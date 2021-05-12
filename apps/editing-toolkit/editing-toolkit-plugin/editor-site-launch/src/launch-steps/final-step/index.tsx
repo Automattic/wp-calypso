@@ -1,15 +1,17 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import classnames from 'classnames';
 import { ThemeProvider } from 'emotion-theming';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Button, Tip } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
-import { useSite, useDomainSuggestion, useDomainSearch, useTitle } from '@automattic/launch';
+import { useSiteDomains, useDomainSuggestion, useDomainSearch, useTitle } from '@automattic/launch';
+import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
+import { useI18n } from '@wordpress/react-i18n';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 import {
 	CheckoutStepBody,
@@ -33,21 +35,35 @@ import './styles.scss';
 const TickIcon = <Icon icon={ check } size={ 17 } />;
 
 const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, onPrevStep } ) => {
-	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
-	const plan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
-	const planPrices = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPrices( window.wpcomEditorSiteLaunch?.locale || 'en' )
+	const { domain, LaunchStep, isStepCompleted, isFlowCompleted, planProductId } = useSelect(
+		( select ) => {
+			const launchStore = select( LAUNCH_STORE );
+			return {
+				domain: launchStore.getSelectedDomain(),
+				LaunchStep: launchStore.getLaunchStep(),
+				isStepCompleted: launchStore.isStepCompleted,
+				isFlowCompleted: launchStore.isFlowCompleted(),
+				planProductId: launchStore.getSelectedPlanProductId(),
+			};
+		}
 	);
-	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
-	const isStepCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isStepCompleted );
-	const isFlowCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowCompleted() );
+
+	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
+
+	const [ plan, planProduct ] = useSelect( ( select ) => [
+		select( PLANS_STORE ).getPlanByProductId( planProductId, locale ),
+		select( PLANS_STORE ).getPlanProductById( planProductId ),
+	] );
 
 	const { title } = useTitle();
-	const { currentDomainName } = useSite();
+	const { siteSubdomain } = useSiteDomains();
 	const domainSuggestion = useDomainSuggestion();
 	const { domainSearch } = useDomainSearch();
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
+
+	const localizeUrl = useLocalizeUrl();
 
 	const nameSummary = (
 		<div className="nux-launch__summary-item">
@@ -62,11 +78,24 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 			{ domain?.domain_name ? (
 				<p>
 					{ __( 'Custom domain', 'full-site-editing' ) }: { domain.domain_name }
+					{ planProduct?.billingPeriod === 'MONTHLY' && (
+						<>
+							<br />
+							<span className="nux-launch__summary-item__domain-price">
+								{ __( 'Domain Registration', 'full-site-editing' ) }:{ ' ' }
+								{ sprintf(
+									// translators: %s is the price with currency. Eg: $15/year
+									__( '%s/year', 'full-site-editing' ),
+									domain.cost
+								) }
+							</span>
+						</>
+					) }
 				</p>
 			) : (
 				<>
 					<p>
-						{ __( 'Free site address', 'full-site-editing' ) }: { currentDomainName }
+						{ __( 'Free site address', 'full-site-editing' ) }: { siteSubdomain?.domain }
 					</p>
 					<Tip>
 						{ domainSearch
@@ -99,13 +128,28 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 		</div>
 	);
 
+	const fallbackPlanSummaryCostLabelAnnually = __( 'billed annually', 'full-site-editing' );
+	// translators: %s is the cost per year (e.g "billed as 96$ annually")
+	const newPlanSummaryCostLabelAnnually = __(
+		'per month, billed as %s annually',
+		'full-site-editing'
+	);
+	const planSummaryCostLabelAnnually =
+		locale === 'en' || hasTranslation?.( 'per month, billed as %s annually' )
+			? sprintf( newPlanSummaryCostLabelAnnually, planProduct?.annualPrice )
+			: fallbackPlanSummaryCostLabelAnnually;
+
+	const planSummaryCostLabelMonthly = __( 'per month, billed monthly', 'full-site-editing' );
+
 	const planSummary = (
 		<div className="nux-launch__summary-item">
-			{ plan && ! plan?.isFree ? (
+			{ plan && planProduct && ! plan.isFree ? (
 				<>
 					<p className="nux-launch__summary-item__plan-name">WordPress.com { plan.title }</p>
-					{ __( 'Plan subscription', 'full-site-editing' ) }: { planPrices[ plan.storeSlug ] }{ ' ' }
-					{ __( 'per month, billed yearly', 'full-site-editing' ) }
+					{ __( 'Plan subscription', 'full-site-editing' ) }: { planProduct.price }{ ' ' }
+					{ planProduct.billingPeriod === 'ANNUALLY'
+						? planSummaryCostLabelAnnually
+						: planSummaryCostLabelMonthly }
 				</>
 			) : (
 				<>
@@ -113,10 +157,13 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 					<p>{ __( 'Plan subscription: Free forever', 'full-site-editing' ) }</p>
 					<Tip>
 						{ createInterpolateElement(
-							/* translators: pressing <Link> will redirect user to plan selection step */
-							__(
-								'<Link>Upgrade to Premium</Link> to get access to 13GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer 30-day full-refunds, guaranteed.',
-								'full-site-editing'
+							sprintf(
+								/* translators: pressing <Link> will redirect user to plan selection step; %1$d is the number of days */
+								__(
+									'<Link>Upgrade to Premium</Link> to get access to 13GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer %1$d-day full-refunds, guaranteed.',
+									'full-site-editing'
+								),
+								14
 							),
 							{
 								Link: <Button isLink onClick={ () => setStep( LaunchStep.Plan ) } />,
@@ -155,15 +202,28 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 										{ __( 'Included in your plan', 'full-site-editing' ) }
 									</h3>
 									<ul className="nux-launch__feature-item-group">
-										{ plan?.features.map( ( feature, i ) => (
-											<li key={ i } className="nux-launch__feature-item">
-												{ TickIcon } { feature }
-											</li>
-										) ) }
+										{ plan?.features
+											// Some features are only available for the
+											// annually-billed version of a plan
+											.filter(
+												( feature ) =>
+													planProduct?.billingPeriod === 'ANNUALLY' ||
+													! feature.requiresAnnuallyBilledPlan
+											)
+											.map( ( feature, i ) => (
+												<li key={ i } className="nux-launch__feature-item">
+													{ TickIcon } { feature.name }
+												</li>
+											) ) }
 									</ul>
 									<p>
 										{ __( 'Questions?', 'full-site-editing' ) }{ ' ' }
-										<Button isLink href="https://wordpress.com/help/contact" target="_blank">
+										<Button
+											isLink
+											href={ localizeUrl( 'https://wordpress.com/help/contact', locale ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										>
 											{ __( 'Ask a Happiness Engineer', 'full-site-editing' ) }
 										</Button>
 									</p>

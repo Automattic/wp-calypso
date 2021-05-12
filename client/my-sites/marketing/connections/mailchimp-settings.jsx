@@ -4,7 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -92,13 +91,12 @@ const MailchimpSettings = ( {
 		);
 	}
 
-	/* eslint-disable jsx-a11y/no-onchange */
 	return (
 		<div>
 			<QueryMailchimpLists siteId={ siteId } />
 			<QueryMailchimpSettings siteId={ siteId } />
 			<p>{ translate( 'What Mailchimp list should subscribers be added to?' ) }</p>
-			{ isArray( mailchimpLists ) && mailchimpLists.length === 0 && (
+			{ Array.isArray( mailchimpLists ) && mailchimpLists.length === 0 && (
 				<Notice
 					status="is-info"
 					text={ translate(
@@ -132,7 +130,6 @@ const MailchimpSettings = ( {
 			{ common }
 		</div>
 	);
-	/* eslint-enable jsx-a11y/no-onchange */
 };
 
 export const renderMailchimpLogo = () => (

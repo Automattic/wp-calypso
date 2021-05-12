@@ -18,12 +18,13 @@ import {
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,
+	isFreePlansDomainUpsellFulfilled,
+	addDomainUpsellToCart,
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
 	maybeRemoveStepForUserlessCheckout,
 } from 'calypso/lib/signup/step-actions';
-import { abtest } from 'calypso/lib/abtest';
 import { generateSteps } from './steps-pure';
 
 export default generateSteps( {
@@ -38,6 +39,8 @@ export default generateSteps( {
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,
+	isFreePlansDomainUpsellFulfilled,
+	addDomainUpsellToCart,
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
@@ -45,8 +48,5 @@ export default generateSteps( {
 } );
 
 export function isDomainStepSkippable( flowName ) {
-	return (
-		flowName === 'test-fse' ||
-		( flowName === 'onboarding' && abtest( 'skippableDomainStep' ) === 'skippable' )
-	);
+	return flowName === 'test-fse';
 }

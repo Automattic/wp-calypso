@@ -7,10 +7,11 @@ import { map, pick, throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-import { APPLY_STORED_STATE, SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { APPLY_STORED_STATE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { getAllStoredItems, setStoredItem, clearStorage } from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import user from 'calypso/lib/user';
 
 /**
@@ -36,17 +37,13 @@ const bootTimestamp = Date.now();
  */
 let stateCache = {};
 
-function serialize( state, reducer ) {
-	return reducer( state, { type: SERIALIZE } );
-}
-
-function deserialize( state, reducer ) {
-	delete state._timestamp;
-	return reducer( state, { type: DESERIALIZE } );
+function deserializeStored( reducer, stored ) {
+	const { _timestamp, ...state } = stored;
+	return deserialize( reducer, state );
 }
 
 function shouldPersist() {
-	return config.isEnabled( 'persist-redux' ) && ! isSupportSession();
+	return ! isSupportSession();
 }
 
 /**
@@ -185,7 +182,7 @@ export function persistOnChange( reduxStore ) {
 
 			prevState = state;
 
-			const serializedState = serialize( state, reduxStore.getCurrentReducer() );
+			const serializedState = serialize( reduxStore.getCurrentReducer(), state );
 			const _timestamp = Date.now();
 
 			const storeTasks = map( serializedState.get(), ( data, storageKey ) =>
@@ -224,7 +221,7 @@ function getInitialServerState( initialReducer ) {
 		return null;
 	}
 
-	const serverState = deserialize( window.initialReduxState, initialReducer );
+	const serverState = deserializeStored( initialReducer, window.initialReduxState );
 	return pick( serverState, Object.keys( window.initialReduxState ) );
 }
 
@@ -345,7 +342,7 @@ function deserializeState( subkey, state, reducer, isServerState = false ) {
 			return null;
 		}
 
-		const deserializedState = deserialize( state, reducer );
+		const deserializedState = deserializeStored( reducer, state );
 		if ( ! deserializedState ) {
 			debug( `${ origin } Redux state failed to deserialize, dropping` );
 			return null;

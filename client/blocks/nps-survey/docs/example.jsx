@@ -5,7 +5,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,6 +27,8 @@ import {
 	sendNpsSurveyFeedback,
 } from 'calypso/state/nps-survey/actions';
 import { successNotice } from 'calypso/state/notices/actions';
+
+const noop = () => {};
 
 class NpsSurveyExample extends PureComponent {
 	state = {

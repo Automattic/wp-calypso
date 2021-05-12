@@ -10,7 +10,7 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
-import { render, act, fireEvent } from '@testing-library/react';
+import { render, act, fireEvent, screen } from '@testing-library/react';
 import { ShoppingCartProvider } from '@automattic/shopping-cart';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 
@@ -22,16 +22,14 @@ import CompositeCheckout from '../composite-checkout';
 /**
  * Mocked dependencies
  */
-jest.mock( 'state/sites/selectors' );
+jest.mock( 'calypso/state/sites/selectors' );
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-jest.mock( 'state/selectors/is-site-automated-transfer' );
+jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
-
-jest.mock( 'components/data/query-experiments' );
 
 const domainProduct = {
 	product_name: '.cash Domain',
@@ -47,7 +45,7 @@ const domainProduct = {
 	},
 	free_trial: false,
 	meta: 'foo.cash',
-	product_id: 106,
+	product_id: 6,
 	volume: 1,
 	is_domain_registration: true,
 	item_original_cost_integer: 500,
@@ -70,7 +68,7 @@ const domainTransferProduct = {
 	},
 	free_trial: false,
 	meta: 'foo.cash',
-	product_id: 106,
+	product_id: 6,
 	volume: 1,
 	item_original_cost_integer: 500,
 	item_original_cost_display: 'R$5',
@@ -180,43 +178,36 @@ describe( 'CompositeCheckout', () => {
 							product_id: 1009,
 							product_name: 'Plan',
 							product_slug: 'personal-bundle',
-							prices: {},
 						},
 						domain_map: {
 							product_id: 5,
 							product_name: 'Product',
 							product_slug: 'domain_map',
-							prices: {},
 						},
 						domain_reg: {
 							product_id: 6,
 							product_name: 'Product',
 							product_slug: 'domain_reg',
-							prices: {},
 						},
 						premium_theme: {
 							product_id: 39,
 							product_name: 'Product',
 							product_slug: 'premium_theme',
-							prices: {},
 						},
 						'concierge-session': {
 							product_id: 371,
 							product_name: 'Product',
 							product_slug: 'concierge-session',
-							prices: {},
 						},
 						jetpack_backup_daily: {
 							product_id: 2100,
 							product_name: 'Jetpack Backup (Daily)',
 							product_slug: 'jetpack_backup_daily',
-							prices: {},
 						},
 						jetpack_scan: {
 							product_id: 2106,
 							product_name: 'Jetpack Scan Daily',
 							product_slug: 'jetpack_scan',
-							prices: {},
 						},
 					},
 				},
@@ -497,12 +488,63 @@ describe( 'CompositeCheckout', () => {
 		expect( page.redirect ).not.toHaveBeenCalled();
 	} );
 
-	it( 'redirects to the plans page if the cart is empty when it loads', async () => {
+	it( 'removes a product from the cart after clicking to remove it', async () => {
+		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+		const removeProductButton = await screen.findByLabelText(
+			'Remove WordPress.com Personal from cart'
+		);
+		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 2 );
+		fireEvent.click( removeProductButton );
+		const confirmButton = await screen.findByText( 'Continue' );
+		await act( async () => {
+			fireEvent.click( confirmButton );
+		} );
+		expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
+	} );
+
+	it( 'redirects to the plans page if the cart is empty after removing the last product', async () => {
+		const cartChanges = { products: [ planWithoutDomain ] };
+		await act( async () => {
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+		const removeProductButton = await screen.findByLabelText(
+			'Remove WordPress.com Personal from cart'
+		);
+		fireEvent.click( removeProductButton );
+		const confirmButton = await screen.findByText( 'Continue' );
+		await act( async () => {
+			fireEvent.click( confirmButton );
+		} );
+		expect( page.redirect ).toHaveBeenCalledWith( '/plans/foo.com' );
+	} );
+
+	it( 'does not redirect to the plans page if the cart is empty after removing a product when it is not the last', async () => {
+		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
+		await act( async () => {
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+		const removeProductButton = await screen.findByLabelText( 'Remove foo.cash from cart' );
+		fireEvent.click( removeProductButton );
+		const confirmButton = await screen.findByText( 'Continue' );
+		await act( async () => {
+			fireEvent.click( confirmButton );
+		} );
+		expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
+	} );
+
+	it( 'does not redirect to the plans page if the cart is empty when it loads', async () => {
 		const cartChanges = { products: [] };
 		await act( async () => {
 			render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
-		expect( page.redirect ).toHaveBeenCalledWith( '/plans/foo.com' );
+		expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 	} );
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a plan alias', async () => {

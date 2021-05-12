@@ -7,7 +7,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import sinon from 'sinon';
 
@@ -16,7 +15,9 @@ import sinon from 'sinon';
  */
 import { SitesDropdown } from '..';
 
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
+
+const noop = () => {};
 
 describe( 'index', () => {
 	describe( 'component rendering', () => {

@@ -95,7 +95,6 @@ class WP_Template_Inserter {
 		$this->fse_template_data_option = $this->theme_slug . '-fse-template-data-v1';
 	}
 
-
 	/**
 	 * Retrieves template parts content.
 	 */

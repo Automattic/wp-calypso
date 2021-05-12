@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -19,6 +18,8 @@ import {
 } from 'calypso/state/wordads/settings/actions';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 const fromApi = ( data ) => {
 	if ( ! data.hasOwnProperty( 'settings' ) ) {

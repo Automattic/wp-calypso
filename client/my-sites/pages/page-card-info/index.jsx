@@ -13,8 +13,8 @@ import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import PostMetadata from 'calypso/lib/post-metadata';
 import { getTheme } from 'calypso/state/themes/selectors';
+import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';
 import QueryTheme from 'calypso/components/data/query-theme';
 
 /**
@@ -34,6 +34,12 @@ const getContentLink = ( state, siteId, page ) => {
 	}
 
 	return { contentLinkURL, contentLinkTarget };
+};
+
+const getThemeId = ( page ) => {
+	return getThemeIdFromStylesheet(
+		page?.metadata?.find( ( { key } ) => key === '_tft_homepage_template' )?.value
+	);
 };
 
 const ICON_SIZE = 12;
@@ -92,7 +98,7 @@ function PageCardInfo( {
 }
 
 export default connect( ( state, props ) => {
-	const themeId = PostMetadata.homepageTemplate( props.page );
+	const themeId = getThemeId( props.page );
 
 	return {
 		isFront: isFrontPage( state, props.page.site_ID, props.page.ID ),

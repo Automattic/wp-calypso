@@ -16,7 +16,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import HeaderCake from 'calypso/components/header-cake';
 import { purchasesRoot } from '../purchases/paths';
-import MembershipSiteHeader from '../purchases/membership-site/header';
+import MembershipSiteHeader from './header';
 import Gridicon from 'calypso/components/gridicon';
 import { requestSubscriptionStop } from 'calypso/state/memberships/subscriptions/actions';
 import Notice from 'calypso/components/notice';
@@ -40,7 +40,7 @@ class Subscription extends React.Component {
 		const { translate, subscription, moment, stoppingStatus } = this.props;
 
 		return (
-			<Main className="memberships__subscription is-wide-layout">
+			<Main wideLayout className="memberships__subscription">
 				<DocumentHead title={ translate( 'Subscription Details' ) } />
 				<MeSidebarNavigation />
 				<QueryMembershipsSubscriptions />

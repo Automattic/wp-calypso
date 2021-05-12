@@ -3,19 +3,21 @@
 /**
  * External dependencies
  */
-import { SubTitle, Title } from '@automattic/onboarding';
+import * as React from 'react';
+import { Link } from 'react-router-dom';
+import { ActionButtons, NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
-import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
-import React, { ReactNode, useContext, useEffect } from 'react';
-import DomainPicker from '@automattic/domain-picker';
+import { TextControl, SVG, Path, Tooltip, Circle, Rect, Button } from '@wordpress/components';
+import DomainPicker, {
+	mockDomainSuggestion,
+	SUGGESTION_ITEM_TYPE_INDIVIDUAL,
+} from '@automattic/domain-picker';
+import classNames from 'classnames';
 import { Icon, check } from '@wordpress/icons';
-import { Link } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
-import FocusedLaunchSummaryItem, {
-	LeadingContentSide,
-	TrailingContentSide,
-} from './focused-launch-summary-item';
+import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
+
 /**
  * Internal dependencies
  */
@@ -27,12 +29,16 @@ import {
 	useDomainSelection,
 	useSite,
 	usePlans,
+	useCart,
 } from '../../hooks';
-
-import { LAUNCH_STORE } from '../../stores';
+import FocusedLaunchSummaryItem, {
+	LeadingContentSide,
+	TrailingContentSide,
+} from './focused-launch-summary-item';
+import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../../stores';
 import LaunchContext from '../../context';
-import { isDefaultSiteTitle } from '../../utils';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
+import type { Plan, PlanProduct } from '../../stores';
 
 import './style.scss';
 
@@ -51,12 +57,17 @@ const info = (
 );
 
 type SummaryStepProps = {
-	input: ReactNode;
-	commentary?: ReactNode;
+	input: React.ReactNode;
+	commentary?: React.ReactNode;
+	highlighted: boolean;
 };
 
-const SummaryStep: React.FunctionComponent< SummaryStepProps > = ( { input, commentary } ) => (
-	<div className="focused-launch-summary__step">
+const SummaryStep: React.FunctionComponent< SummaryStepProps > = ( {
+	input,
+	commentary,
+	highlighted,
+} ) => (
+	<div className={ classNames( 'focused-launch-summary__step', { highlighted } ) }>
 		<div className="focused-launch-summary__data-input">
 			<div className="focused-launch-summary__section">{ input }</div>
 		</div>
@@ -66,6 +77,7 @@ const SummaryStep: React.FunctionComponent< SummaryStepProps > = ( { input, comm
 
 type CommonStepProps = {
 	stepIndex?: number;
+	highlighted?: boolean;
 };
 
 // Props in common between all summary steps + a few props from <TextControl>
@@ -80,6 +92,7 @@ const SiteTitleStep: React.FunctionComponent< SiteTitleStepProps > = ( {
 } ) => {
 	return (
 		<SummaryStep
+			highlighted
 			input={
 				<TextControl
 					className="focused-launch-summary__input"
@@ -92,8 +105,6 @@ const SiteTitleStep: React.FunctionComponent< SiteTitleStepProps > = ( {
 					value={ value }
 					onChange={ onChange }
 					onBlur={ onBlur }
-					// eslint-disable-next-line jsx-a11y/no-autofocus
-					autoFocus={ true }
 				/>
 			}
 		/>
@@ -109,7 +120,6 @@ type DomainStepProps = CommonStepProps & { hasPaidDomain?: boolean; isLoading: b
 		| 'initialDomainSearch'
 		| 'onDomainSelect'
 		| 'onExistingSubdomainSelect'
-		| 'locale'
 	>;
 
 const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
@@ -120,11 +130,14 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 	hasPaidDomain,
 	onDomainSelect,
 	onExistingSubdomainSelect,
-	locale,
 	isLoading,
+	highlighted,
 } ) => {
+	const locale = useLocale();
+
 	return (
 		<SummaryStep
+			highlighted={ !! highlighted }
 			input={
 				hasPaidDomain ? (
 					<>
@@ -137,23 +150,25 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 									__i18n_text_domain__
 								) }
 							>
-								{ info }
+								<span>{ info }</span>
 							</Tooltip>
-							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
+							<p className="focused-launch-summary__mobile-commentary">
 								<Icon icon={ bulb } />
-								{ createInterpolateElement(
-									__(
-										'<strong>Unique domains</strong> help build brand trust',
-										__i18n_text_domain__
-									),
-									{
-										strong: <strong />,
-									}
-								) }
+								<span>
+									{ createInterpolateElement(
+										__(
+											'<strong>Unique domains</strong> help build brand trust',
+											__i18n_text_domain__
+										),
+										{
+											strong: <strong />,
+										}
+									) }
+								</span>
 							</p>
 						</label>
 						<FocusedLaunchSummaryItem readOnly>
-							<LeadingContentSide label={ currentDomain || '' } />
+							<LeadingContentSide label={ currentDomain?.domain_name || '' } />
 							<TrailingContentSide nodeType="PRICE">
 								<Icon icon={ check } size={ 18 } /> { __( 'Purchased', __i18n_text_domain__ ) }
 							</TrailingContentSide>
@@ -168,17 +183,19 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 										{ stepIndex && `${ stepIndex }. ` }
 										{ __( 'Confirm your domain', __i18n_text_domain__ ) }
 									</label>
-									<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
+									<p className="focused-launch-summary__mobile-commentary">
 										<Icon icon={ bulb } />
-										{ createInterpolateElement(
-											__(
-												'<strong>46.9%</strong> of registered domains are <strong>.com</strong>',
-												__i18n_text_domain__
-											),
-											{
-												strong: <strong />,
-											}
-										) }
+										<span>
+											{ createInterpolateElement(
+												__(
+													'<strong>46.9%</strong> of registered domains are <strong>.com</strong>',
+													__i18n_text_domain__
+												),
+												{
+													strong: <strong />,
+												}
+											) }
+										</span>
 									</p>
 								</>
 							}
@@ -193,10 +210,11 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							analyticsUiAlgo="summary_domain_step"
 							quantity={ 3 }
 							quantityExpanded={ 3 }
-							itemType="individual-item"
+							itemType={ SUGGESTION_ITEM_TYPE_INDIVIDUAL }
 							locale={ locale }
+							orderSubDomainsLast={ true }
 						/>
-						<Link to={ Route.DomainDetails }>
+						<Link to={ Route.DomainDetails } className="focused-launch-summary__details-link">
 							{ __( 'View all domains', __i18n_text_domain__ ) }
 						</Link>
 					</>
@@ -259,34 +277,78 @@ type PlanStepProps = CommonStepProps & {
 
 const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	stepIndex,
+	highlighted,
 	hasPaidPlan = false,
 	hasPaidDomain = false,
 	selectedPaidDomain = false,
 } ) => {
-	const { setPlan, unsetPlan } = useDispatch( LAUNCH_STORE );
+	const locale = useLocale();
 
-	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
+	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
-	const onceSelectedPaidPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getPaidPlan() );
+	const [ selectedPlanProductId, billingPeriod ] = useSelect( ( select ) => [
+		select( LAUNCH_STORE ).getSelectedPlanProductId(),
+		select( LAUNCH_STORE ).getLastPlanBillingPeriod(),
+	] );
 
-	const { defaultPaidPlan, defaultFreePlan, planPrices } = usePlans();
+	const { selectedPlan, selectedPlanProduct } = useSelect( ( select ) => {
+		const plansStore = select( PLANS_STORE );
 
-	const sitePlan = useSite().sitePlan;
+		return {
+			selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
+			selectedPlanProduct: plansStore.getPlanProductById( selectedPlanProductId ),
+		};
+	} );
 
-	useEffect( () => {
-		// To keep the launch store state valid,
-		// unselect the free plan if the user selected a paid domain.
-		// free plans don't support paid domains.
-		if ( selectedPaidDomain && selectedPlan && selectedPlan.isFree ) {
-			unsetPlan();
+	// persist non-default selected paid plan if it's paid in order to keep displaying it in the plan picker
+	const [ nonDefaultPaidPlan, setNonDefaultPaidPlan ] = React.useState< Plan | undefined >();
+	const [ nonDefaultPaidPlanProduct, setNonDefaultPaidPlanProduct ] = React.useState<
+		PlanProduct | undefined
+	>();
+
+	const {
+		defaultPaidPlan,
+		defaultFreePlan,
+		defaultPaidPlanProduct,
+		defaultFreePlanProduct,
+	} = usePlans( billingPeriod );
+
+	React.useEffect( () => {
+		if (
+			selectedPlan &&
+			defaultPaidPlan &&
+			! selectedPlan.isFree &&
+			selectedPlan.periodAgnosticSlug !== defaultPaidPlan.periodAgnosticSlug
+		) {
+			setNonDefaultPaidPlan( selectedPlan );
+			setNonDefaultPaidPlanProduct( selectedPlanProduct );
 		}
-	}, [ selectedPaidDomain, selectedPlan, unsetPlan ] );
+	}, [ selectedPlan, defaultPaidPlan, nonDefaultPaidPlan, selectedPlanProduct ] );
 
-	// if the user picks (or ever picked) up a paid plan from the detailed plan page, show it, otherwise show premium plan
-	const paidPlan = onceSelectedPaidPlan || defaultPaidPlan;
+	const isPlanSelected = ( plan: Plan ) =>
+		plan && plan.periodAgnosticSlug === selectedPlan?.periodAgnosticSlug;
+
+	const { sitePlan } = useSite();
+
+	const allAvailablePlans: ( Plan | undefined )[] = nonDefaultPaidPlan
+		? [ defaultPaidPlan, nonDefaultPaidPlan, defaultFreePlan ]
+		: [ defaultPaidPlan, defaultFreePlan ];
+
+	const allAvailablePlansProducts: ( PlanProduct | undefined )[] = nonDefaultPaidPlanProduct
+		? [ defaultPaidPlanProduct, nonDefaultPaidPlanProduct, defaultFreePlanProduct ]
+		: [ defaultPaidPlanProduct, defaultFreePlanProduct ];
+
+	const popularLabel = __( 'Popular', __i18n_text_domain__ );
+
+	const freePlanLabel = __( 'Free', __i18n_text_domain__ );
+	const freePlanLabelNotAvailable = __(
+		'Not available with your domain selection',
+		__i18n_text_domain__
+	);
 
 	return (
 		<SummaryStep
+			highlighted={ !! highlighted }
 			input={
 				hasPaidPlan ? (
 					<>
@@ -299,24 +361,32 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 									__i18n_text_domain__
 								) }
 							>
-								{ info }
+								<span>{ info }</span>
 							</Tooltip>
 							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 								<Icon icon={ bulb } />
-								{ createInterpolateElement(
-									__(
-										'More than <strong>38%</strong> of the internet uses <strong>WordPress</strong>',
-										__i18n_text_domain__
-									),
-									{
-										strong: <strong />,
-									}
-								) }
+								<span>
+									{ createInterpolateElement(
+										__(
+											'More than <strong>38%</strong> of the internet uses <strong>WordPress</strong>',
+											__i18n_text_domain__
+										),
+										{
+											strong: <strong />,
+										}
+									) }
+								</span>
 							</p>
 						</label>
 						<div>
 							<FocusedLaunchSummaryItem readOnly={ true }>
-								<LeadingContentSide label={ sitePlan?.product_name_short_with_suffix } />
+								<LeadingContentSide
+									label={ sprintf(
+										/* translators: Purchased plan label where %s is the WordPress.com plan name (eg: Personal, Premium, Business) */
+										__( '%s Plan', __i18n_text_domain__ ),
+										sitePlan?.product_name_short
+									) }
+								/>
 								<TrailingContentSide nodeType="PRICE">
 									<Icon icon={ check } size={ 18 } /> { __( 'Purchased', __i18n_text_domain__ ) }
 								</TrailingContentSide>
@@ -331,61 +401,72 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						</label>
 						<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 							<Icon icon={ bulb } />
-							{ createInterpolateElement(
-								__(
-									'Grow your business with <strong>WordPress Business</strong>',
-									__i18n_text_domain__
-								),
-								{
-									strong: <strong />,
-								}
-							) }
+							<span>
+								{ createInterpolateElement(
+									__(
+										'Grow your business with <strong>WordPress Business</strong>',
+										__i18n_text_domain__
+									),
+									{
+										strong: <strong />,
+									}
+								) }
+							</span>
 						</p>
 						<div>
-							<FocusedLaunchSummaryItem
-								isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
-								readOnly={ hasPaidDomain || selectedPaidDomain }
-								onClick={ () => defaultFreePlan && setPlan( defaultFreePlan ) }
-								isSelected={ ! ( hasPaidDomain || selectedPaidDomain ) && selectedPlan?.isFree }
-							>
-								<LeadingContentSide
-									label={
-										/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
-										sprintf( __( '%s Plan', __i18n_text_domain__ ), defaultFreePlan?.title ?? '' )
-									}
-								/>
-								<TrailingContentSide
-									nodeType={ hasPaidDomain || selectedPaidDomain ? 'WARNING' : 'PRICE' }
-								>
-									{ hasPaidDomain || selectedPaidDomain
-										? __( 'Not available with your domain selection', __i18n_text_domain__ )
-										: __( 'Free', __i18n_text_domain__ ) }
-								</TrailingContentSide>
-							</FocusedLaunchSummaryItem>
-							<FocusedLaunchSummaryItem
-								isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
-								onClick={ () => paidPlan && setPlan( paidPlan ) }
-								isSelected={ selectedPlan?.storeSlug === paidPlan?.storeSlug }
-							>
-								<LeadingContentSide
-									label={
-										/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
-										sprintf( __( '%s Plan', __i18n_text_domain__ ), paidPlan?.title ?? '' )
-									}
-									badgeText={ paidPlan?.isPopular ? __( 'Popular', __i18n_text_domain__ ) : '' }
-								/>
-								<TrailingContentSide nodeType="PRICE">
-									<span>{ paidPlan && planPrices[ paidPlan?.storeSlug ] }</span>
-									<span>
-										{
-											// translators: /mo is short for "per-month"
-											__( '/mo', __i18n_text_domain__ )
+							{ allAvailablePlans.map( ( plan, index ) => {
+								const planProduct = allAvailablePlansProducts[ index ];
+								if (
+									! plan ||
+									! planProduct ||
+									plan.periodAgnosticSlug !== planProduct?.periodAgnosticSlug
+								) {
+									return <FocusedLaunchSummaryItem key={ index } isLoading />;
+								}
+								return (
+									<FocusedLaunchSummaryItem
+										key={ plan.periodAgnosticSlug }
+										isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
+										onClick={ () =>
+											setPlanProductId( allAvailablePlansProducts[ index ]?.productId )
 										}
-									</span>
-								</TrailingContentSide>
-							</FocusedLaunchSummaryItem>
+										isSelected={ isPlanSelected( plan ) }
+										readOnly={ plan.isFree && ( hasPaidDomain || selectedPaidDomain ) }
+									>
+										<LeadingContentSide
+											label={ sprintf(
+												/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
+												__( '%s Plan', __i18n_text_domain__ ),
+												plan.title ?? ''
+											) }
+											badgeText={ plan.isPopular ? popularLabel : '' }
+										/>
+										{ plan.isFree ? (
+											<TrailingContentSide
+												nodeType={ hasPaidDomain || selectedPaidDomain ? 'WARNING' : 'PRICE' }
+											>
+												{ hasPaidDomain || selectedPaidDomain
+													? freePlanLabelNotAvailable
+													: freePlanLabel }
+											</TrailingContentSide>
+										) : (
+											<TrailingContentSide nodeType="PRICE">
+												<span>{ allAvailablePlansProducts[ index ]?.price }</span>
+												<span>
+													{
+														// translators: /mo is short for "per-month"
+														__( '/mo', __i18n_text_domain__ )
+													}
+												</span>
+											</TrailingContentSide>
+										) }
+									</FocusedLaunchSummaryItem>
+								);
+							} ) }
 						</div>
-						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
+						<Link to={ Route.PlanDetails } className="focused-launch-summary__details-link">
+							{ __( 'View all plans', __i18n_text_domain__ ) }
+						</Link>
 					</>
 				)
 			}
@@ -439,38 +520,84 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 type StepIndexRenderFunction = ( renderOptions: {
 	stepIndex: number;
 	forwardStepIndex: boolean;
-} ) => ReactNode;
+} ) => React.ReactNode;
 
 const Summary: React.FunctionComponent = () => {
-	const { title, updateTitle, saveTitle, isSiteTitleStepVisible, showSiteTitleStep } = useTitle();
+	const { siteId } = React.useContext( LaunchContext );
 
-	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
-	const { onDomainSelect, onExistingSubdomainSelect } = useDomainSelection();
-	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
+	const [
+		hasSelectedDomain,
+		isSiteTitleStepVisible,
+		selectedDomain,
+		selectedPlanProductId,
+	] = useSelect( ( select ) => {
+		const launchStore = select( LAUNCH_STORE );
+		const { isSiteTitleStepVisible, domain, planProductId } = launchStore.getState();
+
+		return [
+			launchStore.hasSelectedDomainOrSubdomain(),
+			isSiteTitleStepVisible,
+			domain,
+			planProductId,
+		];
+	}, [] );
+
+	const isSelectedPlanPaid = useSelect(
+		( select ) => select( LAUNCH_STORE ).isSelectedPlanPaid(),
+		[]
+	);
+
+	const { launchSite } = useDispatch( SITE_STORE );
+	const {
+		setModalDismissible,
+		unsetModalDismissible,
+		showModalTitle,
+		showSiteTitleStep,
+	} = useDispatch( LAUNCH_STORE );
+
+	const { title, isValidTitle, isDefaultTitle, updateTitle } = useTitle();
+	const { siteSubdomain, hasPaidDomain } = useSiteDomains();
+	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const { domainSearch, isLoading } = useDomainSearch();
+	const { hasPaidPlan } = useSite();
 
-	const site = useSite();
+	const locale = useLocale();
+	const localizeUrl = useLocalizeUrl();
 
-	const { locale } = useContext( LaunchContext );
+	const { goToCheckoutAndLaunch, isCartUpdating } = useCart();
 
-	const { setModalDismissible, showModalTitle } = useDispatch( LAUNCH_STORE );
-
-	// When the summary view is active, the modal should be dismissible, and
+	// When the summary view is active, if cart is not updating, the modal should be dismissible, and
 	// the modal title should be visible
-	useEffect( () => {
-		setModalDismissible();
+	React.useEffect( () => {
+		if ( isCartUpdating ) {
+			unsetModalDismissible();
+		} else {
+			setModalDismissible();
+		}
+
 		showModalTitle();
-	}, [ setModalDismissible, showModalTitle ] );
+	}, [ isCartUpdating, setModalDismissible, showModalTitle, unsetModalDismissible ] );
 
 	// If the user needs to change the site title, always show the site title
 	// step to the user when in this launch flow.
-	useEffect( () => {
-		if ( ! isSiteTitleStepVisible && isDefaultSiteTitle( { currentSiteTitle: title } ) ) {
+	// Allow changing site title when it's the default value or when it's an empty string.
+	React.useEffect( () => {
+		if ( ! isSiteTitleStepVisible && isDefaultTitle ) {
 			showSiteTitleStep();
 		}
-	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
+	}, [ isDefaultTitle, showSiteTitleStep, isSiteTitleStepVisible, title ] );
 
-	const hasPaidPlan = site.isPaidPlan;
+	// Launch the site directly if Free plan and subdomain are selected.
+	// Otherwise, show checkout as the next step.
+	const handleLaunch = () => {
+		// checking for not having a selected paid plan instead of checking for a selected Free plan because
+		// user may be entering the launch flow after they have paid for a plan.
+		if ( ! selectedDomain && ! isSelectedPlanPaid ) {
+			launchSite( siteId );
+		} else {
+			goToCheckoutAndLaunch();
+		}
+	};
 
 	// Prepare Steps
 	const renderSiteTitleStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
@@ -479,16 +606,18 @@ const Summary: React.FunctionComponent = () => {
 			key={ stepIndex }
 			value={ title || '' }
 			onChange={ updateTitle }
-			onBlur={ saveTitle }
 		/>
 	);
 
+	const isDomainStepHighlighted = !! selectedPlanProductId || !! hasSelectedDomain || isValidTitle;
+
 	const renderDomainStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<DomainStep
+			highlighted={ isDomainStepHighlighted }
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
-			existingSubdomain={ siteSubdomain?.domain }
-			currentDomain={ selectedDomain?.domain_name ?? sitePrimaryDomain?.domain }
+			existingSubdomain={ mockDomainSuggestion( siteSubdomain?.domain ) }
+			currentDomain={ currentDomain }
 			initialDomainSearch={ domainSearch }
 			hasPaidDomain={ hasPaidDomain }
 			isLoading={ isLoading }
@@ -499,14 +628,16 @@ const Summary: React.FunctionComponent = () => {
 			 * they already have a paid domain
 			 * */
 			onExistingSubdomainSelect={ onExistingSubdomainSelect }
-			locale={ locale }
 		/>
 	);
 
+	const isPlansStepHighlighted = !! hasSelectedDomain || !! selectedPlanProductId;
+
 	const renderPlanStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<PlanStep
+			highlighted={ isPlansStepHighlighted }
 			hasPaidPlan={ hasPaidPlan }
-			selectedPaidDomain={ selectedDomain && ! selectedDomain.is_free }
+			selectedPaidDomain={ selectedDomain && ! selectedDomain.is_free } // @TODO: check if selectedDomain can ever be free
 			hasPaidDomain={ hasPaidDomain }
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
@@ -516,36 +647,48 @@ const Summary: React.FunctionComponent = () => {
 	// Disabled steps are not interactive (e.g. user has already selected domain/plan)
 	// Active steps require user interaction
 	// Using this arrays allows to easily sort the steps correctly in both
-	// groups, and allows the actve steps to always show the correct step index.
+	// groups, and allows the active steps to always show the correct step index.
 	const disabledSteps: StepIndexRenderFunction[] = [];
 	const activeSteps: StepIndexRenderFunction[] = [];
 	isSiteTitleStepVisible && activeSteps.push( renderSiteTitleStep );
 	( hasPaidDomain ? disabledSteps : activeSteps ).push( renderDomainStep );
 	( hasPaidPlan ? disabledSteps : activeSteps ).push( renderPlanStep );
 
+	/*
+	 * Enable the launch button if:
+	 * - the site title input is not empty
+	 * - there is a purchased or selected domain
+	 * - there is a purchased or selected plan
+	 */
+	const isReadyToLaunch =
+		title && ( hasPaidDomain || hasSelectedDomain ) && ( hasPaidPlan || selectedPlanProductId );
+
+	const titleReady = __( "You're ready to launch", __i18n_text_domain__ );
+	const titleInProgress = __( "You're almost there", __i18n_text_domain__ );
+
+	const subtitleReady = __(
+		"You're good to go! Launch your site and share your site address.",
+		__i18n_text_domain__
+	);
+	const subtitleInProgress = __(
+		'Prepare for launch! Confirm a few final things before you take it live.',
+		__i18n_text_domain__
+	);
+
 	return (
 		<div className="focused-launch-container">
 			<div className="focused-launch-summary__section">
-				<Title tagName="h2">
-					{ hasPaidDomain && hasPaidPlan
-						? __( "You're ready to launch", __i18n_text_domain__ )
-						: __( "You're almost there", __i18n_text_domain__ ) }
-				</Title>
+				<Title tagName="h2">{ hasPaidDomain && hasPaidPlan ? titleReady : titleInProgress }</Title>
 				<SubTitle tagName="p" className="focused-launch-summary__caption">
-					{ hasPaidDomain && hasPaidPlan
-						? __(
-								"You're good to go! Launch your site and share your site address.",
-								__i18n_text_domain__
-						  )
-						: __(
-								'Prepare for launch! Confirm a few final things before you take it live.',
-								__i18n_text_domain__
-						  ) }
+					{ hasPaidDomain && hasPaidPlan ? subtitleReady : subtitleInProgress }
 				</SubTitle>
 			</div>
 			{ disabledSteps.map( ( disabledStepRenderer, disabledStepIndex ) =>
 				// Disabled steps don't show the step index
-				disabledStepRenderer( { stepIndex: disabledStepIndex + 1, forwardStepIndex: false } )
+				disabledStepRenderer( {
+					stepIndex: disabledStepIndex + 1,
+					forwardStepIndex: false,
+				} )
 			) }
 			{ activeSteps.map( ( activeStepRenderer, activeStepIndex ) =>
 				// Active steps show the step index only if there are at least 2 steps
@@ -554,9 +697,31 @@ const Summary: React.FunctionComponent = () => {
 					forwardStepIndex: activeSteps.length > 1,
 				} )
 			) }
+			<div className="focused-launch-summary__actions-wrapper">
+				<ActionButtons className="focused-launch-summary__launch-action-bar">
+					<NextButton
+						className={ classNames( 'focused-launch-summary__launch-button', {
+							'focused-launch-summary__launch-button--is-loading': isCartUpdating,
+						} ) }
+						disabled={ ! isReadyToLaunch || isCartUpdating }
+						onClick={ handleLaunch }
+					>
+						{ __( 'Launch your site', __i18n_text_domain__ ) }
+					</NextButton>
+				</ActionButtons>
 
-			{ /* @TODO: placeholder for https://github.com/Automattic/wp-calypso/issues/47392 */ }
-			<Link to={ Route.Success }>{ __( 'Launch your site', __i18n_text_domain__ ) }</Link>
+				<div className="focused-launch-summary__ask-for-help">
+					<p>{ __( 'Questions? Our experts can assist.', __i18n_text_domain__ ) }</p>
+					<Button
+						isLink
+						href={ localizeUrl( 'https://wordpress.com/help/contact', locale ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ __( 'Ask a Happiness Engineer', __i18n_text_domain__ ) }
+					</Button>
+				</div>
+			</div>
 		</div>
 	);
 };

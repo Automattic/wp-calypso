@@ -9,7 +9,6 @@ import { Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
 import FixAllThreatsDialog from 'calypso/components/jetpack/fix-all-threats-dialog';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
@@ -45,38 +44,19 @@ const ScanError: React.FC< { site: Site } > = ( { site } ) => {
 
 	return (
 		<div className="scan-threats__error">
-			{ isEnabled( 'jetpack/on-demand-scan' )
-				? translate(
-						'The scanner was unable to check all files and errored before completion. Deal with the threats found above and run the {{runScan}}scan again{{/runScan}}. If the error persists, we are {{linkToSupport}}here to help{{/linkToSupport}}.',
-						{
-							components: {
-								runScan: (
-									<Button className="scan-threats__run-scan-button" onClick={ dispatchScanRun } />
-								),
-								linkToSupport: (
-									<a
-										href={ contactSupportUrl( site.URL ) }
-										rel="noopener noreferrer"
-										target="_blank"
-									/>
-								),
-							},
-						}
-				  )
-				: translate(
-						'The scanner was unable to check all files and errored before completion. Deal with the threats found above and if the error persists, we are {{linkToSupport}}here to help{{/linkToSupport}}.',
-						{
-							components: {
-								linkToSupport: (
-									<a
-										href={ contactSupportUrl( site.URL ) }
-										rel="noopener noreferrer"
-										target="_blank"
-									/>
-								),
-							},
-						}
-				  ) }
+			{ translate(
+				'The scanner was unable to check all files and errored before completion. Deal with the threats found above and run the {{runScan}}scan again{{/runScan}}. If the error persists, we are {{linkToSupport}}here to help{{/linkToSupport}}.',
+				{
+					components: {
+						runScan: (
+							<Button className="scan-threats__run-scan-button" onClick={ dispatchScanRun } />
+						),
+						linkToSupport: (
+							<a href={ contactSupportUrl( site.URL ) } rel="noopener noreferrer" target="_blank" />
+						),
+					},
+				}
+			) }
 		</div>
 	);
 };

@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
 	EXPORT_ADVANCED_SETTINGS_FETCH,
@@ -14,7 +15,7 @@ import {
 	EXPORT_FAILURE,
 	SET_MEDIA_EXPORT_DATA,
 } from 'calypso/state/action-types';
-import { combineReducers, withStorageKey } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import { States } from './constants';
 
 export function selectedPostType( state = null, action ) {
@@ -58,8 +59,8 @@ export function selectedAdvancedSettings( state = {}, action ) {
 /**
  * Tracks the state of the exporter for each site ID
  *
- * @param  {object} state  The current state
- * @param  {object} action Action object
+ * @param {object} state  The current state
+ * @param {object} action Action object
  * @returns {object}        Updated state
  */
 export function exportingState( state = {}, { type, siteId } ) {

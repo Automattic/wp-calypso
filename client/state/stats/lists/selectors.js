@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isArray, map, flatten, round } from 'lodash';
-import moment from 'moment';
+import { get, map, flatten } from 'lodash';
 
 /**
  * Internal dependencies
@@ -76,10 +75,11 @@ export const getSiteStatsPostStreakData = treeSelect(
 		const gmtOffset = query.gmtOffset || 0;
 		const response = {};
 		// ensure streakData.data exists and it is not an array
-		if ( streakData && streakData.data && ! isArray( streakData.data ) ) {
+		if ( streakData && streakData.data && ! Array.isArray( streakData.data ) ) {
 			Object.keys( streakData.data ).forEach( ( timestamp ) => {
-				const postDay = moment.unix( timestamp );
-				const datestamp = postDay.utcOffset( gmtOffset ).format( 'YYYY-MM-DD' );
+				const time = new Date( timestamp * 1000 );
+				time.setUTCHours( time.getUTCHours() + gmtOffset );
+				const datestamp = time.toISOString().slice( 0, 10 );
 
 				if ( 'undefined' === typeof response[ datestamp ] ) {
 					response[ datestamp ] = 0;
@@ -135,7 +135,7 @@ export const getSiteStatsNormalizedData = treeSelect(
  */
 export function getSiteStatsCSVData( state, siteId, statType, query ) {
 	const data = getSiteStatsNormalizedData( state, siteId, statType, query );
-	if ( ! data || ! isArray( data ) ) {
+	if ( ! data || ! Array.isArray( data ) ) {
 		return [];
 	}
 
@@ -182,8 +182,9 @@ export function getSiteStatsViewSummary( state, siteId ) {
 
 	viewData.data.forEach( ( item ) => {
 		const [ date, value ] = item;
-		const momentDate = moment( date );
-		const { years, months } = momentDate.toObject();
+		const newDate = new Date( date );
+		const years = newDate.getFullYear();
+		const months = newDate.getMonth();
 
 		if ( ! viewSummary[ years ] ) {
 			viewSummary[ years ] = {};
@@ -194,15 +195,25 @@ export function getSiteStatsViewSummary( state, siteId ) {
 				total: 0,
 				data: [],
 				average: 0,
-				daysInMonth: momentDate.daysInMonth(),
+				daysInMonth: new Date( years, months + 1, 0 ).getDate(),
 			};
 		}
 		viewSummary[ years ][ months ].total += value;
 		viewSummary[ years ][ months ].data.push( item );
 		const average =
 			viewSummary[ years ][ months ].total / viewSummary[ years ][ months ].daysInMonth;
-		viewSummary[ years ][ months ].average = round( average, 0 );
+		viewSummary[ years ][ months ].average = Math.round( average );
 	} );
+
+	// With the current month, calculate the average based on the days passed so far in the month
+	const date = new Date();
+	const thisMonth =
+		viewSummary[ date.getFullYear() ] && viewSummary[ date.getFullYear() ][ date.getMonth() ];
+
+	if ( thisMonth ) {
+		thisMonth.daysInMonth = date.getDate();
+		thisMonth.average = Math.round( thisMonth.total / thisMonth.daysInMonth );
+	}
 
 	return viewSummary;
 }

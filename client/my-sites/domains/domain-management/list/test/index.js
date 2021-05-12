@@ -7,9 +7,9 @@
  */
 import deepFreeze from 'deep-freeze';
 import React from 'react';
-import { Provider } from 'react-redux';
+import { Provider as ReduxProvider } from 'react-redux';
 import { shallow, mount } from 'enzyme';
-import { noop } from 'lodash';
+import { ShoppingCartProvider, getEmptyResponseCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -17,12 +17,32 @@ import { noop } from 'lodash';
 import { List as DomainList } from '..';
 import { createReduxStore } from 'calypso/state';
 
-jest.mock( 'lib/wp', () => ( {
+const noop = () => {};
+
+jest.mock( 'calypso/lib/wp', () => ( {
 	undocumented: () => ( {
 		getProducts: () => {},
 		getSitePlans: () => {},
 	} ),
 } ) );
+
+const emptyResponseCart = getEmptyResponseCart();
+
+function getCart() {
+	return Promise.resolve( emptyResponseCart );
+}
+
+function setCart() {
+	return Promise.resolve( emptyResponseCart );
+}
+
+function TestProvider( { store, children } ) {
+	return (
+		<ShoppingCartProvider cartKey="1" getCart={ getCart } setCart={ setCart }>
+			<ReduxProvider store={ store }>{ children }</ReduxProvider>
+		</ShoppingCartProvider>
+	);
+}
 
 describe( 'index', () => {
 	let component;
@@ -54,6 +74,7 @@ describe( 'index', () => {
 		userCanManageOptions: true,
 		successNotice: noop,
 		errorNotice: noop,
+		translate: ( string ) => string,
 	} );
 
 	function renderWithProps( props = defaultProps ) {
@@ -80,7 +101,7 @@ describe( 'index', () => {
 			}
 		);
 		return mount( <DomainList { ...props } />, {
-			wrappingComponent: Provider,
+			wrappingComponent: TestProvider,
 			wrappingComponentProps: { store },
 		} );
 	}

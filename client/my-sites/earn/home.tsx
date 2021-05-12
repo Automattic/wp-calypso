@@ -24,18 +24,16 @@ import EmptyContent from 'calypso/components/empty-content';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
-import {
-	FEATURE_WORDADS_INSTANT,
-	FEATURE_SIMPLE_PAYMENTS,
-	PLAN_PREMIUM,
-	PLAN_JETPACK_SECURITY_DAILY,
-} from 'calypso/lib/plans/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
 import {
+	FEATURE_WORDADS_INSTANT,
+	FEATURE_SIMPLE_PAYMENTS,
+	PLAN_PREMIUM,
+	PLAN_JETPACK_SECURITY_DAILY,
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
@@ -44,7 +42,7 @@ import {
 	isSecurityDailyPlan,
 	isSecurityRealTimePlan,
 	isCompletePlan,
-} from 'calypso/lib/plans';
+} from '@automattic/calypso-products';
 
 /**
  * Image dependencies
@@ -219,7 +217,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
 			icon: 'money',
 			actions: {
 				cta,
@@ -268,7 +265,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
 			icon: 'heart-outline',
 			actions: {
 				cta,
@@ -333,7 +329,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
 			icon: 'bookmark-outline',
 			actions: {
 				cta,
@@ -383,7 +378,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
 			icon: 'mail',
 			actions: {
 				cta,
@@ -501,7 +495,18 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			align: 'right',
 		},
 		body: translate(
-			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. Turn your website into a reliable source of income with payments and ads.'
+			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{a}}Watch our tutorial videos to get started{{/a}}.',
+			{
+				components: {
+					a: (
+						<a
+							href="https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
 		),
 	} );
 

@@ -7,7 +7,7 @@ import qs from 'qs';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 
 function loginEndpointData() {

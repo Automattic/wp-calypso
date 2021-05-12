@@ -12,65 +12,44 @@ import {
 	READER_SIDEBAR_ORGANIZATIONS_TOGGLE,
 	READER_SIDEBAR_FOLLOWING_TOGGLE,
 } from 'calypso/state/reader/action-types';
-import { combineReducers } from 'calypso/state/utils';
-import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
+import { combineReducers, withPersistence } from 'calypso/state/utils';
 
-export const isListsOpen = ( state = false, action ) => {
+export const isListsOpen = withPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
-		case SERIALIZE:
-		case DESERIALIZE:
-			return state;
-
 		case READER_SIDEBAR_LISTS_TOGGLE:
 			return ! state;
 	}
 
 	return state;
-};
-isListsOpen.hasCustomPersistence = true;
+} );
 
-export const isTagsOpen = ( state = false, action ) => {
+export const isTagsOpen = withPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
-		case SERIALIZE:
-		case DESERIALIZE:
-			return state;
-
 		case READER_SIDEBAR_TAGS_TOGGLE:
 			return ! state;
 	}
 
 	return state;
-};
-isTagsOpen.hasCustomPersistence = true;
+} );
 
-export const isFollowingOpen = ( state = false, action ) => {
+export const isFollowingOpen = withPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
-		case SERIALIZE:
-		case DESERIALIZE:
-			return state;
-
 		case READER_SIDEBAR_FOLLOWING_TOGGLE:
 			return ! state;
 	}
 
 	return state;
-};
-isFollowingOpen.hasCustomPersistence = true;
+} );
 
-export const openOrganizations = ( state = [], action ) => {
+export const openOrganizations = withPersistence( ( state = [], action ) => {
 	switch ( action.type ) {
-		case SERIALIZE:
-		case DESERIALIZE:
-			return state;
-
 		case READER_SIDEBAR_ORGANIZATIONS_TOGGLE: {
 			return xor( state, [ action.organizationId ] );
 		}
 	}
 
 	return state;
-};
-openOrganizations.hasCustomPersistence = true;
+} );
 
 export default combineReducers( {
 	isListsOpen,

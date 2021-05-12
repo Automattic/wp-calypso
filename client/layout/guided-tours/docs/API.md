@@ -9,7 +9,7 @@ Tour is a React component that declares the top-level of a tour. It consists of 
 There are three ways a tour can get triggered:
 
 1. If the user navigates to a path that matches the tour's `path` property and the tour's `when` property evaluates to true and there is no other tour that is either running or could also be triggered (in the case of multiple tours that could be triggered we just choose the first match). Every tour will be triggered only once for a user when using this mechanism.
-2. If the user navigates to a URL that contains the tour's name in the `tour` query argument -- e.g., `?tour=editorBasicsTour`. This will ignore the `path` and `when` props as well as the user's tour history.
+2. If the user navigates to a URL that contains the tour's name in the `tour` query argument -- e.g., `?tour=main`. This will ignore the `path` and `when` props as well as the user's tour history.
 3. We can dispatch the Redux action `requestGuidedTour( tour )` to trigger a tour as well. This will ignore the `path` and `when` props as well as the user's tour history.
 
 ### Props
@@ -29,7 +29,7 @@ There are three ways a tour can get triggered:
 </Tour>;
 ```
 
-Note that you can use e.g. `lodash`'s `overEvery` as an `and` function to connect different `when` conditions. When you do so, consider your conditions' order: the function stops evaluating its argument functions as soon as one condition is false. This will affect you if you're assigning users to an A/B test, for example. Also think about how computing-intensive the functions are -- ideally order them so that you can bail with the least amount of resources as possible.
+Note that you can use e.g. the `and` utility function to connect different `when` conditions. When you do so, consider your conditions' order: the function stops evaluating its argument functions as soon as one condition is false. This will affect you if you're assigning users to an A/B test, for example. Also think about how computing-intensive the functions are -- ideally order them so that you can bail with the least amount of resources as possible.
 
 For more comprehensive examples of tours, look at [TUTORIAL.md](TUTORIAL.md) or explore existing tours in `client/layout/guided-tours/tours`.
 
@@ -135,8 +135,8 @@ There are currently two ways to declare the condition to continue the tour with 
 ```
 
 ```jsx
-// continue when Redux selector evaluates to true (in this case after the user opens a preview)
-<Continue step="next-step" when={ isPreviewShowing } />;
+// continue when Redux selector evaluates to true (in this case after site credentials have been updated)
+<Continue step="next-step" when={ siteHasCredentials } />;
 ```
 
 ## Next

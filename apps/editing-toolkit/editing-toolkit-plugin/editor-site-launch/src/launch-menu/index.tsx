@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 /**
  * Internal dependencies
  */
 import { LAUNCH_STORE } from '../stores';
 import LaunchMenuItem from './item';
-import type { LaunchStepType } from '../../../common/data-stores/launch/types';
+import type { LaunchStepType } from '../../../common/data-stores/launch';
 
 import './styles.scss';
 
@@ -19,11 +19,20 @@ interface Props {
 }
 
 const LaunchMenu: React.FunctionComponent< Props > = ( { onMenuItemClick } ) => {
-	const { step: currentStep } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
-	const LaunchSequence = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchSequence() );
-	const isStepCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isStepCompleted );
-	const isFlowStarted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowStarted() );
+	const { __ } = useI18n();
+
+	const { currentStep, LaunchStep, LaunchSequence, isStepCompleted, isFlowCompleted } = useSelect(
+		( select ) => {
+			const launchStore = select( LAUNCH_STORE );
+			return {
+				currentStep: launchStore.getCurrentStep(),
+				LaunchStep: launchStore.getLaunchStep(),
+				LaunchSequence: launchStore.getLaunchSequence(),
+				isStepCompleted: launchStore.isStepCompleted,
+				isFlowCompleted: launchStore.isFlowCompleted(),
+			};
+		}
+	);
 
 	const LaunchStepMenuItemTitles = {
 		[ LaunchStep.Name ]: __( 'Name your site', 'full-site-editing' ),
@@ -34,7 +43,7 @@ const LaunchMenu: React.FunctionComponent< Props > = ( { onMenuItemClick } ) => 
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
 
-	const handleClick = ( step ) => {
+	const handleClick = ( step: string ) => {
 		setStep( step );
 		onMenuItemClick( step );
 	};
@@ -50,7 +59,7 @@ const LaunchMenu: React.FunctionComponent< Props > = ( { onMenuItemClick } ) => 
 						isCompleted={ isStepCompleted( step ) }
 						isCurrent={ step === currentStep }
 						onClick={ () => handleClick( step ) }
-						isDisabled={ step === LaunchStep.Final && ! isFlowStarted }
+						isDisabled={ step === LaunchStep.Final && ! isFlowCompleted }
 					/>
 				) ) }
 			</div>

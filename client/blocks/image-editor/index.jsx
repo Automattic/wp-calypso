@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { noop, isEqual, partial } from 'lodash';
+import { isEqual, partial } from 'lodash';
 import path from 'path';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -39,6 +39,8 @@ import { getDefaultAspectRatio } from './utils';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class ImageEditor extends React.Component {
 	static propTypes = {

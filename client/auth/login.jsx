@@ -11,7 +11,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import AuthCodeButton from './auth-code-button';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

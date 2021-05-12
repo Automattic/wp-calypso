@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { omit, findIndex } from 'lodash';
+import { findIndex } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -116,7 +116,7 @@ function plugin( state, action ) {
 			if ( state.id !== action.data.id ) {
 				return state;
 			}
-			return Object.assign( {}, omit( state, 'update' ), action.data );
+			return Object.assign( {}, state, { update: { recentlyUpdated: true } }, action.data );
 		default:
 			return state;
 	}

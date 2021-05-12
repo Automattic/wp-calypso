@@ -1,55 +1,168 @@
 /**
+ * External dependencies
+ */
+import { select } from '@wordpress/data';
+import deprecate from '@wordpress/deprecated';
+
+/**
  * Internal dependencies
  */
 import type { State } from './reducer';
-import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE, STORE_KEY } from './constants';
-import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
-import { select } from '@wordpress/data';
+import {
+	DEFAULT_PAID_PLAN,
+	TIMELESS_PLAN_ECOMMERCE,
+	TIMELESS_PLAN_FREE,
+	STORE_KEY,
+	FREE_PLAN_PRODUCT_ID,
+} from './constants';
+import type {
+	Plan,
+	PlanFeature,
+	FeaturesByType,
+	PlanProduct,
+	PlanPath,
+	PlanSlug,
+	StorePlanSlug,
+} from './types';
 
-export const getFeatures = ( state: State ): Record< string, PlanFeature > => state.features;
+// Some of these selectors require unused parameters because those
+// params are used by the associated resolver.
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
-export const getFeaturesByType = ( state: State ): Array< PlanFeatureType > => state.featuresByType;
+export const getFeatures = ( state: State, locale: string ): Record< string, PlanFeature > =>
+	state.features[ locale ] ?? {};
 
-export const getPlanBySlug = ( state: State, slug: PlanSlug ): Plan => {
-	return state.plans[ slug ] ?? undefined;
+export const getFeaturesByType = ( state: State, locale: string ): Array< FeaturesByType > =>
+	state.featuresByType[ locale ] ?? [];
+
+export const getPlanByProductId = (
+	_state: State,
+	productId: number | undefined,
+	locale: string
+): Plan | undefined => {
+	if ( ! productId ) {
+		return undefined;
+	}
+
+	return select( STORE_KEY )
+		.getSupportedPlans( locale )
+		.find( ( plan ) => plan.productIds.indexOf( productId ) > -1 );
 };
 
-export const getDefaultPaidPlan = (): Plan => {
-	return select( STORE_KEY ).getPlansDetails( '' )?.plans[ DEFAULT_PAID_PLAN ];
+export const getPlanProductById = (
+	_state: State,
+	productId: number | undefined
+): PlanProduct | undefined => {
+	if ( ! productId ) {
+		return undefined;
+	}
+
+	return select( STORE_KEY )
+		.getPlansProducts()
+		.find( ( product ) => product.productId === productId );
 };
 
-export const getDefaultFreePlan = (): Plan => {
-	return select( STORE_KEY ).getPlansDetails( '' )?.plans[ PLAN_FREE ];
+export const getPlanByPeriodAgnosticSlug = (
+	_state: State,
+	slug: PlanSlug | undefined,
+	locale: string
+): Plan | undefined => {
+	if ( ! slug ) {
+		return undefined;
+	}
+	return select( STORE_KEY )
+		.getSupportedPlans( locale )
+		.find( ( plan ) => plan.periodAgnosticSlug === slug );
 };
 
-export const getSupportedPlans = ( state: State ): Plan[] => {
-	const supportedPlans: Plan[] = [];
+export const getDefaultPaidPlan = ( _: State, locale: string ): Plan | undefined => {
+	return select( STORE_KEY )
+		.getSupportedPlans( locale )
+		.find( ( plan ) => plan.periodAgnosticSlug === DEFAULT_PAID_PLAN );
+};
 
-	state.supportedPlanSlugs.forEach( ( slug ) => {
-		if ( slug in state.plans ) {
-			supportedPlans.push( state.plans[ slug ] );
-		}
+export const getDefaultFreePlan = ( _: State, locale: string ): Plan | undefined => {
+	return select( STORE_KEY )
+		.getSupportedPlans( locale )
+		.find( ( plan ) => plan.periodAgnosticSlug === TIMELESS_PLAN_FREE );
+};
+
+export const getSupportedPlans = ( state: State, _locale: string ): Plan[] => {
+	return state.plans[ _locale ] ?? [];
+};
+
+export const getPlansProducts = ( state: State ): PlanProduct[] => {
+	return state.planProducts;
+};
+
+/**
+ * @deprecated  getPrices is deprecated, please use plan.price directly
+ *
+ * @param _state the state
+ * @param _locale the locale
+ */
+export const getPrices = ( _state: State, _locale: string ): Record< StorePlanSlug, string > => {
+	deprecate( 'getPrices', {
+		alternative: 'getPlanProduct().price',
 	} );
-
-	return supportedPlans;
+	return select( STORE_KEY )
+		.getPlansProducts()
+		.reduce( ( prices, plan ) => {
+			prices[ plan.storeSlug ] = plan.price;
+			return prices;
+		}, {} as Record< StorePlanSlug, string > );
 };
 
-export const getPlanByPath = ( state: State, path?: string ): Plan | undefined => {
-	return path ? getSupportedPlans( state ).find( ( plan ) => plan?.pathSlug === path ) : undefined;
+export const getPlanByPath = (
+	_state: State,
+	path: PlanPath | undefined,
+	locale: string
+): Plan | undefined => {
+	if ( ! path ) {
+		return undefined;
+	}
+
+	const planProduct = select( STORE_KEY )
+		.getPlansProducts()
+		.find( ( product ) => product.pathSlug === path );
+
+	if ( ! planProduct ) {
+		return undefined;
+	}
+
+	return select( STORE_KEY )
+		.getSupportedPlans( locale )
+		.find( ( plan ) => plan.periodAgnosticSlug === planProduct.periodAgnosticSlug );
 };
 
-export const getPlansDetails = ( state: State, _: string ): State => state; // eslint-disable-line @typescript-eslint/no-unused-vars
+export const getPlanProduct = (
+	_state: State,
+	periodAgnosticSlug: string | undefined,
+	billingPeriod: PlanProduct[ 'billingPeriod' ] | undefined
+): PlanProduct | undefined => {
+	if ( ! periodAgnosticSlug || ! billingPeriod ) {
+		return undefined;
+	}
 
-export const getPlansPaths = ( state: State ) => {
-	return getSupportedPlans( state ).map( ( plan ) => plan?.pathSlug );
+	return select( STORE_KEY )
+		.getPlansProducts()
+		.find( ( product ) => {
+			const matchesSlug = product.periodAgnosticSlug === periodAgnosticSlug;
+			// The billing period doesn't matter when dealing with free plan
+			const matchesBillingPeriod =
+				periodAgnosticSlug === TIMELESS_PLAN_FREE || product.billingPeriod === billingPeriod;
+
+			return matchesSlug && matchesBillingPeriod;
+		} );
 };
 
-export const getPrices = ( state: State, _: string ) => state.prices; // eslint-disable-line @typescript-eslint/no-unused-vars
-
-export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ) => {
-	return planSlug === PLAN_ECOMMERCE;
+export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ): boolean => {
+	return planSlug === TIMELESS_PLAN_ECOMMERCE;
 };
 
-export const isPlanFree = ( _: State, planSlug?: PlanSlug ) => {
-	return planSlug === PLAN_FREE;
+export const isPlanFree = ( _: State, planSlug?: PlanSlug ): boolean => {
+	return planSlug === TIMELESS_PLAN_FREE;
 };
+
+export const isPlanProductFree = ( _: State, planProductId: number | undefined ): boolean =>
+	planProductId === FREE_PLAN_PRODUCT_ID;

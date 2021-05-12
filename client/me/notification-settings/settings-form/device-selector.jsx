@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { size, map, first } from 'lodash';
+import { size, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +24,7 @@ class NotificationSettingsFormDeviceSelector extends PureComponent {
 	render() {
 		const { devices } = this.props;
 		if ( size( devices ) === 1 ) {
-			return <StreamHeader title={ first( devices ).name } />;
+			return <StreamHeader title={ devices[ 0 ].name } />;
 		}
 
 		return (

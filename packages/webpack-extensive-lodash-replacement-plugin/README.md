@@ -3,7 +3,7 @@
 Replaces most usage of `lodash` with `lodash-es`:
 
 ```js
-import { uniq } from 'lodash';
+import { get } from 'lodash';
 import map from 'lodash/map';
 import camelCase from 'lodash.camelcase';
 ```
@@ -11,7 +11,7 @@ import camelCase from 'lodash.camelcase';
 Becomes:
 
 ```js
-import { uniq } from 'lodash-es';
+import { get } from 'lodash-es';
 import map from 'lodash-es/map';
 import camelCase from 'lodash-es/camelCase';
 ```

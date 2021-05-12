@@ -1,6 +1,6 @@
 # StatsSparkline
 
-The `StatsSparkline` block renders an image of a chart representing hourly views for a given site.
+The `StatsSparkline` block renders a chart representing hourly views for a given site.
 
 ## Usage
 
@@ -16,7 +16,7 @@ import StatsSparkline from 'calypso/blocks/stats-sparkline';
 
 <table>
 	<tr><th>Type</th><td>Number</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
 The site ID to display the sparkline for.
@@ -28,4 +28,4 @@ The site ID to display the sparkline for.
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-Optional className that is applied to the sparkline image.
+Optional className that is applied to the sparkline chart.

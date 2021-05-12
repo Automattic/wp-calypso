@@ -24,41 +24,41 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Plans: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Comparing Plans:  @parallel @jetpack', function () {
-		step( 'Login and Select My Site', async function () {
+		it( 'Login and Select My Site', async function () {
 			const loginFlow = new LoginFlow( driver );
 			return await loginFlow.loginAndSelectMySite();
 		} );
 
-		step( 'Can Select Plans', async function () {
+		it( 'Can Select Plans', async function () {
 			const sideBarComponent = await SidebarComponent.Expect( driver );
 			return await sideBarComponent.selectPlans();
 		} );
 
-		step( 'Can Compare Plans', async function () {
+		it( 'Can Compare Plans', async function () {
 			const plansPage = await PlansPage.Expect( driver );
+			await plansPage.openPlansTab();
 			return await plansPage.waitForComparison();
 		} );
 
 		if ( host === 'WPCOM' ) {
-			step( 'Can Verify Current Plan', async function () {
+			it( 'Can Verify Current Plan', async function () {
 				const planName = 'premium';
 				const plansPage = await PlansPage.Expect( driver );
 				const present = await plansPage.confirmCurrentPlan( planName );
 				return assert( present, `Failed to detect correct plan (${ planName })` );
 			} );
 
-			step( 'Can See Exactly One Primary CTA Button', async function () {
+			it( 'Can See Exactly One Primary CTA Button', async function () {
 				const plansPage = await PlansPage.Expect( driver );
 				return assert(
 					await plansPage.onePrimaryButtonShown(),
@@ -66,7 +66,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 				);
 			} );
 		} else {
-			step( 'Can Verify Current Plan', async function () {
+			it( 'Can Verify Current Plan', async function () {
 				// Jetpack
 				const plansPage = await PlansPage.Expect( driver );
 				const displayed = await plansPage.planTypesShown( 'jetpack' );
@@ -83,30 +83,31 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Login and Select My Site', async function () {
+		it( 'Login and Select My Site', async function () {
 			loginFlow = new LoginFlow( driver );
 			return await loginFlow.loginAndSelectMySite();
 		} );
 
-		step( 'Can Select Plans', async function () {
+		it( 'Can Select Plans', async function () {
 			const sideBarComponent = await SidebarComponent.Expect( driver );
 			return await sideBarComponent.selectPlans();
 		} );
 
-		step( 'Can Compare Plans', async function () {
+		it( 'Can Compare Plans', async function () {
 			const plansPage = await PlansPage.Expect( driver );
+			await plansPage.openPlansTab();
 			if ( host === 'WPCOM' ) {
 				await plansPage.openAdvancedPlansSegment();
 			}
 			return await plansPage.waitForComparison();
 		} );
 
-		step( 'Select Business Plan', async function () {
+		it( 'Select Business Plan', async function () {
 			const plansPage = await PlansPage.Expect( driver );
 			return await plansPage.selectPaidPlan();
 		} );
 
-		step( 'Remove any existing coupon', async function () {
+		it( 'Remove any existing coupon', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 
 			if ( await securePaymentComponent.hasCouponApplied() ) {
@@ -114,7 +115,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 			}
 		} );
 
-		step( 'Can Correctly Apply Coupon', async function () {
+		it( 'Can Correctly Apply Coupon', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 
 			await securePaymentComponent.toggleCartSummary();
@@ -129,7 +130,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 			assert.strictEqual( newCartAmount, expectedCartAmount, 'Coupon not applied properly' );
 		} );
 
-		step( 'Can Remove Coupon', async function () {
+		it( 'Can Remove Coupon', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 
 			await securePaymentComponent.removeCoupon();
@@ -138,7 +139,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 			assert.strictEqual( removedCouponAmount, originalCartAmount, 'Coupon not removed properly' );
 		} );
 
-		step( 'Remove from cart', async function () {
+		it( 'Remove from cart', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 
 			return await securePaymentComponent.removeBusinessPlan();
@@ -150,12 +151,12 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can log into WordPress.com', async function () {
+		it( 'Can log into WordPress.com', async function () {
 			const loginFlow = new LoginFlow( driver );
 			return await loginFlow.login();
 		} );
 
-		step( 'Can navigate to purchases', async function () {
+		it( 'Can navigate to purchases', async function () {
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickProfileLink();
 			const profilePage = await ProfilePage.Expect( driver );
@@ -165,7 +166,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 			return await purchasesPage.selectPremiumPlanOnConnectedSite();
 		} );
 
-		step( '"Renew Now" link takes user to Payment Details form', async function () {
+		it( '"Renew Now" link takes user to Payment Details form', async function () {
 			const managePurchasePage = await ManagePurchasePage.Expect( driver );
 			await managePurchasePage.chooseRenewNow();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
@@ -183,19 +184,20 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can log into WordPress.com', async function () {
+		it( 'Can log into WordPress.com', async function () {
 			const loginFlow = new LoginFlow( driver );
 			return await loginFlow.loginAndSelectMySite();
 		} );
 
-		step( 'Can navigate to plans page and select business plan', async function () {
+		it( 'Can navigate to plans page and select business plan', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			await sidebarComponent.selectPlans();
 			const plansPage = await PlansPage.Expect( driver );
+			await plansPage.openPlansTab();
 			return await plansPage.selectPaidPlan();
 		} );
 
-		step( 'User is taken to be Payment Details form', async function () {
+		it( 'User is taken to be Payment Details form', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			const businessPlanInCart = await securePaymentComponent.containsBusinessPlan();
 			return assert.strictEqual(

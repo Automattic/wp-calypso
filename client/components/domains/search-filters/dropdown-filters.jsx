@@ -11,7 +11,7 @@ import { isEqual, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormLabel from 'calypso/components/forms/form-label';

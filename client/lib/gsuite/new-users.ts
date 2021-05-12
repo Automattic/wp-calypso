@@ -5,13 +5,18 @@ import emailValidator from 'email-validator';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { countBy, find, includes, groupBy, map, mapValues } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { CartItemValue } from 'calypso/lib/cart-values/types';
 import { googleApps, googleAppsExtraLicenses } from 'calypso/lib/cart-values/cart-items';
-import { hasGSuiteWithUs } from './has-gsuite-with-us';
+import {
+	getGSuiteMailboxCount,
+	hasGSuiteWithUs,
+	isGoogleWorkspaceProductSlug,
+	isGSuiteProductSlug,
+} from 'calypso/lib/gsuite';
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -98,7 +103,7 @@ const validEmailCharacterField = ( { value, error }: GSuiteNewUserField ): GSuit
 	error:
 		! error && ! /^[0-9a-z_'-](\.?[0-9a-z_'-])*$/i.test( value )
 			? translate(
-					'Only number, letters, dashes, underscores, apostrophes and periods are allowed.'
+					'Only numbers, letters, dashes, underscores, apostrophes and periods are allowed.'
 			  )
 			: error,
 } );
@@ -187,11 +192,16 @@ const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ): GSuiteNewUser[] =>
  *
  * @see https://support.google.com/accounts/answer/32040 for requirements
  */
-const validatePasswordField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => {
-	if ( ! error && 12 > value.length ) {
+const validatePasswordField = (
+	{ value, error }: GSuiteNewUserField,
+	minimumLength = 12
+): GSuiteNewUserField => {
+	if ( ! error && minimumLength > value.length ) {
 		return {
 			value,
-			error: translate( "This field can't be shorter than %s characters.", { args: '12' } ),
+			error: translate( "This field can't be shorter than %s characters.", {
+				args: String( minimumLength ),
+			} ),
 		};
 	}
 
@@ -337,18 +347,33 @@ const getItemsForCart = (
 	domains: { name: string },
 	productSlug: string,
 	users: GSuiteNewUser[]
-): CartItemValue => {
+): MinimalRequestCartProduct => {
 	const usersGroupedByDomain: { [ domain: string ]: GSuiteProductUser[] } = mapValues(
 		groupBy( users, 'domain.value' ),
 		( groupedUsers ) => groupedUsers.map( transformUserForCart )
 	);
 
-	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domain: string ) => {
-		const domainInfo = find( domains, [ 'name', domain ] );
+	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domainName: string ) => {
+		const properties = { domain: domainName, users: groupedUsers };
 
-		return domainInfo && hasGSuiteWithUs( domainInfo )
-			? googleAppsExtraLicenses( { domain, users: groupedUsers } )
-			: googleApps( { domain, product_slug: productSlug, users: groupedUsers } );
+		const domain = find( domains, [ 'name', domainName ] );
+
+		const isExtraLicense = domain && hasGSuiteWithUs( domain );
+
+		if ( isGSuiteProductSlug( productSlug ) && isExtraLicense ) {
+			return googleAppsExtraLicenses( properties );
+		}
+
+		if ( isGoogleWorkspaceProductSlug( productSlug ) && isExtraLicense ) {
+			properties[ 'new_quantity' ] = groupedUsers.length;
+			properties[ 'quantity' ] = getGSuiteMailboxCount( domain ) + groupedUsers.length;
+		}
+
+		if ( isGoogleWorkspaceProductSlug( productSlug ) && ! isExtraLicense ) {
+			properties[ 'quantity' ] = groupedUsers.length;
+		}
+
+		return googleApps( { ...properties, product_slug: productSlug } );
 	} );
 };
 
@@ -364,6 +389,7 @@ export {
 	sanitizeEmail,
 	validateAgainstExistingUsers,
 	validateNewUsersAreUnique,
+	validatePasswordField,
 	validateUser,
 	validateUsers,
 };

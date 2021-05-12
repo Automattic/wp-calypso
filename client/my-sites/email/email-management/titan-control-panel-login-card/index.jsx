@@ -9,11 +9,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import wpcom from 'calypso/lib/wp';
+import { isEnabled } from '@automattic/calypso-config';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { Button, CompactCard } from '@automattic/components';
 import SectionHeader from 'calypso/components/section-header';
-import { getTitanMailOrderId } from 'calypso/lib/titan/get-titan-mail-order-id';
+import {
+	fetchTitanAutoLoginURL,
+	fetchTitanIframeURL,
+} from 'calypso/my-sites/email/email-management/titan-functions';
+import { getTitanMailOrderId, getTitanProductName } from 'calypso/lib/titan';
 
 /**
  * Style dependencies
@@ -23,72 +27,131 @@ import './style.scss';
 class TitanControlPanelLoginCard extends React.Component {
 	state = {
 		isFetchingAutoLoginLink: false,
+		iframeURL: '',
 	};
 
-	fetchTitanAutoLoginURL = ( orderId ) => {
-		return new Promise( ( resolve ) => {
-			wpcom.undocumented().getTitanControlPanelAutoLoginURL( orderId, ( serverError, result ) => {
-				resolve( {
-					error: serverError?.message,
-					loginURL: serverError ? null : result.auto_login_url,
-				} );
-			} );
-		} );
-	};
+	componentDidMount() {
+		this._mounted = true;
+
+		const { context, domain } = this.props;
+
+		fetchTitanIframeURL( getTitanMailOrderId( domain ), context ).then(
+			( { error, iframeURL } ) => {
+				if ( error ) {
+					this.props.errorNotice(
+						error ?? this.props.translate( 'An unknown error occurred. Please try again later.' )
+					);
+				} else if ( this._mounted ) {
+					this.setState( { iframeURL } );
+				}
+			}
+		);
+	}
+
+	componentWillUnmount() {
+		this._mounted = false;
+	}
 
 	onLogInClick = () => {
 		if ( this.state.isFetchingAutoLoginLink ) {
 			return;
 		}
 
-		const { domain, translate } = this.props;
+		const { context, domain, translate } = this.props;
 		this.setState( { isFetchingAutoLoginLink: true } );
 
-		this.fetchTitanAutoLoginURL( getTitanMailOrderId( domain ) ).then( ( { error, loginURL } ) => {
-			this.setState( { isFetchingAutoLoginLink: false } );
-			if ( error ) {
-				this.props.errorNotice(
-					error ?? translate( 'An unknown error occurred. Please try again later.' )
-				);
-			} else {
-				window.location.href = loginURL;
+		fetchTitanAutoLoginURL( getTitanMailOrderId( domain ), context ).then(
+			( { error, loginURL } ) => {
+				this.setState( { isFetchingAutoLoginLink: false } );
+				if ( error ) {
+					this.props.errorNotice(
+						error ?? translate( 'An unknown error occurred. Please try again later.' )
+					);
+				} else {
+					window.location.href = loginURL;
+				}
 			}
-		} );
+		);
 	};
 
-	render() {
+	renderAutoLogin() {
 		const { domain, translate } = this.props;
 		const translateArgs = {
 			args: {
 				domainName: domain.name,
+				productName: getTitanProductName(),
 			},
-			comment: '%(domainName)s is a domain name, e.g. example.com',
+			comment:
+				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, either Email or Titan Mail',
 		};
+		const sectionHeaderLabel = translate( '%(productName)s: %(domainName)s', translateArgs );
+		const buttonCtaText = isEnabled( 'titan/phase-2' )
+			? translate( 'Log in to the Email control panel' )
+			: translate( "Log in to Titan's control panel" );
+		const cardText = translate(
+			'Go to the %(productName)s control panel to manage email for %(domainName)s.',
+			translateArgs
+		);
 
 		return (
 			<div className="titan-control-panel-login-card">
-				<SectionHeader label={ translate( 'Titan Mail: %(domainName)s', translateArgs ) }>
+				<SectionHeader label={ sectionHeaderLabel }>
 					<Button
 						primary
 						compact
 						busy={ this.state.isFetchingAutoLoginLink }
 						onClick={ this.onLogInClick }
 					>
-						{ translate( "Log in to Titan's control panel" ) }
+						{ buttonCtaText }
 					</Button>
 				</SectionHeader>
+				<CompactCard>{ cardText }</CompactCard>
+			</div>
+		);
+	}
+
+	renderIframe() {
+		const { domain, translate } = this.props;
+		const translateArgs = {
+			args: {
+				domainName: domain.name,
+				productName: getTitanProductName(),
+			},
+			comment:
+				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, either Email or Titan Mail',
+		};
+		const sectionHeaderLabel = translate( '%(productName)s: %(domainName)s', translateArgs );
+
+		return (
+			<div className="titan-control-panel-login-card">
+				<SectionHeader label={ sectionHeaderLabel } />
 				<CompactCard>
-					{ translate(
-						"Go to Titan's control panel to manage email for %(domainName)s.",
-						translateArgs
+					{ this.state.iframeURL ? (
+						<iframe
+							title={ translate( 'Email Control Panel' ) }
+							src={ this.state.iframeURL }
+							width="100%"
+							height="1200px"
+						/>
+					) : (
+						<div>{ translate( 'Loading the control panel…' ) }</div>
 					) }
 				</CompactCard>
 			</div>
 		);
 	}
+
+	render() {
+		if ( isEnabled( 'titan/iframe-control-panel' ) ) {
+			return this.renderIframe();
+		}
+
+		return this.renderAutoLogin();
+	}
 }
 
 TitanControlPanelLoginCard.propTypes = {
+	context: PropTypes.string,
 	domain: PropTypes.object.isRequired,
 };
 

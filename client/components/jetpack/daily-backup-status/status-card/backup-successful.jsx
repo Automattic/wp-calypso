@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { useTranslate } from 'i18n-calypso';
-import { get, isArray } from 'lodash';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
@@ -16,6 +15,7 @@ import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-valu
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import ActivityCard from 'calypso/components/activity-card';
+import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
 import ActionButtons from '../action-buttons';
 import BackupChanges from '../backup-changes';
 import useGetDisplayDate from '../use-get-display-date';
@@ -31,7 +31,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const hasRealtimeBackups = useSelector( ( state ) => {
 		const capabilities = getRewindCapabilities( state, siteId );
-		return isArray( capabilities ) && capabilities.includes( 'backup-realtime' );
+		return Array.isArray( capabilities ) && capabilities.includes( 'backup-realtime' );
 	} );
 
 	const moment = useLocalizedMoment();
@@ -48,13 +48,15 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	} );
 	const isToday = selectedDate.isSame( today, 'day' );
 
-	const meta = get( backup, 'activityDescription[2].children[0]', '' );
+	const meta = backup?.activityDescription?.[ 2 ]?.children?.[ 0 ] ?? '';
 
 	// We should only showing the summarized ActivityCard for Real-time sites when the latest backup is not a full backup
 	const showBackupDetails =
 		hasRealtimeBackups &&
 		( 'rewind__backup_complete_full' !== backup.activityName ||
 			'rewind__backup_only_complete_full' !== backup.activityName );
+
+	const actionableRewindId = useActionableRewindId( backup );
 
 	return (
 		<>
@@ -71,7 +73,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 				<div className="status-card__title">{ displayDateNoLatest }</div>
 			</div>
 			<div className="status-card__meta">{ meta }</div>
-			<ActionButtons rewindId={ backup.rewindId } />
+			<ActionButtons rewindId={ actionableRewindId } />
 			{ showBackupDetails && (
 				<div className="status-card__realtime-details">
 					<div className="status-card__realtime-details-card">

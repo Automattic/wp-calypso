@@ -7,6 +7,7 @@ import PaymentLogo from './lib/payment-methods/payment-logo';
 import { CheckoutProvider } from './components/checkout-provider';
 import useMessages from './components/use-messages';
 import useEvents from './components/use-events';
+import CheckoutSubmitButton from './components/checkout-submit-button';
 import {
 	Checkout,
 	CheckoutStep,
@@ -50,14 +51,9 @@ import {
 	createGiropayMethod,
 } from './lib/payment-methods/giropay';
 import {
-	createBancontactPaymentMethodStore,
-	createBancontactMethod,
-} from './lib/payment-methods/bancontact';
-import {
 	createStripeMethod,
 	createStripePaymentMethodStore,
 } from './lib/payment-methods/stripe-credit-card-fields';
-import { createApplePayMethod } from './lib/payment-methods/apple-pay';
 import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
 import CheckoutOrderSummaryStep, {
@@ -79,10 +75,15 @@ import {
 	makeManualResponse,
 	makeSuccessResponse,
 	makeRedirectResponse,
+	makeErrorResponse,
 } from './lib/payment-processors';
+import useProcessPayment from './components/use-process-payment';
 import RadioButton from './components/radio-button';
 import checkoutTheme from './lib/theme';
+import InvalidPaymentProcessorResponseError from './lib/invalid-payment-processor-response-error';
 export * from './types';
+
+export type { Theme } from './lib/theme';
 
 // Re-export the public API
 export {
@@ -101,8 +102,10 @@ export {
 	CheckoutStepAreaWrapper,
 	CheckoutStepBody,
 	CheckoutSteps,
+	CheckoutSubmitButton,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
+	InvalidPaymentProcessorResponseError,
 	MainContentWrapper,
 	OrderReviewLineItems,
 	OrderReviewSection,
@@ -113,9 +116,6 @@ export {
 	checkoutTheme,
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
-	createApplePayMethod,
-	createBancontactMethod,
-	createBancontactPaymentMethodStore,
 	createEpsMethod,
 	createEpsPaymentMethodStore,
 	createExistingCardMethod,
@@ -136,6 +136,7 @@ export {
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
+	makeErrorResponse,
 	makeManualResponse,
 	makeRedirectResponse,
 	makeSuccessResponse,
@@ -153,6 +154,7 @@ export {
 	usePaymentMethodId,
 	usePaymentProcessor,
 	usePaymentProcessors,
+	useProcessPayment,
 	useRegisterStore,
 	useRegistry,
 	useSelect,

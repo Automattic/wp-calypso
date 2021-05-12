@@ -12,12 +12,12 @@ jest.mock( '../controller', () => ( {
 	redirectToDefaultSitePage: jest.fn(),
 	redirectToDefaultWordAdsPeriod: jest.fn(),
 } ) );
-jest.mock( 'my-sites/controller', () => ( {
+jest.mock( 'calypso/my-sites/controller', () => ( {
 	navigation: jest.fn(),
 	siteSelection: jest.fn(),
 	sites: jest.fn(),
 } ) );
-jest.mock( 'controller', () => ( {
+jest.mock( 'calypso/controller', () => ( {
 	makeLayout: jest.fn(),
 	render: jest.fn(),
 } ) );

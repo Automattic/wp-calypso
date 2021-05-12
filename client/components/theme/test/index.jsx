@@ -10,7 +10,6 @@ import ReactDom from 'react-dom';
 import sinon from 'sinon';
 import TestUtils from 'react-dom/test-utils';
 import { assert } from 'chai';
-import { identity } from 'lodash';
 import { parse } from 'url';
 import { shallow } from 'enzyme';
 
@@ -19,9 +18,9 @@ import { shallow } from 'enzyme';
  */
 import { Theme } from '../';
 
-jest.mock( 'components/popover/menu', () => 'components--popover--menu' );
-jest.mock( 'components/popover/menu-item', () => 'components--popover--menu-item' );
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/components/popover/menu', () => 'components--popover--menu' );
+jest.mock( 'calypso/components/popover/menu-item', () => 'components--popover--menu-item' );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'Theme', () => {
 	let props;
@@ -36,7 +35,7 @@ describe( 'Theme', () => {
 					'https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?ssl=1',
 			},
 			buttonContents: { dummyAction: { label: 'Dummy action', action: sinon.spy() } }, // TODO: test if called when clicked
-			translate: identity,
+			translate: ( string ) => string,
 			setThemesBookmark: () => {},
 		};
 	} );
@@ -124,7 +123,7 @@ describe( 'Theme', () => {
 				React.createElement( Theme, {
 					theme: { id: 'placeholder-1', name: 'Loading' },
 					isPlaceholder: true,
-					translate: identity,
+					translate: ( string ) => string,
 				} )
 			);
 			themeNode = ReactDom.findDOMNode( themeElement );

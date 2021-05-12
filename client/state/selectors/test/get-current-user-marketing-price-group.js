@@ -15,13 +15,9 @@ describe( 'getCurrentUserMarketingPriceGroup()', () => {
 			getCurrentUserMarketingPriceGroup( {
 				currentUser: {
 					id: 12345,
-				},
-				users: {
-					items: {
-						[ 12345 ]: {
-							meta: {
-								marketing_price_group: marketingPriceGroup,
-							},
+					user: {
+						meta: {
+							marketing_price_group: marketingPriceGroup,
 						},
 					},
 				},

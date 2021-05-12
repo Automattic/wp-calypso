@@ -6,10 +6,10 @@ import { startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import { ROUTE_SET } from 'calypso/state/action-types';
 
-export const currentClientId = withoutPersistence( ( state = null, action ) => {
+export const currentClientId = ( state = null, action ) => {
 	switch ( action.type ) {
 		case ROUTE_SET: {
 			const { path, query } = action;
@@ -26,7 +26,7 @@ export const currentClientId = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	currentClientId,

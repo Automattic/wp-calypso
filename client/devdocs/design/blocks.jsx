@@ -16,13 +16,12 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import ReadmeViewer from 'calypso/components/readme-viewer';
 import SearchCard from 'calypso/components/search-card';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Docs examples
  */
 import AllSites from 'calypso/blocks/all-sites/docs/example';
-import CreditCardForm from 'calypso/blocks/credit-card-form/docs/example';
 import CalendarButton from 'calypso/blocks/calendar-button/docs/example';
 import CalendarPopover from 'calypso/blocks/calendar-popover/docs/example';
 import AuthorSelector from 'calypso/blocks/author-selector/docs/example';
@@ -56,7 +55,6 @@ import DismissibleCard from 'calypso/blocks/dismissible-card/docs/example';
 import PostEditButton from 'calypso/blocks/post-edit-button/docs/example';
 import PostComment from 'calypso/blocks/comments/docs/post-comment-example';
 import ReaderAvatar from 'calypso/blocks/reader-avatar/docs/example';
-import SubscriptionLengthPicker from 'calypso/blocks/subscription-length-picker/docs/example';
 import ImageEditor from 'calypso/blocks/image-editor/docs/example';
 import ImageSelector from 'calypso/blocks/image-selector/docs/example';
 import VideoEditor from 'calypso/blocks/video-editor/docs/example';
@@ -74,7 +72,6 @@ import ReaderImportButton from 'calypso/blocks/reader-import-button/docs/example
 import SharingPreviewPane from 'calypso/blocks/sharing-preview-pane/docs/example';
 import ReaderShare from 'calypso/blocks/reader-share/docs/example';
 import Login from 'calypso/blocks/login/docs/example';
-import LocationSearch from 'calypso/blocks/location-search/docs/example';
 import ConversationCommentList from 'calypso/blocks/conversations/docs/example';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar/docs/example';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button/docs/example';
@@ -83,6 +80,7 @@ import UserMentions from 'calypso/blocks/user-mentions/docs/example';
 import SupportArticleDialog from 'calypso/blocks/support-article-dialog/docs/example';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning/docs/example';
 import UpsellNudge from 'calypso/blocks/upsell-nudge/docs/example';
+import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt/docs/example';
 
 export default class AppComponents extends React.Component {
 	static displayName = 'AppComponents';
@@ -139,14 +137,12 @@ export default class AppComponents extends React.Component {
 					<CalendarButton readmeFilePath="calendar-button" />
 					<CalendarPopover readmeFilePath="calendar-popover" />
 					<CommentButtons readmeFilePath="comment-button" />
-					<CreditCardForm readmeFilePath="credit-card-form" />
 					<FollowButton readmeFilePath="follow-button" />
 					<HappinessSupport />
 					<ImageEditor readmeFilePath="image-editor" />
 					<VideoEditor readmeFilePath="video-editor" />
 					<LikeButtons readmeFilePath="like-button" />
 					<Login />
-					<LocationSearch readmeFilePath="location-search" />
 					<PostEditButton />
 					<PlanStorage readmeFilePath="plan-storage" />
 					<PostSchedule />
@@ -184,19 +180,17 @@ export default class AppComponents extends React.Component {
 					<ReaderExportButton readmeFilePath="reader-export-button" />
 					<ReaderImportButton readmeFilePath="reader-import-button" />
 					<SharingPreviewPane />
-					<SubscriptionLengthPicker />
 					<ReaderShare readmeFilePath="reader-share" />
 					<ConversationCommentList />
 					<PostComment />
 					<ConversationCaterpillar readmeFilePath="conversation-caterpillar" />
 					<ConversationFollowButton />
-					{ isEnabled( 'reader/user-mention-suggestions' ) && (
-						<UserMentions readmeFilePath="user-mentions" />
-					) }
+					<UserMentions readmeFilePath="user-mentions" />
 					<SupportArticleDialog />
 					<ImageSelector readmeFilePath="image-selector" />
 					<TimeMismatchWarning readmeFilePath="time-mismatch-warning" />
 					<UpsellNudge />
+					<JetpackReviewPrompt readmeFilePath="jetpack-review-prompt" />
 				</Collection>
 			</Main>
 		);

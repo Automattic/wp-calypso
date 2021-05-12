@@ -2,11 +2,10 @@
  * External dependencies
  */
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classnames from 'classnames';
 import { Button } from '@automattic/components';
-import { noop } from 'lodash';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 
 /**
@@ -14,18 +13,17 @@ import ExternalLinkWithTracking from 'calypso/components/external-link/with-trac
  */
 import LogItem from '../log-item';
 import ThreatDescription from '../threat-description';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
 import ThreatItemSubheader from 'calypso/components/jetpack/threat-item-subheader';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import { getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
 interface Props {
 	threat: Threat;
 	isPlaceholder: boolean;
@@ -51,6 +49,8 @@ const ThreatItem: React.FC< Props > = ( {
 	isFixing,
 	contactSupportUrl,
 } ) => {
+	const dispatch = useDispatch();
+
 	/**
 	 * Render a CTA button. Currently, this button is rendered three
 	 * times: in the details section, and in the `summary` and `extendSummary`
@@ -88,24 +88,38 @@ const ThreatItem: React.FC< Props > = ( {
 		if ( ! threat.fixable ) {
 			return (
 				<>
-					<p className="threat-description__section-text">
-						{ translate(
-							'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
-								'ensure that WordPress, your theme, and all of your plugins are up to date, and remove ' +
-								'the offending code, theme, or plugin from your site.'
-						) }
-					</p>
-					<p className="threat-description__section-text">
-						{ translate(
-							'If you need more help on resolving this threat, we recommend {{strong}}Codeable{{/strong}}, a WordPress freelancer marketplace of 530+ highly vetted security experts. ' +
-								'Pricing ranges from $70-120/hour, and you can get a free estimate with no obligation to hire.',
-							{
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</p>
+					{ ! threat.rows && (
+						<p className="threat-description__section-text">
+							{ translate(
+								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
+									'ensure that WordPress, your theme, and all of your plugins are up to date, and remove ' +
+									'the offending code, theme, or plugin from your site.'
+							) }
+						</p>
+					) }
+					{ threat.rows && (
+						<p className="threat-description__section-text">
+							{ translate(
+								'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
+									'ensure that WordPress, your theme, and all of your plugins are up to date, and remove or edit ' +
+									'the offending post from your site.'
+							) }
+						</p>
+					) }
+					{ 'current' === threat.status && (
+						<p className="threat-description__section-text">
+							{ translate(
+								'If you need more help to resolve this threat, we recommend {{strong}}Codeable{{/strong}}, a trusted freelancer marketplace of highly vetted WordPress experts. ' +
+									'They have identified a select group of security experts to help with these projects. ' +
+									'Pricing ranges from $70-120/hour, and you can get a free estimate with no obligation to hire.',
+								{
+									components: {
+										strong: <strong />,
+									},
+								}
+							) }
+						</p>
+					) }
 				</>
 			);
 		}
@@ -125,10 +139,16 @@ const ThreatItem: React.FC< Props > = ( {
 			? { section: currentRoute.includes( '/scan/history' ) ? 'History' : 'Scanner' }
 			: {};
 	}, [ currentRoute ] );
-	const onOpenTrackEvent = useTrackCallback( noop, 'calypso_jetpack_scan_threat_itemtoggle', {
-		threat_signature: threat.signature,
-		...currentRouteProp,
-	} );
+	const onOpenTrackEvent = React.useCallback(
+		() =>
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_scan_threat_itemtoggle', {
+					threat_signature: threat.signature,
+					...currentRouteProp,
+				} )
+			),
+		[ dispatch, threat, currentRouteProp ]
+	);
 
 	if ( isPlaceholder ) {
 		return <ThreatItemPlaceholder />;
@@ -154,6 +174,8 @@ const ThreatItem: React.FC< Props > = ( {
 				problem={ threat.description }
 				context={ threat.context }
 				diff={ threat.diff }
+				rows={ threat.rows }
+				table={ threat.table }
 				filename={ threat.filename }
 				isFixable={ isFixable }
 			/>
@@ -169,14 +191,13 @@ const ThreatItem: React.FC< Props > = ( {
 						{ translate( 'Ignore threat' ) }
 					</Button>
 				) }
-				{ ! isFixable && (
+				{ ! threat.fixable && 'current' === threat.status && (
 					<ExternalLinkWithTracking
 						className="button is-primary threat-item__codeable-button"
 						href="https://codeable.io/partners/jetpack-scan/"
 						target="_blank"
 						rel="noopener noreferrer"
 						tracksEventName="calypso_jetpack_scan_threat_codeable_estimate"
-						onClick={ () => {} }
 					>
 						{ translate( 'Get a free estimate' ) }
 					</ExternalLinkWithTracking>

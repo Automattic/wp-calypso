@@ -7,7 +7,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import NetworkConnectionApp from 'calypso/lib/network-connection';
 
 describe( 'index', () => {

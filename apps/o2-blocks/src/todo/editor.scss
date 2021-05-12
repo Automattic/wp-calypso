@@ -1,6 +1,10 @@
 @import '~@wordpress/base-styles/colors';
 
 $color-accent-green: #31843f;
+$color-move-button-icon: #555d66; // dark-gray-500
+$color-add-button-text: #555d66; // dark-gray-500
+$color-add-button-border: #ccd0d4; // light-gray-700
+$color-add-button-icon: #7e8993; // dark-gray-200
 
 .wp-block-a8c-todo {
 	margin-bottom: 20px;
@@ -75,7 +79,7 @@ $color-accent-green: #31843f;
 			border-color: $gray-100;
 
 			.dashicon {
-				fill: $dark-gray-500;
+				fill: $color-move-button-icon;
 			}
 		}
 	}
@@ -86,10 +90,10 @@ $color-accent-green: #31843f;
 
 		.components-button {
 			font-size: 13px !important; // yep, I'm a monster.
-			color: $dark-gray-500;
-			border: 1px solid $light-gray-700;
+			color: $color-add-button-text;
+			border: 1px solid $color-add-button-border;
 			background: $gray-100;
-			box-shadow: 0 1px 0 $light-gray-700;
+			box-shadow: 0 1px 0 $color-add-button-border;
 			margin: 0;
 			height: 33px;
 			line-height: 32px;
@@ -98,7 +102,7 @@ $color-accent-green: #31843f;
 			white-space: nowrap;
 
 			.dashicon {
-				fill: $dark-gray-200;
+				fill: $gray-600;
 				vertical-align: middle;
 				display: inline;
 			}

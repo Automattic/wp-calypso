@@ -1,18 +1,13 @@
 /**
- * External dependencies
- */
-
-import debugFactory from 'debug';
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import {
 	USER_SETTINGS_REQUEST,
+	USER_SETTINGS_REQUEST_FAILURE,
+	USER_SETTINGS_REQUEST_SUCCESS,
 	USER_SETTINGS_SAVE,
-	USER_SETTINGS_UPDATE,
+	USER_SETTINGS_SAVE_SUCCESS,
+	USER_SETTINGS_SAVE_FAILURE,
 	USER_SETTINGS_UNSAVED_CLEAR,
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,
@@ -20,7 +15,7 @@ import {
 
 import 'calypso/state/data-layer/wpcom/me/settings';
 
-const debug = debugFactory( 'calypso:user:settings' );
+export { default as setUserSetting } from './thunks/set-user-setting';
 
 /**
  * Fetch user settings from WordPress.com API and store them in UserSettings instance
@@ -29,6 +24,28 @@ const debug = debugFactory( 'calypso:user:settings' );
  */
 export const fetchUserSettings = () => ( {
 	type: USER_SETTINGS_REQUEST,
+} );
+
+/**
+ * Used in signalling that requesting user settings was not successful
+ *
+ * @param {object} error Error object received from the API
+ * @returns {object} Action object
+ */
+export const fetchUserSettingsFailure = ( error ) => ( {
+	type: USER_SETTINGS_REQUEST_FAILURE,
+	error,
+} );
+
+/**
+ * Used in signalling that requesting user settings was successful.
+ *
+ * @param {object} settingValues Object containing fetched user settings
+ * @returns {object} Action object
+ */
+export const fetchUserSettingsSuccess = ( settingValues ) => ( {
+	type: USER_SETTINGS_REQUEST_SUCCESS,
+	settingValues,
 } );
 
 /**
@@ -48,9 +65,15 @@ export const saveUserSettings = ( settingsOverride ) => ( {
  * @param  {object} settingValues Setting values (the subset of keys to be updated)
  * @returns {object}               Action object
  */
-export const updateUserSettings = ( settingValues ) => ( {
-	type: USER_SETTINGS_UPDATE,
+export const saveUserSettingsSuccess = ( settingValues ) => ( {
+	type: USER_SETTINGS_SAVE_SUCCESS,
 	settingValues,
+} );
+
+export const saveUserSettingsFailure = ( settingsOverride, error ) => ( {
+	type: USER_SETTINGS_SAVE_FAILURE,
+	settingsOverride,
+	error,
 } );
 
 export const cancelPendingEmailChange = () => ( {
@@ -73,36 +96,3 @@ export const removeUnsavedUserSetting = ( settingName ) => ( {
 	type: USER_SETTINGS_UNSAVED_REMOVE,
 	settingName,
 } );
-
-/**
- * Handles the storage and removal of changed setting that are pending
- * being saved to the WPCOM API.
- *
- * @param  {string} settingName - setting name
- * @param  {*} value - setting value
- * @returns {Function} Action thunk that returns updating successful response
- */
-export function setUserSetting( settingName, value ) {
-	return ( dispatch, getState ) => {
-		const settings = getUserSettings( getState() );
-
-		if ( get( settings, settingName ) === undefined ) {
-			debug( settingName + ' does not exist in user-settings data module.' );
-			return false;
-		}
-
-		/*
-		 * If the two match, we don't consider the setting "changed".
-		 * user_login is a special case since the logic for validating and saving a username
-		 * is more complicated.
-		 */
-		if ( settings[ settingName ] === value && 'user_login' !== settingName ) {
-			debug( 'Removing ' + settingName + ' from changed settings.' );
-			dispatch( removeUnsavedUserSetting( settingName ) );
-		} else {
-			dispatch( setUnsavedUserSetting( settingName, value ) );
-		}
-
-		return true;
-	};
-}

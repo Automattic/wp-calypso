@@ -10,11 +10,14 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isFreePlan } from 'calypso/lib/plans';
+import { isFreePlan } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getHttpData } from 'calypso/state/data-layer/http-data';
 import { requestActivityLogs, getRequestActivityLogsId } from 'calypso/state/data-getters';
-import { siteHasBackupProductPurchase } from 'calypso/state/purchases/selectors';
+import {
+	siteHasBackupProductPurchase,
+	siteHasScanProductPurchase,
+} from 'calypso/state/purchases/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ActivityCardList from 'calypso/components/activity-card-list';
@@ -54,22 +57,26 @@ const ActivityLogV2: FunctionComponent = () => {
 	const siteHasBackupPurchase = useSelector(
 		( state ) => siteId && siteHasBackupProductPurchase( state, siteId )
 	);
+	const siteHasScanPurchase = useSelector(
+		( state ) => siteId && siteHasScanProductPurchase( state, siteId )
+	);
 	const settingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
 
-	const showUpgrade = siteIsOnFreePlan && ! siteHasBackupPurchase;
+	const showUpgrade = siteIsOnFreePlan && ! siteHasBackupPurchase && ! siteHasScanPurchase;
 	const showFilter = ! showUpgrade;
 
 	const jetpackCloudHeader = showUpgrade ? (
 		<Upsell
-			headerText={ translate( 'Welcome to your site’s activity' ) }
+			headerText={ translate( 'Activity Log' ) }
 			bodyText={ translate(
 				'With your free plan, you can monitor the 20 most recent events. A paid plan unlocks more powerful features. You can access all site activity for the last 30 days and filter events by type and date range to quickly find the information you need. '
 			) }
-			buttonLink={ `https://wordpress.com/plans/${ selectedSiteSlug }?feature=offsite-backup-vaultpress-daily&plan=jetpack_personal_monthly` }
+			buttonLink={ `https://cloud.jetpack.com/pricing/${ selectedSiteSlug }` }
 			buttonText={ translate( 'Upgrade Now' ) }
 			onClick={ () =>
 				dispatch( recordTracksEvent( 'calypso_jetpack_activity_log_upgrade_click' ) )
 			}
+			openButtonLinkOnNewTab={ false }
 		/>
 	) : (
 		<div className="activity-log-v2__header">

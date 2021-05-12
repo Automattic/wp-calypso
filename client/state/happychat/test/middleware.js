@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { socketMiddleware as middleware } from '../middleware';
+import { HAPPYCHAT_IO_SET_CUSTOM_FIELDS } from 'calypso/state/action-types';
 import {
 	initConnection,
 	requestTranscript,
@@ -12,6 +13,7 @@ import {
 	sendPreferences,
 	sendTyping,
 	sendNotTyping,
+	setChatCustomFields,
 } from 'calypso/state/happychat/connection/actions';
 import { blur, focus } from 'calypso/state/happychat/ui/actions';
 import {
@@ -82,6 +84,11 @@ describe( 'middleware', () => {
 			const action = sendUserInfo( { user: 'user' } );
 			actionMiddleware( action );
 			expect( connection.send ).toHaveBeenCalledWith( action );
+
+			// This should also set custom fields based on the user info
+			expect( store.dispatch ).toHaveBeenCalledWith(
+				expect.objectContaining( { type: HAPPYCHAT_IO_SET_CUSTOM_FIELDS } )
+			);
 		} );
 
 		test( 'HAPPYCHAT_IO_SEND_MESSAGE_PREFERENCES', () => {
@@ -98,6 +105,12 @@ describe( 'middleware', () => {
 
 		test( 'HAPPYCHAT_IO_SEND_MESSAGE_TYPING (sendNotTyping)', () => {
 			const action = sendNotTyping( 'msg' );
+			actionMiddleware( action );
+			expect( connection.send ).toHaveBeenCalledWith( action );
+		} );
+
+		test( 'HAPPYCHAT_IO_SET_CUSTOM_FIELDS (setChatCustomFields)', () => {
+			const action = setChatCustomFields( { channel: 'WP.com', presales: '1' } );
 			actionMiddleware( action );
 			expect( connection.send ).toHaveBeenCalledWith( action );
 		} );

@@ -1,5 +1,4 @@
-Routing
-=======
+# Routing
 
 Let’s start with an informal definition of a section: A _section_ is usually a subdirectory of `client/my-sites`, `client/me`, or `client/reader` (which in contrast we call _(section) groups_). Most of the sidebar’s menu items link to individual sections; and there's usually a different sidebar for each group.
 
@@ -8,11 +7,11 @@ Now if you’ve worked in a given Calypso section before, you’ve probably enco
 ```js
 import page from 'page';
 
-import { makeLayout, render as clientRender } from 'controller';
-import { siteSelection, navigation, sites } from 'my-sites/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
 import menus from './controller';
 
-export default function() {
+export default function () {
 	page(
 		'/menus/:site_id',
 		siteSelection,
@@ -21,12 +20,7 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
-	page(
-		'/menus',
-		sites,
-		makeLayout,
-		clientRender
-	);
+	page( '/menus', sites, makeLayout, clientRender );
 }
 ```
 
@@ -48,14 +42,14 @@ The last middleware before `makeLayout` is usually section-specific; and most of
 
 Middleware specific to the my-sites group:
 
-* `navigation` generates the section group's sidebar in `context.secondary`
-* `siteSelection` parses the current route, looking out for something that looks like a URL or numeric site ID, and sets the currently selected site based on this information. You can then find it by using the `getSelectedSiteId` selector found in `state/sites/selectors`.
-* `sites` renders a site selector menu for the user to select a site, and will then append that site's slug to current route.
+- `navigation` generates the section group's sidebar in `context.secondary`
+- `siteSelection` parses the current route, looking out for something that looks like a URL or numeric site ID, and sets the currently selected site based on this information. You can then find it by using the `getSelectedSiteId` selector found in `state/sites/selectors`.
+- `sites` renders a site selector menu for the user to select a site, and will then append that site's slug to current route.
 
 Content-rendering middleware:
 
-* `makeLayout` takes `context.primary` (view's primary content area) and `context.secondary` (a sidebar) and generates a single [`Layout`](../client/layout/README.md) component containing those two.
-* `clientRender` takes the `Layout` component and renders it to a server-generated `<div />` called `#wpcom`.
+- `makeLayout` takes `context.primary` (view's primary content area) and `context.secondary` (a sidebar) and generates a single [`Layout`](../client/layout/README.md) component containing those two.
+- `clientRender` takes the `Layout` component and renders it to a server-generated `<div />` called `#wpcom`.
 
 This all happens in the client but `Layout` can be also server-side rendered (SSR). You can read more about this in [server-side rendering](server-side-rendering.md) and [Isomorphic Routing](isomorphic-routing.md) documentation.
 
@@ -76,6 +70,5 @@ There are some exceptions to this; if the filter is an id, which is specific to 
 `/comment/{ siteFragment }/{ commentId }`
 
 `/post/{ siteFragment }/{ postId }`
-
 
 Our code supports last, second to last, and for some exceptions, using a :site parameter.

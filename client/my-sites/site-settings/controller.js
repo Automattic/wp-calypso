@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import DeleteSite from './delete-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
 import DisconnectSite from './disconnect-site';

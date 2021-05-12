@@ -31,10 +31,11 @@
 		"composite": true
 	},
 	"include": [ "src" ],
-	"exclude": [ "**/test/*" ],
+	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
 	"references": [
 		{ "path": "../data-stores" },
 		{ "path": "../calypso-analytics" },
-		{ "path": "../react-i18n" }
+		{ "path": "../i18n-utils" },
+		{ "path": "../onboarding" }
 	]
 }

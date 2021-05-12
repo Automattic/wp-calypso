@@ -30,9 +30,6 @@ export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 
 	return (
 		<div className="quick-start-video">
-			<h2 className="quick-start-video__heading customer-home__section-heading">
-				{ translate( 'Watch this video to get started' ) }
-			</h2>
 			<Card>
 				<div className="quick-start-video__content educational-content">
 					<div className="quick-start-video__content-wrapper educational-content__wrapper">

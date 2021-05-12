@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { noop, get } from 'lodash';
+import { get } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -22,6 +22,8 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class SitesDropdown extends PureComponent {
 	static propTypes = {

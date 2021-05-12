@@ -1,29 +1,7 @@
-.purchases-site {
-	margin-bottom: 24px;
-
-	.site-icon {
-		display: inline-block;
-		margin-right: 12px;
-		vertical-align: middle;
-	}
-}
-
-.purchases-site__slug {
-	color: var( --color-neutral );
-	font-size: $font-body-extra-small;
-}
-
-.purchases-site__slug {
-	white-space: nowrap;
-
-	@include breakpoint-deprecated( '<660px' ) {
-		line-height: 15px;
-	}
-}
-
 .concierge-banner {
 	& .action-card__button-container {
 		text-align: left;
+		margin-bottom: 0;
 
 		@include breakpoint-deprecated( '>960px' ) {
 			text-align: center;
@@ -32,7 +10,7 @@
 
 	& .action-card__illustration {
 		@include breakpoint-deprecated( '>960px' ) {
-			margin: -10px -20px 0;
+			margin: 5px -20px 0;
 		}
 	}
 
@@ -44,7 +22,6 @@
 
 	&.card {
 		@include breakpoint-deprecated( '>480px' ) {
-			padding: 10px;
 			align-items: flex-start;
 		}
 	}

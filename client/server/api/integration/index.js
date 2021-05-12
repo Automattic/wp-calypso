@@ -5,7 +5,7 @@
  */
 import request from 'superagent';
 import supertest from 'supertest';
-import unmodifiedConfig from 'calypso/config';
+import unmodifiedConfig from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -21,7 +21,7 @@ describe( 'api', () => {
 	useSandbox( ( newSandbox ) => ( sandbox = newSandbox ) );
 
 	beforeAll( () => {
-		config = require( 'calypso/config' );
+		config = require( '@automattic/calypso-config' );
 		sandbox.stub( config, 'isEnabled' ).withArgs( 'oauth' ).returns( true );
 		app = require( '../' ).default();
 		localRequest = supertest( app );

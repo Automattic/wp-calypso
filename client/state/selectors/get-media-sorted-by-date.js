@@ -1,13 +1,10 @@
 /**
- * External dependencies
- */
-import { values } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getMediaQueryManager from './get-media-query-manager';
 import { sortItemsByDate } from 'calypso/lib/media/utils/sort-items-by-date';
+
+import 'calypso/state/media/init';
 
 /**
  * Returns media for a specified site ID and query.
@@ -26,7 +23,9 @@ export default function getMediaSortedByDate( state, siteId ) {
 	}
 
 	const mediaItems = queryManager.getItemsIgnoringPage( query );
-	const transientItems = values( state.media.transientItems[ siteId ]?.transientItems );
+	const transientItems = Object.values(
+		state.media.transientItems[ siteId ]?.transientItems ?? {}
+	);
 
 	return sortItemsByDate( transientItems.concat( mediaItems ).filter( ( i ) => i ) );
 }

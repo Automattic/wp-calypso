@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/media/init';
+
+/**
  * Gets the MediaQueryManager for the site
  *
  * @param {object} state The state object

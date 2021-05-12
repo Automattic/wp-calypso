@@ -1,17 +1,16 @@
 /**
- */
-
-/**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { noop, some } from 'lodash';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import PostCommentForm from './form';
+
+const noop = () => {};
 
 /*
  * A component for displaying a comment form at the root of a conversation.

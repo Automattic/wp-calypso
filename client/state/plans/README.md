@@ -59,7 +59,6 @@ state.plans = {
 			product_id: 1,
 			product_name: 'WordPress.com Free',
 			product_name_en: 'Free',
-			prices: { USD: 0, AUD: 0, CAD: 0, EUR: 0, GBP: 0, JPY: 0 },
 			product_name_short: 'Free',
 			product_slug: 'free_plan',
 			tagline: 'Just get started',

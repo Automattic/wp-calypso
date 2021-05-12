@@ -2,15 +2,14 @@
  * External dependencies
  */
 import creditcards from 'creditcards';
-import { capitalize, compact, isArray, isEmpty, mergeWith, union, isString } from 'lodash';
+import { capitalize, compact, isEmpty, mergeWith } from 'lodash';
 import i18n from 'i18n-calypso';
-import { isValidPostalCode } from 'calypso/lib/postal-code';
+import { isValidPostalCode } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
 import {
-	isEbanxCreditCardProcessingEnabledForCountry,
 	isValidCPF,
 	isValidCNPJ,
 	countrySpecificFieldRules,
@@ -91,7 +90,6 @@ export function getStripeElementsRules() {
 
 /**
  * Returns the tef payment validation rule set
- * See: client/my-sites/checkout/checkout/redirect-payment-box.jsx
  *
  * @returns {object} the ruleset
  */
@@ -143,16 +141,21 @@ export function tokenFieldRules() {
  * Returns a validation ruleset to use for the given payment type
  *
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card(default)|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe
+ * @param {string} paymentType credit-card|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe|ebanx
  * @returns {object|null} the ruleset
  */
 export function paymentFieldRules( paymentDetails, paymentType ) {
 	switch ( paymentType ) {
-		case 'credit-card':
+		case 'ebanx':
 			return mergeValidationRules(
 				getCreditCardFieldRules(),
 				getConditionalCreditCardRules( paymentDetails ),
 				getEbanxCreditCardRules( paymentDetails )
+			);
+		case 'credit-card':
+			return mergeValidationRules(
+				getCreditCardFieldRules(),
+				getConditionalCreditCardRules( paymentDetails )
 			);
 		case 'brazil-tef':
 			return tefPaymentFieldRules();
@@ -178,7 +181,9 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
  */
 export function mergeValidationRules( ...rulesets ) {
 	return mergeWith( {}, ...rulesets, ( objValue, srcValue ) =>
-		isArray( objValue ) && isArray( srcValue ) ? union( objValue, srcValue ) : undefined
+		Array.isArray( objValue ) && Array.isArray( srcValue )
+			? [ ...new Set( [].concat( objValue, srcValue ) ) ]
+			: undefined
 	);
 }
 
@@ -292,7 +297,7 @@ validators.validIndiaPan = {
 
 validators.validIndonesiaNik = {
 	isValid( value ) {
-		const digitsOnly = isString( value ) ? value.replace( /[^0-9]/g, '' ) : '';
+		const digitsOnly = typeof value === 'string' ? value.replace( /[^0-9]/g, '' ) : '';
 		return digitsOnly.length === 16;
 	},
 	error: function ( description ) {
@@ -345,10 +350,10 @@ validators.validStreetNumber = {
  * property of that object is an array of error strings.
  *
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card(default)|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe
+ * @param {string} paymentType credit-card|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe|ebanx
  * @returns {object} validation errors, if any
  */
-export function validatePaymentDetails( paymentDetails, paymentType = 'credit-card' ) {
+export function validatePaymentDetails( paymentDetails, paymentType ) {
 	const rules = paymentFieldRules( paymentDetails, paymentType ) || {};
 	const errors = Object.keys( rules ).reduce( function ( allErrors, fieldName ) {
 		const field = rules[ fieldName ];
@@ -416,16 +421,12 @@ function getErrors( field, value, paymentDetails ) {
 }
 
 function getEbanxCreditCardRules( { country } ) {
-	return (
-		country &&
-		isEbanxCreditCardProcessingEnabledForCountry( country ) &&
-		countrySpecificFieldRules( country )
-	);
+	return country && countrySpecificFieldRules( country );
 }
 
 /**
  *
- * @param {object} cardDetails - a map of credit card field key value pairs
+ * @param {{country: string}} cardDetails - a map of credit card field key value pairs
  * @returns {object|null} If match is found,
  * an object containing rule sets for specific credit card processing providers,
  * otherwise `null`
@@ -447,7 +448,7 @@ function getConditionalCreditCardRules( { country } ) {
 }
 
 function getValidator( rule ) {
-	if ( isArray( rule ) ) {
+	if ( Array.isArray( rule ) ) {
 		return validators[ rule[ 0 ] ].apply( null, rule.slice( 1 ) );
 	}
 

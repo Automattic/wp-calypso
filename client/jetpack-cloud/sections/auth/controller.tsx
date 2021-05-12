@@ -10,7 +10,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Connect from './connect';
 import GetToken from './get-token';
 import userModule from 'calypso/lib/user';
@@ -24,12 +24,7 @@ const debug = debugFactory( 'calypso:jetpack-cloud-connect' );
 
 export const connect: PageJS.Callback = ( context, next ) => {
 	if ( config.isEnabled( 'oauth' ) && config( 'oauth_client_id' ) ) {
-		const protocol = window.location.protocol;
-		const host = window.location.hostname;
-		const port = window.location.port;
-		const redirectUri = port
-			? `${ protocol }//${ host }:${ port }${ authTokenRedirectPath() }`
-			: `${ protocol }//${ host }${ authTokenRedirectPath() }`;
+		const redirectUri = window.location.origin + authTokenRedirectPath();
 
 		const params = {
 			response_type: 'token',

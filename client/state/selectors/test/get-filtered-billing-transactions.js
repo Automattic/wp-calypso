@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { cloneDeep, slice } from 'lodash';
+import { cloneDeep } from 'lodash';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -177,7 +177,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			expect( result ).toEqual( {
 				pageSize: PAGE_SIZE,
 				total: 10,
-				transactions: slice( state.billingTransactions.items.past, 0, PAGE_SIZE ),
+				transactions: state.billingTransactions.items.past.slice( 0, PAGE_SIZE ),
 			} );
 		} );
 
@@ -213,7 +213,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			expect( result ).toEqual( {
 				pageSize: PAGE_SIZE,
 				total: 10,
-				transactions: slice( state.billingTransactions.items.past, 0, PAGE_SIZE ),
+				transactions: state.billingTransactions.items.past.slice( 0, PAGE_SIZE ),
 			} );
 		} );
 
@@ -237,7 +237,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			expect( result ).toEqual( {
 				pageSize: PAGE_SIZE,
 				total: 10,
-				transactions: slice( state.billingTransactions.items.past, 0, PAGE_SIZE ),
+				transactions: state.billingTransactions.items.past.slice( 0, PAGE_SIZE ),
 			} );
 		} );
 

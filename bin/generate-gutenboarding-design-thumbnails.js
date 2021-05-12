@@ -14,7 +14,8 @@
  *
  * `node ./bin/generate-gutenboarding-design-thumbnails.js`
  *
- * We should bump the version query param on the image src to cache bust the images too in client/landing/gutenboarding/available-designs.ts
+ * We should bump the version query param on the image src to cache bust the images too
+ * in `getDesignImageUrl()` in packages/design-picker/src/utils/available-designs.ts
  *
  * To check the results, take a look at http://calypso.localhost:3000/new/design and the output folder static/images
  *
@@ -23,7 +24,9 @@
 const captureWebsite = require( 'capture-website' );
 const sharp = require( 'sharp' );
 const wpUrl = require( '@wordpress/url' );
-const designs = require( '../client/landing/gutenboarding/available-designs-config.json' );
+const designs = require( '../packages/design-picker/src/available-designs-config.json' );
+
+// @TODO: should be using `DESIGN_IMAGE_FOLDER` from '@automattic/design-picker' package
 const screenshotsPath = './static/images/design-screenshots'; // Folder to store output images
 
 // image output variables
@@ -73,14 +76,28 @@ async function run() {
 					: [];
 
 			console.log( `Taking screenshot of ${ url }` );
-			const screenshot = await captureWebsite.buffer( url, {
-				fullPage: true,
-				height: viewportHeight,
-				scaleFactor: viewportScaleFactor,
-				styles,
-				type: 'png',
-				width: viewportWidth,
-			} );
+
+			let screenshot;
+			try {
+				screenshot = await captureWebsite.buffer( url, {
+					fullPage: true,
+					height: viewportHeight,
+					scaleFactor: viewportScaleFactor,
+					styles,
+					type: 'png',
+					width: viewportWidth,
+				} );
+			} catch ( e ) {
+				if (
+					typeof e.message === 'string' &&
+					e.message.includes( 'Run "npm install" or "yarn install" to download a browser binary.' )
+				) {
+					console.error(
+						'\n\nPlease run `node ./bin/install-gutenboarding-design-thumbnails-dependencies.js` to install the dependencies for this script and then try again.'
+					);
+					process.exit( 1 );
+				}
+			}
 
 			[ 'webp', 'jpg' ].forEach( async ( extension ) => {
 				let image = await sharp( screenshot );
@@ -90,7 +107,7 @@ async function run() {
 					.then( ( metadata ) => {
 						image = image
 							.extract( {
-								// Ensure we're not extracting taller area than screenshot actaully is
+								// Ensure we're not extracting taller area than screenshot actually is
 								height: Math.min( metadata.height, captureMaxHeight * viewportScaleFactor ),
 								left: 0,
 								top: 0,

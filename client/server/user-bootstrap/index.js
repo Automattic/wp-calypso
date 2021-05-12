@@ -11,7 +11,7 @@ import crypto from 'crypto';
  */
 import { filterUserObject } from 'calypso/lib/user/shared-utils';
 import { getActiveTestNames } from 'calypso/lib/abtest/utility';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 const debug = debugFactory( 'calypso:bootstrap' );
 const AUTH_COOKIE_NAME = 'wordpress_logged_in';

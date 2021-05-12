@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import { throttle, map, uniq } from 'lodash';
+import { throttle, map } from 'lodash';
 import { connect } from 'react-redux';
 import { loadScript } from '@automattic/load-script';
 import { localize } from 'i18n-calypso';
@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -139,7 +139,7 @@ class StatsGeochart extends Component {
 			domain: currentUserCountryCode,
 		};
 
-		const regions = uniq( map( data, 'region' ) );
+		const regions = [ ...new Set( map( data, 'region' ) ) ];
 
 		if ( 1 === regions.length ) {
 			options.region = regions[ 0 ];

@@ -6,7 +6,6 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +14,7 @@ import { identity } from 'lodash';
 import { CountrySpecificPaymentFields } from '../country-specific-payment-fields';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 const defaultProps = {
 	countryCode: 'BR',
@@ -29,7 +28,7 @@ const defaultProps = {
 	getFieldValue: jest.fn(),
 	handleFieldChange: jest.fn(),
 	fieldClassName: 'country-brazil',
-	translate: identity,
+	translate: ( string ) => string,
 };
 
 describe( '<CountrySpecificPaymentFields />', () => {

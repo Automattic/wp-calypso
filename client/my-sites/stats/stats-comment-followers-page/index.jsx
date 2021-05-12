@@ -30,7 +30,6 @@ class StatModuleFollowersPage extends Component {
 	render() {
 		const {
 			data,
-			followList,
 			hasError,
 			numberFormat,
 			page,
@@ -100,9 +99,7 @@ class StatModuleFollowersPage extends Component {
 			} );
 			valueLegend = translate( 'Followers' );
 		} else if ( data && data.subscribers ) {
-			followers = (
-				<StatsList data={ data.subscribers } followList={ followList } moduleName="Followers" />
-			);
+			followers = <StatsList data={ data.subscribers } moduleName="Followers" />;
 			labelLegend = translate( 'Follower' );
 			valueLegend = translate( 'Since' );
 		}

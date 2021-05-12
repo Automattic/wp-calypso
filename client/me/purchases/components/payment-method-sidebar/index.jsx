@@ -19,11 +19,10 @@ import './style.scss';
 
 export default function PaymentMethodSidebar( { purchase } ) {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 
 	return (
 		<React.Fragment>
-			{ renderMainCard( purchase, translate, moment ) }
+			<MainCard purchase={ purchase } />
 
 			<Card className="payment-method-sidebar__security-card">
 				<CardHeading
@@ -44,7 +43,10 @@ export default function PaymentMethodSidebar( { purchase } ) {
 	);
 }
 
-function renderMainCard( purchase, translate, moment ) {
+function MainCard( { purchase } ) {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+
 	if ( purchase ) {
 		const purchaseMessaging = purchase.renewDate
 			? translate( 'Next payment on %s', { args: moment( purchase.renewDate ).format( 'LL' ) } )
@@ -69,22 +71,7 @@ function renderMainCard( purchase, translate, moment ) {
 		);
 	}
 
-	return (
-		<Card className="payment-method-sidebar__details-card">
-			<CardHeading
-				tagName="h1"
-				size={ 16 }
-				isBold={ true }
-				className="payment-method-sidebar__title"
-			>
-				{ translate( 'Usage' ) }
-			</CardHeading>
-
-			<p className="payment-method-sidebar__paragraph">
-				{ translate( 'This card will be used for future renewals of existing purchases.' ) }
-			</p>
-		</Card>
-	);
+	return null;
 }
 
 PaymentMethodSidebar.propTypes = {

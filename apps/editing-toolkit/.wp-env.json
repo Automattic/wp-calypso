@@ -1,5 +1,5 @@
 {
-	"plugins": [ "./dev-plugin", "./editing-toolkit-plugin", "../../../gutenberg" ],
+	"plugins": [ "./editing-toolkit-plugin", "../../../gutenberg" ],
 	"themes": [ "../../../themes/varia", "../../../themes/maywood" ],
 	"port": 4013,
 	"testsPort": 4005,

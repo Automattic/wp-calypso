@@ -1,13 +1,14 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	SECURE_YOUR_BRAND_REQUEST,
 	SECURE_YOUR_BRAND_FAILURE,
 	SECURE_YOUR_BRAND_SUCCESS,
 } from 'calypso/state/action-types';
 import { secureYourBrandSchema } from './schema';
-import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 
 export const items = withSchemaValidation( secureYourBrandSchema, ( state = [], action ) => {
 	switch ( action.type ) {

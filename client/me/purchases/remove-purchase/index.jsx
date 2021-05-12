@@ -13,7 +13,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Dialog, Button, CompactCard } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
@@ -24,14 +24,15 @@ import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
-	isGoogleApps,
+	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isJetpackProduct,
 	isPlan,
 	isJetpackSearch,
-} from 'calypso/lib/products-values';
-import notices from 'calypso/notices';
+	isTitanMail,
+} from '@automattic/calypso-products';
 import { purchasesRoot } from '../paths';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import { removePurchase } from 'calypso/state/purchases/actions';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
@@ -139,7 +140,7 @@ class RemovePurchase extends Component {
 
 				this.closeDialog();
 
-				notices.error( purchasesError );
+				this.props.errorNotice( purchasesError );
 			} else {
 				if ( isDomainRegistration( purchase ) ) {
 					if ( isDomainOnlySite ) {
@@ -147,19 +148,19 @@ class RemovePurchase extends Component {
 						this.props.setAllSitesSelected();
 					}
 
-					notices.success(
+					this.props.successNotice(
 						translate( 'The domain {{domain/}} was removed from your account.', {
 							components: { domain: <em>{ productName }</em> },
 						} ),
-						{ persistent: true }
+						{ isPersistent: true }
 					);
 				} else {
-					notices.success(
+					this.props.successNotice(
 						translate( '%(productName)s was removed from {{siteName/}}.', {
 							args: { productName },
 							components: { siteName: <em>{ purchase.domain }</em> },
 						} ),
-						{ persistent: true }
+						{ isPersistent: true }
 					);
 				}
 
@@ -271,15 +272,10 @@ class RemovePurchase extends Component {
 							//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
 						} )
 					}{ ' ' }
-					{ isGoogleApps( purchase )
-						? translate(
-								'Your G Suite account will continue working without interruption. ' +
-									'You will be able to manage your G Suite billing directly through Google.'
-						  )
-						: translate(
-								'You will not be able to reuse it again without purchasing a new subscription.',
-								{ comment: "'it' refers to a product purchased by a user" }
-						  ) }
+					{ translate(
+						'You will not be able to reuse it again without purchasing a new subscription.',
+						{ comment: "'it' refers to a product purchased by a user" }
+					) }
 				</p>
 
 				{ isPlan( purchase ) && hasIncludedDomain( purchase ) && includedDomainText }
@@ -332,11 +328,11 @@ class RemovePurchase extends Component {
 			return this.renderDomainDialog();
 		}
 
-		if ( isDomainMapping( purchase ) || isDomainTransfer( purchase ) ) {
+		if ( isDomainMapping( purchase ) || isDomainTransfer( purchase ) || isTitanMail( purchase ) ) {
 			return this.renderPlanDialog();
 		}
 
-		if ( isGoogleApps( purchase ) ) {
+		if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 			return (
 				<GSuiteCancellationPurchaseDialog
 					isVisible={ this.state.isDialogVisible }
@@ -346,6 +342,7 @@ class RemovePurchase extends Component {
 				/>
 			);
 		}
+
 		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase ) ) {
 			return this.renderAtomicDialog( purchase );
 		}
@@ -408,9 +405,11 @@ export default connect(
 		};
 	},
 	{
+		errorNotice,
 		receiveDeletedSite,
 		recordTracksEvent,
 		removePurchase,
 		setAllSitesSelected,
+		successNotice,
 	}
 )( localize( RemovePurchase ) );

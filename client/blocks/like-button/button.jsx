@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import { omitBy, isNull } from 'lodash';
+import { omitBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -122,7 +122,7 @@ class LikeButton extends PureComponent {
 					onMouseEnter,
 					onMouseLeave,
 				},
-				isNull
+				( prop ) => prop === null
 			),
 			<LikeIcons size={ this.props.iconSize } />,
 			labelElement

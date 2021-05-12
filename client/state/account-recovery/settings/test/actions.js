@@ -497,7 +497,7 @@ describe( 'account-recovery actions', () => {
 			successResponse: { success: true },
 			errorResponse: errorResponse,
 		},
-		thunk: () => validateAccountRecoveryPhone()( spy ),
+		thunk: () => validateAccountRecoveryPhone( '' )( spy ),
 		preCondition: () =>
 			assert(
 				spy.calledWith( {

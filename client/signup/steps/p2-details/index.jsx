@@ -13,23 +13,15 @@ import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { Button } from '@automattic/components';
 import { login } from 'calypso/lib/paths';
 import { getStepUrl } from 'calypso/signup/utils';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-function getOriginUrl() {
-	return (
-		window.location.protocol +
-		'//' +
-		window.location.hostname +
-		( window.location.port ? ':' + window.location.port : '' )
-	);
-}
-
 function getRedirectToAfterLoginUrl( { flowName } ) {
-	return getOriginUrl() + getStepUrl( flowName, 'p2-site' );
+	return window.location.origin + getStepUrl( flowName, 'p2-site' );
 }
 
 function getLoginLink( { flowName, locale } ) {
@@ -78,7 +70,7 @@ function P2Details( {
 				</div>
 				<div className="p2-details__description">
 					{ translate(
-						'P2 is powered by WordPress.com: log in with your account (or create a new one) ' +
+						'P2 is powered by WordPress.com: log in to your account (or create a new one) ' +
 							'to continue.'
 					) }
 				</div>
@@ -91,16 +83,20 @@ function P2Details( {
 								stepName: stepName,
 							} );
 
+							recordTracksEvent( 'calypso_signup_p2_details_login_button_click' );
+
 							page( getLoginLink( { flowName, locale } ) );
 						} }
 					>
-						{ translate( 'Log in with WordPress.com' ) }
+						{ translate( 'Log in to WordPress.com' ) }
 					</Button>
 					<Button
 						onClick={ () => {
 							submitSignupStep( {
 								stepName: stepName,
 							} );
+
+							recordTracksEvent( 'calypso_signup_p2_details_signup_button_click' );
 
 							goToNextStep();
 						} }

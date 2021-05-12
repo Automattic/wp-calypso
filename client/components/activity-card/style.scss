@@ -35,6 +35,20 @@
 		margin: 8px 0;
 		font-style: italic;
 	}
+
+	&.with-error {
+		.activity-card__time-icon {
+			fill: var( --color-error );
+		}
+
+		.activity-card__time-text {
+			color: var( --color-error );
+		}
+
+		.card {
+			border: solid 1px var( --color-error );
+		}
+	}
 }
 
 .activity-card__time {
@@ -108,11 +122,6 @@
 
 .backup-delta__realtime .activity-card__actions-button.button.is-borderless.is-primary {
 	float: right;
-}
-
-.button.activity-card__see-content-link {
-	margin-left: 0;
-	color: var( --studio-jetpack-green-40 );
 }
 
 .button.is-borderless.is-primary:focus {

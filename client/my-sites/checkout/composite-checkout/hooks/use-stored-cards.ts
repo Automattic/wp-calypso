@@ -3,6 +3,7 @@
  */
 import { useReducer, useEffect } from 'react';
 import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -30,6 +31,7 @@ export default function useStoredCards(
 		isLoading: true,
 		error: null,
 	} );
+	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( isLoggedOutCart ) {
@@ -43,6 +45,12 @@ export default function useStoredCards(
 
 		fetchStoredCards()
 			.then( ( cards ) => {
+				if ( ! Array.isArray( cards ) ) {
+					const payload = String( translate( 'There was a problem loading your stored cards.' ) );
+					debug( 'stored cards response is not an array', cards );
+					isSubscribed && dispatch( { type: 'FETCH_ERROR', payload } );
+					return;
+				}
 				debug( 'stored cards fetched', cards );
 				isSubscribed && dispatch( { type: 'FETCH_END', payload: cards } );
 			} )
@@ -54,7 +62,7 @@ export default function useStoredCards(
 		return () => {
 			isSubscribed = false;
 		};
-	}, [ getStoredCards, isLoggedOutCart ] );
+	}, [ getStoredCards, isLoggedOutCart, translate ] );
 
 	if ( isLoggedOutCart ) {
 		return { ...state, isLoading: false };

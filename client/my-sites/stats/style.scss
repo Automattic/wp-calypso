@@ -57,3 +57,68 @@
 		display: none;
 	}
 }
+
+.stats__card {
+	display: flex;
+	background: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	position: relative;
+	margin-bottom: 24px;
+
+	.stats__card-text,
+	.stats__card-illustration {
+		box-sizing: border-box;
+		padding: 24px;
+
+		@include breakpoint-deprecated( '>1040px' ) {
+			padding: 32px;
+		}
+	}
+
+	.stats__card-text {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.stats__card-illustration {
+		width: 25%;
+		align-self: auto;
+		flex-shrink: 0;
+		margin-left: auto;
+	}
+
+	.stats__card-title {
+		@extend .wp-brand-font;
+		font-size: $font-title-medium;
+		line-height: 36px;
+		margin-bottom: 4px;
+
+		@include breakpoint-deprecated( '>800px' ) {
+			line-height: 40px;
+		}
+	}
+
+	.stats__card-description {
+		margin-bottom: 24px;
+		font-size: $font-body;
+		line-height: 24px;
+		color: var( --color-text );
+
+		@include breakpoint-deprecated( '>800px' ) {
+			line-height: 28px;
+			margin-bottom: 32px;
+		}
+	}
+
+	.stats__card-actions {
+		display: flex;
+		padding-top: 0;
+		margin-top: auto;
+		font-size: $font-body-small;
+	}
+
+	.stats__card-action {
+		margin-right: 16px;
+	}
+}

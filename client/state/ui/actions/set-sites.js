@@ -3,6 +3,8 @@
  */
 import { SELECTED_SITE_SET } from 'calypso/state/action-types';
 
+import 'calypso/state/ui/init';
+
 /**
  * Returns an action object to be used in signalling that a site has been set
  * as selected.

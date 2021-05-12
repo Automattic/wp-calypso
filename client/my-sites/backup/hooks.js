@@ -1,21 +1,16 @@
 /**
  * External dependencies
  */
-import { isArray } from 'lodash';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { getHttpData } from 'calypso/state/data-layer/http-data';
 import { getRequestActivityLogsId, requestActivityLogs } from 'calypso/state/data-getters';
 import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
-import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 const isLoading = ( response ) => [ 'uninitialized', 'pending' ].includes( response.state );
 
@@ -54,10 +49,7 @@ export const useActivityLogs = ( siteId, filter, shouldExecute = true ) => {
 	}, [ shouldExecute, siteId, memoizedFilter ] );
 
 	const requestId = getRequestActivityLogsId( siteId, memoizedFilter );
-	const response = useSelector( () => shouldExecute && getHttpData( requestId ), [
-		shouldExecute,
-		requestId,
-	] );
+	const response = useSelector( () => shouldExecute && getHttpData( requestId ) );
 
 	return {
 		isLoadingActivityLogs: !! ( shouldExecute && isLoading( response ) ),
@@ -99,7 +91,7 @@ export const useFirstMatchingBackupAttempt = (
 
 	const rewindCapabilities = useSelector( ( state ) => getRewindCapabilities( state, siteId ) );
 	const hasRealtimeBackups =
-		isArray( rewindCapabilities ) && rewindCapabilities.includes( 'backup-realtime' );
+		Array.isArray( rewindCapabilities ) && rewindCapabilities.includes( 'backup-realtime' );
 
 	const filter = hasRealtimeBackups
 		? getRealtimeAttemptFilter( { before, after, sortOrder } )
@@ -149,22 +141,4 @@ export const useFirstMatchingBackupAttempt = (
 		isLoading: isLoadingActivityLogs,
 		backupAttempt: matchingAttempt || undefined,
 	};
-};
-
-// Tolerates null settings values, unlike the implementation in `calypso/components/site-offset`;
-// I don't want to disturb existing behavior, but we may want to come back later
-// and DRY up this bit of code.
-export const useDateWithOffset = ( date, shouldExecute = true ) => {
-	const siteId = useSelector( getSelectedSiteId );
-
-	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
-	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
-
-	const dateWithOffset = useMemo( () => applySiteOffset( date, { timezone, gmtOffset } ), [
-		date,
-		timezone,
-		gmtOffset,
-	] );
-
-	return shouldExecute ? dateWithOffset : undefined;
 };

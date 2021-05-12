@@ -23,14 +23,6 @@
 	&.is-large .site-selector__sites {
 		border-top: 1px solid var( --color-neutral-10 );
 	}
-
-	.site.is-loading {
-		.site-icon,
-		.site__title,
-		.site__domain {
-			background-color: var( --color-neutral-0 );
-		}
-	}
 }
 
 // Styles for Site elements within the Selector
@@ -46,9 +38,7 @@
 		.site__domain {
 			color: var( --color-sidebar-menu-selected-text );
 			&::after {
-				@include long-content-fade(
-					$color: var( --color-sidebar-menu-selected-background-rgb )
-				);
+				@include long-content-fade( $color: var( --color-sidebar-menu-selected-background-rgb ) );
 			}
 		}
 
@@ -63,15 +53,35 @@
 	}
 }
 
-// Highlight & hover effects
-.site-selector .site.is-highlighted,
-.site-selector .all-sites.is-highlighted,
+
 .notouch .site-selector.is-hover-enabled .site:hover,
-.notouch .site-selector.is-hover-enabled .all-sites:hover {
-	background: var( --color-sidebar-menu-hover-background );
+.notouch .site-selector.is-hover-enabled .all-sites:hover
+.site-selector .site.is-highlighted,
+.site-selector .all-sites.is-highlighted {
+	background-color: var( --color-neutral-5 );
 	cursor: pointer;
 
 	.site__badge {
+		background-color: var( --color-surface );
+	}
+
+	.site__title,
+	.site__domain {
+		&::after {
+			@include long-content-fade( $color: var( --color-neutral-5-rgb ) );
+		}
+	}
+}
+
+// Highlight & hover effects
+.notouch .layout__secondary .site-selector.is-hover-enabled .site:hover,
+.notouch .layout__secondary .site-selector.is-hover-enabled .all-sites:hover
+.layout__secondary .site-selector .site.is-highlighted,
+.layout__secondary .site-selector .all-sites.is-highlighted {
+	background: var( --color-sidebar-menu-hover-background );
+
+	.site__badge {
+		background: var( --color-sidebar-background );
 		color: var( --color-sidebar-text );
 	}
 
@@ -93,6 +103,12 @@
 	}
 }
 
+// Tweaking secondary Layout styles.
+.layout__secondary .site-selector .site__badge {
+	background: var( --color-sidebar-menu-hover-background );
+	color: var( --color-sidebar-menu-hover-text );
+}
+
 .site-selector .search {
 	margin: 8px;
 	height: 33px;
@@ -102,7 +118,8 @@
 	position: absolute;
 
 	// ensure sufficient selector specificity for .search.is-open, too
-	&, &.is-open {
+	&,
+	&.is-open {
 		width: auto;
 	}
 
@@ -204,6 +221,10 @@
 
 	.site-selector__manage-hidden-sites {
 		text-decoration: underline;
+
+		&:hover {
+			text-decoration: none;
+		}
 	}
 }
 

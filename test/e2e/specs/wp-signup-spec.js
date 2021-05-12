@@ -34,6 +34,8 @@ import DomainDetailsPage from '../lib/pages/domain-details-page';
 import CancelPurchasePage from '../lib/pages/cancel-purchase-page';
 import CancelDomainPage from '../lib/pages/cancel-domain-page';
 import SettingsPage from '../lib/pages/settings-page';
+import NewPage from '../lib/pages/gutenboarding/new-page';
+import AccountSettingsPage from '../lib/pages/account/account-settings-page';
 
 import FindADomainComponent from '../lib/components/find-a-domain-component.js';
 import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
@@ -48,8 +50,7 @@ import NewUserRegistrationUnavailableComponent from '../lib/components/new-user-
 import DeleteAccountFlow from '../lib/flows/delete-account-flow';
 import DeletePlanFlow from '../lib/flows/delete-plan-flow';
 import SignUpStep from '../lib/flows/sign-up-step';
-import LaunchSiteFlow from '../lib/flows/launch-site-flow.js';
-import ActivateAccountFlow from '../lib/flows/activate-account-flow';
+import GutenboardingFlow from '../lib/flows/gutenboarding-flow';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
 import MyHomePage from '../lib/pages/my-home-page';
@@ -64,15 +65,14 @@ const locale = driverManager.currentLocale();
 const passwordForTestAccounts = config.get( 'passwordForNewTestSignUps' );
 const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	this.driver = driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		this.driver = driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @signup @email', function () {
 		const blogName = dataHelper.getNewBlogName();
@@ -84,11 +84,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can create a new WordPress site', async function () {
-			await StartPage.Visit( this.driver, StartPage.getStartURL() );
+		it( 'Can create a new WordPress site', async function () {
+			await StartPage.Visit( driver, StartPage.getStartURL() );
 		} );
 
-		step( 'Can see the account page and enter account details', async function () {
+		it( 'Can see the account page and enter account details', async function () {
 			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
@@ -97,40 +97,34 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			);
 		} );
 
-		step(
-			'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
-			async function () {
-				const findADomainComponent = await FindADomainComponent.Expect( driver );
-				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				// See https://github.com/Automattic/wp-calypso/pull/38641/
-				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-				// 	expectedBlogAddresses,
-				// 	blogName
-				// );
-				// const actualAddress = await findADomainComponent.freeBlogAddress();
-				// assert(
-				// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
-				// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
-				// );
-				return await findADomainComponent.selectFreeAddress();
-			}
-		);
+		it( 'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results', async function () {
+			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
+			// See https://github.com/Automattic/wp-calypso/pull/38641/
+			// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+			// 	expectedBlogAddresses,
+			// 	blogName
+			// );
+			// const actualAddress = await findADomainComponent.freeBlogAddress();
+			// assert(
+			// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
+			// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
+			// );
+			return await findADomainComponent.selectFreeAddress();
+		} );
 
-		step( 'Can see the plans page and pick the free plan', async function () {
+		it( 'Can see the plans page and pick the free plan', async function () {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlan();
 		} );
 
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
-			}
-		);
+		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
+			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+		} );
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		step( 'Can log out and request a magic link', async function () {
+		it( 'Can log out and request a magic link', async function () {
 			if ( process.env.HORIZON_TESTS === 'true' ) {
 				return this.skip();
 			}
@@ -139,7 +133,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await loginPage.requestMagicLink( emailAddress );
 		} );
 
-		step( 'Can see email containing magic link', async function () {
+		it( 'Can see email containing magic link', async function () {
 			if ( process.env.HORIZON_TESTS === 'true' ) {
 				return this.skip();
 			}
@@ -163,7 +157,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			);
 		} );
 
-		step( 'Can visit the magic link and we should be logged in', async function () {
+		it( 'Can visit the magic link and we should be logged in', async function () {
 			if ( process.env.HORIZON_TESTS === 'true' ) {
 				return this.skip();
 			}
@@ -191,11 +185,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can visit the start page', async function () {
+		it( 'Can visit the start page', async function () {
 			await StartPage.Visit( driver, StartPage.getStartURL( { culture: locale } ) );
 		} );
 
-		step( 'Can see the account page and enter account details', async function () {
+		it( 'Can see the account page and enter account details', async function () {
 			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
@@ -204,36 +198,30 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			);
 		} );
 
-		step(
-			'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
-			async function () {
-				const findADomainComponent = await FindADomainComponent.Expect( driver );
-				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				// See https://github.com/Automattic/wp-calypso/pull/38641/
-				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-				// 	expectedBlogAddresses,
-				// 	blogName
-				// );
-				// const actualAddress = await findADomainComponent.freeBlogAddress();
-				// assert(
-				// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
-				// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
-				// );
-				return await findADomainComponent.selectFreeAddress();
-			}
-		);
+		it( 'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results', async function () {
+			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
+			// See https://github.com/Automattic/wp-calypso/pull/38641/
+			// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+			// 	expectedBlogAddresses,
+			// 	blogName
+			// );
+			// const actualAddress = await findADomainComponent.freeBlogAddress();
+			// assert(
+			// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
+			// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
+			// );
+			return await findADomainComponent.selectFreeAddress();
+		} );
 
-		step( 'Can see the plans page and pick the free plan', async function () {
+		it( 'Can see the plans page and pick the free plan', async function () {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlan();
 		} );
 
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
-			}
-		);
+		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
+			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+		} );
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
@@ -252,11 +240,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can visit the start page', async function () {
+		it( 'Can visit the start page', async function () {
 			await StartPage.Visit( driver, StartPage.getStartURL( { flow: 'main', culture: locale } ) );
 		} );
 
-		step( 'Can see the account page and enter account details', async function () {
+		it( 'Can see the account page and enter account details', async function () {
 			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
@@ -265,64 +253,55 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			);
 		} );
 
-		step( 'Can see the "About" page, and enter some site information', async function () {
+		it( 'Can see the "About" page, and enter some site information', async function () {
 			const aboutPage = await AboutPage.Expect( driver );
 			return await aboutPage.enterSiteDetails( blogName, '', {
 				showcase: true,
 			} );
 		} );
 
-		step( 'Can accept defaults for about page', async function () {
+		it( 'Can accept defaults for about page', async function () {
 			const aboutPage = await AboutPage.Expect( driver );
 			await aboutPage.submitForm();
 		} );
 
-		step( 'Can then see the domains page ', async function () {
+		it( 'Can then see the domains page ', async function () {
 			const findADomainComponent = await FindADomainComponent.Expect( driver );
 			const displayed = await findADomainComponent.displayed();
 			return assert.strictEqual( displayed, true, 'The choose a domain page is not displayed' );
 		} );
 
-		step(
-			'Can search for a blog name, can see and select a free WordPress.com blog address in results',
-			async function () {
-				return await new SignUpStep( driver ).selectFreeWordPressDotComAddresss(
-					blogName,
-					expectedBlogAddresses
-				);
-			}
-		);
+		it( 'Can search for a blog name, can see and select a free WordPress.com blog address in results', async function () {
+			return await new SignUpStep( driver ).selectFreeWordPressDotComAddresss(
+				blogName,
+				expectedBlogAddresses
+			);
+		} );
 
-		step( 'Can then see the plans page and select the premium plan ', async function () {
+		it( 'Can then see the plans page and select the premium plan ', async function () {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			const displayed = await pickAPlanPage.displayed();
 			assert.strictEqual( displayed, true, 'The pick a plan page is not displayed' );
 			return await pickAPlanPage.selectPremiumPlan();
 		} );
 
-		step(
-			'Can then see the sign up processing page which will automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
-			}
-		);
+		it( 'Can then see the sign up processing page which will automatically move along', async function () {
+			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+		} );
 
-		step(
-			'Can then see the secure payment page with the premium plan in the cart',
-			async function () {
-				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-				const premiumPlanInCart = await securePaymentComponent.containsPremiumPlan();
-				assert.strictEqual( premiumPlanInCart, true, "The cart doesn't contain the premium plan" );
-				const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
-				return assert.strictEqual(
-					numberOfProductsInCart,
-					1,
-					"The cart doesn't contain the expected number of products"
-				);
-			}
-		);
+		it( 'Can then see the secure payment page with the premium plan in the cart', async function () {
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const premiumPlanInCart = await securePaymentComponent.containsPremiumPlan();
+			assert.strictEqual( premiumPlanInCart, true, "The cart doesn't contain the premium plan" );
+			const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
+			return assert.strictEqual(
+				numberOfProductsInCart,
+				1,
+				"The cart doesn't contain the expected number of products"
+			);
+		} );
 
-		step( 'Can Correctly Apply Coupon discount', async function () {
+		it( 'Can Correctly Apply Coupon discount', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			await securePaymentComponent.toggleCartSummary();
 			originalCartAmount = await securePaymentComponent.cartTotalAmount();
@@ -342,278 +321,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			);
 		} );
 
-		step( 'Can Remove Coupon', async function () {
+		it( 'Can Remove Coupon', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 
 			await securePaymentComponent.removeCoupon();
 
 			const removedCouponAmount = await securePaymentComponent.cartTotalAmount();
 			assert.strictEqual( removedCouponAmount, originalCartAmount, 'Coupon not removed properly' );
-		} );
-
-		after( 'Can delete our newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
-		} );
-	} );
-
-	/**
-	 * This test fails due to the step to delete the plan failing which results in a warning message as shown below.
-	 * ~~
-	 * ~~ There was an error in the hooks that clean up the test account (delete plan) but since it is cleaning
-	 * ~~ up we really don't care: 'TimeoutError: Timed out waiting for element with css selector of '.cancel-purchase.main' to be
-	 * ~~ present and displayed Wait timed out after 22157ms'
-	 * ~~
-	 * This error should ideally be raised as a proper test failure. It doesn't because of a try catch preventing errors from bubbling up to the test client;
-	 * check file wp-calypso/test/e2e/lib/flowswp-calypso/test/e2e/lib/flows/delete-plan-flow.js Line 51
-	 * Fixes need to happen to wp-calypso/test/e2e/lib/pages/cancel-purchase-page.js to expect the proper class
-	 * The catch all should be replaced with a check that isolate the exact error we don't want to break the test (There was an error in the hooks that clean up the test account)
-	 * And throw the error on all other instances
-	 */
-	describe.skip( 'Sign up for a site on a premium paid plan through main flow in USD currency and launch @parallel @canary', function () {
-		const blogName = dataHelper.getNewBlogName();
-		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
-		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
-		const currencyValue = 'USD';
-		const expectedCurrencySymbol = '$';
-
-		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
-
-		step( 'We can set the sandbox cookie for payments', async function () {
-			const wPHomePage = await WPHomePage.Visit( driver );
-			await wPHomePage.checkURL( locale );
-			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
-			return await wPHomePage.setCurrencyForPayments( currencyValue );
-		} );
-
-		step( 'Can visit the start page', async function () {
-			await StartPage.Visit( driver, StartPage.getStartURL( { culture: locale } ) );
-		} );
-
-		step( 'Can then enter account details', async function () {
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
-			return await createYourAccountPage.enterAccountDetailsAndSubmit(
-				emailAddress,
-				blogName,
-				passwordForTestAccounts
-			);
-		} );
-
-		step( 'Can then see the domains page ', async function () {
-			const findADomainComponent = await FindADomainComponent.Expect( driver );
-			const displayed = await findADomainComponent.displayed();
-			return assert.strictEqual( displayed, true, 'The choose a domain page is not displayed' );
-		} );
-
-		step(
-			'Can search for a blog name, can see and select a free WordPress.com blog address in results',
-			async function () {
-				return await new SignUpStep( driver ).selectFreeWordPressDotComAddresss(
-					blogName,
-					expectedBlogAddresses
-				);
-			}
-		);
-
-		step( 'Can then see the plans page and select the premium plan ', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			const displayed = await pickAPlanPage.displayed();
-			assert.strictEqual( displayed, true, 'The pick a plan page is not displayed' );
-			return await pickAPlanPage.selectPremiumPlan();
-		} );
-
-		step(
-			'Can then see the sign up processing page which will automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
-			}
-		);
-
-		step(
-			'Can then see the secure payment page with the premium plan in the cart',
-			async function () {
-				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-				const premiumPlanInCart = await securePaymentComponent.containsPremiumPlan();
-				assert.strictEqual( premiumPlanInCart, true, "The cart doesn't contain the premium plan" );
-				const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
-				return assert.strictEqual(
-					numberOfProductsInCart,
-					1,
-					"The cart doesn't contain the expected number of products"
-				);
-			}
-		);
-
-		step(
-			'Can then see the secure payment page with the expected currency in the cart',
-			async function () {
-				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-				if ( driverManager.currentScreenSize() === 'desktop' ) {
-					const totalShown = await securePaymentComponent.cartTotalDisplayed();
-					assert.strictEqual(
-						totalShown.indexOf( expectedCurrencySymbol ),
-						0,
-						`The cart total '${ totalShown }' does not begin with '${ expectedCurrencySymbol }'`
-					);
-				}
-				const paymentButtonText = await securePaymentComponent.paymentButtonText();
-				return assert(
-					paymentButtonText.includes( expectedCurrencySymbol ),
-					`The payment button text '${ paymentButtonText }' does not contain the expected currency symbol: '${ expectedCurrencySymbol }'`
-				);
-			}
-		);
-
-		step( 'Can enter and submit test payment details', async function () {
-			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
-			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
-			await securePaymentComponent.submitPaymentDetails();
-			return await securePaymentComponent.waitForPageToDisappear();
-		} );
-
-		sharedSteps.canSeeTheOnboardingChecklist();
-
-		step( 'Can update the homepage', async function () {
-			const myHomePage = await MyHomePage.Expect( this.driver );
-			await myHomePage.updateHomepageFromSiteSetup();
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.initEditor();
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			assert.strictEqual(
-				errorShown,
-				false,
-				'There is a block editor error when editing the homepage'
-			);
-
-			const hasInvalidBlocks = await gEditorComponent.hasInvalidBlocks();
-			assert.strictEqual(
-				hasInvalidBlocks,
-				false,
-				'There are invalid blocks when editing the homepage'
-			);
-			return await gEditorComponent.closeEditor();
-		} );
-
-		step( 'Can delete the plan', async function () {
-			return await new DeletePlanFlow( driver ).deletePlan( 'premium' );
-		} );
-
-		step( 'Can launch the site', async function () {
-			const navBarComponent = await NavBarComponent.Expect( driver );
-			await navBarComponent.clickMySites();
-			await new ActivateAccountFlow( driver, emailAddress ).activateAccount();
-			return await new LaunchSiteFlow( driver ).launchFreeSite();
-		} );
-
-		after( 'Can delete our newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
-		} );
-	} );
-
-	describe( 'Sign up for a site on a premium paid plan coming in via /create as premium flow in JPY currency @signup', function () {
-		const blogName = dataHelper.getNewBlogName();
-		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
-		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
-
-		const currencyValue = 'JPY';
-		const expectedCurrencySymbol = '¥';
-
-		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
-
-		step( 'We can set the sandbox cookie for payments', async function () {
-			const wPHomePage = await WPHomePage.Visit( driver );
-			await wPHomePage.checkURL( locale );
-			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
-			return await wPHomePage.setCurrencyForPayments( currencyValue );
-		} );
-
-		step( 'Can visit the start page', async function () {
-			await StartPage.Visit(
-				driver,
-				StartPage.getStartURL( { culture: locale, flow: 'premium' } )
-			);
-		} );
-
-		step( 'Can see the account details page and enter account details', async function () {
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
-			return await createYourAccountPage.enterAccountDetailsAndSubmit(
-				emailAddress,
-				blogName,
-				passwordForTestAccounts
-			);
-		} );
-
-		step(
-			'Can then see the domains page and can search for a blog name, can see and select a free WordPress.com blog address in results',
-			async function () {
-				return await new SignUpStep( driver ).selectFreeWordPressDotComAddresss(
-					blogName,
-					expectedBlogAddresses
-				);
-			}
-		);
-
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
-			}
-		);
-
-		step(
-			'Can then see the secure payment page with the expected currency in the cart',
-			async function () {
-				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-				if ( driverManager.currentScreenSize() === 'desktop' ) {
-					const totalShown = await securePaymentComponent.cartTotalDisplayed();
-					assert.strictEqual(
-						totalShown.indexOf( expectedCurrencySymbol ),
-						0,
-						`The cart total '${ totalShown }' does not begin with '${ expectedCurrencySymbol }'`
-					);
-				}
-				const paymentButtonText = await securePaymentComponent.paymentButtonText();
-				return assert(
-					paymentButtonText.includes( expectedCurrencySymbol ),
-					`The payment button text '${ paymentButtonText }' does not contain the expected currency symbol: '${ expectedCurrencySymbol }'`
-				);
-			}
-		);
-
-		step(
-			'Can then see the secure payment page with the expected products in the cart',
-			async function () {
-				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-				const premiumPlanInCart = await securePaymentComponent.containsPremiumPlan();
-				assert.strictEqual( premiumPlanInCart, true, "The cart doesn't contain the premium plan" );
-				const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
-				return assert.strictEqual(
-					numberOfProductsInCart,
-					1,
-					"The cart doesn't contain the expected number of products"
-				);
-			}
-		);
-
-		step( 'Can submit test payment details', async function () {
-			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
-			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
-			await securePaymentComponent.submitPaymentDetails();
-			return await securePaymentComponent.waitForPageToDisappear();
-		} );
-
-		sharedSteps.canSeeTheOnboardingChecklist();
-
-		step( 'Can delete the plan', async function () {
-			return await new DeletePlanFlow( driver ).deletePlan( 'premium' );
 		} );
 
 		after( 'Can delete our newly created account', async function () {
@@ -632,21 +346,21 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'We can set the sandbox cookie for payments', async function () {
+		it( 'We can set the sandbox cookie for payments', async function () {
 			const wPHomePage = await WPHomePage.Visit( driver );
 			await wPHomePage.checkURL( locale );
 			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
 			return await wPHomePage.setCurrencyForPayments( currencyValue );
 		} );
 
-		step( 'Can visit the start page', async function () {
+		it( 'Can visit the start page', async function () {
 			await StartPage.Visit(
 				driver,
 				StartPage.getStartURL( { culture: locale, flow: 'personal' } )
 			);
 		} );
 
-		step( 'Can see the account details page and enter account details', async function () {
+		it( 'Can see the account details page and enter account details', async function () {
 			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
@@ -655,63 +369,47 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			);
 		} );
 
-		step(
-			'Can then see the domains page and can search for a blog name, can see and select a free WordPress.com blog address in results',
-			async function () {
-				return await new SignUpStep( driver ).selectFreeWordPressDotComAddresss(
-					blogName,
-					expectedBlogAddresses
-				);
-			}
-		);
+		it( 'Can then see the domains page and can search for a blog name, can see and select a free WordPress.com blog address in results', async function () {
+			return await new SignUpStep( driver ).selectFreeWordPressDotComAddresss(
+				blogName,
+				expectedBlogAddresses
+			);
+		} );
 
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
-			}
-		);
+		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
+			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+		} );
 
-		step(
-			'Can then see the secure payment page with the expected currency in the cart',
-			async function () {
-				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-				if ( driverManager.currentScreenSize() === 'desktop' ) {
-					const totalShown = await securePaymentComponent.cartTotalDisplayed();
-					assert.strictEqual(
-						totalShown.indexOf( expectedCurrencySymbol ),
-						0,
-						`The cart total '${ totalShown }' does not begin with '${ expectedCurrencySymbol }'`
-					);
-				}
-				const paymentButtonText = await securePaymentComponent.paymentButtonText();
-				return assert(
-					paymentButtonText.includes( expectedCurrencySymbol ),
-					`The payment button text '${ paymentButtonText }' does not contain the expected currency symbol: '${ expectedCurrencySymbol }'`
-				);
-			}
-		);
-
-		step(
-			'Can then see the secure payment page with the expected products in the cart',
-			async function () {
-				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-				const personalPlanInCart = await securePaymentComponent.containsPersonalPlan();
+		it( 'Can then see the secure payment page with the expected currency in the cart', async function () {
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			if ( driverManager.currentScreenSize() === 'desktop' ) {
+				const totalShown = await securePaymentComponent.cartTotalDisplayed();
 				assert.strictEqual(
-					personalPlanInCart,
-					true,
-					"The cart doesn't contain the personal plan"
-				);
-				const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
-				return assert.strictEqual(
-					numberOfProductsInCart,
-					1,
-					"The cart doesn't contain the expected number of products"
+					totalShown.indexOf( expectedCurrencySymbol ),
+					0,
+					`The cart total '${ totalShown }' does not begin with '${ expectedCurrencySymbol }'`
 				);
 			}
-		);
+			const paymentButtonText = await securePaymentComponent.paymentButtonText();
+			return assert(
+				paymentButtonText.includes( expectedCurrencySymbol ),
+				`The payment button text '${ paymentButtonText }' does not contain the expected currency symbol: '${ expectedCurrencySymbol }'`
+			);
+		} );
 
-		step( 'Can submit test payment details', async function () {
+		it( 'Can then see the secure payment page with the expected products in the cart', async function () {
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const personalPlanInCart = await securePaymentComponent.containsPersonalPlan();
+			assert.strictEqual( personalPlanInCart, true, "The cart doesn't contain the personal plan" );
+			const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
+			return assert.strictEqual(
+				numberOfProductsInCart,
+				1,
+				"The cart doesn't contain the expected number of products"
+			);
+		} );
+
+		it( 'Can submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
@@ -722,7 +420,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		step( 'Can delete the plan', async function () {
+		it( 'Can delete the plan', async function () {
 			return await new DeletePlanFlow( driver ).deletePlan( 'personal' );
 		} );
 
@@ -753,14 +451,14 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'We can visit set the sandbox cookie for payments', async function () {
+		it( 'We can visit set the sandbox cookie for payments', async function () {
 			const wPHomePage = await WPHomePage.Visit( driver );
 			await wPHomePage.checkURL( locale );
 			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
 			return await wPHomePage.setCurrencyForPayments( currencyValue );
 		} );
 
-		step( 'Can visit the domains start page', async function () {
+		it( 'Can visit the domains start page', async function () {
 			await StartPage.Visit(
 				driver,
 				StartPage.getStartURL( {
@@ -771,12 +469,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			);
 		} );
 
-		step( 'Can select domain only from the domain first choice page', async function () {
+		it( 'Can select domain only from the domain first choice page', async function () {
 			const domainFirstPage = await DomainFirstPage.Expect( driver );
 			return await domainFirstPage.chooseJustBuyTheDomain();
 		} );
 
-		step( 'Can then enter account details', async function () {
+		it( 'Can then enter account details', async function () {
 			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
@@ -785,20 +483,19 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			);
 		} );
 
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( siteName, passwordForTestAccounts );
-			}
-		);
+		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
+			return await new SignUpStep( driver ).continueAlong( siteName, passwordForTestAccounts );
+		} );
 
-		step( 'Can see checkout page and enter registrar details', async function () {
+		it( 'Can see checkout page and enter registrar details', async function () {
 			let checkOutPage;
 			try {
 				checkOutPage = await CheckOutPage.Expect( driver );
 			} catch ( err ) {
 				//TODO: Check this code once more when domain registration is not available
-				if ( driverHelper.isEventuallyPresentAndDisplayed( driver, By.css( '.empty-content' ) ) ) {
+				if (
+					driverHelper.isElementEventuallyLocatedAndVisible( driver, By.css( '.empty-content' ) )
+				) {
 					await SlackNotifier.warn(
 						"OOPS! Something went wrong, you don't have a site! Check if domains registrations is available."
 					);
@@ -809,46 +506,36 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await checkOutPage.submitForm();
 		} );
 
-		step(
-			'Can then see the secure payment page with the correct products in the cart',
-			async function () {
-				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-				const domainInCart = await securePaymentComponent.containsDotLiveDomain();
+		it( 'Can then see the secure payment page with the correct products in the cart', async function () {
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const domainInCart = await securePaymentComponent.containsDotLiveDomain();
+			assert.strictEqual( domainInCart, true, "The cart doesn't contain the .live domain product" );
+			const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
+			return assert.strictEqual(
+				numberOfProductsInCart,
+				1,
+				"The cart doesn't contain the expected number of products"
+			);
+		} );
+
+		it( 'Can then see the secure payment page with the expected currency in the cart', async function () {
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			if ( driverManager.currentScreenSize() === 'desktop' ) {
+				const totalShown = await securePaymentComponent.cartTotalDisplayed();
 				assert.strictEqual(
-					domainInCart,
-					true,
-					"The cart doesn't contain the .live domain product"
-				);
-				const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
-				return assert.strictEqual(
-					numberOfProductsInCart,
-					1,
-					"The cart doesn't contain the expected number of products"
+					totalShown.indexOf( expectedCurrencySymbol ),
+					0,
+					`The cart total '${ totalShown }' does not begin with '${ expectedCurrencySymbol }'`
 				);
 			}
-		);
+			const paymentButtonText = await securePaymentComponent.paymentButtonText();
+			return assert(
+				paymentButtonText.includes( expectedCurrencySymbol ),
+				`The payment button text '${ paymentButtonText }' does not contain the expected currency symbol: '${ expectedCurrencySymbol }'`
+			);
+		} );
 
-		step(
-			'Can then see the secure payment page with the expected currency in the cart',
-			async function () {
-				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-				if ( driverManager.currentScreenSize() === 'desktop' ) {
-					const totalShown = await securePaymentComponent.cartTotalDisplayed();
-					assert.strictEqual(
-						totalShown.indexOf( expectedCurrencySymbol ),
-						0,
-						`The cart total '${ totalShown }' does not begin with '${ expectedCurrencySymbol }'`
-					);
-				}
-				const paymentButtonText = await securePaymentComponent.paymentButtonText();
-				return assert(
-					paymentButtonText.includes( expectedCurrencySymbol ),
-					`The payment button text '${ paymentButtonText }' does not contain the expected currency symbol: '${ expectedCurrencySymbol }'`
-				);
-			}
-		);
-
-		step( 'Can enter/submit test payment details', async function () {
+		it( 'Can enter/submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			// No need to fill out contact details here as they already have been completed
@@ -858,12 +545,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		step( 'Can open the sidebar', async function () {
+		it( 'Can open the sidebar', async function () {
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickMySites();
 		} );
 
-		step( 'We should only see one option - the settings option', async function () {
+		it( 'We should only see one option - the settings option', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			const numberMenuItems = await sidebarComponent.numberOfMenuItems();
 			assert.strictEqual(
@@ -924,21 +611,21 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'We can set the sandbox cookie for payments', async function () {
+		it( 'We can set the sandbox cookie for payments', async function () {
 			const wPHomePage = await WPHomePage.Visit( driver );
 			await wPHomePage.checkURL( locale );
 			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
 			return await wPHomePage.setCurrencyForPayments( currencyValue );
 		} );
 
-		step( 'Can visit the start page', async function () {
+		it( 'Can visit the start page', async function () {
 			await StartPage.Visit(
 				driver,
 				StartPage.getStartURL( { culture: locale, flow: 'business' } )
 			);
 		} );
 
-		step( 'Can then enter account details and continue', async function () {
+		it( 'Can then enter account details and continue', async function () {
 			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
@@ -947,82 +634,66 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			);
 		} );
 
-		step(
-			'Can then see the domains page, and can search for a blog name, can see and select a paid .live address in results ',
-			async function () {
-				const findADomainComponent = await FindADomainComponent.Expect( driver );
-				await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
-				try {
-					return await findADomainComponent.selectDomainAddress( expectedDomainName );
-				} catch ( err ) {
-					if ( await NewUserRegistrationUnavailableComponent.Expect( driver ) ) {
-						await SlackNotifier.warn( 'SKIPPING: Domain registration is currently unavailable. ' );
-						return this.skip();
-					}
+		it( 'Can then see the domains page, and can search for a blog name, can see and select a paid .live address in results ', async function () {
+			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
+			try {
+				return await findADomainComponent.selectDomainAddress( expectedDomainName );
+			} catch ( err ) {
+				if ( await NewUserRegistrationUnavailableComponent.Expect( driver ) ) {
+					await SlackNotifier.warn( 'SKIPPING: Domain registration is currently unavailable. ' );
+					return this.skip();
 				}
 			}
-		);
+		} );
 
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( siteName, passwordForTestAccounts );
-			}
-		);
+		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
+			return await new SignUpStep( driver ).continueAlong( siteName, passwordForTestAccounts );
+		} );
 
-		step( 'Can see checkout page and enter registrar details', async function () {
+		it( 'Can see checkout page and enter registrar details', async function () {
 			const checkOutPage = await CheckOutPage.Expect( driver );
 			await checkOutPage.enterRegistrarDetails( testDomainRegistarDetails );
 			return await checkOutPage.submitForm();
 		} );
 
-		step(
-			'Can then see the secure payment page with the correct products in the cart',
-			async function () {
-				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-				const domainInCart = await securePaymentComponent.containsDotLiveDomain();
-				assert.strictEqual(
-					domainInCart,
-					true,
-					"The cart doesn't contain the .live domain product"
-				);
-				const businessPlanInCart = await securePaymentComponent.containsBusinessPlan();
-				assert.strictEqual(
-					businessPlanInCart,
-					true,
-					"The cart doesn't contain the business plan product"
-				);
-				// Removing product number assertion due to https://github.com/Automattic/wp-calypso/issues/24579
-				// const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
-				// return assert.strictEqual(
-				// 	numberOfProductsInCart,
-				// 	3,
-				// 	"The cart doesn't contain the expected number of products"
-				// );
-			}
-		);
+		it( 'Can then see the secure payment page with the correct products in the cart', async function () {
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const domainInCart = await securePaymentComponent.containsDotLiveDomain();
+			assert.strictEqual( domainInCart, true, "The cart doesn't contain the .live domain product" );
+			const businessPlanInCart = await securePaymentComponent.containsBusinessPlan();
+			assert.strictEqual(
+				businessPlanInCart,
+				true,
+				"The cart doesn't contain the business plan product"
+			);
+			// Removing product number assertion due to https://github.com/Automattic/wp-calypso/issues/24579
+			// const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
+			// return assert.strictEqual(
+			// 	numberOfProductsInCart,
+			// 	3,
+			// 	"The cart doesn't contain the expected number of products"
+			// );
+		} );
 
-		step(
-			'Can then see the secure payment page with the expected currency in the cart',
-			async function () {
-				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-				if ( driverManager.currentScreenSize() === 'desktop' ) {
-					const totalShown = await securePaymentComponent.cartTotalDisplayed();
-					assert.strictEqual(
-						totalShown.indexOf( expectedCurrencySymbol ),
-						0,
-						`The cart total '${ totalShown }' does not begin with '${ expectedCurrencySymbol }'`
-					);
-				}
-				const paymentButtonText = await securePaymentComponent.paymentButtonText();
-				return assert(
-					paymentButtonText.includes( expectedCurrencySymbol ),
-					`The payment button text '${ paymentButtonText }' does not contain the expected currency symbol: '${ expectedCurrencySymbol }'`
+		it( 'Can then see the secure payment page with the expected currency in the cart', async function () {
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			if ( driverManager.currentScreenSize() === 'desktop' ) {
+				const totalShown = await securePaymentComponent.cartTotalDisplayed();
+				assert.strictEqual(
+					totalShown.indexOf( expectedCurrencySymbol ),
+					0,
+					`The cart total '${ totalShown }' does not begin with '${ expectedCurrencySymbol }'`
 				);
 			}
-		);
+			const paymentButtonText = await securePaymentComponent.paymentButtonText();
+			return assert(
+				paymentButtonText.includes( expectedCurrencySymbol ),
+				`The payment button text '${ paymentButtonText }' does not contain the expected currency symbol: '${ expectedCurrencySymbol }'`
+			);
+		} );
 
-		step( 'Can enter/submit test payment details', async function () {
+		it( 'Can enter/submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			// No need to fill out contact details here as they already have been completed
@@ -1034,7 +705,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		step( 'Can delete the plan', async function () {
+		it( 'Can delete the plan', async function () {
 			return await new DeletePlanFlow( driver ).deletePlan( 'business', {
 				deleteDomainAlso: true,
 			} );
@@ -1052,11 +723,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can visit the start page', async function () {
+		it( 'Can visit the start page', async function () {
 			await StartPage.Visit( driver, StartPage.getStartURL( { culture: locale } ) );
 		} );
 
-		step( 'Can then enter account details and continue', async function () {
+		it( 'Can then enter account details and continue', async function () {
 			const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
 			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
@@ -1066,57 +737,44 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			);
 		} );
 
-		step(
-			'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
-			async function () {
-				// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
-				const findADomainComponent = await FindADomainComponent.Expect( driver );
-				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				// See https://github.com/Automattic/wp-calypso/pull/38641/
-				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-				// 	expectedBlogAddresses,
-				// 	blogName
-				// );
-				// const actualAddress = await findADomainComponent.freeBlogAddress();
-				// assert(
-				// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
-				// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
-				// );
-				return await findADomainComponent.selectFreeAddress();
-			}
-		);
+		it( 'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results', async function () {
+			// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
+			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
+			// See https://github.com/Automattic/wp-calypso/pull/38641/
+			// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+			// 	expectedBlogAddresses,
+			// 	blogName
+			// );
+			// const actualAddress = await findADomainComponent.freeBlogAddress();
+			// assert(
+			// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
+			// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
+			// );
+			return await findADomainComponent.selectFreeAddress();
+		} );
 
-		step( 'Can then see the plans page and pick the free plan', async function () {
+		it( 'Can then see the plans page and pick the free plan', async function () {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlan();
 		} );
 
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
-			}
-		);
+		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
+			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+		} );
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		step( 'Can update the homepage', async function () {
+		it( 'Can update the homepage', async function () {
 			// Skipping if IE11 due to JS errors caused by missing DOMRect polyfill.
 			// See https://github.com/Automattic/wp-calypso/issues/40502
 			if ( dataHelper.getTargetType() === 'IE11' ) {
 				return this.skip();
 			}
-			const myHomePage = await MyHomePage.Expect( this.driver );
+			const myHomePage = await MyHomePage.Expect( driver );
 			await myHomePage.updateHomepageFromSiteSetup();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.initEditor();
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			assert.strictEqual(
-				errorShown,
-				false,
-				'There is a block editor error when editing the homepage'
-			);
 
 			const hasInvalidBlocks = await gEditorComponent.hasInvalidBlocks();
 			assert.strictEqual(
@@ -1150,7 +808,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can enter the onboarding flow with vertical set', async function () {
+		it( 'Can enter the onboarding flow with vertical set', async function () {
 			await StartPage.Visit(
 				driver,
 				StartPage.getStartURL( {
@@ -1161,7 +819,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			);
 		} );
 
-		step( 'Can then enter account details and continue', async function () {
+		it( 'Can then enter account details and continue', async function () {
 			const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
 			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
@@ -1171,53 +829,46 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			);
 		} );
 
-		step( 'Can see the "Site Type" page, and enter some site information', async function () {
+		it( 'Can see the "Site Type" page, and enter some site information', async function () {
 			const siteTypePage = await SiteTypePage.Expect( driver );
 			return await siteTypePage.selectBlogType();
 		} );
 
-		step( 'Can see the "Site title" page, and enter the site title', async function () {
+		it( 'Can see the "Site title" page, and enter the site title', async function () {
 			const siteTitlePage = await SiteTitlePage.Expect( driver );
 			await siteTitlePage.enterSiteTitle( blogName );
 			return await siteTitlePage.submitForm();
 		} );
 
-		step(
-			'Can then see the domains page, and Can search for a blog name, can see and select a free .art.blog address in the results',
-			async function () {
-				const findADomainComponent = await FindADomainComponent.Expect( driver );
-				await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
-				// More details: https://github.com/Automattic/wp-calypso/pull/35347
-				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-				// 	expectedDomainName,
-				// 	blogName
-				// );
-				const actualAddress = await findADomainComponent.freeBlogAddress();
-				assert(
-					expectedDomainName.indexOf( actualAddress ) > -1,
-					`The displayed blog address: '${ actualAddress }' was not the expected addresses: '${ expectedDomainName }'`
-				);
-				return await findADomainComponent.selectFreeAddress();
-			}
-		);
+		it( 'Can then see the domains page, and Can search for a blog name, can see and select a free .art.blog address in the results', async function () {
+			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
+			// More details: https://github.com/Automattic/wp-calypso/pull/35347
+			// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+			// 	expectedDomainName,
+			// 	blogName
+			// );
+			const actualAddress = await findADomainComponent.freeBlogAddress();
+			assert(
+				expectedDomainName.indexOf( actualAddress ) > -1,
+				`The displayed blog address: '${ actualAddress }' was not the expected addresses: '${ expectedDomainName }'`
+			);
+			return await findADomainComponent.selectFreeAddress();
+		} );
 
-		step( 'Can then see the plans page and pick the free plan', async function () {
+		it( 'Can then see the plans page and pick the free plan', async function () {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlan();
 		} );
 
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
-			}
-		);
+		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
+			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+		} );
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		step( 'Can delete site', async function () {
+		it( 'Can delete site', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
-			await sidebarComponent.ensureSidebarMenuVisible();
 			await sidebarComponent.selectSettings();
 			const settingsPage = await SettingsPage.Expect( driver );
 			return await settingsPage.deleteSite( expectedDomainName );
@@ -1228,16 +879,15 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Sign up for an account only (no site) then add a site @signup', function () {
+	describe( 'Sign up for an account only (no site) then add a site as an existing user @signup', function () {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
-		// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 
 		before( async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can enter the account flow and see the account details page', async function () {
+		it( 'Can enter the account flow and see the account details page', async function () {
 			await StartPage.Visit(
 				driver,
 				StartPage.getStartURL( {
@@ -1248,7 +898,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			await CreateYourAccountPage.Expect( driver );
 		} );
 
-		step( 'Can then enter account details and continue', async function () {
+		it( 'Can then enter account details and continue', async function () {
 			const emailAddress = dataHelper.getEmailAddress( userName, signupInboxId );
 			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
@@ -1258,56 +908,21 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			);
 		} );
 
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
-			}
-		);
-
-		step(
-			'We are then on the Reader page and have no sites - we click Create Site',
-			async function () {
-				await ReaderPage.Expect( driver );
-				const navBarComponent = await NavBarComponent.Expect( driver );
-				await navBarComponent.clickMySites();
-				const noSitesComponent = await NoSitesComponent.Expect( driver );
-				return await noSitesComponent.createSite();
-			}
-		);
-
-		step(
-			'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
-			async function () {
-				const findADomainComponent = await FindADomainComponent.Expect( driver );
-				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				// See https://github.com/Automattic/wp-calypso/pull/38641/
-				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-				// 	expectedBlogAddresses,
-				// 	blogName
-				// );
-				// const actualAddress = await findADomainComponent.freeBlogAddress();
-				// assert(
-				// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
-				// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
-				//);
-				return await findADomainComponent.selectFreeAddress();
-			}
-		);
-
-		step( 'Can see the plans page and pick the free plan', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlan();
+		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
+			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
 		} );
 
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
-			}
-		);
+		it( 'We are then on the Reader page and have no sites - we click Create Site', async function () {
+			await ReaderPage.Expect( driver );
+			const navBarComponent = await NavBarComponent.Expect( driver );
+			await navBarComponent.clickMySites();
+			const noSitesComponent = await NoSitesComponent.Expect( driver );
+			return await noSitesComponent.createSite();
+		} );
 
-		sharedSteps.canSeeTheOnboardingChecklist();
+		it( 'We are creating the site using the New Onboarding (Gutenboarding)', async function () {
+			return await new GutenboardingFlow( driver ).createFreeSite();
+		} );
 
 		after( 'Can delete our newly created account', async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
@@ -1321,7 +936,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can enter the reader flow and see the Reader landing page', async function () {
+		it( 'Can enter the reader flow and see the Reader landing page', async function () {
 			await StartPage.Visit(
 				driver,
 				StartPage.getStartURL( {
@@ -1332,37 +947,54 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await ReaderLandingPage.Expect( driver );
 		} );
 
-		step( 'Can choose Start Using The Reader', async function () {
+		it( 'Can choose Start Using The Reader', async function () {
 			const readerLandingPage = await ReaderLandingPage.Expect( driver );
 			return await readerLandingPage.clickStartUsingTheReader();
 		} );
 
-		step(
-			'Can see the account details page and enter account details and continue',
-			async function () {
-				const emailAddress = dataHelper.getEmailAddress( userName, signupInboxId );
-				const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
-				return await createYourAccountPage.enterAccountDetailsAndSubmit(
-					emailAddress,
-					userName,
-					passwordForTestAccounts
-				);
-			}
-		);
+		it( 'Can see the account details page and enter account details and continue', async function () {
+			const emailAddress = dataHelper.getEmailAddress( userName, signupInboxId );
+			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			return await createYourAccountPage.enterAccountDetailsAndSubmit(
+				emailAddress,
+				userName,
+				passwordForTestAccounts
+			);
+		} );
 
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( userName, passwordForTestAccounts );
-			}
-		);
+		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
+			return await new SignUpStep( driver ).continueAlong( userName, passwordForTestAccounts );
+		} );
 
-		step( 'We are then on the Reader page', async function () {
+		it( 'We are then on the Reader page', async function () {
 			return await ReaderPage.Expect( driver );
 		} );
 
 		after( 'Can delete our newly created account', async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
+		} );
+	} );
+
+	describe( 'Signup and create new site using the New Onboarding (Gutenboarding) @signup', function () {
+		const emailAddress = dataHelper.getEmailAddress( dataHelper.getNewBlogName(), signupInboxId );
+
+		before( async function () {
+			await driverManager.ensureNotLoggedIn( driver );
+		} );
+
+		it( 'Signup and create site using default options', async function () {
+			await NewPage.Visit( driver );
+
+			await new GutenboardingFlow( driver ).signupAndCreateFreeSite( { emailAddress } );
+		} );
+
+		after( 'Can delete our newly created account', async function () {
+			// Gutenboarding creates users with auto-generated usernames so we need
+			// to find the username before we can delete it.
+			const accountSettingsPage = await AccountSettingsPage.Visit( driver );
+			const username = await accountSettingsPage.getUsername();
+
+			return await new DeleteAccountFlow( driver ).deleteAccount( username );
 		} );
 	} );
 } );

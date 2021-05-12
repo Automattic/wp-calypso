@@ -14,13 +14,11 @@ export default class JetpackComPricingPage extends AsyncBaseContainer {
 		if ( ! url ) {
 			url = 'https://cloud.jetpack.com/pricing/';
 		}
-		super( driver, By.css( '.is-section-jetpack-cloud-pricing .selector-alt__main' ), url );
+		super( driver, By.css( '.is-section-jetpack-cloud-pricing .selector__main' ), url );
 	}
 
 	async buyJetpackPlan( planSlug ) {
-		const planCTA = By.css(
-			`[data-e2e-product-slug="${ planSlug }"] .jetpack-product-card-alt__button`
-		);
+		const planCTA = By.css( `[data-e2e-product-slug="${ planSlug }"] .button` );
 		return await driverHelper.clickWhenClickable( this.driver, planCTA );
 	}
 }

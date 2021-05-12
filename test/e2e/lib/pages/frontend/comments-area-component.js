@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-import { By, until } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
  */
 import * as driverHelper from '../../driver-helper';
-import * as dataHelper from '../../data-helper';
 
 import AsyncBaseContainer from '../../async-base-container';
 
@@ -16,50 +15,47 @@ export default class CommentsAreaComponent extends AsyncBaseContainer {
 		super( driver, By.css( '#comments.comments-area' ) );
 	}
 
-	async _postComment( { comment } ) {
-		const commentForm = By.css( '#commentform' );
+	/**
+	 * Posts the first comment to a post (under "Join the Conversation" in the footer).
+	 *
+	 * @param { string } comment The comment text.
+	 */
+	async _postComment( comment ) {
 		const commentField = By.css( '#comment' );
-		const submitButton = By.css( ".form-submit[style='display: block;'] #comment-submit" );
-		const commentContent = By.xpath( `//div[@class='comment-content']/p[.='${ comment }']` );
+		const submitButton = By.css( '.form-submit #comment-submit' );
 
-		await driverHelper.scrollIntoView( this.driver, commentForm, 'end' );
-		await driverHelper.clickWhenClickable( this.driver, commentForm );
-		await driverHelper.scrollIntoView( this.driver, commentForm, 'end' );
-		await this.switchToFrameIfJetpack();
-
-		await driverHelper.clickWhenClickable( this.driver, commentForm );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, submitButton );
 		await driverHelper.scrollIntoView( this.driver, submitButton );
 		await driverHelper.setWhenSettable( this.driver, commentField, comment );
+		await driverHelper.scrollIntoView( this.driver, submitButton );
 		await driverHelper.clickWhenClickable( this.driver, submitButton );
-		await this.driver.switchTo().defaultContent();
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, commentContent );
 	}
 
-	async reply( commentObj, depth = 2 ) {
+	/**
+	 * Posts a reply to a comment. Re-uses most of @see _postComment, but starts
+	 * the action by clicking the "Reply" link for an existing comment.
+	 *
+	 * @param {*} comment The comment text.
+	 */
+	async reply( comment ) {
 		const replyButton = By.css( '.comment-reply-link' );
-		const replyContent = By.xpath(
-			`//li[contains(@class,'depth-${ depth }')]//div[@class='comment-content']/p[.='${ commentObj.comment }']`
-		);
+
 		await driverHelper.clickWhenClickable( this.driver, replyButton );
-		await this._postComment( commentObj );
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, replyContent );
+		await this._postComment( comment );
 	}
 
-	async switchToFrameIfJetpack() {
-		if ( dataHelper.getJetpackHost() === 'WPCOM' ) {
-			return false;
-		}
-		await this.driver.sleep( 1000 );
-
-		const iFrameSelector = By.css( 'iframe.jetpack_remote_comment' );
-
-		await this.driver.switchTo().defaultContent();
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, iFrameSelector );
-		await this.driver.wait(
-			until.ableToSwitchToFrame( iFrameSelector ),
-			this.explicitWaitMS,
-			'Could not switch to comment form iFrame'
+	/**
+	 * Verifies if a comment is visible. If you tweak the depth, you can also
+	 * "point" it to a reply comment.
+	 *
+	 * @param { string } comment The comment text.
+	 * @param { number } depth How nested you want to check. The first comment has
+	 * a depth of 1, while the first reply to it would have a depth of 2.
+	 */
+	async verifyCommentIsVisible( comment, depth = 1 ) {
+		const commentLocator = By.xpath(
+			`//li[contains(@class,'depth-${ depth }')]//div[@class='comment-content']/p[.='${ comment }']`
 		);
+
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, commentLocator );
 	}
 }

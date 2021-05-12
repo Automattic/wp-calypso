@@ -14,13 +14,14 @@ import Stream from 'calypso/reader/stream';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from './empty';
 import TagStreamHeader from './header';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import HeaderBack from 'calypso/reader/header-back';
 import { getReaderTags, getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
 import QueryReaderTag from 'calypso/components/data/query-reader-tag';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -89,7 +90,7 @@ class TagStream extends React.Component {
 			isFollowing ? 'Clicked Unfollow Topic' : 'Clicked Follow Topic',
 			decodedTagSlug
 		);
-		recordTrack(
+		this.props.recordReaderTracksEvent(
 			isFollowing ? 'calypso_reader_reader_tag_unfollowed' : 'calypso_reader_reader_tag_followed',
 			{
 				tag: decodedTagSlug,
@@ -134,7 +135,7 @@ class TagStream extends React.Component {
 				listName={ this.state.title }
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
-				forcePlaceholders={ ! tag } // if tag hasn't loaded yet, then make everything a placeholder
+				forcePlaceholders={ ! tag } // if tag has not loaded yet, then make everything a placeholder
 			>
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
@@ -165,6 +166,7 @@ export default connect(
 	} ),
 	{
 		followTag: requestFollowTag,
+		recordReaderTracksEvent,
 		unfollowTag: requestUnfollowTag,
 	}
 )( localize( TagStream ) );

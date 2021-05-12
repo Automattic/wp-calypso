@@ -8,6 +8,8 @@ import { get } from 'lodash';
  */
 import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-happychat-client-connected';
 
+import 'calypso/state/happychat/init';
+
 /**
  * Returns true if Happychat client is connected and server is available to take new chats
  *

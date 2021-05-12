@@ -17,7 +17,6 @@ export const responseCartWithRenewal = {
 			volume: 1,
 			extra: {
 				purchaseId: '1234',
-				purchaseDomain: 'userpersonalsitetest1234.wordpress.com',
 				purchaseType: 'renewal',
 				context: 'calypstore',
 				registrar: 'OpenSRS',
@@ -45,13 +44,9 @@ export const responseCartWithRenewal = {
 export const storeData = () => ( {
 	currentUser: {
 		id: 123,
+		user: {},
 		capabilities: {},
 		flags: [ 'calypso_allow_nonprimary_domains_without_plan' ],
-	},
-	users: {
-		items: {
-			'123': {},
-		},
 	},
 	purchases: {
 		hasLoadedUserPurchasesFromServer: true,
@@ -277,7 +272,6 @@ export const storeData = () => ( {
 				product_id: 1009,
 				product_name: 'Plan',
 				meta: null,
-				prices: {},
 				path_slug: 'personal',
 				product_slug: 'personal-bundle',
 				product_type: 'bundle',
@@ -330,31 +324,26 @@ export const storeData = () => ( {
 				product_id: 1009,
 				product_name: 'Plan',
 				product_slug: 'personal-bundle',
-				prices: {},
 			},
 			domain_map: {
 				product_id: 5,
 				product_name: 'Product',
 				product_slug: 'domain_map',
-				prices: {},
 			},
 			domain_reg: {
 				product_id: 6,
 				product_name: 'Product',
 				product_slug: 'domain_reg',
-				prices: {},
 			},
 			premium_theme: {
 				product_id: 39,
 				product_name: 'Product',
 				product_slug: 'premium_theme',
-				prices: {},
 			},
 			'concierge-session': {
 				product_id: 371,
 				product_name: 'Product',
 				product_slug: 'concierge-session',
-				prices: {},
 			},
 		},
 	},

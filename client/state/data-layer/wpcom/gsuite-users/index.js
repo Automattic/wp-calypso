@@ -16,6 +16,7 @@ import {
 } from 'calypso/state/gsuite-users/actions';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 
 export const getGSuiteUsers = ( action ) => {
 	return http(
@@ -29,7 +30,14 @@ export const getGSuiteUsers = ( action ) => {
 
 export const getGSuiteUsersFailure = ( action, error ) => {
 	return [
-		errorNotice( translate( 'Failed to retrieve G Suite Users' ) ),
+		errorNotice(
+			translate( 'Failed to retrieve %(googleMailService)s users', {
+				args: {
+					googleMailService: getGoogleMailServiceFamily(),
+				},
+				comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+			} )
+		),
 		receiveGetGSuiteUsersFailure( action.siteId, error ),
 	];
 };

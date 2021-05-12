@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, find, noop, assign } from 'lodash';
+import { get, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,6 +30,8 @@ import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class TermFormDialog extends Component {
 	static initialState = {
@@ -160,9 +162,10 @@ class TermFormDialog extends Component {
 		if ( ! props.term ) {
 			if ( props.searchTerm && props.searchTerm.trim().length ) {
 				this.setState(
-					assign( {}, this.constructor.initialState, {
+					{
+						...this.constructor.initialState,
 						name: props.searchTerm,
-					} ),
+					},
 					this.isValid
 				);
 				return;
@@ -173,14 +176,13 @@ class TermFormDialog extends Component {
 		}
 
 		const { name, description, parent = false } = props.term;
-		this.setState(
-			assign( {}, this.constructor.initialState, {
-				name,
-				description,
-				isTopLevel: parent ? false : true,
-				selectedParent: parent ? [ parent ] : [],
-			} )
-		);
+		this.setState( {
+			...this.constructor.initialState,
+			name,
+			description,
+			isTopLevel: parent ? false : true,
+			selectedParent: parent ? [ parent ] : [],
+		} );
 	}
 
 	UNSAFE_componentWillReceiveProps( newProps ) {

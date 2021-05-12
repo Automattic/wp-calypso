@@ -4,12 +4,15 @@
 import '@automattic/calypso-polyfills';
 import * as React from 'react';
 import ReactDom from 'react-dom';
+import { isEqual } from 'lodash';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
-import config from '../../config';
+import config from '@automattic/calypso-config';
 import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import type { Site as SiteStore } from '@automattic/data-stores';
-import { xorWith, isEqual, isEmpty, shuffle } from 'lodash';
+import accessibleFocus from '@automattic/accessible-focus';
+import { getAvailableDesigns } from '@automattic/design-picker';
+import type { Design } from '@automattic/design-picker';
 
 /**
  * Internal dependencies
@@ -17,14 +20,11 @@ import { xorWith, isEqual, isEmpty, shuffle } from 'lodash';
 import Gutenboard from './gutenboard';
 import { LocaleContext } from './components/locale-context';
 import { setupWpDataDebug } from './devtools';
-import accessibleFocus from 'calypso/lib/accessible-focus';
-import availableDesigns from './available-designs';
 import { Step, path } from './path';
 import { SITE_STORE } from './stores/site';
 import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { WindowLocaleEffectManager } from './components/window-locale-effect-manager';
-import type { Design } from './stores/onboard/types';
 
 /**
  * Style dependencies
@@ -42,26 +42,13 @@ function generateGetSuperProps() {
 }
 
 type Site = SiteStore.SiteDetails;
-
 interface AppWindow extends Window {
 	BUILD_TARGET?: string;
 }
+
 declare const window: AppWindow;
 
-/**
- * Handle redirects from development phase
- * TODO: Remove after a few months. See section definition as well.
- */
-const DEVELOPMENT_BASENAME = '/gutenboarding';
-
 window.AppBoot = async () => {
-	if ( window.location.pathname.startsWith( DEVELOPMENT_BASENAME ) ) {
-		const url = new URL( window.location.href );
-		url.pathname = 'new' + url.pathname.substring( DEVELOPMENT_BASENAME.length );
-		window.location.replace( url.toString() );
-		return;
-	}
-
 	setupWpDataDebug();
 	// User is left undefined here because the user account will not be created
 	// until after the user has completed the gutenboarding flow.
@@ -71,9 +58,11 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	try {
-		checkAndRedirectIfSiteWasCreatedRecently();
-	} catch {}
+	// If site was recently created, redirect to customer site home.
+	const shouldRedirect = await checkAndRedirectIfSiteWasCreatedRecently();
+	if ( shouldRedirect ) {
+		return;
+	}
 
 	// Update list of randomized designs in the gutenboarding session store
 	ensureRandomizedDesignsAreUpToDate();
@@ -118,7 +107,7 @@ async function checkAndRedirectIfSiteWasCreatedRecently() {
 				const diffMinutes = diff / 1000 / 60;
 				if ( diffMinutes < 10 && diffMinutes >= 0 ) {
 					window.location.replace( `/home/${ selectedSiteDetails.ID }` );
-					return;
+					return true;
 				}
 			}
 		}
@@ -135,40 +124,50 @@ function waitForSelectedSite(): Promise< Site | undefined > {
 			return resolve( undefined );
 		}
 		unsubscribe = subscribe( () => {
-			const resolvedSelectedSite = select( SITE_STORE ).getSite( selectedSite );
-			if ( resolvedSelectedSite ) {
-				resolve( resolvedSelectedSite );
-			}
-
-			if ( ! select( 'core/data' ).isResolving( SITE_STORE, 'getSite', [ selectedSite ] ) ) {
-				resolve( undefined );
+			if (
+				select( 'core/data' ).hasFinishedResolution( SITE_STORE, 'getSite', [ selectedSite ] )
+			) {
+				resolve( select( SITE_STORE ).getSite( selectedSite ) );
 			}
 		} );
 		select( SITE_STORE ).getSite( selectedSite );
 	} ).finally( unsubscribe );
 }
 /**
- * If available-designs-config.json has been updated, replace the cached list
- * of designs with the updated designs
+ * If the list of available designs (stored in the `@automattic/design-picker` package)
+ * has been updated, replace the cached list of designs with the updated designs.
  */
 function ensureRandomizedDesignsAreUpToDate() {
 	const designsInStore = select( ONBOARD_STORE ).getRandomizedDesigns();
-	if ( ! isDeepEqual( designsInStore.featured, availableDesigns.featured ) ) {
-		dispatch( ONBOARD_STORE ).setRandomizedDesigns( {
-			...availableDesigns,
-			featured: shuffle( availableDesigns.featured ),
-		} );
+	const availableDesigns = getAvailableDesigns();
+	if ( areCachedDesignsOutOfDate( designsInStore.featured, availableDesigns.featured ) ) {
+		dispatch( ONBOARD_STORE ).setRandomizedDesigns( getAvailableDesigns( { randomize: true } ) );
 	}
 }
 
 /**
  *
- * Compare cached designs in the ONBOARD_STORE to the source of designs in
- * available-designs-config.json
+ * Compare cached designs in the ONBOARD_STORE to the source of designs defined
+ * in the `@automattic/design-picker` package, in order to check if the two lists
+ * contains exactly the same designs.
  *
  * @param stored randomizedDesigns cached in WP_ONBOARD
- * @param available designs sourced from available-designs-config.json
+ * @param available designs sourced from the `@automattic/design-picker` package
  */
-function isDeepEqual( stored: Design[], available: Design[] ): boolean {
-	return isEmpty( xorWith( stored, available, isEqual ) );
+function areCachedDesignsOutOfDate( stored: Design[], available: Design[] ): boolean {
+	const keyDesignsBySlug = (
+		designsByKey: Record< string, Design >,
+		currentDesign: Design
+	): Record< string, Design > => ( {
+		...designsByKey,
+		[ currentDesign.slug ]: currentDesign,
+	} );
+
+	// Transform the lists of designs in a dictionary where the key is a design's slug
+	const storedBySlug = stored.reduce( keyDesignsBySlug, {} );
+	const availableBySlug = available.reduce( keyDesignsBySlug, {} );
+
+	// If the two design maps are not deeply equal, it means that the
+	// cached designs are out of date.
+	return ! isEqual( storedBySlug, availableBySlug );
 }

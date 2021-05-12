@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import {
 	Button,
 	FormStatus,
@@ -63,6 +63,7 @@ function ButtonContents( { formStatus, total } ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === FormStatus.READY ) {
+		/* translators: %s is the total to be paid in localized currency */
 		return sprintf( __( 'Pay %s with credits' ), total );
 	}
 	return __( 'Please wait…' );
@@ -75,9 +76,12 @@ function WordPressCreditsLabel() {
 	return (
 		<React.Fragment>
 			<div>
-				{ sprintf( __( 'WordPress.com Credits: %(amount)s available' ), {
-					amount: responseCart.credits_display,
-				} ) }
+				{
+					/* translators: %(amount)s is the total amount of credits available in localized currency */
+					sprintf( __( 'WordPress.com Credits: %(amount)s available' ), {
+						amount: responseCart.credits_display,
+					} )
+				}
 			</div>
 			<WordPressLogo />
 		</React.Fragment>

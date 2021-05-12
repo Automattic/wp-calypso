@@ -9,9 +9,11 @@ import type {
 	SiteError,
 	Cart,
 	Domain,
+	SiteLaunchError as SiteLaunchErrorType,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest } from '../wpcom-request-controls';
+import { SiteLaunchError } from './types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const fetchSite = () => ( {
@@ -53,7 +55,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				validate: false,
 			};
 
-			const newSite = yield wpcomRequest( {
+			const newSite: NewSiteSuccessResponse = yield wpcomRequest( {
 				path: '/sites/new',
 				apiVersion: '1.1',
 				method: 'post',
@@ -95,24 +97,39 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		type: 'RESET_RECEIVE_NEW_SITE_FAILED' as const,
 	} );
 
-	const launchedSite = ( siteId: number ) => ( {
-		type: 'LAUNCHED_SITE' as const,
+	const launchSiteStart = ( siteId: number ) => ( {
+		type: 'LAUNCH_SITE_START' as const,
 		siteId,
 	} );
 
+	const launchSiteSuccess = ( siteId: number ) => ( {
+		type: 'LAUNCH_SITE_SUCCESS' as const,
+		siteId,
+	} );
+
+	const launchSiteFailure = ( siteId: number, error: SiteLaunchErrorType ) => ( {
+		type: 'LAUNCH_SITE_FAILURE' as const,
+		siteId,
+		error,
+	} );
+
 	function* launchSite( siteId: number ) {
-		yield wpcomRequest( {
-			path: `/sites/${ siteId }/launch`,
-			apiVersion: '1.1',
-			method: 'post',
-		} );
-		yield launchedSite( siteId );
-		return true;
+		yield launchSiteStart( siteId );
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ siteId }/launch`,
+				apiVersion: '1.1',
+				method: 'post',
+			} );
+			yield launchSiteSuccess( siteId );
+		} catch ( _ ) {
+			yield launchSiteFailure( siteId, SiteLaunchError.INTERNAL );
+		}
 	}
 
 	// TODO: move getCart and setCart to a 'cart' data-store
 	function* getCart( siteId: number ) {
-		const success = yield wpcomRequest( {
+		const success: Cart = yield wpcomRequest( {
 			path: '/me/shopping-cart/' + siteId,
 			apiVersion: '1.1',
 			method: 'GET',
@@ -127,7 +144,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	} );
 
 	function* setCart( siteId: number, cartData: Cart ) {
-		const success = yield wpcomRequest( {
+		const success: Cart = yield wpcomRequest( {
 			path: '/me/shopping-cart/' + siteId,
 			apiVersion: '1.1',
 			method: 'POST',
@@ -163,7 +180,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSiteFailed,
 		reset,
 		launchSite,
-		launchedSite,
+		launchSiteStart,
+		launchSiteSuccess,
+		launchSiteFailure,
 		getCart,
 		setCart,
 	};
@@ -183,7 +202,9 @@ export type Action =
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'reset' ]
 			| ActionCreators[ 'resetNewSiteFailed' ]
-			| ActionCreators[ 'launchedSite' ]
+			| ActionCreators[ 'launchSiteStart' ]
+			| ActionCreators[ 'launchSiteSuccess' ]
+			| ActionCreators[ 'launchSiteFailure' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

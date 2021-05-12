@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { includes, filter, map, noop, reduce, union } from 'lodash';
+import { includes, filter, map, reduce } from 'lodash';
 import { WindowScroller } from '@automattic/react-virtualized';
 
 /**
@@ -31,6 +31,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 const DEFAULT_TERMS_PER_PAGE = 100;
 const LOAD_OFFSET = 10;
 const ITEM_HEIGHT = 55;
+const noop = () => {};
 
 export class TaxonomyManagerList extends Component {
 	static propTypes = {
@@ -137,7 +138,7 @@ export class TaxonomyManagerList extends Component {
 
 	requestPages = ( pages ) => {
 		this.setState( {
-			requestedPages: union( this.state.requestedPages, pages ),
+			requestedPages: [ ...new Set( [].concat( this.state.requestedPages, pages ) ) ],
 		} );
 	};
 

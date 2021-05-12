@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { flatten, partialRight, sumBy } from 'lodash';
+import { flatten, partialRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -97,7 +97,6 @@ function getAggregation( props ) {
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/* eslint-disable jsx-a11y/no-onchange */
 
 class GoogleMyBusinessStatsChart extends Component {
 	static propTypes = {
@@ -238,7 +237,7 @@ class GoogleMyBusinessStatsChart extends Component {
 			return false;
 		}
 
-		return sumBy( flatten( transformedData ), 'value' ) === 0;
+		return flatten( transformedData ).reduce( ( sum, { value } ) => sum + value, 0 ) === 0;
 	}
 
 	renderChartNotice() {
@@ -311,7 +310,6 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 }
 /* eslint-enable wpcalypso/jsx-classname-namespace */
-/* eslint-enable jsx-a11y/no-onchange */
 
 export default connect(
 	( state, ownProps ) => {

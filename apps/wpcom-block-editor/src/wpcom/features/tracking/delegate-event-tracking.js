@@ -8,6 +8,7 @@ import debugFactory from 'debug';
  */
 import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
 import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
+import wpcomInserterTabPanelSelected from './wpcom-inserter-tab-panel-selected';
 import wpcomBlockDonationsPlanUpgrade from './wpcom-block-donations-plan-upgrade';
 import wpcomBlockDonationsStripeConnect from './wpcom-block-donations-stripe-connect';
 import wpcomBlockPremiumContentPlanUpgrade from './wpcom-block-premium-content-plan-upgrade';
@@ -25,6 +26,7 @@ const debug = debugFactory( 'wpcom-block-editor:tracking' );
 const EVENTS_MAPPING = [
 	wpcomBlockEditorCloseClick(),
 	wpcomInserterInlineSearchTerm(),
+	wpcomInserterTabPanelSelected(),
 	wpcomBlockDonationsPlanUpgrade(),
 	wpcomBlockDonationsStripeConnect(),
 	wpcomBlockPremiumContentPlanUpgrade(),
@@ -36,9 +38,9 @@ const EVENTS_MAPPING = [
  * the desired target element. Accounts for event
  * bubbling.
  *
- * @param  {DOMEvent} event          the DOM event
+ * @param  {object} event          the DOM Event
  * @param  {string|Function} targetSelector the CSS selector for the target element
- * @returns {Node}                the target element if found
+ * @returns {object}                the target Element if found
  */
 const getMatchingEventTarget = ( event, targetSelector ) => {
 	if ( typeof targetSelector === 'function' ) {

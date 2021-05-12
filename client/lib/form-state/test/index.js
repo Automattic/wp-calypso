@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, constant, mapValues, zipObject } from 'lodash';
+import { mapValues, zipObject } from 'lodash';
 import assert from 'assert';
 
 /**
@@ -26,12 +26,15 @@ function testController( options ) {
 
 	const defaults = {
 		loadFunction: function ( onComplete ) {
-			const fieldValues = zipObject( fieldNames, fieldNames.map( constant( 'loaded' ) ) );
+			const fieldValues = zipObject(
+				fieldNames,
+				fieldNames.map( () => 'loaded' )
+			);
 			onComplete( null, fieldValues );
 		},
 
 		validatorFunction: function ( fieldValues, onComplete ) {
-			const fieldErrors = mapValues( fieldValues, constant( [] ) );
+			const fieldErrors = mapValues( fieldValues, () => [] );
 			onComplete( null, fieldErrors );
 		},
 
@@ -40,7 +43,7 @@ function testController( options ) {
 		debounceWait: 0,
 	};
 
-	return formState.Controller( assign( defaults, options ) );
+	return formState.Controller( { ...defaults, ...options } );
 }
 
 describe( 'index', () => {

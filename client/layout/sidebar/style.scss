@@ -38,6 +38,13 @@
 	li {
 		list-style: none;
 	}
+
+	.count {
+		margin-left: 8px;
+		background-color: var( --color-sidebar-menu-hover-background );
+		border-color: var( --color-sidebar-menu-hover-background );
+		color: var( --color-sidebar-menu-hover-text );
+	}
 }
 
 // This button is hidden until focused. It allows screen-readers
@@ -141,15 +148,8 @@
 		}
 	}
 
-	.count {
-		margin-left: 8px;
-		color: var( --color-sidebar-menu-hover-text );
-		background-color: var( --color-sidebar-menu-hover-background );
-		border-color: var( --color-sidebar-menu-hover-background );
-		line-height: 0;
-		padding: 8px 6px;
-		position: absolute;
-		top: 10px;
+	&:focus {
+		outline: none;
 	}
 
 	.badge {
@@ -160,6 +160,10 @@
 	.selected &:hover {
 		color: var( --color-sidebar-menu-selected-text );
 		background-color: var( --color-sidebar-menu-selected-background );
+
+		.stats-sparkline {
+			--color-stats-sparkline: var( --color-sidebar-menu-selected-text );
+		}
 
 		.sidebar__menu-icon {
 			fill: var( --color-sidebar-menu-selected-text );
@@ -200,7 +204,7 @@
 	font-weight: 600;
 	font-size: $font-body-extra-small;
 	position: absolute;
-	right: 28px;
+	right: 0;
 	z-index: 1;
 	color: var( --color-sidebar-text-alternative );
 	padding: 4px 8px;
@@ -228,6 +232,12 @@
 			.sidebar__expandable-arrow {
 				fill: var( --color-sidebar-menu-hover-text );
 			}
+
+			.count {
+				background-color: transparent;
+				border-color: var( --color-sidebar-submenu-selected-text );
+				color: var( --color-sidebar-submenu-selected-text );
+			}
 		}
 	}
 
@@ -248,6 +258,11 @@
 		.sidebar__expandable-arrow {
 			transform: rotate( 180deg );
 		}
+		.count {
+			background-color: transparent;
+			border-color: var( --color-sidebar-submenu-selected-text );
+			color: var( --color-sidebar-submenu-selected-text );
+		}
 	}
 }
 
@@ -257,4 +272,8 @@
 .sidebar__wp-admin,
 .sidebar__footer {
 	margin-top: 16px;
+}
+
+.sidebar__menu-wrapper {
+	border-top: 1px solid var( --color-sidebar-border );
 }

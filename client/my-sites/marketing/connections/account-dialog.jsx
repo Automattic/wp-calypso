@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { filter, find, identity, isEqual } from 'lodash';
+import { filter, find, isEqual } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 
@@ -38,7 +38,6 @@ class AccountDialog extends Component {
 		isVisible: true,
 		onAccountSelected: () => {},
 		service: Object.freeze( {} ),
-		translate: identity,
 		warningNotice: () => {},
 	};
 

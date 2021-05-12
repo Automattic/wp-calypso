@@ -3,15 +3,16 @@
  */
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import debugFactory from 'debug';
-import type { ResponseCart } from '@automattic/shopping-cart';
+import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
 
 /**
  * Internal dependencies
  */
-import { isExternal } from 'calypso/lib/url';
-import config from 'calypso/config';
+import { isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
+import config from '@automattic/calypso-config';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	hasRenewalItem,
 	getAllCartItems,
@@ -24,11 +25,16 @@ import {
 	hasBusinessPlan,
 	hasEcommercePlan,
 	hasMonthlyCartItem,
+	hasTrafficGuide,
 } from 'calypso/lib/cart-values/cart-items';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
-import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
-import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
+import {
+	JETPACK_PRODUCTS_LIST,
+	JETPACK_RESET_PLANS,
+	JETPACK_REDIRECT_URL,
+	redirectCloudCheckoutToWpAdmin,
+} from '@automattic/calypso-products';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import { abtest } from 'calypso/lib/abtest';
 
@@ -54,32 +60,37 @@ export default function getThankYouPageUrl( {
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
-	redirectTo: string | undefined;
+	redirectTo?: string | undefined;
 	receiptId: number | undefined;
 	orderId: number | undefined;
 	purchaseId: number | undefined;
 	feature: string | undefined;
 	cart: ResponseCart | undefined;
-	isJetpackNotAtomic: boolean;
+	isJetpackNotAtomic?: boolean;
 	productAliasFromUrl: string | undefined;
 	getUrlFromCookie?: GetUrlFromCookie;
 	saveUrlToCookie?: SaveUrlToCookie;
-	isEligibleForSignupDestinationResult: boolean;
-	hideNudge: boolean;
+	isEligibleForSignupDestinationResult?: boolean;
+	hideNudge?: boolean;
 	isInEditor?: boolean;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
-	// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
-	// This is required for Jetpack's (and WP.com's) paid blocks Upgrade Nudge.
-	if ( redirectTo && ! isExternal( redirectTo ) ) {
-		debug( 'has external redirectTo, so returning that', redirectTo );
-		return redirectTo;
-	}
+	// (i.e. on WordPress.com), the same site as the cart's site, or a Jetpack or WP.com
+	// site's block editor (in wp-admin). This is required for Jetpack's (and WP.com's)
+	// paid blocks Upgrade Nudge.
 	if ( redirectTo ) {
 		const { protocol, hostname, port, pathname, query } = parseUrl( redirectTo, true, true );
 
+		if ( resemblesUrl( redirectTo ) && hostname && urlToSlug( hostname ) === siteSlug ) {
+			debug( 'has same site redirectTo, so returning that', redirectTo );
+			return redirectTo;
+		}
+		if ( ! isExternal( redirectTo ) ) {
+			debug( 'has a redirectTo that is not external, so returning that', redirectTo );
+			return redirectTo;
+		}
 		// We cannot simply compare `hostname` to `siteSlug`, since the latter
 		// might contain a path in the case of Jetpack subdirectory installs.
 		if ( adminUrl && redirectTo.startsWith( `${ adminUrl }post.php?` ) ) {
@@ -100,6 +111,13 @@ export default function getThankYouPageUrl( {
 		debug( 'ignorning redirectTo', redirectTo );
 	}
 
+	// If there's a redirect URL set on a product in the cart, use the most recent one.
+	const urlFromCart = cart ? getRedirectUrlFromCart( cart ) : null;
+	if ( urlFromCart ) {
+		debug( 'returning url from cart', urlFromCart );
+		return urlFromCart;
+	}
+
 	// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
 	// The `:receiptId` string is filled in by our pending page after the PayPal checkout
 	const pendingOrReceiptId = getPendingOrReceiptId( receiptId, orderId, purchaseId );
@@ -108,18 +126,27 @@ export default function getThankYouPageUrl( {
 	const fallbackUrl = getFallbackDestination( {
 		pendingOrReceiptId,
 		siteSlug,
+		adminUrl,
 		feature,
 		cart,
-		isJetpackNotAtomic,
+		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
 		productAliasFromUrl,
 	} );
 	debug( 'fallbackUrl is', fallbackUrl );
+
+	// If receipt ID is 'noPreviousPurchase', then send the user to a generic page (not post-purchase related).
+	// For example, this case arises when a Skip button is clicked on a concierge upsell
+	// nudge opened by a direct link to /checkout/offer-support-session.
+	if ( 'noPreviousPurchase' === pendingOrReceiptId ) {
+		debug( 'receipt ID is "noPreviousPurchase", so returning: ', fallbackUrl );
+		return fallbackUrl;
+	}
 
 	saveUrlToCookieIfEcomm( saveUrlToCookie, cart, fallbackUrl );
 
 	// If the user is making a purchase/upgrading within the editor,
 	// we want to return them back to the editor after the purchase is successful.
-	if ( isInEditor && ! hasEcommercePlan( cart ) ) {
+	if ( isInEditor && cart && ! hasEcommercePlan( cart ) ) {
 		saveUrlToCookie( window?.location.href );
 	}
 
@@ -129,29 +156,18 @@ export default function getThankYouPageUrl( {
 	const urlFromCookie = getUrlFromCookie();
 	debug( 'cookie url is', urlFromCookie );
 
-	if ( cart && hasRenewalItem( cart ) ) {
-		const renewalItem = getRenewalItems( cart )[ 0 ];
-		const managePurchaseUrl = managePurchase(
-			renewalItem.extra.purchaseDomain,
-			renewalItem.extra.purchaseId
-		);
-		debug(
-			'renewal item in cart',
-			renewalItem,
-			'so returning managePurchaseUrl',
-			managePurchaseUrl
-		);
-		return managePurchaseUrl;
-	}
-
-	// If cart is empty, then send the user to a generic page (not post-purchase related).
-	// For example, this case arises when a Skip button is clicked on a concierge upsell
-	// nudge opened by a direct link to /offer-support-session.
-	const isCartEmpty = cart && getAllCartItems( cart ).length === 0;
-	if ( ':receiptId' === pendingOrReceiptId && isCartEmpty ) {
-		const emptyCartUrl = urlFromCookie || fallbackUrl;
-		debug( 'cart is empty or receipt ID is pending, so returning', emptyCartUrl );
-		return emptyCartUrl;
+	if ( cart && hasRenewalItem( cart ) && siteSlug ) {
+		const renewalItem: ResponseCartProduct = getRenewalItems( cart )[ 0 ];
+		if ( renewalItem && renewalItem.subscription_id ) {
+			const managePurchaseUrl = managePurchase( siteSlug, renewalItem.subscription_id );
+			debug(
+				'renewal item in cart',
+				renewalItem,
+				'so returning managePurchaseUrl',
+				managePurchaseUrl
+			);
+			return managePurchaseUrl;
+		}
 	}
 
 	// Domain only flow
@@ -167,7 +183,7 @@ export default function getThankYouPageUrl( {
 		orderId,
 		cart,
 		siteSlug,
-		hideNudge,
+		hideNudge: Boolean( hideNudge ),
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		debug( 'redirect for concierge exists, so returning', redirectPathForConciergeUpsell );
@@ -175,11 +191,23 @@ export default function getThankYouPageUrl( {
 	}
 
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
-	// when purchasing a concierge session.
+	// when purchasing a concierge session or when purchasing the Ultimate Traffic Guide
 	const displayModeParam = getDisplayModeParamFromCart( cart );
+
+	const thankYouPageUrlForTrafficGuide = getThankYouPageUrlForTrafficGuide( {
+		cart,
+		siteSlug,
+		pendingOrReceiptId,
+	} );
+	if ( thankYouPageUrlForTrafficGuide ) {
+		return getUrlWithQueryParam( thankYouPageUrlForTrafficGuide, displayModeParam );
+	}
+
 	if ( isEligibleForSignupDestinationResult && urlFromCookie ) {
 		debug( 'is eligible for signup destination', urlFromCookie );
-		return getUrlWithQueryParam( urlFromCookie, displayModeParam );
+		const noticeType = getNoticeType( cart );
+		const queryParams = { ...displayModeParam, ...noticeType };
+		return getUrlWithQueryParam( urlFromCookie, queryParams );
 	}
 	debug( 'returning fallback url', fallbackUrl );
 	return getUrlWithQueryParam( fallbackUrl, displayModeParam );
@@ -205,6 +233,7 @@ function getPendingOrReceiptId(
 function getFallbackDestination( {
 	pendingOrReceiptId,
 	siteSlug,
+	adminUrl,
 	feature,
 	cart,
 	isJetpackNotAtomic,
@@ -212,6 +241,7 @@ function getFallbackDestination( {
 }: {
 	pendingOrReceiptId: string;
 	siteSlug: string | undefined;
+	adminUrl: string | undefined;
 	feature: string | undefined;
 	cart: ResponseCart | undefined;
 	isJetpackNotAtomic: boolean;
@@ -219,6 +249,11 @@ function getFallbackDestination( {
 } ): string {
 	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
 	const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
+
+	if ( 'noPreviousPurchase' === pendingOrReceiptId ) {
+		debug( 'fallback is just root' );
+		return '/';
+	}
 
 	// We will show the Thank You page if there's a site slug and either one of the following is true:
 	// - has a receipt number
@@ -242,6 +277,20 @@ function getFallbackDestination( {
 			);
 		if ( isJetpackNotAtomic && purchasedProduct ) {
 			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
+
+			// Jetpack Cloud will either redirect to wp-admin (if JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN
+			// flag is set), or otherwise will redirect to a Jetpack Redirect API url (source=jetpack-checkout-thankyou)
+			if ( isJetpackCloud() ) {
+				if ( redirectCloudCheckoutToWpAdmin() && adminUrl ) {
+					debug( 'checkout is Jetpack Cloud, returning wp-admin url' );
+					return `${ adminUrl }admin.php?page=jetpack#/recommendations`;
+				}
+				debug( 'checkout is Jetpack Cloud, returning Jetpack Redirect API url' );
+				return `${ JETPACK_REDIRECT_URL }&site=${ siteSlug }&query=${ encodeURIComponent(
+					`product=${ purchasedProduct }&thank-you=true`
+				) }`;
+			}
+			// Otherwise if not Jetpack Cloud:
 			return `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
 		}
 
@@ -256,6 +305,7 @@ function getFallbackDestination( {
 				? `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ pendingOrReceiptId }`
 				: `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
 		debug( 'site with receipt or cart; feature is', feature );
+
 		return siteWithReceiptOrCartUrl;
 	}
 
@@ -263,6 +313,7 @@ function getFallbackDestination( {
 		debug( 'just site slug', siteSlug );
 		return `/checkout/thank-you/${ siteSlug }`;
 	}
+
 	debug( 'fallback is just root' );
 	return '/';
 }
@@ -285,6 +336,7 @@ function maybeShowPlanBumpOffer( {
 		const upgradeItem = hasMonthlyCartItem( cart ) ? 'business-monthly' : 'business';
 		return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
 	}
+
 	return;
 }
 
@@ -360,11 +412,22 @@ function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< 
 	if ( cart && hasConciergeSession( cart ) ) {
 		return { d: 'concierge' };
 	}
+	if ( cart && hasTrafficGuide( cart ) ) {
+		return { d: 'traffic-guide' };
+	}
+	return {};
+}
+
+function getNoticeType( cart: ResponseCart | undefined ): Record< string, string > {
+	if ( cart ) {
+		return { notice: 'purchase-success' };
+	}
+
 	return {};
 }
 
 function getUrlWithQueryParam( url: string, queryParams: Record< string, string > ): string {
-	const { protocol, hostname, port, pathname, query } = parseUrl( url, true );
+	const { protocol, hostname, port, pathname, query, hash } = parseUrl( url, true );
 
 	return formatUrl( {
 		protocol,
@@ -375,6 +438,7 @@ function getUrlWithQueryParam( url: string, queryParams: Record< string, string 
 			...query,
 			...queryParams,
 		},
+		hash,
 	} );
 }
 
@@ -420,4 +484,41 @@ function modifyCookieUrlIfAtomic(
 	if ( updatedUrl !== urlFromCookie ) {
 		saveUrlToCookie( updatedUrl );
 	}
+}
+
+function getThankYouPageUrlForTrafficGuide( {
+	cart,
+	siteSlug,
+	pendingOrReceiptId,
+}: {
+	cart: ResponseCart | undefined;
+	siteSlug: string | undefined;
+	pendingOrReceiptId: string;
+} ) {
+	if ( ! cart ) return;
+	if ( hasTrafficGuide( cart ) ) {
+		return `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
+	}
+}
+
+function getRedirectUrlFromCart( cart: ResponseCart ): string | null {
+	const firstProductWithUrl = cart.products.reduce(
+		( mostRecent: ResponseCartProduct | null, product: ResponseCartProduct ) => {
+			if ( product.extra?.afterPurchaseUrl ) {
+				if ( ! mostRecent ) {
+					return product;
+				}
+				if ( product.time_added_to_cart > mostRecent.time_added_to_cart ) {
+					return product;
+				}
+			}
+			return mostRecent;
+		},
+		null
+	);
+	debug(
+		'looking for redirect url in cart products found',
+		firstProductWithUrl?.extra.afterPurchaseUrl
+	);
+	return firstProductWithUrl?.extra.afterPurchaseUrl ?? null;
 }

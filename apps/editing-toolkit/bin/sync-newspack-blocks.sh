@@ -123,6 +123,7 @@ cp -R $CODE/src/blocks/homepage-articles $TARGET/blocks/
 cp -R $CODE/src/blocks/carousel $TARGET/blocks/
 cp -R $CODE/src/shared $TARGET/
 cp -R $CODE/src/components $TARGET/
+cp -R $CODE/amp $TARGET/
 
 echo "Fixing the text domains…"
 echo -n "eslint --fix: "

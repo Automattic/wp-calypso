@@ -62,3 +62,5 @@ registerHandlers( 'state/data-layer/wpcom/sites/stats/visits/index.js', {
 		} ),
 	],
 } );
+
+export default {};

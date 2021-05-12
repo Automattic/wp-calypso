@@ -1,9 +1,9 @@
 === WordPress.com Editing Toolkit ===
-Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, iandstewart, jeryj, Joen, jonsurrell, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, noahtallen, nosolosw, nrqsnchz, obenland, okenobi, owolski, philipmjackson, vindl
+Contributors: automattic
 Tags: block, blocks, editor, gutenberg, page
-Requires at least: 5.0
-Tested up to: 5.5
-Stable tag: 2.8.6
+Requires at least: 5.5
+Tested up to: 5.6
+Stable tag: 2.21
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,158 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+View the commit history here: https://github.com/Automattic/wp-calypso/commits/trunk/apps/editing-toolkit
+
+= 2.21 =
+* Focused Launch: redirect to checkout after launch for eCommerce plan in Calypso (https://github.com/Automattic/wp-calypso/pull/50267)
+* Focused Launch: Once there is a plan selected, do not use plan from cart anymore. (https://github.com/Automattic/wp-calypso/pull/50276)
+* Set an order for page layout categories (https://github.com/Automattic/wp-calypso/pull/50110)
+* Focused Launch: show Name your site step for non-EN sites (https://github.com/Automattic/wp-calypso/pull/50311)
+
+= 2.20 =
+* Page layout picker: Fix broken web fonts in page layout picker large preview (https://github.com/Automattic/wp-calypso/pull/50253)
+* Move page template modal into its own package (https://github.com/Automattic/wp-calypso/pull/49661)
+* Patterns: Reveal the Featured pattern category and make it the first in the list (https://github.com/Automattic/wp-calypso/pull/49907)
+* Focused Launch - Summary View: Fix incorrect HE support link (https://github.com/Automattic/wp-calypso/pull/50115)
+* Update Newspack Blocks to v1.21.0 (https://github.com/Automattic/wp-calypso/pull/50154)
+* Focused Launch: Only launch site if checkout is complete (https://github.com/Automattic/wp-calypso/pull/48452)
+* Launch: Cleanup calypsoifyGutenberg (https://github.com/Automattic/wp-calypso/pull/49067)
+* Remove Anchor-specific welcome guide (https://github.com/Automattic/wp-calypso/pull/50161)
+* Patterns: Allow custom viewport width when registering patterns (https://github.com/Automattic/wp-calypso/pull/49906)
+* Disable premium block patterns feature due to performance issues (https://github.com/Automattic/wp-calypso/pull/50111)
+* Focused Launch: Fix billing period tracking in summary (https://github.com/Automattic/wp-calypso/pull/49930)
+* Focused Launch: Fix domain picker item flex spacing (https://github.com/Automattic/wp-calypso/pull/49883)
+
+= 2.19 =
+* Unhide draft button when site hasn't launched yet. (https://github.com/Automattic/wp-calypso/pull/49766)
+* Fix issues in Focused Launch
+
+= 2.18 =
+* Introduces a "What's New" dialogue for the editor. (https://github.com/Automattic/wp-calypso/pull/48722)
+* Updates newspack blocks to v1.20, fixing issues with AMP and "specific posts" mode. (https://github.com/Automattic/wp-calypso/pull/49778)
+* Fix issues in the plan selector. (https://github.com/Automattic/wp-calypso/pull/49523)
+* Improve translations in site launch and onboarding. (https://github.com/Automattic/wp-calypso/pull/47947)
+
+= 2.17 =
+* WelcomeTour: capture mousedown event and call preventDefault on the event (https://github.com/Automattic/wp-calypso/pull/49583)
+* Premium Content: Remove from the Editing Toolkit plugin (https://github.com/Automattic/wp-calypso/pull/49561)
+* Anchor: Gutenboarding Launch works immediately without domain or plan selection (https://github.com/Automattic/wp-calypso/pull/48938)
+* Editing Toolkit: Update Newspack blocks to v1.19.0 (https://github.com/Automattic/wp-calypso/pull/49493)
+* Plans store: Always pass locale to plans store (https://github.com/Automattic/wp-calypso/pull/49559)
+* Welcome Tour: Prevent clicks on Tour from bubbling up to the Block Inserter (https://github.com/Automattic/wp-calypso/pull/49583)
+
+= 2.16 =
+* Fix Global Styles Panel Font Change Update (https://github.com/Automattic/wp-calypso/pull/49216)
+* Welcome Tour: combine existing and variant tour plugins (https://github.com/Automattic/wp-calypso/pull/49296)
+* Launch: Fix launch button translations not loaded. (https://github.com/Automattic/wp-calypso/pull/49456)
+* Gutenboarding: Fix eCommerce plan not being recommended (https://github.com/Automattic/wp-calypso/pull/49426)
+* Gutenboarding: Fix "Choose a domain I own" layout on mobile (https://github.com/Automattic/wp-calypso/pull/49249)
+* Domain Picker: Prevent instant error on domain step during editor launch flow (https://github.com/Automattic/wp-calypso/pull/48399)
+* Focused Launch: Highlight selected plan in Focused Launch - Detailed Plans. (https://github.com/Automattic/wp-calypso/pull/48622)
+
+= 2.15 =
+* Add plugin to transform i18n imports to local variables (https://github.com/Automattic/wp-calypso/pull/49341)
+* Plans Grid: add monthly pricing option (https://github.com/Automattic/wp-calypso/pull/48963)
+* Gutenboarding: Calypso-Free Launch Button Injection (https://github.com/Automattic/wp-calypso/pull/49004)
+
+= 2.14 =
+* Hide plugin buttons in header on mobile layouts (https://github.com/Automattic/wp-calypso/pull/49329)
+
+= 2.13 =
+* New Onboarding Launch: fix plans data-store integration (https://github.com/Automattic/wp-calypso/pull/49304)
+* Refunds: update copy to reflect 14-day refunds (https://github.com/Automattic/wp-calypso/pull/48872)
+* Editing toolkit: clean out contributors list in readme (https://github.com/Automattic/wp-calypso/pull/49182)
+* Fix untranslated text in Domain Picker (https://github.com/Automattic/wp-calypso/pull/49168)
+* Use @automattic/format-currency package to format prices in Plan Store (https://github.com/Automattic/wp-calypso/pull/49293)
+* Patterns and SPT: Add pattern_meta is_web param to calls to the ptk/patterns endpoint (https://github.com/Automattic/wp-calypso/pull/49166)
+* Switch on block pattern modifications (https://github.com/Automattic/wp-calypso/pull/48848)
+
+= 2.12 =
+* Starter page templates: remove sidebar component (#48948)
+* Starter page templates: Prevent links and buttons from being clicked within the layout preview (https://github.com/Automattic/wp-calypso/pull/49024)
+* Fix bug where premium content popover preview in block transformations menu would freeze the editor (https://github.com/Automattic/wp-calypso/pull/48988)
+* Focused-Launch: fix styling for disabled Free plan card (https://github.com/Automattic/wp-calypso/pull/47796)
+* Update type definitions (https://github.com/Automattic/wp-calypso/pull/46728)
+* Add a basic README.md for the Welcome Tour (https://github.com/Automattic/wp-calypso/pull/48785)
+
+= 2.11 =
+* Welcome Guide (Tour & NUX modal): add flag to track if guide is opened manually via MoreMenu
+* Welcome Tour: adjust z-index to show above editor side nav
+* Welcome Tour: prevent showing on Start Page Layout selection page
+
+= 2.10 =
+* Fix issue where block patterns did not load.
+
+= 2.9 =
+* Template Selector: Use patterns API
+* Focused Launch: Debounce domain search for focused launch on key press.
+* Domain Picker: Added "Use a domain I own" item.
+* Welcome Tour: update copy and add i18n wrappers.
+* Remove editor welcome tour images and replace with urls to those same.
+
+= 2.8.17 =
+* Domain Picker: make items keyboard accessible (https://github.com/Automattic/wp-calypso/pull/48172)
+* Patterns: Guard the premium patterns indicator behind an Object.isExtensible check to prevent editor fatals in SCRIPT_DEBUG mode. (https://github.com/Automattic/wp-calypso/pull/48640)
+* Onboarding: Fix plan picker comparison table width on large displays. (https://github.com/Automattic/wp-calypso/pull/48112)
+* Add an initial sync to remove need to make an edit for sync to happen. (https://github.com/Automattic/wp-calypso/pull/48586)
+* Editor welcome tour tracking and fixes. (https://github.com/Automattic/wp-calypso/pull/48390)
+* New Onboarding: pre-select subdomain in editor launch flow. (https://github.com/Automattic/wp-calypso/pull/48247)
+* New Onboarding: use site slug instead of siteId when redirecting after launch. (https://github.com/Automattic/wp-calypso/pull/48248)
+* Coming Soon: add php unit tests. (https://github.com/Automattic/wp-calypso/pull/48584)
+* Focused Launch: miscellaneous improvements and fixes
+* Checkout: miscellaneous fixes
+
+= 2.8.16 =
+* Page layout selector: Fixed an issue where the wrong close button would appear in certain circumstances. (https://github.com/Automattic/wp-calypso/pull/48469)
+
+= 2.8.15 =
+* Page layout selector: Use description of the templates as label for screen readers (https://github.com/Automattic/wp-calypso/pull/48128)
+* Remove usages of lodash trimEnd() (https://github.com/Automattic/wp-calypso/pull/48255)
+* Patterns: Swap `can_register_pattern` logic from using a tag, to using `pattern_meta` instead (https://github.com/Automattic/wp-calypso/pull/48330)
+* NUX: New Welcome Tour Component (https://github.com/Automattic/wp-calypso/pull/47779)
+* NUX: Custom Welcome Guide for Anchor users (https://github.com/Automattic/wp-calypso/pull/48357)
+* Newspack Blocks: Update to 1.17.1 (https://github.com/Automattic/wp-calypso/pull/48456)
+
+= 2.8.14 =
+* Premium Patterns: add pink dot to indicate a premium pattern in the inserter. (https://github.com/Automattic/wp-calypso/pull/47896)
+* Coming Soon: add coming soon wpcom localized url filter. (https://github.com/Automattic/wp-calypso/pull/48076)
+
+= 2.8.13 =
+* Removes unnecessary site editor implementation from the plugin. (https://github.com/Automattic/wp-calypso/pull/47301)
+
+= 2.8.12 =
+* New onboarding Launch: Fix subdomain selection and update menu (https://github.com/Automattic/wp-calypso/pull/47913)
+* Onboarding: Fix missing translations (https://github.com/Automattic/wp-calypso/pull/48074)
+* Onboarding: Improve displaying domain search errors (https://github.com/Automattic/wp-calypso/pull/47985)
+
+= 2.8.11 =
+* Focused Launch: Render selected popular plan only once (https://github.com/Automattic/wp-calypso/pull/47913)
+* Patterns: fix PHP notice about undefined offset in can_register_pattern (https://github.com/Automattic/wp-calypso/pull/48025)
+* Focused Launch: Get selected domain and plan from cart if available (https://github.com/Automattic/wp-calypso/pull/47987)
+* Focused Launch: Add persistent success view after launch (https://github.com/Automattic/wp-calypso/pull/47808)
+* Focused Launch: Implement step highlighting logic (https://github.com/Automattic/wp-calypso/pull/#47503)
+
+= 2.8.10 =
+* Premium Content: Fix selection of payment plans (https://github.com/Automattic/wp-calypso/pull/47944)
+* Coming soon: Check for coming soon mode on 404 (https://github.com/Automattic/wp-calypso/pull/47945)
+* Onboarding: Add support for RTL site launch stylesheet (https://github.com/Automattic/wp-calypso/pull/47890)
+* Coming soon: Show Coming Soon on blog post pages (https://github.com/Automattic/wp-calypso/pull/47853)
+
+= 2.8.9 =
+* Domain Picker: Persistent Domain (https://github.com/Automattic/wp-calypso/pull/47633)
+* Focused Launch: Add Launch your site button (https://github.com/Automattic/wp-calypso/pull/47601)
+
+= 2.8.8 =
+* Coming soon: Show coming soon page when showing posts on front (https://github.com/Automattic/wp-calypso/pull/47661)
+* Coming soon: Fix login link on coming soon page (https://github.com/Automattic/wp-calypso/pull/47665)
+* Launch: Launch flow can use translations from global translation functions (https://github.com/Automattic/wp-calypso/pull/47352)
+
+= 2.8.7 =
+* Launch: open launch modal in editor only for free sites created in New Onboarding (https://github.com/Automattic/wp-calypso/pull/47514)
+* Focused Launch: add launch success view (https://github.com/Automattic/wp-calypso/pull/47404)
+* Premium Content: Use snackbar for error and success messages (https://github.com/Automattic/wp-calypso/pull/47477)
+* Coming soon: only show the coming soon page for singular, archive and search posts (https://github.com/Automattic/wp-calypso/pull/47563)
+* Patterns: Support skipping registering patterns with a requires-align-wide tag (https://github.com/Automattic/wp-calypso/pull/47571)
 
 = 2.8.6 =
 * Premium Content: Compatibility fix for Gutenberg >= 9.3.0 (https://github.com/Automattic/wp-calypso/pull/47467)
@@ -50,7 +202,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Premium Content: allow the payments button to know when it's inside the premium content block (https://github.com/Automattic/wp-calypso/pull/47245)
 * Coming soon: remove cookie banner, open graph, gravatar and other unneeded features from coming soon page (https://github.com/Automattic/wp-calypso/pull/47400)
 * Coming soon: fix the localised login link on the coming soon page (https://github.com/Automattic/wp-calypso/pull/47307)
-* Comgin soon: don't cache the coming soon page (https://github.com/Automattic/wp-calypso/pull/47450)
+* Coming soon: don't cache the coming soon page (https://github.com/Automattic/wp-calypso/pull/47450)
 
 = 2.8.4 =
 * Editor NUX modal: Temporarily make text smaller in editor welcome modal for german language (https://github.com/Automattic/wp-calypso/pull/47193)

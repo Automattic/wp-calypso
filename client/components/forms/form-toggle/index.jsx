@@ -3,7 +3,6 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -14,6 +13,8 @@ import { ToggleControl } from '@wordpress/components';
  * Internal dependencies
  */
 import Disableable from 'calypso/components/disableable';
+
+const noop = () => {};
 
 export default class FormToggle extends PureComponent {
 	static propTypes = {

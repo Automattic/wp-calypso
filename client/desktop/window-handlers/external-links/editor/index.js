@@ -61,7 +61,7 @@ function selectedEnableSSOandContinue( mainWindow, info ) {
 
 function selectedProceedInBrowser( mainWindow, { origin, wpAdminLoginUrl } ) {
 	log.info( "User selected 'Proceed in Browser'..." );
-	openInBrowser( null, wpAdminLoginUrl );
+	openInBrowser( wpAdminLoginUrl );
 	navigateToShowMySites( mainWindow, origin );
 }
 
@@ -175,10 +175,10 @@ function handleUndefined( mainWindow, info ) {
 		log.info(
 			`Falling back to opening editor in browser with admin login URL: '${ wpAdminLoginUrl }'`
 		);
-		openInBrowser( null, wpAdminLoginUrl );
+		openInBrowser( wpAdminLoginUrl );
 	} else if ( editorUrl ) {
 		log.info( `Falling back to opening editor in browser with editor URL: '${ editorUrl }'` );
-		openInBrowser( null, editorUrl );
+		openInBrowser( editorUrl );
 	} else {
 		log.error( 'Failed to open editor in browser as fallback: invalid admin and editor urls' );
 	}

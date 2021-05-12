@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, identity } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import { themes } from 'calypso/lib/signup/themes-data';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSurveyVertical } from 'calypso/state/signup/steps/survey/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
@@ -40,7 +40,6 @@ class ThemeSelectionStep extends Component {
 
 	static defaultProps = {
 		useHeadstart: true,
-		translate: identity,
 	};
 
 	pickTheme = ( themeId ) => {

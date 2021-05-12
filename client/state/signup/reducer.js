@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers } from 'calypso/state/utils';
 import dependencyStore from './dependency-store/reducer';
 import progress from './progress/reducer';
 import optionalDependencies from './optional-dependencies/reducer';

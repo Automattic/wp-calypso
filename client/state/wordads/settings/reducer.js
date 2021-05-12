@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { items as itemsSchema } from './schema';
 import {
 	WORDADS_SETTINGS_RECEIVE,
@@ -53,7 +53,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  * @param  {object}  action Action payload
  * @returns {object}        Updated state
  */
-export const requests = withoutPersistence( ( state = {}, action ) => {
+export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WORDADS_SETTINGS_SAVE: {
 			const { siteId } = action;
@@ -75,7 +75,7 @@ export const requests = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	items,

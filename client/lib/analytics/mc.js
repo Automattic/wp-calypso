@@ -6,7 +6,7 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 const mcDebug = debug( 'calypso:analytics:mc' );
 
@@ -45,7 +45,7 @@ export function bumpStat( group, name ) {
 		mcDebug( 'Bumping stat %s:%s', group, name );
 	}
 
-	if ( config( 'mc_analytics_enabled' ) ) {
+	if ( 'undefined' !== typeof window && config( 'mc_analytics_enabled' ) ) {
 		const uriComponent = buildQuerystring( group, name );
 		new window.Image().src =
 			document.location.protocol +
@@ -64,7 +64,7 @@ export function bumpStatWithPageView( group, name ) {
 		mcDebug( 'Bumping page view %s:%s', group, name );
 	}
 
-	if ( config( 'mc_analytics_enabled' ) ) {
+	if ( 'undefined' !== typeof window && config( 'mc_analytics_enabled' ) ) {
 		const uriComponent = buildQuerystringNoPrefix( group, name );
 		new window.Image().src =
 			document.location.protocol +

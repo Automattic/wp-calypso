@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { Provider } from 'react-redux';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,6 +27,7 @@ import './boot/stylesheets/style.scss';
 
 let client;
 
+const noop = () => {};
 const globalData = {};
 
 repliesCache.cleanup();

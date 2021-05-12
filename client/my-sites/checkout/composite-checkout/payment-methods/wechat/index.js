@@ -5,12 +5,11 @@ import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import {
 	Button,
 	FormStatus,
 	useLineItems,
-	useEvents,
 	useFormStatus,
 	useTransactionStatus,
 	registerStore,
@@ -19,12 +18,12 @@ import {
 	PaymentProcessorResponseType,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { Field } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
 import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
-import Field from 'calypso/my-sites/checkout/composite-checkout/components/field';
 import {
 	SummaryLine,
 	SummaryDetails,
@@ -143,7 +142,6 @@ function WeChatPayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const { resetTransaction } = useTransactionStatus();
-	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
 	const { responseCart: cart } = useShoppingCart();
 	const [ stripeResponseWithCode, setStripeResponseWithCode ] = useState( null );
@@ -171,7 +169,6 @@ function WeChatPayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting wechat payment' );
-					onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', payload: { paymentMethodId: 'wechat' } } );
 					onClick( 'wechat', {
 						stripe,
 						name: customerName?.value,
@@ -220,6 +217,7 @@ function ButtonContents( { formStatus, total } ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === FormStatus.READY ) {
+		/* translators: %s is the total to be paid in localized currency */
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );

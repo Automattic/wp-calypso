@@ -31,15 +31,16 @@ export function trackEventWithFlow( eventId: string, params = {}, flow = FLOW_ID
  *
  * @param {string} ref  The value of a `ref` query parameter, usually set by marketing landing pages
  * @param {number} site_count The number of sites owned by the current user or 0 if there is no logged in user
+ * @param {string} flow the current onboarding flow
  */
-export function recordOnboardingStart( ref = '', site_count: number ): void {
+export function recordOnboardingStart( ref = '', site_count: number, flow: string ): void {
 	if ( ! ref ) {
 		ref = new URLSearchParams( window.location.search ).get( 'ref' ) || ref;
 	}
-
-	trackEventWithFlow( 'calypso_newsite_start', { ref, site_count } );
+	const eventProps = { ref, site_count };
+	trackEventWithFlow( 'calypso_newsite_start', eventProps, flow );
 	// Also fire the signup start|complete events. See: pbmFJ6-95-p2
-	trackEventWithFlow( 'calypso_signup_start', { ref, site_count } );
+	trackEventWithFlow( 'calypso_signup_start', eventProps, flow );
 }
 
 /**
@@ -53,6 +54,7 @@ export function recordOnboardingComplete( params: OnboardingCompleteParameters )
 		is_new_site: params.isNewSite,
 		blog_id: params.blogId,
 		has_cart_items: params.hasCartItems,
+		flow: params.flow,
 	};
 	trackEventWithFlow( 'calypso_newsite_complete', trackingParams );
 	// Also fire the signup start|complete events. See: pbmFJ6-95-p2

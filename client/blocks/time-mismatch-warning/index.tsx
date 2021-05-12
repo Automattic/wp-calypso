@@ -17,13 +17,13 @@ import { savePreference } from 'calypso/state/preferences/actions';
 interface ExternalProps {
 	status?: string;
 	siteId: number | null;
-	settingsUrl?: string;
+	settingsUrl: string;
 }
 
 export const TimeMismatchWarning: FC< ExternalProps > = ( {
 	status = 'is-warning',
 	siteId,
-	settingsUrl = '#',
+	settingsUrl,
 }: ExternalProps ) => {
 	const dismissPreference = `time-mismatch-warning-${ siteId }`;
 
@@ -39,6 +39,7 @@ export const TimeMismatchWarning: FC< ExternalProps > = ( {
 	if (
 		! siteId ||
 		! hasPreferences ||
+		! settingsUrl ||
 		isDismissed ||
 		siteOffset === null ||
 		userOffset === siteOffset

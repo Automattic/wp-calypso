@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import debugModule from 'debug';
 import React from 'react';
 import page from 'page';
 import { isEmpty } from 'lodash';
@@ -8,7 +9,7 @@ import { isEmpty } from 'lodash';
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { sectionify } from 'calypso/lib/route';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import SignupComponent from './main';
@@ -43,6 +44,12 @@ import { requestGeoLocation } from 'calypso/state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'calypso/lib/abtest';
 import user from 'calypso/lib/user';
+import getSiteId from 'calypso/state/selectors/get-site-id';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
+
+const debug = debugModule( 'calypso:signup' );
 
 /**
  * Constants
@@ -62,13 +69,17 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
-const gutenbergRedirect = function ( flowName ) {
+const gutenbergRedirect = function ( flowName, locale ) {
 	const url = new URL( window.location );
-	if ( [ 'beginner', 'personal', 'premium', 'business', 'ecommerce' ].includes( flowName ) ) {
-		url.pathname = `/new/${ flowName }`;
-	} else {
-		url.pathname = '/new';
+	let path = '/new';
+	if ( [ 'free', 'personal', 'premium', 'business', 'ecommerce' ].includes( flowName ) ) {
+		path += `/${ flowName }`;
 	}
+	if ( locale ) {
+		path += `/${ locale }`;
+	}
+
+	url.pathname = path;
 	window.location.replace( url.toString() );
 };
 
@@ -90,7 +101,12 @@ export const removeP2SignupClassName = function () {
 
 export default {
 	redirectTests( context, next ) {
+		const currentFlowName = getFlowName( context.params );
+		currentFlowName === 'onboarding' && loadExperimentAssignment( 'refined_reskin_v2' );
+		currentFlowName === 'launch-site' && loadExperimentAssignment( 'hide_ecommerce_launch_site' );
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
+			next();
+		} else if ( currentFlowName === 'onboarding' ) {
 			next();
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
@@ -98,7 +114,7 @@ export default {
 			context.pathname.indexOf( 'onboarding-registrationless' ) >= 0 ||
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
-			context.params.flowName === 'user' ||
+			context.pathname.indexOf( 'launch-only' ) >= 0 ||
 			context.params.flowName === 'account' ||
 			context.params.flowName === 'crowdsignal' ||
 			context.params.flowName === 'pressable-nux' ||
@@ -119,20 +135,17 @@ export default {
 
 			next();
 		} else {
-			const flowName = getFlowName( context.params );
-			const userLoggedIn = isUserLoggedIn( context.store.getState() );
-			if (
-				userLoggedIn &&
-				flowName === 'onboarding' &&
-				'gutenberg' === abtest( 'existingUsersGutenbergOnboard' )
-			) {
-				gutenbergRedirect( context.params.flowName );
-				return;
-			}
-
 			waitForHttpData( () => ( { geo: requestGeoLocation() } ) )
 				.then( ( { geo } ) => {
 					const countryCode = geo.data;
+					const localeFromParams = context.params.lang;
+					const flowName = getFlowName( context.params );
+
+					if ( flowName === 'free' && 'newOnboarding' === abtest( 'newUsersWithFreePlan' ) ) {
+						gutenbergRedirect( flowName, localeFromParams );
+						return;
+					}
+
 					if (
 						( ! user() || ! user().get() ) &&
 						-1 === context.pathname.indexOf( 'free' ) &&
@@ -146,7 +159,6 @@ export default {
 						removeWhiteBackground();
 						const stepName = getStepName( context.params );
 						const stepSectionName = getStepSectionName( context.params );
-						const localeFromParams = context.params.lang;
 						const urlWithLocale = getStepUrl(
 							'onboarding-registrationless',
 							stepName,
@@ -155,7 +167,6 @@ export default {
 						);
 						window.location = urlWithLocale;
 					} else {
-						removeWhiteBackground();
 						next();
 					}
 				} )
@@ -284,8 +295,21 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
-		if ( flowName !== 'launch-site' ) {
+		if ( ! [ 'launch-site', 'new-launch' ].includes( flowName ) ) {
 			context.store.dispatch( setSelectedSiteId( null ) );
+		}
+
+		let actualFlowName = flowName;
+		if ( flowName === 'onboarding' || flowName === 'with-design-picker' ) {
+			const experimentAssignment = await loadExperimentAssignment(
+				'design_picker_after_onboarding'
+			);
+			debug(
+				`design_picker_after_onboarding experiment variation: ${ experimentAssignment?.variationName }`
+			);
+			if ( 'treatment' === experimentAssignment?.variationName ) {
+				actualFlowName = 'with-design-picker';
+			}
 		}
 
 		context.primary = React.createElement( SignupComponent, {
@@ -293,16 +317,47 @@ export default {
 			path: context.path,
 			initialContext,
 			locale: context.params.lang,
-			flowName: flowName,
+			flowName: actualFlowName,
 			queryObject: query,
 			refParameter: query && query.ref,
 			stepName,
 			stepSectionName,
 			stepComponent,
-			pageTitle: getFlowPageTitle( flowName ),
+			pageTitle: getFlowPageTitle( actualFlowName ),
 		} );
 
 		next();
+	},
+	setSelectedSiteForSignup( { store: signupStore, query }, next ) {
+		const { getState, dispatch } = signupStore;
+		const signupDependencies = getSignupDependencyStore( getState() );
+
+		const siteSlug = signupDependencies?.siteSlug || query?.siteSlug;
+		if ( ! siteSlug ) {
+			next();
+			return;
+		}
+		const siteId = getSiteId( getState(), siteSlug );
+		if ( siteId ) {
+			dispatch( setSelectedSiteId( siteId ) );
+			next();
+		} else {
+			// Fetch the site by siteSlug and then try to select again
+			dispatch( requestSite( siteSlug ) ).then( () => {
+				let freshSiteId = getSiteId( getState(), siteSlug );
+
+				if ( ! freshSiteId ) {
+					const wpcomStagingFragment = siteSlug.replace( /\.wordpress\.com$/, '.wpcomstaging.com' );
+					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+				}
+
+				if ( freshSiteId ) {
+					dispatch( setSelectedSiteId( freshSiteId ) );
+					next();
+				}
+			} );
+			next();
+		}
 	},
 	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
 		const state = signupStore.getState();

@@ -15,6 +15,7 @@ import persistOptions from './persist';
 import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 
 export type { State };
+export type { LaunchStepType } from './types';
 export { STORE_KEY };
 
 use( plugins.persistence, persistOptions );
@@ -32,10 +33,12 @@ export function register(): typeof STORE_KEY {
 			persist: [
 				'domain',
 				'domainSearch',
-				'plan',
+				'planProductId',
+				'planBillingPeriod',
 				'confirmedDomainSelection',
-				'isExperimental',
+				'isAnchorFm',
 				'isSiteTitleStepVisible',
+				'siteTitle',
 			],
 		} );
 	}

@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { siteKeyrings as siteKeyringsSchema } from './schema';
 import {
 	SITE_KEYRINGS_REQUEST,
@@ -22,7 +23,7 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_KEYRINGS_REQUEST: {
 			const { siteId } = action;
@@ -39,7 +40,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the save Request status after an action has been dispatched. The
@@ -49,7 +50,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const saveRequests = withoutPersistence( ( state = {}, action ) => {
+export const saveRequests = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_KEYRINGS_SAVE: {
 			const { siteId } = action;
@@ -78,7 +79,7 @@ export const saveRequests = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -137,8 +138,10 @@ const items = withSchemaValidation( siteKeyringsSchema, ( state = {}, action ) =
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	items,
 	requesting,
 	saveRequests,
 } );
+
+export default withStorageKey( 'siteKeyrings', combinedReducer );

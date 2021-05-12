@@ -9,11 +9,33 @@ import { ReactElement } from 'react';
  */
 import { Theme } from './lib/theme';
 
+export interface CheckoutStepProps {
+	stepId: string;
+	titleContent: React.ReactNode;
+	isCompleteCallback: IsCompleteCallback;
+	activeStepContent?: React.ReactNode;
+	completeStepContent?: React.ReactNode;
+	className?: string;
+	editButtonText?: string;
+	editButtonAriaLabel?: string;
+	nextStepButtonText?: string;
+	nextStepButtonAriaLabel?: string;
+	validatingButtonText?: string;
+	validatingButtonAriaLabel?: string;
+}
+
+export type IsCompleteCallback = () => boolean | Promise< boolean >;
+
+export interface OrderSummaryData {
+	className: string;
+	summaryContent: React.ReactNode;
+}
+
 export interface PaymentMethod {
 	id: string;
-	label: React.ReactNode;
-	activeContent: React.ReactNode;
-	inactiveContent: React.ReactNode;
+	label?: React.ReactNode;
+	activeContent?: React.ReactNode;
+	inactiveContent?: React.ReactNode;
 	submitButton: ReactElement;
 	getAriaLabel: ( localize: ( value: string ) => string ) => string;
 }
@@ -24,7 +46,7 @@ export interface LineItem {
 	id: string;
 	type: string;
 	label: string;
-	subLabel?: string;
+	sublabel?: string;
 	amount: LineItemAmount;
 }
 
@@ -76,32 +98,47 @@ export type ReactStandardAction< T = string, P = unknown > = P extends void
 	  }
 	: {
 			type: T;
-			payload: P;
+			payload?: P;
 	  };
 
 export interface CheckoutProviderProps {
 	theme?: Theme;
 	registry?: DataRegistry;
-	total: LineItem;
-	items: LineItem[];
+	total?: LineItem;
+	items?: LineItem[];
 	paymentMethods: PaymentMethod[];
-	onPaymentComplete: ( { paymentMethodId }: { paymentMethodId: string | null } ) => void;
-	showErrorMessage: ( message: string ) => void;
-	showInfoMessage: ( message: string ) => void;
-	showSuccessMessage: ( message: string ) => void;
+	onPaymentComplete: PaymentCompleteCallback;
+	showErrorMessage: ShowNoticeFunction;
+	showInfoMessage: ShowNoticeFunction;
+	showSuccessMessage: ShowNoticeFunction;
 	onEvent?: ( event: ReactStandardAction ) => void;
 	isLoading?: boolean;
 	redirectToUrl?: ( url: string ) => void;
 	paymentProcessors: PaymentProcessorProp;
 	isValidating?: boolean;
+	initiallySelectedPaymentMethodId?: string | null;
+	children: React.ReactNode;
 }
+
+export type ShowNoticeFunction = ( message: string ) => void;
 
 export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;
 }
 
+export type PaymentCompleteCallback = ( args: PaymentCompleteCallbackArguments ) => void;
+
+export type PaymentCompleteCallbackArguments = {
+	paymentMethodId: string | null;
+	transactionLastResponse: PaymentProcessorResponseData;
+};
+
 export type PaymentProcessorResponseData = unknown;
 
+export type PaymentProcessorError = {
+	type: PaymentProcessorResponseType.ERROR;
+	payload: string;
+};
 export type PaymentProcessorSuccess = {
 	type: PaymentProcessorResponseType.SUCCESS;
 	payload: PaymentProcessorResponseData;
@@ -116,18 +153,22 @@ export type PaymentProcessorManual = {
 };
 
 export type PaymentProcessorResponse =
+	| PaymentProcessorError
 	| PaymentProcessorSuccess
 	| PaymentProcessorRedirect
 	| PaymentProcessorManual;
 
+export type PaymentProcessorSubmitData = unknown;
+
 export type PaymentProcessorFunction = (
-	submitData: unknown
+	submitData: PaymentProcessorSubmitData
 ) => Promise< PaymentProcessorResponse >;
 
 export enum PaymentProcessorResponseType {
 	SUCCESS = 'SUCCESS',
 	REDIRECT = 'REDIRECT',
 	MANUAL = 'MANUAL',
+	ERROR = 'ERROR',
 }
 
 export enum TransactionStatus {
@@ -188,12 +229,27 @@ export type TransactionStatusPayload =
 export type TransactionStatusAction = ReactStandardAction< 'STATUS_SET', TransactionStatusPayload >;
 
 export interface TransactionStatusManager extends TransactionStatusState {
-	resetTransaction: () => void;
-	setTransactionError: ( message: string ) => void;
-	setTransactionComplete: ( response: PaymentProcessorResponseData ) => void;
-	setTransactionPending: () => void;
-	setTransactionRedirecting: ( url: string ) => void;
+	resetTransaction: ResetTransaction;
+	setTransactionError: SetTransactionError;
+	setTransactionComplete: SetTransactionComplete;
+	setTransactionPending: SetTransactionPending;
+	setTransactionRedirecting: SetTransactionRedirecting;
 }
+
+export type ProcessPayment = (
+	paymentProcessorId: string,
+	processorData: PaymentProcessorSubmitData
+) => Promise< PaymentProcessorResponse >;
+
+export type SetTransactionRedirecting = ( url: string ) => void;
+
+export type SetTransactionPending = () => void;
+
+export type SetTransactionComplete = ( response: PaymentProcessorResponseData ) => void;
+
+export type SetTransactionError = ( message: string ) => void;
+
+export type ResetTransaction = () => void;
 
 export interface LineItemsState {
 	items: LineItem[];
@@ -203,23 +259,4 @@ export interface LineItemsState {
 export interface LineItemsProviderProps {
 	items: LineItem[];
 	total: LineItem;
-}
-
-export interface StripePaymentRequest {
-	on: ( event: string, handler: StripePaymentRequestHandler ) => void;
-	show: () => void;
-}
-
-export type StripePaymentRequestHandler = ( event: StripePaymentRequestHandlerEvent ) => void;
-
-export interface StripePaymentRequestHandlerEvent {
-	token?: {
-		id: string;
-		object: 'token';
-	};
-	paymentMethod?: {
-		id: string;
-		object: 'payment_method';
-	};
-	complete: () => void;
 }

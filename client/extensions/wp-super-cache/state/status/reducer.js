@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_RECEIVE_STATUS,
@@ -17,7 +17,7 @@ import {
  * @param  {object} action Action object
  * @returns {object} Updated requesting state
  */
-const requesting = withoutPersistence( ( state = {}, action ) => {
+const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_RECEIVE_STATUS: {
 			const { siteId } = action;
@@ -38,7 +38,7 @@ const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Tracks the status for a particular site.

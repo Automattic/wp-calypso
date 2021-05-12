@@ -3,48 +3,27 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'calypso/components/empty-content';
-import { recordAction as statRecordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
-import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
+import { recordAction as statRecordAction, recordGaEvent } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 const SiteEmptyContent = ( { translate } ) => {
-	const recordAction = () => {
-		statRecordAction( 'clicked_discover_on_empty' );
-		recordGaEvent( 'Clicked Discover on EmptyContent' );
-		recordTrack( 'calypso_reader_discover_on_empty_site_stream_clicked' );
-	};
+	const dispatch = useDispatch();
 
-	const recordSecondaryAction = () => {
+	const recordAction = () => {
 		statRecordAction( 'clicked_search_on_empty' );
 		recordGaEvent( 'Clicked Search on EmptyContent' );
-		recordTrack( 'calypso_reader_search_on_empty_site_stream_clicked' );
+		dispatch( recordReaderTracksEvent( 'calypso_reader_search_on_empty_site_stream_clicked' ) );
 	};
 
-	let action;
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	if ( isDiscoverEnabled() ) {
-		action = (
-			<a
-				className="empty-content__action button is-primary"
-				onClick={ recordAction }
-				href="/discover"
-			>
-				{ translate( 'Explore' ) }
-			</a>
-		);
-	}
-
-	const secondaryAction = (
-		<a
-			className="empty-content__action button"
-			onClick={ recordSecondaryAction }
-			href="/read/search"
-		>
+	const action = (
+		<a className="empty-content__action button" onClick={ recordAction } href="/read/search">
 			{ translate( 'Find sites to follow' ) }
 		</a>
 	);
@@ -52,10 +31,9 @@ const SiteEmptyContent = ( { translate } ) => {
 
 	return (
 		<EmptyContent
-			title={ translate( 'No Posts' ) }
+			title={ translate( 'No posts' ) }
 			line={ translate( 'This site has not posted anything yet. Try back later.' ) }
 			action={ action }
-			secondaryAction={ secondaryAction }
 			illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 			illustrationWidth={ 500 }
 		/>

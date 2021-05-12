@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { repeat } from 'lodash';
 
 /**
  * Internal dependencies
@@ -49,8 +48,8 @@ const mockMultipleShortLineComment = {
 
 const mockComments = [
 	{ ...mockComment, ID: 0 },
-	{ ...mockComment, ID: 1, content: repeat( mockComment.content, 5 ) },
-	{ ...mockComment, ID: 2, content: repeat( mockComment.content, 5 ) },
+	{ ...mockComment, ID: 1, content: mockComment.content.repeat( 5 ) },
+	{ ...mockComment, ID: 2, content: mockComment.content.repeat( 5 ) },
 	{ ...mockShortComment, ID: 3 },
 	{ ...mockMultipleShortLineComment, ID: 4 },
 ];

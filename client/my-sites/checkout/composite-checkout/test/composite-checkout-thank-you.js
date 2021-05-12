@@ -8,24 +8,35 @@
  * Internal dependencies
  */
 import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
-import { isEnabled } from 'calypso/config';
-import { PLAN_ECOMMERCE } from '../../../../lib/plans/constants';
+import { isEnabled } from '@automattic/calypso-config';
+import {
+	PLAN_ECOMMERCE,
+	JETPACK_REDIRECT_URL,
+	redirectCloudCheckoutToWpAdmin,
+} from '@automattic/calypso-products';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 let mockGSuiteCountryIsValid = true;
-jest.mock( 'lib/user', () =>
+jest.mock( 'calypso/lib/user', () =>
 	jest.fn( () => ( {
 		get: () => ( { is_valid_google_apps_country: mockGSuiteCountryIsValid } ),
 	} ) )
 );
 
-jest.mock( 'config', () => {
+jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
+	redirectCloudCheckoutToWpAdmin: jest.fn(),
+} ) );
+
+jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
 	mock.isEnabled = jest.fn();
 	return mock;
 } );
 
 // Temporary A/B test to dial down the concierge upsell, check pau2Xa-1bk-p2.
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: jest.fn( ( name ) => {
 		if ( 'conciergeUpsellDial' === name ) {
 			return 'offer';
@@ -39,6 +50,11 @@ const defaultArgs = {
 };
 
 describe( 'getThankYouPageUrl', () => {
+	beforeEach( () => {
+		isJetpackCloud.mockImplementation( () => false );
+		redirectCloudCheckoutToWpAdmin.mockImplementation( () => false );
+	} );
+
 	it( 'redirects to the root page when no site is set', () => {
 		const url = getThankYouPageUrl( defaultArgs );
 		expect( url ).toBe( '/' );
@@ -181,6 +197,98 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
+	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic jetpack product', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			productAliasFromUrl: 'jetpack_backup_daily',
+		} );
+		expect( url ).toBe(
+			`${ JETPACK_REDIRECT_URL }&site=foo.bar&query=product%3Djetpack_backup_daily%26thank-you%3Dtrue`
+		);
+	} );
+
+	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic jetpack product in the cart', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_backup_realtime' } ],
+			},
+		} );
+		expect( url ).toBe(
+			`${ JETPACK_REDIRECT_URL }&site=foo.bar&query=product%3Djetpack_backup_realtime%26thank-you%3Dtrue`
+		);
+	} );
+
+	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic Jetpack Security plan', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			productAliasFromUrl: 'jetpack_security_daily_monthly',
+		} );
+		expect( url ).toBe(
+			`${ JETPACK_REDIRECT_URL }&site=foo.bar&query=product%3Djetpack_security_daily_monthly%26thank-you%3Dtrue`
+		);
+	} );
+
+	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic Jetpack Security plan is in the cart', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_security_daily' } ],
+			},
+		} );
+		expect( url ).toBe(
+			`${ JETPACK_REDIRECT_URL }&site=foo.bar&query=product%3Djetpack_security_daily%26thank-you%3Dtrue`
+		);
+	} );
+
+	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic Jetpack Complete plan is in the cart', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_complete' } ],
+			},
+		} );
+		expect( url ).toBe(
+			`${ JETPACK_REDIRECT_URL }&site=foo.bar&query=product%3Djetpack_complete%26thank-you%3Dtrue`
+		);
+	} );
+
+	it( 'redirects to the sites wp-admin if checkout is on Jetpack Cloud and if redirectCloudCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		redirectCloudCheckoutToWpAdmin.mockImplementation( () => true );
+		const adminUrl = 'https://my.site/wp-admin/';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_complete' } ],
+			},
+			adminUrl,
+		} );
+		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=jetpack#/recommendations` );
+	} );
+
 	it( 'redirects to the plans page with thank-you query string if there is a non-atomic jetpack product', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
@@ -278,9 +386,57 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&install=all' );
 	} );
 
+	it( 'redirects to the afterPurchaseUrl from a cart item if set', () => {
+		const cart = {
+			products: [ { extra: { afterPurchaseUrl: '/after/purchase/url' } } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			cart,
+			siteSlug: 'foo.bar',
+		} );
+		expect( url ).toBe( '/after/purchase/url' );
+	} );
+
+	it( 'redirects to the afterPurchaseUrl from the most recent cart item if multiple are set', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'older_product',
+					time_added_to_cart: 1617228489,
+					extra: { afterPurchaseUrl: '/older/purchase/url' },
+				},
+				{
+					product_slug: 'newer_product',
+					time_added_to_cart: 1617228689,
+					extra: { afterPurchaseUrl: '/newer/purchase/url' },
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			cart,
+			siteSlug: 'foo.bar',
+		} );
+		expect( url ).toBe( '/newer/purchase/url' );
+	} );
+
 	it( 'redirects to internal redirectTo url if set', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
+			siteSlug: 'foo.bar',
+			redirectTo: '/foo/bar',
+		} );
+		expect( url ).toBe( '/foo/bar' );
+	} );
+
+	it( 'redirects to internal redirectTo url if set even if afterPurchaseUrl exists on a cart item', () => {
+		const cart = {
+			products: [ { extra: { afterPurchaseUrl: '/after/purchase/url' } } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			cart,
 			siteSlug: 'foo.bar',
 			redirectTo: '/foo/bar',
 		} );
@@ -303,15 +459,13 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to manage purchase page if there is a renewal', () => {
 		const cart = {
-			products: [
-				{ extra: { purchaseType: 'renewal', purchaseDomain: 'foo.bar', purchaseId: '123abc' } },
-			],
+			products: [ { subscription_id: '123abc', extra: { purchaseType: 'renewal' } } ],
 		};
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );
 		expect( url ).toBe( '/me/purchases/foo.bar/123abc' );
 	} );
 
-	it( 'does not redirect to url from cookie if isEligibleForSignupDestination is false', () => {
+	it( 'does not redirect to url from cookie if isEligibleForSignupDestinationResult is false', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			products: [ { product_slug: 'foo' } ],
@@ -321,12 +475,43 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestination: false,
+			isEligibleForSignupDestinationResult: false,
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
-	it( 'redirects to url from cookie if isEligibleForSignupDestination is set', () => {
+	it( 'Redirects to root if previous receipt is "noPreviousPurchase" and isEligibleForSignupDestinationResult is false', () => {
+		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const cart = {
+			products: [ { product_slug: 'foo' } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			receiptId: 'noPreviousPurchase',
+			cart,
+			getUrlFromCookie,
+			isEligibleForSignupDestinationResult: false,
+		} );
+		expect( url ).toBe( '/' );
+	} );
+
+	it( 'redirects to afterPurchaseUrl if set even if there is a url from a cookie', () => {
+		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const cart = {
+			products: [ { product_slug: 'foo', extra: { afterPurchaseUrl: '/after/purchase/url' } } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			getUrlFromCookie,
+			isEligibleForSignupDestinationResult: true,
+		} );
+		expect( url ).toBe( '/after/purchase/url' );
+	} );
+
+	it( 'redirects to url from cookie with notice type set to "purchase-success" if isEligibleForSignupDestination is set', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			products: [ { product_slug: 'foo' } ],
@@ -338,22 +523,7 @@ describe( 'getThankYouPageUrl', () => {
 			getUrlFromCookie,
 			isEligibleForSignupDestinationResult: true,
 		} );
-		expect( url ).toBe( '/cookie' );
-	} );
-
-	it( 'redirects to url from cookie if cart is empty and no receipt is set', () => {
-		const getUrlFromCookie = jest.fn( () => '/cookie' );
-		const cart = {
-			products: [],
-		};
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			cart,
-			getUrlFromCookie,
-			isEligibleForSignupDestination: true,
-		} );
-		expect( url ).toBe( '/cookie' );
+		expect( url ).toBe( '/cookie?notice=purchase-success' );
 	} );
 
 	it( 'Should store the current URL in the redirect cookie when called from the editor', () => {
@@ -720,5 +890,50 @@ describe( 'getThankYouPageUrl', () => {
 			hideNudge: true,
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
+	} );
+
+	it( 'redirects to thank you page (with traffic guide display mode) if traffic guide is in cart', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'traffic-guide',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			receiptId: '1234abcd',
+		} );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=traffic-guide' );
+	} );
+
+	it( 'redirects to thank you page (with traffic guide display mode) if traffic guide is in cart and site has a non-atomic jetpack plan', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'traffic-guide',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			receiptId: '1234abcd',
+			isJetpackNotAtomic: true,
+		} );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=traffic-guide' );
+	} );
+
+	it( 'redirects to a url on the site we are checking out', () => {
+		const redirectTo = 'https://foo.bar/some-path?with-args=yes';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			redirectTo,
+			siteSlug: 'foo.bar',
+		} );
+		expect( url ).toBe( redirectTo );
 	} );
 } );

@@ -7,7 +7,7 @@ import { find, get, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getSections } from 'calypso/sections-helper';
 
 export function getExtensionSettingsPath( plugin ) {
@@ -21,4 +21,12 @@ export function getExtensionSettingsPath( plugin ) {
 	}
 
 	return get( section, 'settings_path' );
+}
+
+export function siteObjectsToSiteIds( sites ) {
+	return sites?.map( ( site ) => site.ID ) ?? [];
+}
+
+export function getVisibleSites( sites ) {
+	return sites?.filter( ( site ) => site.visible );
 }

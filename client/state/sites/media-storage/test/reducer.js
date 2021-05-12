@@ -13,9 +13,8 @@ import {
 	SITE_MEDIA_STORAGE_REQUEST,
 	SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
 	SITE_MEDIA_STORAGE_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -126,7 +125,7 @@ describe( 'reducer', () => {
 						storage_used_bytes: 323506,
 					},
 				} );
-				const state = items( original, { type: SERIALIZE } );
+				const state = serialize( items, original );
 				expect( state ).to.eql( original );
 			} );
 
@@ -141,7 +140,7 @@ describe( 'reducer', () => {
 						storage_used_bytes: 323506,
 					},
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 				expect( state ).to.eql( original );
 			} );
 
@@ -156,7 +155,7 @@ describe( 'reducer', () => {
 						storage_used_bytes: 323506,
 					},
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 				expect( state ).to.eql( {} );
 			} );
 		} );

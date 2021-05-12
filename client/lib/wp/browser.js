@@ -7,7 +7,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import wpcomUndocumented from 'calypso/lib/wpcom-undocumented';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import wpcomSupport from 'calypso/lib/wp/support';
 import { injectLocalization } from './localization';
 import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
@@ -62,3 +62,8 @@ injectGuestSandboxTicketHandler( wpcom );
  * Expose `wpcom`
  */
 export default wpcom;
+
+/**
+ * Expose `wpcomJetpackLicensing` which uses a different auth token than wpcom.
+ */
+export const wpcomJetpackLicensing = wpcomUndocumented( wpcomXhrWrapper );

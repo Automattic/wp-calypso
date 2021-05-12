@@ -37,6 +37,7 @@ function enqueue_script( $filename, $in_footer = false ) {
 		$asset['version'],
 		$in_footer
 	);
+	wp_set_script_translations( $filename, 'full-site-editing' );
 }
 
 /**

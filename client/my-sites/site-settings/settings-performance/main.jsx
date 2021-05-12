@@ -12,6 +12,7 @@ import { flowRight, partialRight, pick } from 'lodash';
  */
 import AmpJetpack from 'calypso/my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'calypso/my-sites/site-settings/amp/wpcom';
+import Cloudflare from 'calypso/my-sites/site-settings/cloudflare';
 import DocumentHead from 'calypso/components/data/document-head';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
@@ -30,6 +31,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import config from '@automattic/calypso-config';
 
 class SiteSettingsPerformance extends Component {
 	render() {
@@ -42,14 +44,17 @@ class SiteSettingsPerformance extends Component {
 			site,
 			siteId,
 			siteIsJetpack,
+			siteIsAtomic,
 			siteIsAtomicPrivate,
 			siteIsUnlaunched,
 			siteSlug,
+			showCloudflare,
 			submitForm,
 			translate,
 			trackEvent,
 			updateFields,
 		} = this.props;
+		const siteIsJetpackNonAtomic = siteIsJetpack && ! siteIsAtomic;
 
 		return (
 			<Main className="settings-performance site-settings site-settings__performance-settings">
@@ -60,9 +65,12 @@ class SiteSettingsPerformance extends Component {
 					brandFont
 					className="settings-performance__page-heading"
 					headerText={ translate( 'Settings' ) }
+					subHeaderText={ translate( "Explore settings to improve your site's performance." ) }
 					align="left"
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
+
+				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
 
 				<Search
 					handleAutosavingToggle={ handleAutosavingToggle }
@@ -130,15 +138,18 @@ const connectComponent = connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const siteIsAtomicPrivate =
-		isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId );
+	const siteIsAtomic = isSiteAutomatedTransfer( state, siteId );
+	const siteIsAtomicPrivate = siteIsAtomic && isPrivateSite( state, siteId );
+	const showCloudflare = config.isEnabled( 'cloudflare' );
 
 	return {
 		site,
 		siteIsJetpack,
+		siteIsAtomic,
 		siteIsAtomicPrivate,
 		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
+		showCloudflare,
 	};
 } );
 

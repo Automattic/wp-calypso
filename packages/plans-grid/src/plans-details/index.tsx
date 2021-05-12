@@ -2,15 +2,17 @@
  * External dependencies
  */
 import React from 'react';
-import { __ } from '@wordpress/i18n';
+import classnames from 'classnames';
+import { useI18n } from '@wordpress/react-i18n';
 import { useSelect } from '@wordpress/data';
 import { Button } from '@wordpress/components';
-import { Icon, check } from '@wordpress/icons';
+import { Icon, check, close } from '@wordpress/icons';
+import type { Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
-import { PLANS_STORE } from '../constants';
+import { PLANS_STORE } from '../stores';
 
 /**
  * Style dependencies
@@ -18,22 +20,52 @@ import { PLANS_STORE } from '../constants';
 import './style.scss';
 
 const TickIcon = <Icon icon={ check } size={ 25 } />;
+const CrossIcon = <Icon icon={ close } size={ 25 } />;
 
 type Props = {
-	onSelect: ( storeSlug: string ) => void;
+	onSelect: ( planProductId: number | undefined ) => void;
+	billingPeriod: Plans.PlanBillingPeriod;
 	locale: string;
 };
 
-const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) => {
-	const { features, featuresByType, plans } = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlansDetails( locale )
-	);
+const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, billingPeriod } ) => {
+	const { __, hasTranslation } = useI18n();
 
-	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
-	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
+	const { supportedPlans, planProducts, features, featuresByType } = useSelect( ( select ) => {
+		const { getPlanProduct, getFeatures, getFeaturesByType, getSupportedPlans } = select(
+			PLANS_STORE
+		);
+		const supportedPlans = getSupportedPlans( locale );
+		const planProducts = supportedPlans.map( ( plan ) =>
+			getPlanProduct( plan.periodAgnosticSlug, billingPeriod )
+		);
+
+		return {
+			supportedPlans,
+			planProducts,
+			features: getFeatures( locale ),
+			featuresByType: getFeaturesByType( locale ),
+		};
+	} );
 
 	const isLoading = ! supportedPlans?.length;
 	const placeholderPlans = [ 1, 2, 3, 4, 5 ];
+
+	// @TODO: clean this up when translations are done and we don't need fallbackAnnualBillingLabel
+	const newAnnualBillingLabel = __( 'Monthly price (billed yearly)', __i18n_text_domain__ );
+	const fallbackAnnualBillingLabel = __(
+		'Monthly subscription (billed yearly)',
+		__i18n_text_domain__
+	);
+	const annualBillingLabel =
+		locale === 'en' || hasTranslation?.( 'Monthly price (billed yearly)' )
+			? newAnnualBillingLabel
+			: fallbackAnnualBillingLabel;
+
+	const monthlyBillingLabel = __( 'Monthly subscription', __i18n_text_domain__ );
+
+	const annualNudgeTextAnnually = __( 'Included with annual plans', __i18n_text_domain__ );
+	const annualNudgeTextMonthly = __( 'Only included with annual plans', __i18n_text_domain__ );
 
 	return (
 		<div className="plans-details">
@@ -47,7 +79,9 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) 
 										<span className="plans-details__placeholder">{ '' }</span>
 									</th>
 							  ) )
-							: supportedPlans.map( ( plan ) => <th key={ plan.storeSlug }>{ plan.title }</th> ) }
+							: supportedPlans.map( ( plan ) => (
+									<th key={ plan.periodAgnosticSlug }>{ plan.title }</th>
+							  ) ) }
 					</tr>
 				</thead>
 
@@ -75,20 +109,57 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) 
 								</tr>
 							) }
 							{ featureType.features?.map( ( feature: string, i ) => (
-								<tr className="plans-details__feature-row" key={ i }>
-									<th>{ features[ feature ].name }</th>
+								<tr
+									className={ classnames( 'plans-details__feature-row', {
+										'plans-details__feature-row--enabled':
+											features[ feature ].requiresAnnuallyBilledPlan &&
+											billingPeriod === 'ANNUALLY',
+										'plans-details__feature-row--disabled':
+											features[ feature ].requiresAnnuallyBilledPlan &&
+											billingPeriod !== 'ANNUALLY',
+									} ) }
+									key={ i }
+								>
+									<th>
+										{ features[ feature ].requiresAnnuallyBilledPlan && (
+											<span
+												className="plans-details__feature-annual-nudge"
+												aria-label={
+													billingPeriod === 'ANNUALLY'
+														? annualNudgeTextAnnually
+														: annualNudgeTextMonthly
+												}
+											>
+												{ __( 'Included with annual plans', __i18n_text_domain__ ) }
+											</span>
+										) }
+										<span>{ features[ feature ].name }</span>
+									</th>
 									{ supportedPlans.map( ( plan, j ) =>
 										feature === 'storage' ? (
-											<td key={ j }>{ plans[ plan.storeSlug ][ feature ] }</td>
+											<td key={ j }>{ plan.storage }</td>
 										) : (
 											<td key={ j }>
-												{ plans[ plan.storeSlug ].featuresSlugs?.[ feature ] ? (
+												{ plan.featuresSlugs?.[ feature ] ? (
 													<>
-														{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-														<span className="hidden">
-															{ __( 'Available', __i18n_text_domain__ ) }
-														</span>
-														{ TickIcon }
+														{ features[ feature ].requiresAnnuallyBilledPlan &&
+														billingPeriod !== 'ANNUALLY' ? (
+															<>
+																{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+																<span className="hidden">
+																	{ __( 'Unavailable', __i18n_text_domain__ ) }
+																</span>
+																{ CrossIcon }
+															</>
+														) : (
+															<>
+																{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+																<span className="hidden">
+																	{ __( 'Available', __i18n_text_domain__ ) }
+																</span>
+																{ TickIcon }
+															</>
+														) }
 													</>
 												) : (
 													<>
@@ -112,15 +183,15 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) 
 						<th colSpan={ 6 }>{ __( 'Sign up', __i18n_text_domain__ ) }</th>
 					</tr>
 					<tr className="plans-details__feature-row" key="price">
-						<th>{ __( 'Monthly subscription (billed yearly)', __i18n_text_domain__ ) }</th>
+						<th>{ billingPeriod === 'ANNUALLY' ? annualBillingLabel : monthlyBillingLabel }</th>
 						{ isLoading
 							? placeholderPlans.map( ( placeholder ) => (
 									<td key={ placeholder }>
 										<span className="plans-details__placeholder">{ '' }</span>
 									</td>
 							  ) )
-							: supportedPlans.map( ( plan ) => (
-									<td key={ plan.storeSlug }>{ prices[ plan.storeSlug ] }</td>
+							: supportedPlans.map( ( plan, i ) => (
+									<td key={ plan.periodAgnosticSlug }>{ planProducts[ i ]?.price }</td>
 							  ) ) }
 					</tr>
 
@@ -136,12 +207,12 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) 
 										</Button>{ ' ' }
 									</td>
 							  ) )
-							: supportedPlans.map( ( plan ) => (
-									<td key={ plan.storeSlug }>
+							: supportedPlans.map( ( plan, i ) => (
+									<td key={ plan.periodAgnosticSlug }>
 										<Button
 											className="plans-details__select-button"
 											onClick={ () => {
-												onSelect( plan.storeSlug );
+												onSelect( planProducts[ i ]?.productId );
 											} }
 											isPrimary
 										>

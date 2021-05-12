@@ -15,7 +15,17 @@ export default class PlansPage extends AsyncBaseContainer {
 	}
 
 	async skipStep() {
-		const skipButtonSelector = By.css( '.action-buttons__skip' );
-		return await driverHelper.clickWhenClickable( this.driver, skipButtonSelector );
+		const skipButtonLocator = By.css( '.action-buttons__skip' );
+		return await driverHelper.clickWhenClickable( this.driver, skipButtonLocator );
+	}
+
+	async goToNextStep() {
+		const nextButtonLocator = By.css( '.action-buttons__next' );
+		return await driverHelper.clickWhenClickable( this.driver, nextButtonLocator );
+	}
+
+	async selectPluginsFeature() {
+		const pluginsFeatureButon = By.css( 'button[data-e2e-button="feature-plugins"]' );
+		return await driverHelper.clickIfPresent( this.driver, pluginsFeatureButon );
 	}
 }

@@ -9,7 +9,11 @@ import { useDebounce } from 'use-debounce';
 /**
  * Internal dependencies
  */
-import { DOMAIN_SUGGESTIONS_STORE, DOMAIN_SEARCH_DEBOUNCE_INTERVAL } from '../constants';
+import {
+	DOMAIN_SUGGESTIONS_STORE,
+	DOMAIN_SEARCH_DEBOUNCE_INTERVAL,
+	DOMAIN_QUERY_MINIMUM_LENGTH,
+} from '../constants';
 
 type DomainSuggestionsResult = {
 	allDomainSuggestions: DomainSuggestion[] | undefined;
@@ -22,19 +26,19 @@ export function useDomainSuggestions(
 	searchTerm = '',
 	quantity: number,
 	domainCategory?: string,
-	locale = 'en'
+	locale = 'en',
+	extraOptions = {}
 ): DomainSuggestionsResult | undefined {
 	const [ domainSearch ] = useDebounce( searchTerm, DOMAIN_SEARCH_DEBOUNCE_INTERVAL );
-
-	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-	// @ts-ignore
-	// Missing types for invalidateResolutionForStoreSelector
-	// (see packages/data/src/namespace-store/metadata/actions.js#L57)
-	const { invalidateResolutionForStoreSelector } = useDispatch( DOMAIN_SUGGESTIONS_STORE );
+	const { invalidateResolutionForStoreSelector } = ( useDispatch(
+		DOMAIN_SUGGESTIONS_STORE
+	) as unknown ) as {
+		invalidateResolutionForStoreSelector: ( selectorName: string ) => void;
+	};
 
 	return useSelect(
 		( select ) => {
-			if ( ! domainSearch || domainSearch.length < 2 ) {
+			if ( ! domainSearch || domainSearch.length < DOMAIN_QUERY_MINIMUM_LENGTH ) {
 				return;
 			}
 			const { getDomainSuggestions, getDomainState, getDomainErrorMessage } = select(
@@ -52,6 +56,7 @@ export function useDomainSuggestions(
 				quantity: quantity + 1, // increment the count to add the free domain
 				locale,
 				category_slug: domainCategory,
+				...extraOptions,
 			} );
 
 			const state = getDomainState();

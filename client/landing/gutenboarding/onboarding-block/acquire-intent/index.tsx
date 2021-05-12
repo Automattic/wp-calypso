@@ -4,9 +4,9 @@
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { SkipButton, NextButton } from '@automattic/onboarding';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -16,8 +16,11 @@ import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
+import useDetectMatchingAnchorSite from '../../hooks/use-detect-matching-anchor-site';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 import Arrow from './arrow';
+import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
+import { useIsAnchorFm } from '../../path';
 
 /**
  * Style dependencies
@@ -55,6 +58,10 @@ const AcquireIntent: React.FunctionComponent = () => {
 		has_selected_site_title: hasSiteTitle(),
 	} ) );
 
+	// Allow Anchor Gutenboarding to check the backend for matching sites and redirect if found.
+	const isAnchorFm = useIsAnchorFm();
+	const isLookingUpMatchingAnchorSites = useDetectMatchingAnchorSite();
+
 	const handleSkip = () => {
 		skipSiteVertical();
 		recordVerticalSkip();
@@ -70,7 +77,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 	};
 
 	const handleSiteTitleSubmit = () => {
-		if ( hasSiteTitle() ) {
+		if ( hasSiteTitle() && isGoodDefaultDomainQuery( getSelectedSiteTitle() ) ) {
 			setDomainSearch( getSelectedSiteTitle() );
 		}
 		goNext();
@@ -102,6 +109,12 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const siteVertical = getSelectedVertical();
 
 	const showVerticalInput = config.isEnabled( 'gutenboarding/show-vertical-input' );
+
+	// In the case of an Anchor signup, we ask the backend to see if they already
+	// have an anchor site. If we're still waiting for this response, don't show anything yet.
+	if ( isAnchorFm && isLookingUpMatchingAnchorSites ) {
+		return <div className="gutenboarding-page acquire-intent" />;
+	}
 
 	return (
 		<div className="gutenboarding-page acquire-intent">

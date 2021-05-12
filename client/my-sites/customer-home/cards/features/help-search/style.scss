@@ -14,7 +14,7 @@ $min_results_height: 180px;
 		padding: 16px;
 
 		@include break-mobile {
-			padding: $card_padding_large;
+			padding: 16px 24px;
 		}
 	}
 

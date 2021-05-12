@@ -15,7 +15,7 @@ import {
 	READER_RELATED_POSTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-jest.mock( 'state/reader/posts/actions', () => ( {
+jest.mock( 'calypso/state/reader/posts/actions', () => ( {
 	receivePosts( posts ) {
 		return Promise.resolve( posts );
 	},

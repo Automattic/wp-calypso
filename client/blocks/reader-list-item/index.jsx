@@ -5,6 +5,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { flowRight as compose, isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -21,10 +22,11 @@ import {
 	getSiteUrl,
 } from 'calypso/reader/get-helpers';
 import ReaderListItemPlaceholder from 'calypso/blocks/reader-list-item/placeholder';
-import { recordTrack, recordTrackWithRailcar } from 'calypso/reader/stats';
+import { recordRailcar } from 'calypso/reader/stats';
 import ExternalLink from 'calypso/components/external-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -57,23 +59,25 @@ function ReaderListItem( {
 	const siteUrl = getSiteUrl( { feed, site } );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
 	const preferGravatar = ! isMultiAuthor;
+	const dispatch = useDispatch();
 
 	if ( ! site && ! feed ) {
 		return <ReaderListItemPlaceholder />;
 	}
 
-	function recordEvent( name ) {
-		const props = {
+	const recordEvent = ( eventName ) => {
+		const eventProps = {
 			blog_id: siteId,
 			feed_id: feedId,
 			source: followSource,
 		};
+
+		dispatch( recordReaderTracksEvent( eventName, eventProps ) );
+
 		if ( railcar ) {
-			recordTrackWithRailcar( name, railcar, props );
-		} else {
-			recordTrack( name, props );
+			recordRailcar( eventName, railcar, eventProps );
 		}
-	}
+	};
 
 	const recordTitleClick = () => recordEvent( 'calypso_reader_feed_link_clicked' );
 	const recordAuthorClick = () => recordEvent( 'calypso_reader_author_link_clicked' );

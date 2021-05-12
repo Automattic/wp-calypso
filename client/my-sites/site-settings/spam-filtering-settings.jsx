@@ -25,9 +25,9 @@ import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_JETPACK_ANTI_SPAM,
 	FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
-} from 'calypso/lib/plans/constants';
-import { isJetpackAntiSpam } from 'calypso/lib/products-values';
-import { PRODUCT_JETPACK_ANTI_SPAM } from 'calypso/lib/products-values/constants';
+	PRODUCT_JETPACK_ANTI_SPAM,
+	isJetpackAntiSpam,
+} from '@automattic/calypso-products';
 import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
 import { getSiteProducts } from 'calypso/state/sites/selectors';
@@ -68,7 +68,10 @@ const SpamFilteringSettings = ( {
 		return null;
 	}
 
-	if ( ! ( hasAkismetFeature || hasAntiSpamFeature || hasJetpackAntiSpamProduct ) ) {
+	if (
+		! ( hasAkismetFeature || hasAntiSpamFeature || hasJetpackAntiSpamProduct ) &&
+		! akismetActive
+	) {
 		return (
 			<UpsellNudge
 				title={ translate( 'Automatically clear spam from comments and forms' ) }

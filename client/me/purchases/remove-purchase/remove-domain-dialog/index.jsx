@@ -20,7 +20,7 @@ import { MOVE_DOMAIN } from 'calypso/lib/url/support';
 import { getName } from 'calypso/lib/purchases';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
+import { getTitanProductName, hasTitanMailWithUs } from 'calypso/lib/titan';
 
 class RemoveDomainDialog extends Component {
 	static propTypes = {
@@ -55,8 +55,15 @@ class RemoveDomainDialog extends Component {
 				{ hasTitanWithUs &&
 					' ' +
 						translate(
-							'You also have an active Titan Mail subscription for this domain, and your emails will stop ' +
-								'working if you delete your domain.'
+							'You also have an active %(productName)s subscription for this domain, and your emails will stop ' +
+								'working if you delete your domain.',
+							{
+								args: {
+									productName: getTitanProductName(),
+								},
+								comment:
+									'%(productName) is the name of the product, which is either Email or Titan Mail',
+							}
 						) }
 			</p>
 		);

@@ -50,28 +50,25 @@ export class ReaderSidebarOrganizationsList extends Component {
 
 	renderAll() {
 		const { translate, organization, path, sites } = this.props;
-		if ( organization.id === AUTOMATTIC_ORG_ID ) {
-			// have a selector
-			const sum = sites.reduce( ( acc, item ) => {
-				acc = acc + item.unseen_count;
-				return acc;
-			}, 0 );
-			return (
-				<>
-					<SidebarItem
-						link={ '/read/' + organization.slug }
-						key={ translate( 'All' ) }
-						label={ translate( 'All' ) }
-						className={ ReaderSidebarHelper.itemLinkClass( '/read/' + organization.slug, path, {
-							'sidebar-streams__all': true,
-						} ) }
-					>
-						{ sum > 0 && <Count count={ sum } compact /> }
-					</SidebarItem>
-				</>
-			);
-		}
-		return null;
+		// have a selector
+		const sum = sites.reduce( ( acc, item ) => {
+			acc = acc + item.unseen_count;
+			return acc;
+		}, 0 );
+		return (
+			<>
+				<SidebarItem
+					link={ '/read/' + organization.slug }
+					key={ translate( 'All' ) }
+					label={ translate( 'All' ) }
+					className={ ReaderSidebarHelper.itemLinkClass( '/read/' + organization.slug, path, {
+						'sidebar-streams__all': true,
+					} ) }
+				>
+					{ sum > 0 && <Count count={ sum } compact /> }
+				</SidebarItem>
+			</>
+		);
 	}
 
 	renderSites() {
@@ -84,7 +81,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 	}
 
 	render() {
-		const { organization } = this.props;
+		const { organization, path, sites } = this.props;
 
 		if ( ! organization.sites_count ) {
 			return null;
@@ -95,6 +92,12 @@ export class ReaderSidebarOrganizationsList extends Component {
 				title={ organization.title }
 				onClick={ this.handleClick }
 				customIcon={ this.renderIcon() }
+				disableFlyout={ true }
+				className={
+					( '/read/' + organization.slug === path ||
+						sites.some( ( site ) => `/read/feeds/${ site.feed_ID }` === path ) ) &&
+					'sidebar__menu--selected'
+				}
 			>
 				{ this.renderAll() }
 				{ this.renderSites() }

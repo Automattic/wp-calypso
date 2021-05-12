@@ -6,15 +6,13 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { isRequestingReaderTeams } from 'calypso/state/teams/selectors';
 
 describe( 'isRequestingReaderTeams()', () => {
 	test( 'should return false if not requesting teams', () => {
 		const isRequesting = isRequestingReaderTeams( {
-			reader: {
-				teams: {
-					isRequesting: false,
-				},
+			teams: {
+				isRequesting: false,
 			},
 		} );
 
@@ -23,10 +21,8 @@ describe( 'isRequestingReaderTeams()', () => {
 
 	test( 'should return true if requesting teams', () => {
 		const isRequesting = isRequestingReaderTeams( {
-			reader: {
-				teams: {
-					isRequesting: true,
-				},
+			teams: {
+				isRequesting: true,
 			},
 		} );
 

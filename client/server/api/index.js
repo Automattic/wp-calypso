@@ -6,10 +6,12 @@ import express from 'express';
 /**
  * Internal dependencies
  */
-import { version } from '../../package.json';
-import config from 'calypso/config';
+import pkgJson from '../../package.json';
+import config from '@automattic/calypso-config';
 import oauth from './oauth';
 import signInWithApple from './sign-in-with-apple';
+
+const { version } = pkgJson;
 
 export default function api() {
 	const app = express();
@@ -18,7 +20,7 @@ export default function api() {
 		response.json( { version } );
 	} );
 
-	if ( config.isEnabled( 'oauth' ) && ! config.isEnabled( 'jetpack-cloud' ) ) {
+	if ( config.isEnabled( 'desktop' ) ) {
 		oauth( app );
 	}
 

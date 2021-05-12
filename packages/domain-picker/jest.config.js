@@ -1,7 +1,6 @@
 module.exports = {
 	preset: '../../test/packages/jest-preset.js',
 	testEnvironment: 'jsdom',
-	globals: {
-		__i18n_text_domain__: 'default',
-	},
+	testMatch: [ '<rootDir>/**/__tests__/**/*.[jt]s?(x)', '!**/.eslintrc.*' ],
+	setupFilesAfterEnv: [ '@testing-library/jest-dom/extend-expect' ],
 };

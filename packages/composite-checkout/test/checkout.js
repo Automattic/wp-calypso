@@ -53,6 +53,7 @@ describe( 'Checkout', () => {
 						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
+						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
 						<Checkout />
 					</CheckoutProvider>
@@ -119,6 +120,7 @@ describe( 'Checkout', () => {
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
 						registry={ registry }
+						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
 						<Checkout />
 					</CheckoutProvider>
@@ -183,6 +185,7 @@ describe( 'Checkout', () => {
 						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
+						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
 						<Checkout />
 					</CheckoutProvider>
@@ -227,6 +230,7 @@ describe( 'Checkout', () => {
 						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
+						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
 						<Checkout />
 					</CheckoutProvider>
@@ -273,6 +277,7 @@ describe( 'Checkout', () => {
 							showSuccessMessage={ noop }
 							paymentMethods={ [ mockMethod ] }
 							paymentProcessors={ getMockPaymentProcessors() }
+							initiallySelectedPaymentMethodId={ mockMethod.id }
 						>
 							<Checkout>
 								{ createStepsFromStepObjects( props.steps || steps, paymentData ) }

@@ -14,13 +14,13 @@ const state = {
 	siteSettings: {
 		items: {
 			123: {
-				blacklist_keys: 'mail@mail.com\ntest@example.com\nfoo@bar.baz\nyadda@yadda.yadda',
+				disallowed_keys: 'mail@mail.com\ntest@example.com\nfoo@bar.baz\nyadda@yadda.yadda',
 			},
 			456: {
-				blacklist_keys: 'mail@mail.com\ntest@example.com\nyadda@yadda.yadda',
+				disallowed_keys: 'mail@mail.com\ntest@example.com\nyadda@yadda.yadda',
 			},
 			789: {
-				blacklist_keys: '',
+				disallowed_keys: '',
 			},
 		},
 	},

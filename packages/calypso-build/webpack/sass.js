@@ -1,8 +1,13 @@
 /**
  * External dependencies
  */
-const MiniCssExtractPluginWithRTL = require( '@automattic/mini-css-extract-plugin-with-rtl' );
-const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
+const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
+const WebpackRTLPlugin = require( '@automattic/webpack-rtl-plugin' );
+
+/**
+ * Internal dependnecies
+ */
+const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
 
 /**
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
@@ -11,21 +16,14 @@ const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
  * @param  {string[]}  _.includePaths                 Sass files lookup paths
  * @param  {string}    _.prelude                      String to prepend to each Sass file
  * @param  {object}    _.postCssOptions               PostCSS options
- * @param  {object}    _.postCssConfig                PostCSS config (deprecated)
  * @param  {object}    _.cacheDirectory               Directory used to store the cache
  *
  * @returns {object}                                  webpack loader object
  */
-module.exports.loader = ( {
-	includePaths,
-	prelude,
-	postCssOptions,
-	postCssConfig = {},
-	cacheDirectory,
-} ) => ( {
+module.exports.loader = ( { includePaths, prelude, postCssOptions, cacheDirectory } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
 	use: [
-		MiniCssExtractPluginWithRTL.loader,
+		MiniCssExtractPlugin.loader,
 		...( cacheDirectory
 			? [
 					{
@@ -44,7 +42,9 @@ module.exports.loader = ( {
 		},
 		{
 			loader: require.resolve( 'postcss-loader' ),
-			options: postCssOptions || { config: postCssConfig },
+			options: {
+				postcssOptions: postCssOptions || {},
+			},
 		},
 		{
 			loader: require.resolve( 'sass-loader' ),
@@ -57,7 +57,6 @@ module.exports.loader = ( {
 		},
 	],
 } );
-
 /**
  * Return an array of styling relevant webpack plugin objects.
  *
@@ -69,12 +68,15 @@ module.exports.loader = ( {
  * @returns {object[]}                 styling relevant webpack plugin objects
  */
 module.exports.plugins = ( { chunkFilename, filename, minify } ) => [
-	new MiniCssExtractPluginWithRTL( {
+	new MiniCssExtractPlugin( {
 		chunkFilename,
 		filename,
 		ignoreOrder: true, // suppress conflicting order warnings from mini-css-extract-plugin
-		rtlEnabled: true,
+		attributes: {
+			'data-webpack': true,
+		},
 	} ),
+	new MiniCSSWithRTLPlugin(),
 	new WebpackRTLPlugin( {
 		minify,
 	} ),

@@ -4,7 +4,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -17,6 +16,8 @@ import Gridicon from 'calypso/components/gridicon';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class VerticalNavItem extends Component {
 	static propTypes = {
@@ -46,21 +47,21 @@ class VerticalNavItem extends Component {
 	};
 
 	render() {
-		if ( this.props.isPlaceholder ) {
+		const { isPlaceholder, external, onClick, path, className, children } = this.props;
+
+		if ( isPlaceholder ) {
 			return this.placeholder();
 		}
 
-		const compactCardClassNames = classNames( 'vertical-nav-item', this.props.className );
+		const compactCardClassNames = classNames( 'vertical-nav-item', className );
+
+		const linkProps = external ? { target: '_blank', rel: 'noreferrer' } : {};
 
 		return (
-			<a
-				href={ this.props.path }
-				onClick={ this.props.onClick }
-				target={ this.props.external ? '_blank' : null }
-			>
+			<a href={ path } onClick={ onClick } { ...linkProps }>
 				<CompactCard className={ compactCardClassNames }>
 					{ this.getIcon() }
-					<span>{ this.props.children }</span>
+					<span>{ children }</span>
 				</CompactCard>
 			</a>
 		);

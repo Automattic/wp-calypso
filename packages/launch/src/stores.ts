@@ -10,14 +10,12 @@ const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
 
 const PLANS_STORE = Plans.register();
 
-// TODO: Check domain suggestions store registration discrepancies between:
-// - client/landing/gutenboarding/stores/domain-suggestions/index.ts
-// - apps/editing-toolkit/editing-toolkit-plugin/common/data-stores/domain-suggestions.ts
-const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register( { vendor: 'variation2_front' } );
+const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 const LAUNCH_STORE = Launch.register();
 
 export { SITE_STORE, PLANS_STORE, DOMAIN_SUGGESTIONS_STORE, LAUNCH_STORE };
 
 export type Plan = Plans.Plan;
+export type PlanProduct = Plans.PlanProduct;
 export type SiteDetailsPlan = Site.SiteDetailsPlan;

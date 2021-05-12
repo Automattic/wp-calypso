@@ -29,12 +29,12 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@automattic/react-i18n": "^1.0.0-alpha.0",
-		"@babel/runtime": "^7.11.1",
-		"@wordpress/base-styles": "^2.0.1",
-		"@wordpress/components": "^10.0.5",
-		"@wordpress/i18n": "^3.14.0",
-		"tslib": "^1.10.0"
+		"@automattic/search": "^1.0.0",
+		"@babel/runtime": "^7.14.0",
+		"@wordpress/base-styles": "^3.4.3",
+		"@wordpress/components": "^13.0.3",
+		"@wordpress/i18n": "^3.20.0",
+		"@wordpress/react-i18n": "^1.0.3"
 	},
 	"peerDependencies": {
 		"react": "^16.8",

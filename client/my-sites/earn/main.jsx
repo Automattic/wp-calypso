@@ -191,7 +191,7 @@ class EarningsMain extends Component {
 		};
 
 		return (
-			<Main className="earn is-wide-layout">
+			<Main wideLayout={ true } className="earn">
 				<PageViewTracker
 					path={ section ? `/earn/${ section }/:site` : `/earn/:site` }
 					title={ `${ adsProgramName } ${ capitalize( section ) }` }
@@ -202,6 +202,7 @@ class EarningsMain extends Component {
 					brandFont
 					className="earn__page-header"
 					headerText={ translate( 'Earn' ) }
+					subHeaderText={ translate( 'Explore tools to earn money with your site.' ) }
 					align="left"
 				/>
 				{ this.getHeaderCake() }

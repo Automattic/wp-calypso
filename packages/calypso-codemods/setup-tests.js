@@ -7,13 +7,10 @@ function test_folder( dir ) {
 		.readdirSync( dir )
 		.filter( ( f ) => ! f.endsWith( '.spec.js' ) && f.endsWith( '.js' ) );
 
-	testFiles.forEach( ( filename ) => {
+	test.each( testFiles )( '%s', ( filename ) => {
 		const filepath = path.join( dir, filename );
-
-		test( filename, () => {
-			const result = api.runCodemodDry( path.basename( dir ), filepath );
-			expect( result ).toMatchSnapshot();
-		} );
+		const result = api.runCodemodDry( path.basename( dir ), filepath );
+		expect( result ).toMatchSnapshot();
 	} );
 }
 

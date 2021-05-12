@@ -5,14 +5,14 @@ import React from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 /**
  * Internal dependencies
  */
 import Field from '../../components/field';
 import Button from '../../components/button';
-import { FormStatus, useLineItems, useEvents } from '../../public-api';
+import { FormStatus, useLineItems } from '../../public-api';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { useFormStatus } from '../form-status';
 import { registerStore, useSelect, useDispatch } from '../../lib/registry';
@@ -128,7 +128,6 @@ const SofortField = styled( Field )`
 function SofortPayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'sofort' ).getCustomerName() );
 
 	return (
@@ -137,7 +136,6 @@ function SofortPayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting sofort payment' );
-					onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', payload: { paymentMethodId: 'sofort' } } );
 					onClick( 'sofort', {
 						stripe,
 						name: customerName?.value,
@@ -162,6 +160,7 @@ function ButtonContents( { formStatus, total } ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === FormStatus.READY ) {
+		/* translators: %s is the total to be paid in localized currency */
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );

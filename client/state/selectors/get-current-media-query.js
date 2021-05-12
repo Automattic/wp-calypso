@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/media/init';
+
+/**
  * Retrieves the current query for media items for a given site.
  *
  * @param {object} state The redux state.

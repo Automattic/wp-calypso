@@ -15,10 +15,10 @@ import React from 'react';
 import { EditorMediaModalDetailItem as DetailItem } from '../detail-item';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
-jest.mock( 'post-editor/media-modal/detail/detail-fields', () =>
+jest.mock( 'calypso/post-editor/media-modal/detail/detail-fields', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'post-editor/media-modal/detail/detail-file-info', () =>
+jest.mock( 'calypso/post-editor/media-modal/detail/detail-file-info', () =>
 	require( 'calypso/components/empty-component' )
 );
 

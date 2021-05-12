@@ -15,9 +15,8 @@ describe( 'jitms', () => {
 			expect( doFetchJITM( action ) ).toEqual(
 				http(
 					{
-						apiNamespace: 'rest',
 						method: 'GET',
-						path: `/v1.1/jetpack-blogs/${ siteId }/rest-api/`,
+						path: `/jetpack-blogs/${ siteId }/rest-api/`,
 						query: {
 							path: '/jetpack/v4/jitm',
 							query: JSON.stringify( {
@@ -42,7 +41,6 @@ describe( 'jitms', () => {
 			expect( doDismissJITM( action ) ).toEqual(
 				http(
 					{
-						apiNamespace: 'rest',
 						method: 'POST',
 						path: `/jetpack-blogs/${ siteId }/rest-api/`,
 						query: {

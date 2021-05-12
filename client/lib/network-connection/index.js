@@ -7,7 +7,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import PollerPool from 'calypso/lib/data-poller';
 import Emitter from 'calypso/lib/mixins/emitter';
 import { connectionLost, connectionRestored } from 'calypso/state/application/actions';

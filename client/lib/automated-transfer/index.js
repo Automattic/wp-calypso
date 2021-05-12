@@ -6,8 +6,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import config, { isEnabled } from 'calypso/config';
-import { isWpComBusinessPlan, isWpComEcommercePlan } from 'calypso/lib/plans';
+import config, { isEnabled } from '@automattic/calypso-config';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { userCan } from 'calypso/lib/site/utils';
 
 /**

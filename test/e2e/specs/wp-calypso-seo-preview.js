@@ -24,46 +24,44 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-	await driverManager.clearCookiesAndDeleteLocalStorage( driver );
-} );
-
 describe( `[${ host }] SEO Preview page: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	describe( 'SEO Preview page:', function () {
-		// Login as Business plan user and open the sidebar
-		step( 'Log In', async function () {
-			const loginFlow = new LoginFlow( driver, 'wooCommerceUser' );
-			await loginFlow.login();
-			const navBarComponent = await NavBarComponent.Expect( driver );
-			return await navBarComponent.clickMySites();
-		} );
+	let driver;
 
-		step( 'Open the marketing page', async function () {
-			this.sidebarComponent = await SidebarComponent.Expect( driver );
-			return await this.sidebarComponent.selectMarketing();
-		} );
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
+	} );
 
-		step( 'Enter front page meta description and click preview button ', async function () {
-			const trafficPage = new TrafficPage( driver );
-			await trafficPage.openTrafficTab();
-			await trafficPage.enterFrontPageMetaAndClickPreviewButton();
-		} );
+	// Login as Business plan user and open the sidebar
+	it( 'Log In', async function () {
+		const loginFlow = new LoginFlow( driver, 'wooCommerceUser' );
+		await loginFlow.login();
+		const navBarComponent = await NavBarComponent.Expect( driver );
+		return await navBarComponent.clickMySites();
+	} );
 
-		step( 'Ensure site preview stays open for 10 seconds', async function () {
-			await driverHelper.waitTillPresentAndDisplayed( driver, By.css( '.web-preview.is-seo' ) );
-			const wait = async ( interval ) => {
-				return new Promise( ( resolve ) => {
-					setTimeout( resolve, interval );
-				} );
-			};
-			await wait( 10000 );
-			const previewPane = await driver.findElement( By.css( '.web-preview.is-seo' ) );
-			assert( previewPane, 'The site preview component has been closed.' );
-		} );
+	it( 'Open the marketing page', async function () {
+		this.sidebarComponent = await SidebarComponent.Expect( driver );
+		return await this.sidebarComponent.selectMarketing();
+	} );
+
+	it( 'Enter front page meta description and click preview button ', async function () {
+		const trafficPage = new TrafficPage( driver );
+		await trafficPage.openTrafficTab();
+		await trafficPage.enterFrontPageMetaAndClickPreviewButton();
+	} );
+
+	it( 'Ensure site preview stays open for 10 seconds', async function () {
+		await driverHelper.waitUntilElementLocatedAndVisible( driver, By.css( '.web-preview.is-seo' ) );
+		const wait = async ( interval ) => {
+			return new Promise( ( resolve ) => {
+				setTimeout( resolve, interval );
+			} );
+		};
+		await wait( 10000 );
+		const previewPane = await driver.findElement( By.css( '.web-preview.is-seo' ) );
+		assert( previewPane, 'The site preview component has been closed.' );
 	} );
 } );

@@ -1,27 +1,33 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	PLAN_PERSONAL_MONTHLY,
+	PLAN_PREMIUM_MONTHLY,
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_ECOMMERCE_MONTHLY,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
+
+const noop = () => {};
 
 export function generateSteps( {
 	addPlanToCart = noop,
+	addDomainUpsellToCart = noop,
 	createAccount = noop,
 	createSite = noop,
 	createWpForTeamsSite = noop,
@@ -32,6 +38,7 @@ export function generateSteps( {
 	addDomainToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
+	isFreePlansDomainUpsellFulfilled = noop,
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
@@ -113,6 +120,14 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 		},
 
+		'domain-upsell': {
+			stepName: 'domain-upsell',
+			apiRequestFunction: addDomainUpsellToCart,
+			fulfilledStepCallback: isFreePlansDomainUpsellFulfilled,
+			dependencies: [ 'domainItem', 'cartItem', 'siteSlug' ],
+			providesDependencies: [ 'selectedDomainUpsellItem' ],
+		},
+
 		'plans-site-selected': {
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,
@@ -145,7 +160,13 @@ export function generateSteps( {
 			stepName: 'user',
 			apiRequestFunction: createAccount,
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username', 'marketing_price_group' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'plans_reorder_abtest_variation',
+			],
+			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
@@ -161,12 +182,14 @@ export function generateSteps( {
 				'bearer_token',
 				'username',
 				'marketing_price_group',
+				'plans_reorder_abtest_variation',
 				'allowUnauthenticated',
 			],
 			optionalDependencies: [
 				'bearer_token',
 				'username',
 				'marketing_price_group',
+				'plans_reorder_abtest_variation',
 				'allowUnauthenticated',
 			],
 			props: {
@@ -273,9 +296,6 @@ export function generateSteps( {
 			props: {
 				headerText: i18n.translate( 'Getting ready to launch your website' ),
 				subHeaderText: i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." ),
-				fallbackHeaderText: i18n.translate(
-					"Almost there, pick a plan that's right for you. Upgrade as you grow."
-				),
 				isLaunchPage: true,
 			},
 		},
@@ -321,12 +341,6 @@ export function generateSteps( {
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 			},
-		},
-
-		'secure-your-brand': {
-			stepName: 'secure-your-brand',
-			dependencies: [ 'domainItem', 'siteSlug' ],
-			providesDependencies: [ 'domainUpsellItems' ],
 		},
 
 		'domains-store': {
@@ -382,7 +396,9 @@ export function generateSteps( {
 				'oauth2_client_id',
 				'oauth2_redirect',
 				'marketing_price_group',
+				'plans_reorder_abtest_variation',
 			],
+			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 		},
 
 		'oauth2-name': {
@@ -395,7 +411,9 @@ export function generateSteps( {
 				'oauth2_client_id',
 				'oauth2_redirect',
 				'marketing_price_group',
+				'plans_reorder_abtest_variation',
 			],
+			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,
@@ -658,6 +676,57 @@ export function generateSteps( {
 			stepName: 'p2-site',
 			apiRequestFunction: createWpForTeamsSite,
 			providesDependencies: [ 'siteSlug' ],
+		},
+
+		'plans-personal-monthly': {
+			stepName: 'plans-personal-monthly',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PERSONAL_MONTHLY,
+			},
+		},
+
+		'plans-premium-monthly': {
+			stepName: 'plans-premium-monthly',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PREMIUM_MONTHLY,
+			},
+		},
+
+		'plans-business-monthly': {
+			stepName: 'plans-business-monthly',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_BUSINESS_MONTHLY,
+			},
+		},
+
+		'plans-ecommerce-monthly': {
+			stepName: 'plans-ecommerce-monthly',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_ECOMMERCE_MONTHLY,
+			},
+		},
+
+		design: {
+			stepName: 'design-picker',
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'selectedDesign' ],
+			optionalDependencies: [ 'selectedDesign' ],
 		},
 	};
 }

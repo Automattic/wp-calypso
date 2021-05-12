@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { get, flow } from 'lodash';
+import { get } from 'lodash';
 import { Dialog } from '@automattic/components';
 
 /**
@@ -105,15 +105,12 @@ class PostRevisionsDialog extends PureComponent {
 	}
 }
 
-export default flow(
-	localize,
-	connect(
-		( state ) => ( {
-			isVisible: isPostRevisionsDialogVisible( state ),
-			postId: getEditorPostId( state ),
-			revision: getPostRevisionsSelectedRevision( state ),
-			siteId: getSelectedSiteId( state ),
-		} ),
-		{ recordTracksEvent, closeDialog: closePostRevisionsDialog, selectPostRevision }
-	)
-)( PostRevisionsDialog );
+export default connect(
+	( state ) => ( {
+		isVisible: isPostRevisionsDialogVisible( state ),
+		postId: getEditorPostId( state ),
+		revision: getPostRevisionsSelectedRevision( state ),
+		siteId: getSelectedSiteId( state ),
+	} ),
+	{ recordTracksEvent, closeDialog: closePostRevisionsDialog, selectPostRevision }
+)( localize( PostRevisionsDialog ) );

@@ -6,7 +6,7 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { statsdTimingUrl, statsdCountingUrl } from 'calypso/lib/analytics/statsd-utils';
 import { getFeatureSlugFromPageUrl } from './feature-slug';
 

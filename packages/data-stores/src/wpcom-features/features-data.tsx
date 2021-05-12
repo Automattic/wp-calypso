@@ -6,39 +6,44 @@ import type { FeatureId, Feature } from './types';
 /**
  * Internal dependencies
  */
-const { PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } = Plans;
+const {
+	TIMELESS_PLAN_PERSONAL,
+	TIMELESS_PLAN_PREMIUM,
+	TIMELESS_PLAN_BUSINESS,
+	TIMELESS_PLAN_ECOMMERCE,
+} = Plans;
 
 export const featuresList: Record< FeatureId, Feature > = {
 	domain: {
 		id: 'domain',
-		minSupportedPlan: PLAN_PERSONAL,
+		minSupportedPlan: TIMELESS_PLAN_PERSONAL,
 	},
 	store: {
 		id: 'store',
-		minSupportedPlan: PLAN_ECOMMERCE,
+		minSupportedPlan: TIMELESS_PLAN_ECOMMERCE,
 	},
 	seo: {
 		id: 'seo',
-		minSupportedPlan: PLAN_BUSINESS,
+		minSupportedPlan: TIMELESS_PLAN_BUSINESS,
 	},
 	plugins: {
 		id: 'plugins',
-		minSupportedPlan: PLAN_BUSINESS,
+		minSupportedPlan: TIMELESS_PLAN_BUSINESS,
 	},
 	'ad-free': {
 		id: 'ad-free',
-		minSupportedPlan: PLAN_PERSONAL,
+		minSupportedPlan: TIMELESS_PLAN_PERSONAL,
 	},
 	'image-storage': {
 		id: 'image-storage',
-		minSupportedPlan: PLAN_PREMIUM,
+		minSupportedPlan: TIMELESS_PLAN_PREMIUM,
 	},
 	'video-storage': {
 		id: 'video-storage',
-		minSupportedPlan: PLAN_PREMIUM,
+		minSupportedPlan: TIMELESS_PLAN_PREMIUM,
 	},
 	support: {
 		id: 'support',
-		minSupportedPlan: PLAN_BUSINESS,
+		minSupportedPlan: TIMELESS_PLAN_BUSINESS,
 	},
 };

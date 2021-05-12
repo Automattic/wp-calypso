@@ -5,13 +5,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
-import { omit } from 'lodash';
+import { pick } from 'lodash';
+import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { isURL } from '@wordpress/url';
 
 /**
  * Internal dependencies
  */
 import Main from 'calypso/components/main';
 import QuerySites from 'calypso/components/data/query-sites';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { CompactCard } from '@automattic/components';
@@ -35,22 +39,59 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import { ConciergeQuickstartSession } from './concierge-quickstart-session';
 import { ConciergeSupportSession } from './concierge-support-session';
-import { PlanUpgradeUpsell } from './plan-upgrade-upsell';
+import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
-import { PurchaseModal } from './purchase-modal';
-import { replaceCartWithItems } from 'calypso/lib/cart/actions';
+import PurchaseModal from './purchase-modal';
 import Gridicon from 'calypso/components/gridicon';
-import { isMonthly } from 'calypso/lib/plans/constants';
+import { isMonthly, getPlanByPathSlug } from '@automattic/calypso-products';
+import { isFetchingStoredCards, getStoredCards } from 'calypso/state/stored-cards/selectors';
+import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
+import { extractStoredCardMetaValue } from './purchase-modal/util';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
+import {
+	retrieveSignupDestination,
+	clearSignupDestinationCookie,
+} from 'calypso/signup/storageUtils';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+/**
+ * Upsell Types
+ */
+export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
+export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
+export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
+
 export class UpsellNudge extends React.Component {
 	static propTypes = {
 		receiptId: PropTypes.number,
-		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
+		upsellType: PropTypes.string,
+		upgradeItem: PropTypes.string,
+		siteSlugParam: PropTypes.string,
+
+		// Below are provided by HOCs
+		currencyCode: PropTypes.string,
+		isLoading: PropTypes.bool,
+		hasProductsList: PropTypes.bool,
+		hasSitePlans: PropTypes.bool,
+		product: PropTypes.object,
+		productCost: PropTypes.number,
+		productDisplayCost: PropTypes.string,
+		planRawPrice: PropTypes.string,
+		planDiscountedRawPrice: PropTypes.string,
+		isLoggedIn: PropTypes.bool,
+		siteSlug: PropTypes.string,
+		selectedSiteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+		hasSevenDayRefundPeriod: PropTypes.bool,
+		trackUpsellButtonClick: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+		cards: PropTypes.arrayOf( PropTypes.object ),
+		cart: PropTypes.object,
+		isFetchingStoredCards: PropTypes.bool,
 	};
 
 	state = {
@@ -63,6 +104,7 @@ export class UpsellNudge extends React.Component {
 		return (
 			<Main className={ upsellType }>
 				<QuerySites siteId={ selectedSiteId } />
+				<QueryStoredCards />
 				{ ! hasProductsList && <QueryProductsList /> }
 				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
 				{ isLoading ? this.renderPlaceholders() : this.renderContent() }
@@ -134,7 +176,7 @@ export class UpsellNudge extends React.Component {
 		} = this.props;
 
 		switch ( upsellType ) {
-			case 'concierge-quickstart-session':
+			case CONCIERGE_QUICKSTART_SESSION:
 				return (
 					<ConciergeQuickstartSession
 						currencyCode={ currencyCode }
@@ -149,7 +191,7 @@ export class UpsellNudge extends React.Component {
 					/>
 				);
 
-			case 'concierge-support-session':
+			case CONCIERGE_SUPPORT_SESSION:
 				return (
 					<ConciergeSupportSession
 						currencyCode={ currencyCode }
@@ -164,9 +206,9 @@ export class UpsellNudge extends React.Component {
 					/>
 				);
 
-			case 'plan-upgrade-upsell':
+			case BUSINESS_PLAN_UPGRADE_UPSELL:
 				return (
-					<PlanUpgradeUpsell
+					<BusinessPlanUpgradeUpsell
 						currencyCode={ currencyCode }
 						planRawPrice={ planRawPrice }
 						planDiscountedRawPrice={ planDiscountedRawPrice }
@@ -181,10 +223,33 @@ export class UpsellNudge extends React.Component {
 	}
 
 	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
-		const { trackUpsellButtonClick, upsellType, handleCheckoutCompleteRedirect } = this.props;
+		const { trackUpsellButtonClick, upsellType } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
-		handleCheckoutCompleteRedirect( shouldHideUpsellNudges );
+
+		const getThankYouPageUrlArguments = {
+			siteSlug: this.props.siteSlug,
+			receiptId: this.props.receiptId || 'noPreviousPurchase',
+			cart: this.props.cart,
+			hideNudge: shouldHideUpsellNudges,
+			isEligibleForSignupDestinationResult: this.props.isEligibleForSignupDestinationResult,
+		};
+		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
+
+		// Removes the destination cookie only if redirecting to the signup destination.
+		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
+		const destinationFromCookie = retrieveSignupDestination();
+		if ( url.includes( destinationFromCookie ) ) {
+			clearSignupDestinationCookie();
+		}
+
+		// If url starts with http, use browser redirect.
+		// If url is a route, use page router.
+		if ( isURL( url ) ) {
+			window.location.href = url;
+		} else {
+			page.redirect( url );
+		}
 	};
 
 	handleClickAccept = ( buttonAction ) => {
@@ -197,9 +262,16 @@ export class UpsellNudge extends React.Component {
 		if ( this.isEligibleForOneClickUpsell( buttonAction ) ) {
 			this.setState( {
 				showPurchaseModal: true,
-				cartLastServerResponseDate: this.getCartUpdatedTime(),
 			} );
-			replaceCartWithItems( [ this.props.product ] );
+			const storedCard = this.props.cards[ 0 ];
+			const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
+			const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
+			this.props.shoppingCartManager.updateLocation( {
+				countryCode,
+				postalCode,
+				subdivisionCode: null,
+			} );
+			this.props.shoppingCartManager.replaceProductsInCart( [ this.props.product ] );
 			return;
 		}
 
@@ -209,9 +281,14 @@ export class UpsellNudge extends React.Component {
 	};
 
 	isEligibleForOneClickUpsell = ( buttonAction ) => {
-		const { cards, siteSlug, upsellType } = this.props;
+		const { product, cards, siteSlug, upsellType } = this.props;
 
-		if ( 'accept' !== buttonAction || 'concierge-quickstart-session' !== upsellType ) {
+		if ( ! product ) {
+			return false;
+		}
+
+		const supportedUpsellTypes = [ CONCIERGE_QUICKSTART_SESSION, BUSINESS_PLAN_UPGRADE_UPSELL ];
+		if ( 'accept' !== buttonAction || ! supportedUpsellTypes.includes( upsellType ) ) {
 			return false;
 		}
 
@@ -227,22 +304,25 @@ export class UpsellNudge extends React.Component {
 		return true;
 	};
 
-	handleOneClickUpsellComplete = () => {
-		this.props.handleCheckoutCompleteRedirect( true );
-	};
-
 	renderPurchaseModal = () => {
-		const isCartUpdating = this.state.cartLastServerResponseDate === this.getCartUpdatedTime();
+		const isCartUpdating = this.props.shoppingCartManager.isPendingUpdate;
+
+		const onCloseModal = () => {
+			this.props.shoppingCartManager.replaceProductsInCart( [] );
+			this.setState( { showPurchaseModal: false } );
+		};
 
 		return (
-			<PurchaseModal
-				cart={ this.props.cart }
-				cards={ this.props.cards }
-				onComplete={ this.handleOneClickUpsellComplete }
-				onClose={ () => this.setState( { showPurchaseModal: false } ) }
-				siteSlug={ this.props.siteSlug }
-				isCartUpdating={ isCartUpdating }
-			/>
+			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
+				<PurchaseModal
+					cart={ this.props.cart }
+					cards={ this.props.cards }
+					onClose={ onCloseModal }
+					siteId={ this.props.selectedSiteId }
+					siteSlug={ this.props.siteSlug }
+					isCartUpdating={ isCartUpdating }
+				/>
+			</StripeHookProvider>
 		);
 	};
 
@@ -253,10 +333,6 @@ export class UpsellNudge extends React.Component {
 			</div>
 		);
 	};
-
-	getCartUpdatedTime = () => {
-		return this.props.cart?.client_metadata?.last_server_response_date;
-	};
 }
 
 const trackUpsellButtonClick = ( eventName ) => {
@@ -264,9 +340,20 @@ const trackUpsellButtonClick = ( eventName ) => {
 	return recordTracksEvent( eventName, { section: 'checkout' } );
 };
 
+const resolveProductSlug = ( upsellType, productAlias ) => {
+	switch ( upsellType ) {
+		case BUSINESS_PLAN_UPGRADE_UPSELL:
+			return getPlanByPathSlug( productAlias )?.getStoreSlug();
+		case CONCIERGE_QUICKSTART_SESSION:
+		case CONCIERGE_SUPPORT_SESSION:
+		default:
+			return 'concierge-session';
+	}
+};
+
 export default connect(
 	( state, props ) => {
-		const { siteSlugParam } = props;
+		const { siteSlugParam, upgradeItem, upsellType } = props;
 		const selectedSiteId = getSelectedSiteId( state );
 		const productsList = getProductsList( state );
 		const sitePlans = getPlansBySiteId( state ).data;
@@ -278,27 +365,40 @@ export default connect(
 		const annualPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 			isMonthly: false,
 		} );
+		const isFetchingCards = isFetchingStoredCards( state );
+		const productSlug = resolveProductSlug( upsellType, upgradeItem );
+		const productProperties = pick( getProductBySlug( state, productSlug ), [
+			'product_slug',
+			'product_id',
+		] );
+		const product =
+			productProperties.product_slug && productProperties.product_id
+				? createRequestCartProduct( productProperties )
+				: null;
 
 		return {
+			isFetchingStoredCards: isFetchingCards,
+			cards: getStoredCards( state ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			isLoading:
-				props.isFetchingStoredCards ||
+				isFetchingCards ||
 				isProductsListFetching( state ) ||
 				isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
 			hasSitePlans: sitePlans && sitePlans.length > 0,
-			product: omit( getProductBySlug( state, 'concierge-session' ), 'prices' ),
-			productCost: getProductCost( state, 'concierge-session' ),
-			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
+			product,
+			productCost: getProductCost( state, productSlug ),
+			productDisplayCost: getProductDisplayCost( state, productSlug ),
 			planRawPrice: annualPrice,
 			planDiscountedRawPrice: annualDiscountPrice,
 			isLoggedIn: isUserLoggedIn( state ),
 			siteSlug,
 			selectedSiteId,
 			hasSevenDayRefundPeriod: isMonthly( planSlug ),
+			isEligibleForSignupDestinationResult: isEligibleForSignupDestination( props.cart ),
 		};
 	},
 	{
 		trackUpsellButtonClick,
 	}
-)( localize( UpsellNudge ) );
+)( withShoppingCart( localize( UpsellNudge ) ) );

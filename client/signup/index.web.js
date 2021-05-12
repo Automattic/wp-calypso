@@ -24,6 +24,7 @@ export default function () {
 		controller.saveInitialContext,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,
+		controller.setSelectedSiteForSignup,
 		controller.start,
 		controller.importSiteInfoFromQuery,
 		makeLayout,

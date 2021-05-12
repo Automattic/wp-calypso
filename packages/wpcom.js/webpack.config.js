@@ -9,5 +9,5 @@ module.exports = {
 		libraryTarget: 'var',
 		library: 'WPCOM',
 	},
-	devtool: 'sourcemap',
+	devtool: 'source-map',
 };

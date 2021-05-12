@@ -18,10 +18,11 @@ import {
 	doesCartLocationDifferFromResponseCartLocation,
 	doesResponseCartContainProductMatching,
 } from './cart-functions';
-import { ResponseCart, ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
-import { emptyResponseCart } from './empty-carts';
+import type { ResponseCart, ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
+import { getEmptyResponseCart } from './empty-carts';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-reducer' );
+const emptyResponseCart = getEmptyResponseCart();
 
 export default function useShoppingCartReducer(): [
 	ShoppingCartState,
@@ -64,6 +65,10 @@ function shoppingCartReducer(
 		action.type !== 'FETCH_INITIAL_RESPONSE_CART' &&
 		action.type !== 'RAISE_ERROR'
 	) {
+		if ( action.type === 'CART_RELOAD' ) {
+			debug( 'cart has not yet loaded; ignoring reload action', action );
+			return state;
+		}
 		debug( 'cart has not yet loaded; queuing requested action', action );
 		return {
 			...state,
@@ -147,7 +152,10 @@ function shoppingCartReducer(
 
 		case 'ADD_COUPON': {
 			const newCoupon = action.couponToAdd;
-			if ( couponStatus === 'applied' || couponStatus === 'pending' ) {
+			if (
+				( couponStatus === 'applied' || couponStatus === 'pending' ) &&
+				newCoupon === state.responseCart.coupon
+			) {
 				debug( `coupon status is '${ couponStatus }'; not submitting again` );
 				return state;
 			}
@@ -255,26 +263,21 @@ function removeItemFromLocalStorage( productSlugsInCart: string[] ) {
 	}
 }
 
-function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart: ResponseCart ) {
+function getUpdatedCouponStatus(
+	currentCouponStatus: CouponStatus,
+	responseCart: ResponseCart
+): CouponStatus {
 	const isCouponApplied = responseCart.is_coupon_applied;
 	const couponDiscounts = responseCart.coupon_discounts_integer.length;
 
-	switch ( currentCouponStatus ) {
-		case 'fresh':
-			return isCouponApplied ? 'applied' : currentCouponStatus;
-		case 'pending': {
-			if ( isCouponApplied ) {
-				return 'applied';
-			}
-			if ( ! isCouponApplied && couponDiscounts <= 0 ) {
-				return 'invalid';
-			}
-			if ( ! isCouponApplied && couponDiscounts > 0 ) {
-				return 'rejected';
-			}
-			return 'error';
-		}
-		default:
-			return currentCouponStatus;
+	if ( isCouponApplied ) {
+		return 'applied';
 	}
+	if ( currentCouponStatus === 'pending' && couponDiscounts <= 0 ) {
+		return 'invalid';
+	}
+	if ( currentCouponStatus === 'pending' && couponDiscounts > 0 ) {
+		return 'rejected';
+	}
+	return 'fresh';
 }

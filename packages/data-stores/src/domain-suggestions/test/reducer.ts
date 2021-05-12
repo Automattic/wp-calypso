@@ -72,6 +72,8 @@ describe( 'domainSuggestions', () => {
 				product_id: 78,
 				product_slug: 'dotsite_domain',
 				cost: '$25.00',
+				raw_price: 25,
+				currency_code: 'USD',
 			},
 			{
 				domain_name: 'hot-test-site.com',
@@ -82,6 +84,8 @@ describe( 'domainSuggestions', () => {
 				product_id: 6,
 				product_slug: 'domain_reg',
 				cost: '$18.00',
+				raw_price: 18,
+				currency_code: 'USD',
 			},
 		];
 		const now = Date.now();

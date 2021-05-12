@@ -35,8 +35,8 @@ const {
 } = data;
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
+jest.mock( 'calypso/lib/user', () => () => {} );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
 jest.mock( 'page', () => jest.fn() );
 
 describe( 'index', () => {
@@ -225,9 +225,16 @@ describe( 'index', () => {
 			);
 		} );
 
+		test( 'should redirect to the checkout page with ?redirect_to', () => {
+			handleRenewNowClick( purchase, siteSlug, { redirectTo: '/me/purchases' } );
+			expect( page ).toHaveBeenCalledWith(
+				'/checkout/personal-bundle/renew/1/my-site.wordpress.com?redirect_to=%2Fme%2Fpurchases'
+			);
+		} );
+
 		test( 'should send the tracks events', () => {
-			const trackProps = { extra: 'extra' };
-			handleRenewNowClick( purchase, siteSlug, trackProps );
+			const tracksProps = { extra: 'extra' };
+			handleRenewNowClick( purchase, siteSlug, { tracksProps } );
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_purchases_renew_now_click', {
 				product_slug: 'personal-bundle',
 				extra: 'extra',

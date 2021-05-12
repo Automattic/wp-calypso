@@ -14,9 +14,10 @@ import 'calypso/state/posts/init';
  *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
+ * @param  {boolean}  silent Whether to stop related notices from appearing
  * @returns {Function}        Action thunk
  */
-export function trashPost( siteId, postId ) {
+export function trashPost( siteId, postId, silent = false ) {
 	return ( dispatch ) => {
 		// Trashing post is almost equivalent to saving the post with status field set to `trash`
 		// and the action behaves like it was doing exactly that -- it dispatches the `POST_SAVE_*`
@@ -40,7 +41,7 @@ export function trashPost( siteId, postId ) {
 
 		trashResult.then(
 			( savedPost ) => {
-				dispatch( savePostSuccess( siteId, postId, savedPost, post ) );
+				dispatch( savePostSuccess( siteId, postId, savedPost, post, silent ) );
 				dispatch( receivePost( savedPost ) );
 			},
 			( error ) => {

@@ -15,7 +15,7 @@ import { select, dispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import * as metadata from './block.json';
+import metadata from './block.json';
 import './editor.scss';
 import './style.scss';
 import { transforms, isValidHomepagePostsBlockType } from './transforms';

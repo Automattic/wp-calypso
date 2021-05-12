@@ -5,14 +5,15 @@ import React, { Component } from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import debugModule from 'debug';
 import { find, isEmpty } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Translatable from './translatable';
 import languages from '@automattic/languages';
-import userSettings from 'calypso/lib/user-settings';
-import { isCommunityTranslatorEnabled } from 'calypso/components/community-translator/utils';
+import isCommunityTranslatorEnabled from 'calypso/state/selectors/is-community-translator-enabled';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
 
 /**
  * Style dependencies
@@ -41,12 +42,10 @@ class CommunityTranslator extends Component {
 		// the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
 		i18n.registerComponentUpdateHook( () => {} );
 		i18n.on( 'change', this.refresh );
-		userSettings.on( 'change', this.refresh );
 	}
 
 	componentWillUnmount() {
 		i18n.off( 'change', this.refresh );
-		userSettings.removeListener( 'change', this.refresh );
 	}
 
 	setLanguage() {
@@ -65,12 +64,7 @@ class CommunityTranslator extends Component {
 			return;
 		}
 
-		if ( ! userSettings.getSettings() ) {
-			debug( 'initialization failed because userSettings are not ready' );
-			return;
-		}
-
-		if ( ! isCommunityTranslatorEnabled() ) {
+		if ( ! this.props.isCommunityTranslatorEnabled ) {
 			debug( 'not initializing, not enabled' );
 			return;
 		}
@@ -95,7 +89,7 @@ class CommunityTranslator extends Component {
 	 * @returns {object} DOM object
 	 */
 	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
-		if ( ! isCommunityTranslatorEnabled() ) {
+		if ( ! this.props.isCommunityTranslatorEnabled ) {
 			return displayedTranslationFromPage;
 		}
 
@@ -158,8 +152,10 @@ class CommunityTranslator extends Component {
 	}
 
 	render() {
-		return null;
+		return <QueryUserSettings />;
 	}
 }
 
-export default localize( CommunityTranslator );
+export default connect( ( state ) => ( {
+	isCommunityTranslatorEnabled: isCommunityTranslatorEnabled( state ),
+} ) )( localize( CommunityTranslator ) );

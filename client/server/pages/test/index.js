@@ -8,21 +8,21 @@ jest.mock( 'child_process', () => ( {
 
 jest.mock( 'superagent', () => jest.fn() );
 
-jest.mock( 'config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const impl = jest.fn();
 	impl.isEnabled = jest.fn();
 	return impl;
 } );
 
-jest.mock( 'server/sanitize', () => jest.fn() );
+jest.mock( 'calypso/server/sanitize', () => jest.fn() );
 
-jest.mock( 'server/bundler/utils', () => ( {
+jest.mock( 'calypso/server/bundler/utils', () => ( {
 	hashFile: jest.fn( () => 'hash' ),
-	getUrl: jest.fn( jest.requireActual( 'server/bundler/utils' ).getUrl ),
+	getUrl: jest.fn( jest.requireActual( 'calypso/server/bundler/utils' ).getUrl ),
 } ) );
 
-jest.mock( 'sections', () => {
-	const sections = jest.requireActual( 'sections' );
+jest.mock( 'calypso/sections', () => {
+	const sections = jest.requireActual( 'calypso/sections' );
 	sections
 		.filter( ( section ) => section.isomorphic )
 		.forEach( ( section ) => {
@@ -33,9 +33,9 @@ jest.mock( 'sections', () => {
 	return sections;
 } );
 
-jest.mock( 'sections-filter', () => jest.fn( () => true ) );
+jest.mock( 'calypso/sections-filter', () => jest.fn( () => true ) );
 
-jest.mock( 'login', () => {
+jest.mock( 'calypso/login', () => {
 	const impl = jest.fn();
 	impl.LOGIN_SECTION_DEFINITION = {
 		name: 'login',
@@ -47,12 +47,12 @@ jest.mock( 'login', () => {
 	return impl;
 } );
 
-jest.mock( 'server/isomorphic-routing', () => ( {
+jest.mock( 'calypso/server/isomorphic-routing', () => ( {
 	serverRouter: jest.fn(),
 	getNormalizedPath: jest.fn(),
 } ) );
 
-jest.mock( 'server/render', () => ( {
+jest.mock( 'calypso/server/render', () => ( {
 	serverRender: jest.fn(),
 	renderJsx: jest.fn(),
 	attachBuildTimestamp: jest.fn(),
@@ -60,30 +60,25 @@ jest.mock( 'server/render', () => ( {
 	attachI18n: jest.fn(),
 } ) );
 
-jest.mock( 'server/state-cache', () => jest.fn() );
+jest.mock( 'calypso/server/state-cache', () => jest.fn() );
 
-jest.mock( 'server/user-bootstrap', () => jest.fn() );
+jest.mock( 'calypso/server/user-bootstrap', () => jest.fn() );
 
-jest.mock( 'state', () => ( {
+jest.mock( 'calypso/state', () => ( {
 	createReduxStore: jest.fn(),
 } ) );
 
-jest.mock( 'state/redux-store', () => ( {
+jest.mock( 'calypso/state/redux-store', () => ( {
 	setStore: jest.fn(),
 } ) );
 
-jest.mock( 'state/reducer', () => jest.fn() );
+jest.mock( 'calypso/state/reducer', () => jest.fn() );
 
-jest.mock( 'state/action-types', () => ( {
-	DESERIALIZE: 'DESERIALIZE',
-	LOCALE_SET: 'LOCALE_SET',
-} ) );
-
-jest.mock( 'state/current-user/actions', () => ( {
+jest.mock( 'calypso/state/current-user/actions', () => ( {
 	setCurrentUser: jest.fn(),
 } ) );
 
-jest.mock( 'lib/paths', () => ( {
+jest.mock( 'calypso/lib/paths', () => ( {
 	login: jest.fn(),
 } ) );
 
@@ -91,22 +86,22 @@ jest.mock( './analytics', () => ( {
 	logSectionResponse: jest.fn(),
 } ) );
 
-jest.mock( 'server/lib/analytics', () => ( {
+jest.mock( 'calypso/server/lib/analytics', () => ( {
 	tracks: {
 		recordEvent: jest.fn(),
 	},
 } ) );
 
-jest.mock( 'lib/i18n-utils', () => ( {
+jest.mock( 'calypso/lib/i18n-utils', () => ( {
 	getLanguage: jest.fn( ( lang ) => ( { langSlug: lang } ) ),
 	filterLanguageRevisions: jest.fn(),
 } ) );
 
-jest.mock( 'lib/oauth2-clients', () => ( {
+jest.mock( 'calypso/lib/oauth2-clients', () => ( {
 	isWooOAuth2Client: jest.fn(),
 } ) );
 
-jest.mock( 'landing/gutenboarding/section', () => ( {
+jest.mock( 'calypso/landing/gutenboarding/section', () => ( {
 	GUTENBOARDING_SECTION_DEFINITION: {
 		name: 'gutenboarding',
 		paths: [ '/new' ],
@@ -155,7 +150,7 @@ const buildApp = ( environment ) => {
 		// When the app requries these modules, they are loaded from its isolated registry.
 		// Requiring them here will give us the same instance used by the app, this will allow
 		// us to change the mock implementation later or make assertions about it.
-		mocks.config = require( 'calypso/config' );
+		mocks.config = require( '@automattic/calypso-config' );
 		mocks.matchesUA = require( 'browserslist-useragent' ).matchesUA;
 		const {
 			attachBuildTimestamp,
@@ -165,7 +160,7 @@ const buildApp = ( environment ) => {
 			serverRender,
 		} = require( 'calypso/server/render' );
 		mocks = { ...mocks, attachBuildTimestamp, attachI18n, attachHead, renderJsx, serverRender };
-		mocks.sanitize = require( 'sanitize' );
+		mocks.sanitize = require( 'calypso/server/sanitize' );
 		mocks.createReduxStore = require( 'calypso/state' ).createReduxStore;
 		mocks.execSync = require( 'child_process' ).execSync;
 		mocks.login = require( 'calypso/lib/paths' ).login;
@@ -331,7 +326,7 @@ const buildApp = ( environment ) => {
 					url: defaultUrl,
 					method: 'GET',
 					get: jest.fn(),
-					connection: {},
+					socket: {},
 					logger: {
 						error: jest.fn(),
 					},
@@ -521,7 +516,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 			app.withMockedVariable( process.env, 'NODE_ENV', 'development' );
 		} );
 
-		it( 'uses the value from DEV_TARGET ', async () => {
+		it( 'uses the value from DEV_TARGET', async () => {
 			app.withMockedVariable( process.env, 'DEV_TARGET', 'fallback' );
 			const { request } = await app.run();
 			expect( request.context.target ).toEqual( 'fallback' );
@@ -638,15 +633,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		customApp.withMockFilesystem();
 		const { request } = await customApp.run();
 		expect( request.context.app.isDebug ).toEqual( true );
-	} );
-
-	it( 'sets the static files urls', async () => {
-		const { request } = await app.run();
-		const staticUrls = request.context.app.staticUrls;
-		expect( staticUrls ).toEqual( {
-			'tinymce/skins/wordpress/wp-content.css':
-				'/calypso/tinymce/skins/wordpress/wp-content.css?v=hash',
-		} );
 	} );
 
 	describe( 'with environment wpcalypso', () => {
@@ -1120,7 +1106,7 @@ describe( 'main app', () => {
 	} );
 
 	describe( 'Middleware localSubdomains', () => {
-		describe( 'sets locale info in the request context ', () => {
+		describe( 'sets locale info in the request context', () => {
 			it( 'rtl language', async () => {
 				const { request } = await app.run( {
 					request: {

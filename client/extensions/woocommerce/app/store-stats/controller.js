@@ -15,7 +15,7 @@ import StatsPagePlaceholder from 'calypso/my-sites/stats/stats-page-placeholder'
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { getQueryDate, getQueries } from './utils';
 import { recordTrack } from 'woocommerce/lib/analytics';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 function isValidParameters( context ) {
 	const validParameters = {
@@ -46,7 +46,7 @@ export default function StatsController( context, next ) {
 		selectedDate: context.query.startDate || moment().format( 'YYYY-MM-DD' ),
 		queryParams: context.query || {},
 	};
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( translate( 'Stats', { textOnly: true } ) ) );
 
 	let tracksEvent;

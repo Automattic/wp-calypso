@@ -1,10 +1,16 @@
 .gsuite-upsell-card__product-details {
 	margin-bottom: 1.5em;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		.gsuite-price {
+			margin-left: 2em;
+		}
+	}
 }
 
 .gsuite-upsell-card__product-intro {
 	@include breakpoint-deprecated( '<960px' ) {
-		margin-bottom: 1em;
+		margin-bottom: 10px;
 	}
 
 	@include breakpoint-deprecated( '>960px' ) {
@@ -14,13 +20,12 @@
 
 .gsuite-upsell-card__product-presentation {
 	flex-basis: 55%;
-}
 
-.gsuite-upsell-card__product-name {
-	color: #888;
-	font-size: $font-title-medium;
-	font-weight: 400;
-	margin: 0;
+	img {
+		margin-bottom: 10px;
+		margin-top: 10px;
+		max-width: 270px;
+	}
 }
 
 .gsuite-upsell-card__product-logo {

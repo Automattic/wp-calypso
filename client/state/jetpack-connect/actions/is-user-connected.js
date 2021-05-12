@@ -9,7 +9,6 @@ import { omit } from 'lodash';
  */
 import wpcom from 'calypso/lib/wp';
 import { receiveDeletedSite, receiveSite } from 'calypso/state/sites/actions';
-import { withoutNotice } from 'calypso/state/notices/actions';
 import { JETPACK_CONNECT_USER_ALREADY_CONNECTED } from 'calypso/state/jetpack-connect/action-types';
 import {
 	SITE_REQUEST,
@@ -65,7 +64,7 @@ export function isUserConnected( siteId, siteIsOnSitesList ) {
 				debug( 'user is not connected from', error );
 				if ( siteIsOnSitesList ) {
 					debug( 'removing site from sites list', siteId );
-					dispatch( withoutNotice( receiveDeletedSite )( siteId ) );
+					dispatch( receiveDeletedSite( siteId ) );
 				}
 			} );
 	};

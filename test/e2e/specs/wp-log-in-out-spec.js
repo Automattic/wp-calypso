@@ -16,6 +16,7 @@ import EmailClient from '../lib/email-client.js';
 import { listenForSMS } from '../lib/xmpp-client';
 import { subscribeToPush, approvePushToken } from '../lib/push-client';
 import ReaderPage from '../lib/pages/reader-page';
+import StatsPage from '../lib/pages/stats-page';
 import ProfilePage from '../lib/pages/profile-page';
 import WPHomePage from '../lib/pages/wp-home-page';
 import MagicLoginPage from '../lib/pages/magic-login-page';
@@ -32,22 +33,18 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Auth Screen Canary: (${ screenSize }) @parallel @safaricanary`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+		return await driverManager.ensureNotLoggedIn( driver );
+	} );
 
 	describe( 'Loading the log-in screen', function () {
-		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
-
-		step( 'Can see the log in screen', async function () {
+		it( 'Can see the log in screen', async function () {
 			await LoginPage.Visit( driver, LoginPage.getLoginURL() );
 		} );
 	} );
@@ -55,6 +52,12 @@ describe( `[${ host }] Auth Screen Canary: (${ screenSize }) @parallel @safarica
 
 describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Logging In and Out: @jetpack', function () {
 		before( async function () {
@@ -62,42 +65,42 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 		} );
 
 		describe( 'Can Log In', function () {
-			step( 'Can log in', async function () {
+			it( 'Can log in', async function () {
 				const loginFlow = new LoginFlow( driver );
 				await loginFlow.login( { useFreshLogin: true } );
 			} );
 
-			step( 'Can see Reader Page after logging in', async function () {
-				return await ReaderPage.Expect( driver );
+			it( 'Can see Stats Page after logging in', async function () {
+				return await StatsPage.Expect( driver );
 			} );
 		} );
 
 		// Test Jetpack SSO
 		if ( host !== 'WPCOM' ) {
 			describe( 'Can Log via Jetpack SSO', function () {
-				step( 'Can log into site via Jetpack SSO', async function () {
+				it( 'Can log into site via Jetpack SSO', async function () {
 					const loginPage = await WPAdminLogonPage.Visit( driver, dataHelper.getJetpackSiteName() );
 					return await loginPage.logonSSO();
 				} );
 
-				step( 'Can return to Reader', async function () {
+				it( 'Can return to Reader', async function () {
 					return await ReaderPage.Visit( driver );
 				} );
 			} );
 		}
 
 		describe( 'Can Log Out', function () {
-			step( 'Can view profile to log out', async function () {
+			it( 'Can view profile to log out', async function () {
 				const navbarComponent = await NavBarComponent.Expect( driver );
 				await navbarComponent.clickProfileLink();
 			} );
 
-			step( 'Can logout from profile page', async function () {
+			it( 'Can logout from profile page', async function () {
 				const profilePage = await ProfilePage.Expect( driver );
 				await profilePage.clickSignOut();
 			} );
 
-			step( 'Can see wordpress.com home when after logging out', async function () {
+			it( 'Can see wordpress.com home when after logging out', async function () {
 				return await LoggedOutMasterbarComponent.Expect( driver );
 			} );
 		} );
@@ -139,7 +142,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 				} );
 			} );
 
-			step( 'Should be on the /log-in/sms page', async function () {
+			it( 'Should be on the /log-in/sms page', async function () {
 				await twoFALoginPage.displayed();
 				const urlDisplayed = await driver.getCurrentUrl();
 
@@ -149,7 +152,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 				);
 			} );
 
-			step( "Enter the 2fa code and we're logged in", async function () {
+			it( "Enter the 2fa code and we're logged in", async function () {
 				return await twoFALoginPage.enter2FACode( twoFACode );
 			} );
 		} );
@@ -170,7 +173,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 				twoFALoginPage = new LoginPage( driver );
 			} );
 
-			step( 'Should be on the /log-in/push page', async function () {
+			it( 'Should be on the /log-in/push page', async function () {
 				await twoFALoginPage.displayed();
 				const urlDisplayed = await driver.getCurrentUrl();
 				assert(
@@ -179,7 +182,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 				);
 			} );
 
-			step( "Approve push 2fa token and we're logged in", async function () {
+			it( "Approve push 2fa token and we're logged in", async function () {
 				await subscribeToPush( loginFlow.account.pushConfig, async ( pushToken ) => {
 					await approvePushToken( pushToken, loginFlow.account.bearerToken );
 					const readerPage = new ReaderPage( driver );
@@ -206,7 +209,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 				return twoFALoginPage.use2FAMethod( 'otp' );
 			} );
 
-			step( 'Should be on the /log-in/authenticator page', async function () {
+			it( 'Should be on the /log-in/authenticator page', async function () {
 				await twoFALoginPage.displayed();
 				const urlDisplayed = await driver.getCurrentUrl();
 				assert(
@@ -215,7 +218,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 				);
 			} );
 
-			step( "Enter the 2fa code and we're logged in", async function () {
+			it( "Enter the 2fa code and we're logged in", async function () {
 				const twoFACode = speakeasy.totp( {
 					secret: loginFlow.account[ '2faOTPsecret' ],
 					encoding: 'base32',
@@ -245,7 +248,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 					return await loginFlow.login( { emailSSO: true, useFreshLogin: true } );
 				} );
 
-				step( 'Can find the magic link in the email received', async function () {
+				it( 'Can find the magic link in the email received', async function () {
 					const emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
 					magicLinkEmail = emails.find(
 						( email ) => email.subject.indexOf( 'WordPress.com' ) > -1
@@ -260,7 +263,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 
 				describe( 'Can use the magic link to log in', function () {
 					let magicLoginPage;
-					step( "Visit the magic link and we're logged in", async function () {
+					it( "Visit the magic link and we're logged in", async function () {
 						driver.get( magicLoginLink );
 						magicLoginPage = new MagicLoginPage( driver );
 						await magicLoginPage.finishLogin();
@@ -306,7 +309,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 					return await loginFlow.login( { emailSSO: true } );
 				} );
 
-				step( 'Can find the magic link in the email received', async function () {
+				it( 'Can find the magic link in the email received', async function () {
 					const emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
 					magicLinkEmail = emails.find(
 						( email ) => email.subject.indexOf( 'WordPress.com' ) > -1
@@ -349,7 +352,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 						} );
 					} );
 
-					step( 'Should be on the /log-in/sms page', async function () {
+					it( 'Should be on the /log-in/sms page', async function () {
 						await twoFALoginPage.displayed();
 						const urlDisplayed = await driver.getCurrentUrl();
 
@@ -359,7 +362,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 						);
 					} );
 
-					step( "Enter the 2fa code and we're logged in", async function () {
+					it( "Enter the 2fa code and we're logged in", async function () {
 						return await twoFALoginPage.enter2FACode( twoFACode );
 					} );
 
@@ -400,7 +403,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 					return await loginFlow.login( { emailSSO: true } );
 				} );
 
-				step( 'Can find the magic link in the email received', async function () {
+				it( 'Can find the magic link in the email received', async function () {
 					const emails = await emailClient.pollEmailsByRecipient( loginFlow.account.email );
 					magicLinkEmail = emails.find(
 						( email ) => email.subject.indexOf( 'WordPress.com' ) > -1
@@ -424,7 +427,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 						return await twoFALoginPage.use2FAMethod( 'otp' );
 					} );
 
-					step( 'Should be on the /log-in/authenticator page', async function () {
+					it( 'Should be on the /log-in/authenticator page', async function () {
 						await twoFALoginPage.displayed();
 						const urlDisplayed = await driver.getCurrentUrl();
 						assert(
@@ -433,7 +436,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 						);
 					} );
 
-					step( "Enter the 2fa code and we're logged in", async function () {
+					it( "Enter the 2fa code and we're logged in", async function () {
 						const twoFACode = speakeasy.totp( {
 							secret: loginFlow.account[ '2faOTPsecret' ],
 							encoding: 'base32',
@@ -461,12 +464,15 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 
 describe( `[${ host }] User Agent: (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
 
-	before( async function () {
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
 		await driverManager.ensureNotLoggedIn( driver );
 	} );
 
-	step( 'Can see the correct user agent set', async function () {
+	it( 'Can see the correct user agent set', async function () {
 		await WPHomePage.Visit( driver );
 		const userAgent = await driver.executeScript( 'return navigator.userAgent;' );
 		assert(

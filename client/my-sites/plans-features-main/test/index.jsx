@@ -1,27 +1,26 @@
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
 jest.mock( 'react-redux', () => ( {
 	connect: () => ( component ) => component,
 } ) );
-jest.mock( 'lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'config', () => {
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock( '@automattic/calypso-config', () => {
 	const fn = () => {
 		return [];
 	};
 	fn.isEnabled = jest.fn( () => true );
 	return fn;
 } );
-jest.mock( 'components/happychat/connection-connected', () => 'HappychatConnection' );
-jest.mock( 'components/data/query-plans', () => 'QueryPlans' );
-jest.mock( 'components/data/query-site-plans', () => 'QuerySitePlans' );
-jest.mock( 'components/data/cart', () => 'CartData' );
-jest.mock( 'my-sites/plan-features', () => 'PlanFeatures' );
-jest.mock( 'my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
-jest.mock( 'my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
+jest.mock( 'calypso/components/happychat/connection-connected', () => 'HappychatConnection' );
+jest.mock( 'calypso/components/data/query-plans', () => 'QueryPlans' );
+jest.mock( 'calypso/components/data/query-site-plans', () => 'QuerySitePlans' );
+jest.mock( 'calypso/my-sites/plan-features', () => 'PlanFeatures' );
+jest.mock( 'calypso/my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
+jest.mock( 'calypso/my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
 
 /**
  * External dependencies
@@ -38,26 +37,22 @@ import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_PREMIUM_MONTHLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
+	PLAN_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TERM_ANNUALLY,
 	TYPE_PREMIUM,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 const props = {
 	selectedPlan: PLAN_FREE,
@@ -111,71 +106,6 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 		const plans = instance.getPlansForPlanFeatures();
 		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_ECOMMERCE ] );
 	} );
-	test( 'Should render <PlanFeatures /> with Jetpack monthly plans when called with jetpack props', () => {
-		const instance = new PlansFeaturesMain( {
-			...props,
-			displayJetpackPlans: true,
-			intervalType: 'monthly',
-		} );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [
-			PLAN_JETPACK_FREE,
-			PLAN_JETPACK_PERSONAL_MONTHLY,
-			PLAN_JETPACK_PREMIUM_MONTHLY,
-			PLAN_JETPACK_BUSINESS_MONTHLY,
-		] );
-	} );
-
-	test( 'Should render <PlanFeatures /> with Jetpack monthly plans without free one when requested', () => {
-		const instance = new PlansFeaturesMain( {
-			...props,
-			displayJetpackPlans: true,
-			intervalType: 'monthly',
-			hideFreePlan: true,
-		} );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [
-			PLAN_JETPACK_PERSONAL_MONTHLY,
-			PLAN_JETPACK_PREMIUM_MONTHLY,
-			PLAN_JETPACK_BUSINESS_MONTHLY,
-		] );
-	} );
-	test( 'Should render <PlanFeatures /> with Jetpack monthly data-e2e-plans when requested', () => {
-		const instance = new PlansFeaturesMain( { ...props, displayJetpackPlans: true } );
-		const comp = shallow( instance.getPlanFeatures() );
-		expect( comp.find( '[data-e2e-plans="jetpack"]' ).length ).toBe( 1 );
-	} );
-
-	test( 'Should render <PlanFeatures /> with Jetpack plans when called with jetpack props', () => {
-		const instance = new PlansFeaturesMain( { ...props, displayJetpackPlans: true } );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [
-			PLAN_JETPACK_FREE,
-			PLAN_JETPACK_PERSONAL,
-			PLAN_JETPACK_PREMIUM,
-			PLAN_JETPACK_BUSINESS,
-		] );
-	} );
-
-	test( 'Should render <PlanFeatures /> with Jetpack plans without free one when requested', () => {
-		const instance = new PlansFeaturesMain( {
-			...props,
-			displayJetpackPlans: true,
-			hideFreePlan: true,
-		} );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [
-			PLAN_JETPACK_PERSONAL,
-			PLAN_JETPACK_PREMIUM,
-			PLAN_JETPACK_BUSINESS,
-		] );
-	} );
-
-	test( 'Should render <PlanFeatures /> with Jetpack data-e2e-plans when requested', () => {
-		const instance = new PlansFeaturesMain( { ...props, displayJetpackPlans: true } );
-		const comp = shallow( instance.getPlanFeatures() );
-		expect( comp.find( '[data-e2e-plans="jetpack"]' ).length ).toBe( 1 );
-	} );
 
 	test( 'Should render <PlanFeatures /> with WP.com plans when requested', () => {
 		const instance = new PlansFeaturesMain( { ...props } );
@@ -209,10 +139,10 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 		} );
 		const plans = instance.getPlansForPlanFeatures();
 		expect( plans ).toEqual( [
-			PLAN_PERSONAL,
-			PLAN_PREMIUM,
+			PLAN_PERSONAL_MONTHLY,
+			PLAN_PREMIUM_MONTHLY,
 			PLAN_BUSINESS_MONTHLY,
-			PLAN_ECOMMERCE,
+			PLAN_ECOMMERCE_MONTHLY,
 		] );
 	} );
 

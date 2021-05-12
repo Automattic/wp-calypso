@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { makeLayout } from 'calypso/controller';
 import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
 import { newAccount, selectBusinessType, selectLocation, stats } from './controller';

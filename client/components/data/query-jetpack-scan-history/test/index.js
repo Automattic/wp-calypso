@@ -43,7 +43,7 @@ function setup( siteId ) {
 }
 
 describe( 'QueryJetpackScanHistory', () => {
-	it( 'should not dispatch the action if the siteId is null ', () => {
+	it( 'should not dispatch the action if the siteId is null', () => {
 		const siteId = null;
 		const { requestJetpackScanHistoryActionSpy } = setup( siteId );
 		expect( requestJetpackScanHistoryActionSpy ).not.toHaveBeenCalled();

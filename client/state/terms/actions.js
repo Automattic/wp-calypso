@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { filter, get, uniqueId } from 'lodash';
+import { filter, get } from 'lodash';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -33,7 +34,7 @@ import 'calypso/state/terms/init';
  */
 export function addTerm( siteId, taxonomy, term ) {
 	return ( dispatch ) => {
-		const temporaryId = uniqueId( 'temporary' );
+		const temporaryId = 'temporary' + uuid();
 
 		dispatch(
 			receiveTerm( siteId, taxonomy, {

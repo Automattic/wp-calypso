@@ -6,7 +6,7 @@ import { createTransientMedia, validateMediaItem } from 'calypso/lib/media/utils
 import * as dateUtils from 'calypso/state/media/utils/transient-date';
 import * as syncActions from 'calypso/state/media/actions';
 
-jest.mock( 'lib/media/utils', () => ( {
+jest.mock( 'calypso/lib/media/utils', () => ( {
 	createTransientMedia: jest.fn(),
 	validateMediaItem: jest.fn(),
 } ) );

@@ -55,6 +55,10 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	getTitle() {
+		if ( this.props.flowName === 'domain' ) {
+			return this.props.translate( 'We are preparing the domain for purchase…' );
+		}
+
 		return this.props.translate( '{{strong}}Hooray!{{/strong}} Your site will be ready shortly.', {
 			components: { strong: <strong />, br: <br /> },
 			comment:

@@ -14,7 +14,9 @@ import React from 'react';
  */
 import PluginAction from '../plugin-action';
 
-jest.mock( 'components/info-popover', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'calypso/components/info-popover', () =>
+	require( 'calypso/components/empty-component' )
+);
 
 describe( 'PluginAction', () => {
 	describe( 'rendering with form toggle', () => {

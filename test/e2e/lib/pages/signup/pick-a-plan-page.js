@@ -16,7 +16,7 @@ import { getJetpackHost } from '../../data-helper.js';
 export default class PickAPlanPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		const host = getJetpackHost();
-		const plansCssHandle = host !== 'WPCOM' ? '.selector-alt__main' : '.plans-features-main__group';
+		const plansCssHandle = host !== 'WPCOM' ? '.selector__main' : '.plans-features-main__group';
 		super( driver, By.css( plansCssHandle ), null, config.get( 'explicitWaitMS' ) * 2 );
 		this.host = host;
 	}
@@ -27,7 +27,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 
 	// Explicitly select the free button on jetpack without needing `host` above.
 	async selectFreePlanJetpack() {
-		const freePlanButton = By.css( '.jetpack-free-card-alt__main a.button' );
+		const freePlanButton = By.css( '[data-e2e-product-slug="free"] a' );
 		await driverHelper.scrollIntoView( this.driver, freePlanButton );
 		return await driverHelper.clickWhenClickable( this.driver, freePlanButton );
 	}
@@ -39,32 +39,34 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 	async _selectPlan( level ) {
 		// We are switching from two separate designs for mobile and desktop plans to one. There will be two buttons -
 		// one visible and one hidden in control and only one button in the test variation.
-		const planSelector =
+		const planLocator =
 			driverManager.currentScreenSize() === 'mobile'
-				? `.plan-features__mobile button.is-${ level }-plan, .plan-features__table button.is-${ level }-plan`
-				: `.plan-features__table button.is-${ level }-plan`;
+				? `.plan-features__mobile button.is-${ level }-plan, .plan-features-comparison__table button.is-${ level }-plan, .plan-features__table button.is-${ level }-plan`
+				: `.plan-features-comparison__table button.is-${ level }-plan, .plan-features__table button.is-${ level }-plan`;
 
-		let selector = By.css( planSelector );
+		let locator = By.css( planLocator );
 
 		if ( level === 'free' ) {
-			if ( ! ( await driverHelper.isElementPresent( this.driver, selector ) ) ) {
-				selector = By.css( '.plans-features-main__banner-content button' );
+			if ( ! ( await driverHelper.isElementLocated( this.driver, locator ) ) ) {
+				locator = By.css(
+					'.plans-features-main__banner-content button, .formatted-header__subtitle button'
+				);
 			}
 		}
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css(
-				'.plan-features__mobile button.is-business-plan, .plan-features__table button.is-business-plan'
+				'.plan-features__mobile button.is-business-plan, .plan-features-comparison__table button.is-business-plan, .plan-features__table button.is-business-plan'
 			)
 		);
 		await this.scrollPlanInToView( level );
 
-		await driverHelper.clickWhenClickable( this.driver, selector );
+		await driverHelper.clickWhenClickable( this.driver, locator );
 		try {
-			await driverHelper.waitTillNotPresent( this.driver, selector );
+			await driverHelper.waitUntilElementNotLocated( this.driver, locator );
 		} catch {
 			//If the first click doesn't take, try again
-			await driverHelper.clickWhenClickable( this.driver, selector );
+			await driverHelper.clickWhenClickable( this.driver, locator );
 		}
 	}
 
@@ -90,7 +92,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 	}
 
 	async clickDirectionArrow( direction ) {
-		const arrowSelector = By.css( `.plan-features__scroll-${ direction } button` );
-		return await driverHelper.clickWhenClickable( this.driver, arrowSelector );
+		const arrowLocator = By.css( `.plan-features__scroll-${ direction } button` );
+		return await driverHelper.clickWhenClickable( this.driver, arrowLocator );
 	}
 }

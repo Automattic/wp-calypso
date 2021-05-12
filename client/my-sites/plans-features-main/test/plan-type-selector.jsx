@@ -10,7 +10,7 @@ jest.mock( 'i18n-calypso', () => ( {
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { PLAN_FREE } from 'calypso/lib/plans/constants';
+import { PLAN_FREE } from '@automattic/calypso-products';
 import PlanTypeSelector, { CustomerTypeToggle } from '../plan-type-selector';
 
 describe( '<PlanTypeSelector />', () => {
@@ -20,8 +20,10 @@ describe( '<PlanTypeSelector />', () => {
 		withWPPlanTabs: true,
 	};
 
-	test( 'Should show CustomerTypeToggle when withWPPlanTabs is set to true', () => {
-		const comp = shallow( <PlanTypeSelector { ...myProps } customerType="personal" /> );
+	test( 'Should show CustomerTypeToggle when kind is set to `customer`', () => {
+		const comp = shallow(
+			<PlanTypeSelector { ...myProps } kind="customer" customerType="personal" />
+		);
 
 		expect( comp.find( 'CustomerTypeToggle' ).length ).toBe( 1 );
 
@@ -29,9 +31,9 @@ describe( '<PlanTypeSelector />', () => {
 		expect( comp.find( 'CustomerTypeToggle[customerType="personal"]' ).length ).toBe( 1 );
 	} );
 
-	test( 'Should show IntervalTypeToggle when displayJetpackPlans is set to true', () => {
+	test( 'Should show IntervalTypeToggle when kind is set to `interval`', () => {
 		const comp = shallow(
-			<PlanTypeSelector { ...myProps } displayJetpackPlans={ true } intervalType="monthly" />
+			<PlanTypeSelector { ...myProps } kind="interval" intervalType="monthly" />
 		);
 
 		expect( comp.find( 'IntervalTypeToggle' ).length ).toBe( 1 );

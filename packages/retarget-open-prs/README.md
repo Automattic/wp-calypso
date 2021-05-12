@@ -2,8 +2,6 @@
 
 A script utilizing the GitHub API to retarget open PRs in a given repository from one branch to another. This is useful, for example, when changing the default branch of a repository.
 
-This was successfully used to update `wp-calypso`'s 297 open PRs targeting the old main branch on 2020-11-20.
-
 ## Usage
 
 ```

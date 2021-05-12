@@ -1,7 +1,11 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
-
 import {
 	GRAVATAR_UPLOAD_RECEIVE,
 	GRAVATAR_UPLOAD_REQUEST,
@@ -16,7 +20,7 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
-
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export function uploadGravatar( action ) {
@@ -49,19 +53,35 @@ export function announceSuccess( { file } ) {
 					type: GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 				} )
 			);
+			dispatch(
+				successNotice(
+					translate( 'You successfully uploaded a new profile photo — looking sharp!' ),
+					{
+						id: 'gravatar-upload',
+					}
+				)
+			);
 		} );
 		fileReader.readAsDataURL( file );
 	};
 }
 
 export function announceFailure() {
-	return withAnalytics(
-		composeAnalytics(
-			recordTracksEvent( 'calypso_edit_gravatar_upload_failure' ),
-			bumpStat( 'calypso_gravatar_update_error', 'unsuccessful_http_response' )
+	return [
+		withAnalytics(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_edit_gravatar_upload_failure' ),
+				bumpStat( 'calypso_gravatar_update_error', 'unsuccessful_http_response' )
+			),
+			{ type: GRAVATAR_UPLOAD_REQUEST_FAILURE }
 		),
-		{ type: GRAVATAR_UPLOAD_REQUEST_FAILURE }
-	);
+		errorNotice(
+			translate( 'Hmm, your new profile photo was not saved. Please try uploading again.' ),
+			{
+				id: 'gravatar-upload',
+			}
+		),
+	];
 }
 
 registerHandlers( 'state/data-layer/wpcom/gravatar-upload/index.js', {

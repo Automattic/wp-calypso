@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 
 /**
@@ -10,6 +9,8 @@ import React from 'react';
  */
 import DocsExample, { DocsExampleToggle } from '../index';
 import { Button } from '@automattic/components';
+
+const noop = () => {};
 
 describe( 'DocsExample', () => {
 	const props = {

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 /**
  * Internal dependencies
@@ -31,9 +31,9 @@ export default function CheckoutReviewOrder( { className }: { className?: string
 	);
 }
 
-export function CheckoutReviewOrderTitle() {
+export function CheckoutReviewOrderTitle(): JSX.Element {
 	const { __ } = useI18n();
-	return __( 'Review your order' );
+	return <>{ __( 'Review your order' ) }</>;
 }
 
 CheckoutReviewOrder.propTypes = {

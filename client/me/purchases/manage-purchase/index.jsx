@@ -14,9 +14,8 @@ import React, { Component, Fragment } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { abtest } from 'calypso/lib/abtest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { applyTestFiltersToPlansList } from 'calypso/lib/plans';
 import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
@@ -27,6 +26,7 @@ import {
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
 	hasPaymentMethod,
+	isPaidWithCredits,
 	isCancelable,
 	isExpired,
 	isOneTimePurchase,
@@ -39,7 +39,11 @@ import {
 	purchaseType,
 	getName,
 } from 'calypso/lib/purchases';
-import { canEditPaymentDetails, getEditCardDetailsPath } from '../utils';
+import {
+	canEditPaymentDetails,
+	getAddNewPaymentMethodPath,
+	getChangePaymentMethodPath,
+} from '../utils';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -48,6 +52,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
@@ -59,19 +64,26 @@ import {
 	isBusiness,
 	isEcommerce,
 	isPlan,
+	isComplete,
 	isDomainProduct,
 	isDomainRegistration,
 	isDomainMapping,
 	isDomainTransfer,
-	isGoogleApps,
+	isGoogleWorkspace,
+	isGSuiteOrGoogleWorkspace,
 	isJetpackSearch,
 	isTheme,
 	isJetpackProduct,
 	isConciergeSession,
-} from 'calypso/lib/products-values';
+	isTitanMail,
+	applyTestFiltersToPlansList,
+	isWpComMonthlyPlan,
+	JETPACK_PLANS,
+	JETPACK_LEGACY_PLANS,
+	JETPACK_PRODUCTS_LIST,
+	isP2Plus,
+} from '@automattic/calypso-products';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
-import { JETPACK_PLANS, JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import ProductLink from 'calypso/me/purchases/product-link';
 import PurchaseMeta from './purchase-meta';
@@ -88,13 +100,12 @@ import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
-import PlanRenewalMessage from 'calypso/my-sites/plans-v2/plan-renewal-message';
+import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import {
 	currentUserHasFlag,
 	getCurrentUser,
 	getCurrentUserId,
 } from 'calypso/state/current-user/selectors';
-import CartStore from 'calypso/lib/cart/store';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -108,9 +119,9 @@ import './style.scss';
 class ManagePurchase extends Component {
 	static propTypes = {
 		cardTitle: PropTypes.string,
-		getAddPaymentMethodUrlFor: PropTypes.func,
+		getAddNewPaymentMethodUrlFor: PropTypes.func,
 		getCancelPurchaseUrlFor: PropTypes.func,
-		getEditPaymentMethodUrlFor: PropTypes.func,
+		getChangePaymentMethodUrlFor: PropTypes.func,
 		getManagePurchaseUrlFor: PropTypes.func,
 		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
@@ -121,6 +132,7 @@ class ManagePurchase extends Component {
 		purchase: PropTypes.object,
 		purchaseAttachedTo: PropTypes.object,
 		purchaseListUrl: PropTypes.string,
+		redirectTo: PropTypes.string,
 		showHeader: PropTypes.bool,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
@@ -131,9 +143,8 @@ class ManagePurchase extends Component {
 	static defaultProps = {
 		showHeader: true,
 		purchaseListUrl: purchasesRoot,
-		getAddPaymentMethodUrlFor: getEditCardDetailsPath,
-		getEditPaymentMethodUrlFor: getEditCardDetailsPath,
-		cardTitle: titles.managePurchase,
+		getAddNewPaymentMethodUrlFor: getAddNewPaymentMethodPath,
+		getChangePaymentMethodUrlFor: getChangePaymentMethodPath,
 		getCancelPurchaseUrlFor: cancelPurchase,
 		getManagePurchaseUrlFor: managePurchase,
 	};
@@ -150,22 +161,10 @@ class ManagePurchase extends Component {
 		}
 	}
 
-	componentDidMount() {
-		if ( this.props.siteId ) {
-			CartStore.setSelectedSiteId( this.props.siteId );
-		}
-	}
-
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
 			page.redirect( this.props.purchaseListUrl );
 			return;
-		}
-	}
-
-	componentDidUpdate( { siteId } ) {
-		if ( this.props.siteId && siteId !== this.props.siteId ) {
-			CartStore.setSelectedSiteId( this.props.siteId );
 		}
 	}
 
@@ -182,11 +181,15 @@ class ManagePurchase extends Component {
 	}
 
 	handleRenew = () => {
-		handleRenewNowClick( this.props.purchase, this.props.siteSlug );
+		const { purchase, siteSlug, redirectTo } = this.props;
+		const options = redirectTo ? { redirectTo } : undefined;
+		handleRenewNowClick( purchase, siteSlug, options );
 	};
 
 	handleRenewMultiplePurchases = ( purchases ) => {
-		handleRenewMultiplePurchasesClick( purchases, this.props.siteSlug );
+		const { siteSlug, redirectTo } = this.props;
+		const options = redirectTo ? { redirectTo } : undefined;
+		handleRenewMultiplePurchasesClick( purchases, siteSlug, options );
 	};
 
 	shouldShowNonPrimaryDomainWarning() {
@@ -259,7 +262,12 @@ class ManagePurchase extends Component {
 			? translate( 'Pick Another Plan' )
 			: translate( 'Upgrade Plan' );
 
-		if ( ! isPlan( purchase ) || isEcommerce( purchase ) ) {
+		if (
+			! isPlan( purchase ) ||
+			isEcommerce( purchase ) ||
+			isComplete( purchase ) ||
+			isP2Plus( purchase )
+		) {
 			return null;
 		}
 
@@ -290,14 +298,14 @@ class ManagePurchase extends Component {
 	};
 
 	renderEditPaymentMethodNavItem() {
-		const { purchase, translate, siteSlug, getEditPaymentMethodUrlFor } = this.props;
+		const { purchase, translate, siteSlug, getChangePaymentMethodUrlFor } = this.props;
 
 		if ( ! this.props.site ) {
 			return null;
 		}
 
 		if ( canEditPaymentDetails( purchase ) ) {
-			const path = getEditPaymentMethodUrlFor( siteSlug, purchase );
+			const path = getChangePaymentMethodUrlFor( siteSlug, purchase );
 			const renewing = isRenewing( purchase );
 
 			if (
@@ -310,9 +318,7 @@ class ManagePurchase extends Component {
 
 			return (
 				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>
-					{ hasPaymentMethod( purchase )
-						? translate( 'Change Payment Method' )
-						: translate( 'Add Credit Card' ) }
+					{ addPaymentMethodLinkText( { purchase, translate } ) }
 				</CompactCard>
 			);
 		}
@@ -394,7 +400,8 @@ class ManagePurchase extends Component {
 		if (
 			isAtomicSite &&
 			isSubscription( purchase ) &&
-			! isGoogleApps( purchase ) &&
+			! isGSuiteOrGoogleWorkspace( purchase ) &&
+			! isTitanMail( purchase ) &&
 			! isJetpackSearch( purchase )
 		) {
 			text = translate( 'Contact Support to Cancel your Subscription' );
@@ -445,8 +452,9 @@ class ManagePurchase extends Component {
 		);
 	}
 
-	renderPlanIcon() {
-		const { purchase } = this.props;
+	renderPurchaseIcon() {
+		const { purchase, translate } = this.props;
+
 		if ( isPlan( purchase ) || isJetpackProduct( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
@@ -463,6 +471,14 @@ class ManagePurchase extends Component {
 			);
 		}
 
+		if ( isGoogleWorkspace( purchase ) ) {
+			return (
+				<div className="manage-purchase__plan-icon">
+					<img src={ googleWorkspaceIcon } alt={ translate( 'Google Workspace icon' ) } />
+				</div>
+			);
+		}
+
 		if ( isTheme( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
@@ -471,13 +487,22 @@ class ManagePurchase extends Component {
 			);
 		}
 
+		if ( isTitanMail( purchase ) ) {
+			return (
+				<div className="manage-purchase__plan-icon">
+					<Gridicon icon="my-sites" size={ 54 } />
+				</div>
+			);
+		}
+
 		return null;
 	}
 
-	renderPlanDescription() {
+	renderPurchaseDescription() {
 		const { plan, purchase, site, theme, translate } = this.props;
 
 		let description = purchaseType( purchase );
+
 		if ( isPlan( purchase ) ) {
 			description = plan.getDescription();
 		} else if ( isTheme( purchase ) && theme ) {
@@ -499,6 +524,52 @@ class ManagePurchase extends Component {
 				'Transfers an existing domain from another provider to WordPress.com, ' +
 					'helping you manage your site and domain in one place.'
 			);
+		} else if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
+			description = translate(
+				'Professional email integrated with Google Meet and other collaboration tools from Google.'
+			);
+
+			if ( purchase.purchaseRenewalQuantity ) {
+				description = (
+					<>
+						{ description }{ ' ' }
+						{ translate(
+							'This purchase is for %(numberOfUsers)d user for the domain %(domain)s.',
+							'This purchase is for %(numberOfUsers)d users for the domain %(domain)s.',
+							{
+								count: purchase.purchaseRenewalQuantity,
+								args: {
+									numberOfUsers: purchase.purchaseRenewalQuantity,
+									domain: purchase.meta,
+								},
+							}
+						) }
+					</>
+				);
+			}
+		} else if ( isTitanMail( purchase ) ) {
+			description = translate(
+				'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
+			);
+
+			if ( purchase.purchaseRenewalQuantity ) {
+				description = (
+					<>
+						{ description }{ ' ' }
+						{ translate(
+							'This purchase is for %(numberOfMailboxes)d mailbox for the domain %(domain)s.',
+							'This purchase is for %(numberOfMailboxes)d mailboxes for the domain %(domain)s.',
+							{
+								count: purchase.purchaseRenewalQuantity,
+								args: {
+									numberOfMailboxes: purchase.purchaseRenewalQuantity,
+									domain: purchase.meta,
+								},
+							}
+						) }
+					</>
+				);
+			}
 		}
 
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
@@ -524,7 +595,7 @@ class ManagePurchase extends Component {
 			siteSlug,
 			hasLoadedPurchasesFromServer,
 			getManagePurchaseUrlFor,
-			getEditCardDetailsPathFor,
+			getChangePaymentMethodUrlFor,
 		} = this.props;
 
 		return (
@@ -546,7 +617,7 @@ class ManagePurchase extends Component {
 						siteSlug={ siteSlug }
 						hasLoadedPurchasesFromServer={ hasLoadedPurchasesFromServer }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-						getEditCardDetailsPathFor={ getEditCardDetailsPathFor }
+						getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					/>
 				</Card>
 				<PurchasePlanDetails isPlaceholder />
@@ -567,6 +638,19 @@ class ManagePurchase extends Component {
 		return ! hasLoadedDomains;
 	}
 
+	getProductDisplayName() {
+		const { purchase, plan, translate } = this.props;
+
+		if ( ! plan || ! isWpComMonthlyPlan( purchase.productSlug ) ) {
+			return getDisplayName( purchase );
+		}
+
+		return translate( '%s Monthly', {
+			args: getDisplayName( purchase ),
+			comment: '%s will be a dotcom plan name. e.g. WordPress.com Business Monthly',
+		} );
+	}
+
 	renderPurchaseDetail( preventRenewal ) {
 		if ( this.isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
 			return this.renderPlaceholder();
@@ -574,12 +658,11 @@ class ManagePurchase extends Component {
 
 		const {
 			purchase,
-			siteId,
 			translate,
 			isProductOwner,
 			getManagePurchaseUrlFor,
 			siteSlug,
-			getEditPaymentMethodUrlFor,
+			getChangePaymentMethodUrlFor,
 			hasLoadedPurchasesFromServer,
 		} = this.props;
 
@@ -592,6 +675,7 @@ class ManagePurchase extends Component {
 		} );
 		const siteName = purchase.siteName;
 		const siteDomain = purchase.domain;
+		const siteId = purchase.siteId;
 
 		return (
 			<Fragment>
@@ -600,8 +684,8 @@ class ManagePurchase extends Component {
 				) }
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
-						{ this.renderPlanIcon() }
-						<h2 className="manage-purchase__title">{ getDisplayName( purchase ) }</h2>
+						{ this.renderPurchaseIcon() }
+						<h2 className="manage-purchase__title">{ this.getProductDisplayName() }</h2>
 						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
 						<div className="manage-purchase__price">
 							{ isPartnerPurchase( purchase ) ? (
@@ -622,14 +706,14 @@ class ManagePurchase extends Component {
 							) }
 						</div>
 					</header>
-					{ this.renderPlanDescription() }
+					{ this.renderPurchaseDescription() }
 					{ ! isPartnerPurchase( purchase ) && (
 						<PurchaseMeta
 							purchaseId={ purchase.id }
 							siteSlug={ siteSlug }
 							hasLoadedPurchasesFromServer={ hasLoadedPurchasesFromServer }
 							getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-							getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 						/>
 					) }
 					{ isProductOwner && preventRenewal && this.renderSelectNewButton() }
@@ -664,14 +748,14 @@ class ManagePurchase extends Component {
 			isPurchaseTheme,
 			translate,
 			getManagePurchaseUrlFor,
-			getAddPaymentMethodUrlFor,
-			getEditPaymentMethodUrlFor,
+			getAddNewPaymentMethodUrlFor,
+			getChangePaymentMethodUrlFor,
 			isProductOwner,
 		} = this.props;
 
-		let editCardDetailsPath = false;
+		let changePaymentMethodPath = false;
 		if ( ! this.isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
-			editCardDetailsPath = getEditPaymentMethodUrlFor( siteSlug, purchase );
+			changePaymentMethodPath = getChangePaymentMethodUrlFor( siteSlug, purchase );
 		}
 
 		let showExpiryNotice = false;
@@ -696,7 +780,9 @@ class ManagePurchase extends Component {
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 
-				<HeaderCake backHref={ this.props.purchaseListUrl }>{ this.props.cardTitle }</HeaderCake>
+				<HeaderCake backHref={ this.props.purchaseListUrl }>
+					{ this.props.cardTitle || titles.managePurchase }
+				</HeaderCake>
 				{ showExpiryNotice ? (
 					<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
 						<NoticeAction href={ `/plans/${ siteSlug || '' }` }>
@@ -712,10 +798,10 @@ class ManagePurchase extends Component {
 						purchase={ purchase }
 						purchaseAttachedTo={ purchaseAttachedTo }
 						renewableSitePurchases={ renewableSitePurchases }
-						editCardDetailsPath={ editCardDetailsPath }
+						changePaymentMethodPath={ changePaymentMethodPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 						isProductOwner={ isProductOwner }
-						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
+						getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
 					/>
 				) }
 				<AsyncLoad
@@ -731,6 +817,17 @@ class ManagePurchase extends Component {
 			</Fragment>
 		);
 	}
+}
+
+function addPaymentMethodLinkText( { purchase, translate } ) {
+	let linkText = null;
+	// TODO: we need a "hasRechargeablePaymentMethod" function here
+	if ( hasPaymentMethod( purchase ) && ! isPaidWithCredits( purchase ) ) {
+		linkText = translate( 'Change Payment Method' );
+	} else {
+		linkText = translate( 'Add Payment Method' );
+	}
+	return linkText;
 }
 
 export default connect( ( state, props ) => {

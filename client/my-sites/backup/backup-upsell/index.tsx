@@ -79,6 +79,7 @@ const BackupsUpsellBody: FunctionComponent = () => {
 			buttonLink={ `https://jetpack.com/upgrade/backup/?site=${ selectedSiteSlug }` }
 			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_upsell_click' ) ) }
 			iconComponent={ <BackupsUpsellIcon /> }
+			openButtonLinkOnNewTab={ false }
 		/>
 	);
 };

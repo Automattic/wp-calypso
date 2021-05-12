@@ -4,11 +4,12 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
@@ -24,13 +25,15 @@ import {
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
 import { getSiteFragment } from 'calypso/lib/route';
-import { hydrate } from './web-util.js';
+import { render, hydrate } from './web-util.js';
 
 /**
  * Re-export
  */
 export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
 export { render, hydrate } from './web-util.js';
+
+const queryClient = new QueryClient();
 
 export const ProviderWrappedLayout = ( {
 	store,
@@ -57,15 +60,33 @@ export const ProviderWrappedLayout = ( {
 				currentRoute={ currentRoute }
 				currentQuery={ currentQuery }
 			>
-				<ReduxProvider store={ store }>
-					<MomentProvider>{ layout }</MomentProvider>
-				</ReduxProvider>
+				<QueryClientProvider client={ queryClient }>
+					<ReduxProvider store={ store }>
+						<MomentProvider>{ layout }</MomentProvider>
+					</ReduxProvider>
+				</QueryClientProvider>
 			</RouteProvider>
 		</CalypsoI18nProvider>
 	);
 };
 
 export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
+
+/**
+ * For logged in users with bootstrap (production), ReactDOM.hydrate().
+ * Otherwise (development), ReactDOM.render().
+ * See: https://wp.me/pd2qbF-P#comment-20
+ *
+ * @param context - Middleware context
+ */
+function smartHydrate( context ) {
+	const doHydrate =
+		! config.isEnabled( 'wpcom-user-bootstrap' ) && isUserLoggedIn( context.store.getState() )
+			? render
+			: hydrate;
+
+	doHydrate( context );
+}
 
 /**
  * Isomorphic routing helper, client side
@@ -82,7 +103,7 @@ export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
  * divs.
  */
 export function clientRouter( route, ...middlewares ) {
-	page( route, ...middlewares, hydrate );
+	page( route, ...middlewares, smartHydrate );
 }
 
 export function redirectLoggedOut( context, next ) {

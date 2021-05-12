@@ -5,15 +5,15 @@ import { uploadMedia as uploadMediaThunk } from 'calypso/state/media/thunks/uplo
 import * as syncActions from 'calypso/state/media/actions';
 import { createTransientMediaItems } from 'calypso/state/media/thunks/create-transient-media-items';
 
-jest.mock( 'state/media/utils/is-file-list', () => ( {
+jest.mock( 'calypso/state/media/utils/is-file-list', () => ( {
 	isFileList: jest.fn(),
 } ) );
 
-jest.mock( 'state/media/thunks/create-transient-media-items', () => ( {
+jest.mock( 'calypso/state/media/thunks/create-transient-media-items', () => ( {
 	createTransientMediaItems: jest.fn(),
 } ) );
 
-jest.mock( 'state/sites/media-storage/actions', () => ( {
+jest.mock( 'calypso/state/sites/media-storage/actions', () => ( {
 	requestMediaStorage: jest.fn(),
 } ) );
 

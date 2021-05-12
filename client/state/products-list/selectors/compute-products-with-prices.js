@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getTermDuration } from 'calypso/lib/plans/constants';
+import { getTermDuration } from '@automattic/calypso-products';
 import { getProductsList } from './get-products-list';
 import { planSlugToPlanProduct } from './plan-slug-to-plan-product';
 import { computeFullAndMonthlyPricesForPlan } from './compute-full-and-monthly-prices-for-plan';
@@ -16,7 +16,7 @@ import { computeFullAndMonthlyPricesForPlan } from './compute-full-and-monthly-p
  * products, and their full and monthly prices
  *
  * @param {object} state Current redux state
- * @param {number} siteId Site ID to consider
+ * @param {number|undefined} siteId Site ID to consider
  * @param {string[]} planSlugs Plans constants
  * @param {number} credits The number of free credits in cart
  * @param {object} couponDiscounts Absolute values of any discounts coming from a discount coupon

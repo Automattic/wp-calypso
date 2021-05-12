@@ -14,9 +14,9 @@ import {
 } from 'calypso/me/concierge/constants';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 
-// we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
-jest.mock( 'lib/impure-lodash', () => ( {
-	uniqueId: () => 'mock-unique-id',
+// we are mocking uuid.v4 here, so that conciergeShiftsFetchError() will contain the expected id in the tests
+jest.mock( 'uuid', () => ( {
+	v4: () => 'fake-uuid',
 } ) );
 
 describe( 'wpcom-api', () => {

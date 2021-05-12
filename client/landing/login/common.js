@@ -7,10 +7,10 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { setRoute } from 'calypso/state/route/actions';
 
@@ -62,7 +62,7 @@ function renderDevHelpers( reduxStore ) {
 	if ( config.isEnabled( 'dev/test-helper' ) ) {
 		const testHelperEl = document.querySelector( '.environment.is-tests' );
 		if ( testHelperEl ) {
-			asyncRequire( 'lib/abtest/test-helper', ( testHelper ) => {
+			asyncRequire( 'calypso/lib/abtest/test-helper', ( testHelper ) => {
 				testHelper( testHelperEl );
 			} );
 		}
@@ -71,7 +71,7 @@ function renderDevHelpers( reduxStore ) {
 	if ( config.isEnabled( 'dev/preferences-helper' ) ) {
 		const prefHelperEl = document.querySelector( '.environment.is-prefs' );
 		if ( prefHelperEl ) {
-			asyncRequire( 'lib/preferences-helper', ( prefHelper ) => {
+			asyncRequire( 'calypso/lib/preferences-helper', ( prefHelper ) => {
 				prefHelper( prefHelperEl, reduxStore );
 			} );
 		}
@@ -80,7 +80,7 @@ function renderDevHelpers( reduxStore ) {
 	if ( config.isEnabled( 'features-helper' ) ) {
 		const featureHelperEl = document.querySelector( '.environment.is-features' );
 		if ( featureHelperEl ) {
-			asyncRequire( 'lib/features-helper', ( featureHelper ) => {
+			asyncRequire( 'calypso/lib/features-helper', ( featureHelper ) => {
 				featureHelper( featureHelperEl );
 			} );
 		}
@@ -99,7 +99,7 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'lib/network-connection', ( networkConnection ) =>
+		asyncRequire( 'calypso/lib/network-connection', ( networkConnection ) =>
 			networkConnection.init( reduxStore )
 		);
 	}

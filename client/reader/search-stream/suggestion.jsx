@@ -1,15 +1,17 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
+import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { recordTrack, recordTracksRailcarInteract } from 'calypso/reader/stats';
+import { recordTracksRailcarInteract } from 'calypso/reader/stats';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 export class Suggestion extends Component {
 	static propTypes = {
@@ -26,7 +28,10 @@ export class Suggestion extends Component {
 
 	handleSuggestionClick = () => {
 		const { suggestion, source, railcar } = this.props;
-		recordTrack( 'calypso_reader_search_suggestion_click', { suggestion, source } );
+		this.props.recordReaderTracksEvent( 'calypso_reader_search_suggestion_click', {
+			suggestion,
+			source,
+		} );
 		recordTracksRailcarInteract( 'search_suggestion_click', railcar );
 	};
 
@@ -48,4 +53,6 @@ export class Suggestion extends Component {
 	}
 }
 
-export default Suggestion;
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( Suggestion );

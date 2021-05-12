@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { memoize, noop } from 'lodash';
+import { memoize } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -39,6 +39,8 @@ import {
  */
 import './style.scss';
 import './content.scss';
+
+const noop = () => {};
 
 export const SupportArticleDialog = ( {
 	actionIsExternal,

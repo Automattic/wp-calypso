@@ -2,16 +2,15 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { noop } from 'lodash';
 import React, { useRef, FunctionComponent, useState, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ActivityActor, { SIZE_S } from 'calypso/components/activity-card/activity-actor';
 import ActivityDescription from 'calypso/components/activity-card/activity-description';
 import ActivityMedia from 'calypso/components/activity-card/activity-media';
@@ -19,7 +18,6 @@ import Badge from 'calypso/components/badge';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Tooltip from 'calypso/components/tooltip';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -34,6 +32,9 @@ import cloudIcon from 'calypso/components/jetpack/daily-backup-status/status-car
  * Type dependencies
  */
 import type { Activity } from 'calypso/state/activity-log/types';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 type Props = {
 	activity: Activity;
@@ -50,6 +51,7 @@ const BackupCard: FunctionComponent< Props > = ( {
 } ) => {
 	const { activityTs, activityTitle, rewindId } = activity;
 
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const getDisplayDate = useGetDisplayDate();
 	const moment = useLocalizedMoment();
@@ -68,12 +70,24 @@ const BackupCard: FunctionComponent< Props > = ( {
 	const onRestoreButtonLeave = useCallback( () => setTooltipVisibility( false ), [
 		setTooltipVisibility,
 	] );
-	const onDownloadClick = useTrackCallback( noop, 'calypso_jetpack_backup_download', {
-		rewind_id: rewindId,
-	} );
-	const onRestoreClick = useTrackCallback( noop, 'calypso_jetpack_backup_restore', {
-		rewind_id: rewindId,
-	} );
+	const onDownloadClick = useCallback(
+		() =>
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_backup_download', {
+					rewind_id: rewindId,
+				} )
+			),
+		[ dispatch, rewindId ]
+	);
+	const onRestoreClick = useCallback(
+		() =>
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_backup_restore', {
+					rewind_id: rewindId,
+				} )
+			),
+		[ dispatch, rewindId ]
+	);
 
 	return (
 		<Card

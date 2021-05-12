@@ -17,7 +17,7 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 } from '../../action-types';
 import reducer, { generating } from '../reducer';
-import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -82,22 +82,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				[ primarySiteId ]: false,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = generating( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = generating( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 
@@ -180,22 +164,6 @@ describe( 'reducer', () => {
 				[ primarySiteId ]: false,
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const state = reducer( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state.deleting ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = reducer( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state.deleting ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'items()', () => {
@@ -268,9 +236,7 @@ describe( 'reducer', () => {
 			} );
 
 			test( 'should persist state', () => {
-				const state = reducer( previousState, {
-					type: SERIALIZE,
-				} );
+				const state = serialize( reducer, previousState );
 
 				expect( state.root().items ).to.eql( {
 					[ primarySiteId ]: primaryStats,
@@ -278,9 +244,7 @@ describe( 'reducer', () => {
 			} );
 
 			test( 'should load valid persisted state', () => {
-				const state = reducer( previousState, {
-					type: DESERIALIZE,
-				} );
+				const state = deserialize( reducer, previousState );
 
 				expect( state.items ).to.eql( {
 					[ primarySiteId ]: primaryStats,
@@ -293,9 +257,7 @@ describe( 'reducer', () => {
 						[ primarySiteId ]: 2,
 					},
 				} );
-				const state = reducer( previousInvalidState, {
-					type: DESERIALIZE,
-				} );
+				const state = deserialize( reducer, previousInvalidState );
 
 				expect( state.items ).to.eql( {} );
 			} );

@@ -11,7 +11,7 @@ import decodeEntities from 'calypso/lib/post-normalizer/rule-decode-entities';
 import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
 import withContentDom from 'calypso/lib/post-normalizer/rule-with-content-dom';
 import stripHtml from 'calypso/lib/post-normalizer/rule-strip-html';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 const normalizeDisplayFlow = flow( [
 	decodeEntities,

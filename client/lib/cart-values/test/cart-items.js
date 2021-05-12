@@ -8,27 +8,23 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
-	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-} from 'calypso/lib/plans/constants';
+	PRODUCT_JETPACK_BACKUP_DAILY,
+} from '@automattic/calypso-products';
 import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
-import { PRODUCT_JETPACK_BACKUP_DAILY } from 'calypso/lib/products-values/constants';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 const cartItems = require( '../cart-items' );
-const { getPlan } = require( 'calypso/lib/plans' );
-const { getTermDuration } = require( 'calypso/lib/plans/constants' );
+const { getPlan, getTermDuration } = require( '@automattic/calypso-products' );
 const {
 	planItem,
-	replaceItem,
-	getItemForPlan,
 	isNextDomainFree,
 	hasRenewableSubscription,
 	isDomainBeingUsedForPlan,
@@ -36,6 +32,7 @@ const {
 	getDomainPriceRule,
 	hasToUpgradeToPayForADomain,
 	getRenewalItemFromProduct,
+	supportsPrivacyProtectionPurchase,
 } = cartItems;
 
 /**
@@ -57,46 +54,6 @@ describe( 'planItem()', () => {
 	].forEach( ( product_slug ) => {
 		test( `should return an object for non-free plan (${ product_slug })`, () => {
 			expect( planItem( product_slug ).product_slug ).toBe( product_slug );
-		} );
-	} );
-} );
-
-describe( 'getItemForPlan()', () => {
-	[
-		PLAN_PERSONAL,
-		PLAN_PERSONAL_2_YEARS,
-		PLAN_JETPACK_PERSONAL,
-		PLAN_JETPACK_PERSONAL_MONTHLY,
-	].forEach( ( product_slug ) => {
-		test( `should return personal plan item for personal plan ${ product_slug }`, () => {
-			expect( getItemForPlan( { product_slug } ).product_slug ).toBe( product_slug );
-		} );
-	} );
-	[
-		PLAN_PREMIUM,
-		PLAN_PREMIUM_2_YEARS,
-		PLAN_JETPACK_PREMIUM,
-		PLAN_JETPACK_PREMIUM_MONTHLY,
-	].forEach( ( product_slug ) => {
-		test( `should return personal plan item for a premium plan ${ product_slug }`, () => {
-			expect( getItemForPlan( { product_slug } ).product_slug ).toBe( product_slug );
-		} );
-	} );
-
-	[
-		PLAN_BUSINESS,
-		PLAN_BUSINESS_2_YEARS,
-		PLAN_JETPACK_BUSINESS,
-		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( ( product_slug ) => {
-		test( `should return personal plan item for a business plan ${ product_slug }`, () => {
-			expect( getItemForPlan( { product_slug } ).product_slug ).toBe( product_slug );
-		} );
-	} );
-
-	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( ( product_slug ) => {
-		test( `should throw an error for plan ${ product_slug }`, () => {
-			expect( () => getItemForPlan( { product_slug } ).product_slug ).toThrow();
 		} );
 	} );
 } );
@@ -167,52 +124,6 @@ describe( 'hasRenewableSubscription()', () => {
 				} )
 			).toBe( true );
 		} );
-	} );
-} );
-
-describe( 'replaceItem()', () => {
-	test( 'should return a function', () => {
-		expect( typeof replaceItem() ).toBe( 'function' );
-	} );
-
-	test( 'should replace a cart item', () => {
-		const oldProduct = { id: 1, product_slug: '1' };
-		const newProduct = { id: 2, product_slug: '2' };
-		const cart = {
-			products: [ oldProduct ],
-		};
-		const newCart = replaceItem( oldProduct, newProduct )( cart );
-		expect( typeof newCart ).toBe( 'object' );
-		expect( newCart.products ).toHaveLength( 1 );
-		expect( newCart.products[ 0 ] ).toBe( newProduct );
-	} );
-
-	test( 'should preserve other cart items when replacing a cart item', () => {
-		const oldProduct = { id: 1, product_slug: '1' };
-		const newProduct = { id: 2, product_slug: '2' };
-		const neutralProduct = { id: 3, product_slug: '3' };
-		const cart = {
-			products: [ oldProduct, neutralProduct ],
-		};
-		const newCart = replaceItem( oldProduct, newProduct )( cart );
-		expect( typeof newCart ).toBe( 'object' );
-		expect( newCart.products ).toHaveLength( 2 );
-		expect( newCart.products[ 0 ] ).toBe( neutralProduct );
-		expect( newCart.products[ 1 ] ).toBe( newProduct );
-	} );
-
-	test( 'should just add new item when old one is missing', () => {
-		const oldProduct = { id: 1, product_slug: '1' };
-		const newProduct = { id: 2, product_slug: '2' };
-		const neutralProduct = { id: 3, product_slug: '3' };
-		const cart = {
-			products: [ neutralProduct ],
-		};
-		const newCart = replaceItem( oldProduct, newProduct )( cart );
-		expect( typeof newCart ).toBe( 'object' );
-		expect( newCart.products ).toHaveLength( 2 );
-		expect( newCart.products[ 0 ] ).toBe( neutralProduct );
-		expect( newCart.products[ 1 ] ).toBe( newProduct );
 	} );
 } );
 
@@ -577,6 +488,73 @@ describe( 'getDomainPriceRule()', () => {
 			).toBe( 'UPGRADE_TO_HIGHER_PLAN_TO_BUY' );
 		} );
 	} );
+
+	describe( 'plan flows which do not include a free domain', () => {
+		test( 'should return PRICE if flowName is free', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					null,
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' },
+					false,
+					'free'
+				)
+			).toBe( 'PRICE' );
+		} );
+
+		test( 'should return PRICE if flowName is personal-monthly', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					null,
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' },
+					false,
+					'personal-monthly'
+				)
+			).toBe( 'PRICE' );
+		} );
+
+		test( 'should return PRICE if flowName is premium-monthly', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					null,
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' },
+					false,
+					'premium-monthly'
+				)
+			).toBe( 'PRICE' );
+		} );
+
+		test( 'should return PRICE if flowName is business-monthly', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					null,
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' },
+					false,
+					'business-monthly'
+				)
+			).toBe( 'PRICE' );
+		} );
+
+		test( 'should return PRICE if flowName is ecommerce-monthly', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					null,
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' },
+					false,
+					'ecommerce-monthly'
+				)
+			).toBe( 'PRICE' );
+		} );
+	} );
 } );
 
 describe( 'hasToUpgradeToPayForADomain()', () => {
@@ -656,7 +634,6 @@ describe( 'hasToUpgradeToPayForADomain()', () => {
 describe( 'getRenewalItemFromProduct()', () => {
 	const buildPurchase = ( overrides ) => ( {
 		id: 123,
-		includedDomain: 'included.com',
 		domain: 'purchased.com',
 		...overrides,
 	} );
@@ -670,8 +647,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				getRenewalItemFromProduct( buildPurchase( { product_slug: 'domain_map' } ), properties )
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 					source: 'source',
@@ -687,12 +662,9 @@ describe( 'getRenewalItemFromProduct()', () => {
 				getRenewalItemFromProduct( buildPurchase( { product_slug: PLAN_PERSONAL } ), properties )
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
-				free_trial: false,
 				product_slug: PLAN_PERSONAL,
 			} );
 		} );
@@ -707,8 +679,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 			).toEqual( {
 				extra: {
 					google_apps_users: 123,
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -726,8 +696,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 					source: 'source',
@@ -746,8 +714,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -761,8 +727,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				getRenewalItemFromProduct( buildPurchase( { product_slug: 'custom-design' } ), properties )
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -776,8 +740,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				getRenewalItemFromProduct( buildPurchase( { product_slug: 'videopress' } ), properties )
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -794,8 +756,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -812,8 +772,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -830,8 +788,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -848,8 +804,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toEqual( {
 				extra: {
-					includedDomain: 'included.com',
-					purchaseDomain: 'purchased.com',
 					purchaseId: 123,
 					purchaseType: 'renewal',
 				},
@@ -867,5 +821,25 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toThrowError( 'This product cannot be renewed' );
 		} );
+	} );
+} );
+
+describe( 'supportsPrivacyProtectionPurchase', () => {
+	const testProducts = {
+		non_private_product: {
+			product_slug: 'non_private_product',
+		},
+		private_product: {
+			product_slug: 'private_product',
+			is_privacy_protection_product_purchase_allowed: true,
+		},
+	};
+
+	it( 'returns true if the product slug matches a product with privacy allowed', () => {
+		expect( supportsPrivacyProtectionPurchase( 'private_product', testProducts ) ).toBeTruthy();
+	} );
+
+	it( 'returns false if the product slug does not match a product with privacy allowed', () => {
+		expect( supportsPrivacyProtectionPurchase( 'non_private_product', testProducts ) ).toBeFalsy();
 	} );
 } );

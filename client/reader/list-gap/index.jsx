@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -8,10 +8,11 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { fillGap } from 'calypso/state/reader/streams/actions';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -32,7 +33,7 @@ class Gap extends React.Component {
 		this.props.fillGap( { streamKey, gap } );
 		recordAction( 'fill_gap' );
 		recordGaEvent( 'Clicked Fill Gap' );
-		recordTrack( 'calypso_reader_filled_gap', { stream: streamKey } );
+		this.props.recordReaderTracksEvent( 'calypso_reader_filled_gap', { stream: streamKey } );
 
 		this.setState( { isFilling: true } );
 	};
@@ -61,4 +62,4 @@ class Gap extends React.Component {
 	}
 }
 
-export default localize( connect( null, { fillGap } )( Gap ) );
+export default localize( connect( null, { fillGap, recordReaderTracksEvent } )( Gap ) );

@@ -15,26 +15,27 @@
 # Customer Home
 /client/my-sites/customer-home @Automattic/manage
 
-# G Suite
-/client/components/data/query-gsuite-users @Automattic/cobalt
-/client/components/domains/contact-details-form-fields/index.jsx @Automattic/cobalt
-/client/components/gsuite @Automattic/cobalt
-/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/cobalt
-/client/components/upgrades/gsuite @Automattic/cobalt
-/client/lib/domains/email-forwarding @Automattic/cobalt
-/client/lib/gsuite @Automattic/cobalt
-/client/me/purchases/remove-purchase/index.jsx @Automattic/cobalt
-/client/my-sites/checkout/checkout-thank-you/google-apps-details.jsx @Automattic/cobalt
-/client/my-sites/checkout/checkout-thank-you/index.jsx @Automattic/cobalt
-/client/my-sites/checkout/checkout/domain-details-form.jsx @Automattic/cobalt
-/client/my-sites/checkout/checkout/index.jsx @Automattic/cobalt
-/client/my-sites/checkout/controller.jsx @Automattic/cobalt
-/client/my-sites/checkout/gsuite-nudge @Automattic/cobalt
-/client/my-sites/domains/components/domain-warnings @Automattic/cobalt
-/client/my-sites/domains/controller.jsx @Automattic/cobalt
-/client/my-sites/email @Automattic/cobalt
-/client/state/data-layer/wpcom/gsuite-users @Automattic/cobalt
-/client/state/gsuite-users @Automattic/cobalt
+# Email services
+/client/components/data/query-gsuite-users @Automattic/letero
+/client/components/domains/contact-details-form-fields/index.jsx @Automattic/letero
+/client/components/gsuite @Automattic/letero
+/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/letero
+/client/components/upgrades/gsuite @Automattic/letero
+/client/lib/domains/email-forwarding @Automattic/letero
+/client/lib/gsuite @Automattic/letero
+/client/lib/titan @Automattic/letero
+/client/me/purchases/remove-purchase/index.jsx @Automattic/letero
+/client/my-sites/checkout/checkout-thank-you/google-apps-details.jsx @Automattic/letero
+/client/my-sites/checkout/checkout-thank-you/index.jsx @Automattic/letero
+/client/my-sites/checkout/checkout/domain-details-form.jsx @Automattic/letero
+/client/my-sites/checkout/checkout/index.jsx @Automattic/letero
+/client/my-sites/checkout/controller.jsx @Automattic/letero
+/client/my-sites/checkout/gsuite-nudge @Automattic/letero
+/client/my-sites/domains/components/domain-warnings @Automattic/letero
+/client/my-sites/domains/controller.jsx @Automattic/letero
+/client/my-sites/email @Automattic/letero
+/client/state/data-layer/wpcom/gsuite-users @Automattic/letero
+/client/state/gsuite-users @Automattic/letero
 
 # Payments
 /client/blocks/credit-card-form/ @Automattic/shilling
@@ -67,6 +68,7 @@
 /packages/composite-checkout/ @Automattic/shilling
 /packages/calypso-stripe/ @Automattic/shilling
 /packages/shopping-cart/ @Automattic/shilling
+/packages/wpcom-checkout/ @Automattic/shilling
 
 # Reader
 /client/reader @Automattic/reader
@@ -77,19 +79,27 @@
 /client/types.ts @Automattic/type-review
 /docs/coding-guidelines/typescript* @Automattic/type-review
 
-# FSE (Full Site Editing)
+# Editing Toolkit Modules
 /apps/editing-toolkit/editing-toolkit-plugin/site-editor @Automattic/cylon
 /apps/editing-toolkit/editing-toolkit-plugin/dotcom-fse @Automattic/cylon
 /apps/editing-toolkit/editing-toolkit-plugin/posts-list-block @Automattic/ajax
 /apps/editing-toolkit/editing-toolkit-plugin/global-styles @Automattic/cylon @nosolosw
+/apps/editing-toolkit/editing-toolkit-plugin/block-patterns @Automattic/dotcom-view-design
 
-# FSE Workflow Files
-/.github/workflows/editing-toolkit-plugin.yml @Automattic/cylon
-/.github/workflows/send-calypso-app-build-trigger.sh @Automattic/cylon
+# Editing Toolkit Workflow Files
+/.github/workflows/editing-toolkit-plugin.yml @noahtallen
+/.github/workflows/send-calypso-app-build-trigger.sh @noahtallen
 
 # Experimentation platform legacy library and new client
 /client/lib/abtest @Automattic/experimentation-platform
-/client/components/data/query-experiments @Automattic/experimentation-platform
-/client/components/experiment @Automattic/experimentation-platform
-/client/state/data-layer/wpcom/experiments @Automattic/experimentation-platform
-/client/state/experiments @Automattic/experimentation-platform
+/client/lib/explat @Automattic/experimentation-platform
+/packages/explat-* @Automattic/experimentation-platform
+
+# Framework
+/packages/js-utils @Automattic/team-calypso-frameworks
+
+# Jetpack Search
+/client/my-sites/jetpack-search @Automattic/jetpack-search
+
+# TeamCity configuration
+/.teamcity @Automattic/team-calypso-platform

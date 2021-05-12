@@ -29,7 +29,7 @@ import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/ac
 import { getLastPath } from 'calypso/state/reader-ui/selectors';
 import { getSection } from 'calypso/state/ui/selectors';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
-import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 
 const analyticsPageTitle = 'Reader';
 
@@ -297,6 +297,41 @@ const exported = {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 		next();
 	},
+
+	readFollowingP2( context, next ) {
+		const basePath = sectionify( context.path );
+		const fullAnalyticsPageTitle = analyticsPageTitle + ' > P2';
+		const mcKey = 'p2';
+		const streamKey = 'p2';
+		const startDate = getStartDate( context );
+
+		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+
+		setPageTitle( context, 'P2' );
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		context.primary = (
+			<AsyncLoad
+				require="calypso/reader/p2/main"
+				key="read-p2"
+				listName="P2"
+				streamKey={ streamKey }
+				startDate={ startDate }
+				trackScrollPage={ trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				) }
+				showPrimaryFollowButtonOnCards={ false }
+				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+				placeholder={ null }
+			/>
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		next();
+	},
 };
 
 export const {
@@ -312,4 +347,5 @@ export const {
 	feedListing,
 	blogListing,
 	readA8C,
+	readFollowingP2,
 } = exported;

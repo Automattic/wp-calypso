@@ -46,10 +46,11 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 			'/' . $this->rest_base . '/batch',
 			array(
 				array(
-					'methods'       => \WP_REST_Server::CREATABLE,
-					'callback'      => array( $this, 'create_items' ),
-					'show_in_index' => false,
-					'args'          => array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'create_items' ),
+					'permission_callback' => array( $this, 'create_item_permissions_check' ),
+					'show_in_index'       => false,
+					'args'                => array(
 						'resources' => array(
 							'description' => 'URL to the image to be side-loaded.',
 							'type'        => 'array',
@@ -271,7 +272,7 @@ class WP_REST_Sideload_Image_Controller extends \WP_REST_Attachments_Controller 
 				'type'              => 'string',
 				'required'          => true,
 				'format'            => 'uri',
-				'sanitize_callback' => function( $url ) {
+				'sanitize_callback' => function ( $url ) {
 					return esc_url_raw( strtok( $url, '?' ) );
 				},
 			),

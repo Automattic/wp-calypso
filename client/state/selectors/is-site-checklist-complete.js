@@ -34,6 +34,8 @@ export default function isSiteChecklistComplete( state, siteId ) {
 	 *	B) the task front_page_updated is pending but the site doesn't have a page set as front page.
 	 *	This is because updating the front page doesn't apply when the site doesn't have a page set as the front page.
 	 *	Any other case leads to a pending task.
+	 *	C) the mobile_app_installed task, because it shouldn't affect the site setup status.
+	 *	D) the start_site_setup task, because it autocompletes on view as a way of starting the checklist.
 	 *
 	 *		@param   {object}  task The task that we'll check to see if it's completed.
 	 *		@returns {boolean}      Whether the task is considered to be completed or not.
@@ -49,6 +51,11 @@ export default function isSiteChecklistComplete( state, siteId ) {
 
 		// The mobile app setup task shouldn't affect the site setup status.
 		if ( CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED === task.id ) {
+			return true;
+		}
+
+		// Starting site setup autocompletes, so it shouldn't cause an incomplete checklist.
+		if ( CHECKLIST_KNOWN_TASKS.START_SITE_SETUP === task.id ) {
 			return true;
 		}
 

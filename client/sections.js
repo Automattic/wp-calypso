@@ -222,6 +222,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'incoming-redirect',
+		paths: [ '/incoming-redirect' ],
+		module: 'calypso/incoming-redirect',
+		enableLoggedOut: true,
+	},
+	{
 		name: 'email',
 		paths: [ '/email' ],
 		module: 'calypso/my-sites/email',
@@ -270,7 +276,13 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/feeds/[^\\/]+', '/read/blogs/[^\\/]+', '/read/a8c', '/recommendations' ],
+		paths: [
+			'/read/feeds/[^\\/]+',
+			'/read/blogs/[^\\/]+',
+			'/read/a8c',
+			'/read/p2',
+			'/recommendations',
+		],
 		module: 'calypso/reader',
 		group: 'reader',
 		trackLoadPerformance: true,
@@ -338,7 +350,7 @@ const sections = [
 	},
 	{
 		name: 'auth',
-		paths: [ '/oauth-login', '/authorize', '/api/oauth/token' ],
+		paths: [ '/oauth-login', '/api/oauth/token' ],
 		module: 'calypso/auth',
 		enableLoggedOut: true,
 	},
@@ -449,7 +461,7 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud-pricing',
-		paths: [ '/pricing', '/[^\\/]+/pricing' ],
+		paths: [ '/pricing', '/plans', '/[^\\/]+/pricing' ],
 		module: 'calypso/jetpack-cloud/sections/pricing',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
@@ -460,6 +472,24 @@ const sections = [
 					'https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap',
 			},
 		],
+	},
+	{
+		name: 'jetpack-search',
+		paths: [ '/jetpack-search' ],
+		module: 'calypso/my-sites/jetpack-search',
+		group: 'sites',
+	},
+	{
+		name: 'jetpack-cloud-partner-portal',
+		paths: [ '/partner-portal' ],
+		module: 'calypso/jetpack-cloud/sections/partner-portal',
+		group: 'jetpack-cloud',
+	},
+	{
+		name: 'woocommerce-installation',
+		paths: [ '/woocommerce-installation' ],
+		module: 'calypso/my-sites/woocommerce',
+		group: 'woocommerce-installation',
 	},
 ];
 

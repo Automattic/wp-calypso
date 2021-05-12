@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,6 +16,7 @@ import JetpackExampleActivate from './example-components/jetpack-activate';
 import JetpackExampleConnect from './example-components/jetpack-connect';
 
 const NEW_INSTRUCTIONS_JETPACK_VERSION = '4.2.0';
+const noop = () => {};
 
 class JetpackInstallStep extends Component {
 	static propTypes = {

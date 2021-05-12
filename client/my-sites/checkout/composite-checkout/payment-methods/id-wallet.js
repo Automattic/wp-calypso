@@ -5,25 +5,25 @@ import React from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import {
 	Button,
 	useLineItems,
-	useEvents,
 	useFormStatus,
 	registerStore,
 	useSelect,
 	useDispatch,
 } from '@automattic/composite-checkout';
 import { camelCase } from 'lodash';
+import { useDispatch as useReduxDispatch } from 'react-redux';
+import { Field } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
-import Field from 'calypso/my-sites/checkout/composite-checkout/components/field';
 import {
 	SummaryLine,
 	SummaryDetails,
@@ -214,7 +214,6 @@ function IdWalletPayButton( { disabled, onClick, store } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'id_wallet' ).getCustomerName() );
 	const fields = useSelect( ( select ) => select( 'id_wallet' ).getFields() );
 	const massagedFields = Object.entries( fields ).reduce(
@@ -224,17 +223,14 @@ function IdWalletPayButton( { disabled, onClick, store } ) {
 	const contactCountryCode = useSelect(
 		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
 	);
+	const reduxDispatch = useReduxDispatch();
 
 	return (
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isFormValid( store, contactCountryCode, __ ) ) {
+				if ( isFormValid( store, contactCountryCode, __, reduxDispatch ) ) {
 					debug( 'submitting id wallet payment' );
-					onEvent( {
-						type: 'REDIRECT_TRANSACTION_BEGIN',
-						payload: { paymentMethodId: 'id_wallet' },
-					} );
 					onClick( 'id_wallet', {
 						...massagedFields,
 						name: customerName?.value,
@@ -259,6 +255,7 @@ function ButtonContents( { formStatus, total } ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === 'ready' ) {
+		/* translators: %s is the total to be paid in localized currency */
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
@@ -274,7 +271,7 @@ function IdWalletSummary() {
 	);
 }
 
-function isFormValid( store, contactCountryCode, __ ) {
+function isFormValid( store, contactCountryCode, __, reduxDispatch ) {
 	// Touch fields so that we show errors
 	store.dispatch( store.actions.touchAllFields() );
 	let isValid = true;
@@ -311,7 +308,9 @@ function isFormValid( store, contactCountryCode, __ ) {
 
 	if ( validationResults.errors?.country?.length > 0 ) {
 		const countryErrorMessage = validationResults.errors.country[ 0 ];
-		notices.error( countryErrorMessage || __( 'An error occurred during your purchase.' ) );
+		reduxDispatch(
+			errorNotice( countryErrorMessage || __( 'An error occurred during your purchase.' ) )
+		);
 	}
 	return isValid;
 }

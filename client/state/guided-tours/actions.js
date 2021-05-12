@@ -10,6 +10,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 
 import 'calypso/state/guided-tours/init';
+import 'calypso/state/ui/init';
 
 export function quitGuidedTour( { tour, stepName, finished } ) {
 	const quitAction = {

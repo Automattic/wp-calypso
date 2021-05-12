@@ -7,7 +7,7 @@
 
 add_action(
 	'init',
-	function() {
+	function () {
 
 		$asset_file   = __DIR__ . '/dist/event-countdown-block.asset.php';
 		$asset        = file_exists( $asset_file ) ? require $asset_file : null;
@@ -48,7 +48,7 @@ add_action(
 			array(
 				'editor_script'   => 'jetpack-event-countdown',
 				'editor_style'    => 'jetpack-event-countdown-style',
-				'render_callback' => function( $attribs, $content ) {
+				'render_callback' => function ( $attribs, $content ) {
 					wp_enqueue_style( 'jetpack-event-countdown-style' );
 					wp_enqueue_script( 'jetpack-event-countdown-js' );
 					return $content;

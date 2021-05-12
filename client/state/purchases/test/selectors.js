@@ -14,7 +14,7 @@ import {
 } from '../selectors';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'selectors', () => {
 	describe( 'getPurchases', () => {
@@ -90,6 +90,7 @@ describe( 'selectors', () => {
 				expiryStatus: '',
 				includedDomain: undefined,
 				includedDomainPurchaseAmount: undefined,
+				introductoryOffer: null,
 				isCancelable: false,
 				isDomainRegistration: false,
 				isRechargeable: true,
@@ -103,6 +104,7 @@ describe( 'selectors', () => {
 					countryName: undefined,
 					name: undefined,
 					type: undefined,
+					storedDetailsId: undefined,
 				},
 				priceText: undefined,
 				productId: NaN,
@@ -120,6 +122,7 @@ describe( 'selectors', () => {
 				tagLine: undefined,
 				taxAmount: undefined,
 				taxText: undefined,
+				purchaseRenewalQuantity: null,
 				userId: NaN,
 			} );
 		} );

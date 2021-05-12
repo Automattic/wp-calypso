@@ -10,7 +10,7 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import PurchasesHeader from '../purchases/purchases-list/header';
+import PurchasesNavigation from 'calyspo/me/purchases/purchases-navigation';
 import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -26,7 +26,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 /**
  * Style dependencies
  */
-import './main.scss';
+import './style.scss';
 
 /**
  * Image dependencies
@@ -112,13 +112,13 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 	}
 
 	return (
-		<Main className="memberships is-wide-layout">
+		<Main wideLayout className="memberships">
 			<DocumentHead title={ translate( 'Other Sites' ) } />
 			<PageViewTracker path="/me/purchases/other" title="Me > Other Sites" />
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<MeSidebarNavigation />
 			<QueryMembershipsSubscriptions />
-			<PurchasesHeader section={ 'memberships' } />
+			<PurchasesNavigation section="activeUpgrades" />
 			{ content }
 		</Main>
 	);

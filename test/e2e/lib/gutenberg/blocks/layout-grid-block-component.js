@@ -8,12 +8,11 @@ import { By } from 'selenium-webdriver';
  */
 import GutenbergBlockComponent from './gutenberg-block-component';
 import * as driverHelper from '../../driver-helper';
-import * as driverManager from '../../driver-manager';
 
 class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	static blockTitle = 'Layout Grid';
 	static blockName = 'jetpack/layout-grid';
-	static blockFrontendSelector = By.css( '.entry-content .wp-block-jetpack-layout-grid' );
+	static blockFrontendLocator = By.css( '.entry-content .wp-block-jetpack-layout-grid' );
 
 	/**
 	 * Sets up the number of columns for the layout grid block.
@@ -21,10 +20,10 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	 * @param {number} number number of columns, 1 to 4 (based on the default buttons in the block).
 	 */
 	async setupColumns( number ) {
-		const columnButtonSelector = By.css(
+		const columnButtonLocator = By.css(
 			`${ this.blockID } button[aria-label="${ number } columns"]`
 		);
-		await driverHelper.clickWhenClickable( this.driver, columnButtonSelector );
+		await driverHelper.clickWhenClickable( this.driver, columnButtonLocator );
 
 		const updatedBlockID = await this.driver
 			.findElement( By.css( 'div.block-editor-block-list__block.is-selected' ) )
@@ -47,27 +46,22 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 			throw new Error( 'You need to run setupColumns before inserting an inner block.' );
 		}
 
-		const screenSize = driverManager.currentScreenSize();
-		const addBlockButtonSelector = By.css( `${ this.blockID } button[aria-label="Add block"]` );
+		const addBlockButtonLocator = By.css( `${ this.blockID } button[aria-label="Add block"]` );
+		const addBlockButtons = await this.driver.findElements( addBlockButtonLocator );
+		const firstEmptyColumnIndex = this.columns - addBlockButtons.length + 1;
+		const blockLocator = By.css( this.blockID );
+		const columnLocator = By.css(
+			`${ this.blockID } div[data-type="jetpack/layout-grid-column"]:nth-child(${ firstEmptyColumnIndex })`
+		);
 
-		if ( screenSize === 'mobile' ) {
-			const addBlockButtons = await this.driver.findElements( addBlockButtonSelector );
-			const firstEmptyColumnIndex = this.columns - addBlockButtons.length + 1;
-			const blockSelector = By.css( this.blockID );
-			const columnSelector = By.css(
-				`${ this.blockID } div[data-type="jetpack/layout-grid-column"]:nth-child(${ firstEmptyColumnIndex })`
-			);
+		// We need to click through the layers until the appender is clickable:
+		await driverHelper.clickWhenClickable( this.driver, blockLocator );
+		await driverHelper.clickWhenClickable( this.driver, columnLocator );
+		await driverHelper.clickWhenClickable( this.driver, addBlockButtonLocator );
 
-			// On mobiles, we need to click through the layers until the appender is clickable:
-			await driverHelper.clickWhenClickable( this.driver, blockSelector );
-			await driverHelper.clickWhenClickable( this.driver, columnSelector );
-		}
+		const inserterSearchInputLocator = By.css( 'input.block-editor-inserter__search-input' );
 
-		await driverHelper.clickWhenClickable( this.driver, addBlockButtonSelector );
-
-		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search-input' );
-
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( 'div.block-editor-inserter__quick-inserter.has-search.has-expand' ),
 			3000
@@ -75,7 +69,7 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 
 		await driverHelper.setWhenSettable(
 			this.driver,
-			inserterSearchInputSelector,
+			inserterSearchInputLocator,
 			blockClass.blockTitle
 		);
 
@@ -84,19 +78,20 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 			By.css( `button.editor-block-list-item-${ blockClass.blockName.replace( '/', '-' ) }` )
 		);
 
-		const insertedBlockSelector = By.css(
-			`${ this.blockID } div.wp-block-jetpack-layout-grid .block-editor-block-list__block[aria-label='Block: ${ blockClass.blockTitle }']`
+		const insertedBlockLocator = By.css(
+			`${ this.blockID } div[aria-label='Block: ${ blockClass.blockTitle }']`
 		);
-		const blockId = await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
+
+		const blockId = await this.driver.findElement( insertedBlockLocator ).getAttribute( 'id' );
 
 		// We need to move focus away from the layout grid, or any subsequent blocks inserted will be part of it
-		const blockAppenderWrapperSelector = await this.driver.findElement(
+		const blockAppenderWrapperLocator = await this.driver.findElement(
 			By.css( '.interface-interface-skeleton__content' )
 		);
 
 		const blockAppenderWrapperBox = await this.driver.executeScript(
 			'return arguments[0].getBoundingClientRect()',
-			blockAppenderWrapperSelector
+			blockAppenderWrapperLocator
 		);
 
 		const actions = await this.driver.actions( { bridge: true } );

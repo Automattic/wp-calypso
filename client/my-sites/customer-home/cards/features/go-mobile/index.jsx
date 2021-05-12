@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
 import userAgent from 'calypso/lib/user-agent';
 import CardHeading from 'calypso/components/card-heading';

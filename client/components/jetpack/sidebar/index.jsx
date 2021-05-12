@@ -2,9 +2,8 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { format as formatUrl, getUrlParts, getUrlFromParts } from 'calypso/lib/url';
+import { format as formatUrl, getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import { localize } from 'i18n-calypso';
-import { memoize } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -26,10 +25,6 @@ import SidebarRegion from 'calypso/layout/sidebar/region';
  * Style dependencies
  */
 import './style.scss';
-// We import these styles from here because this is the only section that gets always
-// loaded when a user visits Jetpack Cloud. We might have to find a better place for
-// this in the future.
-import 'calypso/jetpack-cloud/style.scss';
 
 class JetpackCloudSidebar extends Component {
 	static propTypes = {
@@ -38,13 +33,13 @@ class JetpackCloudSidebar extends Component {
 		threats: PropTypes.array,
 	};
 
-	onNavigate = memoize( ( menuItem ) => () => {
+	onGetHelp = () => {
 		this.props.dispatchRecordTracksEvent( 'calypso_jetpack_sidebar_menu_click', {
-			menu_item: menuItem,
+			menu_item: 'Jetpack Cloud / Support',
 		} );
 
 		window.scrollTo( 0, 0 );
-	} );
+	};
 
 	render() {
 		const { translate, jetpackAdminUrl, path } = this.props;
@@ -66,7 +61,7 @@ class JetpackCloudSidebar extends Component {
 							link="https://jetpack.com/support"
 							materialIcon="help"
 							materialIconStyle="filled"
-							onNavigate={ this.onNavigate( 'Jetpack Cloud / Support' ) }
+							onNavigate={ this.onGetHelp }
 						/>
 						<SidebarItem
 							label={ translate( 'WP Admin', {

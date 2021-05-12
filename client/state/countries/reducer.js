@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { combineReducers, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	COUNTRIES_DOMAINS_UPDATED,
 	COUNTRIES_PAYMENTS_UPDATED,

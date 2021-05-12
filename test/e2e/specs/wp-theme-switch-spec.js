@@ -26,24 +26,23 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Previewing Themes: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Previewing Themes @parallel @jetpack', function () {
-		step( 'Can login and select themes', async function () {
+		it( 'Can login and select themes', async function () {
 			const loginFlow = new LoginFlow( driver );
 			await loginFlow.loginAndSelectThemes();
 		} );
 
 		describe( 'Can preview free themes', function () {
-			step( 'Can select a different free theme', async function () {
+			it( 'Can select a different free theme', async function () {
 				this.themesPage = await ThemesPage.Expect( driver );
 				await this.themesPage.waitUntilThemesLoaded();
 				await this.themesPage.showOnlyFreeThemes();
@@ -52,12 +51,12 @@ describe( `[${ host }] Previewing Themes: (${ screenSize })`, function () {
 				return await this.themesPage.selectNewThemeStartingWith( 'Twenty S' );
 			} );
 
-			step( 'Can see theme details page and open the live demo', async function () {
+			it( 'Can see theme details page and open the live demo', async function () {
 				this.themeDetailPage = await ThemeDetailPage.Expect( driver );
 				return await this.themeDetailPage.openLiveDemo();
 			} );
 
-			step( 'Activate button appears on the theme preview page', async function () {
+			it( 'Activate button appears on the theme preview page', async function () {
 				this.themePreviewPage = await ThemePreviewPage.Expect( driver );
 				await this.themePreviewPage.activateButtonVisible();
 			} );
@@ -68,19 +67,26 @@ describe( `[${ host }] Previewing Themes: (${ screenSize })`, function () {
 // NOTE: test in jetpack env is failing due to some strange issue, when switching to new tab. It fails only in CI
 describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
+
 	describe( 'Activating Themes:', function () {
-		step( 'Login', async function () {
+		it( 'Login', async function () {
 			const loginFlow = new LoginFlow( driver );
 			return await loginFlow.loginAndSelectMySite( null, { useFreshLogin: true } );
 		} );
 
-		step( 'Can open Themes menu', async function () {
+		it( 'Can open Themes menu', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			return await sidebarComponent.selectThemes();
 		} );
 
 		describe( 'Can switch free themes', function () {
-			step( 'Can activate a different free theme', async function () {
+			it( 'Can activate a different free theme', async function () {
 				const themesPage = await ThemesPage.Expect( driver );
 				await themesPage.waitUntilThemesLoaded();
 				await themesPage.showOnlyFreeThemes();
@@ -92,22 +98,22 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function
 				return await themesPage.clickPopoverItem( 'Activate' );
 			} );
 
-			step( 'Can see the theme thanks dialog', async function () {
+			it( 'Can see the theme thanks dialog', async function () {
 				const themeDialogComponent = await ThemeDialogComponent.Expect( driver );
 				await themeDialogComponent.customizeSite();
 			} );
 
 			if ( host === 'WPCOM' ) {
-				step( 'Can customize the site from the theme thanks dialog', async function () {
+				it( 'Can customize the site from the theme thanks dialog', async function () {
 					return await CustomizerPage.Expect( driver );
 				} );
 			} else {
-				step( 'Can log in via Jetpack SSO', async function () {
+				it( 'Can log in via Jetpack SSO', async function () {
 					const wpAdminLogonPage = await WPAdminLogonPage.Expect( driver );
 					return await wpAdminLogonPage.logonSSO();
 				} );
 
-				step( 'Can customize the site from the theme thanks dialog', async function () {
+				it( 'Can customize the site from the theme thanks dialog', async function () {
 					await WPAdminCustomizerPage.refreshIfJNError( driver );
 					return await WPAdminCustomizerPage.Expect( driver );
 				} );

@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import { get } from 'lodash';
+import DOMPurify from 'dompurify';
 
 /**
  * Internal dependencies
@@ -103,7 +104,7 @@ export class CommentContent extends Component {
 							<Emojify>
 								<div
 									className="comment__content-body"
-									dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
+									dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( commentContent ) } } //eslint-disable-line react/no-danger
 								/>
 							</Emojify>
 						</AutoDirection>

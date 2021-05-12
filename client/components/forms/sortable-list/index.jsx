@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { assign, findIndex, fromPairs, noop } from 'lodash';
+import { findIndex } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import Gridicon from 'calypso/components/gridicon';
@@ -15,6 +15,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { ScreenReaderText } from '@automattic/components';
 import { hasTouch } from 'calypso/lib/touch-detect';
 
+const noop = () => {};
 const debug = debugFactory( 'calypso:forms:sortable-list' );
 
 /**
@@ -279,21 +280,21 @@ class SortableList extends React.Component {
 				const isActive = this.state.activeIndex === index;
 				const isDraggable = this.props.allowDrag && ! hasTouch();
 				let events = isDraggable ? [ 'onMouseDown', 'onMouseUp' ] : [ 'onClick' ];
-				const style = { order: this.getAdjustedElementIndex( index ) };
+				let style = { order: this.getAdjustedElementIndex( index ) };
 				const classes = classNames( {
 					'sortable-list__item': true,
 					'is-active': isActive,
 					'is-draggable': isDraggable,
 				} );
 
-				events = fromPairs(
+				events = Object.fromEntries(
 					events.map( function ( event ) {
 						return [ event, this[ event ].bind( null, index ) ];
 					}, this )
 				);
 
 				if ( isActive ) {
-					assign( style, this.state.position );
+					style = { ...style, ...this.state.position };
 				}
 				const itemRef = React.createRef();
 				this.itemsRefs.set( 'wrap-' + index, itemRef );

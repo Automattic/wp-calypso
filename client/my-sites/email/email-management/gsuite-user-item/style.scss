@@ -1,18 +1,32 @@
-.email-management .is-placeholder {
-	.gsuite-user-item__email,
-	button {
-		@include placeholder();
-	}
-}
-
 .email-management {
 	.gsuite-user-item__email {
 		align-items: center;
 		display: flex;
 		flex-grow: 1;
+		margin-right: 10px;
+
+		strong {
+			font-weight: normal;
+		}
 
 		.badge {
 			margin-left: 5px;
 		}
+	}
+}
+
+.email-management .is-placeholder {
+	.gsuite-users-card__user-list-inner li {
+		justify-content: space-between;
+	}
+
+	.gsuite-user-item__email,
+	button {
+		@include placeholder();
+	}
+
+	.gsuite-user-item__email {
+		flex-grow: 0;
+		width: 50%;
 	}
 }

@@ -4,12 +4,11 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useCallback, useState } from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
 import { getRewindBackupProgress, rewindBackup } from 'calypso/state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
@@ -22,6 +21,9 @@ import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 interface Props {
 	backupDisplayDate: string;
@@ -264,7 +266,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				downloadId={ downloadProgress !== undefined ? downloadId : undefined }
 				siteId={ siteId }
 			/>
-			{ render() }
+			<Card>{ render() }</Card>
 		</>
 	);
 };

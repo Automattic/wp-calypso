@@ -25,13 +25,16 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.14.0",
 		"i18n-calypso": "^5.0.0"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"build": "transpile",
 		"prepack": "yarn run clean && yarn run build"
+	},
+	"peerDependencies": {
+		"react": "^16.8"
 	},
 	"types": "types"
 }

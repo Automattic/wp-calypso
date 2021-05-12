@@ -8,17 +8,17 @@ import { bumpStat } from 'calypso/lib/analytics/mc';
 import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'calypso/state/reader/action-types';
 import wp from 'calypso/lib/wp';
 
-jest.mock( 'reader/stats', () => ( { pageViewForPost: jest.fn() } ) );
+jest.mock( 'calypso/reader/stats', () => ( { pageViewForPost: jest.fn() } ) );
 
-jest.mock( 'lib/analytics/tracks', () => ( {
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
-jest.mock( 'lib/analytics/mc', () => ( {
+jest.mock( 'calypso/lib/analytics/mc', () => ( {
 	bumpStat: jest.fn(),
 } ) );
 
-jest.mock( 'lib/wp', () => {
+jest.mock( 'calypso/lib/wp', () => {
 	const readFeedPost = jest.fn();
 	const readSitePost = jest.fn();
 

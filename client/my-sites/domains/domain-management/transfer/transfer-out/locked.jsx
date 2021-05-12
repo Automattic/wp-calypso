@@ -10,12 +10,10 @@ import { localize } from 'i18n-calypso';
  */
 import { Card, Button } from '@automattic/components';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import {
-	fetchWapiDomainInfo,
-	requestDomainTransferCode,
-} from 'calypso/state/domains/transfer/actions';
-import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
+import { requestDomainTransferCode } from 'calypso/state/domains/transfer/actions';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
+import TransferOutWarning from './warning.jsx';
+import { registrar as registrarNames } from 'calypso/lib/domains/constants';
 
 class Locked extends React.Component {
 	unlockAndRequestTransferCode = () => {
@@ -47,23 +45,22 @@ class Locked extends React.Component {
 	}
 
 	render() {
-		const { translate } = this.props;
-		const { privateDomain } = getSelectedDomain( this.props );
+		const { translate, selectedSite } = this.props;
+		const { domain: domainName, privateDomain, registrar } = getSelectedDomain( this.props );
 
 		return (
 			<div>
 				<Card className="transfer-out__card">
 					<p>
-						{ privateDomain
+						{ privateDomain && registrar === registrarNames.WWD
 							? translate(
-									'To transfer your domain, we must unlock it and remove Privacy Protection. ' +
-										'Your contact information will be publicly available during the transfer period.'
+									'To transfer your domain, we must unlock it and remove Privacy Protection. Your contact information will be publicly available during the transfer period. The domain will remain unlocked and your contact information will be publicly available until the transfer is canceled or completed.'
 							  )
-							: translate( 'To transfer your domain, we must unlock it.' ) }{ ' ' }
-						<a href={ TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer">
-							{ translate( 'Learn More.' ) }
-						</a>
+							: translate(
+									'To transfer your domain, we must unlock it. It will remain unlocked until the transfer is canceled or completed.'
+							  ) }{ ' ' }
 					</p>
+					<TransferOutWarning domainName={ domainName } selectedSiteSlug={ selectedSite.slug } />
 					{ this.isManualTransferRequired() && this.renderManualTransferInfo() }
 					<Button
 						className="transfer-out__action-button"
@@ -88,7 +85,6 @@ export default connect(
 		};
 	},
 	{
-		fetchWapiDomainInfo,
 		requestDomainTransferCode,
 	}
 )( localize( Locked ) );

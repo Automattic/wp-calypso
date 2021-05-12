@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
  * Internal dependencies
  */
 import { getLogger } from 'calypso/server/lib/logger';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 const NS_TO_MS = 1e-6;
 

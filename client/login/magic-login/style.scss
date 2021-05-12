@@ -20,6 +20,12 @@
 	}
 }
 
+.magic-login__handle-link.jetpack {
+	img {
+		margin: 80px 0;
+	}
+}
+
 .magic-login__request-link {
 	max-width: 400px;
 }
@@ -70,6 +76,10 @@
 	button {
 		width: 100%;
 	}
+
+	.form-button:last-child {
+		margin-right: 0;
+	}
 }
 
 .magic-login__footer {
@@ -106,6 +116,10 @@
 	margin: 0 auto 1.5em;
 }
 
+.magic-login__check-email-image.jetpack {
+	height: 240px;
+}
+
 .magic-login.is-gutenboarding-login {
 	.magic-login__form-header {
 		@include onboarding-heading-text-mobile;
@@ -140,5 +154,11 @@
 
 	@include break-mobile {
 		padding: 8px 24px;
+	}
+}
+
+.magic-login__successfully-jetpack {
+	p {
+		text-align: center;
 	}
 }

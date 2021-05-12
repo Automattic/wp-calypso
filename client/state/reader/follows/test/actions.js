@@ -16,7 +16,7 @@ import {
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 } from 'calypso/state/reader/action-types';
 
-jest.mock( 'state/reader/posts/actions', () => ( {
+jest.mock( 'calypso/state/reader/posts/actions', () => ( {
 	receivePosts: ( posts ) => Promise.resolve( posts ),
 } ) );
 

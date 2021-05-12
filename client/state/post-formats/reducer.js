@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { postFormatsItemsSchema } from './schema';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,
@@ -18,7 +19,7 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case POST_FORMATS_REQUEST: {
 			const { siteId } = action;
@@ -35,7 +36,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -56,7 +57,10 @@ export const items = withSchemaValidation( postFormatsItemsSchema, ( state = {},
 	return state;
 } );
 
-export default combineReducers( {
-	requesting,
-	items,
-} );
+export default withStorageKey(
+	'postFormats',
+	combineReducers( {
+		requesting,
+		items,
+	} )
+);

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( 'lib/safe-image-url', () => require( './mocks/lib/safe-image-url' ) );
+jest.mock( 'calypso/lib/safe-image-url', () => require( './mocks/lib/safe-image-url' ) );
 
 /**
  * External dependencies

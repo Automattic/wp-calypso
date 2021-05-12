@@ -18,54 +18,55 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
-	isPaidWithCredits,
 	cardProcessorSupportsUpdates,
-	isPaidWithPayPalDirect,
 	isRenewing,
 	isSubscription,
 	isCloseToExpiration,
-	paymentLogoType,
-	hasPaymentMethod,
 	isRenewable,
+	isWithinIntroductoryOfferPeriod,
+	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
-import {
-	isDomainRegistration,
-	isDomainTransfer,
-	isGoogleApps,
-	isConciergeSession,
-	isJetpackPlan,
-	isJetpackProduct,
-	isPlan,
-	getProductFromSlug,
-} from 'calypso/lib/products-values';
-import { getPlan } from 'calypso/lib/plans';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import { getUser } from 'calypso/state/users/selectors';
 import { managePurchase } from '../paths';
 import AutoRenewToggle from './auto-renew-toggle';
-import PaymentLogo from 'calypso/components/payment-logo';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import UserItem from 'calypso/components/user';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { canEditPaymentDetails } from '../utils';
-import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import {
+	getPlan,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
+	JETPACK_LEGACY_PLANS,
+	isDomainRegistration,
+	isDomainTransfer,
+	isConciergeSession,
+	isJetpackPlan,
+	isJetpackProduct,
+	getProductFromSlug,
+} from '@automattic/calypso-products';
+import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import PaymentInfoBlock from './payment-info-block';
+import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
 
 export default function PurchaseMeta( {
 	purchaseId = false,
 	hasLoadedPurchasesFromServer = false,
 	siteSlug,
-	getEditPaymentMethodUrlFor,
+	getChangePaymentMethodUrlFor,
 	getManagePurchaseUrlFor = managePurchase,
 } ) {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 
 	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
 	const site = useSelector( ( state ) => getSite( state, purchase?.siteId ) ) || null;
-	const owner = useSelector( ( state ) => getUser( state, purchase?.userId ) ) || null;
+
+	// TODO: if the owner is not the currently logged-in user, retrieve their info from users list
+	const currentUser = useSelector( getCurrentUser );
+	const owner = currentUser && purchase?.userId === currentUser.ID ? currentUser : null;
 
 	const isDataLoading = useSelector( isRequestingSites ) || ! hasLoadedPurchasesFromServer;
 
@@ -76,29 +77,26 @@ export default function PurchaseMeta( {
 	return (
 		<>
 			<ul className="manage-purchase__meta">
-				<PurchaseMetaOwner translate={ translate } owner={ owner } />
+				<PurchaseMetaOwner owner={ owner } />
 				<li>
 					<em className="manage-purchase__detail-label">{ translate( 'Price' ) }</em>
 					<span className="manage-purchase__detail">
-						<PurchaseMetaPrice purchase={ purchase } translate={ translate } />
+						<PurchaseMetaPrice purchase={ purchase } />
+						<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
 					</span>
 				</li>
 				<PurchaseMetaExpiration
 					purchase={ purchase }
 					site={ site }
 					siteSlug={ siteSlug }
-					translate={ translate }
-					moment={ moment }
-					getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+					getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				/>
 				<PurchaseMetaPaymentDetails
 					purchase={ purchase }
-					translate={ translate }
-					getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+					getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					siteSlug={ siteSlug }
 					site={ site }
-					moment={ moment }
 				/>
 			</ul>
 			<RenewErrorMessage purchase={ purchase } translate={ translate } site={ site } />
@@ -111,7 +109,7 @@ PurchaseMeta.propTypes = {
 	purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ).isRequired,
 	siteSlug: PropTypes.string.isRequired,
 	getManagePurchaseUrlFor: PropTypes.func,
-	getEditPaymentMethodUrlFor: PropTypes.func,
+	getChangePaymentMethodUrlFor: PropTypes.func,
 };
 
 function renderRenewsOrExpiresOnLabel( { purchase, translate } ) {
@@ -205,7 +203,8 @@ function PurchaseMetaPlaceholder() {
 	);
 }
 
-function PurchaseMetaOwner( { translate, owner } ) {
+function PurchaseMetaOwner( { owner } ) {
+	const translate = useTranslate();
 	if ( ! owner ) {
 		return null;
 	}
@@ -220,53 +219,16 @@ function PurchaseMetaOwner( { translate, owner } ) {
 	);
 }
 
-function renderPaymentInfo( { purchase, translate, moment } ) {
-	const payment = purchase?.payment;
-
-	if ( isIncludedWithPlan( purchase ) ) {
-		return translate( 'Included with plan' );
-	}
-
-	if ( hasPaymentMethod( purchase ) ) {
-		let paymentInfo = null;
-
-		if ( isPaidWithCredits( purchase ) ) {
-			return translate( 'Credits' );
-		}
-
-		if ( ( isExpired( purchase ) || isExpiring( purchase ) ) && ! isPaidWithCredits( purchase ) ) {
-			return translate( 'None' );
-		}
-
-		if ( isPaidWithCreditCard( purchase ) ) {
-			paymentInfo = payment.creditCard.number;
-		} else if ( isPaidWithPayPalDirect( purchase ) ) {
-			paymentInfo = translate( 'expiring %(cardExpiry)s', {
-				args: {
-					cardExpiry: moment( payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
-				},
-			} );
-		}
-
-		return (
-			<>
-				<PaymentLogo type={ paymentLogoType( purchase ) } />
-				{ paymentInfo }
-			</>
-		);
-	}
-
-	return translate( 'None' );
-}
-
-function PurchaseMetaPrice( { purchase, translate } ) {
-	const { priceText, currencyCode, productSlug } = purchase;
+function PurchaseMetaPrice( { purchase } ) {
+	const translate = useTranslate();
+	const { priceText, productSlug } = purchase;
 	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
 	let period = translate( 'year' );
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
-		return translate( '%(priceText)s %(currencyCode)s {{period}}(one-time){{/period}}', {
-			args: { priceText, currencyCode },
+		// translators: %(priceText)s is the price of the purchase with localized currency (i.e. "C$10")
+		return translate( '%(priceText)s {{period}}(one-time){{/period}}', {
+			args: { priceText },
 			components: {
 				period: <span className="manage-purchase__time-period" />,
 			},
@@ -289,26 +251,42 @@ function PurchaseMetaPrice( { purchase, translate } ) {
 		}
 	}
 
-	return translate( '%(priceText)s %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
-		args: {
-			priceText,
-			currencyCode,
-			period,
-		},
+	if ( productSlug === TITAN_MAIL_MONTHLY_SLUG ) {
+		period = translate( 'month' );
+	}
+
+	// translators: %(priceText)s is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
+	return translate( '%(priceText)s {{period}}/ %(period)s{{/period}}', {
+		args: { priceText, period },
 		components: {
 			period: <span className="manage-purchase__time-period" />,
 		},
 	} );
 }
 
-function PurchaseMetaPaymentDetails( {
-	purchase,
-	translate,
-	getEditPaymentMethodUrlFor,
-	siteSlug,
-	site,
-	moment,
-} ) {
+function PurchaseMetaIntroductoryOfferDetail( { purchase } ) {
+	const translate = useTranslate();
+
+	if ( ! isWithinIntroductoryOfferPeriod( purchase ) ) {
+		return null;
+	}
+
+	const text = getIntroductoryOfferIntervalDisplay(
+		translate,
+		purchase.introductoryOffer.intervalUnit,
+		purchase.introductoryOffer.intervalCount,
+		isIntroductoryOfferFreeTrial( purchase )
+	);
+
+	return (
+		<>
+			<br />
+			<small> { text } </small>
+		</>
+	);
+}
+
+function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, siteSlug, site } ) {
 	const handleEditPaymentMethodClick = () => {
 		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
 	};
@@ -317,14 +295,7 @@ function PurchaseMetaPaymentDetails( {
 		return null;
 	}
 
-	const paymentDetails = (
-		<span>
-			<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
-			<span className="manage-purchase__detail">
-				{ renderPaymentInfo( { purchase, translate, moment } ) }
-			</span>
-		</span>
-	);
+	const paymentDetails = <PaymentInfoBlock purchase={ purchase } />;
 
 	if (
 		! canEditPaymentDetails( purchase ) ||
@@ -338,7 +309,7 @@ function PurchaseMetaPaymentDetails( {
 	return (
 		<li>
 			<a
-				href={ getEditPaymentMethodUrlFor( siteSlug, purchase ) }
+				href={ getChangePaymentMethodUrlFor( siteSlug, purchase ) }
 				onClick={ handleEditPaymentMethodClick }
 			>
 				{ paymentDetails }
@@ -405,11 +376,11 @@ function PurchaseMetaExpiration( {
 	purchase,
 	site,
 	siteSlug,
-	translate,
-	moment,
-	getEditPaymentMethodUrlFor,
+	getChangePaymentMethodUrlFor,
 	getManagePurchaseUrlFor,
 } ) {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
 	const isAutorenewalEnabled = purchase ? ! isExpiring( purchase ) : null;
 	const hideAutoRenew =
@@ -419,10 +390,7 @@ function PurchaseMetaExpiration( {
 		return null;
 	}
 
-	if (
-		( isDomainRegistration( purchase ) || isPlan( purchase ) || isGoogleApps( purchase ) ) &&
-		! isExpired( purchase )
-	) {
+	if ( isRenewable( purchase ) && ! isExpired( purchase ) ) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;
 		const subsRenewText = isAutorenewalEnabled
 			? translate( 'Auto-renew is ON' )
@@ -464,7 +432,7 @@ function PurchaseMetaExpiration( {
 							siteSlug={ site.slug }
 							purchase={ purchase }
 							toggleSource="manage-purchase"
-							getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 						/>
 					</span>
 				) }

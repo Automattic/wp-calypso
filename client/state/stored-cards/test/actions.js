@@ -66,7 +66,7 @@ describe( 'actions', () => {
 		describe( 'success', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
-					.get( '/rest/v1.1/me/payment-methods' )
+					.get( '/rest/v1.1/me/payment-methods?expired=include' )
 					.reply( 200, cards );
 			} );
 
@@ -89,7 +89,7 @@ describe( 'actions', () => {
 		describe( 'fail', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
-					.get( '/rest/v1.1/me/payment-methods' )
+					.get( '/rest/v1.1/me/payment-methods?expired=include' )
 					.reply( 403, error );
 			} );
 

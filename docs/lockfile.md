@@ -1,5 +1,4 @@
-NPM Lockfile
-============
+# NPM Lockfile
 
 We use [`yarn.lock`](https://classic.yarnpkg.com/en/docs/yarn-lock/)
 to lock down our dependency versions. This allows us to freeze all dependencies at the

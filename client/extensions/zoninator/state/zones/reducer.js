@@ -1,16 +1,19 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 import {
+	ZONINATOR_ADD_ZONE,
 	ZONINATOR_REQUEST_ERROR,
 	ZONINATOR_REQUEST_ZONES,
+	ZONINATOR_SAVE_ZONE,
 	ZONINATOR_UPDATE_ZONE,
+	ZONINATOR_UPDATE_ZONE_ERROR,
 	ZONINATOR_UPDATE_ZONES,
 } from '../action-types';
 
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case ZONINATOR_REQUEST_ZONES: {
 			const { siteId } = action;
@@ -27,7 +30,24 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
+
+export const saving = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case ZONINATOR_ADD_ZONE:
+		case ZONINATOR_SAVE_ZONE: {
+			const { siteId } = action;
+			return { ...state, [ siteId ]: true };
+		}
+		case ZONINATOR_UPDATE_ZONE:
+		case ZONINATOR_UPDATE_ZONE_ERROR: {
+			const { siteId } = action;
+			return { ...state, [ siteId ]: false };
+		}
+	}
+
+	return state;
+};
 
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -52,6 +72,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 } );
 
 export default combineReducers( {
-	requesting,
 	items,
+	requesting,
+	saving,
 } );

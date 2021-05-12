@@ -3,12 +3,12 @@
  */
 import React from 'react';
 import styled from '@emotion/styled';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
+import { Field } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import Field from 'calypso/my-sites/checkout/composite-checkout/components/field';
 import {
 	LeftColumn,
 	RightColumn,

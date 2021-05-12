@@ -8,7 +8,7 @@ import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stri
 import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 /**
  * Internal dependencies
@@ -19,7 +19,7 @@ import Field from '../../components/field';
 import GridRow from '../../components/grid-row';
 import Button from '../../components/button';
 import PaymentLogo from './payment-logo';
-import { FormStatus, useLineItems, useEvents } from '../../public-api';
+import { FormStatus, useLineItems } from '../../public-api';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import Spinner from '../../components/spinner';
 import { useFormStatus } from '../form-status';
@@ -142,7 +142,6 @@ export function createStripeMethod( { store, stripe, stripeConfiguration } ) {
 function StripeCreditCardFields() {
 	const { __ } = useI18n();
 	const theme = useTheme();
-	const onEvent = useEvents();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
 	const brand = useSelect( ( select ) => select( 'stripe' ).getBrand() );
@@ -162,14 +161,6 @@ function StripeCreditCardFields() {
 		}
 
 		if ( input.error && input.error.message ) {
-			onEvent( {
-				type: 'a8c_checkout_stripe_field_invalid_error',
-				payload: {
-					type: 'Stripe field error',
-					field: input.elementType,
-					message: input.error.message,
-				},
-			} );
 			setCardDataError( input.elementType, input.error.message );
 			return;
 		}
@@ -412,6 +403,7 @@ function ButtonContents( { formStatus, total } ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === FormStatus.READY ) {
+		/* translators: %s is the total to be paid in localized currency */
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );

@@ -16,7 +16,7 @@ import {
 } from './controller';
 import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 export default function () {
 	if ( config.isEnabled( 'reader/list-management' ) ) {

@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import AccountPassword from 'calypso/me/account-password';
 import { Card } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
@@ -50,7 +50,7 @@ class Security extends React.Component {
 		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
 
 		return (
-			<Main className="security is-wide-layout">
+			<Main wideLayout className="security">
 				<PageViewTracker path={ path } title="Me > Password" />
 				<DocumentHead title={ translate( 'Password' ) } />
 				<MeSidebarNavigation />
@@ -74,7 +74,6 @@ class Security extends React.Component {
 					</p>
 
 					<AccountPassword
-						accountPasswordData={ this.props.accountPasswordData }
 						autocomplete="new-password"
 						// Hint to LastPass not to attempt autofill
 						data-lpignore="true"

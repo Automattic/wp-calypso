@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,11 +10,12 @@ import React, { useState } from 'react';
 import { Button, CompactCard as Card } from '@automattic/components';
 import CardHeading from 'calypso/components/card-heading';
 import MultipleChoiceQuestion from '../';
-import notices from 'calypso/notices';
+import { successNotice } from 'calypso/state/notices/actions';
 
 function MultipleChoiceQuestionExamples() {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( null );
 	const [ answerText, setAnswerText ] = useState( '' );
+	const dispatch = useDispatch();
 
 	const answers = [
 		{ id: 'hungry-bunnies', answerText: 'Hungry Bunnies' },
@@ -30,7 +31,7 @@ function MultipleChoiceQuestionExamples() {
 			children: (
 				<Button
 					onClick={ () => {
-						notices.success( 'The Stork Button was clicked', { duration: 5000 } );
+						dispatch( successNotice( 'The Stork Button was clicked', { duration: 5000 } ) );
 					} }
 					primary
 				>
@@ -47,7 +48,7 @@ function MultipleChoiceQuestionExamples() {
 			children: (
 				<Button
 					onClick={ () => {
-						notices.success( 'The Extra Button was clicked', { duration: 5000 } );
+						dispatch( successNotice( 'The Extra Button was clicked', { duration: 5000 } ) );
 					} }
 				>
 					{ 'The Extra Button' }

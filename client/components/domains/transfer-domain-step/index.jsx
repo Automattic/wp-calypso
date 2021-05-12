@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty, noop } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import page from 'page';
 import { stringify } from 'qs';
 import classnames from 'classnames';
@@ -26,7 +26,6 @@ import {
 } from 'calypso/lib/domains';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { domainAvailability } from 'calypso/lib/domains/constants';
-import { PLAN_PERSONAL } from 'calypso/lib/plans/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import { getCurrentUser, getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
@@ -49,17 +48,20 @@ import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QueryPlans from 'calypso/components/data/query-plans';
-import { isPlan } from 'calypso/lib/products-values';
+import { PLAN_PERSONAL, isPlan } from '@automattic/calypso-products';
 import {
 	isDomainBundledWithPlan,
 	isNextDomainFree,
 	hasToUpgradeToPayForADomain,
 } from 'calypso/lib/cart-values/cart-items';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -209,7 +211,7 @@ class TransferDomainStep extends React.Component {
 			);
 		} else if ( domainsWithPlansOnlyButNoPlan ) {
 			domainProductPriceText = translate(
-				'One additional year of domain registration included in paid plans.'
+				'One additional year of domain registration included in annual paid plans.'
 			);
 		} else if ( domainProductSalePrice ) {
 			domainProductPriceText = translate( 'Sale price is %(cost)s', {
@@ -452,6 +454,7 @@ class TransferDomainStep extends React.Component {
 			<div className={ 'transfer-domain-step__domain-availability' }>
 				<DomainRegistrationSuggestion
 					cart={ this.props.cart }
+					isCartPendingUpdate={ this.props.cart.hasPendingServerUpdates }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					key={ suggestion.domain_name }
 					onButtonClick={ this.registerSuggestedDomain }
@@ -726,4 +729,4 @@ export default connect(
 		recordGoButtonClickInTransferDomain,
 		recordMapDomainButtonClick,
 	}
-)( localize( TransferDomainStep ) );
+)( withShoppingCart( localize( TransferDomainStep ) ) );

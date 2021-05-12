@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { DataRegistry } from '@wordpress/data';
 
 /**
@@ -24,12 +24,36 @@ import {
 	validateTotal,
 } from '../lib/validation';
 import TransactionStatusHandler from './transaction-status-handler';
-import { CheckoutProviderProps, FormStatus, PaymentMethod } from '../types';
+import { LineItem, CheckoutProviderProps, FormStatus, PaymentMethod } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
-export const CheckoutProvider: FunctionComponent< CheckoutProviderProps > = ( props ) => {
-	const {
+const emptyTotal: LineItem = {
+	id: 'total',
+	type: 'total',
+	amount: { value: 0, displayValue: '0', currency: 'USD' },
+	label: 'Total',
+};
+
+export function CheckoutProvider( {
+	total = emptyTotal,
+	items = [],
+	onPaymentComplete,
+	showErrorMessage,
+	showInfoMessage,
+	showSuccessMessage,
+	redirectToUrl,
+	theme,
+	paymentMethods,
+	paymentProcessors,
+	registry,
+	onEvent,
+	isLoading,
+	isValidating,
+	initiallySelectedPaymentMethodId = null,
+	children,
+}: CheckoutProviderProps ): JSX.Element {
+	const propsToValidate = {
 		total,
 		items,
 		onPaymentComplete,
@@ -45,32 +69,44 @@ export const CheckoutProvider: FunctionComponent< CheckoutProviderProps > = ( pr
 		isLoading,
 		isValidating,
 		children,
-	} = props;
+		initiallySelectedPaymentMethodId,
+	};
 	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
-		paymentMethods?.length ? paymentMethods[ 0 ].id : null
+		initiallySelectedPaymentMethodId
 	);
 	const [ prevPaymentMethods, setPrevPaymentMethods ] = useState< PaymentMethod[] >( [] );
 	useEffect( () => {
-		if ( paymentMethods.length !== prevPaymentMethods.length ) {
-			debug( 'paymentMethods changed; setting payment method to first of', paymentMethods );
-			setPaymentMethodId( paymentMethods?.length ? paymentMethods[ 0 ].id : null );
+		const paymentMethodIds = paymentMethods.map( ( x ) => x?.id );
+		const prevPaymentMethodIds = prevPaymentMethods.map( ( x ) => x?.id );
+		const paymentMethodsChanged =
+			paymentMethodIds.some( ( x ) => ! prevPaymentMethodIds.includes( x ) ) ||
+			prevPaymentMethodIds.some( ( x ) => ! paymentMethodIds.includes( x ) );
+		if ( paymentMethodsChanged ) {
+			debug(
+				'paymentMethods changed; setting payment method to initial selection ',
+				initiallySelectedPaymentMethodId,
+				'from',
+				paymentMethods
+			);
 			setPrevPaymentMethods( paymentMethods );
+			setPaymentMethodId( initiallySelectedPaymentMethodId );
 		}
-	}, [ paymentMethods, prevPaymentMethods ] );
+	}, [ paymentMethods, prevPaymentMethods, initiallySelectedPaymentMethodId ] );
 
 	const [ formStatus, setFormStatus ] = useFormStatusManager(
 		Boolean( isLoading ),
 		Boolean( isValidating )
 	);
 	const transactionStatusManager = useTransactionStatusManager();
+	const { transactionLastResponse } = transactionStatusManager;
 	const didCallOnPaymentComplete = useRef( false );
 	useEffect( () => {
 		if ( formStatus === FormStatus.COMPLETE && ! didCallOnPaymentComplete.current ) {
 			debug( "form status is complete so I'm calling onPaymentComplete" );
 			didCallOnPaymentComplete.current = true;
-			onPaymentComplete( { paymentMethodId } );
+			onPaymentComplete( { paymentMethodId, transactionLastResponse } );
 		}
-	}, [ formStatus, onPaymentComplete, paymentMethodId ] );
+	}, [ formStatus, onPaymentComplete, transactionLastResponse, paymentMethodId ] );
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef< DataRegistry | undefined >( registry );
@@ -112,7 +148,7 @@ export const CheckoutProvider: FunctionComponent< CheckoutProviderProps > = ( pr
 	);
 	return (
 		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onError }>
-			<CheckoutProviderPropValidator propsToValidate={ props } />
+			<CheckoutProviderPropValidator propsToValidate={ propsToValidate } />
 			<ThemeProvider theme={ theme || defaultTheme }>
 				<RegistryProvider value={ registryRef.current }>
 					<LineItemsProvider items={ items } total={ total }>
@@ -125,7 +161,7 @@ export const CheckoutProvider: FunctionComponent< CheckoutProviderProps > = ( pr
 			</ThemeProvider>
 		</CheckoutErrorBoundary>
 	);
-};
+}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop(): void {}

@@ -20,6 +20,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
 import ChartTabs from './stats-chart-tabs';
+import Cloudflare from './cloudflare';
 import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
@@ -29,6 +30,8 @@ import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug, getSiteOption } from 'calypso/state/sites/selectors';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { FEATURE_WORDADS_INSTANT } from '@automattic/calypso-products';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -46,6 +49,7 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import Banner from 'calypso/components/banner';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -59,32 +63,46 @@ const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	date: endOf.format( 'YYYY-MM-DD' ),
 } ) );
 
-const CHARTS = [
-	{
-		attr: 'views',
-		legendOptions: [ 'visitors' ],
-		gridicon: 'visible',
-		label: translate( 'Views', { context: 'noun' } ),
-	},
-	{
-		attr: 'visitors',
-		gridicon: 'user',
-		label: translate( 'Visitors', { context: 'noun' } ),
-	},
-	{
-		attr: 'likes',
-		gridicon: 'star',
-		label: translate( 'Likes', { context: 'noun' } ),
-	},
-	{
-		attr: 'comments',
-		gridicon: 'comment',
-		label: translate( 'Comments', { context: 'noun' } ),
-	},
-];
+const CHART_VIEWS = {
+	attr: 'views',
+	legendOptions: [ 'visitors' ],
+	gridicon: 'visible',
+	label: translate( 'Views', { context: 'noun' } ),
+};
+const CHART_VISITORS = {
+	attr: 'visitors',
+	gridicon: 'user',
+	label: translate( 'Visitors', { context: 'noun' } ),
+};
+const CHART_LIKES = {
+	attr: 'likes',
+	gridicon: 'star',
+	label: translate( 'Likes', { context: 'noun' } ),
+};
+const CHART_COMMENTS = {
+	attr: 'comments',
+	gridicon: 'comment',
+	label: translate( 'Comments', { context: 'noun' } ),
+};
+const CHARTS = [ CHART_VIEWS, CHART_VISITORS, CHART_LIKES, CHART_COMMENTS ];
+
+/**
+ * Define chart properties with translatable strings getters
+ */
+Object.defineProperty( CHART_VIEWS, 'label', {
+	get: () => translate( 'Views', { context: 'noun' } ),
+} );
+Object.defineProperty( CHART_VISITORS, 'label', {
+	get: () => translate( 'Visitors', { context: 'noun' } ),
+} );
+Object.defineProperty( CHART_LIKES, 'label', {
+	get: () => translate( 'Likes', { context: 'noun' } ),
+} );
+Object.defineProperty( CHART_COMMENTS, 'label', {
+	get: () => translate( 'Comments', { context: 'noun' } ),
+} );
 
 const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
-
 class StatsSite extends Component {
 	static defaultProps = {
 		chartTab: 'views',
@@ -133,12 +151,23 @@ class StatsSite extends Component {
 	};
 
 	renderStats() {
-		const { date, hasWordAds, siteId, slug, isAdmin, isJetpack, isVip } = this.props;
+		const {
+			date,
+			hasWordAds,
+			planSupportsWordAdsInstantFeature,
+			siteId,
+			slug,
+			isAdmin,
+			isJetpack,
+			isAtomic,
+			isVip,
+		} = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 		let fileDownloadList;
+		const isJetpackNonAtomic = isJetpack && ! isAtomic;
 
 		const query = memoizedQuery( period, endOf );
 
@@ -167,6 +196,9 @@ class StatsSite extends Component {
 					className="stats__section-header"
 					headerText={ translate( 'Stats and Insights' ) }
 					align="left"
+					subHeaderText={ translate(
+						"Learn more about the activity and behavior of your site's visitors."
+					) }
 				/>
 				<StatsNavigation
 					selectedItem={ 'traffic' }
@@ -174,6 +206,9 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
+
+				{ ! isVip && isAdmin && ! hasWordAds && ! isJetpackNonAtomic && <Cloudflare /> }
+
 				<div id="my-stats-content">
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
@@ -187,22 +222,6 @@ class StatsSite extends Component {
 						period={ this.props.period }
 						chartTab={ this.props.chartTab }
 					/>
-					{ ! isVip && isAdmin && ! hasWordAds && (
-						<Banner
-							className="stats__upsell-nudge"
-							icon="star"
-							title={ translate( 'Start earning money now' ) }
-							description={ translate(
-								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
-							) }
-							href={ `/earn/${ slug }` }
-							event="stats_earn_nudge"
-							tracksImpressionName="calypso_upgrade_nudge_impression"
-							tracksClickName="calypso_upgrade_nudge_cta_click"
-							showIcon={ true }
-							jetpack={ false }
-						/>
-					) }
 					<StickyPanel className="stats__sticky-navigation">
 						<StatsPeriodNavigation
 							date={ date }
@@ -282,6 +301,27 @@ class StatsSite extends Component {
 							/>
 						</div>
 					</div>
+					{ ! isVip && isAdmin && ! hasWordAds && (
+						<Banner
+							className="stats__upsell-nudge"
+							icon="star"
+							title={ translate( 'Start earning money now' ) }
+							description={ translate(
+								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
+							) }
+							callToAction={ planSupportsWordAdsInstantFeature ? translate( 'Learn more' ) : null }
+							href={ `/earn/${ slug }` }
+							dismissPreferenceName={
+								planSupportsWordAdsInstantFeature ? `stats-earn-nudge-wordads-${ siteId }` : null
+							}
+							event="stats_earn_nudge"
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
+							showIcon={ true }
+							jetpack={ false }
+							horizontal
+						/>
+					) }
 				</div>
 				<JetpackColophon />
 			</>
@@ -312,7 +352,7 @@ class StatsSite extends Component {
 		const { period } = this.props.period;
 
 		return (
-			<Main wideLayout={ true }>
+			<Main wideLayout>
 				<QueryKeyringConnections />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
@@ -341,16 +381,19 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isVip = isVipSite( state, siteId );
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const showEnableStatsModule =
 			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
 			isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			isJetpack,
+			isAtomic,
 			hasWordAds: getSiteOption( state, siteId, 'wordads' ),
 			siteId,
 			isVip,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),
+			planSupportsWordAdsInstantFeature: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 		};

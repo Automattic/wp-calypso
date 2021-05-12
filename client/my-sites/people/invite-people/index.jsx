@@ -4,7 +4,7 @@
 
 import React from 'react';
 import page from 'page';
-import { filter, flowRight, get, groupBy, includes, isEmpty, pickBy, some, uniqueId } from 'lodash';
+import { filter, flowRight, get, groupBy, includes, pickBy, some } from 'lodash';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -20,18 +20,11 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import {
-	sendInvites,
-	createInviteValidation,
-	generateInviteLinks,
-	disableInviteLinks,
-} from 'calypso/lib/invites/actions';
+import { generateInviteLinks, disableInviteLinks } from 'calypso/state/invites/actions';
 import { Card, Button } from '@automattic/components';
 import Main from 'calypso/components/main';
 import HeaderCake from 'calypso/components/header-cake';
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
-import InvitesCreateValidationStore from 'calypso/lib/invites/stores/invites-create-validation';
-import InvitesSentStore from 'calypso/lib/invites/stores/invites-sent';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import EmptyContent from 'calypso/components/empty-content';
 import { userCan } from 'calypso/lib/site/utils';
@@ -60,6 +53,8 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import SectionHeader from 'calypso/components/section-header';
 import accept from 'calypso/lib/accept';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -73,16 +68,6 @@ const debug = debugModule( 'calypso:my-sites:people:invite' );
 
 class InvitePeople extends React.Component {
 	static displayName = 'InvitePeople';
-
-	componentDidMount() {
-		InvitesCreateValidationStore.on( 'change', this.refreshValidation );
-		InvitesSentStore.on( 'change', this.refreshFormState );
-	}
-
-	componentWillUnmount() {
-		InvitesCreateValidationStore.off( 'change', this.refreshValidation );
-		InvitesSentStore.off( 'change', this.refreshFormState );
-	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
@@ -117,31 +102,32 @@ class InvitePeople extends React.Component {
 		};
 	};
 
-	refreshFormState = () => {
-		const sendInvitesSuccess = InvitesSentStore.getSuccess( this.state.formId );
+	refreshFormState = ( errors = {}, success = [] ) => {
+		const errorKeys = Object.keys( errors );
 
-		if ( sendInvitesSuccess ) {
+		if ( success.length && ! errorKeys.length ) {
 			this.setState( this.resetState() );
 			this.props.recordTracksEventAction( 'calypso_invite_people_form_refresh_initial' );
 			debug( 'Submit successful. Resetting form.' );
-		} else {
-			const sendInvitesErrored = InvitesSentStore.getErrors( this.state.formId );
-			const errors = get( sendInvitesErrored, 'errors', {} );
-			const updatedState = { sendingInvites: false };
-			if ( ! isEmpty( errors ) && 'object' === typeof errors ) {
-				const errorKeys = Object.keys( errors );
-				Object.assign( updatedState, {
-					usernamesOrEmails: errorKeys,
-					errorToDisplay: errorKeys[ 0 ],
-					errors,
-				} );
-			}
+			return;
+		}
+
+		if ( errorKeys.length && 'object' === typeof errors ) {
+			const updatedState = {
+				sendingInvites: false,
+				usernamesOrEmails: errorKeys,
+				errorToDisplay: errorKeys[ 0 ],
+				errors,
+			};
 
 			debug( 'Submit errored. Updating state to:  ' + JSON.stringify( updatedState ) );
 
 			this.setState( updatedState );
 			this.props.recordTracksEventAction( 'calypso_invite_people_form_refresh_retry' );
+			return;
 		}
+
+		this.setState( { sendingInvites: false } );
 	};
 
 	onTokensChange = ( tokens ) => {
@@ -167,7 +153,7 @@ class InvitePeople extends React.Component {
 			success: filteredSuccess,
 			errorToDisplay: includes( filteredTokens, errorToDisplay ) && errorToDisplay,
 		} );
-		createInviteValidation( this.props.siteId, filteredTokens, role );
+		this.validateInvitation( this.props.siteId, filteredTokens, role );
 
 		if ( filteredTokens.length > usernamesOrEmails.length ) {
 			this.props.recordTracksEventAction( 'calypso_invite_people_token_added' );
@@ -181,7 +167,7 @@ class InvitePeople extends React.Component {
 	onRoleChange = ( event ) => {
 		const role = event.target.value;
 		this.setState( { role } );
-		createInviteValidation( this.props.siteId, this.state.usernamesOrEmails, role );
+		this.validateInvitation( this.props.siteId, this.state.usernamesOrEmails, role );
 	};
 
 	onExternalChange = ( event ) => {
@@ -189,11 +175,21 @@ class InvitePeople extends React.Component {
 		this.setState( { isExternal } );
 	};
 
-	refreshValidation = () => {
-		const errors =
-			InvitesCreateValidationStore.getErrors( this.props.siteId, this.state.role ) || {};
-		const success =
-			InvitesCreateValidationStore.getSuccess( this.props.siteId, this.state.role ) || [];
+	async validateInvitation( siteId, usernamesOrEmails, role ) {
+		try {
+			const { success, errors } = await wpcom
+				.undocumented()
+				.createInviteValidation( siteId, usernamesOrEmails, role );
+
+			this.refreshValidation( success, errors );
+
+			this.props.recordTracksEventAction( 'calypso_invite_create_validation_success' );
+		} catch ( error ) {
+			this.props.recordTracksEventAction( 'calypso_invite_create_validation_failed' );
+		}
+	}
+
+	refreshValidation = ( success = [], errors = {} ) => {
 		const errorsKeys = Object.keys( errors );
 		const errorToDisplay =
 			this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[ 0 ] );
@@ -242,6 +238,60 @@ class InvitePeople extends React.Component {
 		return tokens;
 	};
 
+	async sendInvites( siteId, usernamesOrEmails, role, message, isExternal ) {
+		try {
+			const response = await wpcom
+				.undocumented()
+				.sendInvites( siteId, usernamesOrEmails, role, message, isExternal );
+
+			const countValidationErrors = Object.keys( response.errors ).length;
+
+			if ( countValidationErrors ) {
+				let errorMessage;
+
+				if ( countValidationErrors === usernamesOrEmails.length ) {
+					errorMessage = this.props.translate(
+						'Invitation failed to send',
+						'Invitations failed to send',
+						{
+							count: countValidationErrors,
+							context: 'Displayed in a notice when all invitations failed to send.',
+						}
+					);
+				} else {
+					errorMessage = this.props.translate(
+						'An invitation failed to send',
+						'Some invitations failed to send',
+						{
+							count: countValidationErrors,
+							context: 'Displayed in a notice when some invitations failed to send.',
+						}
+					);
+				}
+
+				this.props.errorNotice( errorMessage );
+				this.props.recordTracksEventAction( 'calypso_invite_send_failed' );
+			} else {
+				this.props.successNotice(
+					this.props.translate( 'Invitation sent successfully', 'Invitations sent successfully', {
+						count: usernamesOrEmails.length,
+					} )
+				);
+				this.props.recordTracksEventAction( 'calypso_invite_send_success', { role } );
+			}
+
+			this.refreshFormState( response.errors, response.sent );
+		} catch ( error ) {
+			this.props.errorNotice(
+				this.props.translate(
+					"Sorry, we couldn't process your invitations. Please try again later."
+				)
+			);
+			this.props.recordTracksEventAction( 'calypso_invite_send_failed' );
+			this.setState( { sendingInvites: false } );
+		}
+	}
+
 	submitForm = ( event ) => {
 		event.preventDefault();
 		debug( 'Submitting invite form. State: ' + JSON.stringify( this.state ) );
@@ -250,18 +300,10 @@ class InvitePeople extends React.Component {
 			return false;
 		}
 
-		const formId = uniqueId();
 		const { usernamesOrEmails, message, role, isExternal } = this.state;
 
-		this.setState( { sendingInvites: true, formId } );
-		this.props.sendInvites(
-			this.props.siteId,
-			usernamesOrEmails,
-			role,
-			message,
-			formId,
-			isExternal
-		);
+		this.setState( { sendingInvites: true } );
+		this.sendInvites( this.props.siteId, usernamesOrEmails, role, message, isExternal );
 
 		const groupedInvitees = groupBy( usernamesOrEmails, ( invitee ) => {
 			return includes( invitee, '@' ) ? 'email' : 'username';
@@ -488,6 +530,8 @@ class InvitePeople extends React.Component {
 			isGeneratingInviteLinks: true,
 		} );
 
+		this.props.recordTracksEventAction( 'calypso_invite_people_generate_new_link_button_click' );
+
 		return this.props.generateInviteLinks( this.props.siteId );
 	};
 
@@ -704,47 +748,50 @@ class InvitePeople extends React.Component {
 	}
 }
 
-const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const activating = isActivatingJetpackModule( state, siteId, 'sso' );
-		const active = isJetpackModuleActive( state, siteId, 'sso' );
+const mapStateToProps = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const activating = isActivatingJetpackModule( state, siteId, 'sso' );
+	const active = isJetpackModuleActive( state, siteId, 'sso' );
 
-		return {
-			siteId,
-			needsVerification: ! isCurrentUserEmailVerified( state ),
-			showSSONotice: ! ( activating || active ),
-			isJetpack: isJetpackSite( state, siteId ),
-			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
-			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-			inviteLinks: getInviteLinksForSite( state, siteId ),
-			siteRoles: getSiteRoles( state, siteId ),
-			wpcomFollowerRole: getWpcomFollowerRole( state, siteId ),
-		};
-	},
-	( dispatch ) => ( {
-		...bindActionCreators(
-			{
-				sendInvites,
-				activateModule,
-				generateInviteLinks,
-				disableInviteLinks,
-			},
-			dispatch
-		),
-		recordTracksEventAction,
-		onFocusTokenField: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_token_field_focus' ) ),
-		onFocusRoleSelect: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_role_select_focus' ) ),
-		onFocusCustomMessage: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_custom_message_focus' ) ),
-		onClickSendInvites: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_send_invite_button_click' ) ),
-		onClickRoleExplanation: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_role_explanation_link_click' ) ),
-	} )
-);
+	return {
+		siteId,
+		needsVerification: ! isCurrentUserEmailVerified( state ),
+		showSSONotice: ! ( activating || active ),
+		isJetpack: isJetpackSite( state, siteId ),
+		isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+		inviteLinks: getInviteLinksForSite( state, siteId ),
+		siteRoles: getSiteRoles( state, siteId ),
+		wpcomFollowerRole: getWpcomFollowerRole( state, siteId ),
+	};
+};
+
+const mapDispatchToProps = ( dispatch ) => ( {
+	...bindActionCreators(
+		{
+			activateModule,
+			generateInviteLinks,
+			disableInviteLinks,
+			errorNotice,
+			successNotice,
+		},
+		dispatch
+	),
+	recordTracksEventAction,
+
+	onFocusTokenField: () =>
+		dispatch( recordTracksEventAction( 'calypso_invite_people_token_field_focus' ) ),
+	onFocusRoleSelect: () =>
+		dispatch( recordTracksEventAction( 'calypso_invite_people_role_select_focus' ) ),
+	onFocusCustomMessage: () =>
+		dispatch( recordTracksEventAction( 'calypso_invite_people_custom_message_focus' ) ),
+	onClickSendInvites: () =>
+		dispatch( recordTracksEventAction( 'calypso_invite_people_send_invite_button_click' ) ),
+	onClickRoleExplanation: () =>
+		dispatch( recordTracksEventAction( 'calypso_invite_people_role_explanation_link_click' ) ),
+} );
+
+const connectComponent = connect( mapStateToProps, mapDispatchToProps );
 
 export default flowRight(
 	connectComponent,

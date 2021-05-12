@@ -4,7 +4,7 @@
 
 import React, { PureComponent } from 'react';
 import ReactDom from 'react-dom';
-import { assign, filter, forEach, forOwn, noop } from 'lodash';
+import { filter, forEach } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -13,6 +13,7 @@ import { loadScript } from '@automattic/load-script';
 import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
 import debugFactory from 'debug';
 
+const noop = () => {};
 const debug = debugFactory( 'calypso:components:embed-container' );
 
 const embedsToLookFor = {
@@ -35,7 +36,7 @@ const SLIDESHOW_URLS = {
 };
 
 function processEmbeds( domNode ) {
-	forOwn( embedsToLookFor, ( fn, embedSelector ) => {
+	Object.entries( embedsToLookFor ).forEach( ( [ embedSelector, fn ] ) => {
 		const nodes = domNode.querySelectorAll( embedSelector );
 		forEach( filter( nodes, nodeNeedsProcessing ), fn );
 	} );
@@ -51,11 +52,11 @@ function nodeNeedsProcessing( domNode ) {
 }
 
 function loadCSS( cssUrl ) {
-	const link = assign( document.createElement( 'link' ), {
-		rel: 'stylesheet',
-		type: 'text/css',
-		href: cssUrl,
-	} );
+	const link = document.createElement( 'link' );
+
+	link.rel = 'stylesheet';
+	link.type = 'text/css';
+	link.href = cssUrl;
 
 	document.head.appendChild( link );
 }

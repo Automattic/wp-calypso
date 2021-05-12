@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
 	NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY,
@@ -15,38 +16,38 @@ import {
 	NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
 	NPS_SURVEY_SEND_FEEDBACK_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import { NOT_SUBMITTED, SUBMITTING, SUBMIT_FAILURE, SUBMITTED } from './constants';
 import notice from './notice/reducer';
 
-export const isSessionEligible = withoutPersistence( ( state = false, action ) => {
+export const isSessionEligible = ( state = false, action ) => {
 	switch ( action.type ) {
 		case NPS_SURVEY_SET_ELIGIBILITY:
 			return action.isSessionPicked;
 	}
 
 	return state;
-} );
+};
 
-export const isAvailableForConciergeSession = withoutPersistence( ( state = false, action ) => {
+export const isAvailableForConciergeSession = ( state = false, action ) => {
 	switch ( action.type ) {
 		case NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY:
 			return action.isAvailableForConciergeSession;
 	}
 
 	return state;
-} );
+};
 
-export const wasShownThisSession = withoutPersistence( ( state = false, action ) => {
+export const wasShownThisSession = ( state = false, action ) => {
 	switch ( action.type ) {
 		case NPS_SURVEY_MARK_SHOWN_THIS_SESSION:
 			return true;
 	}
 
 	return state;
-} );
+};
 
-export const surveyState = withoutPersistence( ( state = NOT_SUBMITTED, action ) => {
+export const surveyState = ( state = NOT_SUBMITTED, action ) => {
 	switch ( action.type ) {
 		case NPS_SURVEY_SUBMIT_REQUESTING:
 			return SUBMITTING;
@@ -69,9 +70,9 @@ export const surveyState = withoutPersistence( ( state = NOT_SUBMITTED, action )
 	}
 
 	return state;
-} );
+};
 
-export const surveyName = withoutPersistence( ( state = null, action ) => {
+export const surveyName = ( state = null, action ) => {
 	switch ( action.type ) {
 		case NPS_SURVEY_SUBMIT_REQUESTING: {
 			return action.surveyName;
@@ -85,9 +86,9 @@ export const surveyName = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const score = withoutPersistence( ( state = null, action ) => {
+export const score = ( state = null, action ) => {
 	switch ( action.type ) {
 		case NPS_SURVEY_SUBMIT_REQUESTING: {
 			return action.score;
@@ -95,9 +96,9 @@ export const score = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const feedback = withoutPersistence( ( state = null, action ) => {
+export const feedback = ( state = null, action ) => {
 	switch ( action.type ) {
 		case NPS_SURVEY_SEND_FEEDBACK_REQUESTING: {
 			return action.feedback;
@@ -105,7 +106,7 @@ export const feedback = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
 const combinedReducer = combineReducers( {
 	isSessionEligible,

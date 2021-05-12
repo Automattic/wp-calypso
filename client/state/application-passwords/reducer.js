@@ -6,13 +6,14 @@ import { reject } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	APPLICATION_PASSWORD_CREATE_SUCCESS,
 	APPLICATION_PASSWORD_DELETE_SUCCESS,
 	APPLICATION_PASSWORD_NEW_CLEAR,
 	APPLICATION_PASSWORDS_RECEIVE,
 } from 'calypso/state/action-types';
-import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {

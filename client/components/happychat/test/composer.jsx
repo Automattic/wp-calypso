@@ -7,15 +7,16 @@
  */
 import React from 'react';
 import { mount } from 'enzyme';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { Composer } from '../composer';
+import Composer from '../composer';
+
+const noop = () => {};
 
 describe( '<Composer />', () => {
-	describe( 'onChange event ', () => {
+	describe( 'onChange event', () => {
 		test( 'should call onSetCurrentMessage property and send a typing event if message is not empty', () => {
 			const onSendNotTyping = jest.fn();
 			const onSendTyping = jest.fn();
@@ -55,7 +56,7 @@ describe( '<Composer />', () => {
 		} );
 	} );
 
-	describe( 'onKeyDown event ', () => {
+	describe( 'onKeyDown event', () => {
 		test( 'should call message and noTyping props if message is not empty', () => {
 			const onSendMessage = jest.fn();
 			const onSendNotTyping = jest.fn();

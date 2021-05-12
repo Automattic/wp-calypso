@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/route';
+
+const noop = () => {};
 
 export function generateFlows( {
 	getSiteDestination = noop,
@@ -118,17 +119,10 @@ export function generateFlows( {
 			steps: [ 'user', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
-			lastModified: '2020-03-03',
+			lastModified: '2020-12-10',
 			showRecaptcha: true,
 		},
 
-		'onboarding-secure-your-brand': {
-			steps: [ 'user', 'domains', 'secure-your-brand', 'plans' ],
-			destination: getSignupDestination,
-			description: 'Onboarding flow with an additional step to upsell domains',
-			lastModified: '2020-10-08',
-			showRecaptcha: true,
-		},
 		'onboarding-registrationless': {
 			steps: [ 'domains', 'plans-new', 'user-new' ],
 			destination: getSignupDestination,
@@ -138,10 +132,10 @@ export function generateFlows( {
 		},
 
 		desktop: {
-			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
+			steps: [ 'user' ],
 			destination: getSignupDestination,
 			description: 'Signup flow for desktop app',
-			lastModified: '2020-08-11',
+			lastModified: '2021-03-26',
 			showRecaptcha: true,
 		},
 
@@ -250,6 +244,14 @@ export function generateFlows( {
 				'Signup flow for creating an online store with an Atomic site, forked from the design-first flow',
 			lastModified: '2019-11-27',
 		};
+
+		flows[ 'ecommerce-monthly' ] = {
+			steps: [ 'user', 'domains', 'plans-ecommerce-monthly' ],
+			destination: getSignupDestination,
+			description: 'Signup flow for creating an online store with an Atomic site',
+			lastModified: '2021-02-02',
+			showRecaptcha: true,
+		};
 	}
 
 	if ( isEnabled( 'signup/wpcc' ) ) {
@@ -314,7 +316,7 @@ export function generateFlows( {
 	};
 
 	flows[ 'launch-site' ] = {
-		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
+		steps: [ 'domains-launch', 'plans-launch', 'domain-upsell', 'launch' ],
 		destination: getLaunchDestination,
 		description: 'A flow to launch a private site.',
 		providesDependenciesInQuery: [ 'siteSlug' ],
@@ -396,6 +398,51 @@ export function generateFlows( {
 		lastModified: '2020-04-28',
 		pageTitle: translate( 'Launch your site' ),
 		providesDependenciesInQuery: [ 'siteSlug', 'source' ],
+	};
+
+	flows[ 'launch-only' ] = {
+		steps: [ 'launch' ],
+		destination: getLaunchDestination,
+		description:
+			'Launch flow without domain or plan selected, used for sites that already have a paid plan and domain (e.g. via the launch banner in the site preview)',
+		lastModified: '2020-11-30',
+		pageTitle: translate( 'Launch your site' ),
+		providesDependenciesInQuery: [ 'siteSlug' ],
+	};
+
+	flows[ 'business-monthly' ] = {
+		steps: [ 'user', 'domains', 'plans-business-monthly' ],
+		destination: getSignupDestination,
+		description:
+			'Create an account and a blog and then add the business monthly plan to the users cart.',
+		lastModified: '2021-02-02',
+		showRecaptcha: true,
+	};
+
+	flows[ 'premium-monthly' ] = {
+		steps: [ 'user', 'domains', 'plans-premium-monthly' ],
+		destination: getSignupDestination,
+		description:
+			'Create an account and a blog and then add the premium monthly plan to the users cart.',
+		lastModified: '2021-02-02',
+		showRecaptcha: true,
+	};
+
+	flows[ 'personal-monthly' ] = {
+		steps: [ 'user', 'domains', 'plans-personal-monthly' ],
+		destination: getSignupDestination,
+		description:
+			'Create an account and a blog and then add the personal monthly plan to the users cart.',
+		lastModified: '2021-02-02',
+		showRecaptcha: true,
+	};
+
+	flows[ 'with-design-picker' ] = {
+		steps: [ 'user', 'domains', 'plans', 'design' ],
+		destination: getSignupDestination,
+		description: 'Default onboarding experience with design picker as the last step',
+		lastModified: '2021-03-29',
+		showRecaptcha: true,
 	};
 
 	return flows;

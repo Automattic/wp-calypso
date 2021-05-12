@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-
+import { withStorageKey } from '@automattic/state-utils';
 import cache from './cache/reducer';
-import { combineReducers, withStorageKey } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import plugins from './plugins/reducer';
 import status from './status/reducer';
 import settings from './settings/reducer';

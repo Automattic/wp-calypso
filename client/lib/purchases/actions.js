@@ -7,7 +7,8 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
-import notices from 'calypso/notices';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 
 const debug = debugFactory( 'calypso:purchases:actions' );
 
@@ -35,7 +36,7 @@ export function submitSurvey( surveyName, siteID, surveyData ) {
 		.then( ( res ) => {
 			debug( 'Survey submit response', res );
 			if ( ! res.success ) {
-				notices.error( res.err );
+				reduxDispatch( errorNotice( res.err ) );
 			}
 		} )
 		.catch( ( err ) => debug( err ) ); // shouldn't get here

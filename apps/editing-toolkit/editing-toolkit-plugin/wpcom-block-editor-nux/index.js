@@ -1,6 +1,8 @@
 /**
  * Internal dependencies
  */
-import './src/store';
+import { register } from './src/store';
 import './src/disable-core-nux';
-import './src/wpcom-nux';
+import './src/block-editor-nux';
+
+register();

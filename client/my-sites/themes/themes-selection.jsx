@@ -27,7 +27,7 @@ import {
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies

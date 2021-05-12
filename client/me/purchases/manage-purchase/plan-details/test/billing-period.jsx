@@ -11,8 +11,6 @@ import { translate } from 'i18n-calypso';
  */
 import { PlanBillingPeriod } from '../billing-period';
 import page from 'page';
-import { planItem } from 'calypso/lib/cart-values/cart-items';
-import { addItem } from 'calypso/lib/cart/actions';
 
 const props = {
 	purchase: {
@@ -37,12 +35,8 @@ const props = {
 	moment,
 };
 
-jest.mock( 'lib/cart-values/cart-items', () => ( {
+jest.mock( 'calypso/lib/cart-values/cart-items', () => ( {
 	planItem: jest.fn(),
-} ) );
-
-jest.mock( 'lib/cart/actions', () => ( {
-	addItem: jest.fn(),
 } ) );
 
 jest.mock( 'page', () => jest.fn() );
@@ -58,17 +52,15 @@ describe( 'PlanBillingPeriod', () => {
 
 		it( 'should upgrade to a yearly plan when the button is clicked', () => {
 			const wrapper = shallow( <PlanBillingPeriod { ...props } /> );
-			wrapper.find( 'Button' ).simulate( 'click' );
-			expect( planItem ).toHaveBeenCalledWith( 'jetpack_premium' );
-			expect( addItem ).toHaveBeenCalled();
-			expect( page ).toHaveBeenCalledWith( '/checkout/site.com' );
+			wrapper.find( 'ForwardRef(Button)' ).simulate( 'click' );
+			expect( page ).toHaveBeenCalledWith( '/checkout/site.com/jetpack_premium' );
 		} );
 
 		describe( 'a disconnected site', () => {
 			test( 'should display a message instead of the upgrade button', () => {
 				const site = null;
 				const wrapper = shallow( <PlanBillingPeriod { ...props } site={ site } /> );
-				expect( wrapper.find( 'Button' ) ).toHaveLength( 0 );
+				expect( wrapper.find( 'ForwardRef(Button)' ) ).toHaveLength( 0 );
 				expect( wrapper.find( 'FormSettingExplanation' ).last().shallow().text() ).toContain(
 					'To manage your plan, please reconnect your site.'
 				);

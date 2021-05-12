@@ -23,7 +23,6 @@ import reducer, {
 } from '../reducer';
 
 import {
-	DESERIALIZE,
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
 	MAGIC_LOGIN_HIDE_REQUEST_NOTICE,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
@@ -36,7 +35,6 @@ import {
 	MAGIC_LOGIN_REQUEST_AUTH_FETCH,
 	MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
-	SERIALIZE,
 } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
@@ -56,22 +54,6 @@ describe( 'reducer', () => {
 		test( 'should default to false', () => {
 			const state = isFetchingAuth( undefined, {} );
 			expect( state ).to.be.false;
-		} );
-
-		test( 'should be false on DESERIALIZE', () => {
-			const state = isFetchingAuth( undefined, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		test( 'should not persist on SERIALIZE', () => {
-			const state = isFetchingAuth( undefined, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should be true on fetch', () => {
@@ -102,22 +84,6 @@ describe( 'reducer', () => {
 			expect( state ).to.be.false;
 		} );
 
-		test( 'should be false on DESERIALIZE', () => {
-			const state = isFetchingEmail( undefined, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		test( 'should not persist on SERIALIZE', () => {
-			const state = isFetchingEmail( undefined, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
 		test( 'should be true on fetch', () => {
 			const state = isFetchingEmail( undefined, {
 				type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
@@ -144,22 +110,6 @@ describe( 'reducer', () => {
 		test( 'should default to false', () => {
 			const state = requestAuthSuccess( undefined, {} );
 			expect( state ).to.be.false;
-		} );
-
-		test( 'should be false on DESERIALIZE', () => {
-			const state = requestAuthSuccess( undefined, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		test( 'should not persist on SERIALIZE', () => {
-			const state = requestAuthSuccess( undefined, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should be false on fetch', () => {
@@ -191,22 +141,6 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		test( 'should be null on DESERIALIZE', () => {
-			const state = requestAuthError( undefined, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.null;
-		} );
-
-		test( 'should not persist on SERIALIZE', () => {
-			const state = requestAuthError( undefined, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
 		test( 'should be null on fetch', () => {
 			const state = requestAuthError( undefined, {
 				type: MAGIC_LOGIN_REQUEST_AUTH_FETCH,
@@ -234,22 +168,6 @@ describe( 'reducer', () => {
 		test( 'should default to null', () => {
 			const state = requestEmailError( undefined, {} );
 			expect( state ).to.be.null;
-		} );
-
-		test( 'should be null on DESERIALIZE', () => {
-			const state = requestEmailError( undefined, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.null;
-		} );
-
-		test( 'should not persist on SERIALIZE', () => {
-			const state = requestEmailError( undefined, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should be null on fetch', () => {
@@ -288,22 +206,6 @@ describe( 'reducer', () => {
 			expect( state ).to.be.false;
 		} );
 
-		test( 'should be false on DESERIALIZE', () => {
-			const state = requestEmailSuccess( undefined, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		test( 'should not persist on SERIALIZE', () => {
-			const state = requestEmailSuccess( undefined, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
 		test( 'should be false on fetch action', () => {
 			const state = requestEmailSuccess( undefined, {
 				type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
@@ -330,22 +232,6 @@ describe( 'reducer', () => {
 		test( 'should default to null', () => {
 			const state = currentView( undefined, {} );
 			expect( state ).to.be.null;
-		} );
-
-		test( 'should be null on DESERIALIZE', () => {
-			const state = currentView( undefined, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.null;
-		} );
-
-		test( 'should not persist on SERIALIZE', () => {
-			const state = currentView( undefined, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should be check email page on show check email', () => {

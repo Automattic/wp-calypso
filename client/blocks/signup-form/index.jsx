@@ -16,6 +16,7 @@ import {
 	mapKeys,
 	merge,
 	pick,
+	omitBy,
 	snakeCase,
 } from 'lodash';
 import debugModule from 'debug';
@@ -23,7 +24,6 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { abtest } from 'calypso/lib/abtest';
 
 /**
  * Internal dependencies
@@ -31,7 +31,7 @@ import { abtest } from 'calypso/lib/abtest';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import wpcom from 'calypso/lib/wp';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Button } from '@automattic/components';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
@@ -41,7 +41,6 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormButton from 'calypso/components/forms/form-button';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import notices from 'calypso/notices';
 import Notice from 'calypso/components/notice';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import { login } from 'calypso/lib/paths';
@@ -50,7 +49,6 @@ import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
-import PasswordlessSignupForm from './passwordless';
 import CrowdsignalSignupForm from './crowdsignal';
 import SocialSignupForm from './social';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
@@ -124,10 +122,14 @@ class SignupForm extends Component {
 	};
 
 	state = {
-		notice: null,
 		submitting: false,
-		focusPassword: false,
-		focusUsername: false,
+		isFieldDirty: {
+			email: false,
+			username: false,
+			password: false,
+			firstName: false,
+			lastName: false,
+		},
 		form: null,
 		signedUp: false,
 		validationInitialized: false,
@@ -241,6 +243,14 @@ class SignupForm extends Component {
 		}
 	};
 
+	filterUntouchedFieldErrors = ( errorMessages ) => {
+		// Filter out "field is empty" error messages unless the field is 'dirty' (it has been interacted with).
+		return omitBy(
+			errorMessages,
+			( value, key ) => value.hasOwnProperty( 'argument' ) && ! this.state.isFieldDirty[ key ]
+		);
+	};
+
 	validate = ( fields, onComplete ) => {
 		const fieldsForValidation = filter( [
 			'email',
@@ -264,6 +274,12 @@ class SignupForm extends Component {
 			let messages = response.success
 				? {}
 				: mapKeys( response.messages, ( value, key ) => camelCase( key ) );
+
+			// Prevent "field is empty" error messages from displaying prematurely
+			// before the form has been submitted or before the field has been interacted with (is dirty).
+			if ( ! this.state.submitting ) {
+				messages = this.filterUntouchedFieldErrors( messages );
+			}
 
 			forEach( messages, ( fieldError, field ) => {
 				if ( ! formState.isFieldInvalid( this.state.form, field ) ) {
@@ -334,8 +350,6 @@ class SignupForm extends Component {
 		const name = event.target.name;
 		const value = event.target.value;
 
-		this.setState( { notice: null } );
-
 		this.formStateController.handleFieldChange( {
 			name: name,
 			value: value,
@@ -344,25 +358,17 @@ class SignupForm extends Component {
 
 	handleBlur = ( event ) => {
 		const fieldId = event.target.id;
-		// Ensure that username and password field validation does not trigger prematurely
-		if ( fieldId === 'password' ) {
-			this.setState( { focusPassword: true }, () => {
-				this.validateAndSaveForm();
-			} );
-			return;
-		}
-		if ( fieldId === 'username' ) {
-			this.setState( { focusUsername: true }, () => {
-				this.validateAndSaveForm();
-			} );
-			return;
-		}
+		this.setState( {
+			isFieldDirty: { ...this.state.isFieldDirty, [ fieldId ]: true },
+			submitting: false,
+		} );
 
 		this.validateAndSaveForm();
 	};
 
 	validateAndSaveForm = () => {
 		const data = this.getUserData();
+
 		// When a user moves away from the signup form without having entered
 		// anything do not show error messages, think going to click log in.
 		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {
@@ -448,12 +454,12 @@ class SignupForm extends Component {
 		return notice.message;
 	}
 
-	globalNotice( notice ) {
+	globalNotice( notice, status ) {
 		return (
 			<Notice
 				className="signup-form__notice"
 				showDismiss={ false }
-				status={ notices.getStatusHelper( notice ) }
+				status={ status }
 				text={ this.getNoticeMessageWithLogin( notice ) }
 			/>
 		);
@@ -556,7 +562,11 @@ class SignupForm extends Component {
 					</>
 				) }
 
-				<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
+				<FormLabel htmlFor="email">
+					{ this.props.isReskinned
+						? this.props.translate( 'Email address' )
+						: this.props.translate( 'Your email address' ) }
+				</FormLabel>
 				<FormTextInput
 					autoCapitalize="off"
 					autoCorrect="off"
@@ -582,7 +592,9 @@ class SignupForm extends Component {
 				{ this.props.displayUsernameInput && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.translate( 'Choose a username' ) }
+							{ this.props.isReskinned
+								? this.props.translate( 'Username' )
+								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
@@ -604,7 +616,11 @@ class SignupForm extends Component {
 					</>
 				) }
 
-				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
+				<FormLabel htmlFor="password">
+					{ this.props.isReskinned
+						? this.props.translate( 'Password' )
+						: this.props.translate( 'Choose a password' ) }
+				</FormLabel>
 				<FormPasswordInput
 					className="signup-form__input"
 					disabled={ this.state.submitting || this.props.disabled }
@@ -672,7 +688,6 @@ class SignupForm extends Component {
 					value={ formState.getFieldValue( this.state.form, 'email' ) }
 					onBlur={ this.handleBlur }
 					onChange={ ( value ) => {
-						this.setState( { notice: null } );
 						this.formStateController.handleFieldChange( {
 							name: 'email',
 							value,
@@ -695,7 +710,6 @@ class SignupForm extends Component {
 							value={ formState.getFieldValue( this.state.form, 'username' ) }
 							onBlur={ this.handleBlur }
 							onChange={ ( value ) => {
-								this.setState( { notice: null } );
 								this.formStateController.handleFieldChange( {
 									name: 'username',
 									value,
@@ -778,20 +792,20 @@ class SignupForm extends Component {
 
 	getNotice() {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
-			return this.globalNotice( this.props.step.errors[ 0 ] );
-		}
-		if ( this.state.notice ) {
-			return this.globalNotice( this.state.notice );
+			return this.globalNotice( this.props.step.errors[ 0 ], 'is-error' );
 		}
 		if ( this.userCreationComplete() ) {
 			return (
 				<TrackRender eventName="calypso_signup_account_already_created_show">
-					{ this.globalNotice( {
-						info: true,
-						message: this.props.translate(
-							'Your account has already been created. You can change your email, username, and password later.'
-						),
-					} ) }
+					{ this.globalNotice(
+						{
+							info: true,
+							message: this.props.translate(
+								'Your account has already been created. You can change your email, username, and password later.'
+							),
+						},
+						'is-info'
+					) }
 				</TrackRender>
 			);
 		}
@@ -860,19 +874,21 @@ class SignupForm extends Component {
 
 		return (
 			<>
-				<LoggedOutFormLinks>
-					<LoggedOutFormLinkItem href={ logInUrl }>
-						{ flowName === 'onboarding'
-							? translate( 'Log in to create a site for your existing account.' )
-							: translate( 'Already have a WordPress.com account?' ) }
-					</LoggedOutFormLinkItem>
-					{ this.props.oauth2Client && (
-						<LoggedOutFormBackLink
-							oauth2Client={ this.props.oauth2Client }
-							recordClick={ this.recordBackLinkClick }
-						/>
-					) }
-				</LoggedOutFormLinks>
+				{ ! this.props.isReskinned && (
+					<LoggedOutFormLinks>
+						<LoggedOutFormLinkItem href={ logInUrl }>
+							{ flowName === 'onboarding'
+								? translate( 'Log in to create a site for your existing account.' )
+								: translate( 'Already have a WordPress.com account?' ) }
+						</LoggedOutFormLinkItem>
+						{ this.props.oauth2Client && (
+							<LoggedOutFormBackLink
+								oauth2Client={ this.props.oauth2Client }
+								recordClick={ this.recordBackLinkClick }
+							/>
+						) }
+					</LoggedOutFormLinks>
+				) }
 				{ showRecaptchaToS && (
 					<div className="signup-form__recaptcha-tos">
 						<LoggedOutFormLinks>
@@ -970,53 +986,6 @@ class SignupForm extends Component {
 			);
 		}
 
-		/*
-
-			AB Test: passwordlessSignup
-
-			`<PasswordlessSignupForm />` is for the `onboarding` flow.
-
-			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
-		*/
-		if (
-			( this.props.flowName === 'onboarding' || this.props.flowName === 'test-fse' ) &&
-			'passwordless' === abtest( 'passwordlessSignup' )
-		) {
-			const logInUrl = config.isEnabled( 'login/native-login-links' )
-				? this.getLoginLink()
-				: localizeUrl( config( 'login_url' ), this.props.locale );
-
-			return (
-				<div
-					className={ classNames( 'signup-form', this.props.className, {
-						'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
-					} ) }
-				>
-					{ this.getNotice() }
-					<PasswordlessSignupForm
-						step={ this.props.step }
-						stepName={ this.props.stepName }
-						flowName={ this.props.flowName }
-						goToNextStep={ this.props.goToNextStep }
-						renderTerms={ this.termsOfServiceLink }
-						logInUrl={ logInUrl }
-						disabled={ this.props.disabled }
-						disableSubmitButton={ this.props.disableSubmitButton }
-						recaptchaClientId={ this.props.recaptchaClientId }
-					/>
-					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
-						<SocialSignupForm
-							handleResponse={ this.props.handleSocialResponse }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
-						/>
-					) }
-
-					{ this.props.footerLink || this.footerLink() }
-				</div>
-			);
-		}
-
 		return (
 			<div
 				className={ classNames( 'signup-form', this.props.className, {
@@ -1036,17 +1005,14 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ this.props.horizontal && (
-					<div className="signup-form__separator">
-						<span className="signup-form__separator-text">{ this.props.translate( 'or' ) }</span>
-					</div>
-				) }
+				{ this.props.horizontal && <div className="signup-form__separator"></div> }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<SocialSignupForm
 						handleResponse={ this.props.handleSocialResponse }
 						socialService={ this.props.socialService }
 						socialServiceResponse={ this.props.socialServiceResponse }
+						isReskinned={ this.props.isReskinned }
 					/>
 				) }
 

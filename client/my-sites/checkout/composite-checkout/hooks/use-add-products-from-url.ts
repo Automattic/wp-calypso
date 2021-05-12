@@ -3,7 +3,11 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import debugFactory from 'debug';
-import type { RequestCartProduct } from '@automattic/shopping-cart';
+import type {
+	RequestCartProduct,
+	ApplyCouponToCart,
+	AddProductsToCart,
+} from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -16,22 +20,18 @@ export default function useAddProductsFromUrl( {
 	isLoadingCart,
 	isCartPendingUpdate,
 	productsForCart,
-	renewalsForCart,
 	areCartProductsPreparing,
 	couponCodeFromUrl,
 	applyCoupon,
 	addProductsToCart,
-	replaceProductsInCart,
 }: {
 	isLoadingCart: boolean;
 	isCartPendingUpdate: boolean;
 	productsForCart: RequestCartProduct[];
-	renewalsForCart: RequestCartProduct[];
 	areCartProductsPreparing: boolean;
 	couponCodeFromUrl: string | null | undefined;
-	applyCoupon: ( couponId: string ) => void;
-	addProductsToCart: ( products: RequestCartProduct[] ) => void;
-	replaceProductsInCart: ( products: RequestCartProduct[] ) => void;
+	applyCoupon: ApplyCouponToCart;
+	addProductsToCart: AddProductsToCart;
 } ): isPendingAddingProductsFromUrl {
 	const [ isLoading, setIsLoading ] = useState< boolean >( true );
 	const hasRequestedInitialProducts = useRef< boolean >( false );
@@ -45,7 +45,6 @@ export default function useAddProductsFromUrl( {
 		if (
 			! areCartProductsPreparing &&
 			productsForCart.length === 0 &&
-			renewalsForCart.length === 0 &&
 			! couponCodeFromUrl &&
 			! isLoadingCart &&
 			! isCartPendingUpdate
@@ -60,25 +59,8 @@ export default function useAddProductsFromUrl( {
 		isLoadingCart,
 		areCartProductsPreparing,
 		productsForCart.length,
-		renewalsForCart.length,
 		couponCodeFromUrl,
 	] );
-
-	// If we have made requests to update the cart, and the cart has finished
-	// updating, mark this hook complete.
-	useEffect( () => {
-		if ( ! isLoading ) {
-			return;
-		}
-		if ( ! hasRequestedInitialProducts.current ) {
-			return;
-		}
-		if ( ! isCartPendingUpdate && ! isLoadingCart ) {
-			debug( 'initial cart requests have been completed' );
-			setIsLoading( false );
-			return;
-		}
-	}, [ isLoading, isCartPendingUpdate, isLoadingCart ] );
 
 	// If we have products or a coupon to add, and we have not requested they be
 	// added, and nothing is loading, request that the shopping cart add those
@@ -91,23 +73,18 @@ export default function useAddProductsFromUrl( {
 			return;
 		}
 		debug( 'adding initial products to cart', productsForCart );
+		const cartPromises = [];
 		if ( productsForCart.length > 0 ) {
-			addProductsToCart( productsForCart );
-		}
-		debug( 'adding initial renewal products to cart', renewalsForCart );
-		if ( renewalsForCart.length > 0 ) {
-			if ( productsForCart.length > 0 ) {
-				throw new Error(
-					'Renewals and non-renewals cannot be added to the cart from the URL at the same time'
-				);
-			}
-			// Note that adding renewals replaces any existing products in the cart
-			replaceProductsInCart( renewalsForCart );
+			cartPromises.push( addProductsToCart( productsForCart ) );
 		}
 		debug( 'adding initial coupon to cart', couponCodeFromUrl );
 		if ( couponCodeFromUrl ) {
-			applyCoupon( couponCodeFromUrl );
+			cartPromises.push( applyCoupon( couponCodeFromUrl ) );
 		}
+		Promise.all( cartPromises ).then( () => {
+			debug( 'initial cart requests have completed' );
+			setIsLoading( false );
+		} );
 		hasRequestedInitialProducts.current = true;
 	}, [
 		isLoading,
@@ -116,9 +93,7 @@ export default function useAddProductsFromUrl( {
 		couponCodeFromUrl,
 		applyCoupon,
 		productsForCart,
-		renewalsForCart,
 		addProductsToCart,
-		replaceProductsInCart,
 	] );
 
 	debug( 'useAddProductsFromUrl isLoading', isLoading );

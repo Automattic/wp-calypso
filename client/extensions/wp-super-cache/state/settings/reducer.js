@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
@@ -25,7 +25,7 @@ import {
  * @param  {object} action Action object
  * @returns {object} Updated requesting state
  */
-const requesting = withoutPersistence( ( state = {}, action ) => {
+const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_REQUEST_SETTINGS: {
 			const { siteId } = action;
@@ -54,7 +54,7 @@ const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated saving state after an action has been dispatched.
@@ -64,7 +64,7 @@ const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated saving state
  */
-const saveStatus = withoutPersistence( ( state = {}, action ) => {
+const saveStatus = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_SAVE_SETTINGS: {
 			const { siteId } = action;
@@ -105,7 +105,7 @@ const saveStatus = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated restoring state after an action has been dispatched.
@@ -115,7 +115,7 @@ const saveStatus = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated restoring state
  */
-export const restoring = withoutPersistence( ( state = {}, action ) => {
+export const restoring = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_RESTORE_SETTINGS: {
 			const { siteId } = action;
@@ -144,7 +144,7 @@ export const restoring = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Tracks the settings for a particular site.

@@ -7,7 +7,7 @@
  */
 const fs = require( 'fs' );
 const path = require( 'path' );
-const assign = require( 'lodash/assign' );
+const { assignWith } = require( 'lodash' );
 const debug = require( 'debug' )( 'config' );
 
 function getDataFromFile( file ) {
@@ -24,7 +24,7 @@ function getDataFromFile( file ) {
 }
 
 module.exports = function ( configPath, defaultOpts ) {
-	const opts = assign(
+	const opts = Object.assign(
 		{
 			env: 'development',
 		},
@@ -43,7 +43,10 @@ module.exports = function ( configPath, defaultOpts ) {
 	const disabledFeatures = opts.disabledFeatures ? opts.disabledFeatures.split( ',' ) : [];
 
 	configFiles.forEach( function ( file ) {
-		assign( data, getDataFromFile( file ) );
+		// merge the objects in `features` field, and do a simple assignment for other fields
+		assignWith( data, getDataFromFile( file ), ( objValue, srcValue, key ) =>
+			key === 'features' ? { ...objValue, ...srcValue } : undefined
+		);
 	} );
 
 	if ( data.hasOwnProperty( 'features' ) ) {
@@ -58,7 +61,7 @@ module.exports = function ( configPath, defaultOpts ) {
 	}
 
 	if (
-		! ( secretsPath === realSecretsPath ) &&
+		secretsPath !== realSecretsPath &&
 		data.features &&
 		data.features[ 'wpcom-user-bootstrap' ]
 	) {
@@ -66,8 +69,13 @@ module.exports = function ( configPath, defaultOpts ) {
 		data.features[ 'wpcom-user-bootstrap' ] = false;
 	}
 
-	const serverData = assign( {}, data, getDataFromFile( secretsPath ) );
-	const clientData = assign( {}, data );
+	// `protocol`, `hostname` and `port` config values can be overridden by env variables
+	data.protocol = process.env.PROTOCOL || data.protocol;
+	data.hostname = process.env.HOST || data.hostname;
+	data.port = process.env.PORT || data.port;
+
+	const serverData = Object.assign( {}, data, getDataFromFile( secretsPath ) );
+	const clientData = Object.assign( {}, data );
 
 	return { serverData, clientData };
 };

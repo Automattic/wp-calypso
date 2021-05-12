@@ -18,13 +18,21 @@ fetchInstallInstructions( 106093271 );
 
 ### `installPlugin( plugin: object, siteId: object )`
 
-Start the install process for a plugin. Plugin object should be pulled from the [PluginsStore](https://github.com/Automattic/wp-calypso/tree/HEAD/client/lib/plugins).
+Start the install process for a plugin.
 
 ```js
+import { useDispatch, useSelector } from 'react-redux';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { installPlugin } from 'calypso/state/plugins/premium/actions';
 
-const plugin = PluginsStore.getSitePlugin( site, 'vaultpress' );
-installPlugin( plugin, site );
+const MyComponent = ( { site } ) => {
+	// Retrieve the plugin installed on the site via Redux
+	const plugin = useSelector( ( state ) => getPluginOnSite( state, site, 'vaultpress' ) );
+
+	// Install the plugin
+	const dispatch = useDispatch();
+	dispatch( installPlugin( plugin, site ) );
+};
 ```
 
 ## Reducer

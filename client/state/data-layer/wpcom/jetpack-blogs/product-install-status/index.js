@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
@@ -13,6 +8,8 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { JETPACK_PRODUCT_INSTALL_STATUS_REQUEST } from 'calypso/state/action-types';
 import { receiveJetpackProductInstallStatus } from 'calypso/state/jetpack-product-install/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 /**
  * Request the current Jetpack product install status.

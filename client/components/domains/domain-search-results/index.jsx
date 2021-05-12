@@ -6,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get, includes, times, first } from 'lodash';
+import { get, includes, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +24,7 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { hideSitePreview } from 'calypso/state/signup/preview/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
-
+import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
 /**
  * Style dependencies
  */
@@ -38,6 +38,7 @@ class DomainSearchResults extends React.Component {
 		lastDomainStatus: PropTypes.string,
 		lastDomainSearched: PropTypes.string,
 		cart: PropTypes.object,
+		isCartPendingUpdate: PropTypes.bool,
 		premiumDomains: PropTypes.object,
 		products: PropTypes.object,
 		selectedSite: PropTypes.object,
@@ -54,6 +55,8 @@ class DomainSearchResults extends React.Component {
 		onClickMapping: PropTypes.func,
 		onClickTransfer: PropTypes.func,
 		onClickUseYourDomain: PropTypes.func,
+		showSkipButton: PropTypes.bool,
+		onSkip: PropTypes.func,
 		isSignupStep: PropTypes.bool,
 		showStrikedOutPrice: PropTypes.bool,
 		railcarId: PropTypes.string,
@@ -240,6 +243,7 @@ class DomainSearchResults extends React.Component {
 		let featuredSuggestionElement;
 		let suggestionElements;
 		let unavailableOffer;
+		let domainSkipSuggestion;
 
 		if ( ! this.props.isLoadingSuggestions && this.props.suggestions ) {
 			suggestionCount = (
@@ -260,6 +264,7 @@ class DomainSearchResults extends React.Component {
 			featuredSuggestionElement = (
 				<FeaturedDomainSuggestions
 					cart={ this.props.cart }
+					isCartPendingUpdate={ this.props.isCartPendingUpdate }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					isDomainOnly={ isDomainOnly }
 					fetchAlgo={ this.props.fetchAlgo }
@@ -268,13 +273,14 @@ class DomainSearchResults extends React.Component {
 					key="featured"
 					onButtonClick={ this.props.onClickResult }
 					premiumDomains={ this.props.premiumDomains }
-					primarySuggestion={ first( bestMatchSuggestions ) }
+					primarySuggestion={ bestMatchSuggestions[ 0 ] }
 					query={ this.props.lastDomainSearched }
 					railcarId={ this.props.railcarId }
-					secondarySuggestion={ first( bestAlternativeSuggestions ) }
+					secondarySuggestion={ bestAlternativeSuggestions[ 0 ] }
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
+					isReskinned={ this.props.isReskinned }
 				/>
 			);
 
@@ -285,6 +291,7 @@ class DomainSearchResults extends React.Component {
 
 				return (
 					<DomainRegistrationSuggestion
+						isCartPendingUpdate={ this.props.isCartPendingUpdate }
 						isDomainOnly={ isDomainOnly }
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
@@ -301,11 +308,16 @@ class DomainSearchResults extends React.Component {
 						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
+						isReskinned={ this.props.isReskinned }
 					/>
 				);
 			} );
 
-			if ( this.props.offerUnavailableOption && this.props.siteDesignType !== DESIGN_TYPE_STORE ) {
+			if (
+				this.props.offerUnavailableOption &&
+				this.props.siteDesignType !== DESIGN_TYPE_STORE &&
+				! this.props.isReskinned
+			) {
 				unavailableOffer = (
 					<DomainTransferSuggestion
 						onButtonClick={ this.props.onClickUseYourDomain }
@@ -313,6 +325,13 @@ class DomainSearchResults extends React.Component {
 					/>
 				);
 			}
+
+			domainSkipSuggestion = (
+				<DomainSkipSuggestion
+					selectedSiteSlug={ this.props.selectedSite?.slug }
+					onButtonClick={ this.props.onSkip }
+				/>
+			);
 		} else {
 			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
 			suggestionElements = this.renderPlaceholders();
@@ -325,6 +344,7 @@ class DomainSearchResults extends React.Component {
 				{ featuredSuggestionElement }
 				{ suggestionElements }
 				{ unavailableOffer }
+				{ this.props.showSkipButton && domainSkipSuggestion }
 			</div>
 		);
 	}

@@ -7,7 +7,7 @@ import bodyParser from 'body-parser';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 function oauth() {
 	return {

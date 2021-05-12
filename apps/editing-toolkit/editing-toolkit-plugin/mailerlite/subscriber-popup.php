@@ -86,7 +86,7 @@ class WPCOM_Widget_Mailerlite extends \WP_Widget {
 	 *
 	 * @return mixed
 	 */
-	public function update( $new_instance, $old_instance ) { // @phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed
+	public function update( $new_instance, $old_instance ) { // @phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		return array(
 			'account' => wp_kses( stripslashes( $new_instance['account'] ), array() ),
 			'uuid'    => wp_kses( stripslashes( $new_instance['uuid'] ), array() ),

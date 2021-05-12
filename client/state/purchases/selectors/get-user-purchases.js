@@ -10,7 +10,7 @@ import 'calypso/state/purchases/init';
  *
  * @param   {object} state       global state
  * @param   {number} userId      the user id
- * @returns {object} the matching purchases if there are some
+ * @returns {Array.<object>} the matching purchases if there are some
  */
 export const getUserPurchases = ( state, userId ) =>
 	state.purchases.hasLoadedUserPurchasesFromServer &&

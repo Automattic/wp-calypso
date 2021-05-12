@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { ReactElement } from 'react';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 
 /**
@@ -12,7 +12,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isFreePlan } from 'calypso/lib/plans';
+import { isFreePlan } from '@automattic/calypso-products';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
@@ -34,24 +34,24 @@ import './style.scss';
 
 const trackEventName = 'calypso_jetpack_backup_business_upsell';
 
-const promos: PromoSectionProps = {
-	promos: [
-		{
-			title: translate( 'Activity Log' ),
-			body: translate(
-				'A complete record of everything that happens on your site, with history that spans over 30 days.'
-			),
-			image: <Gridicon icon="history" className="backup__upsell-icon" />,
-		},
-	],
-};
-
 export default function WPCOMUpsellPage(): ReactElement {
 	const onUpgradeClick = useTrackCallback( undefined, trackEventName );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 	const { product_slug: planSlug } = useSelector( ( state ) => getSitePlan( state, siteId ) );
+	const translate = useTranslate();
+	const promos: PromoSectionProps = {
+		promos: [
+			{
+				title: translate( 'Activity Log' ),
+				body: translate(
+					'A complete record of everything that happens on your site, with history that spans over 30 days.'
+				),
+				image: <Gridicon icon="history" className="backup__upsell-icon" />,
+			},
+		],
+	};
 
 	return (
 		<Main className="backup__main backup__wpcom-upsell">

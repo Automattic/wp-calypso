@@ -13,9 +13,9 @@ import {
 	hasPlan,
 	hasJetpackPlan,
 	isNextDomainFree,
+	hasP2PlusPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { getPlan, getBillingMonthsForTerm } from 'calypso/lib/plans';
-import { isMonthly } from 'calypso/lib/plans/constants';
+import { isMonthly, getPlan, getBillingMonthsForTerm } from '@automattic/calypso-products';
 import { REGISTER_DOMAIN } from 'calypso/lib/url/support';
 import { translationExists } from 'calypso/lib/i18n-utils';
 
@@ -40,7 +40,12 @@ function hasMonthlyPlan( cart ) {
 
 export default function BundledDomainNotice( { cart } ) {
 	// A dotcom plan should exist.
-	if ( ! hasPlan( cart ) || hasJetpackPlan( cart ) || hasMonthlyPlan( cart ) ) {
+	if (
+		! hasPlan( cart ) ||
+		hasJetpackPlan( cart ) ||
+		hasMonthlyPlan( cart ) ||
+		hasP2PlusPlan( cart )
+	) {
 		return null;
 	}
 

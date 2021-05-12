@@ -6,7 +6,7 @@ import Lasagna from '@automattic/lasagna';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 import connectMiddleware from './connect/middleware';
 import postChannelMiddleware from './post-channel/middleware';

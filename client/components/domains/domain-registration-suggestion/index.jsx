@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, isNumber, includes } from 'lodash';
+import { get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
@@ -23,6 +23,8 @@ import {
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	parseMatchReasons,
+	SLD_EXACT_MATCH,
+	TLD_EXACT_MATCH,
 	VALID_MATCH_REASONS,
 } from 'calypso/components/domains/domain-registration-suggestion/utility';
 import { ProgressBar } from '@automattic/components';
@@ -33,12 +35,14 @@ import Badge from 'calypso/components/badge';
 import PremiumBadge from '../premium-badge';
 import InfoPopover from 'calypso/components/info-popover';
 import { HTTPS_SSL } from 'calypso/lib/url/support';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 
 const NOTICE_GREEN = '#4ab866';
 
 class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {
 		isDomainOnly: PropTypes.bool,
+		isCartPendingUpdate: PropTypes.bool,
 		isSignupStep: PropTypes.bool,
 		showStrikedOutPrice: PropTypes.bool,
 		isFeatured: PropTypes.bool,
@@ -80,7 +84,7 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	recordRender() {
-		if ( this.props.railcarId && isNumber( this.props.uiPosition ) ) {
+		if ( this.props.railcarId && typeof this.props.uiPosition === 'number' ) {
 			let resultSuffix = '';
 			if ( this.props.suggestion.isRecommended ) {
 				resultSuffix = '#recommended';
@@ -166,12 +170,8 @@ class DomainRegistrationSuggestion extends React.Component {
 			buttonContent = translate( 'Unavailable', {
 				context: 'Domain suggestion is not available for registration',
 			} );
-		} else if ( pendingCheckSuggestion ) {
-			if ( pendingCheckSuggestion.domain_name === suggestion.domain_name ) {
-				buttonStyles = { ...buttonStyles, busy: true };
-			} else {
-				buttonStyles = { ...buttonStyles, disabled: true };
-			}
+		} else if ( pendingCheckSuggestion || this.props.isCartPendingUpdate ) {
+			buttonStyles = { ...buttonStyles, busy: true, disabled: true };
 		}
 		return {
 			buttonContent,
@@ -180,8 +180,22 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	getPriceRule() {
-		const { cart, isDomainOnly, domainsWithPlansOnly, selectedSite, suggestion } = this.props;
-		return getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion, isDomainOnly );
+		const {
+			cart,
+			isDomainOnly,
+			domainsWithPlansOnly,
+			selectedSite,
+			suggestion,
+			flowName,
+		} = this.props;
+		return getDomainPriceRule(
+			domainsWithPlansOnly,
+			selectedSite,
+			cart,
+			suggestion,
+			isDomainOnly,
+			flowName
+		);
 	}
 
 	/**
@@ -249,6 +263,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		return (
 			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
+				{ isReskinned && this.renderProgressBar() }
 				{ isPremium && (
 					<PremiumBadge restrictedPremium={ premiumDomain?.is_price_limit_exceeded } />
 				) }
@@ -290,24 +305,34 @@ class DomainRegistrationSuggestion extends React.Component {
 
 	renderProgressBar() {
 		const {
-			suggestion: { isRecommended, isBestAlternative, relevance: matchScore },
+			suggestion: { isRecommended, isBestAlternative, match_reasons: matchReasons },
 			translate,
 			isFeatured,
 			showStrikedOutPrice,
+			isReskinned,
 		} = this.props;
 
 		if ( ! isFeatured ) {
 			return null;
 		}
 
+		const isExactFullMatch =
+			matchReasons &&
+			matchReasons.includes( SLD_EXACT_MATCH ) &&
+			matchReasons.includes( TLD_EXACT_MATCH );
 		let title;
 		let progressBarProps;
 		if ( isRecommended ) {
 			title = showStrikedOutPrice ? translate( 'Our Recommendation' ) : translate( 'Best Match' );
+
+			if ( isReskinned ) {
+				title = translate( 'Recommended' );
+			}
+
 			progressBarProps = {
 				color: NOTICE_GREEN,
 				title,
-				value: matchScore * 100 || 90,
+				value: isExactFullMatch ? 100 : 90,
 			};
 		}
 
@@ -315,15 +340,17 @@ class DomainRegistrationSuggestion extends React.Component {
 			title = translate( 'Best Alternative' );
 			progressBarProps = {
 				title,
-				value: matchScore * 100 || 80,
+				value: isExactFullMatch ? 100 : 82,
 			};
 		}
 
 		if ( title ) {
 			if ( showStrikedOutPrice ) {
 				const badgeClassName = classNames( '', {
-					success: isRecommended,
-					'info-blue': isBestAlternative,
+					success: isRecommended && ! isReskinned,
+					'info-blue': isBestAlternative && ! isReskinned,
+					'info-green': isRecommended && isReskinned,
+					'info-purple': isBestAlternative && isReskinned,
 				} );
 
 				return (
@@ -379,6 +406,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			productSaleCost,
 			premiumDomain,
 			showStrikedOutPrice,
+			isReskinned,
 		} = this.props;
 
 		const isUnavailableDomain = this.isUnavailableDomain( domain );
@@ -401,9 +429,10 @@ class DomainRegistrationSuggestion extends React.Component {
 				{ ...this.getButtonProps() }
 				isFeatured={ isFeatured }
 				showStrikedOutPrice={ showStrikedOutPrice }
+				isReskinned={ isReskinned }
 			>
 				{ this.renderDomain() }
-				{ this.renderProgressBar() }
+				{ ! isReskinned && this.renderProgressBar() }
 				{ this.renderMatchReason() }
 			</DomainSuggestion>
 		);
@@ -416,6 +445,7 @@ const mapStateToProps = ( state, props ) => {
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
 	const stripZeros = props.showStrikedOutPrice ? true : false;
 	const isPremium = props.premiumDomain?.is_premium || props.suggestion?.is_premium;
+	const flowName = getCurrentFlowName( state );
 
 	let productCost;
 	let productSaleCost;
@@ -436,6 +466,7 @@ const mapStateToProps = ( state, props ) => {
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
 		productCost,
 		productSaleCost,
+		flowName,
 	};
 };
 

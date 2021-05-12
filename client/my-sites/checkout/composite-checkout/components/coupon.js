@@ -7,12 +7,12 @@ import { keyframes } from '@emotion/core';
 import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/composite-checkout';
+import { Field } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
 import joinClasses from './join-classes';
-import Field from './field';
 
 export default function Coupon( { id, className, disabled, couponStatus, couponFieldStateProps } ) {
 	const translate = useTranslate();
@@ -24,12 +24,6 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 		setIsFreshOrEdited,
 		handleCouponSubmit,
 	} = couponFieldStateProps;
-
-	if ( couponStatus === 'applied' ) {
-		// Clear the field value when the coupon is applied
-		setCouponFieldValue( '' );
-		return null;
-	}
 
 	const hasCouponError = couponStatus === 'invalid' || couponStatus === 'rejected';
 	const isPending = couponStatus === 'pending';
@@ -106,8 +100,8 @@ const CouponWrapper = styled.form`
 
 const ApplyButton = styled( Button )`
 	position: absolute;
-	top: 5px;
-	right: 4px;
+	top: 3px;
+	right: 3px;
 	padding: 8px;
 	animation: ${ animateIn } 0.2s ease-out;
 	animation-fill-mode: backwards;

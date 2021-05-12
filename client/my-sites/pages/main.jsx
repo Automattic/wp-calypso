@@ -24,12 +24,12 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { mapPostStatus } from 'calypso/lib/route';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
 import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
-import { Experiment } from 'calypso/components/experiment';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { Experiment } from 'calypso/lib/explat';
 
 class PagesMain extends React.Component {
 	static displayName = 'Pages';
@@ -98,6 +98,11 @@ class PagesMain extends React.Component {
 					brandFont
 					className="pages__page-heading"
 					headerText={ translate( 'Pages' ) }
+					subHeaderText={
+						siteId
+							? translate( 'Create, edit, and manage the pages on your site.' )
+							: translate( 'Create, edit, and manage the pages on your sites.' )
+					}
 					align="left"
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ status } />
@@ -118,6 +123,9 @@ class PagesMain extends React.Component {
 					name={ `explat_test_aa_weekly_calypso_${ moment
 						.utc()
 						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
+					defaultExperience={ null }
+					treatmentExperience={ null }
+					loadingExperience={ null }
 				/>
 			</Main>
 		);

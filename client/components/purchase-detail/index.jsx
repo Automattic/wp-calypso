@@ -1,12 +1,10 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +17,8 @@ import { preventWidows } from 'calypso/lib/formatting';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export default class PurchaseDetail extends PureComponent {
 	static propTypes = {

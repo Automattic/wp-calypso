@@ -12,7 +12,7 @@ import { ProgressBar } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import config, { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import CurrentSite from 'calypso/my-sites/current-site';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ExternalLink from 'calypso/components/external-link';
@@ -29,7 +29,7 @@ import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QueryScanState from 'calypso/components/data/query-jetpack-scan';
 import ToolsMenu from './tools-menu';
-import { isEcommerce } from 'calypso/lib/products-values';
+import { isP2PlusPlan, isBusiness, isEcommerce } from '@automattic/calypso-products';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -53,7 +53,9 @@ import {
 	getSite,
 	isJetpackSite,
 	canCurrentUserUseEarn,
-	canCurrentUserUseStore,
+	getSiteOption,
+	canCurrentUserUseWooCommerceCoreStore,
+	getSiteWoocommerceUrl,
 } from 'calypso/state/sites/selectors';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
@@ -63,6 +65,7 @@ import { getStatsPathForTab } from 'calypso/lib/route';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
+	collapseMySitesSidebarSection as collapseSection,
 	expandMySitesSidebarSection as expandSection,
 	toggleMySitesSidebarSection as toggleSection,
 } from 'calypso/state/my-sites/sidebar/actions';
@@ -75,18 +78,19 @@ import {
 	SIDEBAR_SECTION_JETPACK,
 	SIDEBAR_SECTION_MANAGE,
 	SIDEBAR_SECTION_SITE,
-	SIDEBAR_SECTION_PLAN,
+	SIDEBAR_SECTION_UPGRADES,
 	SIDEBAR_SECTION_TOOLS,
 } from './constants';
 import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
 import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
+import InfoPopover from 'calypso/components/info-popover';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
-import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
-import { isP2PlusPlan } from 'calypso/lib/plans';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 
 /**
  * Style dependencies
@@ -105,7 +109,9 @@ export class MySitesSidebar extends Component {
 		sitePlanSlug: PropTypes.string,
 	};
 
-	expandPlanSection = () => this.props.expandSection( SIDEBAR_SECTION_PLAN );
+	collapseManageSection = () => this.props.collapseSection( SIDEBAR_SECTION_MANAGE );
+
+	expandUpgradesSection = () => this.props.expandSection( SIDEBAR_SECTION_UPGRADES );
 
 	expandSiteSection = () => this.props.expandSection( SIDEBAR_SECTION_SITE );
 
@@ -118,6 +124,11 @@ export class MySitesSidebar extends Component {
 	expandJetpackSection = () => this.props.expandSection( SIDEBAR_SECTION_JETPACK );
 
 	toggleSection = memoize( ( id ) => () => this.props.toggleSection( id ) );
+
+	expandDomains = () => {
+		this.collapseManageSection();
+		this.expandUpgradesSection();
+	};
 
 	onNavigate = () => {
 		this.props.setNextLayoutFocus( 'content' );
@@ -489,7 +500,7 @@ export class MySitesSidebar extends Component {
 						link={ this.props.customizeUrl }
 						onNavigate={ this.trackCustomizeClick }
 						preloadSectionName="customize"
-						forceInternalLink
+						forceInternalLink={ ! this.props.isJetpack || this.props.isAtomicSite }
 						expandSection={ this.expandDesignSection }
 					/>
 				) }
@@ -519,7 +530,7 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
-	upgrades() {
+	domains() {
 		const { path, translate, canUserManageOptions } = this.props;
 
 		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
@@ -548,12 +559,12 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackDomainsClick }
 				preloadSectionName="domains"
 				tipTarget="domains"
-				expandSection={ this.expandManageSection }
+				expandSection={ this.expandDomains }
 			/>
 		);
 	}
 
-	planMenu() {
+	upgradesMenu() {
 		const { canUserManageOptions, site, isWpMobile } = this.props;
 
 		if ( ! site ) {
@@ -577,50 +588,42 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
-		const displayPlanName = ! this.props.isJetpack || this.props.isAtomicSite || this.props.isVip;
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<li>
-				<ExpandableSidebarMenu
-					onClick={ this.toggleSection( SIDEBAR_SECTION_PLAN ) }
-					expanded={ this.props.isPlanSectionOpen }
-					title={
-						<>
-							<span className="menu-link-text" data-e2e-sidebar="Plan">
-								{ this.props.translate( 'Plan', { context: 'noun' } ) }
-							</span>
-							{ displayPlanName && (
-								<span className="sidebar__menu-link-secondary-text">
-									{ this.props.site?.plan.product_name_short }
-								</span>
-							) }
-						</>
+			<ExpandableSidebarMenu
+				onClick={ this.toggleSection( SIDEBAR_SECTION_UPGRADES ) }
+				expanded={ this.props.isUpgradesSectionOpen }
+				title={ this.props.translate( 'Upgrades', { context: 'noun' } ) }
+				customIcon={ <Gridicon icon="star" className="sidebar__menu-icon" size={ 24 } /> }
+			>
+				{ this.plans() }
+				{ this.domains() }
+				<SidebarItem
+					label={ this.props.translate( 'Purchases' ) }
+					tipTarget="purchases"
+					selected={ itemLinkMatches( '/purchases', this.props.path ) }
+					link={
+						this.props.site ? '/purchases/subscriptions/' + this.props.site.slug : '/me/purchases'
 					}
-					customIcon={ <Gridicon icon="star" className="sidebar__menu-icon" size={ 24 } /> }
-				>
-					{ this.plans() }
-					<SidebarItem
-						label={ this.props.translate( 'Billing' ) }
-						tipTarget="purchases"
-						selected={ itemLinkMatches( '/purchases', this.props.path ) }
-						link={
-							this.props.site ? '/purchases/subscriptions/' + this.props.site.slug : '/me/purchases'
-						}
-						onNavigate={ this.trackPurchasesClick }
-						preloadSectionName="site-purchases"
-						forceInternalLink
-						expandSection={ this.expandPlanSection }
-					/>
-				</ExpandableSidebarMenu>
-			</li>
+					onNavigate={ this.trackPurchasesClick }
+					preloadSectionName="site-purchases"
+					forceInternalLink
+					expandSection={ this.expandUpgradesSection }
+				/>
+			</ExpandableSidebarMenu>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	plans() {
-		const { canUserManageOptions, path, site, siteSuffix, translate } = this.props;
+		const {
+			canUserManageOptions,
+			isAtomicSite,
+			isJetpack,
+			isVip,
+			path,
+			site,
+			siteSuffix,
+			translate,
+		} = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -638,6 +641,9 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
+		const displayPlanName = ! isJetpack || isAtomicSite || isVip;
+
 		return (
 			<SidebarItem
 				label={ translate( 'Plans', { context: 'noun' } ) }
@@ -647,44 +653,150 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackPlanClick }
 				preloadSectionName="plans"
 				forceInternalLink
-				expandSection={ this.expandPlanSection }
-			/>
+				expandSection={ this.expandUpgradesSection }
+			>
+				{ displayPlanName && (
+					<span className="sidebar__menu-link-secondary-text">
+						{ site?.plan.product_name_short }
+					</span>
+				) }
+			</SidebarItem>
 		);
 	}
 
-	trackStoreClick = () => {
-		this.trackMenuItemClick( 'store' );
-		this.props.recordTracksEvent( 'calypso_woocommerce_store_nav_item_click' );
+	trackWooCommerceNavItemClick = ( menuItemName, experience, plan ) => {
+		// Log the general Tracks event
+		this.trackMenuItemClick( menuItemName );
+
+		// Log a single Tracks event for Store/WooCommerce nav item clicks,
+		// so that easy comparisons can be made between them.
+		this.props.recordTracksEvent( 'calypso_woocommerce_nav_item_click', {
+			nav_item: menuItemName,
+			experience,
+			plan,
+			nav_item_experience_plan_combo: `${ menuItemName }__${ experience }__${ plan }`,
+		} );
+
+		// Continue to log the old individual Tracks events so that existing analysis
+		// using them still function.
+		if ( menuItemName === 'store' ) {
+			this.props.recordTracksEvent( 'calypso_woocommerce_store_nav_item_click' );
+		} else if ( menuItemName === 'woocommerce' ) {
+			this.props.recordTracksEvent( 'calypso_woocommerce_store_woo_core_item_click' );
+		}
+
 		this.onNavigate();
 	};
 
 	store() {
-		const { translate, site, siteSuffix, canUserUseStore } = this.props;
+		const {
+			translate,
+			site,
+			siteSuffix,
+			canUserUseWooCommerceCoreStore,
+			isSiteWpcomStore,
+		} = this.props;
 
-		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
+		if ( ! site ) {
 			return null;
 		}
 
-		if ( ! canUserUseStore ) {
-			return null;
-		}
-
-		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
-			return null;
-		}
-
+		let experience = 'calypso-store';
 		let storeLink = '/store' + siteSuffix;
-		if ( isEcommerce( site.plan ) ) {
-			storeLink = site.options.admin_url + 'admin.php?page=wc-admin&calypsoify=1';
+		if ( isEcommerce( site.plan ) && canUserUseWooCommerceCoreStore ) {
+			// Eventually, the plan is to have the WooCommerce Core menu item labelled the same
+			// for both Business and eCommerce users. But, for now, we want to continue to
+			// use the "Store" label for eCommerce users because that is what they are used to.
+			// So, we'll just continue to change the link here as we have been doing.
+			experience = 'wpadmin-woocommerce-core';
+			storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
+		} else {
+			return null;
 		}
+
+		if ( ! isSiteWpcomStore && isBusiness( site.plan ) ) {
+			return null;
+		}
+
+		const infoCopy = translate(
+			'Your favorite Store functions will become part of WooCommerce menus in February. {{link}}Learn more{{/link}}.',
+			{
+				components: {
+					link: (
+						<a
+							href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/"
+							rel="noreferrer"
+							target="_blank"
+						/>
+					),
+				},
+			}
+		);
 
 		return (
 			<SidebarItem
 				label={ translate( 'Store' ) }
 				link={ storeLink }
-				onNavigate={ this.trackStoreClick }
+				onNavigate={ this.trackWooCommerceNavItemClick.bind(
+					this,
+					'store',
+					experience,
+					site.plan.product_slug
+				) }
 				materialIcon="shopping_cart"
 				forceInternalLink
+				className="sidebar__store"
+			>
+				{ isBusiness( site.plan ) && (
+					<InfoPopover
+						className="sidebar__store-tooltip"
+						position="bottom right"
+						showOnHover={ true }
+					>
+						{ infoCopy }
+					</InfoPopover>
+				) }
+			</SidebarItem>
+		);
+	}
+
+	woocommerce() {
+		const {
+			site,
+			canUserUseWooCommerceCoreStore,
+			siteSuffix,
+			isSiteWpcomStore,
+			woocommerceUrl,
+		} = this.props;
+
+		if ( ! site ) {
+			return null;
+		}
+
+		if ( ! isBusiness( site.plan ) || ! canUserUseWooCommerceCoreStore ) {
+			// Right now, we only use the "WooCommerce" label for Business plan sites.
+			// eCommerce sites continue to use the "Store" label for now
+			// (see handling in `store()` above.
+			return null;
+		}
+
+		let storeLink = woocommerceUrl;
+		if ( ! isSiteWpcomStore ) {
+			// Navigate to installation.
+			storeLink = '/woocommerce-installation' + siteSuffix;
+		}
+
+		return (
+			<SidebarItem
+				label="WooCommerce"
+				link={ storeLink }
+				onNavigate={ this.trackWooCommerceNavItemClick.bind(
+					this,
+					'woocommerce',
+					'wpadmin-woocommerce-core',
+					site.plan.product_slug
+				) }
+				materialIcon="shopping_cart"
 			/>
 		);
 	}
@@ -885,7 +997,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Add new site' ) }
-				link={ `${ config( 'signup_url' ) }?ref=calypso-selector` }
+				link={ `${ this.props.onboardingUrl }?ref=calypso-sidebar` }
 				onNavigate={ this.trackAddNewSiteClick }
 				icon="add-outline"
 			/>
@@ -939,8 +1051,9 @@ export class MySitesSidebar extends Component {
 				<SidebarMenu>
 					{ this.customerHome() }
 					{ this.stats() }
-					{ this.planMenu() }
+					{ this.upgradesMenu() }
 					{ this.store() }
+					{ this.woocommerce() }
 				</SidebarMenu>
 
 				{ this.props.siteId && <QuerySiteChecklist siteId={ this.props.siteId } /> }
@@ -994,7 +1107,7 @@ export class MySitesSidebar extends Component {
 						materialIcon="settings"
 					>
 						{ this.hosting() }
-						{ this.upgrades() }
+						{ this.domains() }
 						{ this.users() }
 						{ this.siteSettings() }
 					</ExpandableSidebarMenu>
@@ -1034,7 +1147,7 @@ function mapStateToProps( state ) {
 
 	const isJetpack = isJetpackSite( state, siteId );
 
-	const isPlanSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_PLAN );
+	const isUpgradesSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_UPGRADES );
 	const isSiteSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SITE );
 	const isDesignSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_DESIGN );
 	const isToolsSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_TOOLS );
@@ -1052,7 +1165,7 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManagePlugins: canCurrentUserManagePlugins( state ),
-		canUserUseStore: canCurrentUserUseStore( state, siteId ),
+		canUserUseWooCommerceCoreStore: canCurrentUserUseWooCommerceCoreStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		currentUser,
@@ -1062,7 +1175,7 @@ function mapStateToProps( state ) {
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
 		shouldRenderJetpackSection: isJetpackSectionEnabledForSite( state, selectedSiteId ),
-		isPlanSectionOpen,
+		isUpgradesSectionOpen,
 		isSiteSectionOpen,
 		isDesignSectionOpen,
 		isToolsSectionOpen,
@@ -1095,6 +1208,9 @@ function mapStateToProps( state ) {
 		isAllSitesView: isAllDomainsView || getSelectedSiteId( state ) === null,
 		isWpMobile: isWpMobileApp(), // This doesn't rely on state, but we inject it here for future testability
 		sitePlanSlug: getSitePlanSlug( state, siteId ),
+		onboardingUrl: getOnboardingUrl( state ),
+		isSiteWpcomStore: getSiteOption( state, siteId, 'is_wpcom_store' ), // 'is_automated_transfer' && 'woocommerce_is_active'
+		woocommerceUrl: getSiteWoocommerceUrl( state, siteId ),
 	};
 }
 
@@ -1103,6 +1219,7 @@ export default connect( mapStateToProps, {
 	recordTracksEvent,
 	setLayoutFocus,
 	setNextLayoutFocus,
+	collapseSection,
 	expandSection,
 	toggleSection,
 } )( localize( MySitesSidebar ) );

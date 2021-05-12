@@ -100,6 +100,7 @@ module.exports = function ( mainWindow ) {
 
 				if ( navigate ) {
 					// if we have a specific URL, then navigate Calypso there
+					log.info( `Navigating user to URL: ${ navigate }` );
 					mainWindow.webContents.send( 'navigate', navigate );
 				} else {
 					// else just display the notifications panel

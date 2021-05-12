@@ -1,23 +1,23 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { trim, initial, flatMap } from 'lodash';
+import { trim, flatMap } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classnames from 'classnames';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { CompactCard } from '@automattic/components';
 import DocumentHead from 'calypso/components/data/document-head';
 import SearchInput from 'calypso/components/search';
-import { recordAction, recordTrack } from 'calypso/reader/stats';
+import { recordAction } from 'calypso/reader/stats';
 import SiteResults from './site-results';
 import PostResults from './post-results';
 import ReaderMain from 'calypso/reader/components/reader-main';
@@ -35,6 +35,7 @@ import { SEARCH_RESULTS_URL_INPUT } from 'calypso/reader/follow-sources';
 import FollowButton from 'calypso/reader/follow-button';
 import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -87,7 +88,7 @@ class SearchStream extends React.Component {
 	useRelevanceSort = () => {
 		const sort = 'relevance';
 		recordAction( 'search_page_clicked_relevance_sort' );
-		recordTrack( 'calypso_reader_clicked_search_sort', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_clicked_search_sort', {
 			query: this.props.query,
 			sort,
 		} );
@@ -97,7 +98,7 @@ class SearchStream extends React.Component {
 	useDateSort = () => {
 		const sort = 'date';
 		recordAction( 'search_page_clicked_date_sort' );
-		recordTrack( 'calypso_reader_clicked_search_sort', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_clicked_search_sort', {
 			query: this.props.query,
 			sort,
 		} );
@@ -140,17 +141,15 @@ class SearchStream extends React.Component {
 		const singleColumnResultsClasses = classnames( 'search-stream__single-column-results', {
 			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
 		} );
-		const suggestionList = initial(
-			flatMap( suggestions, ( suggestion ) => [
-				<Suggestion
-					suggestion={ suggestion.text }
-					source="search"
-					sort={ sortOrder === 'date' ? sortOrder : undefined }
-					railcar={ suggestion.railcar }
-				/>,
-				', ',
-			] )
-		);
+		const suggestionList = flatMap( suggestions, ( suggestion ) => [
+			<Suggestion
+				suggestion={ suggestion.text }
+				source="search"
+				sort={ sortOrder === 'date' ? sortOrder : undefined }
+				railcar={ suggestion.railcar }
+			/>,
+			', ',
+		] ).slice( 0, -1 );
 
 		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
@@ -262,7 +261,12 @@ const wrapWithMain = ( Component ) => ( props ) => (
 );
 /* eslint-enable */
 
-export default connect( ( state, ownProps ) => ( {
-	readerAliasedFollowFeedUrl:
-		ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
-} ) )( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );
+export default connect(
+	( state, ownProps ) => ( {
+		readerAliasedFollowFeedUrl:
+			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
+	} ),
+	{
+		recordReaderTracksEvent,
+	}
+)( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );

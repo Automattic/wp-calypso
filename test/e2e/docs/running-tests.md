@@ -2,112 +2,135 @@
 
 ## Table of Contents
 
-- [Getting started](#getting-started)
-- [To run the default specs](#to-run-the-default-specs-in-parallel-in-default-browser-sizes---mobile-and-desktop)
-- [To run an individual spec](#to-run-an-individual-spec)
-- [To run with different modes](#to-run-with-different-modes)
-- [To run a specific suite of specs](#to-run-a-specific-suite-of-specs)
-- [To run headlessly](#to-run-headlessly)
+<!-- TOC -->
 
-## Getting started
+- [Run tests](#run-tests)
+  - [Table of Contents](#table-of-contents)
+  - [Staging](#staging)
+    - [All tests default](#all-tests-default)
+    - [Spec files](#spec-files)
+    - [Individual suite](#individual-suite)
+    - [Headless](#headless)
+    - [Other options](#other-options)
+  - [Locally Development Environment](#locally-development-environment)
+  - [TeamCity](#teamcity)
+  - [Sauce Labs](#sauce-labs)
 
-You will need to generate a `config/local-decrypted.json` file by following these [fieldguide steps](https://fieldguide.automattic.com/automated-end-to-end-testing/).
+<!-- /TOC -->
 
-```bash
-# in another terminal session/tab:
-# install dependencies.
-yarn
-# start the devlopment server
-yarn start
+## Staging
 
-# in the e2e tests tab
-cd test/e2e
-# Follow these instructions to get the secret (https://fieldguide.automattic.com/automated-end-to-end-testing/
-export CONFIG_KEY='<SECRET_FROM_SECRET_STORE>'
-export NODE_CONFIG_ENV='decrypted'
-yarn run decryptconfig
-# a file `config/local-decrypted.json` will be generated and ignored by git. Make sure to set the `NODE_CONFIG_ENV` variable on every bash/zsh session
+By default, end-to-end tests run from the developer's hardware will hit the WPCOM Staging environment.
 
-# now run tests
+Prior to executing any end-to-end tests, ensure the steps at [setup](setup.md) have been followed.
+
+### All tests (default)
+
+```
 ./run.sh -g
 ```
 
-## To run the default specs in parallel (in default browser sizes - mobile and desktop)
+Configuration values for this command is read from `magellan.json`.
 
-`./run.sh -g`
+This is the same process used in the CI environment.
 
-- or -
+Note that this command will search for tests tagged with `@parallel`. If you add new e2e tests, ensure it is tagged with the `@parallel` keyword. For more information, see this page.
 
-`./node_modules/.bin/magellan`
+### Spec file(s)
 
-See the magellan.json file for the default parameters. This is the process used in CI.
+Calypso e2e tests use `mocha` as the test runner.
 
-**NOTE!** - The magellan mocha plugin will search for all suites tagged with `@parallel`. If you add a new test to this repo, you MUST add that tag to ensure that your test is run via CircleCI.
+Specify spec file(s) directly to mocha:
 
-## To run an individual spec
-
-`./node_modules/.bin/mocha specs/wp-log-in-out-spec.js`
-
-Note: you can also change the spec _temporarily_ the use the `.only` syntax so it is the only spec that runs (making sure this isn't committed)
+```
+./node_modules/.bin/mocha <path_to_e2e_spec>
+```
 
 eg.
 
-`describe.only( 'Logging In and Out:', function() {`
-
-## To run with different modes
-
-All tests should be written to work in three modes: desktop (1440 wide), tablet (1024 wide) and mobile (375 wide).
-
-You can run tests in different modes by setting an environment variable `BROWSERSIZE` to either `desktop`, `tablet` or `mobile`.
-
-Eg:
-
-`env BROWSERSIZE=tablet ./node_modules/.bin/mocha specs`
-
-Or you can use the -s option on the run.sh script:
-
-`./run.sh -g -s mobile`
-`./run.sh -g -s desktop,tablet`
-
-## To run a specific suite of specs
-
-The `run.sh` script takes the following parameters, which can be combined to execute a variety of suites
-
-```text
--a [workers]  - Number of parallel workers in Magellan (defaults to 3)
--R  - Use custom Slack/Spec/XUnit reporter, otherwise just use Spec reporter
--p  - Execute the tests in parallel via CircleCI envvars (implies -g -s mobile,desktop)
--S [commitHash]   - Run tests against given commit via https://calypso.live
--B [branch]  - Run Jetpack tests on given Jetpack branch via https://jurassic.ninja
--s  - Screensizes in a comma-separated list (defaults to mobile,desktop)
--g  - Execute general tests in the specs/ directory
--j  - Execute Jetpack tests in the specs-jetpack-calypso/ directory (desktop and mobile)
--W  - Execute WooCommerce tests in the specs-woocommerce/ directory (desktop and mobile)
--C  - Execute tests tagged with @canary
--J  - Execute Jetpack connect tests tagged with @canary
--H [host]  - Specify an alternate host for Jetpack tests
--w - Only execute signup tests on Windows/IE11, not compatible with -g flag
--z  - Only execute canary tests on Windows/IE11, not compatible with -g flag
--y  - Only execute canary tests on Safari 10 on Mac, not compatible with -g flag
--l [config]  - Execute the tests via Sauce Labs with the given configuration
--c  - Exit with status code 0 regardless of test results
--m [browsers]  - Execute the multi-browser visual-diff tests with the given list of browsers via grunt.  Specify browsers in comma-separated list or 'all'
--i  - Execute i18n NUX screenshot tests, not compatible with -g flag
--I  - Execute tests in specs-i18n/ directory
--x  - Execute the tests from the context of xvfb-run
--u [baseUrl]  - Override the calypsoBaseURL config
--h  - This help listing
+```
+./node_modules/.bin/mocha specs/wp-calypso-gutenberg-coblocks-spec.js
 ```
 
-## To run headlessly
+Using `.only` syntax when writing tests:
+
+eg.
+
+```
+describe.only( 'Logging In and Out:', function() {
+```
+
+**!NOTE**: ensure this syntax should be removed once the test is to be committed to the repository.
+There is an eslint rule that will prevent committing tests with the `.only` syntax, but please also exercise due diligence.
+
+### Individual suite
+
+```
+./node_modules/.bin/mocha <path_to_e2e_spec> -g "<test_case_name>"
+```
+
+eg.
+
+```
+./node_modules/.bin/mocha specs/wp-calypso-gutenberg-coblocks-spec.js -g 'Insert a Pricing Table block'
+```
+
+### Headless
 
 By default the tests start their own Selenium server in the background, which in turn launches a Chrome browser on your desktop where you can watch the tests execute. This can be a bit of a headache if you're trying to do other work while the tests are running, as the browser may occasionally steal focus back (although that's mostly been resolved).
 
-The easiest way to run "headlessly" without a visible window is to add the `-x` flag when running `run.sh` or using the `HEADLESS=1` environment variable which will run Chrome with the --headless flag.
+The easiest way to run "headlessly" without a visible window is to add the `-x` flag when running `run.sh`:
 
-1. `./run.sh -g -x`
+```
+./run.sh -g -x
+```
 
-or
+or using the `HEADLESS=1` environment variable which will run Chrome with the `--headless` flag:
 
-1. `export HEADLESS=1`
-1. `./node_modules/.bin/mocha specs/wp-log-in-out-spec.js`
+```
+export HEADLESS=1
+./node_modules/.bin/mocha <path_to_e2e_spec>
+```
+
+### Other options
+
+The `run.sh` script takes a number of parameters that can be mixed-and-matched.
+
+For the list of current supported flags, use `run.sh -h`.
+
+## Locally (Development Environment)
+
+Local development environment refers to a locally served instance of the `wp-calypso` frontend.
+
+1. ensure required [dependencies](setup.md#software-environment#steps) are set up.
+
+2. change the `calypsoBaseURL` value in `test/e2e/config/default.json` to `http://calypso.localhost:3000`.
+
+3. start the webapp as follows:
+
+```shell
+yarn start
+./run.sh -g -u http://calypso.localhost:3000
+```
+
+4. ensure requests to `http://calypso.localhost:3000` are registering in your local instance.
+
+When calypso e2e test are now run, they will hit againt the local development server instead of WordPress.com staging environment.
+
+## TeamCity
+
+Calypso end-to-end tests have migrated to TeamCity as of 2021-01.
+
+Both sets of E2E Tests (desktop, mobile) are run against all branches, PRs and trunk. This process is automatic.
+
+Note that interactions in TeamCity are available only to Automatticians. For OSS Citizens, please request that e2e tests be run in the PR.
+
+## Sauce Labs
+
+To run tests on Sauce Labs, add the following environment variable to CircleCI:
+
+```
+export SAUCE_ARG="-l osx-chrome"
+```
+
+Note that tests tend to run slower on Sauce Labs and this option should be used sparingly.

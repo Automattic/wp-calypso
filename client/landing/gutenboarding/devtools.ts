@@ -16,7 +16,7 @@ export const setupWpDataDebug = () => {
 			if ( ! window.wp.data ) {
 				window.wp.data = require( '@wordpress/data' );
 
-				const config = require( 'calypso/config' ).default;
+				const config = require( '@automattic/calypso-config' ).default;
 				const clientCreds = {
 					client_id: config( 'wpcom_signup_id' ),
 					client_secret: config( 'wpcom_signup_key' ),

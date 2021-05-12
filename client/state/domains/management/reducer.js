@@ -1,17 +1,12 @@
 /**
  * External dependencies
  */
-import { get, isArray, merge, omit, stubFalse, stubTrue } from 'lodash';
+import { get, merge, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	combineReducers,
-	keyedReducer,
-	withSchemaValidation,
-	withoutPersistence,
-} from 'calypso/state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import { validationSchemas } from './validation-schemas/reducer';
 import { domainWhoisSchema } from './schema';
 import {
@@ -39,34 +34,29 @@ import { whoisType } from '../../../lib/domains/whois/constants';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const isRequestingContactDetailsCache = withoutPersistence( ( state = false, action ) => {
+export const isRequestingContactDetailsCache = ( state = false, action ) => {
 	switch ( action.type ) {
 		case DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST:
-			return stubTrue( state, action );
+			return true;
 		case DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS:
-			return stubFalse( state, action );
 		case DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE:
-			return stubFalse( state, action );
+			return false;
+	}
+
+	return state;
+};
+
+export const isRequestingWhois = keyedReducer( 'domain', ( state = false, action ) => {
+	switch ( action.type ) {
+		case DOMAIN_MANAGEMENT_WHOIS_REQUEST:
+			return true;
+		case DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS:
+		case DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE:
+			return false;
 	}
 
 	return state;
 } );
-
-export const isRequestingWhois = keyedReducer(
-	'domain',
-	withoutPersistence( ( state = false, action ) => {
-		switch ( action.type ) {
-			case DOMAIN_MANAGEMENT_WHOIS_REQUEST:
-				return stubTrue( state, action );
-			case DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS:
-				return stubFalse( state, action );
-			case DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE:
-				return stubFalse( state, action );
-		}
-
-		return state;
-	} )
-);
 
 /**
  * Returns the save request status after an action has been dispatched. The
@@ -76,7 +66,7 @@ export const isRequestingWhois = keyedReducer(
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const isSaving = withoutPersistence( ( state = {}, action ) => {
+export const isSaving = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case DOMAIN_MANAGEMENT_WHOIS_SAVE: {
 			const { domain } = action;
@@ -105,10 +95,10 @@ export const isSaving = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 function mergeDomainRegistrantContactDetails( domainState, registrantContactDetails ) {
-	return isArray( domainState )
+	return Array.isArray( domainState )
 		? domainState.map( ( item ) => {
 				if ( item.type === whoisType.REGISTRANT ) {
 					return {
@@ -201,5 +191,5 @@ export default combineReducers( {
  */
 function sanitizeExtra( data ) {
 	const path = data._contactDetailsCache ? [ '_contactDetailsCache', 'extra' ] : 'extra';
-	return data && isArray( get( data, path ) ) ? omit( data, path ) : data;
+	return data && Array.isArray( get( data, path ) ) ? omit( data, path ) : data;
 }

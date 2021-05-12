@@ -9,12 +9,11 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { items, isFetching } from '../reducer';
 import {
-	DESERIALIZE,
 	PRODUCTS_LIST_RECEIVE,
 	PRODUCTS_LIST_REQUEST,
 	PRODUCTS_LIST_REQUEST_FAILURE,
-	SERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -41,7 +40,6 @@ describe( 'reducer', () => {
 						product_id: 40,
 						product_name: 'Guided Transfer',
 						product_slug: 'guided_transfer',
-						prices: { USD: 129, AUD: 169 },
 						is_domain_registration: false,
 						description: 'Guided Transfer',
 						cost: 129,
@@ -69,14 +67,13 @@ describe( 'reducer', () => {
 						product_id: 40,
 						product_name: 'Guided Transfer',
 						product_slug: 'guided_transfer',
-						prices: { USD: 129, AUD: 169 },
 						is_domain_registration: false,
 						description: 'Guided Transfer',
 						cost: 129,
 						cost_display: '$129',
 					},
 				} );
-				const state = items( original, { type: SERIALIZE } );
+				const state = serialize( items, original );
 				expect( state ).to.eql( original );
 			} );
 
@@ -87,14 +84,13 @@ describe( 'reducer', () => {
 						product_id: 40,
 						product_name: 'Guided Transfer',
 						product_slug: 'guided_transfer',
-						prices: { USD: 129, AUD: 169 },
 						is_domain_registration: false,
 						description: 'Guided Transfer',
 						cost: 129,
 						cost_display: '$129',
 					},
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 				expect( state ).to.eql( original );
 			} );
 
@@ -107,7 +103,7 @@ describe( 'reducer', () => {
 						slug: 'guided_transfer',
 					},
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 				expect( state ).to.eql( {} );
 			} );
 		} );
@@ -132,18 +128,6 @@ describe( 'reducer', () => {
 
 		test( 'should be false when a request fails', () => {
 			const state = isFetching( true, { type: PRODUCTS_LIST_REQUEST_FAILURE } );
-			expect( state ).to.eql( false );
-		} );
-
-		test( 'should never persist state', () => {
-			const state = isFetching( true, { type: SERIALIZE } );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should never load persisted state', () => {
-			const state = isFetching( true, { type: DESERIALIZE } );
-
 			expect( state ).to.eql( false );
 		} );
 	} );

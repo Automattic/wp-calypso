@@ -2,6 +2,10 @@
 	margin: 0 auto;
 	max-width: 700px;
 
+	.plans__loading-container {
+		margin-top: 18em;
+	}
+
 	&.is-wide-layout {
 		margin: auto;
 		max-width: 1200px;
@@ -9,6 +13,11 @@
 
 	.formatted-header.is-without-subhead {
 		margin-bottom: 15px;
+	}
+
+	.formatted-header__title {
+		font-family: 'Recoleta';
+		font-size: 3rem;
 	}
 
 	.step-wrapper {
@@ -35,7 +44,8 @@
 	margin-top: 25px;
 }
 
-.signup__step.is-plans .formatted-header__subtitle .button.is-borderless {
+.signup__step.is-plans .formatted-header__subtitle .button.is-borderless,
+.signup__step.is-plans-launch .formatted-header__subtitle .button.is-borderless {
 	padding: 0;
 	color: inherit;
 	font-size: inherit;
@@ -43,3 +53,4 @@
 	line-height: inherit;
 	text-decoration: underline;
 }
+

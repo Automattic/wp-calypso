@@ -11,9 +11,11 @@ import wp from '../../../lib/wp';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
+import { PLANS_STORE } from '../stores/plans';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
 import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
+import { useOnboardingFlow } from '../path';
 
 const wpcom = wp.undocumented();
 
@@ -55,7 +57,7 @@ interface Cart {
  * 3. The user is still seeing 'Free Plan' label on PlansButton => redirect to editor
  **/
 
-export default function useOnSiteCreation() {
+export default function useOnSiteCreation(): void {
 	const { domain } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const isRedirecting = useSelect( ( select ) => select( ONBOARD_STORE ).getIsRedirecting() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
@@ -63,6 +65,14 @@ export default function useOnSiteCreation() {
 	const selectedPlan = useSelectedPlan();
 	const shouldRedirectToEditorAfterCheckout = useShouldRedirectToEditorAfterCheckout();
 	const design = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const selectedPlanProductId = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getPlanProductId()
+	);
+	const planProductSource = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanProductById( selectedPlanProductId )
+	);
+
+	const flow = useOnboardingFlow();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const flowCompleteTrackingParams = {
@@ -79,8 +89,8 @@ export default function useOnSiteCreation() {
 
 			if ( selectedPlan && ! selectedPlan?.isFree ) {
 				const planProduct = {
-					product_id: selectedPlan.productId,
-					product_slug: selectedPlan.storeSlug,
+					product_id: planProductSource?.productId,
+					product_slug: planProductSource?.storeSlug,
 					extra: {
 						source: 'gutenboarding',
 					},
@@ -116,19 +126,26 @@ export default function useOnSiteCreation() {
 				recordOnboardingComplete( {
 					...flowCompleteTrackingParams,
 					hasCartItems: true,
+					flow,
 				} );
 				go();
 				return;
 			}
-
-			recordOnboardingComplete( flowCompleteTrackingParams );
+			recordOnboardingComplete( {
+				...flowCompleteTrackingParams,
+				flow,
+			} );
 			resetOnboardStore();
 			clearLastNonEditorRoute();
 			setSelectedSite( newSite.blogid );
 
-			window.location.href = design?.is_fse
-				? `/site-editor/${ newSite.site_slug }/`
-				: `/page/${ newSite.site_slug }/home`;
+			let destination;
+			if ( design?.is_fse ) {
+				destination = `/site-editor/${ newSite.site_slug }/`;
+			} else {
+				destination = `/page/${ newSite.site_slug }/home`;
+			}
+			window.location.href = destination;
 		}
 	}, [
 		domain,

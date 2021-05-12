@@ -8,6 +8,7 @@
 	"rtl": false,
 	"login_url": "/connect",
 	"logout_url": "https://jetpack.com",
+	"jetpack_connect_url": "https://wordpress.com/jetpack/connect",
 	"site_name": "Jetpack.com",
 	"meta": [
 		{
@@ -30,22 +31,27 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
+		"checkout/google-pay": false,
 		"i18n/community-translator": false,
+		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
+		"jetpack-cloud/connect": false,
 		"jetpack/backups-date-picker": true,
-		"jetpack/backups-restore": true,
-		"jetpack/on-demand-scan": true,
 		"jetpack/pricing-page": true,
 		"jetpack/server-credentials-advanced-flow": true,
+		"jetpack/redirect-legacy-plans": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/nps-survey-notice": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
+		"marketplace-yoast": false,
 		"oauth": true,
+		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
-		"support-user": true
+		"support-user": true,
+		"upgrades/redirect-payments": false
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -54,12 +60,12 @@
 		"jetpack-cloud-auth": true,
 		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
+		"jetpack-cloud-partner-portal": true,
 		"jetpack-cloud": true,
 		"scan": true
 	},
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
-	"theme_color": "#2fb41f",
-	"olark_chat_identity": "5581-687-10-4070"
+	"theme_color": "#2fb41f"
 }

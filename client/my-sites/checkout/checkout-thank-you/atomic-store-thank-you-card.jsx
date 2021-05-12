@@ -14,7 +14,7 @@ import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getPlanClass } from 'calypso/lib/plans';
+import { getPlanClass } from '@automattic/calypso-products';
 import {
 	getCurrentUserEmail,
 	isCurrentUserEmailVerified,
@@ -111,7 +111,7 @@ class AtomicStoreThankYouCard extends Component {
 			<div className="checkout-thank-you__atomic-store-action-buttons">
 				<a
 					className={ classNames( 'button', 'thank-you-card__button' ) }
-					href={ site.URL + '/wp-admin/admin.php?page=wc-setup&calypsoify=1' }
+					href={ site.URL + '/wp-admin/admin.php?page=wc-admin&path=%2Fsetup-wizard' }
 				>
 					{ translate( 'Create your store!' ) }
 				</a>

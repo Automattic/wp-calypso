@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { assign, includes, find, flatMap } from 'lodash';
+import { includes, find, flatMap } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -89,7 +89,10 @@ class DnsAddNew extends React.Component {
 			return includes( record.types, type );
 		} );
 
-		return assign( {}, dnsRecord.initialFields, { type } );
+		return {
+			...dnsRecord.initialFields,
+			type,
+		};
 	}
 
 	UNSAFE_componentWillMount() {

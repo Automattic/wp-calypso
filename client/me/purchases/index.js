@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import page from 'page';
 
 /**
  * Internal Dependencies
  */
-import * as paymentMethodsController from 'calypso/me/payment-methods/controller';
-import * as billingController from 'calypso/me/billing-history/controller';
+import * as paymentMethodsController from 'calypso/me/purchases/payment-methods/controller';
+import * as billingController from 'calypso/me/purchases/billing-history/controller';
 import * as pendingController from 'calypso/me/pending-payments/controller';
 import * as membershipsController from 'calypso/me/memberships/controller';
 import * as controller from './controller';
@@ -26,10 +26,27 @@ export default ( router ) => {
 			makeLayout,
 			clientRender
 		);
-		router( paths.addCreditCard, sidebar, controller.addCreditCard, makeLayout, clientRender );
+
+		router(
+			paths.addNewPaymentMethod,
+			sidebar,
+			controller.addNewPaymentMethod,
+			makeLayout,
+			clientRender
+		);
+
+		router(
+			paths.addCreditCard,
+			sidebar,
+			controller.addNewPaymentMethod,
+			makeLayout,
+			clientRender
+		);
 
 		// redirect legacy urls
-		router( '/payment-methods/add-credit-card', () => page.redirect( paths.addCreditCard ) );
+		router( '/payment-methods/add-credit-card', () => {
+			page.redirect( paths.addCreditCard );
+		} );
 	}
 
 	router(
@@ -116,19 +133,19 @@ export default ( router ) => {
 	);
 
 	router(
-		paths.addCardDetails( ':site', ':purchaseId' ),
+		paths.addPaymentMethod( ':site', ':purchaseId' ),
 		sidebar,
 		siteSelection,
-		controller.addCardDetails,
+		controller.changePaymentMethod,
 		makeLayout,
 		clientRender
 	);
 
 	router(
-		paths.editCardDetails( ':site', ':purchaseId', ':cardId' ),
+		paths.changePaymentMethod( ':site', ':purchaseId', ':cardId' ),
 		sidebar,
 		siteSelection,
-		controller.editCardDetails,
+		controller.changePaymentMethod,
 		makeLayout,
 		clientRender
 	);
@@ -137,5 +154,13 @@ export default ( router ) => {
 	router( '/me/billing', () => page.redirect( paths.billingHistory ) );
 	router( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>
 		page.redirect( paths.billingHistoryReceipt( receiptId ) )
+	);
+	router( paths.addCardDetails( ':site', ':purchaseId' ), ( { params: { site, purchaseId } } ) =>
+		page.redirect( paths.addPaymentMethod( site, purchaseId ) )
+	);
+	router(
+		paths.editCardDetails( ':site', ':purchaseId', ':cardId' ),
+		( { params: { site, purchaseId, cardId } } ) =>
+			page.redirect( paths.changePaymentMethod( site, purchaseId, cardId ) )
 	);
 };

@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { each, get, includes, isEqual, isUndefined, map } from 'lodash';
+import { get, includes, isEqual, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,7 +37,6 @@ import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 import hasPendingCommentRequests from 'calypso/state/selectors/has-pending-comment-requests';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
-import { extendAction } from 'calypso/state/utils';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -68,7 +66,7 @@ export class CommentNavigation extends Component {
 	bulkDeletePermanently = () => {
 		const { translate } = this.props;
 		if (
-			isUndefined( window ) ||
+			typeof window === 'undefined' ||
 			window.confirm( translate( 'Delete these comments permanently?' ) )
 		) {
 			this.setBulkStatus( 'delete' )();
@@ -127,7 +125,7 @@ export class CommentNavigation extends Component {
 			unlike,
 		} = this.props;
 		this.props.removeNotice( 'comment-notice' );
-		each( selectedComments, ( { commentId, isLiked, postId, status } ) => {
+		selectedComments.forEach( ( { commentId, isLiked, postId, status } ) => {
 			if ( 'delete' === newStatus ) {
 				deletePermanently( postId, commentId );
 				return;
@@ -352,32 +350,26 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
 	changeStatus: ( postId, commentId, status, analytics = { alsoUnlike: false } ) =>
 		dispatch(
-			extendAction(
-				withAnalytics(
-					composeAnalytics(
-						recordTracksEvent( 'calypso_comment_management_change_status', {
-							also_unlike: analytics.alsoUnlike,
-							previous_status: analytics.previousStatus,
-							status,
-						} ),
-						bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
-					),
-					changeCommentStatus( siteId, postId, commentId, status )
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_comment_management_change_status', {
+						also_unlike: analytics.alsoUnlike,
+						previous_status: analytics.previousStatus,
+						status,
+					} ),
+					bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
 				),
-				{ meta: { comment: { commentsListQuery: commentsListQuery } } }
+				changeCommentStatus( siteId, postId, commentId, status, commentsListQuery )
 			)
 		),
 	deletePermanently: ( postId, commentId ) =>
 		dispatch(
-			extendAction(
-				withAnalytics(
-					composeAnalytics(
-						recordTracksEvent( 'calypso_comment_management_delete' ),
-						bumpStat( 'calypso_comment_management', 'comment_deleted' )
-					),
-					deleteComment( siteId, postId, commentId, { showSuccessNotice: true } )
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_comment_management_delete' ),
+					bumpStat( 'calypso_comment_management', 'comment_deleted' )
 				),
-				{ meta: { comment: { commentsListQuery: commentsListQuery } } }
+				deleteComment( siteId, postId, commentId, { showSuccessNotice: true }, commentsListQuery )
 			)
 		),
 	recordBulkAction: ( action, count, fromList, view = 'site' ) =>

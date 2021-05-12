@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual, noop } from 'lodash';
+import { isEqual } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -25,6 +25,8 @@ import {
 } from 'calypso/state/editor/image-editor/actions';
 import { defaultCrop } from 'calypso/state/editor/image-editor/reducer';
 import getImageEditorOriginalAspectRatio from 'calypso/state/selectors/get-image-editor-original-aspect-ratio';
+
+const noop = () => {};
 
 class ImageEditorCrop extends Component {
 	static propTypes = {

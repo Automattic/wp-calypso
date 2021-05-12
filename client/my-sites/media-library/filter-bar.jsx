@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { identity, includes, noop, pull, union } from 'lodash';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -22,6 +21,8 @@ import DataSource from './data-source';
 // the site icon editor, where we want to disable them because the editor
 // can't handle the large images.
 const largeImageSources = [ 'pexels', 'google_photos' ];
+
+const noop = () => {};
 
 export class MediaLibraryFilterBar extends Component {
 	static propTypes = {
@@ -47,7 +48,6 @@ export class MediaLibraryFilterBar extends Component {
 		onFilterChange: noop,
 		onSourceChange: noop,
 		onSearch: noop,
-		translate: identity,
 		source: '',
 		post: false,
 		isConnected: true,
@@ -119,10 +119,10 @@ export class MediaLibraryFilterBar extends Component {
 	}
 
 	renderTabItems() {
-		const tabs = this.getFiltersForSource( this.props.source );
+		let tabs = this.getFiltersForSource( this.props.source );
 
 		if ( ! this.props.post ) {
-			pull( tabs, 'this-post' );
+			tabs = tabs.filter( ( tab ) => tab !== 'this-post' );
 		}
 
 		if ( tabs.length === 0 ) {
@@ -192,7 +192,7 @@ export class MediaLibraryFilterBar extends Component {
 
 	render() {
 		const disabledSources = this.props.disableLargeImageSources
-			? union( this.props.disabledDataSources, largeImageSources )
+			? [ ...new Set( [].concat( this.props.disabledDataSources, largeImageSources ) ) ]
 			: this.props.disabledDataSources;
 
 		// Dropdown is disabled when viewing any external data source

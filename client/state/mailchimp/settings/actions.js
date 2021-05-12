@@ -7,9 +7,9 @@ import {
 	MAILCHIMP_SETTINGS_UPDATE,
 	MAILCHIMP_SETTINGS_UPDATE_SUCCESS,
 	MAILCHIMP_SETTINGS_UPDATE_FAILURE,
-	NOTICE_CREATE,
 } from 'calypso/state/action-types';
 import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/data-layer/wpcom/sites/mailchimp';
 import 'calypso/state/mailchimp/init';
@@ -43,14 +43,11 @@ export const requestSettingsUpdate = ( siteId, settings, noticeText ) => {
 					siteId,
 					settings: data,
 				} );
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					successNotice( noticeText, {
 						duration: 5000,
-						text: noticeText,
-						status: 'is-success',
-					},
-				} );
+					} )
+				);
 			} )
 			.catch( ( error ) => {
 				dispatch( {
@@ -58,14 +55,11 @@ export const requestSettingsUpdate = ( siteId, settings, noticeText ) => {
 					siteId,
 					error,
 				} );
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					errorNotice( error.message, {
 						duration: 10000,
-						text: error.message,
-						status: 'is-error',
-					},
-				} );
+					} )
+				);
 			} );
 	};
 };

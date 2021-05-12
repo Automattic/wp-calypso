@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers } from 'calypso/state/utils';
 import toggleState from 'calypso/state/notification-settings/toggle-state';
 import {
 	NOTIFICATION_SETTINGS_FETCH,

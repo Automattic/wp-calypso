@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer, { currentClientId } from '../reducer';
-import { ROUTE_SET, SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { ROUTE_SET } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
@@ -32,20 +32,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.equal( 42 );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = currentClientId( true, {
-				type: SERIALIZE,
-			} );
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = currentClientId( true, {
-				type: DESERIALIZE,
-			} );
-			expect( state ).to.be.null;
 		} );
 	} );
 } );

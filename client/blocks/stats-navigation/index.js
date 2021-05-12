@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,7 +19,7 @@ import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { navItems, intervals as intervalConstants } from './constants';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies
@@ -109,4 +110,4 @@ export default connect( ( state, { siteId } ) => {
 			canCurrentUser( state, siteId, 'manage_options' ),
 		siteId,
 	};
-} )( StatsNavigation );
+} )( localize( StatsNavigation ) );

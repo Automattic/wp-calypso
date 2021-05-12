@@ -1,12 +1,12 @@
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'lib/analytics/track-component-view', () => 'TrackComponentView' );
-jest.mock( 'blocks/upsell-nudge', () => 'UpsellNudge' );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock( 'calypso/lib/analytics/track-component-view', () => 'TrackComponentView' );
+jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: ( Comp ) => ( props ) => (
@@ -41,9 +41,10 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'calypso/lib/plans/constants';
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -99,13 +100,14 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 		PLAN_JETPACK_PREMIUM,
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
+		PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	].forEach( ( product_slug ) => {
 		test( `Jetpack Business for (${ product_slug })`, () => {
 			const comp = shallow(
 				<SeoPreviewNudge { ...props } isJetpack={ true } site={ { plan: { product_slug } } } />
 			);
 			expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
-			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_JETPACK_BUSINESS );
+			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_JETPACK_SECURITY_DAILY );
 		} );
 	} );
 } );

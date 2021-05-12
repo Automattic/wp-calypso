@@ -10,7 +10,7 @@ import { isEmpty, partial } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import FormToggle from 'calypso/components/forms/form-toggle';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';

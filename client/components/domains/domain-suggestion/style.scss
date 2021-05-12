@@ -1,6 +1,20 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
+.domain-suggestion {
+	&.is-clickable {
+		cursor: pointer;
+
+		// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
+		transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
+
+		&:hover {
+			box-shadow: 0 0 0 1px var( --color-neutral-light );
+			z-index: z-index( 'root', '.domain-suggestion.is-clickable:hover' );
+		}
+	}
+}
+
 .domain-suggestion:not( .featured-domain-suggestion ) {
 	display: flex;
 	flex-direction: column;
@@ -20,18 +34,6 @@
 		@include breakpoint-deprecated( '>800px' ) {
 			flex-direction: row;
 			align-items: center;
-		}
-	}
-
-	&.is-clickable {
-		cursor: pointer;
-
-		// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
-		transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
-
-		&:hover {
-			box-shadow: 0 0 0 1px var( --color-neutral-light );
-			z-index: z-index( 'root', '.domain-suggestion.is-clickable:hover' );
 		}
 	}
 
@@ -257,20 +259,45 @@
 }
 
 body.is-section-signup.is-white-signup {
-	.featured-domain-suggestions {
-		.domain-registration-suggestion__title {
-			font-size: $font-title-medium;
+	.domain-registration-suggestion__progress-bar {
+		align-self: center;
+		margin-left: 0;
+		margin-top: 0;
+		margin-bottom: 10px;
+		
+		.badge {
+			border-radius: 4px; /* stylelint-disable-line */
+			font-size: 0.75rem;
+			font-weight: 500; /* stylelint-disable-line */
+		}
+
+		@include break-xlarge {
+			margin-left: 12px;
+			margin-bottom: 0;
 		}
 	}
 
-	.domain-registration-suggestion__progress-bar {
-		.badge {
-			background-color: var( --color-neutral-100 );
-			border-radius: 2px;
-		}
+	.featured-domain-suggestion--is-placeholder .domain-registration-suggestion__progress-bar {
+		margin-left: 0;
 	}
 
 	.domain-suggestion {
+		flex-direction: row;
+		box-shadow: none;
+
+		@include break-mobile {
+			margin: 0 20px;
+		}
+		
+		@include break-large {
+			margin: 0;
+		}
+
+		& .domain-suggestion__content-domain {
+			justify-content: space-between;
+			margin-right: 40px;
+		}
+
 		.domain-product-price__free-text {
 			color: var( --color-neutral-60 );
 			font-size: $font-body;
@@ -284,19 +311,57 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 
+		&.is-clickable:hover {
+			@include break-mobile {
+				border-top: 1px solid #646970;
+				border-bottom: 1px solid #646970;
+			}
+		}
+
+		.domain-registration-suggestion__title {
+			font-size: 0.875rem;
+
+			@include break-mobile {
+				font-size: 1rem;
+			}
+		}
+
+		& .domain-registration-suggestion__domain-title {
+			color: var( --studio-gray-90 );
+		}
+
+		& .domain-product-price__free-price {
+			font-size: $font-body-small;
+			color: var( --studio-green-60 );
+			line-height: 20px;
+			letter-spacing: 0.2px;
+
+			@include break-mobile {
+				font-weight: 500; /* stylelint-disable-line */
+			}
+		}
+
 		&:not( .featured-domain-suggestion ) {
-			.domain-registration-suggestion__domain-title {
-				line-height: 3rem;
-				.domain-registration-suggestion__domain-title-tld {
-					color: var( --color-accent );
-				}
+			background: none;
+			border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
+			border-top: 1px solid #fff; //This white border is to prevent jumpiness while showing borders on hover
+			
+			@include break-mobile {
+				padding-left: 5px;
+				padding-right: 5px;
 			}
 
-			.domain-product-price__free-price {
-				font-size: $font-body;
+			.domain-registration-suggestion__domain-title {
+				@include break-xlarge {
+					line-height: 3rem;
+				}
 
-				@include break-mobile {
-					font-size: $font-body-small;
+				.domain-registration-suggestion__domain-title-name {
+					color: var( --studio-gray-60 );
+				}
+
+				.domain-registration-suggestion__domain-title-tld {
+					font-weight: 500; /* stylelint-disable-line */
 				}
 			}
 
@@ -310,27 +375,41 @@ body.is-section-signup.is-white-signup {
 
 			.domain-product-price__price:not( .domain-product-price__free-price ) {
 				font-size: $font-body-small;
-
-				@include break-mobile {
-					font-size: $font-body-extra-small;
-				}
 			}
 
-			&.is-clickable:hover {
-				@include break-mobile {
-					background: var( --color-primary-0 );
-					box-shadow: 0 0 0 1px var( --color-primary-40 );
-				}
+			.domain-suggestion__action-container {
+				flex: 0 0 auto;
 			}
 
 			.domain-suggestion__action:not( .is-borderless ) {
-				border-radius: 2px;
-				line-height: 17px;
-				padding-top: 11px;
-				padding-bottom: 10px;
+				line-height: 20px;
+				padding: 0.57em 1.17em;
+				font-weight: 500; /* stylelint-disable-line */
+				border-radius: 4px;  /* stylelint-disable-line */
+				box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+				border: 1px solid #c3c4c7;
+				letter-spacing: 0.32px;
+				font-size: 0.875rem;
+
+				@include break-mobile {
+					padding: 0.65em 2.8em;
+				}
 			}
 
 			&.domain-transfer-suggestion {
+				$cod-grey: #2b2d2f;
+
+				.domain-suggestion__action {
+					color: $cod-grey;
+					text-decoration-line: underline;
+				}
+				.domain-suggestion__chevron {
+					fill: $cod-grey;
+					margin-left: 0;
+				}
+			}
+
+			&.domain-skip-suggestion {
 				$cod-grey: #2b2d2f;
 
 				.domain-suggestion__action {

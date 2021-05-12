@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -23,6 +23,8 @@ import { getTerms } from 'calypso/state/terms/selectors';
  * Style dependencies
  */
 import './add-term.scss';
+
+const noop = () => {};
 
 class TermSelectorAddTerm extends Component {
 	static propTypes = {

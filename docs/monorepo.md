@@ -104,7 +104,6 @@ If your package requires compilation, the `package.json` `prepare` script should
 
 Running `yarn run lint:package-json` will lint all `package.json`'s under `./packages|apps/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
 
-
 ## Running Tests
 
 To run all of the package tests:
@@ -159,7 +158,7 @@ Note that if you're building with Webpack, you may need to turn off [`resolve.sy
 
 ## Publishing
 
-We use [Lerna](https://lernajs.io/) and its `publish` command to publish the monorepo packages to NPM registry. Please do not use regular [`yarn publish`](https://docs.npmjs.com/cli/publish) within a package to publish an individual package; `npx` has issues using this flow.
+We use [Lerna](https://lerna.js.org/) and its `publish` command to publish the monorepo packages to NPM registry. Please do not use regular [`yarn publish`](https://docs.npmjs.com/cli/publish) within a package to publish an individual package; `npx` has issues using this flow.
 
 ### Make sure changelogs and `package.json` versions are up to date
 

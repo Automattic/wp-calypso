@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get, filter, find } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/site-keyrings/init';
 
 /**
  * Returns true if we are requesting keyrings for the specified site ID, false otherwise.

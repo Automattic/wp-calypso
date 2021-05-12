@@ -2,25 +2,24 @@
  * External dependencies
  */
 import React from 'react';
-import styled from '@emotion/styled';
 import { useSelect, useDispatch } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import type { ContactDetailsType, ManagedContactDetails } from '@automattic/wpcom-checkout';
+import { Field, styled } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import { useDomainNamesInCart } from '../hooks/has-domains';
-import Field from './field';
 import {
 	prepareDomainContactDetails,
 	prepareDomainContactDetailsErrors,
 	isValid,
 } from '../types/wpcom-store-state';
 import type { CountryListItem } from '../types/country-list-item';
-import type { ManagedContactDetails } from '../types/wpcom-store-state';
-import type { ContactDetailsType } from '../types/contact-details';
 import TaxFields from './tax-fields';
 import DomainContactDetails from './domain-contact-details';
+import { isDomainProduct, isDomainTransfer, getDomain } from '@automattic/calypso-products';
 
 const ContactDetailsFormDescription = styled.p`
 	font-size: 14px;
@@ -44,7 +43,10 @@ export default function ContactDetailsContainer( {
 	isLoggedOutCart: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
-	const domainNames = useDomainNamesInCart();
+	const { responseCart } = useShoppingCart();
+	const domainNames: string[] = responseCart.products
+		.filter( ( product ) => isDomainProduct( product ) || isDomainTransfer( product ) )
+		.map( getDomain );
 	const {
 		updateDomainContactFields,
 		updateCountryCode,

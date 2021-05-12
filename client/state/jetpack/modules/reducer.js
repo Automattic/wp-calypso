@@ -21,7 +21,7 @@ import {
 	JETPACK_SETTINGS_UPDATE,
 	JETPACK_SETTINGS_SAVE_SUCCESS,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 
 const createItemsReducer = ( active ) => {
 	return ( state, { siteId, moduleSlug } ) => {
@@ -94,7 +94,7 @@ const createSettingsItemsReducer = () => {
  * @param  {object} action action
  * @returns {Array}         Updated state
  */
-export const items = withoutPersistence( ( state = {}, action ) => {
+export const items = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case JETPACK_MODULE_ACTIVATE_SUCCESS:
 			return createItemsReducer( true )( state, action );
@@ -109,7 +109,7 @@ export const items = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * `Reducer` function which handles request/response actions
@@ -119,7 +119,7 @@ export const items = withoutPersistence( ( state = {}, action ) => {
  * @param {object} action - action
  * @returns {object} updated state
  */
-export const requests = withoutPersistence( ( state = {}, action ) => {
+export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case JETPACK_MODULE_ACTIVATE:
 			return createRequestsReducer( { activating: true } )( state, action );
@@ -142,7 +142,7 @@ export const requests = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export const reducer = combineReducers( {
 	items,

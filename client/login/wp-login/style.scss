@@ -346,8 +346,8 @@ $image-height: 47px;
 
 		&:hover,
 		&:active {
-			background: #72aee6;
-			border-color: #72aee6;
+			background: var( --studio-blue-20 );
+			border-color: var( --studio-blue-20 );
 			color: #fff;
 			outline-color: transparent;
 			box-shadow: none;

@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
@@ -23,6 +22,8 @@ import { addMedia } from 'calypso/state/media/thunks';
  * Style dependencies
  */
 import './upload-url.scss';
+
+const noop = () => {};
 
 class MediaLibraryUploadUrl extends Component {
 	static propTypes = {

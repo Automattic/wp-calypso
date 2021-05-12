@@ -1,11 +1,11 @@
 {
 	"mocha_tests": [ "specs" ],
-	"mocha_args": "-R mocha-multi-reporters --reporter-options configFile=mocha-reporter-config.json",
+	"mocha_args": "-R spec-junit-reporter",
 	"max_test_attempts": 3,
 	"max_workers": 3,
 	"suiteTag": "canary",
 	"sauce": false,
-	"framework": "testarmada-magellan-mocha-plugin",
+	"framework": "@automattic/testarmada-magellan-mocha-plugin",
 	"reporters": [ "./lib/reporter/magellan-reporter.js" ],
 	"executors": [ "testarmada-magellan-local-executor" ],
 	"bail_time": 450000

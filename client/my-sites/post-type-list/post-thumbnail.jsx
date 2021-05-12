@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,8 @@ import safeImageUrl from 'calypso/lib/safe-image-url';
 import { getNormalizedPost } from 'calypso/state/posts/selectors';
 import { getEditorPath } from 'calypso/state/editor/selectors';
 import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
+
+const noop = () => {};
 
 function PostTypeListPostThumbnail( { onClick, thumbnail, postLink } ) {
 	const classes = classnames( 'post-type-list__post-thumbnail-wrapper', {

@@ -49,10 +49,6 @@ class StatsListItem extends React.Component {
 		}
 	}
 
-	isFollowersModule = () => {
-		return !! this.props.followList;
-	};
-
 	getSiteIdForFollow = () => {
 		return get( this.props, 'data.actions[0].data.blog_id' );
 	};
@@ -107,11 +103,7 @@ class StatsListItem extends React.Component {
 			} else if ( this.props.data.page && ! this.props.children ) {
 				gaEvent = [ 'Clicked', moduleName, 'Summary Link' ].join( ' ' );
 				page( this.props.data.page );
-			} else if (
-				this.props.data.link &&
-				! this.props.children &&
-				! ( this.isFollowersModule() && this.getSiteIdForFollow() )
-			) {
+			} else if ( this.props.data.link && ! this.props.children && ! this.getSiteIdForFollow() ) {
 				gaEvent = [ 'Clicked', moduleName, 'External Link' ].join( ' ' );
 
 				window.open( this.props.data.link );
@@ -149,10 +141,14 @@ class StatsListItem extends React.Component {
 
 				switch ( action.type ) {
 					case 'follow':
-						if ( action.data && this.props.followList ) {
-							const followSite = this.props.followList.add( action.data );
+						if ( action.data ) {
 							actionItem = (
-								<Follow followSite={ followSite } key={ action.type } moduleName={ moduleName } />
+								<Follow
+									key={ action.type }
+									moduleName={ moduleName }
+									isFollowing={ !! action.data.is_following }
+									siteId={ action.data.blog_id }
+								/>
 							);
 						}
 						break;

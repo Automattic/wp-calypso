@@ -20,25 +20,42 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import GutenboardingHeader from 'calypso/my-sites/plans-features-main/gutenboarding-header';
 import QueryPlans from 'calypso/components/data/query-plans';
-import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
-import { planHasFeature } from '../../../lib/plans';
+import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import { getUrlParts } from 'calypso/lib/url/url-parts';
-import QueryExperiments from 'calypso/components/data/query-experiments';
-import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
+import { getUrlParts } from '@automattic/calypso-url';
+import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import PulsingDot from 'calypso/components/pulsing-dot';
+import { isTabletResolution, isDesktop } from '@automattic/viewport';
 
 export class PlansStep extends Component {
+	state = {
+		isDesktop: ! isTabletResolution(),
+	};
+
+	windowResize = () => {
+		this.setState( { plansWithScroll: ! isTabletResolution() } );
+	};
+
+	componentWillUnmount() {
+		if ( typeof window === 'object' ) {
+			window.removeEventListener( 'resize', this.windowResize );
+		}
+	}
+
 	componentDidMount() {
+		if ( typeof window === 'object' ) {
+			window.addEventListener( 'resize', this.windowResize );
+		}
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
@@ -142,45 +159,80 @@ export class PlansStep extends Component {
 			selectedSite,
 			planTypes,
 			flowName,
-			isMonthlyPricingTest,
+			showTreatmentPlansReorderTest,
+			isLoadingExperiment,
+			isInVerticalScrollingPlansExperiment,
+			isReskinned,
 		} = this.props;
 
 		return (
 			<div>
 				<QueryPlans />
-				<QueryExperiments />
-
-				<PlansFeaturesMain
-					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-					hideFreePlan={ hideFreePlan }
-					isInSignup={ true }
-					isLaunchPage={ isLaunchPage }
-					intervalType={ this.getIntervalType() }
-					onUpgradeClick={ this.onSelectPlan }
-					showFAQ={ false }
-					displayJetpackPlans={ false }
-					domainName={ this.getDomainName() }
-					customerType={ this.getCustomerType() }
-					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-					plansWithScroll={ true }
-					planTypes={ planTypes }
-					flowName={ flowName }
-					customHeader={ this.getGutenboardingHeader() }
-					isMonthlyPricingTest={ isMonthlyPricingTest }
-				/>
+				{ isLoadingExperiment ? (
+					<div className="plans__loading-container">
+						<PulsingDot delay={ 400 } active />
+					</div>
+				) : (
+					<PlansFeaturesMain
+						site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+						hideFreePlan={ hideFreePlan }
+						isInSignup={ true }
+						isLaunchPage={ isLaunchPage }
+						intervalType={ this.getIntervalType() }
+						onUpgradeClick={ this.onSelectPlan }
+						showFAQ={ false }
+						domainName={ this.getDomainName() }
+						customerType={ this.getCustomerType() }
+						disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+						plansWithScroll={ isDesktop() }
+						planTypes={ planTypes }
+						flowName={ flowName }
+						customHeader={ this.getGutenboardingHeader() }
+						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
+						isAllPaidPlansShown={ true }
+						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+						shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
+						isReskinned={ isReskinned }
+					/>
+				) }
 			</div>
 		);
 	}
 
-	getSubHeaderText() {
-		const { hideFreePlan, isMonthlyPricingTest, subHeaderText, translate } = this.props;
+	getHeaderText() {
+		const { headerText, translate } = this.props;
 
-		if ( isMonthlyPricingTest && ! hideFreePlan ) {
+		if ( isDesktop() ) {
+			return translate( 'Choose a plan' );
+		}
+
+		return headerText || translate( "Pick a plan that's right for you." );
+	}
+
+	getSubHeaderText() {
+		const { hideFreePlan, subHeaderText, translate } = this.props;
+
+		if ( ! hideFreePlan ) {
+			if ( isDesktop() ) {
+				return translate(
+					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
+					{
+						components: {
+							link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+						},
+					}
+				);
+			}
+
 			return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
 				components: {
 					link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
 				},
 			} );
+		}
+
+		if ( isDesktop() ) {
+			return translate( "Pick one that's right for you and unlock features that help you grow." );
 		}
 
 		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
@@ -195,7 +247,7 @@ export class PlansStep extends Component {
 			hasInitializedSitesBackUrl,
 		} = this.props;
 
-		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
+		const headerText = this.getHeaderText();
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
 		const subHeaderText = this.getSubHeaderText();
 		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
@@ -209,26 +261,29 @@ export class PlansStep extends Component {
 		}
 
 		return (
-			<StepWrapper
-				flowName={ flowName }
-				stepName={ stepName }
-				positionInFlow={ positionInFlow }
-				headerText={ headerText }
-				fallbackHeaderText={ fallbackHeaderText }
-				subHeaderText={ subHeaderText }
-				fallbackSubHeaderText={ fallbackSubHeaderText }
-				isWideLayout={ true }
-				stepContent={ this.plansFeaturesList() }
-				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
-				backUrl={ backUrl }
-				backLabelText={ backLabelText }
-				hideFormattedHeader={ !! this.getGutenboardingHeader() }
-			/>
+			<>
+				<StepWrapper
+					flowName={ flowName }
+					stepName={ stepName }
+					positionInFlow={ positionInFlow }
+					headerText={ headerText }
+					fallbackHeaderText={ fallbackHeaderText }
+					subHeaderText={ subHeaderText }
+					fallbackSubHeaderText={ fallbackSubHeaderText }
+					isWideLayout={ true }
+					stepContent={ this.plansFeaturesList() }
+					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+					backUrl={ backUrl }
+					backLabelText={ backLabelText }
+					hideFormattedHeader={ !! this.getGutenboardingHeader() }
+				/>
+			</>
 		);
 	}
 
 	render() {
 		const classes = classNames( 'plans plans-step', {
+			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment,
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
 		} );
@@ -249,7 +304,7 @@ PlansStep.propTypes = {
 	translate: PropTypes.func.isRequired,
 	planTypes: PropTypes.array,
 	flowName: PropTypes.string,
-	isMonthlyPricingTest: PropTypes.bool,
+	isTreatmentPlansReorderTest: PropTypes.bool,
 };
 
 /**
@@ -269,7 +324,10 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 };
 
 export default connect(
-	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
+	(
+		state,
+		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
+	) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
 			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
@@ -281,7 +339,13 @@ export default connect(
 		siteGoals: getSiteGoals( state ) || '',
 		siteType: getSiteType( state ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-		isMonthlyPricingTest: isTreatmentInMonthlyPricingTest( state ),
+		showTreatmentPlansReorderTest:
+			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
+		isLoadingExperiment: false,
+		// IMPORTANT NOTE: The following is always set to true. It's a hack to resolve the bug reported
+		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
+		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
+		isInVerticalScrollingPlansExperiment: true,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

@@ -10,20 +10,8 @@
 
 	font-family: 'Noto Sans', $sans;
 
-	.plans-filter-bar.sticky {
-		top: 0; // No masterbar here.
-		left: 0;
-
-		width: 100%;
-		max-width: none;
-
-		border-left: none;
-		border-right: none;
-
-		@include break-large {
-			// This is the height of the jpcom masterbar
-			top: 94px;
-		}
+	h2 {
+		line-height: inherit;
 	}
 
 	.header {
@@ -53,52 +41,13 @@
 		}
 	}
 
-	.jetpack-product-card {
-		.jetpack-product-card__product-name {
-			font-size: rem( 21px );
-		}
-
-		.jetpack-product-card__from,
-		.jetpack-product-card__billing-time-frame,
-		.jetpack-product-card__subheadline {
-			color: #8c8f94;
-
-			font-size: rem( 11px );
-
-			@include break-medium {
-				font-size: rem( 13px );
-			}
-		}
-
-		.jetpack-product-card__description {
-			font-size: rem( 15px );
-		}
-	}
-
-	.jetpack-product-card-alt {
-		background: var( --studio-gray-0 );
-
-		.foldable-card {
-			font-size: $font-body;
-		}
-	}
-
-	.jetpack-free-card-alt {
-		background: var( --studio-gray-0 );
+	.main {
+		padding-left: 0;
+		padding-right: 0;
 	}
 
 	.foldable-card {
 		font-size: rem( 13px );
-	}
-
-	.jetpack-free-card {
-		.jetpack-free-card__header {
-			font-size: rem( 21px );
-		}
-
-		.jetpack-free-card__body {
-			font-size: rem( 15px );
-		}
 	}
 
 	.faq {
@@ -122,6 +71,18 @@
 
 				font-size: rem( 35px );
 			}
+		}
+	}
+
+	// On cloud.jetpack.com, we want to override the primary color, used on
+	// the featured product card, with --studio-pink-50.
+	.jetpack-product-card.is-featured {
+		.jetpack-product-card__header {
+			background-color: var( --studio-pink-50 );
+		}
+
+		.jetpack-product-card__body {
+			border: solid 2px var( --studio-pink-50 );
 		}
 	}
 }

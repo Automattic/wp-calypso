@@ -2,28 +2,31 @@
  * Extrenal dependencies
  *
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import validatorFactory from 'is-my-json-valid';
-import { castArray, get, isEmpty, map, once, reduce, replace, update } from 'lodash';
+import { get, isEmpty, map, once, reduce, update } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:domains:with-contact-details-validation' );
+
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
  */
 import getValidationSchemas from 'calypso/state/selectors/get-validation-schemas';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
-import warn from 'calypso/lib/warn';
 
 export function disableSubmitButton( children ) {
 	if ( isEmpty( children ) ) {
 		return children;
 	}
 
-	return map( castArray( children ), ( child, index ) =>
+	return map( Array.isArray( children ) ? children : [ children ], ( child, index ) =>
 		React.cloneElement( child, {
 			disabled: !! child.props.className.match( /submit-button/ ) || child.props.disabled,
 			key: index,
@@ -47,7 +50,7 @@ export function interpretIMJVError( error, schema ) {
 
 	if ( schema ) {
 		// Search up the schema for an explicit errorField & message
-		const path = [ ...castArray( error.schemaPath ) ];
+		const path = Array.isArray( error.schemaPath ) ? [ ...error.schemaPath ] : [ error.schemaPath ];
 
 		// The errorCode is primary because messages are localized, so without
 		// the code consumers couldn't do anything other than display errors.
@@ -62,7 +65,7 @@ export function interpretIMJVError( error, schema ) {
 	}
 
 	// use field from error
-	const path = explicitPath || replace( error.field, /^data\./, '' );
+	const path = explicitPath || ( error.field ?? '' ).replace( /^data\./, '' );
 
 	return { errorMessage, errorCode, path };
 }

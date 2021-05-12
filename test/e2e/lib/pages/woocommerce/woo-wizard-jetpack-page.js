@@ -15,13 +15,13 @@ export default class WooWizardJetpackPage extends AsyncBaseContainer {
 	}
 
 	async selectContinueWithJetpack() {
-		const buttonSelector = By.css( 'button.is-primary' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, buttonSelector );
+		const buttonLocator = By.css( 'button.is-primary' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, buttonLocator );
 		await this.driver.sleep( 5000 );
-		await driverHelper.clickWhenClickable( this.driver, buttonSelector );
-		return await driverHelper.waitTillNotPresent(
+		await driverHelper.clickWhenClickable( this.driver, buttonLocator );
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			buttonSelector,
+			buttonLocator,
 			this.explicitWaitMS * 20
 		);
 	}

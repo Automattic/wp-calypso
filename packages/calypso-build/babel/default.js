@@ -16,9 +16,11 @@ module.exports = ( api, opts ) => ( {
 		[
 			require.resolve( '@babel/preset-env' ),
 			{
-				corejs: 3.6,
+				corejs: opts.corejs ? opts.corejs : 3.6,
+				debug: opts.debug ? opts.debug : false,
+				bugfixes: opts.bugfixes ? opts.bugfixes : false,
 				modules: modulesOption( opts ),
-				useBuiltIns: 'entry',
+				useBuiltIns: opts.useBuiltIns ? opts.useBuiltIns : 'entry',
 				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
 				exclude: [ 'transform-typeof-symbol' ],
 			},
@@ -40,5 +42,6 @@ module.exports = ( api, opts ) => ( {
 				version: require( '@babel/helpers/package.json' ).version,
 			},
 		],
+		require.resolve( './babel-plugin-optimize-i18n' ),
 	],
 } );

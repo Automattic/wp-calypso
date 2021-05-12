@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 import {
 	HAPPYCHAT_ELIGIBILITY_SET,
@@ -9,6 +9,9 @@ import {
 } from 'calypso/state/action-types';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { setSupportLevel } from 'calypso/state/help/actions';
+import { logToLogstash } from 'calypso/state/logstash/actions';
+
+import 'calypso/state/happychat/init';
 
 export const setHappyChatEligibility = ( isEligible ) => ( {
 	type: HAPPYCHAT_ELIGIBILITY_SET,
@@ -35,6 +38,20 @@ export const requestHappychatEligibility = () => ( dispatch ) => {
 			// whether the user is logged in when fetching the user profile)
 			if ( error && error.message && error.error !== 'authorization_required' ) {
 				dispatch( errorNotice( error.message ) );
+				// Log this failure to logstash. This is debug info for https://github.com/Automattic/wp-calypso/issues/51517
+				// and can probably be removed once that's closed.
+				dispatch(
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: 'Olark configuration request failed',
+						severity: 'error',
+						extra: {
+							error: error.name,
+							status: error.status,
+							message: error.message,
+						},
+					} )
+				);
 			}
 		} );
 };

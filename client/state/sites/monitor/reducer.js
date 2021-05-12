@@ -1,13 +1,7 @@
 /**
- * External dependencies
- */
-
-import { stubFalse, stubTrue } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	SITE_MONITOR_SETTINGS_RECEIVE,
 	SITE_MONITOR_SETTINGS_REQUEST,
@@ -18,52 +12,38 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 } from 'calypso/state/action-types';
 
-export const items = withoutPersistence( ( state = {}, action ) => {
+export const items = keyedReducer( 'siteId', ( state = null, action ) => {
 	switch ( action.type ) {
-		case SITE_MONITOR_SETTINGS_RECEIVE: {
-			const { siteId, settings } = action;
-
-			return {
-				...state,
-				[ siteId ]: settings,
-			};
-		}
+		case SITE_MONITOR_SETTINGS_RECEIVE:
+			return action.settings;
 	}
 
 	return state;
 } );
 
-export const requesting = keyedReducer(
-	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
-			case SITE_MONITOR_SETTINGS_REQUEST:
-				return stubTrue( state, action );
-			case SITE_MONITOR_SETTINGS_REQUEST_SUCCESS:
-				return stubFalse( state, action );
-			case SITE_MONITOR_SETTINGS_REQUEST_FAILURE:
-				return stubFalse( state, action );
-		}
+export const requesting = keyedReducer( 'siteId', ( state = false, action ) => {
+	switch ( action.type ) {
+		case SITE_MONITOR_SETTINGS_REQUEST:
+			return true;
+		case SITE_MONITOR_SETTINGS_REQUEST_SUCCESS:
+		case SITE_MONITOR_SETTINGS_REQUEST_FAILURE:
+			return false;
+	}
 
-		return state;
-	} )
-);
+	return state;
+} );
 
-export const updating = keyedReducer(
-	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
-			case SITE_MONITOR_SETTINGS_UPDATE:
-				return stubTrue( state, action );
-			case SITE_MONITOR_SETTINGS_UPDATE_SUCCESS:
-				return stubFalse( state, action );
-			case SITE_MONITOR_SETTINGS_UPDATE_FAILURE:
-				return stubFalse( state, action );
-		}
+export const updating = keyedReducer( 'siteId', ( state = false, action ) => {
+	switch ( action.type ) {
+		case SITE_MONITOR_SETTINGS_UPDATE:
+			return true;
+		case SITE_MONITOR_SETTINGS_UPDATE_SUCCESS:
+		case SITE_MONITOR_SETTINGS_UPDATE_FAILURE:
+			return false;
+	}
 
-		return state;
-	} )
-);
+	return state;
+} );
 
 export default combineReducers( {
 	items,

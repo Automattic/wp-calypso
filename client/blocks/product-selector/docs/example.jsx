@@ -23,8 +23,8 @@ const products = [
 		optionShortNames: {
 			jetpack_backup_daily: 'Daily Backups',
 			jetpack_backup_daily_monthly: 'Daily Backups',
-			jetpack_backup_realtime: 'Real-Time Backups',
-			jetpack_backup_realtime_monthly: 'Real-Time Backups',
+			jetpack_backup_realtime: 'Real-time Backups',
+			jetpack_backup_realtime_monthly: 'Real-time Backups',
 		},
 		optionsLabel: 'Backup options',
 	},

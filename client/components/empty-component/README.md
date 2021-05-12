@@ -10,8 +10,8 @@ In the webpack server [config file](/webpack.config.node.js):
 const config = {
 	plugins: [
 		new webpack.NormalModuleReplacementPlugin(
-			/^my-sites\/themes\/thanks-modal$/,
-			'components/empty-component'
+			/^calypso\/my-sites\/themes\/thanks-modal$/,
+			'calypso/components/empty-component'
 		), // Depends on BOM
 	],
 };

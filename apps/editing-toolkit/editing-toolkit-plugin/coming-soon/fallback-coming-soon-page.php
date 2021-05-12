@@ -21,18 +21,37 @@ function get_current_locale() {
 }
 
 /**
- * Returns a redirect URL for post-login flow
+ * Returns request URL for self-hosted and/or Atomic sites (non-WordPress.com sites)
  *
  * @return string The redirect URL
  */
-function get_redirect_to() {
+function original_request_url() {
+	if ( empty( $_SERVER['SERVER_NAME'] ) || empty( $_SERVER['REQUEST_URI'] ) ) {
+		return get_onboarding_url();
+	}
+
+	$origin = ( is_ssl() ? 'https://' : 'http://' ) . sanitize_text_field( wp_unslash( $_SERVER['SERVER_NAME'] ) );
+
+	if ( ! empty( $_SERVER['SERVER_PORT'] ) && ! in_array( $_SERVER['SERVER_PORT'], array( 80, 443 ), true ) ) {
+		$origin .= ':' . sanitize_text_field( wp_unslash( $_SERVER['SERVER_PORT'] ) );
+	}
+
+	return $origin . strtok( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ), '?' );
+}
+
+/**
+ * Returns an unencoded redirect URL for post-login flow in WordPress.com.
+ *
+ * @return string The redirect URL
+ */
+function get_wpcom_redirect_to() {
 	// Redirect to the current URL.
 	// If, for any reason, the superglobals aren't available, set a default redirect.
 	if ( empty( $_SERVER['HTTP_HOST'] ) || empty( $_SERVER['REQUEST_URI'] ) ) {
-		return get_marketing_home_url();
+		return get_onboarding_url();
 	}
 
-	return rawurlencode( 'https://' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) . sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+	return 'https://' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) . sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
 }
 
 /**
@@ -41,16 +60,9 @@ function get_redirect_to() {
  * @return string The login URL
  */
 function get_login_url() {
-	$redirect_to = get_redirect_to();
+	$default_url = site_url() . '/wp-login.php?redirect_to=' . set_url_scheme( original_request_url() );
 
-	if ( function_exists( 'localized_wpcom_url' ) ) {
-		return localized_wpcom_url( '//wordpress.com/log-in?redirect_to=' . $redirect_to );
-	}
-
-	$locale              = get_current_locale();
-	$locale_url_fragment = 'en' === $locale ? '' : '/' . $locale;
-
-	return '//wordpress.com/log-in' . $locale_url_fragment . '?redirect_to=' . $redirect_to;
+	return apply_filters( 'wpcom_public_coming_soon_login_url', $default_url, get_wpcom_redirect_to() );
 }
 
 /**
@@ -59,14 +71,10 @@ function get_login_url() {
  * @return string The URL
  */
 function get_onboarding_url() {
-	if ( function_exists( 'localized_wpcom_url' ) ) {
-		return localized_wpcom_url( 'https://wordpress.com/?ref=coming_soon' );
-	}
-
 	$locale           = get_current_locale();
 	$locale_subdomain = 'en' === $locale ? '' : $locale . '.';
 
-	return 'https://' . $locale_subdomain . 'wordpress.com/?ref=coming_soon';
+	return apply_filters( 'wpcom_public_coming_soon_onboarding_url', 'https://' . $locale_subdomain . 'wordpress.com/?ref=coming_soon' );
 }
 
 nocache_headers();
@@ -141,6 +149,9 @@ nocache_headers();
 			.wpcom-coming-soon-wplogo {
 				margin-right: 16px;
 				margin-bottom: 0;
+			}
+			.wpcom-coming-soon-wplogo a {
+				border: none;
 			}
 			.wpcom-coming-soon-marketing-copy-text {
 				line-height: 1.4;
@@ -270,11 +281,12 @@ nocache_headers();
 					</div>
 					<div class="wpcom-coming-soon-marketing-buttons">
 						<p><a class="button button-secondary" href="<?php echo esc_url( get_login_url() ); ?>"><?php esc_html_e( 'Log in', 'full-site-editing' ); ?></a></p>
-						<p><a class="button button-primary " href="<?php echo esc_url( get_onboarding_url() ); ?>"><?php esc_html_e( 'Start your website', 'full-site-editing' ); ?></a></p>
+						<p><a class="button button-primary has-background" href="<?php echo esc_url( get_onboarding_url() ); ?>"><?php esc_html_e( 'Start your website', 'full-site-editing' ); ?></a></p>
 					</div>
 				<?php endif; ?>
 			</div>
 		</div>
 		<?php wp_footer(); ?>
+		<!-- WordPress.com Editing Toolkit Plugin - Coming Soon -->
 	</body>
 </html>

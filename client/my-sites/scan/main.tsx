@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { Button, Card, ProgressBar } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-import { isEnabled } from 'calypso/config';
 import classNames from 'classnames';
 
 /**
@@ -19,13 +18,11 @@ import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
 import { Scan, Site } from 'calypso/my-sites/scan/types';
-import EmptyContent from 'calypso/components/empty-content';
 import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
 import getSiteScanIsInitial from 'calypso/state/selectors/get-site-scan-is-initial';
@@ -40,6 +37,7 @@ import { triggerScanRun } from 'calypso/lib/jetpack/trigger-scan-run';
 import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
 import ScanNavigation from './navigation';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
+import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 
 /**
  * Type dependencies
@@ -73,6 +71,9 @@ interface Props {
 }
 
 class ScanPage extends Component< Props > {
+	state = {
+		showJetpackReviewPrompt: false,
+	};
 	renderProvisioning() {
 		return (
 			<>
@@ -151,15 +152,13 @@ class ScanPage extends Component< Props > {
 						}
 					) }
 				</p>
-				{ isEnabled( 'jetpack/on-demand-scan' ) && (
-					<Button
-						primary
-						className="scan__button"
-						onClick={ () => siteId && dispatchScanRun( siteId ) }
-					>
-						{ translate( 'Scan now' ) }
-					</Button>
-				) }
+				<Button
+					primary
+					className="scan__button"
+					onClick={ () => siteId && dispatchScanRun( siteId ) }
+				>
+					{ translate( 'Scan now' ) }
+				</Button>
 			</>
 		);
 	}
@@ -208,14 +207,12 @@ class ScanPage extends Component< Props > {
 					) }
 				</p>
 				{ this.renderContactSupportButton() }
-				{ isEnabled( 'jetpack/on-demand-scan' ) && (
-					<Button
-						className="scan__button scan__retry-bottom"
-						onClick={ () => siteId && dispatchScanRun( siteId ) }
-					>
-						{ translate( 'Retry scan' ) }
-					</Button>
-				) }
+				<Button
+					className="scan__button scan__retry-bottom"
+					onClick={ () => siteId && dispatchScanRun( siteId ) }
+				>
+					{ translate( 'Retry scan' ) }
+				</Button>
 			</>
 		);
 	}
@@ -270,8 +267,25 @@ class ScanPage extends Component< Props > {
 		return this.renderScanOkay();
 	}
 
+	renderJetpackReviewPrompt() {
+		const { scanState, isRequestingScan } = this.props;
+		if ( ! scanState ) {
+			return;
+		}
+		const { threats, mostRecent } = scanState;
+
+		const threatsFound = threats?.length;
+		const errorFound = !! mostRecent?.error;
+
+		// Only render JetpackReviewPrompt after this.renderScanOkay() is called.
+		if ( isRequestingScan || threatsFound || errorFound || scanState?.state !== 'idle' ) {
+			return;
+		}
+		return <JetpackReviewPrompt type="scan" align="left" />;
+	}
+
 	render() {
-		const { isAdmin, siteId, siteSettingsUrl } = this.props;
+		const { siteId, siteSettingsUrl } = this.props;
 		const isJetpackPlatform = isJetpackCloud();
 
 		if ( ! siteId ) {
@@ -291,21 +305,13 @@ class ScanPage extends Component< Props > {
 				{ ! isJetpackPlatform && (
 					<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />
 				) }
-				{ isAdmin && (
-					<>
-						<QueryJetpackScan siteId={ siteId } />
-						<ScanNavigation section={ 'scanner' } />
-						<Card>
-							<div className="scan__content">{ this.renderScanState() }</div>
-						</Card>
-					</>
-				) }
-				{ ! isAdmin && (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/illustration-404.svg"
-						title={ translate( 'You are not authorized to view this page' ) }
-					/>
-				) }
+
+				<QueryJetpackScan siteId={ siteId } />
+				<ScanNavigation section={ 'scanner' } />
+				<Card>
+					<div className="scan__content">{ this.renderScanState() }</div>
+				</Card>
+				{ this.renderJetpackReviewPrompt() }
 			</Main>
 		);
 	}
@@ -327,7 +333,6 @@ export default connect(
 		const scanProgress = getSiteScanProgress( state, siteId ) ?? undefined;
 		const isRequestingScan = isRequestingJetpackScan( state, siteId );
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
-		const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 
 		return {
 			site,
@@ -338,7 +343,6 @@ export default connect(
 			isInitialScan,
 			siteSettingsUrl,
 			isRequestingScan,
-			isAdmin,
 		};
 	},
 	{

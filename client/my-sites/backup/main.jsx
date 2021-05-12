@@ -6,33 +6,31 @@ import { useSelector } from 'react-redux';
 import page from 'page';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
+import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
-import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
-import { useDateWithOffset } from './hooks';
 import { backupMainPath } from './paths';
-import DatePicker from './date-picker';
+import BackupDatePicker from './backup-date-picker';
 import EnableRestoresBanner from './enable-restores-banner';
 import SearchResults from './search-results';
 import { DailyStatus, RealtimeStatus } from './status';
@@ -46,17 +44,23 @@ import {
  */
 import './style.scss';
 
-const isCurrentUserAdmin = ( state, siteId ) => canCurrentUser( state, siteId, 'manage_options' );
-
 const BackupPage = ( { queryDate } ) => {
-	const translate = useTranslate();
-
 	const siteId = useSelector( getSelectedSiteId );
-	const isAdmin = useSelector( ( state ) => isCurrentUserAdmin( state, siteId ) );
+	const siteSettingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
 
 	const moment = useLocalizedMoment();
 	const parsedQueryDate = queryDate ? moment( queryDate, INDEX_FORMAT ) : moment();
-	const selectedDate = useDateWithOffset( parsedQueryDate );
+
+	// If a date is specified, it'll be in a timezone-agnostic string format,
+	// so we'll need to add the site's TZ info in without affecting the date
+	// we were given.
+	//
+	// Otherwise, if no date is specified, we're talking about the current date.
+	// This is the same point in time for everyone, but we should make sure to
+	// store it in terms of the selected site's time zone.
+	const selectedDate = useDateWithOffset( parsedQueryDate, {
+		keepLocalTime: !! queryDate,
+	} );
 
 	return (
 		<div
@@ -70,19 +74,12 @@ const BackupPage = ( { queryDate } ) => {
 				} ) }
 			>
 				<SidebarNavigation />
-				<TimeMismatchWarning siteId={ siteId } />
+				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ ! isJetpackCloud() && (
 					<FormattedHeader headerText="Jetpack Backup" align="left" brandFont />
 				) }
 
-				{ isAdmin ? (
-					<AdminContent selectedDate={ selectedDate } />
-				) : (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/illustration-404.svg"
-						title={ translate( 'You are not authorized to view this page' ) }
-					/>
-				) }
+				<AdminContent selectedDate={ selectedDate } />
 			</Main>
 		</div>
 	);
@@ -114,7 +111,7 @@ const AdminContent = ( { selectedDate } ) => {
 
 	const needCredentials = useSelector( ( state ) => getDoesRewindNeedCredentials( state, siteId ) );
 
-	const onSelectDate = ( date ) =>
+	const onDateChange = ( date ) =>
 		page( backupMainPath( siteSlug, { date: date.format( INDEX_FORMAT ) } ) );
 
 	return (
@@ -133,7 +130,7 @@ const AdminContent = ( { selectedDate } ) => {
 						<div className="backup__last-backup-status">
 							{ needCredentials && <EnableRestoresBanner /> }
 
-							<DatePicker onSelectDate={ onSelectDate } selectedDate={ selectedDate } />
+							<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
 							<BackupStatus selectedDate={ selectedDate } />
 						</div>
 					</div>
@@ -147,7 +144,7 @@ const BackupStatus = ( { selectedDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const rewindCapabilities = useSelector( ( state ) => getRewindCapabilities( state, siteId ) );
 
-	if ( ! isArray( rewindCapabilities ) ) {
+	if ( ! Array.isArray( rewindCapabilities ) ) {
 		return <BackupPlaceholder showDatePicker={ false } />;
 	}
 

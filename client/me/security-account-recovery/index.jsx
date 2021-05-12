@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
@@ -55,7 +55,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import './style.scss';
 
 const SecurityAccountRecovery = ( props ) => (
-	<Main className="security security-account-recovery is-wide-layout">
+	<Main wideLayout className="security security-account-recovery">
 		<PageViewTracker path="/me/security/account-recovery" title="Me > Account Recovery" />
 		<QueryAccountRecoverySettings />
 

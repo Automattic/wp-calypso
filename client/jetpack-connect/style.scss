@@ -230,7 +230,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__logged-in-form {
 	.jetpack-connect__logged-in-form-user-text {
-		margin-bottom: 0;
 		text-align: center;
 	}
 
@@ -519,6 +518,15 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	font-size: $font-body-extra-small;
 	margin: 0 0 16px;
 	text-align: center;
+}
+
+.is-support-session {
+	.jetpack-connect__sso,
+	.jetpack-connect__authorize-form {
+		.jetpack-connect__tos-link {
+			display: none;
+		}
+	}
 }
 
 .jetpack-connect__tos-link-text {
@@ -1172,34 +1180,12 @@ body.is-section-jetpack-connect .layout {
 	}
 }
 
-.is-section-jetpack-connect .plans-filter-bar {
-	border-width: 0;
-
-	&.sticky {
-		top: 0; // No masterbar here.
-		left: 0;
-
-		width: 100%;
-		max-width: none;
-
-		border-bottom: solid 1px var( --studio-gray-10 );
-	}
-
-	.select-dropdown .select-dropdown__header {
-		border-color: var( --color-primary );
-	}
-}
-
 .layout.is-section-jetpack-connect .upsell .upsell__header .formatted-header {
 	color: inherit;
 }
 
 // The new Plans grid uses as primary color a darker version Jetpack's green.
-.is-section-jetpack-connect .selector-alt__main {
+.is-section-jetpack-connect .selector__main {
 	--color-accent: var( --studio-jetpack-green-40 );
 	--color-primary: var( --studio-jetpack-green-40 );
-
-	.plans-filter-bar__discount-message {
-		font-weight: 600;
-	}
 }

@@ -9,10 +9,6 @@ export const remoteValuesSchema = {
 		},
 	},
 	properties: {
-		'editor-mode': {
-			type: 'string',
-			enum: [ 'html', 'tinymce' ],
-		},
 		mediaModalGalleryInstructionsDismissed: {
 			type: 'boolean',
 		},
@@ -40,9 +36,6 @@ export const remoteValuesSchema = {
 			minimum: 0,
 			maximum: 1,
 		},
-		editorAdvancedVisible: {
-			type: 'boolean',
-		},
 		editorConfirmationDisabledSites: {
 			type: 'array',
 			items: { type: 'number' },
@@ -54,6 +47,7 @@ export const remoteValuesSchema = {
 				'blue',
 				'classic-blue',
 				'classic-bright',
+				'classic-dark',
 				'coffee',
 				'contrast',
 				'ectoplasm',
@@ -68,10 +62,6 @@ export const remoteValuesSchema = {
 				'sunset',
 			],
 		},
-		'store-dashboardStatsWidgetUnit': {
-			type: 'string',
-			enum: [ 'day', 'week', 'month' ],
-		},
 		'upwork-dismissible-banner': {
 			type: 'object',
 			'^[a-z-]+$': {
@@ -85,6 +75,30 @@ export const remoteValuesSchema = {
 					required: [ 'dismissedAt', 'type' ],
 				},
 			},
+		},
+		'jetpack-review-prompt': {
+			type: 'object',
+			properties: {
+				scan: {
+					type: 'object',
+					properties: {
+						'/[0-9]+/': { $ref: '#/definitions/dismissiblePrompt' },
+					},
+				},
+				restore: { $ref: '#/definitions/dismissiblePrompt' },
+			},
+		},
+	},
+	definitions: {
+		dismissiblePrompt: {
+			type: 'object',
+			properties: {
+				dismissedAt: { type: [ 'number', 'null' ] },
+				dismissedCount: { type: 'number', minimum: 0 },
+				reviewed: { type: 'number' },
+				validFrom: { type: [ 'number', 'null' ] },
+			},
+			required: [ 'dismissedAt', 'dismissedCount', 'reviewed', 'validFrom' ],
 		},
 	},
 };

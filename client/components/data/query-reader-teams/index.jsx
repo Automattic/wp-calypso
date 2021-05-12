@@ -1,28 +1,19 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { requestTeams } from 'calypso/state/reader/teams/actions';
+import { requestTeams } from 'calypso/state/teams/actions';
 
-class QueryReaderTeams extends Component {
-	UNSAFE_componentWillMount() {
-		this.props.requestTeams();
-	}
+export default function QueryReaderTeams() {
+	const dispatch = useDispatch();
+	useEffect( () => {
+		dispatch( requestTeams() );
+	}, [ dispatch ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
-
-QueryReaderTeams.propTypes = {
-	request: PropTypes.func,
-};
-
-export default connect( null, { requestTeams } )( QueryReaderTeams );

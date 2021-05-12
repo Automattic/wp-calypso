@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { assign } from 'lodash';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import React from 'react';
 import { expect } from 'chai';
@@ -98,11 +97,10 @@ describe( 'index', () => {
 		const result = renderer.getRenderOutput();
 
 		expect( result.type ).to.equal( 'div' );
-		expect( result.props ).to.eql(
-			assign( {}, DUMMY_PROPS, {
-				'data-preserve': true,
-			} )
-		);
+		expect( result.props ).to.eql( {
+			...DUMMY_PROPS,
+			'data-preserve': true,
+		} );
 	} );
 
 	test( 'should preserve props passed to the instance itself', () => {
@@ -114,10 +112,9 @@ describe( 'index', () => {
 		const result = renderer.getRenderOutput();
 
 		expect( result.type ).to.equal( 'div' );
-		expect( result.props ).to.eql(
-			assign( {}, DUMMY_PROPS, {
-				'data-preserve': true,
-			} )
-		);
+		expect( result.props ).to.eql( {
+			...DUMMY_PROPS,
+			'data-preserve': true,
+		} );
 	} );
 } );

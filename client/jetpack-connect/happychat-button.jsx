@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import HappychatButton from 'calypso/components/happychat/button';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';

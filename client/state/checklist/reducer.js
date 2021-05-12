@@ -1,12 +1,8 @@
 /**
  * Internal dependencies
  */
-import {
-	combineReducers,
-	keyedReducer,
-	withSchemaValidation,
-	withStorageKey,
-} from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,

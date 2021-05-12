@@ -13,11 +13,13 @@ import {
 	gsuiteNudge,
 	upsellNudge,
 	redirectToSupportSession,
+	redirectJetpackLegacyPlans,
 } from './controller';
+import { noop } from './utils';
 import SiftScience from 'calypso/lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
 import { noSite, siteSelection } from 'calypso/my-sites/controller';
-import config from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import userFactory from 'calypso/lib/user';
 
 export default function () {
@@ -95,7 +97,7 @@ export default function () {
 		clientRender
 	);
 
-	if ( config.isEnabled( 'upsell/concierge-session' ) ) {
+	if ( isEnabled( 'upsell/concierge-session' ) ) {
 		// For backwards compatibility, retaining the old URL structure.
 		page( '/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession );
 
@@ -132,9 +134,23 @@ export default function () {
 		);
 	}
 
-	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
+	page(
+		'/checkout/:domainOrProduct',
+		siteSelection,
+		isEnabled( 'jetpack/redirect-legacy-plans' ) ? redirectJetpackLegacyPlans : noop,
+		checkout,
+		makeLayout,
+		clientRender
+	);
 
-	page( '/checkout/:product/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
+	page(
+		'/checkout/:product/:domainOrProduct',
+		siteSelection,
+		isEnabled( 'jetpack/redirect-legacy-plans' ) ? redirectJetpackLegacyPlans : noop,
+		checkout,
+		makeLayout,
+		clientRender
+	);
 
 	// Visiting /renew without a domain is invalid and should be redirected to /me/purchases
 	page( '/checkout/:product/renew/:purchaseId', '/me/purchases' );
@@ -156,7 +172,7 @@ export default function () {
 	);
 
 	// Visiting /checkout without a plan or product should be redirected to /plans
-	page( '/checkout', '/plans' );
+	page( '/checkout', isEnabled( 'jetpack-cloud/connect' ) ? '/plans' : '/pricing' );
 
 	page(
 		'/checkout/:site/offer-plan-upgrade/:upgradeItem/:receiptId?',

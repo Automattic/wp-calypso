@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import React, { useEffect, useState } from 'react';
 
 /**
@@ -10,6 +9,9 @@ import React, { useEffect, useState } from 'react';
 import Spinner from 'calypso/components/spinner';
 import classNames from 'classnames';
 import photon from 'photon';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 interface Props {
 	defaultViewportDevice: string;

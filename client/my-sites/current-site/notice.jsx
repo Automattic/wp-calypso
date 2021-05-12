@@ -7,13 +7,13 @@ import React from 'react';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import config, { isEnabled } from 'calypso/config';
-import { get, reject, transform } from 'lodash';
+import config, { isEnabled } from '@automattic/calypso-config';
+import { get, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getUrlParts } from 'calypso/lib/url/url-parts';
+import { getUrlParts } from '@automattic/calypso-url';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import getActiveDiscount from 'calypso/state/selectors/get-active-discount';
@@ -141,9 +141,8 @@ export class SiteNotice extends React.Component {
 
 		const { site, currencyCode, productsList, translate } = this.props;
 
-		const priceAndSaleInfo = transform(
-			productsList,
-			function ( result, value, key ) {
+		const priceAndSaleInfo = Object.entries( productsList ).reduce(
+			function ( result, [ key, value ] ) {
 				if ( value.is_domain_registration && value.available ) {
 					const regularPrice = getUnformattedDomainPrice( key, productsList );
 					const minRegularPrice = get( result, 'minRegularPrice', regularPrice );
@@ -156,6 +155,8 @@ export class SiteNotice extends React.Component {
 						result.saleTlds.push( value.tld );
 					}
 				}
+
+				return result;
 			},
 			{ saleTlds: [] }
 		);

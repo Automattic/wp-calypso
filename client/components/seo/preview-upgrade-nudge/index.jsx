@@ -19,12 +19,13 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import FeatureExample from 'calypso/components/feature-example';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
 import {
+	findFirstSimilarPlanKey,
 	TERM_ANNUALLY,
 	TYPE_BUSINESS,
+	TYPE_SECURITY_DAILY,
 	FEATURE_SEO_PREVIEW_TOOLS,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -47,10 +48,10 @@ export const SeoPreviewNudge = ( {
 				showIcon
 				plan={
 					site &&
-					findFirstSimilarPlanKey( site.plan.product_slug, {
-						type: TYPE_BUSINESS,
-						...( isJetpack ? { term: TERM_ANNUALLY } : {} ),
-					} )
+					findFirstSimilarPlanKey(
+						site.plan.product_slug,
+						isJetpack ? { type: TYPE_SECURITY_DAILY, term: TERM_ANNUALLY } : { type: TYPE_BUSINESS }
+					)
 				}
 				title={
 					canCurrentUserUpgrade

@@ -3,7 +3,6 @@
  */
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 
 /**
@@ -19,8 +18,10 @@ import {
 	EDUCATION_FREE_PHOTO_LIBRARY,
 	EDUCATION_GUTENBERG,
 	EDUCATION_EARN,
+	EDUCATION_WPCOURSES,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import WpCourses from 'calypso/my-sites/customer-home/cards/education/wpcourses';
 
 /**
  * Style dependencies
@@ -31,11 +32,10 @@ const cardComponents = {
 	[ EDUCATION_FREE_PHOTO_LIBRARY ]: FreePhotoLibrary,
 	[ EDUCATION_GUTENBERG ]: MasteringGutenberg,
 	[ EDUCATION_EARN ]: EducationEarn,
+	[ EDUCATION_WPCOURSES ]: WpCourses,
 };
 
 const LearnGrow = ( { cards, trackCards } ) => {
-	const translate = useTranslate();
-
 	useEffect( () => {
 		if ( cards && cards.length ) {
 			trackCards( cards );
@@ -48,9 +48,6 @@ const LearnGrow = ( { cards, trackCards } ) => {
 
 	return (
 		<>
-			<h2 className="learn-grow__heading customer-home__section-heading">
-				{ translate( 'Learn and grow' ) }
-			</h2>
 			<Card className="learn-grow__content">
 				{ cards.map(
 					( card, index ) =>

@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers } from 'calypso/state/utils';
 import settings from './settings/reducer';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,
@@ -9,7 +10,7 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 } from 'calypso/state/action-types';
 
-const isFetchingSettings = withoutPersistence( ( state = false, action ) => {
+const isFetchingSettings = ( state = false, action ) => {
 	switch ( action.type ) {
 		case ACCOUNT_RECOVERY_SETTINGS_FETCH:
 			return true;
@@ -20,7 +21,7 @@ const isFetchingSettings = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
 const combinedReducer = combineReducers( {
 	settings,

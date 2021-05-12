@@ -7,7 +7,7 @@ import { partition, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import { getSite } from 'calypso/state/sites/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';

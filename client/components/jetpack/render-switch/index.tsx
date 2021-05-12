@@ -7,7 +7,7 @@ import React, { ReactComponent, ReactNode } from 'react';
  * @typedef RenderSwitchArgs
  */
 type RenderSwitchArgs = {
-	loadingCondition: () => boolean;
+	loadingCondition?: () => boolean;
 	renderCondition: () => boolean;
 	queryComponent?: ReactNode;
 	loadingComponent?: ReactNode;
@@ -28,7 +28,7 @@ type RenderSwitchArgs = {
  * @param {ReactNode} [props.falseComponent] - The component to render when the renderCondition evaluates to false.
  */
 const RenderSwitch: ReactComponent = ( {
-	loadingCondition,
+	loadingCondition = () => false,
 	renderCondition,
 	queryComponent,
 	loadingComponent,

@@ -21,7 +21,7 @@ export default class EmbedsBlockComponent extends GutenbergBlockComponent {
 			this.driver,
 			By.css( `${ this.blockID } .wp-block-embed .components-button` )
 		);
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			By.css( `${ this.blockID } .wp-block-image .components-spinner` )
 		);
@@ -29,7 +29,10 @@ export default class EmbedsBlockComponent extends GutenbergBlockComponent {
 
 	async isEmbeddedInEditor( selector ) {
 		const element = By.css( `${ this.blockID } ${ selector }` );
-		const displayed = await driverHelper.isEventuallyPresentAndDisplayed( this.driver, element );
+		const displayed = await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			element
+		);
 		return assert.strictEqual(
 			displayed,
 			true,

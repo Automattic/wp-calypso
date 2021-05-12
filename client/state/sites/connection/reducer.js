@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,
 	SITE_CONNECTION_STATUS_REQUEST,
@@ -15,7 +15,7 @@ const createRequestingReducer = ( requesting ) => ( state, { siteId } ) => ( {
 	[ siteId ]: requesting,
 } );
 
-export const items = withoutPersistence( ( state = {}, action ) => {
+export const items = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_CONNECTION_STATUS_RECEIVE: {
 			const { siteId, status } = action;
@@ -28,9 +28,9 @@ export const items = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_CONNECTION_STATUS_REQUEST:
 			return createRequestingReducer( true )( state, action );
@@ -41,7 +41,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	items,

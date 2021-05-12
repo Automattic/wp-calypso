@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 

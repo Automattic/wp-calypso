@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_RECEIVE_PLUGINS,
@@ -22,7 +22,7 @@ import {
  * @param  {object} action Action object
  * @returns {object} Updated requesting state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_REQUEST_PLUGINS: {
 			const { siteId } = action;
@@ -47,7 +47,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated plugin toggling state after an action has been dispatched.
@@ -57,7 +57,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated saving state
  */
-export const toggling = withoutPersistence( ( state = {}, action ) => {
+export const toggling = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_TOGGLE_PLUGIN: {
 			const { siteId, plugin } = action;
@@ -92,7 +92,7 @@ export const toggling = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Tracks the plugins for a particular site.

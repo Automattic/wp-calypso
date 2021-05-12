@@ -64,10 +64,10 @@
 <body>
 
 <script type="text/javascript">
-	var electron = require( 'electron' );
-	var version = electron.remote.getGlobal( 'desktop' ).config.version;
-	var build = electron.remote.getGlobal( 'desktop' ).config.build
-	var ipc = electron.ipcRenderer;
+	const config = window.electron.config;
+
+	const version = config.version;
+	const build = config.build;
 
 	if ( build === 'development' )
 		version += ' dev';
@@ -99,7 +99,7 @@ Proudly released under the GPL</p>
 	var keyPos = 0;
 
 	document.querySelector( 'a' ).addEventListener( 'click', function() {
-		ipc.send( 'secrets', 0 );
+		window.electron.send( 'secrets', 0 );
 		return false;
 	} );
 
@@ -109,7 +109,7 @@ Proudly released under the GPL</p>
 
 			if ( keyPos === KONAMI.length ) {
 				keyPos = 0;
-				ipc.send( 'secrets', 1 );
+				window.electron.send( 'secrets', 1 );
 			}
 		}
 		else {

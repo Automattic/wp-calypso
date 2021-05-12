@@ -1,0 +1,12 @@
+.billing-dashboard {
+	&__header {
+		display: flex;
+		align-items: center;
+
+		@include breakpoint-deprecated( '>960px' ) {
+			> * + * {
+				margin-left: 24px;
+			}
+		}
+	}
+}

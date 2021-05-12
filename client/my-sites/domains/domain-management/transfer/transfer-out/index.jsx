@@ -102,7 +102,11 @@ class Transfer extends React.Component {
 	};
 
 	isDataLoading() {
-		return ! this.props.wapiDomainInfo.hasLoadedFromServer || this.props.isRequestingSiteDomains;
+		return (
+			! this.props.wapiDomainInfo.hasLoadedFromServer ||
+			this.props.isRequestingSiteDomains ||
+			! this.props.hasSiteDomainsLoaded
+		);
 	}
 }
 

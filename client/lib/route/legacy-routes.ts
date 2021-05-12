@@ -11,7 +11,7 @@ import { URL as URLString } from 'calypso/types';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 interface LegacyRoute {
 	match: RegExp;
@@ -27,7 +27,7 @@ const legacyRoutes: LegacyRoute[] = [
 	{
 		match: /^\/me/,
 		noMatch: /^\/me\/(billing|next)/,
-		predicate: () => ! isEnabled( 'me/my-profile' ),
+		predicate: () => false,
 	},
 ];
 

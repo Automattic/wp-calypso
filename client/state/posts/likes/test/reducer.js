@@ -7,7 +7,8 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { items, itemReducer } from '../reducer';
-import { POST_LIKES_RECEIVE, SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { POST_LIKES_RECEIVE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { addLiker, removeLiker, like, unlike } from '../actions';
 import { useFakeTimers, useSandbox } from 'calypso/test-helpers/use-sinon';
 
@@ -220,7 +221,8 @@ describe( 'reducer', () => {
 
 		test( 'should persist state', () => {
 			const likes = [ { ID: 1, login: 'chicken' } ];
-			const state = items(
+			const state = serialize(
+				items,
 				deepFreeze( {
 					12345678: {
 						50: {
@@ -230,10 +232,7 @@ describe( 'reducer', () => {
 							lastUpdated: 2000,
 						},
 					},
-				} ),
-				{
-					type: SERIALIZE,
-				}
+				} )
 			);
 
 			expect( state.root() ).toEqual( {
@@ -250,7 +249,8 @@ describe( 'reducer', () => {
 
 		test( 'should load valid persisted state', () => {
 			const likes = [ { ID: 1, login: 'chicken' } ];
-			const state = items(
+			const state = deserialize(
+				items,
 				deepFreeze( {
 					12345678: {
 						50: {
@@ -260,10 +260,7 @@ describe( 'reducer', () => {
 							lastUpdated: 4000,
 						},
 					},
-				} ),
-				{
-					type: DESERIALIZE,
-				}
+				} )
 			);
 
 			expect( state ).toEqual( {
@@ -279,13 +276,11 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should not load invalid persisted state', () => {
-			const state = items(
+			const state = deserialize(
+				items,
 				deepFreeze( {
 					status: 'ribs',
-				} ),
-				{
-					type: DESERIALIZE,
-				}
+				} )
 			);
 
 			expect( state ).toEqual( {} );

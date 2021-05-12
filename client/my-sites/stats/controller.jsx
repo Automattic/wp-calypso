@@ -17,7 +17,6 @@ import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import FollowList from 'calypso/lib/follow-list';
 import StatsInsights from './stats-insights';
 import StatsOverview from './overview';
 import StatsSite from './site';
@@ -168,7 +167,7 @@ export function redirectToDefaultModulePage( context ) {
 }
 
 export function insights( context, next ) {
-	context.primary = <StatsInsights followList={ new FollowList() } />;
+	context.primary = <StatsInsights />;
 	next();
 }
 
@@ -373,7 +372,6 @@ export function post( context, next ) {
 export function follows( context, next ) {
 	let siteId = context.params.site;
 	let pageNum = context.params.page_num;
-	const followList = new FollowList();
 
 	const selectedSite = getSite( context.store.getState(), siteId );
 	siteId = selectedSite ? selectedSite.ID || 0 : 0;
@@ -402,7 +400,6 @@ export function follows( context, next ) {
 			total="10"
 			domain={ siteDomain }
 			siteId={ siteId }
-			followList={ followList }
 		/>
 	);
 

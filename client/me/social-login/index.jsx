@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import AppleIcon from 'calypso/components/social-icons/apple';
 import { CompactCard } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import DocumentHead from 'calypso/components/data/document-head';
 import { getRequestError } from 'calypso/state/login/selectors';
 import GoogleIcon from 'calypso/components/social-icons/google';
@@ -84,7 +84,7 @@ class SocialLogin extends Component {
 		const title = useCheckupMenu ? translate( 'Social Logins' ) : translate( 'Social Login' );
 
 		return (
-			<Main className="security social-login is-wide-layout">
+			<Main wideLayout className="security social-login">
 				<PageViewTracker path="/me/security/social-login" title="Me > Social Login" />
 				<DocumentHead title={ title } />
 				<MeSidebarNavigation />

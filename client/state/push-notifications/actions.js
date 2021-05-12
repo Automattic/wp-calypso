@@ -7,7 +7,7 @@ import wpcom from 'calypso/lib/wp';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	PUSH_NOTIFICATIONS_API_READY,
 	PUSH_NOTIFICATIONS_API_NOT_READY,

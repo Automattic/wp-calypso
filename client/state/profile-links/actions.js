@@ -15,6 +15,8 @@ import {
 	USER_PROFILE_LINKS_RESET_ERRORS,
 } from 'calypso/state/action-types';
 
+import 'calypso/state/profile-links/init';
+
 import 'calypso/state/data-layer/wpcom/me/settings/profile-links';
 import 'calypso/state/data-layer/wpcom/me/settings/profile-links/delete';
 import 'calypso/state/data-layer/wpcom/me/settings/profile-links/new';

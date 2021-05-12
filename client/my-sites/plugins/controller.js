@@ -9,7 +9,6 @@ import { includes, some } from 'lodash';
  * Internal Dependencies
  */
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
-import notices from 'calypso/notices';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginEligibility from './plugin-eligibility';
@@ -19,6 +18,7 @@ import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import AsyncLoad from 'calypso/components/async-load';
 
 /**
  * Module variables
@@ -125,15 +125,12 @@ export function plugins( context, next ) {
 	const basePath = sectionify( context.path ).replace( '/' + filter, '' );
 
 	context.params.pluginFilter = filter;
-	notices.clearNotices( 'notices' );
 	renderPluginList( context, basePath );
 	next();
 }
 
 function plugin( context, next ) {
 	const siteUrl = getSiteFragment( context.path );
-
-	notices.clearNotices( 'notices' );
 	renderSinglePlugin( context, siteUrl );
 	next();
 }
@@ -206,5 +203,12 @@ export function scrollTopIfNoHash( context, next ) {
 	if ( typeof window !== 'undefined' && ! window.location.hash ) {
 		window.scrollTo( 0, 0 );
 	}
+	next();
+}
+
+export function renderDomainsPage( context, next ) {
+	context.primary = (
+		<AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-domain-upsell" />
+	);
 	next();
 }

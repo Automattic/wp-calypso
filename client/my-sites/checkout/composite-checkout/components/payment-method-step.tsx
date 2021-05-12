@@ -2,16 +2,20 @@
  * External dependencies
  */
 import React from 'react';
-import { useLineItems } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
-import type { LineItem as LineItemType } from '@automattic/composite-checkout';
+import {
+	getTotalLineItemFromCart,
+	getTaxLineItemFromCart,
+	getCreditsLineItemFromCart,
+	getSubtotalLineItemFromCart,
+} from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
 import CheckoutTerms from '../components/checkout-terms';
-import { WPOrderReviewTotal, WPOrderReviewSection, LineItem } from './wp-order-review-line-items';
+import { NonProductLineItem, WPOrderReviewSection } from './wp-order-review-line-items';
 
 const CheckoutTermsWrapper = styled.div`
 	& > * {
@@ -63,17 +67,13 @@ const CheckoutTermsWrapper = styled.div`
 `;
 
 export default function PaymentMethodStep( {
-	subtotal,
-	credits,
 	activeStepContent,
 }: {
-	subtotal: LineItemType;
-	credits: LineItemType;
-	activeStepContent: JSX.Element;
+	activeStepContent: React.ReactNode;
 } ): JSX.Element {
 	const { responseCart } = useShoppingCart();
-	const [ items, total ] = useLineItems();
-	const taxes = items.filter( ( item ) => item.type === 'tax' );
+	const taxLineItem = getTaxLineItemFromCart( responseCart );
+	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	return (
 		<>
 			{ activeStepContent }
@@ -83,12 +83,12 @@ export default function PaymentMethodStep( {
 			</CheckoutTermsWrapper>
 
 			<WPOrderReviewSection>
-				{ subtotal && <LineItem subtotal item={ subtotal } /> }
-				{ taxes.map( ( tax ) => (
-					<LineItem tax key={ tax.id } item={ tax } />
-				) ) }
-				{ credits && subtotal.amount.value > 0 && <LineItem subtotal item={ credits } /> }
-				<WPOrderReviewTotal total={ total } />
+				<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
+				{ taxLineItem && <NonProductLineItem tax lineItem={ taxLineItem } /> }
+				{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+					<NonProductLineItem subtotal lineItem={ creditsLineItem } />
+				) }
+				<NonProductLineItem total lineItem={ getTotalLineItemFromCart( responseCart ) } />
 			</WPOrderReviewSection>
 		</>
 	);

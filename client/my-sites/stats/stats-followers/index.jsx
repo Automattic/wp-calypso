@@ -145,11 +145,7 @@ class StatModuleFollowers extends Component {
 								</div>
 								<StatsListLegend value={ translate( 'Since' ) } label={ translate( 'Follower' ) } />
 								{ hasWpcomFollowers && (
-									<StatsList
-										moduleName="wpcomFollowers"
-										data={ wpcomData.subscribers }
-										followList={ this.props.followList }
-									/>
+									<StatsList moduleName="wpcomFollowers" data={ wpcomData.subscribers } />
 								) }
 								{ hasWpcomQueryFailed && <ErrorPanel className="is-error" /> }
 							</div>

@@ -4,19 +4,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'calypso/components/gridicon';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { recordTrack } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
- * Image dependencies
+ * Asset dependencies
  */
 import charactersImage from 'calypso/assets/images/reader/reader-conversations-characters.svg';
 
@@ -52,11 +52,12 @@ class ConversationsIntro extends React.Component {
 
 	maybeRecordRenderTrack = ( props = this.props ) => {
 		if ( props.hasUsedConversations !== true ) {
-			recordTrack( 'calypso_reader_conversations_intro_render' );
+			this.props.recordReaderTracksEvent( 'calypso_reader_conversations_intro_render' );
 		}
 	};
 
 	dismiss = () => {
+		this.props.recordReaderTracksEvent( 'calypso_reader_conversations_intro_dismiss' );
 		this.props.dismiss( this.props.isInternal );
 	};
 
@@ -129,9 +130,9 @@ export default connect(
 	},
 	{
 		dismiss: ( isInternal ) => {
-			recordTrack( 'calypso_reader_conversations_intro_dismiss' );
 			const preferenceName = getPreferenceName( isInternal );
 			return savePreference( preferenceName, true );
 		},
+		recordReaderTracksEvent,
 	}
 )( localize( ConversationsIntro ) );

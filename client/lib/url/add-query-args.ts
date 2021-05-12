@@ -2,14 +2,13 @@
  * External dependencies
  */
 import { pickBy } from 'lodash';
-import { Primitive } from 'utility-types';
+import type { Primitive } from 'utility-types';
 
 /**
  * Internal dependencies
  */
-import { URL as URLString } from 'calypso/types';
-import { determineUrlType, URL_TYPE } from './url-type';
-import format from './format';
+import type { URL as URLString } from 'calypso/types';
+import { format, determineUrlType, URL_TYPE } from '@automattic/calypso-url';
 
 const BASE_URL = 'http://__domain__.invalid';
 

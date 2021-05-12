@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import { receiveGravatarImageFailed, uploadGravatar } from '../actions';
@@ -12,13 +7,15 @@ import {
 	GRAVATAR_UPLOAD_REQUEST,
 } from 'calypso/state/action-types';
 
+const dispatch = jest.fn();
+
 describe( 'actions', () => {
 	describe( '#uploadGravatar', () => {
 		test( 'dispatches request action with the file and email', () => {
 			const action = uploadGravatar( 'file', 'email' );
-			expect( action.type ).to.equal( GRAVATAR_UPLOAD_REQUEST );
-			expect( action.file ).to.equal( 'file' );
-			expect( action.email ).to.equal( 'email' );
+			expect( action.type ).toEqual( GRAVATAR_UPLOAD_REQUEST );
+			expect( action.file ).toEqual( 'file' );
+			expect( action.email ).toEqual( 'email' );
 		} );
 	} );
 
@@ -26,13 +23,15 @@ describe( 'actions', () => {
 		test( 'dispatches image receive failure action with error message', () => {
 			const errorMessage = 'error';
 			const statName = 'statName';
-			const result = receiveGravatarImageFailed( {
+			receiveGravatarImageFailed( {
 				errorMessage,
 				statName,
+			} )( dispatch );
+			expect( dispatch ).toHaveBeenCalledWith( {
+				type: GRAVATAR_RECEIVE_IMAGE_FAILURE,
+				errorMessage,
+				meta: expect.any( Object ),
 			} );
-			expect( result ).to.have.property( 'type', GRAVATAR_RECEIVE_IMAGE_FAILURE );
-			expect( result ).to.have.property( 'errorMessage', errorMessage );
-			expect( result ).to.have.property( 'meta' );
 		} );
 	} );
 } );

@@ -6,10 +6,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { noop, size } from 'lodash';
+import { size } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -21,8 +21,9 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
-} from 'calypso/lib/plans';
-import { GROUP_JETPACK, GROUP_WPCOM } from 'calypso/lib/plans/constants';
+	GROUP_JETPACK,
+	GROUP_WPCOM,
+} from '@automattic/calypso-products';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -39,12 +40,15 @@ import { preventWidows } from 'calypso/lib/formatting';
  */
 import './style.scss';
 
+const noop = () => {};
+
 export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
 		description: PropTypes.node,
 		forceHref: PropTypes.bool,
+		disableCircle: PropTypes.bool,
 		disableHref: PropTypes.bool,
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
@@ -78,6 +82,7 @@ export class Banner extends Component {
 
 	static defaultProps = {
 		forceHref: false,
+		disableCircle: false,
 		disableHref: false,
 		dismissTemporary: false,
 		compact: false,
@@ -145,7 +150,7 @@ export class Banner extends Component {
 	};
 
 	getIcon() {
-		const { icon, iconPath, jetpack, showIcon } = this.props;
+		const { disableCircle, icon, iconPath, jetpack, showIcon } = this.props;
 
 		if ( ! showIcon ) {
 			return;
@@ -169,7 +174,10 @@ export class Banner extends Component {
 		return (
 			<div className="banner__icons">
 				<div className="banner__icon">{ iconComponent }</div>
-				<div className="banner__icon-circle">{ iconComponent }</div>
+				{ ! disableCircle && <div className="banner__icon-circle">{ iconComponent }</div> }
+				{ disableCircle && iconPath && (
+					<div className="banner__icon-no-circle">{ iconComponent }</div>
+				) }
 			</div>
 		);
 	}

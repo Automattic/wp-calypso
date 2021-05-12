@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
@@ -23,7 +23,7 @@ import {
  * @param  {object} action Action object
  * @returns {object} Updated deleting state
  */
-const deleteStatus = withoutPersistence( ( state = {}, action ) => {
+const deleteStatus = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_DELETE_CACHE: {
 			const { siteId } = action;
@@ -61,7 +61,7 @@ const deleteStatus = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated preloading state after an action has been dispatched.
@@ -71,7 +71,7 @@ const deleteStatus = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated preloading state
  */
-const preloading = withoutPersistence( ( state = {}, action ) => {
+const preloading = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_PRELOAD_CACHE: {
 			const { siteId } = action;
@@ -96,7 +96,7 @@ const preloading = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated cache testing state after an action has been dispatched.
@@ -106,7 +106,7 @@ const preloading = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated cache testing state
  */
-const testing = withoutPersistence( ( state = {}, action ) => {
+const testing = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_TEST_CACHE: {
 			const { siteId } = action;
@@ -131,7 +131,7 @@ const testing = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Tracks the cache test results for a particular site.
@@ -140,7 +140,7 @@ const testing = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated cache test results
  */
-const items = withoutPersistence( ( state = {}, action ) => {
+const items = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_TEST_CACHE_SUCCESS: {
 			const { siteId, data } = action;
@@ -153,7 +153,7 @@ const items = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	deleteStatus,

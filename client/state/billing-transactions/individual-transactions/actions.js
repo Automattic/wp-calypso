@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import {
@@ -9,6 +14,8 @@ import {
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import wp from 'calypso/lib/wp';
+import { billingHistoryReceipt } from 'calypso/me/purchases/paths';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/billing-transactions/init';
 
@@ -39,6 +46,31 @@ export const requestBillingTransaction = ( transactionId ) => ( dispatch ) => {
 				transactionId,
 				error,
 			} );
+
+			const displayOnNextPage = true;
+			const id = `transaction-fetch-${ transactionId }`;
+			if ( 'invalid_receipt' === error.error ) {
+				dispatch(
+					errorNotice(
+						translate( "Sorry, we couldn't find receipt #%s.", { args: transactionId } ),
+						{
+							id,
+							displayOnNextPage,
+							duration: 5000,
+						}
+					)
+				);
+				return;
+			}
+
+			dispatch(
+				errorNotice( translate( "Sorry, we weren't able to load the requested receipt." ), {
+					id,
+					displayOnNextPage,
+					button: translate( 'Try again' ),
+					href: billingHistoryReceipt( transactionId ),
+				} )
+			);
 		} );
 };
 

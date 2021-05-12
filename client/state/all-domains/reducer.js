@@ -1,13 +1,14 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	ALL_DOMAINS_REQUEST,
 	ALL_DOMAINS_REQUEST_FAILURE,
 	ALL_DOMAINS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { allDomainsSchema } from './schema';
-import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { createLightSiteDomainObject } from 'calypso/state/all-domains/helpers';
 
 export const allDomains = withSchemaValidation( allDomainsSchema, ( state = [], action ) => {

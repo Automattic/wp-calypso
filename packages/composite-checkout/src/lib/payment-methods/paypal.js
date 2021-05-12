@@ -4,7 +4,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 /**
  * Internal dependencies
@@ -13,7 +13,6 @@ import Button from '../../components/button';
 import {
 	FormStatus,
 	TransactionStatus,
-	useEvents,
 	useTransactionStatus,
 	useLineItems,
 } from '../../public-api';
@@ -22,23 +21,23 @@ import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 const debug = debugFactory( 'composite-checkout:paypal' );
 
-export function createPayPalMethod() {
+export function createPayPalMethod( { labelText = null } ) {
 	debug( 'creating new paypal payment method' );
 	return {
 		id: 'paypal',
-		label: <PaypalLabel />,
+		label: <PaypalLabel labelText={ labelText } />,
 		submitButton: <PaypalSubmitButton />,
 		inactiveContent: <PaypalSummary />,
 		getAriaLabel: ( __ ) => __( 'PayPal' ),
 	};
 }
 
-export function PaypalLabel() {
+export function PaypalLabel( { labelText = null } ) {
 	const { __ } = useI18n();
 
 	return (
 		<React.Fragment>
-			<span>{ __( 'PayPal' ) }</span>
+			<span>{ labelText || __( 'PayPal' ) }</span>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
 				<PaypalLogo />
 			</PaymentMethodLogos>
@@ -48,12 +47,10 @@ export function PaypalLabel() {
 
 export function PaypalSubmitButton( { disabled, onClick } ) {
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
 	const { transactionStatus } = useTransactionStatus();
 	const [ items ] = useLineItems();
 
 	const handleButtonPress = () => {
-		onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', payload: { paymentMethodId: 'paypal' } } );
 		onClick( 'paypal', {
 			items,
 		} );

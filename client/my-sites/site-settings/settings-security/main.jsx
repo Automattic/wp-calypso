@@ -70,6 +70,7 @@ const SiteSettingsSecurity = ( {
 				brandFont
 				className="settings-security__page-heading"
 				headerText={ translate( 'Settings' ) }
+				subHeaderText={ translate( "Manage your site's security settings." ) }
 				align="left"
 			/>
 			<SiteSettingsNavigation site={ site } section="security" />

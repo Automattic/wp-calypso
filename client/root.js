@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';

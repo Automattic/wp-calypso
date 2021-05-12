@@ -18,7 +18,7 @@ import { flowRight as compose } from 'lodash';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Notice from 'calypso/components/notice';
 import ButtonGroup from 'calypso/components/button-group';
 import { Button } from '@automattic/components';

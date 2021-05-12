@@ -5,7 +5,7 @@ import * as React from 'react';
 import classnames from 'classnames';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 /**
  * Internal dependencies
@@ -40,7 +40,7 @@ const PlansButton: React.FunctionComponent = () => {
 		<>
 			<Link
 				to={ makePath( Step.PlansModal ) }
-				label={ __( planLabel ) }
+				label={ planLabel }
 				className={ classnames( 'plans-button', { 'is-highlighted': !! plan } ) }
 			>
 				{ isDesktop && planLabel }

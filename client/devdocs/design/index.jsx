@@ -10,7 +10,7 @@ import { trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
@@ -46,7 +46,6 @@ import Disableable from 'calypso/components/disableable/docs/example';
 import DotPager from 'calypso/components/dot-pager/docs/example';
 import DropZones from 'calypso/components/drop-zone/docs/example';
 import EllipsisMenu from 'calypso/components/ellipsis-menu/docs/example';
-import EmbedDialog from 'calypso/components/tinymce/plugins/embed/docs/example';
 import EmojifyExample from 'calypso/components/emojify/docs/example';
 import EmptyContent from 'calypso/components/empty-content/docs/example';
 import ExternalLink from 'calypso/components/external-link/docs/example';
@@ -73,13 +72,10 @@ import InfoPopover from 'calypso/components/info-popover/docs/example';
 import InlineSupportLink from 'calypso/components/inline-support-link/docs/example';
 import InputChrono from 'calypso/components/input-chrono/docs/example';
 import JetpackColophonExample from 'calypso/components/jetpack-colophon/docs/example';
-import JetpackBundleCard from 'calypso/components/jetpack/card/jetpack-bundle-card/docs/example';
 import JetpackHeaderExample from 'calypso/components/jetpack-header/docs/example';
 import JetpackLogoExample from 'calypso/components/jetpack-logo/docs/example';
-import JetpackPlanCard from 'calypso/components/jetpack/card/jetpack-plan-card/docs/example';
-import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card/docs/example';
-import JetpackProductSlideOutCard from 'calypso/components/jetpack/card/jetpack-product-slide-out-card/docs/example';
 import LanguagePicker from 'calypso/components/language-picker/docs/example';
+import JetpackReviewPromptExample from 'calypso/blocks/jetpack-review-prompt/docs/example';
 import LayoutExample from 'calypso/components/layout/docs/example';
 import LineChart from 'calypso/components/line-chart/docs/example';
 import ListEnd from 'calypso/components/list-end/docs/example';
@@ -208,7 +204,6 @@ export default class DesignAssets extends React.Component {
 					<DotPager readmeFilePath="dot-pager" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
-					<EmbedDialog readmeFilePath="tinymce/plugins/embed" />
 					<EmojifyExample readmeFilePath="emojify" />
 					<EmptyContent readmeFilePath="empty-content" />
 					<ExternalLink readmeFilePath="external-link" />
@@ -234,13 +229,10 @@ export default class DesignAssets extends React.Component {
 					<InfoPopover readmeFilePath="info-popover" />
 					<InlineSupportLink readmeFilePath="inline-support-link" />
 					<InputChrono readmeFilePath="input-chrono" />
-					<JetpackBundleCard readmeFilePath="jetpack-bundle-card" />
 					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
 					<JetpackHeaderExample readmeFilePath="jetpack-header" />
 					<JetpackLogoExample readmeFilePath="jetpack-logo" />
-					<JetpackPlanCard readmeFilePath="jetpack-plan-card" />
-					<JetpackProductCard readmeFilePath="jetpack-product-card" />
-					<JetpackProductSlideOutCard readmeFilePath="jetpack-product-slide-out-card" />
+					<JetpackReviewPromptExample readmeFilePath="jetpack/jetpack-review-prompt" />
 					<LanguagePicker readmeFilePath="language-picker" />
 					<LayoutExample readmeFilePath="layout" />
 					<LineChart readmeFilePath="line-chart" />

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
-import { each, isNaN, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ const mapPendingStatusToUnapproved = ( status ) => ( 'pending' === status ? 'una
 
 const sanitizeInt = ( number ) => {
 	const integer = parseInt( number, 10 );
-	return ! isNaN( integer ) && integer > 0 ? integer : false;
+	return ! Number.isNaN( integer ) && integer > 0 ? integer : false;
 };
 
 const sanitizeQueryAction = ( action ) => {
@@ -135,7 +135,7 @@ export const clearCommentNotices = ( { store }, next ) => {
 	if ( ! startsWith( nextPath, '/comments' ) ) {
 		const { getState, dispatch } = store;
 		const notices = getNotices( getState() );
-		each( notices, ( { noticeId } ) => {
+		notices.forEach( ( { noticeId } ) => {
 			if ( startsWith( noticeId, 'comment-notice' ) ) {
 				dispatch( removeNotice( noticeId ) );
 			}

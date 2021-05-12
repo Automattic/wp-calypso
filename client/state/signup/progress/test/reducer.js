@@ -12,14 +12,14 @@ import {
 } from 'calypso/state/action-types';
 
 // Mock necessary for testing certain utils
-jest.mock( 'signup/config/flows-pure', () => ( {
+jest.mock( 'calypso/signup/config/flows-pure', () => ( {
 	'new-flow': {
 		steps: [ 'something', 'everything' ],
 	},
 } ) );
 
 // Mock necessary for testing step submission behavior
-jest.mock( 'signup/config/steps-pure', () => ( {
+jest.mock( 'calypso/signup/config/steps-pure', () => ( {
 	stepWithAPI: { apiRequestFunction: () => {} },
 	stepWithoutAPI: {},
 } ) );

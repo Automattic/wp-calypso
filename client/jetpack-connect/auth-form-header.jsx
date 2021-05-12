@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import FormattedHeader from 'calypso/components/formatted-header';
 import safeImageUrl from 'calypso/lib/safe-image-url';
 import Site from 'calypso/blocks/site';
@@ -130,6 +130,11 @@ export class AuthFormHeader extends Component {
 				case 'auth-in-progress':
 					return translate( 'Connecting your store' );
 				default:
+					if ( wooDnaConfig.getFlowName() === 'woodna:woocommerce-payments' ) {
+						return translate(
+							'Approve your connection. Your account will enable you to start using the features and benefits offered by WooCommerce Payments'
+						);
+					}
 					return translate( 'Approve your connection' );
 			}
 		}

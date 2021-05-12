@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies

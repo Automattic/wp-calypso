@@ -4,7 +4,7 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { sprintf } from '@wordpress/i18n';
 
 /**
@@ -27,6 +27,10 @@ import { FormStatus } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
+export const RadioButtons = styled.div`
+	margin-bottom: 16px;
+`;
+
 export default function CheckoutPaymentMethods( {
 	summary,
 	isComplete,
@@ -35,7 +39,7 @@ export default function CheckoutPaymentMethods( {
 	summary?: boolean;
 	isComplete: boolean;
 	className?: string;
-} ) {
+} ): JSX.Element | null {
 	const { __ } = useI18n();
 	const onEvent = useEvents();
 	const onError = useCallback(
@@ -92,6 +96,7 @@ export default function CheckoutPaymentMethods( {
 					<CheckoutErrorBoundary
 						key={ method.id }
 						errorMessage={ sprintf(
+							/* translators: %s is the payment method name that has an error, like "PayPal" */
 							__( 'There was a problem with the payment method: %s' ),
 							method.id
 						) }
@@ -119,11 +124,15 @@ CheckoutPaymentMethods.propTypes = {
 	className: PropTypes.string,
 };
 
-export function CheckoutPaymentMethodsTitle() {
+export function CheckoutPaymentMethodsTitle(): JSX.Element {
 	const { __ } = useI18n();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
-	return ! isActive && isComplete ? __( 'Payment method' ) : __( 'Pick a payment method' );
+
+	const paymentMethodLabelActive = __( 'Pick a payment method' );
+	const paymentMethodLabelInactive = __( 'Payment method' );
+
+	return <>{ ! isActive && isComplete ? paymentMethodLabelInactive : paymentMethodLabelActive }</>;
 }
 
 function PaymentMethod( {
@@ -178,7 +187,3 @@ interface PaymentMethodProps {
 	inactiveContent?: React.ReactNode;
 	summary?: boolean;
 }
-
-export const RadioButtons = styled.div`
-	margin-bottom: 16px;
-`;

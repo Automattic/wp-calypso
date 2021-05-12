@@ -54,7 +54,7 @@ const GSuitePrice = ( { currencyCode, product } ) => {
 	return (
 		<div className="gsuite-price">
 			<h4 className="gsuite-price__monthly-price">
-				{ translate( '{{strong}}%(price)s{{/strong}} per user/month', {
+				{ translate( '{{strong}}%(price)s{{/strong}} /user /month', {
 					args: {
 						price: monthlyPrice,
 					},

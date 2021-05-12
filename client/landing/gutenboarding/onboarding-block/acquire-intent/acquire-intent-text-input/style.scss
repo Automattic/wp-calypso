@@ -1,6 +1,8 @@
 @import '../../../variables.scss';
 @import '../../../mixins';
 
+$placeholder-color: #ccd0d4; // former light-gray-700
+
 .acquire-intent-text-input__wrapper {
 	display: block;
 }
@@ -34,7 +36,7 @@
 	}
 
 	&::placeholder {
-		color: $light-gray-700;
+		color: $placeholder-color;
 		line-height: normal;
 	}
 
@@ -57,8 +59,8 @@
 		max-width: 550px;
 		background: linear-gradient(
 			90deg,
-			$light-gray-700 0%,
-			lighten( $light-gray-700, 10% ) 100%
+			$placeholder-color 0%,
+			lighten( $placeholder-color, 10% ) 100%
 		);
 	}
 }

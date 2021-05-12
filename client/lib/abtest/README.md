@@ -1,4 +1,9 @@
-# A/B Tests
+# This library is deprecated
+
+_Please consider ExPlat for your next A/B experiment._
+See client/lib/explat/readme.md for more info!
+
+## A/B Tests
 
 This module includes functionality for performing A/B tests in Calypso.
 

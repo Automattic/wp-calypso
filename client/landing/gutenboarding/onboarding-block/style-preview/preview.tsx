@@ -5,22 +5,24 @@ import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
 import { useLocale } from '@automattic/i18n-utils';
+import type { FontPair } from '@automattic/design-picker';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { fontPairings } from '../../constants';
+import { useFontPairings } from '../../fonts';
+import { useAnchorFmParams } from '../../../gutenboarding/path';
 import type { Viewport } from './types';
 
-function getFontsLoadingHTML() {
+function getFontsLoadingHTML( effectiveFontPairings: readonly FontPair[] ) {
 	const baseURL = 'https://fonts.googleapis.com/css2';
 
 	// matrix: regular,bold * regular,italic
 	const axis = 'ital,wght@0,400;0,700;1,400;1,700';
 
 	// create a query for all fonts together
-	const query = fontPairings.reduce( ( acc, pairing ) => {
+	const query = effectiveFontPairings.reduce( ( acc, pairing ) => {
 		acc.push(
 			`family=${ encodeURI( pairing.headings ) }:${ axis }`,
 			`family=${ encodeURI( pairing.base ) }:${ axis }`
@@ -36,7 +38,7 @@ function getFontsLoadingHTML() {
 
 	// Chrome doesn't load the fonts in memory until they're actually used,
 	// this keeps the fonts used and ready in memory.
-	const fontsHolders = fontPairings.reduce( ( acc, pairing ) => {
+	const fontsHolders = ( effectiveFontPairings as FontPair[] ).reduce( ( acc, pairing ) => {
 		Object.values( pairing ).forEach( ( font ) => {
 			const fontHolder = document.createElement( 'div' );
 			fontHolder.style.fontFamily = font;
@@ -60,8 +62,10 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 	const { selectedDesign, selectedFonts, siteTitle } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
+	const { anchorFmPodcastId } = useAnchorFmParams();
 
 	const iframe = React.useRef< HTMLIFrameElement >( null );
+	const effectiveFontPairings = useFontPairings();
 
 	React.useEffect(
 		() => {
@@ -78,6 +82,9 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 					...( selectedFonts && {
 						font_headings: selectedFonts.headings,
 						font_base: selectedFonts.base,
+					} ),
+					...( anchorFmPodcastId && {
+						anchor_podcast: anchorFmPodcastId,
 					} ),
 				} );
 
@@ -98,7 +105,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 					return;
 				}
 				const html = await resp.text();
-				const { head, fontsHolders } = getFontsLoadingHTML();
+				const { head, fontsHolders } = getFontsLoadingHTML( effectiveFontPairings );
 				// the browser automatically moves the head code to the <head />
 				setPreviewHtml( head + html + fontsHolders );
 			};

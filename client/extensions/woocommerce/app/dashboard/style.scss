@@ -1,152 +1,25 @@
-.dashboard__placeholder .card {
-	@include placeholder();
-}
-
-.dashboard__placeholder-large button,
-.dashboard__placeholder-small button {
-	display: none;
-}
-
-.dashboard__placeholder-small {
-	height: 250px;
-}
-
-.dashboard__placeholder-large {
-	margin-bottom: 16px;
-	height: 200px;
-}
-
-.dashboard__manage-has-orders-header {
-	margin-bottom: 24px;
+.dashboard__store-move-notice {
+	font-size: $font-body-small;
 	text-align: center;
+	margin-bottom: 80px;
 
-	h2 {
-		font-size: $font-title-medium;
-
-		span {
-			display: block;
-		}
-	}
-}
-
-.dashboard__manage-has-orders-stats-actions {
-	padding: 24px;
-	text-align: center;
-}
-
-.dashboard__manage-has-orders {
-	h2 {
-		font-size: $font-title-medium;
-		line-height: 1.2em;
-		margin-bottom: 16px;
+	a {
+		margin-top: 20px;
 	}
 
-	.dashboard__reports-widget .dashboard-widget__image {
-		margin-right: 10%;
-		width: calc( 35% - 8px ) !important;
-		margin-bottom: 16px;
+	h1 {
+		font-weight: bold;
+		margin: 17px;
+	}
 
-		@include breakpoint-deprecated( '>660px' ) {
-			margin-bottom: 0;
-		}
-
-		@include breakpoint-deprecated( '<660px' ) {
-			margin-right: auto;
-			margin-left: auto;
-			width: 80% !important;
-		}
-
-		& + .dashboard-widget__children {
-			@include breakpoint-deprecated( '>660px' ) {
-				width: calc( 65% - 34px ) !important;
-			}
+	@media screen and ( min-width: 720px ) {
+		p {
+			max-width: 50%;
+			margin: auto;
 		}
 	}
 
-	.dashboard-widget__row {
-		@include breakpoint-deprecated( '<960px' ) {
-			flex-direction: column;
-		}
-	}
-
-	.dashboard-widget__row.dashboard__process-orders-container {
-		margin-bottom: 10px;
-		min-width: 100%;
-		background: var( --color-surface );
-		box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
-			0 1px 2px var( --color-neutral-0 );
-		flex-direction: row;
-
-		@include breakpoint-deprecated( '<480px' ) {
-			flex-direction: column;
-		}
-
-		@include breakpoint-deprecated( '>480px' ) {
-			margin-bottom: 16px;
-		}
-
-		&.has-reviews {
-			min-width: calc( 75% - 16px );
-		}
-
-		.dashboard-widget {
-			text-align: center;
-			box-shadow: none;
-			background-color: transparent;
-			margin: 0;
-
-			.dashboard__process-orders-value {
-				display: block;
-				font-size: $font-title-medium;
-			}
-
-			&.dashboard__process-orders-revenue .dashboard__process-orders-value {
-				color: var( --color-success );
-			}
-
-			.dashboard__process-orders-label {
-				color: var( --color-text-subtle );
-			}
-		}
-
-		.dashboard__process-orders-action {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-	}
-
-	.dashboard-widget.dashboard__reviews-widget {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		min-width: 25%;
-		width: 100%;
-		text-align: center;
-
-		@include breakpoint-deprecated( '>960px' ) {
-			margin-left: 16px;
-		}
-
-		.dashboard-widget__title {
-			margin-bottom: 12px;
-		}
-
-		.dashboard-widget__content {
-			width: 100%;
-		}
-
-		.dashboard-widget__children {
-			@include breakpoint-deprecated( '<960px' ) {
-				display: flex;
-				align-items: stretch;
-
-				.dashboard-widget__title,
-				.button {
-					flex: 1 0 50%;
-					margin: auto;
-				}
-			}
-		}
+	&.store-removed {
+		margin-top: 40px;
 	}
 }

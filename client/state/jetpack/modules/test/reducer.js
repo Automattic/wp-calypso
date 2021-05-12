@@ -22,8 +22,6 @@ import {
 	JETPACK_MODULES_REQUEST_SUCCESS,
 	JETPACK_SETTINGS_UPDATE,
 	JETPACK_SETTINGS_SAVE_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
@@ -55,24 +53,6 @@ describe( 'reducer', () => {
 			};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
 			expect( stateOut[ siteId ][ 'module-b' ].active ).to.be.false;
-		} );
-
-		test( 'should not persist state', () => {
-			const stateIn = MODULES_FIXTURE;
-			const action = {
-				type: SERIALIZE,
-			};
-			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const stateIn = MODULES_FIXTURE;
-			const action = {
-				type: DESERIALIZE,
-			};
-			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {} );
 		} );
 
 		test( 'should replace the items object for the site with a new list of modules', () => {
@@ -274,26 +254,6 @@ describe( 'reducer', () => {
 				};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
 				expect( stateOut[ siteId ].fetchingModules ).to.be.false;
-			} );
-		} );
-
-		describe( 'persistence', () => {
-			test( 'should not persist state', () => {
-				const stateIn = REQUESTS_FIXTURE;
-				const action = {
-					type: SERIALIZE,
-				};
-				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-				expect( stateOut ).to.be.undefined;
-			} );
-
-			test( 'should not load persisted state', () => {
-				const stateIn = REQUESTS_FIXTURE;
-				const action = {
-					type: DESERIALIZE,
-				};
-				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-				expect( stateOut ).to.eql( {} );
 			} );
 		} );
 	} );

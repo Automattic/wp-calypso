@@ -8,12 +8,12 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { getDeltaActivities, isSuccessfulDailyBackup } from 'calypso/lib/jetpack/backup-utils';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupCard from 'calypso/components/jetpack/backup-card';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import MostRecentStatus from 'calypso/components/jetpack/daily-backup-status/index-alternate';
-import { useDateWithOffset } from '../hooks';
 import { useDailyBackupStatus, useRealtimeBackupStatus } from './hooks';
 
 /**
@@ -39,10 +39,9 @@ export const DailyStatus = ( { selectedDate } ) => {
 	useDailyBackupStatus( siteId, moment( dateWithOffset ).subtract( 1, 'day' ) );
 	useDailyBackupStatus( siteId, moment( dateWithOffset ).add( 1, 'day' ) );
 
-	const lastBackupDate = useDateWithOffset(
-		lastBackupBeforeDate?.activityTs,
-		!! lastBackupBeforeDate
-	);
+	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs, {
+		shouldExecute: !! lastBackupBeforeDate,
+	} );
 
 	if ( isLoading ) {
 		return <BackupPlaceholder showDatePicker={ false } />;
@@ -80,7 +79,8 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 		mostRecentBackupEver,
 		lastBackupBeforeDate,
 		lastBackupAttemptOnDate,
-		earlierBackupAttemptsOnDate,
+		lastSuccessfulBackupOnDate,
+		backupAttemptsOnDate,
 		rawDeltas,
 	} = useRealtimeBackupStatus( siteId, selectedDate );
 
@@ -88,10 +88,9 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 	useRealtimeBackupStatus( siteId, moment( selectedDate ).subtract( 1, 'day' ) );
 	useRealtimeBackupStatus( siteId, moment( selectedDate ).add( 1, 'day' ) );
 
-	const lastBackupDate = useDateWithOffset(
-		lastBackupBeforeDate?.activityTs,
-		!! lastBackupBeforeDate
-	);
+	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs, {
+		shouldExecute: !! lastBackupBeforeDate,
+	} );
 
 	if ( isLoading ) {
 		return <BackupPlaceholder showDatePicker={ false } />;
@@ -117,14 +116,14 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 					{ ...{
 						selectedDate,
 						lastBackupDate,
-						backup: lastBackupAttemptOnDate,
+						backup: lastSuccessfulBackupOnDate || lastBackupAttemptOnDate,
 						isLatestBackup,
 						dailyDeltas,
 					} }
 				/>
 			</li>
 
-			{ earlierBackupAttemptsOnDate.map( ( activity ) => (
+			{ backupAttemptsOnDate.map( ( activity ) => (
 				<li key={ activity.activityId }>
 					<BackupCard activity={ activity } />
 				</li>

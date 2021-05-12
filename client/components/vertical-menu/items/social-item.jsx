@@ -6,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, identity } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import SocialLogo from 'calypso/components/social-logo';
  */
 import './style.scss';
 
-const services = ( translate ) => ( {
+const services = ( translate = ( string ) => string ) => ( {
 	facebook: { icon: 'facebook', label: translate( 'Facebook' ) },
 	google: { icon: 'google', label: translate( 'Google search' ) },
 	google_plus: { icon: 'google-plus', label: translate( 'Google+ ' ) },
@@ -27,6 +27,8 @@ const services = ( translate ) => ( {
 	twitter: { icon: 'twitter', label: translate( 'Twitter' ) },
 	wordpress: { icon: 'wordpress', label: translate( 'WordPress.com Reader' ) },
 } );
+
+const noop = () => {};
 
 export const SocialItem = ( props ) => {
 	const { isSelected, onClick, service, translate } = props;
@@ -51,14 +53,13 @@ export const SocialItem = ( props ) => {
 SocialItem.propTypes = {
 	isSelected: PropTypes.bool,
 	onClick: PropTypes.func,
-	service: PropTypes.oneOf( Object.keys( services( identity ) ) ).isRequired,
+	service: PropTypes.oneOf( Object.keys( services() ) ).isRequired,
 	translate: PropTypes.func,
 };
 
 SocialItem.defaultProps = {
 	isSelected: false,
-	onClick: identity,
-	translate: identity,
+	onClick: noop,
 };
 
 export default localize( SocialItem );

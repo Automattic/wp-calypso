@@ -1,13 +1,15 @@
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+
 import {
 	SUPPORT_ARTICLE_DIALOG_OPEN,
 	SUPPORT_ARTICLE_DIALOG_CLOSE,
 } from 'calypso/state/action-types';
 
-export default withoutPersistence(
+export default withStorageKey(
+	'inlineSupportArticle',
 	(
 		state = {
 			postId: null,

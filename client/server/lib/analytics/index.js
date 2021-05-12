@@ -4,12 +4,12 @@
 
 import superagent from 'superagent';
 import { v4 as uuid } from 'uuid';
-import { isUndefined, omit, assign, get, has } from 'lodash';
+import { omit, get, has } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { statsdTimingUrl, statsdCountingUrl } from 'calypso/lib/analytics/statsd-utils';
 const URL = require( 'url' );
 
@@ -90,27 +90,23 @@ const analytics = {
 
 			// Remove properties that have an undefined value
 			// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-			eventProperties = omit( eventProperties, isUndefined );
+			eventProperties = omit( eventProperties, ( prop ) => typeof prop === 'undefined' );
 
 			const date = new Date();
 			const acceptLanguageHeader = req.get( 'Accept-Language' ) || '';
 
-			this.createPixel(
-				assign(
-					{
-						_en: eventName,
-						_ts: date.getTime(),
-						_tz: date.getTimezoneOffset() / 60,
-						_dl: req.get( 'Referer' ),
-						_lg: acceptLanguageHeader.split( ',' )[ 0 ],
-						_pf: req.useragent.platform,
-						_via_ip: req.get( 'x-forwarded-for' ) || req.connection.remoteAddress,
-						_via_ua: req.useragent.source,
-					},
-					getUserFromRequest( req ),
-					eventProperties
-				)
-			);
+			this.createPixel( {
+				_en: eventName,
+				_ts: date.getTime(),
+				_tz: date.getTimezoneOffset() / 60,
+				_dl: req.get( 'Referer' ),
+				_lg: acceptLanguageHeader.split( ',' )[ 0 ],
+				_pf: req.useragent.platform,
+				_via_ip: req.get( 'x-forwarded-for' ) || req.connection.remoteAddress,
+				_via_ua: req.useragent.source,
+				...getUserFromRequest( req ),
+				...eventProperties,
+			} );
 		},
 	},
 };

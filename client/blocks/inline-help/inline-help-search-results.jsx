@@ -3,7 +3,7 @@
  */
 import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { debounce, identity, isEmpty, noop } from 'lodash';
+import { debounce, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -35,6 +35,8 @@ import {
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from './constants';
 
+const noop = () => {};
+
 function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
 	return debounce( () => {
 		speak( message, priority );
@@ -59,7 +61,7 @@ function HelpSearchResults( {
 	sectionName,
 	selectedResultIndex = -1,
 	selectSearchResult,
-	translate = identity,
+	translate,
 	placeholderLines,
 	track,
 } ) {
@@ -205,10 +207,22 @@ function HelpSearchResults( {
 			.filter( ( type, index, arr ) => arr.indexOf( type ) === index );
 
 		return searchResultTypes.map( ( resultType ) => {
+			let displayedResults = results;
+			switch ( resultType ) {
+				case SUPPORT_TYPE_CONTEXTUAL_HELP:
+					displayedResults = results.filter( ( r ) => r.support_type === resultType ).slice( 0, 6 );
+					break;
+				case SUPPORT_TYPE_API_HELP:
+					displayedResults = results.filter( ( r ) => r.support_type === resultType ).slice( 0, 5 );
+					break;
+				case SUPPORT_TYPE_ADMIN_SECTION:
+					displayedResults = results.filter( ( r ) => r.support_type === resultType ).slice( 0, 3 );
+					break;
+			}
 			return renderSearchResultsSection(
 				`inline-search--${ resultType }`,
 				getTitleBySectionType( resultType, query ),
-				results.filter( ( r ) => r.support_type === resultType )
+				displayedResults
 			);
 		} );
 	};

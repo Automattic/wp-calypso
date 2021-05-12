@@ -2,6 +2,7 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_FETCH,
@@ -106,9 +107,11 @@ export const isDeleting = ( state = {}, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	hasLoadedFromServer,
 	isDeleting,
 	isFetching,
 	items,
 } );
+
+export default withStorageKey( 'storedCards', combinedReducer );

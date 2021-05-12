@@ -6,7 +6,7 @@ import { start, stop } from '@automattic/browser-data-collector';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite, isSingleUserSite } from 'calypso/state/sites/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -15,8 +15,9 @@ import {
 	getCurrentUserVisibleSiteCount,
 	getCurrentUserCountryCode,
 	isCurrentUserBootstrapped,
+	getCurrentUserLocale,
 } from 'calypso/state/current-user/selectors';
-
+import { collectTranslationTimings, clearTranslationTimings } from './collectors/translations';
 /**
  * This reporter is added to _all_ performance tracking metrics.
  * Be sure to add only metrics that make sense for tracked pages and are always present.
@@ -32,6 +33,12 @@ const buildDefaultCollector = ( state ) => {
 	const sitesVisibleCount = getCurrentUserVisibleSiteCount( state );
 	const userCountryCode = getCurrentUserCountryCode( state );
 	const userBootstrapped = isCurrentUserBootstrapped( state );
+	const userLocale = getCurrentUserLocale( state );
+	const {
+		count: translationsChunksCount,
+		total: translationsChunksDuration,
+	} = collectTranslationTimings();
+	clearTranslationTimings();
 
 	return ( report ) => {
 		report.data.set( 'siteId', siteId );
@@ -42,6 +49,9 @@ const buildDefaultCollector = ( state ) => {
 		report.data.set( 'sitesVisibleCount', sitesVisibleCount );
 		report.data.set( 'userCountryCode', userCountryCode );
 		report.data.set( 'userBootstrapped', userBootstrapped );
+		report.data.set( 'userLocale', userLocale );
+		report.data.set( 'translationsChunksDuration', translationsChunksDuration );
+		report.data.set( 'translationsChunksCount', translationsChunksCount );
 	};
 };
 

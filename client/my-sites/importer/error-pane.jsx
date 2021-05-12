@@ -6,13 +6,14 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import Page from 'page';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Notice from 'calypso/components/notice';
 import { Button } from '@automattic/components';
+
+const noop = () => {};
 
 class ImporterError extends React.PureComponent {
 	static displayName = 'ImporterError';

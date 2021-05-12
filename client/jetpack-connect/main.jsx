@@ -57,15 +57,6 @@ export class JetpackConnectMain extends Component {
 		if ( this.props.type === 'install' ) {
 			from = 'jpdotcom';
 		}
-		if ( this.props.type === 'pro' ) {
-			from = 'ad';
-		}
-		if ( this.props.type === 'premium' ) {
-			from = 'ad';
-		}
-		if ( this.props.type === 'personal' ) {
-			from = 'ad';
-		}
 
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: from,

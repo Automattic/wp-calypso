@@ -11,7 +11,7 @@ import React, {
 } from 'react';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 /**
  * Internal dependencies
@@ -34,7 +34,7 @@ import {
 } from '../public-api';
 import styled from '../lib/styled';
 import { Theme } from '../lib/theme';
-import { FormStatus } from '../types';
+import { FormStatus, CheckoutStepProps } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
@@ -210,7 +210,7 @@ export function Checkout( {
 	children,
 	className,
 }: {
-	children: React.ReactChildren;
+	children: React.ReactNode;
 	className?: string;
 } ): JSX.Element {
 	const { isRTL } = useI18n();
@@ -275,20 +275,7 @@ export const CheckoutStep = ( {
 	nextStepButtonAriaLabel,
 	validatingButtonText,
 	validatingButtonAriaLabel,
-}: {
-	stepId: string;
-	titleContent: React.ReactNode;
-	isCompleteCallback: () => boolean | Promise< boolean >;
-	activeStepContent?: React.ReactNode;
-	completeStepContent?: React.ReactNode;
-	className?: string;
-	editButtonText?: string;
-	editButtonAriaLabel?: string;
-	nextStepButtonText?: string;
-	nextStepButtonAriaLabel?: string;
-	validatingButtonText?: string;
-	validatingButtonAriaLabel?: string;
-} ): JSX.Element => {
+}: CheckoutStepProps ): JSX.Element => {
 	const { __ } = useI18n();
 	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
 		CheckoutStepDataContext
@@ -489,9 +476,7 @@ export function CheckoutStepArea( {
 	submitButtonHeader?: React.ReactNode;
 	disableSubmitButton?: boolean;
 } ): JSX.Element {
-	const { __ } = useI18n();
 	const onEvent = useEvents();
-	const { formStatus } = useFormStatus();
 
 	const { activeStepNumber, totalSteps } = useContext( CheckoutStepDataContext );
 	const actualActiveStepNumber =
@@ -512,18 +497,12 @@ export function CheckoutStepArea( {
 		<CheckoutStepAreaWrapper className={ classNames }>
 			{ children }
 
-			<SubmitButtonWrapper>
+			<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper">
 				{ submitButtonHeader ? submitButtonHeader : null }
-				<CheckoutErrorBoundary
-					errorMessage={ __( 'There was a problem with the submit button.' ) }
-					onError={ onSubmitButtonLoadError }
-				>
-					<CheckoutSubmitButton
-						disabled={
-							isThereAnotherNumberedStep || formStatus !== FormStatus.READY || disableSubmitButton
-						}
-					/>
-				</CheckoutErrorBoundary>
+				<CheckoutSubmitButton
+					disabled={ isThereAnotherNumberedStep || disableSubmitButton }
+					onLoadError={ onSubmitButtonLoadError }
+				/>
 			</SubmitButtonWrapper>
 		</CheckoutStepAreaWrapper>
 	);
@@ -863,8 +842,7 @@ const StepNumber = styled.div< StepNumberProps & React.HTMLAttributes< HTMLDivEl
 	// Reason: The IE media query needs to not have spaces within brackets otherwise ie11 doesn't read them
 	// prettier-ignore
 	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
-		z-index: ${ ( props ) =>
-		props.isComplete ? '0' : '1' };
+		z-index: ${ ( props ) => ( props.isComplete ? '0' : '1' ) };
 	}
 `;
 
@@ -880,9 +858,7 @@ const StepNumberCompleted = styled( StepNumber )`
 	// prettier-ignore
 	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
 		backface-visibility: visible;
-		z-index: ${ (
-		props
-	) => ( props.isComplete ? '1' : '0' ) };
+		z-index: ${ ( props ) => ( props.isComplete ? '1' : '0' ) };
 	}
 
 	svg {

@@ -15,7 +15,7 @@ export default class WooWizardThemePage extends AsyncBaseContainer {
 	}
 
 	async skip() {
-		const buttonSelector = By.css( '.woocommerce-profile-wizard__skip' );
-		return await driverHelper.clickWhenClickable( this.driver, buttonSelector );
+		const buttonLocator = By.css( '.woocommerce-profile-wizard__skip' );
+		return await driverHelper.clickWhenClickable( this.driver, buttonLocator );
 	}
 }

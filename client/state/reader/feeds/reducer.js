@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { assign, keyBy, map, omit, omitBy, reduce, merge, forEach } from 'lodash';
+import { keyBy, map, omit, omitBy, reduce, merge, forEach } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -15,28 +15,20 @@ import {
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 } from 'calypso/state/reader/action-types';
-import { SERIALIZE } from 'calypso/state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { itemsSchema } from './schema';
 import { safeLink } from 'calypso/lib/post-normalizer/utils';
 
-function handleSerialize( state ) {
-	// remove errors from the serialized state
-	return omitBy( state, 'is_error' );
-}
-
 function handleRequestFailure( state, action ) {
 	// new object precedes current state to prevent new errors from overwriting existing values
-	return assign(
-		{
-			[ action.payload.feed_ID ]: {
-				feed_ID: action.payload.feed_ID,
-				is_error: true,
-			},
+	return {
+		[ action.payload.feed_ID ]: {
+			feed_ID: action.payload.feed_ID,
+			is_error: true,
 		},
-		state
-	);
+		...state,
+	};
 }
 
 function adaptFeed( feed ) {
@@ -58,20 +50,22 @@ function adaptFeed( feed ) {
 
 function handleRequestSuccess( state, action ) {
 	const feed = adaptFeed( action.payload );
-	return assign( {}, state, {
+	return {
+		...state,
 		[ feed.feed_ID ]: feed,
-	} );
+	};
 }
 
 function handleFeedUpdate( state, action ) {
 	const feeds = map( action.payload, adaptFeed );
-	return assign( {}, state, keyBy( feeds, 'feed_ID' ) );
+	return {
+		...state,
+		...keyBy( feeds, 'feed_ID' ),
+	};
 }
 
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
+const itemsReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case SERIALIZE:
-			return handleSerialize( state, action );
 		case READER_FEED_REQUEST_SUCCESS:
 			return handleRequestSuccess( state, action );
 		case READER_FEED_REQUEST_FAILURE:
@@ -116,14 +110,23 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 	}
 
 	return state;
-} );
+};
+
+export const items = withSchemaValidation(
+	itemsSchema,
+	withPersistence( itemsReducer, {
+		// remove errors from the serialized state
+		serialize: ( state ) => omitBy( state, 'is_error' ),
+	} )
+);
 
 export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_FEED_REQUEST:
-			return assign( {}, state, {
+			return {
+				...state,
 				[ action.payload.feed_ID ]: true,
-			} );
+			};
 
 		case READER_FEED_REQUEST_SUCCESS:
 		case READER_FEED_REQUEST_FAILURE:
@@ -132,7 +135,7 @@ export function queuedRequests( state = {}, action ) {
 	return state;
 }
 
-export const lastFetched = withoutPersistence( ( state = {}, action ) => {
+export const lastFetched = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_FEED_REQUEST_SUCCESS:
 			return {
@@ -148,12 +151,12 @@ export const lastFetched = withoutPersistence( ( state = {}, action ) => {
 				},
 				{}
 			);
-			return assign( {}, state, updates );
+			return { ...state, ...updates };
 		}
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	items,

@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, intersection } from 'lodash';
+import { intersection } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -13,6 +13,8 @@ import Gridicon from 'calypso/components/gridicon';
  */
 import i18n from 'i18n-calypso';
 import { allowedSearchWelcomeTaxonomies, taxonomyToGridicon } from './taxonomies-config.js';
+
+const noop = () => {};
 
 class MagicSearchWelcome extends React.Component {
 	constructor( props ) {

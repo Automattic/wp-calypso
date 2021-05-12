@@ -13,7 +13,6 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
 import page from 'page';
 import CustomizerLoadingPanel from 'calypso/my-sites/customize/loading-panel';
 import EmptyContent from 'calypso/components/empty-content';
@@ -27,10 +26,8 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import wpcom from 'calypso/lib/wp';
-import { addItem } from 'calypso/lib/cart/actions';
 import { trackClick } from 'calypso/my-sites/themes/helpers';
-import { themeItem } from 'calypso/lib/cart-values/cart-items';
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 
 /**
  * Style dependencies
@@ -46,7 +43,6 @@ class Customize extends React.Component {
 		super( props );
 		this.state = {
 			iframeLoaded: false,
-			errorFromIframe: false,
 			timeoutError: false,
 			returnUrl: undefined,
 		};
@@ -278,19 +274,6 @@ class Customize extends React.Component {
 			switch ( message.command ) {
 				case 'back':
 					debug( 'iframe says it is done', message );
-					if ( message.error ) {
-						this.setState( { errorFromIframe: message.error } );
-						return;
-					}
-					if ( message.warning ) {
-						notices.warning( message.warning, { displayOnNextPage: true } );
-					}
-					if ( message.info ) {
-						notices.info( message.info, { displayOnNextPage: true } );
-					}
-					if ( message.success ) {
-						notices.success( message.success, { displayOnNextPage: true } );
-					}
 					this.goBack();
 					break;
 				case 'saved':
@@ -317,9 +300,8 @@ class Customize extends React.Component {
 					break;
 				case 'purchased': {
 					const themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
-					addItem( themeItem( themeSlug, 'customizer' ) );
 					trackClick( 'customizer', 'purchase' );
-					page( '/checkout/' + site.slug );
+					page( '/checkout/' + site.slug + '/theme:' + themeSlug );
 					break;
 				}
 				case 'navigateTo': {
@@ -360,13 +342,6 @@ class Customize extends React.Component {
 				actionCallback: function () {
 					window.location.reload();
 				},
-			} );
-		}
-
-		if ( this.state.errorFromIframe ) {
-			this.cancelWaitingTimer();
-			return this.renderErrorPage( {
-				title: this.state.errorFromIframe,
 			} );
 		}
 

@@ -5,7 +5,6 @@
 /**
  * External dependencies
  */
-import { identity } from 'lodash';
 import moment from 'moment';
 import React from 'react';
 import TestUtils from 'react-dom/test-utils';
@@ -18,13 +17,15 @@ import { DomainWarnings } from '../';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { MAP_EXISTING_DOMAIN_UPDATE_DNS, MAP_SUBDOMAIN } from 'calypso/lib/url/support';
 
-jest.mock( 'lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 
 describe( 'index', () => {
+	const translate = ( string ) => string;
+
 	describe( 'rules', () => {
 		test( "should not render anything if there's no need", () => {
 			const props = {
-				translate: identity,
+				translate,
 				domain: {
 					name: 'example.com',
 				},
@@ -39,7 +40,7 @@ describe( 'index', () => {
 
 		test( 'should render the highest priority notice when there are others', () => {
 			const props = {
-				translate: identity,
+				translate,
 				domain: {
 					name: 'example.com',
 					registrationDate: new Date().toISOString(),
@@ -61,7 +62,7 @@ describe( 'index', () => {
 	describe( 'newDomain', () => {
 		test( 'should render new warning notice if the domain is new', () => {
 			const props = {
-				translate: identity,
+				translate,
 				domain: {
 					name: 'example.com',
 					registrationDate: new Date().toISOString(),
@@ -81,7 +82,7 @@ describe( 'index', () => {
 
 		test( 'should render the multi version of the component if more than two domains match the same rule', () => {
 			const props = {
-				translate: identity,
+				translate,
 				domains: [
 					{
 						name: '1.com',
@@ -111,7 +112,7 @@ describe( 'index', () => {
 	describe( 'mapped domain with wrong NS', () => {
 		test( 'should render a warning for misconfigured mapped domains', () => {
 			const props = {
-				translate: identity,
+				translate,
 				domains: [
 					{
 						name: '1.com',
@@ -142,7 +143,7 @@ describe( 'index', () => {
 
 		test( 'should render the correct support url for multiple misconfigured mapped domains', () => {
 			const props = {
-				translate: identity,
+				translate,
 				domains: [
 					{
 						name: '1.com',
@@ -171,7 +172,7 @@ describe( 'index', () => {
 
 		test( 'should show a subdomain mapping related message for one misconfigured subdomain', () => {
 			const props = {
-				translate: identity,
+				translate,
 				domains: [
 					{
 						name: 'blog.example.com',
@@ -195,7 +196,7 @@ describe( 'index', () => {
 
 		test( 'should show a subdomain mapping related message for multiple misconfigured subdomains', () => {
 			const props = {
-				translate: identity,
+				translate,
 				domains: [
 					{
 						name: 'blog.example.com',
@@ -225,7 +226,7 @@ describe( 'index', () => {
 
 		test( 'should show a subdomain mapping related message for multiple misconfigured subdomains and domains mixed', () => {
 			const props = {
-				translate: identity,
+				translate,
 				domains: [
 					{
 						name: 'blog.example.com',
@@ -259,7 +260,7 @@ describe( 'index', () => {
 	describe( 'verification nudge', () => {
 		test( 'should not show any verification nudge for any unverified domains younger than 2 days if site is FSE eligible', () => {
 			const props = {
-				translate: identity,
+				translate,
 				domains: [
 					{
 						name: 'blog.example.com',
@@ -301,7 +302,7 @@ describe( 'index', () => {
 		} );
 		test( 'should show a verification nudge with weak message for any unverified domains younger than 2 days', () => {
 			const props = {
-				translate: identity,
+				translate,
 				domains: [
 					{
 						name: 'blog.example.com',
@@ -342,7 +343,7 @@ describe( 'index', () => {
 
 		test( 'should show a verification nudge with strong message for any unverified domains older than 2 days', () => {
 			const props = {
-				translate: identity,
+				translate,
 				domains: [
 					{
 						name: 'blog.example.com',
@@ -385,7 +386,7 @@ describe( 'index', () => {
 
 		test( "should show a verification nudge with strong message for users who can't manage the domain", () => {
 			const props = {
-				translate: identity,
+				translate,
 				domains: [
 					{
 						name: 'blog.example.com',
@@ -419,7 +420,7 @@ describe( 'index', () => {
 	describe( 'Ruleset filtering', () => {
 		test( 'should only process allowed renderers', () => {
 			const props = {
-				translate: identity,
+				translate,
 				domain: { name: 'example.com' },
 				allowedRules: [],
 				selectedSite: {},
@@ -433,7 +434,7 @@ describe( 'index', () => {
 
 		test( 'should not allow running extra functions other than defined in getPipe()', () => {
 			const props = {
-				translate: identity,
+				translate,
 				domain: { name: 'example.com' },
 				allowedRules: [ 'getDomains' ],
 				selectedSite: {},

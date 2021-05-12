@@ -1,11 +1,6 @@
-/**
- * External Dependencies
- */
-import { isUndefined } from 'lodash';
-
 export const filterStateToApiQuery = ( filter ) => {
 	// by default, we'll tell the api to create aggregate events
-	const aggregate = isUndefined( filter.aggregate ) ? true : filter.aggregate;
+	const aggregate = typeof filter.aggregate === 'undefined' ? true : filter.aggregate;
 
 	return Object.assign(
 		{},
@@ -28,7 +23,7 @@ export const filterStateToQuery = ( filter ) =>
 	Object.assign(
 		{},
 		filter.action && { action: filter.action.join( ',' ) },
-		! isUndefined( filter.aggregate ) && { aggregate: filter.aggregate },
+		typeof filter.aggregate !== 'undefined' && { aggregate: filter.aggregate },
 		filter.backButton && { back_button: true },
 		filter.on && { on: filter.on },
 		filter.after && { after: filter.after },
@@ -45,7 +40,7 @@ export const queryToFilterState = ( query ) =>
 	Object.assign(
 		{},
 		query.action && { action: decodeURI( query.action ).split( ',' ) },
-		! isUndefined( query.aggregate ) && { aggregate: query.aggregate },
+		typeof query.aggregate !== 'undefined' && { aggregate: query.aggregate },
 		query.on && { on: query.on },
 		query.after && { after: query.after },
 		query.before && { before: query.before },

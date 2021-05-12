@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Button, Card, CompactCard, Dialog } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';

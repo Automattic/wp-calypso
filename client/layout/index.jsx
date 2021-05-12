@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -14,17 +13,23 @@ import classnames from 'classnames';
 import AsyncLoad from 'calypso/components/async-load';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
+import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
-import notices from 'calypso/notices';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import OfflineStatus from 'calypso/layout/offline-status';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import QuerySites from 'calypso/components/data/query-sites';
 import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected-editor';
 import { isOffline } from 'calypso/state/application/selectors';
-import { getSelectedSiteId, masterbarIsVisible, getSelectedSite } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSiteId,
+	masterbarIsVisible,
+	getSelectedSite,
+	getSidebarIsCollapsed,
+} from 'calypso/state/ui/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
+import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import SitePreview from 'calypso/blocks/site-preview';
@@ -33,7 +38,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import KeyboardShortcutsMenu from 'calypso/lib/keyboard-shortcuts/menu';
 import SupportUser from 'calypso/support/support-user';
-import { isCommunityTranslatorEnabled } from 'calypso/components/community-translator/utils';
+import isCommunityTranslatorEnabled from 'calypso/state/selectors/is-community-translator-enabled';
 import { isE2ETest } from 'calypso/lib/e2e';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import BodySectionCssClass from './body-section-css-class';
@@ -43,6 +48,12 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import LayoutLoader from './loader';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { withCurrentRoute } from 'calypso/components/route';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { getShouldShowAppBanner, handleScroll } from './utils';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import { useBreakpoint } from '@automattic/viewport-react';
+import { isWithinBreakpoint } from '@automattic/viewport';
 
 /**
  * Style dependencies
@@ -50,9 +61,60 @@ import { withCurrentRoute } from 'calypso/components/route';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 import './style.scss';
-import { getShouldShowAppBanner, handleScroll } from './utils';
 
-const scrollCallback = ( e ) => handleScroll( e );
+function SidebarScrollSynchronizer( { enabled } ) {
+	const isNarrow = useBreakpoint( '<660px' );
+	const active = enabled && ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
+
+	React.useEffect( () => {
+		if ( active ) {
+			window.addEventListener( 'scroll', handleScroll );
+			window.addEventListener( 'resize', handleScroll );
+		}
+
+		return () => {
+			if ( active ) {
+				window.removeEventListener( 'scroll', handleScroll );
+				window.removeEventListener( 'resize', handleScroll );
+
+				// remove style attributes added by `handleScroll`
+				document.getElementById( 'content' )?.removeAttribute( 'style' );
+				document.getElementById( 'secondary' )?.removeAttribute( 'style' );
+			}
+		};
+	}, [ active ] );
+
+	return null;
+}
+
+function SidebarOverflowDelay( { layoutFocus } ) {
+	const setSidebarOverflowClass = ( overflow ) => {
+		const classList = document.querySelector( 'body' ).classList;
+		if ( overflow ) {
+			classList.add( 'is-sidebar-overflow' );
+		} else {
+			classList.remove( 'is-sidebar-overflow' );
+		}
+	};
+
+	React.useEffect( () => {
+		if ( layoutFocus !== 'sites' ) {
+			// The sidebar menu uses a flyout design that requires the overflowing content
+			// to be visible. However, `overflow` isn't an animatable CSS property, so we
+			// need to set it after the sliding transition finishes. We wait for 150ms (the
+			// CSS transition time) + a grace period of 350ms (since the sidebar menu is
+			// rendered asynchronously).
+			// @see https://github.com/Automattic/wp-calypso/issues/47019
+			setTimeout( () => {
+				setSidebarOverflowClass( true );
+			}, 500 );
+		} else {
+			setSidebarOverflowClass( false );
+		}
+	}, [ layoutFocus ] );
+
+	return null;
+}
 
 class Layout extends Component {
 	static propTypes = {
@@ -80,17 +142,6 @@ class Layout extends Component {
 					.classList.add( `is-${ this.props.colorSchemePreference }` );
 			}
 		}
-		if ( config.isEnabled( 'nav-unification' ) ) {
-			window.addEventListener( 'scroll', scrollCallback );
-			window.addEventListener( 'resize', scrollCallback );
-		}
-	}
-
-	componentWillUnmount() {
-		if ( config.isEnabled( 'nav-unification' ) ) {
-			window.removeEventListener( 'scroll', scrollCallback );
-			window.removeEventListener( 'resize', scrollCallback );
-		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -109,13 +160,21 @@ class Layout extends Component {
 		// intentionally don't remove these in unmount
 	}
 
-	shouldLoadInlineHelp() {
-		if ( ! config.isEnabled( 'inline-help' ) ) {
+	shouldShowHappyChatButton() {
+		if ( ! config.isEnabled( 'happychat' ) ) {
 			return false;
 		}
 
-		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help' ];
-		const exemptedRoutes = [ '/log-in/jetpack', '/me/account/closed' ];
+		if ( isWpMobileApp() ) {
+			return false;
+		}
+
+		if ( ! this.props.hasActiveHappyChat ) {
+			return false;
+		}
+
+		const exemptedSections = [ 'happychat', 'devdocs' ];
+		const exemptedRoutes = [ '/log-in/jetpack' ];
 		const exemptedRoutesStartingWith = [ '/start/p2' ];
 
 		return (
@@ -127,7 +186,32 @@ class Layout extends Component {
 		);
 	}
 
+	shouldLoadInlineHelp() {
+		if ( ! config.isEnabled( 'inline-help' ) ) {
+			return false;
+		}
+
+		if ( isWpMobileApp() ) {
+			return false;
+		}
+
+		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help', 'home' ];
+		const exemptedRoutes = [ '/log-in/jetpack' ];
+		const exemptedRoutesStartingWith = [ '/start/p2', '/plugins/domain' ];
+
+		return (
+			! exemptedSections.includes( this.props.sectionName ) &&
+			! exemptedRoutes.includes( this.props.currentRoute ) &&
+			! some( exemptedRoutesStartingWith, ( startsWithString ) =>
+				this.props.currentRoute?.startsWith( startsWithString )
+			)
+		);
+	}
+
 	renderMasterbar() {
+		if ( this.props.masterbarIsHidden ) {
+			return <EmptyMasterbar />;
+		}
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
 			? JetpackCloudMasterbar
 			: MasterbarLoggedIn;
@@ -146,6 +230,8 @@ class Layout extends Component {
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': ! this.props.secondary,
+			'is-inline-help-showing': this.shouldLoadInlineHelp(),
+			'is-happychat-button-showing': this.shouldShowHappyChatButton(),
 			'has-chat': this.props.chatIsOpen,
 			'has-no-masterbar': this.props.masterbarIsHidden,
 			'is-jetpack-login': this.props.isJetpackLogin,
@@ -158,22 +244,34 @@ class Layout extends Component {
 				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom,
-			'is-nav-unification': config.isEnabled( 'nav-unification' ),
 		} );
 
 		const optionalBodyProps = () => {
-			const optionalProps = {};
-
+			const bodyClass = [];
 			if ( this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding ) {
-				optionalProps.bodyClass = 'is-new-launch-flow';
+				bodyClass.push( 'is-new-launch-flow' );
+			}
+			if ( this.props.isNavUnificationEnabled && ! config.isEnabled( 'jetpack-cloud' ) ) {
+				// Jetpack cloud hasn't yet aligned with WPCOM.
+				bodyClass.push( 'is-nav-unification' );
 			}
 
-			return optionalProps;
-		};
+			if ( this.props.sidebarIsCollapsed && isWithinBreakpoint( '>800px' ) ) {
+				bodyClass.push( 'is-sidebar-collapsed' );
+			}
 
+			return {
+				bodyClass,
+			};
+		};
 		const { shouldShowAppBanner } = this.props;
+
+		const loadInlineHelp = this.shouldLoadInlineHelp();
+
 		return (
 			<div className={ sectionClass }>
+				<SidebarScrollSynchronizer enabled={ this.props.isNavUnificationEnabled } />
+				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					group={ this.props.sectionGroup }
 					section={ this.props.sectionName }
@@ -197,6 +295,9 @@ class Layout extends Component {
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
+				{ isJetpackCloud() && (
+					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
+				) }
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
@@ -210,7 +311,6 @@ class Layout extends Component {
 						require="calypso/components/global-notices"
 						placeholder={ null }
 						id="notices"
-						notices={ notices.list }
 					/>
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
@@ -220,7 +320,7 @@ class Layout extends Component {
 					</div>
 				</div>
 				{ config.isEnabled( 'i18n/community-translator' )
-					? isCommunityTranslatorEnabled() && (
+					? this.props.isCommunityTranslatorEnabled && (
 							<AsyncLoad require="calypso/components/community-translator" />
 					  )
 					: config( 'restricted_me_access' ) && (
@@ -236,9 +336,22 @@ class Layout extends Component {
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 				) }
-				{ this.shouldLoadInlineHelp() && (
+				{ loadInlineHelp && (
 					<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
 				) }
+				{ this.shouldShowHappyChatButton() && (
+					<AsyncLoad
+						require="calypso/components/happychat/button"
+						placeholder={ null }
+						allowMobileRedirect
+						borderless={ false }
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className={ classnames( 'floating-happychat-button', {
+							offset: loadInlineHelp,
+						} ) }
+					/>
+				) }
+
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 				) }
@@ -268,8 +381,7 @@ export default compose(
 		const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 		const isCheckoutFromGutenboarding =
 			'checkout' === sectionName && '1' === currentQuery?.preLaunch;
-		const noMasterbarForRoute =
-			isJetpackLogin || isCheckoutFromGutenboarding || currentRoute === '/me/account/closed';
+		const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooCommerceFlow =
@@ -280,20 +392,29 @@ export default compose(
 			wooDnaConfig( currentQuery ).isWooDnaFlow();
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
-		const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins', 'comments' ].includes(
-			sectionName
-		);
+		const isEligibleForJITM = [
+			'home',
+			'stats',
+			'plans',
+			'themes',
+			'plugins',
+			'comments',
+		].includes( sectionName );
 		const isNewLaunchFlow = startsWith( currentRoute, '/start/new-launch' );
 
 		return {
 			masterbarIsHidden:
-				! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
+				! masterbarIsVisible( state ) ||
+				noMasterbarForSection ||
+				noMasterbarForRoute ||
+				isWpMobileApp(),
 			isJetpack,
 			isJetpackLogin,
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
 			isJetpackMobileFlow,
 			isEligibleForJITM,
+			isCommunityTranslatorEnabled: isCommunityTranslatorEnabled( state ),
 			oauth2Client,
 			wccomFrom,
 			isSupportSession: isSupportSession( state ),
@@ -304,6 +425,7 @@ export default compose(
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			chatIsOpen: isHappychatOpen( state ),
+			hasActiveHappyChat: hasActiveHappychatSession( state ),
 			colorSchemePreference: getPreference( state, 'colorScheme' ),
 			siteId,
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
@@ -314,6 +436,8 @@ export default compose(
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			isNewLaunchFlow,
 			isCheckoutFromGutenboarding,
+			isNavUnificationEnabled: isNavUnificationEnabled( state ),
+			sidebarIsCollapsed: getSidebarIsCollapsed( state ),
 		};
 	} )
 )( Layout );

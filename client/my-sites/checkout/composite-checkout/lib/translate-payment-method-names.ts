@@ -2,12 +2,7 @@
  * External dependencies
  */
 import { snakeCase } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
-import { WPCOMPaymentMethod } from '../types/backend/payment-method';
+import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from '@automattic/wpcom-checkout';
 
 /**
  * Convert a WPCOM payment method class name to a checkout payment method slug
@@ -54,12 +49,12 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 		case 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet':
 			return 'id_wallet';
 		case 'WPCOM_Billing_Web_Payment':
-			return 'apple-pay';
+			return 'web-pay';
 	}
 }
 
 export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
-	paymentMethod: CheckoutPaymentMethodSlug
+	paymentMethod: CheckoutPaymentMethodSlug | string
 ): WPCOMPaymentMethod | null {
 	// existing cards have unique paymentMethodIds
 	if ( paymentMethod.startsWith( 'existingCard' ) ) {
@@ -99,12 +94,14 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'wechat':
 			return 'WPCOM_Billing_Stripe_Source_Wechat';
 		case 'apple-pay':
+		case 'google-pay':
 			return 'WPCOM_Billing_Web_Payment';
 		case 'full-credits':
 			return 'WPCOM_Billing_WPCOM';
 		case 'free-purchase':
 			return 'WPCOM_Billing_WPCOM';
 	}
+	return null;
 }
 
 export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod | null {
@@ -133,6 +130,9 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 }
 
 export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMethodSlug | null {
+	if ( slug.startsWith( 'existingCard-' ) ) {
+		slug = 'card';
+	}
 	switch ( slug ) {
 		case 'ebanx':
 		case 'brazil-tef':
@@ -150,10 +150,13 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'sofort':
 		case 'stripe-three-d-secure':
 		case 'wechat':
-		case 'apple-pay':
+		case 'web-pay':
 		case 'full-credits':
 		case 'free-purchase':
 			return slug;
+		case 'apple-pay':
+		case 'google-pay':
+			return 'web-pay';
 	}
 	return null;
 }
@@ -170,6 +173,7 @@ export function translateCheckoutPaymentMethodToTracksPaymentMethod(
 		case 'card':
 			return 'credit_card';
 		case 'apple-pay':
+		case 'google-pay':
 			return 'web_payment';
 	}
 	return snakeCase( paymentMethodSlug );

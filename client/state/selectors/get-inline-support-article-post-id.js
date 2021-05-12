@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/inline-support-article/init';
+
+/**
  * External dependencies
  */
 import { get } from 'lodash';

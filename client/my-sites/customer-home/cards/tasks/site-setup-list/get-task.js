@@ -15,7 +15,7 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 
-const getTaskDescription = ( task, { isDomainUnverified, isEmailUnverified } ) => {
+const getTaskDescription = ( task, { isDomainUnverified } ) => {
 	switch ( task.id ) {
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			if ( isDomainUnverified ) {
@@ -25,16 +25,6 @@ const getTaskDescription = ( task, { isDomainUnverified, isEmailUnverified } ) =
 						<br />
 						<br />
 						{ translate( 'Verify the email address for your domain before launching your site.' ) }
-					</>
-				);
-			}
-			if ( isEmailUnverified ) {
-				return (
-					<>
-						{ task.description }
-						<br />
-						<br />
-						{ translate( 'Confirm your email address before launching your site.' ) }
 					</>
 				);
 			}
@@ -52,7 +42,7 @@ const isTaskDisabled = (
 		case CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED:
 			return 'requesting' === emailVerificationStatus || ! isEmailUnverified;
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
-			return isDomainUnverified || isEmailUnverified;
+			return isDomainUnverified;
 		default:
 			return false;
 	}
@@ -64,6 +54,7 @@ export const getTask = (
 		emailVerificationStatus,
 		isDomainUnverified,
 		isEmailUnverified,
+		isPodcastingSite,
 		menusUrl,
 		siteId,
 		siteSlug,
@@ -89,6 +80,12 @@ export const getTask = (
 				actionAdvanceToNext: true,
 				completeOnView: true,
 			};
+
+			// Change the task title for podcasting sites.
+			if ( isPodcastingSite ) {
+				taskData.title = translate( 'Welcome to your podcast site!' );
+				taskData.hideLabel = true;
+			}
 			break;
 		case CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
 			taskData = {
@@ -186,7 +183,7 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.SITE_MENU_UPDATED:
 			taskData = {
 				timing: 10,
-				title: translate( 'Create a site menu' ),
+				title: translate( 'Edit the site menu' ),
 				description: (
 					<>
 						{ translate(
@@ -207,6 +204,19 @@ export const getTask = (
 				actionText: translate( 'Add a menu' ),
 				isSkippable: true,
 				actionUrl: menusUrl,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.SITE_THEME_SELECTED:
+			taskData = {
+				timing: 5,
+				title: translate( 'Choose a theme' ),
+				description: translate(
+					'Make your site uniquely yours! ' +
+						'Themes don’t just change the look and feel of your site, they can also add new features such as a unique home page layout, interactive post sliders, and more!'
+				),
+				actionText: translate( 'Choose a theme' ),
+				isSkippable: false,
+				actionUrl: `/themes/${ siteSlug }`,
 			};
 			break;
 	}

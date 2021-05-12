@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { assign, pick } from 'lodash';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,7 +46,8 @@ export default class GalleryShortcode extends Component< Props > {
 			return rendered;
 		}
 
-		const filtered = assign( {}, rendered, {
+		const filtered = {
+			...rendered,
 			scripts: {
 				'tiled-gallery': {
 					src: 'https://s0.wp.com/wp-content/mu-plugins/tiled-gallery/tiled-gallery.js',
@@ -60,36 +61,34 @@ export default class GalleryShortcode extends Component< Props > {
 					src: 'https://widgets.wp.com/gallery-preview/style.css',
 				},
 			},
-		} );
+		};
 
 		if ( 'slideshow' === this.getAttributes().type ) {
-			assign( filtered, {
-				scripts: {
-					'jquery-cycle': {
-						src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.min.js',
-					},
-					'jetpack-slideshow': {
-						src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/slideshow-shortcode.js',
-						extra:
-							'var jetpackSlideshowSettings = { "spinner": "https://s0.wp.com/wp-content/mu-plugins/shortcodes/img/slideshow-loader.gif" };',
-					},
+			filtered.scripts = {
+				'jquery-cycle': {
+					src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.min.js',
 				},
-				styles: {
-					'jetpack-slideshow': {
-						src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/css/slideshow-shortcode.css',
-					},
+				'jetpack-slideshow': {
+					src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/slideshow-shortcode.js',
+					extra:
+						'var jetpackSlideshowSettings = { "spinner": "https://s0.wp.com/wp-content/mu-plugins/shortcodes/img/slideshow-loader.gif" };',
 				},
-			} );
+			};
+			filtered.styles = {
+				'jetpack-slideshow': {
+					src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/css/slideshow-shortcode.css',
+				},
+			};
 		}
 
 		return filtered;
 	};
 
 	getAttributes = () => {
-		const attributes = pick( this.props, 'items', 'type', 'columns', 'orderBy', 'link', 'size' );
+		let attributes = pick( this.props, 'items', 'type', 'columns', 'orderBy', 'link', 'size' );
 
 		if ( this.props.children ) {
-			assign( attributes, parseShortcode( this.props.children ).attrs.named );
+			attributes = { ...attributes, ...parseShortcode( this.props.children ).attrs.named };
 		}
 
 		return attributes;

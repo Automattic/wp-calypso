@@ -13,12 +13,12 @@ import i18n from 'i18n-calypso';
 import { getDomainManagementUrl } from './utils';
 import GoogleAppsDetails from './google-apps-details';
 import {
-	isGoogleApps,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isBlogger,
 	isPlan,
 	isFreePlan,
 	isDomainRegistration,
-} from 'calypso/lib/products-values';
+} from '@automattic/calypso-products';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { EMAIL_VALIDATION_AND_VERIFICATION, DOMAIN_WAITING } from 'calypso/lib/url/support';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -33,7 +33,7 @@ const DomainRegistrationDetails = ( {
 	hasNonPrimaryDomainsFlag,
 	onPickPlanUpsellClick,
 } ) => {
-	const googleAppsWasPurchased = purchases.some( isGoogleApps );
+	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 	const domainContactEmailVerified = purchases.some( ( purchase ) => purchase.isEmailVerified );
 	const hasOtherPrimaryDomain =
 		selectedSite.options && selectedSite.options.is_mapped_domain && selectedSite.domain !== domain;

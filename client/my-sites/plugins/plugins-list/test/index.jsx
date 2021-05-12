@@ -6,30 +6,13 @@
  * External dependencies
  */
 import React from 'react';
-import { Provider } from 'react-redux';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
 import { PluginsList } from '..';
-import { sites } from './fixtures';
-import { createReduxStore } from 'calypso/state';
-
-jest.mock( 'lib/analytics/ga', () => ( {
-	recordEvent: () => {},
-} ) );
-jest.mock( 'lib/wp', () => ( {
-	undocumented: () => ( {
-		getProducts: () => {},
-	} ),
-} ) );
-jest.mock( 'my-sites/plugins/plugin-item/plugin-item', () =>
-	require( 'calypso/components/empty-component' )
-);
-jest.mock( 'my-sites/plugins/plugin-list-header', () =>
-	require( 'calypso/components/empty-component' )
-);
+import { sites, sitesObject } from './fixtures';
 
 describe( 'PluginsList', () => {
 	describe( 'rendering bulk actions', () => {
@@ -39,24 +22,28 @@ describe( 'PluginsList', () => {
 
 		beforeAll( () => {
 			plugins = [
-				{ sites, slug: 'hello', name: 'Hello Dolly' },
-				{ sites, slug: 'jetpack', name: 'Jetpack' },
+				{ sites: sitesObject, slug: 'hello', name: 'Hello Dolly' },
+				{ sites: sitesObject, slug: 'jetpack', name: 'Jetpack' },
 			];
 
 			props = {
 				plugins,
 				header: 'Plugins',
 				selectedSite: sites[ 0 ],
+				selectedSiteId: sites[ 0 ].ID,
 				isPlaceholder: false,
 				pluginUpdateCount: plugins.length,
+				inProgressStatuses: [],
+				pluginsOnSites: {
+					hello: plugins[ 0 ],
+					jetpack: plugins[ 1 ],
+				},
+				allSites: sites,
 			};
 		} );
 
 		beforeEach( () => {
-			renderedPluginsList = mount( <PluginsList { ...props } />, {
-				wrappingComponent: Provider,
-				wrappingComponentProps: { store: createReduxStore() },
-			} );
+			renderedPluginsList = shallow( <PluginsList { ...props } /> );
 		} );
 
 		test( 'should be intialized with no selectedPlugins', () => {

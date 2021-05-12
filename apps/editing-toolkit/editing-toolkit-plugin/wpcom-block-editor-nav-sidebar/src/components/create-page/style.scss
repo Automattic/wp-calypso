@@ -1,10 +1,14 @@
 @import '~@wordpress/base-styles/colors';
 
+// TODO: This is former light-gray-900 from @wordpress/base-styles.
+// Replace with a color from the standard palette.
+$create-page-text-color: #a2aab2;
+
 .wpcom-block-editor-nav-sidebar-create-page {
 	width: 100%;
 	background: inherit !important;
 	padding: 8px 11px !important;
-	color: $light-gray-900 !important;
+	color: $create-page-text-color !important;
 	margin: 0;
 	min-height: 45px;
 

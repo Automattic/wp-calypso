@@ -12,7 +12,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Main from 'calypso/components/main';
 import { Card } from '@automattic/components';
 import Notice from 'calypso/components/notice';
@@ -21,7 +21,6 @@ import ActiveTicketsNotice from 'calypso/me/help/active-tickets-notice';
 import HelpContactConfirmation from 'calypso/me/help/help-contact-confirmation';
 import HeaderCake from 'calypso/components/header-cake';
 import wpcomLib from 'calypso/lib/wp';
-import notices from 'calypso/notices';
 import ChatHolidayClosureNotice from 'calypso/me/help/contact-form-notice/chat-holiday-closure';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getHappychatUserInfo from 'calypso/state/happychat/selectors/get-happychat-userinfo';
@@ -71,7 +70,8 @@ import getInlineHelpSupportVariation, {
 	SUPPORT_TICKET,
 	SUPPORT_UPWORK_TICKET,
 } from 'calypso/state/selectors/get-inline-help-support-variation';
-import { getPlanTermLabel } from 'calypso/lib/plans';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { getPlanTermLabel } from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -190,12 +190,12 @@ class HelpContact extends React.Component {
 
 	submitKayakoTicket = ( contactForm ) => {
 		const { subject, message, howCanWeHelp, howYouFeel, site } = contactForm;
-		const { currentUserLocale, supportVariation, translate } = this.props;
+		const { currentUserLocale, supportVariation } = this.props;
 		let plan = 'N/A';
 		if ( site ) {
 			plan = `${ site.plan.product_name_short } (${ getPlanTermLabel(
 				site.plan.product_slug,
-				translate
+				( val ) => val // Passing an identity function instead of `translate` to always return the English string
 			) })`;
 		}
 		const ticketMeta = [
@@ -219,7 +219,7 @@ class HelpContact extends React.Component {
 			( error ) => {
 				if ( error ) {
 					// TODO: bump a stat here
-					notices.error( error.message );
+					this.props.errorNotice( error.message );
 
 					this.setState( { isSubmitting: false } );
 					return;
@@ -270,7 +270,7 @@ class HelpContact extends React.Component {
 			( error, data ) => {
 				if ( error ) {
 					// TODO: bump a stat here
-					notices.error( error.message );
+					this.props.errorNotice( error.message );
 
 					this.setState( { isSubmitting: false } );
 					return;
@@ -609,18 +609,31 @@ class HelpContact extends React.Component {
 				{ isUserAffectedByLiveChatClosure && (
 					<>
 						<ChatHolidayClosureNotice
-							holidayName="Christmas"
+							holidayName={ translate( 'Easter', {
+								context: 'Holiday name',
+							} ) }
 							compact={ compact }
-							displayAt="2020-12-17 00:00Z"
-							closesAt="2020-12-24 00:00Z"
-							reopensAt="2020-12-26 07:00Z"
+							displayAt="2021-03-28 00:00Z"
+							closesAt="2021-04-04 00:00Z"
+							reopensAt="2021-04-05 06:00Z"
 						/>
 						<ChatHolidayClosureNotice
-							holidayName="New Year's Day"
+							holidayName={ translate( 'Christmas', {
+								context: 'Holiday name',
+							} ) }
 							compact={ compact }
-							displayAt="2020-12-26 07:00Z"
-							closesAt="2020-12-31 00:00Z"
-							reopensAt="2021-01-02 07:00Z"
+							displayAt="2021-12-17 00:00Z"
+							closesAt="2021-12-24 00:00Z"
+							reopensAt="2021-12-26 07:00Z"
+						/>
+						<ChatHolidayClosureNotice
+							holidayName={ translate( "New Year's Day", {
+								context: 'Holiday name',
+							} ) }
+							compact={ compact }
+							displayAt="2021-12-26 07:00Z"
+							closesAt="2021-12-31 00:00Z"
+							reopensAt="2022-01-02 07:00Z"
 						/>
 					</>
 				) }
@@ -691,6 +704,7 @@ export default connect(
 	},
 	{
 		askDirectlyQuestion,
+		errorNotice,
 		initializeDirectly,
 		openHappychat,
 		recordTracksEventAction,

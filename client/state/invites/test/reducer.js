@@ -17,9 +17,8 @@ import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
 	INVITES_DELETE_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -411,7 +410,7 @@ describe( 'reducer', () => {
 					],
 				},
 			} );
-			const state = items( original, { type: SERIALIZE } );
+			const state = serialize( items, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -457,7 +456,7 @@ describe( 'reducer', () => {
 					],
 				},
 			} );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -496,7 +495,7 @@ describe( 'reducer', () => {
 						accepted: [],
 					},
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 
 				expect( state ).to.eql( {} );
 			} );
@@ -529,7 +528,7 @@ describe( 'reducer', () => {
 						],
 					},
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 
 				expect( state ).to.eql( {} );
 			} );
@@ -538,7 +537,7 @@ describe( 'reducer', () => {
 				const original = deepFreeze( {
 					12345: { pending: [] /* accepted: missing */ },
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 
 				expect( state ).to.eql( {} );
 			} );
@@ -547,7 +546,7 @@ describe( 'reducer', () => {
 				const original = deepFreeze( {
 					12345: { pending: [], accepted: [], fileNotFound: [] },
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 
 				expect( state ).to.eql( {} );
 			} );

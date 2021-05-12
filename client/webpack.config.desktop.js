@@ -43,6 +43,7 @@ module.exports = {
 				configFile: path.resolve( 'babel.config.js' ),
 				cacheDirectory,
 				cacheIdentifier,
+				cacheCompression: false,
 				exclude: /node_modules\//,
 			} ),
 			TranspileConfig.loader( {
@@ -50,6 +51,7 @@ module.exports = {
 				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
 				cacheDirectory,
 				cacheIdentifier,
+				cacheCompression: false,
 				include: shouldTranspileDependency,
 			} ),
 			{
@@ -76,7 +78,6 @@ module.exports = {
 	},
 	externals: [
 		'webpack',
-		'electron',
 		'keytar',
 
 		// These are Calypso server modules we don't need, so let's not bundle them
@@ -87,8 +88,8 @@ module.exports = {
 		mainFields: [ 'calypso:src', 'module', 'main' ],
 		modules: [ __dirname, 'node_modules' ],
 		alias: {
-			config: 'server/config',
-			'calypso/config': 'server/config',
+			config: 'calypso/server/config',
+			'@automattic/calypso-config': 'calypso/server/config',
 			// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
 			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
 			calypso: __dirname,
@@ -99,12 +100,8 @@ module.exports = {
 		// the `require` function. That breaks webpack.
 		new webpack.DefinePlugin( { 'global.GENTLY': false } ),
 		new webpack.NormalModuleReplacementPlugin(
-			/^my-sites[/\\]themes[/\\]theme-upload$/,
-			'components/empty-component'
-		), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin(
 			/^calypso[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
-			'components/empty-component'
+			'calypso/components/empty-component'
 		), // Depends on BOM
 		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ), // server doesn't use moment locales
 	],

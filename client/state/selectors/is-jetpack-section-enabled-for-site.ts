@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 

@@ -20,7 +20,7 @@ import {
 
 import { JPC_PATH_PLANS, JPC_PATH_REMOTE_INSTALL, REMOTE_PATH_AUTH } from '../constants';
 
-jest.mock( 'config', () => ( input ) => {
+jest.mock( '@automattic/calypso-config', () => ( input ) => {
 	const lookupTable = {
 		env_id: 'mocked-test-env-id',
 	};
@@ -90,6 +90,7 @@ describe( 'parseAuthorizationQuery', () => {
 			site: 'https://yourjetpack.blog',
 			site_url: 'https://yourjetpack.blog',
 			state: '1',
+			skipUser: '1',
 		};
 		const result = parseAuthorizationQuery( data );
 		expect( result ).not.toBeNull();
@@ -141,7 +142,7 @@ describe( 'parseAuthorizationQuery', () => {
 	} );
 } );
 
-jest.mock( 'lib/route/path', () => ( {
+jest.mock( 'calypso/lib/route/path', () => ( {
 	externalRedirect: jest.fn(),
 } ) );
 

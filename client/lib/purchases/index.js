@@ -1,33 +1,37 @@
 /**
  * External dependencies
  */
-import { find, includes, isObject } from 'lodash';
+import { find, includes } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
+import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
-import { getPlan } from 'calypso/lib/plans';
-import { isMonthly as isMonthlyPlan } from 'calypso/lib/plans/constants';
 import {
+	getPlan,
+	isMonthly as isMonthlyPlan,
 	getProductFromSlug,
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
+	isGoogleWorkspace,
 	isJetpackPlan,
-	isMonthly as isMonthlyProduct,
+	isMonthlyProduct,
 	isPlan,
 	isTheme,
+	isTitanMail,
 	isConciergeSession,
-} from 'calypso/lib/products-values';
-import { getJetpackProductsDisplayNames } from 'calypso/lib/products-values/translations';
+	getJetpackProductsDisplayNames,
+} from '@automattic/calypso-products';
 import { MembershipSubscription, MembershipSubscriptionsSite } from 'calypso/lib/purchases/types';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 const debug = debugFactory( 'calypso:purchases' );
 
@@ -99,7 +103,7 @@ function getSubscriptionsBySite( subscriptions ) {
 }
 
 function getName( purchase ) {
-	if ( isDomainRegistration( purchase ) ) {
+	if ( isDomainRegistration( purchase ) || isDomainMapping( purchase ) ) {
 		return purchase.meta;
 	}
 
@@ -132,9 +136,11 @@ function getSubscriptionEndDate( purchase ) {
  *
  * @param {object} purchase - the purchase to be renewed
  * @param {string} siteSlug - the site slug to renew the purchase for
- * @param {object} tracksProps - where was the renew button clicked from
+ * @param {object} [options] - optional information
+ * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
+ * @param {object} [options.tracksProps] - where was the renew button clicked from
  */
-function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
+function handleRenewNowClick( purchase, siteSlug, options = {} ) {
 	const renewItem = getRenewalItemFromProduct( purchase, {
 		domain: purchase.meta,
 	} );
@@ -142,22 +148,25 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 	// Track the renew now submit.
 	recordTracksEvent( 'calypso_purchases_renew_now_click', {
 		product_slug: purchase.productSlug,
-		...tracksProps,
+		...options.tracksProps,
 	} );
 
 	if ( ! renewItem.extra.purchaseId ) {
-		notices.error( 'Could not find purchase id for renewal.' );
+		reduxDispatch( errorNotice( 'Could not find purchase id for renewal.' ) );
 		throw new Error( 'Could not find purchase id for renewal.' );
 	}
 	if ( ! renewItem.product_slug ) {
-		notices.error( 'Could not find product slug for renewal.' );
+		reduxDispatch( errorNotice( 'Could not find product slug for renewal.' ) );
 		throw new Error( 'Could not find product slug for renewal.' );
 	}
 	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
 
-	const renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
-		siteSlug || renewItem.extra.purchaseDomain || ''
+	let renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
+		siteSlug || ''
 	}`;
+	if ( options.redirectTo ) {
+		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
+	}
 	debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
 	page( renewalUrl );
@@ -168,14 +177,16 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
  *
  * @param {Array} purchases - the purchases to be renewed
  * @param {string} siteSlug - the site slug to renew the purchase for
- * @param {object} tracksProps - where was the renew button clicked from
+ * @param {object} [options] - optional information
+ * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
+ * @param {object} [options.tracksProps] - where was the renew button clicked from
  */
-function handleRenewMultiplePurchasesClick( purchases, siteSlug, tracksProps = {} ) {
+function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) {
 	purchases.forEach( ( purchase ) => {
 		// Track the renew now submit.
 		recordTracksEvent( 'calypso_purchases_renew_multiple_click', {
 			product_slug: purchase.productSlug,
-			...tracksProps,
+			...options.tracksProps,
 		} );
 	} );
 
@@ -187,13 +198,16 @@ function handleRenewMultiplePurchasesClick( purchases, siteSlug, tracksProps = {
 	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
 
 	if ( purchaseIds.length === 0 ) {
-		notices.error( 'Could not find product slug or purchase id for renewal.' );
+		reduxDispatch( errorNotice( 'Could not find product slug or purchase id for renewal.' ) );
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
 	}
 
-	const renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
-		siteSlug || renewItems[ 0 ].extra.purchaseDomain || ''
+	let renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
+		siteSlug || ''
 	}`;
+	if ( options.redirectTo ) {
+		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
+	}
 	debug( 'handling renewal click', purchases, siteSlug, renewItems, renewalUrl );
 
 	page( renewalUrl );
@@ -212,15 +226,15 @@ function getProductSlugsAndPurchaseIds( renewItems ) {
 			debug( 'Could not find product slug for renewal.', currentRenewItem );
 			return null;
 		}
-		// There is a product with this weird slug, but left to itself the slug will
-		// cause a routing error since it contains a slash, so we encode it here and
-		// then decode it in the checkout code before adding to the cart.
-		const productSlug =
-			currentRenewItem.product_slug === 'no-adverts/no-adverts.php'
-				? 'no-ads'
-				: currentRenewItem.product_slug;
+		// Some product slugs or meta contain slashes which will break the URL, so
+		// we encode them first. We cannot use encodeURIComponent because the
+		// calypso router seems to break if the trailing part of the URL contains
+		// an encoded slash.
+		const productSlug = encodeProductForUrl( currentRenewItem.product_slug );
 		productSlugs.push(
-			currentRenewItem.meta ? `${ productSlug }:${ currentRenewItem.meta }` : productSlug
+			currentRenewItem.meta
+				? `${ productSlug }:${ encodeProductForUrl( currentRenewItem.meta ) }`
+				: productSlug
 		);
 		purchaseIds.push( currentRenewItem.extra.purchaseId );
 	} );
@@ -294,6 +308,10 @@ function hasPaymentMethod( purchase ) {
 
 function isPendingTransfer( purchase ) {
 	return purchase.pendingTransfer;
+}
+
+function isObject( value ) {
+	return value !== null && typeof value === 'object';
 }
 
 /**
@@ -449,7 +467,7 @@ function isRechargeable( purchase ) {
 
 /**
  * Checks if a purchase can be canceled and refunded via the WordPress.com API.
- * Purchases usually can be refunded up to 30 days after purchase.
+ * Purchases usually can be refunded up to 14 days after purchase.
  * Domains and domain mappings can be refunded up to 96 hours.
  * Purchases included with plan can't be refunded.
  *
@@ -542,6 +560,14 @@ function isRenewing( purchase ) {
 	return includes( [ 'active', 'autoRenewing' ], purchase.expiryStatus );
 }
 
+function isWithinIntroductoryOfferPeriod( purchase ) {
+	return purchase.introductoryOffer?.isWithinPeriod;
+}
+
+function isIntroductoryOfferFreeTrial( purchase ) {
+	return purchase.introductoryOffer?.costPerInterval === 0;
+}
+
 function isSubscription( purchase ) {
 	const nonSubscriptionFunctions = [ isDomainRegistration, isOneTimePurchase ];
 
@@ -593,6 +619,7 @@ function creditCardHasAlreadyExpired( purchase ) {
 	const creditCard = purchase?.payment?.creditCard;
 
 	return (
+		creditCard &&
 		isPaidWithCreditCard( purchase ) &&
 		hasCreditCardData( purchase ) &&
 		moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment.now(), 'months' )
@@ -662,6 +689,26 @@ function purchaseType( purchase ) {
 		return purchase.productName;
 	}
 
+	if ( isDomainMapping( purchase ) ) {
+		return purchase.productName;
+	}
+
+	if ( isGoogleWorkspace( purchase ) ) {
+		return i18n.translate( 'Productivity and Collaboration Tools at %(domain)s', {
+			args: {
+				domain: purchase.meta,
+			},
+		} );
+	}
+
+	if ( isTitanMail( purchase ) ) {
+		return i18n.translate( 'Mailboxes at %(domain)s', {
+			args: {
+				domain: purchase.meta,
+			},
+		} );
+	}
+
 	if ( purchase.meta ) {
 		return purchase.meta;
 	}
@@ -725,6 +772,8 @@ export {
 	isRenewal,
 	isRenewing,
 	isSubscription,
+	isWithinIntroductoryOfferPeriod,
+	isIntroductoryOfferFreeTrial,
 	maybeWithinRefundPeriod,
 	needsToRenewSoon,
 	paymentLogoType,
@@ -735,3 +784,5 @@ export {
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 	shouldRenderExpiringCreditCard,
 };
+
+export { isGoogleWorkspaceExtraLicence } from './is-google-workspace-extra-license';

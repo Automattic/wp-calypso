@@ -7,9 +7,7 @@ import styled from '@emotion/styled';
 
 const debug = debugFactory( 'calypso:site-level-purchases-error-boundary' );
 
-export default class SiteLevelPurchasesErrorBoundary extends React.Component<
-	SiteLevelPurchasesErrorBoundaryProps
-> {
+export default class SiteLevelPurchasesErrorBoundary extends React.Component< SiteLevelPurchasesErrorBoundaryProps > {
 	constructor( props: SiteLevelPurchasesErrorBoundaryProps ) {
 		super( props );
 	}

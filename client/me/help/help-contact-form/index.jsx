@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { debounce, isEqual, find, isEmpty, isArray } from 'lodash';
+import { debounce, isEqual, find, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
@@ -13,7 +13,7 @@ import Gridicon from 'calypso/components/gridicon';
  */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import FormLabel from 'calypso/components/forms/form-label';
 import SegmentedControl from 'calypso/components/segmented-control';
 import SelectDropdown from 'calypso/components/select-dropdown';
@@ -198,7 +198,7 @@ export class HelpContactForm extends React.PureComponent {
 			.getQandA( query, site )
 			.then( ( qanda ) =>
 				this.setState( {
-					qanda: isArray( qanda ) ? qanda : [],
+					qanda: Array.isArray( qanda ) ? qanda : [],
 					// only keep sibylClicked true if the user is seeing the same set of questions
 					// we don't want to track "questions -> question click -> different questions -> support click",
 					// so we need to set sibylClicked to false here if the questions have changed
@@ -474,6 +474,7 @@ export class HelpContactForm extends React.PureComponent {
 						helpLinks={ this.state.qanda }
 						iconTypeDescription="book"
 						onClick={ this.trackSibylClick }
+						compact
 					/>
 				) }
 

@@ -5,22 +5,24 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, includes, startsWith } from 'lodash';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import config, { isEnabled } from 'calypso/config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import ExternalLink from 'calypso/components/external-link';
 import Gridicon from 'calypso/components/gridicon';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
+import { getSignupUrl } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { addQueryArgs, getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
+import { addQueryArgs } from 'calypso/lib/url';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -42,7 +44,22 @@ export class LoginLinks extends React.Component {
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
 		isGutenboarding: PropTypes.bool.isRequired,
+		usernameOrEmail: PropTypes.string,
 	};
+
+	constructor( props ) {
+		super( props );
+
+		this.loginLinkRef = React.createRef();
+	}
+
+	componentDidMount() {
+		this.loginLinkRef.current?.addEventListener( 'click', this.handleMagicLoginLinkClick );
+	}
+
+	componentWillUnmount() {
+		this.loginLinkRef.current?.removeEventListener( 'click', this.handleMagicLoginLinkClick );
+	}
 
 	recordBackToWpcomLinkClick = () => {
 		this.props.recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
@@ -72,23 +89,14 @@ export class LoginLinks extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
 		this.props.resetMagicLoginRequestForm();
 
-		const loginParameters = {
-			isNative: true,
-			locale: this.props.locale,
-			twoFactorAuthType: 'link',
-		};
-		const emailAddress = get( this.props, [ 'query', 'email_address' ] );
-		if ( emailAddress ) {
-			loginParameters.emailAddress = emailAddress;
-		}
+		// Add typed email address as a query param
+		const { query, usernameOrEmail } = this.props;
+		const emailAddress = usernameOrEmail || query?.email_address;
+		const { pathname, search } = getUrlParts(
+			addQueryArgs( { email_address: emailAddress }, event.target.href )
+		);
 
-		if ( this.props.currentRoute === '/log-in/jetpack' ) {
-			loginParameters.twoFactorAuthType = 'jetpack/link';
-		} else if ( this.props.isGutenboarding ) {
-			loginParameters.twoFactorAuthType = 'new/link';
-		}
-
-		page( login( loginParameters ) );
+		page( pathname + search );
 	};
 
 	recordResetPasswordLinkClick = () => {
@@ -97,6 +105,26 @@ export class LoginLinks extends React.Component {
 
 	recordSignUpLinkClick = () => {
 		this.props.recordTracksEvent( 'calypso_login_sign_up_link_click' );
+	};
+
+	getLoginLinkPageUrl = () => {
+		// The email address from the URL (if present) is added to the login
+		// parameters in this.handleMagicLoginLinkClick(). But it's left out
+		// here deliberately, to ensure that if someone copies this link to
+		// paste somewhere else, their email address isn't included in it.
+		const loginParameters = {
+			isNative: true,
+			locale: this.props.locale,
+			twoFactorAuthType: 'link',
+		};
+
+		if ( this.props.currentRoute === '/log-in/jetpack' ) {
+			loginParameters.twoFactorAuthType = 'jetpack/link';
+		} else if ( this.props.isGutenboarding ) {
+			loginParameters.twoFactorAuthType = 'new/link';
+		}
+
+		return login( loginParameters );
 	};
 
 	renderBackLink() {
@@ -213,28 +241,18 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
-		// The email address from the URL (if present) is added to the login
-		// parameters in this.handleMagicLoginLinkClick(). But it's left out
-		// here deliberately, to ensure that if someone copies this link to
-		// paste somewhere else, their email address isn't included in it.
-		const loginParameters = {
-			isNative: true,
-			locale: this.props.locale,
-			twoFactorAuthType: 'link',
-		};
-
-		if ( this.props.currentRoute === '/log-in/jetpack' ) {
-			loginParameters.twoFactorAuthType = 'jetpack/link';
-		} else if ( this.props.isGutenboarding ) {
-			loginParameters.twoFactorAuthType = 'new/link';
-		}
-
 		return (
 			<a
-				href={ login( loginParameters ) }
+				// Event listeners added with `onClick` are not called, because
+				// page.js adds an event listener itself. By explicitely adding
+				// an event listener through the ref, we can intercept the event
+				// and prevent this page.js behaviour.
+				// A simpler solution would have been to add rel=external or
+				// rel=download, but it would have been semantically wrong.
+				ref={ this.loginLinkRef }
+				href={ this.getLoginLinkPageUrl() }
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
-				onClick={ this.handleMagicLoginLinkClick }
 			>
 				{ this.props.translate( 'Email me a login link' ) }
 			</a>
@@ -276,91 +294,37 @@ export class LoginLinks extends React.Component {
 	renderSignUpLink() {
 		// Taken from client/layout/masterbar/logged-out.jsx
 		const {
-			currentQuery,
 			currentRoute,
-			oauth2Client,
-			pathname,
-			translate,
-			wccomFrom,
 			isGutenboarding,
 			locale,
+			oauth2Client,
+			pathname,
+			query,
+			translate,
+			usernameOrEmail,
 		} = this.props;
+
+		const signupUrl = getSignupUrl(
+			query,
+			currentRoute,
+			oauth2Client,
+			locale,
+			pathname,
+			isGutenboarding
+		);
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
 			return null;
 		}
 
-		let signupUrl = config( 'signup_url' );
-		const signupFlow = get( currentQuery, 'signup_flow' );
-		if (
-			// Match locales like `/log-in/jetpack/es`
-			startsWith( currentRoute, '/log-in/jetpack' )
-		) {
-			// Basic validation that we're in a valid Jetpack Authorization flow
-			if (
-				includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
-				includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
-			) {
-				/**
-				 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
-				 * this case, the redirect_to will handle signups as part of the flow. Use the
-				 * `redirect_to` parameter directly for signup.
-				 */
-				signupUrl = currentQuery.redirect_to;
-			} else {
-				signupUrl = '/jetpack/connect';
-			}
-		} else if ( '/jetpack-connect' === pathname ) {
-			signupUrl = '/jetpack/connect';
-		} else if ( signupFlow ) {
-			signupUrl += '/' + signupFlow;
-		}
-
-		if ( config.isEnabled( 'signup/wpcc' ) && isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			const oauth2Flow = 'crowdsignal';
-			const redirectTo = get( currentQuery, 'redirect_to', '' );
-			const oauth2Params = new URLSearchParams( {
-				oauth2_client_id: oauth2Client.id,
-				oauth2_redirect: redirectTo,
-			} );
-
-			signupUrl = `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
-		}
-
-		if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			oauth2Client &&
-			isWooOAuth2Client( oauth2Client ) &&
-			wccomFrom
-		) {
-			const redirectTo = get( currentQuery, 'redirect_to', '' );
-			const oauth2Params = new URLSearchParams( {
-				oauth2_client_id: oauth2Client.id,
-				'wccom-from': wccomFrom,
-				oauth2_redirect: redirectTo,
-			} );
-
-			signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
-		}
-
-		if ( isGutenboarding ) {
-			const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-			signupUrl = this.props.signupUrl || '/new' + langFragment;
-		}
-
-		if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {
-			const redirectTo = get( currentQuery, 'redirect_to', '' );
-			const oauth2Params = new URLSearchParams( {
-				oauth2_client_id: oauth2Client.id,
-				oauth2_redirect: redirectTo,
-			} );
-
-			signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
-		}
-
 		return (
 			<a
-				href={ signupUrl }
+				href={ addQueryArgs(
+					{
+						user_email: usernameOrEmail,
+					},
+					signupUrl
+				) }
 				key="sign-up-link"
 				onClick={ this.recordSignUpLinkClick }
 				rel="external"
@@ -386,7 +350,6 @@ export class LoginLinks extends React.Component {
 
 export default connect(
 	( state ) => ( {
-		currentQuery: getCurrentQueryArguments( state ),
 		currentRoute: getCurrentRoute( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		oauth2Client: getCurrentOAuth2Client( state ),

@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { loadScript } from '@automattic/load-script';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,6 +24,8 @@ let auth2InitDone = false;
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class GoogleLoginButton extends Component {
 	static propTypes = {
@@ -228,7 +229,11 @@ class GoogleLoginButton extends Component {
 						onBlur={ this.hideError }
 						onClick={ this.handleClick }
 					>
-						<GoogleIcon isDisabled={ isDisabled } />
+						<GoogleIcon
+							isDisabled={ isDisabled }
+							width={ this.props.isReskinned ? 19 : 20 }
+							height={ this.props.isReskinned ? 19 : 20 }
+						/>
 
 						<span className="social-buttons__service-name">
 							{ this.props.translate( 'Continue with %(service)s', {

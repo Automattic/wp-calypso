@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import { assign, get, includes, indexOf, reject } from 'lodash';
+import { get, includes, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import stepConfig from './steps';
 import user from 'calypso/lib/user';
-import { isEcommercePlan } from 'calypso/lib/plans';
+import { isEcommercePlan } from '@automattic/calypso-products';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import { addQueryArgs } from 'calypso/lib/url';
 
@@ -32,14 +32,19 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 					redirect_to: `/home/${ dependencies.siteSlug }`,
 				} ),
 			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
-			...( 'domain' === flowName && { isDomainOnly: 1 } ),
+			...( [ 'domain', 'add-domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
 		},
 		checkoutURL
 	);
 }
 
 function dependenciesContainCartItem( dependencies ) {
-	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
+	return (
+		dependencies.cartItem ||
+		dependencies.domainItem ||
+		dependencies.themeItem ||
+		dependencies.selectedDomainUpsellItem
+	);
 }
 
 function getSiteDestination( dependencies ) {
@@ -58,11 +63,15 @@ function getSiteDestination( dependencies ) {
 }
 
 function getRedirectDestination( dependencies ) {
-	if (
-		dependencies.oauth2_redirect &&
-		dependencies.oauth2_redirect.startsWith( 'https://public-api.wordpress.com' )
-	) {
-		return dependencies.oauth2_redirect;
+	try {
+		if (
+			dependencies.oauth2_redirect &&
+			new URL( dependencies.oauth2_redirect ).host === 'public-api.wordpress.com'
+		) {
+			return dependencies.oauth2_redirect;
+		}
+	} catch {
+		return '/';
 	}
 
 	return '/';
@@ -107,9 +116,10 @@ function removeUserStepFromFlow( flow ) {
 		return;
 	}
 
-	return assign( {}, flow, {
+	return {
+		...flow,
 		steps: reject( flow.steps, ( stepName ) => stepConfig[ stepName ].providesToken ),
-	} );
+	};
 }
 
 function removeP2DetailsStepFromFlow( flow ) {
@@ -117,9 +127,10 @@ function removeP2DetailsStepFromFlow( flow ) {
 		return;
 	}
 
-	return assign( {}, flow, {
+	return {
+		...flow,
 		steps: reject( flow.steps, ( stepName ) => stepName === 'p2-details' ),
-	} );
+	};
 }
 
 function filterDestination( destination, dependencies, flowName, localeSlug ) {
@@ -174,7 +185,7 @@ const Flows = {
 			return false;
 		}
 		const flowSteps = flow.steps;
-		const currentStepIndex = indexOf( flowSteps, currentStepName );
+		const currentStepIndex = flowSteps.indexOf( currentStepName );
 		const nextIndex = currentStepIndex + 1;
 		const nextStepName = get( flowSteps, nextIndex );
 
@@ -197,9 +208,10 @@ const Flows = {
 			return;
 		}
 
-		return assign( {}, flow, {
+		return {
+			...flow,
 			steps: reject( flow.steps, ( stepName ) => includes( Flows.excludedSteps, stepName ) ),
-		} );
+		};
 	},
 
 	resetExcludedSteps() {

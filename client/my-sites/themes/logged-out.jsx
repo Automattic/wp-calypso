@@ -14,7 +14,7 @@ import { connectOptions } from './theme-options';
 const ConnectedThemeShowcase = connectOptions( ThemeShowcase );
 
 export default ( props ) => (
-	<Main className="themes">
+	<Main fullWidthLayout className="themes">
 		<ConnectedThemeShowcase
 			{ ...props }
 			origin="wpcom"

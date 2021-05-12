@@ -8,7 +8,8 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { items } from '../reducer';
-import { POST_TYPES_RECEIVE, SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { POST_TYPES_RECEIVE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -94,13 +95,13 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should persist state', () => {
-			const state = items(
+			const state = serialize(
+				items,
 				deepFreeze( {
 					2916284: {
 						post: { name: 'post', label: 'Posts' },
 					},
-				} ),
-				{ type: SERIALIZE }
+				} )
 			);
 
 			expect( state.root() ).to.eql( {
@@ -111,13 +112,13 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should load valid persisted state', () => {
-			const state = items(
+			const state = deserialize(
+				items,
 				deepFreeze( {
 					2916284: {
 						post: { name: 'post', label: 'Posts' },
 					},
-				} ),
-				{ type: DESERIALIZE }
+				} )
 			);
 
 			expect( state ).to.eql( {
@@ -128,11 +129,11 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should not load invalid persisted state', () => {
-			const state = items(
+			const state = deserialize(
+				items,
 				deepFreeze( {
 					post: { name: 'post', label: 'Posts' },
-				} ),
-				{ type: DESERIALIZE }
+				} )
 			);
 
 			expect( state ).to.eql( {} );

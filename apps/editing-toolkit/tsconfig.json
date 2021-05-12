@@ -6,6 +6,7 @@
 		"isolatedModules": true,
 		"noEmit": true,
 
+		"jsx": "react",
 		"allowJs": true,
 		"checkJs": false,
 
@@ -22,15 +23,14 @@
 
 		/* Module Resolution Options */
 		"moduleResolution": "node",
+		"allowSyntheticDefaultImports": true,
 
 		/* This needs to be false so our types are possible to consume without setting this */
 		"esModuleInterop": false,
 
 		// Some type helpers from our webpack/
-		"types": [ "fse", "jest" ],
 		"typeRoots": [ "./typings", "./node_modules/@types", "../../node_modules/@types" ],
-		// Preserve JSX, allows compatibility with wp-element jsx babel transforms
-		"jsx": "preserve"
+		"types": [ "jest", "@emotion/core" ]
 	},
 	"exclude": [ "node_modules" ],
 	"references": [
@@ -38,10 +38,9 @@
 		{ "path": "../../packages/calypso-analytics" },
 		{ "path": "../../packages/composite-checkout" },
 		{ "path": "../../packages/domain-picker" },
-		{ "path": "../../packages/format-currency" },
 		{ "path": "../../packages/onboarding" },
 		{ "path": "../../packages/launch" },
 		{ "path": "../../packages/plans-grid" },
-		{ "path": "../../packages/react-i18n" }
+		{ "path": "../../packages/i18n-utils" }
 	]
 }

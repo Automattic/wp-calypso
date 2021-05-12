@@ -1,14 +1,8 @@
 /**
- * External dependencies
- */
-
-import Dispatcher from 'calypso/dispatcher';
-
-/**
  * Internal Dependencies
  */
-import { action as InvitesActionTypes } from 'calypso/lib/invites/constants';
 import User from './user';
+
 let _user = false;
 
 export default function () {
@@ -17,14 +11,3 @@ export default function () {
 	}
 	return _user;
 }
-
-User.dispatchToken = Dispatcher.register( function ( payload ) {
-	const action = payload.action;
-	switch ( action.type ) {
-		case InvitesActionTypes.INVITE_ACCEPTED:
-			if ( [ 'follower', 'viewer' ].indexOf( action.invite.role ) === -1 ) {
-				_user.incrementSiteCount();
-			}
-			break;
-	}
-} );

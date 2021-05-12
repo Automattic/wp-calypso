@@ -5,24 +5,21 @@ import {
 	DomainSuggestions,
 	Site,
 	VerticalsTemplates,
-	Plans,
 	WPCOMFeatures,
 } from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { getLanguage } from 'calypso/lib/i18n-utils';
 import { __ } from '@wordpress/i18n';
+import type { Design, FontPair } from '@automattic/design-picker';
 
 /**
  * Internal dependencies
  */
-import type { Design, SiteVertical } from './types';
+import type { SiteVertical } from './types';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
-import { PLANS_STORE } from '../plans';
 import type { State } from '.';
-import type { FontPair } from '../../constants';
-import { isEnabled } from 'calypso/config';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -37,14 +34,25 @@ export const addFeature = ( featureId: FeatureId ) => ( {
 	featureId,
 } );
 
-export function* createSite(
-	username: string,
-	languageSlug: string,
-	bearerToken?: string,
-	visibility: number = isEnabled( 'coming-soon-v2' )
-		? Site.Visibility.PublicNotIndexed
-		: Site.Visibility.Private
-) {
+export interface CreateSiteActionParameters {
+	username: string;
+	languageSlug: string;
+	bearerToken?: string;
+	visibility: number;
+	anchorFmPodcastId: string | null;
+	anchorFmEpisodeId: string | null;
+	anchorFmSpotifyUrl: string | null;
+}
+
+export function* createSite( {
+	username,
+	languageSlug,
+	bearerToken = undefined,
+	visibility = Site.Visibility.PublicNotIndexed,
+	anchorFmPodcastId = null,
+	anchorFmEpisodeId = null,
+	anchorFmSpotifyUrl = null,
+}: CreateSiteActionParameters ) {
 	const {
 		domain,
 		selectedDesign,
@@ -71,7 +79,7 @@ export function* createSite(
 			// so we can match directories in
 			// https://github.com/Automattic/wp-calypso/tree/HEAD/static/page-templates/verticals
 			// TODO: determine default vertical should user input match no official vertical
-			site_vertical_slug: siteVertical?.slug || 'football',
+			site_vertical_slug: siteVertical?.slug,
 			site_information: {
 				title: blogTitle,
 			},
@@ -87,14 +95,24 @@ export function* createSite(
 			} ),
 			use_patterns: true,
 			selected_features: selectedFeatures,
-			...( isEnabled( 'coming-soon-v2' ) &&
-				visibility === Site.Visibility.PublicNotIndexed && {
-					wpcom_public_coming_soon: 1,
-				} ),
+			wpcom_public_coming_soon: 1,
+			...( anchorFmPodcastId && {
+				anchor_fm_podcast_id: anchorFmPodcastId,
+			} ),
+			...( anchorFmEpisodeId && {
+				anchor_fm_episode_id: anchorFmEpisodeId,
+			} ),
+			...( anchorFmSpotifyUrl && {
+				anchor_fm_spotify_url: anchorFmSpotifyUrl,
+			} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
-	const success = yield dispatch( SITE_STORE, 'createSite', params );
+	const success: Site.NewSiteBlogDetails | undefined = yield dispatch(
+		SITE_STORE,
+		'createSite',
+		params
+	);
 
 	return success;
 }
@@ -153,9 +171,14 @@ export const setIsRedirecting = ( isRedirecting: boolean ) => ( {
 	isRedirecting,
 } );
 
-export const setPlan = ( plan: Plans.Plan ) => ( {
-	type: 'SET_PLAN' as const,
-	plan,
+export const setLastLocation = ( path: string ) => ( {
+	type: 'SET_LAST_LOCATION' as const,
+	path,
+} );
+
+export const setPlanProductId = ( planProductId: number | undefined ) => ( {
+	type: 'SET_PLAN_PRODUCT_ID' as const,
+	planProductId,
 } );
 
 export const setRandomizedDesigns = ( randomizedDesigns: { featured: Design[] } ) => ( {
@@ -197,9 +220,9 @@ export const togglePageLayout = ( pageLayout: Template ) => ( {
 	pageLayout,
 } );
 
-export function* updatePlan( planSlug: Plans.PlanSlug ) {
-	const plan: Plans.Plan = yield select( PLANS_STORE, 'getPlanBySlug', planSlug );
-	yield setPlan( plan );
+export function updatePlan( planProductId: number ) {
+	// keep updatePlan for backwards compat
+	return setPlanProductId( planProductId );
 }
 
 export const startOnboarding = () => ( {
@@ -219,7 +242,8 @@ export type OnboardAction = ReturnType<
 	| typeof setHasUsedDomainsStep
 	| typeof setHasUsedPlansStep
 	| typeof setIsRedirecting
-	| typeof setPlan
+	| typeof setLastLocation
+	| typeof setPlanProductId
 	| typeof setRandomizedDesigns
 	| typeof setSelectedDesign
 	| typeof setSelectedSite

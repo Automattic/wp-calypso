@@ -17,6 +17,8 @@ import {
 } from 'calypso/state/action-types';
 import wp from 'calypso/lib/wp';
 
+import 'calypso/state/stored-cards/init';
+
 export const addStoredCard = ( cardData ) => ( dispatch ) => {
 	return wp
 		.undocumented()
@@ -37,7 +39,7 @@ export const fetchStoredCards = () => ( dispatch ) => {
 
 	return wp
 		.undocumented()
-		.getPaymentMethods()
+		.getPaymentMethods( { expired: 'include' } )
 		.then( ( data ) => {
 			dispatch( {
 				type: STORED_CARDS_FETCH_COMPLETED,

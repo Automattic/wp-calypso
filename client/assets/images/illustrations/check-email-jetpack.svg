@@ -1,0 +1,54 @@
+<svg width="208" height="245" viewBox="0 0 208 245" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g filter="url(#filter0_d)">
+        <path d="M32 116H176V185C176 191.627 170.627 197 164 197H44C37.3726 197 32 191.627 32 185V116Z" fill="white" />
+    </g>
+    <path
+        d="M99.3064 72.3624C102.247 70.5459 105.753 70.5459 108.694 72.3624L174.185 112.818C176.629 114.328 176.598 118.478 174.132 119.937L108.535 158.734C105.68 160.422 102.32 160.422 99.4654 158.734L33.8683 119.937C31.4017 118.478 31.3708 114.328 33.8153 112.818L99.3064 72.3624Z"
+        fill="url(#paint0_linear)" />
+    <mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="32" y="0" width="144" height="160">
+        <path
+            d="M99.3064 1.36381C102.247 -0.454601 105.753 -0.454605 108.694 1.36381L174.185 6.32397C176.629 7.83559 176.598 118.435 174.132 119.896L108.535 158.732C105.68 160.423 102.32 160.423 99.4654 158.732L33.8683 119.896C31.4017 118.435 31.3708 7.83559 33.8153 6.32397L99.3064 1.36381Z"
+            fill="#C4C4C4" />
+    </mask>
+    <g mask="url(#mask0)">
+        <g opacity="0.9" filter="url(#filter1_d)">
+            <rect x="52" y="50" width="104" height="140" rx="6" fill="white" />
+        </g>
+        <circle cx="104" cy="74" r="9" fill="#FAFAFA" />
+        <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M114 74C114 79.5228 109.523 84 104 84C98.4772 84 94 79.5228 94 74C94 68.4772 98.4772 64 104 64C109.523 64 114 68.4772 114 74ZM103.485 75.6607V65.9851L98.5039 75.6607H103.485ZM104.496 72.3212V82.0159L109.496 72.3212H104.496Z"
+            fill="#069E08" />
+    </g>
+    <line x1="79.5" y1="97.5" x2="127.5" y2="97.5" stroke="#AAC6A1" stroke-width="7" stroke-linecap="round" />
+    <line x1="67" y1="113" x2="96" y2="113" stroke="#AAC6A1" stroke-width="4" stroke-linecap="round" />
+    <line x1="67" y1="121" x2="129" y2="121" stroke="#AAC6A1" stroke-width="4" stroke-linecap="round" />
+    <line x1="106" y1="113" x2="117" y2="113" stroke="#AAC6A1" stroke-width="4" stroke-linecap="round" />
+    <line x1="67" y1="130" x2="82" y2="130" stroke="#AAC6A1" stroke-width="4" stroke-linecap="round" />
+    <line x1="91" y1="130" x2="99" y2="130" stroke="#AAC6A1" stroke-width="4" stroke-linecap="round" />
+    <defs>
+        <filter id="filter0_d" x="0" y="100" width="208" height="145" filterUnits="userSpaceOnUse"
+            color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+            <feOffset dy="16" />
+            <feGaussianBlur stdDeviation="16" />
+            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.16 0" />
+            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
+            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+        </filter>
+        <filter id="filter1_d" x="30" y="32" width="148" height="184" filterUnits="userSpaceOnUse"
+            color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+            <feOffset dy="4" />
+            <feGaussianBlur stdDeviation="11" />
+            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.16 0" />
+            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
+            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+        </filter>
+        <linearGradient id="paint0_linear" x1="104" y1="71" x2="104" y2="160" gradientUnits="userSpaceOnUse">
+            <stop offset="0.34375" stop-color="#64CA43" />
+            <stop offset="0.786458" stop-color="#3E7E93" />
+        </linearGradient>
+    </defs>
+</svg>

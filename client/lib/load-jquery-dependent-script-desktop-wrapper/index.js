@@ -8,7 +8,7 @@
  * External dependencies
  */
 import { loadScript, loadjQueryDependentScript } from '@automattic/load-script';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 const debug = debugFactory( 'lib/load-jquery-dependent-script-desktop-wrapper' );
 

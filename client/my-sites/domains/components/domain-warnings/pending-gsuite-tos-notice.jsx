@@ -70,9 +70,10 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 
 	getExclamation( severity ) {
 		const { translate } = this.props;
+
 		const translationOptions = {
-			context: 'Beginning of Gapps pending account notice',
-			comment: "Used as an exclamation in Gapps' pending account notice",
+			context: 'Beginning of Google Workspace pending account notice',
+			comment: "Used as an exclamation in Google Workspace's pending account notice",
 		};
 
 		switch ( severity ) {
@@ -83,7 +84,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 				return translate( 'Urgent!', translationOptions );
 
 			default:
-				return translate( "You're almost there!", translationOptions );
+				return '';
 		}
 	}
 
@@ -136,14 +137,13 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 			<>
 				<p>
 					{ translate(
-						'Your mailbox {{strong}}%(emails)s{{/strong}} is almost ready! Complete the setup to activate your new email address.',
-						'Your mailboxes {{strong}}%(emails)s{{/strong}} are almost ready! Complete the setup to activate your new email addresses.',
+						'Your new user {{strong}}%(emails)s{{/strong}} is ready! Complete the setup to activate it.',
+						'Your new users {{strong}}%(emails)s{{/strong}} are ready! Complete the setup to activate them.',
 						{
 							count: users.length,
 							args: { emails },
 							comment:
-								'%(emails)s will be a list of email addresses separated by a comma, ' +
-								'e.g. test@example.com, test2@example.com',
+								"%(emails)s is a list of email addresses separated by commas (e.g. 'one@example.com, two@example.com')",
 							components: { strong },
 						}
 					) }
@@ -169,11 +169,13 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domain"
 				text={ translate(
-					'%(exclamation)s To activate your email {{strong}}%(emails)s{{/strong}}, click "Finish Setup".',
-					'%(exclamation)s To activate your emails {{strong}}%(emails)s{{/strong}}, click "Finish Setup".',
+					'%(exclamation)s Finish the setup of {{strong}}%(emails)s{{/strong}} to activate it.',
+					'%(exclamation)s Finish the setup of {{strong}}%(emails)s{{/strong}} to activate them.',
 					{
 						count: users.length,
 						args: { exclamation, emails: users.join( ', ' ) },
+						comment:
+							"%(emails)s is a list of email addresses separated by a comma (e.g. 'one@example.com, two@example.com')",
 						components: { strong },
 					}
 				) }
@@ -201,12 +203,9 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domains"
 			>
-				{ translate(
-					'%(exclamation)s To activate your new email addresses, click "Finish Setup".',
-					{
-						args: { exclamation },
-					}
-				) }
+				{ translate( '%(exclamation)s Finish the setup of your new users to activate them:', {
+					args: { exclamation },
+				} ) }
 
 				<ul>
 					{ this.props.domains.map(

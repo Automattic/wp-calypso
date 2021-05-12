@@ -15,22 +15,22 @@ import React from 'react';
 import MediaLibrary from '..';
 import { requestKeyringConnections as requestStub } from 'calypso/state/sharing/keyring/actions';
 
-jest.mock( 'components/data/query-preferences', () =>
+jest.mock( 'calypso/components/data/query-preferences', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'my-sites/media-library/content', () =>
+jest.mock( 'calypso/my-sites/media-library/content', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'my-sites/media-library/drop-zone', () =>
+jest.mock( 'calypso/my-sites/media-library/drop-zone', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'my-sites/media-library/filter-bar', () =>
+jest.mock( 'calypso/my-sites/media-library/filter-bar', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'state/sharing/keyring/actions', () => ( {
+jest.mock( 'calypso/state/sharing/keyring/actions', () => ( {
 	requestKeyringConnections: require( 'sinon' ).stub(),
 } ) );
-jest.mock( 'state/sharing/keyring/selectors', () => ( {
+jest.mock( 'calypso/state/sharing/keyring/selectors', () => ( {
 	getKeyringConnections: () => null,
 	isKeyringConnectionsFetching: () => null,
 } ) );
@@ -41,8 +41,6 @@ describe( 'MediaLibrary', () => {
 			media: {
 				errors: {},
 				queries: {},
-				queryRequests: {},
-				mediaItemRequests: {},
 				selectedItems: {},
 			},
 		} ),

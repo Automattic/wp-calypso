@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,67 +13,60 @@ import NoteActions from './actions';
 import NotePreface from './preface';
 import Post from './block-post';
 import User from './block-user';
-
 import { bumpStat } from '../rest-client/bump-stat';
-
 import { html } from '../indices-to-html';
 import { p, zipWithSignature } from './functions';
 
-class ReplyBlock extends React.Component {
-	render() {
-		// explicitly send className of '' here so we don't get the default of
-		// "paragraph"
-		const replyText = p( html( this.props.block ), '' );
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
-		return <div className="wpnc__reply">{ replyText }</div>;
-	}
+function ReplyBlock( { block } ) {
+	// explicitly send className of '' here so we don't get the default of "paragraph"
+	const replyText = p( html( block ), '' );
+
+	return <div className="wpnc__reply">{ replyText }</div>;
 }
 
-export const NoteBody = createReactClass( {
-	displayName: 'NoteBody',
+export class NoteBody extends React.Component {
+	state = {
+		reply: null,
+	};
 
-	getInitialState: function () {
-		return {
-			reply: null,
-		};
-	},
+	isMounted = false;
 
-	componentDidMount: function () {
-		bumpStat( 'notes-click-type', this.props.note.type );
-	},
+	componentDidMount() {
+		this.isMounted = true;
 
-	replyLoaded: function ( error, data ) {
-		if ( error || ! this.isMounted() ) {
-			return;
-		}
-
-		this.setState( { reply: data } );
-	},
-
-	UNSAFE_componentWillMount: function () {
-		const note = this.props.note;
-		let hasReplyBlock;
+		const { note } = this.props;
+		bumpStat( 'notes-click-type', note.type );
 
 		if ( note.meta && note.meta.ids.reply_comment ) {
-			hasReplyBlock =
-				note.body.filter( function ( block ) {
-					return (
-						block.ranges &&
-						block.ranges.length > 1 &&
-						block.ranges[ 1 ].id == note.meta.ids.reply_comment
-					);
-				} ).length > 0;
+			const hasReplyBlock = note.body.some(
+				( block ) =>
+					block.ranges &&
+					block.ranges.length > 1 &&
+					block.ranges[ 1 ].id === note.meta.ids.reply_comment
+			);
 
 			if ( ! hasReplyBlock ) {
 				wpcom()
-					.site( this.props.note.meta.ids.site )
-					.comment( this.props.note.meta.ids.reply_comment )
-					.get( this.replyLoaded );
+					.site( note.meta.ids.site )
+					.comment( note.meta.ids.reply_comment )
+					.get( ( error, data ) => {
+						if ( error || ! this.isMounted ) {
+							return;
+						}
+
+						this.setState( { reply: data } );
+					} );
 			}
 		}
-	},
+	}
 
-	render: function () {
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
+
+	render() {
 		let blocks = zipWithSignature( this.props.note.body, this.props.note );
 		let actions = '';
 		let preface = '';
@@ -173,7 +165,9 @@ export const NoteBody = createReactClass( {
 				{ actions }
 			</div>
 		);
-	},
-} );
+	}
+}
+
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default localize( NoteBody );

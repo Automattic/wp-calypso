@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop, map } from 'lodash';
+import { map } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -11,6 +11,8 @@ import { localize } from 'i18n-calypso';
  */
 import Tooltip from 'calypso/components/tooltip';
 import { CalendarEvent } from './event';
+
+const noop = () => {};
 
 class EventsTooltip extends Component {
 	static propTypes = {

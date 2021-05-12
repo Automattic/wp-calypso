@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import { CompactCard } from '@automattic/components';
 import FormToggle from 'calypso/components/forms/form-toggle';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';

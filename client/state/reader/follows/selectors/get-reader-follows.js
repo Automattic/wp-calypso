@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { values, reject } from 'lodash';
+import { reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 
@@ -21,7 +21,7 @@ import 'calypso/state/reader/init';
 const getReaderFollows = createSelector(
 	( state ) => {
 		// remove subs where the sub has an error
-		const items = reject( values( state.reader.follows.items ), 'error' );
+		const items = reject( Object.values( state.reader.follows.items ), 'error' );
 
 		// this is important. don't mutate the original items.
 		const withSiteAndFeed = items.map( ( item ) => ( {

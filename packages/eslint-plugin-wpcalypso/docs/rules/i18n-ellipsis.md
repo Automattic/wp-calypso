@@ -7,7 +7,7 @@ Three dots for indicating an ellipsis should be replaced with the UTF-8 characte
 The following patterns are considered warnings:
 
 ```js
-translate( 'Loading…' );
+translate( 'Loading...' );
 ```
 
 The following patterns are not warnings:

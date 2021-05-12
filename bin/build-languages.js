@@ -206,7 +206,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 
 		const languageRevisionsHashes = {};
 
-		languagesPaths.map( ( { chunksMapPath, publicPath } ) => {
+		languagesPaths.map( ( { chunksMapPath, extraPath, publicPath } ) => {
 			const chunksMap = require( path.join( '..', chunksMapPath ) );
 
 			const chunks = _.mapValues( chunksMap, ( modules ) => {
@@ -228,6 +228,8 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 
 				return [ ...strings ];
 			} );
+
+			languageRevisionsHashes[ extraPath ] = {};
 
 			successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
 				const languageChunks = _.chain( chunks )
@@ -251,7 +253,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 					.digest( 'hex' );
 
 				// Trim hash in language revisions to 5 characters to reduce file size
-				languageRevisionsHashes[ langSlug ] = manifestJsonDataRaw.hash.substr( 0, 5 );
+				languageRevisionsHashes[ extraPath ][ langSlug ] = manifestJsonDataRaw.hash.substr( 0, 5 );
 
 				const manifestJsonData = JSON.stringify( manifestJsonDataRaw );
 				const manifestFilepathJson = path.join(
@@ -292,17 +294,15 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 
 		logUpdate( 'Updating language revisions...\n' );
 
-		const updatedLanguageRevisions = JSON.stringify( {
-			...languageRevisions,
-			hashes: languageRevisionsHashes,
-		} );
-
-		languagesPaths.forEach( ( { publicPath } ) =>
-			fs.writeFileSync(
+		languagesPaths.forEach( ( { extraPath, publicPath } ) => {
+			return fs.writeFileSync(
 				`${ publicPath }/${ LANGUAGES_REVISIONS_FILENAME }`,
-				updatedLanguageRevisions
-			)
-		);
+				JSON.stringify( {
+					...languageRevisions,
+					hashes: languageRevisionsHashes[ extraPath ],
+				} )
+			);
+		} );
 	}
 
 	logUpdate(

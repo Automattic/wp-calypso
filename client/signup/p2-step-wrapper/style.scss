@@ -13,8 +13,16 @@
 	line-height: 1.8;
 
 	@include break-mobile {
-		padding: 80px 20px 0;
+		padding: 48px 20px 0;
 		max-width: 400px;
+	}
+
+	@include break-medium {
+		padding: 64px 20px 0;
+	}
+
+	@include break-huge {
+		padding: 80px 20px 0;
 	}
 
 	input,
@@ -37,8 +45,9 @@
 
 .p2-step-wrapper__header {
 	margin-bottom: 40px;
-	@include break-mobile {
-		margin-bottom: 80px;
+
+	@include break-huge {
+		margin-bottom: 56px;
 	}
 }
 
@@ -81,7 +90,7 @@
 	background-color: var( --p2-color-button );
 	color: var( --p2-color-text );
 	border: none;
-	border-radius: 40px;
+	border-radius: 40px; /* stylelint-disable-line scales/radii */
 	font-weight: normal;
 	font-size: var( --p2-font-size-form );
 	transition: background 0.2s ease;

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 
@@ -12,8 +12,6 @@ import { Button } from '@automattic/components';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
-import { Iterations } from 'calypso/my-sites/plans-v2/iterations';
 
 /**
  * Style dependencies
@@ -23,8 +21,8 @@ import './style.scss';
 const JETPACK_COM_BASE_URL = 'https://jetpack.com';
 const MENU_ITEMS = [
 	{
-		title: translate( 'Product Tour' ),
-		path: 'features',
+		title: translate( 'Security' ),
+		path: 'features/security',
 	},
 	{
 		title: translate( 'Pricing' ),
@@ -40,9 +38,7 @@ const MENU_ITEMS = [
 	},
 ];
 
-const JetpackComMasterbar = () => {
-	const iteration = useMemo( getJetpackCROActiveVersion, [] ) as Iterations;
-
+const JetpackComMasterbar: React.FC = () => {
 	const [ isMenuOpen, setIsMenuOpen ] = useState( false );
 
 	const toggleMenu = () => {
@@ -50,7 +46,7 @@ const JetpackComMasterbar = () => {
 	};
 
 	return (
-		<div className={ `jpcom-masterbar iteration-${ iteration }` }>
+		<nav className="jpcom-masterbar">
 			<div className="jpcom-masterbar__inner">
 				<ExternalLink
 					className="jpcom-masterbar__logo"
@@ -59,7 +55,7 @@ const JetpackComMasterbar = () => {
 						recordTracksEvent( 'calypso_jetpack_nav_logo_click' );
 					} }
 				>
-					<JetpackLogo className="jpcom-masterbar__jetpack-logo" full size={ 49 } />
+					<JetpackLogo className="jpcom-masterbar__jetpack-logo" full size={ 43 } />
 				</ExternalLink>
 
 				<Button
@@ -73,9 +69,7 @@ const JetpackComMasterbar = () => {
 					<span className="jpcom-masterbar__navbox">
 						<span className="jpcom-masterbar__navinner"></span>
 					</span>
-					<span className="jpcom-masterbar__navlabel">
-						{ isMenuOpen ? null : translate( 'Menu' ) }
-					</span>
+					<span className="jpcom-masterbar__navlabel">{ translate( 'Menu' ) }</span>
 				</Button>
 
 				<ul className={ classNames( 'jpcom-masterbar__nav', { 'is-open': isMenuOpen } ) }>
@@ -94,7 +88,7 @@ const JetpackComMasterbar = () => {
 					) ) }
 				</ul>
 			</div>
-		</div>
+		</nav>
 	);
 };
 

@@ -5,25 +5,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import {
-	findIndex,
-	flow,
-	get,
-	head,
-	isEmpty,
-	identity,
-	includes,
-	noop,
-	partial,
-	some,
-	values,
-} from 'lodash';
+import { flow, get, head, isEmpty, includes, partial, some, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import MediaLibrary from 'calypso/my-sites/media-library';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
 import { recordEditorEvent, recordEditorStat } from 'calypso/state/posts/stats';
 import MediaModalGallery from './gallery';
@@ -38,11 +25,7 @@ import { resetMediaModalView } from 'calypso/state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'calypso/state/editor/actions';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 import { editMedia, deleteMedia, addExternalMedia } from 'calypso/state/media/thunks';
-import {
-	changeMediaSource,
-	setMediaLibrarySelectedItems,
-	setQuery,
-} from 'calypso/state/media/actions';
+import { changeMediaSource, selectMediaItems, setQuery } from 'calypso/state/media/actions';
 import ImageEditor from 'calypso/blocks/image-editor';
 import VideoEditor from 'calypso/blocks/video-editor';
 import MediaModalDialog from './dialog';
@@ -53,6 +36,8 @@ import { withAnalytics, bumpStat, recordGoogleEvent } from 'calypso/state/analyt
  * Style dependencies
  */
 import './index.scss';
+
+const noop = () => {};
 
 function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 	return (
@@ -102,7 +87,6 @@ export class EditorMediaModal extends Component {
 		labels: Object.freeze( {} ),
 		setView: noop,
 		resetView: noop,
-		translate: identity,
 		view: ModalViews.LIST,
 		galleryViewEnabled: true,
 		imageEditorProps: {},
@@ -120,7 +104,7 @@ export class EditorMediaModal extends Component {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.site && this.props.visible && ! nextProps.visible ) {
-			this.props.setMediaLibrarySelectedItems( nextProps.site.ID, [] );
+			this.props.selectMediaItems( nextProps.site.ID, [] );
 		}
 
 		if ( this.props.visible === nextProps.visible ) {
@@ -146,13 +130,13 @@ export class EditorMediaModal extends Component {
 	UNSAFE_componentWillMount() {
 		const { view, selectedItems, site, single } = this.props;
 		if ( ! isEmpty( selectedItems ) && ( view === ModalViews.LIST || single ) ) {
-			this.props.setMediaLibrarySelectedItems( site.ID, [] );
+			this.props.selectMediaItems( site.ID, [] );
 		}
 	}
 
 	componentWillUnmount() {
 		this.props.resetView();
-		this.props.setMediaLibrarySelectedItems( this.props.site.ID, [] );
+		this.props.selectMediaItems( this.props.site.ID, [] );
 	}
 
 	getDefaultState( props ) {
@@ -277,7 +261,7 @@ export class EditorMediaModal extends Component {
 	};
 
 	onAddAndEditImage = () => {
-		this.props.setMediaLibrarySelectedItems( this.props.site.ID, [] );
+		this.props.selectMediaItems( this.props.site.ID, [] );
 
 		this.props.setView( ModalViews.IMAGE_EDITOR );
 	};
@@ -394,32 +378,6 @@ export class EditorMediaModal extends Component {
 
 	onClose = () => {
 		this.props.onClose();
-	};
-
-	editItem = ( item ) => {
-		const { site, selectedItems, single } = this.props;
-		if ( ! site ) {
-			return;
-		}
-
-		// Append item to set of selected items if not already selected.
-		let items = selectedItems;
-		if ( ! items.some( ( selected ) => selected.ID === item.ID ) ) {
-			if ( single ) {
-				items = [ item ];
-			} else {
-				items = items.concat( item );
-			}
-			this.props.setMediaLibrarySelectedItems( site.ID, items );
-		}
-
-		// Find and set detail selected index for the edited item
-		this.setDetailSelectedIndex( findIndex( items, { ID: item.ID } ) );
-
-		mcBumpStat( 'editor_media_actions', 'edit_button_contextual' );
-		gaRecordEvent( 'Media', 'Clicked Contextual Edit Button' );
-
-		this.props.setView( ModalViews.DETAIL );
 	};
 
 	getFirstEnabledFilter() {
@@ -564,7 +522,6 @@ export class EditorMediaModal extends Component {
 						onScaleChange={ this.onScaleChange }
 						onSourceChange={ this.onSourceChange }
 						onSearch={ this.onSearch }
-						onEditItem={ this.editItem }
 						fullScreenDropZone={ false }
 						single={ this.props.single }
 						onDeleteItem={ this.deleteMedia }
@@ -619,7 +576,7 @@ export default connect(
 		recordEditorEvent,
 		recordEditorStat,
 		editMedia,
-		setMediaLibrarySelectedItems,
+		selectMediaItems,
 		setQuery,
 		addExternalMedia,
 		changeMediaSource,

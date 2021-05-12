@@ -17,6 +17,24 @@ function assembleGoogleAppsSubscription( googleAppsSubscription ) {
 	return mapKeys( googleAppsSubscription, ( value, key ) => camelCase( key ) );
 }
 
+function assembleCurrentUserCannotAddEmailReason( reason ) {
+	if ( ! reason || ! reason.errors ) {
+		return null;
+	}
+
+	const errorDetails = Object.entries( reason.errors ).map( ( entry ) => {
+		const [ errorCode, errorMessages ] = entry;
+		return {
+			code: errorCode,
+			message: errorMessages[ 0 ],
+		};
+	} );
+	if ( ! errorDetails.length ) {
+		return null;
+	}
+	return errorDetails[ 0 ];
+}
+
 export const createSiteDomainObject = ( domain ) => {
 	let transferEndDate = null;
 	if ( domain.transfer_start_date ) {
@@ -26,6 +44,7 @@ export const createSiteDomainObject = ( domain ) => {
 	}
 
 	return {
+		aRecordsRequiredForMapping: domain.a_records_required_for_mapping,
 		autoRenewalDate: String( domain.auto_renewal_date ),
 		adminEmail: domain.admin_email,
 		autoRenewing: Boolean( domain.auto_renewing ),
@@ -34,7 +53,11 @@ export const createSiteDomainObject = ( domain ) => {
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
 		contactInfoDisclosureAvailable: Boolean( domain.contact_info_disclosure_available ),
 		contactInfoDisclosed: Boolean( domain.contact_info_disclosed ),
+		currentUserCanAddEmail: Boolean( domain.current_user_can_add_email ),
 		currentUserCanManage: Boolean( domain.current_user_can_manage ),
+		currentUserCannotAddEmailReason: assembleCurrentUserCannotAddEmailReason(
+			domain.current_user_cannot_add_email_reason
+		),
 		domain: String( domain.domain ),
 		domainLockingAvailable: Boolean( domain.domain_locking_available ),
 		domainRegistrationAgreementUrl: getDomainRegistrationAgreementUrl( domain ),
@@ -79,6 +102,7 @@ export const createSiteDomainObject = ( domain ) => {
 		renewableUntil: String( domain.renewable_until ),
 		redeemableUntil: String( domain.redeemable_until ),
 		sslStatus: ! domain.ssl_status ? null : String( domain.ssl_status ),
+		subdomainPart: String( domain.subdomain_part ),
 		subscriptionId: domain.subscription_id,
 		supportsDomainConnect: Boolean( domain.supports_domain_connect ),
 		supportsGdprConsentManagement: Boolean( domain.supports_gdpr_consent_management ),

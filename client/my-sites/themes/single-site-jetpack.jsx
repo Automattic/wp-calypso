@@ -15,7 +15,7 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { isPartnerPurchase } from 'calypso/lib/purchases';
 import JetpackReferrerMessage from './jetpack-referrer-message';
 import { connectOptions } from './theme-options';
@@ -23,7 +23,7 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import {
 	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	PLAN_JETPACK_SECURITY_REALTIME,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
@@ -87,12 +87,13 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	const isPartnerPlan = purchase && isPartnerPurchase( purchase );
 
 	return (
-		<Main className="themes">
+		<Main fullWidthLayout className="themes">
 			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="themes__page-heading"
 				headerText={ translate( 'Themes' ) }
+				subHeaderText={ translate( 'Select or update the visual design for your site.' ) }
 				align="left"
 			/>
 			<CurrentTheme siteId={ siteId } />

@@ -4,13 +4,14 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
 import FilePicker from 'calypso/components/file-picker';
+
+const noop = () => {};
 
 class VideoEditorUploadButton extends Component {
 	static propTypes = {

@@ -9,21 +9,20 @@ import React from 'react';
 import { reject } from 'lodash';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
-import CartMessages from './cart-messages';
 import HeaderButton from 'calypso/components/header-button';
 import CartButtons from './cart-buttons';
 import Count from 'calypso/components/count';
 import Popover from 'calypso/components/popover';
 import CartEmpty from './cart-empty';
-import { isCredits } from 'calypso/lib/products-values';
+import { isCredits } from '@automattic/calypso-products';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { reloadCart } from 'calypso/lib/cart/actions';
 
 /**
  * Style dependencies
@@ -33,9 +32,9 @@ import './style.scss';
 class PopoverCart extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
+		shoppingCartManager: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		onToggle: PropTypes.func.isRequired,
-		closeSectionNavMobilePanel: PropTypes.func,
 		visible: PropTypes.bool.isRequired,
 		pinned: PropTypes.bool.isRequired,
 		compact: PropTypes.bool,
@@ -49,7 +48,7 @@ class PopoverCart extends React.Component {
 	hasUnmounted = false;
 
 	componentDidMount() {
-		reloadCart();
+		this.props.shoppingCartManager.reloadFromServer();
 	}
 
 	componentWillUnmount() {
@@ -57,7 +56,10 @@ class PopoverCart extends React.Component {
 	}
 
 	itemCount() {
-		if ( ! this.props.cart.hasLoadedFromServer || this.props.cart.hasPendingServerUpdates ) {
+		if (
+			this.props.shoppingCartManager.isLoading ||
+			this.props.shoppingCartManager.isPendingUpdate
+		) {
 			return;
 		}
 
@@ -65,7 +67,6 @@ class PopoverCart extends React.Component {
 	}
 
 	onToggle = () => {
-		this.props.closeSectionNavMobilePanel?.();
 		this.props.onToggle();
 	};
 
@@ -85,7 +86,6 @@ class PopoverCart extends React.Component {
 	};
 
 	render() {
-		const { cart, selectedSite } = this.props;
 		let countBadge;
 		const classes = classNames( 'popover-cart', {
 			pinned: this.props.pinned,
@@ -102,11 +102,6 @@ class PopoverCart extends React.Component {
 
 		return (
 			<div>
-				<CartMessages
-					cart={ cart }
-					selectedSite={ selectedSite }
-					isLoadingCart={ ! cart.hasLoadedFromServer }
-				/>
 				<div className={ classes }>
 					<HeaderButton
 						icon="cart"
@@ -157,7 +152,10 @@ class PopoverCart extends React.Component {
 	}
 
 	renderCartBody() {
-		if ( ! this.props.cart.hasLoadedFromServer || this.props.cart.hasPendingServerUpdates ) {
+		if (
+			this.props.shoppingCartManager.isLoading ||
+			this.props.shoppingCartManager.isPendingUpdate
+		) {
 			return <CartBodyLoadingPlaceholder />;
 		}
 
@@ -174,4 +172,4 @@ class PopoverCart extends React.Component {
 	}
 }
 
-export default localize( PopoverCart );
+export default withShoppingCart( localize( PopoverCart ) );

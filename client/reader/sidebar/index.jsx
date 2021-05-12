@@ -3,7 +3,7 @@
  */
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
-import { defer, startsWith, identity } from 'lodash';
+import { defer, startsWith } from 'lodash';
 import page from 'page';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -20,16 +20,15 @@ import QueryReaderLists from 'calypso/components/data/query-reader-lists';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
-import SidebarHeading from 'calypso/layout/sidebar/heading';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
-import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import {
 	toggleReaderSidebarLists,
@@ -41,11 +40,14 @@ import QueryReaderOrganizations from 'calypso/components/data/query-reader-organ
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import ReaderSidebarFollowedSites from 'calypso/reader/sidebar/reader-sidebar-followed-sites';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
+import { isEnabled } from '@automattic/calypso-config';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import 'calypso/my-sites/sidebar-unified/style.scss'; // nav-unification overrides. Should be removed once launched.
 
 const A8CConversationsIcon = () => (
 	<svg
@@ -112,49 +114,49 @@ export class ReaderSidebar extends React.Component {
 		}
 	};
 
-	handleReaderSidebarFollowedSitesClicked() {
+	handleReaderSidebarFollowedSitesClicked = () => {
 		recordAction( 'clicked_reader_sidebar_followed_sites' );
 		recordGaEvent( 'Clicked Reader Sidebar Followed Sites' );
-		recordTrack( 'calypso_reader_sidebar_followed_sites_clicked' );
-	}
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_followed_sites_clicked' );
+	};
 
-	handleReaderSidebarConversationsClicked() {
+	handleReaderSidebarConversationsClicked = () => {
 		recordAction( 'clicked_reader_sidebar_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar Conversations' );
-		recordTrack( 'calypso_reader_sidebar_conversations_clicked' );
-	}
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_conversations_clicked' );
+	};
 
-	handleReaderSidebarA8cConversationsClicked() {
+	handleReaderSidebarA8cConversationsClicked = () => {
 		recordAction( 'clicked_reader_sidebar_a8c_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar A8C Conversations' );
-		recordTrack( 'calypso_reader_sidebar_automattic_conversations_clicked' );
-	}
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_automattic_conversations_clicked' );
+	};
 
-	handleReaderSidebarDiscoverClicked() {
+	handleReaderSidebarDiscoverClicked = () => {
 		recordAction( 'clicked_reader_sidebar_discover' );
 		recordGaEvent( 'Clicked Reader Sidebar Discover' );
-		recordTrack( 'calypso_reader_sidebar_discover_clicked' );
-	}
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_discover_clicked' );
+	};
 
-	handleReaderSidebarSearchClicked() {
+	handleReaderSidebarSearchClicked = () => {
 		recordAction( 'clicked_reader_sidebar_search' );
 		recordGaEvent( 'Clicked Reader Sidebar Search' );
-		recordTrack( 'calypso_reader_sidebar_search_clicked' );
-	}
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_search_clicked' );
+	};
 
-	handleReaderSidebarLikeActivityClicked() {
+	handleReaderSidebarLikeActivityClicked = () => {
 		recordAction( 'clicked_reader_sidebar_like_activity' );
 		recordGaEvent( 'Clicked Reader Sidebar Like Activity' );
-		recordTrack( 'calypso_reader_sidebar_like_activity_clicked' );
-	}
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_like_activity_clicked' );
+	};
 
 	renderForRegularUsers() {
 		const { path, translate } = this.props;
 		return (
 			<SidebarMenu>
-				<SidebarHeading>{ translate( 'Streams' ) }</SidebarHeading>
 				<QueryReaderLists />
 				<QueryReaderTeams />
+				<QueryReaderOrganizations />
 
 				<SidebarItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
@@ -165,6 +167,10 @@ export class ReaderSidebar extends React.Component {
 					materialIcon="check_circle"
 					link="/read"
 				/>
+
+				<li>
+					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
+				</li>
 
 				<SidebarItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {
@@ -208,7 +214,7 @@ export class ReaderSidebar extends React.Component {
 					} ) }
 				/>
 
-				{ this.props.subscribedLists && this.props.subscribedLists.length > 0 && (
+				{ ( this.props.subscribedLists?.length > 0 || isEnabled( 'reader/list-management' ) ) && (
 					<ReaderSidebarLists
 						lists={ this.props.subscribedLists }
 						path={ path }
@@ -299,7 +305,7 @@ export class ReaderSidebar extends React.Component {
 					} ) }
 				/>
 
-				{ this.props.subscribedLists && this.props.subscribedLists.length > 0 && (
+				{ ( this.props.subscribedLists?.length > 0 || isEnabled( 'reader/list-management' ) ) && (
 					<ReaderSidebarLists
 						lists={ this.props.subscribedLists }
 						path={ path }
@@ -341,10 +347,6 @@ export class ReaderSidebar extends React.Component {
 	}
 }
 
-ReaderSidebar.defaultProps = {
-	translate: identity,
-};
-
 export default connect(
 	( state ) => {
 		return {
@@ -356,8 +358,9 @@ export default connect(
 		};
 	},
 	{
+		recordReaderTracksEvent,
+		setNextLayoutFocus,
 		toggleListsVisibility: toggleReaderSidebarLists,
 		toggleTagsVisibility: toggleReaderSidebarTags,
-		setNextLayoutFocus,
 	}
 )( localize( ReaderSidebar ) );

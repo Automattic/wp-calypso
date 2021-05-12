@@ -2,8 +2,8 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useRef } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
@@ -29,6 +29,7 @@ import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
+import { successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -43,8 +44,27 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
+	noticeType,
 } ) => {
 	const translate = useTranslate();
+	const reduxDispatch = useDispatch();
+
+	const shouldShowNotice = Boolean( canUserUseCustomerHome && layout && noticeType );
+	const lastShownNotice = useRef( null );
+	useEffect( () => {
+		if ( ! shouldShowNotice || lastShownNotice.current === noticeType ) {
+			return;
+		}
+
+		if ( noticeType === 'purchase-success' ) {
+			lastShownNotice.current = noticeType;
+			const successMessage = translate( 'Your purchase has been completed!' );
+			reduxDispatch( successNotice( successMessage ) );
+			return;
+		}
+
+		return;
+	}, [ shouldShowNotice, translate, reduxDispatch, noticeType ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
@@ -61,7 +81,7 @@ const Home = ( {
 			<FormattedHeader
 				brandFont
 				headerText={ translate( 'My Home' ) }
-				subHeaderText={ translate( 'Your home base for posting, editing, and growing your site.' ) }
+				subHeaderText={ translate( 'Your hub for posting, editing, and growing your site.' ) }
 				align="left"
 			/>
 			<div className="customer-home__view-site-button">
@@ -73,7 +93,7 @@ const Home = ( {
 	);
 
 	return (
-		<Main className="customer-home__main is-wide-layout">
+		<Main wideLayout className="customer-home__main">
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }

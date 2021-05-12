@@ -13,11 +13,10 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DomainStatus from '../card/domain-status';
 import { isExpiringSoon } from 'calypso/lib/domains/utils';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
-import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/state/domains/nameservers/constants';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { isSubdomain, resolveDomainStatus } from 'calypso/lib/domains';
-import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'calypso/lib/url/support';
+import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -30,12 +29,13 @@ import {
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
+import DomainMappingInstructions from 'calypso/my-sites/domains/components/mapping-instructions';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 
 class MappedDomainType extends React.Component {
-	renderSettingUpNameservers() {
+	renderSettingUpNameserversAndARecords() {
 		const { domain, translate } = this.props;
 		if ( this.props.isJetpackSite && ! this.props.isSiteAutomatedTransfer ) {
 			return null;
@@ -45,22 +45,14 @@ class MappedDomainType extends React.Component {
 			return null;
 		}
 
-		const learnMoreLink = ( linksTo ) => (
-			<a href={ linksTo } target="_blank" rel="noopener noreferrer" />
-		);
-		let primaryMessage;
+		let setupInstructionsMessage;
 		let secondaryMessage;
 
 		if ( isSubdomain( domain.name ) ) {
-			primaryMessage = translate(
-				'Your subdomain mapping has not been set up. You need to create the correct CNAME or NS records at your current DNS provider. {{learnMoreLink}}Learn how to do that in our support guide for mapping subdomains{{/learnMoreLink}}.',
+			setupInstructionsMessage = translate(
+				'You need to follow these instructions to finish connecting the %(domainName)s subdomain to your WordPress.com site:',
 				{
-					components: {
-						strong: <strong />,
-						learnMoreLink: learnMoreLink( MAP_SUBDOMAIN ),
-					},
 					args: { domainName: domain.name },
-					context: 'Notice for mapped subdomain that has DNS records need to set up',
 				}
 			);
 			secondaryMessage = translate(
@@ -70,16 +62,16 @@ class MappedDomainType extends React.Component {
 				}
 			);
 		} else {
-			primaryMessage = translate(
-				'Your domain mapping has not been set up. You need to update your name servers at the company where you purchased the domain to:',
+			setupInstructionsMessage = translate(
+				'You need to follow these instructions to finish connecting the %(domainName)s domain to your WordPress.com site:',
 				{
-					context: 'Notice for mapped domain notice with NS records pointing to somewhere else',
+					args: { domainName: domain.name },
 				}
 			);
 			secondaryMessage = translate(
 				"Please note that it can take up to 72 hours for your changes to become available. If you're still not seeing your site loading at %(domainName)s, please wait a few more hours, clear your browser cache, and try again. {{learnMoreLink}}Learn all about mapping an existing domain in our support docs{{/learnMoreLink}}.",
 				{
-					components: { learnMoreLink: learnMoreLink( MAP_EXISTING_DOMAIN ) },
+					components: { learnMoreLink: this.renderLinkTo( MAP_EXISTING_DOMAIN ) },
 					args: { domainName: domain.name },
 				}
 			);
@@ -87,19 +79,24 @@ class MappedDomainType extends React.Component {
 
 		return (
 			<React.Fragment>
-				<div>
-					<p>{ primaryMessage }</p>
-					{ ! isSubdomain( domain.name ) && (
-						<ul className="mapped-domain-type__name-server-list">
-							{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
-								return <li key={ nameServer }>{ nameServer }</li>;
-							} ) }
-						</ul>
-					) }
+				<div className="mapped-domain-type__main-content">
+					<p>{ setupInstructionsMessage }</p>
+					<DomainMappingInstructions
+						aRecordsRequiredForMapping={ domain.aRecordsRequiredForMapping }
+						areDomainDetailsLoaded={ true }
+						domainName={ domain.name }
+						isAtomic={ this.props.isSiteAutomatedTransfer }
+						subdomainPart={ domain.subdomainPart }
+						wpcomDomainName={ this.props.wpcomDomainName }
+					/>
 				</div>
 				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
 			</React.Fragment>
 		);
+	}
+
+	renderLinkTo( url ) {
+		return <a href={ url } target="_blank" rel="noopener noreferrer" />;
 	}
 
 	renderPendingGSuiteTosNotice() {
@@ -226,7 +223,7 @@ class MappedDomainType extends React.Component {
 						purchase={ purchase }
 						domain={ domain }
 					/>
-					{ this.renderSettingUpNameservers() }
+					{ this.renderSettingUpNameserversAndARecords() }
 					{ this.renderPendingGSuiteTosNotice() }
 					<ExpiringSoon
 						selectedSite={ selectedSite }

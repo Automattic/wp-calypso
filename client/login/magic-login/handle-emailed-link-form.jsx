@@ -14,7 +14,7 @@ import page from 'page';
 import { Button } from '@automattic/components';
 import EmptyContent from 'calypso/components/empty-content';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { login } from 'calypso/lib/paths';
 import { localize } from 'i18n-calypso';
 import { LINK_EXPIRED_PAGE } from 'calypso/state/login/magic-login/constants';

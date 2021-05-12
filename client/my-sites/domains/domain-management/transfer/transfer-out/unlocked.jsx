@@ -12,11 +12,11 @@ import { Card, Button } from '@automattic/components';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	cancelDomainTransferRequest,
-	fetchWapiDomainInfo,
 	requestDomainTransferCode,
 } from 'calypso/state/domains/transfer/actions';
-import { TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR } from 'calypso/lib/url/support';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
+import TransferOutWarning from './warning.jsx';
+import { registrar as registrarNames } from 'calypso/lib/domains/constants';
 
 class Unlocked extends React.Component {
 	state = {
@@ -167,40 +167,50 @@ class Unlocked extends React.Component {
 		);
 	}
 
-	render() {
-		const { isSubmitting, translate } = this.props;
-		const domain = getSelectedDomain( this.props );
-		const { privateDomain, domainLockingAvailable } = domain;
+	renderDomainStateMessage( domain ) {
+		const { selectedSite, translate } = this.props;
+		const { domain: domainName, domainLockingAvailable, privateDomain, registrar } = domain;
 		const privacyDisabled = ! privateDomain;
 
 		let domainStateMessage;
-		if ( domainLockingAvailable && privacyDisabled ) {
+		if ( domainLockingAvailable && privacyDisabled && registrar === registrarNames.WWD ) {
 			domainStateMessage = translate(
 				'Your domain is unlocked and ' +
-					'Privacy Protection has been disabled to prepare for transfer.'
+					'Privacy Protection has been disabled to prepare for transfer. Your contact information will be publicly available during the transfer period. The domain will remain unlocked and your contact information will be publicly available until the transfer is canceled or completed.'
+			);
+		} else if ( domainLockingAvailable ) {
+			domainStateMessage = translate(
+				'Your domain is unlocked to prepare for transfer. It will remain unlocked until the transfer is canceled or completed.'
 			);
 		} else if ( privacyDisabled ) {
 			domainStateMessage = translate(
-				'Privacy Protection for your ' + 'domain has been disabled to prepare for transfer.'
+				'Privacy Protection for your domain has been disabled to prepare for transfer. It will remain disabled until the transfer is canceled or completed.'
 			);
-		} else if ( domainLockingAvailable ) {
-			domainStateMessage = translate( 'Your domain is unlocked to prepare for transfer.' );
 		}
+
+		if ( ! domainStateMessage ) {
+			return null;
+		}
+
+		return (
+			<div>
+				<p>{ domainStateMessage }</p>
+				<TransferOutWarning domainName={ domainName } selectedSiteSlug={ selectedSite.slug } />
+			</div>
+		);
+	}
+
+	render() {
+		const { isSubmitting, translate } = this.props;
+		const domain = getSelectedDomain( this.props );
 
 		return (
 			<div>
 				<Card className="transfer-out__card">
 					<div className="transfer-out__content">
 						{ isSubmitting && <p>{ translate( 'Sending request…' ) }</p> }
-						{ domainStateMessage && <p>{ domainStateMessage }</p> }
+						{ this.renderDomainStateMessage( domain ) }
 						{ this.renderBody( domain ) }
-						<a
-							href={ TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR }
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							{ translate( 'Learn More.' ) }
-						</a>
 					</div>
 					{ this.renderSendButton( domain ) }
 					{ this.renderCancelButton( domain ) }
@@ -239,7 +249,6 @@ export default connect(
 	},
 	{
 		cancelDomainTransferRequest,
-		fetchWapiDomainInfo,
 		requestDomainTransferCode,
 	}
 )( localize( Unlocked ) );

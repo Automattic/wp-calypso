@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-
-import { combineReducers, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers } from 'calypso/state/utils';
 import feeds from './feeds/reducer';
 import locks from './locks/reducer';
 import zones from './zones/reducer';

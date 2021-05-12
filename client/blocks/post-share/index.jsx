@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, map, concat } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import Gridicon from 'calypso/components/gridicon';
 import { current as currentPage } from 'page';
 
@@ -43,14 +43,13 @@ import {
 	sharePostFailure,
 	sharePostSuccessMessage,
 } from 'calypso/state/sharing/publicize/selectors';
-import PostMetadata from 'calypso/lib/post-metadata';
 import PublicizeMessage from 'calypso/components/publicize-message';
 import Notice from 'calypso/components/notice';
 import {
 	hasFeature,
 	isRequestingSitePlans as siteIsRequestingPlans,
 } from 'calypso/state/sites/plans/selectors';
-import { FEATURE_REPUBLICIZE } from 'calypso/lib/plans/constants';
+import { FEATURE_REPUBLICIZE } from '@automattic/calypso-products';
 import { UpgradeToPremiumNudge } from './nudges';
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList from './connections-list';
@@ -66,6 +65,8 @@ import { sectionify } from 'calypso/lib/route';
  * Style dependencies
  */
 import './style.scss';
+
+const REGEXP_PUBLICIZE_SERVICE_SKIPPED = /^_wpas_skip_(\d+)$/;
 
 class PostShare extends Component {
 	static propTypes = {
@@ -98,14 +99,32 @@ class PostShare extends Component {
 	};
 
 	state = {
-		message: PostMetadata.publicizeMessage( this.props.post ) || '',
-		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
+		message: this.getPostPublicizeMessage(),
+		skipped: this.getPostPublicizeSkipped(),
 		showSharingPreview: false,
 		scheduledDate: null,
 		showTooltip: false,
 		tooltipContext: null,
 		eventsByDay: [],
 	};
+
+	getPostPublicizeMessage() {
+		return this.props.post?.metadata?.find( ( { key } ) => key === '_wpas_mess' )?.value || '';
+	}
+
+	getPostPublicizeSkipped() {
+		return (
+			this.props.post.metadata
+				?.filter( function ( meta ) {
+					return (
+						REGEXP_PUBLICIZE_SERVICE_SKIPPED.test( meta.key ) && 1 === parseInt( meta.value, 10 )
+					);
+				} )
+				?.map( function ( meta ) {
+					return parseInt( meta.key.match( REGEXP_PUBLICIZE_SERVICE_SKIPPED )[ 1 ], 10 );
+				} ) ?? []
+		);
+	}
 
 	hasConnections() {
 		return !! get( this.props, 'connections.length' );

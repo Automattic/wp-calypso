@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import type { FeatureId } from '../wpcom-features';
+
 export interface NewSiteBlogDetails {
 	url: string;
 	blogid: number;
@@ -57,8 +62,9 @@ export interface CreateSiteParams {
 		font_headings?: string;
 		font_base?: string;
 		use_patterns?: boolean;
-		selected_features?: string[];
+		selected_features?: FeatureId[];
 		wpcom_public_coming_soon?: number;
+		anchor_fm_podcast_id?: string;
 	};
 }
 
@@ -67,7 +73,6 @@ export interface SiteDetailsPlan {
 	product_slug: string;
 	product_name: string;
 	product_name_short: string;
-	product_name_short_with_suffix: string;
 	expired: boolean;
 	billing_period: string;
 	user_is_owner: boolean;
@@ -82,7 +87,7 @@ export interface SiteDetails {
 	launch_status: string;
 	options: {
 		created_at: string;
-		selected_features?: string[];
+		selected_features?: FeatureId[];
 	};
 	plan?: SiteDetailsPlan;
 }
@@ -126,6 +131,7 @@ export interface Cart {
 }
 
 export interface Domain {
+	a_records_required_for_mapping?: string[];
 	primary_domain: boolean;
 	blog_id: number;
 	subscription_id?: any;
@@ -163,6 +169,7 @@ export interface Domain {
 	pending_whois_update: boolean;
 	tld_maintenance_end_time?: any;
 	ssl_status?: any;
+	subdomain_part?: string;
 	supports_gdpr_consent_management: boolean;
 	supports_transfer_approval: boolean;
 	domain_registration_agreement_url: string;
@@ -173,4 +180,20 @@ export interface Domain {
 	bundled_plan_subscription_id?: any;
 	product_slug?: any;
 	owner: string;
+}
+
+export interface SiteLaunchState {
+	status: SiteLaunchStatus;
+	errorCode: SiteLaunchError | undefined;
+}
+
+export enum SiteLaunchError {
+	INTERNAL = 'internal',
+}
+
+export enum SiteLaunchStatus {
+	UNINITIALIZED = 'unintialized',
+	IN_PROGRESS = 'in_progress',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
 }

@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, get, each, includes, union, find } from 'lodash';
+import { isEmpty, get, includes, find } from 'lodash';
 import page from 'page';
 
 /**
@@ -52,6 +52,8 @@ const isItemUpdating = ( updatables ) =>
  * @returns {boolean}   True if the plugin or theme is enqueued to be updated.
  */
 const isItemEnqueued = ( updateSlug, updateQueue ) => !! find( updateQueue, { slug: updateSlug } );
+
+const union = ( ...arrays ) => [ ...new Set( [].concat( ...arrays ) ) ];
 
 const MAX_UPDATED_TO_SHOW = 3;
 
@@ -276,7 +278,7 @@ class ActivityLogTasklist extends Component {
 
 		const { showErrorNotice, showSuccessNotice, siteName, translate } = this.props;
 
-		each( itemsWithUpdate, ( item ) => {
+		itemsWithUpdate.forEach( ( item ) => {
 			const { slug, updateStatus, type, name } = item;
 			// Finds in prevProps.pluginWithUpdate, prevProps.themeWithUpdate or prevpros.coreWithUpdate
 			const prevItemWithUpdate = find( prevProps[ `${ type }WithUpdate` ], { slug } );

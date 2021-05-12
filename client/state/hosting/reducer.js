@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	HOSTING_PHP_VERSION_SET,
 	HOSTING_SFTP_USER_UPDATE,

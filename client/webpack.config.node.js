@@ -76,9 +76,6 @@ function getExternals() {
 		// to the path of the `build/server.js` bundle.
 		{
 			// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
-			'webpack.config': {
-				commonjs: '../client/webpack.config.js',
-			},
 			'calypso/webpack.config': {
 				commonjs: '../client/webpack.config.js',
 			},
@@ -116,6 +113,7 @@ const webpackConfig = {
 				configFile: path.resolve( 'babel.config.js' ),
 				cacheDirectory,
 				cacheIdentifier,
+				cacheCompression: false,
 				exclude: /node_modules\//,
 			} ),
 			TranspileConfig.loader( {
@@ -123,6 +121,7 @@ const webpackConfig = {
 				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
 				cacheDirectory,
 				cacheIdentifier,
+				cacheCompression: false,
 				include: shouldTranspileDependency,
 			} ),
 			fileLoader,
@@ -135,10 +134,9 @@ const webpackConfig = {
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'calypso:src', 'module', 'main' ],
-		modules: [ __dirname, path.join( __dirname, 'extensions' ), 'node_modules' ],
+		modules: [ path.join( __dirname, 'extensions' ), 'node_modules' ],
 		alias: {
-			'calypso/config': 'server/config',
-			config: 'server/config',
+			'@automattic/calypso-config': 'calypso/server/config',
 		},
 	},
 	node: {
@@ -168,21 +166,16 @@ const webpackConfig = {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 		} ),
 		new webpack.NormalModuleReplacementPlugin(
-			/^my-sites[/\\]themes[/\\]theme-upload$/,
-			'components/empty-component'
-		), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin(
 			/^calypso[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
-			'components/empty-component'
+			'calypso/components/empty-component'
 		), // Depends on BOM
-		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ), // server doesn't use moment locales
+		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 		! isDevelopment && new ExternalModulesWriter(),
 	].filter( Boolean ),
 };
 
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' ),
 		new webpack.NormalModuleReplacementPlugin( /^calypso[/\\]lib[/\\]desktop$/, 'lodash/noop' )
 	);
 }

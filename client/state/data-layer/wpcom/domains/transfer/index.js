@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,6 +34,8 @@ import {
 	getDomainTransferCodeError,
 	getNoticeOptions,
 } from './notices';
+
+const noop = () => {};
 
 /**
  * Generates actions to save the domain IPS tag at OpenSRS

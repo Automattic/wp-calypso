@@ -1,15 +1,13 @@
 /**
  * External dependencies
  */
-
 import debugModule from 'debug';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { bypassPersistentStorage } from 'calypso/lib/browser-storage';
 import { supportSessionActivate } from 'calypso/state/support/actions';
 import localStorageBypass from 'calypso/lib/local-storage-bypass';
@@ -25,7 +23,7 @@ import localStorageBypass from 'calypso/lib/local-storage-bypass';
 
 const debug = debugModule( 'calypso:support-user' );
 const STORAGE_KEY = 'boot_support_user';
-
+const noop = () => {};
 const isEnabled = () => config.isEnabled( 'support-user' );
 
 let _setReduxStore = noop;

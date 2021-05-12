@@ -4,7 +4,7 @@
 @import '../../variables.scss';
 
 .gutenboarding-page.features {
-	padding-bottom: $onboarding-footer-height;
+	padding-bottom: $onboarding-footer-height + 28px;
 
 	// TODO: This shouldn't be here. Find out why
 	// this is blue in features page but black in others.

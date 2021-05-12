@@ -3,14 +3,15 @@
  */
 import { intersection, words, memoize } from 'lodash';
 import { translate } from 'i18n-calypso';
-import { getCustomizerUrl } from 'calypso/state/sites/selectors';
 
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import { getCustomizerUrl } from 'calypso/state/sites/selectors';
+import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 
 /**
  * Returns admin section items with site-based urls.
@@ -32,6 +33,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Manage my domain settings' ),
+		description: translate( 'Manage all domains linked to your account.' ),
 		link: `/domains/manage/${ siteSlug }`,
 		synonyms: [ 'domains' ],
 		icon: 'domains',
@@ -104,7 +106,12 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 		icon: 'plans',
 	},
 	{
-		title: translate( 'Cancel G Suite' ),
+		title: translate( 'Cancel %(googleMailService)s', {
+			args: {
+				googleMailService: getGoogleMailServiceFamily(),
+			},
+			comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+		} ),
 		link: `/me/purchases/${ siteSlug }`,
 		synonyms: [ 'upgrade', 'business', 'professional', 'personal', 'google' ],
 		icon: 'plans',
@@ -343,6 +350,13 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 		icon: 'my-sites',
 	},
 	{
+		title: translate( 'New post' ),
+		description: translate( `Create a new blog post on your site.` ),
+		link: `/post/${ siteSlug }`,
+		synonyms: [ 'lists', 'posts' ],
+		icon: 'my-sites',
+	},
+	{
 		title: translate( 'View my drafted pages' ),
 		link: `/pages/drafts/${ siteSlug }`,
 		synonyms: [ 'pages', 'draft' ],
@@ -368,7 +382,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Create a new site' ),
-		link: `${ config( 'signup_url' ) }?ref=calypso-selector`,
+		link: `${ getOnboardingUrl( state ) }?ref=calypso-inline-help`,
 		synonyms: [ 'site' ],
 		icon: 'cog',
 	},
@@ -419,16 +433,24 @@ export function filterListBySearchTerm( searchTerm = '', collection = [], limit 
 		'gi'
 	);
 
-	return collection
-		.filter( ( item ) => {
-			if ( searchRegex.test( item.title ) ) {
-				return true;
-			}
-			// Until we get the synonyms translated, just check when the language is `'en'`
-			return 'en' === getLocaleSlug()
-				? intersection( item.synonyms, searchTermWords ).length > 0
-				: false;
-		} )
+	const exactMatches = [];
+	const partialMatches = [];
+	const synonymMatches = [];
+
+	collection.forEach( ( item ) => {
+		if ( item.title.toLowerCase() === searchTerm.toLowerCase() ) {
+			exactMatches.push( item );
+		} else if ( searchRegex.test( item.title ) ) {
+			partialMatches.push( item );
+		} else if (
+			'en' === getLocaleSlug() &&
+			intersection( item.synonyms, searchTermWords ).length > 0
+		) {
+			synonymMatches.push( item );
+		}
+	} );
+
+	return [ ...exactMatches, ...partialMatches, ...synonymMatches ]
 		.map( ( item ) => ( { ...item, support_type: SUPPORT_TYPE_ADMIN_SECTION, key: item.title } ) )
 		.slice( 0, limit );
 }

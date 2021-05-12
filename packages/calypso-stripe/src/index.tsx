@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import React, { useEffect, useState, useContext, createContext } from 'react';
+import React, { useRef, useEffect, useCallback, useState, useContext, createContext } from 'react';
 import { loadScript } from '@automattic/load-script';
 // We are several versions old for react-stripe-elements, and probably should
 // actually upgrade to the new Stripe.js anyway. Trying to use the actual types
@@ -24,7 +24,7 @@ declare global {
 
 type StripeFactory = ( key: string, options?: Record< string, string > ) => Stripe;
 
-type PaymentDetails = Record< string, string >;
+type PaymentDetails = Record< string, unknown >;
 
 type HandleCardSetupResponse = { setupIntent: StripeSetupIntent; error: StripeError };
 
@@ -33,7 +33,7 @@ interface PaymentRequestOptionsItem {
 	amount: number;
 }
 
-interface PaymentRequestOptions {
+export interface PaymentRequestOptions {
 	requestPayerName: boolean;
 	requestPayerPhone: boolean;
 	requestPayerEmail: boolean;
@@ -42,10 +42,6 @@ interface PaymentRequestOptions {
 	currency: string;
 	displayItems: PaymentRequestOptionsItem[];
 	total: PaymentRequestOptionsItem;
-}
-
-interface StripePaymentRequestResponse {
-	canMakePayment: () => Promise< undefined | { applePay: boolean } >;
 }
 
 export type Stripe = {
@@ -61,7 +57,7 @@ export type Stripe = {
 		secret: string,
 		options: Record< string, string >
 	) => Promise< { paymentIntent: StripeAuthenticationResponse; error: StripeError } >;
-	paymentRequest: ( paymentRequestOptions: PaymentRequestOptions ) => StripePaymentRequestResponse;
+	paymentRequest: ( paymentRequestOptions: PaymentRequestOptions ) => StripePaymentRequest;
 };
 
 export interface StripeConfiguration {
@@ -71,29 +67,25 @@ export interface StripeConfiguration {
 	setup_intent_id: null | string;
 }
 
-type SetStripeError = ( error: string ) => void;
+export type ReloadStripeConfiguration = () => void;
+
+export type StripeLoadingError = undefined | null | Error;
 
 export interface StripeData {
 	stripe: null | Stripe;
 	stripeConfiguration: null | StripeConfiguration;
 	isStripeLoading: boolean;
-	stripeLoadingError: undefined | null | Error;
-	setStripeError: SetStripeError;
+	stripeLoadingError: StripeLoadingError;
+	reloadStripeConfiguration: ReloadStripeConfiguration;
 }
 
 export type StripeSetupIntent = { payment_method: string };
 
-export type StripeAuthenticationResponse = { status?: string };
+export type StripeAuthenticationResponse = { status?: string; redirect_url?: string };
 
 const StripeContext = createContext< StripeData | undefined >( undefined );
 
 type StripeError = Error & { code?: string; type?: string };
-
-export interface TransactionResponseWithPaymentIntent {
-	message: { payment_intent_client_secret: string };
-}
-
-type TransactionResponse = unknown;
 
 export interface UseStripeJs {
 	stripeJs: Stripe | null;
@@ -101,10 +93,30 @@ export interface UseStripeJs {
 	stripeLoadingError: null | undefined | string;
 }
 
-type GetStripeConfigurationArgs = { country?: string; needs_intent?: boolean };
-type GetStripeConfiguration = (
+export type GetStripeConfigurationArgs = { country?: string; needs_intent?: boolean };
+export type GetStripeConfiguration = (
 	requestArgs: GetStripeConfigurationArgs
 ) => Promise< StripeConfiguration >;
+
+export interface StripePaymentRequest {
+	canMakePayment: () => Promise< undefined | { applePay?: boolean; googlePay?: boolean } >;
+	on: ( event: string, handler: StripePaymentRequestHandler ) => void;
+	show: () => void;
+}
+
+export type StripePaymentRequestHandler = ( event: StripePaymentRequestHandlerEvent ) => void;
+
+export interface StripePaymentRequestHandlerEvent {
+	token?: {
+		id: string;
+		object: 'token';
+	};
+	paymentMethod?: {
+		id: string;
+		object: 'payment_method';
+	};
+	complete: () => void;
+}
 
 /**
  * An error for display by the payment form
@@ -402,7 +414,7 @@ function useStripeJs(
  * This is internal. You probably actually want the useStripe hook.
  *
  * Returns an object with two properties: `stripeConfiguration`, and
- * `setStripeError`.
+ * `reloadStripeConfiguration`.
  *
  * `stripeConfiguration` is an object as returned by the stripe configuration
  * endpoint, possibly including a Setup Intent if one was requested (via
@@ -410,8 +422,7 @@ function useStripeJs(
  *
  * If there is a stripe error, it may be necessary to reload the configuration
  * since (for example) a Setup Intent may need to be recreated. You can force
- * the configuration to reload by setting a value by calling `setStripeError()`
- * with a value for that error.
+ * the configuration to reload by calling `reloadStripeConfiguration()`.
  *
  * @param {Function} fetchStripeConfiguration A function that will fetch the stripe configuration from the HTTP API
  * @param {object} [requestArgs] (optional) Can include `country` or `needs_intent`
@@ -423,22 +434,28 @@ function useStripeConfiguration(
 ): {
 	stripeConfiguration: StripeConfiguration | undefined;
 	stripeConfigurationError: undefined | Error;
-	setStripeError: SetStripeError;
+	reloadStripeConfiguration: ReloadStripeConfiguration;
 } {
-	const [ stripeError, setStripeError ] = useState< undefined | string >();
+	const [ stripeReloadCount, setReloadCount ] = useState< number >( 0 );
 	const [ stripeConfigurationError, setStripeConfigurationError ] = useState< undefined | Error >();
 	const [ stripeConfiguration, setStripeConfiguration ] = useState<
 		undefined | StripeConfiguration
 	>();
+	const reloadStripeConfiguration = useCallback(
+		() => setReloadCount( ( count ) => count + 1 ),
+		[]
+	);
+	const memoizedRequestArgs = useMemoCompare( requestArgs, areRequestArgsEqual );
+
 	useEffect( () => {
 		debug( 'loading stripe configuration' );
 		let isSubscribed = true;
-		fetchStripeConfiguration( requestArgs || {} )
+		fetchStripeConfiguration( memoizedRequestArgs || {} )
 			.then( ( configuration ) => {
 				if ( ! isSubscribed ) {
 					return;
 				}
-				if ( requestArgs?.needs_intent && ! configuration.setup_intent_id ) {
+				if ( memoizedRequestArgs?.needs_intent && ! configuration.setup_intent_id ) {
 					debug( 'invalid stripe configuration; missing setup_intent_id', configuration );
 					throw new StripeConfigurationError(
 						'Error loading new payment method configuration. Received invalid data from the server.'
@@ -463,8 +480,21 @@ function useStripeConfiguration(
 		return () => {
 			isSubscribed = false;
 		};
-	}, [ requestArgs, stripeError, fetchStripeConfiguration ] );
-	return { stripeConfiguration, stripeConfigurationError, setStripeError };
+	}, [ memoizedRequestArgs, stripeReloadCount, fetchStripeConfiguration ] );
+	return { stripeConfiguration, stripeConfigurationError, reloadStripeConfiguration };
+}
+
+function areRequestArgsEqual(
+	previous: undefined | null | GetStripeConfigurationArgs,
+	next: undefined | null | GetStripeConfigurationArgs
+): boolean {
+	if ( next?.country !== previous?.country ) {
+		return false;
+	}
+	if ( next?.needs_intent !== previous?.needs_intent ) {
+		return false;
+	}
+	return true;
 }
 
 function StripeHookProviderInnerWrapper( {
@@ -493,10 +523,11 @@ export function StripeHookProvider( {
 	locale?: undefined | string;
 } ): JSX.Element {
 	debug( 'rendering StripeHookProvider' );
-	const { stripeConfiguration, stripeConfigurationError, setStripeError } = useStripeConfiguration(
-		fetchStripeConfiguration,
-		configurationArgs
-	);
+	const {
+		stripeConfiguration,
+		stripeConfigurationError,
+		reloadStripeConfiguration,
+	} = useStripeConfiguration( fetchStripeConfiguration, configurationArgs );
 	const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs(
 		stripeConfiguration,
 		stripeConfigurationError,
@@ -508,7 +539,7 @@ export function StripeHookProvider( {
 		stripeConfiguration,
 		isStripeLoading,
 		stripeLoadingError,
-		setStripeError,
+		reloadStripeConfiguration,
 	};
 
 	return (
@@ -533,26 +564,16 @@ export function StripeHookProvider( {
  * - stripeConfiguration: the object containing the data returned by the wpcom stripe configuration endpoint
  * - isStripeLoading: a boolean that is true if stripe is currently being loaded
  * - stripeLoadingError: an optional object that will be set if there is an error loading stripe
- * - setStripeError: a function that can be called with a value to force the stripe configuration to reload
+ * - reloadStripeConfiguration: a function that can be called with a value to force the stripe configuration to reload
  *
  * @returns {StripeData} See above
  */
 export function useStripe(): StripeData {
 	const stripeData = useContext( StripeContext );
-	return (
-		stripeData || {
-			stripe: null,
-			stripeConfiguration: null,
-			isStripeLoading: false,
-			stripeLoadingError: null,
-			setStripeError: ( error: string ) => {
-				// eslint-disable-next-line no-console
-				console.error(
-					`You cannot use setStripeError until stripe has been initialized. Got "${ error }"`
-				);
-			},
-		}
-	);
+	if ( ! stripeData ) {
+		throw new Error( 'useStripe can only be used inside a StripeHookProvider' );
+	}
+	return stripeData;
 }
 
 /**
@@ -623,20 +644,28 @@ function getStripeLocaleForLocale( locale: string | null | undefined ): string {
 	return stripeLocale;
 }
 
-export async function showStripeModalAuth( {
-	stripeConfiguration,
-	response,
-}: {
-	stripeConfiguration: StripeConfiguration;
-	response: TransactionResponseWithPaymentIntent;
-} ): Promise< null | TransactionResponse > {
-	const authenticationResponse = await confirmStripePaymentIntent(
-		stripeConfiguration,
-		response.message.payment_intent_client_secret
-	);
+// See https://usehooks.com/useMemoCompare/
+function useMemoCompare< A, B >(
+	next: B,
+	compare: ( previous: A | B | undefined, next: B ) => boolean
+): A | B | undefined {
+	// Ref for storing previous value
+	const previousRef = useRef< undefined | A | B >();
+	const previous = previousRef.current;
 
-	if ( authenticationResponse?.status ) {
-		return authenticationResponse;
-	}
-	return null;
+	// Pass previous and next value to compare function
+	// to determine whether to consider them equal.
+	const isEqual = compare( previous, next );
+
+	// If not equal update previousRef to next value.
+	// We only update if not equal so that this hook continues to return
+	// the same old value if compare keeps returning true.
+	useEffect( () => {
+		if ( ! isEqual ) {
+			previousRef.current = next;
+		}
+	} );
+
+	// Finally, if equal then return the previous value
+	return isEqual ? previous : next;
 }

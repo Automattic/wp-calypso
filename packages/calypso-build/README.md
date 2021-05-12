@@ -52,13 +52,13 @@ If you have some experience with Webpack, the format of these [command line opti
 
 It was our conscious decision to stick to Webpack's interface rather than covering it up with our own abstraction, since the build tool doesn't really add any conceptually different functionality, and our previous SDK approach showed that we ended up replicating features readily provided by Webpack anyway.
 
-### `--env.WP` option to automatically compute dependencies, and transpile JSX to `@wordpress/element`
+### `--env WP` option to automatically compute dependencies, and transpile JSX to `@wordpress/element`
 
 That `webpack.config.js` introduces one rather WordPress/Gutenberg specific "environment" option, `WP`, which you can set as follows:
 
 ```json
 	"scripts": {
-		"build": "calypso-build ./src/editor.js --env.WP"
+		"build": "calypso-build ./src/editor.js --env WP"
 	}
 ```
 
@@ -129,6 +129,8 @@ module.exports = {
 ```
 
 Another way to set the `modules` option is to set the `MODULES` environment variable to `'esm'` (maps to `false`) or any other valid value. That's convenient for running Babel from command line, where specifying options for presets (`--presets=...`) is not supported.
+
+The `default` preset also specifies `corejs`, `debug`, and `useBuiltIns` options that's passed through to [@babel/preset-env](https://babeljs.io/docs/en/babel-preset-env#options).
 
 ## Advanced Usage: Use own PostCSS Config
 

@@ -4,7 +4,7 @@
 
 import { getSite } from 'calypso/state/sites/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 
 /**
  * Get all visible sites

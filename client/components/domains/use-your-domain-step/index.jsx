@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty, noop } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import page from 'page';
 import { stringify } from 'qs';
@@ -41,11 +41,12 @@ import {
 	isDomainMappingFree,
 	isNextDomainFree,
 } from 'calypso/lib/cart-values/cart-items';
-import { isPlan } from 'calypso/lib/products-values';
+import { isPlan } from '@automattic/calypso-products';
 import {
 	DOMAINS_WITH_PLANS_ONLY,
 	NON_PRIMARY_DOMAINS_TO_FREE_USERS,
 } from 'calypso/state/current-user/constants';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Style dependencies
@@ -57,6 +58,8 @@ import './style.scss';
  */
 import themesImage from 'calypso/assets/images/illustrations/themes.svg';
 import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
+
+const noop = () => {};
 
 class UseYourDomainStep extends React.Component {
 	static propTypes = {
@@ -278,7 +281,7 @@ class UseYourDomainStep extends React.Component {
 			);
 		} else if ( domainsWithPlansOnly || primaryWithPlansOnly ) {
 			mappingProductPrice = translate(
-				'Included in paid plans, but registration costs at your current provider still apply'
+				'Included in annual paid plans, but registration costs at your current provider still apply'
 			);
 		}
 
@@ -462,4 +465,4 @@ export default connect(
 		recordTransferButtonClickInUseYourDomain,
 		recordMappingButtonClickInUseYourDomain,
 	}
-)( localize( UseYourDomainStep ) );
+)( withShoppingCart( localize( UseYourDomainStep ) ) );

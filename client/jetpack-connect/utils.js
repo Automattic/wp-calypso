@@ -2,13 +2,13 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { head, includes, isEmpty, split } from 'lodash';
+import { head, includes, isEmpty } from 'lodash';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import config, { isCalypsoLive } from 'calypso/config';
+import config, { isCalypsoLive } from '@automattic/calypso-config';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import { addQueryArgs, externalRedirect, untrailingslashit } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
@@ -47,6 +47,7 @@ export function authQueryTransformer( queryObject ) {
 		userEmail: queryObject.user_email || null,
 		woodna_service_name: queryObject.woodna_service_name || null,
 		woodna_help_url: queryObject.woodna_help_url || null,
+		skipUser: queryObject.skip_user || null,
 	};
 }
 
@@ -106,7 +107,7 @@ export function getRoleFromScope( scope ) {
 	if ( ! includes( scope, ':' ) ) {
 		return null;
 	}
-	const role = head( split( scope, ':', 1 ) );
+	const role = head( scope.split( ':', 1 ) );
 	if ( ! isEmpty( role ) ) {
 		return role;
 	}

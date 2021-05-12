@@ -12,7 +12,7 @@ import LazyRender from 'react-lazily-render';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
 import {

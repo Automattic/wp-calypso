@@ -12,6 +12,10 @@ import {
 } from '../actions';
 import { NOTICE_CREATE, NOTICE_REMOVE } from 'calypso/state/action-types';
 
+jest.mock( 'uuid', () => ( {
+	v4: () => 'someid',
+} ) );
+
 describe( 'actions', () => {
 	describe( 'removeNotice()', () => {
 		test( 'should return an action object', () => {

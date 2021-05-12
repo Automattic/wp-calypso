@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	HELP_CONTACT_FORM_SITE_SELECT,
 	HELP_LINKS_RECEIVE,
@@ -8,7 +9,7 @@ import {
 	SUPPORT_LEVEL_SET,
 } from 'calypso/state/action-types';
 import courses from './courses/reducer';
-import { combineReducers, withStorageKey } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import directly from './directly/reducer';
 import ticket from './ticket/reducer';
 
@@ -47,8 +48,8 @@ export const links = ( state = {}, action ) => {
 /**
  * Responsible for the help search results links
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
+ * @param {object} state  Current state
+ * @param {object} action Action payload
  * @returns {object}        Updated state
  */
 export const supportHistory = ( state = [], { type, items } ) => {
@@ -63,8 +64,8 @@ export const supportHistory = ( state = [], { type, items } ) => {
 /**
  * The level of support we're offering to this user (represents their highest paid plan).
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
+ * @param {object} state  Current state
+ * @param {object} action Action payload
  * @returns {object}        Updated state
  */
 export const supportLevel = ( state = null, { type, level } ) => {

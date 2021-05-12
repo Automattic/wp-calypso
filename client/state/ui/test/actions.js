@@ -7,11 +7,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	collapseSidebar,
-	expandSidebar,
 	navigate,
 	setAllSitesSelected,
-	setPreviewShowing,
 	setSection,
 	setSelectedSiteId,
 	toggleNotificationsPanel,
@@ -19,8 +16,6 @@ import {
 import {
 	NAVIGATE,
 	NOTIFICATIONS_PANEL_TOGGLE,
-	PREVIEW_IS_SHOWING,
-	SIDEBAR_TOGGLE_VISIBILITY,
 	SECTION_SET,
 	SELECTED_SITE_SET,
 } from 'calypso/state/action-types';
@@ -33,26 +28,6 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: SELECTED_SITE_SET,
 				siteId: null,
-			} );
-		} );
-	} );
-
-	describe( 'setPreviewShowing()', () => {
-		test( 'should return an action object where isShowing is true', () => {
-			const action = setPreviewShowing( true );
-
-			expect( action ).to.eql( {
-				type: PREVIEW_IS_SHOWING,
-				isShowing: true,
-			} );
-		} );
-
-		test( 'should return an action object where isShowing is false', () => {
-			const action = setPreviewShowing( false );
-
-			expect( action ).to.eql( {
-				type: PREVIEW_IS_SHOWING,
-				isShowing: false,
 			} );
 		} );
 	} );
@@ -96,24 +71,6 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: NAVIGATE,
 				path,
-			} );
-		} );
-	} );
-
-	describe( 'expandSidebar', () => {
-		test( 'should return an action object with the action type and sidebarIsCollapsed= false', () => {
-			expect( expandSidebar() ).to.eql( {
-				type: SIDEBAR_TOGGLE_VISIBILITY,
-				collapsed: false,
-			} );
-		} );
-	} );
-
-	describe( 'collapseSidebar', () => {
-		test( 'should return an action object with the action type and sidebarIsCollapsed= true', () => {
-			expect( collapseSidebar() ).to.eql( {
-				type: SIDEBAR_TOGGLE_VISIBILITY,
-				collapsed: true,
 			} );
 		} );
 	} );
