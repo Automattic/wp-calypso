@@ -82,10 +82,12 @@
 	}
 }
 
-@mixin email_status_color( $color ) {
+@mixin email_plan_header_status_color( $color ) {
 	border-top: 5px solid $color;
-	.email-plan__status {
+
+	.email-plan-header__status {
 		color: $color;
+
 		> svg {
 			fill: $color;
 		}
@@ -98,35 +100,37 @@
 	padding-top: 28px;
 }
 
-.email-plan__status {
+.email-plan-header__status {
 	display: flex;
 	align-items: center;
+
 	> svg {
 		margin-right: 5px;
 	}
 }
 
-.email-plan__header {
+.email-plan-header {
 	display: flex;
 	align-items: center;
+
 	h2 {
 		font-size: $font-title-large;
 	}
 
 	&.success {
-		@include email_status_color( var( --color-success ) );
+		@include email_plan_header_status_color( var( --color-success ) );
 	}
 
 	&.warning {
-		@include email_status_color( var( --color-warning ) );
+		@include email_plan_header_status_color( var( --color-warning ) );
 	}
 
 	&.error {
-		@include email_status_color( var( --color-error ) );
+		@include email_plan_header_status_color( var( --color-error ) );
 	}
 }
 
-.email-plan__header-icon {
+.email-plan-header__icon {
 	> img, svg {
 		height: 36px;
 		width: 36px;

@@ -10,9 +10,13 @@ import {
 	getGSuiteMailboxCount,
 	getGSuiteSubscriptionId,
 	hasGSuiteWithUs,
-	hasPendingGSuiteUsers
+	hasPendingGSuiteUsers,
 } from 'calypso/lib/gsuite';
-import { getMaxTitanMailboxCount, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
+import {
+	getMaxTitanMailboxCount,
+	getTitanSubscriptionId,
+	hasTitanMailWithUs,
+} from 'calypso/lib/titan';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 

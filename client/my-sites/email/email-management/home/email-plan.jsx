@@ -19,7 +19,10 @@ import {
 	getProductType,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
-import { getEmailPurchaseByDomain, hasEmailSubscription } from 'calypso/my-sites/email/email-management/home/utils';
+import {
+	getEmailPurchaseByDomain,
+	hasEmailSubscription,
+} from 'calypso/my-sites/email/email-management/home/utils';
 import { getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
@@ -49,7 +52,7 @@ class EmailPlan extends React.Component {
 
 		// Connected props
 		currentRoute: PropTypes.string,
-		hasEmailSubscription: PropTypes.bool,
+		hasSubscription: PropTypes.bool,
 		isLoadingPurchase: PropTypes.bool,
 		purchase: PropTypes.object,
 	};
@@ -162,9 +165,9 @@ class EmailPlan extends React.Component {
 	}
 
 	renderBillingNavItem() {
-		const { hasEmailSubscription, purchase, selectedSite, translate } = this.props;
+		const { hasSubscription, purchase, selectedSite, translate } = this.props;
 
-		if ( ! hasEmailSubscription ) {
+		if ( ! hasSubscription ) {
 			return null;
 		}
 
@@ -239,7 +242,7 @@ class EmailPlan extends React.Component {
 		const {
 			domain,
 			selectedSite,
-			hasEmailSubscription,
+			hasSubscription,
 			purchase,
 			isLoadingPurchase,
 			translate,
@@ -250,15 +253,13 @@ class EmailPlan extends React.Component {
 
 		return (
 			<>
-				{ selectedSite && hasEmailSubscription && (
-					<QuerySitePurchases siteId={ selectedSite.ID } />
-				) }
+				{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 
 				<HeaderCake onClick={ this.handleBack }>{ this.getHeaderText() }</HeaderCake>
 
 				<EmailPlanHeader
 					domain={ domain }
-					hasEmailSubscription={ hasEmailSubscription }
+					hasEmailSubscription={ hasSubscription }
 					isLoadingPurchase={ isLoadingPurchase }
 					purchase={ purchase }
 					selectedSite={ selectedSite }
@@ -289,6 +290,6 @@ export default connect( ( state, ownProps ) => {
 		isLoadingPurchase:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 		purchase: getEmailPurchaseByDomain( state, ownProps.domain ),
-		hasEmailSubscription: hasEmailSubscription( ownProps.domain ),
+		hasSubscription: hasEmailSubscription( ownProps.domain ),
 	};
 } )( localize( EmailPlan ) );

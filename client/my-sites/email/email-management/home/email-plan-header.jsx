@@ -14,26 +14,32 @@ import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-ty
 import MaterialIcon from 'calypso/components/material-icon';
 import { resolveEmailPlanStatus } from 'calypso/my-sites/email/email-management/home/utils';
 
-const EmailPlanHeader = ( { domain, hasEmailSubscription, isLoadingPurchase, purchase, selectedSite } ) => {
+const EmailPlanHeader = ( {
+	domain,
+	hasEmailSubscription,
+	isLoadingPurchase,
+	purchase,
+	selectedSite,
+} ) => {
 	if ( ! domain ) {
 		return null;
 	}
 
 	const { statusClass, text, icon } = resolveEmailPlanStatus( domain );
 
-	const cardClasses = classnames( 'email-plan__header', statusClass );
+	const cardClasses = classnames( 'email-plan-header', statusClass );
 
 	return (
 		<>
 			<CompactCard className={ cardClasses }>
-				<span className="email-plan__header-icon">
+				<span className="email-plan-header__icon">
 					<EmailTypeIcon domain={ domain } />
 				</span>
 
 				<div>
 					<h2>{ domain.name }</h2>
 
-					<span className="email-plan__status">
+					<span className="email-plan-header__status">
 						<MaterialIcon icon={ icon } /> { text }
 					</span>
 				</div>
@@ -49,7 +55,7 @@ const EmailPlanHeader = ( { domain, hasEmailSubscription, isLoadingPurchase, pur
 			) }
 		</>
 	);
-}
+};
 
 EmailPlanHeader.propTypes = {
 	domain: PropTypes.object.isRequired,
