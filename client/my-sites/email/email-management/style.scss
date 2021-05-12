@@ -151,6 +151,12 @@
 		flex-direction: row;
 	}
 
+	&.card.is-highlight {
+		padding-left: 13px;
+	}
+	&.card.is-error {
+		border-left-color: var( --color-error-50 );
+	}
 	.email-plan-mailboxes-list__mailbox-list-item-main {
 		display: flex;
 		flex-direction: column;
