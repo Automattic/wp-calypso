@@ -158,6 +158,7 @@ export default function CompositeCheckout( {
 		createAnalyticsEventHandler( reduxDispatch ),
 		[]
 	);
+	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
 
 	const showErrorMessage = useCallback(
 		( error ) => {
@@ -211,7 +212,7 @@ export default function CompositeCheckout( {
 		isInEditor,
 		isJetpackNotAtomic,
 		isPrivate,
-		siteSlug: isJetpackCheckout ? jetpackSiteSlug : siteSlug,
+		siteSlug: updatedSiteSlug,
 		isLoggedOutCart,
 		isNoSiteCart,
 		isJetpackCheckout,
@@ -260,7 +261,7 @@ export default function CompositeCheckout( {
 	);
 
 	const getThankYouUrlBase = useGetThankYouUrl( {
-		siteSlug: isJetpackCheckout ? jetpackSiteSlug : siteSlug,
+		siteSlug: updatedSiteSlug,
 		redirectTo,
 		purchaseId,
 		feature,
@@ -330,7 +331,7 @@ export default function CompositeCheckout( {
 		isRemovingProductFromCart,
 		removeProductFromCartAndMaybeRedirect,
 	} = useRemoveFromCartAndRedirect(
-		isJetpackCheckout ? jetpackSiteSlug : siteSlug,
+		updatedSiteSlug,
 		siteSlugLoggedOutCart,
 		createUserAndSiteBeforeTransaction
 	);
@@ -364,7 +365,7 @@ export default function CompositeCheckout( {
 		isApplePayAvailable,
 		isApplePayLoading,
 		storedCards,
-		siteSlug: isJetpackCheckout ? jetpackSiteSlug : siteSlug,
+		siteSlug: updatedSiteSlug,
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
 
@@ -402,7 +403,7 @@ export default function CompositeCheckout( {
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
 		productAliasFromUrl,
-		isJetpackCheckout ? jetpackSiteSlug : siteSlug,
+		updatedSiteSlug,
 		feature,
 		plan
 	);
@@ -450,7 +451,7 @@ export default function CompositeCheckout( {
 			reduxDispatch,
 			responseCart,
 			siteId,
-			siteSlug: isJetpackCheckout ? jetpackSiteSlug : siteSlug,
+			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 		} ),
 		[
@@ -459,14 +460,12 @@ export default function CompositeCheckout( {
 			getThankYouUrl,
 			includeDomainDetails,
 			includeGSuiteDetails,
-			isJetpackCheckout,
-			jetpackSiteSlug,
 			recordEvent,
 			reduxDispatch,
 			responseCart,
 			siteId,
-			siteSlug,
 			stripeConfiguration,
+			updatedSiteSlug,
 		]
 	);
 
@@ -567,7 +566,7 @@ export default function CompositeCheckout( {
 		isInEditor,
 		isComingFromUpsell,
 		isFocusedLaunch,
-		siteSlug: isJetpackCheckout ? jetpackSiteSlug : siteSlug,
+		siteSlug: updatedSiteSlug,
 		isJetpackCheckout,
 	} );
 
@@ -592,8 +591,8 @@ export default function CompositeCheckout( {
 			recordEvent( {
 				type: 'EMPTY_CART_CTA_CLICKED',
 			} );
-			if ( siteSlug ) {
-				page( `/plans/${ siteSlug }` );
+			if ( updatedSiteSlug ) {
+				page( `/plans/${ updatedSiteSlug }` );
 			} else {
 				page( '/plans' );
 			}
@@ -619,6 +618,7 @@ export default function CompositeCheckout( {
 
 	if ( isJetpackCheckout ) {
 		siteId = parseInt( responseCart.blog_id );
+		// TODO: can we remove this?
 		siteSlug = responseCart.jetpack_site_slug;
 	}
 
@@ -650,7 +650,7 @@ export default function CompositeCheckout( {
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
 					changePlanLength={ changePlanLength }
 					siteId={ siteId }
-					siteUrl={ siteSlug }
+					siteUrl={ updatedSiteSlug }
 					countriesList={ countriesList }
 					getItemVariants={ getItemVariants }
 					addItemToCart={ addItemWithEssentialProperties }
