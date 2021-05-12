@@ -70,6 +70,7 @@ export const TRACKING_IDS = {
 	facebookInit: '823166884443641',
 	facebookJetpackInit: '919484458159593',
 	criteo: '31321',
+	fullStory: '120RG4',
 	quantcast: 'p-3Ma3jHaQMB_bS',
 	twitterPixelId: 'nvzbs',
 	dcmFloodlightAdvertiserId: '6355556',

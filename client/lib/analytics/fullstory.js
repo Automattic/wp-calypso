@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import cookie from 'cookie';
 import debug from 'debug';
 
 /**
@@ -10,12 +11,17 @@ import config from '@automattic/calypso-config';
 import { mayWeTrackCurrentUserGdpr, isPiiUrl } from './utils';
 import { getCurrentUser, getDoNotTrack } from '@automattic/calypso-analytics';
 import { isE2ETest } from 'calypso/lib/e2e';
+import { TRACKING_IDS } from './ad-tracking/constants';
 
 const fullStoryDebug = debug( 'calypso:analytics:fullstory' );
 
 let fullStoryScriptLoaded = false;
 
 export function retargetFullStory() {
+	if ( document.location.href.indexOf( 'checkout' ) !== -1 ) {
+		return;
+	}
+
 	maybeAddFullStoryScript();
 
 	if ( ! window.FS ) {
@@ -41,12 +47,16 @@ export function recordFullStoryEvent( name, _props ) {
 }
 
 function maybeAddFullStoryScript() {
+	const cookies = cookie.parse( document.cookie );
+	const isUS = 'US' === cookies.country_code;
+
 	if (
 		fullStoryScriptLoaded ||
 		! config.isEnabled( 'fullstory' ) ||
-		isE2ETest() ||
 		getDoNotTrack() ||
+		isE2ETest() ||
 		isPiiUrl() ||
+		! isUS ||
 		! mayWeTrackCurrentUserGdpr()
 	) {
 		if ( ! fullStoryScriptLoaded ) {
@@ -61,7 +71,7 @@ function maybeAddFullStoryScript() {
 	window._fs_debug = false;
 	window._fs_host = 'fullstory.com';
 	window._fs_script = 'edge.fullstory.com/s/fs.js';
-	window._fs_org = '120RG4';
+	window._fs_org = TRACKING_IDS.fullStory;
 	window._fs_namespace = 'FS';
 
 	( function ( m, n, e, t, l, o, g, y ) {

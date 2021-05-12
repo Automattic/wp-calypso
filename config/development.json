@@ -30,7 +30,6 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": false,
-		"fullstory": false,
 		"async-payments": false,
 		"automated-transfer": true,
 		"blogger-plan": true,
@@ -66,6 +65,7 @@
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
+		"fullstory": true,
 		"gdpr-banner": false,
 		"google-my-business": true,
 		"google-drive": true,
