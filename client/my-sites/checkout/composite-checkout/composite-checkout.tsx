@@ -616,16 +616,18 @@ export default function CompositeCheckout( {
 		);
 	}
 
+	// TODO: can we remove this?
 	if ( isJetpackCheckout ) {
 		siteId = parseInt( responseCart.blog_id );
-		// TODO: can we remove this?
 		siteSlug = responseCart.jetpack_site_slug;
 	}
 
+	const updatedSiteId = isJetpackCheckout ? parseInt( responseCart.blog_id ) : siteId;
+
 	return (
 		<React.Fragment>
-			<QuerySitePlans siteId={ siteId } />
-			<QuerySitePurchases siteId={ siteId } />
+			<QuerySitePlans siteId={ updatedSiteId } />
+			<QuerySitePurchases siteId={ updatedSiteId } />
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
@@ -649,7 +651,7 @@ export default function CompositeCheckout( {
 				<WPCheckout
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
 					changePlanLength={ changePlanLength }
-					siteId={ siteId }
+					siteId={ updatedSiteId }
 					siteUrl={ updatedSiteSlug }
 					countriesList={ countriesList }
 					getItemVariants={ getItemVariants }
