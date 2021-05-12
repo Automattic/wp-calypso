@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import { memoize } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { Button, MenuItem, Modal, NavigableMenu, VisuallyHidden } from '@wordpress/components';
@@ -313,7 +314,9 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 					<div className="page-pattern-modal__sidebar">
 						<h1
 							id={ `page-pattern-modal__heading-${ instanceId }` }
-							className="page-pattern-modal__heading"
+							className={ classnames( 'page-pattern-modal__heading', {
+								'page-pattern-modal__heading--default': ! this.props.title,
+							} ) }
 						>
 							{ this.props.title || __( 'Add a page', __i18n_text_domain__ ) }
 						</h1>
