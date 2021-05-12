@@ -1,5 +1,4 @@
 module.exports = {
-	bail: true,
 	cacheDirectory: '<rootDir>/../../.cache/jest',
 	testEnvironment: 'node',
 	testMatch: [ '<rootDir>/specs/**/*.js' ],
