@@ -11,7 +11,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
  */
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite, getSiteWoocommerceWizardUrl } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isPluginActionCompleted,
 	isPluginActionInProgress,
@@ -21,14 +21,16 @@ import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { successNotice, removeNotice } from 'calypso/state/notices/actions';
+import { getRedirectPluginHandler } from './utils';
 
 const withPluginRedirect = createHigherOrderComponent(
 	( Component ) => ( props ) => {
 		const { plugin } = props;
-
 		if ( ! plugin?.slug ) {
 			return <Component { ...props } />;
 		}
+
+		const { slug: pluginSlug } = plugin;
 
 		/*
 		 * Store if the site was in a processing state.
@@ -36,43 +38,17 @@ const withPluginRedirect = createHigherOrderComponent(
 		 * For Atomic sites, it was transferring the site.
 		 */
 		const [ prevProcessingState, setPrevProcessingState ] = useState( 'init' );
-		const [ redirectTo, setRedirectTo ] = useState( null );
+		const [ shouldRedirect, setShouldRedirect ] = useState( false );
 
 		const translate = useTranslate();
 		const dispatch = useDispatch();
 
-		/*
-		 * List of plugins that should perform a redirect
-		 * once it's installed.
-		 */
-		const redirectingPluginsList = {
-			woocommerce: {
-				name: 'WooCommerce',
-				message: translate( 'Redirecting to setup WooCommerce in five seconds.' ),
-				getUrl: getSiteWoocommerceWizardUrl,
-			},
-		};
-
-		/**
-		 * Helper - return the redirect plugin object.
-		 *
-		 * @param {string} slug - Plugin slug.
-		 * @returns {object|boolean} Plugin redirect object. Otherwise, False.
-		 */
-		function getPluginRedirectHandler( slug ) {
-			if ( ! redirectingPluginsList.hasOwnProperty( slug ) ) {
-				return false;
-			}
-
-			return redirectingPluginsList[ slug ];
-		}
-
-		const pluginSlug = plugin.slug;
-		const redirectPlugin = getPluginRedirectHandler( pluginSlug );
-		if ( ! redirectPlugin ) {
+		const redirectHandler = getRedirectPluginHandler( pluginSlug );
+		if ( ! redirectHandler ) {
 			return <Component { ...props } />;
 		}
 
+		// Select data to detect the installing-plugin/transferring site state.
 		const {
 			transferringStatus,
 			hasPluginBeenInstalled,
@@ -85,7 +61,6 @@ const withPluginRedirect = createHigherOrderComponent(
 			( state ) => {
 				const siteId = getSelectedSiteId( state );
 
-				// transferStates.COMPLETE
 				return {
 					transferringStatus: getAutomatedTransferStatus( state, siteId ),
 					isInstallingPlugin: isPluginActionInProgress( state, siteId, pluginSlug, INSTALL_PLUGIN ),
@@ -98,13 +73,14 @@ const withPluginRedirect = createHigherOrderComponent(
 					isAtomic: isSiteAutomatedTransfer( state, siteId ),
 					isJetpack: isJetpackSite( state, siteId ),
 					isSiteConnected: getSiteConnectionStatus( state, siteId ),
-					redirectUrl: redirectPlugin.getUrl( state, siteId ),
+					redirectUrl: redirectHandler?.getUrl( state, siteId ),
 				};
 			},
 			[ pluginSlug ]
 		);
 
-		// Stores the previous state of plugin install.
+		// Define whether the site should redirect,
+		// once the action is done (install plugin or transferring site)
 		useEffect( () => {
 			if ( ! isSiteConnected ) {
 				return;
@@ -128,10 +104,10 @@ const withPluginRedirect = createHigherOrderComponent(
 				( isJetpack && ! isInstallingPlugin && prevProcessingState === 'plugin-installed' ) || // <- Jetpack site.
 				( isAtomic && prevProcessingState === transferStates.COMPLETE ) // <- Atomic site.
 			) {
-				return setRedirectTo( redirectUrl );
+				return setShouldRedirect( redirectUrl );
 			}
 
-			setRedirectTo( false );
+			setShouldRedirect( false );
 		}, [
 			isInstallingPlugin,
 			hasPluginBeenInstalled,
@@ -143,8 +119,10 @@ const withPluginRedirect = createHigherOrderComponent(
 			prevProcessingState,
 		] );
 
+		// Perform the client redirect,
+		// cancelable by clickin on the cancel button.
 		useEffect( () => {
-			if ( ! redirectTo ) {
+			if ( ! shouldRedirect ) {
 				return;
 			}
 
@@ -161,14 +139,14 @@ const withPluginRedirect = createHigherOrderComponent(
 						return;
 					}
 
-					window.location.href = redirectTo;
+					return ( window.location.href = shouldRedirect );
 				}, 6000 );
 
 				const redirectMessage =
-					redirectPlugin.message ||
+					redirectHandler.message ||
 					translate( 'Redirecting to setup %{pluginName} in five seconds.', {
 						args: {
-							pluginName: redirectPlugin.name,
+							pluginName: redirectHandler.name,
 						},
 					} );
 
@@ -179,7 +157,7 @@ const withPluginRedirect = createHigherOrderComponent(
 						onClick: function () {
 							timerId && window.clearTimeout( timerId );
 							setPrevProcessingState( 'done' );
-							setRedirectTo( null );
+							setShouldRedirect( null );
 							dispatch( removeNotice( 'plugin-redirect-notice' ) );
 						},
 					} )
@@ -187,7 +165,7 @@ const withPluginRedirect = createHigherOrderComponent(
 			}, pluginInstalledNoticeTime );
 
 			return () => timerId && window.clearTimeout( timerId );
-		}, [ redirectTo, redirectPlugin, dispatch, translate, transferringStatus ] );
+		}, [ shouldRedirect, redirectHandler, dispatch, translate, transferringStatus ] );
 
 		return <Component { ...props } />;
 	},
