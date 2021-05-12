@@ -17,10 +17,7 @@ export default async function submitWpcomTransaction(
 	payload: WPCOMTransactionEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ): Promise< WPCOMTransactionEndpointResponse > {
-	if (
-		( transactionOptions && transactionOptions.createUserAndSiteBeforeTransaction ) ||
-		payload.cart.is_jetpack_checkout
-	) {
+	if ( transactionOptions.createUserAndSiteBeforeTransaction || payload.cart.is_jetpack_checkout ) {
 		const createAccountOptions = payload.cart.is_jetpack_checkout
 			? { signupFlowName: 'jetpack-userless-checkout' }
 			: { signupFlowName: 'onboarding-registrationless' };
