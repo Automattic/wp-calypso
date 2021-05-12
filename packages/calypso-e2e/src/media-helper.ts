@@ -28,7 +28,7 @@ export function getScreenshotDir(): string {
 export function getVideoDir(): string {
 	return path.resolve(
 		process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ),
-		process.env.VIDEODIR || 'videos'
+		process.env.VIDEODIR || 'screenshots/videos'
 	);
 }
 
