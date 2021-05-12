@@ -20,6 +20,7 @@ import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'calypso/components/data/document-head';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import siteHasBusinessOrEcommercePlan from 'calypso/state/sites/selectors/has-business-or-ecommerce-plan';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from '@automattic/calypso-config';
@@ -46,6 +47,18 @@ import RecommendedThemes from './recommended-themes';
  * Style dependencies
  */
 import './theme-showcase.scss';
+
+function getInstallThemeSlug( siteSlug, hasBusinessOrEcommercePlan ) {
+	if ( siteSlug && hasBusinessOrEcommercePlan ) {
+		return `https://${ siteSlug }/wp-admin/theme-install.php`;
+	}
+
+	if ( siteSlug ) {
+		return `/themes/upload/${ siteSlug }`;
+	}
+
+	return '/themes/upload';
+}
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -234,6 +247,7 @@ class ThemeShowcase extends React.Component {
 			title,
 			filterString,
 			isMultisite,
+			hasBusinessOrEcommercePlan,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -295,7 +309,7 @@ class ThemeShowcase extends React.Component {
 							className="themes__upload-button"
 							compact
 							onClick={ this.onUploadClick }
-							href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
+							href={ getInstallThemeSlug( siteSlug, hasBusinessOrEcommercePlan ) }
 						>
 							<Gridicon icon="cloud-upload" />
 							{ translate( 'Install theme' ) }
@@ -430,18 +444,21 @@ class ThemeShowcase extends React.Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
-	currentThemeId: getActiveTheme( state, siteId ),
-	isLoggedIn: !! getCurrentUserId( state ),
-	siteSlug: getSiteSlug( state, siteId ),
-	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
-	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
-	subjects: getThemeFilterTerms( state, 'subject' ) || {},
-	filterString: prependThemeFilterKeys( state, filter ),
-	filterToTermTable: getThemeFilterToTermTable( state ),
-	hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
-	themesBookmark: getThemesBookmark( state ),
-} );
+const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
+	return {
+		currentThemeId: getActiveTheme( state, siteId ),
+		isLoggedIn: !! getCurrentUserId( state ),
+		siteSlug: getSiteSlug( state, siteId ),
+		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
+		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
+		subjects: getThemeFilterTerms( state, 'subject' ) || {},
+		filterString: prependThemeFilterKeys( state, filter ),
+		filterToTermTable: getThemeFilterToTermTable( state ),
+		hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
+		themesBookmark: getThemesBookmark( state ),
+		hasBusinessOrEcommercePlan: siteHasBusinessOrEcommercePlan( state, siteId ),
+	};
+};
 
 const mapDispatchToProps = {
 	trackUploadClick: () => recordTracksEvent( 'calypso_click_theme_upload' ),
