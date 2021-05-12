@@ -4,7 +4,6 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -47,42 +46,12 @@ import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import VerticalNavItemEnhanced from 'calypso/components/vertical-nav/item/enhanced';
 
+/**
+ * Style dependencies
+ */
 import './style.scss';
-
-const DomainManagementNavigationItemContents = function ( props ) {
-	const { gridicon, materialIcon, text, description } = props;
-	return (
-		<React.Fragment>
-			{ gridicon && <Gridicon className="navigation__icon" icon={ gridicon } /> }
-			{ ! gridicon && <MaterialIcon icon={ materialIcon } className="navigation__icon" /> }
-			<div>
-				<div>{ text }</div>
-				<small>{ description }</small>
-			</div>
-		</React.Fragment>
-	);
-};
-
-const DomainManagementNavigationItem = function ( props ) {
-	const { path, onClick, external, gridicon, materialIcon, text, description } = props;
-
-	return (
-		<VerticalNavItem
-			path={ path }
-			onClick={ onClick }
-			external={ external }
-			className="navigation__nav-item"
-		>
-			<DomainManagementNavigationItemContents
-				materialIcon={ materialIcon }
-				gridicon={ gridicon }
-				text={ text }
-				description={ description }
-			/>
-		</VerticalNavItem>
-	);
-};
 
 class DomainManagementNavigationEnhanced extends React.Component {
 	getEmail() {
@@ -144,7 +113,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ emailManagement( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="email"
 				text={ navigationText }
@@ -188,7 +157,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const description = this.getDestinationText();
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementNameServers( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Change your name servers & DNS records' ) }
@@ -203,7 +172,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const description = this.getDestinationText();
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementDns( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Update your DNS records' ) }
@@ -230,7 +199,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementContactsPrivacy( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="chrome_reader_mode"
 				text={ translate( 'Update your contact information' ) }
@@ -263,10 +232,10 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementTransfer( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="sync_alt"
-				text={ translate( 'Transfer domain' ) }
+				text={ translate( 'Transfer your domain' ) }
 				description={ description }
 			/>
 		);
@@ -280,7 +249,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementTransfer( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="sync_alt"
 				text={ translate( 'Transfer mapping' ) }
@@ -298,7 +267,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				onClick={ this.handleTransferDomainClick }
 				path={ domainTransferIn( selectedSite.slug, domain.name, true ) }
 				materialIcon="sync_alt"
@@ -320,7 +289,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const path = domainManagementDomainConnectMapping( selectedSite.slug, domain.name );
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ path }
 				materialIcon="double_arrow"
 				text={ translate( 'Connect your domain' ) }
@@ -339,7 +308,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const wpcomUrl = withoutHttp( getUnmappedUrl( selectedSite ) );
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ `/home/${ selectedSite.slug }` }
 				gridicon="my-sites"
 				text={ translate( 'Manage your site' ) }
@@ -412,7 +381,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const { selectedSite, translate } = this.props;
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainAddNew( selectedSite.slug ) }
 				onClick={ this.handlePickCustomDomainClick }
 				materialIcon="search"
@@ -431,7 +400,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementChangeSiteAddress( selectedSite.slug, domain.name, currentRoute ) }
 				onClick={ this.handleChangeSiteAddressClick }
 				materialIcon="create"
@@ -463,7 +432,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ path }
 				onClick={ this.handlePickCustomDomainClick }
 				materialIcon="search"
@@ -502,7 +471,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementSecurity( selectedSite.slug, domain.name, currentRoute ) }
 				onClick={ this.handleDomainSecurityClick }
 				materialIcon="security"
@@ -556,7 +525,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 			const link = cancelPurchase( selectedSite.slug, purchase.id );
 
 			return (
-				<DomainManagementNavigationItem
+				<VerticalNavItemEnhanced
 					path={ link }
 					onClick={ this.handleDomainDeleteClick }
 					materialIcon="delete"
@@ -572,12 +541,12 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				site={ selectedSite }
 				purchase={ purchase }
 				useVerticalNavItem={ true }
-				className="navigation__nav-item is-clickable"
+				className="navigation-enhanced__delete-domain is-clickable"
 				onClickTracks={ this.handleDomainDeleteClick }
 			>
-				<span>
-					<DomainManagementNavigationItemContents materialIcon="delete" text={ title } />
-				</span>
+				<MaterialIcon icon="delete" />
+
+				<strong>{ title }</strong>
 			</RemovePurchase>
 		);
 	}
@@ -586,7 +555,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const { domain, selectedSite, currentRoute, translate } = this.props;
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementRedirectSettings( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Redirect settings' ) }
