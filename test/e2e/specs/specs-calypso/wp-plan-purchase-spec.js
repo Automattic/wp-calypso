@@ -19,19 +19,16 @@ import ProfilePage from '../../lib/pages/profile-page';
 import PurchasesPage from '../../lib/pages/purchases-page';
 import ManagePurchasePage from '../../lib/pages/manage-purchase-page';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Plans: (${ screenSize })`, function () {
-	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
+	beforeAll( async function () {
 		driver = await driverManager.startBrowser();
-	} );
+	}, startBrowserTimeoutMS );
 
 	describe( 'Comparing Plans:  @parallel @jetpack', function () {
 		it( 'Login and Select My Site', async function () {
@@ -79,7 +76,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 		let originalCartAmount;
 		let loginFlow;
 
-		before( async function () {
+		beforeAll( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -147,7 +144,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 	} );
 
 	describe( 'Renew a plan:  @parallel', function () {
-		before( async function () {
+		beforeAll( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -180,7 +177,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 	} );
 
 	describe( 'Upgrade a plan:  @parallel @jetpack', function () {
-		before( async function () {
+		beforeAll( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 

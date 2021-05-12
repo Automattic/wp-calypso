@@ -29,7 +29,6 @@ import * as dataHelper from '../../lib/data-helper.js';
 import * as driverManager from '../../lib/driver-manager.js';
 import EmailClient from '../../lib/email-client.js';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const inviteInboxId = config.get( 'inviteInboxId' );
 const password = config.get( 'passwordForNewTestSignUps' );
@@ -38,13 +37,11 @@ const host = dataHelper.getJetpackHost();
 const emailClient = new EmailClient( inviteInboxId );
 
 describe( `[${ host }] Invites:  (${ screenSize })`, function () {
-	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
+	beforeAll( async function () {
 		driver = await driverManager.startBrowser();
-	} );
+	}, startBrowserTimeoutMS );
 
 	describe( 'Inviting new user as an Editor: @parallel @jetpack', function () {
 		const newUserName = 'e2eflowtestingeditora' + new Date().getTime().toString();
@@ -151,7 +148,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 			return await NoSitesComponent.Expect( driver );
 		} );
 
-		after( async function () {
+		afterAll( async function () {
 			if ( inviteCreated ) {
 				try {
 					await new LoginFlow( driver ).loginAndSelectPeople();
@@ -342,7 +339,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 			return await PrivateSiteLoginPage.Visit( driver, siteUrl );
 		} );
 
-		after( async function () {
+		afterAll( async function () {
 			if ( inviteCreated ) {
 				try {
 					await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();

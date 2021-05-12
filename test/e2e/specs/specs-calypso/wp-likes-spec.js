@@ -17,7 +17,6 @@ import CommentLikesComponent from '../../lib/pages/frontend/comment-likes-compon
 const host = dataHelper.getJetpackHost();
 const screenSize = driverManager.currentScreenSize();
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
-const mochaTimeoutMS = config.get( 'mochaTimeoutMS' );
 const blogPostTitle = dataHelper.randomPhrase();
 const blogPostQuote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
@@ -27,16 +26,14 @@ const blogPostQuote =
  * for both loggedin and logged out users.
  */
 describe( `[${ host }] Likes: (${ screenSize })`, function () {
-	let driver;
 	let postUrl;
-	this.timeout( mochaTimeoutMS );
 	const comment = dataHelper.randomPhrase();
 	const accountKey = 'gutenbergSimpleSiteUser';
+	let driver;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
+	beforeAll( async function () {
 		driver = await driverManager.startBrowser();
-	} );
+	}, startBrowserTimeoutMS );
 
 	describe( 'Like posts and comments @parallel', function () {
 		it( 'Login, create a new post and view it', async function () {

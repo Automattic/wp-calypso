@@ -27,13 +27,11 @@ const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Previewing Themes: (${ screenSize })`, function () {
-	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
+	beforeAll( async function () {
 		driver = await driverManager.startBrowser();
-	} );
+	}, startBrowserTimeoutMS );
 
 	describe( 'Previewing Themes @parallel @jetpack', function () {
 		it( 'Can login and select themes', async function () {
@@ -69,7 +67,7 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function
 	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( async function () {
+	beforeAll( async function () {
 		this.timeout( startBrowserTimeoutMS );
 		driver = await driverManager.startBrowser();
 	} );

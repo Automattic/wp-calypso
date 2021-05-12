@@ -56,7 +56,6 @@ import * as sharedSteps from '../../lib/shared-steps/wp-signup-spec';
 import MyHomePage from '../../lib/pages/my-home-page';
 import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const signupInboxId = config.get( 'signupInboxId' );
@@ -66,13 +65,12 @@ const passwordForTestAccounts = config.get( 'passwordForNewTestSignUps' );
 const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 
 describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
-	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
+	beforeAll( async function () {
+		driver = await driverManager.startBrowser();
 		this.driver = driver = await driverManager.startBrowser();
-	} );
+	}, startBrowserTimeoutMS );
 
 	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @signup @email', function () {
 		const blogName = dataHelper.getNewBlogName();
@@ -80,7 +78,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
 		let magicLoginLink;
 
-		before( async function () {
+		beforeAll( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -171,7 +169,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 		} );
 
-		after( 'Can delete our newly created account', async function () {
+		afterAll( async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
 		} );
 	} );
@@ -181,7 +179,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
 
-		before( async function () {
+		beforeAll( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -225,7 +223,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
-		after( 'Can delete our newly created account', async function () {
+		afterAll( async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
 		} );
 	} );
@@ -236,7 +234,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
 		let originalCartAmount;
 
-		before( async function () {
+		beforeAll( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -330,7 +328,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			assert.strictEqual( removedCouponAmount, originalCartAmount, 'Coupon not removed properly' );
 		} );
 
-		after( 'Can delete our newly created account', async function () {
+		afterAll( async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
 		} );
 	} );
@@ -342,7 +340,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		const currencyValue = 'GBP';
 		const expectedCurrencySymbol = '£';
 
-		before( async function () {
+		beforeAll( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -424,7 +422,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await new DeletePlanFlow( driver ).deletePlan( 'personal' );
 		} );
 
-		after( 'Can delete our newly created account', async function () {
+		afterAll( async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
 		} );
 	} );
@@ -437,7 +435,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		const currencyValue = 'EUR';
 		const expectedCurrencySymbol = '€';
 
-		before( async function () {
+		beforeAll( async function () {
 			if ( process.env.SKIP_DOMAIN_TESTS === 'true' ) {
 				await SlackNotifier.warn(
 					'Domains tests are currently disabled as SKIP_DOMAIN_TESTS is set to true',
@@ -447,7 +445,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 		} );
 
-		before( async function () {
+		beforeAll( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -562,7 +560,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return assert( exists, 'The settings menu option does not exist' );
 		} );
 
-		after( 'We can cancel the domain and delete newly created account', async function () {
+		afterAll( async function () {
 			return await ( async () => {
 				await ReaderPage.Visit( driver );
 				const navBarComponent = await NavBarComponent.Expect( driver );
@@ -597,7 +595,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		const currencyValue = 'CAD';
 		const expectedCurrencySymbol = 'C$';
 
-		before( async function () {
+		beforeAll( async function () {
 			if ( process.env.SKIP_DOMAIN_TESTS === 'true' ) {
 				await SlackNotifier.warn(
 					'Domains tests are currently disabled as SKIP_DOMAIN_TESTS is set to true',
@@ -607,7 +605,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 		} );
 
-		before( async function () {
+		beforeAll( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -711,7 +709,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			} );
 		} );
 
-		after( 'Can delete our newly created account', async function () {
+		afterAll( async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( siteName );
 		} );
 	} );
@@ -719,7 +717,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 	describe( 'Basic sign up for a free site @signup @email @ie11canary', function () {
 		const blogName = dataHelper.getNewBlogName();
 
-		before( async function () {
+		beforeAll( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -785,7 +783,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await gEditorComponent.closeEditor();
 		} );
 
-		after( 'Can delete our newly created account', async function () {
+		afterAll( async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
 		} );
 	} );
@@ -794,7 +792,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedDomainName = `${ blogName }.art.blog`;
 
-		before( async function () {
+		beforeAll( async function () {
 			if ( process.env.SKIP_DOMAIN_TESTS === 'true' ) {
 				await SlackNotifier.warn(
 					'Domains tests are currently disabled as SKIP_DOMAIN_TESTS is set to true',
@@ -804,7 +802,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 		} );
 
-		before( async function () {
+		beforeAll( async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -874,7 +872,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await settingsPage.deleteSite( expectedDomainName );
 		} );
 
-		after( 'Can delete our newly created account', async function () {
+		afterAll( async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
 		} );
 	} );
@@ -883,7 +881,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
 
-		before( async function () {
+		beforeAll( async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -924,7 +922,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await new GutenboardingFlow( driver ).createFreeSite();
 		} );
 
-		after( 'Can delete our newly created account', async function () {
+		afterAll( async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
 		} );
 	} );
@@ -932,7 +930,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 	describe( 'Sign up for a Reader account @signup', function () {
 		const userName = dataHelper.getNewBlogName();
 
-		before( async function () {
+		beforeAll( async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -970,7 +968,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await ReaderPage.Expect( driver );
 		} );
 
-		after( 'Can delete our newly created account', async function () {
+		afterAll( async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
 		} );
 	} );
@@ -978,7 +976,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 	describe( 'Signup and create new site using the New Onboarding (Gutenboarding) @signup', function () {
 		const emailAddress = dataHelper.getEmailAddress( dataHelper.getNewBlogName(), signupInboxId );
 
-		before( async function () {
+		beforeAll( async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -988,7 +986,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			await new GutenboardingFlow( driver ).signupAndCreateFreeSite( { emailAddress } );
 		} );
 
-		after( 'Can delete our newly created account', async function () {
+		afterAll( async function () {
 			// Gutenboarding creates users with auto-generated usernames so we need
 			// to find the username before we can delete it.
 			const accountSettingsPage = await AccountSettingsPage.Visit( driver );

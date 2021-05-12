@@ -34,14 +34,12 @@ const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Auth Screen Canary: (${ screenSize }) @parallel @safaricanary`, function () {
-	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
+	beforeAll( async function () {
 		driver = await driverManager.startBrowser();
 		return await driverManager.ensureNotLoggedIn( driver );
-	} );
+	}, startBrowserTimeoutMS );
 
 	describe( 'Loading the log-in screen', function () {
 		it( 'Can see the log in screen', async function () {
@@ -51,16 +49,15 @@ describe( `[${ host }] Auth Screen Canary: (${ screenSize }) @parallel @safarica
 } );
 
 describe( `[${ host }] Authentication: (${ screenSize })`, function () {
-	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
+	beforeAll( async function () {
 		driver = await driverManager.startBrowser();
-	} );
+		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
+	}, startBrowserTimeoutMS );
 
 	describe( 'Logging In and Out: @jetpack', function () {
-		before( async function () {
+		beforeAll( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
@@ -115,11 +112,11 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 			let twoFALoginPage;
 			let twoFACode;
 
-			before( async function () {
+			beforeAll( async function () {
 				return await driverManager.ensureNotLoggedIn( driver );
 			} );
 
-			before( async function () {
+			beforeAll( async function () {
 				loginFlow = new LoginFlow( driver, [ '+2fa-sms', '-passwordless' ] );
 				// make sure we listen for SMS before we trigger any
 				const xmppClient = listenForSMS( loginFlow.account );
@@ -166,7 +163,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 			let loginFlow;
 			let twoFALoginPage;
 
-			before( async function () {
+			beforeAll( async function () {
 				await driverManager.ensureNotLoggedIn( driver );
 				loginFlow = new LoginFlow( driver, [ '+2fa-push', '-passwordless' ] );
 				await loginFlow.login( { useFreshLogin: true } );
@@ -201,7 +198,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 			let loginFlow;
 			let twoFALoginPage;
 
-			before( async function () {
+			beforeAll( async function () {
 				await driverManager.ensureNotLoggedIn( driver );
 				loginFlow = new LoginFlow( driver, [ '+2fa-otp', '-passwordless' ] );
 				await loginFlow.login( { useFreshLogin: true } );
@@ -233,7 +230,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 		! dataHelper.isRunningOnLiveBranch()
 	) {
 		describe( 'Can Log in on a passwordless account @secure-auth', function () {
-			before( async function () {
+			beforeAll( async function () {
 				return await driverManager.ensureNotLoggedIn( driver );
 			} );
 
@@ -242,7 +239,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 				let loginFlow;
 				let magicLinkEmail;
 				let emailClient;
-				before( async function () {
+				beforeAll( async function () {
 					loginFlow = new LoginFlow( driver, [ '+passwordless', '-2fa' ] );
 					emailClient = new EmailClient( get( loginFlow.account, 'mailosaur.inboxId' ) );
 					return await loginFlow.login( { emailSSO: true, useFreshLogin: true } );
@@ -273,14 +270,14 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 					} );
 
 					// we should always remove a magic link email once the magic link has been used (even if login failed)
-					after( async function () {
+					afterAll( async function () {
 						if ( magicLinkEmail ) {
 							return await emailClient.deleteAllEmailByID( magicLinkEmail.id );
 						}
 					} );
 				} );
 
-				after( function () {
+				afterAll( function () {
 					if ( loginFlow ) {
 						loginFlow.end();
 					}
@@ -294,7 +291,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 		! dataHelper.isRunningOnLiveBranch()
 	) {
 		describe( 'Can Log in on a passwordless account with 2fa using sms @secure-auth', function () {
-			before( async function () {
+			beforeAll( async function () {
 				return await driverManager.ensureNotLoggedIn( driver );
 			} );
 
@@ -303,7 +300,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 				let loginFlow;
 				let magicLinkEmail;
 				let emailClient;
-				before( async function () {
+				beforeAll( async function () {
 					loginFlow = new LoginFlow( driver, [ '+passwordless', '+2fa-sms' ] );
 					emailClient = new EmailClient( get( loginFlow.account, 'mailosaur.inboxId' ) );
 					return await loginFlow.login( { emailSSO: true } );
@@ -326,7 +323,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 					let magicLoginPage;
 					let twoFALoginPage;
 					let twoFACode;
-					before( async function () {
+					beforeAll( async function () {
 						await driver.get( magicLoginLink );
 						magicLoginPage = new MagicLoginPage( driver );
 						// make sure we listen for SMS before we trigger any
@@ -367,14 +364,14 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 					} );
 
 					// we should always remove a magic link email once the magic link has been used (even if login failed)
-					after( async function () {
+					afterAll( async function () {
 						if ( magicLinkEmail ) {
 							return await emailClient.deleteAllEmailByID( magicLinkEmail.id );
 						}
 					} );
 				} );
 
-				after( function () {
+				afterAll( function () {
 					if ( loginFlow ) {
 						loginFlow.end();
 					}
@@ -388,7 +385,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 		! dataHelper.isRunningOnLiveBranch()
 	) {
 		describe( 'Can Log in on a passwordless account with 2fa using authenticator @secure-auth', function () {
-			before( async function () {
+			beforeAll( async function () {
 				return await driverManager.ensureNotLoggedIn( driver );
 			} );
 
@@ -397,7 +394,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 				let loginFlow;
 				let magicLinkEmail;
 				let emailClient;
-				before( async function () {
+				beforeAll( async function () {
 					loginFlow = new LoginFlow( driver, [ '+passwordless', '+2fa-sms' ] );
 					emailClient = new EmailClient( get( loginFlow.account, 'mailosaur.inboxId' ) );
 					return await loginFlow.login( { emailSSO: true } );
@@ -419,7 +416,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 				describe( 'Can use the magic link and the code received via sms to log in', function () {
 					let magicLoginPage;
 					let twoFALoginPage;
-					before( async function () {
+					beforeAll( async function () {
 						driver.get( magicLoginLink );
 						magicLoginPage = new MagicLoginPage( driver );
 						await magicLoginPage.finishLogin();
@@ -445,14 +442,14 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 					} );
 
 					// we should always remove a magic link email once the magic link has been used (even if login failed)
-					after( async function () {
+					afterAll( async function () {
 						if ( magicLinkEmail ) {
 							return await emailClient.deleteAllEmailByID( magicLinkEmail.id );
 						}
 					} );
 				} );
 
-				after( function () {
+				afterAll( function () {
 					if ( loginFlow ) {
 						loginFlow.end();
 					}
@@ -466,7 +463,7 @@ describe( `[${ host }] User Agent: (${ screenSize }) @parallel @jetpack`, functi
 	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( 'Start browser', async function () {
+	beforeAll( async function () {
 		this.timeout( startBrowserTimeoutMS );
 		driver = await driverManager.startBrowser();
 		await driverManager.ensureNotLoggedIn( driver );

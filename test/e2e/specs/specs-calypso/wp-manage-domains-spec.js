@@ -28,20 +28,17 @@ import LoginFlow from '../../lib/flows/login-flow.js';
 
 import * as SlackNotifier from '../../lib/slack-notifier';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const domainsInboxId = config.get( 'domainsInboxId' );
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function () {
-	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
+	beforeAll( async function () {
 		driver = await driverManager.startBrowser();
-	} );
+	}, startBrowserTimeoutMS );
 
 	describe( 'Adding a domain to an existing site', function () {
 		const blogName = dataHelper.getNewBlogName();
@@ -49,7 +46,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 		const expectedDomainName = blogName + '.com';
 		const testDomainRegistarDetails = dataHelper.getTestDomainRegistarDetails( domainEmailAddress );
 
-		before( async function () {
+		beforeAll( async function () {
 			if ( process.env.SKIP_DOMAIN_TESTS === 'true' ) {
 				await SlackNotifier.warn(
 					'Domains tests are currently disabled as SKIP_DOMAIN_TESTS is set to true',
@@ -127,7 +124,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 	describe( 'Map a domain to an existing site', function () {
 		const blogName = 'nature.com';
 
-		before( async function () {
+		beforeAll( async function () {
 			if ( process.env.SKIP_DOMAIN_TESTS === 'true' ) {
 				await SlackNotifier.warn(
 					'Domains tests are currently disabled as SKIP_DOMAIN_TESTS is set to true',

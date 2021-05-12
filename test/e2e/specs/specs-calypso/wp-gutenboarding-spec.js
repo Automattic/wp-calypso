@@ -23,18 +23,15 @@ import * as driverManager from '../../lib/driver-manager.js';
 import * as dataHelper from '../../lib/data-helper.js';
 import * as driverHelper from '../../lib/driver-helper.js';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 
 describe( 'Gutenboarding: (' + screenSize + ')', function () {
-	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
+	beforeAll( async function () {
 		driver = await driverManager.startBrowser();
-	} );
+	}, startBrowserTimeoutMS );
 
 	describe( 'Create new site as existing user @parallel @canary', function () {
 		const siteTitle = dataHelper.randomPhrase();
@@ -135,7 +132,7 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			await gEditorComponent.initEditor();
 		} );
 
-		after( 'Can delete site', async function () {
+		afterAll( async function () {
 			await new DeleteSiteFlow( driver ).deleteSite( newSiteDomain );
 		} );
 	} );

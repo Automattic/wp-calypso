@@ -20,7 +20,6 @@ import FindADomainComponent from '../../lib/components/find-a-domain-component.j
 import MyHomePage from '../../lib/pages/my-home-page.js';
 
 const host = dataHelper.getJetpackHost();
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const signupInboxId = config.get( 'signupInboxId' );
@@ -39,18 +38,16 @@ const createAndActivateAccount = async function ( driver, accountName ) {
 };
 
 describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () {
-	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
+	beforeAll( async function () {
 		driver = await driverManager.startBrowser();
-	} );
+	}, startBrowserTimeoutMS );
 
 	describe( 'Launch a free site', function () {
 		const siteName = dataHelper.getNewBlogName();
 
-		before( 'Can log in', async function () {
+		beforeAll( async function () {
 			const loginFlow = new LoginFlow( driver );
 			await loginFlow.login();
 		} );
@@ -63,7 +60,7 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 			return await new LaunchSiteFlow( driver ).launchFreeSite();
 		} );
 
-		after( 'Delete the newly created site', async function () {
+		afterAll( async function () {
 			const deleteSite = new DeleteSiteFlow( driver );
 			return await deleteSite.deleteSite( siteName + '.wordpress.com' );
 		} );
@@ -78,7 +75,7 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 		const firstSiteName = dataHelper.getNewBlogName();
 		const secondSiteName = dataHelper.getNewBlogName();
 
-		before( 'Create 2 free sites as a new user', async function () {
+		beforeAll( async function () {
 			await createAndActivateAccount( driver, accountName );
 			await new CreateSiteFlow( driver, firstSiteName ).createFreeSite();
 			await new CreateSiteFlow( driver, secondSiteName ).createFreeSite();
@@ -105,7 +102,7 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 			return await new LaunchSiteFlow( driver ).launchFreeSite();
 		} );
 
-		after( 'Delete the newly created account', async function () {
+		afterAll( async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( accountName );
 		} );
 	} );

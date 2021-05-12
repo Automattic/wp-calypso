@@ -13,22 +13,19 @@ import * as dataHelper from '../../lib/data-helper';
 import SideBarComponent from '../../lib/components/sidebar-component';
 import MediaPage from '../../lib/pages/media-page';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, function () {
-	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
+	beforeAll( async function () {
 		driver = await driverManager.startBrowser();
-	} );
+	}, startBrowserTimeoutMS );
 
 	describe( 'Edit Existing Media:', function () {
-		before( 'Can login and select my site', async function () {
+		beforeAll( async function () {
 			const loginFlow = new LoginFlow( driver );
 			await loginFlow.loginAndSelectMySite();
 		} );

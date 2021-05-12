@@ -19,20 +19,17 @@ import TrafficPage from '../../lib/pages/marketing/traffic-page.js';
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] SEO Preview page: (${ screenSize }) @parallel`, function () {
-	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
+	beforeAll( async function () {
 		driver = await driverManager.startBrowser();
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
-	} );
+	}, startBrowserTimeoutMS );
 
 	// Login as Business plan user and open the sidebar
 	it( 'Log In', async function () {

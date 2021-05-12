@@ -29,10 +29,9 @@ const host = dataHelper.getJetpackHost();
 describe( `[${ host }] Themes: All sites (${ screenSize })`, function () {
 	let driver;
 
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
+	beforeAll( async function () {
 		driver = await driverManager.startBrowser();
-	} );
+	}, startBrowserTimeoutMS );
 
 	describe( 'Preview a theme @parallel', function () {
 		this.timeout( mochaTimeOut );
@@ -91,7 +90,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function () {
 						assert( url.indexOf( this.themeSearchName ) > -1, 'Wrong theme' );
 					} );
 
-					after( async function () {
+					afterAll( async function () {
 						await this.customizerPage.close();
 					} );
 				} );

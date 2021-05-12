@@ -14,25 +14,22 @@ import * as driverManager from '../../lib/driver-manager.js';
 import * as mediaHelper from '../../lib/media-helper.js';
 import * as dataHelper from '../../lib/data-helper';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack`, function () {
-	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
+	beforeAll( async function () {
 		driver = await driverManager.startBrowser();
-	} );
+	}, startBrowserTimeoutMS );
 
 	describe( 'Image Upload:', function () {
 		let gutenbergEditor;
 		let blockID;
 
-		before( async function () {
+		beforeAll( async function () {
 			let editorType = 'iframe';
 			const loginFlow = new LoginFlow( driver );
 
