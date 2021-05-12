@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { unlink, renameSync } from 'fs';
+import * as fs from 'fs/promises';
 import { Context } from 'mocha';
 
 /**
@@ -75,11 +75,11 @@ export async function saveVideo( this: Context ): Promise< void > {
  * @returns {void} No return value.
  */
 async function removeVideo( path: string ) {
-	unlink( path, function ( err ) {
-		if ( err ) {
-			console.log( 'Failed to delete video recording of passed test case.' );
-		}
-	} );
+	try {
+		await fs.unlink( path );
+	} catch ( err ) {
+		console.log( 'Failed to delete video recording of passed test case.' );
+	}
 }
 
 /**
@@ -103,9 +103,8 @@ async function renameVideo( context: Context, path: string ): Promise< void > {
 	const newPath = `${ videoDir }/${ fileName }.webm`;
 
 	try {
-		renameSync( path, newPath );
-		console.log( `Video file saved as ${ newPath }` );
-	} catch ( error ) {
-		console.log( `Renaming video file failed! \n ${ error }` );
+		await fs.rename( path, newPath );
+	} catch ( err ) {
+		console.log( `Renaming video file failed! \n ${ err }` );
 	}
 }
