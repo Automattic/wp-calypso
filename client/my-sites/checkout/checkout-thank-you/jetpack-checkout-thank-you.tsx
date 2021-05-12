@@ -21,7 +21,7 @@ import Main from 'calypso/components/main';
 
 interface Props {
 	site: number | string;
-	productSlug: string;
+	productSlug: string | 'no_product';
 }
 
 const getRequestUnauthorizedSiteId = ( siteId: string | number ): string =>
@@ -52,9 +52,12 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const productName = useSelector( ( state ) => getProductName( state, productSlug ) ) as
-		| string
-		| null;
+	const hasProductInfo = productSlug !== 'no_product';
+
+	const productName = useSelector( ( state ) =>
+		hasProductInfo ? getProductName( state, productSlug ) : null
+	) as string | null;
+
 	const isProductListFetching = useSelector( ( state ) =>
 		getIsProductListFetching( state )
 	) as boolean;
@@ -76,13 +79,13 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 		<Main className="jetpack-checkout-thank-you">
 			<Card className="jetpack-checkout-thank-you__card">
 				<JetpackLogo full size={ 45 } />
-				<QueryProducts type="jetpack" />
+				{ hasProductInfo && <QueryProducts type="jetpack" /> }
 				<h2 className="jetpack-checkout-thank-you__main-message">
 					{ /* the single space literal below is intentional for rendering purposes */ }
 					{ translate( 'Thank you for your purchase!' ) }{ ' ' }
 					{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
 				</h2>
-				{ ( isLoading || ( siteName && productName ) ) && (
+				{ hasProductInfo && ( isLoading || ( siteName && productName ) ) && (
 					<p
 						className={
 							isLoading

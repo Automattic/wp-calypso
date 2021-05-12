@@ -132,7 +132,7 @@ export default function getThankYouPageUrl( {
 		// extract a product from the cart, in userless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug;
 
-		return `/checkout/jetpack/thank-you/${ siteSlug }/${ productSlug }`;
+		return `/checkout/jetpack/thank-you/${ siteSlug }/${ productSlug ?? 'no_product' }`;
 	}
 
 	const fallbackUrl = getFallbackDestination( {
