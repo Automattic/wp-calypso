@@ -1,8 +1,7 @@
 {
-	"mocha_tests": [ "specs-gutenberg" ],
-	"mocha_args": "-R spec-junit-reporter",
+	"mocha_tests": [ "specs/specs-wpcom" ],
 	"max_test_attempts": 3,
-	"max_workers": 6,
+	"max_workers": 1,
 	"suiteTag": "parallel",
 	"sauce": false,
 	"framework": "@automattic/testarmada-magellan-mocha-plugin",

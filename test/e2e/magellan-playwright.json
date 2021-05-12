@@ -1,5 +1,5 @@
 {
-	"mocha_tests": [ "specs-playwright" ],
+	"mocha_tests": [ "specs/specs-playwright" ],
 	"mocha_config": "./.mocharc_playwright.yml",
 	"max_test_attempts": 3,
 	"max_workers": 1,
