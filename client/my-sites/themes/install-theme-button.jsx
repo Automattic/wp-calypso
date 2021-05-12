@@ -17,7 +17,6 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { Button } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
@@ -40,7 +39,6 @@ const InstallThemeButton = connectOptions( ( { isMultisite, isLoggedIn, siteSlug
 			onClick={ clickHandler }
 			href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
 		>
-			<Gridicon icon="cloud-upload" className="themes__upload-button-gridicon" />
 			{ translate( 'Install theme' ) }
 		</Button>
 	);
