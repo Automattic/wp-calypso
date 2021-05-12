@@ -43,7 +43,7 @@ export function recordFullStoryEvent( name, _props ) {
 function maybeAddFullStoryScript() {
 	if (
 		fullStoryScriptLoaded ||
-		! config( 'fullstory-enabled' ) ||
+		! config.isEnabled( 'fullstory' ) ||
 		isE2ETest() ||
 		getDoNotTrack() ||
 		isPiiUrl() ||

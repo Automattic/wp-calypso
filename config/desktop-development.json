@@ -17,7 +17,7 @@
 	"readerFollowingSource": "desktop",
 	"features": {
 		"ad-tracking": true,
-		"fullstory-enabled": false,
+		"fullstory": false,
 		"always_use_logout_url": true,
 		"async-payments": false,
 		"automated-transfer": true,
