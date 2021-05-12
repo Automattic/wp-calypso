@@ -106,7 +106,7 @@
 	}
 }
 
-.email-plan__general {
+.email-plan__header {
 	display: flex;
 	align-items: center;
 	h2 {
@@ -116,20 +116,23 @@
 	&.success {
 		@include email_status_color( var( --color-success ) );
 	}
+
 	&.warning {
 		@include email_status_color( var( --color-warning ) );
 	}
+
 	&.error {
 		@include email_status_color( var( --color-error ) );
 	}
 }
 
-.email-plan__general-icon {
+.email-plan__header-icon {
 	> img, svg {
 		height: 36px;
 		width: 36px;
 		margin-right: 20px;
 	}
+
 	> .gridicon.gridicons-my-sites {
 		fill: var( --color-wordpress-com );
 	}
