@@ -15,7 +15,7 @@ import { Button } from '@automattic/components';
 import ThemesSelection from './themes-selection';
 import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { addTracking, trackClick } from './helpers';
+import { addTracking, trackClick, localizeThemesPath } from './helpers';
 import DocumentHead from 'calypso/components/data/document-head';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -40,7 +40,6 @@ import {
 } from 'calypso/state/themes/selectors';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
 import RecommendedThemes from './recommended-themes';
-import { isDefaultLocale } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -183,7 +182,7 @@ class ThemeShowcase extends React.Component {
 	 * @returns {string} Theme showcase url
 	 */
 	constructUrl = ( sections ) => {
-		const { vertical, tier, filter, siteSlug, searchString, locale } = {
+		const { vertical, tier, filter, siteSlug, searchString, locale, isLoggedIn } = {
 			...this.props,
 			...sections,
 		};
@@ -194,8 +193,11 @@ class ThemeShowcase extends React.Component {
 
 		let filterSection = filter ? `/filter/${ filter }` : '';
 		filterSection = filterSection.replace( /\s/g, '+' );
-		const localePrefix = locale && ! isDefaultLocale( locale ) ? `/${ locale }` : '';
-		const url = `${ localePrefix }/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
+		const url = localizeThemesPath(
+			`/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`,
+			locale,
+			! isLoggedIn
+		);
 		return buildRelativeSearchUrl( url, searchString );
 	};
 
@@ -295,9 +297,11 @@ class ThemeShowcase extends React.Component {
 										return null;
 									}
 
-									const localePrefix = locale && ! isDefaultLocale( locale ) ? `/${ locale }` : '';
-
-									return localePrefix + getScreenshotOption( theme ).getUrl( theme );
+									return localizeThemesPath(
+										getScreenshotOption( theme ).getUrl( theme ),
+										locale,
+										! isLoggedIn
+									);
 								} }
 								onScreenshotClick={ function ( themeId ) {
 									if ( ! getScreenshotOption( themeId ).action ) {
@@ -379,9 +383,11 @@ class ThemeShowcase extends React.Component {
 									return null;
 								}
 
-								const localePrefix = locale && ! isDefaultLocale( locale ) ? `/${ locale }` : '';
-
-								return localePrefix + getScreenshotOption( theme ).getUrl( theme );
+								return localizeThemesPath(
+									getScreenshotOption( theme ).getUrl( theme ),
+									locale,
+									! isLoggedIn
+								);
 							} }
 							onScreenshotClick={ function ( themeId ) {
 								if ( ! getScreenshotOption( themeId ).action ) {

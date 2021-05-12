@@ -86,7 +86,6 @@ export function fetchThemeFilters( context, next ) {
 			return next();
 		}
 	} );
-
 	store.dispatch( requestThemeFilters() );
 }
 
