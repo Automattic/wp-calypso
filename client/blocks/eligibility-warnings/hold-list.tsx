@@ -15,6 +15,7 @@ import Gridicon from 'calypso/components/gridicon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { isAtomicSiteWithoutBusinessPlan } from './utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
 function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
@@ -155,7 +156,12 @@ export const HardBlockingNotice = ( {
 	const blockingHold = holds.find( ( h ): h is keyof ReturnType< typeof getBlockingMessages > =>
 		isHardBlockingHoldType( h, blockingMessages )
 	);
-	if ( ! blockingHold ) {
+
+	/*
+		This accounts for Atomic sites that are on a plan below Business so we can prompt them to upgrade
+		instead of showing them an "Upload in progress" notice.
+	*/
+	if ( ! blockingHold || isAtomicSiteWithoutBusinessPlan( holds ) ) {
 		return null;
 	}
 
@@ -179,6 +185,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );
+	const hasValidBlockingHold = blockingHold && ! isAtomicSiteWithoutBusinessPlan( holds );
 
 	return (
 		<>
@@ -191,7 +198,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 			) }
 			<div
 				className={ classNames( {
-					'eligibility-warnings__hold-list-dim': blockingHold,
+					'eligibility-warnings__hold-list-dim': hasValidBlockingHold,
 				} ) }
 				data-testid="HoldList-Card"
 			>
@@ -228,7 +235,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 									<div className="eligibility-warnings__hold-action">
 										<Button
 											compact
-											disabled={ !! blockingHold }
+											disabled={ !! hasValidBlockingHold }
 											href={ holdMessages[ hold ].supportUrl }
 											rel="noopener noreferrer"
 										>
