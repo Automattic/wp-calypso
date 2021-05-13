@@ -56,25 +56,26 @@ const list = function ( resourceOptions ) {
 
 // Walk for each resource and create related method
 resources.forEach( function ( resource ) {
-	const name = resource[ 0 ],
-		resourceOptions = {
-			subpath: resource[ 1 ],
-			apiVersion: resource[ 2 ] || '1',
-			method: resource[ 3 ] || 'get',
-		};
+	const name = resource[ 0 ];
+	const resourceOptions = {
+		subpath: resource[ 1 ],
+		apiVersion: resource[ 2 ] || '1',
+		method: resource[ 3 ] || 'get',
+	};
 
 	UndocumentedSite.prototype[ name ] = list.call( this, resourceOptions );
 } );
 
+/* eslint-disable jsdoc/no-undefined-types */
 /**
  * Create an UndocumentedSite instance
  *
- * @param {[int]}   id          Site ID
- * @param {[WPCOM]} wpcom       WPCOM instance
+ * @param {number}   id          Site ID
+ * @param {object} wpcom       WPCOM instance
  *
- * @returns {{UndocumentedSite}} UndocumentedSite instance
+ * @returns {UndocumentedSite} UndocumentedSite instance
  *
- * @api public
+ * @public
  */
 function UndocumentedSite( id, wpcom ) {
 	debug( 'UndocumentedSite', id );
@@ -130,10 +131,6 @@ UndocumentedSite.prototype.getRoles = function ( callback ) {
 	return this.wpcom.req.get( '/sites/' + this._id + '/roles', {}, callback );
 };
 
-UndocumentedSite.prototype.getViewers = function ( query, callback ) {
-	return this.wpcom.req.get( '/sites/' + this._id + '/viewers', query, callback );
-};
-
 UndocumentedSite.prototype.removeViewer = function ( viewerId, callback ) {
 	return this.wpcom.req.post(
 		{
@@ -174,10 +171,6 @@ UndocumentedSite.prototype.removeFollower = function ( followerId, callback ) {
 		},
 		callback
 	);
-};
-
-UndocumentedSite.prototype.fetchFollowers = function ( fetchOptions, callback ) {
-	return this.wpcom.req.get( '/sites/' + this._id + '/followers/', fetchOptions, callback );
 };
 
 UndocumentedSite.prototype.removeEmailFollower = function ( followerId, callback ) {
@@ -414,6 +407,36 @@ UndocumentedSite.prototype.deleteInvites = function ( inviteIds ) {
 		{
 			invite_ids: inviteIds,
 		}
+	);
+};
+/**
+ * Generate invite links
+ *
+ * @returns {Promise}             A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.generateInviteLinks = function () {
+	return this.wpcom.req.post(
+		{
+			path: `/sites/${ this._id }/invites/links/generate`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{}
+	);
+};
+
+/**
+ * Disable invite links
+ *
+ * @returns {Promise}             A Promise to resolve when complete.
+ */
+
+UndocumentedSite.prototype.disableInviteLinks = function () {
+	return this.wpcom.req.post(
+		{
+			path: `/sites/${ this._id }/invites/links/disable`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{}
 	);
 };
 

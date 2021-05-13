@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
-import { filter, values } from 'lodash';
+import { filter } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
+
+import 'calypso/state/sharing/init';
 
 /**
  * Returns an array of keyring connection objects.
@@ -16,7 +17,7 @@ import createSelector from 'lib/create-selector';
  * @returns {Array}        Keyring connections, if known.
  */
 export function getKeyringConnections( state ) {
-	return values( state.sharing.keyring.items );
+	return Object.values( state.sharing.keyring.items );
 }
 
 /**
@@ -53,6 +54,21 @@ export function getBrokenKeyringConnectionsByName( state, service ) {
 	return filter( getKeyringConnectionsByName( state, service ), {
 		status: 'broken',
 	} );
+}
+
+/**
+ * Returns an array of keyring connection objects for a specified service that
+ * need to be manually refreshed/reconnected.
+ *
+ * @param  {object} state   Global state tree
+ * @param  {string} service Service slug.
+ * @returns {Array}         Keyring connections, if any.
+ */
+export function getRefreshableKeyringConnections( state, service ) {
+	return filter(
+		getKeyringConnectionsByName( state, service ),
+		( conn ) => 'broken' === conn.status || 'refresh-failed' === conn.status
+	);
 }
 
 /**

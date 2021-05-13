@@ -10,12 +10,12 @@ import startsWith from 'lodash/startsWith';
 /**
  * Internal dependencies
  */
-import { addLocaleToPath, getLanguage } from 'lib/i18n-utils';
+import { addLocaleToPath, getLanguage } from 'calypso/lib/i18n-utils';
 import LocaleSuggestionsListItem from './list-item';
-import QueryLocaleSuggestions from 'components/data/query-locale-suggestions';
-import Notice from 'components/notice';
-import getLocaleSuggestions from 'state/selectors/get-locale-suggestions';
-import { setLocale } from 'state/ui/language/actions';
+import QueryLocaleSuggestions from 'calypso/components/data/query-locale-suggestions';
+import Notice from 'calypso/components/notice';
+import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
+import { setLocale } from 'calypso/state/ui/language/actions';
 
 /**
  * Style dependencies

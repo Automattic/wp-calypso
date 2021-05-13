@@ -10,6 +10,7 @@ import deepFreeze from 'deep-freeze';
 import {
 	getStoredCardById,
 	getStoredCards,
+	getAllStoredCards,
 	hasLoadedStoredCardsFromServer,
 	getStoredPaymentAgreements,
 	getUniquePaymentAgreements,
@@ -23,7 +24,7 @@ import {
 
 describe( 'selectors', () => {
 	describe( 'getStoredCards', () => {
-		test( 'should return all cards', () => {
+		test( 'should return all non-expired cards', () => {
 			const state = deepFreeze( {
 				storedCards: {
 					hasLoadedFromServer: true,
@@ -33,7 +34,24 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getStoredCards( state ) ).to.be.eql( SELECTED_STORED_CARDS );
+			expect( getStoredCards( state ) ).to.be.eql(
+				SELECTED_STORED_CARDS.filter( ( card ) => ! card.is_expired )
+			);
+		} );
+	} );
+
+	describe( 'getAllStoredCards', () => {
+		test( 'should return all cards including expired ones', () => {
+			const state = deepFreeze( {
+				storedCards: {
+					hasLoadedFromServer: true,
+					isFetching: false,
+					isDeleting: false,
+					items: STORED_CARDS_FROM_API,
+				},
+			} );
+
+			expect( getAllStoredCards( state ) ).to.be.eql( SELECTED_STORED_CARDS );
 		} );
 	} );
 

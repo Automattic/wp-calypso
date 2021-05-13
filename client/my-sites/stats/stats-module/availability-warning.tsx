@@ -3,7 +3,7 @@
  */
 import React, { FunctionComponent } from 'react';
 import { Moment } from 'moment';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize, LocalizeProps } from 'i18n-calypso';
 
 interface Props {

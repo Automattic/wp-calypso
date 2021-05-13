@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { settingsPath } from '../../../app/util';
 
 const ZoneItem = ( { siteSlug, zone } ) => {

@@ -4,12 +4,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import JetpackLogo from 'components/jetpack-logo';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 
 class PartnerLogoGroup extends PureComponent {
 	static displayName = 'JetpackPartnerLogoGroup';

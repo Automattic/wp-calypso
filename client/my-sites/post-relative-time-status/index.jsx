@@ -8,8 +8,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { withLocalizedMoment } from 'components/localized-moment';
+import Gridicon from 'calypso/components/gridicon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
  * Style dependencies
@@ -81,10 +81,10 @@ class PostRelativeTime extends React.PureComponent {
 			} );
 		}
 
-		// If the content is scheduled to be release within a year, do not display the year at the end
-		return timestamp.diff( now, 'years' ) > 0
-			? displayedTime
-			: displayedTime.replace( timestamp.format( 'Y' ), '' );
+		// If the content was (or is scheduled to be) published within the calendar year, do not display the year
+		return timestamp.isSame( now, 'year' )
+			? displayedTime.replace( timestamp.format( 'Y' ), '' )
+			: displayedTime;
 	}
 
 	getTimeText() {

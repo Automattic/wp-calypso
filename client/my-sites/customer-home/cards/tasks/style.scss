@@ -1,74 +1,114 @@
 .task {
-	padding-bottom: 24px;
+	display: flex;
+	background: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	position: relative;
+	margin-bottom: 24px;
 
-	@include breakpoint( '>480px' ) {
-		padding-bottom: 32px;
-	}
+	.task__text,
+	.task__illustration {
+		box-sizing: border-box;
+		padding: 24px;
 
-	.action-panel__body {
-		display: flex;
-	}
-
-	.action-panel__title {
-		font-family: 'Recoleta', serif;
-		font-size: 32px;
-		line-height: 40px;
-		margin-bottom: 4px;
-
-		@include breakpoint( '>800px' ) {
-			font-size: 40px;
-			line-height: 48px;
+		@include breakpoint-deprecated( '>1040px' ) {
+			padding: 32px;
 		}
 	}
 
-	.action-panel__figure {
-		max-width: 33.3333%;
-		margin-bottom: 0;
-		order: 1;
+	.task__text {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.task__illustration {
+		width: 33.33%;
 		align-self: center;
+		flex-shrink: 0;
+		margin-left: auto;
+		text-align: center;
 	}
 
-	.action-panel__body p.task__description {
-		margin-bottom: 32px;
-		font-size: 16px;
-		line-height: 24px;
-		color: var( --color-text );
-
-		@include breakpoint( '>800px' ) {
-			font-size: 20px;
-			line-height: 32px;
-		}
-	}
-
-	.action-panel__body .task__timing {
-		display: flex;
+	.task__timing {
 		margin-bottom: 10px;
+		align-items: center;
+		color: var( --color-text-subtle );
+		font-size: $font-body-small;
 
 		.gridicon {
 			margin-right: 4px;
-		}
-
-		p {
-			margin-bottom: 0;
+			vertical-align: text-bottom;
 		}
 	}
 
-	.action-panel__cta {
+	.task__badge {
+		background-color: var( --studio-gray-80 );
+		color: var( --color-text-inverted );
+		margin-bottom: 8px;
+	}
+
+	.task__title {
+		@extend .wp-brand-font;
+		font-size: $font-title-large;
+		line-height: 36px;
+		margin-bottom: 4px;
+
+		@include breakpoint-deprecated( '>800px' ) {
+			line-height: 40px;
+		}
+	}
+
+	.task__description {
+		margin-bottom: 24px;
+		font-size: $font-body;
+		line-height: 24px;
+		color: var( --color-text );
+
+		@include breakpoint-deprecated( '>800px' ) {
+			line-height: 28px;
+			margin-bottom: 32px;
+		}
+	}
+
+	.task__actions {
 		display: flex;
 		padding-top: 0;
+		margin-top: auto;
+		font-size: $font-body-small;
+	}
 
+	.task__action {
+		margin-right: 16px;
+	}
+
+	.spinner {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		margin-left: -10px;
+		margin-top: -10px;
+	}
+
+	&.is-loading > *:not( .spinner ) {
+		visibility: hidden;
+	}
+
+	&.is-urgent {
+		background: var( --color-neutral-80 );
+		color: var( --color-neutral-0 );
+
+		.task__badge {
+			background: var( --color-neutral-0 );
+			color: var( --color-text );
+		}
+
+		.task__description,
 		.task__skip {
-			margin: auto 16px;
+			color: var( --color-neutral-0 );
 		}
 	}
 }
 
 .task__skip-popover .popover__menu {
 	min-width: 130px;
-}
-
-.badge--info.task__badge {
-	background-color: var( --studio-gray-80 );
-	color: var( --color-text-inverted );
-	margin-bottom: 8px;
 }

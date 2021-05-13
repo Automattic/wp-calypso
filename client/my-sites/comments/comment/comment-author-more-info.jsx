@@ -5,32 +5,32 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Emojify from 'components/emojify';
-import ExternalLink from 'components/external-link';
-import Popover from 'components/popover';
-import { decodeEntities } from 'lib/formatting';
-import { urlToDomainAndPath } from 'lib/url';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSiteComment } from 'state/comments/selectors';
-import getSiteSetting from 'state/selectors/get-site-setting';
-import isEmailBlacklisted from 'state/selectors/is-email-blacklisted';
+import Emojify from 'calypso/components/emojify';
+import ExternalLink from 'calypso/components/external-link';
+import Popover from 'calypso/components/popover';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { urlToDomainAndPath } from 'calypso/lib/url';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getSiteComment } from 'calypso/state/comments/selectors';
+import getSiteSetting from 'calypso/state/selectors/get-site-setting';
+import isAuthorsEmailBlocked from 'calypso/state/selectors/is-authors-email-blocked';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import { successNotice } from 'state/notices/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+} from 'calypso/state/analytics/actions';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export class CommentAuthorMoreInfo extends Component {
 	static propTypes = {
@@ -52,12 +52,12 @@ export class CommentAuthorMoreInfo extends Component {
 			authorEmail,
 			authorId,
 			commentId,
-			isAuthorBlacklisted,
+			isAuthorBlocked,
 			showNotice,
-			siteBlacklist,
+			blockedCommentAuthorKeys,
 			siteId,
 			translate,
-			updateBlacklist,
+			updateBlockedCommentAuthors,
 		} = this.props;
 
 		const noticeOptions = {
@@ -67,17 +67,17 @@ export class CommentAuthorMoreInfo extends Component {
 		};
 
 		const analytics = {
-			action: isAuthorBlacklisted ? 'unblock_user' : 'block_user',
+			action: isAuthorBlocked ? 'unblock_user' : 'block_user',
 			user_type: authorId ? 'wpcom' : 'email_only',
 		};
 
-		if ( isAuthorBlacklisted ) {
-			const newBlacklist = siteBlacklist
+		if ( isAuthorBlocked ) {
+			const nextBlockedCommentAuthorKeys = blockedCommentAuthorKeys
 				.split( '\n' )
 				.filter( ( item ) => item !== authorEmail )
 				.join( '\n' );
 
-			updateBlacklist( siteId, newBlacklist, analytics );
+			updateBlockedCommentAuthors( siteId, nextBlockedCommentAuthorKeys, analytics );
 
 			return showNotice(
 				translate( 'User %(email)s unblocked.', { args: { email: authorEmail } } ),
@@ -85,9 +85,11 @@ export class CommentAuthorMoreInfo extends Component {
 			);
 		}
 
-		const newBlacklist = siteBlacklist ? siteBlacklist + '\n' + authorEmail : authorEmail;
+		const nextBlockedCommentAuthorKeys = blockedCommentAuthorKeys
+			? blockedCommentAuthorKeys + '\n' + authorEmail
+			: authorEmail;
 
-		updateBlacklist( siteId, newBlacklist, analytics );
+		updateBlockedCommentAuthors( siteId, nextBlockedCommentAuthorKeys, analytics );
 
 		showNotice(
 			translate( 'User %(email)s is blocked and can no longer comment on your site.', {
@@ -104,7 +106,7 @@ export class CommentAuthorMoreInfo extends Component {
 			authorIp,
 			authorUrl,
 			authorUsername,
-			isAuthorBlacklisted,
+			isAuthorBlocked,
 			showBlockUser,
 			siteSlug,
 			trackAnonymousModeration,
@@ -166,8 +168,8 @@ export class CommentAuthorMoreInfo extends Component {
 
 					{ showBlockUser && (
 						<div className="comment__author-more-info-element">
-							<Button onClick={ this.toggleBlockUser } scary={ ! isAuthorBlacklisted }>
-								{ isAuthorBlacklisted ? translate( 'Unblock user' ) : translate( 'Block user' ) }
+							<Button onClick={ this.toggleBlockUser } scary={ ! isAuthorBlocked }>
+								{ isAuthorBlocked ? translate( 'Unblock user' ) : translate( 'Block user' ) }
 							</Button>
 						</div>
 					) }
@@ -216,9 +218,9 @@ const mapStateToProps = ( state, { commentId } ) => {
 		authorIp: get( comment, 'author.ip_address' ),
 		authorUsername: get( comment, 'author.nice_name' ),
 		authorUrl: get( comment, 'author.URL', '' ),
-		isAuthorBlacklisted: isEmailBlacklisted( state, siteId, authorEmail ),
+		isAuthorBlocked: isAuthorsEmailBlocked( state, siteId, authorEmail ),
 		showBlockUser,
-		siteBlacklist: getSiteSetting( state, siteId, 'blacklist_keys' ),
+		blockedCommentAuthorKeys: getSiteSetting( state, siteId, 'disallowed_keys' ),
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 	};
@@ -226,7 +228,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 
 const mapDispatchToProps = ( dispatch ) => ( {
 	showNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
-	updateBlacklist: ( siteId, blacklist_keys, analytics ) =>
+	updateBlockedCommentAuthors: ( siteId, blockedCommentAuthorKeys, analytics ) =>
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
@@ -238,7 +240,7 @@ const mapDispatchToProps = ( dispatch ) => ( {
 							: 'comment_author_unblocked'
 					)
 				),
-				saveSiteSettings( siteId, { blacklist_keys } )
+				saveSiteSettings( siteId, { disallowed_keys: blockedCommentAuthorKeys } )
 			)
 		),
 	trackAnonymousModeration: () =>

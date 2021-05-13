@@ -7,14 +7,14 @@
 		font-size: 34px;
 		margin-bottom: 1em;
 
-		@include breakpoint( '<660px' ) {
-			font-size: 24px;
+		@include breakpoint-deprecated( '<660px' ) {
+			font-size: $font-title-medium;
 		}
 	}
 
 	.content-card__message {
 		color: var( --color-neutral-50 );
-		font-size: 22px;
+		font-size: $font-title-small;
 		font-weight: 400;
 		margin-bottom: 40px;
 		text-align: left;
@@ -23,19 +23,19 @@
 			text-align: center;
 		}
 
-		@include breakpoint( '<660px' ) {
-			font-size: 16px;
+		@include breakpoint-deprecated( '<660px' ) {
+			font-size: $font-body;
 		}
 	}
 
 	.content-card__footer {
 		color: var( --color-neutral-50 );
-		font-size: 18px;
+		font-size: $font-title-small;
 		font-weight: 400;
 		margin-bottom: 16px;
 
-		@include breakpoint( '<660px' ) {
-			font-size: 16px;
+		@include breakpoint-deprecated( '<660px' ) {
+			font-size: $font-body;
 		}
 	}
 
@@ -56,7 +56,7 @@
 			margin-left: auto;
 			margin-right: auto;
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				display: none;
 			}
 		}

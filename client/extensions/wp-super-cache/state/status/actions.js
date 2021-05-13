@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 import {
 	WP_SUPER_CACHE_RECEIVE_STATUS,
 	WP_SUPER_CACHE_REQUEST_STATUS,

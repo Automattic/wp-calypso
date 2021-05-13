@@ -1,10 +1,15 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isPrivateSite from 'state/selectors/is-private-site';
+
+/**
+ * Internal dependencies
+ */
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+
+import 'calypso/state/jetpack/init';
 
 /**
  * Returns true if the module is currently active. False otherwise.

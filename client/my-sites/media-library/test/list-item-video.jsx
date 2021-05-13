@@ -6,14 +6,14 @@
  * External dependencies
  */
 import { render } from '@testing-library/react';
-import photon from 'photon';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import fixtures from './fixtures';
-import ListItemVideo from 'my-sites/media-library/list-item-video';
+import resize from 'calypso/lib/resize-image-url';
+import ListItemVideo from 'calypso/my-sites/media-library/list-item-video';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 
@@ -32,10 +32,9 @@ const initialReduxState = {
 	currentUser: {
 		capabilities: {},
 	},
-	ui: {
-		editor: {
-			imageEditor: {},
-		},
+	ui: {},
+	editor: {
+		imageEditor: {},
 	},
 };
 
@@ -54,11 +53,14 @@ describe( 'MediaLibraryListItem video', () => {
 	} );
 
 	const expectedBackground = () =>
-		styleUrl( photon( fixtures.media[ 1 ].thumbnails.fmt_hd, { width: WIDTH } ) );
+		styleUrl(
+			resize( fixtures.media[ 1 ].thumbnails.fmt_hd, { resize: `${ WIDTH },${ WIDTH }` } )
+		);
 	const getItem = ( type ) => (
 		<ListItemVideo
 			media={ fixtures.media[ 1 ] }
 			scale={ 1 }
+			maxScale={ 1 }
 			maxImageWidth={ WIDTH }
 			thumbnailType={ type }
 		/>

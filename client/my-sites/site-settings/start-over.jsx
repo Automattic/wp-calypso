@@ -5,20 +5,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import ActionPanel from 'components/action-panel';
-import ActionPanelTitle from 'components/action-panel/title';
-import ActionPanelBody from 'components/action-panel/body';
-import ActionPanelFigure from 'components/action-panel/figure';
-import ActionPanelFooter from 'components/action-panel/footer';
+import HeaderCake from 'calypso/components/header-cake';
+import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelTitle from 'calypso/components/action-panel/title';
+import ActionPanelBody from 'calypso/components/action-panel/body';
+import ActionPanelFigure from 'calypso/components/action-panel/figure';
+import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import { Button } from '@automattic/components';
-import { EMPTY_SITE } from 'lib/url/support';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { EMPTY_SITE } from 'calypso/lib/url/support';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const StartOver = ( { translate, selectedSiteSlug } ) => {
 	return (

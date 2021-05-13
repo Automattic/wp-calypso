@@ -1,4 +1,5 @@
-@import '../styles/breakpoints';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
 @import '../styles/clear-fix';
 
 .card {
@@ -12,7 +13,7 @@
 
 	@include a8c-clear-fix;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include break-mobile {
 		margin-bottom: 16px;
 		padding: 24px;
 	}
@@ -21,7 +22,7 @@
 	&.is-compact {
 		margin-bottom: 1px;
 
-		@include a8c-breakpoint( '>480px' ) {
+		@include break-mobile {
 			margin-bottom: 1px;
 			padding: 16px 24px;
 		}

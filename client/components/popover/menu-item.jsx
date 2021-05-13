@@ -5,13 +5,15 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { noop, omit } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { omit } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
+import ExternalLink from 'calypso/components/external-link';
+
+const noop = () => {};
 
 export default class PopoverMenuItem extends Component {
 	static propTypes = {

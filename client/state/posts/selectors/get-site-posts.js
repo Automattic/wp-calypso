@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns an array of post objects by site ID.

@@ -13,10 +13,11 @@ import { times } from 'lodash';
 import {
 	getEligibleKeyringServices,
 	isKeyringServicesFetching,
-} from 'state/sharing/services/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import Notice from 'components/notice';
-import SectionHeader from 'components/section-header';
+} from 'calypso/state/sharing/services/selectors';
+import { getExpandedService } from 'calypso/state/sharing/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Notice from 'calypso/components/notice';
+import SectionHeader from 'calypso/components/section-header';
 import Service from './service';
 import * as Components from './services';
 import ServicePlaceholder from './service-placeholder';
@@ -45,7 +46,7 @@ const serviceWarningLevelToNoticeStatus = ( level ) => {
 
 const SharingServicesGroup = ( { isFetching, services, title, expandedService } ) => {
 	useEffect( () => {
-		if ( expandedService ) {
+		if ( expandedService && ! isFetching ) {
 			const serviceElement = document.querySelector(
 				'.sharing-service.' + expandedService.replace( /_/g, '-' )
 			);
@@ -53,7 +54,7 @@ const SharingServicesGroup = ( { isFetching, services, title, expandedService } 
 				serviceElement.scrollIntoView();
 			}
 		}
-	}, [ expandedService, services ] );
+	}, [ expandedService, isFetching ] );
 
 	if ( ! services.length && ! isFetching ) {
 		return null;
@@ -66,6 +67,7 @@ const SharingServicesGroup = ( { isFetching, services, title, expandedService } 
 			<ul className="sharing-services-group__services">
 				{ services.length
 					? services.map( ( service ) => {
+							// eslint-disable-next-line import/namespace
 							const Component = Components[ service.ID.replace( /-/g, '_' ) ] || Service;
 
 							if ( service.warnings ) {
@@ -113,5 +115,5 @@ SharingServicesGroup.defaultProps = {
 export default connect( ( state, { type } ) => ( {
 	isFetching: isKeyringServicesFetching( state ),
 	services: getEligibleKeyringServices( state, getSelectedSiteId( state ), type ),
-	expandedService: state.sharing.expandedService,
+	expandedService: getExpandedService( state ),
 } ) )( SharingServicesGroup );

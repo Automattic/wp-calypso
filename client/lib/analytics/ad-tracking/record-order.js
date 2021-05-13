@@ -1,8 +1,12 @@
 /**
  * Internal dependencies
  */
-import { isJetpackPlan } from 'lib/products-values';
-import { costToUSD, isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'lib/analytics/utils';
+import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
+import {
+	costToUSD,
+	isAdTrackingAllowed,
+	refreshCountryCodeCookieGdpr,
+} from 'calypso/lib/analytics/utils';
 import {
 	debug,
 	isCriteoEnabled,
@@ -40,7 +44,7 @@ import './setup';
 /**
  * Tracks a purchase conversion
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
  * @returns {void}
  */
@@ -73,7 +77,7 @@ export async function recordOrder( cart, orderId ) {
 	debug( 'recordOrder: wpcomJetpackCartInfo:', wpcomJetpackCartInfo );
 
 	recordOrderInGoogleAds( cart, orderId );
-	recordOrderInFacebook( cart, orderId );
+	recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInBing( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo );
@@ -168,11 +172,17 @@ export async function recordOrder( cart, orderId ) {
 
 function splitWpcomJetpackCartInfo( cart ) {
 	const jetpackCost = cart.products
-		.map( ( product ) => ( isJetpackPlan( product ) ? product.cost : 0)  )
+		.map( ( product ) =>
+			isJetpackPlan( product ) || isJetpackProduct( product ) ? product.cost : 0
+		)
 		.reduce( ( accumulator, cost ) => accumulator + cost, 0 );
 	const wpcomCost = cart.total_cost - jetpackCost;
-	const wpcomProducts = cart.products.filter( ( product ) => ! isJetpackPlan( product ) );
-	const jetpackProducts = cart.products.filter( ( product ) => isJetpackPlan( product ) );
+	const wpcomProducts = cart.products.filter(
+		( product ) => ! isJetpackPlan( product ) && ! isJetpackProduct( product )
+	);
+	const jetpackProducts = cart.products.filter(
+		( product ) => isJetpackPlan( product ) || isJetpackProduct( product )
+	);
 
 	return {
 		wpcomProducts: wpcomProducts,
@@ -190,7 +200,7 @@ function splitWpcomJetpackCartInfo( cart ) {
 /**
  * Records an order in Quantcast
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
  * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
@@ -248,7 +258,7 @@ function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
 /**
  * Records an order in DCM Floodlight
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
  * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
@@ -307,67 +317,67 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 /**
  * Records an order in Facebook (a single event for the entire order)
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
+ * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
-function recordOrderInFacebook( cart, orderId ) {
+function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( ! isAdTrackingAllowed() || ! isFacebookEnabled ) {
-		return;
-	}
-
-	/**
-	 * We have made a conscious decision to ignore the 0 cost carts, such that these carts are not considered
-	 * a conversion. We will analyze the results and make a final decision on this.
-	 */
-	if ( cart.total_cost < 0.01 ) {
-		debug( 'recordOrderInFacebook: skipping due to a 0-value cart.' );
 		return;
 	}
 
 	const currentUser = getCurrentUser();
 
-	// Fire both WPCom and Jetpack pixels
-
 	// WPCom
-
-	let params = [
-		'trackSingle',
-		TRACKING_IDS.facebookInit,
-		'Purchase',
-		{
-			product_slug: cart.products.map( ( product ) => product.product_slug ).join( ', ' ),
-			value: cart.total_cost,
-			currency: cart.currency,
-			user_id: currentUser ? currentUser.hashedPii.ID : 0,
-			order_id: orderId,
-		},
-	];
-	debug( 'recordOrderInFacebook: WPCom', params );
-	window.fbq( ...params );
+	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
+		if ( null !== wpcomJetpackCartInfo.wpcomCostUSD && wpcomJetpackCartInfo.wpcomCostUSD > 0 ) {
+			const params = [
+				'trackSingle',
+				TRACKING_IDS.facebookInit,
+				'Purchase',
+				{
+					product_slug: wpcomJetpackCartInfo.wpcomProducts
+						.map( ( product ) => product.product_slug )
+						.join( ', ' ),
+					value: wpcomJetpackCartInfo.wpcomCostUSD,
+					currency: 'USD',
+					user_id: currentUser ? currentUser.hashedPii.ID : 0,
+					order_id: orderId,
+				},
+			];
+			debug( 'recordOrderInFacebook: WPCom', params );
+			window.fbq( ...params );
+		}
+	}
 
 	// Jetpack
-
-	params = [
-		'trackSingle',
-		TRACKING_IDS.facebookJetpackInit,
-		'Purchase',
-		{
-			product_slug: cart.products.map( ( product ) => product.product_slug ).join( ', ' ),
-			value: cart.total_cost,
-			currency: cart.currency,
-			user_id: currentUser ? currentUser.hashedPii.ID : 0,
-			order_id: orderId,
-		},
-	];
-	debug( 'recordOrderInFacebook: Jetpack', params );
-	window.fbq( ...params );
+	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
+		if ( null !== wpcomJetpackCartInfo.jetpackCostUSD && wpcomJetpackCartInfo.jetpackCostUSD > 0 ) {
+			const params = [
+				'trackSingle',
+				TRACKING_IDS.facebookJetpackInit,
+				'Purchase',
+				{
+					product_slug: wpcomJetpackCartInfo.jetpackProducts
+						.map( ( product ) => product.product_slug )
+						.join( ', ' ),
+					value: wpcomJetpackCartInfo.jetpackCostUSD,
+					currency: 'USD',
+					user_id: currentUser ? currentUser.hashedPii.ID : 0,
+					order_id: orderId,
+				},
+			];
+			debug( 'recordOrderInFacebook: Jetpack', params );
+			window.fbq( ...params );
+		}
+	}
 }
 
 /**
  * Records a signup|purchase in Bing.
  *
- * @param {object} cart - cart as `CartValue` object.
+ * @param {object} cart - cart as `ResponseCart` object.
  * @param {number} orderId - the order ID.
  * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
@@ -413,7 +423,7 @@ function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
 /**
  * Records an order/sign_up in Google Ads Gtag
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
  * @returns {void}
  */
@@ -423,6 +433,8 @@ function recordOrderInGoogleAds( cart, orderId ) {
 		return;
 	}
 
+	// MCC-level event.
+	// @TODO Separate WPCOM from Jetpack events.
 	if ( isWpcomGoogleAdsGtagEnabled ) {
 		const params = [
 			'event',
@@ -450,7 +462,9 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 		return;
 	}
 
-	let products, brand, totalCostUSD;
+	let products;
+	let brand;
+	let totalCostUSD;
 
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
 		products = wpcomJetpackCartInfo.wpcomProducts;
@@ -498,7 +512,7 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 /**
  * Records an order in Criteo
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
  * @returns {void}
  */
@@ -507,6 +521,7 @@ function recordOrderInCriteo( cart, orderId ) {
 		return;
 	}
 
+	// @TODO Separate WPCOM from Jetpack events.
 	const params = [
 		'trackTransaction',
 		{

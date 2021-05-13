@@ -7,8 +7,8 @@ import qs from 'qs';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import wpcom from 'lib/wp';
+import config from '@automattic/calypso-config';
+import wpcom from 'calypso/lib/wp';
 
 function loginEndpointData() {
 	return {
@@ -72,11 +72,11 @@ function redirectToCalypso( request, response, next ) {
 	response.redirect( originalUrlPath + '#' + hashString );
 }
 
-module.exports = function ( app ) {
+export default function ( app ) {
 	return app.post(
 		[ '/log-in/apple/callback', '/start/user', '/me/security/social-login' ],
 		bodyParser.urlencoded(),
 		loginWithApple,
 		redirectToCalypso
 	);
-};
+}

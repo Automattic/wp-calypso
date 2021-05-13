@@ -5,7 +5,7 @@
 ## Usage
 
 ```js
-import DotPager from 'blocks/dot-pager';
+import DotPager from 'calypso/blocks/dot-pager';
 
 function myDotPager() {
 	return (
@@ -14,6 +14,6 @@ function myDotPager() {
 			<div>Item 2</div>
 			<div>Item 3</div>
 		</DotPager>
-	)
+	);
 }
 ```

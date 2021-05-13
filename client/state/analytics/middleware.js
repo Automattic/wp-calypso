@@ -1,27 +1,22 @@
 /**
- *  External dependencies
- */
-import { has, invoke } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { recordPageView } from 'lib/analytics/page-view';
-import { recordTracksEvent, setTracksOptOut } from 'lib/analytics/tracks';
-import { gaRecordEvent, gaRecordPageView } from 'lib/analytics/ga';
-import { bumpStat } from 'lib/analytics/mc';
-import { addHotJarScript } from 'lib/analytics/hotjar';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { recordTracksEvent, setTracksOptOut } from 'calypso/lib/analytics/tracks';
+import { gaRecordEvent, gaRecordPageView } from 'calypso/lib/analytics/ga';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import {
 	trackCustomAdWordsRemarketingEvent,
 	trackCustomFacebookConversionEvent,
-} from 'lib/analytics/ad-tracking';
+} from 'calypso/lib/analytics/ad-tracking';
 import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP,
 	ANALYTICS_TRACKING_ON,
 	ANALYTICS_TRACKS_OPT_OUT,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 const eventServices = {
 	ga: ( { category, action, label, value } ) => gaRecordEvent( category, action, label, value ),
@@ -50,10 +45,10 @@ const dispatcher = ( action ) => {
 
 		switch ( type ) {
 			case ANALYTICS_EVENT_RECORD:
-				return invoke( eventServices, service, params );
+				return eventServices[ service ]?.( params );
 
 			case ANALYTICS_PAGE_VIEW_RECORD:
-				return invoke( pageViewServices, service, params );
+				return pageViewServices[ service ]?.( params );
 
 			case ANALYTICS_STAT_BUMP:
 				return statBump( params );
@@ -72,7 +67,7 @@ export const analyticsMiddleware = () => ( next ) => ( action ) => {
 			return;
 
 		default:
-			if ( has( action, 'meta.analytics' ) ) {
+			if ( action.meta?.analytics ) {
 				dispatcher( action );
 			}
 	}

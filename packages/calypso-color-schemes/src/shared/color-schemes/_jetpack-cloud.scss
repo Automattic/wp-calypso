@@ -1,7 +1,7 @@
 .theme-jetpack-cloud,
 .color-scheme.is-jetpack-cloud {
 	/* Theme Properties */
-	--color-primary: var( --studio-jetpack-green );
+	--color-primary: var( --studio-jetpack-green-50 );
 	--color-primary-rgb: var( --studio-jetpack-green-rgb );
 	--color-primary-dark: var( --studio-jetpack-green-70 );
 	--color-primary-dark-rgb: var( --studio-jetpack-green-70-rgb );
@@ -33,8 +33,8 @@
 	--color-primary-100-rgb: var( --studio-jetpack-green-100-rgb );
 
 	/* Theme Properties */
-	--color-accent: var( --studio-jetpack-green );
-	--color-accent-rgb: var( --studio-jetpack-green-rgb );
+	--color-accent: var( --studio-jetpack-green-50 );
+	--color-accent-rgb: var( --studio-jetpack-green-50-rgb );
 	--color-accent-dark: var( --studio-jetpack-green-70 );
 	--color-accent-dark-rgb: var( --studio-jetpack-green-70-rgb );
 	--color-accent-light: var( --studio-jetpack-green-30 );
@@ -65,12 +65,12 @@
 	--color-accent-100-rgb: var( --studio-jetpack-green-100-rgb );
 
 	/* Theme Properties */
-	--color-link: var( --studio-jetpack-green-40 );
-	--color-link-rgb: var( --studio-jetpack-green-40-rgb );
-	--color-link-dark: var( --studio-jetpack-green-60 );
-	--color-link-dark-rgb: var( --studio-jetpack-green-60-rgb );
-	--color-link-light: var( --studio-jetpack-green-20 );
-	--color-link-light-rgb: var( --studio-jetpack-green-20-rgb );
+	--color-link: var( --studio-jetpack-green-50 );
+	--color-link-rgb: var( --studio-jetpack-green-50-rgb );
+	--color-link-dark: var( --studio-jetpack-green-70 );
+	--color-link-dark-rgb: var( --studio-jetpack-green-70-rgb );
+	--color-link-light: var( --studio-jetpack-green-30 );
+	--color-link-light-rgb: var( --studio-jetpack-green-30-rgb );
 	--color-link-0: var( --studio-jetpack-green-0 );
 	--color-link-0-rgb: var( --studio-jetpack-green-0-rgb );
 	--color-link-5: var( --studio-jetpack-green-5 );
@@ -113,9 +113,11 @@
 	--color-sidebar-background-rgb: var( --studio-white-rgb );
 	--color-sidebar-border: var( --studio-gray-5 );
 	--color-sidebar-text: var( --studio-gray-60 );
+	--color-sidebar-text-rgb: var( --studio-gray-60-rgb );
 	--color-sidebar-text-alternative: var( --studio-gray-60 );
 	--color-sidebar-gridicon-fill: var( --studio-gray-60 );
 	--color-sidebar-menu-selected-text: var( --studio-jetpack-green-50 );
+	--color-sidebar-menu-selected-text-rgb: var( --studio-jetpack-green-50-rgb );
 	--color-sidebar-menu-selected-background: var( --studio-jetpack-green-5 );
 	--color-sidebar-menu-selected-background-rgb: var( --studio-jetpack-green-5-rgb );
 	--color-sidebar-menu-hover-text: var( --studio-gray-90 );
@@ -127,8 +129,4 @@
 	--color-scary-40: var( --studio-red-40 );
 	--color-scary-50: var( --studio-red-50 );
 	--color-scary-60: var( --studio-red-60 );
-
-	--color-threat-found: var( --studio-red-50 );
-	--color-threat-fixed: var( --studio-jetpack-green-40 );
-	--color-threat-ignored: var( --studio-gray-50 );
 }

@@ -1,32 +1,50 @@
 /**
  * External dependencies
  */
-import { assign, get, includes, indexOf, reject } from 'lodash';
+import { get, includes, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import stepConfig from './steps';
-import userFactory from 'lib/user';
-import { generateFlows } from 'signup/config/flows-pure';
-import { addQueryArgs } from 'lib/url';
+import user from 'calypso/lib/user';
+import { isEcommercePlan } from '@automattic/calypso-products';
+import { generateFlows } from 'calypso/signup/config/flows-pure';
+import { addQueryArgs } from 'calypso/lib/url';
 
-const user = userFactory();
+function getCheckoutUrl( dependencies, localeSlug, flowName ) {
+	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
 
-function getCheckoutUrl( dependencies ) {
+	// Append the locale slug for the userless checkout page.
+	if ( 'no-site' === dependencies.siteSlug && true === dependencies.allowUnauthenticated ) {
+		checkoutURL += `/${ localeSlug }`;
+	}
+
 	return addQueryArgs(
 		{
 			signup: 1,
-			...( dependencies.isPreLaunch && { preLaunch: 1 } ),
+			...( dependencies.isPreLaunch && {
+				preLaunch: 1,
+			} ),
+			...( dependencies.isPreLaunch &&
+				! isEcommercePlan( dependencies.cartItem.product_slug ) && {
+					redirect_to: `/home/${ dependencies.siteSlug }`,
+				} ),
 			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
+			...( [ 'domain', 'add-domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
 		},
-		`/checkout/${ dependencies.siteSlug }`
+		checkoutURL
 	);
 }
 
 function dependenciesContainCartItem( dependencies ) {
-	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
+	return (
+		dependencies.cartItem ||
+		dependencies.domainItem ||
+		dependencies.themeItem ||
+		dependencies.selectedDomainUpsellItem
+	);
 }
 
 function getSiteDestination( dependencies ) {
@@ -45,25 +63,30 @@ function getSiteDestination( dependencies ) {
 }
 
 function getRedirectDestination( dependencies ) {
-	if (
-		dependencies.oauth2_redirect &&
-		dependencies.oauth2_redirect.startsWith( 'https://public-api.wordpress.com' )
-	) {
-		return dependencies.oauth2_redirect;
+	try {
+		if (
+			dependencies.oauth2_redirect &&
+			new URL( dependencies.oauth2_redirect ).host === 'public-api.wordpress.com'
+		) {
+			return dependencies.oauth2_redirect;
+		}
+	} catch {
+		return '/';
 	}
 
 	return '/';
 }
 
 function getSignupDestination( dependencies ) {
+	if ( 'no-site' === dependencies.siteSlug ) {
+		return '/home';
+	}
+
 	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getLaunchDestination( dependencies ) {
-	if ( dependencies.source === 'editor' ) {
-		return `/block-editor/page/${ dependencies.siteSlug }/home`;
-	}
-	return `/home/${ dependencies.siteSlug }?d=launched`;
+	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getThankYouNoSiteDestination() {
@@ -71,11 +94,11 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }?d=theme`;
+	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getEditorDestination( dependencies ) {
-	return `/block-editor/page/${ dependencies.siteSlug }/home`;
+	return `/page/${ dependencies.siteSlug }/home`;
 }
 
 const flows = generateFlows( {
@@ -93,14 +116,26 @@ function removeUserStepFromFlow( flow ) {
 		return;
 	}
 
-	return assign( {}, flow, {
+	return {
+		...flow,
 		steps: reject( flow.steps, ( stepName ) => stepConfig[ stepName ].providesToken ),
-	} );
+	};
 }
 
-function filterDestination( destination, dependencies ) {
+function removeP2DetailsStepFromFlow( flow ) {
+	if ( ! flow ) {
+		return;
+	}
+
+	return {
+		...flow,
+		steps: reject( flow.steps, ( stepName ) => stepName === 'p2-details' ),
+	};
+}
+
+function filterDestination( destination, dependencies, flowName, localeSlug ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies );
+		return getCheckoutUrl( dependencies, localeSlug, flowName );
 	}
 
 	return destination;
@@ -132,8 +167,12 @@ const Flows = {
 			return flow;
 		}
 
-		if ( user && user.get() ) {
+		if ( user() && user().get() ) {
 			flow = removeUserStepFromFlow( flow );
+		}
+
+		if ( flowName === 'p2' && user() && user().get() ) {
+			flow = removeP2DetailsStepFromFlow( flow );
 		}
 
 		return Flows.filterExcludedSteps( flow );
@@ -146,7 +185,7 @@ const Flows = {
 			return false;
 		}
 		const flowSteps = flow.steps;
-		const currentStepIndex = indexOf( flowSteps, currentStepName );
+		const currentStepIndex = flowSteps.indexOf( currentStepName );
 		const nextIndex = currentStepIndex + 1;
 		const nextStepName = get( flowSteps, nextIndex );
 
@@ -169,9 +208,10 @@ const Flows = {
 			return;
 		}
 
-		return assign( {}, flow, {
+		return {
+			...flow,
 			steps: reject( flow.steps, ( stepName ) => includes( Flows.excludedSteps, stepName ) ),
-		} );
+		};
 	},
 
 	resetExcludedSteps() {

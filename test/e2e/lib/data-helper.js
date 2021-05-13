@@ -46,7 +46,7 @@ export function getWidgetContent() {
 	return this.randomPhrase();
 }
 
-function getRandomInt( min, max ) {
+export function getRandomInt( min, max ) {
 	return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
 }
 
@@ -154,8 +154,8 @@ export function getAllAccountsWithFeatures( features = [] ) {
 		allAccounts = config.get( 'accounts' );
 	}
 
-	const mustHaveFeatures = [],
-		mustNotHaveFeatures = [];
+	const mustHaveFeatures = [];
+	const mustNotHaveFeatures = [];
 	features.forEach( function ( feature ) {
 		if ( feature.indexOf( '-' ) === 0 ) {
 			mustNotHaveFeatures.push( feature.substring( 1 ) );

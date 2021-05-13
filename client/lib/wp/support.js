@@ -6,7 +6,7 @@ import { parse, stringify } from 'qs';
 export default function wpcomSupport( wpcom ) {
 	let supportUser = '';
 	let supportToken = '';
-	let interceptResponse = null;
+	let tokenErrorCallback = null;
 
 	/**
 	 * Add the supportUser and supportToken to the query.
@@ -46,39 +46,35 @@ export default function wpcomSupport( wpcom ) {
 	return Object.assign( wpcom, {
 		addSupportParams,
 		/**
-		 * @param {string} supportUser  Support username
-		 * @param {string} supportToken Support token
-		 * @returns {bool}  true if the user and token were changed, false otherwise
+		 * @param {string} newUser  Support username
+		 * @param {string} newToken Support token
+		 * @param {Function} newTokenErrorCallback Called when invalid support auth token is detected
+		 * @returns {boolean}  true if the user and token were changed, false otherwise
 		 */
 		setSupportUserToken: function ( newUser = '', newToken = '', newTokenErrorCallback ) {
-			if ( newUser !== supportUser || newToken !== supportToken ) {
-				supportUser = newUser;
-				supportToken = newToken;
-				interceptResponse = ( callback ) => {
-					return ( response, ...args ) => {
-						if (
-							response &&
-							response.error &&
-							response.error === 'invalid_support_token' &&
-							typeof newTokenErrorCallback === 'function'
-						) {
-							newTokenErrorCallback( response );
-						} else {
-							// Call the original response callback
-							callback( response, ...args );
-						}
-					};
-				};
-				return true;
-			}
-			return false;
-		},
-		request: ( params, callback ) => {
-			if ( supportUser && supportToken && interceptResponse ) {
-				return request( addSupportData( params ), interceptResponse( callback ) );
+			if ( newUser === supportUser && newToken === supportToken ) {
+				return false;
 			}
 
-			return request( params, callback );
+			supportUser = newUser;
+			supportToken = newToken;
+			tokenErrorCallback = newTokenErrorCallback;
+			return true;
+		},
+		request: ( params, callback ) => {
+			if ( ! ( supportUser && supportToken ) ) {
+				return request( params, callback );
+			}
+
+			return request( addSupportData( params ), ( error, response ) => {
+				if ( tokenErrorCallback && error?.error === 'invalid_support_token' ) {
+					tokenErrorCallback( error );
+					return;
+				}
+
+				// Call the original response callback
+				callback( error, response );
+			} );
 		},
 	} );
 }

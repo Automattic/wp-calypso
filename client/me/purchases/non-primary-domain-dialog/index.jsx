@@ -9,7 +9,7 @@ import React, { Component, Fragment } from 'react';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 
 /**
  * Style dependencies

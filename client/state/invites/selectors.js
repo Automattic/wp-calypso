@@ -1,12 +1,14 @@
 /**
  * External dependencies
  */
-import { get, find, indexOf, values } from 'lodash';
+import { get, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import treeSelect from '@automattic/tree-select';
+
+import 'calypso/state/invites/init';
 
 /**
  * Returns true if currently requesting invites for the given site, or false
@@ -50,6 +52,22 @@ export function getAcceptedInvitesForSite( state, siteId ) {
 		return null;
 	}
 	return invites.accepted;
+}
+
+/**
+ * Returns an array of all invite links for the given site, or
+ * `null` if there are none.
+ *
+ * @param  {object} state  Global state tree
+ * @param  {number} siteId Site ID
+ * @returns {?Array}       The list of invite links for the given site
+ */
+export function getInviteLinksForSite( state, siteId ) {
+	const inviteLinks = state.invites.links[ siteId ];
+	if ( ! inviteLinks ) {
+		return null;
+	}
+	return inviteLinks;
 }
 
 /**
@@ -144,11 +162,12 @@ export function didInviteDeletionSucceed( state, siteId, inviteId ) {
  *
  * @param  {object}  state    Global state tree
  * @param  {number}  siteId   Site ID
-
+ *
  * @returns {boolean}          Whether an invite is being deleted
  */
 export function isDeletingAnyInvite( state, siteId ) {
 	return (
-		-1 !== indexOf( values( get( state, [ 'invites', 'deleting', siteId ], {} ) ), 'requesting' )
+		-1 !==
+		Object.values( get( state, [ 'invites', 'deleting', siteId ], {} ) ).indexOf( 'requesting' )
 	);
 }

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/data-layer/wpcom/sites/scan';
+import 'calypso/state/data-layer/wpcom/sites/scan';
 
 /**
  * Returns true if the most recent Scan is the first Scan run and false otherwise.
@@ -11,5 +11,5 @@ import 'state/data-layer/wpcom/sites/scan';
  * @returns {boolean}		If the most recent Scan was the first one
  */
 export default function getSiteScanIsInitial( state, siteId ) {
-	return state.jetpackScan.scan?.[ siteId ]?.mostRecent?.isInitial ?? false;
+	return state.jetpackScan.scan?.[ siteId ]?.current?.isInitial ?? false;
 }

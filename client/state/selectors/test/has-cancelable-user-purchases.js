@@ -6,7 +6,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import hasCancelableUserPurchases from 'state/selectors/has-cancelable-user-purchases';
+import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 
 describe( 'hasCancelableUserPurchases', () => {
 	const targetUserId = 123;

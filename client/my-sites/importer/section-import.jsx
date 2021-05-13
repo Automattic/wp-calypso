@@ -5,38 +5,43 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, flow, get, isEmpty, memoize, once } from 'lodash';
+import { once } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import DocumentHead from 'components/data/document-head';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
-import { Interval, EVERY_FIVE_SECONDS } from 'lib/interval';
-import WordPressImporter from 'my-sites/importer/importer-wordpress';
-import MediumImporter from 'my-sites/importer/importer-medium';
-import BloggerImporter from 'my-sites/importer/importer-blogger';
-import WixImporter from 'my-sites/importer/importer-wix';
-import GoDaddyGoCentralImporter from 'my-sites/importer/importer-godaddy-gocentral';
-import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
-import { fetchState, startImport } from 'lib/importer/actions';
-import { getImporters, getImporterByKey } from 'lib/importer/importer-config';
-import { appStates } from 'state/imports/constants';
+import SectionHeader from 'calypso/components/section-header';
+import DocumentHead from 'calypso/components/data/document-head';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import WordPressImporter from 'calypso/my-sites/importer/importer-wordpress';
+import MediumImporter from 'calypso/my-sites/importer/importer-medium';
+import BloggerImporter from 'calypso/my-sites/importer/importer-blogger';
+import WixImporter from 'calypso/my-sites/importer/importer-wix';
+import SquarespaceImporter from 'calypso/my-sites/importer/importer-squarespace';
+import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
+import { getImporters, getImporterByKey } from 'calypso/lib/importer/importer-config';
+import { appStates } from 'calypso/state/imports/constants';
+import {
+	getImporterStatusForSiteId,
+	isImporterStatusHydrated,
+} from 'calypso/state/imports/selectors';
 
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getSelectedSite, getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteTitle } from 'state/sites/selectors';
-import { getSelectedImportEngine, getImporterSiteUrl } from 'state/importer-nux/temp-selectors';
-import Main from 'components/main';
-import JetpackImporter from 'my-sites/importer/jetpack-importer';
-import canCurrentUser from 'state/selectors/can-current-user';
-import EmptyContent from 'components/empty-content';
-import memoizeLast from 'lib/memoize-last';
-import { recordTracksEvent } from 'state/analytics/actions';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import {
+	getSelectedSite,
+	getSelectedSiteSlug,
+	getSelectedSiteId,
+} from 'calypso/state/ui/selectors';
+import { getSiteTitle } from 'calypso/state/sites/selectors';
+import Main from 'calypso/components/main';
+import JetpackImporter from 'calypso/my-sites/importer/jetpack-importer';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import EmptyContent from 'calypso/components/empty-content';
+import memoizeLast from 'calypso/lib/memoize-last';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -52,51 +57,44 @@ import './section-import.scss';
  */
 const importerComponents = {
 	blogger: BloggerImporter,
-	'godaddy-gocentral': GoDaddyGoCentralImporter,
 	medium: MediumImporter,
 	squarespace: SquarespaceImporter,
 	wix: WixImporter,
 	wordpress: WordPressImporter,
 };
 
-const filterImportsForSite = ( siteID, imports ) => {
-	return filter( imports, ( importItem ) => importItem.site.ID === siteID );
-};
-
-const getImporterTypeForEngine = memoize( ( engine ) => `importer-type-${ engine }` );
+const getImporterTypeForEngine = ( engine ) => `importer-type-${ engine }`;
 
 class SectionImport extends Component {
 	static propTypes = {
 		site: PropTypes.object,
+		engine: PropTypes.string,
+		fromSite: PropTypes.string,
 	};
 
-	state = getImporterState();
-
 	onceAutoStartImport = once( () => {
-		const { engine, site } = this.props;
-		const { importers: imports } = this.state;
+		const { engine, siteId, siteImports, afterStartImport } = this.props;
 
 		if ( ! engine ) {
 			return;
 		}
 
-		if ( ! isEmpty( imports ) ) {
-			// Never clobber an existing import
-			return;
+		// If there is no existing import and the `engine` is valid, start a new import.
+		if ( siteImports.length === 0 && importerComponents[ engine ] ) {
+			this.props.startImport( siteId, getImporterTypeForEngine( engine ) );
 		}
 
-		if ( ! importerComponents[ engine ] ) {
-			return;
-		}
-
-		startImport( site.ID, getImporterTypeForEngine( engine ) );
+		// After import was started, redirect back to the route without `engine` query arg.
+		// That removes the `engine` prop from this component and doesn't spoil future
+		// rendering when the import is, e.g., cancelled.
+		//
+		// We redirect back even if we decided to not start the import requested by the `engine`
+		// query arg. The request has been processed, only with a negative result.
+		afterStartImport?.();
 	} );
 
 	handleStateChanges = () => {
-		const { site } = this.props;
-		const { importers: imports } = this.state;
-
-		filterImportsForSite( site.ID, imports ).map( ( importItem ) => {
+		this.props.siteImports.map( ( importItem ) => {
 			const { importerState, type: importerId } = importItem;
 			this.trackImporterStateChange( importerState, importerId );
 		} );
@@ -121,97 +119,81 @@ class SectionImport extends Component {
 	} );
 
 	componentDidMount() {
-		ImporterStore.on( 'change', this.updateState );
 		this.updateFromAPI();
+		if ( this.props.isImporterStatusHydrated ) {
+			this.onceAutoStartImport();
+		}
 	}
 
 	componentDidUpdate() {
-		const { site } = this.props;
-
-		if ( ! site.ID ) {
-			return;
+		if ( this.props.isImporterStatusHydrated ) {
+			this.onceAutoStartImport();
 		}
 
-		this.onceAutoStartImport();
 		this.handleStateChanges();
-	}
-
-	componentWillUnmount() {
-		ImporterStore.off( 'change', this.updateState );
 	}
 
 	/**
 	 * Renders each enabled importer at the provided `state`
 	 *
-	 * @param {object} site Data for the currently active site
-	 * @param {string} siteTitle The site's title
-	 * @param {string} state The state constant for the importer components
+	 * @param {string} importerState The state constant for the importer components
 	 * @returns {Array} A list of react elements for each enabled importer
 	 */
-	renderIdleImporters( site, siteTitle, state ) {
-		const {
-			options: { is_wpcom_atomic: isAtomic },
-		} = site;
+	renderIdleImporters( importerState ) {
+		const { site, siteTitle } = this.props;
+		let importers = getImporters();
 
-		const importerElementsAll = getImporters();
+		// Filter out all importers except the WordPress ones for Atomic sites.
+		if ( site.options.is_wpcom_atomic ) {
+			importers = importers.filter( ( importer ) => importer.engine === 'wordpress' );
+		}
 
-		/**
-		 * Filter out all importers except the WordPress ones for Atomic sites.
-		 */
-		const importerElementsFiltered = isAtomic
-			? importerElementsAll.filter( ( importer ) => importer.engine === 'wordpress' )
-			: importerElementsAll;
-
-		const importerElements = importerElementsFiltered.map( ( importer ) => {
-			const { engine } = importer;
+		const importerElements = importers.map( ( { engine } ) => {
 			const ImporterComponent = importerComponents[ engine ];
 
 			if ( ! ImporterComponent ) {
-				return;
+				return null;
 			}
+
+			const importerStatus = {
+				importerState,
+				type: getImporterTypeForEngine( engine ),
+			};
 
 			return (
 				<ImporterComponent
 					key={ engine }
 					site={ site }
 					siteTitle={ siteTitle }
-					importerStatus={ {
-						importerState: state,
-						siteTitle,
-						type: getImporterTypeForEngine( engine ),
-					} }
+					importerStatus={ importerStatus }
 				/>
 			);
 		} );
 
 		// add the 'other importers' card to the end of the list of importers
-		const {
-			options: { admin_url: adminUrl },
-		} = site;
-
-		const otherImportersCard = (
-			<CompactCard
-				key="other-importers-card"
-				href={ adminUrl + 'import.php' }
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				{ this.props.translate( 'Choose from full list' ) }
-			</CompactCard>
+		return (
+			<>
+				{ importerElements }
+				<CompactCard
+					href={ site.options.admin_url + 'import.php' }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{ this.props.translate( 'Choose from full list' ) }
+				</CompactCard>
+			</>
 		);
-
-		return [ ...importerElements, otherImportersCard ];
 	}
 
 	/**
-	 * Receives import jobs data (`importsForSite`) and maps this to return a
-	 * list of importer elements for active import jobs
+	 * Renders list of importer elements for active import jobs
 	 *
-	 * @param {Array} importsForSite The list of active import jobs
 	 * @returns {Array} Importer react elements for the active import jobs
 	 */
-	renderActiveImporters( importsForSite ) {
-		return importsForSite.map( ( importItem, idx ) => {
+	renderActiveImporters() {
+		const { fromSite, site, siteTitle, siteImports } = this.props;
+
+		return siteImports.map( ( importItem, idx ) => {
 			const importer = getImporterByKey( importItem.type );
 			if ( ! importer ) {
 				return;
@@ -219,43 +201,14 @@ class SectionImport extends Component {
 
 			const ImporterComponent = importerComponents[ importer.engine ];
 
-			/**
-			 * Ugly hack™
-			 *
-			 * Sometimes due to the convoluted voodoo sorcery that is the Import Red(fl)ux store
-			 * the `site` object that gets passed in `importItem` contains only `{ ID: <site_id> }`.
-			 *
-			 * This makes the components down the chain fail as they expect to have the full `site` object
-			 * with all it's properties.
-			 *
-			 * That usually happens when you land on an import directly, such as when coming from a
-			 * `/?engine=wordpress` URL. In those cases a slew of artifacts occur - the upload reports issues,
-			 * the author mapping screen doesn't show any authors to choose from, etc.
-			 *
-			 * This hack makes sure to overwrite the the `site` object if it's the same as the current site.
-			 * Ideally this should always be the case, but if there's an instance where the current site is different
-			 * than what's stored in the import data, let it fail as it does now.
-			 */
-			const importItemId = get( importItem, 'site.ID', null );
-			const currentSiteId = get( this.props, 'site.ID', null );
-
-			if ( importItemId && importItemId === currentSiteId ) {
-				importItem.site = this.props.site;
-			}
-
-			const siteTitle = importItem.siteTitle || this.props.siteTitle;
-
 			return (
 				ImporterComponent && (
 					<ImporterComponent
-						key={ importItem.type + idx }
-						site={ importItem.site }
-						fromSite={ this.props.fromSite }
+						key={ idx }
+						site={ site }
+						fromSite={ fromSite }
 						siteTitle={ siteTitle }
-						importerStatus={ {
-							...importItem,
-							siteTitle: siteTitle,
-						} }
+						importerStatus={ importItem }
 					/>
 				)
 			);
@@ -268,43 +221,33 @@ class SectionImport extends Component {
 	 * @returns {Array} Importer react elements
 	 */
 	renderImporters() {
-		const {
-			api: { isHydrated },
-			importers: imports,
-		} = this.state;
-		const { engine, site, siteTitle } = this.props;
+		const { engine } = this.props;
 
+		// If starting a new import was requested by the `engine` query param, never show the list
+		// of available "idle" importers. Always render the list of active importers, even if it's
+		// initially empty. A new import will be started very soon by `onceAutoStartImport`.
 		if ( engine && importerComponents[ engine ] ) {
-			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
+			return this.renderActiveImporters();
 		}
 
-		if ( ! isHydrated ) {
-			return this.renderIdleImporters( site, siteTitle, appStates.DISABLED );
+		if ( ! this.props.isImporterStatusHydrated ) {
+			return this.renderIdleImporters( appStates.DISABLED );
 		}
 
-		const importsForSite = filterImportsForSite( site.ID, imports )
-			// Add in the 'site' and 'siteTitle' properties to the import objects.
-			.map( ( item ) => Object.assign( {}, item, { site, siteTitle } ) );
-
-		if ( 0 === importsForSite.length ) {
-			return this.renderIdleImporters( site, siteTitle, appStates.INACTIVE );
+		if ( this.props.siteImports.length === 0 ) {
+			return this.renderIdleImporters( appStates.INACTIVE );
 		}
 
-		return this.renderActiveImporters( importsForSite );
+		return this.renderActiveImporters();
 	}
 
 	updateFromAPI = () => {
-		const siteID = get( this, 'props.site.ID' );
-		siteID && fetchState( siteID );
-	};
-
-	updateState = () => {
-		this.setState( getImporterState() );
+		this.props.siteId && this.props.fetchImporterState( this.props.siteId );
 	};
 
 	renderImportersList() {
 		const { translate } = this.props;
-		const isSpecificImporter = ! isEmpty( this.state.importers );
+		const isSpecificImporter = this.props.siteImports.length > 0;
 		const sectionHeaderLabel = isSpecificImporter
 			? translate( 'Importing content from:', {
 					comment:
@@ -345,11 +288,13 @@ class SectionImport extends Component {
 
 		return (
 			<Main>
-				<DocumentHead title={ translate( 'Import Your Content' ) } />
+				<DocumentHead title={ translate( 'Import Content' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="importer__page-heading"
-					headerText={ translate( 'Import Your Content' ) }
+					headerText={ translate( 'Import Content' ) }
+					subHeaderText={ translate( 'Import content from another website or platform.' ) }
 					align="left"
 				/>
 				<EmailVerificationGate allowUnlaunched>
@@ -360,20 +305,18 @@ class SectionImport extends Component {
 	}
 }
 
-export default flow(
-	connect(
-		( state ) => {
-			const siteID = getSelectedSiteId( state );
-			return {
-				engine: getSelectedImportEngine( state ),
-				fromSite: getImporterSiteUrl( state ),
-				site: getSelectedSite( state ),
-				siteSlug: getSelectedSiteSlug( state ),
-				siteTitle: getSiteTitle( state, siteID ),
-				canImport: canCurrentUser( state, siteID, 'manage_options' ),
-			};
-		},
-		{ recordTracksEvent }
-	),
-	localize
-)( SectionImport );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			siteId,
+			site: getSelectedSite( state ),
+			siteSlug: getSelectedSiteSlug( state ),
+			siteTitle: getSiteTitle( state, siteId ),
+			siteImports: getImporterStatusForSiteId( state, siteId ),
+			canImport: canCurrentUser( state, siteId, 'manage_options' ),
+			isImporterStatusHydrated: isImporterStatusHydrated( state ),
+		};
+	},
+	{ recordTracksEvent, startImport, fetchImporterState }
+)( localize( SectionImport ) );

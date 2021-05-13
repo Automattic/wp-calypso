@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Day from './day';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class PostTrendsWeek extends Component {
 	static propTypes = {

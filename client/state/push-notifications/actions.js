@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import {
 	PUSH_NOTIFICATIONS_API_READY,
 	PUSH_NOTIFICATIONS_API_NOT_READY,
@@ -19,7 +18,7 @@ import {
 	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 import { isApiReady, getDeviceId, getStatus, isBlocked, isEnabled } from './selectors';
 import {
@@ -31,8 +30,10 @@ import {
 	getOperaVersion,
 	urlBase64ToUint8Array,
 } from './utils';
-import { registerServerWorker } from 'lib/service-worker';
-import { recordTracksEvent, bumpStat } from 'state/analytics/actions';
+import { registerServerWorker } from 'calypso/lib/service-worker';
+import { recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
+
+import 'calypso/state/push-notifications/init';
 
 const debug = debugFactory( 'calypso:push-notifications' );
 const serviceWorkerOptions = {
@@ -47,7 +48,7 @@ export function init() {
 		// TODO: read the `isSupportSession` flag with a Redux selector instead. That requires
 		// reorganizing the `configureReduxStore` function so that the flag is set *before* this
 		// init function is called. That currently happens too late, in a promise resolution callback.
-		const { isSupportSession } = require( 'lib/user/support-user-interop' );
+		const { isSupportSession } = require( 'calypso/lib/user/support-user-interop' );
 		if ( isSupportSession() ) {
 			debug( 'Push Notifications are not supported when SU is active' );
 			dispatch( apiNotReady() );
@@ -143,7 +144,7 @@ export function fetchAndLoadServiceWorker() {
 
 export function deactivateSubscription() {
 	return ( dispatch ) => {
-		navigator.serviceWorker
+		window.navigator.serviceWorker
 			.getRegistration( serviceWorkerOptions )
 			.then( ( serviceWorkerRegistration ) => {
 				serviceWorkerRegistration.pushManager

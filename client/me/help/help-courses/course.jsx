@@ -13,9 +13,9 @@ import { Card } from '@automattic/components';
 import CourseScheduleItem from './course-schedule-item';
 import HelpTeaserButton from '../help-teaser-button';
 import CourseVideo from './course-video';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import { getSiteSlug } from 'state/sites/selectors';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 class Course extends Component {
 	componentDidMount() {

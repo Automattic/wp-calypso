@@ -7,7 +7,7 @@
 	max-width: 960px;
 	color: var( --color-text-subtle );
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		background: transparent;
 		padding: 14px;
 	}
@@ -18,13 +18,13 @@
 	padding: 12px 24px 48px;
 	text-align: center;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding-bottom: 72px;
 	}
 }
 
 .activity-log-switch__header-header {
-	font-size: 24px;
+	font-size: $font-title-medium;
 	font-weight: 400;
 	text-align: center;
 	padding: 12px 24px 48px;
@@ -35,19 +35,19 @@
 }
 
 .activity-log-switch__header-text {
-	font-size: 18px;
+	font-size: $font-title-small;
 	margin: 24px 64px 32px;
 }
 
 .activity-log-switch__no-thanks {
 	display: inline-block;
 	margin-top: 8px;
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .activity-log-switch__features-header {
 	color: var( --color-neutral-50 );
-	font-size: 24px;
+	font-size: $font-title-medium;
 	line-height: 32px;
 	margin: 48px 48px 24px;
 }
@@ -55,19 +55,19 @@
 .activity-log-switch__feature {
 	display: flex;
 	flex-wrap: wrap;
-	border-radius: 3px;
+	border-radius: 2px;
 	max-width: 700px;
 	margin: 16px auto;
 	padding: 32px;
 }
 
 .activity-log-switch__feature-content {
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		flex-basis: 66%;
 		text-align: left;
 	}
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		order: 2;
 	}
 
@@ -78,11 +78,11 @@
 
 .activity-log-switch__feature-heading {
 	color: var( --color-neutral-40 );
-	font-size: 21px;
+	font-size: $font-title-small;
 	margin-bottom: 8px;
 	width: 100%;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		order: 1;
 	}
 }
@@ -92,7 +92,7 @@
 	max-height: 110px;
 	box-sizing: border-box;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		order: 0;
 		max-width: none;
 		height: 90px;

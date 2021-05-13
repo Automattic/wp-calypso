@@ -1,28 +1,29 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Notice from 'components/notice';
-import { editComment } from 'state/comments/actions';
-import { recordAction, recordGaEvent } from 'reader/stats';
-import PostCommentFormTextarea from './form-textarea';
+import { isEnabled } from '@automattic/calypso-config';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import Notice from 'calypso/components/notice';
+import { editComment } from 'calypso/state/comments/actions';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import AutoresizingFormTextarea from './autoresizing-form-textarea';
+import AsyncLoad from 'calypso/components/async-load';
 
 /**
  * Style dependencies
  */
 import './comment-edit-form.scss';
+
+const noop = () => {};
 
 class PostCommentForm extends Component {
 	constructor( props ) {
@@ -67,9 +68,12 @@ class PostCommentForm extends Component {
 
 	handleFocus = () => this.setState( { haveFocus: true } );
 
-	handleTextChange = ( event ) => {
+	handleTextChangeEvent = ( event ) => {
 		const commentText = event.target.value;
+		this.setState( { commentText } );
+	};
 
+	handleTextChange = ( commentText ) => {
 		this.setState( { commentText } );
 	};
 
@@ -139,35 +143,34 @@ class PostCommentForm extends Component {
 			'is-visible': this.state.haveFocus || this.hasCommentText(),
 		} );
 
-		const expandingAreaClasses = classNames( {
-			focused: this.state.haveFocus,
-			'expanding-area': true,
-		} );
-
 		const isReply = !! this.props.parentCommentId;
+
+		const formTextarea = isEnabled( 'reader/gutenberg-for-comments' ) ? (
+			<AsyncLoad
+				require="./block-editor"
+				onChange={ this.handleTextChange }
+				siteId={ this.props.post.site_ID }
+			/>
+		) : (
+			<AutoresizingFormTextarea
+				value={ this.state.commentText }
+				placeholder={ translate( 'Enter your comment here…' ) }
+				onKeyUp={ this.handleKeyUp }
+				onKeyDown={ this.handleKeyDown }
+				onFocus={ this.handleFocus }
+				onBlur={ this.handleBlur }
+				onChange={ this.handleTextChangeEvent }
+				siteId={ this.props.post.site_ID }
+				enableAutoFocus={ isReply }
+			/>
+		);
 
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
 			<form className="comments__edit-form">
-				<fieldset>
-					<div className={ expandingAreaClasses }>
-						<pre>
-							<span>{ this.state.commentText }</span>
-							<br />
-						</pre>
-						<AutoDirection>
-							<PostCommentFormTextarea
-								value={ this.state.commentText }
-								onKeyUp={ this.handleKeyUp }
-								onKeyDown={ this.handleKeyDown }
-								onFocus={ this.handleFocus }
-								onBlur={ this.handleBlur }
-								onChange={ this.handleTextChange }
-								enableAutoFocus={ isReply }
-							/>
-						</AutoDirection>
-					</div>
+				<FormFieldset>
+					{ formTextarea }
 					<button
 						className={ buttonClasses }
 						disabled={ this.state.commentText.length === 0 }
@@ -176,7 +179,7 @@ class PostCommentForm extends Component {
 						{ translate( 'Send' ) }
 					</button>
 					{ this.renderError() }
-				</fieldset>
+				</FormFieldset>
 			</form>
 		);
 	}
@@ -196,6 +199,4 @@ PostCommentForm.defaultProps = {
 	onCommentSubmit: noop,
 };
 
-const mapDispatchToProps = ( dispatch ) => bindActionCreators( { editComment }, dispatch );
-
-export default connect( null, mapDispatchToProps )( PostCommentForm );
+export default connect( null, { editComment } )( PostCommentForm );

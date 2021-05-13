@@ -7,22 +7,22 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { get, defer } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
-import AsyncLoad from 'components/async-load';
+import AsyncLoad from 'calypso/components/async-load';
 import { translate } from 'i18n-calypso';
-import { preload } from 'sections-helper';
+import { preloadEditor } from 'calypso/sections-preloaders';
 import { Button } from '@automattic/components';
-import { markPostSeen } from 'state/reader/posts/actions';
-import { recordGaEvent, recordAction, recordTrackForPost } from 'reader/stats';
+import { markPostSeen } from 'calypso/state/reader/posts/actions';
+import { recordGaEvent, recordAction, recordTrackForPost } from 'calypso/reader/stats';
 import { getDailyPostType } from './helper';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -41,10 +41,6 @@ function getPingbackAttributes( post ) {
 		title,
 		url: post.URL,
 	};
-}
-
-function preloadEditor() {
-	preload( 'post-editor' );
 }
 
 export class DailyPostButton extends React.Component {
@@ -136,7 +132,7 @@ export class DailyPostButton extends React.Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<AsyncLoad
-				require="components/sites-popover"
+				require="calypso/components/sites-popover"
 				placeholder={ null }
 				key="menu"
 				header={ <div> { translate( 'Post on' ) } </div> }

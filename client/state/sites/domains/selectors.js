@@ -17,8 +17,32 @@ export const getDomainsBySiteId = ( state, siteId ) => {
 	return state.sites.domains.items[ siteId ] || EMPTY_SITE_DOMAINS;
 };
 
+/**
+ * Returns the  wpcom domain for the proved site id.
+ *
+ * @param {object} state - global state tree
+ * @param {number | undefined} siteId - identifier of the site
+ * @returns {?object} the wpcom domain
+ */
+export const getWpComDomainBySiteId = ( state, siteId ) => {
+	const domains = getDomainsBySiteId( state, siteId );
+	if ( ! Array.isArray( domains ) ) {
+		return null;
+	}
+
+	const WPComDomain = domains.find(
+		( { isWPCOMDomain, isWpcomStagingDomain } ) => isWPCOMDomain || isWpcomStagingDomain
+	);
+
+	return WPComDomain || null;
+};
+
 export const getAllDomains = ( state ) => {
 	return state.sites.domains.items;
+};
+
+export const getFlatDomainsList = ( state ) => {
+	return state.allDomains.domains ?? [];
 };
 
 /**

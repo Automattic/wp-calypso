@@ -3,7 +3,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
+import { clone, difference, forEach, last, map, some, take } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 
@@ -59,7 +59,7 @@ class TokenField extends PureComponent {
 		maxSuggestions: 100,
 		value: Object.freeze( [] ),
 		placeholder: '',
-		displayTransform: identity,
+		displayTransform: ( token ) => token,
 		saveTransform: function ( token ) {
 			return token.trim();
 		},
@@ -334,29 +334,26 @@ class TokenField extends PureComponent {
 	};
 
 	_getMatchingSuggestions = () => {
-		let suggestions = this.props.suggestions,
-			match = this.props.saveTransform( this.state.incompleteTokenValue ),
-			startsWithMatch = [],
-			containsMatch = [];
+		let suggestions = this.props.suggestions;
+		let match = this.props.saveTransform( this.state.incompleteTokenValue );
+		const startsWithMatch = [];
+		const containsMatch = [];
 
 		if ( match.length === 0 ) {
 			suggestions = difference( suggestions, this.props.value );
 		} else {
 			match = match.toLocaleLowerCase();
 
-			each(
-				suggestions,
-				function ( suggestion ) {
-					const index = suggestion.toLocaleLowerCase().indexOf( match );
-					if ( this.props.value.indexOf( suggestion ) === -1 ) {
-						if ( index === 0 ) {
-							startsWithMatch.push( suggestion );
-						} else if ( index > 0 ) {
-							containsMatch.push( suggestion );
-						}
+			suggestions.forEach( ( suggestion ) => {
+				const index = suggestion.toLocaleLowerCase().indexOf( match );
+				if ( this.props.value.indexOf( suggestion ) === -1 ) {
+					if ( index === 0 ) {
+						startsWithMatch.push( suggestion );
+					} else if ( index > 0 ) {
+						containsMatch.push( suggestion );
 					}
-				}.bind( this )
-			);
+				}
+			} );
 
 			suggestions = startsWithMatch.concat( containsMatch );
 		}
@@ -371,8 +368,8 @@ class TokenField extends PureComponent {
 	};
 
 	_addCurrentToken = () => {
-		let preventDefault = false,
-			selectedSuggestion = this._getSelectedSuggestion();
+		let preventDefault = false;
+		const selectedSuggestion = this._getSelectedSuggestion();
 
 		if ( selectedSuggestion ) {
 			this._addNewToken( selectedSuggestion );
@@ -490,12 +487,14 @@ class TokenField extends PureComponent {
 	};
 
 	_addNewTokens = ( tokens ) => {
-		const tokensToAdd = uniq(
-			tokens
-				.map( this.props.saveTransform )
-				.filter( Boolean )
-				.filter( ( token ) => ! this._valueContainsToken( token ) )
-		);
+		const tokensToAdd = [
+			...new Set(
+				tokens
+					.map( this.props.saveTransform )
+					.filter( Boolean )
+					.filter( ( token ) => ! this._valueContainsToken( token ) )
+			),
+		];
 		debug( '_addNewTokens: tokensToAdd', tokensToAdd );
 
 		if ( tokensToAdd.length > 0 ) {

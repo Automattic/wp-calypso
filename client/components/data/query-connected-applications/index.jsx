@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestConnectedApplications } from 'state/connected-applications/actions';
+import { requestConnectedApplications } from 'calypso/state/connected-applications/actions';
 
 class QueryConnectedApplications extends Component {
 	static propTypes = {

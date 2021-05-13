@@ -1,7 +1,14 @@
+/**
+ * External dependencies
+ */
 import proxy from 'wpcom-proxy-request';
-import wpcomFactory from '../../';
 import wpcomOAuthFactory from 'wpcom-oauth-cors';
 import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
+ */
+import wpcomFactory from '../../';
 
 const debug = debugFactory( 'media-editor' );
 const isLocalhost = document.location.hostname === 'calypso.localhost';

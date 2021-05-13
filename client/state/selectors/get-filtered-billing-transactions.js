@@ -2,16 +2,18 @@
  * External dependencies
  */
 import { getLocaleSlug } from 'i18n-calypso';
-import { compact, flatMap, omit, slice, some, values } from 'lodash';
+import { compact, flatMap, omit, some } from 'lodash';
 import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import getBillingTransactionsByType from 'state/selectors/get-billing-transactions-by-type';
-import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { createSelector } from '@automattic/state-utils';
+import getBillingTransactionsByType from 'calypso/state/selectors/get-billing-transactions-by-type';
+import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+
+import 'calypso/state/billing-transactions/init';
 
 const PAGE_SIZE = 5;
 
@@ -33,9 +35,9 @@ function formatDate( date ) {
  * @returns {Array}             list of searchable strings
  */
 function getSearchableStrings( transaction ) {
-	const rootStrings = values( omit( transaction, [ 'date', 'items' ] ) );
+	const rootStrings = Object.values( omit( transaction, [ 'date', 'items' ] ) );
 	const dateString = transaction.date ? formatDate( transaction.date ) : null;
-	const itemStrings = flatMap( transaction.items, values );
+	const itemStrings = flatMap( transaction.items, ( item ) => Object.values( item ) );
 
 	return compact( [ ...rootStrings, dateString, ...itemStrings ] );
 }
@@ -63,10 +65,11 @@ function search( transactions, searchQuery ) {
  *
  * @param   {object}  state           Global state tree
  * @param   {string}  transactionType Transaction type
+ * @param   {string}  [siteId]        An optional siteId on which to filter results (in addition to the other filters)
  * @returns {object}                  Filtered results in format {transactions, total, pageSize}
  */
 export default createSelector(
-	( state, transactionType ) => {
+	( state, transactionType, siteId = null ) => {
 		const transactions = getBillingTransactionsByType( state, transactionType );
 		if ( ! transactions ) {
 			return {
@@ -94,10 +97,18 @@ export default createSelector(
 			results = results.filter( ( transaction ) => transaction.service === app );
 		}
 
+		if ( siteId ) {
+			results = results.filter( ( transaction ) => {
+				return transaction.items.some( ( receiptItem ) => {
+					return String( receiptItem.site_id ) === String( siteId );
+				} );
+			} );
+		}
+
 		const total = results.length;
 
 		const pageIndex = page - 1;
-		results = slice( results, pageIndex * PAGE_SIZE, pageIndex * PAGE_SIZE + PAGE_SIZE );
+		results = results.slice( pageIndex * PAGE_SIZE, pageIndex * PAGE_SIZE + PAGE_SIZE );
 
 		return {
 			transactions: results,
@@ -111,6 +122,6 @@ export default createSelector(
 		// Ideally, we shouldn't allow for full-text search matching against localized dates.
 		getCurrentLocaleSlug( state ),
 		getBillingTransactionsByType( state, transactionType ),
-		...values( getBillingTransactionFilters( state, transactionType ) ),
+		...Object.values( getBillingTransactionFilters( state, transactionType ) ),
 	]
 );

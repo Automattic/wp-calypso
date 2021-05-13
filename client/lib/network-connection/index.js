@@ -7,10 +7,10 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import PollerPool from 'lib/data-poller';
-import Emitter from 'lib/mixins/emitter';
-import { connectionLost, connectionRestored } from 'state/application/actions';
+import config from '@automattic/calypso-config';
+import PollerPool from 'calypso/lib/data-poller';
+import Emitter from 'calypso/lib/mixins/emitter';
+import { connectionLost, connectionRestored } from 'calypso/state/application/actions';
 
 const debug = debugFactory( 'calypso:network-connection' );
 
@@ -75,13 +75,10 @@ const NetworkConnectionApp = {
 
 		this.on( 'change', changeCallback );
 
-		window.addEventListener(
-			'beforeunload',
-			function () {
-				debug( 'Removing listener.' );
-				this.off( 'change', changeCallback );
-			}.bind( this )
-		);
+		window.addEventListener( 'beforeunload', () => {
+			debug( 'Removing listener.' );
+			this.off( 'change', changeCallback );
+		} );
 	},
 
 	/**

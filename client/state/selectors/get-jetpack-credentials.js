@@ -1,12 +1,8 @@
 /**
- * External Dependencies
+ * Internal dependencies
  */
-import { get } from 'lodash';
+import 'calypso/state/jetpack/init';
 
 export default function getJetpackCredentials( state, siteId, role ) {
-	const scanCredentials = get( state, [ 'jetpackScan', 'scan', siteId, 'credentials' ], false );
-	if ( scanCredentials ) {
-		return scanCredentials.filter( ( credential ) => credential.role === role );
-	}
-	return get( state, [ 'jetpack', 'credentials', 'items', siteId, role ], {} );
+	return state?.jetpack?.credentials?.items?.[ siteId ]?.[ role ] || {};
 }

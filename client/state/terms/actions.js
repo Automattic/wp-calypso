@@ -1,25 +1,27 @@
 /**
  * External dependencies
  */
-
-import { filter, get, uniqueId } from 'lodash';
+import { filter, get } from 'lodash';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	TERM_REMOVE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
 	TERMS_REQUEST_SUCCESS,
 	TERMS_REQUEST_FAILURE,
-} from 'state/action-types';
-import { editPost } from 'state/posts/actions';
-import { updateSiteSettings } from 'state/site-settings/actions';
-import { getSitePostsByTerm } from 'state/posts/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
+} from 'calypso/state/action-types';
+import { editPost } from 'calypso/state/posts/actions';
+import { updateSiteSettings } from 'calypso/state/site-settings/actions';
+import { getSitePostsByTerm } from 'calypso/state/posts/selectors';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getTerm, getTerms } from './selectors';
+
+import 'calypso/state/terms/init';
 
 /**
  * Returns an action thunk, dispatching progress of a request to add a new term
@@ -32,7 +34,7 @@ import { getTerm, getTerms } from './selectors';
  */
 export function addTerm( siteId, taxonomy, term ) {
 	return ( dispatch ) => {
-		const temporaryId = uniqueId( 'temporary' );
+		const temporaryId = 'temporary' + uuid();
 
 		dispatch(
 			receiveTerm( siteId, taxonomy, {

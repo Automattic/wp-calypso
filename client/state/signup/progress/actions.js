@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { includes, isEmpty, reduce, snakeCase, toPairs } from 'lodash';
+import { includes, isEmpty, reduce, snakeCase } from 'lodash';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -13,12 +14,13 @@ import {
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_INVALIDATE_STEP,
 	SIGNUP_PROGRESS_REMOVE_STEP,
-} from 'state/action-types';
-import { assertValidDependencies } from 'lib/signup/asserts';
-import { getCurrentFlowName } from 'state/signup/flow/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+	SIGNUP_PROGRESS_ADD_STEP,
+} from 'calypso/state/action-types';
+import { assertValidDependencies } from 'calypso/lib/signup/asserts';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-import 'state/signup/init';
+import 'calypso/state/signup/init';
 
 function addProvidedDependencies( step, providedDependencies ) {
 	if ( isEmpty( providedDependencies ) ) {
@@ -54,12 +56,16 @@ function recordSubmitStep( stepName, providedDependencies ) {
 			}
 
 			if (
-				( propName === 'cart_item' || propName === 'domain_item' ) &&
+				[ 'cart_item', 'domain_item', 'selected_domain_upsell_item' ].includes( propName ) &&
 				typeof propValue !== 'string'
 			) {
-				propValue = toPairs( propValue )
+				propValue = Object.entries( propValue || {} )
 					.map( ( pair ) => pair.join( ':' ) )
 					.join( ',' );
+			}
+
+			if ( includes( [ 'selected_design' ], propName ) ) {
+				propValue = propValue.slug;
 			}
 
 			return {
@@ -70,7 +76,9 @@ function recordSubmitStep( stepName, providedDependencies ) {
 		{}
 	);
 
+	const device = resolveDeviceTypeByViewPort();
 	return recordTracksEvent( 'calypso_signup_actions_submit_step', {
+		device,
 		step: stepName,
 		...inputs,
 	} );
@@ -136,5 +144,12 @@ export function removeStep( step ) {
 	return {
 		type: SIGNUP_PROGRESS_REMOVE_STEP,
 		step,
+	};
+}
+
+export function addStep( step ) {
+	return {
+		type: SIGNUP_PROGRESS_ADD_STEP,
+		step: { ...step },
 	};
 }

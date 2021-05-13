@@ -14,10 +14,8 @@ import {
 	getSectionName,
 	getSectionGroup,
 	isSiteSection,
-	isSectionIsomorphic,
-	hasSidebar,
 } from '../selectors';
-import { userState } from 'state/selectors/test/fixtures/user-state';
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	describe( '#getSelectedSite()', () => {
@@ -137,7 +135,6 @@ describe( 'selectors', () => {
 				paths: [ '/post', '/page' ],
 				module: 'post-editor',
 				group: 'editor',
-				secondary: true,
 			};
 			const section = getSection( {
 				ui: {
@@ -168,7 +165,6 @@ describe( 'selectors', () => {
 						paths: [ '/post', '/page' ],
 						module: 'post-editor',
 						group: 'editor',
-						secondary: true,
 					},
 				},
 			} );
@@ -196,7 +192,6 @@ describe( 'selectors', () => {
 						paths: [ '/post', '/page' ],
 						module: 'post-editor',
 						group: 'editor',
-						secondary: true,
 					},
 				},
 			} );
@@ -224,7 +219,6 @@ describe( 'selectors', () => {
 						paths: [ '/me' ],
 						module: 'me',
 						group: 'me',
-						secondary: true,
 					},
 				},
 			} );
@@ -240,72 +234,11 @@ describe( 'selectors', () => {
 						paths: [ '/post', '/page' ],
 						module: 'post-editor',
 						group: 'editor',
-						secondary: true,
 					},
 				},
 			} );
 
 			expect( siteSection ).to.be.true;
-		} );
-	} );
-
-	describe( '#isSectionIsomorphic()', () => {
-		test( 'should return false if there is no section currently selected', () => {
-			const selected = isSectionIsomorphic( {
-				ui: {
-					section: false,
-				},
-			} );
-
-			expect( selected ).to.be.false;
-		} );
-
-		test( 'should return true if current section is isomorphic', () => {
-			const section = {
-				enableLoggedOut: true,
-				group: 'sites',
-				isomorphic: true,
-				module: 'my-sites/themes',
-				name: 'themes',
-				paths: [ '/themes' ],
-				secondary: false,
-			};
-
-			const selected = isSectionIsomorphic( {
-				ui: { section },
-			} );
-
-			expect( selected ).to.be.true;
-		} );
-	} );
-
-	describe( '#hasSidebar()', () => {
-		test( 'should return false if set', () => {
-			expect( hasSidebar( { ui: { hasSidebar: false } } ) ).to.be.false;
-		} );
-
-		test( 'should be true if true and secondary does not override it', () => {
-			expect(
-				hasSidebar( {
-					ui: {
-						hasSidebar: true,
-						section: {},
-					},
-				} )
-			).to.be.true;
-		} );
-
-		test( 'should fall back to the secondary prop on the current section when hasSidebar is true', () => {
-			expect(
-				hasSidebar( {
-					ui: {
-						hasSidebar: true,
-						section: {
-							secondary: false,
-						},
-					},
-				} )
-			).to.be.false;
 		} );
 	} );
 } );

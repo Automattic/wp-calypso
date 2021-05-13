@@ -8,9 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { abtest } from 'lib/abtest';
+import Notice from 'calypso/components/notice';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -25,14 +24,6 @@ class ActiveTicketsNotice extends React.Component {
 	}
 
 	render() {
-		// During AB test, only show the notice to those in the test group. We're
-		// controlling the visibility here, so that we can still mount the component
-		// from the parent which fires the tracks event — we want the event to
-		// fire for both AB groups.
-		if ( abtest( 'showActiveTicketsNotice' ) !== 'showNotice' ) {
-			return null;
-		}
-
 		const { translate, compact, count } = this.props;
 
 		const text = translate(

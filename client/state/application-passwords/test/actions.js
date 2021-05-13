@@ -18,7 +18,7 @@ import {
 	APPLICATION_PASSWORD_NEW_CLEAR,
 	APPLICATION_PASSWORDS_RECEIVE,
 	APPLICATION_PASSWORDS_REQUEST,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'requestApplicationPasswords()', () => {

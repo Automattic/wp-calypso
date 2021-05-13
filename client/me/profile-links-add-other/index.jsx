@@ -8,11 +8,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
-import { addUserProfileLinks } from 'state/profile-links/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import { addUserProfileLinks } from 'calypso/state/profile-links/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -105,7 +105,7 @@ class ProfileLinksAddOther extends React.Component {
 						'Please enter the URL and description of the site you want to add to your profile.'
 					) }
 				</p>
-				<FormFieldset>
+				<FormFieldset className="profile-links-add-other__fieldset">
 					<FormTextInput
 						className="profile-links-add-other__value"
 						placeholder={ this.props.translate( 'Enter a URL' ) }

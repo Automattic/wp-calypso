@@ -1,15 +1,15 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
-import { sectionify } from 'lib/route';
+import { abtest } from 'calypso/lib/abtest';
+import { sectionify } from 'calypso/lib/route';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
@@ -17,14 +17,19 @@ import {
 	setPageTitle,
 	getStartDate,
 } from './controller-helper';
-import FeedError from 'reader/feed-error';
-import StreamComponent from 'reader/following/main';
-import { getPrettyFeedUrl, getPrettySiteUrl } from 'reader/route';
-import { recordTrack } from 'reader/stats';
-import { preload } from 'sections-helper';
-import { requestFeedDiscovery } from 'state/data-getters';
-import { waitForData } from 'state/data-layer/http-data';
-import AsyncLoad from 'components/async-load';
+import FeedError from 'calypso/reader/feed-error';
+import StreamComponent from 'calypso/reader/following/main';
+import { getPrettyFeedUrl, getPrettySiteUrl } from 'calypso/reader/route';
+import { recordTrack } from 'calypso/reader/stats';
+import { requestFeedDiscovery } from 'calypso/state/data-getters';
+import { waitForHttpData } from 'calypso/state/data-layer/http-data';
+import AsyncLoad from 'calypso/components/async-load';
+import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
+import { getLastPath } from 'calypso/state/reader-ui/selectors';
+import { getSection } from 'calypso/state/ui/selectors';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 
 const analyticsPageTitle = 'Reader';
 
@@ -50,7 +55,7 @@ const exported = {
 	},
 
 	prettyRedirects( context, next ) {
-		// Do we have a 'pretty' site or feed URL?
+		// Do we have a 'pretty' site or feed URL? We only use this for /discover.
 		let redirect;
 		if ( context.params.blog_id ) {
 			redirect = getPrettySiteUrl( context.params.blog_id );
@@ -110,14 +115,9 @@ const exported = {
 		next();
 	},
 
-	preloadReaderBundle( context, next ) {
-		preload( 'reader' );
-		next();
-	},
-
 	sidebar( context, next ) {
 		context.secondary = (
-			<AsyncLoad require="reader/sidebar" path={ context.path } placeholder={ null } />
+			<AsyncLoad require="calypso/reader/sidebar" path={ context.path } placeholder={ null } />
 		);
 
 		next();
@@ -132,6 +132,24 @@ const exported = {
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Following';
 		const mcKey = 'following';
 		const startDate = getStartDate( context );
+
+		const state = context.store.getState();
+		// only for a8c for now
+		if ( isAutomatticTeamMember( getReaderTeams( state ) ) ) {
+			// select last reader path if available, otherwise just open following
+			const currentSection = getSection( state );
+			const lastPath = getLastPath( state );
+
+			if ( lastPath && lastPath !== '/read' && currentSection.name !== 'reader' ) {
+				return page.redirect( lastPath );
+			}
+
+			// if we have no last path, default to Following/All and expand following
+			const isOpen = isFollowingOpen( state );
+			if ( ! isOpen ) {
+				context.store.dispatch( toggleReaderSidebarFollowing() );
+			}
+		}
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_following_loaded' );
@@ -160,16 +178,11 @@ const exported = {
 
 	feedDiscovery( context, next ) {
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
-			waitForData( {
-				feeds: () => requestFeedDiscovery( context.params.feed_id ),
-			} )
-				.then( ( { feeds } ) => {
-					const feed = feeds?.data?.feeds?.[ 0 ];
-					if ( feed && feed.feed_ID ) {
-						return page.redirect( `/read/feeds/${ feed.feed_ID }` );
-					}
+			waitForHttpData( () => ( { feedId: requestFeedDiscovery( context.params.feed_id ) } ) )
+				.then( ( { feedId } ) => {
+					page.redirect( `/read/feeds/${ feedId.data }` );
 				} )
-				.catch( function () {
+				.catch( () => {
 					renderFeedError( context, next );
 				} );
 		} else {
@@ -193,7 +206,7 @@ const exported = {
 
 		context.primary = (
 			<AsyncLoad
-				require="reader/feed-stream"
+				require="calypso/reader/feed-stream"
 				key={ 'feed-' + feedId }
 				streamKey={ 'feed:' + feedId }
 				feedId={ +feedId }
@@ -228,7 +241,7 @@ const exported = {
 
 		context.primary = (
 			<AsyncLoad
-				require="reader/site-stream"
+				require="calypso/reader/site-stream"
 				key={ 'site-' + blogId }
 				streamKey={ streamKey }
 				siteId={ +blogId }
@@ -263,10 +276,45 @@ const exported = {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<AsyncLoad
-				require="reader/team/main"
+				require="calypso/reader/a8c/main"
 				key="read-a8c"
 				className="is-a8c"
 				listName="Automattic"
+				streamKey={ streamKey }
+				startDate={ startDate }
+				trackScrollPage={ trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				) }
+				showPrimaryFollowButtonOnCards={ false }
+				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+				placeholder={ null }
+			/>
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		next();
+	},
+
+	readFollowingP2( context, next ) {
+		const basePath = sectionify( context.path );
+		const fullAnalyticsPageTitle = analyticsPageTitle + ' > P2';
+		const mcKey = 'p2';
+		const streamKey = 'p2';
+		const startDate = getStartDate( context );
+
+		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+
+		setPageTitle( context, 'P2' );
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		context.primary = (
+			<AsyncLoad
+				require="calypso/reader/p2/main"
+				key="read-p2"
+				listName="P2"
 				streamKey={ streamKey }
 				startDate={ startDate }
 				trackScrollPage={ trackScrollPage.bind(
@@ -292,7 +340,6 @@ export const {
 	legacyRedirects,
 	updateLastRoute,
 	incompleteUrlRedirects,
-	preloadReaderBundle,
 	sidebar,
 	unmountSidebar,
 	following,
@@ -300,4 +347,5 @@ export const {
 	feedListing,
 	blogListing,
 	readA8C,
+	readFollowingP2,
 } = exported;

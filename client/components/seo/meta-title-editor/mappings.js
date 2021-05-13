@@ -36,7 +36,6 @@ import {
 	camelCase,
 	flowRight as compose,
 	get,
-	initial,
 	last,
 	map,
 	mapKeys,
@@ -88,7 +87,7 @@ export const nativeToRaw = unary(
 				const lastPiece = last( format );
 
 				if ( lastPiece && 'string' === lastPiece.type && 'string' === piece.type ) {
-					return [ ...initial( format ), mergeStringPieces( lastPiece, piece ) ];
+					return [ ...format.slice( 0, -1 ), mergeStringPieces( lastPiece, piece ) ];
 				}
 
 				return [ ...format, piece ];

@@ -11,17 +11,17 @@ import { camelCase, debounce, difference, get, isEmpty, keys, map, pick } from '
 /**
  * Internal dependencies
  */
-import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormInputValidation from 'components/forms/form-input-validation';
-import { Input } from 'my-sites/domains/components/form';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import { Input } from 'calypso/my-sites/domains/components/form';
 import { disableSubmitButton } from './with-contact-details-validation';
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 
 const wpcom = wp.undocumented();
 const ciraAgreementUrl = 'https://cira.ca/agree';
@@ -37,9 +37,14 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		ccTldDetails: PropTypes.object.isRequired,
 		onContactDetailsChange: PropTypes.func,
 		contactDetailsValidationErrors: PropTypes.object,
-		userWpcomLang: PropTypes.string.isRequired,
+		userWpcomLang: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		updateContactDetailsCache: PropTypes.func.isRequired,
+		isManaged: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		userWpcomLang: 'EN',
 	};
 
 	constructor( props ) {
@@ -106,7 +111,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 
 		// Set the lang to FR if user languages is French, otherwise leave EN
-		if ( this.props.userWpcomLang.match( /^fr-?/i ) ) {
+		if ( this.props.userWpcomLang?.match( /^fr-?/i ) ) {
 			defaultValues.lang = 'FR';
 		}
 
@@ -149,7 +154,10 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 
 		this.props.updateContactDetailsCache( { ...newContactDetails } );
-		this.props.onContactDetailsChange?.( { ...newContactDetails } );
+
+		if ( this.props.isManaged ) {
+			this.props.onContactDetailsChange?.( { ...newContactDetails } );
+		}
 	};
 
 	needsOrganization() {
@@ -157,7 +165,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	}
 
 	organizationFieldIsValid() {
-		return isEmpty( this.getOrganizationErrorMessage() );
+		return this.needsOrganization() ? isEmpty( this.getOrganizationErrorMessage() ) : true;
 	}
 
 	getOrganizationErrorMessage() {
@@ -170,6 +178,17 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 			);
 		}
 		return message;
+	}
+
+	getCiraAgreementAcceptedErrorMessage() {
+		if ( this.props.isManaged ) {
+			return (
+				this.props.contactDetailsValidationErrors?.extra?.ca?.ciraAgreementAccepted ??
+				this.props.translate( 'Required' )
+			);
+		}
+
+		return this.props.translate( 'Required' );
 	}
 
 	renderOrganizationField() {
@@ -240,7 +259,10 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 							} ) }
 						</span>
 						{ ciraAgreementAccepted || (
-							<FormInputValidation text={ translate( 'Required' ) } isError={ true } />
+							<FormInputValidation
+								text={ this.getCiraAgreementAcceptedErrorMessage() }
+								isError={ true }
+							/>
 						) }
 					</FormLabel>
 				</FormFieldset>
@@ -252,7 +274,17 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 }
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
+		if ( ownProps.isManaged ) {
+			return {
+				// Treat this like a managed component, except for userWpcomLang.
+				contactDetails: ownProps.contactDetails ?? {},
+				ccTldDetails: ownProps.ccTldDetails ?? {},
+				userWpcomLang: getCurrentUserLocale( state ),
+				contactDetailsValidationErrors: ownProps.contactDetailsValidationErrors ?? {},
+			};
+		}
+
 		const contactDetails = getContactDetailsCache( state );
 		return {
 			contactDetails,

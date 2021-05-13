@@ -10,20 +10,20 @@ import { get, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import EmptyContent from 'components/empty-content';
-import DocumentHead from 'components/data/document-head';
-import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
-import ModerateComment from 'components/data/moderate-comment';
-import Comment from 'my-sites/comments/comment';
-import CommentPermalink from 'my-sites/comment/comment-permalink';
-import CommentDeleteWarning from 'my-sites/comment/comment-delete-warning';
-import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { preventWidows } from 'lib/formatting';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSiteComment } from 'state/comments/selectors';
-import getSiteId from 'state/selectors/get-site-id';
+import Main from 'calypso/components/main';
+import EmptyContent from 'calypso/components/empty-content';
+import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteCommentsTree from 'calypso/components/data/query-site-comments-tree';
+import ModerateComment from 'calypso/components/data/moderate-comment';
+import Comment from 'calypso/my-sites/comments/comment';
+import CommentPermalink from 'calypso/my-sites/comment/comment-permalink';
+import CommentDeleteWarning from 'calypso/my-sites/comment/comment-delete-warning';
+import CommentListHeader from 'calypso/my-sites/comments/comment-list/comment-list-header';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { preventWidows } from 'calypso/lib/formatting';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getSiteComment } from 'calypso/state/comments/selectors';
+import getSiteId from 'calypso/state/selectors/get-site-id';
 
 /**
  * Style dependencies
@@ -102,7 +102,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const comment = getSiteComment( state, siteId, commentId );
 	const postId = get( comment, 'post.ID' );
 
-	const canModerateComments = canCurrentUser( state, siteId, 'moderate_comments' ) !== false;
+	const canModerateComments = canCurrentUser( state, siteId, 'moderate_comments' );
 	const hasPermalink = includes( [ 'approved', 'unapproved' ], get( comment, 'status' ) );
 
 	return {

@@ -9,9 +9,9 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/i18n-mismatched-placeholders' ),
-	config = { env: { es6: true } }, // support for string templates
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require( '../../../lib/rules/i18n-mismatched-placeholders' );
+const config = { env: { es6: true } }; // support for string templates
+const RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests

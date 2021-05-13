@@ -5,20 +5,22 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import ExternalLink from 'calypso/components/external-link';
+import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { localizeUrl } from 'lib/i18n-utils';
+} from 'calypso/state/analytics/actions';
+import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -26,39 +28,48 @@ import { localizeUrl } from 'lib/i18n-utils';
 import './style.scss';
 
 class InlineSupportLink extends Component {
+	state = {
+		shouldLazyLoadAlternates: false,
+	};
+
 	static propTypes = {
 		supportPostId: PropTypes.number,
 		supportLink: PropTypes.string,
 		showText: PropTypes.bool,
-		text: PropTypes.string,
 		showIcon: PropTypes.bool,
 		iconSize: PropTypes.number,
 		tracksEvent: PropTypes.string,
 		tracksOptions: PropTypes.object,
 		statsGroup: PropTypes.string,
 		statsName: PropTypes.string,
+		localeSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
 		supportPostId: null,
 		supportLink: null,
 		showText: true,
-		text: null,
 		showIcon: true,
 		iconSize: 14,
+	};
+
+	loadAlternates = () => {
+		this.setState( { shouldLazyLoadAlternates: true } );
 	};
 
 	render() {
 		const {
 			showText,
-			text,
 			supportPostId,
 			supportLink,
 			showIcon,
 			iconSize,
 			translate,
 			openDialog,
+			children,
+			localeSlug,
 		} = this.props;
+		const { shouldLazyLoadAlternates } = this.state;
 
 		if ( ! supportPostId && ! supportLink ) {
 			return null;
@@ -71,21 +82,49 @@ class InlineSupportLink extends Component {
 			iconSize,
 		};
 
+		const text = children ? children : translate( 'Learn more' );
+		let content = (
+			<>
+				{ showText && text }
+				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
+			</>
+		);
+		/* Prevent widows, sometimes:
+			No  Text, No Icon  = Widow not possible
+			Yes Text, No Icon  = Widow possible
+			No  Text, Yes Icon = Widow not possible
+			Yes Text, Yes Icon = Widow possible
+		*/
+		if ( showText ) {
+			content = <span className="inline-support-link__nowrap">{ content }</span>;
+		}
+
 		return (
 			<LinkComponent
 				className="inline-support-link"
 				href={ url }
 				onClick={ openDialog }
+				onMouseEnter={
+					! isDefaultLocale( localeSlug ) && ! shouldLazyLoadAlternates
+						? this.loadAlternates
+						: undefined
+				}
 				target="_blank"
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
 			>
-				{ showText && ( text || translate( 'Learn more' ) ) }
-				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
+				{ shouldLazyLoadAlternates && <QuerySupportArticleAlternates postId={ supportPostId } /> }
+				{ content }
 			</LinkComponent>
 		);
 	}
 }
+
+const mapStateToProps = ( state ) => {
+	return {
+		localeSlug: getCurrentLocaleSlug( state ),
+	};
+};
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {
 	const {
@@ -124,4 +163,4 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	};
 };
 
-export default connect( null, mapDispatchToProps )( localize( InlineSupportLink ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineSupportLink ) );

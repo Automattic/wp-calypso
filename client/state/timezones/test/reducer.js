@@ -9,7 +9,8 @@ import deepFreeze from 'deep-freeze';
  */
 import { timezonesReceive } from '../actions';
 import timezonesReducer, { byContinents, labels, rawOffsets } from '../reducer';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { serialize, deserialize } from 'calypso/state/utils';
 
 describe( 'reducer', () => {
 	let sandbox;
@@ -87,9 +88,8 @@ describe( 'reducer', () => {
 			};
 			deepFreeze( initialState );
 
-			const action = { type: 'SERIALIZE' };
 			const expectedState = initialState;
-			const newState = rawOffsets( initialState, action );
+			const newState = serialize( rawOffsets, initialState );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -102,21 +102,20 @@ describe( 'reducer', () => {
 			};
 			deepFreeze( initialState );
 
-			const action = { type: 'DESERIALIZE' };
 			const expectedState = initialState;
-			const newState = rawOffsets( initialState, action );
+			const newState = deserialize( rawOffsets, initialState );
 			expect( newState ).to.eql( expectedState );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
 			const initialStateONE = { rawOffsets: { foo: 'bar' } };
 			deepFreeze( initialStateONE );
-			const newStateONE = rawOffsets( initialStateONE, { type: 'DESERIALIZE' } );
+			const newStateONE = deserialize( rawOffsets, initialStateONE );
 
 			// 'UTC' shouldn't be allowed either.
 			const initialStateTWO = { rawOffsets: { UTC: 'UTC' } };
 			deepFreeze( initialStateTWO );
-			const newStateTWO = rawOffsets( initialStateTWO, { type: 'DESERIALIZE' } );
+			const newStateTWO = deserialize( rawOffsets, initialStateTWO );
 
 			expect( newStateONE ).to.eql( {} );
 			expect( newStateTWO ).to.eql( {} );
@@ -184,9 +183,8 @@ describe( 'reducer', () => {
 			};
 			deepFreeze( initialState );
 
-			const action = { type: 'SERIALIZE' };
 			const expectedState = initialState;
-			const newState = labels( initialState, action );
+			const newState = serialize( labels, initialState );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -199,16 +197,15 @@ describe( 'reducer', () => {
 			};
 			deepFreeze( initialState );
 
-			const action = { type: 'DESERIALIZE' };
 			const expectedState = initialState;
-			const newState = labels( initialState, action );
+			const newState = deserialize( labels, initialState );
 			expect( newState ).to.eql( expectedState );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
 			const initialStateONE = { labels: { foo: 'bar' } };
 			deepFreeze( initialStateONE );
-			const newStateONE = labels( initialStateONE, { type: 'DESERIALIZE' } );
+			const newStateONE = deserialize( labels, initialStateONE );
 			expect( newStateONE ).to.eql( {} );
 		} );
 	} );
@@ -273,9 +270,8 @@ describe( 'reducer', () => {
 			};
 			deepFreeze( initialState );
 
-			const action = { type: 'SERIALIZE' };
 			const expectedState = initialState;
-			const newState = byContinents( initialState, action );
+			const newState = serialize( byContinents, initialState );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -288,16 +284,15 @@ describe( 'reducer', () => {
 			};
 			deepFreeze( initialState );
 
-			const action = { type: 'DESERIALIZE' };
 			const expectedState = initialState;
-			const newState = byContinents( initialState, action );
+			const newState = deserialize( byContinents, initialState );
 			expect( newState ).to.eql( expectedState );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
 			const initialStateONE = { byContinents: { foo: 'bar' } };
 			deepFreeze( initialStateONE );
-			const newStateONE = byContinents( initialStateONE, { type: 'DESERIALIZE' } );
+			const newStateONE = deserialize( byContinents, initialStateONE );
 			expect( newStateONE ).to.eql( {} );
 		} );
 	} );

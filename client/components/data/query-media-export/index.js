@@ -8,8 +8,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestMediaExport } from 'state/exporter/actions';
-import getMediaExportUrl from 'state/selectors/get-media-export-url';
+import { requestMediaExport } from 'calypso/state/exporter/actions';
+import getMediaExportUrl from 'calypso/state/selectors/get-media-export-url';
 
 class QueryMediaExport extends Component {
 	static propTypes = {

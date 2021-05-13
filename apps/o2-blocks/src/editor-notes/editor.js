@@ -8,7 +8,7 @@ import './editor.scss';
 
 const attributes = {
 	notes: {
-		type: 'array',
+		type: 'string',
 	},
 };
 

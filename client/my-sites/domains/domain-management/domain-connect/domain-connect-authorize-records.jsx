@@ -91,10 +91,10 @@ class DomainConnectAuthorizeRecords extends Component {
 	};
 
 	render() {
-		const { dnsTemplateRecords, isPlaceholder, translate } = this.props,
-			showRecordsLinkText = this.state.recordsVisible
-				? translate( 'Hide Changes.' )
-				: translate( 'View Changes.' );
+		const { dnsTemplateRecords, isPlaceholder, translate } = this.props;
+		const showRecordsLinkText = this.state.recordsVisible
+			? translate( 'Hide Changes.' )
+			: translate( 'View Changes.' );
 
 		if ( isPlaceholder ) {
 			return this.placeholder();

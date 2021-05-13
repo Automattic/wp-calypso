@@ -11,24 +11,28 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import WordAdsEarnings from 'my-sites/stats/wordads/earnings';
-import AdsSettings from 'my-sites/earn/ads/form-settings';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
+import AdsSettings from 'calypso/my-sites/earn/ads/form-settings';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
 import Home from './home';
 import AdsWrapper from './ads/wrapper';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
 import ReferAFriendSection from './refer-a-friend';
-import { canAccessAds } from 'lib/ads/utils';
+import { canAccessAds } from 'calypso/lib/ads/utils';
 
 class EarningsMain extends Component {
 	static propTypes = {
@@ -124,8 +128,7 @@ class EarningsMain extends Component {
 
 		switch ( this.props.section ) {
 			case 'payments':
-				return translate( 'Recurring Payments' );
-
+				return translate( 'Payments' );
 			case 'ads-earnings':
 			case 'ads-settings':
 				return translate( 'Ads' );
@@ -143,7 +146,7 @@ class EarningsMain extends Component {
 	 *
 	 * @returns {string} Path to Earn home. Has site slug append if it exists.
 	 */
-	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '') ;
+	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '' );
 
 	getHeaderCake = () => {
 		const headerText = this.getHeaderText();
@@ -188,7 +191,7 @@ class EarningsMain extends Component {
 		};
 
 		return (
-			<Main className="earn is-wide-layout">
+			<Main wideLayout={ true } className="earn">
 				<PageViewTracker
 					path={ section ? `/earn/${ section }/:site` : `/earn/:site` }
 					title={ `${ adsProgramName } ${ capitalize( section ) }` }
@@ -196,8 +199,10 @@ class EarningsMain extends Component {
 				<DocumentHead title={ layoutTitles[ section ] } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="earn__page-header"
 					headerText={ translate( 'Earn' ) }
+					subHeaderText={ translate( 'Explore tools to earn money with your site.' ) }
 					align="left"
 				/>
 				{ this.getHeaderCake() }

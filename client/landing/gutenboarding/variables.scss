@@ -1,6 +1,5 @@
-// Reusable style variables
-$gutenboarding-header-height: 64px;
-$gutenboarding-heading-padding-desktop: 64px 0 80px;
-$gutenboarding-heading-padding-mobile: 44px 0 50px;
+@import '~@automattic/onboarding/styles/variables';
+
 $acquire-intent-transition-duration: 200ms;
 $acquire-intent-transition-algorithm: ease-in-out;
+$gutenboarding-header-height: 64px;

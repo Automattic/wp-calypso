@@ -2,39 +2,34 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useRef } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import config from 'config';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import EmptyContent from 'components/empty-content';
-import Main from 'components/main';
-import { preventWidows } from 'lib/formatting';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { canCurrentUserUseCustomerHome, getSiteOption } from 'state/sites/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
-import getSiteChecklist from 'state/selectors/get-site-checklist';
-import QuerySiteChecklist from 'components/data/query-site-checklist';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import QueryHomeLayout from 'components/data/query-home-layout';
-import { getHomeLayout } from 'state/selectors/get-home-layout';
-import Notices from 'my-sites/customer-home/locations/notices';
-import Upsells from 'my-sites/customer-home/locations/upsells';
-import Primary from 'my-sites/customer-home/locations/primary';
-import Secondary from 'my-sites/customer-home/locations/secondary';
-import Tertiary from 'my-sites/customer-home/locations/tertiary';
+import EmptyContent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
+import { preventWidows } from 'calypso/lib/formatting';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { canCurrentUserUseCustomerHome, getSiteOption } from 'calypso/state/sites/selectors';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
+import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import QueryHomeLayout from 'calypso/components/data/query-home-layout';
+import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
+import Primary from 'calypso/my-sites/customer-home/locations/primary';
+import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
+import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
+import { successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -43,15 +38,34 @@ import './style.scss';
 
 const Home = ( {
 	canUserUseCustomerHome,
-	checklistMode,
-	hasChecklistData,
-	displayChecklist,
+	isDev,
+	forcedView,
 	layout,
 	site,
 	siteId,
 	trackViewSiteAction,
+	noticeType,
+	shuffleViews,
 } ) => {
 	const translate = useTranslate();
+	const reduxDispatch = useDispatch();
+
+	const shouldShowNotice = Boolean( canUserUseCustomerHome && layout && noticeType );
+	const lastShownNotice = useRef( null );
+	useEffect( () => {
+		if ( ! shouldShowNotice || lastShownNotice.current === noticeType ) {
+			return;
+		}
+
+		if ( noticeType === 'purchase-success' ) {
+			lastShownNotice.current = noticeType;
+			const successMessage = translate( 'Your purchase has been completed!' );
+			reduxDispatch( successNotice( successMessage ) );
+			return;
+		}
+
+		return;
+	}, [ shouldShowNotice, translate, reduxDispatch, noticeType ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
@@ -63,61 +77,48 @@ const Home = ( {
 		);
 	}
 
+	const header = (
+		<div className="customer-home__heading">
+			<FormattedHeader
+				brandFont
+				headerText={ translate( 'My Home' ) }
+				subHeaderText={ translate( 'Your hub for posting, editing, and growing your site.' ) }
+				align="left"
+			/>
+			<div className="customer-home__view-site-button">
+				<Button href={ site.URL } onClick={ trackViewSiteAction }>
+					{ translate( 'Visit site' ) }
+				</Button>
+			</div>
+		</div>
+	);
+
 	return (
-		<Main
-			className={ classnames( 'customer-home__main', 'is-wide-layout', {
-				'is-experimental': config.isEnabled( 'home/experimental-layout' ),
-			} ) }
-		>
+		<Main wideLayout className="customer-home__main">
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-			{ siteId && <QueryHomeLayout siteId={ siteId } /> }
-			<SidebarNavigation />
-			<div className="customer-home__heading">
-				<FormattedHeader
-					headerText={ translate( 'My Home' ) }
-					subHeaderText={ translate(
-						'Your home base for posting, editing, and growing your site.'
-					) }
-					align="left"
+			{ siteId && (
+				<QueryHomeLayout
+					siteId={ siteId }
+					isDev={ isDev }
+					forcedView={ forcedView }
+					shuffle={ shuffleViews }
 				/>
-				<div className="customer-home__view-site-button">
-					<Button href={ site.URL } onClick={ trackViewSiteAction }>
-						{ translate( 'View site' ) }
-					</Button>
-				</div>
-			</div>
+			) }
+			<SidebarNavigation />
+			{ header }
 			{ layout ? (
 				<>
-					<Notices
-						cards={ layout.notices }
-						checklistMode={ checklistMode }
-						displayChecklist={ displayChecklist }
-					/>
-					{ config.isEnabled( 'home/experimental-layout' ) ? (
-						<Primary cards={ layout.primary } checklistMode={ checklistMode } />
-					) : (
-						<Upsells cards={ layout.upsells } />
-					) }
-					{ hasChecklistData && (
-						<div className="customer-home__layout">
-							<div className="customer-home__layout-col customer-home__layout-col-left">
-								{ config.isEnabled( 'home/experimental-layout' ) ? (
-									<Secondary cards={ layout.secondary } />
-								) : (
-									<Primary cards={ layout.primary } checklistMode={ checklistMode } />
-								) }
-							</div>
-							<div className="customer-home__layout-col customer-home__layout-col-right">
-								{ config.isEnabled( 'home/experimental-layout' ) ? (
-									<Tertiary cards={ layout.tertiary } />
-								) : (
-									<Secondary cards={ layout.secondary } />
-								) }
-							</div>
+					<Primary cards={ layout.primary } />
+					<div className="customer-home__layout">
+						<div className="customer-home__layout-col customer-home__layout-col-left">
+							<Secondary cards={ layout.secondary } />
 						</div>
-					) }
+						<div className="customer-home__layout-col customer-home__layout-col-right">
+							<Tertiary cards={ layout.tertiary } />
+						</div>
+					</div>
 				</>
 			) : (
 				<div className="customer-home__loading-placeholder"></div>
@@ -127,35 +128,28 @@ const Home = ( {
 };
 
 Home.propTypes = {
-	checklistMode: PropTypes.string,
+	canUserUseCustomerHome: PropTypes.bool.isRequired,
+	isDev: PropTypes.bool,
+	isStaticHomePage: PropTypes.bool.isRequired,
+	forcedView: PropTypes.string,
 	layout: PropTypes.object,
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
-	siteSlug: PropTypes.string.isRequired,
-	canUserUseCustomerHome: PropTypes.bool.isRequired,
-	hasChecklistData: PropTypes.bool.isRequired,
 	trackViewSiteAction: PropTypes.func.isRequired,
-	isStaticHomePage: PropTypes.bool.isRequired,
+	shuffleViews: PropTypes.bool,
 };
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const siteChecklist = getSiteChecklist( state, siteId );
-	const hasChecklistData = null !== siteChecklist && Array.isArray( siteChecklist.tasks );
-	const user = getCurrentUser( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 	const layout = getHomeLayout( state, siteId );
 
 	return {
 		site: getSelectedSite( state ),
 		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
-		hasChecklistData,
 		isStaticHomePage:
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
-		displayChecklist: layout?.primary?.includes( 'home-primary-checklist-site-setup' ),
-		user,
 		layout,
 	};
 };

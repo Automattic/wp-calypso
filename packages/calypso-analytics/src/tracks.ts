@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, includes, isObjectLike, isUndefined, omitBy, times } from 'lodash';
+import { includes, omitBy, times } from 'lodash';
 import cookie from 'cookie';
 import { EventEmitter } from 'events';
 import { loadScript } from '@automattic/load-script';
@@ -36,12 +36,15 @@ const EVENT_NAME_EXCEPTIONS = [
 	'wcadmin_storeprofiler_login_jetpack_account',
 	'wcadmin_storeprofiler_payment_login',
 	'wcadmin_storeprofiler_payment_create_account',
+	// Checkout
+	'calypso_checkout_switch_to_p_24',
+	'calypso_checkout_composite_p24_submit_clicked',
 ];
 let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 if ( typeof document !== 'undefined' ) {
-	_loadTracksResult = loadScript( '//stats.wp.com/w.js?61' );
+	_loadTracksResult = loadScript( '//stats.wp.com/w.js?63' );
 }
 
 function createRandomId( randomBytesLength = 9 ): string {
@@ -77,7 +80,8 @@ function checkForBlockedTracks(): Promise< void > {
 	// Calling this function from `initialize` ensures current user is set.
 	// This detects stats blocking, and identifies by `getCurrentUser()`, URL, or cookie.
 	return _loadTracksResult.catch( () => {
-		let _ut, _ui;
+		let _ut;
+		let _ui;
 		const currentUser = getCurrentUser();
 		if ( currentUser && currentUser.ID ) {
 			_ut = 'wpcom:user_id';
@@ -102,6 +106,13 @@ function checkForBlockedTracks(): Promise< void > {
 			'/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui )
 		);
 	} );
+}
+
+/**
+ * Returns a promise that marks whether and when the external Tracks script loads.
+ */
+export function getTracksLoadPromise() {
+	return _loadTracksResult;
 }
 
 export function pushEventToTracksQueue( args: Array< any > ) {
@@ -164,7 +175,7 @@ export function identifyUser( userData: any ): any {
 	pushEventToTracksQueue( [ 'identifyUser', currentUser.ID, currentUser.username ] );
 }
 
-export function recordTracksEvent( eventName: string, eventProperties: any ) {
+export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	eventProperties = eventProperties || {};
 
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
@@ -181,7 +192,7 @@ export function recordTracksEvent( eventName: string, eventProperties: any ) {
 		}
 
 		for ( const key in eventProperties ) {
-			if ( isObjectLike( eventProperties[ key ] ) ) {
+			if ( eventProperties[ key ] !== null && typeof eventProperties[ key ] === 'object' ) {
 				const errorMessage =
 					`Tracks: Unable to record event "${ eventName }" because nested ` +
 					`properties are not supported by Tracks. Check '${ key }' on`;
@@ -225,7 +236,7 @@ export function recordTracksEvent( eventName: string, eventProperties: any ) {
 
 	// Remove properties that have an undefined value
 	// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-	eventProperties = omitBy( eventProperties, isUndefined );
+	eventProperties = omitBy( eventProperties, ( prop ) => typeof prop === 'undefined' );
 
 	debug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
@@ -244,12 +255,12 @@ export function recordTracksPageView( urlPath: string, params: any ) {
 	// Add calypso build timestamp if set
 	const build_timestamp = typeof window !== 'undefined' && window.BUILD_TIMESTAMP;
 	if ( build_timestamp ) {
-		eventProperties = assign( eventProperties, { build_timestamp } );
+		eventProperties = Object.assign( eventProperties, { build_timestamp } );
 	}
 
 	// add optional path params
 	if ( params ) {
-		eventProperties = assign( eventProperties, params );
+		eventProperties = Object.assign( eventProperties, params );
 	}
 
 	// Record all `utm` marketing parameters as event properties on the page view event
@@ -261,7 +272,7 @@ export function recordTracksPageView( urlPath: string, params: any ) {
 			Array.from( urlParams.entries() ).filter( ( [ key ] ) => key.startsWith( 'utm_' ) );
 		const utmParams = utmParamEntries ? Object.fromEntries( utmParamEntries ) : {};
 
-		eventProperties = assign( eventProperties, utmParams );
+		eventProperties = Object.assign( eventProperties, utmParams );
 	}
 
 	recordTracksEvent( 'calypso_page_view', eventProperties );

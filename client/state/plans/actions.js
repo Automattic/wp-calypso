@@ -6,8 +6,10 @@ import {
 	PLANS_REQUEST,
 	PLANS_REQUEST_SUCCESS,
 	PLANS_REQUEST_FAILURE,
-} from 'state/action-types';
-import 'state/data-layer/wpcom/plans';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/data-layer/wpcom/plans';
+import 'calypso/state/plans/init';
 
 /**
  * Action creator function: RECEIVE

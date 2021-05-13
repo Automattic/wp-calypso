@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
-
 import { getSerializedDomainsSuggestionsQuery } from './utils';
+
+import 'calypso/state/domains/init';
 
 /**
  * Returns domains suggestions information for a query.

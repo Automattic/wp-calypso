@@ -6,7 +6,6 @@
  * External dependencies
  */
 import page from 'page';
-import { noop } from 'lodash';
 import React, { ReactChild } from 'react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
@@ -31,6 +30,9 @@ function renderWithStore( element: ReactChild, initialState: object ) {
 }
 
 global.document = {};
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 function createState( {
 	holds = [],

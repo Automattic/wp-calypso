@@ -1,25 +1,27 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * me.twoStep
  */
 describe( 'wpcom.me.twoStep', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var me = wpcom.me();
-	var twoStep = me.twoStep();
+	const wpcom = util.wpcom();
+	const me = wpcom.me();
+	const twoStep = me.twoStep();
 
 	describe( 'wpcom.me.twoStep.get', function () {
-		it( "should get current user' two-step auth configuration", function ( done ) {
-			twoStep.get( ( err, data ) => {
-				if ( err ) throw err;
+		it( "should get current user' two-step auth configuration", function () {
+			return new Promise( ( done ) => {
+				twoStep.get( ( err, data ) => {
+					if ( err ) throw err;
 
-				assert.ok( data );
-				done();
+					assert.ok( data );
+					done();
+				} );
 			} );
 		} );
 	} );

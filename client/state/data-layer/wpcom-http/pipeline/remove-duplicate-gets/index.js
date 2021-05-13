@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { compact, get, head, isEqual, sortBy, toPairs, unionWith } from 'lodash';
+import { compact, get, head, isEqual, sortBy } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:data-layer:remove-duplicate-gets' );
 
@@ -42,16 +42,29 @@ export const clearQueue = () => {
 const isGetRequest = ( request ) => 'GET' === get( request, 'method', '' ).toUpperCase();
 
 /**
+ * Returns all elements that exist in any of the two arrays at least once,
+ *
+ * @param {Array} a First array
+ * @param {Array} b Second array
+ * @returns {Array} Array of elements that exist in at least one of the arrays
+ */
+const unionWith = ( a = [], b = [] ) => [
+	...a,
+	...b.filter( ( x ) => a.findIndex( ( y ) => isEqual( x, y ) ) === -1 ),
+];
+
+/**
  * Generate a deterministic key for comparing request descriptions
  *
- * @param {string} path API endpoint path
- * @param {string} apiNamespace used for endpoint versioning
- * @param {string} apiVersion used for endpoint versioning
- * @param {object<string, *>} query GET query string
+ * @param {object}            requestOptions              Request options
+ * @param {string}            requestOptions.path         API endpoint path
+ * @param {string}            requestOptions.apiNamespace used for endpoint versioning
+ * @param {string}            requestOptions.apiVersion   used for endpoint versioning
+ * @param {object<string, *>} requestOptions.query        GET query string
  * @returns {string} unique key up to duplicate request descriptions
  */
-export const buildKey = ( { path, apiNamespace, apiVersion, query } ) =>
-	JSON.stringify( [ path, apiNamespace, apiVersion, sortBy( toPairs( query ), head ) ] );
+export const buildKey = ( { path, apiNamespace, apiVersion, query = {} } ) =>
+	JSON.stringify( [ path, apiNamespace, apiVersion, sortBy( Object.entries( query ), head ) ] );
 
 /**
  * Joins a responder action into a unique list of responder actions
@@ -61,8 +74,8 @@ export const buildKey = ( { path, apiNamespace, apiVersion, query } ) =>
  * @returns {object<string, object[]>} union of existing list and new item
  */
 export const addResponder = ( list, item ) => ( {
-	failures: unionWith( list.failures, compact( [ item.onFailure ] ), isEqual ),
-	successes: unionWith( list.successes, compact( [ item.onSuccess ] ), isEqual ),
+	failures: unionWith( list.failures, compact( [ item.onFailure ] ) ),
+	successes: unionWith( list.successes, compact( [ item.onSuccess ] ) ),
 } );
 
 /**
@@ -71,8 +84,8 @@ export const addResponder = ( list, item ) => ( {
  *
  * @see applyDuplicateHandlers
  *
- * @param {OutboundData} outboundData request info
- * @returns {OutboundData} filtered request info
+ * @param {object} outboundData request info
+ * @returns {object} filtered request info
  */
 export const removeDuplicateGets = ( outboundData ) => {
 	const { nextRequest } = outboundData;
@@ -102,8 +115,8 @@ export const removeDuplicateGets = ( outboundData ) => {
  *
  * @see removeDuplicateGets
  *
- * @param {InboundData} inboundData request info
- * @returns {InboundData} processed request info
+ * @param {object} inboundData request info
+ * @returns {object} processed request info
  */
 export const applyDuplicatesHandlers = ( inboundData ) => {
 	const { originalRequest } = inboundData;
@@ -127,8 +140,8 @@ export const applyDuplicatesHandlers = ( inboundData ) => {
 	requestQueue.delete( key );
 
 	const responders = {
-		failures: unionWith( inboundData.failures || [], queued.failures, isEqual ),
-		successes: unionWith( inboundData.successes || [], queued.successes, isEqual ),
+		failures: unionWith( inboundData.failures || [], queued.failures ),
+		successes: unionWith( inboundData.successes || [], queued.successes ),
 	};
 
 	return { ...inboundData, ...responders };

@@ -1,6 +1,6 @@
 .reader-related-card__heading {
 	color: var( --color-text-subtle );
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	margin-bottom: 20px;
 	display: -webkit-box;
@@ -38,7 +38,7 @@
 	margin: 0;
 	padding: 0;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 	}
 }
@@ -52,7 +52,7 @@
 	&:first-child {
 		margin-right: 10px;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			margin-right: 10px;
 		}
 	}
@@ -60,14 +60,14 @@
 	&:last-child {
 		margin-left: 10px;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			margin-left: 10px;
 		}
 	}
 
 	&:first-child,
 	&:last-child {
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			margin: 0 0 20px;
 		}
 	}
@@ -83,7 +83,7 @@
 	flex: 1 1 auto;
 	padding: 0;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: flex;
 		flex-direction: column;
 	}
@@ -129,7 +129,7 @@
 		}
 
 		.reader-related-card__excerpt {
-			font-size: 15px;
+			font-size: $font-body;
 		}
 	}
 
@@ -142,7 +142,7 @@
 	border-top: 1px solid var( --color-neutral-10 );
 	margin-top: 30px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		margin-top: 0;
 	}
 
@@ -172,7 +172,7 @@
 		.reader-related-card__post {
 			max-height: 17px * 1.6 * 4;
 
-			@include breakpoint( '>480px' ) {
+			@include breakpoint-deprecated( '>480px' ) {
 				max-height: 17px * 1.6 * 7.5;
 			}
 		}
@@ -219,7 +219,7 @@
 	display: flex;
 	flex: 1 1 auto;
 	flex-direction: column;
-	font-size: 14px;
+	font-size: $font-body-small;
 	margin-top: 3px;
 	min-height: 38px;
 }
@@ -236,7 +236,7 @@
 .reader-related-card__byline-site {
 	color: var( --color-accent );
 	display: flex;
-	font-weight: 500;
+	font-weight: 600;
 	max-height: 14px * 1.75;
 	overflow: hidden;
 	overflow-wrap: break-word;
@@ -253,7 +253,7 @@
 	border: 1px solid var( --color-neutral-0 );
 	min-height: 78px;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		min-height: 153px;
 	}
 }
@@ -283,7 +283,7 @@
 	}
 
 	// Clamp to 3 lines on larger viewports
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		overflow: hidden;
 		max-height: 17px * 1.48 * 3;
 		word-wrap: break-word;
@@ -301,7 +301,7 @@
 
 	&.post-excerpt {
 		display: -webkit-box;
-		font-size: 15px;
+		font-size: $font-body;
 		line-height: 25px;
 		max-height: none;
 		overflow: hidden;
@@ -329,20 +329,20 @@
 		fill: var( --color-primary );
 	}
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		min-width: 20px;
 	}
 
 	.follow-button__label {
 		color: var( --color-primary );
 
-		@include breakpoint( '<960px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			display: none;
 		}
 	}
 
 	.gridicon {
-		@include breakpoint( '<960px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			padding-right: 0;
 		}
 	}

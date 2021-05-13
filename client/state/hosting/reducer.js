@@ -1,12 +1,13 @@
 /**
  * Internal dependencies
  */
-import { keyedReducer, combineReducers } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	HOSTING_PHP_VERSION_SET,
 	HOSTING_SFTP_USER_UPDATE,
 	HOSTING_SFTP_USERS_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export const sftpUsers = ( state = {}, { type, users } ) => {
 	if ( type === HOSTING_SFTP_USERS_SET ) {
@@ -40,4 +41,5 @@ const atomicHostingReducer = combineReducers( {
 	sftpUsers,
 } );
 
-export default keyedReducer( 'siteId', atomicHostingReducer );
+const reducer = keyedReducer( 'siteId', atomicHostingReducer );
+export default withStorageKey( 'atomicHosting', reducer );

@@ -19,3 +19,6 @@ export const isRequestingFeed = ( state, siteId, zoneId ) =>
  */
 export const getFeed = ( state, siteId, zoneId ) =>
 	get( getFeedsState( state ), [ 'items', siteId, zoneId ], [] );
+
+export const isSavingFeed = ( state, siteId, zoneId ) =>
+	get( getFeedsState( state ), [ 'saving', siteId, zoneId ], false );

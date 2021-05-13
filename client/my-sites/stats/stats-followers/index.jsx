@@ -17,16 +17,16 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsList from '../stats-list';
 import ErrorPanel from '../stats-error';
 import { Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import SectionHeader from 'calypso/components/section-header';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 	hasSiteStatsQueryFailed,
-} from 'state/stats/lists/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+} from 'calypso/state/stats/lists/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class StatModuleFollowers extends Component {
 	state = {
@@ -66,11 +66,11 @@ class StatModuleFollowers extends Component {
 		const options = [
 			{
 				value: 'wpcom-followers',
-				label: this.props.translate( 'WordPress.com Followers' ),
+				label: this.props.translate( 'WordPress.com followers' ),
 			},
 			{
 				value: 'email-followers',
-				label: this.props.translate( 'Email Followers' ),
+				label: this.props.translate( 'Email followers' ),
 			},
 		];
 
@@ -138,18 +138,14 @@ class StatModuleFollowers extends Component {
 								<div className="module-content-text module-content-text-stat">
 									{ wpcomData && !! wpcomData.total_wpcom && (
 										<p>
-											{ translate( 'Total WordPress.com Followers' ) }:{ ' ' }
+											{ translate( 'Total WordPress.com followers' ) }:{ ' ' }
 											{ numberFormat( wpcomData.total_wpcom ) }
 										</p>
 									) }
 								</div>
 								<StatsListLegend value={ translate( 'Since' ) } label={ translate( 'Follower' ) } />
 								{ hasWpcomFollowers && (
-									<StatsList
-										moduleName="wpcomFollowers"
-										data={ wpcomData.subscribers }
-										followList={ this.props.followList }
-									/>
+									<StatsList moduleName="wpcomFollowers" data={ wpcomData.subscribers } />
 								) }
 								{ hasWpcomQueryFailed && <ErrorPanel className="is-error" /> }
 							</div>
@@ -177,7 +173,7 @@ class StatModuleFollowers extends Component {
 							( emailData && emailData.subscribers.length !== emailData.total_email ) ) && (
 							<div key="view-all" className="module-expand">
 								<a href={ summaryPageLink }>
-									{ translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }
+									{ translate( 'View all', { context: 'Stats: Button label to expand a panel' } ) }
 									<span className="right" />
 								</a>
 							</div>

@@ -14,11 +14,11 @@ import { map } from 'lodash';
 import * as MediaUtils from '../utils';
 import { ValidationErrors as MediaValidationErrors } from '../constants';
 
-jest.mock( 'lib/impure-lodash', () => ( {
-	uniqueId: () => 'media-13',
+jest.mock( 'uuid', () => ( {
+	v4: () => 'someid',
 } ) );
 
-const UNIQUEID = 'media-13';
+const UNIQUEID = 'media-someid';
 const DUMMY_FILENAME = 'test.jpg';
 const DUMMY_FILE_BLOB = {
 	fileContents: {

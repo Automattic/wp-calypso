@@ -7,6 +7,7 @@
 import * as React from 'react';
 
 declare namespace i18nCalypso {
+	type LocaleData = Record< string, any >;
 	type NormalizedTranslateArgs =
 		| ( TranslateOptions & { original: string } )
 		| ( TranslateOptions & {
@@ -65,7 +66,11 @@ declare namespace i18nCalypso {
 		options: TranslateOptions & { count: number }
 	): TranslateResult;
 
+	export function setLocale( localeData: LocaleData ): void;
+	export function addTranslations( localeData: LocaleData ): void;
 	export function hasTranslation( original: string ): boolean;
+
+	export function configure( options: Record< string, any > ): void;
 
 	export interface NumberFormatOptions {
 		decimals?: number;
@@ -98,12 +103,27 @@ declare namespace i18nCalypso {
 
 	export function useTranslate(): typeof translate;
 
+	export function reRenderTranslations(): void;
+
 	export type TranslateHook = (
 		translation: TranslateResult,
 		options: NormalizedTranslateArgs
 	) => TranslateResult;
-
 	export function registerTranslateHook( hook: TranslateHook ): void;
+
+	export type ComponentUpdateHook = ( ...args: any ) => any;
+	export function registerComponentUpdateHook( hook: ComponentUpdateHook ): void;
+
+	export function getLocale(): LocaleData;
+	export function getLocaleSlug(): string | null;
+	export function getLocaleVariant(): string | undefined;
+	export function isRtl(): boolean;
+	export const defaultLocaleSlug: string;
+
+	export type EventListener = ( ...payload: any ) => any;
+	export function on( eventName: string, listener: EventListener ): void;
+	export function off( eventName: string, listener: EventListener ): void;
+	export function emit( eventName: string, ...payload: any ): void;
 }
 
 export = i18nCalypso;

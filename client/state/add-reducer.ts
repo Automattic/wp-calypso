@@ -6,8 +6,8 @@ import { Reducer, Store } from 'redux';
 /**
  * Internal Dependencies
  */
-import { APPLY_STORED_STATE } from 'state/action-types';
-import { getStateFromCache } from 'state/initial-state';
+import { APPLY_STORED_STATE } from 'calypso/state/action-types';
+import { getStateFromCache } from 'calypso/state/initial-state';
 
 const initializations = new Map< string, boolean >();
 const reducers = new Map< string, Reducer >();

@@ -2,17 +2,18 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import ButtonGroup from 'components/button-group';
-import { ScreenReaderText } from '@automattic/components';
+import { Button, ScreenReaderText } from '@automattic/components';
+import ButtonGroup from 'calypso/components/button-group';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 interface Props {
 	startDate: Date | Moment | null | undefined;

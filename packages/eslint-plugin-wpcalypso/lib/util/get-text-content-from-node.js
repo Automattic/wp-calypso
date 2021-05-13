@@ -23,7 +23,8 @@ function getTextContentFromNode( node ) {
 	// Literal strings => node.value
 	// We don't need to handle TeplateLiterals with multiple quasis, because
 	// we don't support expressions in literals.
-	let left, right;
+	let left;
+	let right;
 
 	if ( node.type === 'BinaryExpression' && node.operator === '+' ) {
 		left = getTextContentFromNode( node.left );
@@ -38,7 +39,7 @@ function getTextContentFromNode( node ) {
 		return node.value;
 	}
 
-	// template literals are specced at https://github.com/babel/babylon/blob/master/ast/spec.md
+	// template literals are specced at https://github.com/babel/babylon/blob/HEAD/ast/spec.md
 	if ( node.type === 'TemplateLiteral' ) {
 		return node.quasis
 			.map( function ( quasis ) {

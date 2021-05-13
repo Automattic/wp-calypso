@@ -10,7 +10,7 @@ body.is-section-jetpack-connect .site-topic__content {
 		position: absolute;
 		width: 100%;
 		z-index: 1000; // I know, I know...
-		border-radius: 4px;
+		border-radius: 2px;
 		background: var( --color-surface );
 		@include elevation ( 2dp );
 	}
@@ -25,12 +25,12 @@ body.is-section-jetpack-connect .site-topic__content {
 		padding: 10px 90px 12px 42px;
 
 		// Trying out a rounded input
-		border-radius: 4px;
+		border-radius: 2px;
 
 		// No need for a border here
 		border: none;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			// On smaller screens the buttons get bigger,
 			// so this input needs to get bigger, too.
 			padding: 15px 100px 15px 42px;
@@ -80,7 +80,7 @@ body.is-section-jetpack-connect .site-topic__content {
 			width: 24px;
 		}
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			padding: 12px;
 		}
 	}

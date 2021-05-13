@@ -5,13 +5,13 @@
 /**
  * Internal Dependencies
  */
-import { unlike, addLiker } from 'state/posts/likes/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { POST_LIKE } from 'state/action-types';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { unlike, addLiker } from 'calypso/state/posts/likes/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { POST_LIKE } from 'calypso/state/action-types';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const fetch = ( action ) => {
 	const query = {};

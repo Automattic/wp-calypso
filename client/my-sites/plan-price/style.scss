@@ -1,6 +1,6 @@
 .plan-price {
 	margin: 0;
-	font-size: 28px;
+	font-size: $font-title-large;
 	line-height: 1.5;
 	color: var( --color-neutral-70 );
 
@@ -16,8 +16,8 @@
 		vertical-align: super;
 	}
 
-	@include breakpoint( '<960px' ) {
-		font-size: 24px;
+	@include breakpoint-deprecated( '<960px' ) {
+		font-size: $font-title-medium;
 	}
 }
 
@@ -51,7 +51,7 @@
 .plan-price__fraction,
 .plan-price__tax-amount {
 	vertical-align: super;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }
 
 .plan-price.is-discounted .plan-price__currency-symbol {
@@ -74,4 +74,12 @@
 
 .plan-price__fraction {
 	font-weight: 600;
+}
+
+.plan-price__term {
+	display: inline-block;
+	font-size: 0.875rem;
+	text-align: left;
+	line-height: 1rem;
+	margin-left: 5px;
 }

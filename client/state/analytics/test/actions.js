@@ -18,7 +18,7 @@ import {
 	recordPageViewWithClientId,
 } from '../actions';
 
-import { ANALYTICS_MULTI_TRACK, ANALYTICS_STAT_BUMP } from 'state/action-types';
+import { ANALYTICS_MULTI_TRACK, ANALYTICS_STAT_BUMP } from 'calypso/state/action-types';
 
 describe( 'middleware', () => {
 	describe( 'actions', () => {
@@ -101,7 +101,7 @@ describe( 'middleware', () => {
 
 			const clientId = 123;
 			const getState = () => ( {
-				ui: { oauth2Clients: { currentClientId: clientId } },
+				oauth2Clients: { ui: { currentClientId: clientId } },
 			} );
 
 			thunk( dispatch, getState );
@@ -127,7 +127,7 @@ describe( 'middleware', () => {
 
 			const clientId = 123;
 			const getState = () => ( {
-				ui: { oauth2Clients: { currentClientId: clientId } },
+				oauth2Clients: { ui: { currentClientId: clientId } },
 			} );
 
 			thunk( dispatch, getState );

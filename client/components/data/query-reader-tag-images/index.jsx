@@ -1,17 +1,15 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { shouldRequestTagImages } from 'state/reader/tags/images/selectors';
-import { requestTagImages } from 'state/reader/tags/images/actions';
+import { shouldRequestTagImages } from 'calypso/state/reader/tags/images/selectors';
+import { requestTagImages } from 'calypso/state/reader/tags/images/actions';
 
 class QueryReaderTagImages extends Component {
 	UNSAFE_componentWillMount() {
@@ -50,12 +48,7 @@ export default connect(
 			shouldRequestTagImages: shouldRequestTagImages( state, ownProps.tag ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators(
-			{
-				requestTagImages,
-			},
-			dispatch
-		);
+	{
+		requestTagImages,
 	}
 )( QueryReaderTagImages );

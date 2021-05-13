@@ -1,0 +1,71 @@
+@import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' ); // Used for switch-sites icon.
+
+// Menu links
+.sidebar__jetpack-cloud {
+
+	.current-site__switch-sites .button.is-borderless .dashicons-before {
+		top: 15px;
+	}
+
+	.sidebar__menu-link {
+		padding-top: 14px;
+		padding-bottom: 14px;
+
+		.selected &,
+		.selected &:hover {
+			background-color: rgba( var( --color-sidebar-menu-selected-background-rgb ), 0.12 );
+		}
+	}
+
+	.sidebar__menu-link-text {
+		line-height: 1.2em;
+
+		@include breakpoint-deprecated( '<960px' ) {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+
+	// Expandables
+	.sidebar__menu.is-togglable {
+		.sidebar__heading {
+			padding-top: 15px;
+			padding-bottom: 15px;
+			line-height: 24px;
+		}
+
+		&.is-toggle-open {
+			.sidebar__heading {
+				background-color: var( --studio-white );
+			}
+		}
+	}
+
+	.sidebar__expandable-content {
+		.sidebar__menu-link {
+			padding-top: 10px;
+			padding-bottom: 10px;
+			font-weight: 400;
+		}
+	}
+
+	.sidebar__expandable-title .badge {
+		float: right;
+		font-weight: 400;
+	}
+
+	.sidebar__expandable-title > a {
+		display: block;
+		color: inherit;
+	}
+
+	// Footer
+	.sidebar__footer {
+		margin-top: auto;
+
+		.sidebar__menu-link {
+			border-top: 1px solid var( --color-sidebar-border );
+		}
+	}
+}

@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isRequestingSiteConnectionStatus from 'state/selectors/is-requesting-site-connection-status';
-import { requestConnectionStatus } from 'state/sites/connection/actions';
+import isRequestingSiteConnectionStatus from 'calypso/state/selectors/is-requesting-site-connection-status';
+import { requestConnectionStatus } from 'calypso/state/sites/connection/actions';
 
 class QuerySiteConnectionStatus extends Component {
 	static propTypes = {

@@ -14,9 +14,9 @@ import { Card } from '@automattic/components';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
-import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
-import ErrorPanel from 'my-sites/stats/stats-error';
+} from 'calypso/state/stats/lists/selectors';
+import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
+import ErrorPanel from 'calypso/my-sites/stats/stats-error';
 
 class StoreStatsModule extends Component {
 	static propTypes = {

@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { plansLink } from 'lib/plans';
+import { plansLink } from '@automattic/calypso-products';
 import { getCurrencyObject } from '@automattic/format-currency';
 
 /**

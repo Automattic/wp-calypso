@@ -1,0 +1,44 @@
+.ultimate-traffic-guide {
+	h1 {
+		font-size: $font-title-large;
+	}
+
+	h2 {
+		font-size: $font-title-medium;
+		margin-bottom: 1em;
+	}
+	&__placeholder {
+		margin-bottom: 1.5em;
+		&-animation {
+			animation: pulse-light 1.6s ease-in-out infinite;
+			background-color: var( --color-neutral-10 );
+			color: transparent;
+			min-height: $font-title-small;
+		}
+	}
+
+	&__header {
+		font-size: $font-title-medium;
+		text-align: center;
+		font-weight: 600;
+		line-height: 1.4;
+		margin-top: 0.5em;
+		margin-bottom: 1.4em;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			font-size: $font-title-small;
+		}
+	}
+
+	&__sub-header {
+		font-size: $font-title-small;
+		font-weight: 600;
+		line-height: 1.4;
+		margin-top: 0.5em;
+		margin-bottom: 1.4em;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			font-size: $font-title-small;
+		}
+	}
+}

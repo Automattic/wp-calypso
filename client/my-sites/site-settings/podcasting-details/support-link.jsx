@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import InlineSupportLink from 'components/inline-support-link';
-import { localizeUrl } from 'lib/i18n-utils';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 function PodcastingSupportLink( { showText, iconSize } ) {
 	const supportLink = localizeUrl( 'https://wordpress.com/support/audio/podcasting/' );

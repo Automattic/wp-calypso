@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { keyedReducer } from 'state/utils';
-import { SIGNUP_VERTICALS_SET } from 'state/action-types';
+import { keyedReducer } from 'calypso/state/utils';
+import { SIGNUP_VERTICALS_SET } from 'calypso/state/action-types';
 
 export default keyedReducer( 'siteType', ( state = null, action ) => {
 	if ( action.type === SIGNUP_VERTICALS_SET ) {

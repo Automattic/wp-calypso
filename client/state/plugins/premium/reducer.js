@@ -14,9 +14,8 @@ import {
 	PLUGIN_SETUP_CONFIGURE,
 	PLUGIN_SETUP_FINISH,
 	PLUGIN_SETUP_ERROR,
-	SERIALIZE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { pluginInstructionSchema } from './schema';
 
 /*
@@ -51,7 +50,7 @@ export function hasRequested( state = {}, action ) {
  * Tracks all known premium plugin objects (plugin meta and install status),
  * indexed by site ID.
  */
-export const plugins = withSchemaValidation( pluginInstructionSchema, ( state = {}, action ) => {
+const pluginsReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PLUGIN_SETUP_INSTRUCTIONS_RECEIVE:
 			return Object.assign( {}, state, { [ action.siteId ]: action.data } );
@@ -66,20 +65,38 @@ export const plugins = withSchemaValidation( pluginInstructionSchema, ( state = 
 				} );
 			}
 			return state;
-		case SERIALIZE:
-			// Save the error state as a string message.
-			return mapValues( state, ( pluginList ) =>
-				pluginList.map( ( item ) => {
-					if ( item.error !== null ) {
-						return Object.assign( {}, item, { error: item.error.toString() } );
-					}
-					return omit( item, 'key' );
-				} )
-			);
 		default:
 			return state;
 	}
-} );
+};
+
+// pick selected properties from the error object and ignore ones that are `undefined`.
+const serializeError = ( error ) =>
+	Object.fromEntries(
+		[ 'name', 'code', 'error', 'message' ]
+			.map( ( k ) => [ k, error[ k ] ] )
+			.filter( ( [ , v ] ) => v !== undefined )
+	);
+
+export const plugins = withSchemaValidation(
+	pluginInstructionSchema,
+	withPersistence( pluginsReducer, {
+		// - save only selected fields of an error (an `Error` instance is not serializable per se)
+		// - omit the `key` field.
+		serialize: ( state ) =>
+			mapValues( state, ( pluginList ) =>
+				pluginList.map( ( item ) => {
+					if ( item.error ) {
+						item = {
+							...item,
+							error: serializeError( item.error ),
+						};
+					}
+					return omit( item, 'key' );
+				} )
+			),
+	} )
+);
 
 /*
  * Tracks the list of premium plugin objects for a single site

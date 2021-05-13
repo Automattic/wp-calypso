@@ -1,30 +1,24 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Internal dependencies
  */
-import { loadTrackingTool } from 'state/analytics/actions';
+import { loadTrackingTool } from 'calypso/state/analytics/actions';
 
-export default ( trackingTool ) => ( EnhancedComponent ) => {
-	class WithTrackingTool extends Component {
-		static displayName = `WithTrackingTool( ${
-			EnhancedComponent.displayName || EnhancedComponent.name || ''
-		} )`;
+export default ( trackingTool ) =>
+	createHigherOrderComponent(
+		( EnhancedComponent ) => ( props ) => {
+			const dispatch = useDispatch();
+			React.useEffect( () => {
+				dispatch( loadTrackingTool( trackingTool ) );
+			}, [ dispatch ] );
 
-		componentDidMount() {
-			this.props.loadTrackingTool( trackingTool );
-		}
-
-		render() {
-			return <EnhancedComponent { ...this.props } />;
-		}
-	}
-
-	return connect( null, {
-		loadTrackingTool,
-	} )( WithTrackingTool );
-};
+			return <EnhancedComponent { ...props } />;
+		},
+		'WithTrackingTool'
+	);

@@ -7,13 +7,12 @@ import page from 'page';
  * Internal dependencies
  */
 import { conversations, conversationsA8c } from './controller';
-import { initAbTests, preloadReaderBundle, sidebar, updateLastRoute } from 'reader/controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { initAbTests, sidebar, updateLastRoute } from 'calypso/reader/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	page(
 		'/read/conversations',
-		preloadReaderBundle,
 		updateLastRoute,
 		initAbTests,
 		sidebar,
@@ -24,7 +23,6 @@ export default function () {
 
 	page(
 		'/read/conversations/a8c',
-		preloadReaderBundle,
 		updateLastRoute,
 		initAbTests,
 		sidebar,

@@ -24,15 +24,16 @@ import {
 	REWIND_BACKUP_UPDATE_ERROR,
 	REWIND_BACKUP_UPDATE_PROGRESS,
 	REWIND_BACKUP_DISMISS_PROGRESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/activity-log/activate';
-import 'state/data-layer/wpcom/activity-log/deactivate';
-import 'state/data-layer/wpcom/activity-log/rewind/downloads';
-import 'state/data-layer/wpcom/activity-log/rewind/restore-status';
-import 'state/data-layer/wpcom/activity-log/rewind/to';
-import 'state/data-layer/wpcom/sites/rewind/downloads';
-import 'state/data-layer/wpcom/sites/rewind/restores';
+import 'calypso/state/data-layer/wpcom/activity-log/activate';
+import 'calypso/state/data-layer/wpcom/activity-log/deactivate';
+import 'calypso/state/data-layer/wpcom/activity-log/rewind/downloads';
+import 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status';
+import 'calypso/state/data-layer/wpcom/activity-log/rewind/to';
+import 'calypso/state/data-layer/wpcom/sites/rewind/downloads';
+import 'calypso/state/data-layer/wpcom/sites/rewind/restores';
+import 'calypso/state/activity-log/init';
 
 /**
  * Turn the 'rewind' feature on for a site.
@@ -225,6 +226,11 @@ export function getRewindBackupProgress( siteId ) {
 	return {
 		type: REWIND_BACKUP_PROGRESS_REQUEST,
 		siteId,
+		meta: {
+			dataLayer: {
+				trackRequest: true,
+			},
+		},
 	};
 }
 
@@ -232,8 +238,8 @@ export function getRewindBackupProgress( siteId ) {
  * Update the status of the backup creation with its progress.
  *
  * @param  {string|number} siteId     The site ID
- * @param  {number}        downloadId Id of the backup being created.
- * @param  {number}        progress   Number from 0 to 100 that indicates the progress of the backup creation.
+ * @param  {?number}        downloadId Id of the backup being created.
+ * @param  {?number}        progress   Number from 0 to 100 that indicates the progress of the backup creation.
  * @returns {object}                   Action object
  */
 export function updateRewindBackupProgress( siteId, downloadId, progress ) {

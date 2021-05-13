@@ -6,9 +6,9 @@ import { find, includes, some } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { prepareComparableUrl } from 'state/reader/follows/utils';
+import { prepareComparableUrl } from 'calypso/state/reader/follows/utils';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 export const commonExtensions = [ 'rss', 'rss.xml', 'feed', 'feed/atom', 'atom.xml', 'atom' ];
 

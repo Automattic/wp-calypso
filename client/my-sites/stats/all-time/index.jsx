@@ -14,14 +14,14 @@ import { localize } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import SectionHeader from 'calypso/components/section-header';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
+} from 'calypso/state/stats/lists/selectors';
 
 /**
  * Style dependencies
@@ -34,6 +34,7 @@ class StatsAllTime extends Component {
 		siteId: PropTypes.number,
 		requesting: PropTypes.bool,
 		query: PropTypes.object,
+		comments: PropTypes.number,
 		posts: PropTypes.number,
 		views: PropTypes.number,
 		viewsBestDay: PropTypes.string,
@@ -45,6 +46,7 @@ class StatsAllTime extends Component {
 			translate,
 			siteId,
 			requesting,
+			comments,
 			posts,
 			views,
 			visitors,
@@ -67,7 +69,7 @@ class StatsAllTime extends Component {
 		return (
 			<div>
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" query={ query } /> }
-				<SectionHeader label={ translate( 'All-time posts, views, and visitors' ) } />
+				<SectionHeader label={ translate( 'All-time posts, comments, views, and visitors' ) } />
 				<Card className={ classNames( 'stats-module', 'all-time', classes ) }>
 					<StatsTabs borderless>
 						<StatsTab
@@ -75,6 +77,13 @@ class StatsAllTime extends Component {
 							label={ translate( 'Posts' ) }
 							loading={ isLoading }
 							value={ posts }
+							compact
+						/>
+						<StatsTab
+							gridicon="comment"
+							label={ translate( 'Comments' ) }
+							loading={ isLoading }
+							value={ comments }
 							compact
 						/>
 						<StatsTab
@@ -94,7 +103,7 @@ class StatsAllTime extends Component {
 						<StatsTab
 							className="all-time__is-best"
 							gridicon="trophy"
-							label={ translate( 'Best Views Ever' ) }
+							label={ translate( 'Best views ever' ) }
 							loading={ isLoading }
 							value={ viewsBestDayTotal }
 							compact
@@ -113,6 +122,7 @@ export default connect( ( state ) => {
 	const query = {};
 	const allTimeData = getSiteStatsNormalizedData( state, siteId, 'stats', query ) || {};
 	const allTimeStats = pick( allTimeData, [
+		'comments',
 		'posts',
 		'views',
 		'visitors',

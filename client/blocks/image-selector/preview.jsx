@@ -4,20 +4,20 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { isEqual, uniq } from 'lodash';
+import { isEqual } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import ImagePreloader from 'components/image-preloader';
-import MediaActions from 'lib/media/actions';
-import MediaStore from 'lib/media/store';
-import Spinner from 'components/spinner';
-import { url } from 'lib/media/utils';
+import ImagePreloader from 'calypso/components/image-preloader';
+import Spinner from 'calypso/components/spinner';
+import { url } from 'calypso/lib/media/utils';
+import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 
 export class ImageSelectorPreview extends Component {
 	static propTypes = {
@@ -37,7 +37,6 @@ export class ImageSelectorPreview extends Component {
 
 	componentDidMount() {
 		this.fetchImages();
-		MediaStore.on( 'change', this.updateImageState );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -47,15 +46,11 @@ export class ImageSelectorPreview extends Component {
 		}
 	}
 
-	componentWillUnmount() {
-		MediaStore.off( 'change', this.updateImageState );
-	}
-
 	setTransientImages = () => {
 		const newTransientImages = {};
 		this.state.images.forEach( ( image ) => {
 			if ( image.transient ) {
-				const media = MediaStore.get( this.props.siteId, image.ID );
+				const media = this.props.getMediaItem( this.props.siteId, image.ID );
 				newTransientImages[ media.ID ] = image.URL;
 			}
 		} );
@@ -78,9 +73,9 @@ export class ImageSelectorPreview extends Component {
 
 			itemIds.map( ( id ) => {
 				id = parseInt( id, 10 );
-				const media = MediaStore.get( siteId, id );
+				const media = this.props.getMediaItem( siteId, id );
 				if ( ! media ) {
-					MediaActions.fetch( siteId, id );
+					this.props.fetchMediaItem( siteId, id );
 				}
 			} );
 		} );
@@ -89,15 +84,13 @@ export class ImageSelectorPreview extends Component {
 	updateImageState = ( callback ) => {
 		const { itemIds, onImageChange, siteId } = this.props;
 		this.setTransientImages();
-		const images = uniq(
-			itemIds
-				.map( ( id ) => {
-					return MediaStore.get( siteId, id );
-				} )
-				.filter( function ( e ) {
-					return e;
-				} )
-		);
+		const images = [
+			...new Set(
+				itemIds
+					.map( ( id ) => this.props.getMediaItem( siteId, id ) )
+					.filter( ( mediaItem ) => mediaItem )
+			),
+		];
 
 		this.setState( { images }, () => {
 			if ( 'function' === typeof callback ) {
@@ -237,4 +230,6 @@ export class ImageSelectorPreview extends Component {
 	}
 }
 
-export default localize( ImageSelectorPreview );
+export default connect( null, { fetchMediaItem, getMediaItem } )(
+	localize( ImageSelectorPreview )
+);

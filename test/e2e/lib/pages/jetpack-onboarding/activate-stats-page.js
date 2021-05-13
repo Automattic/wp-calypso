@@ -23,8 +23,7 @@ export default class ActivateStatsPage extends AsyncBaseContainer {
 	}
 
 	async selectContinue() {
-		const continueSelector = By.css( 'a.card[data-e2e-type="continue"] button' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, continueSelector );
-		return await driverHelper.clickWhenClickable( this.driver, continueSelector );
+		const continueLocator = By.css( 'a.card[data-e2e-type="continue"] button' );
+		return await driverHelper.clickWhenClickable( this.driver, continueLocator );
 	}
 }

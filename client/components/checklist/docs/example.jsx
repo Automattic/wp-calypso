@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import accept from 'lib/accept';
+import accept from 'calypso/lib/accept';
 import { Button } from '@automattic/components';
 import { Checklist, Task } from '../';
 
@@ -23,7 +23,7 @@ export default class ChecklistExample extends PureComponent {
 	getClickHandler = ( taskId ) => () =>
 		accept(
 			'Will you complete this thing?',
-			( accepted ) => ( accepted ? void this.setState( { [ taskId ]: true } ) : undefined) ,
+			( accepted ) => ( accepted ? void this.setState( { [ taskId ]: true } ) : undefined ),
 			'Yes',
 			'No'
 		);

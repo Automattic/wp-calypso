@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestUserDevices } from 'state/user-devices/actions';
+import { requestUserDevices } from 'calypso/state/user-devices/actions';
 
 class QueryUserDevices extends Component {
 	static propTypes = {

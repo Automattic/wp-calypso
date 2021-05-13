@@ -35,7 +35,7 @@
 .podcast-cover-image-setting__placeholder {
 	color: var( --color-text-subtle );
 	display: block;
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-style: italic;
 	font-weight: 400;
 	margin: 0 7px;
@@ -50,7 +50,7 @@
 .podcast-cover-image-setting {
 	width: 208px;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		width: 98px;
 	}
 }
@@ -67,7 +67,7 @@
 		color: var( --color-neutral-20 );
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin: 6px 0 0;
 	}
 }

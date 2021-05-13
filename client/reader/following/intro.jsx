@@ -3,25 +3,24 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import QueryPreferences from 'components/data/query-preferences';
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
-import { recordTrack } from 'reader/stats';
-import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'state/ui/guided-tours/contexts';
-import cssSafeUrl from 'lib/css-safe-url';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
+import cssSafeUrl from 'calypso/lib/css-safe-url';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
- * Image dependencies
+ * Asset dependencies
  */
-import readerImage from 'assets/images/reader/reader-intro-character.svg';
-import readerBackground from 'assets/images/reader/reader-intro-background.svg';
+import readerImage from 'calypso/assets/images/reader/reader-intro-character.svg';
+import readerBackground from 'calypso/assets/images/reader/reader-intro-background.svg';
 
 class FollowingIntro extends React.Component {
 	componentDidMount() {
@@ -34,20 +33,30 @@ class FollowingIntro extends React.Component {
 		}
 	}
 
+	dismiss = () => {
+		this.props.recordReaderTracksEvent( 'calypso_reader_following_intro_dismiss' );
+		return this.props.savePreference( 'is_new_reader', false );
+	};
+
+	handleManageLinkClick = () => {
+		this.props.recordReaderTracksEvent( 'calypso_reader_following_intro_link_clicked' );
+		return this.props.savePreference( 'is_new_reader', false );
+	};
+
 	recordRenderTrack = ( props = this.props ) => {
 		if ( props.isNewReader === true ) {
-			recordTrack( 'calypso_reader_following_intro_render' );
+			this.props.recordReaderTracksEvent( 'calypso_reader_following_intro_render' );
 		}
 	};
 
 	render() {
-		const { isNewReader, translate, dismiss, isNewUser } = this.props;
+		const { isNewReader, isNewUser, translate } = this.props;
 
 		if ( ! isNewReader || ! isNewUser ) {
 			return null;
 		}
 
-		const linkElement = <a onClick={ this.props.handleManageLinkClick } href="/following/manage" />;
+		const linkElement = <a onClick={ this.handleManageLinkClick } href="/following/manage" />;
 
 		return (
 			<header
@@ -73,11 +82,12 @@ class FollowingIntro extends React.Component {
 							) }
 						</span>
 					</div>
+
 					<img className="following__intro-character" src={ readerImage } alt="" />
 
 					<button
 						className="following__intro-close"
-						onClick={ dismiss }
+						onClick={ this.dismiss }
 						title={ translate( 'Close' ) }
 						aria-label={ translate( 'Close' ) }
 					>
@@ -101,18 +111,8 @@ export default connect(
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS * 2 )( state ),
 		};
 	},
-	( dispatch ) =>
-		bindActionCreators(
-			{
-				dismiss: () => {
-					recordTrack( 'calypso_reader_following_intro_dismiss' );
-					return savePreference( 'is_new_reader', false );
-				},
-				handleManageLinkClick: () => {
-					recordTrack( 'calypso_reader_following_intro_link_clicked' );
-					return savePreference( 'is_new_reader', false );
-				},
-			},
-			dispatch
-		)
+	{
+		recordReaderTracksEvent,
+		savePreference,
+	}
 )( localize( FollowingIntro ) );

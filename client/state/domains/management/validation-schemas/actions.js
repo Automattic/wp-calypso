@@ -1,17 +1,12 @@
 /**
- * External dependencies
- */
-import { castArray } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
 	DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_ADD,
 	DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/domains/validation-schemas/index.js';
+import 'calypso/state/data-layer/wpcom/domains/validation-schemas/index.js';
 
 /**
  * Action creator function: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_ADD
@@ -32,5 +27,5 @@ export const addValidationSchemas = ( schemas ) => ( {
  */
 export const requestValidationSchemas = ( tlds ) => ( {
 	type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST,
-	tlds: castArray( tlds ),
+	tlds: Array.isArray( tlds ) ? tlds : [ tlds ],
 } );

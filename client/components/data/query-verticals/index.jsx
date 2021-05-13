@@ -9,8 +9,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { requestVerticals } from 'state/signup/verticals/actions';
-import { getVerticals } from 'state/signup/verticals/selectors';
+import { requestVerticals } from 'calypso/state/signup/verticals/actions';
+import { getVerticals } from 'calypso/state/signup/verticals/selectors';
 
 export class QueryVerticals extends Component {
 	static propTypes = {

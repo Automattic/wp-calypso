@@ -1,13 +1,10 @@
 /**
  * External dependencies
  */
-
-import { entries, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import store from 'store';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:user' );
-import config from 'config';
-import { stringify } from 'qs';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -17,14 +14,16 @@ import {
 	isSupportNextSession,
 	supportUserBoot,
 	supportNextBoot,
-} from 'lib/user/support-user-interop';
-import wpcom from 'lib/wp';
-import Emitter from 'lib/mixins/emitter';
-import { isE2ETest } from 'lib/e2e';
+} from 'calypso/lib/user/support-user-interop';
+import wpcom from 'calypso/lib/wp';
+import Emitter from 'calypso/lib/mixins/emitter';
+import { isE2ETest } from 'calypso/lib/e2e';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
-import { getLanguage } from 'lib/i18n-utils/utils';
-import { clearStorage } from 'lib/browser-storage';
-import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
+import { getLanguage } from 'calypso/lib/i18n-utils/utils';
+import { clearStorage } from 'calypso/lib/browser-storage';
+import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'calypso/lib/abtest/utility';
+
+const debug = debugFactory( 'calypso:user' );
 
 /**
  * User component
@@ -207,19 +206,17 @@ User.prototype.getLanguage = function () {
  *
  * @returns {string} The user's avatar URL based on the options parameter.
  */
-User.prototype.getAvatarUrl = function ( options ) {
-	const default_options = {
+User.prototype.getAvatarUrl = function ( options = {} ) {
+	const defaultOptions = {
 		s: 80,
 		d: 'mm',
 		r: 'G',
 	};
-	const avatar_URL = this.get().avatar_URL;
-	const avatar = typeof avatar_URL === 'string' ? avatar_URL.split( '?' )[ 0 ] : '';
+	const avatarURL = this.get().avatar_URL;
+	const avatar = typeof avatarURL === 'string' ? avatarURL.split( '?' )[ 0 ] : '';
 
-	options = options || {};
-	options = Object.assign( {}, options, default_options );
-
-	return avatar + '?' + stringify( options );
+	options = { ...options, ...defaultOptions };
+	return avatar + '?' + new URLSearchParams( options ).toString();
 };
 
 /**
@@ -232,9 +229,7 @@ User.prototype.clear = async function () {
 	 */
 	this.data = false;
 	store.clearAll();
-	if ( config.isEnabled( 'persist-redux' ) ) {
-		await clearStorage();
-	}
+	await clearStorage();
 };
 
 /**
@@ -253,7 +248,7 @@ User.prototype.sendVerificationEmail = function ( fn ) {
 User.prototype.set = function ( attributes ) {
 	let changed = false;
 
-	for ( const [ attrName, attrValue ] of entries( attributes ) ) {
+	for ( const [ attrName, attrValue ] of Object.entries( attributes ) ) {
 		if ( ! isEqual( attrValue, this.data[ attrName ] ) ) {
 			this.data[ attrName ] = attrValue;
 			changed = true;

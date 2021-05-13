@@ -6,7 +6,7 @@ import { omitBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { DEFAULT_POST_QUERY } from 'state/posts/constants';
+import { DEFAULT_POST_QUERY } from 'calypso/state/posts/constants';
 
 /**
  * Returns a normalized posts query, excluding any values which match the

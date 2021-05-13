@@ -10,11 +10,11 @@ import {
 	SOCIAL_CREATE_ACCOUNT_REQUEST,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { getErrorFromWPCOMError } from 'state/login/utils';
-import wpcom from 'lib/wp';
+} from 'calypso/state/action-types';
+import { getErrorFromWPCOMError } from 'calypso/state/login/utils';
+import wpcom from 'calypso/lib/wp';
 
-import 'state/login/init';
+import 'calypso/state/login/init';
 
 /**
  * Creates a WordPress.com account from a third-party social account (Google ...).

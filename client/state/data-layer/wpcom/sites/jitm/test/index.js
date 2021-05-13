@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import { doFetchJITM, doDismissJITM } from '..';
-import { fetchJITM, dismissJITM } from 'state/jitm/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { fetchJITM, dismissJITM } from 'calypso/state/jitm/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( 'jitms', () => {
 	describe( '#doFetchJITM', () => {
@@ -15,9 +15,8 @@ describe( 'jitms', () => {
 			expect( doFetchJITM( action ) ).toEqual(
 				http(
 					{
-						apiNamespace: 'rest',
 						method: 'GET',
-						path: `/v1.1/jetpack-blogs/${ siteId }/rest-api/`,
+						path: `/jetpack-blogs/${ siteId }/rest-api/`,
 						query: {
 							path: '/jetpack/v4/jitm',
 							query: JSON.stringify( {
@@ -42,7 +41,6 @@ describe( 'jitms', () => {
 			expect( doDismissJITM( action ) ).toEqual(
 				http(
 					{
-						apiNamespace: 'rest',
 						method: 'POST',
 						path: `/jetpack-blogs/${ siteId }/rest-api/`,
 						query: {

@@ -6,7 +6,7 @@
  * Internal dependencies
  */
 import { getAvailabilityNotice } from '../availability-messages';
-import { domainAvailability } from 'lib/domains/constants';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 
 jest.mock( 'i18n-calypso', () => ( {
 	translate: jest.fn( () => 'default' ),
@@ -25,7 +25,7 @@ describe( 'getAvailabilityNotice()', () => {
 
 	test( 'Should return default message when domain is not a string', () => {
 		expect(
-			getAvailabilityNotice( null, domainAvailability.BLACKLISTED, {
+			getAvailabilityNotice( null, domainAvailability.DISALLOWED, {
 				site: 1,
 				maintenanceEndTime: 2,
 			} )

@@ -3,12 +3,13 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
+
+const noop = () => {};
 
 const ProductCardAction = ( { intro, label, onClick, primary, href } ) => (
 	<div className="product-card__action">

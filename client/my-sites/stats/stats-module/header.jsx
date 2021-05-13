@@ -8,8 +8,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import Gridicon from 'calypso/components/gridicon';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import titlecase from 'to-title-case';
 
 class StatsModuleHeader extends React.Component {

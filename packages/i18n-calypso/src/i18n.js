@@ -127,8 +127,10 @@ function getTranslationFromTannin( tannin, options ) {
 function getTranslation( i18n, options ) {
 	for ( let i = translationLookup.length - 1; i >= 0; i-- ) {
 		const lookup = translationLookup[ i ]( Object.assign( {}, options ) );
+		const key = lookup.context ? lookup.context + '\u0004' + lookup.original : lookup.original;
+
 		// Only get the translation from tannin if it exists.
-		if ( i18n.state.locale[ lookup.original ] ) {
+		if ( i18n.state.locale[ key ] ) {
 			return getTranslationFromTannin( i18n.state.tannin, lookup );
 		}
 	}
@@ -142,12 +144,13 @@ function I18N() {
 	}
 	this.defaultLocaleSlug = 'en';
 	// Tannin always needs a plural form definition, or it fails when dealing with plurals.
-	this.defaultPluralForms = ( n ) => ( n === 1 ? 0 : 1) ;
+	this.defaultPluralForms = ( n ) => ( n === 1 ? 0 : 1 );
 	this.state = {
 		numberFormatSettings: {},
 		tannin: undefined,
 		locale: undefined,
 		localeSlug: undefined,
+		localeVariant: undefined,
 		textDirection: undefined,
 		translations: LRU( { max: 100 } ),
 	};
@@ -268,6 +271,7 @@ I18N.prototype.setLocale = function ( localeData ) {
 	}
 
 	this.state.localeSlug = this.state.locale[ '' ].localeSlug;
+	this.state.localeVariant = this.state.locale[ '' ].localeVariant;
 
 	// extract the `textDirection` info (LTR or RTL) from either:
 	// - the translation for the special string "ltr" (standard in Core, not present in Calypso)
@@ -308,9 +312,19 @@ I18N.prototype.getLocale = function () {
  * Get the current locale slug.
  *
  * @returns {string} The string representing the currently loaded locale
- **/
+ */
 I18N.prototype.getLocaleSlug = function () {
 	return this.state.localeSlug;
+};
+
+/**
+ * Get the current locale variant. That's set for some special locales that don't have a
+ * standard ISO code, like `de_formal` or `sr_latin`.
+ *
+ * @returns {string|undefined} The string representing the currently loaded locale's variant
+ */
+I18N.prototype.getLocaleVariant = function () {
+	return this.state.localeVariant;
 };
 
 /**

@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -16,12 +10,13 @@ import {
 	MEMBERSHIPS_SUBSCRIBERS_LIST,
 	MEMBERSHIPS_SETTINGS,
 	MEMBERSHIPS_SETTINGS_RECEIVE,
-	MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_SUCCESS,
-} from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+} from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 export const membershipProductFromApi = ( product ) => ( {
 	ID: parseInt( product.id || product.connected_account_product_id ),
@@ -33,6 +28,8 @@ export const membershipProductFromApi = ( product ) => ( {
 	renewal_schedule: product.interval,
 	buyer_can_change_amount: product.buyer_can_change_amount,
 	multiple_per_user: product.multiple_per_user,
+	subscribe_as_site_subscriber: product.subscribe_as_site_subscriber,
+	welcome_email_content: product.welcome_email_content,
 } );
 
 export const handleMembershipProductsList = dispatchRequest( {
@@ -115,5 +112,4 @@ registerHandlers( 'state/data-layer/wpcom/sites/memberships/index.js', {
 	[ MEMBERSHIPS_EARNINGS_GET ]: [ handleMembershipGetEarnings ],
 	[ MEMBERSHIPS_SUBSCRIBERS_LIST ]: [ handleMembershipGetSubscribers ],
 	[ MEMBERSHIPS_SETTINGS ]: [ handleMembershipGetSettings ],
-	[ MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_SUCCESS ]: [ handleMembershipGetSettings ],
 } );

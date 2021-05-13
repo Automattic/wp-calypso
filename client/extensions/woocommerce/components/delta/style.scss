@@ -44,7 +44,7 @@
 	.delta__icon {
 		width: 20px;
 		height: 20px;
-		border-radius: 5px;
+		border-radius: 2px;
 		min-width: 15px;
 
 		&.gridicon {
@@ -64,7 +64,7 @@
 		.delta__value {
 			color: var( --color-neutral-light );
 			display: inline-block;
-			font-size: 13px;
+			font-size: $font-body-small;
 			font-weight: 400;
 			line-height: 13px;
 			text-align: left;

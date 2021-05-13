@@ -1,0 +1,33 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.earn .promo-section__promos img {
+	width: 48px;
+	@include break-mobile {
+		width: auto;
+	}
+}
+
+.earn__placeholder-promo-card {
+	.promo-card:not( .is-primary ) {
+		& > * {
+			@include placeholder( --color-neutral-10 );
+			* {
+				visibility: hidden;
+			}
+		}
+	}
+}
+
+.earn .promo-section__promos .gridicon {
+	fill: var( --color-primary-10 );
+	position: relative;
+	top: -8px;
+}
+
+@include break-wide {
+	.earn .promo-card.is-primary {
+		padding-left: 72px;
+		padding-right: 72px;
+	}
+}

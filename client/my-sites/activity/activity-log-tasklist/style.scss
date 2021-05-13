@@ -1,6 +1,6 @@
 .card.activity-log-tasklist {
 	padding-bottom: 4px;
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	.activity-log-tasklist__heading {
 		display: flex;
@@ -41,19 +41,18 @@
 
 .activity-log-tasklist__update-text {
 	margin-bottom: 8px;
-	a, span {
+	a,
+	span {
 		font-weight: 600;
 	}
 }
-.activity-log-tasklist__update-text
-
-.activity-log-tasklist__update-version {
+.activity-log-tasklist__update-text .activity-log-tasklist__update-version {
 	color: var( --color-text-subtle );
 }
 
 .activity-log-tasklist__update-bullet,
 .activity-log-tasklist__update-type {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 }
 
 .activity-log-tasklist__update-bullet {

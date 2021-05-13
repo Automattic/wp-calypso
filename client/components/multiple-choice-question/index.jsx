@@ -9,8 +9,8 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import MultipleChoiceAnswer from './answer';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLegend from 'calypso/components/forms/form-legend';
 
 /**
  * Style dependencies
@@ -20,7 +20,7 @@ import './style.scss';
 const shuffleAnswers = memoize(
 	( answers ) => {
 		const shuffles = shuffle( answers.filter( ( { doNotShuffle } ) => ! doNotShuffle ) );
-		return answers.map( ( answer ) => ( answer.doNotShuffle ? answer : shuffles.pop())  );
+		return answers.map( ( answer ) => ( answer.doNotShuffle ? answer : shuffles.pop() ) );
 	},
 	( answers ) =>
 		answers

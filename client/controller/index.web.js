@@ -4,28 +4,46 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import Layout from 'layout';
-import LayoutLoggedOut from 'layout/logged-out';
-import { MomentProvider } from 'components/localized-moment/context';
-import { login } from 'lib/paths';
+import config from '@automattic/calypso-config';
+import { translate } from 'i18n-calypso';
+import Layout from 'calypso/layout';
+import LayoutLoggedOut from 'calypso/layout/logged-out';
+import EmptyContent from 'calypso/components/empty-content';
+import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
+import MomentProvider from 'calypso/components/localized-moment/provider';
+import { RouteProvider } from 'calypso/components/route';
+import { login } from 'calypso/lib/paths';
 import { makeLayoutMiddleware } from './shared.js';
-import { isUserLoggedIn } from 'state/current-user/selectors';
-import { getImmediateLoginEmail, getImmediateLoginLocale } from 'state/immediate-login/selectors';
-import { getSiteFragment } from 'lib/route';
-import { hydrate } from './web-util.js';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getImmediateLoginEmail,
+	getImmediateLoginLocale,
+} from 'calypso/state/immediate-login/selectors';
+import { getSiteFragment } from 'calypso/lib/route';
+import { render, hydrate } from './web-util.js';
 
 /**
  * Re-export
  */
-export { setSection, setUpLocale } from './shared.js';
-export { render, hydrate, redirectLoggedIn } from './web-util.js';
+export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
+export { render, hydrate } from './web-util.js';
 
-export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
+const queryClient = new QueryClient();
+
+export const ProviderWrappedLayout = ( {
+	store,
+	currentSection,
+	currentRoute,
+	currentQuery,
+	primary,
+	secondary,
+	redirectUri,
+} ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
 
@@ -36,13 +54,39 @@ export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } )
 	);
 
 	return (
-		<ReduxProvider store={ store }>
-			<MomentProvider>{ layout }</MomentProvider>
-		</ReduxProvider>
+		<CalypsoI18nProvider>
+			<RouteProvider
+				currentSection={ currentSection }
+				currentRoute={ currentRoute }
+				currentQuery={ currentQuery }
+			>
+				<QueryClientProvider client={ queryClient }>
+					<ReduxProvider store={ store }>
+						<MomentProvider>{ layout }</MomentProvider>
+					</ReduxProvider>
+				</QueryClientProvider>
+			</RouteProvider>
+		</CalypsoI18nProvider>
 	);
 };
 
-export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
+export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
+
+/**
+ * For logged in users with bootstrap (production), ReactDOM.hydrate().
+ * Otherwise (development), ReactDOM.render().
+ * See: https://wp.me/pd2qbF-P#comment-20
+ *
+ * @param context - Middleware context
+ */
+function smartHydrate( context ) {
+	const doHydrate =
+		! config.isEnabled( 'wpcom-user-bootstrap' ) && isUserLoggedIn( context.store.getState() )
+			? render
+			: hydrate;
+
+	doHydrate( context );
+}
 
 /**
  * Isomorphic routing helper, client side
@@ -59,7 +103,7 @@ export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
  * divs.
  */
 export function clientRouter( route, ...middlewares ) {
-	page( route, ...middlewares, hydrate );
+	page( route, ...middlewares, smartHydrate );
 }
 
 export function redirectLoggedOut( context, next ) {
@@ -94,3 +138,18 @@ export function redirectLoggedOut( context, next ) {
 	}
 	next();
 }
+
+export const notFound = ( context, next ) => {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	context.primary = (
+		<EmptyContent
+			className="content-404"
+			illustration="/calypso/images/illustrations/illustration-404.svg"
+			title={ translate( 'Uh oh. Page not found.' ) }
+			line={ translate( "Sorry, the page you were looking for doesn't exist or has been moved." ) }
+		/>
+	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+
+	next();
+};

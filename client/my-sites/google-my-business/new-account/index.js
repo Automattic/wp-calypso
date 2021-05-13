@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
@@ -12,17 +12,16 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import HeaderCake from 'components/header-cake';
-import KeyringConnectButton from 'blocks/keyring-connect-button';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { dismissNudge } from 'blocks/google-my-business-stats-nudge/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
-import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
-import { withEnhancers } from 'state/utils';
-import { connectGoogleMyBusinessAccount } from 'state/google-my-business/actions';
+import DocumentHead from 'calypso/components/data/document-head';
+import HeaderCake from 'calypso/components/header-cake';
+import KeyringConnectButton from 'calypso/blocks/keyring-connect-button';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { enhanceWithLocationCounts } from 'calypso/my-sites/google-my-business/utils';
+import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { withEnhancers } from 'calypso/state/utils';
+import { connectGoogleMyBusinessAccount } from 'calypso/state/google-my-business/actions';
 
 /**
  * Style dependencies
@@ -66,7 +65,6 @@ class GoogleMyBusinessNewAccount extends Component {
 
 	handleNoThanksClick = () => {
 		this.props.recordTracksEvent( 'calypso_google_my_business_new_account_no_thanks_button_click' );
-		this.props.dismissNudge();
 	};
 
 	render() {
@@ -142,7 +140,6 @@ export default connect(
 	} ),
 	{
 		connectGoogleMyBusinessAccount,
-		dismissNudge,
 		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
 		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
 			enhanceWithLocationCounts,

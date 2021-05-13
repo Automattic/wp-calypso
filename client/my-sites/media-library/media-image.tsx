@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ImagePreloader from 'components/image-preloader';
+import ImagePreloader from 'calypso/components/image-preloader';
 import MediaFile, { MediaFileProps } from './media-file';
 import { RenderedComponent } from './proxied-image';
 

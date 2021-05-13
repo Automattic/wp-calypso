@@ -7,13 +7,14 @@
  */
 import React from 'react';
 import { assert } from 'chai';
-import { noop } from 'lodash';
 import { shallow, mount } from 'enzyme';
 
 /**
  * Internal dependencies
  */
 import D3Base from '..';
+
+const noop = () => {};
 
 describe( 'D3base', () => {
 	const shallowWithoutLifecycle = ( arg ) => shallow( arg, { disableLifecycleMethods: true } );

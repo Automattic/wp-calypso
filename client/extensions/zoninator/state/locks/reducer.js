@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	ZONINATOR_REQUEST_LOCK_ERROR,
 	ZONINATOR_RESET_LOCK,
 	ZONINATOR_UPDATE_LOCK,
 } from '../action-types';
 
-export const blocked = withoutPersistence( ( state = false, action ) => {
+export const blocked = ( state = false, action ) => {
 	switch ( action.type ) {
 		case ZONINATOR_UPDATE_LOCK:
 			return false;
@@ -17,9 +17,9 @@ export const blocked = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const created = withoutPersistence( ( state = 0, action ) => {
+export const created = ( state = 0, action ) => {
 	switch ( action.type ) {
 		case ZONINATOR_RESET_LOCK: {
 			const { time } = action;
@@ -28,25 +28,25 @@ export const created = withoutPersistence( ( state = 0, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const expires = withoutPersistence( ( state = 0, action ) => {
+export const expires = ( state = 0, action ) => {
 	switch ( action.type ) {
 		case ZONINATOR_UPDATE_LOCK:
 			return action.expires;
 	}
 
 	return state;
-} );
+};
 
-export const maxLockPeriod = withoutPersistence( ( state = 0, action ) => {
+export const maxLockPeriod = ( state = 0, action ) => {
 	switch ( action.type ) {
 		case ZONINATOR_UPDATE_LOCK:
 			return action.maxLockPeriod;
 	}
 
 	return state;
-} );
+};
 
 export const items = combineReducers( {
 	blocked,

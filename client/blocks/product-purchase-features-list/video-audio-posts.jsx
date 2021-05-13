@@ -7,14 +7,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import { newPost } from 'lib/paths';
-import { isWpComBusinessPlan, isWpComEcommercePlan, isWpComPremiumPlan } from 'lib/plans';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { newPost } from 'calypso/lib/paths';
+import {
+	isWpComBusinessPlan,
+	isWpComEcommercePlan,
+	isWpComPremiumPlan,
+} from '@automattic/calypso-products';
 
 /**
  * Image dependencies
  */
-import videoImage from 'assets/images/illustrations/video-hosting.svg';
+import videoImage from 'calypso/assets/images/illustrations/video-hosting.svg';
 
 function getDescription( plan, translate ) {
 	if ( isWpComBusinessPlan( plan ) ) {
@@ -32,7 +36,7 @@ function getDescription( plan, translate ) {
 
 	if ( isWpComPremiumPlan( plan ) ) {
 		return translate(
-			'Enrich your posts and pages with video or audio. Upload up to 13GB of media directly to your site.'
+			'Enrich your posts and pages with video or audio. Upload up to 13 GB of media directly to your site.'
 		);
 	}
 

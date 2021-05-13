@@ -8,7 +8,7 @@ import { filter, head, orderBy, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import InlineSupportLink from 'components/inline-support-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 function getConfig( { siteTitle = '' } = {} ) {
 	const importerConfig = {};
@@ -42,8 +42,9 @@ function getConfig( { siteTitle = '' } = {} ) {
 							supportPostId={ 67084 }
 							supportLink="https://wordpress.com/support/coming-from-self-hosted/"
 							showIcon={ false }
-							text={ translate( 'Need help exporting your content?' ) }
-						/>
+						>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
 					),
 				},
 			}
@@ -84,44 +85,13 @@ function getConfig( { siteTitle = '' } = {} ) {
 							supportPostId={ 66764 }
 							supportLink="https://wordpress.com/support/import/coming-from-blogger/"
 							showIcon={ false }
-							text={ translate( 'Need help exporting your content?' ) }
-						/>
+						>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
 					),
 				},
 			}
 		),
-		weight: 0,
-	};
-
-	importerConfig[ 'godaddy-gocentral' ] = {
-		engine: 'godaddy-gocentral',
-		key: 'importer-type-godaddy-gocentral',
-		type: 'url',
-		title: 'GoDaddy',
-		icon: 'godaddy-gocentral',
-		description: translate(
-			'Import posts, pages, and media from sites made with the GoDaddy GoCentral website builder to {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: {
-					siteTitle,
-				},
-				components: {
-					b: <strong />,
-				},
-			}
-		),
-		uploadDescription: translate( 'Enter the URL of your existing site. ' + '{{supportLink/}}', {
-			components: {
-				supportLink: (
-					<InlineSupportLink
-						supportPostId={ 154436 }
-						supportLink="https://wordpress.com/support/import/import-from-godaddy/"
-						showIcon={ false }
-						text={ translate( 'Need help?' ) }
-					/>
-				),
-			},
-		} ),
 		weight: 0,
 	};
 
@@ -157,8 +127,9 @@ function getConfig( { siteTitle = '' } = {} ) {
 							supportPostId={ 93180 }
 							supportLink="https://wordpress.com/support/import/import-from-medium/"
 							showIcon={ false }
-							text={ translate( 'Need help exporting your content?' ) }
-						/>
+						>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
 					),
 				},
 			}
@@ -198,8 +169,9 @@ function getConfig( { siteTitle = '' } = {} ) {
 							supportPostId={ 87696 }
 							supportLink="https://wordpress.com/support/import/import-from-squarespace/"
 							showIcon={ false }
-							text={ translate( 'Need help exporting your content?' ) }
-						/>
+						>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
 					),
 				},
 			}
@@ -231,8 +203,9 @@ function getConfig( { siteTitle = '' } = {} ) {
 						supportPostId={ 147777 }
 						supportLink="https://wordpress.com/support/import/import-from-wix/"
 						showIcon={ false }
-						text={ translate( 'Need help?' ) }
-					/>
+					>
+						{ translate( 'Need help?' ) }
+					</InlineSupportLink>
 				),
 			},
 		} ),

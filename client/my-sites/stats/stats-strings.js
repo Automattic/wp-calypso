@@ -8,7 +8,7 @@ export default function () {
 	const statsStrings = {};
 
 	statsStrings.posts = {
-		title: translate( 'Posts & Pages', { context: 'Stats: title of module' } ),
+		title: translate( 'Posts & pages', { context: 'Stats: title of module' } ),
 		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
 		value: translate( 'Views', { context: 'Stats: module row header for number of post views.' } ),
 		empty: translate( 'No posts or pages viewed', {
@@ -50,8 +50,8 @@ export default function () {
 	};
 
 	statsStrings.search = {
-		title: translate( 'Search Terms', { context: 'Stats: title of module' } ),
-		item: translate( 'Search Term', {
+		title: translate( 'Search terms', { context: 'Stats: title of module' } ),
+		item: translate( 'Search term', {
 			context: 'Stats: module row header for search in search terms.',
 		} ),
 		value: translate( 'Views', {
@@ -85,9 +85,9 @@ export default function () {
 	};
 
 	statsStrings.filedownloads = {
-		title: translate( 'File Downloads', { context: 'Stats: title of module' } ),
+		title: translate( 'File downloads', { context: 'Stats: title of module' } ),
 		item: translate( 'Files', { context: 'Stats: module row header for file downloads.' } ),
-		value: translate( 'Downloads', {
+		value: translate( 'downloads', {
 			context: 'Stats: module row header for number of downloads per file.',
 		} ),
 		empty: translate( 'No files downloaded', {
@@ -96,7 +96,7 @@ export default function () {
 	};
 
 	statsStrings.tags = {
-		title: translate( 'Tags & Categories', { context: 'Stats: title of module' } ),
+		title: translate( 'Tags & categories', { context: 'Stats: title of module' } ),
 		item: translate( 'Topic', { context: 'Stats: module row header for tags and categories.' } ),
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views per tag or category.',

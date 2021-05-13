@@ -1,42 +1,42 @@
-Follow Button
-=========
+# Follow Button
 
 This component is used to display a follow/unfollow button.
 It has two parts, the actual button and a container that works with Redux state.
 For most uses, the container is the easiest route.
 
-#### How to use the container:
+## How to use the container
 
 ```js
-import FollowButtonContainer from 'blocks/follow-button';
+import FollowButtonContainer from 'calypso/blocks/follow-button';
 
-render() {
+function render() {
 	return (
 		<div className="your-stuff">
-			  <FollowButtonContainer siteUrl="http://trailnose.com" />
+			<FollowButtonContainer siteUrl="http://trailnose.com" />
 		</div>
 	);
 }
 ```
 
-#### Props
+## Props
 
-* `siteUrl`: string, a site URL to follow or unfollow
+- `siteUrl`: string, a site URL to follow or unfollow
 
-#### How to use the button directly:
+## How to use the button directly
+
 ```js
-import FollowButton from 'blocks/follow-button/button';
+import FollowButton from 'calypso/blocks/follow-button/button';
 
-render() {
+function render() {
 	return (
 		<div className="your-stuff">
-			  <FollowButton following={ false } />
+			<FollowButton following={ false } />
 		</div>
 	);
 }
 ```
 
-#### Props
+## Props
 
-* `following`: (default: false) a boolean indicating if the current user is currently following the site URL
-* `disabled`: (default: false) a boolean indicating if the button is currently disabled
+- `following`: (default: false) a boolean indicating if the current user is currently following the site URL
+- `disabled`: (default: false) a boolean indicating if the button is currently disabled

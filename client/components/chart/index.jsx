@@ -4,16 +4,15 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { localize, withRtl } from 'i18n-calypso';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { hasTouch } from 'lib/touch-detect';
-import { useWindowResizeCallback } from 'lib/track-element-size';
-import Tooltip from 'components/tooltip';
-import Notice from 'components/notice';
+import { hasTouch } from 'calypso/lib/touch-detect';
+import { useWindowResizeCallback } from 'calypso/lib/track-element-size';
+import Tooltip from 'calypso/components/tooltip';
+import Notice from 'calypso/components/notice';
 import BarContainer from './bar-container';
 
 /**
@@ -21,7 +20,9 @@ import BarContainer from './bar-container';
  */
 import './style.scss';
 
+const noop = () => {};
 const isTouch = hasTouch();
+const CHART_PADDING = 20;
 
 /**
  * Auxiliary method to calculate the maximum value for the Y axis, based on a dataset.
@@ -66,7 +67,7 @@ function Chart( {
 } ) {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
 	const [ sizing, setSizing ] = useState( { clientWidth: 650, hasResized: false } );
-
+	const [ yAxisSize, setYAxisSize ] = useState( { clientWidth: 0, hasResized: false } );
 	const { hasResized } = sizing;
 
 	// Callback to handle tooltip changes.
@@ -79,12 +80,9 @@ function Chart( {
 		}
 	}, [] );
 
-	// Callback to handle element size changes.
-	// Needs to be memoized to avoid causing the `useWindowResizeCallback` custom hook to re-subscribe.
-	const handleContentRectChange = useCallback( ( contentRect ) => {
-		setSizing( ( prevSizing ) => {
-			const clientWidth = contentRect.width - 82;
-
+	const handleYAxisSizeChange = useCallback( ( contentRect ) => {
+		setYAxisSize( ( prevSizing ) => {
+			const clientWidth = contentRect.width;
 			if ( ! prevSizing.hasResized || clientWidth !== prevSizing.clientWidth ) {
 				return { clientWidth, hasResized: true };
 			}
@@ -92,11 +90,31 @@ function Chart( {
 		} );
 	}, [] );
 
+	const yAxisRef = useWindowResizeCallback( handleYAxisSizeChange );
+
+	// Callback to handle element size changes.
+	// Needs to be memoized to avoid causing the `useWindowResizeCallback` custom hook to re-subscribe.
+	const handleContentRectChange = useCallback(
+		( contentRect ) => {
+			setSizing( ( prevSizing ) => {
+				const effectiveYAxisSize =
+					yAxisRef && yAxisRef.current ? yAxisRef.current.clientWidth : yAxisSize.clientWidth;
+				const clientWidth = contentRect.width - effectiveYAxisSize;
+				if ( ! prevSizing.hasResized || clientWidth !== prevSizing.clientWidth ) {
+					return { clientWidth, hasResized: true };
+				}
+				return prevSizing;
+			} );
+		},
+		[ yAxisSize ]
+	);
+
 	// Subscribe to changes to element size and position.
 	const resizeRef = useWindowResizeCallback( handleContentRectChange );
 
 	const minWidth = isTouch ? minTouchBarWidth : minBarWidth;
-	const width = isTouch && sizing.clientWidth <= 0 ? 350 : sizing.clientWidth; // mobile safari bug with zero width
+
+	const width = isTouch && sizing.clientWidth <= 0 ? 350 : sizing.clientWidth - CHART_PADDING; // mobile safari bug with zero width
 	const maxBars = Math.floor( width / minWidth );
 
 	// Memoize data calculations to avoid performing them too often.
@@ -148,8 +166,8 @@ function Chart( {
 				) }
 			</div>
 			{ ! isPlaceholder && (
-				<div className="chart__y-axis">
-					<div className="chart__y-axis-width-fix">{ numberFormat( 100000 ) }</div>
+				<div ref={ yAxisRef } className="chart__y-axis">
+					<div className="chart__y-axis-width-fix">{ numberFormat( 1e5 ) }</div>
 					<div className="chart__y-axis-label is-hundred">
 						{ yMax > 1 ? numberFormat( yMax ) : numberFormat( yMax, 2 ) }
 					</div>

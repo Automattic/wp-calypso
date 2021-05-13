@@ -3,20 +3,20 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { preventWidows } from 'lib/formatting';
-import versionCompare from 'lib/version-compare';
+import { preventWidows } from 'calypso/lib/formatting';
+import versionCompare from 'calypso/lib/version-compare';
 import JetpackExampleInstall from './example-components/jetpack-install';
 import JetpackExampleActivate from './example-components/jetpack-activate';
 import JetpackExampleConnect from './example-components/jetpack-connect';
 
 const NEW_INSTRUCTIONS_JETPACK_VERSION = '4.2.0';
+const noop = () => {};
 
 class JetpackInstallStep extends Component {
 	static propTypes = {

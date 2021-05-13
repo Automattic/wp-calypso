@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html class="desktop-auth">
+<head>
+	<title>WordPress.com failed to start</title>
+
+	<meta charset="utf-8" />
+
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,400,300,600|Merriweather:700,300,700italic,300italic" />
+	<link rel="stylesheet" href="wordpress-desktop.css" />
+
+	<script type="text/javascript">
+		function showme() {
+			document.getElementById( 'showme' ).style.display = 'block';
+			document.getElementById( 'hideme' ).style.display = 'none';
+
+			return false;
+		}
+	</script>
+</head>
+<body>
+
+<div class="welcome">
+	<p><img class="sadface" src="https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/svg/1f615.svg" /></p>
+
+	<h3>Uh oh!</h3>
+	<p>WordPress.com ran into an error! (code <code></code>)<br /><span id="hideme"><a href="#" onclick="return showme()">Using a proxy?</a></span></p>
+	<p><a class="button-emphasis" href="http://127.0.0.1:41050">Try again</a></p>
+
+	<div style="display: none" id="showme">
+		<h2>How to bypass your proxy for this app</h2>
+		<p>If you are using a system proxy, you will need to add an exclusion for <code>127.0.0.1</code> to your proxy settings.</p>
+		<ol>
+			<li>Open <code>System Preferences...</code></li>
+			<li>Pick <code>Network</code></li>
+			<li>Pick whichever connection is being proxied (probably Wi-fi)</li>
+			<li>Click on <code>Advanced</code></li>
+			<li>Click on <code>Proxies</code></li>
+			<li>Add <code>, 127.0.0.1</code> to the <code>Bypass proxy settings for these hosts</code> - the leading comma is important</li>
+			<li>Press <code>OK</code></li>
+			<li>Press <code>Apply</code> - this last step is also important!</li>
+		</ol>
+
+		<p><img class="instructions" src="unproxy.jpg" alt="Instructions" /></p>
+	</div>
+</div>
+
+<script>
+	var code = parseInt( document.location.hash.substring( 2 ), 10 );
+
+	document.querySelector( 'code' ).innerHTML = isNaN( code ) ? encodeURIComponent( document.location.hash.substring( 1 ) ) : code;
+</script>
+</body>
+</html>

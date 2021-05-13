@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import isRequestingBillingTransactions from 'state/selectors/is-requesting-billing-transactions';
+import isRequestingBillingTransactions from 'calypso/state/selectors/is-requesting-billing-transactions';
+
+import 'calypso/state/billing-transactions/init';
 
 /**
  * Returns true if we are currently making a request to bulk fetch past billing

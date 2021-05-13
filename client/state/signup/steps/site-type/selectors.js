@@ -6,9 +6,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 
-import 'state/signup/init';
+import 'calypso/state/signup/init';
 
 export function getSiteType( state ) {
 	return get( state, 'signup.steps.siteType', '' );

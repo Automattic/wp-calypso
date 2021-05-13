@@ -1,12 +1,12 @@
 /**
  * Module dependencies
  */
-var assert = require( 'assert' );
+const assert = require( 'assert' );
 
 /**
  * Fixture
  */
-var fixture = require( './fixture' );
+const fixture = require( './fixture' );
 
 /**
  * Sync tests

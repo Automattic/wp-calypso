@@ -1,5 +1,4 @@
-Section Navigation
-==================
+# Section Navigation
 
 React component used to display a particular section's navigation bar. Or more traditionally, the sub navigation most commonly seen near the top of a page.
 
@@ -10,17 +9,17 @@ React component used to display a particular section's navigation bar. Or more t
 ## Example Usage
 
 ```js
-import SectionNav from 'components/section-nav' );
-import NavTabs from 'components/section-nav/tabs';
-import NavSegmented from 'components/section-nav/segmented';
-import NavItem from 'components/section-nav/item';
-import Search from 'components/search';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavSegmented from 'calypso/components/section-nav/segmented';
+import NavItem from 'calypso/components/section-nav/item';
+import Search from 'calypso/components/search';
 
-export default class extends React.Component { 
+export default class extends React.Component {
 	// ...
 
 	render() {
-		var sectionNavSelectedText = (
+		const sectionNavSelectedText = (
 			<span>
 				<span>Published</span>
 				<small>Everyone</small>
@@ -30,15 +29,27 @@ export default class extends React.Component {
 		return (
 			<SectionNav selectedText={ sectionNavSelectedText }>
 				<NavTabs label="Status" selectedText="Published">
-					<NavItem path="/posts" selected={ true }>Published</NavItem>
-					<NavItem path="/posts/drafts" selected={ false }>Drafts</NavItem>
-					<NavItem path="/posts/scheduled" selected={ false }>Scheduled</NavItem>
-					<NavItem path="/posts/trashed" selected={ false }>Trashed</NavItem>
+					<NavItem path="/posts" selected>
+						Published
+					</NavItem>
+					<NavItem path="/posts/drafts" selected={ false }>
+						Drafts
+					</NavItem>
+					<NavItem path="/posts/scheduled" selected={ false }>
+						Scheduled
+					</NavItem>
+					<NavItem path="/posts/trashed" selected={ false }>
+						Trashed
+					</NavItem>
 				</NavTabs>
 
 				<NavSegmented label="Author">
-					<NavItem path="/posts/my" selected={ false }>Only Me</NavItem>
-					<NavItem path="/posts" selected={ true }>Everyone</NavItem>
+					<NavItem path="/posts/my" selected={ false }>
+						Only Me
+					</NavItem>
+					<NavItem path="/posts" selected>
+						Everyone
+					</NavItem>
 				</NavSegmented>
 
 				<Search
@@ -48,7 +59,7 @@ export default class extends React.Component {
 					initialValue={ this.props.search }
 					placeholder="Search Published..."
 					analyticsGroup="Pages"
-					delaySearch={ true }
+					delaySearch
 				/>
 			</SectionNav>
 		);
@@ -56,7 +67,7 @@ export default class extends React.Component {
 }
 ```
 
-Keep in mind that every `prop` referenced in the example can and *should* be dynamic. The parent component decides selection logic, text display, and hierarchy. Take a look at [pages](/client/my-sites/pages/pages.jsx) & [post types]((/client/my-sites/post-type-filter/index.jsx)) for more working examples.
+Keep in mind that every `prop` referenced in the example can and _should_ be dynamic. The parent component decides selection logic, text display, and hierarchy. Take a look at [pages](/client/my-sites/pages/pages.jsx) & [post types](<(/client/my-sites/post-type-filter/index.jsx)>) for more working examples.
 
 ---
 
@@ -64,7 +75,7 @@ Keep in mind that every `prop` referenced in the example can and *should* be dyn
 
 The base component is `SectionNav` and acts as the wrapper for various control groups / other elements.
 
-#### Props
+### Props
 
 `selectedText` - **required** (node - anything that can be rendered)
 
@@ -74,8 +85,7 @@ Text displayed in the header of the panel when rendered on mobile.
 
 `selectedCount` - **optional** (Number)
 
-Count displayed in the header of the panel.
----
+## Count displayed in the header of the panel
 
 ## Nav Tabs
 
@@ -83,7 +93,7 @@ The tabs sub component will render items inline when there is enough horizontal 
 
 ![Nav Tabs Example](https://cldup.com/SG0UuJKr3i.png)
 
-#### Props
+### Props
 
 `selectedText` - **required** (string)
 
@@ -95,12 +105,12 @@ Text displayed in the header when rendered as dropdown.
 
 Count displayed in the header when rendered as dropdown.
 
-`label` - *optional* (string)
+`label` - _optional_ (string)
 
 Text displayed above tabs group when:
 
-* Mobile (`<480px`)
-* `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`)
+- Mobile (`<480px`)
+- `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`)
 
 ![label example](https://cldup.com/OeWSPtifYY.png)
 
@@ -114,14 +124,14 @@ The segmented sub component utilizes [`SegmentedControl`](/client/components/seg
 
 > Note: `SectionNav` relies on flex box techniques for sizing and that `NavSegmented` will not be allowed to overflow available horizontal space.
 
-#### Props
+### Props
 
-`label` - *optional* (string)
+`label` - _optional_ (string)
 
 Text displayed above tabs group when:
 
-* Mobile (`<480px`)
-* `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`)
+- Mobile (`<480px`)
+- `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`)
 
 ![label example](https://cldup.com/OeWSPtifYY.png)
 
@@ -131,30 +141,30 @@ Text displayed above tabs group when:
 
 These are the sub components that make up the children of both `NavTabs` & `NavSegmented`. They represent the options under each control group.
 
-#### Props
+### Props
 
-`path` - *optional* (string)
+`path` - _optional_ (string)
 
 URL to navigate to when clicked.
 
-`selected` - *optional* (boolean)
+`selected` - _optional_ (boolean)
 
 Used for marking an item selected visually.
 
-`onClick` - *optional* (function)
+`onClick` - _optional_ (function)
 
 Additional function to be executed when item is clicked.
 
-> Note: if `SectionNav` needs to execute some additional functionality on click, this function will still be executed and *not* overridden.
+> Note: if `SectionNav` needs to execute some additional functionality on click, this function will still be executed and _not_ overridden.
 
-`tabIndex` - *optional* (number)
+`tabIndex` - _optional_ (number)
 
 Used for accessibility and places option in a different `tab-index`. Default is `0`.
 
-`disabled` - *optional* (boolean)
+`disabled` - _optional_ (boolean)
 
 Prevents the item from being selected. Default is `false`.
 
-`count` - *optional* (number)
+`count` - _optional_ (number)
 
 Add an extra `item-count` element into nav item.

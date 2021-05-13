@@ -1,6 +1,19 @@
 #### Unreleased
+
+#### trunk
+
+- Breaking: Migrated from `babel-eslint` to `@babel/eslint-parser`. This requires `@babel/core` to be
+  installed (added as a `peerDependency` to this package) and a valid Babel configuration file to exist.
+
+#### v5.1.0 (2020-12-14)
+
+- Absorb package `eslint-config-wpcalypso`
+
+#### v5.0.0 (2020-07-23)
+
 - Breaking: Removed rule [`import-no-redux-combine-reducers`](docs/rules/import-no-redux-combine-reducers.md)
 - Enhancement: `jsx-classname-namespace` understands Storybook `index.stories.js` files and treats them as root files
+- Enhancement: `import-docblock` now supports WordPress dependencies.
 
 #### v4.1.0 (2019-05-07)
 

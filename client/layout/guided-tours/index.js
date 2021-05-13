@@ -1,22 +1,21 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
+import AsyncLoad from 'calypso/components/async-load';
+import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
 
 function GuidedTours( { shouldShow } ) {
 	if ( ! shouldShow ) {
 		return null;
 	}
 
-	return <AsyncLoad require="layout/guided-tours/component" />;
+	return <AsyncLoad require="calypso/layout/guided-tours/component" />;
 }
 
 export default connect( ( state ) => {

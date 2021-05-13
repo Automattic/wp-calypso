@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import ManageContact from './manage-contact';
 import EditPhone from './edit-phone';
-import accept from 'lib/accept';
+import accept from 'calypso/lib/accept';
 
 class RecoveryPhone extends Component {
 	render() {
@@ -20,10 +20,10 @@ class RecoveryPhone extends Component {
 			<ManageContact
 				type="sms"
 				isLoading={ isLoading }
-				title={ translate( 'Recovery SMS Number', {
+				title={ translate( 'Recovery SMS number', {
 					comment: 'Account security',
 				} ) }
-				subtitle={ phone ? phone.numberFull : translate( 'Not set' ) }
+				subtitle={ phone ? <span dir="ltr">{ phone.numberFull }</span> : translate( 'Not set' ) }
 				hasValue={ !! phone }
 				disabled={ disabled }
 				onSave={ this.onSave }

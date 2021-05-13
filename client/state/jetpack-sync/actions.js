@@ -7,7 +7,7 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	JETPACK_SYNC_START_REQUEST,
 	JETPACK_SYNC_START_SUCCESS,
@@ -15,7 +15,9 @@ import {
 	JETPACK_SYNC_STATUS_REQUEST,
 	JETPACK_SYNC_STATUS_SUCCESS,
 	JETPACK_SYNC_STATUS_ERROR,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/jetpack-sync/init';
 
 /**
  *  Local variables;

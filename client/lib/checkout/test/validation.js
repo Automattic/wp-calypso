@@ -19,6 +19,14 @@ import {
 } from '../validation';
 import * as processorSpecificMethods from '../processor-specific';
 
+jest.mock( '../processor-specific', () => {
+	const realProcessorSpecificMethods = jest.requireActual( '../processor-specific' );
+	return {
+		...realProcessorSpecificMethods,
+		isValidCPF: jest.fn(),
+	};
+} );
+
 describe( 'validation', () => {
 	const validCard = {
 		name: 'John Doe',
@@ -46,14 +54,14 @@ describe( 'validation', () => {
 
 	describe( '#validatePaymentDetails', () => {
 		test( 'should return no errors when card is valid', () => {
-			const result = validatePaymentDetails( validCard );
+			const result = validatePaymentDetails( validCard, 'credit-card' );
 			expect( result ).toEqual( { errors: {} } );
 		} );
 
 		describe( 'validate credit card', () => {
 			test( 'should return error when card has expiration date in the past', () => {
 				const expiredCard = { ...validCard, 'expiration-date': '01/01' };
-				const result = validatePaymentDetails( expiredCard );
+				const result = validatePaymentDetails( expiredCard, 'credit-card' );
 
 				expect( result ).toEqual( {
 					errors: {
@@ -64,7 +72,7 @@ describe( 'validation', () => {
 
 			test( 'should return error when cvv is the wrong length', () => {
 				const invalidCVVCard = { ...validCard, cvv: '12345' };
-				const result = validatePaymentDetails( invalidCVVCard );
+				const result = validatePaymentDetails( invalidCVVCard, 'credit-card' );
 
 				expect( result ).toEqual( {
 					errors: {
@@ -77,7 +85,7 @@ describe( 'validation', () => {
 		describe( 'validate basic non-credit card details', () => {
 			test( 'should return error when card holder name is missing', () => {
 				const invalidCardHolderName = { ...validCard, name: '' };
-				const result = validatePaymentDetails( invalidCardHolderName );
+				const result = validatePaymentDetails( invalidCardHolderName, 'credit-card' );
 
 				expect( result ).toEqual( {
 					errors: {
@@ -88,7 +96,7 @@ describe( 'validation', () => {
 
 			test( 'should return error when Cardholder Name is missing', () => {
 				const invalidCardHolderName = { ...validCard, name: '' };
-				const result = validatePaymentDetails( invalidCardHolderName );
+				const result = validatePaymentDetails( invalidCardHolderName, 'credit-card' );
 
 				expect( result ).toEqual( {
 					errors: {
@@ -99,7 +107,7 @@ describe( 'validation', () => {
 
 			test( 'should return error when Postal Code is missing', () => {
 				const invalidCardPostCode = { ...validCard, 'postal-code': '' };
-				const result = validatePaymentDetails( invalidCardPostCode );
+				const result = validatePaymentDetails( invalidCardPostCode, 'credit-card' );
 
 				expect( result ).toEqual( {
 					errors: {
@@ -114,7 +122,7 @@ describe( 'validation', () => {
 					country: 'US',
 					'postal-code': '1234',
 				};
-				const result = validatePaymentDetails( invalidCardPostCode );
+				const result = validatePaymentDetails( invalidCardPostCode, 'credit-card' );
 
 				expect( result ).toEqual( {
 					errors: {
@@ -131,7 +139,7 @@ describe( 'validation', () => {
 					country: 'US',
 					'postal-code': '90001',
 				};
-				const result = validatePaymentDetails( invalidCardPostCode );
+				const result = validatePaymentDetails( invalidCardPostCode, 'credit-card' );
 
 				expect( result ).not.toEqual( {
 					errors: {
@@ -148,7 +156,7 @@ describe( 'validation', () => {
 					country: 'CA', // redundancy for explicitness
 					'postal-code': '1234',
 				};
-				const result = validatePaymentDetails( invalidCardPostCode );
+				const result = validatePaymentDetails( invalidCardPostCode, 'credit-card' );
 
 				expect( result ).not.toEqual( {
 					errors: {
@@ -162,21 +170,18 @@ describe( 'validation', () => {
 
 		describe( 'validate ebanx non-credit card details', () => {
 			beforeAll( () => {
-				processorSpecificMethods.isEbanxCreditCardProcessingEnabledForCountry = jest
-					.fn()
-					.mockImplementation( () => true );
-				processorSpecificMethods.isValidCPF = jest.fn().mockImplementation( () => true );
+				processorSpecificMethods.isValidCPF.mockImplementation( () => true );
 			} );
 
 			test( 'should return no errors when details are valid', () => {
-				const result = validatePaymentDetails( validBrazilianEbanxCard );
+				const result = validatePaymentDetails( validBrazilianEbanxCard, 'ebanx' );
 
 				expect( result ).toEqual( { errors: {} } );
 			} );
 
 			test( 'should return error when city is missing', () => {
 				const invalidCity = { ...validBrazilianEbanxCard, city: '' };
-				const result = validatePaymentDetails( invalidCity );
+				const result = validatePaymentDetails( invalidCity, 'ebanx' );
 
 				expect( result ).toEqual( {
 					errors: {
@@ -187,7 +192,7 @@ describe( 'validation', () => {
 
 			test( 'should return error when state is missing', () => {
 				const invalidState = { ...validBrazilianEbanxCard, state: '' };
-				const result = validatePaymentDetails( invalidState );
+				const result = validatePaymentDetails( invalidState, 'ebanx' );
 
 				expect( result ).toEqual( {
 					errors: {
@@ -198,7 +203,7 @@ describe( 'validation', () => {
 
 			test( 'should return error when address-1 is missing', () => {
 				const invalidAddress = { ...validBrazilianEbanxCard, 'address-1': '' };
-				const result = validatePaymentDetails( invalidAddress );
+				const result = validatePaymentDetails( invalidAddress, 'ebanx' );
 
 				expect( result ).toEqual( {
 					errors: {
@@ -209,7 +214,7 @@ describe( 'validation', () => {
 
 			test( 'should return error when street-number is missing', () => {
 				const invalidStNo = { ...validBrazilianEbanxCard, 'street-number': '' };
-				const result = validatePaymentDetails( invalidStNo );
+				const result = validatePaymentDetails( invalidStNo, 'ebanx' );
 
 				expect( result ).toEqual( {
 					errors: {
@@ -220,7 +225,7 @@ describe( 'validation', () => {
 
 			test( 'should return error when phone number is missing', () => {
 				const invalidStPhNo = { ...validBrazilianEbanxCard, 'phone-number': '' };
-				const result = validatePaymentDetails( invalidStPhNo );
+				const result = validatePaymentDetails( invalidStPhNo, 'ebanx' );
 
 				expect( result ).toEqual( {
 					errors: {
@@ -231,7 +236,7 @@ describe( 'validation', () => {
 
 			test( 'should return error when street number is invalid', () => {
 				const invalidStreetNumber = { ...validBrazilianEbanxCard, 'street-number': '0' };
-				const result = validatePaymentDetails( invalidStreetNumber );
+				const result = validatePaymentDetails( invalidStreetNumber, 'ebanx' );
 
 				expect( result ).toEqual( {
 					errors: {
@@ -241,9 +246,9 @@ describe( 'validation', () => {
 			} );
 
 			test( 'should return error when CPF is invalid', () => {
-				processorSpecificMethods.isValidCPF = jest.fn().mockImplementation( () => false );
+				processorSpecificMethods.isValidCPF.mockImplementation( () => false );
 				const invalidCPF = { ...validBrazilianEbanxCard, document: 'blah' };
-				const result = validatePaymentDetails( invalidCPF );
+				const result = validatePaymentDetails( invalidCPF, 'ebanx' );
 				expect( result ).toEqual( {
 					errors: {
 						document: [

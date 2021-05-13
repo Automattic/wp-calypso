@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
 
 const EmailForwardingPlaceholder = () => {
 	return (

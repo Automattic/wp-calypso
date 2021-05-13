@@ -20,13 +20,13 @@
 
 .module-content-list-item {
 	// Smaller font-size for narrower, two-column modules
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 40px;
 
 	// List item height shorter on 2-column modules
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		.stats__module-list & {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			line-height: 28px;
 		}
 	}
@@ -34,7 +34,7 @@
 	border-top: 1px solid rgba( var( --color-surface-rgb ), 0 );
 
 	// Increase touch targets on mobile
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		line-height: 48px;
 		border-top: 1px solid var( --color-neutral-0 );
 
@@ -84,17 +84,17 @@
 	padding: 0 24px;
 
 	span {
-		font-size: 14px;
+		font-size: $font-body-small;
 		// Always let child elements inherit line heights
 		line-height: inherit;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		.stats__module-list & {
 			line-height: 28px;
 
 			span {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				// Always let child elements inherit line heights
 				line-height: inherit;
 			}
@@ -110,7 +110,7 @@
 
 // Module Content List Item Hover
 
-@include breakpoint( '>480px' ) {
+@include breakpoint-deprecated( '>480px' ) {
 	.module-content-list .stats-list__module-content-list-item-wrapper:hover,
 	.module-content-list-item-link .stats-list__module-content-list-item-wrapper:hover {
 		&,
@@ -123,7 +123,11 @@
 		}
 
 		.module-content-list-item-right::before {
-			background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
+			background-image: linear-gradient(
+				to right,
+				rgba( var( --color-neutral-0-rgb ), 0 ) 0%,
+				var( --color-neutral-0 ) 90%
+			);
 		}
 
 		// Display hidden actions
@@ -157,7 +161,11 @@
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient(
+			to right,
+			rgba( var( --color-neutral-0-rgb ), 0 ) 0%,
+			var( --color-neutral-0 ) 90%
+		);
 	}
 
 	// Display hidden actions
@@ -168,14 +176,18 @@
 
 // Highlight toggle icon if item has a sublist
 
-@include breakpoint( '>480px' ) {
-	.module-content-list > .module-content-list-item-toggle > .stats-list__module-content-list-item-wrapper:hover
+@include breakpoint-deprecated( '>480px' ) {
+	.module-content-list
+		> .module-content-list-item-toggle
+		> .stats-list__module-content-list-item-wrapper:hover
 		.stats-list__module-content-list-item-label::before {
 		color: var( --color-link-dark );
 	}
 }
 
-.module-content-list > .module-content-list-item-toggle > .stats-list__module-content-list-item-wrapper:focus
+.module-content-list
+	> .module-content-list-item-toggle
+	> .stats-list__module-content-list-item-wrapper:focus
 	.stats-list__module-content-list-item-label::before {
 	color: var( --color-link-dark );
 }
@@ -191,13 +203,13 @@
 	height: 40px; // 2
 
 	// List item height shorter on 2-column modules
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		.stats__module-list & {
 			height: 28px;
 		}
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		height: 48px; // ### see ^
 	}
 
@@ -254,9 +266,9 @@
 	}
 
 	// Icons smaller on 2col
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		.stats__module-list & .stats-list__icon {
-			font-size: 20px;
+			font-size: $font-title-small;
 			line-height: 1.3;
 		}
 
@@ -305,13 +317,13 @@
 	background: var( --color-surface );
 	margin-left: -48px; // ### keep? experimental: to force labels to go longer than they normally would to make sure the fade out shows
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		.stats__module-list & {
 			height: 28px;
 		}
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		height: 48px;
 	}
 
@@ -380,7 +392,7 @@ ul.module-content-list-item-actions {
 		}
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		@include dropdown-menu;
 
 		background: var( --color-neutral-0 );
@@ -430,7 +442,7 @@ ul.module-content-list-item-actions {
 	height: 40px;
 	line-height: inherit;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		.stats__module-list & {
 			height: 28px;
 		}
@@ -440,7 +452,7 @@ ul.module-content-list-item-actions {
 		vertical-align: middle;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: inline-block;
 		height: 48px;
 	}
@@ -459,7 +471,7 @@ ul.module-content-list-item-action-submenu {
 	list-style: none;
 	margin: 0;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		@include dropdown-menu;
 
 		display: none;
@@ -490,13 +502,13 @@ ul.module-content-list-item-action-submenu {
 	margin: 0 1em 0 0;
 
 	// So that 'View' label is moved more to the right since icon has been dropped
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		.stats__module-list & {
 			margin: 0;
 		}
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		margin-right: 0;
 	}
 
@@ -508,7 +520,7 @@ ul.module-content-list-item-action-submenu {
 		opacity: 0;
 		line-height: inherit;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			min-width: 24px;
 			opacity: 1;
 			padding: 0 12px;
@@ -523,7 +535,7 @@ ul.module-content-list-item-action-submenu {
 		}
 
 		// Hide 'View' label next to icon on 2-column modules
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			.stats__module-list & span.module-content-list-item-action-label-view {
 				display: none;
 			}
@@ -558,7 +570,7 @@ ul.module-content-list-item-action-submenu {
 			margin-right: 0;
 		}
 	}
-	
+
 	// When a button instead of a link is used
 	.button.module-content-list-item-action-wrapper .gridicon {
 		vertical-align: unset;
@@ -569,7 +581,7 @@ ul.module-content-list-item-action-submenu {
 		color: var( --color-error );
 
 		// Hover state
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			&:hover {
 				color: var( --color-error-30 );
 			}
@@ -595,7 +607,7 @@ ul.module-content-list-legend {
 	@extend %placeholder;
 
 	color: var( --color-text-subtle );
-	font-weight: bold;
+	font-weight: 600;
 
 	// Limit width when loading for placeholders to take less visual space
 	.stats-module.is-loading & {
@@ -608,7 +620,7 @@ ul.module-content-list-legend {
 	.module-content-list-item
 	.module-content-list-item-action
 	.module-content-list-item-action-label {
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: inline;
 	}
 }
@@ -632,7 +644,7 @@ ul.module-content-list-legend {
 .module-content-list > .module-content-list-item-large {
 	> .module-content-list-item-wrapper {
 		line-height: 48px;
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			.stats__module-list & {
 				line-height: 28px;
 			}
@@ -641,24 +653,28 @@ ul.module-content-list-legend {
 
 	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label {
 		height: 48px;
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			.stats__module-list & {
 				height: 28px;
 			}
 		}
 	}
 
-	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .avatar {
-		font-size: 32px;
+	> .stats-list__module-content-list-item-wrapper
+		.stats-list__module-content-list-item-label
+		.avatar {
+		font-size: $font-title-large;
 		margin-right: 10px;
 	}
 
-	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .stats-list__icon {
-		font-size: 32px;
+	> .stats-list__module-content-list-item-wrapper
+		.stats-list__module-content-list-item-label
+		.stats-list__icon {
+		font-size: $font-title-large;
 		line-height: 32px;
 		width: 32px;
 		height: 32px;
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			.stats__module-list & {
 				width: 24px;
 				height: 24px;
@@ -666,19 +682,22 @@ ul.module-content-list-legend {
 		}
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		.stats__module-list
-			& > .stats-list__module-content-list-item-wrapper
+			&
+			> .stats-list__module-content-list-item-wrapper
 			.stats-list__module-content-list-item-label
 			.stats-list__icon {
 			margin-top: -2px; // Really couldn't figure out a better way to correctly position the avatar
 		}
 	}
 
-	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .avatar {
+	> .stats-list__module-content-list-item-wrapper
+		.stats-list__module-content-list-item-label
+		.avatar {
 		width: 32px;
 		height: 32px;
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			.stats__module-list & {
 				width: 24px;
 				height: 24px;
@@ -686,7 +705,9 @@ ul.module-content-list-legend {
 		}
 	}
 
-	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .avatar-user {
+	> .stats-list__module-content-list-item-wrapper
+		.stats-list__module-content-list-item-label
+		.avatar-user {
 		border-radius: 16px;
 	}
 }
@@ -708,8 +729,9 @@ ul.module-content-list-legend {
 
 	// Highlight main action (usually what's indicated in the label)
 
-	@include breakpoint( '>480px' ) {
-		.stats-list__module-content-list-item-wrapper:hover .stats-list__module-content-list-item-label {
+	@include breakpoint-deprecated( '>480px' ) {
+		.stats-list__module-content-list-item-wrapper:hover
+			.stats-list__module-content-list-item-label {
 			color: var( --color-link-dark );
 		}
 	}
@@ -726,7 +748,9 @@ ul.module-content-list-legend {
 	position: relative;
 
 	// Toggle icon
-	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .gridicons-chevron-down {
+	> .stats-list__module-content-list-item-wrapper
+		.stats-list__module-content-list-item-label
+		.gridicons-chevron-down {
 		vertical-align: middle;
 		transition: 0.2s transform ease-out;
 		transform: translate3d( 0, 0, 0 );
@@ -753,11 +777,17 @@ ul.module-content-list-legend {
 	}
 
 	> .stats-list__module-content-list-item-wrapper .module-content-list-item-right::before {
-		background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient(
+			to right,
+			rgba( var( --color-neutral-0-rgb ), 0 ) 0%,
+			var( --color-neutral-0 ) 90%
+		);
 	}
 
 	// Rotate toggle icon
-	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .gridicons-chevron-down {
+	> .stats-list__module-content-list-item-wrapper
+		.stats-list__module-content-list-item-label
+		.gridicons-chevron-down {
 		transform: rotate( 180deg );
 	}
 
@@ -767,7 +797,7 @@ ul.module-content-list-legend {
 	}
 
 	// Hover changes
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		> .stats-list__module-content-list-item-wrapper:hover {
 			// Change background and gradient color
 			&,
@@ -776,7 +806,11 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ) 0%, var( --color-surface ) 90% );
+				background-image: linear-gradient(
+					to right,
+					rgba( var( --color-surface-rgb ), 0 ) 0%,
+					var( --color-surface ) 90%
+				);
 			}
 		}
 	}
@@ -803,11 +837,15 @@ ul.module-content-list-legend {
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient( to right, rgba( var( --color-neutral-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient(
+			to right,
+			rgba( var( --color-neutral-rgb ), 0 ) 0%,
+			var( --color-neutral-0 ) 90%
+		);
 	}
 
 	// Hover changes
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		&-link .stats-list__module-content-list-item-wrapper:hover,
 		&-normal .stats-list__module-content-list-item-wrapper:hover {
 			// Change background and gradient color
@@ -817,7 +855,11 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ) 0%, var( --color-surface ) 90% );
+				background-image: linear-gradient(
+					to right,
+					rgba( var( --color-surface-rgb ), 0 ) 0%,
+					var( --color-surface ) 90%
+				);
 			}
 		}
 	}

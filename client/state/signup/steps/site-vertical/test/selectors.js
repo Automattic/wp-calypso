@@ -91,7 +91,7 @@ describe( 'selectors', () => {
 			expect( getSiteVerticalPreview( state ) ).toEqual( verticals.business.felice[ 0 ].preview );
 		} );
 	} );
-	describe( '', () => {
+	describe( 'getSiteVerticalId', () => {
 		test( 'should return empty string as a default state', () => {
 			expect( getSiteVerticalId( {} ) ).toBe( '' );
 		} );

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, get, isEqual, merge, omitBy, pickBy, reduce } from 'lodash';
+import { find, forEach, get, isEqual, merge, omitBy, pickBy, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,9 +23,11 @@ import {
 	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
-} from 'state/reader/action-types';
-import { SERIALIZE } from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+	READER_SEEN_MARK_AS_SEEN_RECEIVE,
+	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
+	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
+} from 'calypso/state/reader/action-types';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
 
@@ -106,7 +108,7 @@ function updateNotificationSubscription( state, { payload, type } ) {
 	};
 }
 
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
+const itemsReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_RECORD_FOLLOW: {
 			const urlKey = prepareComparableUrl( action.payload.url );
@@ -255,14 +257,56 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			// or follows that we picked up from a feed, site, or post object.
 			return omitBy( state, ( follow ) => follow.ID && ! seenSubscriptions.has( follow.feed_URL ) );
 		}
-		case SERIALIZE:
-			return pickBy( state, ( item ) => item.ID && item.is_following );
+
+		case READER_SEEN_MARK_AS_SEEN_RECEIVE: {
+			const urlKey = prepareComparableUrl( action.feedUrl );
+			const existingEntry = state[ urlKey ];
+			if ( ! existingEntry ) {
+				return state;
+			}
+			return {
+				...state,
+				[ urlKey ]: merge( {}, existingEntry, {
+					unseen_count: existingEntry.unseen_count - action.globalIds.length,
+				} ),
+			};
+		}
+
+		case READER_SEEN_MARK_AS_UNSEEN_RECEIVE: {
+			const urlKey = prepareComparableUrl( action.feedUrl );
+			const existingEntry = state[ urlKey ];
+			if ( ! existingEntry ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ urlKey ]: merge( {}, existingEntry, {
+					unseen_count: existingEntry.unseen_count + action.globalIds.length,
+				} ),
+			};
+		}
+
+		case READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE: {
+			forEach( action.feedUrls, ( feedUrl ) => {
+				const urlKey = prepareComparableUrl( feedUrl );
+				state[ urlKey ] = { ...state[ urlKey ], unseen_count: 0 };
+			} );
+			return { ...state };
+		}
 	}
 
 	return state;
-} );
+};
 
-export const itemsCount = withoutPersistence( ( state = 0, action ) => {
+export const items = withSchemaValidation(
+	itemsSchema,
+	withPersistence( itemsReducer, {
+		serialize: ( state ) => pickBy( state, ( item ) => item.ID && item.is_following ),
+	} )
+);
+
+export const itemsCount = ( state = 0, action ) => {
 	switch ( action.type ) {
 		case READER_FOLLOWS_RECEIVE: {
 			return action.payload.totalCount ? action.payload.totalCount : state;
@@ -270,9 +314,9 @@ export const itemsCount = withoutPersistence( ( state = 0, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const lastSyncTime = withoutPersistence( ( state = null, action ) => {
+export const lastSyncTime = ( state = null, action ) => {
 	switch ( action.type ) {
 		case READER_FOLLOWS_SYNC_START: {
 			return Date.now();
@@ -280,7 +324,7 @@ export const lastSyncTime = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	items,

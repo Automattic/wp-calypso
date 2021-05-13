@@ -7,7 +7,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Timezone from 'components/timezone';
+import Timezone from 'calypso/components/timezone';
 import { Card } from '@automattic/components';
 
 export default class TimezoneExample extends PureComponent {

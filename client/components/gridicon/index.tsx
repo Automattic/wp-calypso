@@ -22,7 +22,7 @@ interface Props {
 type AllProps = Assign< React.SVGProps< SVGSVGElement >, Props >;
 
 const Gridicon = React.forwardRef< SVGSVGElement, AllProps >( ( props: AllProps, ref ) => {
-	const { size = 24, icon, onClick, className, ...otherProps } = props;
+	const { size = 24, icon, onClick, className, title, ...otherProps } = props;
 	const isModulo18 = size % 18 === 0;
 
 	// Using a missing icon doesn't produce any errors, just a blank icon, which is the exact intended behaviour.
@@ -47,6 +47,7 @@ const Gridicon = React.forwardRef< SVGSVGElement, AllProps >( ( props: AllProps,
 			ref={ ref }
 			{ ...otherProps }
 		>
+			{ title && <title>{ title }</title> }
 			<use xlinkHref={ `${ spritePath }#${ iconName }` } />
 		</svg>
 	);

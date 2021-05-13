@@ -1,25 +1,37 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
-import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
+import React, { useState, useEffect } from 'react';
+import { ExternalLink } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
  */
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { useLangRouteParam, usePath, Step, useCurrentStep } from '../../path';
-import ModalSubmitButton from '../modal-submit-button';
+import {
+	useLangRouteParam,
+	usePath,
+	Step,
+	useCurrentStep,
+	useAnchorFmParams,
+	useIsAnchorFm,
+} from '../../path';
 import './style.scss';
-import SignupFormHeader from './header';
-import GUTENBOARDING_BASE_NAME from '../../basename.json';
-import { recordOnboardingError } from '../../lib/analytics';
-import { localizeUrl } from '../../../../lib/i18n-utils';
+import {
+	initGoogleRecaptcha,
+	recordGoogleRecaptchaAction,
+	recordOnboardingError,
+} from '../../lib/analytics';
 import { useTrackModal } from '../../hooks/use-track-modal';
+import config from '@automattic/calypso-config';
+import SignupDefaultLayout from './signup-default-layout';
+import SignupAnchorLayout from './signup-anchor-layout';
 
 interface Props {
 	onRequestClose: () => void;
@@ -29,6 +41,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const { __ } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const [ passwordVal, setPasswordVal ] = useState( '' );
+	const [ recaptchaClientId, setRecaptchaClientId ] = useState< number >();
 	const { createAccount, clearErrors } = useDispatch( USER_STORE );
 	const isFetchingNewUser = useSelect( ( select ) => select( USER_STORE ).isFetchingNewUser() );
 	const newUserError = useSelect( ( select ) => select( USER_STORE ).getNewUserError() );
@@ -36,6 +49,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const langParam = useLangRouteParam();
 	const makePath = usePath();
 	const currentStep = useCurrentStep();
+	const isMobile = useViewportMatch( 'small', '<' );
+	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl } = useAnchorFmParams();
+	const isAnchorFmSignup = useIsAnchorFm();
 
 	const closeModal = () => {
 		clearErrors();
@@ -45,20 +61,48 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	useTrackModal( 'Signup' );
 
 	const lang = useLangRouteParam();
+	const localizeUrl = useLocalizeUrl();
+
+	useEffect( () => {
+		initGoogleRecaptcha( 'g-recaptcha', config( 'google_recaptcha_site_key' ) ).then(
+			( clientId ) => {
+				if ( clientId === null ) {
+					return;
+				}
+				setRecaptchaClientId( clientId );
+			}
+		);
+	}, [ setRecaptchaClientId ] );
 
 	const handleSignUp = async ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
-		const username_hint = siteTitle || siteVertical?.label;
+		const username_hint = siteTitle || siteVertical?.label || null;
+
+		let recaptchaToken;
+		let recaptchaError;
+
+		if ( typeof recaptchaClientId === 'number' ) {
+			recaptchaToken = await recordGoogleRecaptchaAction(
+				recaptchaClientId,
+				'calypso/signup/formSubmit'
+			);
+
+			if ( ! recaptchaToken ) {
+				recaptchaError = 'recaptcha_failed';
+			}
+		} else {
+			recaptchaError = 'recaptcha_didnt_load';
+		}
 
 		const result = await createAccount( {
 			email: emailVal,
+			'g-recaptcha-error': recaptchaError,
+			'g-recaptcha-response': recaptchaToken || undefined,
 			password: passwordVal,
 			signup_flow_name: 'gutenboarding',
 			locale: langParam,
-			...( username_hint && {
-				extra: { username_hint },
-			} ),
+			extra: { username_hint, is_anchor_fm_signup: isAnchorFmSignup },
 			is_passwordless: false,
 		} );
 
@@ -81,13 +125,34 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		}
 	);
 
+	// translators: English wording comes from Google: https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed
+	const recaptcha_text = __(
+		'This site is protected by reCAPTCHA and the Google <link_to_policy>Privacy Policy</link_to_policy> and <link_to_tos>Terms of Service</link_to_tos> apply.'
+	);
+	const recaptcha_tos = createInterpolateElement( recaptcha_text, {
+		link_to_policy: <ExternalLink href="https://policies.google.com/privacy" />,
+		link_to_tos: <ExternalLink href="https://policies.google.com/terms" />,
+	} );
+
 	let errorMessage: string | undefined;
 	if ( newUserError ) {
 		switch ( newUserError.error ) {
 			case 'already_taken':
 			case 'already_active':
 			case 'email_exists':
+			case 'email_reserved':
 				errorMessage = __( 'An account with this email address already exists.' );
+				break;
+			case 'email_invalid':
+				errorMessage = __( 'Please enter a valid email address.' );
+				break;
+			case 'email_cant_be_used_to_signup':
+				errorMessage = __(
+					'You cannot use that email address to signup. We are having problems with them blocking some of our email. Please use another email provider.'
+				);
+				break;
+			case 'email_not_allowed':
+				errorMessage = __( 'Sorry, that email address is not allowed!' );
 				break;
 			case 'password_invalid':
 				errorMessage = newUserError.message;
@@ -101,79 +166,55 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	}
 
 	const langFragment = lang ? `/${ lang }` : '';
-	const loginRedirectUrl = encodeURIComponent(
-		`${ window.location.origin }/${ GUTENBOARDING_BASE_NAME }${ makePath( Step[ currentStep ] ) }`
-	);
-	const signupUrl = encodeURIComponent(
-		`/${ GUTENBOARDING_BASE_NAME }${ makePath( Step[ currentStep ] ) }?signup`
-	);
-	const loginUrl = `/log-in/${ GUTENBOARDING_BASE_NAME }${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
 
-	return (
-		<Modal
-			className={ 'signup-form' }
-			title={ __( 'Save your progress' ) }
-			onRequestClose={ closeModal }
-			focusOnMount={ false }
-			isDismissible={ false }
-			overlayClassName={ 'signup-form__overlay' }
-			// set to false so that 1password's autofill doesn't automatically close the modal
-			shouldCloseOnClickOutside={ false }
-		>
-			<SignupFormHeader onRequestClose={ closeModal } />
+	const addAnchorQueryParts = ( url: string ): string => {
+		const queryParts = {
+			anchor_podcast: anchorFmPodcastId,
+			anchor_episode: anchorFmEpisodeId,
+			spotify_url: anchorFmSpotifyUrl,
+		};
+		for ( const [ k, v ] of Object.entries( queryParts ) ) {
+			if ( v ) {
+				url += `&${ k }=${ encodeURIComponent( v ) }`;
+			}
+		}
+		return url;
+	};
 
-			<div className="signup-form__body">
-				<h1 className="signup-form__title">{ __( 'Save your progress' ) }</h1>
+	let loginRedirectUrl = window.location.origin + '/new';
+	if ( isAnchorFmSignup ) {
+		loginRedirectUrl += `${ makePath( Step.IntentGathering ) }?new`;
+		loginRedirectUrl = addAnchorQueryParts( loginRedirectUrl );
+	} else {
+		loginRedirectUrl += `${ makePath( Step.CreateSite ) }?new`;
+	}
+	loginRedirectUrl = encodeURIComponent( loginRedirectUrl );
 
-				<form onSubmit={ handleSignUp }>
-					<fieldset>
-						<legend className="signup-form__legend">
-							<p>{ __( 'Enter an email and password to save your progress and continue.' ) }</p>
-						</legend>
+	let signupUrl = `/new${ makePath( Step[ currentStep ] ) }?signup`;
+	if ( isAnchorFmSignup ) {
+		signupUrl = addAnchorQueryParts( signupUrl );
+	}
+	signupUrl = encodeURIComponent( signupUrl );
+	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
 
-						<TextControl
-							value={ emailVal }
-							disabled={ isFetchingNewUser }
-							type="email"
-							onChange={ setEmailVal }
-							placeholder={ __( 'Email address' ) }
-							required
-							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-						/>
-
-						<TextControl
-							value={ passwordVal }
-							disabled={ isFetchingNewUser }
-							type="password"
-							onChange={ setPasswordVal }
-							placeholder={ __( 'Password' ) }
-							required
-						/>
-
-						{ errorMessage && (
-							<Notice className="signup-form__error-notice" status="error" isDismissible={ false }>
-								{ errorMessage }
-							</Notice>
-						) }
-
-						<div className="signup-form__footer">
-							<p className="signup-form__login-link">
-								<span>{ __( 'Already have an account?' ) }</span>{ ' ' }
-								<Button className="signup-form__link" isLink href={ loginUrl }>
-									{ __( 'Log in' ) }
-								</Button>
-							</p>
-
-							<ModalSubmitButton disabled={ isFetchingNewUser } isBusy={ isFetchingNewUser }>
-								{ __( 'Create account' ) }
-							</ModalSubmitButton>
-
-							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
-						</div>
-					</fieldset>
-				</form>
-			</div>
-		</Modal>
+	const displayProps = {
+		closeModal,
+		emailVal,
+		errorMessage,
+		handleSignUp,
+		isFetchingNewUser,
+		isMobile,
+		loginUrl,
+		passwordVal,
+		recaptcha_tos,
+		setEmailVal,
+		setPasswordVal,
+		tos,
+	};
+	return isAnchorFmSignup ? (
+		<SignupAnchorLayout { ...displayProps } />
+	) : (
+		<SignupDefaultLayout { ...displayProps } />
 	);
 };
 

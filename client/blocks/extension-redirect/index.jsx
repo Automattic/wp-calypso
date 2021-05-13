@@ -11,10 +11,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import versionCompare from 'lib/version-compare';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getPluginOnSite, isRequesting } from 'state/plugins/installed/selectors';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import versionCompare from 'calypso/lib/version-compare';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 
 class ExtensionRedirect extends Component {
 	static propTypes = {

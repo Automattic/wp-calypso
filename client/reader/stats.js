@@ -1,15 +1,15 @@
 /**
- * External Dependencies
+ * External dependencies
  */
-import { assign, partial, pick } from 'lodash';
+import { partial, pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { bumpStat, bumpStatWithPageView } from 'lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 
 const debug = debugFactory( 'calypso:reader:stats' );
 
@@ -50,6 +50,9 @@ function getLocation( path ) {
 	}
 	if ( path.indexOf( '/read/a8c' ) === 0 ) {
 		return 'following_a8c';
+	}
+	if ( path.indexOf( '/read/p2' ) === 0 ) {
+		return 'following_p2';
 	}
 	if ( path.indexOf( '/tag/' ) === 0 ) {
 		return 'topic_page';
@@ -102,17 +105,14 @@ function getLocation( path ) {
  *   recordTrack after changing windows and would result in a `ui_algo: single_post`
  *   regardless of the stream the post was opened. This now allows the article_opened
  *   Tracks event to correctly specify which stream the post was opened.
+ *
+ * @deprecated Use the recordReaderTracksEvent action instead.
  */
 export function recordTrack( eventName, eventProperties, { pathnameOverride } = {} ) {
 	debug( 'reader track', ...arguments );
-	const subCount = 0; // todo: fix subCount by moving to redux middleware for recordTrack
 
 	const location = getLocation( pathnameOverride || window.location.pathname );
 	eventProperties = Object.assign( { ui_algo: location }, eventProperties );
-
-	if ( subCount != null ) {
-		eventProperties = Object.assign( { subscription_count: subCount }, eventProperties );
-	}
 
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if (
@@ -127,8 +127,8 @@ export function recordTrack( eventName, eventProperties, { pathnameOverride } = 
 	recordTracksEvent( eventName, eventProperties );
 }
 
-const tracksRailcarEventWhitelist = new Set();
-tracksRailcarEventWhitelist
+const allowedTracksRailcarEventNames = new Set();
+allowedTracksRailcarEventNames
 	.add( 'calypso_reader_related_post_from_same_site_clicked' )
 	.add( 'calypso_reader_related_post_from_other_site_clicked' )
 	.add( 'calypso_reader_related_post_site_clicked' )
@@ -158,14 +158,15 @@ export const recordTracksRailcarRender = partial(
 	recordTracksRailcar,
 	'calypso_traintracks_render'
 );
+
 export const recordTracksRailcarInteract = partial(
 	recordTracksRailcar,
 	'calypso_traintracks_interact'
 );
 
 export function recordTrackForPost( eventName, post = {}, additionalProps = {}, options ) {
-	recordTrack( eventName, assign( getTracksPropertiesForPost( post ), additionalProps ), options );
-	if ( post.railcar && tracksRailcarEventWhitelist.has( eventName ) ) {
+	recordTrack( eventName, { ...getTracksPropertiesForPost( post ), ...additionalProps }, options );
+	if ( post.railcar && allowedTracksRailcarEventNames.has( eventName ) ) {
 		// check for overrides for the railcar
 		recordTracksRailcarInteract(
 			eventName,
@@ -173,7 +174,7 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {}, 
 			pick( additionalProps, [ 'ui_position', 'ui_algo' ] )
 		);
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
-		console.warn( 'Consider whitelisting reader track', eventName ); //eslint-disable-line no-console
+		console.warn( 'Consider allowing reader track', eventName ); //eslint-disable-line no-console
 	}
 }
 
@@ -187,13 +188,17 @@ export function getTracksPropertiesForPost( post = {} ) {
 	};
 }
 
-export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
-	recordTrack( eventName, eventProperties );
+export function recordRailcar( eventName, railcar, eventProperties ) {
 	recordTracksRailcarInteract(
 		eventName,
 		railcar,
 		pick( eventProperties, [ 'ui_position', 'ui_algo' ] )
 	);
+}
+
+export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
+	recordTrack( eventName, eventProperties );
+	recordRailcar( eventName, railcar, eventProperties );
 }
 
 export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {

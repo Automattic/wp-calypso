@@ -10,32 +10,32 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import StatsNavigation from 'blocks/stats-navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import AllTime from 'my-sites/stats/all-time/';
+import DocumentHead from 'calypso/components/data/document-head';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import AllTime from 'calypso/my-sites/stats/all-time/';
 import Comments from '../stats-comments';
 import Reach from '../stats-reach';
 import PostingActivity from '../post-trends';
 import StatsModule from '../stats-module';
 import statsStrings from '../stats-strings';
-import MostPopular from 'my-sites/stats/most-popular';
+import MostPopular from 'calypso/my-sites/stats/most-popular';
 import LatestPostSummary from '../post-performance';
-import DomainTip from 'blocks/domain-tip';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import SectionHeader from 'components/section-header';
+import DomainTip from 'calypso/blocks/domain-tip';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import SectionHeader from 'calypso/components/section-header';
 import StatsViews from '../stats-views';
 import Followers from '../stats-followers';
-import JetpackColophon from 'components/jetpack-colophon';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import AnnualSiteStats from 'my-sites/stats/annual-site-stats';
-import { getSuggestionsVendor } from 'lib/domains/suggestions';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 
 const StatsInsights = ( props ) => {
-	const { followList, isJetpack, siteId, siteSlug, translate } = props;
+	const { isJetpack, siteId, siteSlug, translate } = props;
 	const moduleStrings = statsStrings();
 
 	let tagsList;
@@ -57,14 +57,16 @@ const StatsInsights = ( props ) => {
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<SidebarNavigation />
 			<FormattedHeader
+				brandFont
 				className="stats__section-header"
 				headerText={ translate( 'Stats and Insights' ) }
+				subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				align="left"
 			/>
 			<StatsNavigation selectedItem={ 'insights' } siteId={ siteId } slug={ siteSlug } />
 			<div>
 				<PostingActivity />
-				<SectionHeader label={ translate( 'All Time Views' ) } />
+				<SectionHeader label={ translate( 'All-time views' ) } />
 				<StatsViews />
 				{ siteId && (
 					<DomainTip
@@ -83,11 +85,11 @@ const StatsInsights = ( props ) => {
 						</div>
 						<div className="stats__module-column">
 							<Reach />
-							<Followers path={ 'followers' } followList={ followList } />
+							<Followers path={ 'followers' } />
 						</div>
 						<div className="stats__module-column">
 							<AllTime />
-							<Comments path={ 'comments' } followList={ followList } />
+							<Comments path={ 'comments' } />
 							<StatsModule
 								path="publicize"
 								moduleStrings={ moduleStrings.publicize }
@@ -104,7 +106,6 @@ const StatsInsights = ( props ) => {
 };
 
 StatsInsights.propTypes = {
-	followList: PropTypes.object.isRequired,
 	translate: PropTypes.func,
 };
 

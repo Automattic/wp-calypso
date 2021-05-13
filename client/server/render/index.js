@@ -13,26 +13,25 @@ import fs from 'fs';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { isDefaultLocale, isLocaleRtl } from 'lib/i18n-utils';
+import config from '@automattic/calypso-config';
+import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
 	getTranslationChunkFileUrl,
-} from 'lib/i18n-utils/switch-locale';
-import { isSectionIsomorphic } from 'state/ui/selectors';
+} from 'calypso/lib/i18n-utils/switch-locale';
 import {
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
-} from 'state/document-head/selectors';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
-import initialReducer from 'state/reducer';
-import { SERIALIZE } from 'state/action-types';
-import { logToLogstash } from 'state/logstash/actions';
-import stateCache from 'server/state-cache';
-import { getNormalizedPath } from 'server/isomorphic-routing';
+} from 'calypso/state/document-head/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
+import initialReducer from 'calypso/state/reducer';
+import { serialize } from 'calypso/state/utils';
+import { logToLogstash } from 'calypso/state/logstash/actions';
+import stateCache from 'calypso/server/state-cache';
+import { getNormalizedPath } from 'calypso/server/isomorphic-routing';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
@@ -57,7 +56,7 @@ function bumpStat( group, name ) {
  * @returns {string} Rendered markup
  */
 export function renderJsx( view, props ) {
-	const requireComponent = require.context( 'document', true, /\.jsx$/ );
+	const requireComponent = require.context( 'calypso/document', true, /\.jsx$/ );
 	const component = requireComponent( './' + view + '.jsx' ).default;
 	const doctype = `<!DOCTYPE html><!--
 	<3
@@ -123,8 +122,14 @@ export function render( element, key = JSON.stringify( element ), req ) {
 
 		return renderedLayout;
 	} catch ( ex ) {
-		if ( process.env.NODE_ENV === 'development' ) {
-			throw ex;
+		try {
+			req.logger.error( ex );
+		} catch ( err ) {
+			// Failed to log the error, swallow it in prod so it doesn't break anything. This will serve
+			// a blank page and the client will render on top of it.
+			if ( process.env.NODE_ENV === 'development' ) {
+				throw ex;
+			}
 		}
 	}
 	//todo: render an error?
@@ -145,51 +150,59 @@ const getLanguageManifest = ( langSlug, target ) => {
 			'languages',
 			`${ langSlug }-language-manifest.json`
 		);
-		cachedLanguageManifest[ key ] = JSON.parse(
-			fs.readFileSync( languageManifestFilepath, 'utf8' )
-		);
+		cachedLanguageManifest[ key ] = fs.existsSync( languageManifestFilepath )
+			? JSON.parse( fs.readFileSync( languageManifestFilepath, 'utf8' ) )
+			: null;
 	}
 	return cachedLanguageManifest[ key ];
 };
 
 export function attachI18n( context ) {
-	if ( ! isDefaultLocale( context.lang ) ) {
-		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
+	let localeSlug = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
+	const shouldUseFallbackLocale =
+		context.user?.use_fallback_for_incomplete_languages && isTranslatedIncompletely( localeSlug );
 
-		context.i18nLocaleScript = getLanguageFileUrl( langFileName, 'js', context.languageRevisions );
+	if ( shouldUseFallbackLocale ) {
+		localeSlug = config( 'i18n_default_locale_slug' );
 	}
 
-	if ( ! isDefaultLocale( context.lang ) && context.useTranslationChunks ) {
+	if ( ! isDefaultLocale( localeSlug ) ) {
+		context.i18nLocaleScript = getLanguageFileUrl( localeSlug, 'js', context.languageRevisions );
+	}
+
+	if ( ! isDefaultLocale( localeSlug ) && context.useTranslationChunks ) {
 		context.entrypoint.language = {};
 
-		context.entrypoint.language.manifest = getLanguageManifestFileUrl( {
-			localeSlug: context.lang,
-			fileType: 'js',
-			targetBuild: context.target,
-			hash: context?.languageRevisions?.hashes?.[ context.lang ],
-		} );
+		const languageManifest = getLanguageManifest( localeSlug, context.target );
 
-		const translatedChunks = getLanguageManifest( context.lang, context.target ).translatedChunks;
+		if ( languageManifest ) {
+			context.entrypoint.language.manifest = getLanguageManifestFileUrl( {
+				localeSlug: localeSlug,
+				fileType: 'js',
+				targetBuild: context.target,
+				hash: context?.languageRevisions?.hashes?.[ localeSlug ],
+			} );
 
-		context.entrypoint.language.translations = context.entrypoint.js
-			.concat( context.chunkFiles.js )
-			.map( ( chunk ) => path.parse( chunk ).name )
-			.filter( ( chunkId ) => translatedChunks.includes( chunkId ) )
-			.map( ( chunkId ) =>
-				getTranslationChunkFileUrl( {
-					chunkId,
-					localeSlug: context.lang,
-					fileType: 'js',
-					targetBuild: context.target,
-					hash: context?.languageRevisions?.[ context.lang ],
-				} )
-			);
+			context.entrypoint.language.translations = context.entrypoint.js
+				.concat( context.chunkFiles.js )
+				.map( ( chunk ) => path.parse( chunk ).name )
+				.filter( ( chunkId ) => languageManifest.translatedChunks.includes( chunkId ) )
+				.map( ( chunkId ) =>
+					getTranslationChunkFileUrl( {
+						chunkId,
+						localeSlug: localeSlug,
+						fileType: 'js',
+						targetBuild: context.target,
+						hash: context?.languageRevisions?.[ localeSlug ],
+					} )
+				);
+		}
 	}
 
 	if ( context.store ) {
-		context.lang = getCurrentLocaleSlug( context.store.getState() ) || context.lang;
+		context.lang = getCurrentLocaleSlug( context.store.getState() ) || localeSlug;
 
-		const isLocaleRTL = isLocaleRtl( context.lang );
+		const isLocaleRTL = isLocaleRtl( localeSlug );
 		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
 }
@@ -234,9 +247,7 @@ export function serverRender( req, res ) {
 		attachHead( context );
 
 		const cacheableReduxSubtrees = [ 'documentHead' ];
-		const isomorphicSubtrees = isSectionIsomorphic( context.store.getState() )
-			? [ 'themes', 'ui' ]
-			: [];
+		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
 
 		const reduxSubtrees = [ ...cacheableReduxSubtrees, ...isomorphicSubtrees ];
 
@@ -246,7 +257,7 @@ export function serverRender( req, res ) {
 		// And cache on the server, too.
 		if ( cacheKey ) {
 			const cacheableInitialState = pick( context.store.getState(), cacheableReduxSubtrees );
-			const serverState = initialReducer( cacheableInitialState, { type: SERIALIZE } );
+			const serverState = serialize( initialReducer, cacheableInitialState );
 			stateCache.set( cacheKey, serverState );
 		}
 	}
@@ -301,8 +312,8 @@ export function setShouldServerSideRender( context, next ) {
  */
 function isServerSideRenderCompatible( context ) {
 	return Boolean(
-		isSectionIsomorphic( context.store.getState() ) &&
-		! context.user && // logged out only
+		context.section?.isomorphic &&
+			! context.user && // logged out only
 			isDefaultLocale( context.lang ) &&
 			context.layout
 	);

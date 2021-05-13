@@ -8,27 +8,27 @@ import page from 'page';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, isUndefined } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { get } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Count from 'components/count';
+import Count from 'calypso/components/count';
 import { Dialog } from '@automattic/components';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
-import Tooltip from 'components/tooltip';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
-import { getSite } from 'state/sites/selectors';
-import { decodeEntities } from 'lib/formatting';
-import { deleteTerm } from 'state/terms/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
-import PodcastIndicator from 'components/podcast-indicator';
-import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
+import Tooltip from 'calypso/components/tooltip';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { deleteTerm } from 'calypso/state/terms/actions';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
+import PodcastIndicator from 'calypso/components/podcast-indicator';
+import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
 
 class TaxonomyManagerListItem extends Component {
 	static propTypes = {
@@ -164,13 +164,15 @@ class TaxonomyManagerListItem extends Component {
 						<PodcastIndicator className="taxonomy-manager__podcast-indicator" />
 					) }
 				</span>
-				{ ! isUndefined( term.post_count ) && (
-					<Count
-						ref="count"
-						count={ term.post_count }
-						onMouseEnter={ this.showTooltip }
-						onMouseLeave={ this.hideTooltip }
-					/>
+				{ typeof term.post_count !== 'undefined' && (
+					<div className="taxonomy-manager__count">
+						<Count
+							ref="count"
+							count={ term.post_count }
+							onMouseEnter={ this.showTooltip }
+							onMouseLeave={ this.hideTooltip }
+						/>
+					</div>
 				) }
 				<Tooltip
 					context={ this.refs && this.refs.count }

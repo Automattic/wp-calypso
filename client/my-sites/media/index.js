@@ -7,10 +7,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import mediaController from './controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { getSiteFragment } from 'lib/route';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { getSiteFragment } from 'calypso/lib/route';
 
 export default function () {
 	page( '/media', siteSelection, sites, makeLayout, clientRender );

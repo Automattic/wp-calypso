@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { FunctionKeys } from 'utility-types';
+import type { FunctionKeys } from 'utility-types';
 
 /**
  * Mapped types
@@ -22,6 +22,7 @@ import { FunctionKeys } from 'utility-types';
  *
  * @template S Selector map, usually from `import * as selectors from './my-store/selectors';`
  */
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type SelectFromMap< S extends object > = {
 	[ selector in FunctionKeys< S > ]: (
 		...args: TailParameters< S[ selector ] >
@@ -47,6 +48,7 @@ export type DispatchFromMap< A extends Record< string, ( ...args: any[] ) => any
  * This is useful for typing some @wordpres/data functions that make a leading
  * `state` argument implicit.
  */
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type TailParameters< F extends Function > = F extends ( head: any, ...tail: infer T ) => any
 	? T
 	: never;
@@ -58,4 +60,17 @@ export type GeneratorReturnType< T extends ( ...args: any[] ) => Generator > = T
 	...args: any
 ) => Generator< any, infer R, any >
 	? R
+	: never;
+
+/**
+ * Usually we use ReturnType of all the action creators to deduce all the actions.
+ * This works until one of the action creators is a generator and doesn't actually "Return" an action.
+ * This type helper allows for actions to be both functions and generators
+ */
+export type ReturnOrGeneratorYieldUnion< T extends ( ...args: any ) => any > = T extends (
+	...args: any
+) => infer Return
+	? Return extends Generator< infer T, infer U, any >
+		? T | U
+		: Return
 	: never;

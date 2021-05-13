@@ -11,14 +11,14 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import SupportInfo from 'components/support-info';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import SupportInfo from 'calypso/components/support-info';
 
 class Shortlinks extends Component {
 	static defaultProps = {

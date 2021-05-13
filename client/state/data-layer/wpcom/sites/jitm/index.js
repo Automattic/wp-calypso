@@ -1,19 +1,16 @@
 /**
- * External Dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import schema from './schema.json';
-import { clearJITM, insertJITM } from 'state/jitm/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { JITM_DISMISS, JITM_FETCH } from 'state/action-types';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { clearJITM, insertJITM } from 'calypso/state/jitm/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { JITM_DISMISS, JITM_FETCH } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 /**
  * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.
@@ -27,7 +24,8 @@ const unescapeDecimalEntities = ( str ) =>
 /**
  * Given an object from the api, prepare it to be consumed by the ui by transforming the shape of the data
  *
- * @param {object} jitms The jitms to display from the api
+ * @param {object} response The response object from the jitms endpoint
+ * @param {object} response.data The jitms to display from the api
  * @returns {object} The transformed data to display
  */
 const transformApiRequest = ( { data: jitms } ) =>
@@ -57,9 +55,8 @@ const transformApiRequest = ( { data: jitms } ) =>
 export const doFetchJITM = ( action ) => {
 	return http(
 		{
-			apiNamespace: 'rest',
 			method: 'GET',
-			path: `/v1.1/jetpack-blogs/${ action.siteId }/rest-api/`,
+			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
 			query: {
 				path: '/jetpack/v4/jitm',
 				query: JSON.stringify( {
@@ -83,7 +80,6 @@ export const doFetchJITM = ( action ) => {
 export const doDismissJITM = ( action ) =>
 	http(
 		{
-			apiNamespace: 'rest',
 			method: 'POST',
 			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
 			query: {

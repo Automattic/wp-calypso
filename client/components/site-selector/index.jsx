@@ -8,27 +8,29 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
-import { filter, find, flow, get, includes, isEmpty, noop } from 'lodash';
+import { filter, find, flow, get, includes, isEmpty } from 'lodash';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import { getPreference } from 'state/preferences/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSite, hasAllSitesList } from 'state/sites/selectors';
-import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
-import getSites from 'state/selectors/get-sites';
-import getVisibleSites from 'state/selectors/get-visible-sites';
-import hasLoadedSites from 'state/selectors/has-loaded-sites';
-import AllSites from 'blocks/all-sites';
-import Site from 'blocks/site';
-import SitePlaceholder from 'blocks/site/placeholder';
-import Search from 'components/search';
+import { getUserSiteCountForPlatform, getUserVisibleSiteCountForPlatform } from './utils';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSite, hasAllSitesList } from 'calypso/state/sites/selectors';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import getSites from 'calypso/state/selectors/get-sites';
+import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import AllSites from 'calypso/blocks/all-sites';
+import Site from 'calypso/blocks/site';
+import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import Search from 'calypso/components/search';
 import SiteSelectorAddSite from './add-site';
-import searchSites from 'components/search-sites';
-import scrollIntoViewport from 'lib/scroll-into-viewport';
+import searchSites from 'calypso/components/search-sites';
+import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
 
 /**
  * Style dependencies
@@ -36,7 +38,7 @@ import scrollIntoViewport from 'lib/scroll-into-viewport';
 import './style.scss';
 
 const ALL_SITES = 'ALL_SITES';
-
+const noop = () => {};
 const debug = debugFactory( 'calypso:site-selector' );
 
 class SiteSelector extends Component {
@@ -130,7 +132,8 @@ class SiteSelector extends Component {
 	computeHighlightedSite() {
 		// site can be highlighted by either keyboard or by mouse and
 		// we need to switch seemlessly between the two
-		let highlightedSiteId, highlightedIndex;
+		let highlightedSiteId;
+		let highlightedIndex;
 		if ( this.state.isKeyboardEngaged ) {
 			debug( 'using highlight from last keyboard interaction' );
 			highlightedSiteId = this.visibleSites[ this.state.highlightedIndex ];
@@ -480,7 +483,29 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 			// There is currently no "all sites" version of the insights page
 			return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
 		} else if ( siteBasePath ) {
-			return getSiteBasePath( site ) + '/' + site.slug;
+			const base = getSiteBasePath( site );
+
+			// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
+			const urlType = determineUrlType( base );
+
+			// Get URL parts and modify the path.
+			const { origin, pathname: urlPathname, search } = getUrlParts( base );
+			const newPathname = `${ urlPathname }/${ site.slug }`;
+
+			try {
+				// Get an absolute URL from the original URL, the modified path, and some defaults.
+				const absoluteUrl = getUrlFromParts( {
+					origin: origin || window.location.origin,
+					pathname: newPathname,
+					search,
+				} );
+
+				// Format the absolute URL down to the original URL type.
+				return format( absoluteUrl, urlType );
+			} catch {
+				// Invalid URLs will cause `getUrlFromParts` to throw. Return `null` in that case.
+				return null;
+			}
 		}
 	}
 
@@ -512,8 +537,8 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 		}
 
 		// Jetpack Cloud: default to /backups/ when in the details of a particular backup
-		if ( path.match( /^\/backups\/.*\/(download|restore|detail)/ ) ) {
-			path = '/backups';
+		if ( path.match( /^\/backup\/.*\/(download|restore|detail)/ ) ) {
+			path = '/backup';
 		}
 
 		return path;
@@ -522,15 +547,14 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 
 const mapState = ( state ) => {
 	const user = getCurrentUser( state );
-	const visibleSiteCount = get( user, 'visible_site_count', 0 );
 
 	return {
 		hasLoadedSites: hasLoadedSites( state ),
 		sites: getSites( state ),
 		showRecentSites: get( user, 'visible_site_count', 0 ) > 11,
 		recentSites: getPreference( state, 'recentSites' ),
-		siteCount: get( user, 'site_count', 0 ),
-		visibleSiteCount: visibleSiteCount,
+		siteCount: getUserSiteCountForPlatform( user ),
+		visibleSiteCount: getUserVisibleSiteCountForPlatform( user ),
 		selectedSite: getSelectedSite( state ),
 		visibleSites: getVisibleSites( state ),
 		allSitesSingleUser: areAllSitesSingleUser( state ),

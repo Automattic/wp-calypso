@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns whether the theme activation action is currently ongoing on the site.

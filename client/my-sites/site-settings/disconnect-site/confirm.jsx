@@ -3,27 +3,32 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { find, flowRight, isArray } from 'lodash';
+import { find, flowRight } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import DisconnectJetpack from 'blocks/disconnect-jetpack';
-import DocumentHead from 'components/data/document-head';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import FormattedHeader from 'components/formatted-header';
-import Main from 'components/main';
-import NavigationLink from 'components/wizard/navigation-link';
-import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { submitSurvey } from 'lib/purchases/actions';
+import DisconnectJetpack from 'calypso/blocks/disconnect-jetpack';
+import DocumentHead from 'calypso/components/data/document-head';
+import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import NavigationLink from 'calypso/components/wizard/navigation-link';
+import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import { submitSurvey } from 'calypso/lib/purchases/actions';
 
 class ConfirmDisconnection extends PureComponent {
 	static propTypes = {
 		reason: PropTypes.string,
+		type: PropTypes.string,
 		text: PropTypes.oneOfType( [ PropTypes.string, PropTypes.arrayOf( PropTypes.string ) ] ),
 		// Provided by HOCs
 		purchase: PropTypes.object,
@@ -32,7 +37,7 @@ class ConfirmDisconnection extends PureComponent {
 		translate: PropTypes.func,
 	};
 
-	static reasonWhitelist = [
+	static allowedReasons = [
 		'troubleshooting',
 		'cannot-work',
 		'slow',
@@ -47,8 +52,8 @@ class ConfirmDisconnection extends PureComponent {
 
 		const surveyData = {
 			'why-cancel': {
-				response: find( this.constructor.reasonWhitelist, ( r ) => r === reason ),
-				text: isArray( text ) ? text.join() : text,
+				response: find( this.constructor.allowedReasons, ( r ) => r === reason ),
+				text: Array.isArray( text ) ? text.join() : text,
 			},
 			source: {
 				from: 'Calypso',
@@ -63,7 +68,11 @@ class ConfirmDisconnection extends PureComponent {
 	};
 
 	render() {
-		const { siteId, siteSlug, translate } = this.props;
+		const { type, siteId, siteSlug, translate } = this.props;
+
+		const backHref =
+			`/settings/disconnect-site/${ siteSlug }` +
+			( type ? `?type=${ encodeURIComponent( type ) }` : '' );
 
 		return (
 			<Main className="disconnect-site__confirm">
@@ -83,7 +92,7 @@ class ConfirmDisconnection extends PureComponent {
 					stayConnectedHref={ '/settings/manage-connection/' + siteSlug }
 				/>
 				<div className="disconnect-site__navigation-links">
-					<NavigationLink href={ '/settings/disconnect-site/' + siteSlug } direction="back" />
+					<NavigationLink href={ backHref } direction="back" />
 				</div>
 			</Main>
 		);

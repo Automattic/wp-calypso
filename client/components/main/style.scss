@@ -3,8 +3,7 @@
 	max-width: 720px;
 	z-index: z-index( 'root', '.main' );
 
-	// Themes is a great example of using all this new space ;)
-	&.themes {
+	&.is-full-width-layout {
 		max-width: 100%;
 	}
 
@@ -16,9 +15,4 @@
 // Used on views (ex posts & pages ) where the empty-content is already inside a padded div
 .main .empty-content {
 	margin-top: 0;
-}
-
-// Use Recoleta on all page headings
-.main > .formatted-header .formatted-header__title {
-	font-family: 'Recoleta', $serif;
 }

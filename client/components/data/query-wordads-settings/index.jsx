@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestWordadsSettings } from 'state/wordads/settings/actions';
+import { requestWordadsSettings } from 'calypso/state/wordads/settings/actions';
 
 export default function QueryWordadsSettings( { siteId } ) {
 	const dispatch = useDispatch();

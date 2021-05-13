@@ -1,5 +1,4 @@
-Translator invite
-==========
+# Translator invite
 
 This component invites users to translate WordPress.com into a non-default locale based on a locale:
 
@@ -9,12 +8,12 @@ This component invites users to translate WordPress.com into a non-default local
 
 If a locale is found, the component fetches the localized name of the language.
 
-#### Usage:
+## Usage
 
 ```javascript
-	<TranslatorInvite path={ path } />
+<TranslatorInvite path={ path } />;
 ```
 
-#### Props
+## Props
 
-* `path`: {string} (optional) Current path
+- `path`: {string} (optional) Current path
