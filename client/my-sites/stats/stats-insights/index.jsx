@@ -28,6 +28,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SectionHeader from 'calypso/components/section-header';
 import StatsViews from '../stats-views';
 import Followers from '../stats-followers';
+import StatShares from '../stats-shares';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -84,6 +85,7 @@ const StatsInsights = ( props ) => {
 							<AnnualSiteStats isWidget />
 						</div>
 						<div className="stats__module-column">
+							<StatShares siteId={ siteId } />
 							<Reach />
 							<Followers path={ 'followers' } />
 						</div>
