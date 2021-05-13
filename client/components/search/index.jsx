@@ -5,8 +5,9 @@ import { isMobile } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { debounce, uniqueId } from 'lodash';
+import { debounce } from 'lodash';
 import i18n from 'i18n-calypso';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -99,7 +100,7 @@ class Search extends Component {
 	constructor( props ) {
 		super( props );
 
-		this.instanceId = uniqueId();
+		this.instanceId = uuid();
 
 		this.state = {
 			keyword: props.initialValue || '',

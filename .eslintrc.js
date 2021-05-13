@@ -79,6 +79,7 @@ module.exports = {
 				'mocha/no-global-tests': 'error',
 				'mocha/no-async-describe': 'error',
 				'mocha/no-top-level-hooks': 'error',
+				'mocha/max-top-level-suites': [ 'warn', { limit: 1 } ],
 				'no-console': 'off',
 				// Disable all rules from "plugin:jest/recommended", as e2e tests use mocha
 				...Object.keys( require( 'eslint-plugin-jest' ).configs.recommended.rules ).reduce(
@@ -410,6 +411,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/detect': 'error',
 		'you-dont-need-lodash-underscore/drop': 'error',
 		'you-dont-need-lodash-underscore/drop-right': 'error',
+		'you-dont-need-lodash-underscore/each': 'error',
 		'you-dont-need-lodash-underscore/ends-with': 'error',
 		'you-dont-need-lodash-underscore/entries': 'error',
 		'you-dont-need-lodash-underscore/every': 'error',

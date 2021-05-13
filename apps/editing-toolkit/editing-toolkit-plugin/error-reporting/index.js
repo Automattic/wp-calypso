@@ -11,6 +11,14 @@ const headErrors = window._jsErr || [];
 const headErrorHandler = window._headJsErrorHandler;
 
 const reportError = ( { error } ) => {
+	// Sanitized error event objects do not include a nested error attribute. In
+	// that case, we return early to prevent a needless TypeError when defining
+	// `data`, below. Also, sanitized errors don't include any useful information,
+	// so the sensible thing to do is to completely ignore them.
+	if ( ! error ) {
+		return;
+	}
+
 	const data = {
 		message: error.message,
 		trace: error.stack,

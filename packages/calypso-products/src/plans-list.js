@@ -720,7 +720,10 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 const getPlanJetpackCompleteDetails = () => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_ALL,
-	getTitle: () => translate( 'Complete' ),
+	getTitle: () =>
+		translate( 'Complete', {
+			context: 'Jetpack plan name',
+		} ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[ PLAN_JETPACK_FREE, ...JETPACK_SECURITY_PLANS, ...JETPACK_LEGACY_PLANS ].includes( plan ),

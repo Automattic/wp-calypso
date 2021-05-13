@@ -31,14 +31,14 @@ describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) 
 		driver = await driverManager.startBrowser();
 	} );
 
-	step( 'Can login and select Manage Plugins', async function () {
+	it( 'Can login and select Manage Plugins', async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 
 		const loginFlow = new LoginFlow( driver );
 		await loginFlow.loginAndSelectManagePluginsJetpack();
 	} );
 
-	step( 'Can ensure Hello Dolly is deactivated', async function () {
+	it( 'Can ensure Hello Dolly is deactivated', async function () {
 		const pluginsPage = await PluginsPage.Expect( driver );
 		await pluginsPage.viewPlugin( 'hello' );
 		const pluginDetailsPage = await PluginDetailsPage.Expect( driver );
@@ -47,7 +47,7 @@ describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) 
 		return await pluginDetailsPage.goBack();
 	} );
 
-	step( 'Can view the plugin details to activate Hello Dolly', async function () {
+	it( 'Can view the plugin details to activate Hello Dolly', async function () {
 		const pluginsPage = await PluginsPage.Expect( driver );
 		await pluginsPage.viewPlugin( 'hello' );
 		const pluginDetailsPage = await PluginDetailsPage.Expect( driver );
@@ -55,7 +55,7 @@ describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) 
 		return await pluginDetailsPage.clickActivateToggleForPlugin();
 	} );
 
-	step( 'Can see a success message contains Hello Dolly', async function () {
+	it( 'Can see a success message contains Hello Dolly', async function () {
 		const expectedPartialText = 'Successfully activated Hello Dolly';
 		const noticesComponent = await NoticesComponent.Expect( driver );
 		await noticesComponent.isSuccessNoticeDisplayed();
@@ -77,25 +77,19 @@ describe( `[${ host }] Jetpack Plugins - Searching a plugin: (${ screenSize }) @
 		driver = await driverManager.startBrowser();
 	} );
 
-	step( 'Can login and select Plugins', async function () {
+	it( 'Can login and select Plugins', async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 
 		const loginFlow = new LoginFlow( driver );
 		await loginFlow.loginAndSelectPluginsJetpack();
 	} );
 
-	step(
-		'Can open the plugins browser and find WP Job Manager by searching for Automattic',
-		async function () {
-			const pluginVendor = 'WP Job Manager';
-			const pluginTitle = 'WP Job Manager';
-			const pluginsBrowserPage = await PluginsBrowserPage.Expect( driver );
-			await pluginsBrowserPage.searchForPlugin( pluginVendor );
-			const pluginDisplayed = await pluginsBrowserPage.pluginTitledShown(
-				pluginTitle,
-				pluginVendor
-			);
-			assert( pluginDisplayed, `The plugin titled ${ pluginTitle } was not displayed` );
-		}
-	);
+	it( 'Can open the plugins browser and find WP Job Manager by searching for Automattic', async function () {
+		const pluginVendor = 'WP Job Manager';
+		const pluginTitle = 'WP Job Manager';
+		const pluginsBrowserPage = await PluginsBrowserPage.Expect( driver );
+		await pluginsBrowserPage.searchForPlugin( pluginVendor );
+		const pluginDisplayed = await pluginsBrowserPage.pluginTitledShown( pluginTitle, pluginVendor );
+		assert( pluginDisplayed, `The plugin titled ${ pluginTitle } was not displayed` );
+	} );
 } );

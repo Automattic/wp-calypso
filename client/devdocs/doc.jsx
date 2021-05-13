@@ -52,15 +52,9 @@ export default class extends React.Component {
 			error: null,
 		} );
 		this.delayLoadingMessage();
-		DocService.fetch(
-			this.props.path,
-			function ( error, body ) {
-				this.setState( {
-					body,
-					error,
-				} );
-			}.bind( this )
-		);
+		DocService.fetch( this.props.path, ( error, body ) => {
+			this.setState( { body, error } );
+		} );
 	};
 
 	setBodyScrollPosition = () => {
@@ -75,16 +69,13 @@ export default class extends React.Component {
 
 	delayLoadingMessage = () => {
 		this.clearLoadingMessage();
-		this.timeoutID = setTimeout(
-			function () {
-				if ( ! this.state.body ) {
-					this.setState( {
-						body: 'Loading…',
-					} );
-				}
-			}.bind( this ),
-			1000
-		);
+		this.timeoutID = setTimeout( () => {
+			if ( ! this.state.body ) {
+				this.setState( {
+					body: 'Loading…',
+				} );
+			}
+		}, 1000 );
 	};
 
 	clearLoadingMessage = () => {

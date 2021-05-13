@@ -8,7 +8,6 @@ import striptags from 'striptags';
  * Internal dependencies
  */
 import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
-import PostMetadata from 'calypso/lib/post-metadata';
 import { parseHtml } from 'calypso/lib/formatting';
 
 const PREVIEW_IMAGE_WIDTH = 512;
@@ -48,7 +47,14 @@ export const getExcerptForPost = ( post ) => {
 	return trim(
 		striptags(
 			formatExcerpt(
-				find( [ PostMetadata.metaDescription( post ), post.excerpt, post.content ], Boolean )
+				find(
+					[
+						post.metadata?.find( ( { key } ) => key === 'advanced_seo_description' )?.value,
+						post.excerpt,
+						post.content,
+					],
+					Boolean
+				)
 			)
 		)
 	);

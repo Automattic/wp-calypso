@@ -55,6 +55,7 @@ describe( 'payPalExpressProcessor', () => {
 			create_new_blog: true,
 			currency: 'USD',
 			extra: [],
+			is_jetpack_checkout: false,
 			products: [ product ],
 			tax: {
 				location: {},

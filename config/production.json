@@ -25,6 +25,7 @@
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": true,
+		"checkout/google-pay": false,
 		"desktop-promo": true,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,

@@ -44,6 +44,7 @@ import {
 	handleContactValidationResult,
 	isContactValidationResponseValid,
 	getDomainValidationResult,
+	getTaxValidationResult,
 	getSignupEmailValidationResult,
 	getGSuiteValidationResult,
 } from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
@@ -218,7 +219,18 @@ export default function WPCheckout( {
 			}
 		}
 
-		if ( contactDetailsType === 'domain' ) {
+		if ( contactDetailsType === 'tax' ) {
+			const validationResult = await getTaxValidationResult( contactInfo );
+			debug( 'validating contact details result', validationResult );
+			handleContactValidationResult( {
+				recordEvent: onEvent,
+				showErrorMessage: showErrorMessageBriefly,
+				paymentMethodId: activePaymentMethod?.id ?? '',
+				validationResult,
+				applyDomainContactValidationResults,
+			} );
+			return isContactValidationResponseValid( validationResult, contactInfo );
+		} else if ( contactDetailsType === 'domain' ) {
 			const validationResult = await getDomainValidationResult(
 				responseCart.products,
 				contactInfo
@@ -267,7 +279,11 @@ export default function WPCheckout( {
 			}
 		}
 
-		if ( contactDetailsType === 'domain' ) {
+		if ( contactDetailsType === 'tax' ) {
+			const validationResult = await getTaxValidationResult( contactInfo );
+			debug( 'validating contact details result', validationResult );
+			return isContactValidationResponseValid( validationResult, contactInfo );
+		} else if ( contactDetailsType === 'domain' ) {
 			const validationResult = await getDomainValidationResult(
 				responseCart.products,
 				contactInfo

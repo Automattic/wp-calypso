@@ -3,8 +3,7 @@
 	max-width: 720px;
 	z-index: z-index( 'root', '.main' );
 
-	// Themes is a great example of using all this new space ;)
-	&.themes {
+	&.is-full-width-layout {
 		max-width: 100%;
 	}
 

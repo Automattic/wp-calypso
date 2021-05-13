@@ -50,13 +50,13 @@ class StatsCommentFollows extends Component {
 		const { perPage, translate } = this.props;
 
 		return (
-			<Main wideLayout={ true }>
+			<Main wideLayout>
 				<PageViewTracker
 					path="/stats/follows/comment/:site_id"
 					title="Stats > Followers > Comment"
 				/>
 
-				<div id="my-stats-content" className="follows-detail follows-detail-comment">
+				<div id="my-stats-content">
 					<HeaderCake onClick={ this.goBack }>{ translate( 'Comments Followers' ) }</HeaderCake>
 					<Followers
 						path="comment-follow-summary"

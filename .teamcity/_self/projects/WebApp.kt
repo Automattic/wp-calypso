@@ -45,6 +45,9 @@ object RunCalypsoE2eDesktopTests : BuildType({
 
 				# Install modules
 				${_self.yarn_install_cmd}
+
+				# Build package
+				yarn workspace @automattic/mocha-debug-reporter build
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -53,15 +56,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 			scriptContent = """
 				shopt -s globstar
 				set -x
-
-				# Chrome upgrade start
-				wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_90.0.4430.93-1_amd64.deb
-				sudo apt-get install -y ./google-chrome-stable_90.0.4430.93-1_amd64.deb
-				rm ./google-chrome-stable_90.0.4430.93-1_amd64.deb
-				cd test/e2e
-				npm install chromedriver --chromedriver-force-download --detect_chromedriver_version
-				cd ../..
-				# Chrome upgrade end
 
 				cd test/e2e
 				mkdir temp
@@ -74,12 +68,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 				# mocha-teamcity-reporter to work.
 				export MAGELLANDEBUG=true
-
-				function join() {
-					local IFS=${'$'}1
-					shift
-					echo "${'$'}*"
-				}
 
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
@@ -113,9 +101,8 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export BROWSERSIZE="desktop"
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export TEST_FILES=${'$'}(join ',' ${'$'}(find specs*/**/*spec.js -type f -not -path specs-playwright/*))
 
-				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
+				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
@@ -220,6 +207,9 @@ object RunCalypsoE2eMobileTests : BuildType({
 
 				# Install modules
 				${_self.yarn_install_cmd}
+
+				# Build package
+				yarn workspace @automattic/mocha-debug-reporter build
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -228,15 +218,6 @@ object RunCalypsoE2eMobileTests : BuildType({
 			scriptContent = """
 				shopt -s globstar
 				set -x
-
-				# Chrome upgrade start
-				wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_90.0.4430.93-1_amd64.deb
-				sudo apt-get install -y ./google-chrome-stable_90.0.4430.93-1_amd64.deb
-				rm ./google-chrome-stable_90.0.4430.93-1_amd64.deb
-				cd test/e2e
-				npm install chromedriver --chromedriver-force-download --detect_chromedriver_version
-				cd ../..
-				# Chrome upgrade end
 
 				cd test/e2e
 				mkdir temp
@@ -249,12 +230,6 @@ object RunCalypsoE2eMobileTests : BuildType({
 				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 				# mocha-teamcity-reporter to work.
 				export MAGELLANDEBUG=true
-
-				function join() {
-					local IFS=${'$'}1
-					shift
-					echo "${'$'}*"
-				}
 
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
@@ -288,9 +263,8 @@ object RunCalypsoE2eMobileTests : BuildType({
 				export BROWSERSIZE="mobile"
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export TEST_FILES=${'$'}(join ',' ${'$'}(find specs*/**/*spec.js -type f -not -path specs-playwright/*))
 
-				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
+				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
@@ -751,8 +725,9 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				# Install modules
 				${_self.yarn_install_cmd}
 
-				# Build package
+				# Build packages
 				yarn workspace @automattic/calypso-e2e build
+				yarn workspace @automattic/mocha-debug-reporter build
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -772,12 +747,6 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 				# mocha-teamcity-reporter to work.
 				export MAGELLANDEBUG=true
-
-				function join() {
-					local IFS=${'$'}1
-					shift
-					echo "${'$'}*"
-				}
 
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
@@ -811,9 +780,8 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				export BROWSERSIZE="mobile"
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs-playwright/**/*spec.js))
 
-				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="-R mocha-teamcity-reporter" --test=${'$'}{TEST_FILES}
+				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
@@ -824,7 +792,7 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 			scriptContent = """
 				set -x
 
-				mkdir -p screenshots-playwright
+				mkdir -p screenshots
 				find test/e2e/temp -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"

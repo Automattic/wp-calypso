@@ -75,13 +75,10 @@ const NetworkConnectionApp = {
 
 		this.on( 'change', changeCallback );
 
-		window.addEventListener(
-			'beforeunload',
-			function () {
-				debug( 'Removing listener.' );
-				this.off( 'change', changeCallback );
-			}.bind( this )
-		);
+		window.addEventListener( 'beforeunload', () => {
+			debug( 'Removing listener.' );
+			this.off( 'change', changeCallback );
+		} );
 	},
 
 	/**

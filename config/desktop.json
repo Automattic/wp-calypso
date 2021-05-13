@@ -10,11 +10,7 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "/",
 	"rebrand_cities_prefix": "rebrandcitiessite",
-	"livechat_support_locales": [
-		"en",
-		"es",
-		"pt-br"
-	],
+	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": true,
 		"always_use_logout_url": true,
@@ -25,6 +21,7 @@
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": true,
+		"checkout/google-pay": false,
 		"desktop": true,
 		"desktop-promo": false,
 		"domains/cctlds": true,

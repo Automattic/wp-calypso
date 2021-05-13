@@ -23,7 +23,7 @@ import './style.scss';
 interface Props {
 	licenseKey: string;
 	product: string;
-	domain: string;
+	siteUrl: string | null;
 	username: string | null;
 	blogId: number | null;
 	issuedAt: string;
@@ -37,7 +37,7 @@ const DETAILS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss A';
 export default function LicenseDetails( {
 	licenseKey,
 	product,
-	domain,
+	siteUrl,
 	username,
 	blogId,
 	issuedAt,
@@ -67,6 +67,17 @@ export default function LicenseDetails( {
 							<Gridicon icon="clipboard" />
 						</ClipboardButton>
 					</div>
+				</li>
+
+				<li className="license-details__list-item license-details__list-item--wide">
+					<h4 className="license-details__label">{ translate( 'Blog URL' ) }</h4>
+					{ siteUrl ? (
+						<a href={ siteUrl } target="_blank" rel="noopener noreferrer">
+							{ siteUrl }
+						</a>
+					) : (
+						<Gridicon icon="minus" />
+					) }
 				</li>
 
 				<li className="license-details__list-item">
@@ -109,7 +120,7 @@ export default function LicenseDetails( {
 			<LicenseDetailsActions
 				licenseKey={ licenseKey }
 				product={ product }
-				domain={ domain }
+				siteUrl={ siteUrl }
 				attachedAt={ attachedAt }
 				revokedAt={ revokedAt }
 			/>

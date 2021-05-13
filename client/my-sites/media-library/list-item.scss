@@ -63,7 +63,8 @@
 	background-color: var( --color-neutral-10 );
 }
 
-.media-library__list-item:hover .media-library__list-item-figure {
+.media-library__list-item:hover .media-library__list-item-figure,
+.media-library__list-item:focus .media-library__list-item-figure {
 	box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
 }
 
