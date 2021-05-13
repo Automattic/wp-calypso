@@ -121,4 +121,5 @@ export { default as Version } from 'calypso/components/version';
 export { default as VerticalMenu } from 'calypso/components/vertical-menu';
 export { default as VerticalNav } from 'calypso/components/vertical-nav';
 export { default as VerticalNavItem } from 'calypso/components/vertical-nav/item';
+export { default as VerticalNavItemEnhanced } from 'calypso/components/vertical-nav/item/enhanced';
 export { default as Wizard } from 'calypso/components/wizard';
