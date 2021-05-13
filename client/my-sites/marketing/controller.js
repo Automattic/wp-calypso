@@ -16,18 +16,12 @@ import SharingConnections from './connections/connections';
 import Traffic from './traffic/';
 import UltimateTrafficGuide from './ultimate-traffic-guide';
 import { requestSite } from 'calypso/state/sites/actions';
-import {
-	getSiteSlug,
-	isJetpackSite,
-	isJetpackModuleActive,
-	getSiteOption,
-} from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite, isJetpackModuleActive } from 'calypso/state/sites/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import versionCompare from 'calypso/lib/version-compare';
 import { setExpandedService } from 'calypso/state/sharing/actions';
 
 export const redirectConnections = ( context ) => {
@@ -120,13 +114,10 @@ export const sharingButtons = ( context, next ) => {
 		);
 	}
 
-	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-
 	if (
 		siteId &&
 		isJetpackSite( state, siteId ) &&
-		( ! isJetpackModuleActive( state, siteId, 'sharedaddy' ) ||
-			versionCompare( siteJetpackVersion, '3.4-dev', '<' ) )
+		! isJetpackModuleActive( state, siteId, 'sharedaddy' )
 	) {
 		store.dispatch(
 			errorNotice(

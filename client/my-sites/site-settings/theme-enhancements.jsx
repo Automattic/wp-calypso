@@ -31,7 +31,6 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import SupportInfo from 'calypso/components/support-info';
-import versionCompare from 'calypso/lib/version-compare';
 
 class ThemeEnhancements extends Component {
 	static defaultProps = {
@@ -180,7 +179,6 @@ class ThemeEnhancements extends Component {
 	renderMinilevenSettings() {
 		const { minilevenModuleActive, selectedSiteId, site, translate } = this.props;
 		const formPending = this.isFormPending();
-		const jetpackVersion = get( site, 'options.jetpack_version', 0 );
 		const minilevenSupportUrl = 'https://jetpack.com/support/mobile-theme/';
 		const googleMobileCheckUrl = `https://search.google.com/test/mobile-friendly?url=${ encodeURIComponent(
 			`${ site.URL }?jetpack-preview=responsivetheme`
@@ -198,9 +196,7 @@ class ThemeEnhancements extends Component {
 					status="is-info"
 					showDismiss={ false }
 					text={
-						minilevenModuleActive &&
-						jetpackVersion &&
-						versionCompare( jetpackVersion, '8.1-alpha', '>=' )
+						minilevenModuleActive
 							? translate(
 									'{{b}}Action needed:{{/b}} The Jetpack mobile theme is not supported ' +
 										'anymore. It will be removed when you update to the most recent ' +
