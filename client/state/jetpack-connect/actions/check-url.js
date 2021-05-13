@@ -7,15 +7,15 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
-} from 'state/jetpack-connect/action-types';
+} from 'calypso/state/jetpack-connect/action-types';
 
-import 'state/jetpack-connect/init';
+import 'calypso/state/jetpack-connect/init';
 
 /**
  * Module constants
@@ -23,7 +23,7 @@ import 'state/jetpack-connect/init';
 const _fetching = {};
 const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 
-export function checkUrl( url, isUrlOnSites ) {
+export function checkUrl( url, isUrlOnSites, allowWPCOMSite ) {
 	return ( dispatch ) => {
 		if ( _fetching[ url ] ) {
 			return;
@@ -73,7 +73,11 @@ export function checkUrl( url, isUrlOnSites ) {
 
 				let errorCode = null;
 				let instructionsType = null;
-				if ( data && data.isWordPressDotCom ) {
+				let isSearch = true;
+				if ( allowWPCOMSite ) {
+					isSearch = false;
+				}
+				if ( data && data.isWordPressDotCom && isSearch ) {
 					errorCode = 'calypso_jpc_error_wpdotcomsite';
 				} else if ( data && ! data.exists ) {
 					errorCode = 'calypso_jpc_error_notexists';

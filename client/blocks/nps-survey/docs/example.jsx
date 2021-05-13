@@ -5,11 +5,12 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import { NpsSurvey } from '../';
 import {
 	isNpsSurveySubmitted,
@@ -19,13 +20,15 @@ import {
 	getNpsSurveyName,
 	getNpsSurveyScore,
 	getNpsSurveyFeedback,
-} from 'state/nps-survey/selectors';
+} from 'calypso/state/nps-survey/selectors';
 import {
 	submitNpsSurvey,
 	submitNpsSurveyWithNoScore,
 	sendNpsSurveyFeedback,
-} from 'state/nps-survey/actions';
-import { successNotice } from 'state/notices/actions';
+} from 'calypso/state/nps-survey/actions';
+import { successNotice } from 'calypso/state/notices/actions';
+
+const noop = () => {};
 
 class NpsSurveyExample extends PureComponent {
 	state = {
@@ -52,14 +55,14 @@ class NpsSurveyExample extends PureComponent {
 	renderOptions() {
 		return (
 			<div style={ { marginTop: '10px' } }>
-				<label style={ { display: 'block' } }>
-					<input type="checkbox" onClick={ this.toggleBusinessUser } />
-					The user subscribes the Business plan.
-				</label>
-				<label style={ { display: 'block' } }>
-					<input type="checkbox" onClick={ this.toggleConciergeSessionAvailability } />
-					The user is available for concierge sessions.
-				</label>
+				<FormLabel>
+					<FormInputCheckbox onClick={ this.toggleBusinessUser } />
+					<span>The user subscribes the Business plan.</span>
+				</FormLabel>
+				<FormLabel>
+					<FormInputCheckbox onClick={ this.toggleConciergeSessionAvailability } />
+					<span>The user is available for concierge sessions.</span>
+				</FormLabel>
 			</div>
 		);
 	}

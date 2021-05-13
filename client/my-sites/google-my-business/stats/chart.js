@@ -4,30 +4,31 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { flatten, partialRight, sumBy } from 'lodash';
+import { flatten, partialRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import CardHeading from 'components/card-heading';
-import getGoogleMyBusinessStats from 'state/selectors/get-google-my-business-stats';
-import getGoogleMyBusinessStatsError from 'state/selectors/get-google-my-business-stats-error';
-import LineChart from 'components/line-chart';
-import LineChartPlaceholder from 'components/line-chart/placeholder';
-import Notice from 'components/notice';
-import PieChart from 'components/pie-chart';
-import PieChartLegend from 'components/pie-chart/legend';
-import PieChartLegendPlaceholder from 'components/pie-chart/legend-placeholder';
-import PieChartPlaceholder from 'components/pie-chart/placeholder';
-import SectionHeader from 'components/section-header';
-import { changeGoogleMyBusinessStatsInterval } from 'state/ui/google-my-business/actions';
-import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getStatsInterval } from 'state/ui/google-my-business/selectors';
-import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
-import { withEnhancers } from 'state/utils';
+import CardHeading from 'calypso/components/card-heading';
+import FormSelect from 'calypso/components/forms/form-select';
+import getGoogleMyBusinessStats from 'calypso/state/selectors/get-google-my-business-stats';
+import getGoogleMyBusinessStatsError from 'calypso/state/selectors/get-google-my-business-stats-error';
+import LineChart from 'calypso/components/line-chart';
+import LineChartPlaceholder from 'calypso/components/line-chart/placeholder';
+import Notice from 'calypso/components/notice';
+import PieChart from 'calypso/components/pie-chart';
+import PieChartLegend from 'calypso/components/pie-chart/legend';
+import PieChartLegendPlaceholder from 'calypso/components/pie-chart/legend-placeholder';
+import PieChartPlaceholder from 'calypso/components/pie-chart/placeholder';
+import SectionHeader from 'calypso/components/section-header';
+import { changeGoogleMyBusinessStatsInterval } from 'calypso/state/google-my-business/ui/actions';
+import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getStatsInterval } from 'calypso/state/google-my-business/ui/selectors';
+import { requestGoogleMyBusinessStats } from 'calypso/state/google-my-business/actions';
+import { withEnhancers } from 'calypso/state/utils';
 
 const withToolTip = ( WrappedComponent ) => ( props ) => {
 	// inject interval props to renderTooltipForDatanum
@@ -96,7 +97,6 @@ function getAggregation( props ) {
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/* eslint-disable jsx-a11y/no-onchange */
 
 class GoogleMyBusinessStatsChart extends Component {
 	static propTypes = {
@@ -237,7 +237,7 @@ class GoogleMyBusinessStatsChart extends Component {
 			return false;
 		}
 
-		return sumBy( flatten( transformedData ), 'value' ) === 0;
+		return flatten( transformedData ).reduce( ( sum, { value } ) => sum + value, 0 ) === 0;
 	}
 
 	renderChartNotice() {
@@ -293,7 +293,7 @@ class GoogleMyBusinessStatsChart extends Component {
 							</CardHeading>
 						</div>
 					) }
-					<select
+					<FormSelect
 						className="gmb-stats__chart-interval"
 						onChange={ this.handleIntervalChange }
 						value={ interval }
@@ -301,7 +301,7 @@ class GoogleMyBusinessStatsChart extends Component {
 						<option value="week">{ translate( 'Week' ) }</option>
 						<option value="month">{ translate( 'Month' ) }</option>
 						<option value="quarter">{ translate( 'Quarter' ) }</option>
-					</select>
+					</FormSelect>
 
 					<div className="gmb-stats__chart">{ this.renderChart() }</div>
 				</Card>
@@ -310,7 +310,6 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 }
 /* eslint-enable wpcalypso/jsx-classname-namespace */
-/* eslint-enable jsx-a11y/no-onchange */
 
 export default connect(
 	( state, ownProps ) => {

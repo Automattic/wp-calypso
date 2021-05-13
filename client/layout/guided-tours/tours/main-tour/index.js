@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Fragment } from 'react';
 
 /**
@@ -17,14 +16,14 @@ import {
 	Quit,
 	Continue,
 	Link,
-} from 'layout/guided-tours/config-elements';
+} from 'calypso/layout/guided-tours/config-elements';
 import {
 	isSelectedSitePreviewable,
 	isSelectedSiteCustomizable,
-} from 'state/ui/guided-tours/contexts';
-import { getScrollableSidebar } from 'layout/guided-tours/positioning';
-import scrollTo from 'lib/scroll-to';
-import { ViewSiteButton } from 'layout/guided-tours/button-labels';
+} from 'calypso/state/guided-tours/contexts';
+import { getScrollableSidebar } from 'calypso/layout/guided-tours/positioning';
+import scrollTo from 'calypso/lib/scroll-to';
+import { ViewSiteButton } from 'calypso/layout/guided-tours/button-labels';
 
 const scrollSidebarToTop = () => scrollTo( { y: 0, container: getScrollableSidebar() } );
 

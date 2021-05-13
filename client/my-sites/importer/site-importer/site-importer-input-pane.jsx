@@ -5,40 +5,49 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty, noop, flowRight, has, get, trim, sortBy, reverse } from 'lodash';
-import url from 'url';
+import { includes, isEmpty, flowRight, has, trim, sortBy } from 'lodash';
+import url from 'url'; // eslint-disable-line no-restricted-imports
 import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import wpcom from 'lib/wp';
-import { validateImportUrl } from 'lib/importer/url-validation';
-import TextInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { setSelectedEditor } from 'state/selected-editor/actions';
+import config from '@automattic/calypso-config';
+import wpcom from 'calypso/lib/wp';
+import { validateImportUrl } from 'calypso/lib/importer/url-validation';
+import TextInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setSelectedEditor } from 'calypso/state/selected-editor/actions';
 import {
 	importSite,
 	validateSiteIsImportable,
 	resetSiteImporterImport,
 	setValidationError,
 	clearSiteImporterImport,
-} from 'state/imports/site-importer/actions';
-import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
-import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
-import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
+} from 'calypso/state/imports/site-importer/actions';
+import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
+import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
+import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import ErrorPane from '../error-pane';
 import SiteImporterSitePreview from './site-importer-site-preview';
-import { appStates } from 'state/imports/constants';
-import { cancelImport, setUploadStartState } from 'lib/importer/actions';
+import { appStates } from 'calypso/state/imports/constants';
+import { cancelImport, setUploadStartState } from 'calypso/state/imports/actions';
+import {
+	getError,
+	getImportData,
+	getImportStage,
+	getValidatedSiteUrl,
+	isLoading as isLoadingSelector,
+} from 'calypso/state/imports/site-importer/selectors';
 
 /**
  * Style dependencies
  */
 import './site-importer-input-pane.scss';
+
+const noop = () => {};
 
 class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';
@@ -52,6 +61,7 @@ class SiteImporterInputPane extends React.Component {
 		onStartImport: PropTypes.func,
 		disabled: PropTypes.bool,
 		site: PropTypes.object,
+		fromSite: PropTypes.string,
 	};
 
 	static defaultProps = { description: null, onStartImport: noop };
@@ -83,7 +93,7 @@ class SiteImporterInputPane extends React.Component {
 		} = this.props;
 
 		if ( ! includes( [ appStates.UPLOAD_SUCCESS ], importerState ) ) {
-			cancelImport( siteId, importerId );
+			this.props.cancelImport( siteId, importerId );
 			this.resetImport();
 		}
 	}
@@ -113,10 +123,7 @@ class SiteImporterInputPane extends React.Component {
 					];
 				}, [] );
 				this.setState( {
-					availableEndpoints: reverse( sortBy( endpoints, 'lastModifiedTimestamp' ) ).slice(
-						0,
-						20
-					),
+					availableEndpoints: sortBy( endpoints, 'lastModifiedTimestamp' ).reverse().slice( 0, 20 ),
 				} );
 			} )
 			.catch( ( err ) => {
@@ -184,7 +191,7 @@ class SiteImporterInputPane extends React.Component {
 	importSite = () => {
 		// To track an "upload start"
 		const { importerId } = this.props.importerStatus;
-		setUploadStartState( importerId, this.props.validatedSiteUrl );
+		this.props.setUploadStartState( importerId, this.props.validatedSiteUrl );
 
 		this.props.importSite( {
 			engine: this.props.importData.engine,
@@ -263,11 +270,6 @@ class SiteImporterInputPane extends React.Component {
 				) }
 				{ importStage === 'idle' && (
 					<ImporterActionButtonContainer>
-						<ImporterCloseButton
-							importerStatus={ importerStatus }
-							site={ site }
-							isEnabled={ isEnabled }
-						/>
 						<ImporterActionButton
 							primary
 							disabled={ isLoading || isEmpty( this.state.siteURLInput ) }
@@ -276,6 +278,11 @@ class SiteImporterInputPane extends React.Component {
 						>
 							{ this.props.translate( 'Continue' ) }
 						</ImporterActionButton>
+						<ImporterCloseButton
+							importerStatus={ importerStatus }
+							site={ site }
+							isEnabled={ isEnabled }
+						/>
 					</ImporterActionButtonContainer>
 				) }
 			</div>
@@ -285,21 +292,13 @@ class SiteImporterInputPane extends React.Component {
 
 export default flowRight(
 	connect(
-		( state ) => {
-			const { isLoading, error, importData, importStage, validatedSiteUrl } = get(
-				state,
-				'imports.siteImporter',
-				{}
-			);
-
-			return {
-				isLoading,
-				error,
-				importData,
-				importStage,
-				validatedSiteUrl,
-			};
-		},
+		( state ) => ( {
+			error: getError( state ),
+			importData: getImportData( state ),
+			importStage: getImportStage( state ),
+			isLoading: isLoadingSelector( state ),
+			validatedSiteUrl: getValidatedSiteUrl( state ),
+		} ),
 		{
 			recordTracksEvent,
 			setSelectedEditor,
@@ -308,6 +307,8 @@ export default flowRight(
 			resetSiteImporterImport,
 			clearSiteImporterImport,
 			setValidationError,
+			cancelImport,
+			setUploadStartState,
 		}
 	),
 	localize

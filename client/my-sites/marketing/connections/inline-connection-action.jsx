@@ -10,13 +10,13 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import ServiceAction from './service-action';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import {
 	getKeyringConnections,
 	isKeyringConnectionsFetching,
-} from 'state/sharing/keyring/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import requestExternalAccess from 'lib/sharing';
+} from 'calypso/state/sharing/keyring/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import requestExternalAccess from '@automattic/request-external-access';
 
 export const getNamedConnectedService = ( state, name ) =>
 	getKeyringConnections( state ).filter( ( item ) => item.service === name );

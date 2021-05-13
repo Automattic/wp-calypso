@@ -5,7 +5,7 @@
 
 	.disconnect-jetpack__header {
 		color: var( --color-neutral-70 );
-		font-size: 24px;
+		font-size: $font-title-medium;
 		height: 2em;
 		line-height: 32px;
 		margin-top: 0.5em;
@@ -16,13 +16,13 @@
 .disconnect-jetpack__highlight {
 	color: var( --color-text-subtle );
 	margin-bottom: 1.5em;
-	font-size: 16px;
+	font-size: $font-body;
 }
 
 .disconnect-jetpack__feature {
 	padding: 14px 24px 14px 44px;
 	text-align: left;
-	font-size: 13px;
+	font-size: $font-body-small;
 	border-bottom: 1px solid var( --color-neutral-5 );
 
 	&:first-of-type {
@@ -57,7 +57,7 @@
 }
 
 .disconnect-jetpack__more-info-link {
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 // Dialog

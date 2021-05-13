@@ -13,7 +13,7 @@ import { Button, Card } from '@automattic/components';
 /**
  * Image dependencies
  */
-import privateImage from 'assets/images/illustrations/private.svg';
+import privateImage from 'calypso/assets/images/illustrations/private.svg';
 
 export default function PrivateSite() {
 	const translate = useTranslate();

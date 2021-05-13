@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by, until } from 'selenium-webdriver';
+import { By as by } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -13,7 +13,7 @@ import AsyncBaseContainer from '../async-base-container';
 export default class NotificationsComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, by.css( '#wpnc-panel' ) );
-		this.undoSelector = by.css( '.wpnc__undo-item' );
+		this.undoLocator = by.css( '.wpnc__undo-item' );
 	}
 
 	async selectComments() {
@@ -21,7 +21,7 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 			this.driver,
 			by.css( 'li[data-filter-name="comments"]' )
 		);
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			by.css( 'li.wpnc__comment' )
 		);
@@ -33,40 +33,21 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 	}
 
 	async selectCommentByText( commentText ) {
-		const commentSelector = by.css( '.wpnc__excerpt' );
-		return await driverHelper.selectElementByText( this.driver, commentSelector, commentText );
+		const commentLocator = by.css( '.wpnc__excerpt' );
+		return await driverHelper.selectElementByText( this.driver, commentLocator, commentText );
 	}
 
 	async trashComment() {
-		const self = this;
-		const trashPostSelector = by.css( 'button[title="Trash comment"]' );
-		await this.driver.wait(
-			until.elementLocated( trashPostSelector ),
-			self.explicitWaitMS,
-			'Could not locate the trash comment button'
-		);
-		const trashPostElement = await self.driver.findElement( trashPostSelector );
-		await this.driver.wait(
-			until.elementIsVisible( trashPostElement ),
-			self.explicitWaitMS,
-			'The trash post comment is not visible'
-		);
-		await driverHelper.clickWhenClickable( self.driver, trashPostSelector );
-		return self.driver
-			.wait( until.elementLocated( by.css( '.wpnc__undo-item' ) ), this.explicitWaitMS )
-			.then(
-				() => {},
-				() => {
-					driverHelper.clickWhenClickable( self.driver, trashPostSelector );
-				}
-			);
+		const trashPostLocator = by.css( 'button[title="Trash comment"]' );
+
+		await driverHelper.clickWhenClickable( this.driver, trashPostLocator );
 	}
 
 	async waitForUndoMessage() {
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, this.undoSelector );
+		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.undoLocator );
 	}
 
 	async waitForUndoMessageToDisappear() {
-		return await driverHelper.waitTillNotPresent( this.driver, this.undoSelector );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, this.undoLocator );
 	}
 }

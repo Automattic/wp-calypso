@@ -8,10 +8,10 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { recordTracksEvent } from 'state/analytics/actions';
+import Gridicon from 'calypso/components/gridicon';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick, showChevron } ) => {
+const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick, useAccordionLayout } ) => {
 	const dispatch = useDispatch();
 
 	const trackExpand = () =>
@@ -31,6 +31,7 @@ const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick, showChevron }
 				trackExpand();
 				onClick();
 			} }
+			data-task={ taskId }
 		>
 			<div className="nav-item__status">
 				{ isCompleted ? (
@@ -42,7 +43,13 @@ const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick, showChevron }
 			<div className="nav-item__text">
 				<h6>{ text }</h6>
 			</div>
-			{ showChevron && <Gridicon className="nav-item__chevron" icon="chevron-right" size={ 18 } /> }
+			{ useAccordionLayout && (
+				<Gridicon
+					className="nav-item__chevron"
+					icon={ isCurrent ? 'chevron-up' : 'chevron-down' }
+					size={ 18 }
+				/>
+			) }
 		</button>
 	);
 };

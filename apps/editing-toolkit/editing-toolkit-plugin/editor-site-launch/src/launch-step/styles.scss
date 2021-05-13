@@ -1,0 +1,41 @@
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@automattic/typography/styles/fonts';
+@import '~@automattic/onboarding/styles/mixins';
+
+.nux-launch-step__header {
+	@include onboarding-heading-padding;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	// On mobile, show header action buttons.
+	// On desktop, hide header action buttons.
+	.action-buttons {
+		display: none;
+
+		@include break-medium {
+			display: block;
+		}
+	}
+}
+
+.nux-launch-step__body {
+	@include onboarding-body-margin;
+}
+
+.nux-launch-step__footer {
+	// On mobile & tablet, show step footer, sticky at bottom.
+	@include onboarding-block-edge2edge;
+	position: sticky;
+	bottom: 0;
+
+	.action-buttons {
+		position: relative;
+	}
+
+	// On desktop, hide step footer.
+	@include break-medium {
+		display: none;
+	}
+}

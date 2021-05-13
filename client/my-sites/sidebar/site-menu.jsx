@@ -3,37 +3,39 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { compact, includes, omit, reduce, get, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import SidebarItem from 'layout/sidebar/item';
-import { getPostTypes } from 'state/post-types/selectors';
-import QueryPostTypes from 'components/data/query-post-types';
-import { bumpStat } from 'lib/analytics/mc';
-import { decodeEntities } from 'lib/formatting';
-import compareProps from 'lib/compare-props';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import { getPostTypes } from 'calypso/state/post-types/selectors';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
+import { getSiteCommentCounts } from 'calypso/state/comments/selectors';
+import QuerySiteCommentCounts from 'calypso/components/data/query-site-comment-counts';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { decodeEntities } from 'calypso/lib/formatting';
+import compareProps from 'calypso/lib/compare-props';
 import {
 	getSite,
 	getSiteAdminUrl,
 	getSiteSlug,
 	isJetpackSite,
 	isSingleUserSite,
-} from 'state/sites/selectors';
-import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
-import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
-import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/can-current-user';
+} from 'calypso/state/sites/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import { canCurrentUser as canCurrentUserStateSelector } from 'calypso/state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import isVipSite from 'state/selectors/is-vip-site';
-import { SIDEBAR_SECTION_SITE } from 'my-sites/sidebar/constants';
-import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { SIDEBAR_SECTION_SITE } from 'calypso/my-sites/sidebar/constants';
+import { expandMySitesSidebarSection as expandSection } from 'calypso/state/my-sites/sidebar/actions';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 class SiteMenu extends PureComponent {
 	static propTypes = {
@@ -107,6 +109,7 @@ class SiteMenu extends PureComponent {
 			{
 				name: 'comments',
 				label: translate( 'Comments' ),
+				count: get( this.props.commentCounts, 'pending' ),
 				capability: 'edit_posts',
 				queryable: true,
 				config: 'manage/comments',
@@ -176,6 +179,7 @@ class SiteMenu extends PureComponent {
 			<SidebarItem
 				key={ menuItem.name }
 				label={ menuItem.label }
+				count={ menuItem.count > 0 ? menuItem.count : null }
 				selected={ itemLinkMatches( menuItem.paths || menuItem.link, this.props.path ) }
 				link={ link }
 				onNavigate={ this.onNavigate( menuItem.name ) }
@@ -257,13 +261,15 @@ class SiteMenu extends PureComponent {
 	}
 
 	render() {
+		const { siteId, canCurrentUser } = this.props;
 		const menuItems = [ ...this.getDefaultMenuItems(), ...this.getCustomMenuItems() ];
 
 		return (
-			<ul>
-				{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
+			<Fragment>
+				{ siteId && <QueryPostTypes siteId={ siteId } /> }
+				{ siteId && canCurrentUser( 'edit_posts' ) && <QuerySiteCommentCounts siteId={ siteId } /> }
 				{ menuItems.map( this.renderMenuItem, this ) }
-			</ul>
+			</Fragment>
 		);
 	}
 }
@@ -282,6 +288,7 @@ export default connect(
 		siteSlug: getSiteSlug( state, siteId ),
 		isVip: isVipSite( state, siteId ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
+		commentCounts: getSiteCommentCounts( state, siteId ),
 	} ),
 	{ expandSection, recordTracksEvent },
 	null,

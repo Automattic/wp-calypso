@@ -1,0 +1,67 @@
+@startuml
+
+'red: #facfd2
+'orange: #f7dcc6
+'yellow: #f5e6b3
+'green: #b8e6bf
+
+skinparam ParticipantPadding 5
+skinparam BoxPadding 5
+
+box " " #f7dcc6
+  participant WordPress.com
+end box
+box "Calypso" #f5e6b3
+  participant Undocumented
+end box
+box "Composite Checkout" #b8e6bf
+  participant CompositeCheckout
+  participant useShoppingCart
+  participant useInitializeCartFromServer
+  participant useShoppingCartManager
+  participant ShoppingCartProvider
+  participant CheckoutSystemDecider
+  participant useShoppingCartReducer
+end box
+
+Undocumented -> CheckoutSystemDecider : import getCart
+note over CheckoutSystemDecider
+	cart from props
+	or fall back to import
+end note
+CheckoutSystemDecider -> ShoppingCartProvider : cartKey, getCart
+ShoppingCartProvider -> useShoppingCartManager : cartKey, getCart
+activate useShoppingCartManager
+return
+note over ShoppingCartProvider : manager\nstored as provider value
+ShoppingCartProvider -> useShoppingCart : cacheStatus: 'fresh'\nresponseCart: emptyResponseCart
+CompositeCheckout -> useShoppingCart
+activate useShoppingCart
+return isLoading: true
+note over CompositeCheckout : render\nloading
+...cart loads asynchronously...
+note over useShoppingCartManager : getCart bound to cartKey
+useShoppingCartManager -> useShoppingCartReducer
+activate useShoppingCartReducer
+return dispatcher
+useShoppingCartManager -> useInitializeCartFromServer : getCart, dispatcher
+useInitializeCartFromServer -> Undocumented : << getCart >>
+activate Undocumented
+	Undocumented -> WordPress.com : GET /me/shopping-cart/{cartKey}
+	activate WordPress.com
+	return
+return
+useInitializeCartFromServer -> useShoppingCartReducer : dispatch RECEIVE_INITIAL_RESPONSE_CART
+note over useShoppingCartReducer
+  Moves the payload to .responseCart
+  updates .couponStatus,
+  and sets .cacheStatus to 'valid'
+end note
+useShoppingCartReducer -> ShoppingCartProvider
+note over ShoppingCartProvider
+	stored manager is updated
+end note
+ShoppingCartProvider -> useShoppingCart
+useShoppingCart -> CompositeCheckout : isLoading: false
+note over CompositeCheckout: render\nresponseCart
+@enduml

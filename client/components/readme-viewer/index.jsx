@@ -55,7 +55,7 @@ export default class ReadmeViewer extends Component {
 		const editLink = (
 			<a
 				className="readme-viewer__doc-edit-link devdocs__doc-edit-link"
-				href={ `https://github.com/Automattic/wp-calypso/edit/master${ readmeFilePath }` }
+				href={ `https://github.com/Automattic/wp-calypso/edit/trunk${ readmeFilePath }` }
 			>
 				Improve this document on GitHub
 			</a>

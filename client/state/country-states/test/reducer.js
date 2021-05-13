@@ -13,10 +13,9 @@ import {
 	COUNTRY_STATES_REQUEST,
 	COUNTRY_STATES_REQUEST_FAILURE,
 	COUNTRY_STATES_REQUEST_SUCCESS,
-	DESERIALIZE,
-	SERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 const originalCountryStates = [
 	{ code: 'AL', name: 'Alabama' },
@@ -60,14 +59,14 @@ describe( 'reducer', () => {
 
 		describe( 'persistence', () => {
 			test( 'persists state', () => {
-				const original = deepFreeze( { us: originalCountryStates } ),
-					state = items( original, { type: SERIALIZE } );
+				const original = deepFreeze( { us: originalCountryStates } );
+				const state = serialize( items, original );
 				expect( state ).to.eql( original );
 			} );
 
 			test( 'loads valid persisted state', () => {
-				const original = deepFreeze( { us: originalCountryStates } ),
-					state = items( original, { type: DESERIALIZE } );
+				const original = deepFreeze( { us: originalCountryStates } );
+				const state = deserialize( items, original );
 
 				expect( state ).to.eql( original );
 			} );
@@ -78,7 +77,7 @@ describe( 'reducer', () => {
 					AK: 'Alaska',
 					AS: 'American Samoa',
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 				expect( state ).to.eql( {} );
 			} );
 		} );
@@ -113,18 +112,6 @@ describe( 'reducer', () => {
 				countryCode: 'de',
 			} );
 			expect( state.de ).to.eql( false );
-		} );
-
-		test( 'should never persist state', () => {
-			const state = isFetching( true, { type: SERIALIZE } );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should never load persisted state', () => {
-			const state = isFetching( true, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

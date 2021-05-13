@@ -57,6 +57,11 @@ describe( 'getSite', () => {
 
 		// First call returns undefined
 		expect( select( store ).getSite( slug ) ).toEqual( undefined );
+
+		// In the first state update, the resolver starts resolving
+		await listenForStateUpdate();
+
+		// In the second update, the resolver is finished resolving and we can read the result in state
 		await listenForStateUpdate();
 
 		// By the second call, the resolver will have resolved
@@ -70,7 +75,7 @@ describe( 'getSite', () => {
 		);
 	} );
 
-	it( 'resolves the state via an API call and invalidates the resolver cache on fail', async () => {
+	it( 'resolves the state via an API call and caches the resolver on fail', async () => {
 		const slug = 'mytestsite12345.wordpress.com';
 		const apiResponse = {
 			status: 404,
@@ -90,15 +95,7 @@ describe( 'getSite', () => {
 			} );
 		};
 
-		// After the first call, the resolver's cache will be invalidated
-		expect( select( store ).getSite( slug ) ).toEqual( undefined );
-		await listenForStateUpdate();
-
-		expect( select( 'core/data' ).getIsResolving( store, 'getSite', [ slug ] ) ).toStrictEqual(
-			undefined
-		);
-
-		// After the second call, the resolver's cache will be valid
+		// After the first call, the resolver's cache will be valid
 		expect( select( store ).getSite( slug ) ).toEqual( undefined );
 		await listenForStateUpdate();
 
@@ -106,13 +103,12 @@ describe( 'getSite', () => {
 			false
 		);
 
-		// After the third call, the resolver's cache will be invalidated again
+		// After the second call, the resolver's cache will still be valid
 		expect( select( store ).getSite( slug ) ).toEqual( undefined );
 		await listenForStateUpdate();
 
-		// The resolver should now be cached with an `isStarting` value of false
 		expect( select( 'core/data' ).getIsResolving( store, 'getSite', [ slug ] ) ).toStrictEqual(
-			undefined
+			false
 		);
 	} );
 } );

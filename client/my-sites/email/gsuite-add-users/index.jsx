@@ -7,41 +7,49 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { addItems } from 'lib/cart/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 import { Button, Card } from '@automattic/components';
-import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
+import DomainManagementHeader from 'calypso/my-sites/domains/domain-management/components/header';
 import {
 	emailManagementAddGSuiteUsers,
 	emailManagementNewGSuiteAccount,
 	emailManagement,
-} from 'my-sites/email/paths';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
-import { getDomainsWithForwards } from 'state/selectors/get-email-forwards';
-import { getEligibleGSuiteDomain, getGSuiteSupportedDomains } from 'lib/gsuite';
+} from 'calypso/my-sites/email/paths';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
+import {
+	getEligibleGSuiteDomain,
+	getGoogleMailServiceFamily,
+	getGSuiteSupportedDomains,
+	getProductSlug,
+} from 'calypso/lib/gsuite';
 import {
 	areAllUsersValid,
 	getItemsForCart,
 	newUsers,
 	validateAgainstExistingUsers,
-} from 'lib/gsuite/new-users';
-import { getSelectedSite } from 'state/ui/selectors';
-import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'lib/gsuite/constants';
-import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
-import Main from 'components/main';
-import Notice from 'components/notice';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import SectionHeader from 'components/section-header';
-import QueryEmailForwards from 'components/data/query-email-forwards';
-import QueryGSuiteUsers from 'components/data/query-gsuite-users';
-import getGSuiteUsers from 'state/selectors/get-gsuite-users';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+} from 'calypso/lib/gsuite/new-users';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
+import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import SectionHeader from 'calypso/components/section-header';
+import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
+import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
+import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
 
 /**
  * Style dependencies
@@ -52,6 +60,8 @@ class GSuiteAddUsers extends React.Component {
 	state = {
 		users: [],
 	};
+
+	isMounted = false;
 
 	static getDerivedStateFromProps(
 		{ domains, isRequestingDomains, selectedDomainName },
@@ -69,21 +79,22 @@ class GSuiteAddUsers extends React.Component {
 	}
 
 	handleContinue = () => {
-		const { domains, planType, selectedSite } = this.props;
+		const { domains, productType, selectedSite } = this.props;
 		const { users } = this.state;
 		const canContinue = areAllUsersValid( users );
 
 		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_continue_button_click' );
 
 		if ( canContinue ) {
-			addItems(
-				getItemsForCart(
-					domains,
-					'business' === planType ? GSUITE_BUSINESS_SLUG : GSUITE_BASIC_SLUG,
-					users
+			this.props.shoppingCartManager
+				.addProductsToCart(
+					getItemsForCart( domains, getProductSlug( productType ), users ).map( ( item ) =>
+						fillInSingleCartItemAttributes( item, this.props.productsList )
+					)
 				)
-			);
-			page( '/checkout/' + selectedSite.slug );
+				.then( () => {
+					this.isMounted && page( '/checkout/' + selectedSite.slug );
+				} );
 		}
 	};
 
@@ -133,6 +144,11 @@ class GSuiteAddUsers extends React.Component {
 	componentDidMount() {
 		const { domains, isRequestingDomains, selectedDomainName } = this.props;
 		this.redirectIfCannotAddEmail( domains, isRequestingDomains, selectedDomainName );
+		this.isMounted = true;
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
 	}
 
 	shouldComponentUpdate( nextProps ) {
@@ -152,7 +168,13 @@ class GSuiteAddUsers extends React.Component {
 	}
 
 	goToEmail = () => {
-		page( emailManagement( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			emailManagement(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
+		);
 	};
 
 	renderAddGSuite() {
@@ -177,7 +199,11 @@ class GSuiteAddUsers extends React.Component {
 				{ domainsWithForwards.length ? (
 					<Notice showDismiss={ false } status="is-warning">
 						{ translate(
-							'Please note that email forwards are not compatible with G Suite, and will be disabled once G Suite is added to this domain. The following domains have forwards:'
+							'Please note that email forwards are not compatible with %(productFamily)s, and will be disabled once %(productFamily)s is added to this domain. The following domains have forwards:',
+							{
+								args: { productFamily: getGoogleMailServiceFamily() },
+								comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
+							}
 						) }
 						<ul>
 							{ domainsWithForwards.map( ( domainName ) => {
@@ -188,13 +214,21 @@ class GSuiteAddUsers extends React.Component {
 				) : (
 					''
 				) }
+
 				{ selectedDomainInfo.map( ( domain ) => {
 					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
 				} ) }
-				<SectionHeader label={ translate( 'Add G Suite' ) } />
+
+				<SectionHeader
+					label={ translate( 'Add New Users', {
+						comment: 'This refers to Google Workspace user accounts',
+					} ) }
+				/>
+
 				{ gsuiteUsers && selectedDomainInfo && ! isRequestingDomains ? (
 					<Card>
 						<GSuiteNewUserList
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							extraValidation={ ( user ) => validateAgainstExistingUsers( user, gsuiteUsers ) }
 							domains={ selectedDomainInfo }
 							onUsersChange={ this.handleUsersChange }
@@ -218,26 +252,34 @@ class GSuiteAddUsers extends React.Component {
 	}
 
 	render() {
-		const { translate, planType, selectedDomainName, selectedSite } = this.props;
+		const { isNewAccount, productType, translate, selectedDomainName, selectedSite } = this.props;
 
-		const analyticsPath = planType
-			? emailManagementNewGSuiteAccount( ':site', ':domain', ':planType' )
+		const analyticsPath = isNewAccount
+			? emailManagementNewGSuiteAccount( ':site', ':domain', ':productType' )
 			: emailManagementAddGSuiteUsers( ':site', selectedDomainName ? ':domain' : undefined );
+
+		const googleMailServiceFamily = getGoogleMailServiceFamily( getProductSlug( productType ) );
+
 		return (
 			<Fragment>
 				<PageViewTracker path={ analyticsPath } title="Domain Management > Add G Suite Users" />
+
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 				{ selectedSite && <QueryGSuiteUsers siteId={ selectedSite.ID } /> }
+
 				<Main>
 					<DomainManagementHeader
 						onClick={ this.goToEmail }
 						selectedDomainName={ selectedDomainName }
 					>
-						{ translate( 'Add G Suite' ) }
+						{ googleMailServiceFamily }
 					</DomainManagementHeader>
 
 					<EmailVerificationGate
-						noticeText={ translate( 'You must verify your email to purchase G Suite.' ) }
+						noticeText={ translate( 'You must verify your email to purchase %(productFamily)s.', {
+							args: { productFamily: googleMailServiceFamily },
+							comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
+						} ) }
 						noticeStatus="is-info"
 					>
 						{ this.renderAddGSuite() }
@@ -249,10 +291,12 @@ class GSuiteAddUsers extends React.Component {
 }
 
 GSuiteAddUsers.propTypes = {
+	currentRoute: PropTypes.string,
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array,
+	isNewAccount: PropTypes.bool,
 	isRequestingDomains: PropTypes.bool.isRequired,
-	planType: PropTypes.oneOf( [ 'basic', 'business' ] ),
+	productType: PropTypes.oneOf( [ GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE ] ),
 	selectedDomainName: PropTypes.string.isRequired,
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,
@@ -266,12 +310,14 @@ export default connect(
 		const siteId = get( selectedSite, 'ID', null );
 		const domains = getDomainsBySiteId( state, siteId );
 		return {
+			currentRoute: getCurrentRoute( state ),
 			domains,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gsuiteUsers: getGSuiteUsers( state, siteId ),
 			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
+			productsList: getProductsList( state ),
 			selectedSite,
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( localize( GSuiteAddUsers ) );
+)( withShoppingCart( localize( GSuiteAddUsers ) ) );

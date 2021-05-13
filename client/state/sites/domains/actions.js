@@ -2,14 +2,14 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { map, noop } from 'lodash';
+import { map } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { createSiteDomainObject } from './assembler';
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 import {
 	DOMAIN_PRIVACY_ENABLE,
 	DOMAIN_PRIVACY_DISABLE,
@@ -19,16 +19,17 @@ import {
 	SITE_DOMAINS_REQUEST_FAILURE,
 	DOMAIN_CONTACT_INFO_DISCLOSE,
 	DOMAIN_CONTACT_INFO_REDACT,
-} from 'state/action-types';
-import { requestSite } from 'state/sites/actions';
+} from 'calypso/state/action-types';
+import { requestSite } from 'calypso/state/sites/actions';
 
-import 'state/data-layer/wpcom/domains/privacy/index.js';
+import 'calypso/state/data-layer/wpcom/domains/privacy/index.js';
 
 /**
  * Module vars
  */
 const debug = debugFactory( 'calypso:state:sites:domains:actions' );
 const wpcom = wp.undocumented();
+const noop = () => {};
 
 /**
  * Action creator function

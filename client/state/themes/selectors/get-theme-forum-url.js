@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
-import { isWpcomTheme } from 'state/themes/selectors/is-wpcom-theme';
-import { isWporgTheme } from 'state/themes/selectors/is-wporg-theme';
+import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
+import { isWpcomTheme } from 'calypso/state/themes/selectors/is-wpcom-theme';
+import { isWporgTheme } from 'calypso/state/themes/selectors/is-wporg-theme';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns the URL for a premium theme's dedicated forum, or for the general themes

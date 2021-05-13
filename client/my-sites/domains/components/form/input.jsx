@@ -7,11 +7,12 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import scrollIntoViewport from 'lib/scroll-into-viewport';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
 export default class Input extends React.Component {
 	static defaultProps = { autoFocus: false, autoComplete: 'on' };
@@ -118,6 +119,9 @@ export default class Input extends React.Component {
 				/>
 				{ this.props.errorMessage && (
 					<FormInputValidation id={ validationId } text={ this.props.errorMessage } isError />
+				) }
+				{ this.props.description && ! this.props.errorMessage && (
+					<FormSettingExplanation>{ this.props.description }</FormSettingExplanation>
 				) }
 			</div>
 		);

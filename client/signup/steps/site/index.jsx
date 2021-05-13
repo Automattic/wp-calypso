@@ -10,19 +10,19 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import wpcom from 'lib/wp';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import formState from 'lib/form-state';
-import { login } from 'lib/paths';
-import ValidationFieldset from 'signup/validation-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
-import StepWrapper from 'signup/step-wrapper';
-import LoggedOutForm from 'components/logged-out-form';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
+import config from '@automattic/calypso-config';
+import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import formState from 'calypso/lib/form-state';
+import { login } from 'calypso/lib/paths';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormButton from 'calypso/components/forms/form-button';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import LoggedOutForm from 'calypso/components/logged-out-form';
+import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -39,8 +39,8 @@ const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 /**
  * Module variables
  */
-let siteUrlsSearched = [],
-	timesValidationFailed = 0;
+let siteUrlsSearched = [];
+let timesValidationFailed = 0;
 
 class Site extends React.Component {
 	static displayName = 'Site';
@@ -148,32 +148,30 @@ class Site extends React.Component {
 
 		this.setState( { submitting: true } );
 
-		this.formStateController.handleSubmit(
-			function ( hasErrors ) {
-				const site = formState.getFieldValue( this.state.form, 'site' );
+		this.formStateController.handleSubmit( ( hasErrors ) => {
+			const site = formState.getFieldValue( this.state.form, 'site' );
 
-				this.setState( { submitting: false } );
+			this.setState( { submitting: false } );
 
-				if ( hasErrors ) {
-					return;
-				}
+			if ( hasErrors ) {
+				return;
+			}
 
-				recordTracksEvent( 'calypso_signup_site_step_submit', {
-					unique_site_urls_searched: siteUrlsSearched.length,
-					times_validation_failed: timesValidationFailed,
-				} );
+			recordTracksEvent( 'calypso_signup_site_step_submit', {
+				unique_site_urls_searched: siteUrlsSearched.length,
+				times_validation_failed: timesValidationFailed,
+			} );
 
-				this.resetAnalyticsData();
+			this.resetAnalyticsData();
 
-				this.props.submitSignupStep( {
-					stepName: this.props.stepName,
-					form: this.state.form,
-					site,
-				} );
+			this.props.submitSignupStep( {
+				stepName: this.props.stepName,
+				form: this.state.form,
+				site,
+			} );
 
-				this.props.goToNextStep();
-			}.bind( this )
-		);
+			this.props.goToNextStep();
+		} );
 	};
 
 	handleBlur = () => {
@@ -204,39 +202,36 @@ class Site extends React.Component {
 
 	getErrorMessagesWithLogin = ( fieldName ) => {
 		const link = login( {
-				isNative: config.isEnabled( 'login/native-login-links' ),
-				redirectTo: window.location.href,
-			} ),
-			messages = formState.getFieldErrorMessages( this.state.form, fieldName );
+			isNative: config.isEnabled( 'login/native-login-links' ),
+			redirectTo: window.location.href,
+		} );
+		const messages = formState.getFieldErrorMessages( this.state.form, fieldName );
 
 		if ( ! messages ) {
 			return;
 		}
 
-		return map(
-			messages,
-			function ( message, error_code ) {
-				if ( error_code === 'blog_name_reserved' ) {
-					return (
-						<span>
-							<p>
-								{ message }
-								&nbsp;
-								{ this.props.translate(
-									'Is this your username? {{a}}Log in now to claim this site address{{/a}}.',
-									{
-										components: {
-											a: <a href={ link } />,
-										},
-									}
-								) }
-							</p>
-						</span>
-					);
-				}
-				return message;
-			}.bind( this )
-		);
+		return map( messages, ( message, error_code ) => {
+			if ( error_code === 'blog_name_reserved' ) {
+				return (
+					<span>
+						<p>
+							{ message }
+							&nbsp;
+							{ this.props.translate(
+								'Is this your username? {{a}}Log in now to claim this site address{{/a}}.',
+								{
+									components: {
+										a: <a href={ link } />,
+									},
+								}
+							) }
+						</p>
+					</span>
+				);
+			}
+			return message;
+		} );
 	};
 
 	formFields = () => {
@@ -250,7 +245,6 @@ class Site extends React.Component {
 					autoCapitalize={ 'off' }
 					className="site__site-url"
 					disabled={ fieldDisabled }
-					type="text"
 					name="site"
 					value={ formState.getFieldValue( this.state.form, 'site' ) }
 					isError={ formState.isFieldInvalid( this.state.form, 'site' ) }

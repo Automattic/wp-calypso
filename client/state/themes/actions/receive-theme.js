@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { receiveThemes } from 'state/themes/actions/receive-themes';
+import { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns an action object to be used in signalling that a theme object has

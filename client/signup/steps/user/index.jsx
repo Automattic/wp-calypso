@@ -4,32 +4,47 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { identity, includes, isEmpty, omit, get } from 'lodash';
+import i18n, { localize } from 'i18n-calypso';
+import { includes, isEmpty, omit, get } from 'lodash';
 import classNames from 'classnames';
-import cookie from 'cookie';
 
 /**
  * Internal dependencies
  */
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
-import StepWrapper from 'signup/step-wrapper';
-import flows from 'signup/config/flows';
-import SignupForm from 'blocks/signup-form';
-import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
-import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
-import { WPCC } from 'lib/url/support';
-import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
-import config from 'config';
-import AsyncLoad from 'components/async-load';
-import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
-import { getSocialServiceFromClientId } from 'lib/login';
-import { abtest } from 'lib/abtest';
+import {
+	isCrowdsignalOAuth2Client,
+	isWooOAuth2Client,
+	isJetpackCloudOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import flows from 'calypso/signup/config/flows';
+import SignupForm from 'calypso/blocks/signup-form';
+import {
+	getFlowSteps,
+	getNextStepName,
+	getPreviousStepName,
+	getStepUrl,
+} from 'calypso/signup/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { WPCC } from 'calypso/lib/url/support';
+import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
+import config from '@automattic/calypso-config';
+import AsyncLoad from 'calypso/components/async-load';
+import WooCommerceConnectCartHeader from 'calypso/extensions/woocommerce/components/woocommerce-connect-cart-header';
+import { getSocialServiceFromClientId } from 'calypso/lib/login';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import { login } from 'calypso/lib/paths';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class UserStep extends Component {
 	static propTypes = {
@@ -42,8 +57,6 @@ export class UserStep extends Component {
 	};
 
 	static defaultProps = {
-		translate: identity,
-		suggestedUsername: identity,
 		isSocialSignupEnabled: false,
 	};
 
@@ -60,6 +73,7 @@ export class UserStep extends Component {
 
 		if (
 			this.props.flowName !== nextProps.flowName ||
+			this.props.locale !== nextProps.locale ||
 			this.props.subHeaderText !== nextProps.subHeaderText
 		) {
 			this.setSubHeaderText( nextProps );
@@ -83,6 +97,30 @@ export class UserStep extends Component {
 		}
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
+
+		i18n.on( 'change', this.handleI18nChange );
+	}
+
+	componentWillUnmount() {
+		i18n.off( 'change', this.handleI18nChange );
+	}
+
+	handleI18nChange = () => {
+		this.setSubHeaderText( this.props );
+	};
+
+	getLoginLink() {
+		// TODO: If Reskin signup experiment wins, then refactor to remove duplicate definition of this function
+		// in <SignupForm> component
+		return login( {
+			isJetpack: 'jetpack-connect' === this.props.sectionName,
+			from: this.props.from,
+			isNative: config.isEnabled( 'login/native-login-links' ),
+			redirectTo: this.getRedirectToAfterLoginUrl(),
+			locale: this.props.locale,
+			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+			wccomFrom: this.props.wccomFrom,
+		} );
 	}
 
 	setSubHeaderText( props ) {
@@ -147,40 +185,35 @@ export class UserStep extends Component {
 
 		if ( positionInFlow === 0 && flowName === 'onboarding' ) {
 			subHeaderText = translate( 'First, create your WordPress.com account.' );
+
+			if ( this.props.isReskinned ) {
+				const loginUrl = this.getLoginLink();
+				subHeaderText = translate(
+					'Create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
+					{
+						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+					}
+				);
+			}
 		}
 
 		this.setState( { subHeaderText } );
 	}
 
 	initGoogleRecaptcha() {
-		initGoogleRecaptcha(
-			'g-recaptcha',
-			'calypso/signup/pageLoad',
-			config( 'google_recaptcha_site_key' )
-		).then( ( result ) => {
-			if ( ! result ) {
-				return;
+		initGoogleRecaptcha( 'g-recaptcha', config( 'google_recaptcha_site_key' ) ).then(
+			( clientId ) => {
+				if ( clientId === null ) {
+					return;
+				}
+
+				this.setState( { recaptchaClientId: clientId } );
+
+				this.props.saveSignupStep( {
+					stepName: this.props.stepName,
+				} );
 			}
-
-			this.setState( { recaptchaClientId: result.clientId } );
-
-			this.props.saveSignupStep( {
-				stepName: this.props.stepName,
-				recaptchaToken: typeof result.token === 'string' ? result.token : undefined,
-			} );
-		} );
-	}
-
-	isEligibleForSwapStepsTest() {
-		const cookies = cookie.parse( document.cookie );
-		const countryCodeFromCookie = cookies.country_code;
-		const isUserFromUS = 'US' === countryCodeFromCookie;
-
-		if ( isUserFromUS && 'onboarding' === this.props.flowName ) {
-			return true;
-		}
-
-		return false;
+		);
 	}
 
 	save = ( form ) => {
@@ -189,6 +222,21 @@ export class UserStep extends Component {
 			form,
 		} );
 	};
+
+	isOauth2RedirectValid( oauth2Redirect ) {
+		// Allow Google sign-up to work.
+		// See: https://github.com/Automattic/wp-calypso/issues/49572
+		if ( oauth2Redirect === undefined ) {
+			return true;
+		}
+
+		try {
+			const url = new URL( oauth2Redirect );
+			return url.host === 'public-api.wordpress.com';
+		} catch {
+			return false;
+		}
+	}
 
 	submit = ( data ) => {
 		const { flowName, stepName, oauth2Signup } = this.props;
@@ -207,14 +255,6 @@ export class UserStep extends Component {
 			},
 			dependencies
 		);
-
-		if (
-			this.isEligibleForSwapStepsTest() &&
-			'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
-		) {
-			const switchFlowName = 'onboarding-plan-first';
-			this.props.goToNextStep( switchFlowName );
-		}
 
 		this.props.goToNextStep();
 	};
@@ -271,6 +311,15 @@ export class UserStep extends Component {
 	 * @param {object} userData     (Optional) extra user information that can be used to create a new account
 	 */
 	handleSocialResponse = ( service, access_token, id_token = null, userData = null ) => {
+		const { translate } = this.props;
+
+		if ( ! this.isOauth2RedirectValid( this.props.initialContext.query.oauth2_redirect ) ) {
+			this.props.errorNotice(
+				translate( 'An unexpected error occurred. Please try again later.' )
+			);
+			return;
+		}
+
 		this.submit( {
 			service,
 			access_token,
@@ -309,7 +358,7 @@ export class UserStep extends Component {
 							<div className={ classNames( 'signup-form__woocommerce-logo' ) }>
 								<svg width={ 200 } viewBox={ '0 0 1270 170' }>
 									<AsyncLoad
-										require="components/jetpack-header/woocommerce"
+										require="calypso/components/jetpack-header/woocommerce"
 										darkColorScheme={ false }
 										placeholder={ null }
 									/>
@@ -321,6 +370,15 @@ export class UserStep extends Component {
 						{ translate( 'Create a WordPress.com account' ) }
 					</div>
 				</Fragment>
+			);
+		}
+
+		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+			return (
+				<div className={ classNames( 'signup-form__jetpack-cloud-wrapper' ) }>
+					<JetpackLogo full={ false } size={ 60 } />
+					<h3>{ translate( 'Sign up to Jetpack.com with a WordPress.com account.' ) }</h3>
+				</div>
 			);
 		}
 
@@ -339,7 +397,8 @@ export class UserStep extends Component {
 		if (
 			this.props.oauth2Signup &&
 			this.props.initialContext &&
-			this.props.initialContext.query.oauth2_redirect
+			this.props.initialContext.query.oauth2_redirect &&
+			this.isOauth2RedirectValid( this.props.initialContext.query.oauth2_redirect )
 		) {
 			return this.props.initialContext.query.oauth2_redirect;
 		}
@@ -347,15 +406,13 @@ export class UserStep extends Component {
 		const stepAfterRedirect =
 			getNextStepName( this.props.flowName, this.props.stepName ) ||
 			getPreviousStepName( this.props.flowName, this.props.stepName );
-		return this.originUrl() + getStepUrl( this.props.flowName, stepAfterRedirect );
-	}
+		const queryArgs = new URLSearchParams( this.props?.initialContext?.query );
+		const queryArgsString = queryArgs.toString() ? '?' + queryArgs.toString() : '';
 
-	originUrl() {
 		return (
-			window.location.protocol +
-			'//' +
-			window.location.hostname +
-			( window.location.port ? ':' + window.location.port : '' )
+			window.location.origin +
+			getStepUrl( this.props.flowName, stepAfterRedirect ) +
+			queryArgsString
 		);
 	}
 
@@ -374,8 +431,9 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, wccomFrom } = this.props;
-		let socialService, socialServiceResponse;
+		const { oauth2Client, wccomFrom, isReskinned } = this.props;
+		let socialService;
+		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
 		const hashObject = this.props.initialContext && this.props.initialContext.hash;
 		if ( this.props.isSocialSignupEnabled && ! isEmpty( hashObject ) ) {
@@ -412,6 +470,8 @@ export class UserStep extends Component {
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
 					showRecaptchaToS={ flows.getFlow( this.props.flowName )?.showRecaptcha }
+					horizontal={ isReskinned }
+					isReskinned={ isReskinned }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
@@ -438,8 +498,10 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 		suggestedUsername: getSuggestedUsername( state ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+		from: get( getCurrentQueryArguments( state ), 'from' ),
 	} ),
 	{
+		errorNotice,
 		recordTracksEvent,
 		fetchOAuth2ClientData,
 		saveSignupStep,

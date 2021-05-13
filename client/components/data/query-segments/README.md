@@ -1,5 +1,4 @@
-Query Site Segments
-===========================
+# Query Site Segments
 
 `<QuerySegments />` is a React component used to fire a network request for the `/segments` endpoint, which returns site segment information for signup.
 
@@ -10,8 +9,8 @@ Because it's static data from the server, it will only fire if there are no segm
 Render the component. It accepts neither props or children, nor does it render any elements to the page.
 
 ```js
-import QuerySegments from 'components/data/query-segments';
-import { getSegments } from 'state/signup/segments/selectors';
+import QuerySegments from 'calypso/components/data/query-segments';
+import { getSegments } from 'calypso/state/signup/segments/selectors';
 
 class MyComponent extends React.Component {
 	render() {
@@ -21,22 +20,17 @@ class MyComponent extends React.Component {
 			<div>
 				<QuerySegments />
 				<ul>
-				{
-					segments.length && segments.map( segments => {
-						return ( <li>{ segments.id }</li> );
-					} )
-				}
+					{ segments.length &&
+						segments.map( ( segment ) => {
+							return <li>{ segment.id }</li>;
+						} ) }
 				</ul>
 			</div>
 		);
 	}
 }
 
-export default connect(
-	state => ( {
-		segments: getSegments( state ),
-	} ),
-)( MyComponent );
-
+export default connect( ( state ) => ( {
+	segments: getSegments( state ),
+} ) )( MyComponent );
 ```
-

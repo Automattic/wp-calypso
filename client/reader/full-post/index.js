@@ -7,8 +7,8 @@ import page from 'page';
  * Internal dependencies
  */
 import { blogPost, feedPost } from './controller';
-import { updateLastRoute, unmountSidebar } from 'reader/controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { updateLastRoute, unmountSidebar } from 'calypso/reader/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	// Feed full post

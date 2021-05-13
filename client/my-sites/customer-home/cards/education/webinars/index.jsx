@@ -12,7 +12,7 @@ import EducationalContent from '../educational-content';
 /**
  * Image dependencies
  */
-import webinarIllustration from 'assets/images/customer-home/illustration-webinars.svg';
+import webinarIllustration from 'calypso/assets/images/customer-home/illustration-webinars.svg';
 
 const Webinars = () => {
 	const translate = useTranslate();

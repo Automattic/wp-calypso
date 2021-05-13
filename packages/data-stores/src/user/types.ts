@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Action } from 'redux';
+import type { Action } from 'redux';
 
 export interface CurrentUser {
 	ID: number;
@@ -28,6 +28,11 @@ export interface CurrentUser {
 	 * The bootstrapped user's locale variant, e.g. `es-mx`.
 	 */
 	localeVariant: string;
+
+	/**
+	 * The user's existing sites count.
+	 */
+	site_count: number;
 }
 
 export interface NewUser {
@@ -62,10 +67,13 @@ export interface CreateAccountParams {
 	is_passwordless?: boolean;
 	signup_flow_name?: string;
 	locale?: string;
+	'g-recaptcha-error'?: string;
+	'g-recaptcha-response'?: string;
 	extra?: {
 		first_name?: string;
 		last_name?: string;
 		username_hint: string | null | undefined;
+		is_anchor_fm_signup?: boolean | undefined;
 	};
 }
 

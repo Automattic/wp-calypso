@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { By as by } from 'selenium-webdriver';
-import URL from 'url';
 
 /**
  * Internal dependencies
@@ -23,11 +22,11 @@ export default class ReaderPage extends AsyncBaseContainer {
 		const href = await this.driver
 			.findElement( by.css( '.reader-visit-link' ) )
 			.getAttribute( 'href' );
-		return URL.parse( href ).host;
+		return new URL( href ).host;
 	}
 
 	async shareLatestPost() {
-		const shareButtonSelector = by.css( '.reader-share__button' );
+		const shareButtonLocator = by.css( '.reader-share__button' );
 
 		// Allow the components to settle and finish loading, one hopes. There
 		// continues to be errors where the test cannot find the site selector
@@ -36,19 +35,15 @@ export default class ReaderPage extends AsyncBaseContainer {
 		// causing the share modal to close before it clicks the site button.
 		await this.driver.sleep( 2000 );
 
-		const hasSharablePost = await driverHelper.isElementPresent( this.driver, shareButtonSelector );
+		const hasSharablePost = await driverHelper.isElementLocated( this.driver, shareButtonLocator );
 		if ( ! hasSharablePost ) {
 			// no shareable posts on this screen. try moving into a combined card
-			const firstComboCardPostSelector = by.css( '.reader-combined-card__post-title-link' );
-			await driverHelper.clickWhenClickable( this.driver, firstComboCardPostSelector );
+			const firstComboCardPostLocator = by.css( '.reader-combined-card__post-title-link' );
+			await driverHelper.clickWhenClickable( this.driver, firstComboCardPostLocator );
 		}
 
 		const clickAndOpenShareModal = async () => {
-			await driverHelper.clickWhenClickable( this.driver, shareButtonSelector );
-			await driverHelper.waitTillPresentAndDisplayed(
-				this.driver,
-				by.css( '.site-selector__sites' )
-			);
+			await driverHelper.clickWhenClickable( this.driver, shareButtonLocator );
 			return await driverHelper.clickWhenClickable(
 				this.driver,
 				by.css( '.site-selector__sites .site__content' )
@@ -77,8 +72,12 @@ export default class ReaderPage extends AsyncBaseContainer {
 	}
 
 	async waitForCommentToAppear( comment ) {
-		const commentSelector = by.css( '.comments__comment-content' );
-		return await driverHelper.verifyTextPresent( this.driver, commentSelector, comment );
+		const commentLocator = by.css( '.comments__comment-content' );
+		return await driverHelper.waitUntilElementWithTextLocated(
+			this.driver,
+			commentLocator,
+			comment
+		);
 	}
 
 	static getReaderURL() {

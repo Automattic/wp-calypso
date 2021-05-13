@@ -10,12 +10,12 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormPhoneInput from 'components/forms/form-phone-input';
-import FormInputValidation from 'components/forms/form-input-validation';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormPhoneInput from 'calypso/components/forms/form-phone-input';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import Buttons from './buttons';
-import getCountries from 'state/selectors/get-countries';
-import QuerySmsCountries from 'components/data/query-countries/sms';
+import getCountries from 'calypso/state/selectors/get-countries';
+import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 
 class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 	static displayName = 'SecurityAccountRecoveryRecoveryPhoneEdit';

@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { get, keys, last, map, omit, reduce, slice } from 'lodash';
+import { get, keys, last, map, omit, reduce } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import InfiniteList from 'components/infinite-list';
+import InfiniteList from 'calypso/components/infinite-list';
 import Label from './label';
 
 /**
@@ -29,7 +28,7 @@ class SortedGrid extends PureComponent {
 		const items = [];
 
 		for ( let i = 0; i < this.props.items.length; i += this.props.itemsPerRow ) {
-			const row = slice( this.props.items, i, i + this.props.itemsPerRow );
+			const row = this.props.items.slice( i, i + this.props.itemsPerRow );
 			const groups = reduce(
 				map( row, this.props.getItemGroup ),
 				( results, group ) => {

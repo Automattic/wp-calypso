@@ -51,9 +51,9 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'account-recovery actions', () => {
 	let spy;
@@ -497,7 +497,7 @@ describe( 'account-recovery actions', () => {
 			successResponse: { success: true },
 			errorResponse: errorResponse,
 		},
-		thunk: () => validateAccountRecoveryPhone()( spy ),
+		thunk: () => validateAccountRecoveryPhone( '' )( spy ),
 		preCondition: () =>
 			assert(
 				spy.calledWith( {

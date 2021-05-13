@@ -36,3 +36,13 @@ export const getZones = ( state, siteId ) =>
  */
 export const getZone = ( state, siteId, zoneId ) =>
 	get( getZonesState( state ), [ 'items', siteId, zoneId ], null );
+
+/**
+ * Returns true if a zone is being saved or created for the specified site ID.
+ *
+ * @param  {object} state  Global state tree
+ * @param  {number} siteId Site ID
+ * @returns {boolean}       Whether zones are being requested
+ */
+export const isSavingZone = ( state, siteId ) =>
+	get( getZonesState( state ), [ 'saving', siteId ], false );

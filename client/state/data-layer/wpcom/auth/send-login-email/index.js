@@ -6,19 +6,24 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	LOGIN_EMAIL_SEND,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
-} from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { infoNotice, errorNotice, successNotice, removeNotice } from 'state/notices/actions';
-import { recordTracksEventWithClientId } from 'state/analytics/actions';
-import config from 'config';
+} from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import {
+	infoNotice,
+	errorNotice,
+	successNotice,
+	removeNotice,
+} from 'calypso/state/notices/actions';
+import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
+import config from '@automattic/calypso-config';
 
 export const sendLoginEmail = ( action ) => {
 	const {
@@ -30,6 +35,8 @@ export const sendLoginEmail = ( action ) => {
 		loginFormFlow,
 		requestLoginEmailFormFlow,
 		isMobileAppLogin,
+		flow,
+		createAccount,
 	} = action;
 	const noticeAction = showGlobalNotices
 		? infoNotice( translate( 'Sending email' ), { duration: 4000 } )
@@ -45,11 +52,18 @@ export const sendLoginEmail = ( action ) => {
 		...( loginFormFlow
 			? [ recordTracksEventWithClientId( 'calypso_login_block_login_form_send_magic_link' ) ]
 			: [] ),
+		...( createAccount
+			? [
+					recordTracksEventWithClientId(
+						'calypso_login_block_login_form_send_account_create_magic_link'
+					),
+			  ]
+			: [] ),
 		http(
 			{
 				path: `/auth/send-login-email`,
 				method: 'POST',
-				apiVersion: '1.2',
+				apiVersion: '1.3',
 				body: {
 					client_id: config( 'wpcom_signup_id' ),
 					client_secret: config( 'wpcom_signup_key' ),
@@ -59,6 +73,8 @@ export const sendLoginEmail = ( action ) => {
 					lang_id: lang_id,
 					email: email,
 					...( redirect_to && { redirect_to } ),
+					...( flow && { flow } ),
+					create_account: createAccount,
 				},
 			},
 			{ ...action, infoNoticeId: noticeAction ? noticeAction.notice.noticeId : null }

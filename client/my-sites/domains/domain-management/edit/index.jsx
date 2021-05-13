@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import React from 'react';
 import page from 'page';
 import { includes } from 'lodash';
@@ -8,24 +9,27 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import { getSelectedDomain, getDomainTypeText } from 'lib/domains';
-import Header from 'my-sites/domains/domain-management/components/header';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import { getSelectedDomain, getDomainTypeText } from 'calypso/lib/domains';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import { localize } from 'i18n-calypso';
-import Main from 'components/main';
-import MaintenanceCard from 'my-sites/domains/domain-management/components/domain/maintenance-card';
-import { domainManagementList } from 'my-sites/domains/paths';
-import { registrar as registrarNames, type as domainTypes } from 'lib/domains/constants';
-import SiteRedirect from './site-redirect';
+import Main from 'calypso/components/main';
+import MaintenanceCard from 'calypso/my-sites/domains/domain-management/components/domain/maintenance-card';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { registrar as registrarNames, type as domainTypes } from 'calypso/lib/domains/constants';
+import SiteRedirectType from './domain-types/site-redirect-type';
 import WpcomDomainType from './domain-types/wpcom-domain-type';
 import RegisteredDomainType from './domain-types/registered-domain-type';
 import MappedDomainType from './domain-types/mapped-domain-type';
 import TransferInDomainType from './domain-types/transfer-in-domain-type';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { getWpcomDomain } from 'calypso/lib/domains/get-wpcom-domain';
 
 class Edit extends React.Component {
 	render() {
@@ -45,13 +49,20 @@ class Edit extends React.Component {
 				>
 					{ this.props.translate( '%(domainType)s Settings', {
 						args: {
-							domainType: getDomainTypeText( domain ),
+							domainType: this.getDomainTypeText( domain ),
 						},
 					} ) }
 				</Header>
 				{ this.renderDetails( domain, Details ) }
 			</Main>
 		);
+	}
+
+	getDomainTypeText( domain ) {
+		if ( this.props.hasDomainOnlySite ) {
+			return this.props.translate( 'Parked Domain' );
+		}
+		return getDomainTypeText( domain, this.props.translate );
 	}
 
 	getDetailsForType = ( type ) => {
@@ -63,7 +74,7 @@ class Edit extends React.Component {
 				return RegisteredDomainType;
 
 			case domainTypes.SITE_REDIRECT:
-				return SiteRedirect;
+				return SiteRedirectType;
 
 			case domainTypes.TRANSFER:
 				return TransferInDomainType;
@@ -89,12 +100,25 @@ class Edit extends React.Component {
 			);
 		}
 
-		return <Details domain={ domain } selectedSite={ this.props.selectedSite } />;
+		const wpcomDomain = getWpcomDomain( this.props.domains );
+
+		return (
+			<Details
+				domain={ domain }
+				wpcomDomainName={ wpcomDomain?.domain }
+				selectedSite={ this.props.selectedSite }
+			/>
+		);
 	};
 
 	goToDomainManagement = () => {
-		page( domainManagementList( this.props.selectedSite.slug ) );
+		page( domainManagementList( this.props.selectedSite.slug, this.props.currentRoute ) );
 	};
 }
 
-export default localize( Edit );
+export default connect( ( state, ownProps ) => {
+	return {
+		currentRoute: getCurrentRoute( state ),
+		hasDomainOnlySite: isDomainOnlySite( state, ownProps.selectedSite.ID ),
+	};
+} )( localize( Edit ) );

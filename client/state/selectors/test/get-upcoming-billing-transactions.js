@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getUpcomingBillingTransactions from 'state/selectors/get-upcoming-billing-transactions';
+import getUpcomingBillingTransactions from 'calypso/state/selectors/get-upcoming-billing-transactions';
 
 describe( 'getUpcomingBillingTransactions()', () => {
 	test( 'should return the upcoming billing transactions', () => {

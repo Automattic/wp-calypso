@@ -10,7 +10,7 @@ import './setup';
 /**
  * Records that a user viewed the checkout page
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `ResponseCart` object
  */
 export function recordViewCheckout( cart ) {
 	if ( isCriteoEnabled ) {

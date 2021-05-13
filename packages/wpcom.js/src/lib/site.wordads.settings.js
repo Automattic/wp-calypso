@@ -56,6 +56,6 @@ SiteWordAdsSettings.prototype.get = function ( query, fn ) {
  * @returns {Function} request handler
  */
 SiteWordAdsSettings.prototype.update = function ( query, body, fn ) {
-	var path = '/sites/' + this._sid + '/wordads/settings';
+	const path = '/sites/' + this._sid + '/wordads/settings';
 	return this.wpcom.req.post( path, query, body, fn );
 };

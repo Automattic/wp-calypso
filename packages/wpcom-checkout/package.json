@@ -1,0 +1,57 @@
+{
+	"name": "@automattic/wpcom-checkout",
+	"version": "1.0.0",
+	"description": "Functions and components used by WordPress.com checkout",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"types": "dist/types/index.d.ts",
+	"calypso:src": "src/index.ts",
+	"sideEffects": false,
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"keywords": [
+		"checkout",
+		"payments",
+		"automattic"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/wpcom-checkout"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/wpcom-checkout#readme",
+	"dependencies": {
+		"@automattic/calypso-stripe": "^1.0.0",
+		"@automattic/composite-checkout": "^1.0.0",
+		"@automattic/shopping-cart": "^1.0.0",
+		"@emotion/styled": "^10.0.27",
+		"@wordpress/i18n": "^3.20.0",
+		"@wordpress/react-i18n": "^1.0.3",
+		"debug": "^4.1.1",
+		"i18n-calypso": "^5.0.0",
+		"prop-types": "^15.7.2"
+	},
+	"devDependencies": {
+		"react": "^16.12.0",
+		"react-dom": "^16.12.0",
+		"@testing-library/jest-dom": "^5.11.10",
+		"@testing-library/react": "^11.2.6"
+	},
+	"private": true
+}

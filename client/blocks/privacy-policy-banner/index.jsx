@@ -5,24 +5,25 @@ import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose, get, identity, noop } from 'lodash';
+import { flowRight as compose, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
-import { savePreference } from 'state/preferences/actions';
-import getCurrentUserRegisterDate from 'state/selectors/get-current-user-register-date';
-import Banner from 'components/banner';
-import config from 'config';
+import { getHttpData, requestHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
+import getCurrentUserRegisterDate from 'calypso/state/selectors/get-current-user-register-date';
+import Banner from 'calypso/components/banner';
+import config from '@automattic/calypso-config';
 import PrivacyPolicyDialog from './privacy-policy-dialog';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 const AUTOMATTIC_ENTITY = 'automattic';
 const PRIVACY_POLICY_PREFERENCE = 'privacy_policy';
 const PRIVACY_POLICY_REQUEST_ID = 'privacy-policy';
+const noop = () => {};
 
 const privacyPolicyQuery = {
 	fetch() {
@@ -54,10 +55,6 @@ class PrivacyPolicyBanner extends Component {
 		privacyPolicy: PropTypes.object,
 		userRegisterDate: PropTypes.number,
 		translate: PropTypes.func,
-	};
-
-	static defaultProps = {
-		translate: identity,
 	};
 
 	state = { showDialog: false };

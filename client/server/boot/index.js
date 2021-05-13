@@ -1,24 +1,28 @@
 /**
- * Module dependencies
+ * External dependencies
  */
+import path from 'path';
+import chalk from 'chalk';
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import userAgent from 'express-useragent';
 
-const path = require( 'path' );
-const chalk = require( 'chalk' );
-const express = require( 'express' );
-const cookieParser = require( 'cookie-parser' );
-const userAgent = require( 'express-useragent' );
-const morgan = require( 'morgan' );
-const config = require( 'server/config' );
-const pages = require( 'server/pages' );
-const pwa = require( 'server/pwa' ).default;
-const analytics = require( 'server/lib/analytics' ).default;
+/**
+ * Internal dependencies
+ */
+import analytics from 'calypso/server/lib/analytics';
+import config from 'calypso/server/config';
+import api from 'calypso/server/api';
+import pages from 'calypso/server/pages';
+import pwa from 'calypso/server/pwa';
+import loggerMiddleware from 'calypso/server/middleware/logger';
 
 /**
  * Returns the server HTTP request handler "app".
  *
  * @returns {object} The express app
  */
-function setup() {
+export default function setup() {
 	const app = express();
 
 	// for nginx
@@ -26,12 +30,10 @@ function setup() {
 
 	app.use( cookieParser() );
 	app.use( userAgent.express() );
+	app.use( loggerMiddleware() );
 
 	if ( 'development' === process.env.NODE_ENV ) {
-		require( 'server/bundler' )( app );
-
-		// setup logger
-		app.use( morgan( 'dev' ) );
+		require( 'calypso/server/bundler' )( app );
 
 		if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 			if ( config( 'wordpress_logged_in_cookie' ) ) {
@@ -67,9 +69,6 @@ function setup() {
 				}
 			} catch ( e ) {}
 		}
-	} else {
-		// setup logger
-		app.use( morgan( 'combined' ) );
 	}
 
 	app.use( pwa() );
@@ -91,25 +90,13 @@ function setup() {
 	} );
 
 	if ( config.isEnabled( 'devdocs' ) ) {
-		app.use( require( 'server/devdocs' )() );
+		app.use( require( 'calypso/server/devdocs' ).default() );
 	}
 
-	if ( config.isEnabled( 'desktop' ) ) {
-		app.use(
-			'/desktop',
-			express.static( path.resolve( __dirname, '..', '..', '..', '..', 'public_desktop' ) )
-		);
-	}
-
-	app.use( require( 'server/api' )() );
+	app.use( api() );
 
 	// attach the pages module
 	app.use( pages() );
 
 	return app;
 }
-
-/**
- * Module exports
- */
-module.exports = setup;

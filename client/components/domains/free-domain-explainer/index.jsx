@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import Banner from 'calypso/components/banner';
 
 /**
  * Style dependencies
@@ -21,53 +21,44 @@ class FreeDomainExplainer extends React.Component {
 		this.props.onSkip( undefined, hideFreePlan );
 	};
 
-	renderCustomDomainExplainer() {
+	getDescription() {
+		const { translate, locale } = this.props;
+
 		return (
-			<div className="free-domain-explainer card is-compact">
-				<header>
-					<h1 className="free-domain-explainer__title">All our custom domains need a paid plan.</h1>
-					<p className="free-domain-explainer__subtitle">
-						That's why we'll pay the registration fees for your new domain when you choose a paid
-						plan during the next step.
-					</p>
-					<p className="free-domain-explainer__subtitle">
-						You can always claim your free custom domain later if you aren't ready yet.
-					</p>
-				</header>
-			</div>
+			<>
+				<p className="free-domain-explainer__subtitle">
+					{ locale === 'en'
+						? translate(
+								"We'll pay the registration fees for your new domain when you choose an annual plan during the next step."
+						  )
+						: translate(
+								"We'll pay the registration fees for your new domain when you choose a paid plan during the next step."
+						  ) }
+				</p>
+				<p className="free-domain-explainer__subtitle">
+					{ translate( "You can claim your free custom domain later if you aren't ready yet." ) }
+				</p>
+			</>
 		);
 	}
 
 	render() {
-		const { showFreeDomainExplainerForFreePlan, translate } = this.props;
-
-		if ( showFreeDomainExplainerForFreePlan ) {
-			return this.renderCustomDomainExplainer();
-		}
+		const { translate, locale } = this.props;
+		const title =
+			locale === 'en'
+				? translate( 'Get a free one-year domain registration with any paid annual plan.' )
+				: translate( 'Get a free one-year domain registration with any paid plan.' );
 
 		return (
-			<div className="free-domain-explainer card is-compact">
-				<header>
-					<h1 className="free-domain-explainer__title">
-						{ translate( 'Get a free one-year domain registration with any paid plan.' ) }
-					</h1>
-					<p className="free-domain-explainer__subtitle">
-						{ translate(
-							"We'll pay the registration fees for your new domain when you choose a paid plan during the next step."
-						) }
-					</p>
-					<p className="free-domain-explainer__subtitle">
-						{ translate( "You can claim your free custom domain later if you aren't ready yet." ) }
-						<Button
-							borderless
-							className="free-domain-explainer__subtitle-link"
-							onClick={ this.handleClick }
-						>
-							{ translate( 'Review our plans to get started' ) } &raquo;
-						</Button>
-					</p>
-				</header>
-			</div>
+			<Banner
+				className="free-domain-explainer"
+				callToAction={ translate( 'Review our plans to get started' ) }
+				description={ this.getDescription() }
+				horizontal
+				title={ title }
+				primaryButton={ false }
+				onClick={ this.handleClick }
+			/>
 		);
 	}
 }

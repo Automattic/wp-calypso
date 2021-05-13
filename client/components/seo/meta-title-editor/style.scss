@@ -10,12 +10,12 @@
 */
 
 .meta-title-editor .segmented-control__link {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 16px;
 	padding: 4px 2px;
 
-	@include breakpoint( '>660px' ) {
-		font-size: 14px;
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: $font-body-small;
 		line-height: 18px;
 		padding: 8px 12px;
 	}

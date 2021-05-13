@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, CompactCard, ScreenReaderText } from '@automattic/components';
-import Notice from 'components/notice';
-import Spinner from 'components/spinner';
+import Notice from 'calypso/components/notice';
+import Spinner from 'calypso/components/spinner';
 
 class Task extends PureComponent {
 	static propTypes = {

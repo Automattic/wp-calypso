@@ -10,30 +10,36 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import QuerySites from 'components/data/query-sites';
-import QuerySiteRoles from 'components/data/query-site-roles';
-import { getSite } from 'state/sites/selectors';
-import { getSiteRoles } from 'state/site-roles/selectors';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import QuerySites from 'calypso/components/data/query-sites';
+import QuerySiteRoles from 'calypso/components/data/query-site-roles';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getSiteRoles, getWpcomFollowerRole } from 'calypso/state/site-roles/selectors';
+import { ROLES_LIST } from './constants';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
-const getWpcomFollowerRole = ( { site, translate } ) => {
-	const displayName = site.is_private
-		? translate( 'Viewer', { context: 'Role that is displayed in a select' } )
-		: translate( 'Follower', { context: 'Role that is displayed in a select' } );
-
-	return {
-		display_name: displayName,
-		name: 'follower',
-	};
-};
+import './style.scss';
 
 const RoleSelect = ( props ) => {
 	let { siteRoles } = props;
-	const { site, includeFollower, siteId, id, explanation, translate, value } = props;
+	const { isWPForTeamsSite } = props;
+
+	const {
+		site,
+		includeFollower,
+		wpcomFollowerRole,
+		siteId,
+		id,
+		explanation,
+		translate,
+		value,
+	} = props;
+
 	const omitProps = [
+		'isWPForTeamsSite',
 		'site',
 		'key',
 		'siteId',
@@ -46,10 +52,11 @@ const RoleSelect = ( props ) => {
 		'translate',
 		'value',
 		'id',
+		'wpcomFollowerRole',
 	];
 
 	if ( site && siteRoles && includeFollower ) {
-		siteRoles = siteRoles.concat( getWpcomFollowerRole( props ) );
+		siteRoles = siteRoles.concat( wpcomFollowerRole );
 	}
 
 	return (
@@ -61,12 +68,22 @@ const RoleSelect = ( props ) => {
 				map( siteRoles, ( role ) => {
 					return (
 						<FormLabel key={ role.name }>
-							<FormRadio
-								checked={ role.name === value }
-								value={ role.name }
-								{ ...omit( props, omitProps ) }
-							/>
-							<span>{ role.display_name }</span>
+							<div className="role-select__role-wrapper">
+								<FormRadio
+									className="role-select__role-radio"
+									checked={ role.name === value }
+									value={ role.name }
+									{ ...omit( props, omitProps ) }
+								/>
+								<div className="role-select__role-name">
+									<div>{ role.display_name }</div>
+									{ ROLES_LIST[ role.name ] && (
+										<div className="role-select__role-name-description">
+											{ ROLES_LIST[ role.name ].getDescription( isWPForTeamsSite ) }
+										</div>
+									) }
+								</div>
+							</div>
 						</FormLabel>
 					);
 				} ) }
@@ -78,4 +95,6 @@ const RoleSelect = ( props ) => {
 export default connect( ( state, ownProps ) => ( {
 	site: getSite( state, ownProps.siteId ),
 	siteRoles: getSiteRoles( state, ownProps.siteId ),
+	isWPForTeamsSite: isSiteWPForTeams( state, ownProps.siteId ),
+	wpcomFollowerRole: getWpcomFollowerRole( state, ownProps.siteId ),
 } ) )( localize( RoleSelect ) );

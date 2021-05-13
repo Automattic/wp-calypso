@@ -1,6 +1,7 @@
-/**
- * External dependencies
- */
-import { overEvery as and, negate as not, noop } from 'lodash';
+const noop = () => {};
+
+const and = ( ...conditions ) => () => conditions.every( ( cond ) => cond() );
+
+const not = ( fn ) => ( ...args ) => ! fn( ...args );
 
 export { and, not, noop };

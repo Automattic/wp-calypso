@@ -7,28 +7,28 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { noop, isFunction } from 'lodash';
 import page from 'page';
 import { v4 as uuid } from 'uuid';
-import { addQueryArgs } from 'lib/route';
+import { addQueryArgs } from 'calypso/lib/route';
 
 /**
  * Internal dependencies
  */
 import Toolbar from './toolbar';
-import { hasTouch } from 'lib/touch-detect';
+import { hasTouch } from 'calypso/lib/touch-detect';
 import { localize } from 'i18n-calypso';
-import SpinnerLine from 'components/spinner-line';
-import SeoPreviewPane from 'components/seo-preview-pane';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
+import SpinnerLine from 'calypso/components/spinner-line';
+import SeoPreviewPane from 'calypso/components/seo-preview-pane';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isInlineHelpPopoverVisible from 'calypso/state/inline-help/selectors/is-inline-help-popover-visible';
 import { parse as parseUrl } from 'url';
-import { getSelectedSite } from 'state/ui/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isPrivateSite from 'state/selectors/is-private-site';
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 const debug = debugModule( 'calypso:web-preview' );
+const noop = () => {};
 
 export class WebPreviewContent extends Component {
 	previewId = uuid();
@@ -148,14 +148,14 @@ export class WebPreviewContent extends Component {
 		// remove all textual selections when user gives focus to preview iframe
 		// they might be confusing
 		if ( typeof window !== 'undefined' ) {
-			if ( isFunction( window.getSelection ) ) {
+			if ( typeof window.getSelection === 'function' ) {
 				const selection = window.getSelection();
-				if ( isFunction( selection.empty ) ) {
+				if ( typeof selection.empty === 'function' ) {
 					selection.empty();
-				} else if ( isFunction( selection.removeAllRanges ) ) {
+				} else if ( typeof selection.removeAllRanges === 'function' ) {
 					selection.removeAllRanges();
 				}
-			} else if ( document.selection && isFunction( document.selection.empty ) ) {
+			} else if ( document.selection && typeof document.selection.empty === 'function' ) {
 				document.selection.empty();
 			}
 		}
@@ -182,6 +182,9 @@ export class WebPreviewContent extends Component {
 
 	setIframeUrl = ( iframeUrl ) => {
 		if ( ! this.iframe || ( ! this.props.showPreview && this.props.isModalWindow ) ) {
+			if ( this.state.iframeUrl !== 'about:blank' ) {
+				this.setState( { iframeUrl: 'about:blank' } );
+			}
 			return;
 		}
 
@@ -302,6 +305,7 @@ export class WebPreviewContent extends Component {
 					device={ this.state.device }
 					{ ...this.props }
 					showExternal={ this.props.previewUrl ? this.props.showExternal : false }
+					showEditHeaderLink={ this.props.showEditHeaderLink }
 					showDeviceSwitcher={ this.props.showDeviceSwitcher && isWithinBreakpoint( '>660px' ) }
 					showUrl={ this.props.showUrl && isWithinBreakpoint( '>960px' ) }
 					selectSeoPreview={ this.selectSEO }
@@ -315,20 +319,21 @@ export class WebPreviewContent extends Component {
 							<span className="web-preview__loading-message">{ this.props.loadingMessage }</span>
 						</div>
 					) }
-					<div
-						className={ classNames( 'web-preview__frame-wrapper', {
-							'is-resizable': ! this.props.isModalWindow,
-						} ) }
-						style={ { display: 'seo' === this.state.device ? 'none' : 'inherit' } }
-					>
-						<iframe
-							ref={ this.setIframeInstance }
-							className="web-preview__frame"
-							src="about:blank"
-							onLoad={ () => this.setLoaded( 'iframe-onload' ) }
-							title={ this.props.iframeTitle || translate( 'Preview' ) }
-						/>
-					</div>
+					{ 'seo' !== this.state.device && (
+						<div
+							className={ classNames( 'web-preview__frame-wrapper', {
+								'is-resizable': ! this.props.isModalWindow,
+							} ) }
+						>
+							<iframe
+								ref={ this.setIframeInstance }
+								className="web-preview__frame"
+								src="about:blank"
+								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
+								title={ this.props.iframeTitle || translate( 'Preview' ) }
+							/>
+						</div>
+					) }
 					{ 'seo' === this.state.device && (
 						<SeoPreviewPane
 							overridePost={ this.props.overridePost }
@@ -358,6 +363,8 @@ WebPreviewContent.propTypes = {
 	showDeviceSwitcher: PropTypes.bool,
 	// Show edit button
 	showEdit: PropTypes.bool,
+	// Show edit the header link button
+	showEditHeaderLink: PropTypes.bool,
 	// The URL for the edit button
 	editUrl: PropTypes.string,
 	// The URL that should be displayed in the iframe
@@ -404,6 +411,7 @@ WebPreviewContent.defaultProps = {
 	showSEO: true,
 	showDeviceSwitcher: true,
 	showEdit: false,
+	showEditHeaderLink: false,
 	editUrl: null,
 	previewUrl: null,
 	previewMarkup: null,

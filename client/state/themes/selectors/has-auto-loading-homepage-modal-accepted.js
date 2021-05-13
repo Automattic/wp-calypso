@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns whether the auto loading homepage modal has been

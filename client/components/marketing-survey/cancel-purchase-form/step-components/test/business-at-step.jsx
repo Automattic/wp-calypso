@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import { stub } from 'sinon';
 
@@ -11,6 +10,8 @@ import { stub } from 'sinon';
  * Internal dependencies
  */
 import { BusinessATStep } from '../business-at-step';
+
+const noop = () => {};
 
 describe( 'BusinessATStep', () => {
 	describe( 'rendering translated content', () => {
@@ -55,7 +56,8 @@ describe( 'BusinessATStep', () => {
 			}
 			return null;
 		};
-		let recordTracksEvent, wrapper;
+		let recordTracksEvent;
+		let wrapper;
 
 		beforeEach( () => {
 			recordTracksEvent = stub();

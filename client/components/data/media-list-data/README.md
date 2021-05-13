@@ -1,5 +1,4 @@
-MediaListData
-=============
+# MediaListData
 
 MediaListData is a React component intended to be used as a controller-view to simplify binding and interacting with the [media stores and actions](../../../lib/media/).
 
@@ -9,7 +8,7 @@ Wrap a child component with `<MediaListData />`, passing a `siteId` and optional
 
 ```jsx
 import React from 'react';
-import MediaListData from 'components/data/media-list-data';
+import MediaListData from 'calypso/components/data/media-list-data';
 import MyChildComponent from './my-child-component';
 
 export default class extends React.Component {
@@ -29,5 +28,4 @@ The child component should expect to receive any props defined during the render
 
 - `media`: An ordered array of known media items for the site, or `undefined` if currently fetching data
 - `mediaHasNextPage`: A boolean indicating whether more media items exist for the site
-- `mediaFetchingNextPage`: A boolean indicating whether the next page of media items is being fetched
 - `mediaOnFetchNextPage`: A function to invoke when more media items are desired

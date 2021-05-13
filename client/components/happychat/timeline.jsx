@@ -2,18 +2,16 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { assign, isArray, isEmpty } from 'lodash';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { first, when, forEach } from './functional';
-import autoscroll from './autoscroll';
-import Emojify from 'components/emojify';
-import scrollbleed from './scrollbleed';
+import { useAutoscroll } from './autoscroll';
+import Emojify from 'calypso/components/emojify';
+import { useScrollbleed } from './scrollbleed';
 import { addSchemeIfMissing, setUrlScheme } from './url';
 
 /**
@@ -24,10 +22,8 @@ import './timeline.scss';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:happychat:timeline' );
 
-const linksNotEmpty = ( { links } ) => ! isEmpty( links );
-
-const messageParagraph = ( { message, key, twemojiUrl } ) => (
-	<p key={ key }>
+const MessageParagraph = ( { message, twemojiUrl } ) => (
+	<p>
 		<Emojify twemojiUrl={ twemojiUrl }>{ message }</Emojify>
 	</p>
 );
@@ -36,7 +32,7 @@ const messageParagraph = ( { message, key, twemojiUrl } ) => (
  * Given a message and array of links contained within that message, returns the message
  * with clickable links inside of it.
  */
-const messageWithLinks = ( { message, key, links, isExternalUrl } ) => {
+const MessageWithLinks = ( { message, links, isExternalUrl } ) => {
 	const children = links.reduce(
 		( { parts, last }, [ url, startIndex, length ] ) => {
 			const text = url;
@@ -77,14 +73,19 @@ const messageWithLinks = ( { message, key, links, isExternalUrl } ) => {
 		);
 	}
 
-	return <p key={ key }>{ children.parts }</p>;
+	return <p>{ children.parts }</p>;
 };
 
 /*
  * If a message event has a message with links in it, return a component with clickable links.
  * Otherwise just return a single paragraph with the text.
  */
-const messageText = when( linksNotEmpty, messageWithLinks, messageParagraph );
+const MessageText = ( props ) =>
+	props.links && props.links.length > 0 ? (
+		<MessageWithLinks { ...props } />
+	) : (
+		<MessageParagraph { ...props } />
+	);
 
 /*
  * Group messages based on user so when any user sends multiple messages they will be grouped
@@ -100,31 +101,26 @@ const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl, isExternalUrl
 			key={ event.id || index }
 		>
 			<div className="happychat__message-text">
-				{ messageText( {
-					message: event.message,
-					name: event.name,
-					key: event.id,
-					links: event.links,
-					twemojiUrl,
-					isExternalUrl,
-				} ) }
-				{ rest.map( ( { message, id: key, links } ) =>
-					messageText( { message, key, links, twemojiUrl, isExternalUrl } )
-				) }
+				<MessageText
+					name={ event.name }
+					message={ event.message }
+					links={ event.links }
+					twemojiUrl={ twemojiUrl }
+					isExternalUrl={ isExternalUrl }
+				/>
+				{ rest.map( ( { message, id, links } ) => (
+					<MessageText
+						key={ id }
+						message={ message }
+						links={ links }
+						twemojiUrl={ twemojiUrl }
+						isExternalUrl={ isExternalUrl }
+					/>
+				) ) }
 			</div>
 		</div>
 	);
 };
-
-const itemTypeIs = ( type ) => ( { item: [ firstItem ] } ) => firstItem.type === type;
-
-/*
- * Renders a chat bubble with multiple messages grouped by user.
- */
-const renderGroupedTimelineItem = first(
-	when( itemTypeIs( 'message' ), renderGroupedMessages ),
-	( { item: [ firstItem ] } ) => debug( 'no handler for message type', firstItem.type, firstItem )
-);
 
 const groupMessages = ( messages ) => {
 	const grouped = messages.reduce(
@@ -151,82 +147,68 @@ const groupMessages = ( messages ) => {
 	return grouped.groups.concat( [ grouped.group ] );
 };
 
-const welcomeMessage = ( { currentUserEmail, translate } ) => (
-	<div className="happychat__welcome">
-		<p>
-			{ translate(
-				"Welcome to WordPress.com support chat! We'll send a transcript to %s at the end of the chat.",
-				{
-					args: currentUserEmail,
+function WelcomeMessage( { currentUserEmail } ) {
+	const translate = useTranslate();
+
+	return (
+		<div className="happychat__welcome">
+			<p>
+				{ translate(
+					"Welcome to WordPress.com support chat! We'll send a transcript to %s at the end of the chat.",
+					{
+						args: currentUserEmail,
+					}
+				) }
+			</p>
+		</div>
+	);
+}
+
+function Timeline( props ) {
+	const autoscroll = useAutoscroll();
+	const scrollbleed = useScrollbleed();
+
+	if ( props.timeline.length === 0 ) {
+		return <WelcomeMessage currentUserEmail={ props.currentUserEmail } />;
+	}
+
+	function onScrollContainer( el ) {
+		autoscroll.setTarget( el );
+		scrollbleed.setTarget( el );
+	}
+
+	const { timeline, isCurrentUser, isExternalUrl = () => true, twemojiUrl } = props;
+
+	return (
+		<div
+			className="happychat__conversation"
+			ref={ onScrollContainer }
+			onMouseEnter={ scrollbleed.lock }
+			onMouseLeave={ scrollbleed.unlock }
+		>
+			{ groupMessages( timeline ).map( ( item ) => {
+				const firstItem = item[ 0 ];
+				if ( firstItem.type !== 'message' ) {
+					debug( 'no handler for message type', firstItem.type, firstItem );
+					return null;
 				}
-			) }
-		</p>
-	</div>
-);
+				return renderGroupedMessages( {
+					item,
+					isCurrentUser: isCurrentUser( firstItem ),
+					isExternalUrl,
+					twemojiUrl,
+				} );
+			} ) }
+		</div>
+	);
+}
 
-const timelineHasContent = ( { timeline } ) => isArray( timeline ) && ! isEmpty( timeline );
+Timeline.propTypes = {
+	currentUserEmail: PropTypes.string,
+	isCurrentUser: PropTypes.func,
+	isExternalUrl: PropTypes.func,
+	timeline: PropTypes.array,
+	twemojiUrl: PropTypes.string,
+};
 
-const renderTimeline = ( {
-	timeline,
-	isCurrentUser,
-	isExternalUrl,
-	onScrollContainer,
-	scrollbleedLock,
-	scrollbleedUnlock,
-	twemojiUrl,
-} ) => (
-	<div
-		className="happychat__conversation"
-		ref={ onScrollContainer }
-		onMouseEnter={ scrollbleedLock }
-		onMouseLeave={ scrollbleedUnlock }
-	>
-		{ groupMessages( timeline ).map( ( item ) =>
-			renderGroupedTimelineItem( {
-				item,
-				isCurrentUser: isCurrentUser( item[ 0 ] ),
-				isExternalUrl,
-				twemojiUrl,
-			} )
-		) }
-	</div>
-);
-
-const chatTimeline = when( timelineHasContent, renderTimeline, welcomeMessage );
-
-export const Timeline = createReactClass( {
-	displayName: 'Timeline',
-	mixins: [ autoscroll, scrollbleed ],
-
-	propTypes: {
-		currentUserEmail: PropTypes.string,
-		isCurrentUser: PropTypes.func,
-		isExternalUrl: PropTypes.func,
-		onScrollContainer: PropTypes.func,
-		timeline: PropTypes.array,
-		translate: PropTypes.func,
-		twemojiUrl: PropTypes.string,
-	},
-
-	getDefaultProps() {
-		return {
-			onScrollContainer: () => {},
-			isExternalUrl: () => true,
-		};
-	},
-
-	render() {
-		const { onScrollContainer } = this.props;
-		return chatTimeline(
-			assign( {}, this.props, {
-				onScrollContainer: forEach(
-					this.setupAutoscroll,
-					onScrollContainer,
-					this.setScrollbleedTarget
-				),
-				scrollbleedLock: this.scrollbleedLock,
-				scrollbleedUnlock: this.scrollbleedUnlock,
-			} )
-		);
-	},
-} );
+export default Timeline;

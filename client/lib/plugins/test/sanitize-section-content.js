@@ -11,7 +11,7 @@ import { sanitizeSectionContent as clean } from '../sanitize-section-content';
  * Attempts to create a DOM node from given HTML
  *
  * @param {string} html expected HTML to create node
- * @returns {Node | null} possible node described by HTML
+ * @returns {object | null} possible node described by HTML
  */
 const cleanNode = ( html ) => {
 	const div = document.createElement( 'div' );
@@ -21,30 +21,30 @@ const cleanNode = ( html ) => {
 	return div.firstChild;
 };
 
-test( 'should allow whitelisted tags', () =>
+test( 'should not strip allowed tags', () =>
 	expect( clean( '<div>👍</div>' ) ).toBe( '<div>👍</div>' ) );
 
-test( 'should strip out non-whitelisted tags', () =>
+test( 'should strip out disallowed tags', () =>
 	expect( clean( '<marquee></marquee>' ) ).toBe( '' ) );
 
 test( 'should preserve children of stripped tags', () =>
 	expect( clean( '<unsupported><b>👍</b></unsupported>' ) ).toBe( '<b>👍</b>' ) );
 
-test( 'should strip out content with non-whitelisted tags', () =>
+test( 'should strip out content with disallowed tags', () =>
 	expect( clean( '<p><script>alert("do bad things")</script>👍</p>' ) ).toBe(
 		'<p>alert("do bad things")👍</p>'
 	) );
 
-test( 'should strip out non-whitelisted children', () =>
+test( 'should strip out disallowed children', () =>
 	expect( clean( '<marquee><marquee>👍</marquee></marquee>' ) ).toBe( '👍' ) );
 
 test( 'should not break when no attributes present', () =>
 	expect( clean( '<p></p>' ) ).toBe( '<p></p>' ) );
 
-test( 'should allow whitelisted attributes', () =>
+test( 'should not strip allowed attributes', () =>
 	expect( clean( '<img alt="graphic">' ) ).toBe( '<img alt="graphic">' ) );
 
-test( 'should strip out non-whitelisted attributes', () =>
+test( 'should strip out disallowed attributes', () =>
 	expect( clean( '<span style="font-size: 128px;">👍</span>' ) ).toBe( '<span>👍</span>' ) );
 
 test( 'should allow http(s) links', () => {
@@ -105,7 +105,7 @@ test( 'should strip out <script> tags', () => expect( clean( '<script></script>'
  * which leads to unexpected `<script>` tags. However, we are using
  * the browser's parser and not our own and thus don't need to test for
  * some of those situations. We are already verifying that we strip
- * <script> tags as well as non-whitelisted attributes, so in order for
+ * <script> tags as well as disallowed attributes, so in order for
  * those security-related tests to fail our earlier tests would have
  * also failed, and again we don't need to double-test them.
  *

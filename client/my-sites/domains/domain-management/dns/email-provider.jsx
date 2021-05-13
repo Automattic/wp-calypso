@@ -9,14 +9,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { applyDnsTemplate } from 'state/domains/dns/actions';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { applyDnsTemplate } from 'calypso/state/domains/dns/actions';
 
 class EmailProvider extends Component {
 	state = {
@@ -92,16 +91,16 @@ class EmailProvider extends Component {
 						<FormInputValidation text={ translate( 'Invalid Token' ) } isError />
 					) }
 				</FormFieldset>
-				<FormFooter>
+				<div>
 					<FormButton disabled={ ! isDataValid || submitting } onClick={ this.onAddDnsRecords }>
 						{ translate( 'Set up %(providerName)s', {
 							args: { providerName: name },
 							comment:
 								'%(providerName)s will be replaced with the name of the service ' +
-								'provider that this template is used for, for example G Suite or Office 365',
+								'provider that this template is used for, for example Google Workspace or Office 365',
 						} ) }
 					</FormButton>
-				</FormFooter>
+				</div>
 			</form>
 		);
 	}

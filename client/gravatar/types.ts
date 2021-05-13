@@ -1,7 +1,7 @@
 /**
  * Internal Dependencies
  */
-import { URL } from '../types';
+import type { URL } from '../types';
 
 export type GravatarOptions = Partial< {
 	s: number;

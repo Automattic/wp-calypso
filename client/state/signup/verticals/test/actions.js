@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import { SIGNUP_VERTICALS_REQUEST, SIGNUP_VERTICALS_SET } from 'state/action-types';
+import { SIGNUP_VERTICALS_REQUEST, SIGNUP_VERTICALS_SET } from 'calypso/state/action-types';
 import { requestVerticals, setVerticals } from '../actions';
 
 describe( 'state/signup/verticals/actions', () => {
 	test( 'requestVerticals', () => {
-		const search = 'Foo',
-			siteType = 'Business',
-			limit = 7;
+		const search = 'Foo';
+		const siteType = 'Business';
+		const limit = 7;
 
 		expect( requestVerticals( search, siteType, limit ) ).toEqual( {
 			type: SIGNUP_VERTICALS_REQUEST,

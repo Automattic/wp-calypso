@@ -8,7 +8,9 @@ import React from 'react';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import BulkSelect from 'components/bulk-select';
+import BulkSelect from 'calypso/components/bulk-select';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 
 export default class extends React.Component {
 	static displayName = 'BulkSelects';
@@ -21,7 +23,7 @@ export default class extends React.Component {
 	};
 
 	handleToggleAll = ( checkedState ) => {
-		let newElements = [];
+		const newElements = [];
 		this.state.elements.forEach( ( element ) => {
 			if ( typeof checkedState !== 'undefined' ) {
 				element.selected = checkedState;
@@ -41,15 +43,15 @@ export default class extends React.Component {
 
 	renderElements = () => {
 		return this.state.elements.map( ( element, index ) => {
-			const onClick = function () {
+			const onClick = () => {
 				element.selected = ! element.selected;
 				this.forceUpdate();
-			}.bind( this );
+			};
 			return (
-				<label key={ index }>
-					<input type="checkbox" onClick={ onClick } checked={ element.selected } readOnly />
+				<FormLabel key={ index }>
+					<FormInputCheckbox onClick={ onClick } checked={ element.selected } readOnly />
 					<span>{ element.title }</span>
-				</label>
+				</FormLabel>
 			);
 		} );
 	};

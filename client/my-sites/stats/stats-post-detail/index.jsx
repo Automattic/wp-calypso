@@ -12,27 +12,31 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Emojify from 'components/emojify';
+import Emojify from 'calypso/components/emojify';
 import PostSummary from '../stats-post-summary';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
 import StatsPlaceholder from '../stats-module/placeholder';
-import HeaderCake from 'components/header-cake';
-import { decodeEntities } from 'lib/formatting';
-import Main from 'components/main';
+import HeaderCake from 'calypso/components/header-cake';
+import { decodeEntities } from 'calypso/lib/formatting';
+import Main from 'calypso/components/main';
 import titlecase from 'to-title-case';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PostLikes from '../stats-post-likes';
-import QueryPosts from 'components/data/query-posts';
-import QueryPostStats from 'components/data/query-post-stats';
-import EmptyContent from 'components/empty-content';
-import { getPostStat, isRequestingPostStats } from 'state/stats/posts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryPosts from 'calypso/components/data/query-posts';
+import QueryPostStats from 'calypso/components/data/query-post-stats';
+import EmptyContent from 'calypso/components/empty-content';
+import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Button } from '@automattic/components';
-import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
-import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'state/posts/selectors';
-import hasNavigated from 'state/selectors/has-navigated';
-import WebPreview from 'components/web-preview';
+import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
+import {
+	getSitePost,
+	isRequestingSitePost,
+	getPostPreviewUrl,
+} from 'calypso/state/posts/selectors';
+import hasNavigated from 'calypso/state/selectors/has-navigated';
+import WebPreview from 'calypso/components/web-preview';
 
 class StatsPostDetail extends Component {
 	static propTypes = {
@@ -108,7 +112,8 @@ class StatsPostDetail extends Component {
 		}
 
 		const postType = post && post.type !== null ? post.type : 'post';
-		let actionLabel, noViewsLabel;
+		let actionLabel;
+		let noViewsLabel;
 
 		if ( postType === 'page' ) {
 			actionLabel = translate( 'View Page' );

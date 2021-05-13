@@ -7,15 +7,25 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from '@automattic/calypso-config';
 import MasterbarItem from './item';
-import LanguagePickerModal from 'components/language-picker/modal';
-import { languages } from 'languages';
-import { setLocale } from 'state/ui/language/actions';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import LanguagePickerModal from 'calypso/components/language-picker/modal';
+import languages from '@automattic/languages';
+import { setLocale } from 'calypso/state/ui/language/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import {
+	getLanguageEmpathyModeActive,
+	toggleLanguageEmpathyMode,
+} from 'calypso/lib/i18n-utils/empathy-mode';
 
 function QuickLanguageSwitcher( props ) {
 	const [ isShowingModal, toggleLanguagesModal ] = useReducer( ( toggled ) => ! toggled, false );
-	const onSelected = ( languageSlug ) => props.setLocale( languageSlug );
+	const onSelected = ( language, { empathyMode, useFallbackForIncompleteLanguages } ) => {
+		props.setLocale(
+			useFallbackForIncompleteLanguages ? config( 'i18n_default_locale_slug' ) : language.langSlug
+		);
+		toggleLanguageEmpathyMode( empathyMode );
+	};
 
 	return (
 		<Fragment>
@@ -28,10 +38,11 @@ function QuickLanguageSwitcher( props ) {
 			</MasterbarItem>
 			{ isShowingModal && (
 				<LanguagePickerModal
-					isVisible
 					languages={ languages }
-					selected={ props.selectedLanguageSlug }
-					onSelected={ onSelected }
+					selectedLanguageSlug={ props.selectedLanguageSlug }
+					empathyMode={ getLanguageEmpathyModeActive() }
+					showEmpathyModeControl
+					onSelectLanguage={ onSelected }
 					onClose={ toggleLanguagesModal }
 				/>
 			) }

@@ -4,22 +4,21 @@ jest.mock( '../controller', () => ( {
 	plans: jest.fn(),
 	redirectToCheckout: jest.fn(),
 	redirectToPlans: jest.fn(),
+	redirectToPlansIfNotJetpack: jest.fn(),
 } ) );
 jest.mock( '../current-plan/controller', () => ( {
 	currentPlan: jest.fn(),
 } ) );
-jest.mock( 'controller', () => ( {
+jest.mock( 'calypso/controller', () => ( {
 	makeLayout: jest.fn(),
 	render: jest.fn(),
 } ) );
-jest.mock( 'my-sites/controller', () => ( {
+jest.mock( 'calypso/my-sites/controller', () => ( {
 	navigation: jest.fn(),
 	siteSelection: jest.fn(),
 	sites: jest.fn(),
 } ) );
-jest.mock( 'lib/performance-tracking', () => ( {
-	trackNavigationStart: jest.fn(),
-} ) );
+jest.mock( 'calypso/my-sites/plans/jetpack-plans', () => jest.fn() );
 
 /**
  * External dependencies
@@ -29,55 +28,69 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { features, plans, redirectToCheckout, redirectToPlans } from '../controller';
+import {
+	features,
+	plans,
+	redirectToCheckout,
+	redirectToPlans,
+	redirectToPlansIfNotJetpack,
+} from '../controller';
 import { currentPlan } from '../current-plan/controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { trackNavigationStart } from 'lib/performance-tracking';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import {
+	navigation,
+	siteSelection,
+	sites,
+	wpForTeamsP2PlusNotSupportedRedirect,
+} from 'calypso/my-sites/controller';
+import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 
 import router from '../index';
 
-// Return the same tag so we can make assertions in the tets
-trackNavigationStart.mockImplementation( ( tag ) => tag );
-
 const routes = {
-	'/plans': [ 'plans', siteSelection, sites, makeLayout, clientRender ],
-	'/plans/compare': [
-		'plans',
+	'/plans': [
 		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		sites,
+		makeLayout,
+		clientRender,
+	],
+	'/plans/compare': [
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		redirectToPlans,
 		makeLayout,
 		clientRender,
 	],
 	'/plans/compare/:domain': [
-		'plans',
 		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		redirectToPlans,
 		makeLayout,
 		clientRender,
 	],
 	'/plans/features': [
-		'plans',
 		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		redirectToPlans,
 		makeLayout,
 		clientRender,
 	],
 	'/plans/features/:domain': [
-		'plans',
 		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		redirectToPlans,
 		makeLayout,
 		clientRender,
 	],
-	'/plans/features/:feature/:domain': [ 'plans', features, makeLayout, clientRender ],
+	'/plans/features/:feature/:domain': [ features, makeLayout, clientRender ],
 	'/plans/my-plan': [
-		'plans',
 		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		sites,
 		navigation,
 		currentPlan,
@@ -85,23 +98,23 @@ const routes = {
 		clientRender,
 	],
 	'/plans/my-plan/:site': [
-		'plans',
 		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		currentPlan,
 		makeLayout,
 		clientRender,
 	],
 	'/plans/select/:plan/:domain': [
-		'plans',
 		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		redirectToCheckout,
 		makeLayout,
 		clientRender,
 	],
 	'/plans/:intervalType?/:site': [
-		'plans',
 		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		plans,
 		makeLayout,
@@ -116,5 +129,18 @@ describe( 'Sets all routes', () => {
 			const [ , ...actualMiddleware ] = page.mock.calls.find( ( [ path ] ) => path === route );
 			expect( actualMiddleware ).toEqual( expectedMiddleware );
 		} );
+	} );
+} );
+
+describe( 'Loads Jetpack plan page', () => {
+	it( 'Loads plans', () => {
+		router();
+		expect( jetpackPlans ).toHaveBeenCalledWith(
+			'/plans',
+			siteSelection,
+			wpForTeamsP2PlusNotSupportedRedirect,
+			redirectToPlansIfNotJetpack,
+			navigation
+		);
 	} );
 } );

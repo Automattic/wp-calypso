@@ -6,7 +6,7 @@ import { delay } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	THEME_TRANSFER_INITIATE_FAILURE,
 	THEME_TRANSFER_INITIATE_PROGRESS,
@@ -14,10 +14,10 @@ import {
 	THEME_TRANSFER_INITIATE_SUCCESS,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
-} from 'state/themes/action-types';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+} from 'calypso/state/themes/action-types';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Start an Automated Transfer with an uploaded theme.

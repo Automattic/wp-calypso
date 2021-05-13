@@ -7,14 +7,14 @@
 	position: relative;
 
 	.dns-records__list-type {
-		min-width: 60px;
+		min-width: 65px;
 
 		span {
 			background: var( --color-neutral-light );
 			border-radius: 2px;
 			color: var( --color-text-inverted );
 			display: block;
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			margin: 0 10px 0 0;
 			padding: 10px 5px;
 			text-align: center;
@@ -33,12 +33,16 @@
 		em {
 			color: var( --color-text-subtle );
 			display: block;
-			font-size: 11px;
+			font-size: $font-body-extra-small;
 		}
 	}
 
 	&.is-disabled {
-		opacity: 0.2;
-		cursor: not-allowed;
+		.dns-records__list-type,
+		.dns-records__list-info,
+		.dns__list-remove {
+			opacity: 0.4;
+			cursor: not-allowed;
+		}
 	}
 }

@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { abtest, getABTestVariation } from 'lib/abtest';
-import { getLocaleSlug } from 'lib/i18n-utils';
-import { getSectionGroup } from 'state/ui/selectors';
-import { getSiteOption } from 'state/sites/selectors';
+import { abtest, getABTestVariation } from 'calypso/lib/abtest';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { getSectionGroup } from 'calypso/state/ui/selectors';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 
 export function isInPageBuilderTest() {
 	return 'test' === getABTestVariation( 'pageBuilderMVP' );
@@ -16,7 +16,7 @@ export function shouldEnterPageBuilder() {
 
 export function getEditHomeUrl( siteSlug ) {
 	// @todo we will need to retrieve the home page ID from site options
-	return `/block-editor/page/${ siteSlug }/2`;
+	return `/page/${ siteSlug }/2`;
 }
 
 export function isEligibleForPageBuilder( segment, flowName ) {
@@ -32,7 +32,7 @@ export function isBlockEditorSectionInTest( state ) {
  *
  * @param {object} state  Redux state
  * @param {number} siteId Current site ID
- * @returns {bool}        Is the site qualified?
+ * @returns {boolean}        Is the site qualified?
  */
 export function siteQualifiesForPageBuilder( state, siteId ) {
 	const segment = getSiteOption( state, siteId, 'site_segment' );

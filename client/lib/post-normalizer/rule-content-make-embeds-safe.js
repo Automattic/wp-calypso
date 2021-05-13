@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-
-import { some, forEach, startsWith, endsWith } from 'lodash';
-import { iframeIsWhitelisted } from './utils';
-import url from 'url';
+import { some, forEach, startsWith } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
+import { iframeIsAllowed } from './utils';
+import { getUrlParts } from '@automattic/calypso-url';
 
 /** Given an iframe, is it okay to have it run without a sandbox?
  *
@@ -24,10 +23,10 @@ function doesNotNeedSandbox( iframe ) {
 		'player.twitch.tv',
 	];
 
-	const hostName = iframe.src && url.parse( iframe.src ).hostname;
+	const hostName = iframe.src && getUrlParts( iframe.src ).hostname;
 	const iframeHost = hostName && hostName.toLowerCase();
 
-	return some( trustedHosts, ( trustedHost ) => endsWith( '.' + iframeHost, '.' + trustedHost ) );
+	return some( trustedHosts, ( trustedHost ) => `.${ iframeHost }`.endsWith( '.' + trustedHost ) );
 }
 
 export default function makeEmbedsSafe( post, dom ) {
@@ -47,7 +46,7 @@ export default function makeEmbedsSafe( post, dom ) {
 
 		if ( doesNotNeedSandbox( iframe ) ) {
 			iframe.removeAttribute( 'sandbox' );
-		} else if ( iframeIsWhitelisted( iframe ) ) {
+		} else if ( iframeIsAllowed( iframe ) ) {
 			iframe.setAttribute( 'sandbox', 'allow-same-origin allow-scripts allow-popups' );
 		} else {
 			iframe.setAttribute( 'sandbox', '' );

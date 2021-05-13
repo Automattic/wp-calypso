@@ -1,7 +1,7 @@
 .site-settings {
-	font-size: 14px;
+	font-size: $font-body-small;
 
-	fieldset {
+	fieldset.form-fieldset {
 		clear: both;
 		margin-bottom: 24px;
 
@@ -27,21 +27,25 @@
 		margin-top: 24px; // Give labels some margin when they immediately follow a select
 	}
 
-	input[type='number'] {
+	input[type='number'].form-text-input {
 		padding: 0;
 		width: 50px;
 		text-align: center;
 	}
 
-	input[type='text'] {
+	input[type='text'].form-text-input {
 		-webkit-appearance: none;
 	}
 
 	legend,
 	label {
 		margin-bottom: 5px;
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: 700;
+	}
+
+	.components-toggle-control__label {
+		margin-bottom: 1px;
 	}
 
 	legend + label,
@@ -50,7 +54,8 @@
 	input[type='checkbox'] + label,
 	input[type='radio'] + label,
 	label input[type='checkbox'],
-	label input[type='radio'] {
+	label input[type='radio'],
+	.components-toggle-control__label {
 		font-weight: 400;
 	}
 
@@ -73,27 +78,22 @@
 		}
 	}
 
-	.form-toggle__switch {
-		margin-top: 3px;
-	}
-
 	p.form-setting-explanation {
 		display: block;
 		margin: 5px 0;
-		font-size: 13px;
+		font-size: $font-body-small;
 		font-style: italic;
 		font-weight: 400;
 		color: var( --color-text-subtle );
 
 		&.is-indented {
-			margin-left: 24px;
+			margin-left: 48px;
 		}
 	}
 
-	.form-toggle__wrapper + p.form-setting-explanation.is-indented,
 	.indented-form-field,
 	.indented-form-field + p.form-setting-explanation.is-indented {
-		margin-left: 36px;
+		margin-left: 48px;
 	}
 
 	p.settings-alert {
@@ -126,7 +126,7 @@
 	}
 
 	.site-settings__blogaddress-settings {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			display: flex;
 		}
 
@@ -134,8 +134,9 @@
 			width: 100%;
 			margin-left: 0;
 			margin-top: 5px;
+			text-align: center;
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				width: 45%;
 				margin-left: 16px;
 				margin-top: 0;
@@ -180,10 +181,10 @@
 		margin-bottom: 1.5em;
 	}
 
-	fieldset.site-icon-setting {
+	fieldset.form-fieldset.site-icon-setting {
 		padding-bottom: 16px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			flex: 0 0 122px;
 			order: 1;
 			margin-bottom: 0;
@@ -193,21 +194,21 @@
 	}
 
 	.site-icon-setting__heading {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			justify-content: space-between;
 			white-space: nowrap;
 		}
 	}
 
 	.site-icon-setting__icon {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			float: left;
 			margin-right: 8px;
 		}
 	}
 
 	.site-icon-setting__button {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: block;
 			margin-bottom: 8px;
 		}
@@ -221,10 +222,6 @@
 
 	.site.is-compact .site__content {
 		padding: 0;
-	}
-
-	.composing__publish-confirmation .form-toggle__label-content {
-		font-weight: 700;
 	}
 
 	.eligibility-warnings {
@@ -246,57 +243,27 @@
 .manage-connection,
 .seo-settings__site-verification,
 .seo-settings__help {
-	.form-toggle__label {
-		display: flex;
-		align-items: center;
-	}
-
-	.form-toggle__switch {
-		flex: 1 0 auto;
-	}
-
 	hr {
 		margin: 0 -24px 1.5em;
 	}
 }
+
+.site-settings__general-settings .is-coming-soon-disabled {
+	opacity: 0.5;
+}
+
 .site-settings__general-settings .site-settings__language-picker-notice {
 	margin-bottom: 10px;
 }
 
 .site-settings__discussion-settings {
-	.form-toggle__label {
-		display: flex;
-		align-items: center;
-	}
-
-	.form-toggle__switch {
-		flex: 1 0 auto;
-	}
-
-	.form-toggle__switch + span {
-		flex: 0 1 100%;
-		margin-left: 12px;
-	}
-
 	hr {
 		margin: 0 -24px 1.5em;
 	}
 
 	.site-settings__other-comment-settings {
-		.form-toggle__label {
-			align-items: flex-start;
-		}
-
-		.form-toggle__switch {
-			margin-top: 5px;
-		}
-
-		.form-toggle__switch + span {
-			line-height: 26px;
-		}
-
 		.form-select {
-			margin-top: 2px;
+			margin: -3px 4px;
 		}
 	}
 
@@ -308,7 +275,7 @@
 }
 
 .site-settings__site-options {
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: flex;
 	}
 
@@ -320,7 +287,7 @@
 }
 
 .site-settings__site-title-tagline {
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex: 0 1 100%;
 		order: 2;
 	}
@@ -360,7 +327,7 @@
 
 .writing-settings,
 .general-settings {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		select {
 			width: 100%;
 		}
@@ -368,16 +335,15 @@
 }
 
 .jetpack-protect__deactivate,
-.jetpack-protect__edit-settings,
-.disconnect-jetpack-button,
-.jetpack-protect__edit-settings,
-.disconnect-jetpack-button {
+.jetpack-protect__edit-settings {
 	margin-right: 8px;
 }
 
 // @TODO: Remove has-divider once all instances have been replaced with .site-settings__has-divider
 .has-divider,
-.site-settings__has-divider {
+.site-settings__has-divider,
+.form-fieldset.has-divider,
+.form-fieldset.site-settings__has-divider {
 	margin: 0 -24px;
 	padding: 24px 24px 16px;
 	border: 1px var( --color-neutral-0 ) solid;
@@ -453,14 +419,14 @@
 }
 
 .site-settings__child-settings {
-	margin: 16px 36px 0;
+	margin: 16px 48px 0;
 }
 
 .form-legend + .support-info {
 	margin-top: -21px;
 }
 
-.site-settings__add-to-whitelist {
+.site-settings__add-to-explicitly-allowed-list {
 	margin-top: 3px;
 }
 
@@ -497,6 +463,11 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 		box-shadow: none;
 	}
 }
+
+.site-settings .site-settings__wordpress-version {
+	display: inline;
+}
+
 .site-settings__jetpack-dev-mode-notice .notice {
 	animation: none;
 }
@@ -516,7 +487,7 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	margin-bottom: 16px;
 
 	.site-settings__jetpack-instant-search-toggle {
-		margin-left: 36px;
+		margin-left: 48px;
 	}
 
 	.search__module-settings {
@@ -537,7 +508,6 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 .site-settings__general-settings-launch-site {
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 1px;
 }
 
 .site-settings__general-settings-launch-site-text {
@@ -559,7 +529,7 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 		.form-fieldset.minileven {
 			&.inactive {
 				p,
-				.form-toggle__label,
+				.components-toggle-control__label,
 				.support-info {
 					opacity: 0.3;
 					transition: all 0.75s;
@@ -567,4 +537,32 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 			}
 		}
 	}
+}
+
+.site-settings__cloudflare {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+}
+
+.site-settings__cloudflare-text {
+	margin-left: 20px;
+
+	p {
+		margin: 0 0 0.5rem;
+	}
+}
+
+.site-settings__cloudflare-title {
+	font-weight: 600;
+	line-height: 1rem;
+}
+
+.site-settings__cloudflare-illustration {
+	width: 5%;
+	padding-left: -10px;
+}
+
+.site-settings__cloudflare-spacer {
+	margin-bottom: 16px;
 }

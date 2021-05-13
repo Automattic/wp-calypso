@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { READER_DISMISS_POST, READER_DISMISS_SITE } from 'state/reader/action-types';
-import { dismissPost, dismissSite } from 'state/reader/site-dismissals/actions';
+import { READER_DISMISS_POST, READER_DISMISS_SITE } from 'calypso/state/reader/action-types';
+import { dismissPost, dismissSite } from 'calypso/state/reader/site-dismissals/actions';
 
 describe( 'actions', () => {
 	describe( '#dismissPost', () => {

@@ -1,15 +1,15 @@
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const defaultExport = jest.fn();
 	defaultExport.isEnabled = jest.fn();
 	defaultExport.default = jest.fn();
 	return defaultExport;
 } );
 
-jest.mock( 'lib/site/utils', () => ( {
+jest.mock( 'calypso/lib/site/utils', () => ( {
 	userCan: jest.fn(),
 } ) );
 
@@ -35,15 +35,15 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
  */
 import { isATEnabled } from '../index';
 
-const config = require( 'config' );
-const utils = require( 'lib/site/utils' );
+const config = require( '@automattic/calypso-config' );
+const utils = require( 'calypso/lib/site/utils' );
 
 const site = {
 	options: {

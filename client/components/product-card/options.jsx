@@ -10,9 +10,9 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import InfoPopover from 'components/info-popover';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import InfoPopover from 'calypso/components/info-popover';
 import ProductCardPriceGroup from './price-group';
 
 const ProductCardOptions = ( {
@@ -35,11 +35,13 @@ const ProductCardOptions = ( {
 			{ ! hideRadios && optionsLabel && (
 				<h4 className="product-card__options-label">
 					{ optionsLabel }
-					<InfoPopover position="right">
-						{ translate(
-							'Records are all posts, pages, custom post types, and other types of content indexed by Jetpack Search.'
-						) }
-					</InfoPopover>
+					{ selectedSlug === 'jetpack_search' && (
+						<InfoPopover position="right">
+							{ translate(
+								'Records are all posts, pages, custom post types, and other types of content indexed by Jetpack Search.'
+							) }
+						</InfoPopover>
+					) }
 				</h4>
 			) }
 			<div className="product-card__options">

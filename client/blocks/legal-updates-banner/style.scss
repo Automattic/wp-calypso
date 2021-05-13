@@ -24,7 +24,7 @@
 		width: 100%;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding: 1rem 1.5rem;
 		flex-direction: row;
 		align-items: center;
@@ -36,7 +36,7 @@
 		}
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		padding: 1rem 2rem;
 
 		.legal-updates-banner__content {

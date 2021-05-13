@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import { Button, Dialog } from '@automattic/components';
 import { successNotice } from '../../state/notices/actions';
 import { recordGoogleEvent } from '../../state/analytics/actions';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 class Security2faKeyDeleteButton extends Component {
 	static propTypes = {

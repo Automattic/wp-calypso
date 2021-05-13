@@ -7,15 +7,14 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { items, requests } from '../reducer';
+import { serialize, deserialize } from 'calypso/state/utils';
 import {
-	DESERIALIZE,
-	SERIALIZE,
 	WORDADS_SETTINGS_RECEIVE,
 	WORDADS_SETTINGS_SAVE,
 	WORDADS_SETTINGS_SAVE_FAILURE,
 	WORDADS_SETTINGS_SAVE_SUCCESS,
 	WORDADS_SETTINGS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	const originalConsoleWarn = global.console.warn;
@@ -101,7 +100,7 @@ describe( 'reducer', () => {
 			const previousState = deepFreeze( {
 				2916284: { paypal: 'support@wordpress.com' },
 			} );
-			const state = items( previousState, { type: SERIALIZE } );
+			const state = serialize( items, previousState );
 
 			expect( state ).toEqual( {
 				2916284: { paypal: 'support@wordpress.com' },
@@ -112,7 +111,7 @@ describe( 'reducer', () => {
 			const previousState = deepFreeze( {
 				2916284: { paypal: 'support@wordpress.com' },
 			} );
-			const state = items( previousState, { type: DESERIALIZE } );
+			const state = deserialize( items, previousState );
 
 			expect( state ).toEqual( {
 				2916284: { paypal: 'support@wordpress.com' },
@@ -123,7 +122,7 @@ describe( 'reducer', () => {
 			const previousInvalidState = deepFreeze( {
 				2454: 2,
 			} );
-			const state = items( previousInvalidState, { type: DESERIALIZE } );
+			const state = deserialize( items, previousInvalidState );
 
 			expect( state ).toEqual( {} );
 		} );
@@ -188,28 +187,6 @@ describe( 'reducer', () => {
 			expect( state ).toEqual( {
 				2916284: false,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const previousState = deepFreeze( {
-				2916284: false,
-			} );
-			const state = requests( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).toBeUndefined();
-		} );
-
-		test( 'should not load persisted state', () => {
-			const previousState = deepFreeze( {
-				2916284: false,
-			} );
-			const state = requests( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).toEqual( {} );
 		} );
 	} );
 } );

@@ -3,13 +3,13 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { sortBy, sumBy } from 'lodash';
+import { sortBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import DataType from './data-type';
-import LegendItem from 'components/legend-item';
+import LegendItem from 'calypso/components/legend-item';
 
 const NUM_COLOR_SECTIONS = 3;
 
@@ -36,7 +36,7 @@ class PieChartLegend extends Component {
 		if ( nextProps.data !== prevState.data ) {
 			return {
 				data: nextProps.data,
-				dataTotal: sumBy( nextProps.data, ( datum ) => datum.value ),
+				dataTotal: nextProps.data.reduce( ( sum, { value } ) => sum + value, 0 ),
 				transformedData: transformData( nextProps.data ),
 			};
 		}

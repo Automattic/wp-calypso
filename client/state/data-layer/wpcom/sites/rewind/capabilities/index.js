@@ -1,10 +1,13 @@
 /**
  * Internal dependencies
  */
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { REWIND_CAPABILITIES_REQUEST, REWIND_CAPABILITIES_UPDATE } from 'state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import {
+	REWIND_CAPABILITIES_REQUEST,
+	REWIND_CAPABILITIES_UPDATE,
+} from 'calypso/state/action-types';
 
 const fetchCapabilities = ( action ) =>
 	http(

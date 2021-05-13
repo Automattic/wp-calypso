@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-
 import { get, orderBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { enrichPublicizeActionsWithConnections } from 'state/selectors/utils/';
-import createSelector from 'lib/create-selector';
+import { enrichPublicizeActionsWithConnections } from 'calypso/state/selectors/utils/';
+import { createSelector } from '@automattic/state-utils';
+
+import 'calypso/state/sharing/init';
 
 const getScheduledActions = ( state, siteId, postId ) =>
 	orderBy(

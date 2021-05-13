@@ -4,33 +4,39 @@
 
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import HappychatButton from 'components/happychat/button';
-import QueryRewindState from 'components/data/query-rewind-state';
+import HappychatButton from 'calypso/components/happychat/button';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import {
 	recordGoogleEvent as recordGoogleEventAction,
 	recordTracksEvent as recordTracksEventAction,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { disconnect } from 'state/jetpack/connection/actions';
-import { setAllSitesSelected, navigate } from 'state/ui/actions';
-import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
-import { getPlanClass } from 'lib/plans';
-import { getSiteSlug, getSiteTitle, getSitePlanSlug } from 'state/sites/selectors';
-import getRewindState from 'state/selectors/get-rewind-state';
+} from 'calypso/state/analytics/actions';
+import { disconnect } from 'calypso/state/jetpack/connection/actions';
+import { setAllSitesSelected, navigate } from 'calypso/state/ui/actions';
+import {
+	successNotice,
+	errorNotice,
+	infoNotice,
+	removeNotice,
+} from 'calypso/state/notices/actions';
+import { getPlanClass } from '@automattic/calypso-products';
+import { getSiteSlug, getSiteTitle, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class DisconnectJetpack extends PureComponent {
 	static propTypes = {
@@ -76,77 +82,69 @@ class DisconnectJetpack extends PureComponent {
 	planFeatures() {
 		const { plan, translate } = this.props;
 		const features = [];
-		switch ( plan ) {
-			case 'is-free-plan':
-				features.push(
-					translate(
-						'{{icon/}} Site stats, related content, and sharing tools',
-						this.getIcon( 'stats-alt' )
-					)
-				);
-				features.push(
-					translate(
-						'{{icon/}} Brute force attack protection and downtime monitoring',
-						this.getIcon( 'lock' )
-					)
-				);
-				features.push(
-					translate( '{{icon/}} Unlimited, high-speed image hosting', this.getIcon( 'image' ) )
-				);
-				break;
 
-			case 'is-personal-plan':
-				features.push(
-					translate(
-						'{{icon/}} Daily automated backups (unlimited storage)',
-						this.getIcon( 'history' )
-					)
-				);
-				features.push(
-					translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) )
-				);
-				features.push( translate( '{{icon/}} Spam filtering', this.getIcon( 'spam' ) ) );
-				break;
-
-			case 'is-premium-plan':
-				features.push(
-					translate(
-						'{{icon/}} Daily automated backups (unlimited storage)',
-						this.getIcon( 'history' )
-					)
-				);
-				features.push(
-					translate( '{{icon/}} Daily automated malware scanning', this.getIcon( 'spam' ) )
-				);
-				features.push(
-					translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) )
-				);
-				features.push(
-					translate( '{{icon/}} 13GB of high-speed video hosting', this.getIcon( 'video' ) )
-				);
-				break;
-
-			case 'is-business-plan':
-				features.push(
-					translate(
-						'{{icon/}} Daily automated backups (unlimited storage)',
-						this.getIcon( 'history' )
-					)
-				);
-				features.push(
-					translate(
-						'{{icon/}} Daily automated malware scanning with automated resolution',
-						this.getIcon( 'spam' )
-					)
-				);
-				features.push(
-					translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) )
-				);
-				features.push(
-					translate( '{{icon/}} Unlimited high-speed video hosting', this.getIcon( 'video' ) )
-				);
-				features.push( translate( '{{icon/}} SEO preview tools', this.getIcon( 'globe' ) ) );
-				break;
+		if ( plan === 'is-free-plan' ) {
+			features.push(
+				translate(
+					'{{icon/}} Site stats, related content, and sharing tools',
+					this.getIcon( 'stats-alt' )
+				)
+			);
+			features.push(
+				translate(
+					'{{icon/}} Brute force attack protection and downtime monitoring',
+					this.getIcon( 'lock' )
+				)
+			);
+			features.push(
+				translate( '{{icon/}} Unlimited, high-speed image hosting', this.getIcon( 'image' ) )
+			);
+		} else if ( plan === 'is-personal-plan' ) {
+			features.push(
+				translate(
+					'{{icon/}} Daily automated backups (unlimited storage)',
+					this.getIcon( 'history' )
+				)
+			);
+			features.push(
+				translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) )
+			);
+			features.push( translate( '{{icon/}} Spam filtering', this.getIcon( 'spam' ) ) );
+		} else if ( [ 'is-premium-plan', 'is-daily-security-plan' ].includes( plan ) ) {
+			features.push(
+				translate(
+					'{{icon/}} Daily automated backups (unlimited storage)',
+					this.getIcon( 'history' )
+				)
+			);
+			features.push(
+				translate( '{{icon/}} Daily automated malware scanning', this.getIcon( 'spam' ) )
+			);
+			features.push(
+				translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) )
+			);
+			features.push(
+				translate( '{{icon/}} 13GB of high-speed video hosting', this.getIcon( 'video' ) )
+			);
+		} else if (
+			[ 'is-business-plan', 'is-realtime-security-plan', 'is-complete-plan' ].includes( plan )
+		) {
+			features.push(
+				translate(
+					'{{icon/}} Real-time automated backups (unlimited storage)',
+					this.getIcon( 'history' )
+				)
+			);
+			features.push(
+				translate( '{{icon/}} Real-time automated malware scanning', this.getIcon( 'spam' ) )
+			);
+			features.push(
+				translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) )
+			);
+			features.push(
+				translate( '{{icon/}} Unlimited high-speed video hosting', this.getIcon( 'video' ) )
+			);
+			features.push( translate( '{{icon/}} SEO preview tools', this.getIcon( 'globe' ) ) );
 		}
 
 		return features.map( ( freature, index ) => {

@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import page from 'page';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { filter, get, range } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -12,22 +11,23 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import Spinner from 'components/spinner';
-import QueryPluginKeys from 'components/data/query-plugin-keys';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import Spinner from 'calypso/components/spinner';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
+import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	JETPACK_CONTACT_SUPPORT,
 	JETPACK_SERVICE_AKISMET,
 	JETPACK_SERVICE_VAULTPRESS,
 	JETPACK_SUPPORT,
-} from 'lib/url/support';
-import { getSiteFileModDisableReason } from 'lib/site/utils';
+} from 'calypso/lib/url/support';
+import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
 
 /**
  * Style dependencies
@@ -35,13 +35,13 @@ import { getSiteFileModDisableReason } from 'lib/site/utils';
 import './style.scss';
 
 // Redux actions & selectors
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
-import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import { getPlugin } from 'state/plugins/wporg/selectors';
-import { fetchPluginData } from 'state/plugins/wporg/actions';
-import { requestSites } from 'state/sites/actions';
-import { installPlugin } from 'state/plugins/premium/actions';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
+import { fetchPluginData } from 'calypso/state/plugins/wporg/actions';
+import { requestSites } from 'calypso/state/sites/actions';
+import { installPlugin } from 'calypso/state/plugins/premium/actions';
 import {
 	getPluginsForSite,
 	getActivePlugin,
@@ -50,9 +50,11 @@ import {
 	isInstalling,
 	isRequesting,
 	hasRequested,
-} from 'state/plugins/premium/selectors';
-// Store for existing plugins
-import PluginsStore from 'lib/plugins/store';
+} from 'calypso/state/plugins/premium/selectors';
+import {
+	getPluginOnSite,
+	isRequesting as isRequestingInstalledPlugins,
+} from 'calypso/state/plugins/installed/selectors';
 
 const helpLinks = {
 	vaultpress: JETPACK_SERVICE_VAULTPRESS,
@@ -88,11 +90,11 @@ class PlansSetup extends React.Component {
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins = ( plugins ) => {
 		return plugins.map( ( plugin ) => {
-			const pluginData = getPlugin( this.props.wporg, plugin.slug );
+			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
 			if ( ! pluginData ) {
 				this.props.fetchPluginData( plugin.slug );
 			}
-			return Object.assign( {}, plugin, pluginData );
+			return { ...plugin, ...pluginData };
 		} );
 	};
 
@@ -136,7 +138,7 @@ class PlansSetup extends React.Component {
 			! this.props.isInstalling &&
 			this.props.nextPlugin
 		) {
-			this.startNextPlugin( this.props.nextPlugin );
+			this.startNextPlugin();
 		}
 	}
 
@@ -151,7 +153,9 @@ class PlansSetup extends React.Component {
 		return beforeUnloadText;
 	};
 
-	startNextPlugin = ( plugin ) => {
+	startNextPlugin = () => {
+		const { nextPlugin, requestingInstalledPlugins, sitePlugin } = this.props;
+
 		// We're already installing.
 		if ( this.props.isInstalling ) {
 			return;
@@ -161,14 +165,11 @@ class PlansSetup extends React.Component {
 		const site = this.props.selectedSite;
 
 		// Merge wporg info into the plugin object
-		plugin = Object.assign( {}, plugin, getPlugin( this.props.wporg, plugin.slug ) );
+		let plugin = { ...nextPlugin, ...this.props.wporgPlugins?.[ nextPlugin.slug ] };
 
 		const getPluginFromStore = function () {
-			const sitePlugin = PluginsStore.getSitePlugin( site, plugin.slug );
-			if ( ! sitePlugin && PluginsStore.isFetchingSite( site ) ) {
-				// if the Plugins are still being fetched, we wait. We are not using flux
-				// store events because it would be more messy to handle the one-time-only
-				// callback with bound parameters than to do it this way.
+			if ( ! sitePlugin && requestingInstalledPlugins ) {
+				// if the Plugins are still being fetched, we wait.
 				return setTimeout( getPluginFromStore, 500 );
 			}
 			// Merge any site-specific info into the plugin object, setting a default plugin ID if needed
@@ -240,20 +241,19 @@ class PlansSetup extends React.Component {
 	};
 
 	renderPluginsPlaceholders = () => {
-		const placeholderCount = this.props.whitelist ? 1 : 2;
+		const placeholderCount = this.props.forSpecificPlugin ? 1 : 2;
 		return range( placeholderCount ).map( ( i ) => <PluginItem key={ 'placeholder-' + i } /> );
 	};
 
 	renderPlugins = ( hidden = false ) => {
-		const site = this.props.selectedSite;
-		if ( this.props.isRequesting || PluginsStore.isFetchingSite( site ) ) {
+		if ( this.props.isRequesting || this.props.requestingInstalledPlugins ) {
 			return this.renderPluginsPlaceholders();
 		}
 
 		const plugins = this.addWporgDataToPlugins( this.props.plugins );
 
 		return plugins.map( ( item, i ) => {
-			const plugin = Object.assign( {}, item, getPlugin( this.props.wporg, item.slug ) );
+			const plugin = { ...item, ...this.props.wporgPlugins?.[ item.slug ] };
 
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
@@ -510,7 +510,7 @@ class PlansSetup extends React.Component {
 	};
 
 	render() {
-		const { sitesInitialized, translate } = this.props;
+		const { siteId, sitesInitialized, translate } = this.props;
 		const site = this.props.selectedSite;
 
 		if ( ! site && ( this.props.isRequestingSites || ! sitesInitialized ) ) {
@@ -529,7 +529,7 @@ class PlansSetup extends React.Component {
 			site &&
 			! this.props.isRequestingSites &&
 			! this.props.isRequesting &&
-			! PluginsStore.isFetchingSite( site ) &&
+			! this.props.requestingInstalledPlugins &&
 			! this.props.plugins.length
 		) {
 			return this.renderNoJetpackPlan();
@@ -539,6 +539,7 @@ class PlansSetup extends React.Component {
 			<div className="jetpack-plugins-setup">
 				<PageViewTracker path="/plugins/setup/:site" title="Jetpack Plugins Setup" />
 				<QueryPluginKeys siteId={ site.ID } />
+				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				<h1 className="jetpack-plugins-setup__header">
 					{ translate( 'Setting up your %(plan)s Plan', {
 						args: { plan: site.plan.product_name_short },
@@ -558,22 +559,24 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const selectedSite = getSelectedSite( state );
-		const whitelist = ownProps.whitelist || false;
+		const forSpecificPlugin = ownProps.forSpecificPlugin || false;
 
 		return {
-			wporg: state.plugins.wporg.items,
+			sitePlugin: forSpecificPlugin && getPluginOnSite( state, siteId, forSpecificPlugin ),
+			wporgPlugins: getAllWporgPlugins( state ),
 			isRequesting: isRequesting( state, siteId ),
+			requestingInstalledPlugins: isRequestingInstalledPlugins( state, siteId ),
 			hasRequested: hasRequested( state, siteId ),
-			isInstalling: isInstalling( state, siteId, whitelist ),
-			isFinished: isFinished( state, siteId, whitelist ),
-			plugins: getPluginsForSite( state, siteId, whitelist ),
-			activePlugin: getActivePlugin( state, siteId, whitelist ),
-			nextPlugin: getNextPlugin( state, siteId, whitelist ),
+			isInstalling: isInstalling( state, siteId, forSpecificPlugin ),
+			isFinished: isFinished( state, siteId, forSpecificPlugin ),
+			plugins: getPluginsForSite( state, siteId, forSpecificPlugin ),
+			activePlugin: getActivePlugin( state, siteId, forSpecificPlugin ),
+			nextPlugin: getNextPlugin( state, siteId, forSpecificPlugin ),
 			selectedSite: selectedSite,
 			isRequestingSites: isRequestingSites( state ),
 			sitesInitialized: hasInitializedSites( state ),
 			siteId,
 		};
 	},
-	( dispatch ) => bindActionCreators( { requestSites, fetchPluginData, installPlugin }, dispatch )
+	{ requestSites, fetchPluginData, installPlugin }
 )( localize( PlansSetup ) );

@@ -1,21 +1,21 @@
 /**
  * External dependencies
  */
-
-import url from 'url';
 import { forEach, startsWith, some, includes, filter } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import safeImageURL from 'lib/safe-image-url';
+import safeImageURL from 'calypso/lib/safe-image-url';
 import { maxWidthPhotonishURL } from './utils';
+import { resolveRelativePath } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 
 const TRANSPARENT_GIF =
 	'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
 /**
- * @param {Node} node - Takes in a DOM Node and mutates it so that it no longer has an 'on*' event handlers e.g. onClick
+ * @param {window.Node} node - Takes in a DOM Node and mutates it so that it no longer has an 'on*' event handlers e.g. onClick
  */
 const removeUnwantedAttributes = ( node ) => {
 	if ( ! node || ! node.hasAttributes() ) {
@@ -57,12 +57,17 @@ const imageShouldBeRemovedFromContent = ( imageUrl ) => {
 
 function makeImageSafe( post, image, maxWidth ) {
 	let imgSource = image.getAttribute( 'src' );
-	const parsedImgSrc = url.parse( imgSource, false, true );
-	const hostName = parsedImgSrc.hostname;
+	const imgSourceParts = getUrlParts( imgSource );
+	const hostName = imgSourceParts.hostname;
 
 	// if imgSource is relative, prepend post domain so it isn't relative to calypso
 	if ( ! hostName ) {
-		imgSource = url.resolve( post.URL, imgSource );
+		const postUrlParts = getUrlParts( post.URL );
+		imgSource = getUrlFromParts( {
+			protocol: postUrlParts.protocol,
+			host: postUrlParts.host,
+			pathname: resolveRelativePath( postUrlParts.pathname, imgSourceParts.pathname ),
+		} ).href;
 	}
 
 	let safeSource = maxWidth

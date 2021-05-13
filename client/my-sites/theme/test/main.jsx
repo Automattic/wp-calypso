@@ -9,20 +9,26 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import ThemeSheetComponent from '../main';
-import { createReduxStore } from 'state';
-import { setStore } from 'state/redux-store';
-import { receiveTheme, themeRequestFailure } from 'state/themes/actions';
+import { createReduxStore } from 'calypso/state';
+import { setStore } from 'calypso/state/redux-store';
+import { receiveTheme, themeRequestFailure } from 'calypso/state/themes/actions';
 
-jest.mock( 'lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'lib/wp', () => ( {
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/wp', () => ( {
 	undocumented: () => ( {
 		getProducts: () => {},
 	} ),
 } ) );
-jest.mock( 'my-sites/themes/theme-preview', () => require( 'components/empty-component' ) );
-jest.mock( 'my-sites/themes/themes-site-selector-modal', () =>
-	require( 'components/empty-component' )
+jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
+	require( 'calypso/components/empty-component' )
 );
+jest.mock( 'calypso/my-sites/themes/themes-site-selector-modal', () =>
+	require( 'calypso/components/empty-component' )
+);
+jest.mock( 'calypso/state/selectors/is-nav-unification-enabled', () => ( {
+	__esModule: true,
+	default: () => true,
+} ) );
 
 describe( 'main', () => {
 	describe( 'Calling renderToString() on Theme Info sheet', () => {
@@ -39,7 +45,8 @@ describe( 'main', () => {
 			demo_uri: 'https://twentysixteendemo.wordpress.com/',
 		};
 
-		let store, initialState;
+		let store;
+		let initialState;
 
 		beforeAll( () => {
 			store = createReduxStore();

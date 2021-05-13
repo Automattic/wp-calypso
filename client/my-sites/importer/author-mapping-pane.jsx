@@ -5,17 +5,16 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Internal dependencies
  */
 import AuthorMapping from './author-mapping-item';
-import SiteUsersFetcher from 'components/site-users-fetcher';
-import UsersStore from 'lib/users/store';
-
-import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
-import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
-import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
+import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
+import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
+import useUsersQuery from 'calypso/data/users/use-users-query';
 
 /**
  * Style dependencies
@@ -122,13 +121,6 @@ class AuthorMappingPane extends React.PureComponent {
 		}
 	};
 
-	getUserCount = () => {
-		const fetchOptions = this.getFetchOptions( 50 );
-		const { totalUsers } = UsersStore.getPaginationData( fetchOptions );
-
-		return totalUsers;
-	};
-
 	render() {
 		const {
 			hasSingleAuthor,
@@ -141,19 +133,18 @@ class AuthorMappingPane extends React.PureComponent {
 			sourceType,
 			importerStatus,
 			site,
+			totalUsers,
 		} = this.props;
 		const canStartImport = hasSingleAuthor || sourceAuthors.some( ( author ) => author.mappedTo );
-		const targetUserCount = this.getUserCount();
 		const mappingDescription = this.getMappingDescription(
 			sourceAuthors.length,
-			targetUserCount,
+			totalUsers,
 			targetTitle,
 			sourceType
 		);
 
 		return (
 			<div className="importer__mapping-pane">
-				<SiteUsersFetcher fetchOptions={ this.getFetchOptions( { number: 50 } ) } />
 				<div className="importer__mapping-description">{ mappingDescription }</div>
 				<div className="importer__mapping-header">
 					<span className="importer__mapping-source-title">{ sourceTitle }</span>
@@ -171,14 +162,26 @@ class AuthorMappingPane extends React.PureComponent {
 					);
 				} ) }
 				<ImporterActionButtonContainer>
-					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 					<ImporterActionButton primary disabled={ ! canStartImport } onClick={ onStartImport }>
 						{ this.props.translate( 'Start import' ) }
 					</ImporterActionButton>
+					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 				</ImporterActionButtonContainer>
 			</div>
 		);
 	}
 }
 
-export default localize( AuthorMappingPane );
+const withTotalUsers = createHigherOrderComponent(
+	( Component ) => ( props ) => {
+		const { siteId } = props;
+		const { data } = useUsersQuery( siteId );
+
+		const totalUsers = data?.total ?? 0;
+
+		return <Component totalUsers={ totalUsers } { ...props } />;
+	},
+	'withTotalUsers'
+);
+
+export default localize( withTotalUsers( AuthorMappingPane ) );

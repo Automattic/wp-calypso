@@ -1,5 +1,4 @@
-DatePicker
-==========
+# DatePicker
 
 React component used to display a Date Picker.
 
@@ -9,17 +8,17 @@ React component used to display a Date Picker.
 
 ```js
 import React from 'react';
-import DatePicker from 'components/date-picker';
+import DatePicker from 'calypso/components/date-picker';
 
 export default class extends React.Component {
 	// ...
 
-	this.onSelectDay: function( date ) {
+	onSelectDay( date ) {
 		this.setState( { date: date } );
-	},
+	}
 
 	render() {
-		var events = [
+		const events = [
 			{
 				title: '1 other post scheduled',
 				date: new Date( '2015-10-15 10:30' ),
@@ -30,15 +29,16 @@ export default class extends React.Component {
 				title: 'Happy birthday Damian!',
 				date: new Date( '2015-07-18 15:00' ),
 				socialIcon: 'path',
-			}
+			},
 		];
 
 		return (
 			<DatePicker
-				initialMonth = { new Date( '2015-07-01' ) }
-				events= { events }
-				onSelectDay= { this.onSelectDay }
-				selectedDay= { this.state.date } />
+				initialMonth={ new Date( '2015-07-01' ) }
+				events={ events }
+				onSelectDay={ this.onSelectDay }
+				selectedDay={ this.state.date }
+			/>
 		);
 	}
 }
@@ -48,7 +48,7 @@ export default class extends React.Component {
 
 ## DatePicker
 
-#### Props
+### Props
 
 `initialMonth` - **optional** Date object that defines the month of the calendar. Default is `now`.
 
@@ -69,4 +69,4 @@ is selected.
 
 `localeUtils` - **optional** Object of [locale utility _overides_](http://react-day-picker.js.org/api/LocaleUtils) which are merged with the default utilities passed into the `react-day-picker` library. Previously this prop was named `locale`, but was moved to its own dedicated prop for API consistency with the React Day Picker library.
 
-------------
+---

@@ -1,0 +1,172 @@
+# Setup
+
+This document will cover the environment setup process to run the `wp-calypso` e2e tests.
+
+## Table of contents
+
+<!-- TOC -->
+
+- [Setup](#setup)
+  - [Table of contents](#table-of-contents)
+  - [Software Environment](#software-environment)
+    - [Required software](#required-software)
+    - [Steps](#steps)
+      - [Intel-based macOS](#intel-based-macos)
+      - [Apple Silicon-based macOS](#apple-silicon-based-macos)
+  - [Configuration File](#configuration-file)
+    - [Overview](#overview)
+    - [In-repo configuration](#in-repo-configuration)
+    - [Custom configurations optional](#custom-configurations-optional)
+  - [Environment Variables](#environment-variables)
+  - [Naming Branches](#naming-branches)
+
+<!-- /TOC -->
+
+## Software Environment
+
+The following instructions are geared towards macOS users.
+
+### Required software
+
+- [Node.js](https://nodejs.org/en/download/package-manager/#macos)
+- [yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
+- [npm](https://www.npmjs.com/get-npm)
+- (optional) [nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+
+Node.js can also be installed using [brew](https://nodejs.dev/learn/how-to-install-nodejs).
+
+It is strongly recommended to use `nvm` to manage multiple Node.js versions.
+
+### Steps
+
+#### Intel-based macOS
+
+Up-to-date instructions on installing individual pieces of required software can be found on their respective sites.
+
+Once installed, open a Terminal instance and execute the following:
+
+1. navigate to the test directory:
+
+```
+cd <repo_root>/tests/e2e
+```
+
+2. install dependencies:
+
+```
+yarn install
+```
+
+#### Apple Silicon-based macOS
+
+It appears that key dependencies do not support ARM64 yet, notably `mocha`. This is true as of 2021-01 and may be subject to change in the coming months.
+
+Currently the restrictions mean we must install and run x86_64 binaries.
+
+1. install i386 Homebrew:
+
+```
+arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+```
+
+2. install `nvm` using i386 Homebrew:
+
+```
+arch -x86_64 /usr/local/bin/brew install nvm
+```
+
+**This is critical as if nvm is installed using ARM64 Homebrew, installed Node versions will also be the ARM64 variant!**
+
+3. using `nvm`, install the current version of node used in `wp-calypso`:
+
+```
+nvm install <node_version>
+```
+
+4. use the version of node installed:
+
+```
+nvm use <node_version>
+```
+
+5. update `npm` version:
+
+```
+arch -x86_64 npm install -g npm@latest
+```
+
+6. install `yarn`:
+
+```
+arch -x86_64 npm install yarn
+```
+
+7. install all dependencies from repo root:
+
+```
+arch -x86_64 yarn install --frozen-lockfile
+```
+
+8. verify that mocha can run under `test/e2e/` directory:
+
+```
+./test/e2e/node_modules/.bin/mocha
+```
+
+At any point, run `arch` to verify whether shell is running with Rosetta 2 emulation.
+
+## Configuration File
+
+### Overview
+
+The tests use the node [config](https://www.npmjs.com/package/config) library to specify config values for the tests.
+
+Under the `tests/e2e/config` directory are JSON files for predefined environments:
+
+- `default.json` is for all environments
+- `development.json` is for local
+- `test.json` for CI
+
+It is also possible to use custom configuration files that are not part of the repo. See next section.
+
+### In-repo configuration
+
+There is a 'standard' configuration already in the GitHub repo under `test/e2e/config/`.
+
+This configuration must be decrypted prior to running any e2e tests. To decrypt, please follow the steps outlined in the Field Guide.
+
+**Trialmatticians**: please contact a team member in your Slack chat for the decryption key.
+
+### Custom configurations (optional)
+
+Custom config files should be added under `test/e2e/config/` and should follow the naming scheme:
+
+```
+local-<env>.json
+```
+
+**Note** that `.gitignore` ensures that custom configurations prefixed with `local-` will not be commited to the repository. With tha said however, **please ensure username/passwords and other configuration values are not committed by accident!**
+
+Values found in the local configuration file will override ones found in `default.json`.
+
+This is useful to test various configurations in the local environment.
+e.g. testing on local Calypso instance, instead of production by setting the `calypsoBaseURL` property to `http://calypso.localhost:3000`.
+
+For the full list of possible configuration values, please see the following page: [config values](config_values.md).
+
+## Environment Variables
+
+Environment Variables are values that are defined at the system level to serve as configuration for programs.
+
+For e2e tests, the following are required environment variables without which e2e tests will not run:
+
+```
+export NODE_CONFIG_ENV=<name_of_decrypted_config_to_use>
+export CONFIG_KEY=<decryption_key_from_a8c_store>
+```
+
+Additionally, see the list of other environment variables [here](environment_variables.md).
+
+## Naming Branches
+
+Please refer to the Automattic [branch naming scheme](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/git-workflow.md#branch-naming-scheme).

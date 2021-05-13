@@ -16,13 +16,13 @@
 
 .community-translator__dialog-header {
 	margin-bottom: 14px;
-	font-weight: bold;
+	font-weight: 600;
 	border-bottom: 1px solid var( --color-neutral-0 );
 	padding-bottom: 7px;
 	h2 {
 		font-weight: normal;
 		display: inline-block;
-		font-size: 18px;
+		font-size: $font-title-small;
 	}
 	nav {
 		text-align: right;
@@ -33,7 +33,7 @@
 }
 
 .community-translator__dialog-content {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }
 
 .community-translator__string-container {
@@ -45,27 +45,27 @@
 		border-top : 0;
 	}
 	> span {
-		font-weight: bold;
+		font-weight: 600;
 		display: block;
 		flex-basis: 85%;
 	}
 	.community-translator__string-description {
 		margin-right: 7px;
 		flex-basis: 15%;
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-style: italic;
 		color: var( --color-neutral-20 );
 	}
 	dfn {
 		margin-bottom: 5px;
 		display: block;
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 	textarea {
 		min-height: auto;
 		padding: 7px;
 		line-height: 1;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 	&.placeholder > span {
 		animation: pulse-light 800ms ease-in-out infinite;

@@ -1,15 +1,15 @@
 /**
  * Internal dependencies
  */
-import { normalizePluginsList } from 'lib/plugins/utils';
-import { PLUGINS_RECOMMENDED_REQUEST } from 'state/action-types';
+import { normalizePluginsList } from 'calypso/lib/plugins/utils';
+import { PLUGINS_RECOMMENDED_REQUEST } from 'calypso/state/action-types';
 import {
 	dispatchRecommendPluginsRequestFailure,
 	receiveRecommendedPlugins,
-} from 'state/plugins/recommended/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+} from 'calypso/state/plugins/recommended/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const fetch = ( action ) => {
 	const { siteId, limit = 6 } = action;

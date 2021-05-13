@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/rewind/init';
+
+/**
  * Get the list of Rewind backups
  *
  * @param {object} state Global state tree

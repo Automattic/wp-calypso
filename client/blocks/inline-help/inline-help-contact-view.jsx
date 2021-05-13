@@ -7,15 +7,15 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import HelpContact from 'me/help/help-contact';
-import InlineHelpForumView from 'blocks/inline-help/inline-help-forum-view';
-import PlaceholderLines from 'blocks/inline-help/placeholder-lines';
+import HelpContact from 'calypso/me/help/help-contact';
+import InlineHelpForumView from 'calypso/blocks/inline-help/inline-help-forum-view';
+import PlaceholderLines from 'calypso/blocks/inline-help/placeholder-lines';
 import getInlineHelpSupportVariation, {
 	SUPPORT_FORUM,
-} from 'state/selectors/get-inline-help-support-variation';
-import { getHelpSelectedSite } from 'state/help/selectors';
-import isSupportVariationDetermined from 'state/selectors/is-support-variation-determined';
-import TrackComponentView from 'lib/analytics/track-component-view';
+} from 'calypso/state/selectors/get-inline-help-support-variation';
+import { getHelpSelectedSite } from 'calypso/state/help/selectors';
+import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 
 const InlineHelpContactView = ( {
 	/* eslint-disable no-shadow */

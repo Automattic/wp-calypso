@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import hasLoadedSites from 'state/selectors/has-loaded-sites';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 
 describe( 'hasLoadedSites()', () => {
 	it( 'should return false if site items are null', () => {

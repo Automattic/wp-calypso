@@ -3,20 +3,20 @@
  */
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-import { useLocalizedMoment } from 'components/localized-moment';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
  * Internal dependencies
  */
-import { isExpiringSoon } from 'lib/domains/utils';
-import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
-import { type as domainTypes } from 'lib/domains/constants';
+import { isExpiringSoon } from 'calypso/lib/domains/utils';
+import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 
 function ExpiringSoon( props ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
-	const { domain, purchase, selectedSite } = props;
+	const { domain, purchase, isLoadingPurchase, selectedSite } = props;
 	const { expiry } = domain;
 
 	if ( ! isExpiringSoon( domain, 30 ) ) {
@@ -108,7 +108,7 @@ function ExpiringSoon( props ) {
 	return (
 		<div>
 			<p>{ noticeText }</p>
-			{ domain.currentUserCanManage && (
+			{ domain.currentUserCanManage && ( purchase || isLoadingPurchase ) && (
 				<RenewButton
 					primary={ true }
 					purchase={ purchase }

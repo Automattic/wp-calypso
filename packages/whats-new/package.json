@@ -1,0 +1,49 @@
+{
+	"name": "@automattic/whats-new",
+	"version": "1.0.0",
+	"description": "A WordPress Guide component that highlights recently-added WordPress.com features.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"keywords": [
+		"wordpress"
+	],
+	"author": "Automattic Inc.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/whats-new"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"build": "transpile && copy-assets",
+		"prepack": "yarn run clean && yarn run build"
+	},
+	"dependencies": {
+		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
+		"@automattic/i18n-utils": "^1.0.0",
+		"@wordpress/components": "^13.0.3",
+		"@wordpress/react-i18n": "^1.0.3",
+		"wpcom-proxy-request": "^6.0.0",
+		"wpcom": "^6.0.0"
+	},
+	"peerDependencies": {
+		"react": "^16.8"
+	}
+}

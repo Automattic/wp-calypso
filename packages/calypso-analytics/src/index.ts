@@ -11,6 +11,12 @@ export {
 	identifyUser,
 	initializeAnalytics,
 	getTracksAnonymousUserId,
+	getTracksLoadPromise,
 	analyticsEvents,
 	pushEventToTracksQueue,
 } from './tracks';
+export {
+	recordTrainTracksRender,
+	recordTrainTracksInteract,
+	getNewRailcarId,
+} from './train-tracks';

@@ -8,12 +8,14 @@ import { get, includes } from 'lodash';
  */
 import { REASONS_FOR_MANUAL_RENEWAL } from './constants';
 
+import 'calypso/state/immediate-login/init';
+
 /**
  * Retrieves information about whether an immediate login attempt was made for
  * the current instance of Calypso.
  *
  * @param  {object} state - Global state tree
- * @returns {bool} - Whether the client request indicates that an immediate
+ * @returns {boolean} - Whether the client request indicates that an immediate
  *                  login attempt was made
  */
 export const wasImmediateLoginAttempted = ( state ) => {
@@ -31,8 +33,8 @@ export const wasImmediateLoginAttempted = ( state ) => {
  * use it to make user interface improvements for the immediate login scenario.
  *
  * @param {object} state - Global state tree
- * @returns {bool} - Whether the client request indicates that an immediate
- *                  login attempt was successful
+ * @returns {boolean} - Whether the client request indicates that an immediate
+ *                      login attempt was successful
  */
 export const wasImmediateLoginSuccessfulAccordingToClient = ( state ) => {
 	return get( state, 'immediateLogin.success', false );
@@ -80,8 +82,8 @@ export const getImmediateLoginLocale = ( state ) => {
  * current instance of Calypso.
  *
  * @param {object} state - Global state tree
- * @returns {bool} - Whether the client request indicates that an immediate
- *                  login attempt was made from a manual renewal email
+ * @returns {boolean} - Whether the client request indicates that an immediate
+ *                      login attempt was made from a manual renewal email
  */
 export const wasManualRenewalImmediateLoginAttempted = ( state ) => {
 	return includes( REASONS_FOR_MANUAL_RENEWAL, getImmediateLoginReason( state ) );

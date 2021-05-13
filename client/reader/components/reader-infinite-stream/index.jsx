@@ -11,17 +11,19 @@ import {
 	WindowScroller,
 } from '@automattic/react-virtualized';
 
-import { debounce, noop, get, pickBy } from 'lodash';
+import { debounce, get, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { recordTracksRailcarRender } from 'reader/stats';
+import { recordTracksRailcarRender } from 'calypso/reader/stats';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class ReaderInfiniteStream extends Component {
 	static propTypes = {

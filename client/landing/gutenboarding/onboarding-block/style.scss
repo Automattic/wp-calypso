@@ -6,18 +6,27 @@
 }
 
 .gutenboarding-page {
-	transform-origin: center center;
 	animation: gutenboarding-page-appear 300ms ease-out forwards;
+
+	@media ( prefers-reduced-motion: reduce ) {
+		animation: none;
+	}
+
+	max-width: 1440px;
+	margin: auto;
 }
 
 @keyframes gutenboarding-page-appear {
 	from {
 		opacity: 0;
-		transform: translateY( 10px );
+		// using this instead of 'transform: translateY' because of this bug:
+		// https://achrafkassioui.com/blog/position-fixed-and-CSS-transforms/
+		// and the need to render children of the .gutenboarding-page as sticky footer in components/action-buttons
+		margin-top: -10px;
 	}
 
 	to {
 		opacity: 1;
-		transform: translateY( 0 );
+		margin-top: 0;
 	}
 }

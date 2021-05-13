@@ -5,18 +5,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import SupportInfo from 'components/support-info';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import SupportInfo from 'calypso/components/support-info';
+import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 
 const SeoSettingsHelpCard = ( {
 	disabled,
@@ -76,7 +78,9 @@ const SeoSettingsHelpCard = ( {
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const hasAdvancedSEOFeature = hasFeature( state, siteId, FEATURE_ADVANCED_SEO );
+	const hasAdvancedSEOFeature =
+		hasFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
+		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
 
 	return {
 		siteId,

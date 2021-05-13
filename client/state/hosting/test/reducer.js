@@ -7,8 +7,8 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { sftpUsers } from '../reducer';
-import { HOSTING_SFTP_USERS_SET, HOSTING_SFTP_USER_UPDATE, SERIALIZE } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { HOSTING_SFTP_USERS_SET, HOSTING_SFTP_USER_UPDATE } from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
@@ -39,13 +39,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).toEqual( [ 4, 5, 6 ] );
-		} );
-
-		test( 'should persist state', () => {
-			const previousState = deepFreeze( [ 1, 2, 3 ] );
-			const state = sftpUsers( previousState, { type: SERIALIZE } );
-
-			expect( state ).toEqual( [ 1, 2, 3 ] );
 		} );
 
 		test( 'should update existing users', () => {

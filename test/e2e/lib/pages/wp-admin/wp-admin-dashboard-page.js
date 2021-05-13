@@ -16,26 +16,26 @@ export default class WPAdminDashboardPage extends AsyncBaseContainer {
 	}
 
 	async logout() {
-		const accountBarSelector = By.css( '#wp-admin-bar-my-account' );
-		const logoutOptionSelector = By.css( '#wp-admin-bar-logout' );
-		const element = await this.driver.findElement( accountBarSelector );
+		const accountBarLocator = By.css( '#wp-admin-bar-my-account' );
+		const logoutOptionLocator = By.css( '#wp-admin-bar-logout' );
+		const element = await this.driver.findElement( accountBarLocator );
 		await this.driver.actions( { bridge: true } ).move( { origin: element } ).perform();
-		return await driverHelper.clickWhenClickable( this.driver, logoutOptionSelector );
+		return await driverHelper.clickWhenClickable( this.driver, logoutOptionLocator );
 	}
 
 	async isJITMessageDisplayed( type ) {
-		const jitmActionSelector = By.css( `.jitm-banner__action a[data-module="${ type }"]` );
+		const jitmActionLocator = By.css( `.jitm-banner__action a[data-module="${ type }"]` );
 
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			jitmActionSelector,
+			jitmActionLocator,
 			1000
 		);
 	}
 
 	async enterWooCommerceWizard() {
-		const wooWizardSelector = By.css( 'div.woocommerce-message p.submit a.button-primary' );
-		return await driverHelper.clickWhenClickable( this.driver, wooWizardSelector );
+		const wooWizardLocator = By.css( 'div.woocommerce-message p.submit a.button-primary' );
+		return await driverHelper.clickWhenClickable( this.driver, wooWizardLocator );
 	}
 
 	static getUrl( url ) {

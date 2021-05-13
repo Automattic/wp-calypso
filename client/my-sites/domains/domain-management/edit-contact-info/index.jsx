@@ -11,16 +11,17 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import EditContactInfoFormCard from './form-card';
 import EditContactInfoPrivacyEnabledCard from './privacy-enabled-card';
 import PendingWhoisUpdateCard from './pending-whois-update-card';
-import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
-import { getSelectedDomain } from 'lib/domains';
-import isRequestingWhois from 'state/selectors/is-requesting-whois';
+import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import Main from 'calypso/components/main';
+import { domainManagementContactsPrivacy } from 'calypso/my-sites/domains/paths';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 class EditContactInfo extends React.Component {
 	static propTypes = {
@@ -85,13 +86,18 @@ class EditContactInfo extends React.Component {
 
 	goToContactsPrivacy = () => {
 		page(
-			domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomainName )
+			domainManagementContactsPrivacy(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
 		);
 	};
 }
 
 export default connect( ( state, ownProps ) => {
 	return {
+		currentRoute: getCurrentRoute( state ),
 		isRequestingWhois: isRequestingWhois( state, ownProps.selectedDomainName ),
 	};
 } )( localize( EditContactInfo ) );

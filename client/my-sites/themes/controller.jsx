@@ -4,19 +4,22 @@
 import { compact, includes, isEmpty, startsWith } from 'lodash';
 import debugFactory from 'debug';
 import React from 'react';
+import page from 'page';
 
 /**
  * Internal Dependencies
  */
-import SingleSiteComponent from 'my-sites/themes/single-site';
-import MultiSiteComponent from 'my-sites/themes/multi-site';
+import SingleSiteComponent from 'calypso/my-sites/themes/single-site';
+import MultiSiteComponent from 'calypso/my-sites/themes/multi-site';
 import LoggedOutComponent from './logged-out';
-import Upload from 'my-sites/themes/theme-upload';
-import trackScrollPage from 'lib/track-scroll-page';
-import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
-import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/actions';
-import { getThemeFilters, getThemesForQuery } from 'state/themes/selectors';
+import Upload from 'calypso/my-sites/themes/theme-upload';
+import trackScrollPage from 'calypso/lib/track-scroll-page';
+import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
+import { requestThemes, requestThemeFilters, setBackPath } from 'calypso/state/themes/actions';
+import { getThemeFilters, getThemesForQuery } from 'calypso/state/themes/selectors';
 import { getAnalyticsData } from './helpers';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 const debug = debugFactory( 'calypso:themes' );
 
@@ -55,6 +58,13 @@ export function upload( context, next ) {
 }
 
 export function loggedIn( context, next ) {
+	// Block direct access for P2 sites
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	if ( isSiteWPForTeams( state, siteId ) ) {
+		return page.redirect( `/home/${ context.params.site_id }` );
+	}
+
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );

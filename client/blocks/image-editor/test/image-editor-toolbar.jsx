@@ -7,17 +7,17 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import { ImageEditorToolbar } from '../image-editor-toolbar';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'ImageEditorToolbar', () => {
-	let defaultProps, wrapper;
+	let defaultProps;
+	let wrapper;
 
 	useSandbox( ( sandbox ) => {
 		defaultProps = {
@@ -26,7 +26,9 @@ describe( 'ImageEditorToolbar', () => {
 	} );
 
 	beforeEach( () => {
-		wrapper = shallow( <ImageEditorToolbar { ...defaultProps } translate={ identity } /> );
+		wrapper = shallow(
+			<ImageEditorToolbar { ...defaultProps } translate={ ( string ) => string } />
+		);
 	} );
 
 	test( 'should not add `is-disabled` class to aspect ratio toolbar button by default', () => {

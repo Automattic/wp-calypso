@@ -7,7 +7,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import stepsConfig from 'signup/config/steps-pure';
+import stepsConfig from 'calypso/signup/config/steps-pure';
 import {
 	SIGNUP_COMPLETE_RESET,
 	SIGNUP_PROGRESS_COMPLETE_STEP,
@@ -17,8 +17,9 @@ import {
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 	SIGNUP_STEPS_SITE_TYPE_SET,
 	SIGNUP_PROGRESS_REMOVE_STEP,
-} from 'state/action-types';
-import { withSchemaValidation } from 'state/utils';
+	SIGNUP_PROGRESS_ADD_STEP,
+} from 'calypso/state/action-types';
+import { withSchemaValidation } from 'calypso/state/utils';
 import { schema } from './schema';
 
 const debug = debugFactory( 'calypso:state:signup:progress:reducer' );
@@ -112,6 +113,8 @@ const submitStep = ( state, { step } ) => {
 
 export default withSchemaValidation( schema, ( state = {}, action ) => {
 	switch ( action.type ) {
+		case SIGNUP_PROGRESS_ADD_STEP:
+			return addStep( state, action.step );
 		case SIGNUP_COMPLETE_RESET:
 			return overwriteSteps( state, action );
 		case SIGNUP_PROGRESS_COMPLETE_STEP:

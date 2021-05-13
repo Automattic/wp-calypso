@@ -1,5 +1,4 @@
-CurrentTheme
-============
+# CurrentTheme
 
 Card showing the upload theme button.
 

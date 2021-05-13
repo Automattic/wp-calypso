@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { JETPACK_SCAN_REQUEST } from 'state/action-types';
+import { JETPACK_SCAN_REQUEST } from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/scan';
-import 'state/jetpack-scan/init';
+import 'calypso/state/data-layer/wpcom/sites/scan';
+import 'calypso/state/jetpack-scan/init';
 
 export const requestScanStatus = ( siteId, pooling = true ) => ( {
 	type: JETPACK_SCAN_REQUEST,

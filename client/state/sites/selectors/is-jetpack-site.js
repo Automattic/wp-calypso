@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getRawSite from 'state/selectors/get-raw-site';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 
 /**
  * Returns true if site is a Jetpack site, false if the site is hosted on

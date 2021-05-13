@@ -6,15 +6,15 @@
 /**
  * Internal Dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 import newLike from './new';
 import mine from './mine';
-import { POST_LIKES_REQUEST } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveLikes } from 'state/posts/likes/actions';
+import { POST_LIKES_REQUEST } from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { receiveLikes } from 'calypso/state/posts/likes/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const fetch = ( action ) =>
 	http(

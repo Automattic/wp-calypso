@@ -8,50 +8,54 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
+import accessibleFocus from '@automattic/accessible-focus';
 
 /**
  * Internal dependencies
  */
 import { setupLocale } from './locale';
-import config from 'config';
-import { ReduxWrappedLayout } from 'controller';
-import notices from 'notices';
-import { getToken } from 'lib/oauth-token';
-import emailVerification from 'components/email-verification';
-import { getSavedVariations } from 'lib/abtest'; // used by error logger
-import accessibleFocus from 'lib/accessible-focus';
-import Logger from 'lib/catch-js-errors';
-import { bindState as bindWpLocaleState } from 'lib/wp/localization';
-import { hasTouch } from 'lib/touch-detect';
-import { installPerfmonPageHandlers } from 'lib/perfmon';
-import { setupRoutes } from 'sections-middleware';
-import { checkFormHandler } from 'lib/protect-form';
-import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
-import { init as pushNotificationsInit } from 'state/push-notifications/actions';
-import { setSupportSessionReduxStore } from 'lib/user/support-user-interop';
-import { tracksEvents } from 'lib/analytics/tracks';
-import { initializeAnalytics } from 'lib/analytics/init';
-import { bumpStat } from 'lib/analytics/mc';
-import getSuperProps from 'lib/analytics/super-props';
-import { getSiteFragment, normalize } from 'lib/route';
-import { isLegacyRoute } from 'lib/route/legacy-routes';
-import { setCurrentUser } from 'state/current-user/actions';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { initConnection as initHappychatConnection } from 'state/happychat/connection/actions';
-import { requestHappychatEligibility } from 'state/happychat/user/actions';
-import { getHappychatAuth } from 'state/happychat/utils';
-import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
-import { setRoute as setRouteAction } from 'state/ui/actions';
-import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
-import { createReduxStore } from 'state';
-import initialReducer from 'state/reducer';
-import { getInitialState, persistOnChange, loadAllState } from 'state/initial-state';
-import detectHistoryNavigation from 'lib/detect-history-navigation';
-import userFactory from 'lib/user';
-import { getUrlParts, isOutsideCalypso } from 'lib/url';
-import { setStore } from 'state/redux-store';
+import config from '@automattic/calypso-config';
+import { ProviderWrappedLayout } from 'calypso/controller';
+import { getToken } from 'calypso/lib/oauth-token';
+import emailVerification from 'calypso/components/email-verification';
+import { getSavedVariations } from 'calypso/lib/abtest'; // used by error logger
+import Logger from 'calypso/lib/catch-js-errors';
+import { hasTouch } from 'calypso/lib/touch-detect';
+import { installPerfmonPageHandlers } from 'calypso/lib/perfmon';
+import { setupRoutes } from 'calypso/sections-middleware';
+import { checkFormHandler } from 'calypso/lib/protect-form';
+import { setReduxStore as setReduxBridgeReduxStore } from 'calypso/lib/redux-bridge';
+import { init as pushNotificationsInit } from 'calypso/state/push-notifications/actions';
+import { setSupportSessionReduxStore } from 'calypso/lib/user/support-user-interop';
+import { tracksEvents } from 'calypso/lib/analytics/tracks';
+import { initializeAnalytics } from 'calypso/lib/analytics/init';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import getSuperProps from 'calypso/lib/analytics/super-props';
+import { getSiteFragment, normalize } from 'calypso/lib/route';
+import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
+import { setCurrentUser } from 'calypso/state/current-user/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { initConnection as initHappychatConnection } from 'calypso/state/happychat/connection/actions';
+import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
+import { getHappychatAuth } from 'calypso/state/happychat/utils';
+import wasHappychatRecentlyActive from 'calypso/state/happychat/selectors/was-happychat-recently-active';
+import { setRoute } from 'calypso/state/route/actions';
+import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import setupGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
+import { createReduxStore } from 'calypso/state';
+import initialReducer from 'calypso/state/reducer';
+import { getInitialState, persistOnChange, loadAllState } from 'calypso/state/initial-state';
+import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import userFactory from 'calypso/lib/user';
+import { isOutsideCalypso } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
+import { setStore } from 'calypso/state/redux-store';
+import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { inJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
+import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
+import DesktopListeners from 'calypso/lib/desktop-listeners';
 
 const debug = debugFactory( 'calypso' );
 
@@ -113,25 +117,71 @@ const setupContextMiddleware = ( reduxStore ) => {
 	} );
 };
 
+function authorizePath() {
+	// TODO: flags=oauth should be present only in dev-like environments
+	// where we need to preserve the flag on full reloads and redirects
+	const redirectUri = new URL( '/api/oauth/token', window.location );
+	redirectUri.search = new URLSearchParams( {
+		flags: 'oauth',
+		next: window.location.pathname + window.location.search,
+	} );
+
+	const authUri = new URL( 'https://public-api.wordpress.com/oauth2/authorize' );
+	authUri.search = new URLSearchParams( {
+		response_type: 'token',
+		client_id: config( 'oauth_client_id' ),
+		redirect_uri: redirectUri,
+		scope: 'global',
+		blog_id: 0,
+	} );
+
+	return authUri.toString();
+}
+
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
-		const loggedOutRoutes = [
-			'/oauth-login',
-			'/oauth',
-			'/start',
-			'/authorize',
-			'/api/oauth/token',
-		];
+		const loggedOutRoutes = [ '/oauth-login', '/oauth', '/start', '/api/oauth/token', '/connect' ];
+
+		if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
+			loggedOutRoutes.push( '/jetpack/connect', '/plans' );
+		}
+
+		if ( isJetpackCloud() && config.isEnabled( 'jetpack/pricing-page' ) ) {
+			loggedOutRoutes.push( '/pricing' );
+			getLanguageSlugs().forEach( ( slug ) => loggedOutRoutes.push( `/${ slug }/pricing` ) );
+		}
 
 		// Forces OAuth users to the /login page if no token is present
 		page( '*', function ( context, next ) {
 			const isValidSection = loggedOutRoutes.some( ( route ) => startsWith( context.path, route ) );
 
 			// Check we have an OAuth token, otherwise redirect to auth/login page
-			if ( getToken() === false && ! isValidSection ) {
+			if (
+				getToken() === false &&
+				! isValidSection &&
+				! ( isJetpackCloud() && inJetpackCloudOAuthOverride() )
+			) {
 				const isDesktop = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
-				const redirectPath = isDesktop ? config( 'login_url' ) : '/authorize';
-				page( redirectPath );
+				const redirectPath =
+					isDesktop || isJetpackCloud() ? config( 'login_url' ) : authorizePath();
+
+				const currentPath = window.location.pathname;
+				// In the context of Jetpack Cloud, if the user isn't authorized, we want
+				// to save the current path (/<product>/<site-slug>) so we can redirect
+				// the user back to it once the login flow is finished. We also set an expiration
+				// to this because we don't want to redirect by mistake a user with an old path
+				// stored in their session.
+				if ( isJetpackCloud() && currentPath !== '/' ) {
+					const EXPIRATION_IN_SECONDS = 300;
+					const SESSION_STORAGE_PATH_KEY = 'jetpack_cloud_redirect_path';
+					const SESSION_STORAGE_PATH_KEY_EXPIRES_IN = 'jetpack_cloud_redirect_path_expires_in';
+					window.sessionStorage.setItem( SESSION_STORAGE_PATH_KEY, currentPath );
+					window.sessionStorage.setItem(
+						SESSION_STORAGE_PATH_KEY_EXPIRES_IN,
+						parseInt( new Date().getTime() / 1000 ) + EXPIRATION_IN_SECONDS
+					);
+				}
+				window.location = redirectPath;
 				return;
 			}
 
@@ -142,15 +192,10 @@ const oauthTokenMiddleware = () => {
 
 const setRouteMiddleware = () => {
 	page( '*', ( context, next ) => {
-		context.store.dispatch( setRouteAction( context.pathname, context.query ) );
+		context.store.dispatch( setRoute( context.pathname, context.query ) );
 
 		next();
 	} );
-};
-
-const clearNoticesMiddleware = () => {
-	//TODO: remove this one when notices are reduxified - it is for old notices
-	page( '*', notices.clearNoticesOnNavigation );
 };
 
 const unsavedFormsMiddleware = () => {
@@ -179,8 +224,6 @@ const utils = () => {
 const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
 
-	bindWpLocaleState( reduxStore );
-
 	if ( currentUser.get() ) {
 		// Set current user in Redux store
 		reduxStore.dispatch( setCurrentUser( currentUser.get() ) );
@@ -190,7 +233,7 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'lib/network-connection', ( networkConnection ) =>
+		asyncRequire( 'calypso/lib/network-connection', ( networkConnection ) =>
 			networkConnection.init( reduxStore )
 		);
 	}
@@ -214,7 +257,7 @@ function setupErrorLogger( reduxStore ) {
 	const errorLogger = new Logger();
 
 	// Save errorLogger to a singleton for use in arbitrary logging.
-	require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
+	require( 'calypso/lib/catch-js-errors/log' ).registerLogger( errorLogger );
 
 	// Save data to JS error logger
 	errorLogger.saveDiagnosticData( {
@@ -252,7 +295,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	oauthTokenMiddleware();
 	setupRoutes();
 	setRouteMiddleware();
-	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
 
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
@@ -291,11 +333,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 			return next();
 		}
 
-		// Focus UI on the content on page navigation
-		if ( ! config.isEnabled( 'code-splitting' ) ) {
-			context.store.dispatch( activateNextLayoutFocus() );
-		}
-
 		// Bump general stat tracking overall Newdash usage
 		bumpStat( { newdash_pageviews: 'route' } );
 
@@ -321,7 +358,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function ( context, next ) {
 			//see server/pages/index for prod redirect
-			if ( '/plans' === context.pathname ) {
+			if ( ! config.isEnabled( 'jetpack-cloud/connect' ) && '/plans' === context.pathname ) {
 				const queryFor = context.query && context.query.for;
 				if ( queryFor && 'jetpack' === queryFor ) {
 					window.location =
@@ -338,6 +375,11 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	}
 
 	const state = reduxStore.getState();
+	// get reader unread status
+	if ( config.isEnabled( 'reader/seen-posts' ) ) {
+		reduxStore.dispatch( requestUnseenStatus() );
+	}
+
 	if ( config.isEnabled( 'happychat' ) ) {
 		reduxStore.dispatch( requestHappychatEligibility() );
 	}
@@ -349,21 +391,15 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		setupGlobalKeyboardShortcuts();
 	}
 
-	if ( config.isEnabled( 'desktop' ) ) {
-		require( 'lib/desktop' ).default.init();
-	}
-
-	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
-		asyncRequire( 'lib/rubberband-scroll-disable', ( disableRubberbandScroll ) => {
-			disableRubberbandScroll( document.body );
-		} );
+	if ( window.electron ) {
+		DesktopListeners.init( reduxStore );
 	}
 
 	if (
 		config.isEnabled( 'dev/test-helper' ) &&
 		document.querySelector( '.environment.is-tests' )
 	) {
-		asyncRequire( 'lib/abtest/test-helper', ( testHelper ) => {
+		asyncRequire( 'calypso/lib/abtest/test-helper', ( testHelper ) => {
 			testHelper( document.querySelector( '.environment.is-tests' ) );
 		} );
 	}
@@ -371,14 +407,22 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		config.isEnabled( 'dev/preferences-helper' ) &&
 		document.querySelector( '.environment.is-prefs' )
 	) {
-		asyncRequire( 'lib/preferences-helper', ( prefHelper ) => {
+		asyncRequire( 'calypso/lib/preferences-helper', ( prefHelper ) => {
 			prefHelper( document.querySelector( '.environment.is-prefs' ), reduxStore );
+		} );
+	}
+	if (
+		config.isEnabled( 'dev/features-helper' ) &&
+		document.querySelector( '.environment.is-features' )
+	) {
+		asyncRequire( 'calypso/lib/features-helper', ( featureHelper ) => {
+			featureHelper( document.querySelector( '.environment.is-features' ) );
 		} );
 	}
 };
 
 function renderLayout( reduxStore ) {
-	const layoutElement = React.createElement( ReduxWrappedLayout, {
+	const layoutElement = React.createElement( ProviderWrappedLayout, {
 		store: reduxStore,
 	} );
 
@@ -412,10 +456,9 @@ const boot = ( currentUser, registerRoutes ) => {
 	} );
 };
 
-export const bootApp = ( appName, registerRoutes ) => {
+export const bootApp = async ( appName, registerRoutes ) => {
 	const user = userFactory();
-	user.initialize().then( () => {
-		debug( `Starting ${ appName }. Let's do this.` );
-		boot( user, registerRoutes );
-	} );
+	await user.initialize();
+	debug( `Starting ${ appName }. Let's do this.` );
+	boot( user, registerRoutes );
 };

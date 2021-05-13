@@ -6,7 +6,7 @@ import { size, filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 /*
  * Get the count of follows a user has

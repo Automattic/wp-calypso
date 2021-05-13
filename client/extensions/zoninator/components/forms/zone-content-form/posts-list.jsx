@@ -5,13 +5,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { findIndex, map, times } from 'lodash';
+import { map, times } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import SortableList from 'components/forms/sortable-list';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import SortableList from 'calypso/components/forms/sortable-list';
 import PostCard from './post-card';
 import PostPlaceholder from './post-placeholder';
 import RecentPostsDropdown from '../../recent-posts-dropdown';
@@ -19,42 +19,50 @@ import SearchAutocomplete from './../../search-autocomplete';
 
 class PostsList extends Component {
 	static propTypes = {
-		fields: PropTypes.object.isRequired,
+		posts: PropTypes.array.isRequired,
 		requesting: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
+		updatePosts: PropTypes.func.isRequired,
 	};
 
-	addPost = ( { push } ) => ( post ) =>
-		push( {
-			id: post.ID,
-			siteId: post.site_ID,
-			title: post.title,
-			url: post.URL,
-		} );
+	addPost = ( post ) => {
+		const { posts, updatePosts } = this.props;
 
-	removePost = ( { remove }, index ) => () => remove( index );
+		const updatedPosts = [
+			...posts,
+			{
+				id: post.ID,
+				siteId: post.site_ID,
+				title: post.title,
+				url: post.URL,
+			},
+		];
 
-	changePostOrder = ( { move } ) => ( newOrder ) => {
+		updatePosts( updatedPosts );
+	};
+
+	removePost = ( index ) => () => {
+		const { posts, updatePosts } = this.props;
+		const updatedPosts = [ ...posts ];
+
+		updatedPosts.splice( index, 1 );
+
+		updatePosts( updatedPosts );
+	};
+
+	changePostOrder = ( newOrder ) => {
+		const { posts, updatePosts } = this.props;
 		if ( newOrder.length < 2 ) {
 			return;
 		}
 
-		// This loop attempts to find to which index in the array has been moved
-		// by making the following assumptions:
-		// Moved forward: newIndex < index.
-		// Moved backward by less than one position: same as moving the next item forward.
-		// Moved backward by more than one position: newIndex > index + 1.
-		const from = findIndex(
-			newOrder,
-			( newIndex, index ) => newIndex < index || newIndex > index + 1
-		);
-
-		move( from, newOrder[ from ] );
+		const updatedPosts = [];
+		newOrder.map( ( newIndex, oldIndex ) => ( updatedPosts[ newIndex ] = posts[ oldIndex ] ) );
+		updatePosts( updatedPosts );
 	};
 
 	render() {
-		const { fields, requesting, translate } = this.props;
-		const posts = fields.getAll() || [];
+		const { posts, requesting, translate } = this.props;
 
 		const explanationTextClass = 'zoninator__zone-text';
 
@@ -67,11 +75,11 @@ class PostsList extends Component {
 						) }
 					</p>
 					<SearchAutocomplete
-						onSelect={ this.addPost( fields ) }
+						onSelect={ this.addPost }
 						exclude={ map( posts, ( post ) => post.id ) }
 					>
 						<RecentPostsDropdown
-							onSelect={ this.addPost( fields ) }
+							onSelect={ this.addPost }
 							exclude={ map( posts, ( post ) => post.id ) }
 						/>
 					</SearchAutocomplete>
@@ -84,14 +92,14 @@ class PostsList extends Component {
 								"You can reorder the zone's content by dragging it to a different location on the list."
 							) }
 						</p>
-						<SortableList direction="vertical" onChange={ this.changePostOrder( fields ) }>
+						<SortableList direction="vertical" onChange={ this.changePostOrder }>
 							{ posts.map( ( post, index ) => (
 								<PostCard
 									key={ post.id }
 									postId={ post.id }
 									postTitle={ post.title }
 									siteId={ post.siteId }
-									remove={ this.removePost( fields, index ) }
+									remove={ this.removePost( index ) }
 								/>
 							) ) }
 						</SortableList>

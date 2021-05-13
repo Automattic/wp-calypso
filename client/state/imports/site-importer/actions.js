@@ -1,24 +1,22 @@
 /**
  * External dependencies
  */
-import Dispatcher from 'dispatcher';
 import { stringify } from 'qs';
-import { defer, every, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { toApi, fromApi } from 'lib/importer/common';
-import wpcom from 'lib/wp';
-import user from 'lib/user';
+import { toApi, fromApi } from 'calypso/state/imports/api';
+import wpcom from 'calypso/lib/wp';
+import user from 'calypso/lib/user';
 import {
 	mapAuthor,
 	startMappingAuthors,
 	startImporting,
-	createFinishUploadAction,
-} from 'lib/importer/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { setSelectedEditor } from 'state/selected-editor/actions';
+	finishUpload,
+} from 'calypso/state/imports/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import {
 	SITE_IMPORTER_IMPORT_FAILURE,
 	SITE_IMPORTER_IMPORT_RESET,
@@ -28,9 +26,14 @@ import {
 	SITE_IMPORTER_IS_SITE_IMPORTABLE_START,
 	SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS,
 	SITE_IMPORTER_VALIDATION_ERROR_SET,
-} from 'state/action-types';
-import { getState as getImporterState } from 'lib/importer/store';
-import { prefetchmShotsPreview } from 'lib/mshots';
+} from 'calypso/state/action-types';
+import { getImporterStatus } from 'calypso/state/imports/selectors';
+import { prefetchmShotsPreview } from 'calypso/lib/mshots';
+
+/**
+ * Redux dependencies
+ */
+import 'calypso/state/imports/init';
 
 const sortAndStringify = ( items ) => items.slice( 0 ).sort().join( ', ' );
 
@@ -68,7 +71,8 @@ export const setValidationError = ( message ) => ( {
 } );
 
 export const startMappingSiteImporterAuthors = ( { importerStatus, site, targetSiteUrl } ) => (
-	dispatch
+	dispatch,
+	getState
 ) => {
 	const singleAuthorSite = get( site, 'single_user_site', true );
 	const siteId = site.ID;
@@ -85,29 +89,26 @@ export const startMappingSiteImporterAuthors = ( { importerStatus, site, targetS
 
 		// map all the authors to the current user
 		// TODO: when converting to redux, allow for multiple mappings in a single action
-		sourceAuthors.forEach( ( author ) => mapAuthor( importerId, author, currentUser ) );
+		sourceAuthors.forEach( ( author ) => dispatch( mapAuthor( importerId, author, currentUser ) ) );
 
 		// Check if all authors are mapped before starting the import.
-		defer( () => {
-			const newState = get( getImporterState(), [ 'importers', importerId ] );
-			const areAllAuthorsMapped = every(
-				get( newState, 'customData.sourceAuthors', [] ),
-				'mappedTo'
+		const newState = getImporterStatus( getState(), importerId );
+		const areAllAuthorsMapped = get( newState, 'customData.sourceAuthors', [] ).every(
+			( { mappedTo } ) => mappedTo
+		);
+
+		if ( areAllAuthorsMapped ) {
+			dispatch( startImporting( newState ) );
+
+			dispatch(
+				recordTracksEvent( 'calypso_site_importer_map_authors_single', {
+					blog_id: siteId,
+					site_url: targetSiteUrl,
+				} )
 			);
-
-			if ( areAllAuthorsMapped ) {
-				startImporting( newState );
-
-				dispatch(
-					recordTracksEvent( 'calypso_site_importer_map_authors_single', {
-						blog_id: siteId,
-						site_url: targetSiteUrl,
-					} )
-				);
-			}
-		} );
+		}
 	} else {
-		startMappingAuthors( importerId );
+		dispatch( startMappingAuthors( importerId ) );
 
 		dispatch(
 			recordTracksEvent( 'calypso_site_importer_map_authors_multi', {
@@ -143,22 +144,13 @@ export const importSite = ( {
 		.undocumented()
 		.importWithSiteImporter( siteId, toApi( importerStatus ), params, targetSiteUrl )
 		.then( ( response ) => {
-			// At this point we're assuming that an import is going to happen
-			// so we set the user's editor to Gutenberg in order to make sure
-			// that the posts aren't mangled by the classic editor.
-			if ( 'godaddy-gocentral' === engine ) {
-				dispatch( setSelectedEditor( siteId, 'gutenberg' ) );
-			}
-
 			dispatch( recordTracksEvent( 'calypso_site_importer_start_import_success', trackingParams ) );
 			dispatch( siteImporterImportSuccessful( response ) );
 
 			const data = fromApi( response );
-			// Note: We're creating the finishUploadAction using the locally generated ID here
+			// Note: We're creating the finishUpload action using the locally generated ID here
 			// as opposed to the new import ID recieved in the API response.
-			const action = createFinishUploadAction( importerStatus.importerId, data );
-
-			Dispatcher.handleViewAction( action );
+			dispatch( finishUpload( importerStatus.importerId, data ) );
 
 			dispatch(
 				startMappingSiteImporterAuthors( {

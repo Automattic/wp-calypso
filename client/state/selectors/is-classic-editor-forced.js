@@ -2,12 +2,14 @@
  * External dependencies
  */
 import { get } from 'lodash';
-import { isEnabled } from 'config';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import isVipSite from 'state/selectors/is-vip-site';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+
+import 'calypso/state/selected-editor/init';
 
 /**
  * Indicates if the classic editor should be always loaded even if the selected editor for the given site is Gutenberg.

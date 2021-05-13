@@ -24,7 +24,7 @@
 	@include clear-fix;
 	position: relative;
 	margin: 0;
-	padding: 79px 32px 32px ( $sidebar-width-max + 32px + 1px );
+	padding: 79px 32px 32px calc( var( --sidebar-width-max ) + 32px + 1px );
 	box-sizing: border-box;
 	overflow: hidden;
 
@@ -44,12 +44,12 @@
 	// displays at full height.
 	.is-section-preview & {
 		height: 100%;
-		padding: 47px 0 0 ( $sidebar-width-max + 1px );
+		padding: 47px 0 0 calc( var( --sidebar-width-max ) + 1px );
 	}
 
 	// Tablets
-	@include breakpoint( '<960px' ) {
-		padding: 71px 24px 24px ( $sidebar-width-min + 24px + 1px );
+	@include breakpoint-deprecated( '<960px' ) {
+		padding: 71px 24px 24px calc( var( --sidebar-width-min ) + 24px + 1px );
 
 		.has-no-sidebar & {
 			padding-left: 24px;
@@ -67,7 +67,7 @@
 	}
 
 	// Mobile (Full Width)
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-left: 0;
 		padding: 0;
 		padding-top: 47px;
@@ -87,7 +87,7 @@
 .layout__primary .main {
 	padding-bottom: 88px;
 
-	@include breakpoint( '>1400px' ) {
+	@include breakpoint-deprecated( '>1400px' ) {
 		padding-bottom: 0;
 	}
 }
@@ -96,20 +96,20 @@
 // the site-selector elements.
 .layout__secondary {
 	position: fixed;
-	top: 47px;
+	top: var( --masterbar-height );
 	left: 0;
 	bottom: 0;
 	color: var( --color-sidebar-text );
 	background: var( --color-sidebar-background );
 	border-right: 1px solid var( --color-sidebar-border );
-	width: $sidebar-width-max;
+	width: var( --sidebar-width-max );
 	overflow: hidden;
 
-	@include breakpoint( '<960px' ) {
-		width: $sidebar-width-min;
+	@include breakpoint-deprecated( '<960px' ) {
+		width: var( --sidebar-width-min );
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 100%;
 	}
 
@@ -133,7 +133,7 @@
 	bottom: 0;
 	left: 0;
 	pointer-events: none;
-	transform: translateX( -$sidebar-width-max );
+	transform: translateX( calc( -1 * var( --sidebar-width-max ) ) );
 
 	.site,
 	.all-sites {
@@ -145,7 +145,7 @@
 		}
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		-webkit-overflow-scrolling: touch;
 		transform: translateX( -100% );
 	}
@@ -210,8 +210,7 @@
 	}
 
 	.app-promo .app-promo__link {
-		box-shadow: 0 0 0 1px var( --color-sidebar-border ),
-			0 1px 2px var( --color-sidebar-border );
+		box-shadow: 0 0 0 1px var( --color-sidebar-border ), 0 1px 2px var( --color-sidebar-border );
 	}
 }
 
@@ -227,7 +226,7 @@
 .layout.focus-sites:not( .is-section-post-editor ),
 .layout.focus-sidebar:not( .is-section-post-editor ) {
 	.layout__primary .main {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			pointer-events: none;
 			overflow: hidden;
 			max-height: calc( 100vh - 47px );
@@ -248,15 +247,15 @@
 
 	.layout__secondary .sidebar {
 		pointer-events: none;
-		transform: translateX( $sidebar-width-max );
+		transform: translateX( var( --sidebar-width-max ) );
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			transform: translateX( 100% );
 		}
 	}
 
 	.layout__primary .main {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			pointer-events: none;
 			opacity: 0.25;
 		}
@@ -266,7 +265,7 @@
 // Move the secondary element off screen when focused
 // on the content. This only applies to small screens.
 .layout.focus-content {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		.layout__secondary {
 			transform: translateX( -100% );
 		}
@@ -285,7 +284,7 @@
 
 // Display sidebar as a panel under a main payment component in mobile checkout
 .layout.is-section-checkout {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		.layout__content {
 			display: flex;
 			flex-flow: column;
@@ -317,3 +316,56 @@
 		}
 	}
 }
+// Only apply the no-masterbar rule to logged in sections
+// This is done since most has-no-masterbar section have their own padding set already that we don't want to overwrite
+.layout.has-no-masterbar.is-group-me,
+.layout.has-no-masterbar.is-group-sites,
+.layout.has-no-masterbar.is-section-reader {
+	--masterbar-height: 0;
+
+	.layout__content {
+		padding-top: 32px;
+	}
+	&.has-no-sidebar .layout__content {
+		padding-top: 0;
+	}
+}
+
+
+.floating-happychat-button {
+	position: fixed;
+	right: 24px;
+	bottom: 24px;
+	z-index: z-index( 'root', '.floating-help' );
+	line-height: 0;
+	padding: 1px;
+	border-radius: 100%; /* stylelint-disable-line */
+	background: var( --color-primary );
+	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
+
+	.gridicon {
+		fill: var( --color-text-inverted );
+		margin: 2px;
+		top: 0;
+		height: 24px;
+		width: 24px;
+	}
+
+	&.is-active {
+		background: var( --color-primary );
+		border-color: var( --color-primary-40 );
+	}
+
+	&.has-unread {
+		background-color: var( --color-accent );
+		border-color: var( --color-accent );
+	}
+
+	// Make happychat button appear above the FAB icon
+	// when the latter is already is already shown.
+	&.offset {
+		bottom: calc( 24px + 60px );
+		right: calc( 24px + 5px );
+	}
+}
+

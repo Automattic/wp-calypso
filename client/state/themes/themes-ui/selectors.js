@@ -6,9 +6,9 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 // Returns destination for theme sheet 'back' button
 export function getBackPath( state ) {
@@ -19,11 +19,6 @@ export function getBackPath( state ) {
 		return backPath;
 	}
 	return `/themes/${ siteSlug }`;
-}
-
-//  Returns true if the theme showcase banner is currently visible
-export function isThemesBannerVisible( state ) {
-	return state.themes.themesUI.themesBannerVisible;
 }
 
 // Returns the theme bookmark.

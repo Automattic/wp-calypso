@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { REWIND_BACKUPS_SET } from 'state/action-types';
+import { REWIND_BACKUPS_SET } from 'calypso/state/action-types';
 
 /**
  * Returns the updated backups state after an action has been dispatched. The

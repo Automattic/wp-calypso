@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { partial } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 
 /**
@@ -13,9 +13,14 @@ import { connect } from 'react-redux';
  */
 import { localize } from 'i18n-calypso';
 import { Button } from '@automattic/components';
-import SelectDropdown from 'components/select-dropdown';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import { recordTracksEvent } from 'state/analytics/actions';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { getCustomizerUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 
@@ -33,6 +38,10 @@ class PreviewToolbar extends Component {
 		showSEO: PropTypes.bool,
 		// Show edit button
 		showEdit: PropTypes.bool,
+		// Show edit the header link button
+		showEditHeaderLink: PropTypes.bool,
+		// The URL for the selected site's customizer
+		customizeUrl: PropTypes.string,
 		// The URL for the edit button
 		editUrl: PropTypes.string,
 		// The device to display, used for setting preview dimensions
@@ -45,6 +54,8 @@ class PreviewToolbar extends Component {
 		onClose: PropTypes.func.isRequired,
 		// Called when the edit button is clicked
 		onEdit: PropTypes.func,
+		// Whether or not the current user has access to the customizer
+		canUserEditThemeOptions: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -65,6 +76,12 @@ class PreviewToolbar extends Component {
 		this.props.onEdit();
 	};
 
+	handleEditorWebPreviewEditHeader = ( event ) => {
+		event.preventDefault();
+		this.props.recordTracksEvent( 'calypso_editor_preview_edit_header_click' );
+		window.location.href = this.props.customizeUrl;
+	};
+
 	constructor( props ) {
 		super();
 
@@ -78,7 +95,9 @@ class PreviewToolbar extends Component {
 
 	render() {
 		const {
+			canUserEditThemeOptions,
 			device: currentDevice,
+			customizeUrl,
 			editUrl,
 			externalUrl,
 			isModalWindow,
@@ -90,12 +109,12 @@ class PreviewToolbar extends Component {
 			showEdit,
 			showExternal,
 			showSEO,
+			showEditHeaderLink,
 			translate,
 		} = this.props;
 
 		const selectedDevice = this.devices[ currentDevice ];
 		const devicesToShow = showSEO ? possibleDevices.concat( 'seo' ) : possibleDevices;
-
 		return (
 			<div className="web-preview__toolbar">
 				{ showClose && (
@@ -147,6 +166,17 @@ class PreviewToolbar extends Component {
 							{ translate( 'Edit' ) }
 						</Button>
 					) }
+					{ showEditHeaderLink && canUserEditThemeOptions && (
+						<Button
+							borderless
+							aria-label={ translate( 'Customize' ) }
+							className="web-preview__edit-header-link"
+							href={ customizeUrl }
+							onClick={ this.handleEditorWebPreviewEditHeader }
+						>
+							{ translate( 'Customize' ) }
+						</Button>
+					) }
 					{ showExternal && (
 						<Button
 							primary
@@ -166,6 +196,18 @@ class PreviewToolbar extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-} )( localize( PreviewToolbar ) );
+export default connect(
+	( state ) => {
+		const currentUser = getCurrentUser( state );
+		const selectedSiteId = getSelectedSiteId( state );
+		const isSingleSite = !! selectedSiteId || currentUser?.site_count === 1;
+		const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
+		const canUserEditThemeOptions = canCurrentUser( state, siteId, 'edit_theme_options' );
+
+		return {
+			canUserEditThemeOptions,
+			customizeUrl: getCustomizerUrl( state, siteId, null, window.location.href ),
+		};
+	},
+	{ recordTracksEvent }
+)( localize( PreviewToolbar ) );

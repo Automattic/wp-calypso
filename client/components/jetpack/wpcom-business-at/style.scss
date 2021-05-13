@@ -1,0 +1,47 @@
+.wpcom-business-at {
+	.wpcom-business-at {
+		&__subheader.formatted-header {
+			margin-top: 40px;
+		}
+
+		&__secondary-promo-icon {
+			fill: #7bb1cd;
+		}
+
+		&__cta {
+			margin: 24px 0 8px;
+
+			> div {
+				display: flex;
+				flex-direction: row-reverse;
+				justify-content: flex-end;
+			}
+
+			.spinner,
+			.button {
+				float: none;
+				margin-left: 0;
+				margin-right: 8px;
+			}
+		}
+
+		&__footer {
+			margin-top: 40px;
+		}
+	}
+
+	&.placeholder__header {
+		display: block;
+		@include placeholder( --color-neutral-10 );
+	}
+
+	&.placeholder__primary-promo {
+		display: block;
+		height: 400px;
+		@include placeholder( --color-neutral-10 );
+
+		@include breakpoint-deprecated( '>480px' ) {
+			height: 250px;
+		}
+	}
+}

@@ -4,51 +4,27 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DomainStatus from '../card/domain-status';
-import QuerySitePurchases from 'components/data/query-site-purchases';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
-} from 'state/purchases/selectors';
-import { transferStatus } from 'lib/domains/constants';
-import page from 'page';
-import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
-import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'lib/url/support';
-import DomainManagementNavigation from '../navigation';
+} from 'calypso/state/purchases/selectors';
+import { transferStatus } from 'calypso/lib/domains/constants';
+import { domainManagementTransferInPrecheck } from 'calypso/my-sites/domains/paths';
+import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'calypso/lib/url/support';
+import DomainManagementNavigationEnhanced from '../navigation/enhanced';
+import { resolveDomainStatus } from 'calypso/lib/domains';
 
 class TransferInDomainType extends React.Component {
-	resolveStatus() {
-		const { domain, translate } = this.props;
-		const { transferStatus: status } = domain;
-
-		if ( status === transferStatus.PENDING_START ) {
-			return {
-				statusText: translate( 'Action required' ),
-				statusClass: 'status-error',
-				icon: 'info',
-			};
-		} else if ( status === transferStatus.CANCELLED ) {
-			return {
-				statusText: translate( 'Transfer failed' ),
-				statusClass: 'status-error',
-				icon: 'info',
-			};
-		}
-
-		return {
-			statusText: translate( 'Transfer in progress' ),
-			statusClass: 'status-success',
-			icon: 'cached',
-		};
-	}
-
 	startTransfer = () => {
 		const { domain, selectedSite } = this.props;
 		page( domainManagementTransferInPrecheck( selectedSite.slug, domain.name ) );
@@ -140,7 +116,7 @@ class TransferInDomainType extends React.Component {
 		const { domain, selectedSite, purchase, isLoadingPurchase } = this.props;
 		const { name: domain_name } = domain;
 
-		const { statusText, statusClass, icon } = this.resolveStatus();
+		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase );
 
 		return (
 			<div className="domain-types__container">
@@ -153,7 +129,7 @@ class TransferInDomainType extends React.Component {
 				>
 					{ this.renderStatusBody( domain.transferStatus ) }
 				</DomainStatus>
-				<DomainManagementNavigation
+				<DomainManagementNavigationEnhanced
 					domain={ domain }
 					selectedSite={ selectedSite }
 					purchase={ purchase }

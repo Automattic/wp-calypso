@@ -3,22 +3,22 @@
  */
 import React from 'react';
 import page from 'page';
-import { each, isNaN, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { addQueryArgs, getSiteFragment } from 'lib/route';
+import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import CommentsManagement from './main';
-import CommentView from 'my-sites/comment/main';
-import { removeNotice } from 'state/notices/actions';
-import { getNotices } from 'state/notices/selectors';
+import CommentView from 'calypso/my-sites/comment/main';
+import { removeNotice } from 'calypso/state/notices/actions';
+import { getNotices } from 'calypso/state/notices/selectors';
 
-const mapPendingStatusToUnapproved = ( status ) => ( 'pending' === status ? 'unapproved' : status) ;
+const mapPendingStatusToUnapproved = ( status ) => ( 'pending' === status ? 'unapproved' : status );
 
 const sanitizeInt = ( number ) => {
 	const integer = parseInt( number, 10 );
-	return ! isNaN( integer ) && integer > 0 ? integer : false;
+	return ! Number.isNaN( integer ) && integer > 0 ? integer : false;
 };
 
 const sanitizeQueryAction = ( action ) => {
@@ -135,7 +135,7 @@ export const clearCommentNotices = ( { store }, next ) => {
 	if ( ! startsWith( nextPath, '/comments' ) ) {
 		const { getState, dispatch } = store;
 		const notices = getNotices( getState() );
-		each( notices, ( { noticeId } ) => {
+		notices.forEach( ( { noticeId } ) => {
 			if ( startsWith( noticeId, 'comment-notice' ) ) {
 				dispatch( removeNotice( noticeId ) );
 			}

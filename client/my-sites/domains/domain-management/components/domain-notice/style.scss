@@ -1,0 +1,21 @@
+.domain-notice {
+	text-transform: none;
+	font-size: 12px;
+
+	.gridicon {
+		transform: translateY( 3.5px );
+		margin-right: 4px;
+	}
+}
+
+.domain-notice__info {
+	color: var( --color-success-50 );
+}
+
+.domain-notice__warning {
+	color: var( --color-warning-40 );
+}
+
+.domain-notice__alert {
+	color: var( --color-error );
+}

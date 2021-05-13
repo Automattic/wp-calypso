@@ -4,6 +4,7 @@
 	"description": "Vanilla helpers for tracking viewport changes",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -15,13 +16,16 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/viewport#readme",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/viewport#readme",
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && transpile"
+		"clean": "npx rimraf dist",
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
 	},
 	"publishConfig": {
 		"access": "public"
+	},
+	"devDependencies": {
+		"regenerator-runtime": "^0.13.4"
 	}
 }

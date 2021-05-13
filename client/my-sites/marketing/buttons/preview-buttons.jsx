@@ -12,10 +12,10 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import ButtonsPreviewButton from 'my-sites/marketing/buttons/preview-button';
-import ResizableIframe from 'components/resizable-iframe';
+import ButtonsPreviewButton from 'calypso/my-sites/marketing/buttons/preview-button';
+import ResizableIframe from 'calypso/components/resizable-iframe';
 import previewWidget from './preview-widget';
-import { hasTouch } from 'lib/touch-detect';
+import { hasTouch } from 'calypso/lib/touch-detect';
 
 class SharingButtonsPreviewButtons extends React.Component {
 	static displayName = 'SharingButtonsPreviewButtons';
@@ -75,13 +75,13 @@ class SharingButtonsPreviewButtons extends React.Component {
 	};
 
 	detectWidgetPreviewChanges = ( event ) => {
-		let preview, offset;
+		let offset;
 
 		// Ensure this only triggers in the context of an official preview
 		if ( ! this.refs.iframe ) {
 			return;
 		}
-		preview = ReactDom.findDOMNode( this.refs.iframe );
+		const preview = ReactDom.findDOMNode( this.refs.iframe );
 
 		// Parse the JSON message data
 		let data;
@@ -119,7 +119,8 @@ class SharingButtonsPreviewButtons extends React.Component {
 	};
 
 	showMorePreview = ( event ) => {
-		let moreButton, offset;
+		let moreButton;
+		let offset;
 
 		if ( event && ( event.currentTarget.contains( event.relatedTarget ) || hasTouch() ) ) {
 			// Only allow the preview to be shown if cursor has moved from outside
@@ -173,8 +174,8 @@ class SharingButtonsPreviewButtons extends React.Component {
 		// to include the non-enabled icons in a preview. Non-enabled icons are
 		// only needed in the button selection tray, where official buttons are
 		// rendered in the text-only style.
-		let buttons = filter( this.props.buttons, { visibility: this.props.visibility } ),
-			previewUrl = previewWidget.generatePreviewUrlFromButtons( buttons, this.props.showMore );
+		const buttons = filter( this.props.buttons, { visibility: this.props.visibility } );
+		const previewUrl = previewWidget.generatePreviewUrlFromButtons( buttons, this.props.showMore );
 
 		return (
 			<ResizableIframe
@@ -221,18 +222,17 @@ class SharingButtonsPreviewButtons extends React.Component {
 	};
 
 	getMorePreviewElement = () => {
-		let classes, hiddenButtons;
 		if ( ! this.props.showMore ) {
 			return;
 		}
 
-		classes = classNames( 'sharing-buttons-preview-buttons__more', {
+		const classes = classNames( 'sharing-buttons-preview-buttons__more', {
 			'is-visible': this.state.morePreviewVisible,
 		} );
 
 		// The more preview is only ever used to show hidden buttons, so we
 		// filter on the current set of buttons
-		hiddenButtons = filter( this.props.buttons, { visibility: 'hidden' } );
+		const hiddenButtons = filter( this.props.buttons, { visibility: 'hidden' } );
 
 		return (
 			<div ref="more" className={ classes } style={ this.state.morePreviewOffset }>

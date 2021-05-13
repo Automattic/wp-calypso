@@ -1,9 +1,10 @@
-Notifications
-=============
+# Notifications
 
 The _**notifications panel**_ (also known as "masterbar notifications" and "the bell notifications") is a cross-environment app that runs directly inside of Calypso and in an `iframe` on WordPress.com sites which aren't Calypso.
 
-This module is where the code for the notifications panel lives. Calypso views are imported as normal `node` imports while the `iframe` version is served from `https://widgets.wp.com/notes`.
+This module is where the code for the notifications panel lives. Calypso views are imported as normal `node` imports while the `iframe` version is served from `https://widgets.wp.com/notes` or `https://widgets.wp.com/notifications`.
+
+This code is developed in the calypso monorepo at <https://github.com/Automattic/wp-calypso/tree/trunk/apps/notifications>.
 
 ## Building and developing
 
@@ -12,7 +13,7 @@ That is, you can work in these files and rely on the normal Calypso dev server.
 **However** things are often different inside the `iframe` in unexpected ways and so we need to verify that any changes apply properly in both environments.
 
 CircleCI generates notifications panel build artifacts on every commit that it processes.
-Alternatively you can manually build the app with `lerna` and copy the built files to your sandbox.
+Alternatively you can manually build the app with `yarn` and copy the built files to your sandbox.
 
 ```bash
 # Builds files and places them in `apps/notifications/dist`
@@ -29,11 +30,11 @@ When running in an iframe communication with the parent frame occurs through a `
 Messages we handle from the notifications iframe have the form:
 
 ```js
-{
-	type: "notesIframeMessage",
-	action: < varies >,
+const obj = {
+	type: 'notesIframeMessage',
+	action: action,
 	//... other properties depending on action ...
-}
+};
 ```
 
 - `togglePanel`: This is a message from the client that the panel open state
@@ -41,7 +42,7 @@ Messages we handle from the notifications iframe have the form:
   means we should close the panel.
 
 - `iFrameReady`: The client sends this message when it's code has loaded and
-it is ready to begin polling for notifications.
+  it is ready to begin polling for notifications.
 
 - `renderAllSeen`: A message to indicate that the user has seen all
   notifications (so we can clear the new notifications indicator).

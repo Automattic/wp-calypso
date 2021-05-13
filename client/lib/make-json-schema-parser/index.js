@@ -2,7 +2,7 @@
  * External dependencies
  */
 import schemaValidator from 'is-my-json-valid';
-import { get, identity } from 'lodash';
+import { get } from 'lodash';
 
 export class SchemaError extends Error {
 	constructor( errors ) {
@@ -19,6 +19,8 @@ export class TransformerError extends Error {
 	}
 }
 
+const defaultTransformer = ( data ) => data;
+
 /**
  * @typedef {Function} Parser
  * @param   {*}        data   Input data
@@ -30,13 +32,17 @@ export class TransformerError extends Error {
 /**
  * Create a parser to validate and transform data
  *
- * @param {object}   schema               JSON schema
- * @param {Function} transformer=identity Transformer function
- * @param {object}   schemaOptions={}     Options to pass to schema validator
+ * @param {object}   schema        JSON schema
+ * @param {Function} transformer   Transformer function
+ * @param {object}   schemaOptions Options to pass to schema validator
  *
- * @returns {Parser}                       Function to validate and transform data
+ * @returns {Parser}               Function to validate and transform data
  */
-export function makeJsonSchemaParser( schema, transformer = identity, schemaOptions = {} ) {
+export function makeJsonSchemaParser(
+	schema,
+	transformer = defaultTransformer,
+	schemaOptions = {}
+) {
 	let transform;
 	let validate;
 

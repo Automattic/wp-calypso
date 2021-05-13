@@ -11,13 +11,13 @@ import { camelCase, difference, filter, get, includes, isEmpty, keys, map, pick 
 /**
  * Internal dependencies
  */
-import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import WithContactDetailsValidation, {
 	disableSubmitButton,
 } from './with-contact-details-validation';
@@ -34,6 +34,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		contactDetailsValidationErrors: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		updateContactDetailsCache: PropTypes.func.isRequired,
+		isManaged: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -85,7 +86,10 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		};
 
 		this.props.updateContactDetailsCache( payload );
-		this.props.onContactDetailsChange?.( payload );
+
+		if ( this.props.isManaged ) {
+			this.props.onContactDetailsChange?.( payload );
+		}
 	}
 
 	handleChangeEvent = ( event ) => {
@@ -95,7 +99,10 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 			},
 		};
 		this.props.updateContactDetailsCache( payload );
-		this.props.onContactDetailsChange?.( payload );
+
+		if ( this.props.isManaged ) {
+			this.props.onContactDetailsChange?.( payload );
+		}
 	};
 
 	isTradingNameRequired( registrantType ) {
@@ -242,7 +249,16 @@ export const ValidatedRegistrantExtraInfoUkForm = WithContactDetailsValidation(
 );
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
+		if ( ownProps.isManaged ) {
+			return {
+				// Treat this like a managed component.
+				contactDetails: ownProps.contactDetails ?? {},
+				ccTldDetails: ownProps.ccTldDetails ?? {},
+				contactDetailsValidationErrors: ownProps.contactDetailsValidationErrors ?? {},
+			};
+		}
+
 		const contactDetails = getContactDetailsCache( state );
 		return {
 			contactDetails,

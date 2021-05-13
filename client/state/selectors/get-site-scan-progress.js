@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/data-layer/wpcom/sites/scan';
+import 'calypso/state/data-layer/wpcom/sites/scan';
 
 /**
  * Returns the current Jetpack Scan Progress for a given site only if the
@@ -15,7 +15,7 @@ import 'state/data-layer/wpcom/sites/scan';
  */
 export default function getSiteScanProgress( state, siteId ) {
 	if ( state.jetpackScan.scan?.[ siteId ]?.state === 'scanning' ) {
-		return state.jetpackScan.scan?.[ siteId ]?.mostRecent?.progress ?? 0;
+		return state.jetpackScan.scan?.[ siteId ]?.current?.progress ?? 0;
 	}
 	return;
 }

@@ -2,22 +2,38 @@
  * External dependencies
  */
 import React from 'react';
-import classnames from 'classnames';
 import { isDesktop } from '@automattic/viewport';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import InlineSupportLink from 'components/inline-support-link';
-import Gridicon from 'components/gridicon';
+import ExternalLink from 'calypso/components/external-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Gridicon from 'calypso/components/gridicon';
+import MaterialIcon from 'calypso/components/material-icon';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'calypso/state/analytics/actions';
+import { navigate } from 'calypso/state/ui/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const EducationalContent = ( { title, description, links, illustration } ) => {
+const EducationalContent = ( {
+	title,
+	description,
+	links,
+	illustration,
+	cardName,
+	calypsoNavigation,
+	trackExternalClick,
+} ) => {
 	return (
 		<div className="educational-content">
 			<div className="educational-content__wrapper">
@@ -26,29 +42,47 @@ const EducationalContent = ( { title, description, links, illustration } ) => {
 					{ description }
 				</p>
 				<div className="educational-content__links">
-					{ links.map( ( { postId, url, externalLink, text, icon, tracksEvent, statsName } ) => (
-						<div
-							className={ classnames( 'educational-content__link', {
-								'is-external-link': externalLink,
-							} ) }
-							key={ url }
-						>
+					{ links.map( ( { postId, url, calypsoLink, externalLink, text, icon, materialIcon } ) => (
+						<div className="educational-content__link" key={ url }>
 							{ icon && <Gridicon icon={ icon } size={ 18 } /> }
+							{ materialIcon && <MaterialIcon icon={ materialIcon } /> }
 							{ postId && (
 								<InlineSupportLink
 									supportPostId={ postId }
 									supportLink={ url }
 									showIcon={ false }
-									text={ text }
-									tracksEvent={ tracksEvent }
+									tracksEvent="calypso_customer_home_education"
 									statsGroup="calypso_customer_home"
-									statsName={ statsName }
-								/>
+									tracksOptions={ {
+										url,
+										card_name: cardName,
+									} }
+									statsName={ cardName }
+								>
+									{ text }
+								</InlineSupportLink>
 							) }
 							{ externalLink && (
-								<ExternalLink href={ url } icon>
+								<ExternalLink
+									href={ url }
+									onClick={ () => {
+										trackExternalClick( url, cardName );
+									} }
+									icon
+								>
 									{ text }
 								</ExternalLink>
+							) }
+							{ calypsoLink && (
+								<a
+									href={ url }
+									onClick={ ( event ) => {
+										event.preventDefault();
+										calypsoNavigation( url, cardName );
+									} }
+								>
+									{ text }
+								</a>
 							) }
 						</div>
 					) ) }
@@ -63,4 +97,24 @@ const EducationalContent = ( { title, description, links, illustration } ) => {
 	);
 };
 
-export default EducationalContent;
+const calypsoNavigation = ( url, cardName ) => {
+	return withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_customer_home_education', { url, card_name: cardName } ),
+			bumpStat( 'calypso_customer_home', cardName )
+		),
+		navigate( url )
+	);
+};
+
+const trackExternalClick = ( url, cardName ) => {
+	return composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_education', { url, card_name: cardName } ),
+		bumpStat( 'calypso_customer_home', cardName )
+	);
+};
+
+export default connect( null, {
+	calypsoNavigation,
+	trackExternalClick,
+} )( EducationalContent );

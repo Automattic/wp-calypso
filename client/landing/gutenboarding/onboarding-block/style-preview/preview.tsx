@@ -4,32 +4,68 @@
 import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
+import { useLocale } from '@automattic/i18n-utils';
+import type { FontPair } from '@automattic/design-picker';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import * as T from './types';
-import { useLangRouteParam } from '../../path';
-import { isEnabled } from 'config';
+import { useFontPairings } from '../../fonts';
+import { useAnchorFmParams } from '../../../gutenboarding/path';
+import type { Viewport } from './types';
 
-type Design = import('../../stores/onboard/types').Design;
-type Font = import('../../constants').Font;
-type SiteVertical = import('../../stores/onboard/types').SiteVertical;
+function getFontsLoadingHTML( effectiveFontPairings: readonly FontPair[] ) {
+	const baseURL = 'https://fonts.googleapis.com/css2';
+
+	// matrix: regular,bold * regular,italic
+	const axis = 'ital,wght@0,400;0,700;1,400;1,700';
+
+	// create a query for all fonts together
+	const query = effectiveFontPairings.reduce( ( acc, pairing ) => {
+		acc.push(
+			`family=${ encodeURI( pairing.headings ) }:${ axis }`,
+			`family=${ encodeURI( pairing.base ) }:${ axis }`
+		);
+		return acc;
+	}, [] as string[] );
+
+	const l = document.createElement( 'link' );
+	l.rel = 'stylesheet';
+	l.type = 'text/css';
+	l.href = `${ baseURL }?${ query.join( '&' ) }&display=swap`;
+	const head = l.outerHTML;
+
+	// Chrome doesn't load the fonts in memory until they're actually used,
+	// this keeps the fonts used and ready in memory.
+	const fontsHolders = ( effectiveFontPairings as FontPair[] ).reduce( ( acc, pairing ) => {
+		Object.values( pairing ).forEach( ( font ) => {
+			const fontHolder = document.createElement( 'div' );
+			fontHolder.style.fontFamily = font;
+			fontHolder.innerHTML = 'Placeholder';
+			fontHolder.style.visibility = 'hidden';
+			fontHolder.style.position = 'absolute';
+			acc += fontHolder.outerHTML;
+		} );
+		return acc;
+	}, '' );
+
+	return { head, fontsHolders };
+}
 
 interface Props {
-	viewport: T.Viewport;
+	viewport: Viewport;
 }
 const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
+	const language = useLocale();
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
-	const [ requestedFonts, setRequestedFonts ] = React.useState< Set< Font > >( new Set() );
-
-	const { selectedDesign, selectedFonts, siteVertical, siteTitle } = useSelect( ( select ) =>
+	const { selectedDesign, selectedFonts, siteTitle } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
+	const { anchorFmPodcastId } = useAnchorFmParams();
 
 	const iframe = React.useRef< HTMLIFrameElement >( null );
-	const language = useLangRouteParam();
+	const effectiveFontPairings = useFontPairings();
 
 	React.useEffect(
 		() => {
@@ -40,19 +76,18 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 				const templateUrl = `https://public-api.wordpress.com/rest/v1/template/demo/${ encodeURIComponent(
 					selectedDesign.theme
 				) }/${ encodeURIComponent( selectedDesign.template ) }/`;
-				let url = addQueryArgs( templateUrl, {
-					language: language,
+				const url = addQueryArgs( templateUrl, {
+					language,
 					site_title: siteTitle,
 					...( selectedFonts && {
 						font_headings: selectedFonts.headings,
 						font_base: selectedFonts.base,
 					} ),
+					...( anchorFmPodcastId && {
+						anchor_podcast: anchorFmPodcastId,
+					} ),
 				} );
-				if ( isEnabled( 'gutenboarding/style-preview-verticals' ) ) {
-					url = addQueryArgs( url, {
-						vertical: siteVertical?.label,
-					} );
-				}
+
 				let resp;
 
 				try {
@@ -67,19 +102,17 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 						console.error( err );
 					}
 					setPreviewHtml( '<h1>Error loading preview.</h1>' );
-					setRequestedFonts( new Set() );
 					return;
 				}
 				const html = await resp.text();
-				setPreviewHtml( html );
-				setRequestedFonts(
-					new Set( selectedFonts ? [ selectedFonts.headings, selectedFonts.base ] : undefined )
-				);
+				const { head, fontsHolders } = getFontsLoadingHTML( effectiveFontPairings );
+				// the browser automatically moves the head code to the <head />
+				setPreviewHtml( head + html + fontsHolders );
 			};
 			eff();
 		},
 		// Disable reason: We'll handle font change elsewhere.
-		[ language, selectedDesign, siteVertical ] // eslint-disable-line react-hooks/exhaustive-deps
+		[ language, selectedDesign ] // eslint-disable-line react-hooks/exhaustive-deps
 	);
 
 	React.useEffect( () => {
@@ -99,41 +132,14 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 			const iframeDocument = iframeWindow.document;
 			if ( selectedFonts ) {
 				const { headings, base } = selectedFonts;
-
-				const baseURL = 'https://fonts.googleapis.com/css2';
-
-				// matrix: regular,bold * regular,italic
-				const axis = 'ital,wght@0,400;0,700;1,400;1,700';
-				const query = [];
-
-				// To replace state
-				const nextFonts = new Set( requestedFonts );
-
-				if ( ! requestedFonts.has( headings ) ) {
-					query.push( `family=${ encodeURI( headings ) }:${ axis }` );
-					nextFonts.add( headings );
-				}
-				if ( ! requestedFonts.has( base ) ) {
-					query.push( `family=${ encodeURI( base ) }:${ axis }` );
-					nextFonts.add( base );
-				}
-
-				if ( query.length ) {
-					const l = iframeDocument.createElement( 'link' );
-					l.rel = 'stylesheet';
-					l.type = 'text/css';
-					l.href = `${ baseURL }?${ query.join( '&' ) }&display=swap`;
-					iframeDocument.head.appendChild( l );
-					setRequestedFonts( nextFonts );
-				}
-				iframeDocument.body.style.setProperty( '--font-headings', headings );
-				iframeDocument.body.style.setProperty( '--font-base', base );
+				iframeDocument.documentElement.style.setProperty( '--font-headings', headings );
+				iframeDocument.documentElement.style.setProperty( '--font-base', base );
 			} else {
-				iframeDocument.body.style.removeProperty( '--font-headings' );
-				iframeDocument.body.style.removeProperty( '--font-base' );
+				iframeDocument.documentElement.style.removeProperty( '--font-headings' );
+				iframeDocument.documentElement.style.removeProperty( '--font-base' );
 			}
 		}
-	}, [ previewHtml, requestedFonts, selectedFonts ] );
+	}, [ previewHtml, selectedFonts ] );
 
 	return (
 		<div className={ `style-preview__preview is-viewport-${ viewport }` }>
@@ -145,7 +151,12 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 						<div role="presentation" className="style-preview__preview-bar-dot" />
 					</div>
 				) }
-				<iframe ref={ iframe } className="style-preview__iframe" title="preview" />
+				<iframe
+					className="style-preview__iframe"
+					data-hj-allow-iframe
+					ref={ iframe }
+					title="preview"
+				/>
 			</div>
 		</div>
 	);

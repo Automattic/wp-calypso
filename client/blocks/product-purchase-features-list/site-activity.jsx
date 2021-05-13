@@ -8,13 +8,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 /**
  * Image dependencies
  */
-import siteActivity from 'assets/images/illustrations/site-activity.svg';
+import siteActivity from 'calypso/assets/images/illustrations/site-activity.svg';
 
 const SiteActivity = ( { siteSlug, translate } ) => (
 	<div className="product-purchase-features-list__item">
@@ -22,7 +22,7 @@ const SiteActivity = ( { siteSlug, translate } ) => (
 			icon={ <img alt="" src={ siteActivity } /> }
 			title={ translate( 'Activity' ) }
 			description={ translate(
-				'View a chronological list of all the changes and updates to your site in an organized, readable way.'
+				'The at-a-glance and activity list makes it easy to track changes and updates to your site.'
 			) }
 			buttonText={ translate( 'View your site activity' ) }
 			href={ `/activity-log/${ siteSlug }` }

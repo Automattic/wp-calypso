@@ -1,108 +1,73 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes, uniq } from 'lodash';
-import { isEnabled } from 'config';
+import { includes } from 'lodash';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import PluginSiteList from 'my-sites/plugins/plugin-site-list';
-import HeaderCake from 'components/header-cake';
+import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
+import HeaderCake from 'calypso/components/header-cake';
 import { Card } from '@automattic/components';
-import PluginMeta from 'my-sites/plugins/plugin-meta';
-import PluginsStore from 'lib/plugins/store';
-import PluginsLog from 'lib/plugins/log-store';
-import { getPlugin, isFetched, isFetching } from 'state/plugins/wporg/selectors';
-import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
-import PluginNotices from 'lib/plugins/notices';
-import MainComponent from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PluginSections from 'my-sites/plugins/plugin-sections';
-import PluginSectionsCustom from 'my-sites/plugins/plugin-sections/custom';
-import DocumentHead from 'components/data/document-head';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { isJetpackSite, isRequestingSites } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
-import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import PluginMeta from 'calypso/my-sites/plugins/plugin-meta';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import {
+	isFetching as isWporgPluginFetching,
+	isFetched as isWporgPluginFetched,
+	getPlugin as getWporgPlugin,
+} from 'calypso/state/plugins/wporg/selectors';
+import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
+import PluginNotices from 'calypso/my-sites/plugins/notices';
+import MainComponent from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
+import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
+import DocumentHead from 'calypso/components/data/document-head';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
+import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import NoPermissionsError from './no-permissions-error';
-import getToursHistory from 'state/ui/guided-tours/selectors/get-tours-history';
-import hasNavigated from 'state/selectors/has-navigated';
-
-/* eslint-disable react/prefer-es6-class */
+import getToursHistory from 'calypso/state/guided-tours/selectors/get-tours-history';
+import hasNavigated from 'calypso/state/selectors/has-navigated';
+import {
+	getPluginOnSite,
+	getPluginOnSites,
+	getSiteObjectsWithPlugin,
+	getSitesWithoutPlugin,
+	isPluginActionInProgress,
+	isRequestingForSites,
+} from 'calypso/state/plugins/installed/selectors';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 function goBack() {
 	window.history.back();
 }
 
-const SinglePlugin = createReactClass( {
-	displayName: 'SinglePlugin',
-	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
-	mixins: [ PluginNotices ],
-
+class SinglePlugin extends React.Component {
 	UNSAFE_componentWillMount() {
 		if ( ! this.isFetched() ) {
 			this.props.wporgFetchPluginData( this.props.pluginSlug );
 		}
-	},
+	}
 
 	componentDidMount() {
-		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
-		PluginsLog.on( 'change', this.refreshSitesAndPlugins );
 		this.hasAlreadyShownTheTour = false;
-	},
-
-	getInitialState() {
-		return this.getSitesPlugin();
-	},
+	}
 
 	componentWillUnmount() {
-		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
-		PluginsLog.removeListener( 'change', this.refreshSitesAndPlugins );
 		this.hasAlreadyShownTheTour = false;
-		if ( this.pluginRefreshTimeout ) {
-			clearTimeout( this.pluginRefreshTimeout );
-		}
-	},
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.refreshSitesAndPlugins( nextProps );
-	},
-
-	getSitesPlugin( nextProps ) {
-		const props = nextProps || this.props;
-
-		const sites = uniq( props.sites ),
-			sitePlugin = PluginsStore.getPlugin( sites, props.pluginSlug ),
-			plugin = Object.assign(
-				{
-					name: props.pluginSlug,
-					id: props.pluginSlug,
-					slug: props.pluginSlug,
-				},
-				sitePlugin
-			);
-
-		return {
-			sites: PluginsStore.getSites( sites, props.pluginSlug ) || [],
-			notInstalledSites: PluginsStore.getNotInstalledSites( sites, props.pluginSlug ) || [],
-			plugin,
-		};
-	},
-
-	refreshSitesAndPlugins( nextProps ) {
-		this.setState( this.getSitesPlugin( nextProps ) );
-	},
+	}
 
 	getPageTitle() {
 		const plugin = this.getPlugin();
@@ -111,11 +76,11 @@ const SinglePlugin = createReactClass( {
 			textOnly: true,
 			context: 'Page title: Plugin detail',
 		} );
-	},
+	}
 
-	recordEvent( eventAction ) {
+	recordEvent = ( eventAction ) => {
 		this.props.recordGoogleEvent( 'Plugins', eventAction, 'Plugin Name', this.props.pluginSlug );
-	},
+	};
 
 	getPreviousListUrl() {
 		const splitPluginUrl = this.props.prevPath.split( '/' + this.props.pluginSlug + '/' );
@@ -131,15 +96,15 @@ const SinglePlugin = createReactClass( {
 			( this.props.siteUrl || '' ) +
 			( this.props.prevQuerystring ? '?' + this.props.prevQuerystring : '' )
 		);
-	},
+	}
 
-	backHref( shouldUseHistoryBack ) {
+	backHref = ( shouldUseHistoryBack ) => {
 		const { prevPath, siteUrl } = this.props;
 		if ( prevPath ) {
 			return this.getPreviousListUrl();
 		}
 		return ! shouldUseHistoryBack ? '/plugins/manage/' + ( siteUrl || '' ) : null;
-	},
+	};
 
 	displayHeader( calypsoify ) {
 		if ( ! this.props.selectedSite || calypsoify ) {
@@ -157,49 +122,46 @@ const SinglePlugin = createReactClass( {
 				onClick={ shouldUseHistoryBack ? goBack : undefined }
 			/>
 		);
-	},
+	}
 
 	pluginExists( plugin ) {
-		if ( this.isFetching() ) {
+		if ( this.isFetching() || ! this.isFetched() ) {
 			return 'unknown';
 		}
 		if ( plugin && plugin.fetched ) {
 			return true;
 		}
 
-		const sites = this.props.sites;
-
 		// If the plugin has at least one site then we know it exists
-		if ( plugin.sites && plugin.sites[ 0 ] ) {
+		const pluginSites = Object.values( plugin.sites );
+		if ( pluginSites && pluginSites[ 0 ] ) {
 			return true;
 		}
 
-		if ( sites.some( PluginsStore.isFetchingSite ) ) {
+		if ( this.props.requestingPluginsForSites ) {
 			return 'unknown';
 		}
 
 		return false;
-	},
+	}
 
 	isFetching() {
 		return this.props.wporgFetching;
-	},
+	}
 
 	isFetched() {
-		return isFetched( this.props.wporgPlugins, this.props.pluginSlug );
-	},
-
-	isFetchingSites() {
-		return this.props.sites.every( PluginsStore.isFetchingSite );
-	},
+		return this.props.wporgFetched;
+	}
 
 	getPlugin() {
-		let plugin = Object.assign( {}, this.state.plugin );
-		// assign it .org details
-		plugin = Object.assign( plugin, getPlugin( this.props.wporgPlugins, this.props.pluginSlug ) );
+		const { plugin, wporgPlugin } = this.props;
 
-		return plugin;
-	},
+		// assign it .org details
+		return {
+			...plugin,
+			...wporgPlugin,
+		};
+	}
 
 	getPluginDoesNotExistView( selectedSite ) {
 		const { translate } = this.props;
@@ -217,7 +179,7 @@ const SinglePlugin = createReactClass( {
 				/>
 			</MainComponent>
 		);
-	},
+	}
 
 	getAllowedPluginActions( plugin ) {
 		const autoManagedPlugins = [ 'jetpack', 'vaultpress', 'akismet' ];
@@ -229,22 +191,25 @@ const SinglePlugin = createReactClass( {
 			activation: ! hiddenForAutomatedTransfer,
 			remove: ! hiddenForAutomatedTransfer,
 		};
-	},
+	}
 
 	isPluginInstalledOnsite() {
-		if ( this.isFetchingSites() ) {
+		if ( this.props.requestingPluginsForSites ) {
 			return null;
 		}
 
-		return !! PluginsStore.getSitePlugin( this.props.selectedSite, this.state.plugin.slug );
-	},
+		return !! this.props.sitePlugin;
+	}
 
 	renderSitesList( plugin ) {
 		if ( this.props.siteUrl || this.isFetching() ) {
 			return;
 		}
 
-		const { translate } = this.props;
+		const { translate, sites, sitesWithPlugin, sitesWithoutPlugin } = this.props;
+		const notInstalledSites = sitesWithoutPlugin.map( ( siteId ) =>
+			sites.find( ( site ) => site.ID === siteId )
+		);
 
 		return (
 			<div>
@@ -253,9 +218,8 @@ const SinglePlugin = createReactClass( {
 					title={ translate( 'Installed on', {
 						comment: 'header for list of sites a plugin is installed on',
 					} ) }
-					sites={ this.state.sites }
+					sites={ sitesWithPlugin }
 					plugin={ plugin }
-					notices={ this.state.notices }
 				/>
 				{ plugin.wporg && (
 					<PluginSiteList
@@ -263,17 +227,16 @@ const SinglePlugin = createReactClass( {
 						title={ translate( 'Available sites', {
 							comment: 'header for list of sites a plugin can be installed on',
 						} ) }
-						sites={ this.state.notInstalledSites }
+						sites={ notInstalledSites }
 						plugin={ plugin }
-						notices={ this.state.notices }
 					/>
 				) }
 			</div>
 		);
-	},
+	}
 
 	renderPluginPlaceholder() {
-		const { selectedSite } = this.props;
+		const { selectedSite, sitesWithPlugin } = this.props;
 		return (
 			<MainComponent>
 				<SidebarNavigation />
@@ -284,17 +247,17 @@ const SinglePlugin = createReactClass( {
 						isInstalledOnSite={ this.isPluginInstalledOnsite() }
 						plugin={ this.getPlugin() }
 						siteUrl={ this.props.siteUrl }
-						sites={ this.state.sites }
+						sites={ sitesWithPlugin }
 						selectedSite={ selectedSite }
 						isAtomicSite={ this.props.isAtomicSite }
 					/>
 				</div>
 			</MainComponent>
 		);
-	},
+	}
 
 	render() {
-		const { selectedSite } = this.props;
+		const { selectedSite, siteIds, sitesWithPlugin } = this.props;
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.getPageTitle() } />;
 		}
@@ -311,10 +274,6 @@ const SinglePlugin = createReactClass( {
 			return this.getPluginDoesNotExistView( selectedSite );
 		}
 
-		const installing =
-			selectedSite &&
-			PluginsLog.isInProgressAction( selectedSite.ID, this.state.plugin.slug, 'INSTALL_PLUGIN' );
-
 		const isWpcom = selectedSite && ! this.props.isJetpackSite;
 		const calypsoify = this.props.isAtomicSite && isEnabled( 'calypsoify/plugins' );
 		const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
@@ -323,16 +282,19 @@ const SinglePlugin = createReactClass( {
 			<MainComponent>
 				<DocumentHead title={ this.getPageTitle() } />
 				<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
+				<QueryJetpackPlugins siteIds={ siteIds } />
 				<SidebarNavigation />
+				<PluginNotices pluginId={ plugin.id } sites={ this.props.sites } plugins={ [ plugin ] } />
+
 				<div className="plugin__page">
 					{ this.displayHeader( calypsoify ) }
 					<PluginMeta
 						plugin={ plugin }
 						siteUrl={ this.props.siteUrl }
-						sites={ this.state.sites }
+						sites={ sitesWithPlugin }
 						selectedSite={ selectedSite }
 						isInstalledOnSite={ this.isPluginInstalledOnsite() }
-						isInstalling={ installing }
+						isInstalling={ this.props.isInstallingPlugin }
 						allowedActions={ allowedPluginActions }
 						calypsoify={ calypsoify }
 					/>
@@ -345,24 +307,39 @@ const SinglePlugin = createReactClass( {
 				</div>
 			</MainComponent>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	( state, props ) => {
 		const selectedSiteId = getSelectedSiteId( state );
+		const sites = getSelectedOrAllSitesWithPlugins( state );
+		const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
 
 		return {
-			wporgPlugins: state.plugins.wporg.items,
-			wporgFetching: isFetching( state.plugins.wporg.fetchingItems, props.pluginSlug ),
+			plugin: getPluginOnSites( state, siteIds, props.pluginSlug ),
+			sitesWithPlugin: getSiteObjectsWithPlugin( state, siteIds, props.pluginSlug ),
+			sitePlugin: selectedSiteId && getPluginOnSite( state, selectedSiteId, props.pluginSlug ),
+			wporgPlugin: getWporgPlugin( state, props.pluginSlug ),
+			wporgFetching: isWporgPluginFetching( state, props.pluginSlug ),
+			wporgFetched: isWporgPluginFetched( state, props.pluginSlug ),
 			selectedSite: getSelectedSite( state ),
+			sitesWithoutPlugin: getSitesWithoutPlugin( state, siteIds, props.pluginSlug ),
 			isAtomicSite: isSiteAutomatedTransfer( state, selectedSiteId ),
 			isJetpackSite: selectedSiteId && isJetpackSite( state, selectedSiteId ),
+			isInstallingPlugin: isPluginActionInProgress(
+				state,
+				selectedSiteId,
+				props.pluginSlug,
+				INSTALL_PLUGIN
+			),
 			isRequestingSites: isRequestingSites( state ),
+			requestingPluginsForSites: isRequestingForSites( state, siteIds ),
 			userCanManagePlugins: selectedSiteId
 				? canCurrentUser( state, selectedSiteId, 'manage_options' )
 				: canCurrentUserManagePlugins( state ),
-			sites: getSelectedOrAllSitesWithPlugins( state ),
+			siteIds,
+			sites,
 			toursHistory: getToursHistory( state ),
 			navigated: hasNavigated( state ),
 		};

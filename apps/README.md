@@ -1,6 +1,6 @@
 # Apps
 
-This directory exists to hold a variety of projects that can produce independent, binary-like outputs deployed elsewhere. Typically not published to NPM or build on `yarn start`
+This directory exists to hold a variety of projects that can produce independent, binary-like outputs deployed elsewhere. Typically not published to NPM or built on `yarn start`.
 
 For packages that we might publish as NPM packages, see [`/packages`](../packages).
 
@@ -24,6 +24,7 @@ yarn dev --sync
 ```
 
 ## Validating package.json
+
 Running `yarn run lint:package-json` will lint all `package.json`'s under `./apps/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
 
 If you need exceptions to linting rules, add them to overrides section in the config file.

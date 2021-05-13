@@ -16,12 +16,12 @@ import {
 	getSocialAccountLinkAuthInfo,
 	getSocialAccountLinkService,
 	getRedirectToSanitized,
-} from 'state/login/selectors';
-import { connectSocialUser } from 'state/login/actions';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import SocialLogo from 'components/social-logo';
-import GoogleIcon from 'components/social-icons/google';
-import AppleIcon from 'components/social-icons/apple';
+} from 'calypso/state/login/selectors';
+import { connectSocialUser } from 'calypso/state/login/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import SocialLogo from 'calypso/components/social-logo';
+import GoogleIcon from 'calypso/components/social-icons/google';
+import AppleIcon from 'calypso/components/social-icons/apple';
 
 /**
  * Style dependencies

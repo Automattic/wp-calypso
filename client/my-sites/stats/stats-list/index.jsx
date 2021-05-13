@@ -68,7 +68,6 @@ export default class extends React.Component {
 						children={ childResults }
 						key={ groupKey }
 						itemClickHandler={ clickHandler }
-						followList={ this.props.followList }
 						useShortLabel={ this.props.useShortLabel }
 					/>
 				);

@@ -17,7 +17,7 @@ import UserAgent from 'express-useragent';
 	}
 	```
 
-	For a full list of values see: https://github.com/biggora/express-useragent/blob/master/lib/express-useragent.js#L191
+	For a full list of values see: https://github.com/biggora/express-useragent/blob/HEAD/lib/express-useragent.js#L191
 
 	Note: we also import this lib server-side in server/boot/index.js
  */

@@ -1,0 +1,101 @@
+.profile-dropdown {
+	&__nav {
+		position: relative;
+	}
+
+	&__button {
+		// Button needs to be above the list to partly hide its top border
+		position: relative;
+		z-index: 1;
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		// Minimum recommended width for touch interactions
+		min-width: 48px;
+		height: 100%;
+
+		background: var( --color-surface );
+
+		cursor: pointer;
+
+		&[aria-expanded='true'] {
+			box-shadow: -1px 0 var( --studio-gray-20 );
+		}
+
+		&:hover,
+		&:focus {
+			img {
+				transform: scale( 1.2 );
+			}
+		}
+	}
+
+	// Hide focus state right after a user clicked the button. The focus state
+	// is still shown if we know the user is using a keyboard exclusively.
+	html.accessible-focus &__button:focus {
+		box-shadow: inset 0 0 0 2px var( --color-primary-light );
+	}
+
+	&__button-gravatar {
+		transform-origin: center center;
+		transition: all 0.1s ease;
+	}
+
+	&__list {
+		position: absolute;
+		right: -1px;
+		top: calc( 100% - 1px );
+
+		width: 220px;
+		margin: 0;
+		padding: 0 16px;
+
+		background: var( --color-surface );
+		border: 1px solid var( --studio-gray-20 );
+		box-shadow: 0 4px 6px rgba( var( --studio-gray-100-rgb ), 0.1 ),
+			0 1px 2px rgba( var( --studio-gray-100-rgb ), 0.1 );
+		list-style-type: none;
+
+		font-size: $font-body-small;
+
+		// Required for older browsers
+		&[hidden] {
+			display: none;
+		}
+	}
+
+	&__list-item {
+		margin: 16px 0;
+	}
+
+	&__display-name {
+		display: block;
+
+		color: var( --color-text );
+
+		font-size: $font-body;
+		font-weight: 700;
+	}
+
+	&__username {
+		word-break: break-word;
+	}
+
+	&__logout {
+		color: var( --color-link );
+		text-decoration: underline;
+
+		cursor: pointer;
+
+		&:hover {
+			color: var( --color-link-dark );
+			text-decoration: none;
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px var( --color-primary-light );
+		}
+	}
+}

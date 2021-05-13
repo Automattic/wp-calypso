@@ -1,5 +1,3 @@
-/* eslint jest/expect-expect: [ "error", { "assertFunctionNames": [ "expect", "chaiExpect" ] } ] */
-
 /**
  * External dependencies
  */
@@ -39,12 +37,11 @@ import {
 	hasStaticFrontPage,
 	canCurrentUserUseAds,
 	canCurrentUserUseCustomerHome,
-	canCurrentUserUseStore,
+	canCurrentUserUseAnyWooCommerceBasedStore,
+	canCurrentUserUseWooCommerceCoreStore,
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
 	canJetpackSiteAutoUpdateCore,
-	hasJetpackSiteJetpackThemes,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSiteMultiSite,
 	isJetpackSiteSecondaryNetworkSite,
 	verifyJetpackModulesActive,
@@ -54,11 +51,24 @@ import {
 	getSiteAdminUrl,
 	getCustomizerUrl,
 	getJetpackComputedAttributes,
-	hasDefaultSiteTitle,
 	getSiteComputedAttributes,
 } from '../selectors';
-import config from 'config';
-import { userState } from 'state/selectors/test/fixtures/user-state';
+import config from '@automattic/calypso-config';
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
+import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_FREE } from '@automattic/calypso-products';
+
+jest.mock( '@automattic/calypso-config', () => {
+	const configMock = () => '';
+	configMock.isEnabled = jest.fn( () => true );
+	return configMock;
+} );
+
+jest.mock( 'calypso/sections-filter', () => {
+	const mock = () => '';
+	mock.isSectionEnabled = jest.fn( () => true );
+	mock.isSectionNameEnabled = jest.fn( () => true );
+	return mock;
+} );
 
 describe( 'selectors', () => {
 	const createStateWithItems = ( items ) =>
@@ -128,7 +138,7 @@ describe( 'selectors', () => {
 				canUpdateFiles: true,
 				isMainNetworkSite: false,
 				isSecondaryNetworkSite: false,
-				isSiteUpgradeable: null,
+				isSiteUpgradeable: false,
 				options: {
 					jetpack_version: '8.0',
 					unmapped_url: 'https://example.wordpress.com',
@@ -2595,95 +2605,6 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#hasJetpackSiteJetpackThemes()', () => {
-		test( 'it should return `false` if jetpack version is smaller than 3.7-beta', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						jetpack_version: '3.7-alpha',
-					},
-				},
-			} );
-
-			const hasThemes = hasJetpackSiteJetpackThemes( state, siteId );
-			chaiExpect( hasThemes ).to.equal( false );
-		} );
-
-		test( 'it should return `true` if jetpack version is greater or equal to 3.7-beta', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						jetpack_version: '3.7',
-					},
-				},
-			} );
-
-			const hasThemes = hasJetpackSiteJetpackThemes( state, siteId );
-			chaiExpect( hasThemes ).to.equal( true );
-		} );
-	} );
-
-	describe( '#hasJetpackSiteJetpackThemesExtendedFeatures()', () => {
-		test( 'it should return `null` if the given site is not a Jetpack site', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-				},
-			} );
-
-			const hasThemesExtendedFeatures = hasJetpackSiteJetpackThemesExtendedFeatures(
-				state,
-				siteId
-			);
-			chaiExpect( hasThemesExtendedFeatures ).to.be.null;
-		} );
-
-		test( 'it should return `false` if jetpack version is smaller than 4.7', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						jetpack_version: '4.4.1',
-					},
-				},
-			} );
-
-			const hasThemesExtendedFeatures = hasJetpackSiteJetpackThemesExtendedFeatures(
-				state,
-				siteId
-			);
-			chaiExpect( hasThemesExtendedFeatures ).to.be.false;
-		} );
-
-		test( 'it should return `true` if jetpack version is greater or equal to 4.7', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						jetpack_version: '4.7',
-					},
-				},
-			} );
-
-			const hasThemesExtendedFeatures = hasJetpackSiteJetpackThemesExtendedFeatures(
-				state,
-				siteId
-			);
-			chaiExpect( hasThemesExtendedFeatures ).to.be.true;
-		} );
-	} );
-
 	describe( 'isJetpackSiteMultiSite()', () => {
 		test( 'should return null if the site is not known', () => {
 			const isMultisite = isJetpackSiteMultiSite(
@@ -3206,6 +3127,31 @@ describe( 'selectors', () => {
 			chaiExpect( customizerUrl ).to.equal( '/customize/example.com' );
 		} );
 
+		test( 'should return customizer URL with return query for WordPress.com site', () => {
+			const customizerUrl = getCustomizerUrl(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								jetpack: false,
+							},
+						},
+					},
+				},
+				77203199,
+				null,
+				'https://wordpress.com/things/are/going?to=be&okay=true'
+			);
+
+			chaiExpect( customizerUrl ).to.equal(
+				`/customize/example.com?return=${ encodeURIComponent(
+					'https://wordpress.com/things/are/going?to=be&okay=true'
+				) }`
+			);
+		} );
+
 		test( 'should return null if admin URL for Jetpack site is not known', () => {
 			const customizerUrl = getCustomizerUrl(
 				{
@@ -3355,78 +3301,6 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'hasDefaultSiteTitle()', () => {
-		test( 'should return null if the site is not known', () => {
-			const hasDefaultTitle = hasDefaultSiteTitle(
-				{
-					sites: {
-						items: {},
-					},
-				},
-				77203074
-			);
-
-			chaiExpect( hasDefaultTitle ).to.be.null;
-		} );
-
-		test( 'should return true if the site title is "Site Title"', () => {
-			const hasDefaultTitle = hasDefaultSiteTitle(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'example.wordpress.com',
-								name: 'Site Title',
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			chaiExpect( hasDefaultTitle ).to.be.true;
-		} );
-
-		test( 'should return true if the site title is equal to the site slug', () => {
-			const hasDefaultTitle = hasDefaultSiteTitle(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'example.wordpress.com',
-								name: 'example.wordpress.com',
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			chaiExpect( hasDefaultTitle ).to.be.true;
-		} );
-
-		test( 'should return false if the site title is any other title', () => {
-			const hasDefaultTitle = hasDefaultSiteTitle(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'example.wordpress.com',
-								name: 'Example Site Name',
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			chaiExpect( hasDefaultTitle ).to.be.false;
-		} );
-	} );
-
 	describe( 'getJetpackComputedAttributes()', () => {
 		test( 'should return undefined attributes if a site is not Jetpack', () => {
 			const state = {
@@ -3565,7 +3439,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'canCurrentUserUseStore()', () => {
+	describe( 'canCurrentUserUseAnyWooCommerceBasedStore()', () => {
 		const createState = (
 			manage_options,
 			is_automated_transfer,
@@ -3594,26 +3468,138 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return true if site is AT and user can manage it', () => {
-			expect( canCurrentUserUseStore( createState( true, true, false ) ) ).toBe( true );
+			expect( canCurrentUserUseAnyWooCommerceBasedStore( createState( true, true, false ) ) ).toBe(
+				true
+			);
 		} );
 
 		test( 'should return false if site is not AT and user can manage it', () => {
-			expect( canCurrentUserUseStore( createState( true, false, false ) ) ).toBe( false );
+			expect( canCurrentUserUseAnyWooCommerceBasedStore( createState( true, false, false ) ) ).toBe(
+				false
+			);
 		} );
 
 		test( "should return false if site is AT and user can't manage it", () => {
-			expect( canCurrentUserUseStore( createState( false, true, false ) ) ).toBe( false );
+			expect( canCurrentUserUseAnyWooCommerceBasedStore( createState( false, true, false ) ) ).toBe(
+				false
+			);
 		} );
 
 		test( "should return true if user can't manage a site, but it has background transfer and atomic store flow is enabled", () => {
-			const oldEnabled = config.isEnabled;
-			config.isEnabled = () => true;
-			expect( canCurrentUserUseStore( createState( false, false, true ) ) ).toBe( true );
-			config.isEnabled = oldEnabled;
+			expect( canCurrentUserUseAnyWooCommerceBasedStore( createState( false, false, true ) ) ).toBe(
+				true
+			);
 		} );
 
 		test( "should return false if user can't manage a site, but it has background transfer and atomic store flow is disabled", () => {
-			expect( canCurrentUserUseStore( createState( false, false, true ) ) ).toBe( false );
+			// Enable all features except for the atomic store flow
+			config.isEnabled.mockImplementation( ( feature ) => feature !== 'signup/atomic-store-flow' );
+
+			expect( canCurrentUserUseAnyWooCommerceBasedStore( createState( false, false, true ) ) ).toBe(
+				false
+			);
+		} );
+	} );
+
+	describe( 'canCurrentUserUseWooCommerceCoreStore()', () => {
+		const createState = (
+			manage_options,
+			is_automated_transfer,
+			has_pending_automated_transfer,
+			product_slug
+		) => ( {
+			ui: {
+				selectedSiteId: 1,
+			},
+			currentUser: {
+				capabilities: {
+					1: {
+						manage_options,
+					},
+				},
+			},
+			sites: {
+				items: {
+					1: {
+						options: {
+							is_automated_transfer,
+							has_pending_automated_transfer,
+						},
+						plan: {
+							product_slug,
+						},
+					},
+				},
+				plans: {
+					1: {
+						data: {
+							0: {
+								currentPlan: true,
+								productSlug: product_slug,
+							},
+						},
+					},
+				},
+			},
+		} );
+
+		beforeEach( () => {
+			// Enable all features
+			config.isEnabled.mockImplementation( () => true );
+		} );
+
+		test( 'should return true if site is AT and user can manage it', () => {
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_ECOMMERCE ) )
+			).toBe( true );
+		} );
+
+		test( 'should return false if site is not AT and user can manage it', () => {
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( true, false, false, PLAN_ECOMMERCE ) )
+			).toBe( false );
+		} );
+
+		test( "should return false if site is AT and user can't manage it", () => {
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( false, true, false, PLAN_ECOMMERCE ) )
+			).toBe( false );
+		} );
+
+		test( "should return true if user can't manage a site, but it has background transfer and atomic store flow is enabled", () => {
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( false, false, true, PLAN_ECOMMERCE ) )
+			).toBe( true );
+		} );
+
+		test( "should return false if user can't manage a site, but it has background transfer and atomic store flow is disabled", () => {
+			// Enable all features except for the atomic store flow
+			config.isEnabled.mockImplementation( ( feature ) => feature !== 'signup/atomic-store-flow' );
+
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( false, false, true, PLAN_ECOMMERCE ) )
+			).toBe( false );
+		} );
+
+		test( 'should return false if site is not eCommerce or Business', () => {
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_FREE ) )
+			).toBe( false );
+		} );
+
+		test( 'should return true if site is Business and Store is deprecated but not removed', () => {
+			// Enable all features except for store removal
+			config.isEnabled.mockImplementation( ( feature ) => feature !== 'woocommerce/store-removed' );
+
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_BUSINESS ) )
+			).toBe( true );
+		} );
+
+		test( 'should return true if site is Business and Store is not deprecated but is removed', () => {
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_BUSINESS ) )
+			).toBe( true );
 		} );
 	} );
 

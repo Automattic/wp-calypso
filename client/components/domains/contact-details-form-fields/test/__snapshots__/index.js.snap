@@ -145,13 +145,9 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       getFieldProps={[Function]}
       hasCountryStates={false}
       shouldAutoFocusAddressField={false}
-      translate={[Function]}
     />
   </div>
-  <div
-    className="contact-details-form-fields__extra-fields"
-  />
-  <DomainManagementFormFooter>
+  <div>
     <FormButton
       className="contact-details-form-fields__submit-button"
       disabled={false}
@@ -162,7 +158,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
     >
       Submit
     </FormButton>
-  </DomainManagementFormFooter>
+  </div>
   <Connect(QueryCountries) />
 </FormFieldset>
 `;

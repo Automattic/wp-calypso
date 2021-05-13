@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { endsWith, filter, includes, mapValues, trimStart } from 'lodash';
+import { filter, includes, mapValues } from 'lodash';
 
 function validateAllFields( fieldValues, domainName ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
@@ -84,14 +84,14 @@ function getNormalizedData( record, selectedDomainName ) {
 	// The leading '_' in SRV's service field is a convention
 	// The record itself should not contain it
 	if ( record.service ) {
-		normalizedRecord.service = trimStart( record.service, '_' );
+		normalizedRecord.service = record.service.replace( /^_+/, '' );
 	}
 
 	return normalizedRecord;
 }
 
 function getNormalizedName( name, type, selectedDomainName ) {
-	const endsWithDomain = endsWith( name, '.' + selectedDomainName );
+	const endsWithDomain = name.endsWith( '.' + selectedDomainName );
 
 	if ( isRootDomain( name, selectedDomainName ) && canBeRootDomain( type ) ) {
 		return selectedDomainName + '.';

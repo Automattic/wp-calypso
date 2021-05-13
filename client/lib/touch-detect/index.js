@@ -4,7 +4,7 @@
  *
  * @copyright Modernizr © 2009-2015.
  * @license See CREDITS.md.
- * @see https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+ * @see https://github.com/Modernizr/Modernizr/blob/HEAD/feature-detects/touchevents.js
  *
  * @returns {boolean} whether touch screen is available
  */

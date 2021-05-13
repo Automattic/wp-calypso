@@ -31,18 +31,33 @@ export interface OnboardingCompleteParameters {
 	 * The blog id of the newly created site
 	 */
 	blogId: number | string | undefined;
+
+	/**
+	 * Whether the user has a paid plan or other checkout item
+	 */
+	hasCartItems?: boolean;
+
+	/**
+	 * Type of onboarding flow
+	 */
+	flow?: string;
 }
 
-type TracksVerticalSelectEventProperties = {
+export type TracksAcquireIntentEventProperties = {
 	/**
-	 * The Vertical selected on the intent gathering page
+	 * The slug of the selected vertical or undefined if the vertical is free-form user input
 	 */
-	selected_vertical: string | undefined;
+	selected_vertical_slug?: string | undefined;
 
 	/**
-	 * The site title that was selected on the intent gathering page
+	 * Translated label of vertical or free-form user input
 	 */
-	selected_site_title: string | undefined;
+	selected_vertical_label?: string | undefined;
+
+	/**
+	 * Whether site title has been entered on the acquire intent page
+	 */
+	has_selected_site_title: boolean;
 };
 
 type TracksStyleSelectEventProperties = {
@@ -62,6 +77,11 @@ type TracksDesignSelectEventProperties = {
 	 * The selected theme
 	 */
 	selected_design: string | undefined;
+
+	/**
+	 * If the selected theme is premium
+	 */
+	is_selected_design_premium: boolean;
 };
 
 type TracksDomainSelectEventProperties = {
@@ -71,8 +91,29 @@ type TracksDomainSelectEventProperties = {
 	selected_domain: string | undefined;
 };
 
+type TracksPlanSelectEventProperties = {
+	/**
+	 * The selected plan slug
+	 */
+	selected_plan: string | undefined;
+};
+
+type TracksFeaturesSelectEventProperties = {
+	/**
+	 * If the user selected features
+	 */
+	has_selected_features: boolean | undefined;
+
+	/**
+	 * If the user seleceted the "Video storage" feature
+	 */
+	has_selected_video_storage: boolean | undefined;
+};
+
 export type TracksEventProperties =
-	| TracksVerticalSelectEventProperties
+	| TracksAcquireIntentEventProperties
 	| TracksStyleSelectEventProperties
 	| TracksDesignSelectEventProperties
-	| TracksDomainSelectEventProperties;
+	| TracksDomainSelectEventProperties
+	| TracksPlanSelectEventProperties
+	| TracksFeaturesSelectEventProperties;

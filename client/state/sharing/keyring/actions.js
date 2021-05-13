@@ -1,8 +1,13 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTION_DELETE_FAILURE,
@@ -10,10 +15,14 @@ import {
 	KEYRING_CONNECTIONS_REQUEST,
 	KEYRING_CONNECTIONS_REQUEST_FAILURE,
 	KEYRING_CONNECTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/sharing/init';
 
 /**
  * Triggers a network request for a user's connected services.
+ *
+ * @param {boolean} forceExternalUsersRefetch Whether to force refetching of external users
  *
  * @returns {Function} Action thunk
  */
@@ -58,6 +67,22 @@ export function deleteKeyringConnection( connection ) {
 }
 
 /**
+ * Returns an action object to be used to render a connection deletion success notice.
+ *
+ * @param  {object} connection Connection that was deleted.
+ * @returns {object}            Action object
+ */
+function deleteKeyringConnectionSuccess( connection ) {
+	return successNotice(
+		translate( 'The %(service)s account was successfully disconnected.', {
+			args: { service: connection.label },
+			context: 'Sharing: Publicize connection confirmation',
+		} ),
+		{ id: 'publicize' }
+	);
+}
+
+/**
  * Triggers a network request to delete a Keyring connection from the server-side.
  *
  * @param  {object} connection         Connection to be deleted.
@@ -70,17 +95,31 @@ export function deleteStoredKeyringConnection( connection ) {
 		wpcom
 			.undocumented()
 			.deletekeyringConnection( connection.ID )
-			.then( () => dispatch( deleteKeyringConnection( connection ) ) )
+			.then( () => {
+				dispatch( deleteKeyringConnection( connection ) );
+				dispatch( deleteKeyringConnectionSuccess( connection ) );
+			} )
 			.catch( ( error ) => {
 				if ( error && 404 === error.statusCode ) {
 					// If the connection cannot be found, we infer that it must have been deleted since the original
 					// connections were retrieved, so pass along the cached connection.
 					dispatch( deleteKeyringConnection( connection ) );
+					dispatch( deleteKeyringConnectionSuccess( connection ) );
 				}
 
 				dispatch( {
 					type: KEYRING_CONNECTION_DELETE_FAILURE,
 					error: { ...error, label: connection.label },
 				} );
+
+				dispatch(
+					errorNotice(
+						translate( 'The %(service)s account was unable to be disconnected.', {
+							args: { service: error.label },
+							context: 'Sharing: Publicize connection confirmation',
+						} ),
+						{ id: 'publicize' }
+					)
+				);
 			} );
 }

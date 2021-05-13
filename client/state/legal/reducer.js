@@ -1,6 +1,8 @@
 /**
  * Internal dependencies
  */
-import { LEGAL_SET } from 'state/action-types';
+import { withStorageKey } from '@automattic/state-utils';
+import { LEGAL_SET } from 'calypso/state/action-types';
 
-export default ( state = {}, { type, legalData } ) => ( type === LEGAL_SET ? legalData : state) ;
+const reducer = ( state = {}, { type, legalData } ) => ( type === LEGAL_SET ? legalData : state );
+export default withStorageKey( 'legal', reducer );

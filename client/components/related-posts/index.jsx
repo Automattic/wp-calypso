@@ -4,16 +4,18 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, times } from 'lodash';
+import { times } from 'lodash';
 import classnames from 'classnames';
 
 /**
  * Internal Dependencies
  */
-import { relatedPostsForPost } from 'state/reader/related-posts/selectors';
-import { SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
-import RelatedPost from 'blocks/reader-related-card';
-import QueryReaderRelatedPosts from 'components/data/query-reader-related-posts';
+import { relatedPostsForPost } from 'calypso/state/reader/related-posts/selectors';
+import { SCOPE_SAME, SCOPE_OTHER } from 'calypso/state/reader/related-posts/utils';
+import RelatedPost from 'calypso/blocks/reader-related-card';
+import QueryReaderRelatedPosts from 'calypso/components/data/query-reader-related-posts';
+
+const noop = () => {};
 
 function RelatedPosts( {
 	siteId,

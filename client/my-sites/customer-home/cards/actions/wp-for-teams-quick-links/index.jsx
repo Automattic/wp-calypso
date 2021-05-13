@@ -4,38 +4,37 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { Card } from '@automattic/components';
-import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
-import FoldableCard from 'components/foldable-card';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import FoldableCard from 'calypso/components/foldable-card';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
 	isNewSite,
-} from 'state/sites/selectors';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
-import { getGSuiteSupportedDomains } from 'lib/gsuite';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { navigate } from 'state/ui/actions';
+} from 'calypso/state/sites/selectors';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import { getGSuiteSupportedDomains } from 'calypso/lib/gsuite';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { navigate } from 'calypso/state/ui/actions';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import ActionBox from 'my-sites/customer-home/cards/actions/quick-links/action-box';
+} from 'calypso/state/analytics/actions';
+import ActionBox from '../quick-links/action-box';
+import isHomeQuickLinksExpanded from 'calypso/state/selectors/is-home-quick-links-expanded';
+import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'calypso/state/home/actions';
 
 /**
  * Style dependencies
  */
-import 'my-sites/customer-home/cards/actions/quick-links/style.scss';
+import '../quick-links/style.scss';
 
 export const QuickLinks = ( {
 	customizeUrl,
@@ -48,12 +47,14 @@ export const QuickLinks = ( {
 	manageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
+	isExpanded,
+	expand,
+	collapse,
 } ) => {
 	const translate = useTranslate();
 
 	const quickLinks = (
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<div className="quick-links__boxes">
+		<div className="wp-for-teams-quick-links__boxes quick-links__boxes">
 			{ isStaticHomePage ? (
 				<ActionBox
 					onClick={ editHomepageAction }
@@ -111,20 +112,14 @@ export const QuickLinks = ( {
 			) }
 		</div>
 	);
-
-	if ( ! isMobile() ) {
-		return (
-			<Card className="quick-links">
-				<CardHeading>{ translate( 'Quick Links' ) }</CardHeading>
-				{ quickLinks }
-			</Card>
-		);
-	}
 	return (
 		<FoldableCard
-			className="quick-links card-heading-21"
+			className="wp-for-teams-quick-links quick-links"
 			header={ translate( 'Quick Links' ) }
-			expanded
+			clickableHeader
+			expanded={ isExpanded }
+			onOpen={ expand }
+			onClose={ collapse }
 		>
 			{ quickLinks }
 		</FoldableCard>
@@ -199,8 +194,7 @@ const mapStateToProps = ( state ) => {
 		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
 	const siteSlug = getSelectedSiteSlug( state );
 	const staticHomePageId = getSiteFrontPage( state, siteId );
-	const editHomePageUrl =
-		isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
+	const editHomePageUrl = isStaticHomePage && `/page/${ siteSlug }/${ staticHomePageId }`;
 
 	return {
 		customizeUrl: getCustomizerUrl( state, siteId ),
@@ -211,6 +205,7 @@ const mapStateToProps = ( state ) => {
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
+		isExpanded: isHomeQuickLinksExpanded( state ),
 	};
 };
 
@@ -221,12 +216,15 @@ const mapDispatchToProps = {
 	manageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
+	expand: expandHomeQuickLinks,
+	collapse: collapseHomeQuickLinks,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const { editHomePageUrl, isStaticHomePage, siteSlug } = stateProps;
 	return {
 		...stateProps,
+		...dispatchProps,
 		editHomepageAction: () => dispatchProps.editHomepageAction( editHomePageUrl, isStaticHomePage ),
 		writePostAction: () => dispatchProps.writePostAction( siteSlug, isStaticHomePage ),
 		addPageAction: () => dispatchProps.addPageAction( siteSlug, isStaticHomePage ),

@@ -12,9 +12,7 @@ import {
 	GRAVATAR_UPLOAD_REQUEST,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'exports expected reducer keys', () => {
@@ -50,20 +48,6 @@ describe( 'reducer', () => {
 				} )
 			).to.equal( false );
 		} );
-
-		test( 'never persists loading state', () => {
-			expect(
-				isUploading( true, {
-					type: SERIALIZE,
-				} )
-			).to.be.undefined;
-
-			expect(
-				isUploading( true, {
-					type: DESERIALIZE,
-				} )
-			).to.equal( false );
-		} );
 	} );
 
 	describe( '#tempImage', () => {
@@ -82,14 +66,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				src: imageSrc,
 			} );
-		} );
-
-		test( 'never persists state', () => {
-			const state = {
-				src: imageSrc,
-			};
-			expect( tempImage( state, { type: SERIALIZE } ) ).to.be.undefined;
-			expect( tempImage( state, { type: DESERIALIZE } ) ).to.eql( {} );
 		} );
 	} );
 } );

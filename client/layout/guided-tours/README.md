@@ -9,9 +9,9 @@ Guided Tours is a framework for easily building tours that show users around a s
 **Mission Statement:**
 
 > Calypso is powerful, and therefore not easily understood by everyone.
-This leaves too many users behind.
-The Guided Tours framework lets us provide context-dependent and skill-appropriate tours that guide users through the UI.
-This will lead to more users finding value in Calypso earlier.
+> This leaves too many users behind.
+> The Guided Tours framework lets us provide context-dependent and skill-appropriate tours that guide users through the UI.
+> This will lead to more users finding value in Calypso earlier.
 
 This is a screen capture of a tour ("siteTitle") that gets triggered when a user has been registered for two days or more but still hasn't changed their site's title from the default "Site Title":
 
@@ -26,7 +26,7 @@ These are the **core use cases** we currently see for Guided Tours:
 - Tours that help address common oversights, such as the title tour mentioned above.
 - Announce new or changed features.
 
-Guided Tours sits on top of Calypso, and conceptually isn't part of the UI — one could think of it as a "meta UI". The design of the steps is different from the default Calypso design for this reason: we want Guided Tours to be obviously *not* part of normal Calypso.
+Guided Tours sits on top of Calypso, and conceptually isn't part of the UI — one could think of it as a "meta UI". The design of the steps is different from the default Calypso design for this reason: we want Guided Tours to be obviously _not_ part of normal Calypso.
 
 ## Getting Started
 

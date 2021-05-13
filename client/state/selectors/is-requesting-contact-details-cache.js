@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/domains/init';
 
 /**
  * Return a boolean value indicating whether a request for domain contact details

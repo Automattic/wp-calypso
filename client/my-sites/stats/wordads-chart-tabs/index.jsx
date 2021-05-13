@@ -12,20 +12,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import compareProps from 'lib/compare-props';
-import Chart from 'components/chart';
-import Legend from 'components/chart/legend';
+import compareProps from 'calypso/lib/compare-props';
+import Chart from 'calypso/components/chart';
+import Legend from 'calypso/components/chart/legend';
 import StatTabs from '../stats-tabs';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import { Card } from '@automattic/components';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
-} from 'state/stats/lists/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { getSiteOption } from 'state/sites/selectors';
+} from 'calypso/state/stats/lists/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import { formatDate, getQueryDate } from '../stats-chart-tabs/utility';
 
 const ChartTabShape = PropTypes.shape( {

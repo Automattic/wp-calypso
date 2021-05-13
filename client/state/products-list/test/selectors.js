@@ -15,25 +15,25 @@ import {
 	computeProductsWithPrices,
 } from '../selectors';
 
-import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
-import { getPlanRawPrice } from 'state/plans/selectors';
-import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
-const plans = require( 'lib/plans' );
+import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
+import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import { getPlan, TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'state/sites/plans/selectors', () => ( {
+jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
 } ) );
 
-plans.applyTestFiltersToPlansList = jest.fn( ( x ) => x );
-plans.getPlan = jest.fn();
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
+	applyTestFiltersToPlansList: jest.fn( ( x ) => x ),
+	getPlan: jest.fn(),
+} ) );
 
-const { getPlan } = plans;
-
-jest.mock( 'state/plans/selectors', () => ( {
+jest.mock( 'calypso/state/plans/selectors', () => ( {
 	getPlanRawPrice: jest.fn(),
 } ) );
 
@@ -130,7 +130,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#computeFullAndMonthlyPricesForPlan()', () => {
-		test( 'Should return shape { priceFull, priceMonthly }', () => {
+		test( 'Should return shape { priceFull }', () => {
 			getPlanDiscountedRawPrice.mockImplementation( ( a, b, c, { isMonthly } ) =>
 				isMonthly ? 10 : 120
 			);
@@ -141,7 +141,6 @@ describe( 'selectors', () => {
 				priceFullBeforeDiscount: 150,
 				priceFull: 120,
 				priceFinal: 120,
-				priceMonthly: 10,
 			} );
 		} );
 
@@ -151,7 +150,6 @@ describe( 'selectors', () => {
 				priceFullBeforeDiscount: 150,
 				priceFull: 120,
 				priceFinal: 60,
-				priceMonthly: 10, // The monthly price is without discounts applied
 			} );
 		} );
 	} );
@@ -186,7 +184,7 @@ describe( 'selectors', () => {
 			getPlan.mockImplementation( ( slug ) => testPlans[ slug ] );
 		} );
 
-		test( 'Should return list of shapes { priceFull, priceFullBeforeDiscount, priceMonthly, plan, product, planSlug }', () => {
+		test( 'Should return list of shapes { priceFull, priceFullBeforeDiscount, plan, product, planSlug }', () => {
 			const state = {
 				productsList: {
 					items: {
@@ -204,7 +202,6 @@ describe( 'selectors', () => {
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceFinal: 120,
-					priceMonthly: 10,
 				},
 				{
 					planSlug: 'plan2',
@@ -213,7 +210,6 @@ describe( 'selectors', () => {
 					priceFullBeforeDiscount: 150,
 					priceFull: 240,
 					priceFinal: 240,
-					priceMonthly: 20,
 				},
 			] );
 		} );
@@ -238,7 +234,6 @@ describe( 'selectors', () => {
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceFinal: 60,
-					priceMonthly: 10,
 				},
 				{
 					planSlug: 'plan2',
@@ -247,7 +242,6 @@ describe( 'selectors', () => {
 					priceFullBeforeDiscount: 150,
 					priceFull: 240,
 					priceFinal: 120,
-					priceMonthly: 20,
 				},
 			] );
 		} );
@@ -270,7 +264,6 @@ describe( 'selectors', () => {
 					priceFullBeforeDiscount: 150,
 					priceFinal: 120,
 					priceFull: 120,
-					priceMonthly: 10,
 				},
 			] );
 		} );
@@ -292,7 +285,6 @@ describe( 'selectors', () => {
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceFinal: 120,
-					priceMonthly: 10,
 				},
 			] );
 		} );
@@ -326,7 +318,6 @@ describe( 'selectors', () => {
 					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceFinal: 120,
-					priceMonthly: 10,
 				},
 			] );
 		} );

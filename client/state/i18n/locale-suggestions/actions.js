@@ -1,9 +1,12 @@
 /**
  * Internal dependencies
  */
-import { I18N_LOCALE_SUGGESTIONS_ADD, I18N_LOCALE_SUGGESTIONS_REQUEST } from 'state/action-types';
+import {
+	I18N_LOCALE_SUGGESTIONS_ADD,
+	I18N_LOCALE_SUGGESTIONS_REQUEST,
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/locale-guess';
+import 'calypso/state/data-layer/wpcom/locale-guess';
 
 /**
  * Action creator function: I18N_LOCALE_SUGGESTIONS_ADD

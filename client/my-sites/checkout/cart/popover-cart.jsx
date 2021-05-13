@@ -9,20 +9,20 @@ import React from 'react';
 import { reject } from 'lodash';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
-import CartMessages from './cart-messages';
-import HeaderButton from 'components/header-button';
+import HeaderButton from 'calypso/components/header-button';
 import CartButtons from './cart-buttons';
-import Count from 'components/count';
-import Popover from 'components/popover';
+import Count from 'calypso/components/count';
+import Popover from 'calypso/components/popover';
 import CartEmpty from './cart-empty';
-import { isCredits } from 'lib/products-values';
-import TrackComponentView from 'lib/analytics/track-component-view';
+import { isCredits } from '@automattic/calypso-products';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 
 /**
  * Style dependencies
@@ -32,22 +32,34 @@ import './style.scss';
 class PopoverCart extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
+		shoppingCartManager: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		onToggle: PropTypes.func.isRequired,
-		closeSectionNavMobilePanel: PropTypes.func,
 		visible: PropTypes.bool.isRequired,
 		pinned: PropTypes.bool.isRequired,
+		compact: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		compact: false,
 	};
 
 	toggleButtonRef = React.createRef();
 	hasUnmounted = false;
+
+	componentDidMount() {
+		this.props.shoppingCartManager.reloadFromServer();
+	}
 
 	componentWillUnmount() {
 		this.hasUnmounted = true;
 	}
 
 	itemCount() {
-		if ( ! this.props.cart.hasLoadedFromServer ) {
+		if (
+			this.props.shoppingCartManager.isLoading ||
+			this.props.shoppingCartManager.isPendingUpdate
+		) {
 			return;
 		}
 
@@ -55,7 +67,6 @@ class PopoverCart extends React.Component {
 	}
 
 	onToggle = () => {
-		this.props.closeSectionNavMobilePanel();
 		this.props.onToggle();
 	};
 
@@ -75,7 +86,6 @@ class PopoverCart extends React.Component {
 	};
 
 	render() {
-		const { cart, selectedSite } = this.props;
 		let countBadge;
 		const classes = classNames( 'popover-cart', {
 			pinned: this.props.pinned,
@@ -92,10 +102,10 @@ class PopoverCart extends React.Component {
 
 		return (
 			<div>
-				<CartMessages cart={ cart } selectedSite={ selectedSite } />
 				<div className={ classes }>
 					<HeaderButton
 						icon="cart"
+						compact={ this.props.compact }
 						label={ translate( 'Cart' ) }
 						ref={ this.toggleButtonRef }
 						onClick={ this.onToggle }
@@ -142,7 +152,10 @@ class PopoverCart extends React.Component {
 	}
 
 	renderCartBody() {
-		if ( ! this.props.cart.hasLoadedFromServer ) {
+		if (
+			this.props.shoppingCartManager.isLoading ||
+			this.props.shoppingCartManager.isPendingUpdate
+		) {
 			return <CartBodyLoadingPlaceholder />;
 		}
 
@@ -159,4 +172,4 @@ class PopoverCart extends React.Component {
 	}
 }
 
-export default localize( PopoverCart );
+export default withShoppingCart( localize( PopoverCart ) );

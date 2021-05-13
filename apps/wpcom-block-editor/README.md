@@ -4,6 +4,8 @@ This package provides utilities for the WordPress.com block editor integration.
 
 These utilities are intended to be built and then served from `widgets.wp.com`, so they can be loaded by a WordPress.com or a Jetpack connected site.
 
+This code is developed in the calypso monorepo at <https://github.com/Automattic/wp-calypso/tree/trunk/apps/wpcom-block-editor>.
+
 ## Editors
 
 There are two editors supported:
@@ -34,22 +36,6 @@ The block editor integration provides features for the following combination of 
     <td>✅</td>
     <td>✅</td>
     <td>✅</td>
-  </tr>
-  <tr>
-    <td>Calypso</td>
-    <td>✅</td>
-    <td>✅</td>
-    <td>✅</td>
-  </tr>
-  <tr>
-    <td rowspan="2">
-      <a href="./src/default/features/switch-to-classic.js"><code>switch-to-classic</code></a>:
-      Appends a button to the "More tools" menu for switching to the classic editor.
-    </td>
-    <td>WP Admin</td>
-    <td>✅</td>
-    <td>❌</td>
-    <td>❌</td>
   </tr>
   <tr>
     <td>Calypso</td>
@@ -173,7 +159,7 @@ Say you have an Atomic site. You visit the block-editor through the iFrame. In t
 
 If we access Gutenberg on the same Atomic site through wp-admin, the same PHP code will run. However, this time it can tell that we are not in the iFrame, so it does _not_ load the **calypso** directory, but still loads default and wpcom.
 
-Say you have a connected Jetpack site that is non-Atomic. In this scenario, if you access Gutenberg through the iFrame, the PHP code will detect the iFrame, so it loads **calypso**, and it also loads the **default** directory by default. 
+Say you have a connected Jetpack site that is non-Atomic. In this scenario, if you access Gutenberg through the iFrame, the PHP code will detect the iFrame, so it loads **calypso**, and it also loads the **default** directory by default.
 
 Then, each bundle contains features for different types of pages. For example, the `editor.js` file is in every directory, since the main goal of this app is to provide features for the editor. Additionally, the `view.js` file exists in the `default` directory in order to provide some code which is always loaded on the front end.
 
@@ -187,8 +173,20 @@ Then, each bundle contains features for different types of pages. For example, t
 	└── view.scss   ← stylesheet importing styles of features that will loaded in both editor and front-end.
 ```
 
-
 ## Build
+
+### Dev workflow
+
+The wpcom-block-editor needs an active wpcom sandbox to test.
+
+Ensure that your sandbox is set up, aliased to `wpcom-sandbox` and currently active
+
+The following will build wpcom-block-editor, and upload the results to the `widgets.wp.com/wpcom-block-editor` folder on your sandbox.
+
+```bash
+# Watch for file changes and upload build output to your sandbox
+yarn dev --sync
+```
 
 ### Manual
 

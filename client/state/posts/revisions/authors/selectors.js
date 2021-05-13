@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns an author (user) object by ID.

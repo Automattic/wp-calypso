@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { omit, repeat } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ describe( 'validateContactDetails', () => {
 		extra: {
 			fr: {
 				registrantType: 'individual',
-				sirenSiret: '123456789',
+				sirenSiret: '123456782',
 				registrantVatId: 'FRXX123456789',
 				trademarkNumber: '123456789',
 			},
@@ -104,7 +104,7 @@ describe( 'validateContactDetails', () => {
 
 			test( 'should reject long strings', () => {
 				const testDetails = Object.assign( {}, organizationDetails, {
-					organization: repeat( '0123456789', 11 ),
+					organization: '0123456789'.repeat( 11 ),
 				} );
 
 				const result = validateContactDetails( testDetails );
@@ -175,6 +175,21 @@ describe( 'validateContactDetails', () => {
 					.to.have.property( 'extra' )
 					.with.property( 'fr' )
 					.with.property( 'sirenSiret' );
+			} );
+		} );
+
+		test( 'should reject values that fail Luhn check', () => {
+			const badSiretNumbers = [ '123456789', '12345678901234' ];
+
+			badSiretNumbers.forEach( ( sirenSiret ) => {
+				const testDetails = Object.assign( {}, contactDetails, { extra: { fr: { sirenSiret } } } );
+
+				const result = validateContactDetails( testDetails );
+				expect( result, `expected to reject '${ sirenSiret }'` )
+					.to.have.property( 'extra' )
+					.with.property( 'fr' )
+					.with.property( 'sirenSiret' )
+					.to.deep.equal( [ 'checksum' ] );
 			} );
 		} );
 

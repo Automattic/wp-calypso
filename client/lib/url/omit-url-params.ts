@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import { URL as URLString } from 'types';
+import { URL as URLString } from 'calypso/types';
 import { Falsy } from 'utility-types';
 
 /**
  * Internal dependencies
  */
-import { determineUrlType, URL_TYPE } from './url-type';
-import format from './format';
+import { format, determineUrlType, URL_TYPE } from '@automattic/calypso-url';
 
 const BASE_URL = 'http://__domain__.invalid';
 

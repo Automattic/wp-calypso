@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { setSiteType } from '../actions';
-import { SIGNUP_STEPS_SITE_TYPE_SET } from 'state/action-types';
+import { SIGNUP_STEPS_SITE_TYPE_SET } from 'calypso/state/action-types';
 
 describe( 'setSiteType()', () => {
 	test( 'should return the expected action object', () => {

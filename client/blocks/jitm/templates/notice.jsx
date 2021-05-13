@@ -2,27 +2,26 @@
  * External Dependencies
  */
 import React from 'react';
-import { assign } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import UpsellNudge from 'blocks/upsell-nudge';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 export default function NoticeTemplate( { id, CTA, tracks, ...props } ) {
 	const jitmProps = { id, cta_name: id, jitm: true };
 	const tracksProps = {
 		// CTA clicks
 		tracksClickName: tracks?.click?.name ?? `jitm_nudge_click`,
-		tracksClickProperties: assign( {}, jitmProps, tracks?.click?.props ),
+		tracksClickProperties: { ...jitmProps, ...tracks?.click?.props },
 
 		// Impression
 		tracksImpressionName: tracks?.display?.name ?? `jitm_nudge_impression`,
-		tracksImpressionProperties: assign( {}, jitmProps, tracks?.display?.props ),
+		tracksImpressionProperties: { ...jitmProps, ...tracks?.display?.props },
 
 		// Dismiss
 		tracksDismissName: tracks?.dismiss?.name ?? `jitm_nudge_dismiss`,
-		trackDismissProperties: assign( {}, jitmProps, tracks?.dismiss?.props ),
+		trackDismissProperties: { ...jitmProps, ...tracks?.dismiss?.props },
 	};
 
 	return (

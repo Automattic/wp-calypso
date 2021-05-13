@@ -11,12 +11,12 @@ import { v4 as uuid } from 'uuid';
 /**
  * Internal dependencies
  */
-import SuggestionSearch from 'components/suggestion-search';
-import PopularTopics from 'components/site-verticals-suggestion-search/popular-topics';
-import QueryVerticals from 'components/data/query-verticals';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getVerticals } from 'state/signup/verticals/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import SuggestionSearch from 'calypso/components/suggestion-search';
+import PopularTopics from 'calypso/components/site-verticals-suggestion-search/popular-topics';
+import QueryVerticals from 'calypso/components/data/query-verticals';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { getVerticals } from 'calypso/state/signup/verticals/selectors';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 
 /**
  * Style dependencies

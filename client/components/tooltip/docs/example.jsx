@@ -7,7 +7,9 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import TooltipComponent from 'components/tooltip';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import TooltipComponent from 'calypso/components/tooltip';
 
 class Tooltip extends PureComponent {
 	constructor( props ) {
@@ -40,9 +42,9 @@ class Tooltip extends PureComponent {
 
 		return (
 			<div>
-				<label>
+				<FormLabel>
 					Position
-					<select value={ this.state.position } onChange={ this.changePosition }>
+					<FormSelect value={ this.state.position } onChange={ this.changePosition }>
 						<option value="top">top</option>
 						<option value="top left">top left</option>
 						<option value="top right">top right</option>
@@ -51,8 +53,8 @@ class Tooltip extends PureComponent {
 						<option value="bottom">bottom</option>
 						<option value="bottom left">bottom left</option>
 						<option value="bottom right">bottom right</option>
-					</select>
-				</label>
+					</FormSelect>
+				</FormLabel>
 
 				<hr />
 

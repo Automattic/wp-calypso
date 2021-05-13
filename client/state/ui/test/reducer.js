@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { isNotificationsOpen, selectedSiteId, siteSelectionInitialized } from '../reducer';
-import { SELECTED_SITE_SET, NOTIFICATIONS_PANEL_TOGGLE } from 'state/action-types';
+import { SELECTED_SITE_SET, NOTIFICATIONS_PANEL_TOGGLE } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#selectedSiteId()', () => {

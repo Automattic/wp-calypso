@@ -1,26 +1,25 @@
 jest.mock( 'page', () => jest.fn() );
-jest.mock( '../controller', () => jest.fn() );
-jest.mock( 'my-sites/controller', () => ( {
+jest.mock( '../controller', () => ( {
+	overview: jest.fn(),
+	insights: jest.fn(),
+	site: jest.fn(),
+	summary: jest.fn(),
+	post: jest.fn(),
+	follows: jest.fn(),
+	wordAds: jest.fn(),
+	redirectToActivity: jest.fn(),
+	redirectToDefaultModulePage: jest.fn(),
+	redirectToDefaultSitePage: jest.fn(),
+	redirectToDefaultWordAdsPeriod: jest.fn(),
+} ) );
+jest.mock( 'calypso/my-sites/controller', () => ( {
 	navigation: jest.fn(),
 	siteSelection: jest.fn(),
 	sites: jest.fn(),
 } ) );
-
-jest.mock( 'lib/route', () => ( {
-	getStatsDefaultSitePage: jest.fn(),
-} ) );
-jest.mock( 'my-sites/activity/controller', () => ( {
-	redirect: jest.fn(),
-} ) );
-jest.mock( 'config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
-jest.mock( 'controller', () => ( {
+jest.mock( 'calypso/controller', () => ( {
 	makeLayout: jest.fn(),
 	render: jest.fn(),
-} ) );
-jest.mock( 'lib/performance-tracking', () => ( {
-	trackNavigationStart: jest.fn(),
 } ) );
 
 import page from 'page';
@@ -28,18 +27,23 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection, sites } from 'my-sites/controller';
-import statsController from '../controller';
-import { redirect as redirectToAcivity } from 'my-sites/activity/controller';
-import config from 'config';
-import { makeLayout, render as clientRender } from 'controller';
-import { trackNavigationStart } from 'lib/performance-tracking';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import {
+	overview,
+	insights,
+	site,
+	summary,
+	post,
+	follows,
+	wordAds,
+	redirectToActivity,
+	redirectToDefaultModulePage,
+	redirectToDefaultSitePage,
+	redirectToDefaultWordAdsPeriod,
+} from '../controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 import router from '../index';
-
-// Return the same tag so we can make assertions in the tets
-trackNavigationStart.mockImplementation( ( tag ) => tag );
-config.isEnabled.mockImplementation( ( flag ) => flag === 'manage/stats' );
 
 const validModules = [
 	'posts',
@@ -52,171 +56,57 @@ const validModules = [
 	'filedownloads',
 	'searchterms',
 	'annualstats',
-];
-const validPeriods = [ 'day', 'week', 'month', 'year' ];
+].join( '|' );
+
+const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );
 
 const routes = {
-	'/stats/day': [
-		'stats',
+	[ `/stats/:period(${ validPeriods })` ]: [
 		siteSelection,
 		navigation,
-		statsController.overview,
+		overview,
 		makeLayout,
 		clientRender,
 	],
-	'/stats/week': [
-		'stats',
+	'/stats/insights': [ siteSelection, navigation, sites, makeLayout, clientRender ],
+	'/stats/insights/:site': [ siteSelection, navigation, insights, makeLayout, clientRender ],
+	[ `/stats/:period(${ validPeriods })/:site` ]: [
 		siteSelection,
 		navigation,
-		statsController.overview,
+		site,
 		makeLayout,
 		clientRender,
 	],
-	'/stats/month': [
-		'stats',
+	[ `/stats/:module(${ validModules })/:site` ]: [ redirectToDefaultModulePage ],
+	[ `/stats/:period(${ validPeriods })/:module(${ validModules })/:site` ]: [
 		siteSelection,
 		navigation,
-		statsController.overview,
+		summary,
 		makeLayout,
 		clientRender,
 	],
-	'/stats/year': [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.overview,
-		makeLayout,
-		clientRender,
-	],
-	'/stats/insights': [ 'stats', siteSelection, navigation, sites, makeLayout, clientRender ],
-	'/stats/insights/:site': [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.insights,
-		makeLayout,
-		clientRender,
-	],
-	'/stats/day/:site': [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.site,
-		makeLayout,
-		clientRender,
-	],
-	'/stats/week/:site': [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.site,
-		makeLayout,
-		clientRender,
-	],
-	'/stats/month/:site': [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.site,
-		makeLayout,
-		clientRender,
-	],
-	'/stats/year/:site': [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.site,
-		makeLayout,
-		clientRender,
-	],
-	[ `/stats/:module(${ validModules.join( '|' ) })/:site` ]: [
-		statsController.redirectToDefaultModulePage,
-	],
-	[ `/stats/day/:module(${ validModules.join( '|' ) })/:site` ]: [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.summary,
-		makeLayout,
-		clientRender,
-	],
-	[ `/stats/week/:module(${ validModules.join( '|' ) })/:site` ]: [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.summary,
-		makeLayout,
-		clientRender,
-	],
-	[ `/stats/month/:module(${ validModules.join( '|' ) })/:site` ]: [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.summary,
-		makeLayout,
-		clientRender,
-	],
-	[ `/stats/year/:module(${ validModules.join( '|' ) })/:site` ]: [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.summary,
-		makeLayout,
-		clientRender,
-	],
-	'/stats/post/:post_id/:site': [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.post,
-		makeLayout,
-		clientRender,
-	],
+	'/stats/post/:post_id/:site': [ siteSelection, navigation, post, makeLayout, clientRender ],
 
-	'/stats/page/:post_id/:site': [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.post,
-		makeLayout,
-		clientRender,
-	],
-	'/stats/follows/comment/:site': [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.follows,
-		makeLayout,
-		clientRender,
-	],
+	'/stats/page/:post_id/:site': [ siteSelection, navigation, post, makeLayout, clientRender ],
+	'/stats/follows/comment/:site': [ siteSelection, navigation, follows, makeLayout, clientRender ],
 	'/stats/follows/comment/:page_num/:site': [
-		'stats',
 		siteSelection,
 		navigation,
-		statsController.follows,
+		follows,
 		makeLayout,
 		clientRender,
 	],
-	'/stats/activity': [ 'stats', siteSelection, sites, redirectToAcivity, makeLayout, clientRender ],
-	'/stats/activity/:site': [
-		'stats',
+	'/stats/activity/:site?': [ redirectToActivity ],
+	[ `/stats/ads/:period(${ validPeriods })/:site` ]: [
 		siteSelection,
 		navigation,
-		redirectToAcivity,
+		wordAds,
 		makeLayout,
 		clientRender,
 	],
-	[ `/stats/ads/:period(${ validPeriods.join( '|' ) })/:site` ]: [
-		'stats',
-		siteSelection,
-		navigation,
-		statsController.wordAds,
-		makeLayout,
-		clientRender,
-	],
-	'/stats/wordads/(.*)': [ statsController.redirectToDefaultWordAdsPeriod ],
-	'/stats/ads/(.*)': [ statsController.redirectToDefaultWordAdsPeriod ],
-	'/stats/(.*)': [ statsController.redirectToDefaultSitePage ],
+	'/stats/wordads/(.*)': [ redirectToDefaultWordAdsPeriod ],
+	'/stats/ads/(.*)': [ redirectToDefaultWordAdsPeriod ],
+	'/stats/(.*)': [ redirectToDefaultSitePage ],
 };
 
 describe( 'Sets all routes', () => {

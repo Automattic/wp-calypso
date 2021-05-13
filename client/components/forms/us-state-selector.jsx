@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SelectOptGroups from 'components/forms/select-opt-groups';
+import SelectOptGroups from 'calypso/components/forms/select-opt-groups';
 
 const USStateSelector = ( props ) => {
 	const { translate } = props;

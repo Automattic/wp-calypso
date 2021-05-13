@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestRewindState } from 'state/rewind/state/actions';
+import { requestRewindState } from 'calypso/state/rewind/state/actions';
 
 export class QueryRewindState extends Component {
 	componentDidMount() {

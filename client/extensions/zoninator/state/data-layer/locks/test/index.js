@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { fetch, onSuccess, onError } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestLock, requestLockError, updateLock } from 'zoninator/state/locks/actions';
 
 describe( 'handlers', () => {
