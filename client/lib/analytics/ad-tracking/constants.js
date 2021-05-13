@@ -67,16 +67,17 @@ export const OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js';
 export const PINTEREST_SCRIPT_URL = 'https://s.pinimg.com/ct/core.js';
 export const TRACKING_IDS = {
 	bingInit: '4074038',
+	criteo: '31321',
+	dcmFloodlightAdvertiserId: '6355556',
 	facebookInit: '823166884443641',
 	facebookJetpackInit: '919484458159593',
-	criteo: '31321',
 	fullStory: '120RG4',
-	quantcast: 'p-3Ma3jHaQMB_bS',
-	twitterPixelId: 'nvzbs',
-	dcmFloodlightAdvertiserId: '6355556',
 	linkedInPartnerId: '195308',
-	quoraPixelId: '420845cb70e444938cf0728887a74ca1',
 	outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
+	pinterestInit: '2613194105266',
+	quantcast: 'p-3Ma3jHaQMB_bS',
+	quoraPixelId: '420845cb70e444938cf0728887a74ca1',
+	twitterPixelId: 'nvzbs',
 	wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ),
 	wpcomFloodlightGtag: 'DC-6355556',
 	wpcomGoogleAdsGtag: 'AW-946162814',
@@ -85,7 +86,6 @@ export const TRACKING_IDS = {
 	wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
 	wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
 	wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
-	pinterestInit: '2613194105266',
 };
 // This name is something we created to store a session id for DCM Floodlight session tracking
 export const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';

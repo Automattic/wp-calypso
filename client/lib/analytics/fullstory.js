@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import cookie from 'cookie';
 import debug from 'debug';
 
 /**
@@ -18,10 +17,6 @@ const fullStoryDebug = debug( 'calypso:analytics:fullstory' );
 let fullStoryScriptLoaded = false;
 
 export function retargetFullStory() {
-	if ( document.location.href.indexOf( 'checkout' ) !== -1 ) {
-		return;
-	}
-
 	maybeAddFullStoryScript();
 
 	if ( ! window.FS ) {
@@ -47,16 +42,12 @@ export function recordFullStoryEvent( name, _props ) {
 }
 
 function maybeAddFullStoryScript() {
-	const cookies = cookie.parse( document.cookie );
-	const isUS = 'US' === cookies.country_code;
-
 	if (
 		fullStoryScriptLoaded ||
 		! config.isEnabled( 'fullstory' ) ||
 		getDoNotTrack() ||
 		isE2ETest() ||
 		isPiiUrl() ||
-		! isUS ||
 		! mayWeTrackCurrentUserGdpr()
 	) {
 		if ( ! fullStoryScriptLoaded ) {
