@@ -16011,6 +16011,13 @@ jake@^10.6.1:
     filelist "^1.0.1"
     minimatch "^3.0.4"
 
+jasmine-fail-fast@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/jasmine-fail-fast/-/jasmine-fail-fast-2.0.1.tgz#222daa16c89b675aba4ed9552d62cf0d1e759d71"
+  integrity sha512-En8ONwvDQOV+jyiZEZvbvUSLWSdJFj9HiWjhLdGq/V/gxs4XyST730ooe928BbRxv4bfy05OpykKuoOU4aLC5w==
+  dependencies:
+    lodash "^4.17.15"
+
 jest-canvas-mock@^2.3.0:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/jest-canvas-mock/-/jest-canvas-mock-2.3.1.tgz#9535d14bc18ccf1493be36ac37dd349928387826"

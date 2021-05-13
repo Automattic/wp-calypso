@@ -47,6 +47,7 @@
 		"grunt-cli": "^1.2.0",
 		"grunt-concurrent": "^2.3.0",
 		"grunt-shell": "^1.1.2",
+		"jasmine-fail-fast": "^2.0.1",
 		"junit-viewer": "^4.9.6",
 		"lodash": "^4.17.20",
 		"mailosaur": "^4.0.0",
