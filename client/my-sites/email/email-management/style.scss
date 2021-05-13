@@ -46,24 +46,45 @@
 
 .email-list-active {
 	> .card {
-		display: flex;
-		align-items: center;
 		color: var( --color-text );
+		display: flex;
+
 		> div > span {
 			font-size: $font-body-small;
 			color: var( --color-text-subtle );
 		}
+
+		.email-list-active__warning {
+			font-size: $font-body-extra-small;
+			margin-left: 14px;
+
+			> span {
+				color: var( --color-error-50 );
+				vertical-align: middle;
+			}
+
+			> svg {
+				fill: var( --color-error-50 );
+				height: 18px;
+				margin-right: 6px;
+				vertical-align: middle;
+				width: 18px;
+			}
+		}
 	}
+
 	> .card.is-card-link:hover {
 		background-color: var( --color-neutral-0 );
 	}
 }
 
 .email-list-active__item-icon {
+	align-self: center;
+
 	> img, svg {
 		height: 36px;
 		width: 36px;
-		margin-right: 20px;
+		margin-right: 24px;
 	}
 	> .gridicon.gridicons-my-sites {
 		fill: var( --color-wordpress-com );
