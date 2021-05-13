@@ -14,6 +14,7 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
+import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import EmptyContent from 'calypso/components/empty-content';
@@ -99,7 +100,7 @@ class EmailManagementHome extends React.Component {
 		const nonWpcomDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
 
 		if ( nonWpcomDomains.length < 1 ) {
-			return this.renderContentWithHeader( <div>no domains</div> );
+			return this.renderContentWithHeader( <EmailNoDomain selectedSite={ selectedSite } /> );
 		}
 
 		const domainsWithEmail = nonWpcomDomains.filter( domainHasEmail );
