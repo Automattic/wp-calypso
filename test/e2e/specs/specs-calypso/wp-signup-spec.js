@@ -64,7 +64,7 @@ const locale = driverManager.currentLocale();
 const passwordForTestAccounts = config.get( 'passwordForNewTestSignUps' );
 const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 
-describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
+describe.skip( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 	let driver;
 
 	beforeAll( async function () {
