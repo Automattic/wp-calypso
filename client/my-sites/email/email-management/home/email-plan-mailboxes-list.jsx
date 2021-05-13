@@ -325,7 +325,7 @@ function EmailPlanMailboxesList( { accountType, domain, isLoadingEmails, mailbox
 					{ action }
 				</div>
 				{ hasTitanMailWithUs( domain ) ? (
-					<TitanActionMenu domain={ domain } />
+					<TitanActionMenu />
 				) : (
 					<GmailActionMenu domainName={ domain.name } />
 				) }
