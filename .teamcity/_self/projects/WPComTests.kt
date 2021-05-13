@@ -155,15 +155,16 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 			// been muted previously.
 			nonZeroExitCode = false
 
-		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
-		// crashes and no tests are run.
-		failOnMetricChange {
-			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-			threshold = 50
-			units = BuildFailureOnMetric.MetricUnit.PERCENTS
-			comparison = BuildFailureOnMetric.MetricComparison.LESS
-			compareTo = build {
-				buildRule = lastSuccessful()
+			// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
+			// crashes and no tests are run.
+			failOnMetricChange {
+				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+				threshold = 50
+				units = BuildFailureOnMetric.MetricUnit.PERCENTS
+				comparison = BuildFailureOnMetric.MetricComparison.LESS
+				compareTo = build {
+					buildRule = lastSuccessful()
+				}
 			}
 		}
 
