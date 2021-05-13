@@ -23,26 +23,28 @@ import { Button } from '@automattic/components';
  */
 import './install-theme-button.scss';
 
-const InstallThemeButton = connectOptions( ( { isMultisite, isLoggedIn, siteSlug } ) => {
-	if ( ! isLoggedIn || isMultisite ) {
-		return null;
+const InstallThemeButton = connectOptions(
+	( { isMultisite, isLoggedIn, siteSlug, dispatchTracksEvent } ) => {
+		if ( ! isLoggedIn || isMultisite ) {
+			return null;
+		}
+
+		const clickHandler = () => {
+			trackClick( 'upload theme' );
+			dispatchTracksEvent();
+		};
+
+		return (
+			<Button
+				className="themes__upload-button"
+				onClick={ clickHandler }
+				href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
+			>
+				{ translate( 'Install theme' ) }
+			</Button>
+		);
 	}
-
-	const clickHandler = () => {
-		trackClick( 'upload theme' );
-		recordTracksEvent( 'calypso_click_theme_upload' );
-	};
-
-	return (
-		<Button
-			className="themes__upload-button"
-			onClick={ clickHandler }
-			href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
-		>
-			{ translate( 'Install theme' ) }
-		</Button>
-	);
-} );
+);
 
 const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
@@ -53,4 +55,8 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps )( InstallThemeButton );
+const mapDispatchToProps = ( dispatch ) => ( {
+	dispatchTracksEvent: () => dispatch( recordTracksEvent( 'calypso_click_theme_upload' ) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( InstallThemeButton );
