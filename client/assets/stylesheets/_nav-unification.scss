@@ -17,9 +17,11 @@
 		--masterbar-height: 32px;
 	}
 
-	&.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) {
-		--sidebar-width-max: 36px;
-		--sidebar-width-min: 36px;
+	&.is-group-sites.is-sidebar-collapsed {
+		.layout:not( .focus-sites ) {
+			--sidebar-width-max: 36px;
+			--sidebar-width-min: 36px;
+		}
 	}
 
 	$nav-unification-primary: #23282d;

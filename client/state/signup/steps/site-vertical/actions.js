@@ -20,9 +20,8 @@ export function setSiteVertical( siteVerticalData ) {
 }
 
 /**
- * It's a thunk since there is still Flux involved, so it can't be a plain object yet.
- * If the signup state is fully reduxified, we can just keep setSiteVertical() and
- * keep all the dependency filling and progress filling in a middleware.
+ * TODO: It was a thunk since there used to be Flux involved, but now it can be converted to a plain object.
+ * We can just keep setSiteVertical() and keep all the dependency filling and progress filling in a middleware.
  *
  * @param {object} siteVerticalData An object containing `isUserInput`, `name`, `preview` and `slug` vertical values.
  * @param {string} stepName The name of the step to submit. Default is `site-topic`

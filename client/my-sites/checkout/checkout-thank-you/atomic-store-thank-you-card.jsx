@@ -14,7 +14,7 @@ import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getPlanClass } from 'calypso/lib/plans';
+import { getPlanClass } from '@automattic/calypso-products';
 import {
 	getCurrentUserEmail,
 	isCurrentUserEmailVerified,

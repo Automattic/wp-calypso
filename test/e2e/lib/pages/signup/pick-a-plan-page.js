@@ -39,21 +39,21 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 	async _selectPlan( level ) {
 		// We are switching from two separate designs for mobile and desktop plans to one. There will be two buttons -
 		// one visible and one hidden in control and only one button in the test variation.
-		const planSelector =
+		const planLocator =
 			driverManager.currentScreenSize() === 'mobile'
 				? `.plan-features__mobile button.is-${ level }-plan, .plan-features-comparison__table button.is-${ level }-plan, .plan-features__table button.is-${ level }-plan`
 				: `.plan-features-comparison__table button.is-${ level }-plan, .plan-features__table button.is-${ level }-plan`;
 
-		let selector = By.css( planSelector );
+		let locator = By.css( planLocator );
 
 		if ( level === 'free' ) {
-			if ( ! ( await driverHelper.isElementPresent( this.driver, selector ) ) ) {
-				selector = By.css(
+			if ( ! ( await driverHelper.isElementLocated( this.driver, locator ) ) ) {
+				locator = By.css(
 					'.plans-features-main__banner-content button, .formatted-header__subtitle button'
 				);
 			}
 		}
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css(
 				'.plan-features__mobile button.is-business-plan, .plan-features-comparison__table button.is-business-plan, .plan-features__table button.is-business-plan'
@@ -61,12 +61,12 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 		);
 		await this.scrollPlanInToView( level );
 
-		await driverHelper.clickWhenClickable( this.driver, selector );
+		await driverHelper.clickWhenClickable( this.driver, locator );
 		try {
-			await driverHelper.waitTillNotPresent( this.driver, selector );
+			await driverHelper.waitUntilElementNotLocated( this.driver, locator );
 		} catch {
 			//If the first click doesn't take, try again
-			await driverHelper.clickWhenClickable( this.driver, selector );
+			await driverHelper.clickWhenClickable( this.driver, locator );
 		}
 	}
 
@@ -92,7 +92,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 	}
 
 	async clickDirectionArrow( direction ) {
-		const arrowSelector = By.css( `.plan-features__scroll-${ direction } button` );
-		return await driverHelper.clickWhenClickable( this.driver, arrowSelector );
+		const arrowLocator = By.css( `.plan-features__scroll-${ direction } button` );
+		return await driverHelper.clickWhenClickable( this.driver, arrowLocator );
 	}
 }

@@ -7,7 +7,6 @@
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -48,7 +47,7 @@ const defaultProps = {
 			wpLocale: 'ko_KR',
 		},
 	],
-	translate: identity,
+	translate: ( string ) => string,
 	valueKey: 'langSlug',
 	value: 'en',
 	countryCode: 'FR',

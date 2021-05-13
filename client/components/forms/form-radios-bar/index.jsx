@@ -17,7 +17,7 @@ import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thu
  */
 import './style.scss';
 
-const FormRadiosBar = ( { isThumbnail, checked, onChange, items } ) => {
+const FormRadiosBar = ( { isThumbnail, checked, onChange, items, disabled } ) => {
 	return (
 		<div className={ classnames( 'form-radios-bar', { 'is-thumbnail': isThumbnail } ) }>
 			{ items.map( ( item, i ) =>
@@ -26,11 +26,17 @@ const FormRadiosBar = ( { isThumbnail, checked, onChange, items } ) => {
 						key={ item.value + i }
 						checked={ checked === item.value }
 						onChange={ onChange }
+						disabled={ disabled }
 						{ ...item }
 					/>
 				) : (
 					<FormLabel key={ item.value + i }>
-						<FormRadio checked={ checked === item.value } onChange={ onChange } { ...item } />
+						<FormRadio
+							checked={ checked === item.value }
+							disabled={ disabled }
+							onChange={ onChange }
+							{ ...item }
+						/>
 					</FormLabel>
 				)
 			) }

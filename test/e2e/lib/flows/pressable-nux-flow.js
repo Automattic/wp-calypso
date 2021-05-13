@@ -18,18 +18,18 @@ export default class PressableNUXFlow {
 	}
 
 	async addSiteCredentials() {
-		const shareCredentialsSelector = By.css( '.creds-permission__card button' );
-		const continueSelector = By.css( 'a.creds-complete__button' );
-		const successNoticeSelector = By.css( '#notices .is-success .gridicons-checkmark' );
+		const shareCredentialsLocator = By.css( '.creds-permission__card button' );
+		const continueLocator = By.css( 'a.creds-complete__button' );
+		const successNoticeLocator = By.css( '#notices .is-success .gridicons-checkmark' );
 
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			shareCredentialsSelector,
+			shareCredentialsLocator,
 			explicitWaitMS * 2
 		);
-		await driverHelper.clickWhenClickable( this.driver, shareCredentialsSelector );
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, successNoticeSelector );
-		await driverHelper.clickWhenClickable( this.driver, continueSelector );
+		await driverHelper.clickWhenClickable( this.driver, shareCredentialsLocator );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, successNoticeLocator );
+		await driverHelper.clickWhenClickable( this.driver, continueLocator );
 		const loginPage = await WPAdminLogonPage.Expect( this.driver );
 		return await loginPage.logonSSO();
 	}

@@ -15,7 +15,7 @@ import RevokeLicenseDialog from 'calypso/jetpack-cloud/sections/partner-portal/r
 interface Props {
 	licenseKey: string;
 	product: string;
-	domain: string;
+	siteUrl: string | null;
 	attachedAt: string | null;
 	revokedAt: string | null;
 }
@@ -23,7 +23,7 @@ interface Props {
 export default function LicenseDetailsActions( {
 	licenseKey,
 	product,
-	domain,
+	siteUrl,
 	attachedAt,
 	revokedAt,
 }: Props ): ReactElement {
@@ -51,7 +51,7 @@ export default function LicenseDetailsActions( {
 				<RevokeLicenseDialog
 					licenseKey={ licenseKey }
 					product={ product }
-					domain={ domain }
+					siteUrl={ siteUrl }
 					onClose={ closeRevokeDialog }
 				/>
 			) }

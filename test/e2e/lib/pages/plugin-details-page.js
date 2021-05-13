@@ -14,34 +14,37 @@ const by = webdriver.By;
 export default class PluginDetailsPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, by.css( '.plugin__page' ) );
-		this.successNoticeSelector = by.css( '.notice.is-success.is-dismissable' );
-		this.activatePluginSelector = by.css( '.plugin-activate-toggle .components-form-toggle' );
+		this.successNoticeLocator = by.css( '.notice.is-success.is-dismissable' );
+		this.activatePluginLocator = by.css( '.plugin-activate-toggle .components-form-toggle' );
 	}
 
 	async clickActivateToggleForPlugin() {
-		return await driverHelper.clickWhenClickable( this.driver, this.activatePluginSelector );
+		return await driverHelper.clickWhenClickable( this.driver, this.activatePluginLocator );
 	}
 
 	async waitForPlugin() {
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			this.activatePluginSelector
+			this.activatePluginLocator
 		);
 	}
 
 	async waitForSuccessNotice() {
-		return await driverHelper.waitUntilLocatedAndVisible( this.driver, this.successNoticeSelector );
+		return await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			this.successNoticeLocator
+		);
 	}
 
 	async getSuccessNoticeText() {
-		return await this.driver.findElement( this.successNoticeSelector ).getText();
+		return await this.driver.findElement( this.successNoticeLocator ).getText();
 	}
 
 	async ensureDeactivated() {
-		const element = await this.driver.findElement( this.activatePluginSelector );
+		const element = await this.driver.findElement( this.activatePluginLocator );
 		const active = await element.isDisplayed( by.css( '.is-checked' ) );
 		if ( active === true ) {
-			await driverHelper.clickWhenClickable( this.driver, this.activatePluginSelector );
+			await driverHelper.clickWhenClickable( this.driver, this.activatePluginLocator );
 			await this.waitForSuccessNotice();
 		}
 	}

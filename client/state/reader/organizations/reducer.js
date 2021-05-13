@@ -10,7 +10,7 @@ import {
 	READER_ORGANIZATIONS_REQUEST,
 	READER_ORGANIZATIONS_RECEIVE,
 } from 'calypso/state/reader/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
@@ -26,7 +26,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = [], action ) =
 	return state;
 } );
 
-export const isRequesting = withoutPersistence( ( state = false, action ) => {
+export const isRequesting = ( state = false, action ) => {
 	switch ( action.type ) {
 		case READER_ORGANIZATIONS_REQUEST:
 			return true;
@@ -35,7 +35,7 @@ export const isRequesting = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	items,

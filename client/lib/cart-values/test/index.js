@@ -2,7 +2,6 @@
  * External dependencies
  */
 import assert from 'assert';
-import { flow } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -24,34 +23,6 @@ describe( 'index', () => {
 			domain: 'testdomain.com',
 		} );
 		PREMIUM_PRODUCT = cartItems.planItem( 'value_bundle', { isFreeTrial: false } );
-	} );
-
-	describe( 'cart change functions', () => {
-		describe( 'flow( changeFunctions... )', () => {
-			test( 'should combine multiple cart operations into a single step', () => {
-				const addTwo = flow(
-					cartItems.addCartItem( PREMIUM_PRODUCT ),
-					cartItems.addCartItem( DOMAIN_REGISTRATION_PRODUCT )
-				);
-
-				const newCart = addTwo( { blog_id: TEST_BLOG_ID, products: [] } );
-				assert( cartItems.hasProduct( newCart, 'value_bundle' ) );
-				assert( cartItems.hasProduct( newCart, 'dotcom_domain' ) );
-			} );
-		} );
-
-		describe( 'cartItems.addCartItem( cartItem )', () => {
-			test( 'should add the cartItem to the products array', () => {
-				const initialCart = { blog_id: TEST_BLOG_ID, products: [] };
-				const newCart = cartItems.addCartItem( PREMIUM_PRODUCT )( initialCart );
-				const expectedCart = {
-					blog_id: TEST_BLOG_ID,
-					products: [ PREMIUM_PRODUCT ],
-				};
-
-				assert.deepEqual( newCart, expectedCart );
-			} );
-		} );
 	} );
 
 	describe( 'cartItems.hasProduct( cart, productSlug )', () => {

@@ -91,12 +91,6 @@ const sections = [
 		group: 'me',
 	},
 	{
-		name: 'difm',
-		paths: [ '/me/difm-intake' ],
-		module: 'calypso/me/difm-intake',
-		group: 'me',
-	},
-	{
 		name: 'media',
 		paths: [ '/media' ],
 		module: 'calypso/my-sites/media',
@@ -356,7 +350,7 @@ const sections = [
 	},
 	{
 		name: 'auth',
-		paths: [ '/oauth-login', '/authorize', '/api/oauth/token' ],
+		paths: [ '/oauth-login', '/api/oauth/token' ],
 		module: 'calypso/auth',
 		enableLoggedOut: true,
 	},

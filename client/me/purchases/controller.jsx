@@ -39,7 +39,7 @@ function noSites( context, analyticsPath ) {
 	const NoSitesWrapper = localize( () => {
 		return (
 			<PurchasesWrapper>
-				<Main className="purchases__no-site is-wide-layout">
+				<Main wideLayout className="purchases__no-site">
 					<PageViewTracker path={ analyticsPath } title="Purchases > No Sites" />
 					<PurchasesNavigation section="activeUpgrades" />
 					<NoSitesMessage />
@@ -62,7 +62,7 @@ export function cancelPurchase( context, next ) {
 	const CancelPurchaseWrapper = localize( () => {
 		return (
 			<PurchasesWrapper title={ titles.cancelPurchase }>
-				<Main className="purchases__cancel is-wide-layout">
+				<Main wideLayout className="purchases__cancel">
 					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 					<CancelPurchase
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
@@ -87,7 +87,7 @@ export function confirmCancelDomain( context, next ) {
 	const ConfirmCancelDomainWrapper = localize( () => {
 		return (
 			<PurchasesWrapper title={ titles.confirmCancelDomain }>
-				<Main className="purchases__cancel-domain confirm-cancel-domain is-wide-layout">
+				<Main wideLayout className="purchases__cancel-domain confirm-cancel-domain">
 					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 					<ConfirmCancelDomain
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
@@ -99,35 +99,6 @@ export function confirmCancelDomain( context, next ) {
 	} );
 
 	context.primary = <ConfirmCancelDomainWrapper />;
-	next();
-}
-
-export function editCardDetails( context, next ) {
-	const state = context.store.getState();
-
-	if ( userHasNoSites( state ) ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId/payment/edit/:cardId' );
-	}
-
-	const EditCardDetailsWrapper = localize( () => {
-		return (
-			<PurchasesWrapper title={ titles.editCardDetails }>
-				<Main className="purchases__change is-wide-layout">
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-					<ChangePaymentMethod
-						cardId={ context.params.cardId }
-						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-						siteSlug={ context.params.site }
-						getManagePurchaseUrlFor={ managePurchaseUrl }
-						purchaseListUrl={ purchasesRoot }
-						isFullWidth={ true }
-					/>
-				</Main>
-			</PurchasesWrapper>
-		);
-	} );
-
-	context.primary = <EditCardDetailsWrapper />;
 	next();
 }
 
@@ -146,11 +117,11 @@ export function list( context, next ) {
 
 export function managePurchase( context, next ) {
 	const ManagePurchasesWrapper = localize( () => {
-		const classes = 'manage-purchase is-wide-layout';
+		const classes = 'manage-purchase';
 
 		return (
 			<PurchasesWrapper title={ titles.managePurchase }>
-				<Main className={ classes }>
+				<Main wideLayout className={ classes }>
 					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 					<PageViewTracker
 						path="/me/purchases/:site/:purchaseId"
@@ -184,7 +155,7 @@ export function changePaymentMethod( context, next ) {
 	const ChangePaymentMethodWrapper = localize( () => {
 		return (
 			<PurchasesWrapper title={ titles.changePaymentMethod }>
-				<Main className="purchases__edit-payment-method is-wide-layout">
+				<Main wideLayout className="purchases__edit-payment-method">
 					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 					<ChangePaymentMethod
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }

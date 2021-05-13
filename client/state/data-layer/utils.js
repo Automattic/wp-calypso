@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { camelCase, isObjectLike, isPlainObject, map, reduce, set, snakeCase } from 'lodash';
+import { camelCase, isPlainObject, map, reduce, set, snakeCase } from 'lodash';
 import { extendAction } from '@automattic/state-utils';
 
 const doBypassDataLayer = {
@@ -31,7 +31,7 @@ export function convertKeysBy( obj, fn ) {
 			obj,
 			( result, value, key ) => {
 				const newKey = fn( key );
-				const newValue = isObjectLike( value ) ? convertKeysBy( value, fn ) : value;
+				const newValue = convertKeysBy( value, fn );
 				return set( result, [ newKey ], newValue );
 			},
 			{}

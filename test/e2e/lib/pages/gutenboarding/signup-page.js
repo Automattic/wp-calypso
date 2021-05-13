@@ -15,17 +15,17 @@ export default class SignupPage extends AsyncBaseContainer {
 	}
 
 	async enterEmail( email ) {
-		const emailSelector = By.css( '.signup-form__body input[type="email"]' );
-		return await driverHelper.setWhenSettable( this.driver, emailSelector, email );
+		const emailLocator = By.css( '.signup-form__body input[type="email"]' );
+		return await driverHelper.setWhenSettable( this.driver, emailLocator, email );
 	}
 
 	async enterPassword( password ) {
-		const passwordSelector = By.css( '.signup-form__body input[type="password"]' );
-		return await driverHelper.setWhenSettable( this.driver, passwordSelector, password );
+		const passwordLocator = By.css( '.signup-form__body input[type="password"]' );
+		return await driverHelper.setWhenSettable( this.driver, passwordLocator, password );
 	}
 
 	async createAccount() {
-		const submitButtonSelector = By.css( '.signup-form__body button[type="submit"]' );
-		return await driverHelper.clickWhenClickable( this.driver, submitButtonSelector );
+		const submitButtonLocator = By.css( '.signup-form__body button[type="submit"]' );
+		return await driverHelper.clickWhenClickable( this.driver, submitButtonLocator );
 	}
 }

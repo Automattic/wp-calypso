@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, head, isEmpty, identity, includes, partial, some, values } from 'lodash';
+import { flow, get, head, isEmpty, includes, partial, some, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -87,7 +87,6 @@ export class EditorMediaModal extends Component {
 		labels: Object.freeze( {} ),
 		setView: noop,
 		resetView: noop,
-		translate: identity,
 		view: ModalViews.LIST,
 		galleryViewEnabled: true,
 		imageEditorProps: {},

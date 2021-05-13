@@ -5,6 +5,10 @@ import React, { useEffect } from 'react';
 import { find } from 'lodash';
 
 import { CompactCard } from '@automattic/components';
+import {
+	FEATURE_GOOGLE_ANALYTICS,
+	PLAN_JETPACK_SECURITY_DAILY,
+} from '@automattic/calypso-products';
 import ExternalLink from 'calypso/components/external-link';
 import SupportInfo from 'calypso/components/support-info';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -18,14 +22,10 @@ import FormAnalyticsStores from '../form-analytics-stores';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
-import { FEATURE_GOOGLE_ANALYTICS } from 'calypso/lib/plans/constants';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import {
-	OPTIONS_JETPACK_SECURITY,
-	PRODUCT_UPSELLS_BY_FEATURE,
-} from 'calypso/my-sites/plans/jetpack-plans/constants';
+import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 /**
  * Style dependencies
@@ -81,21 +81,6 @@ const GoogleAnalyticsJetpackForm = ( {
 	};
 
 	const renderForm = () => {
-		const plan = OPTIONS_JETPACK_SECURITY;
-
-		const nudge = (
-			<UpsellNudge
-				description={ translate(
-					"Monitor your site's views, clicks, and other important metrics"
-				) }
-				event={ 'google_analytics_settings' }
-				feature={ FEATURE_GOOGLE_ANALYTICS }
-				plan={ plan }
-				href={ upsellHref }
-				showIcon={ true }
-				title={ nudgeTitle }
-			/>
-		);
 		return (
 			<form id="analytics" onSubmit={ handleSubmitForm }>
 				<QueryJetpackModules siteId={ siteId } />
@@ -225,7 +210,17 @@ const GoogleAnalyticsJetpackForm = ( {
 					) }
 				</CompactCard>
 				{ showUpgradeNudge && site && site.plan ? (
-					nudge
+					<UpsellNudge
+						description={ translate(
+							"Monitor your site's views, clicks, and other important metrics"
+						) }
+						event={ 'google_analytics_settings' }
+						feature={ FEATURE_GOOGLE_ANALYTICS }
+						plan={ PLAN_JETPACK_SECURITY_DAILY }
+						href={ upsellHref }
+						showIcon={ true }
+						title={ nudgeTitle }
+					/>
 				) : (
 					<CompactCard>
 						<div className="analytics site-settings__analytics">

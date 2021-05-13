@@ -75,11 +75,20 @@ async function stripeCardProcessor(
 		contactDetails,
 	} = transactionOptions;
 
-	const { id: paymentMethodToken } = await createStripePaymentMethodToken( {
-		...submitData,
-		country: contactDetails?.countryCode?.value,
-		postalCode: getPostalCode( contactDetails ),
-	} );
+	let paymentMethodToken;
+	try {
+		const tokenResponse = await createStripePaymentMethodToken( {
+			...submitData,
+			country: contactDetails?.countryCode?.value,
+			postalCode: getPostalCode( contactDetails ),
+		} );
+		paymentMethodToken = tokenResponse.id;
+	} catch ( error ) {
+		debug( 'transaction failed' );
+		// Errors here are "expected" errors, meaning that they (hopefully) come
+		// from stripe and not from some bug in the frontend code.
+		return makeErrorResponse( error.message );
+	}
 
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,
@@ -143,13 +152,22 @@ async function ebanxCardProcessor(
 		contactDetails,
 	} = transactionOptions;
 
-	const paymentMethodToken: EbanxToken = await createEbanxToken( 'new_purchase', {
-		country: submitData.countryCode,
-		name: submitData.name,
-		number: submitData.number,
-		cvv: submitData.cvv,
-		'expiration-date': submitData[ 'expiration-date' ],
-	} );
+	let paymentMethodToken;
+	try {
+		const ebanxTokenResponse: EbanxToken = await createEbanxToken( 'new_purchase', {
+			country: submitData.countryCode,
+			name: submitData.name,
+			number: submitData.number,
+			cvv: submitData.cvv,
+			'expiration-date': submitData[ 'expiration-date' ],
+		} );
+		paymentMethodToken = ebanxTokenResponse;
+	} catch ( error ) {
+		debug( 'transaction failed' );
+		// Errors here are "expected" errors, meaning that they (hopefully) come
+		// from Ebanx and not from some bug in the frontend code.
+		return makeErrorResponse( error.message );
+	}
 
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,

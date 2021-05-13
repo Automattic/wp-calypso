@@ -130,6 +130,11 @@ export class AuthFormHeader extends Component {
 				case 'auth-in-progress':
 					return translate( 'Connecting your store' );
 				default:
+					if ( wooDnaConfig.getFlowName() === 'woodna:woocommerce-payments' ) {
+						return translate(
+							'Approve your connection. Your account will enable you to start using the features and benefits offered by WooCommerce Payments'
+						);
+					}
 					return translate( 'Approve your connection' );
 			}
 		}

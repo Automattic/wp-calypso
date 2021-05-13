@@ -16,6 +16,7 @@ import {
 } from '@automattic/composite-checkout';
 import { camelCase } from 'lodash';
 import { useDispatch as useReduxDispatch } from 'react-redux';
+import { Field } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -23,7 +24,6 @@ import { useDispatch as useReduxDispatch } from 'react-redux';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
-import Field from 'calypso/my-sites/checkout/composite-checkout/components/field';
 import {
 	SummaryLine,
 	SummaryDetails,

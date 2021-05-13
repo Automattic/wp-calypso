@@ -8,6 +8,8 @@ export interface SiteData {
 	domain: string;
 	locale: string;
 	options?: SiteDataOptions;
+	wpcom_url?: string;
+	jetpack?: boolean;
 	// TODO: fill out the rest of this
 }
 

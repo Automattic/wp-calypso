@@ -19,13 +19,13 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import FeatureExample from 'calypso/components/feature-example';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
 import {
+	findFirstSimilarPlanKey,
 	TERM_ANNUALLY,
 	TYPE_BUSINESS,
 	TYPE_SECURITY_DAILY,
 	FEATURE_SEO_PREVIEW_TOOLS,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Style dependencies

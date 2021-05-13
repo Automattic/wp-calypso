@@ -18,7 +18,6 @@ import { flowRight as compose } from 'lodash';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import config from '@automattic/calypso-config';
 import Notice from 'calypso/components/notice';
 import ButtonGroup from 'calypso/components/button-group';
 import { Button } from '@automattic/components';
@@ -26,7 +25,6 @@ import Tooltip from 'calypso/components/tooltip';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { notifyDesktopSendToPrinter } from 'calypso/state/desktop/actions';
 
 /**
  * Style dependencies
@@ -88,12 +86,7 @@ class Security2faBackupCodesList extends React.Component {
 	onPrint = () => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Print Backup Codes Button' );
 
-		if ( config.isEnabled( 'desktop' ) ) {
-			this.props.notifyDesktopSendToPrinter(
-				this.props.translate( 'Backup verification codes' ),
-				this.getBackupCodeHTML( this.props.backupCodes )
-			);
-		} else if ( this.openPopup() ) {
+		if ( this.openPopup() ) {
 			this.doPopup( this.props.backupCodes );
 		}
 	};
@@ -378,7 +371,6 @@ class Security2faBackupCodesList extends React.Component {
 export default compose(
 	connect( ( state ) => ( { username: getCurrentUserName( state ) } ), {
 		recordGoogleEvent,
-		notifyDesktopSendToPrinter,
 	} ),
 	localize,
 	withLocalizedMoment

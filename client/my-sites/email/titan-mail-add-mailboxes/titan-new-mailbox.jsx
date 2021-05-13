@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
@@ -34,6 +35,7 @@ const TitanNewMailbox = ( {
 		password: { value: password, error: passwordError },
 	},
 	showLabels = true,
+	showTrashButton = true,
 } ) => {
 	const translate = useTranslate();
 
@@ -62,7 +64,11 @@ const TitanNewMailbox = ( {
 
 	return (
 		<>
-			<div className="titan-mail-add-mailboxes__new-mailbox">
+			<div
+				className={ classNames( 'titan-mail-add-mailboxes__new-mailbox', {
+					'show-labels': showLabels,
+				} ) }
+			>
 				<div className="titan-mail-add-mailboxes__new-mailbox-name-and-remove">
 					<FormFieldset>
 						<FormLabel>
@@ -85,13 +91,15 @@ const TitanNewMailbox = ( {
 						{ hasNameError && <FormInputValidation text={ nameError } isError /> }
 					</FormFieldset>
 
-					<Button
-						className="titan-mail-add-mailboxes__new-mailbox-remove-mailbox-button"
-						onClick={ onMailboxRemove }
-					>
-						<Gridicon icon="trash" />
-						<span>{ translate( 'Remove mailbox' ) }</span>
-					</Button>
+					{ showTrashButton && (
+						<Button
+							className="titan-mail-add-mailboxes__new-mailbox-remove-mailbox-button"
+							onClick={ onMailboxRemove }
+						>
+							<Gridicon icon="trash" />
+							<span>{ translate( 'Remove mailbox' ) }</span>
+						</Button>
+					) }
 				</div>
 
 				<div className="titan-mail-add-mailboxes__new-mailbox-email-and-password">

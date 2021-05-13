@@ -20,6 +20,7 @@ import {
 } from 'calypso/state/posts/counts/selectors';
 import urlSearch from 'calypso/lib/url-search';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
 import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
@@ -144,6 +145,7 @@ export class PostTypeFilter extends Component {
 		return (
 			<div className="post-type-filter">
 				{ siteId && false === jetpack && <QueryPostCounts siteId={ siteId } type={ query.type } /> }
+				{ siteId && <QueryPostTypes siteId={ siteId } /> }
 				<SectionNav
 					selectedText={
 						<span>
@@ -180,7 +182,11 @@ export class PostTypeFilter extends Component {
 							initialValue={ query.search }
 							isOpen={ this.props.getSearchOpen() }
 							onSearch={ this.props.doSearch }
-							placeholder={ `${ searchPagesPlaceholder }…` }
+							placeholder={
+								searchPagesPlaceholder
+									? `${ searchPagesPlaceholder }…`
+									: this.props.translate( 'Search…' )
+							}
 							delaySearch={ true }
 						/>
 					) }

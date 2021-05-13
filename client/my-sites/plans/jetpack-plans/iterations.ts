@@ -1,5 +1,5 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
 import { getUrlParts } from '@automattic/calypso-url';
 
@@ -35,6 +35,11 @@ const getCurrentCROIterationName = (): Iterations | null => {
 
 		if ( iterationQuery && iterationNames.includes( iterationQuery ) ) {
 			return iterationQuery as Iterations;
+		}
+
+		// Allow for people to explicitly look at the control/default variation
+		if ( iterationQuery === 'default' ) {
+			return null;
 		}
 	}
 

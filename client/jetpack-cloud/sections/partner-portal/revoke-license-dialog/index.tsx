@@ -24,14 +24,14 @@ import './style.scss';
 interface Props {
 	licenseKey: string;
 	product: string;
-	domain: string;
+	siteUrl: string | null;
 	onClose: ( action?: string ) => void;
 }
 
 export default function RevokeLicenseDialog( {
 	licenseKey,
 	product,
-	domain,
+	siteUrl,
 	onClose,
 	...rest
 }: Props ): ReactElement {
@@ -48,7 +48,6 @@ export default function RevokeLicenseDialog( {
 			dispatch( errorNotice( error.message ) );
 		},
 	} );
-	const helpUrl = '';
 
 	close = useCallback( () => {
 		if ( ! mutation.isLoading ) {
@@ -70,15 +69,17 @@ export default function RevokeLicenseDialog( {
 		</Button>,
 	];
 
-	if ( helpUrl ) {
-		buttons.unshift(
-			<a href={ helpUrl } target="_blank" rel="noreferrer noopener">
-				{ translate( 'Learn more about revoking licenses' ) }
-				&nbsp;
-				<Gridicon icon="external" size={ 18 } />
-			</a>
-		);
-	}
+	buttons.unshift(
+		<a
+			href="https://github.com/Automattic/jetpack-licensing-api/tree/master/integration-docs#glossary"
+			target="_blank"
+			rel="noreferrer noopener"
+		>
+			{ translate( 'Learn more about revoking licenses' ) }
+			&nbsp;
+			<Gridicon icon="external" size={ 18 } />
+		</a>
+	);
 
 	return (
 		<Dialog
@@ -99,9 +100,9 @@ export default function RevokeLicenseDialog( {
 			</p>
 
 			<ul>
-				{ domain && (
+				{ siteUrl && (
 					<li>
-						<strong>{ translate( 'Site:' ) }</strong> { domain }
+						<strong>{ translate( 'Site:' ) }</strong> { siteUrl }
 					</li>
 				) }
 				<li>

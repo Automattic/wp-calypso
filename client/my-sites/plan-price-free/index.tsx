@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY } from 'calypso/lib/plans/constants';
+import { PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY } from '@automattic/calypso-products';
 
 /**
  * Style dependencies

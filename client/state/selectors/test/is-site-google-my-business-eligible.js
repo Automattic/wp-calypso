@@ -15,8 +15,8 @@ import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
-} from 'calypso/lib/plans/constants';
-import selectors from 'calypso/state/sites/selectors';
+} from '@automattic/calypso-products';
+import { getSitePlanSlug } from 'calypso/state/sites/selectors';
 
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSitePlanSlug: jest.fn(),
@@ -33,7 +33,7 @@ describe( 'siteHasEligibleWpcomPlan()', () => {
 		];
 
 		plans.forEach( ( plan ) => {
-			selectors.getSitePlanSlug.mockImplementation( () => plan );
+			getSitePlanSlug.mockImplementation( () => plan );
 
 			expect( siteHasEligibleWpcomPlan() ).toBe( true );
 		} );
@@ -51,7 +51,7 @@ describe( 'siteHasEligibleWpcomPlan()', () => {
 		];
 
 		plans.forEach( ( plan ) => {
-			selectors.getSitePlanSlug.mockImplementation( () => plan );
+			getSitePlanSlug.mockImplementation( () => plan );
 
 			expect( siteHasEligibleWpcomPlan() ).toBe( false );
 		} );

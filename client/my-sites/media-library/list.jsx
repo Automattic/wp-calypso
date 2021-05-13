@@ -225,11 +225,11 @@ export class MediaLibraryList extends React.Component {
 			} );
 		}
 
-		const onFetchNextPage = function () {
+		const onFetchNextPage = () => {
 			// InfiniteList passes its own parameter which would interfere
 			// with the optional parameters expected by mediaOnFetchNextPage
 			this.props.mediaOnFetchNextPage();
-		}.bind( this );
+		};
 
 		// some sources aren't grouped beyond anything but the source, so set the
 		// getItemGroup function to return the source, and no label.

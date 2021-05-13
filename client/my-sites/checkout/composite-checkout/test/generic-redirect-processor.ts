@@ -50,9 +50,9 @@ describe( 'genericRedirectProcessor', () => {
 			create_new_blog: true,
 			currency: 'USD',
 			extra: [],
+			is_jetpack_checkout: false,
 			products: [ product ],
 			tax: {
-				display_taxes: false,
 				location: {},
 			},
 			temporary: false,
@@ -182,6 +182,51 @@ describe( 'genericRedirectProcessor', () => {
 				cart_key: '1234567',
 				coupon: '',
 				create_new_blog: false,
+			},
+			payment: {
+				...basicExpectedStripeRequest.payment,
+				successUrl:
+					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fwordpress.com',
+			},
+		} );
+	} );
+
+	it( 'sends the correct data to the endpoint with tax information', async () => {
+		const submitData = {
+			name: 'test name',
+			email: 'test@example.com',
+		};
+		const expected = { payload: 'https://test-redirect-url', type: 'REDIRECT' };
+		await expect(
+			genericRedirectProcessor( 'bancontact', submitData, {
+				...options,
+				siteSlug: 'example.wordpress.com',
+				siteId: 1234567,
+				contactDetails: {
+					countryCode,
+					postalCode,
+				},
+				responseCart: {
+					...options.responseCart,
+					tax: {
+						display_taxes: true,
+						location: {
+							postal_code: 'pr267ry',
+							country_code: 'GB',
+						},
+					},
+				},
+			} )
+		).resolves.toStrictEqual( expected );
+		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+			...basicExpectedStripeRequest,
+			cart: {
+				...basicExpectedStripeRequest.cart,
+				blog_id: '1234567',
+				cart_key: '1234567',
+				coupon: '',
+				create_new_blog: false,
+				tax: { location: { postal_code: 'PR26 7RY', country_code: 'GB' } },
 			},
 			payment: {
 				...basicExpectedStripeRequest.payment,

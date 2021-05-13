@@ -2,16 +2,15 @@
  * External dependencies
  */
 import React from 'react';
-import styled from '@emotion/styled';
 import { useSelect, useDispatch } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { ContactDetailsType, ManagedContactDetails } from '@automattic/wpcom-checkout';
+import { Field, styled } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import Field from './field';
 import {
 	prepareDomainContactDetails,
 	prepareDomainContactDetailsErrors,
@@ -20,7 +19,7 @@ import {
 import type { CountryListItem } from '../types/country-list-item';
 import TaxFields from './tax-fields';
 import DomainContactDetails from './domain-contact-details';
-import { isDomainProduct, isDomainTransfer, getDomain } from 'calypso/lib/products-values';
+import { isDomainProduct, isDomainTransfer, getDomain } from '@automattic/calypso-products';
 
 const ContactDetailsFormDescription = styled.p`
 	font-size: 14px;

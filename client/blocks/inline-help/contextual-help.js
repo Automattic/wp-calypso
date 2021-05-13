@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { compact, first, get } from 'lodash';
+import { compact, get } from 'lodash';
 import i18n, { translate } from 'i18n-calypso';
 
 /**
@@ -1485,8 +1485,8 @@ export function getContextResults( section ) {
 
 	// make sure editorially to show at most one tour and one video at once
 	// `first` is a safe-guard in case that fails
-	const video = first( get( videosForSection, section ) );
-	const tour = first( get( toursForSection, section ) );
+	const video = get( videosForSection, section )?.[ 0 ];
+	const tour = get( toursForSection, section )?.[ 0 ];
 	const links = get( contextLinksForSection, section, fallbackLinks );
 
 	// If true, still display fallback links in addition (as opposed to instead

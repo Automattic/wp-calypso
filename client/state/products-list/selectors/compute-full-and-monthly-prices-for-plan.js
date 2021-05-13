@@ -1,8 +1,13 @@
 /**
  * Internal dependencies
  */
-import { getPlan, getMonthlyPlanByYearly, getBillingMonthsForTerm } from 'calypso/lib/plans';
-import { GROUP_WPCOM, TERM_MONTHLY } from 'calypso/lib/plans/constants';
+import {
+	getPlan,
+	getMonthlyPlanByYearly,
+	getBillingMonthsForTerm,
+	GROUP_WPCOM,
+	TERM_MONTHLY,
+} from '@automattic/calypso-products';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { getPlanPrice } from './get-plan-price';
 
@@ -11,7 +16,7 @@ import { getPlanPrice } from './get-plan-price';
  *
  * @param {object} state Current redux state
  * @param {number} siteId Site ID to consider
- * @param {object} planObject Plan object returned by getPlan() from lib/plans
+ * @param {object} planObject Plan object returned by getPlan() from @automattic/calypso-products
  * @param {number} credits The number of free credits in cart
  * @param {object} couponDiscounts Absolute values of any discounts coming from a discount coupon
  * @returns {object} Object with a full and monthly price
@@ -43,7 +48,7 @@ export const computeFullAndMonthlyPricesForPlan = (
  * Compute a full and monthly price for a given wpcom plan.
  *
  * @param {object} state Current redux state
- * @param {object} planObject Plan object returned by getPlan() from lib/plans
+ * @param {object} planObject Plan object returned by getPlan() from @automattic/calypso-products
  */
 function computePricesForWpComPlan( state, planObject ) {
 	const priceFull = getPlanRawPrice( state, planObject.getProductId(), false ) || 0;

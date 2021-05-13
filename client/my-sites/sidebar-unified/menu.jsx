@@ -8,7 +8,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import page from 'page';
@@ -17,12 +17,9 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 /**
  * Internal dependencies
  */
+
 import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
-import {
-	toggleMySitesSidebarSection as toggleSection,
-	expandMySitesSidebarSection as expandSection,
-	collapseAllMySitesSidebarSections,
-} from 'calypso/state/my-sites/sidebar/actions';
+import { toggleMySitesSidebarSection as toggleSection } from 'calypso/state/my-sites/sidebar/actions';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import MySitesSidebarUnifiedItem from './item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
@@ -43,27 +40,18 @@ export const MySitesSidebarUnifiedMenu = ( {
 	isHappychatSessionActive,
 	isJetpackNonAtomicSite,
 	continueInCalypso,
+	...props
 } ) => {
-	const hasAutoExpanded = useRef( false );
 	const reduxDispatch = useDispatch();
 	const sectionId = 'SIDEBAR_SECTION_' + slug;
 	const isExpanded = useSelector( ( state ) => isSidebarSectionOpen( state, sectionId ) );
-
 	const selectedMenuItem =
 		Array.isArray( children ) &&
 		children.find( ( menuItem ) => menuItem?.url && itemLinkMatches( menuItem.url, path ) );
 	const childIsSelected = !! selectedMenuItem;
-
-	/**
-	 * One time only, auto-expand the currently active section, or the section
-	 * which contains the current active item.
-	 */
-	useEffect( () => {
-		if ( ! hasAutoExpanded.current && ( selected || childIsSelected ) && ! sidebarCollapsed ) {
-			reduxDispatch( expandSection( sectionId ) );
-			hasAutoExpanded.current = true;
-		}
-	}, [ selected, childIsSelected, reduxDispatch, sectionId, sidebarCollapsed ] );
+	const showAsExpanded =
+		( ! isWithinBreakpoint( '>782px' ) && ( childIsSelected || isExpanded ) ) || // For mobile breakpoints, we dont' care about the sidebar collapsed status.
+		( isWithinBreakpoint( '>782px' ) && childIsSelected && ! sidebarCollapsed ); // For desktop breakpoints, a child should be selected and the sidebar being expanded.
 
 	const onClick = () => {
 		if ( isWithinBreakpoint( '>782px' ) ) {
@@ -81,13 +69,9 @@ export const MySitesSidebarUnifiedMenu = ( {
 				// Only open the page if menu is NOT full-width, otherwise just open / close the section instead of directly redirecting to the section.
 				page( link );
 			}
-
-			if ( ! sidebarCollapsed ) {
-				// Keep only current submenu open.
-				reduxDispatch( collapseAllMySitesSidebarSections() );
-			}
 		}
 
+		window.scrollTo( 0, 0 );
 		reduxDispatch( toggleSection( sectionId ) );
 	};
 
@@ -95,12 +79,14 @@ export const MySitesSidebarUnifiedMenu = ( {
 		<li>
 			<ExpandableSidebarMenu
 				onClick={ () => onClick() }
-				expanded={ ! sidebarCollapsed && isExpanded }
+				expanded={ showAsExpanded }
 				title={ title }
 				customIcon={ <SidebarCustomIcon icon={ icon } /> }
 				className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
 				count={ count }
 				hideExpandableIcon={ true }
+				inlineText={ props.inlineText }
+				{ ...props }
 			>
 				{ children.map( ( item ) => {
 					const isSelected = selectedMenuItem?.url === item.url;
@@ -109,7 +95,6 @@ export const MySitesSidebarUnifiedMenu = ( {
 							key={ item.title }
 							{ ...item }
 							selected={ isSelected }
-							sectionId={ sectionId }
 							isSubItem={ true }
 							isHappychatSessionActive={ isHappychatSessionActive }
 							isJetpackNonAtomicSite={ isJetpackNonAtomicSite }

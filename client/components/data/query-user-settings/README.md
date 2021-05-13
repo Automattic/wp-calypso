@@ -10,7 +10,7 @@ Render the component. It does not accept any children, nor does it render any el
 import React from 'react';
 import { useSelector } from 'react-redux';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import { getUserSettings } from 'calypso/state/selectors/get-user-settings';
+import { default as getUserSettings } from 'calypso/state/selectors/get-user-settings';
 
 export default function CurrentUser() {
 	const userSettings = useSelector( ( state ) => getUserSettings( state ) );

@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import { MAILCHIMP_LISTS_RECEIVE } from 'calypso/state/action-types';
 
-export const items = withoutPersistence( ( state = [], action ) => {
+export const items = ( state = [], action ) => {
 	switch ( action.type ) {
 		case MAILCHIMP_LISTS_RECEIVE: {
 			const { siteId, lists } = action;
@@ -18,7 +18,7 @@ export const items = withoutPersistence( ( state = [], action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	items,

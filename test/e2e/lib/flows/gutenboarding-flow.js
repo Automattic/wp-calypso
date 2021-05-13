@@ -7,7 +7,7 @@ import config from 'config';
  * Internal dependencies
  */
 import AcquireIntentPage from '../pages/gutenboarding/acquire-intent-page.js';
-import DesignSelectorPage from '../pages/gutenboarding/designs-page.js';
+import DesignLocatorPage from '../pages/gutenboarding/designs-page.js';
 import StylePreviewPage from '../pages/gutenboarding/style-preview-page.js';
 import PlansPage from '../pages/gutenboarding/plans-page.js';
 import DomainsPage from '../pages/gutenboarding/domains-page.js';
@@ -23,21 +23,18 @@ export default class CreateSiteFlow {
 
 	async skipAllSteps( name ) {
 		const acquireIntentPage = await AcquireIntentPage.Expect( this.driver );
-		if ( name ) {
-			await acquireIntentPage.enterSiteTitle( name );
-			await acquireIntentPage.goToNextStep();
-		} else {
-			await acquireIntentPage.skipStep();
-		}
 
-		const designSelectorPage = await DesignSelectorPage.Expect( this.driver );
-		await designSelectorPage.selectFreeDesign();
-
-		const stylePreviewPage = await StylePreviewPage.Expect( this.driver );
-		await stylePreviewPage.continue();
+		await acquireIntentPage.enterSiteTitle( name || dataHelper.getNewBlogName() );
+		await acquireIntentPage.goToNextStep();
 
 		const domainsPage = await DomainsPage.Expect( this.driver );
 		await domainsPage.skipStep();
+
+		const designLocatorPage = await DesignLocatorPage.Expect( this.driver );
+		await designLocatorPage.selectFreeDesign();
+
+		const stylePreviewPage = await StylePreviewPage.Expect( this.driver );
+		await stylePreviewPage.continue();
 
 		const featuresPage = await FeaturesPage.Expect( this.driver );
 		await featuresPage.skipStep();

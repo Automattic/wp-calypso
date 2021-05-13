@@ -6,13 +6,13 @@ import { get, filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	MEMBERSHIPS_SUBSCRIBERS_RECEIVE,
 	MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS,
 } from '../../action-types';
 
-const list = withoutPersistence( ( state = {}, action ) => {
+const list = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case MEMBERSHIPS_SUBSCRIBERS_RECEIVE:
 			state = {
@@ -47,7 +47,7 @@ const list = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	list,

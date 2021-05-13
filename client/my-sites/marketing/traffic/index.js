@@ -21,7 +21,6 @@ import AnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-goo
 import CloudflareAnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-cloudflare-analytics';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackSiteStats from 'calypso/my-sites/site-settings/jetpack-site-stats';
-import JetpackAds from 'calypso/my-sites/site-settings/jetpack-ads';
 import RelatedPosts from 'calypso/my-sites/site-settings/related-posts';
 import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
@@ -41,10 +40,10 @@ const SiteSettingsTraffic = ( {
 	handleAutosavingRadio,
 	handleSubmitForm,
 	isAdmin,
+	isJetpack,
 	isJetpackAdmin,
 	isRequestingSettings,
 	isSavingSettings,
-	onChangeField,
 	setFieldValue,
 	translate,
 } ) => (
@@ -59,16 +58,6 @@ const SiteSettingsTraffic = ( {
 		) }
 		<JetpackDevModeNotice />
 
-		{ isJetpackAdmin && (
-			<JetpackAds
-				handleAutosavingToggle={ handleAutosavingToggle }
-				isSavingSettings={ isSavingSettings }
-				isRequestingSettings={ isRequestingSettings }
-				fields={ fields }
-				onSubmitForm={ handleSubmitForm }
-				onChangeField={ onChangeField }
-			/>
-		) }
 		{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }
 		{ isAdmin && <SeoSettingsMain /> }
 		{ isAdmin && (
@@ -80,7 +69,9 @@ const SiteSettingsTraffic = ( {
 				fields={ fields }
 			/>
 		) }
-		{ isAdmin && config.isEnabled( 'cloudflare' ) && <CloudflareAnalyticsSettings /> }
+		{ ! isJetpack && isAdmin && config.isEnabled( 'cloudflare' ) && (
+			<CloudflareAnalyticsSettings />
+		) }
 
 		{ isJetpackAdmin && (
 			<JetpackSiteStats
@@ -121,6 +112,7 @@ const connectComponent = connect( ( state ) => {
 
 	return {
 		isAdmin,
+		isJetpack,
 		isJetpackAdmin,
 	};
 } );

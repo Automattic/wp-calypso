@@ -108,12 +108,7 @@
  * The `is-white-signup` class is attached to the body when the user is assigned the `reskinned` group of the `reskinSignupFlow` a/b test
  */
 body.is-section-signup.is-white-signup {
-	.signup__step.is-plans .formatted-header {
-		margin-bottom: 30px;
-	}
-
 	.plans-features-main {
-
 		.plans-features-main__banner-content {
 			box-shadow: none;
 			display: flex;

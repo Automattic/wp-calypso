@@ -1,10 +1,13 @@
 /**
  * Internal dependencies
  */
-import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'calypso/lib/plans';
-import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
+import {
+	JETPACK_RESET_PLANS,
+	getMonthlyPlanByYearly,
+	getYearlyPlanByMonthly,
+} from '@automattic/calypso-products';
 import { SELECTOR_PLANS } from '../constants';
-import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../utils';
+import { slugToSelectorProduct } from '../utils';
 
 /**
  * Type dependencies
@@ -31,12 +34,7 @@ export const getPlansToDisplay = ( {
 				product.term === duration &&
 				// Don't include a plan the user already owns, regardless of the term
 				! currentPlanTerms.includes( product.productSlug )
-		)
-		.map( ( product: SelectorProduct ) => ( {
-			...product,
-			description: getJetpackDescriptionWithOptions( product ),
-		} ) );
-
+		);
 	if ( currentPlanSlug && JETPACK_RESET_PLANS.includes( currentPlanSlug ) ) {
 		const currentPlanSelectorProduct = slugToSelectorProduct( currentPlanSlug );
 		if ( currentPlanSelectorProduct ) {
@@ -83,10 +81,6 @@ export const getProductsToDisplay = ( {
 		[ ...purchasedProducts, ...filteredProducts ]
 			// Make sure we don't allow any null or invalid products
 			.filter( ( product ): product is SelectorProduct => !! product )
-			.map( ( product ) => ( {
-				...product,
-				description: getJetpackDescriptionWithOptions( product as SelectorProduct ),
-			} ) )
 	);
 };
 

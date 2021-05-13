@@ -16,7 +16,7 @@ export default class WizardNavigationComponent extends AsyncBaseContainer {
 	}
 
 	async _postInit() {
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( 'a.wizard__navigation-link' ),
 			this.explicitWaitMS
@@ -31,7 +31,7 @@ export default class WizardNavigationComponent extends AsyncBaseContainer {
 	}
 
 	async skipStep( stepNumber ) {
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( `.wizard__progress-indicator[data-e2e-type="step-indicator-${ stepNumber }"]` )
 		);

@@ -16,7 +16,7 @@ import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { connectOptions } from './theme-options';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'calypso/lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { hasFeature, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -70,7 +70,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 		}
 	}
 	return (
-		<Main className="themes">
+		<Main fullWidthLayout className="themes">
 			<SidebarNavigation />
 			<FormattedHeader
 				brandFont

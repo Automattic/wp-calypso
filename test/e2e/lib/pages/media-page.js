@@ -20,11 +20,11 @@ export default class MediaPage extends AsyncBaseContainer {
 	}
 
 	async selectFirstImage() {
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.media-library__upload-button' )
 		);
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.media-library__list-item:not(.is-placeholder)' )
 		);
@@ -32,7 +32,7 @@ export default class MediaPage extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.media-library__list-item .is-image' )
 		);
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.media-library__list-item.is-selected' )
 		);
@@ -46,11 +46,11 @@ export default class MediaPage extends AsyncBaseContainer {
 	}
 
 	async mediaEditorShowing() {
-		return await driverHelper.isElementPresent( this.driver, By.css( '.editor-media-modal' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '.editor-media-modal' ) );
 	}
 
 	async imageShowingInEditor() {
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.image-editor__crop' )
 		);
@@ -71,7 +71,7 @@ export default class MediaPage extends AsyncBaseContainer {
 	}
 
 	async selectInsertImage() {
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.media-library__list-item.is-selected' )
 		);
@@ -82,20 +82,20 @@ export default class MediaPage extends AsyncBaseContainer {
 	}
 
 	async uploadFile( file ) {
-		const fileNameInputSelector = By.css( '.media-library__upload-button input[type="file"]' );
+		const fileNameInputLocator = By.css( '.media-library__upload-button input[type="file"]' );
 		const driver = this.driver;
 
-		await driverHelper.waitUntilLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			driver,
 			By.className( 'media-library__upload-button' )
 		);
-		const fileNameInput = await driver.findElement( fileNameInputSelector );
+		const fileNameInput = await driver.findElement( fileNameInputLocator );
 		await fileNameInput.sendKeys( file );
-		await driverHelper.elementIsNotPresent(
+		await driverHelper.isElementNotLocated(
 			driver,
 			By.css( '.media-library__list-item.is-transient' )
 		);
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			driver,
 			By.css( '.media-library__list-item.is-selected' )
 		);
@@ -103,7 +103,7 @@ export default class MediaPage extends AsyncBaseContainer {
 
 	async deleteMedia() {
 		if (
-			await driverHelper.elementIsNotPresent(
+			await driverHelper.isElementNotLocated(
 				this.driver,
 				By.css( '.media-library__list-item.is-selected' )
 			)

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isEqual, reduce, keys, first } from 'lodash';
+import { get, isEqual, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -76,11 +76,7 @@ export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) =
 export const currencyCode = withSchemaValidation( currencyCodeSchema, ( state = null, action ) => {
 	switch ( action.type ) {
 		case PRODUCTS_LIST_RECEIVE: {
-			return get(
-				action.productsList,
-				[ first( keys( action.productsList ) ), 'currency_code' ],
-				state
-			);
+			return Object.values( action.productsList )[ 0 ]?.currency_code ?? state;
 		}
 		case PLANS_RECEIVE: {
 			return get( action.plans, [ 0, 'currency_code' ], state );

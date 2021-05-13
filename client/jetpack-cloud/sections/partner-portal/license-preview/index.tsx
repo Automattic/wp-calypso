@@ -56,7 +56,7 @@ export default function LicensePreview( {
 	const isHighlighted = getQueryArg( window.location.href, 'highlight' ) === licenseKey;
 	const [ isOpen, setOpen ] = useState( isHighlighted );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
-	const domain = siteUrl ? getUrlParts( siteUrl ).hostname : '';
+	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 	const showDomain =
 		domain && [ LicenseState.Attached, LicenseState.Revoked ].indexOf( licenseState ) !== -1;
 	const justIssued =
@@ -180,7 +180,7 @@ export default function LicensePreview( {
 				<LicenseDetails
 					licenseKey={ licenseKey }
 					product={ product }
-					domain={ domain }
+					siteUrl={ siteUrl }
 					username={ username }
 					blogId={ blogId }
 					issuedAt={ issuedAt }

@@ -36,16 +36,11 @@ import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-confi
 import wpcom from 'calypso/lib/wp';
 import { openPostRevisionsDialog } from 'calypso/state/posts/revisions/actions';
 import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
-import {
-	notifyDesktopViewPostClicked,
-	notifyDesktopCannotOpenEditor,
-} from 'calypso/state/desktop/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'calypso/components/web-preview';
 import { editPost, trashPost } from 'calypso/state/posts/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor.js';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -56,7 +51,6 @@ import {
 	withStopPerformanceTrackingProp,
 	PerformanceTrackProps,
 } from 'calypso/lib/performance-tracking';
-import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'calypso/state/desktop/window-events';
 import { selectMediaItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
@@ -140,10 +134,13 @@ enum EditorActions {
 	TrackPerformance = 'trackPerformance',
 }
 
-class CalypsoifyIframe extends Component<
-	Props & ConnectedProps & ProtectedFormProps & LocalizeProps & PerformanceTrackProps,
-	State
-> {
+type ComponentProps = Props &
+	ConnectedProps &
+	ProtectedFormProps &
+	LocalizeProps &
+	PerformanceTrackProps;
+
+class CalypsoifyIframe extends Component< ComponentProps, State > {
 	state: State = {
 		isMediaModalVisible: false,
 		isCheckoutModalVisible: false,
@@ -160,31 +157,14 @@ class CalypsoifyIframe extends Component<
 	mediaCancelPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
 	checkoutPort: MessagePort | null = null;
-	successfulIframeLoad = false;
-	waitForIframeToInit: ReturnType< typeof setInterval > | undefined = undefined;
-	waitForIframeToLoad: ReturnType< typeof setTimeout > | undefined = undefined;
 
 	componentDidMount() {
 		window.addEventListener( 'message', this.onMessage, false );
 
-		const isDesktop = config.isEnabled( 'desktop' );
-		// If the iframe fails to load for some reson, eg. an unexpected auth loop, this timeout
-		// provides a redirect to wpadmin for web users - this should now be a rare occurance with
-		// a 3rd party cookie auth issue fix in place https://github.com/Automattic/jetpack/pull/16167
-		this.waitForIframeToInit = setInterval( () => {
-			if ( this.props.shouldLoadIframe ) {
-				clearInterval( ( this.waitForIframeToInit as unknown ) as number );
-				this.waitForIframeToLoad = setTimeout( () => {
-					isDesktop
-						? this.props.notifyDesktopCannotOpenEditor(
-								this.props.site,
-								REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE,
-								this.props.iframeUrl
-						  )
-						: window.location.replace( this.props.iframeUrl );
-				}, 25000 );
-			}
-		}, 1000 );
+		// Redirect timer stage 1.
+		if ( this.props.shouldLoadIframe && ! this.editorRedirectTimer ) {
+			this.setEditorRedirectTimer( 25000 );
+		}
 
 		// An earlier page with no access to the Calypso store (probably `/new`) has asked
 		// for the `lastNonEditorRoute` state to be cleared so that `getEditorCloseConfig()`
@@ -195,9 +175,68 @@ class CalypsoifyIframe extends Component<
 		}
 	}
 
+	componentDidUpdate( { shouldLoadIframe }: ComponentProps ) {
+		// Redirect timer stage 1. Starts when shouldLoadIframe turns to true if
+		// not already triggered in componentDidMount
+		if ( ! this.editorRedirectTimer && ! shouldLoadIframe && this.props.shouldLoadIframe ) {
+			this.setEditorRedirectTimer( 25000 );
+		}
+	}
+
 	componentWillUnmount() {
+		this.editorRedirectTimer && clearTimeout( this.editorRedirectTimer );
 		window.removeEventListener( 'message', this.onMessage, false );
 	}
+
+	/**
+	 * The editor redirect timer will attempt to perform a redirect if the editor
+	 * has not loaded after a certain time. The timer is always cancelled as soon
+	 * as the iframe sends us a message that the editor is ready to go via the
+	 * iframe bridge server. Given that we have redirect logic in our parent
+	 * components which detects things like lack of authentication, this timer
+	 * handles error conditions which we cannot detect. There are two stages:
+	 *
+	 * 1. The first stage waits up to 25 seconds for the iframe to call `onLoad`.
+	 * This is to handle rare error conditions such as redirects within the frame
+	 * which cause iframe.onload to never be called. It's 25 seconds to account
+	 * for slow network conditions. Thankfully, this timer should very rarely be
+	 * triggered as most failure conditions happen do not happen in this stage.
+	 * Most problems are detected before (such as auth) or after (such as the page
+	 * loading the wrong thing).
+	 *
+	 * 2. The second stage waits 2 seconds to ensure the iframe is responding as
+	 * we expect. After `iframe.onload` is called, we still don't know if the editor
+	 * has loaded because the browser could be displaying an error message (such
+	 * is the case with `X-Frame-Options: DENY`) in the document which has loaded.
+	 * As a result, we need to wait to make sure the iframe bridge server
+	 * is responding. It needs to be greater than 0 because we can't guarantee
+	 * that the iframe will have executed the script which sends the message by
+	 * the time iframe.onload is called. However, we do know that the script will
+	 * at least be downloaded and parsed (because that's what iframe.onload indicates),
+	 * so the timer doesn't have to be very long. Ideally, we would look into the
+	 * iframe to see if it is displaying an error, but the browser does not allow
+	 * this.
+	 *
+	 * Some historical work which has been combined into this timer:
+	 *
+	 * @see https://github.com/Automattic/wp-calypso/pull/43248
+	 * @see https://github.com/Automattic/wp-calypso/pull/36977
+	 * @see https://github.com/Automattic/wp-calypso/pull/41006
+	 * @see https://github.com/Automattic/wp-calypso/pull/44086
+	 */
+	editorRedirectTimer: ReturnType< typeof setTimeout > | undefined;
+	setEditorRedirectTimer = ( time: number ) => {
+		this.editorRedirectTimer && clearTimeout( this.editorRedirectTimer );
+		this.editorRedirectTimer = setTimeout( this.tryRedirect, time );
+	};
+
+	disableRedirects = false;
+	tryRedirect = () => {
+		if ( this.disableRedirects ) {
+			return;
+		}
+		window.location.replace( this.props.iframeUrl );
+	};
 
 	onMessage = ( { data, origin }: MessageEvent ) => {
 		if ( ! data || 'gutenbergIframeMessage' !== data.type ) {
@@ -218,7 +257,10 @@ class CalypsoifyIframe extends Component<
 			this.iframeRef.current &&
 			this.iframeRef.current.contentWindow
 		) {
-			this.successfulIframeLoad = true;
+			// Remove any timeouts waiting for the editor to load.
+			this.disableRedirects = true;
+			this.editorRedirectTimer && clearTimeout( this.editorRedirectTimer );
+
 			const { port1: iframePortObject, port2: transferredPortObject } = new window.MessageChannel();
 
 			this.iframePort = iframePortObject;
@@ -234,6 +276,9 @@ class CalypsoifyIframe extends Component<
 
 			// Notify external listeners that the iframe has loaded
 			this.props.setEditorIframeLoaded( true, this.iframePort );
+
+			window.performance?.mark( 'iframe_loaded' );
+			this.setState( { isIframeLoaded: true, currentIFrameUrl: this.props.iframeUrl } );
 
 			return;
 		}
@@ -362,9 +407,7 @@ class CalypsoifyIframe extends Component<
 
 		if ( EditorActions.ViewPost === action ) {
 			const { postUrl } = payload;
-			config.isEnabled( 'desktop' )
-				? this.props.notifyDesktopViewPostClicked( postUrl )
-				: window.open( postUrl, '_top' );
+			window.open( postUrl, '_top' );
 		}
 
 		if ( EditorActions.OpenCustomizer === action ) {
@@ -660,16 +703,6 @@ class CalypsoifyIframe extends Component<
 			: `Block Editor > ${ postTypeText } > New`;
 	};
 
-	onIframeLoaded = ( iframeUrl: string ) => {
-		clearTimeout( this.waitForIframeToLoad );
-		if ( ! this.successfulIframeLoad ) {
-			window.location.replace( iframeUrl );
-			return;
-		}
-		window.performance?.mark( 'iframe_loaded' );
-		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
-	};
-
 	handleCheckoutSuccess = () => {
 		if ( this.checkoutPort ) {
 			this.checkoutPort.postMessage( 'checkout complete' );
@@ -723,15 +756,19 @@ class CalypsoifyIframe extends Component<
 							className={ isIframeLoaded ? 'is-loaded' : '' }
 							ref={ this.iframeRef }
 							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
-							// Iframe url needs to be kept in state to prevent editor reloading if frame_nonce changes
-							// in Jetpack sites
-							onLoad={ () => {
-								this.onIframeLoaded( iframeUrl );
-							} }
-							// when 3rd party cookies are disabled
-							// the iframe shows an error page that flashes for a moment
+							// NOTE: Do not include any "editor load" events in
+							// this handler. It really only tracks if the document
+							// has loaded. That document could just be a 404 or
+							// a browser error page. Use the WindowActions.Loaded
+							// onMessage handler to handle when the editor iframe
+							// has loaded and started responding. This is the
+							// redirect timer stage 2.
+							onLoad={ () => this.setEditorRedirectTimer( 2000 ) }
+							// When 3rd party cookies are disabled, the iframe
+							// shows an error page that flashes for a moment
 							// before the user is the redirected to wp-admin.
-							// This styling hides the iframe until it loads or the redirect is executed
+							// This styling hides the iframe until it loads or
+							// the redirect is executed.
 							style={ isIframeLoaded ? undefined : { opacity: 0 } }
 						/>
 					) }
@@ -826,19 +863,10 @@ const mapStateToProps = (
 		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
-	let siteAdminUrl =
+	const siteAdminUrl =
 		editorType === 'site'
 			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
 			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
-
-	// Use the site editor to edit already-published pages if site editor is enabled
-	if ( postId && postType === 'page' && isSiteUsingCoreSiteEditor( state, siteId ) ) {
-		siteAdminUrl = getSiteAdminUrl(
-			state,
-			siteId,
-			`admin.php?page=gutenberg-edit-site&postId=${ postId }&postType=page`
-		);
-	}
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
@@ -890,11 +918,9 @@ const mapDispatchToProps = {
 	openPostRevisionsDialog,
 	setEditorIframeLoaded,
 	startEditingPost,
-	notifyDesktopViewPostClicked,
 	editPost,
 	trashPost,
 	updateSiteFrontPage,
-	notifyDesktopCannotOpenEditor,
 	selectMediaItems,
 	fetchMediaItem,
 	getMediaItem,

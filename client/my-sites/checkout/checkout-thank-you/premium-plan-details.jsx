@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
-import { isPremium, isGSuiteOrExtraLicenseOrGoogleWorkspace } from 'calypso/lib/products-values';
+import { isPremium, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
 import { newPost } from 'calypso/lib/paths';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 

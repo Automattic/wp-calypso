@@ -24,7 +24,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { mapPostStatus } from 'calypso/lib/route';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
 import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
-import { Experiment as ExperimentPreviousClient } from 'calypso/components/experiment';
 
 /**
  * Style dependencies
@@ -99,7 +98,11 @@ class PagesMain extends React.Component {
 					brandFont
 					className="pages__page-heading"
 					headerText={ translate( 'Pages' ) }
-					subHeaderText={ translate( 'Create, edit, and manage the pages on your site.' ) }
+					subHeaderText={
+						siteId
+							? translate( 'Create, edit, and manage the pages on your site.' )
+							: translate( 'Create, edit, and manage the pages on your sites.' )
+					}
 					align="left"
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ status } />
@@ -116,15 +119,10 @@ class PagesMain extends React.Component {
 				 * We use iso-week and iso-week-year in order to consistently change the experiment name every week.
 				 * Assumes users have a somewhat working clock but shouldn't be a problem if they don't.
 				 */ }
-				<ExperimentPreviousClient
+				<Experiment
 					name={ `explat_test_aa_weekly_calypso_${ moment
 						.utc()
 						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
-				/>
-				<Experiment
-					name={ `explat_test_aa_weekly_calypso_next_client_${ moment
-						.utc()
-						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }_v2` }
 					defaultExperience={ null }
 					treatmentExperience={ null }
 					loadingExperience={ null }

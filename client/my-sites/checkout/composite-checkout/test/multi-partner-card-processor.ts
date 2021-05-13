@@ -107,9 +107,9 @@ describe( 'multiPartnerCardProcessor', () => {
 			create_new_blog: true,
 			currency: 'USD',
 			extra: [],
+			is_jetpack_checkout: false,
 			products: [ product ],
 			tax: {
-				display_taxes: false,
 				location: {},
 			},
 			temporary: false,
@@ -236,8 +236,12 @@ describe( 'multiPartnerCardProcessor', () => {
 
 		it( 'fails to create a token if the name and address are missing', async () => {
 			const submitData = { paymentPartner: 'stripe', stripe, stripeConfiguration };
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
-				/billing_details.name/
+			const expected = {
+				payload: 'stripe error: missing billing_details.name',
+				type: 'ERROR',
+			};
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
 			);
 		} );
 
@@ -248,8 +252,12 @@ describe( 'multiPartnerCardProcessor', () => {
 				stripeConfiguration,
 				name: 'test name',
 			};
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
-				/billing_details.address.country/
+			const expected = {
+				payload: 'stripe error: missing billing_details.address.country',
+				type: 'ERROR',
+			};
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
 			);
 		} );
 
@@ -260,12 +268,16 @@ describe( 'multiPartnerCardProcessor', () => {
 				stripeConfiguration,
 				name: 'test name',
 			};
+			const expected = {
+				payload: 'stripe error: missing billing_details.address.postal_code',
+				type: 'ERROR',
+			};
 			await expect(
 				multiPartnerCardProcessor( submitData, {
 					...options,
 					contactDetails: { countryCode },
 				} )
-			).rejects.toThrowError( /billing_details.address.postal_code/ );
+			).resolves.toStrictEqual( expected );
 		} );
 
 		it( 'sends the correct data to the endpoint with no site and one product', async () => {
@@ -339,6 +351,48 @@ describe( 'multiPartnerCardProcessor', () => {
 			} );
 		} );
 
+		it( 'sends the correct data to the endpoint with tax information', async () => {
+			const submitData = {
+				paymentPartner: 'stripe',
+				stripe,
+				stripeConfiguration,
+				name: 'test name',
+			};
+			const expected = { payload: 'test success', type: 'SUCCESS' };
+			await expect(
+				multiPartnerCardProcessor( submitData, {
+					...options,
+					siteSlug: 'example.wordpress.com',
+					siteId: 1234567,
+					contactDetails: {
+						countryCode,
+						postalCode,
+					},
+					responseCart: {
+						...options.responseCart,
+						tax: {
+							display_taxes: true,
+							location: {
+								postal_code: 'pr267ry',
+								country_code: 'GB',
+							},
+						},
+					},
+				} )
+			).resolves.toStrictEqual( expected );
+			expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+				...basicExpectedStripeRequest,
+				cart: {
+					...basicExpectedStripeRequest.cart,
+					blog_id: '1234567',
+					cart_key: '1234567',
+					coupon: '',
+					create_new_blog: false,
+					tax: { location: { postal_code: 'PR26 7RY', country_code: 'GB' } },
+				},
+			} );
+		} );
+
 		it( 'sends the correct data to the endpoint with a site and one domain product', async () => {
 			const submitData = {
 				paymentPartner: 'stripe',
@@ -398,8 +452,9 @@ describe( 'multiPartnerCardProcessor', () => {
 				...ebanxCardTransactionRequest,
 				countryCode: undefined,
 			};
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
-				/missing country/
+			const expected = { payload: 'ebanx error: missing country', type: 'ERROR' };
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
 			);
 		} );
 
@@ -409,8 +464,9 @@ describe( 'multiPartnerCardProcessor', () => {
 				...ebanxCardTransactionRequest,
 				name: undefined,
 			};
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
-				/missing name/
+			const expected = { payload: 'ebanx error: missing name', type: 'ERROR' };
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
 			);
 		} );
 
@@ -420,8 +476,9 @@ describe( 'multiPartnerCardProcessor', () => {
 				...ebanxCardTransactionRequest,
 				number: undefined,
 			};
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
-				/missing number/
+			const expected = { payload: 'ebanx error: missing number', type: 'ERROR' };
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
 			);
 		} );
 
@@ -431,8 +488,9 @@ describe( 'multiPartnerCardProcessor', () => {
 				...ebanxCardTransactionRequest,
 				cvv: undefined,
 			};
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
-				/missing cvv/
+			const expected = { payload: 'ebanx error: missing cvv', type: 'ERROR' };
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
 			);
 		} );
 
@@ -442,8 +500,9 @@ describe( 'multiPartnerCardProcessor', () => {
 				...ebanxCardTransactionRequest,
 				'expiration-date': undefined,
 			};
-			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
-				/missing expiration-date/
+			const expected = { payload: 'ebanx error: missing expiration-date', type: 'ERROR' };
+			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
+				expected
 			);
 		} );
 

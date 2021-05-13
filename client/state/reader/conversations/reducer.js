@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, forEach, omit, size } from 'lodash';
+import { forEach, omit, size } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,18 +23,20 @@ import { key } from './utils';
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_CONVERSATION_FOLLOW: {
-			const newState = assign( {}, state, {
+			const newState = {
+				...state,
 				[ key(
 					action.payload.siteId,
 					action.payload.postId
 				) ]: CONVERSATION_FOLLOW_STATUS.following,
-			} );
+			};
 			return newState;
 		}
 		case READER_CONVERSATION_MUTE: {
-			const newState = assign( {}, state, {
+			const newState = {
+				...state,
 				[ key( action.payload.siteId, action.payload.postId ) ]: CONVERSATION_FOLLOW_STATUS.muting,
-			} );
+			};
 			return newState;
 		}
 		case READER_CONVERSATION_UPDATE_FOLLOW_STATUS: {
@@ -45,9 +47,10 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 				return omit( state, stateKey );
 			}
 
-			const newState = assign( {}, state, {
+			const newState = {
+				...state,
 				[ stateKey ]: action.payload.followStatus,
-			} );
+			};
 
 			return newState;
 		}

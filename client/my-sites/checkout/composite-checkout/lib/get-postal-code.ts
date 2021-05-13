@@ -2,11 +2,7 @@
  * External dependencies
  */
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
+import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 
 export default function getPostalCode( contactDetails: ManagedContactDetails | undefined ): string {
 	if ( ! contactDetails ) {

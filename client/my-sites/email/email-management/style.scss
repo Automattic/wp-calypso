@@ -5,3 +5,220 @@
 		margin: 20px 0 40px;
 	}
 }
+
+/**
+ * New email home styles
+ */
+
+.email-home__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+}
+
+.email-home__header-cart {
+	display: flex;
+
+	> div {
+		margin-top: auto;
+		margin-bottom: auto;
+	}
+
+	.popover-cart {
+		margin-right: 8px;
+	}
+
+	.popover-cart .header-button,
+	.popover-cart .header-button:hover {
+		min-height: initial;
+		background: none;
+		color: var( --color-text );
+	}
+
+	.cart__count-badge .count {
+		top: -7px;
+		right: -3px;
+	}
+}
+
+.email-list-active {
+	> .card {
+		display: flex;
+		align-items: center;
+		color: var( --color-text );
+		> div > span {
+			font-size: $font-body-small;
+			color: var( --color-text-subtle );
+		}
+	}
+	> .card.is-card-link:hover {
+		background-color: var( --color-neutral-0 );
+	}
+}
+
+.email-list-active__item-icon {
+	> img, svg {
+		height: 36px;
+		width: 36px;
+		margin-right: 20px;
+	}
+	> .gridicon.gridicons-my-sites {
+		fill: var( --color-wordpress-com );
+	}
+}
+
+.email-list-inactive {
+	margin-top: 15px;
+	> .card {
+		align-items: center;
+		display: flex;
+		margin-bottom: 0;
+		padding-bottom: 20px;
+		padding-top: 20px;
+		> span {
+			flex: 1 1 auto;
+			line-height: 40px;
+		}
+	}
+}
+
+@mixin email_plan_header_status_color( $color ) {
+	border-top: 5px solid $color;
+
+	.email-plan-header__status {
+		color: $color;
+
+		> svg {
+			fill: $color;
+		}
+	}
+}
+
+.email-plan__actions .vertical-nav-item.card,
+.email-plan-mailboxes-list__mailbox-list-item.card {
+	padding-bottom: 28px;
+	padding-top: 28px;
+}
+
+.email-plan-header__status {
+	display: flex;
+	align-items: center;
+
+	> svg {
+		margin-right: 5px;
+	}
+}
+
+.email-plan-header {
+	display: flex;
+	align-items: center;
+
+	h2 {
+		font-size: $font-title-large;
+	}
+
+	&.success {
+		@include email_plan_header_status_color( var( --color-success ) );
+	}
+
+	&.warning {
+		@include email_plan_header_status_color( var( --color-warning ) );
+	}
+
+	&.error {
+		@include email_plan_header_status_color( var( --color-error ) );
+	}
+}
+
+.email-plan-header__icon {
+	> img, svg {
+		height: 36px;
+		width: 36px;
+		margin-right: 20px;
+	}
+
+	> .gridicon.gridicons-my-sites {
+		fill: var( --color-wordpress-com );
+	}
+}
+
+.email-plan-mailboxes-list__mailbox-list {
+	margin-top: 15px;
+}
+
+.email-plan-mailboxes-list__mailbox-list-item {
+	display: flex;
+	.email-plan-mailboxes-list__mailbox-list-item-main {
+		display: flex;
+		flex-direction: column;
+		> div:not( :first-child ) {
+			margin-top: 0.5em;
+		}
+	}
+	&.is-placeholder > span,
+	&.is-placeholder .email-plan-mailboxes-list__mailbox-list-item-main {
+		@include placeholder( --color-neutral-5 );
+		width: 50%;
+	}
+	&.no-emails > span {
+		color: var( --color-text-subtle );
+		font-style: italic;
+	}
+	> svg,
+	.email-plan-mailboxes-list__mailbox-list-item-main svg {
+		fill: var( --studio-gray-40 );
+		margin-right: 10px;
+		vertical-align: middle;
+	}
+	.email-plan-mailboxes-list__mailbox-list-item-main span {
+		vertical-align: middle;
+	}
+	> .badge {
+		margin-left: 10px;
+	}
+	.email-plan-mailboxes-list__mailbox-list-item-warning {
+		color: var( --color-error );
+		font-size: $font-body-small;
+		line-height: 24px;
+		margin-left: 16px;
+		> svg {
+			margin-right: 6px;
+			vertical-align: middle;
+		}
+		> span {
+			vertical-align: middle;
+		}
+	}
+
+	.button {
+		margin-left: auto;
+		max-height: 2rem;
+	}
+}
+
+.email-plan-subscription__card {
+	display: flex;
+	align-items: center;
+
+	> div:nth-last-child( 2 ) {
+		margin-left: 15px;
+		flex: 1 1 auto;
+	}
+	> div:last-child {
+		margin-left: 15px;
+		/* vertically aligns the auto-renew toggle - not sure if there's a better way... */
+		> div > div {
+			margin-top: auto;
+			margin-bottom: auto;
+		}
+	}
+}
+
+.email-plan-subscription__placeholder {
+	div {
+		@include placeholder( --color-neutral-5 );
+		margin: 0 auto;
+		width: 150px;
+		height: 28px;
+	}
+}

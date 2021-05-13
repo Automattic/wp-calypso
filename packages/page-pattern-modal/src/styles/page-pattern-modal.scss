@@ -28,17 +28,26 @@ $breakpoint-mobile: 600px;
 $breakpoint-tablet: 783px;
 $breakpoint-desktop: 961px;
 $breakpoint-huge: 1648px;
+$breakpoint-xhuge: 2000px;
 
-$sidebar-width: 324px;
+$sidebar-width: 230px;
+$sidebar-width-desktop: 324px;
 
 // Overrides of the Gutenberg modal component
 .page-pattern-modal {
 	@media screen and ( min-width: $breakpoint-mobile ) {
-		width: 90%;
+		width: calc( 100% - 32px );
 		height: 90vh;
 		// prevents a 1px strip of content being visible after scrolling
 		overflow-y: hidden;
 		padding-bottom: 24px;
+		.components-modal__content {
+			padding: 0 32px 24px;
+		}
+	}
+
+	@media screen and ( min-width: $breakpoint-desktop ) {
+		width: calc( 100% - 64px );
 	}
 
 	.components-modal__content {
@@ -46,10 +55,12 @@ $sidebar-width: 324px;
 		-webkit-overflow-scrolling: touch;
 		// prevents a 1px strip of content being visible after scrolling
 		margin-top: -1px;
+		padding: 0 16px 16px;
 	}
 
 	.components-modal__header {
 		border-bottom: none;
+		margin-right: -16px;
 	}
 }
 
@@ -67,7 +78,7 @@ $sidebar-width: 324px;
 		line-height: 1.1;
 	}
 
-	@media screen and ( min-width: $breakpoint-tablet ) {
+	@media screen and ( min-width: $breakpoint-desktop ) {
 		font-size: 3rem;
 		line-height: 1.35;
 	}
@@ -104,8 +115,21 @@ $sidebar-width: 324px;
 		margin-top: 0;
 		grid-template-columns: repeat(
 			auto-fill,
-			minmax( 260px, 1fr )
+			minmax( 280px, 1fr )
 		); // allow grid to take over number of cols on large screens
+	}
+
+	@media screen and ( min-width: $breakpoint-huge ) {
+		grid-template-columns: repeat(
+			auto-fill,
+			minmax( 350px, 1fr )
+		);
+	}
+	@media screen and ( min-width: $breakpoint-xhuge ) {
+		grid-template-columns: repeat(
+			auto-fill,
+			minmax( 500px, 1fr )
+		);
 	}
 }
 
@@ -174,8 +198,8 @@ $sidebar-width: 324px;
 .page-pattern-modal__sidebar {
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		position: fixed;
-		width: calc( #{$sidebar-width} - 24px );
-		padding-right: 44px;
+		width: $sidebar-width;
+		padding-right: 22px;
 
 		// Manually choosing when to enable/disable pointer events so that
 		// the scroll wheel behaviour feels natural when the mouse is over
@@ -198,6 +222,10 @@ $sidebar-width: 324px;
 				pointer-events: auto;
 			}
 		}
+	}
+	@media screen and ( min-width: $breakpoint-desktop ) {
+		width: $sidebar-width-desktop;
+		padding-right: 48px;
 	}
 }
 
@@ -296,5 +324,8 @@ $sidebar-width: 324px;
 .page-pattern-modal__pattern-list-container {
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		padding-left: $sidebar-width;
+	}
+	@media screen and ( min-width: $breakpoint-desktop ) {
+		padding-left: $sidebar-width-desktop;
 	}
 }

@@ -7,6 +7,7 @@ import { By } from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
+import SectionNavComponent from '../components/section-nav-component';
 import DisconnectSurveyPage from './disconnect-survey-page.js';
 
 import * as DriverHelper from '../driver-helper.js';
@@ -18,7 +19,8 @@ export default class SettingsPage extends AsyncBaseContainer {
 	}
 
 	async selectWriting() {
-		await DriverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		sectionNav.ensureMobileMenuOpen();
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.section-nav-tabs__list a[href*=writing]' )
@@ -26,7 +28,8 @@ export default class SettingsPage extends AsyncBaseContainer {
 	}
 
 	async selectPerformance() {
-		await DriverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		sectionNav.ensureMobileMenuOpen();
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.section-nav-tabs__list a[href*=performance]' )
@@ -34,28 +37,28 @@ export default class SettingsPage extends AsyncBaseContainer {
 	}
 
 	async mediaSettingsSectionDisplayed() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
+		return await DriverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.site-settings__media-settings' )
 		);
 	}
 
 	async photonToggleDisplayed() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
+		return await DriverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.jetpack-module-toggle .components-form-toggle__input' )
 		);
 	}
 
 	async carouselToggleDisplayed() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
+		return await DriverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.jetpack-module-toggle .components-form-toggle__input' )
 		);
 	}
 
 	async carouseBackgroundColorDisplayed() {
-		return await DriverHelper.isEventuallyPresentAndDisplayed(
+		return await DriverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '#carousel_background_color' )
 		);
@@ -74,7 +77,7 @@ export default class SettingsPage extends AsyncBaseContainer {
 			By.css( '.manage-connection__disconnect-link a' )
 		);
 
-		const present = await DriverHelper.isElementPresent(
+		const present = await DriverHelper.isElementLocated(
 			this.driver,
 			By.css( '.is-primary.is-scary' )
 		);
@@ -102,7 +105,7 @@ export default class SettingsPage extends AsyncBaseContainer {
 			this.driver,
 			By.className( 'button is-primary is-scary' )
 		);
-		return await DriverHelper.waitUntilLocatedAndVisible(
+		return await DriverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '#notices .is-success' )
 		);

@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -18,7 +17,7 @@ const trackForumOpen = () =>
 		location: 'inline-help-popover',
 	} );
 
-const InlineHelpForumView = ( { translate = identity } ) => (
+const InlineHelpForumView = ( { translate } ) => (
 	<div className="inline-help__forum-view">
 		<h2 className="inline-help__view-heading">
 			{ preventWidows( translate( 'Ask the Community for Help' ) ) }

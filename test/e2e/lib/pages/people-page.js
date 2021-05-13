@@ -7,20 +7,22 @@ import { By } from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
+import SectionNavComponent from '../components/section-nav-component';
 
 import * as DriverHelper from '../driver-helper.js';
 
 export default class PeoplePage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.is-people' ) );
-		this.searchButtonSelector = By.css( '.section-nav__panel div.search' );
-		this.searchInputSelector = By.css( '.section-nav__panel input.search__input' );
-		this.searchResultsLoadingSelector = By.css( '.people-profile.is-placeholder' );
-		this.peopleListItemSelector = By.css( '.people-list-item' );
+		this.searchButtonLocator = By.css( '.section-nav__panel div.search' );
+		this.searchInputLocator = By.css( '.section-nav__panel input.search__input' );
+		this.searchResultsLoadingLocator = By.css( '.people-profile.is-placeholder' );
+		this.peopleListItemLocator = By.css( '.people-list-item' );
 	}
 
 	async selectTeam() {
-		await DriverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		await sectionNav.ensureMobileMenuOpen();
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.section-nav-tabs__list a[href*=team]' )
@@ -28,7 +30,8 @@ export default class PeoplePage extends AsyncBaseContainer {
 	}
 
 	async selectViewers() {
-		await DriverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		await sectionNav.ensureMobileMenuOpen();
 		await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.section-nav-tabs__list a[href*=viewers]' )
@@ -37,7 +40,8 @@ export default class PeoplePage extends AsyncBaseContainer {
 	}
 
 	async selectEmailFollowers() {
-		await DriverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		await sectionNav.ensureMobileMenuOpen();
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.section-nav-tabs__list a[href*=email-followers]' )
@@ -45,7 +49,8 @@ export default class PeoplePage extends AsyncBaseContainer {
 	}
 
 	async selectFollowers() {
-		await DriverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		await sectionNav.ensureMobileMenuOpen();
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.section-nav-tabs__list a[href*="people/followers"]' )
@@ -53,7 +58,8 @@ export default class PeoplePage extends AsyncBaseContainer {
 	}
 
 	async selectInvites() {
-		await DriverHelper.ensureMobileMenuOpen( this.driver );
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		await sectionNav.ensureMobileMenuOpen();
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.section-nav-tabs__list a[href*="people/invites"]' )
@@ -63,7 +69,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 	async viewerDisplayed( username ) {
 		let retries = 0;
 		if (
-			await DriverHelper.isElementPresent( this.driver, By.css( '.section-header__label .count' ) )
+			await DriverHelper.isElementLocated( this.driver, By.css( '.section-header__label .count' ) )
 		) {
 			const noOfViewers = parseInt(
 				await this.driver.findElement( By.css( '.section-header__label .count' ) ).getText()
@@ -73,7 +79,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 
 		let displayed;
 		for ( let i = 0; i <= retries; i++ ) {
-			displayed = await DriverHelper.isEventuallyPresentAndDisplayed(
+			displayed = await DriverHelper.isElementEventuallyLocatedAndVisible(
 				this.driver,
 				By.css( `.people-profile__login[data-e2e-login="${ username }"]` ),
 				500
@@ -101,30 +107,36 @@ export default class PeoplePage extends AsyncBaseContainer {
 	async searchForUser( username ) {
 		// This has to be a username without the @
 		await this.ensureSearchOpened();
-		await DriverHelper.setWhenSettable( this.driver, this.searchInputSelector, username );
+		await DriverHelper.setWhenSettable( this.driver, this.searchInputLocator, username );
 		return await this.waitForSearchResults();
 	}
 
 	async ensureSearchOpened() {
-		const searchElement = await this.driver.findElement( this.searchButtonSelector );
+		const searchElement = await this.driver.findElement( this.searchButtonLocator );
 		const classNames = await searchElement.getAttribute( 'class' );
 		if ( classNames.includes( 'is-open' ) === false ) {
-			await DriverHelper.clickWhenClickable( this.driver, this.searchButtonSelector );
+			await DriverHelper.clickWhenClickable( this.driver, this.searchButtonLocator );
 		}
-		return await DriverHelper.waitUntilLocatedAndVisible( this.driver, this.searchInputSelector );
+		return await DriverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			this.searchInputLocator
+		);
 	}
 
 	async waitForSearchResults() {
-		return await DriverHelper.waitTillNotPresent( this.driver, this.searchResultsLoadingSelector );
+		return await DriverHelper.waitUntilElementNotLocated(
+			this.driver,
+			this.searchResultsLoadingLocator
+		);
 	}
 
 	async numberSearchResults() {
-		const peopleItems = await this.driver.findElements( this.peopleListItemSelector );
+		const peopleItems = await this.driver.findElements( this.peopleListItemLocator );
 		return peopleItems.length;
 	}
 
 	async selectOnlyPersonDisplayed() {
-		return await DriverHelper.clickWhenClickable( this.driver, this.peopleListItemSelector );
+		return await DriverHelper.clickWhenClickable( this.driver, this.peopleListItemLocator );
 	}
 
 	async inviteUser() {
@@ -138,12 +150,12 @@ export default class PeoplePage extends AsyncBaseContainer {
 		const driver = this.driver;
 		return await driver.wait( async () => {
 			driver.navigate().refresh();
-			await DriverHelper.waitUntilLocatedAndVisible(
+			await DriverHelper.waitUntilElementLocatedAndVisible(
 				this.driver,
 				By.css( `.people-invites__pending .people-profile__username[title="${ emailAddress }"]` )
 			);
 
-			return await DriverHelper.isElementPresent(
+			return await DriverHelper.isElementLocated(
 				driver,
 				By.css( `.people-invites__pending .people-profile__username[title="${ emailAddress }"]` )
 			);
@@ -176,7 +188,7 @@ export default class PeoplePage extends AsyncBaseContainer {
 	}
 
 	async cancelSearch() {
-		const cancelSelector = By.css( 'div[aria-label="Close Search"] svg' );
-		return await DriverHelper.clickWhenClickable( this.driver, cancelSelector );
+		const cancelLocator = By.css( 'div[aria-label="Close Search"] svg' );
+		return await DriverHelper.clickWhenClickable( this.driver, cancelLocator );
 	}
 }

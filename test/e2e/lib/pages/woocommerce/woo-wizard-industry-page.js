@@ -15,9 +15,9 @@ export default class WooWizardIndustryPage extends AsyncBaseContainer {
 	}
 
 	async selectFashionIndustry() {
-		const fashionSelector = By.css( '#inspector-checkbox-control-2' );
-		const buttonSelector = By.css( '.woocommerce-card button:not([disabled])' );
-		await driverHelper.clickWhenClickable( this.driver, fashionSelector );
-		return await driverHelper.clickWhenClickable( this.driver, buttonSelector );
+		const fashionLocator = By.css( '#inspector-checkbox-control-2' );
+		const buttonLocator = By.css( '.woocommerce-card button:not([disabled])' );
+		await driverHelper.clickWhenClickable( this.driver, fashionLocator );
+		return await driverHelper.clickWhenClickable( this.driver, buttonLocator );
 	}
 }

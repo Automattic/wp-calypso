@@ -2,12 +2,7 @@
  * Internal dependencies
  */
 import { withStorageKey } from '@automattic/state-utils';
-import {
-	combineReducers,
-	keyedReducer,
-	withSchemaValidation,
-	withoutPersistence,
-} from 'calypso/state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import {
 	EMAIL_ACCOUNTS_REQUEST,
 	EMAIL_ACCOUNTS_REQUEST_FAILURE,
@@ -35,7 +30,7 @@ export const emailAccountsReducer = withSchemaValidation(
 	}
 );
 
-export const requestErrorReducer = withoutPersistence( ( state = false, action ) => {
+export const requestErrorReducer = ( state = false, action ) => {
 	switch ( action.type ) {
 		case EMAIL_ACCOUNTS_REQUEST:
 			return false;
@@ -48,9 +43,9 @@ export const requestErrorReducer = withoutPersistence( ( state = false, action )
 	}
 
 	return state;
-} );
+};
 
-export const requestingReducer = withoutPersistence( ( state = false, action ) => {
+export const requestingReducer = ( state = false, action ) => {
 	switch ( action.type ) {
 		case EMAIL_ACCOUNTS_REQUEST:
 			return true;
@@ -63,7 +58,7 @@ export const requestingReducer = withoutPersistence( ( state = false, action ) =
 	}
 
 	return state;
-} );
+};
 
 export default withStorageKey(
 	'emailAccounts',

@@ -16,39 +16,42 @@ export default class NoticesComponent extends AsyncBaseContainer {
 		super( driver, By.css( '.wpcom-site' ), null, config.get( 'explicitWaitMS' ) * 3 );
 	}
 
-	async _isNoticeDisplayed( selector, actionSelector, click = false ) {
-		const isDisplayed = await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+	async _isNoticeDisplayed( locator, actionLocator, click = false ) {
+		const isDisplayed = await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			locator
+		);
 		if ( click === true ) {
-			await driverHelper.clickWhenClickable( this.driver, actionSelector );
+			await driverHelper.clickWhenClickable( this.driver, actionLocator );
 		}
 		return isDisplayed;
 	}
 
 	async isSuccessNoticeDisplayed( click = false ) {
-		const selector = By.css( '.notice.is-success' );
-		const actionSelector = By.css( '.notice.is-success a' );
-		return await this._isNoticeDisplayed( selector, actionSelector, click );
+		const locator = By.css( '.notice.is-success' );
+		const actionLocator = By.css( '.notice.is-success a' );
+		return await this._isNoticeDisplayed( locator, actionLocator, click );
 	}
 
 	async isNoticeDisplayed( click = false ) {
-		const selector = By.css( '.notice' );
-		const actionSelector = By.css( '.notice a' );
-		return await this._isNoticeDisplayed( selector, actionSelector, click );
+		const locator = By.css( '.notice' );
+		const actionLocator = By.css( '.notice a' );
+		return await this._isNoticeDisplayed( locator, actionLocator, click );
 	}
 
 	async isErrorNoticeDisplayed() {
-		const selector = By.css( '.notice.is-error' );
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+		const locator = By.css( '.notice.is-error' );
+		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, locator );
 	}
 
 	async getNoticeContent() {
-		const selector = By.css( '.notice .notice__text' );
-		await driverHelper.waitUntilLocatedAndVisible( this.driver, selector );
-		return await this.driver.findElement( selector ).getText();
+		const locator = By.css( '.notice .notice__text' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
+		return await this.driver.findElement( locator ).getText();
 	}
 
 	async dismissNotice() {
-		const selector = By.css( '.notice.is-dismissable .notice__dismiss' );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		const locator = By.css( '.notice.is-dismissable .notice__dismiss' );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 }

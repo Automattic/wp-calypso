@@ -2,6 +2,9 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
+import { ExternalLink } from '@wordpress/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 
 const addBlock = 'https://s0.wp.com/i/editor-welcome-tour/slide-add-block.gif';
 const allBlocks = 'https://s0.wp.com/i/editor-welcome-tour/slide-all-blocks.gif';
@@ -15,9 +18,10 @@ const welcome = 'https://s0.wp.com/i/editor-welcome-tour/slide-welcome.png';
 /**
  * This function returns a collection of NUX Tour slide data
  *
+ * @param { string } localeSlug the users locale
  * @returns { Array } a collection of <WelcomeTourCard /> props
  */
-function getTourContent() {
+function getTourContent( localeSlug ) {
 	return [
 		{
 			heading: __( 'Welcome to WordPress!', 'full-site-editing' ),
@@ -75,9 +79,26 @@ function getTourContent() {
 		},
 		{
 			heading: __( 'Congratulations!', 'full-site-editing' ),
-			description: __(
-				'You’ve now learned the basics. Remember, your site is always private until you decide to launch.',
-				'full-site-editing'
+			description: createInterpolateElement(
+				__(
+					"You've learned the basics. Remember, your site is private until you <link_to_launch_site_docs>decide to launch</link_to_launch_site_docs>. View the <link_to_editor_docs>block editing docs</link_to_editor_docs> to learn more.",
+					'full-site-editing'
+				),
+				{
+					link_to_launch_site_docs: (
+						<ExternalLink
+							href={ localizeUrl(
+								'https://wordpress.com/support/settings/privacy-settings/#launch-your-site',
+								localeSlug
+							) }
+						/>
+					),
+					link_to_editor_docs: (
+						<ExternalLink
+							href={ localizeUrl( 'https://wordpress.com/support/wordpress-editor/', localeSlug ) }
+						/>
+					),
+				}
 			),
 			imgSrc: finish,
 			animation: 'block-inserter',

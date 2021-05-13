@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import { get as webauthn_auth } from '@github/webauthn-json';
-import { replace } from 'lodash';
 
 const debug = debugFactory( 'calypso:two-step-authorization' );
 
@@ -48,24 +47,22 @@ function TwoStepAuthorization() {
  * fetch data about users two step configuration from /me/two-step
  */
 TwoStepAuthorization.prototype.fetch = function ( callback ) {
-	wpcom.me().getTwoStep(
-		function ( error, data ) {
-			if ( ! error ) {
-				this.data = data;
+	wpcom.me().getTwoStep( ( error, data ) => {
+		if ( ! error ) {
+			this.data = data;
 
-				if ( this.isReauthRequired() && ! this.initialized ) {
-					this.bumpMCStat( 'reauth-required' );
-				}
-
-				this.initialized = true;
-				this.emit( 'change' );
+			if ( this.isReauthRequired() && ! this.initialized ) {
+				this.bumpMCStat( 'reauth-required' );
 			}
 
-			if ( callback ) {
-				callback( error, data );
-			}
-		}.bind( this )
-	);
+			this.initialized = true;
+			this.emit( 'change' );
+		}
+
+		if ( callback ) {
+			callback( error, data );
+		}
+	} );
 };
 
 TwoStepAuthorization.prototype.postLoginRequest = function ( endpoint, data ) {
@@ -146,9 +143,9 @@ TwoStepAuthorization.prototype.validateCode = function ( args, callback ) {
 	wpcom.me().validateTwoStepCode(
 		{
 			...args,
-			code: replace( args.code, /\s/g, '' ),
+			code: args.code.replace( /\s/g, '' ),
 		},
-		function ( error, data ) {
+		( error, data ) => {
 			if ( ! error && data.success ) {
 				if ( args.action ) {
 					this.bumpMCStat(
@@ -177,7 +174,7 @@ TwoStepAuthorization.prototype.validateCode = function ( args, callback ) {
 			if ( callback ) {
 				callback( error, data );
 			}
-		}.bind( this )
+		}
 	);
 };
 
@@ -186,47 +183,43 @@ TwoStepAuthorization.prototype.validateCode = function ( args, callback ) {
  * /me/two-step/sms/new
  */
 TwoStepAuthorization.prototype.sendSMSCode = function ( callback ) {
-	wpcom.me().sendSMSValidationCode(
-		function ( error, data ) {
-			if ( error ) {
-				debug( 'Sending SMS code failed: ' + JSON.stringify( error ) );
+	wpcom.me().sendSMSValidationCode( ( error, data ) => {
+		if ( error ) {
+			debug( 'Sending SMS code failed: ' + JSON.stringify( error ) );
 
-				if ( error.error && 'rate_limited' === error.error ) {
-					debug( 'SMS resend throttled.' );
-					this.bumpMCStat( 'sms-code-send-throttled' );
-					this.smsResendThrottled = true;
-				}
-			} else {
-				this.smsResendThrottled = false;
-				this.bumpMCStat( 'sms-code-send-success' );
+			if ( error.error && 'rate_limited' === error.error ) {
+				debug( 'SMS resend throttled.' );
+				this.bumpMCStat( 'sms-code-send-throttled' );
+				this.smsResendThrottled = true;
 			}
+		} else {
+			this.smsResendThrottled = false;
+			this.bumpMCStat( 'sms-code-send-success' );
+		}
 
-			this.emit( 'change' );
+		this.emit( 'change' );
 
-			if ( callback ) {
-				callback( error, data );
-			}
-		}.bind( this )
-	);
+		if ( callback ) {
+			callback( error, data );
+		}
+	} );
 };
 
 /*
  * Fetches a new set of backup codes by calling /me/two-step/backup-codes/new
  */
 TwoStepAuthorization.prototype.backupCodes = function ( callback ) {
-	wpcom.me().backupCodes(
-		function ( error, data ) {
-			if ( error ) {
-				debug( 'Fetching Backup Codes failed: ' + JSON.stringify( error ) );
-			} else {
-				this.bumpMCStat( 'new-backup-codes-success' );
-			}
+	wpcom.me().backupCodes( ( error, data ) => {
+		if ( error ) {
+			debug( 'Fetching Backup Codes failed: ' + JSON.stringify( error ) );
+		} else {
+			this.bumpMCStat( 'new-backup-codes-success' );
+		}
 
-			if ( callback ) {
-				callback( error, data );
-			}
-		}.bind( this )
-	);
+		if ( callback ) {
+			callback( error, data );
+		}
+	} );
 };
 
 /*
@@ -236,28 +229,25 @@ TwoStepAuthorization.prototype.backupCodes = function ( callback ) {
  */
 TwoStepAuthorization.prototype.validateBackupCode = function ( code, callback ) {
 	const args = {
-		code: replace( code, /\s/g, '' ),
+		code: code.replace( /\s/g, '' ),
 		action: 'create-backup-receipt',
 	};
 
-	wpcom.me().validateTwoStepCode(
-		args,
-		function ( error, data ) {
-			if ( error ) {
-				debug( 'Validating Two Step Code failed: ' + JSON.stringify( error ) );
-			}
+	wpcom.me().validateTwoStepCode( args, ( error, data ) => {
+		if ( error ) {
+			debug( 'Validating Two Step Code failed: ' + JSON.stringify( error ) );
+		}
 
-			if ( data ) {
-				this.bumpMCStat(
-					data.success ? 'backup-code-validate-success' : 'backup-code-validate-failure'
-				);
-			}
+		if ( data ) {
+			this.bumpMCStat(
+				data.success ? 'backup-code-validate-success' : 'backup-code-validate-failure'
+			);
+		}
 
-			if ( callback ) {
-				callback( error, data );
-			}
-		}.bind( this )
-	);
+		if ( callback ) {
+			callback( error, data );
+		}
+	} );
 };
 
 /*

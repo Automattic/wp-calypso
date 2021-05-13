@@ -39,14 +39,17 @@ export default function () {
 
 	// List licenses.
 	page(
-		`/partner-portal/:filter(unassigned|assigned|revoked)?`,
+		`/partner-portal/licenses/:filter(unassigned|assigned|revoked)?`,
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
-		controller.partnerPortalContext,
+		controller.licensesContext,
 		makeLayout,
 		clientRender
 	);
+
+	// Redirect invalid license list filters back to the main portal page.
+	page( `/partner-portal/licenses/*`, '/partner-portal/licenses' );
 
 	// Issue a license.
 	page(
@@ -59,6 +62,14 @@ export default function () {
 		clientRender
 	);
 
-	// Redirect invalid URLs back to the main portal page.
-	page( `/partner-portal/*`, '/partner-portal' );
+	// Billing Dashboard.
+	page(
+		`/partner-portal`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.billingDashboardContext,
+		makeLayout,
+		clientRender
+	);
 }

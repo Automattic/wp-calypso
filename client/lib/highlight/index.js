@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { compact, toArray } from 'lodash';
+import { compact } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:highlight' );
 
@@ -72,7 +72,7 @@ function walk( node, term, wrapperNode ) {
 	let children;
 	debug( 'Node type', node.nodeName );
 	if ( node.childNodes.length ) {
-		children = toArray( node.childNodes );
+		children = Array.from( node.childNodes );
 
 		for ( let i = 0; i < children.length; i++ ) {
 			walk( children[ i ], term, wrapperNode );

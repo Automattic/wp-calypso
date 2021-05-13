@@ -23,6 +23,7 @@ import {
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { styled } from '@automattic/wpcom-checkout';
 import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
@@ -43,6 +44,7 @@ import {
 	handleContactValidationResult,
 	isContactValidationResponseValid,
 	getDomainValidationResult,
+	getTaxValidationResult,
 	getSignupEmailValidationResult,
 	getGSuiteValidationResult,
 } from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
@@ -55,10 +57,8 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
-import QueryExperiments from 'calypso/components/data/query-experiments';
 import PaymentMethodStep from './payment-method-step';
 import CheckoutHelpLink from './checkout-help-link';
-import styled from '../lib/styled';
 import type { CountryListItem } from '../types/country-list-item';
 import type { GetProductVariants } from '../hooks/product-variants';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
@@ -219,7 +219,18 @@ export default function WPCheckout( {
 			}
 		}
 
-		if ( contactDetailsType === 'domain' ) {
+		if ( contactDetailsType === 'tax' ) {
+			const validationResult = await getTaxValidationResult( contactInfo );
+			debug( 'validating contact details result', validationResult );
+			handleContactValidationResult( {
+				recordEvent: onEvent,
+				showErrorMessage: showErrorMessageBriefly,
+				paymentMethodId: activePaymentMethod?.id ?? '',
+				validationResult,
+				applyDomainContactValidationResults,
+			} );
+			return isContactValidationResponseValid( validationResult, contactInfo );
+		} else if ( contactDetailsType === 'domain' ) {
 			const validationResult = await getDomainValidationResult(
 				responseCart.products,
 				contactInfo
@@ -268,7 +279,11 @@ export default function WPCheckout( {
 			}
 		}
 
-		if ( contactDetailsType === 'domain' ) {
+		if ( contactDetailsType === 'tax' ) {
+			const validationResult = await getTaxValidationResult( contactInfo );
+			debug( 'validating contact details result', validationResult );
+			return isContactValidationResponseValid( validationResult, contactInfo );
+		} else if ( contactDetailsType === 'domain' ) {
 			const validationResult = await getDomainValidationResult(
 				responseCart.products,
 				contactInfo
@@ -373,7 +388,6 @@ export default function WPCheckout( {
 
 	return (
 		<Checkout>
-			<QueryExperiments />
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 				<CheckoutErrorBoundary
 					errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }

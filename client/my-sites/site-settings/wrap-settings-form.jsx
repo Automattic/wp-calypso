@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { flowRight, isEqual, isObjectLike, keys, omit, pick } from 'lodash';
+import { flowRight, isEqual, keys, omit, pick } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -34,6 +34,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
+import getRequest from 'calypso/state/selectors/get-request';
 
 const debug = debugFactory( 'calypso:site-settings' );
 
@@ -59,11 +60,11 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 				this.updateDirtyFields();
 			}
 
+			const noticeSettings = {
+				id: 'site-settings-save',
+				duration: 10000,
+			};
 			if ( ! this.props.isSavingSettings && prevProps.isSavingSettings ) {
-				const noticeSettings = {
-					id: 'site-settings-save',
-					duration: 10000,
-				};
 				if (
 					this.props.isSaveRequestSuccessful &&
 					( this.props.isJetpackSaveRequestSuccessful || ! this.props.siteIsJetpack )
@@ -87,6 +88,22 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					}
 					this.props.errorNotice( text, noticeSettings );
 				}
+			} else if (
+				this.props.siteIsJetpack &&
+				this.props.saveInstantSearchRequest?.status === 'success' &&
+				( typeof prevProps.saveInstantSearchRequest?.lastUpdated === 'undefined' ||
+					prevProps.saveInstantSearchRequest?.lastUpdated <
+						this.props.saveInstantSearchRequest?.lastUpdated ) &&
+				this.props.siteId === prevProps.siteId
+			) {
+				// NOTE: 1. the condition is pretty messy - the problem is that, if a request is the same
+				//          as a previous request, the status of the request doesn't change to 'pending' from 'success'
+				//          in state.dataRequests. will submit a bug and track separately.
+				//       2. Error notices are dealt in jetpack data layer, we don't need to worry about errors
+				this.props.successNotice(
+					this.props.translate( 'Settings saved successfully!' ),
+					noticeSettings
+				);
 			}
 		}
 
@@ -98,7 +115,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			const previousDirtyFields = this.props.dirtyFields;
 			/*eslint-disable eqeqeq*/
 			const nextDirtyFields = previousDirtyFields.filter( ( field ) =>
-				isObjectLike( currentFields[ field ] )
+				currentFields[ field ] !== null && typeof currentFields[ field ] === 'object'
 					? ! isEqual( currentFields[ field ], persistedFields[ field ] )
 					: ! ( currentFields[ field ] == persistedFields[ field ] )
 			);
@@ -275,6 +292,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			let isRequestingSettings = isRequestingSiteSettings( state, siteId ) && ! settings;
 			let isJetpackSaveRequestSuccessful;
 			let jetpackFieldsToUpdate;
+			let saveInstantSearchRequest;
 			const siteSettingsSaveError = getSiteSettingsSaveError( state, siteId );
 			const settingsFields = {
 				site: keys( settings ),
@@ -301,6 +319,12 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 				isRequestingSettings =
 					isRequestingSettings ||
 					( isRequestingJetpackSettings( state, siteId ) && ! jetpackSettings );
+				saveInstantSearchRequest = getRequest(
+					state,
+					saveJetpackSettings( siteId, {
+						instant_search_enabled: jetpackFieldsToUpdate.instant_search_enabled,
+					} )
+				);
 			}
 
 			return {
@@ -316,6 +340,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 				settings,
 				settingsFields,
 				siteId,
+				saveInstantSearchRequest,
 			};
 		},
 		( dispatch ) => {

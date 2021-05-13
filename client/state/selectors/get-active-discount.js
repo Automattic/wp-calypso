@@ -3,7 +3,7 @@
  */
 import { activeDiscounts } from 'calypso/lib/discounts';
 import { abtest } from 'calypso/lib/abtest';
-import { planMatches } from 'calypso/lib/plans';
+import { planMatches } from '@automattic/calypso-products';
 import { hasActivePromotion } from 'calypso/state/active-promotions/selectors';
 import { getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

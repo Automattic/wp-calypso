@@ -4,7 +4,7 @@
 import { flagUrl } from '..';
 
 describe( 'flagUrl', () => {
-	test( 'Given a valid country code, returns an SVG file path ', () => {
+	test( 'Given a valid country code, returns an SVG file path', () => {
 		// Note that the 'real' helper function returns a full path,
 		// not just a filename plus extension. However, that behavior
 		// relies on a webpack loader, which we can't fully emulate
@@ -13,7 +13,7 @@ describe( 'flagUrl', () => {
 		expect( flagUrl( 'us' ) ).toBe( 'us.svg' );
 	} );
 
-	test( 'Given an invalid country code, returns a fallback inline SVG ', () => {
+	test( 'Given an invalid country code, returns a fallback inline SVG', () => {
 		const gridicon = `
 			<svg
 				class="gridicon gridicons-globe"

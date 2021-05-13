@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
-import { PlanFeaturesAvailableItem } from './item';
+import { PlanFeaturesItem } from './item';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import { abtest } from 'calypso/lib/abtest';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
@@ -38,12 +38,13 @@ import {
 	getPlan as getPlanFromKey,
 	getPlanClass,
 	isFreePlan,
-} from 'calypso/lib/plans';
+	isMonthly,
+	TERM_MONTHLY,
+} from '@automattic/calypso-products';
 import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
 } from 'calypso/state/sites/plans/selectors';
-import { isMonthly, TERM_MONTHLY } from 'calypso/lib/plans/constants';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 
 /**
@@ -91,7 +92,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { basePlansPath, planProperties } = this.props;
+		const { basePlansPath, planProperties, isReskinned } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -109,7 +110,9 @@ export class PlanFeaturesComparison extends Component {
 				rawPriceForMonthlyPlan,
 			} = properties;
 			const { discountPrice } = properties;
-			const classes = classNames( 'plan-features-comparison__table-item', 'has-border-top' );
+			const classes = classNames( 'plan-features-comparison__table-item', {
+				'has-border-top': ! isReskinned,
+			} );
 			const audience = planConstantObj.getAudience();
 			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
 			const { annualPricePerMonth, isMonthlyPlan } = properties;
@@ -240,16 +243,17 @@ export class PlanFeaturesComparison extends Component {
 
 		return (
 			<>
-				<PlanFeaturesAvailableItem
+				<PlanFeaturesItem
 					key={ index }
 					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
+					isFeatureAvailable={ feature.availableForCurrentPlan }
 				>
 					<span className={ classes }>
 						<span className="plan-features-comparison__item-title">
 							{ feature.getTitle( this.props.domainName ) }
 						</span>
 					</span>
-				</PlanFeaturesAvailableItem>
+				</PlanFeaturesItem>
 			</>
 		);
 	}
@@ -292,7 +296,6 @@ export class PlanFeaturesComparison extends Component {
 
 PlanFeaturesComparison.propTypes = {
 	basePlansPath: PropTypes.string,
-	displayJetpackPlans: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plans prop or isPlaceholder prop
@@ -307,7 +310,6 @@ PlanFeaturesComparison.propTypes = {
 
 PlanFeaturesComparison.defaultProps = {
 	basePlansPath: null,
-	displayJetpackPlans: false,
 	isInSignup: true,
 	siteId: null,
 	onUpgradeClick: noop,

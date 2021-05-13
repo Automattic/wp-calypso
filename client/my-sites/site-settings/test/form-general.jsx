@@ -44,7 +44,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -93,7 +93,7 @@ const props = {
 	moment,
 };
 
-describe( 'SiteSettingsFormGeneral ', () => {
+describe( 'SiteSettingsFormGeneral', () => {
 	test( 'should not blow up and have proper CSS class', () => {
 		const comp = shallow( <SiteSettingsFormGeneral { ...props } /> );
 		expect( comp.find( '.site-settings__site-options' ).length ).toBe( 1 );
@@ -232,22 +232,6 @@ describe( 'SiteSettingsFormGeneral ', () => {
 
 			// We want to show the coming soon setting for existing coming soon v1 sites that have not migrated
 			describe( 'support existing coming soon v1 sites that have not migrated', () => {
-				test( 'Coming soon option should be selected when a site is private and unlaunched (coming soon mode v1 by default)', () => {
-					const newProps = {
-						...testProps,
-						fields: {
-							blog_public: -1,
-						},
-						isUnlaunchedSite: true,
-						// So renderLaunchSite() runs smoothly.
-						siteDomains: [ 'test.com' ],
-					};
-
-					const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...newProps } /> );
-					const radioButton = getByLabelText( 'Coming soon', { exact: false } );
-					expect( radioButton ).toBeChecked();
-				} );
-
 				test( 'Should check private option when site is private, but not in coming soon v1 and not private and unlaunched', () => {
 					const newProps = {
 						...testProps,
@@ -303,6 +287,20 @@ describe( 'SiteSettingsFormGeneral ', () => {
 					const radioButtonPrivate = getByLabelText( 'Private', { exact: false } );
 					expect( radioButtonPrivate ).toBeChecked();
 				} );
+			} );
+		} );
+
+		describe( 'unlaunched site', () => {
+			it( 'Should not show the site settings UI', () => {
+				testProps = {
+					...testProps,
+					isUnlaunchedSite: true,
+					siteDomains: [ 'example.wordpress.com' ],
+				};
+
+				const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
+
+				expect( container.querySelectorAll( '#site-privacy-settings' ) ).toHaveLength( 0 );
 			} );
 		} );
 

@@ -18,8 +18,12 @@ export default class PressableSiteSettingsPage extends AsyncBaseContainer {
 	}
 
 	waitForJetpackPremium() {
-		const loadingSelector = By.css( '.activating img.loading-image' );
-		return driverHelper.waitTillNotPresent( this.driver, loadingSelector, explicitWaitMS * 4 );
+		const loadingLocator = By.css( '.activating img.loading-image' );
+		return driverHelper.waitUntilElementNotLocated(
+			this.driver,
+			loadingLocator,
+			explicitWaitMS * 4
+		);
 	}
 
 	async activateJetpackPremium() {

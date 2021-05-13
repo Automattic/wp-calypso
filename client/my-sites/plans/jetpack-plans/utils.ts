@@ -2,27 +2,20 @@
  * External dependencies
  */
 import { translate, TranslateResult, numberFormat } from 'i18n-calypso';
-import { compact, isObject } from 'lodash';
+import { compact } from 'lodash';
 import page from 'page';
-import React, { createElement, Fragment } from 'react';
+import { createElement, Fragment } from 'react';
 import { createSelector } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
-import { getFeatureByKey, getFeatureCategoryByKey } from 'calypso/lib/plans/features-list';
+import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import {
-	DAILY_PRODUCTS,
 	EXTERNAL_PRODUCTS_LIST,
 	EXTERNAL_PRODUCTS_SLUG_MAP,
-	FEATURED_PRODUCTS,
 	ITEM_TYPE_PRODUCT,
-	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PLAN,
-	OPTIONS_SLUG_MAP,
-	PRODUCTS_WITH_OPTIONS,
-	REALTIME_PRODUCTS,
-	SUBTYPE_TO_OPTION,
 } from './constants';
 import RecordsDetails from './records-details';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -32,33 +25,27 @@ import {
 	TERM_BIENNIALLY,
 	JETPACK_LEGACY_PLANS,
 	JETPACK_RESET_PLANS,
-	JETPACK_SECURITY_PLANS,
 	JETPACK_PLANS_BY_TERM,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
 	JETPACK_PRODUCTS_BY_TERM,
-} from 'calypso/lib/plans/constants';
-import {
 	getPlan,
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
 	planHasFeature,
-} from 'calypso/lib/plans';
-import {
 	Product,
-	JETPACK_PRODUCTS_LIST,
+	JETPACK_SITE_PRODUCTS_WITH_FEATURES,
 	objectIsProduct,
 	PRODUCTS_LIST,
-} from 'calypso/lib/products-values/products-list';
-import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
-import { getJetpackProductTagline } from 'calypso/lib/products-values/get-jetpack-product-tagline';
-import { getJetpackProductCallToAction } from 'calypso/lib/products-values/get-jetpack-product-call-to-action';
-import { getJetpackProductDescription } from 'calypso/lib/products-values/get-jetpack-product-description';
-import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
+	getJetpackProductDisplayName,
+	getJetpackProductTagline,
+	getJetpackProductCallToAction,
+	getJetpackProductDescription,
+	getJetpackProductShortName,
+} from '@automattic/calypso-products';
 import config from '@automattic/calypso-config';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { getForCurrentCROIteration, Iterations } from './iterations';
-import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
@@ -70,7 +57,6 @@ import type { AppState } from 'calypso/types';
 import type {
 	Duration,
 	SelectorProduct,
-	SelectorProductSlug,
 	DurationString,
 	SelectorProductFeaturesItem,
 	SelectorProductFeaturesSection,
@@ -78,12 +64,12 @@ import type {
 	SiteProduct,
 } from './types';
 import type {
-	JetpackPlanSlugs,
+	JetpackPlanSlug,
 	Plan,
 	JetpackPlanCardFeature,
-	JetpackPlanCardFeatureSection,
-} from 'calypso/lib/plans/types';
-import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
+	JetpackProductSlug,
+} from '@automattic/calypso-products';
+
 import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 import ExternalLink from 'calypso/components/external-link';
 import type { PriceTierEntry } from 'calypso/state/products-list/selectors/get-product-price-tiers';
@@ -118,37 +104,45 @@ export function durationToText( duration: Duration ): TranslateResult {
 	return translate( '/month, paid yearly' );
 }
 
-// In the case of products that have options (daily and real-time), we want to display
-// the name of the option, not the name of one of the variants.
-export function getProductWithOptionDisplayName(
-	item: SelectorProduct,
-	isOwned: boolean,
-	isItemPlanFeature: boolean
-): TranslateResult {
-	const optionSlug = getOptionFromSlug( item.productSlug );
+function getSlugInTerm( yearlySlug: string | null, slugTerm: Duration ) {
+	const mainTerm = slugTerm === TERM_MONTHLY ? 'monthly' : 'yearly';
+	const oppositeTerm = mainTerm === 'monthly' ? 'yearly' : 'monthly';
 
-	if ( ! optionSlug || isOwned || isItemPlanFeature ) {
-		return item.displayName;
-	}
-
-	return slugToSelectorProduct( optionSlug )?.displayName || item.displayName;
-}
-
-// Takes any annual Jetpack product or plan slug and returns its corresponding monthly equivalent
-function getMonthlySlugFromYearly( yearlySlug: string | null ) {
 	const matchingProduct = JETPACK_PRODUCTS_BY_TERM.find(
-		( product ) => product.yearly === yearlySlug
+		( product ) => product[ oppositeTerm ] === yearlySlug
 	);
 	if ( matchingProduct ) {
-		return matchingProduct.monthly;
+		return matchingProduct[ mainTerm ];
 	}
 
-	const matchingPlan = JETPACK_PLANS_BY_TERM.find( ( plan ) => plan.yearly === yearlySlug );
+	const matchingPlan = JETPACK_PLANS_BY_TERM.find(
+		( plan ) => plan[ oppositeTerm ] === yearlySlug
+	);
 	if ( matchingPlan ) {
-		return matchingPlan.monthly;
+		return matchingPlan[ mainTerm ];
 	}
 
 	return null;
+}
+
+/**
+ * Get the monthly version of a product slug.
+ *
+ * @param {string} yearlySlug a yearly term product slug
+ * @returns {string} a monthly term product slug
+ */
+export function getMonthlySlugFromYearly( yearlySlug: string | null ): string | null {
+	return getSlugInTerm( yearlySlug, TERM_MONTHLY );
+}
+
+/**
+ * Get the yearly version of a product slug.
+ *
+ * @param {string} monthlySlug a monthly term product slug
+ * @returns {string} a yearly term product slug
+ */
+export function getYearlySlugFromMonthly( monthlySlug: string | null ): string | null {
+	return getSlugInTerm( monthlySlug, TERM_ANNUALLY );
 }
 
 /**
@@ -205,12 +199,25 @@ export const getHighestAnnualDiscount = createSelector(
  * Product UI utils.
  */
 
-export function productButtonLabel(
-	product: SelectorProduct,
-	isOwned: boolean,
-	isUpgradeableToYearly: boolean,
-	currentPlan?: SitePlan | null
-): TranslateResult {
+interface productButtonLabelProps {
+	product: SelectorProduct;
+	isOwned: boolean;
+	isUpgradeableToYearly: boolean;
+	isDeprecated: boolean;
+	currentPlan?: SitePlan | null;
+}
+
+export function productButtonLabel( {
+	product,
+	isOwned,
+	isUpgradeableToYearly,
+	isDeprecated,
+	currentPlan,
+}: productButtonLabelProps ): TranslateResult {
+	if ( isDeprecated ) {
+		return translate( 'No longer available' );
+	}
+
 	if ( isUpgradeableToYearly ) {
 		return translate( 'Upgrade to Yearly' );
 	}
@@ -237,11 +244,10 @@ export function productButtonLabel(
 	);
 }
 
-export function slugIsFeaturedProduct( productSlug: string ): boolean {
-	return FEATURED_PRODUCTS.includes( productSlug );
-}
-
-function getPriceTierForUnits( tiers: PriceTierEntry[], units: number ): PriceTierEntry | null {
+export function getPriceTierForUnits(
+	tiers: PriceTierEntry[],
+	units: number
+): PriceTierEntry | null {
 	const firstUnboundedTier = tiers.find( ( tier ) => ! tier.maximum_units );
 	let matchingTier = tiers.find( ( tier ) => {
 		if ( ! tier.maximum_units ) {
@@ -338,13 +344,10 @@ export function productAboveButtonText(
  * Type guards.
  */
 
-function slugIsSelectorProductSlug( slug: string ): slug is SelectorProductSlug {
-	return PRODUCTS_WITH_OPTIONS.includes( slug as typeof PRODUCTS_WITH_OPTIONS[ number ] );
-}
 function slugIsJetpackProductSlug( slug: string ): slug is JetpackProductSlug {
-	return slug in JETPACK_PRODUCTS_LIST;
+	return slug in JETPACK_SITE_PRODUCTS_WITH_FEATURES;
 }
-function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
+function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlug {
 	return [ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ].includes( slug );
 }
 
@@ -353,16 +356,12 @@ function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
  */
 
 export function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | undefined {
-	if ( slugIsSelectorProductSlug( slug ) ) {
-		return getForCurrentCROIteration( ( variation: Iterations ) =>
-			OPTIONS_SLUG_MAP[ slug ]( variation )
-		);
-	} else if ( EXTERNAL_PRODUCTS_LIST.includes( slug ) ) {
+	if ( EXTERNAL_PRODUCTS_LIST.includes( slug ) ) {
 		return getForCurrentCROIteration( ( variation: Iterations ) =>
 			EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]( variation )
 		);
 	} else if ( slugIsJetpackProductSlug( slug ) ) {
-		return JETPACK_PRODUCTS_LIST[ slug ];
+		return JETPACK_SITE_PRODUCTS_WITH_FEATURES[ slug ];
 	} else if ( slugIsJetpackPlanSlug( slug ) ) {
 		return getPlan( slug ) as Plan;
 	}
@@ -431,7 +430,6 @@ export function itemToSelectorProduct(
 			iconSlug,
 			displayName: getJetpackProductDisplayName( item ),
 			type: ITEM_TYPE_PRODUCT,
-			subtypes: [],
 			shortName: getJetpackProductShortName( item ) || '',
 			tagline: getJetpackProductTagline( item ),
 			description: getJetpackProductDescription( item ),
@@ -467,15 +465,13 @@ export function itemToSelectorProduct(
 		}
 		const isResetPlan = JETPACK_RESET_PLANS.includes( productSlug );
 		const iconAppend = isResetPlan ? '_v2' : '';
-		const type = JETPACK_SECURITY_PLANS.includes( productSlug ) ? ITEM_TYPE_BUNDLE : ITEM_TYPE_PLAN;
 		return {
 			productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
 			displayName: getForCurrentCROIteration( item.getTitle ),
 			buttonLabel: getForCurrentCROIteration( item.getButtonLabel ),
-			type,
-			subtypes: [],
+			type: ITEM_TYPE_PLAN,
 			shortName: getForCurrentCROIteration( item.getTitle ),
 			tagline: getForCurrentCROIteration( item.getTagline ) || '',
 			description: getForCurrentCROIteration( item.getDescription ),
@@ -486,7 +482,6 @@ export function itemToSelectorProduct(
 					getForCurrentCROIteration( ( variation: Iterations ) =>
 						buildCardFeaturesFromItem( item, undefined, variation )
 					) || [],
-				more: MORE_FEATURES_LINK,
 			},
 			legacy: ! isResetPlan,
 		};
@@ -546,45 +541,19 @@ export function buildCardFeatureItemFromFeatureKey(
 /**
  * Builds the feature items passed to the product card, from feature keys.
  *
- * @param {JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection} features Feature keys
+ * @param {JetpackPlanCardFeature[]} features Feature keys
  * @param {object?} options Options
  * @param {string?} variation Experiment variation
  * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
 export function buildCardFeaturesFromFeatureKeys(
-	features: JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection,
+	features: JetpackPlanCardFeature[],
 	options?: Record< string, unknown >,
 	variation?: Iterations
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
-	// Without sections (JetpackPlanCardFeature[])
-	if ( Array.isArray( features ) ) {
-		return compact(
-			features.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
-		);
-	}
-
-	// With sections (JetpackPlanCardFeatureSection)
-	if ( isObject( features ) ) {
-		const result = [] as SelectorProductFeaturesSection[];
-
-		Object.getOwnPropertySymbols( features ).map( ( key ) => {
-			const category = getFeatureCategoryByKey( key );
-			const subfeatures = features[ key ];
-
-			if ( category ) {
-				result.push( {
-					heading: category.getTitle(),
-					list: subfeatures.map( ( f: JetpackPlanCardFeature ) =>
-						buildCardFeatureItemFromFeatureKey( f, options, variation )
-					),
-				} as SelectorProductFeaturesSection );
-			}
-		} );
-
-		return result;
-	}
-
-	return [];
+	return compact(
+		features.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
+	);
 }
 
 /**
@@ -601,7 +570,7 @@ export function buildCardFeaturesFromItem(
 	variation?: Iterations
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	if ( objectIsPlan( item ) ) {
-		const features = item.getPlanCardFeatures?.( variation );
+		const features = item.getPlanCardFeatures?.();
 
 		if ( features ) {
 			return buildCardFeaturesFromFeatureKeys( features, options, variation );
@@ -632,16 +601,6 @@ export function slugToSelectorProduct( slug: string ): SelectorProduct | null {
 }
 
 /**
- * Returns the slug of an option product given a real product/plan slug.
- *
- * @param slug string
- * @returns string | null
- */
-export function getOptionFromSlug( slug: string ): string | null {
-	return SUBTYPE_TO_OPTION[ slug ];
-}
-
-/**
  * Adds products to the cart and redirects to the checkout page.
  *
  * @param {string} siteSlug Selected site
@@ -656,6 +615,25 @@ export function checkout(
 	const productsArray = Array.isArray( products ) ? products : [ products ];
 	const productsString = productsArray.join( ',' );
 
+	if ( config.isEnabled( 'jetpack/userless-checkout' ) ) {
+		const { unlinked, purchasetoken, purchaseNonce, site } = urlQueryArgs;
+		const canDoUnlinkedCheckout = unlinked && !! site && ( !! purchasetoken || purchaseNonce );
+
+		// Enter userless checkout if unlinked, purchasetoken or purchaseNonce, and site are all set
+		if ( isJetpackCloud() && canDoUnlinkedCheckout ) {
+			const host =
+				'development' === urlQueryArgs.calypso_env
+					? 'http://calypso.localhost:3000'
+					: 'https://wordpress.com';
+
+			window.location.href = addQueryArgs(
+				urlQueryArgs,
+				host + `/checkout/jetpack/${ siteSlug }/${ productsString }`
+			);
+			return;
+		}
+	}
+
 	// If there is not siteSlug, we need to redirect the user to the site selection
 	// step of the flow. Since purchases of multiple products are allowed, we need
 	// to pass all products separated by comma in the URL.
@@ -663,10 +641,18 @@ export function checkout(
 		? `/checkout/${ siteSlug }/${ productsString }`
 		: `/jetpack/connect/${ productsString }`;
 
+	// Unauthenticated users will be presented with a Jetpack branded version of the login form
+	// if the URL has the query parameter `source=jetpack-plans`. We only want to do this if the
+	// user is in Jetpack Cloud.
+	const urlQueryArgsWithSource =
+		isJetpackCloud() && ! urlQueryArgs.source
+			? { ...urlQueryArgs, source: 'jetpack-plans' }
+			: urlQueryArgs;
+
 	if ( isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
-		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
+		window.location.href = addQueryArgs( urlQueryArgsWithSource, `https://wordpress.com${ path }` );
 	} else {
-		page( addQueryArgs( urlQueryArgs, path ) );
+		page( addQueryArgs( urlQueryArgsWithSource, path ) );
 	}
 }
 
@@ -688,28 +674,28 @@ export function manageSitePurchase( siteSlug: string, purchaseId: number ): void
 }
 
 /**
- * Append "Available Options: Real-time and Daily" to the product description.
+ * Return the slug of a highlighted product if the given slug is Jetpack product
+ * slug, otherwise, return null.
  *
- * @param product SelectorProduct
+ * @param {string} productSlug the slug of a Jetpack product
  *
- * @returns ReactNode | TranslateResult
+ * @returns {[string, string] | null} the monthly and yearly slug of a supported Jetpack product
  */
-export const getJetpackDescriptionWithOptions = (
-	product: SelectorProduct
-): React.ReactNode | TranslateResult => {
-	const em = React.createElement( 'em', null, null );
+export function getHighlightedProduct( productSlug?: string ): [ string, string ] | null {
+	if ( ! productSlug ) {
+		return null;
+	}
 
-	// If the product has 'subtypes' (containing daily and real-time product slugs).
-	// then append "Available options: Real-time or Daily" to the product description.
-	return product.subtypes.some( ( subtype ) => DAILY_PRODUCTS.includes( subtype ) ) &&
-		product.subtypes.some( ( subtype ) => REALTIME_PRODUCTS.includes( subtype ) )
-		? translate( '%(productDescription)s {{em}}Available options: Real-time or Daily.{{/em}}', {
-				args: {
-					productDescription: product.description,
-				},
-				components: {
-					em,
-				},
-		  } )
-		: product.description;
-};
+	// If neither of these methods return a slug, it means that the `productSlug`
+	// is not really a Jetpack product slug.
+	const yearlySlug = getYearlySlugFromMonthly( productSlug );
+	const monthlySlug = getMonthlySlugFromYearly( productSlug );
+
+	if ( monthlySlug ) {
+		return [ monthlySlug, productSlug ];
+	} else if ( yearlySlug ) {
+		return [ productSlug, yearlySlug ];
+	}
+
+	return null;
+}

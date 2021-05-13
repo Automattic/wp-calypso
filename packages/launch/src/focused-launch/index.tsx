@@ -9,14 +9,13 @@ import { ScrollToTop } from '@automattic/onboarding';
 /**
  * Internal dependencies
  */
-import { useSite } from '../hooks';
 import { Route as FocusedLaunchRoute } from './route';
 import Summary from './summary';
 import DomainDetails from './domain-details';
 import PlanDetails from './plan-details';
 import Success from './success';
 import { LAUNCH_STORE } from '../stores';
-import { useDomainSuggestionFromCart, usePlanProductIdFromCart } from '../hooks';
+import { useSite, useDomainSuggestionFromCart, usePlanProductIdFromCart } from '../hooks';
 
 import './style.scss';
 

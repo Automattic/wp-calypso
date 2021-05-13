@@ -145,6 +145,7 @@ export interface ResponseCartProduct {
 	months_per_bill_period: number | null;
 	volume: number;
 	quantity: number | null;
+	current_quantity: number | null;
 	extra: ResponseCartProductExtra;
 	uuid: string;
 	cost: number;
@@ -188,10 +189,14 @@ export interface ResponseCartProductExtra {
 	purchaseType?: string;
 	privacy?: boolean;
 	afterPurchaseUrl?: string;
+	isJetpackCheckout?: boolean;
 }
 
 export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	purchaseId?: string;
+	isJetpackCheckout?: boolean;
+	jetpackSiteSlug?: string;
+	jetpackPurchaseToken?: string;
 }
 
 export interface GSuiteProductUser {

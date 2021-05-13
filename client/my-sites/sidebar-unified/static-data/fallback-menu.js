@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 
 /* eslint-disable jsdoc/require-param */
@@ -71,17 +72,28 @@ export default function buildFallbackResponse( {
 				},
 				{
 					parent: 'upgrades',
-					slug: 'Purchases',
-					title: translate( 'Purchases' ),
-					type: 'submenu-item',
-					url: `/purchases/subscriptions/${ siteDomain }`,
-				},
-				{
-					parent: 'upgrades',
 					slug: 'Domains',
 					title: translate( 'Domains' ),
 					type: 'submenu-item',
 					url: `/domains/manage/${ siteDomain }`,
+				},
+				...( isEnabled( 'email/centralized-home' )
+					? [
+							{
+								parent: 'upgrades',
+								slug: 'Emails',
+								title: translate( 'Emails' ),
+								type: 'submenu-item',
+								url: `/email/${ siteDomain }`,
+							},
+					  ]
+					: [] ),
+				{
+					parent: 'upgrades',
+					slug: 'Purchases',
+					title: translate( 'Purchases' ),
+					type: 'submenu-item',
+					url: `/purchases/subscriptions/${ siteDomain }`,
 				},
 			],
 		},

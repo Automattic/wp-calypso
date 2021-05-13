@@ -13,7 +13,7 @@ The API returned by `createConfig` is as follows. It is a function extended with
 Returns the value for the given configuration key.
 
 ```js
-const value = config( key )
+const value = config( key );
 ```
 
 ### config.isEnabled( key )
@@ -41,6 +41,7 @@ Enable a feature.
 ```js
 config.enable( 'myFeature' );
 ```
+
 ### config.disable( key )
 
 Disable a feature.
@@ -48,4 +49,3 @@ Disable a feature.
 ```js
 config.disable( 'myFeature' );
 ```
-

@@ -6,15 +6,13 @@ import * as wpcomHttpActions from 'calypso/state/data-layer/wpcom-http/actions';
 import * as jetpackScanActions from 'calypso/state/jetpack-scan/actions';
 import { JETPACK_SCAN_REQUEST } from 'calypso/state/action-types';
 
+jest.mock( 'calypso/state/data-layer/wpcom-http/actions', () => ( {
+	http: jest.fn(),
+} ) );
+
 function setup( siteId ) {
 	// Set spy on action creator to verify it gets called when the component renders.
 	const requestScanStatusActionSpy = jest.spyOn( jetpackScanActions, 'requestScanStatus' );
-
-	// We don't want to make an HTTP request so we need to mock this utility.
-	wpcomHttpActions.http = jest.fn( () => ( {
-		type: JETPACK_SCAN_REQUEST,
-		meta: { dataLayer: { data: 'Fake data!' } },
-	} ) );
 
 	const store = createReduxStore(
 		{
@@ -31,6 +29,17 @@ function setup( siteId ) {
 }
 
 describe( 'Jetpack Scan data-layer', () => {
+	beforeAll( () => {
+		wpcomHttpActions.http.mockImplementation( () => ( {
+			type: JETPACK_SCAN_REQUEST,
+			meta: { dataLayer: { data: 'Fake data!' } },
+		} ) );
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	it( 'should reach the fetch handler middleware', () => {
 		const siteId = 9999;
 		const { store, dispatchSpy, requestScanStatusActionSpy } = setup( siteId );

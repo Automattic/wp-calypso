@@ -20,12 +20,15 @@ export default class DomainsPage extends AsyncBaseContainer {
 	}
 
 	async clickPopoverItem( name ) {
-		const actionItemSelector = By.css( '.popover__menu-item' );
-		return await driverHelper.selectElementByText( this.driver, actionItemSelector, name );
+		const actionItemLocator = By.css( '.popover__menu-item' );
+		return await driverHelper.selectElementByText( this.driver, actionItemLocator, name );
 	}
 
 	async popOverMenuDisplayed() {
-		const popOverMenuSelector = By.css( '.popover__menu' );
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, popOverMenuSelector );
+		const popOverMenuLocator = By.css( '.popover__menu' );
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			popOverMenuLocator
+		);
 	}
 }

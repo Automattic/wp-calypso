@@ -2,10 +2,9 @@
  * External	dependencies
  *
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { identity, includes } from 'lodash';
+import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -40,7 +39,6 @@ export class RegionAddressFieldsets extends Component {
 
 	static defaultProps = {
 		getFieldProps: noop,
-		translate: identity,
 		countryCode: 'US',
 		shouldAutoFocusAddressField: false,
 		hasCountryStates: false,

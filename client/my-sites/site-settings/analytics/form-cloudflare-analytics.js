@@ -23,8 +23,11 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
-import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
-import { TYPE_PREMIUM, FEATURE_CLOUDFLARE_ANALYTICS } from 'calypso/lib/plans/constants';
+import {
+	findFirstSimilarPlanKey,
+	TYPE_PREMIUM,
+	FEATURE_CLOUDFLARE_ANALYTICS,
+} from '@automattic/calypso-products';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 /**

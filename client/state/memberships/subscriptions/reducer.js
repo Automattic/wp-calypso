@@ -8,7 +8,7 @@ import {
 	MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS,
 	MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 
 /**
  * Returns the updated items state after an action has been dispatched.
@@ -18,7 +18,7 @@ import { combineReducers, withoutPersistence } from 'calypso/state/utils';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const items = withoutPersistence( ( state = [], action ) => {
+export const items = ( state = [], action ) => {
 	switch ( action.type ) {
 		case MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE: {
 			const { subscriptions } = action;
@@ -31,9 +31,9 @@ export const items = withoutPersistence( ( state = [], action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const stoppingSubscription = withoutPersistence( ( state = [], action ) => {
+export const stoppingSubscription = ( state = [], action ) => {
 	switch ( action.type ) {
 		case MEMBERSHIPS_SUBSCRIPTION_STOP: {
 			const { subscriptionId } = action;
@@ -62,7 +62,7 @@ export const stoppingSubscription = withoutPersistence( ( state = [], action ) =
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	items,

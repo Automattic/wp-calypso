@@ -7,3 +7,11 @@
 	// Important since there's some imperative code that applies an inline min-height style to do some scroll hacks.
 	min-height: 100vh !important;
 }
+
+.current-section + .card-heading,
+.billing-dashboard__header .card-heading,
+.licenses__header .card-heading {
+	@include breakpoint-deprecated( '<660px' ) {
+		display: none;
+	}
+}

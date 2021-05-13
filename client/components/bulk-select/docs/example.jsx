@@ -43,10 +43,10 @@ export default class extends React.Component {
 
 	renderElements = () => {
 		return this.state.elements.map( ( element, index ) => {
-			const onClick = function () {
+			const onClick = () => {
 				element.selected = ! element.selected;
 				this.forceUpdate();
-			}.bind( this );
+			};
 			return (
 				<FormLabel key={ index }>
 					<FormInputCheckbox onClick={ onClick } checked={ element.selected } readOnly />

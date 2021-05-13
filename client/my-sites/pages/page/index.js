@@ -41,7 +41,7 @@ import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'calypso/state/posts/actions';
 import { infoNotice } from 'calypso/state/notices/actions';
-import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
+import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe/';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
@@ -771,7 +771,7 @@ const mapState = ( state, props ) => {
 		copyPagesModuleDisabled:
 			! isJetpackModuleActive( state, pageSiteId, 'copy-post' ) &&
 			isJetpackSite( state, pageSiteId ),
-		wpAdminGutenberg: ! isEligibleForGutenframe( state, pageSiteId ),
+		wpAdminGutenberg: ! shouldLoadGutenframe( state, pageSiteId ),
 		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
 		isFullSiteEditing: isSiteUsingFullSiteEditing( state, pageSiteId ),
 		canManageOptions: canCurrentUser( state, pageSiteId, 'manage_options' ),

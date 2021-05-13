@@ -79,7 +79,7 @@ export interface Props {
 	/** Called when the user leaves the search box */
 	onDomainSearchBlur?: ( value: string ) => void;
 
-	currentDomain?: DomainSuggestion;
+	currentDomain?: DomainSuggestion | undefined;
 
 	isCheckingDomainAvailability?: boolean;
 
@@ -119,6 +119,9 @@ export interface Props {
 
 	/** Vendor string for domain suggestions */
 	vendor?: string;
+
+	/** Shows the recommendation label for domain suggestions */
+	showRecommendationLabel?: boolean;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -144,6 +147,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	orderSubDomainsLast = false,
 	onUseYourDomainClick,
 	vendor = getDomainSuggestionsVendor(),
+	showRecommendationLabel = true,
 } ) => {
 	const { __ } = useI18n();
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
@@ -400,7 +404,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 															}
 															hstsRequired={ suggestion.hsts_required }
 															isFree={ suggestion.is_free }
-															isRecommended={ isRecommended }
+															isRecommended={ showRecommendationLabel && isRecommended }
 															railcarId={
 																baseRailcarId ? `${ baseRailcarId }${ index }` : undefined
 															}

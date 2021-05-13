@@ -149,18 +149,6 @@ class PreviewToolbar extends Component {
 						) ) }
 					</SelectDropdown>
 				) }
-				{ showEditHeaderLink && canUserEditThemeOptions && (
-					<Button
-						borderless
-						aria-label={ translate( 'Edit header' ) }
-						className="web-preview__edit-header-link"
-						href={ customizeUrl }
-						onClick={ this.handleEditorWebPreviewEditHeader }
-					>
-						{ translate( 'Edit header' ) }
-					</Button>
-				) }
-
 				{ showUrl && (
 					<ClipboardButtonInput
 						className="web-preview__url-clipboard-input"
@@ -176,6 +164,17 @@ class PreviewToolbar extends Component {
 							onClick={ this.handleEditorWebPreviewEdit }
 						>
 							{ translate( 'Edit' ) }
+						</Button>
+					) }
+					{ showEditHeaderLink && canUserEditThemeOptions && (
+						<Button
+							borderless
+							aria-label={ translate( 'Customize' ) }
+							className="web-preview__edit-header-link"
+							href={ customizeUrl }
+							onClick={ this.handleEditorWebPreviewEditHeader }
+						>
+							{ translate( 'Customize' ) }
 						</Button>
 					) }
 					{ showExternal && (

@@ -40,16 +40,6 @@ import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-p
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { addQueryArgs } from 'calypso/lib/url';
 import {
-	planMatches,
-	applyTestFiltersToPlansList,
-	getMonthlyPlanByYearly,
-	getPlanPath,
-	isFreePlan,
-	isWpComEcommercePlan,
-	isWpComBusinessPlan,
-	getPlanClass,
-} from 'calypso/lib/plans';
-import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
 	getPlansBySiteId,
@@ -67,7 +57,6 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import {
 	isBestValue,
 	isMonthly,
-	isNew,
 	PLAN_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -77,7 +66,16 @@ import {
 	FEATURE_BUSINESS_ONBOARDING,
 	TYPE_P2_PLUS,
 	TYPE_FREE,
-} from 'calypso/lib/plans/constants';
+	planMatches,
+	applyTestFiltersToPlansList,
+	getMonthlyPlanByYearly,
+	getPlanPath,
+	isFreePlan,
+	isWpComEcommercePlan,
+	isWpComBusinessPlan,
+	getPlanClass,
+	FEATURE_CUSTOM_DOMAIN,
+} from '@automattic/calypso-products';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -374,6 +372,7 @@ export class PlanFeatures extends Component {
 						audience={ planConstantObj.getAudience() }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 						isLoggedInMonthlyPricing={ this.props.isLoggedInMonthlyPricing }
+						isInSignup={ isInSignup }
 					/>
 					<p className="plan-features__description">{ planDescription }</p>
 					<PlanFeaturesActions
@@ -413,7 +412,6 @@ export class PlanFeatures extends Component {
 		const {
 			basePlansPath,
 			disableBloggerPlanWithNonBlogDomain,
-			displayJetpackPlans,
 			isInSignup,
 			isJetpack,
 			planProperties,
@@ -442,8 +440,8 @@ export class PlanFeatures extends Component {
 			} = properties;
 			let { discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
+			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
 			let audience = planConstantObj.getAudience();
-			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
 			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
 				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
@@ -451,7 +449,7 @@ export class PlanFeatures extends Component {
 				}
 			}
 
-			if ( isInSignup && ! displayJetpackPlans ) {
+			if ( isInSignup ) {
 				switch ( siteType ) {
 					case 'blog':
 						audience = planConstantObj.getBlogAudience();
@@ -465,10 +463,6 @@ export class PlanFeatures extends Component {
 					default:
 						audience = planConstantObj.getAudience();
 				}
-			}
-
-			if ( isInSignup && displayJetpackPlans ) {
-				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame();
 			}
 
 			return (
@@ -539,7 +533,6 @@ export class PlanFeatures extends Component {
 			isInSignup,
 			onUpgradeClick: ownPropsOnUpgradeClick,
 			redirectTo,
-			displayJetpackPlans,
 			withDiscount,
 			selectedSiteSlug,
 			shoppingCartManager,
@@ -585,7 +578,7 @@ export class PlanFeatures extends Component {
 					),
 				] )
 				.then( () => {
-					if ( ! displayJetpackPlans && withDiscount && this.isMounted ) {
+					if ( withDiscount && this.isMounted ) {
 						return shoppingCartManager.applyCoupon( withDiscount );
 					}
 				} )
@@ -598,7 +591,7 @@ export class PlanFeatures extends Component {
 		const planPath = getPlanPath( planName ) || '';
 		const checkoutUrlArgs = {};
 		// Auto-apply the coupon code to the cart for WPCOM sites
-		if ( ! displayJetpackPlans && withDiscount ) {
+		if ( withDiscount ) {
 			checkoutUrlArgs.coupon = withDiscount;
 		}
 		if ( redirectTo ) {
@@ -865,7 +858,6 @@ PlanFeatures.propTypes = {
 	basePlansPath: PropTypes.string,
 	canPurchase: PropTypes.bool.isRequired,
 	disableBloggerPlanWithNonBlogDomain: PropTypes.bool,
-	displayJetpackPlans: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isJetpack: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
@@ -885,7 +877,6 @@ PlanFeatures.propTypes = {
 
 PlanFeatures.defaultProps = {
 	basePlansPath: null,
-	displayJetpackPlans: false,
 	isInSignup: false,
 	isJetpack: false,
 	selectedSiteSlug: '',
@@ -932,15 +923,13 @@ const ConnectedPlanFeatures = connect(
 			plans,
 			isLandingPage,
 			siteId,
-			displayJetpackPlans,
 			visiblePlans,
 			popularPlanSpec,
 			kindOfPlanTypeSelector,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
-		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
-		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
+		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : false;
 		const isSiteAT = selectedSiteId ? isSiteAutomatedTransfer( state, selectedSiteId ) : false;
 		const siteIsPrivate = isPrivateSite( state, selectedSiteId );
 		const sitePlan = getSitePlan( state, selectedSiteId );
@@ -969,7 +958,7 @@ const ConnectedPlanFeatures = connect(
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
 				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
-				const newPlan = isNew( plan ) && ! isPaid;
+				const newPlan = false;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
 				const isMonthlyPlan = isMonthly( plan );
@@ -1015,9 +1004,6 @@ const ConnectedPlanFeatures = connect(
 					}
 				}
 
-				if ( displayJetpackPlans ) {
-					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( currentPlan ) );
-				}
 				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
 				const isMonthlyObj = { isMonthly: showMonthlyPrice };
 				const rawPrice = siteId
@@ -1046,6 +1032,18 @@ const ConnectedPlanFeatures = connect(
 				if ( ! isLoggedInMonthlyPricing && ( ! isInSignup || isPlaceholder ) ) {
 					planFeatures = planFeatures.filter(
 						( { availableForCurrentPlan = true } ) => availableForCurrentPlan
+					);
+				}
+
+				// Strip the "Free domain for one year" feature out for the site's /plans page
+				// if the user is already on a paid annual plan
+				if (
+					isPaid &&
+					! isMonthly( sitePlan?.product_slug ) &&
+					( ! isInSignup || isPlaceholder )
+				) {
+					planFeatures = planFeatures.filter(
+						( feature ) => FEATURE_CUSTOM_DOMAIN !== feature.getSlug()
 					);
 				}
 

@@ -2,8 +2,9 @@
  * Internal dependencies
  */
 import { createSelector } from '@automattic/state-utils';
-import { planHasFeature, planHasSuperiorFeature } from 'calypso/lib/plans';
 import {
+	planHasFeature,
+	planHasSuperiorFeature,
 	FEATURE_JETPACK_BACKUP_REALTIME,
 	FEATURE_JETPACK_BACKUP_DAILY,
 	JETPACK_PLANS,
@@ -24,7 +25,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { hasSiteProduct, getSitePlanSlug } from 'calypso/state/sites/selectors';
 
 /**

@@ -9,6 +9,7 @@ import { Guide, GuidePage } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -29,7 +30,7 @@ registerPlugin( 'wpcom-block-editor-nux', {
 
 		const { fetchWelcomeGuideStatus } = useDispatch( 'automattic/wpcom-welcome-guide' );
 
-		// On mount check if the WPCOM welcome guide status exists in state, otherwise fetch it from the API.
+		// On mount check if the WPCOM welcome guide status exists in state (from local storage), otherwise fetch it from the API.
 		useEffect( () => {
 			if ( ! isLoaded ) {
 				fetchWelcomeGuideStatus();
@@ -41,7 +42,11 @@ registerPlugin( 'wpcom-block-editor-nux', {
 		}
 
 		if ( variant === 'tour' ) {
-			return <LaunchWpcomWelcomeTour />;
+			return (
+				<LocaleProvider localeSlug={ window.wpcomBlockEditorNuxLocale ?? i18nDefaultLocaleSlug }>
+					<LaunchWpcomWelcomeTour />;
+				</LocaleProvider>
+			);
 		}
 
 		if ( variant === 'modal' && Guide && GuidePage ) {

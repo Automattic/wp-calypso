@@ -24,16 +24,13 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
-import { isEnabled } from '@automattic/calypso-config';
 import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
 import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 
 function AddNewPaymentMethod() {
 	const goToPaymentMethods = () => page( paymentMethods );
-	const addPaymentMethodTitle = isEnabled( 'purchases/new-payment-methods' )
-		? titles.addPaymentMethod
-		: titles.addCreditCard;
+	const addPaymentMethodTitle = titles.addPaymentMethod;
 
 	const translate = useTranslate();
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
@@ -59,13 +56,9 @@ function AddNewPaymentMethod() {
 	}
 
 	return (
-		<Main className="add-new-payment-method is-wide-layout">
+		<Main wideLayout className="add-new-payment-method">
 			<PageViewTracker
-				path={
-					isEnabled( 'purchases/new-payment-methods' )
-						? '/me/purchases/add-payment-method'
-						: '/me/purchases/add-credit-card'
-				}
+				path="/me/purchases/add-payment-method"
 				title={ concatTitle( titles.activeUpgrades, addPaymentMethodTitle ) }
 			/>
 			<DocumentHead title={ concatTitle( titles.activeUpgrades, addPaymentMethodTitle ) } />

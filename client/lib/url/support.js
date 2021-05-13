@@ -6,7 +6,7 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
 const root = localizeUrl( 'https://wordpress.com/support/' ).replace( /\/$/, '' );
 
 export const ACCOUNT_RECOVERY = `${ root }/account-recovery`;
-export const ADDING_GSUITE_TO_YOUR_SITE = `${ root }/add-email/adding-g-suite-to-your-site/`;
+export const ADDING_GSUITE_TO_YOUR_SITE = `${ root }/add-email/adding-google-workspace-to-your-site/`;
 export const ADDING_USERS = `${ root }/adding-users`;
 export const AUTO_RENEWAL = `${ root }/auto-renewal`;
 export const BANDPAGE_WIDGET = `${ root }/widgets/bandpage-widget`;
@@ -42,6 +42,7 @@ export const INCOMING_DOMAIN_TRANSFER = `${ root }/incoming-domain-transfer/`;
 export const INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK = `${ root }/incoming-domain-transfer/prepare-domain-for-transfer/#unlock`;
 export const INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE = `${ root }/incoming-domain-transfer/prepare-domain-for-transfer/#auth-code`;
 export const INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID = `${ root }/incoming-domain-transfer/#auth-code-invalid`;
+export const EDIT_PAYMENT_DETAILS = `${ root }/payment/#edit-payment-details`;
 export const EMAIL_FORWARDING = `${ root }/email-forwarding`;
 export const EMAIL_VALIDATION_AND_VERIFICATION = `${ root }/domains/register-domain/#email-validation-and-verification`;
 export const EMPTY_SITE = `${ root }/empty-site/`;

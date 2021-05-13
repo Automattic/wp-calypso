@@ -13,16 +13,17 @@ import debugFactory from 'debug';
  */
 import { requestPlans } from 'calypso/state/plans/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
-import { getPlan, findPlansKeys } from 'calypso/lib/plans';
 import {
+	getPlan,
+	findPlansKeys,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { requestProductsList } from 'calypso/state/products-list/actions';
-import type { Plan } from 'calypso/lib/plans/types';
+import type { Plan } from '@automattic/calypso-products';
 import type { WPCOMProductSlug, WPCOMProductVariant } from '../components/item-variation-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );

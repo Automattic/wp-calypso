@@ -2,11 +2,12 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
+import { getTotalLineItemFromCart, tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import type { LineItem } from '@automattic/composite-checkout';
 import type {
 	ResponseCart,
 	ResponseCartProduct,
+	ResponseCartTaxData,
 	DomainContactDetails,
 } from '@automattic/shopping-cart';
 import type {
@@ -15,14 +16,6 @@ import type {
 	TransactionRequest,
 	WPCOMCart,
 } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import {
-	readWPCOMPaymentMethodClass,
-	translateWpcomPaymentMethodToCheckoutPaymentMethod,
-} from './translate-payment-method-names';
 import {
 	isPlan,
 	isDomainTransferProduct,
@@ -31,7 +24,17 @@ import {
 	isGoogleWorkspaceExtraLicence,
 	isGSuiteOrGoogleWorkspace,
 	isTitanMail,
-} from 'calypso/lib/products-values';
+	isP2Plus,
+	isJetpackSearch,
+} from '@automattic/calypso-products';
+
+/**
+ * Internal dependencies
+ */
+import {
+	readWPCOMPaymentMethodClass,
+	translateWpcomPaymentMethodToCheckoutPaymentMethod,
+} from './translate-payment-method-names';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 import doesValueExist from './does-value-exist';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
@@ -99,10 +102,30 @@ export function createTransactionEndpointCartFromResponseCart( {
 	contactDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
 } ): WPCOMTransactionEndpointCart {
+	if ( responseCart.products.some( ( product ) => product.extra.isJetpackCheckout ) ) {
+		return {
+			blog_id: responseCart.blog_id.toString(),
+			cart_key: responseCart.blog_id.toString(),
+			create_new_blog: false,
+			is_jetpack_checkout: true,
+			coupon: responseCart.coupon || '',
+			currency: responseCart.currency,
+			temporary: false,
+			extra: [],
+			products: responseCart.products.map( ( item ) =>
+				addRegistrationDataToGSuiteCartProduct( item, contactDetails )
+			),
+			tax: createTransactionEndpointTaxFromResponseCartTax( responseCart.tax ),
+		};
+	}
+
 	return {
 		blog_id: siteId || '0',
 		cart_key: siteId || 'no-site',
 		create_new_blog: siteId ? false : true,
+		is_jetpack_checkout: responseCart.products.some(
+			( product ) => product.extra.isJetpackCheckout
+		),
 		coupon: responseCart.coupon || '',
 		currency: responseCart.currency,
 		temporary: false,
@@ -110,7 +133,22 @@ export function createTransactionEndpointCartFromResponseCart( {
 		products: responseCart.products.map( ( item ) =>
 			addRegistrationDataToGSuiteCartProduct( item, contactDetails )
 		),
-		tax: responseCart.tax,
+		tax: createTransactionEndpointTaxFromResponseCartTax( responseCart.tax ),
+	};
+}
+
+function createTransactionEndpointTaxFromResponseCartTax(
+	tax: ResponseCartTaxData
+): Omit< ResponseCartTaxData, 'display_taxes' > {
+	const { country_code, postal_code } = tax.location;
+	const formattedPostalCode = postal_code
+		? tryToGuessPostalCodeFormat( postal_code.toUpperCase(), country_code )
+		: undefined;
+	return {
+		location: {
+			...( country_code ? { country_code } : {} ),
+			...( formattedPostalCode ? { postal_code: formattedPostalCode } : {} ),
+		},
 	};
 }
 
@@ -191,26 +229,37 @@ export function createTransactionEndpointRequestPayload( {
 	};
 }
 
-export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.TranslateResult {
+export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 	const isRenewalItem = isRenewal( serverCartItem );
 	const { meta, product_name: productName } = serverCartItem;
 
+	// Jetpack Search has its own special sublabel
+	if ( ! isRenewalItem && isJetpackSearch( serverCartItem ) ) {
+		return '';
+	}
+
 	if ( isDotComPlan( serverCartItem ) || ( ! isRenewalItem && isTitanMail( serverCartItem ) ) ) {
 		if ( isRenewalItem ) {
-			return translate( 'Plan Renewal' );
+			return String( translate( 'Plan Renewal' ) );
 		}
 	}
 
 	if ( isPlan( serverCartItem ) ) {
-		return isRenewalItem ? translate( 'Plan Renewal' ) : translate( 'Plan Subscription' );
+		if ( isP2Plus( serverCartItem ) ) {
+			return String( translate( 'Monthly subscription' ) );
+		}
+
+		return isRenewalItem
+			? String( translate( 'Plan Renewal' ) )
+			: String( translate( 'Plan Subscription' ) );
 	}
 
 	if ( isGSuiteOrGoogleWorkspace( serverCartItem ) ) {
 		if ( isRenewalItem ) {
-			return translate( 'Productivity and Collaboration Tools Renewal' );
+			return String( translate( 'Productivity and Collaboration Tools Renewal' ) );
 		}
 
-		return translate( 'Productivity and Collaboration Tools' );
+		return String( translate( 'Productivity and Collaboration Tools' ) );
 	}
 
 	if (
@@ -222,16 +271,16 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.
 		}
 
 		if ( productName ) {
-			return translate( '%(productName)s Renewal', { args: { productName } } );
+			return String( translate( '%(productName)s Renewal', { args: { productName } } ) );
 		}
 	}
 
 	if ( ! isRenewalItem && serverCartItem.months_per_bill_period === 1 ) {
-		return translate( 'Billed monthly' );
+		return String( translate( 'Billed monthly' ) );
 	}
 
 	if ( isRenewalItem ) {
-		return translate( 'Renewal' );
+		return String( translate( 'Renewal' ) );
 	}
 
 	return '';

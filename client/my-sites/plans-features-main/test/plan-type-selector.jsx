@@ -10,7 +10,7 @@ jest.mock( 'i18n-calypso', () => ( {
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { PLAN_FREE } from 'calypso/lib/plans/constants';
+import { PLAN_FREE } from '@automattic/calypso-products';
 import PlanTypeSelector, { CustomerTypeToggle } from '../plan-type-selector';
 
 describe( '<PlanTypeSelector />', () => {

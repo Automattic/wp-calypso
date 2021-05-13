@@ -36,6 +36,6 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"tslib": "^1.10.0"
+		"tslib": "^2.2.0"
 	}
 }

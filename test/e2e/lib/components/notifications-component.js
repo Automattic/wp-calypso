@@ -13,7 +13,7 @@ import AsyncBaseContainer from '../async-base-container';
 export default class NotificationsComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, by.css( '#wpnc-panel' ) );
-		this.undoSelector = by.css( '.wpnc__undo-item' );
+		this.undoLocator = by.css( '.wpnc__undo-item' );
 	}
 
 	async selectComments() {
@@ -21,7 +21,7 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 			this.driver,
 			by.css( 'li[data-filter-name="comments"]' )
 		);
-		return await driverHelper.waitUntilLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			by.css( 'li.wpnc__comment' )
 		);
@@ -33,22 +33,21 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 	}
 
 	async selectCommentByText( commentText ) {
-		const commentSelector = by.css( '.wpnc__excerpt' );
-		return await driverHelper.selectElementByText( this.driver, commentSelector, commentText );
+		const commentLocator = by.css( '.wpnc__excerpt' );
+		return await driverHelper.selectElementByText( this.driver, commentLocator, commentText );
 	}
 
 	async trashComment() {
 		const trashPostLocator = by.css( 'button[title="Trash comment"]' );
 
-		await this.driver.sleep( 400 ); // Wait for menu animation to complete
 		await driverHelper.clickWhenClickable( this.driver, trashPostLocator );
 	}
 
 	async waitForUndoMessage() {
-		return await driverHelper.waitUntilLocatedAndVisible( this.driver, this.undoSelector );
+		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.undoLocator );
 	}
 
 	async waitForUndoMessageToDisappear() {
-		return await driverHelper.waitTillNotPresent( this.driver, this.undoSelector );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, this.undoLocator );
 	}
 }

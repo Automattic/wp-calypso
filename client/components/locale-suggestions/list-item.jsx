@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { assign } from 'lodash';
 import { getLocaleSlug } from 'i18n-calypso';
 
 /**
@@ -36,8 +34,8 @@ class LocaleSuggestionsListItem extends Component {
 	};
 
 	hasLocaleDirectionChanged( locale ) {
-		const localeData = assign( {}, getLanguage( locale.locale ) );
-		const currentLocaleData = assign( {}, getLanguage( getLocaleSlug() ) );
+		const localeData = getLanguage( locale.locale );
+		const currentLocaleData = getLanguage( getLocaleSlug() );
 
 		return localeData.rtl !== currentLocaleData.rtl;
 	}

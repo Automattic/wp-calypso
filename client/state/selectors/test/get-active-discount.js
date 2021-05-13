@@ -5,14 +5,14 @@ import getActiveDiscount, { isDiscountActive } from 'calypso/state/selectors/get
 import { hasActivePromotion } from 'calypso/state/active-promotions/selectors';
 import { getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { abtest } from 'calypso/lib/abtest';
-import discounts from 'calypso/lib/discounts';
+import { activeDiscounts } from 'calypso/lib/discounts';
 import {
 	PLAN_PREMIUM_2_YEARS,
 	TYPE_FREE,
 	TYPE_PREMIUM,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 jest.mock( 'calypso/state/active-promotions/selectors', () => ( {
 	hasActivePromotion: jest.fn( () => null ),
@@ -212,9 +212,11 @@ describe( 'getActiveDiscount()', () => {
 		hasActivePromotion.mockImplementation( () => true );
 		abtest.mockImplementation( () => 'upsell' );
 	} );
+	afterEach( () => {
+		activeDiscounts.length = 0;
+	} );
 
 	test( 'should return null when there are no discounts', () => {
-		discounts.activeDiscounts = [];
 		expect( getActiveDiscount( {} ) ).toBe( null );
 	} );
 
@@ -223,7 +225,7 @@ describe( 'getActiveDiscount()', () => {
 			startsAt: DatePlusTime( -10 ),
 			endsAt: DatePlusTime( 100 ),
 		};
-		discounts.activeDiscounts = [ promo ];
+		activeDiscounts.push( promo );
 		expect( getActiveDiscount( {} ) ).toEqual( promo );
 	} );
 
@@ -238,7 +240,7 @@ describe( 'getActiveDiscount()', () => {
 				},
 			},
 		};
-		discounts.activeDiscounts = [ promo ];
+		activeDiscounts.push( promo );
 		expect( getActiveDiscount( {} ) ).toEqual( {
 			...promo,
 			name: 'upsell10 name',

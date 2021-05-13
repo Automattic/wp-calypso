@@ -19,11 +19,11 @@ import {
 	FEATURE_JETPACK_ESSENTIAL,
 	FEATURE_ACTIVITY_LOG,
 	PLAN_PERSONAL,
-} from 'calypso/lib/plans/constants';
+	isFreePlan,
+} from '@automattic/calypso-products';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import { isFreePlan } from 'calypso/lib/plans';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	siteHasBackupProductPurchase,

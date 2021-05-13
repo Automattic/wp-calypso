@@ -34,7 +34,7 @@ export default class CheckOutPage extends AsyncBaseContainer {
 	} ) {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
-			await driverHelper.waitUntilLocatedAndVisible(
+			await driverHelper.waitUntilElementLocatedAndVisible(
 				this.driver,
 				By.css( '.checkout-review-order.is-summary' )
 			);
@@ -75,7 +75,7 @@ export default class CheckOutPage extends AsyncBaseContainer {
 	}
 
 	async isCompositeCheckout() {
-		return driverHelper.isElementPresent( this.driver, By.css( '.composite-checkout' ) );
+		return driverHelper.isElementLocated( this.driver, By.css( '.composite-checkout' ) );
 	}
 
 	async submitForm() {

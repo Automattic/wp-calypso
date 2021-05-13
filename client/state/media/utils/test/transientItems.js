@@ -37,7 +37,7 @@ describe( 'transientItems utils', () => {
 			expect( map ).toHaveBeenCalledWith( site1State );
 		} );
 
-		test( 'should handle non-existant site by passing safe defaults ', () => {
+		test( 'should handle non-existant site by passing safe defaults', () => {
 			const map = jest.fn( () => site1State );
 			const result = transformSite( { 2: site2State }, 1, map );
 

@@ -530,6 +530,8 @@ class InvitePeople extends React.Component {
 			isGeneratingInviteLinks: true,
 		} );
 
+		this.props.recordTracksEventAction( 'calypso_invite_people_generate_new_link_button_click' );
+
 		return this.props.generateInviteLinks( this.props.siteId );
 	};
 

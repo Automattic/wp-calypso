@@ -3,7 +3,7 @@
  */
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,13 +13,15 @@ import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
 import { productAboveButtonText, productButtonLabel, productTooltip } from '../utils';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { planHasFeature } from 'calypso/lib/plans';
-import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 import {
+	planHasFeature,
+	TERM_MONTHLY,
+	TERM_ANNUALLY,
 	PRODUCT_JETPACK_CRM_MONTHLY,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
-} from 'calypso/lib/plans/constants';
+	isJetpackPlanSlug,
+} from '@automattic/calypso-products';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -27,12 +29,17 @@ import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import { isJetpackPlanSlug } from 'calypso/lib/products-values/is-jetpack-plan-slug';
 
 /**
  * Type dependencies
  */
-import type { Duration, PurchaseCallback, SelectorProduct, SiteProduct } from '../types';
+import type {
+	Duration,
+	PurchaseCallback,
+	ScrollCardIntoViewCallback,
+	SelectorProduct,
+	SiteProduct,
+} from '../types';
 
 interface ProductCardProps {
 	item: SelectorProduct;
@@ -42,6 +49,9 @@ interface ProductCardProps {
 	selectedTerm?: Duration;
 	isAligned?: boolean;
 	featuredPlans?: string[];
+	featuredLabel?: TranslateResult;
+	hideSavingLabel?: boolean;
+	scrollCardIntoView: ScrollCardIntoViewCallback;
 }
 
 const ProductCard: React.FC< ProductCardProps > = ( {
@@ -52,6 +62,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	selectedTerm,
 	isAligned,
 	featuredPlans,
+	featuredLabel,
+	hideSavingLabel,
+	scrollCardIntoView,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -113,13 +126,15 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		return ! [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ].includes( item.productSlug );
 	}, [ item.productSlug ] );
 
+	const isDeprecated = Boolean( item.legacy );
+
 	// Disable the product card if it's an incompatible multisite product or CRM monthly product
 	// (CRM is not offered with "Monthly" billing. Only Yearly.)
 	const isDisabled = ( ( isMultisite && ! isMultisiteCompatible ) || isCrmMonthlyProduct ) ?? false;
 
 	let disabledMessage;
 	if ( isDisabled ) {
-		if ( ! isMultisiteCompatible ) {
+		if ( ! isMultisiteCompatible && ! isDeprecated ) {
 			disabledMessage = translate( 'Not available for multisite WordPress installs' );
 		} else if ( isCrmMonthlyProduct ) {
 			disabledMessage = translate( 'Only available in yearly billing' );
@@ -136,7 +151,13 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
 			billingTerm={ item.displayTerm || item.term }
-			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
+			buttonLabel={ productButtonLabel( {
+				product: item,
+				isOwned,
+				isUpgradeableToYearly,
+				isDeprecated,
+				currentPlan: sitePlan,
+			} ) }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
@@ -144,7 +165,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			isOwned={ isOwned }
 			isIncludedInPlan={ ! isOwned && isItemPlanFeature }
 			isFree={ item.isFree }
-			isDeprecated={ item.legacy }
+			isDeprecated={ isDeprecated }
 			isAligned={ isAligned }
 			features={ item.features }
 			displayFrom={ ! siteId && priceTierList.length > 0 }
@@ -153,6 +174,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
 			isDisabled={ isDisabled }
 			disabledMessage={ disabledMessage }
+			featuredLabel={ featuredLabel }
+			hideSavingLabel={ hideSavingLabel }
+			scrollCardIntoView={ scrollCardIntoView }
 		/>
 	);
 };

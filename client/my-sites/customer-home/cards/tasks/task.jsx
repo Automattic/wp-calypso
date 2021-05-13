@@ -98,7 +98,7 @@ const Task = ( {
 
 	const ActionButtonWithStats = ( { children } ) => {
 		return (
-			<div onClick={ startTask } role="presentation">
+			<div onClick={ startTask } role="presentation" className="task__action">
 				{ children }
 			</div>
 		);

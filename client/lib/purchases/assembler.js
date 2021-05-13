@@ -3,11 +3,6 @@
  */
 import { camelCase } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import sortProducts from 'calypso/lib/products-values/sort';
-
 function createPurchaseObject( purchase ) {
 	const object = {
 		id: Number( purchase.ID ),
@@ -106,5 +101,5 @@ export function createPurchasesArray( dataTransferObject ) {
 		return [];
 	}
 
-	return sortProducts( dataTransferObject.map( createPurchaseObject ) );
+	return dataTransferObject.map( createPurchaseObject );
 }

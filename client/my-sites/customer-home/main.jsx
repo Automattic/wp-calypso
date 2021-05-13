@@ -45,6 +45,7 @@ const Home = ( {
 	siteId,
 	trackViewSiteAction,
 	noticeType,
+	shuffleViews,
 } ) => {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
@@ -53,15 +54,6 @@ const Home = ( {
 	const lastShownNotice = useRef( null );
 	useEffect( () => {
 		if ( ! shouldShowNotice || lastShownNotice.current === noticeType ) {
-			return;
-		}
-
-		if ( noticeType === 'difm-success' ) {
-			lastShownNotice.current = noticeType;
-			reduxDispatch( recordTracksEvent( 'calypso_difm_intake_submitted' ) );
-
-			const successMessage = translate( 'Your application has been sent!' );
-			reduxDispatch( successNotice( successMessage ) );
 			return;
 		}
 
@@ -102,11 +94,18 @@ const Home = ( {
 	);
 
 	return (
-		<Main className="customer-home__main is-wide-layout">
+		<Main wideLayout className="customer-home__main">
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-			{ siteId && <QueryHomeLayout siteId={ siteId } isDev={ isDev } forcedView={ forcedView } /> }
+			{ siteId && (
+				<QueryHomeLayout
+					siteId={ siteId }
+					isDev={ isDev }
+					forcedView={ forcedView }
+					shuffle={ shuffleViews }
+				/>
+			) }
 			<SidebarNavigation />
 			{ header }
 			{ layout ? (
@@ -137,6 +136,7 @@ Home.propTypes = {
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 	trackViewSiteAction: PropTypes.func.isRequired,
+	shuffleViews: PropTypes.bool,
 };
 
 const mapStateToProps = ( state ) => {

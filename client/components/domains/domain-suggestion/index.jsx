@@ -46,6 +46,7 @@ class DomainSuggestion extends React.Component {
 			salePrice,
 			isSignupStep,
 			showStrikedOutPrice,
+			isReskinned,
 		} = this.props;
 
 		if ( hidePrice ) {
@@ -63,12 +64,20 @@ class DomainSuggestion extends React.Component {
 				rule={ priceRule }
 				isSignupStep={ isSignupStep }
 				showStrikedOutPrice={ showStrikedOutPrice }
+				isReskinned={ isReskinned }
 			/>
 		);
 	}
 
 	render() {
-		const { children, extraClasses, isAdded, isFeatured, showStrikedOutPrice } = this.props;
+		const {
+			children,
+			extraClasses,
+			isAdded,
+			isFeatured,
+			showStrikedOutPrice,
+			isReskinned,
+		} = this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
@@ -84,6 +93,13 @@ class DomainSuggestion extends React.Component {
 			'domain-suggestion__content-domain': showStrikedOutPrice && ! isFeatured,
 		} );
 
+		const wrapDivActionContainer = ( contentElement ) =>
+			isReskinned ? (
+				<div className="domain-suggestion__action-container">{ contentElement }</div>
+			) : (
+				contentElement
+			);
+
 		/* eslint-disable jsx-a11y/click-events-have-key-events */
 		/* eslint-disable jsx-a11y/interactive-supports-focus */
 		return (
@@ -98,9 +114,11 @@ class DomainSuggestion extends React.Component {
 					{ children }
 					{ this.renderPrice() }
 				</div>
-				<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
-					{ this.props.buttonContent }
-				</Button>
+				{ wrapDivActionContainer(
+					<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
+						{ this.props.buttonContent }
+					</Button>
+				) }
 				{ this.props.showChevron && (
 					<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
 				) }

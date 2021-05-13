@@ -20,8 +20,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import GutenboardingHeader from 'calypso/my-sites/plans-features-main/gutenboarding-header';
 import QueryPlans from 'calypso/components/data/query-plans';
-import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
-import { planHasFeature } from '../../../lib/plans';
+import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
@@ -35,8 +34,6 @@ import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
  * Style dependencies
  */
 import './style.scss';
-import { Experiment } from 'calypso/components/experiment';
-import { getVariationForUser, isLoading } from 'calypso/state/experiments/selectors';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import { isTabletResolution, isDesktop } from '@automattic/viewport';
 
@@ -165,6 +162,7 @@ export class PlansStep extends Component {
 			showTreatmentPlansReorderTest,
 			isLoadingExperiment,
 			isInVerticalScrollingPlansExperiment,
+			isReskinned,
 		} = this.props;
 
 		return (
@@ -183,13 +181,10 @@ export class PlansStep extends Component {
 						intervalType={ this.getIntervalType() }
 						onUpgradeClick={ this.onSelectPlan }
 						showFAQ={ false }
-						displayJetpackPlans={ false }
 						domainName={ this.getDomainName() }
 						customerType={ this.getCustomerType() }
 						disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-						plansWithScroll={
-							isInVerticalScrollingPlansExperiment ? this.state.plansWithScroll : true
-						}
+						plansWithScroll={ isDesktop() }
 						planTypes={ planTypes }
 						flowName={ flowName }
 						customHeader={ this.getGutenboardingHeader() }
@@ -197,6 +192,7 @@ export class PlansStep extends Component {
 						isAllPaidPlansShown={ true }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 						shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
+						isReskinned={ isReskinned }
 					/>
 				) }
 			</div>
@@ -266,7 +262,6 @@ export class PlansStep extends Component {
 
 		return (
 			<>
-				<Experiment name="vertical_plan_listing_v2" />
 				<StepWrapper
 					flowName={ flowName }
 					stepName={ stepName }
@@ -287,10 +282,8 @@ export class PlansStep extends Component {
 	}
 
 	render() {
-		const shouldShowPlansRedesign = isDesktop();
 		const classes = classNames( 'plans plans-step', {
 			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment,
-			'in-plans-redesign-experiment': shouldShowPlansRedesign,
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
 		} );
@@ -348,9 +341,11 @@ export default connect(
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		showTreatmentPlansReorderTest:
 			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
-		isLoadingExperiment: isLoading( state ),
-		isInVerticalScrollingPlansExperiment:
-			'treatment' === getVariationForUser( state, 'vertical_plan_listing_v2' ),
+		isLoadingExperiment: false,
+		// IMPORTANT NOTE: The following is always set to true. It's a hack to resolve the bug reported
+		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
+		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
+		isInVerticalScrollingPlansExperiment: true,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

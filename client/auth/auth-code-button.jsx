@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -15,10 +14,6 @@ const initialState = { status: 'ready', errorLevel: false, errorMessage: false }
 const SMS_URL = '/sms';
 
 export class AuthCodeButton extends React.Component {
-	static defaultProps = {
-		translate: identity,
-	};
-
 	state = initialState;
 
 	componentWillUnmount() {

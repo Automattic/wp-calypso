@@ -177,7 +177,7 @@ Because we're passing the list as an argument, we can pass mock `validValuesList
 
 Often our code will use methods and properties from imported external and internal libraries in multiple places, which makes passing around arguments messy and impracticable. For these cases `jest.mock` offers a neat way to stub these dependencies.
 
-For instance, in Calypso, we use the ['config'](https://github.com/Automattic/wp-calypso/tree/HEAD/client/config) module to control a great deal of functionality via feature flags.
+For instance, in Calypso, we use the ['config'](https://github.com/Automattic/wp-calypso/tree/HEAD/config) module to control a great deal of functionality via feature flags.
 
 ```javascript
 // bilbo.js

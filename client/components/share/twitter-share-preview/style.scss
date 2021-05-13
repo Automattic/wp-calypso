@@ -21,7 +21,7 @@
 }
 
 .twitter-share-preview__profile-picture {
-	border-radius: 2px;
+	border-radius: 50%;
 	display: block;
 }
 
@@ -31,7 +31,7 @@
 	margin-right: 5px;
 
 	&:hover {
-		color: #0084b4;
+		color: #14171a;
 		text-decoration: underline;
 	}
 }
@@ -39,6 +39,10 @@
 .twitter-share-preview__profile-handle {
 	color: #657786;
 	font-size: $font-body-small;
+
+	&:hover {
+		color: #657786;
+	}
 }
 
 .twitter-share-preview__message,
@@ -61,7 +65,7 @@
 }
 
 .twitter-share-preview__image {
-	border: 1px solid rgba( 0, 0, 0, 0.1 );
-	border-radius: 2px;
+	border: 1px solid #c4cfd6;
+	border-radius: 16px;
 	display: block;
 }

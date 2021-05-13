@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { getSelectedDomain, isSubdomain } from 'calypso/lib/domains';
-import { isBusiness } from 'calypso/lib/products-values';
+import { isBusiness } from '@automattic/calypso-products';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';

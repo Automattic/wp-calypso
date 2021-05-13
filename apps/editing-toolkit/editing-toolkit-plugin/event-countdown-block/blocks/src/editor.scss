@@ -9,12 +9,13 @@
 
 	.event-countdown__event-title {
 		min-width: 240px;
+		width: 100%;
 	}
 }
 
 // Fix so datetime picker doesn't have horizontal scrollbar.
 // This is a global fix, unscoped, and not very nice.
-// @todo: It won't be necessary once https://github.com/WordPress/gutenberg/pull/18235/files gets merged. 
+// @todo: It won't be necessary once https://github.com/WordPress/gutenberg/pull/18235/files gets merged.
 .components-datetime {
 	padding: 8px;
 }
