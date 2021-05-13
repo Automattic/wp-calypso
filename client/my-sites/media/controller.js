@@ -7,11 +7,11 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import MediaComponent from 'my-sites/media/main';
-import { getSiteFragment } from 'lib/route';
+import MediaComponent from 'calypso/my-sites/media/main';
+import { getSiteFragment } from 'calypso/lib/route';
 
 export default {
-	media: function( context, next ) {
+	media: function ( context, next ) {
 		if ( ! getSiteFragment( context.path ) ) {
 			return page.redirect( '/media' );
 		}

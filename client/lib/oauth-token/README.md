@@ -1,5 +1,4 @@
-OAuthToken
-=======
+# OAuthToken
 
 Wrapper for OAuth token storage so we can change the underlying storage location without changing access to the token.
 

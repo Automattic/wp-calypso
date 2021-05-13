@@ -9,14 +9,11 @@ import deepFreeze from 'deep-freeze';
  * Internal Dependencies
  */
 import { GlobalNotices } from '..';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 const baseProps = deepFreeze( {
 	storeNotices: [],
 	removeNotice: jest.fn(),
-
-	// Stub event-emmiter notice store so data-observe doesn't break
-	notices: { on() {}, off() {} },
 } );
 
 beforeEach( jest.clearAllMocks );

@@ -9,10 +9,10 @@ import { connect } from 'react-redux';
 /*
  * Internal Dependencies
  */
-import { getSite } from 'state/reader/sites/selectors';
-import { getFeed } from 'state/reader/feeds/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderFeed from 'components/data/query-reader-feed';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 
 /**
  * A HoC function that will take in reader identifiers siteId or feedId and
@@ -25,7 +25,7 @@ import QueryReaderFeed from 'components/data/query-reader-feed';
  * @param {object} Component the component to wrap
  * @returns {object} wrapped component that hands down feed/site to its child
  */
-const connectSite = Component => {
+const connectSite = ( Component ) => {
 	class connectSiteFetcher extends React.PureComponent {
 		static propTypes = {
 			feed: PropTypes.object,

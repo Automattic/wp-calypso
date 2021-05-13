@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { domForHtml } from 'lib/post-normalizer/utils';
+import { domForHtml } from 'calypso/lib/post-normalizer/utils';
 
 /**
  * Given a string, attempts to generate the equivalent HTMLElement
@@ -11,7 +11,7 @@ import { domForHtml } from 'lib/post-normalizer/utils';
  * @returns {HTMLElement}        Element object representing string
  */
 
-export default function( string ) {
+export default function ( string ) {
 	let wrapper;
 	if ( document.implementation && document.implementation.createHTMLDocument ) {
 		wrapper = document.implementation.createHTMLDocument( '' ).body;

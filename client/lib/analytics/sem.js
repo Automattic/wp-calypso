@@ -3,11 +3,12 @@
  */
 import cookie from 'cookie';
 import debugFactory from 'debug';
+import { pushEventToTracksQueue } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies.
  */
-import { urlParseAmpCompatible } from 'lib/analytics/utils';
+import { urlParseAmpCompatible } from 'calypso/lib/analytics/utils';
 
 /**
  * Const variables.
@@ -19,7 +20,7 @@ const MAX_URL_PARAM_VALUE_LENGTH = 50;
 const MAX_KEYWORD_PARAM_VALUE_LENGTH = 80;
 const MAX_GCLID_PARAM_VALUE_LENGTH = 100;
 // These are the URL params that end up in the `ad_details` cookie
-const URL_PARAM_WHITELIST = [
+const ALLOWED_URL_PARAMS = [
 	'adgroupid',
 	'campaignid',
 	'device',
@@ -57,8 +58,8 @@ function isValidOtherUrlParamValue( key, value ) {
 	return value.length <= MAX_URL_PARAM_VALUE_LENGTH;
 }
 
-function isValidWhitelistedUrlParamValue( key, value ) {
-	if ( -1 === URL_PARAM_WHITELIST.indexOf( key ) ) {
+function isValidAndAllowedUrlParamValue( key, value ) {
+	if ( -1 === ALLOWED_URL_PARAMS.indexOf( key ) ) {
 		return false;
 	} else if ( 'utm_source' === key || 'utm_campaign' === value ) {
 		return isValidUtmSourceOrCampaign( value );
@@ -73,12 +74,7 @@ function setUtmCookie( name, value ) {
 		maxAge: UTM_COOKIE_MAX_AGE,
 		// NOTE: Domains having more than a single extension (e.g., example.us.com)
 		// would require additional custom logic to work out the root domain name.
-		domain:
-			'.' +
-			document.location.hostname
-				.split( '.' )
-				.slice( -2 )
-				.join( '.' ),
+		domain: '.' + document.location.hostname.split( '.' ).slice( -2 ).join( '.' ),
 	} );
 }
 
@@ -91,41 +87,35 @@ export function updateQueryParamsTracking() {
 		return;
 	}
 
-	const query = urlParseAmpCompatible( document.location.href ).query;
+	const searchParams = urlParseAmpCompatible( document.location.href )?.searchParams;
 
 	// Sanitize query params
-	const sanitized_query = {};
-	Object.keys( query ).forEach( key => {
-		const value = query[ key ];
-		if ( isValidWhitelistedUrlParamValue( key, value ) ) {
-			sanitized_query[ key ] = value;
-		}
-	} );
+	let sanitizedQuery = new URLSearchParams();
 
-	// Cross domain tracking for AMP.
-	if ( query.amp_client_id ) {
-		window._tkq.push( [ 'identifyAnonUser', query.amp_client_id ] );
+	if ( searchParams ) {
+		const validEntries = Array.from( searchParams.entries() ).filter( ( [ key, value ] ) =>
+			isValidAndAllowedUrlParamValue( key, value )
+		);
+		sanitizedQuery = new URLSearchParams( validEntries );
+
+		// Cross domain tracking for AMP.
+		if ( searchParams.get( 'amp_client_id' ) ) {
+			pushEventToTracksQueue( [ 'identifyAnonUser', searchParams.get( 'amp_client_id' ) ] );
+		}
 	}
 
 	// Drop SEM cookie update if either of these is missing
-	if ( ! sanitized_query.utm_source || ! sanitized_query.utm_campaign ) {
+	if ( ! sanitizedQuery.get( 'utm_source' ) || ! sanitizedQuery.get( 'utm_campaign' ) ) {
 		debug( 'Missing utm_source or utm_campaign.' );
 		return;
 	}
 
 	// Regenerate sanitized query string
-	let sanitized_query_string = [];
-	Object.keys( sanitized_query ).forEach( key => {
-		sanitized_query_string.push(
-			encodeURIComponent( key ) + '=' + encodeURIComponent( sanitized_query[ key ] )
-		);
-	} );
+	const sanitizedQueryString = sanitizedQuery.toString();
 
-	sanitized_query_string = sanitized_query_string.join( '&' );
-
-	if ( sanitized_query_string ) {
-		debug( 'ad_details: ' + sanitized_query_string );
-		setUtmCookie( 'ad_details', sanitized_query_string );
+	if ( sanitizedQueryString ) {
+		debug( 'ad_details: ' + sanitizedQueryString );
+		setUtmCookie( 'ad_details', sanitizedQueryString );
 		setUtmCookie( 'ad_timestamp', Math.floor( new Date().getTime() / 1000 ) );
 	}
 }

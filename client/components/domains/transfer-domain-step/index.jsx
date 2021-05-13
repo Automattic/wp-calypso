@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { endsWith, get, isEmpty, noop } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import page from 'page';
 import { stringify } from 'qs';
 import classnames from 'classnames';
@@ -23,39 +23,45 @@ import {
 	getFixedDomainSearch,
 	getTld,
 	startInboundTransfer,
-} from 'lib/domains';
-import { getProductsList } from 'state/products-list/selectors';
-import { domainAvailability } from 'lib/domains/constants';
-import { PLAN_PERSONAL } from 'lib/plans/constants';
-import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
-import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import { getCurrentUser, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import Banner from 'components/banner';
-import Notice from 'components/notice';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import FormTextInput from 'components/forms/form-text-input';
+} from 'calypso/lib/domains';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
+import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
+import { getCurrentUser, getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import Notice from 'calypso/components/notice';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import TransferDomainPrecheck from './transfer-domain-precheck';
-import { INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
-import HeaderCake from 'components/header-cake';
+import { INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
+import HeaderCake from 'calypso/components/header-cake';
 import { Button } from '@automattic/components';
-import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
-import { fetchSiteDomains } from 'state/sites/domains/actions';
-import { domainManagementTransferIn } from 'my-sites/domains/paths';
-import { errorNotice } from 'state/notices/actions';
-import QueryProducts from 'components/data/query-products-list';
-import QueryPlans from 'components/data/query-plans';
-import { isPlan } from 'lib/products-values';
+import TransferRestrictionMessage from 'calypso/components/domains/transfer-domain-step/transfer-restriction-message';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
+import { errorNotice } from 'calypso/state/notices/actions';
+import QueryProducts from 'calypso/components/data/query-products-list';
+import QueryPlans from 'calypso/components/data/query-plans';
+import { PLAN_PERSONAL, isPlan } from '@automattic/calypso-products';
 import {
 	isDomainBundledWithPlan,
 	isNextDomainFree,
 	hasToUpgradeToPayForADomain,
-} from 'lib/cart-values/cart-items';
+} from 'calypso/lib/cart-values/cart-items';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -124,6 +130,14 @@ class TransferDomainStep extends React.Component {
 		}
 	}
 
+	canInitiateTransfer = () => {
+		const { cart, selectedSite } = this.props;
+		const { searchQuery } = this.state;
+		return (
+			getTld( searchQuery ) && ! hasToUpgradeToPayForADomain( selectedSite, cart, searchQuery )
+		);
+	};
+
 	getMapDomainUrl() {
 		const { basePath, mapDomainUrl, selectedSite } = this.props;
 		if ( mapDomainUrl ) {
@@ -131,7 +145,7 @@ class TransferDomainStep extends React.Component {
 		}
 
 		let buildMapDomainUrl;
-		const basePathForMapping = endsWith( basePath, '/transfer' )
+		const basePathForMapping = basePath?.endsWith( '/transfer' )
 			? basePath.substring( 0, basePath.length - 9 )
 			: basePath;
 
@@ -144,7 +158,7 @@ class TransferDomainStep extends React.Component {
 		return buildMapDomainUrl;
 	}
 
-	goToMapDomainStep = event => {
+	goToMapDomainStep = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordMapDomainButtonClick( this.props.analyticsSection );
@@ -197,7 +211,7 @@ class TransferDomainStep extends React.Component {
 			);
 		} else if ( domainsWithPlansOnlyButNoPlan ) {
 			domainProductPriceText = translate(
-				'One additional year of domain registration included in paid plans.'
+				'One additional year of domain registration included in annual paid plans.'
 			);
 		} else if ( domainProductSalePrice ) {
 			domainProductPriceText = translate( 'Sale price is %(cost)s', {
@@ -226,7 +240,7 @@ class TransferDomainStep extends React.Component {
 	};
 
 	addTransfer() {
-		const { cart, selectedSite, translate } = this.props;
+		const { translate } = this.props;
 		const { searchQuery, submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
 
@@ -247,7 +261,6 @@ class TransferDomainStep extends React.Component {
 						<FormTextInput
 							// eslint-disable-next-line jsx-a11y/no-autofocus
 							autoFocus={ true }
-							type="text"
 							value={ searchQuery }
 							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }
@@ -255,11 +268,7 @@ class TransferDomainStep extends React.Component {
 							onFocus={ this.recordInputFocus }
 						/>
 						<Button
-							disabled={
-								! getTld( searchQuery ) ||
-								hasToUpgradeToPayForADomain( selectedSite, cart, searchQuery ) ||
-								submitting
-							}
+							disabled={ submitting || ! this.canInitiateTransfer() }
 							busy={ submitting }
 							className="transfer-domain-step__go button is-primary"
 							onClick={ this.handleFormSubmit }
@@ -407,12 +416,13 @@ class TransferDomainStep extends React.Component {
 		if ( hasToUpgradeToPayForADomain( selectedSite, cart, searchQuery ) ) {
 			content = (
 				<div>
-					<Banner
+					<UpsellNudge
 						description={ translate(
 							'Only .blog domains are included with your plan, to use a different tld upgrade to a Personal plan.'
 						) }
 						plan={ PLAN_PERSONAL }
 						title={ translate( 'Personal plan required' ) }
+						showIcon={ true }
 					/>
 					{ content }
 				</div>
@@ -444,6 +454,7 @@ class TransferDomainStep extends React.Component {
 			<div className={ 'transfer-domain-step__domain-availability' }>
 				<DomainRegistrationSuggestion
 					cart={ this.props.cart }
+					isCartPendingUpdate={ this.props.cart.hasPendingServerUpdates }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					key={ suggestion.domain_name }
 					onButtonClick={ this.registerSuggestedDomain }
@@ -467,12 +478,17 @@ class TransferDomainStep extends React.Component {
 		this.props.recordInputFocusInTransferDomain( this.state.searchQuery );
 	};
 
-	setSearchQuery = event => {
+	setSearchQuery = ( event ) => {
 		this.setState( { searchQuery: event.target.value } );
 	};
 
-	handleFormSubmit = event => {
+	handleFormSubmit = ( event ) => {
 		event.preventDefault();
+
+		// Check for a keyboard-driven submission of invalid data.
+		if ( ! this.canInitiateTransfer() ) {
+			return;
+		}
 
 		const { analyticsSection, searchQuery } = this.state;
 		const domain = getFixedDomainSearch( searchQuery );
@@ -489,7 +505,7 @@ class TransferDomainStep extends React.Component {
 		this.props.recordGoButtonClickInTransferDomain( searchQuery, analyticsSection );
 
 		Promise.all( [ this.getInboundTransferStatus(), this.getAvailability() ] ).then( () => {
-			this.setState( prevState => {
+			this.setState( ( prevState ) => {
 				const { isTransferable, submittingAvailability, submittingWhois, suggestion } = prevState;
 
 				return {
@@ -517,7 +533,7 @@ class TransferDomainStep extends React.Component {
 	getAvailability = () => {
 		const domain = getFixedDomainSearch( this.state.searchQuery );
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
 				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
 				( error, result ) => {
@@ -620,7 +636,7 @@ class TransferDomainStep extends React.Component {
 	getInboundTransferStatus = () => {
 		this.setState( { submittingWhois: true } );
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			checkInboundTransferStatus(
 				getFixedDomainSearch( this.state.searchQuery ),
 				( error, result ) => {
@@ -654,7 +670,7 @@ class TransferDomainStep extends React.Component {
 	getAuthCodeStatus = ( domain, authCode ) => {
 		this.setState( { submittingAuthCodeCheck: true } );
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			checkAuthCode( domain, authCode, ( error, result ) => {
 				this.setState( { submittingAuthCodeCheck: false } );
 
@@ -682,23 +698,23 @@ const recordAddDomainButtonClickInTransferDomain = ( domain_name, section ) =>
 		section,
 	} );
 
-const recordFormSubmitInTransferDomain = domain_name =>
+const recordFormSubmitInTransferDomain = ( domain_name ) =>
 	recordTracksEvent( 'calypso_transfer_domain_form_submit', { domain_name } );
 
-const recordInputFocusInTransferDomain = domain_name =>
+const recordInputFocusInTransferDomain = ( domain_name ) =>
 	recordTracksEvent( 'calypso_transfer_domain_input_focus', { domain_name } );
 
 const recordGoButtonClickInTransferDomain = ( domain_name, section ) =>
 	recordTracksEvent( 'calypso_transfer_domain_go_click', { domain_name, section } );
 
-const recordMapDomainButtonClick = section =>
+const recordMapDomainButtonClick = ( section ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Transfer Domain', 'Clicked "Map it" Button' ),
 		recordTracksEvent( 'calypso_transfer_domain_mapping_button_click', { section } )
 	);
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		selectedSite: getSelectedSite( state ),
@@ -713,4 +729,4 @@ export default connect(
 		recordGoButtonClickInTransferDomain,
 		recordMapDomainButtonClick,
 	}
-)( localize( TransferDomainStep ) );
+)( withShoppingCart( localize( TransferDomainStep ) ) );

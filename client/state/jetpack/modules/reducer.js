@@ -20,10 +20,10 @@ import {
 	JETPACK_MODULES_REQUEST_SUCCESS,
 	JETPACK_SETTINGS_UPDATE,
 	JETPACK_SETTINGS_SAVE_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
-const createItemsReducer = active => {
+const createItemsReducer = ( active ) => {
 	return ( state, { siteId, moduleSlug } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
@@ -43,7 +43,7 @@ const createItemsListReducer = () => {
 	};
 };
 
-const createRequestsReducer = data => {
+const createRequestsReducer = ( data ) => {
 	return ( state, { siteId, moduleSlug } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
@@ -53,7 +53,7 @@ const createRequestsReducer = data => {
 	};
 };
 
-const createModuleListRequestReducer = fetchingModules => {
+const createModuleListRequestReducer = ( fetchingModules ) => {
 	return ( state, { siteId } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
@@ -94,7 +94,7 @@ const createSettingsItemsReducer = () => {
  * @param  {object} action action
  * @returns {Array}         Updated state
  */
-export const items = withoutPersistence( ( state = {}, action ) => {
+export const items = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case JETPACK_MODULE_ACTIVATE_SUCCESS:
 			return createItemsReducer( true )( state, action );
@@ -109,7 +109,7 @@ export const items = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * `Reducer` function which handles request/response actions
@@ -119,7 +119,7 @@ export const items = withoutPersistence( ( state = {}, action ) => {
  * @param {object} action - action
  * @returns {object} updated state
  */
-export const requests = withoutPersistence( ( state = {}, action ) => {
+export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case JETPACK_MODULE_ACTIVATE:
 			return createRequestsReducer( { activating: true } )( state, action );
@@ -142,7 +142,7 @@ export const requests = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export const reducer = combineReducers( {
 	items,

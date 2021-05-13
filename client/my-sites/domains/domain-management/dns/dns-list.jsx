@@ -13,10 +13,10 @@ import { localize } from 'i18n-calypso';
 import DnsRecordsList from '../dns-records/list';
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecord from './dns-record';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { addDns, deleteDns } from 'state/domains/dns/actions';
-import { isDeletingLastMXRecord } from 'state/domains/dns/utils';
-import { domainConnect } from 'lib/domains/constants';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { addDns, deleteDns } from 'calypso/state/domains/dns/actions';
+import { isDeletingLastMXRecord } from 'calypso/state/domains/dns/utils';
+import { domainConnect } from 'calypso/lib/domains/constants';
 
 class DnsList extends React.Component {
 	static propTypes = {
@@ -45,7 +45,7 @@ class DnsList extends React.Component {
 		} );
 	}
 
-	handleDialogClose = result => {
+	handleDialogClose = ( result ) => {
 		this.state.dialog.onClose( result );
 		this.setState( { dialog: this.noDialog() } );
 	};
@@ -55,7 +55,7 @@ class DnsList extends React.Component {
 		const { records } = this.props.dns;
 
 		if ( ! confirmed && isDeletingLastMXRecord( record, records ) ) {
-			this.openDialog( 'deleteEmailForwards', result => {
+			this.openDialog( 'deleteEmailForwards', ( result ) => {
 				if ( result.shouldDeleteEmailForwards ) {
 					this.deleteDns( record, true );
 				}
@@ -78,7 +78,7 @@ class DnsList extends React.Component {
 					},
 				} );
 			},
-			error => {
+			( error ) => {
 				this.props.errorNotice(
 					error.message || translate( 'The DNS record has not been deleted.' )
 				);
@@ -95,7 +95,7 @@ class DnsList extends React.Component {
 					duration: 5000,
 				} );
 			},
-			error => {
+			( error ) => {
 				this.props.errorNotice(
 					error.message || translate( 'The DNS record could not be restored.' )
 				);

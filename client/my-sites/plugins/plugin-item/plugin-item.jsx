@@ -3,41 +3,37 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flowRight as compose, isEqual, uniqBy } from 'lodash';
+import { connect } from 'react-redux';
+import { uniqBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { CompactCard } from '@automattic/components';
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
-import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
-import Count from 'components/count';
-import Notice from 'components/notice';
-import { withLocalizedMoment } from 'components/localized-moment';
-import PluginNotices from 'lib/plugins/notices';
-import { errorNotice } from 'state/notices/actions';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
+import Count from 'calypso/components/count';
+import Notice from 'calypso/components/notice';
+import {
+	ACTIVATE_PLUGIN,
+	DEACTIVATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
+	ENABLE_AUTOUPDATE_PLUGIN,
+	REMOVE_PLUGIN,
+	UPDATE_PLUGIN,
+} from 'calypso/lib/plugins/constants';
+import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-function checkPropsChange( nextProps, propArr ) {
-	let i;
-
-	for ( i = 0; i < propArr.length; i++ ) {
-		const prop = propArr[ i ];
-
-		if ( ! isEqual( nextProps[ prop ], this.props[ prop ] ) ) {
-			return true;
-		}
-	}
-	return false;
-}
 
 class PluginItem extends Component {
 	static propTypes = {
@@ -53,13 +49,6 @@ class PluginItem extends Component {
 		} ),
 		isAutoManaged: PropTypes.bool,
 		progress: PropTypes.array,
-		notices: PropTypes.shape( {
-			completed: PropTypes.array,
-			errors: PropTypes.array,
-			inProgress: PropTypes.array,
-		} ),
-		hasAllNoManageSites: PropTypes.bool,
-		hasUpdate: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -69,35 +58,7 @@ class PluginItem extends Component {
 		},
 		progress: [],
 		isAutoManaged: false,
-		hasUpdate: () => false,
 	};
-
-	shouldComponentUpdate( nextProps ) {
-		const propsToCheck = [
-			'plugin',
-			'sites',
-			'selectedSite',
-			'isMock',
-			'isSelectable',
-			'isSelected',
-		];
-		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
-			return true;
-		}
-
-		if ( this.props.hasAllNoManageSites !== nextProps.hasAllNoManageSites ) {
-			return true;
-		}
-
-		if (
-			this.props.notices &&
-			PluginNotices.shouldComponentUpdateNotices( this.props.notices, nextProps.notices )
-		) {
-			return true;
-		}
-
-		return false;
-	}
 
 	ago( date ) {
 		return this.props.moment.utc( date, 'YYYY-MM-DD hh:mma' ).fromNow();
@@ -106,8 +67,8 @@ class PluginItem extends Component {
 	doing() {
 		const { translate, progress } = this.props;
 		const log = progress[ 0 ];
-		const uniqLogs = uniqBy( progress, function( uniqLog ) {
-			return uniqLog.site.ID;
+		const uniqLogs = uniqBy( progress, function ( uniqLog ) {
+			return uniqLog.siteId;
 		} );
 		const translationArgs = {
 			args: { count: uniqLogs.length },
@@ -116,7 +77,7 @@ class PluginItem extends Component {
 
 		let message;
 		switch ( log && log.action ) {
-			case 'UPDATE_PLUGIN':
+			case UPDATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Updating', { context: 'plugin' } )
 					: translate(
@@ -126,7 +87,7 @@ class PluginItem extends Component {
 					  );
 				break;
 
-			case 'ACTIVATE_PLUGIN':
+			case ACTIVATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Activating', { context: 'plugin' } )
 					: translate(
@@ -136,7 +97,7 @@ class PluginItem extends Component {
 					  );
 				break;
 
-			case 'DEACTIVATE_PLUGIN':
+			case DEACTIVATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Deactivating', { context: 'plugin' } )
 					: translate(
@@ -146,7 +107,7 @@ class PluginItem extends Component {
 					  );
 				break;
 
-			case 'ENABLE_AUTOUPDATE_PLUGIN':
+			case ENABLE_AUTOUPDATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Enabling autoupdates' )
 					: translate(
@@ -156,7 +117,7 @@ class PluginItem extends Component {
 					  );
 				break;
 
-			case 'DISABLE_AUTOUPDATE_PLUGIN':
+			case DISABLE_AUTOUPDATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Disabling autoupdates' )
 					: translate(
@@ -166,7 +127,7 @@ class PluginItem extends Component {
 					  );
 
 				break;
-			case 'REMOVE_PLUGIN':
+			case REMOVE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Removing' )
 					: translate(
@@ -179,9 +140,10 @@ class PluginItem extends Component {
 	}
 
 	renderUpdateFlag() {
-		const { sites, translate } = this.props;
-		const recentlyUpdated = sites.some( function( site ) {
-			return site.plugin && site.plugin.update && site.plugin.update.recentlyUpdated;
+		const { pluginsOnSites, sites, translate } = this.props;
+		const recentlyUpdated = sites.some( function ( site ) {
+			const sitePlugin = pluginsOnSites?.sites[ site.ID ];
+			return sitePlugin?.update?.recentlyUpdated;
 		} );
 
 		if ( recentlyUpdated ) {
@@ -196,14 +158,12 @@ class PluginItem extends Component {
 			);
 		}
 
-		const updated_versions = this.props.plugin.sites
-			.map( site => {
-				if ( site.plugin.update && site.plugin.update.new_version ) {
-					return site.plugin.update.new_version;
-				}
-				return false;
+		const updated_versions = sites
+			.map( ( site ) => {
+				const sitePlugin = pluginsOnSites?.sites[ site.ID ];
+				return sitePlugin?.update?.new_version;
 			} )
-			.filter( version => version );
+			.filter( ( version ) => version );
 
 		return (
 			<Notice
@@ -215,6 +175,15 @@ class PluginItem extends Component {
 				} ) }
 			/>
 		);
+	}
+
+	hasUpdate() {
+		const { pluginsOnSites, sites } = this.props;
+
+		return sites.some( ( site ) => {
+			const sitePlugin = pluginsOnSites?.sites[ site.ID ];
+			return sitePlugin?.update && site.canUpdateFiles;
+		} );
 	}
 
 	pluginMeta( pluginData ) {
@@ -233,7 +202,7 @@ class PluginItem extends Component {
 			);
 		}
 
-		if ( this.props.hasUpdate( pluginData ) ) {
+		if ( this.hasUpdate() ) {
 			return this.renderUpdateFlag();
 		}
 
@@ -250,15 +219,6 @@ class PluginItem extends Component {
 		return null;
 	}
 
-	showNoManageNotice() {
-		this.props.errorNotice(
-			this.props.translate(
-				'Jetpack Manage is disabled for all the sites where this plugin is installed'
-			),
-			{ id: 'plugin-no-manage-error' } // Display the notice only once on repeated clicks
-		);
-	}
-
 	renderActions() {
 		const {
 			activation: canToggleActivation,
@@ -273,7 +233,6 @@ class PluginItem extends Component {
 						plugin={ this.props.plugin }
 						disabled={ this.props.isSelectable }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 					/>
 				) }
 				{ canToggleAutoupdate && (
@@ -282,7 +241,6 @@ class PluginItem extends Component {
 						plugin={ this.props.plugin }
 						disabled={ this.props.isSelectable }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 						wporg={ !! this.props.plugin.wporg }
 					/>
 				) }
@@ -317,11 +275,8 @@ class PluginItem extends Component {
 		);
 	}
 
-	onItemClick = event => {
-		if ( this.props.hasAllNoManageSites ) {
-			event.preventDefault();
-			this.showNoManageNotice();
-		} else if ( this.props.isSelectable ) {
+	onItemClick = ( event ) => {
+		if ( this.props.isSelectable ) {
 			event.preventDefault();
 			this.props.onClick( this );
 		}
@@ -334,28 +289,23 @@ class PluginItem extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const disabled = this.props.hasAllNoManageSites;
-
 		const pluginTitle = <div className="plugin-item__title">{ plugin.name }</div>;
 
 		let pluginActions = null;
 		if ( ! this.props.selectedSite ) {
 			pluginActions = this.renderSiteCount();
-		} else if ( ! disabled ) {
+		} else {
 			pluginActions = this.renderActions();
 		}
 
-		const pluginItemClasses = classNames( 'plugin-item', 'plugin-item-' + plugin.slug, {
-			disabled,
-		} );
+		const pluginItemClasses = classNames( 'plugin-item', 'plugin-item-' + plugin.slug );
 
 		return (
 			<CompactCard className={ pluginItemClasses }>
-				{ disabled || ! this.props.isSelectable ? null : (
-					<input
+				{ ! this.props.isSelectable ? null : (
+					<FormInputCheckbox
 						className="plugin-item__checkbox"
 						id={ plugin.slug }
-						type="checkbox"
 						onClick={ this.props.onClick }
 						checked={ this.props.isSelected }
 						readOnly={ true }
@@ -378,8 +328,10 @@ class PluginItem extends Component {
 	}
 }
 
-export default compose(
-	connect( null, { errorNotice } ),
-	localize,
-	withLocalizedMoment
-)( PluginItem );
+export default connect( ( state, { plugin, sites } ) => {
+	const siteIds = siteObjectsToSiteIds( sites );
+
+	return {
+		pluginsOnSites: getPluginOnSites( state, siteIds, plugin?.slug ),
+	};
+} )( localize( withLocalizedMoment( PluginItem ) ) );

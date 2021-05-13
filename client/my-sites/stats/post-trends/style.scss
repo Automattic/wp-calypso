@@ -3,7 +3,7 @@
 	user-select: none;
 	position: relative;
 	width: 100%;
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
 	}
 }
@@ -19,16 +19,15 @@
 
 .post-trends__value {
 	text-align: center;
-	font-size: 16px;
-	font-weight: 300;
+	font-size: $font-body;
 	color: var( --color-neutral-50 );
 	margin: 20px 0 30px;
 }
 
 .post-trends__year {
 	position: relative;
-		top: 0;
-		left: 0;
+	top: 0;
+	left: 0;
 	display: block;
 	white-space: nowrap;
 	transition: left, 1s, ease-in-out;
@@ -45,14 +44,19 @@
 .post-trends__scroll-left,
 .post-trends__scroll-right {
 	position: absolute;
-		top: 0;
+	top: 0;
 	width: 30px;
 	height: 130px;
-	background: linear-gradient( to right, var( --color-surface ), rgba( var( --color-surface-rgb ), 0.92 ), rgba( var( --color-surface-rgb ), 0 ) );
+	background: linear-gradient(
+		to right,
+		var( --color-surface ),
+		rgba( var( --color-surface-rgb ), 0.92 ),
+		rgba( var( --color-surface-rgb ), 0 )
+	);
 	text-align: left;
 	z-index: z-index( 'root', '.post-trends__scroll' );
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		.focus-sidebar & {
 			z-index: 0;
 		}
@@ -86,7 +90,12 @@
 }
 
 .post-trends__scroll-right {
-	background: linear-gradient( to left, var( --color-surface ), rgba( var( --color-surface-rgb ), 0.92 ), rgba( var( --color-surface-rgb ), 0 ) );
+	background: linear-gradient(
+		to left,
+		var( --color-surface ),
+		rgba( var( --color-surface-rgb ), 0.92 ),
+		rgba( var( --color-surface-rgb ), 0 )
+	);
 	text-align: right;
 }
 
@@ -114,7 +123,7 @@
 
 .post-trends__label {
 	text-align: center;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral-40 );
 	margin-top: 10px;
 	text-transform: uppercase;
@@ -174,8 +183,7 @@
 	}
 }
 
-@include breakpoint( '>1040px' ) {
-
+@include breakpoint-deprecated( '>1040px' ) {
 	.post-trends__scroll-left,
 	.post-trends__scroll-right {
 		display: none;
@@ -187,7 +195,7 @@
 	padding-top: 10px;
 	float: right;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		float: none;
 		margin: 0 auto;
 		margin-bottom: 25px;
@@ -201,7 +209,7 @@
 }
 
 .post-trends__key-label {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral );
 	letter-spacing: 0.1em;
 	text-transform: uppercase;

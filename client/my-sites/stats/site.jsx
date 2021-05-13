@@ -11,31 +11,45 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
+import DocumentHead from 'calypso/components/data/document-head';
 import StatsPeriodNavigation from './stats-period-navigation';
-import Main from 'components/main';
-import StatsNavigation from 'blocks/stats-navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
+import Main from 'calypso/components/main';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
 import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
 import ChartTabs from './stats-chart-tabs';
+import Cloudflare from './cloudflare';
 import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import StatsBanners from './stats-banners';
-import StickyPanel from 'components/sticky-panel';
-import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
-import JetpackColophon from 'components/jetpack-colophon';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite, getSitePlanSlug } from 'state/sites/selectors';
-import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
-import QuerySiteKeyrings from 'components/data/query-site-keyrings';
-import QueryKeyringConnections from 'components/data/query-keyring-connections';
-import memoizeLast from 'lib/memoize-last';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import StickyPanel from 'calypso/components/sticky-panel';
+import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isJetpackSite, getSitePlanSlug, getSiteOption } from 'calypso/state/sites/selectors';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { FEATURE_WORDADS_INSTANT } from '@automattic/calypso-products';
+import {
+	recordGoogleEvent,
+	recordTracksEvent,
+	withAnalytics,
+} from 'calypso/state/analytics/actions';
+import PrivacyPolicyBanner from 'calypso/blocks/privacy-policy-banner';
+import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import memoizeLast from 'calypso/lib/memoize-last';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import EmptyContent from 'calypso/components/empty-content';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import Banner from 'calypso/components/banner';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -49,32 +63,46 @@ const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	date: endOf.format( 'YYYY-MM-DD' ),
 } ) );
 
-const CHARTS = [
-	{
-		attr: 'views',
-		legendOptions: [ 'visitors' ],
-		gridicon: 'visible',
-		label: translate( 'Views', { context: 'noun' } ),
-	},
-	{
-		attr: 'visitors',
-		gridicon: 'user',
-		label: translate( 'Visitors', { context: 'noun' } ),
-	},
-	{
-		attr: 'likes',
-		gridicon: 'star',
-		label: translate( 'Likes', { context: 'noun' } ),
-	},
-	{
-		attr: 'comments',
-		gridicon: 'comment',
-		label: translate( 'Comments', { context: 'noun' } ),
-	},
-];
+const CHART_VIEWS = {
+	attr: 'views',
+	legendOptions: [ 'visitors' ],
+	gridicon: 'visible',
+	label: translate( 'Views', { context: 'noun' } ),
+};
+const CHART_VISITORS = {
+	attr: 'visitors',
+	gridicon: 'user',
+	label: translate( 'Visitors', { context: 'noun' } ),
+};
+const CHART_LIKES = {
+	attr: 'likes',
+	gridicon: 'star',
+	label: translate( 'Likes', { context: 'noun' } ),
+};
+const CHART_COMMENTS = {
+	attr: 'comments',
+	gridicon: 'comment',
+	label: translate( 'Comments', { context: 'noun' } ),
+};
+const CHARTS = [ CHART_VIEWS, CHART_VISITORS, CHART_LIKES, CHART_COMMENTS ];
 
-const getActiveTab = chartTab => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
+/**
+ * Define chart properties with translatable strings getters
+ */
+Object.defineProperty( CHART_VIEWS, 'label', {
+	get: () => translate( 'Views', { context: 'noun' } ),
+} );
+Object.defineProperty( CHART_VISITORS, 'label', {
+	get: () => translate( 'Visitors', { context: 'noun' } ),
+} );
+Object.defineProperty( CHART_LIKES, 'label', {
+	get: () => translate( 'Likes', { context: 'noun' } ),
+} );
+Object.defineProperty( CHART_COMMENTS, 'label', {
+	get: () => translate( 'Comments', { context: 'noun' } ),
+} );
 
+const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 class StatsSite extends Component {
 	static defaultProps = {
 		chartTab: 'views',
@@ -105,15 +133,15 @@ class StatsSite extends Component {
 		return activeTab.legendOptions || [];
 	}
 
-	barClick = bar => {
+	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
 		const updatedQs = stringifyQs( updateQueryString( { startDate: bar.data.period } ) );
 		page.redirect( `${ window.location.pathname }?${ updatedQs }` );
 	};
 
-	onChangeLegend = activeLegend => this.setState( { activeLegend } );
+	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
-	switchChart = tab => {
+	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
 			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
 			// switch the tab by navigating to route with updated query string
@@ -122,13 +150,24 @@ class StatsSite extends Component {
 		}
 	};
 
-	render() {
-		const { date, isJetpack, siteId, slug, isCustomerHomeEnabled } = this.props;
+	renderStats() {
+		const {
+			date,
+			hasWordAds,
+			planSupportsWordAdsInstantFeature,
+			siteId,
+			slug,
+			isAdmin,
+			isJetpack,
+			isAtomic,
+			isVip,
+		} = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
 		let fileDownloadList;
+		const isJetpackNonAtomic = isJetpack && ! isAtomic;
 
 		const query = memoizedQuery( period, endOf );
 
@@ -148,21 +187,18 @@ class StatsSite extends Component {
 		}
 
 		return (
-			<Main wideLayout={ true }>
-				<QueryKeyringConnections />
-				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
-				<DocumentHead title={ translate( 'Stats and Insights' ) } />
-				<PageViewTracker
-					path={ `/stats/${ period }/:site` }
-					title={ `Stats > ${ titlecase( period ) }` }
-				/>
+			<>
 				<PrivacyPolicyBanner />
-				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<SidebarNavigation />
+				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<FormattedHeader
+					brandFont
 					className="stats__section-header"
 					headerText={ translate( 'Stats and Insights' ) }
 					align="left"
+					subHeaderText={ translate(
+						"Learn more about the activity and behavior of your site's visitors."
+					) }
 				/>
 				<StatsNavigation
 					selectedItem={ 'traffic' }
@@ -170,10 +206,10 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
+
+				{ ! isVip && isAdmin && ! hasWordAds && ! isJetpackNonAtomic && <Cloudflare /> }
+
 				<div id="my-stats-content">
-					{ ! isCustomerHomeEnabled && (
-						<StatsBanners siteId={ siteId } slug={ slug } primaryButton={ true } />
-					) }
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
 						activeLegend={ this.state.activeLegend }
@@ -265,25 +301,102 @@ class StatsSite extends Component {
 							/>
 						</div>
 					</div>
+					{ ! isVip && isAdmin && ! hasWordAds && (
+						<Banner
+							className="stats__upsell-nudge"
+							icon="star"
+							title={ translate( 'Start earning money now' ) }
+							description={ translate(
+								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
+							) }
+							callToAction={ planSupportsWordAdsInstantFeature ? translate( 'Learn more' ) : null }
+							href={ `/earn/${ slug }` }
+							dismissPreferenceName={
+								planSupportsWordAdsInstantFeature ? `stats-earn-nudge-wordads-${ siteId }` : null
+							}
+							event="stats_earn_nudge"
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
+							showIcon={ true }
+							jetpack={ false }
+							horizontal
+						/>
+					) }
 				</div>
 				<JetpackColophon />
+			</>
+		);
+	}
+
+	enableStatsModule = () => {
+		const { siteId, path } = this.props;
+		this.props.enableJetpackStatsModule( siteId, path );
+	};
+
+	renderEnableStatsModule() {
+		return (
+			<EmptyContent
+				illustration="/calypso/images/illustrations/illustration-404.svg"
+				title={ translate( 'Looking for stats?' ) }
+				line={ translate(
+					'Enable site stats to see detailed information about your traffic, likes, comments, and subscribers.'
+				) }
+				action={ translate( 'Enable Site Stats' ) }
+				actionCallback={ this.enableStatsModule }
+			/>
+		);
+	}
+
+	render() {
+		const { isJetpack, siteId, showEnableStatsModule } = this.props;
+		const { period } = this.props.period;
+
+		return (
+			<Main wideLayout>
+				<QueryKeyringConnections />
+				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
+				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
+				<DocumentHead title={ translate( 'Stats and Insights' ) } />
+				<PageViewTracker
+					path={ `/stats/${ period }/:site` }
+					title={ `Stats > ${ titlecase( period ) }` }
+				/>
+				{ showEnableStatsModule ? this.renderEnableStatsModule() : this.renderStats() }
 			</Main>
 		);
 	}
 }
+const enableJetpackStatsModule = ( siteId, path ) =>
+	withAnalytics(
+		recordTracksEvent( 'calypso_jetpack_module_toggle', {
+			module: 'stats',
+			path,
+			toggled: 'on',
+		} ),
+		activateModule( siteId, 'stats' )
+	);
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
-
+		const isVip = isVipSite( state, siteId );
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
+		const showEnableStatsModule =
+			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
+			isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			isJetpack,
+			isAtomic,
+			hasWordAds: getSiteOption( state, siteId, 'wordads' ),
 			siteId,
+			isVip,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),
-			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
+			planSupportsWordAdsInstantFeature: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
+			showEnableStatsModule,
+			path: getCurrentRouteParameterized( state, siteId ),
 		};
 	},
-	{ recordGoogleEvent }
+	{ recordGoogleEvent, enableJetpackStatsModule }
 )( localize( StatsSite ) );

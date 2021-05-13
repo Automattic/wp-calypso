@@ -1,51 +1,54 @@
+/**
+ * External dependencies
+ */
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
 import { wpcom } from '../rest-client/wpcom';
 import { bumpStat } from '../rest-client/bump-stat';
-
 import Gridicon from './gridicons';
+import useSafe from '../helpers/use-safe';
 
-export const FollowLink = createReactClass( {
-	displayName: 'FollowLink',
+const followStatTypes = {
+	comment: 'note_commented_post',
+	comment_like: 'note_liked_comment',
+	like: 'note_liked_post',
+	follow: 'note_followed',
+	reblog: 'note_reblog_post',
+};
 
-	propTypes: {
-		site: PropTypes.number,
-		isFollowing: PropTypes.bool,
-	},
+export const FollowLink = ( { site, noteType, isFollowing: initialIsFollowing } ) => {
+	const translate = useTranslate();
 
-	followStatTypes: {
-		comment: 'note_commented_post',
-		comment_like: 'note_liked_comment',
-		like: 'note_liked_post',
-		follow: 'note_followed',
-		reblog: 'note_reblog_post',
-	},
+	const [ isRequestRunning, setIsRequestRunning ] = React.useState( false );
+	const [ isFollowing, setIsFollowing ] = React.useState( initialIsFollowing );
 
-	getInitialState: function() {
-		return {
-			isFollowing: this.props.isFollowing,
-		};
-	},
+	const safeSetIsFollowing = useSafe( setIsFollowing );
+	const safeSetIsRequestRunning = useSafe( setIsRequestRunning );
 
-	toggleFollowStatus: function( event ) {
-		var isFollowing = this.state.isFollowing;
+	function toggleFollowStatus() {
+		if ( isRequestRunning ) {
+			return;
+		}
 
-		var follower = wpcom()
-			.site( this.props.site )
-			.follow();
-		var component = this;
+		const follower = wpcom().site( site ).follow();
+		setIsRequestRunning( true );
 
-		var updateState = function( error, data ) {
-			if ( error ) throw error;
+		// optimistically update local state
+		const previousState = isFollowing;
+		setIsFollowing( ! isFollowing );
 
-			if ( component.isMounted() ) {
-				component.setState( {
-					isFollowing: data.is_following,
-				} );
+		const updateState = ( error, data ) => {
+			safeSetIsRequestRunning( false );
+			if ( error ) {
+				safeSetIsFollowing( previousState );
+				throw error;
 			}
+			safeSetIsFollowing( data.is_following );
 		};
 
 		if ( isFollowing ) {
@@ -54,39 +57,28 @@ export const FollowLink = createReactClass( {
 		} else {
 			follower.add( updateState );
 
-			var stats = { 'notes-click-action': 'follow' };
-			stats[ 'follow_source' ] = this.followStatTypes[ this.props.noteType ];
+			const stats = { 'notes-click-action': 'follow' };
+			stats.follow_source = followStatTypes[ noteType ];
 			bumpStat( stats );
 		}
+	}
 
-		// but optimistically update the client
-		this.setState( {
-			isFollowing: ! isFollowing,
-		} );
-	},
+	const icon = isFollowing ? 'reader-following' : 'reader-follow';
+	const linkText = isFollowing
+		? translate( 'Following', { context: 'you are following' } )
+		: translate( 'Follow', { context: 'verb: imperative' } );
 
-	render: function() {
-		var gridicon_icon, link_text;
+	return (
+		<button className="follow-link" onClick={ toggleFollowStatus }>
+			<Gridicon icon={ icon } size={ 18 } />
+			{ linkText }
+		</button>
+	);
+};
 
-		if ( this.state.isFollowing ) {
-			gridicon_icon = 'reader-following';
-			link_text = this.props.translate( 'Following', {
-				context: 'you are following',
-			} );
-		} else {
-			gridicon_icon = 'reader-follow';
-			link_text = this.props.translate( 'Follow', {
-				context: 'verb: imperative',
-			} );
-		}
+FollowLink.propTypes = {
+	site: PropTypes.number,
+	isFollowing: PropTypes.bool,
+};
 
-		return (
-			<button className="follow-link" onClick={ this.toggleFollowStatus }>
-				<Gridicon icon={ gridicon_icon } size={ 18 } />
-				{ link_text }
-			</button>
-		);
-	},
-} );
-
-export default localize( FollowLink );
+export default FollowLink;

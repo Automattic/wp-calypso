@@ -5,22 +5,22 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { get } from 'lodash';
+import DOMPurify from 'dompurify';
 
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import CommentLink from 'my-sites/comments/comment/comment-link';
-import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
-import Emojify from 'components/emojify';
-import QueryComment from 'components/data/query-comment';
-import { stripHTML, decodeEntities } from 'lib/formatting';
-import getParentComment from 'state/selectors/get-parent-comment';
-import getSiteComment from 'state/selectors/get-site-comment';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import AutoDirection from 'calypso/components/auto-direction';
+import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
+import CommentPostLink from 'calypso/my-sites/comments/comment/comment-post-link';
+import Emojify from 'calypso/components/emojify';
+import QueryComment from 'calypso/components/data/query-comment';
+import { stripHTML, decodeEntities } from 'calypso/lib/formatting';
+import { getParentComment, getSiteComment } from 'calypso/state/comments/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export class CommentContent extends Component {
 	static propTypes = {
@@ -104,7 +104,7 @@ export class CommentContent extends Component {
 							<Emojify>
 								<div
 									className="comment__content-body"
-									dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
+									dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( commentContent ) } } //eslint-disable-line react/no-danger
 								/>
 							</Emojify>
 						</AutoDirection>

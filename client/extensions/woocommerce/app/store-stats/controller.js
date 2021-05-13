@@ -10,12 +10,12 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import AsyncLoad from 'calypso/components/async-load';
+import StatsPagePlaceholder from 'calypso/my-sites/stats/stats-page-placeholder';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { getQueryDate, getQueries } from './utils';
 import { recordTrack } from 'woocommerce/lib/analytics';
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 function isValidParameters( context ) {
 	const validParameters = {
@@ -25,7 +25,7 @@ function isValidParameters( context ) {
 	if ( config.isEnabled( 'woocommerce/extension-referrers' ) ) {
 		validParameters.type.push( 'referrers' );
 	}
-	return Object.keys( validParameters ).every( param =>
+	return Object.keys( validParameters ).every( ( param ) =>
 		includes( validParameters[ param ], context.params[ param ] )
 	);
 }
@@ -46,7 +46,7 @@ export default function StatsController( context, next ) {
 		selectedDate: context.query.startDate || moment().format( 'YYYY-MM-DD' ),
 		queryParams: context.query || {},
 	};
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( translate( 'Stats', { textOnly: true } ) ) );
 
 	let tracksEvent;
@@ -85,7 +85,7 @@ export default function StatsController( context, next ) {
 			asyncComponent = (
 				<AsyncLoad
 					placeholder={ placeholder }
-					require="extensions/woocommerce/app/store-stats"
+					require="calypso/extensions/woocommerce/app/store-stats"
 					{ ...props }
 				/>
 			);
@@ -95,7 +95,7 @@ export default function StatsController( context, next ) {
 			asyncComponent = (
 				<AsyncLoad
 					placeholder={ placeholder }
-					require="extensions/woocommerce/app/store-stats/referrers"
+					require="calypso/extensions/woocommerce/app/store-stats/referrers"
 					query={ referrerQuery }
 					{ ...props }
 				/>
@@ -106,7 +106,7 @@ export default function StatsController( context, next ) {
 			asyncComponent = (
 				<AsyncLoad
 					placeholder={ placeholder }
-					require="extensions/woocommerce/app/store-stats/listview"
+					require="calypso/extensions/woocommerce/app/store-stats/listview"
 					{ ...props }
 				/>
 			);

@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import { get, isArray, map, flatten } from 'lodash';
-import moment from 'moment';
+import { get, map, flatten } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import treeSelect from '@automattic/tree-select';
 import { getSerializedStatsQuery, normalizers, buildExportArray } from './utils';
-import { getSite } from 'state/sites/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+
+import 'calypso/state/stats/init';
 
 /**
  * Returns true if currently requesting stats for the statType and query combo, or false
@@ -74,10 +75,11 @@ export const getSiteStatsPostStreakData = treeSelect(
 		const gmtOffset = query.gmtOffset || 0;
 		const response = {};
 		// ensure streakData.data exists and it is not an array
-		if ( streakData && streakData.data && ! isArray( streakData.data ) ) {
-			Object.keys( streakData.data ).forEach( timestamp => {
-				const postDay = moment.unix( timestamp );
-				const datestamp = postDay.utcOffset( gmtOffset ).format( 'YYYY-MM-DD' );
+		if ( streakData && streakData.data && ! Array.isArray( streakData.data ) ) {
+			Object.keys( streakData.data ).forEach( ( timestamp ) => {
+				const time = new Date( timestamp * 1000 );
+				time.setUTCHours( time.getUTCHours() + gmtOffset );
+				const datestamp = time.toISOString().slice( 0, 10 );
 
 				if ( 'undefined' === typeof response[ datestamp ] ) {
 					response[ datestamp ] = 0;
@@ -133,13 +135,138 @@ export const getSiteStatsNormalizedData = treeSelect(
  */
 export function getSiteStatsCSVData( state, siteId, statType, query ) {
 	const data = getSiteStatsNormalizedData( state, siteId, statType, query );
-	if ( ! data || ! isArray( data ) ) {
+	if ( ! data || ! Array.isArray( data ) ) {
 		return [];
 	}
 
 	return flatten(
-		map( data, item => {
+		map( data, ( item ) => {
 			return buildExportArray( item );
 		} )
 	);
 }
+
+/**
+ * Returns the date of the last site stats query
+ *
+ * @param  {object}  state    Global state tree
+ * @param  {number}  siteId   Site ID
+ * @param  {string}  statType Type of stat
+ * @param  {object}  query    Stats query object
+ * @returns {Date}             Date of the last site stats query
+ */
+export function getSiteStatsQueryDate( state, siteId, statType, query ) {
+	const serializedQuery = getSerializedStatsQuery( query );
+	return get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'date' ] );
+}
+
+/**
+ * Returns the date of the last site stats query
+ *
+ * @param   {object}  state    Global state tree
+ * @param   {number}  siteId   Site ID
+ * @returns {object}           Stats View Summary
+ */
+export function getSiteStatsViewSummary( state, siteId ) {
+	const query = {
+		stat_fields: 'views',
+		quantity: -1,
+	};
+	const viewData = getSiteStatsForQuery( state, siteId, 'statsVisits', query );
+
+	if ( ! viewData || ! viewData.data ) {
+		return null;
+	}
+
+	const viewSummary = {};
+
+	viewData.data.forEach( ( item ) => {
+		const [ date, value ] = item;
+		const newDate = new Date( date );
+		const years = newDate.getFullYear();
+		const months = newDate.getMonth();
+
+		if ( ! viewSummary[ years ] ) {
+			viewSummary[ years ] = {};
+		}
+
+		if ( ! viewSummary[ years ][ months ] ) {
+			viewSummary[ years ][ months ] = {
+				total: 0,
+				data: [],
+				average: 0,
+				daysInMonth: new Date( years, months + 1, 0 ).getDate(),
+			};
+		}
+		viewSummary[ years ][ months ].total += value;
+		viewSummary[ years ][ months ].data.push( item );
+		const average =
+			viewSummary[ years ][ months ].total / viewSummary[ years ][ months ].daysInMonth;
+		viewSummary[ years ][ months ].average = Math.round( average );
+	} );
+
+	// With the current month, calculate the average based on the days passed so far in the month
+	const date = new Date();
+	const thisMonth =
+		viewSummary[ date.getFullYear() ] && viewSummary[ date.getFullYear() ][ date.getMonth() ];
+
+	if ( thisMonth ) {
+		thisMonth.daysInMonth = date.getDate();
+		thisMonth.average = Math.round( thisMonth.total / thisMonth.daysInMonth );
+	}
+
+	return viewSummary;
+}
+
+export const getMostPopularDatetime = ( state, siteId, query ) => {
+	const insightsData = getSiteStatsNormalizedData( state, siteId, 'statsInsights', query );
+	return {
+		day: insightsData?.day,
+		time: insightsData?.hour,
+	};
+};
+
+export const getTopPostAndPage = ( state, siteId, query ) => {
+	const data = getSiteStatsForQuery( state, siteId, 'statsTopPosts', query );
+
+	if ( ! data ) {
+		return {
+			post: null,
+			page: null,
+		};
+	}
+
+	const topPosts = {};
+
+	Object.values( data.days ).forEach( ( { postviews: posts } ) => {
+		posts.forEach( ( post ) => {
+			if ( post.id in topPosts ) {
+				topPosts[ post.id ].views += post.views;
+			} else {
+				topPosts[ post.id ] = post;
+			}
+		} );
+	} );
+
+	const sortedTopPosts = Object.values( topPosts ).sort( ( a, b ) => {
+		if ( a.views > b.views ) {
+			return -1;
+		}
+		if ( a.views < b.views ) {
+			return 1;
+		}
+		return 0;
+	} );
+
+	if ( ! sortedTopPosts.length ) {
+		return {
+			post: null,
+			page: null,
+		};
+	}
+
+	return {
+		post: sortedTopPosts.find( ( { type } ) => type === 'post' ),
+		page: sortedTopPosts.find( ( { type } ) => type === 'page' ),
+	};
+};

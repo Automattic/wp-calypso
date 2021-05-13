@@ -1,0 +1,12 @@
+.list-all__heading {
+	display: flex;
+
+	.list-all__heading-buttons {
+		margin: auto 16px auto auto;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-top: 0;
+			margin-right: 0;
+		}
+	}
+}

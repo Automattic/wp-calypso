@@ -32,16 +32,16 @@ import {
 	PUBLICIZE_CONNECTIONS_RECEIVE,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 	PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( '#fetchConnections()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/publicize-connections' )
@@ -94,7 +94,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'fetchConnection()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/publicize-connections/2' )
@@ -157,7 +157,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'createSiteConnection()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/sites/2916284/publicize-connections/new', {
 					external_user_ID: 1,
@@ -211,7 +211,7 @@ describe( 'actions', () => {
 	describe( 'updateSiteConnection()', () => {
 		const attributes = { shared: true };
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/sites/2916284/publicize-connections/2', {
 					shared: true,
@@ -230,7 +230,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch update action when request completes', () => {
-			updateSiteConnection(
+			return updateSiteConnection(
 				{ ID: 2, site_ID: 2916284, label: 'Facebook' },
 				attributes
 			)( spy ).then( () => {
@@ -242,7 +242,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			updateSiteConnection(
+			return updateSiteConnection(
 				{ ID: 2, site_ID: 77203074, label: 'Facebook' },
 				attributes
 			)( spy ).then( () => {
@@ -257,7 +257,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deleteSiteConnection()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/sites/2916284/publicize-connections/2/delete' )
 				.reply( 200, {
@@ -272,7 +272,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch delete action when request completes', () => {
-			deleteSiteConnection( { ID: 2, site_ID: 2916284 } )( spy ).then( () => {
+			return deleteSiteConnection( { ID: 2, site_ID: 2916284 } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PUBLICIZE_CONNECTION_DELETE,
 					connection: {
@@ -284,7 +284,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			deleteSiteConnection( { ID: 2, site_ID: 77203074 } )( spy ).then( () => {
+			return deleteSiteConnection( { ID: 2, site_ID: 77203074 } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PUBLICIZE_CONNECTION_DELETE_FAILURE,
 					error: sinon.match( {

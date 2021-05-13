@@ -1,27 +1,28 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { identity, includes, noop, pull, union } from 'lodash';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
-import SectionNavTabItem from 'components/section-nav/item';
-import Search from 'components/search';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import PlanStorage from 'blocks/plan-storage';
+import SectionNav from 'calypso/components/section-nav';
+import SectionNavTabs from 'calypso/components/section-nav/tabs';
+import SectionNavTabItem from 'calypso/components/section-nav/item';
+import Search from 'calypso/components/search';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import PlanStorage from 'calypso/blocks/plan-storage';
 import DataSource from './data-source';
 
 // These source supply very large images, and there are instances such as
 // the site icon editor, where we want to disable them because the editor
 // can't handle the large images.
 const largeImageSources = [ 'pexels', 'google_photos' ];
+
+const noop = () => {};
 
 export class MediaLibraryFilterBar extends Component {
 	static propTypes = {
@@ -47,7 +48,6 @@ export class MediaLibraryFilterBar extends Component {
 		onFilterChange: noop,
 		onSourceChange: noop,
 		onSearch: noop,
-		translate: identity,
 		source: '',
 		post: false,
 		isConnected: true,
@@ -102,7 +102,7 @@ export class MediaLibraryFilterBar extends Component {
 		return enabledFilters && ( ! filter.length || ! includes( enabledFilters, filter ) );
 	}
 
-	changeFilter = filter => () => {
+	changeFilter = ( filter ) => () => {
 		this.props.onFilterChange( filter );
 	};
 
@@ -119,10 +119,10 @@ export class MediaLibraryFilterBar extends Component {
 	}
 
 	renderTabItems() {
-		const tabs = this.getFiltersForSource( this.props.source );
+		let tabs = this.getFiltersForSource( this.props.source );
 
 		if ( ! this.props.post ) {
-			pull( tabs, 'this-post' );
+			tabs = tabs.filter( ( tab ) => tab !== 'this-post' );
 		}
 
 		if ( tabs.length === 0 ) {
@@ -131,7 +131,7 @@ export class MediaLibraryFilterBar extends Component {
 
 		return (
 			<SectionNavTabs>
-				{ tabs.map( filter => (
+				{ tabs.map( ( filter ) => (
 					<SectionNavTabItem
 						key={ 'filter-tab-' + filter }
 						selected={ this.props.filter === filter }
@@ -161,6 +161,8 @@ export class MediaLibraryFilterBar extends Component {
 		// Set the 'key' value so if the source is changed the component is refreshed, forcing it to clear the existing state
 		return (
 			<Search
+				// eslint-disable-next-line jsx-a11y/no-autofocus
+				autoFocus={ source === 'pexels' }
 				key={ source }
 				analyticsGroup="Media"
 				pinned={ isPinned }
@@ -190,7 +192,7 @@ export class MediaLibraryFilterBar extends Component {
 
 	render() {
 		const disabledSources = this.props.disableLargeImageSources
-			? union( this.props.disabledDataSources, largeImageSources )
+			? [ ...new Set( [].concat( this.props.disabledDataSources, largeImageSources ) ) ]
 			: this.props.disabledDataSources;
 
 		// Dropdown is disabled when viewing any external data source

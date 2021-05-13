@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isRequestingJetpackUserConnection from 'state/selectors/is-requesting-jetpack-user-connection';
-import { requestJetpackUserConnectionData } from 'state/jetpack/connection/actions';
+import isRequestingJetpackUserConnection from 'calypso/state/selectors/is-requesting-jetpack-user-connection';
+import { requestJetpackUserConnectionData } from 'calypso/state/jetpack/connection/actions';
 
 class QueryJetpackUserConnection extends Component {
 	static propTypes = {

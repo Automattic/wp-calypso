@@ -1,74 +1,76 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import CartStore from 'lib/cart/store';
-import { hasStaleItem } from 'lib/cart-values/cart-items';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { infoNotice, removeNotice } from 'state/notices/actions';
-import { getNoticeLastTimeShown } from 'state/notices/selectors';
-import { getSectionName, getSelectedSiteSlug } from 'state/ui/selectors';
+import { hasStaleItem } from 'calypso/lib/cart-values/cart-items';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { infoNotice, removeNotice } from 'calypso/state/notices/actions';
+import { getNoticeLastTimeShown } from 'calypso/state/notices/selectors';
+import { getSectionName, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const staleCartItemNoticeId = 'stale-cart-item-notice';
 
-class StaleCartItemsNotice extends React.Component {
-	showStaleCartItemsNotice = () => {
-		// Remove any existing stale cart notice
-		this.props.removeNotice( staleCartItemNoticeId );
+export default function StaleCartItemsNotice() {
+	useShowStaleCartNotice();
+	return null;
+}
 
+function useShowStaleCartNotice() {
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const staleCartItemNoticeLastTimeShown = useSelector( ( state ) =>
+		getNoticeLastTimeShown( state, staleCartItemNoticeId )
+	);
+	const sectionName = useSelector( getSectionName );
+	const reduxDispatch = useDispatch();
+	const { responseCart, isPendingUpdate } = useShoppingCart();
+	const translate = useTranslate();
+
+	useEffect( () => {
 		// Don't show on the checkout page?
-		if ( this.props.sectionName === 'upgrades' ) {
-			return null;
+		if ( sectionName === 'upgrades' ) {
+			// Remove any existing stale cart notice
+			reduxDispatch( removeNotice( staleCartItemNoticeId ) );
+			return;
 		}
 
 		// Show a notice if there are stale items in the cart and it hasn't been shown
 		// in the last 10 minutes (cart abandonment)
 		if (
-			this.props.selectedSiteSlug &&
-			hasStaleItem( CartStore.get() ) &&
-			this.props.staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000
+			selectedSiteSlug &&
+			hasStaleItem( responseCart ) &&
+			staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000 &&
+			! isPendingUpdate
 		) {
-			this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_view' );
+			reduxDispatch( recordTracksEvent( 'calypso_cart_abandonment_notice_view' ) );
 
-			this.props.infoNotice( this.props.translate( 'Your cart is awaiting payment.' ), {
-				id: staleCartItemNoticeId,
-				isPersistent: false,
-				duration: 10000,
-				button: this.props.translate( 'View your cart' ),
-				href: '/checkout/' + this.props.selectedSiteSlug,
-				onClick: this.clickStaleCartItemsNotice,
-			} );
+			// Remove any existing stale cart notice
+			reduxDispatch( removeNotice( staleCartItemNoticeId ) );
+
+			reduxDispatch(
+				infoNotice( translate( 'Your cart is awaiting payment.' ), {
+					id: staleCartItemNoticeId,
+					button: translate( 'View your cart' ),
+					href: `/checkout/${ selectedSiteSlug }?order-review=true`, // Redirect to the order-review step
+					onClick: () => {
+						reduxDispatch( recordTracksEvent( 'calypso_cart_abandonment_notice_click' ) );
+					},
+				} )
+			);
 		}
-	};
-
-	clickStaleCartItemsNotice = () => {
-		this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_click' );
-	};
-
-	componentDidMount() {
-		CartStore.on( 'change', this.showStaleCartItemsNotice );
-	}
-
-	componentWillUnmount() {
-		CartStore.off( 'change', this.showStaleCartItemsNotice );
-	}
-
-	render() {
-		return null;
-	}
+	}, [
+		isPendingUpdate,
+		sectionName,
+		selectedSiteSlug,
+		responseCart,
+		reduxDispatch,
+		translate,
+		staleCartItemNoticeLastTimeShown,
+	] );
 }
-
-export default connect(
-	state => ( {
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-		staleCartItemNoticeLastTimeShown: getNoticeLastTimeShown( state, staleCartItemNoticeId ),
-		sectionName: getSectionName( state ),
-	} ),
-	{ infoNotice, removeNotice, recordTracksEvent }
-)( localize( StaleCartItemsNotice ) );

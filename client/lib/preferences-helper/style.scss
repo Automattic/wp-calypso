@@ -20,13 +20,35 @@
 .preferences-helper__preference-header {
 	text-transform: initial;
 	margin-top: 5px;
-	font-weight: bolder;
+	font-weight: 600;
 	white-space: nowrap;
 	overflow: hidden;
 
 	button {
 		display: inline;
 		margin-right: 5px;
+	}
+}
+
+.preferences-helper__save-pref-button {
+	color: var( --color-accent );
+	cursor: pointer;
+	&:disabled {
+		color: var( --color-neutral );
+	}
+}
+
+.preferences-helper__reset-pref-button {
+	color: var( --color-warning );
+	cursor: pointer;
+	&:disabled {
+		color: var( --color-neutral );
+	}
+}
+
+.boolean-preference {
+	input {
+		appearance: checkbox;
 	}
 }
 
@@ -38,5 +60,5 @@
 	bottom: 100%;
 	right: 0;
 	margin: 0;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 }

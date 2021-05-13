@@ -6,7 +6,7 @@ import { last } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPreference } from 'state/preferences/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
 
 const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -20,7 +20,7 @@ const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
 const getLastDismissTime = ( state, location ) => {
 	const preference = getPreference( state, 'upwork-dismissible-banner' ) || {};
 	const sitePreference = preference[ location ] || [];
-	const lastEvent = last( sitePreference.filter( event => 'dismiss' === event.type ) );
+	const lastEvent = last( sitePreference.filter( ( event ) => 'dismiss' === event.type ) );
 
 	return lastEvent ? lastEvent.dismissedAt : 0;
 };

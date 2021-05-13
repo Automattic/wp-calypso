@@ -4,15 +4,16 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import ImagePreloader from 'components/image-preloader';
-import Spinner from 'components/spinner';
-import { url, isItemBeingUploaded } from 'lib/media/utils';
+import Spinner from 'calypso/components/spinner';
+import MediaImage from 'calypso/my-sites/media-library/media-image';
+import { url, isItemBeingUploaded } from 'calypso/lib/media/utils';
+
+const noop = () => {};
 
 export default class EditorMediaModalDetailPreviewImage extends Component {
 	static propTypes = {
@@ -25,25 +26,18 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 		onLoad: noop,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.onImagePreloaderLoad = this.onImagePreloaderLoad.bind( this );
-		this.state = { loading: false };
-	}
+	state = { loading: true };
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.item.URL === nextProps.item.URL ) {
-			return null;
+		if ( this.props.item.URL !== nextProps.item.URL ) {
+			this.setState( { loading: true } );
 		}
-
-		this.setState( { loading: true } );
 	}
 
-	onImagePreloaderLoad() {
+	onImagePreloaderLoad = () => {
 		this.setState( { loading: false } );
 		this.props.onLoad();
-	}
+	};
 
 	render() {
 		const src = url( this.props.item, {
@@ -84,7 +78,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 
 		return (
 			<div>
-				<img
+				<MediaImage
 					src={ src }
 					width={ this.props.item.width }
 					height={ this.props.item.height }
@@ -92,7 +86,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 					className={ fakeClasses }
 				/>
 
-				<ImagePreloader
+				<MediaImage
 					src={ src }
 					width={ this.props.item.width }
 					height={ this.props.item.height }

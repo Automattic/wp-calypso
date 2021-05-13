@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 export default class extends React.Component {
 	static displayName = 'CurrentThemeButton';

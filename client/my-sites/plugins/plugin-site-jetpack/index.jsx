@@ -1,23 +1,27 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
-import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
-import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
-import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
-import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
-import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
-import Site from 'blocks/site';
+import FoldableCard from 'calypso/components/foldable-card';
+import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
+import PluginUpdateIndicator from 'calypso/my-sites/plugins/plugin-site-update-indicator';
+import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
+import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
+import Site from 'calypso/blocks/site';
+import { Button } from '@automattic/components';
+import {
+	getPluginOnSite,
+	isPluginActionInProgress,
+} from 'calypso/state/plugins/installed/selectors';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 
 /**
  * Style dependencies
@@ -28,7 +32,6 @@ class PluginSiteJetpack extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,
 		plugin: PropTypes.object,
-		notices: PropTypes.object,
 		allowedActions: PropTypes.shape( {
 			activation: PropTypes.bool,
 			autoupdate: PropTypes.bool,
@@ -47,18 +50,12 @@ class PluginSiteJetpack extends React.Component {
 	};
 
 	renderInstallButton = () => {
-		const installInProgress = PluginsLog.isInProgressAction(
-			this.props.site.ID,
-			this.props.plugin.slug,
-			'INSTALL_PLUGIN'
-		);
-
 		return (
 			<PluginInstallButton
 				isEmbed={ true }
 				selectedSite={ this.props.site }
 				plugin={ this.props.plugin }
-				isInstalling={ installInProgress }
+				isInstalling={ this.props.installInProgress }
 			/>
 		);
 	};
@@ -83,6 +80,8 @@ class PluginSiteJetpack extends React.Component {
 
 		const showAutoManagedMessage = this.props.isAutoManaged;
 
+		const settingsLink = this.props?.pluginOnSite?.action_links?.Settings ?? null;
+
 		return (
 			<FoldableCard
 				compact
@@ -93,7 +92,6 @@ class PluginSiteJetpack extends React.Component {
 					<PluginUpdateIndicator
 						site={ this.props.site }
 						plugin={ this.props.plugin }
-						notices={ this.props.notices }
 						expanded={ false }
 					/>
 				}
@@ -101,24 +99,28 @@ class PluginSiteJetpack extends React.Component {
 					<PluginUpdateIndicator
 						site={ this.props.site }
 						plugin={ this.props.plugin }
-						notices={ this.props.notices }
 						expanded={ true }
 					/>
 				}
 			>
 				<div>
 					{ canToggleActivation && (
-						<PluginActivateToggle site={ this.props.site } plugin={ this.props.site.plugin } />
+						<PluginActivateToggle site={ this.props.site } plugin={ this.props.pluginOnSite } />
 					) }
 					{ canToggleAutoupdate && (
 						<PluginAutoupdateToggle
 							site={ this.props.site }
-							plugin={ this.props.site.plugin }
+							plugin={ this.props.pluginOnSite }
 							wporg={ true }
 						/>
 					) }
 					{ canToggleRemove && (
-						<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } />
+						<PluginRemoveButton plugin={ this.props.pluginOnSite } site={ this.props.site } />
+					) }
+					{ settingsLink && (
+						<Button compact href={ settingsLink }>
+							{ this.props.translate( `Settings` ) }
+						</Button>
 					) }
 					{ showAutoManagedMessage && (
 						<div className="plugin-site-jetpack__automanage-notice">
@@ -130,29 +132,12 @@ class PluginSiteJetpack extends React.Component {
 		);
 	};
 
-	renderManageWarning = () => {
-		return (
-			<FoldableCard
-				compact
-				className="plugin-site-jetpack has-manage-error"
-				header={ <Site site={ this.props.site } indicator={ false } /> }
-				actionButton={
-					<PluginSiteDisabledManage site={ this.props.site } plugin={ this.props.plugin } />
-				}
-			/>
-		);
-	};
-
 	render() {
 		if ( ! this.props.site || ! this.props.plugin ) {
 			return null;
 		}
 
-		if ( ! this.props.site.canManage ) {
-			return this.renderManageWarning();
-		}
-
-		if ( ! this.props.site.plugin ) {
+		if ( ! this.props.pluginOnSite ) {
 			return this.renderInstallPlugin();
 		}
 
@@ -160,4 +145,7 @@ class PluginSiteJetpack extends React.Component {
 	}
 }
 
-export default localize( PluginSiteJetpack );
+export default connect( ( state, { site, plugin } ) => ( {
+	installInProgress: isPluginActionInProgress( state, site.ID, plugin.id, INSTALL_PLUGIN ),
+	pluginOnSite: getPluginOnSite( state, site.ID, plugin.slug ),
+} ) )( localize( PluginSiteJetpack ) );

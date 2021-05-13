@@ -5,10 +5,11 @@ import {
 	JETPACK_PRODUCT_INSTALL_REQUEST,
 	JETPACK_PRODUCT_INSTALL_STATUS_RECEIVE,
 	JETPACK_PRODUCT_INSTALL_STATUS_REQUEST,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/jetpack-blogs/product-install';
-import 'state/data-layer/wpcom/jetpack-blogs/product-install-status';
+import 'calypso/state/data-layer/wpcom/jetpack-blogs/product-install';
+import 'calypso/state/data-layer/wpcom/jetpack-blogs/product-install-status';
+import 'calypso/state/jetpack-product-install/init';
 
 /**
  * Start the Jetpack product install process for that site.
@@ -31,7 +32,7 @@ export const startJetpackProductInstall = ( siteId, akismetKey, vaultpressKey ) 
  * @param {number} siteId The ID of the site.
  * @returns {object}       Action object.
  */
-export const requestJetpackProductInstallStatus = siteId => ( {
+export const requestJetpackProductInstallStatus = ( siteId ) => ( {
 	type: JETPACK_PRODUCT_INSTALL_STATUS_REQUEST,
 	siteId,
 } );

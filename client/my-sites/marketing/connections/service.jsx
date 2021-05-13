@@ -1,12 +1,11 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { identity, isEqual, find, replace, some, isFunction, get } from 'lodash';
+import { isEqual, find, some, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,37 +18,37 @@ import {
 	failCreateConnection,
 	fetchConnection,
 	updateSiteConnection,
-} from 'state/sharing/publicize/actions';
-import { successNotice, errorNotice, warningNotice } from 'state/notices/actions';
+} from 'calypso/state/sharing/publicize/actions';
+import { successNotice, errorNotice, warningNotice } from 'calypso/state/notices/actions';
 import Connection from './connection';
-import FoldableCard from 'components/foldable-card';
-import Notice from 'components/notice';
-import { getAvailableExternalAccounts } from 'state/sharing/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import FoldableCard from 'calypso/components/foldable-card';
+import Notice from 'calypso/components/notice';
+import { getAvailableExternalAccounts, isServiceExpanded } from 'calypso/state/sharing/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getKeyringConnectionsByName,
-	getBrokenKeyringConnectionsByName,
-} from 'state/sharing/keyring/selectors';
+	getRefreshableKeyringConnections,
+} from 'calypso/state/sharing/keyring/selectors';
 import {
 	getBrokenSiteUserConnectionsForService,
-	getRemovableConnections,
 	getSiteUserConnectionsForService,
 	isFetchingConnections,
-} from 'state/sharing/publicize/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+} from 'calypso/state/sharing/publicize/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
 import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
-import requestExternalAccess from 'lib/sharing';
+import requestExternalAccess from '@automattic/request-external-access';
 import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
-import config from 'config';
+import config from '@automattic/calypso-config';
 import PicasaMigration from './picasa-migration';
-import SocialLogo from 'components/social-logo';
+import SocialLogo from 'calypso/components/social-logo';
 
 /**
  * Check if the connection is broken or requires reauth.
@@ -57,7 +56,7 @@ import SocialLogo from 'components/social-logo';
  * @param {object} connection Publicize connection.
  * @returns {boolean} True if connection is broken or requires reauthentication.
  */
-const isConnectionInvalidOrMustReauth = connection =>
+const isConnectionInvalidOrMustReauth = ( connection ) =>
 	[ 'must_reauth', 'invalid' ].includes( connection.status );
 
 export class SharingService extends Component {
@@ -97,7 +96,6 @@ export class SharingService extends Component {
 		removableConnections: [],
 		siteId: 0,
 		siteUserConnections: [],
-		translate: identity,
 		updateSiteConnection: () => {},
 		warningNotice: () => {},
 	};
@@ -121,7 +119,7 @@ export class SharingService extends Component {
 				path,
 			} );
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.ID );
-		} else if ( 'reconnect' === connectionStatus ) {
+		} else if ( 'reconnect' === connectionStatus || 'refresh-failed' === connectionStatus ) {
 			this.refresh();
 			this.props.recordTracksEvent( 'calypso_connections_reconnect_button_click', {
 				service: this.props.service.ID,
@@ -143,7 +141,7 @@ export class SharingService extends Component {
 	 *
 	 * @param {number} keyringConnectionId Keyring connection ID.
 	 */
-	externalAccessProvided = keyringConnectionId => {}; // eslint-disable-line no-unused-vars
+	externalAccessProvided = ( keyringConnectionId ) => {}; // eslint-disable-line no-unused-vars
 
 	/**
 	 * Establishes a new connection.
@@ -264,8 +262,8 @@ export class SharingService extends Component {
 	 *                            Default: All broken connections for this service.
 	 */
 	refresh = ( connections = this.props.brokenConnections ) => {
-		this.getConnections( connections ).map( connection => {
-			const keyringConnection = find( this.props.keyringConnections, token => {
+		this.getConnections( connections ).map( ( connection ) => {
+			const keyringConnection = find( this.props.keyringConnections, ( token ) => {
 				// Publicize connections store the token id as `keyring_connection_ID`
 				const tokenID =
 					'publicize' === token.type ? connection.keyring_connection_ID : connection.ID;
@@ -306,7 +304,8 @@ export class SharingService extends Component {
 	 * @param {object} connection Connection to update.
 	 * @returns {Function} Action thunk
 	 */
-	fetchConnection = connection => this.props.fetchConnection( this.props.siteId, connection.ID );
+	fetchConnection = ( connection ) =>
+		this.props.fetchConnection( this.props.siteId, connection.ID );
 
 	/**
 	 * Checks whether any connection can be removed.
@@ -403,6 +402,9 @@ export class SharingService extends Component {
 		} else if ( some( this.getConnections(), { status: 'broken' } ) ) {
 			// A problematic connection exists
 			status = 'reconnect';
+		} else if ( some( this.getConnections(), { status: 'refresh-failed' } ) ) {
+			// We need to manually refresh a token
+			status = 'refresh-failed';
 		} else if ( some( this.getConnections(), isConnectionInvalidOrMustReauth ) ) {
 			// A valid connection is not available anymore, user must reconnect
 			status = 'must-disconnect';
@@ -412,6 +414,12 @@ export class SharingService extends Component {
 		}
 
 		return status;
+	}
+
+	getConnectionExpiry() {
+		const expiringConnections = this.getConnections().filter( ( conn ) => conn.expires );
+		const oldestConnection = expiringConnections.sort( ( a, b ) => a.expires - b.expires ).shift();
+		return oldestConnection?.expires;
 	}
 
 	/**
@@ -460,7 +468,7 @@ export class SharingService extends Component {
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<SocialLogo
-				icon={ replace( this.props.service.ID, '_', '-' ) }
+				icon={ this.props.service.ID.replace( /_/g, '-' ) }
 				size={ 48 }
 				className="sharing-service__logo"
 			/>
@@ -473,6 +481,10 @@ export class SharingService extends Component {
 		}
 
 		if ( this.isPicasaMigration( status ) ) {
+			return true;
+		}
+
+		if ( this.props.isExpanded ) {
 			return true;
 		}
 
@@ -497,6 +509,7 @@ export class SharingService extends Component {
 	render() {
 		const connections = this.getConnections();
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
+		const earliestExpiry = this.getConnectionExpiry();
 		const classNames = classnames( 'sharing-service', this.props.service.ID, connectionStatus, {
 			'is-open': this.state.isOpen,
 		} );
@@ -512,6 +525,7 @@ export class SharingService extends Component {
 					<ServiceDescription
 						service={ this.props.service }
 						status={ connectionStatus }
+						expires={ earliestExpiry }
 						numberOfConnections={ this.getConnections().length }
 					/>
 				</div>
@@ -570,7 +584,7 @@ export class SharingService extends Component {
 								connect={ this.connectAnother }
 								service={ this.props.service }
 							>
-								{ connections.map( connection => (
+								{ connections.map( ( connection ) => (
 									<Connection
 										key={ connection.keyring_connection_ID }
 										connection={ connection }
@@ -602,11 +616,11 @@ export class SharingService extends Component {
 /**
  * Connect a SharingService component to a Redux store.
  *
- * @param  {component} sharingService     A SharingService component
+ * @param  {Component} sharingService     A SharingService component
  * @param  {Function}  mapStateToProps    Optional. A function to pick props from the state.
  *                                        It should return a plain object, which will be merged into the component's props.
  * @param  {object}    mapDispatchToProps Optional. An object that contains additional action creators. Default: {}
- * @returns {component} A highter-order service component
+ * @returns {Component} A highter-order service component
  */
 export function connectFor( sharingService, mapStateToProps, mapDispatchToProps = {} ) {
 	return connect(
@@ -619,10 +633,10 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				userId,
 				service.ID
 			);
-			const brokenKeyringConnections = getBrokenKeyringConnectionsByName( state, service.ID );
+			const refreshableConnections = getRefreshableKeyringConnections( state, service.ID );
 			const props = {
 				availableExternalAccounts: getAvailableExternalAccounts( state, service.ID ),
-				brokenConnections: brokenPublicizeConnections.concat( brokenKeyringConnections ),
+				brokenConnections: brokenPublicizeConnections.concat( refreshableConnections ),
 				isFetching: isFetchingConnections( state, siteId ),
 				keyringConnections: getKeyringConnectionsByName( state, service.ID ),
 				removableConnections: getRemovableConnections( state, service.ID ),
@@ -631,8 +645,9 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				siteId,
 				siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
 				userId,
+				isExpanded: isServiceExpanded( state, service ),
 			};
-			return isFunction( mapStateToProps ) ? mapStateToProps( state, props ) : props;
+			return typeof mapStateToProps === 'function' ? mapStateToProps( state, props ) : props;
 		},
 		{
 			createSiteConnection,

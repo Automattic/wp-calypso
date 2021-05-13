@@ -7,13 +7,15 @@ import renderer from 'react-test-renderer';
 /**
  * Internal dependencies
  */
-import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'lib/gsuite/constants';
+import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'calypso/lib/gsuite/constants';
 import GSuiteCompactFeatures from '../compact';
 
 describe( 'GSuiteCompactFeatures', () => {
 	test( 'it renders GSuiteCompactFeatures with basic plan', () => {
 		const tree = renderer
-			.create( <GSuiteCompactFeatures domainName={ 'testing123.com' } productSlug={ GSUITE_BASIC_SLUG } /> )
+			.create(
+				<GSuiteCompactFeatures domainName={ 'testing123.com' } productSlug={ GSUITE_BASIC_SLUG } />
+			)
 			.toJSON();
 
 		expect( tree ).toMatchSnapshot();
@@ -22,7 +24,10 @@ describe( 'GSuiteCompactFeatures', () => {
 	test( 'it renders GSuiteCompactFeatures with business plan', () => {
 		const tree = renderer
 			.create(
-				<GSuiteCompactFeatures domainName={ 'testing123.com' } productSlug={ GSUITE_BUSINESS_SLUG } />
+				<GSuiteCompactFeatures
+					domainName={ 'testing123.com' }
+					productSlug={ GSUITE_BUSINESS_SLUG }
+				/>
 			)
 			.toJSON();
 

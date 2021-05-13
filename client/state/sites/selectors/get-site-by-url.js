@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { urlToSlug } from 'lib/url';
+import { urlToSlug } from 'calypso/lib/url';
 import getSiteBySlug from './get-site-by-slug';
 
 /**

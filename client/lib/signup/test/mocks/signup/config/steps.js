@@ -20,7 +20,7 @@ export default {
 
 	asyncStep: {
 		stepName: 'asyncStep',
-		apiRequestFunction: function( callback, dependencies, stepData ) {
+		apiRequestFunction: function ( callback, dependencies, stepData ) {
 			defer( callback );
 			stepData.done();
 		},
@@ -30,8 +30,8 @@ export default {
 		stepName: 'siteCreation',
 		dependencies: [ 'bearer_token' ],
 		providesDependencies: [ 'siteSlug' ],
-		apiRequestFunction: function( callback, dependencies, stepData ) {
-			defer( function() {
+		apiRequestFunction: function ( callback, dependencies, stepData ) {
+			defer( function () {
 				callback( null, { siteSlug: 'testsite.wordpress.com' } );
 				stepData.stepCallback( dependencies );
 			} );
@@ -42,8 +42,8 @@ export default {
 		stepName: 'userCreation',
 		providesToken: true,
 		providesDependencies: [ 'bearer_token' ],
-		apiRequestFunction: function( callback ) {
-			defer( function() {
+		apiRequestFunction: function ( callback ) {
+			defer( function () {
 				callback( null, { bearer_token: 'TOKEN' } );
 			} );
 		},
@@ -53,7 +53,7 @@ export default {
 		stepName: 'userCreation',
 		providesToken: true,
 		providesDependencies: [ 'bearer_token' ],
-		apiRequestFunction: function( callback ) {
+		apiRequestFunction: function ( callback ) {
 			defer( callback );
 		},
 	},
@@ -62,7 +62,7 @@ export default {
 		stepName: 'delayedStep',
 		component: null,
 		delayApiRequestUntilComplete: true,
-		apiRequestFunction: function( callback, dependencies, stepData ) {
+		apiRequestFunction: function ( callback, dependencies, stepData ) {
 			stepData.stepCallback();
 			defer( callback );
 		},

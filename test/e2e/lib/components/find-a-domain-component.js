@@ -10,22 +10,22 @@ import AsyncBaseContainer from '../async-base-container';
 import * as slackNotifier from '../slack-notifier';
 import * as driverHelper from '../driver-helper.js';
 
-const searchInputSelector = By.className( 'search__input' );
+const searchInputLocator = By.className( 'search-component__input' );
 
 export default class FindADomainComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.register-domain-step' ) );
-		this.declineGoogleAppsLinkSelector = By.className( 'gsuite-upsell-card__skip-button' );
+		this.declineGoogleAppsLinkLocator = By.className( 'gsuite-upsell-card__skip-button' );
 	}
 
 	async waitForResults() {
 		const driver = this.driver;
-		const resultsLoadingSelector = By.css( '.domain-suggestion.is-placeholder' );
+		const resultsLoadingLocator = By.css( '.domain-suggestion.is-placeholder' );
 		await driver.wait(
-			function() {
+			function () {
 				return driverHelper
-					.isElementPresent( driver, resultsLoadingSelector )
-					.then( function( present ) {
+					.isElementLocated( driver, resultsLoadingLocator )
+					.then( function ( present ) {
 						return ! present;
 					} );
 			},
@@ -37,18 +37,18 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 
 	async waitForGoogleApps() {
 		return await this.driver.wait(
-			until.elementLocated( this.declineGoogleAppsLinkSelector ),
+			until.elementLocated( this.declineGoogleAppsLinkLocator ),
 			this.explicitWaitMS,
 			'Could not locate the link to decline google apps.'
 		);
 	}
 
 	async getSearchInputValue() {
-		return await this.driver.findElement( searchInputSelector ).getAttribute( 'value' );
+		return await this.driver.findElement( searchInputLocator ).getAttribute( 'value' );
 	}
 
 	async searchForBlogNameAndWaitForResults( blogName ) {
-		await driverHelper.setWhenSettable( this.driver, searchInputSelector, blogName );
+		await driverHelper.setWhenSettable( this.driver, searchInputLocator, blogName );
 		return await this.waitForResults();
 	}
 
@@ -63,35 +63,35 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 	}
 
 	async freeBlogAddress() {
-		const freeBlogAddressSelector = By.css(
+		const freeBlogAddressLocator = By.css(
 			'.domain-search-results__domain-suggestions > .domain-suggestion .domain-registration-suggestion__title'
 		);
-		return await this.driver.findElement( freeBlogAddressSelector ).getText();
+		return await this.driver.findElement( freeBlogAddressLocator ).getText();
 	}
 
 	async selectDomainAddress( domainAddress ) {
-		const selector = By.css( `[data-e2e-domain="${ domainAddress }"]` );
+		const locator = By.css( `[data-e2e-domain="${ domainAddress }"]` );
 		await this.driver.wait(
-			until.elementLocated( selector ),
+			until.elementLocated( locator ),
 			this.explicitWaitMS,
 			'Could not locate the select button for the paid address: ' + domainAddress
 		);
-		const element = await this.driver.findElement( selector );
+		const element = await this.driver.findElement( locator );
 		await this.driver.wait(
 			until.elementIsEnabled( element ),
 			this.explicitWaitMS,
 			'The paid address button for ' + domainAddress + ' does not appear to be enabled to click'
 		);
-		return await driverHelper.clickWhenClickable( this.driver, selector, this.explicitWaitMS );
+		return await driverHelper.clickWhenClickable( this.driver, locator, this.explicitWaitMS );
 	}
 
 	async selectFreeAddress() {
-		const freeAddressSelector = By.css(
+		const freeAddressLocator = By.css(
 			'.domain-search-results__domain-suggestions > .domain-suggestion.is-clickable'
 		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			freeAddressSelector,
+			freeAddressLocator,
 			this.explicitWaitMS
 		);
 	}
@@ -101,17 +101,30 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, useOwnDomain, this.explicitWaitMS );
 	}
 
+	async skipSuggestion() {
+		// currently used in 'launch-site' and 'new-launch' signup flows
+		const skipSuggestion = By.css( '.domain-skip-suggestion > .button.domain-suggestion__action' );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			skipSuggestion,
+			this.explicitWaitMS
+		);
+	}
+
 	async declineGoogleApps() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			this.declineGoogleAppsLinkSelector,
+			this.declineGoogleAppsLinkLocator,
 			this.explicitWaitMS
 		);
 		try {
-			await driverHelper.waitTillNotPresent( this.driver, this.declineGoogleAppsLinkSelector );
+			await driverHelper.waitUntilElementNotLocated(
+				this.driver,
+				this.declineGoogleAppsLinkLocator
+			);
 		} catch ( err ) {
 			//Sometimes the first click doesn't work. Clicking again
-			await driverHelper.clickWhenClickable( this.driver, this.declineGoogleAppsLinkSelector );
+			await driverHelper.clickWhenClickable( this.driver, this.declineGoogleAppsLinkLocator );
 		}
 	}
 

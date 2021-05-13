@@ -5,17 +5,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import wrapWithClickOutside from 'react-click-outside';
-import { noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import CloseOnEscape from 'components/close-on-escape';
-import SiteSelector from 'components/site-selector';
-import { hasTouch } from 'lib/touch-detect';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
+import CloseOnEscape from 'calypso/components/close-on-escape';
+import SiteSelector from 'calypso/components/site-selector';
+import { hasTouch } from 'calypso/lib/touch-detect';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
+import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+
+const noop = () => {};
 
 class SitePicker extends React.Component {
 	static displayName = 'SitePicker';
@@ -70,7 +71,7 @@ class SitePicker extends React.Component {
 		window.scrollTo( 0, 0 );
 	};
 
-	closePicker = selectedSiteId => {
+	closePicker = ( selectedSiteId ) => {
 		if ( this.props.currentLayoutFocus === 'sites' ) {
 			this.props.setLayoutFocus( 'sidebar' );
 			if ( selectedSiteId ) {

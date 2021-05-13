@@ -13,7 +13,7 @@
 
 .pending-payments__list-item-product,
 .pending-payments__list-item-payment {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 14px;
 	margin-bottom: 4px;
 }
@@ -21,7 +21,7 @@
 .pending-payments__list-item-title {
 	color: var( --color-primary );
 	display: block;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 1.2em;
 	margin: 4px 20px 4px 0;
 	overflow: hidden;
@@ -32,8 +32,8 @@
 		@include long-content-fade();
 	}
 
-	@include breakpoint( '>480px' ) {
-		font-size: 18px;
+	@include breakpoint-deprecated( '>480px' ) {
+		font-size: $font-title-small;
 		max-width: none;
 	}
 }

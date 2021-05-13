@@ -7,21 +7,42 @@
  */
 import deepFreeze from 'deep-freeze';
 import React from 'react';
-import { Provider } from 'react-redux';
+import { Provider as ReduxProvider } from 'react-redux';
 import { shallow, mount } from 'enzyme';
+import { ShoppingCartProvider, getEmptyResponseCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import { List as DomainList } from '..';
-import { PRIMARY_DOMAIN_CHANGE_SUCCESS, PRIMARY_DOMAIN_CHANGE_FAIL } from '../constants';
-import { createReduxStore } from 'state';
+import { createReduxStore } from 'calypso/state';
 
-jest.mock( 'lib/wp', () => ( {
+const noop = () => {};
+
+jest.mock( 'calypso/lib/wp', () => ( {
 	undocumented: () => ( {
 		getProducts: () => {},
+		getSitePlans: () => {},
 	} ),
 } ) );
+
+const emptyResponseCart = getEmptyResponseCart();
+
+function getCart() {
+	return Promise.resolve( emptyResponseCart );
+}
+
+function setCart() {
+	return Promise.resolve( emptyResponseCart );
+}
+
+function TestProvider( { store, children } ) {
+	return (
+		<ShoppingCartProvider cartKey="1" getCart={ getCart } setCart={ setCart }>
+			<ReduxProvider store={ store }>{ children }</ReduxProvider>
+		</ShoppingCartProvider>
+	);
+}
 
 describe( 'index', () => {
 	let component;
@@ -33,8 +54,8 @@ describe( 'index', () => {
 
 	const defaultProps = deepFreeze( {
 		domains: [
-			{ name: 'domain0.com', isPrimary: false },
-			{ name: 'example.com', isPrimary: true },
+			{ name: 'domain0.com', isPrimary: false, canSetAsPrimary: true },
+			{ name: 'example.com', isPrimary: true, canSetAsPrimary: true },
 		],
 		isRequestingSiteDomains: true,
 		cart: {},
@@ -51,12 +72,37 @@ describe( 'index', () => {
 		},
 		sitePlans: {},
 		userCanManageOptions: true,
+		successNotice: noop,
+		errorNotice: noop,
+		translate: ( string ) => string,
 	} );
 
 	function renderWithProps( props = defaultProps ) {
+		const store = createReduxStore(
+			{
+				purchases: {},
+				ui: {
+					selectedSiteId: 1,
+					section: 'section',
+				},
+				documentHead: {},
+				sites: {
+					plans: [],
+					domains: {
+						items: [],
+					},
+				},
+				currentUser: {
+					capabilities: {},
+				},
+			},
+			( state ) => {
+				return state;
+			}
+		);
 		return mount( <DomainList { ...props } />, {
-			wrappingComponent: Provider,
-			wrappingComponentProps: { store: createReduxStore() },
+			wrappingComponent: TestProvider,
+			wrappingComponentProps: { store },
 		} );
 	}
 
@@ -66,7 +112,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should list two domains', () => {
-			expect( component.find( 'ListItem' ) ).toHaveLength( 2 );
+			expect( component.find( 'DomainItem' ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -78,14 +124,14 @@ describe( 'index', () => {
 
 			test( 'should show "Change Primary Domain" button', () => {
 				const button = component.find( {
-					className: 'domain-management-list__change-primary-button',
+					className: 'list__change-primary-domain',
 				} );
 				expect( button ).toHaveLength( 1 );
 			} );
 
 			test( 'should enable upon clicking the button', () => {
 				const button = component.find( {
-					className: 'domain-management-list__change-primary-button',
+					className: 'list__change-primary-domain',
 				} );
 				button.simulate( 'click' );
 				expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( true );
@@ -96,21 +142,21 @@ describe( 'index', () => {
 			beforeEach( () => {
 				component = renderWithProps();
 				const button = component.find( {
-					className: 'domain-management-list__change-primary-button',
+					className: 'list__change-primary-domain',
 				} );
 				button.simulate( 'click' );
 			} );
 
 			test( 'should show the cancel button', () => {
 				const cancelButton = component.find( {
-					className: 'domain-management-list__cancel-change-primary-button',
+					className: 'list__change-primary-domain',
 				} );
-				expect( cancelButton ).toHaveLength( 1 );
+				expect( cancelButton.text() ).toEqual( 'Cancel primary domain change' );
 			} );
 
 			test( 'should disable upon clicking cancel button', () => {
 				const cancelButton = component.find( {
-					className: 'domain-management-list__cancel-change-primary-button',
+					className: 'list__change-primary-domain',
 				} );
 				cancelButton.simulate( 'click' );
 				expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( false );
@@ -121,7 +167,9 @@ describe( 'index', () => {
 			} );
 
 			describe( '#handleUpdatePrimaryDomain', () => {
-				let setPrimaryDomainStub, setPrimaryDomainResolve, setPrimaryDomainReject;
+				let setPrimaryDomainStub;
+				let setPrimaryDomainResolve;
+				let setPrimaryDomainReject;
 				beforeEach( () => {
 					setPrimaryDomainStub = jest
 						.spyOn( component.instance(), 'setPrimaryDomain' )
@@ -141,34 +189,33 @@ describe( 'index', () => {
 					expect( setPrimaryDomainStub ).not.toHaveBeenCalled();
 				} );
 
-				test( 'should call setPrimaryDomain with a domain name', done => {
-					component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
-					expect( component.state( 'settingPrimaryDomain' ) ).toBe( true );
-					expect( component.state( 'primaryDomainIndex' ) ).toBe( 0 );
-					// `.setPrimaryDomain` should be called with the domain name
-					expect( setPrimaryDomainStub ).toHaveBeenCalledWith( defaultProps.domains[ 0 ].name );
-					setPrimaryDomainResolve();
-					setTimeout( () => {
-						expect( component.state( 'settingPrimaryDomain' ) ).toBe( false );
-						expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( false );
-						expect( component.state( 'notice' ).type ).toBe( PRIMARY_DOMAIN_CHANGE_SUCCESS );
-						expect( component.state( 'notice' ).previousDomainName ).toBe(
-							defaultProps.domains[ 1 ].name
-						);
-						done();
-					}, 0 );
+				test( 'should call setPrimaryDomain with a domain name', () => {
+					return new Promise( ( done ) => {
+						component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
+						expect( component.state( 'settingPrimaryDomain' ) ).toBe( true );
+						expect( component.state( 'primaryDomainIndex' ) ).toBe( 0 );
+						// `.setPrimaryDomain` should be called with the domain name
+						expect( setPrimaryDomainStub ).toHaveBeenCalledWith( defaultProps.domains[ 0 ].name );
+						setPrimaryDomainResolve();
+						setTimeout( () => {
+							expect( component.state( 'settingPrimaryDomain' ) ).toBe( false );
+							expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( false );
+							done();
+						}, 0 );
+					} );
 				} );
 
-				test( 'should handle errors and revert the optimistic updates', done => {
-					component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
-					setPrimaryDomainReject();
-					setTimeout( () => {
-						expect( component.state( 'settingPrimaryDomain' ) ).toBe( false );
-						expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( true );
-						expect( component.state( 'primaryDomainIndex' ) ).toBe( 1 );
-						expect( component.state( 'notice' ).type ).toBe( PRIMARY_DOMAIN_CHANGE_FAIL );
-						done();
-					}, 0 );
+				test( 'should handle errors and revert the optimistic updates', () => {
+					return new Promise( ( done ) => {
+						component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
+						setPrimaryDomainReject( { error: 'Message' } );
+						setTimeout( () => {
+							expect( component.state( 'settingPrimaryDomain' ) ).toBe( false );
+							expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( true );
+							expect( component.state( 'primaryDomainIndex' ) ).toBe( 1 );
+							done();
+						}, 0 );
+					} );
 				} );
 			} );
 		} );
@@ -185,9 +232,9 @@ describe( 'index', () => {
 
 			test( 'should not show "Change Primary Domain" button', () => {
 				const button = component.find( {
-					className: 'domain-management-list__change-primary-button',
+					className: 'list__change-primary-domain',
 				} );
-				expect( button ).toHaveLength( 0 );
+				expect( button ).toBeDisabled();
 			} );
 		} );
 	} );

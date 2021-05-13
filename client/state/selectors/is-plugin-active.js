@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { find } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/plugins/init';
 
 /**
  * Returns a Boolean indicating if a site has a particular plugin that

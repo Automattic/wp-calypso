@@ -13,6 +13,7 @@ export { CURRENCIES } from './currencies';
 
 /**
  * Formats money with a given currency code
+ *
  * @param   {number}     number              number to format
  * @param   {string}     code                currency code e.g. 'USD'
  * @param   {object}     options             options object
@@ -45,6 +46,7 @@ export default function formatCurrency( number, code, options = {} ) {
 
 /**
  * Returns a formatted price object.
+ *
  * @param   {number}     number              number to format
  * @param   {string}     code                currency code e.g. 'USD'
  * @param   {object}     options             options object
@@ -86,6 +88,7 @@ export function getCurrencyObject( number, code, options = {} ) {
 
 /**
  * Remove trailing zero cents
+ *
  * @param {string}  number  formatted number
  * @param {string}  decimal decimal symbol
  * @returns {string}

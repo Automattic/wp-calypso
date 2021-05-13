@@ -9,12 +9,12 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
+import FormButton from 'calypso/components/forms/form-button';
 import { localize } from 'i18n-calypso';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { formUpdate, loginUserWithSecurityKey } from 'state/login/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { formUpdate, loginUserWithSecurityKey } from 'calypso/state/login/actions';
 import TwoFactorActions from './two-factor-actions';
-import Spinner from 'components/spinner';
+import Spinner from 'calypso/components/spinner';
 
 /**
  * Style dependencies
@@ -27,6 +27,7 @@ class SecurityKeyForm extends Component {
 		loginUserWithSecurityKey: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
+		switchTwoFactorAuthType: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -34,7 +35,7 @@ class SecurityKeyForm extends Component {
 		isAuthenticating: false,
 	};
 
-	initiateSecurityKeyAuthentication = event => {
+	initiateSecurityKeyAuthentication = ( event ) => {
 		event.preventDefault();
 
 		const { onSuccess } = this.props;
@@ -46,7 +47,7 @@ class SecurityKeyForm extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, switchTwoFactorAuthType } = this.props;
 
 		return (
 			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
@@ -85,7 +86,10 @@ class SecurityKeyForm extends Component {
 					</FormButton>
 				</Card>
 
-				<TwoFactorActions twoFactorAuthType={ 'webauthn' } />
+				<TwoFactorActions
+					twoFactorAuthType="webauthn"
+					switchTwoFactorAuthType={ switchTwoFactorAuthType }
+				/>
 			</form>
 		);
 	}

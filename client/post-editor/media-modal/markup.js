@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { assign } from 'lodash';
 import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import classNames from 'classnames';
@@ -9,9 +8,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { parse, stringify } from 'lib/shortcode';
-import * as MediaUtils from 'lib/media/utils';
-import { deserialize } from 'lib/media-serialization';
+import { parse, stringify } from 'calypso/lib/shortcode';
+import * as MediaUtils from 'calypso/lib/media/utils';
+import { deserialize } from 'calypso/lib/media-serialization';
 
 /**
  * Module variables
@@ -26,7 +25,7 @@ const Markup = {
 	 * @param  {object} options Appearance options
 	 * @returns {string}         A markup string
 	 */
-	get: function( site, media, options ) {
+	get: function ( site, media, options ) {
 		if ( ! media || media.hasOwnProperty( 'status' ) ) {
 			return '';
 		}
@@ -49,7 +48,7 @@ const Markup = {
 	 * @param  {object} media A media object
 	 * @returns {string}       A link markup string
 	 */
-	link: function( media ) {
+	link: function ( media ) {
 		const element = React.createElement(
 			'a',
 			{
@@ -76,8 +75,10 @@ const Markup = {
 	 * @returns {string}                A caption React element, or null if not
 	 *                                 a captioned item.
 	 */
-	caption: function( site, media ) {
-		let img, caption, width;
+	caption: function ( site, media ) {
+		let img;
+		let caption;
+		let width;
 
 		if ( 'string' !== typeof media ) {
 			media = Markup.get( site, media );
@@ -126,17 +127,16 @@ const Markup = {
 		 * @param  {object} options Appearance options
 		 * @returns {string}         An image markup string
 		 */
-		image: function( site, media, options ) {
-			options = assign(
-				{
-					size: 'full',
-					align: 'none',
-					forceResize: false,
-				},
-				options
-			);
+		image: function ( site, media, options ) {
+			options = {
+				size: 'full',
+				align: 'none',
+				forceResize: false,
+				...options,
+			};
 
-			let width, height;
+			let width;
+			let height;
 			if ( 'full' === options.size ) {
 				width = media.width;
 				height = media.height;
@@ -196,7 +196,7 @@ const Markup = {
 		 * @param  {object} media An audio media object
 		 * @returns {string}       An audio markup string
 		 */
-		audio: function( site, media ) {
+		audio: function ( site, media ) {
 			return stringify( {
 				tag: 'audio',
 				attrs: {
@@ -213,7 +213,7 @@ const Markup = {
 		 * @param  {string} media A video media object
 		 * @returns {string}       A video markup string
 		 */
-		video: function( site, media ) {
+		video: function ( site, media ) {
 			if ( MediaUtils.isVideoPressItem( media ) ) {
 				return stringify( {
 					tag: 'wpvideo',

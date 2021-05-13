@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import { spy } from 'sinon';
 
@@ -11,18 +10,20 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { HappinessSupport } from '..';
-import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection-connected';
+import HappychatButton from 'calypso/components/happychat/button';
+import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import {
 	CALYPSO_CONTACT,
 	JETPACK_CONTACT_SUPPORT,
 	JETPACK_SUPPORT,
 	SUPPORT_ROOT,
-} from 'lib/url/support';
+} from 'calypso/lib/url/support';
+
+const noop = () => {};
 
 describe( 'HappinessSupport', () => {
 	let wrapper;
-	const translate = content => `Translated: ${ content }`;
+	const translate = ( content ) => `Translated: ${ content }`;
 
 	beforeEach( () => {
 		wrapper = shallow( <HappinessSupport translate={ translate } recordTracksEvent={ noop } /> );
@@ -44,7 +45,7 @@ describe( 'HappinessSupport', () => {
 
 	test( 'should render a translated support button', () => {
 		expect(
-			wrapper.find( 'Button.happiness-support__support-button>span' ).props().children
+			wrapper.find( 'ForwardRef(Button).happiness-support__support-button>span' ).props().children
 		).to.equal( 'Translated: Support documentation' );
 	} );
 
@@ -52,21 +53,18 @@ describe( 'HappinessSupport', () => {
 		wrapper = shallow(
 			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack={ false } />
 		);
-		expect( wrapper.find( 'Button.happiness-support__support-button' ).props().href ).to.equal(
-			SUPPORT_ROOT
-		);
+		expect(
+			wrapper.find( 'ForwardRef(Button).happiness-support__support-button' ).props().href
+		).to.equal( SUPPORT_ROOT );
 	} );
 
 	test( 'should render a support button with link to JETPACK_SUPPORT if it is for JetPack', () => {
 		wrapper = shallow(
 			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack={ true } />
 		);
-		expect(
-			wrapper
-				.find( 'Button' )
-				.last()
-				.prop( 'href' )
-		).to.equal( JETPACK_SUPPORT );
+		expect( wrapper.find( 'ForwardRef(Button)' ).last().prop( 'href' ) ).to.equal(
+			JETPACK_SUPPORT
+		);
 	} );
 
 	test( 'should have is-placeholder className only if it is a placeholder', () => {
@@ -174,7 +172,7 @@ describe( 'HappinessSupport', () => {
 	} );
 
 	describe( 'Contact button', () => {
-		const selector = 'Button.happiness-support__contact-button';
+		const selector = 'ForwardRef(Button).happiness-support__contact-button';
 		const props = {
 			translate,
 			recordTracksEvent: noop,

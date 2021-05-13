@@ -1,13 +1,13 @@
 /**
  * Internal dependencies
  */
-import { activeDiscounts } from 'lib/discounts';
-import { abtest } from 'lib/abtest';
-import { planMatches } from 'lib/plans';
-import { hasActivePromotion } from 'state/active-promotions/selectors';
-import { getSitePlanSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import memoizeLast from 'lib/memoize-last';
+import { activeDiscounts } from 'calypso/lib/discounts';
+import { abtest } from 'calypso/lib/abtest';
+import { planMatches } from '@automattic/calypso-products';
+import { hasActivePromotion } from 'calypso/state/active-promotions/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import memoizeLast from 'calypso/lib/memoize-last';
 
 export const isDiscountActive = ( discount, state ) => {
 	const now = new Date();
@@ -26,7 +26,7 @@ export const isDiscountActive = ( discount, state ) => {
 	if ( discount.targetPlans ) {
 		const targetPlans = Array.isArray( discount.targetPlans ) ? discount.targetPlans : [];
 		const selectedSitePlanSlug = getSitePlanSlug( state, getSelectedSiteId( state ) );
-		return targetPlans.some( plan => planMatches( selectedSitePlanSlug, plan ) );
+		return targetPlans.some( ( plan ) => planMatches( selectedSitePlanSlug, plan ) );
 	}
 
 	if ( ! discount.abTestName ) {
@@ -53,8 +53,8 @@ const composeActiveDiscount = memoizeLast( ( discount, activeVariation ) => ( {
  * @param  {object}  state Global state tree.
  * @returns {object|null}  Promo description
  */
-export default state => {
-	const discount = activeDiscounts.find( p => isDiscountActive( p, state ) );
+export default ( state ) => {
+	const discount = activeDiscounts.find( ( p ) => isDiscountActive( p, state ) );
 	if ( ! discount ) {
 		return null;
 	}

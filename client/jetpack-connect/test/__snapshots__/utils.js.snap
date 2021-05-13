@@ -19,7 +19,10 @@ Object {
   "site": "https://yourjetpack.blog",
   "siteIcon": null,
   "siteUrl": "https://yourjetpack.blog",
+  "skipUser": null,
   "state": "1",
   "userEmail": null,
+  "woodna_help_url": null,
+  "woodna_service_name": null,
 }
 `;

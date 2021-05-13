@@ -9,8 +9,12 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { EMAIL_FORWARDING } from 'lib/url/support';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import { EMAIL_FORWARDING } from 'calypso/lib/url/support';
 
 class EmailForwardingDetails extends React.Component {
 	static propTypes = {
@@ -41,7 +45,7 @@ class EmailForwardingDetails extends React.Component {
 	};
 }
 
-const trackLearnMoreClick = domainName =>
+const trackLearnMoreClick = ( domainName ) =>
 	composeAnalytics(
 		recordTracksEvent( 'calypso_domain_management_email_forwarding_learn_more_click', {
 			domain_name: domainName,

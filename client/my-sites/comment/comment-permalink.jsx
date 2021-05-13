@@ -5,15 +5,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, isUndefined } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import ExternalLink from 'components/external-link';
-import getSiteComment from 'state/selectors/get-site-comment';
+import SectionHeader from 'calypso/components/section-header';
+import ExternalLink from 'calypso/components/external-link';
+import { getSiteComment } from 'calypso/state/comments/selectors';
 
 const CommentPermalink = ( { isLoading, permaLink, translate } ) =>
 	! isLoading && (
@@ -37,7 +37,7 @@ const mapStateToProps = ( state, { siteId, commentId } ) => {
 	const comment = getSiteComment( state, siteId, commentId );
 
 	return {
-		isLoading: isUndefined( comment ),
+		isLoading: typeof comment === 'undefined',
 		permaLink: get( comment, 'URL', '' ),
 	};
 };

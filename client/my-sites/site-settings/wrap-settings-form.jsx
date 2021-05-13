@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { flowRight, isEqual, isObjectLike, keys, omit, pick, isNaN } from 'lodash';
+import { flowRight, isEqual, keys, omit, pick } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -11,32 +11,34 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { protectForm } from 'lib/protect-form';
-import trackForm from 'lib/track-form';
+import { protectForm } from 'calypso/lib/protect-form';
+import trackForm from 'calypso/lib/track-form';
 import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
 	getSiteSettings,
-} from 'state/site-settings/selectors';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import getJetpackSettings from 'state/selectors/get-jetpack-settings';
-import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
-import isRequestingJetpackSettings from 'state/selectors/is-requesting-jetpack-settings';
-import isUpdatingJetpackSettings from 'state/selectors/is-updating-jetpack-settings';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import { saveJetpackSettings } from 'state/jetpack/settings/actions';
-import { removeNotice, successNotice, errorNotice } from 'state/notices/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import QueryJetpackSettings from 'components/data/query-jetpack-settings';
+} from 'calypso/state/site-settings/selectors';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
+import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
+import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
+import isUpdatingJetpackSettings from 'calypso/state/selectors/is-updating-jetpack-settings';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
+import { removeNotice, successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
+import getRequest from 'calypso/state/selectors/get-request';
 
 const debug = debugFactory( 'calypso:site-settings' );
 
-const wrapSettingsForm = getFormSettings => SettingsForm => {
+const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 	class WrappedSettingsForm extends Component {
 		state = {
 			uniqueEvents: {},
@@ -58,14 +60,19 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				this.updateDirtyFields();
 			}
 
+			const noticeSettings = {
+				id: 'site-settings-save',
+				duration: 10000,
+			};
 			if ( ! this.props.isSavingSettings && prevProps.isSavingSettings ) {
 				if (
 					this.props.isSaveRequestSuccessful &&
 					( this.props.isJetpackSaveRequestSuccessful || ! this.props.siteIsJetpack )
 				) {
-					this.props.successNotice( this.props.translate( 'Settings saved!' ), {
-						id: 'site-settings-save',
-					} );
+					this.props.successNotice(
+						this.props.translate( 'Settings saved successfully!' ),
+						noticeSettings
+					);
 					// Upon failure to save Jetpack Settings, don't show an error message,
 					// since the JP settings data layer already does that for us.
 				} else if ( ! this.props.isSaveRequestSuccessful ) {
@@ -79,8 +86,24 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 							);
 							break;
 					}
-					this.props.errorNotice( text, { id: 'site-settings-save' } );
+					this.props.errorNotice( text, noticeSettings );
 				}
+			} else if (
+				this.props.siteIsJetpack &&
+				this.props.saveInstantSearchRequest?.status === 'success' &&
+				( typeof prevProps.saveInstantSearchRequest?.lastUpdated === 'undefined' ||
+					prevProps.saveInstantSearchRequest?.lastUpdated <
+						this.props.saveInstantSearchRequest?.lastUpdated ) &&
+				this.props.siteId === prevProps.siteId
+			) {
+				// NOTE: 1. the condition is pretty messy - the problem is that, if a request is the same
+				//          as a previous request, the status of the request doesn't change to 'pending' from 'success'
+				//          in state.dataRequests. will submit a bug and track separately.
+				//       2. Error notices are dealt in jetpack data layer, we don't need to worry about errors
+				this.props.successNotice(
+					this.props.translate( 'Settings saved successfully!' ),
+					noticeSettings
+				);
 			}
 		}
 
@@ -91,8 +114,8 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;
 			/*eslint-disable eqeqeq*/
-			const nextDirtyFields = previousDirtyFields.filter( field =>
-				isObjectLike( currentFields[ field ] )
+			const nextDirtyFields = previousDirtyFields.filter( ( field ) =>
+				currentFields[ field ] !== null && typeof currentFields[ field ] === 'object'
 					? ! isEqual( currentFields[ field ], persistedFields[ field ] )
 					: ! ( currentFields[ field ] == persistedFields[ field ] )
 			);
@@ -113,14 +136,13 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		}
 
 		// Some Utils
-		handleSubmitForm = event => {
+		handleSubmitForm = ( event ) => {
 			const { dirtyFields, fields, trackTracksEvent, path } = this.props;
 
-			if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
+			if ( event && ! event.isDefaultPrevented() && event.nativeEvent ) {
 				event.preventDefault();
 			}
-
-			dirtyFields.map( function( value ) {
+			dirtyFields.map( function ( value ) {
 				switch ( value ) {
 					case 'blogdescription':
 						trackTracksEvent( 'calypso_settings_site_tagline_updated', { path } );
@@ -137,9 +159,13 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 					case 'wga':
 						trackTracksEvent( 'calypso_seo_settings_google_analytics_updated', { path } );
 						break;
+					case 'jetpack_cloudflare_analytics':
+						trackTracksEvent( 'calypso_seo_settings_jetpack_cloudflare_analytics_updated', {
+							path,
+						} );
+						break;
 				}
 			} );
-
 			this.submitForm();
 			this.props.trackEvent( 'Clicked Save Settings Button' );
 		};
@@ -157,9 +183,9 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion: '1.4' } );
 		};
 
-		handleRadio = event => {
-			const currentTargetName = event.currentTarget.name,
-				currentTargetValue = event.currentTarget.value;
+		handleRadio = ( event ) => {
+			const currentTargetName = event.currentTarget.name;
+			const currentTargetValue = event.currentTarget.value;
 
 			this.props.trackEvent( `Set ${ currentTargetName } to ${ currentTargetValue }` );
 			this.props.updateFields( { [ currentTargetName ]: currentTargetValue } );
@@ -177,19 +203,19 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			} );
 		};
 
-		handleSelect = event => {
+		handleSelect = ( event ) => {
 			const { name, value } = event.currentTarget;
 			// Attempt to cast numeric fields value to int
 			const parsedValue = parseInt( value, 10 );
-			this.props.updateFields( { [ name ]: isNaN( parsedValue ) ? value : parsedValue } );
+			this.props.updateFields( { [ name ]: Number.isNaN( parsedValue ) ? value : parsedValue } );
 		};
 
-		handleToggle = name => () => {
+		handleToggle = ( name ) => () => {
 			this.props.trackEvent( `Toggled ${ name }` );
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
 		};
 
-		handleAutosavingToggle = name => () => {
+		handleAutosavingToggle = ( name ) => () => {
 			this.props.trackEvent( `Toggled ${ name }` );
 			this.props.trackTracksEvent( 'calypso_settings_autosaving_toggle_updated', {
 				name,
@@ -200,7 +226,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			} );
 		};
 
-		onChangeField = field => event => {
+		onChangeField = ( field ) => ( event ) => {
 			const value = event.target.value;
 			debug( 'onChangeField', { field, value } );
 			this.props.updateFields( {
@@ -220,7 +246,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			);
 		};
 
-		uniqueEventTracker = message => () => {
+		uniqueEventTracker = ( message ) => () => {
 			if ( this.state.uniqueEvents[ message ] ) {
 				return;
 			}
@@ -266,6 +292,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			let isRequestingSettings = isRequestingSiteSettings( state, siteId ) && ! settings;
 			let isJetpackSaveRequestSuccessful;
 			let jetpackFieldsToUpdate;
+			let saveInstantSearchRequest;
 			const siteSettingsSaveError = getSiteSettingsSaveError( state, siteId );
 			const settingsFields = {
 				site: keys( settings ),
@@ -292,6 +319,12 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				isRequestingSettings =
 					isRequestingSettings ||
 					( isRequestingJetpackSettings( state, siteId ) && ! jetpackSettings );
+				saveInstantSearchRequest = getRequest(
+					state,
+					saveJetpackSettings( siteId, {
+						instant_search_enabled: jetpackFieldsToUpdate.instant_search_enabled,
+					} )
+				);
 			}
 
 			return {
@@ -302,13 +335,15 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				jetpackFieldsToUpdate,
 				path,
 				siteIsJetpack: isJetpack,
+				siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
 				siteSettingsSaveError,
 				settings,
 				settingsFields,
 				siteId,
+				saveInstantSearchRequest,
 			};
 		},
-		dispatch => {
+		( dispatch ) => {
 			const boundActionCreators = bindActionCreators(
 				{
 					errorNotice,
@@ -320,11 +355,11 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				},
 				dispatch
 			);
-			const trackEvent = name => dispatch( recordGoogleEvent( 'Site Settings', name ) );
+			const trackEvent = ( name ) => dispatch( recordGoogleEvent( 'Site Settings', name ) );
 			const trackTracksEvent = ( name, props ) => dispatch( recordTracksEvent( name, props ) );
 			return {
 				...boundActionCreators,
-				eventTracker: message => () => trackEvent( message ),
+				eventTracker: ( message ) => () => trackEvent( message ),
 				trackTracksEvent,
 				trackEvent,
 			};

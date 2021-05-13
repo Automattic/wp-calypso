@@ -7,9 +7,12 @@
 .DS_Store
 .idea
 .vscode
+.nova
 *.code-workspace
 *.iml
 *.iws
+/.tsc-cache/
+/.cache/
 /tags
 node_modules
 /npm-debug.log*
@@ -21,12 +24,14 @@ test-results*.xml
 /chart.json
 /style.json
 /client/stats.json
+/client/stats-server.json
 /client/chart.json
 /client/style.json
 spec-xunit-reporter-0.0.1.tgz
 *xunit_*.xml
 lerna-debug.log
 /vendor
+yarn-error.log
 
 # added during build
 /config/secrets.json
@@ -44,16 +49,16 @@ lerna-debug.log
 /server/devdocs/search-index.js
 /server/devdocs/components-usage-stats.json
 /server/devdocs/proptypes-index.json
-/server/bundler/assets*.json
 /client/server/devdocs/search-index.js
 /client/server/devdocs/components-usage-stats.json
 /client/server/devdocs/proptypes-index.json
-/client/server/bundler/assets*.json
+/client/languages/languages-meta.json
 
 *.rdb
 *.db
 
 /calypso-strings.pot
+/chunks-map.*.json
 cover.html
 .test.log
 
@@ -63,4 +68,31 @@ cached-requests.json
 /apps/*/dist/
 /apps/*/types/
 /packages/*/dist/
-/packages/*/types/
+/apps/*/.cache/
+
+# webpack assets
+/assets*.json
+/desktop/assets*.json
+/server/bundler/assets*.json
+/client/server/bundler/assets*.json
+
+# Desktop app
+/desktop/dist
+/desktop/build
+/desktop/client
+/desktop/config
+/desktop/public
+/desktop/release*
+/desktop/resource/certificates/mac.p12
+/desktop/resource/certificates/win.p12
+/client/desktop/config.json
+/desktop/id_rsa
+/desktop/e2e/logs
+/desktop/e2e/screenshots
+/desktop/e2e/result.xml
+
+# Typescript
+*.tsbuildinfo
+
+# TeamCity Kotlin compilation
+.teamcity/target

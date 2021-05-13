@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-status';
+import getJetpackConnectionStatus from 'calypso/state/selectors/get-jetpack-connection-status';
 
 /**
  * Returns true if we the Jetpack site is in development mode. False otherwise.

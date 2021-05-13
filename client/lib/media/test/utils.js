@@ -12,12 +12,13 @@ import { map } from 'lodash';
  * Internal dependencies
  */
 import * as MediaUtils from '../utils';
+import { ValidationErrors as MediaValidationErrors } from '../constants';
 
-jest.mock( 'lib/impure-lodash', () => ( {
-	uniqueId: () => 'media-13',
+jest.mock( 'uuid', () => ( {
+	v4: () => 'someid',
 } ) );
 
-const UNIQUEID = 'media-13';
+const UNIQUEID = 'media-someid';
 const DUMMY_FILENAME = 'test.jpg';
 const DUMMY_FILE_BLOB = {
 	fileContents: {
@@ -67,11 +68,9 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( 'should simply return the URL if media is transient', () => {
-			let url;
-
 			media.transient = true;
 
-			url = MediaUtils.url( media, {
+			const url = MediaUtils.url( media, {
 				maxWidth: 450,
 			} );
 
@@ -286,7 +285,7 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( 'should return the item with the greater ID if the dates are not set', () => {
-			items = items.map( function( item ) {
+			items = items.map( function ( item ) {
 				item.date = null;
 				return item;
 			} );
@@ -295,7 +294,7 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( 'should return the item with the greater ID if the dates are equal', () => {
-			items = items.map( function( item ) {
+			items = items.map( function ( item ) {
 				item.date = '2015-06-19T09:36:09-04:00';
 				return item;
 			} );
@@ -304,7 +303,7 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( 'should parse dates in string format', () => {
-			items = items.map( function( item ) {
+			items = items.map( function ( item ) {
 				item.date = item.date.toString();
 				return item;
 			} );
@@ -354,8 +353,8 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( "should return false if the site doesn't support the item's extension", () => {
-			let item = { extension: 'avi' },
-				isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
+			const item = { extension: 'avi' };
+			const isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
 
 			expect( isSupported ).to.be.false;
 		} );
@@ -375,15 +374,15 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( "should return true if the site supports the item's extension", () => {
-			let item = { extension: 'pdf' },
-				isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
+			const item = { extension: 'pdf' };
+			const isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
 
 			expect( isSupported ).to.be.true;
 		} );
 
 		test( 'should return true despite even if different case', () => {
-			let item = { extension: 'PdF' },
-				isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
+			const item = { extension: 'PdF' };
+			const isSupported = MediaUtils.isSupportedFileTypeForSite( item, site );
 
 			expect( isSupported ).to.be.true;
 		} );
@@ -675,6 +674,7 @@ describe( 'MediaUtils', () => {
 
 	describe( '#createTransientMedia()', () => {
 		const GUID = 'URL';
+		const originalURL = window.URL;
 
 		beforeEach( () => {
 			window.URL = {
@@ -682,6 +682,10 @@ describe( 'MediaUtils', () => {
 					return GUID;
 				},
 			};
+		} );
+
+		afterEach( () => {
+			window.URL = originalURL;
 		} );
 
 		test( 'should return a transient for a file blob', () => {
@@ -705,6 +709,139 @@ describe( 'MediaUtils', () => {
 			const actual = MediaUtils.createTransientMedia( DUMMY_FILE_OBJECT );
 
 			expect( actual ).to.eql( EXPECTED_FILE_OBJECT );
+		} );
+	} );
+
+	describe( '#validateMediaItem()', () => {
+		const site = {
+			options: {
+				allowed_file_types: [ 'pdf', 'gif' ],
+				max_upload_size: 123456789,
+			},
+		};
+
+		test( 'should return no errors if file type is supported', () => {
+			const mediaItem = {
+				...EXPECTED_FILE_OBJECT,
+				extension: 'gif',
+			};
+			expect( MediaUtils.validateMediaItem( site, mediaItem ) ).to.eql( [] );
+		} );
+
+		test( 'should return an error if file type is unsupported', () => {
+			expect( MediaUtils.validateMediaItem( site, EXPECTED_FILE_OBJECT ) ).to.eql( [
+				MediaValidationErrors.FILE_TYPE_UNSUPPORTED,
+			] );
+		} );
+
+		test( 'should return an error if file type is not in plan', () => {
+			const mediaItem = {
+				...EXPECTED_FILE_OBJECT,
+				extension: 'mp4',
+			};
+			expect( MediaUtils.validateMediaItem( site, mediaItem ) ).to.eql( [
+				MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN,
+			] );
+		} );
+
+		test( 'should return an error if file exceeds the maximum upload file size', () => {
+			const mediaItem = {
+				...EXPECTED_FILE_OBJECT,
+				extension: 'gif',
+				size: 123456790,
+			};
+			expect( MediaUtils.validateMediaItem( site, mediaItem ) ).to.eql( [
+				MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE,
+			] );
+		} );
+
+		test( 'should return both upload file size and unsupported file type errors', () => {
+			const mediaItem = {
+				...EXPECTED_FILE_OBJECT,
+				size: 123456790,
+			};
+			expect( MediaUtils.validateMediaItem( site, mediaItem ) ).to.eql( [
+				MediaValidationErrors.FILE_TYPE_UNSUPPORTED,
+				MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE,
+			] );
+		} );
+	} );
+
+	describe( '#mediaURLToProxyConfig()', () => {
+		test( 'should detect media relative to site URL', () => {
+			expect( MediaUtils.mediaURLToProxyConfig( 'https://test.com/media.jpg', 'test.com' ) ).to.eql(
+				{
+					query: '',
+					filePath: '/media.jpg',
+					isRelativeToSiteRoot: true,
+				}
+			);
+		} );
+
+		test( 'should detect query string of given URL', () => {
+			expect(
+				MediaUtils.mediaURLToProxyConfig( 'https://test.com/media.jpg?w=100&h=98', 'test.com' )
+			).to.eql( {
+				query: '?w=100&h=98',
+				filePath: '/media.jpg',
+				isRelativeToSiteRoot: true,
+			} );
+		} );
+
+		test( 'should detect domain mismatch', () => {
+			expect(
+				MediaUtils.mediaURLToProxyConfig( 'https://test.com/media.jpg', 'test2.com' )
+			).to.eql( {
+				query: '',
+				filePath: '/media.jpg',
+				isRelativeToSiteRoot: false,
+			} );
+		} );
+
+		test( 'should recognize photon URLs as ones relative to site URL', () => {
+			expect(
+				MediaUtils.mediaURLToProxyConfig( 'https://i0.wp.com/test.com/media.jpg?w=100', 'test.com' )
+			).to.eql( {
+				query: '?w=100',
+				filePath: '/media.jpg',
+				isRelativeToSiteRoot: true,
+			} );
+		} );
+
+		test( 'should not recognize non-photon wp.com URLs as ones relative to site URL', () => {
+			expect(
+				MediaUtils.mediaURLToProxyConfig(
+					'https://bad.wp.com/test.com/media.jpg?w=100',
+					'test.com'
+				)
+			).to.eql( {
+				query: '?w=100',
+				filePath: '/test.com/media.jpg',
+				isRelativeToSiteRoot: false,
+			} );
+		} );
+
+		test( 'should recognize domain mismatch in photon URL', () => {
+			expect(
+				MediaUtils.mediaURLToProxyConfig(
+					'https://i0.wp.com/test.com/media.jpg?w=100',
+					'test2.com'
+				)
+			).to.eql( {
+				query: '?w=100',
+				filePath: '/media.jpg',
+				isRelativeToSiteRoot: false,
+			} );
+		} );
+
+		test( 'should not consider URLs with non-http protocols as relative to domain root', () => {
+			expect(
+				MediaUtils.mediaURLToProxyConfig( 'blob://test.com/media.jpg?w=100', 'test.com' )
+			).to.eql( {
+				query: '?w=100',
+				filePath: '/media.jpg',
+				isRelativeToSiteRoot: false,
+			} );
 		} );
 	} );
 } );

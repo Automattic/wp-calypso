@@ -1,17 +1,14 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { I18N_LANGUAGE_NAMES_REQUEST } from 'state/action-types';
-import { receiveLanguageNames } from 'state/i18n/language-names/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { I18N_LANGUAGE_NAMES_REQUEST } from 'calypso/state/action-types';
+import { receiveLanguageNames } from 'calypso/state/i18n/language-names/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 /**
  * @module state/data-layer/wpcom/i18n/language-names
@@ -23,7 +20,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param {object} action Redux action
  * @returns {object} original action
  */
-export const fetchLanguageNames = action =>
+export const fetchLanguageNames = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -37,7 +34,7 @@ export const fetchLanguageNames = action =>
  *
  * @param {object} action Redux action
  * @param {Array} data raw data from i18n/language-names
- * @returns {Array<Object>} Redux actions
+ * @returns {Array<object>} Redux actions
  */
 export const addLanguageNames = ( action, data ) => [ receiveLanguageNames( data ) ];
 

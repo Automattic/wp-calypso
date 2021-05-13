@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -10,12 +9,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import QueryPostTypes from 'components/data/query-post-types';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getEditorPostId, isEditorNewPost } from 'calypso/state/editor/selectors';
+import { getEditedPostValue } from 'calypso/state/posts/selectors';
+import { getPostType } from 'calypso/state/post-types/selectors';
 
 function EditorDocumentHead( { translate, siteId, type, typeObject, newPost } ) {
 	let title;
@@ -59,7 +58,7 @@ EditorDocumentHead.propTypes = {
 	newPost: PropTypes.bool,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const type = getEditedPostValue( state, siteId, postId, 'type' );

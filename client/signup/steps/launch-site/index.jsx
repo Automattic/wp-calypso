@@ -7,12 +7,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { submitSignupStep } from 'state/signup/progress/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 class LaunchSiteComponent extends Component {
 	componentDidMount() {
 		const { flowName, stepName } = this.props;
-		this.props.submitSignupStep( { stepName } );
+		this.props.submitSignupStep(
+			{ stepName },
+			{ isPreLaunch: this.props.flowName === 'new-launch' }
+		);
 		this.props.goToNextStep( flowName );
 	}
 

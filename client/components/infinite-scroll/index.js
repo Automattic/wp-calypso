@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { throttle, defer } from 'lodash';
-import afterLayoutFlush from 'lib/after-layout-flush';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
 const SCROLL_CHECK_RATE_IN_MS = 400;
 
@@ -55,7 +55,7 @@ class InfiniteScrollWithIntersectionObserver extends React.Component {
 		}
 	}
 
-	handleIntersection = entries => {
+	handleIntersection = ( entries ) => {
 		if ( ! entries || ! entries[ 0 ] ) {
 			return;
 		}
@@ -93,7 +93,7 @@ class InfiniteScrollWithScrollEvent extends React.Component {
 		this.pendingLayoutFlush.cancel();
 	}
 
-	checkScrollPosition = triggeredByScroll => {
+	checkScrollPosition = ( triggeredByScroll ) => {
 		const scrollPosition = window.pageYOffset;
 		const documentHeight = document.body.scrollHeight;
 		const viewportHeight = window.innerHeight;

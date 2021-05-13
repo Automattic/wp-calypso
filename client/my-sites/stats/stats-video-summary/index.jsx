@@ -11,13 +11,13 @@ import { flowRight } from 'lodash';
  * Internal dependencies
  */
 import SummaryChart from '../stats-summary';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { withLocalizedMoment } from 'components/localized-moment';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
-} from 'state/stats/lists/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'calypso/state/stats/lists/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class StatsVideoSummary extends Component {
 	static propTypes = {
@@ -31,7 +31,7 @@ class StatsVideoSummary extends Component {
 		selectedBar: null,
 	};
 
-	selectBar = bar => {
+	selectBar = ( bar ) => {
 		this.setState( {
 			selectedBar: bar,
 		} );
@@ -41,7 +41,7 @@ class StatsVideoSummary extends Component {
 		const { query, isRequesting, moment, siteId, summaryData, translate } = this.props;
 		const data =
 			summaryData && summaryData.data
-				? summaryData.data.map( item => {
+				? summaryData.data.map( ( item ) => {
 						return {
 							...item,
 							period: moment( item.period ).format( 'MMM D' ),

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { getWindowInnerWidth } from '@automattic/viewport';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
@@ -11,10 +11,9 @@ import { debounce } from 'lodash';
 /**
  * Internal Dependencies
  */
-import SelectDropdown from 'components/select-dropdown';
-import { getWindowInnerWidth } from 'lib/viewport';
-import afterLayoutFlush from 'lib/after-layout-flush';
-import TranslatableString from 'components/translatable/proptype';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 /**
  * Style dependencies
@@ -64,7 +63,7 @@ class NavTabs extends Component {
 
 	/* Ref that stores the given tab element */
 	storeTabRefs( index ) {
-		return tabElement => {
+		return ( tabElement ) => {
 			if ( tabElement === null ) {
 				this.tabRefMap.delete( index );
 			} else {
@@ -105,7 +104,7 @@ class NavTabs extends Component {
 	getTabWidths() {
 		let totalWidth = 0;
 
-		this.tabRefMap.forEach( tabElement => {
+		this.tabRefMap.forEach( ( tabElement ) => {
 			const tabWidth = ReactDom.findDOMNode( tabElement ).offsetWidth;
 			totalWidth += tabWidth;
 		} );
@@ -172,7 +171,7 @@ class NavTabs extends Component {
 	// just *after* the next layout flush.
 	setDropdownAfterLayoutFlush = afterLayoutFlush( this.setDropdown );
 
-	keyHandler = event => {
+	keyHandler = ( event ) => {
 		switch ( event.keyCode ) {
 			case 32: // space
 			case 13: // enter

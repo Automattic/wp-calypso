@@ -1,22 +1,16 @@
 module.exports = {
-	rules: {
-		'import/no-extraneous-dependencies': [ 'error', { packageDir: __dirname } ],
-	},
 	overrides: [
-		{
-			files: [ '*.stories.jsx' ],
-			rules: {
-				'import/no-extraneous-dependencies': 'off',
-			},
-		},
 		{
 			files: [ '**/test/**/*' ],
 			rules: {
-				'import/no-extraneous-dependencies': [
-					'error',
-					{ packageDir: [ __dirname, __dirname + '/../..' ] },
-				],
 				'import/no-nodejs-modules': 'off',
+			},
+		},
+		{
+			// These are consumed only by Calypso's webpack build, it is ok to import other Calypso components
+			files: [ '**/docs/example.jsx', '*.md.js', '*.md.jsx' ],
+			rules: {
+				'no-restricted-imports': 'off',
 			},
 		},
 	],

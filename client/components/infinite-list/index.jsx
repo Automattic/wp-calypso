@@ -4,7 +4,6 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { noop } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -13,17 +12,18 @@ import ReactDom from 'react-dom';
 /**
  * Internal dependencies
  */
-import detectHistoryNavigation from 'lib/detect-history-navigation';
+import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import ScrollStore from './scroll-store';
 import ScrollHelper from './scroll-helper';
-import scrollTo from 'lib/scroll-to';
-import smartSetState from 'lib/react-smart-set-state';
+import scrollTo from 'calypso/lib/scroll-to';
+import smartSetState from 'calypso/lib/react-smart-set-state';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+const noop = () => {};
 const debug = debugFactory( 'calypso:infinite-list' );
 
 export default class InfiniteList extends React.Component {
@@ -57,7 +57,8 @@ export default class InfiniteList extends React.Component {
 
 	UNSAFE_componentWillMount() {
 		const url = page.current;
-		let newState, scrollTop;
+		let newState;
+		let scrollTop;
 
 		if ( detectHistoryNavigation.loadedViaHistory() ) {
 			newState = ScrollStore.getPositions( url );
@@ -314,7 +315,7 @@ export default class InfiniteList extends React.Component {
 		this.scrollRAFHandle = window.requestAnimationFrame( this.scrollChecks );
 	}
 
-	boundsForRef = ref => {
+	boundsForRef = ( ref ) => {
 		if ( ref in this.refs ) {
 			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
 		}
@@ -339,16 +340,16 @@ export default class InfiniteList extends React.Component {
 	 * @returns {Array} This list of indexes
 	 */
 	getVisibleItemIndexes( options ) {
-		const container = ReactDom.findDOMNode( this ),
-			visibleItemIndexes = [],
-			firstIndex = this.state.firstRenderedIndex,
-			lastIndex = this.state.lastRenderedIndex,
-			offsetTop = options && options.offsetTop ? options.offsetTop : 0;
-		let windowHeight,
-			rect,
-			children,
-			i,
-			offsetBottom = options && options.offsetBottom ? options.offsetBottom : 0;
+		const container = ReactDom.findDOMNode( this );
+		const visibleItemIndexes = [];
+		const firstIndex = this.state.firstRenderedIndex;
+		const lastIndex = this.state.lastRenderedIndex;
+		const offsetTop = options && options.offsetTop ? options.offsetTop : 0;
+		let windowHeight;
+		let rect;
+		let children;
+		let i;
+		let offsetBottom = options && options.offsetBottom ? options.offsetBottom : 0;
 
 		offsetBottom = offsetBottom || 0;
 		if ( lastIndex > -1 ) {
@@ -389,9 +390,9 @@ export default class InfiniteList extends React.Component {
 			...propsToTransfer
 		} = this.props;
 		const spacerClassName = 'infinite-list__spacer';
-		let i,
-			lastRenderedIndex = this.state.lastRenderedIndex,
-			itemsToRender = [];
+		let i;
+		let lastRenderedIndex = this.state.lastRenderedIndex;
+		let itemsToRender = [];
 
 		if ( lastRenderedIndex === -1 || lastRenderedIndex > items.length - 1 ) {
 			debug(
@@ -454,7 +455,7 @@ export default class InfiniteList extends React.Component {
 		this._scrollContainer.addEventListener( 'scroll', this._resetScroll );
 	}
 
-	_resetScroll = event => {
+	_resetScroll = ( event ) => {
 		const position = this.state.scrollTop;
 		if ( ! this._contextLoaded() ) {
 			return;

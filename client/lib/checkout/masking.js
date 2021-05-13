@@ -1,15 +1,11 @@
 /**
- * External dependencies
- */
-import { identity } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { getCreditCardType } from 'lib/checkout';
+import { getCreditCardType } from 'calypso/lib/checkout';
 
 /**
  * Formats a credit card card number
+ *
  * @param {string} cardNumber unformatted field value
  * @returns {string} formatted value
  */
@@ -27,6 +23,7 @@ export function formatCreditCard( cardNumber ) {
 
 /**
  * Formats an American Express card number
+ *
  * @param {string} cardNumber unformatted field value
  * @returns {string} formatted value
  */
@@ -40,9 +37,10 @@ export function formatAmexCreditCard( cardNumber ) {
 }
 
 const fieldMasks = {};
+const unmask = ( value ) => value;
 
 fieldMasks[ 'expiration-date' ] = {
-	mask: function( previousValue, nextValue ) {
+	mask: function ( previousValue, nextValue ) {
 		// If the user is deleting from the value then don't modify it
 		if ( previousValue && previousValue.length > nextValue.length ) {
 			return nextValue;
@@ -68,31 +66,40 @@ fieldMasks[ 'expiration-date' ] = {
 		return nextValue.substring( 0, 2 ) + '/' + nextValue.substring( 2, 4 );
 	},
 
-	unmask: identity,
+	unmask,
 };
 
 fieldMasks.number = {
-	mask: function( previousValue, nextValue ) {
+	mask: function ( previousValue, nextValue ) {
 		return formatCreditCard( nextValue );
 	},
 
-	unmask: function( value ) {
+	unmask: function ( value ) {
 		return value.replace( / /g, '' );
 	},
 };
 
 fieldMasks.cvv = {
-	mask: function( previousValue, nextValue ) {
+	mask: function ( previousValue, nextValue ) {
 		return nextValue.replace( /[^\d]/g, '' ).substring( 0, 4 );
 	},
 
-	unmask: identity,
+	unmask,
+};
+
+fieldMasks.nik = {
+	mask: function ( previousValue, nextValue ) {
+		const digitsOnly = nextValue.replace( /[^0-9]/g, '' );
+		return digitsOnly;
+	},
+
+	unmask,
 };
 
 // `document` is an EBANX field. Currently used for Brazilian CPF numbers
 // See isValidCPF()/isValidCNPJ() / ebanx.js
 fieldMasks.document = {
-	mask: function( previousValue, nextValue ) {
+	mask: function ( previousValue, nextValue ) {
 		let string = nextValue;
 
 		const digits = nextValue.replace( /[^0-9]/g, '' );
@@ -121,14 +128,15 @@ fieldMasks.document = {
 				digits.slice( 9, 11 );
 		}
 
-		return string.replace( /^[\s\.\-]+|[\s\.\-]+$/g, '' );
+		return string.replace( /^[\s.-]+|[\s.-]+$/g, '' );
 	},
 
-	unmask: identity,
+	unmask,
 };
 
 /**
  * Formats a field value
+ *
  * @param {string} fieldName name of field corresponding to a child open of `fieldMasks`
  * @param {string} previousValue the current value of the field before change
  * @param {string} nextValue the new, incoming value of the field on change
@@ -145,6 +153,7 @@ export function maskField( fieldName, previousValue, nextValue ) {
 
 /**
  * Reverses masking formats of a field value
+ *
  * @param {string} fieldName name of field corresponding to a child open of `fieldMasks`
  * @param {string} previousValue the current value of the field before change
  * @param {string} nextValue the new, incoming value of the field on change

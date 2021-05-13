@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchDns } from 'state/domains/dns/actions';
+import { fetchDns } from 'calypso/state/domains/dns/actions';
 
 export default function QueryDomainDns( { domain } ) {
 	const dispatch = useDispatch();

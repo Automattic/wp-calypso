@@ -118,6 +118,34 @@ describe( 'QueryManager', () => {
 
 			expect( manager.getItems( {} ) ).toBeNull();
 		} );
+
+		test( 'should memoize results', () => {
+			manager = manager.receive( { ID: 144 } ).receive( { ID: 152 }, { query: {} } );
+
+			const allItems1 = manager.getItems();
+			const queryItems1 = manager.getItems( {} );
+			const allItems2 = manager.getItems();
+			const queryItems2 = manager.getItems( {} );
+
+			expect( allItems1.map( ( item ) => item.ID ) ).toEqual( [ 144, 152 ] );
+			expect( allItems1 ).toBe( allItems2 );
+
+			expect( queryItems1.map( ( item ) => item.ID ) ).toEqual( [ 152 ] );
+			expect( queryItems1 ).toBe( queryItems2 );
+		} );
+
+		test( 'should invalidate memoized results when underlying data change', () => {
+			manager = manager.receive( { ID: 144 } );
+			const allItems1 = manager.getItems();
+
+			// receive new item, invalidating the memoized data
+			manager = manager.receive( { ID: 152 } );
+			const allItems2 = manager.getItems();
+
+			// verify that the second results are different, not accidentally returning stale results
+			expect( allItems1.map( ( item ) => item.ID ) ).toEqual( [ 144 ] );
+			expect( allItems2.map( ( item ) => item.ID ) ).toEqual( [ 144, 152 ] );
+		} );
 	} );
 
 	describe( '#getFound()', () => {
@@ -425,7 +453,7 @@ describe( 'QueryManager', () => {
 		test( 'should sort items when merging queries', () => {
 			jest.spyOn( QueryManager, 'compare' ).mockImplementation( ( query, a, b ) => a.ID - b.ID );
 			[ { ID: 4 }, { ID: 2 }, { ID: 3 } ].forEach(
-				item =>
+				( item ) =>
 					( manager = manager.receive( item, {
 						mergeQuery: true,
 						query: {},
@@ -441,7 +469,7 @@ describe( 'QueryManager', () => {
 				}
 			} )();
 			[ { ID: 4 }, { ID: 2 }, { ID: 3 } ].forEach(
-				item =>
+				( item ) =>
 					( sortingManager = sortingManager.receive( item, {
 						mergeQuery: true,
 						query: {},

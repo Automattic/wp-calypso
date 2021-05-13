@@ -11,26 +11,26 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import getSiteId from 'state/selectors/get-site-id';
-import StepWrapper from 'signup/step-wrapper';
-import QueryPlans from 'components/data/query-plans';
-import QuerySitePlans from 'components/data/query-site-plans';
-import { getDesignType } from 'state/signup/steps/design-type/selectors';
-import { isEnabled } from 'config';
-import PlanFeatures from 'my-sites/plan-features';
-import { DESIGN_TYPE_STORE } from 'signup/constants';
-import { submitSignupStep } from 'state/signup/progress/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import getSiteId from 'calypso/state/selectors/get-site-id';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import QueryPlans from 'calypso/components/data/query-plans';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
+import { isEnabled } from '@automattic/calypso-config';
+import PlanFeatures from 'calypso/my-sites/plan-features';
+import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-import { planHasFeature } from 'lib/plans';
 import {
+	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -48,7 +48,7 @@ export class PlansAtomicStoreStep extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	onSelectPlan = cartItem => {
+	onSelectPlan = ( cartItem ) => {
 		const { additionalStepData, stepSectionName, stepName, goToNextStep, designType } = this.props;
 
 		if ( cartItem ) {
@@ -108,7 +108,7 @@ export class PlansAtomicStoreStep extends Component {
 				PLAN_BUSINESS,
 				PLAN_ECOMMERCE,
 			],
-			value => !! value
+			( value ) => !! value
 		);
 
 		if ( designType === DESIGN_TYPE_STORE ) {
@@ -126,7 +126,6 @@ export class PlansAtomicStoreStep extends Component {
 					isInSignup={ true }
 					siteId={ siteId }
 					domainName={ this.getDomainName() }
-					displayJetpackPlans={ false }
 				/>
 			</div>
 		);

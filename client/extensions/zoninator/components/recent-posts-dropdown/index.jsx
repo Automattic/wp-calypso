@@ -11,10 +11,10 @@ import { find, flowRight, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import QueryPosts from 'components/data/query-posts';
-import SelectDropdown from 'components/select-dropdown';
-import { getPostsForQuery } from 'state/posts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryPosts from 'calypso/components/data/query-posts';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import { getPostsForQuery } from 'calypso/state/posts/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const recentPostsQuery = {
 	status: 'publish,future',
@@ -35,7 +35,7 @@ class RecentPostsDropdown extends PureComponent {
 		exclude: [],
 	};
 
-	handleSelect = option => {
+	handleSelect = ( option ) => {
 		const { onSelect, posts } = this.props;
 		const slug = option.value;
 

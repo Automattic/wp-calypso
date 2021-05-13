@@ -33,17 +33,18 @@ import {
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'reducer', () => {
 	let sandbox;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		sandbox.stub( console, 'warn' );
 	} );
@@ -168,7 +169,7 @@ describe( 'reducer', () => {
 				[ firstSiteId ]: [ firstDomain ],
 				[ secondSiteId ]: [ secondDomain ],
 			} );
-			expect( itemsReducer( state, { type: 'SERIALIZE' } ) ).to.eql( state );
+			expect( serialize( itemsReducer, state ) ).to.eql( state );
 		} );
 
 		test( 'should load persisted state', () => {
@@ -176,14 +177,14 @@ describe( 'reducer', () => {
 				[ firstSiteId ]: [ firstDomain ],
 				[ secondSiteId ]: [ secondDomain ],
 			} );
-			expect( itemsReducer( state, { type: 'DESERIALIZE' } ) ).to.eql( state );
+			expect( deserialize( itemsReducer, state ) ).to.eql( state );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
 			const state = deepFreeze( {
 				[ 77203074 ]: [ { domain: 1234 } ],
 			} );
-			expect( itemsReducer( state, { type: 'DESERIALIZE' } ) ).to.eql( {} );
+			expect( deserialize( itemsReducer, state ) ).to.eql( {} );
 		} );
 	} );
 

@@ -5,13 +5,13 @@ import classNames from 'classnames';
 import React, { Children, PureComponent, cloneElement } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { isFunction, times } from 'lodash';
+import { times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import TaskPlaceholder from './task-placeholder';
 import { Card } from '@automattic/components';
 
@@ -71,17 +71,17 @@ class Checklist extends PureComponent {
 		// If the user hasn't expanded any task, return the
 		// first task that hasn't been completed yet.
 		return Children.toArray( this.props.children ).findIndex(
-			task => task && ! task.props.completed && ! task.props.inProgress
+			( task ) => task && ! task.props.completed && ! task.props.inProgress
 		);
 	}
 
-	setExpandedTask = newExpandedTaskIndex =>
+	setExpandedTask = ( newExpandedTaskIndex ) =>
 		void this.setState( ( { expandedTaskIndex } ) => {
 			if ( newExpandedTaskIndex === expandedTaskIndex ) {
 				return { expandedTaskIndex: null }; // Collapse
 			}
 
-			if ( isFunction( this.props.onExpandTask ) ) {
+			if ( typeof this.props.onExpandTask === 'function' ) {
 				this.props.onExpandTask(
 					Children.toArray( this.props.children )[ newExpandedTaskIndex ].props
 				);
@@ -108,7 +108,7 @@ class Checklist extends PureComponent {
 					{ showChecklistHeader && completed !== total && this.renderChecklistHeader() }
 
 					<div className="checklist__tasks">
-						{ times( total, index => (
+						{ times( total, ( index ) => (
 							<TaskPlaceholder key={ index } />
 						) ) }
 					</div>
@@ -150,6 +150,6 @@ class Checklist extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteId: getSelectedSiteId( state ),
 } ) )( localize( Checklist ) );

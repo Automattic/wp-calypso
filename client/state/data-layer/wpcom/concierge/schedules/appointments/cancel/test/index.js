@@ -1,15 +1,15 @@
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { cancelConciergeAppointment } from '../';
-import { updateConciergeBookingStatus } from 'state/concierge/actions';
-import { CONCIERGE_APPOINTMENT_CANCEL } from 'state/action-types';
-import { CONCIERGE_STATUS_CANCELLING } from 'me/concierge/constants';
+import { updateConciergeBookingStatus } from 'calypso/state/concierge/actions';
+import { CONCIERGE_APPOINTMENT_CANCEL } from 'calypso/state/action-types';
+import { CONCIERGE_STATUS_CANCELLING } from 'calypso/me/concierge/constants';
 
-// we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
-jest.mock( 'lib/impure-lodash', () => ( {
-	uniqueId: () => 'mock-unique-id',
+// we are mocking uuid.v4 here, so that conciergeShiftsFetchError() will contain the expected id in the tests
+jest.mock( 'uuid', () => ( {
+	v4: () => 'fake-uuid',
 } ) );
 
 describe( 'wpcom-api', () => {

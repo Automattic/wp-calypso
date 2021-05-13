@@ -1,27 +1,25 @@
-/**
- */
-
 /*
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { assign, noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import ConversationFollowButton from './button';
-import isFollowingReaderConversation from 'state/selectors/is-following-reader-conversation';
-import { followConversation, muteConversation } from 'state/reader/conversations/actions';
-import { getTracksPropertiesForPost } from 'reader/stats';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { isFollowingReaderConversation } from 'calypso/state/reader/conversations/selectors';
+import { followConversation, muteConversation } from 'calypso/state/reader/conversations/actions';
+import { getTracksPropertiesForPost } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class ConversationFollowButtonContainer extends Component {
 	static propTypes = {
@@ -37,21 +35,25 @@ class ConversationFollowButtonContainer extends Component {
 		onFollowToggle: noop,
 	};
 
-	handleFollowToggle = isRequestingFollow => {
+	handleFollowToggle = ( isRequestingFollow ) => {
 		const { siteId, postId, post, followSource } = this.props;
 
-		const tracksProperties = assign( getTracksPropertiesForPost( post ), {
+		const tracksProperties = {
+			...getTracksPropertiesForPost( post ),
 			follow_source: followSource,
-		} );
+		};
 
 		if ( isRequestingFollow ) {
-			this.props.recordTracksEvent(
+			this.props.recordReaderTracksEvent(
 				'calypso_reader_conversations_post_followed',
 				tracksProperties
 			);
 			this.props.followConversation( { siteId, postId } );
 		} else {
-			this.props.recordTracksEvent( 'calypso_reader_conversations_post_muted', tracksProperties );
+			this.props.recordReaderTracksEvent(
+				'calypso_reader_conversations_post_muted',
+				tracksProperties
+			);
 			this.props.muteConversation( { siteId, postId } );
 		}
 
@@ -80,6 +82,6 @@ export default connect(
 	{
 		followConversation,
 		muteConversation,
-		recordTracksEvent,
+		recordReaderTracksEvent,
 	}
 )( ConversationFollowButtonContainer );

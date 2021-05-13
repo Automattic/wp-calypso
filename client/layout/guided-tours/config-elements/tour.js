@@ -25,7 +25,7 @@ export default class Tour extends Component {
 		const { children } = this.props;
 		const { step } = this.context;
 		const nextStep = Array.isArray( children )
-			? find( children, stepComponent => stepComponent.props.name === step )
+			? find( children, ( stepComponent ) => stepComponent.props.name === step )
 			: children;
 
 		return nextStep || null;

@@ -8,9 +8,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import InputChrono from 'components/input-chrono';
+import InputChrono from 'calypso/components/input-chrono';
 import { Card } from '@automattic/components';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 // Date Picker Demo
 const InputChronoExample = localize(
@@ -32,7 +32,7 @@ const InputChronoExample = localize(
 				clearInterval( this.interval );
 			}
 
-			onSet = date => {
+			onSet = ( date ) => {
 				// eslint-disable-next-line no-console
 				console.log( `date: %s`, date.toDate() );
 				this.setState( { date: date } );

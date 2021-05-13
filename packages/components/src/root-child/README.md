@@ -1,5 +1,4 @@
-Root Child
-==========
+# Root Child
 
 Root Child is a React component which will render its children as descendants
 of the root `<body>` element. This is handy in cases where you want to fix

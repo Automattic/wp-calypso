@@ -4,26 +4,27 @@
 import React from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import page from 'page';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-const debug = debugFactory( 'calypso:stats:list-item' );
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Emojify from 'components/emojify';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import Emojify from 'calypso/components/emojify';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Follow from './action-follow';
 import Page from './action-page';
 import Spam from './action-spam';
 import OpenLink from './action-link';
 import titlecase from 'to-title-case';
-import { flagUrl } from 'lib/flags';
-import { recordTrack } from 'reader/stats';
-import { decodeEntities } from 'lib/formatting';
+import { flagUrl } from 'calypso/lib/flags';
+import { recordTrack } from 'calypso/reader/stats';
+import { decodeEntities } from 'calypso/lib/formatting';
+
+const debug = debugFactory( 'calypso:stats:list-item' );
 
 class StatsListItem extends React.Component {
 	static displayName = 'StatsListItem';
@@ -48,10 +49,6 @@ class StatsListItem extends React.Component {
 		}
 	}
 
-	isFollowersModule = () => {
-		return !! this.props.followList;
-	};
-
 	getSiteIdForFollow = () => {
 		return get( this.props, 'data.actions[0].data.blog_id' );
 	};
@@ -63,7 +60,7 @@ class StatsListItem extends React.Component {
 		} );
 	};
 
-	actionMenuClick = event => {
+	actionMenuClick = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 
@@ -77,11 +74,11 @@ class StatsListItem extends React.Component {
 		}
 	};
 
-	preventDefaultOnClick = event => {
+	preventDefaultOnClick = ( event ) => {
 		event.preventDefault();
 	};
 
-	onClick = event => {
+	onClick = ( event ) => {
 		let gaEvent;
 		const moduleName = titlecase( this.props.moduleName );
 
@@ -106,11 +103,7 @@ class StatsListItem extends React.Component {
 			} else if ( this.props.data.page && ! this.props.children ) {
 				gaEvent = [ 'Clicked', moduleName, 'Summary Link' ].join( ' ' );
 				page( this.props.data.page );
-			} else if (
-				this.props.data.link &&
-				! this.props.children &&
-				! ( this.isFollowersModule() && this.getSiteIdForFollow() )
-			) {
+			} else if ( this.props.data.link && ! this.props.children && ! this.getSiteIdForFollow() ) {
 				gaEvent = [ 'Clicked', moduleName, 'External Link' ].join( ' ' );
 
 				window.open( this.props.data.link );
@@ -119,12 +112,12 @@ class StatsListItem extends React.Component {
 			}
 
 			if ( gaEvent ) {
-				analytics.ga.recordEvent( 'Stats', gaEvent + ' in List' );
+				gaRecordEvent( 'Stats', gaEvent + ' in List' );
 			}
 		}
 	};
 
-	spamHandler = isSpammed => {
+	spamHandler = ( isSpammed ) => {
 		this.setState( {
 			disabled: isSpammed,
 		} );
@@ -132,26 +125,30 @@ class StatsListItem extends React.Component {
 
 	buildActions = () => {
 		let actionList;
-		const data = this.props.data,
-			moduleName = titlecase( this.props.moduleName ),
-			actionMenu = data.actionMenu,
-			actionClassSet = classNames( 'module-content-list-item-actions', {
-				collapsed: actionMenu && ! this.state.disabled,
-			} );
+		const data = this.props.data;
+		const moduleName = titlecase( this.props.moduleName );
+		const actionMenu = data.actionMenu;
+		const actionClassSet = classNames( 'module-content-list-item-actions', {
+			collapsed: actionMenu && ! this.state.disabled,
+		} );
 
 		// If we have more than a default action build out actions ul
 		if ( data.actions ) {
 			const actionItems = [];
 
-			data.actions.forEach( function( action ) {
+			data.actions.forEach( function ( action ) {
 				let actionItem;
 
 				switch ( action.type ) {
 					case 'follow':
-						if ( action.data && this.props.followList ) {
-							const followSite = this.props.followList.add( action.data );
+						if ( action.data ) {
 							actionItem = (
-								<Follow followSite={ followSite } key={ action.type } moduleName={ moduleName } />
+								<Follow
+									key={ action.type }
+									moduleName={ moduleName }
+									isFollowing={ !! action.data.is_following }
+									siteId={ action.data.blog_id }
+								/>
 							);
 						}
 						break;
@@ -202,9 +199,11 @@ class StatsListItem extends React.Component {
 			'module-content-list-item-label-section': labelData.length > 1,
 		} );
 
-		const label = labelData.map( function( labelItem, i ) {
+		const label = labelData.map( function ( labelItem, i ) {
 			const iconClassSetOptions = { avatar: true };
-			let icon, gridiconSpan, itemLabel;
+			let icon;
+			let gridiconSpan;
+			let itemLabel;
 
 			if ( labelItem.labelIcon ) {
 				gridiconSpan = <Gridicon icon={ labelItem.labelIcon } />;
@@ -240,7 +239,7 @@ class StatsListItem extends React.Component {
 				let onClickHandler = this.preventDefaultOnClick;
 				const siteId = this.getSiteIdForFollow();
 				if ( this.isFollowersModule && siteId ) {
-					onClickHandler = event => {
+					onClickHandler = ( event ) => {
 						const modifierPressed =
 							event.button > 0 ||
 							event.metaKey ||
@@ -285,8 +284,8 @@ class StatsListItem extends React.Component {
 
 	buildValue = () => {
 		const data = this.props.data;
-		let valueData = data.value,
-			value;
+		let valueData = data.value;
+		let value;
 
 		if ( 'object' !== typeof valueData || ! valueData.type ) {
 			valueData = {
@@ -309,17 +308,17 @@ class StatsListItem extends React.Component {
 	};
 
 	render() {
-		const data = this.props.data,
-			rightClassOptions = {
-				'module-content-list-item-right': true,
-			},
-			toggleOptions = {
-				'module-content-list-item-actions-toggle': true,
-				show: data.actionMenu && ! this.state.disabled,
-			},
-			actions = this.buildActions(),
-			toggleGridicon = <Gridicon icon="chevron-down" />,
-			toggleIcon = this.props.children ? toggleGridicon : null;
+		const data = this.props.data;
+		const rightClassOptions = {
+			'module-content-list-item-right': true,
+		};
+		const toggleOptions = {
+			'module-content-list-item-actions-toggle': true,
+			show: data.actionMenu && ! this.state.disabled,
+		};
+		const actions = this.buildActions();
+		const toggleGridicon = <Gridicon icon="chevron-down" />;
+		const toggleIcon = this.props.children ? toggleGridicon : null;
 		let mobileActionToggle;
 
 		const groupClassOptions = {

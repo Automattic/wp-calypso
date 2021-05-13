@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CountedTextarea from 'components/forms/counted-textarea';
+import CountedTextarea from 'calypso/components/forms/counted-textarea';
 
 export default class extends React.PureComponent {
 	static displayName = 'CountedTextareas';
@@ -16,7 +16,7 @@ export default class extends React.PureComponent {
 		value: 'Hello World!',
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.setState( {
 			value: event.target.value,
 		} );

@@ -1,4 +1,4 @@
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
@@ -18,7 +18,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_FREE,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -36,7 +36,7 @@ describe( 'PlanStorage basic tests', () => {
 		sitePlanSlug: PLAN_FREE,
 	};
 
-	test( 'should not blow up and have class .plan-storage ', () => {
+	test( 'should not blow up and have class .plan-storage', () => {
 		const storage = shallow( <PlanStorage { ...props } /> );
 		assert.lengthOf( storage.find( '.plan-storage' ), 1 );
 	} );
@@ -45,7 +45,6 @@ describe( 'PlanStorage basic tests', () => {
 		const storage = shallow( <PlanStorage { ...props } /> );
 		const bar = storage.find( 'Localized(PlanStorageBar)' );
 		assert.lengthOf( bar, 1 );
-		assert.equal( bar.props().siteSlug, props.siteSlug );
 		assert.equal( bar.props().sitePlanSlug, props.sitePlanSlug );
 		assert.equal( bar.props().mediaStorage, props.mediaStorage );
 	} );
@@ -67,26 +66,36 @@ describe( 'PlanStorage basic tests', () => {
 
 		storage = shallow( <PlanStorage { ...props } sitePlanSlug={ PLAN_FREE } /> );
 		assert.lengthOf( storage.find( '.plan-storage' ), 1 );
-	} );
-
-	test( 'should not render when storage is unlimited', () => {
-		let storage;
 
 		storage = shallow( <PlanStorage { ...props } sitePlanSlug={ PLAN_BUSINESS } /> );
-		assert.lengthOf( storage.find( '.plan-storage' ), 0 );
+		assert.lengthOf( storage.find( '.plan-storage' ), 1 );
 
 		storage = shallow( <PlanStorage { ...props } sitePlanSlug={ PLAN_BUSINESS_2_YEARS } /> );
-		assert.lengthOf( storage.find( '.plan-storage' ), 0 );
+		assert.lengthOf( storage.find( '.plan-storage' ), 1 );
 
 		storage = shallow( <PlanStorage { ...props } sitePlanSlug={ PLAN_ECOMMERCE } /> );
-		assert.lengthOf( storage.find( '.plan-storage' ), 0 );
+		assert.lengthOf( storage.find( '.plan-storage' ), 1 );
 
 		storage = shallow( <PlanStorage { ...props } sitePlanSlug={ PLAN_ECOMMERCE_2_YEARS } /> );
-		assert.lengthOf( storage.find( '.plan-storage' ), 0 );
+		assert.lengthOf( storage.find( '.plan-storage' ), 1 );
+	} );
+
+	test( 'should render for atomic sites', () => {
+		const storage = shallow(
+			<PlanStorage
+				{ ...props }
+				sitePlanSlug={ PLAN_BUSINESS }
+				jetpackSite={ true }
+				atomicSite={ true }
+			/>
+		);
+		assert.lengthOf( storage.find( '.plan-storage' ), 1 );
 	} );
 
 	test( 'should not render for jetpack sites', () => {
-		const storage = shallow( <PlanStorage { ...props } jetpackSite={ true } /> );
+		const storage = shallow(
+			<PlanStorage { ...props } jetpackSite={ true } atomicSite={ false } />
+		);
 		assert.lengthOf( storage.find( '.plan-storage' ), 0 );
 	} );
 

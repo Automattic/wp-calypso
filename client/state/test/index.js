@@ -1,16 +1,13 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { createReduxStore } from '../';
-import currentUser from 'state/current-user/reducer';
+import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
+
+const noop = () => {};
 
 describe( 'index', () => {
 	describe( 'createReduxStore', () => {
@@ -36,13 +33,14 @@ describe( 'index', () => {
 		test( 'is instantiated with initialState', () => {
 			const user = { ID: 1234, display_name: 'test user', username: 'testuser' };
 			const initialState = {
-				currentUser: { id: 1234 },
-				users: { items: { 1234: user } },
+				currentUser: {
+					id: 1234,
+					user,
+				},
 			};
-			const reduxStoreWithCurrentUser = createReduxStore( initialState ).getState();
-			expect( reduxStoreWithCurrentUser.currentUser ).toEqual( currentUser( { id: 1234 }, {} ) );
-			expect( Object.keys( reduxStoreWithCurrentUser.users.items ) ).toHaveLength( 1 );
-			expect( reduxStoreWithCurrentUser.users.items[ 1234 ] ).toEqual( user );
+			const reduxStateWithCurrentUser = createReduxStore( initialState ).getState();
+			expect( getCurrentUserId( reduxStateWithCurrentUser ) ).toBe( 1234 );
+			expect( getCurrentUser( reduxStateWithCurrentUser ) ).toBe( user );
 		} );
 
 		describe( 'invalid data', () => {

@@ -3,9 +3,9 @@
  */
 
 import { domainConnectAuthorize, notFoundError } from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
-export default router => {
+export default ( router ) => {
 	router(
 		'/domain-connect/authorize/v2/domainTemplates/providers/:providerId/services/:serviceId/apply',
 		domainConnectAuthorize,

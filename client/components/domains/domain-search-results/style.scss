@@ -1,30 +1,33 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .domain-search-results__transfer-card {
 	display: flex;
 	flex-direction: column;
 	margin-bottom: 12px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		align-items: center;
 		flex-direction: row;
 	}
 }
 
 .domain-search-results__transfer-card-copy {
-	font-size: 16px;
+	font-size: $font-body;
 
 	p {
 		margin-bottom: 0;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding-right: 10px;
 	}
 
-	@include breakpoint( '>660px' ) {
-		font-size: 18px;
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: $font-title-small;
 
 		p {
-			font-size: 16px;
+			font-size: $font-body;
 		}
 	}
 }
@@ -40,11 +43,23 @@
 		padding: 15px 0 0;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		width: auto;
 
 		a {
 			padding: 0;
+		}
+	}
+}
+
+body.is-section-signup.is-white-signup {
+	.domain-search-results {
+		@include break-medium {
+			margin-left: 20px;
+		}
+
+		@include break-xlarge {
+			margin-left: 0;
 		}
 	}
 }

@@ -5,6 +5,11 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import wrapWithClickOutside from 'react-click-outside';
 
+/**
+ * Internal dependencies
+ */
+import FormLabel from 'calypso/components/forms/form-label';
+
 /*
  * This component is temporary until we can pull in `@wordpress/components` and merge https://github.com/Automattic/wp-calypso/pull/34277.
  * See https://github.com/Automattic/wp-calypso/pull/34380.
@@ -67,20 +72,20 @@ class MurielTextControl extends Component {
 			}
 		);
 
-		const onChangeValue = event => onChange( event.target.value );
+		const onChangeValue = ( event ) => onChange( event.target.value );
 		return (
 			<div className={ classes }>
 				<div className="text-control__field">
-					{ label && <label className="text-control__label">{ label }</label> }
+					{ label && <FormLabel className="text-control__label">{ label }</FormLabel> }
 					<input
 						className="text-control__input"
 						type={ type || 'text' }
 						value={ value }
 						onChange={ onChangeValue }
 						placeholder={ label }
-						onClick={ e => this.handleOnClick( onClick, e ) }
-						onFocus={ e => this.handleOnFocus( onFocus, e ) }
-						onBlur={ e => this.handleOnBlur( onBlur, e ) }
+						onClick={ ( e ) => this.handleOnClick( onClick, e ) }
+						onFocus={ ( e ) => this.handleOnFocus( onFocus, e ) }
+						onBlur={ ( e ) => this.handleOnBlur( onBlur, e ) }
 						{ ...otherProps }
 					/>
 				</div>

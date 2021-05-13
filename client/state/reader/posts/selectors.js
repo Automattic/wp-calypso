@@ -7,7 +7,9 @@ import { keyBy, some, get } from 'lodash';
  * Internal depedencies
  */
 import treeSelect from '@automattic/tree-select';
-import { keyToString, keyForPost } from 'reader/post-key';
+import { keyToString, keyForPost } from 'calypso/reader/post-key';
+
+import 'calypso/state/reader/init';
 
 /**
  * Returns a single post.
@@ -21,8 +23,8 @@ export function getPostById( state, postGlobalId ) {
 }
 
 const getPostMapByPostKey = treeSelect(
-	state => [ state.reader.posts.items ],
-	( [ posts ] ) => keyBy( posts, post => keyToString( keyForPost( post ) ) )
+	( state ) => [ state.reader.posts.items ],
+	( [ posts ] ) => keyBy( posts, ( post ) => keyToString( keyForPost( post ) ) )
 );
 
 export const getPostByKey = ( state, postKey ) => {
@@ -35,14 +37,14 @@ export const getPostByKey = ( state, postKey ) => {
 };
 
 export const getPostsByKeys = treeSelect(
-	state => [ getPostMapByPostKey( state ) ],
+	( state ) => [ getPostMapByPostKey( state ) ],
 	( [ postMap ], postKeys ) => {
-		if ( ! postKeys || some( postKeys, postKey => ! keyToString( postKey ) ) ) {
+		if ( ! postKeys || some( postKeys, ( postKey ) => ! keyToString( postKey ) ) ) {
 			return null;
 		}
-		return postKeys.map( keyToString ).map( key => postMap[ key ] );
+		return postKeys.map( keyToString ).map( ( key ) => postMap[ key ] );
 	},
-	{ getCacheKey: postKeys => postKeys.map( keyToString ).join() }
+	{ getCacheKey: ( postKeys ) => postKeys.map( keyToString ).join() }
 );
 
 export const hasPostBeenSeen = ( state, globalId ) =>

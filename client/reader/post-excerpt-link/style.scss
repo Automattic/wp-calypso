@@ -5,7 +5,7 @@
 	margin: 20px 0 8px;
 	position: relative;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		padding-left: 16px;
 	}
 
@@ -20,7 +20,7 @@
 		height: 20px;
 		transition: all 0.15s ease-in-out;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			right: 8px;
 		}
 
@@ -44,7 +44,7 @@
 .post-excerpt-link__helper {
 	max-height: 0;
 	overflow: hidden;
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	margin: 0;
 	transition: all 0.15s ease-in-out;

@@ -28,7 +28,7 @@ export default function detectPolls( post, dom ) {
 	// which contains the information we need, and replace it with a paragraph.
 	const noscripts = dom.querySelectorAll( 'noscript' );
 
-	forEach( noscripts, noscript => {
+	forEach( noscripts, ( noscript ) => {
 		if ( ! noscript.firstChild ) {
 			return;
 		}
@@ -38,9 +38,10 @@ export default function detectPolls( post, dom ) {
 
 		const pollLink = noscriptDom.querySelector( pollLinkSelectors.join( ', ' ) );
 		if ( pollLink ) {
-			const pollId = pollLink.href.match(
-				/https?:\/\/(polldaddy\.com\/poll|poll\.fm|survey\.fm)\/([0-9]+)/
-			)[ 2 ];
+			const matches =
+				pollLink.href.match( /https?:\/\/(polldaddy\.com\/poll|poll\.fm|survey\.fm)\/([0-9]+)/ ) ||
+				[];
+			const pollId = matches[ 2 ];
 			if ( pollId ) {
 				const p = document.createElement( 'p' );
 				p.innerHTML =

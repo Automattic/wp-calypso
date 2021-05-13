@@ -1,9 +1,10 @@
+/**
+ * Internal dependencies
+ */
 import * as types from '../../action-types';
 import actions from '../../actions';
-
 import getAllNotes from '../../selectors/get-all-notes';
 import getIsNoteHidden from '../../selectors/get-is-note-hidden';
-
 import { findNextNoteId } from '../../../templates';
 
 export const advanceToNextNote = ( { dispatch, getState }, { noteId } ) => {

@@ -4,7 +4,7 @@
 
 	.site-selector-modal__content {
 		.theme {
-			@include breakpoint( '>480px' ) {
+			@include breakpoint-deprecated( '>480px' ) {
 				width: 300px;
 			}
 			margin-left: auto;
@@ -13,7 +13,7 @@
 
 		h1 {
 			text-align: center;
-			font-weight: 300;
+			font-weight: 400;
 			margin-bottom: 0;
 		}
 

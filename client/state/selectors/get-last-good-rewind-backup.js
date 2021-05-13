@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getRewindBackups from 'state/selectors/get-rewind-backups';
+import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 
 /**
  * Get the last full site backup.
@@ -12,5 +12,7 @@ import getRewindBackups from 'state/selectors/get-rewind-backups';
  */
 export default function getLastGoodRewindBackup( state, siteId ) {
 	const backups = getRewindBackups( state, siteId );
-	return Array.isArray( backups ) ? backups.find( backup => backup.status === 'finished' ) : null;
+	return Array.isArray( backups )
+		? backups.find( ( backup ) => backup.status === 'finished' )
+		: null;
 }

@@ -4,19 +4,23 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormCheckbox from 'components/forms/form-checkbox';
-import { CALYPSO_CONTACT, MOVE_DOMAIN } from 'lib/url/support';
-import { getName, isRefundable, maybeWithinRefundPeriod } from 'lib/purchases';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { MOVE_DOMAIN } from 'calypso/lib/url/support';
+import { getName } from 'calypso/lib/purchases';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import { getTitanProductName, hasTitanMailWithUs } from 'calypso/lib/titan';
 
 class RemoveDomainDialog extends Component {
 	static propTypes = {
@@ -35,7 +39,7 @@ class RemoveDomainDialog extends Component {
 	};
 
 	renderDomainDeletionWarning( productName ) {
-		const { translate } = this.props;
+		const { translate, hasTitanWithUs } = this.props;
 
 		return (
 			<p>
@@ -48,12 +52,25 @@ class RemoveDomainDialog extends Component {
 						components: { strong: <strong /> },
 					}
 				) }
+				{ hasTitanWithUs &&
+					' ' +
+						translate(
+							'You also have an active %(productName)s subscription for this domain, and your emails will stop ' +
+								'working if you delete your domain.',
+							{
+								args: {
+									productName: getTitanProductName(),
+								},
+								comment:
+									'%(productName) is the name of the product, which is either Email or Titan Mail',
+							}
+						) }
 			</p>
 		);
 	}
 
 	renderFirstStep( productName ) {
-		const { translate, purchase } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<Fragment>
@@ -67,7 +84,7 @@ class RemoveDomainDialog extends Component {
 				{ this.renderDomainDeletionWarning( productName ) }
 
 				<p>
-					{ translate( 'If you want to use this domain with another service, DO NOT delete it.' ) }{ ' ' }
+					{ translate( 'If you want to use this domain with another service, do not delete it.' ) }{ ' ' }
 					{ translate(
 						'Instead, keep the domain. You can then {{a}}move or point your domain to a different service.{{/a}}',
 						{
@@ -77,37 +94,16 @@ class RemoveDomainDialog extends Component {
 						}
 					) }
 				</p>
-
-				{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase ) && (
-					<p>
-						<strong>
-							{ translate(
-								"We're not able to refund this purchase automatically. " +
-									"If you're canceling within %(refundPeriodInDays)s days of " +
-									'purchase, {{contactLink}}contact us{{/contactLink}} to ' +
-									'request a refund.',
-								{
-									args: {
-										refundPeriodInDays: purchase.refundPeriodInDays,
-									},
-									components: {
-										contactLink: <a href={ CALYPSO_CONTACT } />,
-									},
-								}
-							) }
-						</strong>
-					</p>
-				) }
 			</Fragment>
 		);
 	}
 
-	onDomainChange = event => {
+	onDomainChange = ( event ) => {
 		const productName = getName( this.props.purchase );
 		this.setState( { domainValidated: event.currentTarget.value === productName } );
 	};
 
-	onAgreeChange = event => {
+	onAgreeChange = ( event ) => {
 		this.setState( { userAgreed: event.target.checked } );
 	};
 
@@ -167,7 +163,7 @@ class RemoveDomainDialog extends Component {
 		);
 	}
 
-	nextStep = closeDialog => {
+	nextStep = ( closeDialog ) => {
 		if ( this.props.isRemoving ) {
 			return;
 		}
@@ -229,4 +225,11 @@ class RemoveDomainDialog extends Component {
 	}
 }
 
-export default localize( RemoveDomainDialog );
+export default connect( ( state, ownProps ) => {
+	const domains = getDomainsBySiteId( state, ownProps.purchase.siteId );
+	const selectedDomainName = getName( ownProps.purchase );
+	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
+	return {
+		hasTitanWithUs: hasTitanMailWithUs( selectedDomain ),
+	};
+} )( localize( RemoveDomainDialog ) );

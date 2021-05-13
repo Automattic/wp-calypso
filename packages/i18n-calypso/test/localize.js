@@ -41,7 +41,7 @@ describe( 'localize()', () => {
 		expect( LocalizedComponent.displayName ).toBe( 'Localized(MyComponent)' );
 	} );
 
-	it( 'should provide translate, moment, locale and numberFormat props to rendered child', () => {
+	it( 'should provide translate, locale and numberFormat props to rendered child', () => {
 		const renderer = new ShallowRenderer();
 		const LocalizedComponent = localize( () => null );
 
@@ -49,7 +49,6 @@ describe( 'localize()', () => {
 		const result = renderer.getRenderOutput();
 
 		expect( result.props.translate ).toBeInstanceOf( Function );
-		expect( result.props.moment ).toBeInstanceOf( Function );
 		expect( result.props.numberFormat ).toBeInstanceOf( Function );
 		expect( result.props.locale ).toBe( i18n.getLocaleSlug() );
 	} );

@@ -3,24 +3,27 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { Button, CompactCard } from '@automattic/components';
+import { Button, Card, CompactCard } from '@automattic/components';
 import page from 'page';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
-import FormTextInput from 'components/forms/form-text-input';
-import Gridicon from 'components/gridicon';
-import HeaderCake from 'components/header-cake';
-import Site from 'blocks/site';
-import wpLib from 'lib/wp';
+import CardHeading from 'calypso/components/card-heading';
+import HeaderCake from 'calypso/components/header-cake';
+import Notice from 'calypso/components/notice';
+import wpLib from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './section-migrate.scss';
+import SitesBlock from 'calypso/my-sites/migrate/components/sites-block';
+import { getImportSectionLocation, redirectTo } from 'calypso/my-sites/migrate/helpers';
 
 const wpcom = wpLib.undocumented();
 
@@ -37,100 +40,130 @@ class StepSourceSelect extends Component {
 		isLoading: false,
 	};
 
+	onUrlChange = ( args ) => {
+		this.setState( { error: null } );
+		this.props.onUrlChange( args );
+	};
+
 	handleContinue = () => {
+		const {
+			translate,
+			targetSite: { jetpack: isJetpackSite },
+		} = this.props;
+
 		if ( this.state.isLoading ) {
 			return;
 		}
 
+		const validEngines = [ 'wordpress', 'blogger', 'medium', 'wix', 'godaddy', 'squarespace' ];
+
 		this.setState( { error: null, isLoading: true }, () => {
 			wpcom
 				.isSiteImportable( this.props.url )
-				.then( result => {
+				.then( ( result ) => {
 					const importUrl = `/import/${ this.props.targetSiteSlug }?not-wp=1&engine=${ result.site_engine }&from-site=${ result.site_url }`;
+
+					this.props.recordTracksEvent( 'calypso_importer_wordpress_enter_url', {
+						url: result.site_url,
+						engine: result.site_engine,
+						has_jetpack: !! get( result, 'site_meta.jetpack_version', false ),
+						jetpack_version: get( result, 'site_meta.jetpack_version', 'no jetpack' ),
+						is_wpcom: get( result, 'site_meta.wpcom_site', false ),
+					} );
 
 					switch ( result.site_engine ) {
 						case 'wordpress':
+							if ( result.site_meta.wpcom_site ) {
+								return this.setState( {
+									error: translate( 'This site is already hosted on WordPress.com' ),
+									isLoading: false,
+								} );
+							}
+
 							return this.props.onSiteInfoReceived( result, () => {
 								page( `/migrate/choose/${ this.props.targetSiteSlug }` );
 							} );
 						default:
-							if ( window && window.history && window.history.pushState ) {
-								/**
-								 * Because query parameters aren't processed by `page.show`, we're forced to use `page.redirect`.
-								 * Unfortunately, `page.redirect` breaks the back button behavior.
-								 * This is a Work-around to push importUrl to history to fix the back button.
-								 * See https://github.com/visionmedia/page.js#readme
-								 */
-								window.history.pushState( null, null, importUrl );
+							if ( validEngines.indexOf( result.site_engine ) === -1 || isJetpackSite ) {
+								return this.setState( {
+									error: translate( 'This is not a WordPress site' ),
+									isLoading: false,
+								} );
 							}
-							return page.redirect( importUrl );
+
+							return redirectTo( importUrl );
 					}
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					switch ( error.code ) {
 						case 'rest_invalid_param':
 							return this.setState( {
-								error: "We couldn't reach that site. Please check the URL and try again.",
-								loading: false,
+								error: translate(
+									"We couldn't reach that site. Please check the URL and try again."
+								),
+								isLoading: false,
 							} );
 						default:
 							return this.setState( {
-								error: 'Something went wrong. Please check the URL and try again.',
-								loading: false,
+								error: translate( 'Something went wrong. Please check the URL and try again.' ),
+								isLoading: false,
 							} );
 					}
 				} );
 		} );
 	};
 
-	renderFauxSiteSelector() {
-		const { onUrlChange, url } = this.props;
-		const { error } = this.state;
-		const isError = !! error;
-
-		return (
-			<div className="migrate__faux-site-selector">
-				<div className="migrate__faux-site-selector-content">
-					<div className="migrate__faux-site-selector-icon"></div>
-					<div className="migrate__faux-site-selector-info">
-						<div className="migrate__faux-site-selector-label">Import from...</div>
-						<div className="migrate__faux-site-selector-url">
-							<FormTextInput isError={ isError } onChange={ onUrlChange } value={ url } />
-						</div>
-					</div>
-				</div>
-			</div>
-		);
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_importer_wordpress_source_select_viewed' );
 	}
 
 	render() {
-		const { targetSite, targetSiteSlug } = this.props;
+		const { targetSite, targetSiteSlug, translate } = this.props;
 		const backHref = `/import/${ targetSiteSlug }`;
-		const uploadHref = `/import/${ targetSiteSlug }?engine=wordpress`;
+		const uploadFileLink = getImportSectionLocation( targetSiteSlug, targetSite.jetpack );
 
 		return (
 			<>
-				<HeaderCake backHref={ backHref }>Import from WordPress</HeaderCake>
+				<HeaderCake backHref={ backHref }>{ translate( 'Import from WordPress' ) }</HeaderCake>
+
+				{ this.state.error && (
+					<Notice className="migrate__error" showDismiss={ false } status="is-error">
+						{ this.state.error }
+					</Notice>
+				) }
+
 				<CompactCard>
-					<CardHeading>What WordPress site do you want to import?</CardHeading>
+					<CardHeading>{ translate( 'What WordPress site do you want to import?' ) }</CardHeading>
 					<div className="migrate__explain">
-						Enter a URL and we'll help you move your site to WordPress.com. If you already have a
-						backup file, you can <a href={ uploadHref }>upload it to import content</a>.
+						{ translate(
+							"Enter a URL and we'll help you move your site to WordPress.com. If you already have a " +
+								'WordPress export file, you can' +
+								' {{uploadFileLink}}upload it to import content{{/uploadFileLink}}.',
+							{
+								components: {
+									uploadFileLink: <a className="migrate__import-link" href={ uploadFileLink } />,
+								},
+							}
+						) }
 					</div>
 				</CompactCard>
-				<CompactCard className="migrate__sites">
-					{ this.renderFauxSiteSelector() }
-					<Gridicon className="migrate__sites-arrow" icon="arrow-right" />
-					<Site site={ targetSite } indicator={ false } />
-				</CompactCard>
-				<CompactCard>
+				<SitesBlock
+					sourceSite={ null }
+					loadingSourceSite={ this.state.isLoading }
+					targetSite={ targetSite }
+					onUrlChange={ this.onUrlChange }
+					onSubmit={ this.handleContinue }
+					url={ this.props.url }
+					step="sourceSelect"
+				/>
+
+				<Card>
 					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary={ true }>
-						Continue
+						{ translate( 'Continue' ) }
 					</Button>
-				</CompactCard>
+				</Card>
 			</>
 		);
 	}
 }
-
-export default localize( StepSourceSelect );
+export default connect( null, { recordTracksEvent } )( localize( StepSourceSelect ) );

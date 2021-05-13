@@ -8,7 +8,7 @@
 import React from 'react';
 import update from 'immutability-helper';
 import { shallow } from 'enzyme';
-import { noop, omit } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,13 +16,15 @@ import { noop, omit } from 'lodash';
 import { ContactDetailsFormFields } from '../';
 import FormButton from '../../../../components/forms/form-button';
 
+const noop = () => {};
+
 jest.mock( 'i18n-calypso', () => ( {
-	localize: x => x,
-	translate: x => x,
+	localize: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'ContactDetailsFormFields', () => {
 	const defaultProps = {
@@ -51,6 +53,7 @@ describe( 'ContactDetailsFormFields', () => {
 			},
 		],
 		onSubmit: noop,
+		translate: ( string ) => string,
 	};
 
 	describe( 'default fields', () => {
@@ -149,10 +152,7 @@ describe( 'ContactDetailsFormFields', () => {
 			);
 
 			expect(
-				wrapper
-					.find( '.contact-details-form-fields__submit-button' )
-					.render()
-					.text()
+				wrapper.find( '.contact-details-form-fields__submit-button' ).render().text()
 			).toEqual( 'Click it yo!' );
 		} );
 

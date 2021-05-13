@@ -49,6 +49,13 @@ export const rewind = {
 		started_at: { type: 'string' },
 		progress: { type: 'integer' },
 		reason: { type: 'string' },
+		/**
+		 * Commenting these out temporarily because API is returning a null value for current_entry,
+		 * triggering a schema validation error. Once this is corrected on the backend (soon), we
+		 * will activate these properties again.
+		 **/
+		// message: { type: 'string' },
+		// current_entry: { type: 'string' },
 	},
 	required: [ 'restore_id', 'rewind_id', 'status' ],
 };
@@ -79,6 +86,9 @@ export const unavailable = stateSchema( 'unavailable', {
 			type: 'string',
 		},
 		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
+		has_cloud: {
+			type: 'boolean',
+		},
 	},
 	required: [ 'state', 'last_updated' ],
 } );
@@ -95,6 +105,9 @@ export const inactive = stateSchema( 'inactive', {
 			items: credential,
 		},
 		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
+		has_cloud: {
+			type: 'boolean',
+		},
 	},
 	required: [ 'state', 'last_updated' ],
 } );
@@ -107,6 +120,9 @@ export const awaitingCredentials = stateSchema( 'awaiting_credentials', {
 			pattern: '^awaiting_credentials$',
 		},
 		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
+		has_cloud: {
+			type: 'boolean',
+		},
 	},
 	required: [ 'state', 'last_updated' ],
 } );
@@ -123,6 +139,9 @@ export const provisioning = stateSchema( 'provisioning', {
 			items: credential,
 		},
 		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
+		has_cloud: {
+			type: 'boolean',
+		},
 	},
 	required: [ 'state', 'last_updated' ],
 } );
@@ -150,6 +169,9 @@ export const active = stateSchema( 'active', {
 			},
 		},
 		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
+		has_cloud: {
+			type: 'boolean',
+		},
 	},
 	required: [ 'state', 'last_updated' ],
 } );

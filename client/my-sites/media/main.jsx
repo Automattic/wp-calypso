@@ -11,25 +11,26 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import MediaLibrary from 'my-sites/media-library';
-import QueryMedia from 'components/data/query-media';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
-import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import getMediaItem from 'state/selectors/get-media-item';
-import getPreviousRoute from 'state/selectors/get-previous-route';
-import ImageEditor from 'blocks/image-editor';
-import VideoEditor from 'blocks/video-editor';
-import MediaActions from 'lib/media/actions';
-import { getMimeType } from 'lib/media/utils';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import accept from 'lib/accept';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import searchUrl from 'lib/search-url';
+import DocumentHead from 'calypso/components/data/document-head';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import MediaLibrary from 'calypso/my-sites/media-library';
+import QueryMedia from 'calypso/components/data/query-media';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
+import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import ImageEditor from 'calypso/blocks/image-editor';
+import VideoEditor from 'calypso/blocks/video-editor';
+import { getMimeType } from 'calypso/lib/media/utils';
+import accept from 'calypso/lib/accept';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import searchUrl from 'calypso/lib/search-url';
+import { editMedia, deleteMedia } from 'calypso/state/media/thunks';
+import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
 
 /**
  * Style dependencies
@@ -64,7 +65,7 @@ class Media extends Component {
 		} );
 	}
 
-	onFilterChange = filter => {
+	onFilterChange = ( filter ) => {
 		let redirect = '/media';
 
 		if ( filter ) {
@@ -76,26 +77,22 @@ class Media extends Component {
 		}
 
 		if ( this.props.selectedSite ) {
-			MediaActions.setLibrarySelectedItems( this.props.selectedSite.ID, [] );
+			this.props.selectMediaItems( this.props.selectedSite.ID, [] );
+		}
+
+		if ( this.props.currentRoute !== redirect ) {
+			this.props.clearSite( this.props.selectedSite.ID );
 		}
 
 		page( redirect );
 	};
 
-	openDetailsModalForASingleImage = image => {
-		this.setState( {
-			currentDetail: 0,
-			selectedItems: [ image ],
-		} );
-	};
-
 	openDetailsModalForAllSelected = () => {
-		const site = this.props.selectedSite;
-		const selected = MediaLibrarySelectedStore.getAll( site.ID );
+		const { selectedItems } = this.props;
 
 		this.setState( {
 			currentDetail: 0,
-			selectedItems: selected,
+			selectedItems,
 		} );
 	};
 
@@ -128,7 +125,7 @@ class Media extends Component {
 		this.setState( { currentDetail: null, editedVideoItem: this.getSelectedIndex() } );
 	};
 
-	onImageEditorCancel = imageEditorProps => {
+	onImageEditorCancel = ( imageEditorProps ) => {
 		const { resetAllImageEditorState } = imageEditorProps;
 		this.setState( { currentDetail: this.state.editedImageItem, editedImageItem: null } );
 
@@ -155,7 +152,7 @@ class Media extends Component {
 			},
 		};
 
-		MediaActions.update( site.ID, item, true );
+		this.props.editMedia( site.ID, item );
 		resetAllImageEditorState();
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
@@ -192,23 +189,7 @@ class Media extends Component {
 		this.setState( { currentDetail: this.state.editedVideoItem, editedVideoItem: null } );
 	};
 
-	onVideoEditorUpdatePoster = ( { ID, posterUrl } ) => {
-		const site = this.props.selectedSite;
-
-		// Photon does not support URLs with a querystring component.
-		const urlBeforeQuery = ( posterUrl || '' ).split( '?' )[ 0 ];
-
-		if ( site ) {
-			MediaActions.edit( site.ID, {
-				ID,
-				thumbnails: {
-					fmt_hd: urlBeforeQuery,
-					fmt_dvd: urlBeforeQuery,
-					fmt_std: urlBeforeQuery,
-				},
-			} );
-		}
-
+	onVideoEditorUpdatePoster = () => {
 		this.setState( { currentDetail: null, editedVideoItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
 	};
@@ -218,12 +199,12 @@ class Media extends Component {
 			return;
 		}
 
-		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
+		this.props.editMedia( siteId, { ID: item.ID, media_url: item.guid } );
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
 	};
 
-	setDetailSelectedIndex = index => {
+	setDetailSelectedIndex = ( index ) => {
 		this.setState( { currentDetail: index } );
 	};
 
@@ -235,9 +216,8 @@ class Media extends Component {
 	 * @param  {Function} [callback] - callback function
 	 */
 	deleteMedia( callback ) {
-		const { selectedSite, translate } = this.props;
-		const selected = MediaLibrarySelectedStore.getAll( selectedSite.ID );
-		const selectedCount = selected.length;
+		const { translate } = this.props;
+		const selectedCount = this.props.selectedItems.length;
 		const confirmMessage = translate(
 			'Are you sure you want to delete this item? ' +
 				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
@@ -250,7 +230,7 @@ class Media extends Component {
 
 		accept(
 			confirmMessage,
-			accepted => {
+			( accepted ) => {
 				if ( ! accepted ) {
 					return;
 				}
@@ -283,7 +263,7 @@ class Media extends Component {
 			this.onFilterChange( '' );
 		}
 
-		MediaActions.sourceChanged( this.props.selectedSite.ID );
+		this.props.changeMediaSource( this.props.selectedSite.ID );
 		this.setState( { source }, cb );
 	};
 
@@ -300,11 +280,9 @@ class Media extends Component {
 		const selectedItems = this.getSelectedItems();
 
 		const selected =
-			selectedItems && selectedItems.length
-				? selectedItems
-				: MediaLibrarySelectedStore.getAll( site.ID );
+			selectedItems && selectedItems.length ? selectedItems : this.props.selectedItems;
 
-		MediaActions.delete( site.ID, selected );
+		this.props.deleteMedia( site.ID, selected );
 	};
 
 	getAnalyticsPath = () => {
@@ -325,7 +303,7 @@ class Media extends Component {
 		return this.state.selectedItems;
 	};
 
-	getSelectedItem = defaultMediaItem => {
+	getSelectedItem = ( defaultMediaItem ) => {
 		const { media } = this.props;
 		if ( media ) {
 			return media;
@@ -364,6 +342,7 @@ class Media extends Component {
 
 	render() {
 		const { selectedSite: site, mediaId, previousRoute, translate } = this.props;
+
 		return (
 			<div ref={ this.containerRef } className="main main-column media" role="main">
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
@@ -371,8 +350,12 @@ class Media extends Component {
 				<DocumentHead title={ translate( 'Media' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="media__page-heading"
 					headerText={ translate( 'Media' ) }
+					subHeaderText={ translate(
+						'Manage all the media on your site, including images, video, and more.'
+					) }
 					align="left"
 				/>
 				{ this.showDialog() && (
@@ -415,33 +398,42 @@ class Media extends Component {
 					</EditorMediaModalDialog>
 				) }
 				{ site && site.ID && (
-					<MediaLibrarySelectedData siteId={ site.ID }>
-						<MediaLibrary
-							{ ...this.props }
-							className="media__main-section"
-							onFilterChange={ this.onFilterChange }
-							site={ site }
-							single={ false }
-							filter={ this.props.filter }
-							source={ this.state.source }
-							onEditItem={ this.openDetailsModalForASingleImage }
-							onViewDetails={ this.openDetailsModalForAllSelected }
-							onDeleteItem={ this.handleDeleteMediaEvent }
-							onSourceChange={ this.handleSourceChange }
-							modal={ false }
-							containerWidth={ this.state.containerWidth }
-						/>
-					</MediaLibrarySelectedData>
+					<MediaLibrary
+						{ ...this.props }
+						className="media__main-section"
+						onFilterChange={ this.onFilterChange }
+						site={ site }
+						single={ false }
+						filter={ this.props.filter }
+						source={ this.state.source }
+						onViewDetails={ this.openDetailsModalForAllSelected }
+						onDeleteItem={ this.handleDeleteMediaEvent }
+						onSourceChange={ this.handleSourceChange }
+						modal={ false }
+						containerWidth={ this.state.containerWidth }
+					/>
 				) }
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { mediaId } ) => ( {
-	selectedSite: getSelectedSite( state ),
-	previousRoute: getPreviousRoute( state ),
-	media: getMediaItem( state, getSelectedSiteId( state ), mediaId ),
-} );
+const mapStateToProps = ( state, { mediaId } ) => {
+	const siteId = getSelectedSiteId( state );
 
-export default connect( mapStateToProps )( localize( Media ) );
+	return {
+		selectedSite: getSelectedSite( state ),
+		previousRoute: getPreviousRoute( state ),
+		currentRoute: getCurrentRoute( state ),
+		media: getMediaItem( state, siteId, mediaId ),
+		selectedItems: getMediaLibrarySelectedItems( state, siteId ),
+	};
+};
+
+export default connect( mapStateToProps, {
+	editMedia,
+	deleteMedia,
+	selectMediaItems,
+	changeMediaSource,
+	clearSite,
+} )( localize( Media ) );

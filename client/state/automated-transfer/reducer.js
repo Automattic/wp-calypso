@@ -1,8 +1,14 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import eligibility from './eligibility/reducer';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
+import {
+	combineReducers,
+	keyedReducer,
+	withSchemaValidation,
+	withPersistence,
+} from 'calypso/state/utils';
 import { transferStates } from './constants';
 import { automatedTransfer as schema } from './schema';
 import {
@@ -10,12 +16,14 @@ import {
 	AUTOMATED_TRANSFER_STATUS_SET as SET_STATUS,
 	AUTOMATED_TRANSFER_STATUS_REQUEST as REQUEST_STATUS,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
+} from 'calypso/state/action-types';
+import {
 	THEME_TRANSFER_INITIATE_REQUEST as INITIATE,
 	THEME_TRANSFER_INITIATE_FAILURE as INITIATE_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE as TRANSFER_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/themes/action-types';
 
-export const status = ( state = null, action ) => {
+export const status = withPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
 		case ELIGIBILITY_UPDATE:
 			return state || transferStates.INQUIRING;
@@ -30,8 +38,7 @@ export const status = ( state = null, action ) => {
 	}
 
 	return state;
-};
-status.hasCustomPersistence = true;
+} );
 
 export const fetchingStatus = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -54,4 +61,8 @@ export const siteReducer = combineReducers( {
 
 // state is a map of transfer sub-states
 // keyed by the associated site id
-export default withSchemaValidation( schema, keyedReducer( 'siteId', siteReducer ) );
+const validatedReducer = withSchemaValidation( schema, keyedReducer( 'siteId', siteReducer ) );
+
+const automatedTransferReducer = withStorageKey( 'automatedTransfer', validatedReducer );
+
+export default automatedTransferReducer;

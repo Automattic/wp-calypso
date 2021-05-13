@@ -16,9 +16,19 @@ export default class DomainsPage extends AsyncBaseContainer {
 	}
 
 	async clickAddDomain() {
-		return await driverHelper.clickWhenClickable(
+		return await driverHelper.clickWhenClickable( this.driver, By.css( '.add-domain-button' ) );
+	}
+
+	async clickPopoverItem( name ) {
+		const actionItemLocator = By.css( '.popover__menu-item' );
+		return await driverHelper.selectElementByText( this.driver, actionItemLocator, name );
+	}
+
+	async popOverMenuDisplayed() {
+		const popOverMenuLocator = By.css( '.popover__menu' );
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			By.css( '.domain-management-list__add-a-domain' )
+			popOverMenuLocator
 		);
 	}
 }

@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getNetworkSites from 'state/selectors/get-network-sites';
+import getNetworkSites from 'calypso/state/selectors/get-network-sites';
 import { userState } from './fixtures/user-state';
 
 describe( 'getNetworkSites()', () => {
@@ -77,9 +77,7 @@ describe( 'getNetworkSites()', () => {
 			},
 		};
 		const networkSites = getNetworkSites( state, 1 );
-		expect( networkSites )
-			.to.be.an( 'array' )
-			.that.has.lengthOf( 1 );
+		expect( networkSites ).to.be.an( 'array' ).that.has.lengthOf( 1 );
 		expect( networkSites[ 0 ].ID ).to.eql( 1 );
 	} );
 
@@ -119,9 +117,7 @@ describe( 'getNetworkSites()', () => {
 			},
 		};
 		const networkSites = getNetworkSites( state, 1 );
-		expect( networkSites )
-			.to.be.an( 'array' )
-			.that.has.lengthOf( 3 );
+		expect( networkSites ).to.be.an( 'array' ).that.has.lengthOf( 3 );
 		expect( networkSites[ 0 ].ID ).to.eql( 1 );
 		expect( networkSites[ 1 ].ID ).to.eql( 2 );
 		expect( networkSites[ 2 ].ID ).to.eql( 3 );

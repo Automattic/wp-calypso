@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 
 /**
  * Return primary domain from state object and
@@ -18,5 +18,5 @@ export default function getPrimaryDomainBySiteId( state, siteId ) {
 		return null;
 	}
 
-	return domains.filter( domain => domain.isPrimary )[ 0 ];
+	return domains.filter( ( domain ) => domain.isPrimary )[ 0 ];
 }

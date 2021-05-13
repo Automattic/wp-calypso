@@ -8,31 +8,31 @@
 import { capitalPDangit, parseHtml, preventWidows } from '../index';
 
 describe( 'formatting', () => {
-	describe( '#capitalPDangtest()', function() {
-		test( 'should error when input is not a string', function() {
-			const types = [ {}, undefined, 1, true, [], function() {} ];
+	describe( '#capitalPDangtest()', function () {
+		test( 'should error when input is not a string', function () {
+			const types = [ {}, undefined, 1, true, [], function () {} ];
 
-			types.forEach( function( type ) {
-				expect( function() {
+			types.forEach( function ( type ) {
+				expect( function () {
 					capitalPDangit( type );
 				} ).toThrow( Error );
 			} );
 		} );
 
-		test( 'should not modify wordpress', function() {
+		test( 'should not modify wordpress', function () {
 			const strings = [ 'wordpress', 'I love wordpress' ];
 
-			strings.forEach( function( string ) {
+			strings.forEach( function ( string ) {
 				expect( capitalPDangit( string ) ).toBe( string );
 			} );
 		} );
 
-		test( 'should return WordPress with a capital P when passed Wordpress', function() {
+		test( 'should return WordPress with a capital P when passed Wordpress', function () {
 			expect( capitalPDangit( 'Wordpress' ) ).toBe( 'WordPress' );
 			expect( capitalPDangit( 'I love Wordpress' ) ).toBe( 'I love WordPress' );
 		} );
 
-		test( 'should replace all instances of Wordpress', function() {
+		test( 'should replace all instances of Wordpress', function () {
 			expect( capitalPDangit( 'Wordpress Wordpress' ) ).toBe( 'WordPress WordPress' );
 			expect( capitalPDangit( 'I love Wordpress and Wordpress loves me' ) ).toBe(
 				'I love WordPress and WordPress loves me'
@@ -40,38 +40,38 @@ describe( 'formatting', () => {
 		} );
 	} );
 
-	describe( '#parseHtml()', function() {
-		test( 'should equal to null when input is not a string', function() {
-			const types = [ {}, undefined, 1, true, [], function() {} ];
+	describe( '#parseHtml()', function () {
+		test( 'should equal to null when input is not a string', function () {
+			const types = [ {}, undefined, 1, true, [], function () {} ];
 
-			types.forEach( function( type ) {
+			types.forEach( function ( type ) {
 				expect( parseHtml( type ) ).toBeNull();
 			} );
 		} );
 
-		test( 'should return a DOM element if you pass in DOM element', function() {
+		test( 'should return a DOM element if you pass in DOM element', function () {
 			const div = document.createElement( 'div' );
 			expect( div ).toBe( parseHtml( div ) );
 		} );
 
-		test( 'should return a document fragment if we pass in a string', function() {
+		test( 'should return a document fragment if we pass in a string', function () {
 			const fragment = parseHtml( 'hello' );
 			expect( typeof fragment.querySelector ).toBe( 'function' );
 			expect( fragment.querySelectorAll( '*' ) ).toHaveLength( 0 );
 		} );
 
-		test( 'should return a document fragment if we pass in a HTML string', function() {
+		test( 'should return a document fragment if we pass in a HTML string', function () {
 			const fragment = parseHtml( '<div>hello</div>' );
 			expect( fragment.querySelectorAll( 'div' ) ).toHaveLength( 1 );
 		} );
 
-		test( 'should parseHtml and return document fragment that can be queried', function() {
+		test( 'should parseHtml and return document fragment that can be queried', function () {
 			const strings = [
 				'<span><a href="stuff">hello world</a></span>',
 				'<div><span></span><a href="stuff">hello world</a></div>',
 			];
 
-			strings.forEach( function( string ) {
+			strings.forEach( function ( string ) {
 				const link = parseHtml( string ).querySelectorAll( 'a' );
 				expect( link[ 0 ].innerHTML ).toBe( 'hello world' );
 			} );
@@ -80,9 +80,9 @@ describe( 'formatting', () => {
 
 	describe( '#preventWidows()', () => {
 		test( 'should not modify input if type is not string', () => {
-			const types = [ {}, undefined, 1, true, [], function() {} ];
+			const types = [ {}, undefined, 1, true, [], function () {} ];
 
-			types.forEach( type => {
+			types.forEach( ( type ) => {
 				expect( preventWidows( type ) ).toBe( type );
 			} );
 		} );
@@ -90,7 +90,7 @@ describe( 'formatting', () => {
 		test( 'should return empty string when input is all whitespace', () => {
 			const inputs = [ ' ', '\t', '\n' ];
 
-			inputs.forEach( input => {
+			inputs.forEach( ( input ) => {
 				expect( preventWidows( input ) ).toBe( '' );
 			} );
 		} );

@@ -5,16 +5,16 @@
 		&.warning {
 			color: var( --color-text-subtle );
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				padding: 0;
 				text-align: left;
 			}
 
 			p {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				margin: 0;
 
-				@include breakpoint( '>660px' ) {
+				@include breakpoint-deprecated( '>660px' ) {
 					margin-left: 24px;
 				}
 			}
@@ -22,7 +22,7 @@
 			.gridicon {
 				float: left;
 
-				@include breakpoint( '<660px' ) {
+				@include breakpoint-deprecated( '<660px' ) {
 					display: none;
 				}
 			}
@@ -32,37 +32,23 @@
 	.contacts-privacy__settings-explanation {
 		color: var( --color-text-subtle );
 		display: block;
-		font-size: 13px;
+		font-size: $font-body-small;
 		font-style: italic;
 		margin: 5px 0;
 	}
 
 	.notice {
 		clear: both;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-top: 10px;
 		margin-bottom: 10px;
 	}
 
 	.contact-display {
-		h2 {
-			background-color: var( --color-neutral-0 );
-			border: 1px solid var( --color-neutral-0 );
-			border-bottom: 0;
-			color: var( --color-neutral-light );
-			font-size: 11px;
-			font-weight: 600;
-			line-height: 1;
-			margin: 16px 0 0;
-			padding: 8px 0;
-			text-transform: uppercase;
-			text-align: center;
-		}
-
 		.contact-display__content {
-			border: 1px solid var( --color-neutral-0 );
+			background-color: var( --color-neutral-0 );
 			color: var( --color-neutral );
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			line-height: 140%;
 			margin: 0;
 			padding: 16px;
@@ -71,5 +57,6 @@
 				margin-bottom: 0;
 			}
 		}
+		margin-bottom: 1.5em;
 	}
 }

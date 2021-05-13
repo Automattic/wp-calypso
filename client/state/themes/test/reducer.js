@@ -20,7 +20,7 @@ import reducer, {
 	completedActivationRequests,
 	recommendedThemes,
 } from '../reducer';
-import ThemeQueryManager from 'lib/query-manager/theme';
+import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
@@ -38,12 +38,11 @@ import {
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
-	SERIALIZE,
-	DESERIALIZE,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
 	RECOMMENDED_THEMES_FAIL,
-} from 'state/action-types';
+} from 'calypso/state/themes/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 
 const twentysixteen = {
 	id: 'twentysixteen',
@@ -317,7 +316,7 @@ describe( 'reducer', () => {
 				} )
 			);
 
-			const state = queries( original, { type: SERIALIZE } );
+			const state = serialize( queries, original );
 
 			// _timestamp is not part of the data
 			delete state._timestamp;
@@ -362,7 +361,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			const state = queries( original, { type: DESERIALIZE } );
+			const state = deserialize( queries, original );
 
 			expect( state ).toEqual( {
 				2916284: new ThemeQueryManager(
@@ -388,7 +387,7 @@ describe( 'reducer', () => {
 				2916284: '{INVALID',
 			} );
 
-			const state = queries( original, { type: DESERIALIZE } );
+			const state = deserialize( queries, original );
 
 			expect( state ).toEqual( {} );
 		} );
@@ -616,18 +615,12 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'persists state', () => {
-			const state = themeRequestErrors( themeError, {
-				type: SERIALIZE,
-			} );
-
+			const state = serialize( themeRequestErrors, themeError );
 			expect( state ).toEqual( themeError );
 		} );
 
 		test( 'loads persisted state', () => {
-			const state = themeRequestErrors( themeError, {
-				type: DESERIALIZE,
-			} );
-
+			const state = deserialize( themeRequestErrors, themeError );
 			expect( state ).toEqual( themeError );
 		} );
 	} );
@@ -689,8 +682,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should persist state', () => {
-			const state = activeThemes( { 2211888: 'twentysixteen' }, { type: SERIALIZE } );
-
+			const state = serialize( activeThemes, { 2211888: 'twentysixteen' } );
 			expect( state ).toEqual( { 2211888: 'twentysixteen' } );
 		} );
 
@@ -699,7 +691,7 @@ describe( 'reducer', () => {
 				2211888: 'twentysixteen',
 			} );
 
-			const state = activeThemes( original, { type: DESERIALIZE } );
+			const state = deserialize( activeThemes, original );
 			expect( state ).toEqual( { 2211888: 'twentysixteen' } );
 		} );
 
@@ -709,7 +701,7 @@ describe( 'reducer', () => {
 				2916284: 1234,
 			} );
 
-			const state = activeThemes( original, { type: DESERIALIZE } );
+			const state = deserialize( activeThemes, original );
 			expect( state ).toEqual( {} );
 		} );
 	} );

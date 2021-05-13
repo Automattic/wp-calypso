@@ -5,16 +5,28 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { isFunction, map } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { map } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
-import { isOutsideCalypso } from 'lib/url';
+import PopoverMenu from 'calypso/components/popover/menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
+
+/**
+ * Check if a URL is located outside of Calypso.
+ * Note that the check this function implements is incomplete --
+ * it only returns false for absolute URLs, so it misses
+ * relative URLs, or pure query strings, or hashbangs.
+ *
+ * @param  url URL to check
+ * @returns     true if the given URL is located outside of Calypso
+ */
+function isOutsideCalypso( url ) {
+	return !! url && ( url.startsWith( '//' ) || ! url.startsWith( '/' ) );
+}
 
 class ThemeMoreButton extends Component {
 	state = { showPopover: false };
@@ -27,9 +39,9 @@ class ThemeMoreButton extends Component {
 			this.props.onMoreButtonClick( this.props.themeId, this.props.index, 'popup_open' );
 	};
 
-	closePopover = action => {
+	closePopover = ( action ) => {
 		this.setState( { showPopover: false } );
-		if ( isFunction( action ) ) {
+		if ( typeof action === 'function' ) {
 			action();
 		}
 	};
@@ -69,7 +81,7 @@ class ThemeMoreButton extends Component {
 								const url = option.getUrl( this.props.themeId );
 								return (
 									<PopoverMenuItem
-										key={ option.label }
+										key={ `${ option.label }-geturl` }
 										action={ this.popoverAction( option.action, option.label ) }
 										href={ url }
 										target={ isOutsideCalypso( url ) ? '_blank' : null }
@@ -81,7 +93,7 @@ class ThemeMoreButton extends Component {
 							if ( option.action ) {
 								return (
 									<PopoverMenuItem
-										key={ option.label }
+										key={ `${ option.label }-action` }
 										action={ this.popoverAction( option.action, option.label ) }
 									>
 										{ option.label }

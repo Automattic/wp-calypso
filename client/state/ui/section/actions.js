@@ -1,13 +1,14 @@
 /**
  * Internal dependencies
  */
-import { SECTION_SET } from 'state/action-types';
+import { SECTION_SET, SECTION_LOADING_SET } from 'calypso/state/action-types';
+
+import 'calypso/state/ui/init';
 
 export function setSection( section, options = {} ) {
 	const action = {
 		...options,
 		type: SECTION_SET,
-		hasSidebar: options.hasSidebar === false ? false : true,
 	};
 	if ( section ) {
 		action.section = section;
@@ -16,9 +17,9 @@ export function setSection( section, options = {} ) {
 	return action;
 }
 
-export function hideSidebar() {
+export function setSectionLoading( isSectionLoading ) {
 	return {
-		type: SECTION_SET,
-		hasSidebar: false,
+		type: SECTION_LOADING_SET,
+		isSectionLoading,
 	};
 }

@@ -10,11 +10,11 @@ import { keys } from 'lodash';
 /**
  * Internal dependencies
  */
-import * as componentExamples from 'devdocs/design/component-examples';
-import * as playgroundScope from 'devdocs/design/playground-scope';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import SelectDropdown from 'components/select-dropdown';
+import * as componentExamples from 'calypso/devdocs/design/component-examples';
+import * as playgroundScope from 'calypso/devdocs/design/playground-scope';
+import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { getExampleCodeFromComponent } from './playground-utils';
 
 /**
@@ -76,7 +76,7 @@ export default class DesignAssets extends React.Component {
 		page( '/devdocs/design/' );
 	};
 
-	addComponent = exampleCode => () => {
+	addComponent = ( exampleCode ) => () => {
 		this.setState( {
 			code:
 				'<Main>' +
@@ -87,7 +87,7 @@ export default class DesignAssets extends React.Component {
 		} );
 	};
 
-	handleChange = code => {
+	handleChange = ( code ) => {
 		this.setState( {
 			code: code,
 		} );
@@ -96,7 +96,8 @@ export default class DesignAssets extends React.Component {
 	listOfExamples() {
 		return (
 			<SelectDropdown selectedText="Add a component" className="design__playground-examples">
-				{ keys( componentExamples ).map( name => {
+				{ keys( componentExamples ).map( ( name ) => {
+					// eslint-disable-next-line import/namespace
 					const ExampleComponentName = componentExamples[ name ];
 					const exampleComponent = <ExampleComponentName />;
 					const exampleCode = getExampleCodeFromComponent( exampleComponent );

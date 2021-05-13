@@ -8,16 +8,16 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormRadioWithThumbnail from 'components/forms/form-radio-with-thumbnail';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thumbnail';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const FormRadiosBar = ( { isThumbnail, checked, onChange, items } ) => {
+const FormRadiosBar = ( { isThumbnail, checked, onChange, items, disabled } ) => {
 	return (
 		<div className={ classnames( 'form-radios-bar', { 'is-thumbnail': isThumbnail } ) }>
 			{ items.map( ( item, i ) =>
@@ -26,12 +26,17 @@ const FormRadiosBar = ( { isThumbnail, checked, onChange, items } ) => {
 						key={ item.value + i }
 						checked={ checked === item.value }
 						onChange={ onChange }
+						disabled={ disabled }
 						{ ...item }
 					/>
 				) : (
 					<FormLabel key={ item.value + i }>
-						<FormRadio checked={ checked === item.value } onChange={ onChange } { ...item } />
-						<span>{ item.label }</span>
+						<FormRadio
+							checked={ checked === item.value }
+							disabled={ disabled }
+							onChange={ onChange }
+							{ ...item }
+						/>
 					</FormLabel>
 				)
 			) }

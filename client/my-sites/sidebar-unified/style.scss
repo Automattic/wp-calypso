@@ -1,0 +1,715 @@
+// The following changes should be merged in their respective files before nav unification goes to production
+@import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' );
+
+// Override Global Vars
+.is-nav-unification {
+	// client/assets/stylesheets/shared/_variables.scss
+	--sidebar-width-max: 272px;
+	--sidebar-width-min: 272px;
+
+	--color-sidebar-background: #23282d;
+	--color-sidebar-background-rgb: 35, 40, 45;
+	--color-sidebar-menu-hover-background: #1a1e23;
+	--color-sidebar-menu-hover-background-rgb: rgb( var( --color-sidebar-menu-hover-background ) );
+	--color-sidebar-menu-hover-text: #00b9eb;
+	--color-sidebar-menu-selected-background: #0073aa;
+	--color-sidebar-menu-selected-text: white;
+	--color-sidebar-border: #333333;
+	--color-sidebar-text: #eee;
+	--color-sidebar-text-alternative: #a2aab2;
+	--color-sidebar-gridicon-fill: #a2aab2;
+	--color-sidebar-notice-background: #3c434a;
+
+	--color-sidebar-submenu-background: #32373c;
+	--color-sidebar-submenu-text: #b4b9be;
+	--color-sidebar-submenu-hover-background: transparent;
+	--color-sidebar-submenu-hover-text: #00b9eb;
+	--color-sidebar-submenu-selected-background: transparent;
+	--color-sidebar-submenu-selected-text: white;
+}
+
+// Local Vars
+$sidebar-item-padding: 8px 0;
+$font-size: rem( 14px );
+
+.clear-secondary-layout-transitions {
+	// client/layout/style.scss | Workaround to avoid site-selector being transitioning while expanding the sidebar (client/my-sites/sidebar-unified/index.jsx).
+	.layout__secondary .site-selector {
+		transition: none;
+		overflow: hidden;
+	}
+}
+
+.is-nav-unification {
+	// client/layout/style.scss
+	.layout__content {
+		min-height: 101vh; // Hack to give JS the chance to trigger the scroll event when the content is short. JS code: client/layout/utils.ts:36.
+	}
+
+	// client/layout/sidebar/style.scss
+	.sidebar {
+		position: relative;
+		background-color: var( --color-sidebar-background );
+		padding-bottom: 12px;
+		min-height: calc( 100vh - var( --masterbar-height ) );
+		box-sizing: border-box;
+
+		.sidebar__separator {
+			margin: 0 0 11px;
+		}
+
+		.site__content {
+			padding: 10px 0 10px 8px;
+		}
+
+		.site__home {
+			left: 8px;
+			top: 10px;
+		}
+
+		.sidebar__heading,
+		.sidebar__menu-link {
+			position: relative;
+			font-size: $font-size;
+			font-weight: 400;
+			line-height: 1.3;
+			padding: 0 0 0 8px;
+			color: var( --color-sidebar-text );
+			align-items: center;
+
+			&::after {
+				content: ' ';
+				display: none;
+				z-index: 1;
+				position: absolute;
+				top: 50%;
+				right: 0;
+				width: 0;
+				height: 0;
+				margin-top: -8px;
+				border: solid 8px transparent;
+				border-right-color: #f1f1f1;
+				pointer-events: none;
+			}
+		}
+
+		// Apply hover and focus effects only to tabbable items assuming they are links.
+		.sidebar__heading:not( [tabindex='-1'] ),
+		.sidebar__menu-link {
+			&:hover,
+			&:focus {
+				background-color: var( --color-sidebar-menu-hover-background );
+				color: var( --color-sidebar-menu-hover-text );
+				box-shadow: inset 4px 0 0 0 currentColor;
+ 				transition: box-shadow 0.1s linear;
+			}
+		}
+
+		.sidebar__expandable-title,
+		.sidebar__menu-link-text {
+			padding: $sidebar-item-padding;
+			max-height: 34px;
+			box-sizing: border-box;
+		}
+
+		.sidebar__expandable-arrow,
+		.gridicons-external {
+			width: 20px;
+			height: 20px;
+		}
+
+		.sidebar__expandable-content {
+			background: var( --color-sidebar-submenu-background );
+			padding: 7px 0 8px;
+
+			.sidebar__menu-link {
+				padding: 5px 12px;
+				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
+				font-size: rem( 13px );
+				line-height: 1.4;
+				font-weight: 400;
+				color: var( --color-sidebar-submenu-text );
+
+				&:hover,
+				&:focus {
+					background-color: var( --color-sidebar-submenu-hover-background );
+					color: var( --color-sidebar-submenu-hover-text );
+				}
+			}
+
+			.selected .sidebar__menu-link {
+				background-color: var( --color-sidebar-submenu-selected-background );
+				color: var( --color-sidebar-submenu-selected-text );
+				font-weight: 600;
+			}
+
+			.sidebar__menu-link-text {
+				padding: 0;
+			}
+		}
+
+		.sidebar__inline-text {
+			position: absolute;
+			right: 20px;
+			top: 50%;
+			transform: translateY( -50% );
+			opacity: 0.8;
+		}
+
+		.sidebar__menu-icon {
+			background-size: contain;
+			color: var( --color-sidebar-gridicon-fill );
+			margin-right: 8px;
+		}
+
+		img.sidebar__menu-icon {
+			opacity: 0.6;
+		}
+
+		.selected .sidebar__menu-link {
+			background: var( --color-sidebar-menu-selected-background );
+			color: var( --color-sidebar-menu-selected-text );
+
+			&::after {
+				display: block;
+			}
+		}
+
+		.sidebar__menu--selected .selected .sidebar__menu-link::after,
+		.sidebar__expandable-content .selected .sidebar__menu-link::after {
+			display: none;
+		}
+
+		.sidebar__menu-item-parent.selected .sidebar__menu-link {
+			.stats-sparkline {
+				--color-stats-sparkline: var( --color-sidebar-menu-selected-text );
+			}
+
+			.sidebar__menu-icon {
+				color: var( --color-sidebar-menu-selected-text );
+			}
+
+			img.sidebar__menu-icon {
+				opacity: 1;
+			}
+
+			&::after {
+				display: block;
+			}
+		}
+
+		.sidebar__menu,
+		.sidebar__menu-item-parent,
+		.sidebar__menu-link {
+			&:hover {
+				.sidebar__menu-icon {
+					color: var( --color-sidebar-menu-hover-text );
+				}
+				img.sidebar__menu-icon {
+					opacity: 1;
+				}
+			}
+		}
+
+		// Is togglable but closed
+		.sidebar__menu.is-togglable {
+			.sidebar__heading {
+				padding: 0 0 0 8px;
+				font-weight: 400;
+			}
+		}
+
+		// Is togglable but selected
+		.sidebar__menu.sidebar__menu--selected .sidebar__heading {
+			&::after {
+				display: block;
+			}
+		}
+
+		// Is toggled open
+		.sidebar__menu.sidebar__menu--selected {
+			.sidebar__heading {
+				background: var( --color-sidebar-menu-hover-background );
+
+				&:hover {
+					.sidebar__menu-icon {
+						color: var( --color-sidebar-menu-hover-text );
+					}
+					img.sidebar__menu-icon {
+						opacity: 1;
+					}
+				}
+
+				.sidebar__menu-icon {
+					color: #fff;
+				}
+				img.sidebar__menu-icon {
+					opacity: 1;
+				}
+			}
+			// Is toggled open and selected
+			&.sidebar__menu--selected .sidebar__heading {
+				background: var( --color-sidebar-menu-selected-background );
+				color: var( --color-sidebar-menu-selected-text );
+
+				.stats-sparkline {
+					--color-stats-sparkline: var( --color-sidebar-menu-selected-text );
+				}
+
+				.sidebar__menu-icon {
+					color: var( --color-sidebar-menu-selected-text );
+				}
+				img.sidebar__menu-icon {
+					opacity: 1;
+				}
+			}
+		}
+
+		.sidebar__menu.is-togglable .sidebar__expandable-arrow {
+			margin-right: 10px;
+		}
+
+		.notice {
+			/* stylelint-disable-next-line scales/font-weights */
+			font-weight: 300;
+
+			&.is-compact {
+				margin: 0;
+				align-items: center;
+				min-height: 34px;
+			}
+
+			.notice__icon-wrapper {
+				background-color: transparent;
+				width: 35px;
+
+				.notice__icon-wrapper-drop {
+					top: calc( 50% - 9px );
+					left: calc( 50% - 9px );
+					width: 18px;
+					height: 18px;
+					/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
+					border-radius: 50%;
+				}
+			}
+
+			.notice__content {
+				padding: 10px 10px 10px 4px;
+				overflow-wrap: anywhere;
+			}
+
+			.notice__action {
+				color: #fff;
+				font-weight: 600;
+				padding-right: 12px;
+			}
+		}
+	}
+
+	//client/components/site-selector/style.scss
+	.site-selector .site.is-highlighted {
+		background-color: var ( --color-sidebar-submenu-background );
+	}
+
+	.site-selector .site.is-highlighted .site__domain,
+	.site-selector .site.is-highlighted .site__title {
+		color: var( --color-sidebar-text );
+	}
+
+	// client/blocks/upsell-nudge/style.scss
+	&:not( .is-classic-bright ):not( .is-contrast ) {
+		.upsell-nudge.banner.card.is-compact {
+			background-color: #fff;
+			color: #000;
+		}
+
+		.upsell-nudge.banner.card.is-compact .banner__info .banner__title {
+			color: #000;
+		}
+	}
+
+	.upsell-nudge.banner.card.is-compact {
+		padding: 7px 12px 7px 4px;
+		line-height: 26px;
+		margin-top: 8px;
+	}
+
+	.upsell-nudge.banner.card.is-compact .banner__action {
+		top: 0;
+		margin-left: 0;
+	}
+
+	.upsell-nudge.banner.card.is-compact .dismissible-card__close-icon {
+		fill: var( --color-text );
+	}
+
+	// client/my-sites/current-site/style.scss
+	.current-site__switch-sites:hover .button.is-borderless:hover {
+		background-color: var( --color-sidebar-menu-hover-background );
+	}
+
+	.current-site__switch-sites .button.is-borderless {
+		color: var( --color-sidebar-text-alternative );
+		padding: 6px 8px 6px 36px;
+	}
+
+	.current-site__switch-sites .button.is-borderless .gridicon {
+		height: 20px;
+		width: 20px;
+		top: 9px;
+		left: 8px;
+	}
+
+	// client/blocks/site/style.scss
+	.site__content,
+	.all-sites .all-sites__content {
+		padding: 10px 0 10px 8px;
+	}
+
+	&.is-sidebar-collapsed {
+		.layout__primary .main,
+		.layout__secondary,
+		.layout__secondary .sidebar,
+		.layout__secondary .site-selector {
+			transition: none;
+		}
+
+		.dashicons-admin-collapse::before {
+			transform: rotate( 180deg );
+		}
+
+		// client/my-sites/current-site/style.scss
+		.current-site__switch-sites .button.is-borderless {
+			height: 34px;
+			padding: 0;
+		}
+
+		.site-selector .search .search__open-icon {
+			width: auto;
+		}
+
+		.current-site__switch-sites-label {
+			display: none;
+		}
+
+		.current-site .site .site__info {
+			display: none;
+		}
+
+		.sidebar .site__content {
+			padding: 10px 2px;
+
+			.count {
+				margin: 0;
+			}
+
+			.site__title::after {
+				display: none;
+			}
+		}
+
+		.site__home {
+			left: 2px;
+		}
+
+		.sidebar .site .site-icon {
+			margin-bottom: 4px;
+		}
+
+		// client/blocks/upsell-nudge/style.scss
+		.upsell-nudge.banner.card.is-compact {
+			margin: 8px 3px 7px;
+			padding: 2px 12px 2px 4px;
+		}
+
+		.current-site__notices > .banner {
+			&::before {
+				content: '\f534';
+				font-family: 'dashicons';
+				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
+				font-size: 20px;
+				line-height: 20px;
+				background-color: #a7aaad;
+				color: white;
+				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
+				border-radius: 50%;
+				margin: 3px 0 3px 1px;
+			}
+
+			&.is-dismissible .gridicon {
+				display: none;
+			}
+		}
+
+		.upsell-nudge.banner.card.is-compact .banner__content {
+			display: none;
+		}
+
+		.sidebar__inline-text {
+			display: none;
+		}
+
+		.sidebar__heading,
+		.sidebar__menu-link,
+		.sidebar__menu.is-togglable .sidebar__heading {
+			overflow: hidden;
+
+			&::after {
+				border-width: 4px;
+				margin-top: -4px;
+			}
+		}
+
+		.sidebar .notice {
+			.notice__content,
+			.notice__action {
+				display: none;
+			}
+		}
+
+		// Is toggled open
+		.sidebar__menu {
+			// Is toggled open and selected
+			&.sidebar__menu--selected .sidebar__heading {
+				background: var( --color-sidebar-menu-selected-background );
+				color: white;
+
+				.sidebar__menu-icon {
+					color: #fff;
+				}
+				img.sidebar__menu-icon {
+					opacity: 1;
+				}
+			}
+
+			&.is-togglable:not( .is-toggle-open ):hover .sidebar__heading::after {
+				border-width: 4px;
+				margin-top: -4px;
+			}
+		}
+	}
+
+	.collapse-sidebar__toggle {
+		.sidebar__menu-link {
+			cursor: pointer;
+			color: var( --color-sidebar-text-alternative );
+			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
+			font-size: rem( 13px );
+
+			&:hover,
+			&:focus {
+				background-color: transparent;
+			}
+		}
+
+		.sidebar__menu-icon {
+			margin-top: 1px;
+		}
+	}
+
+	.sidebar-unified__menu-loading {
+		position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+		bottom: 0;
+	}
+
+	.sidebar-unified__sparkline {
+		margin-right: 8px;
+	}
+
+	// Reader specific styles
+	// client/reader/sidebar/style.scss
+	&.is-section-reader {
+		.sidebar__menu .count {
+			background: transparent;
+			color: var( --color-sidebar-menu-text );
+			border-color: var( --color-sidebar-menu-text );
+		}
+
+		.sidebar__menu-link:hover .count {
+			color: var( --color-sidebar-submenu-hover-text );
+			border-color: var( --color-sidebar-submenu-hover-text );
+		}
+
+		.selected .sidebar__menu-link .count {
+			color: var( --color-sidebar-submenu-selected-text );
+			border-color: var( --color-sidebar-submenu-selected-text );
+		}
+
+		.sidebar__menu.sidebar__menu--selected {
+			.sidebar__heading {
+				background: var( --color-sidebar-menu-selected-background );
+				color: var( --color-sidebar-menu-selected-text );
+
+				&::after {
+					display: block;
+				}
+
+				.sidebar__menu-icon {
+					fill: var( --color-sidebar-menu-selected-text );
+				}
+			}
+		}
+	}
+}
+
+// Flyout menu (showing from >782px)
+@media screen and ( min-width: 783px ) {
+	.is-nav-unification {
+		// client/layout/style.scss
+		// layout/sidebar/style.scss
+		// TODO: For prototype only, this prevents the sidebar from being scrollable.
+		// In wp-admin there's custom JS to a) position the sidebar based on the scroll
+		// position and b) position the flyout menu based on available screen space.
+		&.is-sidebar-overflow {
+			.focus-content,
+			.focus-sidebar {
+				.sidebar,
+				.layout__secondary {
+					z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
+					overflow: initial;
+				}
+			}
+		}
+
+		.sidebar__menu.is-togglable:not( .is-toggle-open ).hovered {
+			// .hovered is handled in client/layout/sidebar/expandable.jsx. Needed for repositioning and hover intent.
+			position: relative;
+
+			.sidebar__heading {
+				background-color: var( --color-sidebar-menu-hover-background );
+				color: var( --color-sidebar-menu-hover-text );
+			}
+
+			// indicator arrow
+			.sidebar__heading::after {
+				display: block;
+				border-right-color: var( --color-sidebar-submenu-background );
+			}
+
+			// flyout content
+			.sidebar__expandable-content {
+				display: block;
+				top: 0;
+				bottom: auto;
+				position: absolute;
+				left: var( --sidebar-width-max );
+				width: 160px;
+				box-shadow: 0 3px 5px rgba( 0, 0, 0, 0.2 );
+
+				> ul {
+					border-left: 5px solid transparent;
+				}
+
+				.sidebar__menu-link:hover {
+					font-weight: normal;
+				}
+			}
+		}
+	}
+}
+
+@media screen and ( max-width: 782px ) {
+	// client/layout/sidebar/style.scss
+	.is-nav-unification {
+		.focus-content .layout__content {
+			padding: 71px 24px 24px;
+			transition: padding 0.15s ease-in-out;
+		}
+
+		.sidebar {
+			// client/my-sites/current-site/style.scss
+			.site__content {
+				padding: 18px 0 18px 12px;
+			}
+
+			.current-site__switch-sites .button.is-borderless {
+				padding: 11px 8px 11px 38px;
+			}
+
+			.site__home {
+				left: 12px;
+				top: 18px;
+			}
+
+			.current-site__switch-sites .button.is-borderless .gridicon {
+				top: 14px;
+			}
+
+			.sidebar__separator {
+				margin: 0 0 11px;
+			}
+
+			.sidebar__heading,
+			.sidebar__menu-link {
+				padding: 0 0 0 12px;
+				font-size: 1rem;
+			}
+
+			.sidebar__menu.is-togglable {
+				.sidebar__heading {
+					padding: 0 0 0 12px;
+					font-size: 1rem;
+				}
+			}
+
+			.sidebar__menu-icon {
+				margin-right: 10px;
+			}
+
+			.sidebar__expandable-title,
+			.sidebar__menu-link-text {
+				padding: 13px 0;
+				max-height: inherit;
+			}
+
+			.sidebar__expandable-content {
+				.sidebar__menu-link {
+					font-size: 1rem;
+					padding: 7px 16px 7px 42px;
+				}
+			}
+
+			.sidebar__menu.is-toggle-open .sidebar__heading::after {
+				display: none;
+			}
+
+			.collapse-sidebar__toggle {
+				display: none;
+			}
+		}
+	}
+}
+
+@media screen and ( max-width: 660px ) {
+	.is-nav-unification {
+		// client/layout/style.scss
+		.layout__content {
+			min-height: initial;
+		}
+
+		.focus-content .layout__content {
+			padding: 47px 0 0;
+		}
+
+		// client/layout/sidebar/style.scss
+		.sidebar {
+			position: absolute;
+		}
+	}
+}
+
+@supports ( mask-image: none ) or ( -webkit-mask-image: none ) {
+	.sidebar__menu-icon-img {
+		background-image: none !important;
+		background-color: currentColor;
+		mask-size: contain;
+		mask-repeat: no-repeat;
+		mask-position: center center;
+		-webkit-mask-size: contain;
+		-webkit-mask-repeat: no-repeat;
+		-webkit-mask-position: center center;
+	}
+}

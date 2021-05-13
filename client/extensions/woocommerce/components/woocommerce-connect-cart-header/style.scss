@@ -13,7 +13,7 @@
 		transform: none;
 	}
 
-	@include breakpoint( '<800px' ) {
+	@include breakpoint-deprecated( '<800px' ) {
 		position: fixed;
 		z-index: 999;
 		width: 100%;
@@ -58,7 +58,7 @@
 }
 
 .woocommerce-connect-cart-header__stepper-step-icon {
-	font-size: 16px;
+	font-size: $font-body;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -92,9 +92,9 @@
 .woocommerce-connect-cart-header__stepper-step .woocommerce-connect-cart-header__stepper-step-label {
 	color: var( --studio-gray-90 );
 	line-height: 24px;
-	font-size: 16px;
+	font-size: $font-body;
 
-	@include breakpoint( '<800px' ) {
+	@include breakpoint-deprecated( '<800px' ) {
 		display: none;
 		padding-top: 24px;
 	}

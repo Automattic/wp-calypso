@@ -1,5 +1,5 @@
 .site-settings {
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	fieldset {
 		clear: both;
@@ -40,8 +40,12 @@
 	legend,
 	label {
 		margin-bottom: 5px;
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: 600;
+	}
+
+	.components-toggle-control__label {
+		margin-bottom: 1px;
 	}
 
 	legend + label,
@@ -50,7 +54,8 @@
 	input[type='checkbox'] + label,
 	input[type='radio'] + label,
 	label input[type='checkbox'],
-	label input[type='radio'] {
+	label input[type='radio'],
+	.components-toggle-control__label {
 		font-weight: normal;
 	}
 
@@ -73,27 +78,22 @@
 		}
 	}
 
-	.form-toggle__switch {
-		margin-top: 3px;
-	}
-
 	p.form-setting-explanation {
 		display: block;
 		margin: 5px 0;
-		font-size: 13px;
+		font-size: $font-body-small;
 		font-style: italic;
 		font-weight: 400;
 		color: var( --color-text-subtle );
 
 		&.is-indented {
-			margin-left: 24px;
+			margin-left: 48px;
 		}
 	}
 
-	.form-toggle__wrapper + p.form-setting-explanation.is-indented,
 	.indented-form-field,
 	.indented-form-field + p.form-setting-explanation.is-indented {
-		margin-left: 36px;
+		margin-left: 48px;
 	}
 
 	p.settings-alert {
@@ -116,7 +116,7 @@
 	}
 
 	.site-settings__blogaddress-settings {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			display: flex;
 		}
 
@@ -125,7 +125,7 @@
 			margin-left: 0;
 			margin-top: 5px;
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				width: 45%;
 				margin-left: 16px;
 				margin-top: 0;
@@ -145,7 +145,7 @@
 
 	.verification-code-error {
 		color: var( --color-error );
-		font-weight: bold;
+		font-weight: 600;
 	}
 
 	.seo-settings__seo-form .counted-textarea {
@@ -173,7 +173,7 @@
 	fieldset.site-icon-setting {
 		padding-bottom: 16px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			flex: 0 0 122px;
 			order: 1;
 			margin-bottom: 0;
@@ -183,21 +183,21 @@
 	}
 
 	.site-icon-setting__heading {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			justify-content: space-between;
 			white-space: nowrap;
 		}
 	}
 
 	.site-icon-setting__icon {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			float: left;
 			margin-right: 8px;
 		}
 	}
 
 	.site-icon-setting__button {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: block;
 			margin-bottom: 8px;
 		}
@@ -212,14 +212,10 @@
 	.site.is-compact .site__content {
 		padding: 0;
 	}
-
-	.composing__publish-confirmation .form-toggle__label-content {
-		font-weight: 600;
-	}
 }
 
 .site-settings__child-settings {
-	margin: 16px 36px 0;
+	margin: 16px 48px 0;
 }
 
 .site-settings__card + .site-settings__card,
@@ -278,15 +274,6 @@
 .site-settings__traffic-settings,
 .seo-settings__site-verification,
 .seo-settings__help {
-	.form-toggle__label {
-		display: flex;
-		align-items: center;
-	}
-
-	.form-toggle__switch {
-		flex: 1 0 auto;
-	}
-
 	hr {
 		margin: 0 -24px 1.5em;
 	}

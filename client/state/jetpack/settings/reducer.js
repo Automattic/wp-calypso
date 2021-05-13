@@ -6,7 +6,7 @@ import { mapValues, merge } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import { jetpackSettingsSchema } from './schema';
 import { normalizeSettings } from './utils';
 import {
@@ -15,7 +15,7 @@ import {
 	JETPACK_MODULES_RECEIVE,
 	JETPACK_SETTINGS_SAVE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export const settingsReducer = keyedReducer(
 	'siteId',
@@ -39,14 +39,14 @@ export const settingsReducer = keyedReducer(
 			}
 			case JETPACK_MODULES_RECEIVE: {
 				const { modules } = action;
-				const modulesActivationState = mapValues( modules, module => module.active );
+				const modulesActivationState = mapValues( modules, ( module ) => module.active );
 				// The need for flattening module options into this moduleSettings is temporary.
 				// Once https://github.com/Automattic/jetpack/pull/6002 is released,
 				// the flattening will be done on the server side for the /jetpack/v4/settings/ endpoint
 				const moduleSettings = Object.keys( modules ).reduce( ( allTheSettings, slug ) => {
 					return {
 						...allTheSettings,
-						...mapValues( modules[ slug ].options, option => option.current_value ),
+						...mapValues( modules[ slug ].options, ( option ) => option.current_value ),
 					};
 				}, {} );
 				return {
@@ -73,7 +73,6 @@ export const settingsReducer = keyedReducer(
 		return state;
 	} )
 );
-settingsReducer.hasCustomPersistence = true;
 
 export default combineReducers( {
 	settings: settingsReducer,

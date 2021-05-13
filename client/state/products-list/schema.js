@@ -20,9 +20,6 @@ export const productsListSchema = {
 				product_slug: { type: 'string' },
 				description: { type: 'string' },
 				cost: { type: [ 'number', 'null' ] },
-				prices: {
-					type: 'object',
-				},
 				is_domain_registration: { type: 'boolean' },
 				cost_display: { type: 'string' },
 			},

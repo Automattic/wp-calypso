@@ -9,8 +9,8 @@ import { map } from 'lodash';
  * Internal dependencies
  */
 import SplitButton from '../';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
 import { Card } from '@automattic/components';
 
 const popoverItems = [

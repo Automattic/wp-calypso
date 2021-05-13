@@ -6,12 +6,8 @@ import { orderBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	combineReducers,
-	keyedReducer,
-	withSchemaValidation,
-	withoutPersistence,
-} from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import {
 	EMAIL_FORWARDING_REQUEST,
 	EMAIL_FORWARDING_REQUEST_SUCCESS,
@@ -25,10 +21,10 @@ import {
 	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST,
 	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { forwardsSchema, mxSchema, typeSchema } from './schema';
 
-export const requestingReducer = withoutPersistence( ( state = false, action ) => {
+export const requestingReducer = ( state = false, action ) => {
 	switch ( action.type ) {
 		case EMAIL_FORWARDING_REQUEST:
 			return true;
@@ -39,7 +35,7 @@ export const requestingReducer = withoutPersistence( ( state = false, action ) =
 	}
 
 	return state;
-} );
+};
 
 const handleCreateRequest = ( forwards, { domainName, mailbox, destination } ) => {
 	return orderBy(
@@ -60,7 +56,7 @@ const handleCreateRequest = ( forwards, { domainName, mailbox, destination } ) =
 };
 
 const handleCreateRequestSuccess = ( forwards, { mailbox, verified } ) => {
-	return ( forwards || [] ).map( forward => {
+	return ( forwards || [] ).map( ( forward ) => {
 		if ( forward.mailbox === mailbox ) {
 			return {
 				...forward,
@@ -74,16 +70,16 @@ const handleCreateRequestSuccess = ( forwards, { mailbox, verified } ) => {
 
 const handleCreateRequestFailure = ( forwards, { mailbox } ) => {
 	return ( forwards || [] ).filter(
-		forward => forward.mailbox !== mailbox || forward.temporary !== true
+		( forward ) => forward.mailbox !== mailbox || forward.temporary !== true
 	);
 };
 
 const handleRemoveRequestSuccess = ( forwards, { mailbox } ) => {
-	return ( forwards || [] ).filter( forward => mailbox !== forward.mailbox );
+	return ( forwards || [] ).filter( ( forward ) => mailbox !== forward.mailbox );
 };
 
-const changeMailBoxTemporary = temporary => ( forwards, { mailbox } ) => {
-	return ( forwards || [] ).map( forward => {
+const changeMailBoxTemporary = ( temporary ) => ( forwards, { mailbox } ) => {
+	return ( forwards || [] ).map( ( forward ) => {
 		if ( mailbox === forward.mailbox ) {
 			return {
 				...forward,
@@ -163,7 +159,7 @@ export const forwardsReducer = withSchemaValidation( forwardsSchema, ( state = n
 	return state;
 } );
 
-export const requestErrorReducer = withoutPersistence( ( state = false, action ) => {
+export const requestErrorReducer = ( state = false, action ) => {
 	switch ( action.type ) {
 		case EMAIL_FORWARDING_REQUEST:
 			return false;
@@ -178,9 +174,9 @@ export const requestErrorReducer = withoutPersistence( ( state = false, action )
 	}
 
 	return state;
-} );
+};
 
-export default keyedReducer(
+const combinedReducer = keyedReducer(
 	'domainName',
 	combineReducers( {
 		forwards: forwardsReducer,
@@ -190,3 +186,5 @@ export default keyedReducer(
 		type: typeReducer,
 	} )
 );
+
+export default withStorageKey( 'emailForwarding', combinedReducer );

@@ -6,9 +6,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { items as itemsSchemas } from './schema';
-import { STATS_RECENT_POST_VIEWS_RECEIVE } from 'state/action-types';
+import { STATS_RECENT_POST_VIEWS_RECEIVE } from 'calypso/state/action-types';
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -22,7 +22,7 @@ export const items = withSchemaValidation( itemsSchemas, ( state = {}, action ) 
 	switch ( action.type ) {
 		case STATS_RECENT_POST_VIEWS_RECEIVE: {
 			const viewsForState = {};
-			action.posts.forEach( post => {
+			action.posts.forEach( ( post ) => {
 				viewsForState[ post.ID ] = { views: post.views };
 			} );
 

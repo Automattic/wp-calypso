@@ -1,25 +1,50 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
-import { identity, omit } from 'lodash';
+import React, { useState, useEffect } from 'react';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import QueryShortcode from 'components/data/query-shortcode';
-import { getShortcode } from 'state/shortcodes/selectors';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Local dependencies
  */
 import ShortcodeFrame from './frame';
 
-const Shortcode = props => {
-	const { siteId, className, children, filterRenderResult, shortcode } = props;
+function useRenderedShortcode( siteId, shortcode ) {
+	const [ requestState, setRequestState ] = useState( {} );
+
+	useEffect( () => {
+		// set the result to `null` and remember what `siteId` and `shortcode` are we requesting
+		setRequestState( { siteId, shortcode, result: null } );
+		wpcom
+			.undocumented()
+			.site( siteId )
+			.shortcodes( { shortcode } )
+			.then( ( result ) =>
+				setRequestState( ( prevState ) => {
+					// if the response doesn't match the request, ignore it (race condition)
+					if ( prevState.siteId !== siteId || prevState.shortcode !== shortcode ) {
+						return prevState;
+					}
+					// store the matching response into `result`
+					return { siteId, shortcode, result };
+				} )
+			);
+	}, [ siteId, shortcode ] );
+
+	return requestState.result;
+}
+
+const Shortcode = ( props ) => {
+	const { siteId, className, children, filterRenderResult = ( result ) => result } = props;
+	const shortcode = useRenderedShortcode( siteId, children );
+
 	const classes = classNames( 'shortcode', className );
 	let filteredShortcode = {};
 	if ( shortcode ) {
@@ -27,14 +52,11 @@ const Shortcode = props => {
 		filteredShortcode = filterRenderResult( omit( shortcode, 'shortcode' ) );
 	}
 	return (
-		<Fragment>
-			<QueryShortcode siteId={ siteId } shortcode={ children } />
-			<ShortcodeFrame
-				{ ...omit( props, 'siteId', 'filterRenderResult', 'shortcode', 'dispatch' ) }
-				{ ...filteredShortcode }
-				className={ classes }
-			/>
-		</Fragment>
+		<ShortcodeFrame
+			{ ...omit( props, 'siteId', 'filterRenderResult', 'shortcode', 'dispatch' ) }
+			{ ...filteredShortcode }
+			className={ classes }
+		/>
 	);
 };
 
@@ -43,18 +65,11 @@ Shortcode.propTypes = {
 	children: PropTypes.string.isRequired,
 	filterRenderResult: PropTypes.func.isRequired,
 	className: PropTypes.string,
-	shortcode: PropTypes.object,
 	allowSameOrigin: PropTypes.bool,
 };
 
 Shortcode.defaultProps = {
-	filterRenderResult: identity,
 	allowSameOrigin: false,
 };
 
-export default connect(
-	( state, { siteId, children } ) => ( {
-		shortcode: getShortcode( state, siteId, children ),
-	} ),
-	null
-)( Shortcode );
+export default Shortcode;

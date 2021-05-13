@@ -9,16 +9,16 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import isSiteEligibleForFullSiteEditing from 'state/selectors/is-site-eligible-for-full-site-editing';
+import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import isSiteEligibleForFullSiteEditing from 'calypso/state/selectors/is-site-eligible-for-full-site-editing';
 
-const ruleWhiteList = [
+const allowedRules = [
 	'unverifiedDomainsCanManage',
 	'unverifiedDomainsCannotManage',
 	'expiredDomainsCanManage',
@@ -53,7 +53,7 @@ const CurrentSiteDomainWarnings = ( {
 				isCompact
 				selectedSite={ selectedSite }
 				domains={ domains }
-				ruleWhiteList={ ruleWhiteList }
+				allowedRules={ allowedRules }
 				isSiteEligibleForFSE={ isSiteEligibleForFSE }
 				siteIsUnlaunched={ siteIsUnlaunched }
 			/>
@@ -68,7 +68,7 @@ CurrentSiteDomainWarnings.propTypes = {
 	selectedSite: PropTypes.object,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {

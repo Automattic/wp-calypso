@@ -4,7 +4,13 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/happychat/init';
+
+/**
  * Returns if precancellation chat is available.
+ *
  * @param   {object}  state  Global state tree
  * @returns {boolean}        true, when precancellation is available
  */

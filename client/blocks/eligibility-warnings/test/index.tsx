@@ -6,7 +6,6 @@
  * External dependencies
  */
 import page from 'page';
-import { noop } from 'lodash';
 import React, { ReactChild } from 'react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
@@ -23,7 +22,7 @@ jest.mock( 'page', () => ( {
 import EligibilityWarnings from '..';
 
 function renderWithStore( element: ReactChild, initialState: object ) {
-	const store = createStore( state => state, initialState );
+	const store = createStore( ( state ) => state, initialState );
 	return {
 		...render( <Provider store={ store }>{ element }</Provider> ),
 		store,
@@ -31,6 +30,9 @@ function renderWithStore( element: ReactChild, initialState: object ) {
 }
 
 global.document = {};
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 function createState( {
 	holds = [],
@@ -50,6 +52,9 @@ function createState( {
 		},
 		sites: { items: { [ siteId ]: { URL: siteUrl } } },
 		ui: { selectedSiteId: siteId },
+		siteSettings: {
+			saveRequests: {},
+		},
 	};
 }
 
@@ -161,6 +166,7 @@ describe( '<EligibilityWarnings>', () => {
 
 		const upgradeAndContinue = getByText( 'Upgrade and continue' );
 		expect( upgradeAndContinue ).toBeVisible();
+		expect( upgradeAndContinue ).not.toBeDisabled();
 
 		fireEvent.click( upgradeAndContinue );
 

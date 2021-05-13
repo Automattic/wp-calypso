@@ -1,6 +1,61 @@
+@import '~@automattic/onboarding/styles/mixins';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+
 body.is-section-signup {
 	// Use WordPress.com’s brand color for the signup background
 	background: var( --color-wordpress-com );
+
+	&.is-white-signup {
+		background: #fdfdfd;
+
+		.layout:not( .dops ) .wpcom-site__logo {
+			fill: var( --color-neutral-10 );
+			opacity: 1;
+
+			path {
+				fill: var( --color-neutral-10 );
+				opacity: 1;
+			}
+		}
+	}
+
+	&.is-p2-signup {
+		background: var( --p2-color-text-white );
+		color: var( --p2-color-text );
+
+		&.has-loading-screen-signup {
+			background: var( --p2-color-text );
+			color: var( --p2-color-text-white );
+			&::before {
+				content: '';
+				position: absolute;
+				display: block;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient( 126.81deg, #001424 7.92%, #02223a 89.27% );
+				animation: p2-fade 5s ease-in-out infinite alternate;
+			}
+		}
+
+		.layout__content {
+			padding: 0;
+		}
+
+		.layout:not( .dops ) .step-wrapper {
+			margin: 0 0 24px;
+		}
+
+		@include breakpoint-deprecated( '<480px' ) {
+			.locale-suggestions {
+				margin-top: 0;
+				.notice {
+					border-radius: 0;
+				}
+			}
+		}
+	}
 
 	// Adjust the padding as we no longer
 	// show the masterbar.
@@ -34,7 +89,6 @@ body.is-section-signup {
 // avoid stepping on the toes of our oauth users, like Crowdsignal.
 body.is-section-signup .layout:not( .dops ),
 body.is-section-signup .layout.gravatar {
-
 	// Update the logo that appears when loading Calypso
 	// to match the homepage, using primary-dark with opacity.
 	.wpcom-site__logo {
@@ -49,8 +103,8 @@ body.is-section-signup .layout.gravatar {
 			background: var( --color-surface );
 			padding-bottom: 16px;
 			margin-bottom: 24px;
-			border-radius: 6px;
-			@include elevation ( 3dp );
+			border-radius: 6px; /* stylelint-disable-line */
+			@include elevation( 3dp );
 		}
 
 		.empty-content__title {
@@ -72,19 +126,19 @@ body.is-section-signup .layout.gravatar {
 		position: relative;
 	}
 
-	.suggestions__wrapper {
+	.suggestions {
 		position: absolute;
 		top: 42px;
 		left: 0;
 		right: 0;
 		max-height: 350px;
 		overflow: auto;
-		@include elevation ( 2dp );
+		@include elevation( 2dp );
 	}
 
-	@include breakpoint( '<660px' ) {
-		button {
-			font-size: 16px;
+	@include breakpoint-deprecated( '<660px' ) {
+		button:not( .is-compact ) {
+			font-size: $font-body;
 			padding-top: 12px;
 			padding-bottom: 14px;
 		}
@@ -118,7 +172,7 @@ body.is-section-signup .layout:not( .dops ) .step-wrapper {
 
 	// On small screens remove the margin from the
 	// bottom of the cards.
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		.card {
 			margin-bottom: 0;
 		}
@@ -137,8 +191,8 @@ body.is-section-signup .layout.gravatar .formatted-header {
 	}
 
 	.formatted-header__subtitle {
-		margin: 0;
-		font-size: 15px;
+		margin: 8px 0 0;
+		font-size: $font-body;
 		color: var( --color-text-inverted );
 	}
 
@@ -176,7 +230,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		.text-control__label,
 		.components-base-control__label {
 			color: var( --color-neutral-50 );
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			font-weight: normal;
 		}
 
@@ -236,7 +290,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		.formatted-header__subtitle {
 			color: var( --color-primary-10 );
 			margin-top: 1em;
-			font-size: 16px;
+			font-size: $font-body;
 			line-height: 24px;
 			font-weight: 400;
 		}
@@ -250,7 +304,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		text-align: center;
 		text-decoration: underline;
 		color: var( --studio-gray-60 );
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.signup-form__terms-of-service-link {
@@ -268,7 +322,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		padding-bottom: 0;
 		margin-top: 16px;
 		p {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			color: var( --studio-gray-60 );
 		}
 
@@ -281,7 +335,6 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		}
 	}
 
-
 	.logged-out-form__footer {
 		text-align: center;
 		.button.is-primary {
@@ -292,5 +345,490 @@ body.is-section-signup .layout.gravatar .formatted-header {
 			margin-left: auto;
 			height: 48px;
 		}
+	}
+}
+
+// Background color and plans grid overrides for new flow
+body.is-section-signup.is-new-launch-flow {
+	background: var( --color-white );
+
+	.signup-header {
+		display: none;
+	}
+
+	.signup-processing-screen__content {
+		color: var( --color-text );
+	}
+
+	.signup-processing-screen__floaties .gridicon {
+		fill: var( --color-text );
+	}
+
+	.button.is-borderless.navigation-link {
+		color: var( --color-text );
+
+		svg {
+			fill: var( --color-text );
+		}
+	}
+
+	.flow-progress-indicator.flow-progress-indicator__new-launch {
+		color: var( --color-text );
+	}
+
+	.plan-features__header {
+		border-color: transparent;
+	}
+
+	tr:last-child .plan-features__table-item,
+	tr:first-child .plan-features__table-item {
+		border-radius: 0;
+	}
+
+	.plan-features__header,
+	.plan-features__table th,
+	.plan-features__table td {
+		background: rgba( 248, 248, 248, 0.7 );
+	}
+
+	.plan-price__integer {
+		font-weight: 600;
+	}
+
+	.plan-price__integer {
+		font-weight: 600;
+	}
+
+	.plan-features__header-title {
+		font-weight: 600;
+	}
+
+	.formatted-header__title {
+		@include onboarding-heading-text-mobile;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			@include onboarding-heading-text;
+		}
+	}
+
+	.formatted-header__subtitle {
+		margin-bottom: 16px;
+	}
+}
+
+// Text and heading color override for new flow
+body.is-section-signup.is-new-launch-flow .layout:not( .dops ):not( .is-wccom-oauth-flow ) {
+	&.gravatar .formatted-header,
+	.formatted-header {
+		.formatted-header__title {
+			color: var( --color-text );
+		}
+
+		.formatted-header__subtitle {
+			color: var( --color-text );
+		}
+
+		a {
+			color: var( --color-link );
+
+			&:hover {
+				color: var( --color-link-dark );
+			}
+		}
+	}
+
+	.empty-content .empty-content__title {
+		color: var( --color-text );
+	}
+}
+
+/**
+ * Common styles for reskinSignupFlow a/b test
+ */
+body.is-section-signup.is-white-signup .signup.is-onboarding {
+	$gray-100: #101517;
+	$gray-60: #50575e;
+	$gray-50: #646970;
+	$breakpoint-mobile: 660px;
+
+	--color-accent: #117ac9;
+	--color-accent-60: #0e64a5;
+
+	.signup-header {
+		.wordpress-logo {
+			position: absolute;
+			left: 24px;
+			top: 20px;
+			fill: var( --color-text );
+			transform-origin: 0 0;
+		}
+		.signup-header__right {
+			top: 22px;
+			right: 24px;
+
+			.flow-progress-indicator {
+				font-weight: 500; /* stylelint-disable-line */
+				font-size: 0.875rem;
+				color: var( --studio-gray-30 );
+			}
+		}
+	}
+
+	.navigation-link.button.back {
+		svg {
+			display: none;
+		}
+
+		color: $gray-50;
+		top: 23px;
+		left: 72px;
+		text-decoration: underline;
+		font-weight: normal;
+	}
+
+	.formatted-header {
+		margin-top: 48px;
+		margin-bottom: 40px;
+
+		.formatted-header__title {
+			@include onboarding-font-recoleta;
+			color: $gray-100;
+			letter-spacing: 0.2px;
+			font-size: 2.25rem; /* stylelint-disable-line */
+			text-align: center;
+			padding: 0 20px;
+
+			@include break-xlarge {
+				font-size: 2.6rem; /* stylelint-disable-line */
+				padding: 0;
+			}
+		}
+
+		.formatted-header__subtitle {
+			color: $gray-60;
+			font-size: 1rem;
+			text-align: center;
+			padding: 0 20px;
+
+			@include break-xlarge {
+				padding: 0;
+			}
+		}
+	}
+
+	.signup__step.is-user {
+		.formatted-header {
+			.formatted-header__title {
+				text-align: left;
+
+				@include break-small {
+					max-width: inherit;
+					text-align: center;
+					font-size: 3.25rem; /* stylelint-disable-line */
+					line-height: 3.5rem;
+				}
+			}
+
+			.formatted-header__subtitle {
+				text-align: left;
+				color: #646970;
+
+				a {
+					color: var( --studio-gray-90 );
+					text-decoration: underline;
+					cursor: pointer;
+				}
+
+				@include break-small {
+					max-width: inherit;
+					text-align: center;
+					font-size: 1.125rem; /* stylelint-disable-line */
+					line-height: 1.625rem;
+					letter-spacing: 0.24px;
+				}
+			}
+		}
+
+		button.signup-form__submit[disabled],
+		button.signup-form__submit:disabled,
+		button.signup-form__submit.disabled {
+			background-color: var( --studio-gray-20 );
+			color: var( --color-surface );
+		}
+
+		button.signup-form__submit {
+			border-radius: 4px; /* stylelint-disable-line */
+			max-width: 408px;
+			height: 44px;
+			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+			font-weight: 500; /* stylelint-disable-line */
+			letter-spacing: 0.32px;
+			line-height: 17px;
+		}
+
+		.signup-form__social-buttons {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			justify-content: center;
+		}
+
+		.social-buttons__button {
+			text-align: left;
+			padding-left: 0;
+			padding-bottom: 0;
+			border: 0;
+			box-shadow: none;
+
+			@include break-small {
+				text-align: center;
+				margin-bottom: 5px;
+			}
+
+			@include break-medium {
+				text-align: left;
+			}
+
+			> svg {
+				border: 1px solid #d5d5d7;
+				padding: 12px;
+				border-radius: 24px; /* stylelint-disable-line scales/radii */
+			}
+		}
+
+		.signup-form__terms-of-service-link {
+			text-align: left;
+			font-size: 0.875rem;
+			margin-bottom: 32px;
+		}
+
+		.form-password-input .form-password-input__toggle-visibility {
+			right: 17px;
+		}
+
+		.signup-form.is-horizontal {
+			$breakpoint-mobile: 660px;
+			$separator-style: 1px solid #eaeaeb;
+			display: flex;
+			flex-direction: column;
+			flex-wrap: wrap;
+			margin-top: 40px;
+			justify-content: center;
+
+			@include break-mobile {
+				margin-top: 48px;
+			}
+
+			@include break-small {
+				flex-direction: row;
+			}
+
+			.logged-out-form,
+			.signup-form__social {
+				background-color: #fdfdfd;
+				width: unset;
+				max-width: 408px;
+				padding: 0 16px;
+				box-shadow: none;
+				margin: 0;
+
+				@include break-mobile {
+					max-width: 600px;
+				}
+
+				@include break-small {
+					max-width: 408px;
+				}
+
+				@include break-medium {
+					max-width: 350px;
+				}
+
+				@include break-large {
+					max-width: 408px;
+				}
+			}
+
+			.logged-out-form {
+				width: 100%;
+				margin: 0;
+			}
+
+			> .logged-out-form__links {
+				max-width: 100%;
+				margin-top: 30px;
+
+				@media screen and ( max-width: $breakpoint-mobile ) {
+					margin-top: 0;
+
+					&::before, &::after {
+						content: '';
+						display: block;
+						margin: 40px auto 24px;
+						border: 0;
+						padding: 0;
+						border-top: $separator-style;
+						width: 90px;
+					}
+				}
+			}
+
+			.logged-out-form__footer {
+				margin-top: 0;
+			}
+
+			.signup-form__recaptcha-tos {
+				padding: 0 16px;
+				font-size: 0.75rem;
+
+				.logged-out-form__links {
+					margin: 0;
+					padding: 0;
+					text-align: left;
+
+					&::before {
+						content: none;
+					}
+
+					@include break-small {
+						text-align: center;
+					}
+
+					@include break-medium {
+						text-align: left;
+					}
+				}
+			}
+
+			.signup-form__input.form-text-input {
+				margin-bottom: 16px;
+				height: 44px;
+				max-width: 408px;
+				border-radius: 4px; /* stylelint-disable-line */
+				border: 1px solid #d5d5d7;
+			}
+
+			.form-password-input {
+				max-width: 408px;
+			}
+
+			.signup-form__social p {
+				text-align: left;
+			}
+
+			.signup-form__social > p {
+				display: none;
+			}
+
+			.signup-form__separator {
+				position: relative;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: calc( 100% - 32px );
+				margin: 20px auto;
+
+				@include break-medium {
+					width: 60px;
+					margin: 0;
+				}
+
+				&::before {
+					position: absolute;
+					content: '';
+					border-left: 0;
+					border-top: $separator-style;
+					top: 50%;
+					left: 0;
+					height: 0;
+					width: 100%;
+
+					@include break-medium {
+						border-left: $separator-style;
+						border-top: 0;
+						top: 0;
+						left: 50%;
+						height: 100%;
+					}
+				}
+			}
+
+			.signup-form__separator-text {
+				background: var( --studio-white );
+				text-transform: uppercase;
+				text-align: center;
+				padding: 24px 0;
+				font-size: 0.75rem;
+				z-index: 1;
+
+				@media screen and ( max-width: $breakpoint-mobile ) {
+					padding: 0 24px;
+				}
+			}
+
+			.social-buttons__service-name {
+				margin-left: 12px;
+			}
+
+			p.signup-form__social-buttons-tos {
+				font-size: 0.75rem;
+				text-align: left;
+				padding-left: 0;
+				margin-top: 19px;
+
+				@include break-small {
+					text-align: center;
+				}
+
+				@include break-medium {
+					text-align: left;
+				}
+			}
+		}
+	}
+
+	.signup__step.is-domains,
+	.signup__step.is-plans {
+		.formatted-header {
+			.formatted-header__title {
+				font-size: 2.25rem; /* stylelint-disable-line */
+				line-height: 2.5rem;
+
+				@include break-mobile {
+					font-size: 2.75rem; /* stylelint-disable-line */
+					line-height: 3rem;
+				}
+			}
+		}
+	}
+
+	.signup__step.is-domains {
+		.is-wide-layout {
+			max-width: 1200px;
+		}
+
+		.formatted-header__subtitle {
+			text-align: left;
+		}
+
+		.formatted-header__title {
+			text-align: left;
+		}
+	}
+
+	.signup__step.is-plans {
+		.formatted-header__title {
+			font-weight: 500; /* stylelint-disable-line */
+		}
+
+		.formatted-header__subtitle button.is-borderless {
+			font-weight: 500; /* stylelint-disable-line */
+			color: var( --studio-gray-90 );
+		}
+	}
+
+	button.is-primary {
+		box-shadow: none;
+		border: 0;
 	}
 }

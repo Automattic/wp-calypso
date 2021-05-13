@@ -5,14 +5,14 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { size, map, first } from 'lodash';
+import { size, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import getUserDevices from 'state/selectors/get-user-devices';
+import getUserDevices from 'calypso/state/selectors/get-user-devices';
 import StreamHeader from './stream-header';
-import FormSelect from 'components/forms/form-select';
+import FormSelect from 'calypso/components/forms/form-select';
 
 class NotificationSettingsFormDeviceSelector extends PureComponent {
 	static propTypes = {
@@ -24,7 +24,7 @@ class NotificationSettingsFormDeviceSelector extends PureComponent {
 	render() {
 		const { devices } = this.props;
 		if ( size( devices ) === 1 ) {
-			return <StreamHeader title={ first( devices ).name } />;
+			return <StreamHeader title={ devices[ 0 ].name } />;
 		}
 
 		return (
@@ -43,6 +43,6 @@ class NotificationSettingsFormDeviceSelector extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	devices: getUserDevices( state ),
 } ) )( NotificationSettingsFormDeviceSelector );

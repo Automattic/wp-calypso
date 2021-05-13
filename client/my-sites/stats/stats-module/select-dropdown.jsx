@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SelectDropdown from 'components/select-dropdown';
+import SelectDropdown from 'calypso/components/select-dropdown';
 
 const StatsModuleSelectDropdown = ( { initialSelected, options, onSelect = () => {} } ) => {
 	return (

@@ -5,11 +5,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
 	has,
-	noop,
 	pick,
 	pickBy,
 	without,
-	negate,
 	isEmpty,
 	take,
 	filter,
@@ -25,6 +23,8 @@ import i18n from 'i18n-calypso';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 function SuggestionsButtonAll( props ) {
 	function click() {
@@ -59,7 +59,7 @@ class KeyedSuggestions extends React.Component {
 		showAll: '',
 	};
 
-	setInitialState = input => {
+	setInitialState = ( input ) => {
 		const suggestions = this.narrowDownAndSort( input, this.state.showAll );
 		const taxonomySuggestionsArray = this.createTaxonomySuggestionsArray( suggestions );
 		this.setState( {
@@ -84,11 +84,11 @@ class KeyedSuggestions extends React.Component {
 		return this.state.taxonomySuggestionsArray.length;
 	};
 
-	getSuggestionForPosition = position => {
+	getSuggestionForPosition = ( position ) => {
 		return this.state.taxonomySuggestionsArray[ position ];
 	};
 
-	getPositionForSuggestion = suggestion => {
+	getPositionForSuggestion = ( suggestion ) => {
 		return this.state.taxonomySuggestionsArray.indexOf( suggestion );
 	};
 
@@ -108,6 +108,8 @@ class KeyedSuggestions extends React.Component {
 		} );
 	};
 
+	sanitizeInput = ( input ) => input.replace( /[-/\\^$*+?.()|[\]{}]/g, '' );
+
 	/**
 	 * Provides keybord support for suggestings component by managing items highlith position
 	 * and calling suggestion callback when user hits Enter
@@ -115,7 +117,7 @@ class KeyedSuggestions extends React.Component {
 	 * @param  {object} event  Keybord event
 	 * @returns {boolean}      true indicates suggestion was chosen and send to parent using suggest prop callback
 	 */
-	handleKeyEvent = event => {
+	handleKeyEvent = ( event ) => {
 		switch ( event.key ) {
 			case 'ArrowDown':
 				this.incPosition();
@@ -135,14 +137,14 @@ class KeyedSuggestions extends React.Component {
 		return false;
 	};
 
-	onMouseDown = event => {
+	onMouseDown = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 		const suggestion = event.currentTarget.textContent.split( ' ' )[ 0 ];
 		this.props.suggest( suggestion );
 	};
 
-	onMouseOver = event => {
+	onMouseOver = ( event ) => {
 		const suggestion = event.currentTarget.textContent.split( ' ' )[ 0 ];
 		this.setState( {
 			suggestionPosition: this.getPositionForSuggestion( suggestion ),
@@ -150,8 +152,8 @@ class KeyedSuggestions extends React.Component {
 		} );
 	};
 
-	removeEmptySuggestions = suggestions => {
-		return pickBy( suggestions, negate( isEmpty ) );
+	removeEmptySuggestions = ( suggestions ) => {
+		return pickBy( suggestions, ( suggestion ) => ! isEmpty( suggestion ) );
 	};
 
 	/**
@@ -221,9 +223,10 @@ class KeyedSuggestions extends React.Component {
 			}
 
 			// Try a full match first and try substring matches
-			let multiRegex = filterTerm;
-			for ( let i = filterTerm.length; i > 1; i-- ) {
-				multiRegex += '|' + filterTerm.replace( new RegExp( '(.{' + i + '})', 'g' ), '$1.*' );
+			const cleanFilterTerm = this.sanitizeInput( filterTerm );
+			let multiRegex = cleanFilterTerm;
+			for ( let i = cleanFilterTerm.length; i > 1; i-- ) {
+				multiRegex += '|' + cleanFilterTerm.replace( new RegExp( '(.{' + i + '})', 'g' ), '$1.*' );
 			}
 			const regex = new RegExp( multiRegex, 'iu' );
 
@@ -232,16 +235,16 @@ class KeyedSuggestions extends React.Component {
 				const ourTerms = terms[ key ];
 				const keys = Object.keys( ourTerms );
 				// Split to terms matching an non matching to the input.
-				const [ matching, notMatching ] = partition( keys, term => {
+				const [ matching, notMatching ] = partition( keys, ( term ) => {
 					return (
 						ourTerms[ term ].name.match( regex ) || ourTerms[ term ].description.match( regex )
 					);
 				} );
 				// Sort matching so that the best hit is first.
-				const sortedMatching = sortBy( matching, match => {
+				const sortedMatching = sortBy( matching, ( match ) => {
 					const term = ourTerms[ match ];
 					const termString = term.name + ' ' + term.description;
-					const hitIndex = termString.toLowerCase().indexOf( filterTerm.toLowerCase() );
+					const hitIndex = termString.toLowerCase().indexOf( cleanFilterTerm.toLowerCase() );
 					return hitIndex >= 0 && hitIndex;
 				} );
 				// Concatenate mathing and non matchin - this is full set of filters just reordered.
@@ -260,21 +263,21 @@ class KeyedSuggestions extends React.Component {
 		return this.removeEmptySuggestions( filtered );
 	};
 
-	createTaxonomySuggestionsArray = suggestions => {
+	createTaxonomySuggestionsArray = ( suggestions ) => {
 		const taxonomySuggestionsArray = [];
 
 		for ( const key in suggestions ) {
 			if ( ! has( suggestions, key ) ) {
 				continue;
 			}
-			taxonomySuggestionsArray.push( ...suggestions[ key ].map( value => key + ':' + value ) );
+			taxonomySuggestionsArray.push( ...suggestions[ key ].map( ( value ) => key + ':' + value ) );
 		}
 
 		return taxonomySuggestionsArray;
 	};
 
 	createTextWithHighlight = ( text, highlightedText ) => {
-		const re = new RegExp( '(' + highlightedText + ')', 'gi' );
+		const re = new RegExp( '(' + this.sanitizeInput( highlightedText ) + ')', 'gi' );
 		const parts = text.split( re );
 		const token = parts.map( ( part, i ) => {
 			const key = text + i;
@@ -296,7 +299,7 @@ class KeyedSuggestions extends React.Component {
 		return token;
 	};
 
-	onShowAllClick = category => {
+	onShowAllClick = ( category ) => {
 		const suggestions = this.narrowDownAndSort( this.props.input, category );
 		this.setState( {
 			showAll: category,
@@ -305,7 +308,7 @@ class KeyedSuggestions extends React.Component {
 		} );
 	};
 
-	createSuggestions = suggestions => {
+	createSuggestions = ( suggestions ) => {
 		let noOfSuggestions = 0;
 		const rendered = [];
 

@@ -1,14 +1,15 @@
 /**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	POST_COUNTS_RECEIVE,
 	POST_COUNTS_REQUEST,
 	POST_COUNTS_REQUEST_SUCCESS,
 	POST_COUNTS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/posts/init';
 
 /**
  * Returns an action object signalling that post counts have been received for
@@ -37,7 +38,7 @@ export function receivePostCounts( siteId, postType, counts ) {
  * @returns {Function}          Action thunk
  */
 export function requestPostCounts( siteId, postType ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_COUNTS_REQUEST,
 			postType,
@@ -50,7 +51,7 @@ export function requestPostCounts( siteId, postType ) {
 			.postCounts( {
 				type: postType,
 			} )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( receivePostCounts( siteId, postType, data.counts ) );
 				dispatch( {
 					type: POST_COUNTS_REQUEST_SUCCESS,
@@ -58,7 +59,7 @@ export function requestPostCounts( siteId, postType ) {
 					postType,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: POST_COUNTS_REQUEST_FAILURE,
 					siteId,

@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/plugins/init';
 
 /**
  * Returns percentage of plugin zip uploaded to a site.

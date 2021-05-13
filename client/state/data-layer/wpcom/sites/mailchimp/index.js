@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -12,15 +6,17 @@ import {
 	MAILCHIMP_LISTS_RECEIVE,
 	MAILCHIMP_SETTINGS_LIST,
 	MAILCHIMP_SETTINGS_RECEIVE,
-} from 'state/action-types';
-import { mergeHandlers } from 'state/action-watchers/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+} from 'calypso/state/action-types';
+import { mergeHandlers } from 'calypso/state/action-watchers/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 export const handleMailchimpListsList = dispatchRequest( {
-	fetch: action =>
+	fetch: ( action ) =>
 		http(
 			{
 				method: 'GET',
@@ -28,7 +24,7 @@ export const handleMailchimpListsList = dispatchRequest( {
 			},
 			action
 		),
-	fromApi: function( endpointResponse ) {
+	fromApi: function ( endpointResponse ) {
 		return endpointResponse;
 	},
 	onSuccess: ( { siteId }, lists ) => ( {
@@ -40,7 +36,7 @@ export const handleMailchimpListsList = dispatchRequest( {
 } );
 
 export const handleMailchimpSettingsList = dispatchRequest( {
-	fetch: action =>
+	fetch: ( action ) =>
 		http(
 			{
 				method: 'GET',
@@ -48,7 +44,7 @@ export const handleMailchimpSettingsList = dispatchRequest( {
 			},
 			action
 		),
-	fromApi: function( endpointResponse ) {
+	fromApi: function ( endpointResponse ) {
 		return endpointResponse;
 	},
 	onSuccess: ( { siteId }, settings ) => ( {

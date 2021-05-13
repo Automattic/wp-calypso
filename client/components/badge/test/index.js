@@ -36,6 +36,11 @@ describe( 'Badge', () => {
 		assert.lengthOf( badge.find( '.badge.badge--info-blue' ), 1 );
 	} );
 
+	test( 'should have proper type class (error)', () => {
+		const badge = shallow( <Badge type="error" /> );
+		assert.lengthOf( badge.find( '.badge.badge--error' ), 1 );
+	} );
+
 	test( 'should have proper type class (default)', () => {
 		const badge = shallow( <Badge /> );
 		assert.lengthOf( badge.find( '.badge.badge--warning' ), 1 );

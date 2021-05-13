@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import { identity, map } from 'lodash';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -19,13 +19,9 @@ export class ReaderSidebarTagsList extends Component {
 		translate: PropTypes.func,
 	};
 
-	static defaultProps = {
-		translate: identity,
-	};
-
 	renderItems() {
 		const { path, currentTag, tags } = this.props;
-		return map( tags, tag => (
+		return map( tags, ( tag ) => (
 			<ReaderSidebarTagsListItem
 				key={ tag.id }
 				tag={ tag }
@@ -36,7 +32,11 @@ export class ReaderSidebarTagsList extends Component {
 	}
 
 	render() {
-		return <ul className="reader-sidebar-tags__list">{ this.renderItems() }</ul>;
+		return (
+			<li className="reader-sidebar-tags__list">
+				<ul>{ this.renderItems() }</ul>
+			</li>
+		);
 	}
 }
 

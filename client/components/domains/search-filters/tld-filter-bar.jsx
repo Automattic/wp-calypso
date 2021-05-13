@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import React, { Component } from 'react';
 import { includes, isEqual, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -13,9 +13,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import Popover from 'components/popover';
-import TokenField from 'components/token-field';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import Popover from 'calypso/components/popover';
+import TokenField from 'calypso/components/token-field';
 import { recordTldFilterSelected } from './analytics';
 
 const HANDLED_FILTER_KEYS = [ 'tlds' ];
@@ -46,9 +46,9 @@ export class TldFilterBar extends Component {
 		showPopover: false,
 	};
 
-	bindButton = button => ( this.button = button );
+	bindButton = ( button ) => ( this.button = button );
 
-	handleButtonClick = event => {
+	handleButtonClick = ( event ) => {
 		const { filters: { tlds = [] } = {} } = this.props;
 
 		const isCurrentlySelected = event.currentTarget.dataset.selected === 'true';
@@ -76,8 +76,8 @@ export class TldFilterBar extends Component {
 		this.togglePopover();
 		this.hasFiltersChanged() && this.props.onSubmit();
 	};
-	handleTokenChange = newTlds => {
-		const tlds = newTlds.filter( tld => includes( this.props.availableTlds, tld ) );
+	handleTokenChange = ( newTlds ) => {
+		const tlds = newTlds.filter( ( tld ) => includes( this.props.availableTlds, tld ) );
 		this.props.onChange( { tlds } );
 	};
 
@@ -95,7 +95,9 @@ export class TldFilterBar extends Component {
 	}
 
 	render() {
-		if ( this.props.showPlaceholder ) {
+		const { showPlaceholder } = this.props;
+
+		if ( showPlaceholder ) {
 			return this.renderPlaceholder();
 		}
 
@@ -122,6 +124,7 @@ export class TldFilterBar extends Component {
 				<Button
 					className={ classNames( 'search-filters__tld-button', {
 						'is-active': includes( selectedTlds, tld ),
+						'search-filters__tld-button-first': index === 0,
 					} ) }
 					data-selected={ includes( selectedTlds, tld ) }
 					data-index={ index }
@@ -135,7 +138,14 @@ export class TldFilterBar extends Component {
 	}
 
 	renderPopoverButton() {
-		const { filters: { tlds = [] } = {}, translate } = this.props;
+		const { filters: { tlds = [] } = {}, translate, isReskinned } = this.props;
+		const popoverText = isReskinned
+			? translate( 'Show more' )
+			: translate( 'More Extensions', {
+					context: 'TLD filter button',
+					comment: 'Refers to top level domain name extension, such as ".com"',
+			  } );
+
 		return (
 			<Button
 				className={ classNames( 'search-filters__popover-button', {
@@ -145,10 +155,7 @@ export class TldFilterBar extends Component {
 				ref={ this.bindButton }
 				key="popover-button"
 			>
-				{ translate( 'More Extensions', {
-					context: 'TLD filter button',
-					comment: 'Refers to top level domain name extension, such as ".com"',
-				} ) }
+				{ popoverText }
 				<Gridicon icon="chevron-down" size={ 24 } />
 			</Button>
 		);
@@ -160,17 +167,17 @@ export class TldFilterBar extends Component {
 		return (
 			<Popover
 				autoPosition={ false }
-				className="search-filters__popover"
+				className="search-filters__popover search-filters-extensions__popover"
 				context={ this.button }
 				isVisible={ this.state.showPopover }
 				onClose={ this.handleFiltersSubmit }
-				position="bottom left"
+				position="bottom"
 			>
 				<FormFieldset className="search-filters__token-field-fieldset">
 					<TokenField
 						isExpanded
-						displayTransform={ item => `.${ item }` }
-						saveTransform={ query => ( query[ 0 ] === '.' ? query.substr( 1 ) : query ) }
+						displayTransform={ ( item ) => `.${ item }` }
+						saveTransform={ ( query ) => ( query[ 0 ] === '.' ? query.substr( 1 ) : query ) }
 						maxSuggestions={ 500 }
 						onChange={ this.handleTokenChange }
 						placeholder={ translate( 'Select an extension' ) }

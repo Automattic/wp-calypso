@@ -6,9 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
-import isRegeneratingJetpackPostByEmail from 'state/selectors/is-regenerating-jetpack-post-by-email';
-import { regeneratePostByEmail } from 'state/jetpack/settings/actions';
+import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
+import isRegeneratingJetpackPostByEmail from 'calypso/state/selectors/is-regenerating-jetpack-post-by-email';
+import { regeneratePostByEmail } from 'calypso/state/jetpack/settings/actions';
 
 describe( 'isRegeneratingJetpackPostByEmail()', () => {
 	test( 'should return true if post by email is currently being regenerated', () => {

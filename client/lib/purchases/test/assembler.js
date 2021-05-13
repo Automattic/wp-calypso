@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -10,7 +9,7 @@ import moment from 'moment';
 import { createPurchasesArray } from '../assembler';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'assembler', () => {
 	test( 'should be a function', () => {
@@ -28,6 +27,7 @@ describe( 'assembler', () => {
 	test( 'should convert the payment credit card data to the right data structure', () => {
 		const purchase = createPurchasesArray( [
 			{
+				stored_details_id: 1234,
 				payment_card_id: 1234,
 				payment_card_type: 'visa',
 				payment_details: 7890,
@@ -42,7 +42,6 @@ describe( 'assembler', () => {
 		const payment = purchase[ 0 ].payment;
 		const creditCard = payment.creditCard;
 		expect( creditCard.expiryDate ).to.equal( '11/16' );
-		expect( creditCard.expiryMoment.isSame( moment( '11/16', 'MM/YY' ) ) ).to.equal( true );
 		expect( creditCard.id ).to.equal( 1234 );
 		expect( creditCard.number ).to.equal( 7890 );
 		expect( creditCard.type ).to.equal( 'visa' );
@@ -51,5 +50,6 @@ describe( 'assembler', () => {
 		expect( payment.countryCode ).to.equal( 'US' );
 		expect( payment.countryName ).to.equal( 'United States' );
 		expect( payment.name ).to.equal( 'My VISA' );
+		expect( payment.storedDetailsId ).to.equal( 1234 );
 	} );
 } );

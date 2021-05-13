@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import { stub } from 'sinon';
 
@@ -11,13 +10,16 @@ import { stub } from 'sinon';
  * Internal dependencies
  */
 import { UpgradeATStep } from '../upgrade-at-step';
+import { Button } from '@automattic/components';
+
+const noop = () => {};
 
 describe( 'UpgradeATStep', () => {
 	const selectedSite = { slug: 'site_slug' };
 
 	describe( 'rendering translated content', () => {
 		let wrapper;
-		const translate = content => `Translated: ${ content }`;
+		const translate = ( content ) => `Translated: ${ content }`;
 
 		beforeEach( () => {
 			wrapper = shallow(
@@ -43,7 +45,7 @@ describe( 'UpgradeATStep', () => {
 		} );
 
 		test( 'should render translated confirmation content', () => {
-			expect( wrapper.find( 'FormFieldset > Button' ).props().children ).to.equal(
+			expect( wrapper.find( 'FormFieldset > ForwardRef(Button)' ).props().children ).to.equal(
 				'Translated: Upgrade My Site'
 			);
 		} );
@@ -54,7 +56,7 @@ describe( 'UpgradeATStep', () => {
 			<UpgradeATStep recordTracksEvent={ noop } translate={ noop } selectedSite={ selectedSite } />
 		);
 
-		expect( wrapper.find( 'Button' ).props().href ).to.equal(
+		expect( wrapper.find( Button ).props().href ).to.equal(
 			'/checkout/site_slug/business?coupon=BIZC25'
 		);
 	} );
@@ -69,7 +71,7 @@ describe( 'UpgradeATStep', () => {
 			/>
 		);
 
-		wrapper.find( 'Button' ).simulate( 'click' );
+		wrapper.find( Button ).simulate( 'click' );
 
 		expect( recordTracksEvent ).to.have.been.calledWith(
 			'calypso_cancellation_upgrade_at_step_upgrade_click'

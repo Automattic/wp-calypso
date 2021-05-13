@@ -8,10 +8,10 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getGSuiteUsers } from 'state/gsuite-users/actions';
-import isRequestingGSuiteUsers from 'state/selectors/is-requesting-gsuite-users';
+import { getGSuiteUsers } from 'calypso/state/gsuite-users/actions';
+import isRequestingGSuiteUsers from 'calypso/state/selectors/is-requesting-gsuite-users';
 
-const request = siteId => ( dispatch, getState ) => {
+const request = ( siteId ) => ( dispatch, getState ) => {
 	if ( ! isRequestingGSuiteUsers( getState(), siteId ) ) {
 		dispatch( getGSuiteUsers( siteId ) );
 	}
@@ -25,7 +25,7 @@ export default function QueryGSuiteUsers( { siteId } ) {
 	}, [ dispatch, siteId ] );
 
 	return null;
-};
+}
 
 QueryGSuiteUsers.propTypes = {
 	siteId: PropTypes.number.isRequired,

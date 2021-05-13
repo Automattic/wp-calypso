@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 export default function SelfHostedInstructions( { onClickClose } ) {
 	const translate = useTranslate();

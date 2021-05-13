@@ -6,10 +6,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import canCurrentUser from 'state/selectors/can-current-user';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 
 describe( 'canCurrentUser()', () => {
-	test( 'should return null if the site is not known', () => {
+	test( 'should return false if the site is not known', () => {
 		const isCapable = canCurrentUser(
 			{
 				currentUser: {
@@ -20,7 +20,7 @@ describe( 'canCurrentUser()', () => {
 			'manage_options'
 		);
 
-		expect( isCapable ).to.be.null;
+		expect( isCapable ).to.be.false;
 	} );
 
 	test( 'should return the value for the specified capability', () => {
@@ -41,7 +41,7 @@ describe( 'canCurrentUser()', () => {
 		expect( isCapable ).to.be.false;
 	} );
 
-	test( 'should return null if the capability is invalid', () => {
+	test( 'should return false if the capability is invalid', () => {
 		const isCapable = canCurrentUser(
 			{
 				currentUser: {
@@ -56,6 +56,6 @@ describe( 'canCurrentUser()', () => {
 			'manage_foo'
 		);
 
-		expect( isCapable ).to.be.null;
+		expect( isCapable ).to.be.false;
 	} );
 } );
