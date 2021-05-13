@@ -9,10 +9,12 @@ import cookie from 'cookie';
 
 import createConfig from '@automattic/create-calypso-config';
 import type { ConfigData } from '@automattic/create-calypso-config';
+import desktopOverride from './desktop';
 
 declare global {
 	interface Window {
 		configData: ConfigData;
+		electron: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 	}
 }
 
@@ -27,7 +29,15 @@ if ( 'undefined' === typeof window || ! window.configData ) {
 	);
 }
 
-const configData = window.configData;
+const isDesktop = window.electron !== undefined;
+
+let configData: ConfigData;
+
+if ( isDesktop ) {
+	configData = desktopOverride( window.configData );
+} else {
+	configData = window.configData;
+}
 
 // calypso.live matches
 // hash-abcd1234.calypso.live matches
