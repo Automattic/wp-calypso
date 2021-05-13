@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import page from 'page';
-import { startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -38,8 +37,9 @@ export function loggedIn( context, next ) {
 export function upload( context, next ) {
 	// Store previous path to return to only if it was main showcase page
 	if (
-		startsWith( context.prevPath, '/themes' ) &&
-		! startsWith( context.prevPath, '/themes/upload' )
+		context.prevPath &&
+		context.prevPath.startsWith( '/themes' ) &&
+		! context.prevPath.startsWith( '/themes/upload' )
 	) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
 	}
