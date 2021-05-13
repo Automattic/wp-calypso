@@ -1,29 +1,23 @@
 /**
  * External dependencies
  */
-import { compact, includes, isEmpty, startsWith } from 'lodash';
+import { compact, includes, isEmpty } from 'lodash';
 import debugFactory from 'debug';
 import React from 'react';
-import page from 'page';
 
 /**
  * Internal Dependencies
  */
-import SingleSiteComponent from 'calypso/my-sites/themes/single-site';
-import MultiSiteComponent from 'calypso/my-sites/themes/multi-site';
 import LoggedOutComponent from './logged-out';
-import Upload from 'calypso/my-sites/themes/theme-upload';
 import trackScrollPage from 'calypso/lib/track-scroll-page';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
-import { requestThemes, requestThemeFilters, setBackPath } from 'calypso/state/themes/actions';
+import { requestThemes, requestThemeFilters } from 'calypso/state/themes/actions';
 import { getThemeFilters, getThemesForQuery } from 'calypso/state/themes/selectors';
 import { getAnalyticsData } from './helpers';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 const debug = debugFactory( 'calypso:themes' );
 
-function getProps( context ) {
+export function getProps( context ) {
 	const { tier, filter, vertical } = context.params;
 
 	const { analyticsPath, analyticsPageTitle } = getAnalyticsData( context.path, context.params );
@@ -42,38 +36,6 @@ function getProps( context ) {
 		pathName: context.pathname,
 		trackScrollPage: boundTrackScrollPage,
 	};
-}
-
-export function upload( context, next ) {
-	// Store previous path to return to only if it was main showcase page
-	if (
-		startsWith( context.prevPath, '/themes' ) &&
-		! startsWith( context.prevPath, '/themes/upload' )
-	) {
-		context.store.dispatch( setBackPath( context.prevPath ) );
-	}
-
-	context.primary = <Upload />;
-	next();
-}
-
-export function loggedIn( context, next ) {
-	// Block direct access for P2 sites
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	if ( isSiteWPForTeams( state, siteId ) ) {
-		return page.redirect( `/home/${ context.params.site_id }` );
-	}
-
-	// Scroll to the top
-	if ( typeof window !== 'undefined' ) {
-		window.scrollTo( 0, 0 );
-	}
-
-	const Component = context.params.site_id ? SingleSiteComponent : MultiSiteComponent;
-	context.primary = <Component { ...getProps( context ) } />;
-
-	next();
 }
 
 export function loggedOut( context, next ) {
