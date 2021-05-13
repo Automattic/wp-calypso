@@ -180,7 +180,7 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 			}
 		}
 	}
-})
+}
 
 private object VisualRegressionTests : BuildType({
 	name = "Visual Regression Tests"
