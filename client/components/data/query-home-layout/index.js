@@ -9,10 +9,10 @@ import { useDispatch } from 'react-redux';
  */
 import { requestHomeLayout } from 'calypso/state/home/actions';
 
-export default function QueryHomeLayout( { isDev, forcedView, siteId } ) {
+export default function QueryHomeLayout( { isDev, forcedView, siteId, shuffle } ) {
 	const dispatch = useDispatch();
 	React.useEffect( () => {
-		dispatch( requestHomeLayout( siteId, isDev, forcedView ) );
+		dispatch( requestHomeLayout( siteId, isDev, forcedView, shuffle ) );
 	}, [ dispatch, siteId ] );
 
 	return null;
