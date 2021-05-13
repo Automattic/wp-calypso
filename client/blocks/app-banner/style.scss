@@ -16,7 +16,7 @@
 	position: absolute;
 	border: 2px solid;
 	border-radius: 50%; /* stylelint-disable-line */
-	z-index: z-index( 'root', '.app-banner__background' );
+	z-index: z-index( 'root', '.app-banner__circle' );
 
 	&.is-blue {
 		border-color: var( --studio-blue-10 );
