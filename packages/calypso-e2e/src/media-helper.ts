@@ -32,6 +32,13 @@ export function getVideoDir(): string {
 	);
 }
 
+export function getLogDir(): string {
+	return path.resolve(
+		process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ),
+		process.env.LOGDIR || 'logs'
+	);
+}
+
 /**
  * Returns a descriptive file name for the screenshot file.
  *

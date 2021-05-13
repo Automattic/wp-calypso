@@ -8,12 +8,13 @@
  */
 import { chromium } from 'playwright';
 import config from 'config';
+import * as fs from 'fs/promises';
 import type { Browser, BrowserContext, Page } from 'playwright';
 
 /**
  * Internal dependencies
  */
-import { getVideoDir } from './media-helper';
+import { getVideoDir, getDateString, getLogDir } from './media-helper';
 import { getScreenDimension } from './browser-helper';
 
 /**
@@ -66,6 +67,7 @@ export async function launchBrowserContext(): Promise< BrowserContext > {
 	// By default, record video for each browser context.
 	const videoDir = getVideoDir();
 	const dimension = getScreenDimension();
+	const timestamp = getDateString();
 	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ await browser.version() } Safari/537.36`;
 
 	// Generate a new BrowserContext.
@@ -73,6 +75,11 @@ export async function launchBrowserContext(): Promise< BrowserContext > {
 		viewport: null, // Do not override window size set in the browser launch parameters.
 		recordVideo: { dir: videoDir, size: { width: dimension.width, height: dimension.height } },
 		userAgent: userAgent,
+		logger: {
+			isEnabled: ( _name, _severity ) => _name === 'api',
+			log: ( _name, _severity, _message ) =>
+				writeLog( { name: _name, severity: _severity, message: _message }, timestamp ),
+		},
 	} );
 }
 
@@ -89,11 +96,22 @@ export async function launchBrowser(): Promise< Browser > {
 	const isHeadless = process.env.HEADLESS === 'true' || config.has( 'headless' );
 
 	const dimension = getScreenDimension();
+
 	return await chromium.launch( {
 		headless: isHeadless,
 		args: [ '--window-position=0,0', `--window-size=${ dimension.width },${ dimension.height }` ],
 		timeout: playwrightTimeoutMS,
 	} );
+}
+
+async function writeLog(
+	{ name, severity, message }: { name: string; severity: string | Error; message: string | Error },
+	timestamp: string
+): Promise< void > {
+	await fs.appendFile(
+		`${ getLogDir() }/playwright-${ timestamp }.log`,
+		`${ process.pid } ${ name } ${ severity } ${ message }\n`
+	);
 }
 
 /**
@@ -105,5 +123,20 @@ export async function launchBrowser(): Promise< Browser > {
  * @returns {Promise<void>} No return value.
  */
 export async function close(): Promise< void > {
-	await browser.close();
+	if ( browser ) {
+		await browser.close();
+	} else {
+		console.log( 'Browser instance was not found.' );
+		return;
+	}
+}
+
+/**
+ * Given a page, this will clear the cookies for the context to which the page belongs.
+ *
+ * @param {Page} page Object representing a page launched by Playwright.
+ * @returns {Promise<void>} No return value.
+ */
+export async function clearCookies( page: Page ): Promise< void > {
+	await page.context().clearCookies();
 }
