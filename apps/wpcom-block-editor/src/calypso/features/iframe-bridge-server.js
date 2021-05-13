@@ -782,9 +782,12 @@ async function openLinksInParentFrame( calypsoPort ) {
 	// In the Post editor the `.interface-interface-skeleton__sidebar` element
 	// is always present. We can scope down our observer to the sidebar element in this case.
 	// Block settings sidebar, post editor
-	sidebarsObserver.observe( document.querySelector( '.interface-interface-skeleton__sidebar' ), {
-		childList: true,
-	} );
+	const sidebar = document.querySelector( '.interface-interface-skeleton__sidebar' );
+	if ( sidebar ) {
+		sidebarsObserver.observe( sidebar, {
+			childList: true,
+		} );
+	}
 
 	// Manage reusable blocks link in the 3 dots more menu, post and site editors
 	if ( manageReusableBlocksUrl ) {
