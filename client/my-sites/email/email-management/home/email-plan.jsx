@@ -285,6 +285,7 @@ class EmailPlan extends React.Component {
 				) }
 
 				<EmailPlanMailboxesList
+					domain={ domain }
 					mailboxes={ this.getMailboxes() }
 					isLoadingEmails={ isLoadingEmailAccounts }
 				/>
