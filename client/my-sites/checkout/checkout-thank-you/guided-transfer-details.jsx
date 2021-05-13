@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,8 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { GUIDED_TRANSFER } from 'lib/url/support';
-import PurchaseDetail from 'components/purchase-detail';
+import { GUIDED_TRANSFER } from 'calypso/lib/url/support';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 
 const GuidedTransferDetails = ( { translate } ) => (
 	<PurchaseDetail

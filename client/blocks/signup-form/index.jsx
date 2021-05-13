@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
 	camelCase,
@@ -19,6 +16,7 @@ import {
 	mapKeys,
 	merge,
 	pick,
+	omitBy,
 	snakeCase,
 } from 'lodash';
 import debugModule from 'debug';
@@ -30,47 +28,47 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { localizeUrl } from 'lib/i18n-utils';
-import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
-import wpcom from 'lib/wp';
-import config from 'config';
-import analytics from 'lib/analytics';
-import Button from 'components/button';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import FormButton from 'components/forms/form-button';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import notices from 'notices';
-import Notice from 'components/notice';
-import LoggedOutForm from 'components/logged-out-form';
-import { login } from 'lib/paths';
-import formState from 'lib/form-state';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import wpcom from 'calypso/lib/wp';
+import config from '@automattic/calypso-config';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { Button } from '@automattic/components';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormButton from 'calypso/components/forms/form-button';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import Notice from 'calypso/components/notice';
+import LoggedOutForm from 'calypso/components/logged-out-form';
+import { login } from 'calypso/lib/paths';
+import formState from 'calypso/lib/form-state';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
+import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import CrowdsignalSignupForm from './crowdsignal';
 import SocialSignupForm from './social';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { createSocialUserFailed } from 'state/login/actions';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import { getSectionName } from 'state/ui/selectors';
-import TextControl from 'extensions/woocommerce/components/text-control';
+import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
+import { createSocialUserFailed } from 'calypso/state/login/actions';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
+import TextControl from 'calypso/extensions/woocommerce/components/text-control';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 2000,
-	debug = debugModule( 'calypso:signup-form:form' );
+const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 2000;
+const debug = debugModule( 'calypso:signup-form:form' );
 
-let usernamesSearched = [],
-	timesUsernameValidationFailed = 0,
-	timesPasswordValidationFailed = 0;
+let usernamesSearched = [];
+let timesUsernameValidationFailed = 0;
+let timesPasswordValidationFailed = 0;
 
 const resetAnalyticsData = () => {
 	usernamesSearched = [];
@@ -81,8 +79,9 @@ const resetAnalyticsData = () => {
 class SignupForm extends Component {
 	static propTypes = {
 		className: PropTypes.string,
-		disableEmailExplanation: PropTypes.bool,
+		disableEmailExplanation: PropTypes.string,
 		disableEmailInput: PropTypes.bool,
+		disableSubmitButton: PropTypes.bool,
 		disabled: PropTypes.bool,
 		displayNameInput: PropTypes.bool,
 		displayUsernameInput: PropTypes.bool,
@@ -92,10 +91,12 @@ class SignupForm extends Component {
 		formHeader: PropTypes.node,
 		redirectToAfterLoginUrl: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func,
+		handleLogin: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
 		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
+		recaptchaClientId: PropTypes.number,
 		save: PropTypes.func,
 		signupDependencies: PropTypes.object,
 		step: PropTypes.object,
@@ -103,6 +104,8 @@ class SignupForm extends Component {
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		showRecaptchaToS: PropTypes.bool,
+		horizontal: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -114,13 +117,19 @@ class SignupForm extends Component {
 		displayUsernameInput: true,
 		flowName: '',
 		isSocialSignupEnabled: false,
+		showRecaptchaToS: false,
+		horizontal: false,
 	};
 
 	state = {
-		notice: null,
 		submitting: false,
-		focusPassword: false,
-		focusUsername: false,
+		isFieldDirty: {
+			email: false,
+			username: false,
+			password: false,
+			firstName: false,
+			lastName: false,
+		},
 		form: null,
 		signedUp: false,
 		validationInitialized: false,
@@ -146,7 +155,7 @@ class SignupForm extends Component {
 	}
 
 	recordBackLinkClick = () => {
-		analytics.tracks.recordEvent( 'calypso_signup_back_link_click' );
+		recordTracksEvent( 'calypso_signup_back_link_click' );
 	};
 
 	UNSAFE_componentWillMount() {
@@ -178,17 +187,17 @@ class SignupForm extends Component {
 			return null;
 		}
 
-		const userExistsError = find( step.errors, error => error.error === 'user_exists' );
+		const userExistsError = find( step.errors, ( error ) => error.error === 'user_exists' );
 
 		return userExistsError;
 	}
 
-	/***
+	/**
 	 * If the step is invalid because we had an error that the user exists,
 	 * we should prompt user with a request to connect his social account
 	 * to his existing WPCOM account
 	 *
-	 * @param {Object} props react component props that has step info
+	 * @param {object} props react component props that has step info
 	 */
 	maybeRedirectToSocialConnect( props ) {
 		const userExistsError = this.getUserExistsError( props );
@@ -226,18 +235,27 @@ class SignupForm extends Component {
 		const sanitizedUsername = this.sanitizeUsername( fields.username );
 
 		if ( fields.email !== sanitizedEmail || fields.username !== sanitizedUsername ) {
-			onComplete( {
+			const sanitizedFormValues = Object.assign( fields, {
 				email: sanitizedEmail,
 				username: sanitizedUsername,
 			} );
+			onComplete( sanitizedFormValues );
 		}
+	};
+
+	filterUntouchedFieldErrors = ( errorMessages ) => {
+		// Filter out "field is empty" error messages unless the field is 'dirty' (it has been interacted with).
+		return omitBy(
+			errorMessages,
+			( value, key ) => value.hasOwnProperty( 'argument' ) && ! this.state.isFieldDirty[ key ]
+		);
 	};
 
 	validate = ( fields, onComplete ) => {
 		const fieldsForValidation = filter( [
 			'email',
-			this.state.focusPassword && 'password',
-			this.props.displayUsernameInput && this.state.focusUsername && 'username',
+			'password',
+			this.props.displayUsernameInput && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
 		] );
@@ -257,13 +275,19 @@ class SignupForm extends Component {
 				? {}
 				: mapKeys( response.messages, ( value, key ) => camelCase( key ) );
 
+			// Prevent "field is empty" error messages from displaying prematurely
+			// before the form has been submitted or before the field has been interacted with (is dirty).
+			if ( ! this.state.submitting ) {
+				messages = this.filterUntouchedFieldErrors( messages );
+			}
+
 			forEach( messages, ( fieldError, field ) => {
 				if ( ! formState.isFieldInvalid( this.state.form, field ) ) {
 					return;
 				}
 
 				if ( field === 'username' && ! includes( usernamesSearched, fields.username ) ) {
-					analytics.tracks.recordEvent( 'calypso_signup_username_validation_failed', {
+					recordTracksEvent( 'calypso_signup_username_validation_failed', {
 						error: head( keys( fieldError ) ),
 						username: fields.username,
 					} );
@@ -272,7 +296,7 @@ class SignupForm extends Component {
 				}
 
 				if ( field === 'password' ) {
-					analytics.tracks.recordEvent( 'calypso_signup_password_validation_failed', {
+					recordTracksEvent( 'calypso_signup_password_validation_failed', {
 						error: head( keys( fieldError ) ),
 					} );
 
@@ -304,8 +328,16 @@ class SignupForm extends Component {
 		} );
 	};
 
-	setFormState = state => {
+	setFormState = ( state ) => {
 		this.setState( { form: state } );
+	};
+
+	handleLoginClick = ( event, fieldValue ) => {
+		this.props.trackLoginMidFlow( event );
+		if ( this.props.handleLogin ) {
+			event.preventDefault();
+			this.props.handleLogin( fieldValue );
+		}
 	};
 
 	handleFormControllerError( error ) {
@@ -314,11 +346,9 @@ class SignupForm extends Component {
 		}
 	}
 
-	handleChangeEvent = event => {
-		const name = event.target.name,
-			value = event.target.value;
-
-		this.setState( { notice: null } );
+	handleChangeEvent = ( event ) => {
+		const name = event.target.name;
+		const value = event.target.value;
 
 		this.formStateController.handleFieldChange( {
 			name: name,
@@ -326,27 +356,19 @@ class SignupForm extends Component {
 		} );
 	};
 
-	handleBlur = event => {
+	handleBlur = ( event ) => {
 		const fieldId = event.target.id;
-		// Ensure that username and password field validation does not trigger prematurely
-		if ( fieldId === 'password' ) {
-			this.setState( { focusPassword: true }, () => {
-				this.validateAndSaveForm();
-			} );
-			return;
-		}
-		if ( fieldId === 'username' ) {
-			this.setState( { focusUsername: true }, () => {
-				this.validateAndSaveForm();
-			} );
-			return;
-		}
+		this.setState( {
+			isFieldDirty: { ...this.state.isFieldDirty, [ fieldId ]: true },
+			submitting: false,
+		} );
 
 		this.validateAndSaveForm();
 	};
 
 	validateAndSaveForm = () => {
 		const data = this.getUserData();
+
 		// When a user moves away from the signup form without having entered
 		// anything do not show error messages, think going to click log in.
 		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {
@@ -358,7 +380,7 @@ class SignupForm extends Component {
 		this.props.save && this.props.save( this.state.form );
 	};
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		if ( this.state.submitting ) {
@@ -375,7 +397,7 @@ class SignupForm extends Component {
 			return;
 		}
 
-		this.formStateController.handleSubmit( hasErrors => {
+		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
 				this.setState( { submitting: false } );
 				return;
@@ -402,12 +424,12 @@ class SignupForm extends Component {
 	getLoginLink() {
 		return login( {
 			isJetpack: this.isJetpack(),
-			isWoo:
-				config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isJetpackWooCommerceFlow,
+			from: this.props.from,
 			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+			wccomFrom: this.props.wccomFrom,
 		} );
 	}
 
@@ -432,26 +454,30 @@ class SignupForm extends Component {
 		return notice.message;
 	}
 
-	globalNotice( notice ) {
+	globalNotice( notice, status ) {
 		return (
 			<Notice
 				className="signup-form__notice"
 				showDismiss={ false }
-				status={ notices.getStatusHelper( notice ) }
+				status={ status }
 				text={ this.getNoticeMessageWithLogin( notice ) }
 			/>
 		);
 	}
 
 	getUserData() {
-		return {
-			username: formState.getFieldValue( this.state.form, 'username' ),
-			password: formState.getFieldValue( this.state.form, 'password' ),
-			email: formState.getFieldValue( this.state.form, 'email' ),
+		const extraFields = {
 			extra: {
 				first_name: formState.getFieldValue( this.state.form, 'firstName' ),
 				last_name: formState.getFieldValue( this.state.form, 'lastName' ),
 			},
+		};
+
+		return {
+			username: formState.getFieldValue( this.state.form, 'username' ),
+			password: formState.getFieldValue( this.state.form, 'password' ),
+			email: formState.getFieldValue( this.state.form, 'email' ),
+			...( this.props.displayNameInput && extraFields ),
 		};
 	}
 
@@ -465,9 +491,8 @@ class SignupForm extends Component {
 
 		return map( messages, ( message, error_code ) => {
 			if ( error_code === 'taken' ) {
-				link +=
-					'&email_address=' +
-					encodeURIComponent( formState.getFieldValue( this.state.form, fieldName ) );
+				const fieldValue = formState.getFieldValue( this.state.form, fieldName );
+				link += '&email_address=' + encodeURIComponent( fieldValue );
 				return (
 					<span key={ error_code }>
 						<p>
@@ -475,7 +500,12 @@ class SignupForm extends Component {
 							&nbsp;
 							{ this.props.translate( 'If this is you {{a}}log in now{{/a}}.', {
 								components: {
-									a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />,
+									a: (
+										<a
+											href={ link }
+											onClick={ ( event ) => this.handleLoginClick( event, fieldValue ) }
+										/>
+									),
 								},
 							} ) }
 						</p>
@@ -532,7 +562,11 @@ class SignupForm extends Component {
 					</>
 				) }
 
-				<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
+				<FormLabel htmlFor="email">
+					{ this.props.isReskinned
+						? this.props.translate( 'Email address' )
+						: this.props.translate( 'Your email address' ) }
+				</FormLabel>
 				<FormTextInput
 					autoCapitalize="off"
 					autoCorrect="off"
@@ -558,7 +592,9 @@ class SignupForm extends Component {
 				{ this.props.displayUsernameInput && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.translate( 'Choose a username' ) }
+							{ this.props.isReskinned
+								? this.props.translate( 'Username' )
+								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
@@ -580,7 +616,11 @@ class SignupForm extends Component {
 					</>
 				) }
 
-				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
+				<FormLabel htmlFor="password">
+					{ this.props.isReskinned
+						? this.props.translate( 'Password' )
+						: this.props.translate( 'Choose a password' ) }
+				</FormLabel>
 				<FormPasswordInput
 					className="signup-form__input"
 					disabled={ this.state.submitting || this.props.disabled }
@@ -598,24 +638,38 @@ class SignupForm extends Component {
 		);
 	}
 
+	recordWooCommerceSignupTracks( method ) {
+		const { isJetpackWooCommerceFlow, oauth2Client, wccomFrom } = this.props;
+		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+			recordTracksEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
+				signup_method: method,
+			} );
+		} else if (
+			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+			isWooOAuth2Client( oauth2Client ) &&
+			'cart' === wccomFrom
+		) {
+			recordTracksEvent( 'wcadmin_storeprofiler_payment_create_account', {
+				signup_method: method,
+			} );
+		}
+	}
+
 	handleWooCommerceSocialConnect = ( ...args ) => {
-		analytics.tracks.recordEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
-			signup_method: 'google',
-		} );
-		this.props.handleSocialResponse( args );
+		this.recordWooCommerceSignupTracks( 'social' );
+		this.props.handleSocialResponse( ...args );
 	};
 
-	handleWooCommerceSubmit = event => {
+	handleWooCommerceSubmit = ( event ) => {
 		event.preventDefault();
 		document.activeElement.blur();
-		this.formStateController.handleSubmit( hasErrors => {
+		this.recordWooCommerceSignupTracks( 'email' );
+
+		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
 				this.setState( { submitting: false } );
 				return;
 			}
-			analytics.tracks.recordEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
-				signup_method: 'email',
-			} );
 		} );
 		this.handleSubmit( event );
 	};
@@ -633,8 +687,7 @@ class SignupForm extends Component {
 					type="email"
 					value={ formState.getFieldValue( this.state.form, 'email' ) }
 					onBlur={ this.handleBlur }
-					onChange={ value => {
-						this.setState( { notice: null } );
+					onChange={ ( value ) => {
 						this.formStateController.handleFieldChange( {
 							name: 'email',
 							value,
@@ -656,8 +709,7 @@ class SignupForm extends Component {
 							name="username"
 							value={ formState.getFieldValue( this.state.form, 'username' ) }
 							onBlur={ this.handleBlur }
-							onChange={ value => {
-								this.setState( { notice: null } );
+							onChange={ ( value ) => {
 								this.formStateController.handleFieldChange( {
 									name: 'username',
 									value,
@@ -679,7 +731,7 @@ class SignupForm extends Component {
 					type="password"
 					value={ formState.getFieldValue( this.state.form, 'password' ) }
 					onBlur={ this.handleBlur }
-					onChange={ value => {
+					onChange={ ( value ) => {
 						this.formStateController.handleFieldChange( {
 							name: 'password',
 							value,
@@ -695,14 +747,14 @@ class SignupForm extends Component {
 	}
 
 	handleOnClickTos = () => {
-		analytics.tracks.recordEvent.bind( analytics, 'calypso_signup_tos_link_click' );
+		recordTracksEvent( 'calypso_signup_tos_link_click' );
 	};
 
 	getTermsOfServiceUrl() {
 		return localizeUrl( 'https://wordpress.com/tos/' );
 	}
 
-	termsOfServiceLink() {
+	termsOfServiceLink = () => {
 		const tosLink = (
 			<a
 				href={ this.getTermsOfServiceUrl() }
@@ -736,22 +788,26 @@ class SignupForm extends Component {
 		}
 
 		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
-	}
+	};
 
 	getNotice() {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
-			return this.globalNotice( this.props.step.errors[ 0 ] );
-		}
-		if ( this.state.notice ) {
-			return this.globalNotice( this.state.notice );
+			return this.globalNotice( this.props.step.errors[ 0 ], 'is-error' );
 		}
 		if ( this.userCreationComplete() ) {
-			return this.globalNotice( {
-				info: true,
-				message: this.props.translate(
-					'Your account has already been created. You can change your email, username, and password later.'
-				),
-			} );
+			return (
+				<TrackRender eventName="calypso_signup_account_already_created_show">
+					{ this.globalNotice(
+						{
+							info: true,
+							message: this.props.translate(
+								'Your account has already been created. You can change your email, username, and password later.'
+							),
+						},
+						'is-info'
+					) }
+				</TrackRender>
+			);
 		}
 		return false;
 	}
@@ -799,7 +855,9 @@ class SignupForm extends Component {
 				{ this.termsOfServiceLink() }
 				<FormButton
 					className="signup-form__submit"
-					disabled={ this.state.submitting || this.props.disabled }
+					disabled={
+						this.state.submitting || this.props.disabled || this.props.disableSubmitButton
+					}
 				>
 					{ this.props.submitButtonText }
 				</FormButton>
@@ -808,26 +866,49 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { flowName, translate } = this.props;
+		const { flowName, showRecaptchaToS, translate } = this.props;
 
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
 			? this.getLoginLink()
 			: localizeUrl( config( 'login_url' ), this.props.locale );
 
 		return (
-			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href={ logInUrl }>
-					{ flowName === 'onboarding'
-						? translate( 'Log in to create a site for your existing account.' )
-						: translate( 'Already have a WordPress.com account?' ) }
-				</LoggedOutFormLinkItem>
-				{ this.props.oauth2Client && (
-					<LoggedOutFormBackLink
-						oauth2Client={ this.props.oauth2Client }
-						recordClick={ this.recordBackLinkClick }
-					/>
+			<>
+				{ ! this.props.isReskinned && (
+					<LoggedOutFormLinks>
+						<LoggedOutFormLinkItem href={ logInUrl }>
+							{ flowName === 'onboarding'
+								? translate( 'Log in to create a site for your existing account.' )
+								: translate( 'Already have a WordPress.com account?' ) }
+						</LoggedOutFormLinkItem>
+						{ this.props.oauth2Client && (
+							<LoggedOutFormBackLink
+								oauth2Client={ this.props.oauth2Client }
+								recordClick={ this.recordBackLinkClick }
+							/>
+						) }
+					</LoggedOutFormLinks>
 				) }
-			</LoggedOutFormLinks>
+				{ showRecaptchaToS && (
+					<div className="signup-form__recaptcha-tos">
+						<LoggedOutFormLinks>
+							<p>
+								{ translate(
+									'This site is protected by reCAPTCHA and the Google {{a1}}Privacy Policy{{/a1}} and {{a2}}Terms of Service{{/a2}} apply.',
+									{
+										components: {
+											a1: <a href="https://policies.google.com/privacy" />,
+											a2: <a href="https://policies.google.com/terms" />,
+										},
+										comment:
+											'English wording comes from Google: https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed',
+									}
+								) }
+							</p>
+						</LoggedOutFormLinks>
+					</div>
+				) }
+			</>
 		);
 	}
 
@@ -867,8 +948,12 @@ class SignupForm extends Component {
 		}
 
 		if (
-			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-			this.props.isJetpackWooCommerceFlow
+			( config.isEnabled( 'jetpack/connect/woocommerce' ) &&
+				this.props.isJetpackWooCommerceFlow ) ||
+			this.props.isJetpackWooDnaFlow ||
+			( config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+				isWooOAuth2Client( this.props.oauth2Client ) &&
+				this.props.wccomFrom )
 		) {
 			const logInUrl = config.isEnabled( 'login/native-login-links' )
 				? this.getLoginLink()
@@ -892,15 +977,22 @@ class SignupForm extends Component {
 						) }
 					</LoggedOutForm>
 
-					<LoggedOutFormLinkItem href={ logInUrl }>
-						{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
-					</LoggedOutFormLinkItem>
+					{ this.props.footerLink || (
+						<LoggedOutFormLinkItem href={ logInUrl }>
+							{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
+						</LoggedOutFormLinkItem>
+					) }
 				</div>
 			);
 		}
 
 		return (
-			<div className={ classNames( 'signup-form', this.props.className ) }>
+			<div
+				className={ classNames( 'signup-form', this.props.className, {
+					'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
+					'is-horizontal': this.props.horizontal,
+				} ) }
+			>
 				{ this.getNotice() }
 
 				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
@@ -913,11 +1005,14 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
+				{ this.props.horizontal && <div className="signup-form__separator"></div> }
+
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<SocialSignupForm
 						handleResponse={ this.props.handleSocialResponse }
 						socialService={ this.props.socialService }
 						socialServiceResponse={ this.props.socialServiceResponse }
+						isReskinned={ this.props.isReskinned }
 					/>
 				) }
 
@@ -927,15 +1022,26 @@ class SignupForm extends Component {
 	}
 }
 
+function TrackRender( { children, eventName } ) {
+	useEffect( () => {
+		recordTracksEvent( eventName );
+	}, [ eventName ] );
+
+	return children;
+}
+
 export default connect(
-	state => ( {
+	( state ) => ( {
 		oauth2Client: getCurrentOAuth2Client( state ),
 		sectionName: getSectionName( state ),
 		isJetpackWooCommerceFlow:
-			'woocommerce-setup-wizard' === get( getCurrentQueryArguments( state ), 'from' ),
+			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
+		from: get( getCurrentQueryArguments( state ), 'from' ),
+		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{
-		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' ),
+		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
 		createSocialUserFailed,
 	}
 )( localize( SignupForm ) );

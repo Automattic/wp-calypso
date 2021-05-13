@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,8 +7,8 @@ import React, { Children, cloneElement } from 'react';
 /**
  * Internal dependencies
  */
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
 import PostActionsEllipsisMenuEdit from './edit';
 import PostActionsEllipsisMenuStats from './stats';
 import PostActionsEllipsisMenuComments from './comments';
@@ -20,6 +18,7 @@ import PostActionsEllipsisMenuTrash from './trash';
 import PostActionsEllipsisMenuView from './view';
 import PostActionsEllipsisMenuRestore from './restore';
 import PostActionsEllipsisMenuDuplicate from './duplicate';
+import PostActionsEllipsisMenuCopyLink from './copy-link';
 
 /**
  * Style dependencies
@@ -39,6 +38,7 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 			<PostActionsEllipsisMenuShare key="share" />,
 			<PostActionsEllipsisMenuRestore key="restore" />,
 			<PostActionsEllipsisMenuDuplicate key="duplicate" />,
+			<PostActionsEllipsisMenuCopyLink key="copyLink" />,
 			<PostActionsEllipsisMenuTrash key="trash" />
 		);
 	}
@@ -55,7 +55,7 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 	return (
 		<div className="post-actions-ellipsis-menu">
 			<EllipsisMenu position="bottom left" disabled={ ! globalId }>
-				{ actions.map( action => cloneElement( action, { globalId } ) ) }
+				{ actions.map( ( action ) => cloneElement( action, { globalId } ) ) }
 			</EllipsisMenu>
 		</div>
 	);

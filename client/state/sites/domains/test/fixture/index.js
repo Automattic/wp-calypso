@@ -1,15 +1,13 @@
-/** @format */
 /**
  * Internal dependencies
  */
 import {
-	DOMAIN_PRIVACY_TOGGLE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
-} from 'state/action-types';
-import { createSiteDomainObject } from 'state/sites/domains/assembler';
+} from 'calypso/state/action-types';
+import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 
 // first testing-site ID
 export const SITE_ID_FIRST = 2916284;
@@ -19,18 +17,28 @@ export const SUBSCRIPTION_ID_FIRST = '1111';
 export const SITE_ID_SECOND = 77203074;
 export const SUBSCRIPTION_ID_SECOND = null;
 
+export const DOMAIN_EXPIRED_ERROR_CODE = 'domain-expired';
+export const DOMAIN_EXPIRED_ERROR_MESSAGE = 'Domain expired message';
+
 // testing primary-domain
 export const DOMAIN_PRIMARY = {
+	aRecordsRequiredForMapping: undefined,
 	autoRenewalDate: '2017-02-07T00:00:00+00:00',
 	autoRenewing: true,
 	adminEmail: null,
 	blogId: SITE_ID_FIRST,
+	bundledPlanSubscriptionId: null,
 	canSetAsPrimary: true,
+	contactInfoDisclosed: false,
+	contactInfoDisclosureAvailable: false,
+	currentUserCanAddEmail: true,
 	currentUserCanManage: true,
+	currentUserCannotAddEmailReason: null,
 	domain: 'retronevergiveup.me',
 	domainLockingAvailable: true,
 	domainRegistrationAgreementUrl: null,
 	pointsToWpcom: true,
+	emailForwardsCount: 0,
 	expired: false,
 	expiry: '2017-03-09T00:00:00+00:00',
 	expirySoon: false,
@@ -38,13 +46,21 @@ export const DOMAIN_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
+	titanMailSubscription: {
+		status: 'no_subscription',
+	},
 	privacyAvailable: false,
 	hasRegistration: false,
 	hasWpcomNameservers: true,
 	hasZone: true,
+	isEligibleForInboundTransfer: true,
 	isAutoRenewing: true,
 	isPendingIcannVerification: false,
 	isPendingWhoisUpdate: false,
+	isSubdomain: false,
+	isWpcomStagingDomain: false,
+	isLocked: false,
+	isPremium: false,
 	manualTransferRequired: false,
 	mustRemovePrivacyBeforeContactUpdate: false,
 	newRegistration: false,
@@ -55,17 +71,25 @@ export const DOMAIN_PRIMARY = {
 	pendingRegistrationTime: '',
 	pendingTransfer: false,
 	privateDomain: false,
+	redeemableUntil: '',
 	isPrimary: true,
+	isRedeemable: false,
+	isRenewable: false,
 	registrar: '',
 	registrationDate: '2016-03-09T00:00:00+00:00',
+	renewableUntil: '',
+	sslStatus: null,
+	subdomainPart: typeof undefined,
 	subscriptionId: SUBSCRIPTION_ID_FIRST,
 	supportsDomainConnect: false,
 	supportsGdprConsentManagement: true,
+	supportsTransferApproval: true,
 	tldMaintenanceEndTime: 0,
 	type: 'MAPPED',
 	transferAwayEligibleAt: null,
 	transferStatus: null,
 	transferStartDate: null,
+	transferEndDate: null,
 	transferLockOnWhoisUpdateOptional: true,
 	whoisUpdateUnmodifiableFields: [],
 	isWPCOMDomain: false,
@@ -73,16 +97,26 @@ export const DOMAIN_PRIMARY = {
 
 // testing not-primary-domain
 export const DOMAIN_NOT_PRIMARY = {
+	aRecordsRequiredForMapping: undefined,
 	autoRenewalDate: '',
 	autoRenewing: false,
 	adminEmail: null,
 	blogId: SITE_ID_SECOND,
+	bundledPlanSubscriptionId: null,
 	canSetAsPrimary: true,
+	contactInfoDisclosed: false,
+	contactInfoDisclosureAvailable: false,
+	currentUserCanAddEmail: false,
 	currentUserCanManage: true,
+	currentUserCannotAddEmailReason: {
+		code: DOMAIN_EXPIRED_ERROR_CODE,
+		message: DOMAIN_EXPIRED_ERROR_MESSAGE,
+	},
 	domain: 'retronevergiveup.wordpress.me',
 	domainLockingAvailable: true,
 	domainRegistrationAgreementUrl: null,
 	pointsToWpcom: true,
+	emailForwardsCount: 0,
 	expired: false,
 	expiry: null,
 	expirySoon: false,
@@ -90,13 +124,21 @@ export const DOMAIN_NOT_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
+	titanMailSubscription: {
+		status: 'no_subscription',
+	},
 	privacyAvailable: false,
 	hasRegistration: false,
 	hasWpcomNameservers: true,
 	hasZone: false,
+	isEligibleForInboundTransfer: false,
 	isAutoRenewing: false,
 	isPendingIcannVerification: false,
 	isPendingWhoisUpdate: false,
+	isSubdomain: true,
+	isWpcomStagingDomain: false,
+	isLocked: false,
+	isPremium: false,
 	manualTransferRequired: false,
 	mustRemovePrivacyBeforeContactUpdate: false,
 	newRegistration: false,
@@ -108,16 +150,24 @@ export const DOMAIN_NOT_PRIMARY = {
 	pendingTransfer: false,
 	privateDomain: false,
 	isPrimary: false,
+	isRedeemable: false,
+	isRenewable: false,
+	redeemableUntil: '',
+	renewableUntil: '',
 	registrar: '',
 	registrationDate: '',
+	sslStatus: null,
+	subdomainPart: typeof undefined,
 	subscriptionId: SUBSCRIPTION_ID_SECOND,
 	supportsDomainConnect: false,
 	supportsGdprConsentManagement: true,
+	supportsTransferApproval: true,
 	tldMaintenanceEndTime: 0,
 	type: 'WPCOM',
 	transferAwayEligibleAt: null,
 	transferStatus: null,
 	transferStartDate: null,
+	transferEndDate: null,
 	transferLockOnWhoisUpdateOptional: false,
 	whoisUpdateUnmodifiableFields: [ 'first_name', 'last_name' ],
 	isWPCOMDomain: true,
@@ -132,16 +182,23 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	auto_renewing: 1,
 	admin_email: null,
 	blog_id: SITE_ID_FIRST,
+	bundled_plan_subscription_id: null,
 	can_set_as_primary: true,
+	current_user_can_add_email: true,
+	current_user_cannot_add_email_reason: null,
 	domain: 'retronevergiveup.me',
 	domain_locking_available: true,
 	domainRegistrationAgreementUrl: null,
 	points_to_wpcom: true,
+	email_forwards_count: 0,
 	expired: false,
 	expiry: '2017-03-09T00:00:00+00:00',
 	expiry_soon: false,
 	gdprConsentStatus: null,
 	google_apps_subscription: {
+		status: 'no_subscription',
+	},
+	titan_mail_subscription: {
 		status: 'no_subscription',
 	},
 	has_private_registration: false,
@@ -150,7 +207,16 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	has_wpcom_nameservers: true,
 	has_zone: true,
 	current_user_can_manage: true,
+	is_redeemable: false,
+	is_renewable: false,
+	is_locked: false,
+	is_premium: false,
+	redeemable_until: '',
+	renewable_until: '',
+	is_eligible_for_inbound_transfer: true,
 	is_pending_icann_verification: false,
+	is_subdomain: false,
+	is_wpcom_staging_domain: false,
 	manual_transfer_required: false,
 	manual_whois: false,
 	new_registration: false,
@@ -167,6 +233,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	subscription_id: SUBSCRIPTION_ID_FIRST,
 	supports_domain_connect: false,
 	supports_gdpr_consent_management: true,
+	supports_transfer_approval: true,
 	tld_maintenance_end_time: 0,
 	type: 'mapping',
 	transfer_lock_on_whois_update_optional: true,
@@ -179,16 +246,30 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	auto_renewing: false,
 	admin_email: null,
 	blog_id: SITE_ID_SECOND,
+	bundled_plan_subscription_id: null,
 	can_set_as_primary: true,
+	current_user_can_add_email: false,
+	current_user_cannot_add_email_reason: {
+		errors: {
+			[ DOMAIN_EXPIRED_ERROR_CODE ]: [
+				DOMAIN_EXPIRED_ERROR_MESSAGE,
+				'Extraneous ignorable error message',
+			],
+		},
+	},
 	domain: 'retronevergiveup.wordpress.me',
 	domain_locking_available: true,
 	domainRegistrationAgreementUrl: null,
 	points_to_wpcom: true,
+	email_forwards_count: 0,
 	expired: false,
 	expiry: false,
 	expiry_soon: false,
 	gdprConsentStatus: null,
 	google_apps_subscription: {
+		status: 'no_subscription',
+	},
+	titan_mail_subscription: {
 		status: 'no_subscription',
 	},
 	has_private_registration: false,
@@ -197,7 +278,16 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	has_wpcom_nameservers: true,
 	has_zone: false,
 	current_user_can_manage: true,
+	is_locked: false,
+	is_premium: false,
+	is_redeemable: false,
+	is_renewable: false,
+	redeemable_until: '',
+	renewable_until: '',
+	is_eligible_for_inbound_transfer: false,
 	is_pending_icann_verification: false,
+	is_subdomain: true,
+	is_wpcom_staging_domain: false,
 	manual_transfer_required: false,
 	manual_whois: false,
 	new_registration: false,
@@ -213,6 +303,7 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	subscription_id: SUBSCRIPTION_ID_SECOND,
 	supports_domain_connect: false,
 	supports_gdpr_consent_management: true,
+	supports_transfer_approval: true,
 	tld_maintenance_end_time: 0,
 	type: 'wpcom',
 	whois_update_unmodifiable_fields: [ 'first_name', 'last_name' ],
@@ -263,15 +354,10 @@ export const ACTION_SITE_DOMAIN_REQUEST_FAILURE = {
 	error: ERROR_MESSAGE_RESPONSE,
 };
 
-export const ACTION_DOMAIN_PRIVACY_TOGGLE = {
-	type: DOMAIN_PRIVACY_TOGGLE,
-	siteId: SITE_ID_FIRST,
-	domain: REST_API_SITE_DOMAIN_FIRST.domain,
-};
-
 /**
  * Return a whole state with domains data structure
- * @return {Object} an state instance
+ *
+ * @returns {object} an state instance
  *
  * - first site-domians is not requesting
  * - second site-domians is requesting

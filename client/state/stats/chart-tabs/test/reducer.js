@@ -1,9 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'state/action-types';
+import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { counts, isLoading } from '../reducer';
 
 describe( 'reducer', () => {
@@ -109,12 +108,6 @@ describe( 'reducer', () => {
 				[ siteId ]: {
 					[ period ]: [
 						{
-							period: '2018-09-20',
-							views: 247,
-							labelDay: 'Sep 20',
-							classNames: [],
-						},
-						{
 							period: '2018-09-30',
 							views: 487,
 							labelDay: 'Sep 30',
@@ -123,6 +116,15 @@ describe( 'reducer', () => {
 					],
 				},
 			} );
+		} );
+
+		test( 'should serialize and deserialize state', () => {
+			const state = {
+				[ siteId ]: { [ period ]: responseWithViews },
+			};
+
+			expect( serialize( counts, state ).root() ).toEqual( state );
+			expect( deserialize( counts, state ) ).toEqual( state );
 		} );
 	} );
 

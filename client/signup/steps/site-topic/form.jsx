@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,21 +10,22 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FormFieldset from 'components/forms/form-fieldset';
-import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
-import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
+import { Button } from '@automattic/components';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import SiteVerticalsSuggestionSearch from 'calypso/components/site-verticals-suggestion-search';
+import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
 import {
 	getSiteVerticalName,
 	getSiteVerticalSlug,
 	getSiteVerticalIsUserInput,
 	getSiteVerticalId,
 	getSiteVerticalParentId,
-} from 'state/signup/steps/site-vertical/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getVerticals } from 'state/signup/verticals/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+	getSiteVerticalSuggestedTheme,
+} from 'calypso/state/signup/steps/site-vertical/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { getVerticals } from 'calypso/state/signup/verticals/selectors';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 
 /**
  * Style dependencies
@@ -41,7 +40,7 @@ class SiteTopicForm extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	onSiteTopicChange = verticalData => {
+	onSiteTopicChange = ( verticalData ) => {
 		this.props.setSiteVertical( {
 			isUserInput: verticalData.isUserInputVertical,
 			name: verticalData.verticalName,
@@ -49,11 +48,19 @@ class SiteTopicForm extends Component {
 			slug: verticalData.verticalSlug,
 			id: verticalData.verticalId,
 			parentId: verticalData.parent,
+			suggestedTheme: verticalData.suggestedTheme,
 		} );
 	};
 
-	onSubmit = event => {
-		const { isUserInput, siteSlug, siteTopic, verticalId, verticalParentId } = this.props;
+	onSubmit = ( event ) => {
+		const {
+			isUserInput,
+			siteSlug,
+			siteTopic,
+			suggestedTheme,
+			verticalId,
+			verticalParentId,
+		} = this.props;
 
 		event.preventDefault();
 
@@ -69,6 +76,7 @@ class SiteTopicForm extends Component {
 			slug: siteSlug,
 			parentId: verticalParentId,
 			id: verticalId,
+			suggestedTheme,
 		} );
 	};
 
@@ -108,7 +116,7 @@ class SiteTopicForm extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteType = getSiteType( state );
 		const siteTopic = getSiteVerticalName( state );
 		const isButtonDisabled = ! siteTopic || null == getVerticals( state, siteTopic, siteType );
@@ -117,6 +125,7 @@ export default connect(
 			siteTopic,
 			siteType,
 			siteSlug: getSiteVerticalSlug( state ),
+			suggestedTheme: getSiteVerticalSuggestedTheme( state ),
 			isUserInput: getSiteVerticalIsUserInput( state ),
 			isButtonDisabled,
 			verticalId: getSiteVerticalId( state ),

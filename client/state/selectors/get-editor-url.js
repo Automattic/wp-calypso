@@ -1,15 +1,27 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getEditorPath } from 'state/ui/editor/selectors';
+import { shouldCalypsoifyJetpack } from 'calypso/state/selectors/should-calypsoify-jetpack';
+import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
+import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getEditorPath } from 'calypso/state/editor/selectors';
+import { addQueryArgs } from 'calypso/lib/route';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 
 export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
-	if ( shouldLoadGutenberg( state, siteId ) ) {
-		return getGutenbergEditorUrl( state, siteId, postId, postType );
+	if ( ! shouldLoadGutenframe( state, siteId ) ) {
+		const siteAdminUrl = getSiteAdminUrl( state, siteId );
+		let url = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;
+
+		if ( postId ) {
+			url = `${ siteAdminUrl }post.php?post=${ postId }&action=edit`;
+		}
+
+		if ( ! isVipSite( state, siteId ) && shouldCalypsoifyJetpack( state, siteId ) ) {
+			url = addQueryArgs( { calypsoify: '1' }, url );
+		}
+
+		return url;
 	}
 
 	if ( postId ) {

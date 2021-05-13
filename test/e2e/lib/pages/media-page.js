@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,17 +15,24 @@ export default class MediaPage extends AsyncBaseContainer {
 		super( driver, By.css( '.media-library__content' ) );
 	}
 
+	async _preInit() {
+		return await this.driver.switchTo().defaultContent();
+	}
+
 	async selectFirstImage() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.media-library__upload-button' )
 		);
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.media-library__list-item:not(.is-placeholder)' )
 		);
-		await driverHelper.clickWhenClickable( this.driver, By.css( '.media-library__list-item' ) );
-		return await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.media-library__list-item .is-image' )
+		);
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.media-library__list-item.is-selected' )
 		);
@@ -41,11 +46,11 @@ export default class MediaPage extends AsyncBaseContainer {
 	}
 
 	async mediaEditorShowing() {
-		return await driverHelper.isElementPresent( this.driver, By.css( '.editor-media-modal' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '.editor-media-modal' ) );
 	}
 
 	async imageShowingInEditor() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.image-editor__crop' )
 		);
@@ -62,6 +67,60 @@ export default class MediaPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.editor-media-modal-detail__preview-wrapper .editor-media-modal-detail__edit' )
+		);
+	}
+
+	async selectInsertImage() {
+		await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			By.css( '.media-library__list-item.is-selected' )
+		);
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.editor-media-modal button[data-e2e-button="confirm"]' )
+		);
+	}
+
+	async uploadFile( file ) {
+		const fileNameInputLocator = By.css( '.media-library__upload-button input[type="file"]' );
+		const driver = this.driver;
+
+		await driverHelper.waitUntilElementLocatedAndVisible(
+			driver,
+			By.className( 'media-library__upload-button' )
+		);
+		const fileNameInput = await driver.findElement( fileNameInputLocator );
+		await fileNameInput.sendKeys( file );
+		await driverHelper.isElementNotLocated(
+			driver,
+			By.css( '.media-library__list-item.is-transient' )
+		);
+		return await driverHelper.waitUntilElementLocatedAndVisible(
+			driver,
+			By.css( '.media-library__list-item.is-selected' )
+		);
+	}
+
+	async deleteMedia() {
+		if (
+			await driverHelper.isElementNotLocated(
+				this.driver,
+				By.css( '.media-library__list-item.is-selected' )
+			)
+		) {
+			this.selectFirstImage();
+		}
+		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-media-modal__delete' ) );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.dialog__backdrop button[data-e2e-button="accept"]' )
+		);
+	}
+
+	async clickCancel() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.editor-media-modal button[data-e2e-button="cancel"]' )
 		);
 	}
 }

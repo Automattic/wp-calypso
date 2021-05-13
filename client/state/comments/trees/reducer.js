@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,23 +11,26 @@ import {
 	COMMENTS_DELETE,
 	COMMENTS_RECEIVE,
 	COMMENTS_TREE_SITE_ADD,
-} from 'state/action-types';
-import { keyedReducer } from 'state/utils';
+} from 'calypso/state/action-types';
+import { keyedReducer } from 'calypso/state/utils';
 
-const convertToTree = comments =>
-	map( reject( comments, ( { ID } ) => ! parseInt( ID, 10 ) ), comment => ( {
-		commentId: get( comment, 'ID' ),
-		commentParentId: get( comment, 'parent.ID', 0 ),
-		postId: get( comment, 'post.ID' ),
-		status: get( comment, 'status' ),
-		type: get( comment, 'type', 'comment' ),
-	} ) );
+const convertToTree = ( comments ) =>
+	map(
+		reject( comments, ( { ID } ) => ! parseInt( ID, 10 ) ),
+		( comment ) => ( {
+			commentId: get( comment, 'ID' ),
+			commentParentId: get( comment, 'parent.ID', 0 ),
+			postId: get( comment, 'post.ID' ),
+			status: get( comment, 'status' ),
+			type: get( comment, 'type', 'comment' ),
+		} )
+	);
 
 const siteTree = ( state = [], action ) => {
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS:
 			// Update the comment status in the state
-			return map( state, comment => {
+			return map( state, ( comment ) => {
 				if ( comment.commentId === action.commentId ) {
 					return {
 						...comment,

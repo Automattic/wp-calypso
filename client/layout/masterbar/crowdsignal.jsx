@@ -3,12 +3,12 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { filter, tap } from 'lodash';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import WordPressLogo from 'components/wordpress-logo';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 
 /**
  * Style dependencies
@@ -17,22 +17,20 @@ import './crowdsignal.scss';
 
 class CrowdsignalOauthMasterbar extends Component {
 	componentDidMount() {
-		// Crowdsignal's OAuth2 pages should load and use the 'Muli' font to match the marketing page
+		// Crowdsignal's OAuth2 pages should load and use the 'Recoleta' font to match the style of the app
 		// By loading it here we're not affecting any other pages inside Calypso that don't need the font
-		const crowdsignalGoogleFontsLink = 'https://fonts.googleapis.com/css?family=Muli:400,600';
-		const crowdsignalFonts = filter(
-			Array.from( document.head.childNodes ),
-			node => node.nodeName.toLowerCase() === 'link' && node.href === crowdsignalGoogleFontsLink
-		);
 
-		if ( crowdsignalFonts.length === 0 ) {
-			document.head.appendChild(
-				tap( document.createElement( 'link' ), link => {
-					link.type = 'text/css';
-					link.rel = 'stylesheet';
-					link.href = crowdsignalGoogleFontsLink;
-				} )
-			);
+		const crowdsignalFonts = [
+			new window.FontFace( 'Recoleta', 'url(https://s1.wp.com/i/fonts/recoleta/400.woff2)' ),
+			new window.FontFace( 'Recoleta', 'url(https://s1.wp.com/i/fonts/recoleta/700.woff2)', {
+				weight: 700,
+			} ),
+		];
+
+		if ( ! document.fonts.check( '12px Recoleta' ) ) {
+			map( crowdsignalFonts, ( font ) => {
+				font.load().then( ( loadedFont ) => document.fonts.add( loadedFont ) );
+			} );
 		}
 	}
 
@@ -56,17 +54,20 @@ class CrowdsignalOauthMasterbar extends Component {
 						<li className="masterbar__crowdsignal-nav-item masterbar__crowdsignal-nav-text">
 							<p className="masterbar__crowdsignal-text">
 								<span>
-									{ translate(
-										'{{span}}%(product)s is {{/span}}built by the people behind WordPress.com',
-										{
-											args: {
-												product: oauth2Client.title,
-											},
-											components: {
-												span: <span className="masterbar__crowdsignal-wide-screen-only" />,
-											},
-										}
-									) }
+									{
+										// translators: product here is an Automattic product (eg: CrowdSignal or JetPack)
+										translate(
+											'{{span}}%(product)s is {{/span}}built by the people behind WordPress.com',
+											{
+												args: {
+													product: oauth2Client.title,
+												},
+												components: {
+													span: <span className="masterbar__crowdsignal-wide-screen-only" />,
+												},
+											}
+										)
+									}
 								</span>
 							</p>
 						</li>

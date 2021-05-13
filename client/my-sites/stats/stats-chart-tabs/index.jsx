@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,20 +11,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { DEFAULT_HEARTBEAT } from 'components/data/query-site-stats/constants';
-import Chart from 'components/chart';
-import Legend from 'components/chart/legend';
+import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
+import Chart from 'calypso/components/chart';
+import Legend from 'calypso/components/chart/legend';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import Card from 'components/card';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { requestChartCounts } from 'state/stats/chart-tabs/actions';
-import { getCountRecords, getLoadingTabs } from 'state/stats/chart-tabs/selectors';
-import { QUERY_FIELDS } from 'state/stats/chart-tabs/constants';
-import { getSiteOption } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { Card } from '@automattic/components';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
+import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
+import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { buildChartData, getQueryDate } from './utility';
 import StatTabs from '../stats-tabs';
-import memoizeLast from 'lib/memoize-last';
+import memoizeLast from 'calypso/lib/memoize-last';
+import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -75,7 +74,7 @@ class StatModuleChartTabs extends Component {
 		}
 	}
 
-	onLegendClick = chartItem => {
+	onLegendClick = ( chartItem ) => {
 		const activeLegend = this.props.activeLegend.slice();
 		const chartIndex = activeLegend.indexOf( chartItem );
 		let gaEventAction;
@@ -106,8 +105,9 @@ class StatModuleChartTabs extends Component {
 		const { isActiveTabLoading } = this.props;
 		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isActiveTabLoading } ];
 
+		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
-			<Card className={ classNames( ...classes ) }>
+			<Card key={ this.props.chartData.length } className={ classNames( ...classes ) }>
 				<Legend
 					activeCharts={ this.props.activeLegend }
 					activeTab={ this.props.activeTab }
@@ -157,11 +157,11 @@ const connectComponent = connect(
 			return NO_SITE_STATE;
 		}
 
+		const quantity = 'year' === period ? 10 : 30;
 		const counts = getCountRecords( state, siteId, period );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
 		const loadingTabs = getLoadingTabs( state, siteId, period );
-		const isActiveTabLoading = loadingTabs.includes( chartTab ) && chartData.length === 0;
-		const quantity = 'year' === period ? 10 : 30;
+		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length !== quantity;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
@@ -182,4 +182,4 @@ const connectComponent = connect(
 export default flowRight(
 	localize,
 	connectComponent
-)( StatModuleChartTabs );
+)( withPerformanceTrackerStop( StatModuleChartTabs ) );

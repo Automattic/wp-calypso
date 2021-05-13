@@ -1,27 +1,24 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import StoreStatsChart from 'woocommerce/app/store-stats/store-stats-chart';
 import Delta from 'woocommerce/components/delta';
-import { getPeriodFormat } from 'state/stats/lists/utils';
+import { getPeriodFormat } from 'calypso/state/stats/lists/utils';
 import { getDelta } from '../utils';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
-} from 'state/stats/lists/selectors';
-import Tabs from 'my-sites/stats/stats-tabs';
-import Tab from 'my-sites/stats/stats-tabs/tab';
+} from 'calypso/state/stats/lists/selectors';
+import Tabs from 'calypso/my-sites/stats/stats-tabs';
+import Tab from 'calypso/my-sites/stats/stats-tabs/tab';
 import { UNITS, chartTabs as tabs } from 'woocommerce/app/store-stats/constants';
 import { formatValue } from 'woocommerce/app/store-stats/utils';
 
@@ -38,7 +35,7 @@ class StoreStatsOrdersChart extends Component {
 	};
 
 	renderTabs = ( { chartData, selectedIndex, selectedTabIndex, selectedDate, unit, tabClick } ) => {
-		const { deltas } = this.props;
+		const { deltas, moment } = this.props;
 		return (
 			<Tabs data={ chartData }>
 				{ tabs.map( ( tab, tabIndex ) => {
@@ -102,4 +99,4 @@ export default connect( ( state, { query, siteId } ) => {
 		deltas: statsData.deltas,
 		isRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsOrders', query ),
 	};
-} )( StoreStatsOrdersChart );
+} )( withLocalizedMoment( StoreStatsOrdersChart ) );

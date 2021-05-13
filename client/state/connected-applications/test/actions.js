@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -14,7 +12,7 @@ import {
 	CONNECTED_APPLICATION_DELETE_SUCCESS,
 	CONNECTED_APPLICATIONS_RECEIVE,
 	CONNECTED_APPLICATIONS_REQUEST,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'requestConnectedApplications()', () => {

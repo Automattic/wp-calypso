@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,11 +8,15 @@ import { isEmpty, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
+ * Internal dependencies
+ */
+import FormSelect from 'calypso/components/forms/form-select';
+
+/**
  * Style dependencies
  */
 import './style.scss';
 
-/* eslint-disable jsx-a11y/no-onchange */
 export class FormCountrySelect extends Component {
 	static propTypes = {
 		countriesList: PropTypes.array.isRequired,
@@ -48,7 +50,7 @@ export class FormCountrySelect extends Component {
 		const options = this.getOptions();
 
 		return (
-			<select
+			<FormSelect
 				{ ...omit( this.props, [
 					'className',
 					'countriesList',
@@ -60,17 +62,16 @@ export class FormCountrySelect extends Component {
 				onChange={ this.props.onChange }
 				disabled={ this.props.disabled }
 			>
-				{ options.map( function( option ) {
+				{ options.map( function ( option ) {
 					return (
 						<option key={ option.key } value={ option.code } disabled={ option.disabled }>
 							{ option.label }
 						</option>
 					);
 				} ) }
-			</select>
+			</FormSelect>
 		);
 	}
 }
-/* eslint-enable jsx-a11y/no-onchange */
 
 export default localize( FormCountrySelect );

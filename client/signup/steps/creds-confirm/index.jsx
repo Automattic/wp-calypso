@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,13 +11,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
-import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { Card, Button } from '@automattic/components';
+import { autoConfigCredentials } from 'calypso/state/jetpack/credentials/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 /**
  * Style dependencies

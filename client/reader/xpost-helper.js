@@ -1,14 +1,13 @@
-/** @format */
 /**
  * External dependencies
  */
-import url from 'url';
 import { has } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import displayTypes from 'state/reader/posts/display-types';
+import displayTypes from 'calypso/state/reader/posts/display-types';
+import { getUrlParts } from '@automattic/calypso-url';
 
 const { X_POST } = displayTypes;
 
@@ -19,6 +18,7 @@ export function isXPost( post ) {
 const exported = {
 	/**
 	 * Examines the post metadata, and returns metadata related to cross posts.
+	 *
 	 * @param {object} post - post object
 	 * @returns {object} - urls of site and post url
 	 */
@@ -42,11 +42,11 @@ const exported = {
 					meta.key === '_xpost_original_permalink' ||
 					meta.key === 'xcomment_original_permalink'
 				) {
-					const parsedURL = url.parse( meta.value, false, false );
-					xPostMetadata.siteURL = `${ parsedURL.protocol }//${ parsedURL.host }`;
-					xPostMetadata.postURL = `${ xPostMetadata.siteURL }${ parsedURL.path }`;
-					if ( parsedURL.hash && parsedURL.hash.indexOf( '#comment-' ) === 0 ) {
-						xPostMetadata.commentURL = parsedURL.href;
+					const urlParts = getUrlParts( meta.value );
+					xPostMetadata.siteURL = `${ urlParts.protocol }//${ urlParts.host }`;
+					xPostMetadata.postURL = `${ xPostMetadata.siteURL }${ urlParts.pathname }`;
+					if ( urlParts.hash && urlParts.hash.indexOf( '#comment-' ) === 0 ) {
+						xPostMetadata.commentURL = meta.value;
 					}
 				} else if ( meta.key === 'xpost_origin' ) {
 					const ids = meta.value.split( ':' );

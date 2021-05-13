@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,37 +11,34 @@ import { isEmpty, flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
-import ProgressBar from 'components/progress-bar';
-import UploadDropZone from 'blocks/upload-drop-zone';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import EligibilityWarnings from 'blocks/eligibility-warnings';
-import EmptyContent from 'components/empty-content';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryEligibility from 'components/data/query-atat-eligibility';
-import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
-import { initiateAutomatedTransferWithPluginZip } from 'state/automated-transfer/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import getPluginUploadError from 'state/selectors/get-plugin-upload-error';
-import getPluginUploadProgress from 'state/selectors/get-plugin-upload-progress';
-import getUploadedPluginId from 'state/selectors/get-uploaded-plugin-id';
-import isPluginUploadComplete from 'state/selectors/is-plugin-upload-complete';
-import isPluginUploadInProgress from 'state/selectors/is-plugin-upload-in-progress';
+import Main from 'calypso/components/main';
+import HeaderCake from 'calypso/components/header-cake';
+import { Card, ProgressBar } from '@automattic/components';
+import UploadDropZone from 'calypso/blocks/upload-drop-zone';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import EmptyContent from 'calypso/components/empty-content';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
+import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
+import { initiateAutomatedTransferWithPluginZip } from 'calypso/state/automated-transfer/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
+import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
+import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
+import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
+import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
 import {
 	getSiteAdminUrl,
-	isJetpackMinimumVersion,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
-} from 'state/sites/selectors';
+} from 'calypso/state/sites/selectors';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 	getAutomatedTransferStatus,
-} from 'state/automated-transfer/selectors';
-import { successNotice } from 'state/notices/actions';
-import { transferStates } from 'state/automated-transfer/constants';
+} from 'calypso/state/automated-transfer/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 
 class PluginUpload extends React.Component {
 	state = {
@@ -55,7 +50,7 @@ class PluginUpload extends React.Component {
 		! inProgress && this.props.clearPluginUpload( siteId );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.siteId !== this.props.siteId ) {
 			const { siteId, inProgress } = nextProps;
 			! inProgress && this.props.clearPluginUpload( siteId );
@@ -141,22 +136,14 @@ class PluginUpload extends React.Component {
 	}
 
 	render() {
-		const { translate, isJetpackMultisite, upgradeJetpack, siteId, siteSlug } = this.props;
+		const { translate, isJetpackMultisite, siteId, siteSlug } = this.props;
 		const { showEligibility } = this.state;
 
 		return (
 			<Main>
 				<PageViewTracker path="/plugins/upload/:site" title="Plugins > Upload" />
 				<QueryEligibility siteId={ siteId } />
-				<HeaderCake onClick={ this.back }>{ translate( 'Upload plugin' ) }</HeaderCake>
-				{ upgradeJetpack && (
-					<JetpackManageErrorPage
-						template="updateJetpack"
-						siteId={ siteId }
-						featureExample={ this.renderUploadCard() }
-						version="5.1"
-					/>
-				) }
+				<HeaderCake onClick={ this.back }>{ translate( 'Install plugin' ) }</HeaderCake>
 				{ isJetpackMultisite && this.renderNotAvailableForMultisite() }
 				{ showEligibility && (
 					<EligibilityWarnings
@@ -164,13 +151,13 @@ class PluginUpload extends React.Component {
 						onProceed={ this.onProceedClick }
 					/>
 				) }
-				{ ! upgradeJetpack && ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
+				{ ! isJetpackMultisite && ! showEligibility && this.renderUploadCard() }
 			</Main>
 		);
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const error = getPluginUploadError( state, siteId );
 	const progress = getPluginUploadProgress( state, siteId );
@@ -195,8 +182,6 @@ const mapStateToProps = state => {
 		error,
 		progress,
 		installing: progress === 100,
-		upgradeJetpack:
-			isJetpack && ! isJetpackMultisite && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
 		isJetpackMultisite,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
@@ -205,10 +190,12 @@ const mapStateToProps = state => {
 };
 
 const flowRightArgs = [
-	connect(
-		mapStateToProps,
-		{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip, successNotice }
-	),
+	connect( mapStateToProps, {
+		uploadPlugin,
+		clearPluginUpload,
+		initiateAutomatedTransferWithPluginZip,
+		successNotice,
+	} ),
 	localize,
 ];
 

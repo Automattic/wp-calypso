@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,11 +8,12 @@ import React from 'react';
  * Internal Dependencies
  */
 
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormTextInput from 'components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import SelectDropdown from 'calypso/components/select-dropdown';
 
-export const radioOption = (
+export const radioTextOption = (
 	key,
 	radioValue,
 	textValue,
@@ -42,9 +41,49 @@ export const radioOption = (
 				value={ key }
 				checked={ key === radioValue }
 				onChange={ onRadioChange }
+				label={ radioPrompt }
 			/>
-			<span>{ radioPrompt }</span>
 			{ key === radioValue && textInput }
 		</FormLabel>
+	);
+};
+
+export const radioSelectOption = (
+	key,
+	radioValue,
+	onRadioChange,
+	onSelectChange,
+	radioPrompt,
+	selectLabel,
+	selectOptions,
+	selected
+) => {
+	const selectInputKey = `${ key }Select`;
+
+	const selectInput = selectOptions?.length && (
+		<FormLabel key={ selectInputKey } className="cancel-purchase-form__reason-select">
+			{ selectLabel }
+			<SelectDropdown
+				initialSelected={ selected }
+				options={ selectOptions }
+				onSelect={ onSelectChange }
+				compact
+			/>
+		</FormLabel>
+	);
+
+	return (
+		<React.Fragment key={ `fragment${ key }` }>
+			<FormLabel key={ key }>
+				<FormRadio
+					name={ key }
+					value={ key }
+					checked={ key === radioValue }
+					onChange={ onRadioChange }
+					label={ radioPrompt }
+				/>
+			</FormLabel>
+			{ key === radioValue && selectInput }
+		</React.Fragment>
 	);
 };

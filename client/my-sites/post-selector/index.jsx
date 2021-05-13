@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -51,7 +49,7 @@ export default class extends React.PureComponent {
 		search: '',
 	};
 
-	onSearch = term => {
+	onSearch = ( term ) => {
 		if ( term !== this.state.search ) {
 			this.setState( {
 				search: term,

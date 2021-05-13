@@ -1,27 +1,28 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { moment } from 'i18n-calypso';
+import moment from 'moment';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import StatsNavigation from 'blocks/stats-navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import Main from 'calypso/components/main';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Chart from './store-stats-orders-chart';
-import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
-import DatePicker from 'my-sites/stats/stats-date-picker';
+import StatsPeriodNavigation from 'calypso/my-sites/stats/stats-period-navigation';
+import DatePicker from 'calypso/my-sites/stats/stats-date-picker';
+import FormattedHeader from 'calypso/components/formatted-header';
 import Module from './store-stats-module';
 import List from './store-stats-list';
 import WidgetList from './store-stats-widget-list';
-import SectionHeader from 'components/section-header';
-import JetpackColophon from 'components/jetpack-colophon';
+import SectionHeader from 'calypso/components/section-header';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
 import {
 	sparkWidgets,
 	topProducts,
@@ -30,10 +31,10 @@ import {
 	noDataMsg,
 } from 'woocommerce/app/store-stats/constants';
 import { getEndPeriod, getQueries, getWidgetPath } from './utils';
-import QuerySiteStats from 'components/data/query-site-stats';
-import config from 'config';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import config from '@automattic/calypso-config';
 import StoreStatsReferrerWidget from './store-stats-referrer-widget';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
 
 class StoreStats extends Component {
@@ -47,7 +48,7 @@ class StoreStats extends Component {
 	};
 
 	render() {
-		const { queryDate, selectedDate, siteId, slug, unit, queryParams } = this.props;
+		const { queryDate, selectedDate, siteId, slug, unit, queryParams, translate } = this.props;
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
 		const { orderQuery, referrerQuery } = getQueries( unit, queryDate );
 		const { topListQuery } = getQueries( unit, selectedDate );
@@ -55,7 +56,7 @@ class StoreStats extends Component {
 		const widgetPath = getWidgetPath( unit, slug, queryParams );
 
 		return (
-			<Main className="store-stats woocommerce" wideLayout={ true }>
+			<Main className="store-stats woocommerce" wideLayout>
 				<PageViewTracker
 					path={ `/store/stats/orders/${ unit }/:site` }
 					title={ `Store > Stats > Orders > ${ titlecase( unit ) }` }
@@ -64,6 +65,15 @@ class StoreStats extends Component {
 					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ orderQuery } />
 				) }
 				<SidebarNavigation />
+				<FormattedHeader
+					brandFont
+					className="store-stats__section-header"
+					headerText={ translate( 'Stats and Insights' ) }
+					align="left"
+					subHeaderText={ translate(
+						'Learn valuable insights about the purchases made on your store.'
+					) }
+				/>
 				<StatsNavigation
 					selectedItem={ 'store' }
 					siteId={ siteId }
@@ -87,9 +97,7 @@ class StoreStats extends Component {
 						// this is needed to counter the +1d adjustment made in DatePicker for weeks
 						date={
 							unit === 'week'
-								? moment( selectedDate, 'YYYY-MM-DD' )
-										.subtract( 1, 'days' )
-										.format( 'YYYY-MM-DD' )
+								? moment( selectedDate, 'YYYY-MM-DD' ).subtract( 1, 'days' ).format( 'YYYY-MM-DD' )
 								: selectedDate
 						}
 						query={ orderQuery }
@@ -151,7 +159,7 @@ class StoreStats extends Component {
 							</Module>
 						</div>
 					) ) }
-					{ topWidgets.map( widget => {
+					{ topWidgets.map( ( widget ) => {
 						const header = (
 							<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
 						);
@@ -188,7 +196,7 @@ class StoreStats extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	slug: getSelectedSiteSlug( state ),
 	siteId: getSelectedSiteId( state ),
-} ) )( StoreStats );
+} ) )( localize( StoreStats ) );

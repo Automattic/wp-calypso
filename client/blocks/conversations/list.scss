@@ -1,4 +1,6 @@
-
+.conversations__comment-list {
+	cursor: initial; // override style from .card.is-clickable
+}
 
 .conversations__comment-list-ul {
 	list-style-type: none;

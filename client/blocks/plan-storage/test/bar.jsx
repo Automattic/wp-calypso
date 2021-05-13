@@ -1,20 +1,19 @@
-/** @format */
-
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-const translate = x => x;
+const translate = ( x ) => x;
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+	localize: ( Comp ) => ( props ) => (
 		<Comp
 			{ ...props }
-			translate={ function( x ) {
+			translate={ function ( x ) {
 				return x;
 			} }
 		/>
 	),
-	numberFormat: x => x,
+	numberFormat: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 /**
@@ -33,7 +32,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_FREE,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -51,7 +50,7 @@ describe( 'PlanStorageBar basic tests', () => {
 		sitePlanSlug: PLAN_FREE,
 	};
 
-	test( 'should not blow up and have class .plan-storage-bar ', () => {
+	test( 'should not blow up and have class .plan-storage-bar', () => {
 		const bar = shallow( <PlanStorageBar { ...props } /> );
 		assert.lengthOf( bar.find( '.plan-storage__bar' ), 1 );
 	} );
@@ -80,22 +79,18 @@ describe( 'PlanStorageBar basic tests', () => {
 
 		bar = shallow( <PlanStorageBar { ...props } sitePlanSlug={ PLAN_FREE } /> );
 		assert.lengthOf( bar.find( '.plan-storage__bar' ), 1 );
-	} );
-
-	test( 'should not render when storage is unlimited', () => {
-		let bar;
 
 		bar = shallow( <PlanStorageBar { ...props } sitePlanSlug={ PLAN_BUSINESS } /> );
-		assert.lengthOf( bar.find( '.plan-storage__bar' ), 0 );
+		assert.lengthOf( bar.find( '.plan-storage__bar' ), 1 );
 
 		bar = shallow( <PlanStorageBar { ...props } sitePlanSlug={ PLAN_BUSINESS_2_YEARS } /> );
-		assert.lengthOf( bar.find( '.plan-storage__bar' ), 0 );
+		assert.lengthOf( bar.find( '.plan-storage__bar' ), 1 );
 
 		bar = shallow( <PlanStorageBar { ...props } sitePlanSlug={ PLAN_ECOMMERCE } /> );
-		assert.lengthOf( bar.find( '.plan-storage__bar' ), 0 );
+		assert.lengthOf( bar.find( '.plan-storage__bar' ), 1 );
 
 		bar = shallow( <PlanStorageBar { ...props } sitePlanSlug={ PLAN_ECOMMERCE_2_YEARS } /> );
-		assert.lengthOf( bar.find( '.plan-storage__bar' ), 0 );
+		assert.lengthOf( bar.find( '.plan-storage__bar' ), 1 );
 	} );
 
 	test( 'should not render when storage has valid max_storage_bytes', () => {
@@ -125,5 +120,15 @@ describe( 'PlanStorageBar basic tests', () => {
 
 		bar = shallow( <PlanStorageBar { ...props } mediaStorage={ { max_storage_bytes: -1 } } /> );
 		assert.lengthOf( bar.find( '.plan-storage__bar' ), 0 );
+	} );
+
+	test( 'should include upgrade link when displayUpgradeLink is true', () => {
+		const bar = shallow( <PlanStorageBar { ...props } displayUpgradeLink={ true } /> );
+		assert.lengthOf( bar.find( '.plan-storage__storage-link' ), 1 );
+	} );
+
+	test( 'should not include upgrade link when displayUpgradeLink is false', () => {
+		const bar = shallow( <PlanStorageBar { ...props } displayUpgradeLink={ false } /> );
+		assert.lengthOf( bar.find( '.plan-storage__storage-link' ), 0 );
 	} );
 } );

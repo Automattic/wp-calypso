@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import TableItem from 'woocommerce/components/table/table-item';
 import { formatValue } from 'woocommerce/app/store-stats/utils';
 import StoreStatsReferrerWidgetBase from '../store-stats-referrer-widget-base';
 
-const StoreStatsReferrerConvWidget = props => {
+const StoreStatsReferrerConvWidget = ( props ) => {
 	const { translate } = props;
 	const header = (
 		<TableRow isHeader>
@@ -45,7 +43,7 @@ const StoreStatsReferrerConvWidget = props => {
 			header={ header }
 			{ ...props }
 		>
-			{ d => (
+			{ ( d ) => (
 				<Fragment>
 					<TableItem className="store-stats-referrer-conv-widget__referrer">
 						{ d.referrer }

@@ -1,9 +1,3 @@
-/** @format */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
 /**
  * Internal dependencies
  */
@@ -19,46 +13,67 @@ import {
 	setTracksOptOut,
 	loadTrackingTool,
 } from '../actions';
-import { dispatcher as dispatch } from '../middleware.js';
-import { spy as mockAnalytics } from 'lib/analytics';
-import { spy as mockAdTracking } from 'lib/analytics/ad-tracking';
+import { analyticsMiddleware } from '../middleware.js';
+import {
+	trackCustomFacebookConversionEvent,
+	trackCustomAdWordsRemarketingEvent,
+} from 'calypso/lib/analytics/ad-tracking';
+import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
+import { gaRecordPageView, gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { recordPageView as pageviewRecordPageView } from 'calypso/lib/analytics/page-view';
+import {
+	setTracksOptOut as tracksSetTracksOptOut,
+	recordTracksEvent as tracksRecordTracksEvent,
+} from 'calypso/lib/analytics/tracks';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 
-jest.mock( 'lib/analytics', () => {
-	const analyticsSpy = require( 'sinon' ).spy();
-	const { analyticsMock } = require( './helpers/analytics-mock' );
+const noop = () => {};
 
-	const mock = analyticsMock( analyticsSpy );
-	mock.spy = analyticsSpy;
+jest.mock( 'calypso/lib/analytics/page-view', () => ( {
+	recordPageView: jest.fn(),
+} ) );
 
-	return mock;
-} );
-jest.mock( 'lib/analytics/ad-tracking', () => {
-	const adTrackingSpy = require( 'sinon' ).spy();
-	const { adTrackingMock } = require( './helpers/analytics-mock' );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	setTracksOptOut: jest.fn(),
+	recordTracksEvent: jest.fn(),
+} ) );
 
-	const mock = adTrackingMock( adTrackingSpy );
-	mock.spy = adTrackingSpy;
+jest.mock( 'calypso/lib/analytics/ad-tracking', () => ( {
+	trackCustomFacebookConversionEvent: jest.fn(),
+	trackCustomAdWordsRemarketingEvent: jest.fn(),
+} ) );
 
-	return mock;
-} );
+jest.mock( 'calypso/lib/analytics/mc', () => ( {
+	bumpStat: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/analytics/ga', () => ( {
+	gaRecordPageView: jest.fn(),
+	gaRecordEvent: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/analytics/hotjar', () => ( {
+	addHotJarScript: jest.fn(),
+} ) );
+
+const dispatch = analyticsMiddleware()( noop );
 
 describe( 'middleware', () => {
 	describe( 'analytics dispatching', () => {
 		beforeEach( () => {
-			mockAnalytics.resetHistory();
-			mockAdTracking.resetHistory();
+			jest.resetAllMocks();
 		} );
 
 		test( 'should call mc.bumpStat', () => {
 			dispatch( bumpStat( 'test', 'value' ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly( 'mc.bumpStat', 'test', 'value' );
+			expect( mcBumpStat ).toHaveBeenCalledWith( 'test', 'value' );
 		} );
 
 		test( 'should call tracks.recordEvent', () => {
 			dispatch( recordTracksEvent( 'test', { name: 'value' } ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly( 'tracks.recordEvent', 'test', {
+			expect( tracksRecordTracksEvent ).toHaveBeenCalledWith( 'test', {
 				name: 'value',
 			} );
 		} );
@@ -66,68 +81,52 @@ describe( 'middleware', () => {
 		test( 'should call pageView.record', () => {
 			dispatch( recordPageView( 'path', 'title', 'default', { name: 'value' } ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly( 'pageView.record', 'path', 'title', {
+			expect( pageviewRecordPageView ).toHaveBeenCalledWith( 'path', 'title', {
 				name: 'value',
 			} );
 		} );
 
-		test( 'should call ga.recordEvent', () => {
+		test( 'should call gaRecordEvent', () => {
 			dispatch( recordGoogleEvent( 'category', 'action', 'label', 'value' ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly(
-				'ga.recordEvent',
-				'category',
-				'action',
-				'label',
-				'value'
-			);
+			expect( gaRecordEvent ).toHaveBeenCalledWith( 'category', 'action', 'label', 'value' );
 		} );
 
 		test( 'should call ga.recordPageView', () => {
 			dispatch( recordGooglePageView( 'path', 'title' ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly(
-				'ga.recordPageView',
-				'path',
-				'title'
-			);
+			expect( gaRecordPageView ).toHaveBeenCalledWith( 'path', 'title' );
 		} );
 
 		test( 'should call trackCustomFacebookConversionEvent', () => {
 			dispatch( recordCustomFacebookConversionEvent( 'event', { name: 'value' } ) );
 
-			expect( mockAdTracking ).to.have.been.calledWithExactly(
-				'trackCustomFacebookConversionEvent',
-				'event',
-				{ name: 'value' }
-			);
+			expect( trackCustomFacebookConversionEvent ).toHaveBeenCalledWith( 'event', {
+				name: 'value',
+			} );
 		} );
 
 		test( 'should call trackCustomAdWordsRemarketingEvent', () => {
 			dispatch( recordCustomAdWordsRemarketingEvent( { name: 'value' } ) );
 
-			expect( mockAdTracking ).to.have.been.calledWithExactly(
-				'trackCustomAdWordsRemarketingEvent',
-				{ name: 'value' }
-			);
+			expect( trackCustomAdWordsRemarketingEvent ).toHaveBeenCalledWith( { name: 'value' } );
 		} );
 
 		test( 'should call analytics events with wrapped actions', () => {
 			dispatch( withAnalytics( bumpStat( 'name', 'value' ), { type: 'TEST_ACTION' } ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly( 'mc.bumpStat', 'name', 'value' );
+			expect( mcBumpStat ).toHaveBeenCalledWith( 'name', 'value' );
 		} );
 
 		test( 'should call `setOptOut`', () => {
 			dispatch( setTracksOptOut( false ) );
 
-			expect( mockAnalytics ).to.have.been.calledWithExactly( 'tracks.setOptOut', false );
+			expect( tracksSetTracksOptOut ).toHaveBeenCalledWith( false );
 		} );
 
 		test( 'should call hotjar.addHotJarScript', () => {
-			dispatch( loadTrackingTool( 'HotJar' ), { analyticsTracking: [] } );
-
-			expect( mockAnalytics ).to.have.been.calledWith( 'hotjar.addHotJarScript' );
+			dispatch( loadTrackingTool( 'HotJar' ) );
+			expect( addHotJarScript ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );

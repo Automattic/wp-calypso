@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,8 +17,8 @@ import {
 	HAPPYCHAT_CHAT_STATUS_MISSED,
 	HAPPYCHAT_CHAT_STATUS_NEW,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
-} from 'state/happychat/constants';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
+} from 'calypso/state/happychat/constants';
+import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 
 describe( '#hasActiveHappychatSession', () => {
 	const inactiveChatStatuses = [
@@ -38,14 +36,14 @@ describe( '#hasActiveHappychatSession', () => {
 	];
 
 	test( 'should be false when chat.status indicates the user has no active session', () => {
-		inactiveChatStatuses.forEach( status => {
+		inactiveChatStatuses.forEach( ( status ) => {
 			const state = deepFreeze( { happychat: { chat: { status } } } );
 			expect( hasActiveHappychatSession( state ) ).to.be.false;
 		} );
 	} );
 
 	test( 'should be true when chat.status indicates the user has an active session', () => {
-		activeChatStatuses.forEach( status => {
+		activeChatStatuses.forEach( ( status ) => {
 			const state = deepFreeze( { happychat: { chat: { status } } } );
 			expect( hasActiveHappychatSession( state ) ).to.be.true;
 		} );

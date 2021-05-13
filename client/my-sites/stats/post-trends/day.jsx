@@ -3,13 +3,13 @@
  */
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import React, { Fragment } from 'react';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
+import Tooltip from 'calypso/components/tooltip';
 
 class PostTrendsDay extends React.PureComponent {
 	static propTypes = {
@@ -59,12 +59,13 @@ class PostTrendsDay extends React.PureComponent {
 		};
 
 		return (
-			<div
-				className={ classNames( 'post-trends__day', hoveredClass, className ) }
-				onMouseEnter={ postCount > 0 ? this.mouseEnter : null }
-				onMouseLeave={ postCount > 0 ? this.mouseLeave : null }
-				ref={ this.dayRef }
-			>
+			<Fragment>
+				<div
+					className={ classNames( 'post-trends__day', hoveredClass, className ) }
+					onMouseEnter={ postCount > 0 ? this.mouseEnter : null }
+					onMouseLeave={ postCount > 0 ? this.mouseLeave : null }
+					ref={ this.dayRef }
+				/>
 				{ postCount > 0 && (
 					<Tooltip
 						className="chart__tooltip is-streak"
@@ -76,7 +77,7 @@ class PostTrendsDay extends React.PureComponent {
 						{ this.buildTooltipData() }
 					</Tooltip>
 				) }
-			</div>
+			</Fragment>
 		);
 	}
 

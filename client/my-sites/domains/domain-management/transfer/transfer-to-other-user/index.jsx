@@ -1,34 +1,34 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
-import { includes, head, omit, find } from 'lodash';
+import { connect, useSelector } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
-import { getCurrentUser } from 'state/current-user/selectors';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import { domainManagementEdit, domainManagementTransfer } from 'my-sites/domains/paths';
-import FormSelect from 'components/forms/form-select';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import wp from 'lib/wp';
-import { getSelectedDomain } from 'lib/domains';
-import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import SectionHeader from 'components/section-header';
-import Dialog from 'components/dialog';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
+import { Card, Dialog } from '@automattic/components';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import Main from 'calypso/components/main';
+import { domainManagementEdit, domainManagementTransfer } from 'calypso/my-sites/domains/paths';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import wp from 'calypso/lib/wp';
+import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
+import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
+import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import useUsersQuery from 'calypso/data/users/use-users-query';
 
 /**
  * Style dependencies
@@ -37,23 +37,24 @@ import './style.scss';
 
 const wpcom = wp.undocumented();
 
+const getWpcomUserId = ( user ) => user.linked_user_ID ?? user.ID;
+
 class TransferOtherUser extends React.Component {
 	static propTypes = {
-		currentUser: PropTypes.object.isRequired,
+		currentUserId: PropTypes.number.isRequired,
 		domains: PropTypes.array.isRequired,
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		// From `withUsers` HoC
 		users: PropTypes.array.isRequired,
-		wapiDomainInfo: PropTypes.object.isRequired,
 	};
 
 	constructor( props ) {
 		super( props );
 
-		const defaultUser = head( this.filterAvailableUsers( props.users ) );
 		this.state = {
-			selectedUserId: defaultUser ? defaultUser.ID : '',
+			selectedUserId: '',
 			showConfirmationDialog: false,
 			disableDialogButtons: false,
 		};
@@ -62,15 +63,6 @@ class TransferOtherUser extends React.Component {
 		this.handleTransferDomain = this.handleTransferDomain.bind( this );
 		this.handleDialogClose = this.handleDialogClose.bind( this );
 		this.handleConfirmTransferDomain = this.handleConfirmTransferDomain.bind( this );
-	}
-
-	componentWillUpdate( nextProps, nextState ) {
-		if ( nextState && ! nextState.selectedUserId ) {
-			const defaultUser = head( this.filterAvailableUsers( nextProps.users ) );
-			if ( defaultUser ) {
-				this.setState( { selectedUserId: defaultUser.ID } );
-			}
-		}
 	}
 
 	handleUserChange( event ) {
@@ -84,18 +76,18 @@ class TransferOtherUser extends React.Component {
 	}
 
 	handleConfirmTransferDomain( closeDialog ) {
-		const { selectedDomainName } = this.props,
-			selectedUserDisplay = this.getSelectedUserDisplayName(),
-			successMessage = this.props.translate(
-				'%(selectedDomainName)s has been transferred to %(selectedUserDisplay)s',
-				{ args: { selectedDomainName, selectedUserDisplay } }
-			),
-			defaultErrorMessage = this.props.translate(
-				'Failed to transfer %(selectedDomainName)s, please try again or contact support.',
-				{
-					args: { selectedDomainName },
-				}
-			);
+		const { selectedDomainName } = this.props;
+		const selectedUserDisplay = this.getSelectedUserDisplayName();
+		const successMessage = this.props.translate(
+			'%(selectedDomainName)s has been transferred to %(selectedUserDisplay)s',
+			{ args: { selectedDomainName, selectedUserDisplay } }
+		);
+		const defaultErrorMessage = this.props.translate(
+			'Failed to transfer %(selectedDomainName)s, please try again or contact support.',
+			{
+				args: { selectedDomainName },
+			}
+		);
 
 		this.setState( { disableDialogButtons: true } );
 		wpcom
@@ -110,10 +102,14 @@ class TransferOtherUser extends React.Component {
 					this.props.successNotice( successMessage, { duration: 4000, isPersistent: true } );
 					closeDialog();
 					page(
-						domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName )
+						domainManagementEdit(
+							this.props.selectedSite.slug,
+							this.props.selectedDomainName,
+							this.props.currentRoute
+						)
 					);
 				},
-				err => {
+				( err ) => {
 					this.setState( { disableDialogButtons: false } );
 					this.props.errorNotice( err.message || defaultErrorMessage );
 					closeDialog();
@@ -128,13 +124,14 @@ class TransferOtherUser extends React.Component {
 	}
 
 	getSelectedUserDisplayName() {
-		const selectedUser = find(
-			this.props.users,
-			user => user.ID === Number( this.state.selectedUserId )
+		const selectedUser = this.props.users.find(
+			( user ) => getWpcomUserId( user ) === Number( this.state.selectedUserId )
 		);
+
 		if ( ! selectedUser ) {
 			return '';
 		}
+
 		return this.getUserDisplayName( selectedUser );
 	}
 
@@ -147,16 +144,18 @@ class TransferOtherUser extends React.Component {
 			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
 		}
 
-		const { selectedSite, selectedDomainName } = this.props,
-			{ slug } = selectedSite;
+		const { selectedSite, selectedDomainName, translate, currentRoute } = this.props;
+		const { slug } = selectedSite;
 
 		return (
 			<Main>
 				<Header
 					selectedDomainName={ selectedDomainName }
-					backHref={ domainManagementTransfer( slug, selectedDomainName ) }
+					backHref={ domainManagementTransfer( slug, selectedDomainName, currentRoute ) }
 				>
-					{ this.props.translate( 'Transfer Domain To Another User' ) }
+					{ this.props.isMapping
+						? translate( 'Transfer Domain Mapping To Another User' )
+						: translate( 'Transfer Domain To Another User' ) }
 				</Header>
 				{ this.renderSection() }
 			</Main>
@@ -165,70 +164,77 @@ class TransferOtherUser extends React.Component {
 
 	renderDialog() {
 		const buttons = [
-				{
-					action: 'cancel',
-					label: this.props.translate( 'Cancel' ),
-					disabled: this.state.disableDialogButtons,
-				},
-				{
-					action: 'confirm',
-					label: this.props.translate( 'Confirm Transfer' ),
-					onClick: this.handleConfirmTransferDomain,
-					disabled: this.state.disableDialogButtons,
-					isPrimary: true,
-				},
-			],
-			domainName = this.props.selectedDomainName,
-			selectedUserDisplay = this.getSelectedUserDisplayName();
+			{
+				action: 'cancel',
+				label: this.props.translate( 'Cancel' ),
+				disabled: this.state.disableDialogButtons,
+			},
+			{
+				action: 'confirm',
+				label: this.props.translate( 'Confirm transfer' ),
+				onClick: this.handleConfirmTransferDomain,
+				disabled: this.state.disableDialogButtons,
+				isPrimary: true,
+			},
+		];
 		return (
 			<Dialog
+				className="transfer-to-other-user__confirmation-dialog"
 				isVisible={ this.state.showConfirmationDialog }
 				buttons={ buttons }
 				onClose={ this.handleDialogClose }
 			>
 				<h1>{ this.props.translate( 'Confirm Transfer' ) }</h1>
-				<p>
-					{ this.props.translate(
-						'Do you want to transfer the ownership of {{strong}}%(domainName)s{{/strong}} ' +
-							'to {{strong}}%(selectedUserDisplay)s{{/strong}}?',
-						{
-							args: { domainName, selectedUserDisplay },
-							components: { strong: <strong /> },
-						}
-					) }
-				</p>
+				<p>{ this.getDialogMessage() }</p>
 			</Dialog>
 		);
 	}
 
+	getDialogMessage() {
+		const { selectedDomainName: domainName, isMapping, translate } = this.props;
+		const selectedUserDisplay = this.getSelectedUserDisplayName();
+
+		if ( isMapping ) {
+			return translate(
+				'Do you want to transfer the domain mapping of {{strong}}%(domainName)s{{/strong}} ' +
+					'to {{strong}}%(selectedUserDisplay)s{{/strong}}?',
+				{
+					args: { domainName, selectedUserDisplay },
+					components: { strong: <strong /> },
+				}
+			);
+		}
+
+		return translate(
+			'Do you want to transfer the ownership of {{strong}}%(domainName)s{{/strong}} ' +
+				'to {{strong}}%(selectedUserDisplay)s{{/strong}}?',
+			{
+				args: { domainName, selectedUserDisplay },
+				components: { strong: <strong /> },
+			}
+		);
+	}
+
 	renderSection() {
-		const { selectedDomainName: domainName, translate, users, selectedSite } = this.props,
-			availableUsers = this.filterAvailableUsers( users ),
-			{ currentUserCanManage, domainRegistrationAgreementUrl } = getSelectedDomain( this.props ),
-			saveButtonLabel = translate( 'Transfer Domain' );
+		const { currentUserCanManage, domainRegistrationAgreementUrl } = getSelectedDomain(
+			this.props
+		);
 
 		if ( ! currentUserCanManage ) {
-			return <NonOwnerCard { ...omit( this.props, [ 'children' ] ) } />;
+			const { domains, selectedDomainName } = this.props;
+			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
 		}
+
+		const { isMapping, translate, users } = this.props;
+		const availableUsers = this.filterAvailableUsers( users );
+		const saveButtonLabel = isMapping
+			? translate( 'Transfer domain mapping' )
+			: translate( 'Transfer domain' );
 
 		return (
 			<Fragment>
-				<SectionHeader label={ translate( 'Transfer Domain To Another User' ) } />
 				<Card>
-					<p>
-						{ translate(
-							'Transferring a domain to another user will give all the rights of the domain to that user. ' +
-								'Please choose an administrator to transfer {{strong}}%(domainName)s{{/strong}} to.',
-							{ args: { domainName }, components: { strong: <strong /> } }
-						) }
-					</p>
-					<p>
-						{ translate(
-							'You can transfer this domain to any administrator on this site. If the user you want to ' +
-								'transfer is not currently an administrator, please {{a}}add them to the site first{{/a}}.',
-							{ components: { a: <a href={ `/people/new/${ selectedSite.slug }` } /> } }
-						) }
-					</p>
+					{ this.renderTransferInformation() }
 					<FormFieldset>
 						<FormSelect
 							disabled={ availableUsers.length === 0 }
@@ -237,20 +243,29 @@ class TransferOtherUser extends React.Component {
 							value={ this.state.selectedUserId }
 						>
 							{ availableUsers.length ? (
-								availableUsers.map( user => (
-									<option key={ user.ID } value={ user.ID }>
-										{ this.getUserDisplayName( user ) }
-									</option>
-								) )
+								<Fragment>
+									<option value="">{ translate( '-- Select User --' ) }</option>
+									{ availableUsers.map( ( user ) => {
+										const userId = getWpcomUserId( user );
+
+										return (
+											<option key={ userId } value={ userId }>
+												{ this.getUserDisplayName( user ) }
+											</option>
+										);
+									} ) }
+								</Fragment>
 							) : (
 								<option value="">{ translate( '-- Site has no other administrators --' ) }</option>
 							) }
 						</FormSelect>
 					</FormFieldset>
-					<DesignatedAgentNotice
-						domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
-						saveButtonLabel={ saveButtonLabel }
-					/>
+					{ ! isMapping && (
+						<DesignatedAgentNotice
+							domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
+							saveButtonLabel={ saveButtonLabel }
+						/>
+					) }
 					<FormButton
 						disabled={ ! this.state.selectedUserId }
 						onClick={ this.handleTransferDomain }
@@ -263,21 +278,85 @@ class TransferOtherUser extends React.Component {
 		);
 	}
 
+	renderTransferInformation() {
+		const { isMapping, selectedDomainName: domainName, selectedSite, translate } = this.props;
+
+		if ( isMapping ) {
+			return (
+				<>
+					<p>
+						{ translate(
+							'Please choose an administrator to transfer domain mapping of {{strong}}%(domainName)s{{/strong}} to.',
+							{ args: { domainName }, components: { strong: <strong /> } }
+						) }
+					</p>
+					<p>
+						{ translate(
+							'You can transfer this domain mapping to any administrator on this site. If the user you want to ' +
+								'transfer is not currently an administrator, please {{a}}add them to the site first{{/a}}.',
+							{ components: { a: <a href={ `/people/new/${ selectedSite.slug }` } /> } }
+						) }
+					</p>
+				</>
+			);
+		}
+
+		return (
+			<>
+				<p>
+					{ translate(
+						'Transferring a domain to another user will give all the rights of the domain to that user. ' +
+							'Please choose an administrator to transfer {{strong}}%(domainName)s{{/strong}} to.',
+						{ args: { domainName }, components: { strong: <strong /> } }
+					) }
+				</p>
+				<p>
+					{ translate(
+						'You can transfer this domain to any administrator on this site. If the user you want to ' +
+							'transfer is not currently an administrator, please {{a}}add them to the site first{{/a}}.',
+						{ components: { a: <a href={ `/people/new/${ selectedSite.slug }` } /> } }
+					) }
+				</p>
+			</>
+		);
+	}
+
 	filterAvailableUsers( users ) {
 		return users.filter(
-			user => includes( user.roles, 'administrator' ) && user.ID !== this.props.currentUser.ID
+			( user ) =>
+				getWpcomUserId( user ) !== false && getWpcomUserId( user ) !== this.props.currentUserId
 		);
 	}
 
 	isDataReady() {
-		return this.props.wapiDomainInfo.hasLoadedFromServer && ! this.props.isRequestingSiteDomains;
+		return this.props.hasSiteDomainsLoaded && ! this.props.isRequestingSiteDomains;
 	}
 }
 
+const withUsers = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		const siteId = useSelector( getSelectedSiteId );
+		const usersQuery = useUsersQuery( siteId, { role: 'administrator' } );
+		const users = usersQuery.data?.users ?? [];
+
+		return <Wrapped { ...props } users={ users } />;
+	},
+	'WithUsers'
+);
+
 export default connect(
-	state => ( { currentUser: getCurrentUser( state ) } ),
+	( state, ownProps ) => {
+		const domain = ! ownProps.isRequestingSiteDomains && getSelectedDomain( ownProps );
+
+		return {
+			currentUserId: getCurrentUserId( state ),
+			isMapping: Boolean( domain ) && isMappedDomain( domain ),
+			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, ownProps.selectedSite.ID ),
+			currentRoute: getCurrentRoute( state ),
+		};
+	},
 	{
 		successNotice,
 		errorNotice,
 	}
-)( localize( TransferOtherUser ) );
+)( localize( withUsers( TransferOtherUser ) ) );

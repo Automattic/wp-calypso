@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ const by = webdriver.By;
 
 export default class PurchasesPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( 'a[href="/me/purchases"][aria-current="true"]' ) );
+		super( driver, by.css( 'main.purchases-list' ) );
 	}
 
 	async _postInit() {
@@ -35,7 +33,7 @@ export default class PurchasesPage extends AsyncBaseContainer {
 	}
 
 	async selectPremiumPlanOnConnectedSite() {
-		return await this._selectPlanOnConnectedSite( 'premium' );
+		return await this._selectPlanOnConnectedSite();
 	}
 
 	async selectTheme() {
@@ -49,13 +47,12 @@ export default class PurchasesPage extends AsyncBaseContainer {
 	async dismissGuidedTour() {
 		return await driverHelper.clickIfPresent(
 			this.driver,
-			by.css( '.guided-tours__choice-button-row button:not(.is-primary)' ),
-			1
+			by.css( '.guided-tours__choice-button-row button:not(.is-primary)' )
 		);
 	}
 
 	async _waitForPurchases() {
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			by.css( '.is-placeholder' ),
 			this.explicitWaitMS * 3
@@ -70,11 +67,11 @@ export default class PurchasesPage extends AsyncBaseContainer {
 		);
 	}
 
-	async _selectPlanOnConnectedSite( planName ) {
+	async _selectPlanOnConnectedSite() {
 		await this._waitForPurchases();
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( `a.purchase-item[data-e2e-connected-site=true] img.is-${ planName }-plan` )
+			by.css( `a.purchase-item[data-e2e-connected-site=true] svg` )
 		);
 	}
 }

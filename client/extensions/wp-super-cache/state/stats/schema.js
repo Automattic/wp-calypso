@@ -1,4 +1,3 @@
-/** @format */
 export const cacheSchema = {
 	cached: { type: 'integer' },
 	cached_list: { type: 'object' },

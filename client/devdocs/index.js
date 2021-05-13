@@ -1,28 +1,19 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import page from 'page';
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
 import controller from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
-export default function() {
+export default function () {
 	if ( config.isEnabled( 'devdocs' ) ) {
 		page( '/devdocs', controller.sidebar, controller.devdocs, makeLayout, clientRender );
-		page(
-			'/devdocs/form-state-examples/:component?',
-			controller.sidebar,
-			controller.formStateExamples,
-			makeLayout,
-			clientRender
-		);
 		page(
 			'/devdocs/design/wizard/:stepName?',
 			controller.sidebar,
@@ -44,7 +35,7 @@ export default function() {
 			makeLayout,
 			clientRender
 		);
-		page( '/devdocs/app-components/:component?', context =>
+		page( '/devdocs/app-components/:component?', ( context ) =>
 			page.redirect( '/devdocs/blocks/' + ( context.params.component || '' ) )
 		);
 		page( '/devdocs/app-components', '/devdocs/blocks' );
@@ -52,6 +43,13 @@ export default function() {
 			'/devdocs/blocks/:component?',
 			controller.sidebar,
 			controller.blocks,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/devdocs/wordpress-components-gallery',
+			controller.sidebar,
+			controller.wpComponentsGallery,
 			makeLayout,
 			clientRender
 		);
@@ -66,6 +64,13 @@ export default function() {
 			'/devdocs/typography',
 			controller.sidebar,
 			controller.typography,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/devdocs/illustrations',
+			controller.sidebar,
+			controller.illustrations,
 			makeLayout,
 			clientRender
 		);

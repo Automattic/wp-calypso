@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 /**
@@ -14,18 +13,16 @@ import React from 'react';
  * Internal dependencies
  */
 import { MapDomain } from '..';
-import MapDomainStep from 'components/domains/map-domain-step';
-import HeaderCake from 'components/header-cake';
-import { domainManagementList } from 'my-sites/domains/paths';
+import MapDomainStep from 'calypso/components/domains/map-domain-step';
+import HeaderCake from 'calypso/components/header-cake';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
 
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 jest.mock( 'page', () => {
-	const { spy } = require( 'sinon' );
-	const pageSpy = spy();
-
-	pageSpy.redirect = spy();
-
-	return pageSpy;
+	const sinon = require( 'sinon' );
+	const spy = sinon.spy();
+	spy.redirect = sinon.spy();
+	return spy;
 } );
 
 describe( 'MapDomain component', () => {
@@ -38,7 +35,7 @@ describe( 'MapDomain component', () => {
 		cart: {},
 		productsList: {},
 		domainsWithPlansOnly: false,
-		translate: string => string,
+		translate: ( string ) => string,
 		isSiteUpgradeable: true,
 		selectedSite: {
 			ID: 500,
@@ -104,7 +101,7 @@ describe( 'MapDomain component', () => {
 		expect( wrapper.find( { status: 'is-error' } ) ).to.have.length( 0 );
 	} );
 
-	test( 'render a notice by when there is an errorMessage in the state ', () => {
+	test( 'render a notice by when there is an errorMessage in the state', () => {
 		const wrapper = shallow( <MapDomain { ...defaultProps } /> );
 		// we match the notice by props, because enzyme isn't matching the Notice type for some reason
 		wrapper.setState( { errorMessage: 'baba' } );

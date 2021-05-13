@@ -1,5 +1,3 @@
-/** @format */
-
 function translatableStringChecker( props, propName, componentName ) {
 	componentName = componentName || 'ANONYMOUS';
 

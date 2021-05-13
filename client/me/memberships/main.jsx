@@ -1,38 +1,66 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import PurchasesHeader from '../purchases/purchases-list/header';
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryMembershipsSubscriptions from 'components/data/query-memberships-subscriptions';
-import SectionHeader from 'components/section-header';
-import CompactCard from 'components/card';
-import EmptyContent from 'components/empty-content';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import PurchasesNavigation from 'calyspo/me/purchases/purchases-navigation';
+import Main from 'calypso/components/main';
+import DocumentHead from 'calypso/components/data/document-head';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
+import SectionHeader from 'calypso/components/section-header';
+import { CompactCard } from '@automattic/components';
+import EmptyContent from 'calypso/components/empty-content';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
+import titles from 'calypso/me/purchases/titles';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
  */
-import './main.scss';
+import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import noMembershipsImage from 'calypso/assets/images/illustrations/no-memberships.svg';
+
+const getMembershipEndDate = ( translate, endDate, moment ) => {
+	if ( ! endDate ) {
+		return translate( 'Never Expires' );
+	}
+	return moment( endDate ).format( 'll' );
+};
+
+const getMembershipEndDateFromNow = ( translate, endDate, moment ) => {
+	if ( ! endDate ) {
+		return '-';
+	}
+	return translate( 'Renews %s', { args: moment( endDate ).fromNow() } );
+};
+
+const getMembershipRenewalInterval = ( translate, renewalInterval ) => {
+	if ( ! renewalInterval ) {
+		return '-';
+	}
+	return translate( 'Every %s', { args: renewalInterval } );
+};
 
 const MembershipItem = ( { translate, subscription, moment } ) => (
 	<CompactCard key={ subscription.ID } href={ '/me/purchases/other/' + subscription.ID }>
 		<div className="memberships__list-subscription">
 			<div className="memberships__list-date">
-				<div>{ moment( subscription.end_date ).format( 'll' ) }</div>
+				<div>{ getMembershipEndDate( translate, subscription.end_date, moment ) }</div>
 				<div className="memberships__list-sub">
-					{ translate( 'Renews %s', { args: moment( subscription.end_date ).fromNow() } ) }
+					{ getMembershipEndDateFromNow( translate, subscription.end_date, moment ) }
 				</div>
 			</div>
 			<div className="memberships__service-description">
@@ -46,7 +74,7 @@ const MembershipItem = ( { translate, subscription, moment } ) => (
 					{ formatCurrency( subscription.renewal_price, subscription.currency ) }
 				</div>
 				<div className="memberships__list-sub">
-					{ translate( 'Every %s', { args: subscription.renew_interval } ) }
+					{ getMembershipRenewalInterval( translate, subscription.renew_interval ) }
 				</div>
 			</div>
 		</div>
@@ -58,9 +86,9 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 	if ( subscriptions && subscriptions.length ) {
 		content = (
 			<>
-				<SectionHeader label={ translate( 'Active Recurring Payments plans' ) } />
+				<SectionHeader label={ translate( 'Active payments plans' ) } />
 				{ subscriptions.map(
-					subscription => (
+					( subscription ) => (
 						<MembershipItem
 							key={ subscription.ID }
 							translate={ translate }
@@ -76,25 +104,26 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 		content = (
 			<CompactCard className="memberships__no-content">
 				<EmptyContent
-					title={ translate( 'No Recurring Payments found.' ) }
-					illustration={ '/calypso/images/illustrations/illustration-nomemberships.svg' }
+					title={ translate( 'No payments found.' ) }
+					illustration={ noMembershipsImage }
 				/>
 			</CompactCard>
 		);
 	}
 
 	return (
-		<Main className="memberships">
+		<Main wideLayout className="memberships">
 			<DocumentHead title={ translate( 'Other Sites' ) } />
 			<PageViewTracker path="/me/purchases/other" title="Me > Other Sites" />
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<MeSidebarNavigation />
 			<QueryMembershipsSubscriptions />
-			<PurchasesHeader section={ 'memberships' } />
+			<PurchasesNavigation section="activeUpgrades" />
 			{ content }
 		</Main>
 	);
 };
 
-export default connect( state => ( {
-	subscriptions: get( state, 'memberships.subscriptions.items', [] ),
-} ) )( localize( MembershipsHistory ) );
+export default connect( ( state ) => ( {
+	subscriptions: getAllSubscriptions( state ),
+} ) )( localize( withLocalizedMoment( MembershipsHistory ) ) );

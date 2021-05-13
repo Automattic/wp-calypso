@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,8 +7,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import LikeButton from 'blocks/like-button/button';
-import Card from 'components/card/compact';
+import LikeButton from 'calypso/blocks/like-button/button';
+import { CompactCard as Card } from '@automattic/components';
 
 class SimpleLikeButtonContainer extends React.PureComponent {
 	state = {
@@ -29,7 +27,7 @@ class SimpleLikeButtonContainer extends React.PureComponent {
 		);
 	}
 
-	handleLikeToggle = newState => {
+	handleLikeToggle = ( newState ) => {
 		this.setState( {
 			liked: newState,
 			count: ( this.state.count += newState ? 1 : -1 ),

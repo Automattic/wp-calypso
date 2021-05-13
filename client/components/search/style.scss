@@ -7,6 +7,7 @@
 }
 
 .search {
+	border-radius: 2px;
 	display: flex;
 	flex: 1 1 auto;
 	margin-bottom: 24px;
@@ -22,8 +23,7 @@
 		flex: 0 0 auto;
 		display: flex;
 		align-items: center;
-		background-color: var( --color-white );
-		border-radius: inherit;
+		background-color: var( --color-surface );
 		height: 100%;
 
 		.accessible-focus &:focus {
@@ -43,21 +43,21 @@
 	}
 
 	.search__open-icon:hover {
-		color: var( --color-neutral-600 );
+		color: var( --color-neutral-60 );
 	}
 
 	.search__close-icon {
-		color: var( --color-neutral-600 );
+		color: var( --color-neutral-60 );
 		opacity: 0;
 		transition: opacity 0.2s ease-in;
 	}
 
 	&.is-open.has-focus {
 		border-color: var( --color-primary );
-		box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-100 );
+		box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-10 );
 
 		&:hover {
-			box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-200 );
+			box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-20 );
 		}
 	}
 
@@ -65,7 +65,7 @@
 		height: 36px;
 		.search__input {
 			height: 36px;
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 		}
 
 		.search__open-icon {
@@ -103,16 +103,16 @@
 	}
 }
 
-.search__input[type='search'] {
+.search__input.form-text-input[type='search'] {
 	flex: 1 1 auto;
 	display: none;
 	z-index: z-index( '.search', '.search__input' );
 	top: 0;
 	border: none;
-	border-radius: inherit;
 	height: 100%;
-	background: var( --color-white );
+	background: var( --color-surface );
 	appearance: none;
+	border-radius: 0;
 	box-sizing: border-box;
 	padding: 0;
 	-webkit-appearance: none;
@@ -122,7 +122,7 @@
 	}
 
 	&:disabled {
-		background: var( --color-white );
+		background: var( --color-surface );
 	}
 
 	&:focus {
@@ -141,7 +141,7 @@
 	width: 100%;
 
 	.search__open-icon {
-		color: var( --color-neutral-600 );
+		color: var( --color-neutral-60 );
 	}
 
 	.search__close-icon {
@@ -158,11 +158,11 @@
 	}
 
 	.search__input-fade {
+		border-radius: 0;
 		flex: 1 1 auto;
 		height: 100%;
 		position: relative;
-		font-size: 16px;
-		border-radius: inherit;
+		font-size: $font-body;
 		&::before {
 			@include long-content-fade(
 				$size: 32px,
@@ -202,7 +202,8 @@
 	align-items: center;
 	flex: 1 1 auto;
 	overflow: hidden;
-	font: inherit;
+	font-size: inherit;
+	font-family: inherit;
 	width: 100%;
 	height: 100%;
 	top: 1px;
@@ -223,7 +224,7 @@
 	display: flex;
 	width: 50px;
 	height: 100%;
-	background-color: var( --color-white );
+	background-color: var( --color-surface );
 	z-index: z-index( '.search', '.search.is-searching .spinner' );
 }
 

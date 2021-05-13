@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { fromApi, updateProgress } from '../';
-import { updateRewindRestoreProgress } from 'state/activity-log/actions';
+import { updateRewindRestoreProgress } from 'calypso/state/activity-log/actions';
 
 const siteId = 77203074;
 const timestamp = 1496768464;
@@ -25,6 +24,7 @@ const FINISHED_RESPONSE = deepFreeze( {
 		status: 'finished',
 		rewindId: '',
 		context: 'main',
+		currentEntry: '',
 	},
 } );
 
@@ -39,6 +39,7 @@ describe( 'receiveRestoreProgress', () => {
 			status: 'finished',
 			rewindId: '',
 			context: 'main',
+			currentEntry: '',
 		} );
 		expect( action ).toEqual( expectedAction );
 	} );

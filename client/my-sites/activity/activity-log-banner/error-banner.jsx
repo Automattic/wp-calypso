@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,18 +5,20 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ActivityLogBanner from './index';
-import Button from 'components/button';
-import HappychatButton from 'components/happychat/button';
-import Gridicon from 'gridicons';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';
+import { Button } from '@automattic/components';
+import HappychatButton from 'calypso/components/happychat/button';
+import Gridicon from 'calypso/components/gridicon';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	dismissRewindBackupProgress,
+	dismissRewindRestoreProgress as dismissRewindRestoreProgressAction,
+} from 'calypso/state/activity-log/actions';
 
 class ErrorBanner extends PureComponent {
 	static propTypes = {
@@ -56,9 +57,9 @@ class ErrorBanner extends PureComponent {
 	};
 
 	handleDismiss = () =>
-		isUndefined( this.props.downloadId )
+		typeof this.props.downloadId === 'undefined'
 			? this.props.closeDialog( 'restore' )
-			: this.props.closeDialog( 'backup' );
+			: this.props.dismissDownloadError( this.props.siteId, this.props.downloadId );
 
 	render() {
 		const {
@@ -70,15 +71,16 @@ class ErrorBanner extends PureComponent {
 			trackHappyChatBackup,
 			trackHappyChatRestore,
 		} = this.props;
-		const strings = isUndefined( downloadId )
-			? {
-					title: translate( 'Problem rewinding your site' ),
-					details: translate( 'We came across a problem while trying to rewind your site.' ),
-			  }
-			: {
-					title: translate( 'Problem preparing your file' ),
-					details: translate( 'There was a problem preparing your backup for downloading.' ),
-			  };
+		const strings =
+			typeof downloadId === 'undefined'
+				? {
+						title: translate( 'Problem restoring your site' ),
+						details: translate( 'We came across a problem while trying to restore your site.' ),
+				  }
+				: {
+						title: translate( 'Problem preparing your file' ),
+						details: translate( 'There was a problem preparing your backup for downloading.' ),
+				  };
 
 		return (
 			<ActivityLogBanner
@@ -90,7 +92,7 @@ class ErrorBanner extends PureComponent {
 				<TrackComponentView
 					eventName="calypso_activitylog_errorbanner_impression"
 					eventProperties={
-						isUndefined( downloadId )
+						typeof downloadId === 'undefined'
 							? {
 									error_code: errorCode,
 									failure_reason: failureReason,
@@ -109,7 +111,9 @@ class ErrorBanner extends PureComponent {
 				</Button>
 				<HappychatButton
 					className="activity-log-banner__happychat-button"
-					onClick={ isUndefined( downloadId ) ? trackHappyChatRestore : trackHappyChatBackup }
+					onClick={
+						typeof downloadId === 'undefined' ? trackHappyChatRestore : trackHappyChatBackup
+					}
 				>
 					<Gridicon icon="chat" />
 					<span>{ translate( 'Get help' ) }</span>
@@ -119,11 +123,9 @@ class ErrorBanner extends PureComponent {
 	}
 }
 
-export default connect(
-	null,
-	{
-		dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
-		trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_error_banner_backup' ),
-		trackHappyChatRestore: () => recordTracksEvent( 'calypso_activitylog_error_banner_restore' ),
-	}
-)( localize( ErrorBanner ) );
+export default connect( null, {
+	dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
+	dismissDownloadError: dismissRewindBackupProgress,
+	trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_error_banner_backup' ),
+	trackHappyChatRestore: () => recordTracksEvent( 'calypso_activitylog_error_banner_restore' ),
+} )( localize( ErrorBanner ) );

@@ -1,0 +1,60 @@
+{
+	"name": "@automattic/data-stores",
+	"version": "2.0.1",
+	"description": "Calypso Data Stores",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/data-stores"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"autocomplete.gif",
+		"dist",
+		"src"
+	],
+	"types": "dist/types",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"@automattic/format-currency": "^1.0.0-alpha.0",
+		"@wordpress/api-fetch": "^4.0.0",
+		"@wordpress/data-controls": "^1.21.3",
+		"@wordpress/deprecated": "^2.12.3",
+		"@wordpress/url": "^2.22.2",
+		"fast-json-stable-stringify": "^2.1.0",
+		"i18n-calypso": "^5.0.0",
+		"qs": "^6.9.1",
+		"redux": "^4.0.5",
+		"tslib": "^2.2.0",
+		"utility-types": "^3.10.0",
+		"validator": "^13.5.2"
+	},
+	"peerDependencies": {
+		"@wordpress/data": "^4",
+		"react": "^16.8"
+	},
+	"devDependencies": {
+		"jest-fetch-mock": "^2.1.2",
+		"nock": "^12.0.3",
+		"wait-for-expect": "^3.0.2",
+		"wpcom-proxy-request": "^6.0.0",
+		"@types/validator": "^13.1.3"
+	}
+}

@@ -1,14 +1,12 @@
-/** @format */
-
 /**
  * Internal Dependencies
  */
 
-import { isDomainTransfer, isJetpackPlan } from 'lib/products-values';
+import { isDomainTransfer, isJetpackPlan } from '@automattic/calypso-products';
 
-export const cancellationOptionsForPurchase = purchase => {
+export const cancellationOptionsForPurchase = ( purchase ) => {
 	if ( isJetpackPlan( purchase ) ) {
-		return [ 'couldNotActivate', 'didNotInclude', 'onlyNeedFree' ];
+		return [ 'couldNotActivate', 'didNotInclude', 'downgradeToAnotherPlan', 'onlyNeedFree' ];
 	}
 
 	if ( isDomainTransfer( purchase ) ) {
@@ -18,7 +16,7 @@ export const cancellationOptionsForPurchase = purchase => {
 	return [ 'couldNotInstall', 'tooHard', 'didNotInclude', 'onlyNeedFree' ];
 };
 
-export const nextAdventureOptionsForPurchase = purchase => {
+export const nextAdventureOptionsForPurchase = ( purchase ) => {
 	if ( isJetpackPlan( purchase ) ) {
 		return [ 'stayingHere', 'otherPlugin', 'leavingWP', 'noNeed' ];
 	}

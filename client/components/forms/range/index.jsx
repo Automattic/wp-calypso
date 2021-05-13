@@ -1,18 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
-import { omit, uniqueId } from 'lodash';
+import { omit } from 'lodash';
 import classnames from 'classnames';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
  */
-import FormRange from 'components/forms/form-range';
+import FormRange from 'calypso/components/forms/form-range';
 
 /**
  * Style dependencies
@@ -39,7 +37,7 @@ export default class extends React.Component {
 	};
 
 	state = {
-		id: uniqueId( 'range' ),
+		id: 'range' + uuid(),
 	};
 
 	getMinContentElement = () => {
@@ -55,7 +53,8 @@ export default class extends React.Component {
 	};
 
 	getValueLabelElement = () => {
-		let left, offset;
+		let left;
+		let offset;
 
 		if ( this.props.showValueLabel ) {
 			left = ( 100 * ( this.props.value - this.props.min ) ) / ( this.props.max - this.props.min );

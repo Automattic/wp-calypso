@@ -1,16 +1,17 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import { noop, map, compact } from 'lodash';
+import { map, compact } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { ConversationCommentList } from 'blocks/conversations/list';
-import { posts } from 'blocks/reader-post-card/docs/fixtures';
-import { commentsTree } from 'blocks/conversations/docs/fixtures';
+import { ConversationCommentList } from 'calypso/blocks/conversations/list';
+import { posts } from 'calypso/blocks/reader-post-card/docs/fixtures';
+import { commentsTree } from 'calypso/blocks/conversations/docs/fixtures';
+
+const noop = () => {};
 
 const ConversationCommentListExample = () => {
 	const post = posts[ 0 ];

@@ -3,17 +3,17 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import safeProtocolUrl from 'lib/safe-protocol-url';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { withoutHttp } from 'lib/url';
+import { Button } from '@automattic/components';
+import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { withoutHttp } from 'calypso/lib/url';
 
 /**
  * Style dependencies
@@ -36,11 +36,11 @@ class ProfileLink extends React.Component {
 		slug: PropTypes.string.isRequired,
 	};
 
-	recordClickEvent = action => {
+	recordClickEvent = ( action ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
-	getClickHandler = action => {
+	getClickHandler = ( action ) => {
 		return () => this.recordClickEvent( action );
 	};
 
@@ -59,16 +59,16 @@ class ProfileLink extends React.Component {
 
 	render() {
 		const classes = classNames( {
-				'profile-link': true,
-				'is-placeholder': this.props.isPlaceholder,
-			} ),
-			imageSrc =
-				'//s1.wp.com/mshots/v1/' +
-				encodeURIComponent( this.props.url ) +
-				'?w=' +
-				this.props.imageSize +
-				'&h=64',
-			linkHref = this.props.isPlaceholder ? null : safeProtocolUrl( this.props.url );
+			'profile-link': true,
+			'is-placeholder': this.props.isPlaceholder,
+		} );
+		const imageSrc =
+			'//s1.wp.com/mshots/v1/' +
+			encodeURIComponent( this.props.url ) +
+			'?w=' +
+			this.props.imageSize +
+			'&h=64';
+		const linkHref = this.props.isPlaceholder ? null : safeProtocolUrl( this.props.url );
 
 		return (
 			<li className={ classes }>
@@ -101,9 +101,6 @@ class ProfileLink extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( ProfileLink );
+export default connect( null, {
+	recordGoogleEvent,
+} )( ProfileLink );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,12 +17,12 @@ export default class PagesPage extends AsyncBaseContainer {
 
 	async waitForPages() {
 		const driver = this.driver;
-		const resultsLoadingSelector = By.css( '.pages__page-list .is-placeholder:not(.page)' );
+		const resultsLoadingLocator = By.css( '.pages__page-list .is-placeholder:not(.page)' );
 		return await driver.wait(
-			function() {
+			function () {
 				return driverHelper
-					.isElementPresent( driver, resultsLoadingSelector )
-					.then( function( present ) {
+					.isElementLocated( driver, resultsLoadingLocator )
+					.then( function ( present ) {
 						return ! present;
 					} );
 			},
@@ -34,30 +32,30 @@ export default class PagesPage extends AsyncBaseContainer {
 	}
 
 	async editPageWithTitle( title ) {
-		const pageTitleSelector = By.linkText( `${ title }` );
-		return await driverHelper.clickWhenClickable( this.driver, pageTitleSelector );
+		const pageTitleLocator = By.linkText( `${ title }` );
+		return await driverHelper.clickWhenClickable( this.driver, pageTitleLocator );
 	}
 
 	async selectAddNewPage() {
-		const addPageSelector = By.css( '.pages__add-page' ); // Add button when there are pages
-		const startPageSelector = By.css( '.empty-content__action' ); // Add button when there are no pages
+		const addPageLocator = By.css( '.pages__add-page' ); // Add button when there are pages
+		const startPageLocator = By.css( '.empty-content__action' ); // Add button when there are no pages
 
 		if (
-			await driverHelper.isEventuallyPresentAndDisplayed(
+			await driverHelper.isElementEventuallyLocatedAndVisible(
 				this.driver,
-				addPageSelector,
+				addPageLocator,
 				this.explicitWaitMS / 5
 			)
 		) {
-			return await driverHelper.clickWhenClickable( this.driver, addPageSelector );
+			return await driverHelper.clickWhenClickable( this.driver, addPageLocator );
 		} else if (
-			await driverHelper.isEventuallyPresentAndDisplayed(
+			await driverHelper.isElementEventuallyLocatedAndVisible(
 				this.driver,
-				startPageSelector,
+				startPageLocator,
 				this.explicitWaitMS / 5
 			)
 		) {
-			return await driverHelper.clickWhenClickable( this.driver, startPageSelector );
+			return await driverHelper.clickWhenClickable( this.driver, startPageLocator );
 		}
 	}
 }

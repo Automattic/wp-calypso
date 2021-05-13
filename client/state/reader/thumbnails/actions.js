@@ -13,7 +13,9 @@ import {
 	READER_THUMBNAIL_REQUEST_SUCCESS,
 	READER_THUMBNAIL_REQUEST_FAILURE,
 	READER_THUMBNAIL_RECEIVE,
-} from 'state/action-types';
+} from 'calypso/state/reader/action-types';
+
+import 'calypso/state/reader/init';
 
 /**
  * Module variables
@@ -25,9 +27,9 @@ export const BAD_API_RESPONSE = 'BAD_API_RESPONSE';
 /**
  * Returns an action object to signal that a thumbnailUrl has been received.
  *
- * @param {String} embedUrl the url of the embed for which the thumbnail was grabbed
- * @param {String} thumbnailUrl the url at which to find the thumbnail for the embed
- * @return {Object} Action object
+ * @param {string} embedUrl the url of the embed for which the thumbnail was grabbed
+ * @param {string} thumbnailUrl the url at which to find the thumbnail for the embed
+ * @returns {object} Action object
  */
 export function receiveThumbnail( embedUrl, thumbnailUrl ) {
 	return {
@@ -56,10 +58,10 @@ function requestFailure( embedUrl, error ) {
  * Either instantly returns an action for the thumbnail info or
  * triggers a network request to fetch a thumbnailUrl if necessary
  *
- * @param  {String} embedUrl -  the url of the embed for which to get the thumbnail
- * @return {Function|Object} Action thunk | Action object
+ * @param  {string} embedUrl -  the url of the embed for which to get the thumbnail
+ * @returns {Function|object} Action thunk | Action object
  */
-export const requestThumbnail = embedUrl => dispatch => {
+export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 	const { id, service } = getEmbedMetadata( embedUrl ) || {};
 	switch ( service ) {
 		case 'youtube': {
@@ -80,8 +82,8 @@ export const requestThumbnail = embedUrl => dispatch => {
 			} );
 
 			const fetchUrl = `https://vimeo.com/api/v2/video/${ id }.json`;
-			return fetch( fetchUrl ).then(
-				async response => {
+			return globalThis.fetch( fetchUrl ).then(
+				async ( response ) => {
 					let json;
 					try {
 						json = await response.json();
@@ -106,7 +108,7 @@ export const requestThumbnail = embedUrl => dispatch => {
 						);
 					}
 				},
-				error => {
+				( error ) => {
 					dispatch( requestFailure( embedUrl, error ) );
 				}
 			);

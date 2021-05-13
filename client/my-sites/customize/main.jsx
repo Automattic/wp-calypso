@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import url from 'url';
 import { stringify } from 'qs';
 import { cloneDeep, get, startsWith } from 'lodash';
 import { connect } from 'react-redux';
@@ -16,20 +13,21 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
 import page from 'page';
-import CustomizerLoadingPanel from 'my-sites/customize/loading-panel';
-import EmptyContent from 'components/empty-content';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Actions from 'my-sites/customize/actions';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { requestSite } from 'state/sites/actions';
-import { themeActivated } from 'state/themes/actions';
+import CustomizerLoadingPanel from 'calypso/my-sites/customize/loading-panel';
+import EmptyContent from 'calypso/components/empty-content';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { requestSite } from 'calypso/state/sites/actions';
+import { themeActivated } from 'calypso/state/themes/actions';
 import { getCustomizerFocus } from './panels';
-import getMenusUrl from 'state/selectors/get-menus-url';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
-import wpcom from 'lib/wp';
+import getMenusUrl from 'calypso/state/selectors/get-menus-url';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getCustomizerUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
+import wpcom from 'calypso/lib/wp';
+import { trackClick } from 'calypso/my-sites/themes/helpers';
+import { getUrlParts } from '@automattic/calypso-url';
 
 /**
  * Style dependencies
@@ -37,7 +35,6 @@ import wpcom from 'lib/wp';
 import './style.scss';
 
 const debug = debugFactory( 'calypso:my-sites:customize' );
-
 // Used to allow timing-out the iframe loading process
 let loadingTimer;
 
@@ -46,9 +43,11 @@ class Customize extends React.Component {
 		super( props );
 		this.state = {
 			iframeLoaded: false,
-			errorFromIframe: false,
 			timeoutError: false,
+			returnUrl: undefined,
 		};
+
+		this.customizerIframe = null;
 	}
 
 	static propTypes = {
@@ -62,6 +61,7 @@ class Customize extends React.Component {
 		isJetpack: PropTypes.bool,
 		customizerUrl: PropTypes.string,
 		translate: PropTypes.func.isRequired,
+		isCustomerHomeEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -69,7 +69,12 @@ class Customize extends React.Component {
 		prevPath: null,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
+		this.getReturnUrl().then( ( validatedUrl ) => {
+			this.setState( {
+				returnUrl: validatedUrl,
+			} );
+		} );
 		this.redirectIfNeeded( this.props.pathname );
 		this.listenToCustomizer();
 		this.waitForLoading();
@@ -88,11 +93,15 @@ class Customize extends React.Component {
 		this.cancelWaitingTimer();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfNeeded( nextProps.pathname );
 	}
 
-	redirectIfNeeded = pathname => {
+	setCustomizerIframetRef = ( element ) => {
+		this.customizerIframe = element;
+	};
+
+	redirectIfNeeded = ( pathname ) => {
 		const { menusUrl, isJetpack, customizerUrl } = this.props;
 		if ( startsWith( pathname, '/customize/menus' ) && pathname !== menusUrl ) {
 			page( menusUrl );
@@ -115,10 +124,32 @@ class Customize extends React.Component {
 		return false;
 	};
 
+	getReturnUrl = async () => {
+		const returnUrl = new URLSearchParams( window.location.search ).get( 'return' );
+
+		if ( ! returnUrl ) {
+			return null;
+		}
+
+		try {
+			const response = await wpcom.req.get( '/me/validate-redirect', { redirect_url: returnUrl } );
+
+			if ( ! response || ! response.redirect_to ) {
+				return null;
+			}
+
+			return response.redirect_to;
+		} catch {
+			// Ignore error, treat URL as invalid
+			return null;
+		}
+	};
+
 	getPreviousPath = () => {
 		let path = this.props.prevPath;
+
 		if ( ! path || /^\/customize\/?/.test( path ) ) {
-			path = '/stats';
+			path = this.props.isCustomerHomeEnabled ? '/home' : '/stats';
 			if ( this.props.domain ) {
 				path += '/' + this.props.domain;
 			}
@@ -127,15 +158,17 @@ class Customize extends React.Component {
 	};
 
 	goBack = () => {
-		const path = this.getPreviousPath();
+		const path = this.state.returnUrl || this.getPreviousPath();
 
-		Actions.close( path );
+		if ( path.includes( '/themes' ) ) {
+			trackClick( 'customizer', 'close' );
+		}
 
 		debug( 'returning to previous page', path );
 		page.back( path );
 	};
 
-	navigateTo = destination => {
+	navigateTo = ( destination ) => {
 		if ( ! startsWith( destination, '/checkout' ) ) {
 			return;
 		}
@@ -214,15 +247,15 @@ class Customize extends React.Component {
 		window.addEventListener( 'message', this.onMessage, false );
 	};
 
-	onMessage = event => {
+	onMessage = ( event ) => {
 		const { site } = this.props;
 		if ( ! site || ! site.options ) {
 			debug( 'ignoring message received from iframe because the site data cannot be found' );
 			return;
 		}
 
-		const parsedOrigin = url.parse( event.origin, true );
-		const parsedSite = url.parse( site.options.unmapped_url );
+		const parsedOrigin = getUrlParts( event.origin );
+		const parsedSite = getUrlParts( site.options.unmapped_url );
 
 		if (
 			parsedOrigin.hostname !== this.props.domain &&
@@ -241,19 +274,6 @@ class Customize extends React.Component {
 			switch ( message.command ) {
 				case 'back':
 					debug( 'iframe says it is done', message );
-					if ( message.error ) {
-						this.setState( { errorFromIframe: message.error } );
-						return;
-					}
-					if ( message.warning ) {
-						notices.warning( message.warning, { displayOnNextPage: true } );
-					}
-					if ( message.info ) {
-						notices.info( message.info, { displayOnNextPage: true } );
-					}
-					if ( message.success ) {
-						notices.success( message.success, { displayOnNextPage: true } );
-					}
 					this.goBack();
 					break;
 				case 'saved':
@@ -268,13 +288,20 @@ class Customize extends React.Component {
 					debug( 'iframe says it is finished loading customizer' );
 					this.cancelWaitingTimer();
 					this.setState( { iframeLoaded: true } );
+					// focus the iframe
+					if ( this.customizerIframe ) {
+						this.customizerIframe.focus();
+					}
 					break;
 				case 'activated':
-					Actions.activated( message.theme.stylesheet, site, this.props.themeActivated );
+					trackClick( 'customizer', 'activate' );
+					page( '/themes/' + site.slug );
+					this.props.themeActivated( message.theme.stylesheet, site.ID, 'customizer' );
 					break;
 				case 'purchased': {
 					const themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
-					Actions.purchase( themeSlug, site );
+					trackClick( 'customizer', 'purchase' );
+					page( '/checkout/' + site.slug + '/theme:' + themeSlug );
 					break;
 				}
 				case 'navigateTo': {
@@ -290,7 +317,7 @@ class Customize extends React.Component {
 		}
 	};
 
-	renderErrorPage = error => {
+	renderErrorPage = ( error ) => {
 		return (
 			<div className="main main-column customize customize__main-error" role="main">
 				<PageViewTracker path="/customize/:site" title="Customizer" />
@@ -312,16 +339,9 @@ class Customize extends React.Component {
 			return this.renderErrorPage( {
 				title: this.props.translate( 'Sorry, the customizing tools did not load correctly' ),
 				action: this.props.translate( 'Try again' ),
-				actionCallback: function() {
+				actionCallback: function () {
 					window.location.reload();
 				},
-			} );
-		}
-
-		if ( this.state.errorFromIframe ) {
-			this.cancelWaitingTimer();
-			return this.renderErrorPage( {
-				title: this.state.errorFromIframe,
 			} );
 		}
 
@@ -356,7 +376,12 @@ class Customize extends React.Component {
 				<div className="main main-column customize customize__main is-iframe" role="main">
 					<PageViewTracker path="/customize/:site" title="Customizer" />
 					<CustomizerLoadingPanel isLoaded={ this.state.iframeLoaded } />
-					<iframe className={ iframeClassName } src={ iframeUrl } title="Customizer" />
+					<iframe
+						ref={ this.setCustomizerIframetRef }
+						className={ iframeClassName }
+						src={ iframeUrl }
+						title="Customizer"
+					/>
 				</div>
 			);
 		}
@@ -367,7 +392,7 @@ class Customize extends React.Component {
 		return this.renderErrorPage( {
 			title: this.props.translate( 'Sorry, the customizing tools did not load correctly' ),
 			action: this.props.translate( 'Try again' ),
-			actionCallback: function() {
+			actionCallback: function () {
 				window.location.reload();
 			},
 		} );
@@ -375,9 +400,10 @@ class Customize extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = get( site, 'ID' );
+		const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( state, siteId );
 		return {
 			site,
 			siteId,
@@ -385,6 +411,7 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			// TODO: include panel from props?
 			customizerUrl: getCustomizerUrl( state, siteId ),
+			isCustomerHomeEnabled,
 		};
 	},
 	{ requestSite, themeActivated }

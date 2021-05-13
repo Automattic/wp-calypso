@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import hasNavigated from 'state/selectors/has-navigated';
-import { ROUTE_SET } from 'state/action-types';
+import hasNavigated from 'calypso/state/selectors/has-navigated';
+import { ROUTE_SET } from 'calypso/state/action-types';
 
 describe( 'hasNavigated()', () => {
 	test( 'should return false if only one ROUTE_SET has occurred', () => {
@@ -20,7 +18,12 @@ describe( 'hasNavigated()', () => {
 
 	test( 'should return true if more than one ROUTE_SET has occurred', () => {
 		const state = {
-			ui: { actionLog: [ { type: ROUTE_SET, path: 'a' }, { type: ROUTE_SET, path: 'b' } ] },
+			ui: {
+				actionLog: [
+					{ type: ROUTE_SET, path: 'a' },
+					{ type: ROUTE_SET, path: 'b' },
+				],
+			},
 		};
 
 		expect( hasNavigated( state ) ).to.be.true;

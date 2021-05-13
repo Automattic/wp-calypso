@@ -6,13 +6,13 @@
  * External dependencies
  */
 const fetch = require( 'jest-fetch-mock' );
+import { extendAction } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
 import { httpHandler } from '../';
-import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
-import { extendAction } from 'state/utils';
+import { failureMeta, successMeta } from 'calypso/state/data-layer/wpcom-http';
 
 const succeeder = { type: 'SUCCESS' };
 const failer = { type: 'FAIL' };
@@ -36,7 +36,7 @@ describe( '#httpHandler', () => {
 
 	beforeEach( () => {
 		fetch.resetMocks();
-		completed = new Promise( resolve => {
+		completed = new Promise( ( resolve ) => {
 			dispatch = jest.fn( () => resolve( true ) );
 		} );
 	} );
@@ -115,7 +115,10 @@ describe( '#httpHandler', () => {
 	} );
 
 	test( 'should set appropriate headers', () => {
-		const headers = [ [ 'Auth', 'something' ], [ 'Bearer', 'secret' ] ];
+		const headers = [
+			[ 'Auth', 'something' ],
+			[ 'Bearer', 'secret' ],
+		];
 		const data = {};
 
 		fetch.mockResponse( JSON.stringify( data ) );

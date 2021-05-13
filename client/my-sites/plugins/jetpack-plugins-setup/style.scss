@@ -23,23 +23,13 @@
 	@include heading;
 	margin-bottom: 0.75em;
 	text-align: center;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .jetpack-plugins-setup__description {
 	margin-bottom: 3em;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	text-align: center;
-}
-
-.jetpack-plugins-setup__need-manage {
-	.button {
-		float: right;
-	}
-
-	.button + .button {
-		margin-right: 16px;
-	}
 }
 
 .jetpack-plugins-setup .plugin-item {
@@ -52,7 +42,7 @@
 
 .jetpack-plugins-setup .plugin-item__finished {
 	color: var( --color-neutral-light );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 1;
 	padding: 6px 0;
 }

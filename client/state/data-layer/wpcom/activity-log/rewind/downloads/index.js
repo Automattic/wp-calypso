@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,18 +7,18 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { REWIND_BACKUP } from 'state/action-types';
+import { REWIND_BACKUP } from 'calypso/state/action-types';
 import {
 	rewindBackupUpdateError,
 	updateRewindBackupProgress,
 	getRewindBackupProgress,
-} from 'state/activity-log/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+} from 'calypso/state/activity-log/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-const createBackup = action =>
+const createBackup = ( action ) =>
 	http(
 		{
 			method: 'POST',
@@ -34,7 +32,7 @@ const createBackup = action =>
 		action
 	);
 
-const fromApi = data => {
+const fromApi = ( data ) => {
 	if ( ! data.hasOwnProperty( 'downloadId' ) ) {
 		throw new Error( 'Missing downloadId field in response' );
 	}

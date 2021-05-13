@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { I18N_LANGUAGE_NAMES_ADD } from 'state/action-types';
+import { I18N_LANGUAGE_NAMES_ADD } from 'calypso/state/action-types';
 
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 
 export const items = ( state = null, action ) => {
 	switch ( action.type ) {

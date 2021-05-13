@@ -1,27 +1,27 @@
-/** @format */
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
-import { get, isEqual } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import CommentLink from 'my-sites/comments/comment/comment-link';
-import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
-import Emojify from 'components/emojify';
-import ExternalLink from 'components/external-link';
-import Gravatar from 'components/gravatar';
-import Tooltip from 'components/tooltip';
-import { decodeEntities } from 'lib/formatting';
-import { urlToDomainAndPath } from 'lib/url';
-import getSiteComment from 'state/selectors/get-site-comment';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
+import CommentPostLink from 'calypso/my-sites/comments/comment/comment-post-link';
+import Emojify from 'calypso/components/emojify';
+import ExternalLink from 'calypso/components/external-link';
+import Gravatar from 'calypso/components/gravatar';
+import Tooltip from 'calypso/components/tooltip';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { urlToDomainAndPath } from 'calypso/lib/url';
+import { getSiteComment } from 'calypso/state/comments/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export class CommentAuthor extends Component {
 	static propTypes = {
@@ -34,10 +34,7 @@ export class CommentAuthor extends Component {
 		isLinkTooltipVisible: false,
 	};
 
-	shouldComponentUpdate = ( nextProps, nextState ) =>
-		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
-
-	storeLinkIndicatorRef = icon => ( this.hasLinkIndicator = icon );
+	linkIndicatorRef = React.createRef();
 
 	hideLinkTooltip = () => this.setState( { isLinkTooltipVisible: false } );
 
@@ -63,9 +60,7 @@ export class CommentAuthor extends Component {
 
 		const formattedDate = moment( commentDate ).format( 'll LT' );
 
-		const relativeDate = moment()
-			.subtract( 1, 'month' )
-			.isBefore( commentDate )
+		const relativeDate = moment().subtract( 1, 'month' ).isBefore( commentDate )
 			? moment( commentDate ).fromNow()
 			: moment( commentDate ).format( 'll' );
 
@@ -83,20 +78,22 @@ export class CommentAuthor extends Component {
 				<div className="comment__author-info">
 					<div className="comment__author-info-element">
 						{ hasLink && (
-							<span
-								onMouseEnter={ this.showLinkTooltip }
-								onMouseLeave={ this.hideLinkTooltip }
-								ref={ this.storeLinkIndicatorRef }
-							>
-								<Gridicon icon="link" className="comment__author-has-link" size={ 18 } />
+							<Fragment>
+								<span
+									onMouseEnter={ this.showLinkTooltip }
+									onMouseLeave={ this.hideLinkTooltip }
+									ref={ this.linkIndicatorRef }
+								>
+									<Gridicon icon="link" className="comment__author-has-link" size={ 18 } />
+								</span>
 								<Tooltip
-									context={ this.hasLinkIndicator }
+									context={ this.linkIndicatorRef.current }
 									isVisible={ isLinkTooltipVisible }
 									showOnMobile
 								>
 									{ translate( 'This comment contains links.' ) }
 								</Tooltip>
-							</span>
+							</Fragment>
 						) }
 						<strong className="comment__author-name">
 							<Emojify>{ authorDisplayName || translate( 'Anonymous' ) }</Emojify>
@@ -151,4 +148,4 @@ const mapStateToProps = ( state, { commentId } ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( CommentAuthor ) );
+export default connect( mapStateToProps )( localize( withLocalizedMoment( CommentAuthor ) ) );

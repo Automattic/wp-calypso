@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ export default class ImporterPage extends AsyncBaseContainer {
 	}
 
 	async importerIsDisplayed( importerClass ) {
-		return await DriverHelper.isElementPresent(
+		return await DriverHelper.isElementLocated(
 			this.driver,
 			By.css( `.importer__file-importer-card .${ importerClass }` )
 		);

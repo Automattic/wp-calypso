@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,19 +11,19 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Gridicon from 'components/gridicon';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import { Button } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
+import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import {
 	CALYPSO_CONTACT,
 	JETPACK_CONTACT_SUPPORT,
 	JETPACK_SUPPORT,
 	SUPPORT_ROOT,
-} from 'lib/url/support';
-import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection-connected';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { preventWidows } from 'lib/formatting';
+} from 'calypso/lib/url/support';
+import HappychatButton from 'calypso/components/happychat/button';
+import HappychatConnection from 'calypso/components/happychat/connection-connected';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies
@@ -35,7 +33,7 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import supportImage from 'assets/images/illustrations/dotcom-support.svg';
+import supportImage from 'calypso/assets/images/illustrations/dotcom-support.svg';
 
 export class HappinessSupport extends Component {
 	static propTypes = {
@@ -107,8 +105,8 @@ export class HappinessSupport extends Component {
 	}
 
 	renderContactButton() {
-		let url = CALYPSO_CONTACT,
-			target = '';
+		let url = CALYPSO_CONTACT;
+		let target = '';
 
 		if ( this.props.isJetpack ) {
 			url = JETPACK_CONTACT_SUPPORT;
@@ -185,7 +183,7 @@ export class HappinessSupport extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		liveChatAvailable: isHappychatAvailable( state ),
 	} ),
 	{ recordTracksEvent }

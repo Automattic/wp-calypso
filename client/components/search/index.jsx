@@ -1,21 +1,22 @@
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { debounce, noop, uniqueId } from 'lodash';
+import { debounce } from 'lodash';
 import i18n from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Spinner from 'components/spinner';
-import { isMobile } from 'lib/viewport';
-import TranslatableString from 'components/translatable/proptype';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import Gridicon from 'calypso/components/gridicon';
+import Spinner from 'calypso/components/spinner';
+import TranslatableString from 'calypso/components/translatable/proptype';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -26,6 +27,7 @@ import './style.scss';
  * Internal variables
  */
 const SEARCH_DEBOUNCE_MS = 300;
+const noop = () => {};
 
 function keyListener( methodToCall, event ) {
 	switch ( event.key ) {
@@ -98,7 +100,7 @@ class Search extends Component {
 	constructor( props ) {
 		super( props );
 
-		this.instanceId = uniqueId();
+		this.instanceId = uuid();
 
 		this.state = {
 			keyword: props.initialValue || '',
@@ -110,13 +112,13 @@ class Search extends Component {
 		this.openListener = keyListener.bind( this, 'openSearch' );
 	}
 
-	setOpenIconRef = openIcon => ( this.openIcon = openIcon );
+	setOpenIconRef = ( openIcon ) => ( this.openIcon = openIcon );
 
-	setSearchInputRef = input => ( this.searchInput = input );
+	setSearchInputRef = ( input ) => ( this.searchInput = input );
 
-	setOverlayRef = overlay => ( this.overlay = overlay );
+	setOverlayRef = ( overlay ) => ( this.overlay = overlay );
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.onSearch !== this.props.onSearch ||
 			nextProps.delaySearch !== this.props.delaySearch
@@ -126,7 +128,7 @@ class Search extends Component {
 				: this.props.onSearch;
 		}
 
-		if ( nextProps.isOpen ) {
+		if ( this.props.isOpen !== nextProps.isOpen ) {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
 
@@ -187,7 +189,7 @@ class Search extends Component {
 	//This is fix for IE11. Does not work on Edge.
 	//On IE11 scrollLeft value for input is always 0.
 	//We are calculating it manually using TextRange object.
-	getScrollLeft = inputElement => {
+	getScrollLeft = ( inputElement ) => {
 		//TextRange is IE11 specific so this checks if we are not on IE11.
 		if ( ! inputElement.createTextRange ) {
 			return inputElement.scrollLeft;
@@ -215,7 +217,7 @@ class Search extends Component {
 
 	clear = () => this.setState( { keyword: '' } );
 
-	onBlur = event => {
+	onBlur = ( event ) => {
 		if ( this.props.onBlur ) {
 			this.props.onBlur( event );
 		}
@@ -223,23 +225,23 @@ class Search extends Component {
 		this.setState( { hasFocus: false } );
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.setState( {
 			keyword: event.target.value,
 		} );
 	};
 
-	openSearch = event => {
+	openSearch = ( event ) => {
 		event.preventDefault();
 		this.setState( {
 			keyword: '',
 			isOpen: true,
 		} );
 
-		analytics.ga.recordEvent( this.props.analyticsGroup, 'Clicked Open Search' );
+		gaRecordEvent( this.props.analyticsGroup, 'Clicked Open Search' );
 	};
 
-	closeSearch = event => {
+	closeSearch = ( event ) => {
 		event.preventDefault();
 
 		if ( this.props.disabled ) {
@@ -252,18 +254,20 @@ class Search extends Component {
 		} );
 
 		this.searchInput.value = ''; // will not trigger onChange
-		this.searchInput.blur();
 
 		if ( this.props.pinned ) {
+			this.searchInput.blur();
 			this.openIcon.focus();
+		} else {
+			this.searchInput.focus();
 		}
 
 		this.props.onSearchClose( event );
 
-		analytics.ga.recordEvent( this.props.analyticsGroup, 'Clicked Close Search' );
+		gaRecordEvent( this.props.analyticsGroup, 'Clicked Close Search' );
 	};
 
-	keyUp = event => {
+	keyUp = ( event ) => {
 		if ( event.key === 'Enter' && isMobile() ) {
 			//dismiss soft keyboards
 			this.blur();
@@ -279,7 +283,7 @@ class Search extends Component {
 		this.scrollOverlay();
 	};
 
-	keyDown = event => {
+	keyDown = ( event ) => {
 		this.scrollOverlay();
 		if ( event.key === 'Escape' && event.target.value === '' ) {
 			this.closeSearch( event );
@@ -348,7 +352,7 @@ class Search extends Component {
 					{ ! this.props.hideOpenIcon && <Gridicon icon="search" className="search__open-icon" /> }
 				</div>
 				<div className={ fadeDivClass }>
-					<input
+					<FormTextInput
 						type="search"
 						id={ 'search-component-' + this.instanceId }
 						autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
@@ -359,7 +363,7 @@ class Search extends Component {
 						placeholder={ placeholder }
 						role="searchbox"
 						value={ searchValue }
-						ref={ this.setSearchInputRef }
+						inputRef={ this.setSearchInputRef }
 						onChange={ this.onChange }
 						onKeyUp={ this.keyUp }
 						onKeyDown={ this.keyDown }
@@ -376,6 +380,7 @@ class Search extends Component {
 					{ this.props.overlayStyling && this.renderStylingDiv() }
 				</div>
 				{ this.closeButton() }
+				{ this.props.children }
 			</div>
 		);
 	}

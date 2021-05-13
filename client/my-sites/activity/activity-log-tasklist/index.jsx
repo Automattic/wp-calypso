@@ -1,4 +1,3 @@
-/** @format */
 /* eslint-disable wpcalypso/i18n-mismatched-placeholders */
 /**
  * External dependencies
@@ -7,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, get, each, includes, union, find } from 'lodash';
+import { isEmpty, get, includes, find } from 'lodash';
 import page from 'page';
 
 /**
@@ -15,18 +14,19 @@ import page from 'page';
  */
 import ActivityLogTaskUpdate from './update';
 import WithItemsToUpdate from './to-update';
-import Card from 'components/card';
-import PopoverMenuItem from 'components/popover/menu-item';
-import SplitButton from 'components/split-button';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { getSite } from 'state/sites/selectors';
-import { updatePlugin } from 'state/plugins/installed/actions';
-import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { getStatusForPlugin } from 'state/plugins/installed/selectors';
-import { errorNotice, infoNotice, successNotice } from 'state/notices/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { navigate } from 'state/ui/actions';
+import { Card } from '@automattic/components';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import SplitButton from 'calypso/components/split-button';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getSite } from 'calypso/state/sites/selectors';
+import { updatePlugin } from 'calypso/state/plugins/installed/actions';
+import { getHttpData, requestHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { navigate } from 'calypso/state/ui/actions';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies
@@ -40,18 +40,20 @@ import './style.scss';
  *
  * @returns {boolean}  True if one or more plugins or themes are updating.
  */
-const isItemUpdating = updatables =>
-	updatables.some( item => 'inProgress' === get( item, 'updateStatus.status' ) );
+const isItemUpdating = ( updatables ) =>
+	updatables.some( ( item ) => 'inProgress' === get( item, 'updateStatus.status' ) );
 
 /**
  * Checks if the plugin, theme or core update is enqueued to be updated, searching it in the list by its slug.
  *
  * @param {string} updateSlug  Plugin or theme slug, or 'wordpress' for core updates.
- * @param {array}  updateQueue Collection of plugins or themes currently queued to be updated.
+ * @param {Array}  updateQueue Collection of plugins or themes currently queued to be updated.
  *
  * @returns {boolean}   True if the plugin or theme is enqueued to be updated.
  */
 const isItemEnqueued = ( updateSlug, updateQueue ) => !! find( updateQueue, { slug: updateSlug } );
+
+const union = ( ...arrays ) => [ ...new Set( [].concat( ...arrays ) ) ];
 
 const MAX_UPDATED_TO_SHOW = 3;
 
@@ -103,7 +105,7 @@ class ActivityLogTasklist extends Component {
 	 *
 	 * @param {object} item Plugin or theme to dismiss.
 	 */
-	dismiss = item => {
+	dismiss = ( item ) => {
 		// ToDo: this should update some record in the tasklist API
 		const {
 			pluginWithUpdate,
@@ -119,11 +121,11 @@ class ActivityLogTasklist extends Component {
 			trackDismiss( item );
 		} else {
 			items = union(
-				pluginWithUpdate.map( plugin => plugin.slug ),
-				themeWithUpdate.map( theme => theme.slug ),
+				pluginWithUpdate.map( ( plugin ) => plugin.slug ),
+				themeWithUpdate.map( ( theme ) => theme.slug ),
 				// Although core doesn't have a slug, we call it 'wordpress'
 				// to work with it like plugins or themes.
-				coreWithUpdate.map( core => core.slug )
+				coreWithUpdate.map( ( core ) => core.slug )
 			);
 			trackDismissAll();
 		}
@@ -216,7 +218,7 @@ class ActivityLogTasklist extends Component {
 	 *
 	 * @param {object} event Synthetic event
 	 */
-	showAllUpdates = event => {
+	showAllUpdates = ( event ) => {
 		recordTracksEvent( 'calypso_activitylog_tasklist_expand_view' );
 		this.setState( { expandedView: true } );
 		event.preventDefault();
@@ -231,7 +233,7 @@ class ActivityLogTasklist extends Component {
 	 * 		{string} name Plugin or theme name, like "Hello Dolly". Name for core updates is "WordPress".
 	 * }
 	 */
-	updateItem = item => {
+	updateItem = ( item ) => {
 		const { showInfoNotice, siteName, updateSingle, translate, trackUpdate } = this.props;
 
 		trackUpdate( item );
@@ -239,7 +241,7 @@ class ActivityLogTasklist extends Component {
 
 		showInfoNotice(
 			translate( 'Updating %(item)s on %(siteName)s.', {
-				args: { item: item.name, siteName },
+				args: { item: decodeEntities( item.name ), siteName },
 			} ),
 			{
 				id: `alitemupdate-${ item.slug }`,
@@ -276,7 +278,7 @@ class ActivityLogTasklist extends Component {
 
 		const { showErrorNotice, showSuccessNotice, siteName, translate } = this.props;
 
-		each( itemsWithUpdate, item => {
+		itemsWithUpdate.forEach( ( item ) => {
 			const { slug, updateStatus, type, name } = item;
 			// Finds in prevProps.pluginWithUpdate, prevProps.themeWithUpdate or prevpros.coreWithUpdate
 			const prevItemWithUpdate = find( prevProps[ `${ type }WithUpdate` ], { slug } );
@@ -294,7 +296,7 @@ class ActivityLogTasklist extends Component {
 			}
 
 			const noticeArgs = {
-				args: { item: name, siteName },
+				args: { item: decodeEntities( name ), siteName },
 			};
 
 			switch ( updateStatus.status ) {
@@ -327,7 +329,7 @@ class ActivityLogTasklist extends Component {
 	showAllItemsToUpdate( itemsToUpdate ) {
 		// Show if plugin update didn't start, is still running or errored,
 		// but hide plugin if it was updated successfully.
-		return itemsToUpdate.map( item => {
+		return itemsToUpdate.map( ( item ) => {
 			return (
 				<ActivityLogTaskUpdate
 					key={ item.slug }
@@ -370,7 +372,7 @@ class ActivityLogTasklist extends Component {
 			this.props.coreWithUpdate,
 			this.props.pluginWithUpdate,
 			this.props.themeWithUpdate
-		).filter( item => ! includes( this.state.dismissed, item.slug ) );
+		).filter( ( item ) => ! includes( this.state.dismissed, item.slug ) );
 
 		if ( isEmpty( itemsToUpdate ) ) {
 			return null;
@@ -384,17 +386,19 @@ class ActivityLogTasklist extends Component {
 			<Card className="activity-log-tasklist" highlight="warning">
 				<TrackComponentView eventName={ 'calypso_activitylog_tasklist_update_impression' } />
 				<div className="activity-log-tasklist__heading">
-					{ // Not using count method since we want a "one" string.
-					1 < numberOfUpdates
-						? translate(
-								'You have %(updates)s update available',
-								'You have %(updates)s updates available',
-								{
-									count: numberOfUpdates,
-									args: { updates: numberOfUpdates },
-								}
-						  )
-						: translate( 'You have one update available' ) }
+					{
+						// Not using count method since we want a "one" string.
+						1 < numberOfUpdates
+							? translate(
+									'You have %(updates)s update available',
+									'You have %(updates)s updates available',
+									{
+										count: numberOfUpdates,
+										args: { updates: numberOfUpdates },
+									}
+							  )
+							: translate( 'You have one update available' )
+					}
 					{ 1 < numberOfUpdates && (
 						<SplitButton
 							compact
@@ -433,9 +437,9 @@ class ActivityLogTasklist extends Component {
  * Normalizes the state result so it's the same than plugins.
  * This normalization allows to reuse methods for plugins, themes, and core.
  *
- * @param {string} state            Current state of update progress.
- * @param {bool}   isUpdateComplete If update actually produced what is expected to be after a successful update.
- *                                  In themes, the 'update' prop of the theme object is nullified when an update is succesful.
+ * @param {string}  state            Current state of update progress.
+ * @param {boolean} isUpdateComplete If update actually produced what is expected to be after a successful update.
+ *                                   In themes, the 'update' prop of the theme object is nullified when an update is succesful.
  *
  * @returns {boolean|object} False is update hasn't started. One of 'inProgress', 'error', 'completed', when
  * the update is running, failed, or was successfully completed, respectively.
@@ -474,9 +478,10 @@ const getStatusForTheme = ( siteId, themeId ) => {
 
 /**
  * Get data about the status of a core update.
+ *
  * @param {number} siteId      Site Id.
  * @param {string} coreVersion Version of core that the WP installation will be updated to.
- * @returns {boolean|Object}      False is update hasn't started. One of 'inProgress', 'error', 'completed', when
+ * @returns {boolean|object}      False is update hasn't started. One of 'inProgress', 'error', 'completed', when
  * the update is running, failed, or was successfully completed, respectively.
  */
 const getStatusForCore = ( siteId, coreVersion ) => {
@@ -498,14 +503,15 @@ const getStatusForCore = ( siteId, coreVersion ) => {
 		state: PropTypes.oneOf( [ 'uninitialized', 'failure', 'success', 'pending' ] ),
 		error: PropTypes.object,
 	} )
- * @param {array}  itemList Collection of plugins/themes that will be updated.
+ *
+ * @param {Array}  itemList Collection of plugins/themes that will be updated.
  * @param {number} siteId   ID of the site where the plugin/theme is installed.
  * @param {object} state    App state tree.
  *
- * @returns {array} List of plugins/themes to update with their status.
+ * @returns {Array} List of plugins/themes to update with their status.
  */
 const makeUpdatableList = ( itemList, siteId, state = null ) =>
-	itemList.map( item => ( {
+	itemList.map( ( item ) => ( {
 		...item,
 		updateStatus:
 			'plugin' === item.type
@@ -519,7 +525,7 @@ const makeUpdatableList = ( itemList, siteId, state = null ) =>
  * @param {number} siteId  Site Id.
  * @param {string} themeId Theme slug.
  *
- * @return {*} Stored data container for request.
+ * @returns {*} Stored data container for request.
  */
 const updateTheme = ( siteId, themeId ) =>
 	requestHttpData(
@@ -530,7 +536,6 @@ const updateTheme = ( siteId, themeId ) =>
 			body: { action: 'update', themes: themeId },
 		} ),
 		{
-			fromApi: () => ( { themes } ) => themes.map( ( { id } ) => [ id, true ] ),
 			freshness: -Infinity,
 		}
 	);
@@ -540,9 +545,9 @@ const updateTheme = ( siteId, themeId ) =>
  *
  * @param {number} siteId  Site Id.
  *
- * @return {*} Stored data container for request.
+ * @returns {*} Stored data container for request.
  */
-const updateCore = siteId =>
+const updateCore = ( siteId ) =>
 	requestHttpData(
 		`core-update-${ siteId }`,
 		http( {
@@ -551,9 +556,6 @@ const updateCore = siteId =>
 			// No need to pass version: if it's missing, WP will be updated to latest core version.
 		} ),
 		{
-			fromApi: () => ( { version } ) => {
-				return [ [ version, true ] ];
-			},
 			freshness: -Infinity,
 		}
 	);
@@ -578,7 +580,7 @@ const mapStateToProps = ( state, { siteId, plugins, themes, core } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	updateSingle: item => {
+	updateSingle: ( item ) => {
 		if ( 'core' === item.type ) {
 			return updateCore( siteId );
 		}
@@ -598,7 +600,7 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_all' ) ),
 	trackDismiss: ( { type, slug } ) =>
 		dispatch( recordTracksEvent( `calypso_activitylog_tasklist_dismiss_${ type }`, { slug } ) ),
-	goManagePlugins: siteSlug =>
+	goManagePlugins: ( siteSlug ) =>
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_tasklist_manage_plugins' ),
@@ -620,8 +622,5 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 } );
 
 export default WithItemsToUpdate(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( localize( ActivityLogTasklist ) )
+	connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogTasklist ) )
 );

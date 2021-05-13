@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import WPSuperCache from './main';
 
 export function settings( context, next ) {

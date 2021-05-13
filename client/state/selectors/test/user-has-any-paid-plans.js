@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { PLAN_BUSINESS, PLAN_FREE } from 'lib/plans/constants';
-import userHasAnyPaidPlans from 'state/selectors/user-has-any-paid-plans';
+import { PLAN_BUSINESS, PLAN_FREE } from '@automattic/calypso-products';
+import userHasAnyPaidPlans from 'calypso/state/selectors/user-has-any-paid-plans';
 
 describe( 'userHasAnyPaidPlans()', () => {
 	test( 'should return false if no sites in state', () => {

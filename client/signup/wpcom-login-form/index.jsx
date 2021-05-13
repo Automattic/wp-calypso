@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ const debug = debugFactory( 'calypso:signup:wpcom-login' );
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 export default class WpcomLoginForm extends Component {
 	form = null;
@@ -45,7 +43,7 @@ export default class WpcomLoginForm extends Component {
 
 		return (
 			<div>
-				{ Object.keys( extraFields ).map( field => {
+				{ Object.keys( extraFields ).map( ( field ) => {
 					return (
 						<input key={ field } type="hidden" name={ field } value={ extraFields[ field ] } />
 					);
@@ -54,7 +52,7 @@ export default class WpcomLoginForm extends Component {
 		);
 	}
 
-	storeFormRef = form => {
+	storeFormRef = ( form ) => {
 		this.form = form;
 	};
 

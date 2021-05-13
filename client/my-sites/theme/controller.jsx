@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,10 +12,10 @@ import { startsWith } from 'lodash';
  */
 import ThemeSheetComponent from './main';
 import ThemeNotFoundError from './theme-not-found-error';
-import LayoutLoggedOut from 'layout/logged-out';
-import { requestTheme, setBackPath } from 'state/themes/actions';
-import { getTheme, getThemeRequestErrors } from 'state/themes/selectors';
-import config from 'config';
+import LayoutLoggedOut from 'calypso/layout/logged-out';
+import { requestTheme, setBackPath } from 'calypso/state/themes/actions';
+import { getTheme, getThemeRequestErrors } from 'calypso/state/themes/selectors';
+import config from '@automattic/calypso-config';
 
 const debug = debugFactory( 'calypso:themes' );
 

@@ -1,12 +1,11 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import sidebar from './sidebar/reducer';
 
-sidebar.schema = {
+const schema = {
 	type: 'object',
 	patternProperties: {
 		// Sidebar section key, e.g. `site`.
@@ -17,4 +16,9 @@ sidebar.schema = {
 	additionalProperties: false,
 };
 
-export default combineReducers( { sidebarSections: sidebar } );
+export default withStorageKey(
+	'mySites',
+	combineReducers( {
+		sidebarSections: withSchemaValidation( schema, sidebar ),
+	} )
+);

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -8,8 +6,9 @@ import {
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 	SIGNUP_PROGRESS_COMPLETE_STEP,
 	SIGNUP_COMPLETE_RESET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { dependencyStoreSchema } from './schema';
+import { withSchemaValidation } from 'calypso/state/utils';
 
 const EMPTY = {};
 
@@ -35,6 +34,4 @@ function reducer( state = EMPTY, action ) {
 	}
 }
 
-reducer.schema = dependencyStoreSchema;
-
-export default reducer;
+export default withSchemaValidation( dependencyStoreSchema, reducer );

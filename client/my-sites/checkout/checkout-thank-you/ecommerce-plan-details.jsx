@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,31 +10,31 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
-import { isEnabled } from 'config';
-import { isEcommerce, isGoogleApps } from 'lib/products-values';
-import PurchaseDetail from 'components/purchase-detail';
+import { isEnabled } from '@automattic/calypso-config';
+import { isEcommerce, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 
 /**
  * Image dependencies
  */
-import analyticsImage from 'assets/images/illustrations/google-analytics.svg';
-import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
-import updatesImage from 'assets/images/illustrations/updates.svg';
+import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
+import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
+import updatesImage from 'calypso/assets/images/illustrations/updates.svg';
 
 function trackOnboardingButtonClick() {
-	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_onboarding_click' );
+	recordTracksEvent( 'calypso_checkout_thank_you_onboarding_click' );
 }
 
 const EcommercePlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
 	const plan = find( sitePlans.data, isEcommerce );
-	const googleAppsWasPurchased = purchases.some( isGoogleApps );
+	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 
 	return (
 		<div>
-			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+			{ googleAppsWasPurchased && <GoogleAppsDetails purchases={ purchases } /> }
 
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
@@ -47,7 +45,7 @@ const EcommercePlanDetails = ( { selectedSite, sitePlans, selectedFeature, purch
 				icon={ <img alt="" src={ conciergeImage } /> }
 				title={ i18n.translate( 'Get personalized help' ) }
 				description={ i18n.translate(
-					'Schedule a one-on-one orientation with a Happiness Engineer to set up ' +
+					'Schedule a Quick Start session with a Happiness Engineer to set up ' +
 						'your site and learn more about WordPress.com.'
 				) }
 				buttonText={ i18n.translate( 'Schedule a session' ) }

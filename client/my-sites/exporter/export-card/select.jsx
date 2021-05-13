@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,9 +9,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormSelect from 'components/forms/form-select';
-import { getPostTypeFieldOptions, getPostTypeFieldValue } from 'state/exporter/selectors';
-import { setPostTypeFieldValue } from 'state/exporter/actions';
+import FormSelect from 'calypso/components/forms/form-select';
+import { getPostTypeFieldOptions, getPostTypeFieldValue } from 'calypso/state/exporter/selectors';
+import { setPostTypeFieldValue } from 'calypso/state/exporter/actions';
 import { localize } from 'i18n-calypso';
 
 class Select extends Component {
@@ -95,11 +93,8 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	const { siteId, postType, fieldName } = ownProps;
 
 	return {
-		setValue: value => dispatch( setPostTypeFieldValue( siteId, postType, fieldName, value ) ),
+		setValue: ( value ) => dispatch( setPostTypeFieldValue( siteId, postType, fieldName, value ) ),
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( Select ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Select ) );

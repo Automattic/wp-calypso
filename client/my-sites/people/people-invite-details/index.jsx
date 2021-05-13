@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,25 +11,25 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
-import PeopleListItem from 'my-sites/people/people-list-item';
-import Gravatar from 'components/gravatar';
-import Button from 'components/button';
-import QuerySiteInvites from 'components/data/query-site-invites';
-import EmptyContent from 'components/empty-content';
-import { getSelectedSite } from 'state/ui/selectors';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import HeaderCake from 'calypso/components/header-cake';
+import { Card, Button } from '@automattic/components';
+import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import Gravatar from 'calypso/components/gravatar';
+import QuerySiteInvites from 'calypso/components/data/query-site-invites';
+import EmptyContent from 'calypso/components/empty-content';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	isRequestingInvitesForSite,
 	getInviteForSite,
 	isDeletingInvite,
 	didInviteDeletionSucceed,
-} from 'state/invites/selectors';
-import { deleteInvite } from 'state/invites/actions';
-import canCurrentUser from 'state/selectors/can-current-user';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+} from 'calypso/state/invites/selectors';
+import { deleteInvite } from 'calypso/state/invites/actions';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 /**
  * Style dependencies
@@ -44,7 +42,7 @@ export class PeopleInviteDetails extends React.PureComponent {
 		inviteKey: PropTypes.string.isRequired,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.deleteSuccess && ! this.props.deleteSuccess ) {
 			this.goBack();
 		}
@@ -87,7 +85,7 @@ export class PeopleInviteDetails extends React.PureComponent {
 					scary={ isPending }
 					onClick={ this.handleDelete }
 				>
-					{ isPending ? translate( 'Revoke Invite' ) : translate( 'Clear Invite' ) }
+					{ isPending ? translate( 'Revoke invite' ) : translate( 'Clear invite' ) }
 				</Button>
 			</div>
 		);
@@ -221,4 +219,4 @@ export default connect(
 		};
 	},
 	{ deleteInvite }
-)( localize( PeopleInviteDetails ) );
+)( localize( withLocalizedMoment( PeopleInviteDetails ) ) );

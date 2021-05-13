@@ -1,27 +1,50 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import { assign, get, includes, indexOf, reject } from 'lodash';
+import { get, includes, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import stepConfig from './steps';
-import userFactory from 'lib/user';
-import { abtest } from 'lib/abtest';
-import { generateFlows } from 'signup/config/flows-pure';
+import user from 'calypso/lib/user';
+import { isEcommercePlan } from '@automattic/calypso-products';
+import { generateFlows } from 'calypso/signup/config/flows-pure';
+import { addQueryArgs } from 'calypso/lib/url';
 
-const user = userFactory();
+function getCheckoutUrl( dependencies, localeSlug, flowName ) {
+	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
 
-function getCheckoutUrl( dependencies ) {
-	return '/checkout/' + dependencies.siteSlug;
+	// Append the locale slug for the userless checkout page.
+	if ( 'no-site' === dependencies.siteSlug && true === dependencies.allowUnauthenticated ) {
+		checkoutURL += `/${ localeSlug }`;
+	}
+
+	return addQueryArgs(
+		{
+			signup: 1,
+			...( dependencies.isPreLaunch && {
+				preLaunch: 1,
+			} ),
+			...( dependencies.isPreLaunch &&
+				! isEcommercePlan( dependencies.cartItem.product_slug ) && {
+					redirect_to: `/home/${ dependencies.siteSlug }`,
+				} ),
+			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
+			...( [ 'domain', 'add-domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
+		},
+		checkoutURL
+	);
 }
 
 function dependenciesContainCartItem( dependencies ) {
-	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
+	return (
+		dependencies.cartItem ||
+		dependencies.domainItem ||
+		dependencies.themeItem ||
+		dependencies.selectedDomainUpsellItem
+	);
 }
 
 function getSiteDestination( dependencies ) {
@@ -40,29 +63,52 @@ function getSiteDestination( dependencies ) {
 }
 
 function getRedirectDestination( dependencies ) {
-	if (
-		dependencies.oauth2_redirect &&
-		dependencies.oauth2_redirect.startsWith( 'https://public-api.wordpress.com' )
-	) {
-		return dependencies.oauth2_redirect;
+	try {
+		if (
+			dependencies.oauth2_redirect &&
+			new URL( dependencies.oauth2_redirect ).host === 'public-api.wordpress.com'
+		) {
+			return dependencies.oauth2_redirect;
+		}
+	} catch {
+		return '/';
 	}
 
 	return '/';
 }
 
 function getSignupDestination( dependencies ) {
-	return `/checklist/${ dependencies.siteSlug }`;
+	if ( 'no-site' === dependencies.siteSlug ) {
+		return '/home';
+	}
+
+	return `/home/${ dependencies.siteSlug }`;
+}
+
+function getLaunchDestination( dependencies ) {
+	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
+function getChecklistThemeDestination( dependencies ) {
+	return `/home/${ dependencies.siteSlug }`;
+}
+
+function getEditorDestination( dependencies ) {
+	return `/page/${ dependencies.siteSlug }/home`;
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
 	getSignupDestination,
+	getLaunchDestination,
 	getThankYouNoSiteDestination,
+	getChecklistThemeDestination,
+	getEditorDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
@@ -70,14 +116,26 @@ function removeUserStepFromFlow( flow ) {
 		return;
 	}
 
-	return assign( {}, flow, {
-		steps: reject( flow.steps, stepName => stepConfig[ stepName ].providesToken ),
-	} );
+	return {
+		...flow,
+		steps: reject( flow.steps, ( stepName ) => stepConfig[ stepName ].providesToken ),
+	};
 }
 
-function filterDestination( destination, dependencies ) {
+function removeP2DetailsStepFromFlow( flow ) {
+	if ( ! flow ) {
+		return;
+	}
+
+	return {
+		...flow,
+		steps: reject( flow.steps, ( stepName ) => stepName === 'p2-details' ),
+	};
+}
+
+function filterDestination( destination, dependencies, flowName, localeSlug ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies );
+		return getCheckoutUrl( dependencies, localeSlug, flowName );
 	}
 
 	return destination;
@@ -98,13 +156,8 @@ const Flows = {
 	 *
 	 * The returned flow is modified according to several filters.
 	 *
-	 * `currentStepName` is the current step in the signup flow. It is used
-	 * to determine if any AB variations should be assigned after it is completed.
-	 * Example use case: To determine if a new signup step should be part of the flow or not.
-	 *
-	 * @param {String} flowName The name of the flow to return
-	 * @param {String} currentStepName The current step. See description above
-	 * @returns {Object} A flow object
+	 * @param {string} flowName The name of the flow to return
+	 * @returns {object} A flow object
 	 */
 	getFlow( flowName ) {
 		let flow = Flows.getFlows()[ flowName ];
@@ -114,8 +167,12 @@ const Flows = {
 			return flow;
 		}
 
-		if ( user && user.get() ) {
+		if ( user() && user().get() ) {
 			flow = removeUserStepFromFlow( flow );
+		}
+
+		if ( flowName === 'p2' && user() && user().get() ) {
+			flow = removeP2DetailsStepFromFlow( flow );
 		}
 
 		return Flows.filterExcludedSteps( flow );
@@ -128,7 +185,7 @@ const Flows = {
 			return false;
 		}
 		const flowSteps = flow.steps;
-		const currentStepIndex = indexOf( flowSteps, currentStepName );
+		const currentStepIndex = flowSteps.indexOf( currentStepName );
 		const nextIndex = currentStepIndex + 1;
 		const nextStepName = get( flowSteps, nextIndex );
 
@@ -140,10 +197,10 @@ const Flows = {
 	 * The main usage at the moment is to serve as a quick solution to remove steps that have been pre-fulfilled
 	 * without explicit user inputs, e.g. query arguments.
 	 *
-	 * @param {String} step Name of the step to be excluded.
+	 * @param {string} step Name of the step to be excluded.
 	 */
 	excludeStep( step ) {
-		step && Flows.excludedSteps.push( step );
+		step && Flows.excludedSteps.indexOf( step ) === -1 && Flows.excludedSteps.push( step );
 	},
 
 	filterExcludedSteps( flow ) {
@@ -151,22 +208,27 @@ const Flows = {
 			return;
 		}
 
-		return assign( {}, flow, {
-			steps: reject( flow.steps, stepName => includes( Flows.excludedSteps, stepName ) ),
-		} );
+		return {
+			...flow,
+			steps: reject( flow.steps, ( stepName ) => includes( Flows.excludedSteps, stepName ) ),
+		};
 	},
 
 	resetExcludedSteps() {
 		Flows.excludedSteps = [];
 	},
 
+	resetExcludedStep( stepName ) {
+		const index = Flows.excludedSteps.indexOf( stepName );
+
+		if ( index > -1 ) {
+			Flows.excludedSteps.splice( index, 1 );
+		}
+	},
+
 	getFlows() {
 		return flows;
 	},
 };
-
-if ( abtest( 'moveUserStepPosition' ) === 'last' && Flows.defaultFlowName === 'onboarding' ) {
-	Flows.defaultFlowName = 'onboarding-user-last';
-}
 
 export default Flows;

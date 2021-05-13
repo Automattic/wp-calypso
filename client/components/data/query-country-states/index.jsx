@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,15 +9,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isCountryStatesFetching } from 'state/country-states/selectors';
-import { requestCountryStates } from 'state/country-states/actions';
+import { isCountryStatesFetching } from 'calypso/state/country-states/selectors';
+import { requestCountryStates } from 'calypso/state/country-states/actions';
 
 class QueryCountryStates extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.countryCode !== nextProps.countryCode ) {
 			this.request( nextProps );
 		}

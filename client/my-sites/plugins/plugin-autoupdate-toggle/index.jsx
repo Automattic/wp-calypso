@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,12 +9,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PluginsActions from 'lib/plugins/actions';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
-import ExternalLink from 'components/external-link';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { getSiteFileModDisableReason, isMainNetworkSite } from 'lib/site/utils';
+import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
+import ExternalLink from 'calypso/components/external-link';
+import { DISABLE_AUTOUPDATE_PLUGIN, ENABLE_AUTOUPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import { togglePluginAutoUpdate } from 'calypso/state/plugins/installed/actions';
+
+const autoUpdateActions = [ ENABLE_AUTOUPDATE_PLUGIN, DISABLE_AUTOUPDATE_PLUGIN ];
 
 export class PluginAutoUpdateToggle extends Component {
 	toggleAutoUpdates = () => {
@@ -32,8 +35,8 @@ export class PluginAutoUpdateToggle extends Component {
 			return;
 		}
 
-		PluginsActions.togglePluginAutoUpdate( site, plugin );
-		PluginsActions.removePluginsNotices( 'completed', 'error' );
+		this.props.togglePluginAutoUpdate( site.ID, plugin );
+		this.props.removePluginStatuses( 'completed', 'error' );
 
 		if ( plugin.autoupdate ) {
 			recordGAEvent(
@@ -73,12 +76,6 @@ export class PluginAutoUpdateToggle extends Component {
 			);
 		}
 
-		if ( ! site.hasMinimumJetpackVersion ) {
-			return translate( '%(site)s is not running an up to date version of Jetpack', {
-				args: { site: site.title },
-			} );
-		}
-
 		if ( site.options.is_multi_network ) {
 			return translate(
 				'%(site)s is part of a multi-network installation, which is not currently supported.',
@@ -113,6 +110,7 @@ export class PluginAutoUpdateToggle extends Component {
 					<li key={ 'reason-i' + i + '-' + site.ID }>{ reason }</li>
 				) );
 				html.push(
+					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					<ul className="plugin-action__disabled-info-list" key="reason-shell-list">
 						{ list }
 					</ul>
@@ -142,20 +140,16 @@ export class PluginAutoUpdateToggle extends Component {
 	}
 
 	render() {
-		const { site, plugin, translate, disabled } = this.props;
+		const { inProgress, site, plugin, translate, disabled } = this.props;
 		if ( ! site.jetpack ) {
 			return null;
 		}
 
-		const inProgress = PluginsLog.isInProgressAction( site.ID, plugin.slug, [
-				'ENABLE_AUTOUPDATE_PLUGIN',
-				'DISABLE_AUTOUPDATE_PLUGIN',
-			] ),
-			getDisabledInfo = this.getDisabledInfo(),
-			label = translate( 'Autoupdates', {
-				comment:
-					'this goes next to an icon that displays if the plugin has "autoupdates", both enabled and disabled',
-			} );
+		const getDisabledInfo = this.getDisabledInfo();
+		const label = translate( 'Autoupdates', {
+			comment:
+				'this goes next to an icon that displays if the plugin has "autoupdates", both enabled and disabled',
+		} );
 
 		return (
 			<PluginAction
@@ -185,9 +179,13 @@ PluginAutoUpdateToggle.defaultProps = {
 };
 
 export default connect(
-	null,
+	( state, { site, plugin } ) => ( {
+		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, autoUpdateActions ),
+	} ),
 	{
 		recordGoogleEvent,
 		recordTracksEvent,
+		removePluginStatuses,
+		togglePluginAutoUpdate,
 	}
 )( localize( PluginAutoUpdateToggle ) );

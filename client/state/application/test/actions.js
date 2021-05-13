@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import {
 	CONNECTION_RESTORED,
 	NOTICE_REMOVE,
 	NOTICE_CREATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'state/application actions', () => {
 	describe( '#connectionLost()', () => {
@@ -25,7 +23,7 @@ describe( 'state/application actions', () => {
 		//( dispatch ) because it is a thunk action creator
 		connectionLost( exampleText )( dispatch );
 
-		test( 'should dispatch an action with CONNECTION_LOST type ', () => {
+		test( 'should dispatch an action with CONNECTION_LOST type', () => {
 			expect( dispatch.calledWith( { type: CONNECTION_LOST } ) ).ok;
 		} );
 
@@ -33,7 +31,7 @@ describe( 'state/application actions', () => {
 			expect( dispatch.calledWith( { type: NOTICE_REMOVE, noticeId: 'connectionRestored' } ) ).ok;
 		} );
 
-		test( 'should dispatch a notice with connectionLost information ', () => {
+		test( 'should dispatch a notice with connectionLost information', () => {
 			expect(
 				dispatch.calledWithMatch( {
 					type: NOTICE_CREATE,
@@ -53,7 +51,7 @@ describe( 'state/application actions', () => {
 		//( dispatch ) because it is a thunk action creator
 		connectionRestored( exampleText )( dispatch );
 
-		test( 'should dispatch an action with CONNECTION_RESTORED type ', () => {
+		test( 'should dispatch an action with CONNECTION_RESTORED type', () => {
 			expect( dispatch.calledWith( { type: CONNECTION_RESTORED } ) ).ok;
 		} );
 
@@ -61,7 +59,7 @@ describe( 'state/application actions', () => {
 			expect( dispatch.calledWith( { type: NOTICE_REMOVE, noticeId: 'connectionLost' } ) ).ok;
 		} );
 
-		test( 'should dispatch a notice with connectionRestored information ', () => {
+		test( 'should dispatch a notice with connectionRestored information', () => {
 			expect(
 				dispatch.calledWithMatch( {
 					type: NOTICE_CREATE,

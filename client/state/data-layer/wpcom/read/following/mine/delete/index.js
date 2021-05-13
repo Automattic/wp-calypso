@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -7,20 +6,20 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import { READER_UNFOLLOW } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
-import { follow } from 'state/reader/follows/actions';
-import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
-import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
-import { getSiteName } from 'reader/get-helpers';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import config from '@automattic/calypso-config';
+import { READER_UNFOLLOW } from 'calypso/state/reader/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { follow } from 'calypso/state/reader/follows/actions';
+import { getFeedByFeedUrl } from 'calypso/state/reader/feeds/selectors';
+import { getSiteByFeedUrl } from 'calypso/state/reader/sites/selectors';
+import { getSiteName } from 'calypso/reader/get-helpers';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-export const requestUnfollow = action =>
+export const requestUnfollow = ( action ) =>
 	http( {
 		method: 'POST',
 		path: '/read/following/mine/delete',
@@ -33,7 +32,7 @@ export const requestUnfollow = action =>
 		onFailure: action,
 	} );
 
-export const fromApi = data => {
+export const fromApi = ( data ) => {
 	if ( ! data ) {
 		throw new Error( 'Invalid API response: missing data' );
 	}
@@ -45,9 +44,9 @@ export const fromApi = data => {
 	return data.subscribed;
 };
 
-export const receiveUnfollow = action => bypassDataLayer( action );
+export const receiveUnfollow = ( action ) => bypassDataLayer( action );
 
-export const unfollowError = action => ( dispatch, getState ) => {
+export const unfollowError = ( action ) => ( dispatch, getState ) => {
 	const feedUrl = action.payload.feedUrl;
 	const site = getSiteByFeedUrl( getState(), feedUrl );
 	const feed = getFeedByFeedUrl( getState(), feedUrl );

@@ -1,3 +1,7 @@
+.main.sites {
+	max-width: 320px;
+}
+
 .sites__select-header {
 	text-align: center;
 
@@ -7,7 +11,9 @@
 }
 
 .sites__select-heading {
-	font-size: 22px;
+	font-size: $font-title-small;
+	font-weight: 400;
+	line-height: inherit;
 	margin-top: 16px;
 	margin-bottom: 24px;
 
@@ -21,5 +27,16 @@
 
 	.site-selector {
 		overflow: auto;
+	}
+}
+
+/**
+ * Jetpack cloud specific styles
+ */
+
+.is-section-jetpack-cloud {
+	.sites.main {
+		padding-left: 0;
+		padding-right: 0;
 	}
 }

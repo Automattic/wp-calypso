@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,8 +8,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isRequestingJetpackSettings from 'state/selectors/is-requesting-jetpack-settings';
-import { requestJetpackSettings } from 'state/jetpack/settings/actions';
+import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
+import { requestJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 
 class QueryJetpackSettings extends Component {
 	static propTypes = {
@@ -22,11 +20,11 @@ class QueryJetpackSettings extends Component {
 		requestJetpackSettings: PropTypes.func,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.request( nextProps );
 		}

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencis
  */
@@ -8,11 +7,11 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { isStale } from '../utils';
-import { withSchemaValidation } from 'state/utils';
+import { withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { JETPACK_CONNECT_AUTHORIZE_TTL } from '../constants';
 import { jetpackConnectAuthorizeSchema } from './schema';
+import { SITE_REQUEST_FAILURE } from 'calypso/state/action-types';
 import {
-	DESERIALIZE,
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
@@ -20,8 +19,7 @@ import {
 	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
-	SITE_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/jetpack-connect/action-types';
 
 function jetpackConnectAuthorize( state = {}, action ) {
 	switch ( action.type ) {
@@ -79,15 +77,20 @@ function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_COMPLETE_FLOW:
 			return {};
 
-		case DESERIALIZE:
-			if ( isStale( state.timestamp, JETPACK_CONNECT_AUTHORIZE_TTL ) ) {
-				return {};
-			}
-			return state;
-
 		default:
 			return state;
 	}
 }
 
-export default withSchemaValidation( jetpackConnectAuthorizeSchema, jetpackConnectAuthorize );
+export default withSchemaValidation(
+	jetpackConnectAuthorizeSchema,
+	withPersistence( jetpackConnectAuthorize, {
+		deserialize( persisted ) {
+			if ( isStale( persisted.timestamp, JETPACK_CONNECT_AUTHORIZE_TTL ) ) {
+				return {};
+			}
+
+			return persisted;
+		},
+	} )
+);

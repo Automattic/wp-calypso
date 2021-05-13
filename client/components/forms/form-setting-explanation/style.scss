@@ -1,10 +1,10 @@
 .form-setting-explanation {
 	color: var( --color-text-subtle );
 	display: block;
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-style: italic;
 	font-weight: 400;
-	margin: 5px 0 0;
+	margin: 5px 0 -5px;
 
 	&.is-indented {
 		margin-left: 24px;

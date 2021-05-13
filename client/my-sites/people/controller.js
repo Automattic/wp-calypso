@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,14 +10,14 @@ import i18n from 'i18n-calypso';
  */
 import PeopleList from './main';
 import EditTeamMember from './edit-team-member-form';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import InvitePeople from './invite-people';
 import PeopleInvites from './people-invites';
 import PeopleInviteDetails from './people-invite-details';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSiteFragment } from 'lib/route';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSiteFragment } from 'calypso/lib/route';
 
 export default {
 	redirectToTeam,
@@ -66,7 +65,7 @@ function redirectToTeam( context ) {
 function renderPeopleList( context, next ) {
 	const filter = context.params.filter;
 
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'People', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( PeopleList, {
@@ -80,7 +79,7 @@ function renderInvitePeople( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
-	context.store.dispatch( setTitle( i18n.translate( 'Invite People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'Invite People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 
 	context.primary = React.createElement( InvitePeople, {
 		site: site,
@@ -105,7 +104,7 @@ function renderPeopleInviteDetails( context, next ) {
 }
 
 function renderSingleTeamMember( context, next ) {
-	context.store.dispatch( setTitle( i18n.translate( 'View Team Member', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'View Team Member', { textOnly: true } ) ) ); // FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 
 	context.primary = React.createElement( EditTeamMember, {
 		userLogin: context.params.user_login,

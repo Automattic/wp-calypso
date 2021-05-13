@@ -1,20 +1,24 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import classnames from 'classnames';
+
+/**
+ * Internal dependencies
+ */
+import { Button } from '@wordpress/components';
 
 /**
  * Style dependencies
  */
 import './comment-approve-action.scss';
+
+const noop = () => {};
 
 const CommentApproveAction = ( { translate, status, approveComment, unapproveComment } ) => {
 	const isApproved = status === 'approved';
@@ -23,12 +27,12 @@ const CommentApproveAction = ( { translate, status, approveComment, unapproveCom
 	} );
 
 	return (
-		<button className={ buttonStyle } onClick={ ! isApproved ? approveComment : unapproveComment }>
+		<Button className={ buttonStyle } onClick={ ! isApproved ? approveComment : unapproveComment }>
 			<Gridicon icon="checkmark" size={ 18 } />
 			<span className="comments__comment-actions-like-label">
 				{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }
 			</span>
-		</button>
+		</Button>
 	);
 };
 

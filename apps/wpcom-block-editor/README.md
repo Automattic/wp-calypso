@@ -4,40 +4,206 @@ This package provides utilities for the WordPress.com block editor integration.
 
 These utilities are intended to be built and then served from `widgets.wp.com`, so they can be loaded by a WordPress.com or a Jetpack connected site.
 
-## Environments
+This code is developed in the calypso monorepo at <https://github.com/Automattic/wp-calypso/tree/trunk/apps/wpcom-block-editor>.
 
-There are two environments the block editor integration supports:
+## Editors
+
+There are two editors supported:
 
 - **WP Admin block editor**. The block editor loaded by the WP Admin interface on `https://<SITE_SLUG>/wp-admin/post-new.php`.
 - **Calypso block editor**. This is the block editor loaded by Calypso on `https://wordpress.com/block-editor/post/<SITE_SLUG>`. It is actually the WP Admin block editor embed on an iframe. We also refer to this implementation as _Gutenframe_.
- 
-## File architecture
 
-- `/common`: Logic than runs on both environments (WP Admin and Calypso).
-- `/calypso`: Logic than runs only on the Calypso iframed block editor.  
+## Features
 
-### Common utilities
+Skip down to **structure** if you'd like to know how this relates to the code and directory structure!
 
-- `disable-nux-tour.js`: Disable the pop-up tooltip tour that is displayed on first use.
-- `rich-text.js`: Extensions for the Rich Text toolbar with the Calypso buttons missing on Core (i.e. underline, justify).
-- `switch-to-classic.js`: Append a button to the "More tools" menu for switching to the classic editor.
+The block editor integration provides features for the following combination of sites and editors:
 
-### Calypso utilities
+<table>
+  <tr>
+    <th>Feature</th>
+    <th>Editor</th>
+    <th>Simple site</th>
+    <th>Atomic site</th>
+    <th>Jetpack site</th>
+  </tr>
+  <tr>
+    <td rowspan="2">
+      <a href="./src/default/features/rich-text.js"><code>rich-text</code></a>:
+      Extensions for the Rich Text toolbar with the Calypso buttons missing on Core (i.e. underline, justify).
+    </td>
+    <td>WP Admin</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>✅</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>✅</td>
+  </tr>
+  <tr>
+      <td rowspan="2">
+        <a href="./src/wpcom/features/deprecate-coblocks-buttons.js"><code>deprecate-coblocks-buttons</code></a>:
+        Prevents the CoBlocks Buttons block from being insertable.
+      </td>
+      <td>WP Admin</td>
+      <td>✅</td>
+      <td>✅</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td>Calypso</td>
+      <td>✅</td>
+      <td>✅</td>
+      <td>❌</td>
+    </tr>
+  <tr>
+    <td rowspan="2">
+      <a href="./src/wpcom/features/fix-block-invalidation-errors.js"><code>fix-block-invalidation-errors</code></a>:
+      Performs block attempt block recovery on editor load if validation errors are detected.
+    </td>
+    <td>WP Admin</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td rowspan="2">
+      <a href="./src/wpcom/features/reorder-block-categories.js"><code>reorder-block-categories</code></a>:
+      Moves Jetpack and CoBlocks Block Categories below Core Categories.
+    </td>
+    <td>WP Admin</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td rowspan="2">
+      <a href="./src/wpcom/features/tracking.js"><code>tracking</code></a>:
+      Adds analytics around specific user actions.
+    </td>
+    <td>WP Admin</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td rowspan="2">
+      <a href="./src/calypso/features/iframe-bridge-server.js"><code>iframe-bridge-server</code></a>:
+      Server-side handlers of the different communication channels we establish with the client-side when Calypso loads the iframed block editor. See <a href="../../client/gutenberg/editor/calypsoify-iframe.tsx"><code>calypsoify-iframe.jsx</code></a>.
+    </td>
+    <td>WP Admin</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>✅</td>
+  </tr>
+  <tr>
+    <td rowspan="2">
+      <a href="./src/calypso/features/tinymce.js"><code>tinymce</code></a>:
+      Tiny MCE plugin that overrides the core media modal used on classic blocks with the Calypso media modal.
+    </td>
+    <td>WP Admin</td>
+    <td>❌</td>
+    <td>❌</td>
+    <td>❌</td>
+  </tr>
+  <tr>
+    <td>Calypso</td>
+    <td>✅</td>
+    <td>✅</td>
+    <td>✅</td>
+  </tr>
+</table>
 
-- `iframe-bridge-server.js`: Server-side handlers of the different communication channels we establish with the client-side when Calypso loads the iframed block editor. See [`calypsoify-iframe.jsx`](https://github.com/Automattic/wp-calypso/blob/master/client/gutenberg/editor/calypsoify-iframe.jsx).
-- `tinymce.js`: Tiny MCE plugin that overrides the core media modal used on classic blocks with the Calypso media modal.
+## Structure
+
+Features in the `wpcom-block-editor/src` folder follow this structure. This roughly corresponds to three main bundles which are created by webpack, and allows us to support (or not support) various features according to the grid above.
+
+```
+.
+└── src/
+	├── default ← Always loaded.
+	├── calypso ← Only loaded when you access Gutenberg through the iFrame.
+	├── wpcom   ← Only loaded when you access Gutenberg on Simple and Atomic sites.
+```
+
+You can access Gutenberg through the iFrame or directly through wp-admin on any Simple, Atomic, and connected Jetpack site. (Note that Atomic sites are a subset of connected Jetpack sites.) The best way to explain the structure is with an example.
+
+Say you have an Atomic site. You visit the block-editor through the iFrame. In this scenario, the [Jetpack plugin code here](https://github.com/Automattic/jetpack/blob/13c47f276b5b5f30e2347c6486d7fd158bc3a025/modules/wpcom-block-editor/class-jetpack-wpcom-block-editor.php#L282-L335) determines which bundles to load. It will load the **default** bundle because that is always loaded. **calypso** is loaded because it knows we are in an iFrame. It also loads the **wpcom** directory because it knows this is an Atomic site. As a result, all features are supported in this situation.
+
+If we access Gutenberg on the same Atomic site through wp-admin, the same PHP code will run. However, this time it can tell that we are not in the iFrame, so it does _not_ load the **calypso** directory, but still loads default and wpcom.
+
+Say you have a connected Jetpack site that is non-Atomic. In this scenario, if you access Gutenberg through the iFrame, the PHP code will detect the iFrame, so it loads **calypso**, and it also loads the **default** directory by default.
+
+Then, each bundle contains features for different types of pages. For example, the `editor.js` file is in every directory, since the main goal of this app is to provide features for the editor. Additionally, the `view.js` file exists in the `default` directory in order to provide some code which is always loaded on the front end.
+
+```
+.
+└── $bundle_name/
+	├── features    ← Directory with all features that are bundled under this group.
+	├── editor.js   ← script importing features that will be loaded only in the editor.
+	├── editor.scss ← stylesheet importing styles of features that will be loaded only in the editor.
+	├── view.js     ← script importing features that will be loaded in both editor and front-end.
+	└── view.scss   ← stylesheet importing styles of features that will loaded in both editor and front-end.
+```
 
 ## Build
+
+### Dev workflow
+
+The wpcom-block-editor needs an active wpcom sandbox to test.
+
+Ensure that your sandbox is set up, aliased to `wpcom-sandbox` and currently active
+
+The following will build wpcom-block-editor, and upload the results to the `widgets.wp.com/wpcom-block-editor` folder on your sandbox.
+
+```bash
+# Watch for file changes and upload build output to your sandbox
+yarn dev --sync
+```
 
 ### Manual
 
 To manually build the package, execute the command below passing the directory where the distributable files will be generated:
 
-```
-npx lerna run build --scope='@automattic/wpcom-block-editor' -- -- --output-path=/path-to-folder
-```
+```sh
+cd apps/wpcom-block-editor
 
-_Wonky double `--` is needed for first skipping Lerna args and then NPM args to reach Webpack._
+# Watch for changes:
+yarn build --watch
+
+# Production build:
+yarn build
+
+# Change output directory (default is ./dist)
+yarn build --output-path=/path-to-folder
+```
 
 ### Automatic
 

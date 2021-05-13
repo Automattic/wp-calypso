@@ -1,23 +1,21 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import {
 	getImageEditorFileInfo,
 	imageEditorHasChanges,
-} from 'state/ui/editor/image-editor/selectors';
+} from 'calypso/state/editor/image-editor/selectors';
+
+const noop = () => {};
 
 class ImageEditorButtons extends Component {
 	static propTypes = {
@@ -77,9 +75,9 @@ class ImageEditorButtons extends Component {
 	}
 }
 
-export default connect( state => {
-	const { src } = getImageEditorFileInfo( state ),
-		hasChanges = imageEditorHasChanges( state );
+export default connect( ( state ) => {
+	const { src } = getImageEditorFileInfo( state );
+	const hasChanges = imageEditorHasChanges( state );
 
 	return {
 		src,

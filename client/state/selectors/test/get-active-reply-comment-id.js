@@ -1,8 +1,7 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import getActiveReplyCommentId from 'state/selectors/get-active-reply-comment-id';
+import { getActiveReplyCommentId } from 'calypso/state/comments/selectors';
 
 describe( 'getActiveReplyCommentId()', () => {
 	test( 'should return the active reply comment ID for a known site and post', () => {

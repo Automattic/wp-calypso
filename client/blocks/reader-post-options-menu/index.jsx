@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
+import { size, map } from 'lodash';
 import page from 'page';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -13,32 +12,46 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import { blockSite } from 'state/reader/site-blocks/actions';
-import * as PostUtils from 'state/posts/utils';
-import FollowButton from 'reader/follow-button';
-import * as DiscoverHelper from 'reader/discover/helper';
-import * as stats from 'reader/stats';
-import { getFeed } from 'state/reader/feeds/selectors';
-import { getSite } from 'state/reader/sites/selectors';
-import QueryReaderFeed from 'components/data/query-reader-feed';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderTeams from 'components/data/query-reader-teams';
-import { isAutomatticTeamMember } from 'reader/lib/teams';
-import getReaderTeams from 'state/selectors/get-reader-teams';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { blockSite } from 'calypso/state/reader/site-blocks/actions';
+import * as PostUtils from 'calypso/state/posts/utils';
+import FollowButton from 'calypso/reader/follow-button';
+import * as DiscoverHelper from 'calypso/reader/discover/helper';
+import * as stats from 'calypso/reader/stats';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
-import ConversationFollowButton from 'blocks/conversation-follow-button';
-import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
-import { READER_POST_OPTIONS_MENU } from 'reader/follow-sources';
+import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
+import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
+import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
+import {
+	requestMarkAsSeen,
+	requestMarkAsUnseen,
+	requestMarkAsSeenBlog,
+	requestMarkAsUnseenBlog,
+} from 'calypso/state/reader/seen-posts/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+const noop = () => {};
+
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
+		currentRoute: PropTypes.string,
 		post: PropTypes.object,
 		feed: PropTypes.object,
 		onBlock: PropTypes.func,
@@ -49,6 +62,9 @@ class ReaderPostOptionsMenu extends React.Component {
 		showReportPost: PropTypes.bool,
 		showReportSite: PropTypes.bool,
 		position: PropTypes.string,
+		posts: PropTypes.array,
+		isWPForTeamsItem: PropTypes.bool,
+		teams: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -60,6 +76,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		showConversationFollow: true,
 		showReportPost: true,
 		showReportSite: false,
+		posts: [],
 	};
 
 	blockSite = () => {
@@ -106,7 +123,7 @@ class ReaderPostOptionsMenu extends React.Component {
 			: this.props.post.feed_URL || this.props.post.site_URL;
 	};
 
-	onMenuToggle = isMenuVisible => {
+	onMenuToggle = ( isMenuVisible ) => {
 		stats.recordAction( isMenuVisible ? 'open_post_options_menu' : 'close_post_options_menu' );
 		stats.recordGaEvent( isMenuVisible ? 'Open Post Options Menu' : 'Close Post Options Menu' );
 		stats.recordTrackForPost(
@@ -127,7 +144,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		stats.recordGaEvent( 'Clicked Edit Post', 'post_options' );
 		stats.recordTrackForPost( 'calypso_reader_edit_post_clicked', this.props.post );
 
-		setTimeout( function() {
+		setTimeout( function () {
 			// give the analytics a chance to escape
 			if ( editUrl.indexOf( '//' ) === 0 ) {
 				window.location.href = editUrl;
@@ -151,8 +168,102 @@ class ReaderPostOptionsMenu extends React.Component {
 		window.open( post.URL, '_blank' );
 	};
 
+	markAsSeen = () => {
+		const { post, posts } = this.props;
+
+		if ( ! post ) {
+			return;
+		}
+
+		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_seen_clicked' );
+
+		const feedId = post.feed_ID;
+		let postIds = [ post.ID ];
+		let feedItemIds = [ post.feed_item_ID ];
+		let globalIds = [ post.global_ID ];
+
+		if ( size( posts ) ) {
+			postIds = map( posts, 'ID' );
+			feedItemIds = map( posts, 'feed_item_ID' );
+			globalIds = map( posts, 'global_ID' );
+		}
+
+		if ( post.feed_item_ID ) {
+			// is feed
+			this.props.requestMarkAsSeen( {
+				feedId,
+				feedUrl: post.feed_URL,
+				feedItemIds,
+				globalIds,
+			} );
+		} else {
+			// is blog
+			this.props.requestMarkAsSeenBlog( {
+				feedId,
+				feedUrl: post.feed_URL,
+				blogId: post.site_ID,
+				postIds,
+				globalIds,
+			} );
+		}
+
+		this.onMenuToggle();
+	};
+
+	markAsUnSeen = () => {
+		const { post, posts } = this.props;
+
+		if ( ! post ) {
+			return;
+		}
+
+		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_unseen_clicked' );
+
+		const feedId = post.feed_ID;
+		let postIds = [ post.ID ];
+		let feedItemIds = [ post.feed_item_ID ];
+		let globalIds = [ post.global_ID ];
+
+		if ( size( posts ) ) {
+			postIds = map( posts, 'ID' );
+			feedItemIds = map( posts, 'feed_item_ID' );
+			globalIds = map( posts, 'global_ID' );
+		}
+
+		if ( post.feed_item_ID ) {
+			// is feed
+			this.props.requestMarkAsUnseen( {
+				feedId,
+				feedUrl: post.feed_URL,
+				feedItemIds,
+				globalIds,
+			} );
+		} else {
+			// is blog
+			this.props.requestMarkAsUnseenBlog( {
+				feedId,
+				feedUrl: post.feed_URL,
+				blogId: post.site_ID,
+				postIds,
+				globalIds,
+			} );
+		}
+
+		this.onMenuToggle();
+	};
+
 	render() {
-		const { post, site, feed, teams, translate, position } = this.props;
+		const {
+			post,
+			site,
+			feed,
+			teams,
+			translate,
+			position,
+			posts,
+			isWPForTeamsItem,
+			currentRoute,
+		} = this.props;
 
 		if ( ! post ) {
 			return null;
@@ -189,7 +300,7 @@ class ReaderPostOptionsMenu extends React.Component {
 				{ ! teams && <QueryReaderTeams /> }
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
-					popoverClassName="reader-post-options-menu__popover"
+					popoverClassName="reader-post-options-menu__popover ignore-click"
 					onToggle={ this.onMenuToggle }
 					position={ position }
 				>
@@ -199,8 +310,8 @@ class ReaderPostOptionsMenu extends React.Component {
 						<FollowButton
 							tagName={ PopoverMenuItem }
 							siteUrl={ followUrl }
-							followLabel={ showConversationFollowButton ? translate( 'Follow Site' ) : null }
-							followingLabel={ showConversationFollowButton ? translate( 'Following Site' ) : null }
+							followLabel={ showConversationFollowButton ? translate( 'Follow site' ) : null }
+							followingLabel={ showConversationFollowButton ? translate( 'Following site' ) : null }
 						/>
 					) }
 
@@ -214,15 +325,37 @@ class ReaderPostOptionsMenu extends React.Component {
 						/>
 					) }
 
+					{ isEligibleForUnseen( { teams, isWPForTeamsItem } ) &&
+						canBeMarkedAsSeen( { post, posts, currentRoute } ) &&
+						post.is_seen && (
+							<PopoverMenuItem
+								onClick={ this.markAsUnSeen }
+								icon="not-visible"
+								itemComponent={ 'a' }
+							>
+								{ size( posts ) > 0 && translate( 'Mark all as unseen' ) }
+								{ size( posts ) === 0 && translate( 'Mark as unseen' ) }
+							</PopoverMenuItem>
+						) }
+
+					{ isEligibleForUnseen( { teams, isWPForTeamsItem } ) &&
+						canBeMarkedAsSeen( { post, posts, currentRoute } ) &&
+						! post.is_seen && (
+							<PopoverMenuItem onClick={ this.markAsSeen } icon="visible">
+								{ size( posts ) > 0 && translate( 'Mark all as seen' ) }
+								{ size( posts ) === 0 && translate( 'Mark as seen' ) }
+							</PopoverMenuItem>
+						) }
+
 					{ this.props.showVisitPost && post.URL && (
 						<PopoverMenuItem onClick={ this.visitPost } icon="external">
-							{ translate( 'Visit Post' ) }
+							{ translate( 'Visit post' ) }
 						</PopoverMenuItem>
 					) }
 
 					{ this.props.showEditPost && isEditPossible && (
 						<PopoverMenuItem onClick={ this.editPost } icon="pencil">
-							{ translate( 'Edit Post' ) }
+							{ translate( 'Edit post' ) }
 						</PopoverMenuItem>
 					) }
 
@@ -233,19 +366,19 @@ class ReaderPostOptionsMenu extends React.Component {
 
 					{ isBlockPossible && (
 						<PopoverMenuItem onClick={ this.blockSite }>
-							{ translate( 'Block Site' ) }
+							{ translate( 'Block site' ) }
 						</PopoverMenuItem>
 					) }
 
 					{ ( ( this.props.showReportPost && isBlockPossible ) || isDiscoverPost ) && (
 						<PopoverMenuItem onClick={ this.reportPost }>
-							{ translate( 'Report this Post' ) }
+							{ translate( 'Report this post' ) }
 						</PopoverMenuItem>
 					) }
 
 					{ this.props.showReportSite && site && isBlockPossible && (
 						<PopoverMenuItem onClick={ this.reportSite }>
-							{ translate( 'Report this Site' ) }
+							{ translate( 'Report this site' ) }
 						</PopoverMenuItem>
 					) }
 				</EllipsisMenu>
@@ -259,6 +392,8 @@ export default connect(
 		const siteId = is_external ? null : site_ID;
 
 		return Object.assign(
+			{ currentRoute: getCurrentRoute( state ) },
+			{ isWPForTeamsItem: isSiteWPForTeams( state, siteId ) || isFeedWPForTeams( state, feedId ) },
 			{ teams: getReaderTeams( state ) },
 			feedId > 0 && { feed: getFeed( state, feedId ) },
 			siteId > 0 && { site: getSite( state, siteId ) }
@@ -266,5 +401,10 @@ export default connect(
 	},
 	{
 		blockSite,
+		requestMarkAsSeen,
+		requestMarkAsUnseen,
+		requestMarkAsSeenBlog,
+		requestMarkAsUnseenBlog,
+		recordReaderTracksEvent,
 	}
 )( localize( ReaderPostOptionsMenu ) );

@@ -1,111 +1,106 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 import actions from '../state/actions';
-import getSiteSuggestions from '../state/selectors/get-site-suggestions';
 
 /**
  * Internal dependencies
  */
-import { disableKeyboardShortcuts, enableKeyboardShortcuts } from '../flux/input-actions';
 import Spinner from './spinner';
 import Suggestions from '../suggestions';
 import repliesCache from '../comment-replies-cache';
 import { wpcom } from '../rest-client/wpcom';
 import { bumpStat } from '../rest-client/bump-stat';
 import { formatString, validURL } from './functions';
+import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
+import { modifierKeyIsActive } from '../helpers/input';
 
-var debug = require( 'debug' )( 'notifications:reply' );
-var { recordTracksEvent } = require( '../helpers/stats' );
+const debug = require( 'debug' )( 'notifications:reply' );
+const { recordTracksEvent } = require( '../helpers/stats' );
 
-const hasTouch = () =>
-	'ontouchstart' in window || ( window.DocumentTouch && document instanceof DocumentTouch );
+function stopEvent( event ) {
+	event.stopPropagation();
+	event.preventDefault();
+}
 
-const CommentReplyInput = createReactClass( {
-	displayName: 'CommentReplyInput',
-	mixins: [ repliesCache.LocalStorageMixin, Suggestions ],
+class CommentReplyInput extends React.Component {
+	replyInput = React.createRef();
 
-	statics: {
-		stopEvent: function( event ) {
-			event.stopPropagation();
-			event.preventDefault();
-		},
-	},
-
-	getInitialState: function() {
-		var getSavedReply = function() {
-			var savedReply = this.localStorage.getItem( this.savedReplyKey );
-
-			return savedReply ? savedReply[ 0 ] : '';
-		};
+	constructor( props ) {
+		super( props );
 
 		this.savedReplyKey = 'reply_' + this.props.note.id;
 
-		return {
-			value: getSavedReply.apply( this ),
+		const savedReply = repliesCache.getItem( this.savedReplyKey );
+		const savedReplyValue = savedReply ? savedReply[ 0 ] : '';
+
+		this.state = {
+			value: savedReplyValue,
 			hasClicked: false,
 			isSubmitting: false,
 			rowCount: 1,
 			retryCount: 0,
 		};
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		window.addEventListener( 'keydown', this.handleKeyDown, false );
 		window.addEventListener( 'keydown', this.handleCtrlEnter, false );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'keydown', this.handleKeyDown, false );
 		window.removeEventListener( 'keydown', this.handleCtrlEnter, false );
 
-		enableKeyboardShortcuts();
-	},
+		this.props.enableKeyboardShortcuts();
+	}
 
-	handleKeyDown: function( event ) {
-		if ( ! this.props.global.keyboardShortcutsAreEnabled ) {
+	handleKeyDown = ( event ) => {
+		if ( ! this.props.keyboardShortcutsAreEnabled ) {
 			return;
 		}
 
-		if ( this.props.global.input.modifierKeyIsActive( event ) ) {
+		if ( modifierKeyIsActive( event ) ) {
 			return;
 		}
 
-		if ( 82 == event.keyCode ) {
+		if ( 82 === event.keyCode ) {
 			/* 'r' key */
-			this.replyInput.focus();
-			CommentReplyInput.stopEvent( event );
+			this.replyInput.current.focus();
+			stopEvent( event );
 		}
-	},
+	};
 
-	handleCtrlEnter: function( event ) {
+	handleCtrlEnter = ( event ) => {
 		if ( this.state.isSubmitting ) {
 			return;
 		}
 
-		if ( ( event.ctrlKey || event.metaKey ) && ( 10 == event.keyCode || 13 == event.keyCode ) ) {
-			CommentReplyInput.stopEvent( event );
+		if ( ( event.ctrlKey || event.metaKey ) && ( 10 === event.keyCode || 13 === event.keyCode ) ) {
+			stopEvent( event );
 			this.handleSubmit();
 		}
-	},
+	};
 
-	handleSendEnter: function( event ) {
+	handleSendEnter = ( event ) => {
 		if ( this.state.isSubmitting ) {
 			return;
 		}
 
-		if ( 13 == event.keyCode ) {
-			CommentReplyInput.stopEvent( event );
+		if ( 13 === event.keyCode ) {
+			stopEvent( event );
 			this.handleSubmit();
 		}
-	},
+	};
 
-	handleChange: function( event ) {
-		var textarea = this.replyInput;
+	handleChange = ( event ) => {
+		const textarea = this.replyInput.current;
 
-		disableKeyboardShortcuts();
+		this.props.disableKeyboardShortcuts();
 
 		this.setState( {
 			value: event.target.value,
@@ -117,51 +112,50 @@ const CommentReplyInput = createReactClass( {
 
 		// persist the comment reply on local storage
 		if ( this.savedReplyKey ) {
-			this.localStorage.setItem( this.savedReplyKey, [ event.target.value, Date.now() ] );
+			repliesCache.setItem( this.savedReplyKey, [ event.target.value, Date.now() ] );
 		}
-	},
+	};
 
-	handleClick: function( event ) {
-		disableKeyboardShortcuts();
+	handleClick = () => {
+		this.props.disableKeyboardShortcuts();
 
 		if ( ! this.state.hasClicked ) {
 			this.setState( {
 				hasClicked: true,
 			} );
 		}
-	},
+	};
 
-	handleFocus: function() {
-		disableKeyboardShortcuts();
-	},
+	handleFocus = () => {
+		this.props.disableKeyboardShortcuts();
+	};
 
-	handleBlur: function() {
-		enableKeyboardShortcuts();
+	handleBlur = () => {
+		this.props.enableKeyboardShortcuts();
 
 		// Reset the field if there's no valid user input
 		// The regex strips whitespace
-		if ( '' == this.state.value.replace( /^\s+|\s+$/g, '' ) ) {
+		if ( '' === this.state.value.replace( /^\s+|\s+$/g, '' ) ) {
 			this.setState( {
 				value: '',
 				hasClicked: false,
 				rowCount: 1,
 			} );
 		}
-	},
+	};
 
-	handleSubmit( event ) {
-		var wpObject,
-			submitComment,
-			component = this,
-			statusMessage,
-			successMessage = this.props.translate( 'Reply posted!' ),
-			linkMessage = this.props.translate( 'View your comment.' );
+	handleSubmit = ( event ) => {
+		let wpObject;
+		let submitComment;
+		let statusMessage;
+		const successMessage = this.props.translate( 'Reply posted!' );
+		const linkMessage = this.props.translate( 'View your comment.' );
 
 		if ( event ) {
 			event.preventDefault();
 		}
 
-		if ( '' == this.state.value ) return;
+		if ( '' === this.state.value ) return;
 
 		this.props.global.toggleNavigation( false );
 
@@ -169,7 +163,7 @@ const CommentReplyInput = createReactClass( {
 			isSubmitting: true,
 		} );
 
-		if ( this.state.retryCount == 0 ) {
+		if ( this.state.retryCount === 0 ) {
 			bumpStat( 'notes-click-action', 'replyto-comment' );
 			recordTracksEvent( 'calypso_notification_note_reply', {
 				note_type: this.props.note.type,
@@ -203,29 +197,27 @@ const CommentReplyInput = createReactClass( {
 						isSubmitting: false,
 						retryCount: 0,
 					} );
-					this.replyInput.focus();
+					this.replyInput.current.focus();
 
 					this.props.global.updateStatusBar( errorMessageDuplicateComment, [ 'fail' ], 6000 );
 					this.props.unselectNote();
-				} else if ( component.state.retryCount < 3 ) {
-					component.setState( {
-						retryCount: component.state.retryCount + 1,
+				} else if ( this.state.retryCount < 3 ) {
+					this.setState( {
+						retryCount: this.state.retryCount + 1,
 					} );
 
-					window.setTimeout( function() {
-						component.handleSubmit();
-					}, 2000 * component.state.retryCount );
+					window.setTimeout( () => this.handleSubmit(), 2000 * this.state.retryCount );
 				} else {
-					component.setState( {
+					this.setState( {
 						isSubmitting: false,
 						retryCount: 0,
 					} );
 
 					/* Flag submission failure */
-					component.props.global.updateStatusBar( errorMessage, [ 'fail' ], 6000 );
+					this.props.global.updateStatusBar( errorMessage, [ 'fail' ], 6000 );
 
-					enableKeyboardShortcuts();
-					component.props.global.toggleNavigation( true );
+					this.props.enableKeyboardShortcuts();
+					this.props.global.toggleNavigation( true );
 
 					debug( 'Failed to submit comment reply: %s', error.message );
 				}
@@ -233,15 +225,15 @@ const CommentReplyInput = createReactClass( {
 				return;
 			}
 
-			if ( component.props.note.meta.ids.comment ) {
+			if ( this.props.note.meta.ids.comment ) {
 				// pre-emptively approve the comment if it wasn't already
-				component.props.approveNote( component.props.note.id, true );
-				component.props.global.client.getNote( component.props.note.id );
+				this.props.approveNote( this.props.note.id, true );
+				this.props.global.client.getNote( this.props.note.id );
 			}
 
 			// remove focus from textarea so we can resume using keyboard
 			// shortcuts without typing in the field
-			component.replyInput.blur();
+			this.replyInput.current.blur();
 
 			if ( data.URL && validURL.test( data.URL ) ) {
 				statusMessage = formatString(
@@ -254,12 +246,12 @@ const CommentReplyInput = createReactClass( {
 				statusMessage = successMessage;
 			}
 
-			component.props.global.updateStatusBar( statusMessage, [ 'success' ], 12000 );
+			this.props.global.updateStatusBar( statusMessage, [ 'success' ], 12000 );
 
-			enableKeyboardShortcuts();
-			component.props.global.toggleNavigation( true );
+			this.props.enableKeyboardShortcuts();
+			this.props.global.toggleNavigation( true );
 
-			component.setState( {
+			this.setState( {
 				value: '',
 				isSubmitting: false,
 				hasClicked: false,
@@ -268,53 +260,72 @@ const CommentReplyInput = createReactClass( {
 			} );
 
 			// remove the comment reply from local storage
-			component.localStorage.removeItem( component.savedReplyKey );
+			repliesCache.removeItem( this.savedReplyKey );
 
 			// route back to list after successful comment post
-			component.props.selectNote( component.props.note.id );
+			this.props.selectNote( this.props.note.id );
 		} );
-	},
+	};
 
-	storeReplyInput( ref ) {
-		this.replyInput = ref;
-	},
+	insertSuggestion = ( suggestion, suggestionsQuery ) => {
+		if ( ! suggestion ) {
+			return;
+		}
 
-	render: function() {
-		var value = this.state.value;
-		var submitLink = '';
-		var sendText = this.props.translate( 'Send', { context: 'verb: imperative' } );
+		const element = this.replyInput.current;
+		const caretPosition = element.selectionStart;
+		const startString = this.state.value.slice(
+			0,
+			Math.max( caretPosition - suggestionsQuery.length, 0 )
+		);
+		const endString = this.state.value.slice( caretPosition );
+
+		this.setState( {
+			value: startString + suggestion.user_login + ' ' + endString,
+		} );
+
+		element.focus();
+
+		// move the caret after the inserted suggestion
+		const insertPosition = startString.length + suggestion.user_login.length + 1;
+		setTimeout( () => element.setSelectionRange( insertPosition, insertPosition ), 0 );
+	};
+
+	render() {
+		const value = this.state.value;
+		let submitLink = '';
+		const sendText = this.props.translate( 'Send', { context: 'verb: imperative' } );
 
 		if ( this.state.isSubmitting ) {
 			submitLink = <Spinner className="wpnc__spinner" />;
+		} else if ( value.length ) {
+			const submitLinkTitle = this.props.translate( 'Submit reply', {
+				context: 'verb: imperative',
+			} );
+			submitLink = (
+				<button
+					title={ submitLinkTitle }
+					className="active"
+					onClick={ this.handleSubmit }
+					onKeyDown={ this.handleSendEnter }
+				>
+					{ sendText }
+				</button>
+			);
 		} else {
-			if ( value.length ) {
-				var submitLinkTitle = this.props.translate( 'Submit reply', {
-					context: 'verb: imperative',
-				} );
-				submitLink = (
-					<button
-						title={ submitLinkTitle }
-						className="active"
-						onClick={ this.handleSubmit }
-						onKeyDown={ this.handleSendEnter }
-					>
-						{ sendText }
-					</button>
-				);
-			} else {
-				var submitLinkTitle = this.props.translate( 'Write your response in order to submit' );
-				submitLink = (
-					<button title={ submitLinkTitle } className="inactive">
-						{ sendText }
-					</button>
-				);
-			}
+			const submitLinkTitle = this.props.translate( 'Write your response in order to submit' );
+			submitLink = (
+				<button title={ submitLinkTitle } className="inactive">
+					{ sendText }
+				</button>
+			);
 		}
 
 		return (
 			<div className="wpnc__reply-box">
 				<textarea
-					ref={ this.storeReplyInput }
+					className="form-textarea"
+					ref={ this.replyInput }
 					rows={ this.state.rowCount }
 					value={ value }
 					placeholder={ this.props.defaultValue }
@@ -324,26 +335,26 @@ const CommentReplyInput = createReactClass( {
 					onChange={ this.handleChange }
 				/>
 				{ submitLink }
-				{ this.renderSuggestions() }
+				<Suggestions
+					site={ this.props.note.meta.ids.site }
+					onInsertSuggestion={ this.insertSuggestion }
+					getContextEl={ () => this.replyInput.current }
+				/>
 			</div>
 		);
-	},
-} );
+	}
+}
 
-const mapStateToProps = ( state, { note } ) => ( {
-	suggestions: getSiteSuggestions( state, note.meta.ids.site ),
+const mapStateToProps = ( state ) => ( {
+	keyboardShortcutsAreEnabled: getKeyboardShortcutsEnabled( state ),
 } );
 
 const mapDispatchToProps = {
 	approveNote: actions.notes.approveNote,
-	fetchSuggestions: actions.suggestions.fetchSuggestions,
 	selectNote: actions.ui.selectNote,
 	unselectNote: actions.ui.unselectNote,
+	enableKeyboardShortcuts: actions.ui.enableKeyboardShortcuts,
+	disableKeyboardShortcuts: actions.ui.disableKeyboardShortcuts,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-	null,
-	{ pure: false }
-)( localize( CommentReplyInput ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentReplyInput ) );

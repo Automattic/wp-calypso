@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,8 +21,8 @@ import {
 	JETPACK_MODULES_REQUEST,
 	JETPACK_MODULES_REQUEST_SUCCESS,
 	JETPACK_MODULES_REQUEST_FAILURE,
-} from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -49,7 +47,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( '#success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( '/rest/v1.1/jetpack-blogs/123456/rest-api/', {
 						path: '/jetpack/v4/module/module-a/active/',
@@ -77,7 +75,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( '#failure', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( '/rest/v1.1/jetpack-blogs/123456/rest-api/', {
 						path: '/jetpack/v4/module/module-a/active/',
@@ -120,7 +118,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( '#success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( '/rest/v1.1/jetpack-blogs/123456/rest-api/', {
 						path: '/jetpack/v4/module/module-b/active/',
@@ -148,7 +146,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( '#failure', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( '/rest/v1.1/jetpack-blogs/123456/rest-api/', {
 						path: '/jetpack/v4/module/module-b/active/',
@@ -179,7 +177,7 @@ describe( 'actions', () => {
 		const siteId = 123456;
 
 		describe( '#success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/123456/rest-api/' )
@@ -204,7 +202,7 @@ describe( 'actions', () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: JETPACK_MODULES_RECEIVE,
 						siteId,
-						modules: mapValues( API_MODULE_LIST_RESPONSE_FIXTURE.data, module => ( {
+						modules: mapValues( API_MODULE_LIST_RESPONSE_FIXTURE.data, ( module ) => ( {
 							active: module.activated,
 							...omit( module, 'activated' ),
 						} ) ),
@@ -224,7 +222,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( '#failure', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/123456/rest-api/' )

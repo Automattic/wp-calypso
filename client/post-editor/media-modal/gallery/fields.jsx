@@ -1,23 +1,22 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { assign, fromPairs, includes, noop, times } from 'lodash';
+import { includes, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import EditorMediaModalFieldset from '../fieldset';
-import SelectDropdown from 'components/select-dropdown';
-import SelectDropdownItem from 'components/select-dropdown/item';
-import FormCheckbox from 'components/forms/form-checkbox';
-import { GalleryColumnedTypes, GallerySizeableTypes } from 'lib/media/constants';
-import { isModuleActive } from 'lib/site/utils';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { GalleryColumnedTypes, GallerySizeableTypes } from 'calypso/lib/media/constants';
+import { isModuleActive } from 'calypso/lib/site/utils';
+
+const noop = () => {};
 
 export class EditorMediaModalGalleryFields extends React.Component {
 	static propTypes = {
@@ -42,7 +41,7 @@ export class EditorMediaModalGalleryFields extends React.Component {
 		};
 
 		if ( site && ( ! site.jetpack || isModuleActive( site, 'tiled-gallery' ) ) ) {
-			assign( options, {
+			Object.assign( options, {
 				rectangular: this.props.translate( 'Tiled Mosaic' ),
 				square: this.props.translate( 'Square Tiles' ),
 				circle: this.props.translate( 'Circles' ),
@@ -51,7 +50,7 @@ export class EditorMediaModalGalleryFields extends React.Component {
 		}
 
 		if ( site && ( ! site.jetpack || isModuleActive( site, 'shortcodes' ) ) ) {
-			assign( options, {
+			Object.assign( options, {
 				slideshow: this.props.translate( 'Slideshow' ),
 			} );
 		}
@@ -86,10 +85,10 @@ export class EditorMediaModalGalleryFields extends React.Component {
 
 	getColumnOptions = () => {
 		const max = Math.min( this.props.numberOfItems, 9 );
-		return fromPairs( times( max, n => [ n + 1, ( n + 1 ).toString() ] ) );
+		return Object.fromEntries( times( max, ( n ) => [ n + 1, ( n + 1 ).toString() ] ) );
 	};
 
-	updateRandomOrder = event => {
+	updateRandomOrder = ( event ) => {
 		this.props.onUpdateSetting( 'orderBy', event.target.checked ? 'rand' : null );
 	};
 
@@ -103,11 +102,11 @@ export class EditorMediaModalGalleryFields extends React.Component {
 		return (
 			<EditorMediaModalFieldset legend={ legend } className={ 'for-setting-' + settingName }>
 				<SelectDropdown selectedText={ options[ settings[ settingName ] ] }>
-					{ Object.keys( options ).map( value => {
+					{ Object.keys( options ).map( ( value ) => {
 						const label = options[ value ];
 
 						return (
-							<SelectDropdownItem
+							<SelectDropdown.Item
 								key={ 'value-' + value }
 								selected={ value === settings[ settingName ] }
 								onClick={ () =>
@@ -115,7 +114,7 @@ export class EditorMediaModalGalleryFields extends React.Component {
 								}
 							>
 								{ label }
-							</SelectDropdownItem>
+							</SelectDropdown.Item>
 						);
 					} ) }
 				</SelectDropdown>

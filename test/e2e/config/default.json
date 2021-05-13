@@ -7,6 +7,7 @@
 	"startBrowserTimeoutMS": 60000,
 	"startAppTimeoutMS": 240000,
 	"afterHookTimeoutMS": 60000,
+	"playwrightTimeoutMS": 9000,
 	"browser": "chrome",
 	"proxy": "direct",
 	"saveAllScreenshots": false,
@@ -14,15 +15,16 @@
 	"neverSaveScreenshots": false,
 	"checkForConsoleErrors": false,
 	"logNetworkRequests": false,
+	"printConsoleLogs": false,
 	"reportWarningsToSlack": false,
 	"closeBrowserOnComplete": true,
 	"highlightElements": false,
 	"sauceConfigurations": {
 		"osx-chrome": {
 			"browserName": "chrome",
-			"platform": "OS X 10.13",
+			"platform": "OS X 10.15",
 			"screenResolution": "2048x1536",
-			"version": "64.0"
+			"version": "latest"
 		},
 		"osx-firefox": {
 			"browserName": "firefox",

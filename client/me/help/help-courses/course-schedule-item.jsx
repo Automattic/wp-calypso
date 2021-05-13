@@ -1,25 +1,22 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import analytics from 'lib/analytics';
-import Button from 'components/button';
+import { Card, Button } from '@automattic/components';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-export default localize( props => {
+export default localize( ( props ) => {
 	const { date, registrationUrl, isBusinessPlanUser, translate } = props;
 
 	const trackRegistrationClick = () => {
-		analytics.tracks.recordEvent( 'calypso_help_course_registration_click', {
+		recordTracksEvent( 'calypso_help_course_registration_click', {
 			registration_url: registrationUrl,
 			is_business_plan_user: isBusinessPlanUser,
 		} );

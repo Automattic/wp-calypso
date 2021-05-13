@@ -18,7 +18,8 @@ To play a sound when an action is dispatched, add a new handler in `./middleware
 For example, if a sound should be played when an action of type `SOME_ACTION_TYPE` is dispatched, add the
 following:
 
-#### `./middleware.js`
+### `./middleware.js`
+
 ```js
 export const onSomeEvent = ( dispatch, action ) => {
 	playSound( '/calypso/audio/sound-to-play.wav' );

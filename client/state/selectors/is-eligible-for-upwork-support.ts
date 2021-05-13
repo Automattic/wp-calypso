@@ -6,11 +6,16 @@ import { get, includes, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import getSitesItems from 'state/selectors/get-sites-items';
-import { isBusinessPlan, isEcommercePlan } from 'lib/plans';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 
-const UPWORK_LOCALES = [
+export const UPWORK_LOCALES = [
+	'de',
+	'de-at',
+	'de-li',
+	'de-lu',
+	'de-ch',
 	'es',
 	'es-cl',
 	'es-mx',
@@ -18,21 +23,30 @@ const UPWORK_LOCALES = [
 	'fr-ca',
 	'fr-be',
 	'fr-ch',
+	'it',
+	'it-ch',
+	'ja',
+	'nl',
+	'nl-be',
+	'nl-nl',
 	'pt',
 	'pt-pt',
 	'pt-br',
+	'sv',
+	'sv-fi',
+	'sv-se',
 ];
 
 /**
  * @param state Global state tree
- * @return Whether or not this customer should receive Upwork support
+ * @returns Whether or not this customer should receive Upwork support
  */
 export default function isEligibleForUpworkSupport( state ): boolean {
 	if ( ! includes( UPWORK_LOCALES, getCurrentUserLocale( state ) ) ) {
 		return false;
 	}
 
-	const hasBusinessOrEcommercePlan = some( getSitesItems( state ), site => {
+	const hasBusinessOrEcommercePlan = some( getSitesItems( state ), ( site ) => {
 		const planSlug = get( site, 'plan.product_slug' );
 		return isBusinessPlan( planSlug ) || isEcommercePlan( planSlug );
 	} );

@@ -1,13 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { debounce } from 'lodash';
-import shallowEqual from 'react-pure-render/shallowEqual';
+import { debounce, forEach } from 'lodash';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 
 /**
  * Internal dependencies
@@ -18,7 +15,7 @@ import {
 	getPreviewParamClass,
 	isIE,
 	revokeObjectURL,
-} from 'components/signup-site-preview/utils';
+} from 'calypso/components/signup-site-preview/utils';
 
 export default class SignupSitePreviewIframe extends Component {
 	static propTypes = {
@@ -91,7 +88,7 @@ export default class SignupSitePreviewIframe extends Component {
 
 		if (
 			this.props.content.body !== nextProps.content.body ||
-			! shallowEqual( this.props.content.params, nextProps.content.params )
+			! isShallowEqual( this.props.content.params, nextProps.content.params )
 		) {
 			this.setContentParams( nextProps.content.params );
 		}
@@ -128,9 +125,12 @@ export default class SignupSitePreviewIframe extends Component {
 		}
 		const elements = this.iframe.current.contentWindow.document.querySelectorAll( selector );
 
-		for ( const element of elements ) {
+		// Using `_.forEach` instead of a for-of loop to fix environments that need
+		// polyfilled. This is probably required because the node list is being
+		// pulled out of the iframe environment which hasn't been polyfilled.
+		forEach( elements, ( element ) => {
 			element.textContent = content;
-		}
+		} );
 	}
 
 	setOnPreviewClick = () => {

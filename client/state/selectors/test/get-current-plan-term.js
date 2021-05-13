@@ -1,19 +1,22 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { getPlan } from 'lib/plans';
-import { getSitePlan } from 'state/sites/selectors';
+import { getSitePlan } from 'calypso/state/sites/selectors';
 import getCurrentPlanTerm from '../get-current-plan-term';
-import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
+import {
+	getPlan,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
+} from '@automattic/calypso-products';
 
-jest.mock( 'state/sites/selectors', () => ( {
+jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSitePlan: jest.fn( () => ( {} ) ),
 } ) );
 
-jest.mock( 'lib/plans', () => ( {
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
 	getPlan: jest.fn( () => ( {} ) ),
 } ) );
 

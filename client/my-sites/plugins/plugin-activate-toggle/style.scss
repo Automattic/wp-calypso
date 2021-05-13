@@ -2,7 +2,7 @@
 .plugin-activate-toggle__link {
 	display: inline-flex;
 	flex-direction: row-reverse;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 16px;
 }
 
@@ -12,7 +12,7 @@
 }
 
 .plugin-activate-toggle__disabled {
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 }
 
 .plugin-activate-toggle__disabled .plugin-activate-toggle__icon {
@@ -39,7 +39,7 @@
 
 .plugin-activate-toggle__icon {
 	flex: none;
-	margin: -1px 3px;
+	margin: -1px 0 -1px 3px;
 
 	.gridicon {
 		display: block;

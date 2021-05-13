@@ -1,30 +1,28 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
-import { identity, noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { isMobile } from 'lib/viewport';
-import { getHappychatAuth } from 'state/happychat/utils';
-import hasUnreadMessages from 'state/happychat/selectors/has-unread-messages';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
-import { initConnection } from 'state/happychat/connection/actions';
-import { openChat } from 'state/happychat/ui/actions';
-import Button from 'components/button';
+import { getHappychatAuth } from 'calypso/state/happychat/utils';
+import hasUnreadMessages from 'calypso/state/happychat/selectors/has-unread-messages';
+import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
+import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
+import isHappychatConnectionUninitialized from 'calypso/state/happychat/selectors/is-happychat-connection-uninitialized';
+import { initConnection } from 'calypso/state/happychat/connection/actions';
+import { openChat } from 'calypso/state/happychat/ui/actions';
+import { Button } from '@automattic/components';
+
+const noop = () => {};
 
 export class HappychatButton extends Component {
 	static propTypes = {
@@ -51,13 +49,12 @@ export class HappychatButton extends Component {
 		isConnectionUninitialized: false,
 		onClick: noop,
 		openChat: noop,
-		translate: identity,
 	};
 
-	onClick = event => {
+	onClick = ( event ) => {
 		if ( this.props.allowMobileRedirect && isMobile() ) {
 			// For mobile clients, happychat will always use the
-			// page componet instead of the sidebar
+			// page component instead of the sidebar.
 			page( '/me/chat' );
 		} else {
 			this.props.openChat();
@@ -107,7 +104,7 @@ export class HappychatButton extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		hasUnread: hasUnreadMessages( state ),
 		getAuth: getHappychatAuth( state ),
 		isChatAvailable: isHappychatAvailable( state ),

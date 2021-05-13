@@ -6,11 +6,13 @@
 		"redux",
 		"selector"
 	],
-	"author": "Jake Fried <samouri@users.noreply.github.com>",
+	"author": "Automattic Inc.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"sideEffects": false,
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
@@ -26,9 +28,14 @@
 		"dist",
 		"src"
 	],
+	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
-		"prepare": "transpile"
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"tslib": "^2.2.0"
 	}
 }

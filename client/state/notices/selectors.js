@@ -1,28 +1,22 @@
-/** @format */
-
-/**
- * External dependencies
- */
-
-import { values } from 'lodash';
-
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
+
+import 'calypso/state/notices/init';
 
 /**
  * Returns array value of notice item state
  *
- * @param  {Object} state Global state tree
- * @return {Array}        Notice objects as array
+ * @param  {object} state Global state tree
+ * @returns {Array}        Notice objects as array
  */
 export const getNotices = createSelector(
-	state => values( state.notices.items ),
-	state => state.notices.items
+	( state ) => Object.values( state.notices.items ),
+	( state ) => state.notices.items
 );
 
 export const getNoticeLastTimeShown = createSelector(
 	( state, noticeId ) => state.notices.lastTimeShown[ noticeId ] || 0,
-	state => state.notices.lastTimeShown
+	( state ) => state.notices.lastTimeShown
 );

@@ -1,17 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { partial, isArray, isPlainObject } from 'lodash';
+import { partial, isPlainObject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { savePreference } from 'state/preferences/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
 import ArrayPreference from './array-preference';
 import ObjectPreference from './object-preference';
 import BooleanPreference from './boolean-preference';
@@ -28,7 +26,7 @@ class Preference extends Component {
 			</ul>
 		);
 
-		if ( isArray( value ) ) {
+		if ( Array.isArray( value ) ) {
 			preferenceHandler = <ArrayPreference name={ name } value={ value } />;
 		} else if ( isPlainObject( value ) ) {
 			preferenceHandler = <ObjectPreference name={ name } value={ value } />;
@@ -58,9 +56,6 @@ class Preference extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		unsetPreference: savePreference,
-	}
-)( localize( Preference ) );
+export default connect( null, {
+	unsetPreference: savePreference,
+} )( localize( Preference ) );

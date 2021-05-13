@@ -1,30 +1,27 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import shallowEqual from 'react-pure-render/shallowEqual';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 
 /**
  * Internal dependencies
  */
-import { requestSiteTerms } from 'state/terms/actions';
-import { isRequestingTermsForQuery } from 'state/terms/selectors';
+import { requestSiteTerms } from 'calypso/state/terms/actions';
+import { isRequestingTermsForQuery } from 'calypso/state/terms/selectors';
 
 class QueryTerms extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			this.props.siteId === nextProps.siteId &&
 			this.props.taxonomy === nextProps.taxonomy &&
-			shallowEqual( this.props.query, nextProps.query )
+			isShallowEqual( this.props.query, nextProps.query )
 		) {
 			return;
 		}

@@ -1,0 +1,50 @@
+/*
+ * CSS values in this file are specific and
+ * designed to match the CSS on external sites,
+ * such as Google and Facebook. Therefore there
+ * will be exceptions to our CSS guidelines here
+ * but please do not "update" this file to
+ * conform.
+ *
+ * @blame: dmsnell
+*/
+
+@import '../variables.scss';
+
+/* stylelint-disable scales/font-size */
+
+.search-preview__display {
+	border: 1px solid var( --color-neutral-0 );
+	font-family: arial, sans-serif;
+	padding: 10px 20px;
+	word-wrap: break-word;
+}
+
+.search-preview__title {
+	color: #1a0dab; // matching Google results
+	font-size: 20px;
+	line-height: 26px;
+	max-width: 616px;
+	margin-bottom: 7px;
+
+	&:hover {
+		cursor: pointer;
+		text-decoration: underline;
+	}
+}
+
+.search-preview__url {
+	color: #3c4043; // matching Google results
+	font-size: 14px;
+	line-height: 18.2px;
+	max-width: 616px;
+	margin-bottom: 8px;
+}
+
+.search-preview__description {
+	color: #3c4043; // matching Google results
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 22.12px;// matching Google results
+	max-width: 616px;
+}

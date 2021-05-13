@@ -1,20 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
-import { find, replace } from 'lodash';
+import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import { dnsTemplates } from 'lib/domains/constants';
+import { Card } from '@automattic/components';
+import { dnsTemplates } from 'calypso/lib/domains/constants';
 import DnsTemplateSelector from './dns-template-selector';
 import EmailProvider from '../dns/email-provider';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 
 class DnsTemplates extends React.Component {
 	constructor( props ) {
@@ -27,11 +25,11 @@ class DnsTemplates extends React.Component {
 			currentProviderCardName: null,
 			templates: [
 				{
-					name: 'G Suite',
+					name: getGoogleMailServiceFamily(),
 					label: translate(
 						'%(serviceName)s Verification Token - from the TXT record verification',
 						{
-							args: { serviceName: 'G Suite' },
+							args: { serviceName: getGoogleMailServiceFamily() },
 							comment:
 								'%(serviceName)s will be replaced with the name of the service ' +
 								'that this token applies to, for example G Suite or Office 365',
@@ -57,9 +55,9 @@ class DnsTemplates extends React.Component {
 					validationPattern: /^MS=ms\d{8}$/,
 					dnsTemplateProvider: dnsTemplates.MICROSOFT_OFFICE365.PROVIDER,
 					dnsTemplateService: dnsTemplates.MICROSOFT_OFFICE365.SERVICE,
-					modifyVariables: variables =>
+					modifyVariables: ( variables ) =>
 						Object.assign( {}, variables, {
-							mxdata: replace( variables.domain, '.', '-' ) + '.mail.protection.outlook.com',
+							mxdata: variables.domain.replace( '.', '-' ) + '.mail.protection.outlook.com',
 						} ),
 				},
 				{
@@ -74,7 +72,7 @@ class DnsTemplates extends React.Component {
 		};
 	}
 
-	onTemplateClick = name => {
+	onTemplateClick = ( name ) => {
 		this.setState( { currentComponentName: name } );
 	};
 
@@ -86,7 +84,7 @@ class DnsTemplates extends React.Component {
 		const componentName = this.state.currentComponentName;
 		const template = find(
 			this.state.templates,
-			dnsTemplate => dnsTemplate.name === componentName
+			( dnsTemplate ) => dnsTemplate.name === componentName
 		);
 
 		return (

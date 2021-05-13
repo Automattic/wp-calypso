@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,12 +9,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import ReaderMain from 'reader/components/reader-main';
-import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
-import EmptyContent from 'components/empty-content';
-import { recordTrack as recordReaderTrack } from 'reader/stats';
-import { bumpStat, recordGoogleEvent } from 'state/analytics/actions';
-import { unblockSite } from 'state/reader/site-blocks/actions';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
+import EmptyContent from 'calypso/components/empty-content';
+import { recordTrack as recordReaderTrack } from 'calypso/reader/stats';
+import { bumpStat, recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { unblockSite } from 'calypso/state/reader/site-blocks/actions';
 
 class SiteBlocked extends React.Component {
 	static propTypes = {
@@ -66,11 +65,8 @@ class SiteBlocked extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-		bumpStat,
-		unblockSite,
-	}
-)( localize( SiteBlocked ) );
+export default connect( null, {
+	recordGoogleEvent,
+	bumpStat,
+	unblockSite,
+} )( localize( SiteBlocked ) );

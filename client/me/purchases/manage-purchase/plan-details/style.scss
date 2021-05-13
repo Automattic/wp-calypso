@@ -8,7 +8,7 @@
 .plan-details__wrapper.is-placeholder {
 	.section-header__label-text,
 	.plan-details__plugin-key {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 
 		display: block;
 	}

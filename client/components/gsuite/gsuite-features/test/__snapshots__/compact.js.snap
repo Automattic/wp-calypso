@@ -84,7 +84,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures in a list 1`] = 
       <h5
         className="gsuite-features__feature-header"
       >
-        Video and voice calls
+        Video calls
       </h5>
     </div>
   </div>
@@ -175,7 +175,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with basic plan 
       <h5
         className="gsuite-features__feature-header"
       >
-        Video and voice calls
+        Video calls
       </h5>
     </div>
   </div>
@@ -266,7 +266,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with business pl
       <h5
         className="gsuite-features__feature-header"
       >
-        Video and voice calls
+        Video calls
       </h5>
     </div>
   </div>
@@ -357,7 +357,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with no productS
       <h5
         className="gsuite-features__feature-header"
       >
-        Video and voice calls
+        Video calls
       </h5>
     </div>
   </div>

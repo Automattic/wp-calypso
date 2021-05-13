@@ -8,23 +8,41 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import CheckoutData from 'components/data/checkout';
 import Plans from './plans';
-import { isValidFeatureKey } from 'lib/plans/features-list';
+import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
+import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
+import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-header';
+
+function showJetpackPlans( context ) {
+	const getState = context.store.getState();
+	const siteId = getSelectedSiteId( getState );
+	const isWpcom = isSiteWpcom( getState, siteId );
+	return ! isWpcom;
+}
 
 export function plans( context, next ) {
+	if ( showJetpackPlans( context ) ) {
+		if ( context.params.intervalType ) {
+			return page.redirect( `/plans/${ context.params.site }` );
+		}
+		setJetpackPlansHeader( context );
+		return productSelect( '/plans' )( context, next );
+	}
+
 	context.primary = (
-		<CheckoutData>
-			<Plans
-				context={ context }
-				intervalType={ context.params.intervalType }
-				customerType={ context.query.customerType }
-				selectedFeature={ context.query.feature }
-				selectedPlan={ context.query.plan }
-				withDiscount={ context.query.discount }
-				discountEndDate={ context.query.ts }
-			/>
-		</CheckoutData>
+		<Plans
+			context={ context }
+			intervalType={ context.params.intervalType }
+			customerType={ context.query.customerType }
+			selectedFeature={ context.query.feature }
+			selectedPlan={ context.query.plan }
+			withDiscount={ context.query.discount }
+			discountEndDate={ context.query.ts }
+			redirectTo={ context.query.redirect_to }
+			redirectToAddDomainFlow={ context.query.addDomainFlow }
+		/>
 	);
 	next();
 }
@@ -55,4 +73,11 @@ export function redirectToPlans( context ) {
 	}
 
 	return page.redirect( '/plans' );
+}
+
+export function redirectToPlansIfNotJetpack( context, next ) {
+	if ( ! showJetpackPlans( context ) ) {
+		page.redirect( `/plans/${ context.params.site }` );
+	}
+	next();
 }

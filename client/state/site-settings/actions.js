@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_REQUEST,
@@ -14,17 +11,18 @@ import {
 	SITE_SETTINGS_SAVE_FAILURE,
 	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { normalizeSettings } from './utils';
 
-import 'state/data-layer/wpcom/sites/homepage';
+import 'calypso/state/site-settings/init';
+import 'calypso/state/ui/init';
 
 /**
  * Returns an action object to be used in signalling that site settings have been received.
  *
- * @param  {Number} siteId Site ID
- * @param  {Object} settings The site settings object
- * @return {Object}        Action object
+ * @param  {number} siteId Site ID
+ * @param  {object} settings The site settings object
+ * @returns {object}        Action object
  */
 export function receiveSiteSettings( siteId, settings ) {
 	return {
@@ -37,9 +35,9 @@ export function receiveSiteSettings( siteId, settings ) {
 /**
  * Returns an action object to be used in signalling that some site settings have been update.
  *
- * @param  {Number} siteId Site ID
- * @param  {Object} settings The updated site settings
- * @return {Object}        Action object
+ * @param  {number} siteId Site ID
+ * @param  {object} settings The updated site settings
+ * @returns {object}        Action object
  */
 export function updateSiteSettings( siteId, settings ) {
 	return {
@@ -53,11 +51,11 @@ export function updateSiteSettings( siteId, settings ) {
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve site settings
  *
- * @param  {Number} siteId Site ID
- * @return {Function}      Action thunk
+ * @param  {number} siteId Site ID
+ * @returns {Function}      Action thunk
  */
 export function requestSiteSettings( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_SETTINGS_REQUEST,
 			siteId,
@@ -79,7 +77,7 @@ export function requestSiteSettings( siteId ) {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_SETTINGS_REQUEST_FAILURE,
 					siteId,
@@ -90,7 +88,7 @@ export function requestSiteSettings( siteId ) {
 }
 
 export function saveSiteSettings( siteId, settings ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_SETTINGS_SAVE,
 			siteId,
@@ -99,7 +97,7 @@ export function saveSiteSettings( siteId, settings ) {
 		return wpcom
 			.undocumented()
 			.settings( siteId, 'post', settings )
-			.then( body => {
+			.then( ( body ) => {
 				dispatch( updateSiteSettings( siteId, normalizeSettings( body.updated ) ) );
 				dispatch( {
 					type: SITE_SETTINGS_SAVE_SUCCESS,
@@ -108,7 +106,7 @@ export function saveSiteSettings( siteId, settings ) {
 
 				return body;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_SETTINGS_SAVE_FAILURE,
 					siteId,

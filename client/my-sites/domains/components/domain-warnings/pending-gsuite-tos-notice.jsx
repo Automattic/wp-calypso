@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -12,11 +9,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { emailManagement } from 'my-sites/email/paths';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import PendingGSuiteTosNoticeAction from './pending-gsuite-tos-notice-action';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -30,10 +32,12 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 		domains: PropTypes.array.isRequired,
 		section: PropTypes.string.isRequired,
 		isCompact: PropTypes.bool,
+		showDomainStatusNotice: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isCompact: false,
+		showDomainStatusNotice: false,
 	};
 
 	componentDidMount() {
@@ -48,8 +52,8 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 	getNoticeSeverity() {
 		const { moment } = this.props;
 
-		const subscribedDaysAgo = days => {
-			return domain =>
+		const subscribedDaysAgo = ( days ) => {
+			return ( domain ) =>
 				moment( domain.googleAppsSubscription.subscribedDate ).isBefore(
 					moment().subtract( days, 'days' )
 				);
@@ -66,9 +70,10 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 
 	getExclamation( severity ) {
 		const { translate } = this.props;
+
 		const translationOptions = {
-			context: 'Beginning of Gapps pending account notice',
-			comment: "Used as an exclamation in Gapps' pending account notice",
+			context: 'Beginning of Google Workspace pending account notice',
+			comment: "Used as an exclamation in Google Workspace's pending account notice",
 		};
 
 		switch ( severity ) {
@@ -79,7 +84,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 				return translate( 'Urgent!', translationOptions );
 
 			default:
-				return translate( "You're almost there!", translationOptions );
+				return '';
 		}
 	}
 
@@ -111,6 +116,44 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 		);
 	}
 
+	domainStatusNotice() {
+		const { domains, translate } = this.props;
+		const domainName = domains[ 0 ].name;
+		const users = domains[ 0 ].googleAppsSubscription.pendingUsers;
+		const emails = users.join( ', ' );
+
+		const button = (
+			<PendingGSuiteTosNoticeAction
+				domainName={ domainName }
+				section={ this.props.section }
+				siteSlug={ this.props.siteSlug }
+				user={ users[ 0 ] }
+				isCompact={ false }
+				cta={ translate( 'Finish Setup' ) }
+			/>
+		);
+
+		return (
+			<>
+				<p>
+					{ translate(
+						'Your new user {{strong}}%(emails)s{{/strong}} is ready! Complete the setup to activate it.',
+						'Your new users {{strong}}%(emails)s{{/strong}} are ready! Complete the setup to activate them.',
+						{
+							count: users.length,
+							args: { emails },
+							comment:
+								"%(emails)s is a list of email addresses separated by commas (e.g. 'one@example.com, two@example.com')",
+							components: { strong },
+						}
+					) }
+				</p>
+
+				{ button }
+			</>
+		);
+	}
+
 	oneDomainNotice() {
 		const { translate } = this.props;
 		const severity = this.getNoticeSeverity();
@@ -126,11 +169,13 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domain"
 				text={ translate(
-					'%(exclamation)s To activate your email {{strong}}%(emails)s{{/strong}}, click "Finish Setup".',
-					'%(exclamation)s To activate your emails {{strong}}%(emails)s{{/strong}}, click "Finish Setup".',
+					'%(exclamation)s Finish the setup of {{strong}}%(emails)s{{/strong}} to activate it.',
+					'%(exclamation)s Finish the setup of {{strong}}%(emails)s{{/strong}} to activate them.',
 					{
 						count: users.length,
 						args: { exclamation, emails: users.join( ', ' ) },
+						comment:
+							"%(emails)s is a list of email addresses separated by a comma (e.g. 'one@example.com, two@example.com')",
 						components: { strong },
 					}
 				) }
@@ -138,9 +183,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 				<NoticeAction>
 					<PendingGSuiteTosNoticeAction
 						domainName={ domainName }
-						isMultipleDomains={ false }
 						section={ this.props.section }
-						severity={ severity }
 						siteSlug={ this.props.siteSlug }
 						user={ users[ 0 ] }
 					/>
@@ -160,23 +203,20 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domains"
 			>
-				{ translate(
-					'%(exclamation)s To activate your new email addresses, click "Finish Setup".',
-					{
-						args: { exclamation },
-					}
-				) }
+				{ translate( '%(exclamation)s Finish the setup of your new users to activate them:', {
+					args: { exclamation },
+				} ) }
+
 				<ul>
 					{ this.props.domains.map(
 						( { name: domainName, googleAppsSubscription: { pendingUsers: users } } ) => {
 							return (
 								<li key={ `pending-gapps-tos-acceptance-domain-${ domainName }` }>
 									<strong>{ domainName } </strong>
+
 									<PendingGSuiteTosNoticeAction
 										domainName={ domainName }
-										isMultipleDomains={ true }
 										section={ this.props.section }
-										severity={ severity }
 										siteSlug={ this.props.siteSlug }
 										user={ users[ 0 ] }
 									/>
@@ -190,6 +230,10 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 	}
 
 	render() {
+		if ( this.props.showDomainStatusNotice ) {
+			return this.domainStatusNotice();
+		}
+
 		if ( this.props.isCompact ) {
 			return this.compactNotice();
 		}
@@ -218,7 +262,7 @@ const recordShowPendingAccountNotice = ( { siteSlug, severity, isMultipleDomains
 		} )
 	);
 
-const finishSetupNoticeClick = siteSlug =>
+const finishSetupNoticeClick = ( siteSlug ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -231,10 +275,7 @@ const finishSetupNoticeClick = siteSlug =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		finishSetupNoticeClick,
-		recordShowPendingAccountNotice,
-	}
-)( localize( PendingGSuiteTosNotice ) );
+export default connect( null, {
+	finishSetupNoticeClick,
+	recordShowPendingAccountNotice,
+} )( localize( withLocalizedMoment( PendingGSuiteTosNotice ) ) );

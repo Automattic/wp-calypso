@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,30 +6,32 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import config from 'config';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Animate from 'components/animate';
-import Button from 'components/button';
-import ExternalLink from 'components/external-link';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
-import { getUpdatesBySiteId, isJetpackSite } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getSiteConnectionStatus from 'state/selectors/get-site-connection-status';
-import isRequestingSiteConnectionStatus from 'state/selectors/is-requesting-site-connection-status';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import Animate from 'calypso/components/animate';
+import { Button } from '@automattic/components';
+import ExternalLink from 'calypso/components/external-link';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
+import { getUpdatesBySiteId, isJetpackSite } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const WPAdminLink = props => <ExternalLink icon iconSize={ 12 } target="_blank" { ...props } />;
+const WPAdminLink = ( props ) => <ExternalLink icon iconSize={ 12 } target="_blank" { ...props } />;
 
 class SiteIndicator extends Component {
 	static propTypes = {
@@ -41,7 +41,6 @@ class SiteIndicator extends Component {
 		siteIsJetpack: PropTypes.bool,
 		siteUpdates: PropTypes.object,
 		siteIsConnected: PropTypes.bool,
-		requestingConnectionStatus: PropTypes.bool,
 		recordGoogleEvent: PropTypes.func,
 		recordTracksEvent: PropTypes.func,
 	};
@@ -57,20 +56,6 @@ class SiteIndicator extends Component {
 		return this.props.siteIsConnected === false;
 	}
 
-	hasWarning() {
-		const { requestingConnectionStatus, site, siteIsConnected, siteIsJetpack } = this.props;
-
-		if ( siteIsJetpack && ! site.hasMinimumJetpackVersion ) {
-			if ( requestingConnectionStatus ) {
-				return false;
-			}
-
-			return siteIsConnected;
-		}
-
-		return false;
-	}
-
 	showIndicator() {
 		const { siteIsAutomatedTransfer, siteIsJetpack, userCanManage } = this.props;
 
@@ -79,7 +64,7 @@ class SiteIndicator extends Component {
 			userCanManage &&
 			siteIsJetpack &&
 			! siteIsAutomatedTransfer &&
-			( this.hasUpdate() || this.hasError() || this.hasWarning() )
+			( this.hasUpdate() || this.hasError() )
 		);
 	}
 
@@ -218,63 +203,31 @@ class SiteIndicator extends Component {
 		);
 	};
 
-	handleJetpackUpdate = () => {
-		this.props.recordGoogleEvent( 'Site-Indicator', 'Clicked Update Jetpack Now Link' );
-	};
-
-	unsupportedJetpackVersion() {
-		const { translate } = this.props;
-		return (
-			<span>
-				{ translate( 'Jetpack %(version)s is required. {{link}}Update now{{/link}}', {
-					args: {
-						version: config( 'jetpack_min_version' ),
-					},
-					components: {
-						link: (
-							<WPAdminLink
-								onClick={ this.handleJetpackUpdate }
-								href={ this.props.site.options.admin_url + 'plugins.php?plugin_status=upgrade' }
-							/>
-						),
-					},
-				} ) }
-			</span>
-		);
-	}
-
 	errorAccessing() {
 		const { site, translate } = this.props;
-		let accessFailedMessage;
 
 		// Don't show the button if the site is not defined.
 		if ( site ) {
-			accessFailedMessage = (
+			return (
 				<span>
 					{ translate( 'This site cannot be accessed.' ) }
 					<Button
 						borderless
 						compact
 						scary
-						href={ `/settings/disconnect-site/${ site.slug }` }
+						href={ `/settings/disconnect-site/${ site.slug }?type=down` }
 						onClick={ this.props.trackSiteDisconnect }
 					>
-						{ translate( 'Remove Site' ) }
+						{ translate( 'I’d like to fix this now' ) }
 					</Button>
 				</span>
 			);
-		} else {
-			accessFailedMessage = <span>{ translate( 'This site cannot be accessed.' ) }</span>;
 		}
 
-		return accessFailedMessage;
+		return <span>{ translate( 'This site cannot be accessed.' ) }</span>;
 	}
 
 	getText() {
-		if ( this.hasWarning() ) {
-			return this.unsupportedJetpackVersion();
-		}
-
 		if ( this.hasUpdate() ) {
 			return this.updatesAvailable();
 		}
@@ -287,10 +240,6 @@ class SiteIndicator extends Component {
 	}
 
 	getIcon() {
-		if ( this.hasWarning() ) {
-			return 'notice';
-		}
-
 		if ( this.hasUpdate() ) {
 			return 'sync';
 		}
@@ -304,7 +253,6 @@ class SiteIndicator extends Component {
 		const indicatorClass = classNames( {
 			'is-expanded': this.state.expand,
 			'is-update': this.hasUpdate(),
-			'is-warning': this.hasWarning(),
 			'is-error': this.hasError(),
 			'is-action': true,
 			'site-indicator__main': true,
@@ -353,7 +301,6 @@ class SiteIndicator extends Component {
 export default connect(
 	( state, { site } ) => {
 		return {
-			requestingConnectionStatus: site && isRequestingSiteConnectionStatus( state, site.ID ),
 			siteIsConnected: site && getSiteConnectionStatus( state, site.ID ),
 			siteIsJetpack: site && isJetpackSite( state, site.ID ),
 			siteIsAutomatedTransfer: site && isSiteAutomatedTransfer( state, site.ID ),

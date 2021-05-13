@@ -1,11 +1,12 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import { fetchOrderTransaction, onSuccess, onError } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { setOrderTransaction, setOrderTransactionError } from 'state/order-transactions/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import {
+	setOrderTransaction,
+	setOrderTransactionError,
+} from 'calypso/state/order-transactions/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'me/transactions/order', () => {

@@ -1,30 +1,29 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop, values as objectValues } from 'lodash';
+import { values as objectValues } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import { AspectRatios, MinimumImageDimensions } from 'state/ui/editor/image-editor/constants';
-import { getImageEditorAspectRatio } from 'state/ui/editor/image-editor/selectors';
+import PopoverMenu from 'calypso/components/popover/menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { AspectRatios, MinimumImageDimensions } from 'calypso/state/editor/image-editor/constants';
+import { getImageEditorAspectRatio } from 'calypso/state/editor/image-editor/selectors';
 import {
 	imageEditorRotateCounterclockwise,
 	imageEditorFlip,
 	setImageEditorAspectRatio,
-} from 'state/ui/editor/image-editor/actions';
-import getImageEditorIsGreaterThanMinimumDimensions from 'state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
+} from 'calypso/state/editor/image-editor/actions';
+import getImageEditorIsGreaterThanMinimumDimensions from 'calypso/state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
+
+const noop = () => {};
 
 export class ImageEditorToolbar extends Component {
 	static propTypes = {
@@ -117,7 +116,9 @@ export class ImageEditorToolbar extends Component {
 		const items = [
 			{
 				action: AspectRatios.FREE,
-				label: translate( 'Free' ),
+				label: translate( 'Freeform', {
+					context: 'Option in image editor used to crop images using freeform aspect ratio',
+				} ),
 			},
 			{
 				action: AspectRatios.ORIGINAL,
@@ -149,7 +150,7 @@ export class ImageEditorToolbar extends Component {
 				context={ popoverContext }
 				className="image-editor__toolbar-popover popover is-dialog-visible"
 			>
-				{ items.map( item =>
+				{ items.map( ( item ) =>
 					allowedAspectRatios.indexOf( item.action ) !== -1 ? (
 						<PopoverMenuItem
 							key={ 'image-editor-toolbar-aspect-' + item.action }
@@ -192,7 +193,7 @@ export class ImageEditorToolbar extends Component {
 			},
 		];
 
-		return buttons.map( button => {
+		return buttons.map( ( button ) => {
 			const buttonClasses = classNames( 'image-editor__toolbar-button', {
 				'is-disabled': button && button.disabled,
 			} );
@@ -221,7 +222,7 @@ export class ImageEditorToolbar extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const aspectRatio = getImageEditorAspectRatio( state );
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( state );
 

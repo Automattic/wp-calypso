@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,39 +9,45 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import QueryPluginKeys from 'components/data/query-plugin-keys';
-import SectionHeader from 'components/section-header';
+import { Card } from '@automattic/components';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
+import SectionHeader from 'calypso/components/section-header';
 import PlanBillingPeriod from './billing-period';
-import { isRequestingSites } from 'state/sites/selectors';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { isDataLoading } from 'me/purchases/utils';
-import { getName, isExpired } from 'lib/purchases';
-import { isJetpackPlan, isFreeJetpackPlan } from 'lib/products-values';
-import { getPluginsForSite } from 'state/plugins/premium/selectors';
+import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
+import {
+	getByPurchaseId,
+	hasLoadedSitePurchasesFromServer,
+	hasLoadedUserPurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
+import { getName, isExpired, isPartnerPurchase } from 'calypso/lib/purchases';
+import { isJetpackPlan, isFreeJetpackPlan } from '@automattic/calypso-products';
+import { getPluginsForSite } from 'calypso/state/plugins/premium/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-class PurchasePlanDetails extends Component {
+export class PurchasePlanDetails extends Component {
 	static propTypes = {
 		purchaseId: PropTypes.number,
+		isPlaceholder: PropTypes.bool,
+		isProductOwner: PropTypes.bool,
 
 		// Connected props
 		purchase: PropTypes.object,
 		hasLoadedSites: PropTypes.bool,
-		hasLoadedUserPurchasesFromServer: PropTypes.bool,
+		hasLoadedPurchasesFromServer: PropTypes.bool,
 		pluginList: PropTypes.arrayOf(
 			PropTypes.shape( {
 				slug: PropTypes.string.isRequired,
 				key: PropTypes.string,
 			} ).isRequired
 		).isRequired,
+		site: PropTypes.object,
 		siteId: PropTypes.number,
 	};
 
@@ -68,15 +72,19 @@ class PurchasePlanDetails extends Component {
 		}
 	}
 
+	isDataLoading( props ) {
+		return ! props.hasLoadedSites || ! props.hasLoadedPurchasesFromServer;
+	}
+
 	render() {
-		const { pluginList, purchase, siteId, translate } = this.props;
+		const { pluginList, purchase, site, siteId, translate, isProductOwner } = this.props;
 
 		// Short out as soon as we know it's not a Jetpack plan
 		if ( purchase && ( ! isJetpackPlan( purchase ) || isFreeJetpackPlan( purchase ) ) ) {
 			return null;
 		}
 
-		if ( isDataLoading( this.props ) ) {
+		if ( this.isDataLoading( this.props ) || this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
 		}
 
@@ -95,7 +103,13 @@ class PurchasePlanDetails extends Component {
 				{ siteId && <QueryPluginKeys siteId={ siteId } /> }
 				<SectionHeader label={ headerText } />
 				<Card>
-					<PlanBillingPeriod purchase={ purchase } />
+					{ ! isPartnerPurchase( purchase ) && (
+						<PlanBillingPeriod
+							purchase={ purchase }
+							site={ site }
+							isProductOwner={ isProductOwner }
+						/>
+					) }
 
 					{ pluginList.map( ( plugin, i ) => {
 						return (
@@ -113,13 +127,15 @@ class PurchasePlanDetails extends Component {
 	}
 }
 
-// hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
 	const siteId = purchase ? purchase.siteId : null;
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		site: purchase ? getSite( state, purchase.siteId ) : null,
+		hasLoadedPurchasesFromServer: siteId
+			? hasLoadedSitePurchasesFromServer( state )
+			: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
 		pluginList: getPluginsForSite( state, siteId ),
 		siteId,

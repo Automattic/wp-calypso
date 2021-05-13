@@ -1,22 +1,20 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { RegistrantExtraInfoUkForm } from '../uk-form';
-import FormInputValidation from 'components/forms/form-input-validation';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 
 const mockProps = {
 	contactDetails: {},
 	step: 'uk',
-	translate: identity,
-	updateContactDetailsCache: identity,
+	translate: ( string ) => string,
+	updateContactDetailsCache: () => {},
 };
 
 describe( 'uk-form', () => {
@@ -25,7 +23,7 @@ describe( 'uk-form', () => {
 			const testProps = {
 				...mockProps,
 				ccTldDetails: { registrantType: 'LLP' },
-				validationErrors: {
+				contactDetailsValidationErrors: {
 					extra: {
 						uk: {
 							registrationNumber: [ { errorMessage: 'Test error message.' } ],
@@ -43,7 +41,7 @@ describe( 'uk-form', () => {
 			const testProps = {
 				...mockProps,
 				ccTldDetails: { registrantType: 'LLP' },
-				validationErrors: {
+				contactDetailsValidationErrors: {
 					extra: {
 						uk: {
 							registrationNumber: [
@@ -65,7 +63,7 @@ describe( 'uk-form', () => {
 			const testProps = {
 				...mockProps,
 				ccTldDetails: { registrantType: 'LLP' },
-				validationErrors: {
+				contactDetailsValidationErrors: {
 					extra: {
 						uk: {
 							registrationNumber: [ 'dotukRegistrationNumberFormat' ],
@@ -87,7 +85,7 @@ describe( 'uk-form', () => {
 			const testProps = {
 				...mockProps,
 				ccTldDetails: { registrantType: 'IND' },
-				validationErrors: {
+				contactDetailsValidationErrors: {
 					extra: {
 						uk: {
 							registrationNumber: [ 'dotukRegistrationNumberFormat' ],

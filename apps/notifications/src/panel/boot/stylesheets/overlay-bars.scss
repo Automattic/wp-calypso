@@ -7,16 +7,16 @@
   width: 100%;
   z-index: 101;
   background-color: var( --color-error );
-  color: var( --color-white );
+  color: var( --color-text-inverted );
 
   a, a:visited {
-    color: var( --color-white );
+    color: var( --color-text-inverted );
     font-weight: 600;
     text-decoration: underline;
   }
 
   a:hover, a:focus, a:active {
-    color: var( --color-white );
+    color: var( --color-text-inverted );
   }
 
   span {

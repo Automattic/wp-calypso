@@ -1,26 +1,22 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import page from 'page';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Gravatar from 'components/gravatar';
-import Button from 'components/button';
-import InviteFormHeader from 'my-sites/invites/invite-form-header';
-import { acceptInvite } from 'lib/invites/actions';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import analytics from 'lib/analytics';
+import { Card, Button } from '@automattic/components';
+import Gravatar from 'calypso/components/gravatar';
+import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
+import { acceptInvite } from 'calypso/state/invites/actions';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -32,27 +28,34 @@ class InviteAcceptLoggedIn extends React.Component {
 
 	accept = () => {
 		this.setState( { submitting: true } );
-		this.props.acceptInvite( this.props.invite, error => {
-			if ( error ) {
+		this.props
+			.acceptInvite( this.props.invite )
+			.then( () => {
+				const { redirectTo } = this.props;
+
+				// Using page() for cross origin navigations would throw a `History.pushState` exception
+				// about creating state object with a cross-origin URL.
+				if ( new URL( redirectTo, window.location.href ).origin !== window.location.origin ) {
+					window.location = redirectTo;
+				} else {
+					page( redirectTo );
+				}
+			} )
+			.catch( () => {
 				this.setState( { submitting: false } );
-			} else if ( get( this.props, 'invite.site.is_vip' ) ) {
-				window.location.href = this.props.redirectTo;
-			} else {
-				page( this.props.redirectTo );
-			}
-		} );
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_join_button_click' );
+			} );
+		recordTracksEvent( 'calypso_invite_accept_logged_in_join_button_click' );
 	};
 
 	decline = () => {
 		if ( this.props.decline && 'function' === typeof this.props.decline ) {
 			this.props.decline();
-			analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_decline_button_click' );
+			recordTracksEvent( 'calypso_invite_accept_logged_in_decline_button_click' );
 		}
 	};
 
 	signInLink = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_sign_in_link_click' );
+		recordTracksEvent( 'calypso_invite_accept_logged_in_sign_in_link_click' );
 	};
 
 	getButtonText = () => {
@@ -155,7 +158,4 @@ class InviteAcceptLoggedIn extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	dispatch => bindActionCreators( { acceptInvite }, dispatch )
-)( localize( InviteAcceptLoggedIn ) );
+export default connect( null, { acceptInvite } )( localize( InviteAcceptLoggedIn ) );

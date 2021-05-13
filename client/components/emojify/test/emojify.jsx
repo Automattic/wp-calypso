@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -13,7 +12,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import Emojify from '..';
 
 describe( 'Emojify', () => {

@@ -1,5 +1,4 @@
-Performance Monitoring
-======
+# Performance Monitoring
 
 `perfmon` records how much time one or more loading indicators spend on the screen (currently timings are only sent to Google Analytics, but the goal is to get them into statsd or Kibana pronto). This includes those flashing grey divs, and the "pulsing dot", but could be extended to any component.
 
@@ -13,12 +12,12 @@ How it works right now:
 - Placeholders can also be scrolled into view - it monitors for 'scroll' events with useCapture = true (debounced to 200ms) so that we can re-check if any known placeholders have now appeared.
 - It hooks into the `page()` system in order to clear pending events when the user navigates (or, at least, when that navigation is done via the `page` library rather than replaceState/pushState)
 
-You can enable this in development by running `ENABLE_FEATURES=perfmon npm start`. You may also want to enable the `google-analytics` feature in your config file (or by URL, &flags=google-analytics) if you want to observe the events being sent to Google Analytics.
+You can enable this in development by running `ENABLE_FEATURES=perfmon yarn start`. You may also want to enable the `google-analytics` feature in your config file (or by URL, &flags=google-analytics) if you want to observe the events being sent to Google Analytics.
 
 You can see how many active placeholders (visible and non visible) there detected during each check by running this in your console:
 
 ```js
-localStorage.setItem('debug', 'calypso:perfmon')
+localStorage.setItem( 'debug', 'calypso:perfmon' );
 ```
 
 and then reloading the browser.
@@ -32,7 +31,7 @@ To enable monitoring for a page, import and run `recordPlaceholdersTiming` as
 part of its load:
 
 ```js
-import { recordPlaceholdersTiming } from 'lib/perfmon';
+import { recordPlaceholdersTiming } from 'calypso/lib/perfmon';
 
 recordPlaceholdersTiming();
 ```

@@ -1,23 +1,20 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
+import Notice from 'calypso/components/notice';
+import SegmentedControl from 'calypso/components/segmented-control';
 import EditorMediaModalGalleryEdit from './edit';
 import EditorMediaModalGalleryPreviewShortcode from './preview-shortcode';
 import EditorMediaModalGalleryPreviewIndividual from './preview-individual';
+
+const noop = () => {};
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -46,18 +43,18 @@ class EditorMediaModalGalleryPreview extends Component {
 
 		return (
 			<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact>
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ ! this.state.isEditing }
 					onClick={ () => this.setState( { isEditing: false } ) }
 				>
 					{ translate( 'Preview' ) }
-				</SegmentedControlItem>
-				<SegmentedControlItem
+				</SegmentedControl.Item>
+				<SegmentedControl.Item
 					selected={ this.state.isEditing }
 					onClick={ () => this.setState( { isEditing: true } ) }
 				>
 					{ translate( 'Edit' ) }
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 			</SegmentedControl>
 		);
 	}
@@ -108,7 +105,5 @@ class EditorMediaModalGalleryPreview extends Component {
 		);
 	}
 }
-
-EditorMediaModalGalleryPreview.displayName = 'EditorMediaModalGalleryPreview';
 
 export default localize( EditorMediaModalGalleryPreview );

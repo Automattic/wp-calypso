@@ -1,5 +1,3 @@
-/** @format */
-
 export const continentsSchema = {
 	type: 'object',
 	additionalProperties: false,

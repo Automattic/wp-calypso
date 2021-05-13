@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,11 +11,10 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
+import { Button, Card } from '@automattic/components';
+import SectionHeader from 'calypso/components/section-header';
 import { restoreSettings } from '../../state/settings/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRestoringSettings } from '../../state/settings/selectors';
 
 class FixConfig extends Component {
@@ -53,7 +50,7 @@ class FixConfig extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isRestoring = isRestoringSettings( state, siteId );
 
@@ -65,7 +62,4 @@ const connectComponent = connect(
 	{ restoreSettings }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( FixConfig );
+export default flowRight( connectComponent, localize )( FixConfig );

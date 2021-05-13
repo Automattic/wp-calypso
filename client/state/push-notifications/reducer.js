@@ -1,20 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { settingsSchema, systemSchema } from './schema';
 
 import {
-	DESERIALIZE,
 	PUSH_NOTIFICATIONS_API_READY,
 	PUSH_NOTIFICATIONS_AUTHORIZE,
 	PUSH_NOTIFICATIONS_BLOCK,
@@ -23,21 +20,15 @@ import {
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_TOGGLE_ENABLED,
 	PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
-	SERIALIZE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
 const debug = debugFactory( 'calypso:push-notifications' );
 
 // If you change this, also change the corresponding test
 const UNPERSISTED_SYSTEM_NODES = [ 'apiReady', 'authorized', 'authorizationLoaded', 'blocked' ];
-function system( state = {}, action ) {
+
+const systemReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
-		// System state is not persisted
-		case DESERIALIZE:
-			return omit( state, UNPERSISTED_SYSTEM_NODES );
-
-		case SERIALIZE:
-			return omit( state, UNPERSISTED_SYSTEM_NODES );
-
 		case PUSH_NOTIFICATIONS_API_READY: {
 			debug( 'API is ready' );
 			return Object.assign( {}, state, {
@@ -97,8 +88,15 @@ function system( state = {}, action ) {
 	}
 
 	return state;
-}
-system.schema = systemSchema;
+};
+
+const system = withSchemaValidation(
+	systemSchema,
+	withPersistence( systemReducer, {
+		serialize: ( state ) => omit( state, UNPERSISTED_SYSTEM_NODES ),
+		deserialize: ( persisted ) => omit( persisted, UNPERSISTED_SYSTEM_NODES ),
+	} )
+);
 
 // If you change this, also change the corresponding test
 const UNPERSISTED_SETTINGS_NODES = [
@@ -106,16 +104,8 @@ const UNPERSISTED_SETTINGS_NODES = [
 	'showingUnblockInstructions',
 ];
 
-function settings( state = { enabled: false }, action ) {
+const settingsReducer = ( state = { enabled: false }, action ) => {
 	switch ( action.type ) {
-		case DESERIALIZE: {
-			return omit( state, UNPERSISTED_SETTINGS_NODES );
-		}
-
-		case SERIALIZE: {
-			return omit( state, UNPERSISTED_SETTINGS_NODES );
-		}
-
 		case PUSH_NOTIFICATIONS_TOGGLE_ENABLED: {
 			return Object.assign( {}, state, {
 				enabled: ! state.enabled,
@@ -136,10 +126,19 @@ function settings( state = { enabled: false }, action ) {
 	}
 
 	return state;
-}
-settings.schema = settingsSchema;
+};
 
-export default combineReducers( {
+const settings = withSchemaValidation(
+	settingsSchema,
+	withPersistence( settingsReducer, {
+		serialize: ( state ) => omit( state, UNPERSISTED_SETTINGS_NODES ),
+		deserialize: ( persisted ) => omit( persisted, UNPERSISTED_SETTINGS_NODES ),
+	} )
+);
+
+const combinedReducer = combineReducers( {
 	settings,
 	system,
 } );
+
+export default withStorageKey( 'pushNotifications', combinedReducer );

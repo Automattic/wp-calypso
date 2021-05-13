@@ -1,48 +1,48 @@
-/** @format */
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import i18nCalypso, { localize } from 'i18n-calypso';
+import page from 'page';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import { CompactCard } from '@automattic/components';
 import {
-	getName,
+	getDisplayName,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
+	isPartnerPurchase,
+	isRecentMonthlyPurchase,
 	isRenewing,
 	purchaseType,
-	showCreditCardExpiringWarning,
-	subscribedWithinPastWeek,
-} from 'lib/purchases';
-import {
-	isDomainProduct,
-	isDomainTransfer,
-	isGoogleApps,
-	isPlan,
-	isTheme,
-	isConciergeSession,
-} from 'lib/products-values';
-import Notice from 'components/notice';
-import PlanIcon from 'components/plans/plan-icon';
-import Gridicon from 'gridicons';
-import { managePurchase } from '../paths';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { getPlanTermLabel } from 'lib/plans';
+	creditCardExpiresBeforeSubscription,
+	creditCardHasAlreadyExpired,
+	getPartnerName,
+	isWithinIntroductoryOfferPeriod,
+	isIntroductoryOfferFreeTrial,
+} from 'calypso/lib/purchases';
+import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import SiteIcon from 'calypso/blocks/site-icon';
+import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
+import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
+import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
  */
-import './style.scss';
+import 'calypso/me/purchases/style.scss';
 
-const eventProperties = warning => ( { warning, position: 'purchase-list' } );
+const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );
 
 class PurchaseItem extends Component {
 	trackImpression( warning ) {
@@ -54,69 +54,195 @@ class PurchaseItem extends Component {
 		);
 	}
 
-	renewsOrExpiresOn() {
-		const { purchase, translate, moment } = this.props;
+	getStatus() {
+		const { purchase, translate, locale, moment, name, isJetpack, isDisconnectedSite } = this.props;
+		const expiry = moment( purchase.expiryDate );
 
-		if ( showCreditCardExpiringWarning( purchase ) ) {
+		if ( purchase && isPartnerPurchase( purchase ) ) {
+			return translate( 'Managed by %(partnerName)s', {
+				args: {
+					partnerName: getPartnerName( purchase ),
+				},
+			} );
+		}
+
+		if ( isDisconnectedSite ) {
+			if ( isJetpack ) {
+				return (
+					<span className="purchase-item__is-error">
+						{ translate( 'Disconnected from WordPress.com' ) }
+					</span>
+				);
+			}
+
 			return (
-				<Notice isCompact status="is-error" icon="notice">
-					{ translate( 'Credit card expiring soon' ) }
-					{ this.trackImpression( 'credit-card-expiring' ) }
-				</Notice>
+				<span className="purchase-item__is-error">
+					{ translate(
+						'You no longer have access to this site and its purchases. {{button}}Contact support{{/button}}',
+						{
+							args: {
+								site: name,
+							},
+							components: {
+								button: (
+									<button
+										className="purchase-item__link purchase-item__link--error"
+										onClick={ ( event ) => {
+											event.stopPropagation();
+											event.preventDefault();
+											page( CALYPSO_CONTACT );
+										} }
+										title={ translate( 'Contact Support' ) }
+									/>
+								),
+							},
+						}
+					) }
+				</span>
 			);
 		}
 
-		if ( isRenewing( purchase ) && purchase.renewMoment ) {
-			return translate( 'Renews on %s', {
-				args: purchase.renewMoment.format( 'LL' ),
+		if ( isWithinIntroductoryOfferPeriod( purchase ) && isIntroductoryOfferFreeTrial( purchase ) ) {
+			if (
+				isRenewing( purchase ) &&
+				( locale === 'en' ||
+					i18nCalypso.hasTranslation(
+						'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s'
+					) )
+			) {
+				return translate(
+					'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s',
+					{
+						args: {
+							date: expiry.format( 'LL' ),
+							amount: purchase.priceText,
+						},
+						components: {
+							span: <span className="purchase-item__date" />,
+						},
+					}
+				);
+			}
+
+			if (
+				locale === 'en' ||
+				i18nCalypso.hasTranslation( 'Free trial ends on {{span}}%(date)s{{/span}}' )
+			) {
+				const expiryClass =
+					expiry < moment().add( 7, 'days' )
+						? 'purchase-item__is-error'
+						: 'purchase-item__is-warning';
+
+				return (
+					<span className={ expiryClass }>
+						{ translate( 'Free trial ends on {{span}}%(date)s{{/span}}', {
+							args: {
+								date: expiry.format( 'LL' ),
+							},
+							components: {
+								span: <span className="purchase-item__date" />,
+							},
+						} ) }
+						{ this.trackImpression( 'purchase-expiring' ) }
+					</span>
+				);
+			}
+		}
+
+		if ( isRenewing( purchase ) && purchase.renewDate ) {
+			const renewDate = moment( purchase.renewDate );
+
+			if ( creditCardHasAlreadyExpired( purchase ) ) {
+				return (
+					<span className="purchase-item__is-error">
+						{ translate( 'Credit card expired' ) }
+						{ this.trackImpression( 'credit-card-expiring' ) }
+					</span>
+				);
+			}
+
+			if ( creditCardExpiresBeforeSubscription( purchase ) ) {
+				return (
+					<span className="purchase-item__is-warning">
+						{ translate(
+							'Credit card expires before your next renewal on {{span}}%(date)s{{/span}}',
+							{
+								args: {
+									date: renewDate.format( 'LL' ),
+								},
+								components: {
+									span: <span className="purchase-item__date" />,
+								},
+							}
+						) }
+						{ this.trackImpression( 'credit-card-expiring' ) }
+					</span>
+				);
+			}
+
+			return translate( 'Renews at %(amount)s on {{span}}%(date)s{{/span}}', {
+				args: {
+					amount: purchase.priceText,
+					date: renewDate.format( 'LL' ),
+				},
+				components: {
+					span: <span className="purchase-item__date" />,
+				},
 			} );
 		}
 
 		if ( isExpiring( purchase ) ) {
-			if ( purchase.expiryMoment < moment().add( 30, 'days' ) ) {
-				const status = subscribedWithinPastWeek( purchase ) ? 'is-info' : 'is-error';
+			if ( expiry < moment().add( 30, 'days' ) && ! isRecentMonthlyPurchase( purchase ) ) {
+				const expiryClass =
+					expiry < moment().add( 7, 'days' )
+						? 'purchase-item__is-error'
+						: 'purchase-item__is-warning';
+
 				return (
-					<Notice isCompact status={ status } icon="notice">
-						{ translate( 'Expires %(timeUntilExpiry)s', {
+					<span className={ expiryClass }>
+						{ translate( 'Expires %(timeUntilExpiry)s on {{span}}%(date)s{{/span}}', {
 							args: {
-								timeUntilExpiry: purchase.expiryMoment.fromNow(),
+								timeUntilExpiry: expiry.fromNow(),
+								date: expiry.format( 'LL' ),
 							},
-							context:
-								'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+							components: {
+								span: <span className="purchase-item__date" />,
+							},
 						} ) }
 						{ this.trackImpression( 'purchase-expiring' ) }
-					</Notice>
+					</span>
 				);
 			}
 
-			return translate( 'Expires on %s', {
-				args: purchase.expiryMoment.format( 'LL' ),
+			return translate( 'Expires on {{span}}%s{{/span}}', {
+				args: expiry.format( 'LL' ),
+				components: {
+					span: <span className="purchase-item__date" />,
+				},
 			} );
 		}
 
 		if ( isExpired( purchase ) ) {
 			if ( isConciergeSession( purchase ) ) {
 				return translate( 'Session used on %s', {
-					args: purchase.expiryMoment.format( 'LL' ),
+					args: expiry.format( 'LL' ),
 				} );
 			}
 
-			const expiredToday = moment().diff( purchase.expiryMoment, 'hours' ) < 24;
-			const expiredText = expiredToday
-				? purchase.expiryMoment.format( '[today]' )
-				: purchase.expiryMoment.fromNow();
+			const isExpiredToday = moment().diff( expiry, 'hours' ) < 24;
+			const expiredTodayText = translate( 'Expired today' );
+			const expiredFromNowText = translate( 'Expired %(timeSinceExpiry)s', {
+				args: {
+					timeSinceExpiry: expiry.fromNow(),
+				},
+				context: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+			} );
 
 			return (
-				<Notice isCompact status="is-error" icon="notice">
-					{ translate( 'Expired %(timeSinceExpiry)s', {
-						args: {
-							timeSinceExpiry: expiredText,
-						},
-						context:
-							'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
-					} ) }
+				<span className="purchase-item__is-error">
+					{ isExpiredToday ? expiredTodayText : expiredFromNowText }
 					{ this.trackImpression( 'purchase-expired' ) }
-				</Notice>
+				</span>
 			);
 		}
 
@@ -131,94 +257,177 @@ class PurchaseItem extends Component {
 		return null;
 	}
 
-	placeholder() {
-		return (
-			<span className="purchase-item__wrapper">
-				<div className="purchase-item__plan-icon" />
-				<div className="purchase-item__details">
-					<div className="purchase-item__title" />
-					<div className="purchase-item__purchase-type" />
-					<div className="purchase-item__purchase-date" />
-				</div>
-			</span>
-		);
-	}
+	getPurchaseType() {
+		const { purchase, site, translate, slug, showSite, isDisconnectedSite } = this.props;
+		const productType = purchaseType( purchase );
 
-	scrollToTop() {
-		window.scrollTo( 0, 0 );
-	}
+		if ( showSite && site ) {
+			if ( productType ) {
+				return translate( '%(purchaseType)s for {{button}}%(site)s{{/button}}', {
+					args: {
+						purchaseType: productType,
+						site: site.domain,
+					},
+					components: {
+						button: (
+							<button
+								className="purchase-item__link"
+								onClick={ ( event ) => {
+									event.stopPropagation();
+									event.preventDefault();
+									page( getPurchaseListUrlFor( slug ) );
+								} }
+								title={ translate( 'View subscriptions for %(siteName)s', {
+									args: {
+										siteName: site.name,
+									},
+								} ) }
+							/>
+						),
+					},
+				} );
+			}
 
-	renderIcon() {
-		const { purchase } = this.props;
-
-		if ( ! purchase ) {
-			return null;
+			return translate( 'for {{button}}%(site)s{{/button}}', {
+				args: {
+					site: site.domain,
+				},
+				components: {
+					button: (
+						<button
+							className="purchase-item__link"
+							onClick={ ( event ) => {
+								event.stopPropagation();
+								event.preventDefault();
+								page( getPurchaseListUrlFor( slug ) );
+							} }
+							title={ translate( 'View subscriptions for %(siteName)s', {
+								args: {
+									siteName: site.name,
+								},
+							} ) }
+						/>
+					),
+				},
+			} );
 		}
 
-		if ( isPlan( purchase ) ) {
+		if ( isDisconnectedSite ) {
+			return translate( '%(purchaseType)s for %(site)s', {
+				args: {
+					purchaseType: productType,
+					site: purchase.domain,
+				},
+			} );
+		}
+
+		return productType;
+	}
+
+	getPaymentMethod() {
+		const { purchase } = this.props;
+
+		if ( isRenewing( purchase ) ) {
+			if ( purchase.payment.type === 'credit_card' ) {
+				return (
+					<>
+						<img
+							src={ getPaymentMethodImageURL( purchase.payment.creditCard.type ) }
+							alt={ purchase.payment.creditCard.type }
+							className="purchase-item__payment-method-card"
+						/>
+						{ purchase.payment.creditCard.number }
+					</>
+				);
+			}
+
+			if ( purchase.payment.type === 'paypal' ) {
+				return (
+					<img
+						src={ payPalImage }
+						alt={ purchase.payment.type }
+						className="purchase-item__paypal"
+					/>
+				);
+			}
+
+			return null;
+		}
+	}
+
+	getSiteIcon = () => {
+		const { site, isDisconnectedSite } = this.props;
+
+		if ( isDisconnectedSite ) {
 			return (
-				<div className="purchase-item__plan-icon">
-					<PlanIcon plan={ purchase.productSlug } />
+				<div className="purchase-item__disconnected-icon">
+					<Gridicon icon="block" size={ Math.round( 36 / 1.8 ) } />
 				</div>
 			);
 		}
 
-		let icon;
-		if ( isDomainProduct( purchase ) || isDomainTransfer( purchase ) ) {
-			icon = 'domains';
-		} else if ( isTheme( purchase ) ) {
-			icon = 'themes';
-		} else if ( isGoogleApps( purchase ) ) {
-			icon = 'mail';
-		}
+		return <SiteIcon site={ site } size={ 36 } />;
+	};
 
-		if ( ! icon ) {
-			return null;
-		}
+	renderPurhaseItemContent = () => {
+		const { purchase, showSite } = this.props;
 
 		return (
-			<div className="purchase-item__plan-icon">
-				<Gridicon icon={ icon } size={ 24 } />
+			<div className="purchase-item__wrapper purchases-layout__wrapper">
+				{ showSite && (
+					<div className="purchase-item__site purchases-layout__site">{ this.getSiteIcon() }</div>
+				) }
+
+				<div className="purchase-item__information purchases-layout__information">
+					<div className="purchase-item__title">{ getDisplayName( purchase ) }</div>
+					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>
+				</div>
+
+				<div className="purchase-item__status purchases-layout__status">{ this.getStatus() }</div>
+
+				<div className="purchase-item__payment-method purchases-layout__payment-method">
+					{ this.getPaymentMethod() }
+				</div>
 			</div>
 		);
-	}
+	};
 
 	render() {
-		const { isPlaceholder, isDisconnectedSite, purchase, isJetpack, translate } = this.props;
-		const classes = classNames(
-			'purchase-item',
-			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
-			{ 'is-placeholder': isPlaceholder },
-			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
-		);
-		const termLabel =
-			purchase && purchase.productSlug ? getPlanTermLabel( purchase.productSlug, translate ) : null;
+		const {
+			isPlaceholder,
+			isDisconnectedSite,
+			getManagePurchaseUrlFor,
+			purchase,
+			slug,
+			isJetpack,
+		} = this.props;
 
-		let content;
+		const classes = classNames( 'purchase-item', {
+			'purchase-item--disconnected': isDisconnectedSite,
+		} );
+
 		if ( isPlaceholder ) {
-			content = this.placeholder();
-		} else {
-			content = (
-				<span className="purchase-item__wrapper">
-					{ this.renderIcon() }
-					<div className="purchase-item__details">
-						<div className="purchase-item__title">{ getName( purchase ) }</div>
-						<div className="purchase-item__purchase-type">{ purchaseType( purchase ) }</div>
-						{ termLabel ? <div className="purchase-item__term-label">{ termLabel }</div> : null }
-						<div className="purchase-item__purchase-date">{ this.renewsOrExpiresOn() }</div>
-					</div>
-				</span>
+			return (
+				<>
+					<CompactCard className="purchase-item__placeholder-wrapper purchases-list-header" />
+					<CompactCard>
+						<div className="purchase-item__placeholder" />
+					</CompactCard>
+				</>
 			);
 		}
 
 		let onClick;
 		let href;
-		if ( ! isPlaceholder ) {
+
+		if ( ! isPlaceholder && getManagePurchaseUrlFor ) {
 			// A "disconnected" Jetpack site's purchases may be managed.
 			// A "disconnected" WordPress.com site may not (the user has been removed).
 			if ( ! isDisconnectedSite || isJetpack ) {
-				onClick = this.scrollToTop;
-				href = managePurchase( this.props.slug, this.props.purchase.id );
+				onClick = () => {
+					window.scrollTo( 0, 0 );
+				};
+				href = getManagePurchaseUrlFor( slug, purchase.id );
 			}
 		}
 
@@ -229,18 +438,20 @@ class PurchaseItem extends Component {
 				href={ href }
 				onClick={ onClick }
 			>
-				{ content }
+				{ this.renderPurhaseItemContent() }
 			</CompactCard>
 		);
 	}
 }
 
 PurchaseItem.propTypes = {
-	isPlaceholder: PropTypes.bool,
+	getManagePurchaseUrlFor: PropTypes.func,
 	isDisconnectedSite: PropTypes.bool,
-	purchase: PropTypes.object,
-	slug: PropTypes.string,
 	isJetpack: PropTypes.bool,
+	isPlaceholder: PropTypes.bool,
+	purchase: PropTypes.object,
+	showSite: PropTypes.bool,
+	slug: PropTypes.string,
 };
 
-export default localize( PurchaseItem );
+export default localize( withLocalizedMoment( PurchaseItem ) );

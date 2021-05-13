@@ -6,18 +6,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { take, times } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
-import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'reader/follow-sources';
-import InfiniteStream from 'reader/components/reader-infinite-stream';
-import { siteRowRenderer } from 'reader/components/reader-infinite-stream/row-renderers';
-import { requestFeedSearch } from 'state/reader/feed-searches/actions';
+import { Button } from '@automattic/components';
+import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
+import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'calypso/reader/follow-sources';
+import InfiniteStream from 'calypso/reader/components/reader-infinite-stream';
+import { siteRowRenderer } from 'calypso/reader/components/reader-infinite-stream/row-renderers';
+import { requestFeedSearch } from 'calypso/state/reader/feed-searches/actions';
 
 class FollowingManageSearchFeedsResults extends React.Component {
 	static propTypes = {
@@ -30,14 +30,14 @@ class FollowingManageSearchFeedsResults extends React.Component {
 		width: PropTypes.number,
 	};
 
-	hasNextPage = offset => {
+	hasNextPage = ( offset ) => {
 		if ( this.props.showMoreResults ) {
 			return offset < this.props.searchResultsCount;
 		}
 		return false;
 	};
 
-	fetchNextPage = offset =>
+	fetchNextPage = ( offset ) =>
 		this.props.requestFeedSearch( {
 			query: this.props.query,
 			offset,
@@ -62,7 +62,7 @@ class FollowingManageSearchFeedsResults extends React.Component {
 		if ( ! searchResults ) {
 			return (
 				<div className={ classNames }>
-					{ times( 10, i => (
+					{ times( 10, ( i ) => (
 						<ReaderSubscriptionListItemPlaceholder key={ `placeholder-${ i }` } />
 					) ) }
 				</div>
@@ -108,7 +108,6 @@ class FollowingManageSearchFeedsResults extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestFeedSearch }
-)( localize( FollowingManageSearchFeedsResults ) );
+export default connect( null, { requestFeedSearch } )(
+	localize( FollowingManageSearchFeedsResults )
+);

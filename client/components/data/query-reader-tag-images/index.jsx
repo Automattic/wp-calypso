@@ -1,22 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { shouldRequestTagImages } from 'state/reader/tags/images/selectors';
-import { requestTagImages } from 'state/reader/tags/images/actions';
+import { shouldRequestTagImages } from 'calypso/state/reader/tags/images/selectors';
+import { requestTagImages } from 'calypso/state/reader/tags/images/actions';
 
 class QueryReaderTagImages extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.shouldRequestTagImages || ! this.props.tag ) {
 			return;
 		}
@@ -24,7 +20,7 @@ class QueryReaderTagImages extends Component {
 		this.props.requestTagImages( this.props.tag );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.shouldRequestTagImages ) {
 			return;
 		}
@@ -52,12 +48,7 @@ export default connect(
 			shouldRequestTagImages: shouldRequestTagImages( state, ownProps.tag ),
 		};
 	},
-	dispatch => {
-		return bindActionCreators(
-			{
-				requestTagImages,
-			},
-			dispatch
-		);
+	{
+		requestTagImages,
 	}
 )( QueryReaderTagImages );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,14 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
+import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
+
+/**
+ * Image dependencies
+ */
+import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
+import recurringImage from 'calypso/assets/images/earn/recurring.svg';
+import simplePaymentsImage from 'calypso/assets/images/earn/simple-payments.svg';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const PromoSectionExample = () => {
@@ -16,7 +21,7 @@ const PromoSectionExample = () => {
 		header: {
 			title: 'Start earning money',
 			image: {
-				path: '/calypso/images/earn/earn-section.svg',
+				path: earnSectionImage,
 			},
 			body: 'There is a range of ways to earn money through your WordPress.com Site.',
 		},
@@ -26,7 +31,7 @@ const PromoSectionExample = () => {
 				body:
 					'Add a payment button to any post or page to collect PayPal payments for physical products, digital goods, services, or donations. Available to any site with a Premium plan.',
 				image: {
-					path: '/calypso/images/earn/simple-payments.svg',
+					path: simplePaymentsImage,
 				},
 				cta: {
 					text: 'Collect One-time Payments',
@@ -34,14 +39,14 @@ const PromoSectionExample = () => {
 				},
 			},
 			{
-				title: 'Collect recurring payments',
+				title: 'Collect payments',
 				body:
-					'Charge for services, collect membership dues, or take recurring donations. Automate recurring payments, and use your site to earn reliable revenue. Available to any site with a paid plan.',
+					'Charge for services, collect membership dues, or take one-time or recurring donations. Automate recurring payments, and use your site to earn reliable revenue. Available to any site with a paid plan.',
 				image: {
-					path: '/calypso/images/earn/recurring.svg',
+					path: recurringImage,
 				},
 				cta: {
-					text: 'Collect Recurring Payments',
+					text: 'Collect Payments',
 					url: '/',
 				},
 			},

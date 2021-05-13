@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,12 +6,13 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import config, { isEnabled } from 'config';
-import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
-import { userCan } from 'lib/site/utils';
+import config, { isEnabled } from '@automattic/calypso-config';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
+import { userCan } from 'calypso/lib/site/utils';
 
 /**
  * Returns true if Automated Transfer is enabled for the given site
+ *
  * @param { object } site - a full site object
  * @returns { boolean } - true if AT is enabled for the site
  */

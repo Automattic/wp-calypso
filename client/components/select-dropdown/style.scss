@@ -9,6 +9,7 @@ $compact-header-height: 35;
 
 .select-dropdown {
 	height: #{$header-height}px;
+	overflow: hidden;
 
 	&.is-open {
 		overflow: visible;
@@ -40,7 +41,7 @@ $compact-header-height: 35;
 	}
 
 	.accessible-focus & {
-		border-radius: 4px;
+		border-radius: 2px;
 	}
 
 	.accessible-focus &:focus {
@@ -63,19 +64,19 @@ $compact-header-height: 35;
 	align-items: center;
 
 	border-style: solid;
-	border-color: var( --color-neutral-100 );
-	border-width: 1px 1px 2px;
-	border-radius: 4px;
-	background-color: var( --color-white );
+	border-color: var( --color-neutral-10 );
+	border-width: 1px;
+	border-radius: 2px;
+	background-color: var( --color-surface );
 
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	transition: background-color 0.2s ease;
 	cursor: pointer;
 
 	.gridicons-chevron-down {
-		fill: var( --color-neutral-500 );
+		fill: var( --color-neutral-50 );
 		margin: 0;
 		flex-shrink: 0;
 		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
@@ -89,7 +90,7 @@ $compact-header-height: 35;
 		height: #{$compact-header-height}px;
 		line-height: #{$compact-header-height - 3}px;
 		padding-right: #{$side-margin / 2}px;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 
 		.count {
 			border-width: 0;
@@ -100,18 +101,18 @@ $compact-header-height: 35;
 
 	.is-disabled & {
 		color: var( --color-neutral-0 );
-		background: var( --color-white );
+		background: var( --color-surface );
 		border-color: var( --color-neutral-0 );
 		cursor: default;
 
 		&:active,
 		&.is-active {
-			border-width: 1px 1px 2px;
+			border-width: 1px;
 		}
 	}
 
 	.select-dropdown.is-open & {
-		border-radius: 4px 4px 0 0;
+		border-radius: 2px 2px 0 0;
 		box-shadow: none;
 		background-color: var( --color-neutral-0 );
 
@@ -156,25 +157,20 @@ $compact-header-height: 35;
 	box-sizing: border-box;
 	padding: 0;
 	list-style: none;
-	margin: 0;
-	background-color: var( --color-white );
-	border: 1px solid var( --color-neutral-100 );
+	margin: -1px 0 0;
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
 	border-top: 0;
-	// var( --color-primary ) for outer (with focus shadow), $gray for border with header
-	border-radius: 0 0 4px 4px;
-	height: 0;
-	overflow: hidden;
-	opacity: 0;
+	border-radius: 0 0 2px 2px;
+	visibility: hidden;
 
 	.accessible-focus & {
 		border: solid 1px var( --color-primary );
-		border-top-color: var( --color-neutral-100 );
+		border-top-color: var( --color-neutral-10 );
 	}
 
 	.select-dropdown.is-open & {
-		margin-top: -1px;
-		height: auto;
-		opacity: 1;
+		visibility: visible;
 	}
 }
 
@@ -182,7 +178,7 @@ $compact-header-height: 35;
 	height: #{$option-height}px;
 
 	&:last-child .select-dropdown__item {
-		border-radius: 0 0 4px 4px;
+		border-radius: 0 0 2px 2px;
 	}
 }
 
@@ -193,8 +189,8 @@ $compact-header-height: 35;
 	line-height: #{$option-height}px;
 	padding: 0 #{$side-margin + 46}px 0 #{$side-margin}px;
 
-	color: var( --color-neutral-700 );
-	font-size: 14px;
+	color: var( --color-neutral-70 );
+	font-size: $font-body-small;
 	font-weight: 400;
 	white-space: nowrap;
 	overflow: hidden;
@@ -203,27 +199,27 @@ $compact-header-height: 35;
 	// hack to set text width in bold weight
 	&::before {
 		content: attr( data-bold-text );
-		font-weight: 700;
+		font-weight: 600;
 		white-space: nowrap;
 		opacity: 0;
 	}
 
 	&:visited {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	&.is-selected {
 		background-color: var( --color-accent );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		.count {
-			border-color: var( --color-white );
-			color: var( --color-white );
+			border-color: var( --color-border-inverted );
+			color: var( --color-text-inverted );
 		}
 	}
 
 	&.is-disabled {
-		background-color: var( --color-white );
+		background-color: var( --color-surface );
 		color: var( --color-neutral-light );
 		cursor: default;
 		opacity: 0.5;
@@ -236,7 +232,7 @@ $compact-header-height: 35;
 		}
 
 		&.is-selected:hover {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 
@@ -272,7 +268,7 @@ $compact-header-height: 35;
 }
 
 .select-dropdown__separator {
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	display: block;
 	margin: 8px 0;
 }
@@ -282,8 +278,11 @@ $compact-header-height: 35;
 	color: var( --color-text-subtle );
 	line-height: 20px;
 
-	label {
-		font-size: 12px;
+	.form-label {
+		font-size: $font-body-extra-small;
+		font-weight: 400;
 		padding: 0 #{$side-margin}px;
+		margin-bottom: 0;
+		display: inline;
 	}
 }

@@ -1,13 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
-import { filter, includes, isEmpty, last, noop } from 'lodash';
+import { filter, includes, isEmpty, last } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
+const noop = () => {};
 const ESC_KEY_CODE = 27;
 let components = [];
 
@@ -39,7 +38,7 @@ function startCloseOnEscForComponent( component, onEscape ) {
 }
 
 function stopCloseOnEscForComponent( component ) {
-	components = filter( components, item => item.component !== component );
+	components = filter( components, ( item ) => item.component !== component );
 	if ( isEmpty( components ) ) {
 		removeKeydownListener();
 	}

@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Enforce external, internal dependencies docblocks
+ * @file Enforce external, internal, WordPress dependencies docblocks
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -10,8 +9,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/import-docblock' ),
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require( '../../../lib/rules/import-docblock' );
+const RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
@@ -28,19 +27,19 @@ new RuleTester( {
 			code: `/**
  * External dependencies
  */
-import eslint from \'eslint\';`,
+import eslint from 'eslint';`,
 		},
 		{
 			code: `/**
  * External dependencies
  */
-import eslint from \'eslint\';`,
+import eslint from 'eslint';`,
 		},
 		{
 			code: `/**
  * External dependencies${ ' ' }
  */
-import eslint from \'eslint\';`,
+import eslint from 'eslint';`,
 		},
 	],
 
@@ -49,7 +48,7 @@ import eslint from \'eslint\';`,
 			code: "import eslint from 'eslint';",
 			errors: [
 				{
-					message: 'Missing external, internal dependencies docblocks',
+					message: 'Missing external, internal, WordPress dependencies docblocks',
 				},
 			],
 		},

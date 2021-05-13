@@ -1,12 +1,13 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { THEME_BACK_PATH_SET, THEMES_BANNER_HIDE } from 'state/action-types';
-import { themesBannerVisibleSchema } from '../schema';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import {
+	THEME_BACK_PATH_SET,
+	THEMES_SHOWCASE_OPEN,
+	THEMES_BOOKMARK_SET,
+} from 'calypso/state/themes/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 // Destination for 'back' button on theme sheet
 export function backPath( state = '/themes', action ) {
@@ -17,17 +18,23 @@ export function backPath( state = '/themes', action ) {
 	return state;
 }
 
-// Themes banner visible state
-export function themesBannerVisibleReducer( state = true, { type } ) {
-	if ( THEMES_BANNER_HIDE === type ) {
-		return false;
+// "More Themes" button state.
+export function themesShowcaseOpen( state = false, action ) {
+	if ( THEMES_SHOWCASE_OPEN === action.type ) {
+		return true;
 	}
 	return state;
 }
 
-export const themesBannerVisible = withSchemaValidation(
-	themesBannerVisibleSchema,
-	themesBannerVisibleReducer
-);
+export function themesBookmark( state = '', action ) {
+	if ( THEMES_BOOKMARK_SET === action.type ) {
+		return action.payload;
+	}
+	return state;
+}
 
-export default combineReducers( { backPath, themesBannerVisible } );
+export default combineReducers( {
+	backPath,
+	themesShowcaseOpen,
+	themesBookmark,
+} );

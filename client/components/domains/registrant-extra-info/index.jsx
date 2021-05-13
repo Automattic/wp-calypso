@@ -1,7 +1,6 @@
 /**
  * Extrenal dependencies
  *
- * @format
  */
 
 import React, { PureComponent } from 'react';
@@ -10,10 +9,11 @@ import { keys, filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import ca from './ca-form';
 import fr from './fr-form';
 import uk from './uk-form';
+import { getTopLevelOfTld } from 'calypso/lib/domains';
 
 /**
  * Style dependencies
@@ -26,17 +26,19 @@ const tldSpecificForms = {
 	uk,
 };
 
-const enabledTldForms = filter( keys( tldSpecificForms ), tld =>
-	config.isEnabled( `domains/cctlds/${ tld }` )
-);
-
-export const tldsWithAdditionalDetailsForms = enabledTldForms;
+export const getApplicableTldsWithAdditionalDetailsForms = ( tlds ) => {
+	const topLevelTlds = tlds.map( getTopLevelOfTld );
+	return filter( keys( tldSpecificForms ), ( tldFormName ) => {
+		return (
+			config.isEnabled( `domains/cctlds/${ tldFormName }` ) && topLevelTlds.includes( tldFormName )
+		);
+	} );
+};
 
 export default class DomainDetailsForm extends PureComponent {
 	render() {
 		const { tld, ...props } = this.props;
-		const topLevelOfTld = tld.substring( tld.lastIndexOf( '.' ) + 1 );
-		const TldSpecificForm = tldSpecificForms[ topLevelOfTld ];
+		const TldSpecificForm = tldSpecificForms[ getTopLevelOfTld( tld ) ];
 
 		if ( ! TldSpecificForm ) {
 			throw new Error( 'unrecognized tld in extra info form:', tld );

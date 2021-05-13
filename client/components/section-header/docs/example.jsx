@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,8 +7,8 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import SectionHeader from 'components/section-header';
+import { Button } from '@automattic/components';
+import SectionHeader from 'calypso/components/section-header';
 import { translate } from 'i18n-calypso';
 
 class SectionHeaderExample extends PureComponent {
@@ -26,7 +24,7 @@ class SectionHeaderExample extends PureComponent {
 					<Button compact>{ translate( 'Manage' ) }</Button>
 					<Button
 						compact
-						onClick={ function() {
+						onClick={ function () {
 							alert( translate( 'Clicked add button' ) );
 						} }
 					>

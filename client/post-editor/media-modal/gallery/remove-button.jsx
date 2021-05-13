@@ -1,21 +1,19 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { reject } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-import ScreenReaderText from 'components/screen-reader-text';
-import MediaActions from 'lib/media/actions';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import { ScreenReaderText } from '@automattic/components';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import { selectMediaItems } from 'calypso/state/media/actions';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -26,15 +24,14 @@ class RemoveButton extends PureComponent {
 	};
 
 	remove = () => {
-		const { siteId, itemId } = this.props;
+		const { siteId, itemId, selectedItems } = this.props;
 		if ( ! siteId || ! itemId ) {
 			return;
 		}
 
-		const selected = MediaLibrarySelectedStore.getAll( siteId );
-		const items = reject( selected, item => item.ID === itemId );
+		const items = reject( selectedItems, ( item ) => item.ID === itemId );
 
-		MediaActions.setLibrarySelectedItems( siteId, items );
+		this.props.selectMediaItems( siteId, items );
 	};
 
 	render() {
@@ -43,7 +40,7 @@ class RemoveButton extends PureComponent {
 		return (
 			<button
 				onClick={ this.remove }
-				onMouseDown={ event => event.stopPropagation() }
+				onMouseDown={ ( event ) => event.stopPropagation() }
 				className="editor-media-modal-gallery__remove"
 			>
 				<ScreenReaderText>{ translate( 'Remove' ) }</ScreenReaderText>
@@ -55,4 +52,9 @@ class RemoveButton extends PureComponent {
 
 RemoveButton.displayName = 'RemoveButton';
 
-export default localize( RemoveButton );
+export default connect(
+	( state, { siteId } ) => ( {
+		selectedItems: getMediaLibrarySelectedItems( state, siteId ),
+	} ),
+	{ selectMediaItems }
+)( localize( RemoveButton ) );

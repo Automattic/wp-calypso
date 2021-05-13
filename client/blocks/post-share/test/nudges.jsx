@@ -1,26 +1,23 @@
-/** @format */
-
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'lib/analytics/index', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'lib/user', () => ( {} ) );
-jest.mock( 'components/main', () => 'MainComponent' );
-jest.mock( 'components/popover', () => 'Popover' );
-jest.mock( 'components/banner', () => 'Banner' );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+	localize: ( Comp ) => ( props ) => (
 		<Comp
 			{ ...props }
-			translate={ function( x ) {
+			translate={ function ( x ) {
 				return x;
 			} }
 		/>
 	),
-	numberFormat: x => x,
+	numberFormat: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 /**
@@ -53,26 +50,26 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
 
 const props = {
-	translate: x => x,
+	translate: ( x ) => x,
 	canUserUpgrade: true,
 };
 
 describe( 'UpgradeToPremiumNudgePure basic tests', () => {
 	test( 'should not blow up', () => {
 		const comp = shallow( <UpgradeToPremiumNudgePure { ...props } /> );
-		expect( comp.find( 'Banner' ).length ).toBe( 1 );
+		expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
 	} );
-	
+
 	test( 'hide when user cannot upgrade', () => {
-		const props = {
-			translate: x => x,
+		const localProps = {
+			translate: ( x ) => x,
 			canUserUpgrade: false,
 		};
-		const comp = shallow( <UpgradeToPremiumNudgePure { ...props } /> );
-		expect( comp.find( 'Banner' ).length ).toBe( 0 );
+		const comp = shallow( <UpgradeToPremiumNudgePure { ...localProps } /> );
+		expect( comp.find( 'UpsellNudge' ).length ).toBe( 0 );
 	} );
 } );
 
@@ -97,12 +94,12 @@ describe( 'UpgradeToPremiumNudgePure.render()', () => {
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( `Should pass 2-years wp.com premium plan for 2-years plans ${ plan }`, () => {
 			const comp = shallow(
 				<UpgradeToPremiumNudgePure { ...props } isJetpack={ false } planSlug={ plan } />
 			);
-			expect( comp.find( 'Banner' ).props().plan ).toBe( plan );
+			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( plan );
 		} );
 	} );
 } );

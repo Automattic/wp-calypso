@@ -31,7 +31,7 @@
 		}
 
 		.foldable-card__expand {
-			border-left: 1px var( --color-neutral-50 ) solid;
+			border-left: 1px var( --color-neutral-5 ) solid;
 		}
 	}
 }
@@ -85,7 +85,7 @@ button.foldable-card__action {
 	flex: 2 1;
 	margin-right: 5px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		flex: 1 1;
 	}
 }
@@ -96,7 +96,7 @@ button.foldable-card__action {
 	flex: 1 1;
 	justify-content: flex-end;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		flex: 0 1;
 	}
 }
@@ -105,7 +105,7 @@ button.foldable-card__action {
 	width: 48px;
 
 	.gridicon {
-		fill: var( --color-neutral-300 );
+		fill: var( --color-neutral-30 );
 		display: flex;
 		align-items: center;
 		width: 100%;
@@ -115,11 +115,11 @@ button.foldable-card__action {
 	}
 
 	.gridicon:hover {
-		fill: var( --color-neutral-300 );
+		fill: var( --color-neutral-30 );
 	}
 
 	&:hover .gridicon {
-		fill: var( --color-neutral-500 );
+		fill: var( --color-neutral-50 );
 	}
 }
 
@@ -134,7 +134,7 @@ button.foldable-card__action {
 .foldable-card.is-expanded .foldable-card__content {
 	display: block;
 	padding: 16px;
-	border-top: 1px solid var( --color-neutral-50 );
+	border-top: 1px solid var( --color-neutral-5 );
 }
 
 .foldable-card.is-compact .foldable-card.is-expanded .foldable-card__content {
@@ -145,11 +145,11 @@ button.foldable-card__action {
 .foldable-card__summary-expanded {
 	margin-right: 40px;
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	transition: opacity 0.2s linear;
 	display: inline-block;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
 	}
 }

@@ -1,12 +1,9 @@
-/** @format */
-/**
- * External Dependencies
- */
-
 /**
  * Internal Dependencies
  */
 import { key, SCOPE_ALL } from './utils';
+
+import 'calypso/state/reader/init';
 
 export function shouldFetchRelated( state, siteId, postId, scope = SCOPE_ALL ) {
 	return (

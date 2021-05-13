@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,17 +6,17 @@ import { isEmpty, find, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import { hasDomainRegistration, getDomainRegistrations } from 'lib/cart-values/cart-items';
-import { isDomainRegistration } from 'lib/products-values';
+import { hasDomainRegistration, getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
+import { isDomainRegistration } from '@automattic/calypso-products';
 
 /**
  * Depending on the current step in checkout, the user's domain can be found in
  * either the cart or the receipt.
  *
- * @param {?Object} receipt - The receipt for the transaction
- * @param {?Object} cart - The cart for the transaction
+ * @param {import('@automattic/wpcom-checkout').WPCOMTransactionEndpointResponse} [receipt] - The receipt for the transaction
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - The cart for the transaction
  *
- * @return {?String} the name of the first domain for the transaction.
+ * @returns {string|null} the name of the first domain for the transaction.
  */
 export function getDomainNameFromReceiptOrCart( receipt, cart ) {
 	let domainRegistration;

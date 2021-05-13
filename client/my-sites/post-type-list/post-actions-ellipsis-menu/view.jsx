@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,13 +10,13 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
-import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { bumpStat as bumpAnalyticsStat } from 'calypso/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
-import { getPost, getPostPreviewUrl } from 'state/posts/selectors';
-import { isSitePreviewable } from 'state/sites/selectors';
-import { setAllSitesPreviewSiteId, setPreviewUrl } from 'state/ui/preview/actions';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getPost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
+import { isSitePreviewable } from 'calypso/state/sites/selectors';
+import { setAllSitesPreviewSiteId, setPreviewUrl } from 'calypso/state/ui/preview/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 class PostActionsEllipsisMenuView extends Component {
 	static propTypes = {
@@ -39,7 +37,7 @@ class PostActionsEllipsisMenuView extends Component {
 		previewUrl: '',
 	};
 
-	previewPost = event => {
+	previewPost = ( event ) => {
 		const { isPreviewable, previewUrl, siteId } = this.props;
 		this.props.bumpStat();
 		if ( ! isPreviewable ) {

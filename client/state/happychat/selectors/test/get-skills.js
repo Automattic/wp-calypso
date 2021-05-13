@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,8 +11,8 @@ import {
 	HAPPYCHAT_GROUP_JPOP,
 	HAPPYCHAT_SKILL_PRODUCT,
 	HAPPYCHAT_SKILL_LANGUAGE,
-} from 'state/happychat/constants';
-import getSkills from 'state/happychat/selectors/get-skills';
+} from 'calypso/state/happychat/constants';
+import getSkills from 'calypso/state/happychat/selectors/get-skills';
 
 describe( '#getSkills()', () => {
 	const uiState = {
@@ -29,13 +27,9 @@ describe( '#getSkills()', () => {
 		const siteId = 1;
 		const state = {
 			...uiState,
-			users: {
-				items: {
-					73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'en' },
-				},
-			},
 			currentUser: {
 				id: 73705554,
+				user: { ID: 73705554, login: 'testonesite2014', localeSlug: 'en' },
 			},
 			sites: {
 				items: {},
@@ -51,13 +45,9 @@ describe( '#getSkills()', () => {
 		const siteId = 1;
 		const state = {
 			...uiState,
-			users: {
-				items: {
-					73705554: { ID: 73705554, login: 'testonesite2014' },
-				},
-			},
 			currentUser: {
 				id: 73705554,
+				user: { ID: 73705554, login: 'testonesite2014' },
 			},
 			sites: {
 				items: {},
@@ -72,13 +62,9 @@ describe( '#getSkills()', () => {
 		const siteId = 1;
 		const state = {
 			...uiState,
-			users: {
-				items: {
-					1: { ID: 1, login: 'testonesite2014', localeSlug: 'fr' },
-				},
-			},
 			currentUser: {
 				id: 1,
+				user: { ID: 1, login: 'testonesite2014', localeSlug: 'fr' },
 				capabilities: {
 					[ siteId ]: {
 						manage_options: true,

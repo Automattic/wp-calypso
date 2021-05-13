@@ -3,17 +3,18 @@
  *
  *
  *
- * @format
  * @see lib/directly for more about Directly
- * @param {Object}  state  Global state tree
- * @return {Boolean}        Whether the widget is waiting to be initialized
+ * @param {object}  state  Global state tree
+ * @returns {boolean}        Whether the widget is waiting to be initialized
  */
 
 /**
  * Internal dependencies
  */
-import { STATUS_UNINITIALIZED } from 'state/help/directly/constants';
+import { STATUS_UNINITIALIZED } from 'calypso/state/help/directly/constants';
+
+import 'calypso/state/help/init';
 
 export default function isDirectlyUninitialized( state ) {
-	return state.help.directly.status === STATUS_UNINITIALIZED;
+	return state.help?.directly.status === STATUS_UNINITIALIZED;
 }

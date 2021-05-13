@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { compact, get, indexOf } from 'lodash';
+import { compact, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,7 +41,7 @@ class Wizard extends Component {
 		hideNavigation: false,
 	};
 
-	getStepIndex = () => indexOf( this.props.steps, this.props.stepName );
+	getStepIndex = () => this.props.steps.indexOf( this.props.stepName );
 
 	getBackUrl = () => {
 		const stepIndex = this.getStepIndex();

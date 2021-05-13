@@ -1,18 +1,15 @@
-/** @format */
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { flow } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { localize } from 'i18n-calypso';
 
 const DomainPrimaryFlag = ( { isDomainOnly, domain, translate } ) => {
@@ -29,9 +26,6 @@ DomainPrimaryFlag.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default flow(
-	localize,
-	connect( state => ( {
-		isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
-	} ) )
-)( DomainPrimaryFlag );
+export default connect( ( state ) => ( {
+	isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
+} ) )( localize( DomainPrimaryFlag ) );

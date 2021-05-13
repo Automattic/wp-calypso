@@ -6,20 +6,24 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import PluginsActions from 'lib/plugins/actions';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
+import { ACTIVATE_PLUGIN, DEACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import { togglePluginActivation } from 'calypso/state/plugins/installed/actions';
+import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const activationActions = [ ACTIVATE_PLUGIN, DEACTIVATE_PLUGIN ];
 
 export class PluginActivateToggle extends Component {
 	toggleActivation = () => {
@@ -35,8 +39,8 @@ export class PluginActivateToggle extends Component {
 			return;
 		}
 
-		PluginsActions.togglePluginActivation( site, plugin );
-		PluginsActions.removePluginsNotices( 'completed', 'error' );
+		this.props.togglePluginActivation( site.ID, plugin );
+		this.props.removePluginStatuses( 'completed', 'error' );
 
 		if ( plugin.active ) {
 			recordGAEvent( 'Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', plugin.slug );
@@ -98,16 +102,11 @@ export class PluginActivateToggle extends Component {
 	}
 
 	render() {
-		const { site, plugin, disabled, translate } = this.props;
+		const { inProgress, site, plugin, disabled, translate } = this.props;
 
 		if ( ! site ) {
 			return null;
 		}
-
-		const inProgress = PluginsLog.isInProgressAction( site.ID, plugin.slug, [
-			'ACTIVATE_PLUGIN',
-			'DEACTIVATE_PLUGIN',
-		] );
 
 		if ( plugin && 'jetpack' === plugin.slug ) {
 			return (
@@ -146,9 +145,13 @@ PluginActivateToggle.defaultProps = {
 };
 
 export default connect(
-	null,
+	( state, { site, plugin } ) => ( {
+		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, activationActions ),
+	} ),
 	{
 		recordGoogleEvent,
 		recordTracksEvent,
+		removePluginStatuses,
+		togglePluginActivation,
 	}
 )( localize( PluginActivateToggle ) );

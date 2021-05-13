@@ -1,17 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, identity, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import TitleFormatEditor from 'components/title-format-editor';
+import TitleFormatEditor from 'calypso/components/title-format-editor';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,7 +16,9 @@ import { localize } from 'i18n-calypso';
  */
 import './style.scss';
 
-const titleTypes = translate => [
+const noop = () => {};
+
+const titleTypes = ( translate ) => [
 	{ value: 'frontPage', label: translate( 'Front Page' ) },
 	{ value: 'posts', label: translate( 'Posts' ) },
 	{ value: 'pages', label: translate( 'Pages' ) },
@@ -27,7 +26,7 @@ const titleTypes = translate => [
 	{ value: 'archives', label: translate( 'Archives' ) },
 ];
 
-const getValidTokens = translate => ( {
+const getValidTokens = ( translate ) => ( {
 	siteName: translate( 'Site Title' ),
 	tagline: translate( 'Tagline' ),
 	postTitle: translate( 'Post Title' ),
@@ -64,7 +63,6 @@ export class MetaTitleEditor extends Component {
 	static defaultProps = {
 		disabled: false,
 		onChange: noop,
-		translate: identity,
 	};
 
 	constructor( props ) {
@@ -86,7 +84,7 @@ export class MetaTitleEditor extends Component {
 
 		return (
 			<div className="meta-title-editor">
-				{ titleTypes( translate ).map( type => (
+				{ titleTypes( translate ).map( ( type ) => (
 					<TitleFormatEditor
 						key={ type.value }
 						disabled={ disabled }

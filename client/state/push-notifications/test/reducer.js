@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,11 +8,8 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import {
-	SERIALIZE,
-	DESERIALIZE,
-	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
-} from 'state/action-types';
+import { PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 
 const wpcomSubscription = {
 	ID: '42',
@@ -29,10 +24,9 @@ const wpcomSubscription = {
 
 describe( 'system reducer', () => {
 	test( 'should persist keys', () => {
-		const previousState = { system: { wpcomSubscription: wpcomSubscription } };
+		const previousState = { system: { wpcomSubscription } };
 		deepFreeze( previousState );
-		const action = { type: SERIALIZE };
-		const newState = reducer( previousState, action ).root();
+		const newState = serialize( reducer, previousState ).root();
 
 		expect( newState.system ).to.eql( { wpcomSubscription } );
 	} );
@@ -48,17 +42,15 @@ describe( 'system reducer', () => {
 			},
 		};
 		deepFreeze( previousState );
-		const action = { type: SERIALIZE };
-		const newState = reducer( previousState, action ).root();
+		const newState = serialize( reducer, previousState ).root();
 
 		expect( newState.system ).to.eql( { wpcomSubscription } );
 	} );
 
 	test( 'should restore keys', () => {
-		const previousState = { system: { wpcomSubscription: wpcomSubscription } };
+		const previousState = { system: { wpcomSubscription } };
 		deepFreeze( previousState );
-		const action = { type: DESERIALIZE };
-		const newState = reducer( previousState, action );
+		const newState = deserialize( reducer, previousState );
 
 		expect( newState.system ).to.eql( {
 			wpcomSubscription,
@@ -77,8 +69,7 @@ describe( 'system reducer', () => {
 			},
 		};
 		deepFreeze( previousState );
-		const action = { type: DESERIALIZE };
-		const newState = reducer( previousState, action );
+		const newState = deserialize( reducer, previousState );
 
 		expect( newState.system ).to.eql( {
 			wpcomSubscription: wpcomSubscriptionId,
@@ -109,8 +100,7 @@ describe( 'settings reducer', () => {
 			},
 		};
 		deepFreeze( previousState );
-		const action = { type: SERIALIZE };
-		const newState = reducer( previousState, action ).root();
+		const newState = serialize( reducer, previousState ).root();
 
 		expect( newState.settings ).to.eql( {
 			dismissedNotice: true,
@@ -127,8 +117,7 @@ describe( 'settings reducer', () => {
 			},
 		};
 		deepFreeze( previousState );
-		const action = { type: SERIALIZE };
-		const newState = reducer( previousState, action ).root();
+		const newState = serialize( reducer, previousState ).root();
 
 		expect( newState.settings ).to.eql( {
 			enabled: true,
@@ -144,7 +133,7 @@ describe( 'settings reducer', () => {
 			},
 		};
 		deepFreeze( previousState );
-		const newState = reducer( previousState, { type: DESERIALIZE } );
+		const newState = deserialize( reducer, previousState );
 
 		expect( newState.settings ).to.eql( {
 			dismissedNotice: true,
@@ -161,8 +150,7 @@ describe( 'settings reducer', () => {
 			},
 		};
 		deepFreeze( previousState );
-		const action = { type: DESERIALIZE };
-		const newState = reducer( previousState, action );
+		const newState = deserialize( reducer, previousState );
 
 		expect( newState.settings ).to.eql( {
 			enabled: true,

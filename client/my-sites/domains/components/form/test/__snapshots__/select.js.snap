@@ -4,11 +4,11 @@ exports[`<Select /> should render expected output 1`] = `
 <div
   className="mega-selectzilla select"
 >
-  <Localized(FormLabel)
+  <FormLabel
     htmlFor="select"
   >
     Select label
-  </Localized(FormLabel)>
+  </FormLabel>
   <FormSelect
     aria-describedby="validation-field-select"
     disabled={false}

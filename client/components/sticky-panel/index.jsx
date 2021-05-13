@@ -1,20 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import { throttle, defer } from 'lodash';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import React from 'react';
 import classNames from 'classnames';
-import afterLayoutFlush from 'lib/after-layout-flush';
 
 /**
  * Internal dependencies
  */
-import { isMobile } from 'lib/viewport';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
 /**
  * Style dependencies
@@ -34,8 +31,9 @@ const commonDefaultProps = {
 };
 
 export function calculateOffset() {
-	// Offset to account for Master Bar
-	return document.getElementById( 'header' ).getBoundingClientRect().height;
+	// Offset to account for Masterbar
+	const headerEl = document.getElementById( 'header' );
+	return headerEl ? headerEl.getBoundingClientRect().height : 0;
 }
 
 export function getBlockStyle( state ) {
@@ -93,7 +91,7 @@ class StickyPanelWithIntersectionObserver extends React.Component {
 		blockWidth: 0,
 	};
 
-	onIntersection = afterLayoutFlush( entries => {
+	onIntersection = afterLayoutFlush( ( entries ) => {
 		if ( ! entries || ! entries[ 0 ] ) {
 			return;
 		}
@@ -103,7 +101,7 @@ class StickyPanelWithIntersectionObserver extends React.Component {
 	} );
 
 	throttleOnResize = throttle(
-		() => this.setState( prevState => getDimensions( this, prevState.isSticky ) ),
+		() => this.setState( ( prevState ) => getDimensions( this, prevState.isSticky ) ),
 		RESIZE_RATE_IN_MS
 	);
 
@@ -166,7 +164,7 @@ class StickyPanelWithScrollEvent extends React.Component {
 	} );
 
 	throttleOnResize = throttle(
-		() => this.setState( prevState => getDimensionUpdates( this, prevState ) ),
+		() => this.setState( ( prevState ) => getDimensionUpdates( this, prevState ) ),
 		RESIZE_RATE_IN_MS
 	);
 
@@ -201,6 +199,6 @@ class StickyPanelWithScrollEvent extends React.Component {
 	}
 }
 
-export default ( hasIntersectionObserver
+export default hasIntersectionObserver
 	? StickyPanelWithIntersectionObserver
-	: StickyPanelWithScrollEvent );
+	: StickyPanelWithScrollEvent;

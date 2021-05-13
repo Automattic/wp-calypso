@@ -1,18 +1,19 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { find, noop } from 'lodash';
+import { find } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import ChartLegendItem from './legend-item';
 
-export default class ChartLegend extends React.Component {
+const noop = () => {};
+
+class ChartLegend extends React.Component {
 	static propTypes = {
 		activeCharts: PropTypes.array,
 		activeTab: PropTypes.object.isRequired,
@@ -28,18 +29,19 @@ export default class ChartLegend extends React.Component {
 		tabs: [],
 	};
 
-	onFilterChange = chartItem => {
+	onFilterChange = ( chartItem ) => {
 		this.props.clickHandler( chartItem );
 	};
 
 	render() {
-		const legendColors = [ 'chart__legend-color is-dark-blue' ],
-			activeTab = this.props.activeTab;
+		const legendColors = [ 'chart__legend-color is-dark-blue' ];
+		const activeTab = this.props.activeTab;
 
-		const legendItems = this.props.availableCharts.map( function( legendItem, index ) {
-			const colorClass = legendColors[ index ],
-				checked = -1 !== this.props.activeCharts.indexOf( legendItem ),
-				tab = find( this.props.tabs, { attr: legendItem } );
+		const legendItems = this.props.availableCharts.map( function ( legendItem, index ) {
+			const colorClass = legendColors[ index ];
+			const checked = -1 !== this.props.activeCharts.indexOf( legendItem );
+			const tab = find( this.props.tabs, { attr: legendItem } );
+
 			return (
 				<ChartLegendItem
 					key={ index }
@@ -67,3 +69,5 @@ export default class ChartLegend extends React.Component {
 		);
 	}
 }
+
+export default localize( ChartLegend );

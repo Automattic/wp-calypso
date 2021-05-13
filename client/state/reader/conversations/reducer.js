@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External dependencies
  */
-import { assign, forEach, omit, size } from 'lodash';
+import { forEach, omit, size } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,34 +11,35 @@ import {
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
 	READER_POSTS_RECEIVE,
-} from 'state/action-types';
+} from 'calypso/state/reader/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from './follow-status';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 import { key } from './utils';
 
 /**
  * Tracks all known conversation following statuses.
  */
-export const items = createReducer(
-	{},
-	{
-		[ READER_CONVERSATION_FOLLOW ]: ( state, action ) => {
-			const newState = assign( {}, state, {
+export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_CONVERSATION_FOLLOW: {
+			const newState = {
+				...state,
 				[ key(
 					action.payload.siteId,
 					action.payload.postId
 				) ]: CONVERSATION_FOLLOW_STATUS.following,
-			} );
+			};
 			return newState;
-		},
-		[ READER_CONVERSATION_MUTE ]: ( state, action ) => {
-			const newState = assign( {}, state, {
+		}
+		case READER_CONVERSATION_MUTE: {
+			const newState = {
+				...state,
 				[ key( action.payload.siteId, action.payload.postId ) ]: CONVERSATION_FOLLOW_STATUS.muting,
-			} );
+			};
 			return newState;
-		},
-		[ READER_CONVERSATION_UPDATE_FOLLOW_STATUS ]: ( state, action ) => {
+		}
+		case READER_CONVERSATION_UPDATE_FOLLOW_STATUS: {
 			const stateKey = key( action.payload.siteId, action.payload.postId );
 
 			// If followStatus is null, remove the key from the state map entirely
@@ -47,20 +47,21 @@ export const items = createReducer(
 				return omit( state, stateKey );
 			}
 
-			const newState = assign( {}, state, {
+			const newState = {
+				...state,
 				[ stateKey ]: action.payload.followStatus,
-			} );
+			};
 
 			return newState;
-		},
-		[ READER_POSTS_RECEIVE ]: ( state, action ) => {
+		}
+		case READER_POSTS_RECEIVE: {
 			if ( ! action.posts ) {
 				return state;
 			}
 
 			const newState = {};
 
-			forEach( action.posts, post => {
+			forEach( action.posts, ( post ) => {
 				if ( post.is_following_conversation ) {
 					newState[ key( post.site_ID, post.ID ) ] = CONVERSATION_FOLLOW_STATUS.following;
 				}
@@ -71,10 +72,11 @@ export const items = createReducer(
 			}
 
 			return { ...state, ...newState };
-		},
-	},
-	itemsSchema
-);
+		}
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	items,

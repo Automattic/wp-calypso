@@ -5,13 +5,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import Count from 'components/count';
-import { preload } from 'sections-helper';
+import Count from 'calypso/components/count';
+import { preload } from 'calypso/sections-helper';
 
 /**
  * Style dependencies
@@ -25,6 +25,7 @@ class NavItem extends PureComponent {
 		selected: PropTypes.bool,
 		tabIndex: PropTypes.number,
 		onClick: PropTypes.func,
+		onKeyPress: PropTypes.func,
 		isExternalLink: PropTypes.bool,
 		disabled: PropTypes.bool,
 		count: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
@@ -51,7 +52,8 @@ class NavItem extends PureComponent {
 		itemClasses[ 'section-nav-' + itemClassPrefix ] = true;
 		const itemClassName = classNames( this.props.className, itemClasses );
 
-		let target, onClick;
+		let target;
+		let onClick;
 
 		if ( this.props.isExternalLink ) {
 			target = '_blank';
@@ -74,6 +76,7 @@ class NavItem extends PureComponent {
 					disabled={ this.props.disabled }
 					role="menuitem"
 					rel={ this.props.isExternalLink ? 'external' : null }
+					onKeyPress={ this.props.onKeyPress }
 				>
 					<span className={ 'section-nav-' + itemClassPrefix + '__text' }>
 						{ this.props.children }

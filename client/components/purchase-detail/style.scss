@@ -1,5 +1,5 @@
 .purchase-detail {
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ),
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 	box-sizing: border-box;
 	color: var( --color-text-subtle );
@@ -9,8 +9,8 @@
 		border-bottom: none;
 	}
 
-	@include breakpoint( '>660px' ) {
-		border-radius: 3px;
+	@include breakpoint-deprecated( '>480px' ) {
+		border-radius: 2px;
 		max-width: 700px;
 		margin: 16px auto;
 		text-align: left;
@@ -24,7 +24,7 @@
 		.purchase-detail__button,
 		.purchase-detail__description,
 		.purchase-detail__title {
-			@include placeholder( 23% );
+			@include placeholder( --color-neutral-10 );
 
 			display: block;
 		}
@@ -43,7 +43,7 @@
 			margin-top: 3px;
 			width: 85%;
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				margin: 0 auto;
 			}
 		}
@@ -54,7 +54,7 @@
 	padding: 32px;
 	display: flex;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		flex-wrap: wrap;
 	}
 }
@@ -63,27 +63,28 @@
 	width: 100%;
 	flex-shrink: 0;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		width: 178px;
 	}
 }
 
 .purchase-detail__button {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: block;
+		text-align: center;
 	}
 }
 
 .purchase-detail__icon {
-	background: var( --color-neutral-500 );
+	background: var( --color-neutral-50 );
 	border-radius: 50%;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	margin-bottom: 10px;
 	padding: 16px;
 	width: 100%;
 	flex-shrink: 0;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		order: 2;
 		width: 178px;
 	}
@@ -96,7 +97,7 @@
 		top: -3px;
 		width: 24px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			right: -42px;
 			top: -6px;
 		}
@@ -122,7 +123,7 @@
 		margin-top: 0;
 		padding: 0;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			width: 150px;
 		}
 	}
@@ -130,8 +131,8 @@
 
 .purchase-detail__title {
 	clear: none;
-	color: var( --color-neutral-400 );
-	font-size: 21px;
+	color: var( --color-text-subtle );
+	font-size: $font-title-small;
 }
 
 .purchase-detail__description {
@@ -141,6 +142,7 @@
 
 .purchase-detail__text {
 	flex-grow: 1;
+	word-break: break-word;
 }
 
 .purchase-detail__body {
@@ -157,7 +159,7 @@
 .purchase-detail__required-notice {
 	background-color: var( --color-warning );
 	color: var( --color-text );
-	font-size: 14px;
+	font-size: $font-body-small;
 	padding: 8px;
 	text-align: center;
 }

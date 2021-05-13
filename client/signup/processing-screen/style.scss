@@ -36,26 +36,26 @@
 	opacity: 0.1;
 	animation: focus 5s infinite ease-in-out;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		left: 0;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		transform: scale( 0.8 );
 		left: 130px;
 		top: -120px;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		transform: scale( 1.2 );
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		transform: scale( 1.5 );
 	}
 
 	.gridicon {
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 		position: absolute;
 		height: auto;
 		width: auto;
@@ -262,7 +262,7 @@
 	max-width: 500px;
 	margin: 0 auto;
 	padding-bottom: 30px;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 }
 
 /* Title */

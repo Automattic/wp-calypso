@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Disallow strings which include only placeholders
+ * @file Disallow strings which include only placeholders
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -10,9 +9,9 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/i18n-no-placeholders-only' ),
-	config = { env: { es6: true } }, // support for string templates
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require( '../../../lib/rules/i18n-no-placeholders-only' );
+const config = { env: { es6: true } }; // support for string templates
+const RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests

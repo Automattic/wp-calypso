@@ -1,7 +1,8 @@
-/** @format */
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/reader-ui/init';
 
-function getCurrentStream( state ) {
-	return state.ui.reader.currentStream;
+export default function getCurrentStream( state ) {
+	return state.readerUi.currentStream;
 }
-
-export default getCurrentStream;

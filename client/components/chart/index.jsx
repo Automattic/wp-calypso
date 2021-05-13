@@ -1,21 +1,18 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
-import { connect } from 'react-redux';
+import { localize, withRtl } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { hasTouch } from 'lib/touch-detect';
-import { useWindowResizeCallback } from 'lib/track-element-size';
-import Tooltip from 'components/tooltip';
-import Notice from 'components/notice';
-import isRtlSelector from 'state/selectors/is-rtl';
+import { hasTouch } from 'calypso/lib/touch-detect';
+import { useWindowResizeCallback } from 'calypso/lib/track-element-size';
+import Tooltip from 'calypso/components/tooltip';
+import Notice from 'calypso/components/notice';
 import BarContainer from './bar-container';
 
 /**
@@ -23,13 +20,15 @@ import BarContainer from './bar-container';
  */
 import './style.scss';
 
+const noop = () => {};
 const isTouch = hasTouch();
+const CHART_PADDING = 20;
 
 /**
  * Auxiliary method to calculate the maximum value for the Y axis, based on a dataset.
- * @param {Array} values An array of numeric values.
  *
- * @return {Number} The maximum value for the Y axis.
+ * @param {Array} values An array of numeric values.
+ * @returns {number} The maximum value for the Y axis.
  */
 function getYAxisMax( values ) {
 	// Calculate max value in a dataset.
@@ -57,7 +56,9 @@ function getYAxisMax( values ) {
 // The Chart component.
 function Chart( {
 	barClick,
+	children,
 	data,
+	isPlaceholder,
 	isRtl,
 	minBarWidth,
 	minTouchBarWidth,
@@ -66,7 +67,7 @@ function Chart( {
 } ) {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
 	const [ sizing, setSizing ] = useState( { clientWidth: 650, hasResized: false } );
-
+	const [ yAxisSize, setYAxisSize ] = useState( { clientWidth: 0, hasResized: false } );
 	const { hasResized } = sizing;
 
 	// Callback to handle tooltip changes.
@@ -79,12 +80,9 @@ function Chart( {
 		}
 	}, [] );
 
-	// Callback to handle element size changes.
-	// Needs to be memoized to avoid causing the `useWindowResizeCallback` custom hook to re-subscribe.
-	const handleContentRectChange = useCallback( contentRect => {
-		setSizing( prevSizing => {
-			const clientWidth = contentRect.width - 82;
-
+	const handleYAxisSizeChange = useCallback( ( contentRect ) => {
+		setYAxisSize( ( prevSizing ) => {
+			const clientWidth = contentRect.width;
 			if ( ! prevSizing.hasResized || clientWidth !== prevSizing.clientWidth ) {
 				return { clientWidth, hasResized: true };
 			}
@@ -92,15 +90,35 @@ function Chart( {
 		} );
 	}, [] );
 
+	const yAxisRef = useWindowResizeCallback( handleYAxisSizeChange );
+
+	// Callback to handle element size changes.
+	// Needs to be memoized to avoid causing the `useWindowResizeCallback` custom hook to re-subscribe.
+	const handleContentRectChange = useCallback(
+		( contentRect ) => {
+			setSizing( ( prevSizing ) => {
+				const effectiveYAxisSize =
+					yAxisRef && yAxisRef.current ? yAxisRef.current.clientWidth : yAxisSize.clientWidth;
+				const clientWidth = contentRect.width - effectiveYAxisSize;
+				if ( ! prevSizing.hasResized || clientWidth !== prevSizing.clientWidth ) {
+					return { clientWidth, hasResized: true };
+				}
+				return prevSizing;
+			} );
+		},
+		[ yAxisSize ]
+	);
+
 	// Subscribe to changes to element size and position.
 	const resizeRef = useWindowResizeCallback( handleContentRectChange );
 
 	const minWidth = isTouch ? minTouchBarWidth : minBarWidth;
-	const width = isTouch && sizing.clientWidth <= 0 ? 350 : sizing.clientWidth; // mobile safari bug with zero width
+
+	const width = isTouch && sizing.clientWidth <= 0 ? 350 : sizing.clientWidth - CHART_PADDING; // mobile safari bug with zero width
 	const maxBars = Math.floor( width / minWidth );
 
 	// Memoize data calculations to avoid performing them too often.
-	const { chartData, isEmptyChart, yMax } = useMemo(() => {
+	const { chartData, isEmptyChart, yMax } = useMemo( () => {
 		if ( ! hasResized ) {
 			return {};
 		}
@@ -110,10 +128,10 @@ function Chart( {
 
 		return {
 			chartData: nextData,
-			isEmptyChart: Boolean( nextVals.length && ! nextVals.some( a => a > 0 ) ),
+			isEmptyChart: Boolean( nextVals.length && ! nextVals.some( ( a ) => a > 0 ) ),
 			yMax: getYAxisMax( nextVals ),
 		};
-	}, [ data, maxBars, hasResized ]);
+	}, [ data, maxBars, hasResized ] );
 
 	// If we don't have any sizing info yet, render an empty chart with the ref.
 	if ( ! hasResized ) {
@@ -124,41 +142,46 @@ function Chart( {
 	const { isTooltipVisible, tooltipContext, tooltipPosition, tooltipData } = tooltip;
 
 	return (
-		<div ref={ resizeRef } className="chart">
+		<div ref={ resizeRef } className={ classNames( 'chart', { 'is-placeholder': isPlaceholder } ) }>
 			<div className="chart__y-axis-markers">
 				<div className="chart__y-axis-marker is-hundred" />
 				<div className="chart__y-axis-marker is-fifty" />
 				<div className="chart__y-axis-marker is-zero" />
 
-				{ isEmptyChart && (
+				{ ( isPlaceholder || isEmptyChart ) && (
 					<div className="chart__empty">
-						<Notice
-							className="chart__empty-notice"
-							status="is-warning"
-							isCompact
-							text={ translate( 'No activity this period', {
-								context: 'Message on empty bar chart in Stats',
-								comment: 'Should be limited to 32 characters to prevent wrapping',
-							} ) }
-							showDismiss={ false }
-						/>
+						{ children || (
+							<Notice
+								className="chart__empty-notice"
+								status="is-warning"
+								isCompact
+								text={ translate( 'No activity this period', {
+									context: 'Message on empty bar chart in Stats',
+									comment: 'Should be limited to 32 characters to prevent wrapping',
+								} ) }
+								showDismiss={ false }
+							/>
+						) }
 					</div>
 				) }
 			</div>
-			<div className="chart__y-axis">
-				<div className="chart__y-axis-width-fix">{ numberFormat( 100000 ) }</div>
-				<div className="chart__y-axis-label is-hundred">
-					{ yMax > 1 ? numberFormat( yMax ) : numberFormat( yMax, 2 ) }
+			{ ! isPlaceholder && (
+				<div ref={ yAxisRef } className="chart__y-axis">
+					<div className="chart__y-axis-width-fix">{ numberFormat( 1e5 ) }</div>
+					<div className="chart__y-axis-label is-hundred">
+						{ yMax > 1 ? numberFormat( yMax ) : numberFormat( yMax, 2 ) }
+					</div>
+					<div className="chart__y-axis-label is-fifty">
+						{ yMax > 1 ? numberFormat( yMax / 2 ) : numberFormat( yMax / 2, 2 ) }
+					</div>
+					<div className="chart__y-axis-label is-zero">{ numberFormat( 0 ) }</div>
 				</div>
-				<div className="chart__y-axis-label is-fifty">
-					{ yMax > 1 ? numberFormat( yMax / 2 ) : numberFormat( yMax / 2, 2 ) }
-				</div>
-				<div className="chart__y-axis-label is-zero">{ numberFormat( 0 ) }</div>
-			</div>
+			) }
 			<BarContainer
 				barClick={ barClick }
 				chartWidth={ width }
 				data={ chartData }
+				isPlaceholder={ isPlaceholder }
 				isRtl={ isRtl }
 				isTouch={ hasTouch() }
 				setTooltip={ handleTooltipChange }
@@ -182,6 +205,7 @@ function Chart( {
 Chart.propTypes = {
 	barClick: PropTypes.func,
 	data: PropTypes.array,
+	isPlaceholder: PropTypes.bool,
 	isRtl: PropTypes.bool,
 	loading: PropTypes.bool,
 	minBarWidth: PropTypes.number,
@@ -192,10 +216,9 @@ Chart.propTypes = {
 
 Chart.defaultProps = {
 	barClick: noop,
+	isPlaceholder: false,
 	minBarWidth: 15,
 	minTouchBarWidth: 42,
 };
 
-export default connect( state => ( {
-	isRtl: isRtlSelector( state ),
-} ) )( localize( Chart ) );
+export default withRtl( localize( Chart ) );

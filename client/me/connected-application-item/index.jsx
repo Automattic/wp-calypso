@@ -9,12 +9,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ConnectedApplicationIcon from 'me/connected-application-icon';
-import FoldableCard from 'components/foldable-card';
-import safeProtocolUrl from 'lib/safe-protocol-url';
-import { deleteConnectedApplication } from 'state/connected-applications/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { Button } from '@automattic/components';
+import ConnectedApplicationIcon from 'calypso/me/connected-application-icon';
+import FoldableCard from 'calypso/components/foldable-card';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
+import { deleteConnectedApplication } from 'calypso/state/connected-applications/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -34,11 +35,11 @@ class ConnectedApplicationItem extends React.Component {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action, label );
 	};
 
-	getClickHandler = action => {
+	getClickHandler = ( action ) => {
 		return () => this.recordClickEvent( action );
 	};
 
-	disconnect = event => {
+	disconnect = ( event ) => {
 		if ( this.props.isPlaceholder ) {
 			return;
 		}
@@ -120,7 +121,7 @@ class ConnectedApplicationItem extends React.Component {
 		return (
 			<div>
 				<h2>
-					{ this.props.translate( 'Access Scope' ) }
+					{ this.props.translate( 'Access scope' ) }
 					{ this.renderAccessScopeBadge() }
 				</h2>
 
@@ -139,7 +140,7 @@ class ConnectedApplicationItem extends React.Component {
 
 		return (
 			<div>
-				<h2>{ this.props.translate( 'Application Website' ) }</h2>
+				<h2>{ this.props.translate( 'Application website' ) }</h2>
 				<p>
 					<a
 						href={ safeProtocolUrl( URL ) }
@@ -152,9 +153,10 @@ class ConnectedApplicationItem extends React.Component {
 				</p>
 
 				{ this.props.translate(
-					'{{detailTitle}}Authorized On{{/detailTitle}}{{detailDescription}}%(date)s{{/detailDescription}}',
+					'{{detailTitle}}Authorized on{{/detailTitle}}{{detailDescription}}%(date)s{{/detailDescription}}',
 					{
 						components: {
+							// eslint-disable-next-line jsx-a11y/heading-has-content
 							detailTitle: <h2 />,
 							detailDescription: (
 								<p className="connected-application-item__connection-detail-description" />
@@ -167,7 +169,7 @@ class ConnectedApplicationItem extends React.Component {
 				) }
 				<div>{ this.renderScopeMessage() }</div>
 
-				<h2>{ this.props.translate( 'Access Permissions' ) }</h2>
+				<h2>{ this.props.translate( 'Access permissions' ) }</h2>
 				<ul className="connected-application-item__connection-detail-descriptions">
 					{ permissions.map( ( { name, description } ) => (
 						<li key={ `permission-${ name }` }>{ description }</li>
@@ -223,10 +225,7 @@ class ConnectedApplicationItem extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		deleteConnectedApplication,
-		recordGoogleEvent,
-	}
-)( localize( ConnectedApplicationItem ) );
+export default connect( null, {
+	deleteConnectedApplication,
+	recordGoogleEvent,
+} )( localize( withLocalizedMoment( ConnectedApplicationItem ) ) );

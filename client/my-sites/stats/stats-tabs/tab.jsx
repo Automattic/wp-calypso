@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 class StatsTabsTab extends React.Component {
 	static displayName = 'StatsTabsTab';
@@ -26,18 +24,15 @@ class StatsTabsTab extends React.Component {
 		format: PropTypes.func,
 	};
 
-	clickHandler = event => {
+	clickHandler = ( event ) => {
 		if ( this.props.tabClick ) {
 			event.preventDefault();
 			this.props.tabClick( this.props );
 		}
 	};
 
-	ensureValue = value => {
-		const { loading, children, numberFormat, format } = this.props;
-		if ( children ) {
-			return null;
-		}
+	ensureValue = ( value ) => {
+		const { loading, numberFormat, format } = this.props;
 
 		if ( ! loading && ( value || value === 0 ) ) {
 			return format ? format( value ) : numberFormat( value );
@@ -68,11 +63,12 @@ class StatsTabsTab extends React.Component {
 		} );
 
 		const tabIcon = gridicon ? <Gridicon icon={ gridicon } size={ 18 } /> : null;
-		const tabLabel = <span className="label">{ label }</span>;
-		const tabValue = <span className="value">{ this.ensureValue( value ) }</span>;
+		const tabLabel = <span className="stats-tabs__label label">{ label }</span>;
+		const tabValue = <span className="stats-tabs__value value">{ this.ensureValue( value ) }</span>;
 		const hasClickAction = href || tabClick;
 
 		return (
+			// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
 			<li className={ tabClass } onClick={ this.clickHandler }>
 				{ hasClickAction ? (
 					<a href={ href }>
@@ -82,7 +78,7 @@ class StatsTabsTab extends React.Component {
 						{ children }
 					</a>
 				) : (
-					<span className="no-link">
+					<span className="stats-tabs__span no-link">
 						{ tabIcon }
 						{ tabLabel }
 						{ tabValue }

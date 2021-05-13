@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { filter, head, orderBy, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import InlineSupportLink from 'components/inline-support-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 function getConfig( { siteTitle = '' } = {} ) {
 	const importerConfig = {};
@@ -21,29 +19,37 @@ function getConfig( { siteTitle = '' } = {} ) {
 		type: 'file',
 		title: 'WordPress',
 		icon: 'wordpress',
-		description: translate( 'Import posts, pages, and media from a WordPress export\u00A0file.' ),
-		uploadDescription: translate(
-			'Upload a {{b}}WordPress export file{{/b}} to start ' +
-				'importing into {{b2}}%(title)s{{/b2}}. A WordPress export is ' +
-				'an XML file with your page and post content, or a zip archive ' +
-				'containing several XML files. ' +
-				'Need help {{inlineSupportLink/}}?',
+		description: translate(
+			'Import posts, pages, and media from a WordPress export\u00A0file to {{b}}%(siteTitle)s{{/b}}.',
 			{
-				args: { title: siteTitle },
+				args: {
+					siteTitle,
+				},
 				components: {
 					b: <strong />,
-					b2: <strong />,
-					inlineSupportLink: (
+				},
+			}
+		),
+		uploadDescription: translate(
+			'A WordPress export is ' +
+				'an XML file with your page and post content, or a zip archive ' +
+				'containing several XML files. ' +
+				'{{supportLink/}}',
+			{
+				components: {
+					supportLink: (
 						<InlineSupportLink
-							supportPostId={ 2087 }
-							supportLink={ 'https://en.support.wordpress.com/export/' }
-							text={ translate( 'exporting your content' ) }
+							supportPostId={ 67084 }
+							supportLink="https://wordpress.com/support/coming-from-self-hosted/"
 							showIcon={ false }
-						/>
+						>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
 					),
 				},
 			}
 		),
+		overrideDestination: '/migrate/%SITE_SLUG%',
 		weight: 1,
 	};
 
@@ -54,19 +60,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 		title: 'Blogger',
 		icon: 'blogger-alt',
 		description: translate(
-			'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
-			{
-				args: {
-					importerName: 'Blogger',
-				},
-			}
-		),
-		uploadDescription: translate(
-			'Upload a {{b}}%(importerName)s export file{{/b}} ' +
-				'to start importing into {{b}}%(siteTitle)s{{/b}}. ' +
-				'A %(importerName)s export file is an XML file ' +
-				'containing your page and post content. ' +
-				'Need help {{inlineSupportLink/}}?',
+			'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
 			{
 				args: {
 					importerName: 'Blogger',
@@ -74,30 +68,30 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 				components: {
 					b: <strong />,
-					inlineSupportLink: (
+				},
+			}
+		),
+		uploadDescription: translate(
+			'A %(importerName)s export file is an XML file ' +
+				'containing your page and post content. ' +
+				'{{supportLink/}}',
+			{
+				args: {
+					importerName: 'Blogger',
+				},
+				components: {
+					supportLink: (
 						<InlineSupportLink
 							supportPostId={ 66764 }
-							supportLink={ 'https://en.support.wordpress.com/import/coming-from-blogger/#import' }
-							text={ translate( 'exporting your content' ) }
+							supportLink="https://wordpress.com/support/import/coming-from-blogger/"
 							showIcon={ false }
-						/>
+						>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
 					),
 				},
 			}
 		),
-		weight: 0,
-	};
-
-	importerConfig[ 'godaddy-gocentral' ] = {
-		engine: 'godaddy-gocentral',
-		key: 'importer-type-godaddy-gocentral',
-		type: 'url',
-		title: 'GoDaddy',
-		icon: 'godaddy-gocentral',
-		description: translate(
-			'Import posts, pages, and media from sites made with the GoDaddy GoCentral website builder.'
-		),
-		uploadDescription: translate( 'Type your existing site URL to start the import.' ),
 		weight: 0,
 	};
 
@@ -108,27 +102,34 @@ function getConfig( { siteTitle = '' } = {} ) {
 		title: 'Medium',
 		icon: 'medium',
 		description: translate(
-			'Import posts, tags, images, and videos ' + 'from a Medium export file.'
-		),
-		uploadDescription: translate(
-			'Upload your {{b}}%(importerName)s export file{{/b}} to start importing into ' +
-				'{{b}}%(siteTitle)s{{/b}}. A %(importerName)s export file is a ZIP ' +
-				'file containing several HTML files with your stories. ' +
-				'Need help {{inlineSupportLink/}}?',
+			'Import posts, tags, images, and videos ' +
+				'from a Medium export file to {{b}}%(siteTitle)s{{/b}}.',
 			{
 				args: {
-					importerName: 'Medium',
 					siteTitle,
 				},
 				components: {
 					b: <strong />,
-					inlineSupportLink: (
+				},
+			}
+		),
+		uploadDescription: translate(
+			'A %(importerName)s export file is a ZIP ' +
+				'file containing several HTML files with your stories. ' +
+				'{{supportLink/}}',
+			{
+				args: {
+					importerName: 'Medium',
+				},
+				components: {
+					supportLink: (
 						<InlineSupportLink
 							supportPostId={ 93180 }
-							supportLink={ 'https://en.support.wordpress.com/import/import-from-medium/' }
-							text={ translate( 'exporting your content' ) }
+							supportLink="https://wordpress.com/support/import/import-from-medium/"
 							showIcon={ false }
-						/>
+						>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
 					),
 				},
 			}
@@ -143,19 +144,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 		title: 'Squarespace',
 		icon: 'squarespace',
 		description: translate(
-			'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
-			{
-				args: {
-					importerName: 'Squarespace',
-				},
-			}
-		),
-		uploadDescription: translate(
-			'Upload a {{b}}%(importerName)s export file{{/b}} ' +
-				'to start importing into {{b}}%(siteTitle)s{{/b}}. ' +
-				'A %(importerName)s export file is an XML file ' +
-				'containing your page and post content. ' +
-				'Need help {{inlineSupportLink/}}?',
+			'Import posts, pages, comments, tags, and images from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
 			{
 				args: {
 					importerName: 'Squarespace',
@@ -163,13 +152,26 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 				components: {
 					b: <strong />,
-					inlineSupportLink: (
+				},
+			}
+		),
+		uploadDescription: translate(
+			'A %(importerName)s export file is an XML file ' +
+				'containing your page and post content. ' +
+				'{{supportLink/}}',
+			{
+				args: {
+					importerName: 'Squarespace',
+				},
+				components: {
+					supportLink: (
 						<InlineSupportLink
 							supportPostId={ 87696 }
-							supportLink={ 'https://en.support.wordpress.com/import/import-from-squarespace' }
-							text={ translate( 'exporting your content' ) }
+							supportLink="https://wordpress.com/support/import/import-from-squarespace/"
 							showIcon={ false }
-						/>
+						>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
 					),
 				},
 			}
@@ -183,8 +185,30 @@ function getConfig( { siteTitle = '' } = {} ) {
 		type: 'url',
 		title: 'Wix',
 		icon: 'wix',
-		description: translate( 'Import posts, pages, and media from your Wix.com site.' ),
-		uploadDescription: translate( 'Type your existing site URL to start the import.' ),
+		description: translate(
+			'Import posts, pages, and media from your Wix.com site to {{b}}%(siteTitle)s{{/b}}.',
+			{
+				args: {
+					siteTitle,
+				},
+				components: {
+					b: <strong />,
+				},
+			}
+		),
+		uploadDescription: translate( 'Enter the URL of your existing site. ' + '{{supportLink/}}', {
+			components: {
+				supportLink: (
+					<InlineSupportLink
+						supportPostId={ 147777 }
+						supportLink="https://wordpress.com/support/import/import-from-wix/"
+						showIcon={ false }
+					>
+						{ translate( 'Need help?' ) }
+					</InlineSupportLink>
+				),
+			},
+		} ),
 		weight: 0,
 	};
 
@@ -202,11 +226,11 @@ export function getImporters( params = {} ) {
 }
 
 export function getFileImporters( params = {} ) {
-	return filter( getImporters( params ), importer => importer.type === 'file' );
+	return filter( getImporters( params ), ( importer ) => importer.type === 'file' );
 }
 
 export function getImporterByKey( key, params = {} ) {
-	return head( filter( getImporters( params ), importer => importer.key === key ) );
+	return head( filter( getImporters( params ), ( importer ) => importer.key === key ) );
 }
 
 export default getConfig;

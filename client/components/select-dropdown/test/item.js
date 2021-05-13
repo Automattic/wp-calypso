@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -27,20 +26,6 @@ describe( 'item', () => {
 			const dropdownItem = shallow( <SelectDropdownItem>Published</SelectDropdownItem> );
 			expect( dropdownItem.children( 'a.select-dropdown__item' ).length ).to.eql( 1 );
 			expect( dropdownItem.find( 'span.select-dropdown__item-text' ).text() ).to.eql( 'Published' );
-		} );
-
-		test( 'should not have `tabindex` attribute, when the parent dropdown is closed', () => {
-			const dropdownItem = shallow(
-				<SelectDropdownItem isDropdownOpen={ false }>Published</SelectDropdownItem>
-			);
-			expect( dropdownItem.children( { tabIndex: 0 } ).length ).to.eql( 0 );
-		} );
-
-		test( 'should have `tabindex` attribute set to `0`, only when the parent dropdown is open (issue#9206)', () => {
-			const dropdownItem = shallow(
-				<SelectDropdownItem isDropdownOpen={ true }>Published</SelectDropdownItem>
-			);
-			expect( dropdownItem.children( { tabIndex: 0 } ).length ).to.eql( 1 );
 		} );
 	} );
 

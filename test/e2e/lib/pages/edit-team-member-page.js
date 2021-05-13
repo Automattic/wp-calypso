@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -34,6 +32,9 @@ export default class EditTeamMemberPage extends AsyncBaseContainer {
 			this.driver,
 			By.css( 'button.form-button.is-primary:not([disabled])' )
 		);
-		return await DriverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.is-success' ) );
+		return await DriverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			By.css( '.is-success' )
+		);
 	}
 }

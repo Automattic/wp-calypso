@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,10 +10,11 @@ import qs from 'qs';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
-import Intervals from 'blocks/stats-navigation/intervals';
-import DatePicker from 'my-sites/stats/stats-date-picker';
+import HeaderCake from 'calypso/components/header-cake';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import StatsPeriodNavigation from 'calypso/my-sites/stats/stats-period-navigation';
+import Intervals from 'calypso/blocks/stats-navigation/intervals';
+import DatePicker from 'calypso/my-sites/stats/stats-date-picker';
 import { getWidgetPath } from 'woocommerce/app/store-stats/utils';
 
 const goBack = ( unit, slug, queryParams ) => {
@@ -55,9 +55,7 @@ const StoreStatsPeriodNav = ( {
 					period={ unit }
 					date={
 						unit === 'week'
-							? moment( selectedDate, 'YYYY-MM-DD' )
-									.subtract( 1, 'days' )
-									.format( 'YYYY-MM-DD' )
+							? moment( selectedDate, 'YYYY-MM-DD' ).subtract( 1, 'days' ).format( 'YYYY-MM-DD' )
 							: selectedDate
 					}
 					query={ query }
@@ -85,4 +83,4 @@ StoreStatsPeriodNav.propTypes = {
 	queryParams: PropTypes.object,
 };
 
-export default localize( StoreStatsPeriodNav );
+export default localize( withLocalizedMoment( StoreStatsPeriodNav ) );

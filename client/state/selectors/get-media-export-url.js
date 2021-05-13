@@ -1,8 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { get } from 'lodash';
 
-export default state => get( state, 'exporter.mediaExportUrl', null );
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/exporter/init';
+
+export default ( state ) => get( state, 'exporter.mediaExportUrl', null );

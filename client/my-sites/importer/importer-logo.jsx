@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,10 +8,9 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import GoDaddyGoCentralLogo from './logos/godaddy-gocentral';
 import WixLogo from './logos/wix';
 import MediumLogo from './logos/medium';
-import SocialLogo from 'components/social-logo';
+import SocialLogo from 'calypso/components/social-logo';
 
 /**
  * Style dependencies
@@ -26,10 +24,6 @@ const ImporterLogo = ( { icon } ) => {
 
 	if ( 'wix' === icon ) {
 		return <WixLogo />;
-	}
-
-	if ( 'godaddy-gocentral' === icon ) {
-		return <GoDaddyGoCentralLogo size={ 48 } />;
 	}
 
 	if ( 'medium' === icon ) {

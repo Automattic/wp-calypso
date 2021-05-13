@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,28 +17,28 @@ export default class ImportPage extends AsyncBaseContainer {
 	}
 
 	async previewSiteToBeImported() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.site-importer__site-preview' )
 		);
 
-		const isSitePreviewShowing = await driverHelper.isEventuallyPresentAndDisplayed(
+		const isSitePreviewShowing = await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			By.css( '.mini-site-preview__favicon' )
+			By.css( '.site-importer__site-preview-column-container' )
 		);
 
 		assert( isSitePreviewShowing, 'Site preview should be shown' );
 	}
 
 	async siteImporterInputPane() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.site-importer__site-importer-pane' )
 		);
 	}
 
 	async siteImporterCanStartImport() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.site-importer__site-preview-confirm-button' )
 		);

@@ -1,27 +1,25 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { identity } from 'lodash';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import ScreenReaderText from 'components/screen-reader-text';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import UsersStore from 'lib/users/store';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import Gridicon from 'calypso/components/gridicon';
+import useUsersQuery from 'calypso/data/users/use-users-query';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { ScreenReaderText } from '@automattic/components';
 
 class SharingConnection extends Component {
 	static propTypes = {
@@ -49,7 +47,6 @@ class SharingConnection extends Component {
 		recordGoogleEvent: () => {},
 		showDisconnect: false,
 		siteId: 0,
-		translate: identity,
 		userHasCaps: false,
 		userId: 0,
 		defaultServiceIcon: {
@@ -69,7 +66,7 @@ class SharingConnection extends Component {
 		}
 	};
 
-	toggleSitewideConnection = event => {
+	toggleSitewideConnection = ( event ) => {
 		const { path } = this.props;
 
 		if ( ! this.state.isSavingSitewide ) {
@@ -168,21 +165,6 @@ class SharingConnection extends Component {
 			: this.props.connection.shared;
 	}
 
-	getConnectionKeyringUserLabel() {
-		const { translate, keyringUser, userId } = this.props;
-
-		if ( keyringUser && userId !== keyringUser.ID ) {
-			return (
-				<aside className="sharing-connection__keyring-user">
-					{ translate( 'Connected by %(username)s', {
-						args: { username: keyringUser.nice_name },
-						context: 'Sharing: connections',
-					} ) }
-				</aside>
-			);
-		}
-	}
-
 	getConnectionSitewideElement() {
 		if ( 'publicize' !== this.props.service.type ) {
 			return;
@@ -192,9 +174,8 @@ class SharingConnection extends Component {
 
 		if ( this.props.userHasCaps ) {
 			content.push(
-				<input
+				<FormInputCheckbox
 					key="checkbox"
-					type="checkbox"
 					checked={ this.isConnectionShared() }
 					onChange={ this.toggleSitewideConnection }
 					readOnly={ this.state.isSavingSitewide }
@@ -216,18 +197,22 @@ class SharingConnection extends Component {
 		}
 
 		if ( content.length ) {
-			return <label className="sharing-connection__account-sitewide-connection">{ content }</label>;
+			return (
+				<FormLabel className="sharing-connection__account-sitewide-connection">
+					{ content }
+				</FormLabel>
+			);
 		}
 	}
 
 	render() {
-		const connectionSitewideElement = this.getConnectionSitewideElement(),
-			connectionClasses = classNames( 'sharing-connection', {
-				disabled: this.props.isDisconnecting || this.props.isRefreshing,
-			} ),
-			statusClasses = classNames( 'sharing-connection__account-status', {
-				'is-shareable': undefined !== connectionSitewideElement,
-			} );
+		const connectionSitewideElement = this.getConnectionSitewideElement();
+		const connectionClasses = classNames( 'sharing-connection', {
+			disabled: this.props.isDisconnecting || this.props.isRefreshing,
+		} );
+		const statusClasses = classNames( 'sharing-connection__account-status', {
+			'is-shareable': undefined !== connectionSitewideElement,
+		} );
 
 		return (
 			<li className={ connectionClasses }>
@@ -236,7 +221,11 @@ class SharingConnection extends Component {
 					<span className="sharing-connection__account-name">
 						{ this.props.connection.external_display }
 					</span>
-					{ this.getConnectionKeyringUserLabel() }
+					<SharingConnectionKeyringUserLabel
+						siteId={ this.props.siteId }
+						keyringUserId={ this.props.connection?.keyring_connection_user_ID ?? null }
+						userId={ this.props.userId }
+					/>
 					{ connectionSitewideElement }
 				</div>
 				<div className="sharing-connection__account-actions">
@@ -248,15 +237,37 @@ class SharingConnection extends Component {
 	}
 }
 
+const SharingConnectionKeyringUserLabel = localize(
+	( { siteId, keyringUserId, translate, userId } ) => {
+		const fetchOptions = {
+			search: keyringUserId,
+			search_columns: [ 'ID' ],
+		};
+
+		const { data } = useUsersQuery( siteId, fetchOptions );
+		const keyringUser = data?.users?.[ 0 ] ?? null;
+
+		if ( keyringUser && userId !== keyringUser.ID ) {
+			return (
+				<aside className="sharing-connection__keyring-user">
+					{ translate( 'Connected by %(username)s', {
+						args: { username: keyringUser.nice_name },
+						context: 'Sharing: connections',
+					} ) }
+				</aside>
+			);
+		}
+
+		return null;
+	}
+);
+
 export default connect(
-	( state, ownProps ) => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const keyringUserId = ownProps.connection.keyring_connection_user_ID;
-		const keyringUser = keyringUserId ? UsersStore.getUser( keyringUserId ) : null;
 
 		return {
 			siteId,
-			keyringUser,
 			userHasCaps: canCurrentUser( state, siteId, 'edit_others_posts' ),
 			userId: getCurrentUserId( state ),
 			path: getCurrentRouteParameterized( state, siteId ),

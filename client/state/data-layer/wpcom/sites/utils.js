@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,22 +11,22 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_WRITE_ERROR,
-} from 'state/action-types';
-import { requestCommentsList } from 'state/comments/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { getSitePost } from 'state/posts/selectors';
-import { errorNotice } from 'state/notices/actions';
+} from 'calypso/state/action-types';
+import { requestCommentsList } from 'calypso/state/comments/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getSitePost } from 'calypso/state/posts/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 /**
  * Creates a placeholder comment for a given text and postId
  * We need placehodler id to be unique in the context of siteId, postId for that specific user,
  * date milliseconds will do for that purpose.
  *
- * @param   {String}           commentText     text of the comment
- * @param   {Number}           postId          post identifier
- * @param   {Number|undefined} parentCommentId parent comment identifier
- * @returns {Object}                           comment placeholder
+ * @param   {string}           commentText     text of the comment
+ * @param   {number}           postId          post identifier
+ * @param   {number|undefined} parentCommentId parent comment identifier
+ * @returns {object}                           comment placeholder
  */
 export const createPlaceholderComment = ( commentText, postId, parentCommentId ) => ( {
 	ID: 'placeholder-' + new Date().getTime(),
@@ -46,9 +45,9 @@ export const createPlaceholderComment = ( commentText, postId, parentCommentId )
  * We need placeholder id to be unique in the context of siteId and postId for that specific user,
  * date milliseconds will do for that purpose.
  *
- * @param {Object}   action   redux action
- * @param {String}   path     comments resource path
- * @return {Array}	actions
+ * @param {object}   action   redux action
+ * @param {string}   path     comments resource path
+ * @returns {Array}	actions
  */
 export const dispatchNewCommentRequest = ( action, path ) => {
 	const { siteId, postId, parentCommentId, commentText } = action;
@@ -84,8 +83,8 @@ export const dispatchNewCommentRequest = ( action, path ) => {
  * updates the placeholder comments with server values
  *
  * @param {Function} dispatch redux dispatcher
- * @param {Object}   comment  updated comment from the request response
- * @return {Function} thunk
+ * @param {object}   comment  updated comment from the request response
+ * @returns {Function} thunk
  */
 export const updatePlaceholderComment = (
 	{ siteId, postId, parentCommentId, placeholderId, refreshCommentListQuery },
@@ -121,9 +120,9 @@ export const updatePlaceholderComment = (
 /**
  * dispatches a error notice if creating a new comment request failed
  *
- * @param {Object}   action   redux action
- * @param {Object} rawError plain error object
- * @return {Function} thunk
+ * @param {object}   action   redux action
+ * @param {object} rawError plain error object
+ * @returns {Function} thunk
  */
 export const handleWriteCommentFailure = (
 	{ siteId, postId, parentCommentId, placeholderId },
@@ -131,14 +130,7 @@ export const handleWriteCommentFailure = (
 ) => ( dispatch, getState ) => {
 	// Dispatch error notice
 	const post = getSitePost( getState(), siteId, postId );
-	const postTitle =
-		post &&
-		post.title &&
-		post.title
-			.trim()
-			.slice( 0, 20 )
-			.trim()
-			.concat( '…' );
+	const postTitle = post && post.title && post.title.trim().slice( 0, 20 ).trim().concat( '…' );
 	const error = postTitle
 		? translate( 'Could not add a reply to “%(postTitle)s”', { args: { postTitle } } )
 		: translate( 'Could not add a reply to this post' );

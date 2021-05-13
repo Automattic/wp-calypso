@@ -6,9 +6,9 @@
 .activity-log-item__restore-confirm {
 	.activity-log-item__card {
 		padding-bottom: 8px;
-		border-radius: 4px;
-		box-shadow: 0 0 0 1px rgba( var( --color-neutral-100 ), 0.5 ),
-			0 2px 5px var( --color-neutral-100 );
+		border-radius: 2px;
+		box-shadow: 0 0 0 1px rgba( var( --color-neutral-10 ), 0.5 ),
+			0 2px 5px var( --color-neutral-10 );
 		white-space: normal;
 	}
 	.activity-log-item__activity-icon {
@@ -17,12 +17,11 @@
 }
 
 .activity-log-confirm-dialog .dialog__content {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 
 	h1 {
-		color: var( --color-neutral-700 );
-		font-size: 24px;
-		font-weight: 300;
+		color: var( --color-neutral-70 );
+		font-size: $font-title-medium;
 		height: 2em;
 		line-height: 32px;
 		margin-top: 0.5em;
@@ -31,7 +30,7 @@
 }
 
 .activity-log-confirm-dialog__title {
-	font-size: 21px;
+	font-size: $font-title-small;
 	margin-bottom: 12px;
 	line-height: 1;
 }
@@ -46,10 +45,11 @@
 	position: relative;
 	width: 100%;
 	margin-bottom: 24px;
+	margin-left: -4px;
 	box-sizing: border-box;
 	animation: appear 0.3s ease-in-out;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 	}
 
@@ -64,7 +64,7 @@
 		width: 18px;
 		height: 18px;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			position: relative;
 			width: 24px;
 			height: 24px;
@@ -73,28 +73,25 @@
 }
 
 .activity-log-confirm-dialog__notice-content {
-	color: var( --color-error );
 	display: flex;
 	-webkit-box-flex: 1;
 	-ms-flex-positive: 1;
 	flex-grow: 1;
 	padding-left: 24px;
-	font-size: 12px;
 
-	@include breakpoint( '>480px' ) {
-		padding-left: 8px;
-		font-size: 14px;
+	@include breakpoint-deprecated( '>480px' ) {
+		padding-left: 4px;
 	}
 }
 
 .activity-log-confirm-dialog__line {
 	padding: 14px 24px 14px 44px;
 	text-align: left;
-	font-size: 13px;
-	border-bottom: 1px solid var( --color-neutral-50 );
+	font-size: $font-body-small;
+	border-bottom: 1px solid var( --color-neutral-5 );
 
 	&:first-of-type {
-		border-top: 1px solid var( --color-neutral-50 );
+		border-top: 1px solid var( --color-neutral-5 );
 	}
 
 	.gridicon {
@@ -111,7 +108,7 @@
 	border-top: #eee 1px solid;
 	display: block;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		display: flex;
 		justify-content: space-between;
 		flex-direction: row-reverse;
@@ -120,7 +117,7 @@
 	button {
 		margin: 0 0 8px 8px;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			margin: 0 8px 0 0;
 		}
 	}
@@ -128,20 +125,20 @@
 
 .activity-log-confirm-dialog__primary-actions {
 	text-align: right;
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		margin-bottom: 8px;
 		text-align: left;
 	}
 }
 
 .button.activity-log-confirm-dialog__more-info-link {
-	color: var( --color-neutral-300 );
+	color: var( --color-neutral-30 );
 	padding: 8px 8px 0 0;
 	display: inline-block;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		margin-bottom: 4px;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 
 	.gridicon {
@@ -151,7 +148,7 @@
 		height: 18px;
 		margin-right: 6px;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			top: 0;
 			width: 24px;
 			height: 24px;
@@ -179,11 +176,19 @@
 	}
 }
 
+.activity-log-confirm-dialog__secondary-actions {
+	
+	.external-link {
+		display: inline-block;
+		padding: 8px 8px 0 0;
+		font-size: $font-body-small;
+	}
+}
+
 .activity-log-confirm-dialog__partial-restore-settings {
 	margin-bottom: 1.5rem;
 }
 
 .activity-log-confirm-dialog__partial-restore-settings .form-checkbox {
 	margin-right: 0.5rem;
-	margin-left: 1.5rem;
 }

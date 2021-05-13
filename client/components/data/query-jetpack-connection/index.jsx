@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isRequestingJetpackConnectionStatus from 'state/selectors/is-requesting-jetpack-connection-status';
-import { requestJetpackConnectionStatus } from 'state/jetpack/connection/actions';
+import isRequestingJetpackConnectionStatus from 'calypso/state/selectors/is-requesting-jetpack-connection-status';
+import { requestJetpackConnectionStatus } from 'calypso/state/jetpack/connection/actions';
 
 class QueryJetpackConnection extends Component {
 	static propTypes = {
@@ -21,11 +19,11 @@ class QueryJetpackConnection extends Component {
 		requestJetpackConnectionStatus: PropTypes.func,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.request( nextProps );
 		}

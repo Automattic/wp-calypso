@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
+import { clone, difference, forEach, last, map, some, take } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 
@@ -37,13 +36,13 @@ class TokenField extends PureComponent {
 		placeholder: PropTypes.string,
 		id: PropTypes.string,
 		isExpanded: PropTypes.bool,
-		value: function( props ) {
+		value: function ( props ) {
 			const value = props.value;
 			if ( ! Array.isArray( value ) ) {
 				return new Error( 'Value prop is expected to be an array.' );
 			}
 
-			forEach( value, item => {
+			forEach( value, ( item ) => {
 				if ( 'object' === typeof item ) {
 					if ( ! ( 'value' in item ) ) {
 						return new Error(
@@ -60,11 +59,11 @@ class TokenField extends PureComponent {
 		maxSuggestions: 100,
 		value: Object.freeze( [] ),
 		placeholder: '',
-		displayTransform: identity,
-		saveTransform: function( token ) {
+		displayTransform: ( token ) => token,
+		saveTransform: function ( token ) {
 			return token.trim();
 		},
-		onChange: function() {},
+		onChange: function () {},
 		isBorderless: false,
 		disabled: false,
 		tokenizeOnSpace: false,
@@ -82,7 +81,7 @@ class TokenField extends PureComponent {
 
 	state = this.constructor.initialState;
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.disabled && this.state.isActive ) {
 			this.setState( {
 				isActive: false,
@@ -144,7 +143,7 @@ class TokenField extends PureComponent {
 		return components;
 	};
 
-	_renderToken = token => {
+	_renderToken = ( token ) => {
 		const value = this._getTokenValue( token );
 		const status = token.status ? token.status : undefined;
 
@@ -200,11 +199,11 @@ class TokenField extends PureComponent {
 		return <TokenInput { ...props } />;
 	};
 
-	setTokensAndInput = input => {
+	setTokensAndInput = ( input ) => {
 		this.tokensAndInput = input;
 	};
 
-	_onFocus = event => {
+	_onFocus = ( event ) => {
 		this.setState( { isActive: true, tokenInputHasFocus: true } );
 		if ( 'function' === typeof this.props.onFocus ) {
 			this.props.onFocus( event );
@@ -221,11 +220,11 @@ class TokenField extends PureComponent {
 		}
 	};
 
-	_onTokenClickRemove = event => {
+	_onTokenClickRemove = ( event ) => {
 		this._deleteToken( event.value );
 	};
 
-	_onSuggestionHovered = suggestion => {
+	_onSuggestionHovered = ( suggestion ) => {
 		const index = this._getMatchingSuggestions().indexOf( suggestion );
 
 		if ( index >= 0 ) {
@@ -236,12 +235,12 @@ class TokenField extends PureComponent {
 		}
 	};
 
-	_onSuggestionSelected = suggestion => {
+	_onSuggestionSelected = ( suggestion ) => {
 		debug( '_onSuggestionSelected', suggestion );
 		this._addNewToken( suggestion );
 	};
 
-	_onInputChange = event => {
+	_onInputChange = ( event ) => {
 		const text = event.value;
 		const separator = this.props.tokenizeOnSpace ? /[ ,\t]+/ : /[,\t]+/;
 		const items = text.split( separator );
@@ -257,7 +256,7 @@ class TokenField extends PureComponent {
 		} );
 	};
 
-	_onContainerTouched = event => {
+	_onContainerTouched = ( event ) => {
 		// Prevent clicking/touching the tokensAndInput container from blurring
 		// the input and adding the current token.
 		if ( event.target === this.tokensAndInput && this.state.isActive ) {
@@ -265,7 +264,7 @@ class TokenField extends PureComponent {
 		}
 	};
 
-	_onKeyDown = event => {
+	_onKeyDown = ( event ) => {
 		let preventDefault = false;
 
 		switch ( event.keyCode ) {
@@ -307,7 +306,7 @@ class TokenField extends PureComponent {
 		}
 	};
 
-	_onKeyPress = event => {
+	_onKeyPress = ( event ) => {
 		let preventDefault = false;
 
 		switch ( event.charCode ) {
@@ -323,7 +322,7 @@ class TokenField extends PureComponent {
 		}
 	};
 
-	_handleDeleteKey = deleteToken => {
+	_handleDeleteKey = ( deleteToken ) => {
 		let preventDefault = false;
 
 		if ( this.state.tokenInputHasFocus && this._isInputEmpty() ) {
@@ -335,29 +334,26 @@ class TokenField extends PureComponent {
 	};
 
 	_getMatchingSuggestions = () => {
-		let suggestions = this.props.suggestions,
-			match = this.props.saveTransform( this.state.incompleteTokenValue ),
-			startsWithMatch = [],
-			containsMatch = [];
+		let suggestions = this.props.suggestions;
+		let match = this.props.saveTransform( this.state.incompleteTokenValue );
+		const startsWithMatch = [];
+		const containsMatch = [];
 
 		if ( match.length === 0 ) {
 			suggestions = difference( suggestions, this.props.value );
 		} else {
 			match = match.toLocaleLowerCase();
 
-			each(
-				suggestions,
-				function( suggestion ) {
-					const index = suggestion.toLocaleLowerCase().indexOf( match );
-					if ( this.props.value.indexOf( suggestion ) === -1 ) {
-						if ( index === 0 ) {
-							startsWithMatch.push( suggestion );
-						} else if ( index > 0 ) {
-							containsMatch.push( suggestion );
-						}
+			suggestions.forEach( ( suggestion ) => {
+				const index = suggestion.toLocaleLowerCase().indexOf( match );
+				if ( this.props.value.indexOf( suggestion ) === -1 ) {
+					if ( index === 0 ) {
+						startsWithMatch.push( suggestion );
+					} else if ( index > 0 ) {
+						containsMatch.push( suggestion );
 					}
-				}.bind( this )
-			);
+				}
+			} );
 
 			suggestions = startsWithMatch.concat( containsMatch );
 		}
@@ -372,8 +368,8 @@ class TokenField extends PureComponent {
 	};
 
 	_addCurrentToken = () => {
-		let preventDefault = false,
-			selectedSuggestion = this._getSelectedSuggestion();
+		let preventDefault = false;
+		const selectedSuggestion = this._getSelectedSuggestion();
 
 		if ( selectedSuggestion ) {
 			this._addNewToken( selectedSuggestion );
@@ -465,14 +461,14 @@ class TokenField extends PureComponent {
 		}
 	};
 
-	_deleteToken = token => {
-		const newTokens = this.props.value.filter( item => {
+	_deleteToken = ( token ) => {
+		const newTokens = this.props.value.filter( ( item ) => {
 			return this._getTokenValue( item ) !== this._getTokenValue( token );
 		} );
 		this.props.onChange( newTokens );
 	};
 
-	_moveInputToIndex = index => {
+	_moveInputToIndex = ( index ) => {
 		this.setState( {
 			inputOffsetFromEnd: this.props.value.length - Math.max( index, -1 ) - 1,
 		} );
@@ -490,13 +486,15 @@ class TokenField extends PureComponent {
 		} );
 	};
 
-	_addNewTokens = tokens => {
-		const tokensToAdd = uniq(
-			tokens
-				.map( this.props.saveTransform )
-				.filter( Boolean )
-				.filter( token => ! this._valueContainsToken( token ) )
-		);
+	_addNewTokens = ( tokens ) => {
+		const tokensToAdd = [
+			...new Set(
+				tokens
+					.map( this.props.saveTransform )
+					.filter( Boolean )
+					.filter( ( token ) => ! this._valueContainsToken( token ) )
+			),
+		];
 		debug( '_addNewTokens: tokensToAdd', tokensToAdd );
 
 		if ( tokensToAdd.length > 0 ) {
@@ -507,7 +505,7 @@ class TokenField extends PureComponent {
 		}
 	};
 
-	_addNewToken = token => {
+	_addNewToken = ( token ) => {
 		this._addNewTokens( [ token ] );
 
 		this.setState( {
@@ -522,13 +520,13 @@ class TokenField extends PureComponent {
 		}
 	};
 
-	_valueContainsToken = token => {
-		return some( this.props.value, item => {
+	_valueContainsToken = ( token ) => {
+		return some( this.props.value, ( item ) => {
 			return this._getTokenValue( token ) === this._getTokenValue( item );
 		} );
 	};
 
-	_getTokenValue = token => {
+	_getTokenValue = ( token ) => {
 		if ( 'object' === typeof token ) {
 			return token.value;
 		}

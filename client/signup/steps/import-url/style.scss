@@ -7,18 +7,18 @@
 .import-url__wrapper {
 	padding: 0;
 	@include elevation ( 0 );
-	border-radius: 3px;
+	border-radius: 2px;
 	max-width: 640px;
 	margin: auto;
 }
 
 // Actual form input for typing the URL
-.import-url__wrapper .import-url__url-input {
+.import-url__wrapper input[type='text'].form-text-input.import-url__url-input {
 	border: none;
-	border-radius: 3px;
+	border-radius: 2px;
 	padding: 10px 14px;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		padding: 14px;
 	}
 }
@@ -39,7 +39,7 @@
 		top: 2px;
 		right: 2px;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			top: 1px;
 			right: 1px;
 		}
@@ -59,15 +59,15 @@
 	}
 
 	&__example-urls {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		list-style: none;
 		margin: 1em 0 1.5em;
 	}
 
 	&__example-url {
 		font-family: monospace;
-		font-size: 14px;
-		color: var( --color-white );
+		font-size: $font-body-small;
+		color: var( --color-text-inverted );
 
 		&:first-of-type {
 			padding-top: 8px;
@@ -75,12 +75,12 @@
 	}
 
 	&__escape {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		padding: 0 15px 24px;
 		text-align: center;
 
 		a {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 			text-decoration: underline;
 
 			&:hover {

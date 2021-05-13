@@ -1,5 +1,3 @@
-/** @format */
-
 export default {
 	id: 'sites-stats-visits-response',
 	title: 'Stats Visits Response',

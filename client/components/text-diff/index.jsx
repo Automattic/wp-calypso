@@ -1,20 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { isArray, isEmpty, map, partialRight } from 'lodash';
+import { isEmpty, map, partialRight } from 'lodash';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const addLinesToOperations = operations => {
-	if ( ! isArray( operations ) || isEmpty( operations ) ) {
+const addLinesToOperations = ( operations ) => {
+	if ( ! Array.isArray( operations ) || isEmpty( operations ) ) {
 		return operations;
 	}
 	return operations.join( '\n\n' );

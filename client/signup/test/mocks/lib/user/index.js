@@ -1,18 +1,17 @@
 /**
  * User stub
  *
- * @format
  */
 
 let isLoggedIn = false;
 
-export default function() {
+export default function () {
 	return {
-		get: function() {
+		get: function () {
 			return isLoggedIn;
 		},
 
-		setLoggedIn: function( newIsLoggedIn ) {
+		setLoggedIn: function ( newIsLoggedIn ) {
 			isLoggedIn = newIsLoggedIn;
 		},
 	};

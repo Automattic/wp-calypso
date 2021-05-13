@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,9 +8,10 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Notice from 'components/notice';
-import { CALYPSO_CONTACT } from 'lib/url/support';
+import { Card } from '@automattic/components';
+import Notice from 'calypso/components/notice';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -38,7 +37,9 @@ export default function PendingWhoisUpdateCard() {
 							a: <a href={ CALYPSO_CONTACT } rel="noopener noreferrer" />,
 							supporta: (
 								<a
-									href="https://en.support.wordpress.com/update-contact-information/#email-or-name-changes"
+									href={ localizeUrl(
+										'https://wordpress.com/support/update-contact-information/#email-or-name-changes'
+									) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>

@@ -1,15 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
-const handleMonthClick = ( onClick = noop ) => event => {
+const noop = () => {};
+
+const handleMonthClick = ( onClick = noop ) => ( event ) => {
 	event.preventDefault();
 	onClick();
 };

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,9 +9,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchPost } from 'state/reader/posts/actions';
-import { getPostByKey } from 'state/reader/posts/selectors';
-import { isPostKeyLike } from 'reader/post-key';
+import { fetchPost } from 'calypso/state/reader/posts/actions';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { isPostKeyLike } from 'calypso/reader/post-key';
 
 class QueryReaderPost extends Component {
 	static propTypes = {
@@ -24,7 +22,7 @@ class QueryReaderPost extends Component {
 		this.maybeFetch();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.maybeFetch( nextProps );
 	}
 

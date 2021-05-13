@@ -1,27 +1,20 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import page from 'page';
 import classnames from 'classnames';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import { keys } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import * as componentExamples from 'devdocs/design/component-examples';
-import * as playgroundScope from 'devdocs/design/playground-scope';
-import DocumentHead from 'components/data/document-head';
-import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
-import Main from 'components/main';
-import DropdownItem from 'components/select-dropdown/item';
-import SelectDropdown from 'components/select-dropdown';
+import * as componentExamples from 'calypso/devdocs/design/component-examples';
+import * as playgroundScope from 'calypso/devdocs/design/playground-scope';
+import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { getExampleCodeFromComponent } from './playground-utils';
 
 /**
@@ -30,15 +23,8 @@ import { getExampleCodeFromComponent } from './playground-utils';
 import './playground.scss';
 import './syntax.scss';
 
-class DesignAssets extends React.Component {
+export default class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
-
-	componentWillMount() {
-		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-			const { dispatchFetchComponentsUsageStats } = this.props;
-			dispatchFetchComponentsUsageStats();
-		}
-	}
 
 	state = {
 		code: `<Main>
@@ -90,7 +76,7 @@ class DesignAssets extends React.Component {
 		page( '/devdocs/design/' );
 	};
 
-	addComponent = exampleCode => () => {
+	addComponent = ( exampleCode ) => () => {
 		this.setState( {
 			code:
 				'<Main>' +
@@ -101,7 +87,7 @@ class DesignAssets extends React.Component {
 		} );
 	};
 
-	handleChange = code => {
+	handleChange = ( code ) => {
 		this.setState( {
 			code: code,
 		} );
@@ -110,15 +96,16 @@ class DesignAssets extends React.Component {
 	listOfExamples() {
 		return (
 			<SelectDropdown selectedText="Add a component" className="design__playground-examples">
-				{ keys( componentExamples ).map( name => {
+				{ keys( componentExamples ).map( ( name ) => {
+					// eslint-disable-next-line import/namespace
 					const ExampleComponentName = componentExamples[ name ];
 					const exampleComponent = <ExampleComponentName />;
 					const exampleCode = getExampleCodeFromComponent( exampleComponent );
 					return (
 						exampleCode && (
-							<DropdownItem key={ name } onClick={ this.addComponent( exampleCode ) }>
+							<SelectDropdown.Item key={ name } onClick={ this.addComponent( exampleCode ) }>
 								{ name }
-							</DropdownItem>
+							</SelectDropdown.Item>
 						)
 					);
 				} ) }
@@ -156,34 +143,3 @@ class DesignAssets extends React.Component {
 		);
 	}
 }
-
-let connectedDesignAssets;
-if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
-	const mapStateToProps = state => {
-		const { componentsUsageStats } = state;
-
-		return componentsUsageStats;
-	};
-
-	const mapDispatchToProps = dispatch => {
-		return bindActionCreators(
-			{
-				dispatchFetchComponentsUsageStats: fetchComponentsUsageStats,
-			},
-			dispatch
-		);
-	};
-
-	DesignAssets.propTypes = {
-		componentsUsageStats: PropTypes.object,
-		isFetching: PropTypes.bool,
-		dispatchFetchComponentsUsageStats: PropTypes.func,
-	};
-
-	connectedDesignAssets = connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( DesignAssets );
-}
-
-export default connectedDesignAssets || DesignAssets;

@@ -1,17 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ButtonGroup from 'components/button-group';
+import { Button } from '@automattic/components';
+import ButtonGroup from 'calypso/components/button-group';
 
 const EditorRevisionsListNavigation = ( {
 	nextIsDisabled,

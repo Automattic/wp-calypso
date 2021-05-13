@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST,
 	PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_SUCCESS,
@@ -21,10 +18,12 @@ import {
 	PUBLICIZE_SHARE_ACTION_SCHEDULE,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/sharing/init';
 
 export function fetchPostShareActionsScheduled( siteId, postId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST,
 			siteId,
@@ -48,7 +47,7 @@ export function fetchPostShareActionsScheduled( siteId, postId ) {
 				}
 
 				const actions = {};
-				data.items.forEach( action => ( actions[ action.ID ] = action ) );
+				data.items.forEach( ( action ) => ( actions[ action.ID ] = action ) );
 				dispatch( {
 					type: PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_SUCCESS,
 					siteId,
@@ -61,7 +60,7 @@ export function fetchPostShareActionsScheduled( siteId, postId ) {
 }
 
 export function fetchPostShareActionsPublished( siteId, postId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST,
 			siteId,
@@ -86,7 +85,7 @@ export function fetchPostShareActionsPublished( siteId, postId ) {
 				}
 
 				const actions = {};
-				data.items.forEach( action => ( actions[ action.ID ] = action ) );
+				data.items.forEach( ( action ) => ( actions[ action.ID ] = action ) );
 				dispatch( {
 					type: PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_SUCCESS,
 					siteId,
@@ -99,7 +98,7 @@ export function fetchPostShareActionsPublished( siteId, postId ) {
 }
 
 export function deletePostShareAction( siteId, postId, actionId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: PUBLICIZE_SHARE_ACTION_DELETE,
 			siteId,
@@ -132,7 +131,7 @@ export function deletePostShareAction( siteId, postId, actionId ) {
 }
 
 export function editPostShareAction( siteId, postId, actionId, message, share_date ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: PUBLICIZE_SHARE_ACTION_EDIT,
 			siteId,
@@ -174,7 +173,7 @@ export function editPostShareAction( siteId, postId, actionId, message, share_da
 }
 
 export function schedulePostShareAction( siteId, postId, message, share_date, connections ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: PUBLICIZE_SHARE_ACTION_SCHEDULE,
 			siteId,
@@ -183,7 +182,7 @@ export function schedulePostShareAction( siteId, postId, message, share_date, co
 		} );
 
 		return Promise.all(
-			connections.map( connection_id =>
+			connections.map( ( connection_id ) =>
 				wpcom.req.post( {
 					path: `/sites/${ siteId }/posts/${ postId }/publicize/scheduled-actions/`,
 					body: { message, share_date, connection_id },
@@ -191,7 +190,7 @@ export function schedulePostShareAction( siteId, postId, message, share_date, co
 				} )
 			)
 		)
-			.catch( error =>
+			.catch( ( error ) =>
 				dispatch( {
 					type: PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
 					siteId,
@@ -200,7 +199,7 @@ export function schedulePostShareAction( siteId, postId, message, share_date, co
 					connections,
 				} )
 			)
-			.then( items =>
+			.then( ( items ) =>
 				dispatch( {
 					type: PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
 					siteId,

@@ -18,7 +18,7 @@
 .legend-item__placeholder-detail-value,
 .legend-item__title-name,
 .legend-item__placeholder-title-name {
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .legend-item__title-sample-drawing,
@@ -45,7 +45,7 @@
 	&::after {
 		content: '';
 	}
-	border: 2px solid var( --color-white );
+	border: 2px solid var( --color-border-inverted );
 }
 
 .legend-item__placeholder-detail {

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,18 +6,18 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { errorNotice } from 'state/notices/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { REWIND_RESTORE_PROGRESS_REQUEST } from 'state/action-types';
-import { updateRewindRestoreProgress } from 'state/activity-log/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { REWIND_RESTORE_PROGRESS_REQUEST } from 'calypso/state/action-types';
+import { updateRewindRestoreProgress } from 'calypso/state/activity-log/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-/** @type {Number} how many ms between polls for same data */
+/** @type {number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;
 
-/** @type {Map<String, Number>} stores most-recent polling times */
+/** @type {Map<string, number>} stores most-recent polling times */
 const recentRequests = new Map();
 
 /** @type {string} Request error notice id. Prevents polling from creating endless notices */
@@ -31,10 +30,10 @@ const ERROR_NOTICE_ID = 'AL_REW_RESTORESTATUS_ERR';
  * replaced by the `freshness` system in the data layer
  * when it arrives. For now, it's statefully ugly.
  *
- * @param  {Object} action Redux action
- * @return {Object}        Redux action
+ * @param  {object} action Redux action
+ * @returns {object}        Redux action
  */
-const fetchProgress = action => {
+const fetchProgress = ( action ) => {
 	const { restoreId, siteId } = action;
 	const key = `${ siteId }-${ restoreId }`;
 
@@ -66,6 +65,7 @@ export const fromApi = ( {
 		status = '',
 		rewind_id = '',
 		context = '',
+		current_entry = '',
 	} = {},
 } ) => ( {
 	errorCode: error_code,
@@ -75,6 +75,7 @@ export const fromApi = ( {
 	status,
 	rewindId: rewind_id,
 	context,
+	currentEntry: current_entry,
 } );
 
 export const updateProgress = ( { siteId, restoreId, timestamp }, data ) =>

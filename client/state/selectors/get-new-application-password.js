@@ -1,14 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/application-passwords/init';
+
+/**
  * Returns the application password that the user just created.
  *
- * @param  {Object}  state Global state tree
- * @return {?String}       New application password
+ * @param  {object}  state Global state tree
+ * @returns {?string}       New application password
  */
-export default state => get( state, [ 'applicationPasswords', 'newPassword' ], null );
+export default ( state ) => get( state, [ 'applicationPasswords', 'newPassword' ], null );

@@ -1,15 +1,14 @@
-Plugin Site Network
-===================
+# Plugin Site Network
 
 This component is used to display a single instance of a plugin within a multisite network, including all the options & possible actions the user can do with it
 
-#### How to use:
+## How to use
 
 ```js
-import PluginSiteNetwork from 'my-sites/plugins/plugin-site/plugin-site-network';
+import PluginSiteNetwork from 'calypso/my-sites/plugins/plugin-site/plugin-site-network';
 
-render() {
-    return (
+function render() {
+	return (
 		<PluginSiteNetwork
 			site={ site }
 			plugin={ plugin }
@@ -20,9 +19,9 @@ render() {
 }
 ```
 
-#### Props
+## Props
 
-* `site`: a site object with the site which would be associated to the component.
-* `plugin`: a plugin object.
-* `notices`: a notices object.
-* `secondarySites`: an array containing all the site objects of the sites belonging to this network
+- `site`: a site object with the site which would be associated to the component.
+- `plugin`: a plugin object.
+- `notices`: a notices object.
+- `secondarySites`: an array containing all the site objects of the sites belonging to this network

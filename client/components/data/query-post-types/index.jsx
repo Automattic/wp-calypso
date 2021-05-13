@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,9 +10,9 @@ import { isEqual, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteOption } from 'state/sites/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
-import { requestPostTypes } from 'state/post-types/actions';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
+import { requestPostTypes } from 'calypso/state/post-types/actions';
 
 // list of site settings properties that trigger a new query when they change
 const POST_TYPE_SETTINGS = [ 'jetpack_portfolio', 'jetpack_testimonial' ];
@@ -28,11 +26,11 @@ class QueryPostTypes extends Component {
 		requestPostTypes: PropTypes.func,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteSettings, siteId, themeSlug } = this.props;
 		const {
 			siteSettings: nextSiteSettings,

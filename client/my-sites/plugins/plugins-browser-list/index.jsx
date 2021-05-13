@@ -9,10 +9,10 @@ import { times } from 'lodash';
 /**
  * Internal dependencies
  */
-import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item';
-import Card from 'components/card';
-import Gridicon from 'gridicons';
-import SectionHeader from 'components/section-header';
+import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
+import { Card } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
+import SectionHeader from 'calypso/components/section-header';
 
 /**
  * Style dependencies
@@ -64,7 +64,7 @@ class PluginsBrowserList extends Component {
 	}
 
 	renderPlaceholdersViews() {
-		return times( this.props.size || DEFAULT_PLACEHOLDER_NUMBER, i => (
+		return times( this.props.size || DEFAULT_PLACEHOLDER_NUMBER, ( i ) => (
 			<PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />
 		) );
 	}

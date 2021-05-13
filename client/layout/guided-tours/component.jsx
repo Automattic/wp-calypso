@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { defer } from 'lodash';
@@ -11,19 +8,19 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import { tracks } from 'lib/analytics';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import AllTours from './all-tours';
-import QueryPreferences from 'components/data/query-preferences';
-import RootChild from 'components/root-child';
-import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
-import { getLastAction } from 'state/ui/action-log/selectors';
-import { getSectionName, isSectionLoading } from 'state/ui/selectors';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import { RootChild } from '@automattic/components';
+import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
+import { getLastAction } from 'calypso/state/ui/action-log/selectors';
+import { getSectionName, isSectionLoading } from 'calypso/state/ui/selectors';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import {
 	nextGuidedTourStep,
 	quitGuidedTour,
 	resetGuidedToursHistory,
-} from 'state/ui/guided-tours/actions';
+} from 'calypso/state/guided-tours/actions';
 
 /**
  * Style dependencies
@@ -37,23 +34,20 @@ class GuidedToursComponent extends Component {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.requestedTour === 'reset' && this.props.requestedTour !== 'reset' ) {
-			this.props.resetGuidedToursHistory();
+			this.props.dispatch( resetGuidedToursHistory() );
 		}
 	}
 
 	start = ( { step, tour, tourVersion: tour_version } ) => {
 		if ( tour && tour_version ) {
-			this.props.nextGuidedTourStep( { step, tour } );
-			tracks.recordEvent( 'calypso_guided_tours_start', {
-				tour,
-				tour_version,
-			} );
+			this.props.dispatch( nextGuidedTourStep( { step, tour } ) );
+			recordTracksEvent( 'calypso_guided_tours_start', { tour, tour_version } );
 		}
 	};
 
 	next = ( { step, tour, tourVersion, nextStepName, skipping = false } ) => {
 		if ( ! skipping && step ) {
-			tracks.recordEvent( 'calypso_guided_tours_seen_step', {
+			recordTracksEvent( 'calypso_guided_tours_seen_step', {
 				tour,
 				step,
 				tour_version: tourVersion,
@@ -61,33 +55,26 @@ class GuidedToursComponent extends Component {
 		}
 
 		defer( () => {
-			this.props.nextGuidedTourStep( {
-				tour,
-				stepName: nextStepName,
-			} );
+			this.props.dispatch( nextGuidedTourStep( { tour, stepName: nextStepName } ) );
 		} );
 	};
 
 	quit = ( { step, tour, tourVersion: tour_version, isLastStep } ) => {
 		if ( step ) {
-			tracks.recordEvent( 'calypso_guided_tours_seen_step', {
+			recordTracksEvent( 'calypso_guided_tours_seen_step', {
 				tour,
 				step,
 				tour_version,
 			} );
 		}
 
-		tracks.recordEvent( `calypso_guided_tours_${ isLastStep ? 'finished' : 'quit' }`, {
+		recordTracksEvent( `calypso_guided_tours_${ isLastStep ? 'finished' : 'quit' }`, {
 			step,
 			tour,
 			tour_version,
 		} );
 
-		this.props.quitGuidedTour( {
-			tour,
-			stepName: step,
-			finished: isLastStep,
-		} );
+		this.props.dispatch( quitGuidedTour( { tour, stepName: step, finished: isLastStep } ) );
 	};
 
 	render() {
@@ -111,6 +98,7 @@ class GuidedToursComponent extends Component {
 						next={ this.next }
 						quit={ this.quit }
 						start={ this.start }
+						dispatch={ this.props.dispatch }
 					/>
 				</div>
 			</RootChild>
@@ -118,24 +106,17 @@ class GuidedToursComponent extends Component {
 	}
 }
 
-const getTourWhenState = state => when => !! when( state );
+const getTourWhenState = ( state ) => ( when ) => !! when( state );
 
-export default connect(
-	state => {
-		const tourState = getGuidedTourState( state );
-		const shouldPause = isSectionLoading( state ) || tourState.isPaused;
-		return {
-			sectionName: getSectionName( state ),
-			shouldPause,
-			tourState,
-			isValid: getTourWhenState( state ),
-			lastAction: getLastAction( state ),
-			requestedTour: getInitialQueryArguments( state ).tour,
-		};
-	},
-	{
-		nextGuidedTourStep,
-		quitGuidedTour,
-		resetGuidedToursHistory,
-	}
-)( GuidedToursComponent );
+export default connect( ( state ) => {
+	const tourState = getGuidedTourState( state );
+	const shouldPause = isSectionLoading( state ) || tourState.isPaused;
+	return {
+		sectionName: getSectionName( state ),
+		shouldPause,
+		tourState,
+		isValid: getTourWhenState( state ),
+		lastAction: getLastAction( state ),
+		requestedTour: getInitialQueryArguments( state ).tour,
+	};
+} )( GuidedToursComponent );

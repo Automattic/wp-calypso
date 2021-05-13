@@ -4,17 +4,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { assign, findIndex, fromPairs, noop } from 'lodash';
+import { findIndex } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import ScreenReaderText from 'components/screen-reader-text';
-import { hasTouch } from 'lib/touch-detect';
+import { ScreenReaderText } from '@automattic/components';
+import { hasTouch } from 'calypso/lib/touch-detect';
 
+const noop = () => {};
 const debug = debugFactory( 'calypso:forms:sortable-list' );
 
 /**
@@ -45,7 +46,7 @@ class SortableList extends React.Component {
 	itemsRefs = new Map();
 	itemShadowRefs = new Map();
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
 	}
 
@@ -107,7 +108,7 @@ class SortableList extends React.Component {
 		}
 	};
 
-	getAdjustedElementIndex = index => {
+	getAdjustedElementIndex = ( index ) => {
 		// The active order array is used as an array where each index matches
 		// the original prop children indices, but the values correspond to
 		// their visible position index
@@ -117,7 +118,7 @@ class SortableList extends React.Component {
 		return index;
 	};
 
-	getCursorElementIndex = event => {
+	getCursorElementIndex = ( event ) => {
 		const cursorCompare = this.compareCursorVerticalToElement( this.listRef.current, event );
 		const adjustedActiveIndex = this.getAdjustedElementIndex( this.state.activeIndex );
 		const shadowRect = this.itemShadowRefs
@@ -125,7 +126,8 @@ class SortableList extends React.Component {
 			.current.getBoundingClientRect();
 
 		const index = findIndex( this.props.children, ( child, i ) => {
-			let isBeyond, permittedVertical;
+			let isBeyond;
+			let permittedVertical;
 
 			// Avoid self-comparisons for the active item
 			if ( i === this.state.activeIndex ) {
@@ -183,9 +185,9 @@ class SortableList extends React.Component {
 		return this.getAdjustedElementIndex( index );
 	};
 
-	moveItem = direction => {
-		const increment = 'previous' === direction ? -1 : 1,
-			activeOrder = Object.keys( this.props.children ).map( Number );
+	moveItem = ( direction ) => {
+		const increment = 'previous' === direction ? -1 : 1;
+		const activeOrder = Object.keys( this.props.children ).map( Number );
 
 		activeOrder[ this.state.activeIndex + increment ] = this.state.activeIndex;
 		activeOrder[ this.state.activeIndex ] = this.state.activeIndex + increment;
@@ -204,7 +206,7 @@ class SortableList extends React.Component {
 		} );
 	};
 
-	onMouseMove = event => {
+	onMouseMove = ( event ) => {
 		let activeOrder;
 		if ( null === this.state.activeIndex || ! this.props.allowDrag || hasTouch() ) {
 			return;
@@ -263,7 +265,7 @@ class SortableList extends React.Component {
 		} );
 	};
 
-	onClick = index => {
+	onClick = ( index ) => {
 		this.setState( {
 			activeIndex: index,
 		} );
@@ -274,25 +276,25 @@ class SortableList extends React.Component {
 		this.itemShadowRefs.clear();
 		return React.Children.map(
 			this.props.children,
-			function( child, index ) {
+			function ( child, index ) {
 				const isActive = this.state.activeIndex === index;
 				const isDraggable = this.props.allowDrag && ! hasTouch();
 				let events = isDraggable ? [ 'onMouseDown', 'onMouseUp' ] : [ 'onClick' ];
-				const style = { order: this.getAdjustedElementIndex( index ) };
+				let style = { order: this.getAdjustedElementIndex( index ) };
 				const classes = classNames( {
 					'sortable-list__item': true,
 					'is-active': isActive,
 					'is-draggable': isDraggable,
 				} );
 
-				events = fromPairs(
-					events.map( function( event ) {
+				events = Object.fromEntries(
+					events.map( function ( event ) {
 						return [ event, this[ event ].bind( null, index ) ];
 					}, this )
 				);
 
 				if ( isActive ) {
-					assign( style, this.state.position );
+					style = { ...style, ...this.state.position };
 				}
 				const itemRef = React.createRef();
 				this.itemsRefs.set( 'wrap-' + index, itemRef );

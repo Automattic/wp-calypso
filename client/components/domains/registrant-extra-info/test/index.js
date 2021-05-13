@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,7 +14,6 @@ import RegistrantExtraInfoUkForm from '../uk-form';
 import RegistrantExtraInfoForm from '../index';
 
 jest.mock( 'store', () => ( { get: () => {}, set: () => {} } ) );
-jest.mock( 'lib/analytics', () => {} );
 
 describe( 'Switcher Form', () => {
 	test( 'should render correct form for fr', () => {

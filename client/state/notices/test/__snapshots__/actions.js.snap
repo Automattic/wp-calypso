@@ -2,29 +2,17 @@
 
 exports[`actions createNotice() should use default options when none provided 1`] = `
 Object {
-  "noticeId": "1",
+  "noticeId": "someid",
   "showDismiss": true,
   "status": "is-info",
   "text": "Notice text",
 }
 `;
 
-exports[`actions status helpers bound createNotice dispatches expected action 1`] = `
+exports[`actions status helpers errorNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
-    "noticeId": "3",
-    "showDismiss": true,
-    "status": "is-success",
-    "text": "text",
-  },
-  "type": "NOTICE_CREATE",
-}
-`;
-
-exports[`actions status helpers bound createNotice dispatches expected action 2`] = `
-Object {
-  "notice": Object {
-    "noticeId": "4",
+    "noticeId": "someid",
     "showDismiss": true,
     "status": "is-error",
     "text": "text",
@@ -33,10 +21,10 @@ Object {
 }
 `;
 
-exports[`actions status helpers bound createNotice dispatches expected action 3`] = `
+exports[`actions status helpers infoNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
-    "noticeId": "5",
+    "noticeId": "someid",
     "showDismiss": true,
     "status": "is-info",
     "text": "text",
@@ -45,24 +33,36 @@ Object {
 }
 `;
 
-exports[`actions status helpers bound createNotice dispatches expected action 4`] = `
+exports[`actions status helpers plainNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
-    "noticeId": "6",
+    "noticeId": "someid",
     "showDismiss": true,
-    "status": "is-warning",
+    "status": "is-plain",
     "text": "text",
   },
   "type": "NOTICE_CREATE",
 }
 `;
 
-exports[`actions status helpers bound createNotice dispatches expected action 5`] = `
+exports[`actions status helpers successNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
-    "noticeId": "7",
+    "noticeId": "someid",
     "showDismiss": true,
-    "status": "is-plain",
+    "status": "is-success",
+    "text": "text",
+  },
+  "type": "NOTICE_CREATE",
+}
+`;
+
+exports[`actions status helpers warningNotice dispatches expected action 1`] = `
+Object {
+  "notice": Object {
+    "noticeId": "someid",
+    "showDismiss": true,
+    "status": "is-warning",
     "text": "text",
   },
   "type": "NOTICE_CREATE",

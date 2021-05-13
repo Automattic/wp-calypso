@@ -13,14 +13,14 @@
 		cursor: pointer;
 		user-select: none;
 		font-weight: normal;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		text-transform: uppercase;
 		letter-spacing: 0.1em;
 	}
 
 	th {
-		font-size: 11px;
-		color: var( --color-neutral-400 );
+		font-size: $font-body-extra-small;
+		color: var( --color-neutral-40 );
 	}
 }
 
@@ -31,8 +31,8 @@
 	&.is-year {
 		background: none;
 		text-align: left;
-		font-size: 11px;
-		color: var( --color-neutral-400 );
+		font-size: $font-body-extra-small;
+		color: var( --color-neutral-40 );
 	}
 
 	&.level-0 {
@@ -40,30 +40,30 @@
 	}
 
 	&.level-1 {
-		background-color: var( --color-primary-50 );
+		background-color: var( --color-primary-5 );
 	}
 
 	&.level-2 {
-		background-color: var( --color-primary-100 );
+		background-color: var( --color-primary-10 );
 	}
 
 	&.level-3 {
 		background-color: var( --color-primary-light );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	&.level-4 {
 		background-color: var( --color-primary );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	&.level-5 {
 		background-color: var( --color-primary-dark );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 }
 
-.stats-views__month-control {
+.segmented-control.stats-views__month-control {
 	max-width: 280px;
 	margin: 0 auto 10px;
 }
@@ -73,7 +73,7 @@
 	padding-top: 10px;
 	float: right;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		float: none;
 		margin: 0 auto;
 		margin-bottom: 25px;
@@ -87,7 +87,7 @@
 }
 
 .stats-views__key-label {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral );
 	letter-spacing: 0.1em;
 	text-transform: uppercase;

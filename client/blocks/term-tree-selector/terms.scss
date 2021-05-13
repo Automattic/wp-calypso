@@ -1,7 +1,7 @@
 .term-tree-selector {
 	position: relative;
-	background-color: var( --color-white );
-	border: 1px solid var( --color-neutral-100 );
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
 
 	&.is-small {
 		background-color: transparent;
@@ -13,7 +13,7 @@
 	}
 
 	&.is-compact .term-tree-selector__search input[type='search'] {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 }
 
@@ -25,7 +25,7 @@ input[type='checkbox'].term-tree-selector__input {
 		display: block;
 		margin-left: 24px;
 		transition: all 200ms ease-out;
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 
 		&:hover {
 			color: var( --color-accent );
@@ -44,7 +44,11 @@ input[type='checkbox'].term-tree-selector__input {
 .term-tree-selector__list-item {
 	position: relative;
 	padding: 4px 8px;
-	font-size: 13px;
+	font-size: $font-body-small;
+
+	.form-label {
+		margin-bottom: 0;
+	}
 
 	.term-tree-selector.is-compact.is-small & {
 		padding-left: 0;
@@ -67,7 +71,7 @@ input[type='checkbox'].term-tree-selector__input {
 	margin-top: 2px;
 
 	.term-tree-selector.is-compact & {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-top: 0;
 	}
 

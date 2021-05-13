@@ -1,8 +1,8 @@
-/** @format */
 export const appStates = Object.freeze( {
 	CANCEL_PENDING: 'importer-canceling',
 	DEFUNCT: 'importer-defunct',
 	DISABLED: 'importer-disabled',
+	EXPIRED: 'importer-expired',
 	EXPIRE_PENDING: 'importer-expire-pending',
 	IMPORT_FAILURE: 'importer-import-failure',
 	IMPORT_SUCCESS: 'importer-import-success',

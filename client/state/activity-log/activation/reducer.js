@@ -1,11 +1,3 @@
-/** @format */
-
-/**
- * External dependencies
- */
-
-import { stubFalse, stubTrue } from 'lodash';
-
 /**
  * Internal dependencies
  */
@@ -13,17 +5,17 @@ import {
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
-} from 'state/action-types';
-import { createReducer, keyedReducer } from 'state/utils';
+} from 'calypso/state/action-types';
+import { keyedReducer } from 'calypso/state/utils';
 
-export const activationRequesting = keyedReducer(
-	'siteId',
-	createReducer(
-		{},
-		{
-			[ REWIND_ACTIVATE_REQUEST ]: stubTrue,
-			[ REWIND_ACTIVATE_FAILURE ]: stubFalse,
-			[ REWIND_ACTIVATE_SUCCESS ]: stubFalse,
-		}
-	)
-);
+export const activationRequesting = keyedReducer( 'siteId', ( state = false, action ) => {
+	switch ( action.type ) {
+		case REWIND_ACTIVATE_REQUEST:
+			return true;
+		case REWIND_ACTIVATE_SUCCESS:
+		case REWIND_ACTIVATE_FAILURE:
+			return false;
+	}
+
+	return state;
+} );

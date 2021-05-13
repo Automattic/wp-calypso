@@ -1,11 +1,14 @@
 @import 'woocommerce/components/text-control/style.scss';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
 
-.signup-form .signup-form__input {
+.signup-form .signup-form__input.form-text-input {
 	margin-bottom: 20px;
 	transition: none;
 
 	&.is-error,
-	&[type='password'] {
+	&[type='password'],
+	&[name='password'] {
 		margin-bottom: 0;
 	}
 
@@ -16,12 +19,12 @@
 }
 
 .signup-form__terms-of-service-link {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin: 0 0 20px;
 	text-align: center;
 
 	a {
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			white-space: pre;
 		}
 	}
@@ -29,13 +32,13 @@
 
 .signup-form__social {
 	max-width: 400px;
-	margin: 0 auto 16px;
+	margin: 0 auto;
 	padding: 16px;
 	box-sizing: border-box;
 
 	p {
-		font-size: 13px;
-		color: var( --color-white );
+		font-size: $font-body-small;
+		color: var( --color-text-inverted );
 		margin: 0 0 12px;
 		text-align: center;
 
@@ -48,8 +51,53 @@
 .signup-form__social-buttons {
 	button {
 		display: block;
-		margin: 0 auto;
+		margin: 0 auto 15px;
 		box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ), 0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
 			0 1px 3px 0 rgba( 0, 0, 0, 0.2 );
+	}
+}
+
+.signup-form__social-buttons-tos a {
+	color: var( --color-text-inverted );
+	text-decoration: underline;
+}
+
+.signup-form__recaptcha-tos {
+	display: none;
+	padding: 20px 10px 10px;
+	font-size: $font-body-small;
+	color: var( --studio-blue-5 );
+	text-align: center;
+
+	p {
+		margin: 0;
+		padding-top: 9px;
+	}
+
+	a {
+		color: var( --studio-blue-5 );
+		text-decoration: underline;
+	}
+}
+
+// Replace recaptcha badge with ToS text and space
+// everything out a little more.
+@media ( max-width: 660px ) {
+	.signup-form__recaptcha-tos {
+		display: block;
+	}
+
+	.grecaptcha-badge {
+		visibility: hidden;
+	}
+
+	.signup-form.is-showing-recaptcha-tos {
+		.signup-form__social {
+			padding-bottom: 28px;
+		}
+
+		.logged-out-form__links::before {
+			margin-bottom: 16px;
+		}
 	}
 }

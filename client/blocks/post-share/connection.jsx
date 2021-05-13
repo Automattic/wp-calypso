@@ -1,18 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
-import cssSafeUrl from 'lib/css-safe-url';
+import cssSafeUrl from 'calypso/lib/css-safe-url';
 
 /**
  * Internal dependencies
  */
-import FormToggle from 'components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import classNames from 'classnames';
-import SocialLogo from 'components/social-logo';
+import SocialLogo from 'calypso/components/social-logo';
 
 const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 	const {
@@ -36,7 +34,6 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 	if ( external_profile_picture ) {
 		accountImageStyle.backgroundImage = 'url( ' + cssSafeUrl( external_profile_picture ) + ' )';
 	} else {
-		// Display a solid color circle: lighten( $gray, 10% )
 		accountImageStyle.backgroundColor = 'rgb( 168, 190, 206 )';
 	}
 

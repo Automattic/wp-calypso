@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestUserProfileLinks } from 'state/profile-links/actions';
+import { requestUserProfileLinks } from 'calypso/state/profile-links/actions';
 
 class QueryProfileLinks extends Component {
 	static propTypes = {
@@ -26,7 +24,4 @@ class QueryProfileLinks extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestUserProfileLinks }
-)( QueryProfileLinks );
+export default connect( null, { requestUserProfileLinks } )( QueryProfileLinks );

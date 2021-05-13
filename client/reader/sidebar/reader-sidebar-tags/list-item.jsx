@@ -1,30 +1,30 @@
-/** @format */
 /**
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import ReaderSidebarHelper from '../helper';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import '../style.scss';
 
 export class ReaderSidebarTagsListItem extends Component {
 	static propTypes = {
 		tag: PropTypes.object.isRequired,
-		onUnfollow: PropTypes.func.isRequired,
 		path: PropTypes.string.isRequired,
 		currentTag: PropTypes.string,
 		translate: PropTypes.func,
-	};
-
-	static defaultProps = {
-		translate: identity,
 	};
 
 	componentDidMount() {
@@ -38,13 +38,13 @@ export class ReaderSidebarTagsListItem extends Component {
 	handleTagSidebarClick = () => {
 		recordAction( 'clicked_reader_sidebar_tag_item' );
 		recordGaEvent( 'Clicked Reader Sidebar Tag Item' );
-		recordTrack( 'calypso_reader_sidebar_tag_item_clicked', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_tag_item_clicked', {
 			tag: decodeURIComponent( this.props.tag.slug ),
 		} );
 	};
 
 	render() {
-		const { tag, path, onUnfollow, translate } = this.props;
+		const { tag, path, translate } = this.props;
 		const tagName = tag.displayName || tag.slug;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -56,7 +56,7 @@ export class ReaderSidebarTagsListItem extends Component {
 				} ) }
 			>
 				<a
-					className="sidebar__menu-item-label"
+					className="sidebar__menu-link"
 					href={ tag.url }
 					onClick={ this.handleTagSidebarClick }
 					title={ translate( "View tag '%(currentTagName)s'", {
@@ -67,22 +67,12 @@ export class ReaderSidebarTagsListItem extends Component {
 				>
 					<div className="sidebar__menu-item-tagname">{ tagName }</div>
 				</a>
-				{ tag.id !== 'pending' && (
-					<button
-						className="sidebar__menu-action"
-						data-tag-slug={ tag.slug }
-						onClick={ onUnfollow }
-						title={ translate( "Unfollow tag '%(currentTagName)s'", {
-							args: {
-								currentTagName: tagName,
-							},
-						} ) }
-					/>
-				) }
 			</li>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
-export default localize( ReaderSidebarTagsListItem );
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( localize( ReaderSidebarTagsListItem ) );

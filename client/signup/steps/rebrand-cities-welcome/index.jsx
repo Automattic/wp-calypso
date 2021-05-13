@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,11 +9,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import { generateUniqueRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
-import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-import { setSiteTitle } from 'state/signup/steps/site-title/actions';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { generateUniqueRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
+import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
+import { setSiteTitle } from 'calypso/state/signup/steps/site-title/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -23,7 +21,7 @@ import { submitSignupStep } from 'state/signup/progress/actions';
 import './style.scss';
 
 class RebrandCitiesWelcomeStep extends Component {
-	handleSubmit = siteTitle => {
+	handleSubmit = ( siteTitle ) => {
 		const { goToNextStep, stepName, stepSectionName } = this.props;
 
 		this.props.setSiteTitle( siteTitle );
@@ -76,7 +74,6 @@ class RebrandCitiesWelcomeStep extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ setSiteTitle, submitSignupStep }
-)( localize( RebrandCitiesWelcomeStep ) );
+export default connect( null, { setSiteTitle, submitSignupStep } )(
+	localize( RebrandCitiesWelcomeStep )
+);

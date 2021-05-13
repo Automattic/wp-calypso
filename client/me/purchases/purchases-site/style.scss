@@ -1,28 +1,29 @@
-.purchases-site {
-	margin-bottom: 15px;
+.concierge-banner {
+	& .action-card__button-container {
+		text-align: left;
+		margin-bottom: 0;
 
-	.site-icon {
-		display: inline-block;
-		margin-right: 12px;
-		vertical-align: middle;
+		@include breakpoint-deprecated( '>960px' ) {
+			text-align: center;
+		}
 	}
-}
 
-.purchases-site__slug {
-	color: var( --color-neutral );
-	font-size: 12px;
-}
-
-.purchases-site__slug {
-	white-space: nowrap;
-
-	@include breakpoint( '<660px' ) {
-		line-height: 15px;
+	& .action-card__illustration {
+		@include breakpoint-deprecated( '>960px' ) {
+			margin: 5px -20px 0;
+		}
 	}
-}
 
-.purchases-list .action-card__illustration {
-	@include breakpoint( '>960px' ) {
-		margin: -40px 20px 0 -20px;
+	&.purchase-concierge .action-card__illustration {
+		@include breakpoint-deprecated( '>960px' ) {
+			margin-right: 20px;
+		}
 	}
+
+	&.card {
+		@include breakpoint-deprecated( '>480px' ) {
+			align-items: flex-start;
+		}
+	}
+
 }

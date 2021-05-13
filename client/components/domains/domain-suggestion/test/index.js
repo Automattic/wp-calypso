@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -8,13 +7,14 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import DomainSuggestion from 'components/domains/domain-suggestion';
+import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
+
+const noop = () => {};
 
 describe( 'Domain Suggestion', () => {
 	describe( 'has attributes', () => {

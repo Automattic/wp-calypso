@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,12 +7,24 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getStoredCardById, getStoredCards, hasLoadedStoredCardsFromServer } from '../selectors';
-import { STORED_CARDS_FROM_API } from './fixture';
+import {
+	getStoredCardById,
+	getStoredCards,
+	getAllStoredCards,
+	hasLoadedStoredCardsFromServer,
+	getStoredPaymentAgreements,
+	getUniquePaymentAgreements,
+} from '../selectors';
+import {
+	STORED_CARDS_FROM_API,
+	SELECTED_STORED_CARDS,
+	SELECTED_PAYMENT_AGREEMENTS,
+	SELECTED_UNIQUE_PAYMENT_AGREEMENTS,
+} from './fixture';
 
 describe( 'selectors', () => {
 	describe( 'getStoredCards', () => {
-		test( 'should return all cards', () => {
+		test( 'should return all non-expired cards', () => {
 			const state = deepFreeze( {
 				storedCards: {
 					hasLoadedFromServer: true,
@@ -23,7 +34,54 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getStoredCards( state ) ).to.be.eql( STORED_CARDS_FROM_API );
+			expect( getStoredCards( state ) ).to.be.eql(
+				SELECTED_STORED_CARDS.filter( ( card ) => ! card.is_expired )
+			);
+		} );
+	} );
+
+	describe( 'getAllStoredCards', () => {
+		test( 'should return all cards including expired ones', () => {
+			const state = deepFreeze( {
+				storedCards: {
+					hasLoadedFromServer: true,
+					isFetching: false,
+					isDeleting: false,
+					items: STORED_CARDS_FROM_API,
+				},
+			} );
+
+			expect( getAllStoredCards( state ) ).to.be.eql( SELECTED_STORED_CARDS );
+		} );
+	} );
+
+	describe( 'getStoredPaymentAgreements', () => {
+		test( 'should return all payment agreements', () => {
+			const state = deepFreeze( {
+				storedCards: {
+					hasLoadedFromServer: true,
+					isFetching: false,
+					isDeleting: false,
+					items: STORED_CARDS_FROM_API,
+				},
+			} );
+
+			expect( getStoredPaymentAgreements( state ) ).to.be.eql( SELECTED_PAYMENT_AGREEMENTS );
+		} );
+	} );
+
+	describe( 'getUniquePaymentAgreements', () => {
+		test( 'should return all unique payment agreements grouped by email', () => {
+			const state = deepFreeze( {
+				storedCards: {
+					hasLoadedFromServer: true,
+					isFetching: false,
+					isDeleting: false,
+					items: STORED_CARDS_FROM_API,
+				},
+			} );
+
+			expect( getUniquePaymentAgreements( state ) ).to.be.eql( SELECTED_UNIQUE_PAYMENT_AGREEMENTS );
 		} );
 	} );
 
@@ -38,7 +96,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getStoredCardById( state, '12345' ) ).to.be.eql( STORED_CARDS_FROM_API[ 1 ] );
+			expect( getStoredCardById( state, '12345' ) ).to.be.eql( SELECTED_STORED_CARDS[ 1 ] );
 		} );
 	} );
 

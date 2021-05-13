@@ -1,5 +1,5 @@
 .stats-module {
-	.upgrade-nudge.card {
+	.upsell-nudge.card {
 		margin: 16px;
 	}
 }
@@ -30,16 +30,15 @@
 
 .stats-insights__nonperiodic {
 	&.has-no-recent {
-		color: var( --color-neutral-700 );
-		font-weight: 300;
+		color: var( --color-neutral-70 );
 
 		p {
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				margin-left: 24px;
 				margin-right: 24px;
 			}
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				text-align: center;
 			}
 		}
@@ -56,12 +55,12 @@
 .stats-section-title {
 	@include heading;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-left: 24px;
 		margin-right: 24px;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		text-align: center;
 	}
 }
@@ -73,7 +72,7 @@
 	line-height: 40px;
 	display: block;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		line-height: 48px;
 	}
 
@@ -86,27 +85,27 @@
 		@extend %mobile-link-element;
 		border-top: 1px solid var( --color-border-subtle );
 		display: block;
-		font-size: 14px;
+		font-size: $font-body-small;
 		padding: 0 24px;
 		position: relative;
 
 		// Hover state
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			&:hover {
 				background: var( --color-neutral-0 );
-				border-top-color: var( --color-white );
+				border-top-color: var( --color-border-inverted );
 			}
 		}
 
 		// Focus state
 		&:focus {
 			background: var( --color-neutral-0 );
-			border-top-color: var( --color-white );
+			border-top-color: var( --color-border-inverted );
 		}
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			.stats__module-list & {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 			}
 		}
 	}
@@ -122,7 +121,7 @@
 // Module Header
 
 .module-header {
-	background: var( --color-white );
+	background: var( --color-surface );
 	height: 40px;
 	line-height: 40px;
 	padding-left: 24px;
@@ -145,7 +144,7 @@
 	@extend %mobile-interface-element;
 	@extend %placeholder;
 
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-weight: 600;
 	height: 40px; // 1
 	overflow: hidden; // 1
@@ -157,7 +156,7 @@
 // 2: So the focus outline isn't covered by the fading pseudo-element
 
 ul.module-header-actions {
-	background: var( --color-white );
+	background: var( --color-surface );
 	height: 40px;
 	list-style: none;
 	margin: 0;
@@ -167,7 +166,7 @@ ul.module-header-actions {
 
 	// Fade really long module titles
 	&::before {
-		@include stats-fade-text( var( --color-white ) );
+		@include stats-fade-text( rgba( var( --color-surface-rgb ), 0 ), var( --color-surface ) );
 	}
 
 	.module-header-action {
@@ -218,7 +217,7 @@ ul.module-header-actions {
 	}
 
 	// Hover state
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		.stats-module:hover & .module-header-action-link {
 			color: var( --color-primary );
 		}
@@ -256,7 +255,7 @@ ul.module-header-actions {
 	}
 }
 
-.module-content .upgrade-nudge.card {
+.module-content .upsell-nudge.card {
 	margin: 16px;
 }
 
@@ -264,8 +263,8 @@ ul.module-header-actions {
 
 .module-content-text {
 	box-sizing: border-box;
-	color: var( --color-neutral-700 );
-	font-size: 13px;
+	color: var( --color-neutral-70 );
+	font-size: $font-body-small;
 	padding: 16px 16px 0;
 	min-height: 1em;
 	width: 100%;
@@ -274,14 +273,14 @@ ul.module-header-actions {
 	a {
 		display: block;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			display: inline;
 		}
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		.stats__module-list & {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 		}
 	}
 
@@ -295,7 +294,7 @@ ul.module-header-actions {
 	&-info {
 		background: var( --color-neutral-0 );
 		box-shadow: inset 0 1px 0 var( --color-neutral-0 );
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		display: none;
 		position: relative;
 
@@ -338,16 +337,16 @@ ul.module-header-actions {
 		list-style: none;
 
 		li {
-			font-size: 14px;
+			font-size: $font-body-small;
 			line-height: 2em;
 
-			@include breakpoint( '>960px' ) {
+			@include breakpoint-deprecated( '>960px' ) {
 				.stats__module-list & {
-					font-size: 12px;
+					font-size: $font-body-extra-small;
 				}
 			}
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				border-bottom: 1px solid var( --color-border-subtle );
 
 				&:last-child {
@@ -363,7 +362,7 @@ ul.module-header-actions {
 			position: relative;
 			padding: 6px 0;
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				padding-top: 12px;
 				padding-bottom: 12px;
 			}
@@ -400,7 +399,7 @@ ul.module-header-actions {
 	th {
 		border-bottom: 1px solid var( --color-border-subtle );
 		border-right: 1px solid var( --color-border-subtle );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		padding: 8px 12px;
 		white-space: nowrap; // 1
 
@@ -420,7 +419,7 @@ ul.module-header-actions {
 	}
 
 	tbody th:first-child {
-		background: var( --color-white );
+		background: var( --color-surface );
 		position: absolute;
 		z-index: z-index( 'root', '.module-content-table tbody th:first-child' );
 	}
@@ -432,7 +431,7 @@ ul.module-header-actions {
 		th:first-child {
 			width: 34px; // 24 (margin-left) + 12 (margin-right) + 1 (border) + 34 = 70
 			transform: translateX( -70px );
-			background: var( --color-white );
+			background: var( --color-surface );
 			position: fixed;
 			z-index: z-index( 'root', '.module-content-table tbody th:first-child' );
 		}
@@ -450,7 +449,7 @@ ul.module-header-actions {
 	// Left this modifier as-is because these tables are likely going to change
 	// a lot or otherwise be removed, and at least it's directly dependent on
 	// being associated with a td in this structure
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		.stats-module & td.has-no-data:hover, // 1
 		tbody tr:hover td,
 		tbody tr:hover th {
@@ -460,7 +459,7 @@ ul.module-header-actions {
 		.stats-module & td.highest-count:hover,
 		tbody tr td:hover {
 			background: var( --color-neutral-0 );
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 	}
 
@@ -480,7 +479,7 @@ ul.module-header-actions {
 
 	.stats-detail-weeks__value {
 		display: block;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 
 		&.is-rising {
 			color: var( --color-success );
@@ -513,7 +512,7 @@ ul.module-header-actions {
 
 	.stats-detail-weeks__date {
 		display: block;
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
 	}
@@ -558,7 +557,7 @@ ul.module-header-actions {
 
 		&[disabled],
 		&.disabled {
-			color: var( --color-neutral-200 );
+			color: var( --color-neutral-20 );
 		}
 
 		&:hover:not( [disabled] ) {
@@ -581,12 +580,12 @@ ul.module-header-actions {
 }
 
 .stats-module__availability-warning-message {
-	font-size: 14px;
+	font-size: $font-body-small;
 	margin-left: 8px;
 	margin-bottom: 0;
 	color: var( --color-text-subtle );
 }
 
 .stats__module-list .stats-module__availability-warning-message {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }

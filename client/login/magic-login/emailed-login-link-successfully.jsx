@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,17 +11,23 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { login } from 'lib/paths';
-import Card from 'components/card';
-import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
-import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { login } from 'calypso/lib/paths';
+import { Card } from '@automattic/components';
+import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
+import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
-} from 'state/analytics/actions';
-import { withEnhancers } from 'state/utils';
-import Gridicon from 'gridicons';
+} from 'calypso/state/analytics/actions';
+import { withEnhancers } from 'calypso/state/utils';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import Gridicon from 'calypso/components/gridicon';
+
+/**
+ * Image dependencies
+ */
+import checkEmailImage from 'calypso/assets/images/illustrations/check-email.svg';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
 	static propTypes = {
@@ -36,12 +40,14 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
 	}
 
-	onClickBackLink = event => {
+	onClickBackLink = ( event ) => {
 		event.preventDefault();
 
 		this.props.hideMagicLoginRequestForm();
 
-		page( login( { isNative: true, locale: this.props.locale } ) );
+		page(
+			login( { isNative: true, isJetpack: this.props.isJetpackLogin, locale: this.props.locale } )
+		);
 	};
 
 	render() {
@@ -69,16 +75,18 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 				<h1 className="magic-login__form-header">{ translate( 'Check your email!' ) }</h1>
 
 				<Card className="magic-login__form">
-					<img
-						src="/calypso/images/login/check-email.svg"
-						className="magic-login__check-email-image"
-					/>
+					<img alt="" src={ checkEmailImage } className="magic-login__check-email-image" />
 					<p>{ line }</p>
 				</Card>
 
 				<div className="magic-login__footer">
 					<a
-						href={ login( { isNative: true, locale: this.props.locale } ) }
+						href={ login( {
+							isNative: true,
+							isJetpack: this.props.isJetpackLogin,
+							isGutenboarding: this.props.isGutenboardingLogin,
+							locale: this.props.locale,
+						} ) }
 						onClick={ this.onClickBackLink }
 					>
 						<Gridicon icon="arrow-left" size={ 18 } />
@@ -90,8 +98,10 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 	}
 }
 
-const mapState = state => ( {
+const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
+	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
+	isGutenboardingLogin: getCurrentRoute( state )?.startsWith( '/log-in/gutenboarding/link' ),
 } );
 
 const mapDispatch = {
@@ -99,7 +109,4 @@ const mapDispatch = {
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 };
 
-export default connect(
-	mapState,
-	mapDispatch
-)( localize( EmailedLoginLinkSuccessfully ) );
+export default connect( mapState, mapDispatch )( localize( EmailedLoginLinkSuccessfully ) );

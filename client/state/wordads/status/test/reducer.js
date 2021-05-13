@@ -1,23 +1,21 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
 import { items } from '../reducer';
-import { WORDADS_STATUS_RECEIVE } from 'state/action-types';
+import { WORDADS_STATUS_RECEIVE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index settings by site ID', () => {
@@ -35,7 +33,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: status,
 			} );
 		} );
@@ -58,7 +56,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					active: true,
 				},
@@ -66,6 +64,20 @@ describe( 'reducer', () => {
 					unsafe: false,
 				},
 			} );
+		} );
+
+		test( 'should serialize and deserialize state', () => {
+			const state = deepFreeze( {
+				2916284: {
+					unsafe: 'mature',
+				},
+				77203074: {
+					unsafe: false,
+				},
+			} );
+
+			expect( serialize( items, state ).root() ).toEqual( state );
+			expect( deserialize( items, state ) ).toEqual( state );
 		} );
 	} );
 } );

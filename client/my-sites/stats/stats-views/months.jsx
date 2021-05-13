@@ -3,15 +3,16 @@
  */
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { map, range, flatten, max, keys, zipObject, times, size, concat, merge } from 'lodash';
+import { map, range, flatten, keys, zipObject, times, size, concat, merge } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import { formatNumberMetric } from 'lib/format-number-compact';
-import Popover from 'components/popover';
+import { formatNumberMetric } from 'calypso/lib/format-number-compact';
+import Popover from 'calypso/components/popover';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class Month extends PureComponent {
 	static propTypes = {
@@ -73,7 +74,7 @@ class Month extends PureComponent {
 	}
 }
 
-const StatsViewsMonths = props => {
+const StatsViewsMonths = ( props ) => {
 	const { translate, dataKey, data, numberFormat, moment, siteSlug } = props;
 	const isAverageChart = dataKey === 'average';
 	let earliestDate = moment();
@@ -106,7 +107,7 @@ const StatsViewsMonths = props => {
 		} )
 	);
 
-	const highestMonth = max( allMonths );
+	const highestMonth = Math.max( ...allMonths );
 	const yearsObject = zipObject(
 		keys( data ),
 		times( size( data ), () => {
@@ -127,7 +128,7 @@ const StatsViewsMonths = props => {
 	};
 
 	const years = map( data, ( item, year ) => {
-		const cells = map( range( 0, 12 ), month => {
+		const cells = map( range( 0, 12 ), ( month ) => {
 			let value = item[ month ] ? item[ month ][ dataKey ] : null;
 			let displayValue;
 			const momentMonth = momentFromMonthYear( month, year );
@@ -227,4 +228,4 @@ const StatsViewsMonths = props => {
 	);
 };
 
-export default localize( StatsViewsMonths );
+export default localize( withLocalizedMoment( StatsViewsMonths ) );

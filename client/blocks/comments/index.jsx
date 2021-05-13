@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,11 +10,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PostCommentsList from './post-comment-list';
-import Interval, { EVERY_MINUTE } from 'lib/interval';
-import { requestPostComments } from 'state/comments/actions';
+import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
+import { requestPostComments } from 'calypso/state/comments/actions';
 
 class PostComments extends React.Component {
 	static propTypes = {
+		shouldHighlightNew: PropTypes.bool,
 		post: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 			site_ID: PropTypes.number.isRequired,
@@ -24,6 +23,7 @@ class PostComments extends React.Component {
 	};
 
 	static defaultProps = {
+		shouldHighlightNew: false,
 		shouldPollForNewComments: false,
 	};
 

@@ -1,15 +1,19 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 
-import { createReducer } from 'state/utils';
-import { USER_DEVICES_ADD } from 'state/action-types';
+import { USER_DEVICES_ADD } from 'calypso/state/action-types';
 
-export default createReducer(
-	{},
-	{
-		[ USER_DEVICES_ADD ]: ( state, { devices } ) => ( { ...state, ...devices } ),
+const reducer = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case USER_DEVICES_ADD: {
+			const { devices } = action;
+			return { ...state, ...devices };
+		}
 	}
-);
+
+	return state;
+};
+
+export default withStorageKey( 'userDevices', reducer );

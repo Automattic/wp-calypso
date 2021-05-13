@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,17 +18,15 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
 // Write url and site credentials into file for further use
 function writeJNCredentials( url, username, password ) {
 	const fileContents = `${ url } ${ username } ${ password }`;
-	return fs.mkdir( './temp', err => {
+	return fs.mkdir( './temp', ( err ) => {
 		if ( err && err.code !== 'EEXIST' ) {
 			return console.log( err );
 		}
 
-		fs.writeFile( './temp/jn-credentials.txt', fileContents, fileErr => {
+		fs.writeFile( './temp/jn-credentials.txt', fileContents, ( fileErr ) => {
 			if ( fileErr ) {
 				return console.log( fileErr );
 			}
@@ -39,21 +35,22 @@ function writeJNCredentials( url, username, password ) {
 	} );
 }
 
-before( function() {
-	this.timeout( startBrowserTimeoutMS );
-	driver = driverManager.startBrowser();
-	return driverManager.clearCookiesAndDeleteLocalStorage( driver );
-} );
-
-describe( `[${ host }] Jurassic Ninja Connection: (${ screenSize }) @jetpack`, function() {
+describe( `[${ host }] Jurassic Ninja Connection: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
 
-	step( 'Can connect from WP Admin', async function() {
+	before( async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+		return driverManager.clearCookiesAndDeleteLocalStorage( driver );
+	} );
+
+	it( 'Can connect from WP Admin', async function () {
 		this.jnFlow = new JetpackConnectFlow( driver, 'jetpackUserJN' );
 		return await this.jnFlow.connectFromWPAdmin();
 	} );
 
-	step( 'Can logout from WP admin', async function() {
+	it( 'Can logout from WP admin', async function () {
 		const wpDashboard = await WPAdminDashboardPage.Visit(
 			driver,
 			WPAdminDashboardPage.getUrl( this.jnFlow.url )
@@ -61,11 +58,7 @@ describe( `[${ host }] Jurassic Ninja Connection: (${ screenSize }) @jetpack`, f
 		return wpDashboard.logout();
 	} );
 
-	step( 'Can save JN credentials to file', async function() {
+	it( 'Can save JN credentials to file', async function () {
 		await writeJNCredentials( this.jnFlow.url, 'demo', this.jnFlow.password );
-	} );
-
-	step( 'Can remove diconnected sites', async function() {
-		await this.jnFlow.removeSites();
 	} );
 } );

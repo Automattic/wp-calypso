@@ -1,4 +1,3 @@
-/** @format */
 export const idSchema = {
 	type: [ 'integer', 'null' ],
 	minimum: 0,
@@ -39,4 +38,8 @@ export const capabilitiesSchema = {
 
 export const flagsSchema = {
 	type: 'array',
+};
+
+export const lasagnaSchema = {
+	type: [ 'string', 'null' ],
 };

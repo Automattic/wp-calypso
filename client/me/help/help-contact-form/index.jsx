@@ -1,41 +1,40 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import { debounce, isEqual, find, isEmpty, isArray } from 'lodash';
+import { debounce, isEqual, find, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import { preventWidows } from 'lib/formatting';
-import config from 'config';
-import FormLabel from 'components/forms/form-label';
-import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
-import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import FormButton from 'components/forms/form-button';
-import SitesDropdown from 'components/sites-dropdown';
-import InlineHelpCompactResults from 'blocks/inline-help/inline-help-compact-results';
-import { selectSiteId } from 'state/help/actions';
-import { getHelpSelectedSite, getHelpSelectedSiteId } from 'state/help/selectors';
-import wpcomLib from 'lib/wp';
-import HelpResults from 'me/help/help-results';
-import { bumpStat, recordTracksEvent, composeAnalytics } from 'state/analytics/actions';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { isShowingQandAInlineHelpContactForm } from 'state/inline-help/selectors';
-import { showQandAOnInlineHelpContactForm } from 'state/inline-help/actions';
-import { getNpsSurveyFeedback } from 'state/nps-survey/selectors';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { preventWidows } from 'calypso/lib/formatting';
+import config from '@automattic/calypso-config';
+import FormLabel from 'calypso/components/forms/form-label';
+import SegmentedControl from 'calypso/components/segmented-control';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormButton from 'calypso/components/forms/form-button';
+import SitesDropdown from 'calypso/components/sites-dropdown';
+import InlineHelpCompactResults from 'calypso/blocks/inline-help/inline-help-compact-results';
+import { selectSiteId } from 'calypso/state/help/actions';
+import { getHelpSelectedSite, getHelpSelectedSiteId } from 'calypso/state/help/selectors';
+import wpcomLib from 'calypso/lib/wp';
+import HelpResults from 'calypso/me/help/help-results';
+import {
+	bumpStat,
+	recordTracksEvent as recordTracksEventAction,
+	composeAnalytics,
+} from 'calypso/state/analytics/actions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import isShowingQandAInlineHelpContactForm from 'calypso/state/selectors/is-showing-q-and-a-inline-help-contact-form';
+import { showQandAOnInlineHelpContactForm } from 'calypso/state/inline-help/actions';
+import { getNpsSurveyFeedback } from 'calypso/state/nps-survey/selectors';
 import { generateSubjectFromMessage } from './utils';
 
 /**
@@ -51,13 +50,33 @@ const wpcom = wpcomLib.undocumented();
 const trackSibylClick = ( event, helpLink ) =>
 	composeAnalytics(
 		bumpStat( 'sibyl_question_clicks', helpLink.id ),
-		recordTracksEvent( 'calypso_sibyl_question_click', {
+		recordTracksEventAction( 'calypso_sibyl_question_click', {
+			question_id: helpLink.id,
+		} )
+	);
+
+const trackSibylFirstClick = ( event, helpLink ) =>
+	composeAnalytics(
+		recordTracksEventAction( 'calypso_sibyl_first_question_click', {
 			question_id: helpLink.id,
 		} )
 	);
 
 const trackSupportAfterSibylClick = () =>
-	composeAnalytics( recordTracksEvent( 'calypso_sibyl_support_after_question_click' ) );
+	composeAnalytics( recordTracksEventAction( 'calypso_sibyl_support_after_question_click' ) );
+
+const trackSupportWithSibylSuggestions = ( query, suggestions ) =>
+	composeAnalytics(
+		recordTracksEventAction( 'calypso_sibyl_support_with_suggestions_showing', {
+			query,
+			suggestions,
+		} )
+	);
+
+const trackSupportWithoutSibylSuggestions = ( query ) =>
+	composeAnalytics(
+		recordTracksEventAction( 'calypso_sibyl_support_without_suggestions_showing', { query } )
+	);
 
 export class HelpContactForm extends React.PureComponent {
 	static propTypes = {
@@ -100,8 +119,9 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	/**
-	 * Setup our initial state
-	 * @return {Object} An object representing our initial state
+	 * Set up our initial state
+	 *
+	 * @returns {object} An object representing our initial state
 	 */
 	state = this.props.valueLink.value || {
 		howCanWeHelp: 'gettingStarted',
@@ -112,7 +132,7 @@ export class HelpContactForm extends React.PureComponent {
 		qanda: [],
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { npsSurveyFeedback, translate } = this.props;
 
 		if ( npsSurveyFeedback ) {
@@ -127,7 +147,7 @@ export class HelpContactForm extends React.PureComponent {
 		this.debouncedQandA = debounce( this.doQandASearch, 500 );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.valueLink.value || isEqual( nextProps.valueLink.value, this.state ) ) {
 			return;
 		}
@@ -149,12 +169,14 @@ export class HelpContactForm extends React.PureComponent {
 		}[ selectionName ];
 
 		if ( tracksEvent ) {
-			analytics.tracks.recordEvent( tracksEvent, { selected_option: selectedOption } );
+			recordTracksEvent( tracksEvent, { selected_option: selectedOption } );
 		}
 	};
 
+	getSibylQuery = () => ( this.state.subject + ' ' + this.state.message ).trim();
+
 	doQandASearch = () => {
-		const query = ( this.state.subject + ' ' + this.state.message ).trim();
+		const query = this.getSibylQuery();
 
 		if ( '' === query ) {
 			this.setState( { qanda: [] } );
@@ -162,9 +184,9 @@ export class HelpContactForm extends React.PureComponent {
 		}
 
 		const areSameQuestions = ( existingQuestions, newQuestions ) => {
-			const existingIDs = existingQuestions.map( question => question.id );
+			const existingIDs = existingQuestions.map( ( question ) => question.id );
 			existingIDs.sort();
-			const newIDs = newQuestions.map( question => question.id );
+			const newIDs = newQuestions.map( ( question ) => question.id );
 			newIDs.sort();
 			return existingIDs.toString() === newIDs.toString();
 		};
@@ -174,9 +196,9 @@ export class HelpContactForm extends React.PureComponent {
 
 		wpcom
 			.getQandA( query, site )
-			.then( qanda =>
+			.then( ( qanda ) =>
 				this.setState( {
-					qanda: isArray( qanda ) ? qanda : [],
+					qanda: Array.isArray( qanda ) ? qanda : [],
 					// only keep sibylClicked true if the user is seeing the same set of questions
 					// we don't want to track "questions -> question click -> different questions -> support click",
 					// so we need to set sibylClicked to false here if the questions have changed
@@ -187,6 +209,9 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	trackSibylClick = ( event, helpLink ) => {
+		if ( ! this.state.sibylClicked ) {
+			this.props.trackSibylFirstClick( event, helpLink );
+		}
 		this.props.trackSibylClick( event, helpLink );
 		this.setState( { sibylClicked: true } );
 	};
@@ -201,11 +226,11 @@ export class HelpContactForm extends React.PureComponent {
 	 * @param  {object} selectionOptions An array of objects consisting of a value and a label. It can also have a property called subtext
 	 *                                   value is used when setting state, label is used for display in the selection component, and subtext
 	 *                                   is used for the second line of text displayed in the SegmentedControl
-	 * @return {object}                  A JSX object containing both the SegmentedControl and the SelectDropdown.
+	 * @returns {object}                  A JSX object containing both the SegmentedControl and the SelectDropdown.
 	 */
 	renderFormSelection = ( selectionName, selectionOptions ) => {
 		const { translate } = this.props;
-		const options = selectionOptions.map( option => ( {
+		const options = selectionOptions.map( ( option ) => ( {
 			label: option.label,
 			subtext: option.subtext ? (
 				<span className="help-contact-form__selection-subtext">{ option.subtext }</span>
@@ -226,18 +251,18 @@ export class HelpContactForm extends React.PureComponent {
 		return (
 			<div className="help-contact-form__selection">
 				<SegmentedControl primary>
-					{ options.map( option => (
-						<ControlItem { ...option.props }>
+					{ options.map( ( option ) => (
+						<SegmentedControl.Item { ...option.props }>
 							{ option.label }
 							{ option.subtext }
-						</ControlItem>
+						</SegmentedControl.Item>
 					) ) }
 				</SegmentedControl>
 				<SelectDropdown
 					selectedText={ selectedItem ? selectedItem.label : translate( 'Select an option' ) }
 				>
-					{ options.map( option => (
-						<DropdownItem { ...option.props }>{ option.label }</DropdownItem>
+					{ options.map( ( option ) => (
+						<SelectDropdown.Item { ...option.props }>{ option.label }</SelectDropdown.Item>
 					) ) }
 				</SelectDropdown>
 			</div>
@@ -246,7 +271,8 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Determine if this form is ready to submit
-	 * @return {bool}	Return true if this form can be submitted
+	 *
+	 * @returns {boolean}	Return true if this form can be submitted
 	 */
 	canSubmitForm = () => {
 		const { disabled, showSubjectField } = this.props;
@@ -265,7 +291,6 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Start a chat using the info set in state
-	 * @param  {object} event Event object
 	 */
 	submitForm = () => {
 		const { howCanWeHelp, howYouFeel, message } = this.state;
@@ -273,7 +298,7 @@ export class HelpContactForm extends React.PureComponent {
 		const subject = compact ? generateSubjectFromMessage( message ) : this.state.subject;
 
 		if ( additionalSupportOption && additionalSupportOption.enabled ) {
-			this.props.recordTracksEvent( 'calypso_happychat_a_b_english_chat_selected', {
+			this.props.recordTracksEventAction( 'calypso_happychat_a_b_english_chat_selected', {
 				locale: currentUserLocale,
 			} );
 		}
@@ -282,6 +307,15 @@ export class HelpContactForm extends React.PureComponent {
 			// track that the user had clicked a Sibyl result, but still contacted support
 			this.props.trackSupportAfterSibylClick();
 			this.setState( { sibylClicked: false } );
+		}
+
+		if ( isEmpty( this.state.qanda ) ) {
+			this.props.trackSupportWithoutSibylSuggestions( this.getSibylQuery() );
+		} else {
+			this.props.trackSupportWithSibylSuggestions(
+				this.getSibylQuery(),
+				this.state.qanda.map( ( { id, title } ) => `${ id } - ${ title }` ).join( ' / ' )
+			);
 		}
 
 		this.props.onSubmit( {
@@ -295,14 +329,13 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Submit additional support option
-	 * @param  {object} event Event object
 	 */
 	submitAdditionalForm = () => {
 		const { howCanWeHelp, howYouFeel, message } = this.state;
 		const { currentUserLocale } = this.props;
 		const subject = generateSubjectFromMessage( message );
 
-		this.props.recordTracksEvent( 'calypso_happychat_a_b_native_ticket_selected', {
+		this.props.recordTracksEventAction( 'calypso_happychat_a_b_native_ticket_selected', {
 			locale: currentUserLocale,
 		} );
 
@@ -317,7 +350,8 @@ export class HelpContactForm extends React.PureComponent {
 
 	/**
 	 * Render the contact form
-	 * @return {object} ReactJS JSX object
+	 *
+	 * @returns {object} ReactJS JSX object
 	 */
 	render() {
 		const {
@@ -338,17 +372,17 @@ export class HelpContactForm extends React.PureComponent {
 		const howCanWeHelpOptions = [
 			{
 				value: 'gettingStarted',
-				label: translate( 'Help getting started' ),
+				label: translate( 'Get started' ),
 				subtext: translate( 'Can you show me how to…' ),
 			},
 			{
 				value: 'somethingBroken',
-				label: translate( 'Something is broken' ),
+				label: translate( "Report something isn't working" ),
 				subtext: translate( 'Can you check this out…' ),
 			},
 			{
 				value: 'suggestion',
-				label: translate( 'I have a suggestion' ),
+				label: translate( 'Make a suggestion' ),
 				subtext: translate( 'I think it would be cool if…' ),
 			},
 		];
@@ -385,7 +419,7 @@ export class HelpContactForm extends React.PureComponent {
 
 				{ showHowCanWeHelpField && (
 					<div>
-						<FormLabel>{ translate( 'How can we help?' ) }</FormLabel>
+						<FormLabel>{ translate( "You're reaching out to…" ) }</FormLabel>
 						{ this.renderFormSelection( 'howCanWeHelp', howCanWeHelpOptions ) }
 					</div>
 				) }
@@ -440,6 +474,7 @@ export class HelpContactForm extends React.PureComponent {
 						helpLinks={ this.state.qanda }
 						iconTypeDescription="book"
 						onClick={ this.trackSibylClick }
+						compact
 					/>
 				) }
 
@@ -468,13 +503,13 @@ export class HelpContactForm extends React.PureComponent {
 		);
 	}
 
-	handleChange = e => {
+	handleChange = ( e ) => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	};
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	currentUserLocale: getCurrentUserLocale( state ),
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
@@ -484,13 +519,13 @@ const mapStateToProps = state => ( {
 
 const mapDispatchToProps = {
 	onChangeSite: selectSiteId,
-	recordTracksEvent,
+	recordTracksEventAction,
 	trackSibylClick,
+	trackSibylFirstClick,
 	trackSupportAfterSibylClick,
+	trackSupportWithSibylSuggestions,
+	trackSupportWithoutSibylSuggestions,
 	showQandAOnInlineHelpContactForm,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( HelpContactForm ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );

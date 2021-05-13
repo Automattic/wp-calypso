@@ -3,17 +3,16 @@
 }
 
 .login__social-buttons {
-	margin-top: 10px;
+	display: flex;
+	flex-direction: column;
 
-	button {
-		width: 100%;
+	.social-buttons__button:not( :first-of-type ) {
+		margin-top: 10px;
 	}
+}
 
-	svg {
-		margin-top: -2px;
-
-		&.disabled {
-			display: none;
-		}
-	}
+.login__social-tos {
+	font-size: $font-body-extra-small;
+	margin: 1.5em 0 0;
+	text-align: center;
 }

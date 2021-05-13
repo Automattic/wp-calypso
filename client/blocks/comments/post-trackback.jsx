@@ -1,18 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { get } from 'lodash';
 
-/***
+/**
  * Internal dependencies
  */
-import TimeSince from 'components/time-since';
+import TimeSince from 'calypso/components/time-since';
 
 /**
  * Style dependencies

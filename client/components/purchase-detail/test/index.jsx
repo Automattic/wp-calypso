@@ -1,10 +1,8 @@
-/** @format */
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 
 /**
@@ -13,6 +11,8 @@ import React from 'react';
 import PurchaseDetail from '..';
 import PurchaseButton from '../purchase-button';
 import TipInfo from '../tip-info';
+
+const noop = () => {};
 
 describe( 'PurchaseDetail', () => {
 	let wrapper;

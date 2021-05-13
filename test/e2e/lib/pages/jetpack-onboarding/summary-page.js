@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -22,8 +20,8 @@ export default class SummaryPage extends AsyncBaseContainer {
 	}
 
 	async countToDoSteps() {
-		await driverHelper.waitTillNotPresent( this.driver, By.css( 'div.spinner' ) );
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilElementNotLocated( this.driver, By.css( 'div.spinner' ) );
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( 'div.jetpack-onboarding__summary-entry.completed' )
 		);

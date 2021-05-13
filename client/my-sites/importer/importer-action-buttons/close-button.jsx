@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,16 +5,15 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import { flow } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import ImporterActionButton from './action-button';
-import { appStates } from 'state/imports/constants';
-import { cancelImport } from 'lib/importer/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { appStates } from 'calypso/state/imports/constants';
+import { cancelImport } from 'calypso/state/imports/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export class ImporterCloseButton extends React.PureComponent {
 	static displayName = 'ImporterCloseButton';
@@ -39,7 +36,7 @@ export class ImporterCloseButton extends React.PureComponent {
 			site: { ID: siteId },
 		} = this.props;
 
-		cancelImport( siteId, importerId );
+		this.props.cancelImport( siteId, importerId );
 
 		this.props.recordTracksEvent( 'calypso_importer_main_cancel_clicked', {
 			blog_id: siteId,
@@ -65,10 +62,6 @@ export class ImporterCloseButton extends React.PureComponent {
 	}
 }
 
-export default flow(
-	connect(
-		null,
-		{ recordTracksEvent }
-	),
-	localize
-)( ImporterCloseButton );
+export default connect( null, { recordTracksEvent, cancelImport } )(
+	localize( ImporterCloseButton )
+);

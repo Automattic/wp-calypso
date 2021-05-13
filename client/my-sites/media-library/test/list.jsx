@@ -1,76 +1,77 @@
 /**
- * @format
  * @jest-environment jsdom
  */
+
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expectSelectedItems", "expect"] }] */
 
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { toArray } from 'lodash';
+import { defer } from 'lodash';
 import React from 'react';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
 import { MediaLibraryList as MediaList } from '../list';
 import fixtures from './fixtures';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import Dispatcher from 'dispatcher';
-import MediaActions from 'lib/media/actions';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-
-jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'components/infinite-list', () => require( 'components/empty-component' ) );
-jest.mock( 'my-sites/media-library/list-item', () => require( 'components/empty-component' ) );
-jest.mock( 'my-sites/media-library/list-plan-upgrade-nudge', () =>
-	require( 'components/empty-component' )
-);
 
 /**
  * Module variables
  */
 const DUMMY_SITE_ID = 2916284;
+const mockSelectedItems = [];
+
+jest.mock( 'calypso/lib/user', () => () => {} );
+jest.mock( 'calypso/components/infinite-list', () =>
+	require( 'calypso/components/empty-component' )
+);
+jest.mock( 'calypso/my-sites/media-library/list-item', () =>
+	require( 'calypso/components/empty-component' )
+);
+jest.mock( 'calypso/my-sites/media-library/list-plan-upgrade-nudge', () =>
+	require( 'calypso/components/empty-component' )
+);
 
 describe( 'MediaLibraryList item selection', () => {
-	let wrapper, mediaList;
+	let wrapper;
+	let mediaList;
+
+	const selectMediaItems = jest.fn();
 
 	function toggleItem( itemIndex, shiftClick ) {
 		mediaList.toggleItem( fixtures.media[ itemIndex ], shiftClick );
 	}
 
-	function expectSelectedItems() {
-		expect( MediaLibrarySelectedStore.getAll( DUMMY_SITE_ID ) ).to.have.members(
-			toArray( arguments ).map( function( arg ) {
-				return fixtures.media[ arg ];
-			} )
-		);
+	function expectSelectedItems( ...args ) {
+		defer( function () {
+			expect( mockSelectedItems ).to.have.members(
+				args.map( function ( arg ) {
+					return fixtures.media[ arg ];
+				} )
+			);
+		} );
 	}
 
-	beforeAll( function() {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_MEDIA_ITEMS',
-			siteId: DUMMY_SITE_ID,
-			data: fixtures,
-		} );
-	} );
-
 	beforeEach( () => {
-		MediaActions.setLibrarySelectedItems( DUMMY_SITE_ID, [] );
+		mockSelectedItems.length = 0;
 	} );
 
 	describe( 'multiple selection', () => {
 		beforeEach( () => {
 			wrapper = mount(
-				<MediaLibrarySelectedData siteId={ DUMMY_SITE_ID }>
-					<MediaList
-						filterRequiresUpgrade={ false }
-						site={ { ID: DUMMY_SITE_ID } }
-						media={ fixtures.media }
-						mediaScale={ 0.24 }
-					/>
-				</MediaLibrarySelectedData>
+				<MediaList
+					filterRequiresUpgrade={ false }
+					site={ { ID: DUMMY_SITE_ID } }
+					media={ fixtures.media }
+					mediaScale={ 0.24 }
+					moment={ moment }
+					selectedItems={ [] }
+					selectMediaItems={ selectMediaItems }
+				/>
 			);
 			mediaList = wrapper.find( MediaList ).instance();
 		} );
@@ -150,15 +151,16 @@ describe( 'MediaLibraryList item selection', () => {
 	describe( 'single selection', () => {
 		beforeEach( () => {
 			wrapper = mount(
-				<MediaLibrarySelectedData siteId={ DUMMY_SITE_ID }>
-					<MediaList
-						filterRequiresUpgrade={ false }
-						site={ { ID: DUMMY_SITE_ID } }
-						media={ fixtures.media }
-						mediaScale={ 0.24 }
-						single
-					/>
-				</MediaLibrarySelectedData>
+				<MediaList
+					filterRequiresUpgrade={ false }
+					site={ { ID: DUMMY_SITE_ID } }
+					media={ fixtures.media }
+					mediaScale={ 0.24 }
+					moment={ moment }
+					single
+					selectedItems={ [] }
+					selectMediaItems={ selectMediaItems }
+				/>
 			);
 			mediaList = wrapper.find( MediaList ).instance();
 		} );
@@ -196,8 +198,11 @@ describe( 'MediaLibraryList item selection', () => {
 					site={ { ID: DUMMY_SITE_ID } }
 					media={ media }
 					mediaScale={ 0.24 }
+					moment={ moment }
 					source={ source }
 					single
+					selectedItems={ [] }
+					selectMediaItems={ selectMediaItems }
 				/>
 			)
 				.find( MediaList )

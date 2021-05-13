@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,9 +13,9 @@ import AsyncBaseContainer from '../async-base-container';
 export default class StoreSidebarComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.store-sidebar__sidebar' ) );
-		this.productsLinkSelector = By.css( 'li.products a' );
-		this.ordersLinkSelector = By.css( 'li.orders a' );
-		this.settingsLinkSelector = By.css( 'li.settings a' );
+		this.productsLinkLocator = By.css( 'li.products a' );
+		this.ordersLinkLocator = By.css( 'li.orders a' );
+		this.settingsLinkLocator = By.css( 'li.settings a' );
 	}
 
 	async _postInit() {
@@ -26,30 +24,33 @@ export default class StoreSidebarComponent extends AsyncBaseContainer {
 
 	// this is necessary on mobile width screens
 	async displayComponentIfNecessary() {
-		const mobileLeftArrowSelector = By.css( '.action-header button' );
+		const mobileLeftArrowLocator = By.css( '.action-header button' );
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
-			const mobileLeftArrowElement = await this.driver.findElement( mobileLeftArrowSelector );
+			const mobileLeftArrowElement = await this.driver.findElement( mobileLeftArrowLocator );
 			const displayed = await mobileLeftArrowElement.isDisplayed();
 			if ( displayed === true ) {
-				return await driverHelper.clickWhenClickable( this.driver, mobileLeftArrowSelector );
+				return await driverHelper.clickWhenClickable( this.driver, mobileLeftArrowLocator );
 			}
 		}
 	}
 
 	productsLinkDisplayed() {
-		return driverHelper.isEventuallyPresentAndDisplayed( this.driver, this.productsLinkSelector );
+		return driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			this.productsLinkLocator
+		);
 	}
 
 	ordersLinkDisplayed() {
-		return driverHelper.isEventuallyPresentAndDisplayed( this.driver, this.ordersLinkSelector );
+		return driverHelper.isElementEventuallyLocatedAndVisible( this.driver, this.ordersLinkLocator );
 	}
 
 	selectProducts() {
-		return driverHelper.clickWhenClickable( this.driver, this.productsLinkSelector );
+		return driverHelper.clickWhenClickable( this.driver, this.productsLinkLocator );
 	}
 
 	selectOrders() {
-		return driverHelper.clickWhenClickable( this.driver, this.ordersLinkSelector );
+		return driverHelper.clickWhenClickable( this.driver, this.ordersLinkLocator );
 	}
 
 	addProduct() {
@@ -58,10 +59,13 @@ export default class StoreSidebarComponent extends AsyncBaseContainer {
 	}
 
 	settingsLinkDisplayed() {
-		return driverHelper.isEventuallyPresentAndDisplayed( this.driver, this.settingsLinkSelector );
+		return driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			this.settingsLinkLocator
+		);
 	}
 
 	selectSettings() {
-		return driverHelper.clickWhenClickable( this.driver, this.settingsLinkSelector );
+		return driverHelper.clickWhenClickable( this.driver, this.settingsLinkLocator );
 	}
 }

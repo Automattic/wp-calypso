@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,8 +29,8 @@ import {
 	FEATURE_AUDIO_UPLOADS,
 	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	FEATURE_BUSINESS_ONBOARDING,
-} from 'lib/plans/constants';
-import { userState } from 'state/selectors/test/fixtures/user-state';
+} from '@automattic/calypso-products';
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	describe( '#getPlansBySite()', () => {

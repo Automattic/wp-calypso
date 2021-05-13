@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,20 +12,20 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getEndPeriod, getWidgetPath } from 'woocommerce/app/store-stats/utils';
 import StoreStatsPeriodNav from 'woocommerce/app/store-stats/store-stats-period-nav';
-import JetpackColophon from 'components/jetpack-colophon';
-import Main from 'components/main';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
+import Main from 'calypso/components/main';
 import Module from 'woocommerce/app/store-stats/store-stats-module';
-import SearchCard from 'components/search-card';
+import SearchCard from 'calypso/components/search-card';
 import StoreStatsReferrerWidget from 'woocommerce/app/store-stats/store-stats-referrer-widget';
 import StoreStatsReferrerConvWidget from 'woocommerce/app/store-stats/store-stats-referrer-conv-widget';
 import { sortBySales } from 'woocommerce/app/store-stats/referrers/helpers';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
-import getStoreReferrersByDate from 'state/selectors/get-store-referrers-by-date';
+import getStoreReferrersByDate from 'calypso/state/selectors/get-store-referrers-by-date';
 import Chart from './chart';
 import { UNITS, noDataMsg } from 'woocommerce/app/store-stats/constants';
 
@@ -50,15 +48,15 @@ class Referrers extends Component {
 		selectedReferrer: {},
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.setData( nextProps, this.state.filter );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.setData( this.props, this.state.filter );
 	}
 
-	onSearch = str => {
+	onSearch = ( str ) => {
 		const trimmedStr = str.trim();
 		if ( trimmedStr === '' ) {
 			const { unit, slug } = this.props;
@@ -76,7 +74,7 @@ class Referrers extends Component {
 
 	getFilteredData = ( filter, { data } ) => {
 		const filteredData = filter
-			? data.filter( d => d.referrer.toLowerCase().match( filter.toLowerCase() ) )
+			? data.filter( ( d ) => d.referrer.toLowerCase().match( filter.toLowerCase() ) )
 			: data;
 		return {
 			filteredSortedData: sortBySales( filteredData ),
@@ -124,8 +122,9 @@ class Referrers extends Component {
 		const { siteId, query, selectedDate, unit, slug, translate, queryParams } = this.props;
 		const { filter, filteredSortedData, selectedReferrer, selectedReferrerIndex } = this.state;
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
-		const title = `${ translate( 'Store Referrers' ) }: ${ queryParams.referrer ||
-			translate( 'All' ) }`;
+		const title = `${ translate( 'Store Referrers' ) }: ${
+			queryParams.referrer || translate( 'All' )
+		}`;
 		const chartFormat = UNITS[ unit ].chartFormat;
 		const periodNavQueryParams = Object.assign(
 			{ referrer: selectedReferrer.referrer },

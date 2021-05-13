@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,7 +21,7 @@ import Miscellaneous from './miscellaneous';
 import QueryStatus from '../data/query-status';
 import RejectedUserAgents from './rejected-user-agents';
 import WrapSettingsForm from '../wrap-settings-form';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getStatus } from '../../state/status/selectors';
 
 const AdvancedTab = ( {
@@ -49,18 +47,15 @@ const AdvancedTab = ( {
 	);
 };
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const status = getStatus( state, siteId );
 
 	return { status };
 } );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'is_cache_enabled', 'is_super_cache_enabled' ] );
 };
 
-export default flowRight(
-	connectComponent,
-	WrapSettingsForm( getFormSettings )
-)( AdvancedTab );
+export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( AdvancedTab );

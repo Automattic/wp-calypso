@@ -1,4 +1,3 @@
-/** @format */
 export const siteVerticalSchema = {
 	type: 'object',
 	additionalProperties: false,
@@ -19,6 +18,9 @@ export const siteVerticalSchema = {
 			type: 'string',
 		},
 		slug: {
+			type: 'string',
+		},
+		suggestedTheme: {
 			type: 'string',
 		},
 	},

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { contextTypes } from '../context-types';
 
 export default class LinkQuit extends Component {
@@ -31,7 +29,7 @@ export default class LinkQuit extends Component {
 		super( props, context );
 	}
 
-	onClick = event => {
+	onClick = ( event ) => {
 		this.props.onClick && this.props.onClick( event );
 		const { quit, tour, tourVersion, step, isLastStep } = this.context;
 		quit( { tour, tourVersion, step, isLastStep } );

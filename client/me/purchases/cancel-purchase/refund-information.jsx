@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
@@ -19,13 +16,13 @@ import {
 	isSubscription,
 	isOneTimePurchase,
 	maybeWithinRefundPeriod,
-} from 'lib/purchases';
-import { isDomainRegistration, isDomainMapping } from 'lib/products-values';
-import { getIncludedDomainPurchase } from 'state/purchases/selectors';
-import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'lib/url/support';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormCheckbox from 'components/forms/form-checkbox';
+} from 'calypso/lib/purchases';
+import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
+import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
+import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,
@@ -37,7 +34,7 @@ const CancelPurchaseRefundInformation = ( {
 	const { refundPeriodInDays } = purchase;
 	let text;
 	let showSupportLink = true;
-	const onCancelBundledDomainChange = event => {
+	const onCancelBundledDomainChange = ( event ) => {
 		const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
 		onCancelConfirmationStateChange( {
 			cancelBundledDomain: newCancelBundledDomainValue,
@@ -45,7 +42,7 @@ const CancelPurchaseRefundInformation = ( {
 		} );
 	};
 
-	const onConfirmCancelBundledDomainChange = event => {
+	const onConfirmCancelBundledDomainChange = ( event ) => {
 		onCancelConfirmationStateChange( {
 			cancelBundledDomain,
 			confirmCancelBundledDomain: event.target.checked,
@@ -107,18 +104,13 @@ const CancelPurchaseRefundInformation = ( {
 
 				showSupportLink = false;
 			} else if ( includedDomainPurchase && isDomainRegistration( includedDomainPurchase ) ) {
-				const { precision } = getCurrencyDefaults( purchase.currencyCode );
-				const planCostText =
-					purchase.currencySymbol +
-					parseFloat( purchase.refundAmount + includedDomainPurchase.costToUnbundle ).toFixed(
-						precision
-					);
+				const planCostText = purchase.totalRefundText;
 				if ( isRefundable( includedDomainPurchase ) ) {
 					text.push(
 						i18n.translate(
 							'Your plan included the custom domain %(domain)s. You can cancel your domain as well as the plan, but keep ' +
 								'in mind that when you cancel a domain you risk losing it forever, and visitors to your site may ' +
-								'experience difficulties acessing it.',
+								'experience difficulties accessing it.',
 							{
 								args: {
 									domain: includedDomainPurchase.meta,
@@ -132,27 +124,29 @@ const CancelPurchaseRefundInformation = ( {
 								value="keep"
 								checked={ ! cancelBundledDomain }
 								onChange={ onCancelBundledDomainChange }
+								label={
+									<>
+										{ i18n.translate( 'Cancel the plan, but keep %(domain)s.', {
+											args: {
+												domain: includedDomainPurchase.meta,
+											},
+										} ) }
+										<br />
+										{ i18n.translate(
+											"You'll receive a partial refund of %(refundAmount)s -- the cost of the %(productName)s " +
+												'plan, minus %(domainCost)s for the domain. There will be no change to your domain ' +
+												"registration, and you're free to use it on WordPress.com or transfer it elsewhere.",
+											{
+												args: {
+													productName: getName( purchase ),
+													domainCost: includedDomainPurchase.costToUnbundleText,
+													refundAmount: purchase.refundText,
+												},
+											}
+										) }
+									</>
+								}
 							/>
-							<span>
-								{ i18n.translate( 'Cancel the plan, but keep %(domain)s.', {
-									args: {
-										domain: includedDomainPurchase.meta,
-									},
-								} ) }
-								<br />
-								{ i18n.translate(
-									"You'll receive a partial refund of %(refundAmount)s -- the cost of the %(productName)s " +
-										'plan, minus %(domainCost)s for the domain. There will be no change to your domain ' +
-										"registration, and you're free to use it on WordPress.com or transfer it elsewhere.",
-									{
-										args: {
-											productName: getName( purchase ),
-											domainCost: includedDomainPurchase.costToUnbundleText,
-											refundAmount: purchase.refundText,
-										},
-									}
-								) }
-							</span>
 						</FormLabel>,
 						<FormLabel key="cancel_bundled_domain">
 							<FormRadio
@@ -160,27 +154,29 @@ const CancelPurchaseRefundInformation = ( {
 								value="cancel"
 								checked={ cancelBundledDomain }
 								onChange={ onCancelBundledDomainChange }
+								label={
+									<>
+										{ i18n.translate( 'Cancel the plan {{em}}and{{/em}} the domain "%(domain)s."', {
+											args: {
+												domain: includedDomainPurchase.meta,
+											},
+											components: {
+												em: <em />,
+											},
+										} ) }
+										<br />
+										{ i18n.translate(
+											"You'll receive a full refund of %(planCost)s. The domain will be cancelled, and it's possible " +
+												"you'll lose it permanently.",
+											{
+												args: {
+													planCost: planCostText,
+												},
+											}
+										) }
+									</>
+								}
 							/>
-							<span>
-								{ i18n.translate( 'Cancel the plan {{em}}and{{/em}} the domain "%(domain)s."', {
-									args: {
-										domain: includedDomainPurchase.meta,
-									},
-									components: {
-										em: <em />,
-									},
-								} ) }
-								<br />
-								{ i18n.translate(
-									"You'll receive a full refund of %(planCost)s. The domain will be cancelled, and it's possible " +
-										"you'll lose it permanently.",
-									{
-										args: {
-											planCost: planCostText,
-										},
-									}
-								) }
-							</span>
 						</FormLabel>
 					);
 

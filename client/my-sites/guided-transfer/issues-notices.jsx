@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,12 +5,12 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { getGuidedTransferIssue } from 'state/sites/guided-transfer/selectors';
+import { getGuidedTransferIssue } from 'calypso/state/sites/guided-transfer/selectors';
 
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 /**
  * This implements a list of notices for warnings which *don't prevent a transfer*.
@@ -28,10 +26,7 @@ class IssuesNotices extends Component {
 				{ premiumThemeIssue && ! premiumThemeIssue.prevents_transfer && (
 					<Notice status="is-warning" showDismiss={ false }>
 						{ translate(
-							`Your site uses a Premium Theme that can't be
-						transferred. Continuing will automatically activate the
-						default theme, or you can
-						{{a}}choose a free theme{{/a}}.`,
+							"Your site uses a Premium Theme that can't be transferred. Continuing will automatically activate the default theme, or you can {{a}}choose a free theme{{/a}}.",
 							{ components: { a: <a href={ `/themes/free/${ siteSlug }` } /> } }
 						) }
 					</Notice>
@@ -40,10 +35,7 @@ class IssuesNotices extends Component {
 				{ customFontIssue && ! customFontIssue.prevents_transfer && (
 					<Notice status="is-warning" showDismiss={ false }>
 						{ translate(
-							`Your site uses a custom font that can't be
-						transferred. Continuing will automatically activate the
-						default font, or you can
-						{{a}}choose a free theme{{/a}}.`,
+							"Your site uses a custom font that can't be transferred. Continuing will automatically activate the default font, or you can {{a}}choose a free theme{{/a}}.",
 							{ components: { a: <a href={ `/themes/free/${ siteSlug }` } /> } }
 						) }
 					</Notice>

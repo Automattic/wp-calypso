@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { pick } from 'lodash';
  * Internal dependencies
  */
 import FeaturedDomainSuggestionsPlaceholder from './placeholder';
-import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
+import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 
 /**
  * Style dependencies
@@ -23,8 +21,9 @@ import './style.scss';
 export class FeaturedDomainSuggestions extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
+		isCartPendingUpdate: PropTypes.bool,
 		fetchAlgo: PropTypes.string,
-		isSignupStep: PropTypes.bool,
+		showStrikedOutPrice: PropTypes.bool,
 		primarySuggestion: PropTypes.object,
 		railcarId: PropTypes.string,
 		secondarySuggestion: PropTypes.object,
@@ -36,9 +35,10 @@ export class FeaturedDomainSuggestions extends Component {
 	getChildProps() {
 		const childKeys = [
 			'cart',
+			'isCartPendingUpdate',
 			'isDomainOnly',
 			'domainsWithPlansOnly',
-			'isSignupStep',
+			'showStrikedOutPrice',
 			'onButtonClick',
 			'query',
 			'selectedSite',
@@ -86,7 +86,7 @@ export class FeaturedDomainSuggestions extends Component {
 
 	getClassNames() {
 		return classNames( 'featured-domain-suggestions', this.getTextSizeClass(), {
-			'featured-domain-suggestions__is-domain-management': ! this.props.isSignupStep,
+			'featured-domain-suggestions__is-domain-management': ! this.props.showStrikedOutPrice,
 			'featured-domain-suggestions--has-match-reasons': this.hasMatchReasons(),
 		} );
 	}
@@ -117,11 +117,13 @@ export class FeaturedDomainSuggestions extends Component {
 					<DomainRegistrationSuggestion
 						suggestion={ primarySuggestion }
 						isFeatured
-						railcarId={ this.props.railcarId }
+						railcarId={ this.props.railcarId + '-0' }
 						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 0 }
+						premiumDomain={ this.props.premiumDomains[ primarySuggestion.domain_name ] }
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
 						buttonStyles={ { primary: true } }
+						isReskinned={ this.props.isReskinned }
 						{ ...childProps }
 					/>
 				) }
@@ -129,10 +131,13 @@ export class FeaturedDomainSuggestions extends Component {
 					<DomainRegistrationSuggestion
 						suggestion={ secondarySuggestion }
 						isFeatured
-						railcarId={ this.props.railcarId }
+						railcarId={ this.props.railcarId + '-1' }
 						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 1 }
+						premiumDomain={ this.props.premiumDomains[ secondarySuggestion.domain_name ] }
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
+						buttonStyles={ this.props.isReskinned ? { primary: true } : {} }
+						isReskinned={ this.props.isReskinned }
 						{ ...childProps }
 					/>
 				) }

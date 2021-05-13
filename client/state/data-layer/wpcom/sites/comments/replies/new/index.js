@@ -1,20 +1,18 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { COMMENTS_REPLY_WRITE } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { COMMENTS_REPLY_WRITE } from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	dispatchNewCommentRequest,
 	updatePlaceholderComment,
 	handleWriteCommentFailure,
-} from 'state/data-layer/wpcom/sites/utils';
+} from 'calypso/state/data-layer/wpcom/sites/utils';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-export const writeReplyComment = action =>
+export const writeReplyComment = ( action ) =>
 	dispatchNewCommentRequest(
 		action,
 		`/sites/${ action.siteId }/comments/${ action.parentCommentId }/replies/new`

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { HAPPYCHAT_IO_RECEIVE_INIT, DESERIALIZE } from 'state/action-types';
+import { deserialize } from 'calypso/state/utils';
+import { HAPPYCHAT_IO_RECEIVE_INIT } from 'calypso/state/action-types';
 import { geoLocation } from '../reducer';
 
 describe( '#geoLocation()', () => {
@@ -33,12 +32,7 @@ describe( '#geoLocation()', () => {
 	} );
 
 	test( 'deserializes correctly', () => {
-		const state = geoLocation(
-			{ country_long: 'Romania', city: 'Timisoara' },
-			{
-				type: DESERIALIZE,
-			}
-		);
+		const state = deserialize( geoLocation, { country_long: 'Romania', city: 'Timisoara' } );
 
 		expect( state ).to.eql( { country_long: 'Romania', city: 'Timisoara' } );
 	} );

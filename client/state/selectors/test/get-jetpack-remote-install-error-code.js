@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import getJetpackRemoteInstallErrorCode from 'state/selectors/get-jetpack-remote-install-error-code';
+import getJetpackRemoteInstallErrorCode from 'calypso/state/selectors/get-jetpack-remote-install-error-code';
 
 const url = 'https://yourgroovydomain.com';
 

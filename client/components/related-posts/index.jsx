@@ -1,21 +1,21 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, times } from 'lodash';
+import { times } from 'lodash';
 import classnames from 'classnames';
 
 /**
  * Internal Dependencies
  */
-import { relatedPostsForPost } from 'state/reader/related-posts/selectors';
-import { SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
-import RelatedPost from 'blocks/reader-related-card';
-import QueryReaderRelatedPosts from 'components/data/query-reader-related-posts';
+import { relatedPostsForPost } from 'calypso/state/reader/related-posts/selectors';
+import { SCOPE_SAME, SCOPE_OTHER } from 'calypso/state/reader/related-posts/utils';
+import RelatedPost from 'calypso/blocks/reader-related-card';
+import QueryReaderRelatedPosts from 'calypso/components/data/query-reader-related-posts';
+
+const noop = () => {};
 
 function RelatedPosts( {
 	siteId,
@@ -31,7 +31,7 @@ function RelatedPosts( {
 
 	if ( ! posts ) {
 		// Placeholders
-		listItems = times( 2, i => {
+		listItems = times( 2, ( i ) => {
 			return (
 				/* eslint-disable */
 				<li className="reader-related-card__list-item" key={ 'related-post-placeholder-' + i }>
@@ -43,7 +43,7 @@ function RelatedPosts( {
 	} else if ( posts.length === 0 ) {
 		return null;
 	} else {
-		listItems = posts.map( post_id => {
+		listItems = posts.map( ( post_id ) => {
 			return (
 				/* eslint-disable */
 				<li key={ post_id } className="reader-related-card__list-item">

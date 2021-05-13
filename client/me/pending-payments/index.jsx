@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,33 +9,33 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import CompactCard from 'components/card';
-import EmptyContent from 'components/empty-content';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { CompactCard } from '@automattic/components';
+import EmptyContent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PendingListItem from './pending-list-item';
-import PurchasesHeader from '../purchases/purchases-list/header';
+import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import PurchasesSite from '../purchases/purchases-site';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
-import Banner from 'components/banner';
-import { convertToCamelCase } from 'state/data-layer/utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getStatsPathForTab } from 'lib/route';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getHttpData, requestHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import Banner from 'calypso/components/banner';
+import { convertToCamelCase } from 'calypso/state/data-layer/utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getStatsPathForTab } from 'calypso/lib/route';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-export const requestId = userId => `pending-payments:${ userId }`;
+export const requestId = ( userId ) => `pending-payments:${ userId }`;
 
-const requestPendingPayments = userId => {
+const requestPendingPayments = ( userId ) => {
 	return requestHttpData(
 		requestId( userId ),
 		http( {
@@ -46,7 +44,7 @@ const requestPendingPayments = userId => {
 			method: 'GET',
 		} ),
 		{
-			fromApi: () => pending => [ [ requestId( userId ), convertToCamelCase( pending ) ] ],
+			fromApi: () => ( pending ) => [ [ requestId( userId ), convertToCamelCase( pending ) ] ],
 			freshness: -Infinity,
 		}
 	);
@@ -84,7 +82,7 @@ export class PendingPayments extends Component {
 						line={ translate(
 							'Our plans give your site the power to thrive. Find the plan that works for you.'
 						) }
-						action={ translate( 'Upgrade Now' ) }
+						action={ translate( 'Upgrade now' ) }
 						actionURL={ '/plans' }
 						illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 					/>
@@ -104,7 +102,7 @@ export class PendingPayments extends Component {
 						title={ translate( 'Thank you! Your payment is being processed.' ) }
 					/>
 					<div>
-						{ pendingPayments.map( purchase => (
+						{ pendingPayments.map( ( purchase ) => (
 							<PendingListItem key={ purchase.orderId } { ...purchase } />
 						) ) }
 					</div>
@@ -113,10 +111,10 @@ export class PendingPayments extends Component {
 		}
 
 		return (
-			<Main className="pending-payments">
+			<Main wideLayout className="pending-payments">
 				<PageViewTracker path="/me/purchases/pending" title="Pending Payments" />
 				<MeSidebarNavigation />
-				<PurchasesHeader section="pending" />
+				<PurchasesNavigation section="pendingPayments" />
 				{ content }
 			</Main>
 		);
@@ -131,7 +129,7 @@ PendingPayments.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const userId = getCurrentUserId( state );
 		const response = getHttpData( requestId( userId ) );
 		const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
@@ -143,7 +141,7 @@ export default connect(
 			siteSlug: getSiteSlug( state, siteId ),
 		};
 	},
-	dispatch => ( {
+	( dispatch ) => ( {
 		showErrorNotice: ( error, options ) =>
 			dispatch(
 				errorNotice( error, Object.assign( {}, options, { id: 'pending-payments-tab' } ) )

@@ -1,10 +1,8 @@
-/** @format */
 /**
  * External dependencies
  */
 import {
 	filter,
-	isUndefined,
 	orderBy,
 	has,
 	map,
@@ -14,16 +12,14 @@ import {
 	get,
 	zipObject,
 	includes,
-	isArray,
-	values,
 	omit,
 	startsWith,
-	isInteger,
 } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
@@ -38,28 +34,30 @@ import {
 	COMMENTS_UNLIKE,
 	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_WRITE_ERROR,
-	READER_EXPAND_COMMENTS,
 	COMMENTS_SET_ACTIVE_REPLY,
-} from 'state/action-types';
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+} from 'calypso/state/action-types';
+import { READER_EXPAND_COMMENTS } from 'calypso/state/reader/action-types';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	PLACEHOLDER_STATE,
 	NUMBER_OF_COMMENTS_PER_FETCH,
 	POST_COMMENT_DISPLAY_TYPES,
 } from './constants';
 import trees from './trees/reducer';
+import ui from './ui/reducer';
 import { getStateKey, getErrorKey, commentHasLink, getCommentDate } from './utils';
 
-const isCommentManagementEdit = newProperties =>
+const isCommentManagementEdit = ( newProperties ) =>
 	has( newProperties, 'commentContent' ) &&
 	has( newProperties, 'authorDisplayName' ) &&
 	has( newProperties, 'authorUrl' );
 
-const updateComment = ( commentId, newProperties ) => comment => {
+const updateComment = ( commentId, newProperties ) => ( comment ) => {
 	if ( comment.ID !== commentId ) {
 		return comment;
 	}
-	const updateLikeCount = has( newProperties, 'i_like' ) && isUndefined( newProperties.like_count );
+	const updateLikeCount =
+		has( newProperties, 'i_like' ) && typeof newProperties.like_count === 'undefined';
 
 	// Comment Management allows for modifying nested fields, such as `author.name` and `author.url`.
 	// Though, there is no direct match between the GET response (which feeds the state) and the POST request.
@@ -85,11 +83,12 @@ const updateComment = ( commentId, newProperties ) => comment => {
 	};
 };
 
-/***
+/**
  * Comments items reducer, stores a comments items Immutable.List per siteId, postId
- * @param {Object} state redux state
- * @param {Object} action redux action
- * @returns {Object} new redux state
+ *
+ * @param {object} state redux state
+ * @param {object} action redux action
+ * @returns {object} new redux state
  */
 export function items( state = {}, action ) {
 	const { type, siteId, postId, commentId, like_count } = action;
@@ -102,21 +101,23 @@ export function items( state = {}, action ) {
 	const stateKey = getStateKey( siteId, postId );
 
 	switch ( type ) {
-		case COMMENTS_CHANGE_STATUS:
+		case COMMENTS_CHANGE_STATUS: {
 			const { status } = action;
 			return {
 				...state,
 				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, { status } ) ),
 			};
-		case COMMENTS_EDIT:
+		}
+		case COMMENTS_EDIT: {
 			const { comment } = action;
 			return {
 				...state,
 				[ stateKey ]: map( state[ stateKey ], updateComment( commentId, comment ) ),
 			};
-		case COMMENTS_RECEIVE:
+		}
+		case COMMENTS_RECEIVE: {
 			const { skipSort } = action;
-			const comments = map( action.comments, _comment => ( {
+			const comments = map( action.comments, ( _comment ) => ( {
 				..._comment,
 				contiguous: ! action.commentById,
 				has_link: commentHasLink( _comment.content, _comment.has_link ),
@@ -126,6 +127,7 @@ export function items( state = {}, action ) {
 				...state,
 				[ stateKey ]: ! skipSort ? orderBy( allComments, getCommentDate, [ 'desc' ] ) : allComments,
 			};
+		}
 		case COMMENTS_DELETE:
 			return {
 				...state,
@@ -148,7 +150,7 @@ export function items( state = {}, action ) {
 				),
 			};
 		case COMMENTS_RECEIVE_ERROR:
-		case COMMENTS_WRITE_ERROR:
+		case COMMENTS_WRITE_ERROR: {
 			const { error, errorType } = action;
 			return {
 				...state,
@@ -161,16 +163,18 @@ export function items( state = {}, action ) {
 					} )
 				),
 			};
+		}
 	}
 
 	return state;
 }
 
-/***
+/**
  * Comments pending items reducer, stores new comments per siteId and postId
- * @param {Object} state redux state
- * @param {Object} action redux action
- * @returns {Object} new redux state
+ *
+ * @param {object} state redux state
+ * @param {object} action redux action
+ * @returns {object} new redux state
  */
 export function pendingItems( state = {}, action ) {
 	const { type, siteId, postId } = action;
@@ -183,8 +187,8 @@ export function pendingItems( state = {}, action ) {
 	const stateKey = getStateKey( siteId, postId );
 
 	switch ( type ) {
-		case COMMENTS_UPDATES_RECEIVE:
-			const comments = map( action.comments, _comment => ( {
+		case COMMENTS_UPDATES_RECEIVE: {
+			const comments = map( action.comments, ( _comment ) => ( {
 				..._comment,
 				contiguous: ! action.commentById,
 				has_link: commentHasLink( _comment.content, _comment.has_link ),
@@ -194,16 +198,18 @@ export function pendingItems( state = {}, action ) {
 				...state,
 				[ stateKey ]: orderBy( allComments, getCommentDate, [ 'desc' ] ),
 			};
+		}
 
-		case COMMENTS_RECEIVE:
+		case COMMENTS_RECEIVE: {
 			const receivedCommentIds = map( action.comments, 'ID' );
 			return {
 				...state,
 				[ stateKey ]: filter(
 					state[ stateKey ],
-					_comment => ! includes( receivedCommentIds, _comment.ID )
+					( _comment ) => ! includes( receivedCommentIds, _comment.ID )
 				),
 			};
+		}
 	}
 
 	return state;
@@ -216,17 +222,17 @@ export const fetchStatusInitialState = {
 	hasReceivedAfter: false,
 };
 
-const isValidExpansionsAction = action => {
+const isValidExpansionsAction = ( action ) => {
 	const { siteId, postId, commentIds, displayType } = action.payload;
 	return (
 		siteId &&
 		postId &&
-		isArray( commentIds ) &&
-		includes( values( POST_COMMENT_DISPLAY_TYPES ), displayType )
+		Array.isArray( commentIds ) &&
+		includes( Object.values( POST_COMMENT_DISPLAY_TYPES ), displayType )
 	);
 };
 
-const expansionValue = type => {
+const expansionValue = ( type ) => {
 	const { full, excerpt, singleLine } = POST_COMMENT_DISPLAY_TYPES;
 	switch ( type ) {
 		case full:
@@ -238,10 +244,9 @@ const expansionValue = type => {
 	}
 };
 
-export const expansions = createReducer(
-	{},
-	{
-		[ READER_EXPAND_COMMENTS ]: ( state, action ) => {
+export const expansions = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_EXPAND_COMMENTS: {
 			const { siteId, postId, commentIds, displayType } = action.payload;
 
 			if ( ! isValidExpansionsAction( action ) ) {
@@ -251,7 +256,7 @@ export const expansions = createReducer(
 			const stateKey = getStateKey( siteId, postId );
 			const currentExpansions = state[ stateKey ] || {};
 
-			const newDisplayTypes = map( commentIds, id => {
+			const newDisplayTypes = map( commentIds, ( id ) => {
 				if (
 					! has( currentExpansions, id ) ||
 					expansionValue( displayType ) > expansionValue( currentExpansions[ id ] )
@@ -267,11 +272,13 @@ export const expansions = createReducer(
 				...state,
 				[ stateKey ]: Object.assign( {}, state[ stateKey ], newVal ),
 			};
-		},
+		}
 	}
-);
 
-/***
+	return state;
+};
+
+/**
  * Stores whether or not there are more comments, and in which directions, for a particular post.
  * Also includes whether or not a before/after has ever been queried
  * Example state:
@@ -284,14 +291,13 @@ export const expansions = createReducer(
  *     }
  *  }
  *
- * @param {Object} state redux state
- * @param {Object} action redux action
- * @returns {Object} new redux state
+ * @param {object} state redux state
+ * @param {object} action redux action
+ * @returns {object} new redux state
  */
-export const fetchStatus = createReducer(
-	{},
-	{
-		[ COMMENTS_RECEIVE ]: ( state, action ) => {
+export const fetchStatus = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case COMMENTS_RECEIVE: {
 			const { siteId, postId, direction, commentById } = action;
 			const stateKey = getStateKey( siteId, postId );
 
@@ -312,37 +318,45 @@ export const fetchStatus = createReducer(
 			return isEqual( state[ stateKey ], nextState )
 				? state
 				: { ...state, [ stateKey ]: nextState };
-		},
+		}
 	}
-);
 
-/***
+	return state;
+};
+
+/**
  * Stores latest comments count for post we've seen from the server
- * @param {Object} state redux state, prev totalCommentsCount
- * @param {Object} action redux action
- * @returns {Object} new redux state
+ *
+ * @param {object} state redux state, prev totalCommentsCount
+ * @param {object} action redux action
+ * @returns {object} new redux state
  */
-export const totalCommentsCount = createReducer(
-	{},
-	{
-		[ COMMENTS_COUNT_RECEIVE ]: ( state, action ) => {
+export const totalCommentsCount = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case COMMENTS_COUNT_RECEIVE: {
 			const key = getStateKey( action.siteId, action.postId );
 			return { ...state, [ key ]: action.totalCommentsCount };
-		},
-		[ COMMENTS_COUNT_INCREMENT ]: ( state, action ) => {
+		}
+		case COMMENTS_COUNT_INCREMENT: {
 			const key = getStateKey( action.siteId, action.postId );
 			return { ...state, [ key ]: state[ key ] + 1 };
-		},
+		}
 	}
-);
+
+	return state;
+};
 
 /**
  * Houses errors by `siteId-commentId`
+ *
+ * @param {object} state redux state
+ * @param {object} action redux action
+ * @returns {object} new redux state
  */
-export const errors = createReducer(
-	{},
-	{
-		[ COMMENTS_RECEIVE_ERROR ]: ( state, { siteId, commentId } ) => {
+export const errors = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case COMMENTS_RECEIVE_ERROR: {
+			const { siteId, commentId } = action;
 			const key = getErrorKey( siteId, commentId );
 
 			if ( state[ key ] ) {
@@ -353,8 +367,9 @@ export const errors = createReducer(
 				...state,
 				[ key ]: { error: true },
 			};
-		},
-		[ COMMENTS_WRITE_ERROR ]: ( state, { siteId, commentId } ) => {
+		}
+		case COMMENTS_WRITE_ERROR: {
+			const { siteId, commentId } = action;
 			const key = getErrorKey( siteId, commentId );
 
 			if ( state[ key ] ) {
@@ -365,9 +380,11 @@ export const errors = createReducer(
 				...state,
 				[ key ]: { error: true },
 			};
-		},
+		}
 	}
-);
+
+	return state;
+};
 
 export const treesInitializedReducer = ( state = {}, action ) => {
 	if ( action.type === COMMENTS_TREE_SITE_ADD ) {
@@ -381,16 +398,16 @@ export const treesInitialized = keyedReducer(
 	keyedReducer( 'status', treesInitializedReducer )
 );
 
-/***
+/**
  * Stores the active reply comment for a given siteId and postId
- * @param {Object} state redux state
- * @param {Object} action redux action
- * @returns {Object} new redux state
+ *
+ * @param {object} state redux state
+ * @param {object} action redux action
+ * @returns {object} new redux state
  */
-export const activeReplies = createReducer(
-	{},
-	{
-		[ COMMENTS_SET_ACTIVE_REPLY ]: ( state, action ) => {
+export const activeReplies = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case COMMENTS_SET_ACTIVE_REPLY: {
 			const { siteId, postId, commentId } = action.payload;
 			const stateKey = getStateKey( siteId, postId );
 
@@ -400,18 +417,20 @@ export const activeReplies = createReducer(
 			}
 
 			return { ...state, [ stateKey ]: commentId };
-		},
-		[ COMMENTS_WRITE_ERROR ]: ( state, action ) => {
+		}
+		case COMMENTS_WRITE_ERROR: {
 			const { siteId, postId, parentCommentId } = action;
 			const stateKey = getStateKey( siteId, postId );
 			return { ...state, [ stateKey ]: parentCommentId };
-		},
+		}
 	}
-);
+
+	return state;
+};
 
 function updateCount( counts, rawStatus, value = 1 ) {
 	const status = rawStatus === 'unapproved' ? 'pending' : rawStatus;
-	if ( ! counts || ! isInteger( counts[ status ] ) ) {
+	if ( ! counts || ! Number.isInteger( counts[ status ] ) ) {
 		return undefined;
 	}
 	const newCounts = {
@@ -426,10 +445,9 @@ function updateCount( counts, rawStatus, value = 1 ) {
 	};
 }
 
-export const counts = createReducer(
-	{},
-	{
-		[ COMMENT_COUNTS_UPDATE ]: ( state, action ) => {
+export const counts = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case COMMENT_COUNTS_UPDATE: {
 			const { siteId, postId, ...commentCounts } = omit( action, 'type' );
 			if ( ! siteId ) {
 				return state;
@@ -441,8 +459,8 @@ export const counts = createReducer(
 				} ),
 			};
 			return Object.assign( {}, state, siteCounts );
-		},
-		[ COMMENTS_CHANGE_STATUS ]: ( state, action ) => {
+		}
+		case COMMENTS_CHANGE_STATUS: {
 			const { siteId, postId = -1, status } = action;
 			const previousStatus = get( action, 'meta.comment.previousStatus' );
 			if ( ! siteId || ! status || ! state[ siteId ] || ! previousStatus ) {
@@ -462,8 +480,8 @@ export const counts = createReducer(
 				newPostCounts && { [ postId ]: newPostCounts }
 			);
 			return Object.assign( {}, state, { [ siteId ]: newTotalSiteCounts } );
-		},
-		[ COMMENTS_DELETE ]: ( state, action ) => {
+		}
+		case COMMENTS_DELETE: {
 			const { siteId, postId = -1, commentId } = action;
 			if ( commentId && startsWith( commentId, 'placeholder' ) ) {
 				return state;
@@ -485,8 +503,8 @@ export const counts = createReducer(
 				newPostCounts && { [ postId ]: newPostCounts }
 			);
 			return Object.assign( {}, state, { [ siteId ]: newTotalSiteCounts } );
-		},
-		[ COMMENTS_RECEIVE ]: ( state, action ) => {
+		}
+		case COMMENTS_RECEIVE: {
 			if ( get( action, 'meta.comment.context' ) !== 'add' ) {
 				return state;
 			}
@@ -507,11 +525,13 @@ export const counts = createReducer(
 				newPostCounts && { [ postId ]: newPostCounts }
 			);
 			return Object.assign( {}, state, { [ siteId ]: newTotalSiteCounts } );
-		},
+		}
 	}
-);
 
-export default combineReducers( {
+	return state;
+};
+
+const combinedReducer = combineReducers( {
 	counts,
 	items,
 	pendingItems,
@@ -522,4 +542,7 @@ export default combineReducers( {
 	trees,
 	treesInitialized,
 	activeReplies,
+	ui,
 } );
+const commentsReducer = withStorageKey( 'comments', combinedReducer );
+export default commentsReducer;

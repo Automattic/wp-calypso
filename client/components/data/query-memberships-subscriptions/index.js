@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSubscriptionsList } from 'state/memberships/subscriptions/actions';
+import { requestSubscriptionsList } from 'calypso/state/memberships/subscriptions/actions';
 
 class QueryMembershipsSubscriptions extends Component {
 	componentDidMount() {
@@ -22,7 +20,4 @@ class QueryMembershipsSubscriptions extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestSubscriptionsList }
-)( QueryMembershipsSubscriptions );
+export default connect( null, { requestSubscriptionsList } )( QueryMembershipsSubscriptions );

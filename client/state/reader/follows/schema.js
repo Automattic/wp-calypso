@@ -1,4 +1,3 @@
-/** @format */
 export const items = {
 	type: 'object',
 	patternProperties: {
@@ -16,6 +15,10 @@ export const items = {
 				date_subscribed: { type: [ 'integer', 'null' ] },
 				delivery_methods: { type: [ 'object', 'null' ] },
 				is_owner: { type: [ 'boolean', 'null' ] },
+				organization_id: { type: [ 'integer', 'null' ] },
+				name: { type: [ 'string', 'null' ] },
+				unseen_count: { type: [ 'integer', 'null' ] },
+				site_icon: { type: [ 'string', 'null' ] },
 			},
 		},
 	},

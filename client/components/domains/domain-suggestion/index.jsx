@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,13 +5,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import DomainProductPrice from 'components/domains/domain-product-price';
-import Button from 'components/button';
+import DomainProductPrice from 'calypso/components/domains/domain-product-price';
+import { Button } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -27,6 +25,7 @@ class DomainSuggestion extends React.Component {
 		buttonStyles: PropTypes.object,
 		extraClasses: PropTypes.string,
 		onButtonClick: PropTypes.func.isRequired,
+		premiumDomain: PropTypes.object,
 		priceRule: PropTypes.string,
 		price: PropTypes.string,
 		domain: PropTypes.string,
@@ -38,8 +37,47 @@ class DomainSuggestion extends React.Component {
 		showChevron: false,
 	};
 
+	renderPrice() {
+		const {
+			hidePrice,
+			premiumDomain,
+			price,
+			priceRule,
+			salePrice,
+			isSignupStep,
+			showStrikedOutPrice,
+			isReskinned,
+		} = this.props;
+
+		if ( hidePrice ) {
+			return null;
+		}
+
+		if ( premiumDomain?.pending ) {
+			return <div className="domain-suggestion__price-placeholder" />;
+		}
+
+		return (
+			<DomainProductPrice
+				price={ price }
+				salePrice={ salePrice }
+				rule={ priceRule }
+				isSignupStep={ isSignupStep }
+				showStrikedOutPrice={ showStrikedOutPrice }
+				isReskinned={ isReskinned }
+			/>
+		);
+	}
+
 	render() {
-		const { children, extraClasses, hidePrice, isAdded, price, priceRule, salePrice } = this.props;
+		const {
+			children,
+			extraClasses,
+			isAdded,
+			isFeatured,
+			showStrikedOutPrice,
+			isReskinned,
+		} = this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
@@ -51,7 +89,19 @@ class DomainSuggestion extends React.Component {
 			extraClasses
 		);
 
-		/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
+		const contentClassName = classNames( 'domain-suggestion__content', {
+			'domain-suggestion__content-domain': showStrikedOutPrice && ! isFeatured,
+		} );
+
+		const wrapDivActionContainer = ( contentElement ) =>
+			isReskinned ? (
+				<div className="domain-suggestion__action-container">{ contentElement }</div>
+			) : (
+				contentElement
+			);
+
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/interactive-supports-focus */
 		return (
 			<div
 				className={ classes }
@@ -60,25 +110,26 @@ class DomainSuggestion extends React.Component {
 				role="button"
 				data-e2e-domain={ this.props.domain }
 			>
-				<div className="domain-suggestion__content">
+				<div className={ contentClassName }>
 					{ children }
-					{ ! hidePrice && (
-						<DomainProductPrice price={ price } salePrice={ salePrice } rule={ priceRule } />
-					) }
+					{ this.renderPrice() }
 				</div>
-				<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
-					{ this.props.buttonContent }
-				</Button>
+				{ wrapDivActionContainer(
+					<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
+						{ this.props.buttonContent }
+					</Button>
+				) }
 				{ this.props.showChevron && (
 					<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
 				) }
 			</div>
 		);
-		/* eslint-enable jsx-a11y/click-events-have-key-events jsx-a11y/interactive-supports-focus */
+		/* eslint-enable jsx-a11y/click-events-have-key-events */
+		/* eslint-enable jsx-a11y/interactive-supports-focus */
 	}
 }
 
-DomainSuggestion.Placeholder = function() {
+DomainSuggestion.Placeholder = function () {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="domain-suggestion card is-compact is-placeholder is-clickable">

@@ -1,0 +1,95 @@
+.wp-block-todo {
+    display: flex;
+    align-items: baseline;
+}
+
+.wp-block-todo__status {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    position: relative;
+    top: 6px;
+    flex-shrink: 0;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb( 226, 228, 231 );
+    border-image: initial;
+    border-radius: 3px;
+    margin: 0 12px 0 0;
+}
+
+.wp-block-todo__is-in-progress {
+	display: inline-block;
+	color: white;
+	background: #7a6ff0;
+	border-radius: 2px;
+    font-size: 12px;
+    height: 24px;
+    line-height: 24px;
+    padding: 0 10px;
+	margin-right: 8px;
+	position: relative;
+		top: -2px;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+}
+
+.wp-block-task__date-button .components-base-control__field {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+.wp-block-task__date-button .components-base-control__label {
+	display: block;
+	width: 100%;
+}
+
+.wp-block-todo__date {
+	display: inline-block;
+	font-weight: bold;
+	color: 111;
+	font-size: 12px;
+	height: 20px;
+	line-height: 20px;
+	padding: 0 10px;
+	margin-left: 8px;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+}
+
+.wp-block-todo.is-checked .wp-block-todo__status, .wp-block-todo.is-checked img {
+	background-color: #00b0e8;
+	background-image: url( 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGc+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTkgMTkuNDE0bC02LjcwNy02LjcwNyAxLjQxNC0xLjQxNEw5IDE2LjU4NiAyMC4yOTMgNS4yOTNsMS40MTQgMS40MTQiPjwvcGF0aD48L2c+PC9zdmc+' );
+    border-color: #00b0e8;
+    background-repeat: no-repeat;
+    background-position: 50% center;
+	background-size: 18px;
+}
+
+.wp-block-todo__text {
+    flex-grow: 1;
+}
+
+.wp-block-todo__assigned {
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    margin-left: 12px;
+}
+
+.wp-block-todo__avatar {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 24px;
+    margin-left: 10px;
+    color: rgba( white, 0.6 );
+    font-size: 14px;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    font-weight: 100;
+    background: #eb6565;
+    border-radius: 50%;
+}

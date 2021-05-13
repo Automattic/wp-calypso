@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,14 +17,14 @@ export default class StoreProductsPage extends AsyncBaseContainer {
 	}
 
 	async atLeastOneProductDisplayed() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			by.css( '.products__list-wrapper tr.has-action' )
 		);
 	}
 
 	async productDisplayed( productTitle ) {
-		return await driverHelper.verifyTextPresent(
+		return await driverHelper.waitUntilElementWithTextLocated(
 			this.driver,
 			by.css( '.products__list-name' ),
 			productTitle

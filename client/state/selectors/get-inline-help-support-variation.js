@@ -1,33 +1,33 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import isDirectlyReady from 'state/selectors/is-directly-ready';
-import isEligibleForUpworkSupport from 'state/selectors/is-eligible-for-upwork-support';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
-import { isTicketSupportEligible } from 'state/help/ticket/selectors';
+import config from '@automattic/calypso-config';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
+import isEligibleForUpworkSupport from 'calypso/state/selectors/is-eligible-for-upwork-support';
+import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
+import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
+import { isTicketSupportEligible } from 'calypso/state/help/ticket/selectors';
 
+export const SUPPORT_CHAT_OVERFLOW = 'SUPPORT_CHAT_OVERFLOW';
 export const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';
+export const SUPPORT_FORUM = 'SUPPORT_FORUM';
 export const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
 export const SUPPORT_TICKET = 'SUPPORT_TICKET';
-export const SUPPORT_FORUM = 'SUPPORT_FORUM';
+export const SUPPORT_UPWORK_TICKET = 'SUPPORT_UPWORK_TICKET';
 
 /**
- * @param {Object} state Global state tree
- * @return {String} One of the exported support variation constants listed above
+ * @param {object} state Global state tree
+ * @returns {string} One of the exported support variation constants listed above
  */
 export default function getSupportVariation( state ) {
-	if (
-		config.isEnabled( 'happychat' ) &&
-		isHappychatAvailable( state ) &&
-		isHappychatUserEligible( state ) &&
-		// Upwork-eligible customers should skip Happychat and get sent to Tickets
-		! isEligibleForUpworkSupport( state )
-	) {
-		return SUPPORT_HAPPYCHAT;
+	if ( isEligibleForUpworkSupport( state ) && isTicketSupportEligible( state ) ) {
+		// Upwork-eligible customers are sent to tickets, even if chat is available
+		return SUPPORT_UPWORK_TICKET;
+	}
+
+	if ( config.isEnabled( 'happychat' ) && isHappychatUserEligible( state ) ) {
+		return isHappychatAvailable( state ) ? SUPPORT_HAPPYCHAT : SUPPORT_CHAT_OVERFLOW;
 	}
 
 	if ( isTicketSupportEligible( state ) ) {

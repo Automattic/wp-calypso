@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,22 +14,27 @@ import './style.scss';
 export default class GoogleIcon extends PureComponent {
 	static propTypes = {
 		isDisabled: PropTypes.bool,
+		width: PropTypes.number,
+		height: PropTypes.number,
 	};
 
 	static defaultProps = {
 		isDisabled: false,
+		width: 20,
+		height: 20,
 	};
 
 	render() {
 		const props = omit( this.props, [ 'isDisabled' ] );
+
 		return (
 			<svg
 				className={ classNames( 'social-icons social-icons__google', {
 					'social-icons--enabled': ! this.props.isDisabled,
 					'social-icons--disabled': !! this.props.isDisabled,
 				} ) }
-				width="20"
-				height="20"
+				width={ this.props.width }
+				height={ this.props.height }
 				viewBox="0 0 20 20"
 				xmlns="http://www.w3.org/2000/svg"
 				{ ...props }

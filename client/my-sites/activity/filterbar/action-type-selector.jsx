@@ -1,27 +1,25 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { Component, Fragment } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, without, isEmpty, find } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import Popover from 'components/popover';
-import { requestActivityActionTypeCounts } from 'state/data-getters';
-import { updateFilter } from 'state/activity-log/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { Button, Card } from '@automattic/components';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import Popover from 'calypso/components/popover';
+import { requestActivityActionTypeCounts } from 'calypso/state/data-getters';
+import { updateFilter } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import MobileSelectPortal from './mobile-select-portal';
-import { isWithinBreakpoint } from 'lib/viewport';
 
 export class ActionTypeSelector extends Component {
 	state = {
@@ -34,7 +32,7 @@ export class ActionTypeSelector extends Component {
 		this.activityTypeButton = React.createRef();
 	}
 
-	resetActivityTypeSelector = event => {
+	resetActivityTypeSelector = ( event ) => {
 		const { selectActionType, siteId, activityTypes } = this.props;
 		selectActionType( siteId, [], activityTypes );
 		event.preventDefault();
@@ -46,7 +44,7 @@ export class ActionTypeSelector extends Component {
 		if ( ! selectedCheckboxes.length ) {
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: activityTypes.map( type => type.key ),
+				selectedCheckboxes: activityTypes.map( ( type ) => type.key ),
 			} );
 		} else {
 			this.setState( {
@@ -56,7 +54,7 @@ export class ActionTypeSelector extends Component {
 		}
 	};
 
-	handleSelectClick = event => {
+	handleSelectClick = ( event ) => {
 		const group = event.target.getAttribute( 'id' );
 
 		if ( this.getSelectedCheckboxes().includes( group ) ) {
@@ -83,7 +81,7 @@ export class ActionTypeSelector extends Component {
 		return [];
 	};
 
-	activityKeyToName = key => {
+	activityKeyToName = ( key ) => {
 		const { activityTypes } = this.props;
 		const match = find( activityTypes, [ 'key', key ] );
 		return ( match && match.name ) || key;
@@ -100,7 +98,7 @@ export class ActionTypeSelector extends Component {
 		onClose();
 	};
 
-	humanReadable = count => {
+	humanReadable = ( count ) => {
 		if ( count >= 1000 ) {
 			return this.props.translate( '%(number_over_thousand)d K+', {
 				args: {
@@ -111,7 +109,7 @@ export class ActionTypeSelector extends Component {
 		return count;
 	};
 
-	renderCheckbox = group => {
+	renderCheckbox = ( group ) => {
 		return (
 			<FormLabel key={ group.key }>
 				<FormCheckbox
@@ -175,13 +173,13 @@ export class ActionTypeSelector extends Component {
 		);
 	};
 
-	renderPlaceholder = i => {
+	renderPlaceholder = ( i ) => {
 		return (
 			<div className="filterbar__activity-types-selection-placeholder" key={ 'placeholder' + i } />
 		);
 	};
 
-	isSelected = key => this.getSelectedCheckboxes().includes( key );
+	isSelected = ( key ) => this.getSelectedCheckboxes().includes( key );
 
 	handleButtonClick = () => {
 		const { isVisible, onButtonClick } = this.props;
@@ -255,7 +253,7 @@ const mapStateToProps = ( state, { siteId, filter } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	selectActionType: ( siteId, group, allTypes ) => {
 		if ( 0 === group.length ) {
 			return dispatch(
@@ -266,7 +264,9 @@ const mapDispatchToProps = dispatch => ( {
 			);
 		}
 		const eventProps = { num_groups_selected: group.length };
-		allTypes.forEach( type => ( eventProps[ 'group_' + type.key ] = group.includes( type.key ) ) );
+		allTypes.forEach(
+			( type ) => ( eventProps[ 'group_' + type.key ] = group.includes( type.key ) )
+		);
 		eventProps.num_total_activities_selected = allTypes.reduce( ( accumulator, type ) => {
 			return group.includes( type.key ) ? accumulator + type.count : accumulator;
 		}, 0 );
@@ -280,7 +280,4 @@ const mapDispatchToProps = dispatch => ( {
 	},
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( ActionTypeSelector ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ActionTypeSelector ) );

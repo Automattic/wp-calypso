@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -13,29 +11,27 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
-import DocumentHead from 'components/data/document-head';
-import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
-import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
+import { Button, Card, CompactCard } from '@automattic/components';
+import DocumentHead from 'calypso/components/data/document-head';
+import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
+import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
 import GoogleMyBusinessSelectLocationButton from './button';
-import HeaderCake from 'components/header-cake';
-import KeyringConnectButton from 'blocks/keyring-connect-button';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryKeyringConnections from 'components/data/query-keyring-connections';
-import QuerySiteKeyrings from 'components/data/query-site-keyrings';
-import QueryKeyringServices from 'components/data/query-keyring-services';
+import HeaderCake from 'calypso/components/header-cake';
+import KeyringConnectButton from 'calypso/blocks/keyring-connect-button';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import {
 	connectGoogleMyBusinessLocation,
 	connectGoogleMyBusinessAccount,
-} from 'state/google-my-business/actions';
-import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
-import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
-import { withEnhancers } from 'state/utils';
+} from 'calypso/state/google-my-business/actions';
+import { enhanceWithLocationCounts } from 'calypso/my-sites/google-my-business/utils';
+import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
+import { withEnhancers } from 'calypso/state/utils';
 
 /**
  * Style dependencies
@@ -67,7 +63,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 		);
 	};
 
-	handleConnect = keyringConnection => {
+	handleConnect = ( keyringConnection ) => {
 		const { siteId } = this.props;
 
 		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
@@ -111,7 +107,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 					{ translate( 'Select the listing you would like to connect to:' ) }
 				</CompactCard>
 
-				{ locations.map( location => (
+				{ locations.map( ( location ) => (
 					<GoogleMyBusinessLocation key={ location.ID } location={ location } isCompact>
 						<GoogleMyBusinessSelectLocationButton
 							location={ location }
@@ -148,7 +144,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const locations = getGoogleMyBusinessLocations( state, siteId );
 

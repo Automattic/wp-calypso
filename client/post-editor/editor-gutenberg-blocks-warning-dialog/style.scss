@@ -1,8 +1,0 @@
-
-.dialog.card.editor-gutenberg-blocks-warning-dialog {
-	max-width: 600px;
-
-	@include breakpoint( '<660px' ) {
-		max-width: 90%;
-	}
-}

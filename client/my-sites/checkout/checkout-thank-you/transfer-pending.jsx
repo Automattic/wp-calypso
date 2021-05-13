@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,32 +6,27 @@ import { localize } from 'i18n-calypso';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { identity } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 
-import { errorNotice } from 'state/notices/actions';
-import EmptyContent from 'components/empty-content';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getSiteSlug } from 'state/sites/selectors';
-import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
-import { transferStates } from 'state/atomic-transfer/constants';
+import { errorNotice } from 'calypso/state/notices/actions';
+import EmptyContent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
+import { transferStates } from 'calypso/state/atomic-transfer/constants';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 
 class TransferPending extends PureComponent {
 	static propTypes = {
 		error: PropTypes.object,
-		localize: PropTypes.func,
 		showErrorNotice: PropTypes.func,
 		siteId: PropTypes.number.isRequired,
 		transfer: PropTypes.object,
-	};
-
-	static defaultProps = {
-		localize: identity,
-		errorNotice: identity,
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -70,11 +63,50 @@ class TransferPending extends PureComponent {
 		}
 	}
 
+	renderFloaties() {
+		// Non standard gridicon sizes are used here because we display giant, floating icons on the page with an animation
+		/* eslint-disable wpcalypso/jsx-gridicon-size, wpcalypso/jsx-classname-namespace */
+		return (
+			<div className="checkout-thank-you__floaties">
+				<Gridicon icon="add" size={ 64 } />
+				<Gridicon icon="aside" size={ 64 } />
+				<Gridicon icon="attachment" size={ 64 } />
+				<Gridicon icon="audio" size={ 64 } />
+				<Gridicon icon="bell" size={ 64 } />
+				<Gridicon icon="book" size={ 64 } />
+				<Gridicon icon="camera" size={ 64 } />
+				<Gridicon icon="comment" size={ 64 } />
+				<Gridicon icon="globe" size={ 64 } />
+				<Gridicon icon="pencil" size={ 64 } />
+				<Gridicon icon="phone" size={ 64 } />
+				<Gridicon icon="reader" size={ 64 } />
+				<Gridicon icon="star" size={ 64 } />
+				<Gridicon icon="video" size={ 64 } />
+				<Gridicon icon="align-image-right" size={ 64 } />
+				<Gridicon icon="bookmark" size={ 64 } />
+				<Gridicon icon="briefcase" size={ 64 } />
+				<Gridicon icon="calendar" size={ 64 } />
+				<Gridicon icon="clipboard" size={ 64 } />
+				<Gridicon icon="cloud-upload" size={ 64 } />
+				<Gridicon icon="cog" size={ 64 } />
+				<Gridicon icon="customize" size={ 64 } />
+				<Gridicon icon="help" size={ 64 } />
+				<Gridicon icon="link" size={ 64 } />
+				<Gridicon icon="lock" size={ 64 } />
+				<Gridicon icon="pages" size={ 64 } />
+				<Gridicon icon="share" size={ 64 } />
+				<Gridicon icon="stats" size={ 64 } />
+			</div>
+		);
+		/* eslint-enable wpcalypso/jsx-gridicon-size, wpcalypso/jsx-classname-namespace */
+	}
+
 	render() {
 		const { siteSlug, translate } = this.props;
 
 		return (
 			<Main className="checkout-thank-you__transfer-pending">
+				{ this.renderFloaties() }
 				<PageViewTracker
 					path={
 						siteSlug
@@ -84,9 +116,9 @@ class TransferPending extends PureComponent {
 					title="Checkout Pending"
 					properties={ siteSlug && { site: siteSlug } }
 				/>
+				<WordPressLogo size={ 180 } className="checkout-thank-you__wordpress-logo is-large" />
 				<EmptyContent
-					illustration={ '/calypso/images/illustrations/illustration-shopping-bags.svg' }
-					illustrationWidth={ 500 }
+					illustration={ '' }
 					title={ translate( 'Processing…' ) }
 					line={ translate( "Almost there – we're currently finalizing your order." ) }
 				/>

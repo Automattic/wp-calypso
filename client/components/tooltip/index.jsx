@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -11,8 +9,12 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
-import { useMobileBreakpoint } from 'lib/viewport/react';
+import Popover from 'calypso/components/popover';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function Tooltip( props ) {
 	const isMobile = useMobileBreakpoint();
@@ -22,7 +24,6 @@ function Tooltip( props ) {
 	}
 
 	const classes = classnames(
-		'popover',
 		'tooltip',
 		`is-${ props.status }`,
 		`is-${ props.position }`,
@@ -33,7 +34,6 @@ function Tooltip( props ) {
 		<Popover
 			autoPosition={ props.autoPosition }
 			className={ classes }
-			rootClassName={ props.rootClassName }
 			context={ props.context }
 			id={ props.id }
 			isVisible={ props.isVisible }
@@ -51,10 +51,11 @@ Tooltip.propTypes = {
 	id: PropTypes.string,
 	isVisible: PropTypes.bool,
 	position: PropTypes.string,
-	rootClassName: PropTypes.string,
 	status: PropTypes.string,
 	showDelay: PropTypes.number,
 	showOnMobile: PropTypes.bool,
+	children: PropTypes.element,
+	context: PropTypes.any,
 };
 
 Tooltip.defaultProps = {

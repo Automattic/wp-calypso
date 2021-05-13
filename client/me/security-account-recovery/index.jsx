@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,18 +9,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import QueryAccountRecoverySettings from 'components/data/query-account-recovery-settings';
-import ReauthRequired from 'me/reauth-required';
+import { CompactCard } from '@automattic/components';
+import config from '@automattic/calypso-config';
+import DocumentHead from 'calypso/components/data/document-head';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
+import ReauthRequired from 'calypso/me/reauth-required';
 import RecoveryEmail from './recovery-email';
 import RecoveryEmailValidationNotice from './recovery-email-validation-notice';
 import RecoveryPhone from './recovery-phone';
 import RecoveryPhoneValidationNotice from './recovery-phone-validation-notice';
-import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
+import SecuritySectionNav from 'calypso/me/security-section-nav';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import {
 	updateAccountRecoveryEmail,
 	updateAccountRecoveryPhone,
@@ -31,7 +31,7 @@ import {
 	resendAccountRecoveryEmailValidation,
 	resendAccountRecoveryPhoneValidation,
 	validateAccountRecoveryPhone,
-} from 'state/account-recovery/settings/actions';
+} from 'calypso/state/account-recovery/settings/actions';
 import {
 	getAccountRecoveryEmail,
 	getAccountRecoveryPhone,
@@ -44,23 +44,33 @@ import {
 	hasSentAccountRecoveryPhoneValidation,
 	shouldPromptAccountRecoveryEmailValidationNotice,
 	shouldPromptAccountRecoveryPhoneValidationNotice,
-} from 'state/account-recovery/settings/selectors';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+} from 'calypso/state/account-recovery/settings/selectors';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const SecurityAccountRecovery = props => (
-	<Main className="security-account-recovery">
+const SecurityAccountRecovery = ( props ) => (
+	<Main wideLayout className="security security-account-recovery">
 		<PageViewTracker path="/me/security/account-recovery" title="Me > Account Recovery" />
 		<QueryAccountRecoverySettings />
 
 		<MeSidebarNavigation />
 
-		<SecuritySectionNav path={ props.path } />
+		<FormattedHeader brandFont headerText={ props.translate( 'Security' ) } align="left" />
+
+		{ ! config.isEnabled( 'security/security-checkup' ) && (
+			<SecuritySectionNav path={ props.path } />
+		) }
+		{ config.isEnabled( 'security/security-checkup' ) && (
+			<HeaderCake backText={ props.translate( 'Back' ) } backHref="/me/security">
+				{ props.translate( 'Account Recovery' ) }
+			</HeaderCake>
+		) }
 
 		<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
@@ -112,7 +122,7 @@ const SecurityAccountRecovery = props => (
 );
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		accountRecoveryEmail: getAccountRecoveryEmail( state ),
 		accountRecoveryEmailActionInProgress: isAccountRecoveryEmailActionInProgress( state ),
 		accountRecoveryEmailValidated: isAccountRecoveryEmailValidated( state ),

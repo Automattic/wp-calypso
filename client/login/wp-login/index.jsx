@@ -1,40 +1,39 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { startCase } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import AutomatticLogo from 'components/automattic-logo';
-import DocumentHead from 'components/data/document-head';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import LocaleSuggestions from 'components/locale-suggestions';
-import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
-import TranslatorInvite from 'components/translator-invite';
-import LoginBlock from 'blocks/login';
-import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
+import config from '@automattic/calypso-config';
+import AutomatticLogo from 'calypso/components/automattic-logo';
+import DocumentHead from 'calypso/components/data/document-head';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
+import TranslatorInvite from 'calypso/components/translator-invite';
+import LoginBlock from 'calypso/blocks/login';
+import { isCrowdsignalOAuth2Client } from 'calypso/lib/oauth2-clients';
 import LoginLinks from './login-links';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import PrivateSite from './private-site';
-import { localizeUrl } from 'lib/i18n-utils';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	recordPageViewWithClientId as recordPageView,
 	recordTracksEventWithClientId as recordTracksEvent,
 	enhanceWithSiteType,
-} from 'state/analytics/actions';
-import { withEnhancers } from 'state/utils';
+} from 'calypso/state/analytics/actions';
+import { withEnhancers } from 'calypso/state/utils';
 
 /**
  * Style dependencies
@@ -47,6 +46,7 @@ export class Login extends React.Component {
 		isLoggedIn: PropTypes.bool.isRequired,
 		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
+		isGutenboarding: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		path: PropTypes.string.isRequired,
@@ -59,13 +59,23 @@ export class Login extends React.Component {
 		twoFactorAuthType: PropTypes.string,
 	};
 
-	static defaultProps = { isJetpack: false, isLoginView: true };
+	static defaultProps = { isJetpack: false, isGutenboarding: false, isLoginView: true };
+
+	state = {
+		usernameOrEmail: '',
+	};
+
+	constructor( props ) {
+		super();
+
+		this.state.usernameOrEmail = props.emailQueryParam ?? '';
+	}
 
 	componentDidMount() {
 		this.recordPageView( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
 			this.recordPageView( nextProps );
 		}
@@ -82,8 +92,10 @@ export class Login extends React.Component {
 		let title = 'Login';
 
 		if ( twoFactorAuthType ) {
+			const authTypeTitle =
+				twoFactorAuthType.charAt( 0 ).toUpperCase() + twoFactorAuthType.slice( 1 );
 			url += `/${ twoFactorAuthType }`;
-			title += ` > Two-Step Authentication > ${ startCase( twoFactorAuthType ) }`;
+			title += ` > Two-Step Authentication > ${ authTypeTitle }`;
 		}
 
 		if ( socialConnect ) {
@@ -98,6 +110,10 @@ export class Login extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_back_to_wpcom_link_click' );
 	};
 
+	handleUsernameChange( usernameOrEmail ) {
+		this.setState( { usernameOrEmail } );
+	}
+
 	renderI18nSuggestions() {
 		const { locale, path, isLoginView } = this.props;
 
@@ -109,10 +125,10 @@ export class Login extends React.Component {
 	}
 
 	renderFooter() {
-		const { currentRoute, translate } = this.props;
+		const { isJetpack, isGutenboarding, translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2Client;
 
-		if ( currentRoute === '/log-in/jetpack' ) {
+		if ( isJetpack || isGutenboarding ) {
 			return null;
 		}
 
@@ -189,6 +205,7 @@ export class Login extends React.Component {
 			domain,
 			isLoggedIn,
 			isJetpack,
+			isGutenboarding,
 			oauth2Client,
 			privateSite,
 			socialConnect,
@@ -196,11 +213,36 @@ export class Login extends React.Component {
 			socialService,
 			socialServiceResponse,
 			fromSite,
+			locale,
+			isLoginView,
+			path,
+			signupUrl,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
 			return <PrivateSite />;
 		}
+
+		const isJetpackMagicLinkSignUpFlow =
+			isJetpack && config.isEnabled( 'jetpack/magic-link-signup' );
+
+		const shouldRenderFooter = ! socialConnect && ! isJetpackMagicLinkSignUpFlow;
+
+		const footer = (
+			<>
+				{ shouldRenderFooter && (
+					<LoginLinks
+						locale={ locale }
+						privateSite={ privateSite }
+						twoFactorAuthType={ twoFactorAuthType }
+						isGutenboarding={ isGutenboarding }
+						signupUrl={ signupUrl }
+						usernameOrEmail={ this.state.usernameOrEmail }
+					/>
+				) }
+				{ isLoginView && <TranslatorInvite path={ path } /> }
+			</>
+		);
 
 		return (
 			<LoginBlock
@@ -209,25 +251,21 @@ export class Login extends React.Component {
 				privateSite={ privateSite }
 				clientId={ clientId }
 				isJetpack={ isJetpack }
+				isGutenboarding={ isGutenboarding }
 				oauth2Client={ oauth2Client }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				fromSite={ fromSite }
+				footer={ footer }
+				locale={ locale }
+				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
 			/>
 		);
 	}
 
 	render() {
-		const {
-			isLoginView,
-			locale,
-			path,
-			privateSite,
-			socialConnect,
-			translate,
-			twoFactorAuthType,
-		} = this.props;
+		const { locale, translate } = this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		return (
 			<div>
@@ -240,18 +278,7 @@ export class Login extends React.Component {
 						meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
 					/>
 
-					<div>
-						<div className="wp-login__container">{ this.renderContent() }</div>
-
-						{ ! socialConnect && (
-							<LoginLinks
-								locale={ locale }
-								privateSite={ privateSite }
-								twoFactorAuthType={ twoFactorAuthType }
-							/>
-						) }
-						{ isLoginView && <TranslatorInvite path={ path } /> }
-					</div>
+					<div className="wp-login__container">{ this.renderContent() }</div>
 				</Main>
 
 				{ this.renderFooter() }
@@ -262,11 +289,13 @@ export class Login extends React.Component {
 
 export default connect(
 	( state, props ) => ( {
-		currentRoute: getCurrentRoute( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		locale: getCurrentLocaleSlug( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
 		isLoginView: ! props.twoFactorAuthType && ! props.socialConnect,
+		emailQueryParam:
+			getCurrentQueryArguments( state ).email_address ||
+			getInitialQueryArguments( state ).email_address,
 	} ),
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),

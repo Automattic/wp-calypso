@@ -1,26 +1,20 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { addCardDetails, editCardDetails } from './paths';
+import { addPaymentMethod, changePaymentMethod, addNewPaymentMethod } from './paths';
 import {
 	isExpired,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
-} from 'lib/purchases';
-import { isDomainTransfer } from 'lib/products-values';
+} from 'calypso/lib/purchases';
+import { isDomainTransfer } from '@automattic/calypso-products';
 
 function isDataLoading( props ) {
 	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
 }
 
 function canEditPaymentDetails( purchase ) {
-	if ( ! config.isEnabled( 'upgrades/credit-cards' ) ) {
-		return false;
-	}
 	return (
 		! isExpired( purchase ) &&
 		! isOneTimePurchase( purchase ) &&
@@ -29,15 +23,25 @@ function canEditPaymentDetails( purchase ) {
 	);
 }
 
-function getEditCardDetailsPath( siteSlug, purchase ) {
+function getChangePaymentMethodPath( siteSlug, purchase ) {
 	if ( isPaidWithCreditCard( purchase ) ) {
 		const {
 			payment: { creditCard },
 		} = purchase;
 
-		return editCardDetails( siteSlug, purchase.id, creditCard.id );
+		return changePaymentMethod( siteSlug, purchase.id, creditCard.id );
 	}
-	return addCardDetails( siteSlug, purchase.id );
+
+	return addPaymentMethod( siteSlug, purchase.id );
 }
 
-export { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading };
+function getAddNewPaymentMethodPath() {
+	return addNewPaymentMethod;
+}
+
+export {
+	canEditPaymentDetails,
+	getChangePaymentMethodPath,
+	getAddNewPaymentMethodPath,
+	isDataLoading,
+};

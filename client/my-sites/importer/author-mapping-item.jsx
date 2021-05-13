@@ -1,28 +1,26 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { defer } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import AuthorSelector from 'blocks/author-selector';
-import User from 'components/user';
-import { getCurrentUser } from 'state/current-user/selectors';
+import AuthorSelector from 'calypso/blocks/author-selector';
+import User from 'calypso/components/user';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies
  */
 import './author-mapping-item.scss';
 
-const userShape = nameField =>
+const userShape = ( nameField ) =>
 	PropTypes.shape( {
 		ID: PropTypes.number.isRequired,
 		[ nameField ]: PropTypes.string.isRequired,
@@ -80,7 +78,7 @@ class ImporterAuthorMapping extends React.Component {
 
 		return (
 			<div className="importer__author-mapping">
-				<span className="importer__source-author">{ name }</span>
+				<span className="importer__source-author">{ decodeEntities( name ) }</span>
 				<Gridicon className="importer__mapping-relation" icon="arrow-right" />
 				{ ! hasSingleAuthor ? (
 					<AuthorSelector siteId={ siteId } onSelect={ onSelect }>
@@ -94,6 +92,6 @@ class ImporterAuthorMapping extends React.Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	currentUser: getCurrentUser( state ),
 } ) )( ImporterAuthorMapping );

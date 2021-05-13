@@ -1,24 +1,24 @@
-/** @format */
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import Spinner from 'components/spinner';
-import { localizeUrl } from 'lib/i18n-utils';
+import { Card, Button } from '@automattic/components';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import Spinner from 'calypso/components/spinner';
+import SuggestionSearch from 'calypso/components/suggestion-search';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
-class JetpackConnectSiteUrlInput extends PureComponent {
+const noop = () => {};
+
+class JetpackConnectSiteUrlInput extends Component {
 	static propTypes = {
 		handleOnClickTos: PropTypes.func,
 		isError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
@@ -29,9 +29,11 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
 		autoFocus: PropTypes.bool,
+		isSearch: PropTypes.bool,
 	};
 
 	static defaultProps = {
+		candidateSites: [],
 		onChange: noop,
 		url: '',
 		autoFocus: true,
@@ -39,7 +41,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 
 	focusInput = noop;
 
-	refInput = formInputComponent => {
+	refInput = ( formInputComponent ) => {
 		this.focusInput = () => formInputComponent.focus();
 	};
 
@@ -51,19 +53,20 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 		this.focusInput();
 	}
 
-	handleKeyPress = event => {
-		if ( 13 === event.keyCode && ! this.isFormSubmitDisabled() ) {
+	handleKeyPress = ( event ) => {
+		if ( 13 === event.keyCode && ! this.isFormSubmitDisabled() && ! this.isFormSubmitBusy() ) {
 			this.props.onSubmit();
 		}
 	};
 
 	renderButtonLabel() {
-		const { translate } = this.props;
+		const { isSearch, translate } = this.props;
 		if ( ! this.props.isFetching ) {
 			if ( ! this.props.isInstall ) {
 				return translate( 'Continue' );
 			}
-			return translate( 'Start Installation' );
+
+			return isSearch ? translate( 'Get Search' ) : translate( 'Start Installation' );
 		}
 		return translate( 'Setting up…' );
 	}
@@ -77,10 +80,16 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 	}
 
 	isFormSubmitDisabled() {
-		const { isError, isFetching, url } = this.props;
+		const { isError, url } = this.props;
 		const hasError = isError && 'notExists' !== isError;
 
-		return ! url || isFetching || hasError;
+		return ! url || hasError;
+	}
+
+	isFormSubmitBusy() {
+		const { isFetching } = this.props;
+
+		return isFetching;
 	}
 
 	renderTermsOfServiceLink() {
@@ -117,24 +126,44 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 	}
 
 	render() {
-		const { isFetching, onChange, onSubmit, translate, url, autoFocus } = this.props;
+		const {
+			candidateSites,
+			isFetching,
+			onChange,
+			onSubmit,
+			isSearch,
+			translate,
+			url,
+			autoFocus,
+		} = this.props;
 
 		return (
 			<div>
 				<FormLabel htmlFor="siteUrl">{ translate( 'Site Address' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="globe" />
-					<FormTextInput
-						ref={ this.refInput }
-						id="siteUrl"
-						autoCapitalize="off"
-						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-						onChange={ onChange }
-						disabled={ isFetching }
-						placeholder={ 'https://yourjetpack.blog' }
-						onKeyUp={ this.handleKeyPress }
-						value={ url }
-					/>
+					{ ! isSearch && (
+						<FormTextInput
+							ref={ this.refInput }
+							id="siteUrl"
+							autoCapitalize="off"
+							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+							onChange={ onChange }
+							disabled={ isFetching }
+							placeholder={ 'https://yourjetpack.blog' }
+							onKeyUp={ this.handleKeyPress }
+							value={ url }
+						/>
+					) }
+					{ isSearch && (
+						<SuggestionSearch
+							id="siteSelection"
+							placeholder={ 'Type your site' }
+							onChange={ onChange }
+							suggestions={ candidateSites }
+							value={ url }
+						/>
+					) }
 					{ isFetching ? <Spinner /> : null }
 				</div>
 				<Card className="jetpack-connect__connect-button-card">
@@ -143,6 +172,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 						className="jetpack-connect__connect-button"
 						primary
 						disabled={ this.isFormSubmitDisabled() }
+						busy={ this.isFormSubmitBusy() }
 						onClick={ onSubmit }
 					>
 						{ this.renderButtonLabel() }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,10 +21,10 @@ export default class ReaderManagePage extends AsyncBaseContainer {
 	}
 
 	async waitForSites() {
-		const sitesLoadingSelector = by.css(
+		const sitesLoadingLocator = by.css(
 			'.reader-subscription-list-item  .is-placeholder:not(.reader-subscription-list-item__site-title)'
 		);
-		return await driverHelper.waitTillNotPresent( this.driver, sitesLoadingSelector );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, sitesLoadingLocator );
 	}
 
 	static _getUrl() {

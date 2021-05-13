@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -16,17 +15,18 @@ import React from 'react';
 import UsAddressFieldset from '../us-address-fieldset';
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: x => x,
-	translate: x => x,
+	localize: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'US Address Fieldset', () => {
 	const defaultProps = {
 		countryCode: 'US',
-		getFieldProps: name => ( { name, value: '' } ),
+		getFieldProps: ( name ) => ( { name, value: '' } ),
+		translate: ( string ) => string,
 	};
 
 	test( 'should render correctly with default props', () => {

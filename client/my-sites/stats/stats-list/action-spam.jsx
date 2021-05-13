@@ -1,21 +1,20 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:stats:action-spam' );
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import analytics from 'lib/analytics';
-import Gridicon from 'gridicons';
+import wpcom from 'calypso/lib/wp';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { Button } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
+
+const debug = debugFactory( 'calypso:stats:action-spam' );
 
 class StatsActionSpam extends React.Component {
 	static displayName = 'StatsActionSpam';
@@ -24,10 +23,9 @@ class StatsActionSpam extends React.Component {
 		spammed: false,
 	};
 
-	clickHandler = event => {
-		let spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew',
-			gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam',
-			wpcomSite;
+	clickHandler = ( event ) => {
+		const spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew';
+		const gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam';
 		event.stopPropagation();
 		event.preventDefault();
 		debug( this.state );
@@ -39,38 +37,36 @@ class StatsActionSpam extends React.Component {
 			this.props.afterChange( ! this.state.spammed );
 		}
 
-		wpcomSite = wpcom.site( this.props.data.siteID );
-		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function() {} );
-		analytics.ga.recordEvent( 'Stats', gaEvent + ' in ' + this.props.moduleName + ' List' );
+		const wpcomSite = wpcom.site( this.props.data.siteID );
+		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function () {} );
+		gaRecordEvent( 'Stats', gaEvent + ' in ' + this.props.moduleName + ' List' );
 	};
 
 	render() {
-		let label = this.state.spammed
-				? this.props.translate( 'Not Spam' )
-				: this.props.translate( 'Spam', {
-						context: 'Stats: Action to mark an item as spam',
-						comment: 'Default label (changes into "Not Spam").',
-				  } ),
-			title = this.state.spammed
-				? this.props.translate( 'Not Spam', {
-						textOnly: true,
-						context: 'Stats: Action to undo marking an item as spam',
-						comment:
-							'Secondary label (default label is "Spam"). Recommended to use a very short label.',
-				  } )
-				: this.props.translate( 'Spam', {
-						textOnly: true,
-						context: 'Stats: Action to mark an item as spam',
-						comment: 'Default label (changes into "Not Spam").',
-				  } ),
-			wrapperClass = classNames( 'module-content-list-item-action-wrapper', {
-				spam: ! this.state.spammed,
-				unspam: this.state.spammed,
-			} );
+		const label = this.state.spammed
+			? this.props.translate( 'Mark as Not Spam' )
+			: this.props.translate( 'Mark as Spam', {
+					context: 'Stats: Action to mark an item as spam',
+					comment: 'Default label (changes into "Mark as Not Spam").',
+			  } );
+		const title = this.state.spammed
+			? this.props.translate( 'Mark as Not Spam', {
+					textOnly: true,
+					context: 'Stats: Action to undo marking an item as spam',
+			  } )
+			: this.props.translate( 'Mark as Spam', {
+					textOnly: true,
+					context: 'Stats: Action to mark an item as spam',
+			  } );
+
+		const wrapperClass = classNames( 'module-content-list-item-action-wrapper', 'is-link', {
+			spam: ! this.state.spammed,
+			unspam: this.state.spammed,
+		} );
 
 		return (
-			<li className="module-content-list-item-action">
-				<a
+			<li className="stats-list__spam-action module-content-list-item-action">
+				<Button
 					href="#"
 					onClick={ this.clickHandler }
 					className={ wrapperClass }
@@ -78,8 +74,10 @@ class StatsActionSpam extends React.Component {
 					aria-label={ title }
 				>
 					<Gridicon icon="spam" size={ 18 } />
-					<span className="module-content-list-item-action-label">{ label }</span>
-				</a>
+					<span className="stats-list__spam-label module-content-list-item-action-label">
+						{ label }
+					</span>
+				</Button>
 			</li>
 		);
 	}

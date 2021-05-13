@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -51,7 +49,7 @@ describe( 'language picker utils', () => {
 		} );
 	} );
 	describe( 'getLanguageCodeLabels()', () => {
-		test( 'should return empty object if no lang slug passed ', () => {
+		test( 'should return empty object if no lang slug passed', () => {
 			expect( getLanguageCodeLabels() ).toEqual( {} );
 		} );
 		test( 'should return lang code from xx', () => {

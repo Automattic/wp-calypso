@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,14 +13,14 @@ import * as overrideABTests from './override-abtest';
 export default class AsyncBaseContainer {
 	constructor(
 		driver,
-		expectedElementSelector,
+		expectedElementLocator,
 		url = null,
 		waitMS = config.get( 'explicitWaitMS' )
 	) {
 		this.name = this.constructor.name;
 		this.driver = driver;
-		this.screenSize = driverManager.currentScreenSize().toUpperCase();
-		this.expectedElementSelector = expectedElementSelector;
+		this.screenSize = driverManager.currentScreenSize();
+		this.expectedElementLocator = expectedElementLocator;
 		this.url = url;
 		this.explicitWaitMS = waitMS;
 		this.visiting = false;
@@ -58,24 +56,23 @@ export default class AsyncBaseContainer {
 		}
 		await this.waitForPage();
 		await this.checkForUnknownABTestKeys();
-		await this.checkForConsoleErrors();
 		if ( typeof this._postInit === 'function' ) {
 			await this._postInit();
 		}
 	}
 
 	async waitForPage() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			this.expectedElementSelector,
+			this.expectedElementLocator,
 			this.explicitWaitMS
 		);
 	}
 
 	async displayed() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			this.expectedElementSelector,
+			this.expectedElementLocator,
 			this.explicitWaitMS
 		);
 	}
@@ -88,10 +85,6 @@ export default class AsyncBaseContainer {
 		return await this.driver.getCurrentUrl();
 	}
 
-	async checkForConsoleErrors() {
-		return await driverHelper.checkForConsoleErrors( this.driver );
-	}
-
 	async checkForUnknownABTestKeys() {
 		return await overrideABTests.checkForUnknownABTestKeys( this.driver );
 	}
@@ -99,5 +92,11 @@ export default class AsyncBaseContainer {
 	async setABTestControlGroupsInLocalStorage() {
 		await overrideABTests.setABTestControlGroups( this.driver );
 		return await this.waitForPage();
+	}
+
+	async overrideABTestInLocalStorage( name, variation ) {
+		await overrideABTests.setOverriddenABTests( this.driver, name, variation );
+		await this.waitForPage();
+		return await this.driver.navigate().refresh();
 	}
 }

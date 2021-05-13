@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,13 +11,13 @@ import { camelCase, difference, filter, get, includes, isEmpty, keys, map, pick 
 /**
  * Internal dependencies
  */
-import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import WithContactDetailsValidation, {
 	disableSubmitButton,
 } from './with-contact-details-validation';
@@ -32,7 +30,11 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object.isRequired,
 		ccTldDetails: PropTypes.object.isRequired,
+		onContactDetailsChange: PropTypes.func,
+		contactDetailsValidationErrors: PropTypes.object,
 		translate: PropTypes.func.isRequired,
+		updateContactDetailsCache: PropTypes.func.isRequired,
+		isManaged: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -65,7 +67,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		) );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// Add defaults to redux state to make accepting default values work.
 		const neededRequiredDetails = difference(
 			[ 'registrantType' ],
@@ -77,19 +79,30 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 			return;
 		}
 
-		this.props.updateContactDetailsCache( {
+		const payload = {
 			extra: {
 				uk: pick( defaultValues, neededRequiredDetails ),
 			},
-		} );
+		};
+
+		this.props.updateContactDetailsCache( payload );
+
+		if ( this.props.isManaged ) {
+			this.props.onContactDetailsChange?.( payload );
+		}
 	}
 
-	handleChangeEvent = event => {
-		this.props.updateContactDetailsCache( {
+	handleChangeEvent = ( event ) => {
+		const payload = {
 			extra: {
 				uk: { [ camelCase( event.target.id ) ]: event.target.value },
 			},
-		} );
+		};
+		this.props.updateContactDetailsCache( payload );
+
+		if ( this.props.isManaged ) {
+			this.props.onContactDetailsChange?.( payload );
+		}
 	};
 
 	isTradingNameRequired( registrantType ) {
@@ -107,7 +120,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		const { ccTldDetails, translate } = this.props;
 		const tradingName = get( ccTldDetails, 'tradingName', '' );
 		const tradingNameErrors = get(
-			this.props.validationErrors,
+			this.props.contactDetailsValidationErrors,
 			[ 'extra', 'uk', 'tradingName' ],
 			[]
 		);
@@ -139,7 +152,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		const { ccTldDetails, translate } = this.props;
 		const registrationNumber = get( ccTldDetails, 'registrationNumber', '' );
 		const registrationNumberErrors = get(
-			this.props.validationErrors,
+			this.props.contactDetailsValidationErrors,
 			[ 'extra', 'uk', 'registrationNumber' ],
 			[]
 		);
@@ -183,7 +196,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 	};
 
 	render() {
-		const { translate, validationErrors } = this.props;
+		const { translate } = this.props;
 		const { registrantType } = {
 			...defaultValues,
 			...this.props.ccTldDetails,
@@ -193,8 +206,9 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 			this.isTradingNameRequired( registrantType ) && 'tradingName',
 			this.isRegistrationNumberRequired( registrantType ) && 'registrationNumber',
 		] );
-		const relevantErrors = pick( get( validationErrors, 'extra.uk', {} ), relevantExtraFields );
-		const isValid = isEmpty( relevantErrors );
+		const isValid = Object.keys( this.props.contactDetailsValidationErrors?.extra?.uk ?? {} ).every(
+			( errorKey ) => ! relevantExtraFields.includes( errorKey )
+		);
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -235,7 +249,16 @@ export const ValidatedRegistrantExtraInfoUkForm = WithContactDetailsValidation(
 );
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
+		if ( ownProps.isManaged ) {
+			return {
+				// Treat this like a managed component.
+				contactDetails: ownProps.contactDetails ?? {},
+				ccTldDetails: ownProps.ccTldDetails ?? {},
+				contactDetailsValidationErrors: ownProps.contactDetailsValidationErrors ?? {},
+			};
+		}
+
 		const contactDetails = getContactDetailsCache( state );
 		return {
 			contactDetails,

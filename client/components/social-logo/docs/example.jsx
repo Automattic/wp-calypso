@@ -70,7 +70,7 @@ export default function SocialLogoExample() {
 				<a href="/devdocs/design/social-logo">Social Logo</a>
 			</h2>
 			<div>
-				{ logos.map( logo => (
+				{ logos.map( ( logo ) => (
 					<SocialLogo
 						key={ logo }
 						icon={ logo }

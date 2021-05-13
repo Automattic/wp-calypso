@@ -1,31 +1,28 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { sectionify } from 'lib/route';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import { isMobile } from 'lib/viewport';
-import PopoverCart from 'my-sites/checkout/cart/popover-cart';
-import { isATEnabled } from 'lib/automated-transfer';
-import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite, isJetpackSite } from 'state/sites/selectors';
+import config from '@automattic/calypso-config';
+import { sectionify } from 'calypso/lib/route';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import PopoverCart from 'calypso/my-sites/checkout/cart/popover-cart';
+import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 class PlansNavigation extends React.Component {
 	static propTypes = {
-		cart: PropTypes.object,
 		isJetpack: PropTypes.bool,
 		path: PropTypes.string.isRequired,
 		shouldShowMyPlan: PropTypes.bool,
@@ -46,29 +43,21 @@ class PlansNavigation extends React.Component {
 			case '/plans/yearly':
 				return 'Plans';
 
-			case '/domains/manage':
-			case '/domains/add':
-				return 'Domains';
-
-			case '/email':
-				return 'Email';
-
 			default:
 				return path.split( '?' )[ 0 ].replace( /\//g, ' ' );
 		}
 	}
 
 	render() {
-		const { isJetpack, site, shouldShowMyPlan, translate } = this.props;
+		const { site, shouldShowMyPlan, translate } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
-		const userCanManageOptions = get( site, 'capabilities.manage_options', false );
-		const canManageDomain = userCanManageOptions && ( isATEnabled( site ) || ! isJetpack );
+		const hasPinnedItems = isMobile() && config.isEnabled( 'upgrades/checkout' ) && site;
 
 		return (
 			site && (
 				<SectionNav
-					hasPinnedItems={ isMobile() }
+					hasPinnedItems={ hasPinnedItems }
 					selectedText={ sectionTitle }
 					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }
 				>
@@ -89,57 +78,57 @@ class PlansNavigation extends React.Component {
 						>
 							{ translate( 'Plans' ) }
 						</NavItem>
-						{ canManageDomain && (
-							<NavItem
-								path={ `/domains/manage/${ site.slug }` }
-								selected={ path === '/domains/manage' || path === '/domains/add' }
-							>
-								{ translate( 'Domains' ) }
-							</NavItem>
-						) }
-						{ canManageDomain && (
-							<NavItem path={ `/email/${ site.slug }` } selected={ path === '/email' }>
-								{ translate( 'Email' ) }
-							</NavItem>
-						) }
 					</NavTabs>
-					{ this.cartToggleButton() }
+					<CartToggleButton
+						site={ this.props.site }
+						toggleCartVisibility={ this.toggleCartVisibility }
+						cartVisible={ this.state.cartVisible }
+						path={ this.props.path }
+					/>
 				</SectionNav>
 			)
 		);
 	}
 
-	toggleCartVisibility = event => {
-		if ( event ) {
-			event.preventDefault();
-		}
-
+	toggleCartVisibility = () => {
 		this.setState( { cartVisible: ! this.state.cartVisible } );
 	};
 
 	onMobileNavPanelOpen = () => {
 		this.setState( { cartVisible: false } );
 	};
-
-	cartToggleButton() {
-		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.cart || ! this.props.site ) {
-			return null;
-		}
-
-		return (
-			<PopoverCart
-				cart={ this.props.cart }
-				selectedSite={ this.props.site }
-				onToggle={ this.toggleCartVisibility }
-				pinned={ isMobile() }
-				visible={ this.state.cartVisible }
-				path={ this.props.path }
-			/>
-		);
-	}
 }
 
-export default connect( state => {
+function CartToggleButton( {
+	site,
+	toggleCartVisibility,
+	cartVisible,
+	path,
+	closeSectionNavMobilePanel,
+} ) {
+	if ( ! config.isEnabled( 'upgrades/checkout' ) || ! site ) {
+		return null;
+	}
+
+	const onToggle = () => {
+		closeSectionNavMobilePanel();
+		toggleCartVisibility();
+	};
+
+	return (
+		<CalypsoShoppingCartProvider>
+			<PopoverCart
+				selectedSite={ site }
+				onToggle={ onToggle }
+				pinned={ isMobile() }
+				visible={ cartVisible }
+				path={ path }
+			/>
+		</CalypsoShoppingCartProvider>
+	);
+}
+
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const site = getSite( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );

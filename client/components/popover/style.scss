@@ -3,7 +3,7 @@
  */
 
 .popover {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	z-index: z-index( 'root', '.popover' );
 	position: absolute;
 	top: 0;
@@ -11,16 +11,16 @@
 	right: auto #{'/*rtl:ignore*/'};
 
 	.popover__inner {
-		background-color: var( --color-white );
-		border: 1px solid var( --color-neutral-100 );
-		border-radius: 4px;
+		background-color: var( --color-surface );
+		border: 1px solid var( --color-neutral-10 );
+		border-radius: 2px;
 		box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 		text-align: center;
 		position: relative;
 	}
 
 	.popover__arrow {
-		border: 10px dashed var( --color-neutral-100 );
+		border: 10px dashed var( --color-neutral-10 );
 		height: 0;
 		line-height: 0;
 		position: absolute;
@@ -67,7 +67,7 @@
 
 			&::before {
 				#{$opposite-side}: 2px #{'/*rtl:ignore*/'};
-				border: 10px solid var( --color-white );
+				border: 10px solid var( --color-border-inverted );
 				content: ' ';
 				position: absolute;
 				#{$cross-side}: 50% #{'/*rtl:ignore*/'};
@@ -140,14 +140,15 @@
 	min-width: 200px;
 }
 
-.popover__menu-item {
+.popover__menu-item,
+.popover__menu-item.button {
 	position: relative;
 	background: inherit;
 	border: none;
 	border-radius: 0;
 	cursor: pointer;
 	display: block;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 400;
 	margin: 0;
 	padding: 8px 16px;
@@ -162,7 +163,7 @@
 
 	&,
 	&:visited {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	&.is-selected,
@@ -174,12 +175,12 @@
 		color: white;
 
 		.gridicon {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 
 	&[disabled] {
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 		.gridicon {
 			color: var( --color-neutral-0 );
 		}
@@ -204,6 +205,7 @@
 		color: var( --color-text-subtle );
 		vertical-align: bottom;
 		margin-right: 8px;
+		position: static;
 	}
 	.gridicons-cloud-download {
 		position: relative;

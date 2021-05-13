@@ -1,25 +1,22 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import {
-	SERIALIZE,
 	HAPPYCHAT_OPEN,
 	HAPPYCHAT_MINIMIZING,
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 
 /**
  * Tracks the current message the user has typed into the happychat client
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
 export const currentMessage = ( state = '', action ) => {
@@ -32,31 +29,40 @@ export const currentMessage = ( state = '', action ) => {
 	return state;
 };
 
+const lostFocusAtSchema = { type: 'number' };
 /**
  * Tracks the last time Happychat had focus. This lets us determine things like
  * whether the user has unread messages. A numerical value is the timestamp where focus
  * was lost, and `null` means HC currently has focus.
- * @param {Object} state Current state
- * @param {Object} action Action payload
- * @return {Object}        Updated state
+ *
+ * @param {object} state Current state
+ * @param {object} action Action payload
+ * @returns {object}        Updated state
  */
-export const lostFocusAt = ( state = null, action ) => {
-	switch ( action.type ) {
-		case SERIALIZE:
-			// If there's already a timestamp set, use that. Otherwise treat a SERIALIZE as a
-			// "loss of focus" since it represents the state when the browser (and HC) closed.
-			if ( state === null ) {
-				return Date.now();
+export const lostFocusAt = withSchemaValidation(
+	lostFocusAtSchema,
+	withPersistence(
+		( state = null, action ) => {
+			switch ( action.type ) {
+				case HAPPYCHAT_BLUR:
+					return Date.now();
+				case HAPPYCHAT_FOCUS:
+					return null;
 			}
 			return state;
-		case HAPPYCHAT_BLUR:
-			return Date.now();
-		case HAPPYCHAT_FOCUS:
-			return null;
-	}
-	return state;
-};
-lostFocusAt.schema = { type: 'number' };
+		},
+		{
+			serialize: ( state ) => {
+				// If there's already a timestamp set, use that. Otherwise treat serialization as a
+				// "loss of focus" since it represents the state when the browser (and HC) closed.
+				if ( state === null ) {
+					return Date.now();
+				}
+				return state;
+			},
+		}
+	)
+);
 
 const isOpen = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -69,9 +75,9 @@ const isOpen = ( state = false, action ) => {
 /**
  * Tracks the state of the happychat minimizing process
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
 const isMinimizing = ( state = false, action ) => {

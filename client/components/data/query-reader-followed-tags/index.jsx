@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestTags } from 'state/reader/tags/items/actions';
+import { requestTags } from 'calypso/state/reader/tags/items/actions';
 
 /**
  *  QueryReaderFollowedTags takes no parameters and will add all of a
@@ -31,7 +29,4 @@ class QueryReaderFollowedTags extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestFollowedTags: requestTags }
-)( QueryReaderFollowedTags );
+export default connect( null, { requestFollowedTags: requestTags } )( QueryReaderFollowedTags );

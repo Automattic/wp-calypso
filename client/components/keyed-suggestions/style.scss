@@ -5,16 +5,16 @@
 
 .keyed-suggestions__category {
 	background-color: var( --color-neutral-0 );
-	border: 1px solid var( --color-neutral-50 );
+	border: 1px solid var( --color-neutral-5 );
 	border-top: 0;
 	padding: 4px 8px;
-	font-size: 13px;
+	font-size: $font-body-small;
 	display: flex;
 	align-items: center;
 
 	.keyed-suggestions__category-name {
 		text-transform: uppercase;
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	.keyed-suggestions__category-counter {
@@ -25,7 +25,7 @@
 	}
 
 	.keyed-suggestions__category-show-all {
-		font-size: 13px;
+		font-size: $font-body-small;
 		cursor: pointer;
 	}
 }
@@ -33,18 +33,18 @@
 .keyed-suggestions__value {
 	display: flex;
 	padding: 10px;
-	background: var( --color-white );
-	border: 1px solid var( --color-neutral-50 );
+	background: var( --color-surface );
+	border: 1px solid var( --color-neutral-5 );
 	border-top: 0;
-	font-size: 15px;
+	font-size: $font-body;
 	cursor: pointer;
 
 	&.has-highlight {
 		background-color: var( --color-primary );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		.keyed-suggestions__value-description {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }
@@ -62,7 +62,7 @@
 	}
 
 	.keyed-suggestions__value-emphasis {
-		font-weight: bold;
+		font-weight: 600;
 		color: inherit;
 	}
 }
@@ -74,7 +74,7 @@
 	margin-left: 0.5em;
 	padding-top: 3px;
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 	height: 19px; /* font-size + 2*padding */
 	overflow: hidden;
 

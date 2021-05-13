@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,11 +9,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isRequestingWhois from 'state/selectors/is-requesting-whois';
-import { requestWhois } from 'state/domains/management/actions';
+import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
+import { requestWhois } from 'calypso/state/domains/management/actions';
 
 class QueryWhois extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.isRequesting ) {
 			return;
 		}

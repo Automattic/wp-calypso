@@ -1,99 +1,154 @@
-/** @format */
+/* eslint-disable no-case-declarations */
 /**
  * External dependencies
  */
-import { filter, find, get, includes, keyBy, map, omit, union } from 'lodash';
+import { filter, some, find, get, includes, keyBy, map, omit, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
-	READER_LIST_DISMISS_NOTICE,
+	READER_LIST_CREATE,
+	READER_LIST_DELETE,
+	READER_LIST_FOLLOW_RECEIVE,
 	READER_LIST_REQUEST,
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
+	READER_LIST_UNFOLLOW_RECEIVE,
+	READER_LIST_UPDATE,
 	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_UPDATE_FAILURE,
-	READER_LIST_UPDATE_TITLE,
-	READER_LIST_UPDATE_DESCRIPTION,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
-	READER_LISTS_REQUEST_SUCCESS,
-	READER_LISTS_REQUEST_FAILURE,
-	READER_LISTS_FOLLOW_SUCCESS,
-	READER_LISTS_UNFOLLOW_SUCCESS,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
+	READER_LIST_ITEMS_RECEIVE,
+	READER_LIST_ITEM_DELETE_FEED,
+	READER_LIST_ITEM_DELETE_SITE,
+	READER_LIST_ITEM_DELETE_TAG,
+	READER_LIST_ITEM_ADD_FEED_RECEIVE,
+} from 'calypso/state/reader/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } from './schema';
+
+const union = ( ...arrays ) => [ ...new Set( [].concat( ...arrays ) ) ];
 
 /**
  * Tracks all known list objects, indexed by list ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export function items( state = {}, action ) {
+export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
 			return Object.assign( {}, state, keyBy( action.lists, 'ID' ) );
 		case READER_LIST_REQUEST_SUCCESS:
 		case READER_LIST_UPDATE_SUCCESS:
 			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
-		case READER_LIST_UPDATE_TITLE:
-			const listForTitleChange = Object.assign( {}, state[ action.listId ] );
-			if ( ! listForTitleChange ) {
+		case READER_LIST_DELETE:
+			if ( ! ( action.listId in state ) ) {
 				return state;
 			}
-			listForTitleChange.title = action.title;
-			return Object.assign( {}, state, keyBy( [ listForTitleChange ], 'ID' ) );
-		case READER_LIST_UPDATE_DESCRIPTION:
-			const listForDescriptionChange = Object.assign( {}, state[ action.listId ] );
-			if ( ! listForDescriptionChange ) {
-				return state;
-			}
-			listForDescriptionChange.description = action.description;
-			return Object.assign( {}, state, keyBy( [ listForDescriptionChange ], 'ID' ) );
+			return omit( state, action.listId );
 	}
 	return state;
+} );
+
+function removeItemBy( state, action, predicate ) {
+	if ( ! ( action.listId in state ) ) {
+		return state;
+	}
+	const list = state[ action.listId ];
+
+	const newList = reject( list, predicate );
+	return {
+		...state,
+		[ action.listId ]: newList,
+	};
 }
-items.schema = itemsSchema;
+
+export const listItems = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_LIST_ITEMS_RECEIVE:
+			return {
+				...state,
+				[ action.listId ]: action.listItems,
+			};
+		case READER_LIST_ITEM_ADD_FEED_RECEIVE: {
+			const currentItems = state[ action.listId ] || [];
+			if ( some( currentItems, { feed_ID: action.feedId } ) ) {
+				return state;
+			}
+			return {
+				...state,
+				[ action.listId ]: [ ...currentItems, { feed_ID: action.feedId } ],
+			};
+		}
+		case READER_LIST_ITEM_DELETE_FEED:
+			return removeItemBy( state, action, ( item ) => item.feed_ID === action.feedId );
+		case READER_LIST_ITEM_DELETE_TAG:
+			return removeItemBy( state, action, ( item ) => item.tag_ID === action.tagId );
+		case READER_LIST_ITEM_DELETE_SITE:
+			return removeItemBy( state, action, ( item ) => item.site_ID === action.siteId );
+		case READER_LIST_DELETE:
+			if ( ! ( action.listId in state ) ) {
+				return state;
+			}
+			return omit( state, action.listId );
+	}
+	return state;
+};
 
 /**
  * Tracks which list IDs the current user is subscribed to.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export function subscribedLists( state = [], action ) {
-	switch ( action.type ) {
-		case READER_LISTS_RECEIVE:
-			return map( action.lists, 'ID' );
-		case READER_LISTS_FOLLOW_SUCCESS:
-			const newListId = get( action, [ 'data', 'list', 'ID' ] );
-			if ( ! newListId || includes( state, newListId ) ) {
+export const subscribedLists = withSchemaValidation(
+	subscriptionsSchema,
+	( state = [], action ) => {
+		switch ( action.type ) {
+			case READER_LISTS_RECEIVE:
+				return map( action.lists, 'ID' );
+			case READER_LIST_FOLLOW_RECEIVE:
+				const followedListId = action.list?.ID;
+				if ( ! followedListId || includes( state, followedListId ) ) {
+					return state;
+				}
+				return [ ...state, followedListId ];
+			case READER_LIST_UNFOLLOW_RECEIVE:
+				// Remove the unfollowed list ID from subscribedLists
+				const unfollowedListId = action.list?.ID;
+				if ( ! unfollowedListId ) {
+					return state;
+				}
+				return filter( state, ( listId ) => {
+					return listId !== unfollowedListId;
+				} );
+			case READER_LIST_DELETE:
+				return filter( state, ( listId ) => {
+					return listId !== action.listId;
+				} );
+			case READER_LIST_REQUEST_SUCCESS:
+				if ( ! state.includes( action.data.list.ID ) ) {
+					return [ ...state, action.data.list.ID ];
+				}
 				return state;
-			}
-			return [ ...state, newListId ];
-		case READER_LISTS_UNFOLLOW_SUCCESS:
-			// Remove the unfollowed list ID from subscribedLists
-			return filter( state, listId => {
-				return listId !== action.data.list.ID;
-			} );
+		}
+		return state;
 	}
-	return state;
-}
-subscribedLists.schema = subscriptionsSchema;
+);
 
 /**
  * Tracks which list IDs have been updated recently. Used to show the correct success message.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export function updatedLists( state = [], action ) {
+export const updatedLists = withSchemaValidation( updatedListsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case READER_LIST_UPDATE_SUCCESS:
 			const newListId = get( action, 'data.list.ID' );
@@ -101,21 +156,16 @@ export function updatedLists( state = [], action ) {
 				return state;
 			}
 			return union( state, [ newListId ] );
-		case READER_LIST_DISMISS_NOTICE:
-			// Remove the dismissed list ID
-			return filter( state, listId => {
-				return listId !== action.listId;
-			} );
 	}
 	return state;
-}
-updatedLists.schema = updatedListsSchema;
+} );
+
 /**
  * Returns the updated requests state after an action has been dispatched.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isRequestingList( state = false, action ) {
 	switch ( action.type ) {
@@ -129,17 +179,52 @@ export function isRequestingList( state = false, action ) {
 }
 
 /**
+ * Records if there is a pending list creation request.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
+ */
+export function isCreatingList( state = false, action ) {
+	switch ( action.type ) {
+		case READER_LIST_CREATE:
+		case READER_LIST_REQUEST_SUCCESS:
+		case READER_LIST_REQUEST_FAILURE:
+			return READER_LIST_CREATE === action.type;
+	}
+
+	return state;
+}
+
+/**
+ * Records if there is a pending list update request.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
+ */
+export function isUpdatingList( state = false, action ) {
+	switch ( action.type ) {
+		case READER_LIST_UPDATE:
+		case READER_LIST_UPDATE_SUCCESS:
+		case READER_LIST_UPDATE_FAILURE:
+			return READER_LIST_UPDATE === action.type;
+	}
+
+	return state;
+}
+
+/**
  * Returns the updated requests state after an action has been dispatched.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isRequestingLists( state = false, action ) {
 	switch ( action.type ) {
 		case READER_LISTS_REQUEST:
-		case READER_LISTS_REQUEST_SUCCESS:
-		case READER_LISTS_REQUEST_FAILURE:
+		case READER_LISTS_RECEIVE:
 			return READER_LISTS_REQUEST === action.type;
 	}
 
@@ -149,43 +234,38 @@ export function isRequestingLists( state = false, action ) {
 /**
  * Returns errors received when trying to update lists, keyed by list ID.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export function errors( state = {}, action ) {
+export const errors = withSchemaValidation( errorsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_LIST_UPDATE_FAILURE:
 			const newError = {};
 			newError[ action.list.ID ] = action.error.statusCode;
 			return Object.assign( {}, state, newError );
-
-		case READER_LIST_DISMISS_NOTICE:
-			// Remove the dismissed list ID
-			return omit( state, action.listId );
 	}
 
 	return state;
-}
-errors.schema = errorsSchema;
+} );
 
 /**
  * A missing list is one that's been requested, but we couldn't find (API response 404-ed).
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function missingLists( state = [], action ) {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
 			// Remove any valid lists from missingLists
-			return filter( state, list => {
+			return filter( state, ( list ) => {
 				return ! find( action.lists, { owner: list.owner, slug: list.slug } );
 			} );
 		case READER_LIST_REQUEST_SUCCESS:
 			// Remove any valid lists from missingLists
-			return filter( state, list => {
+			return filter( state, ( list ) => {
 				return action.data.list.owner !== list.owner && action.data.list.slug !== list.slug;
 			} );
 		case READER_LIST_REQUEST_FAILURE:
@@ -201,10 +281,13 @@ export function missingLists( state = [], action ) {
 
 export default combineReducers( {
 	items,
+	listItems,
 	subscribedLists,
 	updatedLists,
+	isCreatingList,
 	isRequestingList,
 	isRequestingLists,
+	isUpdatingList,
 	errors,
 	missingLists,
 } );

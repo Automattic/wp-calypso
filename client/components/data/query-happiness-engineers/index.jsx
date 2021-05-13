@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,11 +9,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingHappinessEngineers } from 'state/happiness-engineers/selectors';
-import { fetchHappinessEngineers } from 'state/happiness-engineers/actions';
+import { isRequestingHappinessEngineers } from 'calypso/state/happiness-engineers/selectors';
+import { fetchHappinessEngineers } from 'calypso/state/happiness-engineers/actions';
 
 class QueryHappinessEngineers extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.isRequestingHappinessEngineers ) {
 			this.props.fetchHappinessEngineers();
 		}
@@ -36,7 +34,7 @@ QueryHappinessEngineers.defaultProps = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			isRequestingHappinessEngineers: isRequestingHappinessEngineers( state ),
 		};

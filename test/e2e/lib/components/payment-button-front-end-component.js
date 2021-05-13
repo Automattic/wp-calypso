@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -24,14 +22,13 @@ export default class PaymentButtonFrontEndComponent extends AsyncBaseContainer {
 	}
 
 	async clickPaymentButton() {
-		const payPalPayButtonSelector = by.css( '.paypal-button-card' );
+		const payPalPayButtonLocator = by.css( '.paypal-button-card' );
 		await this.driver.wait(
 			until.ableToSwitchToFrame( by.css( '.xcomponent-component-frame,.zoid-component-frame' ) ),
 			this.explicitWaitMS,
 			'Could not locate the payment button iFrame.'
 		);
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, payPalPayButtonSelector );
-		await driverHelper.clickWhenClickable( this.driver, payPalPayButtonSelector );
+		await driverHelper.clickWhenClickable( this.driver, payPalPayButtonLocator );
 		return await this.driver.switchTo().defaultContent();
 	}
 }

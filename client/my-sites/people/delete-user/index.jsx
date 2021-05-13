@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-/** @format */
 
 /**
  * External dependencies
@@ -12,29 +11,27 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import User from 'components/user';
-import AuthorSelector from 'blocks/author-selector';
-import { deleteUser } from 'lib/users/actions';
-import accept from 'lib/accept';
-import Gravatar from 'components/gravatar';
+import { Card, Button, CompactCard } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import User from 'calypso/components/user';
+import AuthorSelector from 'calypso/blocks/author-selector';
+import accept from 'calypso/lib/accept';
+import Gravatar from 'calypso/components/gravatar';
 import { localize } from 'i18n-calypso';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import {
 	requestExternalContributors,
 	requestExternalContributorsRemoval,
-} from 'state/data-getters';
-import { httpData } from 'state/data-layer/http-data';
+} from 'calypso/state/data-getters';
+import { httpData } from 'calypso/state/data-layer/http-data';
+import withDeleteUser from './with-delete-user';
 
 /**
  * Style dependencies
@@ -85,10 +82,10 @@ class DeleteUser extends React.Component {
 		} );
 	};
 
-	handleRadioChange = event => {
-		const name = event.currentTarget.name,
-			value = event.currentTarget.value,
-			updateObj = {};
+	handleRadioChange = ( event ) => {
+		const name = event.currentTarget.name;
+		const value = event.currentTarget.value;
+		const updateObj = {};
 
 		updateObj[ name ] = value;
 
@@ -128,14 +125,14 @@ class DeleteUser extends React.Component {
 	getAuthorSelectPlaceholder = () => {
 		return (
 			<span className="delete-user__select-placeholder">
-				<User size={ 26 } user={ { name: /* Don't translate yet */ 'Choose an author…' } } />
+				<User size={ 26 } user={ { name: this.props.translate( 'Choose an author…' ) } } />
 			</span>
 		);
 	};
 
-	setReassignLabel = label => ( this.reassignLabel = label );
+	setReassignLabel = ( label ) => ( this.reassignLabel = label );
 
-	onSelectAuthor = author => this.setState( { reassignUser: author } );
+	onSelectAuthor = ( author ) => this.setState( { reassignUser: author } );
 
 	removeUser = () => {
 		const { contributorType, siteId, translate, user } = this.props;
@@ -159,7 +156,7 @@ class DeleteUser extends React.Component {
 				</p>
 				<p>{ translate( 'Would you still like to remove this user?' ) }</p>
 			</div>,
-			accepted => {
+			( accepted ) => {
 				if ( accepted ) {
 					this.props.recordGoogleEvent(
 						'People',
@@ -171,7 +168,7 @@ class DeleteUser extends React.Component {
 							user.linked_user_ID ? user.linked_user_ID : user.ID
 						);
 					}
-					deleteUser( siteId, user.ID );
+					this.props.deleteUser( user.ID );
 				} else {
 					this.props.recordGoogleEvent(
 						'People',
@@ -184,25 +181,30 @@ class DeleteUser extends React.Component {
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Network Site' );
 	};
 
-	deleteUser = event => {
+	deleteUser = ( event ) => {
 		event.preventDefault();
+
 		const { contributorType, siteId, user } = this.props;
+		const { reassignUser, radioOption } = this.state;
+
 		if ( ! user.ID ) {
 			return;
 		}
 
-		let reassignUserId;
-		if ( this.state.reassignUser && 'reassign' === this.state.radioOption ) {
-			reassignUserId = this.state.reassignUser.ID;
+		const variables = {};
+
+		if ( reassignUser && 'reassign' === radioOption ) {
+			variables.reassign = reassignUser.ID;
 		}
+
 		if ( 'external' === contributorType ) {
 			requestExternalContributorsRemoval(
 				siteId,
 				user.linked_user_ID ? user.linked_user_ID : user.ID
 			);
 		}
-		deleteUser( siteId, user.ID, reassignUserId );
 
+		this.props.deleteUser( user.ID, variables );
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
 	};
 
@@ -261,14 +263,13 @@ class DeleteUser extends React.Component {
 								onChange={ this.handleRadioChange }
 								value="reassign"
 								checked={ 'reassign' === this.state.radioOption }
+								label={ this.getTranslatedAssignLabel() }
 							/>
-
-							<span>{ this.getTranslatedAssignLabel() }</span>
-
-							{ this.state.authorSelectorToggled ? (
-								<div className="delete-user__author-selector">{ this.getAuthorSelector() }</div>
-							) : null }
 						</FormLabel>
+
+						{ this.state.authorSelectorToggled ? (
+							<div className="delete-user__author-selector">{ this.getAuthorSelector() }</div>
+						) : null }
 
 						<FormLabel>
 							<FormRadio
@@ -276,17 +277,16 @@ class DeleteUser extends React.Component {
 								onChange={ this.handleRadioChange }
 								value="delete"
 								checked={ 'delete' === this.state.radioOption }
+								label={
+									this.props.user.name
+										? translate( 'Delete all content created by %(username)s', {
+												args: {
+													username: this.props.user.name ? this.props.user.name : '',
+												},
+										  } )
+										: translate( 'Delete all content created by this user' )
+								}
 							/>
-
-							<span>
-								{ this.props.user.name
-									? translate( 'Delete all content created by %(username)s', {
-											args: {
-												username: this.props.user.name ? this.props.user.name : '',
-											},
-									  } )
-									: translate( 'Delete all content created by this user' ) }
-							</span>
 						</FormLabel>
 					</FormFieldset>
 
@@ -346,5 +346,5 @@ export default localize(
 			};
 		},
 		{ recordGoogleEvent }
-	)( DeleteUser )
+	)( withDeleteUser( DeleteUser ) )
 );

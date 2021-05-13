@@ -1,0 +1,324 @@
+.migrate__placeholder {
+	color: transparent;
+	background-color: var( --studio-gray-10 );
+	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
+.migrate__source-site,
+.migrate__confirmation,
+.migrate__explain {
+	margin-bottom: 16px;
+}
+
+.migrate__status {
+	margin-bottom: 16px;
+	text-align: center;
+}
+
+.is-section-migrate .card > .card-heading {
+	margin-bottom: 4px;
+}
+
+.migrate__card {
+	.site__content,
+	.site-selector__hidden-sites-message {
+		border-bottom: 1px solid var( --color-neutral-10 );
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.site-selector .search {
+		margin: 0;
+	}
+}
+
+.migrate__plan-upsell {
+	display: flex;
+	flex-direction: row-reverse;
+	flex-wrap: nowrap;
+	border-top: 1px solid var( --color-neutral-10 );
+	border-bottom: 1px solid var( --color-neutral-10 );
+	margin: 16px 0;
+	padding: 16px 0;
+}
+
+.migrate__plan-upsell-container,
+.migrate__plan-upsell-themes,
+.migrate__plan-upsell-plugins {
+	display: flex;
+	flex-wrap: wrap;
+	margin-right: 16px;
+}
+
+.migrate__plan-upsell-container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	flex-basis: 40%;
+
+	.migrate__plan-upsell-icon {
+		width: 64px;
+		height: 64px;
+		flex-grow: 0;
+		flex-shrink: 0;
+		margin-right: 16px;
+	}
+
+	.migrate__plan-upsell-info {
+		flex-grow: 1;
+		flex-shrink: 1;
+		max-width: 175px; /** To force the text to go on the next line in English */
+	}
+}
+
+.migrate__plan-upsell-themes,
+.migrate__plan-upsell-plugins {
+	flex-basis: 25%;
+}
+
+@include breakpoint-deprecated( '<800px' ) {
+	.migrate__plan-upsell {
+		flex-wrap: wrap;
+		margin: 16px 0;
+		padding: 16px 0;
+		justify-content: space-between;
+		border-top: none;
+		border-bottom: none;
+	}
+
+	.migrate__plan-upsell-container,
+	.migrate__plan-upsell-themes,
+	.migrate__plan-upsell-plugins {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.migrate__plan-upsell-container {
+		display: flex;
+		border-top: 1px solid var( --color-neutral-10 );
+
+		margin: 24px 0 0;
+		padding: 16px 0 0;
+
+		flex-direction: row;
+		flex-wrap: nowrap;
+		flex-basis: 100%;
+
+		.migrate__plan-upsell-icon {
+			width: 64px;
+			height: 64px;
+			flex-grow: 0;
+			flex-shrink: 0;
+			margin-right: 16px;
+		}
+
+		.migrate__plan-upsell-info {
+			flex-grow: 1;
+			flex-shrink: 1;
+			max-width: none;
+		}
+	}
+}
+
+.migrate__plan-name,
+.migrate__plan-price,
+.migrate__plan-billing-time-frame {
+	flex-basis: 100%;
+}
+
+.migrate__plan-name {
+	font-size: $font-title-small;
+}
+
+.migrate__plan-price {
+	.plan-price__currency-symbol {
+		font-size: $font-title-small;
+	}
+
+	.plan-price__integer {
+		font-size: $font-headline-medium;
+		font-weight: 600;
+	}
+}
+
+.migrate__plan-feature-header {
+	font-weight: 600;
+	font-size: $font-body-small;
+}
+
+.migrate__plan-upsell-item {
+	display: flex;
+	flex-basis: 100%;
+	max-width: 180px;
+	white-space: nowrap;
+
+	.gridicon {
+		margin-right: 8px;
+		flex-grow: 0;
+		flex-shrink: 0;
+	}
+}
+
+.migrate__plan-upsell-item-label {
+	display: inline-block;
+	line-height: 18px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	flex-grow: 1;
+}
+
+.migrate__import-link {
+	text-decoration: underline;
+}
+
+.migrate__error {
+	&.notice {
+		margin-bottom: 16px;
+	}
+}
+
+.migrate__card-footer {
+	color: var( --color-text-subtle );
+	font-size: $font-body-small;
+
+	a {
+		color: var( --color-text-subtle );
+		text-decoration: underline;
+	}
+}
+
+.migrate__card-footer-text {
+	vertical-align: middle;
+	margin-left: 8px;
+}
+
+.migrate__card-footer-gridicon {
+	color: var( --color-text-subtle );
+	vertical-align: middle;
+}
+
+.migrate__list {
+	margin: 16px 0;
+	li {
+		list-style-type: none;
+		line-height: 30px;
+		font-size: $font-body-small;
+	}
+}
+
+.migrate__checkmark {
+	color: var( --color-success );
+	margin-right: 16px;
+}
+
+.migrate__cancel {
+	margin-left: 16px;
+}
+
+.migrate__pane {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: inherit;
+	box-shadow: none;
+}
+
+.migrate__illustration {
+	display: block;
+	margin: auto;
+	width: 260px;
+	height: 200px;
+}
+
+.migrate__section-header {
+	.formatted-header__title {
+		font-size: $font-title-medium;
+		@include breakpoint-deprecated( '>660px' ) {
+			font-size: $font-title-large;
+		}
+	}
+
+	.formatted-header__subtitle {
+		margin-bottom: 0;
+		font-size: $font-body;
+	}
+}
+
+.migrate__domain {
+	white-space: nowrap;
+}
+
+.migrate__progress {
+	max-width: 350px;
+	margin-bottom: 2rem;
+}
+
+.migrate__note {
+	text-align: center;
+	color: var( --color-text-subtle );
+}
+
+.migrate__start-time {
+	height: 1.5rem;
+	margin-bottom: 8px;
+	color: var( --color-text-subtle );
+	font-size: $font-body-small;
+}
+
+.migrate__progress-item {
+	position: relative;
+	list-style-type: none;
+	margin-left: 8px;
+	margin-bottom: 8px;
+	font-size: $font-body-small;
+	line-height: 24px;
+	display: flex;
+}
+
+.migrate__progress-item-icon {
+	display: flex;
+	width: 24px;
+	margin-right: 6px;
+	justify-content: center;
+}
+
+.migrate__progress-item-icon-success {
+	width: 22px;
+	color: var( --color-success );
+}
+
+.migrate__progress-item-icon-todo {
+	width: 20px;
+}
+
+.migrate__progress-item-icon-spinner {
+	width: 20px;
+	height: 20px;
+}
+
+.migrate__progress-item-text {
+	display: flex;
+}
+
+.migrate__token-label {
+	background-color: lightgrey;
+	border-radius: 10px;
+	padding: 2px 5px;
+	font-size: $font-body-extra-small;
+	color: darkgray;
+	margin: 5px 3px 5px 0;
+}
+
+.migrate__buttons-wrapper {
+	margin: 24px 0 8px;
+}
+
+.migrate__error {
+	.button {
+		margin-bottom: 16px;
+	}
+	.migrate__info {
+		width: 100%;
+		margin: 10px auto 0;
+	}
+}

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,9 +8,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import DatePicker from 'components/date-picker';
-import EventsTooltip from 'components/date-picker/events-tooltip';
+import { Card } from '@automattic/components';
+import DatePicker from 'calypso/components/date-picker';
+import EventsTooltip from 'calypso/components/date-picker/events-tooltip';
 
 const events = [
 	{

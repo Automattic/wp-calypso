@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,23 +7,20 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
-import Notice from 'components/notice';
-import ScreenReaderText from 'components/screen-reader-text';
+import { Card, Button, Dialog, ScreenReaderText } from '@automattic/components';
+import Notice from 'calypso/components/notice';
 import {
 	getStatus,
 	isApiReady,
 	isShowingUnblockInstructions,
 	isEnabled,
-} from 'state/push-notifications/selectors';
-import { toggleEnabled, toggleUnblockInstructions } from 'state/push-notifications/actions';
+} from 'calypso/state/push-notifications/selectors';
+import { toggleEnabled, toggleUnblockInstructions } from 'calypso/state/push-notifications/actions';
 
 /**
  * Style dependencies
@@ -625,7 +620,7 @@ class PushNotificationSettings extends React.Component {
 				<div className="notification-settings-push-notification-settings__instruction-content">
 					<div>
 						<div className="notification-settings-push-notification-settings__instruction-title">
-							{ this.props.translate( 'Enable Browser Notifications' ) }
+							{ this.props.translate( 'Enable browser notifications' ) }
 						</div>
 						<div className="notification-settings-push-notification-settings__instruction-step">
 							<div className="notification-settings-push-notification-settings__instruction-image">
@@ -671,14 +666,14 @@ class PushNotificationSettings extends React.Component {
 	};
 
 	render() {
-		let blockedInstruction,
-			buttonClass,
-			buttonDisabled,
-			buttonPrimary,
-			buttonText,
-			deniedText,
-			stateClass,
-			stateText;
+		let blockedInstruction;
+		let buttonClass;
+		let buttonDisabled;
+		let buttonPrimary;
+		let buttonText;
+		let deniedText;
+		let stateClass;
+		let stateText;
 
 		if ( ! this.props.apiReady ) {
 			return null;
@@ -774,7 +769,7 @@ class PushNotificationSettings extends React.Component {
 						className="notification-settings-push-notification-settings__settings-icon"
 						icon="bell"
 					/>
-					{ this.props.translate( 'Browser Notifications' ) }
+					{ this.props.translate( 'Browser notifications' ) }
 					<small
 						className={ classNames(
 							'notification-settings-push-notification-settings__settings-state',
@@ -811,7 +806,7 @@ class PushNotificationSettings extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			apiReady: isApiReady( state ),
 			isEnabled: isEnabled( state ),

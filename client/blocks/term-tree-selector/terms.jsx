@@ -1,44 +1,44 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import AutoSizer from 'react-virtualized/AutoSizer';
-import List from 'react-virtualized/List';
+import PropTypes from 'prop-types';
+import { AutoSizer, List } from '@automattic/react-virtualized';
+import { connect } from 'react-redux';
 import {
 	debounce,
 	difference,
+	filter,
 	includes,
 	isEqual,
-	filter,
 	map,
 	memoize,
 	range,
 	reduce,
 } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import NoResults from './no-results';
-import Search from './search';
-import { decodeEntities } from 'lib/formatting';
-import QueryTerms from 'components/data/query-terms';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
 import {
-	isRequestingTermsForQueryIgnoringPage,
-	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
-} from 'state/terms/selectors';
-import PodcastIndicator from 'components/podcast-indicator';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
+	getTermsLastPageForQuery,
+	isRequestingTermsForQueryIgnoringPage,
+} from 'calypso/state/terms/selectors';
+import NoResults from './no-results';
+import PodcastIndicator from 'calypso/components/podcast-indicator';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QueryTerms from 'calypso/components/data/query-terms';
+import Search from './search';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies
@@ -90,7 +90,7 @@ class TermTreeSelectorList extends Component {
 
 	state = this.constructor.initialState;
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
 		this.list = null;
@@ -103,7 +103,7 @@ class TermTreeSelectorList extends Component {
 		}, SEARCH_DEBOUNCE_TIME_MS );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.taxonomy !== this.props.taxonomy ) {
 			this.setState( this.constructor.initialState );
 		}
@@ -143,7 +143,7 @@ class TermTreeSelectorList extends Component {
 		}
 	};
 
-	getPageForIndex = index => {
+	getPageForIndex = ( index ) => {
 		const { query, lastPage } = this.props;
 		const perPage = query.number || DEFAULT_TERMS_PER_PAGE;
 		const page = Math.ceil( index / perPage );
@@ -192,16 +192,17 @@ class TermTreeSelectorList extends Component {
 	hasNoSearchResults = () => {
 		return (
 			! this.props.loading &&
-			( this.props.terms && ! this.props.terms.length ) &&
+			this.props.terms &&
+			! this.props.terms.length &&
 			!! this.state.searchTerm.length
 		);
 	};
 
 	hasNoTerms = () => {
-		return ! this.props.loading && ( this.props.terms && ! this.props.terms.length );
+		return ! this.props.loading && this.props.terms && ! this.props.terms.length;
 	};
 
-	getItem = index => {
+	getItem = ( index ) => {
 		if ( this.props.terms ) {
 			return this.props.terms[ index ];
 		}
@@ -219,7 +220,7 @@ class TermTreeSelectorList extends Component {
 		return this.props.lastPage || !! this.getItem( index );
 	};
 
-	getTermChildren = termId => {
+	getTermChildren = ( termId ) => {
 		const { terms } = this.props;
 		return filter( terms, ( { parent } ) => parent === termId );
 	};
@@ -276,7 +277,7 @@ class TermTreeSelectorList extends Component {
 		return count;
 	};
 
-	onSearch = event => {
+	onSearch = ( event ) => {
 		const searchTerm = event.target.value;
 		if ( this.state.searchTerm && ! searchTerm ) {
 			this.props.onSearch( '' );
@@ -288,14 +289,14 @@ class TermTreeSelectorList extends Component {
 
 		if ( ! this.hasPerformedSearch ) {
 			this.hasPerformedSearch = true;
-			analytics.ga.recordEvent( this.props.analyticsPrefix, 'Performed Term Search' );
+			gaRecordEvent( this.props.analyticsPrefix, 'Performed Term Search' );
 		}
 
 		this.setState( { searchTerm } );
 		this.debouncedSearch();
 	};
 
-	setListRef = ref => {
+	setListRef = ( ref ) => {
 		this.list = ref;
 	};
 
@@ -326,13 +327,12 @@ class TermTreeSelectorList extends Component {
 		const isPodcastingCategory = taxonomy === 'category' && podcastingCategoryId === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
 		const checked = includes( selected, itemId );
-		const inputType = multiple ? 'checkbox' : 'radio';
+		const InputComponent = multiple ? FormCheckbox : FormRadio;
 		const disabled =
 			multiple && checked && defaultTermId && 1 === selected.length && defaultTermId === itemId;
 
 		const input = (
-			<input
-				type={ inputType }
+			<InputComponent
 				value={ itemId }
 				onChange={ onChange }
 				disabled={ disabled }
@@ -342,16 +342,16 @@ class TermTreeSelectorList extends Component {
 
 		return (
 			<div key={ itemId } ref={ setItemRef } className="term-tree-selector__list-item">
-				<label>
+				<FormLabel>
 					{ input }
 					<span className="term-tree-selector__label">
 						{ name }
 						{ isPodcastingCategory && <PodcastIndicator size={ 18 } /> }
 					</span>
-				</label>
+				</FormLabel>
 				{ children.length > 0 && (
 					<div className="term-tree-selector__nested-list">
-						{ children.map( child => this.renderItem( child, true ) ) }
+						{ children.map( ( child ) => this.renderItem( child, true ) ) }
 					</div>
 				) }
 			</div>
@@ -377,16 +377,14 @@ class TermTreeSelectorList extends Component {
 			return this.renderItem( item );
 		}
 
+		const InputComponent = this.props.multiple ? FormCheckbox : FormRadio;
+
 		return (
 			<div key="placeholder" className="term-tree-selector__list-item is-placeholder">
-				<label>
-					<input
-						type={ this.props.multiple ? 'checkbox' : 'radio' }
-						disabled
-						className="term-tree-selector__input"
-					/>
+				<FormLabel>
+					<InputComponent disabled className="term-tree-selector__input" />
 					<span className="term-tree-selector__label">{ this.props.translate( 'Loading…' ) }</span>
-				</label>
+				</FormLabel>
 			</div>
 		);
 	};
@@ -416,7 +414,7 @@ class TermTreeSelectorList extends Component {
 
 		return (
 			<div className={ classes }>
-				{ this.state.requestedPages.map( page => (
+				{ this.state.requestedPages.map( ( page ) => (
 					<QueryTerms
 						key={ `query-${ page }` }
 						siteId={ siteId }

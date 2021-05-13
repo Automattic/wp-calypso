@@ -1,40 +1,41 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { compact, includes, omit, reduce, get, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import SidebarItem from 'layout/sidebar/item';
-import config from 'config';
-import { getPostTypes } from 'state/post-types/selectors';
-import QueryPostTypes from 'components/data/query-post-types';
-import analytics from 'lib/analytics';
-import { decodeEntities } from 'lib/formatting';
-import compareProps from 'lib/compare-props';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import { getPostTypes } from 'calypso/state/post-types/selectors';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
+import { getSiteCommentCounts } from 'calypso/state/comments/selectors';
+import QuerySiteCommentCounts from 'calypso/components/data/query-site-comment-counts';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { decodeEntities } from 'calypso/lib/formatting';
+import compareProps from 'calypso/lib/compare-props';
 import {
 	getSite,
 	getSiteAdminUrl,
 	getSiteSlug,
 	isJetpackSite,
 	isSingleUserSite,
-} from 'state/sites/selectors';
-import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
-import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
-import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/can-current-user';
+} from 'calypso/state/sites/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import { canCurrentUser as canCurrentUserStateSelector } from 'calypso/state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import isVipSite from 'state/selectors/is-vip-site';
-import { SIDEBAR_SECTION_SITE } from 'my-sites/sidebar/constants';
-import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { SIDEBAR_SECTION_SITE } from 'calypso/my-sites/sidebar/constants';
+import { expandMySitesSidebarSection as expandSection } from 'calypso/state/my-sites/sidebar/actions';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 class SiteMenu extends PureComponent {
 	static propTypes = {
@@ -51,6 +52,7 @@ class SiteMenu extends PureComponent {
 		siteAdminUrl: PropTypes.string,
 		site: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		siteSlug: PropTypes.string,
+		isSiteWPForTeams: PropTypes.bool,
 	};
 
 	// We default to `/my` posts when appropriate
@@ -98,7 +100,7 @@ class SiteMenu extends PureComponent {
 			{
 				name: 'media',
 				label: translate( 'Media' ),
-				capability: 'upload_files',
+				capability: 'edit_posts',
 				queryable: true,
 				link: '/media',
 				wpAdminLink: 'upload.php',
@@ -107,6 +109,7 @@ class SiteMenu extends PureComponent {
 			{
 				name: 'comments',
 				label: translate( 'Comments' ),
+				count: get( this.props.commentCounts, 'pending' ),
 				capability: 'edit_posts',
 				queryable: true,
 				config: 'manage/comments',
@@ -118,9 +121,9 @@ class SiteMenu extends PureComponent {
 		];
 	}
 
-	onNavigate = postType => () => {
+	onNavigate = ( postType ) => () => {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
-			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
+			bumpStat( 'calypso_publish_menu_click', postType );
 		}
 		this.props.recordTracksEvent( 'calypso_mysites_site_sidebar_item_clicked', {
 			menu_item: postType,
@@ -143,7 +146,7 @@ class SiteMenu extends PureComponent {
 		}
 
 		// Hide Full Site Editing templates CPT. This shouldn't be editable directly.
-		if ( 'wp_template' === menuItem.name ) {
+		if ( 'wp_template_part' === menuItem.name ) {
 			return null;
 		}
 
@@ -162,52 +165,24 @@ class SiteMenu extends PureComponent {
 		}
 
 		let preload;
-		if ( includes( [ 'post', 'page' ], menuItem.name ) ) {
-			preload = 'posts-pages';
+		if ( 'post' === menuItem.name ) {
+			preload = 'posts';
+		} else if ( 'page' === menuItem.name ) {
+			preload = 'pages';
 		} else if ( 'comments' === menuItem.name ) {
 			preload = 'comments';
 		} else {
 			preload = 'posts-custom';
 		}
 
-		let icon;
-		switch ( menuItem.name ) {
-			case 'post':
-				icon = 'posts';
-				break;
-			case 'page':
-				icon = 'pages';
-				break;
-			case 'import':
-				icon = 'cloud-upload';
-				break;
-			case 'jetpack-portfolio':
-				icon = 'folder';
-				break;
-			case 'jetpack-testimonial':
-				icon = 'quote';
-				break;
-			case 'media':
-				icon = 'image';
-				break;
-			case 'comments':
-				icon = 'chat';
-				break;
-			case 'plugins':
-				icon = 'plugins';
-				break;
-			default:
-				icon = 'custom-post-type';
-		}
-
 		return (
 			<SidebarItem
 				key={ menuItem.name }
 				label={ menuItem.label }
+				count={ menuItem.count > 0 ? menuItem.count : null }
 				selected={ itemLinkMatches( menuItem.paths || menuItem.link, this.props.path ) }
 				link={ link }
 				onNavigate={ this.onNavigate( menuItem.name ) }
-				icon={ icon }
 				preloadSectionName={ preload }
 				postType={ menuItem.name === 'plugins' ? null : menuItem.name }
 				tipTarget={ `side-menu-${ menuItem.name }` }
@@ -230,9 +205,17 @@ class SiteMenu extends PureComponent {
 					return memo;
 				}
 
-				//Special handling for feedback (contact form entries), let's calypsoify except for VIP
-				//It doesn't make sense for the author to use the generic CPT handling in Calypso
-				if ( postTypeSlug === 'feedback' ) {
+				// Hide "Feedback" for WP for Teams sites.
+				if (
+					config.isEnabled( 'signup/wpforteams' ) &&
+					this.props.isSiteWPForTeams &&
+					postTypeSlug === 'feedback'
+				) {
+					return memo;
+				} else if ( postTypeSlug === 'feedback' ) {
+					//Special handling for feedback (contact form entries), let's calypsoify except for VIP
+					//It doesn't make sense for the author to use the generic CPT handling in Calypso
+
 					return memo.concat( {
 						name: postType.name,
 						label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
@@ -278,13 +261,15 @@ class SiteMenu extends PureComponent {
 	}
 
 	render() {
+		const { siteId, canCurrentUser } = this.props;
 		const menuItems = [ ...this.getDefaultMenuItems(), ...this.getCustomMenuItems() ];
 
 		return (
-			<ul>
-				{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
+			<Fragment>
+				{ siteId && <QueryPostTypes siteId={ siteId } /> }
+				{ siteId && canCurrentUser( 'edit_posts' ) && <QuerySiteCommentCounts siteId={ siteId } /> }
 				{ menuItems.map( this.renderMenuItem, this ) }
-			</ul>
+			</Fragment>
 		);
 	}
 }
@@ -302,6 +287,8 @@ export default connect(
 		site: getSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isVip: isVipSite( state, siteId ),
+		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
+		commentCounts: getSiteCommentCounts( state, siteId ),
 	} ),
 	{ expandSection, recordTracksEvent },
 	null,

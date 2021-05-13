@@ -1,11 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Theme rendering with default display buttonContents should match snapshot 1`] = `
-<Card
+<Memo(Card)
   className="theme is-actionable"
   data-e2e-theme="twenty-seventeen"
-  highlight={false}
-  tagName="div"
+  onClick={[Function]}
 >
   <div
     className="theme__content"
@@ -52,5 +51,5 @@ exports[`Theme rendering with default display buttonContents should match snapsh
       />
     </div>
   </div>
-</Card>
+</Memo(Card)>
 `;

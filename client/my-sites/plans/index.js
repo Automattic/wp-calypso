@@ -6,42 +6,93 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { features, plans, redirectToCheckout, redirectToPlans } from './controller';
+import {
+	features,
+	plans,
+	redirectToCheckout,
+	redirectToPlans,
+	redirectToPlansIfNotJetpack,
+} from './controller';
 import { currentPlan } from './current-plan/controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import {
+	navigation,
+	siteSelection,
+	sites,
+	wpForTeamsP2PlusNotSupportedRedirect,
+} from 'calypso/my-sites/controller';
+import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 
-export default function() {
-	page( '/plans', siteSelection, sites, makeLayout, clientRender );
-	page( '/plans/compare', siteSelection, navigation, redirectToPlans, makeLayout, clientRender );
-	page(
+const trackedPage = ( url, ...rest ) => {
+	page( url, ...rest, makeLayout, clientRender );
+};
+
+export default function () {
+	trackedPage( '/plans', siteSelection, wpForTeamsP2PlusNotSupportedRedirect, sites );
+	trackedPage(
+		'/plans/compare',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		navigation,
+		redirectToPlans
+	);
+	trackedPage(
 		'/plans/compare/:domain',
 		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
-		redirectToPlans,
-		makeLayout,
-		clientRender
+		redirectToPlans
 	);
-	page( '/plans/features', siteSelection, navigation, redirectToPlans, makeLayout, clientRender );
-	page(
+	trackedPage(
+		'/plans/features',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		navigation,
+		redirectToPlans
+	);
+	trackedPage(
 		'/plans/features/:domain',
 		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
-		redirectToPlans,
-		makeLayout,
-		clientRender
+		redirectToPlans
 	);
-	page( '/plans/features/:feature/:domain', features, makeLayout, clientRender );
-	page( '/plans/my-plan', siteSelection, sites, navigation, currentPlan, makeLayout, clientRender );
-	page( '/plans/my-plan/:site', siteSelection, navigation, currentPlan, makeLayout, clientRender );
-	page(
+	trackedPage( '/plans/features/:feature/:domain', features );
+	trackedPage(
+		'/plans/my-plan',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		sites,
+		navigation,
+		currentPlan
+	);
+	trackedPage(
+		'/plans/my-plan/:site',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		navigation,
+		currentPlan
+	);
+	trackedPage(
 		'/plans/select/:plan/:domain',
 		siteSelection,
-		redirectToCheckout,
-		makeLayout,
-		clientRender
+		wpForTeamsP2PlusNotSupportedRedirect,
+		redirectToCheckout
 	);
 
 	// This route renders the plans page for both WPcom and Jetpack sites.
-	page( '/plans/:intervalType?/:site', siteSelection, navigation, plans, makeLayout, clientRender );
+	trackedPage(
+		'/plans/:intervalType?/:site',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		navigation,
+		plans
+	);
+	jetpackPlans(
+		'/plans',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		redirectToPlansIfNotJetpack,
+		navigation
+	);
 }

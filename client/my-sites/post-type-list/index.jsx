@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,32 +7,39 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { isEqual, range, throttle, difference, isEmpty, get } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import afterLayoutFlush from 'lib/after-layout-flush';
-import QueryPosts from 'components/data/query-posts';
-import QueryRecentPostViews from 'components/data/query-stats-recent-post-views';
-import { DEFAULT_POST_QUERY } from 'lib/query-manager/post/constants';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
+import QueryPosts from 'calypso/components/data/query-posts';
+import QueryRecentPostViews from 'calypso/components/data/query-stats-recent-post-views';
+import { DEFAULT_POST_QUERY } from 'calypso/lib/query-manager/post/constants';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import {
 	isRequestingPostsForQueryIgnoringPage,
 	getPostsForQueryIgnoringPage,
 	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
-} from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
-import { getEditorUrl } from 'state/selectors/get-editor-url';
-import ListEnd from 'components/list-end';
-import PostItem from 'blocks/post-item';
+} from 'calypso/state/posts/selectors';
+import { getPostType, getPostTypeLabel } from 'calypso/state/post-types/selectors';
+import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
+import ListEnd from 'calypso/components/list-end';
+import PostItem from 'calypso/blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
-import SectionHeader from 'components/section-header';
-import Button from 'components/button';
-import UpgradeNudge from 'blocks/upgrade-nudge';
-import { FEATURE_NO_ADS } from 'lib/plans/constants';
+import SectionHeader from 'calypso/components/section-header';
+import { Button } from '@automattic/components';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { FEATURE_NO_ADS } from '@automattic/calypso-products';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Constants
@@ -47,6 +52,7 @@ class PostTypeList extends Component {
 	static propTypes = {
 		// Props
 		query: PropTypes.object,
+		showPublishedStatus: PropTypes.bool,
 		scrollContainer: PropTypes.object,
 
 		// Connected props
@@ -56,6 +62,7 @@ class PostTypeList extends Component {
 		totalPostCount: PropTypes.number,
 		totalPageCount: PropTypes.number,
 		lastPageToRequest: PropTypes.number,
+		isVip: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -137,7 +144,7 @@ class PostTypeList extends Component {
 	}
 
 	postIdsFromPosts( posts ) {
-		return ! isEmpty( posts ) ? posts.map( post => post.ID ) : [];
+		return ! isEmpty( posts ) ? posts.map( ( post ) => post.ID ) : [];
 	}
 
 	getPostsPerPageCount() {
@@ -190,7 +197,7 @@ class PostTypeList extends Component {
 	}
 
 	renderSectionHeader() {
-		const { editorUrl, postLabels } = this.props;
+		const { editorUrl, postLabels, addNewItemLabel } = this.props;
 
 		if ( ! postLabels ) {
 			return null;
@@ -199,7 +206,7 @@ class PostTypeList extends Component {
 		return (
 			<SectionHeader label={ postLabels.name }>
 				<Button primary compact className="post-type-list__add-post" href={ editorUrl }>
-					{ postLabels.add_new_item }
+					{ addNewItemLabel }
 				</Button>
 			</SectionHeader>
 		);
@@ -232,49 +239,60 @@ class PostTypeList extends Component {
 
 	renderPost( post ) {
 		const globalId = post.global_ID;
-		const { query } = this.props;
+		const { query, showPublishedStatus } = this.props;
 
 		return (
 			<PostItem
 				key={ globalId }
 				globalId={ globalId }
 				singleUserQuery={ query && !! query.author }
+				showPublishedStatus={ showPublishedStatus }
 			/>
 		);
 	}
 
 	render() {
-		const { query, siteId, isRequestingPosts, translate } = this.props;
+		const { query, siteId, isRequestingPosts, translate, isVip, isJetpack } = this.props;
 		const { maxRequestedPage, recentViewIds } = this.state;
 		const posts = this.props.posts || [];
+		const postStatuses = query.status.split( ',' );
 		const isLoadedAndEmpty = query && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
 			'is-empty': isLoadedAndEmpty,
 		} );
+
+		const isSingleSite = !! siteId;
+
 		const showUpgradeNudge =
 			siteId &&
 			posts.length > 10 &&
+			! isVip &&
+			! isJetpack &&
 			query &&
 			( query.type === 'post' || ! query.type ) &&
-			query.status === 'publish,private';
+			( postStatuses.includes( 'publish' ) || postStatuses.includes( 'private' ) );
 
 		return (
 			<div className={ classes }>
 				{ this.renderSectionHeader() }
 				{ query &&
-					range( 1, maxRequestedPage + 1 ).map( page => (
+					range( 1, maxRequestedPage + 1 ).map( ( page ) => (
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
 					) ) }
-				{ recentViewIds.length > 0 && (
+				{ /* Disable Querying recent views in all-sites mode as it doesn't work without sideId. */ }
+				{ isSingleSite && recentViewIds.length > 0 && (
 					<QueryRecentPostViews siteId={ siteId } postIds={ recentViewIds } num={ 30 } />
 				) }
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
 				{ showUpgradeNudge && (
-					<UpgradeNudge
+					<UpsellNudge
 						title={ translate( 'No Ads with WordPress.com Premium' ) }
-						message={ translate( 'Prevent ads from showing on your site.' ) }
+						description={ translate( 'Prevent ads from showing on your site.' ) }
 						feature={ FEATURE_NO_ADS }
 						event="published_posts_no_ads"
+						tracksImpressionName="calypso_upgrade_nudge_impression"
+						tracksClickName="calypso_upgrade_nudge_cta_click"
+						showIcon={ true }
 					/>
 				) }
 				{ posts.slice( 10 ).map( this.renderPost ) }
@@ -295,15 +313,24 @@ export default connect( ( state, ownProps ) => {
 	const totalPageCount = getPostsLastPageForQuery( state, siteId, ownProps.query );
 	const lastPageToRequest =
 		siteId === null ? Math.min( MAX_ALL_SITES_PAGES, totalPageCount ) : totalPageCount;
-
+	const localeSlug = getLocaleSlug( state );
 	return {
 		siteId,
 		posts: getPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
+		isVip: isVipSite( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
 		isRequestingPosts: isRequestingPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		totalPostCount: getPostsFoundForQuery( state, siteId, ownProps.query ),
 		totalPageCount,
 		lastPageToRequest,
 		editorUrl: getEditorUrl( state, siteId, null, ownProps.query.type ),
 		postLabels: get( getPostType( state, siteId, ownProps.query.type ), 'labels' ),
+		addNewItemLabel: getPostTypeLabel(
+			state,
+			siteId,
+			ownProps.query.type,
+			'add_new_item',
+			localeSlug
+		),
 	};
 } )( localize( PostTypeList ) );

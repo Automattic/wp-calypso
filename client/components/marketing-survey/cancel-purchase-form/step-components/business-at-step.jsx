@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,14 +6,16 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormFieldset from 'components/forms/form-fieldset';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+
+const noop = () => {};
 
 export class BusinessATStep extends Component {
 	static propTypes = {
@@ -42,7 +42,7 @@ export class BusinessATStep extends Component {
 				onClick={ this.onClickPluginSupport }
 				target="_blank"
 				rel="noopener noreferrer"
-				href="https://en.support.wordpress.com/plugins/"
+				href={ localizeUrl( 'https://wordpress.com/support/plugins/' ) }
 			/>
 		);
 		const themeLink = (
@@ -50,7 +50,7 @@ export class BusinessATStep extends Component {
 				onClick={ this.onClickThemeSupport }
 				target="_blank"
 				rel="noopener noreferrer"
-				href="https://en.support.wordpress.com/themes/adding-new-themes/"
+				href={ localizeUrl( 'https://wordpress.com/support/themes/adding-new-themes/' ) }
 			/>
 		);
 
@@ -83,7 +83,4 @@ export class BusinessATStep extends Component {
 const mapStateToProps = null;
 const mapDispatchToProps = { recordTracksEvent };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( BusinessATStep ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( BusinessATStep ) );

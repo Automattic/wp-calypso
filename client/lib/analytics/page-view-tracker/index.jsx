@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,25 +5,26 @@
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, isNumber, noop } from 'lodash';
+import { get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getSiteFragment } from 'lib/route';
+import { getSiteFragment } from 'calypso/lib/route';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
-} from 'state/analytics/actions';
-import { withEnhancers } from 'state/utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+} from 'calypso/state/analytics/actions';
+import { withEnhancers } from 'calypso/state/utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 /**
  * Module variables
  */
 const debug = debugFactory( 'calypso:analytics:PageViewTracker' );
+const noop = () => {};
 
 export class PageViewTracker extends React.Component {
 	static displayName = 'PageViewTracker';
@@ -93,7 +92,7 @@ export class PageViewTracker extends React.Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 	const currentSlug =
@@ -101,7 +100,7 @@ const mapStateToProps = state => {
 
 	const hasSelectedSiteLoaded =
 		! currentSlug ||
-		( isNumber( currentSlug ) && currentSlug === selectedSiteId ) ||
+		( typeof currentSlug === 'number' && currentSlug === selectedSiteId ) ||
 		currentSlug === selectedSiteSlug;
 
 	return {
@@ -114,7 +113,4 @@ const mapDispatchToProps = {
 	recorder: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( PageViewTracker );
+export default connect( mapStateToProps, mapDispatchToProps )( PageViewTracker );

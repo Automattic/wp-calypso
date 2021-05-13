@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External Dependencies
  */
-import { assign, keyBy, map, omit, omitBy, reduce } from 'lodash';
+import { keyBy, map, omit, omitBy, reduce, merge, forEach } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -12,29 +11,24 @@ import {
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
 	READER_FEED_UPDATE,
-	SERIALIZE,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
-import { decodeEntities, stripHTML } from 'lib/formatting';
+	READER_SEEN_MARK_AS_SEEN_RECEIVE,
+	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
+	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
+} from 'calypso/state/reader/action-types';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { itemsSchema } from './schema';
-import { safeLink } from 'lib/post-normalizer/utils';
-
-function handleSerialize( state ) {
-	// remove errors from the serialized state
-	return omitBy( state, 'is_error' );
-}
+import { safeLink } from 'calypso/lib/post-normalizer/utils';
 
 function handleRequestFailure( state, action ) {
 	// new object precedes current state to prevent new errors from overwriting existing values
-	return assign(
-		{
-			[ action.payload.feed_ID ]: {
-				feed_ID: action.payload.feed_ID,
-				is_error: true,
-			},
+	return {
+		[ action.payload.feed_ID ]: {
+			feed_ID: action.payload.feed_ID,
+			is_error: true,
 		},
-		state
-	);
+		...state,
+	};
 }
 
 function adaptFeed( feed ) {
@@ -49,38 +43,90 @@ function adaptFeed( feed ) {
 		description: feed.description && decodeEntities( stripHTML( feed.description ) ),
 		last_update: feed.last_update,
 		image: feed.image,
+		organization_id: feed.organization_id,
+		unseen_count: feed.unseen_count,
 	};
 }
 
 function handleRequestSuccess( state, action ) {
 	const feed = adaptFeed( action.payload );
-	return assign( {}, state, {
+	return {
+		...state,
 		[ feed.feed_ID ]: feed,
-	} );
+	};
 }
 
 function handleFeedUpdate( state, action ) {
 	const feeds = map( action.payload, adaptFeed );
-	return assign( {}, state, keyBy( feeds, 'feed_ID' ) );
+	return {
+		...state,
+		...keyBy( feeds, 'feed_ID' ),
+	};
 }
 
-export const items = createReducer(
-	{},
-	{
-		[ SERIALIZE ]: handleSerialize,
-		[ READER_FEED_REQUEST_SUCCESS ]: handleRequestSuccess,
-		[ READER_FEED_REQUEST_FAILURE ]: handleRequestFailure,
-		[ READER_FEED_UPDATE ]: handleFeedUpdate,
-	},
-	itemsSchema
+const itemsReducer = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_FEED_REQUEST_SUCCESS:
+			return handleRequestSuccess( state, action );
+		case READER_FEED_REQUEST_FAILURE:
+			return handleRequestFailure( state, action );
+		case READER_FEED_UPDATE:
+			return handleFeedUpdate( state, action );
+
+		case READER_SEEN_MARK_AS_SEEN_RECEIVE: {
+			const existingEntry = state[ action.feedId ];
+			if ( ! existingEntry ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ action.feedId ]: merge( {}, existingEntry, {
+					unseen_count: Math.max( existingEntry.unseen_count - action.globalIds.length, 0 ),
+				} ),
+			};
+		}
+
+		case READER_SEEN_MARK_AS_UNSEEN_RECEIVE: {
+			const existingEntry = state[ action.feedId ];
+			if ( ! existingEntry ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ action.feedId ]: merge( {}, existingEntry, {
+					unseen_count: Math.max( existingEntry.unseen_count + action.globalIds.length, 0 ),
+				} ),
+			};
+		}
+
+		case READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE: {
+			forEach( action.feedIds, ( feedId ) => {
+				state[ feedId ] = { ...state[ feedId ], unseen_count: 0 };
+			} );
+			return { ...state };
+		}
+	}
+
+	return state;
+};
+
+export const items = withSchemaValidation(
+	itemsSchema,
+	withPersistence( itemsReducer, {
+		// remove errors from the serialized state
+		serialize: ( state ) => omitBy( state, 'is_error' ),
+	} )
 );
 
 export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_FEED_REQUEST:
-			return assign( {}, state, {
+			return {
+				...state,
 				[ action.payload.feed_ID ]: true,
-			} );
+			};
 
 		case READER_FEED_REQUEST_SUCCESS:
 		case READER_FEED_REQUEST_FAILURE:
@@ -89,14 +135,14 @@ export function queuedRequests( state = {}, action ) {
 	return state;
 }
 
-export const lastFetched = createReducer(
-	{},
-	{
-		[ READER_FEED_REQUEST_SUCCESS ]: ( state, action ) => ( {
-			...state,
-			[ action.payload.feed_ID ]: Date.now(),
-		} ),
-		[ READER_FEED_UPDATE ]: ( state, action ) => {
+export const lastFetched = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_FEED_REQUEST_SUCCESS:
+			return {
+				...state,
+				[ action.payload.feed_ID ]: Date.now(),
+			};
+		case READER_FEED_UPDATE: {
 			const updates = reduce(
 				action.payload,
 				( memo, feed ) => {
@@ -105,10 +151,12 @@ export const lastFetched = createReducer(
 				},
 				{}
 			);
-			return assign( {}, state, updates );
-		},
+			return { ...state, ...updates };
+		}
 	}
-);
+
+	return state;
+};
 
 export default combineReducers( {
 	items,

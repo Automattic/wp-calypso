@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,12 +6,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import userSettings from 'lib/user-settings';
-import PrivacyComponent from 'me/privacy/main';
+import PrivacyComponent from 'calypso/me/privacy/main';
 
 export function privacy( context, next ) {
-	context.primary = React.createElement( PrivacyComponent, {
-		userSettings: userSettings,
-	} );
+	context.primary = React.createElement( PrivacyComponent );
 	next();
 }

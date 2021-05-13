@@ -18,7 +18,7 @@
 		display: block;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		width: 33.33%;
 
 		&:nth-child( 3n + 1 ) {
@@ -30,7 +30,7 @@
 		}
 	}
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		width: 100%;
 
 		&:nth-child( n + 2 ) {
@@ -73,15 +73,15 @@
 }
 
 .plugins-browser-item__title {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-weight: 600;
-	font-size: 15px;
+	font-size: $font-body;
 	margin-top: 3px;
 }
 
 .plugins-browser-item__author {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .plugins-browser-item .plugin-icon {
@@ -97,11 +97,11 @@
 	display: flex;
 	align-items: center;
 	position: absolute;
-		bottom: 16px;
-		right: 16px;
+	bottom: 16px;
+	right: 16px;
 	color: var( --color-success );
-	font-size: 12px;
-	font-weight: 500;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
 	animation: appear 0.15s ease-in;
 
 	.gridicon {
@@ -111,6 +111,6 @@
 
 .button.plugins-browser-item__upgrade-button {
 	position: absolute;
-		bottom: 16px;
-		right: 16px;
+	bottom: 16px;
+	right: 16px;
 }

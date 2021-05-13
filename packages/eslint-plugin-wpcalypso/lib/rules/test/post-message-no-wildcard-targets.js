@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Disallow using the wildcard `*` in postMessage
+ * @file Disallow using the wildcard `*` in postMessage
  * @author Automattic
  * @copyright 2017 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -10,9 +9,9 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/post-message-no-wildcard-targets' ),
-	config = { env: { es6: true } },
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require( '../../../lib/rules/post-message-no-wildcard-targets' );
+const config = { env: { es6: true } };
+const RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests

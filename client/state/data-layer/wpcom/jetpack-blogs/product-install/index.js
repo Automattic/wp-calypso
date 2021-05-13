@@ -1,15 +1,12 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { JETPACK_PRODUCT_INSTALL_REQUEST } from 'state/action-types';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { JETPACK_PRODUCT_INSTALL_REQUEST } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 /**
  * Start the Jetpack product install process.
@@ -17,7 +14,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} action Action to start product install request.
  * @returns {object}        The dispatched action.
  */
-export const startJetpackProductInstall = action =>
+export const startJetpackProductInstall = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

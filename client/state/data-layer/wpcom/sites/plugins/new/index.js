@@ -1,31 +1,28 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import { translate } from 'i18n-calypso';
-import { find, includes, toLower } from 'lodash';
+import { find, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { PLUGIN_UPLOAD } from 'state/action-types';
+import { PLUGIN_INSTALL_REQUEST_SUCCESS, PLUGIN_UPLOAD } from 'calypso/state/action-types';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import {
 	completePluginUpload,
 	pluginUploadError,
 	updatePluginUploadProgress,
-} from 'state/plugins/upload/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSite } from 'state/sites/selectors';
-import Dispatcher from 'dispatcher';
+} from 'calypso/state/plugins/upload/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-export const uploadPlugin = action => {
+export const uploadPlugin = ( action ) => {
 	const { siteId, file } = action;
 
 	return [
@@ -42,14 +39,14 @@ export const uploadPlugin = action => {
 	];
 };
 
-const showErrorNotice = error => {
+const showErrorNotice = ( error ) => {
 	const knownErrors = {
 		exists: translate( 'This plugin is already installed on your site.' ),
 		'too large': translate( 'The plugin zip file must be smaller than 10MB.' ),
 		incompatible: translate( 'The uploaded file is not a compatible plugin.' ),
 		unsupported_mime_type: translate( 'The uploaded file is not a valid zip.' ),
 	};
-	const errorString = toLower( error.error + error.message );
+	const errorString = `${ error.error }${ error.message }`.toLowerCase();
 	const knownError = find( knownErrors, ( v, key ) => includes( errorString, key ) );
 
 	if ( knownError ) {
@@ -67,10 +64,8 @@ const showErrorNotice = error => {
 	return errorNotice( translate( 'Problem installing the plugin.' ) );
 };
 
-export const uploadComplete = ( { siteId }, data ) => ( dispatch, getState ) => {
+export const uploadComplete = ( { siteId }, data ) => ( dispatch ) => {
 	const { slug: pluginId } = data;
-	const state = getState();
-	const site = getSite( state, siteId );
 
 	dispatch(
 		recordTracksEvent( 'calypso_plugin_upload_complete', {
@@ -80,15 +75,12 @@ export const uploadComplete = ( { siteId }, data ) => ( dispatch, getState ) => 
 
 	dispatch( completePluginUpload( siteId, pluginId ) );
 
-	/*
-	 * Adding plugin to legacy flux store provides data for plugin page
-	 * and displays a success message.
-	 */
-	Dispatcher.handleServerAction( {
-		type: 'RECEIVE_INSTALLED_PLUGIN',
-		action: 'PLUGIN_UPLOAD',
-		site,
-		plugin: data,
+	// Notifying installed plugins that this plugin was successfully installed
+	dispatch( {
+		type: PLUGIN_INSTALL_REQUEST_SUCCESS,
+		action: INSTALL_PLUGIN,
+		siteId,
+		pluginId: data.id,
 		data,
 	} );
 };

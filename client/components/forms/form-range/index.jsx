@@ -1,18 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { omit, noop } from 'lodash';
+import { omit } from 'lodash';
 import classnames from 'classnames';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export default class extends React.Component {
 	static displayName = 'FormRange';
@@ -46,7 +46,7 @@ export default class extends React.Component {
 		return -1 !== ua.indexOf( 'MSIE' ) || -1 !== ua.indexOf( 'Trident/' );
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.props.onChange( event );
 	};
 

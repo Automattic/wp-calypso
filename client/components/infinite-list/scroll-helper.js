@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:infinite-list:helper' );
 
@@ -11,8 +8,10 @@ const debug = debugFactory( 'calypso:infinite-list:helper' );
 // The purpose of extracting it is to make it testable and help the methods
 // to be shorter and readable.
 class ScrollHelper {
-	constructor( boundsForRef ) {
+	constructor( boundsForRef, getTopPlaceholderBounds, getBottomPlaceholderBounds ) {
 		this.boundsForRef = boundsForRef;
+		this.getTopPlaceholderBounds = getTopPlaceholderBounds;
+		this.getBottomPlaceholderBounds = getBottomPlaceholderBounds;
 		this.itemHeights = {};
 
 		// Hide levels and context height
@@ -48,71 +47,53 @@ class ScrollHelper {
 		return height;
 	}
 
-	forEachInRow( index, callback, context ) {
-		if ( typeof callback !== 'function' ) {
-			return;
-		}
+	forEachInRow( index, callback ) {
+		const { itemsPerRow } = this.props;
 
-		if ( context ) {
-			callback = callback.bind( context );
-		}
+		const firstIndexInRow = index - ( index % itemsPerRow );
+		const lastIndexInRow = Math.min( firstIndexInRow + itemsPerRow, this.props.items.length ) - 1;
 
-		const firstIndexInRow = index - ( index % this.props.itemsPerRow ),
-			lastIndexInRow =
-				Math.min( firstIndexInRow + this.props.itemsPerRow, this.props.items.length ) - 1;
 		for ( let i = firstIndexInRow; i <= lastIndexInRow; i++ ) {
 			callback( this.props.items[ i ], i );
 		}
 	}
 
 	storeRowItemHeights( fromDirection, index ) {
-		this.forEachInRow(
-			index,
-			function( item ) {
-				const itemKey = this.props.getItemRef( item ),
-					itemBounds = this.boundsForRef( itemKey );
-				let height;
+		this.forEachInRow( index, ( item ) => {
+			const itemKey = this.props.getItemRef( item );
+			const itemBounds = this.boundsForRef( itemKey );
+			let height;
 
-				if ( itemBounds ) {
-					if ( 'bottom' === fromDirection ) {
-						height = this.containerBottom - this.bottomPlaceholderHeight - itemBounds.top;
-					} else {
-						height = itemBounds.bottom - ( this.containerTop + this.topPlaceholderHeight );
-					}
+			if ( itemBounds ) {
+				if ( 'bottom' === fromDirection ) {
+					height = this.containerBottom - this.bottomPlaceholderHeight - itemBounds.top;
 				} else {
-					height = this.props.guessedItemHeight;
+					height = itemBounds.bottom - ( this.containerTop + this.topPlaceholderHeight );
 				}
+			} else {
+				height = this.props.guessedItemHeight;
+			}
 
-				this.itemHeights[ itemKey ] = height;
-			},
-			this
-		);
+			this.itemHeights[ itemKey ] = height;
+		} );
 	}
 
 	deleteRowItemHeights( index ) {
-		this.forEachInRow(
-			index,
-			item => {
-				const itemKey = this.props.getItemRef( item );
-				delete this.itemHeights[ itemKey ];
-			},
-			this
-		);
+		this.forEachInRow( index, ( item ) => {
+			const itemKey = this.props.getItemRef( item );
+			delete this.itemHeights[ itemKey ];
+		} );
 	}
 
 	getRowHeight( index ) {
 		let maxHeight = 0;
 
-		this.forEachInRow(
-			index,
-			item => {
-				const itemKey = this.props.getItemRef( item ),
-					height = this.storedItemHeight( itemKey );
+		this.forEachInRow( index, ( item ) => {
+			const itemKey = this.props.getItemRef( item );
+			const height = this.storedItemHeight( itemKey );
 
-				maxHeight = Math.max( maxHeight, height );
-			},
-			this
-		);
+			maxHeight = Math.max( maxHeight, height );
+		} );
 
 		return maxHeight;
 	}
@@ -146,8 +127,12 @@ class ScrollHelper {
 	}
 
 	updatePlaceholderDimensions() {
-		const topPlaceholderRect = this.boundsForRef( 'topPlaceholder' ),
-			bottomPlaceholderRect = this.boundsForRef( 'bottomPlaceholder' );
+		const topPlaceholderRect = this.getTopPlaceholderBounds();
+		const bottomPlaceholderRect = this.getBottomPlaceholderBounds();
+
+		if ( ! topPlaceholderRect || ! bottomPlaceholderRect ) {
+			return;
+		}
 
 		this.topPlaceholderHeight = topPlaceholderRect.height;
 		this.containerTop = topPlaceholderRect.top;
@@ -189,10 +174,10 @@ class ScrollHelper {
 	adjustLastRenderedIndex() {
 		// last index -1 means everything is rendered - it can happen when
 		// item count is not known when component is mounted
-		const offset = this.initialLastRenderedIndex(),
-			lastIndex = this.lastRenderedIndex || 0, // fixes NaN
-			firstIndex = this.firstRenderedIndex || 0, // fixes NaN
-			itemCount = this.props.items.length;
+		const offset = this.initialLastRenderedIndex();
+		const lastIndex = this.lastRenderedIndex || 0; // fixes NaN
+		const firstIndex = this.firstRenderedIndex || 0; // fixes NaN
+		const itemCount = this.props.items.length;
 		let newIndex = lastIndex;
 
 		if ( itemCount === 0 ) {
@@ -253,7 +238,8 @@ class ScrollHelper {
 	}
 
 	hideItemsAbove() {
-		let rowHeight, rowBottom;
+		let rowHeight;
+		let rowBottom;
 
 		while ( this.firstRenderedIndex < this.props.items.length ) {
 			this.storeRowItemHeights( 'top', this.firstRenderedIndex );
@@ -304,7 +290,8 @@ class ScrollHelper {
 	}
 
 	showItemsAbove() {
-		let rowHeight, newPlaceholderBottom;
+		let rowHeight;
+		let newPlaceholderBottom;
 
 		while ( this.firstRenderedIndex > 0 ) {
 			rowHeight = this.getRowHeight( this.firstRenderedIndex - this.props.itemsPerRow );
@@ -374,7 +361,8 @@ class ScrollHelper {
 	}
 
 	hideItemsBelow() {
-		let rowTop, rowHeight;
+		let rowTop;
+		let rowHeight;
 
 		while ( this.lastRenderedIndex >= 0 ) {
 			this.storeRowItemHeights( 'bottom', this.lastRenderedIndex );
@@ -399,7 +387,9 @@ class ScrollHelper {
 	}
 
 	showItemsBelow() {
-		let rowHeight, itemTop, placeholderTop;
+		let rowHeight;
+		let itemTop;
+		let placeholderTop;
 
 		while ( this.lastRenderedIndex < this.props.items.length - 1 ) {
 			rowHeight = this.getRowHeight( this.lastRenderedIndex + this.props.itemsPerRow );

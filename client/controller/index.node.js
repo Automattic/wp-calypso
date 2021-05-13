@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
@@ -11,34 +8,50 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import { makeLayoutMiddleware } from './shared.js';
-import LayoutLoggedOut from 'layout/logged-out';
+import LayoutLoggedOut from 'calypso/layout/logged-out';
+import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
+import { RouteProvider } from 'calypso/components/route';
 
 /**
  * Re-export
  */
-export { setSection, setUpLocale } from './shared.js';
+export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
 
-const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri } ) => (
-	<ReduxProvider store={ store }>
-		<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
-	</ReduxProvider>
+const ProviderWrappedLoggedOutLayout = ( {
+	store,
+	currentSection,
+	currentRoute,
+	currentQuery,
+	primary,
+	secondary,
+	redirectUri,
+} ) => (
+	<CalypsoI18nProvider>
+		<RouteProvider
+			currentSection={ currentSection }
+			currentRoute={ currentRoute }
+			currentQuery={ currentQuery }
+		>
+			<ReduxProvider store={ store }>
+				<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+			</ReduxProvider>
+		</RouteProvider>
+	</CalypsoI18nProvider>
 );
 
 /**
  * @param { object } context -- Middleware context
- * @param { function } next -- Call next middleware in chain
+ * @param {Function} next -- Call next middleware in chain
  *
  * Produce a `LayoutLoggedOut` element in `context.layout`, using
  * `context.primary` and `context.secondary` to populate it.
  */
-export const makeLayout = makeLayoutMiddleware( ReduxWrappedLoggedOutLayout );
+export const makeLayout = makeLayoutMiddleware( ProviderWrappedLoggedOutLayout );
 
-export function redirectLoggedIn( { isLoggedIn, res }, next ) {
-	// TODO: Make it work also for development env
-	if ( isLoggedIn ) {
-		res.redirect( '/' );
-		return;
-	}
-
-	next();
-}
+/**
+ * These functions are not used by Node. It is here to provide an APi compatible with `./index.web.js`
+ */
+export const redirectLoggedOut = () => {};
+export const render = () => {};
+export const ProviderWrappedLayout = () => null;
+export const notFound = () => null;

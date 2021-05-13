@@ -1,10 +1,9 @@
-/** @format */
 /**
  * Internal dependencies
  */
 import { addTimezones, fetchTimezones, fromApi } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { timezonesReceive } from 'state/timezones/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { timezonesReceive } from 'calypso/state/timezones/actions';
 
 describe( 'timezones request', () => {
 	describe( 'successful requests', () => {

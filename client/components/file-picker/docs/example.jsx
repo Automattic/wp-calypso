@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,9 +7,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import FilePicker from 'components/file-picker';
+import { Card, Button } from '@automattic/components';
+import FilePicker from 'calypso/components/file-picker';
 
 export default class FilePickers extends React.Component {
 	constructor( props ) {
@@ -27,7 +24,7 @@ export default class FilePickers extends React.Component {
 			'Selected files:\n' +
 				[].slice
 					.call( files )
-					.map( file => {
+					.map( ( file ) => {
 						return '  ' + JSON.stringify( file.name );
 					} )
 					.join( '\n' )

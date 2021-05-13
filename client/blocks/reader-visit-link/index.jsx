@@ -1,20 +1,20 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
+import ExternalLink from 'calypso/components/external-link';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class ReaderVisitLink extends React.Component {
 	static propTypes = {

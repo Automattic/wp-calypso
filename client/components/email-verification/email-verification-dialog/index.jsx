@@ -1,28 +1,30 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, includes, noop } from 'lodash';
+import { get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import Button from 'components/button';
-import Spinner from 'components/spinner';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import { verifyEmail, resetVerifyEmailState } from 'state/current-user/email-verification/actions';
+import { Dialog, Button } from '@automattic/components';
+import Spinner from 'calypso/components/spinner';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import {
+	verifyEmail,
+	resetVerifyEmailState,
+} from 'calypso/state/current-user/email-verification/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class VerifyEmailDialog extends Component {
 	getResendButtonLabel() {
@@ -128,7 +130,7 @@ VerifyEmailDialog.defaultProps = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		email: getCurrentUserEmail( state ),
 		emailVerificationStatus: get( state, 'currentUser.emailVerification.status' ),
 	} ),

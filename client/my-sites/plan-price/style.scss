@@ -1,11 +1,11 @@
 .plan-price {
 	margin: 0;
-	font-size: 28px;
+	font-size: $font-title-large;
 	line-height: 1.5;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 		width: 60px;
 		margin: 10px 0;
 		height: 21px;
@@ -16,8 +16,8 @@
 		vertical-align: super;
 	}
 
-	@include breakpoint( '<960px' ) {
-		font-size: 24px;
+	@include breakpoint-deprecated( '<960px' ) {
+		font-size: $font-title-medium;
 	}
 }
 
@@ -42,7 +42,7 @@
 	left: 0;
 	top: 50%;
 	right: 0;
-	border-top: 2px solid var( --color-primary );
+	border-top: 2px solid var( --color-accent );
 	transform: rotate( -16deg );
 	opacity: 0.9;
 }
@@ -51,11 +51,15 @@
 .plan-price__fraction,
 .plan-price__tax-amount {
 	vertical-align: super;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }
 
 .plan-price.is-discounted .plan-price__currency-symbol {
 	color: var( --color-success );
+}
+
+.plan-price__tax-amount {
+	margin-left: 4px;
 }
 
 .plan-price__currency-symbol,
@@ -69,5 +73,13 @@
 }
 
 .plan-price__fraction {
-	font-weight: 500;
+	font-weight: 600;
+}
+
+.plan-price__term {
+	display: inline-block;
+	font-size: 0.875rem;
+	text-align: left;
+	line-height: 1rem;
+	margin-left: 5px;
 }

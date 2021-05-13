@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,7 +29,7 @@ export default class JetpackConnectAddCredentialsPage extends AsyncBaseContainer
 	}
 
 	async waitToDisappear() {
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			By.css( '.jetpack-connect__credentials-submit' ),
 			this.explicitWaitMS * 2

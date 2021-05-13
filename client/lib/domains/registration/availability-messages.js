@@ -1,7 +1,5 @@
 /* eslint-disable no-case-declarations */
 
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,18 +10,19 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { getTld } from 'lib/domains';
+import { getTld } from 'calypso/lib/domains';
 import {
 	CALYPSO_CONTACT,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	MAP_EXISTING_DOMAIN,
-} from 'lib/url/support';
-import { domainAvailability } from 'lib/domains/constants';
+} from 'calypso/lib/url/support';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 import {
 	domainManagementTransferToOtherSite,
 	domainManagementTransferIn,
+	domainMapping,
 	domainTransferIn,
-} from 'my-sites/domains/paths';
+} from 'calypso/my-sites/domains/paths';
 
 function getAvailabilityNotice( domain, error, errorData ) {
 	const tld = domain ? getTld( domain ) : null;
@@ -34,8 +33,8 @@ function getAvailabilityNotice( domain, error, errorData ) {
 	// Consumers should check for the message prop in order
 	// to determine whether to display the notice
 	// See for e.g., client/components/domains/register-domain-step/index.jsx
-	let message,
-		severity = 'error';
+	let message;
+	let severity = 'error';
 
 	switch ( error ) {
 		case domainAvailability.REGISTERED:
@@ -71,6 +70,40 @@ function getAvailabilityNotice( domain, error, errorData ) {
 								href={ domainManagementTransferToOtherSite( site, domain ) }
 							/>
 						),
+					},
+				}
+			);
+			break;
+		case domainAvailability.IN_REDEMPTION:
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is not eligible to register or transfer since it is in {{redemptionLink}}redemption{{/redemptionLink}}. If you own this domain, please contact your current registrar to {{aboutRenewingLink}}redeem the domain{{/aboutRenewingLink}}.',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						redemptionLink: (
+							<a
+								rel="noopener noreferrer"
+								href="https://www.icann.org/resources/pages/grace-2013-05-03-en"
+							/>
+						),
+						aboutRenewingLink: (
+							<a
+								rel="noopener noreferrer"
+								href="https://www.icann.org/news/blog/do-you-have-a-domain-name-here-s-what-you-need-to-know-part-5"
+							/>
+						),
+					},
+				}
+			);
+			break;
+		case domainAvailability.CONFLICTING_CNAME_EXISTS:
+			message = translate(
+				'There is an existing CNAME for {{strong}}%(domain)s{{/strong}}. If you want to map this subdomain, you should remove the conflicting CNAME DNS record first.',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
 					},
 				}
 			);
@@ -211,7 +244,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 
-		case domainAvailability.BLACKLISTED:
+		case domainAvailability.DISALLOWED:
 			if ( domain && domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
 				message = translate(
 					'Due to {{a1}}trademark policy{{/a1}}, ' +
@@ -232,7 +265,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 				);
 			} else {
 				message = translate(
-					'Domain cannot be mapped to a WordPress.com blog because of blacklisted term.'
+					'Domain cannot be mapped to a WordPress.com blog because of disallowed term.'
 				);
 			}
 			break;
@@ -322,6 +355,32 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					'Sorry, the domain name you selected is not available. Please choose another domain.'
 				);
 			}
+			break;
+
+		case domainAvailability.AVAILABLE_PREMIUM:
+			message = translate(
+				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support purchasing this premium domain on WordPress.com, but if you purchase the domain elsewhere, you can {{a}}map it to your site{{/a}}.",
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						a: <a rel="noopener noreferrer" href={ domainMapping( site, domain ) } />,
+					},
+				}
+			);
+			break;
+
+		case domainAvailability.TRANSFERRABLE_PREMIUM:
+			message = translate(
+				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support transfers of premium domains on WordPress.com, but if you are the owner of this domain, you can {{a}}map it to your site{{/a}}.",
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						a: <a rel="noopener noreferrer" href={ domainMapping( site, domain ) } />,
+					},
+				}
+			);
 			break;
 
 		default:

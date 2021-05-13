@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Guided Tours Rendering Codemod
  * Transform directly inlined JSX markup into render props. That makes initial load
@@ -20,7 +18,7 @@ export default function transformer( file, api ) {
 		return null;
 	}
 
-	stepEls.forEach( stepEl => {
+	stepEls.forEach( ( stepEl ) => {
 		/* Extract the children */
 		const stepElValue = stepEl.get().value;
 		const { children } = stepElValue;

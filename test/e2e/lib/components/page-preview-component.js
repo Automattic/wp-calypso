@@ -1,73 +1,63 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { By, until } from 'selenium-webdriver';
-import config from 'config';
 
 /**
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
-
 import ViewPagePage from '../../lib/pages/view-page-page.js';
 import * as driverHelper from '../driver-helper.js';
 
 export default class PagePreviewComponent extends AsyncBaseContainer {
 	constructor( driver ) {
-		PagePreviewComponent.switchToIFrame( driver );
-		super( driver, By.css( '#main' ) );
+		super( driver, By.css( '.web-preview.is-visible' ) );
+	}
+
+	async _preInit() {
+		await this._switchToDefaultContent();
 	}
 
 	async _postInit() {
-		return await this.driver.switchTo().defaultContent();
+		await this._switchToPreviewFrame();
+		this.viewPagePage = await ViewPagePage.Expect( this.driver );
+	}
+
+	async _switchToPreviewFrame() {
+		await this._switchToDefaultContent();
+		const frameLocator = By.css( '.web-preview__frame' );
+		await this.driver.wait( until.ableToSwitchToFrame( frameLocator ), this.explicitWaitMS );
+	}
+
+	async _switchToDefaultContent() {
+		await this.driver.switchTo().defaultContent();
 	}
 
 	async pageTitle() {
-		await PagePreviewComponent.switchToIFrame( this.driver );
-		this.viewPagePage = await ViewPagePage.Expect( this.driver );
-		return await this.viewPagePage.pageTitle();
+		await this._switchToPreviewFrame();
+		return this.viewPagePage.pageTitle();
 	}
 
 	async pageContent() {
-		await PagePreviewComponent.switchToIFrame( this.driver );
-		this.viewPagePage = await ViewPagePage.Expect( this.driver );
-		return await this.viewPagePage.pageContent();
+		await this._switchToPreviewFrame();
+		return this.viewPagePage.pageContent();
 	}
 
 	async imageDisplayed( fileDetails ) {
-		await PagePreviewComponent.switchToIFrame( this.driver );
-		this.viewPagePage = await ViewPagePage.Expect( this.driver );
-		return await this.viewPagePage.imageDisplayed( fileDetails );
+		await this._switchToPreviewFrame();
+		return this.viewPagePage.imageDisplayed( fileDetails );
 	}
 
 	async close() {
-		await this.driver.switchTo().defaultContent();
-		const closeButton = await this.driver.findElement( By.css( 'button.web-preview__close' ) );
-		return await this.driver.executeScript( 'arguments[0].click()', closeButton );
+		await this._switchToDefaultContent();
+		const closeButtonLocator = By.css( 'button.web-preview__close' );
+		await driverHelper.clickWhenClickable( this.driver, closeButtonLocator );
 	}
 
 	async edit() {
-		await this.driver.switchTo().defaultContent();
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.button.web-preview__edit' )
-		);
-	}
-
-	static async switchToIFrame( driver ) {
-		const iFrameSelector = By.css( '.web-preview__frame' );
-		const explicitWaitMS = config.get( 'explicitWaitMS' );
-		await driver.switchTo().defaultContent();
-		await driverHelper.waitTillPresentAndDisplayed(
-			driver,
-			By.css( '.web-preview__inner.is-visible.is-loaded' )
-		);
-		return driver.wait(
-			until.ableToSwitchToFrame( iFrameSelector ),
-			explicitWaitMS,
-			'Could not switch to web preview iFrame'
-		);
+		await this._switchToDefaultContent();
+		const editButtonLocator = By.css( '.button.web-preview__edit' );
+		await driverHelper.clickWhenClickable( this.driver, editButtonLocator );
 	}
 }

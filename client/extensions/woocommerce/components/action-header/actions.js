@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,10 +11,10 @@ import { debounce } from 'lodash';
 /**
  * Internal Dependencies
  */
-import afterLayoutFlush from 'lib/after-layout-flush';
-import Button from 'components/button';
-import PopoverMenuItem from 'components/popover/menu-item';
-import SplitButton from 'components/split-button';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
+import { Button } from '@automattic/components';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import SplitButton from 'calypso/components/split-button';
 
 class ActionButtons extends Component {
 	static propTypes = {
@@ -44,12 +42,12 @@ class ActionButtons extends Component {
 		this.setDropdownAfterLayoutFlush.cancel();
 	}
 
-	setGroupRef = group => {
+	setGroupRef = ( group ) => {
 		this.navGroup = group;
 	};
 
 	render() {
-		const buttons = React.Children.map( this.props.children, function( child, index ) {
+		const buttons = React.Children.map( this.props.children, function ( child, index ) {
 			return child && React.cloneElement( child, { ref: 'button-' + index } );
 		} );
 
@@ -71,24 +69,21 @@ class ActionButtons extends Component {
 	getButtonWidths = () => {
 		let totalWidth = 0;
 
-		React.Children.forEach(
-			this.props.children,
-			function( child, index ) {
-				if ( ! child ) {
-					return;
-				}
-				/* eslint-disable react/no-string-refs */
-				const node = ReactDom.findDOMNode( this.refs[ 'button-' + index ] );
-				/* eslint-enable react/no-string-refs */
+		React.Children.forEach( this.props.children, ( child, index ) => {
+			if ( ! child ) {
+				return;
+			}
+			/* eslint-disable react/no-string-refs */
+			const node = ReactDom.findDOMNode( this.refs[ 'button-' + index ] );
+			/* eslint-enable react/no-string-refs */
 
-				if ( ! node ) {
-					return;
-				}
+			if ( ! node ) {
+				return;
+			}
 
-				const buttonWidth = node.offsetWidth;
-				totalWidth += buttonWidth;
-			}.bind( this )
-		);
+			const buttonWidth = node.offsetWidth;
+			totalWidth += buttonWidth;
+		} );
 
 		this.buttonsWidth = Math.max( totalWidth, this.buttonsWidth || 0 );
 	};
@@ -103,7 +98,7 @@ class ActionButtons extends Component {
 
 		const buttons = React.Children.toArray( this.props.children );
 		const primary = buttons.pop();
-		const dropdownOptions = buttons.map( function( child, index ) {
+		const dropdownOptions = buttons.map( function ( child, index ) {
 			if ( ! child ) {
 				return null;
 			}

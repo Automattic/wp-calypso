@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,21 +10,20 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CourseList, { CourseListPlaceholder } from './course-list';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getHelpCourses } from 'state/help/courses/selectors';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getHelpCourses } from 'calypso/state/help/courses/selectors';
 import { helpCourses } from './constants';
-import { planHasFeature } from 'lib/plans';
-import { FEATURE_BUSINESS_ONBOARDING } from 'lib/plans/constants';
-import { receiveHelpCourses } from 'state/help/courses/actions';
+import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
+import { receiveHelpCourses } from 'calypso/state/help/courses/actions';
 import {
 	getUserPurchases,
 	isFetchingUserPurchases,
 	hasLoadedUserPurchasesFromServer,
-} from 'state/purchases/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+} from 'calypso/state/purchases/selectors';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 /**
  * Style dependencies
@@ -96,7 +93,4 @@ export function mapStateToProps( state ) {
 // something like <QueryHelpCourses />
 const fetchCourses = () => receiveHelpCourses( helpCourses );
 
-export default connect(
-	mapStateToProps,
-	{ fetchCourses }
-)( localize( Courses ) );
+export default connect( mapStateToProps, { fetchCourses } )( localize( Courses ) );

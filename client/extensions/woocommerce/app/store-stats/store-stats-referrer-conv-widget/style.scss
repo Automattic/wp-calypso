@@ -7,7 +7,7 @@
 
 		.table-row.is-selected,
 		.table-row.is-selected:hover {
-			// color: var( --color-white );
+			// color: var( --color-text-inverted );
 			box-shadow: inset 4px 0 0 var( --color-accent );
 			background-color: rgba( var( --color-accent-rgb ), 0.1 );
 		}

@@ -1,10 +1,16 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { omit, noop } from 'lodash';
+import { omit } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import FormTextInput from 'calypso/components/forms/form-text-input';
+
+const noop = () => {};
 
 class TokenInput extends React.PureComponent {
 	static propTypes = {
@@ -37,22 +43,21 @@ class TokenInput extends React.PureComponent {
 			( ( value.length === 0 && placeholder && placeholder.length ) || value.length ) + 1;
 
 		return (
-			<input
+			<FormTextInput
 				className="token-field__input"
 				onChange={ this.onChange }
-				ref={ this.setTextInput }
+				inputRef={ this.setTextInput }
 				size={ size }
-				type="text"
 				{ ...omit( this.props, [ 'hasFocus', 'onChange' ] ) }
 			/>
 		);
 	}
 
-	setTextInput = input => {
+	setTextInput = ( input ) => {
 		this.textInput = input;
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.props.onChange( {
 			value: event.target.value,
 		} );

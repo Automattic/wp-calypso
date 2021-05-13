@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -9,20 +8,23 @@
 import React from 'react';
 import update from 'immutability-helper';
 import { shallow } from 'enzyme';
-import { noop, omit } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { ContactDetailsFormFields } from '../';
+import FormButton from '../../../../components/forms/form-button';
+
+const noop = () => {};
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: x => x,
-	translate: x => x,
+	localize: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'ContactDetailsFormFields', () => {
 	const defaultProps = {
@@ -51,6 +53,7 @@ describe( 'ContactDetailsFormFields', () => {
 			},
 		],
 		onSubmit: noop,
+		translate: ( string ) => string,
 	};
 
 	describe( 'default fields', () => {
@@ -65,13 +68,17 @@ describe( 'ContactDetailsFormFields', () => {
 
 			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
 
-			expect( wrapper.find( '.contact-details-form-fields__container.first-name' ) ).toHaveLength(
-				1
-			);
-			expect( wrapper.find( '.contact-details-form-fields__container.last-name' ) ).toHaveLength(
-				1
-			);
-			expect( wrapper.find( '.contact-details-form-fields__container.phone' ) ).toHaveLength( 1 );
+			expect( wrapper.find( '[name="first-name"]' ) ).toHaveLength( 1 );
+			expect( wrapper.find( '[name="last-name"]' ) ).toHaveLength( 1 );
+			expect( wrapper.find( '[name="phone"]' ) ).toHaveLength( 1 );
+		} );
+	} );
+
+	describe( 'onSubmit prop is undefined', () => {
+		test( 'should not render Submit button', () => {
+			const newProps = { ...defaultProps, onSubmit: undefined };
+			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
+			expect( wrapper.find( FormButton ) ).toHaveLength( 0 );
 		} );
 	} );
 
@@ -79,7 +86,9 @@ describe( 'ContactDetailsFormFields', () => {
 		test( 'should not render GAppsFieldset in place of the default contact fields by default', () => {
 			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } /> );
 
-			expect( wrapper.find( '.contact-details-form-fields__g-apps' ) ).toHaveLength( 0 );
+			expect( wrapper.find( '.contact-details-form-fields__row.g-apps-fieldset' ) ).toHaveLength(
+				0
+			);
 			expect( wrapper.find( 'RegionAddressFieldsets' ) ).toHaveLength( 1 );
 		} );
 
@@ -88,7 +97,9 @@ describe( 'ContactDetailsFormFields', () => {
 				<ContactDetailsFormFields { ...defaultProps } needsOnlyGoogleAppsDetails={ true } />
 			);
 
-			expect( wrapper.find( '.contact-details-form-fields__g-apps' ) ).toHaveLength( 1 );
+			expect( wrapper.find( '.contact-details-form-fields__row.g-apps-fieldset' ) ).toHaveLength(
+				1
+			);
 			expect( wrapper.find( 'RegionAddressFieldsets' ) ).toHaveLength( 0 );
 		} );
 	} );
@@ -121,13 +132,13 @@ describe( 'ContactDetailsFormFields', () => {
 		test( 'should not render fax field by default', () => {
 			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } /> );
 
-			expect( wrapper.find( '.contact-details-form-fields__container.fax' ) ).toHaveLength( 0 );
+			expect( wrapper.find( '[name="fax"]' ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should render fax field when fax required', () => {
 			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } needsFax={ true } /> );
 
-			expect( wrapper.find( '.contact-details-form-fields__container.fax' ) ).toHaveLength( 1 );
+			expect( wrapper.find( '[name="fax"]' ) ).toHaveLength( 1 );
 		} );
 	} );
 
@@ -141,10 +152,7 @@ describe( 'ContactDetailsFormFields', () => {
 			);
 
 			expect(
-				wrapper
-					.find( '.contact-details-form-fields__submit-button' )
-					.render()
-					.text()
+				wrapper.find( '.contact-details-form-fields__submit-button' ).render().text()
 			).toEqual( 'Click it yo!' );
 		} );
 

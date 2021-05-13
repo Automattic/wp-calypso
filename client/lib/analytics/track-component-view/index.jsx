@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Module variables
@@ -32,7 +30,7 @@ class TrackComponentView extends Component {
 		bumpStat: () => {},
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		debug( 'Component will mount.' );
 		const { eventName, eventProperties } = this.props;
 		if ( eventName ) {
@@ -52,7 +50,4 @@ class TrackComponentView extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ bumpStat, recordTracksEvent }
-)( TrackComponentView );
+export default connect( null, { bumpStat, recordTracksEvent } )( TrackComponentView );

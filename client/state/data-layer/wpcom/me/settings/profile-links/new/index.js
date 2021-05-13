@@ -1,28 +1,27 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { USER_PROFILE_LINKS_ADD } from 'state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { USER_PROFILE_LINKS_ADD } from 'calypso/state/action-types';
 import {
 	addUserProfileLinksDuplicate,
 	addUserProfileLinksError,
 	addUserProfileLinksMalformed,
 	addUserProfileLinksSuccess,
 	receiveUserProfileLinks,
-} from 'state/profile-links/actions';
+} from 'calypso/state/profile-links/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import 'calypso/state/profile-links/init';
 
 /**
  * Dispatches a request to add profile links for the current user
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched http action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched http action
  */
-export const addUserProfileLinks = action =>
+export const addUserProfileLinks = ( action ) =>
 	http(
 		{
 			apiVersion: '1.2',
@@ -41,9 +40,9 @@ export const addUserProfileLinks = action =>
  * - duplicate links
  * - malformed links
  *
- * @param   {Object} action Redux action
+ * @param   {object} action Redux action
  * @param   {Array}  data   Response from the endpoint
- * @returns {Object} Dispatched user profile links add action
+ * @returns {object} Dispatched user profile links add action
  */
 export const handleAddSuccess = ( action, data ) => {
 	const actions = [ addUserProfileLinksSuccess( action.profileLinks ) ];
@@ -62,9 +61,10 @@ export const handleAddSuccess = ( action, data ) => {
 /**
  * Dispatches a user profile links add error action when the request failed.
  *
- * @param   {Object} action Redux action
- * @param   {Object} error  Error returned
- * @returns {Object} Dispatched user profile links add error action
+ * @param   {object} action              Redux action
+ * @param   {object} action.profileLinks Profile links
+ * @param   {object} error               Error returned
+ * @returns {object} Dispatched user profile links add error action
  */
 export const handleAddError = ( { profileLinks }, error ) =>
 	addUserProfileLinksError( profileLinks, error );

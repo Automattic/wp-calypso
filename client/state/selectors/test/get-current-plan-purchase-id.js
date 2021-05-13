@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getCurrentPlanPurchaseId from 'state/selectors/get-current-plan-purchase-id';
+import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 
 describe( 'getCurrentPlanPurchaseId()', () => {
 	it( 'should return null if the site is unknown', () => {

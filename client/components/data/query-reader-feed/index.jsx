@@ -1,28 +1,24 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { shouldFeedBeFetched } from 'state/reader/feeds/selectors';
-import { requestFeed } from 'state/reader/feeds/actions';
+import { shouldFeedBeFetched } from 'calypso/state/reader/feeds/selectors';
+import { requestFeed } from 'calypso/state/reader/feeds/actions';
 
 class QueryReaderFeed extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.shouldFeedBeFetched ) {
 			this.props.requestFeed( this.props.feedId );
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.shouldFeedBeFetched || this.props.feedId === nextProps.feedId ) {
 			return;
 		}
@@ -36,7 +32,7 @@ class QueryReaderFeed extends Component {
 }
 
 QueryReaderFeed.propTypes = {
-	feedId: PropTypes.number,
+	feedId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
 	shouldFeedBeFetched: PropTypes.bool,
 	requestFeed: PropTypes.func,
 };
@@ -52,12 +48,7 @@ export default connect(
 			shouldFeedBeFetched: shouldFeedBeFetched( state, feedId ),
 		};
 	},
-	dispatch => {
-		return bindActionCreators(
-			{
-				requestFeed,
-			},
-			dispatch
-		);
+	{
+		requestFeed,
 	}
 )( QueryReaderFeed );

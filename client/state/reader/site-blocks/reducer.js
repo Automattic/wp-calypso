@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,22 +12,21 @@ import {
 	READER_SITE_BLOCKS_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_UNBLOCK,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+} from 'calypso/state/reader/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
-export const items = createReducer(
-	{},
-	{
-		[ READER_SITE_BLOCK ]: ( state, action ) => {
+export const items = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_SITE_BLOCK: {
 			return {
 				...state,
 				[ action.payload.siteId ]: true,
 			};
-		},
-		[ READER_SITE_UNBLOCK ]: ( state, action ) => {
+		}
+		case READER_SITE_UNBLOCK: {
 			return omit( state, action.payload.siteId );
-		},
-		[ READER_SITE_REQUEST_SUCCESS ]: ( state, action ) => {
+		}
+		case READER_SITE_REQUEST_SUCCESS: {
 			if ( ! action.payload.is_blocked ) {
 				if ( ! state[ action.payload.ID ] ) {
 					return state;
@@ -41,8 +39,8 @@ export const items = createReducer(
 				...state,
 				[ action.payload.ID ]: true,
 			};
-		},
-		[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
+		}
+		case READER_SITE_BLOCKS_RECEIVE: {
 			if ( ! action.payload || ! action.payload.sites ) {
 				return state;
 			}
@@ -60,34 +58,43 @@ export const items = createReducer(
 				...state,
 				...newBlocks,
 			};
-		},
+		}
 	}
-);
 
-export const currentPage = createReducer( 1, {
-	[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
-		if ( ! action.payload || ! action.payload.page ) {
-			return state;
+	return state;
+};
+
+export const currentPage = ( state = 1, action ) => {
+	switch ( action.type ) {
+		case READER_SITE_BLOCKS_RECEIVE: {
+			if ( ! action.payload || ! action.payload.page ) {
+				return state;
+			}
+
+			return action.payload.page;
 		}
+	}
 
-		return action.payload.page;
-	},
-} );
+	return state;
+};
 
-export const lastPage = createReducer( null, {
-	[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
-		if ( ! action.payload || ! action.payload.page || action.payload.count > 0 ) {
-			return state;
+export const lastPage = ( state = null, action ) => {
+	switch ( action.type ) {
+		case READER_SITE_BLOCKS_RECEIVE: {
+			if ( ! action.payload || ! action.payload.page || action.payload.count > 0 ) {
+				return state;
+			}
+
+			return action.payload.page;
 		}
+	}
 
-		return action.payload.page;
-	},
-} );
+	return state;
+};
 
-export const inflightPages = createReducer(
-	{},
-	{
-		[ READER_SITE_BLOCKS_REQUEST ]: ( state, action ) => {
+export const inflightPages = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_SITE_BLOCKS_REQUEST: {
 			if ( ! action.payload || ! action.payload.page ) {
 				return state;
 			}
@@ -96,16 +103,18 @@ export const inflightPages = createReducer(
 				...state,
 				[ action.payload.page ]: true,
 			};
-		},
-		[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
+		}
+		case READER_SITE_BLOCKS_RECEIVE: {
 			if ( ! action.payload || ! action.payload.page ) {
 				return state;
 			}
 
 			return omit( state, action.payload.page );
-		},
+		}
 	}
-);
+
+	return state;
+};
 
 export default combineReducers( {
 	items,

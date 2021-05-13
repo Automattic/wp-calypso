@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSiteRoles } from 'state/site-roles/selectors';
-import { requestSiteRoles } from 'state/site-roles/actions';
+import { isRequestingSiteRoles } from 'calypso/state/site-roles/selectors';
+import { requestSiteRoles } from 'calypso/state/site-roles/actions';
 
 class QuerySiteRoles extends Component {
 	static propTypes = {
@@ -21,11 +19,11 @@ class QuerySiteRoles extends Component {
 		requestSiteRoles: PropTypes.func,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.request( nextProps );
 		}

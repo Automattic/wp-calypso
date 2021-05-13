@@ -1,24 +1,30 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React from 'react';
+import classNames from 'classnames';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import Head from 'components/head';
-import EmptyContent from 'components/empty-content';
+import Head from 'calypso/components/head';
+import EmptyContent from 'calypso/components/empty-content';
+import { chunkCssLinks } from './utils';
 
-function NotFound( { urls, faviconURL } ) {
+function NotFound( { entrypoint } ) {
+	const theme = config( 'theme' );
+
 	return (
 		<html lang="en">
-			<Head faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
-				<link rel="stylesheet" id="main-css" href={ urls[ 'style.css' ] } type="text/css" />
-			</Head>
-			<body>
+			<Head>{ chunkCssLinks( entrypoint ) }</Head>
+			<body
+				className={ classNames( {
+					[ 'theme-' + theme ]: theme,
+				} ) }
+			>
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace*/ }
 				<div id="wpcom" className="wpcom-site">
 					<div className="wp has-no-sidebar">

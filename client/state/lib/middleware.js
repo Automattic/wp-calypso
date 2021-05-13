@@ -1,20 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import { once } from 'lodash';
-import debugFactory from 'debug';
-import notices from 'notices';
+import { once, defer } from 'lodash';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import {
-	ANALYTICS_SUPER_PROPS_UPDATE,
+	INVITE_ACCEPTED,
 	JETPACK_DISCONNECT_RECEIVE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	ROUTE_SET,
@@ -22,27 +17,22 @@ import {
 	SITE_DELETE_RECEIVE,
 	SITE_RECEIVE,
 	SITES_RECEIVE,
-	SELECTED_SITE_SUBSCRIBE,
-	SELECTED_SITE_UNSUBSCRIBE,
-} from 'state/action-types';
-import analytics from 'lib/analytics';
-import userFactory from 'lib/user';
-import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
-import isFetchingAutomatedTransferStatus from 'state/selectors/is-fetching-automated-transfer-status';
-import isNotificationsOpen from 'state/selectors/is-notifications-open';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentUser, getCurrentUserSiteCount } from 'state/current-user/selectors';
-import keyboardShortcuts from 'lib/keyboard-shortcuts';
-import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
-import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
+} from 'calypso/state/action-types';
+import user from 'calypso/lib/user';
+import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
+import { isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import keyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
+import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import {
 	createImmediateLoginMessage,
 	createPathWithoutImmediateLoginInformation,
-} from 'state/immediate-login/utils';
-import { saveImmediateLoginInformation } from 'state/immediate-login/actions';
-
-const debug = debugFactory( 'calypso:state:middleware' );
-const user = userFactory();
+} from 'calypso/state/immediate-login/utils';
+import { saveImmediateLoginInformation } from 'calypso/state/immediate-login/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Module variables
@@ -54,19 +44,13 @@ if ( globalKeyBoardShortcutsEnabled ) {
 	globalKeyboardShortcuts = getGlobalKeyboardShortcuts();
 }
 
-const desktopEnabled = config.isEnabled( 'desktop' );
-let desktop;
-if ( desktopEnabled ) {
-	desktop = require( 'lib/desktop' ).default;
-}
-
 /**
  * Notifies user about the fact that they were automatically logged in
  * via an immediate link.
  *
- * @param {function} dispatch - redux dispatch function
+ * @param {Function} dispatch - redux dispatch function
  * @param {object}   action   - the dispatched action
- * @param {function} getState - redux getState function
+ * @param {Function} getState - redux getState function
  */
 const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState ) => {
 	if ( ! action.query.immediate_login_attempt ) {
@@ -91,80 +75,23 @@ const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState 
 	if ( ! action.query.immediate_login_success ) {
 		return;
 	}
-	const currentUser = getCurrentUser( getState() );
-	if ( ! currentUser ) {
+	const email = getCurrentUserEmail( getState() );
+	if ( ! email ) {
 		return;
 	}
-	const { email } = currentUser;
 
 	// Let redux process all dispatches that are currently queued and show the message
-	const delay = typeof setImmediate !== 'undefined' ? setImmediate : setTimeout;
-	delay( () => {
-		notices.success( createImmediateLoginMessage( action.query.login_reason, email ) );
+	defer( () => {
+		dispatch( successNotice( createImmediateLoginMessage( action.query.login_reason, email ) ) );
 	} );
 } );
-
-/*
- * Object holding functions that will be called once selected site changes.
- */
-let selectedSiteChangeListeners = [];
-
-/**
- * Calls the listeners to selected site.
- *
- * @param {function} dispatch - redux dispatch function
- * @param {number} siteId     - the selected site id
- */
-const updateSelectedSiteIdForSubscribers = ( dispatch, { siteId } ) => {
-	selectedSiteChangeListeners.forEach( listener => listener( siteId ) );
-};
-
-/**
- * Registers a listener function to be fired once selected site changes.
- *
- * @param {function} dispatch - redux dispatch function
- * @param {object}   action   - the dispatched action
- */
-const receiveSelectedSitesChangeListener = ( dispatch, action ) => {
-	debug( 'receiveSelectedSitesChangeListener' );
-	selectedSiteChangeListeners.push( action.listener );
-};
-
-/**
- * Removes a selectedSite listener.
- *
- * @param {function} dispatch - redux dispatch function
- * @param {object}   action   - the dispatched action
- */
-const removeSelectedSitesChangeListener = ( dispatch, action ) => {
-	debug( 'removeSelectedSitesChangeListener' );
-	selectedSiteChangeListeners = selectedSiteChangeListeners.filter(
-		listener => listener !== action.listener
-	);
-};
-
-/**
- * Sets the selectedSite and siteCount for lib/analytics. This is used to
- * populate extra fields on tracks analytics calls.
- *
- * @param {function} dispatch - redux dispatch function
- * @param {object}   action   - the dispatched action
- * @param {function} getState - redux getState function
- */
-const updateSelectedSiteForAnalytics = ( dispatch, action, getState ) => {
-	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	const siteCount = getCurrentUserSiteCount( state );
-	analytics.setSelectedSite( selectedSite );
-	analytics.setSiteCount( siteCount );
-};
 
 /**
  * Sets the selectedSite for lib/keyboard-shortcuts/global
  *
- * @param {function} dispatch - redux dispatch function
+ * @param {Function} dispatch - redux dispatch function
  * @param {object}   action   - the dispatched action
- * @param {function} getState - redux getState function
+ * @param {Function} getState - redux getState function
  */
 const updatedSelectedSiteForKeyboardShortcuts = ( dispatch, action, getState ) => {
 	const state = getState();
@@ -175,27 +102,14 @@ const updatedSelectedSiteForKeyboardShortcuts = ( dispatch, action, getState ) =
 /**
  * Sets isNotificationOpen for lib/keyboard-shortcuts
  *
- * @param {function} dispatch - redux dispatch function
+ * @param {Function} dispatch - redux dispatch function
  * @param {object}   action   - the dispatched action
- * @param {function} getState - redux getState function
+ * @param {Function} getState - redux getState function
  */
 const updateNotificationsOpenForKeyboardShortcuts = ( dispatch, action, getState ) => {
 	// flip the state here, since the reducer hasn't had a chance to update yet
 	const toggledState = ! isNotificationsOpen( getState() );
 	keyboardShortcuts.setNotificationsOpen( toggledState );
-};
-
-/**
- * Sets the selected site for lib/desktop
- *
- * @param {function} dispatch - redux dispatch function
- * @param {object}   action   - the dispatched action
- * @param {function} getState - redux getState function
- */
-const updateSelectedSiteForDesktop = ( dispatch, action, getState ) => {
-	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	desktop.setSelectedSite( selectedSite );
 };
 
 const fetchAutomatedTransferStatusForSelectedSite = ( dispatch, getState ) => {
@@ -213,17 +127,11 @@ const handler = ( dispatch, action, getState ) => {
 		case ROUTE_SET:
 			return notifyAboutImmediateLoginLinkEffects( dispatch, action, getState );
 
-		case ANALYTICS_SUPER_PROPS_UPDATE:
-			return updateSelectedSiteForAnalytics( dispatch, action, getState );
-
 		//when the notifications panel is open keyboard events should not fire.
 		case NOTIFICATIONS_PANEL_TOGGLE:
 			return updateNotificationsOpenForKeyboardShortcuts( dispatch, action, getState );
 
 		case SELECTED_SITE_SET:
-			//let this fall through
-			updateSelectedSiteIdForSubscribers( dispatch, action );
-
 		case SITE_RECEIVE:
 		case SITES_RECEIVE:
 			// Wait a tick for the reducer to update the state tree
@@ -231,29 +139,25 @@ const handler = ( dispatch, action, getState ) => {
 				if ( globalKeyBoardShortcutsEnabled ) {
 					updatedSelectedSiteForKeyboardShortcuts( dispatch, action, getState );
 				}
-				if ( desktopEnabled ) {
-					updateSelectedSiteForDesktop( dispatch, action, getState );
-				}
 
 				fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );
 			}, 0 );
 			return;
 
-		case SELECTED_SITE_SUBSCRIBE:
-			receiveSelectedSitesChangeListener( dispatch, action );
-			return;
-		case SELECTED_SITE_UNSUBSCRIBE:
-			removeSelectedSitesChangeListener( dispatch, action );
+		case INVITE_ACCEPTED:
+			if ( ! [ 'follower', 'viewer' ].includes( action.invite.role ) ) {
+				user().incrementSiteCount();
+			}
 			return;
 
 		case SITE_DELETE_RECEIVE:
 		case JETPACK_DISCONNECT_RECEIVE:
-			user.decrementSiteCount();
+			user().decrementSiteCount();
 			return;
 	}
 };
 
-export const libraryMiddleware = ( { dispatch, getState } ) => next => action => {
+export const libraryMiddleware = ( { dispatch, getState } ) => ( next ) => ( action ) => {
 	handler( dispatch, action, getState );
 
 	return next( action );

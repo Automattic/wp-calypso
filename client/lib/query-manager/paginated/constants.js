@@ -1,4 +1,3 @@
-/** @format */
 export const DEFAULT_PAGINATED_QUERY = {
 	number: 20,
 	page: 1,

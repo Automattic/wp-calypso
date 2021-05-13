@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,11 +9,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SiteToolsLink from 'my-sites/site-settings/site-tools/link';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { recordTracksEvent } from 'state/analytics/actions';
+import SiteToolsLink from 'calypso/my-sites/site-settings/site-tools/link';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class DisconnectSiteLink extends PureComponent {
 	handleClick = () => {
@@ -46,7 +44,7 @@ class DisconnectSiteLink extends PureComponent {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

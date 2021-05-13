@@ -1,30 +1,32 @@
 /**
  * Extrenal dependencies
  *
- * @format
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import validatorFactory from 'is-my-json-valid';
-import { castArray, get, isEmpty, map, once, reduce, replace, update } from 'lodash';
+import { get, isEmpty, map, once, reduce, update } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:domains:with-contact-details-validation' );
 
 /**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
+
+/**
  * Internal dependencies
  */
-import getValidationSchemas from 'state/selectors/get-validation-schemas';
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
-import warn from 'lib/warn';
+import getValidationSchemas from 'calypso/state/selectors/get-validation-schemas';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export function disableSubmitButton( children ) {
 	if ( isEmpty( children ) ) {
 		return children;
 	}
 
-	return map( castArray( children ), ( child, index ) =>
+	return map( Array.isArray( children ) ? children : [ children ], ( child, index ) =>
 		React.cloneElement( child, {
 			disabled: !! child.props.className.match( /submit-button/ ) || child.props.disabled,
 			key: index,
@@ -42,11 +44,13 @@ export function disableSubmitButton( children ) {
  * }
  */
 export function interpretIMJVError( error, schema ) {
-	let explicitPath, errorCode, errorMessage;
+	let explicitPath;
+	let errorCode;
+	let errorMessage;
 
 	if ( schema ) {
 		// Search up the schema for an explicit errorField & message
-		const path = [ ...castArray( error.schemaPath ) ];
+		const path = Array.isArray( error.schemaPath ) ? [ ...error.schemaPath ] : [ error.schemaPath ];
 
 		// The errorCode is primary because messages are localized, so without
 		// the code consumers couldn't do anything other than display errors.
@@ -61,7 +65,7 @@ export function interpretIMJVError( error, schema ) {
 	}
 
 	// use field from error
-	const path = explicitPath || replace( error.field, /^data\./, '' );
+	const path = explicitPath || ( error.field ?? '' ).replace( /^data\./, '' );
 
 	return { errorMessage, errorCode, path };
 }
@@ -77,7 +81,7 @@ export function formatIMJVErrors( errors, schema ) {
 			// error message
 			const error = interpretIMJVError( rawError, schema );
 
-			return update( accumulatedErrors, error.path, errorsForField => [
+			return update( accumulatedErrors, error.path, ( errorsForField ) => [
 				...( errorsForField || [] ),
 				error,
 			] );
@@ -103,11 +107,11 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 
 		displayName = 'WithContactDetailsValidation(' + tld + ', ' + wrappedComponentName + ')';
 
-		componentWillMount() {
+		UNSAFE_componentWillMount() {
 			this.compileValidator();
 		}
 
-		componentWillReceiveProps( nextProps ) {
+		UNSAFE_componentWillReceiveProps( nextProps ) {
 			if ( nextProps.validationSchema !== this.props.validationSchema ) {
 				this.compileValidator();
 			}
@@ -175,7 +179,7 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 	}
 
 	return connect(
-		state => ( {
+		( state ) => ( {
 			validationSchema: get( getValidationSchemas( state ), tld, { not: {} } ),
 			recordTracksEvent,
 		} ),

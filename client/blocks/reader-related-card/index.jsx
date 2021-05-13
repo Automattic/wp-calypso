@@ -1,27 +1,26 @@
-/** @format */
 /**
  * External Dependencies
  */
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { get, noop, partial } from 'lodash';
+import { get, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import { getPostById } from 'state/reader/posts/selectors';
-import { getSite } from 'state/reader/sites/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
-import Card from 'components/card/compact';
-import Gravatar from 'components/gravatar';
-import FollowButton from 'reader/follow-button';
-import { getPostUrl, getStreamUrl } from 'reader/route';
-import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
-import ReaderFeaturedVideo from 'blocks/reader-featured-video';
-import ReaderFeaturedImage from 'blocks/reader-featured-image';
-import ReaderAuthorLink from 'blocks/reader-author-link';
+import { getPostById } from 'calypso/state/reader/posts/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { CompactCard as Card } from '@automattic/components';
+import Gravatar from 'calypso/components/gravatar';
+import FollowButton from 'calypso/reader/follow-button';
+import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
+import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
+import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 
 /**
  * Style dependencies
@@ -29,6 +28,7 @@ import ReaderAuthorLink from 'blocks/reader-author-link';
 import './style.scss';
 
 const RELATED_IMAGE_WIDTH = 385; // usual width of featured images in related post card
+const noop = () => {};
 
 function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );

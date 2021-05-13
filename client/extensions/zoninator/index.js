@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,13 +7,13 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, sites, siteSelection } from 'my-sites/controller';
+import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
 import { renderTab } from './app/controller';
 import ZoneCreator from './components/settings/zone-creator';
 import Zone from './components/settings/zone';
 import ZonesDashboard from './components/settings/zones-dashboard';
 import installActionHandlers from './state/data-layer';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 import reducer from './state/reducer';
 
 /**
@@ -23,7 +21,7 @@ import reducer from './state/reducer';
  */
 import './style.scss';
 
-export default async function( _, addReducer ) {
+export default async function ( _, addReducer ) {
 	await addReducer( [ 'extensions', 'zoninator' ], reducer );
 	installActionHandlers();
 

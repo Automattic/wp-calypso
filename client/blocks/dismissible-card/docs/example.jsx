@@ -1,20 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { partial } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import DismissibleCard from '../';
-import { savePreference } from 'state/preferences/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
 
 function DismissibleCardExample( { clearPreference } ) {
 	return (
@@ -33,12 +29,9 @@ function DismissibleCardExample( { clearPreference } ) {
 	);
 }
 
-const ConnectedDismissibleCardExample = connect(
-	null,
-	{
-		clearPreference: partial( savePreference, 'dismissible-card-example', null ),
-	}
-)( DismissibleCardExample );
+const ConnectedDismissibleCardExample = connect( null, {
+	clearPreference: partial( savePreference, 'dismissible-card-example', null ),
+} )( DismissibleCardExample );
 
 ConnectedDismissibleCardExample.displayName = 'DismissibleCard';
 

@@ -1,231 +1,250 @@
-/** @format */
 /**
  * External dependencies
  */
 import i18n from 'i18n-calypso';
 import page from 'page';
+import { compact } from 'lodash';
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
  */
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { getHappychatAuth } from 'state/happychat/utils';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
-import { initConnection, sendEvent } from 'state/happychat/connection/actions';
-import { openChat } from 'state/happychat/ui/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
 	JETPACK_CREDENTIALS_UPDATE_FAILURE,
+	JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
+	JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
 	JETPACK_CREDENTIALS_STORE,
 	REWIND_STATE_UPDATE,
-} from 'state/action-types';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
+} from 'calypso/state/action-types';
+import { successNotice, errorNotice, infoNotice } from 'calypso/state/notices/actions';
+import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import getJetpackCredentialsUpdateProgress from 'calypso/state/selectors/get-jetpack-credentials-update-progress';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
-
+const debug = debugModule( 'calypso:data-layer:update-credentials' );
 const navigateTo =
-	undefined !== typeof window ? path => window.open( path, '_blank' ) : path => page( path );
+	undefined !== typeof window
+		? ( path ) => window.open( path, '_blank' )
+		: ( path ) => page( path );
 
-/**
- * Makes sure that we can initialize a connection
- * to HappyChat. We'll need this on the API response
- *
- * @param {function} dispatch Redux dispatcher
- * @param {function} getState Redux getState
- */
-export const primeHappychat = ( { dispatch, getState } ) => {
-	const state = getState();
-	const getAuth = getHappychatAuth( state );
+const getMaybeNoticeId = ( action ) =>
+	'noticeId' in action ? { noticeId: action.noticeId } : {};
 
-	if ( isHappychatConnectionUninitialized( state ) ) {
-		dispatch( initConnection( getAuth() ) );
+export const request = ( action ) => {
+	const maybeNotice = [];
+	const maybeNoticeId = {};
+
+	if ( action.shouldUseNotices ) {
+		const notice = infoNotice( i18n.translate( 'Testing connection…' ), {
+			duration: 30000,
+			showDismiss: false,
+		} );
+
+		const {
+			notice: { noticeId },
+		} = notice;
+
+		maybeNotice.push( notice );
+		Object.assign( maybeNoticeId, { noticeId } );
 	}
-};
-
-export const request = action => {
-	const notice = successNotice( i18n.translate( 'Testing connection…' ), { duration: 30000 } );
-	const {
-		notice: { noticeId },
-	} = notice;
 
 	const { path, ...otherCredentials } = action.credentials;
 	const credentials = { ...otherCredentials, abspath: path };
 
+	const tracksEvent = recordTracksEvent( 'calypso_rewind_creds_update_attempt', {
+		site_id: action.siteId,
+		protocol: action.credentials.protocol,
+	} );
+
 	return [
-		notice,
+		...maybeNotice,
+		tracksEvent,
+		{
+			type: JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
+			siteId: action.siteId,
+		},
 		http(
 			{
 				apiNamespace: 'wpcom/v2',
 				method: 'POST',
 				path: `/sites/${ action.siteId }/rewind/credentials/update`,
-				body: { credentials },
+				body: { credentials, stream: action.stream },
 			},
-			{ ...action, noticeId }
+			{ ...action, ...maybeNoticeId }
 		),
 	];
 };
 
-export const success = ( action, { rewind_state } ) => [
-	{
-		type: JETPACK_CREDENTIALS_UPDATE_SUCCESS,
-		siteId: action.siteId,
-	},
-
-	{
-		type: JETPACK_CREDENTIALS_STORE,
-		credentials: {
-			main: action.credentials,
+export const success = ( action, { rewind_state } ) =>
+	compact( [
+		{
+			type: JETPACK_CREDENTIALS_UPDATE_SUCCESS,
+			siteId: action.siteId,
 		},
-		siteId: action.siteId,
-	},
-	successNotice( i18n.translate( 'Your site is now connected.' ), {
-		duration: 4000,
-		id: action.noticeId,
-	} ),
-	// the API transform could fail and the rewind data might
-	// be unavailable so if that's the case just let it go
-	// for now. we'll improve our rigor as time goes by.
-	( () => {
-		try {
-			return {
-				type: REWIND_STATE_UPDATE,
-				siteId: action.siteId,
-				data: transformApi( rewind_state ),
-			};
-		} catch ( e ) {}
-	} )(),
-];
+		{
+			type: JETPACK_CREDENTIALS_STORE,
+			credentials: {
+				main: action.credentials,
+			},
+			siteId: action.siteId,
+		},
+		action.shouldUseNotices &&
+			successNotice( i18n.translate( 'Your site is now connected.' ), {
+				duration: 4000,
+				...getMaybeNoticeId( action ),
+			} ),
+		recordTracksEvent( 'calypso_rewind_creds_update_success', {
+			site_id: action.siteId,
+			protocol: action.credentials.protocol,
+		} ),
+		// the API transform could fail and the rewind data might
+		// be unavailable so if that's the case just let it go
+		// for now. we'll improve our rigor as time goes by.
+		( () => {
+			try {
+				return {
+					type: REWIND_STATE_UPDATE,
+					siteId: action.siteId,
+					data: transformApi( rewind_state ),
+				};
+			} catch ( e ) {}
+		} )(),
+	] );
 
 export const failure = ( action, error ) => ( dispatch, getState ) => {
-	dispatch( {
-		type: JETPACK_CREDENTIALS_UPDATE_FAILURE,
-		error,
-		siteId: action.siteId,
-	} );
+	const getHelp = () => navigateTo( contactSupportUrl( getSelectedSiteSlug( getState() ) ) );
 
-	const getHelp = () => {
+	const baseOptions = { duration: 10000, ...getMaybeNoticeId( action ) };
+
+	const dispatchFailure = ( message, options = {} ) => {
+		if ( action.shouldUseNotices ) {
+			dispatch( errorNotice( message, { ...baseOptions, ...options } ) );
+		}
+
 		const state = getState();
-		const canChat = isHappychatAvailable( state ) || hasActiveHappychatSession( state );
-
-		return canChat ? dispatch( openChat() ) : navigateTo( '/help' );
-	};
-
-	const baseOptions = { duration: 10000, id: action.noticeId };
-
-	const announce = ( message, options ) =>
-		dispatch( errorNotice( message, options ? { ...baseOptions, ...options } : baseOptions ) );
-
-	const spreadHappiness = message => {
-		const tracksEvent = recordTracksEvent( 'calypso_rewind_creds_update_failure', {
-			site_id: action.siteId,
-			error: error.error,
-			status_code: error.statusCode,
-			host: action.credentials.host,
-			kpri: action.credentials.krpi ? 'provided but [omitted here]' : 'not provided',
-			pass: action.credentials.pass ? 'provided but [omitted here]' : 'not provided',
-			path: action.credentials.path,
-			port: action.credentials.port,
-			protocol: action.credentials.protocol,
-			user: action.credentials.user,
-		} );
+		const progress = getJetpackCredentialsUpdateProgress( state, action.siteId );
 
 		dispatch(
-			hasActiveHappychatSession( getState() )
-				? withAnalytics( tracksEvent, sendEvent( message ) )
-				: tracksEvent
+			recordTracksEvent( 'calypso_rewind_creds_update_failure', {
+				site_id: action.siteId,
+				error: error.code,
+				error_message: error.message,
+				status_code: error.data ?? error.statusCode,
+				transport_message: progress.lastError?.message ?? null,
+				transport_stack: progress.lastError?.stack ?? null,
+				host: action.credentials.host,
+				kpri: action.credentials.kpri ? 'provided but [omitted here]' : 'not provided',
+				pass: action.credentials.pass ? 'provided but [omitted here]' : 'not provided',
+				path: action.credentials.path,
+				port: action.credentials.port,
+				protocol: action.credentials.protocol,
+				user: action.credentials.user,
+			} )
 		);
+
+		dispatch( {
+			type: JETPACK_CREDENTIALS_UPDATE_FAILURE,
+			siteId: action.siteId,
+			error,
+			wpcomError: error,
+			translatedError: message,
+			transportError: progress.lastError ?? undefined,
+		} );
 	};
 
-	switch ( error.error ) {
+	debug( 'failure: error=%o', error );
+
+	switch ( error.code ) {
 		case 'service_unavailable':
-			announce(
+			dispatchFailure(
 				i18n.translate(
-					'A error occurred when we were trying to validate your site information. Please make sure your credentials and host URL are correct and try again. If you need help, please click on the support chat link.'
+					'A error occurred when we were trying to validate your site information. ' +
+						'Please make sure your credentials and host URL are correct and try again. ' +
+						'If you need help, please click on the support link.'
 				),
-				{ button: i18n.translate( 'Support chat' ), onClick: getHelp }
-			);
-			spreadHappiness(
-				'Rewind Credentials: update request failed on timeout (could be us or remote site)'
+				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
 			);
 			break;
 
 		case 'missing_args':
-			announce(
+			dispatchFailure(
 				i18n.translate( 'Something seems to be missing — please fill out all the required fields.' )
 			);
-			spreadHappiness( 'Rewind Credentials: missing API args (contact a dev)' );
 			break;
 
 		case 'invalid_args':
-			announce(
+			dispatchFailure(
 				i18n.translate(
 					"The information you entered seems to be incorrect. Let's take " +
 						'another look to ensure everything is in the right place.'
 				)
 			);
-			spreadHappiness( 'Rewind Credentials: invalid API args (contact a dev)' );
 			break;
 
 		case 'invalid_credentials':
-			announce(
+			dispatchFailure(
 				i18n.translate(
 					"We couldn't connect to your site. Please verify your credentials and give it another try."
 				)
 			);
-			spreadHappiness( 'Rewind Credentials: invalid credentials' );
 			break;
 
 		case 'invalid_wordpress_path':
-			announce(
+			dispatchFailure(
 				i18n.translate(
 					'We looked for `wp-config.php` in the WordPress installation ' +
 						"path you provided but couldn't find it."
 				),
 				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
 			);
-			spreadHappiness( "Rewind Credentials: can't find WordPress installation files" );
 			break;
 
 		case 'read_only_install':
-			announce(
+			dispatchFailure(
 				i18n.translate(
 					'It looks like your server is read-only. ' +
-						'To create backups and rewind your site, we need permission to write to your server.'
+						'To create backups and restore your site, we need permission to write to your server.'
 				),
 				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
 			);
-			spreadHappiness( 'Rewind Credentials: creds only seem to provide read-only access' );
 			break;
 
 		case 'unreachable_path':
-			announce(
+			dispatchFailure(
 				i18n.translate(
 					'We tried to access your WordPress installation through its publicly available URL, ' +
 						"but it didn't work. Please make sure the directory is accessible and try again."
 				)
 			);
-			spreadHappiness( 'Rewind Credentials: creds might be for wrong site on right server' );
 			break;
 
 		default:
-			announce( i18n.translate( 'Error saving. Please check your credentials and try again.' ) );
-			spreadHappiness( 'Rewind Credentials: unknown failure saving credentials' );
+			dispatchFailure(
+				i18n.translate( 'Error saving. Please check your credentials and try again.' )
+			);
 	}
 };
 
+export const streamRecord = ( action, record ) => ( {
+	type: JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
+	siteId: action.siteId,
+	update: record,
+} );
+
 registerHandlers( 'state/data-layer/wpcom/activity-log/update-credentials/index.js', {
 	[ JETPACK_CREDENTIALS_UPDATE ]: [
-		primeHappychat,
 		dispatchRequest( {
 			fetch: request,
 			onSuccess: success,
 			onError: failure,
+			onStreamRecord: streamRecord,
 		} ),
 	],
 } );

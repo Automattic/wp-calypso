@@ -1,29 +1,31 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import ContactsPrivacyCard from './card';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import Main from 'calypso/components/main';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementManageConsent,
-} from 'my-sites/domains/paths';
-import { getSelectedDomain } from 'lib/domains';
-import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/utils';
+} from 'calypso/my-sites/domains/paths';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 
 /**
  * Style dependencies
@@ -35,69 +37,103 @@ class ContactsPrivacy extends React.PureComponent {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-		whois: PropTypes.object.isRequired,
 	};
+
+	renderForOwner() {
+		const { translate } = this.props;
+		const domain = getSelectedDomain( this.props );
+		const {
+			privateDomain,
+			privacyAvailable,
+			contactInfoDisclosed,
+			contactInfoDisclosureAvailable,
+			isPendingIcannVerification,
+		} = domain;
+
+		const canManageConsent =
+			config.isEnabled( 'domains/gdpr-consent-page' ) && domain.supportsGdprConsentManagement;
+
+		return (
+			<>
+				<ContactsPrivacyCard
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSite={ this.props.selectedSite }
+					privateDomain={ privateDomain }
+					privacyAvailable={ privacyAvailable }
+					contactInfoDisclosed={ contactInfoDisclosed }
+					contactInfoDisclosureAvailable={ contactInfoDisclosureAvailable }
+					isPendingIcannVerification={ isPendingIcannVerification }
+				/>
+
+				<VerticalNavItem
+					path={ domainManagementEditContactInfo(
+						this.props.selectedSite.slug,
+						this.props.selectedDomainName,
+						this.props.currentRoute
+					) }
+				>
+					{ translate( 'Edit contact info' ) }
+				</VerticalNavItem>
+
+				{ canManageConsent && (
+					<VerticalNavItem
+						path={ domainManagementManageConsent(
+							this.props.selectedSite.slug,
+							this.props.selectedDomainName,
+							this.props.currentRoute
+						) }
+					>
+						{ translate( 'Manage Consent for Personal Data Use' ) }
+					</VerticalNavItem>
+				) }
+			</>
+		);
+	}
+
+	renderForOthers() {
+		const { domains, selectedDomainName } = this.props;
+		return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
+	}
 
 	render() {
 		if ( this.isDataLoading() ) {
 			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
 		}
 
-		const { translate, whois } = this.props;
+		const { translate } = this.props;
 		const domain = getSelectedDomain( this.props );
-		const { privateDomain, privacyAvailable } = domain;
-		const canManageConsent =
-			config.isEnabled( 'domains/gdpr-consent-page' ) && domain.supportsGdprConsentManagement;
-		const contactInformation = privateDomain
-			? findPrivacyServiceWhois( whois.data )
-			: findRegistrantWhois( whois.data );
 
 		return (
 			<Main className="contacts-privacy">
 				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
-					{ translate( 'Contacts' ) }
+					{ translate( 'Contacts and Privacy' ) }
 				</Header>
 
 				<VerticalNav>
-					<ContactsPrivacyCard
-						contactInformation={ contactInformation }
-						selectedDomainName={ this.props.selectedDomainName }
-						selectedSite={ this.props.selectedSite }
-						privateDomain={ privateDomain }
-						privacyAvailable={ privacyAvailable }
-					/>
-
-					<VerticalNavItem
-						path={ domainManagementEditContactInfo(
-							this.props.selectedSite.slug,
-							this.props.selectedDomainName
-						) }
-					>
-						{ translate( 'Edit Contact Info' ) }
-					</VerticalNavItem>
-
-					{ canManageConsent && (
-						<VerticalNavItem
-							path={ domainManagementManageConsent(
-								this.props.selectedSite.slug,
-								this.props.selectedDomainName
-							) }
-						>
-							{ translate( 'Manage Consent for Personal Data Use' ) }
-						</VerticalNavItem>
-					) }
+					{ domain.currentUserCanManage ? this.renderForOwner() : this.renderForOthers() }
 				</VerticalNav>
 			</Main>
 		);
 	}
 
 	isDataLoading() {
-		return ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer;
+		return ! getSelectedDomain( this.props ) || this.props.isRequestingWhois;
 	}
 
 	goToEdit = () => {
-		page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			domainManagementEdit(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
+		);
 	};
 }
 
-export default localize( ContactsPrivacy );
+export default connect( ( state, ownProps ) => {
+	return {
+		currentRoute: getCurrentRoute( state ),
+		isRequestingWhois: isRequestingWhois( state, ownProps.selectedDomainName ),
+	};
+} )( localize( ContactsPrivacy ) );

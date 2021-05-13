@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -18,8 +16,8 @@ import {
 	getTwoFactorAuthRequestError,
 	getCreateSocialAccountError,
 	getRequestSocialAccountError,
-} from 'state/login/selectors';
-import Notice from 'components/notice';
+} from 'calypso/state/login/selectors';
+import Notice from 'calypso/components/notice';
 
 class ErrorNotice extends Component {
 	static propTypes = {
@@ -30,7 +28,7 @@ class ErrorNotice extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const receiveNewError = key => this.props[ key ] !== prevProps[ key ];
+		const receiveNewError = ( key ) => this.props[ key ] !== prevProps[ key ];
 
 		if (
 			receiveNewError( 'createAccountError' ) ||
@@ -107,7 +105,7 @@ class ErrorNotice extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	createAccountError: getCreateSocialAccountError( state ),
 	requestAccountError: getRequestSocialAccountError( state ),
 	requestError: getRequestError( state ),

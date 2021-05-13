@@ -1,6 +1,120 @@
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
+/******************************************/
+/*       Vertical Scroll Experiment       */
+/*  	       pcbrnV-XN-p2               */
+/******************************************/
+
+.in-vertically-scrolled-plans-experiment {
+	// If experiment succeeds the following styles
+	// need to be moved to the corresponding selectors
+
+	// To be moved to line 651 approximately
+	.plan-features--signup {
+		.plan-features__table {
+			@media ( max-width: 1040px ) {
+				display: none;
+			}
+		}
+
+		//To be moved to line 66 approximately
+		.plan-features__mobile {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			@media ( min-width: 660px ) and ( max-width: 1040px ) {
+				.plan-features__summary, .plan-features__description {
+					padding: 16px 33px;
+
+				}
+				.plan-features--signup .plan-features__pricing {
+					padding: 0 7px;
+				}
+			}
+
+			.plan-features__header {
+				display: block;
+				position: relative;
+				text-align: left;
+				box-sizing: border-box;
+				border-top: solid 8px;
+				border-radius: 2px 2px 0 0;
+				padding-bottom: 12px;
+
+				&.is-blogger-plan {
+					border-color: var( --color-plan-blogger );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+
+				&.is-personal-plan {
+					border-color: var( --color-plan-personal );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+
+				&.is-premium-plan {
+					border-color: var( --color-plan-premium );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+
+				&.is-business-plan {
+					border-color: var( --color-plan-business );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+
+				&.is-ecommerce-plan {
+					border-color: var( --color-plan-ecommerce );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+			}
+
+			 .plan-price {
+				font-weight: 600;
+				margin-right: 10px;
+				font-size: $font-headline-large;
+				text-align: center;
+				font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+
+				.plan-price__currency-symbol {
+					vertical-align: super;
+					font-size: $font-title-medium;
+					font-weight: 400;
+				}
+
+				.plan-price__integer {
+					font-weight: 600;
+				}
+			}
+
+			.plan-features__header-title {
+				font-size: 1.25rem;
+				color: var( --color-primary );
+				line-height: 0.7;
+			}
+
+			.plan-features__header-billing-info {
+				margin-bottom: 1.4em;
+				color: var( --color-text-subtle );
+				line-height: normal;
+				text-align: center;
+			}
+
+			.plan-features__mobile-plan {
+				max-width: 408px;
+			}
+		}
+	}
+}
+
+
+.plan-features--loading-container {
+	margin-top: 300px;
+}
+
+/******************************************/
+
+
 /* Breakpoints 1150px, */
 
 .plan-features__content {
@@ -22,9 +136,8 @@ $plan-features-sidebar-width: 272px;
 .plan-features__mobile {
 	color: var( --color-text-subtle );
 	margin: 0 16px;
-	display: block;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: none;
 	}
 
@@ -47,8 +160,8 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features__item {
-		border-bottom: solid 1px var( --color-neutral-50 );
-		font-size: 14px;
+		border-bottom: solid 1px var( --color-neutral-5 );
+		font-size: $font-body-small;
 	}
 
 	.plan-features__item:last-child {
@@ -72,13 +185,15 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__table.has-1-cols {
+	margin-left: auto;
+	margin-right: auto;
 	max-width: 337px;
 }
 
 .plan-features__mobile-plan {
-	font-size: 14px;
-	border: solid 1px var( --color-neutral-50 );
-	background-color: var( --color-white );
+	font-size: $font-body-small;
+	border: solid 1px var( --color-neutral-5 );
+	background-color: var( --color-surface );
 	margin-bottom: 24px;
 }
 
@@ -90,28 +205,29 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__table {
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	border-spacing: 16px 0;
 	margin-top: -16px;
 	display: none;
 	table-layout: fixed;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: table;
 	}
 
-	@include breakpoint( '<1040px' ) {
+	@include breakpoint-deprecated( '<1040px' ) {
 		border-spacing: 0;
-		margin: 0 15px;
+		margin-left: 15px;
+		margin-right: 15px;
 		width: calc( 100% - 30px );
 	}
 }
 
 .plan-features__table-item {
-	border-right: solid 1px var( --color-neutral-50 );
-	border-left: solid 1px var( --color-neutral-50 );
-	background-color: var( --color-white );
+	border-right: solid 1px var( --color-neutral-5 );
+	border-left: solid 1px var( --color-neutral-5 );
+	background-color: var( --color-surface );
 	position: relative;
 
 	&.is-highlighted {
@@ -140,12 +256,12 @@ $plan-features-sidebar-width: 272px;
 		display: block;
 		height: 1px;
 		width: calc( 100% - 48px );
-		border-bottom: 1px solid var( --color-neutral-50 );
+		border-bottom: 1px solid var( --color-neutral-5 );
 		position: absolute;
 		bottom: 0;
 		margin: 0 24px;
 
-		@include breakpoint( '<1040px' ) {
+		@include breakpoint-deprecated( '<1040px' ) {
 			margin: 0 12px;
 			width: calc( 100% - 24px );
 		}
@@ -153,11 +269,11 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__table-item.has-border-bottom {
-	border-bottom: solid 1px var( --color-neutral-50 );
+	border-bottom: solid 1px var( --color-neutral-5 );
 }
 
 .plan-features__table-item.has-border-top {
-	border-top: solid 1px var( --color-neutral-50 );
+	border-top: solid 1px var( --color-neutral-5 );
 }
 
 .plan-features__table-item.is-placeholder {
@@ -182,11 +298,23 @@ $plan-features-sidebar-width: 272px;
 	display: flex;
 	align-items: flex-start;
 	padding: 12px 24px 0 15px;
-	border-bottom: solid 2px var( --color-neutral-100 );
-	background-color: var( --color-white );
+	border-bottom: solid 2px var( --color-neutral-10 );
+	background-color: var( --color-surface );
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		padding: 12px 12px 0;
+	}
+
+	&.is-p2-free,
+	&.is-p2-plus {
+		padding-left: 12px;
+		@include breakpoint-deprecated( '>1040px' ) {
+			padding-left: 24px;
+		}
+	}
+
+	&.is-p2-plus {
+		border-bottom-color: var( --p2-color-link );
 	}
 
 	.plans-features-main__group.is-wpcom & {
@@ -235,7 +363,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .is-section-plans .plan-features__header-figure {
-	@include breakpoint( '<1280px' ) {
+	@include breakpoint-deprecated( '<1280px' ) {
 		width: 24px;
 		height: 24px;
 		margin-right: 10px;
@@ -245,7 +373,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__header-figure,
 .plan-features__table.has-1-cols .plan-features__header-figure,
 .plan-features__table.has-2-cols .plan-features__header-figure {
-	@include breakpoint( '<1040px' ) {
+	@include breakpoint-deprecated( '<1040px' ) {
 		display: none;
 	}
 }
@@ -256,13 +384,9 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__header-title {
-	font-size: 22px;
+	font-size: $font-title-small;
 	color: var( --color-primary );
 	line-height: 0.7;
-
-	@include breakpoint( '<960px' ) {
-		font-size: 20px;
-	}
 }
 
 .plan-features__audience {
@@ -280,7 +404,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__header-price-group {
 	width: calc( 100% + 20px );
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		width: calc( 100% + 10px );
 	}
 }
@@ -288,54 +412,73 @@ $plan-features-sidebar-width: 272px;
 .plan-features__header-price-group-prices {
 	max-width: calc( 100% - 20px );
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		max-width: calc( 100% - 10px );
 	}
 
 	.plan-price.is-discounted {
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			margin-right: 0;
 		}
 	}
 }
 
 .plan-features__header-credit-label {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	line-height: 20px;
 	height: 20px;
-	border-radius: 10px;
-	color: var( --color-white );
+	border-radius: 10px; /* stylelint-disable-line */
+	color: var( --color-text-inverted );
 	background: var( --color-success );
-	font-weight: normal;
+	font-weight: 400;
 	vertical-align: middle;
 	padding: 0 8px;
 	margin-bottom: 4px;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin-left: 4px;
 	}
-	@include breakpoint( '>1280px' ) {
+	@include breakpoint-deprecated( '>1280px' ) {
 		margin-left: 8px;
 	}
 }
 
 .plan-features__header-timeframe {
 	margin-bottom: 1.4em;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	font-style: italic;
 	font-weight: 400;
 	color: var( --color-text-subtle );
 	line-height: normal;
 
 	&.is-placeholder {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 		width: 140px;
 		height: 12px;
 		margin-bottom: 15px;
 
-		@include breakpoint( '<960px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			margin-bottom: 9px;
 		}
+	}
+
+	&.is-logged-in-monthly-pricing {
+		font-style: normal;
+	}
+}
+
+.plan-features__header-title-free {
+	font-size: 1.5rem;
+	line-height: 1.5;
+	font-weight: 400;
+	color: var( --color-neutral-70 );
+	padding-bottom: 8px;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		font-size: 2rem;
+	}
+	@media ( min-width: $plan-features-sidebar-width + 480px ) {
+		padding-bottom: 32px;
 	}
 }
 
@@ -343,7 +486,7 @@ $plan-features-sidebar-width: 272px;
 	max-width: 520px;
 	margin: 8px auto 16px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		flex-wrap: wrap;
 		border-radius: 0;
 
@@ -355,8 +498,8 @@ $plan-features-sidebar-width: 272px;
 
 .info-popover.plan-features__header-tip-info {
 	position: relative;
-		top: 4px;
-		left: 3px;
+	top: 4px;
+	left: 3px;
 	margin-top: -10px;
 	margin-bottom: -10px;
 	display: inline-block;
@@ -364,35 +507,23 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__price {
 	&.is-placeholder {
-		@include placeholder( 23% );
-			width: 45px;
-			height: 25px;
-			margin-top: 9px;
-			margin-bottom: 5px;
+		@include placeholder( --color-neutral-10 );
+		width: 45px;
+		height: 25px;
+		margin-top: 9px;
+		margin-bottom: 5px;
 	}
 }
 .plan-features__price-jetpack {
 	&.is-placeholder {
-		@include placeholder( 23% );
-			width: 140px;
-			height: 32px;
-			margin-top: 5px;
-			margin-bottom: 5px;
+		@include placeholder( --color-neutral-10 );
+		width: 140px;
+		height: 32px;
+		margin-top: 5px;
+		margin-bottom: 5px;
 
-		@include breakpoint( '<960px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			height: 26px;
-		}
-	}
-}
-
-.plan-features__interval-type {
-	margin-bottom: 1.4em;
-
-	&.is-placeholder {
-		height: 28px;
-
-		@include breakpoint( '<660px' ) {
-			height: auto;
 		}
 	}
 }
@@ -405,12 +536,12 @@ $plan-features-sidebar-width: 272px;
 	top: 0;
 	transform: translateY( -21px );
 	padding: 0 8px;
-	background: var( --color-neutral-700 );
-	font-size: 10px;
+	background: var( --color-neutral-70 );
+	font-size: $font-body-extra-small;
 	line-height: $plan-features-header-banner-height;
 	text-align: center;
 	text-transform: uppercase;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -421,32 +552,32 @@ $plan-features-sidebar-width: 272px;
 	margin: 0;
 	padding: 24px 24px 0;
 
-	@include breakpoint( '<1040px' ) {
+	@include breakpoint-deprecated( '<1040px' ) {
 		padding: 12px 12px 0;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		padding: 20px 20px 0;
 	}
 }
 
 .plan-features__targeted-description-heading {
 	display: block;
-	color: var( --color-neutral-400 );
+	color: var( --color-text-subtle );
 }
 
 .plan-features__item {
 	display: flex;
 	margin: 0 24px;
 	padding: 12px 0;
-	font-size: 14px;
-	color: var( --color-neutral-700 );
+	font-size: $font-body-small;
+	color: var( --color-neutral-70 );
 
-	@include breakpoint( '<960px' ) {
-		font-size: 12px;
+	@include breakpoint-deprecated( '<960px' ) {
+		font-size: $font-body-extra-small;
 	}
 
-	@include breakpoint( '<1040px' ) {
+	@include breakpoint-deprecated( '<1040px' ) {
 		margin: 0 12px;
 	}
 }
@@ -462,6 +593,13 @@ $plan-features-sidebar-width: 272px;
 	margin-right: 10px;
 }
 
+.plan-features__item-unavailable {
+	flex: 0 1 auto;
+	fill: var( --color-neutral-30 );
+	margin-right: 10px;
+	transform: translate( 0, 2px );
+}
+
 .plan-features__item-tip-info {
 	flex: 0 1 auto;
 }
@@ -475,11 +613,11 @@ $plan-features-sidebar-width: 272px;
 .plan-features__actions {
 	padding: 0 24px 24px;
 
-	@include breakpoint( '<1040px' ) {
+	@include breakpoint-deprecated( '<1040px' ) {
 		padding: 0 12px 12px;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		padding: 0 20px 20px;
 		border-bottom: solid 1px var( --color-neutral-0 );
 	}
@@ -493,18 +631,27 @@ $plan-features-sidebar-width: 272px;
 	width: 100%;
 	margin-top: 8px;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-top: 20px;
 	}
 }
 
 .plan-features__item-info {
+	display: flex;
+	flex-direction: column;
 	flex: 1 0 0;
 	width: 100%;
+
+	&.is-annual-plan-feature:not( .is-available ) {
+		.plan-features__item-title {
+			text-decoration: line-through;
+			color: var( --color-neutral-30 );
+		}
+	}
 }
 
 .plan-features__item-title-outlined {
-	font-weight: bold;
+	font-weight: 600;
 	display: block;
 }
 
@@ -516,15 +663,8 @@ $plan-features-sidebar-width: 272px;
 /*= Plans in Signup
 ========================================*/
 
-// This is used for the monthly/yearly billing
-// which is currently us in the Jetpack flow.
-.price-toggle {
-	width: 250px;
-	margin: 0 auto 20px;
-
-	& + .plans-features-main__group {
-		padding-top: 8px;
-	}
+.plans-features-main__group.is-wpcom {
+	padding-top: 19px;
 }
 
 // This is the customer type buttons that let
@@ -535,9 +675,8 @@ $plan-features-sidebar-width: 272px;
 /* stylelint-disable selector-max-id */
 body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	margin: 0 auto 16px;
-	box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ),
-				0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
-				0 1px 3px 0 rgba( 0, 0, 0, 0.2 );
+	box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ), 0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
+		0 1px 3px 0 rgba( 0, 0, 0, 0.2 );
 
 	.segmented-control__item a {
 		text-decoration: underline;
@@ -550,7 +689,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		// This adds a little pointer arrow to the bottom
 		// of the selected segment item. It relies on the
 		// relative positioning above.
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			&::after {
 				display: block;
 				content: '';
@@ -558,7 +697,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 				height: 0;
 				border-left: 10px solid transparent;
 				border-right: 10px solid transparent;
-				border-top: 10px solid var( --color-primary-700 );
+				border-top: 10px solid var( --color-primary-70 );
 				position: absolute;
 				bottom: -10px;
 				left: calc( 50% - 10px );
@@ -568,12 +707,12 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		a,
 		a:hover,
 		a:focus {
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				flex-wrap: wrap;
 			}
 			cursor: default;
 			text-decoration: none;
-			background-color: var( --color-primary-700 );
+			background-color: var( --color-primary-70 );
 		}
 	}
 }
@@ -589,18 +728,10 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 .plan-features--signup {
 	margin: 0 auto;
 
-	.jetpack-connect__plans & {
-		width: auto;
-
-		@include breakpoint( '>660px' ) {
-			max-width: 1000px;
-		}
-	}
-
 	.signup__steps & {
 		width: auto;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			max-width: 1100px;
 		}
 	}
@@ -608,14 +739,14 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	.plan-features__table {
 		display: none;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			display: table;
 			width: 100%;
 			margin: 0 auto;
 			padding: 0 16px;
 		}
 
-		@include breakpoint( '>1040px' ) {
+		@include breakpoint-deprecated( '>1040px' ) {
 			border-spacing: 15px 0;
 			padding: 0;
 		}
@@ -630,7 +761,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__header-title {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		margin-bottom: 5px;
 	}
 
@@ -649,7 +780,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		height: 50px;
 		margin: 16px 20px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			float: none;
 			width: 100px;
 			height: 100px;
@@ -659,14 +790,15 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__pricing,
 	.plan-price.is-discounted {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 
 	.plan-features__pricing {
 		margin: 20px 20px -12px;
 		padding: 0;
+		text-align: center;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			margin-bottom: 0;
 			padding: 0 12px;
 		}
@@ -709,7 +841,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-price,
 	.plan-price.is-original {
-		font-size: 1em;
+		font-size: $font-body;
 	}
 
 	.plan-features__header-price-group {
@@ -717,17 +849,11 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__row:last-of-type .plan-features__table-item {
-		border-bottom: solid 1px var( --color-neutral-50 );
-	}
-
-	.jetpack-connect__hide-plan-icons .jetpack-connect__plans & .plan-features__pricing {
-		@include breakpoint( '<660px' ) {
-			padding-top: 0;
-		}
+		border-bottom: solid 1px var( --color-neutral-5 );
 	}
 
 	.plan-features__header-price-group-prices {
-		display: inline;
+		display: inline-block;
 	}
 }
 
@@ -743,7 +869,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 			margin-left: -280px;
 		}
 
-		@include breakpoint( '<1040px' ) {
+		@include breakpoint-deprecated( '<1040px' ) {
 			padding-top: 12px;
 		}
 	}
@@ -753,7 +879,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		width: calc( 100vw - 278px );
 		margin-left: calc( 50% - 50vw + 138px );
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			margin-left: 0;
 			width: 100%;
 		}
@@ -816,7 +942,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		text-align: left;
 		box-sizing: border-box;
 		border-top: solid 8px;
-		border-radius: 3px 3px 0 0;
+		border-radius: 2px 2px 0 0;
 		padding-bottom: 12px;
 
 		.plans-features-main__group.is-wpcom & {
@@ -851,8 +977,8 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__header-title {
 		color: var( --color-text );
-		font-weight: 700;
-		font-size: 24px;
+		font-weight: 600;
+		font-size: $font-title-medium;
 		margin-bottom: 6px;
 	}
 
@@ -866,17 +992,17 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	.plan-features__pricing {
 		padding: 8px 16px;
 		margin: 0;
-		border-top: solid 1px lighten( $gray, 27% );
+		border-top: solid 1px var( --color-neutral-10 );
 
 		.plan-price {
-			font-weight: bold;
+			font-weight: 600;
 			margin-right: 10px;
-			font-size: 52px;
+			font-size: $font-headline-large;
 			font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
 		}
 
 		.plan-price__currency-symbol {
-			font-size: 50%;
+			font-size: $font-title-medium;
 			font-weight: 400;
 		}
 
@@ -886,7 +1012,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__table-item {
-		border-top: solid 1px var( --color-neutral-50 );
+		border-top: solid 1px var( --color-neutral-5 );
 		vertical-align: middle;
 		padding: 7px 0;
 
@@ -904,7 +1030,9 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 			vertical-align: top;
 		}
 
-		&.has-border-top, &.is-top-buttons, &.is-description {
+		&.has-border-top,
+		&.is-top-buttons,
+		&.is-description {
 			border-top: none;
 			border-bottom: none;
 			padding-top: 0;
@@ -915,16 +1043,16 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		}
 
 		&.is-last-feature {
-			border-bottom: solid 1px var( --color-neutral-50 );
+			border-bottom: solid 1px var( --color-neutral-5 );
 		}
 	}
 
 	tr:first-child .plan-features__table-item {
-		border-radius: 5px 5px 0 0;
+		border-radius: 2px 2px 0 0;
 	}
 
 	tr:last-child .plan-features__table-item {
-		border-radius: 0 0 5px 5px;
+		border-radius: 0 0 5px 5px; /* stylelint-disable-line */
 	}
 
 	.plan-features__actions {
@@ -934,7 +1062,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	.plan-features__item {
 		align-items: center;
 		font-size: inherit;
-		font-weight: 500;
+		font-weight: 600;
 		min-height: 42px;
 		margin: 0;
 		padding: 0 8px 0 16px;
@@ -954,7 +1082,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__row:last-child .plan-features__table-item {
-		border-bottom: solid 1px var( --color-neutral-50 );
+		border-bottom: solid 1px var( --color-neutral-5 );
 	}
 }
 
@@ -996,12 +1124,14 @@ button.plan-features__scroll-button {
 	padding: 0;
 	background-color: var( --color-neutral );
 	border: 0;
-	border-radius: 15px;
-	color: var( --color-white );
+	border-radius: 15px; /* stylelint-disable-line */
+	color: var( --color-text-inverted );
 	cursor: pointer;
 
-	&:hover, &:active, &:focus {
-		color: var( --color-white );
+	&:hover,
+	&:active,
+	&:focus {
+		color: var( --color-text-inverted );
 	}
 
 	.gridicon {
@@ -1010,25 +1140,27 @@ button.plan-features__scroll-button {
 	}
 
 	:root body.is-section-signup .plan-features__scroller-container & {
-		background-color: var( --color-white );
+		background-color: var( --color-surface );
 		color: var( --color-primary );
 		padding: 0;
 	}
 
-	&:disabled, &[disabled] {
+	&:disabled,
+	&[disabled] {
 		background-color: rgba( var( --color-neutral-rgb ), 0.5 );
-		color: var( --color-neutral-50 );
+		color: var( --color-neutral-5 );
 	}
 
-	:root body.is-section-signup &:disabled, .is-section-signup &[disabled] {
-		background-color: rgba( var( --color-white-rgb ), 0.5 );
+	:root body.is-section-signup &:disabled,
+	.is-section-signup &[disabled] {
+		background-color: rgba( var( --color-surface-rgb ), 0.5 );
 		color: var( --color-primary );
 	}
 
 	.plan-features__scroll-right & {
 		margin-left: 20px;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			margin-left: 5px;
 		}
 	}
@@ -1036,7 +1168,7 @@ button.plan-features__scroll-button {
 	.plan-features__scroll-left & {
 		margin-right: 20px;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			margin-right: 5px;
 		}
 	}
@@ -1062,10 +1194,10 @@ button.plan-features__scroll-button {
 	width: 8px;
 	height: 8px;
 	margin: 0 2px;
-	border-radius: 4px;
+	border-radius: 2px;
 
 	.is-section-signup & {
-		background: var( --color-white );
+		background: var( --color-surface );
 		opacity: 0.5;
 	}
 
@@ -1074,8 +1206,33 @@ button.plan-features__scroll-button {
 	}
 }
 
-@include breakpoint( '<480px' ) {
+@include breakpoint-deprecated( '<480px' ) {
 	.plan-features__upgrade-launch-dialog .dialog__content p {
 		padding: 0 20px;
+	}
+}
+
+.plans-wrapper {
+	.plan-features__item-annual-plan {
+		font-size: 0.6rem; /* stylelint-disable-line */
+		text-transform: uppercase;
+	}
+
+	.plan-features__item-info.is-annual-plan-feature {
+		&.is-available {
+			.plan-features__item-annual-plan {
+				color: var( --color-success );
+			}
+		}
+
+		&:not( .is-available ) {
+			.plan-features__item-annual-plan {
+				color: var( --color-error );
+			}
+			.plan-features__item-title {
+				text-decoration: line-through;
+				color: var( --color-neutral-30 );
+			}
+		}
 	}
 }

@@ -1,42 +1,29 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import store from 'store';
 import page from 'page';
-import { find, get, isEmpty, pick } from 'lodash';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import InviteAccept from 'my-sites/invites/invite-accept';
-import { setSection } from 'state/ui/actions';
-import { getRedirectAfterAccept } from 'my-sites/invites/utils';
-import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
-import _user from 'lib/user';
-import { getLanguage, getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import InviteAccept from 'calypso/my-sites/invites/invite-accept';
+import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
+import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/actions';
+import user from 'calypso/lib/user';
+import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 
 /**
  * Module variables
  */
-const user = _user();
 const debug = debugModule( 'calypso:invite-accept:controller' );
 
-function getLocale( parameters ) {
-	const paths = [ 'site_id', 'invitation_key', 'activation_key', 'auth_key', 'locale' ];
-	return find( pick( parameters, paths ), isLocale );
-}
-
-function isLocale( pathFragment ) {
-	return ! isEmpty( getLanguage( pathFragment ) );
-}
-
 export function redirectWithoutLocaleifLoggedIn( context, next ) {
-	if ( user.get() && getLocaleFromPath( context.path ) ) {
+	if ( user().get() && getLocaleFromPath( context.path ) ) {
 		return page.redirect( removeLocaleFromPath( context.path ) );
 	}
 
@@ -44,34 +31,36 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 }
 
 export function acceptInvite( context, next ) {
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) ) );
-
-	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
 	const acceptedInvite = store.get( 'invite_accepted' );
 	if ( acceptedInvite ) {
 		debug( 'invite_accepted is set in localStorage' );
-		if ( user.get().email === acceptedInvite.sentTo ) {
+		if ( user().get().email === acceptedInvite.sentTo ) {
 			debug( 'Setting email_verified in user object' );
-			user.set( { email_verified: true } );
+			user().set( { email_verified: true } );
 		}
 		store.remove( 'invite_accepted' );
-		const acceptInviteCallback = error => {
-			if ( error ) {
-				debug( 'Accept invite error: ' + JSON.stringify( error ) );
-				page( window.location.href );
-			} else if ( get( acceptedInvite, 'site.is_vip' ) ) {
-				debug( 'Accepted invite for VIP sites' );
-				window.location.href = getRedirectAfterAccept( acceptedInvite );
-			} else {
+
+		context.store
+			.dispatch( acceptInviteAction( acceptedInvite ) )
+			.then( () => {
 				const redirect = getRedirectAfterAccept( acceptedInvite );
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
-				page( redirect );
-			}
-		};
 
-		acceptInviteAction( acceptedInvite, acceptInviteCallback )( context.store.dispatch );
+				// Using page() for cross origin navigations would throw a `History.pushState` exception
+				// about creating state object with a cross-origin URL.
+				if ( new URL( redirect, window.location.href ).origin !== window.location.origin ) {
+					window.location = redirect;
+				} else {
+					page( redirect );
+				}
+			} )
+			.catch( ( error ) => {
+				debug( 'Accept invite error: ' + JSON.stringify( error ) );
+				page( window.location.href );
+			} );
 		return;
 	}
 
@@ -80,7 +69,7 @@ export function acceptInvite( context, next ) {
 		inviteKey: context.params.invitation_key,
 		activationKey: context.params.activation_key,
 		authKey: context.params.auth_key,
-		locale: getLocale( context.params ),
+		locale: context.params.locale,
 		path: context.path,
 	} );
 	next();

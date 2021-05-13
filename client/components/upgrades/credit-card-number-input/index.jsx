@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,13 +7,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getCreditCardType } from 'lib/checkout';
-import Input from 'my-sites/domains/components/form/input';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import { getCreditCardType } from 'calypso/lib/checkout';
+import Input from 'calypso/my-sites/domains/components/form/input';
 
 class CreditCardNumberInput extends React.Component {
 	render() {

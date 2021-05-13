@@ -1,36 +1,215 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .domains__step-section-wrapper {
 	margin: 0 auto;
 	max-width: 720px;
 }
 
 .is-section-signup .domains__step-content {
-	.search .search__icon-navigation {
+	margin-bottom: 50px;
+
+	&.domains__step-content-domain-step {
+		margin-bottom: 20px;
+	}
+
+	.search-component .search-component__icon-navigation {
 		background: none;
 	}
 
 	.register-domain-step__search-card {
-		border-radius: 3px;
+		border-radius: 2px;
 		@include elevation( 2dp );
 	}
 
-	.search.is-open.has-focus {
+	.search-component.is-open.has-focus {
 		border: none;
-		border-radius: 3px;
+		border-radius: 2px;
 		box-shadow: 0 0 0 3px var( --color-accent-light );
 	}
 
 	.search-filters__dropdown-filters {
-		border-radius: 0 3px 3px 0;
+		border-radius: 0 2px 2px 0;
 	}
 
 	.search-filters__dropdown-filters.search-filters__dropdown-filters--is-open {
 		box-shadow: 0 0 0 3px var( --color-accent-light );
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		.register-domain-step__search-card,
-		.search.is-open.has-focus {
+		.search-component.is-open.has-focus {
 			border-radius: 0;
+		}
+	}
+}
+
+/**
+ * Styles for design reskin
+ * The `is-white-signup` class is attached to the body when the user is assigned the `reskinned` group of the `reskinSignupFlow` a/b test
+ */
+body.is-section-signup.is-white-signup {
+	$light-white: #f3f4f5;
+
+	.domains__step-content {
+		display: flex;
+
+		.search-component.is-open {
+			border: 1px solid #a7aaad;
+			border-radius: 4px; /* stylelint-disable-line */
+			height: 48px;
+		}
+
+		.search-component.is-open.has-focus {
+			border-color: #646970;
+			background: var( --color-surface );
+			box-shadow: none;
+
+			.search-component__input {
+				background: var( --color-surface );
+			}
+		}
+
+		.domains__domain-side-content-container {
+			flex-direction: column;
+			width: 100vw;
+			margin-top: 40px;
+			display: none;
+
+			@include break-large {
+				width: 30vw;
+				margin-top: 0;
+				flex-direction: column;
+				display: flex;
+			}
+
+			@include break-wide {
+				width: 20vw;
+			}
+		}
+
+		.register-domain-step .domains__domain-side-content-container {
+			display: flex;
+
+			@include break-small {
+				flex-direction: row;
+
+				.domains__domain-side-content {
+					padding-top: 0;
+					border-bottom: none;
+				}
+			}
+
+			@include break-large {
+				display: none;
+			}
+
+
+		}
+
+		.domains__domain-side-content {
+			border-bottom: 1px solid;
+			border-bottom-color: var( --studio-gray-5 );
+			padding: 20px 0;
+			margin: 0 20px;
+
+			@include break-large {
+				margin: 0 0 0 80px;
+				padding: 40px 0;
+			}
+		}
+
+		.domains__domain-side-content:first-of-type {
+			padding-top: 0;
+		}
+
+		.domains__domain-side-content:last-of-type {
+			border-bottom: none;
+		}
+
+		.register-domain-step {
+			width: 100vw;
+
+			@include break-large {
+				width: 62vw;
+			}
+
+			@include break-wide {
+				width: 48vw;
+			}
+		}
+
+		.register-domain-step__search-card {
+			background: var( --color-surface );
+			box-shadow: none;
+			border-radius: 4px; /* stylelint-disable-line */
+			margin: 20px 20px 0;
+
+			@include break-large {
+				margin: 20px 0 0 20px;
+			}
+
+			@include break-wide {
+				margin: initial;
+			}
+		}
+		.search-component__input {
+			border-radius: 4px; /* stylelint-disable-line */
+
+			&::placeholder {
+				color: var( --color-neutral-50 );
+			}
+		}
+		.search-component.is-open .search-component__input-fade.ltr::before {
+			display: none;
+		}
+		.search-component__open-icon {
+			transform: scaleX( -1 );
+		}
+		.search-component__close-icon {
+			display: none;
+		}
+
+		.search-component__icon-search {
+			fill: #a7aaad;
+			margin: 8px 6px 8px 8px;
+		}
+
+		.search-component .search-component__icon-navigation {
+			padding: 0 7px;
+		}
+	}
+
+	.search-filters__dropdown-filters {
+		border: none;
+
+		&.search-filters__dropdown-filters--is-open {
+			box-shadow: none;
+		}
+
+		.button {
+			flex-direction: row;
+
+			&:hover,
+			&:focus {
+				box-shadow: none;
+			}
+
+			.search-filters__dropdown-filters-button-text {
+				color: var( --color-neutral-60 );
+				padding-left: 6px;
+			}
+		}
+	}
+
+	.search-filters__popover {
+		$accent-blue: #117ac9;
+		.button.is-primary {
+			background: $accent-blue;
+			border-color: $accent-blue;
+		}
+		.popover__arrow {
+			display: none;
 		}
 	}
 }

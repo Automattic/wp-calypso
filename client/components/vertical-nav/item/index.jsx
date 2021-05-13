@@ -1,26 +1,27 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import { CompactCard } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+const noop = () => {};
+
 class VerticalNavItem extends Component {
 	static propTypes = {
+		children: PropTypes.any,
+		className: PropTypes.string,
 		external: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		onClick: PropTypes.func,
@@ -33,34 +34,6 @@ class VerticalNavItem extends Component {
 		onClick: noop,
 	};
 
-	placeholder = () => {
-		return (
-			<CompactCard className="vertical-nav-item is-placeholder">
-				<span />
-				<span />
-			</CompactCard>
-		);
-	};
-
-	render() {
-		if ( this.props.isPlaceholder ) {
-			return this.placeholder();
-		}
-
-		return (
-			<a
-				href={ this.props.path }
-				onClick={ this.props.onClick }
-				target={ this.props.external ? '_blank' : null }
-			>
-				<CompactCard className="vertical-nav-item">
-					{ this.getIcon() }
-					<span>{ this.props.children }</span>
-				</CompactCard>
-			</a>
-		);
-	}
-
 	getIcon = () => {
 		if ( this.props.external ) {
 			return <Gridicon icon="external" />;
@@ -68,6 +41,42 @@ class VerticalNavItem extends Component {
 
 		return <Gridicon icon="chevron-right" />;
 	};
+
+	renderPlaceholder = () => {
+		const compactCardClassNames = classNames(
+			'vertical-nav-item is-placeholder',
+			this.props.className
+		);
+
+		return (
+			<CompactCard className={ compactCardClassNames }>
+				<span />
+				<span />
+			</CompactCard>
+		);
+	};
+
+	render() {
+		const { isPlaceholder, external, onClick, path, className, children } = this.props;
+
+		if ( isPlaceholder ) {
+			return this.renderPlaceholder();
+		}
+
+		const compactCardClassNames = classNames( 'vertical-nav-item', className );
+
+		const linkProps = external ? { target: '_blank', rel: 'noreferrer' } : {};
+
+		return (
+			<a href={ path } onClick={ onClick } { ...linkProps }>
+				<CompactCard className={ compactCardClassNames }>
+					{ this.getIcon() }
+
+					<span>{ children }</span>
+				</CompactCard>
+			</a>
+		);
+	}
 }
 
 export default VerticalNavItem;

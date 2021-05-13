@@ -1,41 +1,41 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, includes, invoke } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ExampleDomainBrowser from 'components/domains/example-domain-browser';
-import ExternalLink from 'components/external-link';
-import StepWrapper from 'signup/step-wrapper';
-import FormButton from 'components/forms/form-button';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import ScreenReaderText from 'components/screen-reader-text';
-import { setImportOriginSiteDetails, setNuxUrlInputValue } from 'state/importer-nux/actions';
-import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import { validateImportUrl } from 'lib/importer/url-validation';
-import { recordTracksEvent } from 'state/analytics/actions';
-import Notice from 'components/notice';
-import wpcom from 'lib/wp';
-import { saveSignupStep } from 'state/signup/progress/actions';
-import { suggestDomainFromImportUrl } from 'lib/importer/utils';
+import { Button, ScreenReaderText } from '@automattic/components';
+import ExampleDomainBrowser from 'calypso/components/domains/example-domain-browser';
+import ExternalLink from 'calypso/components/external-link';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import FormButton from 'calypso/components/forms/form-button';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import {
+	setImportOriginSiteDetails,
+	setNuxUrlInputValue,
+} from 'calypso/state/importer-nux/actions';
+import { getNuxUrlInputValue } from 'calypso/state/importer-nux/temp-selectors';
+import { validateImportUrl } from 'calypso/lib/importer/url-validation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import Notice from 'calypso/components/notice';
+import wpcom from 'calypso/lib/wp';
+import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import { suggestDomainFromImportUrl } from 'calypso/lib/importer/utils';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const IMPORT_HELP_LINK = 'https://en.support.wordpress.com/import/';
+const IMPORT_HELP_LINK = 'https://wordpress.com/support/import/';
 const EXAMPLE_CUSTOM_DOMAIN_URL = 'https://example.com';
 const EXAMPLE_WIX_URL = 'https://username.wixsite.com/my-site';
-const EXAMPLE_GOCENTRAL_URL = 'https://example.godaddysites.com';
 
 class ImportURLStepComponent extends Component {
 	state = {
@@ -50,23 +50,24 @@ class ImportURLStepComponent extends Component {
 		this.focusInput();
 	}
 
-	handleInputChange = event => {
+	handleInputChange = ( event ) => {
 		this.props.setNuxUrlInputValue( event.target.value );
 	};
 
-	handleInputBlur = event => {
+	handleInputBlur = ( event ) => {
 		if ( event.target.value ) {
 			this.validateUrl();
 		}
 	};
 
-	handleInputRef = el => ( this.inputRef = el );
+	handleInputRef = ( el ) => ( this.inputRef = el );
 
-	focusInput = () => invoke( this.inputRef, 'focus' );
+	focusInput = () => this.inputRef?.focus();
 
-	setUrlError = urlValidationMessage => this.setState( { urlValidationMessage }, this.focusInput );
+	setUrlError = ( urlValidationMessage ) =>
+		this.setState( { urlValidationMessage }, this.focusInput );
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 		const isValid = this.validateUrl();
 
@@ -95,9 +96,7 @@ class ImportURLStepComponent extends Component {
 				} ) => {
 					if ( ! includes( importerTypes, 'url' ) ) {
 						return this.setUrlError(
-							translate(
-								"That doesn't seem to be a Wix or GoDaddy site. Please check the URL and try again."
-							)
+							translate( "That doesn't seem to be a Wix site. Please check the URL and try again." )
 						);
 					}
 
@@ -135,7 +134,7 @@ class ImportURLStepComponent extends Component {
 					);
 					this.props.goToNextStep();
 				},
-				error => {
+				( error ) => {
 					switch ( error.code ) {
 						case 'rest_invalid_param':
 							return this.setUrlError(
@@ -253,14 +252,13 @@ class ImportURLStepComponent extends Component {
 						} ) }
 						<li className="import-url__example-url">{ EXAMPLE_CUSTOM_DOMAIN_URL }</li>
 						<li className="import-url__example-url">{ EXAMPLE_WIX_URL }</li>
-						<li className="import-url__example-url">{ EXAMPLE_GOCENTRAL_URL }</li>
 					</ul>
 					<ExampleDomainBrowser className="import-url__example-browser" />
 				</div>
 
 				<div className="import-url__escape">
 					{ translate(
-						"Don't have a Wix or GoDaddy GoCentral site? We also support importing from {{a}}other sources{{/a}}.",
+						"Don't have a Wix site? We also support importing from {{a}}other sources{{/a}}.",
 						{
 							components: {
 								a: (
@@ -287,7 +285,7 @@ class ImportURLStepComponent extends Component {
 
 		const headerText = translate( 'Where can we find your old site?' );
 		const subHeaderText = translate(
-			'Enter your Wix or GoDaddy GoCentral site URL, sometimes called a domain name or site address.'
+			"Enter your Wix site's URL, sometimes called a domain name or site address."
 		);
 
 		return (
@@ -306,17 +304,14 @@ class ImportURLStepComponent extends Component {
 	}
 }
 
-export default flow(
-	connect(
-		state => ( {
-			urlInputValue: getNuxUrlInputValue( state ),
-		} ),
-		{
-			recordTracksEvent,
-			saveSignupStep,
-			setImportOriginSiteDetails,
-			setNuxUrlInputValue,
-		}
-	),
-	localize
-)( ImportURLStepComponent );
+export default connect(
+	( state ) => ( {
+		urlInputValue: getNuxUrlInputValue( state ),
+	} ),
+	{
+		recordTracksEvent,
+		saveSignupStep,
+		setImportOriginSiteDetails,
+		setNuxUrlInputValue,
+	}
+)( localize( ImportURLStepComponent ) );

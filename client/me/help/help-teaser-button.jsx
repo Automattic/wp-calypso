@@ -1,27 +1,25 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
 /**
  * Style dependencies
  */
 import './help-teaser-button.scss';
 
-export default localize( ( { title, description, href, onClick } ) => {
+export default localize( ( { title, description, href, onClick, target } ) => {
 	return (
 		<div className="help__help-teaser-button">
-			<Card href={ href } onClick={ onClick }>
+			<Card href={ href } onClick={ onClick } target={ target }>
 				<Gridicon className="help__help-teaser-button-icon" icon="help" size={ 36 } />
 				<div className="help__help-teaser-text">
 					<span className="help__help-teaser-button-title">{ title }</span>

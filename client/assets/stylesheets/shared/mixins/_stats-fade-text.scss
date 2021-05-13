@@ -1,0 +1,18 @@
+
+// ==========================================================================
+// Stats fade text mixin
+//
+// TODO: rename or bundle with stats
+// ==========================================================================
+
+@mixin stats-fade-text( $from-color, $to-color ) {
+	background-image: linear-gradient( to right, $from-color 0%, $to-color 90% );
+	position: absolute;
+	z-index: 1;
+	left: -48px;
+	top: 0;
+	bottom: 0;
+	content: '';
+	display: block;
+	width: 48px;
+}

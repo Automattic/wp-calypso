@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,14 +9,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
-import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { bumpStat as bumpAnalyticsStat } from 'calypso/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
-import { getPost } from 'state/posts/selectors';
-import { toggleSharePanel } from 'state/ui/post-type-list/actions';
-import isPublicizeEnabled from 'state/selectors/is-publicize-enabled';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPost } from 'calypso/state/posts/selectors';
+import { toggleSharePanel } from 'calypso/state/ui/post-type-list/actions';
+import isPublicizeEnabled from 'calypso/state/selectors/is-publicize-enabled';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class PostActionsEllipsisMenuShare extends Component {
 	static propTypes = {
@@ -44,7 +42,13 @@ class PostActionsEllipsisMenuShare extends Component {
 	}
 
 	render() {
-		const { canShare, translate, status, type, isPublicizeEnabled: isPublicizeEnabledForSite } = this.props;
+		const {
+			canShare,
+			translate,
+			status,
+			type,
+			isPublicizeEnabled: isPublicizeEnabledForSite,
+		} = this.props;
 		if ( 'publish' !== status || ! isPublicizeEnabledForSite || 'post' !== type || ! canShare ) {
 			return null;
 		}

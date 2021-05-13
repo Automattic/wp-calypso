@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import { first, last } from 'lodash';
+import { last } from 'lodash';
 
 /**
  * Internal dependencies
@@ -50,7 +48,7 @@ describe( 'immediate-login/selectors', () => {
 		test( 'should return correct value from state [3]', () => {
 			expect(
 				wasManualRenewalImmediateLoginAttempted( {
-					immediateLogin: { reason: first( REASONS_FOR_MANUAL_RENEWAL ) },
+					immediateLogin: { reason: REASONS_FOR_MANUAL_RENEWAL[ 0 ] },
 				} )
 			).toEqual( true );
 		} );

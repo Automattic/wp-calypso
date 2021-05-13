@@ -18,7 +18,7 @@
 
 	&.is-placeholder {
 		.section-header__label span {
-			@include placeholder(23%);
+			@include placeholder( --color-neutral-10 );
 		}
 	}
 
@@ -31,10 +31,10 @@
 		display: inherit;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding-right: 16px;
 	}
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		&.is-action-bar-visible {
 			.plugin-list-header__actions-dropdown {
 				display: none;
@@ -47,10 +47,10 @@
 }
 
 .plugin-list-header__section-actions-close {
-	color: var( --color-neutral-600 );
+	color: var( --color-neutral-60 );
 	cursor: pointer;
 	display: flex;
-		align-items: center;
+	align-items: center;
 
 	&:focus {
 		border-color: var( --color-accent );
@@ -66,13 +66,13 @@
 	color: var( --color-error );
 
 	&.is-disabled {
-		color: var( --color-error-50 );
+		color: var( --color-error-5 );
 	}
 }
 
 .plugin-list-header__mode-buttons {
 	display: flex;
-		justify-content: flex-end;
+	justify-content: flex-end;
 	flex-grow: 1;
 	text-align: right;
 }

@@ -1,22 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import shallowEqual from 'react-pure-render/shallowEqual';
-
+import isShallowEqual from '@wordpress/is-shallow-equal';
 import { defer } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { requestSiteStats } from 'state/stats/lists/actions';
-import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
-import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
+import { requestSiteStats } from 'calypso/state/stats/lists/actions';
+import { isRequestingSiteStatsForQuery } from 'calypso/state/stats/lists/selectors';
+import { isAutoRefreshAllowedForQuery } from 'calypso/state/stats/lists/utils';
 import { DEFAULT_HEARTBEAT } from './constants';
 
 class QuerySiteStats extends Component {
@@ -28,7 +24,7 @@ class QuerySiteStats extends Component {
 		if (
 			this.props.siteId === prevProps.siteId &&
 			this.props.statType === prevProps.statType &&
-			shallowEqual( this.props.query, prevProps.query )
+			isShallowEqual( this.props.query, prevProps.query )
 		) {
 			return;
 		}

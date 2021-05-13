@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,18 +10,19 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import DocumentHead from 'calypso/components/data/document-head';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import SiteOverview from './stats-site-overview';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
 import DatePicker from './stats-date-picker';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import StatsNavigation from 'blocks/stats-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
 import titlecase from 'to-title-case';
-import Main from 'components/main';
-import JetpackColophon from 'components/jetpack-colophon';
-import { getCurrentUser } from 'state/current-user/selectors';
-import getVisibleSites from 'state/selectors/get-visible-sites';
+import Main from 'calypso/components/main';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 
 class StatsOverview extends Component {
 	static propTypes = {
@@ -36,7 +35,7 @@ class StatsOverview extends Component {
 	render() {
 		const { moment, path, period, sites, translate } = this.props;
 		const statsPath = path === '/stats' ? '/stats/day' : path;
-		const sitesSorted = sites.map( site => {
+		const sitesSorted = sites.map( ( site ) => {
 			let momentSiteZone = moment();
 			const gmtOffset = get( site, 'options.gmt_offset' );
 			if ( Number.isFinite( gmtOffset ) ) {
@@ -112,6 +111,7 @@ class StatsOverview extends Component {
 
 		// TODO: a separate StatsSectionTitle component should be created
 		items.push(
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<h3 key="header-placeholder" className="stats-section-title">
 				&nbsp;
 			</h3>
@@ -125,9 +125,9 @@ class StatsOverview extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		user: getCurrentUser( state ),
 		sites: getVisibleSites( state ),
 	};
-} )( localize( StatsOverview ) );
+} )( localize( withLocalizedMoment( StatsOverview ) ) );

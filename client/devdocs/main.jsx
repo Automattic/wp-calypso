@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,16 +5,15 @@
 import debug from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isFunction } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import DocService from './service';
-import DocumentHead from 'components/data/document-head';
-import Card from 'components/card';
-import Main from 'components/main';
-import SearchCard from 'components/search-card';
+import DocumentHead from 'calypso/components/data/document-head';
+import { Card } from '@automattic/components';
+import Main from 'calypso/components/main';
+import SearchCard from 'calypso/components/search-card';
 
 /**
  * Style dependencies
@@ -30,7 +27,7 @@ import './style.scss';
 const DEFAULT_FILES = [
 	'docs/guide/index.md',
 	'README.md',
-	'.github/CONTRIBUTING.md',
+	'docs/CONTRIBUTING.md',
 	'docs/coding-guidelines.md',
 	'docs/coding-guidelines/javascript.md',
 	'docs/coding-guidelines/css.md',
@@ -69,16 +66,13 @@ export default class Devdocs extends React.Component {
 			return;
 		}
 
-		DocService.list(
-			DEFAULT_FILES,
-			function( err, results ) {
-				if ( ! err ) {
-					this.setState( {
-						defaultResults: results,
-					} );
-				}
-			}.bind( this )
-		);
+		DocService.list( DEFAULT_FILES, ( err, results ) => {
+			if ( ! err ) {
+				this.setState( {
+					defaultResults: results,
+				} );
+			}
+		} );
 	};
 
 	componentDidMount() {
@@ -92,7 +86,7 @@ export default class Devdocs extends React.Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		if ( isFunction( this.props.onSearchChange ) && prevState.term !== this.state.term ) {
+		if ( typeof this.props.onSearchChange === 'function' && prevState.term !== this.state.term ) {
 			this.props.onSearchChange( this.state.term );
 		}
 	}
@@ -106,7 +100,7 @@ export default class Devdocs extends React.Component {
 		);
 	};
 
-	onSearchChange = term => {
+	onSearchChange = ( term ) => {
 		this.setState( {
 			inputValue: term,
 			term: term,
@@ -114,23 +108,20 @@ export default class Devdocs extends React.Component {
 		} );
 	};
 
-	onSearch = term => {
+	onSearch = ( term ) => {
 		if ( ! term ) {
 			return;
 		}
-		DocService.search(
-			term,
-			function( err, results ) {
-				if ( err ) {
-					log( 'search error: %o', err );
-				}
+		DocService.search( term, ( err, results ) => {
+			if ( err ) {
+				log( 'search error: %o', err );
+			}
 
-				this.setState( {
-					results: results,
-					searching: false,
-				} );
-			}.bind( this )
-		);
+			this.setState( {
+				results,
+				searching: false,
+			} );
+		} );
 	};
 
 	results = () => {
@@ -139,7 +130,7 @@ export default class Devdocs extends React.Component {
 		}
 
 		const searchResults = this.state.inputValue ? this.state.results : this.state.defaultResults;
-		return searchResults.map( function( result ) {
+		return searchResults.map( function ( result ) {
 			let url = '/devdocs/' + result.path;
 
 			if ( this.state.term ) {
@@ -162,13 +153,13 @@ export default class Devdocs extends React.Component {
 		}, this );
 	};
 
-	snippet = result => {
+	snippet = ( result ) => {
 		// split around <mark> tags to avoid setting unescaped inner HTML
 		const parts = result.snippet.split( /(<mark>.*?<\/mark>)/ );
 
 		return (
 			<div className="devdocs__result-snippet" key={ 'snippet' + result.path }>
-				{ parts.map( function( part, i ) {
+				{ parts.map( function ( part, i ) {
 					const markMatch = part.match( /<mark>(.*?)<\/mark>/ );
 					if ( markMatch ) {
 						return <mark key={ 'mark' + i }>{ markMatch[ 1 ] }</mark>;

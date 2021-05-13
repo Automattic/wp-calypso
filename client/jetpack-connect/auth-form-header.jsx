@@ -1,32 +1,31 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import urlModule from 'url';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import config from 'config';
-import FormattedHeader from 'components/formatted-header';
-import safeImageUrl from 'lib/safe-image-url';
-import Site from 'blocks/site';
-import versionCompare from 'lib/version-compare';
+import { CompactCard } from '@automattic/components';
+import config from '@automattic/calypso-config';
+import FormattedHeader from 'calypso/components/formatted-header';
+import safeImageUrl from 'calypso/lib/safe-image-url';
+import Site from 'calypso/blocks/site';
+import versionCompare from 'calypso/lib/version-compare';
 import { authQueryPropTypes } from './utils';
-import { decodeEntities } from 'lib/formatting';
-import { getAuthorizationData } from 'state/jetpack-connect/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 
 export class AuthFormHeader extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
 		isWoo: PropTypes.bool,
+		wooDnaConfig: PropTypes.object,
 
 		// Connected props
 		translate: PropTypes.func.isRequired,
@@ -48,11 +47,19 @@ export class AuthFormHeader extends Component {
 			return 'logged-in-success';
 		}
 
+		if ( authorize.isAuthorizing ) {
+			return 'auth-in-progress';
+		}
+
 		return 'logged-in';
 	}
 
 	getHeaderText() {
-		const { translate, partnerSlug, isWoo } = this.props;
+		const { translate, partnerSlug, isWoo, wooDnaConfig } = this.props;
+
+		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
+			return wooDnaConfig.getServiceName();
+		}
 
 		let host = '';
 		switch ( partnerSlug ) {
@@ -103,7 +110,7 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, isWoo } = this.props;
+		const { translate, isWoo, wooDnaConfig } = this.props;
 		const currentState = this.getState();
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isWoo ) {
@@ -114,6 +121,21 @@ export class AuthFormHeader extends Component {
 					);
 				default:
 					return translate( "Once connected we'll continue setting up your store" );
+			}
+		}
+
+		if ( wooDnaConfig && wooDnaConfig.isWooDnaFlow() ) {
+			switch ( currentState ) {
+				case 'logged-in-success':
+				case 'auth-in-progress':
+					return translate( 'Connecting your store' );
+				default:
+					if ( wooDnaConfig.getFlowName() === 'woodna:woocommerce-payments' ) {
+						return translate(
+							'Approve your connection. Your account will enable you to start using the features and benefits offered by WooCommerce Payments'
+						);
+					}
+					return translate( 'Approve your connection' );
 			}
 		}
 
@@ -140,8 +162,8 @@ export class AuthFormHeader extends Component {
 		const safeIconUrl = siteIcon ? safeImageUrl( siteIcon ) : false;
 		const icon = safeIconUrl ? { img: safeIconUrl } : false;
 		const url = decodeEntities( homeUrl );
-		const parsedUrl = urlModule.parse( url );
-		const path = parsedUrl.path === '/' ? '' : parsedUrl.path;
+		const parsedUrl = new URL( url );
+		const path = parsedUrl.pathname === '/' ? '' : parsedUrl.pathname;
 		const site = {
 			admin_url: decodeEntities( siteUrl + '/wp-admin' ),
 			domain: parsedUrl.host + path,
@@ -172,7 +194,7 @@ export class AuthFormHeader extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		authorize: getAuthorizationData( state ),
 		user: getCurrentUser( state ),

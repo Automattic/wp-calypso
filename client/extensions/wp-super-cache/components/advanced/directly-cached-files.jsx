@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,16 +8,15 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import SectionHeader from 'components/section-header';
+import { Button, Card } from '@automattic/components';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
 class DirectlyCachedFiles extends Component {
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		if ( 13 !== event.keyCode ) {
 			return;
 		}
@@ -119,7 +116,7 @@ class DirectlyCachedFiles extends Component {
 	}
 }
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_direct_pages', 'cache_path' ] );
 };
 

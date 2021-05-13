@@ -1,10 +1,8 @@
-/** @format */
 /**
  * External dependencies
  */
-import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
-import { identity, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,12 +10,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderSidebarTagsList from './list';
-import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
-import getReaderFollowedTags from 'state/selectors/get-reader-followed-tags';
+import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
+import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { requestFollowTag } from 'calypso/state/reader/tags/items/actions';
+import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 export class ReaderSidebarTags extends Component {
 	static propTypes = {
@@ -30,11 +30,11 @@ export class ReaderSidebarTags extends Component {
 		translate: PropTypes.func,
 	};
 
-	static defaultProps = {
-		translate: identity,
+	state = {
+		addTagCounter: 0,
 	};
 
-	followTag = tag => {
+	followTag = ( tag ) => {
 		if ( startsWith( tag, '#' ) ) {
 			tag = tag.substring( 1 );
 		}
@@ -42,61 +42,48 @@ export class ReaderSidebarTags extends Component {
 		this.props.followTag( decodeURIComponent( tag ) );
 		recordAction( 'followed_topic' );
 		recordGaEvent( 'Clicked Follow Topic', tag );
-		recordTrack( 'calypso_reader_reader_tag_followed', {
-			tag: tag,
-		} );
+		this.props.recordReaderTracksEvent( 'calypso_reader_reader_tag_followed', { tag } );
 		this.props.onFollowTag( tag );
-	};
 
-	unfollowTag = event => {
-		const node = closest( event.target, '[data-tag-slug]' );
-		event.preventDefault();
-		const slug = node && node.dataset && node.dataset.tagSlug;
-		if ( slug ) {
-			recordAction( 'unfollowed_topic' );
-			recordGaEvent( 'Clicked Unfollow Topic', slug );
-			recordTrack( 'calypso_reader_reader_tag_unfollowed', {
-				tag: slug,
-			} );
-			this.props.unfollowTag( decodeURIComponent( slug ) );
-		}
-	};
-
-	handleAddClick = () => {
-		recordAction( 'follow_topic_open_input' );
-		recordGaEvent( 'Clicked Add Topic to Open Input' );
-		recordTrack( 'calypso_reader_add_tag_clicked' );
+		// reset the FormTextInputWithAction field to empty by rerendering it with a new `key`
+		this.setState( ( state ) => ( { addTagCounter: state.addTagCounter + 1 } ) );
 	};
 
 	render() {
-		const { tags, isOpen, translate, onClick } = this.props;
-		const tagCount = tags ? tags.length : 0;
+		const { tags, isOpen, translate, onClick, path } = this.props;
+
 		return (
-			<div>
-				{ ! this.props.tags && <QueryReaderFollowedTags /> }
+			<li>
+				{ ! tags && <QueryReaderFollowedTags /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
-					count={ tagCount }
-					addLabel={ translate( 'New tag name' ) }
-					addPlaceholder={ translate( 'Add any tag' ) }
-					onAddSubmit={ this.followTag }
-					onAddClick={ this.handleAddClick }
 					onClick={ onClick }
+					materialIcon="local_offer"
+					disableFlyout={ true }
+					className={ path.startsWith( '/tag' ) && 'sidebar__menu--selected' }
 				>
-					<ReaderSidebarTagsList { ...this.props } onUnfollow={ this.unfollowTag } />
+					<ReaderSidebarTagsList { ...this.props } />
+
+					<FormTextInputWithAction
+						className="reader-sidebar-tags__text-input"
+						key={ this.state.addTagCounter }
+						action={ translate( 'Add' ) }
+						placeholder={ translate( 'Add a tag' ) }
+						onAction={ this.followTag }
+					/>
 				</ExpandableSidebarMenu>
-			</div>
+			</li>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		tags: getReaderFollowedTags( state ),
 	} ),
 	{
 		followTag: requestFollowTag,
-		unfollowTag: requestUnfollowTag,
+		recordReaderTracksEvent,
 	}
 )( localize( ReaderSidebarTags ) );

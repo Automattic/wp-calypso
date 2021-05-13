@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,18 +7,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, {
-	items as unwrappedItems,
-	requestingAll,
-	requesting,
-	deleting,
-	hasAllSitesList,
-} from '../reducer';
+import reducer, { items, requestingAll, requesting, hasAllSitesList } from '../reducer';
 import {
 	MEDIA_DELETE,
-	SITE_DELETE,
-	SITE_DELETE_FAILURE,
-	SITE_DELETE_SUCCESS,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
 	SITE_RECEIVE,
@@ -33,34 +22,29 @@ import {
 	SITES_REQUEST_SUCCESS,
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_UPDATE,
-	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import { withSchemaValidation } from 'state/utils';
-import { useSandbox } from 'test/helpers/use-sinon';
-
-const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
 	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'connection',
-			'deleting',
 			'domains',
 			'requestingAll',
 			'items',
 			'mediaStorage',
 			'plans',
+			'products',
 			'guidedTransfer',
 			'monitor',
-			'vouchers',
 			'requesting',
 			'sharingButtons',
 			'blogStickers',
@@ -557,7 +541,7 @@ describe( 'reducer', () => {
 					name: 'WordPress.com Example Blog',
 				},
 			} );
-			const state = items( original, { type: SERIALIZE } );
+			const state = serialize( items, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -569,7 +553,7 @@ describe( 'reducer', () => {
 					name: 'WordPress.com Example Blog',
 				},
 			} );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -578,7 +562,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				2916284: { bad: true },
 			} );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 
 			expect( state ).to.be.null;
 		} );
@@ -640,72 +624,6 @@ describe( 'reducer', () => {
 			} );
 			const state = requesting( original, {
 				type: SITE_REQUEST_FAILURE,
-				siteId: 77203074,
-			} );
-
-			expect( state ).to.eql( {
-				2916284: false,
-				77203074: false,
-			} );
-		} );
-	} );
-
-	describe( 'deleting()', () => {
-		test( 'should default to an empty object', () => {
-			const state = deleting( undefined, {} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		test( 'should track request for deleting a site started', () => {
-			const state = deleting( undefined, {
-				type: SITE_DELETE,
-				siteId: 2916284,
-			} );
-
-			expect( state ).to.eql( {
-				2916284: true,
-			} );
-		} );
-
-		test( 'should accumulate requests for deleting a site started', () => {
-			const original = deepFreeze( {
-				2916284: true,
-			} );
-			const state = deleting( original, {
-				type: SITE_DELETE,
-				siteId: 77203074,
-			} );
-
-			expect( state ).to.eql( {
-				2916284: true,
-				77203074: true,
-			} );
-		} );
-
-		test( 'should track request for deleting a site succeeded', () => {
-			const original = deepFreeze( {
-				2916284: true,
-				77203074: true,
-			} );
-			const state = deleting( original, {
-				type: SITE_DELETE_SUCCESS,
-				siteId: 2916284,
-			} );
-
-			expect( state ).to.eql( {
-				2916284: false,
-				77203074: true,
-			} );
-		} );
-
-		test( 'should track request for deleting a site failed', () => {
-			const original = deepFreeze( {
-				2916284: false,
-				77203074: true,
-			} );
-			const state = deleting( original, {
-				type: SITE_DELETE_FAILURE,
 				siteId: 77203074,
 			} );
 
@@ -795,7 +713,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 			expect( state ).to.eql( original );
 		} );
 
@@ -808,7 +726,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 			expect( state ).to.be.null;
 		} );
 	} );

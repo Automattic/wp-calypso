@@ -1,18 +1,19 @@
-@import './colors.scss';
+@import 'colors';
 
 $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__main:not( .is-woocommerce ),
-.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ):not( .is-jetpack-woocommerce-flow ) {
+.layout.is-section-jetpack-connect:not( .is-jetpack-mobile-flow ):not( .is-jetpack-woocommerce-flow ):not( .is-jetpack-woo-dna-flow ) {
 	@include jetpack-connect-colors();
 }
 
-.layout.is-jetpack-woocommerce-flow {
+.layout.is-jetpack-woocommerce-flow,
+.layout.is-jetpack-woo-dna-flow {
 	@include woocommerce-colors();
 }
 
-.is-section-jetpack-connect {
-
+.is-section-jetpack-connect,
+.is-section-purchase-product {
 	.layout__content {
 		position: static;
 		// Adjust the padding as we no longer
@@ -41,7 +42,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 }
 
-.jetpack-connect__main {
+.jetpack-connect__main.main {
 	max-width: 400px;
 
 	.formatted-header {
@@ -65,13 +66,13 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	text-align: initial;
 
 	input[type='radio']:focus {
-		box-shadow: 0 0 0 2px var( --color-jetpack-light );
+		box-shadow: 0 0 0 2px var( --studio-jetpack-green-20 );
 	}
 
 	.wpcom-colophon {
 		position: absolute;
-			bottom: 0;
-			left: 0;
+		bottom: 0;
+		left: 0;
 		width: 100%;
 		height: $colophon-height;
 	}
@@ -84,12 +85,12 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 
 		input[type='text'] {
-			border-color: var( --color-jetpack-dark );
+			border-color: var( --studio-jetpack-green-50 );
 		}
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			.button {
-				font-size: 16px;
+				font-size: $font-body;
 				padding-top: 12px;
 				padding-bottom: 14px;
 			}
@@ -100,9 +101,12 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .jetpack-connect__main-logo {
 	text-align: center;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-top: 20px;
 	}
+}
+.jetpack-connect__main-logo.add-bottom-margin {
+	margin-bottom: 35px;
 }
 
 .jetpack-connect__main.is-wide {
@@ -125,8 +129,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 }
 
-.jetpack-connect__site-url-entry-container {
+.jetpack-connect__site-url-entry-container,
+.purchase-product__site-url-entry-container {
+	margin: 0 auto;
 	max-width: 400px;
+
+	.formatted-header {
+		text-align: center;
+	}
 }
 
 .jetpack-connect__wp-admin-dialog.dialog.card {
@@ -139,8 +149,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 }
 
 .jetpack-connect__site-url-input-container,
+.purchase-product__site-url-input-container,
 .example-components__site-url-input-container {
 	.jetpack-connect__site-address-container,
+	.jetpack-connect__password-container,
 	.example-components__site-address-container {
 		position: relative;
 
@@ -149,7 +161,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			position: absolute;
 			top: 8px;
 			left: 8px;
-			color: var( --color-neutral-100 );
+			color: var( --color-neutral-10 );
 		}
 
 		.form-text-input {
@@ -161,6 +173,11 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			right: 8px;
 			top: 10px;
 		}
+
+		.sites-dropdown__wrapper {
+			width: 100%;
+			margin-top: 20px;
+		}
 	}
 
 	.button {
@@ -168,6 +185,41 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		margin-top: 16px;
 		word-wrap: nowrap;
 	}
+}
+
+.jetpack-connect__site-address {
+	padding: 0 24px 24px;
+	margin: 0 -24px;
+	border-bottom: 1px solid var( --color-border-subtle );
+	display: flex;
+}
+
+.jetpack-connect__globe {
+	width: 32px;
+	height: 28px;
+	margin-top: -4px;
+	background-color: var( --color-neutral );
+	margin-right: 8px;
+	padding-top: 4px;
+	text-align: center;
+
+	.gridicons-globe {
+		fill: var( --color-neutral-0 );
+	}
+}
+.jetpack-connect__wordpress-logo {
+	margin: 32px auto;
+	text-align: center;
+
+	.wordpress-logo {
+		margin: 0;
+		fill: var( --color-neutral );
+	}
+}
+
+.jetpack-connect__note {
+	font-size: $font-body-extra-small;
+	text-align: center;
 }
 
 .jetpack-connect__authorize-form {
@@ -178,7 +230,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__logged-in-form {
 	.jetpack-connect__logged-in-form-user-text {
-		margin-bottom: 0;
 		text-align: center;
 	}
 
@@ -206,7 +257,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	flex-direction: column;
 	flex-wrap: wrap;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: row;
 	}
 }
@@ -217,27 +268,22 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	justify-content: space-between;
 	min-width: 320px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		max-width: 360px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin: 0 8px 16px;
-	}
-
-	&.jetpack-connect__creds-form {
-		margin-left: 20px;
 	}
 }
 
 .jetpack-connect__install-step-title {
-	font-size: 21px;
-	font-weight: 300;
+	font-size: $font-title-small;
 }
 
 .jetpack-connect__install-step-text {
 	color: var( --color-neutral-light );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin: 8px 0 16px;
 	flex-grow: 2;
 }
@@ -247,13 +293,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	width: 100%;
 
 	&:hover > div {
-		box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
+		box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
 	}
 }
 
 .example-components__browser-chrome {
 	padding: 8px;
 	background-color: var( --color-neutral-0 );
+	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px 8px 0 0;
 }
 
@@ -265,7 +312,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .example-components__browser-chrome-dot {
 	display: inline-block;
 	margin-right: 8px;
-	background-color: var( --color-neutral-200 );
+	background-color: var( --color-neutral-20 );
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
@@ -275,13 +322,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	position: relative;
 	margin: 0;
 	line-height: 0;
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+		0 1px 2px var( --color-neutral-0 );
 }
 
 .example-components__install-plugin-header {
 	width: 100%;
 	padding-bottom: 12%;
-	background-color: var( --color-jetpack );
+	background-color: var( --studio-jetpack-green-30 );
 }
 
 .example-components__install-plugin-body {
@@ -296,32 +344,32 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	left: 0;
 	padding: 9px 16px;
 	text-align: right;
-	background-color: #f3f3f3;
+	background-color: var( --color-neutral-0 );
 }
 
 .example-components__install-plugin-footer-button {
 	display: inline-block;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	padding: 7px 14px;
 	line-height: 1;
-	color: var( --color-white );
-	background-color: #008ec2; // wp-admin button blue
-	border: 1px solid #006799;
-	border-radius: 3px;
+	color: var( --color-text-inverted );
+	background-color: var( --color-wp-admin-button-background ); // wp-admin button blue
+	border: 1px solid var( --color-wp-admin-button-border );
+	border-radius: 2px;
 }
 
 .example-components__activate-jetpack {
-	background-color: #f1f1f1;
+	background-color: var( --color-neutral-0 );
 }
 
 .example-components__connect-jetpack {
-	background-color: #f1f1f1;
+	background-color: var( --color-neutral-0 );
 }
 
 .example-components__content-wp-admin-masterbar {
 	width: 100%;
 	padding-bottom: 6%;
-	background-color: #23282d;
+	background-color: var( --color-neutral-90 );
 }
 
 .example-components__content-wp-admin-sidebar {
@@ -329,7 +377,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	width: 15%;
 	padding-bottom: 44%;
 	line-height: 0;
-	background-color: #23282d;
+	background-color: var( --color-neutral-90 );
 }
 
 .example-components__content-wp-admin-main {
@@ -341,25 +389,25 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .example-components__connect-jetpack {
 	.example-components__content-wp-admin-plugin-name {
-		font-size: 14px;
+		font-size: $font-body-small;
 		margin-bottom: 8px;
 	}
 
 	.example-components__content-wp-admin-connect-banner {
 		margin: 10px;
 		padding: 10px 10px 12px;
-		background-color: var( --color-white );
+		background-color: var( --color-surface );
 	}
 
 	.example-components__content-wp-admin-connect-button {
 		display: inline-block;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		padding: 7px 14px;
 		line-height: 1;
-		color: var( --color-white );
-		border-radius: 3px;
-		background-color: #00be28;
-		border: 2px #00a523 solid;
+		color: var( --color-text-inverted );
+		border-radius: 2px;
+		background-color: var( --studio-jetpack-green-30 );
+		border: 1px solid var( --studio-jetpack-green-40 );
 		border-width: 1px 1px 2px;
 	}
 }
@@ -369,36 +417,37 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		margin: 10px;
 		padding: 12px 10px 16px;
 		text-align: right;
-		background-color: #81a844;
+		background-color: var( --studio-jetpack-green-20 );
 		border-left: 0;
 	}
 
 	.example-components__content-wp-admin-connect-button {
 		display: inline-block;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		line-height: 1;
 		padding: 11px 10px;
-		color: var( --color-white );
-		background-color: #518d2a;
-		border-color: #518d2a;
-		border-radius: 4px;
-		box-shadow: 0 2px 3px 0 rgba( 0, 0, 0, 0.2 ), 0 4px 0 0 #3e6c20;
+		color: var( --color-text-inverted );
+		background-color: var( --studio-jetpack-green-40 );
+		border-color: var( --studio-jetpack-green-40 );
+		border-radius: 2px;
+		box-shadow: 0 2px 3px 0 rgba( var( --color-neutral-100 ), 0.2 ),
+			0 4px 0 0 var( --studio-jetpack-green-60 );
 	}
 }
 
 .example-components__content-wp-admin-plugin-card {
 	margin: 10px;
 	padding: 12px 10px;
-	background-color: var( --color-white );
+	background-color: var( --color-surface );
 }
 
 .example-components__content-wp-admin-plugin-name {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }
 
 .example-components__content-wp-admin-plugin-activate-link {
-	font-size: 12px;
-	color: #0073aa;
+	font-size: $font-body-extra-small;
+	color: var( --studio-blue-50 );
 }
 
 .example-components__content-wp-admin-activate-view {
@@ -406,21 +455,21 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 }
 
 .example-components__content-wp-admin-activate-link {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	display: inline-block;
 	padding: 7px 14px;
 	line-height: 1;
-	color: var( --color-white );
-	background-color: #008ec2; // wp-admin button blue
-	border: 1px solid #006799;
-	border-radius: 3px;
+	color: var( --color-text-inverted );
+	background-color: var( --color-wp-admin-button-background ); // wp-admin button blue
+	border: 1px solid var( --color-wp-admin-button-border );
+	border-radius: 2px;
 }
 
 .example-components__site-url-input-container
 	.example-components__site-address-container
 	.example-components__browser-chrome-url {
 	height: 40px;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral-light );
 }
 
@@ -435,17 +484,12 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__sso-log-in-as {
 	font-family: $sans;
-	font-size: 21px;
-	font-weight: 300;
+	font-size: $font-title-small;
 	text-align: center;
 }
 
-.jetpack-connect__sso-display-name {
-	font-family: $serif;
-}
-
 .jetpack-connect__sso-user-email {
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	font-weight: 400;
 	text-align: center;
 }
@@ -471,9 +515,18 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 }
 
 .jetpack-connect__tos-link {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	margin: 0 0 16px;
 	text-align: center;
+}
+
+.is-support-session {
+	.jetpack-connect__sso,
+	.jetpack-connect__authorize-form {
+		.jetpack-connect__tos-link {
+			display: none;
+		}
+	}
 }
 
 .jetpack-connect__tos-link-text {
@@ -487,7 +540,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	margin: 16px -16px -16px;
 	padding: 16px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin: 24px -24px -24px;
 		padding: 24px;
 	}
@@ -505,10 +558,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .jetpack-connect__logged-in-card.card {
 	max-width: 360px;
 	margin: 0 auto 16px;
-	border-radius: 3px;
-	box-shadow: 0 5px 5px -3px rgba( 0, 0, 0, 0.2 ),
-				0 8px 10px 1px rgba( 0, 0, 0, 0.14 ),
-				0 3px 14px 2px rgba( 0, 0, 0, 0.12 );
 }
 
 .jetpack-connect__sso-terms-dialog {
@@ -529,7 +578,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 }
 
 .jetpack-connect__sso-shared-detail-label {
-	font-weight: bold;
+	font-weight: 600;
 }
 
 .jetpack-connect__sso-shared-detail-value {
@@ -541,7 +590,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	padding-bottom: 8px;
 }
 
-@include breakpoint( '<480px' ) {
+@include breakpoint-deprecated( '<480px' ) {
 	.jetpack-connect__sso-shared-detail-label,
 	.jetpack-connect__sso-shared-detail-value {
 		display: block;
@@ -557,7 +606,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 }
 
 .jetpack-connect__sso-placeholder {
-	@include placeholder( 23% );
+	@include placeholder( --color-neutral-10 );
 	background-color: transparent;
 }
 
@@ -581,97 +630,13 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .jetpack-connect__happychat-button {
 	background: none;
 	border: none;
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-weight: normal;
 	padding: 16px 24px;
 	width: 100%;
 
 	&:hover {
 		color: var( --color-primary );
-	}
-}
-
-.jetpack-connect__plans {
-	.plan-features__header-figure {
-		height: 32px;
-		width: 32px;
-	}
-
-	.plan-features__header-timeframe {
-		height: 20px;
-		margin-top: 11px;
-	}
-
-	.plan-price.is-original {
-		align-self: center;
-		margin-top: 6px;
-	}
-
-	.plan-price.is-original .plan-price__currency-symbol,
-	.plan-price.is-original .plan-price__fraction {
-		font-size: 8px;
-	}
-
-	.plan-price.is-discounted {
-		margin-right: 0;
-	}
-
-	.plan-pill {
-		left: 50%;
-		transform: translateX( -50% );
-	}
-
-	.formatted-header,
-	.formatted-header.is-without-subhead {
-		margin-bottom: 8px;
-	}
-
-	.jetpack-connect__happychat-button {
-		text-align: center;
-	}
-
-	.plans-skip-button {
-		margin-bottom: 32px;
-	}
-}
-
-.jetpack-connect__plans.placeholder {
-	.placeholder-text,
-	.jetpack-connect-plans-placeholder__plans-content {
-		@include placeholder();
-	}
-	.jetpack-connect-plans-placeholder__plans-content {
-		min-height: 400px;
-	}
-
-	.plan-features--signup .plan-price.is-original::before {
-		border-top: 0;
-	}
-
-	.plan-features__actions-buttons {
-		margin-top: 16px;
-	}
-
-	.plan-features__item {
-		.placeholder-text {
-			margin: 0 auto;
-		}
-	}
-}
-
-.jetpack-connect__hide-plan-icons {
-	.jetpack-connect__plans {
-		.plans-wrapper {
-			padding-bottom: 0;
-		}
-
-		.plan-features__graphic {
-			display: none;
-		}
-
-		.plan-features__pricing {
-			padding-top: 16px;
-		}
 	}
 }
 
@@ -684,8 +649,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 
 	&.is-primary {
-		background-color: var( --color-jetpack );
-		border-color: var( --color-jetpack-dark );
+		background-color: var( --studio-jetpack-green-30 );
+		border-color: var( --studio-jetpack-green-50 );
 	}
 }
 
@@ -716,7 +681,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		z-index: z-index( 'root', '.jetpack-connect__password-form .gridicon' );
 		left: 8px;
 		top: 7px;
-		fill: var( --color-neutral-100 );
+		fill: var( --color-neutral-10 );
 	}
 }
 
@@ -727,8 +692,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 }
 
 .jetpack-connect__creds-form-spinner {
-	margin-top: -10px;
-	margin-bottom: -10px;
+	margin-top: 0;
+	margin-bottom: -20px;
 }
 
 .jetpack-connect__navigation {
@@ -737,7 +702,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .layout.has-chat.is-section-jetpack-connect:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader )
 	.layout__content {
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		padding-left: 32px;
 		padding-right: 319px;
 	}
@@ -768,28 +733,12 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 /**
  * Onboarding styles
  **/
-.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ) {
-	background-color: var( --color-jetpack-onboarding-background );
-
+.layout.is-section-jetpack-connect:not( .is-jetpack-mobile-flow ),
+.layout.is-section-purchase-product {
 	&.layout {
 		position: relative;
 		min-height: calc( 100% - #{$colophon-height} );
 		padding-bottom: $colophon-height;
-	}
-
-	.formatted-header {
-		color: var( --color-jetpack-onboarding-text );
-	}
-
-	.jetpack-logo__text,
-	.wpcom-colophon path {
-		fill: var( --color-jetpack-onboarding-text );
-	}
-
-	.formatted-header__subtitle,
-	.payment-methods,
-	.jetpack-connect__help-button {
-		color: var( --color-primary-100 );
 	}
 
 	.site__title::after,
@@ -802,7 +751,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 
 	.jetpack-connect__plan-info {
-
 		.formatted-header {
 			color: var( --color-text );
 		}
@@ -812,7 +760,13 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 	}
 
+	.logged-out-form {
+		border-radius: 0;
+		box-shadow: 0 0 0 1px var( --color-border-subtle );
+	}
+
 	.jetpack-connect__site-address-container input:focus,
+	.jetpack-connect__password-container input:focus,
 	.logged-out-form input:focus {
 		border-color: var( --color-accent );
 		box-shadow: 0 0 0 2px var( --color-accent-light );
@@ -820,31 +774,13 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.jetpack-connect__tos-link a,
 	.signup-form__terms-of-service-link a,
-	.form-input-validation a {
+	.form-input-validation a,
+	.faq a {
 		color: var( --color-accent-dark );
 
 		&:hover,
 		&:focus {
 			color: var( --color-accent );
-		}
-	}
-
-	.logged-out-form__links a,
-	.logged-out-form__link-item,
-	.jetpack-connect__back-button,
-	.jetpack-connect__skip-button .button {
-		color: var( --color-neutral-200 );
-		border-bottom-color: var( --color-neutral-700 );
-
-		&:hover,
-		&:focus {
-			color: var( --color-primary-200 );
-		}
-	}
-
-	.jetpack-connect__skip-button .button {
-		&:focus {
-			box-shadow: 0 0 0 transparent;
 		}
 	}
 
@@ -866,11 +802,61 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 	}
 
+	.signup-form__social p {
+		color: var( --color-neutral-60 );
+	}
+
+	.signup-form__social,
+	.login__form-social {
+		padding-bottom: 0;
+		margin-top: 16px;
+		p {
+			font-size: $font-body-extra-small;
+		}
+
+		.signup-form__social-buttons-tos {
+			color: var( --studio-gray-60 );
+			margin-bottom: 16px;
+			a {
+				text-decoration: underline;
+				color: var( --studio-gray-60 );
+			}
+		}
+
+		.social-buttons__button {
+			border: 1px solid var( --color-accent-dark );
+			color: var( --color-accent-dark );
+			box-shadow: none;
+			max-width: 310px;
+			height: 48px;
+			margin-left: auto;
+			margin-right: auto;
+
+			&.disabled {
+				border-color: var( --studio-gray-30 );
+				color: var( --studio-gray-30 );
+			}
+		}
+
+		.card {
+			padding: 0;
+			box-shadow: none;
+		}
+	}
+
+	.logged-out-form__footer,
+	.login__form-footer {
+		.button.is-primary {
+			box-shadow: none;
+		}
+	}
+
 	.payment-logo.is-paypal {
 		width: 64px;
-		background-color: var( --color-white );
+		background-color: var( --color-surface );
 		background-size: 84%;
 		background-position: 50% 45%;
+		/* stylelint-disable-next-line scales/radii */
 		border-radius: 1px;
 	}
 
@@ -883,8 +869,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.jetpack-connect__main-error .empty-content {
 		padding-bottom: 24px;
-		background-color: var( --color-white );
-		border-radius: 3px;
 	}
 
 	.site-topic__content .form-fieldset {
@@ -892,12 +876,13 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 
 	/** WooCommerce Onboarding Styles **/
-	&.is-jetpack-woocommerce-flow {
+	&.is-jetpack-woocommerce-flow,
+	&.is-jetpack-woo-dna-flow {
 		background-color: var( --color-woocommerce-onboarding-background );
 
 		.jetpack-connect__main-logo {
 			text-align: center;
-			border-bottom: 1px solid var( --color-gray-50 );
+			border-bottom: 1px solid var( --color-neutral-50 );
 			position: absolute;
 			width: 100%;
 			left: 0;
@@ -906,6 +891,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 			svg > g {
 				transform: translateX( 25% );
+			}
+
+			@include breakpoint-deprecated( '<660px' ) {
+				margin-top: 0;
 			}
 		}
 
@@ -918,7 +907,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			display: block;
 			height: 56px;
 			border-bottom: 1px solid var( --color-woocommerce-header-border );
-			background: var( --color-white );
+			background: var( --color-surface );
 
 			svg {
 				margin-top: 15px;
@@ -926,8 +915,9 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 
 		.formatted-header__subtitle {
+			color: var( --color-primary-10 );
 			margin-top: 1em;
-			font-size: 16px;
+			font-size: $font-body;
 			line-height: 24px;
 			font-weight: 400;
 		}
@@ -937,19 +927,15 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 
 		.jetpack-logo__icon-circle {
-			fill: var( --color-gray-800 );
+			fill: var( --color-neutral-80 );
 		}
 
 		.jetpack-logo__icon-triangle {
-			fill: var( --color-gray-0 );
-		}
-
-		.signup-form__social p {
-			color: var( --color-gray-600 );
+			fill: var( --color-neutral-0 );
 		}
 
 		.formatted-header__title {
-			color: var( --color-gray-800 );
+			color: var( --color-neutral-80 );
 		}
 
 		.signup-form__submit {
@@ -958,11 +944,11 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 
 		.jetpack-header__partner-logo-plus svg {
-			stroke: var( --color-gray-800 );
+			stroke: var( --color-neutral-80 );
 		}
 
 		.jetpack-header__partner-logo-plus .gridicon {
-			color: var( --color-gray-800 );
+			color: var( --color-neutral-80 );
 		}
 
 		.jetpack-connect__main,
@@ -985,31 +971,39 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		.signup-form__terms-of-service-link,
 		.signup-form__terms-of-service-link a {
 			text-align: left;
-			color: var( --color-gray-600 );
+			color: var( --color-neutral-60 );
+		}
+
+		.signup-form__terms-of-service-link a {
+			text-decoration: underline;
+		}
+
+		.logged-out-form__links {
+			max-width: 400px;
 		}
 
 		.logged-out-form__link-item {
 			text-align: center;
 			text-decoration: underline;
-			color: var( --color-gray-600 );
-			font-size: 14px;
+			color: var( --color-neutral-60 );
+			font-size: $font-body-small;
 		}
 
-		.signup-form__social {
-			padding-bottom: 0;
-			margin-top: 16px;
-			p {
-				font-size: 12px;
-			}
-
+		.signup-form__social,
+		.login__form-social {
 			.social-buttons__button {
-				border: 1px solid $muriel-woo-purple-500;
-				color: $muriel-woo-purple-500;
-				box-shadow: none;
+				border-color: var( --studio-pink-50 );
+				color: var( --studio-pink-50 );
+
+				&.disabled {
+					border-color: var( --studio-gray-30 );
+					color: var( --studio-gray-30 );
+				}
 			}
 		}
 
-		.logged-out-form__footer {
+		.logged-out-form__footer,
+		.login__form-footer {
 			text-align: center;
 
 			.button {
@@ -1018,6 +1012,20 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 				margin-left: auto;
 				height: 48px;
 			}
+		}
+
+		.login__form-footer {
+			margin-top: 24px;
+		}
+
+		.login__form {
+			padding-top: 14px;
+			border-radius: 2px;
+			@include elevation( 2dp );
+		}
+
+		.login__form-change-username {
+			display: none;
 		}
 
 		.jetpack-connect__logged-in-card button {
@@ -1034,14 +1042,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 			.jetpack-connect__tos-link,
 			.jetpack-connect__tos-link a {
-				text-align: left;
-				color: var( --color-gray-600 );
-				font-size: 12px;
+				color: var( --color-neutral-60 );
+				font-size: $font-body-extra-small;
 			}
 		}
 
 		.signup-form__woocommerce .card {
 			padding-bottom: 0;
+			padding-top: 8px;
 		}
 
 		.form-input-validation {
@@ -1051,33 +1059,133 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		.woocommerce-muriel-text-control,
 		.muriel-input-text {
-			border-color: var( --color-gray-200 );
+			border-color: var( --color-neutral-20 );
 
 			.components-base-control__label,
 			.text-control__label {
-				color: var( --color-gray-500 );
+				color: var( --color-neutral-50 );
 			}
 
 			&.active {
-				box-shadow: 0 0 0 2px var( --color-hot-purple-600 );
+				box-shadow: 0 0 0 2px var( --studio-woocommerce-purple-60 );
 				border-color: transparent;
 			}
 		}
-	}
-}
 
-body.is-section-jetpack-connect .layout.is-jetpack-woocommerce-flow {
-	.wpcom-site__logo {
+		.jetpack-connect__magic-link-card {
+			text-align: center;
+			border-radius: 2px;
+			@include elevation( 1dp );
+			padding: 32px;
+
+			p {
+				font-size: $font-body;
+				line-height: 24px;
+				color: var( --color-neutral-60 );
+				margin-bottom: 0;
+			}
+
+			img {
+				margin: 24px;
+			}
+
+			.jetpack-connect__magic-link-resend {
+				font-size: $font-body-small;
+
+				button {
+					cursor: pointer;
+					text-decoration: underline;
+					color: var( --color-neutral-60 );
+				}
+			}
+		}
+	}
+
+	&.is-jetpack-woo-dna-flow .login__form-header-wrapper {
 		display: none;
 	}
 }
 
-.jetpack-connect__skip-button {
-	text-align: center;
-	margin: 17px 0;
-
-	.button .gridicon {
-		padding-left: 4px;
-		margin-right: -5px;
+body.is-section-jetpack-connect .layout {
+	&.is-jetpack-woocommerce-flow,
+	&.is-jetpack-woo-dna-flow {
+		.wpcom-site__logo {
+			display: none;
+		}
 	}
+}
+
+// ProductSelector and ProductCard overrides
+.is-section-jetpack-connect .product-selector {
+	max-width: 984px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 16px;
+	padding-right: 16px;
+}
+
+.is-section-jetpack-connect .product-card {
+	.product-card__header {
+		padding: 12px 0;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			padding: 16px 0;
+		}
+	}
+
+	.product-card__header-primary {
+		@include breakpoint-deprecated( '<660px' ) {
+			justify-content: center;
+		}
+	}
+
+	.product-card__title,
+	.product-card__title:not( .is-purchased ) {
+		font-size: $font-title-small;
+		color: var( --color-neutral-70 );
+	}
+
+	.plan-price,
+	.plan-price *,
+	.product-card__billing-timeframe,
+	.product-card__option .product-card__price-group .product-card__billing-timeframe {
+		color: var( --color-neutral-70 );
+		font-style: normal;
+		vertical-align: baseline;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			font-weight: 600;
+		}
+	}
+
+	.plan-price.is-original,
+	.plan-price.is-original * {
+		color: var( --color-neutral-light );
+	}
+
+	.product-card__billing-timeframe {
+		font-size: $font-body-small;
+	}
+
+	.product-card__header {
+		.plan-price,
+		.plan-price * {
+			font-size: $font-body;
+			line-height: 21px;
+		}
+	}
+
+	.product-card__option-name {
+		text-align: left;
+	}
+}
+
+.layout.is-section-jetpack-connect .upsell .upsell__header .formatted-header {
+	color: inherit;
+}
+
+// The new Plans grid uses as primary color a darker version Jetpack's green.
+.is-section-jetpack-connect .selector__main {
+	--color-accent: var( --studio-jetpack-green-40 );
+	--color-primary: var( --studio-jetpack-green-40 );
 }

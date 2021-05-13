@@ -1,5 +1,3 @@
-/** @format */
-
 // Check for NODE_CONFIG_ENV and warn if not set
 const nodeEnv = process.env.NODE_CONFIG_ENV;
 

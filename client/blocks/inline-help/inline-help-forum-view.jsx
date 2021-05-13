@@ -1,22 +1,23 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
-import { preventWidows } from 'lib/formatting';
-import analytics from 'lib/analytics';
-import { localizeUrl } from 'lib/i18n-utils';
+import { Button } from '@automattic/components';
+import { preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
-const trackForumOpen = () => analytics.tracks.recordEvent( 'calypso_inlinehelp_forums_open' );
+const trackForumOpen = () =>
+	recordTracksEvent( 'calypso_inlinehelp_forums_open', {
+		location: 'inline-help-popover',
+	} );
 
-const InlineHelpForumView = ( { translate = identity } ) => (
+const InlineHelpForumView = ( { translate } ) => (
 	<div className="inline-help__forum-view">
 		<h2 className="inline-help__view-heading">
 			{ preventWidows( translate( 'Ask the Community for Help' ) ) }

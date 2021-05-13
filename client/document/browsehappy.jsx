@@ -1,50 +1,20 @@
 /**
  * External dependencies
- *
- * @format
  */
-
 import React from 'react';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Head from '../components/head';
-import EmptyContent from 'components/empty-content';
-import getStylesheet from './utils/stylesheet';
+import Head from 'calypso/components/head';
+import EmptyContent from 'calypso/components/empty-content';
+import { chunkCssLinks } from './utils';
 
-function Browsehappy( {
-	urls,
-	faviconURL,
-	isRTL,
-	isDebug,
-	env,
-	lang,
-	isFluidWidth,
-	dashboardUrl,
-} ) {
+function Browsehappy( { entrypoint, dashboardUrl } ) {
 	return (
-		<html
-			lang={ lang }
-			dir={ isRTL ? 'rtl' : 'ltr' }
-			className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
-		>
-			<Head
-				title="Unsupported Browser — WordPress.com"
-				faviconURL={ faviconURL }
-				cdn={ '//s1.wp.com' }
-			>
-				<link
-					rel="stylesheet"
-					id="main-css"
-					href={
-						urls[ getStylesheet( { rtl: !! isRTL, debug: isDebug || env === 'development' } ) ]
-					}
-					type="text/css"
-				/>
-			</Head>
-			<body className={ classNames( { rlt: isRTL } ) }>
+		<html lang="en">
+			<Head title="Unsupported Browser — WordPress.com">{ chunkCssLinks( entrypoint ) }</Head>
+			<body>
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace*/ }
 				<div id="wpcom" className="wpcom-site">
 					<div className="layout has-no-sidebar">

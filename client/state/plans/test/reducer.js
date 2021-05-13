@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,21 +14,19 @@ import {
 	requestPlans,
 } from '../actions';
 import plansReducer, {
-	items,
+	items as itemsReducer,
 	requesting as requestReducer,
 	error as errorReducer,
 } from '../reducer';
 
 import { WPCOM_RESPONSE } from './fixture';
-import { withSchemaValidation } from 'state/utils';
-import { useSandbox } from 'test/helpers/use-sinon';
-
-const itemsReducer = withSchemaValidation( items.schema, items );
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { serialize, deserialize } from 'calypso/state/utils';
 
 describe( 'reducer', () => {
 	let sandbox;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		// mute off console warn
 		sandbox.stub( console, 'warn' );
@@ -74,13 +70,12 @@ describe( 'reducer', () => {
 		test( 'should persist state', () => {
 			const plans = WPCOM_RESPONSE;
 			const initialState = plans;
-			const action = { type: 'SERIALIZE' };
 			const expectedState = plans;
 
 			deepFreeze( initialState );
 			deepFreeze( expectedState );
 
-			const newState = itemsReducer( initialState, action );
+			const newState = serialize( itemsReducer, initialState );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -88,12 +83,11 @@ describe( 'reducer', () => {
 		test( 'should load persisted state', () => {
 			const plans = WPCOM_RESPONSE;
 			const initialState = plans;
-			const action = { type: 'DESERIALIZE' };
 			const expectedState = plans;
 			deepFreeze( initialState );
 			deepFreeze( expectedState );
 
-			const newState = itemsReducer( initialState, action );
+			const newState = deserialize( itemsReducer, initialState );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -102,12 +96,11 @@ describe( 'reducer', () => {
 			// product_id should be `Number`
 			const plans = [ { product_id: '234234' } ];
 			const initialState = plans;
-			const action = { type: 'DESERIALIZE' };
 			deepFreeze( initialState );
 			const expectedState = [];
 			deepFreeze( expectedState );
 
-			const newState = itemsReducer( initialState, action );
+			const newState = deserialize( itemsReducer, initialState );
 
 			expect( newState ).to.eql( expectedState );
 		} );

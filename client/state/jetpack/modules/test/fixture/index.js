@@ -1,4 +1,3 @@
-/** @format */
 export const modules = {
 	123456: {
 		'module-a': {

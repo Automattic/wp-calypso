@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -27,8 +25,8 @@ import {
 	PLUGIN_SETUP_CONFIGURE,
 	PLUGIN_SETUP_FINISH,
 	PLUGIN_SETUP_ERROR,
-	SERIALIZE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+import { serialize } from 'calypso/state/utils';
 
 describe( 'premium reducer', () => {
 	describe( 'isRequesting', () => {
@@ -206,7 +204,7 @@ describe( 'premium reducer', () => {
 				],
 			} );
 
-			const nextState = plugins( originalState, { type: SERIALIZE } );
+			const nextState = serialize( plugins, originalState );
 			expect( nextState ).to.deep.eql( {
 				'one.site': [
 					{
@@ -220,7 +218,7 @@ describe( 'premium reducer', () => {
 			} );
 		} );
 
-		test( 'should serialize just the error for errored plugins', () => {
+		test( 'should serialize selected error fields for errored plugins', () => {
 			const originalState = deepFreeze( {
 				'error-site': [
 					{
@@ -228,19 +226,18 @@ describe( 'premium reducer', () => {
 						name: 'VaultPress',
 						key: 'vp-api-key',
 						status: 'done',
-						error: { name: 'ErrorCode', message: 'Something went wrong.' },
+						error: new Error( 'Something went wrong.' ),
 					},
 				],
 			} );
-			const nextState = plugins( originalState, { type: SERIALIZE } );
+			const nextState = serialize( plugins, originalState );
 			expect( nextState ).eql( {
 				'error-site': [
 					{
 						slug: 'vaultpress',
 						name: 'VaultPress',
-						key: 'vp-api-key',
 						status: 'done',
-						error: '[object Object]',
+						error: { name: 'Error', message: 'Something went wrong.' },
 					},
 				],
 			} );

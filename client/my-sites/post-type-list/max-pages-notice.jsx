@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -26,11 +24,11 @@ class PostTypeListMaxPagesNotice extends Component {
 		totalPosts: PropTypes.number,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_post_type_list_max_pages_view' );
 	}
 
-	focusSiteSelector = event => {
+	focusSiteSelector = ( event ) => {
 		event.preventDefault();
 
 		this.props.setLayoutFocus( 'sites' );
@@ -69,7 +67,6 @@ class PostTypeListMaxPagesNotice extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent, setLayoutFocus }
-)( localize( PostTypeListMaxPagesNotice ) );
+export default connect( null, { recordTracksEvent, setLayoutFocus } )(
+	localize( PostTypeListMaxPagesNotice )
+);

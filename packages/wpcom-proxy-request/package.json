@@ -1,0 +1,53 @@
+{
+	"name": "wpcom-proxy-request",
+	"version": "6.0.0",
+	"description": "Proxied cookie-authenticated REST API requests to WordPress.com",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
+	"sideEffects": false,
+	"keywords": [
+		"browser",
+		"wpcom",
+		"wordpress",
+		"rest",
+		"api",
+		"cookie"
+	],
+	"author": "Automattic, Inc.",
+	"license": "MIT",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/wpcom-proxy-request"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"types",
+		"History.md",
+		"README.md"
+	],
+	"types": "types",
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
+	},
+	"dependencies": {
+		"@babel/runtime": "^7.14.0",
+		"debug": "^4.1.1",
+		"progress-event": "^1.0.0",
+		"uuid": "^8.3.2",
+		"wp-error": "^1.3.0"
+	},
+	"devDependencies": {
+		"chai": "^4.2.0"
+	}
+}

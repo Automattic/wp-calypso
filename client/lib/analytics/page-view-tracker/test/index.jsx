@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -15,12 +14,12 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { PageViewTracker } from '../';
-import { useFakeTimers } from 'test/helpers/use-sinon';
+import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 
 describe( 'PageViewTracker', () => {
 	let clock;
 
-	useFakeTimers( fakeClock => {
+	useFakeTimers( ( fakeClock ) => {
 		clock = fakeClock;
 	} );
 

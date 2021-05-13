@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,38 +5,49 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty, noop, flowRight, has, get, trim, sortBy, reverse } from 'lodash';
-import url from 'url';
+import { includes, isEmpty, flowRight, has, trim, sortBy } from 'lodash';
+import url from 'url'; // eslint-disable-line no-restricted-imports
 import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import wpcom from 'lib/wp';
-import { validateImportUrl } from 'lib/importer/url-validation';
-import TextInput from 'components/forms/form-text-input';
-import FormSelect from 'components/forms/form-select';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { setSelectedEditor } from 'state/selected-editor/actions';
+import config from '@automattic/calypso-config';
+import wpcom from 'calypso/lib/wp';
+import { validateImportUrl } from 'calypso/lib/importer/url-validation';
+import TextInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setSelectedEditor } from 'calypso/state/selected-editor/actions';
 import {
 	importSite,
 	validateSiteIsImportable,
 	resetSiteImporterImport,
 	setValidationError,
-} from 'state/imports/site-importer/actions';
-import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
-import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
-import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
+	clearSiteImporterImport,
+} from 'calypso/state/imports/site-importer/actions';
+import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
+import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
+import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import ErrorPane from '../error-pane';
 import SiteImporterSitePreview from './site-importer-site-preview';
-import { appStates } from 'state/imports/constants';
-import { cancelImport } from 'lib/importer/actions';
+import { appStates } from 'calypso/state/imports/constants';
+import { cancelImport, setUploadStartState } from 'calypso/state/imports/actions';
+import {
+	getError,
+	getImportData,
+	getImportStage,
+	getValidatedSiteUrl,
+	isLoading as isLoadingSelector,
+} from 'calypso/state/imports/site-importer/selectors';
 
 /**
  * Style dependencies
  */
 import './site-importer-input-pane.scss';
+
+const noop = () => {};
 
 class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';
@@ -52,6 +61,7 @@ class SiteImporterInputPane extends React.Component {
 		onStartImport: PropTypes.func,
 		disabled: PropTypes.bool,
 		site: PropTypes.object,
+		fromSite: PropTypes.string,
 	};
 
 	static defaultProps = { description: null, onStartImport: noop };
@@ -63,6 +73,12 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	componentDidMount() {
+		const { importStage } = this.props;
+		if ( 'importable' === importStage ) {
+			// Clear any leftover state from previous imports
+			this.props.clearSiteImporterImport();
+		}
+
 		this.validateSite();
 
 		if ( config.isEnabled( 'manage/import/site-importer-endpoints' ) ) {
@@ -77,7 +93,7 @@ class SiteImporterInputPane extends React.Component {
 		} = this.props;
 
 		if ( ! includes( [ appStates.UPLOAD_SUCCESS ], importerState ) ) {
-			cancelImport( siteId, importerId );
+			this.props.cancelImport( siteId, importerId );
 			this.resetImport();
 		}
 	}
@@ -88,7 +104,7 @@ class SiteImporterInputPane extends React.Component {
 				path: `/sites/${ this.props.site.ID }/site-importer/list-endpoints`,
 				apiNamespace: 'wpcom/v2',
 			} )
-			.then( resp => {
+			.then( ( resp ) => {
 				const twoWeeksAgo = moment().subtract( 2, 'weeks' );
 				const endpoints = resp.reduce( ( validEndpoints, endpoint ) => {
 					const lastModified = moment( new Date( endpoint.lastModified ) );
@@ -107,26 +123,23 @@ class SiteImporterInputPane extends React.Component {
 					];
 				}, [] );
 				this.setState( {
-					availableEndpoints: reverse( sortBy( endpoints, 'lastModifiedTimestamp' ) ).slice(
-						0,
-						20
-					),
+					availableEndpoints: sortBy( endpoints, 'lastModifiedTimestamp' ).reverse().slice( 0, 20 ),
 				} );
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				return err;
 			} );
 	};
 
-	setEndpoint = e => {
+	setEndpoint = ( e ) => {
 		this.setState( { selectedEndpoint: e.target.value } );
 	};
 
-	setUrl = event => {
+	setUrl = ( event ) => {
 		this.setState( { siteURLInput: event.target.value } );
 	};
 
-	validateOnEnter = event => {
+	validateOnEnter = ( event ) => {
 		event.key === 'Enter' && this.validateSite();
 	};
 
@@ -176,6 +189,10 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	importSite = () => {
+		// To track an "upload start"
+		const { importerId } = this.props.importerStatus;
+		this.props.setUploadStartState( importerId, this.props.validatedSiteUrl );
+
 		this.props.importSite( {
 			engine: this.props.importData.engine,
 			importerStatus: this.props.importerStatus,
@@ -195,50 +212,6 @@ class SiteImporterInputPane extends React.Component {
 		} );
 	};
 
-	renderUrlHint = () => {
-		switch ( this.props.importerData.engine ) {
-			case 'wix':
-				return (
-					<div>
-						<p>
-							{ this.props.translate( 'Please use one of following formats for the site URL:' ) }
-						</p>
-						<ul>
-							<li>
-								<span className="site-importer__site-importer-example-domain">example.com</span>
-								{ ' - ' }
-								{ this.props.translate( 'a paid custom domain' ) }
-							</li>
-							<li>
-								<span className="site-importer__site-importer-example-domain">
-									example-account.wixsite.com/my-site
-								</span>
-								{ ' - ' }
-								{ this.props.translate( 'a free domain that comes with every site' ) }
-							</li>
-						</ul>
-					</div>
-				);
-			case 'godaddy-gocentral':
-				return (
-					<div>
-						<p>
-							{ this.props.translate( 'Please use one of following formats for the site URL:' ) }
-						</p>
-						<ul>
-							{ /* TODO(marekhrabe): add free URL format before public launch */ }
-							<li>
-								<span className="site-importer__site-importer-example-domain">example.com</span>
-								{ ' - ' }
-								{ this.props.translate( 'a paid custom domain' ) }
-							</li>
-						</ul>
-					</div>
-				);
-		}
-		return null;
-	};
-
 	render() {
 		const { importerStatus, isEnabled, site, error, isLoading, importStage } = this.props;
 
@@ -246,15 +219,18 @@ class SiteImporterInputPane extends React.Component {
 			<div className="site-importer__site-importer-pane">
 				{ importStage === 'idle' && (
 					<div>
-						<p>{ this.props.description }</p>
 						<div className="site-importer__site-importer-url-input">
-							<TextInput
-								disabled={ isLoading }
-								onChange={ this.setUrl }
-								onKeyPress={ this.validateOnEnter }
-								value={ this.state.siteURLInput }
-								placeholder="https://example.com/"
-							/>
+							<FormLabel>
+								{ this.props.description }
+								<TextInput
+									label={ this.props.description }
+									disabled={ isLoading }
+									onChange={ this.setUrl }
+									onKeyPress={ this.validateOnEnter }
+									value={ this.state.siteURLInput }
+									placeholder="example.com"
+								/>
+							</FormLabel>
 						</div>
 						{ this.state.availableEndpoints.length > 0 && (
 							<FormSelect
@@ -264,7 +240,7 @@ class SiteImporterInputPane extends React.Component {
 								value={ this.state.selectedEndpoint }
 							>
 								<option value="">Production Endpoint</option>
-								{ this.state.availableEndpoints.map( endpoint => (
+								{ this.state.availableEndpoints.map( ( endpoint ) => (
 									<option key={ endpoint.name } value={ endpoint.name }>
 										{ endpoint.title } ({ endpoint.lastModifiedTitle })
 									</option>
@@ -292,14 +268,8 @@ class SiteImporterInputPane extends React.Component {
 						retryImport={ this.validateSite }
 					/>
 				) }
-				{ importStage === 'idle' && this.renderUrlHint() }
 				{ importStage === 'idle' && (
 					<ImporterActionButtonContainer>
-						<ImporterCloseButton
-							importerStatus={ importerStatus }
-							site={ site }
-							isEnabled={ isEnabled }
-						/>
 						<ImporterActionButton
 							primary
 							disabled={ isLoading || isEmpty( this.state.siteURLInput ) }
@@ -308,6 +278,11 @@ class SiteImporterInputPane extends React.Component {
 						>
 							{ this.props.translate( 'Continue' ) }
 						</ImporterActionButton>
+						<ImporterCloseButton
+							importerStatus={ importerStatus }
+							site={ site }
+							isEnabled={ isEnabled }
+						/>
 					</ImporterActionButtonContainer>
 				) }
 			</div>
@@ -317,28 +292,23 @@ class SiteImporterInputPane extends React.Component {
 
 export default flowRight(
 	connect(
-		state => {
-			const { isLoading, error, importData, importStage, validatedSiteUrl } = get(
-				state,
-				'imports.siteImporter',
-				{}
-			);
-
-			return {
-				isLoading,
-				error,
-				importData,
-				importStage,
-				validatedSiteUrl,
-			};
-		},
+		( state ) => ( {
+			error: getError( state ),
+			importData: getImportData( state ),
+			importStage: getImportStage( state ),
+			isLoading: isLoadingSelector( state ),
+			validatedSiteUrl: getValidatedSiteUrl( state ),
+		} ),
 		{
 			recordTracksEvent,
 			setSelectedEditor,
 			importSite,
 			validateSiteIsImportable,
 			resetSiteImporterImport,
+			clearSiteImporterImport,
 			setValidationError,
+			cancelImport,
+			setUploadStartState,
 		}
 	),
 	localize

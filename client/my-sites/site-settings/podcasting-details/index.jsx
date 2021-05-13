@@ -1,34 +1,31 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { map, toPairs, pick, flowRight } from 'lodash';
+import { map, pick, flowRight } from 'lodash';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { PLAN_PERSONAL, FEATURE_AUDIO_UPLOADS } from 'lib/plans/constants';
-import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
-import { decodeEntities } from 'lib/formatting';
-import scrollTo from 'lib/scroll-to';
-import { isRequestingSitePlans } from 'state/sites/plans/selectors';
-import Button from 'components/button';
-import Card from 'components/card';
-import DocumentHead from 'components/data/document-head';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormSelect from 'components/forms/form-select';
-import FormTextarea from 'components/forms/form-textarea';
-import HeaderCake from 'components/header-cake';
-import Notice from 'components/notice';
-import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
+import { PLAN_PERSONAL, FEATURE_AUDIO_UPLOADS } from '@automattic/calypso-products';
+import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
+import { decodeEntities } from 'calypso/lib/formatting';
+import scrollTo from 'calypso/lib/scroll-to';
+import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { Button, Card } from '@automattic/components';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import HeaderCake from 'calypso/components/header-cake';
+import Notice from 'calypso/components/notice';
+import PodcastCoverImageSetting from 'calypso/my-sites/site-settings/podcast-cover-image-setting';
 import PodcastFeedUrl from './feed-url';
 import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingNoPermissionsMessage from './no-permissions';
@@ -36,20 +33,21 @@ import PodcastingNotSupportedMessage from './not-supported';
 import PodcastingPublishNotice from './publish-notice';
 import PodcastingSupportLink from './support-link';
 import podcastingTopics from './topics';
-import TermTreeSelector from 'blocks/term-tree-selector';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import TermTreeSelector from 'calypso/blocks/term-tree-selector';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 /**
  * Selectors, actions, and query components
  */
-import QueryTerms from 'components/data/query-terms';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import isPrivateSite from 'state/selectors/is-private-site';
-import canCurrentUser from 'state/selectors/can-current-user';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'state/sites/selectors';
-import { isRequestingTermsForQueryIgnoringPage } from 'state/terms/selectors';
-import { isSavingSiteSettings } from 'state/site-settings/selectors';
+import QueryTerms from 'calypso/components/data/query-terms';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isRequestingTermsForQueryIgnoringPage } from 'calypso/state/terms/selectors';
+import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 
 /**
  * Style dependencies
@@ -91,7 +89,7 @@ class PodcastingDetails extends Component {
 		);
 	}
 
-	renderSaveButton() {
+	renderSaveButton( largeButton ) {
 		const {
 			handleSubmitForm,
 			isRequestingSettings,
@@ -114,19 +112,20 @@ class PodcastingDetails extends Component {
 
 		return (
 			<Button
-				compact={ true }
+				compact={ ! largeButton }
 				onClick={ handleSubmitForm }
-				primary={ true }
+				primary
 				type="submit"
 				disabled={ saveButtonDisabled }
 				busy={ isSavingSettings }
+				className="podcasting-details__save-button"
 			>
 				{ saveButtonText }
 			</Button>
 		);
 	}
 
-	renderTextField( { FormComponent = FormInput, key, label, explanation } ) {
+	renderTextField( { FormComponent = FormInput, key, label, explanation, isDisabled = false } ) {
 		const { fields, isRequestingSettings, onChangeField, isPodcastingEnabled } = this.props;
 
 		return (
@@ -136,10 +135,9 @@ class PodcastingDetails extends Component {
 				<FormComponent
 					id={ key }
 					name={ key }
-					type="text"
 					value={ decodeEntities( fields[ key ] ) || '' }
 					onChange={ onChangeField( key ) }
-					disabled={ isRequestingSettings || ! isPodcastingEnabled }
+					disabled={ isDisabled || isRequestingSettings || ! isPodcastingEnabled }
 				/>
 			</FormFieldset>
 		);
@@ -156,14 +154,14 @@ class PodcastingDetails extends Component {
 				disabled={ isRequestingSettings || ! isPodcastingEnabled }
 			>
 				<option value="0">None</option>
-				{ map( toPairs( podcastingTopics ), ( [ topic, subtopics ] ) => {
+				{ map( Object.entries( podcastingTopics ), ( [ topic, subtopics ] ) => {
 					// The keys for podcasting in Apple Podcasts use &amp;
 					const topicKey = topic.replace( '&', '&amp;' );
 					return [
 						<option key={ topicKey } value={ topicKey }>
 							{ topic }
 						</option>,
-						...map( subtopics, subtopic => {
+						...map( subtopics, ( subtopic ) => {
 							const subtopicKey = topicKey + ',' + subtopic.replace( '&', '&amp;' );
 							return (
 								<option key={ subtopicKey } value={ subtopicKey }>
@@ -236,12 +234,17 @@ class PodcastingDetails extends Component {
 						</h1>
 					</HeaderCake>
 					{ ! error && plansDataLoaded && (
-						<UpgradeNudge
+						<UpsellNudge
 							plan={ PLAN_PERSONAL }
 							title={ translate( 'Upload Audio with WordPress.com Personal' ) }
-							message={ translate( 'Embed podcast episodes directly from your media library.' ) }
+							description={ translate(
+								'Embed podcast episodes directly from your media library.'
+							) }
 							feature={ FEATURE_AUDIO_UPLOADS }
 							event="podcasting_details_upload_audio"
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
+							showIcon={ true }
 						/>
 					) }
 					{ ! error && (
@@ -372,7 +375,12 @@ class PodcastingDetails extends Component {
 				{ this.renderTextField( {
 					key: 'podcasting_keywords',
 					label: translate( 'Keywords' ),
+					explanation: translate(
+						'The keywords setting has been deprecated. This field is for reference only.'
+					),
+					isDisabled: true,
 				} ) }
+				{ isPodcastingEnabled && this.renderSaveButton( true ) }
 			</Fragment>
 		);
 	}
@@ -380,10 +388,10 @@ class PodcastingDetails extends Component {
 	renderSettingsError() {
 		// If there is a reason that we can't display the podcasting settings
 		// screen, it will be rendered here.
-		const { isPrivate, isUnsupportedSite, userCanManagePodcasting } = this.props;
+		const { isPrivate, isComingSoon, isUnsupportedSite, userCanManagePodcasting } = this.props;
 
 		if ( isPrivate ) {
-			return <PodcastingPrivateSiteMessage />;
+			return <PodcastingPrivateSiteMessage isComingSoon={ isComingSoon } />;
 		}
 
 		if ( ! userCanManagePodcasting ) {
@@ -397,7 +405,7 @@ class PodcastingDetails extends Component {
 		return null;
 	}
 
-	onCategorySelected = category => {
+	onCategorySelected = ( category ) => {
 		const { settings, fields, isPodcastingEnabled } = this.props;
 
 		const fieldsToUpdate = { podcasting_category_id: String( category.ID ) };
@@ -441,14 +449,14 @@ class PodcastingDetails extends Component {
 		} );
 	};
 
-	onCoverImageUploadStateChanged = isUploading => {
+	onCoverImageUploadStateChanged = ( isUploading ) => {
 		this.setState( {
 			isCoverImageUploading: isUploading,
 		} );
 	};
 }
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'podcasting_category_id',
 		'podcasting_title',
@@ -496,6 +504,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		siteId,
 		siteSlug,
 		isPrivate: isPrivateSite( state, siteId ),
+		isComingSoon: isSiteComingSoon( state, siteId ),
 		isPodcastingEnabled,
 		podcastingCategoryId,
 		isCategoryChanging,

@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Disallow collapsible whitespace in translatable strings.
+ * @file Disallow collapsible whitespace in translatable strings.
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -10,29 +9,31 @@
 // Helper Functions
 //------------------------------------------------------------------------------
 
-const getCallee = require( '../util/get-callee' ),
-	getTextContentFromNode = require( '../util/get-text-content-from-node' );
+const getCallee = require( '../util/get-callee' );
+const getTextContentFromNode = require( '../util/get-text-content-from-node' );
 
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const rule = ( module.exports = function( context ) {
+const rule = ( module.exports = function ( context ) {
 	return {
-		CallExpression: function( node ) {
+		CallExpression: function ( node ) {
 			if ( 'translate' !== getCallee( node ).name ) {
 				return;
 			}
 
-			node.arguments.forEach( function( arg ) {
+			node.arguments.forEach( function ( arg ) {
 				const string = getTextContentFromNode( arg );
-				let problem, problemString, problemsByCharCode;
+				let problem;
+				let problemString;
+				let problemsByCharCode;
 
 				if ( ! string ) {
 					return;
 				}
 
-				const collapsibleWhitespace = string.match( /(\n|\t|\r|(?:  ))/ );
+				const collapsibleWhitespace = string.match( /(\n|\t|\r|(?: {2}))/ );
 
 				if ( collapsibleWhitespace ) {
 					problemsByCharCode = {

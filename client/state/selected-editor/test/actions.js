@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@
  * Internal dependencies
  */
 import { setSelectedEditor } from '../actions';
-import { EDITOR_TYPE_UPDATE } from 'state/action-types';
+import { EDITOR_TYPE_UPDATE } from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setSelectedEditor()', () => {

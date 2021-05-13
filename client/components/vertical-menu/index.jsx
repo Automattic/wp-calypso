@@ -1,17 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { identity, partial } from 'lodash';
+import { partial } from 'lodash';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class VerticalMenu extends PureComponent {
 	static propTypes = {
@@ -22,7 +22,7 @@ export class VerticalMenu extends PureComponent {
 
 	static defaultProps = {
 		initialItemIndex: 0,
-		onClick: identity,
+		onClick: noop,
 	};
 
 	constructor( props ) {

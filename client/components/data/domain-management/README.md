@@ -9,40 +9,23 @@ It will handle the data itself thus helping us to decouple concerns: i.e. fetchi
 
 ```js
 import React from 'react';
-import DomainManagementData from 'components/data/domain-management';
-import MyChildComponent from 'components/my-child-component';
+import DomainManagementData from 'calypso/components/data/domain-management';
+import MyChildComponent from 'calypso/components/my-child-component';
 
 // initialize rest of the variables
 
-class MyComponent extends React.Component {
-	render() {
-		return (
-			<DomainManagementData
-				component={ MyChildComponent }
-				context={ context }
-				needsDomains
-				needsDomainInfo
-				needsUsers
-			/>
-		);
-	}
-}
+const MyComponent = () => (
+	<DomainManagementData component={ MyChildComponent } context={ context } needsDomains />
+);
 
 export default MyComponent;
 ```
 
-Currently we have both Flux and Redux mixed. Props for loading data:
+Currently we use Redux. Props for loading data:
 
-- `needsCart` - Loads the `CartStore` (Flux)
-- `needsContactDetails` - Loads Contact Details for current user (Redux)
-- `needsDns` - Loads the `DnsStore` (Flux)
-- `needsDomains` - Loads domain for currently selected site (Redux)
-- `needsDomainInfo` - Loads `WapiDomainInfoStore` (Flux)
-- `needsNameservers` - Loads `NameserversStore` (Flux)
-- `needsPlans` - Loads plans for given site (Redux)
-- `needsProductsList` - Loads products list (Redux)
-- `needsSiteRedirect` - Loads `SiteRedirectStore` (Flux)
-- `needsUsers` - Loads `UsersStore` (Flux)
-- `needsWhois` - Loads `WhoisStore` (Flux)
+- `needsContactDetails` - Loads Contact Details for current user
+- `needsDomains` - Loads domain for currently selected site
+- `needsPlans` - Loads plans for given site
+- `needsProductsList` - Loads products list
 
 The child component should receive processed props defined in `getStateFromStores()`. It's updated whenever the data it needs changes.

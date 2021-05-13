@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -69,23 +67,14 @@ describe( 'scroll-helper', () => {
 	} );
 
 	describe( 'Container and placeholder positioning', () => {
-		let preparedBounds = {
-				topPlaceholder: {
-					top: -2000,
-					height: 1000,
-				},
-				bottomPlaceholder: {
-					bottom: 4000,
-					height: 2000,
-				},
-			},
-			helper = new ScrollHelper( function( ref ) {
-				return preparedBounds[ ref ];
-			} );
+		const topPlaceholderBounds = () => ( { top: -2000, height: 1000 } );
+		const bottomPlaceholderBounds = () => ( { bottom: 4000, height: 2000 } );
+
+		const helper = new ScrollHelper( () => null, topPlaceholderBounds, bottomPlaceholderBounds );
 
 		helper.updatePlaceholderDimensions();
 
-		test( 'Placeholders height determined using their bounds ', () => {
+		test( 'Placeholders height determined using their bounds', () => {
 			assert.equal( helper.topPlaceholderHeight, 1000 );
 			assert.equal( helper.bottomPlaceholderHeight, 2000 );
 		} );
@@ -135,21 +124,21 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Hiding batch of items', () => {
-			let preparedBounds = {
-					i0: {
-						bottom: -1850,
-					},
-					i1: {
-						bottom: -1500,
-					},
-					// i2: { bottom: -1200 }, Let it use guessedItemHeight for this one
-					i3: {
-						bottom: -900,
-					},
+			const preparedBounds = {
+				i0: {
+					bottom: -1850,
 				},
-				helper = new ScrollHelper( function( ref ) {
-					return preparedBounds[ ref ];
-				} );
+				i1: {
+					bottom: -1500,
+				},
+				// i2: { bottom: -1200 }, Let it use guessedItemHeight for this one
+				i3: {
+					bottom: -900,
+				},
+			};
+			const helper = new ScrollHelper( function ( ref ) {
+				return preparedBounds[ ref ];
+			} );
 			helper.props = {
 				guessedItemHeight: 300,
 				items: range( 4 ),
@@ -190,17 +179,17 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Completely above context', () => {
-			let preparedBounds = {
-					i0: {
-						bottom: -1850,
-					},
-					i1: {
-						bottom: -1500,
-					},
+			const preparedBounds = {
+				i0: {
+					bottom: -1850,
 				},
-				helper = new ScrollHelper( function( ref ) {
-					return preparedBounds[ ref ];
-				} );
+				i1: {
+					bottom: -1500,
+				},
+			};
+			const helper = new ScrollHelper( function ( ref ) {
+				return preparedBounds[ ref ];
+			} );
 
 			helper.props = {
 				guessedItemHeight: 300,
@@ -349,24 +338,24 @@ describe( 'scroll-helper', () => {
 		} );
 
 		describe( 'Hiding batch of items', () => {
-			let preparedBounds = {
-					i5: {
-						top: 1900,
-					},
-					i6: {
-						top: 2200,
-					},
-					i7: {
-						top: 2500,
-					},
-					// i8: { top: 3400 }, Let it use guessedItemHeight for this one
-					i9: {
-						top: 3700,
-					},
+			const preparedBounds = {
+				i5: {
+					top: 1900,
 				},
-				helper = new ScrollHelper( function( ref ) {
-					return preparedBounds[ ref ];
-				} );
+				i6: {
+					top: 2200,
+				},
+				i7: {
+					top: 2500,
+				},
+				// i8: { top: 3400 }, Let it use guessedItemHeight for this one
+				i9: {
+					top: 3700,
+				},
+			};
+			const helper = new ScrollHelper( function ( ref ) {
+				return preparedBounds[ ref ];
+			} );
 			helper.props = {
 				items: range( 10 ),
 				guessedItemHeight: 300,
@@ -410,7 +399,7 @@ describe( 'scroll-helper', () => {
 
 		describe( 'Completely below context', () => {
 			const helper = new ScrollHelper(
-				function() {
+				function () {
 					return null;
 				} // let it use guessed height
 			);

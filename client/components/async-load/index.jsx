@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,21 +21,14 @@ export default class AsyncLoad extends Component {
 		placeholder: <div className="async-load__placeholder" />,
 	};
 
-	constructor() {
-		super( ...arguments );
+	state = { component: null };
 
-		this.state = {
-			require: null,
-			component: null,
-		};
-	}
-
-	componentDidMount = () => {
+	componentDidMount() {
 		this.mounted = true;
 		this.require();
-	};
+	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.mounted && this.props.require !== nextProps.require ) {
 			this.setState( { component: null } );
 		}
@@ -58,7 +49,7 @@ export default class AsyncLoad extends Component {
 	require() {
 		const requireFunction = this.props.require;
 
-		requireFunction( component => {
+		requireFunction( ( component ) => {
 			if ( this.mounted && this.props.require === requireFunction ) {
 				this.setState( { component } );
 			}

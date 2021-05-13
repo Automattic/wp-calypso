@@ -1,22 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingSubscribedLists } from 'state/reader/lists/selectors';
-import { requestSubscribedLists } from 'state/reader/lists/actions';
+import { isRequestingSubscribedLists } from 'calypso/state/reader/lists/selectors';
+import { requestSubscribedLists } from 'calypso/state/reader/lists/actions';
 
 class QueryReaderLists extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.isRequestingSubscribedLists ) {
 			return;
 		}
@@ -39,17 +35,12 @@ QueryReaderLists.defaultProps = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			isRequestingSubscribedLists: isRequestingSubscribedLists( state ),
 		};
 	},
-	dispatch => {
-		return bindActionCreators(
-			{
-				requestSubscribedLists,
-			},
-			dispatch
-		);
+	{
+		requestSubscribedLists,
 	}
 )( QueryReaderLists );

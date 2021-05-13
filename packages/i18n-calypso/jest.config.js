@@ -1,3 +1,3 @@
-const jestConfig = require( '@automattic/calypso-build/jest.config.js' );
-
-module.exports = { ...jestConfig, rootDir: __dirname };
+module.exports = {
+	preset: '../../test/packages/jest-preset.js',
+};

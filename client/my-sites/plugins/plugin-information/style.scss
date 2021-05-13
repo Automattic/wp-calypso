@@ -47,18 +47,17 @@
 }
 
 .plugin-information__version-info {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-text-subtle );
 	text-transform: uppercase;
 	width: 100%;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		float: left;
 	}
 }
 
 .plugin-information__version-info.is-singlesite {
-
 	.plugin-information__last-updated,
 	.plugin-information__versions,
 	.version {
@@ -92,7 +91,7 @@
 .plugin-information .plugin-ratings {
 	flex-grow: 1;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-grow: 0;
 		width: 160px;
 	}
@@ -105,7 +104,7 @@
 .plugin-information__links {
 	clear: left;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		float: left;
 	}
 }
@@ -116,10 +115,9 @@
 }
 
 .plugin-information.is-placeholder {
-
 	.plugin-information__wrapper {
 		@include placeholder();
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			margin-right: 16px;
 		}
 	}
@@ -136,7 +134,7 @@
 	.plugin-information__version-limit,
 	.plugin-information__last-updated {
 		width: 99%;
-		margin-top:8px;
+		margin-top: 8px;
 	}
 
 	.rating {

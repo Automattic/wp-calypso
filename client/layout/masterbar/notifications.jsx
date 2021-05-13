@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,13 +12,13 @@ import { partial } from 'lodash';
  * Internal dependencies
  */
 import MasterbarItem from './item';
-import AsyncLoad from 'components/async-load';
+import AsyncLoad from 'calypso/components/async-load';
 import store from 'store';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { toggleNotificationsPanel } from 'state/ui/actions';
-import isNotificationsOpen from 'state/selectors/is-notifications-open';
-import TranslatableString from 'components/translatable/proptype';
-import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import TranslatableString from 'calypso/components/translatable/proptype';
+import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 
 class MasterbarItemNotifications extends Component {
 	static propTypes = {
@@ -36,13 +34,13 @@ class MasterbarItemNotifications extends Component {
 		animationState: 0,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.setState( {
 			newNote: this.props.hasUnseenNotifications,
 		} );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { isNotificationsOpen: isOpen, recordOpening } = nextProps;
 
 		if ( ! this.props.isNotificationsOpen && isOpen ) {
@@ -72,7 +70,7 @@ class MasterbarItemNotifications extends Component {
 		}
 	};
 
-	toggleNotesFrame = event => {
+	toggleNotesFrame = ( event ) => {
 		if ( event ) {
 			event.preventDefault && event.preventDefault();
 			event.stopPropagation && event.stopPropagation();
@@ -87,9 +85,9 @@ class MasterbarItemNotifications extends Component {
 	 * determine what state the notifications indicator
 	 * should be in: on, off, or animate-to-on
 	 *
-	 * @param {Number} currentUnseenCount Number of reported unseen notifications
+	 * @param {number} currentUnseenCount Number of reported unseen notifications
 	 */
-	setNotesIndicator = currentUnseenCount => {
+	setNotesIndicator = ( currentUnseenCount ) => {
 		const existingUnseenCount = store.get( 'wpnotes_unseen_count' );
 		let newAnimationState = this.state.animationState;
 
@@ -136,7 +134,7 @@ class MasterbarItemNotifications extends Component {
 					/>
 				</MasterbarItem>
 				<AsyncLoad
-					require="../../../apps/notifications/index.jsx"
+					require="calypso/notifications"
 					isShowing={ this.props.isNotificationsOpen }
 					checkToggle={ this.checkToggleNotes }
 					setIndicator={ this.setNotesIndicator }
@@ -147,7 +145,7 @@ class MasterbarItemNotifications extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		isNotificationsOpen: isNotificationsOpen( state ),
 		hasUnseenNotifications: hasUnseenNotifications( state ),
@@ -158,7 +156,4 @@ const mapDispatchToProps = {
 	recordOpening: partial( recordTracksEvent, 'calypso_notification_open' ),
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( MasterbarItemNotifications );
+export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNotifications );

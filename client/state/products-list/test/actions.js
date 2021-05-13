@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,8 +12,8 @@ import {
 	PRODUCTS_LIST_RECEIVE,
 	PRODUCTS_LIST_REQUEST,
 	PRODUCTS_LIST_REQUEST_FAILURE,
-} from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -27,7 +26,6 @@ describe( 'actions', () => {
 		product_id: 40,
 		product_name: 'Guided Transfer',
 		product_slug: 'guided_transfer',
-		prices: { USD: 129, AUD: 169 },
 		is_domain_registration: false,
 		description: 'Guided Transfer',
 		cost: 129,
@@ -46,7 +44,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestProductsList()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/products' )
 				.twice()

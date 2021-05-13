@@ -1,7 +1,8 @@
 /**
- * @format
  * @jest-environment jsdom
  */
+
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["assertPasses", "assertFails"] }] */
 
 /**
  * External dependencies
@@ -31,10 +32,10 @@ describe( 'translatable proptype', () => {
 		assertPasses( translatableString, <legend />, '' );
 	} );
 
-	test( 'should pass with string ', () =>
+	test( 'should pass with string', () =>
 		assertPasses( translatableString, <legend translatableString={ 'Los pollos hermanos' } /> ) );
 
-	test( 'should pass with <Translatable /> component ', () =>
+	test( 'should pass with <Translatable /> component', () =>
 		assertPasses( translatableString, <legend translatableString={ <Translatable /> } /> ) );
 
 	test( 'should pass on <data /> object', () =>
@@ -51,7 +52,7 @@ describe( 'translatable proptype', () => {
 	} );
 
 	test( 'should fail on unexpected functions', () =>
-		assertFails( translatableString, <legend translatableString={ function() {} } /> ) );
+		assertFails( translatableString, <legend translatableString={ function () {} } /> ) );
 
 	test( 'should fail on unexpected objects', () =>
 		assertFails( translatableString, <legend translatableString={ {} } /> ) );

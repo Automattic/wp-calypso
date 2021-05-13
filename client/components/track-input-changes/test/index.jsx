@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -27,7 +26,7 @@ const spies = {
 };
 
 class DummyInput extends Component {
-	triggerChange = value => {
+	triggerChange = ( value ) => {
 		this.props.onChange( { target: this, value } );
 	};
 
@@ -41,7 +40,9 @@ class DummyInput extends Component {
 }
 
 describe( 'TrackInputChanges#onNewValue', () => {
-	let tree, dummyInput, container;
+	let tree;
+	let dummyInput;
+	let container;
 
 	beforeAll( () => {
 		container = document.createElement( 'div' );

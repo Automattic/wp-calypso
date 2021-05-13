@@ -1,21 +1,24 @@
 /**
  * Return a Webpack loader configuration object containing for JavaScript transpilation.
  *
- * @param {Object} _                  Options
- * @param {number} _.workerCount      Number of workers that are being used by the thread-loader
- * @param {string} _.configFile       Babel config file
- * @param {string} _.cacheDirectory   Babel cache directory
- * @param {string} _.cacheIdentifier  Babel cache identifier
- * @param {RegExp|Function} _.exclude Directories to exclude when looking for files to transpile
- * @param {RegExp|Function} _.include Directories to inclued when looking for files to transpile
+ * @param {object} _                   Options
+ * @param {number} _.workerCount       Number of workers that are being used by the thread-loader
+ * @param {string} _.configFile        Babel config file
+ * @param {string} _.cacheDirectory    Babel cache directory
+ * @param {string} _.cacheIdentifier   Babel cache identifier
+ * @param {boolean} _.cacheCompression Whether to apply gzip compression to the cached files (defauls to true)
+ * @param {RegExp|Function} _.exclude  Directories to exclude when looking for files to transpile
+ * @param {RegExp|Function} _.include  Directories to inclued when looking for files to transpile
+ * @param {string[]} _.presets         Babel presets
  *
- * @return {Object} Webpack loader object
+ * @returns {object} Webpack loader object
  */
 module.exports.loader = ( {
 	workerCount,
 	configFile,
 	cacheDirectory,
 	cacheIdentifier,
+	cacheCompression = true,
 	exclude,
 	include,
 	presets,
@@ -37,6 +40,7 @@ module.exports.loader = ( {
 				babelrc: false,
 				cacheDirectory,
 				cacheIdentifier,
+				cacheCompression,
 				presets,
 			},
 		},

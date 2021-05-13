@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -41,13 +39,13 @@ export default class GoogleAdPreviewTool extends AsyncBaseContainer {
 	}
 
 	async getSearchPageUrl() {
-		const selector = by.css( 'iframe.iframe-preview' );
+		const locator = by.css( 'iframe.iframe-preview' );
 		await this.driver.wait(
-			until.elementLocated( selector ),
+			until.elementLocated( locator ),
 			this.explicitWaitMS,
 			'Could not locate the search results'
 		);
-		const iframe = await this.driver.findElement( selector );
+		const iframe = await this.driver.findElement( locator );
 		await this.driver.wait(
 			until.elementIsVisible( iframe ),
 			this.explicitWaitMS,

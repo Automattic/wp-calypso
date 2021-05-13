@@ -1,21 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import { resendIcannVerification } from 'lib/upgrades/actions/domain-management';
-import Button from 'components/button';
-import notices from 'notices';
-import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
+import { Card, Button } from '@automattic/components';
+import { resendIcannVerification } from 'calypso/lib/domains';
+import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 class IcannVerification extends React.Component {
 	state = {
@@ -25,11 +21,11 @@ class IcannVerification extends React.Component {
 	handleClick = () => {
 		this.setState( { submitting: true } );
 
-		resendIcannVerification( this.props.selectedDomainName, error => {
+		resendIcannVerification( this.props.selectedDomainName, ( error ) => {
 			if ( error ) {
-				notices.error( error.message );
+				this.props.errorNotice( error.message );
 			} else {
-				notices.success(
+				this.props.successNotice(
 					this.props.translate(
 						'We sent the ICANN verification email to your ' +
 							'email address. Please check your inbox and click the link in the email.'
@@ -46,32 +42,39 @@ class IcannVerification extends React.Component {
 
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Transfer Domain' ) }>
-					<Button onClick={ this.handleClick } disabled={ this.state.submitting } compact primary>
+				<Card className="transfer-out__card">
+					<p>
+						{ translate(
+							'You must verify your email address before you can transfer this domain. ' +
+								'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
+							{
+								components: {
+									learnMoreLink: (
+										<a
+											href={ TRANSFER_DOMAIN_REGISTRATION }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</p>
+					<Button
+						className="transfer-out__action-button"
+						onClick={ this.handleClick }
+						disabled={ this.state.submitting }
+						primary
+					>
 						{ translate( 'Resend Verification Email' ) }
 					</Button>
-				</SectionHeader>
-
-				<Card className="transfer-out__card">
-					{ translate(
-						'You must verify your email address before you can transfer this domain. ' +
-							'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
-						{
-							components: {
-								learnMoreLink: (
-									<a
-										href={ TRANSFER_DOMAIN_REGISTRATION }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
 				</Card>
 			</div>
 		);
 	}
 }
 
-export default localize( IcannVerification );
+export default connect( null, {
+	errorNotice,
+	successNotice,
+} )( localize( IcannVerification ) );

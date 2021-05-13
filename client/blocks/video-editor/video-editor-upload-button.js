@@ -1,18 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FilePicker from 'components/file-picker';
+import { Button } from '@automattic/components';
+import FilePicker from 'calypso/components/file-picker';
+
+const noop = () => {};
 
 class VideoEditorUploadButton extends Component {
 	static propTypes = {
@@ -27,7 +26,7 @@ class VideoEditorUploadButton extends Component {
 		onUploadImage: noop,
 	};
 
-	uploadImage = files => {
+	uploadImage = ( files ) => {
 		const file = files[ 0 ];
 
 		if ( file ) {

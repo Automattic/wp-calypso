@@ -1,5 +1,4 @@
-Analytics: Google Analytics
-===========================
+# Analytics: Google Analytics
 
 We should use Google Analytics to record all events the user performs on a page that _do not_ trigger a page view (this will allow us to determine bounce rate on pages).
 
@@ -9,38 +8,41 @@ _Please do not ship anything that does not have Google Analytics tracking in pla
 
 ## Usage
 
-In most situations, it is best to use the [Analytics Middleware](https://github.com/Automattic/wp-calypso/tree/master/client/state/analytics), which has no direct browser dependencies and therefore will not complicate any unit testing of the modules where it is used.
+In most situations, it is best to use the [Analytics Middleware](https://github.com/Automattic/wp-calypso/tree/HEAD/client/state/analytics), which has no direct browser dependencies and therefore will not complicate any unit testing of the modules where it is used.
 
 ### `recordGoogleEvent( category, action [, label, value ] )`
 
 ```js
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 dispatch( recordGoogleEvent( 'Reader', 'Loaded Next Page', 'page', 2 ) );
 ```
 
-### `analytics.ga.recordEvent( category, action [, label, value ] )` (Deprecated)
+### `gaRecordEvent( category, action [, label, value ] )` (Deprecated)
 
 _Note: Unless you have a strong reason to call `analytics.ga` directly, you should use the Analytics Middleware instead._
 
 Record an event:
 
 ```js
-analytics.ga.recordEvent( 'Reader', 'Clicked Like' );
-analytics.ga.recordEvent( 'Reader', 'Loaded Next Page', 'page', 2 );
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+
+gaRecordEvent( 'Reader', 'Clicked Like' );
+gaRecordEvent( 'Reader', 'Loaded Next Page', 'page', 2 );
 ```
 
 For more information and examples about how and when to provide the optional `optionLabel` and `optionValue` parameters, refer to the [Google Analytics Event Tracking documentation](https://developers.google.com/analytics/devguides/collection/analyticsjs/events#overview).
 
-
-### `analytics.ga.recordPageView( url, title )` (Deprecated)
+### `gaRecordPageView( url, title )` (Deprecated)
 
 _Note: Unless you have a strong reason to directly record a page view to Google Analytics, you should use [`PageViewTracker`](./page-views.md) instead._
 
 Record a virtual page view:
 
 ```js
-analytics.ga.recordPageView( '/posts/draft', 'Posts > Drafts' );
+import { gaRecordPageView } from 'calypso/lib/analytics/ga';
+
+gaRecordPageView( '/posts/draft', 'Posts > Drafts' );
 ```
 
 ## Naming Conventions

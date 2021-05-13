@@ -1,10 +1,7 @@
-/** @format */
-
 /**
- * External dependencies
+ * Internal dependencies
  */
-
-import { get } from 'lodash';
+import 'calypso/state/my-sites/init';
 
 export const isSidebarSectionOpen = ( state, section ) =>
-	get( state, `mySites.sidebarSections.${ section }.isOpen` );
+	state.mySites.sidebarSections[ section ]?.isOpen;

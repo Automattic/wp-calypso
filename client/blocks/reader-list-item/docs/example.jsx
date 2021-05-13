@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,9 +8,9 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import ConnectedReaderListItem from 'blocks/reader-list-item/connected';
-import ReaderListItemPlaceholder from 'blocks/reader-list-item/placeholder';
-import Card from 'components/card';
+import ConnectedReaderListItem from 'calypso/blocks/reader-list-item/connected';
+import ReaderListItemPlaceholder from 'calypso/blocks/reader-list-item/placeholder';
+import { Card } from '@automattic/components';
 
 const sites = {
 	longreads: { siteId: 70135762 },
@@ -30,7 +28,7 @@ export default class ReaderListItemExample extends PureComponent {
 	render() {
 		return (
 			<Card>
-				{ map( sites, site => (
+				{ map( sites, ( site ) => (
 					<ConnectedReaderListItem key={ site.feedId || site.siteId } { ...site } />
 				) ) }
 				<ReaderListItemPlaceholder />

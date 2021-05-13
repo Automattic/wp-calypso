@@ -1,0 +1,63 @@
+.threat-item {
+	.foldable-card__main {
+		flex: auto;
+	}
+	&.is-placeholder .card-heading,
+	&.is-placeholder .log-item__subheader {
+		margin-bottom: 2px;
+		@include placeholder( --color-neutral-10 );
+	}
+
+	.card-heading,
+	.threat-item-header__alert-filename {
+		font-size: $font-body;
+		line-height: 24px;
+		word-break: break-all;
+
+		@include breakpoint-deprecated( '>800px' ) {
+			font-size: $font-title-small;
+		}
+	}
+
+	.threat-item-header__alert-filename {
+		word-break: break-all;
+	}
+
+	.log-item__subheader {
+		color: var( --studio-gray-60 );
+		font-size: $font-body-small;
+	}
+
+	&.is-current {
+		border-left: 3px solid var( --color-error-50 );
+	}
+
+	&.is-fixed {
+		border-left: 3px solid var( --color-success-50 );
+	}
+
+	&.is-ignored {
+		border-left: 3px solid var( --studio-gray-50 );
+	}
+
+	&__buttons {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.foldable-card__action.foldable-card__expand {
+		border: none;
+	}
+}
+
+.button {
+	&.threat-item__fix-button,
+	&.threat-item__codeable-button,
+	&.threat-item__ignore-button {
+		margin-inline-start: 5px;
+		margin-inline-end: 5px;
+		border-width: 1px;
+		border-style: solid;
+		border-radius: var( --jetpack-corners-soft );
+	}
+}

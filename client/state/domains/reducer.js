@@ -1,14 +1,23 @@
-/** @format */
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
+import dns from './dns/reducer';
 import management from './management/reducer';
+import nameservers from './nameservers/reducer';
+import siteRedirect from './site-redirect/reducer';
 import suggestions from './suggestions/reducer';
 import transfer from './transfer/reducer';
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
+	dns,
 	management,
+	nameservers,
+	siteRedirect,
 	suggestions,
 	transfer,
 } );
+
+const domainsReducer = withStorageKey( 'domains', combinedReducer );
+export default domainsReducer;

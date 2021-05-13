@@ -1,0 +1,36 @@
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"lib": [ "ES2015" ],
+		"module": "ESNEXT",
+		"allowJs": false,
+		"declaration": true,
+		"declarationMap": true,
+		"declarationDir": "dist/types",
+		"rootDir": "src",
+		"outDir": "dist/esm",
+
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"downlevelIteration": true,
+
+		"forceConsistentCasingInFileNames": true,
+
+		"importsNotUsedAsValues": "error",
+
+		"typeRoots": [ "../../node_modules/@types" ],
+		"types": [],
+
+		"noEmitHelpers": true,
+		"importHelpers": true,
+
+		"composite": true
+	},
+	"files": [ "src/index.ts" ]
+}

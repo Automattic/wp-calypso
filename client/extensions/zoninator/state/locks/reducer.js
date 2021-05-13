@@ -1,31 +1,52 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	ZONINATOR_REQUEST_LOCK_ERROR,
 	ZONINATOR_RESET_LOCK,
 	ZONINATOR_UPDATE_LOCK,
 } from '../action-types';
 
-export const blocked = createReducer( false, {
-	[ ZONINATOR_UPDATE_LOCK ]: () => false,
-	[ ZONINATOR_REQUEST_LOCK_ERROR ]: () => true,
-} );
+export const blocked = ( state = false, action ) => {
+	switch ( action.type ) {
+		case ZONINATOR_UPDATE_LOCK:
+			return false;
+		case ZONINATOR_REQUEST_LOCK_ERROR:
+			return true;
+	}
 
-export const created = createReducer( 0, {
-	[ ZONINATOR_RESET_LOCK ]: ( state, { time } ) => time,
-} );
+	return state;
+};
 
-export const expires = createReducer( 0, {
-	[ ZONINATOR_UPDATE_LOCK ]: ( state, action ) => action.expires,
-} );
+export const created = ( state = 0, action ) => {
+	switch ( action.type ) {
+		case ZONINATOR_RESET_LOCK: {
+			const { time } = action;
+			return time;
+		}
+	}
 
-export const maxLockPeriod = createReducer( 0, {
-	[ ZONINATOR_UPDATE_LOCK ]: ( state, action ) => action.maxLockPeriod,
-} );
+	return state;
+};
+
+export const expires = ( state = 0, action ) => {
+	switch ( action.type ) {
+		case ZONINATOR_UPDATE_LOCK:
+			return action.expires;
+	}
+
+	return state;
+};
+
+export const maxLockPeriod = ( state = 0, action ) => {
+	switch ( action.type ) {
+		case ZONINATOR_UPDATE_LOCK:
+			return action.maxLockPeriod;
+	}
+
+	return state;
+};
 
 export const items = combineReducers( {
 	blocked,

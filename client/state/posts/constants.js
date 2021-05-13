@@ -1,4 +1,3 @@
-/** @format */
 export const DEFAULT_POST_QUERY = {
 	context: 'display',
 	http_envelope: false,
@@ -14,15 +13,5 @@ export const DEFAULT_POST_QUERY = {
 	search: '',
 };
 
-export const DEFAULT_NEW_POST_VALUES = {
-	title: '',
-	content: '',
-	publicize: true,
-	status: 'draft',
-	sticky: false,
-	password: '',
-	type: 'post',
-	parent: 0,
-	format: 'default',
-	featured_image: '',
-};
+// All post statuses displayed in Calypso.
+export const POST_STATUSES = [ 'publish', 'draft', 'pending', 'private', 'future', 'trash' ];

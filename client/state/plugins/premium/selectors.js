@@ -1,16 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import { every, filter, find, get, includes, some } from 'lodash';
+import { filter, find, get, includes, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 
-export const isRequesting = function( state, siteId ) {
+import 'calypso/state/plugins/init';
+
+export const isRequesting = function ( state, siteId ) {
 	// if the `isRequesting` attribute doesn't exist yet,
 	// we assume we are still launching the fetch action, so it's true
 	if ( typeof state.plugins.premium.isRequesting[ siteId ] === 'undefined' ) {
@@ -19,66 +19,75 @@ export const isRequesting = function( state, siteId ) {
 	return state.plugins.premium.isRequesting[ siteId ];
 };
 
-export const hasRequested = function( state, siteId ) {
+export const hasRequested = function ( state, siteId ) {
 	if ( typeof state.plugins.premium.hasRequested[ siteId ] === 'undefined' ) {
 		return false;
 	}
 	return state.plugins.premium.hasRequested[ siteId ];
 };
 
-export const getPluginsForSite = function( state, siteId, whitelist = false ) {
+/**
+ * Gets the list of plugins for a site and optionally filters to a single specific
+ * plugin.
+ *
+ * @param {object} state The current state.
+ * @param {number} siteId The site ID.
+ * @param {string?} forPlugin Name of a specific plugin to filter for, `false` otherwise to return the full list.
+ * @returns {Array<object>} The list of plugins.
+ */
+export const getPluginsForSite = function ( state, siteId, forPlugin = false ) {
 	const pluginList = state.plugins.premium.plugins[ siteId ];
 	if ( typeof pluginList === 'undefined' ) {
 		return [];
 	}
 
 	// patch to solve a bug in jp 4.3 ( https://github.com/Automattic/jetpack/issues/5498 )
-	if ( whitelist === 'backups' || whitelist === 'scan' ) {
-		whitelist = 'vaultpress';
+	if ( forPlugin === 'backups' || forPlugin === 'scan' ) {
+		forPlugin = 'vaultpress';
 	}
 
-	return filter( pluginList, plugin => {
+	return filter( pluginList, ( plugin ) => {
 		// eslint-disable-next-line no-extra-boolean-cast
-		if ( !! whitelist ) {
-			return whitelist === plugin.slug;
+		if ( !! forPlugin ) {
+			return forPlugin === plugin.slug;
 		}
 		return true;
 	} );
 };
 
-export const isStarted = function( state, siteId, whitelist = false ) {
-	const pluginList = getPluginsForSite( state, siteId, whitelist );
-	return ! every( pluginList, item => {
+export const isStarted = function ( state, siteId, forPlugin = false ) {
+	const pluginList = getPluginsForSite( state, siteId, forPlugin );
+	return ! pluginList.every( ( item ) => {
 		return 'wait' === item.status;
 	} );
 };
 
-export const isFinished = function( state, siteId, whitelist = false ) {
-	const pluginList = getPluginsForSite( state, siteId, whitelist );
+export const isFinished = function ( state, siteId, forPlugin = false ) {
+	const pluginList = getPluginsForSite( state, siteId, forPlugin );
 	if ( pluginList.length === 0 ) {
 		return true;
 	}
 
-	return ! some( pluginList, item => {
+	return ! some( pluginList, ( item ) => {
 		return 'done' !== item.status && item.error === null;
 	} );
 };
 
-export const isInstalling = function( state, siteId, whitelist = false ) {
-	const pluginList = getPluginsForSite( state, siteId, whitelist );
+export const isInstalling = function ( state, siteId, forPlugin = false ) {
+	const pluginList = getPluginsForSite( state, siteId, forPlugin );
 	if ( pluginList.length === 0 ) {
 		return false;
 	}
 
 	// If any plugin is not done/waiting/error'd, it's in an installing state.
-	return some( pluginList, item => {
+	return some( pluginList, ( item ) => {
 		return ! includes( [ 'done', 'wait' ], item.status ) && item.error === null;
 	} );
 };
 
-export const getActivePlugin = function( state, siteId, whitelist = false ) {
-	const pluginList = getPluginsForSite( state, siteId, whitelist );
-	const plugin = find( pluginList, item => {
+export const getActivePlugin = function ( state, siteId, forPlugin = false ) {
+	const pluginList = getPluginsForSite( state, siteId, forPlugin );
+	const plugin = find( pluginList, ( item ) => {
 		return ! includes( [ 'done', 'wait' ], item.status ) && item.error === null;
 	} );
 	if ( typeof plugin === 'undefined' ) {
@@ -87,9 +96,9 @@ export const getActivePlugin = function( state, siteId, whitelist = false ) {
 	return plugin;
 };
 
-export const getNextPlugin = function( state, siteId, whitelist = false ) {
-	const pluginList = getPluginsForSite( state, siteId, whitelist );
-	const plugin = find( pluginList, item => {
+export const getNextPlugin = function ( state, siteId, forPlugin = false ) {
+	const pluginList = getPluginsForSite( state, siteId, forPlugin );
+	const plugin = find( pluginList, ( item ) => {
 		return 'wait' === item.status && item.error === null;
 	} );
 	if ( typeof plugin === 'undefined' ) {
@@ -99,8 +108,8 @@ export const getNextPlugin = function( state, siteId, whitelist = false ) {
 };
 
 export const getPluginKeys = createSelector(
-	( state, siteId, whitelist = false ) => {
-		const pluginList = getPluginsForSite( state, siteId, whitelist );
+	( state, siteId, forPlugin = false ) => {
+		const pluginList = getPluginsForSite( state, siteId, forPlugin );
 
 		return pluginList.reduce( ( keys, plugin ) => {
 			const key = get( plugin, 'key' );

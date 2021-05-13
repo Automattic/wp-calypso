@@ -1,9 +1,9 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
-import toggleState from 'state/notification-settings/toggle-state';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers } from 'calypso/state/utils';
+import toggleState from 'calypso/state/notification-settings/toggle-state';
 import {
 	NOTIFICATION_SETTINGS_FETCH,
 	NOTIFICATION_SETTINGS_FETCH_COMPLETE,
@@ -12,7 +12,7 @@ import {
 	NOTIFICATION_SETTINGS_SAVE,
 	NOTIFICATION_SETTINGS_SAVE_COMPLETE,
 	NOTIFICATION_SETTINGS_SAVE_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 function toggleSetting( state, source ) {
 	if ( toggleState[ source ] ) {
@@ -64,7 +64,9 @@ export const settings = ( state = { clean: null, dirty: null }, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	isFetching,
 	settings,
 } );
+
+export default withStorageKey( 'notificationSettings', combinedReducer );

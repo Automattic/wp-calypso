@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,27 +6,29 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { get, isEmpty, isEqual, noop, some } from 'lodash';
-import Gridicon from 'gridicons';
+import { get, isEmpty, isEqual, some } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import photon from 'photon';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card, Ribbon, Button } from '@automattic/components';
 import ThemeMoreButton from './more-button';
-import PulsingDot from 'components/pulsing-dot';
-import Ribbon from 'components/ribbon';
-import InfoPopover from 'components/info-popover';
-import Button from 'components/button';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
+import PulsingDot from 'calypso/components/pulsing-dot';
+import InfoPopover from 'calypso/components/info-popover';
+import { decodeEntities } from 'calypso/lib/formatting';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class Theme extends Component {
 	static propTypes = {
@@ -74,6 +74,12 @@ export class Theme extends Component {
 		actionLabel: PropTypes.string,
 		// Translate function,
 		translate: PropTypes.func,
+		// Themes bookmark items.
+		setThemesBookmark: PropTypes.func,
+		bookmarkRef: PropTypes.oneOfType( [
+			PropTypes.func,
+			PropTypes.shape( { current: PropTypes.any } ),
+		] ),
 	};
 
 	static defaultProps = {
@@ -140,6 +146,10 @@ export class Theme extends Component {
 		} );
 	};
 
+	setBookmark = () => {
+		this.props.setThemesBookmark( this.props.theme.id );
+	};
+
 	render() {
 		const { active, price, theme, translate, upsellUrl } = this.props;
 		const { name, description, screenshot } = theme;
@@ -155,6 +165,8 @@ export class Theme extends Component {
 			'theme__badge-price-upgrade': ! hasPrice,
 			'theme__badge-price-test': showUpsell,
 		} );
+
+		const themeDescription = decodeEntities( description );
 
 		// for performance testing
 		const screenshotID = this.props.index === 0 ? 'theme__firstscreenshot' : null;
@@ -199,20 +211,22 @@ export class Theme extends Component {
 		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } );
 		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
 
+		const bookmarkRef = this.props.bookmarkRef ? { ref: this.props.bookmarkRef } : {};
+
 		return (
-			<Card className={ themeClass } data-e2e-theme={ e2eThemeName }>
+			<Card className={ themeClass } data-e2e-theme={ e2eThemeName } onClick={ this.setBookmark }>
 				{ this.isBeginnerTheme() && (
 					<Ribbon className="theme__ribbon" color="green">
 						{ translate( 'Beginner' ) }
 					</Ribbon>
 				) }
-				<div className="theme__content">
+				<div className="theme__content" { ...bookmarkRef }>
 					<a
 						aria-label={ name }
 						className="theme__thumbnail"
 						href={ this.props.screenshotClickUrl || 'javascript:;' /* fallback for a11y */ }
 						onClick={ this.onScreenshotClick }
-						title={ description }
+						title={ themeDescription }
 					>
 						{ isActionable && (
 							<div className="theme__thumbnail-label">{ this.props.actionLabel }</div>
@@ -220,7 +234,7 @@ export class Theme extends Component {
 						{ this.renderInstalling() }
 						{ screenshot ? (
 							<img
-								alt={ description }
+								alt={ themeDescription }
 								className="theme__img"
 								src={ themeImgSrc }
 								srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
@@ -260,7 +274,4 @@ export class Theme extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( localize( Theme ) );
+export default connect( null, { recordTracksEvent, setThemesBookmark } )( localize( Theme ) );

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -14,15 +11,15 @@ const debug = debugFactory( 'calypso:me:security:2fa-code-prompt' );
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormVerificationCodeInput from 'components/forms/form-verification-code-input';
-import Notice from 'components/notice';
-import twoStepAuthorization from 'lib/two-step-authorization';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
+import Notice from 'calypso/components/notice';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 
 /**
  * Style dependencies
@@ -83,12 +80,12 @@ class Security2faCodePrompt extends React.Component {
 		this.setState( { codeRequestsAllowed: true } );
 	};
 
-	onRequestCode = event => {
+	onRequestCode = ( event ) => {
 		event.preventDefault();
 		this.requestCode();
 	};
 
-	onCancel = event => {
+	onCancel = ( event ) => {
 		event.preventDefault();
 		if ( this.props.onCancel ) {
 			this.props.onCancel();
@@ -105,7 +102,7 @@ class Security2faCodePrompt extends React.Component {
 		this.codeRequestTimer = setTimeout( this.allowCodeRequests, 60000 );
 	};
 
-	onCodeRequestResponse = error => {
+	onCodeRequestResponse = ( error ) => {
 		if ( error ) {
 			this.setState( {
 				codeRequestPerformed: false,
@@ -117,7 +114,7 @@ class Security2faCodePrompt extends React.Component {
 		}
 	};
 
-	onSubmit = event => {
+	onSubmit = ( event ) => {
 		event.preventDefault();
 		this.setState( { submittingCode: true }, this.onBeginCodeValidation );
 	};
@@ -195,6 +192,7 @@ class Security2faCodePrompt extends React.Component {
 
 	render() {
 		const method = twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'app';
+		const hasSmsRecoveryNumber = !! twoStepAuthorization?.data?.two_step_sms_last_four?.length;
 
 		return (
 			<form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
@@ -204,13 +202,13 @@ class Security2faCodePrompt extends React.Component {
 					</FormLabel>
 
 					<FormVerificationCodeInput
-						autoFocus
 						className="security-2fa-code-prompt__verification-code"
 						disabled={ this.state.submittingForm }
+						id="verification-code"
 						method={ method }
 						name="verificationCode"
-						onFocus={ function() {
-							analytics.ga.recordEvent( 'Me', 'Focused On 2fa Disable Code Verification Input' );
+						onFocus={ function () {
+							gaRecordEvent( 'Me', 'Focused On 2fa Disable Code Verification Input' );
 						} }
 						value={ this.state.verificationCode }
 						onChange={ this.handleChange }
@@ -218,7 +216,7 @@ class Security2faCodePrompt extends React.Component {
 					{ this.state.codeRequestPerformed ? (
 						<FormSettingExplanation>
 							{ this.props.translate(
-								'A code has been sent to your device via SMS.  ' +
+								'A code has been sent to your device via SMS. ' +
 									'You may request another code after one minute.'
 							) }
 						</FormSettingExplanation>
@@ -229,25 +227,22 @@ class Security2faCodePrompt extends React.Component {
 					<FormButton
 						className="security-2fa-code-prompt__verify-code"
 						disabled={ this.getFormDisabled() }
-						onClick={ function() {
-							analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Code Prompt Verify Button' );
+						onClick={ function () {
+							gaRecordEvent( 'Me', 'Clicked On 2fa Code Prompt Verify Button' );
 						} }
 					>
 						{ this.getSubmitButtonLabel() }
 					</FormButton>
 
-					{ this.props.showSMSButton ? (
+					{ hasSmsRecoveryNumber && this.props.showSMSButton ? (
 						<FormButton
 							className="security-2fa-code-prompt__send-code"
 							disabled={ ! this.state.codeRequestsAllowed }
 							isPrimary={ false }
-							onClick={ function( event ) {
-								analytics.ga.recordEvent(
-									'Me',
-									'Clicked On 2fa Code Prompt Send Code Via SMS Button'
-								);
+							onClick={ ( event ) => {
+								gaRecordEvent( 'Me', 'Clicked On 2fa Code Prompt Send Code Via SMS Button' );
 								this.onRequestCode( event );
-							}.bind( this ) }
+							} }
 						>
 							{ this.state.codeRequestPerformed
 								? this.props.translate( 'Resend Code' )
@@ -259,10 +254,10 @@ class Security2faCodePrompt extends React.Component {
 						<FormButton
 							className="security-2fa-code-prompt__cancel"
 							isPrimary={ false }
-							onClick={ function( event ) {
-								analytics.ga.recordEvent( 'Me', 'Clicked On Disable 2fa Cancel Button' );
+							onClick={ ( event ) => {
+								gaRecordEvent( 'Me', 'Clicked On Disable 2fa Cancel Button' );
 								this.onCancel( event );
-							}.bind( this ) }
+							} }
 						>
 							{ this.props.translate( 'Cancel' ) }
 						</FormButton>
@@ -272,7 +267,7 @@ class Security2faCodePrompt extends React.Component {
 		);
 	}
 
-	handleChange = e => {
+	handleChange = ( e ) => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	};

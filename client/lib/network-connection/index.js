@@ -1,47 +1,56 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
-
-const debug = debugFactory( 'calypso:network-connection' );
-import Emitter from 'lib/mixins/emitter';
-import request from 'superagent';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import PollerPool from 'lib/data-poller';
+import config from '@automattic/calypso-config';
+import PollerPool from 'calypso/lib/data-poller';
+import Emitter from 'calypso/lib/mixins/emitter';
+import { connectionLost, connectionRestored } from 'calypso/state/application/actions';
 
-import { connectionLost, connectionRestored } from 'state/application/actions';
+const debug = debugFactory( 'calypso:network-connection' );
 
-let STATUS_CHECK_INTERVAL = 20000,
-	connected = true,
-	NetworkConnectionApp;
+const STATUS_CHECK_INTERVAL = 20000;
+let connected = true;
 
-NetworkConnectionApp = {
+function fetchWithTimeout( url, init, timeout = 0 ) {
+	if ( ! timeout ) {
+		return fetch( url, init );
+	}
+
+	return Promise.race( [
+		fetch( url, init ),
+		new Promise( ( resolve, reject ) => {
+			setTimeout( () => reject( new Error() ), timeout );
+		} ),
+	] );
+}
+
+const NetworkConnectionApp = {
 	/**
-	 * @returns {boolean}
+	 * Returns whether the network connection is enabled in config.
+	 *
+	 * @returns {boolean} whether the network connection is enabled in config
 	 */
-	isEnabled: function() {
+	isEnabled: function () {
 		return config.isEnabled( 'network-connection' );
 	},
 
 	/**
 	 * Bootstraps network connection status change handler.
+	 *
+	 * @param {object} reduxStore The Redux store.
 	 */
-	init: function( reduxStore ) {
-		let changeCallback;
-
+	init: function ( reduxStore ) {
 		if ( ! this.isEnabled( 'network-connection' ) ) {
 			return;
 		}
 
-		changeCallback = function() {
+		const changeCallback = () => {
 			if ( connected ) {
 				debug( 'Showing notice "Connection restored".' );
 				reduxStore.dispatch( connectionRestored( i18n.translate( 'Connection restored.' ) ) );
@@ -53,53 +62,41 @@ NetworkConnectionApp = {
 			}
 		};
 
-		if ( config.isEnabled( 'desktop' ) ) {
-			connected = typeof navigator !== 'undefined' ? !! navigator.onLine : true;
-
-			window.addEventListener( 'online', this.emitConnected.bind( this ) );
-			window.addEventListener( 'offline', this.emitDisconnected.bind( this ) );
-		} else {
-			PollerPool.add( this, 'checkNetworkStatus', {
-				interval: STATUS_CHECK_INTERVAL,
-			} );
-		}
+		PollerPool.add( this, 'checkNetworkStatus', {
+			interval: STATUS_CHECK_INTERVAL,
+		} );
 
 		this.on( 'change', changeCallback );
 
-		window.addEventListener(
-			'beforeunload',
-			function() {
-				debug( 'Removing listener.' );
-				this.off( 'change', changeCallback );
-			}.bind( this )
-		);
+		window.addEventListener( 'beforeunload', () => {
+			debug( 'Removing listener.' );
+			this.off( 'change', changeCallback );
+		} );
 	},
 
 	/**
 	 * Checks network status by sending request to /version Calypso endpoint.
 	 * When an error occurs it emits disconnected event, otherwise connected event.
 	 */
-	checkNetworkStatus: function() {
+	checkNetworkStatus: function () {
 		debug( 'Checking network status.' );
 
-		request
-			.head( '/version?' + new Date().getTime() )
-			.timeout( STATUS_CHECK_INTERVAL / 2 )
-			.end(
-				function( error ) {
-					if ( error ) {
-						this.emitDisconnected();
-					} else {
-						this.emitConnected();
-					}
-				}.bind( this )
-			);
+		fetchWithTimeout(
+			'/version?' + new Date().getTime(),
+			{ method: 'HEAD' },
+			STATUS_CHECK_INTERVAL / 2
+		).then(
+			// Success
+			() => this.emitConnected(),
+			// Failure
+			() => this.emitDisconnected()
+		);
 	},
 
 	/**
 	 * Emits event when user's network connection is active.
 	 */
-	emitConnected: function() {
+	emitConnected: function () {
 		if ( ! this.isEnabled( 'network-connection' ) ) {
 			return;
 		}
@@ -113,7 +110,7 @@ NetworkConnectionApp = {
 	/**
 	 * Emits event when user's network connection is broken.
 	 */
-	emitDisconnected: function() {
+	emitDisconnected: function () {
 		if ( ! this.isEnabled( 'network-connection' ) ) {
 			return;
 		}
@@ -125,9 +122,11 @@ NetworkConnectionApp = {
 	},
 
 	/**
-	 * @returns {boolean}
+	 * Returns whether the connections is currently active.
+	 *
+	 * @returns {boolean} whether the connections is currently active.
 	 */
-	isConnected: function() {
+	isConnected: function () {
 		return connected;
 	},
 };

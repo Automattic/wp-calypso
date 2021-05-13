@@ -1,18 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import shallowEqual from 'react-pure-render/shallowEqual';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 
 /**
  * Internal dependencies
  */
-import { requestPostRevisionAuthors } from 'state/posts/revisions/authors/actions';
+import { requestPostRevisionAuthors } from 'calypso/state/posts/revisions/authors/actions';
 
 class QueryPostRevisionAuthors extends Component {
 	static propTypes = {
@@ -27,7 +24,7 @@ class QueryPostRevisionAuthors extends Component {
 
 	componentDidUpdate( prevProps ) {
 		if (
-			shallowEqual( this.props.userIds, prevProps.userIds ) &&
+			isShallowEqual( this.props.userIds, prevProps.userIds ) &&
 			this.props.siteId === prevProps.siteId
 		) {
 			return;
@@ -49,9 +46,6 @@ class QueryPostRevisionAuthors extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		requestPostRevisionAuthors,
-	}
-)( QueryPostRevisionAuthors );
+export default connect( null, {
+	requestPostRevisionAuthors,
+} )( QueryPostRevisionAuthors );

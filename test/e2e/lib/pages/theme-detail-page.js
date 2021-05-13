@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -31,7 +29,7 @@ export default class ThemeDetailPage extends AsyncBaseContainer {
 	}
 
 	async pickThisDesign() {
-		const selector = By.css( '.theme__sheet-primary-button' );
-		return await driverHelper.clickWhenClickable( this.driver, selector, this.explicitWaitMS );
+		const locator = By.css( '.theme__sheet-primary-button' );
+		return await driverHelper.clickWhenClickable( this.driver, locator, this.explicitWaitMS );
 	}
 }

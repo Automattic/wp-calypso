@@ -1,0 +1,76 @@
+.upsell-nudge.banner.card.is-compact {
+	background-color: var( --color-neutral-80 );
+	box-shadow: none;
+	border: 0;
+	border-radius: 2px;
+	color: var( --color-text-inverted );
+	margin: -4px 8px 8px;
+
+	a,
+	button {
+		border: none;
+		box-shadow: none;
+		color: var( --color-text-inverted );
+	}
+
+	.banner__icon-circle,
+	.banner__icon {
+		margin-top: -2px;
+		margin-right: 0.25em;
+	}
+	.dismissible-card__close-icon {
+		fill: var( --color-text-inverted );
+		margin-right: -6px;
+	}
+	.banner__action {
+		position: relative;
+		top: 1px;
+	}
+	.banner__content {
+		color: var( --color-text-inverted );
+		padding: 0 0 0 8px;
+	}
+	.banner__description {
+		color: var( --color-neutral-5 );
+	}
+	.banner__info {
+		margin-right: 5px;
+	}
+	.banner__info .banner__title {
+		color: var( --color-text-inverted );
+		font-weight: 400;
+	}
+	.card__link-indicator {
+		fill: var( --color-text-inverted );
+	}
+	.banner__icon-circle,
+	.banner__icon {
+		width: auto;
+		height: auto;
+		color: var( --color-text-inverted );
+		border-radius: 0;
+		background: none;
+		padding: 0;
+	}
+
+	&:hover {
+		box-shadow: none;
+	}
+}
+
+.upsell-nudge.is-dismissible.is-compact .banner__action {
+	margin-top: 0;
+	margin-right: 28px;
+	top: 2px;
+}
+.upsell-nudge.banner.card.is-compact.is-card-link {
+	padding-right: 12px;
+
+	.card__link-indicator {
+		display: none;
+	}
+
+	&:hover {
+		box-shadow: none;
+	}
+}

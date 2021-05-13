@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import Gridicon from 'components/gridicon';
 import React, { Fragment } from 'react';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'calypso/components/gridicon';
 import meta from './meta';
-import PluginsStore from 'lib/plugins/store';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import {
 	ButtonRow,
 	Continue,
@@ -18,18 +18,27 @@ import {
 	SiteLink,
 	Step,
 	Tour,
-} from 'layout/guided-tours/config-elements';
+} from 'calypso/layout/guided-tours/config-elements';
 
-const JETPACK_TOGGLE_SELECTOR = '.plugin-item-jetpack .form-toggle__switch';
+const JETPACK_TOGGLE_SELECTOR = '.plugin-item-jetpack .components-form-toggle';
+
+// Wait until the desired DOM element appears. Check every 125ms.
+// This function is a Redux action creator, hence the two arrows.
+const waitForJetpackToggle = () => async () => {
+	while ( ! document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {
+		await new Promise( ( resolve ) => setTimeout( resolve, 125 ) );
+	}
+};
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackPluginUpdatesTour = makeTour(
 	<Tour
 		{ ...meta }
-		when={ state => {
+		when={ ( state ) => {
 			const site = getSelectedSite( state );
-			const res =
-				! PluginsStore.isFetchingSite( site ) && !! PluginsStore.getSitePlugin( site, 'jetpack' );
+			const isRequestingPlugins = isRequesting( state, site.ID );
+			const sitePlugin = getPluginOnSite( state, site.ID, 'jetpack' );
+			const res = ! isRequestingPlugins && !! sitePlugin;
 			return res;
 		} }
 	>
@@ -38,38 +47,24 @@ export const JetpackPluginUpdatesTour = makeTour(
 			target={ JETPACK_TOGGLE_SELECTOR }
 			arrow="top-left"
 			placement="below"
-			wait={ () =>
-				new Promise( resolve => {
-					if ( document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {
-						return resolve();
-					}
-
-					const waitForElement = () => {
-						if ( document.querySelector( JETPACK_TOGGLE_SELECTOR ) ) {
-							return resolve();
-						}
-						setTimeout( waitForElement, 125 );
-					};
-
-					waitForElement();
-				} )
-			}
+			wait={ waitForJetpackToggle }
 			style={ {
 				animationDelay: '0.7s',
 				zIndex: 1,
 			} }
+			shouldScrollTo
 		>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>
 						{ translate(
 							"Let's activate autoupdates for Jetpack to ensure you're always " +
-								'up-to-date with the latest features and security fixes.'
+								'up to date with the latest features and security fixes.'
 						) }
 					</p>
 					<ButtonRow>
 						<Continue
-							target=".plugin-item-jetpack .form-toggle__switch"
+							target=".plugin-item-jetpack .components-form-toggle"
 							step="finish"
 							click
 							hidden
@@ -100,7 +95,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 						<SiteLink isButton href="/plans/my-plan/:site">
 							{ translate( "Yes, let's do it." ) }
 						</SiteLink>
-						<Quit>{ translate( 'No thanks.' ) }</Quit>
+						<Quit>{ translate( 'No, thanks.' ) }</Quit>
 					</ButtonRow>
 				</Fragment>
 			) }

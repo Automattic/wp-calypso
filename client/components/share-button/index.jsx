@@ -1,22 +1,22 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import SocialLogo from 'components/social-logo';
+import { Button } from '@automattic/components';
+import SocialLogo from 'calypso/components/social-logo';
 import services from './services';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export default class ShareButton extends PureComponent {
 	static propTypes = {

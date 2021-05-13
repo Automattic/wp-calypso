@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React from 'react';
@@ -10,58 +9,34 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Head from 'components/head';
-import getStylesheet from './utils/stylesheet';
-import { jsonStringifyForHtml } from '../../server/sanitize';
-
-const cssChunkLink = asset => (
-	<link key={ asset } rel="stylesheet" type="text/css" data-webpack={ true } href={ asset } />
-);
+import Head from 'calypso/components/head';
+import { chunkCssLinks } from './utils';
+import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 
 function DomainsLanding( {
 	branchName,
 	clientData,
 	domainsLandingData,
 	inlineScriptNonce,
-	isDebug,
 	env,
 	entrypoint,
 	head,
 	i18nLocaleScript,
 	isRTL,
 	lang,
-	manifest,
-	urls,
-	faviconURL,
+	manifests,
 	addEvergreenCheck,
 } ) {
-	const csskey = isRTL ? 'css.rtl' : 'css.ltr';
-
 	return (
 		<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
-			<Head
-				title={ head.title }
-				faviconURL={ faviconURL }
-				cdn={ '//s1.wp.com' }
-				branchName={ branchName }
-				inlineScriptNonce={ inlineScriptNonce }
-			>
+			<Head title={ head.title } branchName={ branchName } inlineScriptNonce={ inlineScriptNonce }>
 				{ head.metas.map( ( props, index ) => (
 					<meta { ...props } key={ index } />
 				) ) }
 				{ head.links.map( ( props, index ) => (
 					<link { ...props } key={ index } />
 				) ) }
-
-				<link
-					rel="stylesheet"
-					id="main-css"
-					href={
-						urls[ getStylesheet( { rtl: !! isRTL, debug: isDebug || env === 'development' } ) ]
-					}
-					type="text/css"
-				/>
-				{ entrypoint[ csskey ].map( cssChunkLink ) }
+				{ chunkCssLinks( entrypoint, isRTL ) }
 			</Head>
 			<body
 				className={ classnames( {
@@ -92,16 +67,17 @@ function DomainsLanding( {
 						} }
 					/>
 				) }
-				{ // Use <script nomodule> to redirect browsers with no ES module
-				// support to the fallback build. ES module support is a convenient
-				// test to determine that a browser is modern enough to handle
-				// the evergreen bundle.
-				addEvergreenCheck && (
-					<script
-						nonce={ inlineScriptNonce }
-						noModule
-						dangerouslySetInnerHTML={ {
-							__html: `
+				{
+					// Use <script nomodule> to redirect browsers with no ES module
+					// support to the fallback build. ES module support is a convenient
+					// test to determine that a browser is modern enough to handle
+					// the evergreen bundle.
+					addEvergreenCheck && (
+						<script
+							nonce={ inlineScriptNonce }
+							noModule
+							dangerouslySetInnerHTML={ {
+								__html: `
 						(function() {
 							var url = window.location.href;
 
@@ -112,25 +88,27 @@ function DomainsLanding( {
 							}
 						})();
 						`,
-						} }
-					/>
-				) }
+							} }
+						/>
+					)
+				}
 				{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 				{ /*
 				 * inline manifest in production, but reference by url for development.
 				 * this lets us have the performance benefit in prod, without breaking HMR in dev
 				 * since the manifest needs to be updated on each save
 				 */ }
-				{ env === 'development' && <script src="/calypso/evergreen/manifest.js" /> }
-				{ env !== 'development' && (
-					<script
-						nonce={ inlineScriptNonce }
-						dangerouslySetInnerHTML={ {
-							__html: manifest,
-						} }
-					/>
-				) }
-				{ entrypoint.js.map( asset => (
+				{ env === 'development' && <script src="/calypso/evergreen/runtime.js" /> }
+				{ env !== 'development' &&
+					manifests.map( ( manifest ) => (
+						<script
+							nonce={ inlineScriptNonce }
+							dangerouslySetInnerHTML={ {
+								__html: manifest,
+							} }
+						/>
+					) ) }
+				{ entrypoint.js.map( ( asset ) => (
 					<script key={ asset } src={ asset } />
 				) ) }
 				<script

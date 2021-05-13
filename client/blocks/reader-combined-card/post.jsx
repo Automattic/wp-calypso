@@ -1,6 +1,5 @@
-/** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
@@ -11,23 +10,31 @@ import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
-import ReaderExcerpt from 'blocks/reader-excerpt';
-import ReaderVisitLink from 'blocks/reader-visit-link';
-import ReaderAuthorLink from 'blocks/reader-author-link';
-import { recordPermalinkClick } from 'reader/stats';
-import TimeSince from 'components/time-since';
-import ReaderFeaturedImage from 'blocks/reader-featured-image';
-import ReaderFeaturedVideo from 'blocks/reader-featured-video';
-import ReaderCombinedCardPostPlaceholder from 'blocks/reader-combined-card/placeholders/post';
-import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
-import QueryReaderPost from 'components/data/query-reader-post';
+import AutoDirection from 'calypso/components/auto-direction';
+import Emojify from 'calypso/components/emojify';
+import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
+import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
+import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
+import { recordPermalinkClick } from 'calypso/reader/stats';
+import TimeSince from 'calypso/components/time-since';
+import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
+import ReaderCombinedCardPostPlaceholder from 'calypso/blocks/reader-combined-card/placeholders/post';
+import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
+import QueryReaderPost from 'calypso/components/data/query-reader-post';
+import {
+	canBeMarkedAsSeen,
+	getDefaultSeenValue,
+	isEligibleForUnseen,
+} from 'calypso/reader/get-helpers';
 
 class ReaderCombinedCardPost extends React.Component {
 	static propTypes = {
+		currentRoute: PropTypes.string,
+		isWPForTeamsItem: PropTypes.bool,
+		teams: PropTypes.array,
 		post: PropTypes.object,
 		streamUrl: PropTypes.string,
 		onClick: PropTypes.func,
@@ -35,10 +42,11 @@ class ReaderCombinedCardPost extends React.Component {
 	};
 
 	static defaultProps = {
+		teams: [],
 		showFeaturedAsset: true,
 	};
 
-	handleCardClick = event => {
+	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this );
 		const selection = window.getSelection && window.getSelection();
 
@@ -77,7 +85,16 @@ class ReaderCombinedCardPost extends React.Component {
 	};
 
 	render() {
-		const { post, streamUrl, isDiscover, isSelected, postKey } = this.props;
+		const {
+			currentRoute,
+			post,
+			streamUrl,
+			isDiscover,
+			isSelected,
+			postKey,
+			teams,
+			isWPForTeamsItem,
+		} = this.props;
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 
 		if ( isLoading ) {
@@ -89,8 +106,7 @@ class ReaderCombinedCardPost extends React.Component {
 			);
 		}
 
-		const hasAuthorName =
-			has( post, 'author.name' ) && ! isAuthorNameBlacklisted( post.author.name );
+		const hasAuthorName = has( post, 'author.name' ) && ! isAuthorNameBlocked( post.author.name );
 		let featuredAsset = null;
 		if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
 			featuredAsset = (
@@ -114,9 +130,14 @@ class ReaderCombinedCardPost extends React.Component {
 			recordPermalinkClick( 'timestamp_combined_card', post );
 		};
 
+		let isSeen = getDefaultSeenValue( currentRoute );
+		if ( canBeMarkedAsSeen( { post, currentRoute } ) ) {
+			isSeen = isEligibleForUnseen( { teams, isWPForTeamsItem } ) && post.is_seen;
+		}
 		const classes = classnames( {
 			'reader-combined-card__post': true,
 			'is-selected': isSelected,
+			'is-seen': isSeen,
 			'has-featured-asset': !! featuredAsset,
 		} );
 

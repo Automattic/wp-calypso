@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { hasUnseenNotifications as has } from 'state/selectors/has-unseen-notifications';
+import { hasUnseenNotifications as has } from 'calypso/state/selectors/has-unseen-notifications';
 
 const hasUnseenWithNoUser = has( () => null );
 const hasUnseenWithUserUnseen = has( () => ( { has_unseen_notes: true } ) );

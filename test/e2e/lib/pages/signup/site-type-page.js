@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,8 +16,8 @@ export default class SiteTypePage extends AsyncBaseContainer {
 	}
 
 	async _selectType( type ) {
-		const typeButtonSelector = By.css( `button.site-type__option[data-e2e-title='${ type }']` );
-		return await driverHelper.clickWhenClickable( this.driver, typeButtonSelector );
+		const typeButtonLocator = By.css( `button.site-type__option[data-e2e-title='${ type }']` );
+		return await driverHelper.clickWhenClickable( this.driver, typeButtonLocator );
 	}
 
 	async selectBlogType() {
@@ -28,6 +26,10 @@ export default class SiteTypePage extends AsyncBaseContainer {
 
 	async selectBusinessType() {
 		return await this._selectType( 'business' );
+	}
+
+	async selectProfessionalType() {
+		return await this._selectType( 'professional' );
 	}
 
 	async selectOnlineStoreType() {

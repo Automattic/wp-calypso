@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,22 +7,18 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { requesting, items as unwrappedItems } from '../reducer';
+import { requesting, items } from '../reducer';
 import {
 	POST_STATS_RECEIVE,
 	POST_STATS_REQUEST,
 	POST_STATS_REQUEST_FAILURE,
 	POST_STATS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import { withSchemaValidation } from 'state/utils';
-import { useSandbox } from 'test/helpers/use-sinon';
-
-const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -275,7 +269,7 @@ describe( 'reducer', () => {
 					2454: { views: 2 },
 				},
 			} );
-			const state = items( previousState, { type: SERIALIZE } );
+			const state = serialize( items, previousState );
 
 			expect( state ).to.eql( {
 				2916284: {
@@ -290,7 +284,7 @@ describe( 'reducer', () => {
 					2454: { views: 2 },
 				},
 			} );
-			const state = items( previousState, { type: DESERIALIZE } );
+			const state = deserialize( items, previousState );
 
 			expect( state ).to.eql( {
 				2916284: {
@@ -303,7 +297,7 @@ describe( 'reducer', () => {
 			const previousInvalidState = deepFreeze( {
 				2454: { views: 2 },
 			} );
-			const state = items( previousInvalidState, { type: DESERIALIZE } );
+			const state = deserialize( items, previousInvalidState );
 
 			expect( state ).to.eql( {} );
 		} );

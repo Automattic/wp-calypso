@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,24 +7,20 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { items as unwrappedItems, requesting, errors } from '../reducer';
+import reducer, { items, requesting, errors } from '../reducer';
 import {
 	DOMAINS_SUGGESTIONS_RECEIVE,
 	DOMAINS_SUGGESTIONS_REQUEST,
 	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import { withSchemaValidation } from 'state/utils';
-import { useSandbox } from 'test/helpers/use-sinon';
-
-const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	let sandbox;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		sandbox.stub( console, 'warn' );
 	} );
@@ -210,7 +204,7 @@ describe( 'reducer', () => {
 						},
 					],
 				} );
-				const state = items( original, { type: SERIALIZE } );
+				const state = serialize( items, original );
 				expect( state ).to.eql( original );
 			} );
 
@@ -231,7 +225,7 @@ describe( 'reducer', () => {
 						},
 					],
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 				expect( state ).to.eql( original );
 			} );
 
@@ -242,7 +236,7 @@ describe( 'reducer', () => {
 						{ cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
 					],
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 				expect( state ).to.eql( {} );
 			} );
 		} );
@@ -402,7 +396,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should update errors on failure', () => {
+		test( 'should update errors on error', () => {
 			const originalState = deepFreeze( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );

@@ -18,7 +18,7 @@
 		}
 
 		.podcasting-details__link-button {
-			color: var( --color-neutral-500 );
+			color: var( --color-neutral-50 );
 			font-weight: 600;
 			flex-shrink: 0;
 			margin-left: 12px;
@@ -42,10 +42,10 @@
 .podcasting-details__publish-notice {
 	position: relative;
 	background: var( --color-neutral-0 );
-	border-radius: 4px;
+	border-radius: 2px;
 	align-self: stretch;
 	padding: 6px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	text-align: left;
 	// Center contents vertically
 	// Note this element contains a <span> container to ensure normal
@@ -61,7 +61,7 @@
 	}
 
 	a {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		text-decoration: underline;
 	}
 
@@ -71,7 +71,7 @@
 }
 
 .podcasting-details__publish-button {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-weight: 600;
 	flex-shrink: 0;
 	margin-left: 12px;
@@ -85,7 +85,7 @@
 	}
 }
 
-@include breakpoint( '<800px' ) {
+@include breakpoint-deprecated( '<800px' ) {
 	.podcasting-details__link.is-enabled .podcasting-details__link-action-container,
 	.podcasting-details__publish-wrapper {
 		display: block;
@@ -115,7 +115,7 @@
 }
 
 .podcasting-details__title-subtitle-wrapper {
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		float: left;
 		width: 75%;
 	}
@@ -128,25 +128,25 @@
 	}
 
 	.form-select {
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			width: 100%;
 		}
 	}
 
 	&.is-disabled {
 		background-color: var( --color-neutral-0 );
-		border-color: var( --color-neutral-100 );
+		border-color: var( --color-neutral-10 );
 	}
 
 	&.is-disabled label,
 	&.is-disabled .form-setting-explanation {
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 	}
 
 	&.is-disabled .form-text-input,
 	&.is-disabled .form-textarea {
-		color: var( --color-neutral-200 );
-		border-color: var( --color-neutral-100 );
+		color: var( --color-neutral-20 );
+		border-color: var( --color-neutral-10 );
 	}
 }
 

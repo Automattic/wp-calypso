@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import AuthorSelector from '../';
-import Card from 'components/card';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { Card } from '@automattic/components';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 function AuthorSelectorExample( { primarySiteId, displayName } ) {
 	return (
@@ -24,7 +22,7 @@ function AuthorSelectorExample( { primarySiteId, displayName } ) {
 	);
 }
 
-const ConnectedAuthorSelectorExample = connect( state => {
+const ConnectedAuthorSelectorExample = connect( ( state ) => {
 	const user = getCurrentUser( state );
 	if ( ! user ) {
 		return {};

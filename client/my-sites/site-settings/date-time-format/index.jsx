@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -12,11 +9,12 @@ import { capitalize, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
+import FoldableCard from 'calypso/components/foldable-card';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateFormatOption from './date-format-option';
 import StartOfWeekOption from './start-of-week-option';
 import TimeFormatOption from './time-format-option';
-import { defaultDateFormats, defaultTimeFormats } from './default-formats';
+import { getDefaultDateFormats, getDefaultTimeFormats } from './default-formats';
 import { getLocalizedDate, phpToMomentDatetimeFormat } from './utils';
 
 /**
@@ -50,7 +48,7 @@ export class DateTimeFormat extends Component {
 		isLoadingSettings: true,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const {
 			fields: { date_format: dateFormat, time_format: timeFormat },
 		} = nextProps;
@@ -60,13 +58,13 @@ export class DateTimeFormat extends Component {
 		}
 
 		this.setState( {
-			customDateFormat: ! includes( defaultDateFormats, dateFormat ),
-			customTimeFormat: ! includes( defaultTimeFormats, timeFormat ),
+			customDateFormat: ! includes( getDefaultDateFormats(), dateFormat ),
+			customTimeFormat: ! includes( getDefaultTimeFormats(), timeFormat ),
 			isLoadingSettings: false,
 		} );
 	}
 
-	setFormat = ( name, defaultFormats ) => event => {
+	setFormat = ( name, defaultFormats ) => ( event ) => {
 		const { value: format } = event.currentTarget;
 		this.props.updateFields( { [ `${ name }_format` ]: format } );
 		this.setState( {
@@ -74,11 +72,11 @@ export class DateTimeFormat extends Component {
 		} );
 	};
 
-	setDateFormat = this.setFormat( 'date', defaultDateFormats );
+	setDateFormat = this.setFormat( 'date', getDefaultDateFormats() );
 
-	setTimeFormat = this.setFormat( 'time', defaultTimeFormats );
+	setTimeFormat = this.setFormat( 'time', getDefaultTimeFormats() );
 
-	setCustomFormat = name => event => {
+	setCustomFormat = ( name ) => ( event ) => {
 		const { value: format } = event.currentTarget;
 		this.props.updateFields( { [ `${ name }_format` ]: format } );
 		this.setState( {
@@ -109,10 +107,10 @@ export class DateTimeFormat extends Component {
 
 		return (
 			<div>
-				<div className="date-time-format__title">{ translate( 'Date and Time Format' ) }</div>
+				<div className="date-time-format__title">{ translate( 'Date and time format' ) }</div>
 				<div className="date-time-format__info">
-					{ dateFormat && phpToMomentDatetimeFormat( localizedDate, dateFormat ) } &bull;{' '}
-					{ timeFormat && phpToMomentDatetimeFormat( localizedDate, timeFormat ) } &bull;{' '}
+					{ dateFormat && phpToMomentDatetimeFormat( localizedDate, dateFormat ) } &bull;{ ' ' }
+					{ timeFormat && phpToMomentDatetimeFormat( localizedDate, timeFormat ) } &bull;{ ' ' }
 					{ translate( 'Week starts on %s', { args: weekday } ) }
 				</div>
 			</div>
@@ -168,4 +166,4 @@ export class DateTimeFormat extends Component {
 	}
 }
 
-export default localize( DateTimeFormat );
+export default localize( withLocalizedMoment( DateTimeFormat ) );

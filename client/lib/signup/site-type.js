@@ -1,4 +1,3 @@
-/** @format **/
 /**
  * Exernal dependencies
  */
@@ -9,9 +8,10 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 
-const getSiteTypePropertyDefaults = propertyKey =>
+const getSiteTypePropertyDefaults = ( propertyKey ) =>
 	get(
 		{
+			theme: 'pub/hever',
 			// General copy
 			siteMockupHelpTipCopy: i18n.translate(
 				"Scroll down to see how your site will look. You can customize it with your own text and photos when we're done with the setup basics."
@@ -23,7 +23,7 @@ const getSiteTypePropertyDefaults = propertyKey =>
 			siteTitleSubheader: i18n.translate(
 				'This will appear at the top of your site and can be changed at anytime.'
 			),
-			siteTitlePlaceholder: i18n.translate( 'default siteTitlePlaceholder' ),
+			siteTitlePlaceholder: i18n.translate( "E.g., Vail Renovations or Stevie's blog" ),
 			// Site topic step
 			siteTopicHeader: i18n.translate( 'What is your site about?' ),
 			siteTopicLabel: i18n.translate( 'What is your site about?' ),
@@ -32,9 +32,9 @@ const getSiteTypePropertyDefaults = propertyKey =>
 			),
 			siteTopicInputPlaceholder: i18n.translate( 'Enter a topic or choose one from below.' ),
 			// Domains step
-			domainsStepHeader: i18n.translate( 'Give your site an address' ),
-			domainsStepSubheader: i18n.translate(
-				'Enter a keyword that describes your site to get started.'
+			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your site a domain!" ),
+			signUpFlowDomainsStepSubheader: i18n.translate(
+				"Tell us your site's name or a few keywords, and we'll come up with some suggestions."
 			),
 			// Site styles step
 			siteStyleSubheader: i18n.translate(
@@ -55,8 +55,8 @@ const getSiteTypePropertyDefaults = propertyKey =>
  * @param {string} key A property name of a site types item
  * @param {string|number} value The value of `key` with which to filter items
  * @param {string} property The name of the property whose value you wish to return
- * @param {array} siteTypes (optional) A site type collection
- * @return {(string|int)?} value of `property` or `null` if none is found
+ * @param {Array} siteTypes (optional) A site type collection
+ * @returns {(string|number)?} value of `property` or `null` if none is found
  */
 export function getSiteTypePropertyValue( key, value, property, siteTypes = getAllSiteTypes() ) {
 	const siteTypeProperties = find( siteTypes, { [ key ]: value } );
@@ -72,7 +72,7 @@ export function getSiteTypePropertyValue( key, value, property, siteTypes = getA
  *
  * Please don't modify the IDs for now until we can integrate the /segments API into Calypso.
  *
- * @return {array} current list of site types
+ * @returns {Array} current list of site types
  */
 export function getAllSiteTypes() {
 	return [
@@ -82,10 +82,10 @@ export function getAllSiteTypes() {
 			defaultVertical: 'blogging', // used to conduct a vertical search and grab a default vertical for the segment
 			label: i18n.translate( 'Blog' ),
 			description: i18n.translate( 'Share and discuss ideas, updates, or creations.' ),
-			theme: 'pub/modern-business',
+			theme: 'pub/maywood',
 			designType: 'blog',
 			siteTitleLabel: i18n.translate( "Tell us your blog's name" ),
-			siteTitlePlaceholder: i18n.translate( "E.g., Stevie's blog " ),
+			siteTitlePlaceholder: i18n.translate( "E.g., Stevie's blog" ),
 			siteTitleSubheader: i18n.translate(
 				'This will appear at the top of your blog and can be changed at anytime.'
 			),
@@ -98,9 +98,9 @@ export function getAllSiteTypes() {
 				'Scroll down to see your blog. Once you complete setup you’ll be able to customize it further.'
 			),
 			siteMockupTitleFallback: i18n.translate( 'Your New Blog' ),
-			domainsStepHeader: i18n.translate( 'Give your blog an address' ),
-			domainsStepSubheader: i18n.translate(
-				"Enter your blog's name or some keywords that describe it to get started."
+			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your blog a domain!" ),
+			signUpFlowDomainsStepSubheader: i18n.translate(
+				"Tell us your blog's name or a few keywords, and we'll come up with some suggestions."
 			),
 		},
 		{
@@ -109,14 +109,16 @@ export function getAllSiteTypes() {
 			defaultVertical: 'business',
 			label: i18n.translate( 'Business' ),
 			description: i18n.translate( 'Promote products and services.' ),
-			theme: 'pub/modern-business',
+			theme: 'pub/maywood',
 			designType: 'page',
 			siteTitleLabel: i18n.translate( 'Tell us your business’s name' ),
 			siteTitlePlaceholder: i18n.translate( 'E.g., Vail Renovations' ),
 			siteTopicHeader: i18n.translate( 'What does your business do?' ),
 			siteTopicLabel: i18n.translate( 'What type of business do you have?' ),
-			domainsStepSubheader: i18n.translate(
-				"Enter your business's name or some keywords that describe it to get started."
+
+			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your business a domain!" ),
+			signUpFlowDomainsStepSubheader: i18n.translate(
+				"Tell us your business's name or a few keywords, and we'll come up with some suggestions."
 			),
 			customerType: 'business',
 		},
@@ -126,10 +128,12 @@ export function getAllSiteTypes() {
 			defaultVertical: 'designer',
 			label: i18n.translate( 'Professional' ),
 			description: i18n.translate( 'Showcase your portfolio and work.' ),
-			theme: 'pub/modern-business',
+			theme: 'pub/maywood',
 			designType: 'portfolio',
 			siteTitleLabel: i18n.translate( 'What is your name?' ),
-			siteTitlePlaceholder: i18n.translate( 'E.g., John Appleseed' ),
+			siteTitlePlaceholder: i18n.translate( 'E.g., John Appleseed', {
+				comment: "An example of a person's name, use something appropriate for the locale",
+			} ),
 			siteTopicHeader: i18n.translate( 'What type of work do you do?' ),
 			siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
 			siteTopicInputPlaceholder: i18n.translate( 'Enter your job title or choose one from below.' ),
@@ -151,7 +155,10 @@ export function getAllSiteTypes() {
 			siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
 			customerType: 'business',
 			purchaseRequired: true,
-			forcePublicSite: true,
+			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your store a domain!" ),
+			signUpFlowDomainsStepSubheader: i18n.translate(
+				"Tell us your store's name or a few keywords, and we'll come up with some suggestions."
+			),
 		},
 	];
 }

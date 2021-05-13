@@ -13,11 +13,18 @@
 	}
 }
 
-.account-dialog-account__label {
+.account-dialog-account__label.form-label {
 	position: relative;
 	display: block;
 	min-height: 40px;
 	padding-top: 5px;
+	font-weight: 400;
+	font-size: 1rem;
+	margin-bottom: 0;
+}
+
+.account-dialog-account__input.form-radio {
+	margin-right: 2px;
 }
 
 .account-dialog.single-account .account-dialog-account__input {
@@ -37,8 +44,8 @@
 // specificity of .account-dialog is needed for display property to apply
 .account-dialog .account-dialog-account__picture {
 	position: absolute;
-		left: 8px;
-		top: 0;
+	left: 8px;
+	top: 0;
 	width: 34px;
 	height: 34px;
 }
@@ -50,10 +57,9 @@
 .account-dialog-account__content {
 	display: inline-block;
 	padding-left: 48px;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }
 
 .account-dialog-account__description {
-	font-weight: 300;
 	font-size: 0.9em;
 }

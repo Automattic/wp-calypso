@@ -1,19 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import UploadButton from './video-editor-upload-button';
+
+const noop = () => {};
 
 const VideoEditorControls = ( {
 	isPosterUpdating,

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,12 +11,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import MainComponent from 'components/main';
-import HeaderCake from 'components/header-cake';
-import EligibilityWarnings from 'blocks/eligibility-warnings';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { initiateThemeTransfer } from 'state/themes/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import MainComponent from 'calypso/components/main';
+import HeaderCake from 'calypso/components/header-cake';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { initiateThemeTransfer } from 'calypso/state/themes/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class PluginEligibility extends Component {
 	static propTypes = {
@@ -63,11 +61,11 @@ class PluginEligibility extends Component {
 }
 
 // It was 2:45AM, I wanted to deploy, and @dmsnell made me do it... props to @dmsnell :)
-const withNavigation = WrappedComponent => props => (
+const withNavigation = ( WrappedComponent ) => ( props ) => (
 	<WrappedComponent { ...{ ...props, navigateTo: page } } />
 );
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

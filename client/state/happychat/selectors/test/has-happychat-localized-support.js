@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,8 +10,8 @@ import deepFreeze from 'deep-freeze';
 import {
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
-} from 'state/happychat/constants';
-import hasHappychatLocalizedSupport from 'state/happychat/selectors/has-happychat-localized-support';
+} from 'calypso/state/happychat/constants';
+import hasHappychatLocalizedSupport from 'calypso/state/happychat/selectors/has-happychat-localized-support';
 
 describe( '#hasHappychatLocalizedSupport', () => {
 	it( "should be false if there's no active connection", () => {

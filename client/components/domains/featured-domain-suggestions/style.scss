@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .featured-domain-suggestions {
 	display: flex;
 	flex-direction: column;
@@ -10,20 +13,24 @@
 
 	&.featured-domain-suggestions__is-domain-management .featured-domain-suggestion {
 		.domain-suggestion__action {
-			font-size: 16px;
+			font-size: $font-body;
 		}
 	}
 
 	.is-section-signup & {
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			flex-direction: row;
 		}
 	}
 
 	.is-section-domains & {
-		@include breakpoint( '>800px' ) {
+		@include breakpoint-deprecated( '>800px' ) {
 			flex-direction: row;
 		}
+	}
+
+	.is-section-signup.is-white-signup & {
+		display: block;
 	}
 }
 
@@ -77,13 +84,13 @@
     }
 
     .domain-registration-suggestion__title {
-		font-size: 20px;
+		font-size: $font-title-small;
 		font-weight: 400;
 		line-height: 1.2;
 		margin-bottom: 0.25em;
 
-		@include breakpoint( '>480px' ) {
-			font-size: 24px;
+		@include breakpoint-deprecated( '>480px' ) {
+			font-size: $font-title-medium;
 			margin-bottom: 0.125em;
 		}
 	}
@@ -92,6 +99,10 @@
 	&.card .domain-product-price {
 		margin: 0;
 		justify-content: flex-start;
+
+		body.is-section-signup.is-white-signup & {
+			margin-top: 12px;
+		}
 
 		&.is-free-domain,
 		&.is-sale-domain {
@@ -104,8 +115,8 @@
 	.domain-registration-suggestion__progress-bar {
 		align-items: center;
 		display: flex;
-		font-size: 12px;
-		margin-top: 16px;
+		font-size: $font-body-extra-small;
+		margin-top: 10px;
 		order: 2;
 
 		.progress-bar {
@@ -120,7 +131,7 @@
 
 	.domain-registration-suggestion__match-reason {
 		color: var( --color-text-subtle );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		padding: 0.125em 0;
 		display: flex;
 		align-items: center;
@@ -139,13 +150,90 @@
 	}
 }
 
-@include breakpoint( '<660px' ) {
+body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion.card {
+	border: none;
+	border-radius: 4px; /* stylelint-disable-line */
+	margin: 0;
+	align-items: center;
+	background: #fdfdfd;
+	border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
+
+	@include break-mobile {
+		margin-bottom: 12px;
+		box-sizing: border-box;
+		border: 1px solid #e2e4e7;
+		background: var( --color-surface );
+	}
+
+	.button.domain-suggestion__action {
+		margin-top: 0;
+		font-weight: 500; /* stylelint-disable-line */
+		padding: 0.57em 1.17em;
+		border-radius: 4px; /* stylelint-disable-line */
+		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+		font-size: 0.875rem;
+
+		@include break-mobile {
+			padding: 0.65em 2.8em;
+		}
+	}
+
+	.domain-registration-suggestion__domain-title {
+		font-size: 1.375rem; /* stylelint-disable-line */
+		line-height: 30px;
+
+		@include break-mobile {
+			font-size: 1.625rem; /* stylelint-disable-line */
+		}
+	}
+
+	.domain-registration-suggestion__title-wrapper {
+		flex-wrap: nowrap;
+		flex-direction: column-reverse;
+
+		@include break-xlarge {
+			flex-direction: row;
+		}
+	}
+
+	.domain-registration-suggestion__title {
+		font-size: $font-title-medium;
+		padding-right: 0;
+		margin-bottom: 0;
+	}
+
+	&.domain-suggestion.is-clickable:hover {
+		@include break-mobile {
+			border: 1px solid #646970;
+		}
+	}
+
+	&.featured-domain-suggestion--is-placeholder {
+		margin-bottom: 12px;
+		margin-top: 40px;
+		border-radius: 4px; /* stylelint-disable-line */
+	}
+}
+
+body.is-section-signup.is-white-signup .featured-domain-suggestions {
+	margin: 0;
+
+	@include break-mobile {
+		margin: 0 20px;
+	}
+
+	@include break-large {
+		margin: 0;
+	}
+}
+
+@include breakpoint-deprecated( '<660px' ) {
 	.featured-domain-suggestions {
 		flex-flow: wrap;
 	}
 }
 
-@include breakpoint( '>660px' ) {
+@include breakpoint-deprecated( '>660px' ) {
 	.domain-registration-suggestion__title {
 		.featured-domain-suggestions--title-in-18em & {
 			font-size: 1.8em;
@@ -154,7 +242,7 @@
 			font-size: 1.6em;
 		}
 		.featured-domain-suggestions--title-in-14em & {
-			font-size: 1.4em;
+			font-size: $font-title-small;
 		}
 		.featured-domain-suggestions--title-in-12em & {
 			font-size: 1.2em;

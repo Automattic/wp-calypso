@@ -1,5 +1,9 @@
 @import 'jetpack-connect/colors.scss';
 @import 'woocommerce/components/text-control/style.scss';
+@import '~@automattic/onboarding/styles/mixins';
+@import '~@automattic/typography/styles/fonts';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
 
 $image-height: 47px;
 
@@ -31,25 +35,25 @@ $image-height: 47px;
 }
 
 .wp-login__header {
-	color: var( --color-neutral-400 );
-	font-size: 16px;
+	color: var( --color-neutral-40 );
+	font-size: $font-body;
 	margin-bottom: 16px;
 	text-align: center;
 
 	body.is-section-signup & {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 }
 
 .wp-login__links,
 .wp-login__footer {
 	a,
+	a:visited,
 	button {
-		color: var( --color-neutral-500 );
-		text-decoration: none;
+		color: var( --color-neutral-50 );
 
 		body.is-section-signup & {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }
@@ -57,12 +61,12 @@ $image-height: 47px;
 .wp-login__links {
 	a,
 	button {
-		border-bottom: 1px solid var( --color-neutral-100 );
+		border-bottom: 1px solid var( --color-neutral-10 );
 		box-sizing: border-box;
 		cursor: pointer;
 		display: block;
-		font-size: 14px;
-		font-weight: 500;
+		font-size: $font-body-small;
+		font-weight: 600;
 		line-height: 4em;
 		padding: 0 24px;
 		text-align: center;
@@ -75,10 +79,6 @@ $image-height: 47px;
 
 		&:last-child {
 			border-bottom: none;
-		}
-
-		body.is-section-signup & {
-			color: var( --color-white );
 		}
 	}
 
@@ -104,8 +104,8 @@ $image-height: 47px;
 }
 
 .wp-login__footer--jetpack {
-	background: var( --color-white );
-	border-top: solid 1px var( --color-neutral-50 );
+	background: var( --color-surface );
+	border-top: solid 1px var( --color-neutral-5 );
 	text-align: center;
 
 	img {
@@ -134,7 +134,7 @@ $image-height: 47px;
 }
 
 .wp-login__private-site-header {
-	font-weight: bold;
+	font-weight: 600;
 	margin-bottom: 10px;
 	text-align: center;
 }
@@ -153,24 +153,17 @@ $image-height: 47px;
 	}
 }
 
-.layout.is-jetpack-login:not( .is-jetpack-woocommerce-flow ) {
+.layout.is-jetpack-login:not( .is-jetpack-woocommerce-flow ):not( .is-wccom-oauth-flow ) {
 	@include jetpack-connect-colors();
 }
 
-.layout.is-jetpack-woocommerce-flow {
+.layout.is-jetpack-woocommerce-flow,
+.layout.is-wccom-oauth-flow,
+.layout.is-jetpack-woo-dna-flow {
 	@include woocommerce-colors();
 }
 
 .layout.is-jetpack-login {
-	background-color: var( --color-jetpack-onboarding-background );
-
-	.login__form-header {
-		color: var( --color-jetpack-onboarding-text );
-	}
-
-	.jetpack-logo__text {
-		fill: var( --color-jetpack-onboarding-text );
-	}
 
 	.login__form input:focus,
 	.logged-out-form input:focus {
@@ -179,7 +172,9 @@ $image-height: 47px;
 	}
 
 	.login__form-terms a,
-	.form-input-validation a {
+	.login__social-tos a,
+	.form-input-validation a,
+	.login__form-change-username {
 		color: var( --color-accent-dark );
 
 		&:hover,
@@ -188,37 +183,25 @@ $image-height: 47px;
 		}
 	}
 
-	.wp-login__links a,
-	.logged-out-form__links a,
-	.logged-out-form__link-item,
-	.translator-invite__content a {
-		color: var( --color-neutral-200 );
-		border-bottom-color: var( --color-neutral-700 );
-
-		&:hover,
-		&:focus {
-			color: var( --color-primary-200 );
-		}
-	}
-
 	.translator-invite__content a {
 		border: none;
 	}
 
 	.translator-invite__content {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 	}
 
 	.wp-login__site-return-link::after {
 		background: linear-gradient(
 			to right,
-			rgba( var( --color-jetpack-onboarding-background ), 0 ),
-			rgba( var( --color-jetpack-onboarding-background ), 1 ) 90%
+			rgba( var( --color-surface-backdrop-rgb ), 0 ),
+			var( --color-surface-backdrop ) 90%
 		);
 	}
 }
 
-.layout.is-jetpack-woocommerce-flow {
+.layout.is-jetpack-woocommerce-flow,
+.layout.is-wccom-oauth-flow {
 	background-color: var( --color-woocommerce-onboarding-background );
 
 	.wp-login__links {
@@ -228,14 +211,14 @@ $image-height: 47px;
 	.wp-login__links a {
 		border-bottom: none;
 		line-height: 3.4em;
-		color: var( --color-gray-600 );
-		font-size: 14px;
+		color: var( --color-neutral-60 );
+		font-size: $font-body-small;
 		text-decoration: underline;
 		font-weight: normal;
 	}
 
 	.login__form-header {
-		color: var( --color-gray-800 );
+		color: var( --color-neutral-80 );
 	}
 
 	.wp-login__main.main {
@@ -243,7 +226,9 @@ $image-height: 47px;
 	}
 
 	.login__form {
-		@include elevation ( 2dp );
+		@include elevation( 2dp );
+		padding-bottom: 0;
+		padding-top: 8px;
 	}
 
 	.login__form input:focus,
@@ -253,52 +238,54 @@ $image-height: 47px;
 	}
 
 	.login__form-change-username {
-		color: var( --color-gray-600 );
+		color: var( --color-neutral-60 );
 	}
 
 	.login__form-terms,
 	.login__form-terms a,
 	.login__form-terms a:hover {
 		text-align: left;
-		color: var( --color-gray-600 );
-		font-size: 12px;
-	}
-
-	.login__form-social-divider {
-		text-align: center;
-		margin-top: 12px;
-		margin-bottom: 12px;
-		font-size: 12px;
-		position: initial;
-		text-transform: initial;
+		color: var( --color-neutral-60 );
+		font-size: $font-body-extra-small;
 	}
 
 	.login__social {
 		box-shadow: none;
 		padding-top: 0;
+		margin-right: auto;
+		margin-left: auto;
+		width: 300px;
 	}
 
 	.login__social-buttons {
 		.social-buttons__button {
-			border: 1px solid $muriel-woo-purple-500;
-			color: $muriel-woo-purple-500;
+			border: 1px solid var( --studio-pink-50 );
+			color: var( --studio-pink-50 );
 			box-shadow: none;
 		}
 	}
 
+	.login__social-tos a {
+		color: var( --studio-gray-60 );
+	}
+
+	.wp-login__site-return-link::after {
+		background: none;
+	}
+
 	.woocommerce-muriel-text-control,
 	.muriel-input-text {
-		border-color: var( --color-gray-200 );
+		border-color: var( --color-neutral-20 );
 
 		.text-control__label,
 		.components-base-control__label {
-			color: var( --color-gray-500 );
-			font-size: 12px;
+			color: var( --color-neutral-50 );
+			font-size: $font-body-extra-small;
 			font-weight: normal;
 		}
 
 		&.active {
-			box-shadow: 0 0 0 2px var( --color-hot-purple-600 );
+			box-shadow: 0 0 0 2px var( --studio-woocommerce-purple-60 );
 			border-color: transparent;
 		}
 	}
@@ -313,5 +300,99 @@ $image-height: 47px;
 				border: 0;
 			}
 		}
+	}
+}
+
+.layout.is-gutenboarding-login {
+	background-color: #fff;
+
+	.layout__primary {
+		padding-top: 10%;
+	}
+
+	.login__form-header {
+		@include onboarding-heading-text-mobile;
+		margin-bottom: 0;
+
+		@include break-mobile {
+			@include onboarding-heading-text;
+		}
+	}
+
+	.wp-login__container .card {
+		box-shadow: none;
+	}
+
+	.login .button.is-primary {
+		// Match primary button color in Gutenboarding and
+		// change border color to remove 3D effect
+		background-color: #007cba;
+		border-color: #007cba;
+		color: #fff;
+		width: auto;
+		min-width: 100%;
+		text-align: center;
+		font-size: $font-body-small;
+		line-height: 24px;
+		height: 42px;
+		display: block;
+		margin: 13px auto;
+		float: none;
+		font-weight: 600;
+		letter-spacing: 0;
+		transition: background 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+		border-radius: 2px;
+		box-shadow: none;
+
+		&:hover,
+		&:active {
+			background: var( --studio-blue-20 );
+			border-color: var( --studio-blue-20 );
+			color: #fff;
+			outline-color: transparent;
+			box-shadow: none;
+		}
+
+		@include break-mobile {
+			min-width: 170px;
+		}
+	}
+
+	.two-factor-authentication__verification-code-form > p,
+	.login__form .login__form-userdata label,
+	.login__form-terms,
+	.login__social-tos {
+		color: var( --studio-gray-40 );
+	}
+
+	.login__form-terms a,
+	.login__social-tos a {
+		color: var( --studio-gray-80 );
+	}
+
+	.two-factor-authentication__verification-code-form input,
+	.login__form input {
+		padding: 18px 14px;
+		font-size: $font-body-small;
+	}
+
+	.wp-login__main {
+		max-width: 540px;
+
+		form {
+			max-width: 440px;
+			margin: 0 auto;
+		}
+	}
+
+	.form-password-input .form-password-input__toggle-visibility {
+		top: 17px;
+	}
+
+	.wp-login__links a:hover,
+	.wp-login__links a:active,
+	.wp-login__links button:hover,
+	.wp-login__links button:active {
+		color: #00a0d2;
 	}
 }

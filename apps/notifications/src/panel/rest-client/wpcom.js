@@ -2,7 +2,7 @@ let wpcomInstance;
 
 export const wpcom = () => wpcomInstance;
 
-export const init = provider => ( wpcomInstance = provider );
+export const init = ( provider ) => ( wpcomInstance = provider );
 
 export const fetchNote = ( noteId, query, callback ) =>
 	wpcom().req.get(
@@ -48,7 +48,27 @@ export const markReadStatus = ( noteId, isRead, callback ) =>
 		callback
 	);
 
-export const sendLastSeenTime = time =>
+/**
+ * Mark post as seen using the new more granular per post API.
+ *
+ * @param blogId blog identifier
+ * @param postId post identifier
+ */
+export const markPostAsSeen = ( blogId, postId ) =>
+	wpcom().req.post(
+		{
+			path: '/seen-posts/seen/blog/new',
+			apiNamespace: 'wpcom/v2',
+		},
+		null,
+		{
+			blog_id: blogId,
+			post_ids: [ postId ],
+			source: 'notification-web',
+		}
+	);
+
+export const sendLastSeenTime = ( time ) =>
 	wpcom().req.post(
 		{
 			path: '/notifications/seen',
@@ -57,5 +77,5 @@ export const sendLastSeenTime = time =>
 		{ time }
 	);
 
-export const subscribeToNoteStream = callback =>
+export const subscribeToNoteStream = ( callback ) =>
 	wpcom().pinghub.connect( '/wpcom/me/newest-note-data', callback );

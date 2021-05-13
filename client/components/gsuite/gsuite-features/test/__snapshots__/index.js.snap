@@ -96,7 +96,7 @@ exports[`GSuiteFeatures it renders GSuiteFeatures in a list 1`] = `
         Connect with your team
       </h5>
       <p>
-        Use text chats, voice calls, or video calls, with built in screen sharing.
+        Use text chats or video calls, with built in screen sharing.
       </p>
     </div>
   </div>
@@ -199,7 +199,7 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with basic plan 1`] = `
         Connect with your team
       </h5>
       <p>
-        Use text chats, voice calls, or video calls, with built in screen sharing.
+        Use text chats or video calls, with built in screen sharing.
       </p>
     </div>
   </div>
@@ -302,7 +302,7 @@ exports[`GSuiteFeatures it renders GSuiteFeatures with business plan 1`] = `
         Connect with your team
       </h5>
       <p>
-        Use text chats, voice calls, or video calls, with built in screen sharing.
+        Use text chats or video calls, with built in screen sharing.
       </p>
     </div>
   </div>
@@ -405,7 +405,7 @@ exports[`GSuiteFeatures it renders GSuiteFeatures without a productSlug 1`] = `
         Connect with your team
       </h5>
       <p>
-        Use text chats, voice calls, or video calls, with built in screen sharing.
+        Use text chats or video calls, with built in screen sharing.
       </p>
     </div>
   </div>

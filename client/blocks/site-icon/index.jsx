@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,19 +7,20 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Image from 'components/image';
-import Spinner from 'components/spinner';
-import QuerySites from 'components/data/query-sites';
-import { getSite } from 'state/sites/selectors';
-import getSiteIconId from 'state/selectors/get-site-icon-id';
-import getSiteIconUrl from 'state/selectors/get-site-icon-url';
-import isTransientMedia from 'state/selectors/is-transient-media';
-import resizeImageUrl from 'lib/resize-image-url';
+import Image from 'calypso/components/image';
+import MediaImage from 'calypso/my-sites/media-library/media-image';
+import Spinner from 'calypso/components/spinner';
+import QuerySites from 'calypso/components/data/query-sites';
+import { getSite } from 'calypso/state/sites/selectors';
+import getSiteIconId from 'calypso/state/selectors/get-site-icon-id';
+import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
+import isTransientMedia from 'calypso/state/selectors/is-transient-media';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
 
 /**
  * Style dependencies
@@ -47,9 +46,9 @@ function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon } ) {
 		<div className={ classes } style={ style }>
 			{ ! site && siteId > 0 && <QuerySites siteId={ siteId } /> }
 			{ iconSrc ? (
-				<Image className="site-icon__img" src={ iconSrc } alt="" />
+				<MediaImage component={ Image } className="site-icon__img" src={ iconSrc } alt="" />
 			) : (
-				<Gridicon icon="site" size={ Math.round( size / 1.3 ) } />
+				<Gridicon icon="globe" size={ Math.round( size / 1.8 ) } />
 			) }
 			{ isTransientIcon && <Spinner /> }
 		</div>

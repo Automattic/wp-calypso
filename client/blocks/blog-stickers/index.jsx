@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -11,13 +8,13 @@ import React from 'react';
  * Internal Dependencies
  */
 import { connect } from 'react-redux';
-import QueryReaderTeams from 'components/data/query-reader-teams';
-import QueryBlogStickers from 'components/data/query-blog-stickers';
-import getBlogStickers from 'state/selectors/get-blog-stickers';
-import getReaderTeams from 'state/selectors/get-reader-teams';
-import BlogStickersList from 'blocks/blog-stickers/list';
-import InfoPopover from 'components/info-popover';
-import { isAutomatticTeamMember } from 'reader/lib/teams';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import QueryBlogStickers from 'calypso/components/data/query-blog-stickers';
+import getBlogStickers from 'calypso/state/selectors/get-blog-stickers';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import BlogStickersList from 'calypso/blocks/blog-stickers/list';
+import InfoPopover from 'calypso/components/info-popover';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 
 /**
  * Style dependencies
@@ -34,7 +31,7 @@ const BlogStickers = ( { blogId, teams, stickers } ) => {
 		<div className="blog-stickers">
 			<QueryBlogStickers blogId={ blogId } />
 			{ isTeamMember && stickers && stickers.length > 0 && (
-				<InfoPopover rootClassName="blog-stickers__popover">
+				<InfoPopover>
 					<BlogStickersList stickers={ stickers } />
 				</InfoPopover>
 			) }

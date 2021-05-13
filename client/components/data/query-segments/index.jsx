@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSegments } from 'state/signup/segments/actions';
-import { getSegments } from 'state/signup/segments/selectors';
+import { requestSegments } from 'calypso/state/signup/segments/actions';
+import { getSegments } from 'calypso/state/signup/segments/selectors';
 
 export class QuerySegments extends Component {
 	static propTypes = {
@@ -20,7 +18,7 @@ export class QuerySegments extends Component {
 		segments: PropTypes.array,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.segments ) {
 			this.props.requestSegments();
 		}
@@ -32,7 +30,7 @@ export class QuerySegments extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		segments: getSegments( state ),
 	} ),
 	{ requestSegments }

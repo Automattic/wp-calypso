@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,17 +6,15 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getPosterUploadProgress from 'state/selectors/get-poster-upload-progress';
+import getPosterUploadProgress from 'calypso/state/selectors/get-poster-upload-progress';
 
 describe( 'getPosterUploadProgress()', () => {
 	test( 'should return the upload progress', () => {
 		const percentage = 50;
 		const uploadProgress = getPosterUploadProgress( {
-			ui: {
-				editor: {
-					videoEditor: {
-						uploadProgress: percentage,
-					},
+			editor: {
+				videoEditor: {
+					uploadProgress: percentage,
 				},
 			},
 		} );

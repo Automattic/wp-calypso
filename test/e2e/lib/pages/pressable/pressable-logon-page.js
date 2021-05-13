@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,7 +18,7 @@ export default class PressableLogonPage extends AsyncBaseContainer {
 	}
 
 	async loginWithWP() {
-		const wpButtonSelector = By.css( 'div .btn-wordpress' );
-		return await driverHelper.clickWhenClickable( this.driver, wpButtonSelector );
+		const wpButtonLocator = By.css( 'div .btn-wordpress' );
+		return await driverHelper.clickWhenClickable( this.driver, wpButtonLocator );
 	}
 }

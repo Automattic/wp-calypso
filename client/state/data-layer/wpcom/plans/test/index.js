@@ -1,15 +1,14 @@
-/** @format */
 /**
  * Internal dependencies
  */
 import { receivePlans, receiveError, requestPlans } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	plansReceiveAction,
 	plansRequestFailureAction,
 	plansRequestSuccessAction,
-} from 'state/plans/actions';
-import { WPCOM_RESPONSE } from 'state/plans/test/fixture';
+} from 'calypso/state/plans/actions';
+import { WPCOM_RESPONSE } from 'calypso/state/plans/test/fixture';
 
 describe( 'wpcom-api', () => {
 	describe( 'plans request', () => {

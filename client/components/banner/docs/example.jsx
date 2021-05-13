@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,55 +7,29 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import {
-	PLAN_BLOGGER,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_BUSINESS,
-	FEATURE_ADVANCED_SEO,
-} from 'lib/plans/constants';
-import Banner from 'components/banner';
+import Banner from 'calypso/components/banner';
 
 const BannerExample = () => (
 	<div>
-		<Banner disableHref title="Banner unrelated to any plan" />
+		<Banner disableHref title="A simple banner" />
 		<Banner
-			description="And with a description."
+			callToAction="Update"
+			description="This is the description."
 			disableHref
-			icon="star"
-			title="Banner unrelated to any plan"
+			showIcon
+			title="Simple banner with description and call to action"
 		/>
-		<Banner href="#" plan={ PLAN_BLOGGER } title="Upgrade to a Blogger Plan!" />
-		<Banner href="#" plan={ PLAN_PERSONAL } title="Upgrade to a Personal Plan!" />
-		<Banner href="#" plan={ PLAN_PREMIUM } title="Upgrade to a Premium Plan!" />
-		<Banner href="#" plan={ PLAN_BUSINESS } title="Upgrade to a Business Plan!" />
+		<Banner showIcon={ false } title="Banner with showIcon set to false" />
 		<Banner
-			callToAction="Upgrade for $9.99"
-			feature={ FEATURE_ADVANCED_SEO }
-			href="#"
-			list={ [ 'Live chat support', 'No advertising' ] }
-			plan={ PLAN_BUSINESS }
-			price={ [ 10.99, 9.99 ] }
-			title="Upgrade to a Business Plan!"
-		/>
-		<Banner
-			callToAction="Upgrade for $9.99"
-			description="Live chat support and no advertising."
-			dismissPreferenceName="devdocs-banner-example"
+			callToAction="Backup"
+			description="New plugins can lead to unexpected changes. Ensure you can restore your site if something goes wrong."
+			dismissPreferenceName="devdocs-banner-backups-example"
 			dismissTemporary
-			list={ [ 'Live chat support', 'No advertising' ] }
-			plan={ PLAN_BUSINESS }
-			title="Upgrade to a Business Plan!"
+			horizontal
+			href="#"
+			jetpack
+			title="A Jetpack banner with a call to action"
 		/>
-		<Banner href="#" plan={ PLAN_ECOMMERCE } title="Upgrade to an eCommerce Plan!" />
-
-		<Banner href="#" plan={ PLAN_JETPACK_PERSONAL } title="Upgrade to a Jetpack Personal plan!" />
-		<Banner href="#" plan={ PLAN_JETPACK_PREMIUM } title="Upgrade to a Jetpack Premium plan!" />
-		<Banner href="#" plan={ PLAN_JETPACK_BUSINESS } title="Upgrade to a Jetpack Business plan!" />
 	</div>
 );
 

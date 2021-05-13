@@ -1,12 +1,11 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
+import AutoDirection from 'calypso/components/auto-direction';
+import Emojify from 'calypso/components/emojify';
 
 /**
  * Style dependencies

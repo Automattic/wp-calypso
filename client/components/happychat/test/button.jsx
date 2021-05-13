@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -12,6 +10,7 @@ describe( 'Button', () => {
 		component.props = {
 			initConnection: jest.fn(),
 			getAuth: jest.fn(),
+			translate: ( string ) => string,
 		};
 	} );
 

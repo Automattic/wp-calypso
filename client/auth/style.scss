@@ -27,7 +27,8 @@
 }
 
 .auth.main {
-	background: var( --color-primary );
+	// Use WordPress.com’s brand color for the auth background
+	background: var( --color-wordpress-com );
 	float: none;
 	height: 100%;
 	display: flex;
@@ -89,12 +90,6 @@
 		width: calc( 100% - 20px );
 	}
 
-	.form-buttons-bar button,
-	.form-buttons-bar .button.is-primary[disabled] {
-		background: #00a8db;
-		border: #00a8db;
-	}
-
 	.form-buttons-bar .button.is-primary[disabled],
 	.form-fieldset input[type='password']:disabled,
 	.form-fieldset input[type='text']:disabled {
@@ -140,7 +135,7 @@
 }
 
 .auth__lost-password a {
-	color: var( --color-neutral-100 );
+	color: var( --color-neutral-10 );
 }
 
 .auth__help,
@@ -148,7 +143,7 @@
 	position: absolute;
 	top: 16px;
 	right: 16px;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 }
 
 .auth__links {
@@ -160,7 +155,7 @@
 	a,
 	button {
 		text-decoration: none;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		margin: 0 16px;
 		padding: 10px 0;
 		cursor: pointer;
@@ -190,7 +185,7 @@
 	text-align: left;
 	counter-reset: item;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		left: 0;
 		top: -8px;
 		right: 0;
@@ -217,7 +212,7 @@
 	ol li::before {
 		margin-right: 2em;
 		content: counter( item );
-		background: var( --color-white );
+		background: var( --color-surface );
 		border-radius: 100%;
 		color: var( --color-primary-dark );
 		width: 24px;
@@ -226,11 +221,11 @@
 		display: inline-block;
 		position: absolute;
 		left: -3em;
-		font-weight: bold;
+		font-weight: 600;
 	}
 
 	h2 {
-		font-weight: bold;
+		font-weight: 600;
 		margin-bottom: 1.5em;
 	}
 
@@ -248,28 +243,12 @@
 		top: 10px;
 		text-decoration: none;
 		cursor: pointer;
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	.auth__self-hosted-instructions-close:hover {
 		color: var( --color-primary-light );
 	}
-}
-
-.auth__welcome {
-	color: var( --color-white );
-}
-
-.auth__connect-intro {
-	width: 420px;
-	margin: 0 auto;
-}
-
-.auth__connect .button,
-.auth__connect .button:visited {
-	background: #00a8db;
-	border: #00a8db;
-	color: var( --color-white );
 }
 
 .auth .pulsing-dot {

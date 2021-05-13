@@ -1,0 +1,138 @@
+.site-setup-list {
+	padding: 0;
+	display: flex;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		display: block;
+	}
+
+	.site-setup-list__nav {
+		width: 328px;
+		flex-shrink: 0;
+		border-left: 1px solid var( --color-border-subtle );
+
+		@include breakpoint-deprecated( '<1280px' ) {
+			width: 260px;
+		}
+
+		@include breakpoint-deprecated( '<960px' ) {
+			width: 100%;
+			border-left: none;
+		}
+
+		.site-setup-list__task {
+			padding: 0 24px 16px;
+			border-bottom: 1px solid var( --color-border-subtle );
+			transition: all 0.1s;
+			&:last-child {
+				border-bottom: none;
+			}
+			.task__text {
+				padding: 0;
+			}
+		}
+	}
+
+	.card-heading {
+		padding: 16px 24px;
+		border-bottom: 1px solid var( --color-border-subtle );
+		display: flex;
+		align-items: center;
+	}
+
+	button.nav-item {
+		display: flex;
+		align-items: center;
+		padding: 16px 24px;
+		border-bottom: 1px solid var( --color-border-subtle );
+		transition: all 0.1s;
+		cursor: pointer;
+		width: 100%;
+		margin: 0;
+		color: var( --color-text );
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		&:hover {
+			background-color: var( --color-neutral-0 );
+
+			@include breakpoint-deprecated( '<960px' ) {
+				background-color: transparent;
+			}
+		}
+
+		&.is-current {
+			background-color: var( --color-primary-0 );
+			font-weight: 600;
+
+			@include breakpoint-deprecated( '<960px' ) {
+				border-bottom: none;
+				background-color: transparent;
+			}
+		}
+	}
+
+	.nav-item__status {
+		margin-right: 8px;
+	}
+
+	.nav-item__pending {
+		display: block;
+		width: 8px;
+		height: 8px;
+		background-color: var( --color-neutral-20 );
+		border-radius: 50%;
+		margin: 5px;
+		transition: all 0.1s;
+	}
+
+	.nav-item.is-current .nav-item__pending {
+		background-color: var( --color-neutral-80 );
+	}
+
+	.nav-item__complete {
+		fill: var( --color-success );
+		vertical-align: text-bottom;
+	}
+
+	.nav-item__text {
+		text-align: left;
+		line-height: 20px;
+	}
+
+	.nav-item__chevron {
+		margin-left: auto;
+	}
+
+	.site-setup-list__nav-back {
+		padding: 2px 4px;
+		margin: 0 4px 0 -8px;
+	}
+
+	.site-setup-list__task {
+		box-shadow: none;
+		flex: 1;
+	}
+
+	.site-setup-list__task-actions {
+		margin-top: 0;
+	}
+
+	.spinner {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		margin-left: -10px;
+		margin-top: -10px;
+	}
+
+	&.is-loading > *:not( .spinner ) {
+		visibility: hidden;
+	}
+}
+
+.customer-home__main .site-setup-list .card-heading {
+	margin-bottom: 0;
+}

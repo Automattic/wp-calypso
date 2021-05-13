@@ -1,18 +1,15 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import shallowEqual from 'react-pure-render/shallowEqual';
+import isShallowEqual from '@wordpress/is-shallow-equal';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { requestMedia, requestMediaItem } from 'state/media/actions';
+import { requestMedia, requestMediaItem } from 'calypso/state/media/actions';
 
 /**
  * Module variables
@@ -42,7 +39,7 @@ class QueryMedia extends Component {
 		if (
 			this.props.siteId === prevProps.siteId &&
 			this.props.mediaId === prevProps.mediaId &&
-			shallowEqual( this.props.query, prevProps.query )
+			isShallowEqual( this.props.query, prevProps.query )
 		) {
 			return;
 		}
@@ -65,7 +62,4 @@ class QueryMedia extends Component {
 	}
 }
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( QueryMedia );
+export default connect( null, mapDispatchToProps )( QueryMedia );

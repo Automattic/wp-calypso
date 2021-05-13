@@ -1,20 +1,20 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, intersection } from 'lodash';
+import { intersection } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import i18n from 'i18n-calypso';
-import { taxonomiesWelcomeWhitelist, taxonomyToGridicon } from './taxonomies-config.js';
+import { allowedSearchWelcomeTaxonomies, taxonomyToGridicon } from './taxonomies-config.js';
+
+const noop = () => {};
 
 class MagicSearchWelcome extends React.Component {
 	constructor( props ) {
@@ -24,13 +24,13 @@ class MagicSearchWelcome extends React.Component {
 
 	state = { suggestionPosition: -1 };
 
-	onMouseDown = event => {
-		this.props.suggestionsCallback( event.target.textContent + ':' );
+	onMouseDown = ( event ) => {
+		this.props.suggestionsCallback( event.target.getAttribute( 'data-key' ) + ':' );
 		event.stopPropagation();
 		event.preventDefault();
 	};
 
-	movePositionBy = moveDirection => {
+	movePositionBy = ( moveDirection ) => {
 		let newPosition = this.state.suggestionPosition + moveDirection;
 
 		// Loop around
@@ -49,10 +49,11 @@ class MagicSearchWelcome extends React.Component {
 	 * Provides keybord support for component by managing items highlith position
 	 * and calling suggestion callback when user hits Enter
 	 *
-	 * @param  {Object} event  Keybord event
-	 * @return {Bool}          true indicates suggestion was chosen and send to parent using suggestionsCallback prop callback
+	 * @param  {object} event  Keybord event
+	 * @returns {boolean}      true indicates suggestion was chosen and send to parent using suggestionsCallback prop callback
 	 */
-	handleKeyEvent = event => {
+	handleKeyEvent = ( event ) => {
+		const position = this.state.suggestionPosition;
 		switch ( event.key ) {
 			case 'ArrowDown':
 				this.movePositionBy( +1 );
@@ -63,7 +64,6 @@ class MagicSearchWelcome extends React.Component {
 				event.preventDefault();
 				break;
 			case 'Enter':
-				const position = this.state.suggestionPosition;
 				if ( position !== -1 ) {
 					this.props.suggestionsCallback( this.visibleTaxonomies[ position ] + ':' );
 					event.stopPropagation();
@@ -75,7 +75,7 @@ class MagicSearchWelcome extends React.Component {
 		return false;
 	};
 
-	renderToken = taxonomy => {
+	renderToken = ( taxonomy ) => {
 		const themesTokenTypeClass = classNames(
 			'themes-magic-search-card__welcome-taxonomy',
 			'themes-magic-search-card__welcome-taxonomy-type-' + taxonomy,
@@ -85,26 +85,48 @@ class MagicSearchWelcome extends React.Component {
 			}
 		);
 
+		const taxonomyTranslations = {
+			feature: i18n.translate( 'Feature', {
+				context: 'Theme Showcase filter name',
+			} ),
+			layout: i18n.translate( 'Layout', {
+				context: 'Theme Showcase filter name',
+			} ),
+			column: i18n.translate( 'Columns', {
+				context: 'Theme Showcase filter name',
+			} ),
+			subject: i18n.translate( 'Subject', {
+				context: 'Theme Showcase filter name',
+			} ),
+			style: i18n.translate( 'Style', {
+				context: 'Theme Showcase filter name',
+			} ),
+		};
+
 		return (
 			<div
 				className={ themesTokenTypeClass }
 				onMouseDownCapture={ this.onMouseDown }
 				key={ taxonomy }
+				data-key={ taxonomy }
 			>
 				<Gridicon
 					icon={ taxonomyToGridicon( taxonomy ) }
 					className="themes-magic-search-card__welcome-taxonomy-icon"
 					size={ 18 }
 				/>
-				{ taxonomy }
+				{ taxonomyTranslations[ taxonomy ] ||
+					i18n.translate( 'Unknown', {
+						context: 'Theme Showcase filter name',
+					} ) }
 			</div>
 		);
 	};
 
 	renderTaxonomies = () => {
 		const { taxonomies } = this.props;
-		this.visibleTaxonomies = intersection( taxonomies, taxonomiesWelcomeWhitelist );
-		return this.visibleTaxonomies.map( taxonomy => this.renderToken( taxonomy ) );
+		this.visibleTaxonomies = intersection( taxonomies, allowedSearchWelcomeTaxonomies );
+		return this.visibleTaxonomies.map( ( taxonomy ) => this.renderToken( taxonomy ) );
 	};
 
 	render() {

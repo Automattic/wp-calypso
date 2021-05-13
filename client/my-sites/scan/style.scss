@@ -1,0 +1,138 @@
+.scan .formatted-header.is-left-align {
+	margin-top: 20px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 4px;
+		margin-bottom: 18px;
+	}
+}
+
+.scan__content p {
+	font-size: $font-body;
+	margin-bottom: 16px;
+	line-height: 24px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-bottom: 24px;
+	}
+}
+
+.security-icon {
+	display: block;
+	margin: 0 auto;
+	width: 48px;
+
+	// To align vertically with .backup-upsell__icon-header
+	padding: 9px 0;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 0;
+	}
+}
+
+.scan__content {
+	flex: 1 0 auto;
+
+	.progress-bar {
+		margin-bottom: 24px;
+	}
+
+	.progress-bar__progress {
+		background-color: var( --color-primary );
+		box-shadow: 0 2px 6px rgba( var( --color-primary-rgb ), 0.25 );
+	}
+}
+
+.scan__header {
+	color: var( --studio-black );
+	font-size: $font-title-medium;
+	font-weight: 600;
+	line-height: 1;
+	margin: 32px 0 16px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: $font-headline-small;
+		margin: 32px 0 24px;
+	}
+	&.is-placeholder {
+		display: block;
+		max-width: 60%;
+		@include placeholder( --color-neutral-10 );
+	}
+}
+
+.scan__subheader {
+	margin: 20px 16px 8px;
+
+	@extend .wp-brand-font;
+	font-size: $font-title-small;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 36px 0 4px;
+	}
+}
+
+.scan__content.is-placeholder {
+	display: block;
+	max-width: 80%;
+	@include placeholder( --color-neutral-10 );
+}
+
+.scan__button {
+	margin: 16px 0;
+	width: 100%;
+	text-align: center;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		width: auto;
+		text-align: left;
+	}
+}
+
+.scan__retry-bottom {
+	margin: 0 0 16px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 16px 0 16px 20px;
+	}
+}
+
+.scan__upsell-icon {
+	fill: #7bb1cd;
+}
+
+.scan__wpcom-upsell {
+	.what-is-jetpack {
+		margin-top: 32px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-top: 64px;
+		}
+	}
+
+	.action-panel__figure img,
+	.security-icon {
+		height: 120px;
+		width: auto;
+	}
+}
+
+.scan__wpcom-ctas {
+	margin: 16px 0;
+}
+
+.scan__wpcom-cta {
+	margin-top: 8px;
+}
+
+/**
+ * Jetpack.com specific styles
+ */
+
+.scan.is_jetpackcom .section-nav {
+	margin-top: 16px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 0;
+	}
+}

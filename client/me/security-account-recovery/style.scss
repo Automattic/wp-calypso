@@ -6,7 +6,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 	}
 }
@@ -14,8 +14,7 @@
 .security-account-recovery-contact__detail .form-fieldset__country {
 	padding-right: 0;
 
-	@include breakpoint( '>480px' ) {
-		flex: 1;
+	@include breakpoint-deprecated( '>480px' ) {
 		padding-right: 20px;
 		margin-bottom: 0;
 	}
@@ -24,7 +23,7 @@
 .security-account-recovery-contact__detail .form-country-select {
 	width: 100%;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		min-width: 0;
 		width: 100%;
 		max-width: 200px;
@@ -34,7 +33,7 @@
 .security-account-recovery-contact__detail .form-fieldset__phone-number {
 	margin-bottom: 0;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex: 2 0;
 	}
 }
@@ -54,7 +53,7 @@
 .security-account-recovery-contact__placeholder-heading {
 	line-height: 2.4;
 	margin-bottom: 1em;
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		width: 45%;
 	}
 }
@@ -64,18 +63,16 @@
 	flex-direction: row;
 }
 
+.security-account-recovery-contact__header-action .form-button {
+	margin: 0;
+}
+
 .security-account-recovery-contact__header-info {
 	flex: 2;
 }
 
-.security-account-recovery-contact__header-title {
-	font-size: 1em;
-	line-height: 1em;
-}
-
 .security-account-recovery-contact__header-subtitle {
 	display: block;
-	font-size: 1em;
 	font-style: italic;
 	color: var( --color-text-subtle );
 }
@@ -84,32 +81,21 @@
 	margin-top: 8px;
 }
 
-.security-account-recovery-contact__remove {
+.security-account-recovery__remove {
 	color: var( --color-text-subtle );
-	float: left;
+	float: right;
 	cursor: pointer;
 	padding: 9px 0;
 
 	&:hover {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 	}
 
 	.gridicon {
 		vertical-align: bottom;
 		margin-right: 2px;
-
-		@include breakpoint( '>480px' ) {
-			width: 16px;
-			height: 16px;
-		}
-	}
-
-	span {
-		display: none;
-
-		@include breakpoint( '>480px' ) {
-			display: inline;
-		}
+		width: 16px;
+		height: 16px;
 	}
 }
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import { find, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { domainAvailability } from 'lib/domains/constants';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 
 function moveArrayElement( array, from, to ) {
 	if ( from !== to && from < array.length && to < array.length ) {
@@ -59,10 +57,10 @@ export function markFeaturedSuggestions(
 	return output;
 }
 
-export function filterOutDomainsWithTlds( suggestions, blacklistTlds ) {
-	return suggestions.filter( suggestion => {
+export function filterOutDomainsWithTlds( suggestions, disallowedTlds ) {
+	return suggestions.filter( ( suggestion ) => {
 		const tld = suggestion.domain_name.split( '.' ).pop();
-		return blacklistTlds.indexOf( tld ) === -1;
+		return disallowedTlds.indexOf( tld ) === -1;
 	} );
 }
 

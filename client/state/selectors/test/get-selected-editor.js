@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 
 describe( 'getSelectedEditor()', () => {
 	test( 'should return null if site is not found', () => {

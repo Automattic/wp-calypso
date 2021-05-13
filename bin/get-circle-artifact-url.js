@@ -1,5 +1,3 @@
-/** @format */
-
 const https = require( 'https' );
 
 const baseOptions = {
@@ -14,31 +12,31 @@ const basePath = '/api/v1.1/project/github/Automattic/wp-calypso';
 const maxBuilds = 100;
 
 async function getCircleArtifactUrl( pathMatchRegex ) {
-	if ( ! pathMatchRegex instanceof RegExp ) {
+	if ( ! ( pathMatchRegex instanceof RegExp ) ) {
 		console.error( 'Expected a valid RegExp. Received: %o', pathMatchRegex );
 		process.exit( 1 );
 	}
 	try {
-		// Fetch recent successful master builds
+		// Fetch recent successful trunk builds
 		const builds = await httpsGetJsonPromise( {
 			...baseOptions,
-			path: `${ basePath }/tree/master?filter=successful&limit=${ maxBuilds }`,
+			path: `${ basePath }/tree/trunk?filter=successful&limit=${ maxBuilds }`,
 		} );
 
 		const buildNumbersWithArtifacts = builds
-			.filter( build => build.has_artifacts )
-			.map( build => build.build_num );
+			.filter( ( build ) => build.has_artifacts )
+			.map( ( build ) => build.build_num );
 
 		for ( const buildNumber of buildNumbersWithArtifacts ) {
 			const artifacts = await httpsGetJsonPromise( {
 				...baseOptions,
 				path: `${ basePath }/${ buildNumber }/artifacts`,
 			} );
-			const filteredArtifacts = artifacts.filter( artifact =>
+			const filteredArtifacts = artifacts.filter( ( artifact ) =>
 				artifact.path.match( pathMatchRegex )
 			);
 			if ( filteredArtifacts.length ) {
-				filteredArtifacts.forEach( artifact => console.log( artifact.url ) );
+				filteredArtifacts.forEach( ( artifact ) => console.log( artifact.url ) );
 				process.exit( 0 );
 			}
 		}
@@ -56,9 +54,9 @@ async function getCircleArtifactUrl( pathMatchRegex ) {
 
 function httpsGetJsonPromise( options ) {
 	return new Promise( ( resolve, reject ) => {
-		https.get( options, response => {
+		https.get( options, ( response ) => {
 			let body = '';
-			response.on( 'data', data => {
+			response.on( 'data', ( data ) => {
 				body += data;
 			} );
 			response.on( 'end', () => resolve( JSON.parse( body ) ) );

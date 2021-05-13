@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,10 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import QueryThemeFilters from 'components/data/query-theme-filters';
-import SectionHeader from 'components/section-header';
-import isValidThemeFilterTerm from 'state/selectors/is-valid-theme-filter-term';
+import { Card } from '@automattic/components';
+import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
+import SectionHeader from 'calypso/components/section-header';
+import { isValidThemeFilterTerm } from 'calypso/state/themes/selectors';
 
 const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate } ) => {
 	if ( isEmpty( features ) ) {

@@ -1,25 +1,34 @@
 version: 2.1
 
 orbs:
-  slack: circleci/slack@2.6.0
+  slack: circleci/slack@3.4.2
+  win: circleci/windows@2.2.0
 
 references:
-  shared-environment: &shared-environment
-    CIRCLE_ARTIFACTS: /tmp/artifacts
-    CIRCLE_TEST_REPORTS: /tmp/test_results
-
-  docker-image: &docker-image
-    - image: circleci/node:10.15.2-browsers
+  defaults: &defaults
+    working_directory: ~/wp-calypso
+    docker:
+      - image: cimg/node:14.16.1
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/artifacts
+      CIRCLE_TEST_REPORTS: /tmp/test_results
+      PUPPETEER_SKIP_DOWNLOAD: 'true'
+      DETECT_CHROMEDRIVER_VERSION: 'false'
+      CHROMEDRIVER_FILEPATH: /usr/local/bin/chromedriver
+      NODE_OPTIONS: --max-old-space-size=3072
+      npm_config_cache: /home/circleci/.cache/yarn
+      YARN_CACHE_FOLDER: /home/circleci/.cache/yarn
+      CHROME_VERSION: 84.0.4147.135-1
+  desktop_defaults: &desktop_defaults
+    working_directory: ~/wp-calypso
 
   setup-results-and-artifacts: &setup-results-and-artifacts
     name: Create Directories for Results and Artifacts
     command: |
       mkdir -p                                  \
-        "$CIRCLE_ARTIFACTS/icfy"                \
         "$CIRCLE_ARTIFACTS/notifications-panel" \
         "$CIRCLE_ARTIFACTS/translate"           \
         "$CIRCLE_ARTIFACTS/screenshots"         \
-        "$CIRCLE_ARTIFACTS/full-site-editing"   \
         "$CIRCLE_ARTIFACTS/wpcom-block-editor"  \
         "$CIRCLE_TEST_REPORTS/client"           \
         "$CIRCLE_TEST_REPORTS/eslint"           \
@@ -27,53 +36,7 @@ references:
         "$CIRCLE_TEST_REPORTS/packages"         \
         "$CIRCLE_TEST_REPORTS/server"           \
         "$CIRCLE_TEST_REPORTS/e2ereports"       \
-        "$HOME/jest-cache"                      \
-        "$HOME/terser-cache"
-
-  # Jest cache caching
-  #
-  # Jest uses a cache to speed up builds. If we persist this cache across builds,
-  # we can improve the speed of subsequent builds.
-  #
-  # Circle caches never overwritten, so we must ensure that Jest caches from different jobs
-  # do not collide or we'll only cache 1 job.
-  #
-  # We also need to ensure that different nodes and different total nodes do not collide.
-  # When we split tests, different nodes will receive a different set of tests so each node's
-  # cache should be unique.
-  #
-  # Finally, we cache on the branch and revision, falling back to master. This should give us
-  # pretty good "nearest neighbor" primer for the Jest cache.
-  #
-  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
-  restore-jest-cache: &restore-jest-cache
-    name: Restore Jest cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
-  save-jest-cache: &save-jest-cache
-    name: Save Jest cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - ~/jest-cache
-
-  #
-  # Terser cache caching
-  #
-  restore-terser-cache: &restore-terser-cache
-    name: Restore Terser cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-master
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser
-  save-terser-cache: &save-terser-cache
-    name: Save Terser cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - ~/terser-cache
+        "$HOME/jest-cache"
 
   # Git cache
   #
@@ -81,7 +44,7 @@ references:
   # By including the `.git` directory in the cache, we can speed things up by only needing to update
   # the local repository.
   #
-  # We cache on the branch and revision, falling back to master, or any recent cache.
+  # We cache on the branch and revision, falling back to origin/HEAD, or any recent cache.
   #
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
   restore-git-cache: &restore-git-cache
@@ -89,20 +52,20 @@ references:
     keys:
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-master
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-trunk
       - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git
-  update-git-master: &update-git-master
-    name: Update master branch
-    command: git fetch --force origin master
+  update-git: &update-git
+    name: Update all branches
+    command: git fetch --force origin
   save-git-cache: &save-git-cache
     name: Save git cache
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-git-{{ .Branch }}-{{ .Revision }}
     paths:
       - '.git'
 
-  # npm cache
+  # yarn cache
   #
-  # npm caches the modules it installs in ~/.npm.
+  # yarn caches the modules it installs in ~/.cache/yarn.
   # We cache that cache to save time pulling modules from the network.
   #
   #
@@ -111,48 +74,53 @@ references:
   #   - https://github.com/Automattic/wp-calypso/pull/25487
   #   - https://github.com/Automattic/wp-calypso/pull/27180
   #
-  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
-  restore-npm-cache: &restore-npm-cache
-    name: 'Restore npm cache'
+  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching and https://circleci.com/docs/2.0/yarn/
+  restore-yarn-cache: &restore-yarn-cache
+    name: 'Restore yarn cache'
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
 
-  npm-install: &npm-install
-    name: Install npm dependencies
-    command: npm ci
-
-  save-npm-cache: &save-npm-cache
-    name: 'Save node_modules cache'
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-npm-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-    paths:
-      - ~/.npm
-  npm-e2e-install: &npm-e2e-install
-    name: Install e2e npm dependencies
+  yarn-install: &yarn-install
+    name: Install dependencies
     command: |
-      cd test/e2e &&
-      CHROMEDRIVER_VERSION=$(<.chromedriver_version) npm ci
+      source "$HOME/.nvm/nvm.sh"
+      nvm use
+      npm install -g yarn
+      yarn install --frozen-lockfile
 
-  # Babel cache
-  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
-  restore-babel-client-cache: &restore-babel-client-cache
-    name: Restore Babel Client Cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-master
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client
-  save-babel-client-cache: &save-babel-client-cache
-    name: Save Babel Client Cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
+  update-node: &update-node
+    name: Update node
+    command: |
+      set +e
+      set +x
+      export NVM_DIR="$HOME/.nvm" && (
+        git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
+        cd "$NVM_DIR"
+        git checkout v0.35.3
+      ) && \. "$NVM_DIR/nvm.sh" --no-use
+      nvm install
+      nvm use
+
+  # This is used later to send a custom UA string. `google-chrome` is in the PATH in all circleci-browser images
+  save-chrome-version: &save-chrome-version
+    name: Save chrome version
+    command: |
+      google-chrome --version > .chromedriver_version
+      echo -n "Google Chrome version: " && cat .chromedriver_version
+
+  save-yarn-cache: &save-yarn-cache
+    name: 'Save yarn cache'
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
     paths:
-      - 'build/.babel-client-cache'
+      - ~/.cache/yarn
 
   set-e2e-variables: &set-e2e-variables
     name: Set e2e environment variables
     command: |
       echo 'export NODE_CONFIG_ENV=test' >> $BASH_ENV &&
-      echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV
+      echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV &&
+      echo 'export HIGHLIGHT_ELEMENT=true' >> $BASH_ENV
 
   move-e2e-artifacts: &move-e2e-artifacts
     name: Move report and screenshots
@@ -161,10 +129,85 @@ references:
       cp -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
       cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
 
-  defaults: &defaults
-    working_directory: ~/wp-calypso
-    docker: *docker-image
-    environment: *shared-environment
+  desktop-install-app-deps: &desktop-install-app-deps
+    name: Install Desktop Dependencies
+    command: |
+      source "$HOME/.nvm/nvm.sh"
+      nvm use
+      npm install -g yarn
+      yarn run build-desktop:install-app-deps
+  desktop-cache-paths: &desktop-cache-paths
+    - desktop/config
+    - desktop/resource/certificates/win.p12
+    - desktop/resource/certificates/mac.p12
+  desktop-decrypt-assets: &desktop-decrypt-assets
+    name: Decrypt desktop app assets
+    command: |
+      openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+  desktop-restore-yarn-cache: &desktop-restore-yarn-cache
+    name: Restore yarn cache
+    keys:
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
+  desktop-save-yarn-cache: &desktop-save-yarn-cache
+    name: Save yarn cache
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
+    paths:
+      - ~/.cache/yarn
+  desktop-restore-packages-cache: &desktop-restore-packages-cache
+    name: Restore packages cache
+    keys:
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
+  desktop-save-packages-cache: &desktop-save-packages-cache
+    name: Save packages cache
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
+    paths:
+      - packages
+      - packages-cache-restored
+  desktop-restore-calypso-build-cache: &desktop-restore-calypso-build-cache
+    name: Restore Calypso build cache
+    keys:
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-trunk
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
+  desktop-save-calypso-build-cache: &desktop-save-calypso-build-cache
+    name: Save Calypso build cache
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - .cache/evergreen/css-loader
+  desktop-notify-github-success: &desktop-notify-github-success
+    name: Notify Github Success
+    when: on_success
+    command: cd desktop && yarn ci:github:dismiss-review
+  desktop-notify-github-failure: &desktop-notify-github-failure
+    name: Notify Github Failure
+    when: on_fail
+    command: cd desktop && yarn ci:github:add-review
+  desktop-notify-slack-failure: &desktop-notify-slack-failure
+    webhook: '$SLACK_WP_DESKTOP_E2E'
+    fail_only: true
+    mentions: '$CIRCLE_USERNAME'
+    failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
+  install-specific-chrome-browser: &install-specific-chrome-browser
+    name: Install Chrome
+    command: |
+      sudo apt-get update
+      cd /tmp
+      wget --no-check-certificate https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb
+      sudo dpkg -i google-chrome-stable_${CHROME_VERSION}_amd64.deb || sudo apt-get -y -f install
+      rm google-chrome-stable_${CHROME_VERSION}_amd64.deb;
+      sudo sed -i 's|HERE/chrome"|HERE/chrome" --disable-setuid-sandbox --no-sandbox|g' "/opt/google/chrome/google-chrome"
+      CHROME_VERSION="$(google-chrome --version)"
+      CHROMEDRIVER_RELEASE="$(echo $CHROME_VERSION | sed 's/^Google Chrome //')"
+      CHROMEDRIVER_RELEASE=${CHROMEDRIVER_RELEASE%%.*}
+      CHROMEDRIVER_VERSION=$(curl --silent --show-error --location --fail --retry 4 --retry-delay 5 http://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROMEDRIVER_RELEASE})
+      curl --silent --show-error --location --fail --retry 4 --retry-delay 5 --output /tmp/chromedriver_linux64.zip "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
+      cd /tmp && unzip chromedriver_linux64.zip && rm -rf chromedriver_linux64.zip && sudo mv chromedriver /usr/local/bin/chromedriver && sudo chmod +x /usr/local/bin/chromedriver
+      google-chrome --version
+      chromedriver --version
 
 commands:
   prepare:
@@ -174,6 +217,7 @@ commands:
       - run: *setup-results-and-artifacts
       - attach_workspace:
           at: '~'
+      - run: *update-node
   store-artifacts-and-test-results:
     description: Stores artifacts and test results
     steps:
@@ -191,69 +235,34 @@ jobs:
       # repo
       - restore_cache: *restore-git-cache
       - checkout
-      - run: *update-git-master
+      - run: *update-git
       - save_cache: *save-git-cache
+      - run: *update-node
+      - run: *install-specific-chrome-browser
       # npm dependencies
-      - restore_cache: *restore-npm-cache
-      - run: *npm-install
-      - run: *npm-e2e-install
-      - save_cache: *save-npm-cache
-      - run: npm run build-packages
+      - restore_cache: *restore-yarn-cache
+      - run: *yarn-install
+      - save_cache: *save-yarn-cache
       - persist_to_workspace:
           root: '~'
           paths:
             - wp-calypso
 
-  typecheck:
+  translate:
     <<: *defaults
-    parallelism: 1
     steps:
       - prepare
       - run:
-          name: TypeScript typecheck
-          # Report but don't fail the build (`|| exit 0`)
-          command: ./node_modules/.bin/tsc --noEmit || exit 0
-
-
-  lint-and-translate:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - run:
-          name: Lint Config Keys
-          when: always
-          command: npm run lint:config-defaults
-      - run:
-          name: Lint Client and Server
-          when: always
+          name: Extract strings
           command: |
-            # We may not have files to lint which returns non-0 exit
-            # Ensure this does not cause job failure (see `|| exit 0`)
-            FILES_TO_LINT=$(
-              git diff --name-only --diff-filter=d origin/master... \
-                | grep -E '^(client/|server/|packages/)'            \
-                | grep -E '\.[jt]sx?$'
-            ) || exit 0
-
-            if [[ ! -z $FILES_TO_LINT ]]; then
-              ./node_modules/.bin/eslint                                \
-                --format junit                                          \
-                --output-file "$CIRCLE_TEST_REPORTS/eslint/results.xml" \
-                $FILES_TO_LINT
-            fi
-      - run:
-          name: Build calypso-strings.pot
-          when: always
-          command: |
-            npm run translate
+            yarn run translate
             mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
       - run:
           name: Build New Strings .pot
           when: always
           command: |
             git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
-            bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
+            DEFAULT_BRANCH=trunk bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
             rm -rf gp-localci-client
       - store-artifacts-and-test-results
       - run:
@@ -279,278 +288,6 @@ jobs:
                     }
                   }'
 
-  build-notifications:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - run:
-          name: Build Notifications Panel
-          command: |
-            NODE_ENV=production npx lerna run build --scope='@automattic/notifications' -- -- --output-path=$CIRCLE_ARTIFACTS/notifications-panel
-      - store-artifacts-and-test-results
-
-  build-o2-blocks:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - run:
-          name: Build Gutenberg Blocks for internal p2s
-          command: |
-            NODE_ENV=production npx lerna run build --scope='@automattic/o2-blocks' -- -- --output-path=$CIRCLE_ARTIFACTS/o2-blocks
-      - store-artifacts-and-test-results
-
-  build-wpcom-block-editor:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - run:
-          name: Build the block editor in WordPress.com integration utils package
-          command: |
-            npx lerna run build --scope='@automattic/wpcom-block-editor' -- -- --output-path=$CIRCLE_ARTIFACTS/wpcom-block-editor
-      - store-artifacts-and-test-results
-
-  build-full-site-editing:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - run:
-          name: Build the Full Site Editing plugin and theme
-          command: |
-            npx lerna run build --scope='@automattic/full-site-editing'
-            cp -R apps/full-site-editing/full-site-editing-plugin $CIRCLE_ARTIFACTS/full-site-editing/
-      - store-artifacts-and-test-results
-
-  test-client:
-    <<: *defaults
-    parallelism: 6
-    steps:
-      - prepare
-      - restore_cache: *restore-jest-cache
-      - run:
-          name: Run Client Tests
-          no_output_timeout: 2m
-          command: |
-            # Use Jest to list tests to run via config
-            ./node_modules/.bin/jest              \
-              --listTests                         \
-              --config=test/client/jest.config.js \
-              > ~/jest-tests
-
-            # Run jest on the CircleCI split for parallelization across containers
-            # Avoid using `--split-by=timings` here so that per-node Jest caches
-            # receive a stable sub-set of tests for optimal cache usage.
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/results.xml" \
-              ./node_modules/.bin/jest                                  \
-                --cacheDirectory="$HOME/jest-cache"                     \
-                --ci                                                    \
-                --maxWorkers=2                                          \
-                --reporters=default                                     \
-                --reporters=jest-junit                                  \
-                --runTestsByPath                                        \
-                --silent                                                \
-                --config=test/client/jest.config.js                     \
-                $( circleci tests split < ~/jest-tests )
-      - save_cache: *save-jest-cache
-      - store-artifacts-and-test-results
-
-  test-integration:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - restore_cache: *restore-jest-cache
-      - run:
-          name: Run Integration Tests
-          command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/results.xml" \
-              ./node_modules/.bin/jest                     \
-                --cacheDirectory="$HOME/jest-cache"        \
-                --ci                                       \
-                --maxWorkers=2                             \
-                --reporters=default                        \
-                --reporters=jest-junit                     \
-                --silent                                   \
-                --config=test/integration/jest.config.js
-      - save_cache: *save-jest-cache
-      - store-artifacts-and-test-results
-
-  test-packages:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - restore_cache: *restore-jest-cache
-      - run:
-          name: Run Package Tests
-          no_output_timeout: 2m
-          command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/packages/results.xml" \
-              ./node_modules/.bin/jest                                    \
-                --cacheDirectory="$HOME/jest-cache"                       \
-                --ci                                                      \
-                --maxWorkers=2                                            \
-                --reporters=default                                       \
-                --reporters=jest-junit                                    \
-                --silent                                                  \
-                --config=test/packages/jest.config.js
-      - save_cache: *save-jest-cache
-      - store-artifacts-and-test-results
-
-  test-server:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      - prepare
-      - restore_cache: *restore-jest-cache
-      - run:
-          name: Run Server Tests
-          no_output_timeout: 2m
-          command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/results.xml" \
-              ./node_modules/.bin/jest                                  \
-                --cacheDirectory="$HOME/jest-cache"                     \
-                --ci                                                    \
-                --maxWorkers=2                                          \
-                --reporters=default                                     \
-                --reporters=jest-junit                                  \
-                --silent                                                \
-                --config=test/server/jest.config.js
-      - save_cache: *save-jest-cache
-      - store-artifacts-and-test-results
-
-  icfy-stats:
-    <<: *defaults
-    steps:
-      - prepare
-      - restore_cache: *restore-babel-client-cache
-      - restore_cache: *restore-terser-cache
-      - run:
-          name: Build Stats
-          environment:
-            NODE_ENV: 'production'
-            BROWSERSLIST_ENV: 'defaults'
-          command: |
-            #
-            # This block should not cause a test failure and block PRs.
-            # The shell should never error and exit 0 to indicate success.
-            #
-            set +o errexit
-            npm run build-css                                      \
-              && npm run preanalyze-bundles                        \
-              && node bin/icfy-analyze.js                          \
-              && mv stats.json chart.json style.json "$CIRCLE_ARTIFACTS/icfy" \
-              || rm -fr build/.babel-client-cache # In case of failure do not save a potentially bad cache
-            exit 0
-      - save_cache: *save-terser-cache
-      - save_cache: *save-babel-client-cache
-      - store-artifacts-and-test-results
-      - run:
-          name: Notify ICFY of failed build
-          when: on_fail
-          command: |
-            #
-            # This block should not cause a test failure and block PRs.
-            # The shell should never error and exit 0 to indicate success.
-            #
-            set +o errexit
-            curl -X POST                                                                     \
-              "http://api.iscalypsofastyet.com:5000/submit-stats-failed?secret=$ICFY_SECRET" \
-              -H 'Cache-Control: no-cache'                                                   \
-              -H 'Content-Type: application/json'                                            \
-              -d '{
-                    "payload": {
-                      "branch": "'"$CIRCLE_BRANCH"'",
-                      "build_num": '"$CIRCLE_BUILD_NUM"',
-                      "sha": "'"$CIRCLE_SHA1"'"
-                    }
-                  }'
-      - run:
-          name: Notify ICFY
-          command: |
-            #
-            # This block should not cause a test failure and block PRs.
-            # The shell should never error and exit 0 to indicate success.
-            #
-            set +o errexit
-            if [ -e "$CIRCLE_ARTIFACTS/icfy/stats.json" ] && [ -e "$CIRCLE_ARTIFACTS/icfy/chart.json" ]; then
-              ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
-              curl -X POST                                                              \
-                "http://api.iscalypsofastyet.com:5000/submit-stats?secret=$ICFY_SECRET" \
-                -H 'Cache-Control: no-cache'                                            \
-                -H 'Content-Type: application/json'                                     \
-                -d '{
-                      "payload": {
-                        "branch": "'"$CIRCLE_BRANCH"'",
-                        "build_num": '"$CIRCLE_BUILD_NUM"',
-                        "sha": "'"$CIRCLE_SHA1"'",
-                        "ancestor": "'"$ANCESTOR_SHA1"'"
-                      }
-                    }'
-            fi
-
-  # Prime calypso.live so it has a build ready
-  #
-  # We can send a request to calypso.live so that it gets a build ready.
-  # This saves time waiting later when waiting for the calypso.live
-  #
-  # Expected usage:
-  #   - After setup
-  #   - Only on branches (!master)
-  #
-  prime-calypso-live:
-    docker:
-      - image: buildpack-deps
-    working_directory: ~/wp-calypso
-    steps:
-      - run:
-          name: Prime calypso.live
-          command: |
-            if [[ -z $CIRCLE_PR_USERNAME ]]; then
-              curl --silent "https://hash-$CIRCLE_SHA1.calypso.live"
-            fi
-
-  # Wait for calypso.live to be ready
-  #
-  # Expected usage:
-  #   - After main tests have passed (test-client, test-server)
-  #   - Before e2e tests run
-  #
-  wait-calypso-live:
-    docker:
-      - image: buildpack-deps
-    working_directory: ~/wp-calypso
-    steps:
-      - run:
-          name: Check external author
-          command: |
-            if [[ ! -z $CIRCLE_PR_USERNAME ]]; then
-              echo 'PRs from external authors cannot run on calypso.live'
-              exit 1
-            fi
-      - prepare
-      - run:
-          name: Wait for calypso.live build
-          command: ./test/e2e/scripts/wait-for-running-branch.sh
-
-  test-e2e:
-    <<: *defaults
-    working_directory: ~/wp-calypso/test/e2e
-    parallelism: 2
-    steps:
-      - prepare
-      - run: *set-e2e-variables
-      - run: npm run decryptconfig
-      - run: ./scripts/randomize.sh specs
-      - run: ./scripts/run-wrapper.sh
-      - run: *move-e2e-artifacts
-      - store-artifacts-and-test-results
-      - slack/status:
-          webhook: $SLACK_E2E
-
   test-e2e-canary:
     <<: *defaults
     working_directory: ~/wp-calypso/test/e2e
@@ -567,10 +304,15 @@ jobs:
       slack-webhook:
         type: string
         default: $SLACK_E2E
+      env-vars:
+        type: string
+        default: ''
     steps:
       - prepare
       - run: *set-e2e-variables
-      - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei
+      - run: *install-specific-chrome-browser
+      - run: *save-chrome-version
+      - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei xvfb
       - run:
           name: Skip Jetpack Tests if needed
           command: |
@@ -607,151 +349,374 @@ jobs:
                   }" << parameters.slack-webhook >>
               circleci-agent step halt
             fi
-      - run: npm run decryptconfig
+      - run: yarn run decryptconfig
       - run:
           name: Run Canary Tests
           command: |
-            env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
+            env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> << parameters.env-vars >> ./run.sh -R << parameters.test-flags >>
       - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
       - slack/status:
           webhook: << parameters.slack-webhook >>
+
+  # TODO: Make this local to the Win, Linux and Mac jobs
+  wp-desktop-assets:
+    machine:
+      image: ubuntu-1604:202004-01
+    resource_class: medium
+    <<: *desktop_defaults
+    environment:
+      NVM_DIR: '/opt/circleci/.nvm'
+      VERSION: << pipeline.git.tag >>
+      CONFIG_ENV: release
+    steps:
+      - checkout
+      - when:
+          condition: << pipeline.git.tag >>
+          steps:
+            - run:
+                name: Ensure package.json Version And Tag Match
+                command: cd desktop/bin && node validate_tag.js $VERSION
+      - run: *desktop-decrypt-assets
+      - persist_to_workspace:
+          root: /home/circleci/wp-calypso
+          paths: *desktop-cache-paths
+      - run: *desktop-notify-github-failure
+      - slack/status: *desktop-notify-slack-failure
+
+  wp-desktop-mac:
+    macos:
+      xcode: '12.3.0'
+    shell: /bin/bash --login
+    working_directory: /Users/distiller/wp-calypso
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /Users/distiller/wp-calypso
+      - run: *update-node
+      - run: *desktop-install-app-deps
+      - run:
+          name: Build Desktop Mac
+          no_output_timeout: 45m
+          environment:
+            CSC_LINK: resource/certificates/mac.p12
+            CSC_FOR_PULL_REQUEST: true
+          command: |
+            set +e
+            source $HOME/.nvm/nvm.sh
+            nvm use
+
+            # Build all artifacts only when project config changes.
+            # Otherwise only build application executable required for end-to-end testing.
+            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
+
+            # Override SDKROOT and MACOSX_DEPLOYMENT_TARGET to ensure correct SDK configuration:
+            # https://github.com/Homebrew/homebrew-core/pull/19296#issuecomment-352867571
+            export SDKROOT='/Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk'
+            export MACOSX_DEPLOYMENT_TARGET=11.1
+
+            cd desktop && ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
+      - run:
+          name: e2e Tests
+          command: |
+            source $HOME/.nvm/nvm.sh
+            nvm use
+            npm install -g yarn
+
+            yarn run test-desktop:e2e
+      - run:
+          when: always
+          name: Persist Mac Executable
+          command: |
+            # If this isn't a full artifact build, ensure to persist the built application for inspection
+            if ! ls desktop/release/*.zip &>/dev/null
+            then
+              ditto -ck --rsrc --sequesterRsrc desktop/release/mac desktop/release/mac.app.zip
+            fi
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            rm -rf desktop/release/mac
+            rm -rf desktop/release/mac-arm64
+      - store_artifacts:
+          when: always
+          path: desktop/release
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/logs
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/screenshots
+      - persist_to_workspace:
+          root: ~/wp-calypso
+          paths:
+            - desktop/release
+      - run: *desktop-notify-github-success
+      - run: *desktop-notify-github-failure
+      - slack/status: *desktop-notify-slack-failure
+
+  wp-desktop-linux:
+    docker:
+      - image: circleci/node:14.16.1-browsers
+    <<: *desktop_defaults
+    shell: /bin/bash --login
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/wp-calypso
+      - run: *update-node
+      - run:
+          name: Install Linux deps
+          command: |
+            sudo apt update
+            sudo apt-get install -y libsecret-1-dev
+      - run: *desktop-install-app-deps
+      - run:
+          name: Build Desktop Linux
+          environment:
+            CSC_LINK: resource/certificates/win.p12
+          command: |
+            set +e
+            source $HOME/.nvm/nvm.sh
+            nvm use
+
+            # Build all artifacts only when project config changes.
+            # Otherwise only build application executable required for end-to-end testing.
+            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
+
+            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop
+      - run:
+          name: e2e Tests
+          command: |
+            source $HOME/.nvm/nvm.sh
+            nvm use
+            npm install -g yarn
+
+            yarn run test-desktop:e2e
+      - run:
+          when: always
+          name: Persist Linux Executable
+          command: |
+            # If this isn't a full artifact build, ensure to persist the built application for inspection
+            test -f desktop/release/*.tar.gz || tar -zcf desktop/release/linux-unpacked.tar.gz desktop/release/linux-unpacked
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            set +e
+            rm -rf desktop/release/github
+            rm -rf desktop/release/linux-unpacked
+            rm -rf desktop/release/.icon-set
+      - store_artifacts:
+          when: always
+          path: desktop/release
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/logs
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/screenshots
+      - persist_to_workspace:
+          root: ~/wp-calypso
+          paths:
+            - desktop/release
+
+  wp-desktop-windows:
+    executor:
+      name: win/default
+    working_directory: C:\Users\circleci\wp-calypso
+    environment:
+    steps:
+      - checkout
+      - attach_workspace:
+          at: C:\Users\circleci\wp-calypso
+      - run:
+          name: Install Node Version
+          command: |
+            $NODE_VERSION = Get-Content .nvmrc
+            nvm install $NODE_VERSION
+            nvm use $NODE_VERSION
+      - run:
+          name: Install Yarn
+          command: npm install -g yarn
+      - run:
+          name: Install Make
+          command: cinst make
+      - run:
+          name: Install Desktop Dependencies
+          command: yarn run build-desktop:install-app-deps
+      - when:
+          condition: << pipeline.git.tag >>
+          steps:
+            - run:
+                name: Import Codesigning Certificate
+                command: |
+                  # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
+                  # Ref: https://travis-ci.community/t/codesigning-on-windows/
+                  #
+                  # Fix: Import .p12 into the local certificate store. Sign Tool will use
+                  # package.json's `certificateSubjectName` to find the imported cert.
+                  $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
+                  Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
+      - run:
+          name: Build Desktop Windows
+          command: |
+            # Use make for bash-like environment variable substitution
+
+            # Codesign release (tagged) builds only
+            If ( $env:CIRCLE_TAG ) { $env:ARG1='-c.win.certificateSubjectName="Automattic"' }
+
+            # Build all artifacts only when project config changes.
+            # Otherwise only build application executable required for end-to-end testing.
+            If ( -Not $(git diff --name-only origin/trunk...HEAD | Select-String -Pattern desktop/package.json,desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
+
+
+            make -f desktop/Makefile build-main
+            make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$($env:ARG1,$env:ARG2 -join " ")
+      - run:
+          name: Archive Unpacked Directories
+          command: |
+            tar -zcf desktop/release/win-unpacked-x64.tar.gz desktop/release/win-unpacked
+
+            # Check if win-ia32 build is present before archiving. If this is a full
+            # artifact build, the win-ia32-unpacked executable will be generated and we can archive it.
+            If ( $(Test-Path -Path desktop\release\win-ia32-unpacked) ) {
+              tar -zcf desktop/release/win-unpacked-ia32.tar.gz desktop/release/win-ia32-unpacked
+            } else {
+              echo "Skipping tar archive for 'desktop\release\win-ia32-unpacked' (not built)"
+            }
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            set +e
+            rm -rf desktop/release/github
+            rm -rf desktop/release/win-unpacked
+            rm -rf desktop/release/win-ia32-unpacked
+          shell: bash.exe
+      - store_artifacts:
+          when: always
+          path: desktop\release
+      - persist_to_workspace:
+          root: C:\Users\circleci\wp-calypso
+          paths:
+            - desktop\release
+
+  # Publish all the artifacts generated by the previous wp-desktop- jobs to a
+  # GitHub release and generate the release notes using the Git commits history
+  wp-desktop-publish:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /home/circleci/wp-calypso
+    environment:
+      VERSION: << pipeline.git.tag >>
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /home/circleci/wp-calypso
+      - run:
+          name: Install Dependencies
+          command: go get github.com/tcnksm/ghr
+      - run:
+          name: Publish Github Release
+          command: |
+            echo "Publishing draft release for wp-desktop $VERSION..."
+            NAME="WP-Desktop ${VERSION#?}"
+
+            chmod +x desktop/bin/make-changelog.sh
+            ./desktop/bin/make-changelog.sh > desktop/CHANGELOG.md
+
+            ghr \
+              --token "${GH_TOKEN}" \
+              --username "${CIRCLE_PROJECT_USERNAME}" \
+              --repository "${CIRCLE_PROJECT_REPONAME}" \
+              --commitish "${CIRCLE_SHA1}" \
+              --name "${NAME}" \
+              --body "$(cat desktop/CHANGELOG.md)" \
+              --delete \
+              --draft \
+              "${VERSION}" desktop/release/
+
+            echo "Publish complete"
 
 workflows:
   version: 2
   calypso:
     jobs:
       - setup
-      - prime-calypso-live:
+      - translate:
           requires:
             - setup
-          filters:
-            branches:
-              ignore: master
-      - build-full-site-editing:
-          requires:
-            - setup
-      - build-notifications:
-          requires:
-            - setup
-      - build-o2-blocks:
-          requires:
-            - setup
-      - build-wpcom-block-editor:
-          requires:
-            - setup
-      - icfy-stats:
-          requires:
-            - setup
-      - lint-and-translate:
-          requires:
-            - setup
-      - test-client:
-          requires:
-            - setup
-      - test-packages:
-          requires:
-            - setup
-      - test-server:
-          requires:
-            - setup
-      - typecheck:
-          requires:
-            - setup
-      - wait-calypso-live:
-          requires:
-            - test-client
-            - test-server
-          filters:
-            branches:
-              ignore:
-                # Do not spin up calypso.live for `master`
-                - master
-                # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
-                - /pull\/[0-9]+/
-      - test-e2e-canary:
-          requires:
-            - wait-calypso-live
-          test-flags: '-C -S $CIRCLE_SHA1'
-#      - test-e2e-canary:
-#          name: test-e2e-canary-ie
-#          requires:
-#            - wait-calypso-live
-#          test-flags: '-z -S $CIRCLE_SHA1'
-#          test-target: 'IE11'
-#          slack-webhook: '$SLACK_IE'
-      - test-e2e-canary:
-          name: test-e2e-canary-safari
-          requires:
-            - wait-calypso-live
-          test-flags: '-y -S $CIRCLE_SHA1'
-      - test-e2e-canary:
-          name: test-e2e-canary-woo
-          requires:
-            - wait-calypso-live
-          test-flags: '-W -S $CIRCLE_SHA1'
-          test-target: 'WOO'
-          slack-webhook: '$SLACK_WOO'
-
-  calypso-nightly:
+  wp-desktop:
     jobs:
-      - setup
-      - test-client:
-          requires:
-            - setup
-      - test-integration:
-          requires:
-            - setup
-      - test-packages:
-          requires:
-            - setup
-      - test-server:
-          requires:
-            - setup
-    triggers:
-      - schedule:
-          cron: '0 4 * * *'
+      - wp-desktop-assets:
           filters:
             branches:
               only:
-                - master
-
-  e2e-full-suite-scheduled:
-    jobs:
-      - setup
-      - test-e2e:
+              - trunk
+              - /release\/.*/
+              - /desktop\/.*/
+      - wp-desktop-mac:
           requires:
-            - setup
-    triggers:
-      - schedule:
-          cron: '0 3,15 * * *'
+            - wp-desktop-assets
           filters:
             branches:
-              only: master
-
-  e2e-canary-scheduled:
-    jobs:
-      - setup
-      - test-e2e-canary:
-          name: test-e2e-canary-ie-sched
+              only:
+                - trunk
+                - /release\/.*/
+                - /desktop\/.*/
+      - wp-desktop-linux:
           requires:
-            - setup
-          test-flags: '-w'
-          test-target: 'IE11'
-          slack-webhook: '$SLACK_IE'
-      - test-e2e-canary:
-          name: test-e2e-canary-woo-sched
-          requires:
-            - setup
-          test-flags: '-W'
-          test-target: 'WOO'
-          slack-webhook: '$SLACK_WOO'
-    triggers:
-      - schedule:
-          cron: '0 12 * * *'
+            - wp-desktop-assets
           filters:
             branches:
-              only: master
+              only:
+                - trunk
+                - /release\/.*/
+                - /desktop\/.*/
+      - wp-desktop-windows:
+          requires:
+            - wp-desktop-assets
+          filters:
+            branches:
+              only:
+                - trunk
+                - /release\/.*/
+                - /desktop\/.*/
+  wp-desktop-release:
+    when: << pipeline.git.tag >>
+    jobs:
+      - wp-desktop-assets:
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-mac:
+          requires:
+            - wp-desktop-assets
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-linux:
+          requires:
+            - wp-desktop-assets
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-windows:
+          requires:
+            - wp-desktop-assets
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-publish:
+          requires:
+            - wp-desktop-mac
+            - wp-desktop-linux
+            - wp-desktop-windows
+          filters:
+            tags:
+              only: /v.*/
 
   e2e-jetpack-be-scheduled:
     jobs:
@@ -760,7 +725,7 @@ workflows:
           name: test-e2e-jetpack
           requires:
             - setup
-          test-flags: '-j'
+          test-flags: '-j -s desktop'
           jetpack-host: 'PRESSABLEBLEEDINGEDGE'
           test-target: 'JETPACK'
           slack-webhook: '$SLACK_JP'
@@ -769,26 +734,7 @@ workflows:
           cron: '0 7 * * *'
           filters:
             branches:
-              only: master
-
-  # Temporarily disabling these scheduled test runs
-  #  e2e-jetpack-scheduled:
-  #    jobs:
-  #    - setup
-  #    - test-e2e-canary:
-  #        name: test-e2e-jetpack
-  #        requires:
-  #        - setup
-  #        test-flags: "-j"
-  #        jetpack-host: "PRESSABLE"
-  #        test-target: "JETPACK"
-  #        slack-webhook: "$SLACK_JP"
-  #    triggers:
-  #    - schedule:
-  #        cron: "0 1,13 * * *"
-  #        filters:
-  #          branches:
-  #            only: master
+              only: trunk
 
   e2e-canary-i18n-monthly:
     jobs:
@@ -801,13 +747,13 @@ workflows:
           test-flags: '-i'
           filters:
             branches:
-              only: master
+              only: trunk
     triggers:
       - schedule:
           cron: '40 15 19 * *'
           filters:
             branches:
-              only: master
+              only: trunk
 
   e2e-canary-i18n-nightly:
     jobs:
@@ -820,11 +766,11 @@ workflows:
           test-flags: '-I'
           filters:
             branches:
-              only: master
+              only: trunk
     triggers:
       - schedule:
           cron: '46 4 * * *'
           filters:
             branches:
-              only: master
+              only: trunk
 # vi: sts=2 ts=2 sw=2 et

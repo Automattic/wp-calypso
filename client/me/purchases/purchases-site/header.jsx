@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,16 +5,16 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import { getSite } from 'state/sites/selectors';
-import QuerySites from 'components/data/query-sites';
-import Site from 'blocks/site';
-import SitePlaceholder from 'blocks/site/placeholder';
+import { CompactCard } from '@automattic/components';
+import { getSite } from 'calypso/state/sites/selectors';
+import QuerySites from 'calypso/components/data/query-sites';
+import Site from 'calypso/blocks/site';
+import SitePlaceholder from 'calypso/blocks/site/placeholder';
 
 /**
  * Style dependencies

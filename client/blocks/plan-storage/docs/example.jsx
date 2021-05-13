@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,9 +17,9 @@ import {
 	PLAN_PREMIUM,
 	PLAN_PERSONAL,
 	PLAN_FREE,
-} from 'lib/plans/constants';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+} from '@automattic/calypso-products';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 const PlanStorageExample = ( { siteId, siteSlug } ) => {
 	const mediaStorage = {
@@ -97,7 +95,7 @@ const PlanStorageExample = ( { siteId, siteSlug } ) => {
 	);
 };
 
-const ConnectedPlanStorageExample = connect( state => {
+const ConnectedPlanStorageExample = connect( ( state ) => {
 	const siteId = get( getCurrentUser( state ), 'primary_blog', null );
 	const siteSlug = getSiteSlug( state, siteId );
 

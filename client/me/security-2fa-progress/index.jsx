@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -26,7 +24,7 @@ class Security2faProgress extends React.Component {
 		debug( this.constructor.displayName + ' React component will unmount.' );
 	}
 
-	stepClass = step => {
+	stepClass = ( step ) => {
 		const currentStep = parseInt( this.props.step, 10 );
 
 		return {

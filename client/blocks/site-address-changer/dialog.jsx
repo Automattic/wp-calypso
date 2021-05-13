@@ -1,20 +1,20 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import Dialog from 'components/dialog';
-import FormLabel from 'components/forms/form-label';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import TrackComponentView from 'lib/analytics/track-component-view';
+import { Dialog } from '@automattic/components';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+
+const noop = () => {};
 
 class SiteAddressChangerConfirmationDialog extends PureComponent {
 	static propTypes = {
@@ -44,7 +44,7 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 		} );
 	};
 
-	onConfirm = closeDialog => {
+	onConfirm = ( closeDialog ) => {
 		this.onClose();
 		this.props.onConfirm( this.props.targetSite, closeDialog );
 	};
@@ -73,7 +73,7 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 			},
 			{
 				action: 'confirm',
-				label: translate( 'Change Site Address' ),
+				label: translate( 'Change site address' ),
 				onClick: this.onConfirm,
 				disabled: ! this.state.isConfirmationChecked,
 				isPrimary: true,
@@ -94,24 +94,28 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 						new_domain: newDomainName,
 					} }
 				/>
-				<h1>{ translate( "Let's review…" ) }</h1>
-				<p>
-					{ translate(
-						"You're about to change your site address. Once you confirm the change, " +
-							'this site address will no longer be available for future use.'
-					) }
-				</p>
+				<h1 className="site-address-changer__dialog-heading">
+					{ translate( 'Confirm Site Address Change' ) }
+				</h1>
 				<div className="site-address-changer__confirmation-detail">
 					<Gridicon
 						icon="cross-circle"
 						size={ 18 }
 						className="site-address-changer__copy-deletion"
 					/>
-					<p className="site-address-changer__confirmation-detail-copy">
-						<strong className="site-address-changer__copy-deletion">{ currentDomainName }</strong>
-						{ currentDomainSuffix }
-						<br />
-						{ translate( 'Will be removed and unavailable for use.' ) }
+					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-deletion">
+						{ translate(
+							'{{strong}}%(currentDomainName)s{{/strong}}%(currentDomainSuffix)s will be removed and unavailable for use.',
+							{
+								components: {
+									strong: <strong />,
+								},
+								args: {
+									currentDomainName: currentDomainName,
+									currentDomainSuffix: currentDomainSuffix,
+								},
+							}
+						) }
 					</p>
 				</div>
 				<div className="site-address-changer__confirmation-detail">
@@ -120,14 +124,22 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 						size={ 18 }
 						className="site-address-changer__copy-addition"
 					/>
-					<p className="site-address-changer__confirmation-detail-copy">
-						<strong className="site-address-changer__copy-addition">{ newDomainName }</strong>
-						{ newDomainSuffix }
-						<br />
-						{ translate( 'Will be your new site address.' ) }
+					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-addition">
+						{ translate(
+							'{{strong}}%(newDomainName)s{{/strong}}%(newDomainSuffix)s will be your new site address.',
+							{
+								components: {
+									strong: <strong />,
+								},
+								args: {
+									newDomainName: newDomainName,
+									newDomainSuffix: newDomainSuffix,
+								},
+							}
+						) }
 					</p>
 				</div>
-				<h1>{ translate( 'Check the box to confirm' ) }</h1>
+				<h2>{ translate( 'Check the box to confirm' ) }</h2>
 				<FormLabel>
 					<FormInputCheckbox
 						checked={ this.state.isConfirmationChecked }

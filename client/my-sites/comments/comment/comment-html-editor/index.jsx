@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,14 +5,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { delay, each, get, map, reduce, reject } from 'lodash';
+import { delay, get, map, reduce, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import AddImageDialog from 'my-sites/comments/comment/comment-html-editor/add-image-dialog';
-import AddLinkDialog from 'my-sites/comments/comment/comment-html-editor/add-link-dialog';
-import Button from 'components/button';
+import AddImageDialog from 'calypso/my-sites/comments/comment/comment-html-editor/add-image-dialog';
+import AddLinkDialog from 'calypso/my-sites/comments/comment/comment-html-editor/add-link-dialog';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import { Button } from '@automattic/components';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 export class CommentHtmlEditor extends Component {
 	static propTypes = {
@@ -29,9 +30,9 @@ export class CommentHtmlEditor extends Component {
 		showLinkDialog: false,
 	};
 
-	storeTextareaRef = textarea => ( this.textarea = textarea );
+	storeTextareaRef = ( textarea ) => ( this.textarea = textarea );
 
-	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
+	isTagOpen = ( tag ) => -1 !== this.state.openTags.indexOf( tag );
 
 	setCursorPosition = ( selectionEnd, insertedContentLength ) => {
 		this.textarea.selectionEnd = this.textarea.selectionStart =
@@ -60,7 +61,9 @@ export class CommentHtmlEditor extends Component {
 		}
 	) => {
 		const element = document.createElement( tag );
-		each( attributes, ( value, key ) => element.setAttribute( key, value ) );
+		Object.entries( attributes ).forEach( ( [ key, value ] ) =>
+			element.setAttribute( key, value )
+		);
 		element.innerHTML = '<!---->';
 		const fragments = element.outerHTML.split( '<!---->' );
 		const opener =
@@ -81,12 +84,12 @@ export class CommentHtmlEditor extends Component {
 
 		if ( !! fragments[ 1 ] && this.isTagOpen( tag ) ) {
 			this.setState( ( { openTags } ) => ( {
-				openTags: reject( openTags, openTag => openTag === tag ),
+				openTags: reject( openTags, ( openTag ) => openTag === tag ),
 			} ) );
 			return this.insertContent( closer, options.adjustCursorPosition );
 		}
 
-		if ( !! fragments[ 1 ] ) {
+		if ( fragments[ 1 ] ) {
 			this.setState( ( { openTags } ) => ( { openTags: openTags.concat( tag ) } ) );
 		}
 		return this.insertContent( opener, options.adjustCursorPosition );
@@ -141,7 +144,7 @@ export class CommentHtmlEditor extends Component {
 
 	insertInsTag = () => this.insertHtmlTag( 'ins', { datetime: this.props.moment().format() } );
 
-	insertImgTag = attributes => this.insertHtmlTag( 'img', attributes );
+	insertImgTag = ( attributes ) => this.insertHtmlTag( 'img', attributes );
 
 	insertUlTag = () => this.insertHtmlTag( 'ul', {}, { paragraph: true } );
 
@@ -218,11 +221,11 @@ export class CommentHtmlEditor extends Component {
 					) ) }
 				</div>
 
-				<textarea
-					className="comment-html-editor__textarea form-textarea"
+				<FormTextarea
+					className="comment-html-editor__textarea"
 					disabled={ this.props.disabled }
 					onChange={ onChange }
-					ref={ this.storeTextareaRef }
+					forwardedRef={ this.storeTextareaRef }
 					value={ commentContent }
 				/>
 
@@ -243,4 +246,4 @@ export class CommentHtmlEditor extends Component {
 	}
 }
 
-export default localize( CommentHtmlEditor );
+export default localize( withLocalizedMoment( CommentHtmlEditor ) );

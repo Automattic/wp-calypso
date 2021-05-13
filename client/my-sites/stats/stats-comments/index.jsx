@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,22 +12,22 @@ import { get, flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import CommentTab from './comment-tab';
 import StatsErrorPanel from '../stats-error';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleContent from '../stats-module/content-text';
 import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import SectionHeader from 'calypso/components/section-header';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getSiteStatsNormalizedData,
 	hasSiteStatsQueryFailed,
 	isRequestingSiteStatsForQuery,
-} from 'state/stats/lists/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+} from 'calypso/state/stats/lists/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -52,7 +50,7 @@ class StatsComments extends Component {
 		activeFilter: 'top-authors',
 	};
 
-	changeFilter = selection => {
+	changeFilter = ( selection ) => {
 		const filter = selection.value;
 		if ( filter === this.state.activeFilter ) {
 			return;
@@ -88,7 +86,7 @@ class StatsComments extends Component {
 		return (
 			<StatsModuleContent className="module-content-text-stat">
 				<p>
-					{ translate( 'Total posts with comment followers:' ) }{' '}
+					{ translate( 'Total posts with comment followers:' ) }{ ' ' }
 					<a href={ commentFollowURL }>{ numberFormat( commentFollowersTotal ) }</a>
 				</p>
 			</StatsModuleContent>
@@ -104,7 +102,7 @@ class StatsComments extends Component {
 		return (
 			<StatsModuleContent>
 				<p>
-					{ this.props.translate( 'Average comments per month:' ) }{' '}
+					{ this.props.translate( 'Average comments per month:' ) }{ ' ' }
 					{ this.props.numberFormat( data.monthly_comments ) }
 				</p>
 			</StatsModuleContent>
@@ -115,7 +113,6 @@ class StatsComments extends Component {
 		const { activeFilter } = this.state;
 		const {
 			commentsStatsData,
-			followList,
 			hasCommentsStatsQueryFailed: hasError,
 			requestingCommentsStats,
 			siteId,
@@ -125,8 +122,8 @@ class StatsComments extends Component {
 		const commentsPosts = get( commentsStatsData, 'posts' );
 		const noData = ! commentsAuthors;
 		const selectOptions = [
-			{ value: 'top-authors', label: translate( 'Comments By Authors' ) },
-			{ value: 'top-content', label: translate( 'Comments By Posts & Pages' ) },
+			{ value: 'top-authors', label: translate( 'Comments by authors' ) },
+			{ value: 'top-content', label: translate( 'Comments by posts & pages' ) },
 		];
 
 		const classes = classNames( 'stats-module', {
@@ -162,7 +159,6 @@ class StatsComments extends Component {
 							value={ translate( 'Comments' ) }
 							label={ translate( 'Author' ) }
 							data={ commentsAuthors }
-							followList={ followList }
 							isActive={ 'top-authors' === activeFilter }
 						/>
 
@@ -171,7 +167,6 @@ class StatsComments extends Component {
 							value={ translate( 'Comments' ) }
 							label={ translate( 'Title' ) }
 							data={ commentsPosts }
-							followList={ followList }
 							isActive={ 'top-content' === activeFilter }
 						/>
 
@@ -185,7 +180,7 @@ class StatsComments extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 
@@ -204,7 +199,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsComments );
+export default flowRight( connectComponent, localize )( StatsComments );

@@ -1,24 +1,21 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { findIndex, findLastIndex, flatten, flowRight, get, range } from 'lodash';
+import { flatten, flowRight, get, range } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import SummaryChart from '../stats-summary';
-import SectionNav from 'components/section-nav';
-import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
-import QueryPostStats from 'components/data/query-post-stats';
-import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
+import SectionNav from 'calypso/components/section-nav';
+import SegmentedControl from 'calypso/components/segmented-control';
+import QueryPostStats from 'calypso/components/data/query-post-stats';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 
 /**
  * Style dependencies
@@ -44,7 +41,7 @@ class StatsPostSummary extends Component {
 			} );
 	}
 
-	selectRecord = record => {
+	selectRecord = ( record ) => {
 		this.setState( { selectedRecord: record } );
 	};
 
@@ -75,21 +72,21 @@ class StatsPostSummary extends Component {
 					return [];
 				}
 
-				return Object.keys( stats.years ).map( year => {
+				return Object.keys( stats.years ).map( ( year ) => {
 					return {
 						period: year,
 						periodLabel: year,
 						value: stats.years[ year ].total,
 					};
 				} );
-			case 'month':
+			case 'month': {
 				if ( ! stats.years ) {
 					return [];
 				}
 
 				const months = flatten(
-					Object.keys( stats.years ).map( year => {
-						return range( 1, 13 ).map( month => {
+					Object.keys( stats.years ).map( ( year ) => {
+						return range( 1, 13 ).map( ( month ) => {
 							const firstDayOfMonth = moment( `1/${ month }/${ year }`, 'DD/MM/YYYY' );
 							return {
 								period: firstDayOfMonth.format( 'MMM YYYY' ),
@@ -99,16 +96,23 @@ class StatsPostSummary extends Component {
 						} );
 					} )
 				);
-				const firstNotEmpty = findIndex( months, item => item.value !== 0 );
-				const lastNotEmpty = findLastIndex( months, item => item.value !== 0 );
+				const firstNotEmpty = months.findIndex( ( item ) => item.value !== 0 );
+				const reverseLastNotEmpty = [ ...months ]
+					.reverse()
+					.findIndex( ( item ) => item.value !== 0 );
+				const lastNotEmpty =
+					reverseLastNotEmpty === -1
+						? reverseLastNotEmpty
+						: months.length - ( reverseLastNotEmpty + 1 );
 
 				return months.slice( firstNotEmpty, lastNotEmpty + 1 );
+			}
 			case 'week':
 				if ( ! stats.weeks ) {
 					return [];
 				}
 
-				return stats.weeks.map( week => {
+				return stats.weeks.map( ( week ) => {
 					const firstDay = moment( week.days[ 0 ].day );
 					return {
 						period: firstDay.format( 'MMM D' ),
@@ -141,13 +145,13 @@ class StatsPostSummary extends Component {
 				<SectionNav>
 					<SegmentedControl compact>
 						{ periods.map( ( { id, label } ) => (
-							<ControlItem
+							<SegmentedControl.Item
 								key={ id }
 								onClick={ this.selectPeriod( id ) }
 								selected={ this.state.period === id }
 							>
 								{ label }
-							</ControlItem>
+							</SegmentedControl.Item>
 						) ) }
 					</SegmentedControl>
 				</SectionNav>
@@ -176,7 +180,4 @@ const connectComponent = connect( ( state, { siteId, postId } ) => {
 	};
 } );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsPostSummary );
+export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsPostSummary );

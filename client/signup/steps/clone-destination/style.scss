@@ -15,7 +15,7 @@
 	.clone-destination__origin {
 		& [fill='#00BE28'],
 		& [fill='#004F84'] {
-			fill: var( --color-neutral-100 );
+			fill: var( --color-neutral-10 );
 		}
 		& [fill='#00A6DB'],
 		& [fill='#74DCFC'] {
@@ -33,7 +33,7 @@
 .clone-destination__tos {
 	text-align: center;
 	margin: 24px auto;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }
 
 .clone-destination__tos-link {

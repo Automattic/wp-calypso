@@ -31,16 +31,17 @@
 		}
 
 		.product-name {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 			display: block;
-			font-size: 14px;
+			font-size: $font-body-small;
 			padding-right: 30px;
 		}
 
-		.product-domain {
+		.product-domain,
+		.product-domain-renewal-date {
 			color: var( --color-text-subtle );
 			display: block;
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			text-overflow: ellipsis;
 			overflow: hidden;
 		}
@@ -52,7 +53,7 @@
 		.product-price {
 			color: var( --color-text-subtle );
 			display: block;
-			font-size: 13px;
+			font-size: $font-body-small;
 		}
 
 		.cart__free-with-plan {
@@ -68,10 +69,25 @@
 			padding-left: 0;
 		}
 
+		.cart__gsuite-discount {
+			.cart__gsuite-discount-regular-price {
+				text-decoration: line-through;
+			}
+
+			.cart__gsuite-discount-discounted-price {
+				padding-left: 4px;
+			}
+
+			.cart__gsuite-discount-text {
+				color: var( --color-success );
+				padding-left: 8px;
+			}
+		}
+
 		.product-monthly-price {
 			color: var( --color-text-subtle );
 			display: block;
-			font-size: 11px;
+			font-size: $font-body-extra-small;
 			font-style: italic;
 		}
 
@@ -104,7 +120,7 @@
 
 	.cart-item__loading-placeholder {
 		.cart__remove-item {
-			@include placeholder( 23% );
+			@include placeholder( --color-neutral-10 );
 			border-radius: 0;
 			width: 25px;
 		}
@@ -113,7 +129,7 @@
 	.cart__total {
 		color: var( --color-text-subtle );
 		display: table;
-		font-size: 20px;
+		font-size: $font-title-small;
 
 		.cart__total-row.grand-total {
 			display: table-footer-group;
@@ -126,12 +142,14 @@
 		.cart__total-label {
 			display: table-cell;
 			width: 100%;
+			word-break: keep-all;
 		}
 
 		.cart__total-amount {
 			display: table-cell;
 			text-align: right;
 			width: auto;
+			white-space: nowrap;
 		}
 
 		.cart__total-amount.last-cell {
@@ -152,9 +170,9 @@
 	}
 
 	.cart__coupon {
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: none;
 		}
 
@@ -169,14 +187,14 @@
 			margin: 15px -15px 0;
 			padding: 15px 15px 0;
 
-			input[type='text'] {
-				font-size: 12px;
+			input[type='text'].form-text-input {
+				font-size: $font-body-extra-small;
 				margin: 0 4% 0 0;
 				width: 70%;
 			}
 
 			.button {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				height: 34px;
 				padding: 4px;
 				width: 26%;
@@ -188,33 +206,13 @@
 .cart-items__expander {
 	color: var( --color-primary );
 	text-decoration: none;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }
 
 .cart-empty {
-	background: var( --color-white );
 	padding: 30px;
 	text-align: center;
-	font-size: 14px;
-}
-
-.cart__cart-ad {
-	background: var( --color-neutral-0 );
-	border: 1px solid var( --color-neutral-0 );
-	border-radius: 4px;
-	color: var( --color-text );
-	font-size: 12px;
-	margin: 15px 15px 0;
-	padding: 10px;
-
-	@include breakpoint( '<660px' ) {
-		display: none;
-	}
-
-	.button.is-borderless {
-		color: var( --color-link );
-		font-weight: initial;
-	}
+	font-size: $font-body-small;
 }
 
 .cart__cart-plan-discount-ad-paragraph:last-child {
@@ -232,32 +230,17 @@
 	}
 }
 
-.cart-toggle-button {
-	// Hide the text
-	display: flex;
+.popover-cart {
 	position: relative;
-	height: 48px;
-	width: 48px;
-	white-space: nowrap;
-	cursor: pointer; // Needed for Safari
+	display: inline-block;
 
-	.gridicon {
-		color: var( --color-neutral-700 );
-		cursor: pointer;
-		position: absolute;
-		top: 12px;
-		right: 12px;
+	button {
+		box-sizing: border-box;
+		min-width: auto;
+		padding: 0 15px 0 10px;
 
-		&:hover {
-			color: var( --color-primary );
-		}
-	}
-
-	&:focus {
-		outline: none;
-
-		.accessible-focus & {
-			box-shadow: inset 0 0 0 2px var( --color-primary-light );
+		@include breakpoint-deprecated( '>480px' ) {
+			padding: 14px 20px 12px;
 		}
 	}
 }
@@ -274,9 +257,14 @@
 
 .cart__count-badge .count {
 	position: absolute;
-	top: 5px;
-	right: 5px;
+	top: 2px;
+	right: 2px;
 	animation: pulsing-badge 2s infinite;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		top: 5px;
+		right: 5px;
+	}
 }
 
 .cart__count-badge:hover .count {
@@ -329,12 +317,12 @@ div.popover-cart__popover {
 
 	.cart__total {
 		border-top: 1px solid var( --color-border-subtle );
-		font-size: 16px;
+		font-size: $font-body;
 		padding: 15px;
 	}
 
 	.cart-buttons {
-		border-radius: 0 0 4px 4px;
+		border-radius: 0 0 2px 2px;
 		padding: 0 15px 15px;
 	}
 
@@ -344,8 +332,8 @@ div.popover-cart__popover {
 }
 
 .popover-cart__mobile-cart {
-	background-color: var( --color-white );
-	border: 1px solid var( --color-neutral-100 );
+	background-color: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
 	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 	margin: -1px;
 	position: relative;
@@ -373,12 +361,12 @@ div.popover-cart__popover {
 
 	.cart__total {
 		border-top: 1px solid var( --color-border-subtle );
-		font-size: 16px;
+		font-size: $font-body;
 		padding: 15px;
 	}
 
 	.cart-buttons {
-		border-radius: 0 0 4px 4px;
+		border-radius: 0 0 2px 2px;
 		padding: 0 15px 15px;
 	}
 
@@ -414,133 +402,9 @@ div.popover-cart__popover {
 	}
 }
 
-.checkout__secondary-cart-container {
-	margin: 0 auto;
-	margin-left: 20px;
-
-	@include breakpoint( '<660px' ) {
-		left: 0;
-	}
-}
-
-.secondary-cart {
-	background: var( --color-white );
-
-	@include breakpoint( '<660px' ) {
-		left: 0;
-		margin-top: 10px;
-		// Create space for the inline help button
-		margin-bottom: 65px;
-		max-height: 100%;
-		position: relative;
-		top: 0;
-	}
-
-	.jetpack-logo {
-		margin: 32px 0;
-	}
-
-}
-
-
-.checkout-seals {
-
-	display: flex;
-	flex-direction: column;
-
-	.checkout-seals__row {
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-	}
-
-	> * {
-		margin-top: 1.5em;
-	}
-
-	img {
-		width: 40%;
-	}
-
-	.checkout-seals__security-seal, 
-	.checkout-seals__guarantee-seal, 
-	.checkout-seals__trustpilot {
-		width: 40%;
-	}
-
-	.checkout-seals__security-seal {
-		width: 43%;
-		max-width: 110px;
-		max-height: 45px;
-		margin: 0.6em 0 0 2em;
-	}
-
-	.checkout-seals__trustpilot {
-		display: block;
-		width: 40%;
-		max-width: 110px;
-
-		img {
-			display: block;
-			width: 100%;
-		}
-
-	}
-
-	.checkout-seals__trustpilot-rating {
-		margin-top: 0.35em;
-		margin-left: 0.25em;
-	}
-
-
-
-	.checkout-seals__guarantee-seal {
-		max-width: 128px;
-		margin: 2.5em auto;
-		transform: rotate( 15deg );
-	}
-
-	.checkout-seals__guarantee-seal__hidden {
-		display: none;
-	}
-
-
-
-	@include breakpoint( '<660px' ) {
-		justify-content: center;
-		
-		margin: 20px auto;
-
-		> * {
-			margin: 1.5em auto;
-		}
-	
-		.checkout-seals__security-seal {
-			width: 50;
-			margin-left: 3em;
-		}
-
-		.checkout-seals__trustpilot {
-			width: 50%;
-		}
-
-		.checkout-seals__guarantee-seal {
-			width: 30%;
-		}
-
-	}
-
-}
-
-@include breakpoint( '<660px' ) {
-	.secondary-cart__hidden {
-		display: none;
-	}
-}
-
 .cart-item__loading-placeholder {
 	span {
-		@include placeholder( 23% );
+		@include placeholder( --color-neutral-10 );
 		margin-bottom: 1px;
 	}
 
@@ -548,7 +412,8 @@ div.popover-cart__popover {
 		width: 55%;
 	}
 
-	.product-domain {
+	.product-domain,
+	.product-domain-renewal-date {
 		width: 40%;
 	}
 

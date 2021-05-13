@@ -1,24 +1,22 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import resizeImageUrl from 'lib/resize-image-url';
-import safeImageUrl from 'lib/safe-image-url';
-import { getNormalizedPost } from 'state/posts/selectors';
-import { getEditorPath } from 'state/ui/editor/selectors';
-import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
-import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
+import safeImageUrl from 'calypso/lib/safe-image-url';
+import { getNormalizedPost } from 'calypso/state/posts/selectors';
+import { getEditorPath } from 'calypso/state/editor/selectors';
+import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
+
+const noop = () => {};
 
 function PostTypeListPostThumbnail( { onClick, thumbnail, postLink } ) {
 	const classes = classnames( 'post-type-list__post-thumbnail-wrapper', {
@@ -62,9 +60,8 @@ export default connect( ( state, ownProps ) => {
 		: get( post, 'URL' );
 	const isTrashed = post && 'trash' === post.status;
 
-	// Null if the item is a placeholder or bulk edit mode is active.
-	const postLink =
-		! ownProps.globalId || isMultiSelectEnabled( state ) || isTrashed ? null : postUrl;
+	// Null if the item is a placeholder.
+	const postLink = ! ownProps.globalId || isTrashed ? null : postUrl;
 
 	return { thumbnail, postLink };
 } )( PostTypeListPostThumbnail );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,24 +5,36 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { identity, noop, sample } from 'lodash';
+import { sample } from 'lodash';
 import store from 'store';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
+
+/**
+ * WordPress dependencies
+ */
+import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { recordTracksEvent } from 'state/analytics/actions';
-import wpcom from 'lib/wp';
-import Dialog from 'components/dialog'
-import { fetchUserSettings } from 'state/user-settings/actions';
-import getUserSettings from 'state/selectors/get-user-settings';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { Dialog } from '@automattic/components';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
+
+/**
+ * Image dependencies
+ */
+import wordpressLogoImage from 'calypso/assets/images/illustrations/logo-jpc.svg';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 const getRandomPromo = () => {
 	const promoOptions = [
@@ -106,17 +116,10 @@ export class AppPromo extends React.Component {
 	};
 
 	sendMagicLink = () => {
-		this.recordClickEvent()
-
+		this.recordClickEvent();
 		const email = this.props.userSettings.user_email;
-		wpcom.undocumented().requestMagicLoginEmail( {
-			email,
-			'infer': true,
-			'scheme': 'wordpress',
-		} )
-		
+		this.props.sendEmailLogin( email, { showGlobalNotices: false, isMobileAppLogin: true } );
 		this.onShowDialog();
-
 		return false;
 	};
 
@@ -127,21 +130,21 @@ export class AppPromo extends React.Component {
 	onCloseDialog = () => {
 		this.setState( { showDialog: false } );
 	};
-	
+
 	desktopPromo = ( promoItem ) => {
 		const { location, translate } = this.props;
 
 		return (
 			<div className="app-promo">
-				<button
+				<Button
 					tabIndex="0"
 					className="app-promo__dismiss"
 					onClick={ this.dismiss }
 					aria-label={ translate( 'Dismiss' ) }
 				>
 					<Gridicon icon="cross" size={ 24 } />
-				</button>
-				<a
+				</Button>
+				<Button
 					onClick={ this.recordClickEvent }
 					className="app-promo__link"
 					title="Try the desktop app!"
@@ -151,74 +154,80 @@ export class AppPromo extends React.Component {
 				>
 					<img
 						className="app-promo__icon"
-						src="/calypso/images/reader/promo-app-icon.png"
+						src={ wordpressLogoImage }
 						width="32"
 						height="32"
 						alt="WordPress Desktop Icon"
 					/>
 					{ promoItem.message }
-				</a>
+				</Button>
 			</div>
-		)
-	}
-	
+		);
+	};
+
 	mobilePromo = () => {
 		const { translate } = this.props;
-		const buttons = [
-			{ action: 'cancel', label: translate( 'OK' ) },
-		];
+		const buttons = [ { action: 'cancel', label: translate( 'OK' ) } ];
 
 		return (
 			<div className="app-promo">
-				<button
+				<Button
 					tabIndex="0"
 					className="app-promo__dismiss"
 					onClick={ this.dismiss }
 					aria-label={ translate( 'Dismiss' ) }
 				>
 					<Gridicon icon="cross" size={ 24 } />
-				</button>
-				<button
+				</Button>
+				<Button
 					onClick={ this.sendMagicLink }
 					className="app-promo__link"
 					title="Try the mobile app!"
 				>
 					<img
 						className="app-promo__icon"
-						src="/calypso/images/reader/promo-app-icon.png"
+						src={ wordpressLogoImage }
 						width="32"
 						height="32"
-						alt="WordPress Desktop Icon"
+						alt="WordPress App Icon"
 					/>
 					{ 'WordPress.com in the palm of your hands — download the mobile app.' }
-				</button>
-				<Dialog className="app-promo__dialog" isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this.onCloseDialog }>
+				</Button>
+				<Dialog
+					className="app-promo__dialog"
+					isVisible={ this.state.showDialog }
+					buttons={ buttons }
+					onClose={ this.onCloseDialog }
+				>
 					<h1>{ translate( 'Check your mail!' ) }</h1>
-					<p>{ translate( "We've sent you an email with links to download and effortlessly log in to the mobile app. Be sure to use them from your mobile device!" ) }</p>
+					<p>
+						{ translate(
+							"We've sent you an email with links to download and effortlessly log in to the mobile app. Be sure to use them from your mobile device!"
+						) }
+					</p>
 				</Dialog>
 			</div>
-		)
-	}
+		);
+	};
 
 	render() {
 		if ( ! this.state.showPromo ) {
 			return null;
 		}
 		const { promoItem } = this.state;
-		return ( promoItem.type === 'mobile' ) ? this.mobilePromo() : this.desktopPromo( promoItem );
+		return promoItem.type === 'mobile' ? this.mobilePromo() : this.desktopPromo( promoItem );
 	}
 }
 
 AppPromo.defaultProps = {
-	translate: identity,
 	recordTracksEvent: noop,
 	saveDismissal: () => store.set( 'desktop_promo_disabled', true ),
 	getPromoLink,
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		userSettings: getUserSettings( state ),
 	} ),
-	{ fetchUserSettings, recordTracksEvent }
+	{ fetchUserSettings, recordTracksEvent, sendEmailLogin }
 )( localize( AppPromo ) );

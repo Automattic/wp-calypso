@@ -1,0 +1,56 @@
+.hosting {
+	.card > .material-icon {
+		display: inline-block;
+		margin-right: 16px;
+		margin-bottom: 16px;
+		vertical-align: middle;
+	}
+
+	.card > .card-heading {
+		display: inline-block;
+		margin-top: 0;
+		margin-bottom: 16px;
+		vertical-align: middle;
+		line-height: 32px;
+	}
+
+	@include breakpoint-deprecated( '>1280px' ) {
+		&__main-layout-col {
+			.card {
+				padding-left: 72px;
+
+				> .material-icon {
+					display: block;
+					position: absolute;
+					left: 24px;
+				}
+			}
+		}
+	}
+
+	.spinner {
+		width: 100%;
+	}
+
+	.components-panel__body-title .components-button {
+		font-size: 1rem;
+		font-weight: 600;
+	}
+}
+
+.hosting__activating-notice {
+	.gridicons-sync > use:first-child,
+	.gridicons-sync > g:first-child {
+		animation: spinning-sync-icon linear 2s infinite;
+		transform-origin: center;
+	}
+}
+
+@keyframes spinning-sync-icon {
+	from {
+		transform: rotate( 0deg );
+	}
+	to {
+		transform: rotate( 360deg );
+	}
+}

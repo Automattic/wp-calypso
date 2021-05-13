@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,11 +8,13 @@ import { last, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
-import { SharingService, connectFor } from 'my-sites/marketing/connections/service';
+import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
+import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
 
 export class Mailchimp extends SharingService {
 	static propTypes = {
+		// This foreign propTypes access should be safe because we expect all of them to be removed
+		// eslint-disable-next-line react/forbid-foreign-prop-types
 		...SharingService.propTypes,
 		deleteStoredKeyringConnection: PropTypes.func,
 	};
@@ -37,7 +37,7 @@ export class Mailchimp extends SharingService {
 		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
 	};
 
-	componentWillReceiveProps( { availableExternalAccounts } ) {
+	UNSAFE_componentWillReceiveProps( { availableExternalAccounts } ) {
 		if ( ! isEqual( this.props.availableExternalAccounts, availableExternalAccounts ) ) {
 			this.setState( {
 				isConnecting: false,
@@ -74,7 +74,7 @@ export default connectFor(
 			...props,
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
-			siteUserConnections: props.keyringConnections.map( conn => ( {
+			siteUserConnections: props.keyringConnections.map( ( conn ) => ( {
 				...conn,
 				keyring_connection_ID: conn.ID,
 			} ) ),

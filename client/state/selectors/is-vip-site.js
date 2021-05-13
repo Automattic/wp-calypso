@@ -1,19 +1,17 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import getRawSite from 'state/selectors/get-raw-site';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 
 /**
  * Returns true if the site is VIP
  *
  * If the site is missing returns null.
  *
- * @param  {Object}   state  Global state tree
- * @param  {Number}   siteId Site ID
- * @return {?Boolean}        Whether site is VIP
+ * @param  {object}   state  Global state tree
+ * @param  {number}   siteId Site ID
+ * @returns {?boolean}        Whether site is VIP
  */
 export default function isVipSite( state, siteId ) {
 	const site = getRawSite( state, siteId );

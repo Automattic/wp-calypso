@@ -5,6 +5,7 @@
 }
 
 .site-or-domain__choice {
+	display: flex;
 	margin: 10px;
 	min-width: 230px;
 	max-width: 300px;
@@ -12,13 +13,19 @@
 	transition: box-shadow 100ms ease-in-out;
 	cursor: pointer;
 
-	a, svg {
+	a {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+	}
+
+	svg {
 		display: block;
 		width: 100%;
 	}
 
 	&:hover {
-		box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
+		box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
 	}
 
 	h2 {
@@ -45,13 +52,15 @@
 
 .site-or-domain__choice-image {
 	display: none;
+	width: 100%;
 }
 
 .site-or-domain__choice-text {
-	color: var( --color-neutral-700 );
+	flex-grow: 1;
+	color: var( --color-neutral-70 );
 }
 
-@include breakpoint( '>480px' ) {
+@include breakpoint-deprecated( '>480px' ) {
 	.site-or-domain__choice-button {
 		margin-bottom: 1.5em;
 	}
@@ -67,7 +76,7 @@
 	}
 }
 
-@include breakpoint( '<480px' ) {
+@include breakpoint-deprecated( '<480px' ) {
 	.site-or-domain__choice-text {
 		display: flex;
 		flex-direction: column-reverse;
@@ -75,5 +84,5 @@
 }
 
 .site-or-domain__is-placeholder {
-	@include placeholder(23%);
+	@include placeholder( --color-neutral-10 );
 }

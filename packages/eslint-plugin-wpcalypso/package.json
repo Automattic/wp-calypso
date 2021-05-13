@@ -1,6 +1,6 @@
 {
 	"name": "eslint-plugin-wpcalypso",
-	"version": "4.1.0",
+	"version": "5.1.0",
 	"description": "Custom ESLint rules for the WordPress.com Calypso project",
 	"repository": {
 		"type": "git",
@@ -13,7 +13,7 @@
 		"eslintplugin",
 		"eslint-plugin"
 	],
-	"author": "Automattic",
+	"author": "Automattic Inc.",
 	"main": "lib/index.js",
 	"files": [
 		"lib/"
@@ -22,6 +22,16 @@
 		"node": ">=10"
 	},
 	"peerDependencies": {
-		"eslint": ">=5"
+		"@babel/core": ">=7.14.0",
+		"eslint": ">=7.25.0",
+		"eslint-plugin-react-hooks": "^4.2.0",
+		"eslint-plugin-inclusive-language": "^2.1.1",
+		"eslint-plugin-jsdoc": "^32.3.4"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.14.0",
+		"@babel/eslint-parser": "^7.13.14",
+		"@babel/parser": "^7.14.1",
+		"eslint": ">=7.25.0"
 	}
 }

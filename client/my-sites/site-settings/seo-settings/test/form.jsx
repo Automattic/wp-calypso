@@ -1,24 +1,7 @@
-/** @format */
-
-jest.mock( 'lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
-jest.mock( 'components/banner', () => 'Banner' );
-jest.mock( 'components/notice', () => 'Notice' );
-jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: x => x,
-} ) );
+/** @jest-environment jsdom */
+jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
+jest.mock( 'calypso/components/notice', () => 'Notice' );
+jest.mock( 'calypso/components/notice/notice-action', () => 'NoticeAction' );
 
 /**
  * External dependencies
@@ -38,8 +21,8 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-} from 'lib/plans/constants';
+	PLAN_JETPACK_SECURITY_DAILY,
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -47,12 +30,12 @@ import {
 import { SeoForm } from '../form';
 
 const props = {
-	refreshSiteData: x => x,
+	refreshSiteData: ( x ) => x,
 	site: {
 		plan: PLAN_FREE,
 	},
 	selectedSite: {},
-	translate: x => x,
+	translate: ( x ) => x,
 };
 
 describe( 'SeoForm basic tests', () => {
@@ -77,7 +60,7 @@ describe( 'SeoForm basic tests', () => {
 		expect( comp.find( 'Notice' ) ).toHaveLength( 0 );
 	} );
 
-	test( 'should render optimize SEO banner when has no SEO features', () => {
+	test( 'should render optimize SEO nudge when has no SEO features', () => {
 		const comp = shallow(
 			<SeoForm
 				{ ...props }
@@ -86,27 +69,29 @@ describe( 'SeoForm basic tests', () => {
 				selectedSite={ { plan: { product_slug: 'free' } } }
 			/>
 		);
-		expect( comp.find( 'Banner' ) ).toHaveLength( 1 );
-		expect( comp.find( 'Banner' ).props().event ).toContain( 'calypso_seo_settings_upgrade_nudge' );
+		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
+		expect( comp.find( 'UpsellNudge' ).props().event ).toContain(
+			'calypso_seo_settings_upgrade_nudge'
+		);
 	} );
 
 	test( 'should not render Jetpack unsupported notice when has any SEO features', () => {
 		const comp = shallow( <SeoForm { ...props } hasSeoPreviewFeature={ true } /> );
-		expect( comp.find( 'Banner' ) ).toHaveLength( 0 );
+		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 0 );
 
 		comp.setProps( {
 			...props,
 			hasSeoPreviewFeature: false,
 			hasAdvancedSEOFeature: true,
 		} );
-		expect( comp.find( 'Banner' ) ).toHaveLength( 0 );
+		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 0 );
 
 		comp.setProps( {
 			...props,
 			hasSeoPreviewFeature: true,
 			hasAdvancedSEOFeature: true,
 		} );
-		expect( comp.find( 'Banner' ) ).toHaveLength( 0 );
+		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should not render Jetpack unsupported notice when has no site', () => {
@@ -118,7 +103,7 @@ describe( 'SeoForm basic tests', () => {
 				hasAdvancedSEOFeature={ false }
 			/>
 		);
-		expect( comp.find( 'Banner' ) ).toHaveLength( 0 );
+		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should render SEO editor when has advanced seo and there is no conflicted SEO plugin', () => {
@@ -175,30 +160,36 @@ describe( 'SeoForm basic tests', () => {
 	} );
 } );
 
-describe( 'Upsell Banner should get appropriate plan constant', () => {
-	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( product_slug => {
+describe( 'UpsellNudge should get appropriate plan constant', () => {
+	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( product_slug ) => {
 		test( `Business 1 year for (${ product_slug })`, () => {
 			const comp = shallow(
 				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
 			);
-			expect( comp.find( 'Banner' ) ).toHaveLength( 1 );
-			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS );
+			expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
+			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS );
 		} );
 	} );
 
-	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach( product_slug => {
-		test( `Business 2 year for (${ product_slug })`, () => {
-			const comp = shallow(
-				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
-			);
-			expect( comp.find( 'Banner' ) ).toHaveLength( 1 );
-			expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_BUSINESS_2_YEARS );
-		} );
-	} );
+	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach(
+		( product_slug ) => {
+			test( `Business 2 year for (${ product_slug })`, () => {
+				const comp = shallow(
+					<SeoForm
+						{ ...props }
+						siteIsJetpack={ false }
+						selectedSite={ { plan: { product_slug } } }
+					/>
+				);
+				expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
+				expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS_2_YEARS );
+			} );
+		}
+	);
 
 	[ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ].forEach(
-		product_slug => {
-			test( `Jetpack Premium for (${ product_slug })`, () => {
+		( product_slug ) => {
+			test( `Jetpack Security Daily for (${ product_slug })`, () => {
 				const comp = shallow(
 					<SeoForm
 						{ ...props }
@@ -206,8 +197,8 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 						selectedSite={ { plan: { product_slug } } }
 					/>
 				);
-				expect( comp.find( 'Banner' ) ).toHaveLength( 1 );
-				expect( comp.find( 'Banner' ).props().plan ).toBe( PLAN_JETPACK_PREMIUM );
+				expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
+				expect( comp.find( 'UpsellNudge' ).props().href ).toContain( PLAN_JETPACK_SECURITY_DAILY );
 			} );
 		}
 	);

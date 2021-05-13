@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { find, first, size } from 'lodash';
+import { find, size } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,14 +30,14 @@ class NotificationSettingsFormStream extends PureComponent {
 		let { stream, settings } = this.props;
 
 		if ( this.props.devices && size( this.props.devices ) > 0 ) {
-			stream = parseInt( this.state.selectedDeviceId || first( this.props.devices ).id, 10 );
+			stream = parseInt( this.state.selectedDeviceId || this.props.devices[ 0 ].id, 10 );
 			settings = find( this.props.settings, { device_id: stream } );
 		}
 
 		return { stream, settings };
 	};
 
-	onChangeDevices = event =>
+	onChangeDevices = ( event ) =>
 		this.setState( { selectedDeviceId: parseInt( event.target.value, 10 ) } );
 
 	render() {

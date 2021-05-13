@@ -1,12 +1,14 @@
-/** @format */
 /**
  * Internal dependencies
  */
 import { AUTH_ATTEMPS_TTL } from '../constants';
 import { isStale } from '../utils';
-import { JETPACK_CONNECT_COMPLETE_FLOW, JETPACK_CONNECT_RETRY_AUTH } from 'state/action-types';
+import {
+	JETPACK_CONNECT_COMPLETE_FLOW,
+	JETPACK_CONNECT_RETRY_AUTH,
+} from 'calypso/state/jetpack-connect/action-types';
 import { jetpackAuthAttemptsSchema } from './schema';
-import { keyedReducer } from 'state/utils';
+import { keyedReducer, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 
 export function authAttempts( state = undefined, { type, attemptNumber } ) {
 	switch ( type ) {
@@ -28,7 +30,7 @@ export function authAttempts( state = undefined, { type, attemptNumber } ) {
 	return state;
 }
 
-export const reducer = keyedReducer( 'slug', authAttempts );
-reducer.schema = jetpackAuthAttemptsSchema;
-
-export default reducer;
+export default withSchemaValidation(
+	jetpackAuthAttemptsSchema,
+	keyedReducer( 'slug', withPersistence( authAttempts ) )
+);

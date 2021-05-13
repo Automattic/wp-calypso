@@ -1,15 +1,18 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { assign, omit } from 'lodash';
-import Gridicon from 'gridicons';
+import { omit } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 import { translate } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
+import { ScreenReaderText } from '@automattic/components';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -34,24 +37,16 @@ class ExternalLink extends Component {
 	};
 
 	render() {
-		const classes = classnames(
-			'external-link',
-			this.props.className,
-			{
-				'icon-first': !! this.props.showIconFirst,
-			},
-			{
-				'has-icon': !! this.props.icon,
-			}
-		);
-		const props = assign(
-			{},
-			omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName' ),
-			{
-				className: classes,
-				rel: 'external',
-			}
-		);
+		const classes = classnames( 'external-link', this.props.className, {
+			'icon-first': this.props.showIconFirst,
+			'has-icon': this.props.icon,
+		} );
+
+		const props = {
+			...omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName' ),
+			className: classes,
+			rel: 'external',
+		};
 
 		if ( this.props.icon ) {
 			props.target = '_blank';
@@ -59,6 +54,10 @@ class ExternalLink extends Component {
 
 		if ( props.target ) {
 			props.rel = props.rel.concat( ' noopener noreferrer' );
+		}
+
+		if ( props.href ) {
+			props.href = localizeUrl( props.href );
 		}
 
 		const iconComponent = (
@@ -75,11 +74,11 @@ class ExternalLink extends Component {
 				{ this.props.children }
 				{ this.props.icon && ! this.props.showIconFirst && iconComponent }
 				{ this.props.icon && (
-					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-					<span className="screen-reader-text">
-						{ /* translators: accessibility text */
-						translate( '(opens in a new tab)' ) }
-					</span>
+					<ScreenReaderText>
+						{ translate( '(opens in a new tab)', {
+							comment: 'accessibility label for an external link',
+						} ) }
+					</ScreenReaderText>
 				) }
 			</a>
 		);

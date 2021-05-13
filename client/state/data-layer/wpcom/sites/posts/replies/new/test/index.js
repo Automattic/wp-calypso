@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { writePostComment } from '../';
-import * as Utils from 'state/data-layer/wpcom/sites/utils';
+import * as Utils from 'calypso/state/data-layer/wpcom/sites/utils';
 
 describe( '#writePostComment()', () => {
 	const action = {

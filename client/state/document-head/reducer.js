@@ -1,56 +1,73 @@
-/** @format */
+/**
+ * External dependencies
+ */
+import { uniqWith, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
-
-import { combineReducers, createReducer } from 'state/utils';
+import config from '@automattic/calypso-config';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
 	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 	ROUTE_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { titleSchema, unreadCountSchema, linkSchema, metaSchema } from './schema';
 
 /**
  * Constants
  */
-export const DEFAULT_META_STATE = [ { property: 'og:site_name', content: 'WordPress.com' } ];
+export const DEFAULT_META_STATE = config( 'meta' );
 
-export const title = createReducer(
-	'',
-	{
-		[ DOCUMENT_HEAD_TITLE_SET ]: ( state, action ) => action.title,
-	},
-	titleSchema
-);
+export const title = withSchemaValidation( titleSchema, ( state = '', action ) => {
+	switch ( action.type ) {
+		case DOCUMENT_HEAD_TITLE_SET:
+			return action.title;
+	}
 
-export const unreadCount = createReducer(
-	0,
-	{
-		[ DOCUMENT_HEAD_UNREAD_COUNT_SET ]: ( state, action ) => action.count,
-		[ ROUTE_SET ]: () => 0,
-	},
-	unreadCountSchema
-);
+	return state;
+} );
 
-export const meta = createReducer(
-	DEFAULT_META_STATE,
-	{
-		[ DOCUMENT_HEAD_META_SET ]: ( state, action ) => action.meta,
-	},
-	metaSchema
-);
+export const unreadCount = withSchemaValidation( unreadCountSchema, ( state = 0, action ) => {
+	switch ( action.type ) {
+		case DOCUMENT_HEAD_UNREAD_COUNT_SET:
+			return action.count;
+		case ROUTE_SET:
+			return 0;
+	}
 
-export const link = createReducer(
-	[],
-	{
-		[ DOCUMENT_HEAD_LINK_SET ]: ( state, action ) => action.link,
-	},
-	linkSchema
-);
+	return state;
+} );
+
+export const meta = withSchemaValidation( metaSchema, ( state = DEFAULT_META_STATE, action ) => {
+	switch ( action.type ) {
+		case DOCUMENT_HEAD_META_SET:
+			return action.meta;
+	}
+
+	return state;
+} );
+
+export const link = withSchemaValidation( linkSchema, ( state = [], action ) => {
+	switch ( action.type ) {
+		case DOCUMENT_HEAD_LINK_SET:
+			if ( ! action.link ) {
+				return state;
+			}
+
+			// Append action.link to the state array and prevent duplicate objects.
+			// Works with action.link being a single link object or an array of link objects.
+			return uniqWith(
+				[ ...state, ...( Array.isArray( action.link ) ? action.link : [ action.link ] ) ],
+				isEqual
+			);
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	link,

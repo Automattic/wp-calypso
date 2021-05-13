@@ -6,63 +6,88 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { reject } from 'lodash';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import { localize, translate } from 'i18n-calypso';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
-import CartMessages from './cart-messages';
+import HeaderButton from 'calypso/components/header-button';
 import CartButtons from './cart-buttons';
-import Count from 'components/count';
-import Popover from 'components/popover';
+import Count from 'calypso/components/count';
+import Popover from 'calypso/components/popover';
 import CartEmpty from './cart-empty';
-import { isCredits } from 'lib/products-values';
-import TrackComponentView from 'lib/analytics/track-component-view';
+import { isCredits } from '@automattic/calypso-products';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-// eslint-disable-next-line react/prefer-es6-class
-const PopoverCart = createReactClass( {
-	displayName: 'PopoverCart',
-
-	propTypes: {
+class PopoverCart extends React.Component {
+	static propTypes = {
 		cart: PropTypes.object.isRequired,
+		shoppingCartManager: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		onToggle: PropTypes.func.isRequired,
-		closeSectionNavMobilePanel: PropTypes.func,
 		visible: PropTypes.bool.isRequired,
 		pinned: PropTypes.bool.isRequired,
-	},
+		compact: PropTypes.bool,
+	};
 
-	toggleButton: React.createRef(),
-	hasUnmounted: false,
+	static defaultProps = {
+		compact: false,
+	};
 
-	componentWillUnmount: function() {
+	toggleButtonRef = React.createRef();
+	hasUnmounted = false;
+
+	componentDidMount() {
+		this.props.shoppingCartManager.reloadFromServer();
+	}
+
+	componentWillUnmount() {
 		this.hasUnmounted = true;
-	},
+	}
 
-	itemCount: function() {
-		if ( ! this.props.cart.hasLoadedFromServer ) {
+	itemCount() {
+		if (
+			this.props.shoppingCartManager.isLoading ||
+			this.props.shoppingCartManager.isPendingUpdate
+		) {
 			return;
 		}
 
 		return reject( this.props.cart.products, isCredits ).length;
-	},
+	}
 
-	render: function() {
-		const { cart, selectedSite } = this.props;
+	onToggle = () => {
+		this.props.onToggle();
+	};
+
+	onClose = () => {
+		// Since this callback can fire after the user navigates off the page, we
+		// we need to check if it's mounted to prevent errors.
+		if ( this.hasUnmounted ) {
+			return;
+		}
+
+		// if the cart became pinned, ignore close event from Popover
+		if ( this.props.pinned ) {
+			return;
+		}
+
+		this.onToggle();
+	};
+
+	render() {
 		let countBadge;
-		const classes = classNames( {
-			'popover-cart': true,
+		const classes = classNames( 'popover-cart', {
 			pinned: this.props.pinned,
 		} );
 
@@ -77,25 +102,23 @@ const PopoverCart = createReactClass( {
 
 		return (
 			<div>
-				<CartMessages cart={ cart } selectedSite={ selectedSite } />
 				<div className={ classes }>
-					<button
-						className="cart-toggle-button"
-						ref={ this.toggleButton }
+					<HeaderButton
+						icon="cart"
+						compact={ this.props.compact }
+						label={ translate( 'Cart' ) }
+						ref={ this.toggleButtonRef }
 						onClick={ this.onToggle }
-					>
-						<div className="popover-cart__label">{ this.props.translate( 'Cart' ) }</div>
-						<Gridicon icon="cart" size={ 24 } />
-						{ countBadge }
-					</button>
+					/>
+					{ countBadge }
 				</div>
 
-				{ this.cartContent() }
+				{ this.renderCartContent() }
 			</div>
 		);
-	},
+	}
 
-	cartContent: function() {
+	renderCartContent() {
 		if ( ! this.props.pinned ) {
 			return (
 				<Popover
@@ -103,9 +126,9 @@ const PopoverCart = createReactClass( {
 					isVisible={ this.props.visible }
 					position="bottom left"
 					onClose={ this.onClose }
-					context={ this.toggleButton.current }
+					context={ this.toggleButtonRef.current }
 				>
-					{ this.cartBody() }
+					{ this.renderCartBody() }
 					<TrackComponentView
 						eventName="calypso_popover_cart_content_impression"
 						eventProperties={ { style: 'popover' } }
@@ -113,11 +136,12 @@ const PopoverCart = createReactClass( {
 				</Popover>
 			);
 		}
+
 		if ( this.props.visible ) {
 			return (
 				<div className="popover-cart__mobile-cart">
 					<div className="top-arrow" />
-					{ this.cartBody() }
+					{ this.renderCartBody() }
 					<TrackComponentView
 						eventName="calypso_popover_cart_content_impression"
 						eventProperties={ { style: 'mobile-cart' } }
@@ -125,15 +149,13 @@ const PopoverCart = createReactClass( {
 				</div>
 			);
 		}
-	},
+	}
 
-	onToggle: function( event ) {
-		this.props.closeSectionNavMobilePanel();
-		this.props.onToggle( event );
-	},
-
-	cartBody: function() {
-		if ( ! this.props.cart.hasLoadedFromServer ) {
+	renderCartBody() {
+		if (
+			this.props.shoppingCartManager.isLoading ||
+			this.props.shoppingCartManager.isPendingUpdate
+		) {
 			return <CartBodyLoadingPlaceholder />;
 		}
 
@@ -143,31 +165,11 @@ const PopoverCart = createReactClass( {
 
 		return (
 			<div>
-				<CartBody
-					collapse={ true }
-					cart={ this.props.cart }
-					selectedSite={ this.props.selectedSite }
-				/>
-
+				<CartBody collapse cart={ this.props.cart } selectedSite={ this.props.selectedSite } />
 				<CartButtons selectedSite={ this.props.selectedSite } />
 			</div>
 		);
-	},
+	}
+}
 
-	onClose: function() {
-		// Since this callback can fire after the user navigates off the page, we
-		// we need to check if it's mounted to prevent errors.
-		if ( this.hasUnmounted ) {
-			return;
-		}
-
-		// if the cart became pinned, ignore close event from Popover
-		if ( this.props.pinned ) {
-			return;
-		}
-
-		this.onToggle();
-	},
-} );
-
-export default localize( PopoverCart );
+export default withShoppingCart( localize( PopoverCart ) );

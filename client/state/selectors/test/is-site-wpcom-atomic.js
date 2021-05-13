@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 
 describe( 'isSiteWpcomAtomic()', () => {
 	test( 'should default to false', () => {

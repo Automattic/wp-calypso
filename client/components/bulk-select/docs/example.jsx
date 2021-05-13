@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,19 +7,24 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import BulkSelect from 'components/bulk-select';
+import { Card } from '@automattic/components';
+import BulkSelect from 'calypso/components/bulk-select';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 
 export default class extends React.Component {
 	static displayName = 'BulkSelects';
 
 	state = {
-		elements: [ { title: 'Apples', selected: true }, { title: 'Oranges', selected: false } ],
+		elements: [
+			{ title: 'Apples', selected: true },
+			{ title: 'Oranges', selected: false },
+		],
 	};
 
-	handleToggleAll = checkedState => {
-		let newElements = [];
-		this.state.elements.forEach( element => {
+	handleToggleAll = ( checkedState ) => {
+		const newElements = [];
+		this.state.elements.forEach( ( element ) => {
 			if ( typeof checkedState !== 'undefined' ) {
 				element.selected = checkedState;
 			} else {
@@ -33,22 +36,22 @@ export default class extends React.Component {
 	};
 
 	getSelectedElementsNumber = () => {
-		return this.state.elements.filter( function( element ) {
+		return this.state.elements.filter( function ( element ) {
 			return element.selected;
 		} ).length;
 	};
 
 	renderElements = () => {
 		return this.state.elements.map( ( element, index ) => {
-			const onClick = function() {
+			const onClick = () => {
 				element.selected = ! element.selected;
 				this.forceUpdate();
-			}.bind( this );
+			};
 			return (
-				<label key={ index }>
-					<input type="checkbox" onClick={ onClick } checked={ element.selected } readOnly />
+				<FormLabel key={ index }>
+					<FormInputCheckbox onClick={ onClick } checked={ element.selected } readOnly />
 					<span>{ element.title }</span>
-				</label>
+				</FormLabel>
 			);
 		} );
 	};

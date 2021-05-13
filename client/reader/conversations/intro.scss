@@ -9,7 +9,7 @@
 		background-position: 150px 20px;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		background-position: 120px 20px;
 	}
 
@@ -19,11 +19,7 @@
 	}
 
 	.conversations__intro-character {
-		background: url( '/calypso/images/reader/reader-conversations-characters.svg' ) no-repeat 8px
-			bottom;
-		background-size: 97%;
-		flex: 0 0 245px;
-		min-height: 140px;
+		height: 140px;
 		margin-right: -8px; // prevent right crop of illustration
 
 		// Hides the character when main content column gets too narrow
@@ -31,7 +27,7 @@
 			display: none;
 		}
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: none;
 		}
 	}
@@ -40,7 +36,7 @@
 		display: flex;
 		flex: 1 1 auto;
 		flex-direction: column;
-		font-size: 16px;
+		font-size: $font-body;
 		justify-content: center;
 		margin-left: 24px;
 		padding: 10px 0;
@@ -48,7 +44,7 @@
 	}
 
 	.conversations__intro-copy-hidden {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: none;
 			visibility: hidden;
 		}
@@ -64,7 +60,7 @@
 	width: 24px;
 
 	.conversations__intro-close-icon {
-		fill: var( --color-neutral-200 );
+		fill: var( --color-neutral-20 );
 		position: absolute;
 
 		// Fix for 1px (0.5pt) misalignment in Safari under retina. See
@@ -73,7 +69,7 @@
 
 		&:hover {
 			cursor: pointer;
-			fill: var( --color-neutral-500 );
+			fill: var( --color-neutral-50 );
 		}
 	}
 }

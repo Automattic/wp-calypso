@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -8,15 +7,14 @@
  */
 import deepFreeze from 'deep-freeze';
 import React from 'react';
-import { identity, noop } from 'lodash';
 import { shallow } from 'enzyme';
-import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
  */
 import { JetpackAuthorize } from '../authorize';
 
+const noop = () => {};
 const CLIENT_ID = 98765;
 const SITE_SLUG = 'an.example.site';
 const DEFAULT_PROPS = deepFreeze( {
@@ -35,6 +33,7 @@ const DEFAULT_PROPS = deepFreeze( {
 		authApproved: false,
 		blogname: 'Example Blog',
 		clientId: CLIENT_ID,
+		closeWindowAfterLogin: false,
 		from: 'banner-44-slide-1-dashboard',
 		homeUrl: `http://${ SITE_SLUG }`,
 		jpVersion: '5.4',
@@ -58,16 +57,21 @@ const DEFAULT_PROPS = deepFreeze( {
 	recordTracksEvent: noop,
 	retryAuth: noop,
 	siteSlug: SITE_SLUG,
-	translate: identity,
+	translate: ( string ) => string,
 	user: {
 		display_name: "A User's Name",
 	},
 	userAlreadyConnected: false,
 } );
 
-jest.mock( 'config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
-	mock.isEnabled = jest.fn( () => true );
+	mock.isEnabled = jest.fn( ( featureFlag ) => {
+		if ( featureFlag === 'jetpack/magic-link-signup' ) {
+			return false;
+		}
+		return true;
+	} );
 	return mock;
 } );
 
@@ -127,22 +131,27 @@ describe( 'JetpackAuthorize', () => {
 		} );
 	} );
 
-	describe( 'isWoo', () => {
-		const isWoo = new JetpackAuthorize().isWoo;
+	describe( 'isWooRedirect', () => {
+		const isWooRedirect = new JetpackAuthorize().isWooRedirect;
 
 		test( 'should return true for woo services', () => {
 			const props = { authQuery: { from: 'woocommerce-services-auto-authorize' } };
-			expect( isWoo( props ) ).toBe( true );
+			expect( isWooRedirect( props ) ).toBe( true );
 		} );
 
-		test( 'should return true for woo wizard', () => {
+		test( 'should return true for old woo setup wizard', () => {
 			const props = { authQuery: { from: 'woocommerce-setup-wizard' } };
-			expect( isWoo( props ) ).toBe( true );
+			expect( isWooRedirect( props ) ).toBe( true );
+		} );
+
+		test( 'should return true for new woo onboarding', () => {
+			const props = { authQuery: { from: 'woocommerce-onboarding' } };
+			expect( isWooRedirect( props ) ).toBe( true );
 		} );
 
 		test( 'returns false with non-woo from', () => {
 			const props = { authQuery: { from: 'elsewhere' } };
-			expect( isWoo( props ) ).toBe( false );
+			expect( isWooRedirect( props ) ).toBeFalsy();
 		} );
 	} );
 
@@ -176,7 +185,7 @@ describe( 'JetpackAuthorize', () => {
 			component.setProps( {
 				authQuery: {
 					...DEFAULT_PROPS.authQuery,
-					from: 'woocommerce-setup-wizard',
+					from: 'woocommerce-onboarding',
 				},
 			} );
 			const result = component.instance().shouldAutoAuthorize();
@@ -184,15 +193,7 @@ describe( 'JetpackAuthorize', () => {
 			expect( result ).toBe( false );
 		} );
 
-		test( 'should return true for woocommerce onboarding when the feature flag is disabled', () => {
-			isEnabled.mockImplementation( flag => {
-				if ( flag === 'jetpack/connect/woocommerce' ) {
-					return false;
-				}
-
-				return true;
-			} );
-
+		test( 'should return true for the old woocommerc setup wizard', () => {
 			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
 			const component = shallow( renderableComponent );
 			component.setProps( {
@@ -204,6 +205,102 @@ describe( 'JetpackAuthorize', () => {
 			const result = component.instance().shouldAutoAuthorize();
 
 			expect( result ).toBe( true );
+		} );
+	} );
+
+	describe( 'isJetpackUpgradeFlow', () => {
+		const isJetpackUpgradeFlow = new JetpackAuthorize().isJetpackUpgradeFlow;
+
+		test( 'should see plans', () => {
+			const props = {
+				authQuery: {
+					redirectAfterAuth: 'page=jetpack&action=something_else',
+				},
+			};
+
+			expect( isJetpackUpgradeFlow( props ) ).toBe( false );
+		} );
+
+		test( 'should be sent back', () => {
+			const props = {
+				authQuery: {
+					redirectAfterAuth: 'page=jetpack&action=authorize_redirect',
+				},
+			};
+
+			expect( isJetpackUpgradeFlow( props ) ).toBe( true );
+		} );
+	} );
+
+	describe( 'isFromJetpackConnectionManager', () => {
+		const isFromJetpackConnectionManager = new JetpackAuthorize().isFromJetpackConnectionManager;
+
+		test( 'is from connection manager', () => {
+			const props = {
+				authQuery: {
+					from: 'connection-ui',
+				},
+			};
+
+			expect( isFromJetpackConnectionManager( props ) ).toBe( true );
+		} );
+
+		test( 'is not from connection manager', () => {
+			const props = {
+				authQuery: {
+					from: 'not-connection-ui',
+				},
+			};
+
+			expect( isFromJetpackConnectionManager( props ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isFromJetpackBackupPlugin', () => {
+		const isFromJetpackBackupPlugin = new JetpackAuthorize().isFromJetpackBackupPlugin;
+
+		test( 'is from backup plugin', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-backup',
+				},
+			};
+
+			expect( isFromJetpackBackupPlugin( props ) ).toBe( true );
+		} );
+
+		test( 'is not from backup plugin', () => {
+			const props = {
+				authQuery: {
+					from: 'not-jetpack-backup',
+				},
+			};
+
+			expect( isFromJetpackBackupPlugin( props ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isFromJetpackBoost', () => {
+		const isFromJetpackBoost = new JetpackAuthorize().isFromJetpackBoost;
+
+		test( 'is from jetpack boost', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-boost-something',
+				},
+			};
+
+			expect( isFromJetpackBoost( props ) ).toBe( true );
+		} );
+
+		test( 'is not from jetpack boost', () => {
+			const props = {
+				authQuery: {
+					from: 'not-jetpack-boost-something',
+				},
+			};
+
+			expect( isFromJetpackBoost( props ) ).toBe( false );
 		} );
 	} );
 } );

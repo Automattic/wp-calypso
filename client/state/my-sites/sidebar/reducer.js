@@ -1,17 +1,19 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	MY_SITES_SIDEBAR_SECTION_TOGGLE,
 	MY_SITES_SIDEBAR_SECTION_EXPAND,
 	MY_SITES_SIDEBAR_SECTION_COLLAPSE,
-} from 'state/action-types';
-import { combineReducers, keyedReducer } from 'state/utils';
+	MY_SITES_SIDEBAR_SECTIONS_COLLAPSE_ALL,
+} from 'calypso/state/action-types';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 
-function expansionReducer( state = false, action ) {
+const schema = {
+	type: 'boolean',
+};
+
+const expansionReducer = withSchemaValidation( schema, ( state = false, action ) => {
 	switch ( action.type ) {
 		case MY_SITES_SIDEBAR_SECTION_TOGGLE:
 			return ! state;
@@ -22,12 +24,31 @@ function expansionReducer( state = false, action ) {
 		default:
 			return state;
 	}
-}
-
-expansionReducer.schema = {
-	type: 'boolean',
-};
+} );
 
 const sectionReducer = combineReducers( { isOpen: expansionReducer } );
 
-export default keyedReducer( 'sidebarSection', sectionReducer );
+/**
+ * Higher-order reducer to enable expanding/collapsing of all
+ * the sidebar sections via a single action.
+ *
+ * @param reducer Function the keyed reducer to be enhanced
+ */
+const withAllSectionsSidebarControls = ( reducer ) => ( state, action ) => {
+	switch ( action.type ) {
+		case MY_SITES_SIDEBAR_SECTIONS_COLLAPSE_ALL:
+			return Object.keys( state ).reduce( ( acc, curr ) => {
+				acc[ curr ] = {
+					...state[ curr ],
+					isOpen: false,
+				};
+
+				return acc;
+			}, {} );
+		default:
+			// Call original section-specific keyed reducer
+			return reducer( state, action );
+	}
+};
+
+export default withAllSectionsSidebarControls( keyedReducer( 'sidebarSection', sectionReducer ) );

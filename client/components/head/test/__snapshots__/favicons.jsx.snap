@@ -1,0 +1,264 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Favicons should only render Jetpack favicons if running Jetpack Cloud 1`] = `
+<Fragment>
+  <link
+    href=""
+    rel="shortcut icon"
+    sizes="16x16 32x32"
+    type="image/vnd.microsoft.icon"
+  />
+  <link
+    href=""
+    rel="shortcut icon"
+    sizes="16x16 32x32"
+    type="image/x-icon"
+  />
+  <link
+    href=""
+    rel="icon"
+    sizes="16x16 32x32"
+    type="image/x-icon"
+  />
+  <link
+    color="#00be28"
+    href="/calypso/images/jetpack/favicons/safari-pinned-tab.svg"
+    rel="mask-icon"
+    type="image/svg+xml"
+  />
+  <meta
+    content="Jetpack.com"
+    name="application-name"
+  />
+  <meta
+    content="/calypso/images/jetpack/favicons/browserconfig.xml"
+    name="msapplication-config"
+  />
+  <link
+    href="/calypso/images/jetpack/favicons/android-chrome-512x512.png"
+    rel="icon"
+    sizes="512x512"
+    type="image/png"
+  />
+  <link
+    href="/calypso/images/jetpack/favicons/android-chrome-192x192.png"
+    rel="icon"
+    sizes="192x192"
+    type="image/png"
+  />
+  <link
+    href="/calypso/images/jetpack/favicons/apple-touch-icon.png"
+    rel="apple-touch-icon"
+    sizes="180x180"
+    type="image/png"
+  />
+</Fragment>
+`;
+
+exports[`Favicons should only render WordPress favicons if not running Jetpack Cloud 1`] = `
+<Fragment>
+  <link
+    href=""
+    rel="shortcut icon"
+    sizes="16x16 32x32"
+    type="image/vnd.microsoft.icon"
+  />
+  <link
+    href=""
+    rel="shortcut icon"
+    sizes="16x16 32x32"
+    type="image/x-icon"
+  />
+  <link
+    href=""
+    rel="icon"
+    sizes="16x16 32x32"
+    type="image/x-icon"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/favicon-64x64.png"
+    rel="icon"
+    sizes="64x64"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/favicon-96x96.png"
+    rel="icon"
+    sizes="96x96"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/android-chrome-192x192.png"
+    rel="icon"
+    sizes="192x192"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-180x180.png"
+    key="180"
+    rel="apple-touch-icon"
+    sizes="180x180"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-152x152.png"
+    key="152"
+    rel="apple-touch-icon"
+    sizes="152x152"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-144x144.png"
+    key="144"
+    rel="apple-touch-icon"
+    sizes="144x144"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-120x120.png"
+    key="120"
+    rel="apple-touch-icon"
+    sizes="120x120"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-114x114.png"
+    key="114"
+    rel="apple-touch-icon"
+    sizes="114x114"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-76x76.png"
+    key="76"
+    rel="apple-touch-icon"
+    sizes="76x76"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-72x72.png"
+    key="72"
+    rel="apple-touch-icon"
+    sizes="72x72"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-60x60.png"
+    key="60"
+    rel="apple-touch-icon"
+    sizes="60x60"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-57x57.png"
+    key="57"
+    rel="apple-touch-icon"
+    sizes="57x57"
+    type="image/png"
+  />
+</Fragment>
+`;
+
+exports[`Favicons should render environment favicons using the 'environmentFaviconURL' property 1`] = `
+<Fragment>
+  <link
+    href="https://arbitrary-favicon-url/"
+    rel="shortcut icon"
+    sizes="16x16 32x32"
+    type="image/vnd.microsoft.icon"
+  />
+  <link
+    href="https://arbitrary-favicon-url/"
+    rel="shortcut icon"
+    sizes="16x16 32x32"
+    type="image/x-icon"
+  />
+  <link
+    href="https://arbitrary-favicon-url/"
+    rel="icon"
+    sizes="16x16 32x32"
+    type="image/x-icon"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/favicon-64x64.png"
+    rel="icon"
+    sizes="64x64"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/favicon-96x96.png"
+    rel="icon"
+    sizes="96x96"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/android-chrome-192x192.png"
+    rel="icon"
+    sizes="192x192"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-180x180.png"
+    key="180"
+    rel="apple-touch-icon"
+    sizes="180x180"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-152x152.png"
+    key="152"
+    rel="apple-touch-icon"
+    sizes="152x152"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-144x144.png"
+    key="144"
+    rel="apple-touch-icon"
+    sizes="144x144"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-120x120.png"
+    key="120"
+    rel="apple-touch-icon"
+    sizes="120x120"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-114x114.png"
+    key="114"
+    rel="apple-touch-icon"
+    sizes="114x114"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-76x76.png"
+    key="76"
+    rel="apple-touch-icon"
+    sizes="76x76"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-72x72.png"
+    key="72"
+    rel="apple-touch-icon"
+    sizes="72x72"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-60x60.png"
+    key="60"
+    rel="apple-touch-icon"
+    sizes="60x60"
+    type="image/png"
+  />
+  <link
+    href="//s1.wp.com/i/favicons/apple-touch-icon-57x57.png"
+    key="57"
+    rel="apple-touch-icon"
+    sizes="57x57"
+    type="image/png"
+  />
+</Fragment>
+`;

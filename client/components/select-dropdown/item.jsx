@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,20 +5,19 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Count from 'components/count';
-import TranslatableString from 'components/translatable/proptype';
+import Count from 'calypso/components/count';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 class SelectDropdownItem extends Component {
 	static propTypes = {
-		children: TranslatableString.isRequired,
+		children: PropTypes.oneOfType( [ TranslatableString, PropTypes.node ] ).isRequired,
 		compactCount: PropTypes.bool,
 		path: PropTypes.string,
-		isDropdownOpen: PropTypes.bool,
 		selected: PropTypes.bool,
 		onClick: PropTypes.func,
 		count: PropTypes.number,
@@ -29,29 +26,34 @@ class SelectDropdownItem extends Component {
 	};
 
 	static defaultProps = {
-		isDropdownOpen: false,
 		selected: false,
 	};
 
+	linkRef = React.createRef();
+
+	// called by the parent `SelectDropdown` component to focus the item on keyboard navigation
+	focusLink() {
+		this.linkRef.current.focus();
+	}
+
 	render() {
-		const optionClassName = classNames( this.props.className, {
-			'select-dropdown__item': true,
+		const optionClassName = classNames( 'select-dropdown__item', this.props.className, {
 			'is-selected': this.props.selected,
 			'is-disabled': this.props.disabled,
-			'has-icon': !! this.props.icon,
+			'has-icon': this.props.icon,
 		} );
 
 		return (
 			<li className="select-dropdown__option">
 				<a
-					ref="itemLink"
+					ref={ this.linkRef }
 					href={ this.props.path }
 					className={ optionClassName }
 					onClick={ this.props.disabled ? null : this.props.onClick }
 					data-bold-text={ this.props.value || this.props.children }
 					role="menuitem"
-					tabIndex={ this.props.isDropdownOpen ? 0 : '' }
-					aria-selected={ this.props.selected }
+					tabIndex="0"
+					aria-current={ this.props.selected }
 					data-e2e-title={ this.props.e2eTitle }
 				>
 					<span className="select-dropdown__item-text">

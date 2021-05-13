@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 /**
@@ -19,7 +18,7 @@ const defaultProps = {
 	plural: 'Original translations',
 };
 
-describe( '<Translatable /> ', () => {
+describe( '<Translatable />', () => {
 	test( 'should render', () => {
 		const wrapper = shallow( <Translatable { ...defaultProps } /> );
 		expect( wrapper ).toMatchSnapshot();

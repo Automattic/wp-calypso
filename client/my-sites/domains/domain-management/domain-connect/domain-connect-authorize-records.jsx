@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import DnsRecordsList from '../dns-records/list';
 import DomainConnectDnsRecord from './domain-connect-dns-record';
 
@@ -41,7 +39,7 @@ class DomainConnectAuthorizeRecords extends Component {
 		);
 	};
 
-	renderDnsRecords = records => {
+	renderDnsRecords = ( records ) => {
 		return (
 			<DnsRecordsList>
 				{ records.map( ( record, index ) => (
@@ -93,10 +91,10 @@ class DomainConnectAuthorizeRecords extends Component {
 	};
 
 	render() {
-		const { dnsTemplateRecords, isPlaceholder, translate } = this.props,
-			showRecordsLinkText = this.state.recordsVisible
-				? translate( 'Hide Changes.' )
-				: translate( 'View Changes.' );
+		const { dnsTemplateRecords, isPlaceholder, translate } = this.props;
+		const showRecordsLinkText = this.state.recordsVisible
+			? translate( 'Hide Changes.' )
+			: translate( 'View Changes.' );
 
 		if ( isPlaceholder ) {
 			return this.placeholder();

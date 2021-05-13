@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSettings } from 'state/mailchimp/settings/actions';
+import { requestSettings } from 'calypso/state/mailchimp/settings/actions';
 
 class QueryMailchimpSettings extends Component {
 	componentDidMount() {
@@ -30,7 +28,4 @@ class QueryMailchimpSettings extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestSettings }
-)( QueryMailchimpSettings );
+export default connect( null, { requestSettings } )( QueryMailchimpSettings );

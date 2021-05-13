@@ -1,26 +1,25 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
-import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
-import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
-import DropdownSeparator from 'components/select-dropdown/separator';
-import BulkSelect from 'components/bulk-select';
-import analytics from 'lib/analytics';
+import getSites from 'calypso/state/selectors/get-sites';
+import SectionHeader from 'calypso/components/section-header';
+import ButtonGroup from 'calypso/components/button-group';
+import { Button } from '@automattic/components';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import BulkSelect from 'calypso/components/bulk-select';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -100,18 +99,23 @@ export class PluginsListHeader extends PureComponent {
 		const { plugins, selected } = this.props;
 		const someSelected = selected.length > 0;
 		this.props.setSelectionState( plugins, ! someSelected );
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Plugins',
 			someSelected ? 'Clicked to Uncheck All Plugins' : 'Clicked to Check All Plugins'
 		);
 	};
 
 	isJetpackSelected() {
-		return this.props.selected.some( plugin => 'jetpack' === plugin.slug );
+		return this.props.selected.some( ( plugin ) => 'jetpack' === plugin.slug );
 	}
 
 	canUpdatePlugins() {
-		return this.props.selected.some( plugin => plugin.sites.some( site => site.canUpdateFiles ) );
+		const { selected, allSites } = this.props;
+		return selected.some( ( plugin ) =>
+			Object.values( allSites )
+				.filter( ( { ID } ) => plugin.sites.hasOwnProperty( ID ) )
+				.some( ( site ) => site.canUpdateFiles )
+		);
 	}
 
 	needsRemoveButton() {
@@ -286,36 +290,32 @@ export class PluginsListHeader extends PureComponent {
 			<SelectDropdown
 				compact
 				className="plugin-list-header__actions-dropdown"
-				key="plugin-list-header__actions_dropdown"
 				selectedText={ translate( 'Actions' ) }
 			>
-				<DropdownItem key="plugin__actions_title" selected={ true } value="Actions">
+				<SelectDropdown.Item selected value="Actions">
 					{ translate( 'Actions' ) }
-				</DropdownItem>
+				</SelectDropdown.Item>
 
-				<DropdownSeparator key="plugin__actions_separator_1" />
+				<SelectDropdown.Separator />
 
-				<DropdownItem
-					key="plugin__actions_activate"
+				<SelectDropdown.Item
 					disabled={ ! this.props.haveUpdatesSelected }
 					onClick={ this.props.updateSelected }
 				>
 					{ translate( 'Update' ) }
-				</DropdownItem>
+				</SelectDropdown.Item>
 
-				<DropdownSeparator key="plugin__actions_separator_1" />
+				<SelectDropdown.Separator />
 				{ isJetpackOnlySelected && (
-					<DropdownItem
-						key="plugin__actions_activate"
+					<SelectDropdown.Item
 						disabled={ ! this.props.haveInactiveSelected }
 						onClick={ this.props.activateSelected }
 					>
 						{ translate( 'Activate' ) }
-					</DropdownItem>
+					</SelectDropdown.Item>
 				) }
 				{ isJetpackOnlySelected && (
-					<DropdownItem
-						key="plugin__actions_disconnect"
+					<SelectDropdown.Item
 						disabled={ ! this.props.haveActiveSelected }
 						onClick={
 							isJetpackSelected
@@ -324,37 +324,34 @@ export class PluginsListHeader extends PureComponent {
 						}
 					>
 						{ translate( 'Deactivate' ) }
-					</DropdownItem>
+					</SelectDropdown.Item>
 				) }
 
-				<DropdownSeparator key="plugin__actions_separator_2" />
+				<SelectDropdown.Separator />
 
-				<DropdownItem
-					key="plugin__actions_autoupdate"
+				<SelectDropdown.Item
 					disabled={ ! this.canUpdatePlugins() }
 					onClick={ this.props.setAutoupdateSelected }
 				>
 					{ translate( 'Autoupdate' ) }
-				</DropdownItem>
+				</SelectDropdown.Item>
 
-				<DropdownItem
-					key="plugin__actions_disable_autoupdate"
+				<SelectDropdown.Item
 					disabled={ ! this.canUpdatePlugins() }
 					onClick={ this.props.unsetAutoupdateSelected }
 				>
 					{ translate( 'Disable Autoupdates' ) }
-				</DropdownItem>
+				</SelectDropdown.Item>
 
-				<DropdownSeparator key="plugin__actions_separator_3" />
+				<SelectDropdown.Separator />
 
-				<DropdownItem
-					key="plugin__actions_remove"
+				<SelectDropdown.Item
 					className="plugin-list-header__actions-remove-item"
 					disabled={ ! needsRemoveButton }
 					onClick={ this.props.removePluginNotice }
 				>
 					{ translate( 'Remove' ) }
-				</DropdownItem>
+				</SelectDropdown.Item>
 			</SelectDropdown>
 		);
 	}
@@ -383,4 +380,6 @@ export class PluginsListHeader extends PureComponent {
 	}
 }
 
-export default localize( PluginsListHeader );
+export default connect( ( state ) => ( {
+	allSites: getSites( state ),
+} ) )( localize( PluginsListHeader ) );

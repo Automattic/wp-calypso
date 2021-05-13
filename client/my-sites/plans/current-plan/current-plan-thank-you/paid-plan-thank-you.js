@@ -2,24 +2,25 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { parse as parseUrl } from 'url';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import React, { Component, Fragment } from 'react';
 
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { preventWidows } from 'lib/formatting';
-import { SETTING_UP_PREMIUM_SERVICES } from 'lib/url/support';
-import { untrailingslashit } from 'lib/route';
-import Button from 'components/button';
-import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
-import ProgressBar from 'components/progress-bar';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { preventWidows } from 'calypso/lib/formatting';
+import { SETTING_UP_PREMIUM_SERVICES } from 'calypso/lib/url/support';
+import { Button, ProgressBar } from '@automattic/components';
+import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
 import ThankYou from './thank-you';
+
+/**
+ * Image dependencies
+ */
+import fireworksIllustration from 'calypso/assets/images/illustrations/fireworks.svg';
 
 const INSTALL_STATE_COMPLETE = 1;
 const INSTALL_STATE_INCOMPLETE = 2;
@@ -46,11 +47,6 @@ export class PaidPlanThankYou extends Component {
 			installState === INSTALL_STATE_COMPLETE
 		) {
 			this.recordAutoconfigTracksEventOnce( 'calypso_plans_autoconfig_success' );
-		} else if ( site && ! site.hasMinimumJetpackVersion ) {
-			this.recordAutoconfigTracksEventOnce( 'calypso_plans_autoconfig_error', {
-				error: 'jetpack_version_too_old',
-				jetpack_version: get( site, [ 'options', 'jetpack_version' ], 'unknown' ),
-			} );
 		} else if ( site && site.isSecondaryNetworkSite ) {
 			this.recordAutoconfigTracksEventOnce( 'calypso_plans_autoconfig_error', {
 				error: 'secondary_network_site',
@@ -66,40 +62,6 @@ export class PaidPlanThankYou extends Component {
 		const { installProgress, installState, site, translate } = this.props;
 
 		const securityIllustration = '/calypso/images/illustrations/security.svg';
-		const fireworksIllustration = '/calypso/images/illustrations/fireworks.svg';
-
-		// Jetpack is too old
-		if ( ! site.hasMinimumJetpackVersion ) {
-			// Link to "Plugins" page in wp-admin
-			let wpAdminPluginsUrl = get( site, 'options.admin_url' );
-			wpAdminPluginsUrl = wpAdminPluginsUrl
-				? untrailingslashit( parseUrl( wpAdminPluginsUrl ).pathname ) + '/plugins.php'
-				: undefined;
-
-			return (
-				<ThankYou
-					illustration={ fireworksIllustration }
-					showContinueButton={ ! wpAdminPluginsUrl }
-					showHideMessage={ wpAdminPluginsUrl }
-					title={ translate( 'Thank you for your purchase!' ) }
-				>
-					<p>
-						{ preventWidows(
-							translate(
-								'Unfortunately, we are unable to set up your plan because your site has an older version of Jetpack. Please upgrade Jetpack.'
-							)
-						) }
-					</p>
-					{ wpAdminPluginsUrl && (
-						<p>
-							<Button primary href={ wpAdminPluginsUrl } target="_blank">
-								<span>{ translate( 'Upgrade Jetpack' ) }</span> <Gridicon icon="external" />
-							</Button>
-						</p>
-					) }
-				</ThankYou>
-			);
-		}
 
 		// Non-main site at multisite, cannot install anything
 		if ( site.isSecondaryNetworkSite ) {
@@ -175,8 +137,8 @@ export class PaidPlanThankYou extends Component {
 								)
 							) }
 						</p>
-
-						<ProgressBar isPulsing total={ 100 } value={ installProgress || 0 } />
+						{ /* Make the progress bar more visibile by starting at 10% */ }
+						<ProgressBar isPulsing total={ 100 } value={ Math.max( installProgress, 10 ) } />
 					</ThankYou>
 				) }
 				{ installState === INSTALL_STATE_COMPLETE && (
@@ -203,7 +165,7 @@ export class PaidPlanThankYou extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 

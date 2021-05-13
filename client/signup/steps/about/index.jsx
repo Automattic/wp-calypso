@@ -1,59 +1,57 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { noop, includes } from 'lodash';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import formState from 'lib/form-state';
-import { setSiteTitle } from 'state/signup/steps/site-title/actions';
-import { setDesignType } from 'state/signup/steps/design-type/actions';
-import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
-import { setSiteGoals } from 'state/signup/steps/site-goals/actions';
-import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
-import { setUserExperience } from 'state/signup/steps/user-experience/actions';
-import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getThemeForSiteGoals, getDesignTypeForSiteGoals } from 'signup/utils';
-import { setSurvey } from 'state/signup/steps/survey/actions';
-import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
-import { isValidLandingPageVertical } from 'lib/signup/verticals';
-import { DESIGN_TYPE_STORE } from 'signup/constants';
-import { isUserLoggedIn } from 'state/current-user/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import formState from 'calypso/lib/form-state';
+import { setSiteTitle } from 'calypso/state/signup/steps/site-title/actions';
+import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
+import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
+import { setSiteGoals } from 'calypso/state/signup/steps/site-goals/actions';
+import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
+import { setUserExperience } from 'calypso/state/signup/steps/user-experience/actions';
+import { getUserExperience } from 'calypso/state/signup/steps/user-experience/selectors';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getThemeForSiteGoals, getDesignTypeForSiteGoals } from 'calypso/signup/utils';
+import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
+import { getSurveyVertical } from 'calypso/state/signup/steps/survey/selectors';
+import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
+import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import {
 	getSiteVerticalId,
 	getSiteVerticalParentId,
-} from 'state/signup/steps/site-vertical/selectors';
-import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
-import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
+} from 'calypso/state/signup/steps/site-vertical/selectors';
+import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 //Form components
-import Card from 'components/card';
-import Button from 'components/button';
-import FormTextInput from 'components/forms/form-text-input';
-import InfoPopover from 'components/info-popover';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import ScreenReaderText from 'components/screen-reader-text';
-import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
-import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
+import { Card, Button, ScreenReaderText } from '@automattic/components';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import InfoPopover from 'calypso/components/info-popover';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import SegmentedControl from 'calypso/components/segmented-control';
+import SiteVerticalsSuggestionSearch from 'calypso/components/site-verticals-suggestion-search';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class AboutStep extends Component {
 	constructor( props ) {
@@ -101,7 +99,7 @@ class AboutStep extends Component {
 		this._isMounted = false;
 	}
 
-	setFormState = state => this._isMounted && this.setState( { form: state } );
+	setFormState = ( state ) => this._isMounted && this.setState( { form: state } );
 
 	onSiteTopicChange = ( { parent, verticalId, verticalName, verticalSlug } ) => {
 		const verticalParentId = parent || verticalId;
@@ -122,14 +120,14 @@ class AboutStep extends Component {
 		} );
 	};
 
-	handleChangeEvent = event => {
+	handleChangeEvent = ( event ) => {
 		this.formStateController.handleFieldChange( {
 			name: event.target.name,
 			value: event.target.value,
 		} );
 	};
 
-	checkBoxHandleChange = event => {
+	checkBoxHandleChange = ( event ) => {
 		const fieldValue = formState.getFieldValue( this.state.form, 'siteGoals' );
 		const valuesArray = fieldValue ? fieldValue.split( ',' ) : [];
 
@@ -145,7 +143,7 @@ class AboutStep extends Component {
 		} );
 	};
 
-	handleCheckboxKeyDown = event => {
+	handleCheckboxKeyDown = ( event ) => {
 		if ( event.key === 'Enter' ) {
 			event.preventDefault();
 			event.target.checked = ! event.target.checked;
@@ -163,14 +161,14 @@ class AboutStep extends Component {
 	}
 
 	handleSegmentClick( value ) {
-		return function() {
+		return () => {
 			this.setState( {
 				userExperience: value,
 			} );
-		}.bind( this );
+		};
 	}
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 		const {
 			goToNextStep,
@@ -382,7 +380,7 @@ class AboutStep extends Component {
 					</span>
 
 					<SegmentedControl className="is-primary about__segmented-control">
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 1 }
 							onClick={ this.handleSegmentClick( 1 ) }
 						>
@@ -390,35 +388,35 @@ class AboutStep extends Component {
 								{ translate( 'How comfortable are you with creating a website?' ) }
 							</ScreenReaderText>
 							1<ScreenReaderText>{ translate( 'Beginner' ) }</ScreenReaderText>
-						</ControlItem>
+						</SegmentedControl.Item>
 
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 2 }
 							onClick={ this.handleSegmentClick( 2 ) }
 						>
 							2
-						</ControlItem>
+						</SegmentedControl.Item>
 
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 3 }
 							onClick={ this.handleSegmentClick( 3 ) }
 						>
 							3
-						</ControlItem>
+						</SegmentedControl.Item>
 
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 4 }
 							onClick={ this.handleSegmentClick( 4 ) }
 						>
 							4
-						</ControlItem>
+						</SegmentedControl.Item>
 
-						<ControlItem
+						<SegmentedControl.Item
 							selected={ this.state.userExperience === 5 }
 							onClick={ this.handleSegmentClick( 5 ) }
 						>
 							5<ScreenReaderText>{ translate( 'Expert' ) }</ScreenReaderText>
-						</ControlItem>
+						</SegmentedControl.Item>
 					</SegmentedControl>
 					<span
 						className="about__segment-label about__max-label"

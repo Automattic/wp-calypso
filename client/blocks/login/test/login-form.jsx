@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -8,21 +7,22 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import FormsButton from 'components/forms/form-button';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormTextInput from 'components/forms/form-text-input';
+import FormsButton from 'calypso/components/forms/form-button';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+
+const noop = () => {};
 
 describe( 'LoginForm', () => {
 	let LoginForm;
 
 	beforeAll( () => {
-		LoginForm = require( 'blocks/login/login-form' ).LoginForm;
+		LoginForm = require( 'calypso/blocks/login/login-form' ).LoginForm;
 	} );
 
 	describe( 'component rendering', () => {

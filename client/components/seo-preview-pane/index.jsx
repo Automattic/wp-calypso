@@ -1,33 +1,27 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { compact, find, get, identity, overSome } from 'lodash';
+import { compact, find, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import SeoPreviewUpgradeNudge from 'components/seo/preview-upgrade-nudge';
-import ReaderPreview from 'components/seo/reader-preview';
-import FacebookPreview from 'components/seo/facebook-preview';
-import TwitterPreview from 'components/seo/twitter-preview';
-import SearchPreview from 'components/seo/search-preview';
-import VerticalMenu from 'components/vertical-menu';
-import PostMetadata from 'lib/post-metadata';
-import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
-import { isBusiness, isEnterprise, isJetpackPremium, isEcommerce } from 'lib/products-values';
-import { parseHtml } from 'lib/formatting';
-import { SocialItem } from 'components/vertical-menu/items';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getSitePost } from 'state/posts/selectors';
-import { getSeoTitle } from 'state/sites/selectors';
-import { getSectionName, getSelectedSite } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { hasSiteSeoFeature } from './utils';
+import SeoPreviewUpgradeNudge from 'calypso/components/seo/preview-upgrade-nudge';
+import ReaderPreview from 'calypso/components/seo/reader-preview';
+import { FacebookPreview, TwitterPreview, SearchPreview } from '@automattic/social-previews';
+import VerticalMenu from 'calypso/components/vertical-menu';
+import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
+import { parseHtml } from 'calypso/lib/formatting';
+import { SocialItem } from 'calypso/components/vertical-menu/items';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { getSitePost } from 'calypso/state/posts/selectors';
+import { getSeoTitle } from 'calypso/state/sites/selectors';
+import { getSectionName, getSelectedSite } from 'calypso/state/ui/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -35,9 +29,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import './style.scss';
 
 const PREVIEW_IMAGE_WIDTH = 512;
-const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium, isEcommerce );
 
-const largeBlavatar = site => {
+const largeBlavatar = ( site ) => {
 	const siteIcon = get( site, 'icon.img' );
 	if ( ! siteIcon ) {
 		return null;
@@ -46,7 +39,7 @@ const largeBlavatar = site => {
 	return `${ siteIcon }?s=${ PREVIEW_IMAGE_WIDTH }`;
 };
 
-const getPostImage = post => {
+const getPostImage = ( post ) => {
 	if ( ! post ) {
 		return null;
 	}
@@ -72,17 +65,24 @@ const getPostImage = post => {
 	return imageUrl ? `${ imageUrl }?s=${ PREVIEW_IMAGE_WIDTH }` : null;
 };
 
-const getSeoExcerptForPost = post => {
+const getSeoExcerptForPost = ( post ) => {
 	if ( ! post ) {
 		return null;
 	}
 
 	return formatExcerpt(
-		find( [ PostMetadata.metaDescription( post ), post.excerpt, post.content ], identity )
+		find(
+			[
+				post.metadata?.find( ( { key } ) => key === 'advanced_seo_description' )?.value,
+				post.excerpt,
+				post.content,
+			],
+			Boolean
+		)
 	);
 };
 
-const getSeoExcerptForSite = site => {
+const getSeoExcerptForSite = ( site ) => {
 	if ( ! site ) {
 		return null;
 	}
@@ -90,12 +90,12 @@ const getSeoExcerptForSite = site => {
 	return formatExcerpt(
 		find(
 			[ get( site, 'options.advanced_seo_front_page_description' ), site.description ],
-			identity
+			Boolean
 		)
 	);
 };
 
-const ComingSoonMessage = translate => (
+const ComingSoonMessage = ( translate ) => (
 	<div className="seo-preview-pane__message">{ translate( 'Coming Soon!' ) }</div>
 );
 
@@ -116,7 +116,7 @@ const GoogleSite = ( site, frontPageMetaDescription ) => (
 	<SearchPreview
 		title={ site.name }
 		url={ site.URL }
-		snippet={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
+		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
 	/>
 );
 
@@ -124,7 +124,7 @@ const GooglePost = ( site, post, frontPageMetaDescription ) => (
 	<SearchPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
-		snippet={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
+		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 	/>
 );
 
@@ -221,7 +221,7 @@ export class SeoPreviewPane extends PureComponent {
 						</p>
 					</div>
 					<VerticalMenu onClick={ this.selectPreview }>
-						{ services.map( service => (
+						{ services.map( ( service ) => (
 							<SocialItem { ...{ key: service, service } } />
 						) ) }
 					</VerticalMenu>
@@ -270,16 +270,13 @@ const mapStateToProps = ( state, { overridePost } ) => {
 			...post,
 			seoTitle: getSeoTitle( state, 'posts', { site, post } ),
 		},
-		showNudge: site && site.plan && ! hasSupportingPlan( site.plan ),
+		showNudge: ! hasSiteSeoFeature( site ),
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	trackPreviewService: service =>
+const mapDispatchToProps = ( dispatch ) => ( {
+	trackPreviewService: ( service ) =>
 		dispatch( recordTracksEvent( 'calypso_seo_tools_social_preview', { service } ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SeoPreviewPane ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SeoPreviewPane ) );

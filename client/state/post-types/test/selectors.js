@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -207,7 +205,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isPostTypeSupported', () => {
-		test( 'should return null if the site post types are not known', () => {
+		test( 'should return false if the site post types are not known', () => {
 			const isSupported = isPostTypeSupported(
 				{
 					postTypes: {
@@ -218,7 +216,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( isSupported ).to.be.null;
+			expect( isSupported ).to.be.false;
 		} );
 
 		test( 'should return false if the post type is not supported', () => {

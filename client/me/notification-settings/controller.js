@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,26 +7,24 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import userSettings from 'lib/user-settings';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import NotificationsComponent from 'me/notification-settings/main';
-import CommentSettingsComponent from 'me/notification-settings/comment-settings';
-import WPcomSettingsComponent from 'me/notification-settings/wpcom-settings';
-import NotificationSubscriptions from 'me/notification-settings/reader-subscriptions';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import NotificationsComponent from 'calypso/me/notification-settings/main';
+import CommentSettingsComponent from 'calypso/me/notification-settings/comment-settings';
+import WPcomSettingsComponent from 'calypso/me/notification-settings/wpcom-settings';
+import NotificationSubscriptions from 'calypso/me/notification-settings/reader-subscriptions';
 
 export function notifications( context, next ) {
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( NotificationsComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();
 }
 
 export function comments( context, next ) {
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch(
 		setTitle( i18n.translate( 'Comments on other sites', { textOnly: true } ) )
 	);
@@ -40,7 +36,7 @@ export function comments( context, next ) {
 }
 
 export function updates( context, next ) {
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch(
 		setTitle( i18n.translate( 'Updates from WordPress.com', { textOnly: true } ) )
 	);
@@ -52,11 +48,10 @@ export function updates( context, next ) {
 }
 
 export function subscriptions( context, next ) {
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( NotificationSubscriptions, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();

@@ -1,4 +1,3 @@
-/** @format */
 /* Follow Source Constants */
 export const IN_STREAM_RECOMMENDATION = 'in-stream-recommendation';
 export const EMPTY_SEARCH_RECOMMENDATIONS = 'empty-search-rec';

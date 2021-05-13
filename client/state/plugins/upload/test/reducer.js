@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,7 +17,7 @@ import { inProgress, progressPercent, uploadedPluginId, uploadError } from '../r
 import {
 	initiateAutomatedTransferWithPluginZip,
 	setAutomatedTransferStatus,
-} from 'state/automated-transfer/actions';
+} from 'calypso/state/automated-transfer/actions';
 
 const siteId = 2916284;
 const pluginId = 'hello-dolly';

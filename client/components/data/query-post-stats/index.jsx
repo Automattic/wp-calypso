@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,13 +5,13 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual, isUndefined } from 'lodash';
+import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isRequestingPostStats } from 'state/stats/posts/selectors';
-import { requestPostStats } from 'state/stats/posts/actions';
+import { isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
+import { requestPostStats } from 'calypso/state/stats/posts/actions';
 
 class QueryPostStats extends Component {
 	static defaultProps = {
@@ -30,9 +28,9 @@ class QueryPostStats extends Component {
 		heartbeat: PropTypes.number,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const { requestingPostStats, siteId, postId } = this.props;
-		if ( ! requestingPostStats && siteId && ! isUndefined( postId ) ) {
+		if ( ! requestingPostStats && siteId && typeof postId !== 'undefined' ) {
 			this.requestPostStats( this.props );
 		}
 	}
@@ -41,10 +39,10 @@ class QueryPostStats extends Component {
 		this.clearInterval();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId, postId, fields, heartbeat } = this.props;
 		if (
-			! ( siteId && ! isUndefined( postId ) ) ||
+			! ( siteId && typeof postId !== 'undefined' ) ||
 			( siteId === nextProps.siteId &&
 				postId === nextProps.postId &&
 				isEqual( fields, nextProps.fields ) &&

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,23 +6,22 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { filter, find, identity, isEqual } from 'lodash';
+import { filter, find, isEqual } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 /**
  * Internal dependencies
  */
 import AccountDialogAccount from './account-dialog-account';
-import Dialog from 'components/dialog';
-import { warningNotice } from 'state/notices/actions';
+import { Dialog } from '@automattic/components';
+import { warningNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
  */
 import './account-dialog.scss';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 class AccountDialog extends Component {
 	static propTypes = {
 		accounts: PropTypes.arrayOf( PropTypes.object ),
@@ -41,7 +38,6 @@ class AccountDialog extends Component {
 		isVisible: true,
 		onAccountSelected: () => {},
 		service: Object.freeze( {} ),
-		translate: identity,
 		warningNotice: () => {},
 	};
 
@@ -59,7 +55,7 @@ class AccountDialog extends Component {
 		return null;
 	}
 
-	onClose = action => {
+	onClose = ( action ) => {
 		const accountToConnect = this.getAccountToConnect();
 		const externalUserId =
 			this.props.service.multiple_external_user_ID_support &&
@@ -79,7 +75,7 @@ class AccountDialog extends Component {
 		}
 	};
 
-	onSelectedAccountChanged = account => this.setState( { selectedAccount: account } );
+	onSelectedAccountChanged = ( account ) => this.setState( { selectedAccount: account } );
 
 	getSelectedAccount() {
 		if ( this.state.selectedAccount ) {
@@ -116,7 +112,7 @@ class AccountDialog extends Component {
 		return (
 			selectedAccount &&
 			this.props.accounts.some(
-				maybeConnectedAccount =>
+				( maybeConnectedAccount ) =>
 					maybeConnectedAccount.isConnected &&
 					this.areAccountsConflicting( maybeConnectedAccount, selectedAccount )
 			)
@@ -128,7 +124,7 @@ class AccountDialog extends Component {
 		const defaultAccountIcon =
 			this.props.service.ID === 'google_my_business' ? 'institution' : null;
 
-		return accounts.map( account => (
+		return accounts.map( ( account ) => (
 			<AccountDialogAccount
 				key={ [ account.keyringConnectionId, account.ID ].join() }
 				account={ account }
@@ -206,14 +202,13 @@ class AccountDialog extends Component {
 
 	render() {
 		const classes = classNames( 'account-dialog', {
-				'single-account': 1 === this.props.accounts.length,
-			} ),
-			buttons = [
-				{ action: 'cancel', label: this.props.translate( 'Cancel' ) },
-				{ action: 'connect', label: this.props.translate( 'Connect' ), isPrimary: true },
-			];
+			'single-account': 1 === this.props.accounts.length,
+		} );
+		const buttons = [
+			{ action: 'cancel', label: this.props.translate( 'Cancel' ) },
+			{ action: 'connect', label: this.props.translate( 'Connect' ), isPrimary: true },
+		];
 
-		/*eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Dialog
 				isVisible={ this.props.isVisible }
@@ -234,12 +229,7 @@ class AccountDialog extends Component {
 				{ this.getConnectedAccountsContent() }
 			</Dialog>
 		);
-		/*eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
-/* eslint-enable wpcalypso/jsx-classname-namespace */
 
-export default connect(
-	null,
-	{ warningNotice }
-)( localize( AccountDialog ) );
+export default connect( null, { warningNotice } )( localize( AccountDialog ) );

@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -13,9 +10,8 @@ import filesize from 'filesize';
 /**
  * Internal dependencies
  */
-import ProgressBar from 'components/progress-bar';
-import { planHasFeature } from 'lib/plans';
-import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
+import { ProgressBar } from '@automattic/components';
+import { planHasFeature, FEATURE_UNLIMITED_STORAGE } from '@automattic/calypso-products';
 
 const ALERT_PERCENT = 80;
 const WARN_PERCENT = 60;
@@ -24,16 +20,12 @@ export class PlanStorageBar extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		mediaStorage: PropTypes.object,
-		siteSlug: PropTypes.string.isRequired,
+		displayUpgradeLink: PropTypes.bool,
 		sitePlanSlug: PropTypes.string.isRequired,
 	};
 
-	static defaultProps = {
-		siteSlug: '',
-	};
-
 	render() {
-		const { className, mediaStorage, sitePlanSlug, siteSlug, translate } = this.props;
+		const { className, displayUpgradeLink, mediaStorage, sitePlanSlug, translate } = this.props;
 
 		if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
 			return null;
@@ -69,9 +61,9 @@ export class PlanStorageBar extends Component {
 					} ) }
 				</span>
 
-				<a className="plan-storage__storage-link" href={ `/plans/${ siteSlug }` }>
-					{ translate( 'Upgrade' ) }
-				</a>
+				{ displayUpgradeLink && (
+					<span className="plan-storage__storage-link">{ translate( 'Upgrade' ) }</span>
+				) }
 
 				{ this.props.children }
 			</div>

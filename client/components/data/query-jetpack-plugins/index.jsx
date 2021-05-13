@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,8 +9,8 @@ import { isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { fetchPlugins } from 'state/plugins/installed/actions';
-import { isRequestingForSites } from 'state/plugins/installed/selectors';
+import { fetchPlugins } from 'calypso/state/plugins/installed/actions';
+import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 
 class QueryJetpackPlugins extends Component {
 	static propTypes = {
@@ -22,13 +21,13 @@ class QueryJetpackPlugins extends Component {
 		fetchPlugins: PropTypes.func,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( this.props.siteIds && ! this.props.isRequestingForSites ) {
 			this.props.fetchPlugins( this.props.siteIds );
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( isEqual( nextProps.siteIds, this.props.siteIds ) ) {
 			return;
 		}

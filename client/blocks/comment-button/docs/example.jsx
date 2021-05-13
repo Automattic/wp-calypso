@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,8 +7,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CommentButton from 'blocks/comment-button';
-import Card from 'components/card';
+import CommentButton from 'calypso/blocks/comment-button';
+import { Card } from '@automattic/components';
 
 export default class CommentButtonExample extends React.Component {
 	static displayName = 'CommentButtonExample';

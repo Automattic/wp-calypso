@@ -1,12 +1,9 @@
 @keyframes notice-loading-pulse {
-	0% {
-		opacity: 0;
+	0%, 100% {
+		opacity: 0.75;
 	}
 	50% {
-		opacity: 0.5;
-	}
-	100% {
-		opacity: 0;
+		opacity: 1;
 	}
 }
 
@@ -14,17 +11,24 @@
 	display: flex;
 	position: relative;
 	width: 100%;
-	margin-bottom: 24px;
+	margin-bottom: 12px;
 	box-sizing: border-box;
 	animation: appear 0.3s ease-in-out;
-	background: var( --color-neutral-700 );
-	color: var( --color-white );
-	border-radius: 3px;
+	background: var( --color-neutral-80 );
+	color: var( --color-text-inverted );
 	line-height: 1.5;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-bottom: 24px;
+	}
 
 	// Success!
 	&.is-success {
 		.notice__icon-wrapper {
+			background: var( --color-success-40 );
+		}
+
+		.notice__icon-wrapper-drop {
 			background: var( --color-success );
 		}
 	}
@@ -32,6 +36,10 @@
 	// Warning
 	&.is-warning {
 		.notice__icon-wrapper {
+			background: var( --color-warning-30 );
+		}
+
+		.notice__icon-wrapper-drop {
 			background: var( --color-warning );
 		}
 	}
@@ -39,6 +47,10 @@
 	// Error! OHNO!
 	&.is-error {
 		.notice__icon-wrapper {
+			background: var( --color-error-40 );
+		}
+
+		.notice__icon-wrapper-drop {
 			background: var( --color-error );
 		}
 	}
@@ -46,20 +58,17 @@
 	// General notice
 	&.is-info {
 		.notice__icon-wrapper {
+			background: var( --color-accent-40 );
+		}
+
+		.notice__icon-wrapper-drop {
 			background: var( --color-accent );
 		}
 	}
 
 	&.is-loading {
-		.notice__icon-wrapper::after {
-			content: '';
-			background-color: var( --color-white );
+		.notice__icon-wrapper {
 			animation: notice-loading-pulse 0.8s ease-in-out infinite;
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
 		}
 	}
 
@@ -79,57 +88,73 @@
 
 .notice__icon-wrapper {
 	position: relative;
-	background: var( --color-text-subtle );
-	color: var( --color-white );
+	background: var( --color-neutral-40 );
+	color: var( --color-text-inverted );
 	display: flex;
 	align-items: center;
 	width: 47px;
 	justify-content: center;
-	border-radius: 3px 0 0 3px;
 	flex-shrink: 0;
 	align-self: stretch;
 }
 
-.notice__content {
-	padding: 13px;
-	font-size: 12px;
-	flex-grow: 1;
+// Accessible background drop for icons enclosed in a circle
+// to emphasize the glyph inside
+.notice__icon-wrapper-drop {
+	position: absolute;
+	top: calc( 50% - 8px );
+	left: calc( 50% - 8px );
+	width: 16px;
+	height: 16px;
+	border-radius: 8px;
+	background: var( --color-neutral );
 
-	@include breakpoint( '>480px' ) {
-		font-size: 14px;
+	& + .notice__icon {
+		position: relative;
 	}
 }
 
-.notice__text {
-	a,
-	a:visited,
-	button.is-link {
-		text-decoration: underline;
-		color: var( --color-white );
+.notice__content {
+	padding: 13px;
+	font-size: $font-body-extra-small;
+	flex-grow: 1;
 
-		&:hover {
-			color: var( --color-white );
-			text-decoration: none;
+	.notice__text {
+		a,
+		a:visited,
+		button.is-link {
+			text-decoration: underline;
+			color: var( --color-text-inverted );
+			line-height: inherit;
+
+			&:hover {
+				color: var( --color-text-inverted );
+				text-decoration: none;
+			}
+		}
+
+		ul {
+			margin-bottom: 0;
+			margin-left: 0;
+		}
+
+		li {
+			margin-left: 2em;
+			margin-top: 0.5em;
+		}
+
+		p {
+			margin-bottom: 0;
+			margin-top: 0.5em;
+
+			&:first-child {
+				margin-top: 0;
+			}
 		}
 	}
 
-	ul {
-		margin-bottom: 0;
-		margin-left: 0;
-	}
-
-	li {
-		margin-left: 2em;
-		margin-top: 0.5em;
-	}
-
-	p {
-		margin-bottom: 0;
-		margin-top: 0.5em;
-
-		&:first-child {
-			margin-top: 0;
-		}
+	@include breakpoint-deprecated( '>480px' ) {
+		font-size: $font-body-small;
 	}
 }
 
@@ -150,7 +175,7 @@
 		height: 18px;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 11px;
 
 		.gridicon {
@@ -160,11 +185,11 @@
 	}
 
 	.notice & {
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 
 		&:hover,
 		&:focus {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }
@@ -172,21 +197,20 @@
 // specificity for general `a` elements within notice is too great
 a.notice__action {
 	cursor: pointer;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	font-weight: 400;
 	text-decoration: none;
 	white-space: nowrap;
-	color: var( --color-neutral-200 );
+	color: var( --color-neutral-20 );
 	padding: 13px;
 	display: flex;
 	align-items: center;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 			flex-shrink: 1;
 			flex-grow: 0;
 		align-items: center;
-		border-radius: 0;
-		font-size: 14px;
+		font-size: $font-body-small;
 		margin: 0 0 0 auto; // forces the element to the right;
 		padding: 13px 16px;
 
@@ -197,11 +221,11 @@ a.notice__action {
 	}
 
 	&:visited {
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 	}
 
 	&:hover {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	.gridicon {
@@ -218,7 +242,6 @@ a.notice__action {
 		flex-wrap: nowrap;
 		flex-direction: row;
 	width: auto;
-	border-radius: 3px;
 	min-height: 20px;
 	margin: 0;
 	padding: 0;
@@ -228,7 +251,7 @@ a.notice__action {
 	line-height: 1.5;
 
 	.notice__content {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		padding: 6px 10px;
 	}
 
@@ -240,6 +263,13 @@ a.notice__action {
 			height: 18px;
 			margin: 0;
 		}
+	}
+
+	.notice__icon-wrapper-drop {
+		top: calc( 50% - 6px );
+		left: calc( 50% - 6px );
+		width: 12px;
+		height: 12px;
 	}
 
 	.notice__dismiss {
@@ -259,7 +289,7 @@ a.notice__action {
 		background: transparent;
 		display: inline-block;
 		margin: 0;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		align-self: center;
 		margin-left: 16px;
 		padding: 0 10px;

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { getWindowInnerWidth } from '@automattic/viewport';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
@@ -11,11 +11,9 @@ import { debounce } from 'lodash';
 /**
  * Internal Dependencies
  */
-import DropdownItem from 'components/select-dropdown/item';
-import SelectDropdown from 'components/select-dropdown';
-import { getWindowInnerWidth } from 'lib/viewport';
-import afterLayoutFlush from 'lib/after-layout-flush';
-import TranslatableString from 'components/translatable/proptype';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 /**
  * Style dependencies
@@ -44,7 +42,7 @@ class NavTabs extends Component {
 	};
 
 	navGroupRef = React.createRef();
-	tabWidthMap = new Map();
+	tabRefMap = new Map();
 
 	componentDidMount() {
 		this.setDropdownAfterLayoutFlush();
@@ -63,21 +61,20 @@ class NavTabs extends Component {
 		this.setDropdownAfterLayoutFlush.cancel();
 	}
 
-	/* Ref that stores the width of given tab element */
-	storeTabWidth( index ) {
-		return tabElement => {
+	/* Ref that stores the given tab element */
+	storeTabRefs( index ) {
+		return ( tabElement ) => {
 			if ( tabElement === null ) {
-				this.tabWidthMap.delete( index );
+				this.tabRefMap.delete( index );
 			} else {
-				const tabWidth = ReactDom.findDOMNode( tabElement ).offsetWidth;
-				this.tabWidthMap.set( index, tabWidth );
+				this.tabRefMap.set( index, tabElement );
 			}
 		};
 	}
 
 	render() {
 		const tabs = React.Children.map( this.props.children, ( child, index ) => {
-			return child && React.cloneElement( child, { ref: this.storeTabWidth( index ) } );
+			return child && React.cloneElement( child, { ref: this.storeTabRefs( index ) } );
 		} );
 
 		const tabsClassName = classNames( 'section-nav-tabs', {
@@ -107,7 +104,8 @@ class NavTabs extends Component {
 	getTabWidths() {
 		let totalWidth = 0;
 
-		this.tabWidthMap.forEach( tabWidth => {
+		this.tabRefMap.forEach( ( tabElement ) => {
+			const tabWidth = ReactDom.findDOMNode( tabElement ).offsetWidth;
 			totalWidth += tabWidth;
 		} );
 
@@ -120,9 +118,9 @@ class NavTabs extends Component {
 				return null;
 			}
 			return (
-				<DropdownItem { ...child.props } key={ 'navTabsDropdown-' + index }>
+				<SelectDropdown.Item { ...child.props } key={ 'navTabsDropdown-' + index }>
 					{ child.props.children }
-				</DropdownItem>
+				</SelectDropdown.Item>
 			);
 		} );
 
@@ -173,7 +171,7 @@ class NavTabs extends Component {
 	// just *after* the next layout flush.
 	setDropdownAfterLayoutFlush = afterLayoutFlush( this.setDropdown );
 
-	keyHandler = event => {
+	keyHandler = ( event ) => {
 		switch ( event.keyCode ) {
 			case 32: // space
 			case 13: // enter

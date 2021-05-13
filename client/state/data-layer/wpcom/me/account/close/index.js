@@ -1,5 +1,4 @@
 /**
- * @format
  */
 
 /**
@@ -10,13 +9,14 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { ACCOUNT_CLOSE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
-import { closeAccountSuccess } from 'state/account/actions';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { ACCOUNT_CLOSE } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { closeAccountSuccess } from 'calypso/state/account/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export function requestAccountClose( action ) {
 	return http(
@@ -39,10 +39,23 @@ export function fromApi( response ) {
 }
 
 export function receiveAccountCloseSuccess() {
+	recordTracksEvent( 'calypso_account_closed' );
 	return closeAccountSuccess();
 }
 
-export function receiveAccountCloseError() {
+export function receiveAccountCloseError( action, error ) {
+	if ( error.error === 'active-subscriptions' ) {
+		return errorNotice(
+			translate( 'This user account cannot be closed while it has active subscriptions.' )
+		);
+	}
+
+	if ( error.error === 'active-memberships' ) {
+		return errorNotice(
+			translate( 'This user account cannot be closed while it has active purchases.' )
+		);
+	}
+
 	return errorNotice(
 		translate( 'Sorry, there was a problem closing your account. Please contact support.' )
 	);

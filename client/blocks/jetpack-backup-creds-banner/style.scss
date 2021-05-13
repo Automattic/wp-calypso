@@ -1,0 +1,14 @@
+.jetpack-backup-creds-banner.card.banner {
+	@include banner-color( var( --studio-red-50 ) );
+
+	/*
+	The "disconnected" icon comes with its own circular border,
+	so we can ditch our normal 3-4px of padding here
+	and fill up the entire available area instead.
+	*/
+	.banner__icon-circle {
+		width: 31px;
+		height: 31px;
+		padding: initial;
+	}
+}

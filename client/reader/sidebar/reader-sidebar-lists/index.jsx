@@ -1,17 +1,20 @@
-/** @format */
 /**
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderSidebarListsList from './list';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class ReaderSidebarLists extends Component {
 	static propTypes = {
@@ -24,23 +27,23 @@ export class ReaderSidebarLists extends Component {
 		translate: PropTypes.func,
 	};
 
-	static defaultProps = {
-		translate: identity,
-	};
-
 	render() {
-		const { translate, lists, isOpen, onClick } = this.props;
-		const listCount = lists ? lists.length : 0;
+		const { translate, isOpen, onClick, path, ...passedProps } = this.props;
 		return (
-			<ExpandableSidebarMenu
-				expanded={ isOpen }
-				title={ translate( 'Lists' ) }
-				count={ listCount }
-				onClick={ onClick }
-				hideAddButton={ true }
-			>
-				<ReaderSidebarListsList { ...this.props } />
-			</ExpandableSidebarMenu>
+			<li>
+				<ExpandableSidebarMenu
+					expanded={ isOpen }
+					title={ translate( 'Lists' ) }
+					onClick={ onClick }
+					materialIcon={ 'list' }
+					disableFlyout={ true }
+					className={ path.startsWith( '/read/list' ) && 'sidebar__menu--selected' }
+				>
+					<li>
+						<ReaderSidebarListsList path={ path } { ...passedProps } />
+					</li>
+				</ExpandableSidebarMenu>
+			</li>
 		);
 	}
 }

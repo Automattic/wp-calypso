@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,16 +8,16 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormRadio from 'components/forms/form-radio';
-import FormLabel from 'components/forms/form-label';
-import TranslatableString from 'components/translatable/proptype';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormLabel from 'calypso/components/forms/form-label';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const FormRadioWithThumbnail = ( { label, thumbnail, ...otherProps } ) => {
+const FormRadioWithThumbnail = ( { label, thumbnail, disabled, ...otherProps } ) => {
 	const { cssClass, cssColor, imageUrl } = thumbnail;
 
 	return (
@@ -26,12 +25,11 @@ const FormRadioWithThumbnail = ( { label, thumbnail, ...otherProps } ) => {
 			<FormLabel>
 				<div
 					className={ classnames( 'form-radio-with-thumbnail__thumbnail', cssClass ) }
-					style={ { backgroundColor: cssColor } }
+					style={ { backgroundColor: cssColor, opacity: disabled ? 0.5 : 1 } }
 				>
 					{ imageUrl && <img src={ imageUrl } alt={ label } /> }
 				</div>
-				<FormRadio { ...otherProps } />
-				<span>{ label }</span>
+				<FormRadio label={ label } disabled={ disabled } { ...otherProps } />
 			</FormLabel>
 		</div>
 	);

@@ -1,13 +1,12 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { assign, noop } from 'lodash';
 import pick from 'component-file-picker';
+
+const noop = () => {};
 
 export default class FilePicker extends React.Component {
 	constructor( props ) {
@@ -17,7 +16,7 @@ export default class FilePicker extends React.Component {
 
 	showPicker() {
 		this.props.onClick();
-		pick( assign( {}, this.props ), this.props.onPick );
+		pick( { ...this.props }, this.props.onPick );
 	}
 
 	render() {

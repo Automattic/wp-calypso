@@ -4,7 +4,7 @@
 	.stats-date-picker__update-date {
 		color: var( --color-text-subtle );
 		display: inline-block;
-		font-size: 13px;
+		font-size: $font-body-small;
 
 		.gridicon {
 			padding: 0 5px;
@@ -14,5 +14,5 @@
 }
 
 .stats-date-picker__last-update {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 }

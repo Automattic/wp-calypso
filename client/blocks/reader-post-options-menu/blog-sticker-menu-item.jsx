@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -10,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
-import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { addBlogSticker, removeBlogSticker } from 'calypso/state/sites/blog-stickers/actions';
 
 class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {
 	static propTypes = {
@@ -44,7 +43,6 @@ class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{ addBlogSticker, removeBlogSticker }
-)( ReaderPostOptionsMenuBlogStickerMenuItem );
+export default connect( null, { addBlogSticker, removeBlogSticker } )(
+	ReaderPostOptionsMenuBlogStickerMenuItem
+);

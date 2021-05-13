@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import { throttle, map, uniq } from 'lodash';
+import { throttle, map } from 'lodash';
 import { connect } from 'react-redux';
 import { loadScript } from '@automattic/load-script';
 import { localize } from 'i18n-calypso';
@@ -12,13 +12,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import config from 'config';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import config from '@automattic/calypso-config';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -72,7 +72,7 @@ class StatsGeochart extends Component {
 	}
 
 	recordEvent = () => {
-		analytics.ga.recordEvent( 'Stats', 'Clicked Country on Map' );
+		gaRecordEvent( 'Stats', 'Clicked Country on Map' );
 	};
 
 	drawRegionsMap = () => {
@@ -102,7 +102,7 @@ class StatsGeochart extends Component {
 			return;
 		}
 
-		const mapData = map( data, country => {
+		const mapData = map( data, ( country ) => {
 			return [
 				{
 					v: country.countryCode,
@@ -125,13 +125,9 @@ class StatsGeochart extends Component {
 		// support switching color schemes in IE11 thus applying the
 		// defaults as raw hex values here.
 		const chartColorLight =
-			getComputedStyle( document.body )
-				.getPropertyValue( '--color-accent-50' )
-				.trim() || '#ffdff3';
+			getComputedStyle( document.body ).getPropertyValue( '--color-accent-5' ).trim() || '#ffdff3';
 		const chartColorDark =
-			getComputedStyle( document.body )
-				.getPropertyValue( '--color-accent' )
-				.trim() || '#d52c82';
+			getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim() || '#d52c82';
 
 		const options = {
 			width: 100 + '%',
@@ -143,7 +139,7 @@ class StatsGeochart extends Component {
 			domain: currentUserCountryCode,
 		};
 
-		const regions = uniq( map( data, 'region' ) );
+		const regions = [ ...new Set( map( data, 'region' ) ) ];
 
 		if ( 1 === regions.length ) {
 			options.region = regions[ 0 ];

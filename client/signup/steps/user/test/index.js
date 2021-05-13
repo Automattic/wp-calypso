@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -11,18 +10,23 @@ import React from 'react';
 import TestUtils from 'react-dom/test-utils';
 import ReactDOM from 'react-dom';
 import sinon from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { UserStep as User } from '../';
 
-jest.mock( 'blocks/signup-form', () => require( 'components/empty-component' ) );
-jest.mock( 'lib/abtest', () => () => {} );
-jest.mock( 'signup/step-wrapper', () => require( 'components/empty-component' ) );
-jest.mock( 'signup/utils', () => ( {
-	getFlowSteps: flow => {
+const noop = () => {};
+const translate = ( string ) => string;
+
+jest.mock( 'calypso/blocks/signup-form', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'calypso/lib/abtest', () => ( {
+	abtest: () => '',
+	getABTestVariation: () => null,
+} ) );
+jest.mock( 'calypso/signup/step-wrapper', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'calypso/signup/utils', () => ( {
+	getFlowSteps: ( flow ) => {
 		let flowSteps = null;
 
 		if ( 'userAsFirstStepInFlow' === flow ) {
@@ -33,19 +37,21 @@ jest.mock( 'signup/utils', () => ( {
 
 		return flowSteps;
 	},
-	getNextStepName: x => x,
-	getStepUrl: x => x,
-	getPreviousStepName: x => x,
+	getNextStepName: ( x ) => x,
+	getStepUrl: ( x ) => x,
+	getPreviousStepName: ( x ) => x,
 } ) );
 
 describe( '#signupStep User', () => {
-	let testElement, rendered;
+	let testElement;
+	let rendered;
 
 	test( 'should show community subheader text if User step is first in the flow', () => {
 		testElement = React.createElement( User, {
 			subHeaderText: 'first subheader message',
 			flowName: 'userAsFirstStepInFlow',
 			saveSignupStep: noop,
+			translate,
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
@@ -57,6 +63,7 @@ describe( '#signupStep User', () => {
 			subHeaderText: 'test subheader message',
 			flowName: 'someOtherFlow',
 			saveSignupStep: noop,
+			translate,
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
@@ -64,7 +71,9 @@ describe( '#signupStep User', () => {
 	} );
 
 	describe( '#updateComponentProps', () => {
-		let node, spyComponentProps, component;
+		let node;
+		let spyComponentProps;
+		let component;
 
 		beforeEach( () => {
 			node = document.createElement( 'div' );
@@ -75,6 +84,7 @@ describe( '#signupStep User', () => {
 				subHeaderText: 'test subheader message',
 				flowName: 'someOtherFlow',
 				saveSignupStep: noop,
+				translate,
 			} );
 			component = ReactDOM.render( element, node );
 		} );
@@ -88,6 +98,7 @@ describe( '#signupStep User', () => {
 				subHeaderText: 'My test message',
 				flowName: 'userAsFirstStepInFlow',
 				saveSignupStep: noop,
+				translate,
 			};
 
 			expect( spyComponentProps.calledOnce ).to.equal( false );
@@ -103,6 +114,7 @@ describe( '#signupStep User', () => {
 				subHeaderText: 'My test message',
 				flowName: 'another test message test',
 				saveSignupStep: noop,
+				translate,
 			};
 
 			expect( spyComponentProps.calledOnce ).to.equal( false );

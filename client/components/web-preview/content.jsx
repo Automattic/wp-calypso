@@ -1,30 +1,34 @@
-/** @format */
 /**
  * External dependencies
  */
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { noop, isFunction } from 'lodash';
 import page from 'page';
 import { v4 as uuid } from 'uuid';
-import { addQueryArgs } from 'lib/route';
+import { addQueryArgs } from 'calypso/lib/route';
 
 /**
  * Internal dependencies
  */
 import Toolbar from './toolbar';
-import { hasTouch } from 'lib/touch-detect';
-import { isWithinBreakpoint } from 'lib/viewport';
+import { hasTouch } from 'calypso/lib/touch-detect';
 import { localize } from 'i18n-calypso';
-import SpinnerLine from 'components/spinner-line';
-import SeoPreviewPane from 'components/seo-preview-pane';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
+import SpinnerLine from 'calypso/components/spinner-line';
+import SeoPreviewPane from 'calypso/components/seo-preview-pane';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isInlineHelpPopoverVisible from 'calypso/state/inline-help/selectors/is-inline-help-popover-visible';
+import { parse as parseUrl } from 'url';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 const debug = debugModule( 'calypso:web-preview' );
+const noop = () => {};
 
 export class WebPreviewContent extends Component {
 	previewId = uuid();
@@ -37,7 +41,7 @@ export class WebPreviewContent extends Component {
 		isLoadingSubpage: false,
 	};
 
-	setIframeInstance = ref => {
+	setIframeInstance = ( ref ) => {
 		this.iframe = ref;
 	};
 
@@ -82,7 +86,7 @@ export class WebPreviewContent extends Component {
 		}
 	}
 
-	handleMessage = e => {
+	handleMessage = ( e ) => {
 		let data;
 		try {
 			data = JSON.parse( e.data );
@@ -96,6 +100,9 @@ export class WebPreviewContent extends Component {
 		debug( 'message from iframe', data );
 
 		switch ( data.type ) {
+			case 'needs-auth':
+				this.redirectToAuth();
+				return;
 			case 'link':
 				page( data.payload.replace( /^https:\/\/wordpress\.com\//i, '/' ) );
 				this.props.onClose();
@@ -104,7 +111,7 @@ export class WebPreviewContent extends Component {
 				this.props.onClose();
 				return;
 			case 'partially-loaded':
-				this.setLoaded();
+				this.setLoaded( 'iframe-message' );
 				return;
 			case 'location-change':
 				this.handleLocationChange( data.payload );
@@ -120,12 +127,20 @@ export class WebPreviewContent extends Component {
 		}
 	};
 
-	handleLocationChange = payload => {
+	redirectToAuth() {
+		const { isPrivateAtomic, url } = this.props;
+		if ( isPrivateAtomic ) {
+			window.location.href =
+				`${ url }/wp-login.php?redirect_to=` + encodeURIComponent( window.location.href );
+		}
+	}
+
+	handleLocationChange = ( payload ) => {
 		this.props.onLocationUpdate( payload.pathname );
 		this.setState( { isLoadingSubpage: false } );
 	};
 
-	setWrapperElement = el => {
+	setWrapperElement = ( el ) => {
 		this.wrapperElementRef = el;
 	};
 
@@ -133,14 +148,14 @@ export class WebPreviewContent extends Component {
 		// remove all textual selections when user gives focus to preview iframe
 		// they might be confusing
 		if ( typeof window !== 'undefined' ) {
-			if ( isFunction( window.getSelection ) ) {
+			if ( typeof window.getSelection === 'function' ) {
 				const selection = window.getSelection();
-				if ( isFunction( selection.empty ) ) {
+				if ( typeof selection.empty === 'function' ) {
 					selection.empty();
-				} else if ( isFunction( selection.removeAllRanges ) ) {
+				} else if ( typeof selection.removeAllRanges === 'function' ) {
 					selection.removeAllRanges();
 				}
-			} else if ( document.selection && isFunction( document.selection.empty ) ) {
+			} else if ( document.selection && typeof document.selection.empty === 'function' ) {
 				document.selection.empty();
 			}
 		}
@@ -165,8 +180,11 @@ export class WebPreviewContent extends Component {
 		this.iframe.contentDocument.close();
 	}
 
-	setIframeUrl = iframeUrl => {
+	setIframeUrl = ( iframeUrl ) => {
 		if ( ! this.iframe || ( ! this.props.showPreview && this.props.isModalWindow ) ) {
+			if ( this.state.iframeUrl !== 'about:blank' ) {
+				this.setState( { iframeUrl: 'about:blank' } );
+			}
 			return;
 		}
 
@@ -207,7 +225,7 @@ export class WebPreviewContent extends Component {
 		this.setDeviceViewport( 'seo' );
 	};
 
-	setLoaded = () => {
+	setLoaded = ( caller ) => {
 		if ( this.state.loaded && ! this.state.isLoadingSubpage ) {
 			debug( 'already loaded' );
 			return;
@@ -222,13 +240,43 @@ export class WebPreviewContent extends Component {
 		} else {
 			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
-		this.setState( { loaded: true, isLoadingSubpage: false } );
-
+		if ( this.checkForIframeLoadFailure( caller ) ) {
+			if ( this.props.showClose ) {
+				window.open( this.state.iframeUrl, '_blank' );
+				this.props.onClose();
+			} else {
+				window.location.replace( this.state.iframeUrl );
+			}
+		} else {
+			this.setState( { loaded: true, isLoadingSubpage: false } );
+		}
 		// Sometimes we force inline help open in the preview. In this case we don't want to hide it when the iframe loads
 		if ( ! this.props.isInlineHelpPopoverVisible ) {
 			this.focusIfNeeded();
+			// If the preview is loaded and the site is private atomic, there's a chance we ended up on
+			// "you need to login first" screen. These messages are handled by wpcomsh on the other end,
+			// and they make it possible to redirect to wp-login.php since it cannot be displayed in this
+			// iframe OR redirected to using <a href="" target="_top">.
+			if ( this.props.isPrivateAtomic ) {
+				const { protocol, host } = parseUrl( this.props.externalUrl );
+				this.iframe.contentWindow.postMessage(
+					{ connected: 'calypso' },
+					`${ protocol }//${ host }`
+				);
+			}
 		}
 	};
+
+	// In cases where loading of the iframe content is blocked by the browser for cross-origin reasons the
+	// iframe onload event is still fired, so we need to validate that the actual content was loaded by seeing
+	// if state.loaded was set to true by the receipt of a postMessage from the iframe. The check for
+	// 'about:blank' prevents the check for failing in the context of previews in the block editor  - in this
+	// context a postMessage is not received from the iframe.
+	checkForIframeLoadFailure( caller ) {
+		return (
+			caller === 'iframe-onload' && ! this.state.loaded && this.state.iframeUrl !== 'about:blank'
+		);
+	}
 
 	render() {
 		const { translate } = this.props;
@@ -257,7 +305,9 @@ export class WebPreviewContent extends Component {
 					device={ this.state.device }
 					{ ...this.props }
 					showExternal={ this.props.previewUrl ? this.props.showExternal : false }
+					showEditHeaderLink={ this.props.showEditHeaderLink }
 					showDeviceSwitcher={ this.props.showDeviceSwitcher && isWithinBreakpoint( '>660px' ) }
+					showUrl={ this.props.showUrl && isWithinBreakpoint( '>960px' ) }
 					selectSeoPreview={ this.selectSEO }
 					isLoading={ this.state.isLoadingSubpage }
 				/>
@@ -269,20 +319,21 @@ export class WebPreviewContent extends Component {
 							<span className="web-preview__loading-message">{ this.props.loadingMessage }</span>
 						</div>
 					) }
-					<div
-						className={ classNames( 'web-preview__frame-wrapper', {
-							'is-resizable': ! this.props.isModalWindow,
-						} ) }
-						style={ { display: 'seo' === this.state.device ? 'none' : 'inherit' } }
-					>
-						<iframe
-							ref={ this.setIframeInstance }
-							className="web-preview__frame"
-							src="about:blank"
-							onLoad={ this.setLoaded }
-							title={ this.props.iframeTitle || translate( 'Preview' ) }
-						/>
-					</div>
+					{ 'seo' !== this.state.device && (
+						<div
+							className={ classNames( 'web-preview__frame-wrapper', {
+								'is-resizable': ! this.props.isModalWindow,
+							} ) }
+						>
+							<iframe
+								ref={ this.setIframeInstance }
+								className="web-preview__frame"
+								src="about:blank"
+								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
+								title={ this.props.iframeTitle || translate( 'Preview' ) }
+							/>
+						</div>
+					) }
 					{ 'seo' === this.state.device && (
 						<SeoPreviewPane
 							overridePost={ this.props.overridePost }
@@ -312,6 +363,8 @@ WebPreviewContent.propTypes = {
 	showDeviceSwitcher: PropTypes.bool,
 	// Show edit button
 	showEdit: PropTypes.bool,
+	// Show edit the header link button
+	showEditHeaderLink: PropTypes.bool,
 	// The URL for the edit button
 	editUrl: PropTypes.string,
 	// The URL that should be displayed in the iframe
@@ -358,6 +411,7 @@ WebPreviewContent.defaultProps = {
 	showSEO: true,
 	showDeviceSwitcher: true,
 	showEdit: false,
+	showEditHeaderLink: false,
 	editUrl: null,
 	previewUrl: null,
 	previewMarkup: null,
@@ -371,11 +425,13 @@ WebPreviewContent.defaultProps = {
 	overridePost: null,
 };
 
-const mapState = state => ( {
-	isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),
-} );
+const mapState = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),
+		isPrivateAtomic: isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId ),
+		url: getSelectedSite( state )?.URL,
+	};
+};
 
-export default connect(
-	mapState,
-	{ recordTracksEvent }
-)( localize( WebPreviewContent ) );
+export default connect( mapState, { recordTracksEvent } )( localize( WebPreviewContent ) );

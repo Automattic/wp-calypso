@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,8 +8,8 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { newPost } from 'lib/paths';
-import PurchaseDetail from 'components/purchase-detail';
+import { newPost } from 'calypso/lib/paths';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 
 const ChargebackDetails = ( { selectedSite } ) => {
 	return (

@@ -1,36 +1,34 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity, includes } from 'lodash';
+import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
+
+/**
+ * Internal dependencies
+ */
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Module constants
  */
 /**
- * Whitelist of services that we provide tips for.
+ * List of services that we provide tips for.
  *
- * When adding tips for more services, please update the whitelist in addition to adding
+ * When adding tips for more services, please update the list in addition to adding
  * a method with the tip's content.
  *
  * @type {string[]}
  */
-const SERVICES_WHITELIST = [ 'facebook', 'twitter', 'instagram', 'google_plus', 'eventbrite' ];
+const SERVICES_WITH_TIPS = [ 'facebook', 'twitter', 'instagram', 'google_plus' ];
 
 class SharingServiceTip extends Component {
 	static propTypes = {
 		service: PropTypes.object.isRequired,
 		translate: PropTypes.func,
-	};
-
-	static defaultProps = {
-		translate: identity,
 	};
 
 	facebook() {
@@ -39,11 +37,19 @@ class SharingServiceTip extends Component {
 			{
 				components: {
 					likeBoxLink: (
-						<a href="https://support.wordpress.com/facebook-integration/#facebook-like-box" />
+						<a
+							href={ localizeUrl(
+								'https://wordpress.com/support/facebook-integration/#facebook-like-box'
+							) }
+						/>
 					),
-					shareButtonLink: <a href="https://support.wordpress.com/sharing/" />,
+					shareButtonLink: <a href={ localizeUrl( 'https://wordpress.com/support/sharing/' ) } />,
 					embedLink: (
-						<a href="https://support.wordpress.com/facebook-integration/facebook-embeds/" />
+						<a
+							href={ localizeUrl(
+								'https://wordpress.com/support/facebook-integration/facebook-embeds/'
+							) }
+						/>
 					),
 				},
 				context: 'Sharing: Tip in settings',
@@ -56,7 +62,13 @@ class SharingServiceTip extends Component {
 			'You can also add a {{widgetLink}}Twitter Timeline Widget{{/widgetLink}} to display any public timeline on your site.',
 			{
 				components: {
-					widgetLink: <a href="https://support.wordpress.com/widgets/twitter-timeline-widget/" />,
+					widgetLink: (
+						<a
+							href={ localizeUrl(
+								'https://wordpress.com/support/widgets/twitter-timeline-widget/'
+							) }
+						/>
+					),
 				},
 				context: 'Sharing: Tip in settings',
 			}
@@ -68,7 +80,11 @@ class SharingServiceTip extends Component {
 			'You can also add an {{widgetLink}}Instagram Widget{{/widgetLink}} to display your latest Instagram photos on your site.',
 			{
 				components: {
-					widgetLink: <a href="https://support.wordpress.com/instagram/instagram-widget/" />,
+					widgetLink: (
+						<a
+							href={ localizeUrl( 'https://wordpress.com/support/instagram/instagram-widget/' ) }
+						/>
+					),
 				},
 				context: 'Sharing: Tip in settings',
 			}
@@ -79,28 +95,14 @@ class SharingServiceTip extends Component {
 		return null;
 	}
 
-	eventbrite() {
-		return this.props.translate(
-			'You can also add the {{embedLink}}Eventbrite widget{{/embedLink}} to display events in a sidebar.',
-			{
-				components: {
-					embedLink: (
-						<a href="https://support.wordpress.com/widgets/eventbrite-event-calendarlisting-widget/" />
-					),
-				},
-				context: 'Sharing: Tip in settings',
-			}
-		);
-	}
-
 	render() {
 		const { service } = this.props;
-		if ( ! includes( SERVICES_WHITELIST, service.ID ) || 'google_plus' === service.ID ) {
-			return <div className="sharing-service-tip" />;
+		if ( ! includes( SERVICES_WITH_TIPS, service.ID ) || 'google_plus' === service.ID ) {
+			return <div className="connections__sharing-service-tip" />;
 		}
 
 		return (
-			<div className="sharing-service-tip">
+			<div className="connections__sharing-service-tip">
 				<Gridicon icon="info" size={ 18 } />
 				{ this[ service.ID ]() }
 			</div>

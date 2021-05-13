@@ -1,22 +1,20 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import { getHappychatAuth } from '../utils';
-import config from 'config';
-import * as wpcom from 'lib/wp';
-import * as selectedSite from 'state/help/selectors';
+import config from '@automattic/calypso-config';
+import * as wpcom from 'calypso/lib/wp';
+import * as selectedSite from 'calypso/state/help/selectors';
+
+jest.mock( 'calypso/state/help/selectors', () => ( {
+	getHelpSelectedSite: jest.fn(),
+} ) );
 
 describe( 'auth promise', () => {
 	const state = {
 		currentUser: {
 			id: 3,
-		},
-		users: {
-			items: {
-				3: { ID: 123456, localeSlug: 'gl' },
-			},
+			user: { ID: 123456, localeSlug: 'gl' },
 		},
 		ui: {
 			section: {
@@ -38,7 +36,6 @@ describe( 'auth promise', () => {
 			);
 
 			// mock getHelpSelectedSite to return null
-			selectedSite.getHelpSelectedSite = jest.fn();
 			selectedSite.getHelpSelectedSite.mockReturnValue( null );
 		} );
 
@@ -46,8 +43,8 @@ describe( 'auth promise', () => {
 			return expect( getHappychatAuth( state )() ).resolves.toMatchObject( {
 				url: config( 'happychat_url' ),
 				user: {
-					signer_user_id: state.users.items[ 3 ].ID,
-					locale: state.users.items[ 3 ].localeSlug,
+					signer_user_id: state.currentUser.user.ID,
+					locale: state.currentUser.user.localeSlug,
 					groups: [ 'jpop' ],
 					jwt: 'jwt',
 					geoLocation: { city: 'Lugo' },
@@ -64,7 +61,6 @@ describe( 'auth promise', () => {
 			);
 
 			// mock getHelpSelectedSite to return null
-			selectedSite.getHelpSelectedSite = jest.fn();
 			selectedSite.getHelpSelectedSite.mockReturnValue( null );
 		} );
 
@@ -78,7 +74,6 @@ describe( 'auth promise', () => {
 	test( 'should return a rejected promise if there is no current user', () => {
 		const noUserState = {
 			currentUser: {},
-			users: {},
 			ui: {
 				section: {
 					name: 'jetpack-connect',

@@ -1,0 +1,36 @@
+.site-settings__analytics {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	.support-info {
+		position: absolute;
+		right: 24px;
+	}
+}
+
+.site-settings__analytics-text {
+	margin-left: 20px;
+	line-height: 2rem;
+}
+.site-settings__analytics-text p {
+	margin: 0;
+}
+
+.site-settings__analytics-title {
+	font-weight: 600;
+	line-height: 1rem;
+}
+
+.site-settings__analytics-illustration {
+	width: 50px;
+	img {
+		width: 100%;
+	}
+}
+
+.site-settings__analytics-spacer {
+	margin-bottom: 16px;
+}
+.site-settings__analytics-form-content {
+	margin-top: 24px;
+}

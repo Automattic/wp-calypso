@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Fragment, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
@@ -10,16 +10,19 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
-import { CALYPSO_CONTACT } from 'lib/url/support';
-import ClipboardButton from 'components/forms/clipboard-button';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import Dialog from 'components/dialog';
-import { errorNotice } from 'state/notices/actions';
-import { getLoginUrlWithTOSRedirect } from 'lib/gsuite';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import wp from 'lib/wp';
+import { Button, Dialog } from '@automattic/components';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { getLoginUrlWithTOSRedirect } from 'calypso/lib/gsuite';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import wp from 'calypso/lib/wp';
 
 function PendingGSuiteTosNoticeDialog( props ) {
 	const [ password, setPassword ] = useState( false );
@@ -66,26 +69,30 @@ function PendingGSuiteTosNoticeDialog( props ) {
 		);
 	};
 
-	const onPasswordClick = event => {
+	const onPasswordClick = ( event ) => {
 		event.preventDefault();
 
 		const wpcom = wp.undocumented();
 		const mailbox = props.user.split( '@' )[ 0 ];
 
 		wpcom.resetPasswordForMailbox( props.domainName, mailbox ).then(
-			data => {
+			( data ) => {
 				setPassword( data.password );
 			},
 			() => {
-				props.errorNotice( translate( 'There was a problem resetting the password for %(gsuiteEmail)s. Please {{link}}contact support{{/link}}.', {
-						args: {
-							gsuiteEmail: props.user,
-						},
-						components: {
-							link: <a href={ CALYPSO_CONTACT } />,
-						},
-					}
-				) );
+				props.errorNotice(
+					translate(
+						'There was a problem resetting the password for %(gsuiteEmail)s. Please {{link}}contact support{{/link}}.',
+						{
+							args: {
+								gsuiteEmail: props.user,
+							},
+							components: {
+								link: <a href={ CALYPSO_CONTACT } />,
+							},
+						}
+					)
+				);
 
 				setOpenTracked( false );
 				props.onClose();
@@ -122,7 +129,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 
 	const renderPasswordResetCopy = () => {
 		return translate(
-			'We have reset the password for %s. Copy the new password below and click to continue.',
+			'We have reset the password for %s. Copy and use this new password in order to log in:',
 			{
 				args: props.user,
 			}
@@ -132,7 +139,8 @@ function PendingGSuiteTosNoticeDialog( props ) {
 	return (
 		<Dialog className="domain-warnings__dialog" isVisible={ props.visible }>
 			<header>
-				<h1>{ translate( 'Log in to G Suite to finish setup' ) }</h1>
+				<h1>{ translate( 'Log in to Google Admin to finish setup' ) }</h1>
+
 				<button onClick={ onCloseClick }>
 					<Gridicon icon="cross" />
 				</button>
@@ -158,11 +166,11 @@ function PendingGSuiteTosNoticeDialog( props ) {
 					<Button
 						href={ getLoginUrlWithTOSRedirect( props.user, props.domainName ) }
 						onClick={ onResetPasswordLogInClick }
-						primary={ isCopied }
+						primary
 						rel="noopener noreferrer"
 						target="_blank"
 					>
-						{ translate( 'Log In to G Suite and Finish Setup' ) }
+						{ translate( 'Log In to Google Admin' ) }
 					</Button>
 				</Fragment>
 			) }
@@ -181,7 +189,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 						external
 						key="1"
 					>
-						{ translate( 'I have the password, take me to the login page' ) }
+						{ translate( 'I have the password, take me to Google Admin' ) }
 					</VerticalNavItem>
 				</VerticalNav>
 			) }
@@ -210,10 +218,7 @@ const trackEvent = ( { domainName, message, section, siteSlug, tracksEvent, user
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		trackEvent,
-	}
-)( PendingGSuiteTosNoticeDialog );
+export default connect( null, {
+	errorNotice,
+	trackEvent,
+} )( PendingGSuiteTosNoticeDialog );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,8 +8,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Site from 'blocks/site';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import Site from 'calypso/blocks/site';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class ProfileLinksAddWordPressSite extends Component {
 	static propTypes = {
@@ -25,11 +24,11 @@ class ProfileLinksAddWordPressSite extends Component {
 		checked: false,
 	};
 
-	onSelect = event => {
+	onSelect = ( event ) => {
 		this.props.onSelect( event, this.getInputName() );
 	};
 
-	getCheckboxEventHandler = checkboxName => event => {
+	getCheckboxEventHandler = ( checkboxName ) => ( event ) => {
 		const action = 'Clicked ' + checkboxName + ' checkbox';
 		const value = event.target.checked ? 1 : 0;
 
@@ -43,15 +42,15 @@ class ProfileLinksAddWordPressSite extends Component {
 	render() {
 		const { checked, onChange, site } = this.props;
 
+		/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */
 		return (
 			<li
 				key={ site.ID }
 				className="profile-links-add-wordpress__item"
 				onClick={ this.getCheckboxEventHandler( 'Add WordPress Site' ) }
 			>
-				<input
+				<FormInputCheckbox
 					className="profile-links-add-wordpress__checkbox"
-					type="checkbox"
 					name={ this.getInputName() }
 					onChange={ onChange }
 					checked={ checked }
@@ -59,12 +58,10 @@ class ProfileLinksAddWordPressSite extends Component {
 				<Site site={ site } indicator={ false } onSelect={ this.onSelect } />
 			</li>
 		);
+		/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordGoogleEvent,
-	}
-)( ProfileLinksAddWordPressSite );
+export default connect( null, {
+	recordGoogleEvent,
+} )( ProfileLinksAddWordPressSite );

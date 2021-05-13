@@ -1,30 +1,22 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import {
-	assign,
 	camelCase,
-	constant,
 	debounce,
-	every,
 	filter,
 	flatten,
 	isEmpty,
-	isUndefined,
 	map,
 	mapValues,
 	pickBy,
 	property,
 	some,
-	uniqueId,
 } from 'lodash';
 import update from 'immutability-helper';
+import { v4 as uuid } from 'uuid';
 
 function Controller( options ) {
-	let debounceWait;
-
 	if ( ! ( this instanceof Controller ) ) {
 		return new Controller( options );
 	}
@@ -49,142 +41,132 @@ function Controller( options ) {
 	this._pendingValidation = null;
 	this._onValidationComplete = null;
 
-	debounceWait = isUndefined( options.debounceWait ) ? 1000 : options.debounceWait;
+	const debounceWait = typeof options.debounceWait === 'undefined' ? 1000 : options.debounceWait;
 	this._debouncedSanitize = debounce( this.sanitize, debounceWait );
 	this._debouncedValidate = debounce( this.validate, debounceWait );
 
-	this._hideFieldErrorsOnChange = isUndefined( options.hideFieldErrorsOnChange )
-		? false
-		: options.hideFieldErrorsOnChange;
+	this._hideFieldErrorsOnChange =
+		typeof options.hideFieldErrorsOnChange === 'undefined'
+			? false
+			: options.hideFieldErrorsOnChange;
 
 	if ( this._loadFunction ) {
 		this._loadFieldValues();
 	}
 }
 
-assign( Controller.prototype, {
-	getInitialState: function() {
-		return this._initialState;
-	},
+Controller.prototype.getInitialState = function () {
+	return this._initialState;
+};
 
-	_loadFieldValues: function() {
-		this._loadFunction(
-			function( error, fieldValues ) {
-				if ( error ) {
-					this._onError( error );
-					return;
-				}
-
-				this._setState( initializeFields( this._currentState, fieldValues ) );
-			}.bind( this )
-		);
-	},
-
-	handleFieldChange: function( change ) {
-		let formState = this._currentState,
-			name = camelCase( change.name ),
-			value = change.value,
-			hideError = this._hideFieldErrorsOnChange || change.hideError;
-
-		this._setState( changeFieldValue( formState, name, value, hideError ) );
-
-		// If we want to handle sanitize/validate differently in the component (e.g. onBlur)
-		// FormState handleSubmit() will sanitize/validate if not done yet
-		if ( ! this._skipSanitizeAndValidateOnFieldChange ) {
-			this._debouncedSanitize();
-			this._debouncedValidate();
-		}
-	},
-
-	handleSubmit: function( onComplete ) {
-		const isAlreadyValid =
-			! this._pendingValidation &&
-			! needsValidation( this._currentState ) &&
-			isEveryFieldInitialized( this._currentState );
-
-		if ( isAlreadyValid ) {
-			onComplete( hasErrors( this._currentState ) );
+Controller.prototype._loadFieldValues = function () {
+	this._loadFunction( ( error, fieldValues ) => {
+		if ( error ) {
+			this._onError( error );
 			return;
 		}
 
-		this._onValidationComplete = function() {
-			this._setState( showAllErrors( this._currentState ) );
-			onComplete( hasErrors( this._currentState ) );
-		}.bind( this );
+		this._setState( initializeFields( this._currentState, fieldValues ) );
+	} );
+};
 
-		if ( ! this._pendingValidation ) {
-			this.sanitize();
-			this.validate();
-		}
-	},
+Controller.prototype.handleFieldChange = function ( change ) {
+	const formState = this._currentState;
+	const name = camelCase( change.name );
+	const value = change.value;
+	const hideError = this._hideFieldErrorsOnChange || change.hideError;
 
-	_setState: function( newState ) {
-		this._currentState = newState;
-		this._onNewState( newState );
-	},
+	this._setState( changeFieldValue( formState, name, value, hideError ) );
 
-	sanitize: function() {
-		const fieldValues = getAllFieldValues( this._currentState );
+	// If we want to handle sanitize/validate differently in the component (e.g. onBlur)
+	// FormState handleSubmit() will sanitize/validate if not done yet
+	if ( ! this._skipSanitizeAndValidateOnFieldChange ) {
+		this._debouncedSanitize();
+		this._debouncedValidate();
+	}
+};
 
-		if ( ! this._sanitizerFunction ) {
+Controller.prototype.handleSubmit = function ( onComplete ) {
+	const isAlreadyValid =
+		! this._pendingValidation &&
+		! needsValidation( this._currentState ) &&
+		isEveryFieldInitialized( this._currentState );
+
+	if ( isAlreadyValid ) {
+		onComplete( hasErrors( this._currentState ) );
+		return;
+	}
+
+	this._onValidationComplete = () => {
+		this._setState( showAllErrors( this._currentState ) );
+		onComplete( hasErrors( this._currentState ) );
+	};
+
+	if ( ! this._pendingValidation ) {
+		this.sanitize();
+		this.validate();
+	}
+};
+
+Controller.prototype._setState = function ( newState ) {
+	this._currentState = newState;
+	this._onNewState( newState );
+};
+
+Controller.prototype.sanitize = function () {
+	const fieldValues = getAllFieldValues( this._currentState );
+
+	if ( ! this._sanitizerFunction ) {
+		return;
+	}
+
+	this._sanitizerFunction( fieldValues, ( newFieldValues ) => {
+		this._setState( changeFieldValues( this._currentState, newFieldValues ) );
+	} );
+};
+
+Controller.prototype.validate = function () {
+	const fieldValues = getAllFieldValues( this._currentState );
+	const id = uuid();
+
+	this._setState( setFieldsValidating( this._currentState ) );
+
+	this._pendingValidation = id;
+
+	this._validatorFunction( fieldValues, ( error, fieldErrors ) => {
+		if ( id !== this._pendingValidation ) {
 			return;
 		}
 
-		this._sanitizerFunction(
-			fieldValues,
-			function( newFieldValues ) {
-				this._setState( changeFieldValues( this._currentState, newFieldValues ) );
-			}.bind( this )
+		if ( error ) {
+			this._onError( error );
+			return;
+		}
+
+		this._pendingValidation = null;
+		this._setState(
+			setFieldErrors( this._currentState, fieldErrors, this._hideFieldErrorsOnChange )
 		);
-	},
 
-	validate: function() {
-		let fieldValues = getAllFieldValues( this._currentState ),
-			id = uniqueId();
+		if ( this._onValidationComplete ) {
+			this._onValidationComplete();
+			this._onValidationComplete = null;
+		}
+	} );
+};
 
-		this._setState( setFieldsValidating( this._currentState ) );
-
-		this._pendingValidation = id;
-
-		this._validatorFunction(
-			fieldValues,
-			function( error, fieldErrors ) {
-				if ( id !== this._pendingValidation ) {
-					return;
-				}
-
-				if ( error ) {
-					this._onError( error );
-					return;
-				}
-
-				this._pendingValidation = null;
-				this._setState(
-					setFieldErrors( this._currentState, fieldErrors, this._hideFieldErrorsOnChange )
-				);
-
-				if ( this._onValidationComplete ) {
-					this._onValidationComplete();
-					this._onValidationComplete = null;
-				}
-			}.bind( this )
-		);
-	},
-
-	resetFields: function( fieldValues ) {
-		this._initialState = createInitialFormState( fieldValues );
-		this._setState( this._initialState );
-	},
-} );
+Controller.prototype.resetFields = function ( fieldValues ) {
+	this._initialState = createInitialFormState( fieldValues );
+	this._setState( this._initialState );
+};
 
 function changeFieldValue( formState, name, value, hideFieldErrorsOnChange ) {
-	let fieldState = getField( formState, name ),
-		command = {},
-		errors;
+	const fieldState = getField( formState, name );
+	const command = {};
 
 	// We reset the errors if we weren't showing them already to avoid a flash of
 	// error messages when the user starts typing.
-	errors = fieldState.isShowingErrors ? fieldState.errors : [];
+	const errors = fieldState.isShowingErrors ? fieldState.errors : [];
 
 	command[ name ] = {
 		$merge: {
@@ -200,38 +182,36 @@ function changeFieldValue( formState, name, value, hideFieldErrorsOnChange ) {
 }
 
 function changeFieldValues( formState, fieldValues ) {
-	return updateFields( formState, function( name ) {
+	return updateFields( formState, function ( name ) {
 		return { value: fieldValues[ name ] };
 	} );
 }
 
 function updateFields( formState, callback ) {
-	return mapValues( formState, function( field, name ) {
-		return assign( {}, field, callback( name ) );
+	return mapValues( formState, function ( field, name ) {
+		return { ...field, ...callback( name ) };
 	} );
 }
 
 function initializeFields( formState, fieldValues ) {
-	return updateFields( formState, function( name ) {
+	return updateFields( formState, function ( name ) {
 		return { value: fieldValues[ name ] || '', name };
 	} );
 }
 
 function setFieldsValidating( formState ) {
-	return assign(
-		{},
-		formState,
-		updateFields( formState, function() {
+	return {
+		...formState,
+		...updateFields( formState, function () {
 			return { isValidating: true };
-		} )
-	);
+		} ),
+	};
 }
 
 function setFieldErrors( formState, fieldErrors, hideFieldErrorsOnChange ) {
-	return assign(
-		{},
-		formState,
-		updateFields( getFieldsValidating( formState ), function( name ) {
+	return {
+		...formState,
+		...updateFields( getFieldsValidating( formState ), function ( name ) {
 			const newFields = {
 				errors: fieldErrors[ name ] || [],
 				isPendingValidation: false,
@@ -243,17 +223,14 @@ function setFieldErrors( formState, fieldErrors, hideFieldErrorsOnChange ) {
 			}
 
 			return newFields;
-		} )
-	);
+		} ),
+	};
 }
 
 function showAllErrors( formState ) {
-	return updateFields(
-		initializeFields( formState, getAllFieldValues( formState ) ),
-		constant( {
-			isShowingErrors: true,
-		} )
-	);
+	return updateFields( initializeFields( formState, getAllFieldValues( formState ) ), () => ( {
+		isShowingErrors: true,
+	} ) );
 }
 
 function hasErrors( formState ) {
@@ -261,20 +238,20 @@ function hasErrors( formState ) {
 }
 
 function needsValidation( formState ) {
-	return some( formState, function( field ) {
+	return some( formState, function ( field ) {
 		return field.errors === null || ! field.isShowingErrors || field.isPendingValidation;
 	} );
 }
 
 function createNullFieldValues( fieldNames ) {
-	return fieldNames.reduce( function( fields, name ) {
+	return fieldNames.reduce( function ( fields, name ) {
 		fields[ name ] = null;
 		return fields;
 	}, {} );
 }
 
 function createInitialFormState( fieldValues ) {
-	return mapValues( fieldValues, function( value ) {
+	return mapValues( fieldValues, function ( value ) {
 		return {
 			value: value,
 			errors: null,
@@ -286,7 +263,7 @@ function createInitialFormState( fieldValues ) {
 }
 
 function getField( formState, fieldName ) {
-	return formState[ camelCase( fieldName ) ];
+	return formState[ camelCase( fieldName ) ] ?? {};
 }
 
 function getFieldValue( formState, fieldName ) {
@@ -313,7 +290,7 @@ function isInitialized( field ) {
 }
 
 function isEveryFieldInitialized( formState ) {
-	return every( formState, isInitialized );
+	return Object.values( formState ).every( isInitialized );
 }
 
 function isFieldInvalid( formState, fieldName ) {
@@ -335,7 +312,7 @@ function isFieldValidating( formState, fieldName ) {
 }
 
 function getInvalidFields( formState ) {
-	return filter( formState, function( field, fieldName ) {
+	return filter( formState, function ( field, fieldName ) {
 		return isFieldInvalid( formState, fieldName );
 	} );
 }
@@ -346,7 +323,7 @@ function getErrorMessages( formState ) {
 }
 
 function isSubmitButtonDisabled( formState ) {
-	return ! every( formState, isInitialized );
+	return ! Object.values( formState ).every( isInitialized );
 }
 
 function isFieldDisabled( formState, fieldName ) {

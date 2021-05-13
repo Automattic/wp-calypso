@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingUserSuggestions as isRequesting } from 'state/users/suggestions/selectors';
-import { requestUserSuggestions } from 'state/users/suggestions/actions';
+import { isRequestingUserSuggestions as isRequesting } from 'calypso/state/user-suggestions/selectors';
+import { requestUserSuggestions } from 'calypso/state/user-suggestions/actions';
 
 class QueryUsersSuggestions extends Component {
 	static propTypes = {
@@ -26,11 +24,11 @@ class QueryUsersSuggestions extends Component {
 		isRequesting: false,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId ) {
 			return;
 		}

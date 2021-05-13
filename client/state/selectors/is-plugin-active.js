@@ -1,19 +1,21 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { find } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/plugins/init';
 
 /**
  * Returns a Boolean indicating if a site has a particular plugin that
  * is active. This is useful for jetpack connected sites.
  *
- * @param {Object} state - Global state tree
- * @param {Number} siteId - Site ID
- * @param {String} pluginSlug - Plugin slug
- * @return {Boolean} - truthiness of a site having an active plugin
+ * @param {object} state - Global state tree
+ * @param {number} siteId - Site ID
+ * @param {string} pluginSlug - Plugin slug
+ * @returns {boolean} - truthiness of a site having an active plugin
  */
 export default function isPluginActive( state, siteId, pluginSlug ) {
 	const sitePlugins = state.plugins.installed.plugins[ siteId ];

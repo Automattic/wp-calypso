@@ -13,7 +13,7 @@ It is designed in a way that in its simplest form is very easy to invoke, with v
 Add add `@automattic/calypso-build` to your project's `devDependencies` by running
 
 ```
-npm install --save-dev @automattic/calypso-build
+yarn add --dev @automattic/calypso-build
 ```
 
 Then, add a `build` script that invokes the `calypso-build` command:
@@ -52,19 +52,19 @@ If you have some experience with Webpack, the format of these [command line opti
 
 It was our conscious decision to stick to Webpack's interface rather than covering it up with our own abstraction, since the build tool doesn't really add any conceptually different functionality, and our previous SDK approach showed that we ended up replicating features readily provided by Webpack anyway.
 
-### `--env.WP` option to automatically compute dependencies, and transpile JSX to `@wordpress/element`
+### `--env WP` option to automatically compute dependencies, and transpile JSX to `@wordpress/element`
 
 That `webpack.config.js` introduces one rather WordPress/Gutenberg specific "environment" option, `WP`, which you can set as follows:
 
 ```json
 	"scripts": {
-		"build": "calypso-build ./src/editor.js --env.WP"
+		"build": "calypso-build ./src/editor.js --env WP"
 	}
 ```
 
 The impact of this option is twofold:
 
-1. It will make Webpack use `wordpress-external-dependencies-plugin` to infer NPM packages that are commonly used by Gutenberg blocks (anything in the `@wordpress/` scope, `lodash`, React, jQuery, etc) from the source files it bundles, and produce a `.deps.json` file containing an array of those dependencies for use with `wp_enqueue_script`. For more information, see `wordpress-external-dependencies-plugin`'s [docs](../wordpress-external-dependencies-plugin/README.md).
+1. It will make Webpack use `@wordpress/dependency-extraction-webpack-plugin` to infer NPM packages that are commonly used by Gutenberg blocks (anything in the `@wordpress/` scope, `lodash`, React, jQuery, etc) from the source files it bundles, and produce a `.asset.php` file containing an array of those dependencies for use with `wp_enqueue_script`. For more information, see `@wordpress/dependency-extraction-webpack-plugin`'s [docs](https://developer.wordpress.org/block-editor/packages/packages-dependency-extraction-webpack-plugin/).
 
 2. It will transpile JSX to [`@wordpress/element`](https://www.npmjs.com/package/@wordpress/element) rather than React components. This is also required for Gutenberg blocks.
 
@@ -106,7 +106,7 @@ module.exports = getWebpackConfig;
 
 ## Advanced Usage: Use own Babel Config
 
-It is also possible to customize how Babel transpiles a project. Simply add a `babel.config.js` to your project's root (i.e. the location you call `npm run build` from), and the build tool will pick it up over its own `babel.config.js` to transpile your project.
+It is also possible to customize how Babel transpiles a project. Simply add a `babel.config.js` to your project's root (i.e. the location you call `yarn run build` from), and the build tool will pick it up over its own `babel.config.js` to transpile your project.
 
 To extend the default behavior provided by `@automattic/calypso-build`, you can use presets found in its `babel/` directory, and add your own presets and/or plugins, e.g.
 
@@ -117,5 +117,44 @@ module.exports = {
 		'@automattic/calypso-build/babel/default',
 	],
 	plugins: [ 'my-custom-babel-plugin' ],
+};
+```
+
+The `default` preset has a `modules` option that specifies whether we want to transpile ESM `import` and `export` statements. Most common values are `false`, which keeps these statements intact and results in ES modules as output, and `'commonjs'`, which transpiles the module to the CommonJS format. See the [@babel/preset-env documentation](https://babeljs.io/docs/en/babel-preset-env#modules) for more details.
+
+```js
+module.exports = {
+	presets: [ [ '@automattic/calypso-build/babel/default', { modules: 'commonjs' } ] ],
+};
+```
+
+Another way to set the `modules` option is to set the `MODULES` environment variable to `'esm'` (maps to `false`) or any other valid value. That's convenient for running Babel from command line, where specifying options for presets (`--presets=...`) is not supported.
+
+The `default` preset also specifies `corejs`, `debug`, and `useBuiltIns` options that's passed through to [@babel/preset-env](https://babeljs.io/docs/en/babel-preset-env#options).
+
+## Advanced Usage: Use own PostCSS Config
+
+You can also customize how PostCSS transforms your project's style files by adding a `postcss.config.js` to it.
+
+For example, the following `postcss.config.js` will use color definitions from `@automattic/calypso-color-schemes` by setting CSS variables, and add 'polyfills' for browsers like IE11:
+
+```js
+module.exports = () => ( {
+	plugins: {
+		'postcss-custom-properties': {
+			importFrom: [ require.resolve( '@automattic/calypso-color-schemes' ) ],
+		},
+		autoprefixer: {},
+	},
+} );
+```
+
+## Jest
+
+Use the provided Jest configuration via a preset. In your `jest.config.js` set the following:
+
+```js
+module.exports = {
+	preset: '@automattic/calypso-build',
 };
 ```

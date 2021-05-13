@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,63 +7,69 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import { Button } from '@automattic/components';
 
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { isMonthly } from 'lib/plans/constants';
-import { getYearlyPlanByMonthly } from 'lib/plans';
-import { planItem } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/upgrades/actions';
-import { isExpired, isExpiring, isRenewing, showCreditCardExpiringWarning } from 'lib/purchases';
-import { recordTracksEvent } from 'state/analytics/actions';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { isMonthly, getYearlyPlanByMonthly } from '@automattic/calypso-products';
+import {
+	isExpired,
+	isExpiring,
+	isRenewing,
+	showCreditCardExpiringWarning,
+} from 'calypso/lib/purchases';
+import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-class PlanBillingPeriod extends Component {
+export class PlanBillingPeriod extends Component {
 	static propTypes = {
 		purchase: PropTypes.object,
+		site: PropTypes.object,
+		isProductOwner: PropTypes.bool,
 	};
 
 	handleMonthlyToYearlyButtonClick = () => {
 		const { purchase } = this.props;
 		const yearlyPlanSlug = getYearlyPlanByMonthly( purchase.productSlug );
 
-		addItem( planItem( yearlyPlanSlug ) );
 		this.props.recordTracksEvent( 'calypso_purchase_details_plan_upgrade_click', {
 			current_plan: purchase.productSlug,
 			upgrading_to: yearlyPlanSlug,
 		} );
-		page( '/checkout/' + purchase.domain );
+		page( '/checkout/' + purchase.domain + '/' + yearlyPlanSlug );
 	};
 
 	renderYearlyBillingInformation() {
-		const { purchase, translate } = this.props;
+		const { purchase, translate, moment } = this.props;
 
 		if ( showCreditCardExpiringWarning( purchase ) ) {
 			return translate( 'Billed yearly, credit card expiring soon' );
 		}
 
-		if ( isRenewing( purchase ) && purchase.renewMoment ) {
+		if ( isRenewing( purchase ) && purchase.renewDate ) {
+			const renewDate = moment( purchase.renewDate );
 			return translate( 'Billed yearly, renews on %s', {
-				args: purchase.renewMoment.format( 'LL' ),
+				args: renewDate.format( 'LL' ),
 				comment: '%s is the renewal date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
 
-		if ( isExpiring( purchase ) && purchase.expiryMoment ) {
+		if ( isExpiring( purchase ) && purchase.expiryDate ) {
 			return translate( 'Billed yearly, expires on %s', {
-				args: purchase.expiryMoment.format( 'LL' ),
+				args: moment( purchase.expiryDate ).format( 'LL' ),
 				comment: '%s is the expiration date in format M DD, Y, for example: June 10, 2019',
 			} );
 		}
 
-		if ( isExpired( purchase ) && purchase.expiryMoment ) {
+		if ( isExpired( purchase ) && purchase.expiryDate ) {
 			return translate( 'Billed yearly, expired %(timeSinceExpiry)s', {
 				args: {
-					timeSinceExpiry: purchase.expiryMoment.fromNow(),
+					timeSinceExpiry: moment( purchase.expiryDate ).fromNow(),
 				},
 				comment: 'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 			} );
@@ -75,7 +79,7 @@ class PlanBillingPeriod extends Component {
 	}
 
 	renderBillingPeriod() {
-		const { purchase, translate } = this.props;
+		const { purchase, site, translate, isProductOwner } = this.props;
 		if ( ! purchase ) {
 			return;
 		}
@@ -92,12 +96,34 @@ class PlanBillingPeriod extends Component {
 		}
 
 		return (
-			<FormSettingExplanation>
-				{ translate( 'Billed monthly' ) }
-				<Button onClick={ this.handleMonthlyToYearlyButtonClick } primary compact>
-					{ translate( 'Upgrade to yearly billing' ) }
-				</Button>
-			</FormSettingExplanation>
+			<React.Fragment>
+				<FormSettingExplanation>
+					{ translate( 'Billed monthly' ) }
+					{ site && isProductOwner && (
+						<Button onClick={ this.handleMonthlyToYearlyButtonClick } primary compact>
+							{ translate( 'Upgrade to yearly billing' ) }
+						</Button>
+					) }
+				</FormSettingExplanation>
+				{ ! site && (
+					<FormSettingExplanation>
+						{ translate(
+							'To manage your plan, please {{supportPageLink}}reconnect{{/supportPageLink}} your site.',
+							{
+								components: {
+									supportPageLink: (
+										<a
+											href={
+												JETPACK_SUPPORT + 'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
+											}
+										/>
+									),
+								},
+							}
+						) }
+					</FormSettingExplanation>
+				) }
+			</React.Fragment>
 		);
 	}
 
@@ -114,9 +140,6 @@ class PlanBillingPeriod extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( PlanBillingPeriod ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( withLocalizedMoment( PlanBillingPeriod ) ) );

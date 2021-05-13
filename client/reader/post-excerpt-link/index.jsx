@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { recordPermalinkClick } from 'reader/stats';
+import { recordPermalinkClick } from 'calypso/reader/stats';
 
 /**
  * Style dependencies
@@ -27,7 +26,7 @@ class PostExcerptLink extends React.Component {
 		isShowingNotice: false,
 	};
 
-	toggleNotice = event => {
+	toggleNotice = ( event ) => {
 		event.preventDefault();
 		this.setState( {
 			isShowingNotice: ! this.state.isShowingNotice,

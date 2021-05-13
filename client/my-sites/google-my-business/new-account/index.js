@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
@@ -13,19 +11,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import DocumentHead from 'components/data/document-head';
-import HeaderCake from 'components/header-cake';
-import KeyringConnectButton from 'blocks/keyring-connect-button';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { dismissNudge } from 'blocks/google-my-business-stats-nudge/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
-import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
-import { withEnhancers } from 'state/utils';
-import { connectGoogleMyBusinessAccount } from 'state/google-my-business/actions';
+import { Button, Card } from '@automattic/components';
+import DocumentHead from 'calypso/components/data/document-head';
+import HeaderCake from 'calypso/components/header-cake';
+import KeyringConnectButton from 'calypso/blocks/keyring-connect-button';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { enhanceWithLocationCounts } from 'calypso/my-sites/google-my-business/utils';
+import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { withEnhancers } from 'calypso/state/utils';
+import { connectGoogleMyBusinessAccount } from 'calypso/state/google-my-business/actions';
 
 /**
  * Style dependencies
@@ -56,7 +52,7 @@ class GoogleMyBusinessNewAccount extends Component {
 		);
 	};
 
-	handleConnect = keyringConnection => {
+	handleConnect = ( keyringConnection ) => {
 		const { siteId } = this.props;
 
 		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
@@ -69,12 +65,12 @@ class GoogleMyBusinessNewAccount extends Component {
 
 	handleNoThanksClick = () => {
 		this.props.recordTracksEvent( 'calypso_google_my_business_new_account_no_thanks_button_click' );
-		this.props.dismissNudge();
 	};
 
 	render() {
 		const { siteSlug, translate } = this.props;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main className="gmb-new-account" wideLayout>
 				<PageViewTracker path="/google-my-business/new/:site" title="Google My Business > New" />
@@ -123,7 +119,10 @@ class GoogleMyBusinessNewAccount extends Component {
 								{ translate( 'Use another Google Account' ) }
 							</KeyringConnectButton>
 
-							<Button href={ `/stats/${ siteSlug }` } onClick={ this.handleNoThanksClick }>
+							<Button
+								href={ `/marketing/tools/${ siteSlug }` }
+								onClick={ this.handleNoThanksClick }
+							>
 								{ translate( 'No thanks' ) }
 							</Button>
 						</div>
@@ -135,13 +134,12 @@ class GoogleMyBusinessNewAccount extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{
 		connectGoogleMyBusinessAccount,
-		dismissNudge,
 		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
 		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
 			enhanceWithLocationCounts,

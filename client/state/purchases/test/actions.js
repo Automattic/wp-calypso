@@ -1,6 +1,5 @@
 /**
  * @jest-environment jsdom
- * @format
  */
 /**
  * External dependencies
@@ -20,14 +19,14 @@ import {
 	PURCHASES_USER_FETCH_COMPLETED,
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED,
-} from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
 
 describe( 'actions', () => {
-	const purchases = [ { ID: 1 } ],
-		userId = 1337,
-		siteId = 1234,
-		purchaseId = 31337;
+	const purchases = [ { ID: 1 } ];
+	const userId = 1337;
+	const siteId = 1234;
+	const purchaseId = 31337;
 
 	const spy = sinon.spy();
 
@@ -45,7 +44,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSitePurchases', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( `/rest/v1.1/sites/${ siteId }/purchases` )
 				.reply( 200, purchases );
@@ -70,7 +69,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchUserPurchases', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/me/purchases' )
 				.reply( 200, purchases );
@@ -96,14 +95,17 @@ describe( 'actions', () => {
 	describe( '#removePurchase success', () => {
 		const response = { purchases };
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/rest/v1.1/me/purchases/${ purchaseId }/delete` )
 				.reply( 200, response );
 		} );
 
 		test( 'should dispatch fetch/complete actions', () => {
-			return removePurchase( purchaseId, userId )( spy ).then( () => {
+			return removePurchase(
+				purchaseId,
+				userId
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASE_REMOVE_COMPLETED,
 					purchases,
@@ -115,7 +117,7 @@ describe( 'actions', () => {
 
 	describe( '#removePurchase failure', () => {
 		const errorMessage = 'Unable to delete the purchase because of internal error';
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/rest/v1.1/me/purchases/${ purchaseId }/delete` )
 				.reply( 400, {
@@ -125,7 +127,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fetch/remove actions', () => {
-			return removePurchase( purchaseId, userId )( spy ).then( () => {
+			return removePurchase(
+				purchaseId,
+				userId
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASE_REMOVE_FAILED,
 					error: errorMessage,

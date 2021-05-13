@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import reducer, { items } from '../reducer';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
@@ -205,9 +203,7 @@ describe( 'reducer', () => {
 					data: newData,
 				} );
 
-				expect( result._contactDetailsCache )
-					.to.have.property( 'extra' )
-					.that.is.not.an( 'array' );
+				expect( result._contactDetailsCache ).to.have.property( 'extra' ).that.is.not.an( 'array' );
 
 				expect( result._contactDetailsCache ).to.have.nested.property( 'extra.newData', 'exists' );
 			} );

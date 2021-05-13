@@ -1,49 +1,25 @@
-/** @format */
 /**
  * External dependencies
  */
-import { isEmpty } from 'lodash';
-
+import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isNewSite } from 'state/sites/selectors';
-import {
-	getAllCartItems,
-	hasDomainMapping,
-	hasDomainRegistration,
-	hasTransferProduct,
-	hasPlan,
-	hasConciergeSession,
-	hasEcommercePlan,
-} from 'lib/cart-values/cart-items';
-import isEligibleForDotcomChecklist from './is-eligible-for-dotcom-checklist';
-import { retrieveSignupDestination } from 'signup/utils';
+import { getGoogleApps, hasGoogleApps } from 'calypso/lib/cart-values/cart-items';
+import { retrieveSignupDestination } from 'calypso/signup/storageUtils';
 
 /**
- * @param {Object} state Global state tree
- * @param {Number} siteId Site ID
- * @param {Object} cart object
- * @return {Boolean} True if current user is able to see the checklist after checkout
+ * @param {object} cart object
+ * @returns {boolean} True if current user is able to see the checklist after checkout
  */
-export default function isEligibleForSignupDestination( state, siteId, cart ) {
-	if ( ! isEmpty( getAllCartItems( cart ) ) ) {
-		if (
-			hasDomainMapping( cart ) ||
-			hasDomainRegistration( cart ) ||
-			hasTransferProduct( cart ) ||
-			( ! hasPlan( cart ) && ! hasConciergeSession( cart ) ) ||
-			hasEcommercePlan( cart )
-		) {
+export default function isEligibleForSignupDestination( cart ) {
+	if ( hasGoogleApps( cart ) ) {
+		const domainReceiptId = get( getGoogleApps( cart ), '[0].extra.receipt_for_domain', 0 );
+
+		if ( ! domainReceiptId ) {
 			return false;
 		}
 	}
 
-	const destination = retrieveSignupDestination();
-
-	if ( destination && destination.includes( '/checklist/' ) ) {
-		return isNewSite( state, siteId ) && isEligibleForDotcomChecklist( state, siteId );
-	}
-
-	return '/' === destination ? false : isNewSite( state, siteId );
+	return Boolean( retrieveSignupDestination() );
 }

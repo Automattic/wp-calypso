@@ -8,11 +8,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
-import { addUserProfileLinks } from 'state/profile-links/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import { addUserProfileLinks } from 'calypso/state/profile-links/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -55,30 +55,30 @@ class ProfileLinksAddOther extends React.Component {
 		return false;
 	}
 
-	recordClickEvent = action => {
+	recordClickEvent = ( action ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
-	getClickHandler = action => {
+	getClickHandler = ( action ) => {
 		return () => this.recordClickEvent( action );
 	};
 
-	getFocusHandler = action => {
+	getFocusHandler = ( action ) => {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	};
 
-	handleCancelButtonClick = event => {
+	handleCancelButtonClick = ( event ) => {
 		event.preventDefault();
 		this.recordClickEvent( 'Cancel Other Site Button' );
 		this.props.onCancel();
 	};
 
-	handleChange = e => {
+	handleChange = ( e ) => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
 	};
 
-	onSubmit = event => {
+	onSubmit = ( event ) => {
 		event.preventDefault();
 
 		// When the form's submit button is disabled, the form's onSubmit does not
@@ -105,7 +105,7 @@ class ProfileLinksAddOther extends React.Component {
 						'Please enter the URL and description of the site you want to add to your profile.'
 					) }
 				</p>
-				<FormFieldset>
+				<FormFieldset className="profile-links-add-other__fieldset">
 					<FormTextInput
 						className="profile-links-add-other__value"
 						placeholder={ this.props.translate( 'Enter a URL' ) }
@@ -142,10 +142,7 @@ class ProfileLinksAddOther extends React.Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		addUserProfileLinks,
-		recordGoogleEvent,
-	}
-)( localize( ProfileLinksAddOther ) );
+export default connect( null, {
+	addUserProfileLinks,
+	recordGoogleEvent,
+} )( localize( ProfileLinksAddOther ) );

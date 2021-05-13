@@ -1,18 +1,14 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import { restoreProgressSchema } from './schema';
 import {
 	REWIND_RESTORE,
 	REWIND_RESTORE_DISMISS,
 	REWIND_RESTORE_DISMISS_PROGRESS,
 	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_PROGRESS,
-} from 'state/action-types';
-import { createReducer, keyedReducer } from 'state/utils';
-
-const stubNull = () => null;
+} from 'calypso/state/action-types';
+import { keyedReducer } from 'calypso/state/utils';
 
 const startProgress = ( state, { timestamp } ) => ( {
 	errorCode: '',
@@ -26,7 +22,18 @@ const startProgress = ( state, { timestamp } ) => ( {
 
 const updateProgress = (
 	state,
-	{ errorCode, failureReason, message, percent, restoreId, status, timestamp, rewindId, context }
+	{
+		errorCode,
+		failureReason,
+		message,
+		percent,
+		restoreId,
+		status,
+		timestamp,
+		rewindId,
+		context,
+		currentEntry,
+	}
 ) => ( {
 	errorCode,
 	failureReason,
@@ -37,27 +44,33 @@ const updateProgress = (
 	timestamp,
 	rewindId,
 	context,
+	currentEntry,
 } );
 
-export const restoreProgress = keyedReducer(
-	'siteId',
-	createReducer(
-		{},
-		{
-			[ REWIND_RESTORE ]: startProgress,
-			[ REWIND_RESTORE_DISMISS_PROGRESS ]: stubNull,
-			[ REWIND_RESTORE_UPDATE_PROGRESS ]: updateProgress,
-			[ REWIND_RESTORE_DISMISS ]: stubNull,
-		}
-	)
-);
-restoreProgress.schema = restoreProgressSchema;
+export const restoreProgress = keyedReducer( 'siteId', ( state = {}, action ) => {
+	switch ( action.type ) {
+		case REWIND_RESTORE:
+			return startProgress( state, action );
+		case REWIND_RESTORE_DISMISS_PROGRESS:
+			return null;
+		case REWIND_RESTORE_UPDATE_PROGRESS:
+			return updateProgress( state, action );
+		case REWIND_RESTORE_DISMISS:
+			return null;
+	}
 
-export const restoreRequest = keyedReducer(
-	'siteId',
-	createReducer( undefined, {
-		[ REWIND_RESTORE ]: () => undefined,
-		[ REWIND_RESTORE_DISMISS ]: () => undefined,
-		[ REWIND_RESTORE_REQUEST ]: ( state, { activityId } ) => activityId,
-	} )
-);
+	return state;
+} );
+
+export const restoreRequest = keyedReducer( 'siteId', ( state = null, action ) => {
+	switch ( action.type ) {
+		case REWIND_RESTORE:
+			return null;
+		case REWIND_RESTORE_DISMISS:
+			return null;
+		case REWIND_RESTORE_REQUEST:
+			return action.activityId;
+	}
+
+	return state;
+} );

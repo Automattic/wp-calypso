@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Disallow creation of selectors bound to Redux state
+ * @file Disallow creation of selectors bound to Redux state
  * @author Automattic
  * @copyright 2017 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -19,7 +18,7 @@ function isStateInArgs( node ) {
 }
 
 function contains( xs, y ) {
-	return xs.some( x => x === y );
+	return xs.some( ( x ) => x === y );
 }
 
 module.exports = {
@@ -32,7 +31,7 @@ module.exports = {
 		},
 		schema: [],
 	},
-	create: function( context ) {
+	create: function ( context ) {
 		/*
 		 * An array of tuples of shape
 		 *
@@ -155,13 +154,13 @@ module.exports = {
 		}
 
 		return {
-			'Program:exit': function() {
+			'Program:exit': function () {
 				reports
 					.filter( ( { outer } ) => contains( nodesToReportOn, outer ) )
 					.forEach( ( { inner, message } ) => context.report( inner, message ) );
 			},
 
-			CallExpression: function( node ) {
+			CallExpression: function ( node ) {
 				if ( node.callee.name === 'connect' ) {
 					return onConnectCall( node );
 				}

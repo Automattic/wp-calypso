@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,7 +21,7 @@ export default class DisconnectSurveyPage extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.disconnect-site__navigation-links a[href*=confirm]' )
 		);
-		return await DriverHelper.isElementPresent( this.driver, By.css( '.is-primary.is-scary' ) );
+		return await DriverHelper.isElementLocated( this.driver, By.css( '.is-primary.is-scary' ) );
 	}
 
 	async skipSurveyAndDisconnectSite() {

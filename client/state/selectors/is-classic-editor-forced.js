@@ -1,21 +1,22 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { get } from 'lodash';
-import { isEnabled } from 'config';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import isVipSite from 'state/selectors/is-vip-site';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+
+import 'calypso/state/selected-editor/init';
 
 /**
  * Indicates if the classic editor should be always loaded even if the selected editor for the given site is Gutenberg.
- * @param {Object} state Global state tree
- * @param {Number} siteId Site ID
- * @return {Boolean} Whether the classic editor is forced.
+ *
+ * @param {object} state Global state tree
+ * @param {number} siteId Site ID
+ * @returns {boolean} Whether the classic editor is forced.
  */
 export const isClassicEditorForced = ( state, siteId ) => {
 	const selectedEditor = get( state, [ 'selectedEditor', siteId ], null );

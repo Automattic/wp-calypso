@@ -1,68 +1,45 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 	INLINE_HELP_SELECT_RESULT,
-	INLINE_HELP_SELECT_NEXT_RESULT,
-	INLINE_HELP_SELECT_PREVIOUS_RESULT,
+	INLINE_HELP_SET_SEARCH_QUERY,
 	INLINE_HELP_CONTACT_FORM_RESET,
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_HIDE,
 	INLINE_HELP_POPOVER_SHOW,
-	INLINE_HELP_CHECKLIST_PROMPT_SHOW,
-	INLINE_HELP_CHECKLIST_PROMPT_HIDE,
-	INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW,
-	INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE,
-	INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID,
-	INLINE_HELP_CHECKLIST_PROMPT_SET_STEP,
-	SERIALIZE,
-} from 'state/action-types';
+	INLINE_HELP_SHOW,
+	INLINE_HELP_HIDE,
+	INLINE_HELP_SEARCH_RESET,
+} from 'calypso/state/action-types';
 
-export const popover = createReducer(
-	{
-		isVisible: false,
-	},
-	{
-		[ INLINE_HELP_POPOVER_SHOW ]: state => ( { ...state, isVisible: true } ),
-		[ INLINE_HELP_POPOVER_HIDE ]: state => ( { ...state, isVisible: false } ),
+export const ui = ( state = { isVisible: true }, action ) => {
+	switch ( action.type ) {
+		case INLINE_HELP_SHOW:
+			return { ...state, isVisible: true };
+		case INLINE_HELP_HIDE:
+			return { ...state, isVisible: false };
 	}
-);
 
-export const checklistPrompt = createReducer(
-	{
-		isVisible: false,
-		taskId: null,
-		step: 0,
-	},
-	{
-		[ INLINE_HELP_CHECKLIST_PROMPT_SHOW ]: state => ( { ...state, isVisible: true } ),
-		[ INLINE_HELP_CHECKLIST_PROMPT_HIDE ]: state => ( {
-			...state,
-			isVisible: false,
-			taskId: null,
-			step: 0,
-		} ),
-		[ INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID ]: ( state, { taskId } ) => ( { ...state, taskId } ),
-		[ INLINE_HELP_CHECKLIST_PROMPT_SET_STEP ]: ( state, { step } ) => ( { ...state, step } ),
-		[ SERIALIZE ]: state => state,
-	}
-);
+	return state;
+};
 
-export const onboardingWelcomePrompt = createReducer(
-	{
-		isVisible: false,
-	},
-	{
-		[ INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW ]: state => ( { ...state, isVisible: true } ),
-		[ INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE ]: state => ( { ...state, isVisible: false } ),
-		[ INLINE_HELP_POPOVER_HIDE ]: state => ( { ...state, isVisible: false } ),
+export const popover = ( state = { isVisible: false }, action ) => {
+	switch ( action.type ) {
+		case INLINE_HELP_POPOVER_SHOW:
+			return { ...state, isVisible: true };
+		case INLINE_HELP_POPOVER_HIDE:
+			return { ...state, isVisible: false };
 	}
-);
+
+	return state;
+};
 
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -73,6 +50,7 @@ export function requesting( state = {}, action ) {
 			};
 		case INLINE_HELP_SEARCH_REQUEST_SUCCESS:
 		case INLINE_HELP_SEARCH_REQUEST_FAILURE:
+		case INLINE_HELP_SEARCH_RESET:
 			return {
 				...state,
 				[ action.searchQuery ]: false,
@@ -82,82 +60,90 @@ export function requesting( state = {}, action ) {
 	return state;
 }
 
-export const search = createReducer(
-	{
+export const search = (
+	state = {
 		searchQuery: '',
 		items: {},
 		selectedResult: -1,
 		shouldOpenSelectedResult: false,
+		hasAPIResults: false,
 	},
-	{
-		[ INLINE_HELP_SEARCH_REQUEST ]: ( state, action ) => ( {
-			...state,
-			searchQuery: action.searchQuery,
-		} ),
-		[ INLINE_HELP_SEARCH_REQUEST_SUCCESS ]: ( state, action ) => ( {
-			...state,
-			selectedResult: -1,
-			items: {
-				...state.items,
-				[ action.searchQuery ]: action.searchResults,
-			},
-		} ),
-		[ INLINE_HELP_SELECT_RESULT ]: ( state, action ) => ( {
-			...state,
-			selectedResult: action.resultIndex,
-		} ),
-		[ INLINE_HELP_SELECT_NEXT_RESULT ]: state => {
-			if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
-				return {
-					...state,
-					selectedResult: ( state.selectedResult + 1 ) % state.items[ state.searchQuery ].length,
-				};
-			}
-
+	action
+) => {
+	switch ( action.type ) {
+		case INLINE_HELP_SEARCH_RESET:
+			return {
+				searchQuery: '',
+				items: {
+					...state.items,
+					'': action.searchResults,
+				},
+				selectedResult: -1,
+				hasAPIResults: false,
+			};
+		case INLINE_HELP_SET_SEARCH_QUERY:
+			return {
+				...state,
+				searchQuery: action.searchQuery,
+			};
+		case INLINE_HELP_SEARCH_REQUEST:
+			return {
+				...state,
+				searchQuery: action.searchQuery,
+			};
+		case INLINE_HELP_SEARCH_REQUEST_SUCCESS:
 			return {
 				...state,
 				selectedResult: -1,
+				items: {
+					...state.items,
+					[ action.searchQuery ]: action.searchResults,
+				},
 			};
-		},
-		[ INLINE_HELP_SELECT_PREVIOUS_RESULT ]: state => {
-			if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
-				const newResult = ( state.selectedResult - 1 ) % state.items[ state.searchQuery ].length;
-				return {
-					...state,
-					selectedResult: newResult < 0 ? state.items[ state.searchQuery ].length - 1 : newResult,
-				};
-			}
-
+		case INLINE_HELP_SEARCH_REQUEST_API_RESULTS:
 			return {
 				...state,
-				selectedResult: -1,
+				hasAPIResults: action.hasAPIResults,
 			};
-		},
+		case INLINE_HELP_SELECT_RESULT:
+			return {
+				...state,
+				selectedResult: action.resultIndex,
+			};
 	}
-);
+
+	return state;
+};
 
 const searchResults = combineReducers( { requesting, search } );
 
-export const contactForm = createReducer(
-	{
+export const contactForm = (
+	state = {
 		isShowingQandASuggestions: false,
 	},
-	{
-		[ INLINE_HELP_CONTACT_FORM_RESET ]: state => ( {
-			...state,
-			isShowingQandASuggestions: false,
-		} ),
-		[ INLINE_HELP_CONTACT_FORM_SHOW_QANDA ]: state => ( {
-			...state,
-			isShowingQandASuggestions: true,
-		} ),
+	action
+) => {
+	switch ( action.type ) {
+		case INLINE_HELP_CONTACT_FORM_RESET:
+			return {
+				...state,
+				isShowingQandASuggestions: false,
+			};
+		case INLINE_HELP_CONTACT_FORM_SHOW_QANDA:
+			return {
+				...state,
+				isShowingQandASuggestions: true,
+			};
 	}
-);
 
-export default combineReducers( {
+	return state;
+};
+
+const combinedReducer = combineReducers( {
+	ui,
 	popover,
-	checklistPrompt,
-	onboardingWelcomePrompt,
 	contactForm,
 	searchResults,
 } );
+
+export default withStorageKey( 'inlineHelp', combinedReducer );

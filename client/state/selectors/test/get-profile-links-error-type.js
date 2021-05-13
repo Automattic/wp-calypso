@@ -1,8 +1,7 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import getProfileLinksErrorType from 'state/selectors/get-profile-links-error-type';
+import getProfileLinksErrorType from 'calypso/state/selectors/get-profile-links-error-type';
 
 describe( 'getProfileLinksErrorType()', () => {
 	const profileLinks = [

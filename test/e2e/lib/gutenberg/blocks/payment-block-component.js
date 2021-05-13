@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,10 +10,6 @@ import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 export default class SimplePaymentsBlockComponent extends GutenbergBlockComponent {
-	constructor( driver, blockID ) {
-		super( driver, blockID );
-	}
-
 	async insertPaymentButtonDetails( {
 		title = 'Button',
 		description = 'Description',
@@ -24,7 +18,7 @@ export default class SimplePaymentsBlockComponent extends GutenbergBlockComponen
 		allowQuantity = true,
 		email = 'test@wordpress.com',
 	} = {} ) {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.wp-block-jetpack-simple-payments' )
 		);
@@ -63,7 +57,7 @@ export default class SimplePaymentsBlockComponent extends GutenbergBlockComponen
 	}
 
 	async ensurePaymentButtonDisplayedInEditor() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.jetpack-simple-payments-button' )
 		);

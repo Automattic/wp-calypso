@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,6 +7,7 @@ import { By } from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
+import SectionNavComponent from '../components/section-nav-component';
 import * as driverHelper from '../driver-helper';
 
 export default class MyPlanPage extends AsyncBaseContainer {
@@ -17,14 +16,18 @@ export default class MyPlanPage extends AsyncBaseContainer {
 	}
 
 	async openPlansTab() {
-		await driverHelper.ensureMobileMenuOpen( this.driver );
-		const selector = By.css(
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		await sectionNav.ensureMobileMenuOpen();
+		const locator = By.css(
 			'.current-plan a[href*="plans"]:not([href*="my-plan"]).section-nav-tab__link'
 		);
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
-	async isPremium() {
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, By.css( 'img.is-premium-plan' ) );
+	async isSecurityPlan() {
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			By.css( '[data-e2e-product-slug="jetpack_security_daily"]' )
+		);
 	}
 }

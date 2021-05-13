@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -8,42 +7,40 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { EditGravatar } from 'calypso/blocks/edit-gravatar';
+import FilePicker from 'calypso/components/file-picker';
+import Gravatar from 'calypso/components/gravatar';
+import ImageEditor from 'calypso/blocks/image-editor';
+import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
+import DropZone from 'calypso/components/drop-zone';
 
 jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
-jest.mock( 'lib/oauth-token', () => ( {
+jest.mock( 'calypso/lib/oauth-token', () => ( {
 	getToken: () => 'bearerToken',
 } ) );
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
+
+const noop = () => {};
 
 describe( 'EditGravatar', () => {
-	let EditGravatar, FilePicker, Gravatar, ImageEditor, VerifyEmailDialog, DropZone, sandbox;
+	let sandbox;
 	const user = {
 		email_verified: false,
 	};
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		global.URL = {
 			revokeObjectURL: sandbox.stub(),
 			createObjectURL: sandbox.stub(),
 		};
-	} );
-
-	beforeAll( function() {
-		EditGravatar = require( 'blocks/edit-gravatar' ).EditGravatar;
-		FilePicker = require( 'components/file-picker' );
-		Gravatar = require( 'components/gravatar' ).default;
-		ImageEditor = require( 'blocks/image-editor' );
-		VerifyEmailDialog = require( 'components/email-verification/email-verification-dialog' );
-		DropZone = require( 'components/drop-zone' ).default;
 	} );
 
 	describe( 'component rendering', () => {

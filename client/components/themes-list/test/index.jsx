@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -8,15 +7,16 @@
  */
 import React from 'react';
 import deepFreeze from 'deep-freeze';
-import { identity, noop } from 'lodash';
 import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import Theme from 'components/theme';
+import EmptyContent from 'calypso/components/empty-content';
+import Theme from 'calypso/components/theme';
 import { ThemesList } from '../';
+
+const noop = () => {};
 
 const defaultProps = deepFreeze( {
 	themes: [
@@ -36,7 +36,7 @@ const defaultProps = deepFreeze( {
 	fetchNextPage: noop,
 	getButtonOptions: noop,
 	onScreenshotClick: noop,
-	translate: identity,
+	translate: ( string ) => string,
 } );
 
 describe( 'ThemesList', () => {

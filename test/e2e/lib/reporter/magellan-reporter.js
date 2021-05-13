@@ -1,5 +1,3 @@
-/** @format */
-
 const BaseReporter = require( 'testarmada-magellan' ).Reporter;
 const util = require( 'util' );
 
@@ -10,11 +8,11 @@ const fs = require( 'fs-extra' );
 const XunitViewerParser = require( 'xunit-viewer/parser' );
 const pngitxt = require( 'png-itxt' );
 
-const Reporter = function() {};
+const Reporter = function () {};
 
 util.inherits( Reporter, BaseReporter );
 
-Reporter.prototype.listenTo = function( testRun, test, source ) {
+Reporter.prototype.listenTo = function ( testRun, test, source ) {
 	// Print STDOUT/ERR to the screen for extra debugging
 	if ( process.env.MAGELLANDEBUG ) {
 		source.stdout.pipe( process.stdout );
@@ -36,10 +34,10 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 	fs.mkdir( finalScreenshotDir, () => {} );
 	fs.mkdir( './reports', () => {} );
 
-	// Only enable Slack messages on the master branch
+	// Only enable Slack messages on the trunk branch
 	const slackClient = getSlackClient();
 
-	source.on( 'message', msg => {
+	source.on( 'message', ( msg ) => {
 		if ( msg.type === 'worker-status' ) {
 			const passCondition = msg.passed;
 			const failCondition =
@@ -61,12 +59,12 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 					if ( dirErr ) return 1;
 
 					files
-						.filter( file => file.match( /png$/i ) )
-						.forEach( screenshotPath => {
-							// Send screenshot to Slack on master branch only
+						.filter( ( file ) => file.match( /png$/i ) )
+						.forEach( ( screenshotPath ) => {
+							// Send screenshot to Slack on trunk branch only
 							if (
 								config.has( 'slackTokenForScreenshots' ) &&
-								process.env.CIRCLE_BRANCH === 'master' &&
+								process.env.CIRCLE_BRANCH === 'trunk' &&
 								! process.env.LIVEBRANCHES
 							) {
 								const SlackUpload = require( 'node-slack-upload' );
@@ -75,7 +73,7 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 
 								try {
 									fs.createReadStream( `${ screenshotDir }/${ screenshotPath }` ).pipe(
-										pngitxt.get( 'url', url => {
+										pngitxt.get( 'url', ( url ) => {
 											slackUpload.uploadFile(
 												{
 													file: fs.createReadStream( `${ screenshotDir }/${ screenshotPath }` ),
@@ -83,18 +81,12 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 													initialComment: url,
 													channels: slackChannel,
 												},
-												err => {
+												( err ) => {
 													if ( ! err ) return;
 
 													slackClient.send( {
 														icon_emoji: ':a8c:',
-														text: `Build <https://circleci.com/gh/${
-															process.env.CIRCLE_PROJECT_USERNAME
-														}/${ process.env.CIRCLE_PROJECT_REPONAME }/${
-															process.env.CIRCLE_BUILD_NUM
-														}|#${
-															process.env.CIRCLE_BUILD_NUM
-														}> Upload to slack failed: '${ err }'`,
+														text: `Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${ process.env.CIRCLE_BUILD_NUM }> Upload to slack failed: '${ err }'`,
 														username: 'e2e Test Runner',
 													} );
 												}
@@ -118,15 +110,14 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 				if ( test.attempts > 0 ) {
 					slackClient.send( {
 						icon_emoji: ':a8c:',
-						text: `FYI - The following test failed, retried, and passed: (${
-							process.env.BROWSERSIZE
-						}) ${ testObject.title } - Build <https://circleci.com/gh/${
-							process.env.CIRCLE_PROJECT_USERNAME
-						}/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${
-							process.env.CIRCLE_BUILD_NUM
-						}>`,
+						text: `FYI - The following test failed, retried, and passed: (${ process.env.BROWSERSIZE }) ${ testObject.title } - Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${ process.env.CIRCLE_BUILD_NUM }>`,
 						username: 'e2e Test Runner',
 					} );
+				}
+
+				// Print skipped tests
+				if ( test.locator.pending === true ) {
+					console.log( '\x1b[35m', 'TEST SKIPPED: ' + test.locator.name );
 				}
 
 				// Reports
@@ -134,8 +125,8 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 					if ( dirErr ) return 1;
 
 					reportFiles
-						.filter( file => file.match( /xml$/i ) )
-						.forEach( reportPath =>
+						.filter( ( file ) => file.match( /xml$/i ) )
+						.forEach( ( reportPath ) =>
 							copyReports( slackClient, reportDir, reportPath, testRun.guid )
 						);
 				} );
@@ -145,8 +136,8 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 					if ( dirErr ) return 1;
 
 					screenshotFiles
-						.filter( file => file.match( /png$/i ) )
-						.forEach( screenshotFile =>
+						.filter( ( file ) => file.match( /png$/i ) )
+						.forEach( ( screenshotFile ) =>
 							copyScreenshots( slackClient, screenshotDir, screenshotFile, finalScreenshotDir )
 						);
 				} );
@@ -177,17 +168,13 @@ function copyReports( slackClient, reportDir, reportPath, guid ) {
 		fs.copyFile(
 			`${ reportDir }/${ reportPath }`,
 			`./reports/${ guid }_${ reportPath }`,
-			moveErr => {
+			( moveErr ) => {
 				if ( ! moveErr ) {
 					return;
 				}
 				slackClient.send( {
 					icon_emoji: ':a8c:',
-					text: `Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${
-						process.env.CIRCLE_PROJECT_REPONAME
-					}/${ process.env.CIRCLE_BUILD_NUM }|#${
-						process.env.CIRCLE_BUILD_NUM
-					}> Moving file to /reports failed: '${ moveErr }'`,
+					text: `Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${ process.env.CIRCLE_BUILD_NUM }> Moving file to /reports failed: '${ moveErr }'`,
 					username: 'e2e Test Runner',
 				} );
 			}
@@ -200,17 +187,13 @@ function copyReports( slackClient, reportDir, reportPath, guid ) {
 // Move to /screenshots for CircleCI artifacts
 function copyScreenshots( slackClient, dir, path, finalScreenshotDir ) {
 	try {
-		fs.copyFile( `${ dir }/${ path }`, `${ finalScreenshotDir }/${ path }`, moveErr => {
+		fs.copyFile( `${ dir }/${ path }`, `${ finalScreenshotDir }/${ path }`, ( moveErr ) => {
 			if ( ! moveErr ) {
 				return;
 			}
 			slackClient.send( {
 				icon_emoji: ':a8c:',
-				text: `Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${
-					process.env.CIRCLE_PROJECT_REPONAME
-				}/${ process.env.CIRCLE_BUILD_NUM }|#${
-					process.env.CIRCLE_BUILD_NUM
-				}> Moving file to screenshots directory failed: '${ moveErr }'`,
+				text: `Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${ process.env.CIRCLE_BUILD_NUM }> Moving file to screenshots directory failed: '${ moveErr }'`,
 				username: 'e2e Test Runner',
 			} );
 		} );
@@ -219,9 +202,9 @@ function copyScreenshots( slackClient, dir, path, finalScreenshotDir ) {
 	}
 }
 
-// Only enable Slack messages on the master branch & not for live branches
+// Only enable Slack messages on the trunk branch & not for live branches
 function getSlackClient() {
-	if ( process.env.CIRCLE_BRANCH === 'master' && ! process.env.LIVEBRANCHES ) {
+	if ( process.env.CIRCLE_BRANCH === 'trunk' && ! process.env.LIVEBRANCHES ) {
 		const slackHook = configGet( 'slackHook' );
 		return slack( slackHook );
 	}
@@ -237,14 +220,14 @@ function sendFailureNotif( slackClient, reportDir, testRun ) {
 		console.log( `Failed to read directory, maybe it doesn't exist: ${ e.message }` );
 		return;
 	}
-	files.forEach( reportPath => {
+	files.forEach( ( reportPath ) => {
 		if ( ! reportPath.match( /xml$/i ) ) {
 			return;
 		}
 		try {
 			const xmlString = fs.readFileSync( `${ reportDir }/${ reportPath }`, 'utf-8' );
 			const xmlData = XunitViewerParser.parse( xmlString );
-			failuresCount += xmlData[ 0 ].tests.filter( t => t.status === 'fail' ).length;
+			failuresCount += xmlData[ 0 ].tests.filter( ( t ) => t.status === 'fail' ).length;
 		} catch ( e ) {
 			console.log( `Error reading report file, likely just timing race: ${ e.message }` );
 		}
@@ -264,11 +247,7 @@ function sendFailureNotif( slackClient, reportDir, testRun ) {
 
 	slackClient.send( {
 		icon_emoji: ':a8c:',
-		text: `<!subteam^S0G7K98MB|flow-patrol-squad-team> Test Run Failed - Build <https://circleci.com/gh/${
-			process.env.CIRCLE_PROJECT_USERNAME
-		}/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${
-			process.env.CIRCLE_BUILD_NUM
-		}>`,
+		text: `<!subteam^S0G7K98MB|flow-patrol-squad-team> Test Run Failed - Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${ process.env.CIRCLE_BUILD_NUM }>`,
 		fields: fieldsObj,
 		username: 'e2e Test Runner',
 	} );

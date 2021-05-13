@@ -1,5 +1,3 @@
-<!-- @format -->
-
 # Segmented Control
 
 Segmented Control manipulates the content shown following an exclusive or “either/or” pattern.
@@ -16,8 +14,7 @@ A good example for this case is navigation. Sometimes the option that is selecte
 
 ```jsx
 import React from 'react';
-import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
+import SegmentedControl from 'calypso/components/segmented-control';
 
 export default class extends React.Component {
 	// ...
@@ -25,54 +22,53 @@ export default class extends React.Component {
 	render() {
 		return (
 			<SegmentedControl>
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ this.state.selected === 'all' }
 					onClick={ this.handleFilterClick( 'all' ) }
 				>
 					All
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ this.state.selected === 'unread' }
 					onClick={ this.handleFilterClick( 'unread' ) }
 				>
 					Unread
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ this.state.selected === 'comments' }
 					onClick={ this.handleFilterClick( 'comments' ) }
 				>
 					Comments
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ this.state.selected === 'follows' }
 					onClick={ this.handleFilterClick( 'follows' ) }
 				>
 					Follows
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 
-				<SegmentedControlItem
+				<SegmentedControl.Item
 					selected={ this.state.selected === 'likes' }
 					onClick={ this.handleFilterClick( 'likes' ) }
 				>
 					Likes
-				</SegmentedControlItem>
+				</SegmentedControl.Item>
 			</SegmentedControl>
 		);
-	},
+	}
 
-	handleFilterClick: function( value ) {
-		return function() {
-
+	handleFilterClick( value ) {
+		return () => {
 			// ... (track analytics, add to state, etc.)
 
 			this.setState( {
-				selected: value
+				selected: value,
 				// ...
 			} );
-		}.bind( this );
+		};
 	}
 }
 ```
@@ -108,14 +104,14 @@ A good example for this case is a form element. You don't want to have to write 
 
 ```jsx
 import React from 'react';
-import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
+import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 
-var options = [
+const options = [
 	{ value: 'all', label: 'All' },
 	{ value: 'unread', label: 'Unread' },
 	{ value: 'comments', label: 'Comments' },
 	{ value: 'follows', label: 'Follows' },
-	{ value: 'likes', label: 'Likes' }
+	{ value: 'likes', label: 'Likes' },
 ];
 
 export default class extends React.Component {
@@ -123,13 +119,11 @@ export default class extends React.Component {
 
 	handleOnSelect = ( option ) => {
 		console.log( 'selected option:', option ); // full object of selected option
-	}
+	};
 
 	render() {
-		return (
-			<SimplifiedSegmentedControl options={ options } onSelect={ this.handleOnSelect } />
-		);
-	},
+		return <SimplifiedSegmentedControl options={ options } onSelect={ this.handleOnSelect } />;
+	}
 }
 ```
 
@@ -146,11 +140,11 @@ Note that all the "selection" logic will be applied in `SimplifiedSegmentedContr
 ##### `options` prop example
 
 ```js
-var options = [
+const options = [
 	{
-		value: // *required* - (string) tracked by component
-		label: // *required* - (string) displayed to user
-		path: // optional - (string) URL to navigate when clicked
+		value: 'the value', // *required* - (string) tracked by component
+		label: 'the label', // *required* - (string) displayed to user
+		path: 'a path', // optional - (string) URL to navigate when clicked
 	},
 	// ...
 ];

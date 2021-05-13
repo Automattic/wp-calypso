@@ -16,7 +16,7 @@
 
 .clone-cloning__description {
 	color: var( --color-text-subtle );
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 .clone-cloning__button {
 	margin-top: 24px;
@@ -47,9 +47,9 @@
 		fill: var( --color-primary-light );
 	}
 	50% {
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 	}
 	100% {
-		fill: var( --color-white );
+		fill: var( --color-text-inverted );
 	}
 }

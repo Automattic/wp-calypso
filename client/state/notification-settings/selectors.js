@@ -1,8 +1,12 @@
-/** @format */
 /**
  * External dependencies
  */
 import { get, isEqual } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/notification-settings/init';
 
 export const getNotificationSettings = ( state, source ) =>
 	get( state, [ 'notificationSettings', 'settings', 'dirty', source ] );

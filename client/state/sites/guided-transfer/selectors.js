@@ -1,4 +1,6 @@
-/** @format */
+/**
+ * External dependencies
+ */
 import { find, matches, some } from 'lodash';
 
 export function getGuidedTransferError( state, siteId ) {
@@ -22,9 +24,9 @@ export function isGuidedTransferInProgress( state, siteId ) {
  * Returns true if the user has initiated a guided transfer, but
  * we're still waiting for them to purchase the GT
  *
- * @param {Object} state The Redux state object
+ * @param {object} state The Redux state object
  * @param {number} siteId The siteId to check
- * @return {bool} true if guided transfer is awaiting purchase
+ * @returns {bool} true if guided transfer is awaiting purchase
  */
 export function isGuidedTransferAwaitingPurchase( state, siteId ) {
 	const status = state.sites.guidedTransfer.status[ siteId ];
@@ -59,7 +61,7 @@ export function isEligibleForGuidedTransfer( state, siteId ) {
 		return false;
 	}
 
-	return ! some( issues, issue => issue.prevents_transfer );
+	return ! some( issues, ( issue ) => issue.prevents_transfer );
 }
 
 export function getGuidedTransferIssue( state, siteId, options = {} ) {
@@ -89,7 +91,7 @@ export function isGuidedTransferAvailableForAllSites( state, siteId ) {
 		return false;
 	}
 
-	return ! some( issues, issue => {
+	return ! some( issues, ( issue ) => {
 		return issue.reason === 'unavailable' || issue.reason === 'vacation';
 	} );
 }

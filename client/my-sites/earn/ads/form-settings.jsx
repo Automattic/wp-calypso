@@ -1,38 +1,38 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import notices from 'notices';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
+import { flowRight as compose, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import StateSelector from 'components/forms/us-state-selector';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormRadio from 'components/forms/form-radio';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import WordadsActions from 'lib/ads/actions';
-import SectionHeader from 'components/section-header';
-import SettingsStore from 'lib/ads/settings-store';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { dismissWordAdsSuccess } from 'state/wordads/approve/actions';
-import { protectForm } from 'lib/protect-form';
+import { Button, Card } from '@automattic/components';
+import StateSelector from 'calypso/components/forms/us-state-selector';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import isSavingWordadsSettings from 'calypso/state/selectors/is-saving-wordads-settings';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
+import SectionHeader from 'calypso/components/section-header';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getWordadsSettings } from 'calypso/state/selectors/get-wordads-settings';
+import { isJetpackSite, getCustomizerUrl, getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { dismissWordAdsSuccess } from 'calypso/state/wordads/approve/actions';
+import { protectForm } from 'calypso/lib/protect-form';
+import { saveWordadsSettings } from 'calypso/state/wordads/settings/actions';
+import SupportInfo from 'calypso/components/support-info';
 
 class AdsFormSettings extends Component {
 	static propTypes = {
@@ -41,60 +41,18 @@ class AdsFormSettings extends Component {
 		markSaved: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
+	state = {};
 
-		let store = this.getSettingsFromStore();
-		if ( ! store.tos ) {
-			store = this.defaultSettings();
-		}
-
-		this.state = store;
-	}
-
-	componentWillMount() {
-		SettingsStore.on( 'change', this.updateSettings );
-		this.fetchIfEmpty();
-	}
-
-	componentWillUnmount() {
-		SettingsStore.removeListener( 'change', this.updateSettings );
-		SettingsStore.clearNotices();
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		const { site } = this.props;
-		if ( ! nextProps || ! nextProps.site || ! nextProps.site.ID ) {
-			return;
-		}
-
-		if ( ! SettingsStore.settingsLoaded( nextProps.site.ID ) ) {
-			this.setState( this.defaultSettings() );
-		}
-
-		if ( site.ID !== nextProps.site.ID ) {
-			this.fetchIfEmpty( nextProps.site );
-			this.setState( this.getSettingsFromStore( nextProps.site ) );
+	UNSAFE_componentWillReceiveProps( { wordadsSettings } ) {
+		if ( isEmpty( this.state ) && wordadsSettings ) {
+			this.setState( {
+				...this.defaultSettings(),
+				...wordadsSettings,
+			} );
 		}
 	}
 
-	updateSettings = () => {
-		const settings = this.getSettingsFromStore();
-		const { site } = this.props;
-		this.setState( settings );
-
-		// set/clear any notices on update
-		site && this.props.dismissWordAdsSuccess( site.ID );
-		if ( settings.error && settings.error.message ) {
-			notices.error( settings.error.message );
-		} else if ( settings.notice ) {
-			notices.success( settings.notice );
-		} else {
-			notices.clearNotices( 'notices' );
-		}
-	};
-
-	handleChange = event => {
+	handleChange = ( event ) => {
 		const name = event.currentTarget.name;
 		const value = event.currentTarget.value;
 
@@ -103,7 +61,7 @@ class AdsFormSettings extends Component {
 		} );
 	};
 
-	handleToggle = event => {
+	handleToggle = ( event ) => {
 		const name = event.currentTarget.name;
 
 		this.setState( {
@@ -111,13 +69,19 @@ class AdsFormSettings extends Component {
 		} );
 	};
 
-	handleDisplayToggle = name => () => {
-		this.setState( prevState => ( {
+	handleDisplayToggle = ( name ) => () => {
+		this.setState( ( prevState ) => ( {
 			display_options: {
 				...prevState.display_options,
 				[ name ]: ! this.state.display_options[ name ],
 			},
 		} ) );
+	};
+
+	handleCompactToggle = ( name ) => () => {
+		this.setState( {
+			[ name ]: ! this.state[ name ],
+		} );
 	};
 
 	handleResidentCheckbox = () => {
@@ -129,30 +93,14 @@ class AdsFormSettings extends Component {
 		} );
 	};
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		const { site } = this.props;
 		event.preventDefault();
 
-		WordadsActions.updateSettings( site, this.packageState() );
-		this.setState( {
-			notice: null,
-			error: null,
-		} );
+		this.props.saveWordadsSettings( site.ID, this.packageState() );
+
 		this.props.markSaved();
 	};
-
-	getSettingsFromStore( siteInstance ) {
-		const site = siteInstance || this.props.site,
-			store = SettingsStore.getById( site.ID );
-
-		store.us_checked = 'yes' === store.us_resident;
-		if ( this.props.siteIsJetpack ) {
-			// JP doesn't matter, force yes to make things easier
-			store.show_to_logged_in = 'yes';
-		}
-
-		return store;
-	}
 
 	defaultSettings() {
 		return {
@@ -171,10 +119,8 @@ class AdsFormSettings extends Component {
 			who_owns: 'person',
 			zip: '',
 			display_options: {},
-			isLoading: false,
-			isSubmitting: false,
-			error: {},
-			notice: null,
+			ccpa_enabled: false,
+			ccpa_privacy_policy_url: '',
 		};
 	}
 
@@ -194,23 +140,19 @@ class AdsFormSettings extends Component {
 			who_owns: this.state.who_owns,
 			zip: this.state.zip,
 			display_options: this.state.display_options,
+			ccpa_enabled: this.state.ccpa_enabled,
+			ccpa_privacy_policy_url: this.state.ccpa_privacy_policy_url,
 		};
 	}
 
-	fetchIfEmpty( site ) {
-		site = site || this.props.site;
-		if ( ! site || ! site.ID ) {
-			return;
-		}
+	jetpackPlacementControls() {
+		const { translate, siteAdminUrl } = this.props;
 
-		if ( SettingsStore.settingsLoaded( site.ID ) ) {
-			return;
-		}
-
-		// defer fetch requests to avoid dispatcher conflicts
-		setTimeout( function() {
-			WordadsActions.fetchSettings( site );
-		}, 0 );
+		return (
+			<Card href={ `${ siteAdminUrl }admin.php?page=jetpack#/traffic` }>
+				{ translate( 'Manage ad placements' ) }
+			</Card>
+		);
 	}
 
 	showAdsToOptions() {
@@ -225,9 +167,9 @@ class AdsFormSettings extends Component {
 						value="yes"
 						checked={ 'yes' === this.state.show_to_logged_in }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
+						label={ translate( 'Run ads for all users' ) }
 					/>
-					<span>{ translate( 'Run ads for all users' ) }</span>
 				</FormLabel>
 
 				<FormLabel>
@@ -236,9 +178,9 @@ class AdsFormSettings extends Component {
 						value="no"
 						checked={ 'no' === this.state.show_to_logged_in }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
+						label={ translate( 'Run ads only for logged-out users (less revenue)' ) }
 					/>
-					<span>{ translate( 'Run ads only for logged-out users (less revenue)' ) }</span>
 				</FormLabel>
 
 				<FormLabel>
@@ -247,9 +189,9 @@ class AdsFormSettings extends Component {
 						value="pause"
 						checked={ 'pause' === this.state.show_to_logged_in }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
+						label={ translate( 'Pause ads (no revenue)' ) }
 					/>
-					<span>{ translate( 'Pause ads (no revenue)' ) }</span>
 				</FormLabel>
 			</FormFieldset>
 		);
@@ -266,7 +208,7 @@ class AdsFormSettings extends Component {
 						name="optimized_ads"
 						checked={ !! this.state.optimized_ads }
 						onChange={ this.handleToggle }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 					<span>
 						{ translate( 'Show optimized ads. ' ) }
@@ -286,58 +228,58 @@ class AdsFormSettings extends Component {
 			<div>
 				<FormFieldset className="ads__settings-display-toggles">
 					<FormLegend>{ translate( 'Display ads below posts on' ) }</FormLegend>
-					<CompactFormToggle
-						checked={ !! this.state.display_options.display_front_page }
-						disabled={ this.state.isLoading }
+					<FormToggle
+						checked={ !! this.state.display_options?.display_front_page }
+						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_front_page' ) }
 					>
 						{ translate( 'Front page' ) }
-					</CompactFormToggle>
-					<CompactFormToggle
-						checked={ !! this.state.display_options.display_post }
-						disabled={ this.state.isLoading }
+					</FormToggle>
+					<FormToggle
+						checked={ !! this.state.display_options?.display_post }
+						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_post' ) }
 					>
 						{ translate( 'Posts' ) }
-					</CompactFormToggle>
-					<CompactFormToggle
-						checked={ !! this.state.display_options.display_page }
-						disabled={ this.state.isLoading }
+					</FormToggle>
+					<FormToggle
+						checked={ !! this.state.display_options?.display_page }
+						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_page' ) }
 					>
 						{ translate( 'Pages' ) }
-					</CompactFormToggle>
-					<CompactFormToggle
-						checked={ !! this.state.display_options.display_archive }
-						disabled={ this.state.isLoading }
+					</FormToggle>
+					<FormToggle
+						checked={ !! this.state.display_options?.display_archive }
+						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_archive' ) }
 					>
 						{ translate( 'Archives' ) }
-					</CompactFormToggle>
+					</FormToggle>
 				</FormFieldset>
 				<FormFieldset className="ads__settings-display-toggles">
 					<FormLegend>{ translate( 'Additional ad placements' ) }</FormLegend>
-					<CompactFormToggle
-						checked={ !! this.state.display_options.enable_header_ad }
-						disabled={ this.state.isLoading }
+					<FormToggle
+						checked={ !! this.state.display_options?.enable_header_ad }
+						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'enable_header_ad' ) }
 					>
 						{ translate( 'Top of each page' ) }
-					</CompactFormToggle>
-					<CompactFormToggle
-						checked={ !! this.state.display_options.second_belowpost }
-						disabled={ this.state.isLoading }
+					</FormToggle>
+					<FormToggle
+						checked={ !! this.state.display_options?.second_belowpost }
+						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'second_belowpost' ) }
 					>
 						{ translate( 'Second ad below post' ) }
-					</CompactFormToggle>
-					<CompactFormToggle
-						checked={ !! this.state.display_options.sidebar }
-						disabled={ this.state.isLoading }
+					</FormToggle>
+					<FormToggle
+						checked={ !! this.state.display_options?.sidebar }
+						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'sidebar' ) }
 					>
 						{ translate( 'Sidebar' ) }
-					</CompactFormToggle>
+					</FormToggle>
 				</FormFieldset>
 			</div>
 		);
@@ -355,7 +297,7 @@ class AdsFormSettings extends Component {
 						id="paypal"
 						value={ this.state.paypal || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 				<FormFieldset>
@@ -365,7 +307,7 @@ class AdsFormSettings extends Component {
 						id="who_owns"
 						value={ this.state.who_owns || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					>
 						<option value="">{ translate( 'Select who owns this site' ) }</option>
 						<option value="person">{ translate( 'An Individual/Sole Proprietor' ) }</option>
@@ -379,8 +321,8 @@ class AdsFormSettings extends Component {
 					<FormLabel>
 						<FormCheckbox
 							name="us_resident"
-							checked={ this.state.us_checked }
-							disabled={ this.state.isLoading }
+							checked={ !! this.state.us_checked }
+							disabled={ this.props.isLoading }
 							onChange={ this.handleResidentCheckbox }
 						/>
 						<span>{ translate( 'US Resident or based in the US' ) }</span>
@@ -410,7 +352,7 @@ class AdsFormSettings extends Component {
 						}
 						value={ this.state.taxid || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 
@@ -423,7 +365,7 @@ class AdsFormSettings extends Component {
 						id="name"
 						value={ this.state.name || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 
@@ -435,7 +377,7 @@ class AdsFormSettings extends Component {
 						placeholder="Address Line 1"
 						value={ this.state.addr1 || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 
@@ -446,7 +388,7 @@ class AdsFormSettings extends Component {
 						placeholder="Address Line 2"
 						value={ this.state.addr2 || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 
@@ -457,7 +399,7 @@ class AdsFormSettings extends Component {
 						id="city"
 						value={ this.state.city || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 
@@ -469,7 +411,7 @@ class AdsFormSettings extends Component {
 						className="ads__settings-state"
 						value={ this.state.state || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 
@@ -480,7 +422,7 @@ class AdsFormSettings extends Component {
 						id="zip"
 						value={ this.state.zip || '' }
 						onChange={ this.handleChange }
-						disabled={ this.state.isLoading }
+						disabled={ this.props.isLoading }
 					/>
 				</FormFieldset>
 			</div>
@@ -497,16 +439,24 @@ class AdsFormSettings extends Component {
 						name="tos"
 						checked={ !! this.state.tos }
 						onChange={ this.handleToggle }
-						disabled={ this.state.isLoading || 'signed' === this.state.tos }
+						disabled={ this.props.isLoading || 'signed' === this.state.tos }
 					/>
 					<span>
 						{ translate(
-							'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}.',
+							'I have read and agree to the {{a}}Automattic Ads Terms of Service{{/a}}. {{br/}}I agree to post only {{b}}family-friendly content{{/b}} and will not purchase non-human traffic.',
 							{
 								components: {
 									a: (
 										<a
 											href="https://wordpress.com/automattic-ads-tos/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+									br: <br />,
+									b: (
+										<a
+											href="https://wordads.co/2012/09/06/wordads-is-for-family-safe-sites/"
 											target="_blank"
 											rel="noopener noreferrer"
 										/>
@@ -520,15 +470,116 @@ class AdsFormSettings extends Component {
 		);
 	}
 
-	render() {
+	privacy() {
 		const { translate } = this.props;
-		const isPending = this.state.isLoading || this.state.isSubmitting;
+
+		return (
+			<div>
+				<FormSectionHeading>{ translate( 'Privacy and Consent' ) }</FormSectionHeading>
+				<FormFieldset>
+					<SupportInfo
+						text={ translate(
+							'Enables a targeted advertising opt-out link for California consumers, as required by the California Consumer Privacy Act (CCPA).'
+						) }
+						link="https://wordpress.com/support/your-wordpress-com-site-and-the-ccpa/"
+					/>
+					<FormToggle
+						checked={ !! this.state.ccpa_enabled }
+						disabled={ this.props.isLoading }
+						onChange={ this.handleCompactToggle( 'ccpa_enabled' ) }
+					>
+						{ translate( 'Enable targeted advertising to California site visitors (CCPA)' ) }
+					</FormToggle>
+
+					<div className="ads__child-settings">
+						<FormSettingExplanation>
+							{ translate(
+								'For more information about the California Consumer Privacy Act (CCPA) and how it pertains to your site, please consult our {{a}}CCPA guide for site owners{{/a}}.',
+								{
+									components: {
+										a: (
+											<a
+												href="https://wordpress.com/support/your-wordpress-com-site-and-the-ccpa/"
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						</FormSettingExplanation>
+					</div>
+				</FormFieldset>
+
+				{ this.state.ccpa_enabled && (
+					<div className="ads__child-settings">
+						<FormFieldset>
+							<FormLabel>{ translate( 'Do Not Sell Link' ) }</FormLabel>
+							<span>
+								{ translate(
+									'CCPA requires that you place a "Do Not Sell My Personal Information" link on every page of your site where targeted advertising will appear. You can use the {{a}}Do Not Sell Link (CCPA) Widget{{/a}}, or the {{code}}[ccpa-do-not-sell-link]{{/code}} shortcode to automatically place this link on your site. Note: the link will always display to logged in administrators regardless of geolocation.',
+									{
+										components: {
+											a: (
+												<a
+													href={ this.props.widgetsUrl }
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+											code: <code />,
+										},
+									}
+								) }
+							</span>
+							<FormSettingExplanation>
+								{ translate( 'Failure to add this link will result in non-compliance with CCPA.' ) }
+							</FormSettingExplanation>
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormLabel htmlFor="ccpa-privacy-policy-url">
+								{ translate( 'Privacy Policy URL' ) }
+							</FormLabel>
+							<FormTextInput
+								name="ccpa_privacy_policy_url"
+								id="ccpa-privacy-policy-url"
+								value={ this.state.ccpa_privacy_policy_url || '' }
+								onChange={ this.handleChange }
+								disabled={ this.props.isLoading }
+								placeholder="https://"
+							/>
+							<FormSettingExplanation>
+								{ translate(
+									'Adds a link to your privacy policy to the bottom of the CCPA notice popup (optional).'
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
+					</div>
+				) }
+			</div>
+		);
+	}
+
+	render() {
+		const { isLoading, site, translate } = this.props;
+
+		const isWordAds = this.props.site.options.wordads;
 
 		return (
 			<Fragment>
+				<QueryWordadsSettings siteId={ site.ID } />
+
+				{ this.props.siteIsJetpack && isWordAds ? this.jetpackPlacementControls() : null }
+
 				<SectionHeader label={ translate( 'Ads Settings' ) }>
-					<Button compact primary onClick={ this.handleSubmit } disabled={ isPending }>
-						{ isPending ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+					<Button
+						compact
+						primary
+						onClick={ this.handleSubmit }
+						disabled={ isLoading || ! isWordAds }
+					>
+						{ isLoading ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 					</Button>
 				</SectionHeader>
 
@@ -541,6 +592,8 @@ class AdsFormSettings extends Component {
 						{ ! this.props.siteIsJetpack ? this.showAdsToOptions() : null }
 
 						{ ! this.props.siteIsJetpack ? this.displayOptions() : null }
+
+						{ ! this.props.siteIsJetpack ? this.privacy() : null }
 
 						<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
 						{ this.siteOwnerOptions() }
@@ -557,11 +610,21 @@ class AdsFormSettings extends Component {
 
 export default compose(
 	connect(
-		state => ( {
-			site: getSelectedSite( state ),
-			siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
-		} ),
-		{ dismissWordAdsSuccess }
+		( state ) => {
+			const siteId = getSelectedSiteId( state );
+			const isSavingSettings = isSavingWordadsSettings( state, siteId );
+			const wordadsSettings = getWordadsSettings( state, siteId );
+
+			return {
+				isLoading: isSavingSettings || ! wordadsSettings,
+				site: getSelectedSite( state ),
+				siteIsJetpack: isJetpackSite( state, siteId ),
+				wordadsSettings,
+				widgetsUrl: getCustomizerUrl( state, siteId, 'widgets' ),
+				siteAdminUrl: getSiteAdminUrl( state, siteId ),
+			};
+		},
+		{ dismissWordAdsSuccess, saveWordadsSettings }
 	),
 	localize,
 	protectForm

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,13 +6,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import Clipboard from 'clipboard';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
+
+const noop = () => {};
 
 function ClipboardButton( { className, text, onCopy = noop, ...rest } ) {
 	const buttonRef = React.useRef();

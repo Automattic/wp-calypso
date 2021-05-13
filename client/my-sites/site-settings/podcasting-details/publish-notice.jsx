@@ -1,18 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getTerm } from 'state/terms/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getTerm } from 'calypso/state/terms/selectors';
 
 function PodcastingPublishNotice( { translate, podcastingCategoryName } ) {
 	let podcastNoticeText;

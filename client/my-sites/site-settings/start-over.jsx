@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,20 +5,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import ActionPanel from 'components/action-panel';
-import ActionPanelTitle from 'components/action-panel/title';
-import ActionPanelBody from 'components/action-panel/body';
-import ActionPanelFigure from 'components/action-panel/figure';
-import ActionPanelFooter from 'components/action-panel/footer';
-import Button from 'components/button';
-import { EMPTY_SITE } from 'lib/url/support';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import HeaderCake from 'calypso/components/header-cake';
+import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelTitle from 'calypso/components/action-panel/title';
+import ActionPanelBody from 'calypso/components/action-panel/body';
+import ActionPanelFigure from 'calypso/components/action-panel/figure';
+import ActionPanelFooter from 'calypso/components/action-panel/footer';
+import { Button } from '@automattic/components';
+import { EMPTY_SITE } from 'calypso/lib/url/support';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const StartOver = ( { translate, selectedSiteSlug } ) => {
 	return (
@@ -34,7 +32,7 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 			<ActionPanel>
 				<ActionPanelBody>
 					<ActionPanelFigure inlineBodyText={ true }>
-						<img src="/calypso/images/wordpress/logo-stars.svg" width="170" height="143" />
+						<img src="/calypso/images/wordpress/logo-stars.svg" alt="" width="170" height="143" />
 					</ActionPanelFigure>
 					<ActionPanelTitle>{ translate( 'Start Over' ) }</ActionPanelTitle>
 					<p>
@@ -60,14 +58,14 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 						className="action-panel__support-button is-external" // eslint-disable-line wpcalypso/jsx-classname-namespace
 						href={ EMPTY_SITE }
 					>
-						{ translate( 'Follow the Steps' ) }
+						{ translate( 'Follow the steps' ) }
 						<Gridicon icon="external" size={ 48 } />
 					</Button>
 					<Button
 						className="action-panel__support-button" // eslint-disable-line wpcalypso/jsx-classname-namespace
 						href="/help/contact"
 					>
-						{ translate( 'Contact Support' ) }
+						{ translate( 'Contact support' ) }
 					</Button>
 				</ActionPanelFooter>
 			</ActionPanel>
@@ -75,6 +73,6 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 	);
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	selectedSiteSlug: getSelectedSiteSlug( state ),
 } ) )( localize( StartOver ) );

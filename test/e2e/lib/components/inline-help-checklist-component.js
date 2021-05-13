@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,7 +19,7 @@ class InlineHelpChecklistComponent extends AsyncBaseContainer {
 	}
 
 	async leaveInlineHelpChecklist() {
-		if ( this.screenSize === 'MOBILE' ) {
+		if ( this.screenSize === 'mobile' ) {
 			await this.driver.switchTo().defaultContent();
 			return await driverHelper.clickWhenClickable(
 				this.driver,

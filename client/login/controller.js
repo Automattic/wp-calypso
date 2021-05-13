@@ -1,56 +1,63 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import page from 'page';
-import { parse } from 'qs';
 import React from 'react';
 import { includes } from 'lodash';
-import { parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
+import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
 import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
-import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
-import { getLanguageSlugs } from 'lib/i18n-utils';
-import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
+import { getUrlParts } from '@automattic/calypso-url';
+import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
+import { getCurrentUser, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
-const enhanceContextWithLogin = context => {
+const enhanceContextWithLogin = ( context ) => {
 	const {
-		params: { flow, isJetpack, socialService, twoFactorAuthType },
+		params: { flow, isJetpack, isGutenboarding, socialService, twoFactorAuthType },
 		path,
 		query,
 	} = context;
 
+	const previousHash = context.state || {};
+	const { client_id, user_email, user_name, id_token, state } = previousHash;
+	const socialServiceResponse = client_id
+		? { client_id, user_email, user_name, id_token, state }
+		: null;
+
 	context.primary = (
 		<WPLogin
 			isJetpack={ isJetpack === 'jetpack' }
+			isGutenboarding={ isGutenboarding === 'new' }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }
-			socialServiceResponse={ context.hash }
+			socialServiceResponse={ socialServiceResponse }
 			socialConnect={ flow === 'social-connect' }
 			privateSite={ flow === 'private-site' }
 			domain={ ( query && query.domain ) || null }
 			fromSite={ ( query && query.site ) || null }
+			signupUrl={ ( query && query.signup_url ) || null }
 		/>
 	);
 };
 
-// Defining this here so it can be used by both ./index.node.js and ./index.web.js
-// We cannot export it from either of those (to import it from the other) because of
-// the way that `server/bundler/loader` expects only a default export and nothing else.
-export const lang = `:lang(${ getLanguageSlugs().join( '|' ) })?`;
-
-export function login( context, next ) {
+export async function login( context, next ) {
 	const {
 		query: { client_id, redirect_to },
 	} = context;
+
+	// Remove id_token from the address bar and push social connect args into the state instead
+	if ( context.hash && context.hash.client_id ) {
+		page.replace( context.path, context.hash );
+
+		return;
+	}
 
 	if ( client_id ) {
 		if ( ! redirect_to ) {
@@ -59,10 +66,9 @@ export function login( context, next ) {
 			return next( error );
 		}
 
-		const parsedRedirectUrl = parseUrl( redirect_to );
-		const redirectQueryString = parse( parsedRedirectUrl.query );
+		const { searchParams: redirectParams } = getUrlParts( redirect_to );
 
-		if ( client_id !== redirectQueryString.client_id ) {
+		if ( client_id !== redirectParams.get( 'client_id' ) ) {
 			const error = new Error(
 				'The `redirect_to` query parameter is invalid with the given `client_id`.'
 			);
@@ -70,19 +76,16 @@ export function login( context, next ) {
 			return next( error );
 		}
 
-		context.store
-			.dispatch( fetchOAuth2ClientData( Number( client_id ) ) )
-			.then( () => {
-				enhanceContextWithLogin( context );
-
-				next();
-			} )
-			.catch( error => next( error ) );
-	} else {
-		enhanceContextWithLogin( context );
-
-		next();
+		try {
+			await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
+		} catch ( error ) {
+			return next( error );
+		}
 	}
+
+	enhanceContextWithLogin( context );
+
+	next();
 }
 
 export function magicLogin( context, next ) {
@@ -91,6 +94,13 @@ export function magicLogin( context, next ) {
 	context.primary = <MagicLogin path={ path } />;
 
 	next();
+}
+
+function getHandleEmailedLinkFormComponent( flow ) {
+	if ( flow === 'jetpack' && config.isEnabled( 'jetpack/magic-link-signup' ) ) {
+		return HandleEmailedLinkFormJetpackConnect;
+	}
+	return HandleEmailedLinkForm;
 }
 
 export function magicLoginUse( context, next ) {
@@ -106,10 +116,14 @@ export function magicLoginUse( context, next ) {
 
 	const previousQuery = context.state || {};
 
-	const { client_id, email, token } = previousQuery;
+	const { client_id, email, redirect_to, token } = previousQuery;
+
+	const flow = includes( redirect_to, 'jetpack/connect' ) ? 'jetpack' : null;
+
+	const PrimaryComponent = getHandleEmailedLinkFormComponent( flow );
 
 	context.primary = (
-		<HandleEmailedLinkForm clientId={ client_id } emailAddress={ email } token={ token } />
+		<PrimaryComponent clientId={ client_id } emailAddress={ email } token={ token } />
 	);
 
 	next();
@@ -147,15 +161,21 @@ export function redirectJetpack( context, next ) {
 	const { isJetpack } = context.params;
 	const { redirect_to } = context.query;
 
+	const isUserComingFromPricingPage =
+		includes( redirect_to, 'source=jetpack-plans' ) ||
+		includes( redirect_to, 'source=jetpack-connect-plans' );
 	/**
-	 * Send arrivals from the jetpack connect process (when site user email matches
-	 * a wpcom account) to the jetpack branded login.
+	 * Send arrivals from the jetpack connect process or jetpack's pricing page
+	 * (when site user email matches a wpcom account) to the jetpack branded login.
 	 *
 	 * A direct redirect to /log-in/jetpack is not currently done at jetpack.wordpress.com
 	 * because the iOS app relies on seeing a request to /log-in$ to show its
 	 * native credentials form.
 	 */
-	if ( isJetpack !== 'jetpack' && includes( redirect_to, 'jetpack/connect' ) ) {
+	if (
+		isJetpack !== 'jetpack' &&
+		( includes( redirect_to, 'jetpack/connect' ) || isUserComingFromPricingPage )
+	) {
 		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
 	}
 	next();

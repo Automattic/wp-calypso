@@ -1,26 +1,20 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 
 /**
- * Module variables
+ * Internal dependencies
  */
+import FormLabel from 'calypso/components/forms/form-label';
 
-/**
- * Prevents the event from bubbling up the DOM tree
- * @param {SyntheticEvent} event - Browser's native event wrapper
- * @return {void}
- */
-const stopPropagation = event => event.stopPropagation();
+// Prevents the event from bubbling up the DOM tree
+const stopPropagation = ( event ) => event.stopPropagation();
 
-export default function SelectDropdownLabel( props ) {
+export default function SelectDropdownLabel( { children } ) {
 	return (
-		<li onClick={ stopPropagation } className="select-dropdown__label">
-			<label>{ props.children }</label>
+		<li onClick={ stopPropagation } role="presentation" className="select-dropdown__label">
+			<FormLabel>{ children }</FormLabel>
 		</li>
 	);
 }

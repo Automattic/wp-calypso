@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,21 +5,22 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop, pick } from 'lodash';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import Popover from 'components/popover';
-import PostSchedule from 'components/post-schedule';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import Popover from 'calypso/components/popover';
+import PostSchedule from 'calypso/components/post-schedule';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class CalendarPopover extends Component {
 	static propTypes = {
@@ -35,7 +34,6 @@ class CalendarPopover extends Component {
 		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
 		isVisible: PropTypes.bool,
 		position: PropTypes.string,
-		rootClassName: PropTypes.string,
 		showDelay: PropTypes.number,
 		onClose: PropTypes.func,
 		onShow: PropTypes.func,
@@ -57,35 +55,28 @@ class CalendarPopover extends Component {
 		onDayMouseLeave: noop,
 	};
 
-	state = { date: null };
+	state = {
+		date: this.props.selectedDay || null,
+	};
 
-	componentWillMount() {
-		if ( this.props.selectedDay ) {
-			this.setState( { date: this.props.selectedDay } );
-		}
-	}
-
-	setDate = date => {
+	setDate = ( date ) => {
 		this.setState( { date } );
 		this.props.onDateChange( date );
 	};
 
 	renderScheduler() {
-		const schedulerProps = Object.assign(
-			{},
-			pick( this.props, [
-				'events',
-				'posts',
-				'site',
-				'disabledDays',
-				'showOutsideDays',
-				'modifiers',
-				'onDateChange',
-				'onMonthChange',
-				'onDayMouseEnter',
-				'onDayMouseLeave',
-			] )
-		);
+		const schedulerProps = pick( this.props, [
+			'events',
+			'posts',
+			'site',
+			'disabledDays',
+			'showOutsideDays',
+			'modifiers',
+			'onDateChange',
+			'onMonthChange',
+			'onDayMouseEnter',
+			'onDayMouseLeave',
+		] );
 
 		return (
 			<PostSchedule
@@ -100,28 +91,22 @@ class CalendarPopover extends Component {
 	}
 
 	render() {
-		const popoverProps = Object.assign(
-			{},
-			pick( this.props, [
-				'autoPosition',
-				'closeOnEsc',
-				'context',
-				'ignoreContext',
-				'isVisible',
-				'position',
-				'rootClassName',
-				'showDelay',
-				'onClose',
-				'onShow',
-			] )
-		);
+		const popoverProps = pick( this.props, [
+			'autoPosition',
+			'closeOnEsc',
+			'context',
+			'ignoreContext',
+			'isVisible',
+			'position',
+			'showDelay',
+			'onClose',
+			'onShow',
+		] );
 
 		return (
-			<div className="calendar-popover">
-				<Popover { ...popoverProps } className="calendar-popover__popover">
-					{ this.renderScheduler() }
-				</Popover>
-			</div>
+			<Popover { ...popoverProps } className="calendar-popover__popover">
+				{ this.renderScheduler() }
+			</Popover>
 		);
 	}
 }

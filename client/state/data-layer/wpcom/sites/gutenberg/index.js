@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
-import { has, noop } from 'lodash';
+import { has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,14 +10,18 @@ import {
 	EDITOR_TYPE_REQUEST,
 	EDITOR_TYPE_SET,
 	EDITOR_TYPE_UPDATE,
-	GUTENBERG_OPT_IN_SET,
-} from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { replaceHistory } from 'state/ui/actions';
+	GUTENBERG_IFRAME_ELIGIBLE_SET,
+} from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { replaceHistory } from 'calypso/state/ui/actions';
 
-const fetchGutenbergOptInData = action =>
+import 'calypso/state/gutenberg-iframe-eligible/init';
+
+const noop = () => {};
+
+const fetchGutenbergOptInData = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -30,9 +31,12 @@ const fetchGutenbergOptInData = action =>
 		action
 	);
 
-const setGutenbergOptInData = ( { siteId }, { editor_web: editor, opt_in: optIn } ) => dispatch => {
+const setGutenbergOptInData = (
+	{ siteId },
+	{ editor_web: editor, eligible_gutenframe: isEligibleForGutenframe }
+) => ( dispatch ) => {
 	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
-	dispatch( { type: GUTENBERG_OPT_IN_SET, siteId, optIn } );
+	dispatch( { type: GUTENBERG_IFRAME_ELIGIBLE_SET, siteId, isEligibleForGutenframe } );
 };
 
 const dispatchFetchGutenbergOptInData = dispatchRequest( {
@@ -41,7 +45,7 @@ const dispatchFetchGutenbergOptInData = dispatchRequest( {
 	onError: noop,
 } );
 
-const updateSelectedEditor = action =>
+const updateSelectedEditor = ( action ) =>
 	http(
 		{
 			path: `/sites/${ action.siteId }/gutenberg`,
@@ -56,10 +60,9 @@ const updateSelectedEditor = action =>
 		action
 	);
 
-const setSelectedEditorAndRedirect = (
-	{ siteId, redirectUrl },
-	{ editor_web: editor }
-) => dispatch => {
+const setSelectedEditorAndRedirect = ( { siteId, redirectUrl }, { editor_web: editor } ) => (
+	dispatch
+) => {
 	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
 
 	if ( ! redirectUrl ) {
@@ -68,6 +71,7 @@ const setSelectedEditorAndRedirect = (
 	if ( has( window, 'location.replace' ) && -1 !== redirectUrl.indexOf( 'calypsoify=1' ) ) {
 		return window.location.replace( redirectUrl );
 	}
+
 	dispatch( replaceHistory( redirectUrl ) );
 };
 

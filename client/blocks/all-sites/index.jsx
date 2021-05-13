@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,21 +6,23 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import AllSitesIcon from './all-sites-icon';
-import Count from 'components/count';
-import getSites from 'state/selectors/get-sites';
-import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
+import config from '@automattic/calypso-config';
+import Count from 'calypso/components/count';
+import getSites from 'calypso/state/selectors/get-sites';
+import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class AllSites extends Component {
 	static defaultProps = {
@@ -47,7 +47,7 @@ class AllSites extends Component {
 		onMouseLeave: PropTypes.func,
 	};
 
-	onSelect = event => {
+	onSelect = ( event ) => {
 		this.props.onSelect( event );
 	};
 
@@ -97,8 +97,20 @@ class AllSites extends Component {
 	}
 }
 
+// don't instantiate function in `connect`
+const isSiteVisible = ( { visible = true } ) => visible;
+
 export default connect( ( state, props ) => {
 	// If sites or count are not specified as props, fetch the default values from Redux
-	const { sites = getSites( state ), count = getCurrentUserVisibleSiteCount( state ) } = props;
-	return { sites, count };
+	const {
+		sites = getSites( state ),
+		userSitesCount = getCurrentUserVisibleSiteCount( state ),
+	} = props;
+
+	const visibleSites = sites?.filter( isSiteVisible );
+
+	return {
+		sites: config.isEnabled( 'realtime-site-count' ) ? visibleSites : sites,
+		count: config.isEnabled( 'realtime-site-count' ) ? visibleSites.length : userSitesCount,
+	};
 } )( localize( AllSites ) );

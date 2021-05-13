@@ -1,6 +1,5 @@
-/** @format */
 /**
- * @fileoverview Disallow multiple unnamed placeholders
+ * @file Disallow multiple unnamed placeholders
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -10,9 +9,9 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/i18n-named-placeholders' ),
-	config = { env: { es6: true } }, // support for string templates
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require( '../../../lib/rules/i18n-named-placeholders' );
+const config = { env: { es6: true } }; // support for string templates
+const RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests

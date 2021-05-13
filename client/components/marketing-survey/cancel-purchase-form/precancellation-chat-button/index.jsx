@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -10,10 +9,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import HappychatButton from 'components/happychat/button';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { hasIncludedDomain } from 'lib/purchases';
-import { isDomainRegistration, isPlan } from 'lib/products-values';
+import HappychatButton from 'calypso/components/happychat/button';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { hasIncludedDomain } from 'calypso/lib/purchases';
+import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
 import './style.scss';
 
 class PrecancellationChatButton extends Component {
@@ -56,9 +55,6 @@ class PrecancellationChatButton extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( PrecancellationChatButton ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( PrecancellationChatButton ) );

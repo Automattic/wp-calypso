@@ -1,8 +1,7 @@
-/** @format */
 /**
  * External Dependencies
  */
-import { assign, includes, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
+import { includes, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -13,17 +12,11 @@ import {
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
 	READER_SITE_UPDATE,
-	SERIALIZE,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+} from 'calypso/state/reader/action-types';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { readerSitesSchema } from './schema';
-import { withoutHttp } from 'lib/url';
-import { decodeEntities } from 'lib/formatting';
-
-function handleSerialize( state ) {
-	// remove errors from the serialized state
-	return omitBy( state, 'is_error' );
-}
+import { withoutHttp } from 'calypso/lib/url';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 function handleRequestFailure( state, action ) {
 	// 410 means site moved - site used to be on wpcom but is no longer
@@ -33,13 +26,14 @@ function handleRequestFailure( state, action ) {
 		return state;
 	}
 
-	return assign( {}, state, {
+	return {
+		...state,
 		[ action.payload.ID ]: {
 			ID: action.payload.ID,
 			is_error: true,
 			error: action.error,
 		},
-	} );
+	};
 }
 
 function adaptSite( attributes ) {
@@ -74,21 +68,20 @@ function adaptSite( attributes ) {
 function handleRequestSuccess( state, action ) {
 	const site = adaptSite( action.payload );
 	// TODO do we need to normalize site entries somehow?
-	return assign( {}, state, {
+	return {
+		...state,
 		[ action.payload.ID ]: site,
-	} );
+	};
 }
 
 function handleSiteUpdate( state, action ) {
 	const sites = map( action.payload, adaptSite );
-	return assign( {}, state, keyBy( sites, 'ID' ) );
+	return { ...state, ...keyBy( sites, 'ID' ) };
 }
 
-export const items = createReducer(
-	{},
-	{
-		[ SERIALIZE ]: handleSerialize,
-		[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
+const itemsReducer = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_SITE_BLOCKS_RECEIVE: {
 			if ( ! action.payload || ! action.payload.sites ) {
 				return state;
 			}
@@ -100,20 +93,32 @@ export const items = createReducer(
 				...newBlocks,
 				...state,
 			};
-		},
-		[ READER_SITE_REQUEST_SUCCESS ]: handleRequestSuccess,
-		[ READER_SITE_REQUEST_FAILURE ]: handleRequestFailure,
-		[ READER_SITE_UPDATE ]: handleSiteUpdate,
-	},
-	readerSitesSchema
+		}
+		case READER_SITE_REQUEST_SUCCESS:
+			return handleRequestSuccess( state, action );
+		case READER_SITE_REQUEST_FAILURE:
+			return handleRequestFailure( state, action );
+		case READER_SITE_UPDATE:
+			return handleSiteUpdate( state, action );
+	}
+
+	return state;
+};
+export const items = withSchemaValidation(
+	readerSitesSchema,
+	withPersistence( itemsReducer, {
+		// remove errors from the serialized state
+		serialize: ( state ) => omitBy( state, 'is_error' ),
+	} )
 );
 
 export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_SITE_REQUEST:
-			return assign( {}, state, {
+			return {
+				...state,
 				[ action.payload.ID ]: true,
-			} );
+			};
 		case READER_SITE_REQUEST_SUCCESS:
 		case READER_SITE_REQUEST_FAILURE:
 			return omit( state, action.payload.ID );
@@ -122,14 +127,14 @@ export function queuedRequests( state = {}, action ) {
 	return state;
 }
 
-export const lastFetched = createReducer(
-	{},
-	{
-		[ READER_SITE_REQUEST_SUCCESS ]: ( state, action ) => ( {
-			...state,
-			[ action.payload.ID ]: Date.now(),
-		} ),
-		[ READER_SITE_UPDATE ]: ( state, action ) => {
+export const lastFetched = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_SITE_REQUEST_SUCCESS:
+			return {
+				...state,
+				[ action.payload.ID ]: Date.now(),
+			};
+		case READER_SITE_UPDATE: {
 			const updates = reduce(
 				action.payload,
 				( memo, site ) => {
@@ -138,10 +143,12 @@ export const lastFetched = createReducer(
 				},
 				{}
 			);
-			return assign( {}, state, updates );
-		},
+			return { ...state, ...updates };
+		}
 	}
-);
+
+	return state;
+};
 
 export default combineReducers( {
 	items,

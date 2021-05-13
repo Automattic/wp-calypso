@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -8,7 +7,6 @@
  */
 import React from 'react';
 import { assert } from 'chai';
-import { noop } from 'lodash';
 import { shallow, mount } from 'enzyme';
 
 /**
@@ -16,8 +14,10 @@ import { shallow, mount } from 'enzyme';
  */
 import D3Base from '..';
 
+const noop = () => {};
+
 describe( 'D3base', () => {
-	const shallowWithoutLifecycle = arg => shallow( arg, { disableLifecycleMethods: true } );
+	const shallowWithoutLifecycle = ( arg ) => shallow( arg, { disableLifecycleMethods: true } );
 
 	test( 'should have d3-base CSS class', () => {
 		const base = shallowWithoutLifecycle( <D3Base drawChart={ noop } getParams={ noop } /> );
@@ -34,7 +34,7 @@ describe( 'D3base', () => {
 	} );
 
 	test( 'should render a result of the drawChart prop', () => {
-		const drawChart = svg => {
+		const drawChart = ( svg ) => {
 			return svg.append( 'circle' );
 		};
 

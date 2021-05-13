@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,10 +15,6 @@ export default class DomainFirstPage extends AsyncBaseContainer {
 	}
 
 	async chooseJustBuyTheDomain() {
-		await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			By.css( '.site-or-domain__choices' )
-		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.site-or-domain__choice[data-e2e-type="domain"]' )

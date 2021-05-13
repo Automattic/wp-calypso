@@ -1,0 +1,20 @@
+// =======================
+// Layout
+// =======================
+
+:root {
+	// Masterbar
+	--masterbar-height: 46px;
+
+	// Sidebar size limits
+	--sidebar-width-max: 272px;
+	--sidebar-width-min: 228px;
+}
+
+// =======================
+// Components
+// =======================
+
+// Badge
+$badge-padding-x: 11px;
+$badge-padding-y: 2px;

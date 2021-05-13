@@ -1,5 +1,3 @@
-/** @format */
-
 module.exports = {
 	'i18n-ellipsis': require( './i18n-ellipsis' ),
 	'i18n-mismatched-placeholders': require( './i18n-mismatched-placeholders' ),
@@ -9,9 +7,9 @@ module.exports = {
 	'i18n-no-this-translate': require( './i18n-no-this-translate' ),
 	'i18n-no-variables': require( './i18n-no-variables' ),
 	'import-docblock': require( './import-docblock' ),
-	'import-no-redux-combine-reducers': require( './import-no-redux-combine-reducers' ),
 	'jsx-classname-namespace': require( './jsx-classname-namespace' ),
 	'jsx-gridicon-size': require( './jsx-gridicon-size' ),
 	'post-message-no-wildcard-targets': require( './post-message-no-wildcard-targets' ),
 	'redux-no-bound-selectors': require( './redux-no-bound-selectors' ),
+	'no-unsafe-wp-apis': require( './no-unsafe-wp-apis' ),
 };

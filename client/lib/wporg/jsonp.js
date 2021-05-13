@@ -1,7 +1,6 @@
 /**
  * Simple jsonp module that works with the slightly unconventional api.wordpress.org api. Highly inspired by http:
  *
- * @format
  */
 
 /**
@@ -30,24 +29,22 @@ function noop() {}
 /**
  * JSONP handler
  *
- * @param {String} url
- * @param {Object} query params
+ * @param {string} url
+ * @param {object} query params
  * @param {Function} optional callback
  */
 function jsonp( url, query, fn ) {
-	let prefix = '__jp',
-		timeout = 60000,
-		enc = encodeURIComponent,
-		target = document.getElementsByTagName( 'script' )[ 0 ] || document.head,
-		script,
-		timer,
-		id;
+	const prefix = '__jp';
+	const timeout = 60000;
+	const enc = encodeURIComponent;
+	const target = document.getElementsByTagName( 'script' )[ 0 ] || document.head;
+	let timer;
 
 	// generate a unique id for this request
-	id = prefix + count++;
+	const id = prefix + count++;
 
 	if ( timeout ) {
-		timer = setTimeout( function() {
+		timer = setTimeout( function () {
 			cleanup();
 			if ( fn ) {
 				fn( new Error( 'Timeout' ) );
@@ -72,7 +69,7 @@ function jsonp( url, query, fn ) {
 		}
 	}
 
-	window[ id ] = function( data ) {
+	window[ id ] = function ( data ) {
 		debug( 'jsonp got', data );
 		cleanup();
 		if ( fn ) {
@@ -86,7 +83,7 @@ function jsonp( url, query, fn ) {
 	debug( 'jsonp req "%s"', url );
 
 	// create script
-	script = document.createElement( 'script' );
+	const script = document.createElement( 'script' );
 	script.src = url;
 	target.parentNode.insertBefore( script, target );
 

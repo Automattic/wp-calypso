@@ -1,11 +1,10 @@
-/** @format */
 /**
  * External dependencies
  */
 import percentageFactory from 'percentage-regex';
 
 const percentageRegex = percentageFactory( { exact: true } );
-const isPercentage = val => percentageRegex.test( val );
+const isPercentage = ( val ) => percentageRegex.test( val );
 
 const embedsConfig = {
 	default: {
@@ -72,8 +71,8 @@ const embedsConfig = {
 };
 
 function extractUrlFromIframe( iframeHtml ) {
-	const urlRegex = new RegExp( 'src="([^"]+)"' ),
-		res = urlRegex.exec( iframeHtml );
+	const urlRegex = new RegExp( 'src="([^"]+)"' );
+	const res = urlRegex.exec( iframeHtml );
 
 	return res.length > 1 ? res[ 1 ] : null;
 }

@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
-import { filter, get, isEmpty, isInteger, keyBy, omit } from 'lodash';
+import { filter, get, isEmpty, keyBy, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,15 +16,15 @@ import {
 	POST_REVISIONS_DIFF_SPLIT_VIEW,
 	POST_REVISIONS_DIFF_UNIFY_VIEW,
 	SELECTED_SITE_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import authors from './authors/reducer';
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 
 export function diffs( state = {}, { diffs: diffsFromServer, postId, revisions, siteId, type } ) {
 	if ( type !== POST_REVISIONS_RECEIVE ) {
 		return state;
 	}
-	if ( ! isInteger( siteId ) || siteId <= 0 ) {
+	if ( ! Number.isInteger( siteId ) || siteId <= 0 ) {
 		return state;
 	}
 
@@ -37,11 +35,11 @@ export function diffs( state = {}, { diffs: diffsFromServer, postId, revisions, 
 	};
 
 	const filteredDiffs = filter( diffsFromServer, ( { diff, from, to } ) => {
-		if ( ! isInteger( from ) || from < 0 ) {
+		if ( ! Number.isInteger( from ) || from < 0 ) {
 			// `from` can be zero
 			return false;
 		}
-		if ( ! isInteger( to ) || to < 1 ) {
+		if ( ! Number.isInteger( to ) || to < 1 ) {
 			// `to` cannot be zero
 			return false;
 		}
@@ -69,7 +67,7 @@ export function diffs( state = {}, { diffs: diffsFromServer, postId, revisions, 
 			[ postId ]: {
 				...{
 					...omit( sitePostState, 'revisions' ),
-					...keyBy( filteredDiffs, d => `${ d.from }:${ d.to }` ),
+					...keyBy( filteredDiffs, ( d ) => `${ d.from }:${ d.to }` ),
 				},
 				revisions: mergedRevisions,
 			},

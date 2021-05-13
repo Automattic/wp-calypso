@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
@@ -19,14 +16,16 @@ import {
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_WHOIS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/domains/init';
 
 /**
  * Returns an action object to be used in signalling that a cached domains
  * contact details object has been received.
  *
- * @param   {Object}   data   cached contact details object
- * @returns {Object}   Action object
+ * @param   {object}   data   cached contact details object
+ * @returns {object}   Action object
  */
 export function receiveContactDetailsCache( data ) {
 	return {
@@ -38,10 +37,11 @@ export function receiveContactDetailsCache( data ) {
 /**
  * Triggers a network request to query domain contact details
  * cached data (originated from last domain purchase)
+ *
  * @returns {Function}          Action thunk
  */
 export function requestContactDetailsCache() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 		} );
@@ -74,9 +74,9 @@ export function updateContactDetailsCache( data ) {
  * Returns an action object to be used in signalling that a WHOIS details
  * object has been received.
  *
- * @param	{String}   domain		domain queried
- * @param   {Object}   whoisData	contact details object
- * @returns {Object}   Action object
+ * @param	{string}   domain		domain queried
+ * @param   {object}   whoisData	contact details object
+ * @returns {object}   Action object
  */
 export function receiveWhois( domain, whoisData ) {
 	return {
@@ -89,11 +89,11 @@ export function receiveWhois( domain, whoisData ) {
 /**
  * Triggers a network request to query WHOIS details
  *
- * @param   {String}   domain	domain to query
+ * @param   {string}   domain	domain to query
  * @returns {Function}          Action thunk
  */
 export function requestWhois( domain ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_WHOIS_REQUEST,
 			domain,
@@ -102,14 +102,14 @@ export function requestWhois( domain ) {
 		return wpcom
 			.undocumented()
 			.fetchWhois( domain )
-			.then( whoisData => {
+			.then( ( whoisData ) => {
 				dispatch( receiveWhois( domain, whoisData ) );
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS,
 					domain,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE,
 					domain,
@@ -123,12 +123,13 @@ export function requestWhois( domain ) {
  * Sends a network request to the server to save updated WHOIS details
  * at the domain's registrar.
  *
- * @param   {String}   domain		domain to query
- * @param   {Object}   whoisData	whois details object
+ * @param   {string}   domain		domain to query
+ * @param   {object}   whoisData	whois details object
+ * @param	  {boolean}  transferLock set 60-day transfer lock after update
  * @returns {Function}				Action thunk
  */
-export function saveWhois( domain, whoisData ) {
-	return dispatch => {
+export function saveWhois( domain, whoisData, transferLock ) {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_WHOIS_SAVE,
 			domain,
@@ -136,15 +137,16 @@ export function saveWhois( domain, whoisData ) {
 
 		return wpcom
 			.undocumented()
-			.updateWhois( domain, whoisData )
-			.then( ( { updated } ) => {
-				dispatch( updateWhois( domain, updated ) );
+			.updateWhois( domain, whoisData, transferLock )
+			.then( ( data ) => {
+				dispatch( updateWhois( domain, whoisData ) );
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 					domain,
+					data,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
 					domain,

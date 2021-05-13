@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -96,10 +94,10 @@ export default class AddEditProductPage extends AsyncBaseContainer {
 	}
 
 	async deleteProduct() {
-		const menuSelector = by.css( 'button.split-button__toggle' );
-		if ( await driverHelper.isElementPresent( this.driver, menuSelector ) ) {
+		const menuLocator = by.css( 'button.split-button__toggle' );
+		if ( await driverHelper.isElementLocated( this.driver, menuLocator ) ) {
 			// open the menu on mobile screens
-			await driverHelper.clickWhenClickable( this.driver, menuSelector );
+			await driverHelper.clickWhenClickable( this.driver, menuLocator );
 			await driverHelper.clickWhenClickable(
 				this.driver,
 				by.css( '.popover__menu-item.is-scary' )

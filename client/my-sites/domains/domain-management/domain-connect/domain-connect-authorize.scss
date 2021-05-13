@@ -1,6 +1,6 @@
 .domain-connect__main {
 	h2 {
-		font-size: 20px;
+		font-size: $font-title-small;
 		font-weight: 600;
 		margin-bottom: 1em;
 	}
@@ -21,7 +21,7 @@
 
 	.domain-connect__is-placeholder {
 		span {
-			@include placeholder( 23% );
+			@include placeholder( --color-neutral-10 );
 
 			display: block;
 			margin: 0.8em 0;

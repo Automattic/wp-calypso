@@ -1,12 +1,14 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
+
+/**
+ * Internal dependencies
+ */
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
@@ -53,14 +55,30 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	getTitle() {
-		return this.props.translate(
-			'{{strong}}Awesome!{{/strong}} Give us one minute and {{br/}}we’ll move right along.',
-			{
-				components: { strong: <strong />, br: <br /> },
-				comment:
-					'The second line after the breaking tag {{br/}} should fit unbroken in 384px and greater and have a max of 30 characters.',
-			}
-		);
+		if ( this.props.flowName === 'domain' ) {
+			return this.props.translate( 'We are preparing the domain for purchase…' );
+		}
+
+		return this.props.translate( '{{strong}}Hooray!{{/strong}} Your site will be ready shortly.', {
+			components: { strong: <strong />, br: <br /> },
+			comment:
+				'The second line after the breaking tag {{br/}} should fit unbroken in 384px and greater and have a max of 30 characters.',
+		} );
+	}
+
+	componentDidMount() {
+		const { flowName, localeSlug } = this.props;
+		if ( ! localeSlug ) {
+			return;
+		}
+		const locale = localeSlug.split( /[-_]/ )[ 0 ];
+		if ( flowName !== 'onboarding' || ! [ 'en', 'ja' ].includes( locale ) ) {
+			return;
+		}
+		addHotJarScript();
+		if ( window && window.hj ) {
+			window.hj( 'trigger', 'bizx_questionnaire_' + locale );
+		}
 	}
 
 	render() {

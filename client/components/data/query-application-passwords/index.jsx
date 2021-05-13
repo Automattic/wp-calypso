@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestApplicationPasswords } from 'state/application-passwords/actions';
+import { requestApplicationPasswords } from 'calypso/state/application-passwords/actions';
 
 class QueryApplicationPasswords extends Component {
 	static propTypes = {
@@ -26,7 +24,4 @@ class QueryApplicationPasswords extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestApplicationPasswords }
-)( QueryApplicationPasswords );
+export default connect( null, { requestApplicationPasswords } )( QueryApplicationPasswords );

@@ -1,0 +1,25 @@
+name: Is Pull Request
+
+# This job succeeds for every pull request. Then, in settings, we protect trunk
+# such that every commit to trunk must have this job succeed. This effectively
+# makes it such that no one can push directly to `trunk`, since only PRs can
+# include this check.
+
+# We need this because you can only forbid pushing to `trunk` based on branch
+# protection rules. We only utilize the "Require status checks to pass before
+# merging" branch protection rule. If we wanted every other normal "check" to NOT
+# be required, then there would be no "required check" which prevents pushing
+# to trunk. As a result, we have this little fake "check" which will always show
+# up on PRs to prevent direct commits to trunk.
+
+on:
+  pull_request:
+    types: [ opened, synchronize ]
+
+jobs:
+  is-pull-request:
+    name: 'Protect Trunk Branch'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Tells you that it's a pull request
+      run: 'echo "This is a pull request 👍."'

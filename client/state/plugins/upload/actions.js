@@ -1,25 +1,23 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	PLUGIN_UPLOAD,
 	PLUGIN_UPLOAD_CLEAR,
 	PLUGIN_UPLOAD_COMPLETE,
 	PLUGIN_UPLOAD_ERROR,
 	PLUGIN_UPLOAD_PROGRESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/plugins/new';
+import 'calypso/state/data-layer/wpcom/sites/plugins/new';
+import 'calypso/state/plugins/init';
 
 /**
  * Upload a plugin to a site.
  *
  * @param {number} siteId site ID
- * @param {File} file the plugin zip to upload
- * @return {Object} action object
+ * @param {window.File} file the plugin zip to upload
+ * @returns {object} action object
  */
 export function uploadPlugin( siteId, file ) {
 	return {
@@ -34,7 +32,7 @@ export function uploadPlugin( siteId, file ) {
  *
  * @param {number} siteId site ID
  * @param {number} progress percentage of file uploaded
- * @return {Object} action object
+ * @returns {object} action object
  */
 export function updatePluginUploadProgress( siteId, progress ) {
 	return {
@@ -49,7 +47,7 @@ export function updatePluginUploadProgress( siteId, progress ) {
  *
  * @param {number} siteId site ID
  * @param {string} pluginId plugin id
- * @return {Object} action object
+ * @returns {object} action object
  */
 export function completePluginUpload( siteId, pluginId ) {
 	return {
@@ -63,8 +61,8 @@ export function completePluginUpload( siteId, pluginId ) {
  * Set an error from a plugin upload.
  *
  * @param {number} siteId site ID
- * @param {Object} error the error
- * @return {Object} action object
+ * @param {object} error the error
+ * @returns {object} action object
  */
 export function pluginUploadError( siteId, error ) {
 	return {
@@ -78,7 +76,7 @@ export function pluginUploadError( siteId, error ) {
  * Clear any plugin upload data for a site.
  *
  * @param {number} siteId site ID
- * @return {Object} action object
+ * @returns {object} action object
  */
 export function clearPluginUpload( siteId ) {
 	return {

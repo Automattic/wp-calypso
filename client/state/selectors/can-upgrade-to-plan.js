@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,22 +6,28 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { PLAN_FREE, PLAN_JETPACK_FREE } from 'lib/plans/constants';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getPlan, isWpComBusinessPlan, isWpComEcommercePlan, isFreePlan } from 'lib/plans';
-import { isJetpackSite } from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import {
+	PLAN_FREE,
+	PLAN_JETPACK_FREE,
+	getPlan,
+	isWpComBusinessPlan,
+	isWpComEcommercePlan,
+	isFreePlan,
+} from '@automattic/calypso-products';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 
 /**
  * Whether a given site can be upgraded to a specific plan.
  *
- * @param  {Object}   state      Global state tree
- * @param  {Number}   siteId     The site we're interested in upgrading
- * @param  {String}   planKey    The plan we want to upgrade to
- * @return {Boolean}             True if the site can be upgraded
+ * @param  {object}   state      Global state tree
+ * @param  {number}   siteId     The site we're interested in upgrading
+ * @param  {string}   planKey    The plan we want to upgrade to
+ * @returns {boolean}             True if the site can be upgraded
  */
-export default function( state, siteId, planKey ) {
+export default function ( state, siteId, planKey ) {
 	// Which "free plan" should we use to test
 	const freePlan =
 		isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )

@@ -1,26 +1,22 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
-import { requestThumbnail } from 'state/reader/thumbnails/actions';
+import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
+import { requestThumbnail } from 'calypso/state/reader/thumbnails/actions';
 
 class QueryReaderThumbnails extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.embedUrl !== this.props.embedUrl ) {
 			this.request( nextProps );
 		}
@@ -47,9 +43,4 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	shouldRequestThumbnail: ! getThumbnailForIframe( state, ownProps.embedUrl ),
 } );
 
-const mapDispatchToProps = dispatch => bindActionCreators( { requestThumbnail }, dispatch );
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( QueryReaderThumbnails );
+export default connect( mapStateToProps, { requestThumbnail } )( QueryReaderThumbnails );

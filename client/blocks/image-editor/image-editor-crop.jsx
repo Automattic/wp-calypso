@@ -1,30 +1,32 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual, noop } from 'lodash';
+import { isEqual } from 'lodash';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Draggable from 'components/draggable';
+import Draggable from 'calypso/components/draggable';
 import {
 	getImageEditorCropBounds,
 	getImageEditorAspectRatio,
 	getImageEditorTransform,
 	getImageEditorCrop,
 	imageEditorHasChanges,
-} from 'state/ui/editor/image-editor/selectors';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import { imageEditorCrop, imageEditorComputedCrop } from 'state/ui/editor/image-editor/actions';
-import { defaultCrop } from 'state/ui/editor/image-editor/reducer';
-import getImageEditorOriginalAspectRatio from 'state/selectors/get-image-editor-original-aspect-ratio';
+} from 'calypso/state/editor/image-editor/selectors';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import {
+	imageEditorCrop,
+	imageEditorComputedCrop,
+} from 'calypso/state/editor/image-editor/actions';
+import { defaultCrop } from 'calypso/state/editor/image-editor/reducer';
+import getImageEditorOriginalAspectRatio from 'calypso/state/selectors/get-image-editor-original-aspect-ratio';
+
+const noop = () => {};
 
 class ImageEditorCrop extends Component {
 	static propTypes = {
@@ -91,11 +93,11 @@ class ImageEditorCrop extends Component {
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.updateCrop( this.getDefaultState( this.props ), this.props, this.applyComputedCrop );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { bounds, aspectRatio, crop } = this.props;
 
 		if ( ! isEqual( bounds, newProps.bounds ) ) {
@@ -145,15 +147,15 @@ class ImageEditorCrop extends Component {
 			return;
 		}
 
-		const rotated = props.degrees % 180 !== 0,
-			newState = Object.assign( {}, this.state, newValues ),
-			newWidth = newState.right - newState.left,
-			newHeight = newState.bottom - newState.top;
+		const rotated = props.degrees % 180 !== 0;
+		const newState = Object.assign( {}, this.state, newValues );
+		const newWidth = newState.right - newState.left;
+		const newHeight = newState.bottom - newState.top;
 
-		let imageWidth,
-			imageHeight,
-			finalWidth = newWidth,
-			finalHeight = newHeight;
+		let imageWidth;
+		let imageHeight;
+		let finalWidth = newWidth;
+		let finalHeight = newHeight;
 
 		switch ( aspectRatio ) {
 			case AspectRatios.ORIGINAL:
@@ -218,8 +220,8 @@ class ImageEditorCrop extends Component {
 		const { right, bottom } = this.state;
 		const { minCropSize } = this.props;
 
-		let top = y,
-			left = x;
+		let top = y;
+		let left = x;
 
 		if ( right - left <= minCropSize.width ) {
 			left = right - minCropSize.width;
@@ -239,8 +241,8 @@ class ImageEditorCrop extends Component {
 		const { left, bottom } = this.state;
 		const { minCropSize } = this.props;
 
-		let top = y,
-			right = x;
+		let top = y;
+		let right = x;
 
 		if ( right - left <= minCropSize.width ) {
 			right = left + minCropSize.width;
@@ -260,8 +262,8 @@ class ImageEditorCrop extends Component {
 		const { left, top } = this.state;
 		const { minCropSize } = this.props;
 
-		let bottom = y,
-			right = x;
+		let bottom = y;
+		let right = x;
 
 		if ( right - left <= minCropSize.width ) {
 			right = left + minCropSize.width;
@@ -281,8 +283,8 @@ class ImageEditorCrop extends Component {
 		const { right, top } = this.state;
 		const { minCropSize } = this.props;
 
-		let bottom = y,
-			left = x;
+		let bottom = y;
+		let left = x;
 
 		if ( right - left <= minCropSize.width ) {
 			left = right - minCropSize.width;
@@ -299,9 +301,9 @@ class ImageEditorCrop extends Component {
 	}
 
 	onBorderDrag( x, y ) {
-		const { top, left, right, bottom } = this.state,
-			width = right - left,
-			height = bottom - top;
+		const { top, left, right, bottom } = this.state;
+		const width = right - left;
+		const height = bottom - top;
 
 		this.setState( {
 			top: y,
@@ -316,10 +318,10 @@ class ImageEditorCrop extends Component {
 
 		const { topBound, leftBound, rightBound, bottomBound } = this.props.bounds;
 
-		const currentTop = top - topBound,
-			currentLeft = left - leftBound,
-			currentWidth = right - left,
-			currentHeight = bottom - top;
+		const currentTop = top - topBound;
+		const currentLeft = left - leftBound;
+		const currentWidth = right - left;
+		const currentHeight = bottom - top;
 
 		const imageWidth = rightBound - leftBound;
 		let imageHeight = bottomBound - topBound;
@@ -355,9 +357,9 @@ class ImageEditorCrop extends Component {
 	render() {
 		const { top, left, right, bottom } = this.state;
 
-		const width = right - left,
-			height = bottom - top,
-			handleClassName = 'image-editor__crop-handle';
+		const width = right - left;
+		const height = bottom - top;
+		const handleClassName = 'image-editor__crop-handle';
 
 		const { topBound, leftBound, rightBound, bottomBound } = this.props.bounds;
 
@@ -481,7 +483,7 @@ class ImageEditorCrop extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const bounds = getImageEditorCropBounds( state );
 		const crop = getImageEditorCrop( state );
 		const aspectRatio = getImageEditorAspectRatio( state );

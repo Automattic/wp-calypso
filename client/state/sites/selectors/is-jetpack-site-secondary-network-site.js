@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { withoutHttp } from 'lib/url';
-import getRawSite from 'state/selectors/get-raw-site';
+import { withoutHttp } from 'calypso/lib/url';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteOption from './get-site-option';
 import isJetpackSite from './is-jetpack-site';
 
@@ -10,9 +10,9 @@ import isJetpackSite from './is-jetpack-site';
  * Determines if a Jetpack site is a secondary network site.
  * Returns null if the site is not known or is not a Jetpack site.
  *
- * @param {Object} state Global state tree
- * @param {Number} siteId Site ID
- * @return {?Boolean} true if the site is a secondary network site
+ * @param {object} state Global state tree
+ * @param {number} siteId Site ID
+ * @returns {?boolean} true if the site is a secondary network site
  */
 export default function isJetpackSiteSecondaryNetworkSite( state, siteId ) {
 	const site = getRawSite( state, siteId );
@@ -25,8 +25,8 @@ export default function isJetpackSiteSecondaryNetworkSite( state, siteId ) {
 		return false;
 	}
 
-	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' ),
-		mainNetworkSite = getSiteOption( state, siteId, 'main_network_site' );
+	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
+	const mainNetworkSite = getSiteOption( state, siteId, 'main_network_site' );
 
 	if ( ! unmappedUrl || ! mainNetworkSite ) {
 		return false;

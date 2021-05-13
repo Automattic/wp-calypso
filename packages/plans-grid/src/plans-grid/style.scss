@@ -1,0 +1,56 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+@import '~@automattic/onboarding/styles/variables';
+@import '~@automattic/onboarding/styles/mixins';
+@import '../variables.scss';
+
+.plans-grid {
+	// Space to accomadate sticky footer
+	margin-bottom: 85px; // @TODO: replace with a variable
+
+	@include break-small {
+		margin-bottom: 0;
+	}
+}
+
+.plans-grid__header {
+	@include onboarding-heading-padding;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.plans-grid__toggle {
+	margin: -24px 0 32px;
+
+	@include break-medium {
+		margin-bottom: 40px;
+	}
+}
+
+.plans-grid__details {
+	margin-top: 70px;
+}
+
+.plans-grid__details-container {
+	// -1px is becuase this is a `max-width` media query, instead of the usual `min-width`
+	@media ( max-width: $plans-grid-max-page-width - 1px ) {
+		overflow-x: auto;
+		width: 100%;
+		position: absolute;
+		left: 0;
+	}
+	// this is needed on mobiles to uncover the CTA button
+	// without it, it's covered by the sticky bottom bar
+	padding-bottom: 120px;
+}
+
+.plans-grid__details-heading {
+	.plans-ui-title {
+		color: var( --studio-black );
+		margin-bottom: 40px;
+		font-size: 32px;
+		line-height: 40px;
+		letter-spacing: 0.2px;
+	}
+}

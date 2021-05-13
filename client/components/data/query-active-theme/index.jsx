@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestActiveTheme } from 'state/themes/actions';
-import { isRequestingActiveTheme } from 'state/themes/selectors';
+import { requestActiveTheme } from 'calypso/state/themes/actions';
+import { isRequestingActiveTheme } from 'calypso/state/themes/selectors';
 
 class QueryActiveTheme extends Component {
 	static propTypes = {
@@ -26,7 +24,7 @@ class QueryActiveTheme extends Component {
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId === nextProps.siteId ) {
 			return;
 		}

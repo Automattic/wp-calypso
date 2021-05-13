@@ -9,16 +9,16 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/url';
-import Button from 'components/button';
-import { getPlan } from 'lib/plans';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { addQueryArgs } from 'calypso/lib/url';
+import { Button } from '@automattic/components';
+import { getPlan } from '@automattic/calypso-products';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 /**
  * Types
  */
-import * as T from 'types';
+import * as T from 'calypso/types';
 
 interface ConnectedProps {
 	hasPlanFeature: boolean;
@@ -41,6 +41,7 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent<
 	hasPlanFeature,
 	onDefaultButtonClick,
 	onUpgradeButtonClick,
+	feature,
 	planSlug,
 	planTitle,
 	selectedSiteSlug,
@@ -52,20 +53,16 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent<
 			onUpgradeButtonClick();
 		}
 
-		page( addQueryArgs( { plan: planSlug }, `/plans/${ selectedSiteSlug }` ) );
+		page( addQueryArgs( { feature, plan: planSlug }, `/plans/${ selectedSiteSlug }` ) );
 	};
 
 	if ( hasPlanFeature ) {
-		return (
-			<Button compact onClick={ onDefaultButtonClick }>
-				{ buttonText }
-			</Button>
-		);
+		return <Button onClick={ onDefaultButtonClick }>{ buttonText }</Button>;
 	}
 
 	return (
-		<Button compact onClick={ handleUpgradeClick }>
-			{ translate( 'Upgrade To %(plan)s', {
+		<Button onClick={ handleUpgradeClick }>
+			{ translate( 'Upgrade to %(plan)s', {
 				args: {
 					plan: planTitle,
 				},
