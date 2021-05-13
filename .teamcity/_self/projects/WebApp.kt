@@ -102,6 +102,10 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 
+
+				MOCHA_CAPTURE_PATH=get_mocha_tests.json  NODE_CONFIG_ENV=test yarn mocha --reporter-options tags=parallel --reporter ../../packages/magellan-mocha-plugin/lib/suite_capture.js specs/specs-calypso
+				cat get_mocha_tests.json
+
 				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
