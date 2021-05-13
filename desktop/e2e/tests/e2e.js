@@ -3,6 +3,8 @@ const { step } = require( 'mocha-steps' );
 const { assert } = require( 'chai' );
 const webdriver = require( 'selenium-webdriver' );
 const chrome = require( 'selenium-webdriver/chrome' );
+const path = require( 'path' );
+
 const LoginPage = require( './lib/pages/login-page' );
 const NavBarComponent = require( './lib/components/nav-bar-component' );
 const ProfilePage = require( './lib/pages/profile-page' );
@@ -19,14 +21,13 @@ const driverConfig = new webdriver.Builder()
 	.usingServer( 'http://localhost:9515' )
 	.setChromeOptions( options )
 	.withCapabilities( {
-		chromeOptions: {
+		'goog:chromeOptions': {
 			// Here is the path to your Electron binary.
-			binary: process.env.BINARY_PATH,
+			binary: path.join( __dirname, '../../release/linux-unpacked/wpcom' ),
 			args: [ '--disable-renderer-backgrounding', '--disable-http-cache', '--start-maximized' ],
-			debuggerAddress: '127.0.0.1:9222',
 		},
 	} )
-	.forBrowser( 'electron' );
+	.forBrowser( 'chrome' );
 
 let loggedInUrl;
 let driver;
