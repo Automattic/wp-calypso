@@ -37,7 +37,7 @@ export const mochaHooks = async () => {
 		global.displayNum = displayNum;
 
 		// startVideo must come after startFramebuffer, as it depends on the framebuffer being up
-		hooks.beforeAll = [ ...hooks.property, startFramebuffer, startVideoRecording ];
+		hooks.beforeAll = [ ...hooks.beforeAll, startFramebuffer, startVideoRecording ];
 		hooks.afterEach = [ ...hooks.afterEach, takeScreenshot, saveVideoRecording ];
 		hooks.afterAll = [ ...hooks.afterAll, stopFramebuffer, stopVideoRecording ];
 	}
