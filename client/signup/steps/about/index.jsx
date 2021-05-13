@@ -161,11 +161,11 @@ class AboutStep extends Component {
 	}
 
 	handleSegmentClick( value ) {
-		return function () {
+		return () => {
 			this.setState( {
 				userExperience: value,
 			} );
-		}.bind( this );
+		};
 	}
 
 	handleSubmit = ( event ) => {

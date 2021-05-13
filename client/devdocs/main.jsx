@@ -66,16 +66,13 @@ export default class Devdocs extends React.Component {
 			return;
 		}
 
-		DocService.list(
-			DEFAULT_FILES,
-			function ( err, results ) {
-				if ( ! err ) {
-					this.setState( {
-						defaultResults: results,
-					} );
-				}
-			}.bind( this )
-		);
+		DocService.list( DEFAULT_FILES, ( err, results ) => {
+			if ( ! err ) {
+				this.setState( {
+					defaultResults: results,
+				} );
+			}
+		} );
 	};
 
 	componentDidMount() {
@@ -115,19 +112,16 @@ export default class Devdocs extends React.Component {
 		if ( ! term ) {
 			return;
 		}
-		DocService.search(
-			term,
-			function ( err, results ) {
-				if ( err ) {
-					log( 'search error: %o', err );
-				}
+		DocService.search( term, ( err, results ) => {
+			if ( err ) {
+				log( 'search error: %o', err );
+			}
 
-				this.setState( {
-					results: results,
-					searching: false,
-				} );
-			}.bind( this )
-		);
+			this.setState( {
+				results,
+				searching: false,
+			} );
+		} );
 	};
 
 	results = () => {

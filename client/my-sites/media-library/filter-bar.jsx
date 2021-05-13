@@ -161,6 +161,8 @@ export class MediaLibraryFilterBar extends Component {
 		// Set the 'key' value so if the source is changed the component is refreshed, forcing it to clear the existing state
 		return (
 			<Search
+				// eslint-disable-next-line jsx-a11y/no-autofocus
+				autoFocus={ source === 'pexels' }
 				key={ source }
 				analyticsGroup="Media"
 				pinned={ isPinned }

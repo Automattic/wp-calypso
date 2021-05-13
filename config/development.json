@@ -27,11 +27,7 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"happychat_url": "https://happychat-io-staging.go-vip.co/customer",
 	"rebrand_cities_prefix": "rebrandcitiesdevelopmentsite",
-	"livechat_support_locales": [
-		"en",
-		"es",
-		"pt-br"
-	],
+	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": false,
 		"async-payments": false,
@@ -45,6 +41,7 @@
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": true,
+		"checkout/google-pay": true,
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,

@@ -1,5 +1,5 @@
 {
-	"mocha_tests": [ "specs/wp-signup-spec.js" ],
+	"mocha_tests": [ "specs/specs-calypso/wp-signup-spec.js" ],
 	"mocha_args": "-R spec-junit-reporter",
 	"max_test_attempts": 2,
 	"max_workers": 3,

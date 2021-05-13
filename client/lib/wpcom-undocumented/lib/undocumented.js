@@ -663,6 +663,42 @@ function mapKeysRecursively( object, fn ) {
 	}, {} );
 }
 
+Undocumented.prototype.validateTaxContactInformation = function ( contactInformation ) {
+	return new Promise( ( resolve, reject ) => {
+		let data = {
+			contactInformation,
+		};
+
+		debug( '/me/tax-contact-information/validate query' );
+		data = mapKeysRecursively( data, snakeCase );
+
+		this.wpcom.req.post(
+			{ path: '/me/tax-contact-information/validate' },
+			undefined,
+			data,
+			function ( error, successData ) {
+				if ( error ) {
+					reject( error );
+				}
+
+				// Reshape the error messages to a nested object
+				if ( successData.messages ) {
+					successData.messages = Object.keys( successData.messages ).reduce( ( obj, key ) => {
+						set( obj, key, successData.messages[ key ] );
+						return obj;
+					}, {} );
+				}
+
+				const newData = mapKeysRecursively( successData, function ( key ) {
+					return key === '_headers' ? key : camelCase( key );
+				} );
+
+				resolve( newData );
+			}
+		);
+	} );
+};
+
 /**
  * Validates the specified domain contact information against a list of domain names.
  *

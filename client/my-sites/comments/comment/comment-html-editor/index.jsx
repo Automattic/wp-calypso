@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { delay, each, get, map, reduce, reject } from 'lodash';
+import { delay, get, map, reduce, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -61,7 +61,9 @@ export class CommentHtmlEditor extends Component {
 		}
 	) => {
 		const element = document.createElement( tag );
-		each( attributes, ( value, key ) => element.setAttribute( key, value ) );
+		Object.entries( attributes ).forEach( ( [ key, value ] ) =>
+			element.setAttribute( key, value )
+		);
 		element.innerHTML = '<!---->';
 		const fragments = element.outerHTML.split( '<!---->' );
 		const opener =

@@ -34,8 +34,7 @@ const MochaTestRun = function ( options ) {
 		basePath: path.join( options.tempAssetPath, '..', sanitizedName ),
 		counter: 0,
 	} );
-
-	process.env.TEMP_ASSET_PATH = pathWithCounter;
+	this.pathWithCounter = pathWithCounter;
 	fs.mkdirSync( pathWithCounter, { recursive: true } );
 	_.extend( this, options );
 };
@@ -47,7 +46,12 @@ MochaTestRun.prototype.getCommand = function () {
 
 // return the environment
 MochaTestRun.prototype.getEnvironment = function ( env ) {
-	return _.extend( {}, env );
+	return _.extend(
+		{
+			TEMP_ASSET_PATH: this.pathWithCounter,
+		},
+		env
+	);
 };
 
 MochaTestRun.prototype.getArguments = function () {

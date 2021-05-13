@@ -45,6 +45,7 @@ const Home = ( {
 	siteId,
 	trackViewSiteAction,
 	noticeType,
+	shuffleViews,
 } ) => {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
@@ -97,7 +98,14 @@ const Home = ( {
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-			{ siteId && <QueryHomeLayout siteId={ siteId } isDev={ isDev } forcedView={ forcedView } /> }
+			{ siteId && (
+				<QueryHomeLayout
+					siteId={ siteId }
+					isDev={ isDev }
+					forcedView={ forcedView }
+					shuffle={ shuffleViews }
+				/>
+			) }
 			<SidebarNavigation />
 			{ header }
 			{ layout ? (
@@ -128,6 +136,7 @@ Home.propTypes = {
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 	trackViewSiteAction: PropTypes.func.isRequired,
+	shuffleViews: PropTypes.bool,
 };
 
 const mapStateToProps = ( state ) => {

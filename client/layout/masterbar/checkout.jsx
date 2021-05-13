@@ -46,6 +46,9 @@ class CheckoutMasterbar extends React.Component {
 
 	render() {
 		const { translate, title, isJetpackNotAtomic } = this.props;
+		const isJetpackCheckout = window.location.pathname.startsWith( '/checkout/jetpack' );
+		const isJetpack = isJetpackCheckout || isJetpackNotAtomic;
+
 		return (
 			<Masterbar>
 				<div className="masterbar__secure-checkout">
@@ -57,8 +60,8 @@ class CheckoutMasterbar extends React.Component {
 						tooltip={ translate( 'Close Checkout' ) }
 						tipTarget="close"
 					/>
-					{ ! isJetpackNotAtomic && <WordPressWordmark className="masterbar__wpcom-wordmark" /> }
-					{ isJetpackNotAtomic && <JetpackLogo className="masterbar__jetpack-wordmark" full /> }
+					{ ! isJetpack && <WordPressWordmark className="masterbar__wpcom-wordmark" /> }
+					{ isJetpack && <JetpackLogo className="masterbar__jetpack-wordmark" full /> }
 					<span className="masterbar__secure-checkout-text">
 						{ translate( 'Secure checkout' ) }
 					</span>
