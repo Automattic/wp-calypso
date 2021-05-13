@@ -49,12 +49,12 @@ export const buildHooks = ( displayNum ) => {
 			return;
 		}
 
-		const newFile = generatePath( `screenshots/${ getTestNameWithTime( this.currentTest ) }.mpg` );
-		await mkdir( path.dirname( newFile ), { recursive: true } );
-		console.log( `Test failed, saving video recording ${ newFile }` );
-
-		await kill( ffVideo );
 		try {
+			const newFile = generatePath(
+				`screenshots/${ getTestNameWithTime( this.currentTest ) }.mpg`
+			);
+			await mkdir( path.dirname( newFile ), { recursive: true } );
+			await kill( ffVideo );
 			await rename( file, newFile );
 		} catch ( err ) {
 			console.warn(
@@ -68,9 +68,8 @@ export const buildHooks = ( displayNum ) => {
 	const stopVideoRecording = async () => {
 		if ( ! ffVideo || ffVideo.killed ) return;
 
-		console.log( `Stopped recording` );
-		await kill( ffVideo );
 		try {
+			await kill( ffVideo );
 			await unlink( file );
 		} catch ( err ) {
 			console.warn(

@@ -36,9 +36,17 @@ export const buildHooks = ( displayNum ) => {
 	};
 
 	const stopFramebuffer = async () => {
-		if ( ! xvfb ) return;
+		try {
+			if ( ! xvfb ) return;
 
-		xvfb.kill();
+			xvfb.kill();
+		} catch ( err ) {
+			console.warn(
+				'Got an error trying to stop the framebuffer. This IS NOT causing the test to break, is just a warning'
+			);
+			console.warn( 'Original error:' );
+			console.warn( err );
+		}
 	};
 
 	async function takeScreenshot() {
@@ -46,12 +54,22 @@ export const buildHooks = ( displayNum ) => {
 			return;
 		}
 
-		const fileName = generatePath( `screenshots/${ getTestNameWithTime( this.currentTest ) }.png` );
-		await mkdir( path.dirname( fileName ), { recursive: true } );
+		try {
+			const fileName = generatePath(
+				`screenshots/${ getTestNameWithTime( this.currentTest ) }.png`
+			);
+			await mkdir( path.dirname( fileName ), { recursive: true } );
 
-		const driver = global.__BROWSER__;
-		const screenshotData = await driver.takeScreenshot();
-		await writeFile( fileName, screenshotData, { encoding: 'base64' } );
+			const driver = global.__BROWSER__;
+			const screenshotData = await driver.takeScreenshot();
+			await writeFile( fileName, screenshotData, { encoding: 'base64' } );
+		} catch ( err ) {
+			console.warn(
+				'Got an error trying to save a screenshot from the browser. This IS NOT causing the test to break, is just a warning'
+			);
+			console.warn( 'Original error:' );
+			console.warn( err );
+		}
 	}
 
 	return { startFramebuffer, stopFramebuffer, takeScreenshot };
