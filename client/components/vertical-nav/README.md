@@ -42,8 +42,8 @@ instead on the following props:
 
 - **description** - String _required_ - some longer copy displayed below the text.
 - **external** - Boolean _optional_ - determines whether or not the link is opened in a new window.
-- **gridicon** - String _optional_ - the identifier of the [Gridicon icon](../../../docs/icons.md) to show in front of the text and description.
-- **materialIcon** - String _optional_ - the identifier of the [Material Design icon](../../../packages/material-design-icons/README.md) to show in front of the text and description.
+- **gridicon** - String _optional_ - the identifier of the [Gridicon icon](../../../docs/icons.md) to show in front of the text and description (if `materialIcon` wasn't specified).
+- **materialIcon** - String _optional_ - the identifier of the [Material Design icon](../../../packages/material-design-icons/README.md) to show in front of the text and description (if `gridicon` wasn't specified).
 - **onClick** - Function _optional_ - called when the item is clicked.
 - **path** - String _optional_ - the page the user is taken to when the item is clicked.
 - **text** - String _required_ - the main text of the navigation item.

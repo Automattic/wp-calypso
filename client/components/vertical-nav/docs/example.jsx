@@ -50,6 +50,7 @@ VerticalNavExample.defaultProps = {
 			<VerticalNavItemEnhanced
 				description="https://wordpress.com"
 				gridicon="my-sites"
+				key="5"
 				path="https://wordpress.com"
 				text="Create new site"
 			/>
