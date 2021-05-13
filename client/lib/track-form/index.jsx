@@ -2,12 +2,11 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { union } from 'lodash';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:track-form' );
 
-export const trackForm = WrappedComponent =>
+export const trackForm = ( WrappedComponent ) =>
 	class TrackFormComponent extends Component {
 		state = {
 			dirtyFields: [],
@@ -16,7 +15,7 @@ export const trackForm = WrappedComponent =>
 
 		updateFields = ( fields, callback ) => {
 			const newState = {
-				dirtyFields: union( this.state.dirtyFields, Object.keys( fields ) ),
+				dirtyFields: [ ...new Set( [].concat( this.state.dirtyFields, Object.keys( fields ) ) ) ],
 				fields: {
 					...this.state.fields,
 					...fields,

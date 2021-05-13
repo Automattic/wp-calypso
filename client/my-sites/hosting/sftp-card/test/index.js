@@ -13,10 +13,27 @@ import React from 'react';
  */
 import { SftpCard } from '..';
 
-const translate = x => x;
-const requestSftpUsers = x => x;
+const translate = ( x ) => x;
+const requestSftpUsers = ( x ) => x;
 
 describe( 'SftpCard', () => {
+	beforeAll( () => {
+		// Mock the missing `window.matchMedia` function that's not even in JSDOM
+		Object.defineProperty( window, 'matchMedia', {
+			writable: true,
+			value: jest.fn().mockImplementation( ( query ) => ( {
+				matches: false,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(), // deprecated
+				removeListener: jest.fn(), // deprecated
+				addEventListener: jest.fn(),
+				removeEventListener: jest.fn(),
+				dispatchEvent: jest.fn(),
+			} ) ),
+		} );
+	} );
+
 	describe( 'Sftp Questions', () => {
 		it( 'should display sftp questions if no sftp username', () => {
 			const wrapper = shallow( <SftpCard translate={ translate } /> );
@@ -55,7 +72,7 @@ describe( 'SftpCard', () => {
 		} );
 	} );
 
-	describe( 'Create SFTP Credentials', () => {
+	describe( 'Create SFTP credentials', () => {
 		it( 'should display create SFTP credentials if username not set', () => {
 			const wrapper = shallow( <SftpCard translate={ translate } /> );
 

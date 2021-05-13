@@ -10,11 +10,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
-const redirectNonJetpack = redirectRoute => WrappedComponent => {
+const redirectNonJetpack = ( redirectRoute ) => ( WrappedComponent ) => {
 	class RedirectNonJetpack extends Component {
 		static propTypes = {
 			// Connected props
@@ -54,7 +54,7 @@ const redirectNonJetpack = redirectRoute => WrappedComponent => {
 		}
 	}
 
-	return connect( state => {
+	return connect( ( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

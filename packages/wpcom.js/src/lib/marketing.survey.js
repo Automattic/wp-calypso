@@ -7,10 +7,10 @@ export default class MarketingSurvey {
 	/**
 	 * `MarketingSurvey` constructor.
 	 *
-	 * @param {String} id - survey identification
-	 * @param {String} [siteId] - site identification
+	 * @param {string} id - survey identification
+	 * @param {string} [siteId] - site identification
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Undefined} undefined
+	 * @returns {undefined} undefined
 	 */
 	constructor( id, siteId, wpcom ) {
 		if ( ! id ) {
@@ -38,30 +38,22 @@ export default class MarketingSurvey {
 	}
 
 	addResponse( key, value ) {
-		this._responses = Object.assign(
-			{},
-			this._responses,
-			{ [ key ]: value }
-		);
+		this._responses = Object.assign( {}, this._responses, { [ key ]: value } );
 		return this;
 	}
 
 	addResponses( responses ) {
-		this._responses = Object.assign(
-			{},
-			this._responses,
-			responses
-		);
+		this._responses = Object.assign( {}, this._responses, responses );
 		return this;
 	}
 
 	/**
 	 * Submit a marketing survey.
 	 *
-	 * @param {Object} [query] - query object parameter
-	 * @param {Object} [body] - body object parameter
+	 * @param {object} [query] - query object parameter
+	 * @param {object} [body] - body object parameter
 	 * @param {Function} [fn] - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	submit( query = {}, body = {}, fn ) {
 		body.survey_id = this._id;

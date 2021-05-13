@@ -1,4 +1,5 @@
-.color-scheme.is-sunset {
+.color-scheme.is-sunset,
+.color-scheme.is-sunset.is-nav-unification {
 	/* Theme Properties */
 	--color-primary: var( --studio-red-50 );
 	--color-primary-rgb: var( --studio-red-50-rgb );
@@ -109,12 +110,20 @@
 	--color-sidebar-background-rgb: var( --studio-red-70-rgb );
 	--color-sidebar-border: var( --studio-red-80 );
 	--color-sidebar-text: var( --studio-white );
+	--color-sidebar-text-rgb: var( --studio-white-rgb );
 	--color-sidebar-text-alternative: var( --studio-red-10 );
 	--color-sidebar-gridicon-fill: var( --studio-red-5 );
 	--color-sidebar-menu-selected-background: var( --studio-yellow-20 );
 	--color-sidebar-menu-selected-background-rgb: var( --studio-yellow-20-rgb );
 	--color-sidebar-menu-selected-text: var( --studio-yellow-80 );
+	--color-sidebar-menu-selected-text-rgb: var( --studio-yellow-80-rgb );
 	--color-sidebar-menu-hover-background: var( --studio-red-80 );
 	--color-sidebar-menu-hover-background-rgb: var( --studio-red-80-rgb );
 	--color-sidebar-menu-hover-text: var( --studio-white );
+
+	/* Sidebar Submenu - Nav Unification */
+	--color-sidebar-submenu-background: var( --studio-red-60 );
+	--color-sidebar-submenu-text: var( --studio-white );
+	--color-sidebar-submenu-hover-text: var( --studio-yellow-20 );
+	--color-sidebar-submenu-selected-text: var( --studio-white );
 }

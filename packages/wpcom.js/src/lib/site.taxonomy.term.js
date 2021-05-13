@@ -6,11 +6,11 @@ class SiteTaxonomyTerm {
 	/**
 	 * Create a SiteTaxonomyTerm instance
 	 *
-	 * @param {String} term - term slug
-	 * @param {String} taxonomy - taxonomy type
-	 * @param {String} siteId - site id
+	 * @param {string} term - term slug
+	 * @param {string} taxonomy - taxonomy type
+	 * @param {string} siteId - site id
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Null} null
+	 * @returns {null} null
 	 */
 	constructor( term, taxonomy, siteId, wpcom ) {
 		if ( ! siteId ) {
@@ -30,15 +30,15 @@ class SiteTaxonomyTerm {
 		this._siteId = encodeURIComponent( siteId );
 		this._taxonomy = encodeURIComponent( taxonomy );
 		this._term = encodeURIComponent( term );
-		this._taxonomyPath = `/sites/${this._siteId}/taxonomies/${this._taxonomy}/terms`;
+		this._taxonomyPath = `/sites/${ this._siteId }/taxonomies/${ this._taxonomy }/terms`;
 	}
 
 	/**
 	 * Get Term details
 	 *
-	 * @param {Object} [query] - query parameters
- 	 * @param {Function} fn - callback function
- 	 * @return {Promise} Promise
+	 * @param {object} [query] - query parameters
+	 * @param {Function} fn - callback function
+	 * @returns {Promise} Promise
 	 */
 	get( query, fn ) {
 		if ( ! this._term ) {
@@ -58,9 +58,9 @@ class SiteTaxonomyTerm {
 	/**
 	 * Add new Term
 	 *
-	 * @param {Object} [params] - term parameters
- 	 * @param {Function} fn - callback function
- 	 * @return {Promise} Promise
+	 * @param {object} [params] - term parameters
+	 * @param {Function} fn - callback function
+	 * @returns {Promise} Promise
 	 */
 	add( params, fn ) {
 		if ( ! params || ! params.name ) {
@@ -75,8 +75,8 @@ class SiteTaxonomyTerm {
 	/**
 	 * Delete Term
 	 *
- 	 * @param {Function} fn - callback function
- 	 * @return {Promise} Promise
+	 * @param {Function} fn - callback function
+	 * @returns {Promise} Promise
 	 */
 	delete( fn ) {
 		if ( ! this._term ) {
@@ -91,9 +91,9 @@ class SiteTaxonomyTerm {
 	/**
 	 * Update Term
 	 *
-	 * @param {Object} [params] - term parameters
- 	 * @param {Function} fn - callback function
- 	 * @return {Promise} Promise
+	 * @param {object} [params] - term parameters
+	 * @param {Function} fn - callback function
+	 * @returns {Promise} Promise
 	 */
 	update( params, fn ) {
 		if ( ! this._term ) {

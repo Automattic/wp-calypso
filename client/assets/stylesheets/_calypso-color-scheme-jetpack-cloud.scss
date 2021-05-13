@@ -1,6 +1,20 @@
 // Jetpack Cloud color scheme for Calypso
 .is-group-jetpack-cloud.is-section-jetpack-cloud {
 	/* Theme Properties */
+	--color-primary: var( --studio-jetpack-green );
+	--color-primary-0: var( --studio-jetpack-green-0 );
+	--color-primary-5: var( --studio-jetpack-green-5 );
+	--color-primary-10: var( --studio-jetpack-green-10 );
+	--color-primary-20: var( --studio-jetpack-green-20 );
+	--color-primary-30: var( --studio-jetpack-green-30 );
+	--color-primary-40: var( --studio-jetpack-green-40 );
+	--color-primary-50: var( --studio-jetpack-green-50 );
+	--color-primary-60: var( --studio-jetpack-green-60 );
+	--color-primary-70: var( --studio-jetpack-green-70 );
+	--color-primary-80: var( --studio-jetpack-green-80 );
+	--color-primary-90: var( --studio-jetpack-green-90 );
+	--color-primary-100: var( --studio-jetpack-green-100 );
+
 	--color-link: var( --studio-jetpack-green-40 );
 	--color-link-rgb: var( --studio-jetpack-green-40-rgb );
 	--color-link-dark: var( --studio-jetpack-green-60 );
@@ -45,6 +59,12 @@
 	--color-text-inverted-rgb: var( --studio-white-rgb );
 
 	/* Component Properties */
+	--color-masterbar-background: var( --studio-gray-80 );
+	--color-masterbar-border: var( --studio-gray-60 );
+	--color-masterbar-text: var( --studio-white );
+	--color-masterbar-item-hover-background: var( --studio-gray-60 );
+	--color-masterbar-item-active-background: var( --studio-gray-40 );
+
 	--color-sidebar-background: var( --studio-gray-0 );
 	--color-sidebar-background-rgb: var( --studio-gray-0-rgb );
 	--color-sidebar-border: var( --studio-gray-5 );
@@ -57,4 +77,8 @@
 	--color-sidebar-menu-hover-background: var( --studio-gray-5 );
 	--color-sidebar-menu-hover-background-rgb: var( --studio-gray-5-rgb );
 	--color-sidebar-menu-hover-text: var( --studio-gray-70 );
+
+	--color-threat-found: var( --studio-red-50 );
+	--color-threat-fixed: var( --studio-jetpack-green-40 );
+	--color-threat-ignored: var( --studio-gray-50 );
 }

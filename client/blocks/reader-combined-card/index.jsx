@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -8,22 +8,26 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { getStreamUrl } from 'reader/route';
-import ReaderAvatar from 'blocks/reader-avatar';
-import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
+import { getStreamUrl } from 'calypso/reader/route';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import ReaderCombinedCardPost from './post';
-import { keysAreEqual, keyForPost } from 'reader/post-key';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderFeed from 'components/data/query-reader-feed';
-import { recordTrack } from 'reader/stats';
-import { getSiteName } from 'reader/get-helpers';
-import FollowButton from 'reader/follow-button';
-import { getPostsByKeys } from 'state/reader/posts/selectors';
-import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
-import PostBlocked from 'blocks/reader-post-card/blocked';
+import { keysAreEqual, keyForPost } from 'calypso/reader/post-key';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { getSiteName } from 'calypso/reader/get-helpers';
+import FollowButton from 'calypso/reader/follow-button';
+import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
+import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
+import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -32,6 +36,7 @@ import './style.scss';
 
 class ReaderCombinedCardComponent extends React.Component {
 	static propTypes = {
+		currentRoute: PropTypes.string,
 		posts: PropTypes.array.isRequired,
 		site: PropTypes.object,
 		feed: PropTypes.object,
@@ -42,6 +47,8 @@ class ReaderCombinedCardComponent extends React.Component {
 		showFollowButton: PropTypes.bool,
 		followSource: PropTypes.string,
 		blockedSites: PropTypes.array,
+		teams: PropTypes.array,
+		isWPForTeamsItem: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -67,7 +74,7 @@ class ReaderCombinedCardComponent extends React.Component {
 	recordRenderTrack = () => {
 		const { postKey, posts } = this.props;
 
-		recordTrack( 'calypso_reader_combined_card_render', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_combined_card_render', {
 			blog_id: postKey.blogId,
 			feed_id: postKey.feedId,
 			post_count: size( posts ),
@@ -76,6 +83,7 @@ class ReaderCombinedCardComponent extends React.Component {
 
 	render() {
 		const {
+			currentRoute,
 			posts,
 			postKeys,
 			site,
@@ -86,6 +94,8 @@ class ReaderCombinedCardComponent extends React.Component {
 			isDiscover,
 			blockedSites,
 			translate,
+			teams,
+			isWPForTeamsItem,
 		} = this.props;
 		const feedId = postKey.feedId;
 		const siteId = postKey.blogId;
@@ -93,9 +103,10 @@ class ReaderCombinedCardComponent extends React.Component {
 		const feedIcon = get( feed, 'image' );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteName = getSiteName( { site, post: posts[ 0 ] } );
-		const isSelectedPost = post => keysAreEqual( keyForPost( post ), selectedPostKey );
+		const isSelectedPost = ( post ) => keysAreEqual( keyForPost( post ), selectedPostKey );
 		const followUrl = ( feed && feed.URL ) || ( site && site.URL );
-		const mediaCount = filter( posts, post => post && ! isEmpty( post.canonical_media ) ).length;
+		const mediaCount = filter( posts, ( post ) => post && ! isEmpty( post.canonical_media ) )
+			.length;
 
 		// Handle blocked sites here rather than in the post lifecycle, because we don't have the posts there
 		if ( posts[ 0 ] && ! posts[ 0 ].is_external && includes( blockedSites, +posts[ 0 ].site_ID ) ) {
@@ -137,6 +148,7 @@ class ReaderCombinedCardComponent extends React.Component {
 					{ posts.map( ( post, i ) => (
 						<ReaderCombinedCardPost
 							key={ `post-${ postKey.feedId || postKey.blogId }-${ postKey.postIds[ i ] }` }
+							currentRoute={ currentRoute }
 							post={ post }
 							postKey={ postKeys[ i ] }
 							streamUrl={ streamUrl }
@@ -144,6 +156,8 @@ class ReaderCombinedCardComponent extends React.Component {
 							isDiscover={ isDiscover }
 							isSelected={ isSelectedPost( post ) }
 							showFeaturedAsset={ mediaCount > 0 }
+							teams={ teams }
+							isWPForTeamsItem={ isWPForTeamsItem }
 						/>
 					) ) }
 				</ul>
@@ -157,6 +171,7 @@ class ReaderCombinedCardComponent extends React.Component {
 						showReportSite={ true }
 						showReportPost={ false }
 						post={ posts[ 0 ] }
+						posts={ posts }
 					/>
 				</div>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
@@ -178,7 +193,7 @@ export function combinedCardPostKeyToKeys( postKey, memoized = null ) {
 		return memoized.lastPostKeys;
 	}
 
-	const keys = postKey.postIds.map( postId => ( { feedId, blogId, postId } ) );
+	const keys = postKey.postIds.map( ( postId ) => ( { feedId, blogId, postId } ) );
 
 	if ( memoized ) {
 		memoized.lastPostIds = postKey.postIds;
@@ -197,14 +212,19 @@ export const ReaderCombinedCard = localize( ReaderCombinedCardComponent );
 function mapStateToProps( st, ownProps ) {
 	const memoized = {};
 
-	return state => {
+	return ( state ) => {
 		const postKeys = combinedCardPostKeyToKeys( ownProps.postKey, memoized );
 
 		return {
+			currentRoute: getCurrentRoute( state ),
+			isWPForTeamsItem:
+				isFeedWPForTeams( state, ownProps.postKey.feedId ) ||
+				isSiteWPForTeams( state, ownProps.postKey.blogId ),
+			teams: getReaderTeams( state ),
 			posts: getPostsByKeys( state, postKeys ),
 			postKeys,
 		};
 	};
 }
 
-export default connect( mapStateToProps )( ReaderCombinedCard );
+export default connect( mapStateToProps, { recordReaderTracksEvent } )( ReaderCombinedCard );

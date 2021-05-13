@@ -3,22 +3,17 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 const initialState = { status: 'ready', errorLevel: false, errorMessage: false };
 
 const SMS_URL = '/sms';
 
 export class AuthCodeButton extends React.Component {
-	static defaultProps = {
-		translate: identity,
-	};
-
 	state = initialState;
 
 	componentWillUnmount() {
@@ -43,7 +38,7 @@ export class AuthCodeButton extends React.Component {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify( { username: this.props.username, password: this.props.password } ),
-		} ).then( response => response.json() );
+		} ).then( ( response ) => response.json() );
 
 		try {
 			this.handleSMSResponse( null, await this.request );

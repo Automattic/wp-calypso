@@ -1,23 +1,24 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Internal dependencies
  */
-import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
-import getPostTypeAllPostsUrl from 'state/selectors/get-post-type-all-posts-url';
-import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import PostQueryManager from 'lib/query-manager/post';
-import { ROUTE_SET } from 'state/action-types';
+import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
+import getPostTypeAllPostsUrl from 'calypso/state/selectors/get-post-type-all-posts-url';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import PostQueryManager from 'calypso/lib/query-manager/post';
 
 const postType = 'post';
 const pagePostType = 'page';
+const siteEditorPostType = undefined;
 const templatePostType = 'wp_template_part';
 const siteId = 1;
 const siteSlug = 'fake.url.wordpress.com';
 const siteUrl = `https://${ siteSlug }`;
-const checklistUrl = `/checklist/${ siteSlug }`;
 const customerHomeUrl = `/home/${ siteSlug }`;
-const blockEditorAction = { type: ROUTE_SET, path: '/block-editor/page/1' };
-const checklistAction = { type: ROUTE_SET, path: checklistUrl };
-const customerHomeAction = { type: ROUTE_SET, path: customerHomeUrl };
+const themesUrl = `/themes/${ siteSlug }`;
 
 describe( 'getEditorCloseConfig()', () => {
 	test( 'should return URL for customer home as default when no previous route is given', () => {
@@ -27,7 +28,8 @@ describe( 'getEditorCloseConfig()', () => {
 					[ siteId ]: { URL: siteUrl },
 				},
 			},
-			ui: { selectedSiteId: siteId, actionLog: [] },
+			ui: { selectedSiteId: siteId },
+			userSettings: { settings: {} },
 		};
 
 		expect( getEditorCloseConfig( state, siteId, postType ).url ).toEqual( customerHomeUrl );
@@ -40,15 +42,13 @@ describe( 'getEditorCloseConfig()', () => {
 					[ siteId ]: { URL: siteUrl },
 				},
 			},
-			ui: {
-				route: {
-					path: {
-						previous: '/route-with-no-match',
-					},
-				},
-				selectedSiteId: siteId,
-				actionLog: [],
+			route: {
+				lastNonEditorRoute: '/route-with-no-match',
 			},
+			ui: {
+				selectedSiteId: siteId,
+			},
+			userSettings: { settings: {} },
 		};
 
 		const allPostsUrl = getPostTypeAllPostsUrl( state, postType );
@@ -81,51 +81,15 @@ describe( 'getEditorCloseConfig()', () => {
 					} ),
 				},
 			},
-			ui: { selectedSiteId: siteId, actionLog: [] },
+			ui: { selectedSiteId: siteId },
+			userSettings: { settings: {} },
 		};
 
-		const parentPostEditorUrl = getGutenbergEditorUrl( state, siteId, parentPostId, pagePostType );
+		const parentPostEditorUrl = getEditorUrl( state, siteId, parentPostId, pagePostType );
 
 		expect( getEditorCloseConfig( state, siteId, templatePostType, parentPostId ).url ).toEqual(
 			parentPostEditorUrl
 		);
-	} );
-
-	test( 'should return URL for checklist if previous nav was from the checklist', () => {
-		const state = {
-			sites: {
-				items: {
-					[ siteId ]: { URL: siteUrl },
-				},
-			},
-			ui: {
-				route: {
-					path: {
-						previous: checklistUrl,
-					},
-				},
-				selectedSiteId: siteId,
-				actionLog: [],
-			},
-		};
-
-		expect( getEditorCloseConfig( state, siteId, postType ).url ).toEqual( checklistUrl );
-	} );
-
-	test( 'should return URL for checklist if most recent non-editor nav was from the checklist', () => {
-		const state = {
-			sites: {
-				items: {
-					[ siteId ]: { URL: siteUrl },
-				},
-			},
-			ui: {
-				selectedSiteId: siteId,
-				actionLog: [ customerHomeAction, checklistAction, blockEditorAction ],
-			},
-		};
-
-		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).toEqual( checklistUrl );
 	} );
 
 	test( 'should return URL for customer home if previous nav was from the customer home', () => {
@@ -135,15 +99,13 @@ describe( 'getEditorCloseConfig()', () => {
 					[ siteId ]: { URL: siteUrl },
 				},
 			},
-			ui: {
-				route: {
-					path: {
-						previous: customerHomeUrl,
-					},
-				},
-				selectedSiteId: siteId,
-				actionLog: [],
+			route: {
+				lastNonEditorRoute: customerHomeUrl,
 			},
+			ui: {
+				selectedSiteId: siteId,
+			},
+			userSettings: { settings: {} },
 		};
 
 		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).toEqual( customerHomeUrl );
@@ -156,12 +118,57 @@ describe( 'getEditorCloseConfig()', () => {
 					[ siteId ]: { URL: siteUrl },
 				},
 			},
+			route: {
+				lastNonEditorRoute: customerHomeUrl,
+			},
 			ui: {
 				selectedSiteId: siteId,
-				actionLog: [ checklistAction, customerHomeAction, blockEditorAction ],
 			},
+			userSettings: { settings: {} },
 		};
 
 		expect( getEditorCloseConfig( state, siteId, postType, '' ).url ).toEqual( customerHomeUrl );
+	} );
+
+	test( 'should return URL to home if postType is undefined (site editor) and previous route has no match', () => {
+		const state = {
+			sites: {
+				items: {
+					[ siteId ]: { URL: siteUrl },
+				},
+			},
+			route: {
+				lastNonEditorRoute: '/route-with-no-match',
+			},
+			ui: {
+				selectedSiteId: siteId,
+			},
+			userSettings: { settings: {} },
+		};
+
+		expect( getEditorCloseConfig( state, siteId, siteEditorPostType ).url ).toEqual(
+			customerHomeUrl
+		);
+	} );
+
+	test( 'should still return to matching route w/ undefined (site editor) postType', () => {
+		const state = {
+			sites: {
+				items: {
+					[ siteId ]: { URL: siteUrl },
+				},
+			},
+			route: {
+				lastNonEditorRoute: themesUrl,
+			},
+			ui: {
+				selectedSiteId: siteId,
+			},
+			userSettings: { settings: {} },
+		};
+
+		expect( getEditorCloseConfig( state, siteId, siteEditorPostType, '' ).url ).toEqual(
+			themesUrl
+		);
 	} );
 } );

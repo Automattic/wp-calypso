@@ -8,13 +8,13 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { requestStatus, receiveStatus } from '../';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	fetchAutomatedTransferStatus,
 	setAutomatedTransferStatus,
-} from 'state/automated-transfer/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { useFakeTimers } from 'test/helpers/use-sinon';
+} from 'calypso/state/automated-transfer/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 
 const siteId = 1916284;
 
@@ -48,7 +48,7 @@ describe( 'requestStatus', () => {
 
 describe( 'receiveStatus', () => {
 	let clock;
-	useFakeTimers( fakeClock => ( clock = fakeClock ) );
+	useFakeTimers( ( fakeClock ) => ( clock = fakeClock ) );
 
 	test( 'should dispatch set status action', () => {
 		const dispatch = sinon.spy();

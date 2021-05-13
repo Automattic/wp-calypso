@@ -1,22 +1,23 @@
 /**
  * External dependencies
  */
-
 import { filter, find } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import titleCase from 'to-title-case';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import Gridicon from 'calypso/components/gridicon';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { Card } from '@automattic/components';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import ExternalLink from 'calypso/components/external-link';
+import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 
 /**
  * Style dependencies
@@ -26,6 +27,11 @@ import './style.scss';
 class PluginSections extends React.Component {
 	static displayName = 'PluginSections';
 
+	constructor( props ) {
+		super( props );
+		this.descriptionContent = React.createRef();
+	}
+
 	state = {
 		selectedSection: false,
 		readMore: false,
@@ -34,8 +40,8 @@ class PluginSections extends React.Component {
 
 	_COLLAPSED_DESCRIPTION_HEIGHT = 140;
 
-	recordEvent = eventAction => {
-		analytics.ga.recordEvent( 'Plugins', eventAction, 'Plugin Name', this.props.plugin.slug );
+	recordEvent = ( eventAction ) => {
+		gaRecordEvent( 'Plugins', eventAction, 'Plugin Name', this.props.plugin.slug );
 	};
 
 	componentDidMount() {
@@ -47,8 +53,8 @@ class PluginSections extends React.Component {
 	}
 
 	calculateDescriptionHeight() {
-		if ( this.refs.content ) {
-			const node = this.refs.content;
+		if ( this.descriptionContent ) {
+			const node = this.descriptionContent.current;
 			if ( node && node.offsetHeight && node.offsetHeight !== this.state.descriptionHeight ) {
 				this.setState( { descriptionHeight: node.offsetHeight } );
 			}
@@ -108,7 +114,57 @@ class PluginSections extends React.Component {
 					textOnly: true,
 				} ),
 			},
+			{
+				key: 'faq',
+				title: this.props.translate( 'FAQs', {
+					context: 'Navigation item',
+					textOnly: true,
+				} ),
+			},
 		];
+	};
+
+	getWpcomSupportContent = () => {
+		const supportedAuthors = [ 'Automattic', 'WooCommerce' ];
+		const { translate, plugin } = this.props;
+
+		if ( supportedAuthors.indexOf( plugin.author_name ) > -1 ) {
+			return;
+		}
+
+		const linkToAuthor = (
+			<ExternalLink href={ safeProtocolUrl( plugin.author_url ) } target="_blank">
+				{ translate( 'Author website' ) }
+			</ExternalLink>
+		);
+
+		const linkToSupportForum = (
+			<ExternalLink
+				href={ safeProtocolUrl( 'https://wordpress.org/support/plugin/' + plugin.slug ) }
+				target="_blank"
+			>
+				{ translate( 'Support forum' ) }
+			</ExternalLink>
+		);
+
+		return (
+			<div className="plugin-sections__support">
+				<h3>{ translate( 'Support' ) }</h3>
+				<p>
+					{ translate(
+						'Support for this plugin is provided by the plugin author. You may find additional documentation here:'
+					) }
+				</p>
+				<ul>
+					<li>
+						<span>{ linkToAuthor }</span>
+					</li>
+					<li>
+						<span>{ linkToSupportForum }</span>
+					</li>
+				</ul>
+			</div>
+		);
 	};
 
 	getSelected = () => {
@@ -117,20 +173,20 @@ class PluginSections extends React.Component {
 
 	getDefaultSection = () => {
 		const sections = this.props.plugin.sections;
-		return find( this.getFilteredSections(), function( section ) {
+		return find( this.getFilteredSections(), function ( section ) {
 			return sections[ section.key ];
 		} ).key;
 	};
 
 	getAvailableSections = () => {
 		const sections = this.props.plugin.sections;
-		return filter( this.getFilteredSections(), function( section ) {
+		return filter( this.getFilteredSections(), function ( section ) {
 			return sections[ section.key ];
 		} );
 	};
 
-	getNavTitle = sectionKey => {
-		const titleSection = find( this.getFilteredSections(), function( section ) {
+	getNavTitle = ( sectionKey ) => {
+		const titleSection = find( this.getFilteredSections(), function ( section ) {
 			return section.key === sectionKey;
 		} );
 
@@ -165,9 +221,11 @@ class PluginSections extends React.Component {
 		);
 		return (
 			<div className="plugin-sections__read-more">
-				{ // We remove the link but leave the plugin-sections__read-more container
-				// in order to minimize jump on small sections.
-				this.state.readMore ? null : button }
+				{
+					// We remove the link but leave the plugin-sections__read-more container
+					// in order to minimize jump on small sections.
+					this.state.readMore ? null : button
+				}
 			</div>
 		);
 	};
@@ -188,7 +246,7 @@ class PluginSections extends React.Component {
 				<div className="plugin-sections__header">
 					<SectionNav selectedText={ this.getNavTitle( this.getSelected() ) }>
 						<NavTabs>
-							{ this.getAvailableSections().map( function( section ) {
+							{ this.getAvailableSections().map( function ( section ) {
 								return (
 									<NavItem
 										key={ section.key }
@@ -203,8 +261,9 @@ class PluginSections extends React.Component {
 					</SectionNav>
 				</div>
 				<Card>
+					{ 'faq' === this.getSelected() && this.props.isWpcom && this.getWpcomSupportContent() }
 					<div
-						ref="content"
+						ref={ this.descriptionContent }
 						className={ contentClasses }
 						// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
 						dangerouslySetInnerHTML={ {

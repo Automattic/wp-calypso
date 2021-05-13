@@ -7,7 +7,6 @@
  */
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import pageSpy from 'page';
 import { parse } from 'qs';
 import React from 'react';
@@ -18,20 +17,16 @@ import React from 'react';
 import { DailyPostButton } from '../index';
 import { sites, dailyPromptPost } from './fixtures';
 
-jest.mock( 'reader/stats', () => ( {
+jest.mock( 'calypso/reader/stats', () => ( {
 	pageViewForPost: () => {},
 	recordAction: () => {},
 	recordGaEvent: () => {},
 	recordTrackForPost: () => {},
 } ) );
-jest.mock( 'lib/analytics', () => ( {
-	mc: {
-		bumpStat: () => {},
-	},
-} ) );
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 jest.mock( 'page', () => require( 'sinon' ).spy() );
 const markPostSeen = jest.fn();
+const noop = () => {};
 
 describe( 'DailyPostButton', () => {
 	const [ sampleUserSite, sampleReadingSite ] = sites;
@@ -97,7 +92,8 @@ describe( 'DailyPostButton', () => {
 			assert.isTrue( pageSpy.calledWithMatch( /post\/apps.wordpress.com?/ ) );
 		} );
 
-		test( 'shows the site selector if the user has more than one site', done => {
+		// eslint-disable-next-line jest/expect-expect
+		test( 'shows the site selector if the user has more than one site', () => {
 			const dailyPostButton = shallow(
 				<DailyPostButton
 					tagName="span"
@@ -109,8 +105,10 @@ describe( 'DailyPostButton', () => {
 					markPostSeen={ markPostSeen }
 				/>
 			);
-			dailyPostButton.instance().renderSitesPopover = done;
-			dailyPostButton.simulate( 'click', { preventDefault: noop } );
+			return new Promise( ( resolve ) => {
+				dailyPostButton.instance().renderSitesPopover = resolve;
+				dailyPostButton.simulate( 'click', { preventDefault: noop } );
+			} );
 		} );
 	} );
 

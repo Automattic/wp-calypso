@@ -23,16 +23,17 @@ import {
 	ACTION_SITE_DOMAIN_REQUEST_FAILURE,
 	ERROR_MESSAGE_RESPONSE as errorResponse,
 } from './fixture';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'actions', () => {
-	let sandbox, spy;
+	let sandbox;
+	let spy;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
 	} );
@@ -61,7 +62,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSiteDomains() - success', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.2/sites/${ siteId }/domains` )
@@ -85,7 +86,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSiteDomains() - failure', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.2/sites/${ siteId }/domains` )

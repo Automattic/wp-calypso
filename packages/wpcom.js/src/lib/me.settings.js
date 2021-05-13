@@ -1,5 +1,5 @@
 /**
- * Module dependencies
+ * Internal dependencies
  */
 import MeProfileLinks from './me.settings.profile-links';
 import MeSettingsPassword from './me.settings.password';
@@ -10,7 +10,7 @@ import MeSettingsPassword from './me.settings.password';
  * Use a `WPCOM#Me` instance to create a new `MeSettings` instance.
  *
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @returns {null} null
  */
 export default function MeSettings( wpcom ) {
 	if ( ! ( this instanceof MeSettings ) ) {
@@ -32,23 +32,23 @@ export default function MeSettings( wpcom ) {
  *      // user settings data object
  *    } );
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-MeSettings.prototype.get = function( query, fn ) {
+MeSettings.prototype.get = function ( query, fn ) {
 	return this.wpcom.req.get( '/me/settings', query, fn );
 };
 
 /**
  * Update settings of the current user
  *
- * @param {Object} [query] - query object parameter
- * @param {Object} body - body object parameter
+ * @param {object} [query] - query object parameter
+ * @param {object} body - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-MeSettings.prototype.update = function( query, body, fn ) {
+MeSettings.prototype.update = function ( query, body, fn ) {
 	return this.wpcom.req.put( '/me/settings/', query, body, fn );
 };
 
@@ -59,17 +59,17 @@ MeSettings.prototype.update = function( query, body, fn ) {
  *    // Create a MeProfileLinks instance
  *    var profile_links = wpcom.me().settings().profileLinks();
  *
- * @return {MeProfileLinks} MeProfileLinks instance
+ * @returns {MeProfileLinks} MeProfileLinks instance
  */
-MeSettings.prototype.profileLinks = function() {
+MeSettings.prototype.profileLinks = function () {
 	return new MeProfileLinks( this.wpcom );
 };
 
 /**
  * Return `MeSettingsPassword` instance
  *
- * @return {MeSettingsPassword} MeSettingsPassword instance
+ * @returns {MeSettingsPassword} MeSettingsPassword instance
  */
-MeSettings.prototype.password = function() {
+MeSettings.prototype.password = function () {
 	return new MeSettingsPassword( this.wpcom );
 };

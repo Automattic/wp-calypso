@@ -3,6 +3,7 @@
  */
 import { controls } from '@wordpress/data-controls';
 import { plugins, registerStore, use } from '@wordpress/data';
+import type { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -11,18 +12,35 @@ import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
-import { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
+import persistOptions from './persist';
 
+export type { State };
 export { STORE_KEY };
 
-use( plugins.persistence, {} );
+use( plugins.persistence, persistOptions );
 
 registerStore< State >( STORE_KEY, {
 	actions,
 	controls,
-	reducer: reducer as any,
+	reducer: reducer as any, // eslint-disable-line @typescript-eslint/no-explicit-any
 	selectors,
-	persist: [ 'domain', 'siteTitle', 'siteVertical', 'pageLayouts' ],
+	persist: [
+		'domain',
+		'domainSearch',
+		'hasUsedDomainsStep',
+		'hasUsedPlansStep',
+		'lastLocation',
+		'pageLayouts',
+		'planProductId',
+		'randomizedDesigns',
+		'selectedDesign',
+		'selectedFeatures',
+		'selectedFonts',
+		'selectedSite',
+		'siteTitle',
+		'siteVertical',
+		'wasVerticalSkipped',
+	],
 } );
 
 declare module '@wordpress/data' {

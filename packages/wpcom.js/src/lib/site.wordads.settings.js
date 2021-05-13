@@ -1,9 +1,9 @@
 /**
  * `SiteWordAdsSettings` constructor.
  *
- * @param {String} sid - site identifier
+ * @param {string} sid - site identifier
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @returns {null} null
  */
 export default function SiteWordAdsSettings( sid, wpcom ) {
 	if ( ! ( this instanceof SiteWordAdsSettings ) ) {
@@ -27,11 +27,11 @@ export default function SiteWordAdsSettings( sid, wpcom ) {
  *      // `settings` information object
  *    } );
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-SiteWordAdsSettings.prototype.get = function( query, fn ) {
+SiteWordAdsSettings.prototype.get = function ( query, fn ) {
 	return this.wpcom.req.get( '/sites/' + this._sid + '/wordads/settings', query, fn );
 };
 
@@ -50,12 +50,12 @@ SiteWordAdsSettings.prototype.get = function( query, fn ) {
  *      // data settings information object
  *    } );
  *
- * @param {Object} [query] - query object parameter
- * @param {Object} body - body object parameter
+ * @param {object} [query] - query object parameter
+ * @param {object} body - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-SiteWordAdsSettings.prototype.update = function( query, body, fn ) {
-	var path = '/sites/' + this._sid + '/wordads/settings';
+SiteWordAdsSettings.prototype.update = function ( query, body, fn ) {
+	const path = '/sites/' + this._sid + '/wordads/settings';
 	return this.wpcom.req.post( path, query, body, fn );
 };

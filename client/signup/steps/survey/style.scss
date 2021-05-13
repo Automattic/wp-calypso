@@ -10,7 +10,7 @@
 
 .survey-step__question {
 	text-align: center;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 }
 
@@ -121,7 +121,7 @@
 	position: relative;
 }
 
-@include breakpoint( '>480px' ) {
+@include breakpoint-deprecated( '>480px' ) {
 	.survey__other {
 		margin: 0 auto 2em;
 		max-width: 500px;

@@ -8,8 +8,12 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { ConnectedThemesSelection } from './themes-selection';
-import Spinner from 'components/spinner';
-import { getRecommendedThemes } from 'state/themes/actions';
+import Spinner from 'calypso/components/spinner';
+import { getRecommendedThemes } from 'calypso/state/themes/actions';
+import {
+	getRecommendedThemes as getRecommendedThemesSelector,
+	areRecommendedThemesLoading,
+} from 'calypso/state/themes/selectors';
 
 class RecommendedThemes extends React.Component {
 	componentDidMount() {
@@ -30,7 +34,7 @@ class RecommendedThemes extends React.Component {
 		return (
 			<>
 				<h2>
-					<strong>{ translate( 'Recommended Themes' ) }</strong>
+					<strong>{ translate( 'Recommended themes' ) }</strong>
 				</h2>
 				{ this.props.isLoading ? (
 					<Spinner size={ 100 } />
@@ -43,10 +47,10 @@ class RecommendedThemes extends React.Component {
 }
 
 const ConnectedRecommendedThemes = connect(
-	state => {
+	( state ) => {
 		return {
-			recommendedThemes: state.themes.recommendedThemes.themes || [],
-			isLoading: state.themes.recommendedThemes.isLoading,
+			recommendedThemes: getRecommendedThemesSelector( state ),
+			isLoading: areRecommendedThemesLoading( state ),
 		};
 	},
 	{ getRecommendedThemes }

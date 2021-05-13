@@ -3,21 +3,22 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
-import Gridicon from 'components/gridicon';
-import Spinner from 'components/spinner';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import Gridicon from 'calypso/components/gridicon';
+import Spinner from 'calypso/components/spinner';
 import { Suggestions } from '@automattic/components';
-import { tracks } from 'lib/analytics';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class SuggestionSearch extends Component {
 	static propTypes = {
@@ -61,18 +62,18 @@ class SuggestionSearch extends Component {
 		}
 	}
 
-	setSuggestionsRef = ref => ( this.suggestionsRef = ref );
+	setSuggestionsRef = ( ref ) => ( this.suggestionsRef = ref );
 
 	hideSuggestions = () => this.setState( { query: '' } );
 
-	updateInputValue = inputValue => this.setState( { inputValue } );
+	updateInputValue = ( inputValue ) => this.setState( { inputValue } );
 
 	handleSuggestionChangeEvent = ( { target: { value } } ) => {
 		this.setState( { query: value, inputValue: value } );
 		this.props.onChange( value );
 	};
 
-	handleSuggestionKeyDown = event => {
+	handleSuggestionKeyDown = ( event ) => {
 		if ( this.suggestionsRef.props.suggestions.length > 0 && event.key === 'Enter' ) {
 			event.preventDefault();
 		}
@@ -87,7 +88,7 @@ class SuggestionSearch extends Component {
 		const { railcar } = this.props;
 		if ( railcar ) {
 			const { action, id } = railcar;
-			tracks.recordEvent( 'calypso_traintracks_interact', {
+			recordTracksEvent( 'calypso_traintracks_interact', {
 				action,
 				railcar: `${ id }-${ suggestionIndex }`,
 			} );
@@ -115,7 +116,7 @@ class SuggestionSearch extends Component {
 		const { railcar } = this.props;
 		if ( railcar ) {
 			const { fetch_algo, id, ui_algo } = railcar;
-			tracks.recordEvent( 'calypso_traintracks_render', {
+			recordTracksEvent( 'calypso_traintracks_render', {
 				fetch_algo,
 				ui_algo,
 				railcar: `${ id }-${ suggestionIndex }`,

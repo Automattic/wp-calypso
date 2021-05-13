@@ -1,40 +1,33 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 /**
  * Internal dependencies
  */
 import Button from '../../components/button';
-import {
-	useSelect,
-	useDispatch,
-	useMessages,
-	useLineItems,
-	renderDisplayValueMarkdown,
-} from '../../public-api';
-import { sprintf, useLocalize } from '../localize';
+import { FormStatus, useLineItems, useEvents } from '../../public-api';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { useFormStatus } from '../form-status';
 import PaymentLogo from './payment-logo.js';
-import { useStripe, showStripeModalAuth } from '../stripe';
 
 const debug = debugFactory( 'composite-checkout:existing-card-payment-method' );
 
 export function createExistingCardMethod( {
-	getCountry,
-	getPostalCode,
-	getSubdivisionCode,
-	registerStore,
-	submitTransaction,
 	id,
 	cardholderName,
 	cardExpiry,
 	brand,
 	last4,
+	storedDetailsId,
+	paymentMethodToken,
+	paymentPartnerProcessorId,
+	activePayButtonText = undefined,
 } ) {
 	debug( 'creating a new existing credit card payment method', {
 		id,
@@ -42,111 +35,6 @@ export function createExistingCardMethod( {
 		cardExpiry,
 		brand,
 		last4,
-	} );
-
-	const actions = {
-		*beginCardTransaction( payload ) {
-			let response;
-			try {
-				response = yield {
-					type: 'EXISTING_CARD_TRANSACTION_BEGIN',
-					payload: {
-						...payload,
-						name: cardholderName,
-						country: getCountry(),
-						postalCode: getPostalCode(),
-						subdivisionCode: getSubdivisionCode(),
-					},
-				};
-				debug( 'existing card transaction complete', response );
-			} catch ( error ) {
-				debug( 'existing card transaction had an error', error );
-				return { type: 'EXISTING_CARD_TRANSACTION_ERROR', payload: error };
-			}
-			if ( response?.message?.payment_intent_client_secret ) {
-				debug( 'existing card transaction requires auth' );
-				return { type: 'EXISTING_CARD_TRANSACTION_AUTH', payload: response };
-			}
-			if ( response?.redirect_url ) {
-				debug( 'existing card transaction requires redirect' );
-				return { type: 'EXISTING_CARD_TRANSACTION_REDIRECT', payload: response };
-			}
-			debug( 'existing card transaction requires is successful' );
-			return { type: 'EXISTING_CARD_TRANSACTION_END', payload: response };
-		},
-		setTransactionComplete( payload ) {
-			debug( 'transaction is successful' );
-			return { type: 'EXISTING_CARD_TRANSACTION_END', payload };
-		},
-		resetTransaction() {
-			debug( 'resetting transaction' );
-			return { type: 'EXISTING_CARD_TRANSACTION_RESET' };
-		},
-	};
-
-	const selectors = {
-		getTransactionError( state ) {
-			return state.transactionError;
-		},
-		getTransactionStatus( state ) {
-			return state.transactionStatus;
-		},
-		getTransactionAuthData( state ) {
-			return state.transactionAuthData;
-		},
-		getRedirectUrl( state ) {
-			return state.redirectUrl;
-		},
-	};
-
-	registerStore( `existing-card-${ id }`, {
-		reducer(
-			state = {
-				transactionStatus: null,
-				transactionError: null,
-				transactionAuthData: null,
-			},
-			action
-		) {
-			switch ( action.type ) {
-				case 'EXISTING_CARD_TRANSACTION_RESET':
-					return {
-						...state,
-						transactionStatus: null,
-					};
-				case 'EXISTING_CARD_TRANSACTION_END':
-					return {
-						...state,
-						transactionStatus: 'complete',
-					};
-				case 'EXISTING_CARD_TRANSACTION_ERROR':
-					return {
-						...state,
-						transactionStatus: 'error',
-						transactionError: action.payload,
-					};
-				case 'EXISTING_CARD_TRANSACTION_AUTH':
-					return {
-						...state,
-						transactionStatus: 'auth',
-						transactionAuthData: action.payload,
-					};
-				case 'EXISTING_CARD_TRANSACTION_REDIRECT':
-					return {
-						...state,
-						transactionStatus: 'redirect',
-						redirectUrl: action.payload.redirect_url,
-					};
-			}
-			return state;
-		},
-		actions,
-		selectors,
-		controls: {
-			EXISTING_CARD_TRANSACTION_BEGIN( action ) {
-				return submitTransaction( action.payload );
-			},
-		},
 	} );
 
 	return {
@@ -159,7 +47,15 @@ export function createExistingCardMethod( {
 				brand={ brand }
 			/>
 		),
-		submitButton: <ExistingCardPayButton id={ id } />,
+		submitButton: (
+			<ExistingCardPayButton
+				cardholderName={ cardholderName }
+				storedDetailsId={ storedDetailsId }
+				paymentMethodToken={ paymentMethodToken }
+				paymentPartnerProcessorId={ paymentPartnerProcessorId }
+				activeButtonText={ activePayButtonText }
+			/>
+		),
 		inactiveContent: (
 			<ExistingCardSummary
 				cardholderName={ cardholderName }
@@ -183,16 +79,19 @@ function formatDate( cardExpiry ) {
 }
 
 export function ExistingCardLabel( { last4, cardExpiry, cardholderName, brand } ) {
-	const localize = useLocalize();
+	const { __, _x } = useI18n();
+
+	/* translators: %s is the last 4 digits of the credit card number */
+	const maskedCardDetails = sprintf( _x( '**** %s', 'Masked credit card number' ), last4 );
 
 	return (
 		<React.Fragment>
 			<div>
 				<CardHolderName>{ cardholderName }</CardHolderName>
-				<CardDetails>**** { last4 }</CardDetails>
-				{ `${ localize( 'Expiry:' ) }  ${ formatDate( cardExpiry ) }` }
+				<CardDetails>{ maskedCardDetails }</CardDetails>
+				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
 			</div>
-			<div>
+			<div className="existing-credit-card__logo payment-logos">
 				<PaymentLogo brand={ brand } isSummary={ true } />
 			</div>
 		</React.Fragment>
@@ -203,156 +102,82 @@ const CardHolderName = styled.span`
 	display: block;
 `;
 
-function ExistingCardPayButton( { disabled, id } ) {
-	const localize = useLocalize();
+function ExistingCardPayButton( {
+	disabled,
+	onClick,
+	cardholderName,
+	storedDetailsId,
+	paymentMethodToken,
+	paymentPartnerProcessorId,
+	activeButtonText = undefined,
+} ) {
 	const [ items, total ] = useLineItems();
-	const { showErrorMessage, showInfoMessage } = useMessages();
-	const transactionStatus = useSelect( select =>
-		select( `existing-card-${ id }` ).getTransactionStatus()
-	);
-	const transactionError = useSelect( select =>
-		select( `existing-card-${ id }` ).getTransactionError()
-	);
-	const transactionAuthData = useSelect( select =>
-		select( `existing-card-${ id }` ).getTransactionAuthData()
-	);
-	const redirectUrl = useSelect( select => select( `existing-card-${ id }` ).getRedirectUrl() );
-	const { beginCardTransaction, setTransactionComplete, resetTransaction } = useDispatch(
-		`existing-card-${ id }`
-	);
-	const { formStatus, setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
-	const { stripeConfiguration } = useStripe();
+	const { formStatus } = useFormStatus();
+	const onEvent = useEvents();
 
-	useEffect( () => {
-		if ( transactionStatus === 'error' ) {
-			showErrorMessage(
-				transactionError || localize( 'An error occurred during the transaction' )
-			);
-			setFormReady();
-		}
-		if ( transactionStatus === 'complete' ) {
-			debug( 'existing card transaction is complete' );
-			setFormComplete();
-		}
-		if ( transactionStatus === 'redirect' ) {
-			debug( 'redirecting' );
-			showInfoMessage( localize( 'Redirecting...' ) );
-			window.location = redirectUrl;
-		}
-	}, [
-		redirectUrl,
-		setFormReady,
-		setFormComplete,
-		showErrorMessage,
-		showInfoMessage,
-		transactionStatus,
-		transactionError,
-		transactionAuthData,
-		localize,
-	] );
-
-	useEffect( () => {
-		let isSubscribed = true;
-
-		if ( transactionStatus === 'auth' ) {
-			debug( 'showing auth' );
-			showStripeModalAuth( {
-				stripeConfiguration,
-				response: transactionAuthData,
-			} )
-				.then( authenticationResponse => {
-					debug( 'auth is complete', authenticationResponse );
-					isSubscribed && setTransactionComplete( authenticationResponse );
-				} )
-				.catch( error => {
-					debug( 'showing error for auth', error );
-					showErrorMessage(
-						localize( 'Authorization failed for that card. Please try a different payment method.' )
-					);
-					isSubscribed && resetTransaction();
-					isSubscribed && setFormReady();
-				} );
-		}
-
-		return () => ( isSubscribed = false );
-	}, [
-		resetTransaction,
-		setTransactionComplete,
-		setFormReady,
-		showInfoMessage,
-		showErrorMessage,
-		transactionStatus,
-		transactionAuthData,
-		stripeConfiguration,
-		localize,
-	] );
-
-	const buttonString =
-		formStatus === 'submitting'
-			? localize( 'Processing...' )
-			: sprintf( localize( 'Pay %s' ), renderDisplayValueMarkdown( total.amount.displayValue ) );
 	return (
 		<Button
 			disabled={ disabled }
-			onClick={ () =>
-				submitExistingCardPayment( {
-					id,
+			onClick={ () => {
+				debug( 'submitting existing card payment' );
+				onEvent( { type: 'EXISTING_CARD_TRANSACTION_BEGIN' } );
+				onClick( 'existing-card', {
 					items,
-					total,
-					showErrorMessage,
-					beginCardTransaction,
-					setFormSubmitting,
-					resetTransaction,
-				} )
-			}
-			buttonState={ disabled ? 'disabled' : 'primary' }
+					name: cardholderName,
+					storedDetailsId,
+					paymentMethodToken,
+					paymentPartnerProcessorId,
+				} );
+			} }
+			buttonType="primary"
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			{ buttonString }
+			<ButtonContents
+				formStatus={ formStatus }
+				total={ total }
+				activeButtonText={ activeButtonText }
+			/>
 		</Button>
 	);
 }
 
+function ButtonContents( { formStatus, total, activeButtonText = undefined } ) {
+	const { __ } = useI18n();
+	if ( formStatus === FormStatus.SUBMITTING ) {
+		return __( 'Processing…' );
+	}
+	if ( formStatus === FormStatus.READY ) {
+		/* translators: %s is the total to be paid in localized currency */
+		return activeButtonText || sprintf( __( 'Pay %s' ), total.amount.displayValue );
+	}
+	return __( 'Please wait…' );
+}
+
 function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {
-	const localize = useLocalize();
+	const { __, _x } = useI18n();
+
+	/* translators: %s is the last 4 digits of the credit card number */
+	const maskedCardDetails = sprintf( _x( '**** %s', 'Masked credit card number' ), last4 );
 
 	return (
 		<SummaryDetails>
 			<SummaryLine>{ cardholderName }</SummaryLine>
 			<SummaryLine>
 				<PaymentLogo brand={ brand } isSummary={ true } />
-				<CardDetails>**** { last4 }</CardDetails>
-				{ `${ localize( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }
+				<CardDetails>{ maskedCardDetails }</CardDetails>
+				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
 			</SummaryLine>
 		</SummaryDetails>
 	);
 }
 
 const CardDetails = styled.span`
+	display: inline-block;
 	margin-right: 8px;
-`;
 
-async function submitExistingCardPayment( {
-	id,
-	items,
-	total,
-	showErrorMessage,
-	beginCardTransaction,
-	setFormSubmitting,
-	setFormReady,
-	resetTransaction,
-} ) {
-	debug( 'submitting existing card payment with the id', id );
-	try {
-		setFormSubmitting();
-		beginCardTransaction( {
-			items,
-			total,
-		} );
-	} catch ( error ) {
-		resetTransaction();
-		setFormReady();
-		showErrorMessage( error );
-		return;
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
 	}
-}
+`;

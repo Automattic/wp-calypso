@@ -16,7 +16,7 @@ import {
 	isRequestingTermsForQuery,
 	isRequestingTermsForQueryIgnoringPage,
 } from '../selectors';
-import TermQueryManager from 'lib/query-manager/term';
+import TermQueryManager from 'calypso/lib/query-manager/term';
 
 describe( 'selectors', () => {
 	beforeEach( () => {

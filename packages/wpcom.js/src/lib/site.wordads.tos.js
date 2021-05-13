@@ -1,9 +1,9 @@
 /**
  * `SiteWordAdsTOS` constructor.
  *
- * @param {String} sid - site identifier
+ * @param {string} sid - site identifier
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @returns {null} null
  */
 export default function SiteWordAdsTOS( sid, wpcom ) {
 	if ( ! ( this instanceof SiteWordAdsTOS ) ) {
@@ -27,11 +27,11 @@ export default function SiteWordAdsTOS( sid, wpcom ) {
  *      // `settings` information object
  *    } );
 
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-SiteWordAdsTOS.prototype.get = function( query, fn ) {
+SiteWordAdsTOS.prototype.get = function ( query, fn ) {
 	return this.wpcom.req.get( '/sites/' + this._sid + '/wordads/tos', query, fn );
 };
 
@@ -48,13 +48,13 @@ SiteWordAdsTOS.prototype.get = function( query, fn ) {
  *      // data settings information object
  *    } );
  *
- * @param {Object} [query] - query object parameter
- * @param {Object} body - body object parameter
+ * @param {object} [query] - query object parameter
+ * @param {object} body - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-SiteWordAdsTOS.prototype.update = function( query, body, fn ) {
-	var path = '/sites/' + this._sid + '/wordads/tos';
+SiteWordAdsTOS.prototype.update = function ( query, body, fn ) {
+	const path = '/sites/' + this._sid + '/wordads/tos';
 	return this.wpcom.req.post( path, query, body, fn );
 };
 
@@ -71,11 +71,11 @@ SiteWordAdsTOS.prototype.update = function( query, body, fn ) {
  *      // data settings information object
  *    } );
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-SiteWordAdsTOS.prototype.sign = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/wordads/tos';
+SiteWordAdsTOS.prototype.sign = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/wordads/tos';
 	return this.wpcom.req.post( path, query, { tos: 'signed' }, fn );
 };

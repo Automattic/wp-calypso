@@ -1,26 +1,20 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
-import GridIcon from 'components/gridicon';
+import GridIcon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import FoldableCard from 'components/foldable-card';
+import FoldableCard from 'calypso/components/foldable-card';
 
 class SharingServicePlaceholder extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
-	};
-
-	static defaultProps = {
-		translate: identity,
 	};
 
 	render() {

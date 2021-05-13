@@ -1,5 +1,5 @@
 /**
- * Module dependencies.
+ * Internal dependencies
  */
 import SiteWordAdsSettings from './site.wordads.settings';
 import SiteWordAdsEarnings from './site.wordads.earnings';
@@ -10,9 +10,9 @@ import SiteWordAdsTOS from './site.wordads.tos';
  *
  * Use a `WPCOM#Me` instance to create a new `SiteWordAds` instance.
  *
- * @param {String} sid - site identifier
+ * @param {string} sid - site identifier
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @returns {null} null
  */
 export default function SiteWordAds( sid, wpcom ) {
 	if ( ! ( this instanceof SiteWordAds ) ) {
@@ -34,9 +34,9 @@ export default function SiteWordAds( sid, wpcom ) {
  *      .wordAds()
  *      .settings();
  *
- * @return {SiteWordAdsSettings} site WordAds settings instance
+ * @returns {SiteWordAdsSettings} site WordAds settings instance
  */
-SiteWordAds.prototype.settings = function() {
+SiteWordAds.prototype.settings = function () {
 	return new SiteWordAdsSettings( this._sid, this.wpcom );
 };
 
@@ -51,9 +51,9 @@ SiteWordAds.prototype.settings = function() {
  *      .wordAds()
  *      .earnings();
  *
- * @return {SiteWordAdsEarnings} site WordAds earnings instance
+ * @returns {SiteWordAdsEarnings} site WordAds earnings instance
  */
-SiteWordAds.prototype.earnings = function() {
+SiteWordAds.prototype.earnings = function () {
 	return new SiteWordAdsEarnings( this._sid, this.wpcom );
 };
 
@@ -70,8 +70,8 @@ SiteWordAds.prototype.earnings = function() {
  *
  * Return  SiteWordAdsTOS object for the site.
  *
- * @return {SiteWordAdsTOS} site wordAds TOS instance
+ * @returns {SiteWordAdsTOS} site wordAds TOS instance
  */
-SiteWordAds.prototype.tos = function() {
+SiteWordAds.prototype.tos = function () {
 	return new SiteWordAdsTOS( this._sid, this.wpcom );
 };

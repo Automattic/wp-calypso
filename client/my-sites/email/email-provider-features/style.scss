@@ -1,0 +1,36 @@
+.email-provider-features__feature {
+	margin-left: 28px;
+	margin-top: 8px;
+
+	&:first-child {
+		margin-top: 0;
+	}
+
+	&::before {
+		border-bottom: 1px solid var( --color-neutral-5 );
+		content: '';
+		display: block;
+		height: 1px;
+		margin-bottom: 8px;
+	}
+
+	&:first-child::before {
+		display: none;
+	}
+
+	.gridicon {
+		fill: var( --studio-green-40 );
+		margin-left: -28px;
+		margin-top: 2px;
+		position: absolute;
+	}
+}
+
+.email-provider-features__toggle-button {
+	overflow: visible;
+	white-space: nowrap;
+
+	.gridicon {
+		margin-left: 5px;
+	}
+}

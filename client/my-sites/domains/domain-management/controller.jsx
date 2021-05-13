@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { includes } from 'lodash';
 import page from 'page';
 import React from 'react';
 
@@ -9,7 +8,7 @@ import React from 'react';
  * Internal Dependencies
  */
 import DomainManagement from '.';
-import DomainManagementData from 'components/data/domain-management';
+import DomainManagementData from 'calypso/components/data/domain-management';
 import {
 	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
@@ -18,8 +17,9 @@ import {
 	domainManagementEditContactInfo,
 	domainManagementList,
 	domainManagementNameServers,
-	domainManagementPrimaryDomain,
 	domainManagementRedirectSettings,
+	domainManagementSecurity,
+	domainManagementSiteRedirect,
 	domainManagementTransfer,
 	domainManagementTransferIn,
 	domainManagementTransferOut,
@@ -27,14 +27,11 @@ import {
 	domainManagementTransferToOtherSite,
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
-} from 'my-sites/domains/paths';
-import {
-	emailManagement,
-	emailManagementAddGSuiteUsers,
-	emailManagementForwarding,
-} from 'my-sites/email/paths';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { decodeURIComponentIfValid } from 'lib/url';
+	domainManagementRoot,
+} from 'calypso/my-sites/domains/paths';
+import { emailManagement, emailManagementForwarding } from 'calypso/my-sites/email/paths';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { decodeURIComponentIfValid } from 'calypso/lib/url';
 
 export default {
 	domainManagementList( pageContext, next ) {
@@ -44,7 +41,6 @@ export default {
 				analyticsTitle="Domain Management"
 				component={ DomainManagement.List }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -55,25 +51,24 @@ export default {
 	},
 
 	domainManagementListAllSites( pageContext, next ) {
-		pageContext.primary = <DomainManagement.ListAll />;
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementRoot() }
+				analyticsTitle="Domain Management > All Domains"
+				component={ DomainManagement.ListAll }
+				context={ pageContext }
+			/>
+		);
 		next();
 	},
 
 	domainManagementEdit( pageContext, next ) {
-		const isTransfer = includes( pageContext.path, '/transfer/in/' );
-		const component = isTransfer ? DomainManagement.TransferIn : DomainManagement.Edit;
-
 		pageContext.primary = (
 			<DomainManagementData
-				analyticsPath={
-					isTransfer
-						? domainManagementTransferIn( ':site', ':domain' )
-						: domainManagementEdit( ':site', ':domain' )
-				}
+				analyticsPath={ domainManagementEdit( ':site', ':domain', pageContext.canonicalPath ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ component }
+				component={ DomainManagement.Edit }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -84,14 +79,30 @@ export default {
 		next();
 	},
 
-	domainManagementPrimaryDomain: function( pageContext, next ) {
+	domainManagementSiteRedirect( pageContext, next ) {
 		pageContext.primary = (
 			<DomainManagementData
-				analyticsPath={ domainManagementPrimaryDomain( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Set Primary Domain"
-				component={ DomainManagement.PrimaryDomain }
+				analyticsPath={ domainManagementSiteRedirect( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Edit"
+				component={ DomainManagement.SiteRedirect }
 				context={ pageContext }
-				needsCart
+				needsContactDetails
+				needsDomains
+				needsPlans
+				needsProductsList
+				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
+			/>
+		);
+		next();
+	},
+
+	domainManagementTransferIn( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementTransferIn( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Edit"
+				component={ DomainManagement.TransferIn }
+				context={ pageContext }
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -123,7 +134,6 @@ export default {
 				analyticsTitle="Domain Management > Contacts and Privacy > Manage Consent for Personal Data Use"
 				component={ DomainManagement.ManageConsent }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -193,17 +203,24 @@ export default {
 				component={ DomainManagement.NameServers }
 				context={ pageContext }
 				needsDomains
-				needsNameservers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
 		next();
 	},
 
-	domainManagementAddGSuiteUsersRedirect( pageContext ) {
-		page.redirect(
-			emailManagementAddGSuiteUsers( pageContext.params.site, pageContext.params.domain )
+	domainManagementSecurity( pageContext, next ) {
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementSecurity( ':site', ':domain' ) }
+				analyticsTitle="Domain Management > Security"
+				component={ DomainManagement.Security }
+				context={ pageContext }
+				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
+				needsDomains
+			/>
 		);
+		next();
 	},
 
 	domainManagementRedirectSettings( pageContext, next ) {
@@ -211,7 +228,7 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementRedirectSettings( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Redirect Settings"
-				component={ DomainManagement.SiteRedirect }
+				component={ DomainManagement.SiteRedirectSettings }
 				context={ pageContext }
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>
@@ -234,8 +251,6 @@ export default {
 				component={ DomainManagement.Transfer }
 				context={ pageContext }
 				needsDomains
-				needsDomainInfo
-				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -250,8 +265,6 @@ export default {
 				component={ DomainManagement.TransferToOtherSite }
 				context={ pageContext }
 				needsDomains
-				needsDomainInfo
-				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -266,8 +279,6 @@ export default {
 				component={ DomainManagement.TransferToOtherUser }
 				context={ pageContext }
 				needsDomains
-				needsDomainInfo
-				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -282,8 +293,6 @@ export default {
 				component={ DomainManagement.TransferOut }
 				context={ pageContext }
 				needsDomains
-				needsDomainInfo
-				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);

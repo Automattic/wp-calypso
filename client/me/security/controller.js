@@ -8,37 +8,35 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import userSettings from 'lib/user-settings';
-import PasswordComponent from 'me/security/main';
-import accountPasswordData from 'lib/account-password-data';
-import SocialLoginComponent from 'me/social-login';
-import ConnectedAppsComponent from 'me/connected-applications';
-import AccountRecoveryComponent from 'me/security-account-recovery';
-import { getSocialServiceFromClientId } from 'lib/login';
+import PasswordComponent from 'calypso/me/security/main';
+import SocialLoginComponent from 'calypso/me/social-login';
+import ConnectedAppsComponent from 'calypso/me/connected-applications';
+import AccountRecoveryComponent from 'calypso/me/security-account-recovery';
+import SecurityCheckupComponent from 'calypso/me/security-checkup';
+import { getSocialServiceFromClientId } from 'calypso/lib/login';
+import { successNotice } from 'calypso/state/notices/actions';
 
 export function password( context, next ) {
 	if ( context.query && context.query.updated === 'password' ) {
-		notices.success( i18n.translate( 'Your password was saved successfully.' ), {
-			persistent: true,
-		} );
+		context.store.dispatch(
+			successNotice( i18n.translate( 'Your password was saved successfully.' ), {
+				displayOnNextPage: true,
+			} )
+		);
 
 		page.replace( window.location.pathname );
 	}
 
 	context.primary = React.createElement( PasswordComponent, {
-		userSettings: userSettings,
 		path: context.path,
-		accountPasswordData: accountPasswordData,
 	} );
 	next();
 }
 
 export function twoStep( context, next ) {
-	const TwoStepComponent = require( 'me/two-step' ).default;
+	const TwoStepComponent = require( 'calypso/me/two-step' ).default;
 
 	context.primary = React.createElement( TwoStepComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();
@@ -46,7 +44,6 @@ export function twoStep( context, next ) {
 
 export function connectedApplications( context, next ) {
 	context.primary = React.createElement( ConnectedAppsComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();
@@ -54,7 +51,13 @@ export function connectedApplications( context, next ) {
 
 export function accountRecovery( context, next ) {
 	context.primary = React.createElement( AccountRecoveryComponent, {
-		userSettings: userSettings,
+		path: context.path,
+	} );
+	next();
+}
+
+export function securityCheckup( context, next ) {
+	context.primary = React.createElement( SecurityCheckupComponent, {
 		path: context.path,
 	} );
 	next();
@@ -78,7 +81,6 @@ export function socialLogin( context, next ) {
 		path: context.path,
 		socialService,
 		socialServiceResponse,
-		userSettings,
 	} );
 	next();
 }

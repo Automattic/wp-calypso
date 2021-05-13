@@ -2,7 +2,7 @@
 	align-items: flex-start;
 	display: flex;
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-family: $sans;
 	margin-bottom: 8px;
 	margin-top: 13px;
@@ -61,7 +61,7 @@
 		border: 0;
 		color: var( --color-neutral-20 );
 		float: none;
-		font-size: 13px;
+		font-size: $font-body-small;
 		padding: 0;
 		position: relative;
 		top: -1px;
@@ -75,7 +75,7 @@
 		}
 
 		.follow-button__label {
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				display: inline-block;
 			}
 		}

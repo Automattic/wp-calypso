@@ -7,13 +7,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import TokenField from 'components/token-field';
+import TokenField from 'calypso/components/token-field';
 import { Card } from '@automattic/components';
 
 /**
  * Module variables
  */
-var suggestions = [
+const suggestions = [
 	'the',
 	'of',
 	'and',
@@ -131,7 +131,7 @@ class TokenFields extends React.PureComponent {
 	}
 
 	_getStatusTokens = () => {
-		return this.state.statusTokens.map( token => {
+		return this.state.statusTokens.map( ( token ) => {
 			let returnToken;
 			switch ( token ) {
 				case 'error':
@@ -151,8 +151,8 @@ class TokenFields extends React.PureComponent {
 		} );
 	};
 
-	_onStatusTokensChange = value => {
-		const filteredTokens = value.map( token => {
+	_onStatusTokensChange = ( value ) => {
+		const filteredTokens = value.map( ( token ) => {
 			if ( 'object' === typeof token ) {
 				return token.value;
 			}
@@ -162,11 +162,11 @@ class TokenFields extends React.PureComponent {
 		this.setState( { statusTokens: filteredTokens } );
 	};
 
-	_onTokensChange = value => {
+	_onTokensChange = ( value ) => {
 		this.setState( { tokens: value } );
 	};
 
-	_onPlaceholderTokensChange = value => {
+	_onPlaceholderTokensChange = ( value ) => {
 		this.setState( { placeholderTokens: value } );
 	};
 }

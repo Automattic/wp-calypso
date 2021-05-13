@@ -19,28 +19,30 @@ import {
 } from '../constants';
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: x => x,
-	translate: x => x,
+	localize: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'Region Address Fieldsets', () => {
 	const defaultProps = {
-		getFieldProps: name => ( {
+		getFieldProps: ( name ) => ( {
 			value: '',
 			name,
 		} ),
 		hasCountryStates: false,
+		translate: ( string ) => string,
 	};
 
 	const propsWithStates = {
-		getFieldProps: name => ( {
+		getFieldProps: ( name ) => ( {
 			value: '',
 			name,
 		} ),
 		hasCountryStates: true,
+		translate: ( string ) => string,
 	};
 
 	test( 'should render `<UsAddressFieldset />` with default props', () => {

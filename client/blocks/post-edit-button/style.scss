@@ -29,17 +29,17 @@
 	.post-edit-button__label {
 		color: var( --color-text-subtle );
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			display: none;
 		}
 	}
 }
 
 .post-edit-button__label {
-	font-size: 14px;
+	font-size: $font-body-small;
 	margin-left: 4px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
 	}
 }

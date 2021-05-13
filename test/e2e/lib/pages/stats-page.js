@@ -10,16 +10,17 @@ import AsyncBaseContainer from '../async-base-container';
 
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager';
+import * as dataHelper from '../data-helper';
 
 export default class StatsPage extends AsyncBaseContainer {
-	constructor( driver ) {
-		super( driver, By.css( '.stats-module' ) );
+	constructor( driver, url = dataHelper.getCalypsoURL( 'stats/day' ) ) {
+		super( driver, By.css( '.stats-module' ), url );
 	}
 
 	async openInsights() {
 		await this._expandNavIfMobile();
 		await driverHelper.clickWhenClickable( this.driver, By.css( '.stats-navigation__insights' ) );
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.stats__section-header' )
 		);

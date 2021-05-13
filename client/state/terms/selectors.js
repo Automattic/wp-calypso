@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-
 import { get, range } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './utils';
+
+import 'calypso/state/terms/init';
 
 /**
  * Returns true if currently requesting terms for the taxonomies query, or false
@@ -41,7 +42,7 @@ export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, 
 		return false;
 	}
 
-	return range( 1, lastPage + 1 ).some( page => {
+	return range( 1, lastPage + 1 ).some( ( page ) => {
 		const termsQuery = { ...query, page };
 		return isRequestingTermsForQuery( state, siteId, taxonomy, termsQuery );
 	} );

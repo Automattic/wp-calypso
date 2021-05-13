@@ -11,17 +11,19 @@ import {
 	WindowScroller,
 } from '@automattic/react-virtualized';
 
-import { debounce, noop, get, pickBy } from 'lodash';
+import { debounce, get, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { recordTracksRailcarRender } from 'reader/stats';
+import { recordTracksRailcarRender } from 'calypso/reader/stats';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class ReaderInfiniteStream extends Component {
 	static propTypes = {
@@ -52,7 +54,7 @@ class ReaderInfiniteStream extends Component {
 		recordTracksRailcarRender( eventName, railcar, { ui_position: index } );
 	};
 
-	rowRenderer = rowRendererProps => {
+	rowRenderer = ( rowRendererProps ) => {
 		const railcar = get( this.props.items[ rowRendererProps.index ], 'railcar', undefined );
 		if ( railcar && ! this.recordedRender.has( rowRendererProps.index ) ) {
 			this.recordedRender.add( rowRendererProps.index );
@@ -88,7 +90,7 @@ class ReaderInfiniteStream extends Component {
 		</CellMeasurer>
 	);
 
-	handleListMounted = registerChild => list => {
+	handleListMounted = ( registerChild ) => ( list ) => {
 		this.listRef = list;
 		registerChild( list ); // InfiniteLoader also wants a ref
 	};

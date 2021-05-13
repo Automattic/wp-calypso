@@ -1,5 +1,5 @@
 /**
- * Module dependencies
+ * Internal dependencies
  */
 import wpcomFactory from '../';
 import pkg from '../package';

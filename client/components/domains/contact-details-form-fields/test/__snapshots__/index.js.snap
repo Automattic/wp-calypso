@@ -15,7 +15,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       errorMessage=""
       eventFormName="Domain contact details form"
       isError={false}
-      label="First Name"
+      label="First name"
       labelClass="contact-details-form-fields__label"
       name="first-name"
       onBlur={[Function]}
@@ -30,7 +30,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       errorMessage=""
       eventFormName="Domain contact details form"
       isError={false}
-      label="Last Name"
+      label="Last name"
       labelClass="contact-details-form-fields__label"
       name="last-name"
       onBlur={[Function]}
@@ -145,13 +145,9 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       getFieldProps={[Function]}
       hasCountryStates={false}
       shouldAutoFocusAddressField={false}
-      translate={[Function]}
     />
   </div>
-  <div
-    className="contact-details-form-fields__extra-fields"
-  />
-  <DomainManagementFormFooter>
+  <div>
     <FormButton
       className="contact-details-form-fields__submit-button"
       disabled={false}
@@ -162,7 +158,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
     >
       Submit
     </FormButton>
-  </DomainManagementFormFooter>
+  </div>
   <Connect(QueryCountries) />
 </FormFieldset>
 `;

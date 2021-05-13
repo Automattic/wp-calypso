@@ -2,7 +2,7 @@
  * External dependencies
  */
 import moment from 'moment';
-import { every, includes } from 'lodash';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 * @returns {boolean}       Whether media item matches query
 	 */
 	static matches( query, media ) {
-		return every( { ...this.DefaultQuery, ...query }, ( value, key ) => {
+		return Object.entries( { ...this.DefaultQuery, ...query } ).every( ( [ key, value ] ) => {
 			switch ( key ) {
 				case 'search':
 					if ( ! value ) {
@@ -50,7 +50,7 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 							// Split subgroup and group to filter
 							.split( '/' )
 							// Remove invalid characters
-							.map( group => group.replace( /[^-*.+a-zA-Z0-9]/g, '' ) )
+							.map( ( group ) => group.replace( /[^-*.+a-zA-Z0-9]/g, '' ) )
 							// If no group, append wildcard match
 							.concat( '.+' )
 							// Take only subgroup and group
@@ -67,10 +67,11 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 					return value === media.post_ID;
 
 				case 'after':
-				case 'before':
+				case 'before': {
 					const queryDate = moment( value, moment.ISO_8601 );
 					const comparison = /after$/.test( key ) ? 'isAfter' : 'isBefore';
 					return queryDate.isValid() && moment( media.date )[ comparison ]( queryDate );
+				}
 			}
 
 			return true;

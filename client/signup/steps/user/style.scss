@@ -1,0 +1,29 @@
+body.is-section-signup.is-white-signup .signup.is-onboarding {
+	.signup-form.is-horizontal {
+		.signup-form__terms-of-service-link,
+		.signup-form__terms-of-service-link a,
+		.signup-form__social-buttons-tos,
+		.signup-form__social-buttons-tos a,
+		.signup-form__social p,
+		.signup-form__recaptcha-tos,
+		.logged-out-form__links .logged-out-form__link-item {
+			color: var( --studio-gray-40 );
+			font-weight: normal;
+		}
+
+		.form-label {
+			color: var( --studio-gray-60 );
+			font-weight: 500; /* stylelint-disable-line */
+			margin-bottom: 8px;
+			line-height: 20px;
+			letter-spacing: -0.16px;
+		}
+
+		.signup-form__terms-of-service-link a,
+		.signup-form__social-buttons-tos a,
+		.signup-form__recaptcha-tos a {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
+}

@@ -47,7 +47,7 @@
 	margin: 0 auto;
 	// max-width: 90%;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		max-width: 300px;
 	}
 }
@@ -58,7 +58,7 @@
 	justify-content: space-between;
 	align-items: center;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 	}
 }
@@ -83,7 +83,7 @@
 	// https://stackoverflow.com/questions/39325039/css-flex-box-last-space-removed
 	white-space: pre-wrap;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		margin-bottom: 0.5em;
 	}
 
@@ -92,8 +92,8 @@
 	&,
 	.button {
 		padding: 0;
-		font-size: 12px;
-    	font-weight: 500;
+		font-size: $font-body-extra-small;
+		font-weight: 600;
     	line-height: 18px;
 	}
 
@@ -124,7 +124,7 @@
 	}
 
 	.DayPicker-Caption {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 }
 
@@ -159,6 +159,7 @@
 
 .date-range__date-inputs {
 	order: 2;
+	margin-bottom: 0;
 }
 
 .date-range__date-inputs-inner {
@@ -175,13 +176,13 @@
 	flex: 1;
 
 	.form-label {
-		font-size: 10px;
+		font-size: $font-body-extra-small;
 		text-transform: uppercase;
 		margin-bottom: 0;
 	}
 
 	input {
-		font-size: 13px;
+		font-size: $font-body-small;
 		padding: 3px 10px;
 	}
 }
@@ -208,12 +209,14 @@
 		padding: 0.25em; // fix and allow target area
 		width: 24px; // fix and allow target area
 		height: 24px; // fix and allow target area
+	}
 
-
+	.DayPicker-Day {
 		.date-picker__day {
 			&:hover,
 			&:focus {
-				color: var( --color-primary );
+				color: var( --color-text-inverted );
+				background-color: var( --color-primary );
 			}
 		}
 	}
@@ -227,18 +230,22 @@
 		}
 	}
 
-	.DayPicker-Day--range:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
-		background-color: var( --color-primary-10 );
-	}
-
-	.DayPicker-Day--start:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
-		background-color: var( --color-primary );
-	}
-
+	.DayPicker-Day--range:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ),
+	.DayPicker-Day--start:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ),
 	.DayPicker-Day--end:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
 		background-color: var( --color-primary );
 	}
 
+	.DayPicker-Day--range:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ),
+	.DayPicker-Day--start:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ),
+	.DayPicker-Day--end:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
+		.date-picker__day {
+			&:hover,
+			&:focus {
+				background-color: var( --color-primary-light );
+			}
+		}
+	}
 
 	.DayPicker-Day--start,
 	.DayPicker-Day--end {

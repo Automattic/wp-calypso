@@ -10,28 +10,29 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import accept from 'lib/accept';
-import AuthorSelector from 'blocks/author-selector';
-import canCurrentUser from 'state/selectors/can-current-user';
+import accept from 'calypso/lib/accept';
+import AuthorSelector from 'calypso/blocks/author-selector';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { Card } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Gravatar from 'components/gravatar';
-import isJetpackSiteConnected from 'state/selectors/is-jetpack-site-connected';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import isJetpackUserMaster from 'state/selectors/is-jetpack-user-master';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import Gravatar from 'calypso/components/gravatar';
+import isJetpackSiteConnected from 'calypso/state/selectors/is-jetpack-site-connected';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import isJetpackUserConnectionOwner from 'calypso/state/selectors/is-jetpack-user-connection-owner';
+import getJetpackConnectionOwner from 'calypso/state/selectors/get-jetpack-connection-owner';
 import OwnershipInformation from './ownership-information';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import { changeOwner } from 'state/jetpack/connection/actions';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
-import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { transferPlanOwnership } from 'state/sites/plans/actions';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import QueryJetpackUserConnection from 'calypso/components/data/query-jetpack-user-connection';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { changeOwner } from 'calypso/state/jetpack/connection/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { transferPlanOwnership } from 'calypso/state/sites/plans/actions';
 
 class SiteOwnership extends Component {
 	renderPlaceholder() {
@@ -42,7 +43,7 @@ class SiteOwnership extends Component {
 		);
 	}
 
-	isUserExcludedFromSelector = user => {
+	isUserExcludedFromSelector = ( user ) => {
 		const { currentUser } = this.props;
 		return (
 			user.linked_user_ID === false ||
@@ -55,7 +56,7 @@ class SiteOwnership extends Component {
 		return { ...user.linked_user_info, ...{ ID: user.ID } };
 	}
 
-	onSelectConnectionOwner = user => {
+	onSelectConnectionOwner = ( user ) => {
 		const { translate } = this.props;
 		const message = (
 			<Fragment>
@@ -77,7 +78,7 @@ class SiteOwnership extends Component {
 
 		accept(
 			message,
-			accepted => {
+			( accepted ) => {
 				if ( accepted ) {
 					this.props.changeOwner( this.props.siteId, user.ID, user.name );
 					this.props.recordTracksEvent( 'calypso_jetpack_connection_ownership_changed' );
@@ -89,7 +90,7 @@ class SiteOwnership extends Component {
 		);
 	};
 
-	onSelectPlanOwner = user => {
+	onSelectPlanOwner = ( user ) => {
 		const { translate } = this.props;
 		const message = (
 			<Fragment>
@@ -111,7 +112,7 @@ class SiteOwnership extends Component {
 
 		accept(
 			message,
-			accepted => {
+			( accepted ) => {
 				if ( accepted ) {
 					this.props.transferPlanOwnership( this.props.siteId, user.linked_user_ID );
 					this.props.recordTracksEvent( 'calypso_jetpack_plan_ownership_changed' );
@@ -156,7 +157,13 @@ class SiteOwnership extends Component {
 	}
 
 	renderConnectionDetails() {
-		const { siteIsConnected, siteIsInDevMode, translate, userIsMaster } = this.props;
+		const {
+			connectionOwner,
+			siteIsConnected,
+			siteIsInDevMode,
+			userIsConnectionOwner,
+			translate,
+		} = this.props;
 
 		if ( siteIsConnected === false ) {
 			return translate( 'The site is not connected.' );
@@ -174,14 +181,22 @@ class SiteOwnership extends Component {
 
 		return (
 			<Fragment>
-				{ userIsMaster !== null && (
+				{ userIsConnectionOwner !== null && (
 					<FormSettingExplanation>
-						{ userIsMaster
+						{ userIsConnectionOwner
 							? translate( "You are the owner of this site's connection to WordPress.com." )
-							: translate( "Somebody else owns this site's connection to WordPress.com." ) }
+							: translate(
+									"{{strong}}%(connectionOwner)s{{/strong}} owns this site's connection to WordPress.com.",
+									{
+										args: { connectionOwner },
+										components: {
+											strong: <strong />,
+										},
+									}
+							  ) }
 					</FormSettingExplanation>
 				) }
-				{ userIsMaster && this.renderCurrentUserDropdown() }
+				{ userIsConnectionOwner && this.renderCurrentUserDropdown() }
 			</Fragment>
 		);
 	}
@@ -267,13 +282,14 @@ class SiteOwnership extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isPaidPlan = isCurrentPlanPaid( state, siteId );
 		const isCurrentPlanOwner = isPaidPlan && isCurrentUserCurrentPlanOwner( state, siteId );
 
 		return {
 			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
+			connectionOwner: getJetpackConnectionOwner( state, siteId ),
 			currentUser: getCurrentUser( state ),
 			isCurrentPlanOwner,
 			isPaidPlan,
@@ -281,7 +297,7 @@ export default connect(
 			siteIsConnected: isJetpackSiteConnected( state, siteId ),
 			siteIsJetpack: isJetpackSite( state, siteId ),
 			siteIsInDevMode: isJetpackSiteInDevelopmentMode( state, siteId ),
-			userIsMaster: isJetpackUserMaster( state, siteId ),
+			userIsConnectionOwner: isJetpackUserConnectionOwner( state, siteId ),
 		};
 	},
 	{ changeOwner, recordTracksEvent, transferPlanOwnership }

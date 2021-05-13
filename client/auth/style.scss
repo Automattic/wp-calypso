@@ -185,7 +185,7 @@
 	text-align: left;
 	counter-reset: item;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		left: 0;
 		top: -8px;
 		right: 0;
@@ -221,11 +221,11 @@
 		display: inline-block;
 		position: absolute;
 		left: -3em;
-		font-weight: bold;
+		font-weight: 600;
 	}
 
 	h2 {
-		font-weight: bold;
+		font-weight: 600;
 		margin-bottom: 1.5em;
 	}
 
@@ -249,22 +249,6 @@
 	.auth__self-hosted-instructions-close:hover {
 		color: var( --color-primary-light );
 	}
-}
-
-.auth__welcome {
-	color: var( --color-text-inverted );
-}
-
-.auth__connect-intro {
-	width: 420px;
-	margin: 0 auto;
-}
-
-.auth__connect .button,
-.auth__connect .button:visited {
-	background: #00a8db;
-	border: #00a8db;
-	color: var( --color-text-inverted );
 }
 
 .auth .pulsing-dot {

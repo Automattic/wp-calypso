@@ -1,5 +1,4 @@
-Unified Diff Viewer
-===
+# Unified Diff Viewer
 
 This component renders the output of a unified diff (`git diff` or `diff -u`) in a
 visual format recognizable by someone who works with `diff` and comparing files.
@@ -7,11 +6,13 @@ visual format recognizable by someone who works with `diff` and comparing files.
 ## Usage
 
 ```jsx
-import DiffViewer from 'components/diff-viewer';
+import DiffViewer from 'calypso/components/diff-viewer';
 
 export const CommitView = ( { commitHash, description, diff } ) => (
 	<div>
-		<div><a>{ commitHash }</a></div>
+		<div>
+			<a href="https://wordpress.com">{ commitHash }</a>
+		</div>
 		<p>{ description }</p>
 		<DiffViewer diff={ diff } />
 	</div>
@@ -20,9 +21,9 @@ export const CommitView = ( { commitHash, description, diff } ) => (
 
 ### Props
 
-Name | Type | Default | Description
---- | --- | --- | ---
-`diff`* | `string` | `''` | Actual text output of the diff
+| Name     | Type     | Default | Description                    |
+| -------- | -------- | ------- | ------------------------------ |
+| `diff`\* | `string` | `''`    | Actual text output of the diff |
 
 ### Additional usage information
 

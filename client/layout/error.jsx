@@ -1,27 +1,23 @@
 /**
  * External dependencies
  */
-
 import debug from 'debug';
 import { localize } from 'i18n-calypso';
-import { assign, noop } from 'lodash';
 import React from 'react';
-import url from 'url';
-import { stringify } from 'qs';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import EmptyContent from 'components/empty-content';
-import { makeLayout, render as clientRender } from 'controller';
-import { SECTION_SET } from 'state/action-types';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import EmptyContent from 'calypso/components/empty-content';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { setSection } from 'calypso/state/ui/section/actions';
 
 /**
  * Module variables
  */
 const log = debug( 'calypso:layout' );
-
+const noop = () => {};
 const LoadingErrorMessage = localize( ( { translate } ) => (
 	<EmptyContent
 		illustration="/calypso/images/illustrations/error.svg"
@@ -30,29 +26,26 @@ const LoadingErrorMessage = localize( ( { translate } ) => (
 ) );
 
 export function isRetry() {
-	const parsed = url.parse( location.href, true );
-	return parsed.query.retry === '1';
+	const searchParams = new URLSearchParams( window.location.search );
+	return searchParams.get( 'retry' ) === '1';
 }
 
 export function retry( chunkName ) {
 	if ( ! isRetry() ) {
-		const parsed = url.parse( location.href, true );
+		const searchParams = new URLSearchParams( window.location.search );
 
-		analytics.mc.bumpStat( 'calypso_chunk_retry', chunkName );
+		bumpStat( 'calypso_chunk_retry', chunkName );
 
 		// Trigger a full page load which should include script tags for the current chunk
-		window.location.search = stringify( assign( parsed.query, { retry: '1' } ) );
+		searchParams.set( 'retry', '1' );
+		window.location.search = searchParams.toString();
 	}
 }
 
 export function show( context, chunkName ) {
 	log( 'Chunk %s could not be loaded', chunkName );
-	analytics.mc.bumpStat( 'calypso_chunk_error', chunkName );
-	context.store.dispatch( {
-		type: SECTION_SET,
-		section: false,
-		hasSidebar: false,
-	} );
+	bumpStat( 'calypso_chunk_error', chunkName );
+	context.store.dispatch( setSection( false, { section: false } ) );
 	context.primary = <LoadingErrorMessage />;
 	makeLayout( context, noop );
 	clientRender( context );

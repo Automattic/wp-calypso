@@ -1,0 +1,29 @@
+.upsell {
+	& > *:first-child {
+		margin-bottom: 32px;
+	}
+
+	& > *:not( :first-child ):not( :last-child ) {
+		margin-bottom: 24px;
+	}
+}
+
+.upsell__button {
+	text-align: center;
+	width: 100%;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		text-align: auto;
+		width: auto;
+	}
+}
+
+.upsell__button:not( .is-primary ) {
+	margin-left: 0;
+
+	border-color: var( --color-neutral-10 );
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-left: 16px;
+	}
+}

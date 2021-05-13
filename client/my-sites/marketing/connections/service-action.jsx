@@ -1,21 +1,19 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Button } from '@automattic/components';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import { getRemovableConnections } from 'state/sharing/publicize/selectors';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
 
 const SharingServiceAction = ( {
 	isConnecting,
@@ -29,11 +27,11 @@ const SharingServiceAction = ( {
 	recordTracksEvent,
 	path,
 } ) => {
-	let warning = false,
-		label;
+	let warning = false;
+	let label;
 
 	const isPending = 'unknown' === status || isDisconnecting || isRefreshing || isConnecting;
-	const onClick = event => {
+	const onClick = ( event ) => {
 		event.stopPropagation();
 		onAction();
 	};
@@ -64,7 +62,7 @@ const SharingServiceAction = ( {
 		if ( 'must-disconnect' === status ) {
 			warning = true;
 		}
-	} else if ( 'reconnect' === status ) {
+	} else if ( 'reconnect' === status || 'refresh-failed' === status ) {
 		label = translate( 'Reconnect', {
 			context: 'Sharing: Publicize reconnect pending button label',
 		} );
@@ -77,16 +75,6 @@ const SharingServiceAction = ( {
 		label = translate( 'Unavailable', {
 			context: 'Sharing: Publicize connect unavailable button label',
 		} );
-		return (
-			<Button compact disabled={ true }>
-				{ label }
-			</Button>
-		);
-	}
-
-	// No new connections allowed due to Eventbrite shutting down an endpoint needed
-	// for our integration. See: https://groups.google.com/forum/#!topic/eventbrite-api/FT2MsDswdrA
-	if ( 'eventbrite' === service.ID && status === 'not-connected' ) {
 		return (
 			<Button compact disabled={ true }>
 				{ label }
@@ -146,7 +134,6 @@ SharingServiceAction.defaultProps = {
 	onAction: () => {},
 	removableConnections: [],
 	status: 'unknown',
-	translate: identity,
 };
 
 export default connect(

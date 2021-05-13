@@ -9,13 +9,12 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { items, requests } from '../reducer';
 import {
-	DESERIALIZE,
-	SERIALIZE,
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 /**
  * Test Data
@@ -38,7 +37,7 @@ const streakQuery = { startDate: '2015-06-01', endDate: '2016-06-01' };
 const streakQueryDos = { startDate: '2014-06-01', endDate: '2015-06-01' };
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -152,40 +151,6 @@ describe( 'reducer', () => {
 				},
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const original = deepFreeze( {
-				2916284: {
-					statsStreak: {
-						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': {
-							requesting: true,
-							status: 'pending',
-						},
-					},
-				},
-			} );
-
-			const state = requests( original, { type: SERIALIZE } );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const original = deepFreeze( {
-				2916284: {
-					statsStreak: {
-						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': {
-							requesting: true,
-							status: 'pending',
-						},
-					},
-				},
-			} );
-
-			const state = requests( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'items()', () => {
@@ -197,7 +162,7 @@ describe( 'reducer', () => {
 					},
 				},
 			} );
-			const state = items( original, { type: SERIALIZE } );
+			const state = serialize( items, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -210,18 +175,44 @@ describe( 'reducer', () => {
 					},
 				},
 			} );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 
 			expect( state ).to.eql( original );
 		} );
 
-		test( 'should not load invalid persisted state', () => {
+		test( 'should not load persisted state with invalid statType', () => {
 			const original = deepFreeze( {
 				2916284: {
 					'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': streakResponse,
 				},
 			} );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		test( 'should not load persisted state with invalid query', () => {
+			const original = deepFreeze( {
+				2916284: {
+					statsStreak: {
+						'query-withou-square-brackets': streakResponse,
+					},
+				},
+			} );
+			const state = deserialize( items, original );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		test( 'should not load persisted state with non-object data', () => {
+			const original = deepFreeze( {
+				2916284: {
+					statsStreak: {
+						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': '',
+					},
+				},
+			} );
+			const state = deserialize( items, original );
 
 			expect( state ).to.eql( {} );
 		} );
@@ -245,6 +236,24 @@ describe( 'reducer', () => {
 				2916284: {
 					statsStreak: {
 						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': streakResponse,
+					},
+				},
+			} );
+		} );
+
+		test( 'should receive invalid stats as null', () => {
+			const state = items( undefined, {
+				type: SITE_STATS_RECEIVE,
+				siteId: 2916284,
+				statType: 'statsStreak',
+				query: streakQuery,
+				data: '',
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					statsStreak: {
+						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': null,
 					},
 				},
 			} );
@@ -326,7 +335,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should should not change another statTypes property', () => {
+		test( 'should not change another statTypes property', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {

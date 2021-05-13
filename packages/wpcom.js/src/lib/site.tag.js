@@ -1,10 +1,10 @@
 /**
  * Tag methods
  *
- * @param {String} [slug] - tag slug
- * @param {String} sid - site id
+ * @param {string} [slug] - tag slug
+ * @param {string} sid - site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @returns {null} null
  */
 export default function Tag( slug, sid, wpcom ) {
 	if ( ! sid ) {
@@ -23,58 +23,58 @@ export default function Tag( slug, sid, wpcom ) {
 /**
  * Set tag `slug`
  *
- * @param {String} slug - tag slug
+ * @param {string} slug - tag slug
  */
-Tag.prototype.slug = function( slug ) {
+Tag.prototype.slug = function ( slug ) {
 	this._slug = slug;
 };
 
 /**
  * Get tag
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Tag.prototype.get = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
+Tag.prototype.get = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
 	return this.wpcom.req.get( path, query, fn );
 };
 
 /**
  * Add tag
  *
- * @param {Object} [query] - query object parameter
- * @param {Object} body - body object parameter
+ * @param {object} [query] - query object parameter
+ * @param {object} body - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Tag.prototype.add = function( query, body, fn ) {
-	var path = '/sites/' + this._sid + '/tags/new';
+Tag.prototype.add = function ( query, body, fn ) {
+	const path = '/sites/' + this._sid + '/tags/new';
 	return this.wpcom.req.post( path, query, body, fn );
 };
 
 /**
  * Edit tag
  *
- * @param {Object} [query] - query object parameter
- * @param {Object} body - body object parameter
+ * @param {object} [query] - query object parameter
+ * @param {object} body - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Tag.prototype.update = function( query, body, fn ) {
-	var path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
+Tag.prototype.update = function ( query, body, fn ) {
+	const path = '/sites/' + this._sid + '/tags/slug:' + this._slug;
 	return this.wpcom.req.put( path, query, body, fn );
 };
 
 /**
  * Delete tag
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Tag.prototype.delete = Tag.prototype.del = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/tags/slug:' + this._slug + '/delete';
+Tag.prototype.delete = Tag.prototype.del = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/tags/slug:' + this._slug + '/delete';
 	return this.wpcom.req.del( path, query, fn );
 };

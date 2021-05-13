@@ -1,25 +1,25 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * Testing data
  */
-var fixture = require( './fixture' );
+const fixture = require( './fixture' );
 
 /**
  * wpcom.site.post.subscriber
  */
-describe( 'wpcom.site.post.subscriber', function() {
+describe( 'wpcom.site.post.subscriber', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( fixture.site );
-	var testing_post;
+	const wpcom = util.wpcom();
+	const site = wpcom.site( fixture.site );
+	let testing_post;
 
-	before( function( done ) {
-		site.addPost( fixture.post, function( err, data ) {
+	before( function ( done ) {
+		site.addPost( fixture.post, function ( err, data ) {
 			if ( err ) throw err;
 
 			testing_post = site.post( data.ID );
@@ -27,112 +27,112 @@ describe( 'wpcom.site.post.subscriber', function() {
 		} );
 	} );
 
-	after( function( done ) {
+	after( function ( done ) {
 		// delete testing_post post
-		testing_post.delete( function( err ) {
+		testing_post.delete( function ( err ) {
 			if ( err ) throw err;
 
 			done();
 		} );
 	} );
 
-	describe( 'wpcom.site.post.subscribersList', function() {
-		it( 'should get subscribers post list', function( done ) {
-			testing_post.subscribersList( function( err, data ) {
-				if ( err ) throw err;
+	describe( 'wpcom.site.post.subscribersList', function () {
+		it( 'should get subscribers post list', function () {
+			return new Promise( ( done ) => {
+				testing_post.subscribersList( function ( err, data ) {
+					if ( err ) throw err;
 
-				assert.equal( 'number', typeof data.found );
-				assert.equal( 0, data.found );
-				assert.equal( 'object', typeof data.subscriptions );
-				assert.ok( data.subscriptions instanceof Array );
-				done();
+					assert.equal( 'number', typeof data.found );
+					assert.equal( 0, data.found );
+					assert.equal( 'object', typeof data.subscriptions );
+					assert.ok( data.subscriptions instanceof Array );
+					done();
+				} );
+			} );
+		} );
+
+		it( 'should get subscribers post list = 1', function () {
+			return new Promise( ( done ) => {
+				testing_post.subscribersList( function ( err, data ) {
+					if ( err ) throw err;
+
+					assert.equal( 'number', typeof data.found );
+					assert.equal( 1, data.found );
+					assert.equal( 'object', typeof data.subscriptions );
+					assert.ok( data.subscriptions instanceof Array );
+					done();
+				} );
+			} );
+		} );
+
+		it( 'should get subscribers post list = 0', function () {
+			return new Promise( ( done ) => {
+				testing_post.subscribersList( function ( err, data ) {
+					if ( err ) throw err;
+
+					assert.equal( 'number', typeof data.found );
+					assert.equal( 0, data.found );
+					assert.equal( 'object', typeof data.subscriptions );
+					assert.ok( data.subscriptions instanceof Array );
+					done();
+				} );
 			} );
 		} );
 	} );
 
-	describe( 'wpcom.site.post.subscriber.mine', function() {
-		it( 'should get subscribe status `FALSE` for current user', function( done ) {
-			testing_post
-			.subscriber()
-			.mine( function( err, data ) {
-				if ( err ) throw err;
+	describe( 'wpcom.site.post.subscriber.mine', function () {
+		it( 'should get subscribe status `FALSE` for current user', function () {
+			return new Promise( ( done ) => {
+				testing_post.subscriber().mine( function ( err, data ) {
+					if ( err ) throw err;
 
-				assert.ok( data );
-				assert.equal( false, data.i_subscribe );
+					assert.ok( data );
+					assert.equal( false, data.i_subscribe );
 
-				done();
+					done();
+				} );
+			} );
+		} );
+
+		it( 'should get subscribe status `TRUE` for current user', function () {
+			return new Promise( ( done ) => {
+				testing_post.subscriber().mine( function ( err, data ) {
+					if ( err ) throw err;
+
+					assert.ok( data );
+					assert.equal( true, data.i_subscribe );
+					done();
+				} );
 			} );
 		} );
 	} );
 
-	describe( 'wpcom.site.post.subscriber.add', function() {
-		it( 'should subscribe current user to the post', function( done ) {
-			testing_post
-			.subscriber()
-			.add( function( err, data ) {
-				if ( err ) throw err;
+	describe( 'wpcom.site.post.subscriber.add', function () {
+		it( 'should subscribe current user to the post', function () {
+			return new Promise( ( done ) => {
+				testing_post.subscriber().add( function ( err, data ) {
+					if ( err ) throw err;
 
-				assert.ok( data );
-				assert.equal( true, data.success );
-				assert.equal( true, data.i_subscribe );
-				done();
+					assert.ok( data );
+					assert.equal( true, data.success );
+					assert.equal( true, data.i_subscribe );
+					done();
+				} );
 			} );
 		} );
 	} );
 
-	describe( 'wpcom.site.post.subscriber.mine', function() {
-		it( 'should get subscribe status `TRUE` for current user', function( done ) {
-			testing_post
-			.subscriber()
-			.mine( function( err, data ) {
-				if ( err ) throw err;
+	describe( 'wpcom.site.post.subscriber.delete', function () {
+		it( 'should unsubscribe current user from the post', function () {
+			return new Promise( ( done ) => {
+				testing_post.subscriber().delete( function ( err, data ) {
+					if ( err ) throw err;
 
-				assert.ok( data );
-				assert.equal( true, data.i_subscribe );
-				done();
-			} );
-		} );
-	} );
-
-	describe( 'wpcom.site.post.subscribersList', function() {
-		it( 'should get subscribers post list = 1', function( done ) {
-			testing_post.subscribersList( function( err, data ) {
-				if ( err ) throw err;
-
-				assert.equal( 'number', typeof data.found );
-				assert.equal( 1, data.found );
-				assert.equal( 'object', typeof data.subscriptions );
-				assert.ok( data.subscriptions instanceof Array );
-				done();
-			} );
-		} );
-	} );
-
-	describe( 'wpcom.site.post.subscriber.delete', function() {
-		it( 'should unsubscribe current user from the post', function( done ) {
-			testing_post
-			.subscriber()
-			.delete( function( err, data ) {
-				if ( err ) throw err;
-
-				assert.ok( data );
-				assert.equal( true, data.success );
-				assert.equal( false, data.i_subscribe );
-				done();
-			} );
-		} );
-	} );
-
-	describe( 'wpcom.site.post.subscribersList', function() {
-		it( 'should get subscribers post list = 0', function( done ) {
-			testing_post.subscribersList( function( err, data ) {
-				if ( err ) throw err;
-
-				assert.equal( 'number', typeof data.found );
-				assert.equal( 0, data.found );
-				assert.equal( 'object', typeof data.subscriptions );
-				assert.ok( data.subscriptions instanceof Array );
-				done();
+					assert.ok( data );
+					assert.equal( true, data.success );
+					assert.equal( false, data.i_subscribe );
+					done();
+				} );
 			} );
 		} );
 	} );

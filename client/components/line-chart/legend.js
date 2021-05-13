@@ -3,14 +3,14 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import LegendItem from 'components/legend-item';
+import LegendItem from 'calypso/components/legend-item';
 
 const NUM_SERIES = 3;
+const noop = () => {};
 
 class LineChartLegend extends Component {
 	static propTypes = {
@@ -23,7 +23,7 @@ class LineChartLegend extends Component {
 		onDataSeriesSelected: noop,
 	};
 
-	handleMouseOver = dataSeriesIndex => {
+	handleMouseOver = ( dataSeriesIndex ) => {
 		this.props.onDataSeriesSelected( dataSeriesIndex );
 	};
 

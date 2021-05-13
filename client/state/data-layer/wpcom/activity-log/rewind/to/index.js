@@ -6,19 +6,19 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
-import { getRewindRestoreProgress } from 'state/activity-log/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { requestRewindState } from 'state/rewind/state/actions';
-import { REWIND_RESTORE, REWIND_CLONE } from 'state/action-types';
-import { SchemaError } from 'lib/make-json-schema-parser';
+import config from '@automattic/calypso-config';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { getRewindRestoreProgress } from 'calypso/state/activity-log/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { requestRewindState } from 'calypso/state/rewind/state/actions';
+import { REWIND_RESTORE, REWIND_CLONE } from 'calypso/state/action-types';
+import { SchemaError } from 'calypso/lib/make-json-schema-parser';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-const fromApi = data => {
+const fromApi = ( data ) => {
 	const restoreId = parseInt( data.restore_id, 10 );
 
 	if ( Number.isNaN( restoreId ) ) {
@@ -41,8 +41,8 @@ const requestRewind = ( action, payload ) =>
 		action
 	);
 
-const requestRestore = action => requestRewind( action, { types: action.args } );
-const requestClone = action => requestRewind( action, action.payload );
+const requestRestore = ( action ) => requestRewind( action, { types: action.args } );
+const requestClone = ( action ) => requestRewind( action, action.payload );
 
 export const receiveRestoreSuccess = ( { siteId }, restoreId ) => [
 	getRewindRestoreProgress( siteId, restoreId ),

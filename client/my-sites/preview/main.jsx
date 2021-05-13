@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isWithinBreakpoint, isMobile, isDesktop } from '@automattic/viewport';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { debounce, get } from 'lodash';
@@ -10,25 +11,20 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, isSitePreviewable } from 'state/sites/selectors';
-import { addQueryArgs } from 'lib/route';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { isWithinBreakpoint, isMobile, isDesktop } from 'lib/viewport';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getEditorUrl from 'state/selectors/get-editor-url';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteOption, isSitePreviewable } from 'calypso/state/sites/selectors';
+import { addQueryArgs } from 'calypso/lib/route';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { Button } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import EmptyContent from 'components/empty-content';
-import Gridicon from 'components/gridicon';
-import Main from 'components/main';
-import {
-	showInlineHelpPopover,
-	showChecklistPrompt,
-	showOnboardingWelcomePrompt,
-} from 'state/inline-help/actions';
-import WebPreview from 'components/web-preview';
-import { recordTracksEvent } from 'state/analytics/actions';
+import DocumentHead from 'calypso/components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
+import Gridicon from 'calypso/components/gridicon';
+import Main from 'calypso/components/main';
+import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
+import WebPreview from 'calypso/components/web-preview';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Internal dependencies
@@ -71,16 +67,8 @@ class PreviewMain extends React.Component {
 			window.addEventListener( 'resize', this.debouncedUpdateLayout );
 		}
 
-		if ( this.props.welcome ) {
-			this.props.showOnboardingWelcomePrompt();
-		}
-
-		if ( this.props.help || this.props.welcome ) {
+		if ( this.props.help ) {
 			this.props.showInlineHelpPopover();
-		}
-
-		if ( this.props.checklist ) {
-			this.props.showChecklistPrompt();
 		}
 	}
 
@@ -155,7 +143,7 @@ class PreviewMain extends React.Component {
 		}
 	}
 
-	updateSiteLocation = pathname => {
+	updateSiteLocation = ( pathname ) => {
 		const externalUrl = this.props.site.URL + ( pathname === '/' ? '' : pathname );
 		this.setState( { externalUrl } );
 		this.props.recordTracksEvent( 'calypso_view_site_page_view', {
@@ -219,7 +207,7 @@ class PreviewMain extends React.Component {
 	}
 }
 
-const mapState = state => {
+const mapState = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
 	const homePagePostId = get( site, [ 'options', 'page_on_front' ] );
@@ -238,6 +226,4 @@ export default connect( mapState, {
 	recordTracksEvent,
 	setLayoutFocus,
 	showInlineHelpPopover,
-	showChecklistPrompt,
-	showOnboardingWelcomePrompt,
 } )( localize( PreviewMain ) );

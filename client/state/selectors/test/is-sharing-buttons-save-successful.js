@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isSharingButtonsSaveSuccessful from 'state/selectors/is-sharing-buttons-save-successful';
+import isSharingButtonsSaveSuccessful from 'calypso/state/selectors/is-sharing-buttons-save-successful';
 
 describe( 'isRequestingSharingButtons()', () => {
 	test( 'should return false if the site is not attached', () => {

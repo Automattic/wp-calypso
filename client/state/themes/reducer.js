@@ -6,14 +6,14 @@ import { mapValues, omit, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import ThemeQueryManager from 'lib/query-manager/theme';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
+import ThemeQueryManager from 'calypso/lib/query-manager/theme';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	DESERIALIZE,
-	SERIALIZE,
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
@@ -34,7 +34,10 @@ import {
 	THEMES_REQUEST_FAILURE,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
-} from 'state/action-types';
+	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
+	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
+	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
+} from 'calypso/state/themes/action-types';
 import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
 import {
 	queriesSchema,
@@ -44,7 +47,7 @@ import {
 } from './schema';
 import themesUI from './themes-ui/reducer';
 import uploadTheme from './upload-theme/reducer';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
  * Returns the updated active theme state after an action has been
@@ -110,7 +113,7 @@ export function activationRequests( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const completedActivationRequests = withoutPersistence( ( state = {}, action ) => {
+export const completedActivationRequests = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEME_ACTIVATE_SUCCESS: {
 			const { siteId } = action;
@@ -131,7 +134,7 @@ export const completedActivationRequests = withoutPersistence( ( state = {}, act
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated active theme request state after an action has been
@@ -276,7 +279,7 @@ export function queryRequests( state = {}, action ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const queryRequestErrors = withoutPersistence( ( state = {}, action ) => {
+export const queryRequestErrors = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEMES_REQUEST_FAILURE: {
 			const { siteId, query, error } = action;
@@ -300,7 +303,19 @@ export const queryRequestErrors = withoutPersistence( ( state = {}, action ) => 
 	}
 
 	return state;
-} );
+};
+
+function fromApi( theme ) {
+	if ( ! theme || ! theme.description ) {
+		return theme;
+	}
+
+	return { ...theme, description: decodeEntities( theme.description ) };
+}
+
+// Time after which queries stored in IndexedDb will be invalidated.
+// days * hours_in_day * minutes_in_hour * seconds_in_minute * miliseconds_in_second
+const MAX_THEMES_AGE = 1 * 24 * 60 * 60 * 1000;
 
 /**
  * Returns the updated theme query state after an action has been dispatched.
@@ -311,80 +326,47 @@ export const queryRequestErrors = withoutPersistence( ( state = {}, action ) => 
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const queries = ( () => {
-	function applyToManager( state, siteId, method, createDefault, ...args ) {
-		if ( ! state[ siteId ] ) {
-			if ( ! createDefault ) {
-				return state;
-			}
-
-			return {
-				...state,
-				[ siteId ]: new ThemeQueryManager( null, { itemKey: 'id' } )[ method ]( ...args ),
-			};
+const queriesReducer = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case THEMES_REQUEST_SUCCESS: {
+			const { siteId, query, themes, found } = action;
+			return withQueryManager(
+				state,
+				siteId,
+				// Always 'patch' to avoid overwriting existing fields when receiving
+				// from a less rich endpoint such as /mine
+				( m ) => m.receive( map( themes, fromApi ), { query, found, patch: true } ),
+				() => new ThemeQueryManager( null, { itemKey: 'id' } )
+			);
 		}
-
-		const nextManager = state[ siteId ][ method ]( ...args );
-		if ( nextManager === state[ siteId ] ) {
-			return state;
+		case THEME_DELETE_SUCCESS: {
+			const { siteId, themeId } = action;
+			return withQueryManager( state, siteId, ( m ) => m.removeItem( themeId ) );
 		}
-
-		return {
-			...state,
-			[ siteId ]: nextManager,
-		};
 	}
 
-	function fromApi( theme ) {
-		if ( ! theme || ! theme.description ) {
-			return theme;
-		}
+	return state;
+};
 
-		return { ...theme, description: decodeEntities( theme.description ) };
-	}
-
-	// Time after which queries stored in IndexedDb will be invalidated.
-	// days * hours_in_day * minutes_in_hour * seconds_in_minute * miliseconds_in_second
-	const MAX_THEMES_AGE = 1 * 24 * 60 * 60 * 1000;
-
-	return withSchemaValidation( queriesSchema, ( state = {}, action ) => {
-		switch ( action.type ) {
-			case THEMES_REQUEST_SUCCESS: {
-				const { siteId, query, themes, found } = action;
-				return applyToManager(
-					// Always 'patch' to avoid overwriting existing fields when receiving
-					// from a less rich endpoint such as /mine
-					state,
-					siteId,
-					'receive',
-					true,
-					map( themes, fromApi ),
-					{ query, found, patch: true }
-				);
+export const queries = withSchemaValidation(
+	queriesSchema,
+	withPersistence( queriesReducer, {
+		serialize: ( state ) => {
+			const serializedState = mapValues( state, ( { data, options } ) => ( { data, options } ) );
+			serializedState._timestamp = Date.now();
+			return serializedState;
+		},
+		deserialize: ( persisted ) => {
+			if ( persisted._timestamp && persisted._timestamp + MAX_THEMES_AGE < Date.now() ) {
+				return {};
 			}
-			case THEME_DELETE_SUCCESS: {
-				const { siteId, themeId } = action;
-				return applyToManager( state, siteId, 'removeItem', false, themeId );
-			}
-			case SERIALIZE: {
-				const serializedState = mapValues( state, ( { data, options } ) => ( { data, options } ) );
-				serializedState._timestamp = Date.now();
-				return serializedState;
-			}
-			case DESERIALIZE: {
-				if ( state._timestamp && state._timestamp + MAX_THEMES_AGE < Date.now() ) {
-					return {};
-				}
-				const noTimestampState = omit( state, '_timestamp' );
-				return mapValues( noTimestampState, ( { data, options } ) => {
-					return new ThemeQueryManager( data, options );
-				} );
-			}
-		}
-
-		return state;
-	} );
-} )();
+			return mapValues(
+				omit( persisted, '_timestamp' ),
+				( { data, options } ) => new ThemeQueryManager( data, options )
+			);
+		},
+	} )
+);
 
 /**
  * Returns the updated themes last query state.
@@ -394,7 +376,7 @@ export const queries = ( () => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const lastQuery = withoutPersistence( ( state = {}, action ) => {
+export const lastQuery = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEMES_REQUEST_SUCCESS: {
 			const { siteId, query } = action;
@@ -407,7 +389,7 @@ export const lastQuery = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated previewing theme state
@@ -417,30 +399,27 @@ export const lastQuery = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const themePreviewOptions = withoutPersistence( ( state = {}, action ) => {
+export const themePreviewOptions = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEME_PREVIEW_OPTIONS: {
 			const { primary, secondary } = action;
 
-			return {
-				primary,
-				secondary,
-			};
+			return { primary, secondary };
 		}
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated previewing theme state
  * The state reflects if Theme Preview component should be visible or not.
  *
- * @param  {Bool}   state  Current state
+ * @param  {boolean}   state  Current state
  * @param  {object} action Action payload
- * @returns {Bool}          Updated state
+ * @returns {boolean}          Updated state
  */
-export const themePreviewVisibility = withoutPersistence( ( state = null, action ) => {
+export const themePreviewVisibility = ( state = null, action ) => {
 	switch ( action.type ) {
 		case THEME_PREVIEW_STATE: {
 			const { themeId } = action;
@@ -449,7 +428,36 @@ export const themePreviewVisibility = withoutPersistence( ( state = null, action
 	}
 
 	return state;
-} );
+};
+
+export const themeHasAutoLoadingHomepageWarning = ( state = null, action ) => {
+	switch ( action.type ) {
+		case THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING: {
+			return {
+				themeId: action.themeId,
+				show: true,
+				accepted: false,
+			};
+		}
+
+		case THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING: {
+			return {
+				themeId: action.themeId,
+				show: false,
+				accepted: true,
+			};
+		}
+
+		case THEME_ACTIVATE:
+		case THEME_ACTIVATE_SUCCESS:
+		case THEME_ACTIVATE_FAILURE:
+		case THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING: {
+			return null;
+		}
+	}
+
+	return state;
+};
 
 export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -483,7 +491,7 @@ export function recommendedThemes( state = { isLoading: true, themes: [] }, acti
 	return state;
 }
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
 	queryRequestErrors,
@@ -501,4 +509,8 @@ export default combineReducers( {
 	themePreviewVisibility,
 	themeFilters,
 	recommendedThemes,
+	themeHasAutoLoadingHomepageWarning,
 } );
+const themesReducer = withStorageKey( 'themes', combinedReducer );
+
+export default themesReducer;

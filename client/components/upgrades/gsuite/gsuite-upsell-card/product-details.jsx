@@ -9,11 +9,13 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getProductBySlug } from 'state/products-list/selectors';
-import GSuitePrice from 'components/gsuite/gsuite-price';
-import GSuiteCompactFeatures from 'components/gsuite/gsuite-features/compact';
-import { GSUITE_SLUG_PROP_TYPES } from 'lib/gsuite/constants';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import googleWorkspaceLogo from 'calypso/assets/images/email-providers/google-workspace/logo.svg';
+import GSuitePrice from 'calypso/components/gsuite/gsuite-price';
+import GSuiteCompactFeatures from 'calypso/components/gsuite/gsuite-features/compact';
+import { GSUITE_SLUG_PROP_TYPES } from 'calypso/lib/gsuite/constants';
+import { isGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 
 function GSuiteUpsellProductDetails( { currencyCode, domain, product, productSlug } ) {
 	const translate = useTranslate();
@@ -22,10 +24,11 @@ function GSuiteUpsellProductDetails( { currencyCode, domain, product, productSlu
 		<div className="gsuite-upsell-card__product-details">
 			<div className="gsuite-upsell-card__product-intro">
 				<div className="gsuite-upsell-card__product-presentation">
-					<div className="gsuite-upsell-card__product-name">
-						{ /* Intentionally not translated as it is a brand name and Google keeps it in English */ }
+					{ isGoogleWorkspaceProductSlug( productSlug ) ? (
+						<img src={ googleWorkspaceLogo } alt="Google Workspace" />
+					) : (
 						<span className="gsuite-upsell-card__product-logo">G Suite</span>
-					</div>
+					) }
 
 					<p>
 						{ translate(
@@ -50,9 +53,7 @@ GSuiteUpsellProductDetails.propTypes = {
 	productSlug: GSUITE_SLUG_PROP_TYPES,
 };
 
-export default connect(
-	( state, { productSlug } ) => ( {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		product: getProductBySlug( state, productSlug ),
-	} )
-)( GSuiteUpsellProductDetails );
+export default connect( ( state, { productSlug } ) => ( {
+	currencyCode: getCurrentUserCurrencyCode( state ),
+	product: getProductBySlug( state, productSlug ),
+} ) )( GSuiteUpsellProductDetails );

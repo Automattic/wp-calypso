@@ -1,5 +1,10 @@
 /**
- * Module dependencies.
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
  */
 import Like from './site.post.like';
 import Reblog from './site.post.reblog';
@@ -7,7 +12,6 @@ import Comment from './site.comment';
 import Subscriber from './site.post.subscriber';
 import runtimeBuilder from './util/runtime-builder';
 import sitePostGetMethods from './runtime/site.post.get';
-import debugFactory from 'debug';
 
 /**
  * Module vars
@@ -22,10 +26,10 @@ class SitePost {
 	/**
 	 * SitePost methods
 	 *
-	 * @param {String} id - post id
-	 * @param {String} sid site id
+	 * @param {string} id - post id
+	 * @param {string} sid site id
 	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Null} null
+	 * @returns {null} null
 	 */
 	constructor( id, sid, wpcom ) {
 		if ( ! ( this instanceof SitePost ) ) {
@@ -34,10 +38,10 @@ class SitePost {
 
 		this.wpcom = wpcom;
 		this._sid = sid;
-		this.path = `${root}/${this._sid}/posts`;
+		this.path = `${ root }/${ this._sid }/posts`;
 
 		// set `id` and/or `slug` properties
-		id = id || {}
+		id = id || {};
 		if ( 'object' !== typeof id ) {
 			this._id = id;
 		} else {
@@ -49,7 +53,7 @@ class SitePost {
 	/**
 	 * Set post `id`
 	 *
-	 * @param {String} id - site id
+	 * @param {string} id - site id
 	 */
 	id( id ) {
 		this._id = id;
@@ -58,7 +62,7 @@ class SitePost {
 	/**
 	 * Set post `slug`
 	 *
-	 * @param {String} slug - site slug
+	 * @param {string} slug - site slug
 	 */
 	slug( slug ) {
 		this._slug = slug;
@@ -67,19 +71,19 @@ class SitePost {
 	/**
 	 * Get post url path
 	 *
-	 * @return {String} post path
+	 * @returns {string} post path
 	 */
 
 	getPostPath() {
-		return `${this.path}/${this._id}`;
+		return `${ this.path }/${ this._id }`;
 	}
 
 	/**
 	 * Get post
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	get( query, fn ) {
 		if ( ! this._id && this._slug ) {
@@ -92,36 +96,37 @@ class SitePost {
 	/**
 	 * Get post by slug
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	getBySlug( query, fn ) {
-		return this.wpcom.req.get( `${this.path}/slug:${this._slug}`, query, fn );
+		return this.wpcom.req.get( `${ this.path }/slug:${ this._slug }`, query, fn );
 	}
 
 	/**
 	 * Add post
 	 *
-	 * @param {Object} [query] - query object parameter
-	 * @param {Object} body - body object parameter
+	 * @param {object} [query] - query object parameter
+	 * @param {object} body - body object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	add( query, body, fn ) {
 		if ( undefined === fn ) {
 			if ( undefined === body ) {
 				body = query;
-				query = {}
+				query = {};
 			} else if ( 'function' === typeof body ) {
 				fn = body;
 				body = query;
-				query = {}
+				query = {};
 			}
 		}
 
-		return this.wpcom.req.post( `${this.path}/new`, query, body )
-			.then( data => {
+		return this.wpcom.req
+			.post( `${ this.path }/new`, query, body )
+			.then( ( data ) => {
 				// update POST object
 				this._id = data.ID;
 				debug( 'Set post _id: %s', this._id );
@@ -135,7 +140,7 @@ class SitePost {
 					return Promise.resolve( data );
 				}
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				if ( 'function' === typeof fn ) {
 					fn( err );
 				} else {
@@ -147,10 +152,10 @@ class SitePost {
 	/**
 	 * Edit post
 	 *
-	 * @param {Object} [query] - query object parameter
-	 * @param {Object} body - body object parameter
+	 * @param {object} [query] - query object parameter
+	 * @param {object} body - body object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	update( query, body, fn ) {
 		return this.wpcom.req.put( this.getPostPath(), query, body, fn );
@@ -159,21 +164,21 @@ class SitePost {
 	/**
 	 * Delete post
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	delete( query, fn ) {
-		const path = `${this.getPostPath()}/delete`;
+		const path = `${ this.getPostPath() }/delete`;
 		return this.wpcom.req.del( path, query, fn );
 	}
 
 	/**
 	 * Del post, alias of Delete
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Promise} Promise
+	 * @returns {Promise} Promise
 	 */
 	del( query, fn ) {
 		return this.delete( query, fn );
@@ -182,30 +187,30 @@ class SitePost {
 	/**
 	 * Restore post
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	restore( query, fn ) {
-		return this.wpcom.req.put( `${this.getPostPath()}/restore`, query, null, fn );
+		return this.wpcom.req.put( `${ this.getPostPath() }/restore`, query, null, fn );
 	}
 
 	/**
 	 * Search within a site for related posts
 	 *
-	 * @param {Object} body - body object parameter
+	 * @param {object} body - body object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	related( body, fn ) {
-		return this.wpcom.req.put( `${this.getPostPath()}/related`, body, null, fn );
+		return this.wpcom.req.put( `${ this.getPostPath() }/related`, body, null, fn );
 	}
 
 	/**
 	 * Create a `Comment` instance
 	 *
-	 * @param {String} [cid] - comment id
-	 * @return {Comment} Comment instance
+	 * @param {string} [cid] - comment id
+	 * @returns {Comment} Comment instance
 	 */
 	comment( cid ) {
 		return new Comment( cid, this._id, this._sid, this.wpcom );
@@ -214,19 +219,19 @@ class SitePost {
 	/**
 	 * Return recent comments
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	comments( query, fn ) {
-		var comment = new Comment( null, this._id, this._sid, this.wpcom );
+		const comment = new Comment( null, this._id, this._sid, this.wpcom );
 		return comment.replies( query, fn );
 	}
 
 	/**
 	 * Create a `Like` instance
 	 *
-	 * @return {Like} Like instance
+	 * @returns {Like} Like instance
 	 */
 	like() {
 		return new Like( this._id, this._sid, this.wpcom );
@@ -235,7 +240,7 @@ class SitePost {
 	/**
 	 * Create a `Reblog` instance
 	 *
-	 * @return {Reblog} Reblog instance
+	 * @returns {Reblog} Reblog instance
 	 */
 	reblog() {
 		return new Reblog( this._id, this._sid, this.wpcom );
@@ -249,16 +254,16 @@ class SitePost {
 	 *    var post = wpcom.site( 'en.blog.wordpress.com' ).post( 1234 );
 	 *    var subs = post.subscriber();
 	 *
-	 * @return {Subscriber} Subscriber instance
+	 * @returns {Subscriber} Subscriber instance
 	 */
 	subscriber() {
 		return new Subscriber( this._id, this._sid, this.wpcom );
-	};
+	}
 }
 
 // add methods in runtime
 runtimeBuilder( SitePost, sitePostGetMethods, ( item, ctx ) => {
-	return `/sites/${ctx._sid}/posts/${ctx._id}/${item.subpath}`;
+	return `/sites/${ ctx._sid }/posts/${ ctx._id }/${ item.subpath }`;
 } );
 
 export default SitePost;

@@ -16,7 +16,7 @@
  * @returns {string}         Formatted message
  */
 function formatMessage( message, terms ) {
-	return message.replace( /\{\{\s*(.+?)\s*\}\}/g, function( fullMatch, term ) {
+	return message.replace( /\{\{\s*(.+?)\s*\}\}/g, function ( fullMatch, term ) {
 		if ( terms.hasOwnProperty( term ) ) {
 			return terms[ term ];
 		}

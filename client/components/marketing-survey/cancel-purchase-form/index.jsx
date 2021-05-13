@@ -11,30 +11,36 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import { submitSurvey } from 'lib/purchases/actions';
+import config from '@automattic/calypso-config';
+import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { Dialog, Button } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import { recordTracksEvent } from 'state/analytics/actions';
-import getSiteImportEngine from 'state/selectors/get-site-import-engine';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import HappychatButton from 'components/happychat/button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSiteImportEngine from 'calypso/state/selectors/get-site-import-engine';
+import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
+import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
+import isPrecancellationChatAvailable from 'calypso/state/happychat/selectors/is-precancellation-chat-available';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import HappychatButton from 'calypso/components/happychat/button';
 import * as steps from './steps';
 import initialSurveyState from './initial-survey-state';
 import BusinessATStep from './step-components/business-at-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
 import PrecancellationChatButton from './precancellation-chat-button';
 import DowngradeStep from './step-components/downgrade-step';
-import { getName, isRefundable } from 'lib/purchases';
-import { isGoogleApps } from 'lib/products-values';
-import { radioOption } from './radio-option';
+import { getName, isRefundable } from 'calypso/lib/purchases';
+import {
+	isGSuiteOrGoogleWorkspace,
+	isJetpackPlanSlug,
+	isJetpackProductSlug,
+	TERM_ANNUALLY,
+	JETPACK_PRODUCTS_LIST,
+} from '@automattic/calypso-products';
+import { radioTextOption, radioSelectOption } from './radio-option';
 import {
 	cancellationOptionsForPurchase,
 	nextAdventureOptionsForPurchase,
@@ -45,9 +51,11 @@ import isSurveyFilledIn from './is-survey-filled-in';
 import stepsForProductAndSurvey from './steps-for-product-and-survey';
 import enrichedSurveyData from './enriched-survey-data';
 import { CANCEL_FLOW_TYPE } from './constants';
-import { getDowngradePlanRawPrice } from 'state/purchases/selectors';
-import QueryPlans from 'components/data/query-plans';
-import QuerySitePlans from 'components/data/query-site-plans';
+import { getDowngradePlanRawPrice } from 'calypso/state/purchases/selectors';
+import QueryPlans from 'calypso/components/data/query-plans';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import { slugToSelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/utils';
 
 /**
  * Style dependencies
@@ -74,6 +82,29 @@ class CancelPurchaseForm extends React.Component {
 		onInputChange: () => {},
 		showSurvey: true,
 		isVisible: false,
+	};
+
+	shouldShowChatButton = () => {
+		if ( ! config.isEnabled( 'upgrades/precancellation-chat' ) ) {
+			return false;
+		}
+
+		// Don't show a button to start Happychat
+		// if we're already in a chat session
+		const { surveyStep } = this.state;
+		if ( surveyStep === steps.HAPPYCHAT_STEP ) {
+			return false;
+		}
+
+		// Jetpack doesn't do Happychat support
+		const { purchase } = this.props;
+		const isJetpack =
+			isJetpackProductSlug( purchase.productSlug ) || isJetpackPlanSlug( purchase.productSlug );
+
+		// NOTE: The HappychatButton component may still decide not to render,
+		// based on agent availability and connection status.
+
+		return ! isJetpack;
 	};
 
 	getAllSurveySteps = () => {
@@ -147,7 +178,7 @@ class CancelPurchaseForm extends React.Component {
 			value,
 		} );
 
-	onRadioOneChange = event => {
+	onRadioOneChange = ( event ) => {
 		this.recordClickRadioEvent( 'radio_1', event.currentTarget.value );
 
 		const newState = {
@@ -159,7 +190,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onTextOneChange = event => {
+	onTextOneChange = ( event ) => {
 		const newState = {
 			...this.state,
 			questionOneText: event.currentTarget.value,
@@ -168,7 +199,16 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onRadioTwoChange = event => {
+	onSelectOneChange = ( option ) => {
+		const newState = {
+			...this.state,
+			questionOneText: option.value,
+		};
+		this.setState( newState );
+		this.props.onInputChange( newState );
+	};
+
+	onRadioTwoChange = ( event ) => {
 		this.recordClickRadioEvent( 'radio_2', event.currentTarget.value );
 
 		const newState = {
@@ -180,7 +220,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onTextTwoChange = event => {
+	onTextTwoChange = ( event ) => {
 		const newState = {
 			...this.state,
 			questionTwoText: event.currentTarget.value,
@@ -189,7 +229,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onTextThreeChange = event => {
+	onTextThreeChange = ( event ) => {
 		const newState = {
 			...this.state,
 			questionThreeText: event.currentTarget.value,
@@ -198,7 +238,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onImportRadioChange = event => {
+	onImportRadioChange = ( event ) => {
 		this.recordClickRadioEvent( 'import_radio', event.currentTarget.value );
 
 		const newState = {
@@ -210,7 +250,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onImportTextChange = event => {
+	onImportTextChange = ( event ) => {
 		const newState = {
 			...this.state,
 			importQuestionText: event.currentTarget.value,
@@ -238,7 +278,7 @@ class CancelPurchaseForm extends React.Component {
 	onSubmit = () => {
 		const { purchase } = this.props;
 
-		if ( ! isGoogleApps( purchase ) ) {
+		if ( ! isGSuiteOrGoogleWorkspace( purchase ) ) {
 			this.setState( {
 				isSubmitting: true,
 			} );
@@ -287,9 +327,40 @@ class CancelPurchaseForm extends React.Component {
 		const reasons = {};
 		const { translate } = this.props;
 		const { questionOneOrder, questionOneRadio, questionOneText } = this.state;
+		const { productSlug: productBeingRemoved } = this.props.purchase;
+
+		// get all downgradable plans and products for downgrade question dropdown
+		const downgradablePlans = DOWNGRADEABLE_PLANS_FROM_PLAN[ productBeingRemoved ];
+		const downgradableJetpackPlansAndProducts = [
+			...( downgradablePlans ? downgradablePlans : [] ),
+			...JETPACK_PRODUCTS_LIST,
+		];
+		const selectBoxItems = downgradableJetpackPlansAndProducts
+			.map( slugToSelectorProduct )
+			// filter out any null items
+			.filter( ( product ) => product )
+			// get only annual products/plans (no need for monthly variants in the dropdown)
+			.filter( ( product ) => product.term === TERM_ANNUALLY )
+			.map( ( product ) => ( {
+				value: product.productSlug,
+				label: translate( 'Jetpack {{planName/}}', {
+					components: { planName: <>{ product.shortName }</> },
+				} ),
+			} ) );
+
+		const dropDownSelectOptions = [
+			{ value: 'select_a_product', label: translate( 'Select a product' ), isLabel: true },
+			...selectBoxItems,
+		];
+
+		const initialSelected = downgradableJetpackPlansAndProducts.includes(
+			this.state.questionOneText
+		)
+			? this.state.questionOneText
+			: 'select_a_product';
 
 		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
-			( reasons[ key ] = radioOption(
+			( reasons[ key ] = radioTextOption(
 				key,
 				questionOneRadio,
 				questionOneText,
@@ -297,6 +368,24 @@ class CancelPurchaseForm extends React.Component {
 				this.onTextOneChange,
 				radioPrompt,
 				textPlaceholder
+			) );
+
+		const appendRadioOptionWithSelect = (
+			key,
+			radioPrompt,
+			selectLabel,
+			selectOptions,
+			selected
+		) =>
+			( reasons[ key ] = radioSelectOption(
+				key,
+				questionOneRadio,
+				this.onRadioOneChange,
+				this.onSelectOneChange,
+				radioPrompt,
+				selectLabel,
+				selectOptions,
+				selected
 			) );
 
 		appendRadioOption(
@@ -315,6 +404,14 @@ class CancelPurchaseForm extends React.Component {
 			'didNotInclude',
 			translate( "This upgrade didn't include what I needed." ),
 			translate( 'What are we missing that you need?' )
+		);
+
+		appendRadioOptionWithSelect(
+			'downgradeToAnotherPlan',
+			translate( "I'd like to downgrade to another plan." ),
+			translate( 'Mind telling us which one?' ),
+			dropDownSelectOptions,
+			initialSelected
 		);
 
 		appendRadioOption(
@@ -349,7 +446,7 @@ class CancelPurchaseForm extends React.Component {
 		return (
 			<div className="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Please tell us why you are canceling:' ) }</FormLegend>
-				{ questionOneOrder.map( question => reasons[ question ] ) }
+				{ questionOneOrder.map( ( question ) => reasons[ question ] ) }
 			</div>
 		);
 	};
@@ -364,7 +461,7 @@ class CancelPurchaseForm extends React.Component {
 		}
 
 		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
-			( reasons[ key ] = radioOption(
+			( reasons[ key ] = radioTextOption(
 				key,
 				questionTwoRadio,
 				questionTwoText,
@@ -411,7 +508,7 @@ class CancelPurchaseForm extends React.Component {
 		return (
 			<div className="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Where is your next adventure taking you?' ) }</FormLegend>
-				{ questionTwoOrder.map( question => reasons[ question ] ) }
+				{ questionTwoOrder.map( ( question ) => reasons[ question ] ) }
 			</div>
 		);
 	};
@@ -423,7 +520,7 @@ class CancelPurchaseForm extends React.Component {
 
 		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
 			reasons.push(
-				radioOption(
+				radioTextOption(
 					key,
 					importQuestionRadio,
 					importQuestionText,
@@ -550,6 +647,9 @@ class CancelPurchaseForm extends React.Component {
 	surveyContent() {
 		const { translate, isImport, showSurvey, purchase } = this.props;
 		const { surveyStep } = this.state;
+		const isJetpack =
+			isJetpackProductSlug( purchase.productSlug ) || isJetpackPlanSlug( purchase.productSlug );
+		const productName = isJetpack ? translate( 'Jetpack' ) : translate( 'WordPress.com' );
 
 		if ( showSurvey ) {
 			if ( surveyStep === steps.INITIAL_STEP ) {
@@ -558,7 +658,10 @@ class CancelPurchaseForm extends React.Component {
 						<FormSectionHeading>{ translate( 'Your thoughts are needed.' ) }</FormSectionHeading>
 						<p>
 							{ translate(
-								'Before you go, please answer a few quick questions to help us improve WordPress.com.'
+								'Before you go, please answer a few quick questions to help us improve %(productName)s.',
+								{
+									args: { productName },
+								}
 							) }
 						</p>
 						{ this.renderQuestionOne() }
@@ -630,7 +733,7 @@ class CancelPurchaseForm extends React.Component {
 		this.recordEvent( 'calypso_purchases_cancel_form_close' );
 	};
 
-	changeSurveyStep = stepFunction => {
+	changeSurveyStep = ( stepFunction ) => {
 		const allSteps = this.getAllSurveySteps();
 		const newStep = stepFunction( this.state.surveyStep, allSteps );
 
@@ -660,55 +763,61 @@ class CancelPurchaseForm extends React.Component {
 		const disabled = disableButtons || this.state.isSubmitting;
 
 		const close = {
-				action: 'close',
-				disabled,
-				label: translate( "I'll Keep It" ),
-			},
-			chat = (
-				<PrecancellationChatButton
-					purchase={ purchase }
-					onClick={ this.closeDialog }
-					surveyStep={ surveyStep }
-				/>
-			),
-			next = {
-				action: 'next',
-				disabled: disabled || ! isSurveyFilledIn( this.state, isImport ),
-				label: translate( 'Next Step' ),
-				onClick: this.clickNext,
-			},
-			prev = {
-				action: 'prev',
-				disabled,
-				label: translate( 'Previous Step' ),
-				onClick: this.clickPrevious,
-			},
-			cancel = {
-				action: 'cancel',
-				disabled,
-				label: translate( 'Cancel Now' ),
-				onClick: this.onSubmit,
-				isPrimary: true,
-			},
-			downgrade = {
-				action: 'downgrade',
-				disabled: this.state.isSubmitting,
-				label: translate( 'Switch to Personal' ),
-				onClick: this.downgradeClick,
-				isPrimary: true,
-			},
-			remove = {
-				action: 'remove',
-				disabled,
-				label: translate( 'Remove Now' ),
-				onClick: this.onSubmit,
-				isPrimary: true,
-			};
+			action: 'close',
+			disabled,
+			label: translate( "I'll Keep It" ),
+		};
+		const chat = (
+			<PrecancellationChatButton
+				purchase={ purchase }
+				onClick={ this.closeDialog }
+				surveyStep={ surveyStep }
+			/>
+		);
+		const next = {
+			action: 'next',
+			disabled: disabled || ! isSurveyFilledIn( this.state, isImport ),
+			label: translate( 'Next Step' ),
+			onClick: this.clickNext,
+		};
+		const prev = {
+			action: 'prev',
+			disabled,
+			label: translate( 'Previous Step' ),
+			onClick: this.clickPrevious,
+		};
+		const cancel = {
+			action: 'cancel',
+			disabled,
+			label: translate( 'Cancel Now' ),
+			onClick: this.onSubmit,
+			isPrimary: true,
+		};
+		const downgrade = {
+			action: 'downgrade',
+			disabled: this.state.isSubmitting,
+			label: translate( 'Switch to Personal' ),
+			onClick: this.downgradeClick,
+			isPrimary: true,
+		};
+		const removeText = translate( 'Remove It' );
+		const removingText = translate( 'Removing' );
+		const remove = (
+			<Button
+				disabled={ this.props.disableButtons }
+				busy={ this.props.disableButtons }
+				onClick={ this.onSubmit }
+				primary
+				data-e2e-button="remove"
+			>
+				{ this.props.disableButtons ? removingText : removeText }
+			</Button>
+		);
 
-		const firstButtons =
-			config.isEnabled( 'upgrades/precancellation-chat' ) && surveyStep !== 'happychat_step'
-				? [ chat, close ]
-				: [ close ];
+		const firstButtons = [ close ];
+		if ( this.shouldShowChatButton() ) {
+			firstButtons.unshift( chat );
+		}
 
 		if ( surveyStep === steps.FINAL_STEP ) {
 			const stepsCount = this.getAllSurveySteps().length;

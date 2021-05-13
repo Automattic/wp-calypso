@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/billing-transactions/init';
 
 /**
  * Returns true if the past billing transaction fetch errored out

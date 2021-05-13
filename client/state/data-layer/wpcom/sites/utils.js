@@ -11,12 +11,12 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_WRITE_ERROR,
-} from 'state/action-types';
-import { requestCommentsList } from 'state/comments/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { getSitePost } from 'state/posts/selectors';
-import { errorNotice } from 'state/notices/actions';
+} from 'calypso/state/action-types';
+import { requestCommentsList } from 'calypso/state/comments/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getSitePost } from 'calypso/state/posts/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 /**
  * Creates a placeholder comment for a given text and postId
@@ -130,14 +130,7 @@ export const handleWriteCommentFailure = (
 ) => ( dispatch, getState ) => {
 	// Dispatch error notice
 	const post = getSitePost( getState(), siteId, postId );
-	const postTitle =
-		post &&
-		post.title &&
-		post.title
-			.trim()
-			.slice( 0, 20 )
-			.trim()
-			.concat( '…' );
+	const postTitle = post && post.title && post.title.trim().slice( 0, 20 ).trim().concat( '…' );
 	const error = postTitle
 		? translate( 'Could not add a reply to “%(postTitle)s”', { args: { postTitle } } )
 		: translate( 'Could not add a reply to this post' );

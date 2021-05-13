@@ -8,18 +8,19 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { loadScript } from '@automattic/load-script';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import FacebookIcon from 'components/social-icons/facebook';
-import { isFormDisabled } from 'state/login/selectors';
+import FacebookIcon from 'calypso/components/social-icons/facebook';
+import { isFormDisabled } from 'calypso/state/login/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class FacebookLoginButton extends Component {
 	// See: https://developers.facebook.com/docs/javascript/reference/FB.init/v2.8
@@ -70,7 +71,7 @@ class FacebookLoginButton extends Component {
 		}
 
 		this.initialized = this.loadDependency()
-			.then( FB => {
+			.then( ( FB ) => {
 				FB.init( {
 					appId: this.props.appId,
 					version: this.props.version,
@@ -80,7 +81,7 @@ class FacebookLoginButton extends Component {
 
 				return FB;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				this.initialized = null;
 
 				return Promise.reject( error );
@@ -98,9 +99,9 @@ class FacebookLoginButton extends Component {
 
 		// Handle click async if the library is not loaded yet
 		// the popup might be blocked by the browser in that case
-		this.initialize().then( FB => {
+		this.initialize().then( ( FB ) => {
 			FB.login(
-				response => {
+				( response ) => {
 					responseHandler( response );
 				},
 				{ scope }
@@ -132,6 +133,6 @@ class FacebookLoginButton extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	isFormDisabled: isFormDisabled( state ),
 } ) )( localize( FacebookLoginButton ) );

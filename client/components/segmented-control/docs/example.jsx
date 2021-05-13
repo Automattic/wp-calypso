@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SegmentedControl from 'components/segmented-control';
-import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
+import SegmentedControl from 'calypso/components/segmented-control';
+import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 
 class SegmentedControlDemo extends React.PureComponent {
 	static displayName = 'SegmentedControl';
@@ -131,7 +131,7 @@ class SegmentedControlDemo extends React.PureComponent {
 		console.log( 'Segmented Control (selected):', childSelected );
 	};
 
-	selectSegment = option => {
+	selectSegment = ( option ) => {
 		// eslint-disable-next-line no-console
 		console.log( 'Segmented Control (selected):', option );
 	};

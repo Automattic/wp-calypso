@@ -12,7 +12,7 @@ import {
 	EMAIL_VERIFY_REQUEST_SUCCESS,
 	EMAIL_VERIFY_REQUEST_FAILURE,
 	EMAIL_VERIFY_STATE_RESET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'exports expected reducer keys', () => {

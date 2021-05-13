@@ -38,10 +38,10 @@ export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
 		delete parsedUrl.query[ queryKey ];
 	}
 
-	return url.format( parsedUrl ).replace( /\%20/g, '+' );
+	return url.format( parsedUrl ).replace( /%20/g, '+' );
 };
 
-const UrlSearch = Component =>
+const UrlSearch = ( Component ) =>
 	class extends React.Component {
 		static displayName = `UrlSearch(${ Component.displayName || Component.name || '' })`;
 		static defaultProps = {
@@ -57,7 +57,7 @@ const UrlSearch = Component =>
 			return ! search && this.setState( { searchOpen: false } );
 		}
 
-		doSearch = query => {
+		doSearch = ( query ) => {
 			this.setState( {
 				searchOpen: false !== query,
 			} );
@@ -79,7 +79,7 @@ const UrlSearch = Component =>
 		};
 
 		getSearchOpen = () => {
-			return this.state.searchOpen !== false || this.props.search;
+			return this.state.searchOpen !== false || !! this.props.search;
 		};
 
 		render() {

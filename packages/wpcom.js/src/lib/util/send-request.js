@@ -1,5 +1,5 @@
 /**
- * Module dependencies
+ * External dependencies
  */
 import qs from 'qs';
 import debugFactory from 'debug';
@@ -10,11 +10,11 @@ const debug_res = debugFactory( 'wpcom:send-request:res' );
 /**
  * Request to WordPress REST API
  *
- * @param {String|Object} params - params object
- * @param {Object} [query] - query object parameter
- * @param {Object} [body] - body object parameter
+ * @param {string|object} params - params object
+ * @param {object} [query] - query object parameter
+ * @param {object} [body] - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
 export default function sendRequest( params, query, body, fn ) {
 	// `params` can be just the path ( String )
@@ -78,7 +78,7 @@ export default function sendRequest( params, query, body, fn ) {
 	// if callback is provided, behave traditionally
 	if ( 'function' === typeof fn ) {
 		// request method
-		return this.request( params, function( err, res, headers ) {
+		return this.request( params, function ( err, res, headers ) {
 			debug_res( res );
 			fn( err, res, headers );
 		} );

@@ -11,13 +11,13 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import getRawSite from 'state/selectors/get-raw-site';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import QuerySites from 'components/data/query-sites';
-import QuerySitePlans from 'components/data/query-site-plans';
-import { getPlan, getPlanClass } from 'lib/plans';
-import ThankYouCard from 'components/thank-you-card';
-import PlanIcon from 'components/plans/plan-icon';
+import { ProductIcon } from '@automattic/components';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import QuerySites from 'calypso/components/data/query-sites';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { getPlan, getPlanClass } from '@automattic/calypso-products';
+import ThankYouCard from 'calypso/components/thank-you-card';
 
 /**
  * Style dependencies
@@ -60,7 +60,7 @@ class PlanThankYouCard extends Component {
 			return null;
 		}
 
-		return <PlanIcon plan={ plan.productSlug } />;
+		return <ProductIcon slug={ plan.productSlug } />;
 	}
 
 	renderAction() {

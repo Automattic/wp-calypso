@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>WordPress.com REST API Proxy Me Test Page</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	</head>
+	<body>
+		<script src="dist/wpcom-proxy-request.js"></script>
+		<script>
+			/* global WPCOMProxyRequest */
+			/* eslint-disable no-var, no-console */
+			/* eslint no-undef: "error" */
+			var output = '';
+
+			WPCOMProxyRequest( {
+				metaAPI: { accessAllUsersBlogs: true }
+			}, function( err ) {
+				if ( err ) {
+					throw err;
+				}
+
+				console.log( 'proxy now running in "access all user\'s blogs" mode' );
+			} );
+
+			WPCOMProxyRequest( '/me', function( err, res ) {
+				if ( err ) {
+					throw err;
+				}
+
+				console.log( res );
+
+				output = document.createElement( 'pre' );
+				output.innerHTML = JSON.stringify( res, null, 2 );
+				document.body.appendChild( output );
+			} );
+
+		</script>
+	</body>
+</html>

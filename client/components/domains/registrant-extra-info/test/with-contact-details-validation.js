@@ -8,14 +8,14 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
-import { difference, identity, set } from 'lodash';
+import { difference, set } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { ValidatedRegistrantExtraInfoUkForm, RegistrantExtraInfoUkForm } from '../uk-form';
 
-jest.mock( 'state/selectors/get-validation-schemas', () => () => ( {
+jest.mock( 'calypso/state/selectors/get-validation-schemas', () => () => ( {
 	uk: require( './uk-schema.json' ),
 } ) );
 
@@ -28,8 +28,8 @@ const mockStore = {
 const MockReduxProvider = ( { children } ) => <Provider store={ mockStore }>{ children }</Provider>;
 
 const mockProps = {
-	translate: identity,
-	updateContactDetailsCache: identity,
+	translate: ( string ) => string,
+	updateContactDetailsCache: () => {},
 	tld: 'uk',
 };
 
@@ -82,7 +82,7 @@ describe( 'uk-form validation', () => {
 				},
 			};
 
-			needsRegistrationNumber.forEach( registrantType => {
+			needsRegistrationNumber.forEach( ( registrantType ) => {
 				const wrapper = mount(
 					<ValidatedRegistrantExtraInfoUkForm
 						{ ...mockProps }
@@ -116,7 +116,7 @@ describe( 'uk-form validation', () => {
 				},
 			};
 
-			difference( allRegistrantTypes, needsRegistrationNumber ).forEach( registrantType => {
+			difference( allRegistrantTypes, needsRegistrationNumber ).forEach( ( registrantType ) => {
 				const wrapper = mount(
 					<ValidatedRegistrantExtraInfoUkForm
 						{ ...mockProps }
@@ -142,7 +142,7 @@ describe( 'uk-form validation', () => {
 
 			const badFormats = [ '124', 'OC38599', '066566879', 'OCABCDEF', '054025OC' ];
 
-			badFormats.forEach( registrationNumber => {
+			badFormats.forEach( ( registrationNumber ) => {
 				const wrapper = mount(
 					<ValidatedRegistrantExtraInfoUkForm
 						{ ...mockProps }
@@ -173,7 +173,7 @@ describe( 'uk-form validation', () => {
 				},
 			};
 
-			needsTradingName.forEach( registrantType => {
+			needsTradingName.forEach( ( registrantType ) => {
 				const wrapper = mount(
 					<ValidatedRegistrantExtraInfoUkForm
 						{ ...mockProps }
@@ -198,7 +198,7 @@ describe( 'uk-form validation', () => {
 		} );
 
 		test( 'should not be required for other values of registrantType', () => {
-			difference( allRegistrantTypes, needsTradingName ).forEach( registrantType => {
+			difference( allRegistrantTypes, needsTradingName ).forEach( ( registrantType ) => {
 				const testContactDetails = {
 					extra: {
 						uk: {

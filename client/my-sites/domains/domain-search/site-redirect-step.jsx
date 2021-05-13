@@ -7,19 +7,21 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import { Button } from '@automattic/components';
-import { hasProduct, siteRedirect } from 'lib/cart-values/cart-items';
-import { errorNotice } from 'state/notices/actions';
-import { canRedirect } from 'lib/domains';
-import DomainProductPrice from 'components/domains/domain-product-price';
-import { addItem } from 'lib/cart/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { withoutHttp } from 'lib/url';
+import { hasProduct, siteRedirect } from 'calypso/lib/cart-values/cart-items';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { canRedirect } from 'calypso/lib/domains';
+import DomainProductPrice from 'calypso/components/domains/domain-product-price';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { withoutHttp } from 'calypso/lib/url';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 /**
  * Style dependencies
@@ -28,12 +30,21 @@ import './site-redirect-step.scss';
 
 class SiteRedirectStep extends React.Component {
 	static propTypes = {
-		cart: PropTypes.object.isRequired,
 		products: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
 	};
 
-	state = { searchQuery: '' };
+	state = { searchQuery: '', isSubmitting: false };
+
+	isMounted = false;
+
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
+
+	componentDidMount() {
+		this.isMounted = true;
+	}
 
 	render() {
 		const price = get( this.props, 'products.offsite_redirect.cost_display', null );
@@ -54,10 +65,9 @@ class SiteRedirectStep extends React.Component {
 
 					<DomainProductPrice price={ price } requiresPlan={ false } />
 
-					<fieldset>
-						<input
+					<FormFieldset>
+						<FormTextInput
 							className="site-redirect-step__external-domain"
-							type="text"
 							value={ this.state.searchQuery }
 							placeholder={ translate( 'Enter a domain', { textOnly: true } ) }
 							onChange={ this.setSearchQuery }
@@ -68,12 +78,14 @@ class SiteRedirectStep extends React.Component {
 							className="site-redirect-step__go"
 							type="submit"
 							onClick={ this.recordGoButtonClick }
+							busy={ this.state.isSubmitting }
+							disabled={ this.state.isSubmitting }
 						>
 							{ translate( 'Go', {
 								context: 'Upgrades: Label for adding Site Redirect',
 							} ) }
 						</Button>
-					</fieldset>
+					</FormFieldset>
 				</form>
 			</div>
 		);
@@ -88,12 +100,14 @@ class SiteRedirectStep extends React.Component {
 		this.props.recordGoButtonClick( this.state.searchQuery );
 	};
 
-	setSearchQuery = event => {
+	setSearchQuery = ( event ) => {
 		this.setState( { searchQuery: withoutHttp( event.target.value ) } );
 	};
 
-	handleFormSubmit = event => {
+	handleFormSubmit = ( event ) => {
 		event.preventDefault();
+
+		this.setState( { isSubmitting: true } );
 
 		const domain = this.state.searchQuery;
 
@@ -103,26 +117,29 @@ class SiteRedirectStep extends React.Component {
 			this.props.errorNotice(
 				this.getValidationErrorMessage( domain, { code: 'already_in_cart' } )
 			);
+			this.setState( { isSubmitting: false } );
 			return;
 		}
 
-		canRedirect(
-			this.props.selectedSite.ID,
-			domain,
-			function( error ) {
-				if ( error ) {
-					this.props.errorNotice( this.getValidationErrorMessage( domain, error ) );
-					return;
-				}
+		canRedirect( this.props.selectedSite.ID, domain, ( error ) => {
+			if ( error ) {
+				this.props.errorNotice( this.getValidationErrorMessage( domain, error ) );
+				this.setState( { isSubmitting: false } );
+				return;
+			}
 
-				this.addSiteRedirectToCart( domain );
-			}.bind( this )
-		);
+			this.addSiteRedirectToCart( domain );
+		} );
 	};
 
-	addSiteRedirectToCart = domain => {
-		addItem( siteRedirect( { domain } ) );
-		page( '/checkout/' + this.props.selectedSite.slug );
+	addSiteRedirectToCart = ( domain ) => {
+		this.props.shoppingCartManager
+			.addProductsToCart( [
+				fillInSingleCartItemAttributes( siteRedirect( { domain } ), this.props.products ),
+			] )
+			.then( () => {
+				this.isMounted && page( '/checkout/' + this.props.selectedSite.slug );
+			} );
 	};
 
 	getValidationErrorMessage = ( domain, error ) => {
@@ -160,7 +177,7 @@ class SiteRedirectStep extends React.Component {
 	};
 }
 
-const recordInputFocus = searchBoxValue =>
+const recordInputFocus = ( searchBoxValue ) =>
 	recordGoogleEvent(
 		'Domain Search',
 		'Focused On Search Box Input in Site Redirect',
@@ -168,7 +185,7 @@ const recordInputFocus = searchBoxValue =>
 		searchBoxValue
 	);
 
-const recordGoButtonClick = searchBoxValue =>
+const recordGoButtonClick = ( searchBoxValue ) =>
 	recordGoogleEvent(
 		'Domain Search',
 		'Clicked "Go" Button in Site Redirect',
@@ -176,7 +193,7 @@ const recordGoButtonClick = searchBoxValue =>
 		searchBoxValue
 	);
 
-const recordFormSubmit = searchBoxValue =>
+const recordFormSubmit = ( searchBoxValue ) =>
 	recordGoogleEvent(
 		'Domain Search',
 		'Submitted Form in Site Redirect',
@@ -189,4 +206,4 @@ export default connect( null, {
 	recordInputFocus,
 	recordGoButtonClick,
 	recordFormSubmit,
-} )( localize( SiteRedirectStep ) );
+} )( withShoppingCart( localize( SiteRedirectStep ) ) );

@@ -1,8 +1,8 @@
-export const isSuccessNotice = action => {
+export const isSuccessNotice = ( action ) => {
 	return action && action.notice && 'is-success' === action.notice.status;
 };
 
-export const isErrorNotice = action => {
+export const isErrorNotice = ( action ) => {
 	return action && action.notice && 'is-error' === action.notice.status;
 };
 

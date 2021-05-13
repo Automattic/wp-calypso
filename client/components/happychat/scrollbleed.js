@@ -1,24 +1,15 @@
 /**
- * A mixin that prevents scrolling events triggered by the mousewheel from moving scrollable containers
- * not directly under the mouse.
- *
- * By default when scrolling a scrollable HTML element, once the boundary is reached the scrolling events
- * will continue up the DOM tree and ultimately end up scrolling the page.
- *
+ * External dependencies
  */
+import React, { useEffect, useState } from 'react';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
-export default {
-	componentWillUnmount() {
-		this.scrollbleedUnlock();
-	},
+function createScrollbleed() {
+	let scrollbleedNode = null;
 
-	setScrollbleedTarget( node ) {
-		this._scrollbleed_node = node;
-	},
-
-	_scrollbleed_handleScroll( e ) {
+	function handleScroll( e ) {
 		let delta = null;
-		if ( ! this._scrollbleed_node ) {
+		if ( ! scrollbleedNode ) {
 			return;
 		}
 
@@ -50,24 +41,41 @@ export default {
 			}
 		}
 
-		this._scrollbleed_node.scrollTop -= delta;
-	},
+		scrollbleedNode.scrollTop -= delta;
+	}
 
-	scrollbleedLock() {
-		if ( window.addEventListener ) {
-			// older FF
-			window.addEventListener( 'DOMMouseScroll', this._scrollbleed_handleScroll, false );
-		}
-		window.onwheel = this._scrollbleed_handleScroll;
-		window.onmousewheel = document.onmousewheel = this._scrollbleed_handleScroll;
-	},
+	return {
+		setTarget( node ) {
+			scrollbleedNode = node;
+		},
+		lock() {
+			window.addEventListener( 'wheel', handleScroll, { passive: false } );
+		},
+		unlock() {
+			window.removeEventListener( 'wheel', handleScroll );
+		},
+	};
+}
+/**
+ * A hook that prevents scrolling events triggered by the mousewheel from moving scrollable containers
+ * not directly under the mouse.
+ *
+ * By default when scrolling a scrollable HTML element, once the boundary is reached the scrolling events
+ * will continue up the DOM tree and ultimately end up scrolling the page.
+ *
+ */
+export function useScrollbleed() {
+	const [ scrollbleed ] = useState( createScrollbleed );
 
-	scrollbleedUnlock() {
-		if ( window.removeEventListener ) {
-			// older FF
-			window.removeEventListener( 'DOMMouseScroll', this._scrollbleed_handleScroll, false );
-		}
-		window.onwheel = null;
-		window.onmousewheel = document.onmousewheel = null;
+	useEffect( () => scrollbleed.unlock, [ scrollbleed ] );
+
+	return scrollbleed;
+}
+
+export const withScrollbleed = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		const scrollbleed = useScrollbleed();
+		return <Wrapped { ...props } scrollbleed={ scrollbleed } />;
 	},
-};
+	'WithScrollbleed'
+);

@@ -12,7 +12,7 @@ import { getCurrentLyric } from '../selectors';
 describe( 'selectors', () => {
 	describe( '#getCurrentLyric', () => {
 		const threeLines = [ 'one', 'two', 'three' ];
-		const dollyState = state => ( { extensions: { helloDolly: state } } );
+		const dollyState = ( state ) => ( { extensions: { helloDolly: state } } );
 
 		test( 'should return the first line if no state exists', () => {
 			expect( getCurrentLyric( threeLines )( dollyState( undefined ) ) ).to.equal( 'one' );

@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/hosting/init';
+
+/**
  * Returns the sftp users details for given site.
  *
  * @param  {object}  state   Global state tree

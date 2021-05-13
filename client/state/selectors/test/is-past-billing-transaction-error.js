@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import isPastBillingTransactionError from 'state/selectors/is-past-billing-transaction-error';
+import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billing-transaction-error';
 
 describe( 'getPastBillingTransactionError()', () => {
 	const state = {

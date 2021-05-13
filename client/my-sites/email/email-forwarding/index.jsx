@@ -10,23 +10,23 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import EmailForwardingPlaceholder from './email-forwarding-placeholder';
-import Header from 'my-sites/domains/domain-management/components/header';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import EmailForwardingList from './email-forwarding-list';
 import EmailForwardingAddNew from './email-forwarding-add-new';
 import EmailForwardingDetails from './email-forwarding-details';
 import EmailForwardingCustomMxList from './email-forwarding-custom-mx-list';
 import EmailForwardingGSuiteDetails from './email-forwarding-gsuite-details';
 import EmailForwardingGSuiteDetailsAnotherProvider from './email-forwarding-gsuite-details-another-provider';
-import { emailManagement } from 'my-sites/email/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import { CompactCard as Card } from '@automattic/components';
-import getEmailForwardingLimit from 'state/selectors/get-email-forwarding-limit';
-import getEmailForwardingType from 'state/selectors/get-email-forwarding-type';
-import { getEmailForwards } from 'state/selectors/get-email-forwards';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryEmailForwards from 'components/data/query-email-forwards';
-import SectionHeader from 'components/section-header';
+import getEmailForwardingLimit from 'calypso/state/selectors/get-email-forwarding-limit';
+import getEmailForwardingType from 'calypso/state/selectors/get-email-forwarding-type';
+import { getEmailForwards } from 'calypso/state/selectors/get-email-forwards';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -51,7 +51,6 @@ class EmailForwarding extends Component {
 				<Header onClick={ this.goToEditEmail } selectedDomainName={ selectedDomainName }>
 					{ translate( 'Email Forwarding' ) }
 				</Header>
-				<SectionHeader label={ translate( 'Email Forwarding' ) } />
 				{ this.renderContent() }
 			</Main>
 		);
@@ -105,7 +104,9 @@ class EmailForwarding extends Component {
 	}
 
 	goToEditEmail = () => {
-		page( emailManagement( this.props.siteSlug, this.props.selectedDomainName ) );
+		page(
+			emailManagement( this.props.siteSlug, this.props.selectedDomainName, this.props.currentRoute )
+		);
 	};
 }
 
@@ -113,6 +114,7 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const { selectedDomainName } = ownProps;
 	return {
+		currentRoute: getCurrentRoute( state ),
 		emailForwards: getEmailForwards( state, selectedDomainName ),
 		emailForwardingLimit: getEmailForwardingLimit( state, siteId ),
 		emailForwardingType: getEmailForwardingType( state, selectedDomainName ),

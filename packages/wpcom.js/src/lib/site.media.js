@@ -1,7 +1,11 @@
 /**
- * Module dependencies.
+ * External dependencies
  */
 import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
+ */
 import { createReadStream } from './util/fs';
 
 const debug = debugFactory( 'wpcom:media' );
@@ -10,14 +14,17 @@ const debug = debugFactory( 'wpcom:media' );
  * Build a formData object to be sent in a POST request
  *
  * @param  {Array|File} files - array of files
- * @return {Array} formData array
+ * @returns {Array} formData array
  */
 function buildFormData( files ) {
 	const formData = [];
 	const isArray = Array.isArray( files );
 	files = isArray ? files : [ files ];
 
-	let i, f, k, param;
+	let i;
+	let f;
+	let k;
+	let param;
 	for ( i = 0; i < files.length; i++ ) {
 		f = files[ i ];
 
@@ -56,10 +63,10 @@ function buildFormData( files ) {
 /**
  * Media methods
  *
- * @param {String} id - media id
- * @param {String} sid site id
+ * @param {string} id - media id
+ * @param {string} sid site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @returns {null} null
  */
 export default function Media( id, sid, wpcom ) {
 	if ( ! ( this instanceof Media ) ) {
@@ -78,11 +85,11 @@ export default function Media( id, sid, wpcom ) {
 /**
  * Get media
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Media.prototype.get = function( query = {}, fn ) {
+Media.prototype.get = function ( query = {}, fn ) {
 	query.apiVersion = query.apiVersion || '1.2';
 	const path = '/sites/' + this._sid + '/media/' + this._id;
 	return this.wpcom.req.get( path, query, fn );
@@ -91,12 +98,12 @@ Media.prototype.get = function( query = {}, fn ) {
 /**
  * Update media
  *
- * @param {Object} [query] - query object parameter
- * @param {Object} body - body object parameter
+ * @param {object} [query] - query object parameter
+ * @param {object} body - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Media.prototype.update = function( query, body, fn ) {
+Media.prototype.update = function ( query, body, fn ) {
 	const params = { path: '/sites/' + this._sid + '/media/' + this._id };
 	return this.wpcom.req.put( params, query, body, fn );
 };
@@ -104,13 +111,13 @@ Media.prototype.update = function( query, body, fn ) {
 /**
  * Edit media
  *
- * @param {Object} [query] - query object parameter
- * @param {Object} body - body object parameter
+ * @param {object} [query] - query object parameter
+ * @param {object} body - body object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Media.prototype.edit = function( query, body, fn ) {
-	if ( typeof body == 'function' || ! body ) {
+Media.prototype.edit = function ( query, body, fn ) {
+	if ( typeof body === 'function' || ! body ) {
 		fn = body;
 		body = query;
 		query = {};
@@ -135,12 +142,12 @@ Media.prototype.edit = function( query, body, fn ) {
 /**
  * Add media file
  *
- * @param {Object} [query] - query object parameter
- * @param {String|Object|Array} files - files to add
+ * @param {object} [query] - query object parameter
+ * @param {string|object|Array} files - files to add
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Media.prototype.addFiles = function( query, files, fn ) {
+Media.prototype.addFiles = function ( query, files, fn ) {
 	if ( undefined === fn ) {
 		if ( undefined === files ) {
 			files = query;
@@ -154,7 +161,7 @@ Media.prototype.addFiles = function( query, files, fn ) {
 
 	const params = {
 		path: '/sites/' + this._sid + '/media/new',
-		formData: buildFormData( files )
+		formData: buildFormData( files ),
 	};
 
 	return this.wpcom.req.post( params, query, null, fn );
@@ -163,12 +170,12 @@ Media.prototype.addFiles = function( query, files, fn ) {
 /**
  * Add media files from URL
  *
- * @param {Object} [query] - query object parameter
- * @param {String|Array|Object} media - files to add
+ * @param {object} [query] - query object parameter
+ * @param {string|Array|object} media - files to add
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Media.prototype.addUrls = function( query, media, fn ) {
+Media.prototype.addUrls = function ( query, media, fn ) {
 	if ( undefined === fn ) {
 		if ( undefined === media ) {
 			media = query;
@@ -184,7 +191,10 @@ Media.prototype.addUrls = function( query, media, fn ) {
 	const body = { media_urls: [] };
 
 	// process formData
-	let i, m, url, k;
+	let i;
+	let m;
+	let url;
+	let k;
 
 	media = Array.isArray( media ) ? media : [ media ];
 	for ( i = 0; i < media.length; i++ ) {
@@ -217,11 +227,11 @@ Media.prototype.addUrls = function( query, media, fn ) {
 /**
  * Delete media
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Media.prototype.delete = Media.prototype.del = function( query, fn ) {
+Media.prototype.delete = Media.prototype.del = function ( query, fn ) {
 	const path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
 	return this.wpcom.req.del( path, query, fn );
 };

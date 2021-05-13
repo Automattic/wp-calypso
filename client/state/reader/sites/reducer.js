@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { assign, includes, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
+import { includes, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -12,17 +12,11 @@ import {
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
 	READER_SITE_UPDATE,
-	SERIALIZE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+} from 'calypso/state/reader/action-types';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { readerSitesSchema } from './schema';
-import { withoutHttp } from 'lib/url';
-import { decodeEntities } from 'lib/formatting';
-
-function handleSerialize( state ) {
-	// remove errors from the serialized state
-	return omitBy( state, 'is_error' );
-}
+import { withoutHttp } from 'calypso/lib/url';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 function handleRequestFailure( state, action ) {
 	// 410 means site moved - site used to be on wpcom but is no longer
@@ -32,13 +26,14 @@ function handleRequestFailure( state, action ) {
 		return state;
 	}
 
-	return assign( {}, state, {
+	return {
+		...state,
 		[ action.payload.ID ]: {
 			ID: action.payload.ID,
 			is_error: true,
 			error: action.error,
 		},
-	} );
+	};
 }
 
 function adaptSite( attributes ) {
@@ -73,20 +68,19 @@ function adaptSite( attributes ) {
 function handleRequestSuccess( state, action ) {
 	const site = adaptSite( action.payload );
 	// TODO do we need to normalize site entries somehow?
-	return assign( {}, state, {
+	return {
+		...state,
 		[ action.payload.ID ]: site,
-	} );
+	};
 }
 
 function handleSiteUpdate( state, action ) {
 	const sites = map( action.payload, adaptSite );
-	return assign( {}, state, keyBy( sites, 'ID' ) );
+	return { ...state, ...keyBy( sites, 'ID' ) };
 }
 
-export const items = withSchemaValidation( readerSitesSchema, ( state = {}, action ) => {
+const itemsReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case SERIALIZE:
-			return handleSerialize( state, action );
 		case READER_SITE_BLOCKS_RECEIVE: {
 			if ( ! action.payload || ! action.payload.sites ) {
 				return state;
@@ -109,14 +103,22 @@ export const items = withSchemaValidation( readerSitesSchema, ( state = {}, acti
 	}
 
 	return state;
-} );
+};
+export const items = withSchemaValidation(
+	readerSitesSchema,
+	withPersistence( itemsReducer, {
+		// remove errors from the serialized state
+		serialize: ( state ) => omitBy( state, 'is_error' ),
+	} )
+);
 
 export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_SITE_REQUEST:
-			return assign( {}, state, {
+			return {
+				...state,
 				[ action.payload.ID ]: true,
-			} );
+			};
 		case READER_SITE_REQUEST_SUCCESS:
 		case READER_SITE_REQUEST_FAILURE:
 			return omit( state, action.payload.ID );
@@ -125,7 +127,7 @@ export function queuedRequests( state = {}, action ) {
 	return state;
 }
 
-export const lastFetched = withoutPersistence( ( state = {}, action ) => {
+export const lastFetched = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_SITE_REQUEST_SUCCESS:
 			return {
@@ -141,12 +143,12 @@ export const lastFetched = withoutPersistence( ( state = {}, action ) => {
 				},
 				{}
 			);
-			return assign( {}, state, updates );
+			return { ...state, ...updates };
 		}
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	items,

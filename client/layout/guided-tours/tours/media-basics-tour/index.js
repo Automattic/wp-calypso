@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Fragment } from 'react';
 
 /**
@@ -16,14 +15,14 @@ import {
 	Next,
 	Quit,
 	Continue,
-} from 'layout/guided-tours/config-elements';
-import { doesSelectedSiteHaveMediaFiles } from 'state/ui/guided-tours/contexts';
+} from 'calypso/layout/guided-tours/config-elements';
+import { doesSelectedSiteHaveMediaFiles } from 'calypso/state/guided-tours/contexts';
 import {
 	AddNewButton,
 	EditButton,
 	EditImageButton,
 	DoneButton,
-} from 'layout/guided-tours/button-labels';
+} from 'calypso/layout/guided-tours/button-labels';
 
 export const MediaBasicsTour = makeTour(
 	<Tour { ...meta }>
@@ -36,7 +35,7 @@ export const MediaBasicsTour = makeTour(
 		>
 			{ ( { translate } ) => (
 				<Fragment>
-					<p>{ translate( 'Welcome to your media libary!' ) }</p>
+					<p>{ translate( 'Welcome to your Media Library!' ) }</p>
 					<p>
 						{ translate(
 							'Upload media — photos, documents, audio files, and more — ' +
@@ -61,7 +60,7 @@ export const MediaBasicsTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'You can also drag-and-drop image and video files from your computer into your media library.'
+							'You can also drag-and-drop image and video files from your computer into your Media Library.'
 						) }
 					</p>
 					<img
@@ -136,14 +135,14 @@ export const MediaBasicsTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<Next step="done" />
+						<Next step="adjust-image" />
 						<Quit />
 					</ButtonRow>
 				</Fragment>
 			) }
 		</Step>
 
-		<Step name="done" placement="center">
+		<Step name="adjust-image" placement="center">
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>
@@ -156,6 +155,52 @@ export const MediaBasicsTour = makeTour(
 							}
 						) }
 					</p>
+					<ButtonRow>
+						<Next step="personal-files-warning" />
+						<Quit />
+					</ButtonRow>
+				</Fragment>
+			) }
+		</Step>
+
+		<Step
+			name="personal-files-warning"
+			target=".detail__url-field"
+			placement="below"
+			arrow="top-left"
+			style={ { marginTop: '-8px' } }
+		>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							'{{strong}}Make sure you are okay with these files being public:{{/strong}} ' +
+								'all files you upload to WordPress.com get their own web address. ' +
+								'If your site is public, anyone with this address can access the file, ' +
+								"even if you haven't included it in a post. It's unlikely, but possible.",
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+					<ButtonRow>
+						<Next step="done" />
+						<Quit />
+					</ButtonRow>
+				</Fragment>
+			) }
+		</Step>
+
+		<Step
+			name="done"
+			target=".dialog__action-buttons .button.is-primary"
+			placement="above"
+			arrow="bottom-right"
+		>
+			{ ( { translate } ) => (
+				<Fragment>
 					<p>
 						{ translate(
 							'Click {{doneButton /}} to go back to your full library. Happy uploading!',

@@ -11,6 +11,7 @@
  * For example: a search for "halloween",
  * excluding followed sites, using relevance sortwould be
  *   halloween-X-relevance
+ *
  * @param  {object} query The feed search action
  * @returns {string} the key
  */

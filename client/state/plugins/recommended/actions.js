@@ -5,9 +5,10 @@ import {
 	PLUGINS_RECOMMENDED_RECEIVE,
 	PLUGINS_RECOMMENDED_REQUEST_FAILURE,
 	PLUGINS_RECOMMENDED_REQUEST,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/plugins/recommended';
+import 'calypso/state/data-layer/wpcom/sites/plugins/recommended';
+import 'calypso/state/plugins/init';
 
 /**
  * Returns an action object that's bound to the data layer;
@@ -26,7 +27,7 @@ export function fetchRecommendedPlugins( siteId, limit = 6 ) {
  * has been received.
  *
  * @param  {number}         siteId  Site ID
- * @param  {Array<Object>}  data    List of recommended plugins
+ * @param  {Array<object>}  data    List of recommended plugins
  * @returns {object}                 Action object
  */
 export function receiveRecommendedPlugins( siteId, data ) {

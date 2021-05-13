@@ -30,12 +30,15 @@ const countriesList = [
 ];
 
 describe( 'FormPhoneInput', () => {
+	const localizeProps = { translate: ( string ) => string };
+
 	describe( 'getValue()', () => {
 		test( 'should set country from props', () => {
 			const phoneComponent = shallow(
 				<FormPhoneInput
 					countriesList={ countriesList }
 					initialCountryCode={ countriesList[ 1 ].code }
+					{ ...localizeProps }
 				/>
 			);
 
@@ -45,7 +48,9 @@ describe( 'FormPhoneInput', () => {
 		} );
 
 		test( 'should set country to first element when not specified', () => {
-			const phoneComponent = shallow( <FormPhoneInput countriesList={ countriesList } /> );
+			const phoneComponent = shallow(
+				<FormPhoneInput countriesList={ countriesList } { ...localizeProps } />
+			);
 
 			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
 				countriesList[ 0 ]
@@ -53,7 +58,9 @@ describe( 'FormPhoneInput', () => {
 		} );
 
 		test( 'should update country on change', () => {
-			const phoneComponent = mount( <FormPhoneInput countriesList={ countriesList } /> );
+			const phoneComponent = mount(
+				<FormPhoneInput countriesList={ countriesList } { ...localizeProps } />
+			);
 
 			phoneComponent.find( 'select' ).simulate( 'change', {
 				target: {
@@ -67,7 +74,9 @@ describe( 'FormPhoneInput', () => {
 		} );
 
 		test( 'should have no country with empty countryList', () => {
-			const phoneComponent = shallow( <FormPhoneInput countriesList={ [] } /> );
+			const phoneComponent = shallow(
+				<FormPhoneInput countriesList={ [] } { ...localizeProps } />
+			);
 
 			expect( phoneComponent.instance().getValue().countryData ).to.equal( undefined );
 		} );

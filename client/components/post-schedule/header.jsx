@@ -9,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Local dependencies
  */
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import HeaderControl from './header-controls';
 
 /**
@@ -43,7 +43,7 @@ class PostScheduleHeader extends React.Component {
 		onDateChange( moment( date ).year( moment().year() ) );
 	};
 
-	setYear = modifier => {
+	setYear = ( modifier ) => {
 		const { moment, date, onDateChange } = this.props;
 		const newDate = moment( date ).add( modifier, 'y' );
 

@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
+import FoldableCard from 'calypso/components/foldable-card';
 import { Button } from '@automattic/components';
 
 export default class FoldableCardExample extends PureComponent {
@@ -107,13 +107,13 @@ export default class FoldableCardExample extends PureComponent {
 				<div>
 					<FoldableCard
 						header="This card includes click, open and close actions. Check your console!"
-						onClick={ function() {
+						onClick={ function () {
 							console.log( 'Clicked!' );
 						} }
-						onClose={ function() {
+						onClose={ function () {
 							console.log( 'Closed!' );
 						} }
-						onOpen={ function() {
+						onOpen={ function () {
 							console.log( 'Opened!' );
 						} }
 					>

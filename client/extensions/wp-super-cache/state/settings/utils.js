@@ -10,7 +10,7 @@ import { mapValues } from 'lodash';
  * @param  {object} settings Raw settings
  * @returns {object} Normalized settings
  */
-export const normalizeSettings = settings => {
+export const normalizeSettings = ( settings ) => {
 	return mapValues( settings, ( setting, key ) => {
 		switch ( key ) {
 			case 'cache_acceptable_files':
@@ -29,7 +29,7 @@ export const normalizeSettings = settings => {
  * @param  {object} settings Normalized settings
  * @returns {object} Sanitized settings
  */
-export const sanitizeSettings = settings => {
+export const sanitizeSettings = ( settings ) => {
 	return mapValues( settings, ( setting, key ) => {
 		switch ( key ) {
 			case 'cache_acceptable_files':

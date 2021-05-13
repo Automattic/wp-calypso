@@ -8,7 +8,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
+import Badge from 'calypso/components/badge';
+import FormRadio from 'calypso/components/forms/form-radio';
 
 import './style.scss';
 import PropTypes from 'prop-types';
@@ -23,10 +24,10 @@ export default class ImportTypeChoice extends Component {
 
 		let firstSelectedItem = findKey(
 			props.radioOptions,
-			el => el.selected !== true && el.enabled !== false
+			( el ) => el.selected !== true && el.enabled !== false
 		);
 		if ( firstSelectedItem === -1 ) {
-			firstSelectedItem = findKey( props.radioOptions, el => el.enabled !== false );
+			firstSelectedItem = findKey( props.radioOptions, ( el ) => el.enabled !== false );
 		}
 
 		this.state.activeItem = firstSelectedItem !== -1 ? firstSelectedItem : null;
@@ -37,7 +38,7 @@ export default class ImportTypeChoice extends Component {
 		this.props.onChange( this.state.activeItem );
 	};
 
-	onClickHandler = event => {
+	onClickHandler = ( event ) => {
 		event.preventDefault();
 
 		const chosenItem = event.currentTarget.dataset.key;
@@ -56,7 +57,7 @@ export default class ImportTypeChoice extends Component {
 		}
 	};
 
-	onKeyPressHandler = event => {
+	onKeyPressHandler = ( event ) => {
 		// TODO implement this to act on enter key
 		event.preventDefault();
 	};
@@ -77,7 +78,7 @@ export default class ImportTypeChoice extends Component {
 				data-key={ key }
 				key={ key }
 			>
-				<input type="radio" checked={ this.state.activeItem === key } readOnly={ true } />
+				<FormRadio checked={ this.state.activeItem === key } readOnly={ true } />
 				<div className="import-type-choice__option-data">
 					<div className="import-type-choice__option-header">
 						<p className="import-type-choice__option-title">{ item.title }</p>

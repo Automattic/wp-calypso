@@ -6,7 +6,7 @@ import photon from 'photon';
 /**
  * Internal dependencies
  */
-import { getUrlParts } from 'lib/url/url-parts';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 
 /**
  * Pattern matching URLs to be left unmodified.
@@ -30,10 +30,17 @@ if ( typeof globalThis.location === 'object' ) {
 const REGEXP_A8C_HOST = /^([-a-zA-Z0-9_]+\.)*(gravatar\.com|wordpress\.com|wp\.com|a8c\.com)$/;
 
 /**
+ * Query parameters to be treated as image dimensions
+ *
+ * @type {string[]}
+ */
+const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
+
+/**
  * Generate a safe version of the provided URL
  *
  * Images that Calypso uses have to be provided by a trusted TLS host. To do
- * this, we check the host of the URL against a whitelist, and run the image
+ * this, we check the host of the URL against a list of allowed hosts, and run the image
  * through photon if the host name does not match.
  *
  * NOTE: This function will return `null` for external URLs with query strings,
@@ -47,24 +54,50 @@ export default function safeImageUrl( url ) {
 		return null;
 	}
 
+	if ( url.length < 1 ) {
+		return null;
+	}
+
 	if ( REGEX_EXEMPT_URL.test( url ) ) {
 		return url;
 	}
 
-	const { hostname, pathname, search } = getUrlParts( url );
+	const parsedUrl = getUrlParts( url );
 
-	if ( REGEXP_A8C_HOST.test( hostname ) ) {
+	if ( REGEXP_A8C_HOST.test( parsedUrl.hostname ) ) {
 		// Safely promote Automattic domains to HTTPS
-		return url.replace( /^http:/, 'https:' );
+		parsedUrl.protocol = 'https';
+		return getUrlFromParts( parsedUrl ).toString();
 	}
 
 	// If there's a query string, bail out because Photon doesn't support them on external URLs
-	if ( search ) {
-		return null;
+	if ( parsedUrl.search ) {
+		// If it's just size parameters, let's remove them
+		SIZE_PARAMS.forEach( ( param ) => parsedUrl.searchParams.delete( param ) );
+
+		// Ditch authuser=0 if we find it - we see this on googleusercontent.com URLs and it doesn't affect the image output
+		if ( parsedUrl.searchParams.get( 'authuser' ) === '0' ) {
+			parsedUrl.searchParams.delete( 'authuser' );
+		}
+
+		// There are still parameters left, since they might be needed to retrieve the image, bail out
+		if ( parsedUrl.searchParams.length ) {
+			return null;
+		}
+
+		// Ensure we're creating a new URL without the size parameters
+		delete parsedUrl.search;
+
+		// Force https since if there's a missing protocol it'll throw an error
+		if ( ! parsedUrl?.protocol ) {
+			parsedUrl.protocol = 'https';
+		}
+
+		url = getUrlFromParts( parsedUrl ).toString();
 	}
 
 	// Photon doesn't support SVGs
-	if ( pathname.endsWith( '.svg' ) ) {
+	if ( parsedUrl.pathname.endsWith( '.svg' ) ) {
 		return null;
 	}
 

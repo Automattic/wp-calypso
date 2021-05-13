@@ -1,22 +1,21 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import page from 'page';
-import analytics from 'lib/analytics';
-import { preventWidows } from 'lib/formatting';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 import { Button } from '@automattic/components';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MediaLibraryListPlanPromo extends React.Component {
 	static displayName = 'MediaLibraryListPlanPromo';
@@ -97,7 +96,7 @@ class MediaLibraryListPlanPromo extends React.Component {
 	viewPlansPage = () => {
 		const { slug = '' } = this.props.site;
 
-		analytics.tracks.recordEvent( 'calypso_media_plans_button_click' );
+		recordTracksEvent( 'calypso_media_plans_button_click' );
 
 		page( `/plans/${ slug }` );
 	};
@@ -120,7 +119,7 @@ class MediaLibraryListPlanPromo extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		canUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 	};

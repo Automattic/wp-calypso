@@ -8,8 +8,8 @@ function getCurrentScroll( container ) {
 		};
 	}
 
-	const x = window.pageXOffset || document.documentElement.scrollLeft,
-		y = window.pageYOffset || document.documentElement.scrollTop;
+	const x = window.pageXOffset || document.documentElement.scrollLeft;
+	const y = window.pageYOffset || document.documentElement.scrollTop;
 	return { x, y };
 }
 
@@ -61,6 +61,7 @@ class Stepper {
 
 	/**
 	 * Jump directly to a position, bypassing the stepper
+	 *
 	 * @param {number} x - x coord
 	 * @param {number} y - y coord
 	 */
@@ -84,9 +85,10 @@ class Stepper {
 
 	/**
 	 * Move a step along the timeline, with optional easing
+	 *
 	 * @param {number} ts - timestamp
 	 */
-	step = ts => {
+	step = ( ts ) => {
 		// reset the nextFrame raf handle so we can schedule another step
 		this.nextFrame = null;
 
@@ -142,6 +144,7 @@ function circularOutEasing( val ) {
 
 /**
  * Scrolls a container to the specified location
+ *
  * @param {object} options - options object (see below)
  * @param {number} options.x - desired left or x coordinate
  * @param {number} options.y - desired top or y coordinate

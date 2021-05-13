@@ -1,13 +1,12 @@
-const root = '/me/keyring-connections/';
+const root = '/me/connections/';
 
 export default class KeyringConnection {
-
 	/**
 	 * `KeyringConnection` constructor.
 	 *
-	 * @param {String} keyId - the connection ID to take action on.
-	 * @param {WPCOM} wpcom - wpcom instance
-	 * @return {Null} null
+	 * @param {string} keyId - the connection ID to take action on.
+	 * @param {object} wpcom - wpcom instance
+	 * @returns {null} null
 	 */
 	constructor( keyId, wpcom ) {
 		if ( ! ( this instanceof KeyringConnection ) ) {
@@ -20,23 +19,38 @@ export default class KeyringConnection {
 	/**
 	 * Get a single Keyring connection that the current user has setup.
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	get( query, fn ) {
-		return this.wpcom.req.get( root + this._id, query, fn );
+		return this.wpcom.req.get(
+			{
+				path: root + this._id,
+				apiNamespace: 'wpcom/v2',
+			},
+			query,
+			fn
+		);
 	}
 
 	/**
 	 * Delete the Keyring connection (and associated token) with the
 	 * provided ID. Also deletes all associated publicize connections.
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
-	 * @return {Function} request handler
+	 * @returns {Function} request handler
 	 */
 	delete( query, fn ) {
-		return this.wpcom.req.del( root + this._id + '/delete', query, fn );
+		return this.wpcom.req.get(
+			{
+				path: root + this._id,
+				apiNamespace: 'wpcom/v2',
+				method: 'DELETE',
+			},
+			query,
+			fn
+		);
 	}
 }

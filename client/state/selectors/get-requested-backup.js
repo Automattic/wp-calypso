@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/activity-log/init';
+
+/**
  * Returns the requested backup Activity ID.
  *
  * @param  {object}        state  Global state tree

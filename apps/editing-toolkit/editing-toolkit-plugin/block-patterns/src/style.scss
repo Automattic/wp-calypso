@@ -1,0 +1,19 @@
+.pattern-title-container {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+
+// The pink dot
+.premium-pattern-title::after {
+	content: '';
+	background: var( --color-accent );
+	height: 6px;
+	width: 6px;
+	border-radius: 50%;
+	display: inline-block;
+	position: relative;
+	vertical-align: text-top;
+}

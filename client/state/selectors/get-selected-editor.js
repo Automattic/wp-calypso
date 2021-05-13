@@ -6,10 +6,13 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import isClassicEditorForced from 'state/selectors/is-classic-editor-forced';
+import isClassicEditorForced from 'calypso/state/selectors/is-classic-editor-forced';
+
+import 'calypso/state/selected-editor/init';
 
 /**
  * Returns the editor of the selected site
+ *
  * @param {object} state Global state tree
  * @param {number} siteId Site ID
  * @returns {string} "gutenberg-iframe", "gutenberg-redirect", "gutenberg-redirect-and-style" or "classic", or null if we

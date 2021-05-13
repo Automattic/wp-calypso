@@ -92,12 +92,12 @@ describe( 'MediaSerialization', () => {
 
 		test( 'should favor natural dimensions over inferred', () => {
 			const img = document.createElement( 'img' );
-			[ 'width', 'height' ].forEach( dimension => {
+			[ 'width', 'height' ].forEach( ( dimension ) => {
 				Object.defineProperty( img, dimension, {
 					get: () => 660,
 				} );
 			} );
-			[ 'naturalWidth', 'naturalHeight' ].forEach( dimension => {
+			[ 'naturalWidth', 'naturalHeight' ].forEach( ( dimension ) => {
 				Object.defineProperty( img, dimension, {
 					get: () => 1320,
 				} );
@@ -113,7 +113,7 @@ describe( 'MediaSerialization', () => {
 			const img = document.createElement( 'img' );
 			img.width = 660;
 			img.height = 660;
-			[ 'naturalWidth', 'naturalHeight' ].forEach( dimension => {
+			[ 'naturalWidth', 'naturalHeight' ].forEach( ( dimension ) => {
 				Object.defineProperty( img, dimension, {
 					get: () => 1320,
 				} );

@@ -1,11 +1,21 @@
 <?xml version="1.0"?>
-<ruleset name="full-site-editing">
-	<description>Full Site Editing</description>
+<ruleset name="editing-toolkit">
+	<description>Editing Toolkit Plugin Rules</description>
 
-	<rule ref="WordPress"/>
-	<rule ref="WordPress-Core"/>
-	<rule ref="WordPress-Docs"/>
-	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+	<rule ref="Jetpack"/>
+	<rule ref="WordPress.Utils.I18nTextDomainFixer">
+		<properties>
+			<property name="old_text_domain" type="array">
+				<element value="newspack-blocks" />
+				<element value="premium-content" />
+			</property>
+			<property name="new_text_domain" value="full-site-editing" />
+		</properties>
+	</rule>
+
+	<!-- Check for cross-version support for PHP 7.2 and higher. -->
+	<rule ref="PHPCompatibility"/>
+	<config name="testVersion" value="7.2-"/>
 
 	<arg name="extensions" value="php"/>
 
@@ -14,6 +24,17 @@
 
 	<!-- Show sniff codes in all reports. -->
 	<arg value="ps"/>
+
+	<!-- Newspack and ETK don't use exactly the same code standard, so we need to
+		ignore style rules not tracked upstream. (We should not ignore rules
+		which catch actual errors.)
+	-->
+	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable" >
+		<exclude-pattern>editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</exclude-pattern>
+	</rule>
+
+	<!-- Ignore assset files and undeployed files. -->
+	<exclude-pattern>*.asset.php</exclude-pattern>
 
 	<!-- Scan it all! -->
 	<file>.</file>

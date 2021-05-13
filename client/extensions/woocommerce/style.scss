@@ -1,26 +1,5 @@
 .woocommerce {
 	@import 'app/dashboard/style';
-	@import 'app/dashboard/widgets/inventory-widget/style';
-	@import 'app/dashboard/setup/style';
-	@import 'app/order/style';
-	@import 'app/order/order-created/style';
-	@import 'app/order/order-customer/style';
-	@import 'app/order/order-details/style';
-	@import 'app/order/order-fulfillment/style';
-	@import 'app/order/order-activity-log/style';
-	@import 'app/order/order-payment/style';
-	@import 'app/orders/style';
-	@import 'app/settings/payments/style';
-	@import 'app/settings/payments/stripe/style';
-	@import 'app/settings/email/mailchimp/style';
-	@import 'app/settings/email/email-settings/style';
-	@import 'app/products/product-form.scss';
-	@import 'app/products/products-list.scss';
-	@import 'app/product-categories/style';
-	@import 'app/promotions/style';
-	@import 'app/reviews/style';
-	@import 'app/settings/shipping/style';
-	@import 'app/settings/taxes/style';
 	@import 'app/store-stats/store-stats-chart/style';
 	@import 'app/store-stats/store-stats-orders-chart/style';
 	@import 'app/store-stats/store-stats-module/style';
@@ -33,40 +12,17 @@
 	@import 'app/store-stats/style';
 
 	@import 'components/action-header/style';
-	@import 'components/address-view/style';
-	@import 'components/bulk-select/style';
-	@import 'components/compact-tinymce/style';
 	@import 'components/d3/base/style';
 	@import 'components/d3/horizontal-bar/style';
 	@import 'components/d3/sparkline/style';
-	@import 'components/dashboard-widget/style';
 	@import 'components/delta/style';
-	@import 'components/extended-header/style';
-	@import 'components/filtered-list/style';
-	@import 'components/form-click-to-edit-input/style';
-	@import 'components/form-dimensions-input/style';
-	@import 'components/image-thumb/style';
-	@import 'components/list/style';
-	@import 'components/location-flag/style';
-	@import 'components/order-status/style';
-	@import 'components/price-input/style';
-	@import 'components/product-image-uploader/style';
-	@import 'components/product-reviews-widget/style';
-	@import 'components/product-search/style';
-	@import 'components/reading-widget/style';
-	@import 'components/share-widget/style';
-	@import 'components/store-address/style';
 	@import 'components/table/style';
 	@import 'components/woocommerce-colophon/style';
-
-	@import 'app/dashboard/widgets/stats-widget/style';
-
-	@import 'woocommerce-services/style';
 
 	.main {
 		padding-top: 72px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			padding-top: 35px;
 		}
 	}
@@ -74,7 +30,7 @@
 	.woocommerce__placeholder {
 		padding-top: 16px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			padding-top: 32px;
 		}
 	}
@@ -84,7 +40,7 @@
 		height: 70vh;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		&.store-stats {
 			.stats-navigation .section-nav {
 				margin-top: 0;
@@ -98,7 +54,7 @@
 	.global-notices {
 		z-index: z-index( 'root', '.is-section-woocommerce .global-notices' );
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			top: 115px;
 		}
 	}
@@ -107,7 +63,7 @@
 		margin: 35px 200px 0 0;
 		max-width: initial;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			margin: 0;
 		}
 	}
@@ -143,7 +99,7 @@
 		}
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-top: 47px;
 		padding-top: 4px;
 
@@ -155,7 +111,7 @@
 			padding-left: 7px;
 			position: fixed;
 			width: 100%;
-			top: 47px;
+			top: var( --masterbar-height );
 			left: 0;
 			min-height: 46px;
 			z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
@@ -164,7 +120,7 @@
 		}
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		.site__title {
 			margin-top: 8px;
 		}
@@ -176,11 +132,11 @@
 	.sidebar__menu {
 		margin-top: 0;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			border-top: 1px solid var( --color-sidebar-border );
 		}
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			margin-top: -4px;
 		}
 
@@ -216,7 +172,7 @@
 }
 
 .is-section-woocommerce.focus-sidebar {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		.products__form {
 			display: none;
 		}

@@ -1,0 +1,8 @@
+.stats-sparkline {
+	--color-stats-sparkline: var( --color-sidebar-gridicon-fill );
+	padding: 5px 0 2px;
+}
+
+.stats-sparkline__bar {
+	fill: var( --color-stats-sparkline );
+}

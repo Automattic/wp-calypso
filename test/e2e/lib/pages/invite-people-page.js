@@ -23,16 +23,15 @@ export default class InvitePeoplePage extends AsyncBaseContainer {
 			role = 'follower'; //the select input option uses follower for viewer
 		}
 
-		const roleSelector = By.css( `fieldset#role input[value=${ role }]` );
+		const roleLocator = By.css( `fieldset#role input[value=${ role }]` );
 
 		await DriverHelper.setWhenSettable( this.driver, By.css( 'input.token-field__input' ), email );
-		await DriverHelper.waitTillPresentAndDisplayed( this.driver, roleSelector );
-		await DriverHelper.clickWhenClickable( this.driver, roleSelector );
-		await DriverHelper.setCheckbox( this.driver, roleSelector );
+		await DriverHelper.clickWhenClickable( this.driver, roleLocator );
+		await DriverHelper.setCheckbox( this.driver, roleLocator );
 		await DriverHelper.setWhenSettable( this.driver, By.css( '#message' ), message );
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
-			By.css( 'button.button.is-primary:not([disabled])' )
+			By.css( '.invite-people button.button.is-primary:not([disabled])' )
 		);
 	}
 

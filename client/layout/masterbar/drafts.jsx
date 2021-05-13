@@ -9,16 +9,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-import QueryPostCounts from 'components/data/query-post-counts';
+import AsyncLoad from 'calypso/components/async-load';
+import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import { Button } from '@automattic/components';
-import Count from 'components/count';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getMyPostCount } from 'state/posts/counts/selectors';
+import Count from 'calypso/components/count';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getMyPostCount } from 'calypso/state/posts/counts/selectors';
 
-const MasterbarDraftsPopover = props => (
-	<AsyncLoad { ...props } require="layout/masterbar/drafts-popover" placeholder={ null } />
+const MasterbarDraftsPopover = ( props ) => (
+	<AsyncLoad { ...props } require="calypso/layout/masterbar/drafts-popover" placeholder={ null } />
 );
 
 class MasterbarDrafts extends Component {
@@ -38,12 +38,12 @@ class MasterbarDrafts extends Component {
 			return;
 		}
 
-		asyncRequire( 'layout/masterbar/drafts-popover' );
+		asyncRequire( 'calypso/layout/masterbar/drafts-popover' );
 		this.preloaded = true;
 	};
 
 	toggleDrafts = () => {
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			showDrafts: ! state.showDrafts,
 		} ) );
 	};
@@ -67,7 +67,7 @@ class MasterbarDrafts extends Component {
 		this.closeDrafts();
 	};
 
-	setDraftsRef = el => {
+	setDraftsRef = ( el ) => {
 		this.draftsRef = el;
 	};
 
@@ -126,7 +126,7 @@ class MasterbarDrafts extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const draftCount = getMyPostCount( state, selectedSiteId, 'post', 'draft' );
 

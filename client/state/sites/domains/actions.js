@@ -2,14 +2,14 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { map, noop } from 'lodash';
+import { map } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { createSiteDomainObject } from './assembler';
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 import {
 	DOMAIN_PRIVACY_ENABLE,
 	DOMAIN_PRIVACY_DISABLE,
@@ -19,16 +19,17 @@ import {
 	SITE_DOMAINS_REQUEST_FAILURE,
 	DOMAIN_CONTACT_INFO_DISCLOSE,
 	DOMAIN_CONTACT_INFO_REDACT,
-} from 'state/action-types';
-import { requestSite } from 'state/sites/actions';
+} from 'calypso/state/action-types';
+import { requestSite } from 'calypso/state/sites/actions';
 
-import 'state/data-layer/wpcom/domains/privacy/index.js';
+import 'calypso/state/data-layer/wpcom/domains/privacy/index.js';
 
 /**
  * Module vars
  */
 const debug = debugFactory( 'calypso:state:sites:domains:actions' );
 const wpcom = wp.undocumented();
+const noop = () => {};
 
 /**
  * Action creator function
@@ -60,7 +61,7 @@ export const domainsReceiveAction = ( siteId, domains ) => {
  * @param {number} siteId - side identifier
  * @returns {object} siteId - action object
  */
-export const domainsRequestAction = siteId => {
+export const domainsRequestAction = ( siteId ) => {
 	const action = {
 		type: SITE_DOMAINS_REQUEST,
 		siteId,
@@ -78,7 +79,7 @@ export const domainsRequestAction = siteId => {
  * @param {number} siteId - side identifier
  * @returns {object} siteId - action object
  */
-export const domainsRequestSuccessAction = siteId => {
+export const domainsRequestSuccessAction = ( siteId ) => {
 	const action = {
 		type: SITE_DOMAINS_REQUEST_SUCCESS,
 		siteId,
@@ -115,18 +116,18 @@ export const domainsRequestFailureAction = ( siteId, error ) => {
  * @returns {Function} a promise that will resolve once fetching is completed
  */
 export function fetchSiteDomains( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( domainsRequestAction( siteId ) );
 
 		return wpcom
 			.site( siteId )
 			.domains()
-			.then( data => {
+			.then( ( data ) => {
 				const { domains = [] } = data;
 				dispatch( domainsRequestSuccessAction( siteId ) );
 				dispatch( domainsReceiveAction( siteId, domains ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				const message =
 					error instanceof Error
 						? error.message
@@ -155,7 +156,7 @@ export function disableDomainPrivacy( siteId, domain ) {
 	};
 }
 
-export const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => dispatch => {
+export const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => ( dispatch ) => {
 	debug( 'setPrimaryDomain', siteId, domainName );
 	return wpcom.setPrimaryDomain( siteId, domainName, ( error, data ) => {
 		if ( error ) {

@@ -1,5 +1,4 @@
-UI State
-========
+# UI State
 
 A module for managing user interface state.
 
@@ -12,7 +11,7 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 Sets the currently selected site by site ID.
 
 ```js
-import { setSelectedSiteId } from 'state/ui/actions';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 
 dispatch( setSelectedSiteId( 2916284 ) );
 ```
@@ -34,7 +33,7 @@ Selectors are intended to assist in extracting data from the global state tree f
 Returns the currently selected site object.
 
 ```js
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const selectedSite = getSelectedSite( store.getState() );
 ```
@@ -44,7 +43,7 @@ const selectedSite = getSelectedSite( store.getState() );
 Returns the currently selected site slug.
 
 ```js
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const selectedSiteSlug = getSelectedSiteSlug( store.getState() );
 ```

@@ -6,16 +6,17 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import 'calypso/state/stats/init';
 
-export default function( state, { siteId, statType, query, selectedReferrer } ) {
+export default function ( state, { siteId, statType, query, selectedReferrer } ) {
 	const rawData = getSiteStatsNormalizedData( state, siteId, statType, query );
-	return rawData.map( d => {
+	return rawData.map( ( d ) => {
 		const { data, ...props } = d;
 		let referrerData;
 		if ( selectedReferrer ) {
-			referrerData = find( data, r => r.referrer === selectedReferrer ) || {};
+			referrerData = find( data, ( r ) => r.referrer === selectedReferrer ) || {};
 		} else {
 			referrerData = data.reduce(
 				( all, r ) => {

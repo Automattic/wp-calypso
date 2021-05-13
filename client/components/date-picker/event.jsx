@@ -3,15 +3,15 @@
  */
 
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import SocialLogo from 'components/social-logo';
+import SocialLogo from 'calypso/components/social-logo';
 
-const renderIcon = icon =>
+const renderIcon = ( icon ) =>
 	icon && (
 		<span className={ `date-picker__icon-wrapper date-picker__icon-wrapper-${ icon }` }>
 			<Gridicon icon={ icon } size={ 18 } />

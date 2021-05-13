@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
-import { endsWith, get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
+import { get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -12,28 +12,33 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card, Dialog } from '@automattic/components';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import notices from 'notices';
-import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
-import wp from 'lib/wp';
-import { successNotice } from 'state/notices/actions';
-import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'lib/url/support';
-import { registrar as registrarNames } from 'lib/domains/constants';
-import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
-import { getCurrentUser } from 'state/current-user/selectors';
-import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
-import { requestWhois, saveWhois } from 'state/domains/management/actions';
-import { fetchSiteDomains } from 'state/sites/domains/actions';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import {
+	domainManagementContactsPrivacy,
+	domainManagementEdit,
+} from 'calypso/my-sites/domains/paths';
+import wp from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
+import { registrar as registrarNames } from 'calypso/lib/domains/constants';
+import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
+import { requestWhois, saveWhois } from 'calypso/state/domains/management/actions';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import {
 	isUpdatingWhois,
 	getWhoisData,
 	getWhoisSaveError,
 	getWhoisSaveSuccess,
-} from 'state/domains/management/selectors';
-import { findRegistrantWhois } from 'lib/domains/whois/utils';
+} from 'calypso/state/domains/management/selectors';
+import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
+import getPreviousPath from '../../../../state/selectors/get-previous-path';
 
 const wpcom = wp.undocumented();
+
+import './style.scss';
 
 class EditContactInfoFormCard extends React.Component {
 	static propTypes = {
@@ -42,9 +47,11 @@ class EditContactInfoFormCard extends React.Component {
 		currentUser: PropTypes.object.isRequired,
 		domainRegistrationAgreementUrl: PropTypes.string.isRequired,
 		isUpdatingWhois: PropTypes.bool,
+		previousPath: PropTypes.string,
 		whoisData: PropTypes.array,
 		whoisSaveError: PropTypes.object,
 		whoisSaveSuccess: PropTypes.bool,
+		showContactInfoNote: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -165,16 +172,16 @@ class EditContactInfoFormCard extends React.Component {
 				</FormLabel>
 				<DesignatedAgentNotice
 					domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
-					saveButtonLabel={ translate( 'Save Contact Info' ) }
+					saveButtonLabel={ translate( 'Save contact info' ) }
 				/>
 			</div>
 		);
 	}
 
 	renderBackupEmail() {
-		const { email } = this.getContactFormFieldValues(),
-			wpcomEmail = this.props.currentUser.email,
-			strong = <strong />;
+		const { email } = this.getContactFormFieldValues();
+		const wpcomEmail = this.props.currentUser.email;
+		const strong = <strong />;
 
 		return (
 			<p>
@@ -244,22 +251,15 @@ class EditContactInfoFormCard extends React.Component {
 		const NETHERLANDS_TLD = '.nl';
 		const { fax } = this.getContactFormFieldValues();
 
-		return endsWith( this.props.selectedDomain.name, NETHERLANDS_TLD ) || !! fax;
+		return this.props.selectedDomain.name.endsWith( NETHERLANDS_TLD ) || !! fax;
 	}
 
-	onTransferLockOptOutChange = event => this.setState( { transferLock: ! event.target.checked } );
-
-	goToContactsPrivacy = () =>
-		page(
-			domainManagementContactsPrivacy(
-				this.props.selectedSite.slug,
-				this.props.selectedDomain.name
-			)
-		);
+	onTransferLockOptOutChange = ( event ) =>
+		this.setState( { transferLock: ! event.target.checked } );
 
 	showNonDaConfirmationDialog = () => this.setState( { showNonDaConfirmationDialog: true } );
 
-	handleContactDetailsChange = newContactDetails => {
+	handleContactDetailsChange = ( newContactDetails ) => {
 		const { email } = newContactDetails;
 		const registrantWhoisData = this.getContactFormFieldValues();
 
@@ -303,7 +303,7 @@ class EditContactInfoFormCard extends React.Component {
 		} );
 
 		if ( ! this.state.requiresConfirmation ) {
-			this.props.successNotice(
+			this.showNoticeAndGoBack(
 				this.props.translate(
 					'The contact info has been updated. ' +
 						'There may be a short delay before the changes show up in the public records.'
@@ -337,7 +337,27 @@ class EditContactInfoFormCard extends React.Component {
 			);
 		}
 
-		this.props.successNotice( message );
+		this.showNoticeAndGoBack( message );
+	};
+
+	getReturnDestination = () => {
+		const domainName = this.props.selectedDomain.name;
+		const siteSlug = this.props.selectedSite.slug;
+		const domainSettingsPage = domainManagementEdit( siteSlug, domainName );
+		const contactsPrivacyPage = domainManagementContactsPrivacy( siteSlug, domainName );
+
+		return this.props.previousPath?.startsWith( domainSettingsPage )
+			? domainSettingsPage
+			: contactsPrivacyPage;
+	};
+
+	showNoticeAndGoBack = ( message ) => {
+		this.props.successNotice( message, {
+			showDismiss: true,
+			isPersistent: true,
+			duration: 5000,
+		} );
+		page( this.getReturnDestination() );
 	};
 
 	onWhoisUpdateError = () => {
@@ -348,10 +368,10 @@ class EditContactInfoFormCard extends React.Component {
 					'Please try again later or contact support.'
 			);
 
-		notices.error( message );
+		this.props.errorNotice( message );
 	};
 
-	handleSubmitButtonClick = newContactDetails => {
+	handleSubmitButtonClick = ( newContactDetails ) => {
 		this.setState(
 			{
 				requiresConfirmation: this.requiresConfirmation( newContactDetails ),
@@ -369,7 +389,7 @@ class EditContactInfoFormCard extends React.Component {
 		);
 	};
 
-	getIsFieldDisabled = name => {
+	getIsFieldDisabled = ( name ) => {
 		const unmodifiableFields = get(
 			this.props,
 			[ 'selectedDomain', 'whoisUpdateUnmodifiableFields' ],
@@ -384,16 +404,23 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	render() {
-		const { selectedDomain, translate } = this.props;
+		const { selectedDomain, showContactInfoNote, translate } = this.props;
 		const canUseDesignatedAgent = selectedDomain.transferLockOnWhoisUpdateOptional;
 		const whoisRegistrantData = this.getContactFormFieldValues();
 
-		if ( Object.values( whoisRegistrantData ).every( value => isEmpty( value ) ) ) {
+		if ( Object.values( whoisRegistrantData ).every( ( value ) => isEmpty( value ) ) ) {
 			return null;
 		}
 
 		return (
 			<Card>
+				{ showContactInfoNote && (
+					<p className="edit-contact-info__note">
+						<em>
+							{ translate( 'Domain owners are required to provide correct contact information.' ) }
+						</em>
+					</p>
+				) }
 				<form>
 					<ContactDetailsFormFields
 						eventFormName="Edit Contact Info"
@@ -403,8 +430,7 @@ class EditContactInfoFormCard extends React.Component {
 						onContactDetailsChange={ this.handleContactDetailsChange }
 						onSubmit={ this.handleSubmitButtonClick }
 						onValidate={ this.validate }
-						labelTexts={ { submitButton: translate( 'Save Contact Info' ) } }
-						onCancel={ this.goToContactsPrivacy }
+						labelTexts={ { submitButton: translate( 'Save contact info' ) } }
 						disableSubmitButton={ this.shouldDisableSubmitButton() }
 						isSubmitting={ this.state.formSubmitting }
 					>
@@ -422,12 +448,14 @@ export default connect(
 		return {
 			currentUser: getCurrentUser( state ),
 			isUpdatingWhois: isUpdatingWhois( state, ownProps.selectedDomain.name ),
+			previousPath: getPreviousPath( state ),
 			whoisData: getWhoisData( state, ownProps.selectedDomain.name ),
 			whoisSaveError: getWhoisSaveError( state, ownProps.selectedDomain.name ),
 			whoisSaveSuccess: getWhoisSaveSuccess( state, ownProps.selectedDomain.name ),
 		};
 	},
 	{
+		errorNotice,
 		fetchSiteDomains,
 		requestWhois,
 		saveWhois,

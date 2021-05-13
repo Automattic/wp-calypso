@@ -6,7 +6,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { SUPPORT_SESSION_TRANSITION } from 'state/action-types';
+import { SUPPORT_SESSION_TRANSITION } from 'calypso/state/action-types';
 
 const debug = debugFactory( 'calypso:state:support:actions' );
 

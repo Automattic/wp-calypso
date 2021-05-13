@@ -15,7 +15,7 @@ import { LineItemsProvider, useLineItems } from '../src/lib/line-items';
 /* eslint-disable no-console */
 const original = console.error;
 
-describe( 'useLineItems', function() {
+describe( 'useLineItems', function () {
 	beforeEach( () => {
 		console.error = jest.fn();
 	} );
@@ -24,27 +24,12 @@ describe( 'useLineItems', function() {
 		console.error = original;
 	} );
 
-	it( 'throws if outside of a CheckoutProvider', function() {
+	it( 'does not throw if there are no items', function () {
 		const ThingWithHook = () => {
 			const [ items, total ] = useLineItems();
 			return (
 				<div>
-					{ items.map( item => (
-						<span key={ item.id }>{ item.label }</span>
-					) ) }
-					<span key={ total.id }>{ total.label }</span>
-				</div>
-			);
-		};
-		expect( () => render( <ThingWithHook /> ) ).toThrow( /CheckoutProvider/ );
-	} );
-
-	it( 'does not throw if there are no items', function() {
-		const ThingWithHook = () => {
-			const [ items, total ] = useLineItems();
-			return (
-				<div>
-					{ items.map( item => (
+					{ items.map( ( item ) => (
 						<span data-testid={ item.id } key={ item.id }>
 							{ item.label }
 						</span>
@@ -71,12 +56,12 @@ describe( 'useLineItems', function() {
 		expect( renderThing ).not.toThrow( /CheckoutProvider/ );
 	} );
 
-	it( 'returns the items list', function() {
+	it( 'returns the items list', function () {
 		const ThingWithHook = () => {
 			const [ items, total ] = useLineItems();
 			return (
 				<div>
-					{ items.map( item => (
+					{ items.map( ( item ) => (
 						<span data-testid={ item.id } key={ item.id }>
 							{ item.label }
 						</span>
@@ -114,12 +99,12 @@ describe( 'useLineItems', function() {
 		expect( getByTestId( 'two' ) ).toHaveTextContent( 'thing2' );
 	} );
 
-	it( 'returns the total', function() {
+	it( 'returns the total', function () {
 		const ThingWithHook = () => {
 			const [ items, total ] = useLineItems();
 			return (
 				<div>
-					{ items.map( item => (
+					{ items.map( ( item ) => (
 						<span data-testid={ item.id } key={ item.id }>
 							{ item.label }
 						</span>

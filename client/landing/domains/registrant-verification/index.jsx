@@ -4,16 +4,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { get, join } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import DomainsLandingHeader from '../header';
 import DomainsLandingContentCard from '../content-card';
-import { CALYPSO_CONTACT } from 'lib/url/support';
-import wp from 'lib/wp';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import wp from 'calypso/lib/wp';
 import { getMaintenanceMessageFromError } from '../utils';
+import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
 const wpcom = wp.undocumented();
 
@@ -38,10 +39,10 @@ class RegistrantVerificationPage extends Component {
 	UNSAFE_componentWillMount() {
 		const { domain, email, token } = this.props;
 		wpcom.domainsVerifyRegistrantEmail( domain, email, token ).then(
-			response => {
+			( response ) => {
 				this.setState( this.getVerificationSuccessState( get( response, 'domains', [ domain ] ) ) );
 			},
-			error => {
+			( error ) => {
 				this.setErrorState( error );
 			}
 		);
@@ -59,10 +60,10 @@ class RegistrantVerificationPage extends Component {
 		};
 	};
 
-	getVerificationSuccessState = domains => {
+	getVerificationSuccessState = ( domains ) => {
 		const { translate } = this.props;
 
-		const verifiedDomains = join( domains, ', ' );
+		const verifiedDomains = domains.join( ', ' );
 
 		return {
 			title: translate( 'Success!' ),
@@ -80,7 +81,14 @@ class RegistrantVerificationPage extends Component {
 			),
 			actionTitle: null,
 			actionCallback: null,
-			footer: translate( 'All done. You can close this window now.' ),
+			footer: translate(
+				'All done. You can close this window now or {{domainsManagementLink}}manage your domains{{/domainsManagementLink}}.',
+				{
+					components: {
+						domainsManagementLink: <a href={ domainManagementRoot() } />,
+					},
+				}
+			),
 			isLoading: false,
 		};
 	};
@@ -121,7 +129,7 @@ class RegistrantVerificationPage extends Component {
 		};
 	};
 
-	getKeySystemsErrorState = errorMessage => {
+	getKeySystemsErrorState = ( errorMessage ) => {
 		if (
 			'Invalid attribute value; Contact verification already confirmed, nothing to do' ===
 			errorMessage
@@ -143,7 +151,14 @@ class RegistrantVerificationPage extends Component {
 						},
 					}
 				),
-				footer: translate( 'All done. You can close this window now.' ),
+				footer: translate(
+					'All done. You can close this window now or {{domainsManagementLink}}manage your domains{{/domainsManagementLink}}.',
+					{
+						components: {
+							domainsManagementLink: <a href={ domainManagementRoot() } />,
+						},
+					}
+				),
 			};
 		}
 	};
@@ -179,7 +194,7 @@ class RegistrantVerificationPage extends Component {
 		};
 	};
 
-	getRunningMaintenanceErrorState = error => {
+	getRunningMaintenanceErrorState = ( error ) => {
 		const { translate } = this.props;
 
 		const message = getMaintenanceMessageFromError( error, translate );
@@ -190,7 +205,7 @@ class RegistrantVerificationPage extends Component {
 		};
 	};
 
-	setErrorState = error => {
+	setErrorState = ( error ) => {
 		let errorState;
 
 		switch ( error.error ) {
@@ -203,6 +218,7 @@ class RegistrantVerificationPage extends Component {
 				break;
 
 			case 'KS_RAM_error':
+			case 'KS_RSP_error':
 				errorState = this.getKeySystemsErrorState( error.message );
 				break;
 
@@ -227,7 +243,7 @@ class RegistrantVerificationPage extends Component {
 
 		this.setState( this.getLoadingState() );
 
-		wpcom.resendIcannVerification( domain, error => {
+		wpcom.resendIcannVerification( domain, ( error ) => {
 			if ( error ) {
 				this.setErrorState( { error: 'resend_email_failed' } );
 			} else {

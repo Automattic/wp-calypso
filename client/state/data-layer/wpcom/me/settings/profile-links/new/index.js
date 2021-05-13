@@ -1,18 +1,19 @@
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { USER_PROFILE_LINKS_ADD } from 'state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { USER_PROFILE_LINKS_ADD } from 'calypso/state/action-types';
 import {
 	addUserProfileLinksDuplicate,
 	addUserProfileLinksError,
 	addUserProfileLinksMalformed,
 	addUserProfileLinksSuccess,
 	receiveUserProfileLinks,
-} from 'state/profile-links/actions';
+} from 'calypso/state/profile-links/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import 'calypso/state/profile-links/init';
 
 /**
  * Dispatches a request to add profile links for the current user
@@ -20,7 +21,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const addUserProfileLinks = action =>
+export const addUserProfileLinks = ( action ) =>
 	http(
 		{
 			apiVersion: '1.2',
@@ -60,8 +61,9 @@ export const handleAddSuccess = ( action, data ) => {
 /**
  * Dispatches a user profile links add error action when the request failed.
  *
- * @param   {object} action Redux action
- * @param   {object} error  Error returned
+ * @param   {object} action              Redux action
+ * @param   {object} action.profileLinks Profile links
+ * @param   {object} error               Error returned
  * @returns {object} Dispatched user profile links add error action
  */
 export const handleAddError = ( { profileLinks }, error ) =>

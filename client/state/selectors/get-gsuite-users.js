@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/gsuite-users/init';
+
+/**
  * Retrieves the list of G Suite users for the specified site.
  *
  * @param {object} state - global state tree

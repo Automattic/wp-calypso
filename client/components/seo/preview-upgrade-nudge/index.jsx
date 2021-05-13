@@ -6,21 +6,26 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import QueryPlans from 'components/data/query-plans';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { preventWidows } from 'lib/formatting';
-import { isJetpackSite } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import FeatureExample from 'components/feature-example';
-import Banner from 'components/banner';
-import { findFirstSimilarPlanKey } from 'lib/plans';
-import { TERM_ANNUALLY, TYPE_BUSINESS } from 'lib/plans/constants';
+import QueryPlans from 'calypso/components/data/query-plans';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { preventWidows } from 'calypso/lib/formatting';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import FeatureExample from 'calypso/components/feature-example';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import {
+	findFirstSimilarPlanKey,
+	TERM_ANNUALLY,
+	TYPE_BUSINESS,
+	TYPE_SECURITY_DAILY,
+	FEATURE_SEO_PREVIEW_TOOLS,
+} from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -39,13 +44,14 @@ export const SeoPreviewNudge = ( {
 			<QueryPlans />
 			<TrackComponentView eventName="calypso_seo_preview_upgrade_nudge_impression" />
 
-			<Banner
+			<UpsellNudge
+				showIcon
 				plan={
 					site &&
-					findFirstSimilarPlanKey( site.plan.product_slug, {
-						type: TYPE_BUSINESS,
-						...( isJetpack ? { term: TERM_ANNUALLY } : {} ),
-					} )
+					findFirstSimilarPlanKey(
+						site.plan.product_slug,
+						isJetpack ? { type: TYPE_SECURITY_DAILY, term: TERM_ANNUALLY } : { type: TYPE_BUSINESS }
+					)
 				}
 				title={
 					canCurrentUserUpgrade
@@ -54,8 +60,11 @@ export const SeoPreviewNudge = ( {
 								"Unlock powerful SEO tools! Contact your site's administrator to upgrade to a Business plan."
 						  )
 				}
+				forceDisplay
+				disableHref={ ! canCurrentUserUpgrade }
 				event="site_preview_seo_plan_upgrade"
 				className="preview-upgrade-nudge__banner"
+				feature={ FEATURE_SEO_PREVIEW_TOOLS }
 			/>
 
 			<div className="preview-upgrade-nudge__features">

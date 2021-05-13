@@ -5,22 +5,24 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { Button, CompactCard } from '@automattic/components';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import CardHeading from 'components/card-heading';
+import HeaderCake from 'calypso/components/header-cake';
+import CardHeading from 'calypso/components/card-heading';
+import ImportTypeChoice from 'calypso/my-sites/migrate/components/import-type-choice';
+import { get } from 'lodash';
+import { getImportSectionLocation, redirectTo } from 'calypso/my-sites/migrate/helpers';
+import SitesBlock from 'calypso/my-sites/migrate/components/sites-block';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { FEATURE_UPLOAD_THEMES_PLUGINS, planHasFeature } from '@automattic/calypso-products';
 
 /**
  * Style dependencies
  */
 import './section-migrate.scss';
-import ImportTypeChoice from 'my-sites/migrate/components/import-type-choice';
-import MigrateButton from 'my-sites/migrate/migrate-button';
-import { get } from 'lodash';
-import { redirectTo } from 'my-sites/migrate/helpers';
-import SitesBlock from 'my-sites/migrate/components/sites-block';
 
 class StepImportOrMigrate extends Component {
 	static propTypes = {
@@ -33,89 +35,141 @@ class StepImportOrMigrate extends Component {
 		chosenImportType: null,
 	};
 
-	chooseImportType = type => {
+	chooseImportType = ( type ) => {
 		this.setState( { chosenImportType: type } );
+	};
+
+	onJetpackSelect = ( event ) => {
+		const { isTargetSiteAtomic } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_importer_wordpress_select', {
+			is_atomic: isTargetSiteAtomic,
+			migration_type: 'migration',
+		} );
+
+		this.props.onJetpackSelect( event );
 	};
 
 	handleImportRedirect = () => {
 		const { isTargetSiteAtomic, targetSiteSlug } = this.props;
 
+		this.props.recordTracksEvent( 'calypso_importer_wordpress_select', {
+			is_atomic: isTargetSiteAtomic,
+			migration_type: 'content',
+		} );
+
+		const destinationURL = getImportSectionLocation( targetSiteSlug, isTargetSiteAtomic );
+
 		if ( isTargetSiteAtomic ) {
-			window.location.href = `https://${ targetSiteSlug }/wp-admin/import.php`;
+			window.location.href = destinationURL;
 		} else {
-			redirectTo( `/import/${ targetSiteSlug }/?engine=wordpress` );
+			redirectTo( destinationURL );
 		}
 	};
 
+	isTargetSitePlanCompatible = () => {
+		const { targetSite } = this.props;
+		const planSlug = get( targetSite, 'plan.product_slug' );
+
+		return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
+	};
+
 	getJetpackOrUpgradeMessage = () => {
-		const { sourceSite, sourceHasJetpack, isTargetSiteAtomic } = this.props;
+		const { sourceSiteInfo, sourceHasJetpack, isTargetSiteAtomic, translate } = this.props;
 
 		if ( ! sourceHasJetpack ) {
-			const sourceSiteDomain = get( sourceSite, 'domain' );
+			const sourceSiteDomain = get( sourceSiteInfo, 'site_url', '' );
 			return (
 				<p>
-					You need to have{ ' ' }
-					<a href={ `https://wordpress.com/jetpack/connect/install?url=${ sourceSiteDomain }` }>
-						Jetpack
-					</a>{ ' ' }
-					installed on your site to be able to import everything.
+					{ translate(
+						'You need to have Jetpack installed on your site to' +
+							' be able to import everything.' +
+							' {{jetpackInstallLink}}Install' +
+							' Jetpack{{/jetpackInstallLink}}.',
+						{
+							components: {
+								jetpackInstallLink: (
+									<a href={ `https://wordpress.com/jetpack/connect/?url=${ sourceSiteDomain }` } />
+								),
+							},
+						}
+					) }
 				</p>
 			);
 		}
 
 		if ( ! isTargetSiteAtomic ) {
-			return <p>Import your entire site with the Business Plan.</p>;
+			return <p>{ translate( 'Import your entire site with the Business Plan.' ) }</p>;
 		}
 	};
 
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_importer_wordpress_type_viewed' );
+	}
+
 	render() {
-		const { targetSite, targetSiteSlug, sourceHasJetpack, sourceSite } = this.props;
+		const {
+			targetSite,
+			targetSiteSlug,
+			sourceHasJetpack,
+			sourceSite,
+			sourceSiteInfo,
+			translate,
+		} = this.props;
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
-		const targetSiteDomain = get( targetSite, 'domain' );
+		const everythingLabels = [];
+		if ( ! this.isTargetSitePlanCompatible() ) {
+			everythingLabels.push( translate( 'Upgrade' ) );
+		}
 
 		return (
 			<>
 				<HeaderCake backHref={ backHref }>Import from WordPress</HeaderCake>
 
-				<SitesBlock sourceSite={ sourceSite } targetSite={ targetSite } />
+				<SitesBlock
+					sourceSite={ sourceSite }
+					sourceSiteInfo={ sourceSiteInfo }
+					targetSite={ targetSite }
+				/>
 
 				<CompactCard>
-					<CardHeading>What do you want to import?</CardHeading>
+					<CardHeading>{ translate( 'What do you want to import?' ) }</CardHeading>
 
 					{ this.getJetpackOrUpgradeMessage() }
 					<ImportTypeChoice
 						onChange={ this.chooseImportType }
 						radioOptions={ {
 							everything: {
-								title: 'Everything',
-								labels: [ 'Upgrade' ],
-								description: "All your site's content, themes, plugins, users and settings",
+								title: translate( 'Everything' ),
+								labels: everythingLabels,
+								description: translate(
+									"All your site's content, themes, plugins, users and settings"
+								),
 								enabled: sourceHasJetpack,
 							},
 							'content-only': {
 								key: 'content-only',
-								title: 'Content only',
-								description: 'Import posts, pages, comments, and media.',
+								title: translate( 'Content only' ),
+								description: translate( 'Import posts, pages, comments, and media.' ),
 								enabled: true,
 							},
 						} }
 					/>
 					<div className="migrate__buttons-wrapper">
 						{ this.state.chosenImportType === 'everything' ? (
-							<MigrateButton
-								onClick={ this.props.onJetpackSelect }
-								targetSiteDomain={ targetSiteDomain }
-							/>
+							<Button primary onClick={ this.onJetpackSelect }>
+								{ translate( 'Continue' ) }
+							</Button>
 						) : null }
 						{ this.state.chosenImportType === 'content-only' ? (
 							<Button primary onClick={ this.handleImportRedirect }>
-								Continue
+								{ translate( 'Continue' ) }
 							</Button>
 						) : null }
 
 						<Button className="migrate__cancel" href={ backHref }>
-							Cancel
+							{ translate( 'Cancel' ) }
 						</Button>
 					</div>
 				</CompactCard>
@@ -124,4 +178,4 @@ class StepImportOrMigrate extends Component {
 	}
 }
 
-export default localize( StepImportOrMigrate );
+export default connect( null, { recordTracksEvent } )( localize( StepImportOrMigrate ) );

@@ -15,7 +15,7 @@
 		width: 1px;
 		border-left: 1px solid var( --color-border-subtle );
 		overflow: visible;
-		flex-grow:0;
+		flex-grow: 0;
 		flex-shrink: 0;
 		position: relative;
 
@@ -36,20 +36,32 @@
 		width: auto;
 
 		.badge {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 		}
 	}
 
-	.sites-block__sites-item {
+	.sites-block__source-site,
+	.sites-block__target-site {
 		padding: 25px;
 		width: 50%;
+
+		.site__badge {
+			display: none;
+		}
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		&.is-step-source-select {
+			.sites-block__sites-arrow-wrapper,
+			.sites-block__target-site {
+				display: none;
+			}
+		}
 	}
 
 	.site__content {
 		padding: 0; /* Reduce spacing below the site component, so we can put labels under it */
 	}
-
-
 
 	.sites-block__faux-site-selector {
 		box-sizing: border-box;
@@ -77,6 +89,8 @@
 		align-self: flex-start;
 		margin-right: 8px;
 		flex: 0 0 auto;
+		display: flex;
+		justify-content: center;
 	}
 
 	.sites-block__faux-site-selector-info {
@@ -87,12 +101,12 @@
 	.sites-block__faux-site-selector-label {
 		color: var( --color-text );
 		display: block;
-		font-size: 16px;
+		font-size: $font-body;
 		font-weight: 400;
 		line-height: 1.3;
 	}
 
 	.site__title {
-		font-size: 16px;
+		font-size: $font-body;
 	}
 }

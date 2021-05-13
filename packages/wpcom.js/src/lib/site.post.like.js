@@ -1,10 +1,10 @@
 /**
  * Like methods
  *
- * @param {String} pid - post id
- * @param {String} sid - site id
+ * @param {string} pid - post id
+ * @param {string} sid - site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @returns {null} null
  */
 export default function Like( pid, sid, wpcom ) {
 	if ( ! sid ) {
@@ -27,35 +27,33 @@ export default function Like( pid, sid, wpcom ) {
 /**
  * Get your Like status for a Post
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  */
-Like.prototype.mine =
-Like.prototype.state = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine';
+Like.prototype.mine = Like.prototype.state = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine';
 	return this.wpcom.req.get( path, query, fn );
 };
 
 /**
  * Like a post
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Like.prototype.add = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/new';
+Like.prototype.add = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/new';
 	return this.wpcom.req.put( path, query, null, fn );
 };
 
 /**
  * Remove your Like from a Post
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  */
-Like.prototype.del =
-Like.prototype.delete = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine/delete';
+Like.prototype.del = Like.prototype.delete = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine/delete';
 	return this.wpcom.req.del( path, query, fn );
 };

@@ -12,24 +12,22 @@ const debug = debugFactory( 'calypso:i18n-utils:glotpress' );
 
 /**
  * Sends the POST request
+ *
  * @param {string} glotPressUrl API url
  * @param {string} postFormData post data url param string
  * @returns {object} request object
  */
 export async function postRequest( glotPressUrl, postFormData ) {
-	let response;
-
-	try {
-		response = await fetch( glotPressUrl, {
-			method: 'POST',
-			credentials: 'include',
-			body: postFormData,
-		} );
-		if ( response.ok ) {
-			return await response.json();
-		}
-	} catch ( err ) {
-		throw err;
+	const response = await window.fetch( glotPressUrl, {
+		method: 'POST',
+		credentials: 'include',
+		body: postFormData,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+	} );
+	if ( response.ok ) {
+		return await response.json();
 	}
 
 	// Invalid response.
@@ -42,7 +40,8 @@ export function encodeOriginalKey( { original, context } ) {
 
 /**
  * Sends originals to translate.wordpress.com to be recorded
- * @param {[String]} originalKeys Array of original keys to record
+ *
+ * @param {[string]} originalKeys Array of original keys to record
  * @param {string} recordId fallback recordId to pass to the backend
  * @param {Function} post see postRequest()
  * @returns {object} request object
@@ -53,5 +52,7 @@ export function recordOriginals( originalKeys, recordId, post = postRequest ) {
 	const postFormData =
 		recordIdQueryFragment + `originals=${ encodeURIComponent( JSON.stringify( originalKeys ) ) }`;
 
-	return post( glotPressUrl, postFormData ).catch( err => debug( 'recordOriginals failed:', err ) );
+	return post( glotPressUrl, postFormData ).catch( ( err ) =>
+		debug( 'recordOriginals failed:', err )
+	);
 }

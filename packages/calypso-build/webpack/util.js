@@ -30,7 +30,7 @@ function IncrementalProgressPlugin() {
 			const timeString = ( ( nowTime - startTime ) / 1000 ).toFixed( 1 ) + 's';
 			const percentageString = `${ Math.floor( percentage * 100 ) }%`;
 			const detailsString = details
-				.map( detail => {
+				.map( ( detail ) => {
 					if ( ! detail ) {
 						return '';
 					}
@@ -72,6 +72,7 @@ const nodeModulesToTranspile = [
 	// The trailing slash makes sure we're not matching these as prefixes
 	// In some cases we do want prefix style matching (lodash. for lodash.assign)
 	'@automattic/calypso-polyfills/',
+	'@automattic/lasagna/',
 	'@automattic/react-virtualized/',
 	'@github/webauthn-json/',
 	'acorn-jsx/',
@@ -79,16 +80,23 @@ const nodeModulesToTranspile = [
 	'd3-array/',
 	'd3-scale/',
 	'debug/',
+	'dom7/',
 	'escape-string-regexp/',
 	'filesize/',
+	'gridicons/',
 	'prismjs/',
 	'punycode/',
+	'query-string/',
 	'react-spring/',
 	'regenerate-unicode-properties/',
 	'regexpu-core/',
+	'split-on-first/',
+	'strict-uri-encode/',
 	'striptags/',
+	'swiper/',
 	'unicode-match-property-ecmascript/',
 	'unicode-match-property-value-ecmascript/',
+	'calypso/',
 ];
 
 /**
@@ -114,7 +122,9 @@ function shouldTranspileDependency( filepath ) {
 
 	const checkFrom = lastIndex + marker.length;
 
-	return nodeModulesToTranspile.some( modulePart => filepath.startsWith( modulePart, checkFrom ) );
+	return nodeModulesToTranspile.some( ( modulePart ) =>
+		filepath.startsWith( modulePart, checkFrom )
+	);
 }
 
 module.exports = { cssNameFromFilename, IncrementalProgressPlugin, shouldTranspileDependency };

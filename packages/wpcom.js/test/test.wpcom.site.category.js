@@ -1,27 +1,29 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * Testing data
  */
-var fixture = require( './fixture' );
+const fixture = require( './fixture' );
 
-describe( 'wpcom.site.category', function() {
+describe( 'wpcom.site.category', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.site() );
-	var new_category;
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.site() );
+	let new_category;
 
 	// Create a testing_category before to start tests
-	var testing_category;
-	before( done => {
-		fixture.category.name += String( Math.random() * 1000000 | 0 );
+	let testing_category;
+	before( ( done ) => {
+		fixture.category.name += String( ( Math.random() * 1000000 ) | 0 );
 
-		site.category().add( fixture.category )
-			.then( category => {
+		site
+			.category()
+			.add( fixture.category )
+			.then( ( category ) => {
 				testing_category = category;
 				done();
 			} )
@@ -29,76 +31,92 @@ describe( 'wpcom.site.category', function() {
 	} );
 
 	// Delete testing category
-	after( done => {
-		site.category( testing_category.slug ).delete()
+	after( ( done ) => {
+		site
+			.category( testing_category.slug )
+			.delete()
 			.then( () => done() )
 			.catch( done );
 	} );
 
-	describe( 'wpcom.site.category.get', function() {
-		it( 'should get added category', done => {
-			site.category( testing_category.slug ).get()
-				.then( data => {
-					assert.ok( data );
-					assert.ok( data instanceof Object, 'data is not an object' );
-					assert.equal( testing_category.slug, data.slug );
-					assert.equal( testing_category.name, data.name );
-					done();
-				} )
-				.catch( done );
+	describe( 'wpcom.site.category.get', function () {
+		it( 'should get added category', () => {
+			return new Promise( ( done ) => {
+				site
+					.category( testing_category.slug )
+					.get()
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.ok( data instanceof Object, 'data is not an object' );
+						assert.equal( testing_category.slug, data.slug );
+						assert.equal( testing_category.name, data.name );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
-	describe( 'wpcom.site.category.add', function() {
-		it( 'should add a new category', done => {
-			var category = site.category();
+	describe( 'wpcom.site.category.add', function () {
+		it( 'should add a new category', () => {
+			return new Promise( ( done ) => {
+				const category = site.category();
 
-			fixture.category.name += '-added';
-			category.add( fixture.category )
-				.then( data => {
-					// checking some data date
-					assert.ok( data );
-					assert.ok( data instanceof Object, 'data is not an object' );
+				fixture.category.name += '-added';
+				category
+					.add( fixture.category )
+					.then( ( data ) => {
+						// checking some data date
+						assert.ok( data );
+						assert.ok( data instanceof Object, 'data is not an object' );
 
-					// store added catogory
-					new_category = data;
+						// store added catogory
+						new_category = data;
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
-	describe( 'wpcom.site.category.update', function() {
-		it( 'should edit the new added category', done => {
-			var category = site.category( new_category.slug );
-			var edited_name = fixture.category.name + '-updated';
+	describe( 'wpcom.site.category.update', function () {
+		it( 'should edit the new added category', () => {
+			return new Promise( ( done ) => {
+				const category = site.category( new_category.slug );
+				const edited_name = fixture.category.name + '-updated';
 
-			category.update( { name: edited_name } )
-				.then( data => {
-					assert.ok( data );
-					assert.equal( edited_name, data.name );
+				category
+					.update( { name: edited_name } )
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.equal( edited_name, data.name );
 
-					// update added category
-					new_category = data;
+						// update added category
+						new_category = data;
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
-	describe( 'wpcom.site.category.delete', function() {
-		it( 'should delete the new added category', done => {
-			site.category( new_category.slug ).delete()
-				.then( data => {
-					assert.ok( data );
-					assert.equal( 'true', data.success );
-					assert.equal( new_category.slug, data.slug );
+	describe( 'wpcom.site.category.delete', function () {
+		it( 'should delete the new added category', () => {
+			return new Promise( ( done ) => {
+				site
+					.category( new_category.slug )
+					.delete()
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.equal( 'true', data.success );
+						assert.equal( new_category.slug, data.slug );
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 } );

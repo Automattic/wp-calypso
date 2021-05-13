@@ -1,0 +1,112 @@
+.post-type-page .edit-post-header-toolbar > .edit-post-header-toolbar__inserter-toggle {
+	display: none;
+}
+
+.post-type-wp_template_part {
+	.editor-post-title,
+	.editor-post-trash {
+		display: none;
+	}
+
+	// @TODO: Remove this when Gutenberg support is added for
+	// removing the PostStatus panel:
+	.edit-post-post-status {
+		display: none;
+	}
+
+	.edit-post-visual-editor {
+		margin-top: 20px;
+		padding-top: 0;
+	}
+
+	.editor-post-switch-to-draft {
+		display: none;
+	}
+}
+
+.post-type-page,
+.post-type-wp_template_part {
+	@media ( min-width: 768px ) {
+		// @TODO Remove the "regions content" class after G2 is available everywhere.
+		.block-editor-editor-skeleton__content,
+		.edit-post-editor-regions__content {
+			background: #eee;
+		}
+
+		// @TODO Remove the "regions content" class after G2 is available everywhere.
+		.edit-post-visual-editor.editor-styles-wrapper,
+		.edit-post-editor-regions__content .edit-post-visual-editor {
+			box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
+				0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
+			flex: none;
+			margin: 36px 32px;
+		}
+	}
+
+	.block-editor-block-list__layout {
+		padding-left: 0;
+		padding-right: 0;
+
+		.block-editor-block-list__block[data-align='full'],
+		.wp-block[data-align='full'] { // Gutenberg >= 8.0.0
+			margin-left: 0;
+			margin-right: 0;
+		}
+	}
+
+	.block-editor-block-list__block[data-align='full'] > .block-editor-block-list__block-edit {
+		margin-right: 0;
+		margin-left: 0;
+	}
+
+	.block-editor-block-list__block[data-align='wide'] > .block-editor-block-list__block-edit {
+		margin-right: 14px;
+		margin-left: 14px;
+	}
+
+	@media ( max-width: 1200px ) {
+		// Try to ensure that normally-aligned blocks work properly.
+		.wp-block:not( [data-align='full'] ):not( [data-align='wide'] ) {
+			max-width: 580px;
+		}
+		.is-sidebar-opened .wp-block:not( [data-align='full'] ):not( [data-align='wide'] ) {
+			max-width: 400px;
+		}
+	}
+
+	// Remove the 50vh bottom padding that looks off with the FSE frame.
+	.block-editor-writing-flow__click-redirect {
+		display: none;
+	}
+}
+
+// We separate this from the other styles so that
+// the theme style can override this class without
+// having to get as specific.
+.editor-styles-wrapper {
+	background: #fff;
+}
+
+.post-type-page {
+	.edit-post-visual-editor {
+		padding-top: 0;
+	}
+
+	.block-editor-writing-flow {
+		display: block;
+	}
+
+	.wp-block.template__block-container
+		.wp-block-column
+		[data-type='core/social-links']
+		[data-block] {
+		margin: 0;
+	}
+}
+
+@media ( max-width: 600px ) {
+	// Table of contents button is not displayed in mobile view.
+	.components-dropdown.table-of-contents {
+		display: none;
+	}
+}

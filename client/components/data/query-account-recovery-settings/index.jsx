@@ -8,8 +8,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { accountRecoverySettingsFetch } from 'state/account-recovery/settings/actions';
-import { isFetchingAccountRecoverySettings } from 'state/account-recovery/selectors';
+import { accountRecoverySettingsFetch } from 'calypso/state/account-recovery/settings/actions';
+import { isFetchingAccountRecoverySettings } from 'calypso/state/account-recovery/selectors';
 
 class QueryAccountRecoverySettings extends Component {
 	componentDidMount() {
@@ -24,7 +24,7 @@ class QueryAccountRecoverySettings extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isFetching: isFetchingAccountRecoverySettings( state ),
 	} ),
 	{ accountRecoverySettingsFetch }

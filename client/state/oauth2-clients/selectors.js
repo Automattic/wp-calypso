@@ -1,8 +1,7 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
-
-import { get } from 'lodash';
+import 'calypso/state/oauth2-clients/init';
 
 /**
  * Gets the OAuth2 client data.
@@ -12,5 +11,5 @@ import { get } from 'lodash';
  * @returns {object}          OAuth2 client data
  */
 export const getOAuth2Client = ( state, clientId ) => {
-	return get( state, `oauth2Clients[${ clientId }]`, null );
+	return state.oauth2Clients.clients[ clientId ] ?? null;
 };

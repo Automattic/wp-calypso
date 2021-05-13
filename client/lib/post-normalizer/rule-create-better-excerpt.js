@@ -3,7 +3,7 @@
  */
 
 import striptags from 'striptags';
-import { trim, toArray, forEach } from 'lodash';
+import { trim, forEach } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -11,15 +11,19 @@ import { trim, toArray, forEach } from 'lodash';
 import { domForHtml } from './utils';
 
 /**
- *  removes an html element from the dom
+ * Removes an HTML element from the DOM
+ *
+ * @param {Node} element DOM element to remove
  */
 function removeElement( element ) {
 	element.parentNode && element.parentNode.removeChild( element );
 }
 
 /**
- *  Trims any empty starting br tags.  Recurses into non-empty tags.
- *  will remove all of the leading brs it can find.
+ *  Trims any empty starting `br` tags.  Recurses into non-empty tags.
+ *  will remove all of the leading `br`s it can find.
+ *
+ * @param {Node} dom DOM element to remove br tags from.
  */
 function stripLeadingBreaklines( dom ) {
 	if ( ! dom ) {
@@ -33,8 +37,10 @@ function stripLeadingBreaklines( dom ) {
 }
 
 /**
- *  Returns the node if first element ( checking nested ) is a br
+ *  Returns the node if first element ( checking nested ) is a `br`
  *  else returns falsy
+ *
+ * @param {Node} dom DOM element to check
  */
 function firstElementIsBreakline( dom ) {
 	if ( dom.childNodes.length === 0 ) {
@@ -64,12 +70,12 @@ export function formatExcerpt( content ) {
 	dom.id = '__better_excerpt__';
 
 	// strip any p's that are empty
-	toArray( dom.querySelectorAll( 'p' ) )
-		.filter( element => trim( element.textContent ).length === 0 )
+	Array.from( dom.querySelectorAll( 'p' ) )
+		.filter( ( element ) => trim( element.textContent ).length === 0 )
 		.forEach( removeElement );
 
 	// remove styles for all p's that remain
-	toArray( dom.querySelectorAll( 'p' ) ).forEach( element => {
+	Array.from( dom.querySelectorAll( 'p' ) ).forEach( ( element ) => {
 		element.removeAttribute( 'style' );
 		element.removeAttribute( 'align' );
 	} );
@@ -77,14 +83,14 @@ export function formatExcerpt( content ) {
 	stripLeadingBreaklines( dom );
 
 	// now limit it to the first three elements
-	forEach( dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ), function(
-		element,
-		index
-	) {
-		if ( index >= 3 ) {
-			element.parentNode && element.parentNode.removeChild( element );
+	forEach(
+		dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ),
+		function ( element, index ) {
+			if ( index >= 3 ) {
+				element.parentNode && element.parentNode.removeChild( element );
+			}
 		}
-	} );
+	);
 
 	// trim and replace &nbsp; entities
 	const betterExcerpt = trim( dom.innerHTML.replace( /&nbsp;/g, ' ' ) );

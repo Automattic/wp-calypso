@@ -6,9 +6,10 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSiteOptions from 'state/selectors/get-site-options';
-import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import getSiteOptions from 'calypso/state/selectors/get-site-options';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 /**
  * @param {object} state Global state tree
@@ -17,6 +18,15 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
  */
 export default function isEligibleForDotcomChecklist( state, siteId ) {
 	if ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) {
+		return false;
+	}
+
+	if ( isSiteWPForTeams( state, siteId ) ) {
+		return false;
+	}
+
+	//TODO: we should add checklist support for Atomic
+	if ( isAtomicSite( state, siteId ) ) {
 		return false;
 	}
 

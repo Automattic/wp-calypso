@@ -9,9 +9,9 @@ import { find, map } from 'lodash';
 /**
  * Internal depencencies
  */
-import QueryPosts from 'components/data/query-posts';
-import { getPostsForQuery } from 'state/posts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryPosts from 'calypso/components/data/query-posts';
+import { getPostsForQuery } from 'calypso/state/posts/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Suggestions } from '@automattic/components';
 
 class PostSuggestions extends Component {
@@ -30,13 +30,13 @@ class PostSuggestions extends Component {
 
 	suggestionsRef = React.createRef();
 
-	handleKeyEvent = event => this.suggestionsRef.current.handleKeyEvent( event );
+	handleKeyEvent = ( event ) => this.suggestionsRef.current.handleKeyEvent( event );
 
 	suggest = ( { postId } ) => this.props.suggest( find( this.props.posts, { ID: postId } ) );
 
 	render() {
 		const { exclude, posts, search, siteId } = this.props;
-		const suggestions = map( posts, post => ( { label: post.title, postId: post.ID } ) );
+		const suggestions = map( posts, ( post ) => ( { label: post.title, postId: post.ID } ) );
 
 		return (
 			<Fragment>

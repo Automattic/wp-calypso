@@ -10,7 +10,7 @@ export function pathToRegExp( path ) {
 
 // takes in a fn where its last arg is a node-style callback
 // outputs a promise
-export const promisify = fn => ( ...args ) =>
+export const promisify = ( fn ) => ( ...args ) =>
 	new Promise( ( resolve, reject ) => {
 		fn( ...args, ( err, data ) => {
 			if ( err ) {

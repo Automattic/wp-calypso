@@ -1,0 +1,27 @@
+.themes__auto-loading-homepage-modal {
+	min-height: 90px;
+	max-width: 400px;
+	margin: 0 auto;
+
+	@include breakpoint-deprecated( '<480px' ) {
+		box-sizing: border-box;
+		max-width: 100%;
+
+		+ .dialog__action-buttons .button {
+			display: block;
+			margin: 0 auto 10px;
+			width: 100%;
+		}
+	}
+
+	.form-label {
+		font-weight: 400;
+	}
+
+	.themes__auto-loading-homepage-modal-homepage-hint {
+		margin-left: 20px;
+		font-size: 0.875rem;
+		font-style: italic;
+		margin-top: -5px;
+	}
+}

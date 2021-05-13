@@ -1,19 +1,18 @@
 /**
  * External dependencies
  */
-
+import { getWindowInnerWidth } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { throttle } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getWindowInnerWidth } from 'lib/viewport';
 
 /**
  * Style dependencies

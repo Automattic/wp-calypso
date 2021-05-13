@@ -3,30 +3,31 @@
  *
  */
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import EnvironmentBadge, { Branch, DevDocsLink, TestHelper } from 'components/environment-badge';
-import Head from 'components/head';
+import EnvironmentBadge, {
+	Branch,
+	DevDocsLink,
+	TestHelper,
+} from 'calypso/components/environment-badge';
+import Head from 'calypso/components/head';
 import { chunkCssLinks } from './utils';
-import WordPressLogo from 'components/wordpress-logo';
-import { jsonStringifyForHtml } from 'server/sanitize';
+import WordPressLogo from 'calypso/components/wordpress-logo';
+import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 
 class Desktop extends React.Component {
 	render() {
 		const {
 			app,
 			entrypoint,
-			faviconURL,
 			i18nLocaleScript,
 			isRTL,
 			lang,
-			hasSecondary,
 			clientData,
-			isFluidWidth,
 			badge,
 			abTestHelper,
 			branchName,
@@ -37,12 +38,8 @@ class Desktop extends React.Component {
 		} = this.props;
 
 		return (
-			<html
-				lang={ lang }
-				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( 'is-desktop', { 'is-fluid-width': isFluidWidth } ) }
-			>
-				<Head title="WordPress.com" faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
+			<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' } className={ classNames( 'is-desktop' ) }>
+				<Head title="WordPress.com">
 					{ chunkCssLinks( entrypoint, isRTL ) }
 					<link rel="stylesheet" id="desktop-css" href="/desktop/wordpress-desktop.css" />
 				</Head>
@@ -53,12 +50,6 @@ class Desktop extends React.Component {
 							<div className="masterbar" />
 							<div className="layout__content">
 								<WordPressLogo size={ 72 } className="wpcom-site__logo" />
-								{ hasSecondary && (
-									<Fragment>
-										<div className="layout__secondary" />
-										<ul className="sidebar" />
-									</Fragment>
-								) }
 							</div>
 						</div>
 					</div>
@@ -89,7 +80,7 @@ class Desktop extends React.Component {
 						/>
 					) }
 
-					{ entrypoint.js.map( asset => (
+					{ entrypoint.js.map( ( asset ) => (
 						<script key={ asset } src={ asset } />
 					) ) }
 					<script src="/desktop/desktop-app.js" />

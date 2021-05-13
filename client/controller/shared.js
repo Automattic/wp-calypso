@@ -2,25 +2,30 @@
  * External dependencies
  */
 import React from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { setSection as setSectionAction } from 'state/ui/actions';
-import { setLocale } from 'state/ui/language/actions';
+import config from '@automattic/calypso-config';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { setSection } from 'calypso/state/ui/actions';
+import { setLocale } from 'calypso/state/ui/language/actions';
+import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
+
+const noop = () => {};
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
-		const { store, primary, secondary } = context;
+		const { store, section, pathname, query, primary, secondary } = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
 		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
 			context.layout = (
 				<LayoutComponent
 					store={ store }
+					currentSection={ section }
+					currentRoute={ pathname }
+					currentQuery={ query }
 					primary={ primary }
 					secondary={ secondary }
 					redirectUri={ context.originalUrl }
@@ -31,20 +36,30 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 	};
 }
 
-export function setSection( section ) {
+export function setSectionMiddleware( section ) {
 	return ( context, next = noop ) => {
-		context.store.dispatch( setSectionAction( section ) );
+		// save the section in context
+		context.section = section;
+
+		// save the section to Redux, too (poised to become legacy)
+		context.store.dispatch( setSection( section ) );
 		next();
 	};
 }
 
-export function setUpLocale( context, next ) {
+export function setLocaleMiddleware( context, next ) {
 	const currentUser = getCurrentUser( context.store.getState() );
 
 	if ( context.params.lang ) {
 		context.lang = context.params.lang;
 	} else if ( currentUser ) {
-		context.lang = currentUser.localeSlug;
+		const shouldFallbackToDefaultLocale =
+			currentUser.use_fallback_for_incomplete_languages &&
+			isTranslatedIncompletely( currentUser.localeSlug );
+
+		context.lang = shouldFallbackToDefaultLocale
+			? config( 'i18n_default_locale_slug' )
+			: currentUser.localeSlug;
 	}
 
 	context.store.dispatch( setLocale( context.lang || config( 'i18n_default_locale_slug' ) ) );

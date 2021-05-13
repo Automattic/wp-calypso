@@ -1,0 +1,25 @@
+.portal-nav {
+	flex: 1 1 180px;
+	max-width: 280px;
+	margin: 0;
+	margin-right: auto;
+	background: none;
+	box-shadow: none;
+
+	& + .masterbar__item-title {
+		display: none;
+	}
+
+	.section-nav-tabs {
+		// Using a deprecated breakpoint in order to match the usage in the section component we are overriding.
+		@include breakpoint-deprecated( '>480px' ) {
+			&.is-dropdown {
+				margin: 0;
+			}
+		}
+	}
+
+	.section-nav-tab__link {
+		padding: 14px 16px 11px;
+	}
+}

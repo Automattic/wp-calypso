@@ -23,13 +23,14 @@ import {
 	PUBLICIZE_SHARE_ACTION_SCHEDULE,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { publicizeActionsSchema } from './schema';
 
 /**
  * Updates deeply nested data for the siteId/postId subtree
- * @param {mixed} newValue - new value to assign in the subtree
+ *
+ * @param {object} newValue - new value to assign in the subtree
  * @param {object} state previous state
  * @param {number} siteId siteId
  * @param {number} postId siteId
@@ -75,7 +76,7 @@ export const scheduled = withSchemaValidation( publicizeActionsSchema, ( state =
 		case PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS: {
 			const { siteId, postId, items } = action;
 			items.forEach(
-				item => ( state = updateDataForPost( item, state, siteId, postId, item.ID ) )
+				( item ) => ( state = updateDataForPost( item, state, siteId, postId, item.ID ) )
 			);
 			return state;
 		}
@@ -95,7 +96,7 @@ export const published = withSchemaValidation( publicizeActionsSchema, ( state =
 	return state;
 } );
 
-export const fetchingSharePostActionsScheduled = withoutPersistence( ( state = {}, action ) => {
+export const fetchingSharePostActionsScheduled = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_SUCCESS: {
 			const { siteId, postId } = action;
@@ -112,9 +113,9 @@ export const fetchingSharePostActionsScheduled = withoutPersistence( ( state = {
 	}
 
 	return state;
-} );
+};
 
-export const fetchingSharePostActionsPublished = withoutPersistence( ( state = {}, action ) => {
+export const fetchingSharePostActionsPublished = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PUBLICIZE_SHARE_ACTIONS_PUBLISHED_REQUEST_SUCCESS: {
 			const { siteId, postId } = action;
@@ -131,9 +132,9 @@ export const fetchingSharePostActionsPublished = withoutPersistence( ( state = {
 	}
 
 	return state;
-} );
+};
 
-export const deletingSharePostAction = withoutPersistence( ( state = {}, action ) => {
+export const deletingSharePostAction = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PUBLICIZE_SHARE_ACTION_DELETE_SUCCESS: {
 			const { siteId, postId, actionId } = action;
@@ -150,9 +151,9 @@ export const deletingSharePostAction = withoutPersistence( ( state = {}, action 
 	}
 
 	return state;
-} );
+};
 
-export const editingSharePostAction = withoutPersistence( ( state = {}, action ) => {
+export const editingSharePostAction = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS: {
 			const { siteId, postId, item } = action;
@@ -169,9 +170,9 @@ export const editingSharePostAction = withoutPersistence( ( state = {}, action )
 	}
 
 	return state;
-} );
+};
 
-export const schedulingSharePostActionStatus = withoutPersistence( ( state = {}, action ) => {
+export const schedulingSharePostActionStatus = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS: {
 			const { siteId, postId, share_date } = action;
@@ -197,7 +198,7 @@ export const schedulingSharePostActionStatus = withoutPersistence( ( state = {},
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	scheduled,

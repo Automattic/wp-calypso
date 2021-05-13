@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-
 import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
+import { createSelector } from '@automattic/state-utils';
+import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
+
+import 'calypso/state/billing-transactions/init';
 
 /**
  * Utility function to retrieve a transaction from individualTransactions state subtree

@@ -3,12 +3,11 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { invoke } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { decodeEntities, preventWidows } from 'lib/formatting';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 
 class InlineHelpCompactResult extends Component {
 	static propTypes = {
@@ -20,8 +19,8 @@ class InlineHelpCompactResult extends Component {
 		helpLink: {},
 	};
 
-	onClick = event => {
-		invoke( this.props, 'onClick', event, this.props.helpLink );
+	onClick = ( event ) => {
+		this.props.onClick?.( event, this.props.helpLink );
 	};
 
 	render() {
@@ -32,6 +31,7 @@ class InlineHelpCompactResult extends Component {
 					href={ helpLink.link }
 					title={ decodeEntities( helpLink.description ) }
 					onClick={ this.onClick }
+					tabIndex={ -1 }
 				>
 					{ preventWidows( decodeEntities( helpLink.title ) ) }
 				</a>

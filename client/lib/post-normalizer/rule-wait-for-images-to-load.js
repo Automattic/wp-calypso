@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-
-import { filter, find, flow, forEach, map, pull, take } from 'lodash';
+import { filter, find, forEach, map, take } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -43,10 +42,8 @@ function promiseForImage( image ) {
 	} );
 }
 
-const promiseForURL = flow( imageForURL, promiseForImage );
-
 export default function waitForImagesToLoad( post ) {
-	return new Promise( resolve => {
+	return new Promise( ( resolve ) => {
 		function acceptLoadedImages( images ) {
 			if ( post.featured_image ) {
 				if ( ! find( images, { src: post.featured_image } ) ) {
@@ -58,14 +55,14 @@ export default function waitForImagesToLoad( post ) {
 			post.images = map( images, convertImageToObject );
 
 			post.content_images = filter(
-				map( post.content_images, function( image ) {
+				map( post.content_images, function ( image ) {
 					return find( post.images, { src: image.src } );
 				} ),
 				Boolean
 			);
 
 			// this adds adds height/width to images
-			post.content_media = map( post.content_media, media => {
+			post.content_media = map( post.content_media, ( media ) => {
 				if ( media.mediaType === 'image' ) {
 					const img = find( post.images, { src: media.src } );
 					return { ...media, ...img };
@@ -86,7 +83,7 @@ export default function waitForImagesToLoad( post ) {
 			// If we still don't know the dimension info, check attachments.
 			if ( ! knownDimensions && post.attachments ) {
 				const attachment = Object.values( post.attachments ).find(
-					att => att.URL === post.featured_image
+					( att ) => att.URL === post.featured_image
 				);
 				if ( attachment ) {
 					knownDimensions = deduceImageWidthAndHeight( attachment );
@@ -110,7 +107,7 @@ export default function waitForImagesToLoad( post ) {
 			checkAndRememberDimensions( null, post.featured_image );
 		}
 
-		forEach( post.content_images, image => checkAndRememberDimensions( image, image.src ) );
+		forEach( post.content_images, ( image ) => checkAndRememberDimensions( image, image.src ) );
 
 		if ( imagesToCheck.length === 0 ) {
 			resolve( post );
@@ -122,20 +119,20 @@ export default function waitForImagesToLoad( post ) {
 		// convert to image objects to start the load process
 		// only check the first x images
 		const NUMBER_OF_IMAGES_TO_CHECK = 10;
-		let promises = map( take( imagesToCheck, NUMBER_OF_IMAGES_TO_CHECK ), imageUrl => {
+		let promises = map( take( imagesToCheck, NUMBER_OF_IMAGES_TO_CHECK ), ( imageUrl ) => {
 			if ( imageUrl in knownImages ) {
 				return Promise.resolve( knownImages[ imageUrl ] );
 			}
-			return promiseForURL( imageUrl );
+			return promiseForImage( imageForURL( imageUrl ) );
 		} );
 
-		forEach( promises, promise => {
+		forEach( promises, ( promise ) => {
 			promise
-				.then( image => {
+				.then( ( image ) => {
 					// keep track of what loaded successfully. Note these will be out of order.
 					imagesLoaded[ image.src ] = image;
 				} )
-				.catch( err => {
+				.catch( ( err ) => {
 					// ignore what did not, but return the promise chain to success
 					debug( 'failed to load image', err, post );
 					return null;
@@ -143,10 +140,10 @@ export default function waitForImagesToLoad( post ) {
 				.then( () => {
 					// check to see if all of the promises have settled
 					// if so, accept what loaded and resolve the main promise
-					promises = pull( promises, promise );
+					promises = promises.filter( ( p ) => p !== promise );
 					if ( promises.length === 0 ) {
 						const imagesInOrder = filter(
-							map( imagesToCheck, src => {
+							map( imagesToCheck, ( src ) => {
 								return imagesLoaded[ src ];
 							} ),
 							Boolean
@@ -154,7 +151,7 @@ export default function waitForImagesToLoad( post ) {
 						acceptLoadedImages( imagesInOrder );
 					}
 				} )
-				.catch( err => {
+				.catch( ( err ) => {
 					debug( 'Fulfilling promise failed', err );
 				} );
 		} );

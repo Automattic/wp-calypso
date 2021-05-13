@@ -1,5 +1,4 @@
-Query Domains Suggestions
-===========================
+# Query Domains Suggestions
 
 `<QueryDomainsSuggestions />` is a React component used in managing network requests for domains/suggestions.
 
@@ -8,7 +7,7 @@ Query Domains Suggestions
 Render the component, passing in the properties below. It does not accept any children, nor does it render any elements to the page.
 
 ```jsx
-import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
+import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
 
 export default function defaultSuggestions() {
 	return (
@@ -17,7 +16,8 @@ export default function defaultSuggestions() {
 				query="mycoolname"
 				quantity={ 2 }
 				vendor="domainsbot"
-				includeSubdomain={ false } />
+				includeSubdomain={ false }
+			/>
 		</div>
 	);
 }
@@ -32,7 +32,7 @@ export default function defaultSuggestions() {
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The query we use when searching for domains suggestions. 
+The query we use when searching for domains suggestions.
 
 ### `vendor`
 
@@ -59,4 +59,4 @@ The maximum number of suggestions to return.
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-(Default false) When true, includes *.wordpress.com suggestions.
+(Default false) When true, includes \*.wordpress.com suggestions.

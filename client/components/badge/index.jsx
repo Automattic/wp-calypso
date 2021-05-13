@@ -13,7 +13,15 @@ import './style.scss';
 
 export default class Badge extends React.Component {
 	static propTypes = {
-		type: PropTypes.oneOf( [ 'warning', 'success', 'info', 'info-blue' ] ).isRequired,
+		type: PropTypes.oneOf( [
+			'warning',
+			'success',
+			'info',
+			'info-blue',
+			'info-green',
+			'info-purple',
+			'error',
+		] ).isRequired,
 	};
 
 	static defaultProps = {

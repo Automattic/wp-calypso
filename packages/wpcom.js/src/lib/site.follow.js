@@ -1,9 +1,9 @@
 /**
  * Follow
  *
- * @param {String} site_id - site id
+ * @param {string} site_id - site id
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @returns {null} null
  */
 export default function Follow( site_id, wpcom ) {
 	if ( ! site_id ) {
@@ -22,38 +22,35 @@ export default function Follow( site_id, wpcom ) {
  * Get the follow status for current
  * user on current blog sites
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Follow.prototype.mine =
-Follow.prototype.state = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/follows/mine';
+Follow.prototype.mine = Follow.prototype.state = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/follows/mine';
 	return this.wpcom.req.get( path, query, fn );
 };
 
 /**
  * Follow the site
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Follow.prototype.follow =
-Follow.prototype.add = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/follows/new';
+Follow.prototype.follow = Follow.prototype.add = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/follows/new';
 	return this.wpcom.req.put( path, query, null, fn );
 };
 
 /**
  * Unfollow the site
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Follow.prototype.unfollow =
-Follow.prototype.del = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/follows/mine/delete';
+Follow.prototype.unfollow = Follow.prototype.del = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/follows/mine/delete';
 	return this.wpcom.req.del( path, query, null, fn );
 };

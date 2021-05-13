@@ -19,9 +19,9 @@ export default class DeleteAccountFlow {
 			const closeAccountPage = await CloseAccountPage.Expect( this.driver );
 			await closeAccountPage.chooseCloseAccount();
 			await closeAccountPage.enterAccountNameAndClose( name );
-			await closeAccountPage.ConfirmAccountHasBeenClosed();
+			await closeAccountPage.confirmAccountHasBeenClosed();
 			return await LoggedOutMasterbarComponent.Expect( this.driver );
-		} )().catch( err => {
+		} )().catch( ( err ) => {
 			SlackNotifier.warn(
 				`There was an error in the hooks that delete test account, but since it is cleaning up we really don't care: '${ err }'`,
 				{ suppressDuplicateMessages: true }

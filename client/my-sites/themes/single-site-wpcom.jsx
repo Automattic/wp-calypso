@@ -8,22 +8,23 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import CurrentTheme from 'my-sites/themes/current-theme';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import ThanksModal from 'my-sites/themes/thanks-modal';
+import Main from 'calypso/components/main';
+import CurrentTheme from 'calypso/my-sites/themes/current-theme';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
+import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { connectOptions } from './theme-options';
-import Banner from 'components/banner';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
-import { hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QuerySitePurchases from 'components/data/query-site-purchases';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { hasFeature, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import isVipSite from 'state/selectors/is-vip-site';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 
-const ConnectedSingleSiteWpcom = connectOptions( props => {
+const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const {
 		hasUnlimitedPremiumThemes,
 		requestingSitePlans,
@@ -42,19 +43,19 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 	if ( displayUpsellBanner ) {
 		if ( bannerLocationBelowSearch ) {
 			upsellBanner = (
-				<Banner
+				<UpsellNudge
 					plan={ PLAN_PREMIUM }
 					customerType="business"
 					className="themes__showcase-banner"
 					title={ translate( 'Unlock ALL premium themes with our Premium and Business plans!' ) }
 					event="themes_plans_free_personal"
-					callToAction={ translate( 'View Plans' ) }
 					forceHref={ true }
+					showIcon={ true }
 				/>
 			);
 		} else {
 			upsellBanner = (
-				<Banner
+				<UpsellNudge
 					plan={ PLAN_PREMIUM }
 					title={ translate(
 						'Access all our premium themes with our Premium and Business plans!'
@@ -63,16 +64,19 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 						'Get advanced customization, more storage space, and video support along with all your new themes.'
 					) }
 					event="themes_plans_free_personal"
+					showIcon={ true }
 				/>
 			);
 		}
 	}
 	return (
-		<Main className="themes">
+		<Main fullWidthLayout className="themes">
 			<SidebarNavigation />
 			<FormattedHeader
+				brandFont
 				className="themes__page-heading"
 				headerText={ translate( 'Themes' ) }
+				subHeaderText={ translate( 'Select or update the visual design for your site.' ) }
 				align="left"
 			/>
 			<CurrentTheme siteId={ siteId } />
@@ -87,6 +91,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 				{ siteId && <QuerySitePlans siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				<ThanksModal source={ 'list' } />
+				<AutoLoadingHomepageModal source={ 'list' } />
 			</ThemeShowcase>
 		</Main>
 	);

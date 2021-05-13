@@ -41,8 +41,8 @@ describe( 'index', () => {
 	} );
 
 	test( 'should pass props to the child textarea', () => {
-		const value = 'Hello World!',
-			placeholder = 'placeholder test';
+		const value = 'Hello World!';
+		const placeholder = 'placeholder test';
 
 		renderer.render(
 			<CountedTextarea value={ value } className="custom-class" placeholder={ placeholder } />

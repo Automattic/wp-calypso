@@ -1,29 +1,21 @@
 /**
  * External dependencies
  */
-
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import React from 'react';
-import { shuffle } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import FormSectionHeading from 'components/forms/form-section-heading';
-import Gravatar from 'components/gravatar';
-import QueryHappinessEngineers from 'components/data/query-happiness-engineers';
-import {
-	getHappinessEngineers,
-	hasReceivedHappinessEngineers,
-} from 'state/happiness-engineers/selectors';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-function HelpHappinessEngineers( { translate, happinessEngineers, hasReceived } ) {
+function HelpHappinessEngineers( { translate } ) {
 	return (
 		<div className="help-happiness-engineers">
 			{ translate(
@@ -37,23 +29,9 @@ function HelpHappinessEngineers( { translate, happinessEngineers, hasReceived } 
 					},
 				}
 			) }
-			<div className="help-happiness-engineers__tray">
-				{ shuffle( happinessEngineers ).map( happinessEngineer => (
-					<Gravatar
-						key={ happinessEngineer }
-						user={ { avatar_URL: happinessEngineer } }
-						size={ 42 }
-					/>
-				) ) }
-			</div>
-			{ ! hasReceived && <QueryHappinessEngineers /> }
+			<HappinessEngineersTray />
 		</div>
 	);
 }
 
-export default connect( state => {
-	return {
-		happinessEngineers: getHappinessEngineers( state ),
-		hasReceived: hasReceivedHappinessEngineers( state ),
-	};
-} )( localize( HelpHappinessEngineers ) );
+export default localize( HelpHappinessEngineers );

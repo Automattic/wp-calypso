@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import getHelpLinks from 'state/selectors/get-help-links';
-import HelpResults from 'me/help/help-results';
-import NoResults from 'my-sites/no-results';
-import QueryHelpLinks from 'components/data/query-help-links';
-import SearchCard from 'components/search-card';
-import { localizeUrl } from 'lib/i18n-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
+import getHelpLinks from 'calypso/state/selectors/get-help-links';
+import HelpResults from 'calypso/me/help/help-results';
+import NoResults from 'calypso/my-sites/no-results';
+import QueryHelpLinks from 'calypso/components/data/query-help-links';
+import SearchCard from 'calypso/components/search-card';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -28,10 +28,17 @@ export class HelpSearch extends React.PureComponent {
 		searchQuery: '',
 	};
 
-	onSearch = searchQuery => {
+	onSearch = ( searchQuery ) => {
 		this.setState( {
 			searchQuery,
 		} );
+
+		if ( isEmpty( searchQuery ) ) {
+			this.props.onSearch( false );
+		} else {
+			this.props.onSearch( true );
+		}
+
 		this.props.recordTracksEvent( 'calypso_help_search', { query: searchQuery } );
 	};
 
@@ -48,7 +55,7 @@ export class HelpSearch extends React.PureComponent {
 			return (
 				<div className="help-results__placeholder">
 					<HelpResults
-						header="Dummy documentation header"
+						header="..."
 						helpLinks={ [
 							{
 								title: '',
@@ -57,7 +64,7 @@ export class HelpSearch extends React.PureComponent {
 								disabled: true,
 							},
 						] }
-						footer="Dummy documentation footer"
+						footer="..."
 						iconTypeDescription=""
 						searchLink="#"
 					/>
@@ -84,8 +91,8 @@ export class HelpSearch extends React.PureComponent {
 		}
 
 		const forumBaseUrl = helpLinks.wordpress_forum_links_localized
-			? localizeUrl( 'https://en.forums.wordpress.com/' )
-			: 'https://en.forums.wordpress.com/';
+			? localizeUrl( 'https://wordpress.com/forums' )
+			: 'https://wordpress.com/forums';
 
 		return (
 			<div>
@@ -94,14 +101,14 @@ export class HelpSearch extends React.PureComponent {
 					header={ translate( 'WordPress.com Documentation' ) }
 					helpLinks={ helpLinks.wordpress_support_links }
 					iconTypeDescription="book"
-					searchLink={ 'https://en.support.wordpress.com?s=' + searchQuery }
+					searchLink={ 'https://wordpress.com/support?s=' + searchQuery }
 				/>
 				<HelpResults
 					footer={ translate( 'See more from Community Forum…' ) }
 					header={ translate( 'Community Answers' ) }
 					helpLinks={ helpLinks.wordpress_forum_links_localized || helpLinks.wordpress_forum_links }
 					iconTypeDescription="comment"
-					searchLink={ `${ forumBaseUrl }/search/${ searchQuery }` }
+					searchLink={ `${ forumBaseUrl }?s=${ searchQuery }` }
 				/>
 				<HelpResults
 					footer={ translate( 'See more from Jetpack Documentation…' ) }
@@ -134,7 +141,7 @@ export class HelpSearch extends React.PureComponent {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		helpLinks: getHelpLinks( state ),
 	} ),
 	{

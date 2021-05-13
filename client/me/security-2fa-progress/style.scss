@@ -1,7 +1,7 @@
 .security-2fa-progress__container {
 	margin: 0 -16px 16px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin: 0 -24px 24px;
 	}
 
@@ -81,7 +81,7 @@
 				padding: 12px;
 
 				&::before {
-					font-size: 32px;
+					font-size: $font-title-large;
 					position: relative;
 					top: 8px;
 				}
@@ -90,7 +90,7 @@
 			label {
 				color: var( --color-neutral-10 );
 				display: inline-block;
-				font-size: 14px;
+				font-size: $font-body-small;
 				line-height: 1;
 				margin-top: 8px;
 				max-width: 112px;

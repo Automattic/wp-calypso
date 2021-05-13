@@ -14,35 +14,34 @@ import { localize } from 'i18n-calypso';
  */
 import AuthFormHeader from './auth-form-header';
 import { Button, Card } from '@automattic/components';
-import canCurrentUser from 'state/selectors/can-current-user';
-import config from 'config';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import config from '@automattic/calypso-config';
 import Disclaimer from './disclaimer';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Gravatar from 'components/gravatar';
-import Gridicon from 'components/gridicon';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import Gravatar from 'calypso/components/gravatar';
+import Gridicon from 'calypso/components/gridicon';
 import HelpButton from './help-button';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isVipSite from 'state/selectors/is-vip-site';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import JetpackConnectHappychatButton from './happychat-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
+import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
-import QueryUserConnection from 'components/data/query-user-connection';
-import Spinner from 'components/spinner';
-import userUtilities from 'lib/user/utils';
-import versionCompare from 'lib/version-compare';
-import { addQueryArgs, externalRedirect } from 'lib/route';
+import QueryUserConnection from 'calypso/components/data/query-user-connection';
+import Spinner from 'calypso/components/spinner';
+import userUtilities from 'calypso/lib/user/utils';
+import { addQueryArgs, externalRedirect } from 'calypso/lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
-import { decodeEntities } from 'lib/formatting';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
-import { JPC_PATH_PLANS, JPC_PATH_SITE_TYPE, REMOTE_PATH_AUTH } from './constants';
-import { login } from 'lib/paths';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import { urlToSlug } from 'lib/url';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
+import { OFFER_RESET_FLOW_TYPES } from './flow-types';
+import { login } from 'calypso/lib/paths';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { urlToSlug } from 'calypso/lib/url';
 import {
 	ALREADY_CONNECTED,
 	ALREADY_CONNECTED_BY_OTHER_USER,
@@ -50,19 +49,21 @@ import {
 	RETRY_AUTH,
 	RETRYING_AUTH,
 	SECRET_EXPIRED,
-	SITE_BLACKLISTED,
+	SITE_BLOCKED,
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	XMLRPC_ERROR,
 } from './connection-notice-types';
 import {
+	clearPlan,
 	isCalypsoStartedConnection,
 	isSsoApproved,
 	retrieveMobileRedirect,
+	retrievePlan,
 } from './persistence-utils';
 import {
 	authorize as authorizeAction,
 	retryAuth as retryAuthAction,
-} from 'state/jetpack-connect/actions';
+} from 'calypso/state/jetpack-connect/actions';
 import {
 	getAuthAttempts,
 	getAuthorizationData,
@@ -70,10 +71,11 @@ import {
 	hasExpiredSecretError as hasExpiredSecretErrorSelector,
 	hasXmlrpcError as hasXmlrpcErrorSelector,
 	isRemoteSiteOnSitesList,
-	isSiteBlacklistedError as isSiteBlacklistedSelector,
-} from 'state/jetpack-connect/selectors';
-import getPartnerIdFromQuery from 'state/selectors/get-partner-id-from-query';
-import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
+	isSiteBlockedError as isSiteBlockedSelector,
+} from 'calypso/state/jetpack-connect/selectors';
+import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
+import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import wooDnaConfig from './woo-dna-config';
 
 /**
  * Constants
@@ -100,7 +102,7 @@ export class JetpackAuthorize extends Component {
 		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
-		isSiteBlacklisted: PropTypes.bool,
+		isSiteBlocked: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		retryAuth: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -110,6 +112,10 @@ export class JetpackAuthorize extends Component {
 
 	redirecting = false;
 	retryingAuth = false;
+
+	state = {
+		isRedirecting: false,
+	};
 
 	UNSAFE_componentWillMount() {
 		const { recordTracksEvent, isMobileAppFlow } = this.props;
@@ -147,6 +153,7 @@ export class JetpackAuthorize extends Component {
 			this.isSso( nextProps ) ||
 			this.isWooRedirect( nextProps ) ||
 			this.isFromJpo( nextProps ) ||
+			this.isFromJetpackBoost( nextProps ) ||
 			this.shouldRedirectJetpackStart( nextProps ) ||
 			this.props.isVip
 		) {
@@ -164,7 +171,7 @@ export class JetpackAuthorize extends Component {
 			! this.retryingAuth &&
 			! nextProps.hasXmlrpcError &&
 			! nextProps.hasExpiredSecretError &&
-			! nextProps.isSiteBlacklisted &&
+			! nextProps.isSiteBlocked &&
 			site
 		) {
 			// Expired secret errors, and XMLRPC errors will be resolved in `handleResolve`.
@@ -172,7 +179,7 @@ export class JetpackAuthorize extends Component {
 			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			return retryAuth( site, attempts + 1, nextProps.authQuery.from );
+			return retryAuth( site, attempts + 1, nextProps.authQuery.from, redirectAfterAuth );
 		}
 	}
 
@@ -200,6 +207,11 @@ export class JetpackAuthorize extends Component {
 	redirect() {
 		const { isMobileAppFlow, mobileAppRedirect } = this.props;
 		const { from, redirectAfterAuth, scope } = this.props.authQuery;
+		const { isRedirecting } = this.state;
+
+		if ( isRedirecting ) {
+			return;
+		}
 
 		if ( isMobileAppFlow ) {
 			debug( `Redirecting to mobile app ${ mobileAppRedirect }` );
@@ -211,8 +223,13 @@ export class JetpackAuthorize extends Component {
 			this.isSso() ||
 			this.isWooRedirect() ||
 			this.isFromJpo() ||
+			this.isFromJetpackBoost() ||
+			this.isFromBlockEditor() ||
 			this.shouldRedirectJetpackStart() ||
-			getRoleFromScope( scope ) === 'subscriber'
+			getRoleFromScope( scope ) === 'subscriber' ||
+			this.isJetpackUpgradeFlow() ||
+			this.isFromJetpackConnectionManager() ||
+			this.isFromJetpackBackupPlugin()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -225,6 +242,8 @@ export class JetpackAuthorize extends Component {
 		} else {
 			page.redirect( this.getRedirectionTarget() );
 		}
+
+		this.setState( { isRedirecting: true } );
 	}
 
 	redirectToXmlRpcErrorFallbackUrl() {
@@ -251,6 +270,16 @@ export class JetpackAuthorize extends Component {
 		return startsWith( from, 'jpo' );
 	}
 
+	isFromJetpackBoost( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-boost' );
+	}
+
+	isFromBlockEditor( props = this.props ) {
+		const { from } = props.authQuery;
+		return 'jetpack-block-editor' === from;
+	}
+
 	/**
 	 * Check whether this a valid authorized SSO request
 	 *
@@ -264,21 +293,51 @@ export class JetpackAuthorize extends Component {
 		return 'sso' === from && isSsoApproved( clientId );
 	}
 
-	isWooRedirect( props = this.props ) {
-		const { from } = props.authQuery;
-		return includes(
-			[
-				'woocommerce-services-auto-authorize',
-				'woocommerce-setup-wizard',
-				'woocommerce-onboarding',
-			],
-			from
+	/**
+	 * Check if the user is coming from the Jetpack upgrade flow.
+	 *
+	 * @param  {object}  props           Props to test
+	 * @param  {?string} props.authQuery.redirectAfterAuth Where were we redirected after auth.
+	 * @returns {boolean}                True if the user is coming from the Jetpack upgrade flow, false otherwise.
+	 */
+	isJetpackUpgradeFlow( props = this.props ) {
+		const { redirectAfterAuth } = props.authQuery;
+		return (
+			redirectAfterAuth && redirectAfterAuth.includes( 'page=jetpack&action=authorize_redirect' )
 		);
 	}
+
+	isFromJetpackConnectionManager( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'connection-ui' );
+	}
+
+	isFromJetpackBackupPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-backup' );
+	}
+
+	isWooRedirect = ( props = this.props ) => {
+		const { from } = props.authQuery;
+		return (
+			includes(
+				[
+					'woocommerce-services-auto-authorize',
+					'woocommerce-setup-wizard',
+					'woocommerce-onboarding',
+				],
+				from
+			) || this.getWooDnaConfig( props ).isWooDnaFlow()
+		);
+	};
 
 	isWooOnboarding( props = this.props ) {
 		const { from } = props.authQuery;
 		return 'woocommerce-onboarding' === from;
+	}
+
+	getWooDnaConfig( props = this.props ) {
+		return wooDnaConfig( props.authQuery );
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
@@ -423,7 +482,7 @@ export class JetpackAuthorize extends Component {
 
 		let redirectToMobileApp = null;
 		if ( this.props.isMobileAppFlow ) {
-			redirectToMobileApp = reason => {
+			redirectToMobileApp = ( reason ) => {
 				const url = addQueryArgs( { reason }, this.props.mobileAppRedirect );
 				this.externalRedirectOnce( url );
 			};
@@ -507,10 +566,10 @@ export class JetpackAuthorize extends Component {
 				</Fragment>
 			);
 		}
-		if ( this.props.isSiteBlacklisted ) {
+		if ( this.props.isSiteBlocked ) {
 			return (
 				<JetpackConnectNotices
-					noticeType={ SITE_BLACKLISTED }
+					noticeType={ SITE_BLOCKED }
 					onTerminalError={ redirectToMobileApp }
 				/>
 			);
@@ -570,16 +629,31 @@ export class JetpackAuthorize extends Component {
 	getUserText() {
 		const { translate } = this.props;
 		const { authorizeSuccess } = this.props.authorizationData;
-		let text = translate( 'Connecting as {{strong}}%(user)s{{/strong}}', {
-			args: { user: this.props.user.display_name },
-			components: { strong: <strong /> },
-		} );
+
+		// Accounts created through the new Magic Link-based signup flow (enabled with the
+		// 'jetpack/magic-link-signup' feature flag) are created with a username based on the user's
+		// email address. For this reason, we want to display both the username and the email address
+		// so users can start making the connection between the two immediately. Otherwise, users might
+		// not recognize their username since they didn't created it.
+
+		// translators: %(user) is user's Display Name (Eg Connecting as John Doe) and %(email) is the user's email address
+		let text = translate(
+			'Connecting as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})',
+			{
+				args: { email: this.props.user.email, user: this.props.user.display_name },
+				components: { strong: <strong /> },
+			}
+		);
 
 		if ( authorizeSuccess || this.props.isAlreadyOnSitesList ) {
-			text = translate( 'Connected as {{strong}}%(user)s{{/strong}}', {
-				args: { user: this.props.user.display_name },
-				components: { strong: <strong /> },
-			} );
+			// translators: %(user) is user's Display Name (Eg Connecting as John Doe) and %(email) is the user's email address
+			text = translate(
+				'Connected as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})',
+				{
+					args: { email: this.props.user.email, user: this.props.user.display_name },
+					components: { strong: <strong /> },
+				}
+			);
 		}
 
 		return text;
@@ -591,8 +665,8 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getRedirectionTarget() {
-		const { clientId, homeUrl, jpVersion, redirectAfterAuth } = this.props.authQuery;
-		const { canManageOptions, isAtomic, partnerSlug } = this.props;
+		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
+		const { partnerSlug, selectedPlanSlug } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
@@ -602,47 +676,46 @@ export class JetpackAuthorize extends Component {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
-		const isJetpackVersionSupported = versionCompare( jpVersion, '7.1-alpha', '>=' );
-		const nextRoute =
-			config.isEnabled( 'jetpack/connect/site-questions' ) &&
-			isJetpackVersionSupported &&
-			canManageOptions &&
-			! isAtomic
-				? JPC_PATH_SITE_TYPE
-				: JPC_PATH_PLANS;
+		// If the redirect is part of a Jetpack plan or product go to the checkout page
+		const jetpackCheckoutSlugs = OFFER_RESET_FLOW_TYPES.filter( ( productSlug ) =>
+			productSlug.includes( 'jetpack' )
+		);
+		if ( jetpackCheckoutSlugs.includes( selectedPlanSlug ) ) {
+			// Once we decide we want to redirect the user to the checkout page and that there is a
+			// valid plan, we can safely remove it from the session storage
+			clearPlan();
+			return `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`;
+		}
 
 		return addQueryArgs(
 			{ redirect: redirectAfterAuth },
-			`${ nextRoute }/${ urlToSlug( homeUrl ) }`
+			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
 		);
 	}
 
 	renderFooterLinks() {
 		const { translate } = this.props;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
-		const { blogname, redirectAfterAuth } = this.props.authQuery;
-		const backToWpAdminLink = (
-			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
-				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
-				{ translate( 'Return to %(sitename)s', {
-					args: { sitename: decodeEntities( blogname ) },
-				} ) }
-			</LoggedOutFormLinkItem>
-		);
+		const { from } = this.props.authQuery;
 
 		if ( this.retryingAuth || isAuthorizing || authorizeSuccess || this.redirecting ) {
 			return null;
 		}
 
+		const wooDnaFooterLinks = this.renderWooDnaFooterLinks();
+		if ( wooDnaFooterLinks ) {
+			return wooDnaFooterLinks;
+		}
+
 		return (
 			<LoggedOutFormLinks>
-				{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
+				{ this.renderBackToWpAdminLink() }
 				<LoggedOutFormLinkItem
 					href={ login( {
 						isJetpack: true,
 						isNative: config.isEnabled( 'login/native-login-links' ),
 						redirectTo: window.location.href,
-						isWoo: this.isWooOnboarding(),
+						from,
 					} ) }
 					onClick={ this.handleSignIn }
 				>
@@ -658,10 +731,59 @@ export class JetpackAuthorize extends Component {
 		);
 	}
 
+	renderWooDnaFooterLinks() {
+		const { translate } = this.props;
+		const wooDna = this.getWooDnaConfig();
+		if ( ! wooDna.isWooDnaFlow() ) {
+			return null;
+		}
+		/* translators: pluginName is the name of the Woo extension that initiated the connection flow */
+		const helpButtonLabel = translate( 'Get help setting up %(pluginName)s', {
+			args: {
+				pluginName: wooDna.getServiceName(),
+			},
+		} );
+
+		return (
+			<LoggedOutFormLinks>
+				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
+					{ translate( 'Create a new account or connect as a different user' ) }
+				</LoggedOutFormLinkItem>
+				<JetpackConnectHappychatButton
+					eventName="calypso_jpc_authorize_chat_initiated"
+					label={ helpButtonLabel }
+				>
+					<HelpButton label={ helpButtonLabel } url={ wooDna.getServiceHelpUrl() } />
+				</JetpackConnectHappychatButton>
+				{ this.renderBackToWpAdminLink() }
+			</LoggedOutFormLinks>
+		);
+	}
+
+	renderBackToWpAdminLink() {
+		const { translate } = this.props;
+		const { blogname, redirectAfterAuth } = this.props.authQuery;
+
+		if ( ! this.isWaitingForConfirmation() ) {
+			return null;
+		}
+		return (
+			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
+				<Gridicon size={ 18 } icon="arrow-left" />{ ' ' }
+				{
+					// translators: eg: Return to The WordPress.com Blog
+					translate( 'Return to %(sitename)s', {
+						args: { sitename: decodeEntities( blogname ) },
+					} )
+				}
+			</LoggedOutFormLinkItem>
+		);
+	}
+
 	renderStateAction() {
 		const { authorizeSuccess } = this.props.authorizationData;
 
-		if ( this.props.isSiteBlacklisted ) {
+		if ( this.props.isSiteBlocked ) {
 			return null;
 		}
 
@@ -695,22 +817,37 @@ export class JetpackAuthorize extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
+		const wooDna = this.getWooDnaConfig();
+
+		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
+
 		return (
-			<MainWrapper isWoo={ this.isWooOnboarding() }>
+			<MainWrapper
+				isWoo={ this.isWooOnboarding() }
+				wooDnaConfig={ wooDna }
+				pageTitle={
+					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
+				}
+			>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
 						<QueryUserConnection
 							siteId={ this.props.authQuery.clientId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
-						<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWooOnboarding() } />
+						<AuthFormHeader
+							authQuery={ this.props.authQuery }
+							isWoo={ this.isWooOnboarding() }
+							wooDnaConfig={ wooDna }
+						/>
 						<Card className="jetpack-connect__logged-in-card">
 							<Gravatar user={ this.props.user } size={ 64 } />
 							<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
 							{ this.renderNotices() }
 							{ this.renderStateAction() }
 						</Card>
-						{ this.renderFooterLinks() }
+						{ ! isJetpackMagicLinkSignUpFlow && this.renderFooterLinks() }
 					</div>
 				</div>
 			</MainWrapper>
@@ -724,6 +861,7 @@ const connectComponent = connect(
 		// so any change in value will not execute connect().
 		const mobileAppRedirect = retrieveMobileRedirect();
 		const isMobileAppFlow = !! mobileAppRedirect;
+		const selectedPlanSlug = retrievePlan();
 
 		return {
 			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
@@ -733,15 +871,15 @@ const connectComponent = connect(
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
 			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state, authQuery.site ),
-			isAtomic: isSiteAutomatedTransfer( state, authQuery.clientId ),
 			isFetchingAuthorizationSite: isRequestingSite( state, authQuery.clientId ),
 			isFetchingSites: isRequestingSites( state ),
 			isMobileAppFlow,
-			isSiteBlacklisted: isSiteBlacklistedSelector( state ),
+			isSiteBlocked: isSiteBlockedSelector( state ),
 			isVip: isVipSite( state, authQuery.clientId ),
 			mobileAppRedirect,
 			partnerID: getPartnerIdFromQuery( state ),
 			partnerSlug: getPartnerSlugFromQuery( state ),
+			selectedPlanSlug,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};

@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-
-import { forOwn, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { makeImageURLSafe } from './utils';
 
@@ -23,7 +22,7 @@ export default function safeImagePropertiesForWidth( maxWidth ) {
 			makeImageURLSafe( post.canonical_image, 'uri', maxWidth, post.URL );
 		}
 		if ( post.attachments ) {
-			forOwn( post.attachments, function( attachment ) {
+			Object.values( post.attachments ).forEach( function ( attachment ) {
 				if ( startsWith( attachment.mime_type, 'image/' ) ) {
 					makeImageURLSafe( attachment, 'URL', maxWidth, post.URL );
 				}

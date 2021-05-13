@@ -2,7 +2,7 @@
  * Create a `Users` instance
  *
  * @param {WPCOM} wpcom - wpcom instance
- * @return {Null} null
+ * @returns {null} null
  */
 export default function Users( wpcom ) {
 	if ( ! ( this instanceof Users ) ) {
@@ -15,10 +15,10 @@ export default function Users( wpcom ) {
 /**
  * A list of @mention suggestions for the current user
  *
- * @param {Object} [query] - query object parameter
+ * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
- * @return {Function} request handler
+ * @returns {Function} request handler
  */
-Users.prototype.suggest = function( query, fn ) {
+Users.prototype.suggest = function ( query, fn ) {
 	return this.wpcom.req.get( '/users/suggest', query, fn );
 };

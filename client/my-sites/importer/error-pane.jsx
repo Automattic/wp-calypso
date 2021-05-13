@@ -6,13 +6,14 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import Page from 'page';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 import { Button } from '@automattic/components';
+
+const noop = () => {};
 
 class ImporterError extends React.PureComponent {
 	static displayName = 'ImporterError';
@@ -26,7 +27,7 @@ class ImporterError extends React.PureComponent {
 		retryImport: PropTypes.func,
 	};
 
-	contactSupport = event => {
+	contactSupport = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		Page( '/help' );
@@ -90,7 +91,7 @@ class ImporterError extends React.PureComponent {
 		return actionMessage;
 	};
 
-	retryImport = event => {
+	retryImport = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.retryImport();

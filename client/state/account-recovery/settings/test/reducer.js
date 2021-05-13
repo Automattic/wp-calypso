@@ -20,7 +20,7 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( '#account-recovery reducer fetch:', () => {
 	const expectedState = {

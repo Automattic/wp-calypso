@@ -2,24 +2,38 @@
  * External dependencies
  */
 import React from 'react';
-import { get } from 'lodash';
 import page from 'page';
 
 /**
  * Internal Dependencies
  */
 import CustomerHome from './main';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import { canCurrentUserUseCustomerHome } from 'state/sites/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
 
-export default function( context, next ) {
-	const siteId = getSelectedSiteId( context.store.getState() );
+export default async function ( context, next ) {
+	const state = await context.store.getState();
+	const siteId = await getSelectedSiteId( state );
+
+	const isDev = context.query.dev === 'true';
+	const forcedView = context.query.view;
+	const noticeType = context.query.notice;
+	const shuffle = context.query.hasOwnProperty( 'shuffle' );
+
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <CustomerHome checklistMode={ get( context, 'query.d' ) } key={ siteId } />;
+	context.primary = (
+		<CustomerHome
+			key={ siteId }
+			isDev={ isDev }
+			forcedView={ forcedView }
+			noticeType={ noticeType }
+			shuffleViews={ shuffle }
+		/>
+	);
 
 	next();
 }

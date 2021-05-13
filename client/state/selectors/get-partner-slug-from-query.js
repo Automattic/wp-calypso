@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getPartnerIdFromQuery from 'state/selectors/get-partner-id-from-query';
+import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
 
 /**
  * Returns the partner slug when partner_id is present is the query and the
@@ -10,7 +10,7 @@ import getPartnerIdFromQuery from 'state/selectors/get-partner-id-from-query';
  * @param {object}   state Global state tree
  * @returns {?string}       The partner slug or null
  */
-export const getPartnerSlugFromQuery = function( state ) {
+export const getPartnerSlugFromQuery = function ( state ) {
 	switch ( getPartnerIdFromQuery( state ) ) {
 		case 51945:
 		case 51946:

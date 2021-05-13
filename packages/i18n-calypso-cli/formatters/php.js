@@ -27,6 +27,7 @@ function getGlotPressFunction( properties ) {
 /**
  * Generate each line of equivalent php from a matching `translate()`
  * request found in the client code
+ *
  * @param  {object} properties - properties describing translation request
  * @param  {string} textdomain - optional string to be added as a textdomain value
  * @returns {string}            the equivalent php code for each translation request
@@ -81,7 +82,7 @@ module.exports = function formatInPHP( matches, options ) {
 		'<?php',
 		'/* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */',
 		'$' + arrayName + ' = array(',
-		matches.map( element => buildPHPString( element, options.textdomain ) ).join( '\n' ),
+		matches.map( ( element ) => buildPHPString( element, options.textdomain ) ).join( '\n' ),
 		');',
 		'/* THIS IS THE END OF THE GENERATED FILE */',
 	].join( '\n' );

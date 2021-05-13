@@ -8,12 +8,12 @@ import { useSelector, useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSiteChecklist } from 'state/checklist/actions';
-import isSiteEligibleForFullSiteEditing from 'state/selectors/is-site-eligible-for-full-site-editing';
+import { requestSiteChecklist } from 'calypso/state/checklist/actions';
+import isSiteEligibleForFullSiteEditing from 'calypso/state/selectors/is-site-eligible-for-full-site-editing';
 
 export default function QuerySiteChecklist( { siteId } ) {
 	const dispatch = useDispatch();
-	const isSiteEligibleForFSE = useSelector( state =>
+	const isSiteEligibleForFSE = useSelector( ( state ) =>
 		isSiteEligibleForFullSiteEditing( state, siteId )
 	);
 

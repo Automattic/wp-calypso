@@ -6,16 +6,16 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { noop, flow } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { flow } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import QueryPreferences from 'components/data/query-preferences';
-import { savePreference, setPreference } from 'state/preferences/actions';
-import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import { savePreference, setPreference } from 'calypso/state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 
 /**
  * Style dependencies
@@ -23,11 +23,13 @@ import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/s
 import './style.scss';
 
 const PREFERENCE_PREFIX = 'dismissible-card-';
+const noop = () => {};
 
 class DismissibleCard extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		dismissCard: PropTypes.func,
+		highlight: PropTypes.oneOf( [ 'error', 'info', 'success', 'warning' ] ),
 		isDismissed: PropTypes.bool,
 		temporary: PropTypes.bool,
 		onClick: PropTypes.func,
@@ -39,14 +41,21 @@ class DismissibleCard extends Component {
 	};
 
 	render() {
-		const { className, isDismissed, onClick, dismissCard, hasReceivedPreferences } = this.props;
+		const {
+			className,
+			highlight,
+			isDismissed,
+			onClick,
+			dismissCard,
+			hasReceivedPreferences,
+		} = this.props;
 
 		if ( isDismissed || ! hasReceivedPreferences ) {
 			return null;
 		}
 
 		return (
-			<Card className={ className }>
+			<Card className={ className } highlight={ highlight }>
 				<QueryPreferences />
 				<Gridicon
 					icon="cross"

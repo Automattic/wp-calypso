@@ -1,19 +1,19 @@
-
 // =======================
 // Layout
 // =======================
 
-// Sidebar size limits
-$sidebar-width-max: 272px;
-$sidebar-width-min: 228px;
+:root {
+	// Masterbar
+	--masterbar-height: 46px;
 
+	// Sidebar size limits
+	--sidebar-width-max: 272px;
+	--sidebar-width-min: 228px;
+}
 
 // =======================
 // Components
 // =======================
-
-// Accordion
-$accordion-padding: 16px;
 
 // Badge
 $badge-padding-x: 11px;

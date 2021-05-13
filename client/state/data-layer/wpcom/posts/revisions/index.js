@@ -1,16 +1,13 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { POST_REVISIONS_REQUEST } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receivePostRevisions } from 'state/posts/revisions/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { POST_REVISIONS_REQUEST } from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { receivePostRevisions } from 'calypso/state/posts/revisions/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 /**
  * Dispatches returned post revisions
@@ -32,7 +29,7 @@ export const receiveSuccess = ( { siteId, postId }, response ) =>
  * @param {object} action Redux action
  * @returns {object} Redux action
  */
-export const fetchPostRevisionsDiffs = action => {
+export const fetchPostRevisionsDiffs = ( action ) => {
 	const { siteId, postId, postType, comparisons } = action;
 	return http(
 		{
