@@ -16,6 +16,7 @@ import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
  */
 import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 import WpcomNux from './welcome-modal/wpcom-nux';
+import { DEFAULT_VARIANT, BLANK_CANVAS_VARIANT } from './store';
 
 registerPlugin( 'wpcom-block-editor-nux', {
 	render: function WpcomBlockEditorNux() {
@@ -51,12 +52,12 @@ registerPlugin( 'wpcom-block-editor-nux', {
 
 		// Open patterns panel before Welcome Tour if necessary (e.g. when using Blank Canvas theme)
 		// Do this only when Welcome Tour is not manually opened.
-		if ( variant === 'blank-canvas-tour' && isManuallyOpened ) {
+		if ( variant === BLANK_CANVAS_VARIANT && ! isManuallyOpened ) {
 			setOpenState( 'OPEN_FOR_BLANK_CANVAS' );
 			return null;
 		}
 
-		if ( variant === 'tour' ) {
+		if ( variant === DEFAULT_VARIANT ) {
 			return (
 				<LocaleProvider localeSlug={ window.wpcomBlockEditorNuxLocale ?? i18nDefaultLocaleSlug }>
 					<LaunchWpcomWelcomeTour />;
