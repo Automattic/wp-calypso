@@ -64,7 +64,11 @@ function MarketplacePluginDetails( {
 				products
 			);
 			await replaceProductsInCart( [ yoastProduct ] );
-			page( `/plugins/domain${ selectedSite ? `/${ selectedSite.slug }` : '' }` );
+			page(
+				`/plugins/domain${ selectedSite ? `/${ selectedSite.slug }?flags=marketplace-yoast` : '' }`
+			);
+		} else {
+			alert( 'Not implemented yet' );
 		}
 	};
 
