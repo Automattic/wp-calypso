@@ -103,7 +103,6 @@ export default {
 	redirectTests( context, next ) {
 		const currentFlowName = getFlowName( context.params );
 		currentFlowName === 'onboarding' && loadExperimentAssignment( 'refined_reskin_v2' );
-		currentFlowName === 'launch-site' && loadExperimentAssignment( 'hide_ecommerce_launch_site' );
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
 			next();
 		} else if ( currentFlowName === 'onboarding' ) {
