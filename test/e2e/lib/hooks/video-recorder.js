@@ -6,7 +6,7 @@ import { rename, mkdir, unlink } from 'fs/promises';
 import { createWriteStream } from 'fs';
 import { spawn } from 'child_process';
 import ffmpeg from 'ffmpeg-static';
-import { generatePath } from '../test-utils';
+import { generatePath, getTestNameWithTime } from '../test-utils';
 
 const kill = ( proc ) =>
 	new Promise( ( resolve ) => {
@@ -49,9 +49,7 @@ export const buildHooks = ( displayNum ) => {
 			return;
 		}
 
-		const currentTestName = this.currentTest.title.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-		const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
-		const newFile = generatePath( `screenshots/${ currentTestName }-${ dateTime }.mpg` );
+		const newFile = generatePath( `screenshots/${ getTestNameWithTime( this.currentTest ) }.mpg` );
 		await mkdir( path.dirname( newFile ), { recursive: true } );
 		console.log( `Test failed, saving video recording ${ newFile }` );
 

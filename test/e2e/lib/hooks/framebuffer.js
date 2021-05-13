@@ -4,7 +4,7 @@
 import { spawn } from 'child_process';
 import { access, mkdir, writeFile } from 'fs/promises';
 import path from 'path';
-import { generatePath } from '../test-utils';
+import { generatePath, getTestNameWithTime } from '../test-utils';
 
 export const getFreeDisplay = async () => {
 	// eslint-disable-next-line no-constant-condition
@@ -46,9 +46,7 @@ export const buildHooks = ( displayNum ) => {
 			return;
 		}
 
-		const currentTestName = this.currentTest.title.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-		const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
-		const fileName = generatePath( `screenshots/${ currentTestName }-${ dateTime }.png` );
+		const fileName = generatePath( `screenshots/${ getTestNameWithTime( this.currentTest ) }.png` );
 		await mkdir( path.dirname( fileName ), { recursive: true } );
 
 		const driver = global.__BROWSER__;
