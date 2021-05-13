@@ -106,10 +106,7 @@ class EmailPlan extends React.Component {
 	}
 
 	getAccountType() {
-		if ( this.state.emailAccounts[ 0 ] ) {
-			return this.state.emailAccounts[ 0 ].account_type ?? null;
-		}
-		return null;
+		return this.state?.emailAccounts[ 0 ]?.account_type ?? null;
 	}
 
 	getMailboxes() {
