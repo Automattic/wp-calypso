@@ -25,8 +25,6 @@ import {
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import Item from 'calypso/layout/masterbar/item';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
@@ -83,10 +81,8 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 		undefined
 	);
 	const [ isExpandedBasketView, setIsExpandedBasketView ] = useState( false );
-	const { addProductsToCart, replaceProductsInCart, removeProductFromCart } = useShoppingCart();
-	const products = useSelector( getProductsList );
+	const { addProductsToCart, removeProductFromCart } = useShoppingCart();
 	const previousPath = useSelector( getPreviousPath );
-	const isFetchingProducts = useSelector( isProductsListFetching );
 	const selectedSite = useSelector( getSelectedSite );
 	const domainObject = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSite?.ID )
@@ -100,17 +96,6 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 		setIsExpandedBasketView( isDesktop() );
 		selectedSite && dispatch( fetchSiteDomains( selectedSite.ID ) );
 	}, [ setIsExpandedBasketView, selectedSite, dispatch ] );
-
-	useEffect( () => {
-		//FIXME: This code segment simulates yoast premium already being added when arriving here. To be removed when plugins page is completed.
-		if ( ! isFetchingProducts && products[ 'yoast_premium' ] ) {
-			const yoastProduct = fillInSingleCartItemAttributes(
-				{ product_slug: 'yoast_premium' },
-				products
-			);
-			replaceProductsInCart( [ yoastProduct ] );
-		}
-	}, [ isFetchingProducts, products, replaceProductsInCart ] );
 
 	const redirectToUseDomainFlow = (): void => {
 		const currentUrl = '/plugins/domain';
