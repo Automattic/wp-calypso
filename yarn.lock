@@ -16516,6 +16516,11 @@ jest-snapshot@^26.6.2:
     pretty-format "^26.6.2"
     semver "^7.3.2"
 
+jest-teamcity@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/jest-teamcity/-/jest-teamcity-1.9.0.tgz#e374e2bc583b51acffb2691bb0a66ac3202cc982"
+  integrity sha512-qZv44poGwHZp7JZxizZ08I8wZO4WnZ659XlZR56rcO3z7gx6UXXAzrfjRBMS8yF/e4UIeNWLByjZ1exc3Q4jng==
+
 jest-util@^24.9.0:
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/jest-util/-/jest-util-24.9.0.tgz#7396814e48536d2e85a37de3e4c431d7cb140162"
