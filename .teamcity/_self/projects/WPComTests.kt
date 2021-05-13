@@ -205,7 +205,6 @@ private object VisualRegressionTests : BuildType({
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
-			dockerImage = "%docker_image_e2e%"
 		}
 		bashNodeScript {
 			name = "Run e2e tests (desktop)"
@@ -218,7 +217,6 @@ private object VisualRegressionTests : BuildType({
 				# Run the test
 				yarn test-visual
 			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
 		}
 		bashNodeScript {
 			name = "Collect results"
