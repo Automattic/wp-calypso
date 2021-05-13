@@ -1,12 +1,12 @@
 {
-	"mocha_tests": [ "specs/specs-playwright" ],
-	"mocha_config": "./.mocharc_playwright.yml",
+	"mocha_tests": [ "specs/specs-wpcom" ],
 	"max_test_attempts": 3,
 	"max_workers": 1,
-	"sauce": false,
 	"suiteTag": "parallel",
+	"sauce": false,
 	"framework": "@automattic/testarmada-magellan-mocha-plugin",
 	"reporters": [ "./lib/reporter/magellan-reporter.js" ],
 	"executors": [ "testarmada-magellan-local-executor" ],
-	"bail_time": 300000
+	"local_browser": "chrome",
+	"bail_time": 360000
 }
