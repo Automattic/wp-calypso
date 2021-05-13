@@ -68,6 +68,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 				# mocha-teamcity-reporter to work.
 				export MAGELLANDEBUG=true
+				export TEAMCITY_VERSION="2019"
 
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
