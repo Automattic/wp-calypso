@@ -148,44 +148,54 @@
 	flex-direction: column;
 
 	@include break-xlarge {
+		align-items: center;
 		flex-direction: row;
 	}
 
 	&.card.is-highlight {
 		padding-left: 13px;
 	}
+
 	&.card.is-error {
 		border-left-color: var( --color-error-50 );
 	}
+
 	.email-plan-mailboxes-list__mailbox-list-item-main {
 		display: flex;
 		flex-direction: column;
+
 		> div:not( :first-child ) {
 			margin-top: 0.5em;
 		}
 	}
+
 	&.is-placeholder > span,
 	&.is-placeholder .email-plan-mailboxes-list__mailbox-list-item-main {
 		@include placeholder( --color-neutral-5 );
 		width: 50%;
 	}
+
 	&.no-emails > span {
 		color: var( --color-text-subtle );
 		font-style: italic;
 	}
+
 	> svg,
 	.email-plan-mailboxes-list__mailbox-list-item-main svg {
 		fill: var( --studio-gray-40 );
 		margin-right: 10px;
 		vertical-align: middle;
 	}
+
 	.email-plan-mailboxes-list__mailbox-list-item-main span {
 		vertical-align: middle;
 		word-break: break-all;
 	}
+
 	> .badge {
 		margin-left: 10px;
 	}
+
 	.email-plan-mailboxes-list__mailbox-list-item-warning {
 		border-top: 1px solid var( --color-neutral-5 );
 		color: var( --color-error );
@@ -196,6 +206,7 @@
 
 		@include break-xlarge {
 			border-top: none;
+			flex-grow: 1;
 			margin-left: 16px;
 			margin-right: 16px;
 			margin-top: 0;
@@ -206,6 +217,7 @@
 			margin-right: 6px;
 			vertical-align: middle;
 		}
+
 		> span {
 			vertical-align: middle;
 		}
@@ -213,10 +225,9 @@
 
 	.email-plan-mailboxes-list__mailbox-list-item-action {
 		margin-top: 12px;
+
 		@include break-xlarge {
-			flex: 0.75;
 			margin-top: 0;
-			margin-left: auto;
 		}
 	}
 }
