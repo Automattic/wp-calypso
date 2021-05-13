@@ -42,6 +42,12 @@ class SectionHeaderExample extends PureComponent {
 
 				<h3>{ translate( 'Empty SectionHeader' ) }</h3>
 				<SectionHeader />
+
+				<h3>{ translate( 'Placeholder SectionHeader' ) }</h3>
+				<SectionHeader isPlaceholder />
+
+				<h3>{ translate( 'SectionHeader with popover text' ) }</h3>
+				<SectionHeader label={ translate( 'Team' ) } popoverText={ translate( 'More details' ) } />
 			</div>
 		);
 	}
