@@ -18,7 +18,11 @@ const isVideoEnabled = () => {
 
 export const mochaHooks = async () => {
 	const hooks = {
-		afterAll: [],
+		afterAll: [
+			() => {
+				console.log( 'After all: root' );
+			},
+		],
 		beforeAll: [],
 		afterEach: [],
 	};

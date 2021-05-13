@@ -69,22 +69,3 @@ after( async function () {
 		await driver.executeScript( 'sauce:job-result=' + driver.allPassed );
 	}
 } );
-
-// Quit browser
-after( function () {
-	if ( ! global.__BROWSER__ ) {
-		// Early return if there's no browser, i.e. when all specs were skipped.
-		return;
-	}
-
-	this.timeout( afterHookTimeoutMS );
-	const driver = global.__BROWSER__;
-
-	if (
-		( config.has( 'sauce' ) && config.get( 'sauce' ) ) ||
-		config.get( 'closeBrowserOnComplete' ) === true ||
-		global.isHeadless === true
-	) {
-		return driverManager.quitBrowser( driver );
-	}
-} );
