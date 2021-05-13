@@ -36,9 +36,7 @@ registerPlugin( 'wpcom-block-editor-nux', {
 
 		const { setOpenState } = useDispatch( 'automattic/starter-page-layouts' );
 
-		const { fetchWelcomeGuideStatus, setOpenedPatternsModal } = useDispatch(
-			'automattic/wpcom-welcome-guide'
-		);
+		const { fetchWelcomeGuideStatus } = useDispatch( 'automattic/wpcom-welcome-guide' );
 
 		// On mount check if the WPCOM welcome guide status exists in state (from local storage), otherwise fetch it from the API.
 		useEffect( () => {
@@ -53,9 +51,8 @@ registerPlugin( 'wpcom-block-editor-nux', {
 
 		// Open patterns panel before Welcome Tour if necessary (e.g. when using Blank Canvas theme)
 		// Do this only when Welcome Tour is not manually opened.
-		if ( variant === 'blank-canvas-tour' && ! isManuallyOpened ) {
+		if ( variant === 'blank-canvas-tour' && isManuallyOpened ) {
 			setOpenState( 'OPEN_FOR_BLANK_CANVAS' );
-			setOpenedPatternsModal();
 			return null;
 		}
 
