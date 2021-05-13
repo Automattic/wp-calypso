@@ -48,7 +48,7 @@ import { getStateKey, getErrorKey, commentHasLink, getCommentDate } from './util
 
 const unionById = ( a = [], b = [] ) => [
 	...a,
-	...b.filter( ( { ID: bId } ) => ! a.some( ( { ID: aId } ) => aId === bId ) ),
+	...b.filter( ( bc ) => ! a.some( ( ac ) => ac.ID === bc.ID ) ),
 ];
 
 const isCommentManagementEdit = ( newProperties ) =>

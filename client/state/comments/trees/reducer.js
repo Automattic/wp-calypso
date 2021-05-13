@@ -16,7 +16,7 @@ import { keyedReducer } from 'calypso/state/utils';
 
 const unionByCommentId = ( a = [], b = [] ) => [
 	...a,
-	...b.filter( ( { commentId: bId } ) => ! a.some( ( { commentId: aId } ) => aId === bId ) ),
+	...b.filter( ( bc ) => ! a.some( ( ac ) => ac.commentId === bc.commentId ) ),
 ];
 
 const convertToTree = ( comments ) =>

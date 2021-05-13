@@ -17,7 +17,7 @@ const emptyList = [];
 
 const unionBySlug = ( a = [], b = [] ) => [
 	...a,
-	...b.filter( ( { slug: bSlug } ) => ! a.some( ( { slug: aSlug } ) => aSlug === bSlug ) ),
+	...b.filter( ( be ) => ! a.some( ( ae ) => ae.slug === be.slug ) ),
 ];
 
 export default ( WrappedComponent ) => {
