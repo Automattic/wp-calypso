@@ -585,7 +585,7 @@ export class PluginMeta extends Component {
 								{ this.renderAuthorUrl() } { this.renderSupportedFlag() }
 							</div>
 						</div>
-						{ ! this.props.calypsoify && this.renderActions() }
+						{ this.renderActions() }
 					</div>
 				</Card>
 
