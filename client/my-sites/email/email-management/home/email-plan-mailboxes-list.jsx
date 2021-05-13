@@ -27,9 +27,14 @@ import { resendVerificationEmail } from 'calypso/state/email-forwarding/actions'
 
 const getListHeaderTextForAccountType = ( accountType, translate ) => {
 	if ( accountType === EMAIL_ACCOUNT_TYPE_FORWARD ) {
-		return translate( 'Forwarded mailboxes' );
+		return translate( 'Forwarded mailboxes', {
+			comment:
+				'This is a header for a list of email addresses that forward all emails to another email account',
+		} );
 	}
-	return translate( 'Mailboxes' );
+	return translate( 'Mailboxes', {
+		comment: 'This is a header for a list of email addresses the user owns',
+	} );
 };
 
 const MailboxListHeader = ( { accountType = null, children, isPlaceholder = false } ) => {
