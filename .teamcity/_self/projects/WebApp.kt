@@ -103,8 +103,8 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 
-				# -- is required to avoid https://github.com/facebook/jest/issues/10257
-				yarn jest --maxWorkers=%E2E_WORKERS% --reporters=jest-teamcity -- specs/specs-calypso
+				# --reporters can't be the last arg, see https://github.com/facebook/jest/issues/10257
+				yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% specs/specs-calypso
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
