@@ -30,7 +30,7 @@
 	"types": "dist/types",
 	"dependencies": {
 		"@automattic/typography": "1.0.0",
-		"@automattic/design-picker": "^1.0.1",
+		"@automattic/design-picker": "^1.0.0",
 		"@wordpress/blocks": "^8.0.3",
 		"@wordpress/components": "^13.0.3",
 		"@wordpress/compose": "^3.25.3",
