@@ -59,7 +59,6 @@ class EmailPlan extends React.Component {
 
 	state = {
 		isLoadingEmailAccounts: false,
-		errorLoadingEmailAccounts: false,
 		hasLoadedEmailAccounts: false,
 		emailAccounts: [],
 	};
@@ -89,7 +88,6 @@ class EmailPlan extends React.Component {
 				( data ) => {
 					this.setState( {
 						isLoadingEmailAccounts: false,
-						errorLoadingEmailAccounts: false,
 						hasLoadedEmailAccounts: true,
 						emailAccounts: data?.accounts || [],
 					} );
@@ -97,7 +95,6 @@ class EmailPlan extends React.Component {
 				() => {
 					this.setState( {
 						isLoadingEmailAccounts: false,
-						errorLoadingEmailAccounts: true,
 						hasLoadedEmailAccounts: true,
 						emailAccounts: [],
 					} );
