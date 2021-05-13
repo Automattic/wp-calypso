@@ -25,7 +25,7 @@ describe( 'Design Picker shuffle utils', () => {
 			expect( randomSpy ).toHaveBeenCalledTimes( TEST_ARRAY_MANY.length - 1 );
 		} );
 
-		it( 'should create a new copy of the shuffled array', () => {
+		it( 'should create a new copy of the input array', () => {
 			const shuffled = shuffleArray( TEST_ARRAY_SINGLE );
 
 			// Same array contents, but not referencing the same array value
@@ -36,8 +36,6 @@ describe( 'Design Picker shuffle utils', () => {
 		it( 'should handle empty arrays', () => {
 			const randomSpy = jest.spyOn( Math, 'random' );
 
-			// if Math.random() always returns 0, then the array's first item should
-			// become the last item, while every other item stays in the same order.
 			expect( shuffleArray( TEST_ARRAY_EMPTY ) ).toEqual( TEST_ARRAY_EMPTY );
 			expect( randomSpy ).not.toHaveBeenCalled();
 		} );
