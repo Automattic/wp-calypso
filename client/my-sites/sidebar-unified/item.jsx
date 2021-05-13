@@ -18,16 +18,12 @@ import PropTypes from 'prop-types';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import MySitesSidebarUnifiedStatsSparkline from './sparkline';
-import {
-	collapseAllMySitesSidebarSections,
-	expandMySitesSidebarSection,
-} from 'calypso/state/my-sites/sidebar/actions';
+import { collapseAllMySitesSidebarSections } from 'calypso/state/my-sites/sidebar/actions';
 
 export const MySitesSidebarUnifiedItem = ( {
 	count,
 	icon,
 	isSubItem = false,
-	sectionId,
 	selected = false,
 	slug,
 	title,
@@ -40,7 +36,6 @@ export const MySitesSidebarUnifiedItem = ( {
 
 	const onNavigate = () => {
 		reduxDispatch( collapseAllMySitesSidebarSections() );
-		reduxDispatch( expandMySitesSidebarSection( sectionId ) );
 		window.scrollTo( 0, 0 );
 	};
 
