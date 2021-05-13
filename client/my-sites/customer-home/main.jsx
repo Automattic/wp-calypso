@@ -10,7 +10,6 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -77,22 +76,6 @@ const Home = ( {
 		);
 	}
 
-	const header = (
-		<div className="customer-home__heading">
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'My Home' ) }
-				subHeaderText={ translate( 'Your hub for posting, editing, and growing your site.' ) }
-				align="left"
-			/>
-			<div className="customer-home__view-site-button">
-				<Button href={ site.URL } onClick={ trackViewSiteAction }>
-					{ translate( 'Visit site' ) }
-				</Button>
-			</div>
-		</div>
-	);
-
 	return (
 		<Main wideLayout className="customer-home__main">
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
@@ -107,7 +90,12 @@ const Home = ( {
 				/>
 			) }
 			<SidebarNavigation />
-			{ header }
+			<FormattedHeader
+				brandFont
+				headerText={ translate( 'My Home' ) }
+				subHeaderText={ translate( 'Your hub for posting, editing, and growing your site.' ) }
+				align="left"
+			/>
 			{ layout ? (
 				<>
 					<Primary cards={ layout.primary } />
