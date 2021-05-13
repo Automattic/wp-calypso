@@ -180,6 +180,9 @@ export class AppBanner extends Component {
 					statGroup="calypso_mobile_app_banner"
 					statName="impression"
 				/>
+				<div className={ classNames( 'app-banner__circle', 'is-top-left', 'is-yellow' ) } />
+				<div className={ classNames( 'app-banner__circle', 'is-top-right', 'is-blue' ) } />
+				<div className={ classNames( 'app-banner__circle', 'is-bottom-right', 'is-red' ) } />
 				<div className="app-banner__text-content">
 					<div className="app-banner__title">
 						<span> { title } </span>

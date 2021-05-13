@@ -7,8 +7,40 @@
 	padding: 20px;
 	margin-bottom: 0;
 	box-shadow: 3px -2px 24px 4px rgba( 0, 0, 0, 0.29 );
+	overflow: hidden;
 	/* Needed for banner to appear in front of notifications panel. */
 	z-index: z-index( 'root', '.app-banner' );
+}
+
+.app-banner__circle {
+	position: absolute;
+	border: 2px solid;
+	border-radius: 50%; /* stylelint-disable-line */
+	z-index: z-index( 'root', '.app-banner__background' );
+
+	&.is-blue {
+		border-color: var( --studio-blue-10 );
+		height: 102px;
+		width: 102px;
+		right: -60px;
+		top: -40px;
+	}
+
+	&.is-red {
+		border-color: var( --studio-red-10 );
+		height: 91px;
+		width: 91px;
+		right: 25px;
+		bottom: -30px;
+	}
+
+	&.is-yellow {
+		border-color: var( --studio-yellow-10 );
+		height: 48px;
+		width: 48px;
+		left: -24px;
+		top: -24px;
+	}
 }
 
 .app-banner__text-content {
