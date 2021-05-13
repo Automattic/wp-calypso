@@ -57,12 +57,9 @@ function main() {
 		} else if ( this.subscribeTry === this.subscribeTries ) {
 			const sub_retry_ms = 120000;
 			debug( 'main: polling until next subscribe attempt', 'sub_retry_ms =', sub_retry_ms );
-			setTimeout(
-				function () {
-					this.subscribeTry = 0;
-				}.bind( this ),
-				sub_retry_ms
-			);
+			setTimeout( () => {
+				this.subscribeTry = 0;
+			}, sub_retry_ms );
 		}
 		this.subscribeTry++;
 	}

@@ -344,18 +344,16 @@ class TokenField extends PureComponent {
 		} else {
 			match = match.toLocaleLowerCase();
 
-			suggestions.forEach(
-				function ( suggestion ) {
-					const index = suggestion.toLocaleLowerCase().indexOf( match );
-					if ( this.props.value.indexOf( suggestion ) === -1 ) {
-						if ( index === 0 ) {
-							startsWithMatch.push( suggestion );
-						} else if ( index > 0 ) {
-							containsMatch.push( suggestion );
-						}
+			suggestions.forEach( ( suggestion ) => {
+				const index = suggestion.toLocaleLowerCase().indexOf( match );
+				if ( this.props.value.indexOf( suggestion ) === -1 ) {
+					if ( index === 0 ) {
+						startsWithMatch.push( suggestion );
+					} else if ( index > 0 ) {
+						containsMatch.push( suggestion );
 					}
-				}.bind( this )
-			);
+				}
+			} );
 
 			suggestions = startsWithMatch.concat( containsMatch );
 		}
