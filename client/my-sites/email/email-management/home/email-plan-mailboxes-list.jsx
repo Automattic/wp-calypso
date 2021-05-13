@@ -162,7 +162,10 @@ const TitanActionMenu = () => {
 	const translate = useTranslate();
 
 	return (
-		<EllipsisMenu className="email-plan-mailboxes-list__mailbox-action-menu">
+		<EllipsisMenu
+			popoverClassName="email-plan-mailboxes-list__mailbox-action-menu-popover"
+			className="email-plan-mailboxes-list__mailbox-action-menu"
+		>
 			<PopoverMenuItem
 				href="https://wp.titan.email/mail/"
 				className="email-plan-mailboxes-list__mailbox-action-menu-item"
@@ -201,7 +204,10 @@ const GmailActionMenu = ( { domainName } ) => {
 	const translate = useTranslate();
 
 	return (
-		<EllipsisMenu className="email-plan-mailboxes-list__mailbox-action-menu">
+		<EllipsisMenu
+			className="email-plan-mailboxes-list__mailbox-action-menu"
+			popoverClassName="email-plan-mailboxes-list__mailbox-action-menu-popover"
+		>
 			<PopoverMenuItem
 				className="email-plan-mailboxes-list__mailbox-action-menu-item"
 				isExternalLink={ true }

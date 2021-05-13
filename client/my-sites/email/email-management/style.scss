@@ -149,18 +149,20 @@
 .email-plan-mailboxes-list__mailbox-list {
 	margin-top: 15px;
 }
-.popover__menu > .email-plan-mailboxes-list__mailbox-action-menu-item {
-	display: flex;
-	line-height: 22px;
-	align-items: center;
-	> img {
-		width: 18px;
-		height: 18px;
-		margin-right: 8px;
-		filter: grayscale( 100% );
-	}
-	&.external-link > .gridicons-external {
-		display: none;
+.email-plan-mailboxes-list__mailbox-action-menu-popover {
+	.email-plan-mailboxes-list__mailbox-action-menu-item {
+		display: flex;
+		line-height: 24px;
+		align-items: center;
+		> img {
+			width: 18px;
+			height: 18px;
+			margin-right: 8px;
+			filter: grayscale( 100% );
+		}
+		&.external-link > .gridicons-external {
+			display: none;
+		}
 	}
 }
 .email-plan-mailboxes-list__mailbox-list-item {
