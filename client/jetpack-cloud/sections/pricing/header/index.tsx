@@ -9,7 +9,6 @@ import React from 'react';
  */
 import JetpackComMasterbar from '../jpcom-masterbar';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useExperiment } from 'calypso/lib/explat';
 import { preventWidows } from 'calypso/lib/formatting';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 
@@ -20,18 +19,6 @@ import './style.scss';
 
 const Header: React.FC< Props > = () => {
 	const translate = useTranslate();
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'jetpack_explat_testing'
-	);
-
-	let headerText;
-	if ( isLoadingExperimentAssignment ) {
-		headerText = translate( 'Security, performance, and marketing tools made for WordPress' );
-	} else if ( 'treatment' === experimentAssignment?.variationName ) {
-		headerText = translate( 'Security, performance, and marketing tools made for WordPress' );
-	} else {
-		headerText = translate( 'Security, performance, and marketing tools made for WordPress' );
-	}
 
 	return (
 		<>
@@ -40,7 +27,9 @@ const Header: React.FC< Props > = () => {
 			<div className="header">
 				<FormattedHeader
 					className="header__main-title"
-					headerText={ preventWidows( headerText ) }
+					headerText={ preventWidows(
+						translate( 'Security, performance, and marketing tools made for WordPress' )
+					) }
 					align="center"
 				/>
 			</div>
