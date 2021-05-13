@@ -14,7 +14,7 @@ import type { Browser, BrowserContext, Page } from 'playwright';
 /**
  * Internal dependencies
  */
-import { getVideoDir, getDateString, getLogDir } from './media-helper';
+import { getVideoDir, getDateString, getAssetDir } from './media-helper';
 import { getScreenDimension } from './browser-helper';
 
 /**
@@ -104,12 +104,22 @@ export async function launchBrowser(): Promise< Browser > {
 	} );
 }
 
+/**
+ * Function that writes to a log file.
+ *
+ * @param {Object} param0 Object assembled by caller containing details to be written to logfile.
+ * @param {string} param0.name Debug level.
+ * @param {string} param0.severity Log severity.
+ * @param {string} param0.message Action taken by Playwright library.
+ * @param {string} timestamp Timestamp when the logging handler was created.
+ * @returns {Promise<void>} No return value.
+ */
 async function writeLog(
 	{ name, severity, message }: { name: string; severity: string | Error; message: string | Error },
 	timestamp: string
 ): Promise< void > {
 	await fs.appendFile(
-		`${ getLogDir() }/playwright-${ timestamp }.log`,
+		`${ getAssetDir() }/playwright-${ timestamp }.log`,
 		`${ process.pid } ${ name } ${ severity } ${ message }\n`
 	);
 }

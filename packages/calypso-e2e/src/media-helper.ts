@@ -8,6 +8,11 @@ import path from 'path';
  */
 import { getTargetLocale, getTargetScreenSize } from './browser-helper';
 
+/**
+ * Returns the base asset directory.
+ *
+ * @returns {string} Absolute path to the directory.
+ */
 export function getAssetDir(): string {
 	return path.resolve( process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ) );
 }
@@ -18,10 +23,7 @@ export function getAssetDir(): string {
  * @returns {string} Absolute path to the directory.
  */
 export function getScreenshotDir(): string {
-	return path.resolve(
-		process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ),
-		process.env.SCREENSHOTDIR || 'screenshots'
-	);
+	return path.resolve( getAssetDir(), process.env.SCREENSHOTDIR || 'screenshots' );
 }
 
 /**
@@ -30,14 +32,7 @@ export function getScreenshotDir(): string {
  * @returns {string} Absolute path to the directory.
  */
 export function getVideoDir(): string {
-	return path.resolve(
-		process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ),
-		process.env.VIDEODIR || 'screenshots/videos'
-	);
-}
-
-export function getLogDir(): string {
-	return getAssetDir();
+	return path.resolve( getAssetDir(), process.env.VIDEODIR || 'screenshots/videos' );
 }
 
 /**

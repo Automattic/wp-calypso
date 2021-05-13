@@ -2,13 +2,11 @@
  * External dependencies
  */
 import { Context } from 'mocha';
-import * as fs from 'fs/promises';
 
 /**
  * Internal dependencies
  */
 import { start, close } from '../browser-manager';
-import { getLogDir } from '../media-helper';
 
 /**
  * Hook to start a new Browser instance.
@@ -18,14 +16,6 @@ import { getLogDir } from '../media-helper';
  */
 export async function startBrowser( this: Context ): Promise< void > {
 	this.page = await start();
-}
-
-export async function createLogDir( this: Context ): Promise< void > {
-	const logDir = getLogDir();
-
-	if ( ! fs.access( logDir ) ) {
-		await fs.mkdir( `${ getLogDir() }` );
-	}
 }
 
 /**
