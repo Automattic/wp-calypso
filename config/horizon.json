@@ -18,6 +18,7 @@
 		"automated-transfer": true,
 		"async-payments": false,
 		"ad-tracking": false,
+		"fullstory": false,
 		"blogger-plan": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,

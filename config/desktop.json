@@ -13,6 +13,7 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": true,
+		"fullstory": false,
 		"always_use_logout_url": true,
 		"async-payments": false,
 		"blogger-plan": false,
