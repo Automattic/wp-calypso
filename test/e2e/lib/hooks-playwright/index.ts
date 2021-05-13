@@ -9,11 +9,10 @@ import {
 	startBrowser,
 	closeBrowser,
 	closePage,
-	createLogDir,
 } from '@automattic/calypso-e2e';
 
 export const mochaHooks = {
-	beforeAll: [ createLogDir, startBrowser, clearFailedTest ],
+	beforeAll: [ startBrowser, clearFailedTest ],
 	afterEach: [ saveScreenshot, recordFailedTestName ],
 	afterAll: [ closePage, saveVideo, closeBrowser ],
 };

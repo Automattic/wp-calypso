@@ -8,6 +8,10 @@ import path from 'path';
  */
 import { getTargetLocale, getTargetScreenSize } from './browser-helper';
 
+export function getAssetDir(): string {
+	return path.resolve( process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ) );
+}
+
 /**
  * Returns the screenshot save directory.
  *
@@ -33,10 +37,7 @@ export function getVideoDir(): string {
 }
 
 export function getLogDir(): string {
-	return path.resolve(
-		process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ),
-		process.env.LOGDIR || 'logs'
-	);
+	return getAssetDir();
 }
 
 /**
