@@ -2,42 +2,42 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { hasGSuiteSupportedDomain, hasGSuiteWithUs } from 'calypso/lib/gsuite';
-import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
-import hasLoadedGSuiteUsers from 'calypso/state/selectors/has-loaded-gsuite-users';
+import { Card } from '@automattic/components';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import DocumentHead from 'calypso/components/data/document-head';
+import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
+import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
+import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
+import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import EmptyContent from 'calypso/components/empty-content';
-import DocumentHead from 'calypso/components/data/document-head';
+import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import hasLoadedGSuiteUsers from 'calypso/state/selectors/has-loaded-gsuite-users';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import { hasGSuiteSupportedDomain, hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import { hasTitanMailWithUs } from 'calypso/lib/titan';
+import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
+import Main from 'calypso/components/main';
 import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import EmailProvidersComparison from '../email-providers-comparison';
-import { hasTitanMailWithUs } from 'calypso/lib/titan';
-import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import SectionHeader from 'calypso/components/section-header';
-import { Card } from '@automattic/components';
-import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
-import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
-import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 
 /**
  * Style dependencies
