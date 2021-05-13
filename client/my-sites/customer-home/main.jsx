@@ -16,13 +16,11 @@ import { preventWidows } from 'calypso/lib/formatting';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { canCurrentUserUseCustomerHome, getSiteOption } from 'calypso/state/sites/selectors';
+import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import QueryHomeLayout from 'calypso/components/data/query-home-layout';
 import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
@@ -42,7 +40,6 @@ const Home = ( {
 	layout,
 	site,
 	siteId,
-	trackViewSiteAction,
 	noticeType,
 	shuffleViews,
 } ) => {
@@ -118,51 +115,32 @@ const Home = ( {
 Home.propTypes = {
 	canUserUseCustomerHome: PropTypes.bool.isRequired,
 	isDev: PropTypes.bool,
-	isStaticHomePage: PropTypes.bool.isRequired,
 	forcedView: PropTypes.string,
 	layout: PropTypes.object,
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
-	trackViewSiteAction: PropTypes.func.isRequired,
 	shuffleViews: PropTypes.bool,
 };
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 	const layout = getHomeLayout( state, siteId );
 
 	return {
 		site: getSelectedSite( state ),
 		siteId,
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
-		isStaticHomePage:
-			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 		layout,
 	};
 };
 
-const trackViewSiteAction = ( isStaticHomePage ) =>
-	composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_my_site_view_site_click', {
-			is_static_home_page: isStaticHomePage,
-		} ),
-		bumpStat( 'calypso_customer_home', 'my_site_view_site' )
-	);
-
-const mapDispatchToProps = {
-	trackViewSiteAction,
-};
-
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { isStaticHomePage } = stateProps;
 	return {
 		...ownProps,
 		...stateProps,
-		trackViewSiteAction: () => dispatchProps.trackViewSiteAction( isStaticHomePage ),
 	};
 };
 
-const connectHome = connect( mapStateToProps, mapDispatchToProps, mergeProps );
+const connectHome = connect( mapStateToProps, null, mergeProps );
 
 export default flowRight( connectHome, withTrackingTool( 'HotJar' ) )( Home );
