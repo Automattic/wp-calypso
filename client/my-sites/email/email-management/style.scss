@@ -159,6 +159,9 @@
 		margin-right: 8px;
 		filter: grayscale( 100% );
 	}
+	&.external-link > .gridicons-external {
+		display: none;
+	}
 }
 .email-plan-mailboxes-list__mailbox-list-item {
 	display: flex;
