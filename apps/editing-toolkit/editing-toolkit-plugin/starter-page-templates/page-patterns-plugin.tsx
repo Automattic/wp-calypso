@@ -19,6 +19,7 @@ interface PagePatternsPluginProps {
 
 export function PagePatternsPlugin( props: PagePatternsPluginProps ): JSX.Element {
 	const { setOpenState } = useDispatch( 'automattic/starter-page-layouts' );
+	const { setUsedPageOrPatternsModal } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 	const { editPost } = useDispatch( 'core/editor' );
 	const { toggleFeature } = useDispatch( 'core/edit-post' );
@@ -96,10 +97,15 @@ export function PagePatternsPlugin( props: PagePatternsPluginProps ): JSX.Elemen
 		}
 	}, [ areTipsEnabled, disableTips, isWelcomeGuideActive, toggleFeature ] );
 
+	const handleClose = useCallback( () => {
+		setUsedPageOrPatternsModal();
+		setOpenState( 'CLOSED' );
+	}, [ setOpenState, setUsedPageOrPatternsModal ] );
+
 	return (
 		<PagePatternModal
 			{ ...selectProps }
-			setOpenState={ setOpenState }
+			onClose={ handleClose }
 			savePatternChoice={ savePatternChoice }
 			insertPattern={ insertPattern }
 			hideWelcomeGuide={ hideWelcomeGuide }

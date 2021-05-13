@@ -29,7 +29,7 @@ interface PagePatternModalProps {
 	isWelcomeGuideActive?: boolean;
 	locale?: string;
 	savePatternChoice: ( name: string ) => void;
-	setOpenState: ( isOpen: false ) => void;
+	onClose: () => void;
 	siteInformation?: Record< string, string >;
 	patterns: PatternDefinition[];
 	theme?: string;
@@ -132,7 +132,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		// and reset the pattern if so.
 		if ( 'blank' === name ) {
 			this.props.insertPattern( '', [] );
-			this.props.setOpenState( false );
+			this.props.onClose();
 			return;
 		}
 
@@ -148,12 +148,12 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		// Skip inserting if this is not a blank pattern
 		// and there's nothing to insert.
 		if ( ! blocks || ! blocks.length ) {
-			this.props.setOpenState( false );
+			this.props.onClose();
 			return;
 		}
 
 		this.props.insertPattern( title, blocks );
-		this.props.setOpenState( false );
+		this.props.onClose();
 	};
 
 	handleCategorySelection = ( selectedCategory: string | null ) => {
@@ -162,7 +162,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 
 	closeModal = () => {
 		trackDismiss();
-		this.props.setOpenState( false );
+		this.props.onClose();
 	};
 
 	getBlocksByPatternSlug( name: string ) {
