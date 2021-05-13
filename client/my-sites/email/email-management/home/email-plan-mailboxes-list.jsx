@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
 import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
 import Badge from 'calypso/components/badge';
@@ -24,12 +25,22 @@ import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resendVerificationEmail } from 'calypso/state/email-forwarding/actions';
 
-const MailboxListHeader = ( { children } ) => {
+const getListHeaderTextForAccountType = ( accountType, translate ) => {
+	if ( accountType === EMAIL_ACCOUNT_TYPE_FORWARD ) {
+		return translate( 'Forwarded mailboxes' );
+	}
+	return translate( 'Mailboxes' );
+};
+
+const MailboxListHeader = ( { accountType = null, children, isPlaceholder = false } ) => {
 	const translate = useTranslate();
 
 	return (
 		<div className="email-plan-mailboxes-list__mailbox-list">
-			<SectionHeader label={ translate( 'Mailboxes' ) } />
+			<SectionHeader
+				isPlaceholder={ isPlaceholder }
+				label={ getListHeaderTextForAccountType( accountType, translate ) }
+			/>
 			{ children }
 		</div>
 	);
@@ -109,13 +120,13 @@ const getActionsForMailbox = ( mailbox, translate, dispatch ) => {
 	};
 };
 
-function EmailPlanMailboxesList( { mailboxes, isLoadingEmails } ) {
+function EmailPlanMailboxesList( { accountType, mailboxes, isLoadingEmails } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	if ( isLoadingEmails ) {
 		return (
-			<MailboxListHeader>
+			<MailboxListHeader isPlaceholder accountType={ accountType }>
 				<MailboxListItem isPlaceholder>
 					<MaterialIcon icon="email" />
 					<span />
@@ -126,7 +137,7 @@ function EmailPlanMailboxesList( { mailboxes, isLoadingEmails } ) {
 
 	if ( ! mailboxes || mailboxes.length < 1 ) {
 		return (
-			<MailboxListHeader>
+			<MailboxListHeader accountType={ accountType }>
 				<MailboxListItem hasNoEmails>
 					<span>{ translate( 'No mailboxes' ) }</span>
 				</MailboxListItem>
@@ -161,10 +172,11 @@ function EmailPlanMailboxesList( { mailboxes, isLoadingEmails } ) {
 		);
 	} );
 
-	return <MailboxListHeader>{ mailboxItems }</MailboxListHeader>;
+	return <MailboxListHeader accountType={ accountType }>{ mailboxItems }</MailboxListHeader>;
 }
 
 EmailPlanMailboxesList.propTypes = {
+	accountType: PropTypes.string,
 	mailboxes: PropTypes.array,
 	isLoadingEmails: PropTypes.bool,
 };
