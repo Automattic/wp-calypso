@@ -21,7 +21,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
-import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import {
 	getSelectedSite,
@@ -29,13 +28,11 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import hasLoadedGSuiteUsers from 'calypso/state/selectors/has-loaded-gsuite-users';
-import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { hasGSuiteSupportedDomain, hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import Main from 'calypso/components/main';
-import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SectionHeader from 'calypso/components/section-header';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
@@ -49,8 +46,6 @@ class EmailManagementHome extends React.Component {
 	static propTypes = {
 		canManageSite: PropTypes.bool.isRequired,
 		domains: PropTypes.array.isRequired,
-		gsuiteUsers: PropTypes.array,
-		hasGSuiteUsersLoaded: PropTypes.bool.isRequired,
 		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string,
 		selectedSiteId: PropTypes.number.isRequired,
@@ -159,7 +154,6 @@ class EmailManagementHome extends React.Component {
 
 		return (
 			<Main wideLayout>
-				{ selectedSiteId && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<DocumentHead title={ translate( 'Emails' ) } />
 				<SidebarNavigation />
@@ -191,8 +185,6 @@ export default connect( ( state ) => {
 		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
 		currentRoute: getCurrentRoute( state ),
 		domains: getDomainsBySiteId( state, selectedSiteId ),
-		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
-		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
 		hasSitesLoaded: hasLoadedSites( state ),
 		previousRoute: getPreviousRoute( state ),
