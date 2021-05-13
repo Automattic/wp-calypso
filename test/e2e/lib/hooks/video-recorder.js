@@ -1,20 +1,87 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
-import * as videoRecorder from '../video-recorder';
+import path from 'path';
+import { rename, mkdir, unlink } from 'fs/promises';
+import { createWriteStream } from 'fs';
+import { spawn } from 'child_process';
+import ffmpeg from 'ffmpeg-static';
+import { generatePath } from '../test-utils';
 
-export const startVideo = async function () {
-	await videoRecorder.startDisplay();
-	await videoRecorder.startVideo();
-};
+const kill = ( proc ) =>
+	new Promise( ( resolve ) => {
+		proc.on( 'close', resolve );
+		proc.kill();
+	} );
 
-export const takeScreenshot = async function () {
-	if ( this.currentTest && this.currentTest.state === 'failed' ) {
-		await videoRecorder.takeScreenshot( this.currentTest );
+export const buildHooks = ( displayNum ) => {
+	let file;
+	let ffVideo;
+
+	const startVideoRecording = async () => {
+		console.log( `Start video recording on port :${ displayNum }}` );
+		const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
+		file = generatePath( `screenshots/${ displayNum }-${ dateTime }.mpg` );
+		await mkdir( path.dirname( file ), { recursive: true } );
+
+		const logging = createWriteStream( generatePath( 'ffmpeg.log' ), { flags: 'a' } );
+		ffVideo = spawn( ffmpeg.path, [
+			'-f',
+			'x11grab',
+			'-video_size',
+			'1440x1000',
+			'-r',
+			30,
+			'-i',
+			`:${ displayNum }`,
+			'-pix_fmt',
+			'yuv420p',
+			'-loglevel',
+			'info',
+			file,
+		] );
+		ffVideo.stdout.pipe( logging );
+		ffVideo.stderr.pipe( logging );
+	};
+
+	async function saveVideoRecording() {
+		if ( ! this.currentTest || this.currentTest.state !== 'failed' ) {
+			return;
+		}
+
+		const currentTestName = this.currentTest.title.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
+		const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
+		const newFile = generatePath( `screenshots/${ currentTestName }-${ dateTime }.mpg` );
+		await mkdir( path.dirname( newFile ), { recursive: true } );
+		console.log( `Test failed, saving video recording ${ newFile }` );
+
+		await kill( ffVideo );
+		try {
+			await rename( file, newFile );
+		} catch ( err ) {
+			console.warn(
+				'Got an error trying to save the recorded video. This IS NOT causing the test to break, is just a warning'
+			);
+			console.warn( 'Original error:' );
+			console.warn( err );
+		}
 	}
-};
 
-export const stopVideo = async function () {
-	await videoRecorder.stopVideo();
-	await videoRecorder.stopDisplay();
+	const stopVideoRecording = async () => {
+		if ( ! ffVideo || ffVideo.killed ) return;
+
+		console.log( `Stopped recording` );
+		await kill( ffVideo );
+		try {
+			await unlink( file );
+		} catch ( err ) {
+			console.warn(
+				'Got an error trying to clean up the recorded video. This IS NOT causing the test to break, is just a warning'
+			);
+			console.warn( 'Original error:' );
+			console.warn( err );
+		}
+	};
+
+	return { startVideoRecording, saveVideoRecording, stopVideoRecording };
 };
