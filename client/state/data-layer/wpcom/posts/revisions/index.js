@@ -1,27 +1,24 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { POST_REVISIONS_REQUEST } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receivePostRevisions } from 'state/posts/revisions/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { POST_REVISIONS_REQUEST } from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { receivePostRevisions } from 'calypso/state/posts/revisions/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 /**
  * Dispatches returned post revisions
  *
- * @param {Object} action Redux action
- * @param {String} action.siteId of the revisions
- * @param {String} action.postId of the revisions
- * @param {Object} response from the server
- * @param {Object} response.diffs raw data containing a set of diffs for the site & post
+ * @param {object} action Redux action
+ * @param {string} action.siteId of the revisions
+ * @param {string} action.postId of the revisions
+ * @param {object} response from the server
+ * @param {object} response.diffs raw data containing a set of diffs for the site & post
  *
- * @return {Array} An array of Redux actions
+ * @returns {Array} An array of Redux actions
  */
 export const receiveSuccess = ( { siteId, postId }, response ) =>
 	receivePostRevisions( { siteId, postId, ...response } );
@@ -29,10 +26,10 @@ export const receiveSuccess = ( { siteId, postId }, response ) =>
 /**
  * Dispatches a request to fetch post revisions
  *
- * @param {Object} action Redux action
- * @return {Object} Redux action
+ * @param {object} action Redux action
+ * @returns {object} Redux action
  */
-export const fetchPostRevisionsDiffs = action => {
+export const fetchPostRevisionsDiffs = ( action ) => {
 	const { siteId, postId, postType, comparisons } = action;
 	return http(
 		{

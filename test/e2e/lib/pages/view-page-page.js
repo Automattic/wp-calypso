@@ -25,11 +25,11 @@ export default class ViewPagePage extends AsyncBaseContainer {
 	}
 
 	async sharingButtonsVisible() {
-		return await driverHelper.isElementPresent( this.driver, By.css( 'div.sd-sharing' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( 'div.sd-sharing' ) );
 	}
 
 	async isPasswordProtected() {
-		return await driverHelper.isElementPresent( this.driver, By.css( 'form.post-password-form' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( 'form.post-password-form' ) );
 	}
 
 	async categoryDisplayed() {
@@ -60,19 +60,19 @@ export default class ViewPagePage extends AsyncBaseContainer {
 		const imageElement = await this.driver.findElement(
 			By.css( `img[alt='${ fileDetails.imageName }']` )
 		);
-		return await driverHelper.imageVisible( this.driver, imageElement );
+		return await driverHelper.isImageVisible( this.driver, imageElement );
 	}
 
-	async paymentButtonDisplayed() {
+	async paymentButtonDisplayed( retries = 3 ) {
+		if ( retries <= 0 ) return false;
 		let paymentButtonFrontEndComponent;
 		try {
 			paymentButtonFrontEndComponent = await PaymentButtonFrontEndComponent.Expect( this.driver );
+			return await paymentButtonFrontEndComponent.displayed();
 		} catch ( e ) {
-			this.driver.navigate().refresh();
-			paymentButtonFrontEndComponent = await PaymentButtonFrontEndComponent.Expect( this.driver );
+			await this.driver.navigate().refresh();
+			return await this.paymentButtonDisplayed( retries-- );
 		}
-
-		return await paymentButtonFrontEndComponent.displayed();
 	}
 
 	async clickPaymentButton() {

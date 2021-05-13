@@ -4,8 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
-import { noop } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -16,6 +15,8 @@ import { Button } from '@automattic/components';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 const BackButton = ( { onClick, translate } ) => {
 	return (

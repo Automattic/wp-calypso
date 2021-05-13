@@ -2,7 +2,7 @@
  * Mapping from Calypso panel slug to tuple of focus key and value.
  *
  *
- * @type {Object}
+ * @type {object}
  */
 
 export const PANEL_MAPPINGS = {
@@ -12,6 +12,8 @@ export const PANEL_MAPPINGS = {
 	'custom-css': [ 'section', 'jetpack_custom_css' ],
 	amp: [ 'section', 'amp_design' ],
 	menus: [ 'panel', 'nav_menus' ],
+	homepage: [ 'section', 'static_front_page' ],
+	jetpack_search: [ 'section', 'jetpack_search' ],
 };
 
 /**
@@ -19,8 +21,8 @@ export const PANEL_MAPPINGS = {
  * the section or panel to be used in autofocus. Returns null if the panel is
  * not recognized.
  *
- * @param  {String}  panel Calypso panel slug
- * @return {?Object}       WordPress autofocus argument object
+ * @param  {string}  panel Calypso panel slug
+ * @returns {?object}       WordPress autofocus argument object
  */
 export function getCustomizerFocus( panel ) {
 	if ( PANEL_MAPPINGS.hasOwnProperty( panel ) ) {

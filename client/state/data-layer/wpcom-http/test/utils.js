@@ -11,9 +11,9 @@ import {
 } from '../utils.js';
 
 describe( 'WPCOM HTTP Data Layer', () => {
-	const withData = data => ( { type: 'SLUGGER', meta: { dataLayer: { data } } } );
-	const withError = error => ( { type: 'SLUGGER', meta: { dataLayer: { error } } } );
-	const withProgress = progress => ( {
+	const withData = ( data ) => ( { type: 'SLUGGER', meta: { dataLayer: { data } } } );
+	const withError = ( error ) => ( { type: 'SLUGGER', meta: { dataLayer: { error } } } );
+	const withProgress = ( progress ) => ( {
 		type: 'UPLOAD_PROGRESS',
 		meta: { dataLayer: { progress } },
 	} );
@@ -104,8 +104,6 @@ describe( 'WPCOM HTTP Data Layer', () => {
 
 			expect( next ).toMatchObject( { dogs: { lastUpdated: 1000 } } );
 		} );
-
-		test( 'should not care if pending flag is persisted', () => {} );
 	} );
 
 	describe( '#trackRequests', () => {
@@ -214,7 +212,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		} );
 
 		test( 'should pass data to fromApi for validation', () => {
-			const fromApi = jest.fn( input => input );
+			const fromApi = jest.fn( ( input ) => input );
 			dispatchRequest( { fetch, onSuccess, onError, fromApi } )( store, successHttpAction );
 			expect( fromApi ).toHaveBeenCalledWith( successHttpAction.meta.dataLayer.data );
 			expect( dispatch ).toHaveBeenCalledWith( successAction );
@@ -233,7 +231,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		} );
 
 		test( 'should return result of fromApi', () => {
-			const fromApi = input => `Hello, ${ input }!`;
+			const fromApi = ( input ) => `Hello, ${ input }!`;
 			const action = {
 				type: 'REFILL',
 				meta: { dataLayer: { data: 'world' } },

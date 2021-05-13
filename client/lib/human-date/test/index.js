@@ -6,6 +6,7 @@
  * Internal dependencies
  */
 import humanDate from '..';
+import moment from 'moment';
 
 describe( 'humanDate', () => {
 	it( 'should work without a provided format or locale', () => {
@@ -37,8 +38,8 @@ describe( 'humanDate', () => {
 	} );
 
 	it( 'should return a formatted date for dates older than a week', () => {
-		const thirtyDaysAgo = new Date( '2000-01-01' );
-		expect( humanDate( thirtyDaysAgo, 'll', 'en' ) ).toBe( 'Jan 1, 2000' );
-		expect( humanDate( thirtyDaysAgo, 'l', 'en' ) ).toBe( '1/1/2000' );
+		const overThirtyDaysAgo = moment.utc( new Date( '2000-01-01' ) );
+		expect( humanDate( overThirtyDaysAgo, 'll', 'en' ) ).toBe( 'Jan 1, 2000' );
+		expect( humanDate( overThirtyDaysAgo, 'l', 'en' ) ).toBe( '1/1/2000' );
 	} );
 } );

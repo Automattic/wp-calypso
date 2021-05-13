@@ -6,15 +6,15 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { refreshSitePlans } from 'state/sites/plans/actions';
-import { SITE_PLAN_OWNERSHIP_TRANSFER } from 'state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
+import { SITE_PLAN_OWNERSHIP_TRANSFER } from 'calypso/state/action-types';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-const noticeOptions = siteId => ( {
+const noticeOptions = ( siteId ) => ( {
 	duration: 8000,
 	id: `sites-plan-transfer-notice-${ siteId }`,
 } );
@@ -22,10 +22,10 @@ const noticeOptions = siteId => ( {
 /**
  * Dispatches a request to transfer a site's plan to another user.
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched http action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched http action
  */
-export const requestPlanOwnershipTransfer = action =>
+export const requestPlanOwnershipTransfer = ( action ) =>
 	http(
 		{
 			apiVersion: '1',
@@ -41,8 +41,8 @@ export const requestPlanOwnershipTransfer = action =>
 /**
  * Dispatches a success notice when the request succeeded.
  *
- * @param   {Object} action Redux action
- * @returns {Object} Success notice action
+ * @param   {object} action Redux action
+ * @returns {object} Success notice action
  */
 export const handleTransferSuccess = ( { siteId } ) => [
 	successNotice(
@@ -55,9 +55,9 @@ export const handleTransferSuccess = ( { siteId } ) => [
 /**
  * Dispatches an error notice when the request failed.
  *
- * @param   {Object} action Redux action
- * @param   {Object} error  Error object
- * @returns {Object} Error notice action
+ * @param   {object} action Redux action
+ * @param   {object} error  Error object
+ * @returns {object} Error notice action
  */
 export const handleTransferError = ( { siteId }, { message } ) =>
 	errorNotice( message, noticeOptions( siteId ) );

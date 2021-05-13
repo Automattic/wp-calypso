@@ -1,5 +1,5 @@
 /**
- * @fileoverview Ensure placeholder counts match between singular and plural strings
+ * @file Ensure placeholder counts match between singular and plural strings
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -16,16 +16,16 @@ const RX_PLACEHOLDERS = /(?:\x25\x25)|(\x25(?:(?:[1-9]\d*)\$|\((?:[^\)]+)\))?(?:
 // Helper Functions
 //------------------------------------------------------------------------------
 
-const getCallee = require( '../util/get-callee' ),
-	getTextContentFromNode = require( '../util/get-text-content-from-node' );
+const getCallee = require( '../util/get-callee' );
+const getTextContentFromNode = require( '../util/get-text-content-from-node' );
 
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const rule = ( module.exports = function( context ) {
+const rule = ( module.exports = function ( context ) {
 	return {
-		CallExpression: function( node ) {
+		CallExpression: function ( node ) {
 			if ( 'translate' !== getCallee( node ).name ) {
 				return;
 			}

@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_RECEIVE_PLUGINS,
@@ -18,11 +18,11 @@ import {
  * Returns the updated plugins requesting state after an action has been dispatched.
  * Requesting state tracks whether a plugins request is in progress for a site.
  *
- * @param  {Object} state Current requesting state
- * @param  {Object} action Action object
- * @return {Object} Updated requesting state
+ * @param  {object} state Current requesting state
+ * @param  {object} action Action object
+ * @returns {object} Updated requesting state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_REQUEST_PLUGINS: {
 			const { siteId } = action;
@@ -47,17 +47,17 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated plugin toggling state after an action has been dispatched.
  * Toggling state tracks whether a WPSC plugin on a site is currently being toggled.
  *
- * @param  {Object} state Current toggling state
- * @param  {Object} action Action object
- * @return {Object} Updated saving state
+ * @param  {object} state Current toggling state
+ * @param  {object} action Action object
+ * @returns {object} Updated saving state
  */
-export const toggling = withoutPersistence( ( state = {}, action ) => {
+export const toggling = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_TOGGLE_PLUGIN: {
 			const { siteId, plugin } = action;
@@ -92,14 +92,14 @@ export const toggling = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Tracks the plugins for a particular site.
  *
- * @param  {Object} state Current plugins
- * @param  {Object} action Action object
- * @return {Object} Updated plugins
+ * @param  {object} state Current plugins
+ * @param  {object} action Action object
+ * @returns {object} Updated plugins
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

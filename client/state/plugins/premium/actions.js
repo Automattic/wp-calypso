@@ -1,16 +1,18 @@
 /**
  * External dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import { get, keys } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import versionCompare from 'lib/version-compare';
+import versionCompare from 'calypso/lib/version-compare';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import {
+	PLUGIN_INSTALL_REQUEST,
+	PLUGIN_INSTALL_REQUEST_FAILURE,
+	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
 	PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
 	PLUGIN_SETUP_INSTALL,
@@ -18,16 +20,18 @@ import {
 	PLUGIN_SETUP_CONFIGURE,
 	PLUGIN_SETUP_FINISH,
 	PLUGIN_SETUP_ERROR,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/plugins/init';
 
 /**
  *  Local variables;
  */
 const _fetching = {};
 
-const normalizePluginInstructions = data => {
+const normalizePluginInstructions = ( data ) => {
 	const _plugins = data.keys;
-	return keys( _plugins ).map( slug => {
+	return keys( _plugins ).map( ( slug ) => {
 		const apiKey = _plugins[ slug ];
 		return {
 			slug: slug,
@@ -42,9 +46,9 @@ const normalizePluginInstructions = data => {
 /**
  * Return a SitePlugin instance used to handle the plugin
  *
- * @param {Object} site - site object
- * @param {String} plugin - plugin identifier
- * @return {SitePlugin} SitePlugin instance
+ * @param {object} site - site object
+ * @param {string} plugin - plugin identifier
+ * @returns {any} SitePlugin instance
  */
 const getPluginHandler = ( site, plugin ) => {
 	const siteHandler = wpcom.site( site.ID );
@@ -53,13 +57,11 @@ const getPluginHandler = ( site, plugin ) => {
 };
 
 function install( site, plugin, dispatch ) {
-	Dispatcher.handleViewAction( {
-		type: 'INSTALL_PLUGIN',
-		action: 'INSTALL_PLUGIN',
-		site: site,
-		plugin: plugin,
-		data: null,
-		error: null,
+	dispatch( {
+		type: PLUGIN_INSTALL_REQUEST,
+		action: INSTALL_PLUGIN,
+		siteId: site.ID,
+		pluginId: plugin.id,
 	} );
 
 	if ( plugin.active ) {
@@ -74,7 +76,14 @@ function install( site, plugin, dispatch ) {
 
 	getPluginHandler( site, plugin.slug )
 		.install()
-		.then( data => {
+		.then( ( data ) => {
+			dispatch( {
+				type: PLUGIN_INSTALL_REQUEST_SUCCESS,
+				action: INSTALL_PLUGIN,
+				siteId: site.ID,
+				pluginId: plugin.id,
+				data,
+			} );
 			dispatch( {
 				type: PLUGIN_SETUP_ACTIVATE,
 				siteId: site.ID,
@@ -84,7 +93,7 @@ function install( site, plugin, dispatch ) {
 			data.key = plugin.key;
 			activate( site, data, dispatch );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			if ( error.name === 'PluginAlreadyInstalledError' ) {
 				update( site, plugin, dispatch );
 			} else {
@@ -94,13 +103,12 @@ function install( site, plugin, dispatch ) {
 					slug: plugin.slug,
 					error,
 				} );
-				Dispatcher.handleServerAction( {
-					type: 'RECEIVE_INSTALLED_PLUGIN',
-					action: 'INSTALL_PLUGIN',
-					site: site,
-					plugin: plugin,
-					data: null,
-					error: error,
+				dispatch( {
+					type: PLUGIN_INSTALL_REQUEST_FAILURE,
+					action: INSTALL_PLUGIN,
+					siteId: site.ID,
+					pluginId: plugin.id,
+					error,
 				} );
 			}
 		} );
@@ -109,7 +117,7 @@ function install( site, plugin, dispatch ) {
 function update( site, plugin, dispatch ) {
 	getPluginHandler( site, plugin.id )
 		.updateVersion()
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( {
 				type: PLUGIN_SETUP_ACTIVATE,
 				siteId: site.ID,
@@ -119,38 +127,36 @@ function update( site, plugin, dispatch ) {
 			data.key = plugin.key;
 			activate( site, data, dispatch );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( {
 				type: PLUGIN_SETUP_ERROR,
 				siteId: site.ID,
 				slug: plugin.slug,
 				error,
 			} );
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_INSTALLED_PLUGIN',
-				action: 'INSTALL_PLUGIN',
-				site: site,
-				plugin: plugin,
-				data: null,
-				error: error,
+			dispatch( {
+				type: PLUGIN_INSTALL_REQUEST_FAILURE,
+				action: INSTALL_PLUGIN,
+				siteId: site.ID,
+				pluginId: plugin.id,
+				error,
 			} );
 		} );
 }
 
 function activate( site, plugin, dispatch ) {
-	const success = data => {
+	const success = ( data ) => {
 		dispatch( {
 			type: PLUGIN_SETUP_CONFIGURE,
 			siteId: site.ID,
 			slug: data.slug,
 		} );
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_INSTALLED_PLUGIN',
-			action: 'INSTALL_PLUGIN',
-			site: site,
-			plugin: data,
-			data: data,
-			error: null,
+		dispatch( {
+			type: PLUGIN_INSTALL_REQUEST_SUCCESS,
+			action: INSTALL_PLUGIN,
+			siteId: site.ID,
+			pluginId: plugin.id,
+			data,
 		} );
 
 		autoupdate( site, data );
@@ -160,7 +166,7 @@ function activate( site, plugin, dispatch ) {
 	getPluginHandler( site, plugin.id )
 		.activate()
 		.then( success )
-		.catch( error => {
+		.catch( ( error ) => {
 			if ( error.name === 'ActivationErrorError' || error.name === 'ActivationError' ) {
 				// Technically it failed, but only because it's already active.
 				success( plugin );
@@ -172,13 +178,12 @@ function activate( site, plugin, dispatch ) {
 				slug: plugin.slug,
 				error,
 			} );
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_INSTALLED_PLUGIN',
-				action: 'INSTALL_PLUGIN',
-				site: site,
-				plugin: plugin,
-				data: null,
-				error: error,
+			dispatch( {
+				type: PLUGIN_INSTALL_REQUEST_FAILURE,
+				action: INSTALL_PLUGIN,
+				siteId: site.ID,
+				pluginId: plugin.id,
+				error,
 			} );
 		} );
 }
@@ -290,7 +295,7 @@ function configure( site, plugin, dispatch ) {
 }
 
 export function fetchInstallInstructions( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		if ( _fetching[ siteId ] ) {
 			return;
 		}
@@ -325,7 +330,7 @@ export function fetchInstallInstructions( siteId ) {
 }
 
 export function installPlugin( plugin, site ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		// Starting Install
 		dispatch( {
 			type: PLUGIN_SETUP_INSTALL,

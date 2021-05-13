@@ -30,6 +30,22 @@ describe( 'isEligibleForDotcomChecklist()', () => {
 		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
 	} );
 
+	test( 'should return false for a WP for Teams site', () => {
+		const state = {
+			sites: {
+				items: {
+					99: {
+						options: {
+							is_wpforteams_site: true,
+						},
+					},
+				},
+			},
+		};
+
+		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
+	} );
+
 	test( 'should return true for recent simple sites', () => {
 		const state = {
 			sites: {
@@ -46,7 +62,7 @@ describe( 'isEligibleForDotcomChecklist()', () => {
 		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( true );
 	} );
 
-	test( 'should return true for recent AT sites', () => {
+	test( 'should return false for recent AT sites, because the checklist is not fully supported', () => {
 		const state = {
 			sites: {
 				items: {
@@ -60,7 +76,7 @@ describe( 'isEligibleForDotcomChecklist()', () => {
 			},
 		};
 
-		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( true );
+		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
 	} );
 
 	test( 'should return false for AT sites without a created_at option', () => {
@@ -96,7 +112,7 @@ describe( 'isEligibleForDotcomChecklist()', () => {
 		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
 	} );
 
-	test( 'should return true for recent AT non-store sites', () => {
+	test( 'should return false for recent AT non-store sites', () => {
 		const state = {
 			sites: {
 				items: {
@@ -111,10 +127,10 @@ describe( 'isEligibleForDotcomChecklist()', () => {
 			},
 		};
 
-		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( true );
+		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
 	} );
 
-	test( 'should return true for recent AT store sites', () => {
+	test( 'should return false for recent AT store sites', () => {
 		const state = {
 			sites: {
 				items: {
@@ -130,6 +146,6 @@ describe( 'isEligibleForDotcomChecklist()', () => {
 			},
 		};
 
-		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( true );
+		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
 	} );
 } );

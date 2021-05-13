@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { withoutHttp } from 'lib/url';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getRawSite from 'state/selectors/get-raw-site';
-import getSiteOptions from 'state/selectors/get-site-options';
+import { withoutHttp } from 'calypso/lib/url';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import getSiteOptions from 'calypso/state/selectors/get-site-options';
 import getSiteDomain from './get-site-domain';
 import getSiteOption from './get-site-option';
 import getSiteSlug from './get-site-slug';
@@ -16,9 +16,9 @@ import isSitePreviewable from './is-site-previewable';
 /**
  * Returns computed properties of the site object.
  *
- * @param    {Object}      state    Global state tree
- * @param    {Number}      siteId   Site ID
- * @returns  {?Object}              Site computed properties or null
+ * @param    {object}      state    Global state tree
+ * @param    {number}      siteId   Site ID
+ * @returns  {?object}              Site computed properties or null
  */
 export default function getSiteComputedAttributes( state, siteId ) {
 	const site = getRawSite( state, siteId );
@@ -29,7 +29,7 @@ export default function getSiteComputedAttributes( state, siteId ) {
 	const computedAttributes = {
 		domain: getSiteDomain( state, siteId ),
 		hasConflict: isSiteConflicting( state, siteId ),
-		is_customizable: !! canCurrentUser( state, siteId, 'edit_theme_options' ),
+		is_customizable: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		is_previewable: !! isSitePreviewable( state, siteId ),
 		options: getSiteOptions( state, siteId ),
 		slug: getSiteSlug( state, siteId ),

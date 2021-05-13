@@ -7,18 +7,18 @@ import {
 	BILLING_TRANSACTION_REQUEST,
 	BILLING_TRANSACTION_REQUEST_FAILURE,
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
 /**
  * Returns the updated requests state after an action has been dispatched.
  * The state is a Boolean - true if a transaction is being requested
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Boolean}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {boolean}        Updated state
  */
-export const requesting = withoutPersistence( ( state = false, action ) => {
+export const requesting = ( state = false, action ) => {
 	switch ( action.type ) {
 		case BILLING_TRANSACTION_REQUEST:
 			return true;
@@ -29,17 +29,17 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated error state after an action has been dispatched.
  * The state is a Boolean - true if a transaction request has failed
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Boolean}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {boolean}        Updated state
  */
-export const error = withoutPersistence( ( state = false, action ) => {
+export const error = ( state = false, action ) => {
 	switch ( action.type ) {
 		case BILLING_TRANSACTION_REQUEST_FAILURE:
 			return true;
@@ -50,17 +50,17 @@ export const error = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated data state after an action has been dispatched.
  * The state contains the transaction data after a successful fetch
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export const data = withoutPersistence( ( state = null, action ) => {
+export const data = ( state = null, action ) => {
 	switch ( action.type ) {
 		case BILLING_TRANSACTION_RECEIVE: {
 			const { receipt } = action;
@@ -69,7 +69,7 @@ export const data = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default keyedReducer(
 	'transactionId',

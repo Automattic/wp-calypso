@@ -3,16 +3,16 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 
-import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 
 /**
  * Return if it's the primary domainfrom state object and
  * the given site ID and domain.
  *
- * @param {Object} state - current state object
- * @param {Object} siteId - site object
+ * @param {object} state - current state object
+ * @param {object} siteId - site object
  * @param {string} domain - domian name
- * @return {Object} primary domain
+ * @returns {object} primary domain
  */
 export default function isPrimaryDomainBySiteId( state, siteId, domain ) {
 	return domain === get( getPrimaryDomainBySiteId( state, siteId ), 'domain' );

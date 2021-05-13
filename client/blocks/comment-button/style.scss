@@ -9,7 +9,6 @@
 	position: relative;
 
 	&:hover,
-	&:focus,
 	&:active {
 		color: var( --color-primary );
 	}
@@ -19,15 +18,19 @@
 	}
 
 	.comment-button__label-status {
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			display: none;
 		}
 	}
 }
 
 .comment-button__label {
-	font-size: 14px;
+	font-size: $font-body-small;
 	margin-left: 4px;
+
+	&:empty {
+		display: none;
+	}
 }
 
 .comment-button__icon {

@@ -2,16 +2,19 @@
  * External dependencies
  */
 import React, { FunctionComponent, useRef, useCallback } from 'react';
-import { noop } from 'lodash';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { useLocalizedMoment } from 'components/localized-moment';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 type StartOrEnd = 'Start' | 'End';
 
@@ -41,8 +44,9 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	/**
 	 * Handles input focus events with fixed arguments
 	 * for consistency via partial application
+	 *
 	 * @param  startOrEnd one of "Start" or "End"
-	 * @return the partially applied function ready to receive event data
+	 * @returns the partially applied function ready to receive event data
 	 */
 	const handleInputFocus = useCallback(
 		( startOrEnd: StartOrEnd ) => ( e: Event ) => {
@@ -55,8 +59,9 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	/**
 	 * Handles input blur events with fixed arguments
 	 * for consistency via partial application
+	 *
 	 * @param  startOrEnd one of "Start" or "End"
-	 * @return the partially applied function ready to receive event data
+	 * @returns the partially applied function ready to receive event data
 	 */
 	const handleInputBlur = useCallback(
 		( startOrEnd: StartOrEnd ) => ( e: Event ) => {
@@ -69,8 +74,9 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	/**
 	 * Handles input change events with fixed arguments
 	 * for consistency via partial application
+	 *
 	 * @param  startOrEnd one of "Start" or "End"
-	 * @return the partially applied function ready to receive event data
+	 * @returns the partially applied function ready to receive event data
 	 */
 	const handleInputChange = useCallback(
 		( startOrEnd: StartOrEnd ) => ( e: Event ) => {
@@ -91,7 +97,7 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	const endValue = props.endDateValue !== localeDateFormat ? props.endDateValue : '';
 
 	return (
-		<fieldset className="date-range__date-inputs">
+		<FormFieldset className="date-range__date-inputs">
 			<legend className="date-range__date-inputs-legend">Start and End Dates</legend>
 			<div className="date-range__date-inputs-inner">
 				<div className="date-range__date-input date-range__date-input--from">
@@ -129,7 +135,7 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 					/>
 				</div>
 			</div>
-		</fieldset>
+		</FormFieldset>
 	);
 };
 

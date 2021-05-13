@@ -7,9 +7,13 @@ import {
 	receiveAccountCloseError,
 	fromApi,
 } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { closeAccount } from 'state/account/actions';
-import { ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { closeAccount } from 'calypso/state/account/actions';
+import { ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
+
+jest.mock( 'calypso/lib/user', () => () => {
+	return { clear: jest.fn() };
+} );
 
 describe( 'account-close', () => {
 	describe( 'requestAccountClose', () => {
@@ -39,14 +43,13 @@ describe( 'account-close', () => {
 	} );
 
 	describe( 'receiveAccountCloseSuccess', () => {
-		test( 'should fire a success action', () => {
-			const result = receiveAccountCloseSuccess();
+		test( 'should dispatch a success action', async () => {
+			const spy = jest.fn();
+			await receiveAccountCloseSuccess()( spy );
 
-			expect( result ).toEqual(
-				expect.objectContaining( {
-					type: ACCOUNT_CLOSE_SUCCESS,
-				} )
-			);
+			expect( spy ).toHaveBeenCalledWith( {
+				type: ACCOUNT_CLOSE_SUCCESS,
+			} );
 		} );
 	} );
 

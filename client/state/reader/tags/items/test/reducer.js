@@ -8,12 +8,12 @@ import { keyBy } from 'lodash';
  * Internal dependencies
  */
 import { receiveUnfollowTag, receiveTags } from '../actions';
-import { items } from '../reducer';
+import items from '../reducer';
 
 // helpers
-const keyById = tags => keyBy( tags, 'id' );
-const unfollow = tag => ( { ...tag, isFollowing: false } );
-const follow = tag => ( { ...tag, isFollowing: true } );
+const keyById = ( tags ) => keyBy( tags, 'id' );
+const unfollow = ( tag ) => ( { ...tag, isFollowing: false } );
+const follow = ( tag ) => ( { ...tag, isFollowing: true } );
 
 const TAG1 = {
 	id: '307',

@@ -11,10 +11,10 @@ import {
 	SITES_BLOG_STICKER_LIST_RECEIVE,
 	SITES_BLOG_STICKER_ADD,
 	SITES_BLOG_STICKER_REMOVE,
-} from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
-export const items = withoutPersistence( ( state = {}, action ) => {
+export const items = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITES_BLOG_STICKER_LIST_RECEIVE: {
 			return {
@@ -45,13 +45,13 @@ export const items = withoutPersistence( ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ blogId ]: reject( state[ blogId ], sticker => sticker === stickerName ),
+				[ blogId ]: reject( state[ blogId ], ( sticker ) => sticker === stickerName ),
 			};
 		}
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	items,

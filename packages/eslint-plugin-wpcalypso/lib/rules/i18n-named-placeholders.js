@@ -1,5 +1,5 @@
 /**
- * @fileoverview Disallow multiple unnamed placeholders
+ * @file Disallow multiple unnamed placeholders
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -16,8 +16,8 @@ const RX_PLACEHOLDERS = /(?:\x25\x25)|(\x25(?:(?:[1-9]\d*)\$|\((?:[^\)]+)\))?(?:
 // Helper Functions
 //------------------------------------------------------------------------------
 
-const getCallee = require( '../util/get-callee' ),
-	getTextContentFromNode = require( '../util/get-text-content-from-node' );
+const getCallee = require( '../util/get-callee' );
+const getTextContentFromNode = require( '../util/get-text-content-from-node' );
 
 function hasUnqualifiedPlaceholders( string ) {
 	const placeholders = string.match( RX_PLACEHOLDERS ) || [];
@@ -25,7 +25,7 @@ function hasUnqualifiedPlaceholders( string ) {
 		return false;
 	}
 
-	return placeholders.some( function( placeholder ) {
+	return placeholders.some( function ( placeholder ) {
 		return '%%' !== placeholder && ! placeholder.match( /[0-9()]/ );
 	} );
 }
@@ -34,9 +34,9 @@ function hasUnqualifiedPlaceholders( string ) {
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const rule = ( module.exports = function( context ) {
+const rule = ( module.exports = function ( context ) {
 	return {
-		CallExpression: function( node ) {
+		CallExpression: function ( node ) {
 			// Done if no args are passed
 			if ( node.arguments.length === 0 ) {
 				return;

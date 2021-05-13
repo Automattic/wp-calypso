@@ -1,5 +1,5 @@
 /**
- * @fileoverview Disallow strings which include only placeholders
+ * @file Disallow strings which include only placeholders
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -17,21 +17,21 @@ const RX_INTERPOLATED_COMPONENTS = /(\{\{\/?\s*\w+\s*\/?\}\})/g;
 // Helper Functions
 //------------------------------------------------------------------------------
 
-const getCallee = require( '../util/get-callee' ),
-	getTextContentFromNode = require( '../util/get-text-content-from-node' );
+const getCallee = require( '../util/get-callee' );
+const getTextContentFromNode = require( '../util/get-text-content-from-node' );
 
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const rule = ( module.exports = function( context ) {
+const rule = ( module.exports = function ( context ) {
 	return {
-		CallExpression: function( node ) {
+		CallExpression: function ( node ) {
 			if ( 'translate' !== getCallee( node ).name ) {
 				return;
 			}
 
-			node.arguments.forEach( function( arg ) {
+			node.arguments.forEach( function ( arg ) {
 				let value = getTextContentFromNode( arg );
 				if ( 'string' !== typeof value ) {
 					return;

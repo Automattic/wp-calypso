@@ -1,5 +1,4 @@
-Query Post Counts
-================
+# Query Post Counts
 
 `<QueryPostCounts />` is a React component used in managing network requests for post counts.
 
@@ -9,14 +8,12 @@ Render the component, passing `siteId` and `type`. It does not accept any childr
 
 ```jsx
 import React from 'react';
-import QueryPostCounts from 'components/data/query-post-counts';
+import QueryPostCounts from 'calypso/components/data/query-post-counts';
 
 export default function PostCount( { count } ) {
 	return (
 		<div>
-			<QueryPostCounts
-				siteId={ 3584907 }
-				type="post" />
+			<QueryPostCounts siteId={ 3584907 } type="post" />
 			<div>{ count }</div>
 		</div>
 	);

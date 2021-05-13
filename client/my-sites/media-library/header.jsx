@@ -5,21 +5,21 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenu from 'calypso/components/popover/menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import MediaLibraryScale from './scale';
 import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
-import { userCan } from 'lib/site/utils';
-import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-actions';
+import { userCan } from 'calypso/lib/site/utils';
+import MediaModalSecondaryActions from 'calypso/post-editor/media-modal/secondary-actions';
 import { Card, Button, ScreenReaderText } from '@automattic/components';
-import ButtonGroup from 'components/button-group';
-import StickyPanel from 'components/sticky-panel';
+import ButtonGroup from 'calypso/components/button-group';
+import StickyPanel from 'calypso/components/sticky-panel';
 
 class MediaLibraryHeader extends React.Component {
 	static displayName = 'MediaLibraryHeader';
@@ -44,7 +44,7 @@ class MediaLibraryHeader extends React.Component {
 		isMoreOptionsVisible: false,
 	};
 
-	setMoreOptionsContext = component => {
+	setMoreOptionsContext = ( component ) => {
 		if ( ! component ) {
 			return;
 		}
@@ -54,14 +54,14 @@ class MediaLibraryHeader extends React.Component {
 		} );
 	};
 
-	toggleAddViaUrl = state => {
+	toggleAddViaUrl = ( state ) => {
 		this.setState( {
 			addingViaUrl: state,
 			isMoreOptionsVisible: false,
 		} );
 	};
 
-	toggleMoreOptions = state => {
+	toggleMoreOptions = ( state ) => {
 		this.setState( {
 			isMoreOptionsVisible: state,
 		} );
@@ -80,11 +80,11 @@ class MediaLibraryHeader extends React.Component {
 					site={ site }
 					filter={ filter }
 					onAddMedia={ onAddMedia }
-					className="button is-compact"
+					className="media-library__upload-button button is-compact"
 				>
 					<Gridicon icon="add-image" />
-					<span className="is-desktop">
-						{ this.props.translate( 'Add New', { context: 'Media upload' } ) }
+					<span className="media-library__upload-button-label">
+						{ this.props.translate( 'Add new', { context: 'Media upload' } ) }
 					</span>
 				</UploadButton>
 				<Button
@@ -95,7 +95,7 @@ class MediaLibraryHeader extends React.Component {
 					data-tip-target="media-library-upload-more"
 				>
 					<ScreenReaderText>{ this.props.translate( 'More Options' ) }</ScreenReaderText>
-					<Gridicon icon="chevron-down" size={ 20 } />
+					<Gridicon icon="chevron-down" size={ 18 } />
 					<PopoverMenu
 						context={ this.state.moreOptionsContext }
 						isVisible={ this.state.isMoreOptionsVisible }
@@ -134,7 +134,6 @@ class MediaLibraryHeader extends React.Component {
 					onViewDetails={ this.props.onViewDetails }
 					onDelete={ this.props.onDeleteItem }
 					site={ this.props.site }
-					view={ 'LIST' }
 				/>
 				<MediaLibraryScale onChange={ this.props.onMediaScaleChange } />
 			</Card>

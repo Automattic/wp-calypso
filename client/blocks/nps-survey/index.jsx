@@ -1,36 +1,41 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent, Fragment } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { isNumber, noop, trim } from 'lodash';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button, Card, ScreenReaderText } from '@automattic/components';
-import FormTextArea from 'components/forms/form-textarea';
+import FormTextArea from 'calypso/components/forms/form-textarea';
 import {
 	submitNpsSurvey,
 	submitNpsSurveyWithNoScore,
 	sendNpsSurveyFeedback,
-} from 'state/nps-survey/actions';
-import { successNotice } from 'state/notices/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { hasAnsweredNpsSurvey, isAvailableForConciergeSession } from 'state/nps-survey/selectors';
-import { CALYPSO_CONTACT } from 'lib/url/support';
-import analytics from 'lib/analytics';
+} from 'calypso/state/nps-survey/actions';
+import { successNotice } from 'calypso/state/notices/actions';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import {
+	hasAnsweredNpsSurvey,
+	isAvailableForConciergeSession,
+} from 'calypso/state/nps-survey/selectors';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import RecommendationSelect from './recommendation-select';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class NpsSurvey extends PureComponent {
 	static propTypes = {
@@ -59,14 +64,14 @@ export class NpsSurvey extends PureComponent {
 
 		if ( prevState.currentForm !== this.state.currentForm ) {
 			onChangeForm && onChangeForm( this.state.currentForm );
-			this.props.recordTracksEvent( 'calypso_nps_survey_page_displayed', {
+			this.props.recordTracksEventAction( 'calypso_nps_survey_page_displayed', {
 				name: this.state.currentForm,
 				has_available_concierge_sessions: hasAvailableConciergeSession,
 			} );
 		}
 	}
 
-	handleRecommendationSelectChange = score => {
+	handleRecommendationSelectChange = ( score ) => {
 		this.setState( { score } );
 	};
 
@@ -82,7 +87,7 @@ export class NpsSurvey extends PureComponent {
 		this.onClose( noop );
 	};
 
-	handleTextBoxChange = event => {
+	handleTextBoxChange = ( event ) => {
 		this.setState( { feedback: trim( event.target.value ) } );
 	};
 
@@ -107,8 +112,8 @@ export class NpsSurvey extends PureComponent {
 		this.onClose( noop );
 	};
 
-	handleLinkClick = event => {
-		this.props.recordTracksEvent( 'calypso_nps_survey_link_clicked', {
+	handleLinkClick = ( event ) => {
+		this.props.recordTracksEventAction( 'calypso_nps_survey_link_clicked', {
 			url: event.target.href,
 			type: event.target.dataset.type,
 		} );
@@ -121,7 +126,7 @@ export class NpsSurvey extends PureComponent {
 		} );
 	};
 
-	onClose = afterClose => {
+	onClose = ( afterClose ) => {
 		// ensure that state is updated before onClose handler is called
 		setTimeout( () => {
 			this.props.onClose( afterClose );
@@ -129,15 +134,15 @@ export class NpsSurvey extends PureComponent {
 	};
 
 	UNSAFE_componentWillMount() {
-		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_displayed' );
-		analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
+		bumpStat( 'calypso_nps_survey', 'survey_displayed' );
+		recordTracksEvent( 'calypso_nps_survey_displayed' );
 	}
 
 	shouldShowPromotion() {
 		return (
 			[ 'en', 'en-gb' ].indexOf( getLocaleSlug() ) >= 0 &&
 			this.props.isBusinessUser &&
-			isNumber( this.state.score ) &&
+			typeof this.state.score === 'number' &&
 			this.state.score < 7
 		);
 	}
@@ -318,7 +323,7 @@ export class NpsSurvey extends PureComponent {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		hasAnswered: hasAnsweredNpsSurvey( state ),
 		hasAvailableConciergeSession: isAvailableForConciergeSession( state ),
@@ -330,5 +335,5 @@ export default connect( mapStateToProps, {
 	submitNpsSurveyWithNoScore,
 	sendNpsSurveyFeedback,
 	successNotice,
-	recordTracksEvent,
+	recordTracksEventAction,
 } )( localize( NpsSurvey ) );

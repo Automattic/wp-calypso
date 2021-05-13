@@ -4,7 +4,7 @@
  *
  * @param  uri    URL or path to modify
  * @param  search Search terms
- * @return        Path including search terms
+ * @returns        Path including search terms
  */
 export function buildRelativeSearchUrl( uri: string, search: string ): string {
 	// We only care about the relative part, but the URL API only deals with absolute URLs,

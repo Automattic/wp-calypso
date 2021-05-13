@@ -1,0 +1,17 @@
+# General
+.DS_Store
+
+# Dependency directories
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Buld
+build
+
+# Test
+test/output/

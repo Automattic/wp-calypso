@@ -10,36 +10,43 @@ import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 export class ImageBlockComponent extends GutenbergBlockComponent {
-	constructor( driver, blockID ) {
-		super( driver, blockID );
-	}
-
 	async uploadImage( fileDetails ) {
-		await driverHelper.waitTillPresentAndDisplayed(
+		/**
+		 * The image block is initially not selected. It has to be though, if we want
+		 * to sendKeys to the file input. That's why we're clicking the block title
+		 * here.
+		 */
+		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.components-form-file-upload ' )
+			By.css( `${ this.blockID } .components-placeholder__label` )
 		);
+
 		const filePathInput = await this.driver.findElement(
-			By.css( '.components-form-file-upload input[type="file"]' )
+			By.css( `${ this.blockID } .components-form-file-upload input[type="file"]` )
 		);
+
 		await filePathInput.sendKeys( fileDetails.file );
-		return await driverHelper.waitTillNotPresent(
+		await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			By.css( '.wp-block-image .components-spinner' )
+			By.css( `${ this.blockID } .components-spinner` )
 		); // Wait for upload spinner to complete
 	}
 
 	async openMediaModal() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			By.css( '.editor-media-placeholder' )
+			By.css( '.block-editor-media-placeholder' )
 		);
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.components-form-file-upload + button' )
+			By.css( 'button.jetpack-external-media-button-menu' )
+		);
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.components-popover__content button.components-menu-item__button:nth-child(1)' )
 		);
 		await this.driver.switchTo().defaultContent();
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.dialog__content .media-library' )
 		);
@@ -51,7 +58,7 @@ export class ImageBlockComponent extends GutenbergBlockComponent {
 			By.css( '.media-library__upload-button-input' )
 		);
 		await filePathInput.sendKeys( fileDetails.file );
-		await driverHelper.waitTillNotPresent(
+		await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			By.css( '.media-library__list-item.is-selected.is-transient' )
 		);

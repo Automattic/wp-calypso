@@ -5,27 +5,36 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import { get, size, takeRight, delay } from 'lodash';
+import { get, size, delay } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import getActiveReplyCommentId from 'state/selectors/get-active-reply-comment-id';
+import { Button } from '@automattic/components';
 import {
-	getPostCommentsTree,
 	commentsFetchingStatus,
+	getActiveReplyCommentId,
 	getCommentById,
-} from 'state/comments/selectors';
-import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
-import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+	getPostCommentsTree,
+} from 'calypso/state/comments/selectors';
+import {
+	requestPostComments,
+	requestComment,
+	setActiveReply,
+} from 'calypso/state/comments/actions';
+import { NUMBER_OF_COMMENTS_PER_FETCH } from 'calypso/state/comments/constants';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import PostComment from './post-comment';
 import PostCommentFormRoot from './form-root';
 import CommentCount from './comment-count';
-import SegmentedControl from 'components/segmented-control';
-import ConversationFollowButton from 'blocks/conversation-follow-button';
-import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import SegmentedControl from 'calypso/components/segmented-control';
+import Gridicon from 'calypso/components/gridicon';
+import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
+import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -74,9 +83,11 @@ class PostCommentList extends React.Component {
 		commentsTree: PropTypes.object,
 		requestPostComments: PropTypes.func.isRequired,
 		requestComment: PropTypes.func.isRequired,
+		shouldHighlightNew: PropTypes.bool,
 	};
 
 	static defaultProps = {
+		shouldHighlightNew: false,
 		pageSize: NUMBER_OF_COMMENTS_PER_FETCH,
 		initialSize: NUMBER_OF_COMMENTS_PER_FETCH,
 		showCommentCount: true,
@@ -101,7 +112,7 @@ class PostCommentList extends React.Component {
 		this.props.commentsTree[ startingCommentId ] &&
 		! this.alreadyLoadedInitialSet;
 
-	shouldNormalFetchAfterPropsChange = nextProps => {
+	shouldNormalFetchAfterPropsChange = ( nextProps ) => {
 		// this next check essentially looks out for whether we've ever requested comments for the post
 		if (
 			nextProps.commentsFetchingStatus.haveEarlierCommentsToFetch &&
@@ -182,7 +193,7 @@ class PostCommentList extends React.Component {
 		}
 	}
 
-	commentIsOnDOM = commentId => !! window.document.getElementById( `comment-${ commentId }` );
+	commentIsOnDOM = ( commentId ) => !! window.document.getElementById( `comment-${ commentId }` );
 
 	scrollWhenDOMReady = () => {
 		if ( this.props.startingCommentId && ! this.hasScrolledToComment ) {
@@ -193,7 +204,7 @@ class PostCommentList extends React.Component {
 		}
 	};
 
-	renderComment = commentId => {
+	renderComment = ( commentId ) => {
 		if ( ! commentId ) {
 			return null;
 		}
@@ -220,21 +231,41 @@ class PostCommentList extends React.Component {
 				depth={ 0 }
 				maxDepth={ this.props.maxDepth }
 				showNestingReplyArrow={ this.props.showNestingReplyArrow }
+				shouldHighlightNew={ this.props.shouldHighlightNew }
 			/>
 		);
 	};
 
-	onEditCommentClick = commentId => {
+	renderCommentManageLink = () => {
+		const { siteId, postId } = this.props;
+
+		if ( ! siteId || ! postId ) {
+			return null;
+		}
+
+		return (
+			<Button
+				className="comments__manage-comments-button"
+				href={ `/comments/all/${ siteId }/${ postId }` }
+				borderless
+			>
+				<Gridicon icon="chat" />
+				<span>{ translate( 'Manage comments' ) }</span>
+			</Button>
+		);
+	};
+
+	onEditCommentClick = ( commentId ) => {
 		this.setState( { activeEditCommentId: commentId } );
 	};
 
 	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
 
-	onReplyClick = commentId => {
+	onReplyClick = ( commentId ) => {
 		this.setActiveReplyComment( commentId );
 		recordAction( 'comment_reply_click' );
 		recordGaEvent( 'Clicked Reply to Comment' );
-		recordTrack( 'calypso_reader_comment_reply_click', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_click', {
 			blog_id: this.props.post.site_ID,
 			comment_id: commentId,
 		} );
@@ -244,18 +275,18 @@ class PostCommentList extends React.Component {
 		this.setState( { commentText: null } );
 		recordAction( 'comment_reply_cancel_click' );
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
-		recordTrack( 'calypso_reader_comment_reply_cancel_click', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_cancel_click', {
 			blog_id: this.props.post.site_ID,
 			comment_id: this.state.activeReplyCommentId,
 		} );
 		this.resetActiveReplyComment();
 	};
 
-	onUpdateCommentText = commentText => {
+	onUpdateCommentText = ( commentText ) => {
 		this.setState( { commentText: commentText } );
 	};
 
-	setActiveReplyComment = commentId => {
+	setActiveReplyComment = ( commentId ) => {
 		const siteId = get( this.props, 'post.site_ID' );
 		const postId = get( this.props, 'post.ID' );
 
@@ -274,10 +305,10 @@ class PostCommentList extends React.Component {
 		this.setActiveReplyComment( null );
 	};
 
-	renderCommentsList = commentIds => {
+	renderCommentsList = ( commentIds ) => {
 		return (
 			<ol className="comments__list is-root">
-				{ commentIds.map( commentId => this.renderComment( commentId ) ) }
+				{ commentIds.map( ( commentId ) => this.renderComment( commentId ) ) }
 			</ol>
 		);
 	};
@@ -289,7 +320,7 @@ class PostCommentList extends React.Component {
 		this.hasScrolledToComment = true;
 	};
 
-	getCommentsCount = commentIds => {
+	getCommentsCount = ( commentIds ) => {
 		// we always count prevSum, children sum, and +1 for the current processed comment
 		return commentIds.reduce(
 			( prevSum, commentId ) =>
@@ -300,18 +331,19 @@ class PostCommentList extends React.Component {
 		);
 	};
 
-	/***
+	/**
 	 * Gets comments for display
-	 * @param {Immutable.List<Number>} commentIds The top level commentIds to take from
-	 * @param {Number} numberToTake How many top level comments to take
-	 * @returns {Object} that has the displayed comments + total displayed count including children
+	 *
+	 * @param {Array<number>} commentIds The top level commentIds to take from
+	 * @param {number} numberToTake How many top level comments to take
+	 * @returns {object} that has the displayed comments + total displayed count including children
 	 */
 	getDisplayedComments = ( commentIds, numberToTake ) => {
 		if ( ! commentIds ) {
 			return null;
 		}
 
-		const displayedComments = takeRight( commentIds, numberToTake );
+		const displayedComments = numberToTake ? commentIds.slice( numberToTake * -1 ) : [];
 
 		return {
 			displayedComments,
@@ -333,7 +365,7 @@ class PostCommentList extends React.Component {
 		this.loadMoreCommentsHandler( direction );
 	};
 
-	loadMoreCommentsHandler = direction => {
+	loadMoreCommentsHandler = ( direction ) => {
 		const {
 			post: { ID: postId, site_ID: siteId },
 			commentsFilter: status,
@@ -344,7 +376,7 @@ class PostCommentList extends React.Component {
 		this.props.requestPostComments( { siteId, postId, status, direction } );
 	};
 
-	handleFilterClick = commentsFilter => () => this.props.onFilterChange( commentsFilter );
+	handleFilterClick = ( commentsFilter ) => () => this.props.onFilterChange( commentsFilter );
 
 	render() {
 		if ( ! this.props.commentsTree ) {
@@ -376,9 +408,10 @@ class PostCommentList extends React.Component {
 		// Note: we might show fewer comments than commentsCount because some comments might be
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
 		const showViewMoreComments =
-			size( commentsTree.children ) > amountOfCommentsToTake ||
-			haveEarlierCommentsToFetch ||
-			haveLaterCommentsToFetch;
+			( size( commentsTree.children ) > amountOfCommentsToTake ||
+				haveEarlierCommentsToFetch ||
+				haveLaterCommentsToFetch ) &&
+			displayedCommentsCount > 0;
 
 		// If we're not yet fetched all comments from server, we can only rely on server's count.
 		// once we got all the comments tree, we can calculate the count of reachable comments
@@ -391,17 +424,14 @@ class PostCommentList extends React.Component {
 			this.props.showConversationFollowButton &&
 			shouldShowConversationFollowButton( this.props.post );
 
+		const showManageCommentsButton = this.props.canUserModerateComments && commentCount > 0;
+
 		return (
-			<div className="comments__comment-list">
-				{ showConversationFollowButton && (
-					<ConversationFollowButton
-						className="comments__conversation-follow-button"
-						siteId={ siteId }
-						postId={ postId }
-						post={ this.props.post }
-						followSource={ followSource }
-					/>
-				) }
+			<div
+				className={ classnames( 'comments__comment-list', {
+					'has-double-actions': showManageCommentsButton && showConversationFollowButton,
+				} ) }
+			>
 				{ ( this.props.showCommentCount || showViewMoreComments ) && (
 					<div className="comments__info-bar">
 						{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
@@ -417,6 +447,18 @@ class PostCommentList extends React.Component {
 						) }
 					</div>
 				) }
+				<div className="comments__actions-wrapper">
+					{ showManageCommentsButton && this.renderCommentManageLink() }
+					{ showConversationFollowButton && (
+						<ConversationFollowButton
+							className="comments__conversation-follow-button"
+							siteId={ siteId }
+							postId={ postId }
+							post={ this.props.post }
+							followSource={ followSource }
+						/>
+					) }
+				</div>
 				{ showFilters && (
 					<SegmentedControl compact primary>
 						<SegmentedControl.Item
@@ -483,6 +525,7 @@ export default connect(
 		return {
 			siteId,
 			postId,
+			canUserModerateComments: canCurrentUser( state, siteId, 'moderate_comments' ),
 			commentsTree: getPostCommentsTree(
 				state,
 				siteId,
@@ -508,5 +551,5 @@ export default connect(
 			} ),
 		};
 	},
-	{ requestPostComments, requestComment, setActiveReply }
+	{ requestComment, requestPostComments, recordReaderTracksEvent, setActiveReply }
 )( PostCommentList );

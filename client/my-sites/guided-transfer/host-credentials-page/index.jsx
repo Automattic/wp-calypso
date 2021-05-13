@@ -13,16 +13,14 @@ import Bluehost from './bluehost';
 import ErrorNotice from './error-notice';
 import SiteGround from './siteground';
 import Pressable from './pressable';
-import SectionHeader from 'components/section-header';
-import { guidedTransferItem } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/cart/actions';
+import SectionHeader from 'calypso/components/section-header';
 import page from 'page';
-import { saveHostDetails } from 'state/sites/guided-transfer/actions';
+import { saveHostDetails } from 'calypso/state/sites/guided-transfer/actions';
 import {
 	isGuidedTransferSavingHostDetails,
 	isGuidedTransferAwaitingPurchase,
-} from 'state/sites/guided-transfer/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+} from 'calypso/state/sites/guided-transfer/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 class HostCredentialsPage extends Component {
 	static propTypes = {
@@ -40,17 +38,16 @@ class HostCredentialsPage extends Component {
 		} );
 	};
 
-	onFieldChange = fieldName => e => {
+	onFieldChange = ( fieldName ) => ( e ) => {
 		this.setFieldValue( fieldName, e.target.value );
 	};
 
 	redirectToCart = () => {
-		addItem( guidedTransferItem() );
-		page.redirect( `/checkout/${ this.props.siteSlug }` );
+		page.redirect( `/checkout/${ this.props.siteSlug }/guided_transfer` );
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.isAwaitingPurchase ) {
+	componentDidUpdate() {
+		if ( this.props.isAwaitingPurchase ) {
 			this.redirectToCart();
 		}
 	}
@@ -105,7 +102,7 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 } );
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	submit: data => dispatch( saveHostDetails( siteId, data ) ),
+	submit: ( data ) => dispatch( saveHostDetails( siteId, data ) ),
 } );
 
 export default localize( connect( mapStateToProps, mapDispatchToProps )( HostCredentialsPage ) );

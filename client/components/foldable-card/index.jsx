@@ -6,24 +6,25 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import { Card, CompactCard, ScreenReaderText } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+const noop = () => {};
+
 class FoldableCard extends Component {
 	static displayName = 'FoldableCard';
 
 	static propTypes = {
-		actionButton: PropTypes.element,
+		actionButton: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		actionButtonExpanded: PropTypes.element,
 		cardKey: PropTypes.string,
 		compact: PropTypes.bool,
@@ -36,6 +37,7 @@ class FoldableCard extends Component {
 		onOpen: PropTypes.func,
 		screenReaderText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		summary: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		highlight: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -150,7 +152,7 @@ class FoldableCard extends Component {
 		} );
 
 		return (
-			<Container className={ itemSiteClasses }>
+			<Container className={ itemSiteClasses } highlight={ this.props.highlight }>
 				{ this.renderHeader() }
 				{ this.state.expanded && this.renderContent() }
 			</Container>

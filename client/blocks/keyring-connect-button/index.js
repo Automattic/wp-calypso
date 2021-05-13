@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { find, last, noop, some } from 'lodash';
+import { find, last, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,14 +14,16 @@ import { Button } from '@automattic/components';
 import {
 	deleteStoredKeyringConnection,
 	requestKeyringConnections,
-} from 'state/sharing/keyring/actions';
-import { getKeyringServiceByName } from 'state/sharing/services/selectors';
-import QueryKeyringServices from 'components/data/query-keyring-services';
-import requestExternalAccess from 'lib/sharing';
+} from 'calypso/state/sharing/keyring/actions';
+import { getKeyringServiceByName } from 'calypso/state/sharing/services/selectors';
+import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
+import requestExternalAccess from '@automattic/request-external-access';
 import {
 	getKeyringConnectionsByName,
 	isKeyringConnectionsFetching,
-} from 'state/sharing/keyring/selectors';
+} from 'calypso/state/sharing/keyring/selectors';
+
+const noop = () => {};
 
 class KeyringConnectButton extends Component {
 	static propTypes = {
@@ -62,7 +64,7 @@ class KeyringConnectButton extends Component {
 	/**
 	 * Returns the current status of the service's connection.
 	 *
-	 * @return {string} Connection status.
+	 * @returns {string} Connection status.
 	 */
 	getConnectionStatus() {
 		if ( this.props.isFetching || this.props.isAwaitingConnections ) {
@@ -149,12 +151,12 @@ class KeyringConnectButton extends Component {
 	 * in creating new Keyring account options.
 	 *
 	 * @param {Array} keyringConnections props to check on if a keyring connection succeeded.
-	 * @return {Boolean} Whether the Keyring authorization attempt succeeded
+	 * @returns {boolean} Whether the Keyring authorization attempt succeeded
 	 */
 	didKeyringConnectionSucceed( keyringConnections ) {
 		const hasAnyConnectionOptions = some(
 			keyringConnections,
-			keyringConnection =>
+			( keyringConnection ) =>
 				keyringConnection.isConnected === false || keyringConnection.isConnected === undefined
 		);
 
@@ -170,9 +172,9 @@ class KeyringConnectButton extends Component {
 		const { primary, service, translate } = this.props;
 		const { isConnecting, isRefreshing } = this.state;
 		const status = service ? this.getConnectionStatus() : 'unknown';
-		let localPrimary = false,
-			warning = false,
-			label;
+		let localPrimary = false;
+		let warning = false;
+		let label;
 
 		const isPending = 'unknown' === status || isRefreshing || isConnecting;
 

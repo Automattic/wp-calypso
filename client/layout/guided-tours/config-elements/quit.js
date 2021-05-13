@@ -63,7 +63,7 @@ export default class Quit extends Component {
 		}
 	}
 
-	onClick = event => {
+	onClick = ( event ) => {
 		this.props.onClick && this.props.onClick( event );
 		const { quit, tour, tourVersion, step, isLastStep } = this.context;
 		quit( { tour, tourVersion, step, isLastStep } );

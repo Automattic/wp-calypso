@@ -1,16 +1,14 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { assign } from 'lodash';
 import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getLanguage } from 'lib/i18n-utils';
+import { getLanguage } from 'calypso/lib/i18n-utils';
 
 class LocaleSuggestionsListItem extends Component {
 	static propTypes = {
@@ -19,7 +17,7 @@ class LocaleSuggestionsListItem extends Component {
 		path: PropTypes.string.isRequired,
 	};
 
-	handleLocaleSuggestionClick = event => {
+	handleLocaleSuggestionClick = ( event ) => {
 		const { locale, onLocaleSuggestionClick, path } = this.props;
 
 		if ( this.hasLocaleDirectionChanged( locale ) ) {
@@ -36,8 +34,8 @@ class LocaleSuggestionsListItem extends Component {
 	};
 
 	hasLocaleDirectionChanged( locale ) {
-		const localeData = assign( {}, getLanguage( locale.locale ) ),
-			currentLocaleData = assign( {}, getLanguage( getLocaleSlug() ) );
+		const localeData = getLanguage( locale.locale );
+		const currentLocaleData = getLanguage( getLocaleSlug() );
 
 		return localeData.rtl !== currentLocaleData.rtl;
 	}

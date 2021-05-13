@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { statsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
@@ -22,11 +22,11 @@ import {
  * Returns the updated generating state after an action has been dispatched.
  * Generating state tracks whether the stats for a site are currently being generated.
  *
- * @param  {Object} state Current generating state
- * @param  {Object} action Action object
- * @return {Object} Updated generating state
+ * @param  {object} state Current generating state
+ * @param  {object} action Action object
+ * @returns {object} Updated generating state
  */
-export const generating = withoutPersistence( ( state = {}, action ) => {
+export const generating = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_GENERATE_STATS: {
 			const { siteId } = action;
@@ -51,17 +51,17 @@ export const generating = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated deleting state after an action has been dispatched.
  * Deleting state tracks whether a cached file for a site is currently being deleted.
  *
- * @param  {Object} state Current deleting state
- * @param  {Object} action Action object
- * @return {Object} Updated deleting state
+ * @param  {object} state Current deleting state
+ * @param  {object} action Action object
+ * @returns {object} Updated deleting state
  */
-const deleting = withoutPersistence( ( state = {}, action ) => {
+const deleting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_DELETE_FILE: {
 			const { siteId } = action;
@@ -86,14 +86,14 @@ const deleting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Tracks the stats for a particular site.
  *
- * @param  {Object} state Current stats
- * @param  {Object} action Action object
- * @return {Object} Updated stats
+ * @param  {object} state Current stats
+ * @param  {object} action Action object
+ * @returns {object} Updated stats
  */
 const items = withSchemaValidation( statsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

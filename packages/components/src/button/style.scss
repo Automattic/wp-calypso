@@ -1,26 +1,32 @@
 // ==========================================================================
 // Buttons
 // ==========================================================================
+@import '../styles/typography.scss';
 
 .button {
+	font-family: $a8c-font-family-sans;
 	background: transparent;
 	border-style: solid;
-	border-width: 1px 1px 2px;
+	border-width: 1px;
 	cursor: pointer;
 	display: inline-block;
 	margin: 0;
 	outline: 0;
 	overflow: hidden;
-	font-weight: 500;
+	text-align: center;
 	text-overflow: ellipsis;
 	text-decoration: none;
 	vertical-align: top;
 	box-sizing: border-box;
-	font-size: 14px;
-	line-height: 21px;
-	border-radius: 4px;
-	padding: 7px 14px 9px;
+	font-size: $font-body-small;
+	line-height: 22px;
+	border-radius: 2px;
+	padding: 8px 14px;
 	appearance: none;
+
+	.rtl & {
+		font-family: $a8c-font-family-sans-rtl;
+	}
 
 	&.hidden {
 		display: none;
@@ -40,7 +46,7 @@
 
 	&:active,
 	&.is-active {
-		border-width: 2px 1px 1px;
+		border-width: 1px;
 	}
 
 	background-color: var( --color-surface );
@@ -66,7 +72,7 @@
 
 		&:active,
 		&.is-active {
-			border-width: 1px 1px 2px;
+			border-width: 1px;
 		}
 	}
 
@@ -78,7 +84,7 @@
 	&.is-compact {
 		padding: 7px;
 		color: var( --color-text-subtle );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		line-height: 1;
 
 		&:disabled {
@@ -103,6 +109,7 @@
 	}
 
 	&.is-busy {
+		pointer-events: none;
 		animation: button__busy-animation 3000ms infinite linear;
 		background-size: 120px 100%;
 		background-image: linear-gradient(
@@ -118,13 +125,13 @@
 // Primary buttons
 .button.is-primary {
 	background-color: var( --color-accent );
-	border-color: var( --color-accent-dark );
+	border-color: var( --color-accent );
 	color: var( --color-text-inverted );
 
 	&:hover,
 	&:focus {
 		background-color: var( --color-accent-60 );
-		border-color: var( --color-accent-dark );
+		border-color: var( --color-accent-60 );
 		color: var( --color-text-inverted );
 	}
 
@@ -161,7 +168,7 @@
 
 	&:hover,
 	&:focus {
-		border-color: var( --color-error-40 );
+		border-color: var( --color-error );
 	}
 
 	.accessible-focus &:focus {
@@ -178,12 +185,13 @@
 
 .button.is-primary.is-scary {
 	background-color: var( --color-error );
-	border-color: var( --color-error-dark );
+	border-color: var( --color-error );
 	color: var( --color-text-inverted );
 
 	&:hover,
 	&:focus {
 		background-color: var( --color-error-60 );
+		border-color: var( --color-error-60 );
 	}
 
 	&[disabled],
@@ -283,6 +291,18 @@
 			margin-left: 4px;
 		}
 	}
+}
+
+.button-plain {
+	appearance: none;
+	background: transparent;
+	color: inherit;
+	border: none;
+	font-size: inherit;
+	font-weight: inherit;
+	outline: 0;
+	padding: 0;
+	vertical-align: baseline;
 }
 
 // ==========================================================================

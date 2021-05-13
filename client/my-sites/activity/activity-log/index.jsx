@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { isMobile } from '@automattic/viewport';
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -11,42 +12,46 @@ import { find, get, includes, isEmpty, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-
 import ActivityLogBanner from '../activity-log-banner';
 import ActivityLogExample from '../activity-log-example';
 import ActivityLogItem from '../activity-log-item';
 import ActivityLogAggregatedItem from '../activity-log-item/aggregated';
 import ActivityLogSwitch from '../activity-log-switch';
 import ActivityLogTasklist from '../activity-log-tasklist';
-import Banner from 'components/banner';
-import DocumentHead from 'components/data/document-head';
-import EmptyContent from 'components/empty-content';
+import DocumentHead from 'calypso/components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import IntroBanner from '../activity-log-banner/intro-banner';
-import { isFreePlan } from 'lib/plans';
-import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
-import JetpackColophon from 'components/jetpack-colophon';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import Pagination from 'components/pagination';
+import { isFreePlan } from '@automattic/calypso-products';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import Pagination from 'calypso/components/pagination';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import RewindAlerts from './rewind-alerts';
-import QueryRewindState from 'components/data/query-rewind-state';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
-import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
+import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // For site time offset
+import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import RewindUnavailabilityNotice from './rewind-unavailability-notice';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { siteHasBackupProductPurchase } from 'state/purchases/selectors';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getSiteSlug, getSiteTitle, isJetpackSite } from 'state/sites/selectors';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	siteHasBackupProductPurchase,
+	siteHasScanProductPurchase,
+} from 'calypso/state/purchases/selectors';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSiteSlug, getSiteTitle, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	recordTracksEvent as recordTracksEventAction,
+	withAnalytics,
+} from 'calypso/state/analytics/actions';
 import {
 	getRewindRestoreProgress,
 	rewindRequestDismiss,
@@ -54,25 +59,26 @@ import {
 	rewindBackupDismiss,
 	rewindBackup,
 	updateFilter,
-} from 'state/activity-log/actions';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import getBackupProgress from 'state/selectors/get-backup-progress';
-import getRequestedBackup from 'state/selectors/get-requested-backup';
-import getRequestedRewind from 'state/selectors/get-requested-rewind';
-import getRestoreProgress from 'state/selectors/get-restore-progress';
-import getRewindState from 'state/selectors/get-rewind-state';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import isVipSite from 'state/selectors/is-vip-site';
-import { requestActivityLogs } from 'state/data-getters';
-import { emptyFilter } from 'state/activity-log/reducer';
-import { isMobile } from 'lib/viewport';
-import analytics from 'lib/analytics';
-import { applySiteOffset } from 'lib/site/timezone';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { getPreference } from 'state/preferences/selectors';
+} from 'calypso/state/activity-log/actions';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
+import getRequestedBackup from 'calypso/state/selectors/get-requested-backup';
+import getRequestedRewind from 'calypso/state/selectors/get-requested-rewind';
+import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
+import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { requestActivityLogs } from 'calypso/state/data-getters';
+import { emptyFilter } from 'calypso/state/activity-log/reducer';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 
 /**
  * Style dependencies
@@ -144,7 +150,7 @@ class ActivityLog extends Component {
 	 *
 	 * @param {string} type Type of dialog to close.
 	 */
-	handleCloseDialog = type => {
+	handleCloseDialog = ( type ) => {
 		const { siteId } = this.props;
 		switch ( type ) {
 			case 'restore':
@@ -163,13 +169,13 @@ class ActivityLog extends Component {
 	 * @param   {object} date Moment to adjust.
 	 * @returns {object}      Moment adjusted for site timezone or gmtOffset.
 	 */
-	applySiteOffset = date => {
+	applySiteOffset = ( date ) => {
 		const { timezone, gmtOffset } = this.props;
 		return applySiteOffset( date, { timezone, gmtOffset } );
 	};
 
-	changePage = pageNumber => {
-		analytics.tracks.recordEvent( 'calypso_activitylog_change_page', { page: pageNumber } );
+	changePage = ( pageNumber ) => {
+		recordTracksEvent( 'calypso_activitylog_change_page', { page: pageNumber } );
 		this.props.selectPage( this.props.siteId, pageNumber );
 		window.scrollTo( 0, 0 );
 	};
@@ -345,7 +351,7 @@ class ActivityLog extends Component {
 				<div className="activity-log__time-period is-loading">
 					<span />
 				</div>
-				{ [ 1, 2, 3 ].map( i => (
+				{ [ 1, 2, 3 ].map( ( i ) => (
 					<div key={ i } className="activity-log-item is-loading">
 						<div className="activity-log-item__type">
 							<div className="activity-log-item__activity-icon" />
@@ -407,35 +413,30 @@ class ActivityLog extends Component {
 		} )();
 
 		return (
-			<div>
+			<>
 				{ siteId && 'active' === rewindState.state && (
 					<QueryRewindBackupStatus siteId={ siteId } />
 				) }
 				<QuerySiteSettings siteId={ siteId } />
+				<QuerySitePurchases siteId={ siteId } />
+				<QueryRewindBackups siteId={ siteId } />
+
 				<SidebarNavigation />
 
-				<JetpackBackupCredsBanner event={ 'activity-backup-credentials' } />
-
 				<FormattedHeader
+					brandFont
 					className="activity-log__page-heading"
 					headerText={ translate( 'Activity' ) }
+					subHeaderText={ translate(
+						"Keep tabs on all your site's activity — plugin and theme updates, user logins, " +
+							'setting modifications, and more.'
+					) }
 					align="left"
 				/>
 
 				{ siteId && isJetpack && ! isAtomic && <RewindAlerts siteId={ siteId } /> }
 				{ siteId && 'unavailable' === rewindState.state && (
 					<RewindUnavailabilityNotice siteId={ siteId } />
-				) }
-				{ 'provisioning' === rewindState.state && (
-					<Banner
-						icon="history"
-						disableHref
-						title={ translate( 'Your backup is underway' ) }
-						description={ translate(
-							"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
-								"After this initial backup, we'll save future changes in real time."
-						) }
-					/>
 				) }
 				<IntroBanner siteId={ siteId } />
 				{ siteHasNoLog && isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
@@ -460,7 +461,7 @@ class ActivityLog extends Component {
 						/>
 						<section className="activity-log__wrapper">
 							{ siteHasNoLog && <div className="activity-log__fader" /> }
-							{ theseLogs.map( log =>
+							{ theseLogs.map( ( log ) =>
 								log.isAggregate ? (
 									<Fragment key={ log.activityId }>
 										{ timePeriod( log ) }
@@ -501,7 +502,7 @@ class ActivityLog extends Component {
 						/>
 					</div>
 				) }
-			</div>
+			</>
 		);
 	}
 
@@ -524,22 +525,9 @@ class ActivityLog extends Component {
 	}
 
 	render() {
-		const { canViewActivityLog, siteId, translate } = this.props;
+		const { siteId, translate } = this.props;
 
-		if ( false === canViewActivityLog ) {
-			return (
-				<Main>
-					<QuerySitePurchases siteId={ siteId } />
-					<SidebarNavigation />
-					<EmptyContent
-						title={ translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
-					/>
-				</Main>
-			);
-		}
-
-		const { context, rewindState } = this.props;
+		const { context, rewindState, siteSettingsUrl } = this.props;
 
 		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
 		const rewindIsNotReady =
@@ -553,6 +541,7 @@ class ActivityLog extends Component {
 				<DocumentHead title={ translate( 'Activity' ) } />
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
+				{ siteId && <TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } /> }
 				{ '' !== rewindNoThanks && rewindIsNotReady
 					? siteId && <ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
 					: this.getActivityLog() }
@@ -565,12 +554,13 @@ class ActivityLog extends Component {
 const emptyList = [];
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const gmtOffset = getSiteGmtOffset( state, siteId );
 		const timezone = getSiteTimezoneValue( state, siteId );
 		const requestedRestoreId = getRequestedRewind( state, siteId );
 		const requestedBackupId = getRequestedBackup( state, siteId );
+		const rewindBackups = getRewindBackups( state, siteId );
 		const rewindState = getRewindState( state, siteId );
 		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
 		const filter = getActivityLogFilter( state, siteId );
@@ -578,11 +568,13 @@ export default connect(
 		const siteIsOnFreePlan =
 			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
 			! isVipSite( state, siteId );
-		const siteHasNoLog = siteIsOnFreePlan && ! siteHasBackupProductPurchase( state, siteId );
+		const siteHasNoLog =
+			siteIsOnFreePlan &&
+			! siteHasBackupProductPurchase( state, siteId ) &&
+			! siteHasScanProductPurchase( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 
 		return {
-			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
 			enableRewind:
 				'active' === rewindState.state &&
@@ -598,9 +590,11 @@ export default connect(
 			requestedBackupId,
 			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
+			rewindBackups,
 			rewindState,
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
+			siteSettingsUrl: getSettingsUrl( state, siteId, 'general' ),
 			slug: getSiteSlug( state, siteId ),
 			timezone,
 			siteHasNoLog,
@@ -609,29 +603,29 @@ export default connect(
 	},
 	{
 		changePeriod: ( { date, direction } ) =>
-			recordTracksEvent( 'calypso_activitylog_monthpicker_change', {
+			recordTracksEventAction( 'calypso_activitylog_monthpicker_change', {
 				date: date.utc().toISOString(),
 				direction,
 			} ),
 		createBackup: ( siteId, actionId ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_backup_confirm', { action_id: actionId } ),
+				recordTracksEventAction( 'calypso_activitylog_backup_confirm', { action_id: actionId } ),
 				rewindBackup( siteId, actionId )
 			),
-		dismissBackup: siteId =>
+		dismissBackup: ( siteId ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_backup_cancel' ),
+				recordTracksEventAction( 'calypso_activitylog_backup_cancel' ),
 				rewindBackupDismiss( siteId )
 			),
 		getRewindRestoreProgress,
-		rewindRequestDismiss: siteId =>
+		rewindRequestDismiss: ( siteId ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_cancel' ),
+				recordTracksEventAction( 'calypso_activitylog_restore_cancel' ),
 				rewindRequestDismiss( siteId )
 			),
 		rewindRestore: ( siteId, actionId ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_confirm', { action_id: actionId } ),
+				recordTracksEventAction( 'calypso_activitylog_restore_confirm', { action_id: actionId } ),
 				rewindRestore( siteId, actionId )
 			),
 		selectPage: ( siteId, pageNumber ) => updateFilter( siteId, { page: pageNumber } ),

@@ -26,39 +26,38 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
 import { mapStateToProps } from '../main';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
 
-jest.mock( 'lib/analytics', () => ( {} ) );
-jest.mock( 'lib/user', () => jest.fn() );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/user', () => jest.fn() );
 jest.mock( '../help-unverified-warning', () => 'HelpUnverifiedWarning' );
-jest.mock( 'components/main', () => 'Main' );
-jest.mock( 'components/section-header', () => 'SectionHeader' );
-jest.mock( 'me/sidebar-navigation', () => 'MeSidebarNavigation' );
-jest.mock( 'state/current-user/selectors', () => ( {
+jest.mock( 'calypso/components/main', () => 'Main' );
+jest.mock( 'calypso/components/section-header', () => 'SectionHeader' );
+jest.mock( 'calypso/me/sidebar-navigation', () => 'MeSidebarNavigation' );
+jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserId: jest.fn( () => 12 ),
 	isCurrentUserEmailVerified: jest.fn( () => true ),
 } ) );
 
-jest.mock( 'state/purchases/selectors', () => ( {
+jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getUserPurchases: jest.fn(),
 	isFetchingUserPurchases: jest.fn( () => false ),
 } ) );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+	localize: ( Comp ) => ( props ) => (
 		<Comp
 			{ ...props }
-			translate={ function( x ) {
+			translate={ function ( x ) {
 				return x;
 			} }
 		/>
 	),
-	translate: x => x,
-	numberFormat: x => x,
+	translate: ( x ) => x,
+	numberFormat: ( x ) => x,
 } ) );
-
-import purchasesSelectors from 'state/purchases/selectors';
 
 describe( 'mapStateToProps should return correct value for isBusinessPlanUser', () => {
 	[
@@ -77,9 +76,9 @@ describe( 'mapStateToProps should return correct value for isBusinessPlanUser', 
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 		undefined,
-	].forEach( productSlug => {
+	].forEach( ( productSlug ) => {
 		test( `False for plan ${ JSON.stringify( productSlug ) }`, () => {
-			purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
+			getUserPurchases.mockImplementation( () => [ { productSlug } ] );
 			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( false );
 		} );
 	} );
@@ -90,20 +89,20 @@ describe( 'mapStateToProps should return correct value for isBusinessPlanUser', 
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach( productSlug => {
+	].forEach( ( productSlug ) => {
 		test( `True for plan ${ JSON.stringify( productSlug ) }`, () => {
-			purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
+			getUserPurchases.mockImplementation( () => [ { productSlug } ] );
 			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( true );
 		} );
 	} );
 
 	test( 'Should be false for purchases not loaded', () => {
-		purchasesSelectors.getUserPurchases.mockImplementation( () => null );
+		getUserPurchases.mockImplementation( () => null );
 		expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( false );
 	} );
 
 	test( 'Should be false for no purchases', () => {
-		purchasesSelectors.getUserPurchases.mockImplementation( () => [] );
+		getUserPurchases.mockImplementation( () => [] );
 		expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( false );
 	} );
 } );

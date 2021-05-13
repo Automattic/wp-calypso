@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { debounce, isEmpty } from 'lodash';
@@ -12,23 +12,23 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SignupSitePreview from 'components/signup-site-preview';
-import { getPreviewParamClass } from 'components/signup-site-preview/utils';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
+import SignupSitePreview from 'calypso/components/signup-site-preview';
+import { getPreviewParamClass } from 'calypso/components/signup-site-preview/utils';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import {
 	getSiteVerticalName,
 	getSiteVerticalPreview,
 	getSiteVerticalPreviewScreenshot,
 	getSiteVerticalPreviewStyles,
 	getSiteVerticalSlug,
-} from 'state/signup/steps/site-vertical/selectors';
-import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
-import { getThemeCssUri, DEFAULT_FONT_URI as defaultFontUri } from 'lib/signup/site-theme';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getLocaleSlug, getLanguage } from 'lib/i18n-utils';
-import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import QueryVerticals from 'components/data/query-verticals';
+} from 'calypso/state/signup/steps/site-vertical/selectors';
+import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
+import { getThemeCssUri, DEFAULT_FONT_URI as defaultFontUri } from 'calypso/lib/signup/site-theme';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getLocaleSlug, getLanguage } from 'calypso/lib/i18n-utils';
+import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import QueryVerticals from 'calypso/components/data/query-verticals';
 
 /**
  * Style dependencies
@@ -109,7 +109,7 @@ class SiteMockups extends Component {
 	 * preview params to be injected with JavaScript.
 	 *
 	 * @param {string} content Content to format
-	 * @return {string} Formatted content
+	 * @returns {string} Formatted content
 	 */
 	getContent( content = '' ) {
 		if ( 'string' !== typeof content ) {
@@ -136,7 +136,7 @@ class SiteMockups extends Component {
 		};
 	}
 
-	handlePreviewClick = size =>
+	handlePreviewClick = ( size ) =>
 		this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
 			size,
 			vertical_slug: this.props.verticalSlug,

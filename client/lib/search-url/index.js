@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { buildRelativeSearchUrl } from 'lib/build-url';
+import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:search-url' );

@@ -8,15 +8,15 @@ import {
 	HAPPYCHAT_IO_RECEIVE_INIT,
 	HAPPYCHAT_IO_RECEIVE_LOCALIZED_SUPPORT,
 	HAPPYCHAT_IO_RECEIVE_RECONNECTING,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import {
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
 	HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED,
 	HAPPYCHAT_CONNECTION_STATUS_RECONNECTING,
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
-} from 'state/happychat/constants';
-import { combineReducers } from 'state/utils';
+} from 'calypso/state/happychat/constants';
+import { combineReducers } from 'calypso/state/utils';
 
 const error = ( state = null, action ) => {
 	switch ( action.type ) {
@@ -31,9 +31,9 @@ const error = ( state = null, action ) => {
 /**
  * Tracks the state of the happychat client connection
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
 const status = ( state = HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED, action ) => {
@@ -53,9 +53,9 @@ const status = ( state = HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED, action ) => 
 /**
  * Tracks whether happychat.io is accepting new chats.
  *
- * @param  {Boolean} state  Current happychat status
- * @param  {Object}  action Action playload
- * @return {Boolean}        Updated happychat status
+ * @param  {boolean} state  Current happychat status
+ * @param  {object}  action Action playload
+ * @returns {boolean}        Updated happychat status
  */
 const isAvailable = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -69,9 +69,9 @@ const isAvailable = ( state = false, action ) => {
  * Tracks whether happychat.io is accepting fully localized chats.
  * Customers locale and HE locale should be an exact match ( doesn't default routing to english speaker HEs )
  *
- * @param  {Boolean} state  Current happychat status
- * @param  {Object}  action Action playload
- * @return {Boolean}        Updated happychat status
+ * @param  {boolean} state  Current happychat status
+ * @param  {object}  action Action playload
+ * @returns {boolean}        Updated happychat status
  */
 export const localizedSupport = ( state = false, action ) => {
 	switch ( action.type ) {

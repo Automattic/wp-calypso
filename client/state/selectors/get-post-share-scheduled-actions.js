@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-
 import { get, orderBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { enrichPublicizeActionsWithConnections } from 'state/selectors/utils/';
-import createSelector from 'lib/create-selector';
+import { enrichPublicizeActionsWithConnections } from 'calypso/state/selectors/utils/';
+import { createSelector } from '@automattic/state-utils';
+
+import 'calypso/state/sharing/init';
 
 const getScheduledActions = ( state, siteId, postId ) =>
 	orderBy(
@@ -20,10 +21,10 @@ const getScheduledActions = ( state, siteId, postId ) =>
 /**
  * Return a share-scheduled-actions array propagaring data from publicize connections.
  *
- * @param {Object} state Global state tree
- * @param {Number} siteId Site ID
- * @param {Number} postId Post ID
- * @return {Array} share publihed actions array
+ * @param {object} state Global state tree
+ * @param {number} siteId Site ID
+ * @param {number} postId Post ID
+ * @returns {Array} share publihed actions array
  */
 const getPostShareScheduledActions = createSelector(
 	( state, siteId, postId ) => {

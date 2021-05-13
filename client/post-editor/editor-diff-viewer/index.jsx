@@ -1,31 +1,31 @@
 /**
  * External dependencies
  */
-
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { debounce, filter, first, flow, get, has, last, map, throttle } from 'lodash';
+import { debounce, filter, get, has, last, map, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import getPostRevision from 'state/selectors/get-post-revision';
-import getPostRevisionsDiffView from 'state/selectors/get-post-revisions-diff-view';
-import TextDiff from 'components/text-diff';
-import scrollTo from 'lib/scroll-to';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { isWithinBreakpoint } from 'lib/viewport';
+import { getPostRevision } from 'calypso/state/posts/selectors/get-post-revision';
+import { getPostRevisionsDiffView } from 'calypso/state/posts/selectors/get-post-revisions-diff-view';
+import TextDiff from 'calypso/components/text-diff';
+import scrollTo from 'calypso/lib/scroll-to';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const getCenterOffset = node => get( node, 'offsetTop', 0 ) + get( node, 'offsetHeight', 0 ) / 2;
+const getCenterOffset = ( node ) =>
+	get( node, 'offsetTop', 0 ) + get( node, 'offsetHeight', 0 ) / 2;
 
 class EditorDiffViewer extends PureComponent {
 	static propTypes = {
@@ -99,7 +99,7 @@ class EditorDiffViewer extends PureComponent {
 		} );
 	};
 
-	recomputeChanges = callback => {
+	recomputeChanges = ( callback ) => {
 		let selectors = '.text-diff__additions, .text-diff__deletions';
 		if ( this.isBigViewport && this.props.diffView === 'split' ) {
 			selectors =
@@ -137,7 +137,7 @@ class EditorDiffViewer extends PureComponent {
 		} );
 	};
 
-	handleScroll = e => {
+	handleScroll = ( e ) => {
 		this.setState( {
 			scrollTop: get( e.target, 'scrollTop', 0 ),
 		} );
@@ -145,7 +145,7 @@ class EditorDiffViewer extends PureComponent {
 
 	throttledScrollHandler = throttle( this.handleScroll, 100 );
 
-	handleScrollableRef = node => {
+	handleScrollableRef = ( node ) => {
 		if ( node ) {
 			this.node = node;
 			this.node.addEventListener( 'scroll', this.throttledScrollHandler );
@@ -163,7 +163,7 @@ class EditorDiffViewer extends PureComponent {
 	};
 
 	scrollBelow = () => {
-		this.centerScrollingOnOffset( first( this.changesBelowViewport ) );
+		this.centerScrollingOnOffset( this.changesBelowViewport[ 0 ] );
 		this.props.recordTracksEvent( 'calypso_editor_post_revisions_scroll_hint_used', {
 			direction: 'below',
 		} );
@@ -181,11 +181,11 @@ class EditorDiffViewer extends PureComponent {
 		// saving to `this` so we can access if from `scrollAbove` and `scrollBelow`
 		this.changesAboveViewport = filter(
 			this.state.changeOffsets,
-			offset => offset < this.state.scrollTop
+			( offset ) => offset < this.state.scrollTop
 		);
 		this.changesBelowViewport = filter(
 			this.state.changeOffsets,
-			offset => offset > bottomBoundary
+			( offset ) => offset > bottomBoundary
 		);
 
 		const showHints = this.state.viewportHeight > 470;
@@ -215,6 +215,7 @@ class EditorDiffViewer extends PureComponent {
 					) }
 				</div>
 				{ showHints && countAbove > 0 && (
+					// eslint-disable-next-line jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events
 					<div className="editor-diff-viewer__hint-above" onClick={ this.scrollAbove }>
 						<Gridicon className="editor-diff-viewer__hint-icon" size={ 18 } icon="arrow-up" />
 						{ this.props.translate( '%(numberOfChanges)d change', '%(numberOfChanges)d changes', {
@@ -224,6 +225,7 @@ class EditorDiffViewer extends PureComponent {
 					</div>
 				) }
 				{ showHints && countBelow > 0 && (
+					// eslint-disable-next-line jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events
 					<div className="editor-diff-viewer__hint-below" onClick={ this.scrollBelow }>
 						<Gridicon className="editor-diff-viewer__hint-icon" size={ 18 } icon="arrow-down" />
 						{ this.props.translate( '%(numberOfChanges)d change', '%(numberOfChanges)d changes', {
@@ -237,13 +239,10 @@ class EditorDiffViewer extends PureComponent {
 	}
 }
 
-export default flow(
-	localize,
-	connect(
-		( state, { siteId, postId, selectedRevisionId } ) => ( {
-			revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
-			diffView: getPostRevisionsDiffView( state ),
-		} ),
-		{ recordTracksEvent }
-	)
-)( EditorDiffViewer );
+export default connect(
+	( state, { siteId, postId, selectedRevisionId } ) => ( {
+		revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
+		diffView: getPostRevisionsDiffView( state ),
+	} ),
+	{ recordTracksEvent }
+)( localize( EditorDiffViewer ) );

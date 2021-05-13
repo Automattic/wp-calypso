@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-
 import { get, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getVerticals } from 'state/signup/verticals/selectors';
-import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { getVerticals } from 'calypso/state/signup/verticals/selectors';
+import { getSurveyVertical } from 'calypso/state/signup/steps/survey/selectors';
+
+import 'calypso/state/signup/init';
 
 export function getSiteVerticalName( state ) {
 	return get( state, 'signup.steps.siteVertical.name', '' );
@@ -22,7 +23,7 @@ export function getSiteVerticalData( state ) {
 
 	const match = find(
 		verticals,
-		item => item.verticalName.toLowerCase() === verticalName.toLowerCase()
+		( item ) => item.verticalName.toLowerCase() === verticalName.toLowerCase()
 	);
 
 	if ( match ) {

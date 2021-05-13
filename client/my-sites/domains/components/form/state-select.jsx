@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
@@ -11,19 +11,19 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormInputValidation from 'components/forms/form-input-validation';
-import { getCountryStates } from 'state/country-states/selectors';
-import QueryCountryStates from 'components/data/query-country-states';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import scrollIntoViewport from 'lib/scroll-into-viewport';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import { getCountryStates } from 'calypso/state/country-states/selectors';
+import QueryCountryStates from 'calypso/components/data/query-country-states';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import Input from './input';
 
-class StateSelect extends Component {
+class StateSelect extends PureComponent {
 	static instances = 0;
 
-	inputRef = element => {
+	inputRef = ( element ) => {
 		this.inputElement = element;
 
 		if ( ! this.props.inputRef ) {
@@ -77,7 +77,7 @@ class StateSelect extends Component {
 		const validationId = `validation-field-${ this.props.name }`;
 
 		return (
-			<div>
+			<>
 				{ countryCode && <QueryCountryStates countryCode={ countryCode } /> }
 				{ isEmpty( countryStates ) ? (
 					<Input inputRef={ this.inputRef } { ...this.props } />
@@ -102,7 +102,7 @@ class StateSelect extends Component {
 							<option key="--" value="" disabled="disabled">
 								{ selectText || this.props.translate( 'Select State' ) }
 							</option>
-							{ countryStates.map( state => (
+							{ countryStates.map( ( state ) => (
 								<option key={ state.code } value={ state.code }>
 									{ state.name }
 								</option>
@@ -113,7 +113,7 @@ class StateSelect extends Component {
 						) }
 					</div>
 				) }
-			</div>
+			</>
 		);
 	}
 }

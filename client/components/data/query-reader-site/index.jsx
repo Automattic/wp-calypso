@@ -1,17 +1,15 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { shouldSiteBeFetched } from 'state/reader/sites/selectors';
-import { requestSite } from 'state/reader/sites/actions';
+import { shouldSiteBeFetched } from 'calypso/state/reader/sites/selectors';
+import { requestSite } from 'calypso/state/reader/sites/actions';
 
 class QueryReaderSite extends Component {
 	UNSAFE_componentWillMount() {
@@ -50,12 +48,7 @@ export default connect(
 			shouldSiteBeFetched: shouldSiteBeFetched( state, siteId ),
 		};
 	},
-	dispatch => {
-		return bindActionCreators(
-			{
-				requestSite,
-			},
-			dispatch
-		);
+	{
+		requestSite,
 	}
 )( QueryReaderSite );

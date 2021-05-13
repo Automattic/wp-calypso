@@ -8,14 +8,14 @@
 	width: 100%;
 }
 
-@include breakpoint( '>960px' ) {
+@include breakpoint-deprecated( '>960px' ) {
 	.store-stats__widgets {
 		flex-direction: row;
 		flex-wrap: wrap;
 	}
 }
 
-@include breakpoint( '>1280px' ) {
+@include breakpoint-deprecated( '>1280px' ) {
 	.store-stats__widgets-column {
 		width: calc( 33% - 3px );
 

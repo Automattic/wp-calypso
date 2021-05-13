@@ -9,11 +9,11 @@ import { map, mapValues, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import QueryPosts from 'components/data/query-posts';
+import QueryPosts from 'calypso/components/data/query-posts';
 import { Card } from '@automattic/components';
 import PostStatus from '../';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getPostsForQuery } from 'state/posts/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getPostsForQuery } from 'calypso/state/posts/selectors';
 
 function PostStatusExample( { queries, primarySiteId, primarySiteUrl, globalIdByQueryLabel } ) {
 	return (
@@ -47,12 +47,12 @@ const queries = {
 };
 
 const getFirstGlobalIdByQueryLabel = ( state, siteId ) =>
-	mapValues( queries, query => {
+	mapValues( queries, ( query ) => {
 		const postsForQuery = getPostsForQuery( state, siteId, query );
 		return get( postsForQuery, [ 0, 'global_ID' ] );
 	} );
 
-const ConnectedPostStatusExample = connect( state => {
+const ConnectedPostStatusExample = connect( ( state ) => {
 	const user = getCurrentUser( state );
 	const primarySiteId = get( user, 'primary_blog' );
 	return {

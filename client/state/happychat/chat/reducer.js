@@ -2,24 +2,23 @@
 /**
  * External dependencies
  */
-import { concat, filter, find, map, get, sortBy, takeRight } from 'lodash';
+import { concat, filter, find, map, get, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
-	SERIALIZE,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_RECEIVE_STATUS,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import {
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	HAPPYCHAT_MAX_STORED_MESSAGES,
-} from 'state/happychat/constants';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/happychat/constants';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { timelineSchema } from './schema';
 
 // We compare incoming timestamps against a known future Unix time in seconds date
@@ -28,7 +27,7 @@ import { timelineSchema } from './schema';
 //
 // This will all be removed once the server-side is fully converted.
 const UNIX_TIMESTAMP_2023_IN_SECONDS = 1700000000;
-export const maybeUpscaleTimePrecision = time =>
+export const maybeUpscaleTimePrecision = ( time ) =>
 	time < UNIX_TIMESTAMP_2023_IN_SECONDS ? time * 1000 : time;
 
 const lastActivityTimestampSchema = { type: 'number' };
@@ -55,9 +54,9 @@ export const lastActivityTimestamp = withSchemaValidation(
  *  - HAPPYCHAT_CHAT_STATUS_ABANDONED : operator was disconnected
  *  - HAPPYCHAT_CHAT_STATUS_CLOSED : chat was closed
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
 export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
@@ -71,9 +70,9 @@ export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
 /**
  * Returns a timeline event from the redux action
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
 const timelineEvent = ( state = {}, action ) => {
@@ -95,20 +94,19 @@ const timelineEvent = ( state = {}, action ) => {
 	return state;
 };
 
-const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.timestamp, 10 ) );
+const sortTimeline = ( timeline ) =>
+	sortBy( timeline, ( event ) => parseInt( event.timestamp, 10 ) );
 
 /**
  * Adds timeline events for happychat
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
-export const timeline = withSchemaValidation( timelineSchema, ( state = [], action ) => {
+const timelineReducer = ( state = [], action ) => {
 	switch ( action.type ) {
-		case SERIALIZE:
-			return takeRight( state, HAPPYCHAT_MAX_STORED_MESSAGES );
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 			// if meta.forOperator is set, skip so won't show to user
 			if ( get( action, 'message.meta.forOperator', false ) ) {
@@ -120,7 +118,7 @@ export const timeline = withSchemaValidation( timelineSchema, ( state = [], acti
 		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT:
 			return state;
 		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE:
-			const messages = filter( action.messages, message => {
+			const messages = filter( action.messages, ( message ) => {
 				if ( ! message.id ) {
 					return false;
 				}
@@ -134,7 +132,7 @@ export const timeline = withSchemaValidation( timelineSchema, ( state = [], acti
 			} );
 			return sortTimeline(
 				state.concat(
-					map( messages, message => ( {
+					map( messages, ( message ) => ( {
 						id: message.id,
 						source: message.source,
 						message: message.text,
@@ -149,7 +147,14 @@ export const timeline = withSchemaValidation( timelineSchema, ( state = [], acti
 			);
 	}
 	return state;
-} );
+};
+
+export const timeline = withSchemaValidation(
+	timelineSchema,
+	withPersistence( timelineReducer, {
+		serialize: ( state ) => state.slice( -1 * HAPPYCHAT_MAX_STORED_MESSAGES ),
+	} )
+);
 
 export default combineReducers( {
 	status,

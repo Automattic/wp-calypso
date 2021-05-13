@@ -49,7 +49,7 @@ program
 		'name of variable in generated php file that contains array of method calls'
 	)
 	.usage( '-o outputFile -i inputFile -f format [inputFile ...]' )
-	.on( '--help', function() {
+	.on( '--help', function () {
 		console.log( '  Examples' );
 		console.log( '\n    $ i18n-calypso -o ./outputFile.pot -i ./inputFile.js -i ./inputFile2.js' );
 		console.log( '' );
@@ -76,7 +76,7 @@ if ( inputFiles.length === 0 ) {
 
 const inputPaths = globby.sync( inputFiles );
 
-inputPaths.forEach( function( inputFile ) {
+inputPaths.forEach( function ( inputFile ) {
 	if ( ! fs.existsSync( inputFile ) ) {
 		console.error( 'Error: inputFile, `' + inputFile + '`, does not exist' );
 	}

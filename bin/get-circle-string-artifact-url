@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// This script will return a url of the calypso-strings.pot file generated in our latest master build.
+// This script will return a url of the calypso-strings.pot file generated in our latest trunk build.
 // eg: node bin/get-circle-string-artifact-url | xargs curl
 
 const getCircleArtifactUrl = require( './get-circle-artifact-url' );

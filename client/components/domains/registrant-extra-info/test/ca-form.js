@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,16 +10,16 @@ import { identity } from 'lodash';
 import { RegistrantExtraInfoCaForm } from '../ca-form';
 
 jest.mock( 'store', () => ( { get: () => {}, set: () => {} } ) );
-jest.mock( 'lib/analytics', () => {} );
 
 const mockProps = {
-	translate: identity,
-	updateContactDetailsCache: identity,
+	translate: ( string ) => string,
+	updateContactDetailsCache: () => {},
 	userWpcomLang: 'EN',
 	getFieldProps: () => ( {} ),
 };
 
 describe( 'ca-form', () => {
+	// eslint-disable-next-line jest/expect-expect
 	test( 'should render without errors when extra is empty', () => {
 		const testProps = {
 			...mockProps,

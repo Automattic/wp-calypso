@@ -9,32 +9,37 @@ import wrapWithClickOutside from 'react-click-outside';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
-import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Layout from 'calypso/components/layout';
+import Column from 'calypso/components/layout/column';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteOnAtomicPlan from 'calypso/state/selectors/is-site-on-atomic-plan';
+import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
 import SFTPCard from './sftp-card';
 import PhpMyAdminCard from './phpmyadmin-card';
 import SupportCard from './support-card';
 import PhpVersionCard from './php-version-card';
 import SiteBackupCard from './site-backup-card';
-import { isEnabled } from 'config';
-import NoticeAction from 'components/notice/notice-action';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import Notice from 'components/notice';
-import Banner from 'components/banner';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
-import { transferStates } from 'state/automated-transfer/constants';
-import { requestSite } from 'state/sites/actions';
-import FeatureExample from 'components/feature-example';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import MiscellaneousCard from './miscellaneous-card';
+import WebServerLogsCard from './web-server-logs-card';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import Notice from 'calypso/components/notice';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	getAutomatedTransferStatus,
+	isAutomatedTransferActive,
+} from 'calypso/state/automated-transfer/selectors';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { requestSite } from 'calypso/state/sites/actions';
+import FeatureExample from 'calypso/components/feature-example';
+import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -75,14 +80,14 @@ class Hosting extends Component {
 			return null;
 		}
 
-		const sftpPhpMyAdminFeaturesEnabled = isEnabled( 'hosting/sftp-phpmyadmin' );
-
 		const getUpgradeBanner = () => (
-			<Banner
+			<UpsellNudge
 				title={ translate( 'Upgrade to the Business plan to access all hosting features' ) }
 				event="calypso_hosting_configuration_upgrade_click"
 				href={ `/checkout/${ siteId }/business` }
 				plan={ PLAN_BUSINESS }
+				feature={ FEATURE_SFTP }
+				showIcon={ true }
 			/>
 		);
 
@@ -157,33 +162,34 @@ class Hosting extends Component {
 
 			return (
 				<WrapperComponent>
-					<div className="hosting__layout">
-						<div className="hosting__layout-col">
-							{ sftpPhpMyAdminFeaturesEnabled && <SFTPCard disabled={ isDisabled } /> }
-							{ sftpPhpMyAdminFeaturesEnabled && <PhpMyAdminCard disabled={ isDisabled } /> }
-							{ <PhpVersionCard disabled={ isDisabled } /> }
-						</div>
-						<div className="hosting__layout-col">
-							{ sftpPhpMyAdminFeaturesEnabled && <SiteBackupCard disabled={ isDisabled } /> }
+					<Layout className="hosting__layout">
+						<Column type="main" className="hosting__main-layout-col">
+							<SFTPCard disabled={ isDisabled } />
+							<PhpMyAdminCard disabled={ isDisabled } />
+							<PhpVersionCard disabled={ isDisabled } />
+							<MiscellaneousCard disabled={ isDisabled } />
+							<WebServerLogsCard disabled={ isDisabled } />
+						</Column>
+						<Column type="sidebar">
+							<SiteBackupCard disabled={ isDisabled } />
 							<SupportCard />
-						</div>
-					</div>
+						</Column>
+					</Layout>
 				</WrapperComponent>
 			);
 		};
 
 		return (
-			<Main className="hosting is-wide-layout">
+			<Main wideLayout className="hosting">
 				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
 				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					headerText={ translate( 'Hosting Configuration' ) }
-					subHeaderText={
-						sftpPhpMyAdminFeaturesEnabled
-							? translate( 'Access your website’s database and more advanced settings.' )
-							: translate( 'Access and manage more advanced settings of your website.' )
-					}
+					subHeaderText={ translate(
+						'Access your website’s database and more advanced settings.'
+					) }
 					align="left"
 				/>
 				{ isOnAtomicPlan ? getAtomicActivationNotice() : getUpgradeBanner() }
@@ -197,13 +203,14 @@ export const clickActivate = () =>
 	recordTracksEvent( 'calypso_hosting_configuration_activate_click' );
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
-			isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
+			isDisabled:
+				! isSiteOnAtomicPlan( state, siteId ) || ! isSiteAutomatedTransfer( state, siteId ),
 			isOnAtomicPlan: isSiteOnAtomicPlan( state, siteId ),
 			canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 			siteSlug: getSelectedSiteSlug( state ),

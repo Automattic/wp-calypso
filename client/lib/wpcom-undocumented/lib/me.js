@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { Me } from 'wpcom';
+import WPCOM from 'wpcom';
 import inherits from 'inherits';
 import debugFactory from 'debug';
 
@@ -16,13 +16,12 @@ const debug = debugFactory( 'calypso:wpcom-undocumented:me' );
 /**
  * Internal dependencies.
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 /**
  * Create an UndocumentedMe instance
  *
  * @param {WPCOM} wpcom - WPCOMUndocumented instance
- * @return {NUll} null
  */
 function UndocumentedMe( wpcom ) {
 	debug( 'UndocumentedMe' );
@@ -35,9 +34,9 @@ function UndocumentedMe( wpcom ) {
 /**
  * Inherits from Me class
  */
-inherits( UndocumentedMe, Me );
+inherits( UndocumentedMe, WPCOM.Me );
 
-UndocumentedMe.prototype.billingHistoryEmailReceipt = function( receiptId, callback ) {
+UndocumentedMe.prototype.billingHistoryEmailReceipt = function ( receiptId, callback ) {
 	const args = {
 		path: '/me/billing-history/receipt/' + receiptId + '/email',
 	};
@@ -45,7 +44,7 @@ UndocumentedMe.prototype.billingHistoryEmailReceipt = function( receiptId, callb
 	return this.wpcom.req.get( args, callback );
 };
 
-UndocumentedMe.prototype.getReceipt = function( receiptId, queryOrCallback ) {
+UndocumentedMe.prototype.getReceipt = function ( receiptId, queryOrCallback ) {
 	return this.wpcom.req.get(
 		{
 			path: `/me/billing-history/receipt/${ receiptId }`,
@@ -54,11 +53,11 @@ UndocumentedMe.prototype.getReceipt = function( receiptId, queryOrCallback ) {
 	);
 };
 
-UndocumentedMe.prototype.purchases = function( callback ) {
+UndocumentedMe.prototype.purchases = function ( callback ) {
 	return this.wpcom.req.get( '/me/purchases', callback );
 };
 
-UndocumentedMe.prototype.validatePassword = function( password, callback ) {
+UndocumentedMe.prototype.validatePassword = function ( password, callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/settings/password/validate',
@@ -70,7 +69,7 @@ UndocumentedMe.prototype.validatePassword = function( password, callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.sendSMSValidationCode = function( callback ) {
+UndocumentedMe.prototype.sendSMSValidationCode = function ( callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/two-step/sms/new',
@@ -79,7 +78,7 @@ UndocumentedMe.prototype.sendSMSValidationCode = function( callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.validateTwoStepCode = function( body, callback ) {
+UndocumentedMe.prototype.validateTwoStepCode = function ( body, callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/two-step/validate',
@@ -89,7 +88,7 @@ UndocumentedMe.prototype.validateTwoStepCode = function( body, callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.getTwoStep = function( callback ) {
+UndocumentedMe.prototype.getTwoStep = function ( callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/two-step/',
@@ -98,7 +97,7 @@ UndocumentedMe.prototype.getTwoStep = function( callback ) {
 	return this.wpcom.req.get( args, callback );
 };
 
-UndocumentedMe.prototype.getAppAuthCodes = function( callback ) {
+UndocumentedMe.prototype.getAppAuthCodes = function ( callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/two-step/app-auth-setup/',
@@ -107,7 +106,7 @@ UndocumentedMe.prototype.getAppAuthCodes = function( callback ) {
 	return this.wpcom.req.get( args, callback );
 };
 
-UndocumentedMe.prototype.validateUsername = function( username, callback ) {
+UndocumentedMe.prototype.validateUsername = function ( username, callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/username/validate/' + username,
@@ -116,7 +115,7 @@ UndocumentedMe.prototype.validateUsername = function( username, callback ) {
 	return this.wpcom.req.get( args, callback );
 };
 
-UndocumentedMe.prototype.changeUsername = function( username, action, callback ) {
+UndocumentedMe.prototype.changeUsername = function ( username, action, callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/username',
@@ -129,16 +128,36 @@ UndocumentedMe.prototype.changeUsername = function( username, action, callback )
 	return this.wpcom.req.post( args, callback );
 };
 
+UndocumentedMe.prototype.getPeerReferralLink = function ( callback ) {
+	const args = {
+		apiVersion: '1.1',
+		path: '/me/peer-referral-link',
+	};
+
+	return this.wpcom.req.get( args, callback );
+};
+
+UndocumentedMe.prototype.setPeerReferralLinkEnable = function ( enable, callback ) {
+	const args = {
+		apiVersion: '1.1',
+		path: '/me/peer-referral-link-enable',
+		body: {
+			enable,
+		},
+	};
+
+	return this.wpcom.req.post( args, callback );
+};
+
 /**
  * Get a list of the user's stored cards
  *
  * @param {object} [cardToken] Payment key
  * @param {object} [additionalData] Any additional data to send in the request
  *
- * @return {Promise} A promise for the request
- * @api public
+ * @returns {Promise} A promise for the request
  */
-UndocumentedMe.prototype.storedCardAdd = function( cardToken, additionalData = {} ) {
+UndocumentedMe.prototype.storedCardAdd = function ( cardToken, additionalData = {} ) {
 	debug( '/me/stored-cards', cardToken, additionalData );
 
 	return this.wpcom.req.post(
@@ -153,14 +172,14 @@ UndocumentedMe.prototype.storedCardAdd = function( cardToken, additionalData = {
 	);
 };
 
-UndocumentedMe.prototype.storedCardDelete = function( card, callback ) {
+UndocumentedMe.prototype.storedCardDelete = function ( card, callback ) {
 	const args = {
 		path: '/me/stored-cards/' + card.stored_details_id + '/delete',
 	};
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.backupCodes = function( callback ) {
+UndocumentedMe.prototype.backupCodes = function ( callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/two-step/backup-codes/new',
@@ -169,19 +188,19 @@ UndocumentedMe.prototype.backupCodes = function( callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.sendVerificationEmail = function( callback ) {
+UndocumentedMe.prototype.sendVerificationEmail = function ( callback ) {
 	debug( '/me/send-verification-email' );
 
 	return this.wpcom.req.post( { path: '/me/send-verification-email' }, callback );
 };
 
-UndocumentedMe.prototype.getNotificationSettings = function( callback ) {
+UndocumentedMe.prototype.getNotificationSettings = function ( callback ) {
 	debug( '/me/notification/settings/' );
 
 	return this.wpcom.req.get( { apiVersion: '1.1', path: '/me/notifications/settings/' }, callback );
 };
 
-UndocumentedMe.prototype.updateNotificationSettings = function( settings, applyToAll, callback ) {
+UndocumentedMe.prototype.updateNotificationSettings = function ( settings, applyToAll, callback ) {
 	let query = {};
 	debug( '/me/notification/settings/' );
 
@@ -200,7 +219,7 @@ UndocumentedMe.prototype.updateNotificationSettings = function( settings, applyT
 	);
 };
 
-UndocumentedMe.prototype.getAccountRecovery = function( callback ) {
+UndocumentedMe.prototype.getAccountRecovery = function ( callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery',
@@ -209,7 +228,7 @@ UndocumentedMe.prototype.getAccountRecovery = function( callback ) {
 	return this.wpcom.req.get( args, callback );
 };
 
-UndocumentedMe.prototype.updateAccountRecoveryPhone = function( country, phoneNumber, callback ) {
+UndocumentedMe.prototype.updateAccountRecoveryPhone = function ( country, phoneNumber, callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/phone',
@@ -222,7 +241,7 @@ UndocumentedMe.prototype.updateAccountRecoveryPhone = function( country, phoneNu
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.deleteAccountRecoveryPhone = function( callback ) {
+UndocumentedMe.prototype.deleteAccountRecoveryPhone = function ( callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/phone/delete',
@@ -231,7 +250,7 @@ UndocumentedMe.prototype.deleteAccountRecoveryPhone = function( callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.newValidationAccountRecoveryPhone = function( callback ) {
+UndocumentedMe.prototype.newValidationAccountRecoveryPhone = function ( callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/phone/validation/new',
@@ -240,7 +259,7 @@ UndocumentedMe.prototype.newValidationAccountRecoveryPhone = function( callback 
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.validateAccountRecoveryPhone = function( code, callback ) {
+UndocumentedMe.prototype.validateAccountRecoveryPhone = function ( code, callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/phone/validation',
@@ -250,7 +269,7 @@ UndocumentedMe.prototype.validateAccountRecoveryPhone = function( code, callback
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.updateAccountRecoveryEmail = function( email, callback ) {
+UndocumentedMe.prototype.updateAccountRecoveryEmail = function ( email, callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/email',
@@ -262,7 +281,7 @@ UndocumentedMe.prototype.updateAccountRecoveryEmail = function( email, callback 
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.deleteAccountRecoveryEmail = function( callback ) {
+UndocumentedMe.prototype.deleteAccountRecoveryEmail = function ( callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/email/delete',
@@ -271,7 +290,7 @@ UndocumentedMe.prototype.deleteAccountRecoveryEmail = function( callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.newValidationAccountRecoveryEmail = function( callback ) {
+UndocumentedMe.prototype.newValidationAccountRecoveryEmail = function ( callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/email/validation/new',
@@ -280,7 +299,7 @@ UndocumentedMe.prototype.newValidationAccountRecoveryEmail = function( callback 
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.deletePurchase = function( purchaseId, fn ) {
+UndocumentedMe.prototype.deletePurchase = function ( purchaseId, fn ) {
 	debug( '/me/purchases/{purchaseId}/delete' );
 
 	return this.wpcom.req.post(
@@ -301,11 +320,11 @@ UndocumentedMe.prototype.deletePurchase = function( purchaseId, fn ) {
  *  {string} user_name - (Optional) The user name associated with this connection, in case it's not part of id_token.
  *  {string} user_email - (Optional) The user name associated with this connection, in case it's not part of id_token.
  *  {string} redirect_to - The URL to redirect to after connecting.
- * @param {function} fn - The callback for the request.
+ * @param {Function} fn - The callback for the request.
  *
- * @return {Promise} A promise for the request
+ * @returns {Promise} A promise for the request
  */
-UndocumentedMe.prototype.socialConnect = function(
+UndocumentedMe.prototype.socialConnect = function (
 	{ service, access_token, id_token, user_name, user_email, redirect_to },
 	fn
 ) {
@@ -346,9 +365,9 @@ UndocumentedMe.prototype.socialConnect = function(
  * @param {string} service - Social service associated with token, e.g. google.
  * @param {Function} fn - callback
  *
- * @return {Promise} A promise for the request
+ * @returns {Promise} A promise for the request
  */
-UndocumentedMe.prototype.socialDisconnect = function( service, fn ) {
+UndocumentedMe.prototype.socialDisconnect = function ( service, fn ) {
 	const body = {
 		service,
 		// This API call is restricted to these OAuth keys

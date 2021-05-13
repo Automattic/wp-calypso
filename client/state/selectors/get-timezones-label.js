@@ -1,15 +1,16 @@
 /**
  * Internal dependencies
  */
+import getTimezonesLabels from 'calypso/state/selectors/get-timezones-labels';
 
-import getTimezonesLabels from 'state/selectors/get-timezones-labels';
+import 'calypso/state/timezones/init';
 
 /**
  * Return timezone `label` according to the given timezone key (value)
  *
- * @param {Object}  state - Global state tree
- * @param {String} key - timezone value
- * @return {String} the timezone label
+ * @param {object}  state - Global state tree
+ * @param {string} key - timezone value
+ * @returns {string} the timezone label
  */
 export default function getTimezonesLabel( state, key ) {
 	const labels = getTimezonesLabels( state );

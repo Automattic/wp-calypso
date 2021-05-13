@@ -4,9 +4,11 @@
 import {
 	READER_RECOMMENDED_SITES_REQUEST,
 	READER_RECOMMENDED_SITES_RECEIVE,
-} from 'state/action-types';
+} from 'calypso/state/reader/action-types';
 
-import 'state/data-layer/wpcom/read/recommendations/sites';
+import 'calypso/state/data-layer/wpcom/read/recommendations/sites';
+
+import 'calypso/state/reader/init';
 
 export const requestRecommendedSites = ( { offset = 0, number = 4, seed = 0 } ) => ( {
 	type: READER_RECOMMENDED_SITES_REQUEST,

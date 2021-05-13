@@ -2,13 +2,20 @@
  * External dependencies
  */
 import deterministicStringify from 'fast-json-stable-stringify';
-import { get, identity, merge, noop } from 'lodash';
+import { get, merge } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
  */
-import { keyedReducer } from 'state/utils';
-import warn from 'lib/warn';
+import { keyedReducer } from 'calypso/state/utils';
+
+const noop = () => {};
+const identity = ( data ) => data;
 
 /**
  * Returns response data from an HTTP request success action if available
@@ -16,7 +23,7 @@ import warn from 'lib/warn';
  * @param {object} action may contain HTTP response data
  * @returns {*|undefined} response data if available
  */
-export const getData = action => get( action, 'meta.dataLayer.data', undefined );
+export const getData = ( action ) => get( action, 'meta.dataLayer.data', undefined );
 
 /**
  * Returns error data from an HTTP request failure action if available
@@ -24,7 +31,7 @@ export const getData = action => get( action, 'meta.dataLayer.data', undefined )
  * @param {object} action may contain HTTP response error data
  * @returns {*|undefined} error data if available
  */
-export const getError = action => get( action, 'meta.dataLayer.error', undefined );
+export const getError = ( action ) => get( action, 'meta.dataLayer.error', undefined );
 
 /**
  * Returns (response) headers data from an HTTP request action if available
@@ -32,7 +39,7 @@ export const getError = action => get( action, 'meta.dataLayer.error', undefined
  * @param   {object}      action Request action for which to retrieve HTTP response headers
  * @returns {*|undefined}        Headers data if available
  */
-export const getHeaders = action => get( action, 'meta.dataLayer.headers', undefined );
+export const getHeaders = ( action ) => get( action, 'meta.dataLayer.headers', undefined );
 
 /**
  * @typedef {object} ProgressData
@@ -46,9 +53,18 @@ export const getHeaders = action => get( action, 'meta.dataLayer.headers', undef
  * @param  {object} action          may contain HTTP progress data
  * @returns {ProgressData|undefined} Progress data if available
  */
-export const getProgress = action => get( action, 'meta.dataLayer.progress', undefined );
+export const getProgress = ( action ) => get( action, 'meta.dataLayer.progress', undefined );
 
-const getRequestStatus = action => {
+/**
+ * Returns stream record from an HTTP request action if available
+ *
+ * @param {object} action may contain stream record
+ * @returns {*|undefined} response data if available
+ */
+export const getStreamRecord = ( action ) =>
+	get( action, 'meta.dataLayer.streamRecord', undefined );
+
+const getRequestStatus = ( action ) => {
 	if ( undefined !== getError( action ) ) {
 		return 'failure';
 	}
@@ -60,7 +76,7 @@ const getRequestStatus = action => {
 	return 'pending';
 };
 
-export const getRequestKey = fullAction => {
+export const getRequestKey = ( fullAction ) => {
 	const { meta, ...action } = fullAction;
 	const requestKey = get( meta, 'dataLayer.requestKey' );
 
@@ -104,7 +120,7 @@ export const reducer = keyedReducer( 'meta.dataLayer.requestKey', requestsReduce
  * @param {Function} next next link in HTTP middleware chain
  * @returns {Function} middleware function to track requests
  */
-export const trackRequests = next => ( store, action ) => {
+export const trackRequests = ( next ) => ( store, action ) => {
 	// progress events don't affect
 	// any tracking meta at the moment
 	if ( true !== get( action, 'meta.dataLayer.trackRequest' ) || getProgress( action ) ) {
@@ -118,7 +134,7 @@ export const trackRequests = next => ( store, action ) => {
 		status === 'pending' ? { pendingSince: Date.now() } : { lastUpdated: Date.now() }
 	);
 
-	const dispatch = response => store.dispatch( merge( response, { meta: { dataLayer } } ) );
+	const dispatch = ( response ) => store.dispatch( merge( response, { meta: { dataLayer } } ) );
 
 	next( { ...store, dispatch }, action );
 };
@@ -160,7 +176,7 @@ export const trackRequests = next => ( store, action ) => {
  * function - options.fromApi maps between API data and Calypso data
  * @returns {object} action or action thunk to be executed in response to HTTP event
  */
-export const requestDispatcher = middleware => options => {
+export const requestDispatcher = ( middleware ) => ( options ) => {
 	if ( ! options.fetch ) {
 		warn( 'fetch handler is not defined: no request will ever be issued' );
 	}
@@ -202,6 +218,7 @@ function createRequestAction( options, action ) {
 		onSuccess = noop,
 		onError = noop,
 		onProgress = noop,
+		onStreamRecord = noop,
 		fromApi = identity,
 	} = options;
 
@@ -222,6 +239,11 @@ function createRequestAction( options, action ) {
 	const progress = getProgress( action );
 	if ( progress ) {
 		return onProgress( action, progress );
+	}
+
+	const record = getStreamRecord( action );
+	if ( record ) {
+		return onStreamRecord( action, record );
 	}
 
 	return fetch( action );

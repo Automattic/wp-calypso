@@ -14,7 +14,7 @@ import { linkProps } from './functions';
 import FollowLink from './follow-link';
 
 function getDisplayURL( url ) {
-	var parser = document.createElement( 'a' );
+	const parser = document.createElement( 'a' );
 	parser.href = url;
 	return ( parser.hostname + parser.pathname ).replace( /\/$/, '' );
 }
@@ -34,12 +34,12 @@ export class UserBlock extends React.Component {
 	 * @param {string} timestamp - Time stamp in Date.parse()'able format
 	 * @returns {string} - Time stamp formatted for display or '' if input invalid
 	 */
-	getTimeString = timestamp => {
-		var DAY_IN_SECONDS = 3600 * 24,
-			MAX_LENGTH = 15,
-			parsedTime = Date.parse( timestamp ),
-			momentTime,
-			timeString;
+	getTimeString = ( timestamp ) => {
+		const DAY_IN_SECONDS = 3600 * 24;
+		const MAX_LENGTH = 15;
+		const parsedTime = Date.parse( timestamp );
+		let momentTime;
+		let timeString;
 
 		if ( isNaN( parsedTime ) ) {
 			return '';
@@ -65,13 +65,13 @@ export class UserBlock extends React.Component {
 	};
 
 	render() {
-		var grav = this.props.block.media[ 0 ],
-			home_url = '',
-			home_title = '',
-			timeIndicator,
-			homeTemplate,
-			followLink,
-			noteActions;
+		const grav = this.props.block.media[ 0 ];
+		let home_url = '';
+		let home_title = '';
+		let timeIndicator;
+		let homeTemplate;
+		let followLink;
+		let noteActions;
 
 		if ( this.props.block.meta ) {
 			if ( this.props.block.meta.links ) {
@@ -94,7 +94,12 @@ export class UserBlock extends React.Component {
 
 			timeIndicator = (
 				<span className="wpnc__user__timeIndicator">
-					<a href={ this.props.note.url } target="_blank" { ...linkProps( this.props.note ) }>
+					<a
+						href={ this.props.note.url }
+						target="_blank"
+						rel="noopener noreferrer"
+						{ ...linkProps( this.props.note ) }
+					>
 						{ this.getTimeString( this.props.note.timestamp ) }
 					</a>
 					<span className="wpnc__user__bullet" />
@@ -105,7 +110,7 @@ export class UserBlock extends React.Component {
 		}
 
 		if ( home_title ) {
-			var homeClassName =
+			const homeClassName =
 				timeIndicator != '' ? 'wpnc__user__meta wpnc__user__bulleted' : 'wpnc__user__meta';
 			homeTemplate = (
 				<p className={ homeClassName }>
@@ -114,6 +119,7 @@ export class UserBlock extends React.Component {
 						className="wpnc__user__site"
 						href={ home_url }
 						target="_blank"
+						rel="noopener noreferrer"
 						{ ...linkProps( this.props.note, this.props.block ) }
 					>
 						{ home_title }

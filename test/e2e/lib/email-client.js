@@ -15,7 +15,7 @@ export default class EmailClient {
 
 	async deleteAllEmailByID( emailID ) {
 		return await new Promise( ( resolve, reject ) => {
-			this.mailbox.deleteEmail( emailID, err => {
+			this.mailbox.deleteEmail( emailID, ( err ) => {
 				if ( err ) {
 					reject();
 				} else {
@@ -27,7 +27,7 @@ export default class EmailClient {
 
 	deleteAllEmail() {
 		const d = webdriver.promise.defer();
-		this.mailbox.deleteAllEmail( err => {
+		this.mailbox.deleteAllEmail( ( err ) => {
 			if ( err ) {
 				d.reject( err );
 			} else {
@@ -41,11 +41,12 @@ export default class EmailClient {
 	 * Load emails for specific email address.
 	 * It is possible to pass an optional function which will return list of emails only if validator will return "true"
 	 * It's possible to pass a function to validate received emails. For example when you waiting for specific email - validator may check if expected email is present
+	 *
 	 * @param {string} emailAddress - Email address from where to get emails
-	 * @param {function} validator - Optional function to validate received emails
-	 * @returns {Object} - Returns `object`
+	 * @param {Function} validator - Optional function to validate received emails
+	 * @returns {object} - Returns `object`
 	 */
-	async pollEmailsByRecipient( emailAddress, validator = emails => emails.length > 0 ) {
+	async pollEmailsByRecipient( emailAddress, validator = ( emails ) => emails.length > 0 ) {
 		const intervalMS = 1500;
 		let retries = emailWaitMS / intervalMS;
 		let emails;
@@ -62,7 +63,7 @@ export default class EmailClient {
 	}
 
 	resolveAfterTimeout( timeout ) {
-		return new Promise( resolved => {
+		return new Promise( ( resolved ) => {
 			setTimeout( () => {
 				resolved( 'resolved' );
 			}, timeout );

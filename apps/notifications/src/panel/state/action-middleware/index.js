@@ -10,7 +10,7 @@ import ui from './ui';
 
 const mergedHandlers = mergeHandlers( notes, overrides, suggestions, ui );
 
-export const middleware = handlers => store => next => action => {
+export const middleware = ( handlers ) => ( store ) => ( next ) => ( action ) => {
 	const handlerChain = handlers[ action.type ];
 
 	// if no handler is defined for the action type
@@ -19,7 +19,7 @@ export const middleware = handlers => store => next => action => {
 		return next( action );
 	}
 
-	handlerChain.forEach( handler => handler( store, action ) );
+	handlerChain.forEach( ( handler ) => handler( store, action ) );
 
 	return next( action );
 };

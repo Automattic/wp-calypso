@@ -21,49 +21,45 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+	isDotComPlan,
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
  */
 import { CheckoutThankYou } from '../index';
+import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.unmock( 'lib/plans' );
-const plans = require( 'lib/plans' );
-plans.getFeatureByKey = () => null;
-plans.shouldFetchSitePlans = () => false;
+jest.unmock( '@automattic/calypso-products' );
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
+	shouldFetchSitePlans: () => false,
+	isDotComPlan: jest.fn( () => false ),
+} ) );
 
-jest.unmock( 'lib/products-values' );
-const productValues = require( 'lib/products-values' );
-productValues.isDotComPlan = jest.fn( () => false );
-
-jest.mock( 'lib/analytics', () => ( {
-	tracks: {
-		recordEvent: () => null,
-	},
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: () => null,
 } ) );
 jest.mock( '../domain-registration-details', () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => 'component--google-apps-details' );
 jest.mock( '../jetpack-plan-details', () => 'component--jetpack-plan-details' );
 jest.mock( '../rebrand-cities-thank-you', () => 'component--RebrandCitiesThankYou' );
 jest.mock( '../atomic-store-thank-you-card', () => 'component--AtomicStoreThankYouCard' );
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( '../header', () => 'CheckoutThankYouHeader' );
-jest.mock( 'components/happiness-support', () => 'HappinessSupport' );
-jest.mock( 'lib/rebrand-cities', () => ( {
+jest.mock( 'calypso/components/happiness-support', () => 'HappinessSupport' );
+jest.mock( 'calypso/lib/rebrand-cities', () => ( {
 	isRebrandCitiesSiteUrl: jest.fn( () => false ),
 } ) );
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
-import RebrandCities from 'lib/rebrand-cities';
-
-const translate = x => x;
+const translate = ( x ) => x;
 
 const defaultProps = {
 	translate,
@@ -112,7 +108,7 @@ describe( 'CheckoutThankYou', () => {
 					purchases: [ { productSlug: PLAN_BUSINESS }, [] ],
 				},
 			},
-			refreshSitePlans: selectedSite => selectedSite,
+			refreshSitePlans: ( selectedSite ) => selectedSite,
 			planSlug: PLAN_BUSINESS,
 		};
 		test( 'Should display a full version when isSimplified is missing', () => {
@@ -145,12 +141,12 @@ describe( 'CheckoutThankYou', () => {
 
 	describe( 'Presence of <RebrandCitiesThankYou /> in render() output', () => {
 		afterAll( () => {
-			RebrandCities.isRebrandCitiesSiteUrl.mockImplementation( () => false );
+			isRebrandCitiesSiteUrl.mockImplementation( () => false );
 		} );
 
-		[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( product_slug => {
+		[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( ( product_slug ) => {
 			test( 'Should be there for a business plan', () => {
-				RebrandCities.isRebrandCitiesSiteUrl.mockImplementation( () => true );
+				isRebrandCitiesSiteUrl.mockImplementation( () => true );
 				const props = {
 					...defaultProps,
 					selectedSite: {
@@ -164,9 +160,9 @@ describe( 'CheckoutThankYou', () => {
 			} );
 		} );
 
-		[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( product_slug => {
+		[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( ( product_slug ) => {
 			test( 'Should not be there for a business plan if isRebrandCitiesSiteUrl is false', () => {
-				RebrandCities.isRebrandCitiesSiteUrl.mockImplementation( () => false );
+				isRebrandCitiesSiteUrl.mockImplementation( () => false );
 				const props = {
 					...defaultProps,
 					selectedSite: {
@@ -193,9 +189,9 @@ describe( 'CheckoutThankYou', () => {
 			PLAN_JETPACK_PREMIUM_MONTHLY,
 			PLAN_JETPACK_BUSINESS,
 			PLAN_JETPACK_BUSINESS_MONTHLY,
-		].forEach( product_slug => {
+		].forEach( ( product_slug ) => {
 			test( 'Should not be there for any no-business plan', () => {
-				RebrandCities.isRebrandCitiesSiteUrl.mockImplementation( () => true );
+				isRebrandCitiesSiteUrl.mockImplementation( () => true );
 				const props = {
 					...defaultProps,
 					selectedSite: {
@@ -226,12 +222,12 @@ describe( 'CheckoutThankYou', () => {
 					purchases: [ { productSlug: PLAN_ECOMMERCE }, [] ],
 				},
 			},
-			refreshSitePlans: selectedSite => selectedSite,
+			refreshSitePlans: ( selectedSite ) => selectedSite,
 			planSlug: PLAN_ECOMMERCE,
 		};
 
 		afterAll( () => {
-			productValues.isDotComPlan.mockImplementation( () => false );
+			isDotComPlan.mockImplementation( () => false );
 		} );
 
 		test( 'Should be there for AT', () => {
@@ -244,7 +240,7 @@ describe( 'CheckoutThankYou', () => {
 			comp = shallow( <CheckoutThankYou { ...props } transferComplete={ false } /> );
 			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 0 );
 
-			productValues.isDotComPlan.mockImplementation( () => true );
+			isDotComPlan.mockImplementation( () => true );
 
 			comp = shallow( <CheckoutThankYou { ...props } /> );
 			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 0 );
@@ -252,7 +248,7 @@ describe( 'CheckoutThankYou', () => {
 	} );
 
 	describe( 'isEligibleForLiveChat', () => {
-		[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ].forEach( planSlug => {
+		[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ].forEach( ( planSlug ) => {
 			test( `Should return true for Jetpack business plans (${ planSlug })`, () => {
 				const instance = new CheckoutThankYou( { planSlug } );
 				expect( instance.isEligibleForLiveChat() ).toBe( true );
@@ -275,7 +271,7 @@ describe( 'CheckoutThankYou', () => {
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_ECOMMERCE,
 			PLAN_ECOMMERCE_2_YEARS,
-		].forEach( planSlug => {
+		].forEach( ( planSlug ) => {
 			test( `Should return false for all other plans (${ planSlug })`, () => {
 				const instance = new CheckoutThankYou( { planSlug } );
 				expect( instance.isEligibleForLiveChat() ).toBe( false );

@@ -1,8 +1,8 @@
 .button.is-borderless.navigation-link {
 	padding: 0;
 	color: var( --color-text-inverted );
-	font-size: 14px;
-	font-weight: 500;
+	font-size: $font-body-small;
+	font-weight: 600;
 
 	svg {
 		fill: var( --color-text-inverted );

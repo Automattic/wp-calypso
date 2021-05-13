@@ -9,7 +9,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { MomentProvider } from 'components/localized-moment/context';
+import MomentProvider from 'calypso/components/localized-moment/provider';
 
 export function concatTitle( ...parts ) {
 	return parts.join( ' › ' );

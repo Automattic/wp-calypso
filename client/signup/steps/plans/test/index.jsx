@@ -1,12 +1,11 @@
-jest.mock( 'signup/step-wrapper', () => 'step-wrapper' );
-jest.mock( 'my-sites/plan-features', () => 'plan-features' );
+jest.mock( 'calypso/signup/step-wrapper', () => 'step-wrapper' );
+jest.mock( 'calypso/my-sites/plan-features', () => 'plan-features' );
 
 /**
  * External dependencies
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,8 +30,9 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
 
+const noop = () => {};
 const props = {
 	siteGoals: '',
 	stepName: 'Step name',
@@ -42,7 +42,7 @@ const props = {
 	submitSignupStep: noop,
 	goToNextStep: noop,
 	recordTracksEvent: noop,
-	translate: identity,
+	translate: ( string ) => string,
 };
 
 describe( 'Plans basic tests', () => {
@@ -139,7 +139,7 @@ describe( 'Plans.onSelectPlan', () => {
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( `Should add is_store_signup to cartItem.extra when processing wp.com business and eCommerce plans (${ plan })`, () => {
 			const myProps = {
 				...tplProps,
@@ -161,7 +161,7 @@ describe( 'Plans.onSelectPlan', () => {
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( `Should not add is_store_signup to cartItem.extra when flowName is different than 'ecommerce' (${ plan })`, () => {
 			const myProps = {
 				...tplProps,
@@ -203,7 +203,7 @@ describe( 'Plans.onSelectPlan', () => {
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( `Should not add is_store_signup to cartItem.extra when processing non-wp.com non-business plan (${ plan })`, () => {
 			const cartItem = { product_slug: plan };
 			const comp = new PlansStep( tplProps );
@@ -216,7 +216,7 @@ describe( 'Plans.onSelectPlan', () => {
 describe( 'Plans.getCustomerType', () => {
 	describe( 'Should return "business" if at least one site goal seem related to business', () => {
 		const goals = [ 'sell', 'share', 'educate,sell', 'promote,educate' ];
-		goals.forEach( goal =>
+		goals.forEach( ( goal ) =>
 			test( `Should return "business" for site goals ${ goal }`, () => {
 				const comp = new PlansStep( { ...props, siteGoals: 'sell' } );
 				expect( comp.getCustomerType() ).toEqual( 'business' );
@@ -225,7 +225,7 @@ describe( 'Plans.getCustomerType', () => {
 	} );
 	describe( 'Should return "business" if none of site goal sseem related to business', () => {
 		const goals = [ 'educate', 'share', 'showcase', 'share,showcase,educate' ];
-		goals.forEach( goal =>
+		goals.forEach( ( goal ) =>
 			test( `Should return "business" for site goals ${ goal }`, () => {
 				const comp = new PlansStep( { ...props, siteGoals: 'sell' } );
 				expect( comp.getCustomerType() ).toEqual( 'business' );

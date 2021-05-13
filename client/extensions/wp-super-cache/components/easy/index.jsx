@@ -5,23 +5,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
 import { flowRight, get, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isHttps } from 'lib/url';
+import { isHttps } from 'calypso/lib/url';
 import { Button, Card } from '@automattic/components';
-import Notice from 'components/notice';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormToggle from 'components/forms/form-toggle/compact';
+import Notice from 'calypso/components/notice';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import Gridicon from 'calypso/components/gridicon';
 import QueryStatus from '../data/query-status';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 import { testCache } from '../../state/cache/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteTitle } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteTitle } from 'calypso/state/sites/selectors';
 import { getCacheTestResults, isTestingCache } from '../../state/cache/selectors';
 import { getStatus } from '../../state/status/selectors';
 
@@ -152,7 +152,7 @@ class EasyTab extends Component {
 										{ translate( 'Results' ) }
 									</span>
 									<ul className="wp-super-cache__cache-test-results">
-										{ Object.keys( attempts ).map( key => (
+										{ Object.keys( attempts ).map( ( key ) => (
 											<li className="wp-super-cache__cache-test-results-item" key={ key }>
 												{ key === 'prime'
 													? translate( 'Fetching %(url)s to prime cache', {
@@ -220,7 +220,7 @@ class EasyTab extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteTitle = getSiteTitle( state, siteId );
 		const isTesting = isTestingCache( state, siteId );
@@ -237,7 +237,7 @@ const connectComponent = connect(
 	{ testCache }
 );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_mod_rewrite', 'is_cache_enabled' ] );
 };
 

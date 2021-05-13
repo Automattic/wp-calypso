@@ -1,9 +1,7 @@
 /**
- * Debounce our input + HTTP dependent select changes
+ * An ID that identifies the onboarding flow to analytics and other services.
  *
- * Rapidly changing input generates excessive HTTP requests.
- * It also leads to jarring UI changes.
- *
- * @see https://stackoverflow.com/a/44755058/1432801
  */
-export const selectorDebounce = 300;
+export const FLOW_ID = 'gutenboarding';
+
+export const domainIsAvailableStatus = [ 'available', 'available_premium' ];

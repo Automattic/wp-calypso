@@ -9,20 +9,22 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
+import HeaderCake from 'calypso/components/header-cake';
 import { CompactCard } from '@automattic/components';
-import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
-import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
-import getConciergeAppointmentTimespan from 'state/selectors/get-concierge-appointment-timespan';
-import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
-import { bookConciergeAppointment, requestConciergeInitial } from 'state/concierge/actions';
+import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup-form';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
+import getConciergeAppointmentTimespan from 'calypso/state/selectors/get-concierge-appointment-timespan';
+import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { bookConciergeAppointment, requestConciergeInitial } from 'calypso/state/concierge/actions';
 import AvailableTimePicker from '../shared/available-time-picker';
 import {
 	CONCIERGE_STATUS_BOOKED,
 	CONCIERGE_STATUS_BOOKING,
 	CONCIERGE_STATUS_BOOKING_ERROR,
 } from '../constants';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 class CalendarStep extends Component {
 	static propTypes = {
@@ -37,7 +39,7 @@ class CalendarStep extends Component {
 		scheduleId: PropTypes.number.isRequired,
 	};
 
-	onSubmit = timestamp => {
+	onSubmit = ( timestamp ) => {
 		const { currentUserId, signupForm, site, scheduleId } = this.props;
 		const meta = {
 			firstname: signupForm.firstname,
@@ -79,7 +81,39 @@ class CalendarStep extends Component {
 		return (
 			<div>
 				<HeaderCake onClick={ onBack }>{ translate( 'Choose Session' ) }</HeaderCake>
-				<CompactCard>{ translate( 'Please select a day to have your session.' ) }</CompactCard>
+				<CompactCard>
+					<FormattedHeader
+						headerText={ translate( 'Select a time that works for you' ) }
+						align="left"
+						isSecondary={ true }
+					/>
+					<div class="calendar-step__explanation">
+						<div>
+							{ translate(
+								'Our sessions are available 24 hours a day. If you don’t see a day or time that works for you, please check back soon for more options! '
+							) }
+						</div>
+
+						<div class="calendar-step__webinars">
+							{ translate(
+								'In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site. {{u}}{{externalLink}}View webinars{{/externalLink}}{{/u}}.',
+								{
+									components: {
+										u: <u />,
+										externalLink: (
+											<ExternalLinkWithTracking
+												icon={ false }
+												href="/webinars"
+												target="_blank"
+												tracksEventName="calypso_concierge_book_view_webinars"
+											/>
+										),
+									},
+								}
+							) }
+						</div>
+					</div>
+				</CompactCard>
 
 				<AvailableTimePicker
 					actionText={ translate( 'Book this session' ) }
@@ -97,7 +131,7 @@ class CalendarStep extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		appointmentTimespan: getConciergeAppointmentTimespan( state ),
 		signupForm: getConciergeSignupForm( state ),
 		scheduleId: getConciergeScheduleId( state ),

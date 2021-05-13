@@ -4,11 +4,16 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/email-forwarding/init';
+
+/**
  * Retrieve a list of email forwards for a particular domain
  *
- * @param  {Object} state    Global state tree
- * @param  {String} domainName domainName to request email forwards for
- * @return {Object}          EmailForwards list
+ * @param  {object} state    Global state tree
+ * @param  {string} domainName domainName to request email forwards for
+ * @returns {object}          EmailForwards list
  */
 export function getEmailForwards( state, domainName ) {
 	return get( state.emailForwarding, [ domainName, 'forwards' ], null );
@@ -17,9 +22,9 @@ export function getEmailForwards( state, domainName ) {
 /**
  * Retrieve a list domains that have forwards
  *
- * @param  {Object} state   Global state tree
- * @param  {String} domains domains to filter
- * @return {Array}          list of domains with forwards
+ * @param  {object} state   Global state tree
+ * @param  {string} domains domains to filter
+ * @returns {Array}          list of domains with forwards
  */
 export function getDomainsWithForwards( state, domains ) {
 	if ( ! domains || ! domains.length ) {

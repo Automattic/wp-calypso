@@ -2,7 +2,7 @@
  * External dependencies
  */
 import moment from 'moment';
-import { every, includes } from 'lodash';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,12 +22,12 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 * Returns true if the media item matches the given query, or false
 	 * otherwise.
 	 *
-	 * @param  {Object}  query Query object
-	 * @param  {Object}  media Item to consider
-	 * @return {Boolean}       Whether media item matches query
+	 * @param  {object}  query Query object
+	 * @param  {object}  media Item to consider
+	 * @returns {boolean}       Whether media item matches query
 	 */
 	static matches( query, media ) {
-		return every( { ...this.DefaultQuery, ...query }, ( value, key ) => {
+		return Object.entries( { ...this.DefaultQuery, ...query } ).every( ( [ key, value ] ) => {
 			switch ( key ) {
 				case 'search':
 					if ( ! value ) {
@@ -50,7 +50,7 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 							// Split subgroup and group to filter
 							.split( '/' )
 							// Remove invalid characters
-							.map( group => group.replace( /[^-*.+a-zA-Z0-9]/g, '' ) )
+							.map( ( group ) => group.replace( /[^-*.+a-zA-Z0-9]/g, '' ) )
 							// If no group, append wildcard match
 							.concat( '.+' )
 							// Take only subgroup and group
@@ -67,10 +67,11 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 					return value === media.post_ID;
 
 				case 'after':
-				case 'before':
+				case 'before': {
 					const queryDate = moment( value, moment.ISO_8601 );
 					const comparison = /after$/.test( key ) ? 'isAfter' : 'isBefore';
 					return queryDate.isValid() && moment( media.date )[ comparison ]( queryDate );
+				}
 			}
 
 			return true;
@@ -81,10 +82,10 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 	 * A sort comparison function that defines the sort order of media items
 	 * under consideration of the specified query.
 	 *
-	 * @param  {Object} query  Query object
-	 * @param  {Object} mediaA First media item
-	 * @param  {Object} mediaB Second media item
-	 * @return {Number}        0 if equal, less than 0 if mediaA is first,
+	 * @param  {object} query  Query object
+	 * @param  {object} mediaA First media item
+	 * @param  {object} mediaB Second media item
+	 * @returns {number}        0 if equal, less than 0 if mediaA is first,
 	 *                         greater than 0 if mediaB is first.
 	 */
 	static compare( query, mediaA, mediaB ) {

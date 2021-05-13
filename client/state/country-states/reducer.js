@@ -1,13 +1,14 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	COUNTRY_STATES_RECEIVE,
 	COUNTRY_STATES_REQUEST,
 	COUNTRY_STATES_REQUEST_FAILURE,
 	COUNTRY_STATES_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemSchema } from './schema';
 
 // Stores the complete list of states, indexed by locale key
@@ -24,7 +25,7 @@ export const items = withSchemaValidation( itemSchema, ( state = {}, action ) =>
 } );
 
 // Tracks states list fetching state
-export const isFetching = withoutPersistence( ( state = {}, action ) => {
+export const isFetching = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case COUNTRY_STATES_REQUEST: {
 			const { countryCode } = action;
@@ -53,9 +54,11 @@ export const isFetching = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	isFetching,
 	items,
 } );
+
+export default withStorageKey( 'countryStates', combinedReducer );

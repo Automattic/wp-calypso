@@ -11,11 +11,11 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import StoreStatsChart from 'woocommerce/app/store-stats/store-stats-chart';
-import Tabs from 'my-sites/stats/stats-tabs';
-import Tab from 'my-sites/stats/stats-tabs/tab';
+import Tabs from 'calypso/my-sites/stats/stats-tabs';
+import Tab from 'calypso/my-sites/stats/stats-tabs/tab';
 import { formatValue } from 'woocommerce/app/store-stats/utils';
 import { referrerChartTabs as tabs } from 'woocommerce/app/store-stats/constants';
-import getStoreReferrersByReferrer from 'state/selectors/get-store-referrers-by-referrer';
+import getStoreReferrersByReferrer from 'calypso/state/selectors/get-store-referrers-by-referrer';
 
 class Chart extends Component {
 	static propTypes = {
@@ -26,7 +26,7 @@ class Chart extends Component {
 	};
 
 	formatTabValue = ( tab, item ) => {
-		return value => formatValue( value, tab.type, item.currency );
+		return ( value ) => formatValue( value, tab.type, item.currency );
 	};
 
 	renderTabs = ( { chartData, selectedIndex, selectedTabIndex, tabClick } ) => {

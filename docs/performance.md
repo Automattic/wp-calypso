@@ -1,5 +1,4 @@
-Performance
-===========
+# Performance
 
 - React Docs: [Optimizing Performance](https://reactjs.org/docs/optimizing-performance.html)
 - [Debugging React performance with React 16 and Chrome Devtools](https://building.calibreapp.com/debugging-react-performance-with-react-16-and-chrome-devtools-c90698a522ad)
@@ -12,8 +11,8 @@ Performance
 If you want to know why a certain module is bundled you can use `whybundled` to find out. See the following for an example on usage:
 
 ```sh
-npm run preanalyze-bundles
-npm run whybundled -- [module]
+yarn run preanalyze-bundles
+yarn run whybundled -- [module]
 
 npn run whybundled -- is-my-json-valid
 ```

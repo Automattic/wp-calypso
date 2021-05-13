@@ -3,6 +3,20 @@
  */
 import React, { useCallback, useRef } from 'react';
 
+/**
+ * Internal dependencies
+ */
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
 type OptionValue = number | string;
 
 interface Option {
@@ -30,7 +44,7 @@ export default function MultiCheckbox( props: Props & DivProps ) {
 		checked,
 		defaultChecked = [] as OptionValue[],
 		disabled = false,
-		onChange = () => {},
+		onChange = noop,
 		name = 'multiCheckbox',
 		options,
 		...otherProps
@@ -41,10 +55,10 @@ export default function MultiCheckbox( props: Props & DivProps ) {
 	const defaultCheckedOnStart = useRef( defaultChecked );
 
 	const handleChange = useCallback(
-		event => {
+		( event ) => {
 			const target = event.target;
 			let changeEventValue = checked || defaultCheckedOnStart.current;
-			changeEventValue = changeEventValue.concat( [ target.value ] ).filter( currentValue => {
+			changeEventValue = changeEventValue.concat( [ target.value ] ).filter( ( currentValue ) => {
 				return currentValue !== target.value || target.checked;
 			} );
 
@@ -60,18 +74,17 @@ export default function MultiCheckbox( props: Props & DivProps ) {
 	const checkedItems = checked || defaultCheckedOnStart.current;
 	return (
 		<div className="multi-checkbox" { ...otherProps }>
-			{ options.map( option => (
-				<label key={ option.value }>
-					<input
+			{ options.map( ( option ) => (
+				<FormLabel key={ option.value }>
+					<FormInputCheckbox
 						name={ name + '[]' }
-						type="checkbox"
 						value={ option.value }
 						checked={ checkedItems.includes( option.value ) }
 						onChange={ handleChange }
 						disabled={ disabled }
 					/>
 					<span>{ option.label }</span>
-				</label>
+				</FormLabel>
 			) ) }
 		</div>
 	);

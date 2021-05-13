@@ -1,10 +1,14 @@
 /**
  * Internal dependencies
  */
-import { getDomainTypeText } from 'lib/domains';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { getDomainTypeText } from 'calypso/lib/domains';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
-export const recordPaymentSettingsClick = domain => {
+export const recordPaymentSettingsClick = ( domain ) => {
 	const domainType = getDomainTypeText( domain );
 
 	return composeAnalytics(

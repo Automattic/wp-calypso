@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, Dialog } from '@automattic/components';
-import ResizableIframe from 'components/resizable-iframe';
+import ResizableIframe from 'calypso/components/resizable-iframe';
 
 /**
  * Style dependencies
@@ -28,6 +28,9 @@ function InlineHelpDialog( { dialogType, videoLink, onClose, translate } ) {
 			? [ <Button onClick={ onClose }>{ translate( 'Close', { textOnly: true } ) }</Button> ]
 			: [];
 
+	// Replace youtube.com links with the embeddable version that can be iframed.
+	const videoEmbedLink = videoLink.replace( 'youtube.com/watch?v=', 'youtube.com/embed/' );
+
 	return (
 		<Dialog
 			additionalClassNames={ dialogClasses }
@@ -39,7 +42,7 @@ function InlineHelpDialog( { dialogType, videoLink, onClose, translate } ) {
 			{ dialogType === 'video' && (
 				<div className={ iframeClasses }>
 					<ResizableIframe
-						src={ videoLink + '?rel=0&amp;showinfo=0&amp;autoplay=1' }
+						src={ videoEmbedLink + '?rel=0&amp;showinfo=0&amp;autoplay=1' }
 						frameBorder="0"
 						seamless
 						allowFullScreen

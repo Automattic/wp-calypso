@@ -5,8 +5,8 @@ import {
 	HAPPYCHAT_IO_RECEIVE_INIT,
 	HAPPYCHAT_ELIGIBILITY_SET,
 	PRESALE_PRECANCELLATION_CHAT_AVAILABILITY_SET,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	geoLocationSchema,
 	isEligibleSchema,
@@ -17,8 +17,8 @@ import {
  * Tracks the current user geo location.
  *
  *
- * @param {Object} action Action payload
- * @return {Object}        Updated state
+ * @param {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const geoLocation = withSchemaValidation( geoLocationSchema, ( state = null, action ) => {
 	switch ( action.type ) {

@@ -10,13 +10,15 @@ import EditContactInfo from './edit-contact-info';
 import List from './list';
 import ManageConsent from './manage-consent';
 import NameServers from './name-servers';
-import PrimaryDomain from './primary-domain';
-import SiteRedirect from './site-redirect';
+import Security from './security';
+import SiteRedirect from './edit/site-redirect';
+import SiteRedirectSettings from './site-redirect';
 import Transfer from './transfer';
 import TransferIn from './edit/transfer-in';
 import TransferOut from './transfer/transfer-out';
 import TransferToOtherSite from './transfer/transfer-to-other-site';
 import TransferToOtherUser from './transfer/transfer-to-other-user';
+import ListAll from './list/list-all';
 
 export default {
 	ChangeSiteAddress,
@@ -27,9 +29,11 @@ export default {
 	EditContactInfo,
 	ManageConsent,
 	List,
+	ListAll,
 	NameServers,
-	PrimaryDomain,
+	Security,
 	SiteRedirect,
+	SiteRedirectSettings,
 	TransferIn,
 	TransferOut,
 	TransferToOtherSite,

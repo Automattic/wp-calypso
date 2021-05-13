@@ -3,7 +3,7 @@
 }
 
 .section-nav-tab {
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		width: auto;
 		flex: none;
 		border-bottom: 2px solid transparent;
@@ -33,7 +33,7 @@
 	box-sizing: border-box;
 	padding: 15px;
 	width: 100%;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	line-height: 18px;
 	color: var( --color-neutral-70 );
@@ -53,7 +53,7 @@
 		color: var( --color-text-inverted );
 		background-color: var( --color-primary );
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			.count {
 				color: var( --color-text-inverted );
 				border-color: var( --color-border-inverted );
@@ -89,7 +89,7 @@
 		}
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		display: block;
 		width: auto;
 		padding: 16px 16px 14px;
@@ -123,7 +123,7 @@
 	width: 0;
 	color: inherit;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		display: inline;
 		flex: none;
 		width: auto;
@@ -136,7 +136,7 @@
 	box-sizing: border-box;
 	padding: 15px;
 	width: 100%;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 18px;
 	color: var( --color-neutral-70 );
 }

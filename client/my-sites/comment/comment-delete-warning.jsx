@@ -5,7 +5,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,11 +14,11 @@ import {
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { deleteComment } from 'state/comments/actions';
-import getSiteComment from 'state/selectors/get-site-comment';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+} from 'calypso/state/analytics/actions';
+import { deleteComment } from 'calypso/state/comments/actions';
+import { getSiteComment } from 'calypso/state/comments/selectors';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 
 const CommentDeleteWarning = ( { isLoading, destroyComment, translate } ) =>
 	! isLoading && (
@@ -47,7 +46,7 @@ const mapStateToProps = ( state, { siteId, commentId } ) => {
 	const comment = getSiteComment( state, siteId, commentId );
 
 	return {
-		isLoading: isUndefined( comment ),
+		isLoading: typeof comment === 'undefined',
 	};
 };
 

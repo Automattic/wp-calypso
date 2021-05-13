@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { assign, filter, find } from 'lodash';
+import { filter, find } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import SortableList from 'components/forms/sortable-list';
+import SortableList from 'calypso/components/forms/sortable-list';
 import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewButton from './preview-button';
 
@@ -33,9 +33,9 @@ class SharingButtonsTray extends React.Component {
 		buttons: [],
 		style: 'icon',
 		visibility: 'visible',
-		onButtonsChange: function() {},
-		onButtonChange: function() {},
-		onClose: function() {},
+		onButtonsChange: function () {},
+		onButtonChange: function () {},
+		onClose: function () {},
 		active: false,
 		limited: false,
 	};
@@ -81,7 +81,7 @@ class SharingButtonsTray extends React.Component {
 			} ),
 		};
 
-		return Object.keys( labels ).map( function( context ) {
+		return Object.keys( labels ).map( function ( context ) {
 			let label = labels[ context ];
 
 			if ( 'hidden' === this.props.visibility ) {
@@ -108,15 +108,15 @@ class SharingButtonsTray extends React.Component {
 		return filter( this.props.buttons, { visibility: this.props.visibility } );
 	};
 
-	onButtonsReordered = order => {
+	onButtonsReordered = ( order ) => {
 		let buttons = [];
 
-		this.getButtonsOfCurrentVisibility().forEach( function( button, i ) {
+		this.getButtonsOfCurrentVisibility().forEach( function ( button, i ) {
 			buttons[ order[ i ] ] = button;
 		}, this );
 
 		buttons = buttons.concat(
-			this.props.buttons.filter( function( button ) {
+			this.props.buttons.filter( function ( button ) {
 				return button.visibility !== this.props.visibility;
 			}, this )
 		);
@@ -124,10 +124,10 @@ class SharingButtonsTray extends React.Component {
 		this.props.onButtonsChange( buttons );
 	};
 
-	onButtonClick = button => {
-		let buttons = this.props.buttons.slice( 0 ),
-			currentButton = find( buttons, { ID: button.ID } ),
-			isEnabled;
+	onButtonClick = ( button ) => {
+		const buttons = this.props.buttons.slice( 0 );
+		const currentButton = find( buttons, { ID: button.ID } );
+		let isEnabled;
 
 		if ( button.visibility === this.props.visibility ) {
 			// Assuming visibility hasn't changed, we can simply toggle the
@@ -139,7 +139,7 @@ class SharingButtonsTray extends React.Component {
 			isEnabled = true;
 		}
 
-		assign( currentButton, {
+		Object.assign( currentButton, {
 			enabled: isEnabled,
 			visibility: this.props.visibility,
 		} );
@@ -172,7 +172,7 @@ class SharingButtonsTray extends React.Component {
 
 	getButtonElements = () => {
 		if ( this.state.isReordering ) {
-			const buttons = this.getButtonsOfCurrentVisibility().map( function( button ) {
+			const buttons = this.getButtonsOfCurrentVisibility().map( function ( button ) {
 				return (
 					<ButtonsPreviewButton key={ button.ID } button={ button } enabled={ true } style="text" />
 				);

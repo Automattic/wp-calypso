@@ -1,0 +1,61 @@
+.dialog.threat-dialog {
+	.threat-dialog {
+		&__header {
+			font-size: $font-title-small;
+			border-bottom: 1px solid #dcdcde;
+			margin: -8px -24px 16px;
+			padding: 0 24px 16px;
+		}
+
+		&__header--fix-threat {
+			color: var( --color-primary-40 );
+		}
+
+		&__header--ignore-threat {
+			color: var( --color-error-50 );
+		}
+
+		&__threat-title {
+			font-weight: 600;
+			margin: 8px 0;
+		}
+
+		&__threat-description {
+			color: var( --color-text-subtle );
+			font-size: $font-body-small;
+		}
+
+		&__warning {
+			display: flex;
+			margin-top: 26px;
+		}
+
+		&__warning-icon {
+			flex: 0 0 24px;
+			margin-top: -7px;
+			margin-right: 8px;
+		}
+
+		&__warning-icon--fix-threat {
+			fill: var( --color-primary-40 );
+		}
+
+		&__warning-icon--ignore-threat {
+			fill: var( --color-error-50 );
+		}
+
+		&__warning-message {
+			color: var( --color-text-subtle );
+			font-size: $font-body-small;
+		}
+
+		&__btn {
+			width: 100%;
+
+			@include breakpoint-deprecated( '>480px' ) {
+				min-width: 140px;
+				width: auto;
+			}
+		}
+	}
+}

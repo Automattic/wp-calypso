@@ -1,0 +1,10 @@
+bail: true
+require:
+  - 'esm'
+  - 'lib/hooks-playwright/index.ts'
+file:
+  - 'lib/before.js'
+reporter:
+  - 'spec-junit-reporter'
+# Timeout for mocha when starting up only.
+timeout: 9000

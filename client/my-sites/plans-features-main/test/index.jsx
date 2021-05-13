@@ -1,37 +1,31 @@
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
 jest.mock( 'react-redux', () => ( {
-	connect: () => component => component,
+	connect: () => ( component ) => component,
 } ) );
-jest.mock( 'lib/analytics/index', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'config', () => {
-	const fn = () => {};
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock( '@automattic/calypso-config', () => {
+	const fn = () => {
+		return [];
+	};
 	fn.isEnabled = jest.fn( () => true );
 	return fn;
 } );
-jest.mock( 'components/happychat/connection-connected', () => 'HappychatConnection' );
-jest.mock( 'components/data/query-plans', () => 'QueryPlans' );
-jest.mock( 'components/data/query-site-plans', () => 'QuerySitePlans' );
-jest.mock( 'components/data/cart', () => 'CartData' );
-jest.mock( 'blocks/payment-methods', () => 'PaymentMethods' );
-jest.mock( 'my-sites/plan-features', () => 'PlanFeatures' );
-jest.mock( 'my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
-jest.mock( 'my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: Component => props => <Component { ...props } translate={ x => x } />,
-	numberFormat: x => x,
-	translate: x => x,
-} ) );
+jest.mock( 'calypso/components/happychat/connection-connected', () => 'HappychatConnection' );
+jest.mock( 'calypso/components/data/query-plans', () => 'QueryPlans' );
+jest.mock( 'calypso/components/data/query-site-plans', () => 'QuerySitePlans' );
+jest.mock( 'calypso/my-sites/plan-features', () => 'PlanFeatures' );
+jest.mock( 'calypso/my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
+jest.mock( 'calypso/my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
 
 /**
  * External dependencies
  */
 import { shallow } from 'enzyme';
-import React from 'react';
 
 /**
  * Internal dependencies
@@ -43,41 +37,27 @@ import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_PREMIUM_MONTHLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
+	PLAN_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 	TYPE_FREE,
+	TYPE_PERSONAL,
 	TERM_ANNUALLY,
 	TYPE_PREMIUM,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
 
 const props = {
 	selectedPlan: PLAN_FREE,
-	translate: x => x,
+	translate: ( x ) => x,
 };
-
-describe( 'PlansFeaturesMain.renderFreePlanBanner()', () => {
-	test( 'Should return null when called with hideFreePlan props', () => {
-		const instance = new PlansFeaturesMain( {
-			...props,
-			hideFreePlan: true,
-		} );
-		const freePlanBanner = instance.renderFreePlanBanner();
-		expect( freePlanBanner ).toBeNull();
-	} );
-} );
 
 describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 	test( 'Should render <PlanFeatures /> with plans matching given planTypes when called with planTypes props', () => {
@@ -97,70 +77,34 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 		const plans = instance.getPlansForPlanFeatures();
 		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
 	} );
-	test( 'Should render <PlanFeatures /> with Jetpack monthly plans when called with jetpack props', () => {
+	test( 'Should render <PlanFeatures /> removing the Personal plan when hidePersonalPlan prop is present, regardless of its position', () => {
 		const instance = new PlansFeaturesMain( {
 			...props,
-			displayJetpackPlans: true,
-			intervalType: 'monthly',
+			planTypes: [ TYPE_BUSINESS, TYPE_PERSONAL, TYPE_ECOMMERCE ],
+			hidePersonalPlan: true,
 		} );
 		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [
-			PLAN_JETPACK_FREE,
-			PLAN_JETPACK_PERSONAL_MONTHLY,
-			PLAN_JETPACK_PREMIUM_MONTHLY,
-			PLAN_JETPACK_BUSINESS_MONTHLY,
-		] );
+		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
 	} );
-
-	test( 'Should render <PlanFeatures /> with Jetpack monthly plans without free one when requested', () => {
+	test( 'Should render <PlanFeatures /> removing the Premium plan when hidePremiumPlan prop is present, regardless of its position', () => {
 		const instance = new PlansFeaturesMain( {
 			...props,
-			displayJetpackPlans: true,
-			intervalType: 'monthly',
-			hideFreePlan: true,
+			planTypes: [ TYPE_BUSINESS, TYPE_PREMIUM, TYPE_ECOMMERCE ],
+			hidePremiumPlan: true,
 		} );
 		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [
-			PLAN_JETPACK_PERSONAL_MONTHLY,
-			PLAN_JETPACK_PREMIUM_MONTHLY,
-			PLAN_JETPACK_BUSINESS_MONTHLY,
-		] );
+		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
 	} );
-	test( 'Should render <PlanFeatures /> with Jetpack monthly data-e2e-plans when requested', () => {
-		const instance = new PlansFeaturesMain( { ...props, displayJetpackPlans: true } );
-		const comp = shallow( instance.getPlanFeatures() );
-		expect( comp.find( '[data-e2e-plans="jetpack"]' ).length ).toBe( 1 );
-	} );
-
-	test( 'Should render <PlanFeatures /> with Jetpack plans when called with jetpack props', () => {
-		const instance = new PlansFeaturesMain( { ...props, displayJetpackPlans: true } );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [
-			PLAN_JETPACK_FREE,
-			PLAN_JETPACK_PERSONAL,
-			PLAN_JETPACK_PREMIUM,
-			PLAN_JETPACK_BUSINESS,
-		] );
-	} );
-
-	test( 'Should render <PlanFeatures /> with Jetpack plans without free one when requested', () => {
+	test( 'Should render <PlanFeatures /> with the Personal plan and the Premium plan when hidePersonalPlan and hidePremiumPlan are false.', () => {
+		const planTypes = [ TYPE_BUSINESS, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_ECOMMERCE ];
 		const instance = new PlansFeaturesMain( {
 			...props,
-			displayJetpackPlans: true,
-			hideFreePlan: true,
+			planTypes,
+			hidePersonalPlan: false,
+			hidePremiumPlan: false,
 		} );
 		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [
-			PLAN_JETPACK_PERSONAL,
-			PLAN_JETPACK_PREMIUM,
-			PLAN_JETPACK_BUSINESS,
-		] );
-	} );
-
-	test( 'Should render <PlanFeatures /> with Jetpack data-e2e-plans when requested', () => {
-		const instance = new PlansFeaturesMain( { ...props, displayJetpackPlans: true } );
-		const comp = shallow( instance.getPlanFeatures() );
-		expect( comp.find( '[data-e2e-plans="jetpack"]' ).length ).toBe( 1 );
+		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_ECOMMERCE ] );
 	} );
 
 	test( 'Should render <PlanFeatures /> with WP.com plans when requested', () => {
@@ -195,10 +139,10 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 		} );
 		const plans = instance.getPlansForPlanFeatures();
 		expect( plans ).toEqual( [
-			PLAN_PERSONAL,
-			PLAN_PREMIUM,
+			PLAN_PERSONAL_MONTHLY,
+			PLAN_PREMIUM_MONTHLY,
 			PLAN_BUSINESS_MONTHLY,
-			PLAN_ECOMMERCE,
+			PLAN_ECOMMERCE_MONTHLY,
 		] );
 	} );
 
@@ -230,7 +174,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 	const myProps = {
 		selectedPlan: PLAN_FREE,
-		translate: x => x,
+		translate: ( x ) => x,
 		hideFreePlan: true,
 		withWPPlanTabs: true,
 	};
@@ -242,21 +186,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 	test( 'Should render <PlanFeatures /> with tab picker when requested', () => {
 		const instance = new PlansFeaturesMain( { ...myProps } );
 		const comp = shallow( instance.render() );
-		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
-	} );
-
-	test( "Should select personal tab when it's requested", () => {
-		const instance = new PlansFeaturesMain( { ...myProps, customerType: 'personal' } );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
-		expect( comp.find( 'SegmentedControlItem[path="?customerType=personal"]' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?customerType=personal"]' ).props().selected
-		).toBe( true );
-		expect( comp.find( 'SegmentedControlItem[path="?customerType=business"]' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?customerType=business"]' ).props().selected
-		).toBe( false );
+		expect( comp.find( 'PlanTypeSelector' ).length ).toBe( 1 );
 	} );
 
 	test( 'Should display proper plans in personal tab', () => {
@@ -281,37 +211,9 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		] );
 	} );
 
-	test( "Should select business tab when it's requested", () => {
-		const instance = new PlansFeaturesMain( { ...myProps, customerType: 'business' } );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
-		expect( comp.find( 'SegmentedControlItem[path="?customerType=business"]' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?customerType=business"]' ).props().selected
-		).toBe( true );
-		expect( comp.find( 'SegmentedControlItem[path="?customerType=personal"]' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?customerType=personal"]' ).props().selected
-		).toBe( false );
-	} );
-
-	test( 'Should add existing query arguments to personal and business tab links', () => {
-		global.document = { location: { search: '?fake=item' } };
-		const instance = new PlansFeaturesMain( { ...myProps, customerType: 'business' } );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?fake=item&customerType=personal"]' ).length
-		).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?fake=item&customerType=business"]' ).length
-		).toBe( 1 );
-	} );
-
-	test( 'Highlights TYPE_PREMIUM as popular plan for personal customer type if not in	signup flow', () => {
+	test( 'Highlights TYPE_PREMIUM as popular plan for personal customer type', () => {
 		const instance = new PlansFeaturesMain( {
 			customerType: 'personal',
-			isInSignup: false,
 		} );
 		const comp = shallow( instance.render() );
 		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
@@ -320,66 +222,13 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		} );
 	} );
 
-	test( 'Highlights TYPE_BUSINESS as popular plan for business customer type if not in signup flow', () => {
+	test( 'Highlights TYPE_BUSINESS as popular plan for business customer type', () => {
 		const instance = new PlansFeaturesMain( {
 			customerType: 'business',
-			isInSignup: false,
 		} );
 		const comp = shallow( instance.render() );
 		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
 			type: TYPE_BUSINESS,
-			group: GROUP_WPCOM,
-		} );
-	} );
-
-	test( 'Highlights TYPE_PREMIUM as popular plan for personal customer type in signup flow', () => {
-		const instance = new PlansFeaturesMain( {
-			customerType: 'personal',
-			isInSignup: true,
-			isLaunchPage: false,
-		} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
-			type: TYPE_PREMIUM,
-			group: GROUP_WPCOM,
-		} );
-	} );
-
-	test( 'Highlights TYPE_BUSINESS as popular plan for business customer type in signup flow', () => {
-		const instance = new PlansFeaturesMain( {
-			customerType: 'business',
-			isInSignup: true,
-			isLaunchPage: false,
-		} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
-			type: TYPE_BUSINESS,
-			group: GROUP_WPCOM,
-		} );
-	} );
-
-	test( 'Highlights TYPE_BUSINESS as popular plan for business customer type in launch flow', () => {
-		const instance = new PlansFeaturesMain( {
-			customerType: 'business',
-			isInSignup: true,
-			isLaunchPage: true,
-		} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
-			type: TYPE_BUSINESS,
-			group: GROUP_WPCOM,
-		} );
-	} );
-
-	test( 'Highlights TYPE_PREMIUM as popular plan for personal customer type in launch flow', () => {
-		const instance = new PlansFeaturesMain( {
-			customerType: 'personal',
-			isInSignup: true,
-			isLaunchPage: true,
-		} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
-			type: TYPE_PREMIUM,
 			group: GROUP_WPCOM,
 		} );
 	} );

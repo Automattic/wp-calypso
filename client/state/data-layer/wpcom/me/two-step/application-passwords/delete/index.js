@@ -6,21 +6,21 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { APPLICATION_PASSWORD_DELETE } from 'state/action-types';
-import { deleteApplicationPasswordSuccess } from 'state/application-passwords/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { APPLICATION_PASSWORD_DELETE } from 'calypso/state/action-types';
+import { deleteApplicationPasswordSuccess } from 'calypso/state/application-passwords/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Dispatches a request to delete an application password for the current user
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched http action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched http action
  */
-export const removeApplicationPassword = action =>
+export const removeApplicationPassword = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -33,8 +33,8 @@ export const removeApplicationPassword = action =>
 /**
  * Dispatches a user application password removal success action when the request succeeded.
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched user application passwords add action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched user application passwords add action
  */
 export const handleRemoveSuccess = ( { appPasswordId } ) =>
 	deleteApplicationPasswordSuccess( appPasswordId );
@@ -42,7 +42,7 @@ export const handleRemoveSuccess = ( { appPasswordId } ) =>
 /**
  * Dispatches an error notice when the request failed.
  *
- * @returns {Object} Dispatched error notice action
+ * @returns {object} Dispatched error notice action
  */
 export const handleRemoveError = () =>
 	errorNotice(

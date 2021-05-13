@@ -8,14 +8,14 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
+import Popover from 'calypso/components/popover';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const ReaderPopover = props => {
+const ReaderPopover = ( props ) => {
 	const classes = classnames( 'reader-popover', props.className );
 	const popoverProps = omit( props, 'className' );
 	return (

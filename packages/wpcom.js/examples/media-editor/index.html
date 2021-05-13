@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>wpcom.js over iframe proxy Media Upload Test Page</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" type="text/css" href="app.css">
+	</head>
+
+	<body>
+		<div>
+			<label>site ID</label>
+			<input type="text" id="site-node" value="" />
+			<br />
+
+			<label>image ID</label>
+			<input type="text" id="image-node-id"/>
+			<br />
+
+			<label>Title</label>
+			<input type="text" id="image-node-title" />
+			<br />
+
+			<label>Caption</label>
+			<input type="text" id="image-node-caption" />
+			<br />
+
+			<label>Description</label>
+			<input type="text" id="image-node-description" />
+
+			<hr />
+
+			<input type="file" id="file" disabled />
+		</div>
+		<hr />
+
+		
+		<div class="revision-history-container">		
+			<div class="history-original">
+				<h3>Original</h3>
+				<img id="revision-history-original" />
+				<div id="revision-history-details"></div>
+			</div>
+
+			<div id="revision-history-wrapper">
+				<h3>Revision History</h3>
+				<div id="revision-history">
+					<div class="revision-history-container"></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="image-container" id="image-container">
+			<h3>Current media</h3>
+			<div id="image-node"></div>
+			<div id="image-details"></div>
+			<div id="image-actions">
+				<a href="#" id="image-delete">delete</a>
+			</div>
+		</div>
+
+		<script src="built/app.js"></script>
+		<script>
+		</script>
+	</body>
+</html>

@@ -6,7 +6,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	SITE_ADDRESS_AVAILABILITY_REQUEST,
 	SITE_ADDRESS_AVAILABILITY_SUCCESS,
@@ -15,18 +16,18 @@ import {
 	SITE_ADDRESS_CHANGE_REQUEST,
 	SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
 	SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Returns the updated request state after an action has been dispatched. The
  * state maps site ID keys to a boolean value. Each site is true if
  * a site-rename request is currently taking place, and false otherwise.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated rename request state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated rename request state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_ADDRESS_CHANGE_REQUEST: {
 			const { siteId } = action;
@@ -51,17 +52,17 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated site-rename state after an action has been dispatched.
  * Saving state tracks whether the settings for a site are currently being saved.
  *
- * @param  {Object} state 	Current rename requesting state
- * @param  {Object} action 	Action object
- * @return {Object} 		Updated rename request state
+ * @param  {object} state 	Current rename requesting state
+ * @param  {object} action 	Action object
+ * @returns {object} 		Updated rename request state
  */
-export const status = withoutPersistence( ( state = {}, action ) => {
+export const status = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_ADDRESS_CHANGE_REQUEST: {
 			const { siteId } = action;
@@ -99,9 +100,9 @@ export const status = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const validation = withoutPersistence( ( state = {}, action ) => {
+export const validation = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_ADDRESS_AVAILABILITY_REQUEST: {
 			const { siteId } = action;
@@ -160,10 +161,12 @@ export const validation = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	validation,
 	status,
 	requesting,
 } );
+
+export default withStorageKey( 'siteAddressChange', combinedReducer );

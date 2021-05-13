@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { get, isUndefined } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import apiResponseSchema from './schema';
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
-import { parseBlock } from 'lib/notifications/note-block-parser';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
+import { parseBlock } from 'calypso/lib/notifications/note-block-parser';
 
 /**
  * Module constants
@@ -20,7 +20,7 @@ export const DEFAULT_GRIDICON = 'info-outline';
  * Transforms API response into array of activities
  *
  * @param  {object} apiResponse API response body
- * @return {object}             Object with an entry for proccessed item objects and another for oldest item timestamp
+ * @returns {object}             Object with an entry for proccessed item objects and another for oldest item timestamp
  */
 export function transformer( apiResponse ) {
 	return get( apiResponse, [ 'current', 'orderedItems' ], [] ).map( processItem );
@@ -30,7 +30,7 @@ export function transformer( apiResponse ) {
  * Takes an Activity item in the API format and returns a processed Activity item for use in UI
  *
  * @param  {object}  item Validated Activity item
- * @return {object}       Processed Activity item ready for use in UI
+ * @returns {object}       Processed Activity item ready for use in UI
  */
 export function processItem( item ) {
 	const { actor, object, published, first_published } = item;
@@ -70,16 +70,23 @@ export function processItem( item ) {
 		item.rewind_id && { rewindId: item.rewind_id },
 		item.status && { activityStatus: item.status },
 		object && object.target_ts && { activityTargetTs: object.target_ts },
+		object && object.type && { activityType: object.type },
 		item.is_aggregate && { isAggregate: item.is_aggregate },
 		item.streams && { streams: item.streams.map( processItem ) },
 		item.stream_count && { streamCount: item.stream_count },
 		item.first_published && { firstPublishedDate: item.first_published },
 		item.last_published && { lastPublishedDate: item.last_published },
-		! isUndefined( item.streams_have_same_actor ) && {
+		typeof item.streams_have_same_actor !== 'undefined' && {
 			multipleActors: ! item.streams_have_same_actor,
 		}
 	);
 }
 
+const activityLogSchema = makeJsonSchemaParser( apiResponseSchema, transformer );
+const activitySchema = makeJsonSchemaParser(
+	apiResponseSchema.definitions.singleActivityRequest,
+	processItem
+);
+
 // fromApi default export
-export default makeJsonSchemaParser( apiResponseSchema, transformer );
+export { activityLogSchema as default, activitySchema as fromActivityApi };

@@ -10,8 +10,8 @@ import { get as getStoreStub, set as setSpy } from 'store';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
-import { getUserStub } from 'lib/user';
+import { abtest } from 'calypso/lib/abtest';
+import user from 'calypso/lib/user';
 
 const NODE_ENV = process.env.NODE_ENV;
 beforeAll( () => {
@@ -22,7 +22,7 @@ afterAll( () => {
 	process.env.NODE_ENV = NODE_ENV;
 } );
 
-jest.mock( 'lib/abtest/active-tests', () => ( {
+jest.mock( 'calypso/lib/abtest/active-tests', () => ( {
 	mockedTest: {
 		datestamp: '20160627',
 		variations: {
@@ -78,15 +78,15 @@ jest.mock( 'lib/abtest/active-tests', () => ( {
 		allowExistingUsers: true,
 	},
 } ) );
-jest.mock( 'lib/user', () => {
+jest.mock( 'calypso/lib/user', () => {
 	const getStub = jest.fn();
 
-	const user = () => ( {
+	const userInstance = () => ( {
 		get: getStub,
 	} );
-	user.getUserStub = getStub;
+	userInstance.getUserStub = getStub;
 
-	return user;
+	return userInstance;
 } );
 jest.mock( 'store', () => ( {
 	enabled: () => true,
@@ -107,7 +107,7 @@ describe( 'abtest', () => {
 		} );
 
 		test( 'should return stored value and skip store.set for existing users', () => {
-			getUserStub.mockReturnValueOnce( {
+			user.getUserStub.mockReturnValueOnce( {
 				localeSlug: 'en',
 				date: DATE_BEFORE,
 			} );
@@ -120,7 +120,7 @@ describe( 'abtest', () => {
 		} );
 
 		test( 'should return stored value and skip store.set for any user, including new, non-English users', () => {
-			getUserStub.mockReturnValueOnce( {
+			user.getUserStub.mockReturnValueOnce( {
 				localeSlug: 'de',
 				date: DATE_AFTER,
 			} );
@@ -129,7 +129,7 @@ describe( 'abtest', () => {
 		} );
 
 		test( 'should return stored value and skip store.set for a logged-out user', () => {
-			getUserStub.mockReturnValueOnce( null );
+			user.getUserStub.mockReturnValueOnce( null );
 			expect( abtest( 'mockedTest' ) ).toBe( 'show' );
 			expect( setSpy ).not.toHaveBeenCalled();
 		} );
@@ -142,7 +142,7 @@ describe( 'abtest', () => {
 
 		describe( 'existing users', () => {
 			beforeEach( () => {
-				getUserStub.mockReturnValue( {
+				user.getUserStub.mockReturnValue( {
 					localeSlug: 'en',
 					date: DATE_BEFORE,
 				} );
@@ -160,7 +160,7 @@ describe( 'abtest', () => {
 		describe( 'new users', () => {
 			describe( 'English only users allowed (default)', () => {
 				test( 'should call store.set for new users with English settings', () => {
-					getUserStub.mockReturnValue( {
+					user.getUserStub.mockReturnValue( {
 						localeSlug: 'en',
 						date: DATE_AFTER,
 					} );
@@ -168,7 +168,7 @@ describe( 'abtest', () => {
 					expect( setSpy ).toHaveBeenCalledTimes( 1 );
 				} );
 				test( 'should call store.set for new users with English-Canada settings', () => {
-					getUserStub.mockReturnValue( {
+					user.getUserStub.mockReturnValue( {
 						localeSlug: 'en-ca',
 						date: DATE_AFTER,
 					} );
@@ -176,7 +176,7 @@ describe( 'abtest', () => {
 					expect( setSpy ).toHaveBeenCalledTimes( 1 );
 				} );
 				test( 'should return default and skip store.set for new users with non-English settings', () => {
-					getUserStub.mockReturnValue( {
+					user.getUserStub.mockReturnValue( {
 						localeSlug: 'de',
 						date: DATE_AFTER,
 					} );
@@ -187,7 +187,7 @@ describe( 'abtest', () => {
 
 			describe( 'all locales allowed', () => {
 				test( 'should call store.set for new users with English settings', () => {
-					getUserStub.mockReturnValue( {
+					user.getUserStub.mockReturnValue( {
 						localeSlug: 'en',
 						date: DATE_AFTER,
 					} );
@@ -195,7 +195,7 @@ describe( 'abtest', () => {
 					expect( setSpy ).toHaveBeenCalledTimes( 1 );
 				} );
 				test( 'should call store.set for new users with non-English settings', () => {
-					getUserStub.mockReturnValue( {
+					user.getUserStub.mockReturnValue( {
 						localeSlug: 'de',
 						date: DATE_AFTER,
 					} );
@@ -206,7 +206,7 @@ describe( 'abtest', () => {
 
 			describe( 'specific locales only', () => {
 				test( 'should return default and skip store.set for new users with English settings', () => {
-					getUserStub.mockReturnValue( {
+					user.getUserStub.mockReturnValue( {
 						localeSlug: 'en',
 						date: DATE_AFTER,
 					} );
@@ -214,7 +214,7 @@ describe( 'abtest', () => {
 					expect( setSpy ).not.toHaveBeenCalled();
 				} );
 				test( 'should call store.set for new users with non-English settings', () => {
-					getUserStub.mockReturnValue( {
+					user.getUserStub.mockReturnValue( {
 						localeSlug: 'de',
 						date: DATE_AFTER,
 					} );
@@ -225,7 +225,7 @@ describe( 'abtest', () => {
 
 			describe( 'fr locale only', () => {
 				test( 'should return default and skip store.set for new users with non-french settings', () => {
-					getUserStub.mockReturnValue( {
+					user.getUserStub.mockReturnValue( {
 						localeSlug: 'de',
 						date: DATE_AFTER,
 					} );
@@ -233,7 +233,7 @@ describe( 'abtest', () => {
 					expect( setSpy ).not.toHaveBeenCalled();
 				} );
 				test( 'should call store.set for new users with fr settings', () => {
-					getUserStub.mockReturnValue( {
+					user.getUserStub.mockReturnValue( {
 						localeSlug: 'fr',
 						date: DATE_AFTER,
 					} );
@@ -244,7 +244,7 @@ describe( 'abtest', () => {
 
 			describe( 'IL/IN countryCodeTargets only', () => {
 				beforeEach( () => {
-					getUserStub.mockReturnValue( {
+					user.getUserStub.mockReturnValue( {
 						localeSlug: 'en',
 						date: DATE_AFTER,
 					} );
@@ -279,7 +279,7 @@ describe( 'abtest', () => {
 
 		describe( 'new-user-no-locale', () => {
 			beforeEach( () => {
-				getUserStub.mockReturnValue( {
+				user.getUserStub.mockReturnValue( {
 					localeSlug: false,
 					date: DATE_AFTER,
 				} );
@@ -297,7 +297,7 @@ describe( 'abtest', () => {
 
 		describe( 'logged-out users', () => {
 			beforeEach( () => {
-				getUserStub.mockReturnValue( false );
+				user.getUserStub.mockReturnValue( false );
 			} );
 			test( 'should call store.set for logged-out users with English locale', () => {
 				global.navigator.__defineGetter__( 'language', () => 'en' );

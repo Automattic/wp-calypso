@@ -1,9 +1,14 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/post-types/init';
+
+/**
  * Returns the known post types for a site.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {?Object}        Site post types
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId Site ID
+ * @returns {?object}        Site post types
  */
 export function getPostTypes( state, siteId ) {
 	return state.postTypes.items[ siteId ] || null;
@@ -12,10 +17,10 @@ export function getPostTypes( state, siteId ) {
 /**
  * Returns the known post type for a site, given the type slug.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {String}  slug   Post type slug
- * @return {?Object}        Post type
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId Site ID
+ * @param  {string}  slug   Post type slug
+ * @returns {?object}        Post type
  */
 export function getPostType( state, siteId, slug ) {
 	const postTypes = getPostTypes( state, siteId );
@@ -27,15 +32,44 @@ export function getPostType( state, siteId, slug ) {
 }
 
 /**
+ * Returns the label for the post type.
+ *
+ * @param  {object}   state   Global state tree
+ * @param  {number}   siteId  Site ID
+ * @param  {string}   slug    Post type slug
+ * @param  {string}   label   Feature label
+ * @param  {string}   localeSlug LocalSlug @TODO to remove (see note below)
+ * @returns {?boolean}         Whether post type supports feature
+ */
+export function getPostTypeLabel( state, siteId, slug, label, localeSlug ) {
+	const postType = getPostType( state, siteId, slug );
+	if ( postType ) {
+		let postTypeLabel = postType.labels[ label ];
+
+		/*
+		 * Temporary workaround to Sentence case label from core API for EN langs
+		 * @TODO: Remove when https://core.trac.wordpress.org/ticket/49616 is merged
+		 */
+
+		if ( localeSlug && ( 'en' === localeSlug || 'en-gb' === localeSlug ) ) {
+			postTypeLabel = postTypeLabel[ 0 ].toUpperCase() + postTypeLabel.slice( 1 ).toLowerCase();
+		}
+
+		return postTypeLabel;
+	}
+	return null;
+}
+
+/**
  * Returns true if the post type supports the specified feature, false if the
  * post type does not support the specified feature, or null if post type
  * support cannot be determined.
  *
- * @param  {Object}   state   Global state tree
- * @param  {Number}   siteId  Site ID
- * @param  {String}   slug    Post type slug
- * @param  {String}   feature Feature slug
- * @return {?Boolean}         Whether post type supports feature
+ * @param  {object}   state   Global state tree
+ * @param  {number}   siteId  Site ID
+ * @param  {string}   slug    Post type slug
+ * @param  {string}   feature Feature slug
+ * @returns {?boolean}         Whether post type supports feature
  */
 export function postTypeSupports( state, siteId, slug, feature ) {
 	// Hard-coded overrides; even if we know the post type object, continue to
@@ -69,18 +103,18 @@ export function postTypeSupports( state, siteId, slug, feature ) {
 
 /**
  * Returns true if the site supported the post type, false if the site does not
- * support the post type, or null if support cannot be determined (if site is
+ * support the post type, or if support cannot be determined (if site is
  * not currently known).
  *
- * @param  {Object}   state  Global state tree
- * @param  {Number}   siteId Site ID
- * @param  {String}   slug   Post type slug
- * @return {?Boolean}        Whether site supports post type
+ * @param  {object}   state  Global state tree
+ * @param  {number}   siteId Site ID
+ * @param  {string}   slug   Post type slug
+ * @returns {boolean}        Whether site supports post type
  */
 export function isPostTypeSupported( state, siteId, slug ) {
 	const postTypes = getPostTypes( state, siteId );
 	if ( ! postTypes ) {
-		return null;
+		return false;
 	}
 
 	return !! postTypes[ slug ];

@@ -22,18 +22,20 @@ import {
 	READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
 	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
-} from 'state/action-types';
+} from 'calypso/state/reader/action-types';
 
-import 'state/data-layer/wpcom/read/following/mine';
-import 'state/data-layer/wpcom/read/following/mine/delete';
-import 'state/data-layer/wpcom/read/following/mine/new';
-import 'state/data-layer/wpcom/read/site/comment-email-subscriptions/delete';
-import 'state/data-layer/wpcom/read/site/comment-email-subscriptions/new';
-import 'state/data-layer/wpcom/read/site/post-email-subscriptions/delete';
-import 'state/data-layer/wpcom/read/site/post-email-subscriptions/new';
-import 'state/data-layer/wpcom/read/site/post-email-subscriptions/update';
-import 'state/data-layer/wpcom/read/sites/notification-subscriptions/delete';
-import 'state/data-layer/wpcom/read/sites/notification-subscriptions/new';
+import 'calypso/state/data-layer/wpcom/read/following/mine';
+import 'calypso/state/data-layer/wpcom/read/following/mine/delete';
+import 'calypso/state/data-layer/wpcom/read/following/mine/new';
+import 'calypso/state/data-layer/wpcom/read/site/comment-email-subscriptions/delete';
+import 'calypso/state/data-layer/wpcom/read/site/comment-email-subscriptions/new';
+import 'calypso/state/data-layer/wpcom/read/site/post-email-subscriptions/delete';
+import 'calypso/state/data-layer/wpcom/read/site/post-email-subscriptions/new';
+import 'calypso/state/data-layer/wpcom/read/site/post-email-subscriptions/update';
+import 'calypso/state/data-layer/wpcom/read/sites/notification-subscriptions/delete';
+import 'calypso/state/data-layer/wpcom/read/sites/notification-subscriptions/new';
+
+import 'calypso/state/reader/init';
 
 /**
  * Module variables
@@ -42,7 +44,8 @@ const debug = debugModule( 'calypso:redux:reader-follows' );
 
 /**
  * Extended information about a reader follow
- * @typedef {Object} follow
+ *
+ * @typedef {object} follow
  * @property {number} ID
  * @property {string} URL The URL being followed. Usually a feed.
  * @property {string} feed_URL Same as URL
@@ -50,15 +53,16 @@ const debug = debugModule( 'calypso:redux:reader-follows' );
  * @property {number} feed_ID The feed ID
  * @property {number} date_subscribed The date subscribed. Seconds since epoch.
  * @property {boolean} is_owner Is the current user the owner of this site
- * @property {Object} delivery_methods
+ * @property {object} delivery_methods
  *
  */
 
 /**
  * Follow a feed URL
+ *
  * @param  {string} feedUrl      The feed URL
- * @param {Follow} followInfo		A subscription, optional
- * @return {Object}              The action
+ * @param {object} followInfo		A subscription, optional
+ * @returns {object}              The action
  */
 export function follow( feedUrl, followInfo ) {
 	const action = {
@@ -82,9 +86,9 @@ export function unfollow( feedUrl ) {
  * Returns an action object to signal that an error was encountered
  * when following a URL.
  *
- * @param  {String} feedUrl Feed URL
- * @param  {Object} error Error response (contains keys 'info' and 'subscribed')
- * @return {Object} Action
+ * @param  {string} feedUrl Feed URL
+ * @param  {object} error Error response (contains keys 'info' and 'subscribed')
+ * @returns {object} Action
  */
 export function recordFollowError( feedUrl, error ) {
 	const action = {
@@ -98,11 +102,11 @@ export function recordFollowError( feedUrl, error ) {
 /**
  * Returns an action object to signal that a URL has been followed.
  *
- * @param  {String} url Followed URL
- * @return {Function} Action thunk
+ * @param  {string} url Followed URL
+ * @returns {Function} Action thunk
  */
 export function recordFollow( url ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'User followed ' + url );
 		dispatch( {
 			type: READER_RECORD_FOLLOW,
@@ -114,11 +118,11 @@ export function recordFollow( url ) {
 /**
  * Returns an action object to signal that a URL has been unfollowed.
  *
- * @param  {String} url Unfollowed URL
- * @return {Function} Action thunk
+ * @param  {string} url Unfollowed URL
+ * @returns {Function} Action thunk
  */
 export function recordUnfollow( url ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'User unfollowed ' + url );
 		dispatch( {
 			type: READER_RECORD_UNFOLLOW,
@@ -131,7 +135,7 @@ export function recordUnfollow( url ) {
  * Returns an action object to signal that followed sites have been received.
  *
  * @param  {Array}  follows Follows received
- * @return {Object} 		Action object
+ * @returns {object} 		Action object
  */
 export function receiveFollows( { follows, totalCount } ) {
 	return {
@@ -143,7 +147,7 @@ export function receiveFollows( { follows, totalCount } ) {
 /**
  * Returns an action object to signal that follows have been requested.
  *
- * @return {Object} 		Action object
+ * @returns {object} 		Action object
  */
 export function requestFollows() {
 	return {
@@ -153,8 +157,9 @@ export function requestFollows() {
 
 /**
  * Represents a completed sync.
+ *
  * @param  {Array} followedUrls An array of all the feed URLS seen during the sync
- * @return {Object}              The action
+ * @returns {object}              The action
  */
 export function syncComplete( followedUrls ) {
 	return {

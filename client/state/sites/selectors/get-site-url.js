@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getRawSite from 'state/selectors/get-raw-site';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteOption from './get-site-option';
 import getSiteSlug from './get-site-slug';
 import isSiteConflicting from './is-site-conflicting';
@@ -9,9 +9,9 @@ import isSiteConflicting from './is-site-conflicting';
 /**
  * Returns the URL for a site, or null if the site is unknown.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {?String}        Site Url
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId Site ID
+ * @returns {?string}        Site Url
  */
 export default function getSiteUrl( state, siteId ) {
 	if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {

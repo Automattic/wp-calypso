@@ -1,27 +1,22 @@
 /**
- * External dependencies
- */
-import { By } from 'selenium-webdriver';
-
-/**
  * Internal dependencies
  */
 import LoginPage from '../pages/login-page.js';
 import EditorPage from '../pages/editor-page';
 import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page';
 import ReaderPage from '../pages/reader-page.js';
-import StatsPage from '../pages/stats-page.js';
 import StoreDashboardPage from '../pages/woocommerce/store-dashboard-page';
 import PluginsBrowserPage from '../pages/plugins-browser-page';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
-import CustomerHomePage from '../pages/customer-home-page';
+import CustomerHome from '../pages/customer-home-page';
 
 import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
+import GuideComponent from '../components/guide-component.js';
 
 import * as dataHelper from '../data-helper';
-import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager';
+import * as driverHelper from '../driver-helper';
 import * as loginCookieHelper from '../login-cookie-helper';
 import PagesPage from '../pages/pages-page';
 
@@ -57,26 +52,28 @@ export default class LoginFlow {
 		}
 	}
 
-	async login( { emailSSO = false, jetpackSSO = false, useFreshLogin = false } = {} ) {
+	async login( { emailSSO = false, jetpackSSO = false } = {} ) {
 		await driverManager.ensureNotLoggedIn( this.driver );
 
-		if (
-			! useFreshLogin &&
-			( await loginCookieHelper.useLoginCookies( this.driver, this.account.username ) )
-		) {
-			console.log( 'Reusing login cookie for ' + this.account.username );
-			await this.driver.navigate().refresh();
-			const continueSelector = By.css( 'div.continue-as-user a' );
-			if ( await driverHelper.isElementPresent( this.driver, continueSelector ) ) {
-				await driverHelper.clickWhenClickable( this.driver, continueSelector );
-			}
-			return;
-		}
+		// Disabling re-use of cookies as latest versions of Chrome don't currently support it.
+		// We can check later to see if we can find a different way to support it.
+		// if (
+		// 	! useFreshLogin &&
+		// 	( await loginCookieHelper.useLoginCookies( this.driver, this.account.username ) )
+		// ) {
+		// 	console.log( 'Reusing login cookie for ' + this.account.username );
+		// 	await this.driver.navigate().refresh();
+		// 	const continueLocator = By.css( 'div.continue-as-user a' );
+		// 	if ( await driverHelper.isElementLocated( this.driver, continueLocator ) ) {
+		// 		await driverHelper.clickWhenClickable( this.driver, continueLocator );
+		// 	}
+		// 	return;
+		// }
 
 		console.log( 'Logging in as ' + this.account.username );
 
-		let loginURL = this.account.loginURL,
-			loginPage;
+		let loginURL = this.account.loginURL;
+		let loginPage;
 
 		if ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) {
 			loginURL = `http://${ dataHelper.getJetpackSiteName() }/wp-admin`;
@@ -97,6 +94,13 @@ export default class LoginFlow {
 		}
 
 		await loginPage.login( this.account.email || this.account.username, this.account.password );
+
+		if ( process.env.FLAGS === 'nav-unification' ) {
+			// Makes sure that the nav-unification welcome modal will be dismissed.
+			const guideComponent = new GuideComponent( this.driver );
+			await guideComponent.dismiss( 1000, '.nav-unification-modal' );
+		}
+
 		return await loginCookieHelper.saveLogin( this.driver, this.account.username );
 	}
 
@@ -116,7 +120,12 @@ export default class LoginFlow {
 
 		await this.checkForDevDocsAndRedirectToReader();
 
-		await ReaderPage.Expect( this.driver );
+		try {
+			await ReaderPage.Expect( this.driver );
+		} catch ( e ) {
+			await CustomerHome.Expect( this.driver );
+		}
+
 		await NavBarComponent.Expect( this.driver );
 
 		const navbarComponent = await NavBarComponent.Expect( this.driver );
@@ -124,8 +133,7 @@ export default class LoginFlow {
 
 		if ( usingGutenberg ) {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
-			await gEditorComponent.dismissEditorWelcomeModal();
-			await gEditorComponent.closeSidebar();
+			await gEditorComponent.initEditor();
 		}
 
 		if ( ! usingGutenberg ) {
@@ -139,7 +147,7 @@ export default class LoginFlow {
 	async loginAndStartNewPage(
 		site = null,
 		usingGutenberg = false,
-		{ useFreshLogin = false } = {}
+		{ useFreshLogin = false, dismissPageTemplateLocator = true, editorType = 'iframe' } = {}
 	) {
 		if ( site || ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) ) {
 			site = site || dataHelper.getJetpackSiteName();
@@ -154,9 +162,8 @@ export default class LoginFlow {
 		await pagesPage.selectAddNewPage();
 
 		if ( usingGutenberg ) {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
-			await gEditorComponent.dismissPageTemplateSelector();
-			await gEditorComponent.closeSidebar();
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, editorType );
+			await gEditorComponent.initEditor( { dismissPageTemplateLocator } );
 		}
 
 		if ( ! usingGutenberg ) {
@@ -205,18 +212,13 @@ export default class LoginFlow {
 			await sideBarComponent.selectSiteSwitcher();
 			await sideBarComponent.searchForSite( siteURL );
 		}
-
-		if ( this.account.username !== 'e2eflowtestinggutenbergsimpleedge' ) {
-			await StatsPage.Expect( this.driver );
-		} else {
-			await CustomerHomePage.Expect( this.driver );
-		}
 	}
 
 	async loginAndSelectAllSites() {
 		await this.loginAndSelectMySite();
 
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
+		await sideBarComponent.selectStats();
 		await sideBarComponent.selectSiteSwitcher();
 		return await sideBarComponent.selectAllSites();
 	}
@@ -227,18 +229,18 @@ export default class LoginFlow {
 		return await sideBarComponent.selectThemes();
 	}
 
-	async loginAndSelectManagePlugins() {
-		await this.loginAndSelectPlugins();
+	async loginAndSelectManagePluginsJetpack() {
+		await this.loginAndSelectPluginsJetpack();
 
 		const pluginsBrowserPage = await PluginsBrowserPage.Expect( this.driver );
 		return await pluginsBrowserPage.selectManagePlugins();
 	}
 
-	async loginAndSelectPlugins() {
+	async loginAndSelectPluginsJetpack() {
 		await this.loginAndSelectMySite();
 
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
-		return await sideBarComponent.selectPlugins();
+		return await sideBarComponent.selectPluginsJetpackConnected();
 	}
 
 	async loginAndSelectSettings() {
@@ -256,11 +258,32 @@ export default class LoginFlow {
 		);
 	}
 
+	async loginUsingPopup() {
+		await driverHelper.waitUntilAbleToSwitchToWindow( this.driver, 1 );
+		const loginPage = await LoginPage.Expect( this.driver );
+
+		await loginPage.login(
+			this.account.email || this.account.username,
+			this.account.password,
+			false,
+			{ isPopup: true }
+		);
+
+		// Make sure we've switched back to the post window
+		await driverHelper.waitUntilAbleToSwitchToWindow( this.driver, 0 );
+	}
+
 	async loginAndOpenWooStore() {
 		await this.loginAndSelectMySite();
 		this.sideBarComponent = await SidebarComponent.Expect( this.driver );
 		await this.sideBarComponent.selectStoreOption();
 		return await StoreDashboardPage.Expect( this.driver );
+	}
+
+	async loginAndSelectWPAdmin() {
+		await this.loginAndSelectMySite();
+		this.sideBarComponent = await SidebarComponent.Expect( this.driver );
+		return await this.sideBarComponent.selectWPAdmin();
 	}
 
 	end() {

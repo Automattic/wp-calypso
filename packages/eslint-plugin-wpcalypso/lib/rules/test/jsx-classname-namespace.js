@@ -1,5 +1,5 @@
 /**
- * @fileoverview Ensure JSX className adheres to CSS namespace guidelines
+ * @file Ensure JSX className adheres to CSS namespace guidelines
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -24,7 +24,7 @@ const EXPECTED_FOO_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo__
 //------------------------------------------------------------------------------
 
 new RuleTester( {
-	parser: require.resolve( 'babel-eslint' ),
+	parser: require.resolve( '@babel/eslint-parser' ),
 	parserOptions: {
 		ecmaFeatures: { jsx: true },
 		sourceType: 'module',

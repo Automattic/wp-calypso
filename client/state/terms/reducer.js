@@ -7,17 +7,16 @@ import { mapValues, merge } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
-	DESERIALIZE,
 	TERM_REMOVE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
 	TERMS_REQUEST_FAILURE,
 	TERMS_REQUEST_SUCCESS,
-	SERIALIZE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
-import TermQueryManager from 'lib/query-manager/term';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
+import TermQueryManager from 'calypso/lib/query-manager/term';
 import { getSerializedTermsQuery } from './utils';
 import { queriesSchema } from './schema';
 
@@ -26,9 +25,9 @@ import { queriesSchema } from './schema';
  * dispatched. The state reflects a mapping of serialized query to whether a
  * network request is in-progress for that query.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function queryRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -53,7 +52,8 @@ export function queryRequests( state = {}, action ) {
  * The state reflects a mapping of serialized query key to an array of term IDs
  * for the query, if a query response was successfully received.
  */
-export const queries = withSchemaValidation( queriesSchema, ( state = {}, action ) => {
+
+const queriesReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case TERMS_RECEIVE: {
 			const { siteId, query, taxonomy, terms, found } = action;
@@ -92,26 +92,29 @@ export const queries = withSchemaValidation( queriesSchema, ( state = {}, action
 				},
 			};
 		}
-		case SERIALIZE: {
-			return mapValues( state, taxonomies => {
-				return mapValues( taxonomies, ( { data, options } ) => {
-					return { data, options };
-				} );
-			} );
-		}
-		case DESERIALIZE: {
-			return mapValues( state, taxonomies => {
-				return mapValues( taxonomies, ( { data, options } ) => {
-					return new TermQueryManager( data, options );
-				} );
-			} );
-		}
 	}
 
 	return state;
-} );
+};
 
-export default combineReducers( {
+export const queries = withSchemaValidation(
+	queriesSchema,
+	withPersistence( queriesReducer, {
+		serialize: ( state ) =>
+			mapValues( state, ( taxonomies ) =>
+				mapValues( taxonomies, ( { data, options } ) => ( { data, options } ) )
+			),
+		deserialize: ( persisted ) =>
+			mapValues( persisted, ( taxonomies ) =>
+				mapValues( taxonomies, ( { data, options } ) => new TermQueryManager( data, options ) )
+			),
+	} )
+);
+
+const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
 } );
+
+const termsReducer = withStorageKey( 'terms', combinedReducer );
+export default termsReducer;

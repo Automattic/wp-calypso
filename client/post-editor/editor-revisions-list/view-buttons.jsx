@@ -9,12 +9,12 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SegmentedControl from 'components/segmented-control';
+import SegmentedControl from 'calypso/components/segmented-control';
 import {
 	splitPostRevisionsDiffView,
 	unifyPostRevisionsDiffView,
-} from 'state/posts/revisions/actions';
-import getPostRevisionsDiffView from 'state/selectors/get-post-revisions-diff-view';
+} from 'calypso/state/posts/revisions/actions';
+import { getPostRevisionsDiffView } from 'calypso/state/posts/selectors/get-post-revisions-diff-view';
 
 const EditorRevisionsListViewButtons = ( { diffView, viewSplit, viewUnified } ) => {
 	const translate = useTranslate();
@@ -45,7 +45,7 @@ EditorRevisionsListViewButtons.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	diffView: getPostRevisionsDiffView( state ),
 } );
 

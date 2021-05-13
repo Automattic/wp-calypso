@@ -22,15 +22,17 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
  */
 import { ProductPurchaseFeaturesList } from '../index';
 
-jest.mock( 'blocks/product-purchase-features-list/google-vouchers', () => 'GoogleVouchers' );
-jest.mock( 'blocks/product-purchase-features-list/video-audio-posts', () => 'VideoAudioPosts' );
+jest.mock(
+	'calypso/blocks/product-purchase-features-list/video-audio-posts',
+	() => 'VideoAudioPosts'
+);
 
 describe( 'ProductPurchaseFeaturesList basic tests', () => {
 	const props = {
@@ -56,7 +58,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		},
 	};
 
-	let spy, spyWrong;
+	let spy;
+	let spyWrong;
 
 	afterEach( () => {
 		if ( spy ) {
@@ -339,7 +342,7 @@ describe( '<HappinessSupportCard isEligibleForLiveChat', () => {
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		const props = {
 			plan: plan,
 			isPlaceholder: false,

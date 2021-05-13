@@ -1,0 +1,60 @@
+{
+	"name": "@automattic/plans-grid",
+	"version": "1.0.0-alpha.0",
+	"description": "WordPress.com Plans Grid UI component",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/plans-grid"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"types": "dist/types",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"@automattic/data-stores": "^2.0.0",
+		"@automattic/i18n-utils": "^1.0.0",
+		"@automattic/onboarding": "^1.0.0",
+		"@wordpress/components": "^13.0.3",
+		"@wordpress/compose": "^3.25.3",
+		"@wordpress/icons": "^2.10.3",
+		"@wordpress/primitives": "^1.12.3",
+		"@wordpress/react-i18n": "^1.0.3",
+		"classnames": "^2.2.6",
+		"debug": "^4.1.1",
+		"lodash": "^4.17.21",
+		"tslib": "^2.2.0",
+		"uuid": "^8.3.2"
+	},
+	"devDependencies": {
+		"@automattic/typography": "^1.0.0",
+		"@wordpress/base-styles": "^3.4.3",
+		"prop-types": "^15.7.2"
+	},
+	"peerDependencies": {
+		"@wordpress/data": "^4.27.3",
+		"@wordpress/element": "^2.20.3",
+		"@wordpress/i18n": "^3.20.0",
+		"react": "^16.8"
+	},
+	"private": true
+}

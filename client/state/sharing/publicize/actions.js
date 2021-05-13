@@ -1,8 +1,13 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_CREATE_FAILURE,
@@ -22,7 +27,9 @@ import {
 	PUBLICIZE_SHARE_SUCCESS,
 	PUBLICIZE_SHARE_FAILURE,
 	PUBLICIZE_SHARE_DISMISS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/sharing/init';
 
 export function dismissShareConfirmation( siteId, postId ) {
 	return {
@@ -33,7 +40,7 @@ export function dismissShareConfirmation( siteId, postId ) {
 }
 
 export function sharePost( siteId, postId, skippedConnections, message ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: PUBLICIZE_SHARE,
 			siteId,
@@ -42,7 +49,7 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
 			message,
 		} );
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			wpcom
 				.undocumented()
 				.publicizePost( siteId, postId, message, skippedConnections, ( error, data ) => {
@@ -64,11 +71,11 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
  * Triggers a network request to fetch Publicize connections for the specified
  * site ID.
  *
- * @param  {Number}   siteId Site ID
- * @return {Function}        Action thunk
+ * @param  {number}   siteId Site ID
+ * @returns {Function}        Action thunk
  */
 export function fetchConnections( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: PUBLICIZE_CONNECTIONS_REQUEST,
 			siteId,
@@ -77,14 +84,14 @@ export function fetchConnections( siteId ) {
 		return wpcom
 			.undocumented()
 			.siteConnections( siteId )
-			.then( connections => {
+			.then( ( connections ) => {
 				dispatch( receiveConnections( siteId, connections ) );
 				dispatch( {
 					type: PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
 					siteId,
 				} );
 			} )
-			.catch( error =>
+			.catch( ( error ) =>
 				dispatch( {
 					type: PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 					siteId,
@@ -98,12 +105,12 @@ export function fetchConnections( siteId ) {
  * Triggers a network request to request a Publicize connection for the
  * specified site ID.
  *
- * @param  {Number} siteId       Site ID
- * @param  {Number} connectionId ID of the connection to be fetched.
- * @return {Function}            Action thunk
+ * @param  {number} siteId       Site ID
+ * @param  {number} connectionId ID of the connection to be fetched.
+ * @returns {Function}            Action thunk
  */
 export function fetchConnection( siteId, connectionId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: PUBLICIZE_CONNECTION_REQUEST,
 			connectionId,
@@ -114,7 +121,7 @@ export function fetchConnection( siteId, connectionId ) {
 			.undocumented()
 			.site( siteId )
 			.getConnection( connectionId )
-			.then( connection => {
+			.then( ( connection ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_RECEIVE,
 					connection,
@@ -126,7 +133,7 @@ export function fetchConnection( siteId, connectionId ) {
 					siteId,
 				} );
 			} )
-			.catch( error =>
+			.catch( ( error ) =>
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_REQUEST_FAILURE,
 					connectionId,
@@ -141,80 +148,134 @@ export function fetchConnection( siteId, connectionId ) {
  * Given a service and optional site, establishes a new connection to the
  * service for the current user.
  *
- * @param {Number} siteId              Site ID
- * @param {Number} keyringConnectionId Keyring connection ID
- * @param {Number} externalUserId      An optional external user ID to create a connection to an external user account.
- * @return {Function}                  Action thunk
+ * @param {number} siteId              Site ID
+ * @param {number} keyringConnectionId Keyring connection ID
+ * @param {number} externalUserId      An optional external user ID to create a connection to an external user account.
+ * @returns {Function}                  Action thunk
  */
 export function createSiteConnection( siteId, keyringConnectionId, externalUserId ) {
-	return dispatch =>
+	return ( dispatch ) =>
 		wpcom
 			.undocumented()
 			.createConnection( keyringConnectionId, siteId, externalUserId, { shared: false } )
-			.then( connection =>
+			.then( ( connection ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_CREATE,
 					connection,
-				} )
-			)
-			.catch( error => dispatch( failCreateConnection( error ) ) );
+				} );
+				dispatch(
+					successNotice(
+						translate( 'The %(service)s account was successfully connected.', {
+							args: { service: connection.label },
+							context: 'Sharing: Publicize connection confirmation',
+						} ),
+						{ id: 'publicize' }
+					)
+				);
+			} )
+			.catch( ( error ) => {
+				dispatch( failCreateConnection( error ) );
+				dispatch(
+					errorNotice(
+						error.message ||
+							translate( 'An error occurred while connecting the account.', {
+								context: 'Sharing: Publicize connection confirmation',
+							} ),
+						{ id: 'publicize' }
+					)
+				);
+			} );
 }
 
 /**
  * Triggers a network request to update a Publicize connection for a specific site.
  *
- * @param  {Object} connection         Connection to be updated.
- * @param  {Number} connection.site_ID Site ID for which the connection is updated.
- * @param  {Number} connection.ID      ID of the connection to be updated.
- * @param  {String} connection.label   Name of the connected service.
- * @param  {Object} attributes         The update request body.
- * @return {Function}                  Action thunk
+ * @param  {object} connection         Connection to be updated.
+ * @param  {number} connection.site_ID Site ID for which the connection is updated.
+ * @param  {number} connection.ID      ID of the connection to be updated.
+ * @param  {string} connection.label   Name of the connected service.
+ * @param  {object} attributes         The update request body.
+ * @returns {Function}                  Action thunk
  */
 export function updateSiteConnection( connection, attributes ) {
-	return dispatch =>
+	return ( dispatch ) =>
 		wpcom
 			.undocumented()
 			.updateConnection( connection.site_ID, connection.ID, attributes )
-			.then( response =>
+			.then( ( response ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_UPDATE,
 					connection: response,
-				} )
-			)
-			.catch( error =>
+				} );
+
+				dispatch(
+					successNotice(
+						translate( 'The %(service)s account was successfully updated.', {
+							args: { service: connection.label },
+							context: 'Sharing: Publicize connection confirmation',
+						} ),
+						{ id: 'publicize' }
+					)
+				);
+			} )
+			.catch( ( error ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 					error: { ...error, label: connection.label },
-				} )
-			);
+				} );
+
+				dispatch(
+					errorNotice(
+						translate( 'The %(service)s account was unable to be updated.', {
+							args: { service: error.label },
+							context: 'Sharing: Publicize reconnection confirmation',
+						} ),
+						{ id: 'publicize' }
+					)
+				);
+			} );
 }
 
 /**
  * Triggers a network request to delete a Publicize connection for a specific site.
  *
- * @param  {Object} connection         Connection to be deleted.
- * @param  {Number} connection.site_ID Site ID for which the connection is deleted.
- * @param  {Number} connection.ID      ID of the connection to be deleted.
- * @param  {String} connection.label   Name of the service that was connected.
- * @return {Function}                  Action thunk
+ * @param  {object} connection         Connection to be deleted.
+ * @param  {number} connection.site_ID Site ID for which the connection is deleted.
+ * @param  {number} connection.ID      ID of the connection to be deleted.
+ * @param  {string} connection.label   Name of the service that was connected.
+ * @returns {Function}                  Action thunk
  */
 export function deleteSiteConnection( connection ) {
-	return dispatch =>
+	return ( dispatch ) =>
 		wpcom
 			.undocumented()
 			.deleteSiteConnection( connection.site_ID, connection.ID )
-			.then( () => dispatch( deleteConnection( connection ) ) )
-			.catch( error => {
+			.then( () => {
+				dispatch( deleteConnection( connection ) );
+				dispatch( deleteConnectionSuccess( connection ) );
+			} )
+			.catch( ( error ) => {
 				if ( error && 404 === error.statusCode ) {
 					// If the connection cannot be found, we infer that it must have been deleted since the original
 					// connections were retrieved, so pass along the cached connection.
 					dispatch( deleteConnection( connection ) );
+					dispatch( deleteConnectionSuccess( connection ) );
 				}
 
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_DELETE_FAILURE,
 					error: { ...error, label: connection.label },
 				} );
+
+				dispatch(
+					errorNotice(
+						translate( 'The %(service)s account was unable to be disconnected.', {
+							args: { service: error.label },
+							context: 'Sharing: Publicize connection confirmation',
+						} ),
+						{ id: 'publicize' }
+					)
+				);
 			} );
 }
 
@@ -222,8 +283,8 @@ export function deleteSiteConnection( connection ) {
  * Returns an action object to be used in signalling that creating a Publicize
  * connection has failed.
  *
- * @param  {Object} error Error object
- * @return {Object}       Action object
+ * @param  {object} error Error object
+ * @returns {object}       Action object
  */
 export function failCreateConnection( error ) {
 	return {
@@ -236,8 +297,8 @@ export function failCreateConnection( error ) {
  * Returns an action object to be used in signalling that a network request for
  * removing a Publicize connection has been received.
  *
- * @param  {Object} connection Connection to be deleted.
- * @return {Object}            Action object
+ * @param  {object} connection Connection to be deleted.
+ * @returns {object}            Action object
  */
 export function deleteConnection( connection ) {
 	return {
@@ -247,12 +308,28 @@ export function deleteConnection( connection ) {
 }
 
 /**
+ * Returns an action object to be used to render a connection deletion success notice.
+ *
+ * @param  {object} connection Connection that was deleted.
+ * @returns {object}            Action object
+ */
+function deleteConnectionSuccess( connection ) {
+	return successNotice(
+		translate( 'The %(service)s account was successfully disconnected.', {
+			args: { service: connection.label },
+			context: 'Sharing: Publicize connection confirmation',
+		} ),
+		{ id: 'publicize' }
+	);
+}
+
+/**
  * Returns an action object to be used in signalling that a network request for
  * Publicize connections has been received.
  *
- * @param  {Number} siteId Site ID
- * @param  {Object} data   API response
- * @return {Object}        Action object
+ * @param  {number} siteId Site ID
+ * @param  {object} data   API response
+ * @returns {object}        Action object
  */
 export function receiveConnections( siteId, data ) {
 	return {

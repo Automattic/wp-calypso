@@ -1,25 +1,24 @@
 /**
  * Internal dependencies
  */
+import { createSelector } from '@automattic/state-utils';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
-import createSelector from 'lib/create-selector';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
-import { isJetpackSite } from 'state/sites/selectors';
+import 'calypso/state/ui/init';
 
 /**
  * Return an array with the selected site or all sites Jetpack can manage
  *
- * @param {Object} state  Global state tree
- * @return {Array}        Array of Sites objects with the result
+ * @param {object} state  Global state tree
+ * @returns {Array}        Array of Sites objects with the result
  */
 export default createSelector(
-	state =>
+	( state ) =>
 		getSelectedOrAllSites( state ).filter(
-			site =>
-				isJetpackSite( state, site.ID ) &&
-				site.canManage &&
-				canCurrentUser( state, site.ID, 'manage_options' )
+			( site ) =>
+				isJetpackSite( state, site.ID ) && canCurrentUser( state, site.ID, 'manage_options' )
 		),
-	state => [ state.ui.selectedSiteId, state.sites.items, state.currentUser.capabilities ]
+	( state ) => [ state.ui.selectedSiteId, state.sites.items, state.currentUser.capabilities ]
 );

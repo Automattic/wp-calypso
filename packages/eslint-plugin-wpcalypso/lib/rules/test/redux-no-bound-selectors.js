@@ -1,5 +1,5 @@
 /**
- * @fileoverview Disallow creation of selectors bound to Redux state
+ * @file Disallow creation of selectors bound to Redux state
  * @author Automattic
  * @copyright 2017 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -9,8 +9,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/redux-no-bound-selectors' ),
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require( '../../../lib/rules/redux-no-bound-selectors' );
+const RuleTester = require( 'eslint' ).RuleTester;
 
 const REF = ' See wp-calypso#14024';
 const BIND_ERROR_MESSAGE = "Don't bind functions within `connect`." + REF;

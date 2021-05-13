@@ -1,4 +1,6 @@
 .post-relative-time-status {
+	display: inline-block;
+
 	.gridicon {
 		display: inline-block;
 		margin: 0 4px 0 0;
@@ -17,6 +19,9 @@
 	}
 	.is-trash {
 		color: var( --color-error );
+	}
+	.is-private {
+		color: var( --color-primary-dark );
 	}
 }
 

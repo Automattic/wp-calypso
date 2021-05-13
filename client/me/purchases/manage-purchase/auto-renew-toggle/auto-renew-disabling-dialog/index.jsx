@@ -10,11 +10,16 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, Dialog } from '@automattic/components';
-import CancelAutoRenewalForm from 'components/marketing-survey/cancel-auto-renewal-form';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { isDomainRegistration, isPlan } from 'lib/products-values';
-import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
-import { getSite } from 'state/sites/selectors';
+import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import {
+	isDomainRegistration,
+	isGSuiteOrGoogleWorkspace,
+	isPlan,
+	isTitanMail,
+} from '@automattic/calypso-products';
+import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSite } from 'calypso/state/sites/selectors';
 import './style.scss';
 
 const DIALOG = {
@@ -52,13 +57,17 @@ class AutoRenewDisablingDialog extends Component {
 			return 'plan';
 		}
 
+		if ( isGSuiteOrGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
+			return 'email';
+		}
+
 		return null;
 	}
 
 	getCopy( variation ) {
-		const { planName, siteDomain, purchase, translate } = this.props;
+		const { planName, siteDomain, purchase, translate, moment } = this.props;
 
-		const expiryDate = purchase.expiryMoment.format( 'LL' );
+		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
 
 		switch ( variation ) {
 			case 'plan':
@@ -108,6 +117,41 @@ class AutoRenewDisablingDialog extends Component {
 						},
 						comment:
 							'%(planName)s is the name of a WordPress.com plan, e.g. Personal, Premium, Business. ' +
+							'%(siteDomain)s is a domain name, e.g. example.com, example.wordpress.com. ' +
+							'%(expiryDate)s is a date string, e.g. May 14, 2020',
+					}
+				);
+			case 'email':
+				return translate(
+					'By canceling auto-renewal, your %(emailProductName)s subscription for %(domainName)s will expire on %(expiryDate)s. ' +
+						'After it expires, you will not be able to send and receive emails for this domain. ' +
+						'To avoid that, turn auto-renewal back on or manually renew your subscription before the expiration date.',
+					{
+						args: {
+							domainName: purchase.meta,
+							// Use the purchased product name to make sure it's correct
+							emailProductName: purchase.productName,
+							expiryDate,
+						},
+						comment:
+							'%(emailProductName)s is the name of an email product, e.g. Email, Titan Mail, Google Workspace. ' +
+							'%(domainName)s is a domain name, e.g. example.com. ' +
+							'%(expiryDate)s is a date string, e.g. May 14, 2020',
+					}
+				);
+			default:
+				return translate(
+					'By canceling auto-renewal, your %(productName)s subscription for %(siteDomain)s will expire on %(expiryDate)s. ' +
+						"When it does, you'll lose access to key features you may be using on your site. " +
+						'To avoid that, turn auto-renewal back on or manually renew your subscription before the expiration date.',
+					{
+						args: {
+							productName: purchase.productName,
+							siteDomain,
+							expiryDate,
+						},
+						comment:
+							'%(productName)s is the name of a WordPress.com product. ' +
 							'%(siteDomain)s is a domain name, e.g. example.com, example.wordpress.com. ' +
 							'%(expiryDate)s is a date string, e.g. May 14, 2020',
 					}
@@ -192,18 +236,29 @@ class AutoRenewDisablingDialog extends Component {
 		const { isVisible, translate } = this.props;
 		const description = this.getCopy( this.getVariation() );
 
+		const buttons = [
+			{
+				action: 'close',
+				label: translate( "I'll keep it" ),
+				onClick: this.closeAndCleanup,
+			},
+			{
+				action: 'confirm',
+				label: translate( 'Confirm cancellation' ),
+				onClick: this.onClickGeneralConfirm,
+				isPrimary: true,
+			},
+		];
+
 		return (
 			<Dialog
 				isVisible={ isVisible }
 				additionalClassNames="auto-renew-disabling-dialog"
 				onClose={ this.closeAndCleanup }
+				buttons={ buttons }
 			>
 				<h2 className="auto-renew-disabling-dialog__header">{ translate( 'Before you go…' ) }</h2>
 				<p>{ description }</p>
-				<Button onClick={ this.closeAndCleanup }>{ translate( "I'll keep it" ) }</Button>
-				<Button onClick={ this.onClickGeneralConfirm } primary>
-					{ translate( 'Confirm cancellation' ) }
-				</Button>
 			</Dialog>
 		);
 	};

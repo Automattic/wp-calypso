@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, get, map } from 'lodash';
@@ -11,32 +11,31 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/route';
-import analytics from 'lib/analytics';
+import { addQueryArgs } from 'calypso/lib/route';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Button, Card, CompactCard, Dialog } from '@automattic/components';
-import config from 'config';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import EmptyContent from 'components/empty-content';
-import FormattedHeader from 'components/formatted-header';
-import Gravatar from 'components/gravatar';
+import config from '@automattic/calypso-config';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Gravatar from 'calypso/components/gravatar';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import Main from 'components/main';
+import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import Main from 'calypso/components/main';
 import MainWrapper from './main-wrapper';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import Site from 'blocks/site';
-import SitePlaceholder from 'blocks/site/placeholder';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
-import { decodeEntities } from 'lib/formatting';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSSO } from 'state/jetpack-connect/selectors';
-import { login } from 'lib/paths';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import Site from 'calypso/blocks/site';
+import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSSO } from 'calypso/state/jetpack-connect/selectors';
+import { login } from 'calypso/lib/paths';
 import { persistSsoApproved } from './persistence-utils';
-import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
+import { validateSSONonce, authorizeSSO } from 'calypso/state/jetpack-connect/actions';
 
 /*
  * Module variables
@@ -68,9 +67,9 @@ class JetpackSsoForm extends Component {
 		}
 	}
 
-	onApproveSSO = event => {
+	onApproveSSO = ( event ) => {
 		event.preventDefault();
-		analytics.tracks.recordEvent( 'calypso_jetpack_sso_log_in_button_click' );
+		recordTracksEvent( 'calypso_jetpack_sso_log_in_button_click' );
 
 		const { siteId, ssoNonce } = this.props;
 		const siteUrl = get( this.props, 'blogDetails.URL' );
@@ -81,25 +80,25 @@ class JetpackSsoForm extends Component {
 		this.props.authorizeSSO( siteId, ssoNonce, siteUrl );
 	};
 
-	onCancelClick = event => {
+	onCancelClick = ( event ) => {
 		debug( 'Clicked return to site link' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sso_return_to_site_link_click' );
+		recordTracksEvent( 'calypso_jetpack_sso_return_to_site_link_click' );
 		this.returnToSiteFallback( event );
 	};
 
-	onTryAgainClick = event => {
+	onTryAgainClick = ( event ) => {
 		debug( 'Clicked try again link' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sso_try_again_link_click' );
+		recordTracksEvent( 'calypso_jetpack_sso_try_again_link_click' );
 		this.returnToSiteFallback( event );
 	};
 
 	onClickSignInDifferentUser = () => {
-		analytics.tracks.recordEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
+		recordTracksEvent( 'calypso_jetpack_sso_sign_in_different_user_link_click' );
 	};
 
-	onClickSharedDetailsModal = event => {
+	onClickSharedDetailsModal = ( event ) => {
 		event.preventDefault();
-		analytics.tracks.recordEvent( 'calypso_jetpack_sso_shared_details_link_click' );
+		recordTracksEvent( 'calypso_jetpack_sso_shared_details_link_click' );
 		this.setState( {
 			showTermsDialog: true,
 		} );
@@ -111,11 +110,11 @@ class JetpackSsoForm extends Component {
 		} );
 	};
 
-	returnToSiteFallback = event => {
+	returnToSiteFallback = ( event ) => {
 		// If, for some reason, the API request failed and we do not have the admin URL,
 		// then fallback to the user's last location.
 		if ( ! get( this.props, 'blogDetails.admin_url' ) ) {
-			analytics.tracks.recordEvent( 'calypso_jetpack_sso_admin_url_fallback_redirect' );
+			recordTracksEvent( 'calypso_jetpack_sso_admin_url_fallback_redirect' );
 			event.preventDefault();
 			window.history.back();
 		}
@@ -260,6 +259,9 @@ class JetpackSsoForm extends Component {
 
 	getTOSText() {
 		const { translate } = this.props;
+		// translators: "share details" is a link to a legal document.
+		// "share details" implies that both WordPress.com and %(siteName) will have access to the user info
+		// siteName is the partner's site name (eg. Google)
 		const text = translate(
 			'By logging in you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.',
 			{
@@ -284,6 +286,7 @@ class JetpackSsoForm extends Component {
 
 	getSubHeaderText() {
 		const { translate } = this.props;
+		// translators: siteName is a partner site name. Eg "Google.com" or "Tumblr.com".
 		const text = translate(
 			'To use Single Sign-On, WordPress.com needs to be able to connect to your account on %(siteName)s.',
 			{
@@ -419,12 +422,15 @@ class JetpackSsoForm extends Component {
 							<div className="jetpack-connect__sso-user-profile">
 								<Gravatar user={ currentUser } size={ 120 } imgSize={ 400 } />
 								<h3 className="jetpack-connect__sso-log-in-as">
-									{ translate( 'Log in as {{strong}}%s{{/strong}}', {
-										args: currentUser.display_name,
-										components: {
-											strong: <strong className="jetpack-connect__sso-display-name" />,
-										},
-									} ) }
+									{
+										// translators: %s is the user's display name. Eg: Login in as "John Doe"
+										translate( 'Log in as {{strong}}%s{{/strong}}', {
+											args: currentUser.display_name,
+											components: {
+												strong: <strong className="jetpack-connect__sso-display-name" />,
+											},
+										} )
+									}
 								</h3>
 								<div className="jetpack-connect__sso-user-email">{ currentUser.email }</div>
 							</div>
@@ -469,7 +475,7 @@ class JetpackSsoForm extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const jetpackSSO = getSSO( state );
 		return {
 			ssoUrl: get( jetpackSSO, 'ssoUrl' ),
@@ -489,8 +495,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	withTrackingTool( 'HotJar' )
-)( JetpackSsoForm );
+export default flowRight( connectComponent, localize )( JetpackSsoForm );

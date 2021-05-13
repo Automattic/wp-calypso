@@ -3,18 +3,19 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import Stream from 'reader/stream';
+import Stream from 'calypso/reader/stream';
 import EmptyContent from './empty';
-import HeaderBack from 'reader/header-back';
-import { RelatedPostCard } from 'blocks/reader-related-card';
-import { SEARCH_RESULTS } from 'reader/follow-sources';
-import PostPlaceholder from 'reader/stream/post-placeholder';
+import HeaderBack from 'calypso/reader/header-back';
+import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
+import { SEARCH_RESULTS } from 'calypso/reader/follow-sources';
+import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
+
+const defaultTransform = ( item ) => item;
 
 class PostResults extends Component {
 	static propTypes = {
@@ -37,7 +38,9 @@ class PostResults extends Component {
 		const { query, translate } = this.props;
 		const emptyContent = <EmptyContent query={ query } />;
 		const transformStreamItems =
-			! query || query === '' ? postKey => ( { ...postKey, isRecommendation: true } ) : identity;
+			! query || query === ''
+				? ( postKey ) => ( { ...postKey, isRecommendation: true } )
+				: defaultTransform;
 
 		return (
 			<Stream

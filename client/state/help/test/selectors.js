@@ -49,13 +49,9 @@ describe( 'selectors', () => {
 				currentUser: {
 					id: 5678,
 					capabilities: {},
-				},
-				users: {
-					items: {
-						5678: {
-							ID: 5678,
-							primary_blog: 77203074,
-						},
+					user: {
+						ID: 5678,
+						primary_blog: 77203074,
 					},
 				},
 			} );
@@ -80,13 +76,9 @@ describe( 'selectors', () => {
 				currentUser: {
 					id: 5678,
 					capabilities: {},
-				},
-				users: {
-					items: {
-						5678: {
-							ID: 5678,
-							primary_blog: 77203074,
-						},
+					user: {
+						ID: 5678,
+						primary_blog: 77203074,
 					},
 				},
 			} );
@@ -111,13 +103,9 @@ describe( 'selectors', () => {
 				currentUser: {
 					id: 5678,
 					capabilities: {},
-				},
-				users: {
-					items: {
-						5678: {
-							ID: 5678,
-							primary_blog: 77203074,
-						},
+					user: {
+						ID: 5678,
+						primary_blog: 77203074,
 					},
 				},
 			} );
@@ -141,13 +129,9 @@ describe( 'selectors', () => {
 				currentUser: {
 					id: 5678,
 					capabilities: {},
-				},
-				users: {
-					items: {
-						5678: {
-							ID: 5678,
-							primary_blog: 77203074,
-						},
+					user: {
+						ID: 5678,
+						primary_blog: 77203074,
 					},
 				},
 			} );
@@ -170,13 +154,9 @@ describe( 'selectors', () => {
 				currentUser: {
 					id: 5678,
 					capabilities: {},
-				},
-				users: {
-					items: {
-						5678: {
-							ID: 5678,
-							primary_blog: 1234,
-						},
+					user: {
+						ID: 5678,
+						primary_blog: 1234,
 					},
 				},
 			} );
@@ -197,13 +177,9 @@ describe( 'selectors', () => {
 				currentUser: {
 					id: 5678,
 					capabilities: {},
-				},
-				users: {
-					items: {
-						5678: {
-							ID: 5678,
-							primary_blog: 1234,
-						},
+					user: {
+						ID: 5678,
+						primary_blog: 1234,
 					},
 				},
 			} );

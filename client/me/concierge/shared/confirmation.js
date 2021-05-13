@@ -8,7 +8,12 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import FormattedHeader from 'components/formatted-header';
+import FormattedHeader from 'calypso/components/formatted-header';
+
+/**
+ * Image dependencies
+ */
+import supportIllustration from 'calypso/assets/images/illustrations/happiness-support.svg';
 
 class Confirmation extends Component {
 	static propTypes = {
@@ -21,10 +26,7 @@ class Confirmation extends Component {
 
 		return (
 			<Card className="shared__confirmation">
-				<img
-					className="shared__confirmation-illustration"
-					src={ '/calypso/images/illustrations/support.svg' }
-				/>
+				<img className="shared__confirmation-illustration" src={ supportIllustration } alt="" />
 
 				<FormattedHeader headerText={ title } subHeaderText={ description } />
 

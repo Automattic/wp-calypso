@@ -3,7 +3,7 @@
 	flex-wrap: wrap;
 	padding: 0;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 16px 24px 0;
 	}
 }
@@ -13,21 +13,21 @@
 	flex-direction: column;
 	padding-bottom: 16px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		border-bottom: 1px solid var( --color-neutral-0 );
 		flex-direction: row;
 		flex-basis: 100%;
 		padding: 13px 16px;
 
 		&.is-year {
-			font-weight: bold;
+			font-weight: 600;
 		}
 	}
 
 	&:nth-child( 2n + 1 ) {
 		width: 50%;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			width: 45%;
 		}
 	}
@@ -35,7 +35,7 @@
 	&:nth-child( 2n + 0 ) {
 		width: 50%;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			width: 55%;
 		}
 	}
@@ -43,35 +43,35 @@
 
 .annual-site-stats__stat-title {
 	color: var( --color-neutral-light );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	text-transform: uppercase;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		color: var( --color-neutral-70 );
-		font-size: 14px;
+		font-size: $font-body-small;
 		text-transform: capitalize;
 		width: 50%;
 	}
 }
 
 .annual-site-stats__stat-figure {
-	font-size: 18px;
+	font-size: $font-title-small;
 
-	@include breakpoint( '<480px' ) {
-		font-size: 14px;
+	@include breakpoint-deprecated( '<480px' ) {
+		font-size: $font-body-small;
 		text-align: right;
 		width: 50%;
 
 		.is-year {
-			font-weight: bold;
+			font-weight: 600;
 		}
 	}
 
 	&.is-large {
-		font-size: 14px;
+		font-size: $font-body-small;
 
-		@include breakpoint( '>480px' ) {
-			font-size: 30px;
+		@include breakpoint-deprecated( '>480px' ) {
+			font-size: $font-title-large;
 		}
 	}
 }

@@ -50,25 +50,25 @@ We only want our tour to show for users who have registered in the past 7 days. 
 
 Now we're ready to actually start writing our tour.
 
+<!--eslint ignore no-heading-punctuation-->
+
 ### Scaffolding, etc.
 
 First we'll need to create a directory tour, under `tours`. In there, we create two files: `meta.js` and `index.js`.
 `meta.js` contains the metadata for a tour. Here's an empty boilerplate:
 
-```JavaScript
+```javascript
 /**
  * Internal dependencies
  */
-import { and } from 'layout/guided-tours/utils';
+import { and } from 'calypso/layout/guided-tours/utils';
 
-export default {
-};
+export default {};
 ```
 
 For `index.js`, this is the essential boilerplate, which comprises the imports and the `makeTour` wrapping:
 
-
-```JavaScript
+```javascript
 /**
  * External dependencies
  */
@@ -85,15 +85,14 @@ import {
 	ButtonRow,
 	Quit,
 	Continue,
-} from 'layout/guided-tours/config-elements';
+} from 'calypso/layout/guided-tours/config-elements';
 import {
 	isNewUser,
 	isEnabled,
 	isSelectedSitePreviewable,
-} from 'state/ui/guided-tours/contexts';
+} from 'calypso/state/guided-tours/contexts';
 
-export const TutorialSitePreviewTour = makeTour(
-);
+export const TutorialSitePreviewTour = makeTour();
 ```
 
 Now add that tour to the [config list](../config.js):
@@ -122,7 +121,7 @@ And to the [tour list](../all-tours.js):
 +    tutorialSitePreview: TutorialSitePreviewTour,
 ```
 
-And add a [feature flag](https://github.com/Automattic/wp-calypso/blob/master/config/development.json) for the appropriate environment(s), such as `"guided-tours/tutorial-site-preview": true,`.
+And add a [feature flag](https://github.com/Automattic/wp-calypso/blob/HEAD/config/development.json) for the appropriate environment(s), such as `"guided-tours/tutorial-site-preview": true,`.
 
 **Important:** use the feature flag to ensure that the tour is only triggered in environments where all the required features are available. E.g. especially the `desktop` environment may differ from general Calypso because of the different context that it runs in and the different release cycles.
 
@@ -130,16 +129,12 @@ And add a [feature flag](https://github.com/Automattic/wp-calypso/blob/master/co
 
 Now we need to configure the metadata for the tour. In `meta.js`:
 
-```JavaScript
+```javascript
 export default {
 	name: 'sitePreview',
 	version: '20170104',
 	path: '/stats',
-	when: and(
-		isEnabled( 'guided-tours/main' ),
-		isSelectedSitePreviewable,
-		isNewUser,
-	)
+	when: and( isEnabled( 'guided-tours/main' ), isSelectedSitePreviewable, isNewUser ),
 };
 ```
 
@@ -158,42 +153,6 @@ export const TutorialSitePreviewTour = makeTour(
   </Tour>
 );
 ```
-
-### Add an A/B Test
-
-To assess the impact of a tour, it can be helpful to run it as an A/B test. If the user is in the test group we trigger the tour. If they're in the control group we don't trigger the tour. After you've collected some data, you'll hopefully be able to gauge the impact that the tour has on the metric(s) you're interested in.
-
-Open up `client/lib/abtest/active-tests.js` and add a new test such as this one:
-
-```JavaScript
-	designShowcaseWelcomeTour: {
-		datestamp: '20170101',
-		variations: {
-			enabled: 0,
-			disabled: 100,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
-```
-
-Note that we've set the `enabled` variation to 0% so we don't show the tour to any user until we've tested it thoroughly.
-
-Now we need to make sure the tour only triggers if the user in the `enabled` variant.
-
-First, add an import for `isAbTestInVariant` to the list of things we import from `state/ui/guided-tours/contexts` in `meta.js`.
-
-Now, use the import in the `when` property like so:
-
-```JavaScript
-when: and(
-	isNewUser,
-	isEnabled( 'guided-tours/main' ),
-	isAbTestInVariant( 'tutorialSitePreviewTour', 'enabled' ),
-)
-```
-
-**Important:** note that we want to put the call to `isAbTestInVariant` last — it puts users into an A/B test variant, and having later parts of the function return false would taint our results. We want to assign the user to an A/B test variant if and only if the tour would have triggered based on all the other conditions.
 
 ## Adding the First Step
 
@@ -230,7 +189,7 @@ A few notes:
 - The first step of a tour needs to have a name of `init` to be recognizable as the first step by the framework.
 - The `target` is the DOM element the step should be "glued" to or will point at. There are two ways to do that: either the element has a `data-tip-target` attribute, and we pass that name, or we pass a CSS selector that selects that element (cf. method `targetForSlug`). In this case, it's a `data-tip-target`.
 - The `scrollContainer` tells the framework which container it should attempt to scroll in case the `target` isn't visible. In this case, the framework will attempt to scroll the sidebar until the site preview button is in view.
-- `translate` calls: we'd add those only after multiple iterations over the copy. Once you merge something with a `translate` call into `master`, the strings will be translated -- and we don't want to waste anyone's time with translating strings that will still change a few times.
+- `translate` calls: we'd add those only after multiple iterations over the copy. Once you merge something with a `translate` call into `trunk`, the strings will be translated -- and we don't want to waste anyone's time with translating strings that will still change a few times.
 - The `Continue` steps attributes basically say: when the user `click`s the `target`, proceed to the step called `close-preview` (the next step, below). The `hidden` attribute tells the framework to not add an explanatory text below the step.
 - The `ButtonRow` with the `Quit` button doesn't really look nice, but it's important to provide a way for the user to get out of the tour. The framework will quit a tour if it believes that the user is trying to navigate away from it, but in this case we thought an explicit way to quit would be good to provide.
 
@@ -303,7 +262,7 @@ If neither the code chunk nor the site data required for `/settings` are availab
 
 _The [fix][pr-10521]:_ We make Guided Tours "subscribe" to the corresponding data requests using its all-purpose [`actionLog`][action-log]: simply add the action type signaling the satisfaction of a data need — _e.g._, `RECEIVE_FOOS` or `REQUEST_FOOS_SUCCESS` — to the log's [white list][relevant-types]. Any change to `actionLog` triggers all of Guided Tours' view layer to update, thereby allowing a correct and timely positioning of steps.
 
-[async-load]: https://github.com/Automattic/wp-calypso/blob/master/client/components/async-load/README.md
+[async-load]: https://github.com/Automattic/wp-calypso/blob/HEAD/client/components/async-load/README.md
 [async-load-usage]: https://github.com/Automattic/wp-calypso/blob/791003963e72c39589073b4de634bf946d1d288f/client/post-editor/editor-sidebar/index.jsx#L43
 [pr-10521]: https://github.com/Automattic/wp-calypso/pull/10521
 [action-log]: https://github.com/Automattic/wp-calypso/tree/791003963e72c39589073b4de634bf946d1d288f/client/state/ui/action-log

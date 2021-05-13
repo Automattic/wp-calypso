@@ -4,9 +4,9 @@
  *
  * @copyright Modernizr © 2009-2015.
  * @license See CREDITS.md.
- * @see https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+ * @see https://github.com/Modernizr/Modernizr/blob/HEAD/feature-detects/touchevents.js
  *
- * @returns {Boolean} whether touch screen is available
+ * @returns {boolean} whether touch screen is available
  */
 export function hasTouch() {
 	/* global DocumentTouch:true */

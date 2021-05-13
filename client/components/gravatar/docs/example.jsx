@@ -8,14 +8,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
-import { getCurrentUser } from 'state/current-user/selectors';
+import Gravatar from 'calypso/components/gravatar';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 function GravatarExample( { currentUser } ) {
 	return <Gravatar user={ currentUser } size={ 96 } />;
 }
 
-const ConnectedGravatarExample = connect( state => {
+const ConnectedGravatarExample = connect( ( state ) => {
 	const currentUser = getCurrentUser( state );
 
 	if ( ! currentUser ) {

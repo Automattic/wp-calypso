@@ -8,15 +8,17 @@ import { get, includes } from 'lodash';
  */
 import { REASONS_FOR_MANUAL_RENEWAL } from './constants';
 
+import 'calypso/state/immediate-login/init';
+
 /**
  * Retrieves information about whether an immediate login attempt was made for
  * the current instance of Calypso.
  *
- * @param  {Object} state - Global state tree
- * @return {bool} - Whether the client request indicates that an immediate
+ * @param  {object} state - Global state tree
+ * @returns {boolean} - Whether the client request indicates that an immediate
  *                  login attempt was made
  */
-export const wasImmediateLoginAttempted = state => {
+export const wasImmediateLoginAttempted = ( state ) => {
 	return get( state, 'immediateLogin.attempt', false );
 };
 
@@ -30,11 +32,11 @@ export const wasImmediateLoginAttempted = state => {
  * that the immediate login actually occurred. However, it is appropriate to
  * use it to make user interface improvements for the immediate login scenario.
  *
- * @param {Object} state - Global state tree
- * @return {bool} - Whether the client request indicates that an immediate
- *                  login attempt was successful
+ * @param {object} state - Global state tree
+ * @returns {boolean} - Whether the client request indicates that an immediate
+ *                      login attempt was successful
  */
-export const wasImmediateLoginSuccessfulAccordingToClient = state => {
+export const wasImmediateLoginSuccessfulAccordingToClient = ( state ) => {
 	return get( state, 'immediateLogin.success', false );
 };
 
@@ -42,10 +44,10 @@ export const wasImmediateLoginSuccessfulAccordingToClient = state => {
  * Retrieves the reason information provided in the query parameters of
  * immediate login request.
  *
- * @param  {Object} state - Global state tree
- * @return {?String} - Reason for immediate login, or null
+ * @param  {object} state - Global state tree
+ * @returns {?string} - Reason for immediate login, or null
  */
-export const getImmediateLoginReason = state => {
+export const getImmediateLoginReason = ( state ) => {
 	return get( state, 'immediateLogin.reason', null );
 };
 
@@ -53,11 +55,11 @@ export const getImmediateLoginReason = state => {
  * Retrieves the email address used for the immediate login attempt, according
  * to query parameters provided in the client request.
  *
- * @param  {Object} state - Global state tree
- * @return {?String} - Email address used for the immediate login attempt, or
+ * @param  {object} state - Global state tree
+ * @returns {?string} - Email address used for the immediate login attempt, or
  *                     null
  */
-export const getImmediateLoginEmail = state => {
+export const getImmediateLoginEmail = ( state ) => {
 	return get( state, 'immediateLogin.email', null );
 };
 
@@ -65,11 +67,11 @@ export const getImmediateLoginEmail = state => {
  * Retrieves the language code for the immediate login attempt, according
  * to query parameters provided in the client request.
  *
- * @param  {Object} state - Global state tree
- * @return {?String} - Two-letter code for the preferred language of the user
+ * @param  {object} state - Global state tree
+ * @returns {?string} - Two-letter code for the preferred language of the user
  *                     attempting to log in, or null
  */
-export const getImmediateLoginLocale = state => {
+export const getImmediateLoginLocale = ( state ) => {
 	return get( state, 'immediateLogin.locale', null );
 };
 
@@ -79,10 +81,10 @@ export const getImmediateLoginLocale = state => {
  * (according to query parameters provided in the client request) for the
  * current instance of Calypso.
  *
- * @param {Object} state - Global state tree
- * @return {bool} - Whether the client request indicates that an immediate
- *                  login attempt was made from a manual renewal email
+ * @param {object} state - Global state tree
+ * @returns {boolean} - Whether the client request indicates that an immediate
+ *                      login attempt was made from a manual renewal email
  */
-export const wasManualRenewalImmediateLoginAttempted = state => {
+export const wasManualRenewalImmediateLoginAttempted = ( state ) => {
 	return includes( REASONS_FOR_MANUAL_RENEWAL, getImmediateLoginReason( state ) );
 };

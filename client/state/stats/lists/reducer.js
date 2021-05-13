@@ -7,24 +7,24 @@ import { merge, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { getSerializedStatsQuery } from './utils';
 import { itemSchema } from './schema';
 import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The
  * state maps site ID, post ID and stat keys to the request stats.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export const requests = withoutPersistence( ( state = {}, action ) => {
+export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_STATS_REQUEST: {
 			const { siteId, statType, query } = action;
@@ -62,15 +62,15 @@ export const requests = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID, statType and and serialized query key to the stat payload.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( itemSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -86,7 +86,7 @@ export const items = withSchemaValidation( itemSchema, ( state = {}, action ) =>
 					...state[ siteId ],
 					[ statType ]: {
 						...get( state, [ siteId, statType ] ),
-						[ queryKey ]: data,
+						[ queryKey ]: data || null,
 					},
 				},
 			};

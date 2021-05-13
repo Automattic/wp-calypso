@@ -6,10 +6,12 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSelectedOrPrimarySiteId from 'state/selectors/get-selected-or-primary-site-id';
-import { getSite } from 'state/sites/selectors';
+import getSelectedOrPrimarySiteId from 'calypso/state/selectors/get-selected-or-primary-site-id';
+import { getSite } from 'calypso/state/sites/selectors';
 
-export const getHelpSiteId = state => state.help.selectedSiteId;
+import 'calypso/state/help/init';
+
+export const getHelpSiteId = ( state ) => state.help?.selectedSiteId;
 
 /*
  * Returns the site the customer wishes to request help for. Returns in order of preference:
@@ -18,9 +20,9 @@ export const getHelpSiteId = state => state.help.selectedSiteId;
  *  - The primary site (which may not be available).
  *  - If any of the above is requested, but the full site object is not available, return the site with the lowest siteId.
  * @param state - global state
- * @returns {?Object} the help site or null
+ * @returns {?object} the help site or null
  */
-export const getHelpSelectedSite = state => {
+export const getHelpSelectedSite = ( state ) => {
 	const siteId = getHelpSiteId( state ) || getSelectedOrPrimarySiteId( state );
 	const helpSite = getSite( state, siteId );
 	if ( helpSite ) {
@@ -38,9 +40,9 @@ export const getHelpSelectedSite = state => {
  *  - The Primary Site (which may not be available).
  *  - If any of the above is requested, but the full site object is not available, return the site with the lowest siteId.
  * @param state - global state
- * @returns {?Object} the help site or null
+ * @returns {?object} the help site or null
  */
-export const getHelpSelectedSiteId = state => {
+export const getHelpSelectedSiteId = ( state ) => {
 	const site = getHelpSelectedSite( state );
 	return get( site, 'ID', null );
 };

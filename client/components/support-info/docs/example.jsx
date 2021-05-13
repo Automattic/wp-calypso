@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SupportInfo from 'components/support-info';
+import SupportInfo from 'calypso/components/support-info';
 
 export default class extends React.PureComponent {
 	static displayName = 'SupportInfo';

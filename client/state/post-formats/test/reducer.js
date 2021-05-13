@@ -13,13 +13,12 @@ import {
 	POST_FORMATS_REQUEST,
 	POST_FORMATS_REQUEST_FAILURE,
 	POST_FORMATS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -92,32 +91,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				12345678: false,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: true,
-				} ),
-				{
-					type: SERIALIZE,
-				}
-			);
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: true,
-				} ),
-				{
-					type: DESERIALIZE,
-				}
-			);
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 
@@ -204,15 +177,13 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should persist state', () => {
-			const state = items(
+			const state = serialize(
+				items,
 				deepFreeze( {
 					12345678: {
 						status: 'Status',
 					},
-				} ),
-				{
-					type: SERIALIZE,
-				}
+				} )
 			);
 
 			expect( state ).to.eql( {
@@ -223,15 +194,13 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should load valid persisted state', () => {
-			const state = items(
+			const state = deserialize(
+				items,
 				deepFreeze( {
 					12345678: {
 						status: 'Status',
 					},
-				} ),
-				{
-					type: DESERIALIZE,
-				}
+				} )
 			);
 
 			expect( state ).to.eql( {
@@ -242,13 +211,11 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should not load invalid persisted state', () => {
-			const state = items(
+			const state = deserialize(
+				items,
 				deepFreeze( {
 					status: 'Status',
-				} ),
-				{
-					type: DESERIALIZE,
-				}
+				} )
 			);
 
 			expect( state ).to.eql( {} );

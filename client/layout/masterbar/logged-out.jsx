@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import { get, includes, startsWith } from 'lodash';
@@ -11,18 +10,20 @@ import { get, includes, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import Masterbar from './masterbar';
 import Item from './item';
-import WordPressLogo from 'components/wordpress-logo';
-import WordPressWordmark from 'components/wordpress-wordmark';
-import { addQueryArgs } from 'lib/route';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import { login } from 'lib/paths';
-import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
+import WordPressLogo from 'calypso/components/wordpress-logo';
+import WordPressWordmark from 'calypso/components/wordpress-wordmark';
+import { addQueryArgs } from 'calypso/lib/route';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { login } from 'calypso/lib/paths';
+import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
+import { isDefaultLocale, addLocaleToPath } from 'calypso/lib/i18n-utils';
+import AsyncLoad from 'calypso/components/async-load';
 
-class MasterbarLoggedOut extends PureComponent {
+class MasterbarLoggedOut extends React.Component {
 	static propTypes = {
 		redirectUri: PropTypes.string,
 		sectionName: PropTypes.string,
@@ -78,7 +79,7 @@ class MasterbarLoggedOut extends PureComponent {
 	}
 
 	renderSignupItem() {
-		const { currentQuery, currentRoute, sectionName, translate } = this.props;
+		const { currentQuery, currentRoute, locale, sectionName, translate } = this.props;
 
 		// Hide for some sections
 		if ( includes( [ 'signup' ], sectionName ) ) {
@@ -90,14 +91,6 @@ class MasterbarLoggedOut extends PureComponent {
 		 * the flow.
 		 */
 		if ( startsWith( currentRoute, '/jetpack/connect/authorize' ) ) {
-			return null;
-		}
-
-		/**
-		 * Hide signup from from New Site screen. This allows starting with a new Jetpack or
-		 * WordPress.com site.
-		 */
-		if ( startsWith( currentRoute, '/jetpack/new' ) ) {
 			return null;
 		}
 
@@ -128,12 +121,16 @@ class MasterbarLoggedOut extends PureComponent {
 				 */
 				signupUrl = currentQuery.redirect_to;
 			} else {
-				signupUrl = '/jetpack/new';
+				signupUrl = '/jetpack/connect';
 			}
 		} else if ( 'jetpack-connect' === sectionName ) {
-			signupUrl = '/jetpack/new';
+			signupUrl = '/jetpack/connect';
 		} else if ( signupFlow ) {
 			signupUrl += '/' + signupFlow;
+		}
+
+		if ( ! isDefaultLocale( locale ) ) {
+			signupUrl = addLocaleToPath( signupUrl, locale );
 		}
 
 		return (
@@ -147,7 +144,18 @@ class MasterbarLoggedOut extends PureComponent {
 	}
 
 	render() {
-		const { title } = this.props;
+		const { title, isCheckout } = this.props;
+
+		if ( isCheckout ) {
+			return (
+				<AsyncLoad
+					require="calypso/layout/masterbar/checkout"
+					placeholder={ null }
+					title={ title }
+				/>
+			);
+		}
+
 		return (
 			<Masterbar>
 				<Item className="masterbar__item-logo">
@@ -164,7 +172,7 @@ class MasterbarLoggedOut extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	currentQuery: getCurrentQueryArguments( state ),
 	currentRoute: getCurrentRoute( state ),
 } ) )( localize( MasterbarLoggedOut ) );

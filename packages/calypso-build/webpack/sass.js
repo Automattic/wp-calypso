@@ -1,9 +1,13 @@
 /**
  * External dependencies
  */
-const FilterWarningsPlugin = require( 'webpack-filter-warnings-plugin' );
-const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
-const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
+const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
+const WebpackRTLPlugin = require( '@automattic/webpack-rtl-plugin' );
+
+/**
+ * Internal dependnecies
+ */
+const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
 
 /**
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
@@ -11,14 +15,25 @@ const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
  * @param  {object}    _                              Options
  * @param  {string[]}  _.includePaths                 Sass files lookup paths
  * @param  {string}    _.prelude                      String to prepend to each Sass file
- * @param  {object}    _.postCssConfig                PostCSS config
+ * @param  {object}    _.postCssOptions               PostCSS options
+ * @param  {object}    _.cacheDirectory               Directory used to store the cache
  *
  * @returns {object}                                  webpack loader object
  */
-module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
+module.exports.loader = ( { includePaths, prelude, postCssOptions, cacheDirectory } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
 	use: [
-		MiniCssExtractPluginWithRTL.loader,
+		MiniCssExtractPlugin.loader,
+		...( cacheDirectory
+			? [
+					{
+						loader: require.resolve( 'cache-loader' ),
+						options: {
+							cacheDirectory: cacheDirectory,
+						},
+					},
+			  ]
+			: [] ),
 		{
 			loader: require.resolve( 'css-loader' ),
 			options: {
@@ -28,7 +43,7 @@ module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
 		{
 			loader: require.resolve( 'postcss-loader' ),
 			options: {
-				config: postCssConfig,
+				postcssOptions: postCssOptions || {},
 			},
 		},
 		{
@@ -42,7 +57,6 @@ module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
 		},
 	],
 } );
-
 /**
  * Return an array of styling relevant webpack plugin objects.
  *
@@ -54,16 +68,15 @@ module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
  * @returns {object[]}                 styling relevant webpack plugin objects
  */
 module.exports.plugins = ( { chunkFilename, filename, minify } ) => [
-	new MiniCssExtractPluginWithRTL( {
+	new MiniCssExtractPlugin( {
 		chunkFilename,
 		filename,
-		rtlEnabled: true,
+		ignoreOrder: true, // suppress conflicting order warnings from mini-css-extract-plugin
+		attributes: {
+			'data-webpack': true,
+		},
 	} ),
-	new FilterWarningsPlugin( {
-		// suppress conflicting order warnings from mini-css-extract-plugin.
-		// see https://github.com/webpack-contrib/mini-css-extract-plugin/issues/250
-		exclude: /mini-css-extract-plugin[^]*Conflicting order between:/,
-	} ),
+	new MiniCSSWithRTLPlugin(),
 	new WebpackRTLPlugin( {
 		minify,
 	} ),

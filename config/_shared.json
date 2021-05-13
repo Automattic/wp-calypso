@@ -18,12 +18,14 @@
 	"facebook_api_key": false,
 	"features": {},
 	"google_analytics_key": false,
+	"google_recaptcha_site_key": false,
 	"hotjar_enabled": false,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",
-	"jetpack_min_version": false,
+	"lasagna_url": "wss://rt-api.wordpress.com/socket",
 	"login_url": false,
 	"logout_url": false,
+	"jetpack_connect_url": false,
 	"mc_analytics_enabled": false,
 	"oauth_client_id": false,
 	"protocol": "http",
@@ -65,7 +67,6 @@
 		"fa",
 		"fi",
 		"fr",
-		"he",
 		"id",
 		"it",
 		"ja",
@@ -121,6 +122,7 @@
 	"rtl": false,
 	"siftscience_key": false,
 	"signup_url": false,
+	"gutenboarding_url": false,
 	"signup/social-management": false,
 	"twemoji_cdn_url": "https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/",
 	"woocommerce_blog_id": 113771570,
@@ -129,5 +131,24 @@
 	"wpcom_signup_key": false,
 	"statsd_analytics_response_time_max_logs_per_second": 50,
 	"google_maps_and_places_api_key": "AIzaSyAJN-ceOpTLP1CSQdyoRLS4VT9Zlsibkeg",
-	"push_notification_vapid_key": "BDQlTOrVTrxRM0i-gCsrxjxOyul281c5WVdfstXaqZqTSpjSI9M-E99CvwwJRWDkZ0goa8VSqUCgwiexxcDuXCs"
+	"push_notification_vapid_key": "BDQlTOrVTrxRM0i-gCsrxjxOyul281c5WVdfstXaqZqTSpjSI9M-E99CvwwJRWDkZ0goa8VSqUCgwiexxcDuXCs",
+	"enable_all_sections": true,
+	"sections": {
+		"jetpack-cloud": false,
+		"jetpack-cloud-settings": false,
+		"jetpack-cloud-auth": false,
+		"jetpack-cloud-pricing": false,
+		"jetpack-cloud-partner-portal": false
+	},
+	"site_filter": [],
+	"theme": "default",
+	"site_name": "WordPress.com",
+	"meta": [
+		{
+			"property": "og:site_name",
+			"content": "WordPress.com"
+		}
+	],
+	"restricted_me_access": true,
+	"theme_color": "#055d9c"
 }

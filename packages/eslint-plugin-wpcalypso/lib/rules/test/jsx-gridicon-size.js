@@ -1,5 +1,5 @@
 /**
- * @fileoverview Enforce recommended Gridicon size attributes
+ * @file Enforce recommended Gridicon size attributes
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -9,15 +9,15 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/jsx-gridicon-size' ),
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require( '../../../lib/rules/jsx-gridicon-size' );
+const RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
 new RuleTester( {
-	parser: require.resolve( 'babel-eslint' ),
+	parser: require.resolve( '@babel/eslint-parser' ),
 	parserOptions: {
 		ecmaFeatures: { jsx: true },
 	},

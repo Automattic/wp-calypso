@@ -3,7 +3,12 @@
  */
 import i18n from 'i18n-calypso';
 import { get } from 'lodash';
-import { withoutHttp } from 'lib/url';
+import { withoutHttp } from 'calypso/lib/url';
+
+/**
+ * Internal dependencies
+ */
+import { planHasFeature } from '@automattic/calypso-products';
 
 export function userCan( capability, site ) {
 	return site && site.capabilities && site.capabilities[ capability ];
@@ -12,8 +17,8 @@ export function userCan( capability, site ) {
 /**
  * site's timezone getter
  *
- * @param {Object} site - site object
- * @return {String} timezone
+ * @param   {object} site - site object
+ * @returns {string} timezone
  */
 export function timezone( site ) {
 	return site && site.options ? site.options.timezone : null;
@@ -22,8 +27,8 @@ export function timezone( site ) {
 /**
  * site's gmt_offset getter
  *
- * @param {Object} site - site object
- * @return {String} gmt_offset
+ * @param   {object} site - site object
+ * @returns {string} gmt_offset
  */
 export function gmtOffset( site ) {
 	return site && site.options ? site.options.gmt_offset : null;
@@ -35,7 +40,7 @@ export function getSiteFileModDisableReason( site, action = 'modifyFiles' ) {
 	}
 
 	return site.options.file_mod_disabled
-		.map( clue => {
+		.map( ( clue ) => {
 			if (
 				action === 'modifyFiles' ||
 				action === 'autoupdateFiles' ||
@@ -65,14 +70,11 @@ export function getSiteFileModDisableReason( site, action = 'modifyFiles' ) {
 			}
 			return null;
 		} )
-		.filter( reason => reason );
+		.filter( ( reason ) => reason );
 }
 
 export function canUpdateFiles( site ) {
 	if ( ! site ) {
-		return false;
-	}
-	if ( ! site.hasMinimumJetpackVersion ) {
 		return false;
 	}
 
@@ -132,8 +134,9 @@ export function isMainNetworkSite( site ) {
 
 /**
  * Checks whether a site has a custom mapped URL.
- * @param  {Object}   site Site object
- * @return {?Boolean}      Whether site has custom domain
+ *
+ * @param   {object}   site Site object
+ * @returns {?boolean}      Whether site has custom domain
  */
 export function hasCustomDomain( site ) {
 	if ( ! site || ! site.domain || ! site.wpcom_url ) {
@@ -145,4 +148,31 @@ export function hasCustomDomain( site ) {
 
 export function isModuleActive( site, moduleId ) {
 	return site.options.active_modules && site.options.active_modules.indexOf( moduleId ) > -1;
+}
+
+/**
+ * Returns the WordPress.com URL of a site (simple or Atomic)
+ *
+ * @param {object} site Site object
+ * @returns {?string} WordPress.com URL
+ */
+export function getUnmappedUrl( site ) {
+	if ( ! site || ! site.options ) {
+		return null;
+	}
+
+	return site.options.main_network_site || site.options.unmapped_url;
+}
+
+/**
+ * Checks if the plan of a site includes a specific feature.
+ *
+ * @param {object} site Site to check
+ * @param {string} feature Feature
+ * @returns {boolean} True if does
+ */
+export function hasSiteFeature( site, feature ) {
+	if ( site && site.plan ) {
+		return planHasFeature( site.plan.product_slug, feature );
+	}
 }

@@ -7,7 +7,6 @@
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -41,8 +40,14 @@ const defaultProps = {
 			name: 'Español de México de los Gringos',
 			wpLocale: 'es_MX_gringos',
 		},
+		{
+			value: 111,
+			langSlug: 'ko',
+			name: '한국어',
+			wpLocale: 'ko_KR',
+		},
 	],
-	translate: identity,
+	translate: ( string ) => string,
 	valueKey: 'langSlug',
 	value: 'en',
 	countryCode: 'FR',
@@ -64,10 +69,15 @@ describe( 'LanguagePicker', () => {
 		const newProps = { ...defaultProps, value: 'es-mx_gringos' };
 		const wrapper = shallow( <LanguagePicker { ...newProps } /> );
 		expect( wrapper.find( '.language-picker__icon-inner' ).html() ).toBe(
-			'<div class="language-picker__icon-inner">es<br/>mx</div>'
+			'<div class="language-picker__icon-inner">es mx</div>'
 		);
 		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe(
 			'Español de México de los Gringos'
 		);
+	} );
+	test( 'ensure non utf language names display in localized character sets', () => {
+		const newProps = { ...defaultProps, value: 'ko' };
+		const wrapper = shallow( <LanguagePicker { ...newProps } /> );
+		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe( '한국어' );
 	} );
 } );

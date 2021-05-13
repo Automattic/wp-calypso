@@ -5,50 +5,55 @@ import page from 'page';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { map, find } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import cancellationReasons from './cancellation-reasons';
-import { cancelAndRefundPurchase } from 'lib/purchases/actions';
+import { cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
 import { Card } from '@automattic/components';
-import { clearPurchases } from 'state/purchases/actions';
+import { clearPurchases } from 'calypso/state/purchases/actions';
 import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
 import { connect } from 'react-redux';
-import FormButton from 'components/forms/form-button';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormTextarea from 'components/forms/form-textarea';
-import HeaderCake from 'components/header-cake';
-import isDomainOnly from 'state/selectors/is-domain-only-site';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getName as getDomainName } from 'lib/purchases';
+import FormButton from 'calypso/components/forms/form-button';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import HeaderCake from 'calypso/components/header-cake';
+import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
+import { getName as getDomainName } from 'calypso/lib/purchases';
 import { isDataLoading } from '../utils';
-import { getSelectedSite } from 'state/ui/selectors';
-import { isDomainRegistration } from 'lib/products-values';
-import { isRequestingSites } from 'state/sites/selectors';
-import Main from 'components/main';
-import notices from 'notices';
-import { cancelPurchase, purchasesRoot } from 'me/purchases/paths';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import { receiveDeletedSite } from 'state/sites/actions';
-import { refreshSitePlans } from 'state/sites/plans/actions';
-import SelectDropdown from 'components/select-dropdown';
-import { setAllSitesSelected } from 'state/ui/actions';
-import titles from 'me/purchases/titles';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isDomainRegistration } from '@automattic/calypso-products';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
+import { cancelPurchase, purchasesRoot } from 'calypso/me/purchases/paths';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { receiveDeletedSite } from 'calypso/state/sites/actions';
+import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
+import { setAllSitesSelected } from 'calypso/state/ui/actions';
+import titles from 'calypso/me/purchases/titles';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import FormSelect from 'calypso/components/forms/form-select';
 
 class ConfirmCancelDomain extends React.Component {
 	static propTypes = {
+		purchaseListUrl: PropTypes.string,
+		getCancelPurchaseUrlFor: PropTypes.func,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		isDomainOnlySite: PropTypes.bool,
 		purchaseId: PropTypes.number.isRequired,
@@ -67,6 +72,11 @@ class ConfirmCancelDomain extends React.Component {
 		submitting: false,
 	};
 
+	static defaultProps = {
+		purchaseListUrl: purchasesRoot,
+		getCancelPurchaseUrlFor: cancelPurchase,
+	};
+
 	componentDidMount() {
 		this.redirectIfDataIsInvalid( this.props );
 	}
@@ -75,7 +85,7 @@ class ConfirmCancelDomain extends React.Component {
 		this.redirectIfDataIsInvalid( nextProps );
 	}
 
-	redirectIfDataIsInvalid = props => {
+	redirectIfDataIsInvalid = ( props ) => {
 		if ( isDataLoading( props ) || this.state.submitting ) {
 			return null;
 		}
@@ -83,7 +93,7 @@ class ConfirmCancelDomain extends React.Component {
 		const { purchase } = props;
 
 		if ( ! purchase || ! isDomainRegistration( purchase ) || ! props.selectedSite ) {
-			page.redirect( purchasesRoot );
+			page.redirect( this.props.purchaseListUrl );
 		}
 	};
 
@@ -97,7 +107,7 @@ class ConfirmCancelDomain extends React.Component {
 		return [ 'other_host', 'transfer' ].indexOf( selectedReason.value ) === -1;
 	};
 
-	onSubmit = event => {
+	onSubmit = ( event ) => {
 		event.preventDefault();
 
 		const { purchase } = this.props;
@@ -114,7 +124,7 @@ class ConfirmCancelDomain extends React.Component {
 
 		this.setState( { submitting: true } );
 
-		cancelAndRefundPurchase( purchase.id, data, error => {
+		cancelAndRefundPurchase( purchase.id, data, ( error ) => {
 			this.setState( { submitting: false } );
 
 			const { isDomainOnlySite, translate, selectedSite } = this.props;
@@ -125,7 +135,7 @@ class ConfirmCancelDomain extends React.Component {
 			}
 
 			if ( error ) {
-				notices.error(
+				this.props.errorNotice(
 					error.message ||
 						translate(
 							'Unable to cancel your purchase. Please try again later or contact support.'
@@ -135,34 +145,37 @@ class ConfirmCancelDomain extends React.Component {
 				return;
 			}
 
-			notices.success(
+			this.props.successNotice(
 				translate( '%(purchaseName)s was successfully cancelled and refunded.', {
 					args: { purchaseName },
 				} ),
-				{ persistent: true }
+				{ displayOnNextPage: true }
 			);
 
 			this.props.refreshSitePlans( purchase.siteId );
 
 			this.props.clearPurchases();
 
-			analytics.tracks.recordEvent( 'calypso_domain_cancel_form_submit', {
+			recordTracksEvent( 'calypso_domain_cancel_form_submit', {
 				product_slug: purchase.productSlug,
 			} );
 
-			page.redirect( purchasesRoot );
+			page.redirect( this.props.purchaseListUrl );
 		} );
 	};
 
-	onReasonChange = newReason => {
-		this.setState( { selectedReason: newReason } );
+	onReasonChange = ( event ) => {
+		const select = event.currentTarget;
+		this.setState( {
+			selectedReason: find( cancellationReasons, { value: select[ select.selectedIndex ].value } ),
+		} );
 	};
 
 	onConfirmationChange = () => {
 		this.setState( { confirmed: ! this.state.confirmed } );
 	};
 
-	onMessageChange = event => {
+	onMessageChange = ( event ) => {
 		this.setState( {
 			message: event.target.value,
 		} );
@@ -225,8 +238,8 @@ class ConfirmCancelDomain extends React.Component {
 			);
 		}
 
-		const selectedReason = this.state.selectedReason,
-			confirmed = this.state.confirmed;
+		const selectedReason = this.state.selectedReason;
+		const confirmed = this.state.confirmed;
 
 		if ( selectedReason && 'misspelled' === selectedReason.value ) {
 			return (
@@ -258,10 +271,9 @@ class ConfirmCancelDomain extends React.Component {
 
 		const { purchase } = this.props;
 		const domain = getDomainName( purchase );
-		const selectedReason = this.state.selectedReason;
 
 		return (
-			<Main className="confirm-cancel-domain">
+			<React.Fragment>
 				<TrackPurchasePageView
 					eventName="calypso_confirm_cancel_domain_purchase_view"
 					purchaseId={ this.props.purchaseId }
@@ -270,7 +282,12 @@ class ConfirmCancelDomain extends React.Component {
 					path="/me/purchases/:site/:purchaseId/confirm-cancel-domain"
 					title="Purchases > Confirm Cancel Domain"
 				/>
-				<HeaderCake backHref={ cancelPurchase( this.props.siteSlug, this.props.purchaseId ) }>
+				<HeaderCake
+					backHref={ this.props.getCancelPurchaseUrlFor(
+						this.props.siteSlug,
+						this.props.purchaseId
+					) }
+				>
 					{ titles.confirmCancelDomain }
 				</HeaderCake>
 				<Card>
@@ -284,22 +301,25 @@ class ConfirmCancelDomain extends React.Component {
 								'Please select the best option below.'
 						) }
 					</p>
-					<SelectDropdown
+					<FormSelect
 						className="confirm-cancel-domain__reasons-dropdown"
-						key="confirm-cancel-domain__reasons-dropdown"
-						selectedText={
-							selectedReason
-								? selectedReason.label
-								: this.props.translate( 'Please let us know why you wish to cancel.' )
-						}
-						options={ cancellationReasons }
-						onSelect={ this.onReasonChange }
-					/>
+						onChange={ this.onReasonChange }
+						defaultValue="disabled"
+					>
+						<option disabled="disabled" value="disabled" key="disabled">
+							{ this.props.translate( 'Please let us know why you wish to cancel.' ) }
+						</option>
+						{ map( cancellationReasons, ( { value, label } ) => (
+							<option value={ value } key={ value }>
+								{ label }
+							</option>
+						) ) }
+					</FormSelect>
 					{ this.renderHelpMessage() }
 					{ this.renderConfirmationCheckbox() }
 					{ this.renderSubmitButton() }
 				</Card>
-			</Main>
+			</React.Fragment>
 		);
 	}
 }
@@ -319,8 +339,10 @@ export default connect(
 	},
 	{
 		clearPurchases,
+		errorNotice,
 		refreshSitePlans,
 		receiveDeletedSite,
 		setAllSitesSelected,
+		successNotice,
 	}
 )( localize( ConfirmCancelDomain ) );

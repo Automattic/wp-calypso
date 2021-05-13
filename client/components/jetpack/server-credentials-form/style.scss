@@ -1,0 +1,58 @@
+.server-credentials-form {
+	margin-top: 24px;
+	margin-bottom: -24px;
+
+	.form-fieldset {
+		width: 100%;
+	}
+
+	.dialog__action-buttons::before {
+		background: initial;
+	}
+
+	&__buttons {
+		background: var( --studio-gray-0 );
+		margin: 0 -24px;
+		padding: 16px 24px;
+		text-align: right;
+		box-sizing: content-box;
+	}
+
+	&__btn {
+		width: 100%;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			width: 200px;
+		}
+	}
+
+	&__btn--cancel {
+		margin-right: 16px;
+	}
+}
+
+.server-credentials-form__row {
+	display: flex;
+	flex-wrap: wrap;
+
+	.form-fieldset:last-child {
+		margin-bottom: 24px;
+	}
+}
+
+@include breakpoint-deprecated( '>960px' ) {
+	.server-credentials-form__server-address,
+	.server-credentials-form__username,
+	.server-credentials-form__password {
+		flex: 1 0 240px;
+	}
+
+	.server-credentials-form__server-address,
+	.server-credentials-form__username {
+		margin-right: 16px;
+	}
+
+	.server-credentials-form__port-number {
+		flex: 0 0 160px;
+	}
+}

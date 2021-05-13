@@ -9,8 +9,8 @@ module.exports = ( { types: t } ) => {
 	 * Nested visitor for `require` function expression hoisting. This is
 	 * assigned here as a shared reference for optimized path traversal.
 	 *
-	 * @see https://github.com/thejameskyle/babel-handbook/blob/master/translations/en/plugin-handbook.md#optimizing-nested-visitors
-	 * @type {Object}
+	 * @see https://github.com/thejameskyle/babel-handbook/blob/HEAD/translations/en/plugin-handbook.md#optimizing-nested-visitors
+	 * @type {object}
 	 */
 	const asyncAttributeVisitor = {
 		FunctionExpression( path ) {
@@ -78,7 +78,8 @@ module.exports = ( { types: t } ) => {
 					return path.remove();
 				}
 
-				// Determine async from Babel plugin options
+				// Determine mode from Babel plugin options
+				const isIgnore = state.opts.ignore;
 				const isAsync = state.opts.async;
 
 				// In both asynchronous and synchronous case, we'll finish by
@@ -89,7 +90,9 @@ module.exports = ( { types: t } ) => {
 				// the transformation
 				const callback = path.node.arguments[ 1 ];
 
-				if ( isAsync ) {
+				if ( isIgnore ) {
+					path.remove();
+				} else if ( isAsync ) {
 					// Generate a chunk name based on the module path
 					const chunkName = 'async-load-' + kebabCase( argument.value );
 

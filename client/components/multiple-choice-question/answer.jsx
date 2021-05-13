@@ -7,9 +7,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormTextInput from 'components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 const MultipleChoiceAnswer = ( {
 	disabled,
@@ -29,8 +29,8 @@ const MultipleChoiceAnswer = ( {
 				} }
 				checked={ isSelected }
 				disabled={ disabled }
+				label={ answerText }
 			/>
-			<span>{ answerText }</span>
 			{ isSelected && (
 				<div className="multiple-choice-question__answer-item-content">
 					{ textInput && (

@@ -7,16 +7,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { debounce, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import FormRange from 'components/forms/range';
-import SegmentedControl from 'components/segmented-control';
-import { setPreference, savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
-import { SCALE_CHOICES } from 'lib/media/constants';
+import FormRange from 'calypso/components/forms/range';
+import SegmentedControl from 'calypso/components/segmented-control';
+import { setPreference, savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { SCALE_CHOICES } from 'calypso/lib/media/constants';
 
 /**
  * Constants
@@ -25,14 +25,14 @@ import { SCALE_CHOICES } from 'lib/media/constants';
 /**
  * Number of steps on the rendered input range
  *
- * @type {Number}
+ * @type {number}
  */
 const SLIDER_STEPS = 100;
 
 /**
  * Scale size for small viewports grid option (3 items per row).
  *
- * @type {Number}
+ * @type {number}
  */
 const SCALE_TOUCH_GRID = 0.32;
 
@@ -144,7 +144,7 @@ class MediaLibraryScale extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		scale: getPreference( state, 'mediaScale' ),
 	} ),
 	{

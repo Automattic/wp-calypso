@@ -4,9 +4,14 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/application-passwords/init';
+
+/**
  * Returns the application passwords of the current user.
  *
- * @param  {Object} state Global state tree
- * @return {Array}        Application passwords
+ * @param  {object} state Global state tree
+ * @returns {Array}        Application passwords
  */
-export default state => get( state, [ 'applicationPasswords', 'items' ], [] );
+export default ( state ) => get( state, [ 'applicationPasswords', 'items' ], [] );

@@ -1,22 +1,23 @@
 /**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	DOMAINS_SUGGESTIONS_RECEIVE,
 	DOMAINS_SUGGESTIONS_REQUEST,
 	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/domains/init';
 
 /**
  * Returns an action object to be used in signalling that a domains suggestion object
  * has been received.
  *
  * @param   {Array}    suggestions              domain suggestions
- * @param   {Object}   queryObject              domain suggestions queryObject
- * @returns {Object}   Action object
+ * @param   {object}   queryObject              domain suggestions queryObject
+ * @returns {object}   Action object
  */
 export function receiveDomainsSuggestions( suggestions, queryObject ) {
 	return {
@@ -28,15 +29,16 @@ export function receiveDomainsSuggestions( suggestions, queryObject ) {
 
 /**
  * Triggers a network request to find domain suggestions
- * @param   {Object}   queryObject                          domain suggestions queryObject
- * @param   {String}   queryObject.query                    domainQuery
- * @param   {Number}   queryObject.quantity                 max results
- * @param   {String}   queryObject.vendor                   vendor
- * @param   {?Boolean} queryObject.include_wordpressdotcom  adds wordpress subdomain suggestions when true
+ *
+ * @param   {object}   queryObject                          domain suggestions queryObject
+ * @param   {string}   queryObject.query                    domainQuery
+ * @param   {number}   queryObject.quantity                 max results
+ * @param   {string}   queryObject.vendor                   vendor
+ * @param   {?boolean} queryObject.include_wordpressdotcom  adds wordpress subdomain suggestions when true
  * @returns {Function}                                      Action thunk
  */
 export function requestDomainsSuggestions( queryObject ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAINS_SUGGESTIONS_REQUEST,
 			queryObject,
@@ -44,14 +46,14 @@ export function requestDomainsSuggestions( queryObject ) {
 		return wpcom
 			.domains()
 			.suggestions( queryObject )
-			.then( suggestions => {
+			.then( ( suggestions ) => {
 				dispatch( receiveDomainsSuggestions( suggestions, queryObject ) );
 				dispatch( {
 					type: DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
 					queryObject,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 					queryObject,

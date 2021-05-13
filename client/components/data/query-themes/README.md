@@ -1,5 +1,4 @@
-Query Themes
-============
+# Query Themes
 
 Query Themes is a React component used in managing the fetching of themes queries.
 
@@ -10,32 +9,24 @@ Render the component, passing `siteId` and `query`. It does not accept any child
 ```jsx
 import React from 'react';
 import { connect } from 'react-redux';
-import QueryThemes from 'components/data/query-themes';
-import Theme from 'components/theme';
-import { getThemesForQueryIgnoringPage } from 'state/themes/selectors';
+import QueryThemes from 'calypso/components/data/query-themes';
+import Theme from 'calypso/components/theme';
+import { getThemesForQueryIgnoringPage } from 'calypso/state/themes/selectors';
 
 function MyThemesList( { themes } ) {
 	return (
 		<div>
-			<QueryThemes
-				siteId={ 3584907 }
-				query={ { search: 'Automattic' } } />
+			<QueryThemes siteId={ 3584907 } query={ { search: 'Automattic' } } />
 			{ themes.map( ( theme ) => {
-				return (
-					<Theme
-						key={ theme.id }
-						theme={ theme } />
-				);
-			} }
+				return <Theme key={ theme.id } theme={ theme } />;
+			} ) }
 		</div>
 	);
 }
 
-export default connect(
-	( state ) => ( {
-		themes: getThemesForQueryIgnoringPage( state, 3584907, { search: 'Automattic' } )
-	} )
-)( MyThemesList );
+export default connect( ( state ) => ( {
+	themes: getThemesForQueryIgnoringPage( state, 3584907, { search: 'Automattic' } ),
+} ) )( MyThemesList );
 ```
 
 ## Props

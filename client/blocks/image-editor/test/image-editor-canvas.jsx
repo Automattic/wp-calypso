@@ -14,7 +14,7 @@ import React from 'react';
  */
 import { ImageEditorCanvas } from '../image-editor-canvas';
 
-jest.mock( 'blocks/image-editor/image-editor-crop', () => {
+jest.mock( 'calypso/blocks/image-editor/image-editor-crop', () => {
 	const { Component } = require( 'react' );
 
 	class ImageEditorCropMock extends Component {

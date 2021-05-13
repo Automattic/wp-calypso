@@ -8,15 +8,15 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { USER_DEVICES_REQUEST } from 'state/action-types';
-import { userDevicesAdd } from 'state/user-devices/actions';
-import { errorNotice } from 'state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { USER_DEVICES_REQUEST } from 'calypso/state/action-types';
+import { userDevicesAdd } from 'calypso/state/user-devices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-const devicesFromApi = devices =>
+const devicesFromApi = ( devices ) =>
 	keyBy(
 		devices.map( ( { device_id, device_name } ) => ( { id: device_id, name: device_name } ) ),
 		'id'
@@ -25,10 +25,10 @@ const devicesFromApi = devices =>
 /**
  * Returns an action for HTTP request to fetch all available WordPress.com plans
  *
- * @param   {Object} action Redux action
- * @returns {Object} http request action
+ * @param   {object} action Redux action
+ * @returns {object} http request action
  */
-export const requestUserDevices = action =>
+export const requestUserDevices = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -41,16 +41,16 @@ export const requestUserDevices = action =>
 /**
  * Returns a user devices add action then the request for user devices succeeded.
  *
- * @param   {Object}   action   Redux action
- * @param   {Object}   devices  Devices, returned from the endpoint
- * @returns {Object}            User devices add action
+ * @param   {object}   action   Redux action
+ * @param   {object}   devices  Devices, returned from the endpoint
+ * @returns {object}            User devices add action
  */
 export const handleSuccess = ( action, devices ) => userDevicesAdd( devices );
 
 /**
  * Returns an error notice action when the request for user devices fails
  *
- * @returns {Object}            Error notice action
+ * @returns {object}            Error notice action
  */
 export const handleError = () =>
 	errorNotice( translate( "We couldn't load your devices, please try again." ) );

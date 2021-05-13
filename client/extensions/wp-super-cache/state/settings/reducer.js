@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
@@ -21,11 +21,11 @@ import {
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a settings request is in progress for a site.
  *
- * @param  {Object} state Current requesting state
- * @param  {Object} action Action object
- * @return {Object} Updated requesting state
+ * @param  {object} state Current requesting state
+ * @param  {object} action Action object
+ * @returns {object} Updated requesting state
  */
-const requesting = withoutPersistence( ( state = {}, action ) => {
+const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_REQUEST_SETTINGS: {
 			const { siteId } = action;
@@ -54,17 +54,17 @@ const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated saving state after an action has been dispatched.
  * Saving state tracks whether the settings for a site are currently being saved.
  *
- * @param  {Object} state Current saving state
- * @param  {Object} action Action object
- * @return {Object} Updated saving state
+ * @param  {object} state Current saving state
+ * @param  {object} action Action object
+ * @returns {object} Updated saving state
  */
-const saveStatus = withoutPersistence( ( state = {}, action ) => {
+const saveStatus = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_SAVE_SETTINGS: {
 			const { siteId } = action;
@@ -105,17 +105,17 @@ const saveStatus = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated restoring state after an action has been dispatched.
  * Restoring state tracks whether a settings restore request is in progress for a site.
  *
- * @param  {Object} state Current restoring state
- * @param  {Object} action Action object
- * @return {Object} Updated restoring state
+ * @param  {object} state Current restoring state
+ * @param  {object} action Action object
+ * @returns {object} Updated restoring state
  */
-export const restoring = withoutPersistence( ( state = {}, action ) => {
+export const restoring = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_RESTORE_SETTINGS: {
 			const { siteId } = action;
@@ -144,14 +144,14 @@ export const restoring = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Tracks the settings for a particular site.
  *
- * @param  {Object} state Current settings
- * @param  {Object} action Action object
- * @return {Object} Updated settings
+ * @param  {object} state Current settings
+ * @param  {object} action Action object
+ * @returns {object} Updated settings
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

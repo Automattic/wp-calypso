@@ -2,7 +2,7 @@
  * External dependencies
  */
 import moment from 'moment';
-import { every, some, includes, get } from 'lodash';
+import { some, includes, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,15 +21,15 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	/**
 	 * Returns true if the post matches the given query, or false otherwise.
 	 *
-	 * @param  {Object}  query Query object
-	 * @param  {Object}  post  Item to consider
-	 * @return {Boolean}       Whether post matches query
+	 * @param  {object}  query Query object
+	 * @param  {object}  post  Item to consider
+	 * @returns {boolean}       Whether post matches query
 	 */
 	static matches( query, post ) {
 		const queryWithDefaults = Object.assign( {}, this.DefaultQuery, query );
-		return every( queryWithDefaults, ( value, key ) => {
+		return Object.entries( queryWithDefaults ).every( ( [ key, value ] ) => {
 			switch ( key ) {
-				case 'search':
+				case 'search': {
 					if ( ! value ) {
 						return true;
 					}
@@ -39,6 +39,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 						( post.title && includes( post.title.toLowerCase(), search ) ) ||
 						( post.content && includes( post.content.toLowerCase(), search ) )
 					);
+				}
 
 				case 'after':
 				case 'before':
@@ -51,7 +52,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 				}
 
 				case 'term':
-					return every( value, ( slugs, taxonomy ) => {
+					return Object.entries( value ).every( ( [ taxonomy, slugs ] ) => {
 						slugs = slugs.split( ',' );
 						return some( post.terms[ taxonomy ], ( { slug } ) => includes( slugs, slug ) );
 					} );
@@ -102,7 +103,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 						'any' === value ||
 						String( value )
 							.split( ',' )
-							.some( status => {
+							.some( ( status ) => {
 								return status === post[ key ];
 							} )
 					);
@@ -116,10 +117,10 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	 * A sort comparison function that defines the sort order of posts under
 	 * consideration of the specified query.
 	 *
-	 * @param  {Object} query Query object
-	 * @param  {Object} postA First post
-	 * @param  {Object} postB Second post
-	 * @return {Number}       0 if equal, less than 0 if postA is first,
+	 * @param  {object} query Query object
+	 * @param  {object} postA First post
+	 * @param  {object} postB Second post
+	 * @returns {number}       0 if equal, less than 0 if postA is first,
 	 *                        greater than 0 if postB is first.
 	 */
 	static compare( query, postA, postB ) {

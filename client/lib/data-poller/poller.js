@@ -5,8 +5,8 @@
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:poller' );
 
-let DEFAULT_INTERVAL = 30000,
-	_id = 0;
+const DEFAULT_INTERVAL = 30000;
+let _id = 0;
 
 function Poller( dataStore, fetcher, options ) {
 	options = options || {};
@@ -42,11 +42,11 @@ function Poller( dataStore, fetcher, options ) {
 	}
 }
 
-Poller.prototype.start = function() {
-	const fetch = function() {
+Poller.prototype.start = function () {
+	const fetch = () => {
 		debug( 'Calling fetcher for %o', { fetcher: this.fetcher, store: this.dataStore } );
 		this.fetch();
-	}.bind( this );
+	};
 
 	if ( ! this.timer ) {
 		debug( 'Starting poller for %o', this.dataStore );
@@ -58,7 +58,7 @@ Poller.prototype.start = function() {
 	}
 };
 
-Poller.prototype.stop = function() {
+Poller.prototype.stop = function () {
 	if ( this.timer ) {
 		debug( 'Stopping poller for %o', this.dataStore );
 		clearInterval( this.timer );
@@ -67,7 +67,7 @@ Poller.prototype.stop = function() {
 	}
 };
 
-Poller.prototype.fetch = function() {
+Poller.prototype.fetch = function () {
 	if ( typeof this.fetcher === 'string' ) {
 		this.dataStore[ this.fetcher ]();
 	} else {
@@ -75,13 +75,13 @@ Poller.prototype.fetch = function() {
 	}
 };
 
-Poller.prototype.clear = function() {
+Poller.prototype.clear = function () {
 	this.dataStore.off( 'newListener', this.startOnFirstChange );
 	this.dataStore.off( 'removeListener', this.stopOnNoChangeListeners );
 	this.stop();
 };
 
-Poller.prototype.startOnFirstChange = function( event ) {
+Poller.prototype.startOnFirstChange = function ( event ) {
 	if ( event !== 'change' ) {
 		return;
 	}
@@ -89,7 +89,7 @@ Poller.prototype.startOnFirstChange = function( event ) {
 	this.start();
 };
 
-Poller.prototype.stopOnNoChangeListeners = function( event ) {
+Poller.prototype.stopOnNoChangeListeners = function ( event ) {
 	if ( event !== 'change' ) {
 		return;
 	}

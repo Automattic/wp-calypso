@@ -1,16 +1,16 @@
 /**
  * Internal dependencies
  */
-import { canCurrentUserUseCustomerHome, getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getStatsDefaultSitePage } from 'lib/route/path';
+import { canCurrentUserUseCustomerHome, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getStatsDefaultSitePage } from 'calypso/lib/route/path';
 
 /**
  * Determine the default section to show for the specified site.
  *
- * @param  {Object}  state  Global state tree.
- * @param  {?Number} siteId Site ID.
- * @return {String}         Url of the site home.
+ * @param  {object}  state  Global state tree.
+ * @param  {?number} siteId Site ID.
+ * @returns {string}         Url of the site home.
  */
 export default function getSiteHomeUrl( state: object, siteId?: number ): string {
 	const selectedSiteId = siteId || getSelectedSiteId( state );

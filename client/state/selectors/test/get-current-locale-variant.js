@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
+import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 
 describe( 'getCurrentLocaleVariant()', () => {
 	test( 'should return null as default', () => {

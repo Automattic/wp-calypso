@@ -5,23 +5,28 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import SiteIcon from 'blocks/site-icon';
-import SiteIndicator from 'my-sites/site-indicator';
-import { getSite, getSiteSlug, isSitePreviewable } from 'state/sites/selectors';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import SiteIcon from 'calypso/blocks/site-icon';
+import SiteIndicator from 'calypso/my-sites/site-indicator';
+import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import isAtomicAndEditingToolkitPluginDeactivated from 'calypso/state/selectors/is-atomic-and-editing-toolkit-plugin-deactivated';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class Site extends React.Component {
 	static defaultProps = {
@@ -62,19 +67,19 @@ class Site extends React.Component {
 		compact: PropTypes.bool,
 	};
 
-	onSelect = event => {
+	onSelect = ( event ) => {
 		this.props.onSelect( event, this.props.site.ID );
 	};
 
-	onMouseEnter = event => {
+	onMouseEnter = ( event ) => {
 		this.props.onMouseEnter( event, this.props.site.ID );
 	};
 
-	onMouseLeave = event => {
+	onMouseLeave = ( event ) => {
 		this.props.onMouseLeave( event, this.props.site.ID );
 	};
 
-	onViewSiteClick = event => {
+	onViewSiteClick = ( event ) => {
 		const { isPreviewable, siteSlug } = this.props;
 
 		if ( ! isPreviewable ) {
@@ -96,7 +101,7 @@ class Site extends React.Component {
 	};
 
 	render() {
-		const { site, translate } = this.props;
+		const { isAtomicAndEditingToolkitDeactivated, isSiteUnlaunched, site, translate } = this.props;
 
 		if ( ! site ) {
 			// we could move the placeholder state here
@@ -114,6 +119,18 @@ class Site extends React.Component {
 			'is-highlighted': this.props.isHighlighted,
 			'is-compact': this.props.compact,
 		} );
+
+		// We show public coming soon badge only when the site is not private and the editing toolkit is available.
+		// Check for `! site.is_private` to ensure two Coming Soon badges don't appear while we introduce public coming soon.
+		const shouldShowPublicComingSoonSiteBadge =
+			! site.is_private && this.props.site.is_coming_soon && ! isAtomicAndEditingToolkitDeactivated;
+
+		// Cover the coming Soon v1 cases for sites still unlaunched and/or in Coming Soon private by default.
+		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
+		const isPrivateAndUnlaunched = site.is_private && isSiteUnlaunched;
+		const shouldShowPrivateByDefaultComingSoonBadge =
+			( this.props.site.is_coming_soon || isPrivateAndUnlaunched ) &&
+			! isAtomicAndEditingToolkitDeactivated;
 
 		return (
 			<div className={ siteClass }>
@@ -144,7 +161,10 @@ class Site extends React.Component {
 					<div className="site__info">
 						<div className="site__title">{ site.title }</div>
 						<div className="site__domain">
-							{ this.props.homeLink
+							{ /* eslint-disable-next-line no-nested-ternary */ }
+							{ this.props.isNavUnificationEnabled && ! isEnabled( 'jetpack-cloud' )
+								? site.domain
+								: this.props.homeLink
 								? translate( 'View %(domain)s', {
 										args: { domain: site.domain },
 								  } )
@@ -152,7 +172,16 @@ class Site extends React.Component {
 						</div>
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.site.is_private && (
-							<span className="site__badge site__badge-private">{ translate( 'Private' ) }</span>
+							<span className="site__badge site__badge-private">
+								{ shouldShowPrivateByDefaultComingSoonBadge
+									? translate( 'Coming Soon' )
+									: translate( 'Private' ) }
+							</span>
+						) }
+						{ shouldShowPublicComingSoonSiteBadge && (
+							<span className="site__badge site__badge-coming-soon">
+								{ translate( 'Coming Soon' ) }
+							</span>
 						) }
 						{ site.options && site.options.is_redirect && (
 							<span className="site__badge site__badge-redirect">{ translate( 'Redirect' ) }</span>
@@ -168,7 +197,9 @@ class Site extends React.Component {
 						</span>
 					) }
 				</a>
-				{ this.props.indicator ? <SiteIndicator site={ site } /> : null }
+				{ this.props.indicator && isEnabled( 'site-indicator' ) ? (
+					<SiteIndicator site={ site } />
+				) : null }
 			</div>
 		);
 	}
@@ -183,6 +214,12 @@ function mapStateToProps( state, ownProps ) {
 		site,
 		isPreviewable: isSitePreviewable( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
+		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
+		isAtomicAndEditingToolkitDeactivated: isAtomicAndEditingToolkitPluginDeactivated(
+			state,
+			siteId
+		),
+		isNavUnificationEnabled: isNavUnificationEnabled( state ),
 	};
 }
 

@@ -1,17 +1,27 @@
 /**
  * Internal dependencies
  */
-import { URL as URLString } from 'types';
+import { getUrlParts } from '@automattic/calypso-url';
+import isExternal from './is-external';
+import { URL as URLString } from 'calypso/types';
 
-/**
- * Check if a URL is located outside of Calypso.
- * Note that the check this function implements is incomplete --
- * it only returns false for absolute URLs, so it misses
- * relative URLs, or pure query strings, or hashbangs.
- *
- * @param  url URL to check
- * @return     true if the given URL is located outside of Calypso
- */
 export default function isOutsideCalypso( url: URLString ): boolean {
-	return !! url && ( url.startsWith( '//' ) || ! url.startsWith( '/' ) );
+	if ( isExternal( url ) ) {
+		return true;
+	}
+
+	const { pathname } = getUrlParts( url );
+
+	// Some paths live outside of Calypso even though they are hosted on the same domain
+	// Examples: /support, /forums
+	if (
+		/^\/support($|\/)/i.test( pathname ) || // /support or /support/*
+		/^\/([a-z]{2}|[a-z]{2}-[a-z]{2})\/support($|\/)/i.test( pathname ) || // /en/support or /pt-br/support/*, etc
+		/^\/forums($|\/)/i.test( pathname ) || // /forums or /forums/*
+		/^\/([a-z]{2}|[a-z]{2}-[a-z]{2})\/forums($|\/)/i.test( pathname ) // /en/forums or /pt-br/forums/*, etc
+	) {
+		return true;
+	}
+
+	return false;
 }

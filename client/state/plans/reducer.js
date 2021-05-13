@@ -1,13 +1,14 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	PLANS_RECEIVE,
 	PLANS_REQUEST,
 	PLANS_REQUEST_SUCCESS,
 	PLANS_REQUEST_FAILURE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -15,9 +16,9 @@ import { itemsSchema } from './schema';
  * root state -> state.plans.items =>
  * [ {}, {}, ... {} ]
  *
- * @param {Object} state - current state
- * @param {Object} action - plans action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - plans action
+ * @returns {object} updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
@@ -32,9 +33,9 @@ export const items = withSchemaValidation( itemsSchema, ( state = [], action ) =
  * `Reducer` function which handles request/response actions
  * to/from WP REST-API
  *
- * @param {Object} state - current state
- * @param {Object} action - plans action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - plans action
+ * @returns {object} updated state
  */
 export const requesting = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -50,9 +51,9 @@ export const requesting = ( state = false, action ) => {
 /**
  * `Reducer` function which handles ERROR REST-API response actions
  *
- * @param {Object} state - current state
- * @param {Object} action - plans action
- * @return {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - plans action
+ * @returns {object} updated state
  */
 export const error = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -67,8 +68,10 @@ export const error = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	items,
 	requesting,
 	error,
 } );
+
+export default withStorageKey( 'plans', combinedReducer );

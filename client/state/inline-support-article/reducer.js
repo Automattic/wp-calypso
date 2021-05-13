@@ -1,10 +1,15 @@
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
-import { SUPPORT_ARTICLE_DIALOG_OPEN, SUPPORT_ARTICLE_DIALOG_CLOSE } from 'state/action-types';
+import { withStorageKey } from '@automattic/state-utils';
 
-export default withoutPersistence(
+import {
+	SUPPORT_ARTICLE_DIALOG_OPEN,
+	SUPPORT_ARTICLE_DIALOG_CLOSE,
+} from 'calypso/state/action-types';
+
+export default withStorageKey(
+	'inlineSupportArticle',
 	(
 		state = {
 			postId: null,
@@ -15,12 +20,14 @@ export default withoutPersistence(
 	) => {
 		switch ( action.type ) {
 			case SUPPORT_ARTICLE_DIALOG_OPEN: {
-				const { postId, postUrl = null } = action;
+				const { postId, postUrl = null, actionLabel = null, actionUrl = null } = action;
 
 				return {
 					postUrl,
 					postId,
 					isVisible: true,
+					actionLabel,
+					actionUrl,
 				};
 			}
 			case SUPPORT_ARTICLE_DIALOG_CLOSE:

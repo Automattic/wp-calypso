@@ -1,5 +1,5 @@
 /**
- * @fileoverview Disallow collapsible whitespace in translatable strings
+ * @file Disallow collapsible whitespace in translatable strings
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -9,10 +9,10 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../i18n-no-collapsible-whitespace' ),
-	config = { env: { es6: true } }, // support for string templates
-	formatMessage = require( '../../../test-utils/format-message' ),
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require( '../i18n-no-collapsible-whitespace' );
+const config = { env: { es6: true } }; // support for string templates
+const formatMessage = require( '../../../test-utils/format-message' );
+const RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Constants
@@ -53,7 +53,6 @@ new RuleTester( config ).run( 'i18n-no-collapsible-whitespace', rule, {
 			errors: [
 				{
 					message: NO_NEWLINES,
-					problem: ' (\\n)',
 				},
 			],
 		},

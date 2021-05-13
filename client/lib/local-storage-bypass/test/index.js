@@ -12,7 +12,7 @@ import { key, clear, setItem, getItem, removeItem, length } from '..';
 describe( 'localstorage-bypass', () => {
 	// Spy on the original localStorage functions
 	const _setItem = spy();
-	const _getItem = spy( x => x );
+	const _getItem = spy( ( x ) => x );
 	const _removeItem = spy();
 	let db = {};
 

@@ -3,13 +3,13 @@
  */
 const multiline = require( '../formatters/multiline' );
 
-describe( 'multiline', function() {
-	test( 'should not split a short literal into multiple lines', function() {
+describe( 'multiline', function () {
+	test( 'should not split a short literal into multiple lines', function () {
 		const literal = '"Lorem ipsum dolor sit amet"';
 		expect( multiline( literal ) ).toBe( '"Lorem ipsum dolor sit amet"' );
 	} );
 
-	test( 'should split a long literal into multiple lines', function() {
+	test( 'should split a long literal into multiple lines', function () {
 		// normal text
 		const literal1 =
 			'"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."';
@@ -81,7 +81,7 @@ describe( 'multiline', function() {
 		);
 	} );
 
-	test( 'should add an empty line first if the literal can fit on one line without the prefix', function() {
+	test( 'should add an empty line first if the literal can fit on one line without the prefix', function () {
 		const literal =
 			'"There is an issue connecting to %s. {{button}}Reconnect {{icon/}}{{/button}}"';
 		expect( multiline( literal ) ).toBe(
@@ -92,14 +92,14 @@ describe( 'multiline', function() {
 		);
 	} );
 
-	test( 'should not add an empty line if the literal length is less or equal to 73 characters (79 - lengthOf("msgid "))', function() {
+	test( 'should not add an empty line if the literal length is less or equal to 73 characters (79 - lengthOf("msgid "))', function () {
 		const literal = '"Testimonials are not enabled. Open your site settings to activate them."';
 		expect( multiline( literal ) ).toBe(
 			'"Testimonials are not enabled. Open your site settings to activate them."'
 		);
 	} );
 
-	test( 'should split text on a /', function() {
+	test( 'should split text on a /', function () {
 		const literal =
 			'"{{wrapper}}%(email)s{{/wrapper}} {{emailPreferences}}change{{/emailPreferences}}"';
 		expect( multiline( literal ) ).toBe(
@@ -111,7 +111,7 @@ describe( 'multiline', function() {
 		);
 	} );
 
-	test( 'should work with longer prefixes', function() {
+	test( 'should work with longer prefixes', function () {
 		const literal =
 			'"Categories: info popover text shown when creating a new category and selecting a parent category."';
 		expect( multiline( literal, 'msgctxt ' ) ).toBe(
@@ -123,7 +123,7 @@ describe( 'multiline', function() {
 		);
 	} );
 
-	test( 'should work with very long words', function() {
+	test( 'should work with very long words', function () {
 		const literal =
 			'"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporincididuntutlaboreetdoloremagnaaliquaUtenimadminimveniamquisnostrudexercitationullamco laborisnisiutaliquipexeacommodo consequat."';
 		expect( multiline( literal ) ).toBe(
@@ -136,7 +136,7 @@ describe( 'multiline', function() {
 		);
 	} );
 
-	test( 'should not break very long line without separators', function() {
+	test( 'should not break very long line without separators', function () {
 		const literal =
 			'"LoremipsumdolorsitametconsecteturadipiscingelitseddoeiusmodtemporincididuntutlaboreetdoloremagnaaliquaUtenimadminimveniamquisnostrudexercitationullamcolaborisnisiutaliquipexeacommodoconsequat."';
 		expect( multiline( literal ) ).toBe(

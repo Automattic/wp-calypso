@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import { ModalViews } from '../constants';
 import reducer, { view } from '../reducer';
-import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';
+import { MEDIA_MODAL_VIEW_SET } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

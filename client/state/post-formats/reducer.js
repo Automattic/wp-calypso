@@ -1,24 +1,25 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { postFormatsItemsSchema } from './schema';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,
 	POST_FORMATS_REQUEST_SUCCESS,
 	POST_FORMATS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The
  * state maps site ID keys to whether a request for post formats is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case POST_FORMATS_REQUEST: {
 			const { siteId } = action;
@@ -35,15 +36,15 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID keys to an object that contains the site supported post formats.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( postFormatsItemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -56,7 +57,10 @@ export const items = withSchemaValidation( postFormatsItemsSchema, ( state = {},
 	return state;
 } );
 
-export default combineReducers( {
-	requesting,
-	items,
-} );
+export default withStorageKey(
+	'postFormats',
+	combineReducers( {
+		requesting,
+		items,
+	} )
+);

@@ -6,22 +6,22 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
-import { defer, get, has, omit } from 'lodash';
+import { has, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { mapAuthor, startImporting } from 'lib/importer/actions';
-import { appStates } from 'state/imports/constants';
+import { mapAuthor, startImporting } from 'calypso/state/imports/actions';
+import { appStates } from 'calypso/state/imports/constants';
 import { ProgressBar } from '@automattic/components';
 import AuthorMappingPane from './author-mapping-pane';
-import Spinner from 'components/spinner';
-import { loadTrackingTool } from 'state/analytics/actions';
+import Spinner from 'calypso/components/spinner';
+import { loadTrackingTool } from 'calypso/state/analytics/actions';
 
-import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
-import ImporterDoneButton from 'my-sites/importer/importer-action-buttons/done-button';
-import BusyImportingButton from 'my-sites/importer/importer-action-buttons/busy-importing-button';
-import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
+import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
+import ImporterDoneButton from 'calypso/my-sites/importer/importer-action-buttons/done-button';
+import BusyImportingButton from 'calypso/my-sites/importer/importer-action-buttons/busy-importing-button';
+import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 
 /**
  * Style dependencies
@@ -43,7 +43,7 @@ const sum = ( a, b ) => a + b;
  *     …
  * }
  */
-const calculateProgress = progress => {
+const calculateProgress = ( progress ) => {
 	const { attachment = {} } = progress;
 
 	if ( attachment.total > 0 && attachment.completed >= 0 ) {
@@ -55,26 +55,26 @@ const calculateProgress = progress => {
 	}
 
 	const percentages = Object.keys( progress )
-		.map( k => progress[ k ] ) // get the inner objects themselves
+		.map( ( k ) => progress[ k ] ) // get the inner objects themselves
 		.filter( ( { total } ) => total > 0 ) // skip ones with no objects to import
 		.map( ( { completed, total } ) => completed / total ); // compute the individual percentages
 
 	return ( 100 * percentages.reduce( sum, 0 ) ) / percentages.length;
 };
 
-const resourcesRemaining = progress =>
+const resourcesRemaining = ( progress ) =>
 	Object.keys( progress )
-		.map( k => progress[ k ] )
+		.map( ( k ) => progress[ k ] )
 		.map( ( { completed, total } ) => total - completed )
 		.reduce( sum, 0 );
 
-const hasProgressInfo = progress => {
+const hasProgressInfo = ( progress ) => {
 	if ( ! progress ) {
 		return false;
 	}
 
 	const types = Object.keys( progress )
-		.map( k => progress[ k ] )
+		.map( ( k ) => progress[ k ] )
 		.filter( ( { total } ) => total > 0 );
 
 	if ( ! types.length ) {
@@ -101,13 +101,11 @@ class ImportingPane extends React.PureComponent {
 			} ),
 			importerState: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,
-			site: PropTypes.shape( {
-				slug: PropTypes.string.isRequired,
-			} ),
 			statusMessage: PropTypes.string,
 		} ),
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
+			name: PropTypes.string.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
 		} ).isRequired,
 		sourceType: PropTypes.string.isRequired,
@@ -135,7 +133,7 @@ class ImportingPane extends React.PureComponent {
 		return this.props.translate( 'Success! Your content has been imported.' );
 	};
 
-	getImportMessage = numResources => {
+	getImportMessage = ( numResources ) => {
 		if ( 0 === numResources ) {
 			return this.props.translate( 'Finishing up the import.' );
 		}
@@ -166,7 +164,7 @@ class ImportingPane extends React.PureComponent {
 		return this.isInState( appStates.UPLOAD_PROCESSING );
 	};
 
-	isInState = state => {
+	isInState = ( state ) => {
 		return state === this.props.importerStatus.importerState;
 	};
 
@@ -193,7 +191,7 @@ class ImportingPane extends React.PureComponent {
 	}
 
 	handleOnMap = ( source, target ) =>
-		defer( () => mapAuthor( get( this.props, 'importerStatus.importerId' ), source, target ) );
+		this.props.mapAuthor( this.props.importerStatus.importerId, source, target );
 
 	renderActionButtons = () => {
 		if ( this.isProcessing() || this.isMapping() ) {
@@ -263,7 +261,7 @@ class ImportingPane extends React.PureComponent {
 					<AuthorMappingPane
 						hasSingleAuthor={ hasSingleAuthor }
 						onMap={ this.handleOnMap }
-						onStartImport={ () => startImporting( this.props.importerStatus ) }
+						onStartImport={ () => this.props.startImporting( this.props.importerStatus ) }
 						siteId={ siteId }
 						sourceType={ sourceType }
 						sourceAuthors={ customData.sourceAuthors }
@@ -294,4 +292,8 @@ class ImportingPane extends React.PureComponent {
 	}
 }
 
-export default connect( null, { loadTrackingTool } )( localize( ImportingPane ) );
+export default connect( null, {
+	loadTrackingTool,
+	mapAuthor,
+	startImporting,
+} )( localize( ImportingPane ) );

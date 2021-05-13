@@ -40,26 +40,37 @@ These are added with the `retryPolicy` override in the HTTP request description.
 
 ```js
 // stop retry attempts
-import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import {
+	noRetry,
+	exponentialBackoff,
+} from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
-dispatch( http( {
-	path: '/sites',
-	method: 'GET',
-	onSuccess,
-	onFailure,
-	retryPolicy: noRetry(),
-}, action );
+dispatch(
+	http(
+		{
+			path: '/sites',
+			method: 'GET',
+			onSuccess,
+			onFailure,
+			retryPolicy: noRetry(),
+		},
+		action
+	)
+);
 
 // moar attempts for a notoriously slow and buggy server
-import { exponentialBackoff } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
-
-dispatch( http( {
-	path: '/sites',
-	method: 'GET',
-	onSuccess,
-	onFailure,
-	retryPolicy: exponentialBackoff( { delay: 4000, maxAttempts: 5 } ),
-}, action );
+dispatch(
+	http(
+		{
+			path: '/sites',
+			method: 'GET',
+			onSuccess,
+			onFailure,
+			retryPolicy: exponentialBackoff( { delay: 4000, maxAttempts: 5 } ),
+		},
+		action
+	)
+);
 ```
 
 ## Delay calculation
@@ -91,12 +102,12 @@ That is to say, we expect the total wait time to be exponential with the number 
 The following table summaries then total average wait times for when a request resolves after the given number of retries, normalized to the base delay.
 
 | # Retries | Expected Wait Time |
-| --- | --- |
-| 1 | 1.627 |
-| 2 | 4.368 |
-| 3 | 9.385 |
-| 4 | 18.91 |
-| 5 | 37.34 |
+| --------- | ------------------ |
+| 1         | 1.627              |
+| 2         | 4.368              |
+| 3         | 9.385              |
+| 4         | 18.91              |
+| 5         | 37.34              |
 
 From this table we can see that in the average case even if a request takes five retry attempts it should be resolved within about 45 seconds.
 With four attempts, we can see that the vast majority will resolve within about 35s.

@@ -4,9 +4,15 @@
 import { get } from 'lodash';
 
 /**
- * Whether the signup site preview is visible
- * @param   {Object}  state The current client state
- * @return  {Boolean}       Whether the signup site preview is visible
+ * Internal dependencies
  */
-export const isSitePreviewVisible = state =>
+import 'calypso/state/signup/init';
+
+/**
+ * Whether the signup site preview is visible
+ *
+ * @param   {object}  state The current client state
+ * @returns  {boolean}       Whether the signup site preview is visible
+ */
+export const isSitePreviewVisible = ( state ) =>
 	get( state, [ 'signup', 'preview', 'isVisible' ], false );

@@ -1,23 +1,24 @@
 /**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	POST_TYPES_TAXONOMIES_RECEIVE,
 	POST_TYPES_TAXONOMIES_REQUEST,
 	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
 	POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/post-types/init';
 
 /**
  * Returns an action object to be used in signalling that post type taxonomies
  * for a site have been received.
  *
- * @param  {Number} siteId     Site ID
- * @param  {String} postType   Post type
+ * @param  {number} siteId     Site ID
+ * @param  {string} postType   Post type
  * @param  {Array}  taxonomies Taxonomies received
- * @return {Object}            Action object
+ * @returns {object}            Action object
  */
 export function receivePostTypeTaxonomies( siteId, postType, taxonomies ) {
 	return {
@@ -32,12 +33,12 @@ export function receivePostTypeTaxonomies( siteId, postType, taxonomies ) {
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve post type taxonomies for a site.
  *
- * @param  {Number}   siteId   Site ID
- * @param  {String}   postType Post type
- * @return {Function}          Action thunk
+ * @param  {number}   siteId   Site ID
+ * @param  {string}   postType Post type
+ * @returns {Function}          Action thunk
  */
 export function requestPostTypeTaxonomies( siteId, postType ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_TYPES_TAXONOMIES_REQUEST,
 			siteId,
@@ -56,7 +57,7 @@ export function requestPostTypeTaxonomies( siteId, postType ) {
 					postType,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
 					siteId,

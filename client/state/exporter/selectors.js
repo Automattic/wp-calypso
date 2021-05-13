@@ -1,9 +1,10 @@
 /**
  * Internal dependencies
  */
-
 import { States } from './constants.js';
 import { get } from 'lodash';
+
+import 'calypso/state/exporter/init';
 
 export const getExportingState = ( state, siteId ) => {
 	const exportingState = state.exporter.exportingState;
@@ -16,9 +17,9 @@ export const getExportingState = ( state, siteId ) => {
 /**
  * Indicates whether an export activity is in progress.
  *
- * @param  {Object} state    Global state tree
- * @param  {Number} siteId   The ID of the site to check
- * @return {boolean}         true if activity is in progress
+ * @param  {object} state    Global state tree
+ * @param  {number} siteId   The ID of the site to check
+ * @returns {boolean}         true if activity is in progress
  */
 export function shouldShowProgress( state, siteId ) {
 	const exportingState = getExportingState( state, siteId );
@@ -28,9 +29,10 @@ export function shouldShowProgress( state, siteId ) {
 
 /**
  * Indicates whether the export is in progress on the server
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId The site ID for which to check export progress
- * @return {Boolean}        true if an export is in progress
+ *
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId The site ID for which to check export progress
+ * @returns {boolean}        true if an export is in progress
  */
 export function isExporting( state, siteId ) {
 	const exportingState = getExportingState( state, siteId );
@@ -57,7 +59,7 @@ export function isDateRangeValid( state, siteId, postType ) {
 }
 
 export const getAdvancedSettings = ( state, siteId ) => state.exporter.advancedSettings[ siteId ];
-export const getSelectedPostType = state => state.exporter.selectedPostType;
+export const getSelectedPostType = ( state ) => state.exporter.selectedPostType;
 export const getPostTypeFieldOptions = ( state, siteId, postType, fieldName ) => {
 	// Choose which set of options to return for the given field name
 	const optionSet = get(
@@ -101,9 +103,10 @@ export const getPostTypeFieldValue = ( state, siteId, postType, fieldName ) => {
 
 /**
  * Prepare currently selected advanced settings for an /exports/start request
- * @param  {Object} state  Global state tree
+ *
+ * @param  {object} state  Global state tree
  * @param  {number} siteId The ID of the site
- * @return {Object}        The request body
+ * @returns {object}        The request body
  */
 export function prepareExportRequest( state, siteId, { exportAll = true } = {} ) {
 	// Request body is empty if we're just exporting everything
@@ -114,4 +117,8 @@ export function prepareExportRequest( state, siteId, { exportAll = true } = {} )
 	const postType = getSelectedPostType( state );
 	const selectedFieldValues = getPostTypeFieldValues( state, siteId, postType );
 	return Object.assign( { post_type: postType }, selectedFieldValues );
+}
+
+export function getDownloadUrl( state ) {
+	return state.exporter.downloadURL;
 }

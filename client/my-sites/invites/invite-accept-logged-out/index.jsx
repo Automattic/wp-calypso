@@ -1,28 +1,26 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import store from 'store';
 import debugModule from 'debug';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import SignupForm from 'blocks/signup-form';
-import InviteFormHeader from 'my-sites/invites/invite-form-header';
-import { login } from 'lib/paths';
-import { createAccount, acceptInvite } from 'lib/invites/actions';
-import WpcomLoginForm from 'signup/wpcom-login-form';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import analytics from 'lib/analytics';
-import { errorNotice } from 'state/notices/actions';
+import SignupForm from 'calypso/blocks/signup-form';
+import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
+import { login } from 'calypso/lib/paths';
+import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
+import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Card } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
+import FormButton from 'calypso/components/forms/form-button';
 
 /**
  * Module variables
@@ -30,7 +28,7 @@ import FormButton from 'components/forms/form-button';
 const debug = debugModule( 'calypso:invite-accept:logged-out' );
 
 class InviteAcceptLoggedOut extends React.Component {
-	state = { error: false, bearerToken: false, userData: false, submitting: false };
+	state = { bearerToken: false, userData: false, submitting: false };
 
 	submitButtonText = () => {
 		let text = '';
@@ -46,27 +44,35 @@ class InviteAcceptLoggedOut extends React.Component {
 
 	clickSignInLink = () => {
 		const signInLink = login( { redirectTo: window.location.href } );
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_sign_in_link_click' );
+		recordTracksEvent( 'calypso_invite_accept_logged_out_sign_in_link_click' );
 		window.location = signInLink;
 	};
 
 	submitForm = ( form, userData ) => {
-		this.setState( { submitting: true } );
-		debug( 'Storing invite_accepted: ' + JSON.stringify( this.props.invite ) );
-		store.set( 'invite_accepted', this.props.invite );
-		const createAccountCallback = ( error, bearerToken ) => {
-			debug( 'Create account error: ' + JSON.stringify( error ) );
-			debug( 'Create account bearerToken: ' + bearerToken );
+		const { invite } = this.props;
 
-			if ( error ) {
+		this.setState( { submitting: true } );
+		debug( 'Storing invite_accepted: ' + JSON.stringify( invite ) );
+		store.set( 'invite_accepted', invite );
+
+		const enhancedUserData = { ...userData };
+
+		if ( get( invite, 'site.is_wpforteams_site', false ) ) {
+			enhancedUserData.signup_flow_name = 'p2';
+		}
+
+		this.props
+			.createAccount( enhancedUserData, invite )
+			.then( ( response ) => {
+				const bearerToken = response.bearer_token;
+				debug( 'Create account bearerToken: ' + bearerToken );
+				this.setState( { bearerToken, userData } );
+			} )
+			.catch( ( error ) => {
+				debug( 'Create account error: ' + JSON.stringify( error ) );
 				store.remove( 'invite_accepted' );
 				this.setState( { submitting: false } );
-			} else if ( bearerToken ) {
-				this.setState( { bearerToken, userData } );
-			}
-		};
-
-		this.props.createAccount( userData, this.props.invite, createAccountCallback );
+			} );
 	};
 
 	renderFormHeader = () => {
@@ -87,18 +93,17 @@ class InviteAcceptLoggedOut extends React.Component {
 	subscribeUserByEmailOnly = () => {
 		const { invite } = this.props;
 		this.setState( { submitting: true } );
-		this.props.acceptInvite( invite, error => {
-			if ( error ) {
-				this.setState( { error } );
-			} else {
+		this.props
+			.acceptInvite( invite )
+			.then( () => {
 				window.location =
 					'https://subscribe.wordpress.com?update=activate&email=' +
 					encodeURIComponent( invite.sentTo ) +
 					'&key=' +
 					invite.authKey;
-			}
-		} );
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_follow_by_email_click' );
+			} )
+			.catch( () => this.setState( { submitting: false } ) );
+		recordTracksEvent( 'calypso_invite_accept_logged_out_follow_by_email_click' );
 	};
 
 	renderFooterLink = () => {
@@ -125,6 +130,10 @@ class InviteAcceptLoggedOut extends React.Component {
 	};
 
 	renderSignInLinkOnly = () => {
+		// TODO: this needs a refactor to unify it with components/logged-out-form as it's using
+		// styles from there but not the component
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="sign-up-form">
 				<Card className="logged-out-form">
@@ -136,6 +145,7 @@ class InviteAcceptLoggedOut extends React.Component {
 					</Card>
 				</Card>
 			</div>
+			/* eslint-enable */
 		);
 	};
 
@@ -171,6 +181,6 @@ class InviteAcceptLoggedOut extends React.Component {
 	}
 }
 
-export default connect( null, dispatch =>
-	bindActionCreators( { createAccount, acceptInvite, errorNotice }, dispatch )
-)( localize( InviteAcceptLoggedOut ) );
+export default connect( null, { createAccount, acceptInvite } )(
+	localize( InviteAcceptLoggedOut )
+);

@@ -1,0 +1,48 @@
+.customer-home__layout-col-right {
+	@include breakpoint-deprecated( '<480px' ) {
+		.go-mobile__subheader.customer-home__card-subheader {
+			margin-bottom: 0;
+		}
+	}
+}
+
+.go-mobile.card {
+	padding: 16px 24px;
+}
+
+.go-mobile__app-badges {
+	display: flex;
+}
+
+.go-mobile__app-badges .get-apps__app-badge {
+	width: 50%;
+}
+
+.go-mobile__email-link {
+	margin: 24px 0 0;
+	padding-top: 20px;
+	border-top: 1px solid var( --color-neutral-5 );
+	color: var( --color-text-subtle );
+}
+
+.go-mobile__email-link-button {
+	display: block;
+	margin-top: 16px;
+}
+
+.go-mobile__row.has-2-cols {
+	display: flex;
+}
+
+.go-mobile__row.has-2-cols .get-apps__app-badge {
+	width: auto;
+}
+
+.go-mobile__row.has-2-cols .go-mobile__subheader {
+	margin: 0;
+}
+
+.go-mobile__row.has-2-cols .go-mobile__app-badges {
+	margin-left: auto;
+	padding-left: 1rem;
+}

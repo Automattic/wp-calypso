@@ -10,10 +10,10 @@ const conflictingSeoPlugins = [
 	'All in One SEO Pack Pro',
 ];
 
-export const getConflictingSeoPlugins = activePlugins =>
+export const getConflictingSeoPlugins = ( activePlugins ) =>
 	activePlugins
 		.filter( ( { name } ) => includes( conflictingSeoPlugins, name ) )
 		.map( ( { name, slug } ) => ( { name, slug } ) );
 
-export const getFirstConflictingPlugin = activePlugins =>
+export const getFirstConflictingPlugin = ( activePlugins ) =>
 	getConflictingSeoPlugins( activePlugins )[ 0 ];

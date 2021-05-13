@@ -1,29 +1,26 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import schema from './schema';
-import { APPLICATION_PASSWORDS_REQUEST } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveApplicationPasswords } from 'state/application-passwords/actions';
+import { APPLICATION_PASSWORDS_REQUEST } from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { receiveApplicationPasswords } from 'calypso/state/application-passwords/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-export const apiTransformer = data => data.application_passwords;
+const noop = () => {};
+
+export const apiTransformer = ( data ) => data.application_passwords;
 
 /**
  * Dispatches a request to fetch application passwords of the current user
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched http action
+ * @param   {object} action Redux action
+ * @returns {object} Dispatched http action
  */
-export const requestApplicationPasswords = action =>
+export const requestApplicationPasswords = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',
@@ -36,9 +33,9 @@ export const requestApplicationPasswords = action =>
 /**
  * Dispatches a user application passwords receive action when the request succeeded.
  *
- * @param   {Object} action       Redux action
- * @param   {Object} appPasswords Application passwords
- * @returns {Object} Dispatched user application passwords receive action
+ * @param   {object} action       Redux action
+ * @param   {object} appPasswords Application passwords
+ * @returns {object} Dispatched user application passwords receive action
  */
 export const handleRequestSuccess = ( action, appPasswords ) =>
 	receiveApplicationPasswords( appPasswords );

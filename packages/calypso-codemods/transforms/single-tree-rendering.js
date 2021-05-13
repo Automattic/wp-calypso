@@ -55,18 +55,19 @@ export default function transformer( file, api ) {
 	 * Is an import external
 	 *
 	 * @param  {object}  importNode Node object
-	 * @return {boolean}            True if import is external
+	 * @returns {boolean}            True if import is external
 	 */
-	const isExternal = importNode =>
+	const isExternal = ( importNode ) =>
 		externalDependenciesSet.has( importNode.source.value.split( '/' )[ 0 ] );
 
 	/**
 	 * Removes the extra newlines between two import statements
 	 * caused by `insertAfter()`:
+	 *
 	 * @link https://github.com/benjamn/recast/issues/371
 	 *
 	 * @param  {string} str String
-	 * @return {string}     Cleaned string
+	 * @returns {string}     Cleaned string
 	 */
 	function removeExtraNewlines( str ) {
 		return str.replace( /(import.*\n)\n+(import)/g, '$1$2' );
@@ -76,12 +77,12 @@ export default function transformer( file, api ) {
 	 * Check if `parameters` has `param` either as a string or as a name of
 	 * an object, which could be e.g. an `Identifier`.
 	 *
-	 * @param  {array}   params     Parameters to look from. Could be an array of strings or Identifier objects.
+	 * @param  {Array}   params     Parameters to look from. Could be an array of strings or Identifier objects.
 	 * @param  {string}  paramValue Parameter value
-	 * @return {boolean}            True if parameter is present
+	 * @returns {boolean}            True if parameter is present
 	 */
 	function hasParam( params = [], paramValue ) {
-		return _.some( params, param => {
+		return _.some( params, ( param ) => {
 			return ( param.name || param ) === paramValue;
 		} );
 	}
@@ -107,12 +108,12 @@ export default function transformer( file, api ) {
 			// Find remaining external or internal dependencies and place comments above first one
 			root
 				.find( j.ImportDeclaration )
-				.filter( p => {
+				.filter( ( p ) => {
 					// Look for only imports that are same type as the removed import was
 					return isExternal( p.value ) === isRemovedExternal;
 				} )
 				.at( 0 )
-				.replaceWith( p => {
+				.replaceWith( ( p ) => {
 					p.value.comments = p.value.comments ? p.value.comments.concat( comments ) : comments;
 					return p.value;
 				} );
@@ -139,7 +140,7 @@ export default function transformer( file, api ) {
 	 * }
 	 *
 	 * @param  {object}  node AST Node
-	 * @return {boolean}      True if any `page.redirect()` exist inside the function node, otherwise False
+	 * @returns {boolean}      True if any `page.redirect()` exist inside the function node, otherwise False
 	 */
 	function isRedirectMiddleware( node ) {
 		return (
@@ -305,7 +306,7 @@ export default function transformer( file, api ) {
 			.find( j.CallExpression, {
 				callee: expressionCallee,
 			} )
-			.replaceWith( p => {
+			.replaceWith( ( p ) => {
 				const contextArg = path.value.params[ 0 ];
 				const target = getTarget( p.value.arguments[ 1 ] );
 				return j.assignmentExpression(
@@ -362,7 +363,7 @@ export default function transformer( file, api ) {
 				value: 'lib/react-helpers',
 			},
 		} )
-		.filter( p => ! p.value.specifiers.length );
+		.filter( ( p ) => ! p.value.specifiers.length );
 
 	if ( orphanImportHelpers.size() ) {
 		removeImport( orphanImportHelpers );
@@ -387,7 +388,7 @@ export default function transformer( file, api ) {
 			},
 		} )
 		// Ensures we remove only nodes containing `document.getElementById( 'secondary' )`
-		.filter( p => _.get( p, 'value.arguments[0].arguments[0].value' ) === 'secondary' )
+		.filter( ( p ) => _.get( p, 'value.arguments[0].arguments[0].value' ) === 'secondary' )
 		.remove();
 
 	// Find if `ReactDom` is used
@@ -424,7 +425,7 @@ export default function transformer( file, api ) {
 				name: 'page',
 			},
 		} )
-		.filter( p => {
+		.filter( ( p ) => {
 			const lastArgument = _.last( p.value.arguments );
 
 			return (
@@ -434,7 +435,7 @@ export default function transformer( file, api ) {
 				! isRedirectMiddleware( lastArgument )
 			);
 		} )
-		.forEach( p => {
+		.forEach( ( p ) => {
 			p.value.arguments.push( j.identifier( 'makeLayout' ) );
 			p.value.arguments.push( j.identifier( 'clientRender' ) );
 		} );

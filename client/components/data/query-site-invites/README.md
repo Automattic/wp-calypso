@@ -13,7 +13,7 @@ the global application state.
 ```jsx
 import React from 'react';
 import { connect } from 'react-redux';
-import QuerySiteInvites from 'components/data/query-site-invites';
+import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 
 const SITE_ID = 3584907;
 
@@ -21,25 +21,18 @@ function MyInvitesList( { invites } ) {
 	return (
 		<div>
 			<QueryInvites siteId={ SITE_ID } />
-			{ invites.map( invite => {
-				return (
-					<MyInvitesListItem
-						key={ invite.invite_key }
-						invite={ invite }
-					/>
-				);
-			} }
+			{ invites.map( ( invite ) => {
+				return <MyInvitesListItem key={ invite.invite_key } invite={ invite } />;
+			} ) }
 		</div>
 	);
 }
 
-export default connect(
-	state => {
-		return {
-			pendingInvites: getPendingInvitesForSite( state, SITE_ID ),
-		};
-	}
-)( MyInvitesList );
+export default connect( ( state ) => {
+	return {
+		pendingInvites: getPendingInvitesForSite( state, SITE_ID ),
+	};
+} )( MyInvitesList );
 ```
 
 ## Props

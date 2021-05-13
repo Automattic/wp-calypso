@@ -18,6 +18,34 @@ export const getDomainsBySiteId = ( state, siteId ) => {
 };
 
 /**
+ * Returns the  wpcom domain for the proved site id.
+ *
+ * @param {object} state - global state tree
+ * @param {number | undefined} siteId - identifier of the site
+ * @returns {?object} the wpcom domain
+ */
+export const getWpComDomainBySiteId = ( state, siteId ) => {
+	const domains = getDomainsBySiteId( state, siteId );
+	if ( ! Array.isArray( domains ) ) {
+		return null;
+	}
+
+	const WPComDomain = domains.find(
+		( { isWPCOMDomain, isWpcomStagingDomain } ) => isWPCOMDomain || isWpcomStagingDomain
+	);
+
+	return WPComDomain || null;
+};
+
+export const getAllDomains = ( state ) => {
+	return state.sites.domains.items;
+};
+
+export const getFlatDomainsList = ( state ) => {
+	return state.allDomains.domains ?? [];
+};
+
+/**
  * Returns the list of site domains for the specified site.
  *
  * @param {object} state - global state tree
@@ -52,6 +80,10 @@ export const hasLoadedSiteDomains = ( state, siteId ) => {
  */
 export const isRequestingSiteDomains = ( state, siteId ) => {
 	return state.sites.domains.requesting[ siteId ] || false;
+};
+
+export const getAllRequestingSiteDomains = ( state ) => {
+	return state.sites.domains.requesting;
 };
 
 export const isUpdatingDomainPrivacy = ( state, siteId, domain ) => {

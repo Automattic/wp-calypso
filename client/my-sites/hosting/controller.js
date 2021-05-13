@@ -9,13 +9,13 @@ import page from 'page';
  */
 import Hosting from './main';
 import HostingActivate from './hosting-activate';
-import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { fetchSitePlans } from 'state/sites/plans/actions';
+import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 
 function waitForState( context ) {
-	return new Promise( resolve => {
+	return new Promise( ( resolve ) => {
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
 
@@ -46,7 +46,7 @@ export async function handleHostingPanelRedirect( context, next ) {
 		return;
 	}
 
-	page.redirect( `/stats/day/${ context.params.siteId || '' }` );
+	page.redirect( '/hosting-config' );
 }
 
 export function layout( context, next ) {

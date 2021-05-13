@@ -1,30 +1,35 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/active-promotions/init';
+
+/**
  * Return WordPress activePromotions getting from state object
  *
- * @param {Object} state - current state object
- * @return {Array} WordPress activePromotions
+ * @param {object} state - current state object
+ * @returns {Array} WordPress activePromotions
  */
-export const getActivePromotions = state => {
+export function getActivePromotions( state ) {
 	return state.activePromotions.items;
-};
+}
 
 /**
  * Return if promotion is active
  *
- * @param {Object} state - current state object
+ * @param {object} state - current state object
  * @param {string} name - promotion name
- * @return {bool} Is promotion active?
+ * @returns {boolean} Is promotion active?
  */
-export const hasActivePromotion = ( state, name ) => {
+export function hasActivePromotion( state, name ) {
 	return getActivePromotions( state ).indexOf( name ) !== -1;
-};
+}
 
 /**
  * Return requesting state
  *
- * @param {Object} state - current state object
- * @return {Boolean} is activePromotions requesting?
+ * @param {object} state - current state object
+ * @returns {boolean} is activePromotions requesting?
  */
-export const isRequestingActivePromotions = state => {
+export function isRequestingActivePromotions( state ) {
 	return state.activePromotions.requesting;
-};
+}

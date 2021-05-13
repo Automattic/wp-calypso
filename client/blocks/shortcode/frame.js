@@ -10,12 +10,10 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
-import ResizableIframe from 'components/resizable-iframe';
+import generateEmbedFrameMarkup from 'calypso/lib/embed-frame-markup';
+import ResizableIframe from 'calypso/components/resizable-iframe';
 
-export default class extends React.Component {
-	static displayName = 'ShortcodeFrame';
-
+export default class ShortcodeFrame extends React.Component {
 	static propTypes = {
 		body: PropTypes.string,
 		scripts: PropTypes.object,
@@ -48,13 +46,13 @@ export default class extends React.Component {
 		return nextState.html !== this.state.html;
 	}
 
-	updateHtmlState = props => {
+	updateHtmlState = ( props ) => {
 		this.setState( {
 			html: generateEmbedFrameMarkup( props ),
 		} );
 	};
 
-	onFrameLoad = event => {
+	onFrameLoad = ( event ) => {
 		// Transmit message to assign frame markup
 		event.target.contentWindow.postMessage(
 			JSON.stringify( {

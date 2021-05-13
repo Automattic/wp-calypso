@@ -6,48 +6,63 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { overSome } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
 	isWordadsInstantActivationEligible,
+	isWordadsInstantActivationEligibleButNotOwner,
 	canUpgradeToUseWordAds,
 	canAccessAds,
-} from 'lib/ads/utils';
-import { isPremium, isBusiness, isEcommerce } from 'lib/products-values';
-import FeatureExample from 'components/feature-example';
-import FormButton from 'components/forms/form-button';
+} from 'calypso/lib/ads/utils';
+import FeatureExample from 'calypso/components/feature-example';
+import FormButton from 'calypso/components/forms/form-button';
 import { Card } from '@automattic/components';
-import EmptyContent from 'components/empty-content';
-import { requestWordAdsApproval, dismissWordAdsError } from 'state/wordads/approve/actions';
+import EmptyContent from 'calypso/components/empty-content';
+import { requestWordAdsApproval, dismissWordAdsError } from 'calypso/state/wordads/approve/actions';
 import {
 	isRequestingWordAdsApprovalForSite,
 	getWordAdsErrorForSite,
 	getWordAdsSuccessForSite,
-} from 'state/wordads/approve/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import QueryWordadsStatus from 'components/data/query-wordads-status';
-import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded';
-import { PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { isSiteWordadsUnsafe } from 'state/wordads/status/selectors';
-import { wordadsUnsafeValues } from 'state/wordads/status/schema';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import ActionCard from 'components/action-card';
+} from 'calypso/state/wordads/approve/selectors';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import {
+	PLAN_PREMIUM,
+	PLAN_JETPACK_SECURITY_DAILY,
+	FEATURE_WORDADS_INSTANT,
+	isPremium,
+	isBusiness,
+	isEcommerce,
+	isSecurityDaily,
+} from '@automattic/calypso-products';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';
+import { wordadsUnsafeValues } from 'calypso/state/wordads/status/schema';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import ActionCard from 'calypso/components/action-card';
 
 /**
  * Image dependencies
  */
-import wordAdsImage from 'assets/images/illustrations/dotcom-wordads.svg';
+import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import 'my-sites/stats/stats-module/style.scss';
+import 'calypso/my-sites/stats/stats-module/style.scss';
+
+const isEligbleJetpackPlan = overSome( isPremium, isBusiness, isEcommerce, isSecurityDaily );
 
 class AdsWrapper extends Component {
 	static propTypes = {
@@ -130,7 +145,7 @@ class AdsWrapper extends Component {
 						classname="ads__activate-notice"
 						status="is-warning"
 						showDismiss={ false }
-						text={ translate( 'Your site cannot participate in WordAds program.' ) }
+						text={ translate( 'Your site cannot participate in the WordAds program.' ) }
 					/>
 				) }
 
@@ -151,7 +166,7 @@ class AdsWrapper extends Component {
 						</div>
 					</div>
 					<ActionCard
-						headerText={ 'Start Earning Income from Your Site' }
+						headerText={ translate( 'Start Earning Income from Your Site' ) }
 						mainText={ translate(
 							'WordAds is the leading advertising optimization platform for WordPress sites, ' +
 								'where the internet’s top ad suppliers bid against each other to deliver their ads to your site, maximizing your revenue.' +
@@ -166,7 +181,7 @@ class AdsWrapper extends Component {
 								},
 							}
 						) }
-						buttonText={ 'Learn More on WordAds.co' }
+						buttonText={ translate( 'Learn More on WordAds.co' ) }
 						buttonIcon="external"
 						buttonPrimary={ false }
 						buttonHref="https://wordads.co"
@@ -189,17 +204,36 @@ class AdsWrapper extends Component {
 		);
 	}
 
-	renderUpsell() {
-		const { translate } = this.props;
+	renderOwnerRequiredMessage() {
 		return (
-			<UpgradeNudgeExpanded
+			<EmptyContent
+				illustration="/calypso/images/illustrations/wordAds.svg"
+				illustrationWidth={ 400 }
+				title={ this.props.translate( 'Only site owners are eligible to activate WordAds.' ) }
+			/>
+		);
+	}
+
+	renderUpsell() {
+		const { siteSlug, translate } = this.props;
+		const bannerURL = `/checkout/${ siteSlug }/premium`;
+		return (
+			<UpsellNudge
+				callToAction={ translate( 'Upgrade' ) }
 				plan={ PLAN_PREMIUM }
 				title={ translate( 'Upgrade to the Premium plan and start earning' ) }
-				subtitle={ translate(
+				description={ translate(
 					"By upgrading to the Premium plan, you'll be able to monetize your site through the WordAds program."
 				) }
-				highlightedFeature={ FEATURE_WORDADS_INSTANT }
-				benefits={ [
+				feature={ FEATURE_WORDADS_INSTANT }
+				href={ bannerURL }
+				showIcon
+				event="calypso_upgrade_nudge_impression"
+				tracksImpressionName="calypso_upgrade_nudge_impression"
+				tracksImpressionProperties={ { cta_name: undefined, cta_size: 'regular' } }
+				tracksClickName="calypso_upgrade_nudge_cta_click"
+				tracksClickProperties={ { cta_name: undefined, cta_size: 'regular' } }
+				list={ [
 					translate( 'Instantly enroll into the WordAds network.' ),
 					translate( 'Earn money from your content and traffic.' ),
 				] }
@@ -208,35 +242,34 @@ class AdsWrapper extends Component {
 	}
 
 	renderjetpackUpsell() {
-		const { translate } = this.props;
+		const { siteSlug, translate } = this.props;
+		const bannerURL = `/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_DAILY }`;
 		return (
-			<UpgradeNudgeExpanded
-				plan={ PLAN_JETPACK_PREMIUM }
-				title={ translate( 'Upgrade to the Premium plan and start earning' ) }
-				subtitle={ translate(
-					"By upgrading to the Premium plan, you'll be able to monetize your site through the Jetpack Ads program."
+			<UpsellNudge
+				callToAction={ translate( 'Upgrade' ) }
+				plan={ PLAN_JETPACK_SECURITY_DAILY }
+				title={ translate( 'Upgrade and start earning' ) }
+				description={ translate(
+					'Make money each time someone visits your site by displaying ads on all your posts and pages.'
 				) }
-				highlightedFeature={ FEATURE_WORDADS_INSTANT }
-				benefits={ [
-					translate( 'Instantly enroll into the Jetpack Ads network.' ),
-					translate( 'Earn money from your content and traffic.' ),
-				] }
+				href={ bannerURL }
+				feature={ FEATURE_WORDADS_INSTANT }
+				showIcon
+				event="calypso_upgrade_nudge_impression"
+				tracksImpressionName="calypso_upgrade_nudge_impression"
+				tracksClickName="calypso_upgrade_nudge_click"
 			/>
 		);
 	}
 
 	render() {
 		const { site, translate } = this.props;
-		const jetpackPremium =
-			site.jetpack &&
-			( isPremium( site.plan ) || isBusiness( site.plan ) || isEcommerce( site.plan ) );
+		const jetpackPremium = site.jetpack && isEligbleJetpackPlan( site.plan );
 
 		let component = this.props.children;
 		let notice = null;
 
-		if ( ! canAccessAds( site ) ) {
-			component = this.renderEmptyContent();
-		} else if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
+		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
 			notice = (
 				<Notice status="is-success" showDismiss={ false }>
 					{ translate( 'You have joined the WordAds program. Please review these settings:' ) }
@@ -244,12 +277,14 @@ class AdsWrapper extends Component {
 			);
 		} else if ( ! site.options.wordads && isWordadsInstantActivationEligible( site ) ) {
 			component = this.renderInstantActivationToggle( component );
-		} else if ( ! canAccessAds( site ) ) {
-			component = this.renderEmptyContent();
+		} else if ( ! site.options.wordads && isWordadsInstantActivationEligibleButNotOwner( site ) ) {
+			component = this.renderOwnerRequiredMessage( component );
 		} else if ( canUpgradeToUseWordAds( site ) && site.jetpack && ! jetpackPremium ) {
 			component = this.renderjetpackUpsell();
 		} else if ( canUpgradeToUseWordAds( site ) ) {
 			component = this.renderUpsell();
+		} else if ( ! canAccessAds( site ) ) {
+			component = this.renderEmptyContent();
 		} else if ( ! ( site.options.wordads || jetpackPremium ) ) {
 			component = null;
 		}
@@ -263,7 +298,7 @@ class AdsWrapper extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	return {

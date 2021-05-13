@@ -10,25 +10,27 @@ import { flowRight, get, pick } from 'lodash';
  * Internal dependencies
  */
 import wrapSettingsForm from './wrap-settings-form';
-import config from 'config';
+import config from '@automattic/calypso-config';
 import PressThis from './press-this';
-import QueryTaxonomies from 'components/data/query-taxonomies';
+import QueryTaxonomies from 'calypso/components/data/query-taxonomies';
 import TaxonomyCard from './taxonomies/taxonomy-card';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestPostTypes } from 'state/post-types/actions';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { requestPostTypes } from 'calypso/state/post-types/actions';
 import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import FeedSettings from 'my-sites/site-settings/feed-settings';
-import PodcastingLink from 'my-sites/site-settings/podcasting-details/link';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import FeedSettings from 'calypso/my-sites/site-settings/feed-settings';
+import PodcastingLink from 'calypso/my-sites/site-settings/podcasting-details/link';
 import Masterbar from './masterbar';
 import MediaSettingsWriting from './media-settings-writing';
 import ThemeEnhancements from './theme-enhancements';
 import Widgets from './widgets';
 import PublishingTools from './publishing-tools';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
 
 class SiteSettingsFormWriting extends Component {
 	isMobile() {
@@ -55,6 +57,7 @@ class SiteSettingsFormWriting extends Component {
 			siteIsJetpack,
 			translate,
 			updateFields,
+			showAdvancedDashboard,
 		} = this.props;
 
 		return (
@@ -63,13 +66,16 @@ class SiteSettingsFormWriting extends Component {
 				onSubmit={ handleSubmitForm }
 				className="site-settings__writing-settings"
 			>
-				{ config.isEnabled( 'manage/site-settings/categories' ) && (
-					<div className="site-settings__taxonomies">
-						<QueryTaxonomies siteId={ siteId } postType="post" />
-						<TaxonomyCard taxonomy="category" postType="post" />
-						<TaxonomyCard taxonomy="post_tag" postType="post" />
-					</div>
-				) }
+				{
+					// Only show taxonomy management for non-advanced dashboard user setting
+					config.isEnabled( 'manage/site-settings/categories' ) && ! showAdvancedDashboard && (
+						<div className="site-settings__taxonomies">
+							<QueryTaxonomies siteId={ siteId } postType="post" />
+							<TaxonomyCard taxonomy="category" postType="post" />
+							<TaxonomyCard taxonomy="post_tag" postType="post" />
+						</div>
+					)
+				}
 
 				<SettingsSectionHeader
 					disabled={ isRequestingSettings || isSavingSettings }
@@ -116,7 +122,7 @@ class SiteSettingsFormWriting extends Component {
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Content Types' ) }
+					title={ translate( 'Content types' ) }
 				/>
 				<CustomContentTypes
 					handleAutosavingToggle={ handleAutosavingToggle }
@@ -190,11 +196,14 @@ class SiteSettingsFormWriting extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
 		const siteIsAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
 		const isPodcastingSupported = ! siteIsJetpack || siteIsAutomatedTransfer;
+		const isNavUnification = isNavUnificationEnabled( state );
+		const showAdvancedDashboard =
+			isNavUnification && getUserSettings( state )?.calypso_preferences?.linkDestination;
 
 		return {
 			siteIsJetpack,
@@ -204,6 +213,7 @@ const connectComponent = connect(
 				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
 				! siteIsAutomatedTransfer,
 			isPodcastingSupported,
+			showAdvancedDashboard,
 		};
 	},
 	{ requestPostTypes },
@@ -211,7 +221,7 @@ const connectComponent = connect(
 	{ pure: false }
 );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	const formSettings = pick( settings, [
 		'posts_per_page',
 		'posts_per_rss',

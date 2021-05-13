@@ -1,0 +1,147 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+@import '~@automattic/onboarding/styles/mixins';
+@import '~@automattic/typography/styles/variables';
+@import '../variables';
+
+// Used to "counter" the negative margin set on the container, while allowing the
+// table to scroll horizontally in case it doesn't fit in the viewport.
+@mixin plans-grid-edge2edge-padding {
+	padding-left: $onboarding-block-margin-mobile;
+	padding-right: $onboarding-block-margin-mobile;
+
+	@include break-small {
+		padding-left: $onboarding-block-margin-small;
+		padding-right: $onboarding-block-margin-small;
+	}
+
+	@include break-medium {
+		padding-left: $onboarding-block-margin-medium;
+		padding-right: $onboarding-block-margin-medium;
+	}
+
+	@media ( min-width: $plans-grid-max-page-width ) {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+.plans-grid__details-heading {
+	margin-bottom: 20px;
+}
+
+.plans-details__table {
+	@include plans-grid-edge2edge-padding;
+
+	width: 100%;
+	border-spacing: 0;
+
+	th,
+	td {
+		padding: 13px 24px;
+
+		&:first-child {
+			padding-left: 0;
+			width: 20%;
+
+			@include break-mobile {
+				width: 40%;
+			}
+		}
+
+		&:not( :first-child ) {
+			white-space: nowrap;
+		}
+	}
+
+	// TODO: Deal with a11y later.
+	.hidden {
+		display: none;
+	}
+}
+
+.plans-details__header-row {
+	th {
+		font-weight: 600;
+		font-size: $font-body-small;
+		line-height: 20px;
+		text-transform: uppercase;
+		color: var( --studio-gray-20 );
+		padding-top: 5px;
+		padding-bottom: 5px;
+		border-bottom: 1px solid #eaeaeb;
+		text-align: left;
+	}
+
+	thead & {
+		th:not( :first-child ) {
+			text-align: center;
+		}
+	}
+}
+
+.plans-details__feature-row {
+	th,
+	td {
+		font-size: $font-body-small;
+		font-weight: normal;
+		line-height: 17px;
+		letter-spacing: 0.2px;
+		border-bottom: 1px solid #eaeaeb;
+		vertical-align: middle;
+	}
+
+	th {
+		text-align: left;
+	}
+
+	td {
+		text-align: center;
+	}
+}
+
+.plans-details__placeholder {
+	@include onboarding-placeholder();
+	display: inline-block;
+	width: 64px;
+
+	&--narrow {
+		width: 32px;
+	}
+
+	&--wide {
+		width: 96px;
+	}
+}
+
+.plans-details__select-button.components-button {
+	height: 36px;
+	padding: 0 18px;
+
+	@include break-small {
+		height: 40px;
+		padding: 0 24px;
+	}
+}
+
+.plans-details__feature-annual-nudge {
+	display: block;
+	text-transform: uppercase;
+	font-size: 10px; /* stylelint-disable-line scales/font-size */
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	line-height: 1;
+	margin-bottom: 6px;
+
+	.plans-details__feature-row--enabled & {
+		color: var( --studio-green-60 );
+	}
+
+	.plans-details__feature-row--disabled & {
+		color: var( --studio-orange-40 );
+	}
+
+	.plans-details__feature-row--disabled & + span {
+		text-decoration: line-through;
+	}
+}

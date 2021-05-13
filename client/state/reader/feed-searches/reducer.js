@@ -6,8 +6,8 @@ import { uniqBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
-import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
+import { READER_FEED_SEARCH_RECEIVE } from 'calypso/state/reader/action-types';
 
 /**
  * Tracks mappings between queries --> feed results
@@ -23,20 +23,17 @@ import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
 	}
  *
  * @param  {Array} state  Current state
- * @param  {Object} action Action payload
- * @return {Array}        Updated state
+ * @param  {object} action Action payload
+ * @returns {Array}        Updated state
  */
-export const items = keyedReducer(
-	'queryKey',
-	withoutPersistence( ( state = null, action ) => {
-		switch ( action.type ) {
-			case READER_FEED_SEARCH_RECEIVE:
-				return uniqBy( ( state || [] ).concat( action.payload.feeds ), 'feed_URL' );
-		}
+export const items = keyedReducer( 'queryKey', ( state = null, action ) => {
+	switch ( action.type ) {
+		case READER_FEED_SEARCH_RECEIVE:
+			return uniqBy( ( state || [] ).concat( action.payload.feeds ), 'feed_URL' );
+	}
 
-		return state;
-	} )
-);
+	return state;
+} );
 
 /**
  * Tracks mappings between queries --> num results
@@ -54,20 +51,17 @@ export const items = keyedReducer(
 	}
  *
  * @param  {Array}  state  Current state
- * @param  {Object} action Action payload
- * @return {Array}         Updated state
+ * @param  {object} action Action payload
+ * @returns {Array}         Updated state
  */
-export const total = keyedReducer(
-	'queryKey',
-	withoutPersistence( ( state = null, action ) => {
-		switch ( action.type ) {
-			case READER_FEED_SEARCH_RECEIVE:
-				return action.payload.total;
-		}
+export const total = keyedReducer( 'queryKey', ( state = null, action ) => {
+	switch ( action.type ) {
+		case READER_FEED_SEARCH_RECEIVE:
+			return action.payload.total;
+	}
 
-		return state;
-	} )
-);
+	return state;
+} );
 
 export default combineReducers( {
 	items,

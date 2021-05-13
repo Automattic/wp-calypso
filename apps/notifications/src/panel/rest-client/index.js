@@ -1,8 +1,11 @@
 /**
- * Module dependencies.
+ * External dependencies
  */
 import { difference, get, pick, property, range } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import { store } from '../state';
 import actions from '../state/actions';
 
@@ -54,12 +57,9 @@ function main() {
 		} else if ( this.subscribeTry === this.subscribeTries ) {
 			const sub_retry_ms = 120000;
 			debug( 'main: polling until next subscribe attempt', 'sub_retry_ms =', sub_retry_ms );
-			setTimeout(
-				function() {
-					this.subscribeTry = 0;
-				}.bind( this ),
-				sub_retry_ms
-			);
+			setTimeout( () => {
+				this.subscribeTry = 0;
+			}, sub_retry_ms );
 		}
 		this.subscribeTry++;
 	}
@@ -221,7 +221,7 @@ function getNotes() {
 		// Store id/hash pairs for now until properly reduxified
 		// this is used as a network optimization to quickly determine
 		// changes without downloading all the data
-		this.noteList = data.notes.map( note => pick( note, [ 'id', 'note_hash' ] ) );
+		this.noteList = data.notes.map( ( note ) => pick( note, [ 'id', 'note_hash' ] ) );
 
 		this.updateLastSeenTime( Number( data.last_seen_time ) );
 		if ( parameters.number === settings.max_limit ) {
@@ -313,14 +313,15 @@ function getNotesList() {
 function ready() {
 	const notes = getAllNotes( store.getState() );
 
-	const timestamps = notes
-		.map( property( 'timestamp' ) )
-		.map( timestamp => Date.parse( timestamp ) / 1000 );
+	let newNotes = notes.filter(
+		( note ) => Date.parse( note.timestamp ) / 1000 > this.lastSeenTime
+	);
 
-	let newNoteCount = timestamps.filter( time => time > this.lastSeenTime ).length;
+	let newNoteCount = newNotes.length;
 
 	if ( ! this.firstRender && this.lastSeenTime === 0 ) {
 		newNoteCount = 0;
+		newNotes = [];
 	}
 
 	const latestType = get( notes.slice( -1 )[ 0 ], 'type', null );
@@ -333,7 +334,7 @@ function ready() {
 /** @type {RegExp} matches keys which may no longer need to exist */
 const obsoleteKeyPattern = /^(note_read_status|reply)_(\d+)/;
 
-const safelyRemoveKey = key => {
+const safelyRemoveKey = ( key ) => {
 	try {
 		localStorage.removeItem( key );
 	} catch ( e ) {}
@@ -341,7 +342,7 @@ const safelyRemoveKey = key => {
 
 const getLocalKeys = () => {
 	try {
-		return range( localStorage.length ).map( index => localStorage.key( index ) );
+		return range( localStorage.length ).map( ( index ) => localStorage.key( index ) );
 	} catch ( e ) {
 		return [];
 	}
@@ -352,8 +353,8 @@ function cleanupLocalCache() {
 	const currentNoteIds = notes.map( property( 'id' ) );
 
 	getLocalKeys()
-		.map( key => obsoleteKeyPattern.exec( key ) )
-		.filter( match => match && ! currentNoteIds.includes( match[ 1 ] ) )
+		.map( ( key ) => obsoleteKeyPattern.exec( key ) )
+		.filter( ( match ) => match && ! currentNoteIds.includes( match[ 1 ] ) )
 		.forEach( safelyRemoveKey );
 }
 
@@ -362,9 +363,9 @@ function cleanupLocalCache() {
  * Advance this.lastSeenTime to proposedTime or the latest visible note time.
  * If the timestamp comes from a note, update the remote database.
  *
- * @param {Number} proposedTime A proposed update to our lastSeenTime timestamp
- * @param {Boolean} fromStorage Whether this call is from handleStorageEvent
- * @returns {Boolean} whether or not we will update our lastSeenTime value
+ * @param {number} proposedTime A proposed update to our lastSeenTime timestamp
+ * @param {boolean} fromStorage Whether this call is from handleStorageEvent
+ * @returns {boolean} whether or not we will update our lastSeenTime value
  */
 function updateLastSeenTime( proposedTime, fromStorage ) {
 	let fromNote = false;
@@ -440,6 +441,7 @@ function refreshNotes() {
 	if ( this.subscribed ) {
 		return;
 	}
+	debug( 'Refreshing notes...' );
 
 	getNotesList.call( this );
 }
@@ -498,6 +500,24 @@ function setVisibility( { isShowing, isVisible } ) {
 		this.updateLastSeenTime( 0 );
 		this.main();
 	}
+}
+
+// Persists the latest note timestamp sent to the Desktop app.
+function setlatestTimestampSeen( timestamp ) {
+	const parsedTimestamp = Date.parse( timestamp );
+	const latestTimestamp = localStorage.getItem( 'desktop_latest_timestamp_seen' ) || 0;
+
+	if ( parsedTimestamp > latestTimestamp ) {
+		debug( 'Update desktop_latest_timestamp_seen: ', parsedTimestamp );
+
+		try {
+			localStorage.setItem( 'desktop_latest_timestamp_seen', parsedTimestamp );
+			return true;
+		} catch ( e ) {
+			debug( 'Failed to set desktop_latest_timestamp_seen: ', e.message );
+		}
+	}
+	return false;
 }
 
 Client.prototype.main = main;

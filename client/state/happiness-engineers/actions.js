@@ -1,21 +1,22 @@
 /**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	HAPPINESS_ENGINEERS_FETCH,
 	HAPPINESS_ENGINEERS_RECEIVE,
 	HAPPINESS_ENGINEERS_FETCH_FAILURE,
 	HAPPINESS_ENGINEERS_FETCH_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/happiness-engineers/init';
 
 /**
  * Returns an action object used in signalling that a list of HEs
  * has been received.
  *
- * @param  {Object[]} happinessEngineers Array of template objects
- * @return {Object}                      Action object
+ * @param  {object[]} happinessEngineers Array of template objects
+ * @returns {object}                      Action object
  */
 export function receiveHappinessEngineers( happinessEngineers ) {
 	return {
@@ -27,10 +28,10 @@ export function receiveHappinessEngineers( happinessEngineers ) {
 /**
  * Returns a function which, when invoked, triggers a network request to fetch HEs.
  *
- * @return {Function} Action thunk
+ * @returns {Function} Action thunk
  */
 export function fetchHappinessEngineers() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: HAPPINESS_ENGINEERS_FETCH,
 		} );
@@ -38,13 +39,13 @@ export function fetchHappinessEngineers() {
 		return wpcom
 			.undocumented()
 			.getHappinessEngineers()
-			.then( happinessEngineers => {
+			.then( ( happinessEngineers ) => {
 				dispatch( receiveHappinessEngineers( happinessEngineers ) );
 				dispatch( {
 					type: HAPPINESS_ENGINEERS_FETCH_SUCCESS,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: HAPPINESS_ENGINEERS_FETCH_FAILURE,
 					error,

@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 export default function DefaultTemplate( {
 	id,
@@ -23,7 +23,7 @@ export default function DefaultTemplate( {
 	return (
 		<>
 			{ trackImpression && trackImpression() }
-			<Banner
+			<UpsellNudge
 				callToAction={ CTA.message }
 				title={ message }
 				description={ description }
@@ -34,7 +34,10 @@ export default function DefaultTemplate( {
 				onClick={ onClick }
 				event={ get( tracks, [ 'click', 'name' ] ) || `jitm_nudge_click_${ id }` }
 				href={ CTA.link }
+				horizontal
 				target={ '_blank' }
+				showIcon={ true }
+				forceDisplay
 			/>
 		</>
 	);

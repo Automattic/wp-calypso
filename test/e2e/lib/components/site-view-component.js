@@ -19,7 +19,7 @@ export default class SiteViewComponent extends AsyncBaseContainer {
 
 	async isWebPreviewPresent() {
 		await this.driver.switchTo().defaultContent();
-		return await driverHelper.isElementPresent(
+		return await driverHelper.isElementLocated(
 			this.driver,
 			by.css( '.main .web-preview__external' )
 		);
@@ -27,7 +27,7 @@ export default class SiteViewComponent extends AsyncBaseContainer {
 
 	async isOpenInNewWindowButtonPresent() {
 		await this.driver.switchTo().defaultContent();
-		return await driverHelper.isElementPresent(
+		return await driverHelper.isElementLocated(
 			this.driver,
 			by.css( '.main .web-preview__toolbar .web-preview__external' )
 		);
@@ -35,7 +35,7 @@ export default class SiteViewComponent extends AsyncBaseContainer {
 
 	async isSitePresent() {
 		await SiteViewComponent.switchToIFrame( this.driver );
-		return await driverHelper.isElementPresent( this.driver, by.css( 'body.home' ) );
+		return await driverHelper.isElementLocated( this.driver, by.css( 'body.home' ) );
 	}
 
 	async selectSearchAndSocialPreview() {
@@ -56,15 +56,15 @@ export default class SiteViewComponent extends AsyncBaseContainer {
 	}
 
 	static async switchToIFrame( driver ) {
-		const iFrameSelector = by.css( '.web-preview__frame' );
+		const iFrameLocator = by.css( '.web-preview__frame' );
 		const explicitWaitMS = config.get( 'explicitWaitMS' );
 		driver.switchTo().defaultContent();
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			driver,
 			by.css( '.web-preview__inner.is-loaded' )
 		);
 		return await driver.wait(
-			until.ableToSwitchToFrame( iFrameSelector ),
+			until.ableToSwitchToFrame( iFrameLocator ),
 			explicitWaitMS,
 			'Could not switch to web preview iFrame'
 		);

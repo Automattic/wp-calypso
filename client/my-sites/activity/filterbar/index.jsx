@@ -1,22 +1,23 @@
 /**
  * External dependencies
  */
+import { isWithinBreakpoint } from '@automattic/viewport';
 import React, { Component } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
+
 /**
  * Internal dependencies
  */
-import BackButton from 'components/back-button';
+import BackButton from 'calypso/components/back-button';
 import { Button } from '@automattic/components';
 import DateRangeSelector from './date-range-selector';
 import ActionTypeSelector from './action-type-selector';
-import { updateFilter } from 'state/activity-log/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { isWithinBreakpoint } from 'lib/viewport';
-import getPreviousRoute from 'state/selectors/get-previous-route';
+import { updateFilter } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 
 /**
  * Style dependencies
@@ -90,7 +91,7 @@ export class Filterbar extends Component {
 		}
 	};
 
-	isEmptyFilter = filter => {
+	isEmptyFilter = ( filter ) => {
 		if ( ! filter ) {
 			return true;
 		}
@@ -150,12 +151,12 @@ export class Filterbar extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	previousRoute: getPreviousRoute( state ),
 } );
 
-const mapDispatchToProps = dispatch => ( {
-	resetFilters: siteId =>
+const mapDispatchToProps = ( dispatch ) => ( {
+	resetFilters: ( siteId ) =>
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_filterbar_reset' ),

@@ -7,7 +7,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Timezone from 'components/timezone';
+import Timezone from 'calypso/components/timezone';
 import { Card } from '@automattic/components';
 
 export default class TimezoneExample extends PureComponent {
@@ -17,7 +17,7 @@ export default class TimezoneExample extends PureComponent {
 		timezone: 'America/Argentina/La_Rioja',
 	};
 
-	onTimezoneSelect = timezone => {
+	onTimezoneSelect = ( timezone ) => {
 		this.setState( { timezone } );
 	};
 

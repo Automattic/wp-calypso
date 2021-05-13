@@ -10,15 +10,15 @@ import PropTypes from 'prop-types';
  * Internal Dependencies
  */
 import { Card } from '@automattic/components';
-import ActionCard from 'components/action-card';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
+import ActionCard from 'calypso/components/action-card';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
 import {
 	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
 	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
 	CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
 	CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
-} from 'me/concierge/constants';
+} from 'calypso/me/concierge/constants';
 
 /**
  * Style dependencies
@@ -55,7 +55,11 @@ class ConciergeBanner extends Component {
 	getBannerContent() {
 		const { bannerType, translate } = this.props;
 
-		let headerText, mainText, buttonText, buttonHref, illustrationUrl;
+		let headerText;
+		let mainText;
+		let buttonText;
+		let buttonHref;
+		let illustrationUrl;
 
 		switch ( bannerType ) {
 			case CONCIERGE_HAS_UPCOMING_APPOINTMENT:
@@ -75,27 +79,25 @@ class ConciergeBanner extends Component {
 			case CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION:
 				headerText = translate( 'Looking for Expert Help?' );
 				mainText = translate(
-					'Get 30 minutes dedicated to the success of your site. Schedule your free 1-1 Quick Start Session with a Happiness Engineer!',
+					'Get %(durationInMinutes)d minutes dedicated to the success of your site. Schedule your free 1-1 Quick Start Session with a Happiness Engineer!',
 					{
 						comment:
 							'Quick Start Session is a one-on-one video session between the user and our support staff.',
+						args: { durationInMinutes: 30 },
 					}
 				);
-				buttonText = translate( 'Schedule Now' );
+				buttonText = translate( 'Schedule now' );
 				buttonHref = '/me/concierge';
 				illustrationUrl = conciergeImage;
 				break;
 
 			case CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION:
 				headerText = translate( 'Our experts are waiting to help you' );
-				mainText = translate(
-					'Schedule your 45-minute 1-1 Quick Start Session with a Happiness Engineer!',
-					{
-						comment:
-							'Quick Start Session is a one-on-one video session between the user and our support staff.',
-					}
-				);
-				buttonText = translate( 'Schedule Now' );
+				mainText = translate( 'Schedule your 1-1 Quick Start Session with a Happiness Engineer!', {
+					comment:
+						'Quick Start Session is a one-on-one video session between the user and our support staff.',
+				} );
+				buttonText = translate( 'Schedule now' );
 				buttonHref = '/me/concierge';
 				illustrationUrl = conciergeImage;
 				break;
@@ -103,13 +105,14 @@ class ConciergeBanner extends Component {
 			case CONCIERGE_SUGGEST_PURCHASE_CONCIERGE:
 				headerText = translate( 'Need an expert by your side?' );
 				mainText = translate(
-					'We offer one-on-one Quick Start sessions dedicated to your site’s success. Click the button to learn how we can help you during these 45 minute calls.',
+					'We offer one-on-one Quick Start sessions dedicated to your site’s success. Click the button to learn how we can help you during these %(durationInMinutes)d minute calls.',
 					{
 						comment:
 							'Quick Start Session is a one-on-one video session between the user and our support staff.',
+						args: { durationInMinutes: 30 },
 					}
 				);
-				buttonText = translate( 'Learn More' );
+				buttonText = translate( 'Learn more' );
 				buttonHref = '/checkout/offer-quickstart-session';
 				illustrationUrl = '/calypso/images/illustrations/illustration-start.svg';
 				break;
@@ -119,9 +122,9 @@ class ConciergeBanner extends Component {
 	}
 
 	render() {
-		const { bannerType } = this.props;
+		const { bannerType, showPlaceholder } = this.props;
 
-		if ( 'placeholder' === bannerType ) {
+		if ( showPlaceholder ) {
 			return this.placeholder();
 		}
 

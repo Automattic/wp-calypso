@@ -36,5 +36,8 @@ export const authorizeQueryDataSchema = {
 		site_url: { type: 'string' },
 		state: { type: 'string' },
 		user_email: { type: 'string' },
+		woodna_service_name: { type: 'string' },
+		woodna_help_url: { type: 'string' },
+		skip_user: { type: 'string' }, // '1' if true
 	},
 };

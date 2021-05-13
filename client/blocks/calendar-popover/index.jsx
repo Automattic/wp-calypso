@@ -5,20 +5,22 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop, pick } from 'lodash';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import Popover from 'components/popover';
-import PostSchedule from 'components/post-schedule';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import Popover from 'calypso/components/popover';
+import PostSchedule from 'calypso/components/post-schedule';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class CalendarPopover extends Component {
 	static propTypes = {
@@ -57,7 +59,7 @@ class CalendarPopover extends Component {
 		date: this.props.selectedDay || null,
 	};
 
-	setDate = date => {
+	setDate = ( date ) => {
 		this.setState( { date } );
 		this.props.onDateChange( date );
 	};

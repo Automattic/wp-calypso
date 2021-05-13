@@ -14,9 +14,10 @@ import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
-	isGoogleApps,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGuidedTransfer,
-} from 'lib/products-values';
+	isTitanMail,
+} from '@automattic/calypso-products';
 
 const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases } ) => {
 	const classes = classNames( 'checkout-thank-you__features-header', {
@@ -33,11 +34,12 @@ const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedP
 
 	const shouldHideFeaturesHeading =
 		hasFailedPurchases ||
-		purchases.some( isGoogleApps ) ||
+		purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ||
 		purchases.some( isDomainRegistration ) ||
 		purchases.some( isDomainMapping ) ||
 		purchases.some( isGuidedTransfer ) ||
-		purchases.some( isDomainTransfer );
+		purchases.some( isDomainTransfer ) ||
+		purchases.some( isTitanMail );
 
 	if ( shouldHideFeaturesHeading ) {
 		return <div />;

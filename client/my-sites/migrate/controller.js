@@ -3,13 +3,13 @@
  */
 import React from 'react';
 import page from 'page';
-
+import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import SectionMigrate from 'my-sites/migrate/section-migrate';
-import getSiteId from 'state/selectors/get-site-id';
-import { isEnabled } from 'config';
+import SectionMigrate from 'calypso/my-sites/migrate/section-migrate';
+import getSiteId from 'calypso/state/selectors/get-site-id';
+import { isEnabled } from '@automattic/calypso-config';
 
 export function ensureFeatureFlag( context, next ) {
 	if ( isEnabled( 'tools/migrate' ) ) {
@@ -23,14 +23,23 @@ export function migrateSite( context, next ) {
 		const sourceSiteId =
 			context.params.sourceSiteId &&
 			getSiteId( context.store.getState(), context.params.sourceSiteId );
-		context.primary = <SectionMigrate sourceSiteId={ sourceSiteId } />;
+		context.primary = (
+			<SectionMigrate sourceSiteId={ sourceSiteId } step={ context.migrationStep } />
+		);
 		return next();
 	}
 
 	page.redirect( '/' );
 }
 
+export function setStep( migrationStep ) {
+	return ( context, next ) => {
+		context.migrationStep = migrationStep;
+		next();
+	};
+}
+
 export function setSiteSelectionHeader( context, next ) {
-	context.getSiteSelectionHeaderText = () => 'Select a site to import into';
+	context.getSiteSelectionHeaderText = () => translate( 'Select a site to import into' );
 	next();
 }

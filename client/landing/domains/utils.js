@@ -14,10 +14,7 @@ export function getMaintenanceMessageFromError( error, translate ) {
 			"Our domain management system is currently undergoing maintenance and we can't process your request right now. Please try again %(when)s.",
 			{
 				args: {
-					when: moment
-						.unix( maintenanceEndTime )
-						.locale( localeSlug )
-						.fromNow(),
+					when: moment.unix( maintenanceEndTime ).locale( localeSlug ).fromNow(),
 				},
 				comment:
 					'Where `when` is human readable time interval generated from moment.fromNow - something like "in an hour" or "in 30 minutes" and etc.',

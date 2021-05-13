@@ -1,5 +1,5 @@
 /**
- * @fileoverview Disallow using three dots in translate strings
+ * @file Disallow using three dots in translate strings
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -9,9 +9,9 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/i18n-ellipsis' ),
-	config = { env: { es6: true } }, // support for string templates
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require( '../../../lib/rules/i18n-ellipsis' );
+const config = { env: { es6: true } }; // support for string templates
+const RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
@@ -184,6 +184,7 @@ new RuleTester( config ).run( 'i18n-ellipsis', rule, {
 		{
 			code: "_x( '...', 'ellipsis' );",
 			errors: [ { message: rule.ERROR_MESSAGE } ],
+			output: "_x( '…', 'ellipsis' );",
 		},
 		{
 			code: "_n( '...', '...s', 1 );",

@@ -1,0 +1,69 @@
+.threat-item-subheader {
+	&__subheader {
+		color: var( --studio-gray-50 );
+		font-size: $font-body-small;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		margin-top: 4px;
+
+		@include breakpoint-deprecated( '>1040px' ) {
+			flex-direction: row;
+			align-items: center;
+		}
+	}
+
+	&__status {
+		white-space: nowrap;
+
+		&.is-fixed {
+			color: var( --color-success-50 );
+		}
+	}
+
+	&__status-separator {
+		display: none;
+
+		@include breakpoint-deprecated( '>1040px' ) {
+			display: inline-block;
+			background: var( --studio-gray-50 );
+			margin: 0 12px;
+			width: 4px;
+			height: 4px;
+			border-radius: 50%;
+		}
+	}
+
+	&__badge.badge {
+		line-height: 14px;
+		width: 60px;
+		margin-top: 10px;
+		letter-spacing: 1px;
+		text-align: center;
+		text-transform: uppercase;
+		border-radius: var( --jetpack-corners-soft );
+		font-weight: 600;
+		color: #fff;
+
+		&.is-fixed {
+			background-color: var( --color-success-50 );
+		}
+
+		&.is-ignored {
+			background-color: var( --studio-gray-50 );
+		}
+
+		&.is-auto-fix {
+			margin-top: 0px;
+			margin-left: 4px;
+			color: var( --color-success-50 );
+			background-color: var( --color-success-0 );
+			position: relative;
+			top: -1px;
+		}
+	}
+
+	.foldable-card__header {
+		border-bottom: 1px solid var( --studio-gray-5 );
+	}
+}

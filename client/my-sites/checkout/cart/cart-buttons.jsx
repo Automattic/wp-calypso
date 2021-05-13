@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { identity } from 'lodash';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
@@ -13,16 +11,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 export class CartButtons extends React.Component {
 	static propTypes = {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		translate: PropTypes.func.isRequired,
-	};
-
-	static defaultProps = {
-		translate: identity,
 	};
 
 	render() {
@@ -37,7 +31,7 @@ export class CartButtons extends React.Component {
 		);
 	}
 
-	goToCheckout = event => {
+	goToCheckout = ( event ) => {
 		event.preventDefault();
 		this.props.recordGoogleEvent( 'Domain Search', 'Click "Checkout" Button on Popup Cart' );
 		page( '/checkout/' + this.props.selectedSite.slug );

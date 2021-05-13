@@ -1,5 +1,5 @@
 /**
- * @fileoverview Disallow the use of this.translate
+ * @file Disallow the use of this.translate
  * @author Automattic
  * @copyright 2016 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
@@ -9,8 +9,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/i18n-no-this-translate' ),
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require( '../../../lib/rules/i18n-no-this-translate' );
+const RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests

@@ -1,56 +1,74 @@
 /**
  * External dependencies
  */
-
-import { assign, filter, map, pick, sortBy, transform } from 'lodash';
+import { filter, map, pick, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { decodeEntities, parseHtml } from 'lib/formatting';
+import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
 import { sanitizeSectionContent } from './sanitize-section-content';
 
 /**
- * @param  {Object} site       Site Object
- * @param  {Object} log        Notice log Object
- * @return {Bool} True if notice matches criteria
+ * @param  {number} siteId     Site Object
+ * @param  {object} log        Notice log Object
+ * @returns {boolean} True if notice matches criteria
  */
-function isSameSiteNotice( site, log ) {
-	return site && log.site && log.site.ID === site.ID;
+function isSameSiteNotice( siteId, log ) {
+	return siteId && log.siteId && parseInt( log.siteId ) === siteId;
 }
 
 /**
- * @param  {String} pluginSlug Plugin Slug
- * @param  {Object} log        Notice log Object
- * @return {Bool} True if notice matches criteria
+ * @param  {string} pluginId Plugin ID
+ * @param  {object} log      Notice log Object
+ * @returns {boolean} True if notice matches criteria
  */
-function isSamePluginNotice( pluginSlug, log ) {
-	return pluginSlug && log.plugin && log.plugin.slug === pluginSlug;
+function isSamePluginNotice( pluginId, log ) {
+	if ( ! pluginId || ! log.pluginId ) {
+		return false;
+	}
+
+	return isSamePluginIdSlug( log.pluginId, pluginId );
+}
+
+/**
+ * @param  {string} idOrSlug First plugin ID or slug for comparison
+ * @param  {string} slugOrId Second plugin ID or slug for comparison
+ * @returns {boolean} True if the plugin ID and slug match
+ */
+export function isSamePluginIdSlug( idOrSlug, slugOrId ) {
+	return (
+		idOrSlug === slugOrId ||
+		idOrSlug.startsWith( slugOrId + '/' ) ||
+		idOrSlug.endsWith( '/' + slugOrId ) ||
+		slugOrId.startsWith( idOrSlug + '/' ) ||
+		slugOrId.endsWith( '/' + idOrSlug )
+	);
 }
 
 /**
  * Filter function that return notices that fit a certain criteria.
  *
- * @param  {Object} site       Site Object
- * @param  {String} pluginSlug Plugin Slug
- * @param  {Object} log        Notice log Object
- * @return {Bool} True if notice matches criteria
+ * @param  {number} siteId   Site Object
+ * @param  {string} pluginId Plugin Id
+ * @param  {object} log      Notice log Object
+ * @returns {boolean} True if notice matches criteria
  */
-function filterNoticesBy( site, pluginSlug, log ) {
-	if ( ! site && ! pluginSlug ) {
+function filterNoticesBy( siteId, pluginId, log ) {
+	if ( ! siteId && ! pluginId ) {
 		return true;
 	}
-	if ( isSameSiteNotice( site, log ) && isSamePluginNotice( pluginSlug, log ) ) {
+	if ( isSameSiteNotice( siteId, log ) && isSamePluginNotice( pluginId, log ) ) {
 		return true;
-	} else if ( ! pluginSlug && isSameSiteNotice( site, log ) ) {
+	} else if ( ! pluginId && isSameSiteNotice( siteId, log ) ) {
 		return true;
-	} else if ( ! site && isSamePluginNotice( pluginSlug, log ) ) {
+	} else if ( ! siteId && isSamePluginNotice( pluginId, log ) ) {
 		return true;
 	}
 	return false;
 }
 
-export function whiteListPluginData( plugin ) {
+export function getAllowedPluginData( plugin ) {
 	return pick(
 		plugin,
 		'action_links',
@@ -103,7 +121,7 @@ export function extractScreenshots( screenshotsHtml ) {
 	if ( ! list ) {
 		return null;
 	}
-	let screenshots = map( list, function( li ) {
+	let screenshots = map( list, function ( li ) {
 		const img = li.querySelectorAll( 'img' );
 		const captionP = li.querySelectorAll( 'p' );
 
@@ -115,14 +133,14 @@ export function extractScreenshots( screenshotsHtml ) {
 		}
 	} );
 
-	screenshots = screenshots.filter( screenshot => screenshot );
+	screenshots = screenshots.filter( ( screenshot ) => screenshot );
 
 	return screenshots.length ? screenshots : null;
 }
 
 export function normalizeCompatibilityList( compatibilityList ) {
 	function splitInNumbers( version ) {
-		const splittedVersion = version.split( '.' ).map( function( versionComponent ) {
+		const splittedVersion = version.split( '.' ).map( function ( versionComponent ) {
 			return Number.parseInt( versionComponent, 10 );
 		} );
 		while ( splittedVersion.length < 3 ) {
@@ -135,7 +153,7 @@ export function normalizeCompatibilityList( compatibilityList ) {
 		1,
 		2,
 	] );
-	return sortedCompatibility.map( function( version ) {
+	return sortedCompatibility.map( function ( version ) {
 		if ( version.length && version[ version.length - 1 ] === 0 ) {
 			version.pop();
 		}
@@ -144,9 +162,9 @@ export function normalizeCompatibilityList( compatibilityList ) {
 }
 
 export function normalizePluginData( plugin, pluginData ) {
-	plugin = whiteListPluginData( assign( plugin, pluginData ) );
+	plugin = getAllowedPluginData( { ...plugin, ...pluginData } );
 
-	return transform( plugin, function( returnData, item, key ) {
+	return Object.entries( plugin ).reduce( ( returnData, [ key, item ] ) => {
 		switch ( key ) {
 			case 'short_description':
 			case 'description':
@@ -198,25 +216,27 @@ export function normalizePluginData( plugin, pluginData ) {
 			default:
 				returnData[ key ] = item;
 		}
-	} );
+
+		return returnData;
+	}, {} );
 }
 
 export function normalizePluginsList( pluginsList ) {
 	if ( ! pluginsList ) {
 		return [];
 	}
-	return map( pluginsList, pluginData => normalizePluginData( pluginData ) );
+	return map( pluginsList, ( pluginData ) => normalizePluginData( pluginData ) );
 }
 
 /**
  * Return logs that match a certain critia.
  *
- * @param  {Array} logs        List of all notices
- * @param  {Object} site       Site Object
- * @param  {String} pluginSlug Plugin Slug
+ * @param  {Array} logs      List of all notices
+ * @param  {number} siteId   Site Object
+ * @param  {string} pluginId Plugin ID
  *
- * @return {Array} Array of filtered logs that match the criteria
+ * @returns {Array} Array of filtered logs that match the criteria
  */
-export function filterNotices( logs, site, pluginSlug ) {
-	return filter( logs, filterNoticesBy.bind( this, site, pluginSlug ) );
+export function filterNotices( logs, siteId, pluginId ) {
+	return filter( logs, filterNoticesBy.bind( this, siteId, pluginId ) );
 }

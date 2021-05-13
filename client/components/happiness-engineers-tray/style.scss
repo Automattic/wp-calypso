@@ -1,0 +1,14 @@
+.happiness-engineers-tray {
+	display: flex;
+	align-items: flex-start;
+	flex-wrap: wrap;
+	height: 42px;
+	justify-content: space-between;
+	margin-bottom: 16px;
+	margin-right: -8px;
+	overflow: hidden;
+
+	.happiness-engineers-tray__gravatar {
+		margin-right: 8px;
+	}
+}

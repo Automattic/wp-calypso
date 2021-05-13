@@ -6,7 +6,7 @@ import { uniqBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { items as itemSchemas } from './schema';
 import {
 	SHARING_BUTTONS_RECEIVE,
@@ -17,17 +17,17 @@ import {
 	SHARING_BUTTONS_SAVE_FAILURE,
 	SHARING_BUTTONS_SAVE_SUCCESS,
 	SHARING_BUTTONS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The
  * state maps site ID to whether a request is in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SHARING_BUTTONS_REQUEST: {
 			const { siteId } = action;
@@ -52,17 +52,17 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the save Request status after an action has been dispatched. The
  * state maps site ID to the request status
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
-export const saveRequests = withoutPersistence( ( state = {}, action ) => {
+export const saveRequests = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SHARING_BUTTONS_SAVE: {
 			const { siteId } = action;
@@ -91,15 +91,15 @@ export const saveRequests = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID to the sharing buttons settings object.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
 	switch ( action.type ) {

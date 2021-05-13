@@ -6,15 +6,17 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
+
+import 'calypso/state/happychat/init';
 
 /**
  * Gets timeline chat events from the happychat state
  *
- * @param {Object} state - Global redux state
- * @return [{Object}] events - an array of timeline chat events
+ * @param {object} state - Global redux state
+ * @returns [{object}] events - an array of timeline chat events
  */
 export default createSelector(
-	state => state.happychat.chat.timeline,
-	state => map( state.happychat.chat.timeline, 'id' )
+	( state ) => state.happychat.chat.timeline,
+	( state ) => map( state.happychat.chat.timeline, 'id' )
 );

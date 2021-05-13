@@ -4,7 +4,12 @@
 import { get } from 'lodash';
 
 /**
- * @param {Object} state Global app state
- * @return {Object} ...
+ * Internal dependencies
  */
-export default state => get( state, 'inlineSupportArticle.isVisible', false );
+import 'calypso/state/inline-support-article/init';
+
+/**
+ * @param {object} state Global app state
+ * @returns {object} ...
+ */
+export default ( state ) => get( state, 'inlineSupportArticle.isVisible', false );

@@ -1,9 +1,9 @@
-jest.mock( 'signup/step-wrapper', () => 'step-wrapper' );
-jest.mock( 'my-sites/plan-features', () => 'plan-features' );
+jest.mock( 'calypso/signup/step-wrapper', () => 'step-wrapper' );
+jest.mock( 'calypso/my-sites/plan-features', () => 'plan-features' );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: c => c,
-	translate: s => s,
+	localize: ( c ) => c,
+	translate: ( s ) => s,
 } ) );
 
 /**
@@ -11,7 +11,6 @@ jest.mock( 'i18n-calypso', () => ( {
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,10 +35,11 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
 
+const noop = () => {};
 const props = {
-	translate: identity,
+	translate: ( string ) => string,
 	stepName: 'Step name',
 	stepSectionName: 'Step section name',
 	signupDependencies: { domainItem: null },
@@ -140,7 +140,7 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( `Should add is_store_signup to cartItem.extra when processing wp.com business and eCommerce plans (${ plan })`, () => {
 			const myProps = {
 				...tplProps,
@@ -183,7 +183,7 @@ describe( 'PlansAtomicStoreStep.onSelectPlan', () => {
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		test( `Should not add is_store_signup to cartItem.extra when processing non-wp.com non-business plan (${ plan })`, () => {
 			const cartItem = { product_slug: plan };
 			const comp = new PlansAtomicStoreStep( tplProps );

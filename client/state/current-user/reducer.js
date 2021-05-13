@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isEqual, reduce, keys, first } from 'lodash';
+import { get, isEqual, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,9 +13,15 @@ import {
 	SITES_RECEIVE,
 	PLANS_RECEIVE,
 	PRODUCTS_LIST_RECEIVE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
-import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import {
+	capabilitiesSchema,
+	currencyCodeSchema,
+	flagsSchema,
+	idSchema,
+	lasagnaSchema,
+} from './schema';
 import gravatarStatus from './gravatar-status/reducer';
 import emailVerification from './email-verification/reducer';
 
@@ -28,9 +34,9 @@ import emailVerification from './email-verification/reducer';
  *
  * This is likely caused by a server-side error or stored state corruption/auth token expiry.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const id = withSchemaValidation( idSchema, ( state = null, action ) => {
 	switch ( action.type ) {
@@ -40,6 +46,15 @@ export const id = withSchemaValidation( idSchema, ( state = null, action ) => {
 
 	return state;
 } );
+
+export const user = ( state = null, action ) => {
+	switch ( action.type ) {
+		case CURRENT_USER_RECEIVE:
+			return action.user;
+	}
+
+	return state;
+};
 
 export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
@@ -53,19 +68,15 @@ export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) =
 /**
  * Tracks the currency code of the current user
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  *
  */
 export const currencyCode = withSchemaValidation( currencyCodeSchema, ( state = null, action ) => {
 	switch ( action.type ) {
 		case PRODUCTS_LIST_RECEIVE: {
-			return get(
-				action.productsList,
-				[ first( keys( action.productsList ) ), 'currency_code' ],
-				state
-			);
+			return Object.values( action.productsList )[ 0 ]?.currency_code ?? state;
 		}
 		case PLANS_RECEIVE: {
 			return get( action.plans, [ 0, 'currency_code' ], state );
@@ -83,9 +94,9 @@ export const currencyCode = withSchemaValidation( currencyCodeSchema, ( state = 
  * The state maps site ID keys to an object of current user capabilities for
  * that site.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -114,11 +125,22 @@ export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = 
 	return state;
 } );
 
+export const lasagnaJwt = withSchemaValidation( lasagnaSchema, ( state = null, action ) => {
+	switch ( action.type ) {
+		case CURRENT_USER_RECEIVE:
+			return action.user.lasagna_jwt || null;
+	}
+
+	return state;
+} );
+
 export default combineReducers( {
 	id,
+	user,
 	currencyCode,
 	capabilities,
 	flags,
 	gravatarStatus,
 	emailVerification,
+	lasagnaJwt,
 } );

@@ -16,9 +16,44 @@ import QueryKey from './key';
  * Object key name for property used in indicating that an item is intended to
  * be removed during patched `mergeItem`.
  *
- * @type {String}
+ * @type {string}
  */
 export const DELETE_PATCH_KEY = '__DELETE';
+
+/*
+ * Construct an array of items from an array of keys and a map of key/item pairs.
+ * There is a two-level memoization cache for the `items` and `itemKeys` params.
+ * `itemKeys` can also be `null`, which means a request to return an array of all items.
+ */
+const itemsCache = new WeakMap();
+const ALL_ITEMS_KEY = [];
+
+function getItemsForKeys( items, itemKeys ) {
+	// Get the cache record for the `items` instance, construct a new one if doesn't exist yet.
+	let cacheForItems = itemsCache.get( items );
+	if ( ! cacheForItems ) {
+		cacheForItems = new WeakMap();
+		itemsCache.set( items, cacheForItems );
+	}
+
+	// `itemKeys == null` means a request for array of all items. Cache them with a special key.
+	if ( itemKeys == null ) {
+		let resultForAllKeys = cacheForItems.get( ALL_ITEMS_KEY );
+		if ( ! resultForAllKeys ) {
+			resultForAllKeys = values( items );
+			cacheForItems.set( ALL_ITEMS_KEY, resultForAllKeys );
+		}
+		return resultForAllKeys;
+	}
+
+	// compute result from `items` and `itemKeys`, cached for unique `itemKeys` instances
+	let resultForItemKeys = cacheForItems.get( itemKeys );
+	if ( ! resultForItemKeys ) {
+		resultForItemKeys = itemKeys.map( ( itemKey ) => items[ itemKey ] );
+		cacheForItems.set( itemKeys, resultForItemKeys );
+	}
+	return resultForItemKeys;
+}
 
 /**
  * QueryManager manages items which can be queried and change over time. It is
@@ -31,9 +66,9 @@ export default class QueryManager {
 	/**
 	 * Constructs a new instance of QueryManager
 	 *
-	 * @param {Object} data            Initial data
-	 * @param {Object} options         Manager options
-	 * @param {String} options.itemKey Field to key items by
+	 * @param {object} data            Initial data
+	 * @param {object} options         Manager options
+	 * @param {string} options.itemKey Field to key items by
 	 */
 	constructor( data, options ) {
 		this.data = Object.assign(
@@ -58,10 +93,10 @@ export default class QueryManager {
 	 * new. Optionally patch the item to merge, not replace. Returning
 	 * undefined indicates that item should be removed from known set.
 	 *
-	 * @param  {?Object} item        Existing item, if exists
-	 * @param  {Object}  revisedItem Incoming revision of item
-	 * @param  {Boolean} patch       Use patching application
-	 * @return {?Object}             Item to track, or undefined to omit
+	 * @param  {?object} item        Existing item, if exists
+	 * @param  {object}  revisedItem Incoming revision of item
+	 * @param  {boolean} patch       Use patching application
+	 * @returns {?object}             Item to track, or undefined to omit
 	 */
 	static mergeItem( item, revisedItem, patch = false ) {
 		if ( patch ) {
@@ -78,9 +113,9 @@ export default class QueryManager {
 	/**
 	 * Returns true if the item matches the given query, or false otherwise.
 	 *
-	 * @param  {Object}  query Query object
-	 * @param  {Object}  item  Item to consider
-	 * @return {Boolean}       Whether item matches query
+	 * @param  {object}  query Query object
+	 * @param  {object}  item  Item to consider
+	 * @returns {boolean}       Whether item matches query
 	 */
 	static matches( query, item ) {
 		return !! item;
@@ -90,10 +125,10 @@ export default class QueryManager {
 	 * A sort comparison function that defines the sort order of items under
 	 * consideration of the specified query.
 	 *
-	 * @param  {Object} query Query object
-	 * @param  {Object} itemA First item
-	 * @param  {Object} itemB Second item
-	 * @return {Number}       0 if equal, less than 0 if itemA is first,
+	 * @param  {object} query Query object
+	 * @param  {object} itemA First item
+	 * @param  {object} itemB Second item
+	 * @returns {number}       0 if equal, less than 0 if itemA is first,
 	 *                        greater than 0 if itemB is first.
 	 */
 	static compare( query, itemA, itemB ) {
@@ -112,7 +147,7 @@ export default class QueryManager {
 	 *
 	 * @param  {Array}  keys  Keys to be sorted
 	 * @param  {Array}  items Items by which to sort
-	 * @param  {Object} query Query object
+	 * @param  {object} query Query object
 	 */
 	static sort( keys, items, query ) {
 		keys.sort( ( keyA, keyB ) => {
@@ -131,8 +166,8 @@ export default class QueryManager {
 	/**
 	 * Returns a single item by key.
 	 *
-	 * @param  {String} itemKey Item key
-	 * @return {Object}         Item
+	 * @param  {string} itemKey Item key
+	 * @returns {object}         Item
 	 */
 	getItem( itemKey ) {
 		return this.data.items[ itemKey ];
@@ -143,21 +178,20 @@ export default class QueryManager {
 	 * items specific to that query, or null if no items have been received for
 	 * the query.
 	 *
-	 * @param  {?Object}       query Optional query object
-	 * @return {Object[]|null}       Items tracked, if known
+	 * @param  {?object}       query Optional query object
+	 * @returns {object[]|null}       Items tracked, if known
 	 */
 	getItems( query ) {
-		if ( ! query ) {
-			return values( this.data.items );
+		let itemKeys = null;
+		if ( query ) {
+			const queryKey = this.constructor.QueryKey.stringify( query );
+			itemKeys = this.data.queries[ queryKey ]?.itemKeys;
+			if ( ! itemKeys ) {
+				return null;
+			}
 		}
 
-		const queryKey = this.constructor.QueryKey.stringify( query );
-		const itemKeys = get( this.data.queries, [ queryKey, 'itemKeys' ] );
-		if ( ! itemKeys ) {
-			return null;
-		}
-
-		return itemKeys.map( itemKey => this.getItem( itemKey ) );
+		return getItemsForKeys( this.data.items, itemKeys );
 	}
 
 	/**
@@ -165,8 +199,8 @@ export default class QueryManager {
 	 * included in the REST API posts response. Returns null if the query is
 	 * not known.
 	 *
-	 * @param  {Object}  query Query object
-	 * @return {?Number}       Found items for query
+	 * @param  {object}  query Query object
+	 * @returns {?number}       Found items for query
 	 */
 	getFound( query ) {
 		const queryKey = this.constructor.QueryKey.stringify( query );
@@ -178,8 +212,8 @@ export default class QueryManager {
 	 * QueryManager if the tracked items have changed, or the current instance
 	 * otherwise.
 	 *
-	 * @param  {String}       itemKey Key of item to remove
-	 * @return {QueryManager}         New instance if changed, or same instance
+	 * @param  {string}       itemKey Key of item to remove
+	 * @returns {QueryManager}         New instance if changed, or same instance
 	 *                                otherwise
 	 */
 	removeItem( itemKey ) {
@@ -191,13 +225,13 @@ export default class QueryManager {
 	 * instance of QueryManager if the tracked items have changed, or the
 	 * current instance otherwise.
 	 *
-	 * @param  {String[]}     itemKeys Keys of items to remove
-	 * @return {QueryManager}          New instance if changed, or same
+	 * @param  {string[]}     itemKeys Keys of items to remove
+	 * @returns {QueryManager}          New instance if changed, or same
 	 *                                 instance otherwise
 	 */
 	removeItems( itemKeys = [] ) {
 		return this.receive(
-			itemKeys.map( itemKey => {
+			itemKeys.map( ( itemKey ) => {
 				return {
 					[ this.options.itemKey ]: itemKey,
 					[ DELETE_PATCH_KEY ]: true,
@@ -214,13 +248,13 @@ export default class QueryManager {
 	 * instance state. Instead, it returns a new instance of QueryManager if
 	 * the tracked items have been modified, or the current instance otherwise.
 	 *
-	 * @param  {(Array|Object)} items              Item(s) to be received
-	 * @param  {Object}         options            Options for receive
-	 * @param  {Boolean}        options.patch      Apply changes as partial
-	 * @param  {Object}         options.query      Query set to set or replace
-	 * @param  {Boolean}        options.mergeQuery Add to existing query set
-	 * @param  {Number}         options.found      Total found items for query
-	 * @return {QueryManager}                      New instance if changed, or
+	 * @param  {(Array|object)} items              Item(s) to be received
+	 * @param  {object}         options            Options for receive
+	 * @param  {boolean}        options.patch      Apply changes as partial
+	 * @param  {object}         options.query      Query set to set or replace
+	 * @param  {boolean}        options.mergeQuery Add to existing query set
+	 * @param  {number}         options.found      Total found items for query
+	 * @returns {QueryManager}                      New instance if changed, or
 	 *                                             same instance otherwise
 	 */
 	receive( items = [], options = {} ) {
@@ -262,10 +296,10 @@ export default class QueryManager {
 			this.data.items
 		);
 
-		let isModified = nextItems !== this.data.items,
-			nextQueries = this.data.queries,
-			isNewlyReceivedQueryKey = false,
-			receivedQueryKey;
+		let isModified = nextItems !== this.data.items;
+		let nextQueries = this.data.queries;
+		let isNewlyReceivedQueryKey = false;
+		let receivedQueryKey;
 
 		// Skip if no items have been updated, added, or removed. If query
 		// specified with received items, we may need to update queries
@@ -343,7 +377,7 @@ export default class QueryManager {
 
 				const query = this.constructor.QueryKey.parse( queryKey );
 				let needsSort = false;
-				items.forEach( receivedItem => {
+				items.forEach( ( receivedItem ) => {
 					// Find item in known data for query
 					const receivedItemKey = receivedItem[ this.options.itemKey ];
 					const updatedItem = nextItems[ receivedItemKey ];

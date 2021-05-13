@@ -1,7 +1,7 @@
 .account-close__heading {
 	margin-bottom: 16px;
-	font-size: 21px;
-	font-weight: 300;
+	font-size: $font-title-small;
+	font-weight: 400;
 	line-height: 24px;
 	color: var( --color-neutral-70 );
 }
@@ -9,6 +9,35 @@
 .account-close__theme-list {
 	margin-top: 1em;
 	margin-bottom: 1em;
+}
+
+.account-close__sites-item {
+	.gridicon {
+		cursor: pointer;
+		position: relative;
+		margin-left: 2px;
+		top: 4px;
+	}
+
+	.account-close__sites-list {
+		margin-top: 12px;
+
+		li {
+			margin-bottom: 8px;
+		}
+
+		span {
+			display: block;
+			font-size: $font-body-extra-small;
+			margin-left: 3px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+}
+
+.is-hiding-other-sites .account-close__sites-item .gridicon {
+	transform: rotate( 180deg );
 }
 
 // Placeholders
@@ -21,4 +50,3 @@
 .account-close.is-loading .action-panel__footer .button {
 	border: 0;
 }
-
