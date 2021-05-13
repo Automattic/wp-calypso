@@ -164,6 +164,8 @@ export const getHighestAnnualDiscount = createSelector(
 			.map( ( yearlySlug ) => {
 				const yearly = getProductCost( state, yearlySlug );
 
+				console.log( yearly );
+
 				const monthlySlug = getMonthlySlugFromYearly( yearlySlug );
 				const monthly = monthlySlug && getProductCost( state, monthlySlug );
 
