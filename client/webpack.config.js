@@ -208,6 +208,7 @@ const webpackConfig = {
 					: {
 							compress: true,
 							mangle: true,
+							compress: false,
 					  } ),
 			},
 		} ),
