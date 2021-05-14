@@ -20,7 +20,6 @@ const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
  * @returns {string} Absolute path to the directory.
  */
 export function getAssetDir(): string {
-	console.log( __dirname );
 	return path.resolve( process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ) );
 }
 
