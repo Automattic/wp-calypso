@@ -99,6 +99,12 @@ export function hasEmailSubscription( domain ) {
 }
 
 export function resolveEmailPlanStatus( domain ) {
+	const defaultActive = {
+		statusClass: 'success',
+		icon: 'check_circle',
+		text: translate( 'Active' ),
+	};
+
 	const defaultWarning = {
 		statusClass: 'warning',
 		icon: 'info',
@@ -106,10 +112,11 @@ export function resolveEmailPlanStatus( domain ) {
 	};
 
 	if ( hasGSuiteWithUs( domain ) ) {
-		// This is structured this way to fold in ToS acceptance at the account level.
 		if ( hasPendingGSuiteUsers( domain ) ) {
 			return defaultWarning;
 		}
+
+		return defaultActive;
 	}
 
 	if ( hasTitanMailWithUs( domain ) ) {
@@ -120,21 +127,16 @@ export function resolveEmailPlanStatus( domain ) {
 			const startOfToday = new Date();
 			startOfToday.setUTCHours( 0, 0, 0, 0 );
 			if ( titanExpiryDate < startOfToday ) {
-				return {
-					additionalText: translate( 'Your subscription has expired' ),
-					...defaultWarning,
-				};
+				return defaultWarning;
 			}
 		}
 
 		if ( getMaxTitanMailboxCount( domain ) > getConfiguredTitanMailboxCount( domain ) ) {
 			return defaultWarning;
 		}
+
+		return defaultActive;
 	}
 
-	return {
-		statusClass: 'success',
-		icon: 'check_circle',
-		text: translate( 'Active' ),
-	};
+	return defaultActive;
 }
