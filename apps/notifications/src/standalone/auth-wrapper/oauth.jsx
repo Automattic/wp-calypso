@@ -104,9 +104,7 @@ const useOauthClient = ( clientId, redirectPath ) => {
 };
 
 const OAuthWrapper = ( Wrapped ) => {
-	// This is a wrapped component, not a callback, so hooks are okay.
-	/* eslint-disable react-hooks/rules-of-hooks */
-	return ( { clientId, redirectPath, ...childProps } ) => {
+	return function WithOAuthClient( { clientId, redirectPath, ...childProps } ) {
 		const client = useOauthClient( clientId, redirectPath );
 		if ( ! client ) {
 			return null;
@@ -114,7 +112,6 @@ const OAuthWrapper = ( Wrapped ) => {
 
 		return <Wrapped wpcom={ client } { ...childProps } />;
 	};
-	/* eslint-enable react-hooks/rules-of-hooks */
 };
 
 export default OAuthWrapper;
