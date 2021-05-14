@@ -34,9 +34,6 @@ let lastPluginsQuerystring;
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
 
-	// Scroll to the top
-	window.scrollTo( 0, 0 );
-
 	let prevPath;
 	if ( lastPluginsListVisited ) {
 		prevPath = lastPluginsListVisited;
@@ -44,6 +41,7 @@ function renderSinglePlugin( context, siteUrl ) {
 		prevPath = sectionify( context.prevPath );
 	}
 
+	//Add condition to check if business/ecommerce plan before committing
 	if ( config.isEnabled( 'marketplace-yoast' ) && isMarketplaceProduct( pluginSlug ) ) {
 		context.primary = (
 			<MarketplacePluginDetails

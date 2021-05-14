@@ -28,9 +28,27 @@ import {
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 
 interface MarketplacePluginDetailsInterface {
 	marketplacePluginSlug: keyof PluginProductMappingInterface;
+}
+
+const isCustomDomain = ( {
+	isWPCOMDomain,
+	isWpcomStagingDomain,
+}: {
+	isWPCOMDomain: boolean;
+	isWpcomStagingDomain: boolean;
+} ) => ! isWPCOMDomain && ! isWpcomStagingDomain;
+
+function evaluateIsCustomDomainAvailable( siteDomains: any[] ): boolean {
+	return siteDomains.some( isCustomDomain );
+}
+function evaluateIsCustomDomainPrimary( siteDomains: any[] ): boolean {
+	return (
+		evaluateIsCustomDomainAvailable( siteDomains ) && siteDomains.find( isCustomDomain )?.isPrimary
+	);
 }
 
 function MarketplacePluginDetails( {
@@ -44,7 +62,9 @@ function MarketplacePluginDetails( {
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 	const isProductListLoading = useSelector( ( state ) => isProductsListFetching( state ) );
 	const selectedSite = useSelector( getSelectedSite );
-
+	const siteDomains = useSelector( ( state ) =>
+		getDomainsBySiteId( state, selectedSite?.ID ?? 0 )
+	);
 	const displayCost = formatCurrency( cost, currencyCode, { stripZeros: true } );
 	const dispatch = useDispatch();
 	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, marketplacePluginSlug ) );
@@ -58,17 +78,32 @@ function MarketplacePluginDetails( {
 
 	const onAddPlugin = async ( productSlug?: string ) => {
 		setisButtonClicked( true );
-		if ( productSlug ) {
-			const yoastProduct = fillInSingleCartItemAttributes(
-				{ product_slug: productSlug },
-				products
-			);
-			await replaceProductsInCart( [ yoastProduct ] );
+		const isCustomDomainAvailable = evaluateIsCustomDomainAvailable( siteDomains );
+		const isCustomDomainPrimary = evaluateIsCustomDomainPrimary( siteDomains );
+		const isProductPurchased = !! productSlug;
+
+		if ( isCustomDomainAvailable && isCustomDomainPrimary ) {
+			if ( isProductPurchased ) {
+				const yoastProduct = fillInSingleCartItemAttributes(
+					{ product_slug: productSlug },
+					products
+				);
+				await replaceProductsInCart( [ yoastProduct ] );
+				page( `/checkout${ selectedSite ? `/${ selectedSite.slug }` : '' }` );
+			} else {
+				//To be replaced with loading screen and then thank-you page
+				alert( 'To be implemented : Loading Screen -> Thank You Page' );
+			}
+		} else if ( isCustomDomainAvailable && ! isCustomDomainPrimary ) {
+			//Pop up Modal for deciding on primary domain and related logic
+			setisButtonClicked( false );
+			alert( 'To be implemented : Domain deciding Pop up modal ' );
+		} else if ( ! isCustomDomainAvailable ) {
 			page(
 				`/plugins/domain${ selectedSite ? `/${ selectedSite.slug }?flags=marketplace-yoast` : '' }`
 			);
 		} else {
-			alert( 'Not implemented yet' );
+			alert( 'Unknown combination' );
 		}
 	};
 
