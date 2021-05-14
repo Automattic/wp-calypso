@@ -154,7 +154,7 @@
 	margin-bottom: 0.25em;
 }
 
-.search-filters__token-field-fieldset {
+.search-filters__tld-filters {
 	.token-field__token {
 		&:first-child {
 			margin-left: 0;
@@ -244,7 +244,7 @@ body.is-section-signup.is-white-signup {
 			margin-right: 0;
 		}
 	}
-	
+
 	.search-filters__tld-button {
 		background: #fdfdfd;
 		border-radius: 4px; /* stylelint-disable-line */
@@ -264,7 +264,7 @@ body.is-section-signup.is-white-signup {
 			background: var( --studio-white );
 		}
 	}
-	
+
 	.search-filters__buttons .button {
 		margin-left: 0.5em;
 

@@ -231,7 +231,7 @@ export class DropdownFilters extends Component {
 				{ showTldFilter && (
 					<ValidationFieldset className="search-filters__tld-filters">
 						<FormLabel className="search-filters__label" htmlFor="search-filters-max-characters">
-							{ translate( 'TLDs' ) }:
+							{ translate( 'Extensions' ) }:
 						</FormLabel>
 						<TokenField
 							isExpanded
