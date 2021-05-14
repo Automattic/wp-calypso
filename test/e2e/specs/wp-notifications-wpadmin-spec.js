@@ -28,7 +28,7 @@ const host = dataHelper.getJetpackHost();
  * This spec ensures notifications can be opened, viewed and interacted with while loaded from outside of the calypso context.
  * e.g. while viewing a mapped domain.
  */
-describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () {
+describe( `[${ host }] Notifications (wp-admin): (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 	let driver;
 
