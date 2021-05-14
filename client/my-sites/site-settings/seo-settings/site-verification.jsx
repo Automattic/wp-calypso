@@ -332,7 +332,7 @@ class SiteVerification extends Component {
 								' and verify your site with a service, paste the HTML Tag code below. Read the' +
 								' {{support}}full instructions{{/support}} if you are having trouble. Supported verification services:' +
 								' {{google}}Google Search Console{{/google}}, {{bing}}Bing Webmaster Center{{/bing}},' +
-								' {{pinterest}}Pinterest Site Verification{{/pinterest}}, {{yandex}}Yandex.Webmaster{{/yandex}}' +
+								' {{pinterest}}Pinterest Site Verification{{/pinterest}}, {{yandex}}Yandex.Webmaster{{/yandex}},' +
 								' and {{facebook}}Facebook Domain Verification{{/facebook}}.',
 							{
 								components: {
