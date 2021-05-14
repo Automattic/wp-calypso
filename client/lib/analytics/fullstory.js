@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import cookie from 'cookie';
 import debug from 'debug';
 
 /**
@@ -42,6 +43,14 @@ export function recordFullStoryEvent( name, _props ) {
 }
 
 function maybeAddFullStoryScript() {
+	// Don't record user activity on Checkout pages
+	if ( document.location.href.indexOf( 'checkout' ) !== -1 ) {
+		if ( window.FS ) {
+			window.FS.shutdown();
+		}
+		return;
+	}
+
 	if (
 		fullStoryScriptLoaded ||
 		! config.isEnabled( 'fullstory' ) ||
@@ -53,6 +62,11 @@ function maybeAddFullStoryScript() {
 		if ( ! fullStoryScriptLoaded ) {
 			fullStoryDebug( 'maybeAddFullStoryScript:', false );
 		}
+		return;
+	}
+
+	// Only record session for US-based users.
+	if ( 'US' !== cookie.parse( document.cookie ).country_code ) {
 		return;
 	}
 
