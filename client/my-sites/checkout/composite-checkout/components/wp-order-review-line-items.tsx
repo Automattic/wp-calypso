@@ -867,7 +867,7 @@ function WPLineItem( {
 	);
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
-	const deleteButtonId = `checkout-delete-button-${ id }`;
+	const deleteButtonId = `checkout-delete-button-${ id }-${ isSummary ? 'summary' : 'edit' }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const isPwpoUser = useSelector(
 		( state ) =>
