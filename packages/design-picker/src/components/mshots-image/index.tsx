@@ -7,11 +7,6 @@ import { addQueryArgs } from '@wordpress/url';
 import debugFactory from 'debug';
 
 /**
- * Internal dependencies
- */
-import { isEnabled } from '@automattic/calypso-config';
-
-/**
  * Style dependencies
  */
 import './style.scss';
@@ -33,17 +28,9 @@ export type MShotsOptions = {
 };
 
 const debug = debugFactory( 'design-picker:mshots-image' );
-const cacheBuster = Date.now();
 
-export function mshotsUrl( url: string, options: MShotsOptions, count = 0 ): string {
-	const mshotsUrl = isEnabled( 'gutenboarding/local-mshots' )
-		? 'http://127.0.0.1:8000/mshots/v1/'
-		: 'https://s0.wp.com/mshots/v1/';
-
-	const targetUrl = ! isEnabled( 'gutenboarding/bust-mshots-cache' )
-		? url
-		: addQueryArgs( url, { cache_buster: cacheBuster } );
-
+export function mshotsUrl( targetUrl: string, options: MShotsOptions, count = 0 ): string {
+	const mshotsUrl = 'https://s0.wp.com/mshots/v1/';
 	const mshotsRequest = addQueryArgs( mshotsUrl + encodeURIComponent( targetUrl ), {
 		...options,
 		count,

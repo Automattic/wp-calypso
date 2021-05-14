@@ -1,3 +1,8 @@
+/**
+ * External dependencies
+ */
+import { MShotsImage } from '@automattic/design-picker';
+
 interface PatternSelectorItemProps {
 	description?: string;
 	locale: string;
@@ -15,7 +20,6 @@ const PatternSelectorItem = ( props: PatternSelectorItemProps ): JSX.Element | n
 		return null;
 	}
 
-	const mshotsUrl = 'https://s0.wordpress.com/mshots/v1/';
 	const designsEndpoint = 'https://public-api.wordpress.com/rest/v1/template/demo/';
 	const sourceSiteUrl = 'dotcompatterns.wordpress.com';
 
@@ -25,27 +29,22 @@ const PatternSelectorItem = ( props: PatternSelectorItemProps ): JSX.Element | n
 		locale
 	) }`;
 
-	const staticPreviewImg =
-		mshotsUrl + encodeURIComponent( previewUrl ) + '?vpw=1024&vph=1024&w=660&h=430';
-
-	const refreshSourceImg = ( e: React.SyntheticEvent< HTMLImageElement > ) => {
-		const img = e.currentTarget;
-
-		if ( -1 !== img.src.indexOf( 'reload=1' ) ) {
-			return;
-		}
-
-		setTimeout( () => {
-			img.src = img.src + '&reload=1';
-		}, 10000 );
+	const mShotsOptions = {
+		vpw: 1024,
+		vph: 1024,
+		w: 660,
+		screen_height: 3600,
 	};
 
+	const descriptionClass = `pattern-selector-item__preview-label__${ value }`;
+
 	const innerPreview = (
-		<img
-			className="pattern-selector-item__media"
-			src={ staticPreviewImg }
+		<MShotsImage
+			url={ previewUrl }
+			aria-labelledby={ descriptionClass }
 			alt={ title }
-			onLoad={ refreshSourceImg }
+			options={ mShotsOptions }
+			scrollable={ true }
 		/>
 	);
 
@@ -56,8 +55,10 @@ const PatternSelectorItem = ( props: PatternSelectorItemProps ): JSX.Element | n
 			value={ value }
 			onClick={ () => onSelect( value ) }
 		>
-			<span className="pattern-selector-item__preview-wrap">{ innerPreview }</span>
-			{ description }
+			<span className="pattern-selector-item__preview-wrap">
+				<div className="pattern-selector-item__preview-wrap-inner-position">{ innerPreview }</div>
+			</span>
+			<div id={ descriptionClass }>{ description }</div>
 		</button>
 	);
 };
