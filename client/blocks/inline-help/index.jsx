@@ -128,6 +128,7 @@ class InlineHelp extends Component {
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
 			'is-active': isPopoverVisible,
+			'is-compact': true,
 		};
 
 		return (
