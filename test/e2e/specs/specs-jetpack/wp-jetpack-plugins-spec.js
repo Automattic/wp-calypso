@@ -7,15 +7,15 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import * as driverManager from '../lib/driver-manager';
-import { getJetpackHost } from '../lib/data-helper';
+import * as driverManager from '../../lib/driver-manager';
+import { getJetpackHost } from '../../lib/data-helper';
 
-import PluginsPage from '../lib/pages/plugins-page';
-import PluginsBrowserPage from '../lib/pages/plugins-browser-page';
+import PluginsPage from '../../lib/pages/plugins-page';
+import PluginsBrowserPage from '../../lib/pages/plugins-browser-page';
 
-import PluginDetailsPage from '../lib/pages/plugin-details-page';
-import LoginFlow from '../lib/flows/login-flow';
-import NoticesComponent from '../lib/components/notices-component';
+import PluginDetailsPage from '../../lib/pages/plugin-details-page';
+import LoginFlow from '../../lib/flows/login-flow';
+import NoticesComponent from '../../lib/components/notices-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
