@@ -220,17 +220,17 @@ private object VisualRegressionTests : BuildType({
 			name = "Run Visual Regression Tests"
 			scriptContent = """
 				set -x
-
-				# Install Puppeteer
-				export PUPPETEER_SKIP_DOWNLOAD="false"
-				npm install puppeteer
+				export NODE_ENV="test"
 
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
+				apt-get install -y docker-compose
+
 				# Run the test
 				yarn "%vr_task%"
 			""".trimIndent()
+			dockerRunParameters = "-v /var/run/docker.sock:/var/run/docker.sock"
 		}
 		bashNodeScript {
 			name = "Collect results"
