@@ -211,7 +211,6 @@ private object VisualRegressionTests : BuildType({
 			name = "Prepare environment"
 			scriptContent = """
 				export NODE_ENV="test"
-				export PUPPETEER_SKIP_DOWNLOAD="false"
 
 				# Install modules
 				${_self.yarn_install_cmd}
@@ -221,6 +220,10 @@ private object VisualRegressionTests : BuildType({
 			name = "Run Visual Regression Tests"
 			scriptContent = """
 				set -x
+
+				# Install Puppeteer
+				export PUPPETEER_SKIP_DOWNLOAD="false"
+				npm install puppeteer
 
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
