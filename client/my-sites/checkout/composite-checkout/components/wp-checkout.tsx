@@ -444,6 +444,7 @@ export default function WPCheckout( {
 					completeStepContent={
 						<WPCheckoutOrderReview
 							isSummary
+							removeProductFromCart={ removeProductFromCart }
 							couponFieldStateProps={ couponFieldStateProps }
 							siteUrl={ siteUrl }
 						/>

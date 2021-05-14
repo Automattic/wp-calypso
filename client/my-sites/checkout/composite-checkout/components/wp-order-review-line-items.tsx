@@ -77,7 +77,6 @@ const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 
 	.is-summary & {
 		border-top: 0;
-		margin: 0;
 	}
 `;
 
@@ -348,7 +347,7 @@ export function WPOrderReviewLineItems( {
 					<WPOrderReviewListItem key={ product.uuid }>
 						<LineItem
 							product={ product }
-							hasDeleteButton={ ! isSummary && canItemBeDeleted( product ) }
+							hasDeleteButton={ canItemBeDeleted( product ) }
 							removeProductFromCart={ removeProductFromCart }
 							getItemVariants={ getItemVariants }
 							onChangePlanLength={ onChangePlanLength }
