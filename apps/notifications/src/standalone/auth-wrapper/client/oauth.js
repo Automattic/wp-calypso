@@ -1,14 +1,11 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
 import wpcom from 'wpcom';
 import wpcomXhrRequest from 'wpcom-xhr-request';
 
-/**
- * Internal dependencies
- */
-import setTracksUser from './set-tracks-user';
+const OAUTH_CLIENT_ID = 56641;
+const OAUTH_REDIRECT_PATH = '/';
 
 const getStoredToken = () => {
 	try {
@@ -56,13 +53,13 @@ const getTokenFromUrl = () => {
 	};
 };
 
-const redirectForOauth = ( clientId, redirectPath ) => {
-	const redirectUri = `${ window.location.origin }${ redirectPath }`;
+const redirectForOauth = () => {
+	const redirectUri = `${ window.location.origin }${ OAUTH_REDIRECT_PATH }`;
 
 	const auth = getTokenFromUrl();
 	if ( ! auth ) {
 		const baseUrl = 'https://public-api.wordpress.com/oauth2/authorize';
-		const uri = `${ baseUrl }?client_id=${ clientId }&redirect_uri=${ redirectUri }&response_type=token&scope=global`;
+		const uri = `${ baseUrl }?client_id=${ OAUTH_CLIENT_ID }&redirect_uri=${ redirectUri }&response_type=token&scope=global`;
 
 		window.location.replace( uri );
 		return;
@@ -78,40 +75,15 @@ const getOauthRequestHandler = ( authToken ) => ( options, fn ) => {
 	return wpcomXhrRequest( { ...options, authToken }, fn );
 };
 
-const useOauthClient = ( clientId, redirectPath ) => {
-	const [ client, setClient ] = useState( null );
+const createOauthClient = async () => {
+	const token = getStoredToken();
+	if ( ! token ) {
+		redirectForOauth();
+		return;
+	}
 
-	useEffect( () => {
-		const token = getStoredToken();
-		if ( ! token ) {
-			redirectForOauth( clientId, redirectPath );
-			return;
-		}
-
-		const requestHandler = getOauthRequestHandler( token );
-		setClient( wpcom( token, requestHandler ) );
-	}, [ clientId, redirectPath, setClient ] );
-
-	useEffect( () => {
-		if ( ! client ) {
-			return;
-		}
-
-		setTracksUser( client );
-	}, [ client ] );
-
-	return client;
+	const requestHandler = getOauthRequestHandler( token );
+	return wpcom( token, requestHandler );
 };
 
-const OAuthWrapper = ( Wrapped ) => {
-	return function WithOAuthClient( { clientId, redirectPath, ...childProps } ) {
-		const client = useOauthClient( clientId, redirectPath );
-		if ( ! client ) {
-			return null;
-		}
-
-		return <Wrapped wpcom={ client } { ...childProps } />;
-	};
-};
-
-export default OAuthWrapper;
+export default createOauthClient;
