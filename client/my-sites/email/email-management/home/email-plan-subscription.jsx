@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { CompactCard } from '@automattic/components';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { CompactCard } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -13,6 +14,19 @@ import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-tog
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class EmailPlanSubscription extends React.Component {
+	isSubscriptionExpired() {
+		const { isLoadingPurchase, purchase } = this.props;
+
+		if ( isLoadingPurchase || ! purchase ) {
+			return false;
+		}
+
+		const todayTimestamp = new Date().setUTCHours( 0, 0, 0, 0 );
+		const expiryTimestamp = new Date( purchase.expiryDate ).getTime();
+
+		return todayTimestamp > expiryTimestamp;
+	}
+
 	renderRenewButton() {
 		const { domain, purchase, selectedSite, isLoadingPurchase, translate } = this.props;
 
@@ -28,6 +42,7 @@ class EmailPlanSubscription extends React.Component {
 			<RenewButton
 				compact={ true }
 				purchase={ purchase }
+				primary={ this.isSubscriptionExpired() }
 				selectedSite={ selectedSite }
 				subscriptionId={ parseInt( purchase.id, 10 ) }
 				tracksProps={ { source: 'email-plan-view' } }
@@ -71,15 +86,25 @@ class EmailPlanSubscription extends React.Component {
 			return null;
 		}
 
+		const isSubscriptionExpired = this.isSubscriptionExpired();
+		const translateArgs = {
+			args: {
+				expiryDate: moment.utc( purchase.expiryDate ).format( 'LL' ),
+			},
+			comment: 'Shows the expiry date of the email subscription',
+		};
+		const expiryText = isSubscriptionExpired
+			? translate( 'Expired: %(expiryDate)s', translateArgs )
+			: translate( 'Expires: %(expiryDate)s', translateArgs );
+
 		return (
 			<CompactCard className="email-plan-subscription__card">
-				<div>
-					{ translate( 'Expires: %(expiryDate)s', {
-						args: {
-							expiryDate: moment.utc( purchase.expiryDate ).format( 'LL' ),
-						},
-						comment: 'Shows the expiry date of the email subscription',
+				<div
+					className={ classNames( {
+						'email-plan-subscription__expired': isSubscriptionExpired,
 					} ) }
+				>
+					{ expiryText }
 				</div>
 				<div>{ this.renderRenewButton() }</div>
 				<div>{ this.renderAutoRenewToggle() }</div>
