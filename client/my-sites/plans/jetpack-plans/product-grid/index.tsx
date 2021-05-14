@@ -83,7 +83,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const translatedFirstPlanDescription =
 		untranslatedSortedPlans &&
 		untranslatedSortedPlans[ 0 ] &&
-		untranslatedSortedPlans[ 0 ]?.description
+		untranslatedSortedPlans[ 0 ].description
 			? // eslint-disable-next-line wpcalypso/i18n-no-variables
 			  translate( untranslatedSortedPlans[ 0 ].description )
 			: null;
