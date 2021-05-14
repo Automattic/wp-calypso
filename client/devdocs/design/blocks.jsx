@@ -43,7 +43,6 @@ import PlanStorage from 'calypso/blocks/plan-storage/docs/example';
 import PlanCompareCard from 'calypso/my-sites/plan-compare-card/docs/example';
 import DomainTip from 'calypso/blocks/domain-tip/docs/example';
 import PostItem from 'calypso/blocks/post-item/docs/example';
-import PostStatus from 'calypso/blocks/post-status/docs/example';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link/docs/example';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link/docs/example';
 import AuthorCompactProfile from 'calypso/blocks/author-compact-profile/docs/example';
@@ -159,7 +158,6 @@ export default class AppComponents extends React.Component {
 					<DomainTip />
 					<RelatedPostCard />
 					<PostItem readmeFilePath="post-item" />
-					<PostStatus readmeFilePath="post-status" />
 					<ReaderAuthorLink readmeFilePath="reader-author-link" />
 					<ReaderSubscriptionListItem />
 					<ReaderSiteStreamLink readmeFilePath="reader-site-stream-link" />
