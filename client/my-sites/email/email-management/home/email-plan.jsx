@@ -105,6 +105,10 @@ class EmailPlan extends React.Component {
 			);
 	}
 
+	getAccountType() {
+		return this.state?.emailAccounts[ 0 ]?.account_type ?? null;
+	}
+
 	getMailboxes() {
 		if ( this.state.emailAccounts[ 0 ] ) {
 			return this.state.emailAccounts[ 0 ].emails;
@@ -266,6 +270,7 @@ class EmailPlan extends React.Component {
 				/>
 
 				<EmailPlanMailboxesList
+					accountType={ this.getAccountType() }
 					mailboxes={ this.getMailboxes() }
 					isLoadingEmails={ isLoadingEmailAccounts }
 				/>
