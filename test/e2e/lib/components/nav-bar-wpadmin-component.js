@@ -7,12 +7,14 @@ import { By as by } from 'selenium-webdriver';
  * Internal dependencies
  */
 import * as driverHelper from '../driver-helper.js';
-
 import AsyncBaseContainer from '../async-base-container';
 
 /**
- * This class copies the functionality of nav-bar-component for pages
- * loaded outside the calypso context (eg simple-site-domain.wordpress.com)
+ * This class copies the functionality of nav-bar-component.js for pages
+ * loaded outside the calypso context (eg on simple-site-domain.wordpress.com)
+ *
+ * Duplication of the component is required inorder to manage differences between
+ * calypo and non calypso codebases. In this case different classes are used on the html.
  */
 export default class NavBarWPAdminComponent extends AsyncBaseContainer {
 	constructor( driver ) {

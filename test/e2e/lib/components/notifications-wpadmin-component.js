@@ -7,9 +7,16 @@ import { By as by } from 'selenium-webdriver';
  * Internal dependencies
  */
 import * as driverHelper from '../driver-helper.js';
-
 import AsyncBaseContainer from '../async-base-container';
 
+/**
+ * This class copies the functionality of notifications-component.js for pages
+ * loaded outside the calypso context (eg on simple-site-domain.wordpress.com)
+ *
+ * Duplication of the component is required inorder to manage differences between
+ * calypo and non calypso codebases. In this case, the functionality is loaded
+ * through an iframe which requires additional frame switching calls.
+ */
 export default class NotificationsWPAdminComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, by.css( '#wpnt-notes-panel2' ) );

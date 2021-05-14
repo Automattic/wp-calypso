@@ -24,13 +24,17 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
+/**
+ * This spec ensures notifications can be opened, viewed and interacted with while loaded from outside of the calypso context.
+ * e.g. while viewing a mapped domain.
+ */
 describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 	let driver;
 
 	before( 'Start browser', async function () {
 		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser( true, true, true );
+		driver = await driverManager.startBrowser( { disableThirdPartyCookies: true } );
 	} );
 
 	const commentingUser = dataHelper.getAccountConfig( 'commentingUser' )[ 0 ];
@@ -44,7 +48,7 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 
 	it( 'Can view the first post', async function () {
 		const testSiteForNotifications = `https://${ dataHelper.configGet(
-			'testSiteForWPAdminNotifications'
+			'testSiteForNotifications'
 		) }`;
 		const viewBlogPage = await ViewSitePage.Visit( driver, testSiteForNotifications );
 		return await viewBlogPage.viewFirstPost();
@@ -71,13 +75,14 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 	} );
 
 	it( 'Can log in as notifications user', async function () {
-		const loginFlow = new LoginFlow( driver, 'louisTestUser' );
+		const loginFlow = new LoginFlow( driver, 'notificationsUser' );
 		return await loginFlow.login();
 	} );
 
-	it( 'Can open notifications tab', async function () {
+	it( 'Can open notifications tab on mapped domain', async function () {
+		// Todo: this should be a mapped domain, currently even using a simple site will fail on notifications.
 		const testSiteForNotifications = `https://${ dataHelper.configGet(
-			'testSiteForWPAdminNotifications'
+			'testSiteForNotifications'
 		) }`;
 
 		const viewBlogPage = await ViewSitePage.Visit( driver, testSiteForNotifications );
