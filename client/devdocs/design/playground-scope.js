@@ -103,7 +103,6 @@ export { default as NavItem } from 'calypso/components/section-nav/item';
 export { default as SegmentedControl } from 'calypso/components/segmented-control';
 export { default as SelectDropdown } from 'calypso/components/select-dropdown';
 export { default as ShareButton } from 'calypso/components/share-button';
-export { default as SiteTitleControl } from 'calypso/components/site-title';
 export { default as SocialLogo } from 'calypso/components/social-logo';
 export { default as Spinner } from 'calypso/components/spinner';
 export { default as SpinnerButton } from 'calypso/components/spinner-button';
