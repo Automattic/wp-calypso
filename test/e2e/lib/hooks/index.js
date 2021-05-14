@@ -8,6 +8,7 @@ import config from 'config';
  */
 import { buildHooks as buildVideoHooks } from './video-recorder';
 import { buildHooks as buildFramebufferHooks, getFreeDisplay } from './framebuffer';
+import { saveBrowserLogs } from './browser-logs';
 
 const isVideoEnabled = () => {
 	const video = config.has( 'useTestVideo' )
@@ -18,11 +19,7 @@ const isVideoEnabled = () => {
 
 export const mochaHooks = async () => {
 	const hooks = {
-		afterAll: [
-			() => {
-				console.log( 'After all: root' );
-			},
-		],
+		afterAll: [ saveBrowserLogs ],
 		beforeAll: [],
 		afterEach: [],
 	};

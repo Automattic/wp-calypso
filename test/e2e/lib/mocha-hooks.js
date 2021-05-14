@@ -10,7 +10,6 @@ import assert from 'assert';
  * Internal dependencies
  */
 import * as driverManager from './driver-manager';
-import { default as saveConsoleLog } from './hooks/save-console-log';
 
 const afterHookTimeoutMS = config.get( 'afterHookTimeoutMS' );
 
@@ -48,8 +47,6 @@ afterEach( async function () {
 		await driverManager.acceptAllAlerts( driver );
 	}
 } );
-
-saveConsoleLog();
 
 // Update Sauce Job Status locally
 afterEach( function () {
