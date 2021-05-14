@@ -109,7 +109,6 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wpcom-user-bootstrap": false,
-		"woocommerce/extension-wcservices": true,
 		"wordpress-action-search": false
 	}
 }
