@@ -120,8 +120,16 @@ export async function startBrowser( {
 	disableThirdPartyCookies = false,
 } = {} ) {
 	if ( global.__BROWSER__ ) {
-		return global.__BROWSER__;
+		// A change of this setting between specs requires a browser restart
+		if ( global.__BROWSER_disableThirdPartyCookies !== disableThirdPartyCookies ) {
+			await global.__BROWSER__.quit();
+			global.__BROWSER__ = null;
+		} else {
+			return global.__BROWSER__;
+		}
 	}
+	global.__BROWSER_disableThirdPartyCookies = disableThirdPartyCookies;
+
 	const screenSize = currentScreenSize();
 	const locale = currentLocale();
 	let driver;
