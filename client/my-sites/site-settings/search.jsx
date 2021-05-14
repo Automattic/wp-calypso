@@ -271,7 +271,7 @@ class Search extends Component {
 				<div className="site-settings__jetpack-instant-search-toggle">
 					<ToggleControl
 						checked={ !! fields.jetpack_search_enabled && !! fields.instant_search_enabled }
-						disabled={ isRequestingSettings || isSavingSettings || ! this.props.hasSearchProduct }
+						disabled={ isRequestingSettings || isSavingSettings || ! hasSearchProduct }
 						onChange={ handleInstantSearchToggle }
 					>
 						{ translate( 'Enable instant search experience (recommended)' ) }
