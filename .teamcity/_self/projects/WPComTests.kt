@@ -200,11 +200,9 @@ private object VisualRegressionTests : BuildType({
 		select(
 			name= "vr_task",
 			label = "Visual Regression Task",
-			multiple = false,
+			allowMultiple = false,
 			value = "test-visual",
-			data_1 = "test-visual",
-			data_2 = "test-visual-approve",
-			data_3 = "test-visual-reference"
+			options = "test-visual, test-visual-approve, test-visual-reference"
 		)
 	}
 
