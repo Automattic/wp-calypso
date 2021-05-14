@@ -39,15 +39,14 @@ export function getVideoDir(): string {
  * Returns a descriptive file name for the screenshot file.
  *
  * @param {string} name Name of the test case that failed.
- * @param {string} state Pass/fail state of the test case.
  * @returns {string} A Path-like string.
  */
-export function getScreenshotName( name: string, state: string ): string {
+export function getScreenshotName( name: string ): string {
 	const shortTestFileName = name.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
 	const screenSize = getTargetScreenSize().toUpperCase();
 	const locale = getTargetLocale().toUpperCase();
 	const date = getDateString();
-	const fileName = `${ state }-${ locale }-${ screenSize }-${ shortTestFileName }-${ date }`;
+	const fileName = `FAILED-${ locale }-${ screenSize }-${ shortTestFileName }-${ date }`;
 	const screenshotDir = getScreenshotDir();
 	return `${ screenshotDir }/${ fileName }.png`;
 }

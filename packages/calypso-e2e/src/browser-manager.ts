@@ -76,9 +76,9 @@ export async function launchBrowserContext(): Promise< BrowserContext > {
 		recordVideo: { dir: videoDir, size: { width: dimension.width, height: dimension.height } },
 		userAgent: userAgent,
 		logger: {
-			isEnabled: ( _name ) => _name === 'api',
-			log: ( _name, _severity, _message ) =>
-				writeLog( { name: _name, severity: _severity, message: _message }, timestamp ),
+			isEnabled: ( name ) => name === 'api',
+			log: ( name, severity, message ) =>
+				writeLog( { name: name, severity: severity, message: message }, timestamp ),
 		},
 	} );
 }
