@@ -215,8 +215,8 @@ private object VisualRegressionTests : BuildType({
 				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Setup for Docker
-                curl -L --fail https://github.com/docker/compose/releases/download/1.28.6/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose &&\
-                chmod +x /usr/local/bin/docker-compose
+                sudo apt-get update
+                sudo apt-get install docker-ce docker-ce-cli containerd.io
 
 				# Run the test
 				yarn test-visual
