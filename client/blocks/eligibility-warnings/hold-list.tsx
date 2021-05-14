@@ -158,8 +158,10 @@ export const HardBlockingNotice = ( {
 	);
 
 	/*
-		This accounts for Atomic sites that are on a plan below Business so we can prompt them to upgrade
-		instead of showing them an "Upload in progress" notice.
+		For Atomic sites on plans below Business it will return the holds TRANSFER_ALREADY_EXISTS and NO_BUSINESS_PLAN.
+		Because TRANSFER_ALREADY_EXISTS is present and 'blocking' it will show an "Upload in progress" notice even when there isn't one.
+		In this scenario we need to check if it's an Atomic ste (TRANSFER_ALREADY_EXISTS) on a plan below Business (NO_BUSINESS_PLAN)
+		so we can stop the render of "Upload in progress" and prompt them to upgrade instead.
 	*/
 	if ( ! blockingHold || isAtomicSiteWithoutBusinessPlan( holds ) ) {
 		return null;
