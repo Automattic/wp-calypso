@@ -207,7 +207,7 @@ private object VisualRegressionTests : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Run e2e tests (desktop)"
+			name = "Run Visual Regression Tests"
 			scriptContent = """
 				set -x
 
