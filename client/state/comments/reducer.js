@@ -6,7 +6,6 @@ import {
 	orderBy,
 	has,
 	map,
-	unionBy,
 	reject,
 	isEqual,
 	get,
@@ -46,6 +45,11 @@ import {
 import trees from './trees/reducer';
 import ui from './ui/reducer';
 import { getStateKey, getErrorKey, commentHasLink, getCommentDate } from './utils';
+
+const unionById = ( a = [], b = [] ) => [
+	...a,
+	...b.filter( ( bc ) => ! a.some( ( ac ) => ac.ID === bc.ID ) ),
+];
 
 const isCommentManagementEdit = ( newProperties ) =>
 	has( newProperties, 'commentContent' ) &&
@@ -122,7 +126,7 @@ export function items( state = {}, action ) {
 				contiguous: ! action.commentById,
 				has_link: commentHasLink( _comment.content, _comment.has_link ),
 			} ) );
-			const allComments = unionBy( state[ stateKey ], comments, 'ID' );
+			const allComments = unionById( state[ stateKey ], comments );
 			return {
 				...state,
 				[ stateKey ]: ! skipSort ? orderBy( allComments, getCommentDate, [ 'desc' ] ) : allComments,
@@ -193,7 +197,7 @@ export function pendingItems( state = {}, action ) {
 				contiguous: ! action.commentById,
 				has_link: commentHasLink( _comment.content, _comment.has_link ),
 			} ) );
-			const allComments = unionBy( state[ stateKey ], comments, 'ID' );
+			const allComments = unionById( state[ stateKey ], comments );
 			return {
 				...state,
 				[ stateKey ]: orderBy( allComments, getCommentDate, [ 'desc' ] ),
