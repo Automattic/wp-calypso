@@ -35,6 +35,7 @@ const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identi
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
 const getAliasesForExtensions = require( '../build-tools/webpack/extensions' );
+const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
 const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
 const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
 
@@ -327,6 +328,7 @@ const webpackConfig = {
 			new GenerateChunksMapPlugin( {
 				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
 			} ),
+		new RequireChunkCallbackPlugin(),
 		/*
 		 * ExPlat: Don't import the server logger when we are in the browser
 		 */
