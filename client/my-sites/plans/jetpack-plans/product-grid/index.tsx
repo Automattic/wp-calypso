@@ -78,7 +78,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	);
 	// Get the first plan description and pass it through `translate` so that
 	// if it wasn't translated at the start the cache key for sortedPlans
-	// would change once translation become available, but if it was translated
+	// would change once translation becomes available, but if it was translated
 	// from the start the call to `translate` won't have any effect on it.
 	const translatedFirstPlanDescription =
 		untranslatedSortedPlans &&
