@@ -1,5 +1,4 @@
 export { areRecommendedThemesLoading } from 'calypso/state/themes/selectors/are-recommended-themes-loading';
-export { areBlockThemesLoading } from 'calypso/state/themes/selectors/are-block-themes-loading';
 export { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-filter-term';
 export { getActiveTheme } from 'calypso/state/themes/selectors/get-active-theme';
 export { getCanonicalTheme } from 'calypso/state/themes/selectors/get-canonical-theme';
@@ -8,7 +7,6 @@ export { getLastThemeQuery } from 'calypso/state/themes/selectors/get-last-theme
 export { getPreActivateThemeId } from 'calypso/state/themes/selectors/get-pre-activate-theme-id';
 export { getPremiumThemePrice } from 'calypso/state/themes/selectors/get-premium-theme-price';
 export { getRecommendedThemes } from 'calypso/state/themes/selectors/get-recommended-themes';
-export { getBlockThemes } from 'calypso/state/themes/selectors/get-block-themes';
 export { getTheme } from 'calypso/state/themes/selectors/get-theme';
 export { getThemeCustomizeUrl } from 'calypso/state/themes/selectors/get-theme-customize-url';
 export { getThemeDemoUrl } from 'calypso/state/themes/selectors/get-theme-demo-url';

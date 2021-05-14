@@ -251,3 +251,15 @@ export function getThemeTaxonomySlugs( theme, taxonomy ) {
 	const items = get( theme, [ 'taxonomies', taxonomy ], [] );
 	return items.map( ( { slug } ) => slug );
 }
+
+/**
+ * We currently support two types of theme filtering for recommended themes,
+ * with the future possibility of more in the future, which will require some
+ * further work throughout the code base
+ *
+ * @param {boolean} blockThemes Whether or not to filter on Block Themes.
+ * @returns {string}            The string to filter on in an API request.
+ */
+export function getRecommendedThemesFilter( blockThemes = false ) {
+	return blockThemes ? 'block-templates' : 'auto-loading-homepage';
+}

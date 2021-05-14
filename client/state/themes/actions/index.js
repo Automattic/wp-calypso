@@ -12,7 +12,6 @@ export { installAndTryAndCustomizeTheme } from 'calypso/state/themes/actions/ins
 export { installTheme } from 'calypso/state/themes/actions/install-theme';
 export { receiveTheme } from 'calypso/state/themes/actions/receive-theme';
 export { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
-export { getBlockThemes, receiveBlockThemes } from 'calypso/state/themes/actions/block-themes';
 export {
 	getRecommendedThemes,
 	receiveRecommendedThemes,
