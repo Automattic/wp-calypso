@@ -17,7 +17,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
  */
 import './style.scss';
 
-class JetpackConnectSkipUser extends Component {
+class JetpackConnectSiteOnly extends Component {
 	static propTypes = {
 		homeUrl: PropTypes.string.isRequired,
 		redirectAfterAuth: PropTypes.string.isRequired,
@@ -67,7 +67,7 @@ class JetpackConnectSkipUser extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div className="jetpack-connect-skip-user__userless-form">
+			<div className="jetpack-connect-site-only__form">
 				<h2>{ translate( 'Or start using Jetpack now' ) }</h2>
 
 				<p>{ translate( 'Jump in and start using Jetpack right away.' ) }</p>
@@ -90,7 +90,7 @@ class JetpackConnectSkipUser extends Component {
 				</p>
 
 				<a
-					className="jetpack-connect-skip-user__continue-link"
+					className="jetpack-connect-site-only__continue-link"
 					href={ this.getPlansURL() }
 					onClick={ () => this.onSkip() }
 				>
@@ -101,4 +101,4 @@ class JetpackConnectSkipUser extends Component {
 	}
 }
 
-export default localize( JetpackConnectSkipUser );
+export default localize( JetpackConnectSiteOnly );
