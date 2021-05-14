@@ -2,37 +2,50 @@
  * External dependencies
  */
 import path from 'path';
+import config from 'config';
 
 /**
  * Internal dependencies
  */
-import { getTargetLocale, getTargetScreenSize } from './browser-helper';
+import { getTargetLocale, getTargetDisplaySize } from './browser-helper';
+
+const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
 
 /**
  * Returns the base asset directory.
  *
+ * If the environment variable TEMP_ASSET_PATH is set, this will return a path
+ * to the directory. Otherwise, the parent directory of this current file.
+ *
  * @returns {string} Absolute path to the directory.
  */
 export function getAssetDir(): string {
+	console.log( __dirname );
 	return path.resolve( process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ) );
 }
 
 /**
  * Returns the screenshot save directory.
  *
+ * If the environment variable SCREENSHOTDIR is set, this will override all configuration
+ * values. Otherwise, the default path contained in the configuration file is returned.
+ *
  * @returns {string} Absolute path to the directory.
  */
 export function getScreenshotDir(): string {
-	return path.resolve( getAssetDir(), process.env.SCREENSHOTDIR || 'screenshots' );
+	return path.resolve( getAssetDir(), process.env.SCREENSHOTDIR || artifacts.screenshot );
 }
 
 /**
  * Returns the video save directory.
  *
+ * If the environment variable VIDEODIR is set, this will override all configuration
+ * values. Otherwise, the default path contained in the configuration file is returned.
+ *
  * @returns {string} Absolute path to the directory.
  */
 export function getVideoDir(): string {
-	return path.resolve( getAssetDir(), process.env.VIDEODIR || 'screenshots/videos' );
+	return path.resolve( getAssetDir(), process.env.VIDEODIR || artifacts.video );
 }
 
 /**
@@ -43,7 +56,7 @@ export function getVideoDir(): string {
  */
 export function getScreenshotName( name: string ): string {
 	const shortTestFileName = name.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-	const screenSize = getTargetScreenSize().toUpperCase();
+	const screenSize = getTargetDisplaySize().toUpperCase();
 	const locale = getTargetLocale().toUpperCase();
 	const date = getDateString();
 	const fileName = `FAILED-${ locale }-${ screenSize }-${ shortTestFileName }-${ date }`;
@@ -60,7 +73,7 @@ export function getScreenshotName( name: string ): string {
 export function getVideoName( name: string ): string {
 	const suiteName = name.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
 	const locale = getTargetLocale().toUpperCase();
-	const screenSize = getTargetScreenSize().toUpperCase();
+	const screenSize = getTargetDisplaySize().toUpperCase();
 	const date = getDateString();
 	const fileName = `FAILED-${ locale }-${ screenSize }-${ suiteName }-${ date }`;
 	const videoDir = getVideoDir();
