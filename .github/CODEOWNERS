@@ -103,3 +103,25 @@
 
 # TeamCity configuration
 /.teamcity @Automattic/team-calypso-platform
+
+# I18n
+/bin/build-languages.js @Automattic/i18n
+/build-tools/webpack/generate-chunks-map-plugin.js @Automattic/i18n
+/build-tools/webpack/require-chunk-callback-plugin.js @Automattic/i18n
+/client/boot/locale.js @Automattic/i18n
+/client/components/calypso-i18n-provider @Automattic/i18n
+/client/components/community-translator @Automattic/i18n
+/client/components/language-picker @Automattic/i18n
+/client/components/locale-suggestions @Automattic/i18n
+/client/components/localized-moment @Automattic/i18n
+/client/components/translatable @Automattic/i18n
+/client/components/translator-invite @Automattic/i18n
+/client/layout/community-translator @Automattic/i18n
+/client/lib/i18n-utils @Automattic/i18n
+/client/state/i18n @Automattic/i18n
+/packages/babel-plugin-i18n-calypso @Automattic/i18n
+/packages/i18n-calypso @Automattic/i18n
+/packages/i18n-calypso-cli @Automattic/i18n
+/packages/i18n-utils @Automattic/i18n
+/packages/language-picker @Automattic/i18n
+/packages/languages @Automattic/i18n
