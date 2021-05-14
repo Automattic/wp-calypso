@@ -202,7 +202,7 @@ private object VisualRegressionTests : BuildType({
 			label = "Visual Regression Task",
 			allowMultiple = false,
 			value = "test-visual",
-			options = "test-visual, test-visual-approve, test-visual-reference"
+			options = listOf( String( "test-visual") , String( "test-visual-approve"), String( "test-visual-reference"))
 		)
 	}
 
