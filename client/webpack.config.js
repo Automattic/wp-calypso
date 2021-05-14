@@ -156,6 +156,7 @@ const fileLoader = FileConfig.loader(
 
 const webpackConfig = {
 	bail: ! isDevelopment,
+	cache: { type: 'filesystem' },
 	context: __dirname,
 	entry: filterEntrypoints( {
 		'entry-main': [ path.join( __dirname, 'boot', 'app' ) ],
@@ -269,6 +270,9 @@ const webpackConfig = {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
 			} )
 		),
+		fallback: {
+			fs: false,
+		},
 	},
 	node: false,
 	plugins: [
