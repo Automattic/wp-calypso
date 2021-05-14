@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { head, includes, isEmpty } from 'lodash';
+import { includes, isEmpty } from 'lodash';
 import page from 'page';
 
 /**
@@ -107,7 +107,7 @@ export function getRoleFromScope( scope ) {
 	if ( ! includes( scope, ':' ) ) {
 		return null;
 	}
-	const role = head( scope.split( ':', 1 ) );
+	const role = scope.split( ':', 1 )[ 0 ];
 	if ( ! isEmpty( role ) ) {
 		return role;
 	}

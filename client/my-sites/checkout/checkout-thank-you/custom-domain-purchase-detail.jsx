@@ -1,12 +1,10 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { head } from 'lodash';
 
 /**
  * Internal dependencies
@@ -113,6 +111,6 @@ export default connect( ( state ) => {
 		hasNonPrimaryDomainsFlag: getCurrentUser( state )
 			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 			: false,
-		registeredDomain: head( registeredDomains ),
+		registeredDomain: registeredDomains[ 0 ],
 	};
 } )( localize( CustomDomainPurchaseDetail ) );

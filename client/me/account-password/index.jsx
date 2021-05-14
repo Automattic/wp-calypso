@@ -3,7 +3,7 @@
  */
 
 import { localize } from 'i18n-calypso';
-import { debounce, flowRight as compose, head, isEmpty } from 'lodash';
+import { debounce, flowRight as compose, isEmpty } from 'lodash';
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -122,7 +122,7 @@ class AccountPassword extends React.Component {
 
 	renderValidationNotices = () => {
 		const { translate } = this.props;
-		const failure = head( this.state.validation?.test_results.failed );
+		const failure = this.state.validation?.test_results.failed?.[ 0 ];
 
 		if ( this.state.validation?.passed ) {
 			return (

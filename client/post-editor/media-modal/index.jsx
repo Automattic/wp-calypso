@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, head, isEmpty, includes, partial, some, values } from 'lodash';
+import { flow, get, isEmpty, includes, partial, some, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -382,7 +382,7 @@ export class EditorMediaModal extends Component {
 
 	getFirstEnabledFilter() {
 		if ( this.props.enabledFilters ) {
-			return head( this.props.enabledFilters );
+			return this.props.enabledFilters[ 0 ];
 		}
 	}
 

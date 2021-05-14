@@ -9,7 +9,6 @@ import {
 	filter,
 	forEach,
 	get,
-	head,
 	includes,
 	keys,
 	map,
@@ -288,7 +287,7 @@ class SignupForm extends Component {
 
 				if ( field === 'username' && ! includes( usernamesSearched, fields.username ) ) {
 					recordTracksEvent( 'calypso_signup_username_validation_failed', {
-						error: head( keys( fieldError ) ),
+						error: keys( fieldError )[ 0 ],
 						username: fields.username,
 					} );
 
@@ -297,7 +296,7 @@ class SignupForm extends Component {
 
 				if ( field === 'password' ) {
 					recordTracksEvent( 'calypso_signup_password_validation_failed', {
-						error: head( keys( fieldError ) ),
+						error: keys( fieldError )[ 0 ],
 					} );
 
 					timesPasswordValidationFailed++;
