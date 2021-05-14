@@ -167,8 +167,6 @@ $z-layers: (
 		'.wpcom-site__global-noscript': 300000, // JS off always visible
 		'.is-section-woocommerce .global-notices': 999999, //render notices on top of dialogs
 		'.webpack-build-monitor': 99999999,
-		'.image-selector__item.is-transient::after': 1,
-		'.image-selector__item .spinner': 2,
 		'.people-list-item.card.is-compact:focus': 1,
 	),
 	'.is-section-signup': (

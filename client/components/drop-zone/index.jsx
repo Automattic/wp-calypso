@@ -4,7 +4,6 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes, without } from 'lodash';
@@ -14,7 +13,6 @@ import { includes, without } from 'lodash';
  */
 import { RootChild } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
-import { hideDropZone, showDropZone } from 'calypso/state/drop-zone/actions';
 import TranslatableString from 'calypso/components/translatable/proptype';
 
 /**
@@ -34,8 +32,6 @@ export class DropZone extends React.Component {
 		onFilesDrop: PropTypes.func,
 		textLabel: TranslatableString,
 		translate: PropTypes.func,
-		showDropZone: PropTypes.func.isRequired,
-		hideDropZone: PropTypes.func.isRequired,
 		dropZoneName: PropTypes.string,
 	};
 
@@ -164,12 +160,6 @@ export class DropZone extends React.Component {
 
 	toggleDropZoneReduxState = ( isVisible ) => {
 		if ( this.state.lastVisibleState !== isVisible ) {
-			if ( isVisible ) {
-				this.props.showDropZone( this.props.dropZoneName );
-			} else {
-				this.props.hideDropZone( this.props.dropZoneName );
-			}
-
 			this.setState( {
 				lastVisibleState: isVisible,
 			} );
@@ -266,9 +256,4 @@ export class DropZone extends React.Component {
 	}
 }
 
-const mapDispatch = {
-	showDropZone,
-	hideDropZone,
-};
-
-export default connect( null, mapDispatch )( localize( DropZone ) );
+export default localize( DropZone );
