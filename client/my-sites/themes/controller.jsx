@@ -112,7 +112,7 @@ export function redirectFilterAndType( { res, params: { site, filter, tier } } )
 
 export function redirectToThemeDetails( { res, params: { site, theme, section } }, next ) {
 	// Make sure we aren't matching a site -- e.g. /themes/example.wordpress.com or /themes/1234567
-	if ( theme.includes( '.' ) || isFinite( theme ) ) {
+	if ( theme.includes( '.' ) || Number.isInteger( parseInt( theme, 10 ) ) ) {
 		return next();
 	}
 	let redirectedSection;
