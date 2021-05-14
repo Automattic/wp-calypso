@@ -270,9 +270,6 @@ const webpackConfig = {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
 			} )
 		),
-		fallback: {
-			fs: false,
-		},
 	},
 	node: false,
 	plugins: [
