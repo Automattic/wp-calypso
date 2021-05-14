@@ -10,7 +10,7 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
-import { render, act, fireEvent, screen } from '@testing-library/react';
+import { render, act, fireEvent, screen, within } from '@testing-library/react';
 import { ShoppingCartProvider } from '@automattic/shopping-cart';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 
@@ -488,18 +488,36 @@ describe( 'CompositeCheckout', () => {
 		expect( page.redirect ).not.toHaveBeenCalled();
 	} );
 
-	it( 'removes a product from the cart after clicking to remove it', async () => {
+	it( 'removes a product from the cart after clicking to remove it in edit mode', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
-		const removeProductButtons = await screen.findAllByLabelText(
+		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
+		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
 		);
-		const removeProductButton = removeProductButtons[ 0 ];
 		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 2 );
 		fireEvent.click( removeProductButton );
-		const confirmButton = await screen.findByText( 'Continue' );
+		const confirmModal = await screen.findByRole( 'dialog' );
+		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
+		await act( async () => {
+			fireEvent.click( confirmButton );
+		} );
+		expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
+	} );
+
+	it( 'removes a product from the cart after clicking to remove it outside of edit mode', async () => {
+		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
+		const removeProductButton = await within( activeSection ).findByLabelText(
+			'Remove WordPress.com Personal from cart'
+		);
+		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 2 );
+		fireEvent.click( removeProductButton );
+		const confirmModal = await screen.findByRole( 'dialog' );
+		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
 		await act( async () => {
 			fireEvent.click( confirmButton );
 		} );
@@ -513,10 +531,10 @@ describe( 'CompositeCheckout', () => {
 		} );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
-		const removeProductButtons = await screen.findAllByLabelText(
+		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
+		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
 		);
-		const removeProductButton = removeProductButtons[ 0 ];
 		fireEvent.click( removeProductButton );
 		const confirmButton = await screen.findByText( 'Continue' );
 		await act( async () => {
@@ -532,8 +550,10 @@ describe( 'CompositeCheckout', () => {
 		} );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
-		const removeProductButtons = await screen.findAllByLabelText( 'Remove foo.cash from cart' );
-		const removeProductButton = removeProductButtons[ 0 ];
+		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
+		const removeProductButton = await within( activeSection ).findByLabelText(
+			'Remove foo.cash from cart'
+		);
 		fireEvent.click( removeProductButton );
 		const confirmButton = await screen.findByText( 'Continue' );
 		await act( async () => {
