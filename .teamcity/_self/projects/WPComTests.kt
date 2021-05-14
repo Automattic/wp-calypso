@@ -211,6 +211,7 @@ private object VisualRegressionTests : BuildType({
 			name = "Prepare environment"
 			scriptContent = """
 				export NODE_ENV="test"
+				export PUPPETEER_SKIP_DOWNLOAD="false"
 
 				# Install modules
 				${_self.yarn_install_cmd}
