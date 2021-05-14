@@ -223,7 +223,7 @@ private object VisualRegressionTests : BuildType({
 				export NODE_ENV="test"
 
 				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/development.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				ls test/visual/config
 
