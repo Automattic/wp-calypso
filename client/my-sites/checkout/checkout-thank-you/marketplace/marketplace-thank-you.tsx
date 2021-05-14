@@ -33,6 +33,11 @@ import './style.scss';
 const MarketplaceThankYouContainer = styled.div< MarketplaceThemeProps >`
 	background-color: #fff;
 	overflow: scroll;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
 	margin-top: var( --masterbar-height );
 	height: calc( 100vh - var( --masterbar-height ) );
 `;
@@ -46,7 +51,7 @@ const MarketplaceThankYouHeader = styled.div`
 }`;
 
 const MarketplaceThankyouSection = styled.div`
-    margin-bottom: 50px;
+    margin-bottom: 35px;
 }`;
 
 const ThankYouBody = styled.div`
@@ -117,7 +122,6 @@ const MarketplaceThankYou = () => {
 							<MarketplaceHeaderTitle className="marketplace-thank-you__body-header wp-brand-font">
 								{ translate( 'Yoast SEO Premium is installed' ) }
 							</MarketplaceHeaderTitle>
-							<p>{ translate( "You're all set. Yoast SEO is installed and ready to go." ) }</p>
 						</MarketplaceThankyouSection>
 						<MarketplaceThankyouSection>
 							<MarketplaceHeaderTitle
