@@ -240,7 +240,7 @@ private object VisualRegressionTests : BuildType({
 			scriptContent = """
 				set -x
 
-				mkdir -p screenshots
+				mkdir -p reports
 				find test/visual -type f -path '*/html_report/*' -print0 | xargs -r -0 mv -t reports
 
 			""".trimIndent()
