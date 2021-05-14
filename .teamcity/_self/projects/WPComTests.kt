@@ -196,6 +196,18 @@ private object VisualRegressionTests : BuildType({
 		cleanCheckout = true
 	}
 
+	params {
+		select(
+			name= "vr_task",
+			label = "Visual Regression Task",
+			multiple = false,
+			value = "test-visual",
+			data_1 = "test-visual",
+			data_2 = "test-visual-approve",
+			data_3 = "test-visual-reference"
+		)
+	}
+
 	steps {
 		bashNodeScript {
 			name = "Prepare environment"
@@ -214,12 +226,8 @@ private object VisualRegressionTests : BuildType({
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
-				# Setup for Docker
-                sudo apt-get update
-                sudo apt-get install docker-ce docker-ce-cli containerd.io
-
 				# Run the test
-				yarn test-visual
+				yarn "%vr_task%"
 			""".trimIndent()
 		}
 		bashNodeScript {
