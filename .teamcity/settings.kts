@@ -60,6 +60,7 @@ project {
 		text("env.SKIP_TSC", "true", label = "Skip TS type generation", description = "Skips running `tsc` on yarn install", allowEmpty = true)
 		password("mc_post_root", "credentialsJSON:2f764583-d399-4d5f-8ee1-06f68ef2e2a6", display = ParameterDisplay.HIDDEN )
 		password("mc_auth_secret", "credentialsJSON:5b1903f9-4b03-43ff-bba8-4a7509d07088", display = ParameterDisplay.HIDDEN)
+		select("visual_regression_task", label = "Visual Regression Test", multiple = false, value = "test", data_1 = "test", data_2 = "approve", data_3 = "reference")
 	}
 
 	features {
