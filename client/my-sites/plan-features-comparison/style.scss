@@ -1,5 +1,3 @@
-@import '~@automattic/onboarding/styles/mixins';
-
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
@@ -185,7 +183,7 @@ $plan-features-sidebar-width: 272px;
 		.plan-features-comparison__header-annual-discount {
 			color: var( --studio-green-60 );
 			&-is-loading {
-				@include onboarding-placeholder();
+				@include placeholder();
 			}
 		}
 
