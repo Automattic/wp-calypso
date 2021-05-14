@@ -493,9 +493,10 @@ describe( 'CompositeCheckout', () => {
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
-		const removeProductButton = await screen.findByLabelText(
+		const removeProductButtons = await screen.findAllByLabelText(
 			'Remove WordPress.com Personal from cart'
 		);
+		const removeProductButton = removeProductButtons[ 0 ];
 		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 2 );
 		fireEvent.click( removeProductButton );
 		const confirmButton = await screen.findByText( 'Continue' );
@@ -512,9 +513,10 @@ describe( 'CompositeCheckout', () => {
 		} );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
-		const removeProductButton = await screen.findByLabelText(
+		const removeProductButtons = await screen.findAllByLabelText(
 			'Remove WordPress.com Personal from cart'
 		);
+		const removeProductButton = removeProductButtons[ 0 ];
 		fireEvent.click( removeProductButton );
 		const confirmButton = await screen.findByText( 'Continue' );
 		await act( async () => {
@@ -530,7 +532,8 @@ describe( 'CompositeCheckout', () => {
 		} );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
-		const removeProductButton = await screen.findByLabelText( 'Remove foo.cash from cart' );
+		const removeProductButtons = await screen.findAllByLabelText( 'Remove foo.cash from cart' );
+		const removeProductButton = removeProductButtons[ 0 ];
 		fireEvent.click( removeProductButton );
 		const confirmButton = await screen.findByText( 'Continue' );
 		await act( async () => {
