@@ -225,7 +225,6 @@ private object VisualRegressionTests : BuildType({
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
-				echo $PWD
 				ls
 
 				apt-get install -y docker-compose
