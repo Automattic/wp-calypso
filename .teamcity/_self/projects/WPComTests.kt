@@ -22,6 +22,7 @@ object WPComTests : Project({
 	// Keep the previous ID in order to preserve the historical data
 	buildType(gutenbergBuildType("desktop", "aee94c18-ee11-4c80-b6aa-245b967a97db"));
 	buildType(gutenbergBuildType("mobile","2af2eaed-87d5-41f4-ab1d-4ed589d5ae82"));
+	buildType(VisualRegressionTests)
 })
 
 fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
@@ -181,3 +182,56 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 		}
 	}
 }
+
+private object VisualRegressionTests : BuildType({
+	name = "Visual Regression Tests"
+	description = "Runs visual regression tests"
+
+	artifactRules = """
+		reports => reports
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				export NODE_ENV="test"
+
+				# Install modules
+				${_self.yarn_install_cmd}
+			"""
+		}
+		bashNodeScript {
+			name = "Run Visual Regression Tests"
+			scriptContent = """
+				set -x
+
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+				# Run the test
+				yarn test-visual
+			""".trimIndent()
+		}
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				mkdir -p screenshots
+				find test/visual -type f -path '*/html_report/*' -print0 | xargs -r -0 mv -t reports
+
+			""".trimIndent()
+		}
+	}
+
+	failureConditions {
+    	executionTimeoutMin = 30
+    }
+})
