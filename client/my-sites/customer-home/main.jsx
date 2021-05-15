@@ -89,6 +89,7 @@ const Home = ( {
 			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
+				className="customer-home__heading"
 				headerText={ translate( 'My Home' ) }
 				subHeaderText={ translate( 'Your hub for posting, editing, and growing your site.' ) }
 				align="left"
@@ -134,13 +135,6 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	return {
-		...ownProps,
-		...stateProps,
-	};
-};
-
-const connectHome = connect( mapStateToProps, null, mergeProps );
+const connectHome = connect( mapStateToProps );
 
 export default flowRight( connectHome, withTrackingTool( 'HotJar' ) )( Home );
