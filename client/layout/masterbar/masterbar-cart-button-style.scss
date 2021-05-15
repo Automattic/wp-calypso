@@ -1,0 +1,28 @@
+.masterbar-cart-button {
+	display: flex;
+}
+
+.masterbar-cart-button button {
+	border-radius: 2px;
+	border: 1px solid var( --studio-gray-50 );
+}
+
+.masterbar-cart-button__count-wrapper {
+	position: relative;
+}
+
+.masterbar-cart-button__count-container {
+	display: inline-block;
+	padding: 1px 6px;
+	border: 1px solid var( --color-accent );
+	border-radius: 12px; /* stylelint-disable-line scales/radii */
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 14px;
+	text-align: center;
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	color: var( --color-text-inverted );
+	background-color: var( --color-accent );
+}
