@@ -320,11 +320,6 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
 	},
 
-	[ FEATURE_GOOGLE_ANALYTICS_SIGNUP ]: {
-		getSlug: () => FEATURE_GOOGLE_ANALYTICS_SIGNUP,
-		getTitle: () => i18n.translate( 'Google Analytics' ),
-	},
-
 	[ FEATURE_CLOUDFLARE_ANALYTICS ]: {
 		getSlug: () => FEATURE_CLOUDFLARE_ANALYTICS,
 		getTitle: () => i18n.translate( 'Cloudflare Web Analytics' ),
