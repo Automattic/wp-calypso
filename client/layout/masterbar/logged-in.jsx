@@ -218,6 +218,8 @@ class MasterbarLoggedIn extends Component {
 			title,
 		} = this.props;
 
+		const shouldShowCartIcon = true;
+
 		const { isActionSearchVisible } = this.state;
 
 		if ( isCheckout ) {
@@ -279,6 +281,16 @@ class MasterbarLoggedIn extends Component {
 							tooltip={ translate( 'Create a New Post' ) }
 						>
 							{ translate( 'Write' ) }
+						</AsyncLoad>
+					) }
+					{ shouldShowCartIcon && (
+						<AsyncLoad
+							require="./masterbar-cart"
+							placeholder={ null }
+							className="masterbar__item-cart"
+							tooltip={ translate( 'View my Shopping Cart' ) }
+						>
+							{ translate( 'Cart' ) }
 						</AsyncLoad>
 					) }
 					<Item
