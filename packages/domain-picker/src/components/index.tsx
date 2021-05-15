@@ -8,7 +8,7 @@ import { Button, TextControl, Notice } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
@@ -30,8 +30,8 @@ import {
 } from '../hooks';
 import { getDomainSuggestionsVendor } from '../utils';
 import {
-	PAID_DOMAINS_TO_SHOW,
-	PAID_DOMAINS_TO_SHOW_EXPANDED,
+	DOMAIN_SUGGESTIONS_TO_SHOW,
+	DOMAIN_SUGGESTIONS_TO_SHOW_EXPANDED,
 	domainIsAvailableStatus,
 } from '../constants';
 
@@ -70,16 +70,16 @@ export interface Props {
 
 	onExistingSubdomainSelect?: ( existingSubdomain: string ) => void;
 
-	/** Paid domain suggestions to show when the picker isn't expanded */
+	/** Total number of domain suggestions to show when the picker isn't expanded */
 	quantity?: number;
 
-	/** Domain suggestions to show when the picker is expanded */
+	/** Total number of suggestions to show when the picker is expanded */
 	quantityExpanded?: number;
 
 	/** Called when the user leaves the search box */
 	onDomainSearchBlur?: ( value: string ) => void;
 
-	currentDomain?: DomainSuggestion;
+	currentDomain?: DomainSuggestion | undefined;
 
 	isCheckingDomainAvailability?: boolean;
 
@@ -119,6 +119,9 @@ export interface Props {
 
 	/** Vendor string for domain suggestions */
 	vendor?: string;
+
+	/** Shows the recommendation label for domain suggestions */
+	showRecommendationLabel?: boolean;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -126,8 +129,8 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	showDomainCategories,
 	onDomainSelect,
 	onExistingSubdomainSelect,
-	quantity = PAID_DOMAINS_TO_SHOW,
-	quantityExpanded = PAID_DOMAINS_TO_SHOW_EXPANDED,
+	quantity = DOMAIN_SUGGESTIONS_TO_SHOW,
+	quantityExpanded = DOMAIN_SUGGESTIONS_TO_SHOW_EXPANDED,
 	onDomainSearchBlur,
 	analyticsFlowId,
 	analyticsUiAlgo,
@@ -144,6 +147,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	orderSubDomainsLast = false,
 	onUseYourDomainClick,
 	vendor = getDomainSuggestionsVendor(),
+	showRecommendationLabel = true,
 } ) => {
 	const { __ } = useI18n();
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
@@ -160,9 +164,14 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		retryRequest: retryDomainSuggestionRequest,
 	} = useDomainSuggestions( domainSearch.trim(), quantityExpanded, domainCategory, locale ) || {};
 
-	const domainSuggestions = allDomainSuggestions?.slice(
-		existingSubdomain ? 1 : 0,
-		isExpanded ? quantityExpanded : quantity
+	// filter out the free sub-domain suggestion when existingSubdomain prop has value
+	const domainSuggestions = allDomainSuggestions
+		?.filter( ( suggestion ) => ! ( existingSubdomain && suggestion.is_free ) )
+		.slice( 0, isExpanded ? quantityExpanded - 1 : quantity - 1 );
+
+	// we need this index because it refers to the recommended (most relevant) paid domain
+	const firstPaidDomainIndex = domainSuggestions?.findIndex(
+		( suggestion ) => ! suggestion.is_free && ! suggestion.unavailable
 	);
 
 	const persistentSelectedDomain = usePersistentSelectedDomain(
@@ -373,7 +382,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											{ ( ! areDependenciesLoading &&
 												domainSuggestions?.map( ( suggestion, i ) => {
 													const index = existingSubdomain?.domain_name ? i + 1 : i;
-													const isRecommended = index === 1;
+													const isRecommended = i === firstPaidDomainIndex;
 													const availabilityStatus =
 														domainAvailabilities[ suggestion?.domain_name ]?.status;
 													// should availabilityStatus be falsy then we assume it is available as we have not checked yet.
@@ -386,16 +395,16 @@ const DomainPicker: FunctionComponent< Props > = ( {
 																suggestionRefs.current[ index ] = ref;
 															} }
 															key={ suggestion.domain_name }
-															isUnavailable={ ! isAvailable }
 															domain={ suggestion.domain_name }
 															cost={ suggestion.cost }
+															isUnavailable={ ! isAvailable || suggestion?.unavailable }
 															isLoading={
 																currentDomain?.domain_name === suggestion.domain_name &&
 																isCheckingDomainAvailability
 															}
 															hstsRequired={ suggestion.hsts_required }
 															isFree={ suggestion.is_free }
-															isRecommended={ isRecommended }
+															isRecommended={ showRecommendationLabel && isRecommended }
 															railcarId={
 																baseRailcarId ? `${ baseRailcarId }${ index }` : undefined
 															}

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { planHasFeature } from 'calypso/lib/plans';
+import { planHasFeature } from '@automattic/calypso-products';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors/get-site-plan-slug';
 
 /**

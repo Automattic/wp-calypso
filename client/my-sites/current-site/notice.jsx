@@ -13,7 +13,7 @@ import { get, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getUrlParts } from 'calypso/lib/url/url-parts';
+import { getUrlParts } from '@automattic/calypso-url';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import getActiveDiscount from 'calypso/state/selectors/get-active-discount';

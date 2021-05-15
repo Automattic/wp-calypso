@@ -44,7 +44,7 @@ const config = ( data: ConfigData ) => < T >( key: string ): T | undefined => {
 		// eslint-disable-next-line no-console
 		console.error(
 			'%cCore Error: ' +
-				'%cCould not find config value for key %c${ key }%c. ' +
+				`%cCould not find config value for key %c${ key }%c. ` +
 				'Please make sure that if you need it then it has a default value assigned in ' +
 				'%cconfig/_shared.json' +
 				'%c.',

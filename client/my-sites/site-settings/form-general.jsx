@@ -26,8 +26,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import Timezone from 'calypso/components/timezone';
 import SiteIconSetting from './site-icon-setting';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { isBusiness } from 'calypso/lib/products-values';
-import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'calypso/lib/plans/constants';
+import { isBusiness, FEATURE_NO_BRANDING, PLAN_BUSINESS } from '@automattic/calypso-products';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { isJetpackSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
@@ -284,7 +283,7 @@ export class SiteSettingsFormGeneral extends Component {
 				<FormSettingExplanation>
 					{ translate( "The site's primary language." ) }
 					&nbsp;
-					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
+					<a href={ '/me/account' }>
 						{ translate( "You can also modify your interface's language in your profile." ) }
 					</a>
 				</FormSettingExplanation>
@@ -573,28 +572,6 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	disablePrivacySettings = ( e ) => {
-		e.target.blur();
-	};
-
-	privacySettingsWrapper() {
-		if ( this.props.isUnlaunchedSite ) {
-			return (
-				<>
-					{ this.renderLaunchSite() }
-					<div
-						className="site-settings__disable-privacy-settings"
-						onFocus={ this.disablePrivacySettings }
-					>
-						{ this.privacySettings() }
-					</div>
-				</>
-			);
-		}
-
-		return <>{ this.privacySettings() }</>;
-	}
-
 	render() {
 		const {
 			handleSubmitForm,
@@ -634,7 +611,7 @@ export class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
-				{ this.privacySettingsWrapper() }
+				{ this.props.isUnlaunchedSite ? this.renderLaunchSite() : this.privacySettings() }
 
 				{ ! isWPForTeamsSite && ! siteIsJetpack && (
 					<div className="site-settings__footer-credit-container">

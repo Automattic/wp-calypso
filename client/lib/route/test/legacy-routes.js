@@ -46,34 +46,12 @@ describe( 'legacy-routes', () => {
 			expect( isLegacyRoute( '/some/nested/page.php' ) ).to.be.true;
 		} );
 
-		describe( 'when `me/my-profile` feature flag is enabled', () => {
-			// config.isEnabled( 'me/my-profile' ) === true
-			beforeEach( () => {
-				features = [ 'me/my-profile' ];
-			} );
-
-			test( 'should return false for /me', () => {
-				expect( isLegacyRoute( '/me' ) ).to.be.false;
-			} );
-
-			test( 'should return false for /me/billing', () => {
-				expect( isLegacyRoute( '/me/billing' ) ).to.be.false;
-			} );
+		test( 'should return false for /me', () => {
+			expect( isLegacyRoute( '/me' ) ).to.be.false;
 		} );
 
-		describe( 'when `me/my-profile` feature flag is disabled', () => {
-			// config.isEnabled( 'me/my-profile' ) === false
-			beforeEach( () => {
-				features = [];
-			} );
-
-			test( 'should return true for /me', () => {
-				expect( isLegacyRoute( '/me' ) ).to.be.true;
-			} );
-
-			test( 'should return false for /me/billing', () => {
-				expect( isLegacyRoute( '/me/billing' ) ).to.be.false;
-			} );
+		test( 'should return false for /me/billing', () => {
+			expect( isLegacyRoute( '/me/billing' ) ).to.be.false;
 		} );
 	} );
 } );

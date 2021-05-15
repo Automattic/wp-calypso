@@ -34,6 +34,6 @@
 	},
 	"dependencies": {
 		"cookie": "^0.4.0",
-		"tslib": "^2.1.0"
+		"tslib": "^2.2.0"
 	}
 }

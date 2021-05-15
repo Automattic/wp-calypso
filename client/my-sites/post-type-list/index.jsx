@@ -34,7 +34,7 @@ import PostTypeListMaxPagesNotice from './max-pages-notice';
 import SectionHeader from 'calypso/components/section-header';
 import { Button } from '@automattic/components';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_NO_ADS } from 'calypso/lib/plans/constants';
+import { FEATURE_NO_ADS } from '@automattic/calypso-products';
 
 /**
  * Style dependencies

@@ -17,7 +17,7 @@ export default class PluginsPage extends AsyncBaseContainer {
 	}
 
 	async viewPlugin( pluginSlug ) {
-		const pluginSelector = by.css( `a.plugin-item__link[href*='${ pluginSlug }']` );
-		return await driverHelper.clickWhenClickable( this.driver, pluginSelector );
+		const pluginLocator = by.css( `a.plugin-item__link[href*='${ pluginSlug }']` );
+		return await driverHelper.clickWhenClickable( this.driver, pluginLocator );
 	}
 }

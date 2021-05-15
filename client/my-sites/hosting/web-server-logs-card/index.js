@@ -92,17 +92,10 @@ const WebServerLogsCard = ( props ) => {
 			} );
 		}
 
-		if ( startMoment.isBefore( moment.utc().subtract( 30, 'days' ) ) ) {
-			setStartDateValidation( {
-				isValid: false,
-				validationInfo: translate( 'Start date must be less than 30 days ago.' ),
-			} );
-		}
-
 		if ( startMoment.isBefore( moment.utc().subtract( 14, 'days' ) ) ) {
 			setStartDateValidation( {
 				isValid: false,
-				validationInfo: translate( 'Please select a time range of less than 14 days.' ),
+				validationInfo: translate( 'Start date must be less than 14 days ago.' ),
 			} );
 		}
 	}, [ startDateTime, endDateTime ] );
@@ -155,8 +148,13 @@ const WebServerLogsCard = ( props ) => {
 					scrollId = get( response, 'data.scroll_id', null );
 
 					if ( isEmpty( logs ) ) {
-						logs = [ Object.keys( newLogData[ 0 ] ).join( ',' ) + '\n' ];
-						totalLogs = get( response, 'data.total_results', 1 );
+						if ( isEmpty( newLogData ) ) {
+							downloadErrorNotice( translate( 'No logs available for this time range' ) );
+							isError = true;
+						} else {
+							logs = [ Object.keys( newLogData[ 0 ] ).join( ',' ) + '\n' ];
+							totalLogs = get( response, 'data.total_results', 1 );
+						}
 					}
 
 					logs = [

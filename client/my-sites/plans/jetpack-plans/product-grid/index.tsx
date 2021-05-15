@@ -10,21 +10,20 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { SWITCH_PLAN_SIDES_EXPERIMENT, SWITCH_PLAN_SIDES_TREATMENT } from '../experiments';
+import ProductGridSection from './section';
 import PlansFilterBar from '../plans-filter-bar';
+import PlanUpgradeSection from '../plan-upgrade';
 import ProductCard from '../product-card';
 import { getProductPosition } from '../product-grid/products-order';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from './utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
-import Experiment from 'calypso/components/experiment';
 import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
-import { getVariationForUser } from 'calypso/state/experiments/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import MoreInfoBox from '../more-info-box';
@@ -34,8 +33,7 @@ import StoreFooter from 'calypso/jetpack-connect/store-footer';
  * Type dependencies
  */
 import type { ProductsGridProps, SelectorProduct } from '../types';
-import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
-import type { JetpackPlanSlugs } from 'calypso/lib/plans/types';
+import type { JetpackProductSlug, JetpackPlanSlug } from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -44,9 +42,11 @@ import './style.scss';
 
 const ProductGrid: React.FC< ProductsGridProps > = ( {
 	duration,
-	onSelectProduct,
 	urlQueryArgs,
+	planRecommendation,
+	onSelectProduct,
 	onDurationChange,
+	scrollCardIntoView,
 } ) => {
 	const translate = useTranslate();
 
@@ -59,10 +59,13 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	// is connected, and thus, we don't need to show the Jetpack Free card.
 	const isSiteInContext = !! siteId;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const currentPlanSlug =
-		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
-	const exPlatVariation =
-		useSelector( ( state ) => getVariationForUser( state, SWITCH_PLAN_SIDES_EXPERIMENT ) ) || '';
+	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
+	const currentPlanSlug = currentPlan?.product_slug || null;
+	const currentPlanTranslatedName =
+		currentPlan && currentPlan.product_name_short
+			? // eslint-disable-next-line wpcalypso/i18n-no-variables
+			  translate( currentPlan.product_name_short )
+			: null;
 
 	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
 		siteId
@@ -73,9 +76,9 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const sortedPlans = useMemo(
 		() =>
 			sortBy( getPlansToDisplay( { duration, currentPlanSlug } ), ( item ) =>
-				getProductPosition( item.productSlug as JetpackPlanSlugs )
+				getProductPosition( item.productSlug as JetpackPlanSlug )
 			),
-		[ duration, currentPlanSlug ]
+		[ duration, currentPlanSlug, currentPlanTranslatedName ]
 	);
 	const sortedProducts = useMemo(
 		() =>
@@ -95,7 +98,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	let otherProducts = [] as SelectorProduct[];
 
 	const allProducts = sortBy( [ ...sortedPlans, ...sortedProducts ], ( item ) =>
-		getProductPosition( item.productSlug as JetpackPlanSlugs | JetpackProductSlug )
+		getProductPosition( item.productSlug as JetpackPlanSlug | JetpackProductSlug )
 	);
 	popularProducts = allProducts.slice( 0, 3 );
 	otherProducts = allProducts.slice( 3 );
@@ -131,18 +134,28 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		return () => window.removeEventListener( 'resize', onResize );
 	}, [ onResize ] );
 
+	const filterBar = (
+		<div className="product-grid__filter-bar">
+			<PlansFilterBar
+				showDiscountMessage
+				onDurationChange={ onDurationChange }
+				duration={ duration }
+			/>
+		</div>
+	);
+
 	return (
-		<Experiment name={ SWITCH_PLAN_SIDES_EXPERIMENT }>
-			<section className="product-grid__section">
-				<h2 className="product-grid__section-title">{ translate( 'Most Popular' ) }</h2>
-				<div className="product-grid__filter-bar">
-					<PlansFilterBar
-						showDiscountMessage
-						onDurationChange={ onDurationChange }
-						duration={ duration }
-						withTreatmentVariant={ exPlatVariation === SWITCH_PLAN_SIDES_TREATMENT }
-					/>
-				</div>
+		<>
+			{ planRecommendation && (
+				<PlanUpgradeSection
+					planRecommendation={ planRecommendation }
+					duration={ duration }
+					filterBar={ filterBar }
+					onSelectProduct={ onSelectProduct }
+				/>
+			) }
+			<ProductGridSection title={ translate( 'Most Popular' ) }>
+				{ ! planRecommendation && filterBar }
 				<ul
 					className={ classNames( 'product-grid__plan-grid', {
 						'is-wrapping': isPlanRowWrapping,
@@ -162,6 +175,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 									PLAN_JETPACK_SECURITY_DAILY,
 									PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 								] }
+								scrollCardIntoView={ scrollCardIntoView }
 							/>
 						</li>
 					) ) }
@@ -177,9 +191,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						onButtonClick={ scrollToComparison }
 					/>
 				</div>
-			</section>
-
-			<section className="product-grid__section product-grid__asterisk-items">
 				<ul className="product-grid__asterisk-list">
 					<li className="product-grid__asterisk-item">
 						{ translate( 'Special introductory pricing, all renewals are at full price.' ) }
@@ -191,10 +202,8 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						{ translate( 'All plans include priority support' ) }
 					</li>
 				</ul>
-			</section>
-
-			<section className="product-grid__section">
-				<h2 className="product-grid__section-title">{ translate( 'More Products' ) }</h2>
+			</ProductGridSection>
+			<ProductGridSection title={ translate( 'More Products' ) }>
 				<ul className="product-grid__product-grid">
 					{ otherProducts.map( ( product ) => (
 						<li key={ product.iconSlug }>
@@ -204,6 +213,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 								siteId={ siteId }
 								currencyCode={ currencyCode }
 								selectedTerm={ duration }
+								scrollCardIntoView={ scrollCardIntoView }
 							/>
 						</li>
 					) ) }
@@ -213,9 +223,9 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 					) }
 				</div>
-			</section>
+			</ProductGridSection>
 			<StoreFooter />
-		</Experiment>
+		</>
 	);
 };
 

@@ -26,4 +26,4 @@ To start a plan checkout flow, use appropriate URLS:
 - /checkout/site.jetpack.me/premium
 - /checkout/site.jetpack.me/professional
 
-Plan routes are sourced from `lib/plans/constants.js`.
+Plan routes are sourced from `@automattic/calypso-products`.

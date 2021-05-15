@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { flattenDeep, pickBy } from 'lodash';
+import { pickBy } from 'lodash';
 
 /**
  * Extract the product slugs out of an array of product objects.
@@ -10,7 +10,7 @@ import { flattenDeep, pickBy } from 'lodash';
  * @returns {Array} Array of the product slugs.
  */
 export const extractProductSlugs = ( products ) => [
-	...new Set( flattenDeep( products.map( ( product ) => Object.values( product.options ) ) ) ),
+	...new Set( products.map( ( product ) => Object.values( product.options ) ).flat( 2 ) ),
 ];
 
 /**

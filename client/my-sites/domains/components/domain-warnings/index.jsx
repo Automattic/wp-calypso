@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import _debug from 'debug';
-import { intersection, map, every, find, get } from 'lodash';
+import { intersection, map, find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -207,7 +207,7 @@ export class DomainWarnings extends React.PureComponent {
 					) ) }
 				</ul>
 			);
-			if ( every( map( wrongMappedDomains, 'name' ), isSubdomain ) ) {
+			if ( map( wrongMappedDomains, 'name' ).every( isSubdomain ) ) {
 				text = translate( "Some of your domains' DNS records need to be configured.", {
 					context: 'Notice for mapped subdomain that has DNS records need to set up',
 				} );

@@ -56,7 +56,7 @@ class StoreStats extends Component {
 		const widgetPath = getWidgetPath( unit, slug, queryParams );
 
 		return (
-			<Main className="store-stats woocommerce" wideLayout={ true }>
+			<Main className="store-stats woocommerce" wideLayout>
 				<PageViewTracker
 					path={ `/store/stats/orders/${ unit }/:site` }
 					title={ `Store > Stats > Orders > ${ titlecase( unit ) }` }

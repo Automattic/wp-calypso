@@ -11,15 +11,15 @@ import { dispatch, select } from '@wordpress/data-controls';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { getLanguage } from 'calypso/lib/i18n-utils';
 import { __ } from '@wordpress/i18n';
+import type { Design, FontPair } from '@automattic/design-picker';
 
 /**
  * Internal dependencies
  */
-import type { Design, SiteVertical } from './types';
+import type { SiteVertical } from './types';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 import type { State } from '.';
-import type { FontPair } from '../../constants';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -108,7 +108,11 @@ export function* createSite( {
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
-	const success = yield dispatch( SITE_STORE, 'createSite', params );
+	const success: Site.NewSiteBlogDetails | undefined = yield dispatch(
+		SITE_STORE,
+		'createSite',
+		params
+	);
 
 	return success;
 }

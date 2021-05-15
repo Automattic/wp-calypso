@@ -6,12 +6,7 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	EDITOR_IFRAME_LOADED,
-	EDITOR_PASTE_EVENT,
-	EDITOR_START,
-	EDITOR_STOP,
-} from 'calypso/state/action-types';
+import { EDITOR_IFRAME_LOADED, EDITOR_START, EDITOR_STOP } from 'calypso/state/action-types';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 import { setMediaModalView } from 'calypso/state/ui/media-modal/actions';
 import { withAnalytics, bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -61,20 +56,6 @@ export function stopEditingPost( siteId, postId ) {
 		type: EDITOR_STOP,
 		siteId,
 		postId,
-	};
-}
-
-/**
- * Returns an action object to be used in signalling that the user has pasted
- * some content from source.
- *
- * @param {string} source Identifier of the app the content was pasted from.
- * @returns {object} Action object
- */
-export function pasteEvent( source ) {
-	return {
-		type: EDITOR_PASTE_EVENT,
-		source,
 	};
 }
 

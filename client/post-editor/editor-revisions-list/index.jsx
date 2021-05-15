@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, head, isEmpty, last, map } from 'lodash';
+import { get, isEmpty, last, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -186,7 +186,7 @@ class EditorRevisionsList extends PureComponent {
 export default connect(
 	( state, { comparisons, revisions, selectedRevisionId } ) => {
 		const { nextRevisionId, prevRevisionId } = get( comparisons, [ selectedRevisionId ], {} );
-		const latestRevisionId = get( head( revisions ), 'id' );
+		const latestRevisionId = get( revisions[ 0 ], 'id' );
 		const latestRevisionIsSelected = latestRevisionId === selectedRevisionId;
 		const earliestRevisionIsSelected =
 			! latestRevisionIsSelected && get( last( revisions ), 'id' ) === selectedRevisionId;

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 export const DomainNameExplanationImage: FunctionComponent = () => {
 	const { __, isRTL } = useI18n();

@@ -31,7 +31,7 @@ $cloud-icon-height: 24px;
 
 	margin-bottom: 36px;
 
-	color: var( --studio-jetpack-green-50 );
+	color: var( --color-primary-50 );
 
 	font-weight: 700;
 	line-height: $cloud-icon-height;
@@ -84,7 +84,7 @@ $cloud-icon-height: 24px;
 	margin-left: 1rem;
 
 	&.badge {
-		background-color: var( --studio-jetpack-green-5 );
+		background-color: var( --color-primary-5 );
 		color: var( --color-text );
 
 		font-size: 0.75rem;

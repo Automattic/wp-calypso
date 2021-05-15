@@ -19,6 +19,14 @@ import {
 } from '../validation';
 import * as processorSpecificMethods from '../processor-specific';
 
+jest.mock( '../processor-specific', () => {
+	const realProcessorSpecificMethods = jest.requireActual( '../processor-specific' );
+	return {
+		...realProcessorSpecificMethods,
+		isValidCPF: jest.fn(),
+	};
+} );
+
 describe( 'validation', () => {
 	const validCard = {
 		name: 'John Doe',
@@ -162,7 +170,7 @@ describe( 'validation', () => {
 
 		describe( 'validate ebanx non-credit card details', () => {
 			beforeAll( () => {
-				processorSpecificMethods.isValidCPF = jest.fn().mockImplementation( () => true ); // eslint-disable-line no-import-assign
+				processorSpecificMethods.isValidCPF.mockImplementation( () => true );
 			} );
 
 			test( 'should return no errors when details are valid', () => {
@@ -238,7 +246,7 @@ describe( 'validation', () => {
 			} );
 
 			test( 'should return error when CPF is invalid', () => {
-				processorSpecificMethods.isValidCPF = jest.fn().mockImplementation( () => false ); // eslint-disable-line no-import-assign
+				processorSpecificMethods.isValidCPF.mockImplementation( () => false );
 				const invalidCPF = { ...validBrazilianEbanxCard, document: 'blah' };
 				const result = validatePaymentDetails( invalidCPF, 'ebanx' );
 				expect( result ).toEqual( {

@@ -7,7 +7,7 @@
  */
 const fs = require( 'fs' );
 const path = require( 'path' );
-const { assign, assignWith } = require( 'lodash' );
+const { assignWith } = require( 'lodash' );
 const debug = require( 'debug' )( 'config' );
 
 function getDataFromFile( file ) {
@@ -24,7 +24,7 @@ function getDataFromFile( file ) {
 }
 
 module.exports = function ( configPath, defaultOpts ) {
-	const opts = assign(
+	const opts = Object.assign(
 		{
 			env: 'development',
 		},
@@ -74,8 +74,8 @@ module.exports = function ( configPath, defaultOpts ) {
 	data.hostname = process.env.HOST || data.hostname;
 	data.port = process.env.PORT || data.port;
 
-	const serverData = assign( {}, data, getDataFromFile( secretsPath ) );
-	const clientData = assign( {}, data );
+	const serverData = Object.assign( {}, data, getDataFromFile( secretsPath ) );
+	const clientData = Object.assign( {}, data );
 
 	return { serverData, clientData };
 };

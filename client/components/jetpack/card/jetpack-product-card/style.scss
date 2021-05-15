@@ -18,6 +18,19 @@
 	}
 }
 
+// The anchor allow us to scroll into view exactly 100px on top of the
+// card. We need this so that the card never appears behind the filter bar.
+.jetpack-product-card__scroll-anchor {
+	visibility: hidden;
+
+	position: absolute;
+	top: -105px;
+}
+
+.is-section-jetpack-cloud-pricing .jetpack-product-card__scroll-anchor {
+	top: -90px;
+}
+
 .jetpack-product-card__header {
 	display: flex;
 
@@ -134,6 +147,11 @@
 
 .jetpack-product-card__price .plan-price.jetpack-product-card__original-price {
 	margin-inline-end: 16px;
+}
+
+.jetpack-product-card__price-deprecated {
+	font-size: 1.5rem;
+	font-weight: 700;
 }
 
 .jetpack-product-card__you-save,

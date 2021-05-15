@@ -13,7 +13,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteProducts, getSitePlan } from 'calypso/state/sites/selectors';
-import { getPlan } from 'calypso/lib/plans';
+import { getPlan } from '@automattic/calypso-products';
 
 /**
  * Type dependencies

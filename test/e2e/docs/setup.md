@@ -7,18 +7,18 @@ This document will cover the environment setup process to run the `wp-calypso` e
 <!-- TOC -->
 
 - [Setup](#setup)
-    - [Table of contents](#table-of-contents)
-    - [Software Environment](#software-environment)
-        - [Required software](#required-software)
-        - [Steps](#steps)
-            - [Intel-based macOS](#intel-based-macos)
-            - [Apple Silicon-based macOS](#apple-silicon-based-macos)
-    - [Configuration File](#configuration-file)
-        - [Overview](#overview)
-        - [In-repo configuration](#in-repo-configuration)
-        - [Custom configurations optional](#custom-configurations-optional)
-    - [Environment Variables](#environment-variables)
-    - [Naming Branches](#naming-branches)
+  - [Table of contents](#table-of-contents)
+  - [Software Environment](#software-environment)
+    - [Required software](#required-software)
+    - [Steps](#steps)
+      - [Intel-based macOS](#intel-based-macos)
+      - [Apple Silicon-based macOS](#apple-silicon-based-macos)
+  - [Configuration File](#configuration-file)
+    - [Overview](#overview)
+    - [In-repo configuration](#in-repo-configuration)
+    - [Custom configurations optional](#custom-configurations-optional)
+  - [Environment Variables](#environment-variables)
+  - [Naming Branches](#naming-branches)
 
 <!-- /TOC -->
 
@@ -59,8 +59,9 @@ yarn install
 
 #### Apple Silicon-based macOS
 
-It appears that key dependencies do not support ARM64 yet, notably `mocha`.
-This means we must install and run a parallel Intel-based set of dependencies.
+It appears that key dependencies do not support ARM64 yet, notably `mocha`. This is true as of 2021-01 and may be subject to change in the coming months.
+
+Currently the restrictions mean we must install and run x86_64 binaries.
 
 1. install i386 Homebrew:
 
@@ -134,6 +135,8 @@ There is a 'standard' configuration already in the GitHub repo under `test/e2e/c
 
 This configuration must be decrypted prior to running any e2e tests. To decrypt, please follow the steps outlined in the Field Guide.
 
+**Trialmatticians**: please contact a team member in your Slack chat for the decryption key.
+
 ### Custom configurations (optional)
 
 Custom config files should be added under `test/e2e/config/` and should follow the naming scheme:
@@ -155,14 +158,12 @@ For the full list of possible configuration values, please see the following pag
 
 Environment Variables are values that are defined at the system level to serve as configuration for programs.
 
-For e2e tests, the following are required environment variables without which e2e tests will not run locally:
+For e2e tests, the following are required environment variables without which e2e tests will not run:
 
 ```
 export NODE_CONFIG_ENV=<name_of_decrypted_config_to_use>
 export CONFIG_KEY=<decryption_key_from_a8c_store>
 ```
-
-**Trial Engineers**: please contact a team member in your Slack chat for the decryption key.
 
 Additionally, see the list of other environment variables [here](environment_variables.md).
 

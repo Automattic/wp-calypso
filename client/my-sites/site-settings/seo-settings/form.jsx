@@ -48,8 +48,8 @@ import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
-} from 'calypso/lib/plans/constants';
-import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
+	findFirstSimilarPlanKey,
+} from '@automattic/calypso-products';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';

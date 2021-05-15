@@ -70,10 +70,11 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 .wpcom-block-editor-nav-sidebar-nav-sidebar__header {
 	box-sizing: content-box;
 	background-color: $sidebar-nav-header-background-color;
+	display: flex;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__site-title {
-	margin: 0 0 0 74px;
+	margin-left: $grid-unit-10;
 	align-items: center;
 	display: flex;
 	min-height: 60px;
@@ -103,11 +104,10 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button {
-	position: fixed;
-	top: 0;
-	left: 0;
 	height: $header-height !important;
 	background-color: $sidebar-nav-header-background-color !important;
+	// Prevents the icon button from shrinking when the site title goes on 2+ lines
+	flex-shrink: 0;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {
@@ -137,7 +137,7 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading,
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading {
 	padding: $grid-unit-05 $grid-unit-20;
-	/* stylelint-disable-next-line scales/font-size */
+	/* stylelint-disable-next-line scales/font-size, declaration-property-unit-allowed-list */
 	font-size: 18px;
 	color: $white;
 	margin: 0 0 8px;

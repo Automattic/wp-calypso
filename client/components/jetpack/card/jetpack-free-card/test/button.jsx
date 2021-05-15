@@ -14,7 +14,7 @@ import '@testing-library/jest-dom/extend-expect';
 import { render as rtlRender, screen, fireEvent } from 'config/testing-library';
 import JetpackFreeCardButton from '../button';
 import { JPC_PATH_BASE } from 'calypso/jetpack-connect/constants';
-import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
+import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import { SESSION_STORAGE_SELECTED_PLAN } from 'calypso/jetpack-connect/persistence-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import * as analytics from 'calypso/state/analytics/actions/record';
@@ -26,7 +26,7 @@ const siteId = 1;
 const siteFragment = 'bored-sheep.jurassic.ninja';
 const siteUrl = `https://${ siteFragment }`;
 const adminUrl = `${ siteUrl }/wp-admin/`;
-const jetpackAdminUrl = `${ adminUrl }admin.php?page=jetpack#/my-plan`;
+const jetpackAdminUrl = `${ adminUrl }admin.php?page=jetpack#/recommendations`;
 
 const getLink = () => screen.getByRole( 'link' );
 const getHref = () => getLink().getAttribute( 'href' );
@@ -52,7 +52,7 @@ describe( 'JetpackFreeCardButton', () => {
 			ui: { selectedSiteId: siteId },
 			sites: {
 				items: {
-					[ siteId ]: { options: { admin_url: adminUrl } },
+					[ siteId ]: { options: { admin_url: adminUrl }, jetpack: true },
 				},
 			},
 		};
@@ -60,6 +60,21 @@ describe( 'JetpackFreeCardButton', () => {
 		render( <JetpackFreeCardButton />, { initialState } );
 
 		expect( getHref() ).toEqual( jetpackAdminUrl );
+	} );
+
+	it( 'should link to the connect page if the site is not a Jetpack site', () => {
+		const initialState = {
+			ui: { selectedSiteId: siteId },
+			sites: {
+				items: {
+					[ siteId ]: { options: { admin_url: adminUrl }, jetpack: false },
+				},
+			},
+		};
+
+		render( <JetpackFreeCardButton />, { initialState } );
+
+		expect( getHref() ).toEqual( JPC_PATH_BASE );
 	} );
 
 	it( 'should link to the Jetpack section in the site admin, when site in context', () => {
@@ -75,6 +90,15 @@ describe( 'JetpackFreeCardButton', () => {
 		render( <JetpackFreeCardButton urlQueryArgs={ { site: subSiteFragment } } /> );
 
 		expect( getHref() ).toEqual( jetpackAdminUrl.replace( siteUrl, subSiteUrl ) );
+	} );
+
+	it( 'should link to the "admin_url" query arg value, when "admin_url" query arg is present', () => {
+		const wpAdminQueryArg = `http://non-https-site.com/wp-admin/`;
+		const jetpackAdminUrlFromQueryArg = `${ wpAdminQueryArg }admin.php?page=jetpack#/recommendations`;
+
+		render( <JetpackFreeCardButton urlQueryArgs={ { admin_url: wpAdminQueryArg } } /> );
+
+		expect( getHref() ).toEqual( jetpackAdminUrlFromQueryArg );
 	} );
 
 	it( 'should link to the connect page, if site in context is invalid', () => {

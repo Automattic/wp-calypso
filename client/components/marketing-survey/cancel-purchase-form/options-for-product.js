@@ -2,7 +2,7 @@
  * Internal Dependencies
  */
 
-import { isDomainTransfer, isJetpackPlan } from 'calypso/lib/products-values';
+import { isDomainTransfer, isJetpackPlan } from '@automattic/calypso-products';
 
 export const cancellationOptionsForPurchase = ( purchase ) => {
 	if ( isJetpackPlan( purchase ) ) {

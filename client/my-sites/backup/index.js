@@ -18,7 +18,6 @@ import {
 } from 'calypso/my-sites/backup/controller';
 import { backupMainPath, backupRestorePath, backupDownloadPath } from './paths';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isEnabled } from '@automattic/calypso-config';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { notFound, makeLayout, render as clientRender } from 'calypso/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -57,24 +56,22 @@ export default function () {
 		clientRender
 	);
 
-	if ( isEnabled( 'jetpack/backups-restore' ) ) {
-		/* handles /backup/:site/restore/:rewindId, see `backupRestorePath` */
-		page(
-			backupRestorePath( ':site', ':rewindId' ),
-			siteSelection,
-			navigation,
-			backupRestore,
-			wrapInSiteOffsetProvider,
-			wpcomUpsellController( WPCOMUpsellPage ),
-			showUnavailableForVaultPressSites,
-			showJetpackIsDisconnected,
-			showUnavailableForMultisites,
-			showNotAuthorizedForNonAdmins,
-			notFoundIfNotEnabled,
-			makeLayout,
-			clientRender
-		);
-	}
+	/* handles /backup/:site/restore/:rewindId, see `backupRestorePath` */
+	page(
+		backupRestorePath( ':site', ':rewindId' ),
+		siteSelection,
+		navigation,
+		backupRestore,
+		wrapInSiteOffsetProvider,
+		wpcomUpsellController( WPCOMUpsellPage ),
+		showUnavailableForVaultPressSites,
+		showJetpackIsDisconnected,
+		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
+		notFoundIfNotEnabled,
+		makeLayout,
+		clientRender
+	);
 
 	/* handles /backup/:site, see `backupMainPath` */
 	page(

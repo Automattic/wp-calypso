@@ -21,6 +21,11 @@ const getExistingPreference = (
 	type: 'scan' | 'restore'
 ): SinglePreferenceType => {
 	const pref = ( getPreference( state, PREFERENCE_NAME ) as PreferenceType ) || {};
+	if ( type === 'scan' ) {
+		return pref.hasOwnProperty( 'scan' )
+			? pref.scan[ state.ui.selectedSiteId ] ?? emptyPreference
+			: emptyPreference;
+	}
 	return pref[ type ] ?? emptyPreference;
 };
 
@@ -40,4 +45,9 @@ const getIsValid = ( state: AppState, type: 'scan' | 'restore' ): boolean => {
 	return null !== validFrom ? validFrom < Date.now() : false;
 };
 
-export { getIsDismissed, getIsValid, getExistingPreference };
+const getValidFromDate = ( state: AppState, type: 'scan' | 'restore' ): number | null => {
+	const { validFrom } = getExistingPreference( state, type );
+	return validFrom;
+};
+
+export { getIsDismissed, getIsValid, getExistingPreference, getValidFromDate };

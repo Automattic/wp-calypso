@@ -8,13 +8,14 @@ name: Editing Toolkit Plugin
 
 jobs:
   build:
-    name: Build plugin
+    name: Run PHPunit tests.
     runs-on: ubuntu-latest
     steps:
       - name: Set up Node
         uses: actions/setup-node@v1
         with:
-          node-version: '^14.16.0'
+          node-version: '^14.16.1'
+
       - name: Checkout code
         uses: actions/checkout@HEAD
 
@@ -44,54 +45,6 @@ jobs:
       - name: Build JavaScript
         run: yarn build
         working-directory: apps/editing-toolkit
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v1
-        with:
-          name: editing-toolkit-build-archive
-          path: apps/editing-toolkit/editing-toolkit-plugin
-
-  phpunit:
-    name: Run phpunit tests
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      # Pin to Node v12 to work around issue: https://github.com/Automattic/wp-calypso/issues/47255
-      # We should be able to remove this once a wp-env update is released that includes an updated nodegit
-      # More info at: https://github.com/WordPress/gutenberg/pull/26712
-      - name: Set up Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '14.16.0'
-
-      - name: Checkout code
-        uses: actions/checkout@HEAD
-
-      # It saves a bit of time to download the artifact rather than doing a build.
-      - name: Get build
-        uses: actions/download-artifact@HEAD
-        with:
-          name: editing-toolkit-build-archive
-          path: apps/editing-toolkit/editing-toolkit-plugin
-
-      - name: Composer install
-        uses: nick-zh/composer-php@HEAD
-        with:
-          action: 'install'
-
-      # We still need to access some local node modules to run things.
-      - name: Restore node_modules cache
-        id: cache
-        uses: actions/cache@HEAD
-        with:
-          path: |
-            node_modules
-            */*/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
-
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install --frozen-lockfile
 
       - name: Setup wp-env dependencies
         run: |

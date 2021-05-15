@@ -59,7 +59,7 @@ class NotificationSettings extends Component {
 			this.props.saveSettings( 'blogs', findSettingsForBlog( blogId ), true );
 
 		return (
-			<Main className="notification-settings is-wide-layout">
+			<Main wideLayout className="notification-settings">
 				<PageViewTracker path="/me/notifications" title="Me > Notifications" />
 				<QueryUserDevices />
 				<MeSidebarNavigation />

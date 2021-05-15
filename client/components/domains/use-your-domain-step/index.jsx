@@ -41,7 +41,7 @@ import {
 	isDomainMappingFree,
 	isNextDomainFree,
 } from 'calypso/lib/cart-values/cart-items';
-import { isPlan } from 'calypso/lib/products-values';
+import { isPlan } from '@automattic/calypso-products';
 import {
 	DOMAINS_WITH_PLANS_ONLY,
 	NON_PRIMARY_DOMAINS_TO_FREE_USERS,

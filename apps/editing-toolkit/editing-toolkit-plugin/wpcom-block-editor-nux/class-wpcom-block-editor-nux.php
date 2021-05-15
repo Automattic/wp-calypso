@@ -59,6 +59,11 @@ class WPCOM_Block_Editor_NUX {
 			'wpcomBlockEditorNuxAssetsUrl',
 			plugins_url( 'dist/', __FILE__ )
 		);
+		wp_localize_script(
+			'wpcom-block-editor-nux-script',
+			'wpcomBlockEditorNuxLocale',
+			\A8C\FSE\Common\get_iso_639_locale( determine_locale() )
+		);
 
 		wp_set_script_translations( 'wpcom-block-editor-nux-script', 'full-site-editing' );
 

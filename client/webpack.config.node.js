@@ -113,6 +113,7 @@ const webpackConfig = {
 				configFile: path.resolve( 'babel.config.js' ),
 				cacheDirectory,
 				cacheIdentifier,
+				cacheCompression: false,
 				exclude: /node_modules\//,
 			} ),
 			TranspileConfig.loader( {
@@ -120,6 +121,7 @@ const webpackConfig = {
 				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
 				cacheDirectory,
 				cacheIdentifier,
+				cacheCompression: false,
 				include: shouldTranspileDependency,
 			} ),
 			fileLoader,
@@ -163,19 +165,9 @@ const webpackConfig = {
 			COMMIT_SHA: JSON.stringify( commitSha ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 		} ),
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
-			'calypso/components/empty-component'
-		), // Depends on BOM
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 		! isDevelopment && new ExternalModulesWriter(),
 	].filter( Boolean ),
 };
-
-if ( ! config.isEnabled( 'desktop' ) ) {
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^calypso[/\\]lib[/\\]desktop$/, 'lodash/noop' )
-	);
-}
 
 module.exports = webpackConfig;

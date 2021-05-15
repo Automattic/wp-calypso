@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import { useSelect } from '@wordpress/data';
-import { useDispatch } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { isGoodDefaultDomainQuery, DOMAIN_QUERY_MINIMUM_LENGTH } from '@automattic/domain-picker';
 
 /**

@@ -47,12 +47,9 @@ class SuggestionsList extends React.PureComponent {
 				} );
 			}
 
-			setTimeout(
-				function () {
-					this._scrollingIntoView = false;
-				}.bind( this ),
-				100
-			);
+			setTimeout( () => {
+				this._scrollingIntoView = false;
+			}, 100 );
 		}
 	}
 
@@ -90,51 +87,48 @@ class SuggestionsList extends React.PureComponent {
 	}
 
 	_renderSuggestions = () => {
-		return map(
-			this.props.suggestions,
-			function ( suggestion, index ) {
-				const match = this._computeSuggestionMatch( suggestion );
-				const classes = classNames( 'token-field__suggestion', {
-					'is-selected': index === this.props.selectedIndex,
-				} );
+		return map( this.props.suggestions, ( suggestion, index ) => {
+			const match = this._computeSuggestionMatch( suggestion );
+			const classes = classNames( 'token-field__suggestion', {
+				'is-selected': index === this.props.selectedIndex,
+			} );
 
-				return (
-					// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
-					<li
-						className={ classes }
-						key={ suggestion }
-						onMouseDown={ this._handleMouseDown }
-						onClick={ this._handleClick( suggestion ) }
-						onMouseEnter={ this._handleHover( suggestion ) }
-					>
-						{ match ? (
-							<span>
-								{ match.suggestionBeforeMatch }
-								<strong className="token-field__suggestion-match">{ match.suggestionMatch }</strong>
-								{ match.suggestionAfterMatch }
-							</span>
-						) : (
-							this.props.displayTransform( suggestion )
-						) }
-					</li>
-				);
-			}.bind( this )
-		);
+			return (
+				// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
+				<li
+					className={ classes }
+					key={ suggestion }
+					onMouseDown={ this._handleMouseDown }
+					onClick={ this._handleClick( suggestion ) }
+					onMouseEnter={ this._handleHover( suggestion ) }
+				>
+					{ match ? (
+						<span>
+							{ match.suggestionBeforeMatch }
+							<strong className="token-field__suggestion-match">{ match.suggestionMatch }</strong>
+							{ match.suggestionAfterMatch }
+						</span>
+					) : (
+						this.props.displayTransform( suggestion )
+					) }
+				</li>
+			);
+		} );
 	};
 
-	_handleHover = ( suggestion ) => {
-		return function () {
+	_handleHover( suggestion ) {
+		return () => {
 			if ( ! this._scrollingIntoView ) {
 				this.props.onHover( suggestion );
 			}
-		}.bind( this );
-	};
+		};
+	}
 
-	_handleClick = ( suggestion ) => {
-		return function () {
+	_handleClick( suggestion ) {
+		return () => {
 			this.props.onSelect( suggestion );
-		}.bind( this );
-	};
+		};
+	}
 
 	_handleMouseDown = ( e ) => {
 		// By preventing default here, we will not lose focus of <input> when clicking a suggestion

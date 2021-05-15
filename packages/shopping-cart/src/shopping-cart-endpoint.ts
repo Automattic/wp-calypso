@@ -141,9 +141,11 @@ export interface ResponseCartProduct {
 	is_bundled: boolean;
 	is_sale_coupon_applied: boolean;
 	meta: string;
+	time_added_to_cart: number;
 	months_per_bill_period: number | null;
 	volume: number;
 	quantity: number | null;
+	current_quantity: number | null;
 	extra: ResponseCartProductExtra;
 	uuid: string;
 	cost: number;
@@ -186,10 +188,15 @@ export interface ResponseCartProductExtra {
 	google_apps_registration_data?: DomainContactDetails;
 	purchaseType?: string;
 	privacy?: boolean;
+	afterPurchaseUrl?: string;
+	isJetpackCheckout?: boolean;
 }
 
 export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	purchaseId?: string;
+	isJetpackCheckout?: boolean;
+	jetpackSiteSlug?: string;
+	jetpackPurchaseToken?: string;
 }
 
 export interface GSuiteProductUser {

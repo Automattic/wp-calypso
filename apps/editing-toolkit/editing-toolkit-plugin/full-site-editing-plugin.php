@@ -249,12 +249,22 @@ function load_block_patterns_from_api( $current_screen ) {
 		return;
 	}
 
-	if ( ! $current_screen->is_block_editor ) {
+	$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
+
+	if ( ! $current_screen->is_block_editor && ! $is_site_editor ) {
 		return;
 	}
 
+	$patterns_sources = array( 'block_patterns' );
+
+	// While we're still testing the FSE patterns, limit activation via a filter.
+	if ( $is_site_editor && apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
+		$patterns_sources[] = 'fse_block_patterns';
+	}
+
 	require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
-	Block_Patterns_From_API::get_instance();
+	$block_patterns_from_api = new Block_Patterns_From_API( $patterns_sources );
+	$block_patterns_from_api->register_patterns();
 }
 add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
 
@@ -292,7 +302,7 @@ function load_mailerlite() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_mailerlite' );
 
 /**
- * Load WPCOM block editor nav sidebar
+ * Load WPCOM block editor nav sidebar.
  */
 function load_wpcom_block_editor_sidebar() {
 	if (
@@ -318,9 +328,17 @@ function load_coming_soon() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_coming_soon' );
 
 /**
- * What's New section of the Tools menu
+ * What's New section of the Tools menu.
  */
 function load_whats_new() {
 	require_once __DIR__ . '/whats-new/class-whats-new.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );
+
+/**
+ * Error reporting for wp-admin / Gutenberg
+ */
+function load_error_reporting() {
+	require_once __DIR__ . '/error-reporting/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_error_reporting' );

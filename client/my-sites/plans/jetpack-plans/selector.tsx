@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
@@ -9,17 +9,19 @@ import { useDispatch, useSelector } from 'react-redux';
  */
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { checkout, manageSitePurchase } from 'calypso/my-sites/plans/jetpack-plans/utils';
-import QueryProducts from 'calypso/my-sites/plans/jetpack-plans/query-products';
+import {
+	checkout,
+	getYearlySlugFromMonthly,
+	manageSitePurchase,
+} from 'calypso/my-sites/plans/jetpack-plans/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
-import { getProductYearlyVariant, isJetpackPlan } from 'calypso/lib/products-values';
-import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Main from 'calypso/components/main';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QuerySites from 'calypso/components/data/query-sites';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySites from 'calypso/components/data/query-sites';
+import QuerySiteProducts from 'calypso/components/data/query-site-products';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import ProductGrid from './product-grid';
 
 /**
@@ -27,11 +29,11 @@ import ProductGrid from './product-grid';
  */
 import type {
 	Duration,
+	ScrollCardIntoViewCallback,
 	SelectorPageProps,
 	SelectorProduct,
 	PurchaseCallback,
 } from 'calypso/my-sites/plans/jetpack-plans/types';
-import type { ProductSlug } from 'calypso/lib/products-values/types';
 
 import './style.scss';
 
@@ -42,6 +44,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	urlQueryArgs,
 	header,
 	footer,
+	planRecommendation,
+	highlightedProducts = [],
 }: SelectorPageProps ) => {
 	const dispatch = useDispatch();
 
@@ -53,6 +57,19 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	useEffect( () => {
 		setDuration( defaultDuration );
 	}, [ defaultDuration ] );
+
+	const scrollCardIntoView: ScrollCardIntoViewCallback = useCallback(
+		( element, productSlug ) => {
+			if ( highlightedProducts.includes( productSlug ) ) {
+				// Timeout to make sure everything has rendered before
+				// before scrolling the element into view.
+				element.scrollIntoView( {
+					behavior: 'smooth',
+				} );
+			}
+		},
+		[ highlightedProducts ]
+	);
 
 	// Sends a user to a page based on whether there are subtypes.
 	const selectProduct: PurchaseCallback = (
@@ -82,12 +99,10 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			);
 
 			const { productSlug: slug } = product;
-			const yearlyItem = isJetpackPlan( slug )
-				? getYearlyPlanByMonthly( slug )
-				: getProductYearlyVariant( slug as ProductSlug );
+			const yearlySlug = getYearlySlugFromMonthly( slug );
 
-			if ( yearlyItem ) {
-				checkout( siteSlug, yearlyItem, urlQueryArgs );
+			if ( yearlySlug ) {
+				checkout( siteSlug, yearlySlug, urlQueryArgs );
 			}
 			return;
 		}
@@ -139,13 +154,14 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 			<ProductGrid
 				duration={ currentDuration }
-				onSelectProduct={ selectProduct }
 				urlQueryArgs={ urlQueryArgs }
+				planRecommendation={ planRecommendation }
+				onSelectProduct={ selectProduct }
 				onDurationChange={ trackDurationChange }
+				scrollCardIntoView={ scrollCardIntoView }
 			/>
 
-			<QueryProductsList />
-			<QueryProducts />
+			{ siteId ? <QuerySiteProducts siteId={ siteId } /> : <QueryProductsList type="jetpack" /> }
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <QuerySites siteId={ siteId } /> }
 

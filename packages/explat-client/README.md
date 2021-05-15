@@ -1,3 +1,7 @@
+⚠️ **You probably shouldn't be using this package directly.**
+
+Search for `createExPlatClient` within your codebase to find your platform's implementation.
+
 # ExPlat Client
 
 This is a standalone client for Automattic's ExPlat, allowing use of ExPlat in any Javascript context.
@@ -9,7 +13,7 @@ This is a standalone client for Automattic's ExPlat, allowing use of ExPlat in a
 - Dep injects outside parts so it can be fitted to any codebase.
 - Doesn't assume much of its environment.
 - No external dependencies or libs need.
-- Stores state internally and simply.
+- Stores state in LocalStorage if available otherwise in memory.
 
 ## Type: `ExperimentAssignment`
 
@@ -52,24 +56,18 @@ const experimentAssignment = await loadExperimentAssignment('experiment_name')
 loadExperimentAssignment( 'experiment_name' );
 
 // Then, significantly enough in the future for the loading to have occurred:
-try {
-	const experimentAssignment = dangerouslyGetExperimentAssignment( 'experiment_name' );
-} catch ( e ) {
-	// You need to ensure that this will happen very rarely, we use throwing and a try catch block
-	// to indicate that this is the exception rather than the norm.
-	// You MAY want to provide the default experience here.
-}
+const experimentAssignment = dangerouslyGetExperimentAssignment( 'experiment_name' );
 ```
 
 This is an "asyncronous escape hatch", allowing you to use ExPlat in more synchronous code such as within `/lib`.
 
 - Gets but won't load/assign an experiment assignment.
-- MUST be wrapped in a try-catch block.
+- ~~MUST be wrapped in a try-catch block.~~ It now logs and won't throw.
 - Named so it is easy to spot in a code review.
 
 Checklist for use:
 
 - [ ] Does `loadExperiment` get called before `dangerouslyGetExperimentAssignment` gets called.
 - [ ] Does `loadExperiment` get called significantly before it (minimum 2 seconds looking at perf data, 5-10 seconds is best).
-- [ ] Is `dangerouslyGetExperimentAssignment` wrapped in a try-catch block
-- [ ] Does the catch block gracefully handle missing ExperimentAssignments.
+- [ ] ~~Is `dangerouslyGetExperimentAssignment` wrapped in a try-catch block~~
+- [ ] Are there no `console.log` errors being emitted?

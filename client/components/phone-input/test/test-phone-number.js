@@ -35,6 +35,7 @@ describe( 'metadata:', () => {
 			Object.entries( countriesShareDialCode ).map( ( [ dialCode, countriesWithDialCode ] ) => {
 				describe( 'Dialcode: ' + dialCode, () => {
 					countriesWithDialCode.forEach( ( country ) =>
+						// eslint-disable-next-line jest/valid-title
 						test( country.isoCode, () =>
 							ok( country.priority, `"${ country.isoCode }" has no priority` )
 						)

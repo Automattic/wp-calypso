@@ -61,6 +61,35 @@ exports.waitTillNotPresent = function ( driver, selector, waitOverride ) {
 	);
 };
 
+exports.waitTillFocused = function ( driver, selector, pollingOverride, waitOverride ) {
+	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
+	const timeoutPolling = pollingOverride ? pollingOverride : explicitWaitMS;
+
+	return driver.wait(
+		function () {
+			return driver.findElement( selector ).then(
+				async function ( element ) {
+					// Poll if element is active every 100 ms until focused or until timeoutPolling is reached
+					for ( let i = 0; i < timeoutPolling / 100; i++ ) {
+						const isFocused =
+							( await driver.switchTo().activeElement().getId() ) === ( await element.getId() );
+						if ( isFocused ) {
+							return true;
+						}
+						await driver.sleep( 100 );
+					}
+					return false;
+				},
+				function () {
+					return false;
+				}
+			);
+		},
+		timeoutWait,
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be focused`
+	);
+};
+
 exports.followLinkWhenFollowable = function ( driver, selector, waitOverride ) {
 	const self = this;
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;

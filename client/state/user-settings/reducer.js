@@ -98,10 +98,25 @@ export const updating = ( state = false, action ) => {
 	return state;
 };
 
+export const failed = ( state = false, action ) => {
+	switch ( action.type ) {
+		case USER_SETTINGS_SAVE:
+		case USER_SETTINGS_REQUEST:
+		case USER_SETTINGS_SAVE_SUCCESS:
+		case USER_SETTINGS_REQUEST_SUCCESS:
+			return false;
+		case USER_SETTINGS_REQUEST_FAILURE:
+		case USER_SETTINGS_SAVE_FAILURE:
+			return true;
+	}
+	return state;
+};
+
 export default combineReducers( {
 	settings,
 	unsavedSettings,
 	fetching,
 	updatingPassword,
 	updating,
+	failed,
 } );

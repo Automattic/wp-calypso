@@ -62,9 +62,9 @@ export function usePlanProductFromCart(): PlanProductForFlow | undefined {
 	React.useEffect( () => {
 		( async function () {
 			const cart = await getCart( siteId );
-			const planProduct = cart.products?.find( ( item: ResponseCartProduct ) =>
-				isPlanProduct( item )
-			);
+			const planProduct = ( cart.products as ResponseCartProduct[] )?.find(
+				( item: ResponseCartProduct ) => isPlanProduct( item )
+			) as PlanProductForFlow | undefined;
 			setPlanProductFromCart( planProduct );
 		} )();
 	}, [ siteId, getCart, setPlanProductFromCart ] );

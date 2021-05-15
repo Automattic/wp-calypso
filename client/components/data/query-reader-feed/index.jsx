@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -50,12 +48,7 @@ export default connect(
 			shouldFeedBeFetched: shouldFeedBeFetched( state, feedId ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators(
-			{
-				requestFeed,
-			},
-			dispatch
-		);
+	{
+		requestFeed,
 	}
 )( QueryReaderFeed );

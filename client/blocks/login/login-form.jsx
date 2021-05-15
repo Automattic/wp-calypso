@@ -54,6 +54,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
+import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -665,6 +666,14 @@ export class LoginForm extends Component {
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 						/>
 					</Fragment>
+				) }
+
+				{ ( currentQuery?.skip_user || currentQuery?.allow_site_connection ) && (
+					<JetpackConnectSiteOnly
+						homeUrl={ currentQuery?.site }
+						redirectAfterAuth={ currentQuery?.redirect_after_auth }
+						source="login"
+					/>
 				) }
 			</form>
 		);

@@ -13,13 +13,12 @@ import App from './app';
 import Dashboard from './app/dashboard';
 import EmptyContent from 'calypso/components/empty-content';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import installActionHandlers from './state/data-layer';
-import reducer from './state/reducer';
 import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
-import { tracksStore, bumpStat } from './lib/analytics';
+import { bumpStat } from './lib/analytics';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { getSelectedSiteWithFallback, getSiteOption } from 'calypso/state/sites/selectors';
+import isSiteStore from 'calypso/state/selectors/is-site-store';
 
 /**
  * Style dependencies
@@ -152,16 +151,16 @@ function notFoundError( context, next ) {
 	next();
 }
 
-function addTracksContext( context, next ) {
-	tracksStore.setReduxStore( context.store );
-
-	next();
-}
-
 function redirectIfWooCommerceNotInstalled( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site ? site.ID : null;
+	const isStore = isSiteStore( state, siteId );
+
+	if ( isStore ) {
+		next();
+		return;
+	}
 	const isSiteWpcomStore = getSiteOption( state, siteId, 'is_wpcom_store' );
 
 	if ( ! isSiteWpcomStore ) {
@@ -171,10 +170,7 @@ function redirectIfWooCommerceNotInstalled( context, next ) {
 	next();
 }
 
-export default async function ( _, addReducer ) {
-	await addReducer( [ 'extensions', 'woocommerce' ], reducer );
-	installActionHandlers();
-
+export default async function () {
 	// Without site param
 	page(
 		'/store',
@@ -205,14 +201,13 @@ export default async function ( _, addReducer ) {
 
 			next();
 		},
-		addTracksContext,
 		makeLayout,
 		clientRender
 	);
 
 	// Redirect all other pages to the dashboard, to show the Store removal notice
 	getStorePages().forEach( function ( storePage ) {
-		page( storePage.path, redirectIfWooCommerceNotInstalled, addTracksContext, ( context ) => {
+		page( storePage.path, redirectIfWooCommerceNotInstalled, ( context ) => {
 			context.store.dispatch( bumpStat( 'calypso_store_post_sunset', storePage.statName ) );
 			page.redirect( `/store/${ context.params.site }?${ context.querystring }` );
 		} );
@@ -224,7 +219,6 @@ export default async function ( _, addReducer ) {
 		siteSelection,
 		redirectIfWooCommerceNotInstalled,
 		sites,
-		addTracksContext,
 		makeLayout,
 		clientRender
 	);
@@ -233,7 +227,6 @@ export default async function ( _, addReducer ) {
 		siteSelection,
 		redirectIfWooCommerceNotInstalled,
 		navigation,
-		addTracksContext,
 		StatsController,
 		makeLayout,
 		clientRender

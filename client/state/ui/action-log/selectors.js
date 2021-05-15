@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-import { findLast, last } from 'lodash';
+import { last } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { createSelector } from '@automattic/state-utils';
-import { ROUTE_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/ui/init';
 
@@ -25,30 +24,6 @@ import 'calypso/state/ui/init';
 export function getActionLog( state ) {
 	return state.ui.actionLog;
 }
-
-/**
- * Returns a log of ROUTE_SET actions that have previously been
- * dispatched for the current user.
- *
- * @param  {object}   state      Global state tree
- * @returns {Array}               Array of Redux actions of with a type of
- *                               ROUTE_SET, each with timestamp
- */
-export const getRouteHistory = createSelector(
-	( state ) => getActionLog( state ).filter( ( action ) => action.type === ROUTE_SET ),
-	( state ) => [ state.ui.actionLog ]
-);
-
-/**
- * Returns the last ROUTE_SET action that had been dispatched for the current user.
- *
- * @param  {object}   state      Global state tree
- * @returns {object}              The last Redux action of type ROUTE_SET, with timestamp
- */
-export const getLastRouteAction = createSelector(
-	( state ) => findLast( getActionLog( state ), ( action ) => action.type === ROUTE_SET ),
-	( state ) => [ state.ui.actionLog ]
-);
 
 /**
  * Returns the last item from the action log.

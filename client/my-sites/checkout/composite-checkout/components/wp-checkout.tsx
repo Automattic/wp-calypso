@@ -23,7 +23,9 @@ import {
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { styled } from '@automattic/wpcom-checkout';
 import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -42,6 +44,7 @@ import {
 	handleContactValidationResult,
 	isContactValidationResponseValid,
 	getDomainValidationResult,
+	getTaxValidationResult,
 	getSignupEmailValidationResult,
 	getGSuiteValidationResult,
 } from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
@@ -54,13 +57,10 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
-import QueryExperiments from 'calypso/components/data/query-experiments';
 import PaymentMethodStep from './payment-method-step';
 import CheckoutHelpLink from './checkout-help-link';
-import styled from '../lib/styled';
 import type { CountryListItem } from '../types/country-list-item';
 import type { GetProductVariants } from '../hooks/product-variants';
-import type { ManagedContactDetails } from '../types/wpcom-store-state';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
@@ -219,7 +219,18 @@ export default function WPCheckout( {
 			}
 		}
 
-		if ( contactDetailsType === 'domain' ) {
+		if ( contactDetailsType === 'tax' ) {
+			const validationResult = await getTaxValidationResult( contactInfo );
+			debug( 'validating contact details result', validationResult );
+			handleContactValidationResult( {
+				recordEvent: onEvent,
+				showErrorMessage: showErrorMessageBriefly,
+				paymentMethodId: activePaymentMethod?.id ?? '',
+				validationResult,
+				applyDomainContactValidationResults,
+			} );
+			return isContactValidationResponseValid( validationResult, contactInfo );
+		} else if ( contactDetailsType === 'domain' ) {
 			const validationResult = await getDomainValidationResult(
 				responseCart.products,
 				contactInfo
@@ -268,7 +279,11 @@ export default function WPCheckout( {
 			}
 		}
 
-		if ( contactDetailsType === 'domain' ) {
+		if ( contactDetailsType === 'tax' ) {
+			const validationResult = await getTaxValidationResult( contactInfo );
+			debug( 'validating contact details result', validationResult );
+			return isContactValidationResponseValid( validationResult, contactInfo );
+		} else if ( contactDetailsType === 'domain' ) {
 			const validationResult = await getDomainValidationResult(
 				responseCart.products,
 				contactInfo
@@ -286,9 +301,32 @@ export default function WPCheckout( {
 		return isCompleteAndValid( contactInfo );
 	};
 
+	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
+	// and before the first step at mobile (smaller) widths. At smaller widths it
+	// starts collapsed and can be expanded; at wider widths (as a sidebar) it is
+	// always visible. It is not a step and its visibility is managed manually.
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
 
-	const [ isOrderReviewActive, setIsOrderReviewActive ] = useState( false );
+	// The "Order review" step is not managed by Composite Checkout and is shown/hidden manually.
+	// If the page includes a 'order-review=true' query string, then start with
+	// the order review step visible.
+	const [ isOrderReviewActive, setIsOrderReviewActive ] = useState( () => {
+		try {
+			const shouldInitOrderReviewStepActive =
+				window?.location?.search.includes( 'order-review=true' ) ?? false;
+			if ( shouldInitOrderReviewStepActive ) {
+				return true;
+			}
+		} catch ( error ) {
+			// If there's a problem loading the query string, just default to false.
+			debug(
+				'Error loading query string to determine if we should see the order review step at load',
+				error
+			);
+		}
+		return false;
+	} );
+
 	const { formStatus } = useFormStatus();
 
 	// Copy siteId to the store so it can be more easily accessed during payment submission
@@ -350,7 +388,6 @@ export default function WPCheckout( {
 
 	return (
 		<Checkout>
-			<QueryExperiments />
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 				<CheckoutErrorBoundary
 					errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }

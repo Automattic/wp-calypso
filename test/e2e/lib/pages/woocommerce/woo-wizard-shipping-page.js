@@ -15,17 +15,15 @@ export default class WooWizardShippingPage extends AsyncBaseContainer {
 	}
 
 	async selectContinue() {
-		const continueButtonSelector = By.css( 'button.button-next' );
-		return await driverHelper.clickWhenClickable( this.driver, continueButtonSelector );
+		const continueButtonLocator = By.css( 'button.button-next' );
+		return await driverHelper.clickWhenClickable( this.driver, continueButtonLocator );
 	}
 
 	async fillFlatRates( price = 20 ) {
-		const domesticCostSelector = By.css(
-			'input[name="shipping_zones[domestic][flat_rate][cost]"]'
-		);
-		const intlCostSelector = By.css( 'input[name="shipping_zones[intl][flat_rate][cost]"]' );
+		const domesticCostLocator = By.css( 'input[name="shipping_zones[domestic][flat_rate][cost]"]' );
+		const intlCostLocator = By.css( 'input[name="shipping_zones[intl][flat_rate][cost]"]' );
 
-		await this.driver.findElement( domesticCostSelector ).sendKeys( price );
-		return await this.driver.findElement( intlCostSelector ).sendKeys( price );
+		await this.driver.findElement( domesticCostLocator ).sendKeys( price );
+		return await this.driver.findElement( intlCostLocator ).sendKeys( price );
 	}
 }

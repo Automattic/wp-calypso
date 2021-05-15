@@ -9,7 +9,6 @@ import classNames from 'classnames';
 import config from '@automattic/calypso-config';
 import titlecase from 'to-title-case';
 import Gridicon from 'calypso/components/gridicon';
-import { head } from 'lodash';
 import photon from 'photon';
 import page from 'page';
 
@@ -66,7 +65,7 @@ import {
 	FEATURE_UPLOAD_THEMES,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -209,7 +208,7 @@ class ThemeSheet extends React.Component {
 		if ( this.isLoaded() ) {
 			// Results are being returned with photon params like `?w=…`. This makes the photon
 			// module abort and return null. Strip query string.
-			return head( head( this.props.screenshots ).split( '?', 1 ) );
+			return this.props.screenshots[ 0 ]?.replace( /\?.*/, '' );
 		}
 		return null;
 	}

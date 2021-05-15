@@ -8,6 +8,9 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
+import { JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION } from '@automattic/calypso-products';
+import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
 import { preventWidows } from 'calypso/lib/formatting';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -15,19 +18,36 @@ import Notice from 'calypso/components/notice';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
-import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
-import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
+import { PLAN_JETPACK_FREE, JETPACK_PRODUCTS_LIST } from '@automattic/calypso-products';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 
-const StandardPlansHeader = () => (
+type HeaderProps = {
+	context: PageJS.Context;
+	shouldShowPlanRecommendation?: boolean;
+};
+
+type StandardHeaderProps = {
+	shouldShowPlanRecommendation?: boolean;
+	siteId: number | null;
+};
+
+const StandardPlansHeader = ( { shouldShowPlanRecommendation, siteId }: StandardHeaderProps ) => (
 	<>
 		<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
 		<PlansNavigation path={ '/plans' } />
-		<h2 className="jetpack-plans__pricing-header">
-			{ preventWidows(
-				translate( 'Security, performance, and marketing tools made for WordPress' )
-			) }
-		</h2>
+		{ shouldShowPlanRecommendation && siteId && (
+			<JetpackPluginUpdateWarning
+				siteId={ siteId }
+				minJetpackVersion={ JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION }
+			/>
+		) }
+		{ ! shouldShowPlanRecommendation && (
+			<h2 className="jetpack-plans__pricing-header">
+				{ preventWidows(
+					translate( 'Security, performance, and marketing tools made for WordPress' )
+				) }
+			</h2>
+		) }
 	</>
 );
 
@@ -45,7 +65,7 @@ const ConnectFlowPlansHeader = () => (
 	</>
 );
 
-const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
+const PlansHeader = ( { context, shouldShowPlanRecommendation }: HeaderProps ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	// Site plan
 	const currentPlan =
@@ -72,15 +92,24 @@ const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
 			<ConnectFlowPlansHeader />
 		</>
 	) : (
-		<StandardPlansHeader />
+		<StandardPlansHeader
+			shouldShowPlanRecommendation={ shouldShowPlanRecommendation }
+			siteId={ siteId }
+		/>
 	);
 };
 
-export default function setJetpackHeader( context: PageJS.Context ) {
+export default function setJetpackHeader( context: PageJS.Context ): void {
+	const planRecommendation = getPlanRecommendationFromContext( context );
+	const shouldShowPlanRecommendation = !! planRecommendation;
+
 	context.header = (
 		<>
-			<PlansHeader context={ context } />
-			<IntroPricingBanner />
+			<PlansHeader
+				context={ context }
+				shouldShowPlanRecommendation={ shouldShowPlanRecommendation }
+			/>
+			{ ! shouldShowPlanRecommendation && <IntroPricingBanner /> }
 		</>
 	);
 }

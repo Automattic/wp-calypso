@@ -2,6 +2,7 @@
 
 exports[`parseAuthorizationQuery should return transformed data on valid input 1`] = `
 Object {
+  "allowSiteConnection": "1",
   "alreadyAuthorized": false,
   "authApproved": false,
   "blogname": "Just Another WordPress.com Site",

@@ -73,6 +73,7 @@ import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-chang
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { savePreference } from 'calypso/state/preferences/actions';
 
 export const noticeId = 'me-settings-notice';
 const noticeOptions = {
@@ -183,6 +184,7 @@ class Account extends React.Component {
 		this.updateUserSetting( name, checked );
 		const redirect = '/me/account';
 		this.setState( { redirect } );
+		this.saveInterfaceSettings( event );
 	};
 
 	updateLanguage = ( event ) => {
@@ -200,30 +202,48 @@ class Account extends React.Component {
 			);
 		}
 
-		const languageHasChanged =
-			value !== this.getUserOriginalSetting( 'language' ) ||
-			value !== this.getUserOriginalSetting( 'locale_variant' ) ||
-			( typeof empathyMode !== 'undefined' &&
-				empathyMode !== this.getUserOriginalSetting( 'i18n_empathy_mode' ) );
+		const localeVariantSelected = isLocaleVariant( value ) ? value : '';
 
-		if ( languageHasChanged ) {
+		const originalSlug =
+			this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || '';
+
+		const languageHasChanged = originalSlug !== value;
+		const formHasChanged = languageHasChanged;
+		if ( formHasChanged ) {
 			this.props.markChanged();
 		}
 
-		const redirect = languageHasChanged ? '/me/account' : false;
+		const redirect = formHasChanged ? '/me/account' : false;
 		// store any selected locale variant so we can test it against those with no GP translation sets
-		const localeVariantSelected = isLocaleVariant( value ) ? value : '';
 		this.setState( { redirect, localeVariantSelected } );
+
+		if ( formHasChanged ) {
+			this.props.recordTracksEvent( 'calypso_user_language_switch', {
+				new_language: value,
+				previous_language:
+					this.getUserOriginalSetting( 'locale_variant' ) ||
+					this.getUserOriginalSetting( 'language' ),
+				country_code: this.props.countryCode,
+			} );
+			this.saveInterfaceSettings( event );
+		}
 	};
 
 	toggleLinkDestination = ( linkDestination ) => {
 		this.updateUserSetting( linkDestinationKey, linkDestination );
+		this.saveInterfaceSettings( {} );
 	};
 
 	updateColorScheme = ( colorScheme ) => {
 		this.props.recordTracksEvent( 'calypso_color_schemes_select', { color_scheme: colorScheme } );
 		this.props.recordGoogleEvent( 'Me', 'Selected Color Scheme', 'scheme', colorScheme );
 		this.updateUserSetting( colorSchemeKey, colorScheme );
+		this.props.recordTracksEvent( 'calypso_color_schemes_save', {
+			color_scheme: colorScheme,
+		} );
+		this.props.recordGoogleEvent( 'Me', 'Saved Color Scheme', 'scheme', colorScheme );
+		this.props.bumpStat( 'calypso_changed_color_scheme', colorScheme );
+		this.saveInterfaceSettings( {} );
 	};
 
 	getEmailAddress() {
@@ -388,29 +408,6 @@ class Account extends React.Component {
 	handleRadioChange = ( event ) => {
 		const { name, value } = event.currentTarget;
 		this.setState( { [ name ]: value } );
-	};
-
-	handleSubmitButtonClick = () => {
-		const { unsavedUserSettings } = this.props;
-		this.recordClickEvent( 'Save Account Settings Button' );
-		if ( this.hasUnsavedUserSetting( colorSchemeKey ) ) {
-			const colorScheme = get( unsavedUserSettings, colorSchemeKey );
-			this.props.recordTracksEvent( 'calypso_color_schemes_save', {
-				color_scheme: colorScheme,
-			} );
-			this.props.recordGoogleEvent( 'Me', 'Saved Color Scheme', 'scheme', colorScheme );
-			this.props.bumpStat( 'calypso_changed_color_scheme', colorScheme );
-		}
-
-		if ( this.hasUnsavedUserSetting( 'language' ) ) {
-			this.props.recordTracksEvent( 'calypso_user_language_switch', {
-				new_language: this.getUserSetting( 'language' ),
-				previous_language:
-					this.getUserOriginalSetting( 'locale_variant' ) ||
-					this.getUserOriginalSetting( 'language' ),
-				country_code: this.props.countryCode,
-			} );
-		}
 	};
 
 	/**
@@ -712,6 +709,14 @@ class Account extends React.Component {
 			this.props.markSaved();
 		}
 
+		// In order to keep the app preference in-sync,
+		// we'd like to save the color scheme property
+		// once the user settings was successfuly saved.
+		// https://github.com/Automattic/wp-calypso/issues/48220
+		if ( this.shouldUpdateColorSchemePreference ) {
+			this.props.saveColorSchemePreference( this.shouldUpdateColorSchemePreference );
+		}
+
 		if ( this.state.redirect ) {
 			user()
 				.clear()
@@ -742,7 +747,7 @@ class Account extends React.Component {
 	}
 
 	async submitForm( event, fields, formName = '' ) {
-		event.preventDefault();
+		event?.preventDefault && event.preventDefault();
 		debug( 'Submitting form' );
 
 		this.setState( {
@@ -754,6 +759,10 @@ class Account extends React.Component {
 		} );
 
 		try {
+			// Store in a class property if the color scheme should be saved
+			// once the user settings save successfully.
+			this.shouldUpdateColorSchemePreference = this.props.unsavedUserSettings.calypso_preferences?.colorScheme;
+
 			const response = await this.props.saveUnsavedUserSettings( fields );
 			this.handleSubmitSuccess( response, formName );
 		} catch ( error ) {
@@ -981,7 +990,7 @@ class Account extends React.Component {
 		const renderUsernameForm = this.hasUnsavedUserSetting( 'user_login' );
 
 		return (
-			<Main className="account is-wide-layout">
+			<Main wideLayout className="account">
 				<QueryUserSettings />
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<MeSidebarNavigation />
@@ -1064,9 +1073,10 @@ class Account extends React.Component {
 								<FormToggle
 									checked={ !! this.getUserSetting( linkDestinationKey ) }
 									onChange={ this.toggleLinkDestination }
+									disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
 								>
 									{ translate(
-										'{{spanlead}}Show advanced dashboard pages.{{/spanlead}} {{spanextra}}Enabling this will replace your dashboard pages with more advanced wp-admin equivalents when possible.{{/spanextra}}',
+										'{{spanlead}}Show wp-admin pages if available{{/spanlead}} {{spanextra}}Replace your dashboard pages with more advanced wp-admin equivalents.{{/spanextra}}',
 										{
 											components: {
 												spanlead: <strong className="account__link-destination-label-lead" />,
@@ -1092,6 +1102,7 @@ class Account extends React.Component {
 									</FormLabel>
 									<ColorSchemePicker
 										temporarySelection
+										disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
 										defaultSelection={
 											this.props.isNavUnificationEnabled ? 'classic-dark' : 'classic-bright'
 										}
@@ -1099,16 +1110,6 @@ class Account extends React.Component {
 									/>
 								</FormFieldset>
 							) }
-
-						<FormButton
-							isSubmitting={ this.isSubmittingForm( INTERFACE_FORM_NAME ) }
-							disabled={ this.shouldDisableInterfaceSubmitButton() }
-							onClick={ this.handleSubmitButtonClick }
-						>
-							{ this.isSubmittingForm( INTERFACE_FORM_NAME )
-								? translate( 'Saving…' )
-								: translate( 'Save interface settings' ) }
-						</FormButton>
 					</form>
 				</Card>
 
@@ -1146,6 +1147,8 @@ export default compose(
 			saveUnsavedUserSettings,
 			setUserSetting,
 			successNotice,
+			saveColorSchemePreference: ( newColorScheme ) =>
+				savePreference( 'colorScheme', newColorScheme ),
 		}
 	),
 	localize,

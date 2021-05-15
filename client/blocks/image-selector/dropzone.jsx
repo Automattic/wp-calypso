@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { head } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -33,7 +32,7 @@ class ImageSelectorDropZone extends Component {
 		 *
 		 * At the moment we ignore all the other images that were dragged onto the DropZone
 		 */
-		const droppedImage = head( filterItemsByMimePrefix( files, 'image' ) );
+		const droppedImage = filterItemsByMimePrefix( files, 'image' )[ 0 ];
 
 		if ( ! droppedImage ) {
 			return false;

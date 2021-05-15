@@ -44,29 +44,29 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function () {
 			return await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 		} );
 
-		step( 'Can log into WordPress.com', async function () {
+		it( 'Can log into WordPress.com', async function () {
 			this.loginFlow = new LoginFlow( driver );
 			return await this.loginFlow.login();
 		} );
 
-		step( 'Can log into site via Jetpack SSO', async function () {
+		it( 'Can log into site via Jetpack SSO', async function () {
 			const loginPage = await WPAdminLogonPage.Visit( driver, dataHelper.getJetpackSiteName() );
 			return await loginPage.logonSSO();
 		} );
 
-		step( 'Can open Jetpack dashboard', async function () {
+		it( 'Can open Jetpack dashboard', async function () {
 			await WPAdminSidebar.refreshIfJNError( driver );
 			const wpAdminSidebar = await WPAdminSidebar.Expect( driver );
 			return await wpAdminSidebar.selectJetpack();
 		} );
 
-		step( 'Can find and click Upgrade nudge button', async function () {
+		it( 'Can find and click Upgrade nudge button', async function () {
 			await driverHelper.refreshIfJNError( driver );
 			const jetpackDashboard = await WPAdminJetpackPage.Expect( driver );
 			return await jetpackDashboard.clickUpgradeNudge();
 		} );
 
-		step( 'Can then see secure payment component and Search in the cart', async function () {
+		it( 'Can then see secure payment component and Search in the cart', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			return await securePaymentComponent.containsPlan( 'jetpack_search' );
 		} );

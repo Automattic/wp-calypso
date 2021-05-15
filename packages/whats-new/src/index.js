@@ -4,7 +4,7 @@
 import { Guide } from '@wordpress/components';
 import proxyRequest from 'wpcom-proxy-request';
 import React, { useEffect, useState } from 'react';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useLocale } from '@automattic/i18n-utils';
 import wpcom from 'wpcom';
 
@@ -24,7 +24,7 @@ const WhatsNewGuide = ( { onClose } ) => {
 		const proxiedWpcom = wpcom();
 		proxiedWpcom.request = proxyRequest;
 		proxiedWpcom.req
-			.get( { path: `/whats-new/list?locale=${ locale }`, apiNamespace: 'wpcom/v2' } )
+			.get( { path: `/whats-new/list?_locale=${ locale }`, apiNamespace: 'wpcom/v2' } )
 			.then( ( returnedList ) => {
 				setWhatsNewData( returnedList );
 			} );

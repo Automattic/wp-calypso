@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, every } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Returns true if the modified properties in the local edit of the `discussion` object (the edited
@@ -12,5 +12,7 @@ import { get, every } from 'lodash';
  * @returns {boolean}                      are there differences in local edits vs saved values?
  */
 export function isDiscussionEqual( localDiscussionEdits, savedDiscussion ) {
-	return every( localDiscussionEdits, ( value, key ) => get( savedDiscussion, [ key ] ) === value );
+	return Object.entries( localDiscussionEdits ).every(
+		( [ key, value ] ) => get( savedDiscussion, [ key ] ) === value
+	);
 }

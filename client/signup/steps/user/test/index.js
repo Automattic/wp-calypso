@@ -17,6 +17,7 @@ import sinon from 'sinon';
 import { UserStep as User } from '../';
 
 const noop = () => {};
+const translate = ( string ) => string;
 
 jest.mock( 'calypso/blocks/signup-form', () => require( 'calypso/components/empty-component' ) );
 jest.mock( 'calypso/lib/abtest', () => ( {
@@ -50,6 +51,7 @@ describe( '#signupStep User', () => {
 			subHeaderText: 'first subheader message',
 			flowName: 'userAsFirstStepInFlow',
 			saveSignupStep: noop,
+			translate,
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
@@ -61,6 +63,7 @@ describe( '#signupStep User', () => {
 			subHeaderText: 'test subheader message',
 			flowName: 'someOtherFlow',
 			saveSignupStep: noop,
+			translate,
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
@@ -81,6 +84,7 @@ describe( '#signupStep User', () => {
 				subHeaderText: 'test subheader message',
 				flowName: 'someOtherFlow',
 				saveSignupStep: noop,
+				translate,
 			} );
 			component = ReactDOM.render( element, node );
 		} );
@@ -94,6 +98,7 @@ describe( '#signupStep User', () => {
 				subHeaderText: 'My test message',
 				flowName: 'userAsFirstStepInFlow',
 				saveSignupStep: noop,
+				translate,
 			};
 
 			expect( spyComponentProps.calledOnce ).to.equal( false );
@@ -109,6 +114,7 @@ describe( '#signupStep User', () => {
 				subHeaderText: 'My test message',
 				flowName: 'another test message test',
 				saveSignupStep: noop,
+				translate,
 			};
 
 			expect( spyComponentProps.calledOnce ).to.equal( false );

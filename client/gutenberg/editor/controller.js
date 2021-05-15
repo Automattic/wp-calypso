@@ -7,18 +7,21 @@ import { get, has } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
+import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import { hasUserSettingsRequestFailed } from 'calypso/state/user-settings/selectors';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import CalypsoifyIframe from './calypsoify-iframe';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import {
 	getSiteUrl,
 	getSiteOption,
-	getSite,
 	isJetpackSite,
 	isSSOEnabled,
 } from 'calypso/state/sites/selectors';
@@ -28,8 +31,6 @@ import { Placeholder } from './placeholder';
 import { makeLayout, render } from 'calypso/controller';
 import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
-import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'calypso/state/desktop/window-events';
-import { notifyDesktopCannotOpenEditor } from 'calypso/state/desktop/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { stopEditingPost } from 'calypso/state/editor/actions';
 
@@ -82,6 +83,24 @@ function waitForSiteIdAndSelectedEditor( context ) {
 		context.store.dispatch(
 			requestSelectedEditor( getSelectedSiteId( context.store.getState() ) )
 		);
+	} );
+}
+
+function areCalypsoPreferencesAvailable( state ) {
+	return 'undefined' !== typeof getUserSettings( state )?.calypso_preferences;
+}
+
+function waitForCalypsoPreferences( context ) {
+	return new Promise( ( resolve ) => {
+		const unsubscribe = context.store.subscribe( () => {
+			const state = context.store.getState();
+			if ( ! areCalypsoPreferencesAvailable( state ) && ! hasUserSettingsRequestFailed( state ) ) {
+				return;
+			}
+			unsubscribe();
+			resolve();
+		} );
+		context.store.dispatch( fetchUserSettings() );
 	} );
 }
 
@@ -141,10 +160,7 @@ export const authenticate = ( context, next ) => {
 	// We could use `window.location.href` to generate the return URL but there are some potential race conditions that
 	// can cause the browser to not update it before redirecting to WP Admin. To avoid that, we manually generate the
 	// URL from the relevant parts.
-	let origin = `${ window.location.protocol }//${ window.location.hostname }`;
-	if ( window.location.port ) {
-		origin += `:${ window.location.port }`;
-	}
+	const origin = window.location.origin;
 	const returnUrl = addQueryArgs(
 		{ ...context.query, authWpAdmin: true },
 		`${ origin }${ context.path }`
@@ -153,34 +169,34 @@ export const authenticate = ( context, next ) => {
 	const siteUrl = getSiteUrl( state, siteId );
 	const wpAdminLoginUrl = addQueryArgs( { redirect_to: returnUrl }, `${ siteUrl }/wp-login.php` );
 
-	if ( isDesktop ) {
-		context.store.dispatch(
-			notifyDesktopCannotOpenEditor(
-				getSite( state, siteId ),
-				REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO,
-				context.path,
-				wpAdminLoginUrl
-			)
-		);
-	} else {
-		window.location.replace( wpAdminLoginUrl );
-	}
+	window.location.replace( wpAdminLoginUrl );
 };
 
 export const redirect = async ( context, next ) => {
 	const {
 		store: { getState },
 	} = context;
-	const tmpState = getState();
+	const tmpState = await getState();
 	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
+	const checkPromises = [];
 	if ( ! selectedEditor ) {
-		await waitForSiteIdAndSelectedEditor( context );
+		checkPromises.push( waitForSiteIdAndSelectedEditor( context ) );
 	}
+	if ( ! areCalypsoPreferencesAvailable( tmpState ) ) {
+		checkPromises.push( waitForCalypsoPreferences( context ) );
+	}
+	await Promise.all( checkPromises );
 
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
+	const isPostShare = context.query.is_post_share; // Added here https://github.com/Automattic/wp-calypso/blob/4b5fdb65b115e02baf743d2487eeca94fbd28a18/client/blocks/reader-share/index.jsx#L74
 
-	if ( ! isEligibleForGutenframe( state, siteId ) ) {
+	// Force load Gutenframe when choosing to share a post to a Simple site.
+	if ( isPostShare && isPostShare === 'true' && ! isAtomicSite( state, siteId ) ) {
+		return next();
+	}
+
+	if ( ! shouldLoadGutenframe( state, siteId ) ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
 

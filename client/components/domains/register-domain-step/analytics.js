@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { flow, mapKeys, mapValues, snakeCase, startsWith } from 'lodash';
+import { mapKeys, mapValues, snakeCase, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -134,8 +134,7 @@ function processFiltersForAnalytics( filters ) {
 		mapValues( input, ( value ) => ( Array.isArray( value ) ? value.join( ',' ) : value ) );
 	const prepareKeys = ( input ) =>
 		mapKeys( input, ( value, key ) => `filters_${ snakeCase( key ) }` );
-	const transformation = flow( prepareKeys, convertArraysToCSV );
-	return transformation( filters );
+	return convertArraysToCSV( prepareKeys( filters ) );
 }
 
 export function recordFiltersReset( filters, keysToReset, section ) {

@@ -10,17 +10,17 @@ import assert from 'assert';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 
-const searchInputSelectors = By.css(
+const searchInputLocators = By.css(
 	'.inline-help__search input[type="search"], .help-search__search input[type="search"]'
 );
 // A little confusing, but this is specific to the default results and _not_ including the errored results (which are the same results).
 // We're checking for the aria-label is set correctly and that the title for the error section is not present.
-const defaultResultsSelectors = By.css(
+const defaultResultsLocators = By.css(
 	'[aria-label="Helpful resources for this section"] ul:not([aria-labelledby="inline-search--contextual_help"]) li'
 );
-const searchResultsSelectors = By.css( '[aria-labelledby="inline-search--api_help"] li' );
-const adminSearchResultsSelectors = By.css( '[aria-labelledby="inline-search--admin_section"] li' );
-const errorResultsSelectors = By.css( '[aria-labelledby="inline-search--contextual_help"] li' );
+const searchResultsLocators = By.css( '[aria-labelledby="inline-search--api_help"] li' );
+const adminSearchResultsLocators = By.css( '[aria-labelledby="inline-search--admin_section"] li' );
+const errorResultsLocators = By.css( '[aria-labelledby="inline-search--contextual_help"] li' );
 
 class SupportSearchComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -29,26 +29,26 @@ class SupportSearchComponent extends AsyncBaseContainer {
 
 	async waitForResults() {
 		const driver = this.driver;
-		const resultsLoadingSelector = By.css(
+		const resultsLoadingLocator = By.css(
 			'.inline-help__results-placeholder, .help-search__results-placeholder'
 		);
 
-		return driverHelper.waitTillNotPresent(
+		return driverHelper.waitUntilElementNotLocated(
 			driver,
-			resultsLoadingSelector,
+			resultsLoadingLocator,
 			this.explicitWaitMS * 2
 		);
 	}
 
 	async isRequestingSearchResults() {
-		return await driverHelper.isElementPresent(
+		return await driverHelper.isElementLocated(
 			this.driver,
 			By.css( '.inline-help__results-placeholder' )
 		);
 	}
 
 	async getDefaultResults() {
-		return await this.driver.findElements( defaultResultsSelectors );
+		return await this.driver.findElements( defaultResultsLocators );
 	}
 
 	async getDefaultResultsCount() {
@@ -57,11 +57,11 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async waitForDefaultResultsNotToBePresent() {
-		return driverHelper.waitTillNotPresent( this.driver, defaultResultsSelectors );
+		return driverHelper.waitUntilElementNotLocated( this.driver, defaultResultsLocators );
 	}
 
 	async getErrorResults() {
-		return await this.driver.findElements( errorResultsSelectors );
+		return await this.driver.findElements( errorResultsLocators );
 	}
 
 	async getErrorResultsCount() {
@@ -70,11 +70,11 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async waitForErrorResultsNotToBePresent() {
-		return driverHelper.waitTillNotPresent( this.driver, errorResultsSelectors );
+		return driverHelper.waitUntilElementNotLocated( this.driver, errorResultsLocators );
 	}
 
 	async getSearchResults() {
-		return await this.driver.findElements( searchResultsSelectors );
+		return await this.driver.findElements( searchResultsLocators );
 	}
 
 	async getSearchResultsCount() {
@@ -83,11 +83,11 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async waitForSearchResultsNotToBePresent() {
-		return driverHelper.waitTillNotPresent( this.driver, searchResultsSelectors );
+		return driverHelper.waitUntilElementNotLocated( this.driver, searchResultsLocators );
 	}
 
 	async getAdminSearchResults() {
-		return await this.driver.findElements( adminSearchResultsSelectors );
+		return await this.driver.findElements( adminSearchResultsLocators );
 	}
 
 	async getAdminSearchResultsCount() {
@@ -96,18 +96,18 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async waitForAdminResultsNotToBePresent() {
-		return driverHelper.waitTillNotPresent( this.driver, adminSearchResultsSelectors );
+		return driverHelper.waitUntilElementNotLocated( this.driver, adminSearchResultsLocators );
 	}
 
 	async searchFor( query = '' ) {
-		await driverHelper.setWhenSettable( this.driver, searchInputSelectors, query );
+		await driverHelper.setWhenSettable( this.driver, searchInputLocators, query );
 		const val = await this.getSearchInputValue();
 		assert.strictEqual( val, query, `Failed to correctly set search input value to ${ query }` );
 		return await this.waitForResults();
 	}
 
 	async getSearchInputValue() {
-		return await this.driver.findElement( searchInputSelectors ).getAttribute( 'value' );
+		return await this.driver.findElement( searchInputLocators ).getAttribute( 'value' );
 	}
 
 	async clearSearchField() {
@@ -122,7 +122,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async hasNoResultsMessage() {
-		return await driverHelper.isElementPresent(
+		return await driverHelper.isElementLocated(
 			this.driver,
 			By.css( '.inline-help__empty-results, .help-search__empty-results' )
 		);

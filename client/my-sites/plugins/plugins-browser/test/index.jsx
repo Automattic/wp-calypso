@@ -27,7 +27,7 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -95,13 +95,13 @@ describe( 'PluginsBrowser basic tests', () => {
 			0
 		);
 	} );
-	test( 'should not show upsell nudge if jetpack site', () => {
+	test( 'should not show upsell nudge if non-atomic jetpack site', () => {
 		const comp = shallow(
 			<PluginsBrowser
 				{ ...props }
 				selectedSiteId={ 10 }
 				sitePlan={ { product_slug: PLAN_PREMIUM } }
-				isJetpackSite={ true }
+				jetpackNonAtomic={ true }
 				hasBusinessPlan={ false }
 			/>
 		);

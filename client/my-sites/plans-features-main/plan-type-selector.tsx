@@ -17,8 +17,12 @@ import styled from '@emotion/styled';
 import SegmentedControl from 'calypso/components/segmented-control';
 import Popover from 'calypso/components/popover';
 import { addQueryArgs } from 'calypso/lib/url';
-import { getYearlyPlanByMonthly, isWpComPlan, plansLink } from 'calypso/lib/plans';
-import { isMonthly } from 'calypso/lib/plans/constants';
+import {
+	getYearlyPlanByMonthly,
+	isWpComPlan,
+	plansLink,
+	isMonthly,
+} from '@automattic/calypso-products';
 import { getPlanBySlug, getPlanRawPrice } from 'calypso/state/plans/selectors';
 
 type Props = {
@@ -277,94 +281,96 @@ const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSig
 `;
 
 const StyledPopover = styled( Popover )`
-	display: none;
-	opacity: 0;
-	transition-property: opacity, transform;
-	transition-timing-function: ease-in;
+	&.popover {
+		display: none;
+		opacity: 0;
+		transition-property: opacity, transform;
+		transition-timing-function: ease-in;
 
-	&.popover-enter-active {
-		opacity: 1;
-		transition-duration: 0.3s;
-	}
-
-	&.popover-exit,
-	&.popover-enter-done {
-		opacity: 1;
-		transition-duration: 0.01s;
-	}
-
-	&.is-right,
-	.rtl &.is-left {
-		@media ( min-width: 960px ) {
-			display: block;
+		&.popover-enter-active {
+			opacity: 1;
+			transition-duration: 0.3s;
 		}
 
-		&.popover-enter {
-			transform: translate( 30px, 0 );
-		}
-
-		&.popover-enter-active,
+		&.popover-exit,
 		&.popover-enter-done {
-			transform: translate( 20px, 0 );
+			opacity: 1;
+			transition-duration: 0.01s;
 		}
 
-		.popover__arrow {
-			border-right-color: var( --color-neutral-100 );
-			&::before {
+		&.is-right,
+		.rtl &.is-left {
+			@media ( min-width: 960px ) {
+				display: block;
+			}
+
+			&.popover-enter {
+				transform: translate( 30px, 0 );
+			}
+
+			&.popover-enter-active,
+			&.popover-enter-done {
+				transform: translate( 20px, 0 );
+			}
+
+			.popover__arrow {
 				border-right-color: var( --color-neutral-100 );
+				&::before {
+					border-right-color: var( --color-neutral-100 );
+				}
 			}
 		}
-	}
 
-	.rtl &.is-left {
-		.popover__arrow {
-			right: 40px;
-			border-left-color: var( --color-neutral-100 );
-			&::before {
+		.rtl &.is-left {
+			.popover__arrow {
+				right: 40px;
 				border-left-color: var( --color-neutral-100 );
+				&::before {
+					border-left-color: var( --color-neutral-100 );
+				}
+			}
+
+			.popover__inner {
+				left: -50px;
+			}
+		}
+
+		&.is-bottom {
+			@media ( max-width: 960px ) {
+				display: block;
+			}
+
+			&.popover-enter {
+				transform: translate( 0, 22px );
+			}
+
+			&.popover-enter-active,
+			&.popover-enter-done {
+				transform: translate( 0, 12px );
+			}
+
+			.popover__arrow {
+				border-bottom-color: var( --color-neutral-100 );
+				&::before {
+					border-bottom-color: var( --color-neutral-100 );
+				}
+			}
+		}
+
+		.rtl &.is-bottom {
+			.popover__arrow {
+				border-right-color: transparent;
 			}
 		}
 
 		.popover__inner {
-			left: -50px;
+			padding: 8px 10px;
+			max-width: 210px;
+			background-color: var( --color-neutral-100 );
+			border-color: var( --color-neutral-100 );
+			color: var( --color-neutral-0 );
+			border-radius: 2px;
+			text-align: left;
 		}
-	}
-
-	&.is-bottom {
-		@media ( max-width: 960px ) {
-			display: block;
-		}
-
-		&.popover-enter {
-			transform: translate( 0, 22px );
-		}
-
-		&.popover-enter-active,
-		&.popover-enter-done {
-			transform: translate( 0, 12px );
-		}
-
-		.popover__arrow {
-			border-bottom-color: var( --color-neutral-100 );
-			&::before {
-				border-bottom-color: var( --color-neutral-100 );
-			}
-		}
-	}
-
-	.rtl &.is-bottom {
-		.popover__arrow {
-			border-right-color: transparent;
-		}
-	}
-
-	.popover__inner {
-		padding: 8px 10px;
-		max-width: 210px;
-		background-color: var( --color-neutral-100 );
-		border-color: var( --color-neutral-100 );
-		color: var( --color-neutral-0 );
-		border-radius: 2px;
-		text-align: left;
 	}
 `;

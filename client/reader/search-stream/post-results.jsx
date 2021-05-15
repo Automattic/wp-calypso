@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,6 +14,8 @@ import HeaderBack from 'calypso/reader/header-back';
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
 import { SEARCH_RESULTS } from 'calypso/reader/follow-sources';
 import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
+
+const defaultTransform = ( item ) => item;
 
 class PostResults extends Component {
 	static propTypes = {
@@ -39,7 +40,7 @@ class PostResults extends Component {
 		const transformStreamItems =
 			! query || query === ''
 				? ( postKey ) => ( { ...postKey, isRecommendation: true } )
-				: identity;
+				: defaultTransform;
 
 		return (
 			<Stream

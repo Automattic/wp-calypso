@@ -7,6 +7,8 @@ import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
+import { styled } from '@automattic/wpcom-checkout';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,13 +16,14 @@ import type { RemoveProductFromCart, CouponStatus } from '@automattic/shopping-c
 import joinClasses from './join-classes';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
-import { isDomainRegistration, isDomainTransfer } from 'calypso/lib/products-values';
-import styled from '../lib/styled';
+import { isDomainRegistration, isDomainTransfer } from '@automattic/calypso-products';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { GetProductVariants } from '../hooks/product-variants';
 import type { OnChangeItemVariant } from './item-variation-picker';
+import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 
-const DomainURL = styled.div`
+const SiteSummary = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
 	margin-top: -10px;
@@ -97,12 +100,25 @@ export default function WPCheckoutOrderReview( {
 		return removeCoupon();
 	};
 
+	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
+	const planIsP2Plus = hasP2PlusPlan( responseCart );
+
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
 		>
-			{ domainUrl && 'no-user' !== domainUrl && (
-				<DomainURL>{ translate( 'Site: %s', { args: domainUrl } ) }</DomainURL>
+			{ ! planIsP2Plus && domainUrl && 'no-user' !== domainUrl && (
+				<SiteSummary>{ translate( 'Site: %s', { args: domainUrl } ) }</SiteSummary>
+			) }
+			{ planIsP2Plus && selectedSiteData?.name && (
+				<SiteSummary>
+					{ translate( 'Upgrade: {{strong}}%s{{/strong}}', {
+						args: selectedSiteData.name,
+						components: {
+							strong: <strong />,
+						},
+					} ) }
+				</SiteSummary>
 			) }
 
 			<WPOrderReviewSection>

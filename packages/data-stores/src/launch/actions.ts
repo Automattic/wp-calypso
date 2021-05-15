@@ -8,6 +8,7 @@ import { select } from '@wordpress/data';
  * Internal dependencies
  */
 import type { LaunchStepType } from './types';
+import type { ReturnOrGeneratorYieldUnion } from '../mapped-types';
 import { PLANS_STORE } from './constants';
 import type { Plans } from '..';
 
@@ -154,19 +155,6 @@ export const disablePersistentSuccessView = () =>
 	( {
 		type: 'DISABLE_SUCCESS_VIEW',
 	} as const );
-
-/**
- * Usually we use ReturnType of all the action creators to deduce all the actions.
- * This works until one of the action creators is a generator and doesn't actually "Return" an action.
- * This type helper allows for actions to be both functions and generators
- */
-type ReturnOrGeneratorYieldUnion< T extends ( ...args: any ) => any > = T extends (
-	...args: any
-) => infer Return
-	? Return extends Generator< infer T, infer U, any >
-		? T | U
-		: Return
-	: never;
 
 export type LaunchAction = ReturnOrGeneratorYieldUnion<
 	| typeof setSiteTitle

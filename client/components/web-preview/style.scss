@@ -94,10 +94,6 @@
 	color: var( --color-primary );
 	border-radius: 0;
 
-	@include break-small {
-		border-left: 1px solid var( --color-neutral-5 );
-	}
-
 	@include break-large {
 		padding: 6px 32px;
 	}

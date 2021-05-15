@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import { head, includes, isEmpty } from 'lodash';
+import { includes, isEmpty } from 'lodash';
 import page from 'page';
 
 /**
@@ -47,6 +47,7 @@ export function authQueryTransformer( queryObject ) {
 		userEmail: queryObject.user_email || null,
 		woodna_service_name: queryObject.woodna_service_name || null,
 		woodna_help_url: queryObject.woodna_help_url || null,
+		allowSiteConnection: queryObject.skip_user || queryObject.allow_site_connection || null,
 	};
 }
 
@@ -106,7 +107,7 @@ export function getRoleFromScope( scope ) {
 	if ( ! includes( scope, ':' ) ) {
 		return null;
 	}
-	const role = head( scope.split( ':', 1 ) );
+	const role = scope.split( ':', 1 )[ 0 ];
 	if ( ! isEmpty( role ) ) {
 		return role;
 	}

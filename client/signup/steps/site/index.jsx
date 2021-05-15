@@ -148,32 +148,30 @@ class Site extends React.Component {
 
 		this.setState( { submitting: true } );
 
-		this.formStateController.handleSubmit(
-			function ( hasErrors ) {
-				const site = formState.getFieldValue( this.state.form, 'site' );
+		this.formStateController.handleSubmit( ( hasErrors ) => {
+			const site = formState.getFieldValue( this.state.form, 'site' );
 
-				this.setState( { submitting: false } );
+			this.setState( { submitting: false } );
 
-				if ( hasErrors ) {
-					return;
-				}
+			if ( hasErrors ) {
+				return;
+			}
 
-				recordTracksEvent( 'calypso_signup_site_step_submit', {
-					unique_site_urls_searched: siteUrlsSearched.length,
-					times_validation_failed: timesValidationFailed,
-				} );
+			recordTracksEvent( 'calypso_signup_site_step_submit', {
+				unique_site_urls_searched: siteUrlsSearched.length,
+				times_validation_failed: timesValidationFailed,
+			} );
 
-				this.resetAnalyticsData();
+			this.resetAnalyticsData();
 
-				this.props.submitSignupStep( {
-					stepName: this.props.stepName,
-					form: this.state.form,
-					site,
-				} );
+			this.props.submitSignupStep( {
+				stepName: this.props.stepName,
+				form: this.state.form,
+				site,
+			} );
 
-				this.props.goToNextStep();
-			}.bind( this )
-		);
+			this.props.goToNextStep();
+		} );
 	};
 
 	handleBlur = () => {
@@ -213,30 +211,27 @@ class Site extends React.Component {
 			return;
 		}
 
-		return map(
-			messages,
-			function ( message, error_code ) {
-				if ( error_code === 'blog_name_reserved' ) {
-					return (
-						<span>
-							<p>
-								{ message }
-								&nbsp;
-								{ this.props.translate(
-									'Is this your username? {{a}}Log in now to claim this site address{{/a}}.',
-									{
-										components: {
-											a: <a href={ link } />,
-										},
-									}
-								) }
-							</p>
-						</span>
-					);
-				}
-				return message;
-			}.bind( this )
-		);
+		return map( messages, ( message, error_code ) => {
+			if ( error_code === 'blog_name_reserved' ) {
+				return (
+					<span>
+						<p>
+							{ message }
+							&nbsp;
+							{ this.props.translate(
+								'Is this your username? {{a}}Log in now to claim this site address{{/a}}.',
+								{
+									components: {
+										a: <a href={ link } />,
+									},
+								}
+							) }
+						</p>
+					</span>
+				);
+			}
+			return message;
+		} );
 	};
 
 	formFields = () => {

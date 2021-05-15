@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { getVariationForUser } from 'calypso/state/experiments/selectors';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import config from '@automattic/calypso-config';
 
@@ -23,14 +22,6 @@ export default function getOnboardingUrl( state ) {
 
 	const userLocale = getCurrentUserLocale( state );
 	if ( GUTENBOARDING_LOCALES.includes( userLocale ) ) {
-		return config( 'gutenboarding_url' );
-	}
-
-	const existingUsersOnboardingVariant = getVariationForUser(
-		state,
-		'new_onboarding_existing_users_non_en_v5'
-	);
-	if ( existingUsersOnboardingVariant === 'treatment' ) {
 		return config( 'gutenboarding_url' );
 	}
 

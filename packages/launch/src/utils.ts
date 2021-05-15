@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import type { DomainSuggestions } from '@automattic/data-stores';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import { Plans as PlansStore } from '@automattic/data-stores';
-import type { Plans } from '@automattic/data-stores';
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 export type PlanProductForFlow = {
 	product_id: number;
@@ -44,6 +43,9 @@ export const getDomainProduct = (
 	domain: DomainSuggestions.DomainSuggestion,
 	flow: string
 ): DomainProduct | undefined => {
+	if ( domain.unavailable ) {
+		return;
+	}
 	if ( ! domain?.product_id ) {
 		return;
 	}

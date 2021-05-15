@@ -16,12 +16,12 @@ import filesize from 'filesize';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SupportInfo from 'calypso/components/support-info';
-import { planHasFeature } from 'calypso/lib/plans';
 import {
+	planHasFeature,
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-} from 'calypso/lib/plans/constants';
+} from '@automattic/calypso-products';
 import getMediaStorageLimit from 'calypso/state/selectors/get-media-storage-limit';
 import getMediaStorageUsed from 'calypso/state/selectors/get-media-storage-used';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';

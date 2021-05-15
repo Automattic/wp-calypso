@@ -5,7 +5,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import {
 	Button,
 	FormStatus,
@@ -17,6 +17,7 @@ import {
 } from '@automattic/composite-checkout';
 import { camelCase } from 'lodash';
 import { useDispatch as useReduxDispatch } from 'react-redux';
+import { Field } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -24,7 +25,6 @@ import { useDispatch as useReduxDispatch } from 'react-redux';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
-import Field from 'calypso/my-sites/checkout/composite-checkout/components/field';
 import {
 	SummaryLine,
 	SummaryDetails,

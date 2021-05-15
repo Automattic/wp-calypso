@@ -28,7 +28,6 @@ jest.mock( 'i18n-calypso', () => ( {
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -57,10 +56,11 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
-} from 'calypso/lib/plans/constants';
-import { getPlan } from 'calypso/lib/plans';
+	getPlan,
+} from '@automattic/calypso-products';
 import PlanPrice from 'calypso/my-sites/plan-price/';
 
+const translate = ( string ) => string;
 const props = {
 	translate: ( x ) => x,
 	planType: PLAN_FREE,
@@ -393,7 +393,7 @@ describe( 'PlanIntervalDiscount', () => {
 		isYearly: true,
 		rawPrice: 22,
 		relatedMonthlyPlan: { raw_price: 2 },
-		translate: identity,
+		translate,
 		billingTimeFrame: '',
 		title: '',
 		planType: PLAN_JETPACK_FREE,
@@ -425,7 +425,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 	const baseProps = {
 		currencyCode: 'USD',
 		isInSignup: false,
-		translate: identity,
+		translate,
 		currentSitePlan: PLAN_FREE,
 		billingTimeFrame: 'for life',
 	};
@@ -453,7 +453,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( props1.discounted ).toBe( false );
 		expect( props1.original ).toBe( true );
 		expect( props1.currencyCode ).toBe( 'USD' );
-		expect( props1.displayPerMonthNotation ).toBe( false );
+		expect( props1.displayPerMonthNotation ).toBe( true );
 
 		// We need the dive() here to pick up defaultProps
 		const props2 = wrapper.find( PlanPrice ).at( 1 ).dive().props();
@@ -461,7 +461,7 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		expect( props2.discounted ).toBe( true );
 		expect( props2.original ).toBe( false );
 		expect( props2.currencyCode ).toBe( 'USD' );
-		expect( props2.displayPerMonthNotation ).toBe( false );
+		expect( props2.displayPerMonthNotation ).toBe( true );
 	} );
 } );
 
@@ -470,7 +470,7 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 		const baseProps = {
 			currencyCode: 'USD',
 			isInSignup: false,
-			translate: identity,
+			translate,
 			currentSitePlan: PLAN_FREE,
 		};
 		test( 'Should return a placeholder when isPlaceholder=true and isInSignup=false', () => {
@@ -512,7 +512,7 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 			availableForPurchase: true,
 			currencyCode: 'USD',
 			isInSignup: false,
-			translate: identity,
+			translate,
 			currentSitePlan: PLAN_FREE,
 			relatedMonthlyPlan: { raw_price: 5 },
 			rawPrice: 50,
@@ -558,7 +558,7 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 			availableForPurchase: true,
 			currencyCode: 'USD',
 			isInSignup: false,
-			translate: identity,
+			translate,
 			currentSitePlan: PLAN_FREE,
 			discountPrice: 40,
 			rawPrice: 50,
@@ -595,7 +595,7 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 			availableForPurchase: true,
 			currencyCode: 'USD',
 			isInSignup: false,
-			translate: identity,
+			translate,
 			currentSitePlan: PLAN_FREE,
 			rawPrice: 50,
 		};
@@ -628,7 +628,7 @@ describe( 'PlanFeaturesHeader.render()', () => {
 			availableForPurchase: true,
 			currencyCode: 'USD',
 			isInSignup: false,
-			translate: identity,
+			translate,
 			currentSitePlan: PLAN_FREE,
 			rawPrice: 9,
 			isJetpack: true,
@@ -690,7 +690,7 @@ describe( 'PlanFeaturesHeader.renderCreditLabel()', () => {
 		currentSitePlan: { productSlug: PLAN_PERSONAL },
 		rawPrice: 100,
 		discountPrice: 80,
-		translate: identity,
+		translate,
 		isJetpack: false,
 		isSiteAT: false,
 	};
@@ -731,7 +731,7 @@ describe( 'PlanFeaturesHeader.renderCreditLabel()', () => {
 		expect( instance.renderCreditLabel() ).toBe( null );
 	} );
 
-	test( 'Should display credit label for atomic site on Business plan ', () => {
+	test( 'Should display credit label for atomic site on Business plan', () => {
 		const instance = new PlanFeaturesHeader( {
 			...baseProps,
 			planType: PLAN_BUSINESS,
@@ -742,7 +742,7 @@ describe( 'PlanFeaturesHeader.renderCreditLabel()', () => {
 		expect( wrapper.find( '.plan-features__header-credit-label' ).length ).toBe( 1 );
 	} );
 
-	test( 'Should not display credit label for Jetpack site ', () => {
+	test( 'Should not display credit label for Jetpack site', () => {
 		const instance = new PlanFeaturesHeader( {
 			...baseProps,
 			planType: PLAN_JETPACK_PREMIUM,

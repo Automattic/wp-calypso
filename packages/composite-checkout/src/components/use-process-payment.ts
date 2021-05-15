@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import debugFactory from 'debug';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 /**
  * Internal dependencies
@@ -19,6 +19,7 @@ import {
 	SetTransactionComplete,
 	SetTransactionRedirecting,
 	ProcessPayment,
+	SetTransactionError,
 } from '../types';
 
 const debug = debugFactory( 'composite-checkout:use-create-payment-processor-on-click' );
@@ -36,10 +37,8 @@ export default function useProcessPayment(): ProcessPayment {
 			}
 			setTransactionPending();
 			debug( 'calling payment processor function', paymentProcessorId );
-			return handlePaymentProcessorPromise(
-				paymentProcessorId,
-				paymentProcessors[ paymentProcessorId ]( submitData )
-			);
+			const response = paymentProcessors[ paymentProcessorId ]( submitData );
+			return handlePaymentProcessorPromise( paymentProcessorId, response );
 		},
 		[ handlePaymentProcessorPromise, paymentProcessors, setTransactionPending ]
 	);
@@ -60,6 +59,15 @@ function useHandlePaymentProcessorResponse() {
 		setTransactionError,
 	} = useTransactionStatus();
 
+	// processPayment may throw an error, but because it's an async function,
+	// that error will not trigger any React error boundaries around this
+	// component (error boundaries only catch errors that occur during render).
+	// Since we want to know about processing errors, we can cause an error to
+	// occur during render of this button if processPayment throws an error using
+	// the below technique. See
+	// https://github.com/facebook/react/issues/14981#issuecomment-468460187
+	const [ , setErrorState ] = useState();
+
 	return useCallback(
 		async (
 			paymentProcessorId: string,
@@ -70,10 +78,15 @@ function useHandlePaymentProcessorResponse() {
 					handlePaymentProcessorResponse( response, paymentProcessorId, redirectErrorMessage, {
 						setTransactionRedirecting,
 						setTransactionComplete,
+						setTransactionError,
 					} )
 				)
 				.catch( ( error: Error ) => {
 					setTransactionError( error.message );
+					// See note above about transforming an async error into a render-time error
+					setErrorState( () => {
+						throw error;
+					} );
 					throw error;
 				} );
 		},
@@ -88,9 +101,11 @@ async function handlePaymentProcessorResponse(
 	{
 		setTransactionRedirecting,
 		setTransactionComplete,
+		setTransactionError,
 	}: {
 		setTransactionRedirecting: SetTransactionRedirecting;
 		setTransactionComplete: SetTransactionComplete;
+		setTransactionError: SetTransactionError;
 	}
 ): Promise< PaymentProcessorResponse > {
 	debug( 'payment processor function response', rawResponse );
@@ -99,6 +114,13 @@ async function handlePaymentProcessorResponse(
 		throw new InvalidPaymentProcessorResponseError( paymentProcessorId );
 	}
 	const processorResponse = rawResponse as PaymentProcessorResponse;
+	if ( processorResponse.type === PaymentProcessorResponseType.ERROR ) {
+		if ( ! processorResponse.payload ) {
+			processorResponse.payload = 'Unknown transaction failure';
+		}
+		setTransactionError( processorResponse.payload );
+		return processorResponse;
+	}
 	if ( processorResponse.type === PaymentProcessorResponseType.REDIRECT ) {
 		if ( ! processorResponse.payload ) {
 			throw new Error( redirectErrorMessage );

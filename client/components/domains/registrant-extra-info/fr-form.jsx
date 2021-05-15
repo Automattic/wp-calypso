@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-import { defaults, get, identity, isEmpty, map, set } from 'lodash';
+import { defaults, get, isEmpty, map, set } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,6 +24,7 @@ import validateContactDetails from './fr-validate-contact-details';
 import { disableSubmitButton } from './with-contact-details-validation';
 
 const noop = () => {};
+const identity = ( value ) => value;
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 let defaultRegistrantType;
 

@@ -27,9 +27,9 @@ export function useDomainProductFromCart(): DomainProduct | undefined {
 	React.useEffect( () => {
 		( async function () {
 			const cart = await getCart( siteId );
-			const domainProduct = cart.products?.find( ( item: ResponseCartProduct ) =>
-				isDomainProduct( item )
-			);
+			const domainProduct = ( cart.products as ResponseCartProduct[] )?.find(
+				( item: ResponseCartProduct ) => isDomainProduct( item )
+			) as DomainProduct | undefined;
 			setDomainProductFromCart( domainProduct );
 		} )();
 	}, [ siteId, getCart, setDomainProductFromCart ] );
@@ -76,6 +76,7 @@ export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestio
 				domainProductFromCart.cost,
 				domainProductFromCart.currency
 			),
+			unavailable: false,
 		};
 	}
 

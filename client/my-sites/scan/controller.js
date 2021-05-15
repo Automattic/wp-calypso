@@ -21,7 +21,7 @@ import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-d
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanHistoryPlaceholder from 'calypso/components/jetpack/scan-history-placeholder';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isJetpackScanSlug } from 'calypso/lib/products-values';
+import { isJetpackScanSlug } from '@automattic/calypso-products';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
 

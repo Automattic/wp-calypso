@@ -28,6 +28,7 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getRecommendedPlugins from 'calypso/state/selectors/get-recommended-plugins';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -37,9 +38,15 @@ import { getSitePlan, isJetpackSite, isRequestingSites } from 'calypso/state/sit
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { Button } from '@automattic/components';
-import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'calypso/lib/products-values';
-import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'calypso/lib/plans/constants';
-import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
+import {
+	isBusiness,
+	isEcommerce,
+	isEnterprise,
+	isPremium,
+	findFirstSimilarPlanKey,
+	FEATURE_UPLOAD_PLUGINS,
+	TYPE_BUSINESS,
+} from '@automattic/calypso-products';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { isEnabled } from '@automattic/calypso-config';
 import QuerySiteRecommendedPlugins from 'calypso/components/data/query-site-recommended-plugins';
@@ -422,7 +429,7 @@ export class PluginsBrowser extends Component {
 			! this.props.selectedSiteId ||
 			! this.props.sitePlan ||
 			this.props.isVipSite ||
-			this.props.isJetpackSite ||
+			this.props.jetpackNonAtomic ||
 			this.props.hasBusinessPlan
 		) {
 			return null;
@@ -534,6 +541,8 @@ export default flow(
 				hasPremiumPlan,
 				hasBusinessPlan,
 				isJetpackSite: isJetpackSite( state, selectedSiteId ),
+				jetpackNonAtomic:
+					isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
 				isVipSite: isVipSite( state, selectedSiteId ),
 				hasJetpackSites: hasJetpackSites( state ),
 				isRequestingSites: isRequestingSites( state ),

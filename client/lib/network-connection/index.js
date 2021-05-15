@@ -43,7 +43,7 @@ const NetworkConnectionApp = {
 	/**
 	 * Bootstraps network connection status change handler.
 	 *
-	 * @param {Store} reduxStore The Redux store.
+	 * @param {object} reduxStore The Redux store.
 	 */
 	init: function ( reduxStore ) {
 		if ( ! this.isEnabled( 'network-connection' ) ) {
@@ -62,26 +62,16 @@ const NetworkConnectionApp = {
 			}
 		};
 
-		if ( config.isEnabled( 'desktop' ) ) {
-			connected = typeof navigator !== 'undefined' ? !! navigator.onLine : true;
-
-			window.addEventListener( 'online', this.emitConnected.bind( this ) );
-			window.addEventListener( 'offline', this.emitDisconnected.bind( this ) );
-		} else {
-			PollerPool.add( this, 'checkNetworkStatus', {
-				interval: STATUS_CHECK_INTERVAL,
-			} );
-		}
+		PollerPool.add( this, 'checkNetworkStatus', {
+			interval: STATUS_CHECK_INTERVAL,
+		} );
 
 		this.on( 'change', changeCallback );
 
-		window.addEventListener(
-			'beforeunload',
-			function () {
-				debug( 'Removing listener.' );
-				this.off( 'change', changeCallback );
-			}.bind( this )
-		);
+		window.addEventListener( 'beforeunload', () => {
+			debug( 'Removing listener.' );
+			this.off( 'change', changeCallback );
+		} );
 	},
 
 	/**

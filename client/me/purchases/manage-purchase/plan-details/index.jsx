@@ -23,7 +23,7 @@ import {
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { getName, isExpired, isPartnerPurchase } from 'calypso/lib/purchases';
-import { isJetpackPlan, isFreeJetpackPlan } from 'calypso/lib/products-values';
+import { isJetpackPlan, isFreeJetpackPlan } from '@automattic/calypso-products';
 import { getPluginsForSite } from 'calypso/state/plugins/premium/selectors';
 
 /**

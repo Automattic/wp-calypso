@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { assign, some, startsWith } from 'lodash';
+import { some, startsWith } from 'lodash';
 
 const exported = {
 	itemLinkClass: function ( path, currentPath, additionalClasses ) {
@@ -28,17 +28,16 @@ const exported = {
 			isActionButtonSelected = true;
 		}
 
-		return classNames(
-			assign(
-				{ selected: selected, 'is-action-button-selected': isActionButtonSelected },
-				additionalClasses
-			)
-		);
+		return classNames( {
+			selected,
+			'is-action-button-selected': isActionButtonSelected,
+			...additionalClasses,
+		} );
 	},
 
 	itemLinkClassStartsWithOneOf: function ( paths, currentPath, additionalClasses ) {
 		const selected = this.pathStartsWithOneOf( paths, currentPath );
-		return classNames( assign( { selected }, additionalClasses ) );
+		return classNames( { selected, ...additionalClasses } );
 	},
 
 	pathStartsWithOneOf: function ( paths, currentPath ) {

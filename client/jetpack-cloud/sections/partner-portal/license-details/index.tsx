@@ -7,12 +7,13 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { getLicenseState, noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { Card } from '@automattic/components';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Gridicon from 'calypso/components/gridicon';
 import FormattedDate from 'calypso/components/formatted-date';
+import LicenseDetailsActions from 'calypso/jetpack-cloud/sections/partner-portal/license-details/actions';
 
 /**
  * Style dependencies
@@ -21,6 +22,8 @@ import './style.scss';
 
 interface Props {
 	licenseKey: string;
+	product: string;
+	siteUrl: string | null;
 	username: string | null;
 	blogId: number | null;
 	issuedAt: string;
@@ -29,11 +32,12 @@ interface Props {
 	onCopyLicense?: () => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
+const DETAILS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss A';
 
 export default function LicenseDetails( {
 	licenseKey,
+	product,
+	siteUrl,
 	username,
 	blogId,
 	issuedAt,
@@ -65,15 +69,26 @@ export default function LicenseDetails( {
 					</div>
 				</li>
 
+				<li className="license-details__list-item license-details__list-item--wide">
+					<h4 className="license-details__label">{ translate( 'Blog URL' ) }</h4>
+					{ siteUrl ? (
+						<a href={ siteUrl } target="_blank" rel="noopener noreferrer">
+							{ siteUrl }
+						</a>
+					) : (
+						<Gridicon icon="minus" />
+					) }
+				</li>
+
 				<li className="license-details__list-item">
 					<h4 className="license-details__label">{ translate( 'Issued on' ) }</h4>
-					<FormattedDate date={ issuedAt } format="LLL" />
+					<FormattedDate date={ issuedAt } format={ DETAILS_DATE_FORMAT } />
 				</li>
 
 				{ licenseState === LicenseState.Attached && (
 					<li className="license-details__list-item">
 						<h4 className="license-details__label">{ translate( 'Assigned on' ) }</h4>
-						<FormattedDate date={ attachedAt } format="LLL" />
+						<FormattedDate date={ attachedAt } format={ DETAILS_DATE_FORMAT } />
 					</li>
 				) }
 
@@ -87,7 +102,7 @@ export default function LicenseDetails( {
 				{ licenseState === LicenseState.Revoked && (
 					<li className="license-details__list-item">
 						<h4 className="license-details__label">{ translate( 'Revoked on' ) }</h4>
-						<FormattedDate date={ revokedAt } format="LLL" />
+						<FormattedDate date={ revokedAt } format={ DETAILS_DATE_FORMAT } />
 					</li>
 				) }
 
@@ -101,6 +116,14 @@ export default function LicenseDetails( {
 					{ blogId ? <span>{ blogId }</span> : <Gridicon icon="minus" /> }
 				</li>
 			</ul>
+
+			<LicenseDetailsActions
+				licenseKey={ licenseKey }
+				product={ product }
+				siteUrl={ siteUrl }
+				attachedAt={ attachedAt }
+				revokedAt={ revokedAt }
+			/>
 		</Card>
 	);
 }

@@ -27,16 +27,18 @@ To accelerate development by being a force for continuous improvement, and help 
 
 ## Technology
 
-These e2e tests use the same technology as the `wp-calypso` GitHub repository, notably JavaScript on Node. User interaction is simulated using the [selenium-webdriver](https://www.selenium.dev/projects/) library.
+These e2e tests use the same technology as the `wp-calypso` GitHub repository, notably JavaScript on Node. User interaction is simulated using the [selenium-webdriver](https://www.selenium.dev/projects/) library, althought there is an active project under way to migrate to using Playwright.
 
 ## What is tested?
 
 At the high level, each test file (or `spec`) fall under one of the following flows:
 
-| Flow          | Directory            |
-| ------------- | -------------------- |
-| WordPress.com | `specs/`             |
-| Jetpack       | `specs-jetpack/`     |
-| WooCommerce   | `specs-woocommerce/` |
+| Flow                 | Directory                |
+| -------------------- | ------------------------ |
+| WordPress.com        | `specs/`                 |
+| Gutenberg            | `specs-gutenberg/`       |
+| Internationalization | `specs-i18n/`            |
+| Jetpack              | `specs-jetpack-calypso/` |
+| WooCommerce          | `specs-woocommerce/`     |
 
-Note that Jetpack and WooCommerce tests test interactions between `wp-calypso` and the respective features.
+Core code for Jetpack, WooCommerce and Gutenberg are hosted in other repositories and they have separate e2e testing infrastructure. Tests here are meant to test interactions between their respective components and Calypso.

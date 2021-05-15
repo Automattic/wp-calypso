@@ -4,21 +4,6 @@
 	}
 }
 
-.gsuite-new-user-list__new-user-remove-user-button {
-	display: none; // TODO: Fix button displayed in the middle of form (see 1165571745647867-as-1198174007918339)
-	overflow: unset; // Prevents ellipsis from appearing because of a right margin applied on the gridicon
-
-	@include breakpoint-deprecated( '>800px' ) {
-		display: block;
-		height: 40px;
-		width: 50px;
-
-		span {
-			display: none;
-		}
-	}
-}
-
 .gsuite-new-user-list__actions {
 	display: flex;
 	flex-direction: column;
@@ -43,6 +28,14 @@
 	@include breakpoint-deprecated( '>480px' ) {
 		width: auto;
 	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-bottom: 20px;
+	}
+
+	@include breakpoint-deprecated( '>800px' ) {
+		margin-bottom: 0;
+	}
 }
 
 .gsuite-new-user-list__domain-select {
@@ -57,13 +50,49 @@
 	margin-top: 1.5em;
 }
 
+.gsuite-new-user-list__new-user {
+	.form-fieldset .form-label {
+		color: var( --color-text );
+		margin-bottom: 0;
+
+		.form-text-input-with-affixes__suffix {
+			font-weight: normal;
+		}
+
+		> div, > input {
+			margin-top: 5px;
+		}
+	}
+
+	&.show-labels .gsuite-new-user-list__new-user-remove-user-button {
+		@include breakpoint-deprecated( '>800px' ) {
+			margin-top: calc( 1.5em + 5px );
+		}
+	}
+}
+
 .gsuite-new-user-list__new-user-section {
 	@include breakpoint-deprecated( '>800px' ) {
 		display: flex;
 		justify-content: space-between;
 
-		& > *:not(:first-child) {
+		& > *:not( :first-child ) {
 			margin-left: 15px;
+		}
+	}
+
+	.gsuite-new-user-list__new-user-remove-user-button {
+		display: none; // TODO: Fix button displayed in the middle of form (see 1165571745647867-as-1198174007918339)
+		overflow: unset; // Prevents ellipsis from appearing because of a right margin applied on the gridicon
+
+		@include breakpoint-deprecated( '>800px' ) {
+			display: block;
+			height: 40px;
+			width: 50px;
+
+			span {
+				display: none;
+			}
 		}
 	}
 }
@@ -99,7 +128,7 @@
 
 	@include breakpoint-deprecated( '>800px' ) {
 		margin-bottom: 20px;
-		width: 44%;
+		width: 50%;
 	}
 }
 

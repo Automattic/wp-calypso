@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { identity, includes } from 'lodash';
+import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -49,7 +48,6 @@ class SharingServiceExamples extends Component {
 
 	static defaultProps = {
 		site: Object.freeze( {} ),
-		translate: identity,
 	};
 
 	getSharingButtonsLink() {

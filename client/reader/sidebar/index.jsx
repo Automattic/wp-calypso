@@ -3,7 +3,7 @@
  */
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
-import { defer, startsWith, identity } from 'lodash';
+import { defer, startsWith } from 'lodash';
 import page from 'page';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -346,10 +346,6 @@ export class ReaderSidebar extends React.Component {
 		);
 	}
 }
-
-ReaderSidebar.defaultProps = {
-	translate: identity,
-};
 
 export default connect(
 	( state ) => {

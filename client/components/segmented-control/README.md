@@ -61,14 +61,14 @@ export default class extends React.Component {
 	}
 
 	handleFilterClick( value ) {
-		return function () {
+		return () => {
 			// ... (track analytics, add to state, etc.)
 
 			this.setState( {
 				selected: value,
 				// ...
 			} );
-		}.bind( this );
+		};
 	}
 }
 ```

@@ -11,7 +11,7 @@ import { screen, act, render, waitFor, fireEvent } from '@testing-library/react'
 /**
  * Internal dependencies
  */
-import { useShoppingCart, ShoppingCartProvider } from '../index';
+import { useShoppingCart, ShoppingCartProvider } from '../src/index';
 import { getEmptyResponseCart } from '../src/empty-carts';
 import type {
 	RequestCartProduct,

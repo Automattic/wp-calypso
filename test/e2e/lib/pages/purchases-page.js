@@ -13,7 +13,7 @@ const by = webdriver.By;
 
 export default class PurchasesPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( 'a[href="/me/purchases"][aria-current="true"]' ) );
+		super( driver, by.css( 'main.purchases-list' ) );
 	}
 
 	async _postInit() {
@@ -52,7 +52,7 @@ export default class PurchasesPage extends AsyncBaseContainer {
 	}
 
 	async _waitForPurchases() {
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			by.css( '.is-placeholder' ),
 			this.explicitWaitMS * 3

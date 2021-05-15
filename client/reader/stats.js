@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, partial, pick } from 'lodash';
+import { partial, pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -165,7 +165,7 @@ export const recordTracksRailcarInteract = partial(
 );
 
 export function recordTrackForPost( eventName, post = {}, additionalProps = {}, options ) {
-	recordTrack( eventName, assign( getTracksPropertiesForPost( post ), additionalProps ), options );
+	recordTrack( eventName, { ...getTracksPropertiesForPost( post ), ...additionalProps }, options );
 	if ( post.railcar && allowedTracksRailcarEventNames.has( eventName ) ) {
 		// check for overrides for the railcar
 		recordTracksRailcarInteract(

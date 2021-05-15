@@ -18,6 +18,7 @@ export default async function ( context, next ) {
 	const isDev = context.query.dev === 'true';
 	const forcedView = context.query.view;
 	const noticeType = context.query.notice;
+	const shuffle = context.query.hasOwnProperty( 'shuffle' );
 
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
@@ -30,6 +31,7 @@ export default async function ( context, next ) {
 			isDev={ isDev }
 			forcedView={ forcedView }
 			noticeType={ noticeType }
+			shuffleViews={ shuffle }
 		/>
 	);
 

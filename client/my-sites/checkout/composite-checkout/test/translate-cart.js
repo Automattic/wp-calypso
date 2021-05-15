@@ -123,11 +123,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 
 		describe( 'allowed payment methods', function () {
 			it( 'contains the expected slugs', function () {
-				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [
-					'card',
-					'ebanx',
-					'apple-pay',
-				] );
+				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [ 'card', 'ebanx', 'web-pay' ] );
 			} );
 		} );
 	} );
@@ -291,9 +287,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			it( 'has the expected label (the domain name)', function () {
 				expect( clientCart.items[ 1 ].label ).toBe( 'foo.cash' );
 			} );
-			it( 'has the expected meta (the domain name)', function () {
-				expect( clientCart.items[ 1 ].wpcom_meta?.meta ).toBe( 'foo.cash' );
-			} );
 			it( 'has the expected type', function () {
 				expect( clientCart.items[ 1 ].type ).toBe( 'dotcash_domain' );
 			} );
@@ -306,18 +299,11 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			it( 'has the expected display value', function () {
 				expect( clientCart.items[ 1 ].amount.displayValue ).toBe( 'R$0' );
 			} );
-			it( 'has the expected volume', function () {
-				expect( clientCart.items[ 1 ].wpcom_meta?.volume ).toBe( 1 );
-			} );
 		} );
 
 		describe( 'allowed payment methods', function () {
 			it( 'contains the expected slugs', function () {
-				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [
-					'card',
-					'ebanx',
-					'apple-pay',
-				] );
+				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [ 'card', 'ebanx', 'web-pay' ] );
 			} );
 		} );
 	} );
@@ -503,24 +489,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			it( 'has the expected label', function () {
 				expect( clientCart.items[ 2 ].label ).toBe( 'G Suite' );
 			} );
-			it( 'has the expected product_id', function () {
-				expect( clientCart.items[ 2 ].wpcom_meta?.product_id ).toBe( 69 );
-			} );
-			it( 'has the expected google_apps_users', function () {
-				expect( clientCart.items[ 2 ].wpcom_meta?.extra?.google_apps_users?.[ 0 ] ).toEqual( {
-					email: 'foo@foo.cash',
-					firstname: 'First',
-					lastname: 'User',
-				} );
-				expect( clientCart.items[ 2 ].wpcom_meta?.extra?.google_apps_users?.[ 1 ] ).toEqual( {
-					email: 'bar@foo.cash',
-					firstname: 'Second',
-					lastname: 'User',
-				} );
-			} );
-			it( 'has the expected volume', function () {
-				expect( clientCart.items[ 2 ].wpcom_meta?.volume ).toBe( 2 );
-			} );
 			it( 'has the expected type', function () {
 				expect( clientCart.items[ 2 ].type ).toBe( 'gapps' );
 			} );
@@ -533,18 +501,11 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			it( 'has the expected display value', function () {
 				expect( clientCart.items[ 2 ].amount.displayValue ).toBe( '$72' );
 			} );
-			it( 'has the expected meta (the domain name)', function () {
-				expect( clientCart.items[ 2 ].wpcom_meta?.meta ).toBe( 'foo.cash' );
-			} );
 		} );
 
 		describe( 'allowed payment methods', function () {
 			it( 'contains the expected slugs', function () {
-				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [
-					'card',
-					'ebanx',
-					'apple-pay',
-				] );
+				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [ 'card', 'ebanx', 'web-pay' ] );
 			} );
 		} );
 	} );
@@ -661,21 +622,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			it( 'has the expected currency', function () {
 				expect( clientCart.items[ 0 ].amount.currency ).toBe( 'USD' );
 			} );
-			it( 'has the expected original cost value', function () {
-				expect( clientCart.items[ 0 ].wpcom_meta.item_original_cost_integer ).toBe( 14400 );
-			} );
-			it( 'has the expected original cost display value', function () {
-				expect( clientCart.items[ 0 ].wpcom_meta.item_original_cost_display ).toBe( '$144' );
-			} );
-			it( 'has the expected original monthly cost value', function () {
-				expect( clientCart.items[ 0 ].wpcom_meta.item_subtotal_monthly_cost_integer ).toBe( 1200 );
-			} );
-			it( 'has the expected original monthly cost display value', function () {
-				expect( clientCart.items[ 0 ].wpcom_meta.item_subtotal_monthly_cost_display ).toBe( '$12' );
-			} );
-			it( 'has the expected months per bill period', function () {
-				expect( clientCart.items[ 0 ].wpcom_meta.months_per_bill_period ).toBe( 12 );
-			} );
 			it( 'has the expected value', function () {
 				expect( clientCart.items[ 0 ].amount.value ).toBe( 12700 );
 			} );
@@ -686,11 +632,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 
 		describe( 'allowed payment methods', function () {
 			it( 'contains the expected slugs', function () {
-				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [
-					'card',
-					'ebanx',
-					'apple-pay',
-				] );
+				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [ 'card', 'ebanx', 'web-pay' ] );
 			} );
 		} );
 	} );

@@ -2,10 +2,11 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { makeRedirectResponse } from '@automattic/composite-checkout';
-import { format as formatUrl, parse as parseUrl, resolve as resolveUrl } from 'url'; // eslint-disable-line no-restricted-imports
+import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
+import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { ResponseCart } from '@automattic/shopping-cart';
+import type { ResponseCart, DomainContactDetails } from '@automattic/shopping-cart';
+import type { PayPalExpressEndpointRequestPayload } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -13,10 +14,8 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import getDomainDetails from '../lib/get-domain-details';
-import type { PayPalExpressEndpointRequestPayload } from '../types/paypal-express';
 import { createAccount } from '../payment-method-helpers';
 import wp from 'calypso/lib/wp';
-import type { DomainContactDetails } from '../types/backend/domain-contact-details-components';
 import { createTransactionEndpointCartFromResponseCart } from '../lib/translate-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:paypal-express-processor' );
@@ -32,35 +31,42 @@ export default async function payPalProcessor(
 		includeGSuiteDetails,
 		responseCart,
 		siteId,
+		siteSlug,
+		contactDetails,
 	} = transactionOptions;
 	recordTransactionBeginAnalytics( {
 		reduxDispatch,
 		paymentMethodId: 'paypal',
 	} );
 
-	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
-
-	const successUrl = resolveUrl( window.location.href, getThankYouUrl() );
-
-	const cancelUrl = formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname,
-		query: createUserAndSiteBeforeTransaction ? { cart: 'no-user' } : {},
-	} );
+	const thankYouUrl = getThankYouUrl();
+	let currentUrl;
+	let currentBaseUrl;
+	try {
+		currentUrl = window.location.href;
+		currentBaseUrl = window.location.origin;
+	} catch ( error ) {
+		currentUrl = `https://wordpress.com/checkout/${ siteSlug }`;
+		currentBaseUrl = 'https://wordpress.com';
+	}
+	const currentUrlWithoutQuery = currentUrl.split( /\?|#/ )[ 0 ];
+	const successUrl = thankYouUrl.startsWith( 'http' ) ? thankYouUrl : currentBaseUrl + thankYouUrl;
+	const cancelUrl = createUserAndSiteBeforeTransaction
+		? currentUrlWithoutQuery + '?cart=no-user'
+		: currentUrlWithoutQuery;
 
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		responseCart,
 		successUrl,
 		cancelUrl,
 		siteId,
-		domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) || null,
+		domainDetails:
+			getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) || null,
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
-	return wpcomPayPalExpress( formattedTransactionData, transactionOptions ).then(
-		makeRedirectResponse
-	);
+	return wpcomPayPalExpress( formattedTransactionData, transactionOptions )
+		.then( makeRedirectResponse )
+		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
 async function wpcomPayPalExpress(
@@ -105,6 +111,8 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	domainDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
 } ): PayPalExpressEndpointRequestPayload {
+	const postalCode = responseCart.tax.location.postal_code ?? '';
+	const country = responseCart.tax.location.country_code ?? '';
 	return {
 		successUrl,
 		cancelUrl,
@@ -113,8 +121,8 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 			contactDetails: domainDetails,
 			responseCart,
 		} ),
-		country: responseCart.tax.location.country_code ?? '',
-		postalCode: responseCart.tax.location.postal_code ?? '',
+		country,
+		postalCode: postalCode ? tryToGuessPostalCodeFormat( postalCode.toUpperCase(), country ) : '',
 		domainDetails,
 	};
 }

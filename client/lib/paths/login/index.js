@@ -20,6 +20,7 @@ export function login( {
 	site = undefined,
 	useMagicLink = undefined,
 	from = undefined,
+	allowSiteConnection = undefined,
 } = {} ) {
 	let url = config( 'login_url' );
 
@@ -75,6 +76,10 @@ export function login( {
 
 	if ( from ) {
 		url = addQueryArgs( { from }, url );
+	}
+
+	if ( allowSiteConnection ) {
+		url = addQueryArgs( { allow_site_connection: '1' }, url );
 	}
 
 	return url;

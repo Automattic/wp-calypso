@@ -14,16 +14,15 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-} from 'calypso/lib/plans/constants';
+	PRODUCT_JETPACK_BACKUP_DAILY,
+} from '@automattic/calypso-products';
 import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
-import { PRODUCT_JETPACK_BACKUP_DAILY } from 'calypso/lib/products-values/constants';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'calypso/lib/user', () => () => {} );
 
 const cartItems = require( '../cart-items' );
-const { getPlan } = require( 'calypso/lib/plans' );
-const { getTermDuration } = require( 'calypso/lib/plans/constants' );
+const { getPlan, getTermDuration } = require( '@automattic/calypso-products' );
 const {
 	planItem,
 	isNextDomainFree,
@@ -33,6 +32,7 @@ const {
 	getDomainPriceRule,
 	hasToUpgradeToPayForADomain,
 	getRenewalItemFromProduct,
+	supportsPrivacyProtectionPurchase,
 } = cartItems;
 
 /**
@@ -821,5 +821,25 @@ describe( 'getRenewalItemFromProduct()', () => {
 				)
 			).toThrowError( 'This product cannot be renewed' );
 		} );
+	} );
+} );
+
+describe( 'supportsPrivacyProtectionPurchase', () => {
+	const testProducts = {
+		non_private_product: {
+			product_slug: 'non_private_product',
+		},
+		private_product: {
+			product_slug: 'private_product',
+			is_privacy_protection_product_purchase_allowed: true,
+		},
+	};
+
+	it( 'returns true if the product slug matches a product with privacy allowed', () => {
+		expect( supportsPrivacyProtectionPurchase( 'private_product', testProducts ) ).toBeTruthy();
+	} );
+
+	it( 'returns false if the product slug does not match a product with privacy allowed', () => {
+		expect( supportsPrivacyProtectionPurchase( 'non_private_product', testProducts ) ).toBeFalsy();
 	} );
 } );

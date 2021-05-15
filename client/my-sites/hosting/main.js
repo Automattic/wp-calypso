@@ -39,7 +39,7 @@ import {
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { requestSite } from 'calypso/state/sites/actions';
 import FeatureExample from 'calypso/components/feature-example';
-import { PLAN_BUSINESS, FEATURE_SFTP } from 'calypso/lib/plans/constants';
+import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -180,7 +180,7 @@ class Hosting extends Component {
 		};
 
 		return (
-			<Main className="hosting is-wide-layout">
+			<Main wideLayout className="hosting">
 				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
 				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
 				<SidebarNavigation />
@@ -209,7 +209,8 @@ export default connect(
 		return {
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
-			isDisabled: ! isSiteAutomatedTransfer( state, siteId ),
+			isDisabled:
+				! isSiteOnAtomicPlan( state, siteId ) || ! isSiteAutomatedTransfer( state, siteId ),
 			isOnAtomicPlan: isSiteOnAtomicPlan( state, siteId ),
 			canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 			siteSlug: getSelectedSiteSlug( state ),

@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import { has, identity, mapValues, pickBy } from 'lodash';
+import { has, mapValues, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,6 +35,8 @@ import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+
+const identity = ( theme ) => theme;
 
 function getAllThemeOptions() {
 	const purchase = config.isEnabled( 'upgrades/checkout' )

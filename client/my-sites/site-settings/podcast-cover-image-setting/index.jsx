@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { head, isEqual, partial } from 'lodash';
+import { isEqual } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -80,7 +80,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	editSelectedMedia = ( value ) => {
 		if ( value ) {
 			this.setState( { isEditingCoverImage: true } );
-			this.props.onEditSelectedMedia();
+			this.props.setEditorMediaModalView( ModalViews.IMAGE_EDITOR );
 		} else {
 			this.hideModal();
 		}
@@ -121,7 +121,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		}
 
 		const { selectedItems } = this.props;
-		const selectedItem = head( selectedItems );
+		const selectedItem = selectedItems[ 0 ];
 		if ( ! selectedItem ) {
 			return;
 		}
@@ -157,7 +157,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	};
 
 	cancelEditingCoverImage = () => {
-		this.props.onCancelEditingCoverImage();
+		this.props.setEditorMediaModalView( ModalViews.LIST );
 		this.props.resetAllImageEditorState();
 		this.setState( { isEditingCoverImage: false } );
 	};
@@ -304,8 +304,7 @@ export default connect(
 	},
 	{
 		resetAllImageEditorState,
-		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
-		onCancelEditingCoverImage: partial( setEditorMediaModalView, ModalViews.LIST ),
+		setEditorMediaModalView,
 		addMedia,
 		getMediaItem,
 	}

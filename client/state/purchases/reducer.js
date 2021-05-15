@@ -7,7 +7,7 @@ import { find, matches } from 'lodash';
  * Internal Dependencies
  */
 import { withStorageKey } from '@automattic/state-utils';
-import { withoutPersistence } from 'calypso/state/utils';
+
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -18,6 +18,7 @@ import {
 	PURCHASE_REMOVE_FAILED,
 	PURCHASES_SITE_FETCH_FAILED,
 	PURCHASES_USER_FETCH_FAILED,
+	PURCHASES_SITE_RESET_STATE,
 } from 'calypso/state/action-types';
 
 /**
@@ -87,7 +88,7 @@ function updatePurchases( existingPurchases, action ) {
 	return purchases;
 }
 
-const reducer = withoutPersistence( ( state = initialState, action ) => {
+const reducer = ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case PURCHASES_REMOVE:
 			return {
@@ -147,10 +148,17 @@ const reducer = withoutPersistence( ( state = initialState, action ) => {
 				hasLoadedUserPurchasesFromServer: true,
 				isFetchingUserPurchases: false,
 			};
+		case PURCHASES_SITE_RESET_STATE:
+			return {
+				...state,
+				hasLoadedSitePurchasesFromServer: false,
+				isFetchingSitePurchases: false,
+			};
 	}
 
 	return state;
-} );
+};
 
-const purchasesReducer = withStorageKey( 'purchases', reducer );
-export default purchasesReducer;
+export { reducer };
+
+export default withStorageKey( 'purchases', reducer );

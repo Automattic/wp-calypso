@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, includes, invoke, isEmpty } from 'lodash';
+import { get, includes, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -107,7 +107,7 @@ class ImportURLOnboardingStepComponent extends Component {
 
 	handleInputRef = ( el ) => ( this.inputRef = el );
 
-	focusInput = () => invoke( this.inputRef, 'focus' );
+	focusInput = () => this.inputRef?.focus();
 
 	setUrlError = ( urlValidationMessage ) =>
 		this.setState( { urlValidationMessage }, this.focusInput );
@@ -373,18 +373,15 @@ class ImportURLOnboardingStepComponent extends Component {
 	}
 }
 
-export default flow(
-	connect(
-		( state ) => ( {
-			urlInputValue: getNuxUrlInputValue( state ),
-		} ),
-		{
-			recordTracksEvent,
-			saveSignupStep,
-			setImportOriginSiteDetails,
-			setNuxUrlInputValue,
-			setSiteTitle,
-		}
-	),
-	localize
-)( ImportURLOnboardingStepComponent );
+export default connect(
+	( state ) => ( {
+		urlInputValue: getNuxUrlInputValue( state ),
+	} ),
+	{
+		recordTracksEvent,
+		saveSignupStep,
+		setImportOriginSiteDetails,
+		setNuxUrlInputValue,
+		setSiteTitle,
+	}
+)( localize( ImportURLOnboardingStepComponent ) );

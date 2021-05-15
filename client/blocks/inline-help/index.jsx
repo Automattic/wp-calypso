@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -52,7 +51,6 @@ class InlineHelp extends Component {
 	};
 
 	static defaultProps = {
-		translate: identity,
 		isPopoverVisible: false,
 	};
 
@@ -130,6 +128,7 @@ class InlineHelp extends Component {
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
 			'is-active': isPopoverVisible,
+			'is-compact': true,
 		};
 
 		return (

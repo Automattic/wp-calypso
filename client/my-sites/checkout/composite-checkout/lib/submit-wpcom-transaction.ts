@@ -1,20 +1,28 @@
 /**
+ * External dependencies
+ */
+import type {
+	WPCOMTransactionEndpointRequestPayload,
+	WPCOMTransactionEndpointResponse,
+} from '@automattic/wpcom-checkout';
+
+/**
  * Internal dependencies
  */
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import { createAccount } from '../payment-method-helpers';
 import wp from 'calypso/lib/wp';
-import type {
-	WPCOMTransactionEndpointRequestPayload,
-	WPCOMTransactionEndpointResponse,
-} from '../types/transaction-endpoint';
 
 export default async function submitWpcomTransaction(
 	payload: WPCOMTransactionEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ): Promise< WPCOMTransactionEndpointResponse > {
-	if ( transactionOptions && transactionOptions.createUserAndSiteBeforeTransaction ) {
-		return createAccount().then( ( response ) => {
+	if ( transactionOptions.createUserAndSiteBeforeTransaction || payload.cart.is_jetpack_checkout ) {
+		const createAccountOptions = payload.cart.is_jetpack_checkout
+			? { signupFlowName: 'jetpack-userless-checkout' }
+			: { signupFlowName: 'onboarding-registrationless' };
+
+		return createAccount( createAccountOptions ).then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
 
 			// If the account is already created(as happens when we are reprocessing after a transaction error), then

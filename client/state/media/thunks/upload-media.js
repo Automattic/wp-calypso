@@ -27,9 +27,6 @@ const noop = () => {};
  * swallows all errors and depends on the `onItemFailure` and redux store's
  * handling of errors. It then returns only the list of successful uploads.
  *
- * Note: Temporarily this action will dispatch to the flux store, until
- * the flux store is removed.
- *
  * @param {object|object[]} files The file to upload
  * @param {object} site The site to add the media to
  * @param {Function} uploader The file uploader to use

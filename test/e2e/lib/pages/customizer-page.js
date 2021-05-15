@@ -13,11 +13,11 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class CustomizerPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		const expectedElementSelector = by.css( '.is-section-customize' );
-		super( driver, expectedElementSelector );
-		this.metaiFrameElementSelector = by.css( 'iframe.is-iframe-loaded' );
-		this.reloadCustomizerSelector = by.css( '.empty-content__action.button' );
-		this.saveSelector = by.css( '#save' );
+		const expectedElementLocator = by.css( '.is-section-customize' );
+		super( driver, expectedElementLocator );
+		this.metaiFrameElementLocator = by.css( 'iframe.is-iframe-loaded' );
+		this.reloadCustomizerLocator = by.css( '.empty-content__action.button' );
+		this.saveLocator = by.css( '#save' );
 		this.shortSleepMS = 1000;
 	}
 
@@ -28,7 +28,7 @@ export default class CustomizerPage extends AsyncBaseContainer {
 	async waitForCustomizer() {
 		const self = this;
 		await self.driver
-			.wait( until.elementLocated( this.metaiFrameElementSelector ), this.explicitWaitMS * 2 )
+			.wait( until.elementLocated( this.metaiFrameElementLocator ), this.explicitWaitMS * 2 )
 			.then(
 				function () {},
 				async function ( error ) {
@@ -36,16 +36,16 @@ export default class CustomizerPage extends AsyncBaseContainer {
 					slackNotifier.warn( message );
 					await self.driver
 						.wait( async function () {
-							return await driverHelper.isElementPresent(
+							return await driverHelper.isElementLocated(
 								self.driver,
-								self.reloadCustomizerSelector
+								self.reloadCustomizerLocator
 							);
 						}, self.explicitWaitMS )
 						.then(
 							async function () {
 								await driverHelper.clickWhenClickable(
 									self.driver,
-									self.reloadCustomizerSelector,
+									self.reloadCustomizerLocator,
 									self.explicitWaitMS
 								);
 							},
@@ -74,7 +74,7 @@ export default class CustomizerPage extends AsyncBaseContainer {
 		const driver = this.driver;
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
 			await this._switchToMetaiFrame();
-			const previewDisplayed = await driverHelper.isElementPresent(
+			const previewDisplayed = await driverHelper.isElementLocated(
 				driver,
 				by.css( 'div.preview-desktop.preview-only' )
 			);
@@ -91,12 +91,12 @@ export default class CustomizerPage extends AsyncBaseContainer {
 	async _switchToMetaiFrame() {
 		await this._switchToDefaultContent();
 		await this.driver.wait(
-			until.ableToSwitchToFrame( this.metaiFrameElementSelector ),
+			until.ableToSwitchToFrame( this.metaiFrameElementLocator ),
 			this.explicitWaitMS,
 			'Can not switch to the meta iFrame on customizer'
 		);
 		return await this.driver.wait(
-			until.elementLocated( this.saveSelector ),
+			until.elementLocated( this.saveLocator ),
 			this.explicitWaitMS,
 			'Could not locate the save option on customizer'
 		);

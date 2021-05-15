@@ -17,7 +17,7 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import wp from 'calypso/lib/wp';
-import { getDomain, isDomainTransfer, isDomainProduct } from 'calypso/lib/products-values';
+import { getDomain, isDomainTransfer, isDomainProduct } from '@automattic/calypso-products';
 
 const wpcom = wp.undocumented();
 
@@ -35,6 +35,7 @@ const wpcomValidateDomainContactInformation = ( ...args ) =>
 			{ apiVersion: '1.2' }
 		);
 	} );
+
 async function wpcomValidateSignupEmail( ...args ) {
 	return wpcom.validateNewUser( ...args, null );
 }
@@ -43,6 +44,11 @@ async function wpcomValidateSignupEmail( ...args ) {
 // otherwise we get `this is not defined` errors.
 const wpcomValidateGSuiteContactInformation = ( ...args ) =>
 	wpcom.validateGoogleAppsContactInformation( ...args );
+
+// Aliasing wpcom functions explicitly bound to wpcom is required here;
+// otherwise we get `this is not defined` errors.
+const wpcomValidateTaxContactInformation = ( ...args ) =>
+	wpcom.validateTaxContactInformation( ...args );
 
 export function handleContactValidationResult( {
 	recordEvent,
@@ -81,7 +87,7 @@ export function isContactValidationResponseValid( data, contactDetails ) {
 }
 
 export function prepareContactDetailsForValidation( type, contactDetails ) {
-	if ( type === 'domains' ) {
+	if ( type === 'domains' || type === 'tax' ) {
 		const { contact_information } = prepareDomainContactValidationRequest( contactDetails );
 		return contact_information;
 	}
@@ -90,6 +96,11 @@ export function prepareContactDetailsForValidation( type, contactDetails ) {
 		return contact_information;
 	}
 	throw new Error( `Unknown validation type: ${ type }` );
+}
+
+export async function getTaxValidationResult( contactInfo ) {
+	const formattedContactDetails = prepareContactDetailsForValidation( 'tax', contactInfo );
+	return wpcomValidateTaxContactInformation( formattedContactDetails );
 }
 
 export async function getDomainValidationResult( products, contactInfo ) {

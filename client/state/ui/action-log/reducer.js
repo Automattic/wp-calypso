@@ -6,14 +6,7 @@ import { get, has, includes, overSome } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	EDITOR_PASTE_EVENT,
-	FIRST_VIEW_HIDE,
-	GUIDED_TOUR_UPDATE,
-	PREVIEW_IS_SHOWING,
-	ROUTE_SET,
-	SITE_SETTINGS_RECEIVE,
-} from 'calypso/state/action-types';
+import { GUIDED_TOUR_UPDATE, ROUTE_SET, SITE_SETTINGS_RECEIVE } from 'calypso/state/action-types';
 import { THEMES_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
 
 const relevantAnalyticsEvents = [ 'calypso_themeshowcase_theme_click' ];
@@ -23,11 +16,8 @@ const relevantTypes = {
 	// ACTION_TYPE,
 	// to catch actions of a type that match some criterion:
 	// ACTION_TYPE: ( action ) => isValid( action.data )
-	EDITOR_PASTE_EVENT,
-	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,
 	THEMES_REQUEST_SUCCESS,
-	PREVIEW_IS_SHOWING,
 	ROUTE_SET,
 	SITE_SETTINGS_RECEIVE,
 };

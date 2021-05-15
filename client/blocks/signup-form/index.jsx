@@ -9,7 +9,6 @@ import {
 	filter,
 	forEach,
 	get,
-	head,
 	includes,
 	keys,
 	map,
@@ -288,7 +287,7 @@ class SignupForm extends Component {
 
 				if ( field === 'username' && ! includes( usernamesSearched, fields.username ) ) {
 					recordTracksEvent( 'calypso_signup_username_validation_failed', {
-						error: head( keys( fieldError ) ),
+						error: keys( fieldError )[ 0 ],
 						username: fields.username,
 					} );
 
@@ -297,7 +296,7 @@ class SignupForm extends Component {
 
 				if ( field === 'password' ) {
 					recordTracksEvent( 'calypso_signup_password_validation_failed', {
-						error: head( keys( fieldError ) ),
+						error: keys( fieldError )[ 0 ],
 					} );
 
 					timesPasswordValidationFailed++;
@@ -562,7 +561,11 @@ class SignupForm extends Component {
 					</>
 				) }
 
-				<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
+				<FormLabel htmlFor="email">
+					{ this.props.isReskinned
+						? this.props.translate( 'Email address' )
+						: this.props.translate( 'Your email address' ) }
+				</FormLabel>
 				<FormTextInput
 					autoCapitalize="off"
 					autoCorrect="off"
@@ -588,7 +591,9 @@ class SignupForm extends Component {
 				{ this.props.displayUsernameInput && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.translate( 'Choose a username' ) }
+							{ this.props.isReskinned
+								? this.props.translate( 'Username' )
+								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
 						<FormTextInput
 							autoCapitalize="off"
@@ -610,7 +615,11 @@ class SignupForm extends Component {
 					</>
 				) }
 
-				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
+				<FormLabel htmlFor="password">
+					{ this.props.isReskinned
+						? this.props.translate( 'Password' )
+						: this.props.translate( 'Choose a password' ) }
+				</FormLabel>
 				<FormPasswordInput
 					className="signup-form__input"
 					disabled={ this.state.submitting || this.props.disabled }
@@ -864,19 +873,21 @@ class SignupForm extends Component {
 
 		return (
 			<>
-				<LoggedOutFormLinks>
-					<LoggedOutFormLinkItem href={ logInUrl }>
-						{ flowName === 'onboarding'
-							? translate( 'Log in to create a site for your existing account.' )
-							: translate( 'Already have a WordPress.com account?' ) }
-					</LoggedOutFormLinkItem>
-					{ this.props.oauth2Client && (
-						<LoggedOutFormBackLink
-							oauth2Client={ this.props.oauth2Client }
-							recordClick={ this.recordBackLinkClick }
-						/>
-					) }
-				</LoggedOutFormLinks>
+				{ ! this.props.isReskinned && (
+					<LoggedOutFormLinks>
+						<LoggedOutFormLinkItem href={ logInUrl }>
+							{ flowName === 'onboarding'
+								? translate( 'Log in to create a site for your existing account.' )
+								: translate( 'Already have a WordPress.com account?' ) }
+						</LoggedOutFormLinkItem>
+						{ this.props.oauth2Client && (
+							<LoggedOutFormBackLink
+								oauth2Client={ this.props.oauth2Client }
+								recordClick={ this.recordBackLinkClick }
+							/>
+						) }
+					</LoggedOutFormLinks>
+				) }
 				{ showRecaptchaToS && (
 					<div className="signup-form__recaptcha-tos">
 						<LoggedOutFormLinks>
@@ -993,17 +1004,14 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ this.props.horizontal && (
-					<div className="signup-form__separator">
-						<span className="signup-form__separator-text">{ this.props.translate( 'or' ) }</span>
-					</div>
-				) }
+				{ this.props.horizontal && <div className="signup-form__separator"></div> }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<SocialSignupForm
 						handleResponse={ this.props.handleSocialResponse }
 						socialService={ this.props.socialService }
 						socialServiceResponse={ this.props.socialServiceResponse }
+						isReskinned={ this.props.isReskinned }
 					/>
 				) }
 

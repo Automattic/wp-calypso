@@ -1,8 +1,8 @@
 ARG use_cache=false
-ARG node_version=14.16.0
+ARG node_version=14.16.1
 
 ###################
-FROM node:${node_version} as builder-cache-false
+FROM node:${node_version}-buster as builder-cache-false
 
 
 ###################

@@ -1,13 +1,6 @@
 /**
- * External dependencies
- */
-
-import { forOwn } from 'lodash';
-
-/**
  * Internal Dependencies
  */
-
 import { decodeEntities as decode } from 'calypso/lib/formatting';
 import safeImageURL from 'calypso/lib/safe-image-url';
 
@@ -38,7 +31,7 @@ export default function decodeEntities( post, fields = DEFAULT_FIELDS ) {
 
 	if ( post.tags ) {
 		// tags is an object
-		forOwn( post.tags, function ( tag ) {
+		Object.values( post.tags ).forEach( function ( tag ) {
 			tag.name = decode( tag.name );
 		} );
 	}

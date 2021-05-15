@@ -39,12 +39,14 @@ project {
 	vcsRoot(WpCalypso)
 	subProject(_self.projects.DesktopApp)
 	subProject(_self.projects.WPComPlugins)
+	subProject(_self.projects.WPComTests)
 	subProject(_self.projects.WebApp)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
 
 	params {
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
+		param("use_cached_node_modules", "true")
 		text("E2E_WORKERS", "16", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
 		text("env.JEST_MAX_WORKERS", "16", label = "Jest max workers", description = "How many tests run in parallel", allowEmpty = true)
 		password("matticbot_oauth_token", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN)
@@ -56,7 +58,8 @@ project {
 		text("env.DOCKER_BUILDKIT", "1", label = "Enable Docker BuildKit", description = "Enables BuildKit (faster image generation). Values 0 or 1", allowEmpty = true)
 		password("CONFIG_E2E_ENCRYPTION_KEY", "credentialsJSON:16d15e36-f0f2-4182-8477-8d8072d0b5ec", display = ParameterDisplay.HIDDEN)
 		text("env.SKIP_TSC", "true", label = "Skip TS type generation", description = "Skips running `tsc` on yarn install", allowEmpty = true)
-		password("mc-post-root", "credentialsJSON:2f764583-d399-4d5f-8ee1-06f68ef2e2a6", display = ParameterDisplay.HIDDEN )
+		password("mc_post_root", "credentialsJSON:2f764583-d399-4d5f-8ee1-06f68ef2e2a6", display = ParameterDisplay.HIDDEN )
+		password("mc_auth_secret", "credentialsJSON:5b1903f9-4b03-43ff-bba8-4a7509d07088", display = ParameterDisplay.HIDDEN)
 	}
 
 	features {
@@ -210,7 +213,7 @@ object CheckCodeStyle : BuildType({
 				export NODE_ENV="test"
 
 				# Install modules
-				yarn install
+				${_self.yarn_install_cmd}
 			"""
 		}
 		bashNodeScript {

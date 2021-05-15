@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import {
 	Button,
 	FormStatus,
@@ -18,12 +18,12 @@ import {
 	PaymentProcessorResponseType,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { Field } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
 import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
-import Field from 'calypso/my-sites/checkout/composite-checkout/components/field';
 import {
 	SummaryLine,
 	SummaryDetails,

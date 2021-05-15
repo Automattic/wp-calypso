@@ -1,13 +1,13 @@
 /**************************************************************************************************/
 /* This library is deprecated! Please consider ExPlat for your next A/B experiment.               */
-/* See /client/components/experiment/readme.md for more info!
+/* See /client/lib/explat/readme.md for more info!
 /**************************************************************************************************/
 
 /**
  * External dependencies
  */
 import debugFactory from 'debug';
-import { every, includes, keys, reduce, some } from 'lodash';
+import { includes, keys, reduce, some } from 'lodash';
 import store from 'store';
 import { getLocaleSlug } from 'i18n-calypso';
 
@@ -134,7 +134,7 @@ ABTest.prototype.init = function ( name, geoLocation ) {
 			this.localeTargets = false;
 		} else if (
 			Array.isArray( testConfig.localeTargets ) &&
-			every( testConfig.localeTargets, langSlugIsValid )
+			testConfig.localeTargets.every( langSlugIsValid )
 		) {
 			// Allow specific locales.
 			this.localeTargets = testConfig.localeTargets;
@@ -149,7 +149,7 @@ ABTest.prototype.init = function ( name, geoLocation ) {
 	if (
 		testConfig.localeExceptions &&
 		Array.isArray( testConfig.localeExceptions ) &&
-		every( testConfig.localeExceptions, langSlugIsValid )
+		testConfig.localeExceptions.every( langSlugIsValid )
 	) {
 		this.localeExceptions = testConfig.localeExceptions;
 	}
@@ -296,16 +296,13 @@ ABTest.prototype.hasBeenInPreviousSeriesTest = function () {
 	const previousExperimentIds = keys( getSavedVariations() );
 	let previousName;
 
-	return some(
-		previousExperimentIds,
-		function ( previousExperimentId ) {
-			previousName = previousExperimentId.substring(
-				0,
-				previousExperimentId.length - '_YYYYMMDD'.length
-			);
-			return previousExperimentId !== this.experimentId && previousName === this.name;
-		}.bind( this )
-	);
+	return some( previousExperimentIds, ( previousExperimentId ) => {
+		previousName = previousExperimentId.substring(
+			0,
+			previousExperimentId.length - '_YYYYMMDD'.length
+		);
+		return previousExperimentId !== this.experimentId && previousName === this.name;
+	} );
 };
 
 ABTest.prototype.hasRegisteredBeforeTestBegan = function () {
@@ -365,17 +362,13 @@ ABTest.prototype.saveVariation = function ( variation ) {
 };
 
 ABTest.prototype.saveVariationOnBackend = function ( variation ) {
-	wpcom.undocumented().saveABTestData(
-		this.experimentId,
-		variation,
-		function ( error ) {
-			if ( error ) {
-				debug( '%s: Error saving variation %s: %s', this.experimentId, variation, error );
-			} else {
-				debug( '%s: Variation saved successfully: %s.', this.experimentId, variation );
-			}
-		}.bind( this )
-	);
+	wpcom.undocumented().saveABTestData( this.experimentId, variation, ( error ) => {
+		if ( error ) {
+			debug( '%s: Error saving variation %s: %s', this.experimentId, variation, error );
+		} else {
+			debug( '%s: Variation saved successfully: %s.', this.experimentId, variation );
+		}
+	} );
 };
 
 ABTest.prototype.saveVariationInLocalStorage = function ( variation ) {

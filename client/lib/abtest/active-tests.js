@@ -6,7 +6,7 @@
 
 /**************************************************************************************************/
 /* This library is deprecated! Please consider ExPlat for your next A/B experiment.               */
-/* See /client/components/experiment/readme.md for more info!
+/* See /client/lib/explat/readme.md for more info!
 /**************************************************************************************************/
 
 export default {
@@ -58,14 +58,5 @@ export default {
 		localeExceptions: [ 'en', 'es' ],
 		defaultVariation: 'control',
 		allowExistingUsers: false,
-	},
-	pricingPagePopularProducts: {
-		datestamp: '20210324',
-		variations: {
-			withComplete_control: 50,
-			withSecurityRT_test: 50,
-		},
-		defaultVariation: 'withComplete_control',
-		allowExistingUsers: true,
 	},
 };

@@ -12,8 +12,11 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextValidation from 'calypso/components/forms/form-input-validation';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
-import { FEATURE_GOOGLE_ANALYTICS, TYPE_PREMIUM } from 'calypso/lib/plans/constants';
-import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
+import {
+	findFirstSimilarPlanKey,
+	FEATURE_GOOGLE_ANALYTICS,
+	TYPE_PREMIUM,
+} from '@automattic/calypso-products';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 

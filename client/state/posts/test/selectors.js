@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import { values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -200,7 +199,9 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getSitePosts( state, 2916284 ) ).to.have.members( values( postObjects[ 2916284 ] ) );
+			expect( getSitePosts( state, 2916284 ) ).to.have.members(
+				Object.values( postObjects[ 2916284 ] )
+			);
 		} );
 	} );
 

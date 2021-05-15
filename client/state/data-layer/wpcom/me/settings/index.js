@@ -114,11 +114,6 @@ export const userSettingsSaveSuccess = ( { settingsOverride }, data ) => ( dispa
 	dispatch( saveUserSettingsSuccess( fromApi( data ) ) );
 	dispatch( clearUnsavedUserSettings( settingsOverride ? Object.keys( settingsOverride ) : null ) );
 
-	if ( settingsOverride?.password ) {
-		// Since changing a user's password invalidates the session, we reload.
-		window.location = window.location.pathname + '?updated=password';
-		return;
-	}
 	// Refetch the user data after saving user settings
 	// The require() trick is used to avoid excessive mocking in unit tests.
 	// TODO: Replace it with standard 'import' when the `lib/user` module is Reduxized

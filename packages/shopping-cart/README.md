@@ -51,3 +51,7 @@ It takes one argument, an object which contains some or all of the properties in
 ## getEmptyResponseCart
 
 A function that returns an empty but valid `ResponseCart` object. Useful for tests where we need to mock the shopping cart response.
+
+## getEmptyResponseCartProduct
+
+A function that returns an empty but valid `ResponseCartProduct` object. Useful for tests where we need to mock the shopping cart response.

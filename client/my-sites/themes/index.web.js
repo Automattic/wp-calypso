@@ -4,7 +4,8 @@
 import userFactory from 'calypso/lib/user';
 import { makeLayout, redirectLoggedOut } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { loggedIn, loggedOut, upload, fetchThemeFilters } from './controller';
+import { loggedOut, fetchThemeFilters } from './controller';
+import { loggedIn, upload } from './controller-logged-in';
 import { validateFilters, validateVertical } from './validate-filters';
 
 function redirectToLoginIfSiteRequested( context, next ) {

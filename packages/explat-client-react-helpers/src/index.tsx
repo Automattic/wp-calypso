@@ -8,6 +8,19 @@ import React, { useState, useEffect } from 'react';
  */
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 
+interface ExperimentOptions {
+	/**
+	 * Determines whether a participant is currenlty eligible for an assignment.
+	 * - Only loads the experimentAssignment if isEligible is true.
+	 * - Only returns the experimentAssignment if isEligible is true.
+	 */
+	isEligible?: boolean;
+}
+
+const defaultExperimentOptions = {
+	isEligible: true,
+};
+
 interface ExPlatClientReactHelpers {
 	/**
 	 * An ExPlat useExperiment hook.
@@ -16,7 +29,10 @@ interface ExPlatClientReactHelpers {
 	 *
 	 * @returns [isExperimentAssignmentLoading, ExperimentAssignment | null]
 	 */
-	useExperiment: ( experimentName: string ) => [ boolean, ExperimentAssignment | null ];
+	useExperiment: (
+		experimentName: string,
+		options?: ExperimentOptions
+	) => [ boolean, ExperimentAssignment | null ];
 
 	/**
 	 * Experiment component, safest and simplest, should be first choice if usable.
@@ -26,6 +42,7 @@ interface ExPlatClientReactHelpers {
 		defaultExperience: React.ReactNode;
 		treatmentExperience: React.ReactNode;
 		loadingExperience: React.ReactNode;
+		options?: ExperimentOptions;
 	} ) => JSX.Element;
 
 	/**
@@ -38,13 +55,22 @@ interface ExPlatClientReactHelpers {
 			experimentAssignment: ExperimentAssignment | null
 		) => JSX.Element;
 		name: string;
+		options?: ExperimentOptions;
 	} ) => JSX.Element;
 }
 
 export default function createExPlatClientReactHelpers(
 	exPlatClient: ExPlatClient
 ): ExPlatClientReactHelpers {
-	const useExperiment = ( experimentName: string ): [ boolean, ExperimentAssignment | null ] => {
+	const useExperiment = (
+		experimentName: string,
+		providedOptions: ExperimentOptions = {}
+	): [ boolean, ExperimentAssignment | null ] => {
+		const options: Required< ExperimentOptions > = {
+			...defaultExperimentOptions,
+			...providedOptions,
+		};
+
 		const [ previousExperimentName ] = useState( experimentName );
 		const [ state, setState ] = useState< [ boolean, ExperimentAssignment | null ] >( [
 			true,
@@ -53,17 +79,17 @@ export default function createExPlatClientReactHelpers(
 
 		useEffect( () => {
 			let isSubscribed = true;
-			exPlatClient.loadExperimentAssignment( experimentName ).then( ( experimentAssignment ) => {
-				if ( isSubscribed ) {
-					setState( [ false, experimentAssignment ] );
-				}
-			} );
+			if ( options.isEligible ) {
+				exPlatClient.loadExperimentAssignment( experimentName ).then( ( experimentAssignment ) => {
+					if ( isSubscribed ) {
+						setState( [ false, experimentAssignment ] );
+					}
+				} );
+			}
 			return () => {
 				isSubscribed = false;
 			};
-			// We don't expect experimentName to ever change and if it does we want to assignment to stay constant.
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [] );
+		}, [ experimentName, options.isEligible ] );
 
 		if (
 			experimentName !== previousExperimentName &&
@@ -74,6 +100,10 @@ export default function createExPlatClientReactHelpers(
 			} );
 		}
 
+		if ( ! options.isEligible ) {
+			return [ false, null ];
+		}
+
 		return state;
 	};
 
@@ -82,13 +112,15 @@ export default function createExPlatClientReactHelpers(
 		treatmentExperience,
 		loadingExperience,
 		name: experimentName,
+		options,
 	}: {
 		defaultExperience: React.ReactNode;
 		treatmentExperience: React.ReactNode;
 		loadingExperience: React.ReactNode;
 		name: string;
+		options?: ExperimentOptions;
 	} ): JSX.Element => {
-		const [ isLoading, experimentAssignment ] = useExperiment( experimentName );
+		const [ isLoading, experimentAssignment ] = useExperiment( experimentName, options );
 		if ( isLoading ) {
 			return <>{ loadingExperience }</>;
 		} else if ( ! experimentAssignment?.variationName ) {
@@ -100,14 +132,16 @@ export default function createExPlatClientReactHelpers(
 	const ProvideExperimentData = ( {
 		children,
 		name: experimentName,
+		options,
 	}: {
 		children: (
 			isLoading: boolean,
 			experimentAssignment: ExperimentAssignment | null
 		) => JSX.Element;
 		name: string;
+		options?: ExperimentOptions;
 	} ): JSX.Element => {
-		const [ isLoading, experimentAssignment ] = useExperiment( experimentName );
+		const [ isLoading, experimentAssignment ] = useExperiment( experimentName, options );
 		return children( isLoading, experimentAssignment );
 	};
 

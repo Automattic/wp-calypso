@@ -33,6 +33,7 @@ describe( 'Region Address Fieldsets', () => {
 			name,
 		} ),
 		hasCountryStates: false,
+		translate: ( string ) => string,
 	};
 
 	const propsWithStates = {
@@ -41,6 +42,7 @@ describe( 'Region Address Fieldsets', () => {
 			name,
 		} ),
 		hasCountryStates: true,
+		translate: ( string ) => string,
 	};
 
 	test( 'should render `<UsAddressFieldset />` with default props', () => {

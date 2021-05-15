@@ -12,7 +12,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { getUrlParts } from 'calypso/lib/url';
+import { getUrlParts } from '@automattic/calypso-url';
 import { infoNotice } from 'calypso/state/notices/actions';
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
@@ -56,7 +56,7 @@ export default function LicensePreview( {
 	const isHighlighted = getQueryArg( window.location.href, 'highlight' ) === licenseKey;
 	const [ isOpen, setOpen ] = useState( isHighlighted );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
-	const domain = siteUrl ? getUrlParts( siteUrl ).hostname : '';
+	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 	const showDomain =
 		domain && [ LicenseState.Attached, LicenseState.Revoked ].indexOf( licenseState ) !== -1;
 	const justIssued =
@@ -179,6 +179,8 @@ export default function LicensePreview( {
 			{ isOpen && (
 				<LicenseDetails
 					licenseKey={ licenseKey }
+					product={ product }
+					siteUrl={ siteUrl }
 					username={ username }
 					blogId={ blogId }
 					issuedAt={ issuedAt }

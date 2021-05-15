@@ -2,10 +2,11 @@
  * Internal dependencies
  */
 import type { Config, ExperimentAssignment } from '../types';
-import { validateExperimentAssignment } from './validations';
+import { validateExperimentAssignment, isObject } from './validations';
 import { monotonicNow } from './timing';
-import { isObject } from './validations';
+
 import * as ExperimentAssignments from './experiment-assignments';
+import localStorage from './local-storage';
 
 interface FetchExperimentAssignmentResponse {
 	variations: Record< string, unknown >;
@@ -37,6 +38,46 @@ function validateFetchExperimentAssignmentResponse(
 	throw new Error( 'Invalid FetchExperimentAssignmentResponse' );
 }
 
+// We cache the anonId and add it to requests to ensure users that have recently
+// crossed the logged-out/logged-in boundry have a consistent assignment.
+//
+// There can be issues otherwise as matching anonId to userId is only eventually
+// consistent.
+const localStorageLastAnonIdKey = 'explat-last-anon-id';
+const localStorageLastAnonIdRetrievalTimeKey = 'explat-last-anon-id-retrieval-time';
+const lastAnonIdExpiryTimeMs = 3 * 60 * 60 * 1000; // 3 hours
+/**
+ * INTERNAL USE ONLY
+ *
+ * Runs the getAnonId provided cached by LocalStorage:
+ * - Returns the result of getAnonId if it can
+ * - Otherwise, within the expiry time, returns the cached anonId
+ *
+ * Exported for testing.
+ *
+ * @param getAnonId The getAnonId function
+ */
+export const localStorageCachedGetAnonId = async ( getAnonId: Config[ 'getAnonId' ] ) => {
+	const anonId = await getAnonId();
+	if ( anonId ) {
+		localStorage.setItem( localStorageLastAnonIdKey, anonId );
+		localStorage.setItem( localStorageLastAnonIdRetrievalTimeKey, String( monotonicNow() ) );
+		return anonId;
+	}
+
+	const maybeStoredAnonId = localStorage.getItem( localStorageLastAnonIdKey );
+	const maybeStoredRetrievalTime = localStorage.getItem( localStorageLastAnonIdRetrievalTimeKey );
+	if (
+		maybeStoredAnonId &&
+		maybeStoredRetrievalTime &&
+		monotonicNow() - parseInt( maybeStoredRetrievalTime, 10 ) < lastAnonIdExpiryTimeMs
+	) {
+		return maybeStoredAnonId;
+	}
+
+	return null;
+};
+
 /**
  * Fetch an ExperimentAssignment
  *
@@ -51,7 +92,7 @@ export async function fetchExperimentAssignment(
 
 	const { variations, ttl: responseTtl } = validateFetchExperimentAssignmentResponse(
 		await config.fetchExperimentAssignment( {
-			anonId: await config.getAnonId(),
+			anonId: await localStorageCachedGetAnonId( config.getAnonId ),
 			experimentName,
 		} )
 	);

@@ -8,3 +8,18 @@
 		}
 	}
 }
+
+@include breakpoint-deprecated( '<960px' ) {
+	.licenses__header {
+		flex-wrap: wrap;
+
+		> * {
+			width: 100%;
+			margin-bottom: 16px;
+		}
+
+		> * + * {
+			margin-left: 0;
+		}
+	}
+}

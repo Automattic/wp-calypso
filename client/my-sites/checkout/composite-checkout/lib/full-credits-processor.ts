@@ -2,8 +2,9 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { defaultRegistry, makeSuccessResponse } from '@automattic/composite-checkout';
+import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { TransactionRequest } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -16,13 +17,6 @@ import {
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { ManagedContactDetails } from '../types/wpcom-store-state';
-import type {
-	TransactionRequest,
-	WPCOMTransactionEndpointResponse,
-} from '../types/transaction-endpoint';
-
-const { select } = defaultRegistry;
 
 const debug = debugFactory( 'calypso:composite-checkout:full-credits-processor' );
 
@@ -34,30 +28,39 @@ type SubmitFullCreditsTransactionData = Omit<
 export default async function fullCreditsProcessor(
 	transactionOptions: PaymentProcessorOptions
 ): Promise< PaymentProcessorResponse > {
-	const { siteId, responseCart, includeDomainDetails, includeGSuiteDetails } = transactionOptions;
+	const {
+		siteId,
+		responseCart,
+		includeDomainDetails,
+		includeGSuiteDetails,
+		contactDetails,
+	} = transactionOptions;
 
-	const managedContactDetails: ManagedContactDetails | undefined = select(
-		'wpcom'
-	)?.getContactInfo();
-
-	return submitCreditsTransaction(
+	const formattedTransactionData = prepareCreditsTransaction(
 		{
 			name: '',
 			couponId: responseCart.coupon,
 			siteId: siteId ? String( siteId ) : '',
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-			country: managedContactDetails?.countryCode?.value ?? '',
-			postalCode: getPostalCode(),
-			subdivisionCode: managedContactDetails?.state?.value,
+			domainDetails: getDomainDetails( contactDetails, {
+				includeDomainDetails,
+				includeGSuiteDetails,
+			} ),
+			country: contactDetails?.countryCode?.value ?? '',
+			postalCode: getPostalCode( contactDetails ),
+			subdivisionCode: contactDetails?.state?.value,
 		},
 		transactionOptions
-	).then( makeSuccessResponse );
+	);
+
+	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
+		.then( makeSuccessResponse )
+		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
-async function submitCreditsTransaction(
+function prepareCreditsTransaction(
 	transactionData: SubmitFullCreditsTransactionData,
 	transactionOptions: PaymentProcessorOptions
-): Promise< WPCOMTransactionEndpointResponse > {
+) {
 	debug( 'formatting full credits transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
@@ -69,5 +72,5 @@ async function submitCreditsTransaction(
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );
 	debug( 'submitting full credits transaction', formattedTransactionData );
-	return submitWpcomTransaction( formattedTransactionData, transactionOptions );
+	return formattedTransactionData;
 }

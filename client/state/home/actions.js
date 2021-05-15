@@ -12,11 +12,17 @@ import {
 import 'calypso/state/data-layer/wpcom/sites/home/layout';
 import 'calypso/state/home/init';
 
-export const requestHomeLayout = ( siteId, isDev = false, forcedView = null ) => ( {
+export const requestHomeLayout = (
+	siteId,
+	isDev = false,
+	forcedView = null,
+	shuffle = false
+) => ( {
 	type: HOME_LAYOUT_REQUEST,
 	siteId,
 	isDev,
 	forcedView,
+	shuffle,
 } );
 
 export const skipCurrentViewHomeLayout = ( siteId, reminder = null ) => ( {

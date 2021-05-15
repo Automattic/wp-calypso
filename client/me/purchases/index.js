@@ -27,31 +27,25 @@ export default ( router ) => {
 			clientRender
 		);
 
-		if ( config.isEnabled( 'purchases/new-payment-methods' ) ) {
-			router(
-				paths.addNewPaymentMethod,
-				sidebar,
-				controller.addNewPaymentMethod,
-				makeLayout,
-				clientRender
-			);
-		}
+		router(
+			paths.addNewPaymentMethod,
+			sidebar,
+			controller.addNewPaymentMethod,
+			makeLayout,
+			clientRender
+		);
 
 		router(
 			paths.addCreditCard,
 			sidebar,
-			config.isEnabled( 'purchases/new-payment-methods' )
-				? controller.addNewPaymentMethod
-				: controller.addCreditCard,
+			controller.addNewPaymentMethod,
 			makeLayout,
 			clientRender
 		);
 
 		// redirect legacy urls
 		router( '/payment-methods/add-credit-card', () => {
-			config.isEnabled( 'purchases/new-payment-methods' )
-				? page.redirect( paths.addCreditCard )
-				: page.redirect( paths.addNewPaymentMethod );
+			page.redirect( paths.addCreditCard );
 		} );
 	}
 
@@ -160,5 +154,13 @@ export default ( router ) => {
 	router( '/me/billing', () => page.redirect( paths.billingHistory ) );
 	router( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>
 		page.redirect( paths.billingHistoryReceipt( receiptId ) )
+	);
+	router( paths.addCardDetails( ':site', ':purchaseId' ), ( { params: { site, purchaseId } } ) =>
+		page.redirect( paths.addPaymentMethod( site, purchaseId ) )
+	);
+	router(
+		paths.editCardDetails( ':site', ':purchaseId', ':cardId' ),
+		( { params: { site, purchaseId, cardId } } ) =>
+			page.redirect( paths.changePaymentMethod( site, purchaseId, cardId ) )
 	);
 };
