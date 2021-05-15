@@ -19,6 +19,10 @@
 	grid-column: $col-start / span $span;
 }
 
+.customer-home__heading .formatted-header__subtitle {
+	margin: 0;
+}
+
 .customer-home__layout {
 	@include grid-row( 4, 1 );
 	@include breakpoint-deprecated( '>1040px' ) {
