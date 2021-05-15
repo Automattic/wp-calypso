@@ -204,7 +204,7 @@ function embedSlideshow( domNode ) {
 function embedStory( domNode ) {
 	debug( 'processing story for ', domNode );
 
-	const storyLink = domNode.querySelector( 'a.wp-story-overlay' );
+	const storyLink = domNode.querySelector( 'a.wp-story-container' );
 
 	// Open story in a new tab
 	if ( storyLink ) {
