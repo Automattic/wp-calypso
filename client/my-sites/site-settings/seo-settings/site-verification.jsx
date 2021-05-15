@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get, includes, omit, partial, pickBy } from 'lodash';
+import { get, omit, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -82,6 +82,7 @@ class SiteVerification extends Component {
 					...this.stateForSite( nextSite ),
 					invalidatedSiteObject: nextSite,
 					dirtyFields: new Set(),
+					invalidCodes: [],
 				},
 				this.refreshSite
 			);
@@ -133,7 +134,7 @@ class SiteVerification extends Component {
 			return '';
 		}
 
-		if ( includes( content, '<meta' ) ) {
+		if ( content.includes( '<meta' ) ) {
 			// We were passed a meta tag already!
 			return content;
 		}
@@ -155,13 +156,13 @@ class SiteVerification extends Component {
 
 		content = this.getMetaTag( serviceName, content );
 
-		return includes( content, serviceId );
+		return content.includes( serviceId );
 	}
 
 	hasError( service ) {
 		const { invalidCodes = [] } = this.state;
 
-		return includes( invalidCodes, service );
+		return invalidCodes.includes( service );
 	}
 
 	handleVerificationCodeChange( serviceCode ) {
@@ -217,15 +218,17 @@ class SiteVerification extends Component {
 		this.props.removeNotice( 'site-verification-settings-error' );
 
 		const verificationCodes = {};
-
+		const invalidCodes = [];
 		getSupportedServices().forEach( ( service ) => {
-			verificationCodes[ service.slug ] = this.state[ service.slug + 'Code' ];
+			const verificationCode = this.state[ service.slug + 'Code' ];
+			verificationCodes[ service.slug ] = verificationCode;
+			if (
+				typeof verificationCode === 'string' &&
+				! this.isValidCode( service.slug, verificationCode )
+			) {
+				invalidCodes.push( service.slug );
+			}
 		} );
-
-		const filteredCodes = pickBy( verificationCodes, ( code ) => typeof code === 'string' );
-		const invalidCodes = Object.keys(
-			pickBy( filteredCodes, ( name, content ) => ! this.isValidCode( content, name ) )
-		);
 
 		this.setState( { invalidCodes } );
 		if ( invalidCodes.length > 0 ) {
@@ -238,9 +241,8 @@ class SiteVerification extends Component {
 		this.setState( {
 			isSubmittingForm: true,
 		} );
-
 		const updatedOptions = {
-			verification_services_codes: filteredCodes,
+			verification_services_codes: verificationCodes,
 		};
 
 		this.props.saveSiteSettings( siteId, updatedOptions );
