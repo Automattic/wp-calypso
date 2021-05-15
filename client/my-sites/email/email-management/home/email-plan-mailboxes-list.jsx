@@ -31,6 +31,7 @@ import {
 	getGoogleDriveUrl,
 	getGoogleSheetsUrl,
 	getGoogleSlidesUrl,
+	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
 import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/gmail.svg';
 import googleAdminIcon from 'calypso/assets/images/email-providers/google-workspace/services/admin.svg';
@@ -158,118 +159,120 @@ const getActionsForMailbox = ( mailbox, translate, dispatch ) => {
 	};
 };
 
-const TitanActionMenu = () => {
-	const translate = useTranslate();
-
-	return (
-		<EllipsisMenu
-			popoverClassName="email-plan-mailboxes-list__mailbox-action-menu-popover"
-			className="email-plan-mailboxes-list__mailbox-action-menu"
-		>
-			<PopoverMenuItem
-				href="https://wp.titan.email/mail/"
-				className="email-plan-mailboxes-list__mailbox-action-menu-item"
-				isExternalLink={ true }
-			>
-				<img src={ titanMailIcon } alt={ translate( 'Titan Mail icon' ) } />
-				{ translate( 'Mail', {
-					comment: 'This refers to the Email application (i.e. the webmail) of Titan',
-				} ) }
-			</PopoverMenuItem>
-			<PopoverMenuItem
-				href="https://wp.titan.email/calendar/"
-				className="email-plan-mailboxes-list__mailbox-action-menu-item"
-				isExternalLink={ true }
-			>
-				<img src={ titanCalendarIcon } alt={ translate( 'Titan Calendar icon' ) } />
-				{ translate( 'Calendar', {
-					comment: 'This refers to the Calendar application of Titan',
-				} ) }
-			</PopoverMenuItem>
-			<PopoverMenuItem
-				href="https://wp.titan.email/contacts/"
-				className="email-plan-mailboxes-list__mailbox-action-menu-item"
-				isExternalLink={ true }
-			>
-				<img src={ titanContactsIcon } alt={ translate( 'Titan Contacts icon' ) } />
-				{ translate( 'Contacts', {
-					comment: 'This refers to the Contacts application of Titan',
-				} ) }
-			</PopoverMenuItem>
-		</EllipsisMenu>
-	);
+const getTitanMenuItems = ( translate ) => {
+	return [
+		{
+			href: 'https://wp.titan.email/mail/',
+			image: titanMailIcon,
+			imageAltText: translate( 'Titan Mail icon' ),
+			title: translate( 'Mail', {
+				comment: 'This refers to the Email application (i.e. the webmail) of Titan',
+			} ),
+		},
+		{
+			href: 'https://wp.titan.email/calendar/',
+			image: titanCalendarIcon,
+			imageAltText: translate( 'Titan Calendar icon' ),
+			title: translate( 'Calendar', {
+				comment: 'This refers to the Calendar application of Titan',
+			} ),
+		},
+		{
+			href: 'https://wp.titan.email/contacts/',
+			image: titanContactsIcon,
+			imageAltText: translate( 'Titan Contacts icon' ),
+			title: translate( 'Contacts', {
+				comment: 'This refers to the Contacts application of Titan',
+			} ),
+		},
+	];
 };
 
-const GmailActionMenu = ( { domainName } ) => {
-	const translate = useTranslate();
+const getGmailMenuItems = ( domainName, translate ) => {
+	return [
+		{
+			href: getGmailUrl( domainName ),
+			image: gmailIcon,
+			imageAltText: translate( 'Gmail icon' ),
+			title: translate( 'View Gmail' ),
+		},
+		{
+			href: getGoogleAdminUrl( domainName ),
+			image: googleAdminIcon,
+			imageAltText: translate( 'Google Admin icon' ),
+			title: translate( 'View Admin' ),
+		},
+		{
+			href: getGoogleCalendarUrl( domainName ),
+			image: googleCalendarIcon,
+			imageAltText: translate( 'Google Calendar icon' ),
+			title: translate( 'View Calendar' ),
+		},
+		{
+			href: getGoogleDocsUrl( domainName ),
+			image: googleDocsIcon,
+			imageAltText: translate( 'Google Docs icon' ),
+			title: translate( 'View Docs' ),
+		},
+		{
+			href: getGoogleDriveUrl( domainName ),
+			image: googleDriveIcon,
+			imageAltText: translate( 'Google Drive icon' ),
+			title: translate( 'View Drive' ),
+		},
+		{
+			href: getGoogleSheetsUrl( domainName ),
+			image: googleSheetsIcon,
+			imageAltText: translate( 'Google Sheets icon' ),
+			title: translate( 'View Sheets' ),
+		},
+		{
+			href: getGoogleSlidesUrl( domainName ),
+			image: googleSlidesIcon,
+			imageAltText: translate( 'Google Slides icon' ),
+			title: translate( 'View Slides' ),
+		},
+	];
+};
 
+const getMenuItems = ( domain, translate ) => {
+	if ( hasTitanMailWithUs( domain ) ) {
+		return getTitanMenuItems( translate );
+	}
+
+	if ( hasGSuiteWithUs( domain ) ) {
+		return getGmailMenuItems( domain.name, translate );
+	}
+
+	return null;
+};
+
+const ActionMenu = ( { domain } ) => {
+	const translate = useTranslate();
+	const menuItems = getMenuItems( domain, translate );
+	if ( ! menuItems ) {
+		return null;
+	}
 	return (
 		<EllipsisMenu
-			className="email-plan-mailboxes-list__mailbox-action-menu"
 			popoverClassName="email-plan-mailboxes-list__mailbox-action-menu-popover"
+			className="email-plan-mailboxes-list__mailbox-action-menu"
 		>
-			<PopoverMenuItem
-				className="email-plan-mailboxes-list__mailbox-action-menu-item"
-				isExternalLink={ true }
-				href={ getGmailUrl( domainName ) }
-			>
-				<img src={ gmailIcon } alt={ translate( 'Gmail icon' ) } />
-				View Gmail
-			</PopoverMenuItem>
+			{ menuItems.map( function ( menuItem ) {
+				const { image, imageAltText, href, title } = menuItem;
 
-			<PopoverMenuItem
-				className="email-plan-mailboxes-list__mailbox-action-menu-item"
-				isExternalLink={ true }
-				href={ getGoogleAdminUrl( domainName ) }
-			>
-				<img src={ googleAdminIcon } alt={ translate( 'Google Admin icon' ) } />
-				View Admin
-			</PopoverMenuItem>
-
-			<PopoverMenuItem
-				className="email-plan-mailboxes-list__mailbox-action-menu-item"
-				isExternalLink={ true }
-				href={ getGoogleCalendarUrl( domainName ) }
-			>
-				<img src={ googleCalendarIcon } alt={ translate( 'Google Calendar icon' ) } />
-				View Calendar
-			</PopoverMenuItem>
-
-			<PopoverMenuItem
-				className="email-plan-mailboxes-list__mailbox-action-menu-item"
-				isExternalLink={ true }
-				href={ getGoogleDocsUrl( domainName ) }
-			>
-				<img src={ googleDocsIcon } alt={ translate( 'Google Docs icon' ) } />
-				View Docs
-			</PopoverMenuItem>
-
-			<PopoverMenuItem
-				className="email-plan-mailboxes-list__mailbox-action-menu-item"
-				isExternalLink={ true }
-				href={ getGoogleDriveUrl( domainName ) }
-			>
-				<img src={ googleDriveIcon } alt={ translate( 'Google Drive icon' ) } />
-				View Drive
-			</PopoverMenuItem>
-
-			<PopoverMenuItem
-				className="email-plan-mailboxes-list__mailbox-action-menu-item"
-				isExternalLink={ true }
-				href={ getGoogleSheetsUrl( domainName ) }
-			>
-				<img src={ googleSheetsIcon } alt={ translate( 'Google Sheets icon' ) } />
-				View Sheets
-			</PopoverMenuItem>
-
-			<PopoverMenuItem
-				className="email-plan-mailboxes-list__mailbox-action-menu-item"
-				isExternalLink={ true }
-				href={ getGoogleSlidesUrl( domainName ) }
-			>
-				<img src={ googleSlidesIcon } alt={ translate( 'Google Slides icon' ) } />
-				View Slides
-			</PopoverMenuItem>
+				return (
+					<PopoverMenuItem
+						key={ href }
+						className="email-plan-mailboxes-list__mailbox-action-menu-item"
+						isExternalLink
+						href={ href }
+					>
+						<img src={ image } alt={ imageAltText } />
+						{ title }
+					</PopoverMenuItem>
+				);
+			} ) }
 		</EllipsisMenu>
 	);
 };
@@ -324,11 +327,7 @@ function EmailPlanMailboxesList( { accountType, domain, isLoadingEmails, mailbox
 					{ warning }
 					{ action }
 				</div>
-				{ hasTitanMailWithUs( domain ) ? (
-					<TitanActionMenu />
-				) : (
-					<GmailActionMenu domainName={ domain.name } />
-				) }
+				<ActionMenu domain={ domain } />
 			</MailboxListItem>
 		);
 	} );
