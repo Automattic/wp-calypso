@@ -204,7 +204,8 @@ function embedSlideshow( domNode ) {
 function embedStory( domNode ) {
 	debug( 'processing story for ', domNode );
 
-	const storyLink = domNode.querySelector( 'a.wp-story-container' );
+	// wp-story-overlay is here for backwards compatiblity with Stories on Jetpack 9.7 and below.
+	const storyLink = domNode.querySelector( 'a.wp-story-container, a.wp-story-overlay' );
 
 	// Open story in a new tab
 	if ( storyLink ) {
