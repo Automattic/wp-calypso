@@ -3,8 +3,6 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { Button, CompactCard } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
@@ -13,6 +11,8 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
 import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
@@ -39,13 +39,13 @@ import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspa
 import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/services/drive.svg';
 import googleSheetsIcon from 'calypso/assets/images/email-providers/google-workspace/services/sheets.svg';
 import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/slides.svg';
+import Gridicon from 'calypso/components/gridicon';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resendVerificationEmail } from 'calypso/state/email-forwarding/actions';
 import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/calendar.svg';
 import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/contacts.svg';
 import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/mail.svg';
-import Gridicon from 'calypso/components/gridicon';
 
 const getListHeaderTextForAccountType = ( accountType, translate ) => {
 	if ( accountType === EMAIL_ACCOUNT_TYPE_FORWARD ) {
