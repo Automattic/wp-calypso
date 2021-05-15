@@ -4,6 +4,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import { PLAN_PREMIUM, FEATURE_CLOUDFLARE_ANALYTICS } from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import Banner from 'calypso/components/banner';
-import { FEATURE_CLOUDFLARE_ANALYTICS, PLAN_PREMIUM } from 'calypso/lib/plans/constants';
 
 const Cloudflare = () => {
 	const translate = useTranslate();
