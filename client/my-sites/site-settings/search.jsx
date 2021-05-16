@@ -94,13 +94,6 @@ class Search extends Component {
 					{ this.props.translate(
 						'Allow your visitors to get search results as soon as they start typing.'
 					) }{ ' ' }
-					{ ! this.props.hasSearchProduct && // The following notice is only shown for Business/Pro plan holders.
-						this.props.translate(
-							'To enable Instant search experience, simply {{b}}follow the link below{{/b}} to upgrade to a Jetpack Search subscription.',
-							{
-								components: { b: <b /> },
-							}
-						) }
 				</FormSettingExplanation>
 			</div>
 		);
