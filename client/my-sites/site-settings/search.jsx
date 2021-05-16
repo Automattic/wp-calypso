@@ -126,7 +126,7 @@ class Search extends Component {
 		return (
 			<Fragment>
 				<UpsellNudge
-					title={ translate( 'Keep people reading and buying' ) }
+					title={ translate( 'Upgrade your Jetpack Search and get the instant search experience' ) }
 					description={ translate(
 						'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
 					) }
