@@ -1,5 +1,3 @@
-import getMediaItem from 'calypso/state/selectors/get-media-item';
-
 import 'calypso/state/media/init';
 
 /**
@@ -14,13 +12,5 @@ export default ( state, siteId ) => {
 		return [];
 	}
 
-	const selectedMediaIds = state.media.selectedItems[ siteId ];
-
-	if ( ! selectedMediaIds ) {
-		return [];
-	}
-
-	return selectedMediaIds
-		.map( ( mediaId ) => getMediaItem( state, siteId, mediaId ) )
-		.filter( ( media ) => media );
+	return state.media.selectedItems?.[ siteId ] ?? [];
 };

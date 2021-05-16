@@ -6,7 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import MediaListData from 'calypso/components/data/media-list-data';
+import { withMedia } from 'calypso/components/data/media-list-data';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -407,27 +407,25 @@ export class MediaLibraryContent extends Component {
 		].join( '-' );
 
 		return (
-			<MediaListData
-				siteId={ this.props.site.ID }
-				postId={ this.props.postId }
+			<MediaLibraryList
+				key={ listKey }
+				site={ this.props.site }
 				filter={ this.props.filter }
+				filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
 				search={ this.props.search }
 				source={ this.props.source }
-			>
-				<MediaLibraryList
-					key={ listKey }
-					site={ this.props.site }
-					filter={ this.props.filter }
-					filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
-					search={ this.props.search }
-					containerWidth={ this.props.containerWidth }
-					thumbnailType={ this.getThumbnailType() }
-					single={ this.props.single }
-					scrollable={ this.props.scrollable }
-					onSourceChange={ this.props.onSourceChange }
-					mediaScale={ this.props.mediaScale }
-				/>
-			</MediaListData>
+				containerWidth={ this.props.containerWidth }
+				thumbnailType={ this.getThumbnailType() }
+				single={ this.props.single }
+				scrollable={ this.props.scrollable }
+				onSourceChange={ this.props.onSourceChange }
+				mediaScale={ this.props.mediaScale }
+				mediaHasNextPage={ this.props.hasNextPage }
+				mediaOnFetchNextPage={ this.props.fetchNextPage }
+				isLoading={ this.props.isLoading }
+				isFetchingNextPage={ this.props.isFetchingNextPage }
+				media={ this.props.media }
+			/>
 		);
 	}
 
@@ -519,6 +517,8 @@ export default withMobileBreakpoint(
 			deleteKeyringConnection,
 			clearMediaErrors,
 			changeMediaSource,
-		}
-	)( localize( MediaLibraryContent ) )
+		},
+		null,
+		{ pure: false }
+	)( localize( withMedia( MediaLibraryContent ) ) )
 );

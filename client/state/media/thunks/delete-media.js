@@ -16,8 +16,8 @@ export const deleteMedia = ( siteId, item ) => ( dispatch ) => {
 	const items = Array.isArray( item ) ? item : [ item ];
 
 	items
-		.filter( ( i ) => typeof i.ID === 'number' )
-		.forEach( ( mediaItem ) => {
-			dispatch( deleteMediaItem( siteId, mediaItem.ID ) );
+		.filter( ( id ) => typeof id === 'number' )
+		.forEach( ( id ) => {
+			dispatch( deleteMediaItem( siteId, id ) );
 		} );
 };

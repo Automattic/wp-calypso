@@ -10,6 +10,7 @@ import QueryMedia from 'calypso/components/data/query-media';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import withDeleteMedia from 'calypso/data/media/with-delete-media';
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getMimeType } from 'calypso/lib/media/utils';
@@ -19,7 +20,7 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
 import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
 import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
-import { editMedia, deleteMedia } from 'calypso/state/media/thunks';
+import { editMedia } from 'calypso/state/media/thunks';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
@@ -226,8 +227,8 @@ class Media extends Component {
 	 * @param  {Function} [callback] - callback function
 	 */
 	deleteMedia( callback ) {
-		const { translate } = this.props;
-		const selectedCount = this.props.selectedItems.length;
+		const { translate, selectedItems } = this.props;
+		const selectedCount = selectedItems.length;
 		const confirmMessage = translate(
 			'Are you sure you want to delete this item? ' +
 				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
@@ -292,7 +293,10 @@ class Media extends Component {
 		const selected =
 			selectedItems && selectedItems.length ? selectedItems : this.props.selectedItems;
 
-		this.props.deleteMedia( site.ID, selected );
+		this.props.selectMediaItems( site.ID, [] );
+		selected
+			.filter( ( { ID } ) => typeof ID === 'number' )
+			.forEach( ( ID ) => this.props.deleteMedia( site.ID, ID ) );
 	};
 
 	getAnalyticsPath = () => {
@@ -450,8 +454,7 @@ const mapStateToProps = ( state, { mediaId } ) => {
 
 export default connect( mapStateToProps, {
 	editMedia,
-	deleteMedia,
 	selectMediaItems,
 	changeMediaSource,
 	clearSite,
-} )( localize( Media ) );
+} )( localize( withDeleteMedia( Media ) ) );
