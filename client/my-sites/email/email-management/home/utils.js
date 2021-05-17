@@ -99,13 +99,13 @@ export function hasEmailSubscription( domain ) {
 }
 
 export function resolveEmailPlanStatus( domain ) {
-	const defaultActive = {
+	const defaultActiveStatus = {
 		statusClass: 'success',
 		icon: 'check_circle',
 		text: translate( 'Active' ),
 	};
 
-	const defaultWarning = {
+	const defaultWarningStatus = {
 		statusClass: 'warning',
 		icon: 'info',
 		text: translate( 'Action required' ),
@@ -113,10 +113,10 @@ export function resolveEmailPlanStatus( domain ) {
 
 	if ( hasGSuiteWithUs( domain ) ) {
 		if ( hasPendingGSuiteUsers( domain ) ) {
-			return defaultWarning;
+			return defaultWarningStatus;
 		}
 
-		return defaultActive;
+		return defaultActiveStatus;
 	}
 
 	if ( hasTitanMailWithUs( domain ) ) {
@@ -127,16 +127,16 @@ export function resolveEmailPlanStatus( domain ) {
 			const startOfToday = new Date();
 			startOfToday.setUTCHours( 0, 0, 0, 0 );
 			if ( titanExpiryDate < startOfToday ) {
-				return defaultWarning;
+				return defaultWarningStatus;
 			}
 		}
 
 		if ( getMaxTitanMailboxCount( domain ) > getConfiguredTitanMailboxCount( domain ) ) {
-			return defaultWarning;
+			return defaultWarningStatus;
 		}
 
-		return defaultActive;
+		return defaultActiveStatus;
 	}
 
-	return defaultActive;
+	return defaultActiveStatus;
 }
