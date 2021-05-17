@@ -320,15 +320,25 @@
 }
 
 .email-plan-subscription__card {
-	display: flex;
 	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
 
-	> div:nth-last-child( 2 ) {
-		margin-left: 15px;
-		flex: 1 1 auto;
+	@include break-small {
+		flex-wrap: initial;
 	}
+
+	.email-plan-subscription__renew {
+		margin-left: auto;
+		margin-right: 16px;
+
+		@include break-small {
+			flex: 1 1 auto;
+			margin-left: 16px;
+		}
+	}
+
 	.email-plan-subscription__auto-renew {
-		margin-left: 15px;
 		/* Ensure auto-renew text is using the standard font size */
 		label {
 			font-size: $font-body;
