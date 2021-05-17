@@ -25,11 +25,17 @@ export default function ( router ) {
 		'|' + // or
 		'[^\\\\/.]+\\.[^\\\\/]+'; // one-or-more non-slash-or-dot chars, then a dot, then one-or-more non-slashes
 
-	const routes = [
-		`/themes/:tier(free|premium)?/:site_id(${ siteId })?`,
-		`/themes/:tier(free|premium)?/filter/:filter/:site_id(${ siteId })?`,
-		`/themes/:vertical?/:tier(free|premium)?/:site_id(${ siteId })?`,
-		`/themes/:vertical?/:tier(free|premium)?/filter/:filter/:site_id(${ siteId })?`,
+	const routesWithoutSites = [
+		`/themes/:tier(free|premium)?`,
+		`/themes/:tier(free|premium)?/filter/:filter`,
+		`/themes/:vertical?/:tier(free|premium)?`,
+		`/themes/:vertical?/:tier(free|premium)?/filter/:filter`,
+	];
+	const routesWithSites = [
+		`/themes/:tier(free|premium)?/:site_id(${ siteId })`,
+		`/themes/:tier(free|premium)?/filter/:filter/:site_id(${ siteId })`,
+		`/themes/:vertical?/:tier(free|premium)?/:site_id(${ siteId })`,
+		`/themes/:vertical?/:tier(free|premium)?/filter/:filter/:site_id(${ siteId })`,
 	];
 
 	// Upload routes are valid only when logged in. In logged-out sessions they redirect to login page.
@@ -44,8 +50,9 @@ export default function ( router ) {
 	);
 
 	if ( isLoggedIn ) {
+		// routesWithSites - use loggedIn() middleware to display themes showcase
 		router(
-			routes,
+			routesWithSites,
 			fetchThemeFilters,
 			validateVertical,
 			validateFilters,
@@ -54,9 +61,19 @@ export default function ( router ) {
 			navigation,
 			makeLayout
 		);
+		// routesWithoutSites - use sites() middleware to force site selection first. Don't display navigation()
+		router(
+			routesWithoutSites,
+			fetchThemeFilters,
+			validateVertical,
+			validateFilters,
+			siteSelection,
+			sites,
+			makeLayout
+		);
 	} else {
 		router(
-			routes,
+			routesWithSites.concat( routesWithoutSites ),
 			redirectToLoginIfSiteRequested,
 			fetchThemeFilters,
 			validateVertical,

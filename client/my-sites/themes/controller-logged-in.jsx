@@ -12,7 +12,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { setBackPath } from 'calypso/state/themes/actions';
 import { getProps } from './controller';
 import SingleSiteComponent from './single-site';
-import MultiSiteComponent from './multi-site';
 import Upload from './theme-upload';
 
 export function loggedIn( context, next ) {
@@ -28,8 +27,11 @@ export function loggedIn( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	const Component = context.params.site_id ? SingleSiteComponent : MultiSiteComponent;
-	context.primary = <Component { ...getProps( context ) } />;
+	// Assuming context.params.site_id always exists
+	if ( context.params.site_id ) {
+		console.error( 'theme/loggedIn: Missing required parameter site_id' ); // eslint-disable-line no-console
+	}
+	context.primary = <SingleSiteComponent { ...getProps( context ) } />;
 
 	next();
 }
