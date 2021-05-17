@@ -107,7 +107,7 @@ class EmailPlanSubscription extends React.Component {
 					{ expiryText }
 				</div>
 				<div>{ this.renderRenewButton() }</div>
-				<div>{ this.renderAutoRenewToggle() }</div>
+				<div className="email-plan-subscription__auto-renew">{ this.renderAutoRenewToggle() }</div>
 			</CompactCard>
 		);
 	}

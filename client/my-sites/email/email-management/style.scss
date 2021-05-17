@@ -327,8 +327,12 @@
 		margin-left: 15px;
 		flex: 1 1 auto;
 	}
-	> div:last-child {
+	.email-plan-subscription__auto-renew {
 		margin-left: 15px;
+		/* Ensure auto-renew text is using the standard font size */
+		label {
+			font-size: $font-body;
+		}
 		/* vertically aligns the auto-renew toggle - not sure if there's a better way... */
 		> div > div {
 			margin-top: auto;
