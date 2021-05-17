@@ -2,9 +2,9 @@
  * Available Titan Apps
  */
 const TITAN_APPS = {
-	EMAIL: 'email',
 	CALENDAR: 'calendar',
 	CONTACTS: 'contacts',
+	EMAIL: 'email',
 };
 
 /**
@@ -26,11 +26,11 @@ function getTitanUrl( email, app = TITAN_APPS.EMAIL ) {
 }
 
 export function getTitanCalendarlUrl( email ) {
-	return getTitanUrl( email, TITAN_APPS.EMAIL );
+	return getTitanUrl( email, TITAN_APPS.CALENDAR );
 }
 
 export function getTitanContactsUrl( email ) {
-	return getTitanUrl( email, TITAN_APPS.EMAIL );
+	return getTitanUrl( email, TITAN_APPS.CONTACTS );
 }
 
 export function getTitanEmailUrl( email ) {
