@@ -264,6 +264,7 @@ class EmailPlan extends React.Component {
 					isLoadingPurchase={ isLoadingPurchase }
 					purchase={ purchase }
 					selectedSite={ selectedSite }
+					emailAccounts={ this.state?.emailAccounts[ 0 ] }
 				/>
 
 				<EmailPlanMailboxesList

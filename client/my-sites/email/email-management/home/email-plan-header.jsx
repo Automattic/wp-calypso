@@ -10,12 +10,14 @@ import React from 'react';
  * Internal dependencies
  */
 import EmailPlanSubscription from 'calypso/my-sites/email/email-management/home/email-plan-subscription';
+import EmailPlanWarnings from 'calypso/my-sites/email/email-management/home/email-plan-warnings';
 import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';
 import MaterialIcon from 'calypso/components/material-icon';
 import { resolveEmailPlanStatus } from 'calypso/my-sites/email/email-management/home/utils';
 
 const EmailPlanHeader = ( {
 	domain,
+	emailAccounts,
 	hasEmailSubscription,
 	isLoadingPurchase,
 	purchase,
@@ -45,6 +47,10 @@ const EmailPlanHeader = ( {
 				</div>
 			</CompactCard>
 
+			{ hasEmailSubscription && emailAccounts?.warnings?.length && (
+				<EmailPlanWarnings warnings={ emailAccounts?.warnings } />
+			) }
+
 			{ hasEmailSubscription && (
 				<EmailPlanSubscription
 					purchase={ purchase }
@@ -59,6 +65,7 @@ const EmailPlanHeader = ( {
 
 EmailPlanHeader.propTypes = {
 	domain: PropTypes.object.isRequired,
+	emailAccounts: PropTypes.array.isRequired,
 	hasEmailSubscription: PropTypes.bool.isRequired,
 	isLoadingPurchase: PropTypes.bool.isRequired,
 	purchase: PropTypes.object,
