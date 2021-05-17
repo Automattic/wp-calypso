@@ -51,33 +51,29 @@ const withPluginRedirect = createHigherOrderComponent(
 		// Select data to detect the installing-plugin/transferring site state.
 		const {
 			transferringStatus,
-			hasPluginBeenInstalled,
 			isInstallingPlugin,
-			isJetpack,
+			hasPluginBeenInstalled,
 			isAtomic,
+			isJetpack,
 			isSiteConnected,
 			redirectUrl,
-		} = useSelector(
-			( state ) => {
-				const siteId = getSelectedSiteId( state );
-
-				return {
-					transferringStatus: getAutomatedTransferStatus( state, siteId ),
-					isInstallingPlugin: isPluginActionInProgress( state, siteId, pluginSlug, INSTALL_PLUGIN ),
-					hasPluginBeenInstalled: isPluginActionCompleted(
-						state,
-						siteId,
-						pluginSlug,
-						INSTALL_PLUGIN
-					),
-					isAtomic: isSiteAutomatedTransfer( state, siteId ),
-					isJetpack: isJetpackSite( state, siteId ),
-					isSiteConnected: getSiteConnectionStatus( state, siteId ),
-					redirectUrl: redirectHandler?.getUrl( state, siteId ),
-				};
-			},
-			[ pluginSlug ]
-		);
+		} = useSelector( ( state ) => {
+			const siteId = getSelectedSiteId( state );
+			return {
+				transferringStatus: getAutomatedTransferStatus( state, siteId ),
+				isInstallingPlugin: isPluginActionInProgress( state, siteId, pluginSlug, INSTALL_PLUGIN ),
+				hasPluginBeenInstalled: isPluginActionCompleted(
+					state,
+					siteId,
+					pluginSlug,
+					INSTALL_PLUGIN
+				),
+				isAtomic: isSiteAutomatedTransfer( state, siteId ),
+				isJetpack: isJetpackSite( state, siteId ),
+				isSiteConnected: getSiteConnectionStatus( state, siteId ),
+				redirectUrl: redirectHandler?.getUrl( state, siteId ),
+			};
+		} );
 
 		// Define whether the site should redirect,
 		// once the action is done (install plugin or transferring site)
