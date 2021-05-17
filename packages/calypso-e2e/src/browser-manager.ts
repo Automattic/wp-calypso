@@ -15,12 +15,12 @@ import type { Browser, BrowserContext, Page } from 'playwright';
  * Internal dependencies
  */
 import { getVideoDir, getDateString, getAssetDir } from './media-helper';
-import { getDisplayResolution } from './browser-helper';
+import { getViewportSize } from './browser-helper';
 
 /**
  * Type dependencies
  */
-import { displayDimensions } from './types';
+import { viewportSize } from './types';
 
 /**
  * Constants
@@ -71,7 +71,7 @@ export async function launchBrowserContext(): Promise< BrowserContext > {
 
 	// By default, record video for each browser context.
 	const videoDir = getVideoDir();
-	const dimension: displayDimensions = getDisplayResolution();
+	const dimension: viewportSize = getViewportSize();
 	const timestamp = getDateString();
 	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ await browser.version() } Safari/537.36`;
 
@@ -100,7 +100,7 @@ export async function launchBrowserContext(): Promise< BrowserContext > {
 export async function launchBrowser(): Promise< Browser > {
 	const isHeadless = process.env.HEADLESS === 'true' || config.has( 'headless' );
 
-	const dimension = getDisplayResolution();
+	const dimension: viewportSize = getViewportSize();
 
 	return await chromium.launch( {
 		headless: isHeadless,

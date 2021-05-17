@@ -7,7 +7,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import { getTargetLocale, getTargetDisplaySize } from './browser-helper';
+import { getLocale, getViewportName } from './browser-helper';
 
 const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
 
@@ -55,8 +55,8 @@ export function getVideoDir(): string {
  */
 export function getScreenshotName( name: string ): string {
 	const shortTestFileName = name.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-	const screenSize = getTargetDisplaySize().toUpperCase();
-	const locale = getTargetLocale().toUpperCase();
+	const screenSize = getViewportName().toUpperCase();
+	const locale = getLocale().toUpperCase();
 	const date = getDateString();
 	const fileName = `FAILED-${ locale }-${ screenSize }-${ shortTestFileName }-${ date }`;
 	const screenshotDir = getScreenshotDir();
@@ -71,8 +71,8 @@ export function getScreenshotName( name: string ): string {
  */
 export function getVideoName( name: string ): string {
 	const suiteName = name.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-	const locale = getTargetLocale().toUpperCase();
-	const screenSize = getTargetDisplaySize().toUpperCase();
+	const locale = getLocale().toUpperCase();
+	const screenSize = getViewportName().toUpperCase();
 	const date = getDateString();
 	const fileName = `FAILED-${ locale }-${ screenSize }-${ suiteName }-${ date }`;
 	const videoDir = getVideoDir();
