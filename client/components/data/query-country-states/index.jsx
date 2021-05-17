@@ -3,8 +3,8 @@
  */
 
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,37 +12,24 @@ import { connect } from 'react-redux';
 import { isCountryStatesFetching } from 'calypso/state/country-states/selectors';
 import { requestCountryStates } from 'calypso/state/country-states/actions';
 
-class QueryCountryStates extends Component {
-	componentDidMount() {
-		this.request();
+const request = ( countryCode ) => ( dispatch, getState ) => {
+	if ( ! isCountryStatesFetching( getState(), countryCode ) ) {
+		dispatch( requestCountryStates( countryCode ) );
 	}
+};
 
-	componentDidUpdate( prevProps ) {
-		if ( this.props.countryCode !== prevProps.countryCode ) {
-			this.request();
-		}
-	}
+function QueryCountryStates( { countryCode } ) {
+	const dispatch = useDispatch();
 
-	request() {
-		if ( ! this.props.isRequesting ) {
-			this.props.requestCountryStates( this.props.countryCode );
-		}
-	}
+	useEffect( () => {
+		dispatch( request( countryCode ) );
+	}, [ dispatch, countryCode ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
 
 QueryCountryStates.propTypes = {
 	countryCode: PropTypes.string.isRequired,
-	isRequesting: PropTypes.bool,
-	requestCountryStates: PropTypes.func,
 };
 
-export default connect(
-	( state, { countryCode } ) => ( {
-		isRequesting: isCountryStatesFetching( state, countryCode ),
-	} ),
-	{ requestCountryStates }
-)( QueryCountryStates );
+export default QueryCountryStates;
