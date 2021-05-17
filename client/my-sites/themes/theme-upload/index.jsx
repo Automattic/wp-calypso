@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { includes, find, isEmpty, flowRight } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -45,6 +46,8 @@ import {
 	getUploadProgressLoaded,
 	isInstallInProgress,
 } from 'calypso/state/themes/upload-theme/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
@@ -91,6 +94,9 @@ class Upload extends React.Component {
 	componentDidMount() {
 		const { siteId, inProgress } = this.props;
 		! inProgress && this.props.clearThemeUpload( siteId );
+		if ( this.props.canUploadThemesOrPlugins ) {
+			this.redirectToWpAdmin();
+		}
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -109,11 +115,18 @@ class Upload extends React.Component {
 	};
 
 	componentDidUpdate( prevProps ) {
+		if ( this.props.canUploadThemesOrPlugins ) {
+			this.redirectToWpAdmin();
+		}
 		if ( this.props.complete && ! prevProps.complete ) {
 			this.successMessage();
 		} else if ( this.props.failed && ! prevProps.failed ) {
 			this.failureMessage();
 		}
+	}
+
+	redirectToWpAdmin() {
+		page( `https://${ this.props.siteSlug }/wp-admin/theme-install.php` );
 	}
 
 	successMessage() {
@@ -289,6 +302,8 @@ const mapStateToProps = ( state ) => {
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
+	const canUploadThemesOrPlugins = siteCanUploadThemesOrPlugins( state, siteId );
+	const isAtomic = isSiteWpcomAtomic( state, siteId );
 
 	return {
 		siteId,
@@ -307,9 +322,12 @@ const mapStateToProps = ( state ) => {
 		progressLoaded: getUploadProgressLoaded( state, siteId ),
 		installing: isInstallInProgress( state, siteId ),
 		backPath: getBackPath( state ),
-		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
+		showEligibility:
+			( isAtomic || ! isJetpack ) &&
+			( hasEligibilityMessages || ! isEligible || ! canUploadThemesOrPlugins ),
 		isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
+		canUploadThemesOrPlugins,
 	};
 };
 

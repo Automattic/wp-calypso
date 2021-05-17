@@ -15,6 +15,7 @@ import Gridicon from 'calypso/components/gridicon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { isAtomicSiteWithoutBusinessPlan } from './utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
 function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
@@ -155,7 +156,14 @@ export const HardBlockingNotice = ( {
 	const blockingHold = holds.find( ( h ): h is keyof ReturnType< typeof getBlockingMessages > =>
 		isHardBlockingHoldType( h, blockingMessages )
 	);
-	if ( ! blockingHold ) {
+
+	/*
+		For Atomic sites on plans below Business it will return the holds TRANSFER_ALREADY_EXISTS and NO_BUSINESS_PLAN.
+		Because TRANSFER_ALREADY_EXISTS is present and 'blocking' it will show an "Upload in progress" notice even when there isn't one.
+		In this scenario we need to check if it's an Atomic ste (TRANSFER_ALREADY_EXISTS) on a plan below Business (NO_BUSINESS_PLAN)
+		so we can stop the render of "Upload in progress" and prompt them to upgrade instead.
+	*/
+	if ( ! blockingHold || isAtomicSiteWithoutBusinessPlan( holds ) ) {
 		return null;
 	}
 
@@ -179,6 +187,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );
+	const hasValidBlockingHold = blockingHold && ! isAtomicSiteWithoutBusinessPlan( holds );
 
 	return (
 		<>
@@ -191,7 +200,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 			) }
 			<div
 				className={ classNames( {
-					'eligibility-warnings__hold-list-dim': blockingHold,
+					'eligibility-warnings__hold-list-dim': hasValidBlockingHold,
 				} ) }
 				data-testid="HoldList-Card"
 			>
@@ -228,7 +237,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 									<div className="eligibility-warnings__hold-action">
 										<Button
 											compact
-											disabled={ !! blockingHold }
+											disabled={ !! hasValidBlockingHold }
 											href={ holdMessages[ hold ].supportUrl }
 											rel="noopener noreferrer"
 										>
