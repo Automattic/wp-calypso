@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
+import { findIndex } from 'lodash';
 
 /**
  * Internal dependencies
@@ -204,6 +205,25 @@ class Media extends Component {
 		this.maybeRedirectToAll();
 	};
 
+	updateItem = ( itemId, detail ) => {
+		const { selectedItems } = this.state;
+		const index = findIndex( selectedItems, ( item ) => item.ID === itemId );
+
+		if ( index === -1 ) {
+			return;
+		}
+
+		selectedItems.splice( index, 1, {
+			...selectedItems[ index ],
+			...detail,
+		} );
+
+		this.setState( {
+			...this.state,
+			selectedItems,
+		} );
+	};
+
 	setDetailSelectedIndex = ( index ) => {
 		this.setState( { currentDetail: index } );
 	};
@@ -377,6 +397,7 @@ class Media extends Component {
 								onEditImageItem={ this.editImage }
 								onEditVideoItem={ this.editVideo }
 								onRestoreItem={ this.restoreOriginalMedia }
+								onUpdateItem={ this.updateItem }
 								onSelectedIndexChange={ this.setDetailSelectedIndex }
 							/>
 						) }

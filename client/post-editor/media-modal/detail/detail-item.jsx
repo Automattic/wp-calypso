@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -8,7 +9,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { flowRight, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-import url from 'url';
+import { getUrlParts } from '@automattic/calypso-url';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -42,6 +43,7 @@ export class EditorMediaModalDetailItem extends Component {
 		onShowNextItem: PropTypes.func,
 		onEdit: PropTypes.func,
 		onRestore: PropTypes.func,
+		onUpdate: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -51,6 +53,7 @@ export class EditorMediaModalDetailItem extends Component {
 		onShowNextItem: noop,
 		onEdit: noop,
 		onRestore: noop,
+		onUpdate: noop,
 	};
 
 	/**
@@ -139,8 +142,8 @@ export class EditorMediaModalDetailItem extends Component {
 		const { item, translate } = this.props;
 
 		//do a simple guid vs url check
-		const guidParts = url.parse( item.guid );
-		const URLParts = url.parse( item.URL );
+		const guidParts = getUrlParts( item.guid );
+		const URLParts = getUrlParts( item.URL );
 
 		if ( guidParts.pathname === URLParts.pathname ) {
 			return false;
@@ -204,7 +207,9 @@ export class EditorMediaModalDetailItem extends Component {
 			return null;
 		}
 
-		return <EditorMediaModalDetailFields site={ site } item={ item } />;
+		return (
+			<EditorMediaModalDetailFields site={ site } item={ item } onUpdate={ this.props.onUpdate } />
+		);
 	}
 
 	renderPreviousItemButton() {
