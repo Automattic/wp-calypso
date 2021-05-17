@@ -313,26 +313,24 @@ function EmailPlanMailboxesList( { accountType, domain, isLoadingEmails, mailbox
 
 		return (
 			<MailboxListItem key={ mailbox.mailbox } isError={ !! warning }>
-				<div className="email-plan-mailboxes-list__mailbox-list-item-email">
-					<div className="email-plan-mailboxes-list__mailbox-list-item-main">
-						<div>
-							<MaterialIcon icon="email" />
-							<span>
-								{ mailbox.mailbox }@{ mailbox.domain }
-							</span>
-						</div>
-						{ getSecondaryContentForMailbox( mailbox ) }
+				<div className="email-plan-mailboxes-list__mailbox-list-item-main">
+					<div>
+						<MaterialIcon icon="email" />
+						<span>
+							{ mailbox.mailbox }@{ mailbox.domain }
+						</span>
 					</div>
-					{ isEmailUserAdmin( mailbox ) && (
-						<Badge type="info">
-							{ translate( 'Admin', {
-								comment: 'Email user role displayed as a badge',
-							} ) }
-						</Badge>
-					) }
-					{ warning }
-					{ action }
+					{ getSecondaryContentForMailbox( mailbox ) }
 				</div>
+				{ isEmailUserAdmin( mailbox ) && (
+					<Badge type="info">
+						{ translate( 'Admin', {
+							comment: 'Email user role displayed as a badge',
+						} ) }
+					</Badge>
+				) }
+				{ warning }
+				{ action }
 				<ActionMenu domain={ domain } mailbox={ mailbox } />
 			</MailboxListItem>
 		);
