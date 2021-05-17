@@ -15,63 +15,63 @@ export default class ThemesPage extends AsyncBaseContainer {
 		super( driver, By.css( 'a.theme__thumbnail img' ), url );
 	}
 
-	getStartURL() {
+	static _getThemeSelectionXpath( phrase ) {
+		const lowerCasedPhrase = phrase.toLowerCase().replace( ' ', '-' );
+		return By.css( `div[data-e2e-theme*='${ lowerCasedPhrase }']:not(.is-active)` );
+	}
+
+	static getStartURL() {
 		return dataHelper.getCalypsoURL( 'themes' );
 	}
 
-	showOnlyFreeThemes() {
-		return this.showOnlyThemesType( 'free' );
+	async showOnlyFreeThemes() {
+		await this.showOnlyThemesType( 'free' );
 	}
 
-	showOnlyPremiumThemes() {
-		return this.showOnlyThemesType( 'premium' );
+	async showOnlyPremiumThemes() {
+		await this.showOnlyThemesType( 'premium' );
 	}
 
 	async showOnlyThemesType( type ) {
 		await this.openShowcase();
 		await driverHelper.clickWhenClickable( this.driver, By.css( `a[data-e2e-value="${ type }"]` ) );
-		return this.waitUntilThemesLoaded();
+		await this.waitUntilThemesLoaded();
 	}
 
-	selectNewTheme() {
-		// select first theme from the list
-		return driverHelper.clickWhenClickable( this.driver, By.css( '.theme__content' ) );
-	}
-
-	selectNewThemeStartingWith( phrase ) {
+	async selectNewThemeStartingWith( phrase ) {
 		const locator = ThemesPage._getThemeSelectionXpath( phrase );
-		return driverHelper.clickWhenClickable( this.driver, locator );
+		await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
-	waitUntilThemesLoaded() {
-		return driverHelper.waitUntilElementNotLocated(
+	async waitUntilThemesLoaded() {
+		await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			By.css( '.themes-list .is-placeholder' )
 		);
 	}
 
-	waitForThemeStartingWith( phrase ) {
+	async waitForThemeStartingWith( phrase ) {
 		const locator = ThemesPage._getThemeSelectionXpath( phrase );
-		return driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
 	}
 
 	async clickNewThemeMoreButton() {
 		const locator = By.css( '.theme-showcase__all-themes .is-actionable:not(.is-active) button' );
 
 		await driverHelper.scrollIntoView( this.driver, locator );
-		return driverHelper.clickWhenClickable( this.driver, locator );
+		await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
 	async getFirstThemeName() {
 		const locator = By.css( '.theme-showcase__all-themes .is-actionable:not(.is-active) h2' );
 		const element = await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
-		return element.getText();
+		return await element.getText();
 	}
 
 	async getActiveThemeName() {
 		const locator = By.css( '.is-actionable.is-active h2' );
 		const element = await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
-		return element.getText();
+		return await element.getText();
 	}
 
 	async searchFor( phrase ) {
@@ -84,7 +84,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 			phrase
 		);
 		await searchFieldElement.sendKeys( ' ' );
-		return this.waitUntilThemesLoaded();
+		await this.waitUntilThemesLoaded();
 	}
 
 	async clickPopoverItem( name ) {
@@ -92,28 +92,26 @@ export default class ThemesPage extends AsyncBaseContainer {
 			By.css( '.popover__menu-item' ),
 			name
 		);
-		return driverHelper.clickWhenClickable( this.driver, actionItemLocator );
+		await driverHelper.clickWhenClickable( this.driver, actionItemLocator );
 	}
 
-	popOverMenuDisplayed() {
+	async popOverMenuDisplayed() {
 		const popOverMenuLocator = By.css( '.popover__menu' );
-		return driverHelper.isElementEventuallyLocatedAndVisible( this.driver, popOverMenuLocator );
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			popOverMenuLocator
+		);
 	}
 
-	static _getThemeSelectionXpath( phrase ) {
-		const lowerCasedPhrase = phrase.toLowerCase().replace( ' ', '-' );
-		return By.css( `div[data-e2e-theme*='${ lowerCasedPhrase }']:not(.is-active)` );
-	}
-
-	clearSearch() {
-		return driverHelper.clickWhenClickable(
+	async clearSearch() {
+		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.themes-magic-search-card__icon-close' )
 		);
 	}
 
-	openShowcase() {
-		return driverHelper.clickWhenClickable(
+	async openShowcase() {
+		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( `button[data-e2e-value="open-themes-button"]` )
 		);
