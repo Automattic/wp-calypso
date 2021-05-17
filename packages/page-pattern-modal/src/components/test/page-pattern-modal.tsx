@@ -68,7 +68,7 @@ describe( '<PagePatternModal>', () => {
 				patterns={ patterns }
 				insertPattern={ insertPattern }
 				savePatternChoice={ noop }
-				setOpenState={ noop }
+				onClose={ noop }
 				hideWelcomeGuide={ noop }
 			/>
 		);
@@ -86,7 +86,7 @@ describe( '<PagePatternModal>', () => {
 				patterns={ patterns }
 				insertPattern={ insertPattern }
 				savePatternChoice={ noop }
-				setOpenState={ noop }
+				onClose={ noop }
 				hideWelcomeGuide={ noop }
 			/>
 		);
@@ -104,7 +104,7 @@ describe( '<PagePatternModal>', () => {
 				patterns={ patterns }
 				insertPattern={ insertPattern }
 				savePatternChoice={ noop }
-				setOpenState={ noop }
+				onClose={ noop }
 				hideWelcomeGuide={ noop }
 			/>
 		);

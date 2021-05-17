@@ -11,15 +11,17 @@ import { dispatch, select } from '@wordpress/data-controls';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { getLanguage } from 'calypso/lib/i18n-utils';
 import { __ } from '@wordpress/i18n';
+import { isBlankCanvasDesign } from '@automattic/design-picker';
 import type { Design, FontPair } from '@automattic/design-picker';
 
 /**
  * Internal dependencies
  */
-import type { SiteVertical } from './types';
+
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 import type { State } from '.';
+import type { SiteVertical } from './types';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -105,6 +107,7 @@ export function* createSite( {
 			...( anchorFmSpotifyUrl && {
 				anchor_fm_spotify_url: anchorFmSpotifyUrl,
 			} ),
+			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};

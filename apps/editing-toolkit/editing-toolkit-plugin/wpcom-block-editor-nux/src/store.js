@@ -6,6 +6,9 @@ import apiFetch from '@wordpress/api-fetch';
 import { apiFetch as apiFetchControls, controls } from '@wordpress/data-controls';
 import { combineReducers, registerStore } from '@wordpress/data';
 
+export const DEFAULT_VARIANT = 'tour';
+export const BLANK_CANVAS_VARIANT = 'blank-canvas-tour';
+
 const showWelcomeGuideReducer = ( state = undefined, action ) => {
 	switch ( action.type ) {
 		case 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS':
@@ -47,12 +50,14 @@ const tourRatingReducer = ( state = undefined, action ) => {
 	}
 };
 
-const welcomeGuideVariantReducer = ( state = 'tour', action ) => {
+const welcomeGuideVariantReducer = ( state = DEFAULT_VARIANT, action ) => {
 	switch ( action.type ) {
 		case 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS':
 			return action.response.variant;
+		case 'WPCOM_HAS_USED_PATTERNS_MODAL':
+			return state === BLANK_CANVAS_VARIANT ? DEFAULT_VARIANT : state;
 		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
-			return 'tour';
+			return DEFAULT_VARIANT;
 		default:
 			return state;
 	}
@@ -89,6 +94,9 @@ const actions = {
 	},
 	setTourRating: ( tourRating ) => {
 		return { type: 'WPCOM_WELCOME_GUIDE_TOUR_RATING_SET', tourRating };
+	},
+	setUsedPageOrPatternsModal: () => {
+		return { type: 'WPCOM_HAS_USED_PATTERNS_MODAL' };
 	},
 	// The `resetStore` action is only used for testing to reset the
 	// store inbetween tests.
