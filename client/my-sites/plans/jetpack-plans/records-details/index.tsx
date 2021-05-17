@@ -27,7 +27,7 @@ import './styles.scss';
 /**
  * Type dependencies
  */
-import type { ProductTranslations } from '@automattic/calypso-products';
+import type { JetpackProduct } from '@automattic/calypso-products';
 
 type Props = {
 	productSlug: string;
@@ -73,7 +73,7 @@ const RecordsDetails: FunctionComponent< Props > = ( { productSlug } ) => {
 	const isDiscounted = Number.isFinite( discountedPrice );
 	const recordCount = searchProduct?.price_tier_usage_quantity;
 	const translations = getJetpackProducts().find( ( p ) => p.slugs.includes( productSlug ) ) as
-		| ProductTranslations
+		| JetpackProduct
 		| undefined;
 	const tier = translations?.optionShortNamesCallback?.( searchProduct );
 

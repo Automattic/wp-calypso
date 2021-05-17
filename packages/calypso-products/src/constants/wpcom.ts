@@ -4,6 +4,10 @@ export const GROUP_WPCOM = 'GROUP_WPCOM';
 export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
 export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
 
+export const WPCOM_SEARCH_PRODUCTS = <const>[ PRODUCT_WPCOM_SEARCH, PRODUCT_WPCOM_SEARCH_MONTHLY ];
+
+export const WPCOM_PRODUCTS = <const>[ ...WPCOM_SEARCH_PRODUCTS ];
+
 // Plans
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_BUSINESS = 'business-bundle';
@@ -27,7 +31,31 @@ export const PLAN_VIP = 'vip';
 export const PLAN_P2_PLUS = 'wp_p2_plus_monthly';
 export const PLAN_P2_FREE = 'p2_free_plan'; // Not a real plan; it's a renamed WP.com Free for the P2 project.
 
-export const WPCOM_MONTHLY_PLANS = [
+export const WPCOM_PLANS = <const>[
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_PREMIUM_MONTHLY,
+	PLAN_PREMIUM,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_PERSONAL_MONTHLY,
+	PLAN_PERSONAL,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_BLOGGER,
+	PLAN_BLOGGER_2_YEARS,
+	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_FREE,
+	PLAN_HOST_BUNDLE,
+	PLAN_WPCOM_ENTERPRISE,
+	PLAN_CHARGEBACK,
+	PLAN_VIP,
+	PLAN_P2_PLUS,
+	PLAN_P2_FREE,
+];
+
+export const WPCOM_MONTHLY_PLANS = <const>[
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_PERSONAL_MONTHLY,
