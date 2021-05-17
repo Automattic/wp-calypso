@@ -188,8 +188,8 @@ private object VisualRegressionTests : BuildType({
 	description = "Runs visual regression tests"
 
 	artifactRules = """
-		test/visual/html_report => reports
-		test/visual/bitmaps_test => bitmaps_test
+		test/visual/backstop_data/html_report => reports
+		test/visual/backstop_data/bitmaps_test => bitmaps_test
 	""".trimIndent()
 
 	vcs {
