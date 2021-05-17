@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-nodejs-modules
 const fs = require( 'fs' ).promises;
+console.log = () => {};
 
 module.exports = async ( page ) => {
 	const cookiesString = await fs.readFile( './test/visual/cookies/cookies.json' );
