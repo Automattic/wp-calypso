@@ -205,7 +205,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 			await DomainsPage.Expect( driver );
 			try {
 				const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
-				await shoppingCartWidgetComponent.empty();
+				await shoppingCartWidgetComponent.removeDomainMapping( blogName );
 			} catch {
 				console.log( 'Cart already empty' );
 			}
