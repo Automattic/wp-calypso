@@ -67,6 +67,11 @@ export class NavigationLink extends Component {
 			( step ) => step.stepName === currentStepName
 		);
 
+		// Current step isn't finished, so isn't part of the progress array yet, go to the top of the progress array.
+		if ( currentStepIndexInProgress === -1 ) {
+			return filteredProgressedSteps.pop();
+		}
+
 		return filteredProgressedSteps[ currentStepIndexInProgress - 1 ] || previousStep;
 	}
 
