@@ -54,7 +54,6 @@ import PostEditButton from 'calypso/blocks/post-edit-button/docs/example';
 import PostComment from 'calypso/blocks/comments/docs/post-comment-example';
 import ReaderAvatar from 'calypso/blocks/reader-avatar/docs/example';
 import ImageEditor from 'calypso/blocks/image-editor/docs/example';
-import ImageSelector from 'calypso/blocks/image-selector/docs/example';
 import VideoEditor from 'calypso/blocks/video-editor/docs/example';
 import ReaderPostCard from 'calypso/blocks/reader-post-card/docs/example';
 import ReaderCombinedCard from 'calypso/blocks/reader-combined-card/docs/example';
@@ -183,7 +182,6 @@ export default class AppComponents extends React.Component {
 					<ConversationFollowButton />
 					<UserMentions readmeFilePath="user-mentions" />
 					<SupportArticleDialog />
-					<ImageSelector readmeFilePath="image-selector" />
 					<TimeMismatchWarning readmeFilePath="time-mismatch-warning" />
 					<UpsellNudge />
 					<JetpackReviewPrompt readmeFilePath="jetpack-review-prompt" />
