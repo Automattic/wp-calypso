@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import cookie from 'cookie';
 import debug from 'debug';
 
 /**
@@ -62,11 +61,6 @@ function maybeAddFullStoryScript() {
 		if ( ! fullStoryScriptLoaded ) {
 			fullStoryDebug( 'maybeAddFullStoryScript:', false );
 		}
-		return;
-	}
-
-	// Only record session for US-based users.
-	if ( 'US' !== cookie.parse( document.cookie ).country_code ) {
 		return;
 	}
 
