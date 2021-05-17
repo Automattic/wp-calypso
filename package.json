@@ -313,7 +313,7 @@
 		"webpack": "^5.36.2",
 		"webpack-bundle-analyzer": "^4.4.1",
 		"webpack-cli": "^4.6.0",
-		"webpack-dev-middleware": "^4.1.0",
+		"webpack-dev-middleware": "^4.2.0",
 		"whybundled": "^2.0.0",
 		"wpcom": "^6.0.0",
 		"yargs": "^17.0.1"
