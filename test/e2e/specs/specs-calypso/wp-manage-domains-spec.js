@@ -117,9 +117,9 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 			await DomainsPage.Expect( driver );
 			try {
 				const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
-				await shoppingCartWidgetComponent.empty();
+				await shoppingCartWidgetComponent.removeDomainRegistraion( expectedDomainName );
 			} catch {
-				console.log( 'Cart already empty' );
+				console.log( `Can't clean up domain registration for ${ expectedDomainName } from cart` );
 			}
 		} );
 	} );

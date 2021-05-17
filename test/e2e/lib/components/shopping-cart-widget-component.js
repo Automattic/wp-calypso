@@ -43,4 +43,27 @@ export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 			}
 		}
 	}
+
+	async removeDomainRegistraion( domain ) {
+		return this.remove( 'domain_reg', domain );
+	}
+
+	async remove( type, name ) {
+		const cartBadgeLocator = by.css( '.cart__count-badge' );
+
+		const present = await driverHelper.isElementLocated( this.driver, cartBadgeLocator );
+		if ( present ) {
+			await this.open();
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				by.xpath(
+					// Find an element X with class=.cart-item
+					//    that contains an element with data-e2e-product-slug=`type`
+					//    and a sibling with class="product-domain" and text=`name`
+					// and then select an element inside X that matches class=cart__remove-item
+					`//*[@class="cart-item"][.//*[@data-e2e-product-slug="${ type }"]/following-sibling::*[@class="product-domain"][text()="${ name }"]]//*[@class="cart__remove-item"]`
+				)
+			);
+		}
+	}
 }
