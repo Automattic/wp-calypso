@@ -24,7 +24,7 @@ const storeToken = ( token, expiry ) => {
 	} catch ( e ) {}
 };
 
-const getTokenFromUrl = () => {
+const getTokenInfoFromUrl = () => {
 	const tokenPattern = /(?:[#&?]access_token=)([^&]+)/;
 	const expiryPattern = /(?:[#&?]expires_in=)(\d+)/;
 
@@ -53,11 +53,11 @@ const getTokenFromUrl = () => {
 	};
 };
 
-const redirectForOauth = () => {
+const redirectForAuthorization = () => {
 	const redirectUri = `${ window.location.origin }${ OAUTH_REDIRECT_PATH }`;
 
-	const auth = getTokenFromUrl();
-	if ( ! auth ) {
+	const tokenInfo = getTokenInfoFromUrl();
+	if ( ! tokenInfo ) {
 		const baseUrl = 'https://public-api.wordpress.com/oauth2/authorize';
 		const uri = `${ baseUrl }?client_id=${ OAUTH_CLIENT_ID }&redirect_uri=${ redirectUri }&response_type=token&scope=global`;
 
@@ -65,15 +65,14 @@ const redirectForOauth = () => {
 		return;
 	}
 
-	const { token, expiration } = auth;
+	const { token, expiration } = tokenInfo;
 	storeToken( token, expiration );
 	window.location.replace( redirectUri );
 	return;
 };
 
-const getOauthRequestHandler = ( authToken ) => ( options, fn ) => {
-	return wpcomXhrRequest( { ...options, authToken }, fn );
-};
+const getRequestHandler = ( authToken ) => ( options, fn ) =>
+	wpcomXhrRequest( { ...options, authToken }, fn );
 
 const createOauthClient = async () => {
 	const token = getStoredToken();
@@ -82,7 +81,7 @@ const createOauthClient = async () => {
 		return null;
 	}
 
-	const requestHandler = getOauthRequestHandler( token );
+	const requestHandler = getRequestHandler( token );
 	return wpcom( token, requestHandler );
 };
 
