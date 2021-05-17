@@ -20,6 +20,12 @@ object WPComTests : Project({
 		param("docker_image", "%docker_image_e2e%")
 		param("build.prefix", "1")
 	}
+
+	BuildReportTab {
+		title = "VR Report"
+		startPage= "report.zip!index.html"
+	}
+
 	// Keep the previous ID in order to preserve the historical data
 	buildType(gutenbergBuildType("desktop", "aee94c18-ee11-4c80-b6aa-245b967a97db"));
 	buildType(gutenbergBuildType("mobile","2af2eaed-87d5-41f4-ab1d-4ed589d5ae82"));
@@ -192,11 +198,6 @@ private object VisualRegressionTests : BuildType({
 		report.zip => report.zip
 	""".trimIndent()
 
-	BuildReportTab {
-		title = "VR Report"
-		startPage= "report.zip!index.html"
-	}
-
 	vcs {
 		root(Settings.WpCalypso)
 		cleanCheckout = true
@@ -246,7 +247,7 @@ private object VisualRegressionTests : BuildType({
 			scriptContent = """
 				set -x
 
-				zip -r report.zip test/visual/backstop_data/html_report test/visual/backstop_data/bitmaps_test test/visual/backstop_data/bitmaps_reference
+				zip -r vr-report.zip test/visual/backstop_data/html_report test/visual/backstop_data/bitmaps_test test/visual/backstop_data/bitmaps_reference
 
 			""".trimIndent()
 		}
