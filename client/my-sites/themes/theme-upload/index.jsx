@@ -323,7 +323,7 @@ const mapStateToProps = ( state ) => {
 		installing: isInstallInProgress( state, siteId ),
 		backPath: getBackPath( state ),
 		showEligibility:
-			( ( isJetpack && isAtomic ) || ( ! isJetpack && ! isAtomic ) ) &&
+			( isAtomic || ! isJetpack ) &&
 			( hasEligibilityMessages || ! isEligible || ! canUploadThemesOrPlugins ),
 		isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
