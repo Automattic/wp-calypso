@@ -13,7 +13,9 @@ import {
 	hasPendingGSuiteUsers,
 } from 'calypso/lib/gsuite';
 import {
+	getConfiguredTitanMailboxCount,
 	getMaxTitanMailboxCount,
+	getTitanExpiryDate,
 	getTitanSubscriptionId,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
@@ -97,17 +99,44 @@ export function hasEmailSubscription( domain ) {
 }
 
 export function resolveEmailPlanStatus( domain ) {
-	if ( hasPendingGSuiteUsers( domain ) ) {
-		return {
-			statusClass: 'warning',
-			icon: 'info',
-			text: translate( 'Action required' ),
-		};
-	}
-
-	return {
+	const defaultActiveStatus = {
 		statusClass: 'success',
 		icon: 'check_circle',
 		text: translate( 'Active' ),
 	};
+
+	const defaultWarningStatus = {
+		statusClass: 'warning',
+		icon: 'info',
+		text: translate( 'Action required' ),
+	};
+
+	if ( hasGSuiteWithUs( domain ) ) {
+		if ( hasPendingGSuiteUsers( domain ) ) {
+			return defaultWarningStatus;
+		}
+
+		return defaultActiveStatus;
+	}
+
+	if ( hasTitanMailWithUs( domain ) ) {
+		// Check for expired subscription.
+		const titanExpiryDateString = getTitanExpiryDate( domain );
+		if ( titanExpiryDateString ) {
+			const titanExpiryDate = new Date( titanExpiryDateString );
+			const startOfToday = new Date();
+			startOfToday.setUTCHours( 0, 0, 0, 0 );
+			if ( titanExpiryDate < startOfToday ) {
+				return defaultWarningStatus;
+			}
+		}
+
+		if ( getMaxTitanMailboxCount( domain ) > getConfiguredTitanMailboxCount( domain ) ) {
+			return defaultWarningStatus;
+		}
+
+		return defaultActiveStatus;
+	}
+
+	return defaultActiveStatus;
 }

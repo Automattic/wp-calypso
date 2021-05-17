@@ -11,7 +11,11 @@ import { CompactCard } from '@automattic/components';
 import SectionHeader from 'calypso/components/section-header';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';
-import { getNumberOfMailboxesText } from 'calypso/my-sites/email/email-management/home/utils';
+import {
+	getNumberOfMailboxesText,
+	resolveEmailPlanStatus,
+} from 'calypso/my-sites/email/email-management/home/utils';
+import MaterialIcon from 'calypso/components/material-icon';
 
 class EmailListActive extends React.Component {
 	render() {
@@ -22,6 +26,9 @@ class EmailListActive extends React.Component {
 		}
 
 		const emailListItems = domains.map( ( domain ) => {
+			const { statusClass, text: warningText } = resolveEmailPlanStatus( domain );
+			const showWarning = statusClass !== 'success';
+
 			return (
 				<CompactCard
 					href={ emailManagement( selectedSiteSlug, domain.name, currentRoute ) }
@@ -34,6 +41,12 @@ class EmailListActive extends React.Component {
 						<h2>{ domain.name }</h2>
 						<span>{ getNumberOfMailboxesText( domain ) }</span>
 					</div>
+					{ showWarning && (
+						<div className="email-list-active__warning">
+							<MaterialIcon icon="info" />
+							<span>{ warningText }</span>
+						</div>
+					) }
 				</CompactCard>
 			);
 		} );

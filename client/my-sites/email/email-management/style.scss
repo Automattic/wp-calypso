@@ -46,24 +46,82 @@
 
 .email-list-active {
 	> .card {
-		display: flex;
-		align-items: center;
 		color: var( --color-text );
+		display: flex;
+
+		> div > h2 {
+			word-break: break-all;
+		}
+
 		> div > span {
 			font-size: $font-body-small;
 			color: var( --color-text-subtle );
 		}
+
+		.email-list-active__warning {
+			font-size: $font-body-extra-small;
+			margin-left: 14px;
+
+			> span {
+				color: var( --color-error-50 );
+				display: none;
+				vertical-align: middle;
+
+				@include break-small {
+					display: unset;
+				}
+
+				@include break-medium {
+					display: none;
+				}
+
+				@include break-large {
+					display: unset;
+				}
+			}
+
+			> svg {
+				fill: var( --color-error-50 );
+				height: 18px;
+				margin-right: 6px;
+				/* Push the icon down when there is no warning text */
+				margin-top: 3px;
+				vertical-align: middle;
+				width: 18px;
+
+				@include break-small {
+					margin-top: 0;
+				}
+
+				@include break-medium {
+					margin-top: 3px;
+				}
+
+				@include break-large {
+					margin-top: 0;
+				}
+			}
+		}
 	}
+
 	> .card.is-card-link:hover {
 		background-color: var( --color-neutral-0 );
 	}
 }
 
 .email-list-active__item-icon {
+	align-self: center;
+
 	> img, svg {
 		height: 36px;
+		margin-right: 16px;
+		min-height: 36px;
+		min-width: 36px;
 		width: 36px;
-		margin-right: 20px;
+
+		@include break-large {
+			margin-right: 24px;
+		}
 	}
 	> .gridicon.gridicons-my-sites {
 		fill: var( --color-wordpress-com );
