@@ -254,10 +254,7 @@ const ActionMenu = ( { domain } ) => {
 		return null;
 	}
 	return (
-		<EllipsisMenu
-			popoverClassName="email-plan-mailboxes-list__mailbox-action-menu-popover"
-			className="email-plan-mailboxes-list__mailbox-action-menu"
-		>
+		<EllipsisMenu className="email-plan-mailboxes-list__mailbox-action-menu">
 			{ menuItems.map( ( { image, imageAltText, href, title } ) => (
 				<PopoverMenuItem
 					key={ href }
