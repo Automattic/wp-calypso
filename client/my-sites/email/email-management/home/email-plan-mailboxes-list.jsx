@@ -200,7 +200,7 @@ const getTitanMenuItems = ( email, translate ) => {
 	];
 };
 
-const getGSuiteMenuItems = ( email, translate ) => {
+const getGSuiteMenuItems = ( email, mailbox, translate ) => {
 	return [
 		{
 			href: getGmailUrl( email ),
@@ -208,12 +208,16 @@ const getGSuiteMenuItems = ( email, translate ) => {
 			imageAltText: translate( 'Gmail icon' ),
 			title: translate( 'View Gmail' ),
 		},
-		{
-			href: getGoogleAdminUrl( email ),
-			image: googleAdminIcon,
-			imageAltText: translate( 'Google Admin icon' ),
-			title: translate( 'View Admin' ),
-		},
+		...( isEmailUserAdmin( mailbox )
+			? [
+					{
+						href: getGoogleAdminUrl( email ),
+						image: googleAdminIcon,
+						imageAltText: translate( 'Google Admin icon' ),
+						title: translate( 'View Admin' ),
+					},
+			  ]
+			: [] ),
 		{
 			href: getGoogleCalendarUrl( email ),
 			image: googleCalendarIcon,
@@ -247,13 +251,13 @@ const getGSuiteMenuItems = ( email, translate ) => {
 	];
 };
 
-const getMenuItems = ( { domain, email }, translate ) => {
+const getMenuItems = ( { domain, email, mailbox }, translate ) => {
 	if ( hasTitanMailWithUs( domain ) ) {
 		return getTitanMenuItems( email, translate );
 	}
 
 	if ( hasGSuiteWithUs( domain ) ) {
-		return getGSuiteMenuItems( email, translate );
+		return getGSuiteMenuItems( email, mailbox, translate );
 	}
 
 	return null;
@@ -262,7 +266,7 @@ const getMenuItems = ( { domain, email }, translate ) => {
 const ActionMenu = ( { domain, mailbox } ) => {
 	const translate = useTranslate();
 	const email = `${ mailbox.mailbox }@${ mailbox.domain }`;
-	const menuItems = getMenuItems( { domain, email }, translate );
+	const menuItems = getMenuItems( { domain, email, mailbox }, translate );
 	if ( ! menuItems ) {
 		return null;
 	}
