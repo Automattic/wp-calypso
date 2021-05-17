@@ -23,7 +23,7 @@ object WPComTests : Project({
 
 	BuildReportTab {
 		title = "VR Report"
-		startPage= "report.zip!index.html"
+		startPage= "vr-report.zip!index.html"
 	}
 
 	// Keep the previous ID in order to preserve the historical data
@@ -195,7 +195,7 @@ private object VisualRegressionTests : BuildType({
 	description = "Runs visual regression tests"
 
 	artifactRules = """
-		report.zip => report.zip
+		vr-report.zip => vr-report.zip
 	""".trimIndent()
 
 	vcs {
