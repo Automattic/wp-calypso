@@ -1,6 +1,11 @@
+// Add new Site Verification services to this file.
+// Requires the API to be updated in Jetpack in order to work.
+
 /**
- * Add new Site Verification services to this file.
- * Requires the API endpoint in Jetpack to be updated with the new service too.
+ * Returns the Site Verification services.
+ *
+ * @param  {Function}  translate  Translate needed for the name.
+ * @returns {object}              Site Verification services data.
  */
 export default function ( translate = () => {} ) {
 	return [
