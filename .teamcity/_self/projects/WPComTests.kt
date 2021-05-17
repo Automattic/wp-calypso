@@ -4,6 +4,7 @@ import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
+import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportTab
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
@@ -188,9 +189,13 @@ private object VisualRegressionTests : BuildType({
 	description = "Runs visual regression tests"
 
 	artifactRules = """
-		test/visual/backstop_data/html_report => reports
-		test/visual/backstop_data/bitmaps_test => bitmaps_test
+		report.zip => report.zip
 	""".trimIndent()
+
+	buildReportTab {
+		title = "VR Report"
+		startPage= "report.zip!index.html"
+	}
 
 	vcs {
 		root(Settings.WpCalypso)
@@ -234,6 +239,16 @@ private object VisualRegressionTests : BuildType({
 				yarn "%vr_task%"
 			""".trimIndent()
 			dockerRunParameters = "-v /var/run/docker.sock:/var/run/docker.sock"
+		}
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				zip -r report.zip test/visual/backstop_data/html_report test/visual/backstop_data/bitmaps_test test/visual/backstop_data/bitmaps_reference
+
+			""".trimIndent()
 		}
 	}
 
