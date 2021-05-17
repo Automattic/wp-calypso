@@ -105,7 +105,7 @@ class SiteVerification extends Component {
 		const stateItems = {};
 
 		supportedServices.forEach( ( service ) => {
-			stateItems[ service.slug + 'Code' ] = get(
+			stateItems[ service.slug ] = get(
 				site,
 				`options.verification_services_codes.${ service.slug }`,
 				''
@@ -175,7 +175,7 @@ class SiteVerification extends Component {
 			if ( event.target.value.length === 1 ) {
 				this.setState( {
 					showPasteError: true,
-					invalidCodes: [ serviceCode.replace( 'Code', '' ) ],
+					invalidCodes: [ serviceCode ],
 				} );
 				return;
 			}
@@ -220,12 +220,9 @@ class SiteVerification extends Component {
 		const verificationCodes = {};
 		const invalidCodes = [];
 		getSupportedServices().forEach( ( service ) => {
-			const verificationCode = this.state[ service.slug + 'Code' ];
+			const verificationCode = this.state[ service.slug ];
 			verificationCodes[ service.slug ] = verificationCode;
-			if (
-				typeof verificationCode === 'string' &&
-				! this.isValidCode( service.slug, verificationCode )
-			) {
+			if ( ! this.isValidCode( service.slug, verificationCode ) ) {
 				invalidCodes.push( service.slug );
 			}
 		} );
@@ -249,7 +246,7 @@ class SiteVerification extends Component {
 		this.props.trackFormSubmitted( { path } );
 
 		dirtyFields.forEach( ( service ) => {
-			trackSiteVerificationUpdated( service.replace( 'Code', '' ), path );
+			trackSiteVerificationUpdated( service, path );
 		} );
 	};
 
@@ -274,9 +271,7 @@ class SiteVerification extends Component {
 		const supportedServices = getSupportedServices( translate );
 
 		supportedServices.forEach( ( service, index ) => {
-			const stateSlug = `${ service.slug }Code`;
-			service.stateSlug = stateSlug;
-			service.code = this.getMetaTag( service.slug, this.state[ stateSlug ] || '' );
+			service.code = this.getMetaTag( service.slug, this.state[ service.slug ] || '' );
 
 			if (
 				service.minimumJetpackVersion &&
@@ -362,7 +357,7 @@ class SiteVerification extends Component {
 									disabled={ isVerificationDisabled }
 									isError={ this.hasError( service.slug ) }
 									placeholder={ this.getMetaTag( service.slug, '1234' ) }
-									onChange={ this.handleVerificationCodeChange( service.stateSlug ) }
+									onChange={ this.handleVerificationCodeChange( service.slug ) }
 								/>
 								{ this.hasError( service.slug ) && this.getVerificationError( showPasteError ) }
 							</FormFieldset>
