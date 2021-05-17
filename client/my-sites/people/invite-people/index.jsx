@@ -31,7 +31,6 @@ import { userCan } from 'calypso/lib/site/utils';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import FeatureExample from 'calypso/components/feature-example';
-import versionCompare from 'calypso/lib/version-compare';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -39,7 +38,6 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
@@ -74,8 +72,7 @@ class InvitePeople extends React.Component {
 			this.props.siteId !== nextProps.siteId ||
 			this.props.needsVerification !== nextProps.needsVerification ||
 			this.props.showSSONotice !== nextProps.showSSONotice ||
-			this.props.isJetpack !== nextProps.isJetpack ||
-			this.props.isSiteAutomatedTransfer !== nextProps.isSiteAutomatedTransfer
+			this.props.isJetpack !== nextProps.isJetpack
 		) {
 			this.setState( this.resetState( nextProps ) );
 		}
@@ -476,23 +473,7 @@ class InvitePeople extends React.Component {
 			return inviteForm;
 		}
 
-		const jetpackVersion = get( site, 'options.jetpack_version', 0 );
-		if ( ! this.props.isSiteAutomatedTransfer && versionCompare( jetpackVersion, '5.0', '<' ) ) {
-			return (
-				<div className="invite-people__action-required">
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={ translate( 'Inviting users requires Jetpack 5.0 or higher' ) }
-					>
-						<NoticeAction href={ `/plugins/jetpack/${ site.slug }` }>
-							{ translate( 'Update' ) }
-						</NoticeAction>
-					</Notice>
-					<FeatureExample>{ inviteForm }</FeatureExample>
-				</div>
-			);
-		} else if ( showSSONotice ) {
+		if ( showSSONotice ) {
 			return (
 				<div className="invite-people__action-required">
 					<Notice
@@ -758,7 +739,6 @@ const mapStateToProps = ( state ) => {
 		needsVerification: ! isCurrentUserEmailVerified( state ),
 		showSSONotice: ! ( activating || active ),
 		isJetpack: isJetpackSite( state, siteId ),
-		isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		inviteLinks: getInviteLinksForSite( state, siteId ),
 		siteRoles: getSiteRoles( state, siteId ),
