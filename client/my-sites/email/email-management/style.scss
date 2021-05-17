@@ -223,15 +223,18 @@
 }
 
 .popover__menu-item.email-plan-mailboxes-list__mailbox-action-menu-item {
+	align-items: center;
 	display: flex;
 	line-height: 24px;
-	align-items: center;
-	> img {
-		width: 18px;
+
+	> img, svg {
 		height: 18px;
-		margin-right: 8px;
+		fill: var( --color-neutral-50 );
 		filter: grayscale( 100% );
+		margin-right: 8px;
+		width: 18px;
 	}
+
 	&.external-link > .gridicons-external {
 		display: none;
 	}
