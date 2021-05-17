@@ -42,10 +42,8 @@ describe( `[${ host }] Auth Screen Canary: (${ screenSize }) @parallel @safarica
 		return await driverManager.ensureNotLoggedIn( driver );
 	} );
 
-	describe( 'Loading the log-in screen', function () {
-		it( 'Can see the log in screen', async function () {
-			await LoginPage.Visit( driver, LoginPage.getLoginURL() );
-		} );
+	it( 'Can see the log in screen', async function () {
+		await LoginPage.Visit( driver, LoginPage.getLoginURL() );
 	} );
 } );
 

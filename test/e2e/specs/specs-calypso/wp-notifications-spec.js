@@ -26,16 +26,15 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
+	const commentingUser = dataHelper.getAccountConfig( 'commentingUser' )[ 0 ];
+	const comment = dataHelper.randomPhrase() + ' TBD';
+	let commentedPostTitle;
 	let driver;
 
 	before( 'Start browser', async function () {
 		this.timeout( startBrowserTimeoutMS );
 		driver = await driverManager.startBrowser();
 	} );
-
-	const commentingUser = dataHelper.getAccountConfig( 'commentingUser' )[ 0 ];
-	const comment = dataHelper.randomPhrase() + ' TBD';
-	let commentedPostTitle;
 
 	it( 'Can log in as commenting user', async function () {
 		const loginFlow = new LoginFlow( driver, 'commentingUser' );

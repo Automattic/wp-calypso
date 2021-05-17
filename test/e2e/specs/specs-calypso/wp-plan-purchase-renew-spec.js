@@ -22,7 +22,7 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-describe( `[${ host }] Plans: (${ screenSize })`, function () {
+describe( `[${ host }] Plans - Renew: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 	let driver;
 
@@ -31,36 +31,34 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 		driver = await driverManager.startBrowser();
 	} );
 
-	describe( 'Renew a plan:  @parallel', function () {
-		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
+	before( async function () {
+		return await driverManager.ensureNotLoggedIn( driver );
+	} );
 
-		it( 'Can log into WordPress.com', async function () {
-			const loginFlow = new LoginFlow( driver );
-			return await loginFlow.login();
-		} );
+	it( 'Can log into WordPress.com', async function () {
+		const loginFlow = new LoginFlow( driver );
+		return await loginFlow.login();
+	} );
 
-		it( 'Can navigate to purchases', async function () {
-			const navBarComponent = await NavBarComponent.Expect( driver );
-			await navBarComponent.clickProfileLink();
-			const profilePage = await ProfilePage.Expect( driver );
-			await profilePage.chooseManagePurchases();
-			const purchasesPage = await PurchasesPage.Expect( driver );
-			await purchasesPage.dismissGuidedTour();
-			return await purchasesPage.selectPremiumPlanOnConnectedSite();
-		} );
+	it( 'Can navigate to purchases', async function () {
+		const navBarComponent = await NavBarComponent.Expect( driver );
+		await navBarComponent.clickProfileLink();
+		const profilePage = await ProfilePage.Expect( driver );
+		await profilePage.chooseManagePurchases();
+		const purchasesPage = await PurchasesPage.Expect( driver );
+		await purchasesPage.dismissGuidedTour();
+		return await purchasesPage.selectPremiumPlanOnConnectedSite();
+	} );
 
-		it( '"Renew Now" link takes user to Payment Details form', async function () {
-			const managePurchasePage = await ManagePurchasePage.Expect( driver );
-			await managePurchasePage.chooseRenewNow();
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-			const premiumPlanInCart = await securePaymentComponent.containsPremiumPlan();
-			return assert.strictEqual(
-				premiumPlanInCart,
-				true,
-				"The cart doesn't contain the premium plan"
-			);
-		} );
+	it( '"Renew Now" link takes user to Payment Details form', async function () {
+		const managePurchasePage = await ManagePurchasePage.Expect( driver );
+		await managePurchasePage.chooseRenewNow();
+		const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+		const premiumPlanInCart = await securePaymentComponent.containsPremiumPlan();
+		return assert.strictEqual(
+			premiumPlanInCart,
+			true,
+			"The cart doesn't contain the premium plan"
+		);
 	} );
 } );

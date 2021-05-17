@@ -21,6 +21,8 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
+	let gutenbergEditor;
+	let blockID;
 	let driver;
 
 	before( 'Start browser', async function () {
@@ -28,92 +30,85 @@ describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack
 		driver = await driverManager.startBrowser();
 	} );
 
-	describe( 'Image Upload:', function () {
-		let gutenbergEditor;
-		let blockID;
+	before( async function () {
+		let editorType = 'iframe';
+		const loginFlow = new LoginFlow( driver );
 
-		before( async function () {
-			let editorType = 'iframe';
-			const loginFlow = new LoginFlow( driver );
+		if ( host !== 'WPCOM' ) {
+			editorType = 'wpadmin';
+		}
+		await loginFlow.loginAndStartNewPage( null, true, { editorType: editorType } );
 
-			if ( host !== 'WPCOM' ) {
-				editorType = 'wpadmin';
-			}
-			await loginFlow.loginAndStartNewPage( null, true, { editorType: editorType } );
+		gutenbergEditor = await GutenbergEditorComponent.Expect( driver, editorType );
+		await gutenbergEditor.displayed();
+	} );
 
-			gutenbergEditor = await GutenbergEditorComponent.Expect( driver, editorType );
-			await gutenbergEditor.displayed();
+	describe( 'Can upload a normal image', function () {
+		let fileDetails;
+
+		it( 'Navigate to Editor page and create image file for upload', async function () {
+			fileDetails = await mediaHelper.createFileWithFilename( 'normal.jpg' );
 		} );
 
-		describe( 'Can upload many media types', function () {
-			describe( 'Can upload a normal image', function () {
-				let fileDetails;
+		it( 'Can upload an image', async function () {
+			blockID = await gutenbergEditor.addImage( fileDetails );
+		} );
 
-				it( 'Navigate to Editor page and create image file for upload', async function () {
-					fileDetails = await mediaHelper.createFileWithFilename( 'normal.jpg' );
-				} );
+		it( 'Can delete image', async function () {
+			await gutenbergEditor.removeBlock( blockID );
+		} );
 
-				it( 'Can upload an image', async function () {
-					blockID = await gutenbergEditor.addImage( fileDetails );
-				} );
+		it( 'Clean up', async function () {
+			if ( fileDetails ) {
+				await mediaHelper.deleteFile( fileDetails );
+			}
+		} );
+	} );
 
-				it( 'Can delete image', async function () {
-					await gutenbergEditor.removeBlock( blockID );
-				} );
+	describe( 'Can upload an image with reserved url chars in the filename', function () {
+		let fileDetails;
 
-				it( 'Clean up', async function () {
-					if ( fileDetails ) {
-						await mediaHelper.deleteFile( fileDetails );
-					}
-				} );
-			} );
+		it( 'Create image file for upload', async function () {
+			fileDetails = await mediaHelper.createFileWithFilename(
+				'filewith#?#?reservedurlchars.jpg',
+				true
+			);
+		} );
 
-			describe( 'Can upload an image with reserved url chars in the filename', function () {
-				let fileDetails;
+		it( 'Can upload an image', async function () {
+			blockID = await gutenbergEditor.addImage( fileDetails );
+		} );
 
-				it( 'Create image file for upload', async function () {
-					fileDetails = await mediaHelper.createFileWithFilename(
-						'filewith#?#?reservedurlchars.jpg',
-						true
-					);
-				} );
+		it( 'Can delete image', async function () {
+			await gutenbergEditor.removeBlock( blockID );
+		} );
 
-				it( 'Can upload an image', async function () {
-					blockID = await gutenbergEditor.addImage( fileDetails );
-				} );
+		it( 'Clean up', async function () {
+			if ( fileDetails ) {
+				await mediaHelper.deleteFile( fileDetails );
+			}
+		} );
+	} );
 
-				it( 'Can delete image', async function () {
-					await gutenbergEditor.removeBlock( blockID );
-				} );
+	describe( 'Can upload an mp3', function () {
+		let fileDetails;
 
-				it( 'Clean up', async function () {
-					if ( fileDetails ) {
-						await mediaHelper.deleteFile( fileDetails );
-					}
-				} );
-			} );
+		it( 'Create mp3 for upload', async function () {
+			fileDetails = await mediaHelper.getMP3FileWithFilename( 'new.mp3' );
+		} );
 
-			describe( 'Can upload an mp3', function () {
-				let fileDetails;
+		it( 'Can upload an mp3', async function () {
+			blockID = await gutenbergEditor.addFile( fileDetails );
+		} );
 
-				it( 'Create mp3 for upload', async function () {
-					fileDetails = await mediaHelper.getMP3FileWithFilename( 'new.mp3' );
-				} );
+		it( 'Can delete mp3', async function () {
+			await gutenbergEditor.removeBlock( blockID );
+		} );
 
-				it( 'Can upload an mp3', async function () {
-					blockID = await gutenbergEditor.addFile( fileDetails );
-				} );
-
-				it( 'Can delete mp3', async function () {
-					await gutenbergEditor.removeBlock( blockID );
-				} );
-
-				it( 'Clean up', async function () {
-					if ( fileDetails ) {
-						await mediaHelper.deleteFile( fileDetails );
-					}
-				} );
-			} );
+		it( 'Clean up', async function () {
+			if ( fileDetails ) {
+				await mediaHelper.deleteFile( fileDetails );
+			}
 		} );
 	} );
 } );

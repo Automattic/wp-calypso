@@ -34,50 +34,46 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function
 		driver = await driverManager.startBrowser();
 	} );
 
-	describe( 'Activating Themes:', function () {
-		it( 'Login', async function () {
-			const loginFlow = new LoginFlow( driver );
-			return await loginFlow.loginAndSelectMySite( null, { useFreshLogin: true } );
-		} );
-
-		it( 'Can open Themes menu', async function () {
-			const sidebarComponent = await SidebarComponent.Expect( driver );
-			return await sidebarComponent.selectThemes();
-		} );
-
-		describe( 'Can switch free themes', function () {
-			it( 'Can activate a different free theme', async function () {
-				const themesPage = await ThemesPage.Expect( driver );
-				await themesPage.waitUntilThemesLoaded();
-				await themesPage.showOnlyFreeThemes();
-				await themesPage.searchFor( 'Twenty F' );
-				await themesPage.waitForThemeStartingWith( 'Twenty F' );
-				await themesPage.clickNewThemeMoreButton();
-				const displayed = await themesPage.popOverMenuDisplayed();
-				assert( displayed, true, 'Popover menu not displayed' );
-				return await themesPage.clickPopoverItem( 'Activate' );
-			} );
-
-			it( 'Can see the theme thanks dialog', async function () {
-				const themeDialogComponent = await ThemeDialogComponent.Expect( driver );
-				await themeDialogComponent.customizeSite();
-			} );
-
-			if ( host === 'WPCOM' ) {
-				it( 'Can customize the site from the theme thanks dialog', async function () {
-					return await CustomizerPage.Expect( driver );
-				} );
-			} else {
-				it( 'Can log in via Jetpack SSO', async function () {
-					const wpAdminLogonPage = await WPAdminLogonPage.Expect( driver );
-					return await wpAdminLogonPage.logonSSO();
-				} );
-
-				it( 'Can customize the site from the theme thanks dialog', async function () {
-					await WPAdminCustomizerPage.refreshIfJNError( driver );
-					return await WPAdminCustomizerPage.Expect( driver );
-				} );
-			}
-		} );
+	it( 'Login', async function () {
+		const loginFlow = new LoginFlow( driver );
+		return await loginFlow.loginAndSelectMySite( null, { useFreshLogin: true } );
 	} );
+
+	it( 'Can open Themes menu', async function () {
+		const sidebarComponent = await SidebarComponent.Expect( driver );
+		return await sidebarComponent.selectThemes();
+	} );
+
+	it( 'Can activate a different free theme', async function () {
+		const themesPage = await ThemesPage.Expect( driver );
+		await themesPage.waitUntilThemesLoaded();
+		await themesPage.showOnlyFreeThemes();
+		await themesPage.searchFor( 'Twenty F' );
+		await themesPage.waitForThemeStartingWith( 'Twenty F' );
+		await themesPage.clickNewThemeMoreButton();
+		const displayed = await themesPage.popOverMenuDisplayed();
+		assert( displayed, true, 'Popover menu not displayed' );
+		return await themesPage.clickPopoverItem( 'Activate' );
+	} );
+
+	it( 'Can see the theme thanks dialog', async function () {
+		const themeDialogComponent = await ThemeDialogComponent.Expect( driver );
+		await themeDialogComponent.customizeSite();
+	} );
+
+	if ( host === 'WPCOM' ) {
+		it( 'Can customize the site from the theme thanks dialog', async function () {
+			return await CustomizerPage.Expect( driver );
+		} );
+	} else {
+		it( 'Can log in via Jetpack SSO', async function () {
+			const wpAdminLogonPage = await WPAdminLogonPage.Expect( driver );
+			return await wpAdminLogonPage.logonSSO();
+		} );
+
+		it( 'Can customize the site from the theme thanks dialog', async function () {
+			await WPAdminCustomizerPage.refreshIfJNError( driver );
+			return await WPAdminCustomizerPage.Expect( driver );
+		} );
+	}
 } );
