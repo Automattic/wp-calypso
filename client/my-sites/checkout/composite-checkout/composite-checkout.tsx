@@ -84,7 +84,6 @@ import getPostalCode from './lib/get-postal-code';
 import mergeIfObjects from './lib/merge-if-objects';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
-import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
 import type { PaymentProcessorOptions } from './types/payment-processors';
 
 const { colors } = colorStudio;
@@ -221,7 +220,6 @@ export default function CompositeCheckout( {
 	} );
 
 	const {
-		couponStatus,
 		applyCoupon,
 		updateLocation,
 		replaceProductInCart,
@@ -233,17 +231,12 @@ export default function CompositeCheckout( {
 		addProductsToCart,
 	} = useShoppingCart();
 
-	const maybeJetpackIntroCouponCode = useMaybeJetpackIntroCouponCode(
-		productsForCart,
-		couponStatus === 'applied'
-	);
-
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
 		isCartPendingUpdate,
 		productsForCart,
 		areCartProductsPreparing,
-		couponCodeFromUrl: couponCodeFromUrl || maybeJetpackIntroCouponCode,
+		couponCodeFromUrl,
 		applyCoupon,
 		addProductsToCart,
 	} );
