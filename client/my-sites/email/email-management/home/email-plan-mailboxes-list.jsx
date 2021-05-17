@@ -258,21 +258,17 @@ const ActionMenu = ( { domain } ) => {
 			popoverClassName="email-plan-mailboxes-list__mailbox-action-menu-popover"
 			className="email-plan-mailboxes-list__mailbox-action-menu"
 		>
-			{ menuItems.map( function ( menuItem ) {
-				const { image, imageAltText, href, title } = menuItem;
-
-				return (
-					<PopoverMenuItem
-						key={ href }
-						className="email-plan-mailboxes-list__mailbox-action-menu-item"
-						isExternalLink
-						href={ href }
-					>
-						<img src={ image } alt={ imageAltText } />
-						{ title }
-					</PopoverMenuItem>
-				);
-			} ) }
+			{ menuItems.map( ( { image, imageAltText, href, title } ) => (
+				<PopoverMenuItem
+					key={ href }
+					className="email-plan-mailboxes-list__mailbox-action-menu-item"
+					isExternalLink
+					href={ href }
+				>
+					<img src={ image } alt={ imageAltText } />
+					{ title }
+				</PopoverMenuItem>
+			) ) }
 		</EllipsisMenu>
 	);
 };
