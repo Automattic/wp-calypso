@@ -251,14 +251,19 @@ class Block_Patterns_From_API {
 			foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
 				// Gutenberg registers patterns with varying prefixes, but categorizes them using `core/*` in a blockTypes array.
 				// This will ensure we remove `query/*` blocks for example.
+				// TODO: We need to revisit our usage or $pattern['blockTypes']: they are currently an experimental feature and not guaranteed to reference `core/*` blocks.
 				$pattern_block_type_or_name = ! empty( $pattern['blockTypes'][0] ) ? $pattern['blockTypes'][0] : $pattern['name'];
 				if ( 'core/' === substr( $pattern_block_type_or_name, 0, 5 ) ) {
 					unregister_block_pattern( $pattern['name'] );
 				}
 			}
 			if ( function_exists( '_register_core_block_patterns_and_categories' ) ) {
-				switch_to_locale( $this->utils->get_block_patterns_locale() );
+				$did_switch_locale = switch_to_locale( $this->utils->get_block_patterns_locale() );
 				_register_core_block_patterns_and_categories();
+				// The site locale might be the same as the current locale so switching could have failed in such instances.
+				if ( $did_switch_locale !== false ) {
+					restore_previous_locale();
+				}
 			}
 		}
 	}
@@ -280,7 +285,7 @@ class Block_Patterns_From_API {
 					unset( $pattern_properties['name'] );
 					register_block_pattern(
 						$pattern['name'],
-						$pattern_properties,
+						$pattern_properties
 					);
 				}
 			}
