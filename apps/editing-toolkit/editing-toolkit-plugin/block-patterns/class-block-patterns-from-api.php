@@ -261,7 +261,7 @@ class Block_Patterns_From_API {
 				$did_switch_locale = switch_to_locale( $this->utils->get_block_patterns_locale() );
 				_register_core_block_patterns_and_categories();
 				// The site locale might be the same as the current locale so switching could have failed in such instances.
-				if ( $did_switch_locale !== false ) {
+				if ( false !== $did_switch_locale ) {
 					restore_previous_locale();
 				}
 			}
