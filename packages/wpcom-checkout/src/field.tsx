@@ -38,7 +38,7 @@ export default function Field( {
 	inputClassName?: string;
 	isError?: boolean;
 	onChange: ( value: string ) => void;
-	label: string;
+	label?: string;
 	value: string;
 	icon?: React.ReactNode;
 	iconAction?: () => void;
