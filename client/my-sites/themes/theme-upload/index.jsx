@@ -46,6 +46,7 @@ import {
 	getUploadProgressLoaded,
 	isInstallInProgress,
 } from 'calypso/state/themes/upload-theme/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
@@ -302,6 +303,7 @@ const mapStateToProps = ( state ) => {
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
 	const canUploadThemesOrPlugins = siteCanUploadThemesOrPlugins( state, siteId );
+	const isAtomic = isSiteWpcomAtomic( state, siteId );
 
 	return {
 		siteId,
@@ -321,7 +323,8 @@ const mapStateToProps = ( state ) => {
 		installing: isInstallInProgress( state, siteId ),
 		backPath: getBackPath( state ),
 		showEligibility:
-			( ! isJetpack && ( hasEligibilityMessages || ! isEligible ) ) || ! canUploadThemesOrPlugins,
+			( ( isJetpack && isAtomic ) || ( ! isJetpack && ! isAtomic ) ) &&
+			( hasEligibilityMessages || ! isEligible || ! canUploadThemesOrPlugins ),
 		isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		canUploadThemesOrPlugins,
