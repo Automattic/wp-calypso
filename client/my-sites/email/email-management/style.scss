@@ -208,6 +208,28 @@
 	margin-top: 15px;
 }
 
+.email-plan-mailboxes-list__mailbox-action-menu {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+	transform: translateY( -50% );
+}
+
+.popover__menu-item.email-plan-mailboxes-list__mailbox-action-menu-item {
+	display: flex;
+	line-height: 24px;
+	align-items: center;
+	> img {
+		width: 18px;
+		height: 18px;
+		margin-right: 8px;
+		filter: grayscale( 100% );
+	}
+	&.external-link > .gridicons-external {
+		display: none;
+	}
+}
+
 .email-plan-mailboxes-list__mailbox-list-item {
 	display: flex;
 	flex-direction: column;
@@ -222,6 +244,7 @@
 	&.card.is-error {
 		border-left-color: var( --color-error-50 );
 	}
+
 	.email-plan-mailboxes-list__mailbox-list-item-main {
 		display: flex;
 		flex-direction: column;

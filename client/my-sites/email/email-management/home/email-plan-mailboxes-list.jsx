@@ -11,19 +11,47 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Badge from 'calypso/components/badge';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
 import MaterialIcon from 'calypso/components/material-icon';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import SectionHeader from 'calypso/components/section-header';
-import Badge from 'calypso/components/badge';
 import {
 	getEmailForwardAddress,
 	isEmailForward,
 	isEmailForwardVerified,
 	isEmailUserAdmin,
 } from 'calypso/lib/emails';
+import {
+	getGmailUrl,
+	getGoogleAdminUrl,
+	getGoogleCalendarUrl,
+	getGoogleDocsUrl,
+	getGoogleDriveUrl,
+	getGoogleSheetsUrl,
+	getGoogleSlidesUrl,
+	hasGSuiteWithUs,
+} from 'calypso/lib/gsuite';
+import {
+	getTitanCalendarlUrl,
+	getTitanContactsUrl,
+	getTitanEmailUrl,
+	hasTitanMailWithUs,
+} from 'calypso/lib/titan';
+import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/gmail.svg';
+import googleAdminIcon from 'calypso/assets/images/email-providers/google-workspace/services/admin.svg';
+import googleCalendarIcon from 'calypso/assets/images/email-providers/google-workspace/services/calendar.svg';
+import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspace/services/docs.svg';
+import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/services/drive.svg';
+import googleSheetsIcon from 'calypso/assets/images/email-providers/google-workspace/services/sheets.svg';
+import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/slides.svg';
 import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resendVerificationEmail } from 'calypso/state/email-forwarding/actions';
+import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/calendar.svg';
+import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/contacts.svg';
+import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/mail.svg';
 
 const getListHeaderTextForAccountType = ( accountType, translate ) => {
 	if ( accountType === EMAIL_ACCOUNT_TYPE_FORWARD ) {
@@ -136,7 +164,126 @@ const getActionsForMailbox = ( mailbox, translate, dispatch ) => {
 	};
 };
 
-function EmailPlanMailboxesList( { accountType, mailboxes, isLoadingEmails } ) {
+/**
+ * Returns the available menu items for Titan Emails
+ *
+ * @param {string} email The email address of the Titan account
+ * @param {Function} translate The translate function
+ * @returns Array of menu items
+ */
+const getTitanMenuItems = ( email, translate ) => {
+	return [
+		{
+			href: getTitanEmailUrl( email ),
+			image: titanMailIcon,
+			imageAltText: translate( 'Titan Mail icon' ),
+			title: translate( 'Mail', {
+				comment: 'This refers to the Email application (i.e. the webmail) of Titan',
+			} ),
+		},
+		{
+			href: getTitanCalendarlUrl( email ),
+			image: titanCalendarIcon,
+			imageAltText: translate( 'Titan Calendar icon' ),
+			title: translate( 'Calendar', {
+				comment: 'This refers to the Calendar application of Titan',
+			} ),
+		},
+		{
+			href: getTitanContactsUrl( email ),
+			image: titanContactsIcon,
+			imageAltText: translate( 'Titan Contacts icon' ),
+			title: translate( 'Contacts', {
+				comment: 'This refers to the Contacts application of Titan',
+			} ),
+		},
+	];
+};
+
+const getGSuiteMenuItems = ( email, translate ) => {
+	return [
+		{
+			href: getGmailUrl( email ),
+			image: gmailIcon,
+			imageAltText: translate( 'Gmail icon' ),
+			title: translate( 'View Gmail' ),
+		},
+		{
+			href: getGoogleAdminUrl( email ),
+			image: googleAdminIcon,
+			imageAltText: translate( 'Google Admin icon' ),
+			title: translate( 'View Admin' ),
+		},
+		{
+			href: getGoogleCalendarUrl( email ),
+			image: googleCalendarIcon,
+			imageAltText: translate( 'Google Calendar icon' ),
+			title: translate( 'View Calendar' ),
+		},
+		{
+			href: getGoogleDocsUrl( email ),
+			image: googleDocsIcon,
+			imageAltText: translate( 'Google Docs icon' ),
+			title: translate( 'View Docs' ),
+		},
+		{
+			href: getGoogleDriveUrl( email ),
+			image: googleDriveIcon,
+			imageAltText: translate( 'Google Drive icon' ),
+			title: translate( 'View Drive' ),
+		},
+		{
+			href: getGoogleSheetsUrl( email ),
+			image: googleSheetsIcon,
+			imageAltText: translate( 'Google Sheets icon' ),
+			title: translate( 'View Sheets' ),
+		},
+		{
+			href: getGoogleSlidesUrl( email ),
+			image: googleSlidesIcon,
+			imageAltText: translate( 'Google Slides icon' ),
+			title: translate( 'View Slides' ),
+		},
+	];
+};
+
+const getMenuItems = ( { domain, email }, translate ) => {
+	if ( hasTitanMailWithUs( domain ) ) {
+		return getTitanMenuItems( email, translate );
+	}
+
+	if ( hasGSuiteWithUs( domain ) ) {
+		return getGSuiteMenuItems( email, translate );
+	}
+
+	return null;
+};
+
+const ActionMenu = ( { domain, mailbox } ) => {
+	const translate = useTranslate();
+	const email = `${ mailbox.mailbox }@${ mailbox.domain }`;
+	const menuItems = getMenuItems( { domain, email }, translate );
+	if ( ! menuItems ) {
+		return null;
+	}
+	return (
+		<EllipsisMenu className="email-plan-mailboxes-list__mailbox-action-menu">
+			{ menuItems.map( ( { image, imageAltText, href, title } ) => (
+				<PopoverMenuItem
+					key={ href }
+					className="email-plan-mailboxes-list__mailbox-action-menu-item"
+					isExternalLink
+					href={ href }
+				>
+					<img src={ image } alt={ imageAltText } />
+					{ title }
+				</PopoverMenuItem>
+			) ) }
+		</EllipsisMenu>
+	);
+};
+
+function EmailPlanMailboxesList( { accountType, domain, isLoadingEmails, mailboxes } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -184,6 +331,7 @@ function EmailPlanMailboxesList( { accountType, mailboxes, isLoadingEmails } ) {
 				) }
 				{ warning }
 				{ action }
+				<ActionMenu domain={ domain } mailbox={ mailbox } />
 			</MailboxListItem>
 		);
 	} );
@@ -193,8 +341,9 @@ function EmailPlanMailboxesList( { accountType, mailboxes, isLoadingEmails } ) {
 
 EmailPlanMailboxesList.propTypes = {
 	accountType: PropTypes.string,
-	mailboxes: PropTypes.array,
+	domain: PropTypes.object,
 	isLoadingEmails: PropTypes.bool,
+	mailboxes: PropTypes.array,
 };
 
 export default EmailPlanMailboxesList;
