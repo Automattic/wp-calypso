@@ -5,22 +5,22 @@
 <!-- TOC -->
 
 - [Run tests](#run-tests)
-    - [Table of Contents](#table-of-contents)
-    - [Overview](#overview)
-    - [Target environment](#target-environment)
-        - [Staging](#staging)
-        - [Localhost](#localhost)
-    - [Running tests Selenium](#running-tests-selenium)
-        - [All tests](#all-tests)
-        - [Individual spec files](#individual-spec-files)
-        - [Individual suite](#individual-suite)
-    - [Running tests Playwright](#running-tests-playwright)
-        - [All tests](#all-tests)
-        - [Individual spec files](#individual-spec-files)
-        - [Individual suite](#individual-suite)
-    - [Options](#options)
-        - [Headless](#headless)
-    - [TeamCity](#teamcity)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Target environment](#target-environment)
+    - [Staging](#staging)
+    - [Localhost](#localhost)
+  - [Running tests Selenium](#running-tests-selenium)
+    - [All tests](#all-tests)
+    - [Individual spec files](#individual-spec-files)
+    - [Individual suite](#individual-suite)
+  - [Running tests Playwright](#running-tests-playwright)
+    - [All tests](#all-tests)
+    - [Individual spec files](#individual-spec-files)
+    - [Individual suite](#individual-suite)
+  - [Options](#options)
+    - [Headless](#headless)
+  - [TeamCity](#teamcity)
 
 <!-- /TOC -->
 
@@ -127,7 +127,7 @@ eg.
 ./node_modules/.bin/mocha specs/wp-calypso-gutenberg-coblocks-spec.js -g 'Insert a Pricing Table block'
 ```
 
-## Running tests (Playwright) 
+## Running tests (Playwright)
 
 Playwright is the new framework and the intention is to migrate most (if not all) of our Selenium-based tests to this new framework.
 
@@ -154,7 +154,6 @@ yarn magellan --config=magellan-playwright.json
 ```
 
 </details>
-
 
 ### Individual spec file(s)
 

@@ -9,16 +9,16 @@ Refer to the [style guide](docs/style-guide.md) for coding style information.
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-    - [Table of contents](#table-of-contents)
-    - [Selector](#selector)
-    - [Component](#component)
-    - [Page](#page)
-        - [Structure](#structure)
-        - [Guidelines](#guidelines)
-    - [Flow](#flow)
-        - [Structure](#structure)
-        - [Guidelines](#guidelines)
-    - [Gutenberg Blocks](#gutenberg-blocks)
+  - [Table of contents](#table-of-contents)
+  - [Selector](#selector)
+  - [Component](#component)
+  - [Page](#page)
+    - [Structure](#structure)
+    - [Guidelines](#guidelines)
+  - [Flow](#flow)
+    - [Structure](#structure)
+    - [Guidelines](#guidelines)
+  - [Gutenberg Blocks](#gutenberg-blocks)
 
 <!-- /TOC -->
 
@@ -36,7 +36,7 @@ Ideally, a selector satisfies all of the following:
 
 ## Component
 
-Components cover elements that persist across multiple pages. 
+Components cover elements that persist across multiple pages.
 
 Encapsulating behavior of a component in an object permits code reuse, promotes object oriented thinking and separation of duties.
 
@@ -45,13 +45,13 @@ On `wp-calypso`, some components are:
 - left sidebar
 - master bar
 
-## Page 
+## Page
 
 Page Object Model (or _POM_ for short) is a common technique used for automated end-to-end testing.
 
-Similar to a `Class` in software development, the POM groups together attributes, functions and other code on a page. 
+Similar to a `Class` in software development, the POM groups together attributes, functions and other code on a page.
 
-Automated end-to-end tests create instances of page objects to invoke actions on the page. 
+Automated end-to-end tests create instances of page objects to invoke actions on the page.
 
 Similar to comonents, page objects encourage:
 
