@@ -13,8 +13,6 @@ import LoginFlow from '../../lib/flows/login-flow.js';
 
 import CustomizerPage from '../../lib/pages/customizer-page';
 import ThemesPage from '../../lib/pages/themes-page.js';
-import ThemePreviewPage from '../../lib/pages/theme-preview-page.js';
-import ThemeDetailPage from '../../lib/pages/theme-detail-page.js';
 import ThemeDialogComponent from '../../lib/components/theme-dialog-component.js';
 import SidebarComponent from '../../lib/components/sidebar-component';
 import WPAdminCustomizerPage from '../../lib/pages/wp-admin/wp-admin-customizer-page.js';
@@ -25,44 +23,6 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
-
-describe( `[${ host }] Previewing Themes: (${ screenSize })`, function () {
-	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
-
-	describe( 'Previewing Themes @parallel @jetpack', function () {
-		it( 'Can login and select themes', async function () {
-			const loginFlow = new LoginFlow( driver );
-			await loginFlow.loginAndSelectThemes();
-		} );
-
-		describe( 'Can preview free themes', function () {
-			it( 'Can select a different free theme', async function () {
-				this.themesPage = await ThemesPage.Expect( driver );
-				await this.themesPage.waitUntilThemesLoaded();
-				await this.themesPage.showOnlyFreeThemes();
-				await this.themesPage.searchFor( 'Twenty S' );
-				await this.themesPage.waitForThemeStartingWith( 'Twenty S' );
-				return await this.themesPage.selectNewThemeStartingWith( 'Twenty S' );
-			} );
-
-			it( 'Can see theme details page and open the live demo', async function () {
-				this.themeDetailPage = await ThemeDetailPage.Expect( driver );
-				return await this.themeDetailPage.openLiveDemo();
-			} );
-
-			it( 'Activate button appears on the theme preview page', async function () {
-				this.themePreviewPage = await ThemePreviewPage.Expect( driver );
-				await this.themePreviewPage.activateButtonVisible();
-			} );
-		} );
-	} );
-} );
 
 // NOTE: test in jetpack env is failing due to some strange issue, when switching to new tab. It fails only in CI
 describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function () {
