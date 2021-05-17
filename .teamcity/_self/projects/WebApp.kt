@@ -777,8 +777,8 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
-				export DISPLAYSIZE="mobile"
-				export TARGETLOCALE="en"
+				export VIEWPORT_SIZE="mobile"
+				export LOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 
 				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
