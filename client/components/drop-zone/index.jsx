@@ -48,7 +48,6 @@ export class DropZone extends React.Component {
 	state = {
 		isDraggingOverDocument: false,
 		isDraggingOverElement: false,
-		lastVisibleState: false,
 	};
 
 	zoneRef = React.createRef();
@@ -86,8 +85,6 @@ export class DropZone extends React.Component {
 			isDraggingOverDocument: false,
 			isDraggingOverElement: false,
 		} );
-
-		this.toggleDropZoneReduxState( false );
 	};
 
 	toggleMutationObserver = () => {
@@ -151,18 +148,6 @@ export class DropZone extends React.Component {
 			// For redirected CustomEvent instances, immediately remove window
 			// from tracked nodes since another "real" event will be triggered.
 			this.dragEnterNodes = without( this.dragEnterNodes, window );
-		}
-
-		this.toggleDropZoneReduxState(
-			!! ( this.state.isDraggingOverDocument || this.state.isDraggingOverElement )
-		);
-	};
-
-	toggleDropZoneReduxState = ( isVisible ) => {
-		if ( this.state.lastVisibleState !== isVisible ) {
-			this.setState( {
-				lastVisibleState: isVisible,
-			} );
 		}
 	};
 
