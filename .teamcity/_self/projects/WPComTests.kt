@@ -192,7 +192,7 @@ private object VisualRegressionTests : BuildType({
 		report.zip => report.zip
 	""".trimIndent()
 
-	buildReportTab {
+	BuildReportTab {
 		title = "VR Report"
 		startPage= "report.zip!index.html"
 	}
