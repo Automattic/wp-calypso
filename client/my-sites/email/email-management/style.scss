@@ -150,7 +150,7 @@
 	margin-top: 15px;
 }
 
-.email-plan-mailboxes-list__mailbox-action-menu-item {
+.popover__menu-item.email-plan-mailboxes-list__mailbox-action-menu-item {
 	display: flex;
 	line-height: 24px;
 	align-items: center;
@@ -160,10 +160,9 @@
 		margin-right: 8px;
 		filter: grayscale( 100% );
 	}
-}
-
-.popover__menu-item .external-link > .gridicons-external {
-	display: none;
+	&.external-link > .gridicons-external {
+		display: none;
+	}
 }
 
 .email-plan-mailboxes-list__mailbox-list-item {
