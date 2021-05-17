@@ -614,7 +614,7 @@ export default function CompositeCheckout( {
 		);
 	}
 
-	const updatedSiteId = isJetpackCheckout ? parseInt( responseCart.blog_id ) : siteId;
+	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ) ) : siteId;
 
 	return (
 		<React.Fragment>
