@@ -14,7 +14,7 @@ import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-tog
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class EmailPlanSubscription extends React.Component {
-	isSubscriptionExpired() {
+	hasSubscriptionExpired() {
 		const { isLoadingPurchase, purchase } = this.props;
 
 		if ( isLoadingPurchase || ! purchase ) {
@@ -42,7 +42,7 @@ class EmailPlanSubscription extends React.Component {
 			<RenewButton
 				compact={ true }
 				purchase={ purchase }
-				primary={ this.isSubscriptionExpired() }
+				primary={ this.hasSubscriptionExpired() }
 				selectedSite={ selectedSite }
 				subscriptionId={ parseInt( purchase.id, 10 ) }
 				tracksProps={ { source: 'email-plan-view' } }
@@ -86,14 +86,14 @@ class EmailPlanSubscription extends React.Component {
 			return null;
 		}
 
-		const isSubscriptionExpired = this.isSubscriptionExpired();
+		const hasSubscriptionExpired = this.hasSubscriptionExpired();
 		const translateArgs = {
 			args: {
 				expiryDate: moment.utc( purchase.expiryDate ).format( 'LL' ),
 			},
 			comment: 'Shows the expiry date of the email subscription',
 		};
-		const expiryText = isSubscriptionExpired
+		const expiryText = hasSubscriptionExpired
 			? translate( 'Expired: %(expiryDate)s', translateArgs )
 			: translate( 'Expires: %(expiryDate)s', translateArgs );
 
@@ -101,7 +101,7 @@ class EmailPlanSubscription extends React.Component {
 			<CompactCard className="email-plan-subscription__card">
 				<div
 					className={ classNames( {
-						'email-plan-subscription__expired': isSubscriptionExpired,
+						'email-plan-subscription__expired': hasSubscriptionExpired,
 					} ) }
 				>
 					{ expiryText }
