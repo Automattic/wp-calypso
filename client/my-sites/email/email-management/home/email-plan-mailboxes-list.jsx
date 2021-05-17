@@ -235,21 +235,22 @@ const getGSuiteMenuItems = ( domainName, translate ) => {
 	];
 };
 
-const getMenuItems = ( domain, translate ) => {
+const getMenuItems = ( { domain, email }, translate ) => {
 	if ( hasTitanMailWithUs( domain ) ) {
 		return getTitanMenuItems( translate );
 	}
 
 	if ( hasGSuiteWithUs( domain ) ) {
-		return getGSuiteMenuItems( domain.name, translate );
+		return getGSuiteMenuItems( email || domain.name, translate );
 	}
 
 	return null;
 };
 
-const ActionMenu = ( { domain } ) => {
+const ActionMenu = ( { domain, mailbox } ) => {
 	const translate = useTranslate();
-	const menuItems = getMenuItems( domain, translate );
+	const email = `${ mailbox.mailbox }@${ mailbox.domain }`;
+	const menuItems = getMenuItems( { domain, email }, translate );
 	if ( ! menuItems ) {
 		return null;
 	}
@@ -320,7 +321,7 @@ function EmailPlanMailboxesList( { accountType, domain, isLoadingEmails, mailbox
 					{ warning }
 					{ action }
 				</div>
-				<ActionMenu domain={ domain } />
+				<ActionMenu domain={ domain } mailbox={ mailbox } />
 			</MailboxListItem>
 		);
 	} );
