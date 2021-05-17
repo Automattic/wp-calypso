@@ -11,12 +11,12 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
 import MaterialIcon from 'calypso/components/material-icon';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import SectionHeader from 'calypso/components/section-header';
-import Badge from 'calypso/components/badge';
 import {
 	getEmailForwardAddress,
 	isEmailForward,
