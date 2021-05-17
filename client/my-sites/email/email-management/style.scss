@@ -150,6 +150,13 @@
 	margin-top: 15px;
 }
 
+.email-plan-mailboxes-list__mailbox-action-menu {
+	position: absolute;
+    right: 24px;
+    top: 50%;
+	transform: translateY( -50% );
+}
+
 .popover__menu-item.email-plan-mailboxes-list__mailbox-action-menu-item {
 	display: flex;
 	line-height: 24px;
@@ -166,8 +173,6 @@
 }
 
 .email-plan-mailboxes-list__mailbox-list-item {
-	display: flex;
-	flex-direction: column;
 
 	@include break-xlarge {
 		flex-direction: row;
