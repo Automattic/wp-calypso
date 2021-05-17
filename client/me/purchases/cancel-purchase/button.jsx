@@ -23,7 +23,11 @@ import {
 	isOneTimePurchase,
 	isSubscription,
 } from 'calypso/lib/purchases';
-import { isDomainRegistration } from '@automattic/calypso-products';
+import {
+	getMonthlyPlanByYearly,
+	getPlan,
+	isDomainRegistration,
+} from '@automattic/calypso-products';
 import { confirmCancelDomain, purchasesRoot } from 'calypso/me/purchases/paths';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
@@ -224,6 +228,41 @@ class CancelPurchaseButton extends Component {
 		);
 	};
 
+	switchToMonthlyClick = async () => {
+		const { purchase } = this.props;
+		const monthlyPlanSlug = getMonthlyPlanByYearly( purchase.productSlug );
+		const monthlyPlanProductId = getPlan( monthlyPlanSlug ).getProductId();
+
+		this.setDisabled( true );
+		cancelAndRefundPurchase(
+			purchase.id,
+			{
+				product_id: purchase.productId,
+				type: 'downgrade',
+				to_product_id: monthlyPlanProductId,
+			},
+			( error, response ) => {
+				this.setDisabled( false );
+
+				if ( error ) {
+					this.props.errorNotice( error.message );
+
+					this.cancellationFailed();
+
+					return;
+				}
+
+				this.props.successNotice( response.message, { displayOnNextPage: true } );
+
+				this.props.refreshSitePlans( purchase.siteId );
+
+				this.props.clearPurchases();
+
+				page.redirect( this.props.purchaseListUrl );
+			}
+		);
+	};
+
 	submitCancelAndRefundPurchase = () => {
 		const refundable = hasAmountAvailableToRefund( this.props.purchase );
 
@@ -311,6 +350,7 @@ class CancelPurchaseButton extends Component {
 					onClose={ this.closeDialog }
 					onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
 					downgradeClick={ this.downgradeClick }
+					switchToMonthlyClick={ this.switchToMonthlyClick }
 					flowType={ this.getCancellationFlowType() }
 				/>
 			</div>

@@ -11,11 +11,16 @@ import {
 	findPlansKeys,
 	isPlan,
 	includesProduct,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
 } from '@automattic/calypso-products';
 import * as steps from './steps';
 
 const BUSINESS_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BUSINESS } );
 const PREMIUM_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } );
+const WPCOM_ANNUAL_AND_BIENNIAL_PLANS = []
+	.concat( findPlansKeys( { group: GROUP_WPCOM, term: TERM_ANNUALLY } ) )
+	.concat( findPlansKeys( { group: GROUP_WPCOM, term: TERM_BIENNIALLY } ) );
 const PERSONAL_PREMIUM_PLANS = []
 	.concat( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PERSONAL } ) )
 	.concat( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } ) );
@@ -30,7 +35,8 @@ export default function stepsForProductAndSurvey(
 	product,
 	canChat,
 	precancellationChatAvailable,
-	downgradePossible
+	downgradePossible,
+	isRefundable
 ) {
 	if ( survey && survey.questionOneRadio === 'couldNotInstall' ) {
 		if ( includesProduct( BUSINESS_PLANS, product ) ) {
@@ -44,7 +50,16 @@ export default function stepsForProductAndSurvey(
 
 	if ( survey && survey.questionOneRadio === 'onlyNeedFree' ) {
 		if ( includesProduct( PREMIUM_PLANS, product ) && downgradePossible ) {
-			return [ steps.INITIAL_STEP, steps.DOWNGRADE_STEP, steps.FINAL_STEP ];
+			return [
+				steps.INITIAL_STEP,
+				steps.SWITCH_TO_MONTHLY_STEP,
+				steps.DOWNGRADE_STEP,
+				steps.FINAL_STEP,
+			];
+		}
+
+		if ( isRefundable && includesProduct( WPCOM_ANNUAL_AND_BIENNIAL_PLANS, product ) ) {
+			return [ steps.INITIAL_STEP, steps.SWITCH_TO_MONTHLY_STEP, steps.FINAL_STEP ];
 		}
 	}
 

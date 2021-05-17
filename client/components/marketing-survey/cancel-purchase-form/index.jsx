@@ -32,6 +32,7 @@ import BusinessATStep from './step-components/business-at-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
 import PrecancellationChatButton from './precancellation-chat-button';
 import DowngradeStep from './step-components/downgrade-step';
+import SwitchToMonthlyStep from './step-components/switch-to-monthly-step';
 import { getName, isRefundable } from 'calypso/lib/purchases';
 import {
 	isGSuiteOrGoogleWorkspace,
@@ -122,7 +123,8 @@ class CancelPurchaseForm extends React.Component {
 			purchase,
 			isChatAvailable || isChatActive,
 			precancellationChatAvailable,
-			downgradePossible
+			downgradePossible,
+			isRefundable( purchase )
 		);
 	};
 
@@ -317,6 +319,16 @@ class CancelPurchaseForm extends React.Component {
 		if ( ! this.state.isSubmitting ) {
 			this.props.downgradeClick();
 			this.recordEvent( 'calypso_purchases_downgrade_form_submit' );
+			this.setState( {
+				isSubmitting: true,
+			} );
+		}
+	};
+
+	switchToMonthlyClick = () => {
+		if ( ! this.state.isSubmitting ) {
+			this.props.switchToMonthlyClick();
+			this.recordEvent( 'calypso_purchases_switch_to_monthly_form_submit' );
 			this.setState( {
 				isSubmitting: true,
 			} );
@@ -711,6 +723,10 @@ class CancelPurchaseForm extends React.Component {
 				);
 			}
 
+			if ( surveyStep === steps.SWITCH_TO_MONTHLY_STEP ) {
+				return <SwitchToMonthlyStep />;
+			}
+
 			return (
 				<div>
 					<FormSectionHeading>
@@ -800,6 +816,13 @@ class CancelPurchaseForm extends React.Component {
 			onClick: this.downgradeClick,
 			isPrimary: true,
 		};
+		const switchToMonthly = {
+			action: 'switchToMonthly',
+			disabled: this.state.isSubmitting,
+			label: translate( 'Switch to Monthly' ),
+			onClick: this.switchToMonthlyClick,
+			isPrimary: true,
+		};
 		const removeText = translate( 'Remove It' );
 		const removingText = translate( 'Removing' );
 		const remove = (
@@ -833,6 +856,10 @@ class CancelPurchaseForm extends React.Component {
 
 		if ( this.state.surveyStep === steps.DOWNGRADE_STEP ) {
 			return firstButtons.concat( [ prev, downgrade, next ] );
+		}
+
+		if ( this.state.surveyStep === steps.SWITCH_TO_MONTHLY_STEP ) {
+			return firstButtons.concat( [ prev, switchToMonthly, next ] );
 		}
 
 		return firstButtons.concat(
