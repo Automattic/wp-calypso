@@ -228,6 +228,8 @@ private object VisualRegressionTests : BuildType({
 			scriptContent = """
 				set -x
 				export NODE_ENV="test"
+				export CAPTURE_LIMIT=16
+				export COMPARE_LIMIT=150
 
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/development.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"

@@ -1,3 +1,6 @@
+const asyncCaptureLimit = process.env.CAPTURE_LIMIT ? process.env.CAPTURE_LIMIT : 5;
+const asyncCompareLimit = process.env.COMPARE_LIMIT ? process.env.COMPARE_LIMIT : 50;
+
 module.exports = {
 	id: 'pre-test-login',
 	viewports: [
@@ -40,8 +43,8 @@ module.exports = {
 	engineOptions: {
 		args: [ '--no-sandbox' ],
 	},
-	asyncCaptureLimit: 5,
-	asyncCompareLimit: 50,
+	asyncCaptureLimit: asyncCaptureLimit,
+	asyncCompareLimit: asyncCompareLimit,
 	debug: false,
 	debugWindow: false,
 	dockerCommandTemplate:
