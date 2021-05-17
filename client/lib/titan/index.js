@@ -6,5 +6,5 @@ export { getTitanMailboxRenewalCost } from './get-titan-mailbox-renewal-cost';
 export { getTitanMailOrderId } from './get-titan-mail-order-id';
 export { getTitanProductName } from './get-titan-product-name';
 export { getTitanSubscriptionId } from './get-titan-subscription-id';
-export { getTitanEmailUrl, getTitanCalendarlUrl, getTitanContactsUrl } from './get-titan-urls';
+export { getTitanCalendarlUrl, getTitanContactsUrl, getTitanEmailUrl } from './get-titan-urls';
 export { hasTitanMailWithUs } from './has-titan-mail-with-us';

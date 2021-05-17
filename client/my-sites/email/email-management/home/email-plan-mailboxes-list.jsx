@@ -33,6 +33,12 @@ import {
 	getGoogleSlidesUrl,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
+import {
+	getTitanCalendarlUrl,
+	getTitanContactsUrl,
+	getTitanEmailUrl,
+	hasTitanMailWithUs,
+} from 'calypso/lib/titan';
 import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/gmail.svg';
 import googleAdminIcon from 'calypso/assets/images/email-providers/google-workspace/services/admin.svg';
 import googleCalendarIcon from 'calypso/assets/images/email-providers/google-workspace/services/calendar.svg';
@@ -41,12 +47,6 @@ import googleDriveIcon from 'calypso/assets/images/email-providers/google-worksp
 import googleSheetsIcon from 'calypso/assets/images/email-providers/google-workspace/services/sheets.svg';
 import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/slides.svg';
 import Gridicon from 'calypso/components/gridicon';
-import {
-	getTitanEmailUrl,
-	getTitanCalendarlUrl,
-	getTitanContactsUrl,
-	hasTitanMailWithUs,
-} from 'calypso/lib/titan';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resendVerificationEmail } from 'calypso/state/email-forwarding/actions';
 import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/calendar.svg';
