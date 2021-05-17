@@ -210,9 +210,16 @@
 
 .email-plan-mailboxes-list__mailbox-action-menu {
     position: absolute;
-    right: 24px;
-    top: 50%;
-	transform: translateY( -50% );
+    right: 16px;
+	top: 28px;
+
+	@include break-mobile {
+		right: 24px;
+	}
+
+	> .button.is-borderless {
+		padding: 0;
+	}
 }
 
 .popover__menu-item.email-plan-mailboxes-list__mailbox-action-menu-item {
@@ -238,16 +245,25 @@
 		flex-direction: row;
 	}
 
-	&.card.is-highlight {
-		padding-left: 13px;
-	}
-	&.card.is-error {
-		border-left-color: var( --color-error-50 );
+	&.card {
+		&.is-highlight {
+			padding-left: 13px;
+		}
+
+		&.is-error {
+			border-left-color: var( --color-error-50 );
+		}
 	}
 
 	.email-plan-mailboxes-list__mailbox-list-item-main {
 		display: flex;
 		flex-direction: column;
+		padding-right: 56px;
+
+		@include break-mobile {
+			padding-right: 72px;
+		}
+
 		> div:not( :first-child ) {
 			margin-top: 0.5em;
 		}
