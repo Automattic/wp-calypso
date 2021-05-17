@@ -5,18 +5,22 @@
 <!-- TOC -->
 
 - [Run tests](#run-tests)
-  - [Table of Contents](#table-of-contents)
-  - [Overview](#overview)
-  - [Target environment](#target-environment)
-    - [Staging](#staging)
-    - [Localhost](#localhost)
-  - [Running tests](#running-tests)
-    - [All tests](#all-tests)
-    - [Individual spec files](#individual-spec-files)
-    - [Individual suite](#individual-suite)
-  - [Options](#options)
-    - [Headless](#headless)
-  - [TeamCity](#teamcity)
+    - [Table of Contents](#table-of-contents)
+    - [Overview](#overview)
+    - [Target environment](#target-environment)
+        - [Staging](#staging)
+        - [Localhost](#localhost)
+    - [Running tests Selenium](#running-tests-selenium)
+        - [All tests](#all-tests)
+        - [Individual spec files](#individual-spec-files)
+        - [Individual suite](#individual-suite)
+    - [Running tests Playwright](#running-tests-playwright)
+        - [All tests](#all-tests)
+        - [Individual spec files](#individual-spec-files)
+        - [Individual suite](#individual-suite)
+    - [Options](#options)
+        - [Headless](#headless)
+    - [TeamCity](#teamcity)
 
 <!-- /TOC -->
 
@@ -59,7 +63,7 @@ yarn start
 
 The local environment is now ready for testing. When a test is run, it will hit againt the local development server instead of the WordPress.com staging environment.
 
-## Running tests
+## Running tests (Selenium)
 
 ### All tests
 
@@ -88,7 +92,7 @@ Specify spec file(s) directly to mocha:
 
 </details>
 
-<detail>
+<details>
 <summary>Example (magellan)</summary>
 
 ```
@@ -122,6 +126,76 @@ eg.
 ```
 ./node_modules/.bin/mocha specs/wp-calypso-gutenberg-coblocks-spec.js -g 'Insert a Pricing Table block'
 ```
+
+## Running tests (Playwright) 
+
+Playwright is the new framework and the intention is to migrate most (if not all) of our Selenium-based tests to this new framework.
+
+The steps to run calypso e2e tests developed for Playwright are very similar to Selenium-based suites.
+
+### All tests
+
+Specify a directory to `mocha`:
+
+<details>
+<summary>Example (mocha)</summary>
+
+```
+mocha --config .mocharc_playwright.yml specs/specs-playwright
+```
+
+</details>
+
+<details>
+<summary>Example (magellan)</summary>
+
+```
+yarn magellan --config=magellan-playwright.json
+```
+
+</details>
+
+
+### Individual spec file(s)
+
+Specify the file(s) directly to `mocha`:
+
+```
+mocha --config .mocharc_playwright.yml specs/specs-playwright/<spec_file>
+```
+
+<details>
+<summary>Example (mocha)</summary>
+
+```
+mocha --config .mocharc_playwright.yml specs/specs-playwright/wp-log-in-out-spec.js
+```
+
+</details>
+
+<details>
+<summary>Example (magellan)</summary>
+
+```
+yarn magellan --config=magellan-playwright.json --test=specs-playwright/wp-log-in-out-spec.js
+```
+
+</details>
+
+### Individual suite
+
+Specify the name to `mocha`:
+
+</details>
+
+<details>
+<summary>Example (mocha)</summary>
+
+```
+mocha --config .mocharc_playwright.yml specs/specs-playwright -g 'Subsuite 2-1 @parallel'
+```
+
+</details>
 
 ## Options
 

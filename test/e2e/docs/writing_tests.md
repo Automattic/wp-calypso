@@ -1,6 +1,6 @@
 # Writing Tests
 
-This document will outline tips to write successful tests.
+This document will outline tips to write successful tests for both Selenium and Playwright suites.
 
 Refer to the [style guide](docs/style-guide.md) for coding style information.
 
@@ -9,17 +9,16 @@ Refer to the [style guide](docs/style-guide.md) for coding style information.
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-  - [Table of contents](#table-of-contents)
-  - [Selector](#selector)
-    - [How](#how)
-  - [Component](#component)
-  - [Page Object Model](#page-object-model)
-    - [Structure](#structure)
-    - [Guidelines](#guidelines)
-  - [Flow](#flow)
-    - [Structure](#structure)
-    - [Guidelines](#guidelines)
-  - [Gutenberg Blocks](#gutenberg-blocks)
+    - [Table of contents](#table-of-contents)
+    - [Selector](#selector)
+    - [Component](#component)
+    - [Page](#page)
+        - [Structure](#structure)
+        - [Guidelines](#guidelines)
+    - [Flow](#flow)
+        - [Structure](#structure)
+        - [Guidelines](#guidelines)
+    - [Gutenberg Blocks](#gutenberg-blocks)
 
 <!-- /TOC -->
 
@@ -35,30 +34,30 @@ Ideally, a selector satisfies all of the following:
 - **reliable**: the same element is selected with each iteration.
 - **brief**: selector is short and easy to read.
 
-### How
-
-Use the browser's built-in Web Inspector tool to find selectors.
-
 ## Component
 
-Components are smaller in scope than page objects, but fundamentally the concept is to capture attributes and actions associated with page elements that can appear across multiple pages.
+Components cover elements that persist across multiple pages. 
 
-On `wp-calypso`, some possible components may be:
+Encapsulating behavior of a component in an object permits code reuse, promotes object oriented thinking and separation of duties.
+
+On `wp-calypso`, some components are:
 
 - left sidebar
 - master bar
 
-## Page Object Model
+## Page 
 
-Page Object Model (or _POM_ for short) is a common technique used with Selenium WebDriver-based automated tests.
+Page Object Model (or _POM_ for short) is a common technique used for automated end-to-end testing.
 
-Similar to a `Class` in software development, the POM groups together various attributes, functions and other code related to a certain page. Automated e2e tests interact with the page through an instance of the POM.
+Similar to a `Class` in software development, the POM groups together attributes, functions and other code on a page. 
 
-THe use of POM encourages the following:
+Automated end-to-end tests create instances of page objects to invoke actions on the page. 
 
-- **Don't Repeat Yourself (DRY)**: actions can be called from POM instead of being re-implemented each time.
-- **maintainability**: if a page changes, update the corresponding POM.
-- **readability**: named variables and functions are much easier to decipher than series of actions.
+Similar to comonents, page objects encourage:
+
+- **Don't Repeat Yourself (DRY)**: common actions can be called from the page object.
+- **maintainability**: if a page changes, update the page object at one spot.
+- **readability**: named variables and functions are much easier to decipher than series of strings.
 
 Developers should add a new page object under `test/e2e/lib/pages` upon completion of a feature that adds a new page not covered by existing page objects.
 
@@ -111,7 +110,7 @@ For the purpose of this document however, a flow typically refers to a set of ac
 
 ### Structure
 
-Similar to the POM, flows are at heart JavaScript classes that perform actions on elements.
+Flows are larger in scope than page objects, typically executing actions across multiple (related) pages.
 
 ```
 external dependencies
@@ -151,7 +150,7 @@ export default class LoginFlow {
 ### Guidelines
 
 - aggressively refactor such that basic actions can be extended by other functions.
-- tightly control scope so that flows do not become the e2e tests.
+- tightly control scope so that flows do not become the e2e tests themselves.
 
 ## Gutenberg Blocks
 
