@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { ToggleControl } from '@wordpress/components';
+
 /**
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { activateModule, deactivateModule } from 'calypso/state/jetpack/modules/actions';
@@ -71,14 +71,13 @@ class JetpackModuleToggle extends Component {
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<span className="jetpack-module-toggle">
-				<FormToggle
+				<ToggleControl
 					id={ `${ this.props.siteId }-${ this.props.moduleSlug }-toggle` }
 					checked={ this.props.checked || false }
 					onChange={ this.handleChange }
 					disabled={ this.props.disabled || this.props.toggleDisabled || this.props.toggling }
-				>
-					{ this.props.label }
-				</FormToggle>
+					label={ this.props.label }
+				/>
 				{ this.props.description && (
 					<FormSettingExplanation isIndented>{ this.props.description }</FormSettingExplanation>
 				) }
