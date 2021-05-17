@@ -7,18 +7,18 @@ This document will cover the environment setup process to run the `wp-calypso` e
 <!-- TOC -->
 
 - [Setup](#setup)
-    - [Table of contents](#table-of-contents)
-    - [Software Environment](#software-environment)
-        - [Required software](#required-software)
-    - [Setup steps macOS 10.15 and 11.0](#setup-steps-macos-1015-and-110)
-        - [Intel architecture](#intel-architecture)
-        - [Apple Silicon architecture](#apple-silicon-architecture)
-    - [Environment Variables](#environment-variables)
-    - [Configuration File](#configuration-file)
-        - [Overview](#overview)
-        - [Quick start](#quick-start)
-        - [Custom configuration](#custom-configuration)
-    - [Credentials File](#credentials-file)
+  - [Table of contents](#table-of-contents)
+  - [Software Environment](#software-environment)
+    - [Required software](#required-software)
+  - [Setup steps macOS 10.15 and 11.0](#setup-steps-macos-1015-and-110)
+    - [Intel architecture](#intel-architecture)
+    - [Apple Silicon architecture](#apple-silicon-architecture)
+  - [Environment Variables](#environment-variables)
+  - [Configuration File](#configuration-file)
+    - [Overview](#overview)
+    - [Quick start](#quick-start)
+    - [Custom configuration](#custom-configuration)
+  - [Credentials File](#credentials-file)
 
 <!-- /TOC -->
 
@@ -148,6 +148,7 @@ Under the `tests/e2e/config` directory are JSON files for predefined environment
 The default configuration will suffice for most purposes. To use the default configuration, nothing needs to be changed.
 
 ### Custom configuration
+
 > :warning: **ensure username/passwords and other configuration values are not committed by accident!**
 
 Custom config files should be added under `test/e2e/config/` and should follow the naming scheme:
@@ -156,7 +157,7 @@ Custom config files should be added under `test/e2e/config/` and should follow t
 local-<whatever>.json
 ```
 
-The `local-` prefix ensures that custom configurations will not be commited to the repository. 
+The `local-` prefix ensures that custom configurations will not be commited to the repository.
 
 Values found in the local configuration file will override ones found in `default.json`.
 

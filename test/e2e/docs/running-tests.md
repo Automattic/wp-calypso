@@ -5,18 +5,18 @@
 <!-- TOC -->
 
 - [Run tests](#run-tests)
-    - [Table of Contents](#table-of-contents)
-    - [Overview](#overview)
-    - [Target environment](#target-environment)
-        - [Staging](#staging)
-        - [Localhost](#localhost)
-    - [Running tests](#running-tests)
-        - [All tests](#all-tests)
-        - [Individual spec files](#individual-spec-files)
-        - [Individual suite](#individual-suite)
-    - [Options](#options)
-        - [Headless](#headless)
-    - [TeamCity](#teamcity)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Target environment](#target-environment)
+    - [Staging](#staging)
+    - [Localhost](#localhost)
+  - [Running tests](#running-tests)
+    - [All tests](#all-tests)
+    - [Individual spec files](#individual-spec-files)
+    - [Individual suite](#individual-suite)
+  - [Options](#options)
+    - [Headless](#headless)
+  - [TeamCity](#teamcity)
 
 <!-- /TOC -->
 
@@ -37,7 +37,7 @@ Calypso e2e when run locally can use either `magellan` for identical behavior as
 
 By default, end-to-end tests run from the developer's hardware will hit the WPCOM Staging environment. This is specified inside the [`default.json`](config/default.json) file, under `calypsoBaseUrl`.
 
-### Localhost 
+### Localhost
 
 Local development environment refers to a locally served instance of the `wp-calypso` frontend.
 
@@ -45,7 +45,7 @@ Local development environment refers to a locally served instance of the `wp-cal
 
 2. change the `calypsoBaseURL` value in `test/e2e/config/default.json` to `http://calypso.localhost:3000`.
 
-	Alternatively: create a new local-<name>.json under `test/e2e/config` and set the `calypsoBaseURL` value to `http://calypso.localhost:3000`.
+   Alternatively: create a new local-<name>.json under `test/e2e/config` and set the `calypsoBaseURL` value to `http://calypso.localhost:3000`.
 
 3. start the webapp:
 
@@ -85,7 +85,7 @@ Specify spec file(s) directly to mocha:
 ```
 ./node_modules/.bin/mocha specs/wp-calypso-gutenberg-coblocks-spec.js
 ```
- 
+
 </details>
 
 <detail>
@@ -94,7 +94,7 @@ Specify spec file(s) directly to mocha:
 ```
 yarn magellan --test=specs/wp-log-in-out-spec.js
 ```
- 
+
 </details>
 
 Alternatively, append the `.only` postfix to a `describe` block:
@@ -105,7 +105,7 @@ Alternatively, append the `.only` postfix to a `describe` block:
 ```
 describe.only( 'Logging In and Out:', function() {
 ```
- 
+
 </details>
 
 :warning: ensure this syntax should be removed once the test is to be committed to the repository.
@@ -148,6 +148,6 @@ Calypso end-to-end tests have migrated to TeamCity as of 2021-01.
 
 Both sets of E2E Tests (desktop, mobile) are run against all branches, PRs and trunk. This process is automatic.
 
-Note that access to TeamCity is available only to Automatticians. 
+Note that access to TeamCity is available only to Automatticians.
 
 OSS Citizens (including Trialmatticians), please request an Automattician to execute the required e2e tests in the PR.

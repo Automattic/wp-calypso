@@ -3,19 +3,19 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-    - [Naming Branches](#naming-branches)
-    - [Async / Await](#async--await)
-    - [Tags](#tags)
-    - [Modes](#modes)
-        - [Specify one mode](#specify-one-mode)
-        - [Specify multiple modes](#specify-multiple-modes)
-    - [Page Objects](#page-objects)
-    - [Use of this, const and lets](#use-of-this-const-and-lets)
-    - [Arrow functions](#arrow-functions)
-    - [Default values using destructuring](#default-values-using-destructuring)
-    - [Nesting step blocks](#nesting-step-blocks)
-    - [Catching errors in a step block](#catching-errors-in-a-step-block)
-    - [Waiting for elements](#waiting-for-elements)
+  - [Naming Branches](#naming-branches)
+  - [Async / Await](#async--await)
+  - [Tags](#tags)
+  - [Modes](#modes)
+    - [Specify one mode](#specify-one-mode)
+    - [Specify multiple modes](#specify-multiple-modes)
+  - [Page Objects](#page-objects)
+  - [Use of this, const and lets](#use-of-this-const-and-lets)
+  - [Arrow functions](#arrow-functions)
+  - [Default values using destructuring](#default-values-using-destructuring)
+  - [Nesting step blocks](#nesting-step-blocks)
+  - [Catching errors in a step block](#catching-errors-in-a-step-block)
+  - [Waiting for elements](#waiting-for-elements)
 
 <!-- /TOC -->
 
