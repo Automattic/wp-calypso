@@ -79,7 +79,7 @@ export type CacheStatus = 'fresh' | 'fresh-pending' | 'valid' | 'invalid' | 'pen
  *   - 'applied': Coupon has been applied to the cart.
  *   - 'rejected': Coupon code did not apply. The reason should be in the cart errors.
  */
-export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'rejected' | 'error';
+export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'rejected';
 
 export type ShoppingCartAction =
 	| { type: 'CLEAR_QUEUED_ACTIONS' }
