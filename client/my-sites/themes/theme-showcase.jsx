@@ -19,7 +19,6 @@ import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'calypso/components/data/document-head';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from '@automattic/calypso-config';
@@ -46,18 +45,6 @@ import RecommendedThemes from './recommended-themes';
  * Style dependencies
  */
 import './theme-showcase.scss';
-
-function getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) {
-	if ( ! siteSlug ) {
-		return '/themes/upload';
-	}
-
-	if ( canUploadThemesOrPlugins ) {
-		return `https://${ siteSlug }/wp-admin/theme-install.php`;
-	}
-
-	return `/themes/upload/${ siteSlug }`;
-}
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -229,7 +216,6 @@ class ThemeShowcase extends React.Component {
 			title,
 			filterString,
 			isMultisite,
-			canUploadThemesOrPlugins,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -426,7 +412,6 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	filterToTermTable: getThemeFilterToTermTable( state ),
 	hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
 	themesBookmark: getThemesBookmark( state ),
-	canUploadThemesOrPlugins: siteCanUploadThemesOrPlugins( state, siteId ),
 } );
 
 const mapDispatchToProps = {

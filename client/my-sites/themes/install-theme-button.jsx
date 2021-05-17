@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 
+import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
 import { connectOptions } from './theme-options';
 import { translate } from 'i18n-calypso';
 import { trackClick } from './helpers';
@@ -23,8 +24,20 @@ import { Button } from '@automattic/components';
  */
 import './install-theme-button.scss';
 
+function getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) {
+	if ( ! siteSlug ) {
+		return '/themes/upload';
+	}
+
+	if ( canUploadThemesOrPlugins ) {
+		return `https://${ siteSlug }/wp-admin/theme-install.php`;
+	}
+
+	return `/themes/upload/${ siteSlug }`;
+}
+
 const InstallThemeButton = connectOptions(
-	( { isMultisite, isLoggedIn, siteSlug, dispatchTracksEvent } ) => {
+	( { isMultisite, isLoggedIn, siteSlug, dispatchTracksEvent, canUploadThemesOrPlugins } ) => {
 		if ( ! isLoggedIn || isMultisite ) {
 			return null;
 		}
@@ -38,7 +51,7 @@ const InstallThemeButton = connectOptions(
 			<Button
 				className="themes__upload-button"
 				onClick={ clickHandler }
-				href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
+				href={ getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) }
 			>
 				{ translate( 'Install theme' ) }
 			</Button>
@@ -52,6 +65,7 @@ const mapStateToProps = ( state ) => {
 		siteSlug: getSelectedSiteSlug( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 		isMultisite: isJetpackSiteMultiSite( state, selectedSiteId ),
+		canUploadThemesOrPlugins: siteCanUploadThemesOrPlugins( state, selectedSiteId ),
 	};
 };
 
