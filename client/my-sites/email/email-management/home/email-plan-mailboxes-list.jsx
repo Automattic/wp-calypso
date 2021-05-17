@@ -188,7 +188,7 @@ const getTitanMenuItems = ( translate ) => {
 	];
 };
 
-const getGmailMenuItems = ( domainName, translate ) => {
+const getGSuiteMenuItems = ( domainName, translate ) => {
 	return [
 		{
 			href: getGmailUrl( domainName ),
@@ -241,7 +241,7 @@ const getMenuItems = ( domain, translate ) => {
 	}
 
 	if ( hasGSuiteWithUs( domain ) ) {
-		return getGmailMenuItems( domain.name, translate );
+		return getGSuiteMenuItems( domain.name, translate );
 	}
 
 	return null;
