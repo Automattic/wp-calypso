@@ -288,24 +288,28 @@ export function setWhenSettable(
 	);
 }
 
-export function setCheckbox( driver, locator ) {
-	return driver.findElement( locator ).then( ( checkbox ) => {
-		checkbox.getAttribute( 'checked' ).then( ( checked ) => {
-			if ( checked !== 'true' ) {
-				return this.clickWhenClickable( driver, locator );
-			}
-		} );
-	} );
-}
+/**
+ * Checks or unchecks a checkbox element via click.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By|Function} locator The checkbox element locator
+ * @param {boolean} [check=true] Whether the checkbox should be checked or not
+ * @returns {Promise<WebElement>} A promise that will resolve with the located checkbox
+ */
+export async function setCheckbox( driver, locator, check = true ) {
+	const element = await waitUntilElementLocatedAndVisible( driver, locator );
+	const elementType = await element.getAttribute( 'type' );
+	const isCheckbox = 'checkbox' === elementType;
+	if ( ! isCheckbox ) {
+		throw new TypeError( `Element is not a checkbox: ${ elementType }` );
+	}
 
-export function unsetCheckbox( driver, locator ) {
-	return driver.findElement( locator ).then( ( checkbox ) => {
-		checkbox.getAttribute( 'checked' ).then( ( checked ) => {
-			if ( checked === 'true' ) {
-				return this.clickWhenClickable( driver, locator );
-			}
-		} );
-	} );
+	const isChecked = 'true' === ( await element.getAttribute( 'checked' ) );
+
+	if ( ( check && isChecked ) || ( ! check && ! isChecked ) ) {
+		return element;
+	}
+	return await clickWhenClickable( driver, () => element );
 }
 
 /**

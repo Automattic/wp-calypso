@@ -124,13 +124,10 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 			By.css( '.components-checkbox-control__label' ),
 			'Allow comments'
 		);
-		const checkBoxLocatorID = await this.driver.findElement( labelLocator ).getAttribute( 'for' );
-		const checkBoxLocator = By.id( checkBoxLocatorID );
-		if ( allow === true ) {
-			await driverHelper.setCheckbox( this.driver, checkBoxLocator );
-		} else {
-			await driverHelper.unsetCheckbox( this.driver, checkBoxLocator );
-		}
+		const checkBoxSelector = await this.driver.findElement( labelLocator ).getAttribute( 'for' );
+		const checkBoxLocator = By.id( checkBoxSelector );
+
+		await driverHelper.setCheckbox( this.driver, checkBoxLocator, allow );
 	}
 
 	async addNewCategory( category ) {
@@ -197,39 +194,25 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async setVisibilityToPasswordProtected( password ) {
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.edit-post-post-visibility__toggle' )
-		);
-		await this.driver.sleep( 1000 ); // wait for popover to be fully loaded
-		await driverHelper.setCheckbox(
-			this.driver,
-			By.css( 'input#editor-post-password-0[value="password"]' )
-		);
-		return await driverHelper.setWhenSettable(
-			this.driver,
-			By.css( '.editor-post-visibility__dialog-password-input' ),
-			password,
-			{
-				secureValue: true,
-			}
-		);
+		const visibilityToggleLocator = By.css( '.edit-post-post-visibility__toggle' );
+		const visibilityOptionLocator = By.css( 'input#editor-post-password-0[value="password"]' );
+		const passwordInputLocator = By.css( '.editor-post-visibility__dialog-password-input' );
+
+		await driverHelper.clickWhenClickable( this.driver, visibilityToggleLocator );
+		await driverHelper.clickWhenClickable( this.driver, visibilityOptionLocator );
+		await driverHelper.setWhenSettable( this.driver, passwordInputLocator, password, {
+			secureValue: true,
+		} );
 	}
 
 	async setVisibilityToPrivate() {
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.edit-post-post-visibility__toggle' )
-		);
-		await this.driver.sleep( 1000 ); // wait for popover to be fully loaded
-		await driverHelper.setCheckbox(
-			this.driver,
-			By.css( 'input#editor-post-private-0[value="private"]' )
-		);
+		const visibilityToggleLocator = By.css( '.edit-post-post-visibility__toggle' );
+		const visibilityOptionLocator = By.css( 'input#editor-post-private-0[value="private"]' );
 
+		await driverHelper.clickWhenClickable( this.driver, visibilityToggleLocator );
+		await driverHelper.clickWhenClickable( this.driver, visibilityOptionLocator );
 		await driverHelper.waitForAlertPresent( this.driver );
-		const publishPrivateAlert = await this.driver.switchTo().alert();
-		return await publishPrivateAlert.accept();
+		await driverHelper.acceptAlertIfPresent( this.driver );
 	}
 
 	async scheduleFuturePost() {

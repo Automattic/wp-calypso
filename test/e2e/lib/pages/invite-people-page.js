@@ -11,7 +11,7 @@ import AsyncBaseContainer from '../async-base-container';
 import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
 
-import * as DriverHelper from '../driver-helper.js';
+import * as driverHelper from '../driver-helper.js';
 
 export default class InvitePeoplePage extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -20,19 +20,18 @@ export default class InvitePeoplePage extends AsyncBaseContainer {
 
 	async inviteNewUser( email, role, message = '' ) {
 		if ( role === 'viewer' ) {
-			role = 'follower'; //the select input option uses follower for viewer
+			role = 'follower'; // The select input option uses 'follower' for 'viewer'
 		}
 
-		const roleLocator = By.css( `fieldset#role input[value=${ role }]` );
+		const emailFieldLocator = By.css( 'input.token-field__input' );
+		const userRoleLocator = By.css( `fieldset#role input[value=${ role }]` );
+		const messageFieldLocator = By.css( '#message' );
+		const submitButtonLocator = By.css( '.invite-people button.button.is-primary' );
 
-		await DriverHelper.setWhenSettable( this.driver, By.css( 'input.token-field__input' ), email );
-		await DriverHelper.clickWhenClickable( this.driver, roleLocator );
-		await DriverHelper.setCheckbox( this.driver, roleLocator );
-		await DriverHelper.setWhenSettable( this.driver, By.css( '#message' ), message );
-		return await DriverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.invite-people button.button.is-primary:not([disabled])' )
-		);
+		await driverHelper.setWhenSettable( this.driver, emailFieldLocator, email );
+		await driverHelper.clickWhenClickable( this.driver, userRoleLocator );
+		await driverHelper.setWhenSettable( this.driver, messageFieldLocator, message );
+		await driverHelper.clickWhenClickable( this.driver, submitButtonLocator );
 	}
 
 	async backToPeopleMenu() {
