@@ -189,10 +189,14 @@ export interface ResponseCartProductExtra {
 	purchaseType?: string;
 	privacy?: boolean;
 	afterPurchaseUrl?: string;
+	isJetpackCheckout?: boolean;
 }
 
 export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	purchaseId?: string;
+	isJetpackCheckout?: boolean;
+	jetpackSiteSlug?: string;
+	jetpackPurchaseToken?: string;
 }
 
 export interface GSuiteProductUser {

@@ -24,14 +24,14 @@ import './style.scss';
 interface Props {
 	licenseKey: string;
 	product: string;
-	domain: string;
+	siteUrl: string | null;
 	onClose: ( action?: string ) => void;
 }
 
 export default function RevokeLicenseDialog( {
 	licenseKey,
 	product,
-	domain,
+	siteUrl,
 	onClose,
 	...rest
 }: Props ): ReactElement {
@@ -100,9 +100,9 @@ export default function RevokeLicenseDialog( {
 			</p>
 
 			<ul>
-				{ domain && (
+				{ siteUrl && (
 					<li>
-						<strong>{ translate( 'Site:' ) }</strong> { domain }
+						<strong>{ translate( 'Site:' ) }</strong> { siteUrl }
 					</li>
 				) }
 				<li>

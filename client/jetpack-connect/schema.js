@@ -38,6 +38,7 @@ export const authorizeQueryDataSchema = {
 		user_email: { type: 'string' },
 		woodna_service_name: { type: 'string' },
 		woodna_help_url: { type: 'string' },
-		skip_user: { type: 'string' }, // '1' if true
+		skip_user: { type: 'string' }, // deprecated, to be removed soon
+		allow_site_connection: { type: 'string' }, // '1' if true
 	},
 };

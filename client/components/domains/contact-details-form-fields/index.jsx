@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, createElement } from 'react';
 import { connect } from 'react-redux';
-import { get, deburr, kebabCase, pick, head, includes, isEqual, isEmpty, camelCase } from 'lodash';
+import { get, deburr, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -244,7 +244,7 @@ export class ContactDetailsFormFields extends Component {
 	}
 
 	focusFirstError() {
-		const firstErrorName = kebabCase( head( formState.getInvalidFields( this.state.form ) ).name );
+		const firstErrorName = kebabCase( formState.getInvalidFields( this.state.form )[ 0 ].name );
 		const firstErrorRef = this.inputRefs[ firstErrorName ];
 
 		try {

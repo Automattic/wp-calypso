@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { useMemo } from 'react';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	createPayPalMethod,
 	createAlipayMethod,
@@ -19,6 +20,7 @@ import {
 } from '@automattic/composite-checkout';
 import {
 	createApplePayMethod,
+	createGooglePayMethod,
 	createBancontactMethod,
 	createBancontactPaymentMethodStore,
 } from '@automattic/wpcom-checkout';
@@ -171,7 +173,7 @@ function useCreateBancontact( {
 	const paymentMethodStore = useMemo( () => createBancontactPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
-			shouldLoad
+			shouldLoad && stripe && stripeConfiguration
 				? createBancontactMethod( {
 						store: paymentMethodStore,
 						stripe,
@@ -384,12 +386,44 @@ function useCreateApplePay( {
 	return applePayMethod;
 }
 
+function useCreateGooglePay( {
+	isStripeLoading,
+	stripeLoadingError,
+	stripeConfiguration,
+	stripe,
+	isGooglePayAvailable,
+	isWebPayLoading,
+}: {
+	isStripeLoading: boolean;
+	stripeLoadingError: StripeLoadingError;
+	stripeConfiguration: StripeConfiguration | null;
+	stripe: Stripe | null;
+	isGooglePayAvailable: boolean;
+	isWebPayLoading: boolean;
+} ): PaymentMethod | null {
+	const isStripeReady =
+		! isStripeLoading &&
+		! stripeLoadingError &&
+		! isWebPayLoading &&
+		stripe &&
+		stripeConfiguration &&
+		isGooglePayAvailable &&
+		isEnabled( 'checkout/google-pay' );
+
+	return useMemo( () => {
+		return isStripeReady && stripe && stripeConfiguration
+			? createGooglePayMethod( stripe, stripeConfiguration )
+			: null;
+	}, [ stripe, stripeConfiguration, isStripeReady ] );
+}
+
 export default function useCreatePaymentMethods( {
 	isStripeLoading,
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
 	isApplePayAvailable,
+	isGooglePayAvailable,
 	isWebPayLoading,
 	storedCards,
 	siteSlug,
@@ -399,6 +433,7 @@ export default function useCreatePaymentMethods( {
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
 	isApplePayAvailable: boolean;
+	isGooglePayAvailable: boolean;
 	isWebPayLoading: boolean;
 	storedCards: StoredCard[];
 	siteSlug: string | undefined;
@@ -496,6 +531,15 @@ export default function useCreatePaymentMethods( {
 		isWebPayLoading,
 	} );
 
+	const googlePayMethod = useCreateGooglePay( {
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+		isGooglePayAvailable,
+		isWebPayLoading,
+	} );
+
 	const existingCardMethods = useCreateExistingCards( {
 		storedCards,
 	} );
@@ -505,6 +549,7 @@ export default function useCreatePaymentMethods( {
 		fullCreditsPaymentMethod,
 		...existingCardMethods,
 		applePayMethod,
+		googlePayMethod,
 		stripeMethod,
 		paypalMethod,
 		idealMethod,

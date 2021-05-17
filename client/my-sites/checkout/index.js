@@ -14,6 +14,7 @@ import {
 	upsellNudge,
 	redirectToSupportSession,
 	redirectJetpackLegacyPlans,
+	jetpackCheckoutThankYou,
 } from './controller';
 import { noop } from './utils';
 import SiftScience from 'calypso/lib/siftscience';
@@ -29,6 +30,16 @@ export default function () {
 	const isLoggedOut = ! user.get();
 
 	if ( isLoggedOut ) {
+		if ( isEnabled( 'jetpack/userless-checkout' ) ) {
+			page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
+			page(
+				'/checkout/jetpack/thank-you/:site/:product',
+				jetpackCheckoutThankYou,
+				makeLayout,
+				clientRender
+			);
+		}
+
 		page( '/checkout/offer-quickstart-session', upsellNudge, makeLayout, clientRender );
 
 		page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
@@ -36,6 +47,24 @@ export default function () {
 		page( '/checkout*', redirectLoggedOut );
 
 		return;
+	}
+
+	// Handle logged-in user visiting Jetpack checkout
+	if ( isEnabled( 'jetpack/userless-checkout' ) ) {
+		page(
+			'/checkout/jetpack/:product/:domainOrProduct',
+			siteSelection,
+			checkout,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/checkout/jetpack/thank-you/:site/:product',
+			siteSelection,
+			jetpackCheckoutThankYou,
+			makeLayout,
+			clientRender
+		);
 	}
 
 	// Show these paths only for logged in users

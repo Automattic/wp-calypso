@@ -25,11 +25,7 @@ export default function () {
 
 function handleLoggedOut() {
 	if ( config.isEnabled( 'desktop' ) ) {
-		if ( config.isEnabled( 'oauth' ) ) {
-			page.redirect( config( 'login_url' ) );
-		} else {
-			page.redirect( '/log-in' );
-		}
+		page.redirect( '/' );
 	} else if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
 		page.redirect( '/devdocs/start' );
 	} else if ( config.isEnabled( 'jetpack-cloud' ) ) {

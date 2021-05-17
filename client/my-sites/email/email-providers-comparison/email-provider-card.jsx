@@ -87,7 +87,7 @@ function EmailProviderCard( {
 				{ showFeaturesToggleButton && (
 					<EmailProviderFeaturesToggleButton
 						handleClick={ () => setFeaturesExpanded( ! areFeaturesExpanded ) }
-						isSwitched={ areFeaturesExpanded }
+						isRelatedContentExpanded={ areFeaturesExpanded }
 					/>
 				) }
 			</div>

@@ -26,6 +26,14 @@ const AuthorSelector = ( {
 	transformAuthor,
 } ) => {
 	const [ search, setSearch ] = React.useState( '' );
+	const [ prevSiteId, setPrevSiteId ] = React.useState( null );
+
+	if ( siteId && siteId !== prevSiteId ) {
+		setPrevSiteId( siteId );
+		if ( search !== '' ) {
+			setSearch( '' );
+		}
+	}
 
 	const fetchOptions = { number: 50 };
 	const trimmedSearch = search.trim?.();

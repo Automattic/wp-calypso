@@ -67,10 +67,6 @@ describe( 'getCurrentSection', () => {
 		expect( getCurrentSection( STATS, false, '/stats/123' ) ).toBe( STATS );
 	} );
 
-	test( 'returns null for activity log page', () => {
-		expect( getCurrentSection( STATS, false, '/stats/activity/123' ) ).toBe( null );
-	} );
-
 	test( 'returns notes if notes is open', () => {
 		expect( getCurrentSection( STATS, true, '/stats/123' ) ).toBe( NOTES );
 	} );

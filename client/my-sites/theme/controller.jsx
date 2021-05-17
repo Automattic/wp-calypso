@@ -5,7 +5,6 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import debugFactory from 'debug';
-import { startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -53,7 +52,7 @@ export function fetchThemeDetailsData( context, next ) {
 
 export function details( context, next ) {
 	const { slug, section } = context.params;
-	if ( startsWith( context.prevPath, '/themes' ) ) {
+	if ( context.prevPath && context.prevPath.startsWith( '/themes' ) ) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
 	}
 

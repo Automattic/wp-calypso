@@ -2,42 +2,40 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { hasGSuiteSupportedDomain, hasGSuiteWithUs } from 'calypso/lib/gsuite';
-import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
-import hasLoadedGSuiteUsers from 'calypso/state/selectors/has-loaded-gsuite-users';
+import { Card } from '@automattic/components';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import DocumentHead from 'calypso/components/data/document-head';
+import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
+import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
+import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
+import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
+import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import EmptyContent from 'calypso/components/empty-content';
-import DocumentHead from 'calypso/components/data/document-head';
-import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import EmailProvidersComparison from '../email-providers-comparison';
-import { hasTitanMailWithUs } from 'calypso/lib/titan';
-import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { hasGSuiteSupportedDomain, hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
+import Main from 'calypso/components/main';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SectionHeader from 'calypso/components/section-header';
-import { Card } from '@automattic/components';
-import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
-import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
-import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 
 /**
  * Style dependencies
@@ -48,8 +46,6 @@ class EmailManagementHome extends React.Component {
 	static propTypes = {
 		canManageSite: PropTypes.bool.isRequired,
 		domains: PropTypes.array.isRequired,
-		gsuiteUsers: PropTypes.array,
-		hasGSuiteUsersLoaded: PropTypes.bool.isRequired,
 		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string,
 		selectedSiteId: PropTypes.number.isRequired,
@@ -99,7 +95,7 @@ class EmailManagementHome extends React.Component {
 		const nonWpcomDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
 
 		if ( nonWpcomDomains.length < 1 ) {
-			return this.renderContentWithHeader( <div>no domains</div> );
+			return this.renderContentWithHeader( <EmailNoDomain selectedSite={ selectedSite } /> );
 		}
 
 		const domainsWithEmail = nonWpcomDomains.filter( domainHasEmail );
@@ -158,7 +154,6 @@ class EmailManagementHome extends React.Component {
 
 		return (
 			<Main wideLayout>
-				{ selectedSiteId && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<DocumentHead title={ translate( 'Emails' ) } />
 				<SidebarNavigation />
@@ -190,8 +185,6 @@ export default connect( ( state ) => {
 		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
 		currentRoute: getCurrentRoute( state ),
 		domains: getDomainsBySiteId( state, selectedSiteId ),
-		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
-		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
 		hasSitesLoaded: hasLoadedSites( state ),
 		previousRoute: getPreviousRoute( state ),

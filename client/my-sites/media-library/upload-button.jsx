@@ -18,6 +18,7 @@ import {
 import { VideoPressFileTypes } from 'calypso/lib/media/constants';
 import { clearMediaItemErrors } from 'calypso/state/media/actions';
 import { addMedia } from 'calypso/state/media/thunks';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies
@@ -26,7 +27,7 @@ import './upload-button.scss';
 
 const noop = () => {};
 
-export class MediaLibraryUploadButton extends React.Component {
+class MediaLibraryUploadButton extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,
 		onAddMedia: PropTypes.func,
@@ -83,7 +84,9 @@ export class MediaLibraryUploadButton extends React.Component {
 	};
 
 	render() {
-		const classes = classNames( 'media-library__upload-button', 'button', this.props.className );
+		const classes = classNames( 'media-library__upload-button', 'button', this.props.className, {
+			'is-primary': this.props.sectionName === 'media',
+		} );
 
 		return (
 			<form ref={ this.formRef } className={ classes }>
@@ -101,4 +104,12 @@ export class MediaLibraryUploadButton extends React.Component {
 	}
 }
 
-export default connect( null, { addMedia, clearMediaItemErrors } )( MediaLibraryUploadButton );
+const mapStateToProps = ( state ) => {
+	return {
+		sectionName: getSectionName( state ),
+	};
+};
+
+export default connect( mapStateToProps, { addMedia, clearMediaItemErrors } )(
+	MediaLibraryUploadButton
+);

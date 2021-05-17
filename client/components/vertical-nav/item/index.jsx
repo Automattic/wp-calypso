@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -21,6 +20,8 @@ const noop = () => {};
 
 class VerticalNavItem extends Component {
 	static propTypes = {
+		children: PropTypes.any,
+		className: PropTypes.string,
 		external: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		onClick: PropTypes.func,
@@ -33,11 +34,20 @@ class VerticalNavItem extends Component {
 		onClick: noop,
 	};
 
-	placeholder = () => {
+	getIcon = () => {
+		if ( this.props.external ) {
+			return <Gridicon icon="external" />;
+		}
+
+		return <Gridicon icon="chevron-right" />;
+	};
+
+	renderPlaceholder = () => {
 		const compactCardClassNames = classNames(
 			'vertical-nav-item is-placeholder',
 			this.props.className
 		);
+
 		return (
 			<CompactCard className={ compactCardClassNames }>
 				<span />
@@ -50,7 +60,7 @@ class VerticalNavItem extends Component {
 		const { isPlaceholder, external, onClick, path, className, children } = this.props;
 
 		if ( isPlaceholder ) {
-			return this.placeholder();
+			return this.renderPlaceholder();
 		}
 
 		const compactCardClassNames = classNames( 'vertical-nav-item', className );
@@ -61,19 +71,12 @@ class VerticalNavItem extends Component {
 			<a href={ path } onClick={ onClick } { ...linkProps }>
 				<CompactCard className={ compactCardClassNames }>
 					{ this.getIcon() }
+
 					<span>{ children }</span>
 				</CompactCard>
 			</a>
 		);
 	}
-
-	getIcon = () => {
-		if ( this.props.external ) {
-			return <Gridicon icon="external" />;
-		}
-
-		return <Gridicon icon="chevron-right" />;
-	};
 }
 
 export default VerticalNavItem;

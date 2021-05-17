@@ -239,10 +239,10 @@ class Security2faCodePrompt extends React.Component {
 							className="security-2fa-code-prompt__send-code"
 							disabled={ ! this.state.codeRequestsAllowed }
 							isPrimary={ false }
-							onClick={ function ( event ) {
+							onClick={ ( event ) => {
 								gaRecordEvent( 'Me', 'Clicked On 2fa Code Prompt Send Code Via SMS Button' );
 								this.onRequestCode( event );
-							}.bind( this ) }
+							} }
 						>
 							{ this.state.codeRequestPerformed
 								? this.props.translate( 'Resend Code' )
@@ -254,10 +254,10 @@ class Security2faCodePrompt extends React.Component {
 						<FormButton
 							className="security-2fa-code-prompt__cancel"
 							isPrimary={ false }
-							onClick={ function ( event ) {
+							onClick={ ( event ) => {
 								gaRecordEvent( 'Me', 'Clicked On Disable 2fa Cancel Button' );
 								this.onCancel( event );
-							}.bind( this ) }
+							} }
 						>
 							{ this.props.translate( 'Cancel' ) }
 						</FormButton>

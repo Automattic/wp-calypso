@@ -20,6 +20,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-e2e": "^0.1.0",
+		"@automattic/mocha-debug-reporter": "^0.1.0",
 		"@babel/core": "^7.2.2",
 		"@babel/preset-env": "^7.3.1",
 		"@babel/register": "^7.0.0",
@@ -52,6 +53,7 @@
 		"mocha": "^8.1.3",
 		"mocha-junit-reporter": "^2.0.0",
 		"mocha-teamcity-reporter": "^3.0.0",
+		"mocha-multi-reporters": "^1.5.1",
 		"node-slack-upload": "^1.2.1",
 		"png-itxt": "^1.3.0",
 		"prettier": "npm:wp-prettier@2.2.1-beta-1",

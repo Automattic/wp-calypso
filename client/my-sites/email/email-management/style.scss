@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .email-management {
 	.empty-content__illustration {
 		width: 250px;
@@ -43,24 +46,82 @@
 
 .email-list-active {
 	> .card {
-		display: flex;
-		align-items: center;
 		color: var( --color-text );
+		display: flex;
+
+		> div > h2 {
+			word-break: break-all;
+		}
+
 		> div > span {
 			font-size: $font-body-small;
 			color: var( --color-text-subtle );
 		}
+
+		.email-list-active__warning {
+			font-size: $font-body-extra-small;
+			margin-left: 14px;
+
+			> span {
+				color: var( --color-error-50 );
+				display: none;
+				vertical-align: middle;
+
+				@include break-small {
+					display: unset;
+				}
+
+				@include break-medium {
+					display: none;
+				}
+
+				@include break-large {
+					display: unset;
+				}
+			}
+
+			> svg {
+				fill: var( --color-error-50 );
+				height: 18px;
+				margin-right: 6px;
+				/* Push the icon down when there is no warning text */
+				margin-top: 3px;
+				vertical-align: middle;
+				width: 18px;
+
+				@include break-small {
+					margin-top: 0;
+				}
+
+				@include break-medium {
+					margin-top: 3px;
+				}
+
+				@include break-large {
+					margin-top: 0;
+				}
+			}
+		}
 	}
+
 	> .card.is-card-link:hover {
 		background-color: var( --color-neutral-0 );
 	}
 }
 
 .email-list-active__item-icon {
+	align-self: center;
+
 	> img, svg {
 		height: 36px;
+		margin-right: 16px;
+		min-height: 36px;
+		min-width: 36px;
 		width: 36px;
-		margin-right: 20px;
+
+		@include break-large {
+			margin-right: 24px;
+		}
 	}
 	> .gridicon.gridicons-my-sites {
 		fill: var( --color-wordpress-com );
@@ -82,10 +143,12 @@
 	}
 }
 
-@mixin email_status_color( $color ) {
+@mixin email_plan_header_status_color( $color ) {
 	border-top: 5px solid $color;
-	.email-plan__status {
+
+	.email-plan-header__status {
 		color: $color;
+
 		> svg {
 			fill: $color;
 		}
@@ -98,38 +161,44 @@
 	padding-top: 28px;
 }
 
-.email-plan__status {
+.email-plan-header__status {
 	display: flex;
 	align-items: center;
+
 	> svg {
 		margin-right: 5px;
 	}
 }
 
-.email-plan__general {
+.email-plan-header {
 	display: flex;
 	align-items: center;
+
 	h2 {
 		font-size: $font-title-large;
+		word-break: break-all;
 	}
 
 	&.success {
-		@include email_status_color( var( --color-success ) );
+		@include email_plan_header_status_color( var( --color-success ) );
 	}
+
 	&.warning {
-		@include email_status_color( var( --color-warning ) );
+		@include email_plan_header_status_color( var( --color-warning ) );
 	}
+
 	&.error {
-		@include email_status_color( var( --color-error ) );
+		@include email_plan_header_status_color( var( --color-error ) );
 	}
 }
 
-.email-plan__general-icon {
+.email-plan-header__icon {
 	> img, svg {
 		height: 36px;
 		width: 36px;
 		margin-right: 20px;
 	}
+
 	> .gridicon.gridicons-my-sites {
 		fill: var( --color-wordpress-com );
 	}
@@ -141,6 +210,18 @@
 
 .email-plan-mailboxes-list__mailbox-list-item {
 	display: flex;
+	flex-direction: column;
+
+	@include break-xlarge {
+		flex-direction: row;
+	}
+
+	&.card.is-highlight {
+		padding-left: 13px;
+	}
+	&.card.is-error {
+		border-left-color: var( --color-error-50 );
+	}
 	.email-plan-mailboxes-list__mailbox-list-item-main {
 		display: flex;
 		flex-direction: column;
@@ -165,15 +246,27 @@
 	}
 	.email-plan-mailboxes-list__mailbox-list-item-main span {
 		vertical-align: middle;
+		word-break: break-all;
 	}
 	> .badge {
 		margin-left: 10px;
 	}
 	.email-plan-mailboxes-list__mailbox-list-item-warning {
+		border-top: 1px solid var( --color-neutral-5 );
 		color: var( --color-error );
-		font-size: $font-body-small;
+		font-size: $font-body-extra-small;
 		line-height: 24px;
-		margin-left: 16px;
+		margin-top: 18px;
+		padding-top: 18px;
+
+		@include break-xlarge {
+			border-top: none;
+			margin-left: 16px;
+			margin-right: 16px;
+			margin-top: 0;
+			padding-top: 0;
+		}
+
 		> svg {
 			margin-right: 6px;
 			vertical-align: middle;
@@ -183,9 +276,14 @@
 		}
 	}
 
-	.button {
-		margin-left: auto;
-		max-height: 2rem;
+	.email-plan-mailboxes-list__mailbox-list-item-action {
+		margin-top: 12px;
+		@include break-xlarge {
+			flex: 0.75;
+			margin-top: 0;
+			margin-left: auto;
+			text-align: right;
+		}
 	}
 }
 
@@ -214,4 +312,8 @@
 		width: 150px;
 		height: 28px;
 	}
+}
+
+.email-plan-subscription__expired {
+	color: var( --color-error-50 );
 }

@@ -412,7 +412,6 @@ export class PlanFeatures extends Component {
 		const {
 			basePlansPath,
 			disableBloggerPlanWithNonBlogDomain,
-			displayJetpackPlans,
 			isInSignup,
 			isJetpack,
 			planProperties,
@@ -441,8 +440,8 @@ export class PlanFeatures extends Component {
 			} = properties;
 			let { discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
+			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
 			let audience = planConstantObj.getAudience();
-			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
 			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
 				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
@@ -450,7 +449,7 @@ export class PlanFeatures extends Component {
 				}
 			}
 
-			if ( isInSignup && ! displayJetpackPlans ) {
+			if ( isInSignup ) {
 				switch ( siteType ) {
 					case 'blog':
 						audience = planConstantObj.getBlogAudience();
@@ -464,10 +463,6 @@ export class PlanFeatures extends Component {
 					default:
 						audience = planConstantObj.getAudience();
 				}
-			}
-
-			if ( isInSignup && displayJetpackPlans ) {
-				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame();
 			}
 
 			return (
@@ -538,7 +533,6 @@ export class PlanFeatures extends Component {
 			isInSignup,
 			onUpgradeClick: ownPropsOnUpgradeClick,
 			redirectTo,
-			displayJetpackPlans,
 			withDiscount,
 			selectedSiteSlug,
 			shoppingCartManager,
@@ -584,7 +578,7 @@ export class PlanFeatures extends Component {
 					),
 				] )
 				.then( () => {
-					if ( ! displayJetpackPlans && withDiscount && this.isMounted ) {
+					if ( withDiscount && this.isMounted ) {
 						return shoppingCartManager.applyCoupon( withDiscount );
 					}
 				} )
@@ -597,7 +591,7 @@ export class PlanFeatures extends Component {
 		const planPath = getPlanPath( planName ) || '';
 		const checkoutUrlArgs = {};
 		// Auto-apply the coupon code to the cart for WPCOM sites
-		if ( ! displayJetpackPlans && withDiscount ) {
+		if ( withDiscount ) {
 			checkoutUrlArgs.coupon = withDiscount;
 		}
 		if ( redirectTo ) {
@@ -864,7 +858,6 @@ PlanFeatures.propTypes = {
 	basePlansPath: PropTypes.string,
 	canPurchase: PropTypes.bool.isRequired,
 	disableBloggerPlanWithNonBlogDomain: PropTypes.bool,
-	displayJetpackPlans: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isJetpack: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
@@ -884,7 +877,6 @@ PlanFeatures.propTypes = {
 
 PlanFeatures.defaultProps = {
 	basePlansPath: null,
-	displayJetpackPlans: false,
 	isInSignup: false,
 	isJetpack: false,
 	selectedSiteSlug: '',
@@ -931,15 +923,13 @@ const ConnectedPlanFeatures = connect(
 			plans,
 			isLandingPage,
 			siteId,
-			displayJetpackPlans,
 			visiblePlans,
 			popularPlanSpec,
 			kindOfPlanTypeSelector,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
-		// If no site is selected, fall back to use the `displayJetpackPlans` prop's value
-		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
+		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : false;
 		const isSiteAT = selectedSiteId ? isSiteAutomatedTransfer( state, selectedSiteId ) : false;
 		const siteIsPrivate = isPrivateSite( state, selectedSiteId );
 		const sitePlan = getSitePlan( state, selectedSiteId );
@@ -1014,9 +1004,6 @@ const ConnectedPlanFeatures = connect(
 					}
 				}
 
-				if ( displayJetpackPlans ) {
-					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( currentPlan ) );
-				}
 				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
 				const isMonthlyObj = { isMonthly: showMonthlyPrice };
 				const rawPrice = siteId

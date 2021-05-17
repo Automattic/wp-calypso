@@ -14,7 +14,7 @@ import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 
 const MultiSiteThemeShowcase = connectOptions( ( props ) => (
-	<Main className="themes">
+	<Main fullWidthLayout className="themes">
 		<SidebarNavigation />
 		<ThemesSiteSelectorModal { ...props }>
 			<ThemeShowcase source="showcase" showUploadButton={ false } />

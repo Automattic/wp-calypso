@@ -19,30 +19,8 @@
 	grid-column: $col-start / span $span;
 }
 
-.customer-home__heading {
-	display: flex;
-
-	@include breakpoint-deprecated( '<660px' ) {
-		padding-right: 16px;
-	}
-
-	.formatted-header {
-		margin-right: 12px;
-	}
-
-	.formatted-header__subtitle {
-		margin: 0;
-	}
-
-	.customer-home__view-site-button {
-		margin: auto;
-		margin-right: 0;
-
-		.button {
-			text-align: center;
-			white-space: nowrap;
-		}
-	}
+.customer-home__heading .formatted-header__subtitle {
+	margin: 0;
 }
 
 .customer-home__layout {

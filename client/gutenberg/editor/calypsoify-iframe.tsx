@@ -36,10 +36,6 @@ import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-confi
 import wpcom from 'calypso/lib/wp';
 import { openPostRevisionsDialog } from 'calypso/state/posts/revisions/actions';
 import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
-import {
-	notifyDesktopViewPostClicked,
-	notifyDesktopCannotOpenEditor,
-} from 'calypso/state/desktop/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'calypso/components/web-preview';
 import { editPost, trashPost } from 'calypso/state/posts/actions';
@@ -55,7 +51,6 @@ import {
 	withStopPerformanceTrackingProp,
 	PerformanceTrackProps,
 } from 'calypso/lib/performance-tracking';
-import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'calypso/state/desktop/window-events';
 import { selectMediaItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
@@ -240,16 +235,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		if ( this.disableRedirects ) {
 			return;
 		}
-		const { notifyDesktopCannotOpenEditor, site, iframeUrl } = this.props;
-		if ( config.isEnabled( 'desktop' ) ) {
-			notifyDesktopCannotOpenEditor(
-				site,
-				REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE,
-				iframeUrl
-			);
-			return;
-		}
-		window.location.replace( iframeUrl );
+		window.location.replace( this.props.iframeUrl );
 	};
 
 	onMessage = ( { data, origin }: MessageEvent ) => {
@@ -421,9 +407,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 		if ( EditorActions.ViewPost === action ) {
 			const { postUrl } = payload;
-			config.isEnabled( 'desktop' )
-				? this.props.notifyDesktopViewPostClicked( postUrl )
-				: window.open( postUrl, '_top' );
+			window.open( postUrl, '_top' );
 		}
 
 		if ( EditorActions.OpenCustomizer === action ) {
@@ -934,11 +918,9 @@ const mapDispatchToProps = {
 	openPostRevisionsDialog,
 	setEditorIframeLoaded,
 	startEditingPost,
-	notifyDesktopViewPostClicked,
 	editPost,
 	trashPost,
 	updateSiteFrontPage,
-	notifyDesktopCannotOpenEditor,
 	selectMediaItems,
 	fetchMediaItem,
 	getMediaItem,
