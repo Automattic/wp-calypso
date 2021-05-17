@@ -162,10 +162,8 @@
 	}
 }
 
-.popover__menu-item {
-	&.external-link > .gridicons-external {
-		display: none;
-	}
+.popover__menu-item .external-link > .gridicons-external {
+	display: none;
 }
 
 .email-plan-mailboxes-list__mailbox-list-item {
