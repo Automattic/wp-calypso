@@ -56,3 +56,10 @@ export const preferencesLastFetchedTimestamp = ( state ) => state.preferences.la
 export function hasReceivedRemotePreferences( state ) {
 	return !! state.preferences.remoteValues;
 }
+
+/*
+ * Returns whether the previous request to save or retrieve the preferences, failed.
+ *
+ * @param {state} state State object
+ */
+export const hasPreferencesRequestFailed = ( state ) => state.preferences.failed;
