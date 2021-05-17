@@ -248,6 +248,10 @@
 	&.card {
 		&.is-highlight {
 			padding-left: 13px;
+
+			@include break-mobile {
+				padding-left: 21px;
+			}
 		}
 
 		&.is-error {
