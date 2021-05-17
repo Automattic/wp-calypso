@@ -60,11 +60,10 @@ class Block_Patterns_From_API {
 	 * @param Block_Patterns_Utils $utils            A class dependency containing utils methods.
 	 */
 	public function __construct( $patterns_sources, Block_Patterns_Utils $utils = null ) {
-		$patterns_sources                          = empty( $patterns_sources ) ? array( 'block_patterns' ) : $patterns_sources;
-		$this->patterns_sources                    = empty( array_diff( $patterns_sources, $this->valid_patterns_sources ) ) ? $patterns_sources : array( 'block_patterns' );
-		$this->utils                               = empty( $utils ) ? new \A8C\FSE\Block_Patterns_Utils() : $utils;
-		// Add categories to this array using the core pattern name as the key
-		// for core patterns we wish to "recategorize"
+		$patterns_sources       = empty( $patterns_sources ) ? array( 'block_patterns' ) : $patterns_sources;
+		$this->patterns_sources = empty( array_diff( $patterns_sources, $this->valid_patterns_sources ) ) ? $patterns_sources : array( 'block_patterns' );
+		$this->utils            = empty( $utils ) ? new \A8C\FSE\Block_Patterns_Utils() : $utils;
+		// Add categories to this array using the core pattern name as the key for core patterns we wish to "recategorize".
 		$this->core_to_wpcom_categories_dictionary = array(
 			'core/quote' => array(
 				'quotes' => __( 'Quotes', 'full-site-editing' ),
@@ -243,7 +242,7 @@ class Block_Patterns_From_API {
 	}
 
 	/**
-	 * Unregister all core patterns, then reregister core patterns in core Wordpress only,
+	 * Unregister all core patterns, then reregister core patterns in core WordPress only,
 	 * that is those in wp-includes/block-patterns.php
 	 * Gutenberg adds new and overrides existing core patterns. We don't want these for now.
 	 */
@@ -256,7 +255,6 @@ class Block_Patterns_From_API {
 				if ( 'core/' === substr( $pattern_block_type_or_name, 0, 5 ) ) {
 					unregister_block_pattern( $pattern['name'] );
 				}
-
 			}
 			if ( function_exists( '_register_core_block_patterns_and_categories' ) ) {
 				switch_to_locale( $this->utils->get_block_patterns_locale() );
@@ -264,7 +262,7 @@ class Block_Patterns_From_API {
 			}
 		}
 	}
-	//
+
 	/**
 	 * Update categories for core patterns if a records exists in $this->core_to_wpcom_categories_dictionary
 	 * and reregister them.
@@ -275,13 +273,14 @@ class Block_Patterns_From_API {
 				$wpcom_categories = $this->core_to_wpcom_categories_dictionary[ $pattern['name'] ];
 				if ( isset( $wpcom_categories ) ) {
 					unregister_block_pattern( $pattern['name'] );
-					$pattern_properties = array_merge( $pattern, array( 'categories' => array_keys(
-						$wpcom_categories
-					) ) );
+					$pattern_properties = array_merge(
+						$pattern,
+						array( 'categories' => array_keys( $wpcom_categories ) )
+					);
 					unset( $pattern_properties['name'] );
 					register_block_pattern(
 						$pattern['name'],
-						$pattern_properties
+						$pattern_properties,
 					);
 				}
 			}
