@@ -41,7 +41,12 @@ import googleDriveIcon from 'calypso/assets/images/email-providers/google-worksp
 import googleSheetsIcon from 'calypso/assets/images/email-providers/google-workspace/services/sheets.svg';
 import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/slides.svg';
 import Gridicon from 'calypso/components/gridicon';
-import { hasTitanMailWithUs } from 'calypso/lib/titan';
+import {
+	getTitanEmailUrl,
+	getTitanCalendarlUrl,
+	getTitanContactsUrl,
+	hasTitanMailWithUs,
+} from 'calypso/lib/titan';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resendVerificationEmail } from 'calypso/state/email-forwarding/actions';
 import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/calendar.svg';
@@ -159,10 +164,17 @@ const getActionsForMailbox = ( mailbox, translate, dispatch ) => {
 	};
 };
 
-const getTitanMenuItems = ( translate ) => {
+/**
+ * Returns the available menu items for Titan Emails
+ *
+ * @param {string} email The email address of the Titan account
+ * @param {Function} translate The translate function
+ * @returns Array of menu items
+ */
+const getTitanMenuItems = ( email, translate ) => {
 	return [
 		{
-			href: 'https://wp.titan.email/mail/',
+			href: getTitanEmailUrl( email ),
 			image: titanMailIcon,
 			imageAltText: translate( 'Titan Mail icon' ),
 			title: translate( 'Mail', {
@@ -170,7 +182,7 @@ const getTitanMenuItems = ( translate ) => {
 			} ),
 		},
 		{
-			href: 'https://wp.titan.email/calendar/',
+			href: getTitanCalendarlUrl( email ),
 			image: titanCalendarIcon,
 			imageAltText: translate( 'Titan Calendar icon' ),
 			title: translate( 'Calendar', {
@@ -178,7 +190,7 @@ const getTitanMenuItems = ( translate ) => {
 			} ),
 		},
 		{
-			href: 'https://wp.titan.email/contacts/',
+			href: getTitanContactsUrl( email ),
 			image: titanContactsIcon,
 			imageAltText: translate( 'Titan Contacts icon' ),
 			title: translate( 'Contacts', {
@@ -237,7 +249,7 @@ const getGSuiteMenuItems = ( domainName, translate ) => {
 
 const getMenuItems = ( { domain, email }, translate ) => {
 	if ( hasTitanMailWithUs( domain ) ) {
-		return getTitanMenuItems( translate );
+		return getTitanMenuItems( email, translate );
 	}
 
 	if ( hasGSuiteWithUs( domain ) ) {
