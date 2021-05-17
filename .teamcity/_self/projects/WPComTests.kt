@@ -188,7 +188,8 @@ private object VisualRegressionTests : BuildType({
 	description = "Runs visual regression tests"
 
 	artifactRules = """
-		reports => reports
+		./test/visual/html_report/* => reports
+		./test/visual/bitmaps_test/* => bitmaps_test
 	""".trimIndent()
 
 	vcs {
@@ -233,17 +234,6 @@ private object VisualRegressionTests : BuildType({
 				yarn "%vr_task%"
 			""".trimIndent()
 			dockerRunParameters = "-v /var/run/docker.sock:/var/run/docker.sock"
-		}
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p reports
-				find test/visual -type f -path '*/html_report/*' -print0 | xargs -r -0 mv -t reports
-
-			""".trimIndent()
 		}
 	}
 
