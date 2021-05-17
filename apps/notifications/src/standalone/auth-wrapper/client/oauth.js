@@ -78,8 +78,8 @@ const getOauthRequestHandler = ( authToken ) => ( options, fn ) => {
 const createOauthClient = async () => {
 	const token = getStoredToken();
 	if ( ! token ) {
-		redirectForOauth();
-		return;
+		redirectForAuthorization();
+		return null;
 	}
 
 	const requestHandler = getOauthRequestHandler( token );
