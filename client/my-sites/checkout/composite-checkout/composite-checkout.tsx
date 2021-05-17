@@ -652,7 +652,6 @@ export default function CompositeCheckout( {
 					isLoggedOutCart={ !! isLoggedOutCart }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }
-					isJetpackCheckout={ isJetpackCheckout }
 				/>
 			</CheckoutProvider>
 		</React.Fragment>
