@@ -31,7 +31,6 @@ import LikeButtons from 'calypso/blocks/like-button/docs/example';
 import PostSchedule from 'calypso/components/post-schedule/docs/example';
 import PostSelector from 'calypso/my-sites/post-selector/docs/example';
 import ProductPlanOverlapNotices from 'calypso/blocks/product-plan-overlap-notices/docs/example';
-import ProductSelector from 'calypso/blocks/product-selector/docs/example';
 import Site from 'calypso/blocks/site/docs/example';
 import SitePlaceholder from 'calypso/blocks/site/docs/placeholder-example';
 import SitesDropdown from 'calypso/components/sites-dropdown/docs/example';
@@ -148,7 +147,6 @@ export default class AppComponents extends React.Component {
 					<PostSchedule />
 					<PostSelector />
 					<ProductPlanOverlapNotices readmeFilePath="product-plan-overlap-notices" />
-					<ProductSelector readmeFilePath="product-selector" />
 					<Site readmeFilePath="site" />
 					<SitePlaceholder />
 					<SitesDropdown />
