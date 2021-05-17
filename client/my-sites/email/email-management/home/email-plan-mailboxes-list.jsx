@@ -200,46 +200,46 @@ const getTitanMenuItems = ( email, translate ) => {
 	];
 };
 
-const getGSuiteMenuItems = ( domainName, translate ) => {
+const getGSuiteMenuItems = ( email, translate ) => {
 	return [
 		{
-			href: getGmailUrl( domainName ),
+			href: getGmailUrl( email ),
 			image: gmailIcon,
 			imageAltText: translate( 'Gmail icon' ),
 			title: translate( 'View Gmail' ),
 		},
 		{
-			href: getGoogleAdminUrl( domainName ),
+			href: getGoogleAdminUrl( email ),
 			image: googleAdminIcon,
 			imageAltText: translate( 'Google Admin icon' ),
 			title: translate( 'View Admin' ),
 		},
 		{
-			href: getGoogleCalendarUrl( domainName ),
+			href: getGoogleCalendarUrl( email ),
 			image: googleCalendarIcon,
 			imageAltText: translate( 'Google Calendar icon' ),
 			title: translate( 'View Calendar' ),
 		},
 		{
-			href: getGoogleDocsUrl( domainName ),
+			href: getGoogleDocsUrl( email ),
 			image: googleDocsIcon,
 			imageAltText: translate( 'Google Docs icon' ),
 			title: translate( 'View Docs' ),
 		},
 		{
-			href: getGoogleDriveUrl( domainName ),
+			href: getGoogleDriveUrl( email ),
 			image: googleDriveIcon,
 			imageAltText: translate( 'Google Drive icon' ),
 			title: translate( 'View Drive' ),
 		},
 		{
-			href: getGoogleSheetsUrl( domainName ),
+			href: getGoogleSheetsUrl( email ),
 			image: googleSheetsIcon,
 			imageAltText: translate( 'Google Sheets icon' ),
 			title: translate( 'View Sheets' ),
 		},
 		{
-			href: getGoogleSlidesUrl( domainName ),
+			href: getGoogleSlidesUrl( email ),
 			image: googleSlidesIcon,
 			imageAltText: translate( 'Google Slides icon' ),
 			title: translate( 'View Slides' ),
@@ -253,7 +253,7 @@ const getMenuItems = ( { domain, email }, translate ) => {
 	}
 
 	if ( hasGSuiteWithUs( domain ) ) {
-		return getGSuiteMenuItems( email || domain.name, translate );
+		return getGSuiteMenuItems( email, translate );
 	}
 
 	return null;
