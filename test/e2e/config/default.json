@@ -24,8 +24,8 @@
 		"video": "screenshots/videos",
 		"log": "."
 	},
-	"displaySize": "desktop",
-	"displayResolutions": {
+	"viewportName": "desktop",
+	"viewportSize": {
 		"mobile": {
 			"width": 400,
 			"height": 1000
