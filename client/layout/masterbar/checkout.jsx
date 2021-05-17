@@ -11,15 +11,27 @@ import { localize } from 'i18n-calypso';
 import Masterbar from './masterbar';
 import Item from './item';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 
 class CheckoutMasterbar extends React.Component {
 	clickClose = () => {
-		const { previousPath, siteSlug } = this.props;
+		const {
+			previousPath,
+			siteSlug,
+			visitingFromJetpackCloud,
+			recordTracksEvent: recordEvent,
+		} = this.props;
 		let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
-		this.props.recordTracksEvent( 'calypso_masterbar_close_clicked' );
+
+		recordEvent( 'calypso_masterbar_close_clicked' );
+
+		if ( visitingFromJetpackCloud ) {
+			window.location = `https://cloud.jetpack.com/pricing/${ siteSlug }`;
+			return;
+		}
 
 		if (
 			previousPath &&
@@ -72,4 +84,9 @@ class CheckoutMasterbar extends React.Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( CheckoutMasterbar ) );
+export default connect(
+	( state ) => ( {
+		visitingFromJetpackCloud: getInitialQueryArguments( state ).source === 'jetpack-plans',
+	} ),
+	{ recordTracksEvent }
+)( localize( CheckoutMasterbar ) );
