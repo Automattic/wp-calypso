@@ -357,6 +357,7 @@ class Media extends Component {
 						'Manage all the media on your site, including images, video, and more.'
 					) }
 					align="left"
+					wpAdminPath="upload.php"
 				/>
 				{ this.showDialog() && (
 					<EditorMediaModalDialog

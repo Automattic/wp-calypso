@@ -296,6 +296,7 @@ class SectionImport extends Component {
 					headerText={ translate( 'Import Content' ) }
 					subHeaderText={ translate( 'Import content from another website or platform.' ) }
 					align="left"
+					wpAdminPath="import.php"
 				/>
 				<EmailVerificationGate allowUnlaunched>
 					{ isJetpack && ! isAtomic ? <JetpackImporter /> : this.renderImportersList() }

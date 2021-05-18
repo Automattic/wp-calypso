@@ -53,6 +53,7 @@ function Types( {
 				headerText={ get( postType, 'label', '' ) }
 				subHeaderText={ subHeaderText }
 				align="left"
+				wpAdminPath={ `/edit.php?post_type=${ query.type }` }
 			/>
 			{ userCanEdit &&
 				postTypeSupported && [

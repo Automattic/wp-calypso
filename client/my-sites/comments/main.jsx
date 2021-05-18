@@ -82,6 +82,7 @@ export class CommentsManagement extends Component {
 							'View, reply to, and manage all the comments across your site.'
 						) }
 						align="left"
+						wpAdminPath="edit-comments.php"
 					/>
 				) }
 				{ showPermissionError && (

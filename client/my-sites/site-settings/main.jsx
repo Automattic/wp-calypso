@@ -43,6 +43,7 @@ const SiteSettingsComponent = ( { siteId, translate } ) => {
 					'Manage your site settings, including language, time zone, site visibility, and more.'
 				) }
 				align="left"
+				wpAdminPath="options-general.php"
 			/>
 			<SiteSettingsNavigation section={ 'general' } />
 			<GeneralSettings />

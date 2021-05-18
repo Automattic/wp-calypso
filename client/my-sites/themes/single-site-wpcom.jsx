@@ -78,6 +78,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 				headerText={ translate( 'Themes' ) }
 				subHeaderText={ translate( 'Select or update the visual design for your site.' ) }
 				align="left"
+				wpAdminPath="themes.php"
 			/>
 			<CurrentTheme siteId={ siteId } />
 			{ bannerLocationBelowSearch ? null : upsellBanner }

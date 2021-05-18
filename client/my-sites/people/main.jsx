@@ -99,6 +99,7 @@ class People extends React.Component {
 					headerText={ translate( 'People' ) }
 					subHeaderText={ this.renderSubheaderText() }
 					align="left"
+					wpAdminPath="users.php"
 				/>
 				<div>
 					{

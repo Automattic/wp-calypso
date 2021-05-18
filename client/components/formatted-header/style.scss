@@ -1,4 +1,5 @@
 .formatted-header {
+	display: flex;
 	margin: 16px 0 24px;
 	text-align: center;
 
@@ -25,6 +26,15 @@
 
 	&.is-right-align {
 		text-align: right;
+	}
+
+	.formatted--header__text:not( :only-child ) {
+		margin-left: 12px;
+	}
+
+	.quick-calypso-wp-admin-switcher {
+		margin-left: auto;
+		align-self: start;
 	}
 }
 
@@ -68,6 +78,7 @@
 		text-align: left;
 
 		.formatted-header__title {
+			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 			font-size: 17px;
 			font-weight: 600;
 			padding: 0 24px;

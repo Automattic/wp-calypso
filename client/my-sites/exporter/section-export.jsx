@@ -57,6 +57,7 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 					headerText={ translate( 'Export Content' ) }
 					subHeaderText={ translate( 'Back up or move your content to another site or platform.' ) }
 					align="left"
+					wpAdminPath="export.php"
 				/>
 				<ExporterContainer />
 			</Fragment>

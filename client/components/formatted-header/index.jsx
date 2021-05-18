@@ -10,6 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { preventWidows } from 'calypso/lib/formatting';
+import QuickCalypsoWpAdminSwitcher from 'calypso/blocks/quick-calypso-wp-admin-switcher';
 
 /**
  * Style dependencies
@@ -25,6 +26,7 @@ function FormattedHeader( {
 	compactOnMobile,
 	align,
 	isSecondary,
+	wpAdminPath,
 } ) {
 	const classes = classNames( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
@@ -37,11 +39,14 @@ function FormattedHeader( {
 
 	return (
 		<header id={ id } className={ classes }>
-			{ ! isSecondary && <h1 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h1> }
-			{ isSecondary && <h2 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h2> }
-			{ subHeaderText && (
-				<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
-			) }
+			<div className="formatted-header__text">
+				{ ! isSecondary && <h1 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h1> }
+				{ isSecondary && <h2 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h2> }
+				{ subHeaderText && (
+					<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
+				) }
+			</div>
+			{ wpAdminPath && <QuickCalypsoWpAdminSwitcher wpAdminPath={ wpAdminPath } /> }
 		</header>
 	);
 }
@@ -55,6 +60,7 @@ FormattedHeader.propTypes = {
 	compactOnMobile: PropTypes.bool,
 	isSecondary: PropTypes.bool,
 	align: PropTypes.oneOf( [ 'center', 'left', 'right' ] ),
+	wpAdminPath: PropTypes.string,
 };
 
 FormattedHeader.defaultProps = {

@@ -104,6 +104,7 @@ class PagesMain extends React.Component {
 							: translate( 'Create, edit, and manage the pages on your sites.' )
 					}
 					align="left"
+					wpAdminPath="/edit.php?post_type=page"
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ status } />
 				<PageList siteId={ siteId } status={ status } search={ search } query={ query } />

@@ -88,6 +88,7 @@ class PostsMain extends React.Component {
 							: translate( 'Create, edit, and manage the posts on your sites.' )
 					}
 					align="left"
+					wpAdminPath="edit.php"
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
 				<PostTypeList

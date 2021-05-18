@@ -38,7 +38,6 @@ const Home = ( {
 	isDev,
 	forcedView,
 	layout,
-	site,
 	siteId,
 	noticeType,
 	shuffleViews,
@@ -93,6 +92,7 @@ const Home = ( {
 				headerText={ translate( 'My Home' ) }
 				subHeaderText={ translate( 'Your hub for posting, editing, and growing your site.' ) }
 				align="left"
+				wpAdminPath="index.php"
 			/>
 			{ layout ? (
 				<>
