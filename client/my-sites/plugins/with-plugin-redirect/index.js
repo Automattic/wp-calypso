@@ -75,19 +75,38 @@ const withPluginRedirect = createHigherOrderComponent(
 			};
 		} );
 
-		// Define whether the site should redirect,
-		// once the action is done (install plugin or transferring site)
+		/*
+		 * Define whether the site should redirect,
+		 * once the action is done (install plugin or transferring site).
+		 * It needs to detect, store nand compare previous state
+		 * of the installing/transferring process.
+		 */
 		useEffect( () => {
 			if ( ! isSiteConnected ) {
 				return;
 			}
 
-			// Jetpack: Flag if the site was installing a plugin.
-			if ( isJetpack && isInstallingPlugin && ! hasPluginBeenInstalled ) {
+			// Jetpack (installing-plugin): Flag if the site is installing a plugin.
+			if (
+				isJetpack &&
+				isInstallingPlugin &&
+				! hasPluginBeenInstalled &&
+				( prevProcessingState === 'init' || prevProcessingState === 'done' )
+			) {
+				setPrevProcessingState( 'installing-plugin' );
+			}
+
+			// Jetpack (plugin-installed): Flag if the site has intalled a plugin.
+			if (
+				isJetpack &&
+				! isInstallingPlugin &&
+				hasPluginBeenInstalled &&
+				prevProcessingState === 'installing-plugin'
+			) {
 				setPrevProcessingState( 'plugin-installed' );
 			}
 
-			// Atomic: flag if the site was being transferred.
+			// Atomic (complete): flag if the site was being transferred.
 			if (
 				isAtomic &&
 				transferringStatus === transferStates.COMPLETE &&
@@ -97,7 +116,7 @@ const withPluginRedirect = createHigherOrderComponent(
 			}
 
 			if (
-				( isJetpack && ! isInstallingPlugin && prevProcessingState === 'plugin-installed' ) || // <- Jetpack site.
+				( isJetpack && prevProcessingState === 'plugin-installed' ) || // <- Jetpack site.
 				( isAtomic && prevProcessingState === transferStates.COMPLETE ) // <- Atomic site.
 			) {
 				return setShouldRedirect( redirectUrl );
