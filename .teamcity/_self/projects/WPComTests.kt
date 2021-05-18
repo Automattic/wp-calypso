@@ -228,7 +228,7 @@ private object VisualRegressionTests : BuildType({
 			scriptContent = """
 				set -x
 				export NODE_ENV="test"
-				export CAPTURE_LIMIT=60
+				export CAPTURE_LIMIT=16
 				export COMPARE_LIMIT=150
 
 				apt-get install -y docker-compose
