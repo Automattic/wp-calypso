@@ -23,7 +23,7 @@ object WPComTests : Project({
 
 	BuildReportTab {
 		title = "VR Report"
-		startPage= "vr-report.zip!test/visual/backstop_data/html_report/index.html"
+		startPage= "vr-report.zip!/test/visual/backstop_data/html_report/index.html"
 	}
 
 	// Keep the previous ID in order to preserve the historical data
