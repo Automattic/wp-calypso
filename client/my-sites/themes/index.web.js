@@ -8,6 +8,13 @@ import { loggedOut, fetchThemeFilters } from './controller';
 import { loggedIn, upload } from './controller-logged-in';
 import { validateFilters, validateVertical } from './validate-filters';
 
+function navigationIfSite( context, next ) {
+	if ( context.params.site_id ) {
+		return navigation( context, next );
+	}
+	next();
+}
+
 function redirectToLoginIfSiteRequested( context, next ) {
 	if ( context.params.site_id ) {
 		redirectLoggedOut( context, next );
@@ -51,7 +58,7 @@ export default function ( router ) {
 			validateFilters,
 			siteSelection,
 			loggedIn,
-			navigation,
+			navigationIfSite,
 			makeLayout
 		);
 	} else {

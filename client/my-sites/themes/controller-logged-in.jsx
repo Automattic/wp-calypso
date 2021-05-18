@@ -12,8 +12,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { setBackPath } from 'calypso/state/themes/actions';
 import { getProps } from './controller';
 import SingleSiteComponent from './single-site';
-import MultiSiteComponent from './multi-site';
 import Upload from './theme-upload';
+import { sites } from 'calypso/my-sites/controller';
 
 export function loggedIn( context, next ) {
 	// Block direct access for P2 sites
@@ -28,8 +28,13 @@ export function loggedIn( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	const Component = context.params.site_id ? SingleSiteComponent : MultiSiteComponent;
-	context.primary = <Component { ...getProps( context ) } />;
+	if ( context.params.site_id ) {
+		context.primary = <SingleSiteComponent { ...getProps( context ) } />;
+		next();
+	} else {
+		// Force logged in user w/o a site to choose a site
+		return sites( context, next );
+	}
 
 	next();
 }
