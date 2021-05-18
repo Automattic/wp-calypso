@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import page from 'page';
@@ -19,42 +19,24 @@ import PluginProductMappingInterface, {
 } from 'calypso/my-sites/plugins/marketplace/constants';
 import formatCurrency from '@automattic/format-currency';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
-import { Button } from '@automattic/components';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
 	isFetching as isWporgPluginFetching,
 	getPlugin as getWporgPlugin,
 } from 'calypso/state/plugins/wporg/selectors';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import PurchaseArea from './purchase-area';
 
 interface MarketplacePluginDetailsInterface {
 	marketplacePluginSlug: keyof PluginProductMappingInterface;
 }
 
-const isCustomDomain = ( {
-	isWPCOMDomain,
-	isWpcomStagingDomain,
-}: {
-	isWPCOMDomain: boolean;
-	isWpcomStagingDomain: boolean;
-} ) => ! isWPCOMDomain && ! isWpcomStagingDomain;
-
-function evaluateIsCustomDomainAvailable( siteDomains: any[] ): boolean {
-	return siteDomains.some( isCustomDomain );
-}
-function evaluateIsCustomDomainPrimary( siteDomains: any[] ): boolean {
-	return (
-		evaluateIsCustomDomainAvailable( siteDomains ) && siteDomains.find( isCustomDomain )?.isPrimary
-	);
-}
-
 function MarketplacePluginDetails( {
 	marketplacePluginSlug,
 }: MarketplacePluginDetailsInterface ): JSX.Element {
-	const [ isButtonClicked, setisButtonClicked ] = useState( false );
 	const productSlug = getProductSlug( marketplacePluginSlug );
 	const { replaceProductsInCart } = useShoppingCart();
 	const products = useSelector( getProductsList );
@@ -76,55 +58,31 @@ function MarketplacePluginDetails( {
 		dispatch( wporgFetchPluginData( marketplacePluginSlug ) );
 	}, [ dispatch, marketplacePluginSlug ] );
 
-	const onAddPlugin = async ( productSlug?: string ) => {
-		setisButtonClicked( true );
-		const isCustomDomainAvailable = evaluateIsCustomDomainAvailable( siteDomains );
-		const isCustomDomainPrimary = evaluateIsCustomDomainPrimary( siteDomains );
-		const isProductPurchased = !! productSlug;
-
-		if ( isCustomDomainAvailable && isCustomDomainPrimary ) {
-			if ( isProductPurchased ) {
-				const yoastProduct = fillInSingleCartItemAttributes(
-					{ product_slug: productSlug },
-					products
-				);
-				await replaceProductsInCart( [ yoastProduct ] );
-				page( `/checkout${ selectedSite ? `/${ selectedSite.slug }` : '' }` );
-			} else {
-				//To be replaced with loading screen and then thank-you page
-				alert( 'To be implemented : Loading Screen -> Thank You Page' );
-			}
-		} else if ( isCustomDomainAvailable && ! isCustomDomainPrimary ) {
-			//Pop up Modal for deciding on primary domain and related logic
-			setisButtonClicked( false );
-			alert( 'To be implemented : Domain deciding Pop up modal ' );
-		} else if ( ! isCustomDomainAvailable ) {
-			page(
-				`/plugins/domain${ selectedSite ? `/${ selectedSite.slug }?flags=marketplace-yoast` : '' }`
-			);
-		} else {
-			alert( 'Unknown combination' );
-		}
+	const onAddYoastPremiumToCart = () => {
+		const yoastProduct = fillInSingleCartItemAttributes( { product_slug: productSlug }, products );
+		return replaceProductsInCart( [ yoastProduct ] );
 	};
 
 	return (
 		<div>
 			{ ! wporgFetching ? (
-				<>
-					<div className="marketplace-plugin-details__name">{ wporgPlugin?.name }</div>
-					<div>
-						<h2>Yoast Premium cost : { ! isProductListLoading ? displayCost : '' }</h2>
-						<Button busy={ isButtonClicked } onClick={ () => onAddPlugin( productSlug ) } primary>
-							Buy Yoast Premium
-						</Button>
-					</div>
-					<div>
-						<h2>Yoast Free cost : Free</h2>
-						<Button busy={ isButtonClicked } onClick={ () => onAddPlugin() } primary>
-							Add Yoast Free
-						</Button>
-					</div>
-				</>
+				<PurchaseArea
+					siteDomains={ siteDomains }
+					isProductListLoading={ isProductListLoading }
+					displayCost={ displayCost }
+					wporgPluginName={ wporgPlugin?.name }
+					onAddYoastPremiumToCart={ onAddYoastPremiumToCart }
+					onNavigateToCheckout={ () =>
+						page( `/checkout${ selectedSite?.slug ? `/${ selectedSite?.slug }` : '' }` )
+					}
+					onNavigateToDomainsSelection={ () =>
+						page(
+							`/plugins/domain${
+								selectedSite?.slug ? `/${ selectedSite?.slug }?flags=marketplace-yoast` : ''
+							}`
+						)
+					}
+				/>
 			) : (
 				'Loading...'
 			) }
