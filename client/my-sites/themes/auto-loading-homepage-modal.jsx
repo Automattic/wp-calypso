@@ -10,6 +10,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import {
@@ -82,6 +83,10 @@ class AutoLoadingHomepageModal extends Component {
 			const { installingThemeId, siteId, source } = this.props;
 			this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
 			const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
+			recordTracksEvent( 'calypso_theme_activate_new_click', {
+				theme: installingThemeId,
+				keep_current_homepage: keepCurrentHomepage,
+			} );
 			return this.props.activateTheme(
 				installingThemeId,
 				siteId,
@@ -90,6 +95,7 @@ class AutoLoadingHomepageModal extends Component {
 				keepCurrentHomepage
 			);
 		}
+		recordTracksEvent( 'calypso_theme_keep_current_theme_click' );
 		this.props.hideAutoLoadingHomepageWarning();
 	};
 
@@ -199,5 +205,6 @@ export default connect(
 		acceptAutoLoadingHomepageWarning,
 		hideAutoLoadingHomepageWarning,
 		activateTheme,
+		recordTracksEvent,
 	}
 )( AutoLoadingHomepageModal );
