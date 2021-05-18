@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { stringify } from 'qs';
 import page from 'page';
 import React from 'react';
 import store from 'store';
@@ -22,19 +21,19 @@ const debug = debugFactory( 'calypso:jetpack-cloud-connect' );
 
 export const connect: PageJS.Callback = ( context, next ) => {
 	if ( config.isEnabled( 'oauth' ) && config( 'oauth_client_id' ) ) {
-		const redirectUri = window.location.origin + '/connect/oauth/token';
+		const redirectUri = new URL( '/connect/oauth/token', window.location.origin );
 
-		const params = {
+		const authUrl = new URL( WP_AUTHORIZE_ENDPOINT );
+		authUrl.search = new URLSearchParams( {
 			response_type: 'token',
 			client_id: config( 'oauth_client_id' ),
-			redirect_uri: redirectUri,
+			redirect_uri: redirectUri.toString(),
 			scope: 'global',
-		};
+		} ).toString();
 
-		const authUrl = `${ WP_AUTHORIZE_ENDPOINT }?${ stringify( params ) }`;
 		debug( `authUrl: ${ authUrl }` );
 
-		window.location.replace( authUrl );
+		window.location.replace( authUrl.toString() );
 	} else {
 		context.primary = <p>{ 'Oauth un-enabled or client id missing!' }</p>;
 	}
