@@ -92,25 +92,11 @@ export function fetchAndValidateVerticalsAndFiltersIfLoggedIn( context, next ) {
 		return next();
 	}
 
-	// Compose method 1
-	// const noop = () => {};
-	// fetchThemeFilters( context, noop );
-	// validateVertical( context, noop );
-	// validateFilters( context, noop );
-	// return next();
-
-	// Compose method 2
 	return fetchThemeFilters( context, () => {
 		return validateVertical( context, () => {
 			return validateFilters( context, next );
 		} );
 	} );
-
-	// Compose method 2b - same as 2, but
-	// less aethestic after prettier formats it imo
-	// return fetchThemeFilters( context, () =>
-	// 	validateVertical( context, () => validateFilters( context, next ) )
-	// );
 }
 
 export function fetchAndValidateVerticalsAndFiltersIfLoggedOut( context, next ) {
@@ -121,14 +107,6 @@ export function fetchAndValidateVerticalsAndFiltersIfLoggedOut( context, next ) 
 		return next();
 	}
 
-	// Compose method 1
-	// const noop = () => {};
-	// fetchThemeFilters( context, noop );
-	// validateVertical( context, noop );
-	// validateFilters( context, noop );
-	// return next();
-
-	// Compose method 2
 	return fetchThemeFilters( context, () => {
 		return validateVertical( context, () => {
 			return validateFilters( context, next );
