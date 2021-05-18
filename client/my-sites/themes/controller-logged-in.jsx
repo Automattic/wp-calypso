@@ -14,6 +14,7 @@ import { getProps } from './controller';
 import SingleSiteComponent from './single-site';
 import Upload from './theme-upload';
 
+// Renders <SingleSiteComponent, which assumes context.params.site_id always exists
 export function loggedIn( context, next ) {
 	// Block direct access for P2 sites
 	const state = context.store.getState();
@@ -27,10 +28,6 @@ export function loggedIn( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	// Assuming context.params.site_id always exists
-	if ( context.params.site_id ) {
-		console.error( 'theme/loggedIn: Missing required parameter site_id' ); // eslint-disable-line no-console
-	}
 	context.primary = <SingleSiteComponent { ...getProps( context ) } />;
 
 	next();
