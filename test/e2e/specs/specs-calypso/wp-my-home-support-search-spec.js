@@ -26,7 +26,11 @@ const helpCardLocator = By.css( '.help-search' );
 
 describe( `[${ host }] My Home "Get help" support search card: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	it( 'Login and select the My Home page', async function () {
 		const loginFlow = new LoginFlow( driver );

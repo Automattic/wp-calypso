@@ -20,7 +20,11 @@ const gutenbergUser = 'siteEditorSimpleSiteUser';
 
 describe( `[${ host }] Site Editor (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	it( 'Can log in', async function () {
 		this.loginFlow = new LoginFlow( driver, gutenbergUser );

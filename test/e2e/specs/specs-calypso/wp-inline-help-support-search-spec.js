@@ -24,7 +24,11 @@ let inlineHelpPopoverComponent;
 
 describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	it( 'Login and select a page that is not the My Home page', async function () {
 		const loginFlow = new LoginFlow( driver );

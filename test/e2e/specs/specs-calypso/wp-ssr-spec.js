@@ -22,7 +22,11 @@ async function ssrWorksForPage( driver, url ) {
 
 describe( 'Server-side rendering: @canary @parallel', function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	it( '/log-in renders on the server', async function () {
 		await ssrWorksForPage( driver, LoginPage.getLoginURL() );

@@ -1,7 +1,14 @@
 /**
+ * External dependencies
+ */
+import config from 'config';
+
+/**
  * Internal dependencies
  */
 import { quitBrowser, startBrowser, ensureNotLoggedIn } from '../driver-manager';
+
+const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 
 export const closeBrowser = async () => {
 	if ( ! global.__BROWSER__ ) {
@@ -13,8 +20,9 @@ export const closeBrowser = async () => {
 	await quitBrowser( driver );
 };
 
-export const createBrowser = async () => {
+export async function createBrowser() {
+	this.timeout( startBrowserTimeoutMS );
 	const driver = await startBrowser();
 	await ensureNotLoggedIn( driver );
 	global.__BROWSER__ = driver;
-};
+}

@@ -30,7 +30,11 @@ describe( `[${ host }] Likes: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeoutMS );
 	const comment = dataHelper.randomPhrase();
 	const accountKey = 'gutenbergSimpleSiteUser';
-	const driver = global.__BROWSER__;
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	it( 'Login, create a new post and view it', async function () {
 		const loginFlow = new LoginFlow( driver, accountKey );

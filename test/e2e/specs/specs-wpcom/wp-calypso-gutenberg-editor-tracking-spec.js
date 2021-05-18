@@ -40,7 +40,11 @@ function getTotalEventsFiredForBlock( eventsStack, event, block ) {
 
 describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	describe( 'Tracking: @parallel', function () {
 		it( 'Can log in to WPAdmin and create new Post', async function () {

@@ -35,7 +35,11 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	describe( 'Adding a domain to an existing site', function () {
 		const blogName = dataHelper.getNewBlogName();

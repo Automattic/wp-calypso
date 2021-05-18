@@ -25,7 +25,11 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] SEO Preview page: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	// Login as Business plan user and open the sidebar
 	it( 'Log In', async function () {

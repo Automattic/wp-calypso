@@ -35,7 +35,7 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-const driver = global.__BROWSER__;
+let driver;
 let editor;
 let sampleImages;
 
@@ -165,6 +165,9 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 		}
 	} );
 
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 	after( async function () {
 		if ( sampleImages && sampleImages.length ) {
 			await Promise.all(

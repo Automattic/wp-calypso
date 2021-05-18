@@ -25,10 +25,15 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
+
 	const commentingUser = dataHelper.getAccountConfig( 'commentingUser' )[ 0 ];
 	const comment = dataHelper.randomPhrase() + ' TBD';
 	let commentedPostTitle;
-	const driver = global.__BROWSER__;
 
 	it( 'Can log in as commenting user', async function () {
 		const loginFlow = new LoginFlow( driver, 'commentingUser' );

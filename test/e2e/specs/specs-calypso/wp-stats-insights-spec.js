@@ -21,7 +21,11 @@ const screenSize = driverManager.currentScreenSize();
 describe( 'Stats: (' + screenSize + ') @parallel', function () {
 	this.timeout( mochaTimeOut );
 	let statsPage;
-	const driver = global.__BROWSER__;
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	it( 'Can log in as user', async function () {
 		this.loginFlow = new LoginFlow( driver );

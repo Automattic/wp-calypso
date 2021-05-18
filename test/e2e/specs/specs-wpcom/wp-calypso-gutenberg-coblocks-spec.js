@@ -24,7 +24,11 @@ const gutenbergUser =
 
 describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	describe( 'Insert a Click to Tweet block: @parallel', function () {
 		it( 'Can log in', async function () {

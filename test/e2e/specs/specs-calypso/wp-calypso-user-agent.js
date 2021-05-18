@@ -18,7 +18,11 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] User Agent: (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	it( 'Can see the correct user agent set', async function () {
 		await WPHomePage.Visit( driver );

@@ -21,7 +21,11 @@ const screenSize = driverManager.currentScreenSize();
 
 describe( 'Verify Import Option: (' + screenSize + ') @parallel', function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	it( 'Can log in as default user', async function () {
 		const loginFlow = new LoginFlow( driver );

@@ -39,7 +39,11 @@ const createAndActivateAccount = async function ( driver, accountName ) {
 
 describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	describe( 'Launch a free site', function () {
 		const siteName = dataHelper.getNewBlogName();

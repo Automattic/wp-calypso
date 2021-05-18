@@ -23,8 +23,12 @@ const screenSize = driverManager.currentScreenSize();
 
 describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
 	let selectedSubdomain;
-	const driver = global.__BROWSER__;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	describe( 'Launch a free site', function () {
 		const siteName = dataHelper.getNewBlogName();

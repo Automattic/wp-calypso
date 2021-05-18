@@ -22,7 +22,11 @@ const gutenbergUser =
 
 describe( `[${ host }] Calypso Gutenberg Editor: Blocks (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
+	let driver;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	describe( 'Can see monetization blocks in block inserter @canary @parallel', function () {
 		it( 'Can log in', async function () {

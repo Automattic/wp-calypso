@@ -22,8 +22,12 @@ const blogPostQuote =
 
 describe( `[${ host }] Comments: (${ screenSize })`, function () {
 	let fileDetails;
+	let driver;
 	this.timeout( mochaTimeoutMS );
-	const driver = global.__BROWSER__;
+
+	before( () => {
+		driver = global.__BROWSER__;
+	} );
 
 	// Create image file for upload
 	before( async function () {
