@@ -42,7 +42,7 @@ export default function ( router ) {
 
 	router(
 		routesWithSites,
-		redirectLoggedOut, // if logged out, redirect to login
+		redirectLoggedOut,
 		fetchAndValidateVerticalsAndFiltersIfLoggedIn,
 		siteSelection,
 		loggedIn,
