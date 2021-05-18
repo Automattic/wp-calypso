@@ -209,10 +209,17 @@
 }
 
 .email-plan-mailboxes-list__mailbox-action-menu {
-    position: absolute;
-    right: 24px;
-    top: 50%;
-	transform: translateY( -50% );
+	position: absolute;
+	right: 16px;
+	top: 28px;
+
+	@include break-mobile {
+		right: 24px;
+	}
+
+	> .button.is-borderless {
+		padding: 0;
+	}
 }
 
 .popover__menu-item.email-plan-mailboxes-list__mailbox-action-menu-item {
@@ -234,20 +241,44 @@
 	display: flex;
 	flex-direction: column;
 
-	@include break-xlarge {
-		flex-direction: row;
-	}
+	&.card {
+		&.is-compact {
+			@include break-xlarge {
+				flex-direction: row;
+				/* The padding jumps as we need the padding on this element instead
+				 * of mailbox-list-item-main when we shift to flex-direction: row
+				 */
+				padding-right: 72px;
+			}
+		}
 
-	&.card.is-highlight {
-		padding-left: 13px;
-	}
-	&.card.is-error {
-		border-left-color: var( --color-error-50 );
+		&.is-highlight {
+			padding-left: 13px;
+
+			@include break-mobile {
+				padding-left: 21px;
+			}
+		}
+
+		&.is-error {
+			border-left-color: var( --color-error-50 );
+		}
 	}
 
 	.email-plan-mailboxes-list__mailbox-list-item-main {
 		display: flex;
 		flex-direction: column;
+		padding-right: 40px;
+
+		@include break-mobile {
+			padding-right: 48px;
+		}
+
+		@include break-xlarge {
+			/* Padding moves to parent mailbox-list-item when we shift to flex-direction: row */
+			padding-right: 0;
+		}
+
 		> div:not( :first-child ) {
 			margin-top: 0.5em;
 		}
@@ -271,9 +302,18 @@
 		vertical-align: middle;
 		word-break: break-all;
 	}
+
 	> .badge {
-		margin-left: 10px;
+		/* Hide admin badge in mobile layouts */
+		display: none;
+
+		@include break-xlarge {
+			align-self: center;
+			display: unset;
+			margin-left: 10px;
+		}
 	}
+
 	.email-plan-mailboxes-list__mailbox-list-item-warning {
 		border-top: 1px solid var( --color-neutral-5 );
 		color: var( --color-error );
@@ -311,15 +351,29 @@
 }
 
 .email-plan-subscription__card {
-	display: flex;
 	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
 
-	> div:nth-last-child( 2 ) {
-		margin-left: 15px;
-		flex: 1 1 auto;
+	@include break-small {
+		flex-wrap: initial;
 	}
-	> div:last-child {
-		margin-left: 15px;
+
+	.email-plan-subscription__renew {
+		margin-left: auto;
+		margin-right: 16px;
+
+		@include break-small {
+			flex: 1 1 auto;
+			margin-left: 16px;
+		}
+	}
+
+	.email-plan-subscription__auto-renew {
+		/* Ensure auto-renew text is using the standard font size */
+		label {
+			font-size: $font-body;
+		}
 		/* vertically aligns the auto-renew toggle - not sure if there's a better way... */
 		> div > div {
 			margin-top: auto;
