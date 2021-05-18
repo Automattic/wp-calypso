@@ -203,16 +203,6 @@ private object VisualRegressionTests : BuildType({
 		cleanCheckout = true
 	}
 
-	params {
-		select(
-			name= "vr_task",
-			label = "Visual Regression Task",
-			allowMultiple = false,
-			value = "test-visual",
-			options = listOf( "test-visual", "test-visual-approve", "test-visual-reference")
-		)
-	}
-
 	steps {
 		bashNodeScript {
 			name = "Prepare environment"
@@ -237,7 +227,7 @@ private object VisualRegressionTests : BuildType({
 				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/development.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
-				yarn "%vr_task%"
+				yarn test-visual
 			""".trimIndent()
 			dockerRunParameters = "-v /var/run/docker.sock:/var/run/docker.sock"
 		}
