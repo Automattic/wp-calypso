@@ -20,8 +20,8 @@ const isVideoEnabled = () => {
 
 export const mochaHooks = async () => {
 	const hooks = {
-		afterAll: [ saveBrowserLogs ],
-		beforeAll: [ createBrowser ],
+		afterAll: [],
+		beforeAll: [],
 		afterEach: [],
 	};
 
@@ -44,7 +44,8 @@ export const mochaHooks = async () => {
 		hooks.afterAll = [ ...hooks.afterAll, stopFramebuffer, stopVideoRecording ];
 	}
 
-	hooks.afterAll = [ ...hooks.afterAll, closeBrowser ];
+	hooks.afterAll = [ ...hooks.afterAll, saveBrowserLogs, closeBrowser ];
+	hooks.beforeAll = [ ...hooks.beforeAll, createBrowser ];
 
 	return hooks;
 };
