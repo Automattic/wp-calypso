@@ -39,7 +39,6 @@ import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import ThemesSiteSelectorModal from 'calypso/my-sites/themes/themes-site-selector-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import {
 	isThemeActive,
@@ -769,17 +768,7 @@ class ThemeSheet extends React.Component {
 	}
 }
 
-const ConnectedThemeSheet = connectOptions( ( props ) => {
-	if ( ! props.isLoggedIn || props.siteId ) {
-		return <ThemeSheet { ...props } />;
-	}
-
-	return (
-		<ThemesSiteSelectorModal { ...props }>
-			<ThemeSheet />
-		</ThemesSiteSelectorModal>
-	);
-} );
+const ConnectedThemeSheet = connectOptions( ( props ) => <ThemeSheet { ...props } /> );
 
 const ThemeSheetWithOptions = ( props ) => {
 	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = props;
