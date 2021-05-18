@@ -256,15 +256,36 @@ class HelpContact extends React.Component {
 	};
 
 	submitSupportForumsTopic = ( contactForm ) => {
-		const { subject, message } = contactForm;
-		const { currentUserLocale } = this.props;
+		const { site, subject, message, userDeclaresNoSite, userDeclaredUrl } = contactForm;
+		const { currentUserLocale, translate } = this.props;
 
 		this.setState( { isSubmitting: true } );
 		this.recordCompactSubmit( 'forums' );
 
+		let blogHelpMessage = translate( "I don't have a site linked to my WordPress.com account yet" );
+
+		if ( userDeclaresNoSite ) {
+			blogHelpMessage = translate( "I don't have a site with WordPress.com yet" );
+		}
+
+		if ( site || userDeclaredUrl ) {
+			blogHelpMessage = translate( 'The blog I need help with is %(siteUrl)s.', {
+				args: {
+					siteUrl: userDeclaredUrl ? userDeclaredUrl : site.URL,
+				},
+			} );
+
+			if ( userDeclaredUrl ) {
+				blogHelpMessage +=
+					' ' + translate( 'This blog is not linked to my WordPress.com account.' );
+			}
+		}
+
+		const forumMessage = message + '\n\n' + blogHelpMessage;
+
 		wpcom.submitSupportForumsTopic(
 			subject,
-			message,
+			forumMessage,
 			currentUserLocale,
 			this.props.clientSlug,
 			( error, data ) => {
@@ -459,7 +480,8 @@ class HelpContact extends React.Component {
 					showSubjectField: true,
 					showHowCanWeHelpField: false,
 					showHowYouFeelField: false,
-					showSiteField: false,
+					showSiteField: true,
+					showAlternativeSiteOptionsField: true,
 					showQASuggestions: true,
 				};
 		}
