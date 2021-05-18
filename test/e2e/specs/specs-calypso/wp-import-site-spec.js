@@ -17,17 +17,11 @@ import ImporterPage from '../../lib/pages/importer-page';
 import * as driverManager from '../../lib/driver-manager.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 
 describe( 'Verify Import Option: (' + screenSize + ') @parallel', function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'Can log in as default user', async function () {
 		const loginFlow = new LoginFlow( driver );

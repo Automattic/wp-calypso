@@ -16,7 +16,6 @@ import * as driverManager from '../../lib/driver-manager.js';
 import * as dataHelper from '../../lib/data-helper.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
@@ -41,12 +40,7 @@ function getTotalEventsFiredForBlock( eventsStack, event, block ) {
 
 describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	describe( 'Tracking: @parallel', function () {
 		it( 'Can log in to WPAdmin and create new Post', async function () {

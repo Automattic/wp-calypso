@@ -20,19 +20,13 @@ import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page.js';
 import * as dataHelper from '../../lib/data-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 // NOTE: test in jetpack env is failing due to some strange issue, when switching to new tab. It fails only in CI
 describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'Login', async function () {
 		const loginFlow = new LoginFlow( driver );

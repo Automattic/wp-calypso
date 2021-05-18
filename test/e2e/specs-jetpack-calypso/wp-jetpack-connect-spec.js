@@ -35,7 +35,6 @@ import MyPlanPage from '../lib/pages/my-plan-page';
 import WPAdminInPlaceApprovePage from '../lib/pages/wp-admin/wp-admin-in-place-approve-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const signupInboxId = config.get( 'signupInboxId' );
 const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
@@ -45,12 +44,7 @@ const siteName = dataHelper.getJetpackSiteName();
 
 describe( `Jetpack Connect: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	describe( 'Connect From wp-admin: @parallel @jetpack @canary', function () {
 		before( async function () {

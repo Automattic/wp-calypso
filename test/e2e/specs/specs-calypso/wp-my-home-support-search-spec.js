@@ -17,7 +17,6 @@ import SupportSearchComponent from '../../lib/components/support-search-componen
 import SidebarComponent from '../../lib/components/sidebar-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
@@ -27,12 +26,7 @@ const helpCardLocator = By.css( '.help-search' );
 
 describe( `[${ host }] My Home "Get help" support search card: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'Login and select the My Home page', async function () {
 		const loginFlow = new LoginFlow( driver );

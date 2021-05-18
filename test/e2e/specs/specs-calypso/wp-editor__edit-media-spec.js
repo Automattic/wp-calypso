@@ -14,18 +14,12 @@ import SideBarComponent from '../../lib/components/sidebar-component';
 import MediaPage from '../../lib/pages/media-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	before( 'Can login and select my site', async function () {
 		const loginFlow = new LoginFlow( driver );

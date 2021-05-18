@@ -21,7 +21,6 @@ import MyHomePage from '../../lib/pages/my-home-page.js';
 
 const host = dataHelper.getJetpackHost();
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const signupInboxId = config.get( 'signupInboxId' );
 
@@ -40,12 +39,7 @@ const createAndActivateAccount = async function ( driver, accountName ) {
 
 describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	describe( 'Launch a free site', function () {
 		const siteName = dataHelper.getNewBlogName();

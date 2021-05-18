@@ -24,7 +24,6 @@ import * as driverManager from '../../lib/driver-manager.js';
 import EmailClient from '../../lib/email-client.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const inviteInboxId = config.get( 'inviteInboxId' );
 const password = config.get( 'passwordForNewTestSignUps' );
 const screenSize = driverManager.currentScreenSize();
@@ -41,12 +40,7 @@ describe( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @parallel
 	let acceptInviteURL = '';
 	let inviteCreated = false;
 	let inviteAccepted = false;
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'As an anonymous user I can not see a private site', async function () {
 		return await PrivateSiteLoginPage.Visit( driver, siteUrl );

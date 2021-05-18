@@ -26,18 +26,12 @@ import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
 import WPAdminLogonPage from '../lib/pages/wp-admin/wp-admin-logon-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	describe( 'Purchase Business Plan:', function () {
 		before( async function () {

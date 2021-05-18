@@ -24,20 +24,14 @@ import * as dataHelper from '../../lib/data-helper.js';
 import * as driverHelper from '../../lib/driver-helper.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 
 describe( `Gutenboarding - Create new site as existing user: (${ screenSize }) @parallel @canary`, function () {
 	this.timeout( mochaTimeOut );
 	const siteTitle = dataHelper.randomPhrase();
 	const domainQuery = dataHelper.randomPhrase();
-	let driver;
 	let newSiteDomain = '';
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'Can log in as user', async function () {
 		await new LoginFlow( driver ).login();

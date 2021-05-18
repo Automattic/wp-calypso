@@ -12,7 +12,6 @@ import * as driverManager from '../../lib/driver-manager';
 import * as dataHelper from '../../lib/data-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 const gutenbergUser =
@@ -44,12 +43,7 @@ function camelCaseDash( string ) {
 
 describe( `[${ host }] Experimental features we depend on are available (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'Can log in', async function () {
 		this.loginFlow = new LoginFlow( driver, gutenbergUser );

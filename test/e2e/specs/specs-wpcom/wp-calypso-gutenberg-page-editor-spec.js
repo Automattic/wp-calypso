@@ -24,7 +24,6 @@ import * as dataHelper from '../../lib/data-helper.js';
 import * as driverHelper from '../../lib/driver-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 const gutenbergUser =
@@ -32,12 +31,7 @@ const gutenbergUser =
 
 describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	describe( 'Public Pages: @parallel', function () {
 		let fileDetails;

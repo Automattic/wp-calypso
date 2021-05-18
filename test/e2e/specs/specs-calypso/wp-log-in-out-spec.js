@@ -21,19 +21,12 @@ import LoginPage from '../../lib/pages/login-page';
 import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Auth Screen Canary: (${ screenSize }) @parallel @safaricanary`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-		return await driverManager.ensureNotLoggedIn( driver );
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'Can see the log in screen', async function () {
 		await LoginPage.Visit( driver, LoginPage.getLoginURL() );
@@ -42,12 +35,7 @@ describe( `[${ host }] Auth Screen Canary: (${ screenSize }) @parallel @safarica
 
 describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	describe( 'Logging In and Out: @jetpack', function () {
 		before( async function () {

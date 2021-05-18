@@ -14,19 +14,13 @@ import SiteEditorPage from '../../lib/pages/site-editor-page.js';
 import SiteEditorComponent from '../../lib/components/site-editor-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 const gutenbergUser = 'siteEditorSimpleSiteUser';
 
 describe( `[${ host }] Site Editor (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'Can log in', async function () {
 		this.loginFlow = new LoginFlow( driver, gutenbergUser );

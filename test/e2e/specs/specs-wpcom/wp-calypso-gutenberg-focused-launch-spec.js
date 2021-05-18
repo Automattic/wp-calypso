@@ -17,20 +17,14 @@ import GutenboardingFlow from '../../lib/flows/gutenboarding-flow.js';
 import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 
 const host = dataHelper.getJetpackHost();
 const screenSize = driverManager.currentScreenSize();
 
 describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
 	let selectedSubdomain;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	describe( 'Launch a free site', function () {
 		const siteName = dataHelper.getNewBlogName();

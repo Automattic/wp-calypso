@@ -15,18 +15,12 @@ import SettingsPage from '../lib/pages/settings-page';
 import LoginFlow from '../lib/flows/login-flow';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Jetpack Settings on Calypso: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	before( async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );

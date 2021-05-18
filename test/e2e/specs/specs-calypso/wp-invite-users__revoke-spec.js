@@ -21,7 +21,6 @@ import * as driverManager from '../../lib/driver-manager.js';
 import EmailClient from '../../lib/email-client.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const inviteInboxId = config.get( 'inviteInboxId' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
@@ -32,12 +31,7 @@ describe( `[${ host }] Invites - New user as Editor and revoke: (${ screenSize }
 	const newUserName = 'e2eflowtestingeditorb' + new Date().getTime().toString();
 	const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 	let acceptInviteURL = '';
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'Can log in and navigate to Invite People page', async function () {
 		await new LoginFlow( driver ).loginAndSelectPeople();

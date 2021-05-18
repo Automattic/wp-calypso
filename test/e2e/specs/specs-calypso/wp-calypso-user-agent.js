@@ -13,19 +13,12 @@ import * as dataHelper from '../../lib/data-helper';
 import WPHomePage from '../../lib/pages/wp-home-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] User Agent: (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-		await driverManager.ensureNotLoggedIn( driver );
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'Can see the correct user agent set', async function () {
 		await WPHomePage.Visit( driver );

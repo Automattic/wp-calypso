@@ -15,18 +15,12 @@ import PlansPage from '../../lib/pages/plans-page.js';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Plans - Comparing plans: (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'Login and Select My Site', async function () {
 		const loginFlow = new LoginFlow( driver );

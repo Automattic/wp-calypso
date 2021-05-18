@@ -15,7 +15,6 @@ import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-compo
 
 const host = dataHelper.getJetpackHost();
 const screenSize = driverManager.currentScreenSize();
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const mochaTimeoutMS = config.get( 'mochaTimeoutMS' );
 const blogPostTitle = dataHelper.randomPhrase();
 const blogPostQuote =
@@ -23,13 +22,8 @@ const blogPostQuote =
 
 describe( `[${ host }] Comments: (${ screenSize })`, function () {
 	let fileDetails;
-	let driver;
 	this.timeout( mochaTimeoutMS );
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	// Create image file for upload
 	before( async function () {

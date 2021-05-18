@@ -29,19 +29,13 @@ import LoginFlow from '../../lib/flows/login-flow.js';
 import * as SlackNotifier from '../../lib/slack-notifier';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const domainsInboxId = config.get( 'domainsInboxId' );
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	describe( 'Adding a domain to an existing site', function () {
 		const blogName = dataHelper.getNewBlogName();

@@ -32,11 +32,10 @@ import {
 } from '../../lib/gutenberg/blocks';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
+const driver = global.__BROWSER__;
 let editor;
 let sampleImages;
 
@@ -164,11 +163,6 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 		} else {
 			this.skip();
 		}
-	} );
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = global.__BROWSER__ = await driverManager.startBrowser();
 	} );
 
 	after( async function () {

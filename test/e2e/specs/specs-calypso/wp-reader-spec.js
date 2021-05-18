@@ -18,17 +18,11 @@ import * as driverManager from '../../lib/driver-manager.js';
 import * as dataHelper from '../../lib/data-helper.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 
 describe( 'Reader: (' + screenSize + ') @parallel', function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'Can log in as commenting user', async function () {
 		this.loginFlow = new LoginFlow( driver, 'commentingUser' );

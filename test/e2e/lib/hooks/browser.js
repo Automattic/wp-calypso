@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { quitBrowser } from '../driver-manager';
+import { quitBrowser, startBrowser, ensureNotLoggedIn } from '../driver-manager';
 
 export const closeBrowser = async () => {
 	if ( ! global.__BROWSER__ ) {
@@ -11,4 +11,10 @@ export const closeBrowser = async () => {
 
 	const driver = global.__BROWSER__;
 	await quitBrowser( driver );
+};
+
+export const createBrowser = async () => {
+	const driver = await startBrowser();
+	await ensureNotLoggedIn( driver );
+	global.__BROWSER__ = driver;
 };

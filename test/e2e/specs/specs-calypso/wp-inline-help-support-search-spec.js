@@ -16,7 +16,6 @@ import SupportSearchComponent from '../../lib/components/support-search-componen
 import SidebarComponent from '../../lib/components/sidebar-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
@@ -25,12 +24,7 @@ let inlineHelpPopoverComponent;
 
 describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'Login and select a page that is not the My Home page', async function () {
 		const loginFlow = new LoginFlow( driver );

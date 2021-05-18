@@ -33,7 +33,6 @@ import * as SlackNotifier from '../../lib/slack-notifier';
 import EmbedsBlockComponent from '../../lib/gutenberg/blocks/embeds-block-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 const gutenbergUser =
@@ -41,12 +40,7 @@ const gutenbergUser =
 
 describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	describe( 'Public Posts: Preview and Publish a Public Post @parallel', function () {
 		let fileDetails;

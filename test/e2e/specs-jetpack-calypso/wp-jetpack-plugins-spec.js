@@ -24,12 +24,7 @@ const host = getJetpackHost();
 
 describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'Can login and select Manage Plugins', async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
@@ -70,12 +65,7 @@ describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) 
 
 describe( `[${ host }] Jetpack Plugins - Searching a plugin: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	it( 'Can login and select Plugins', async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );

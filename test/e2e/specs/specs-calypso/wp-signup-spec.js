@@ -57,7 +57,6 @@ import MyHomePage from '../../lib/pages/my-home-page';
 import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const signupInboxId = config.get( 'signupInboxId' );
 const host = dataHelper.getJetpackHost();
@@ -67,12 +66,7 @@ const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 
 describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		this.driver = driver = await driverManager.startBrowser();
-	} );
+	const driver = global.__BROWSER__;
 
 	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @signup @email', function () {
 		const blogName = dataHelper.getNewBlogName();
