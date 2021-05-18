@@ -212,3 +212,10 @@ export function renderDomainsPage( context, next ) {
 	);
 	next();
 }
+
+export function renderPluginsSetupStatusPage( context, next ) {
+	context.primary = (
+		<AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status" />
+	);
+	next();
+}
