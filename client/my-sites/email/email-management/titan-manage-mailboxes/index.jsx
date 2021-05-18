@@ -11,6 +11,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import DocumentHead from 'calypso/components/data/document-head';
+import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	emailManagement,
 	emailManagementTitanControlPanelRedirect,
@@ -78,6 +79,7 @@ class TitanManageMailboxes extends Component {
 
 	render() {
 		const {
+			currentRoute,
 			domain,
 			hasSubscription,
 			isLoadingPurchase,
@@ -93,6 +95,8 @@ class TitanManageMailboxes extends Component {
 				{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 
 				<DocumentHead title={ translate( 'Manage all mailboxes' ) } />
+
+				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
 				<HeaderCake onClick={ this.handleBack }>{ translate( 'Manage all mailboxes' ) }</HeaderCake>
 

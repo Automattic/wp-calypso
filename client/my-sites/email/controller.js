@@ -58,10 +58,12 @@ export default {
 
 	emailManagementManageTitanMailboxes( pageContext, next ) {
 		pageContext.primary = (
-			<TitanManageMailboxes
-				context={ pageContext.query.context }
-				selectedDomainName={ pageContext.params.domain }
-			/>
+			<CalypsoShoppingCartProvider>
+				<TitanManageMailboxes
+					context={ pageContext.query.context }
+					selectedDomainName={ pageContext.params.domain }
+				/>
+			</CalypsoShoppingCartProvider>
 		);
 
 		next();
