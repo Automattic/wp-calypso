@@ -83,7 +83,7 @@ class AutoLoadingHomepageModal extends Component {
 			const { installingThemeId, siteId, source } = this.props;
 			this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
 			const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
-			recordTracksEvent( 'calypso_theme_activate_new_click', {
+			recordTracksEvent( 'calypso_theme_autoloading_modal_activate_click', {
 				theme: installingThemeId,
 				keep_current_homepage: keepCurrentHomepage,
 			} );
@@ -95,7 +95,7 @@ class AutoLoadingHomepageModal extends Component {
 				keepCurrentHomepage
 			);
 		}
-		recordTracksEvent( 'calypso_theme_keep_current_theme_click' );
+		recordTracksEvent( 'calypso_theme_autoloading_modal_dismiss' );
 		this.props.hideAutoLoadingHomepageWarning();
 	};
 
