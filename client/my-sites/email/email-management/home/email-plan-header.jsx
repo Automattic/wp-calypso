@@ -17,8 +17,9 @@ import { resolveEmailPlanStatus } from 'calypso/my-sites/email/email-management/
 
 const EmailPlanHeader = ( {
 	domain,
-	emailAccounts,
+	emailAccount,
 	hasEmailSubscription,
+	isLoadingEmails,
 	isLoadingPurchase,
 	purchase,
 	selectedSite,
@@ -27,7 +28,11 @@ const EmailPlanHeader = ( {
 		return null;
 	}
 
-	const { statusClass, text, icon } = resolveEmailPlanStatus( domain );
+	const { statusClass, text, icon } = resolveEmailPlanStatus(
+		domain,
+		emailAccount,
+		isLoadingEmails
+	);
 
 	const cardClasses = classnames( 'email-plan-header', statusClass );
 
@@ -47,8 +52,8 @@ const EmailPlanHeader = ( {
 				</div>
 			</CompactCard>
 
-			{ hasEmailSubscription && emailAccounts?.warnings?.length && (
-				<EmailPlanWarnings warnings={ emailAccounts?.warnings } />
+			{ hasEmailSubscription && emailAccount?.warnings?.length && (
+				<EmailPlanWarnings warnings={ emailAccount?.warnings } />
 			) }
 
 			{ hasEmailSubscription && (
@@ -65,7 +70,8 @@ const EmailPlanHeader = ( {
 
 EmailPlanHeader.propTypes = {
 	domain: PropTypes.object.isRequired,
-	emailAccounts: PropTypes.array.isRequired,
+	emailAccount: PropTypes.object,
+	isLoadingEmails: PropTypes.bool.isRequired,
 	hasEmailSubscription: PropTypes.bool.isRequired,
 	isLoadingPurchase: PropTypes.bool.isRequired,
 	purchase: PropTypes.object,

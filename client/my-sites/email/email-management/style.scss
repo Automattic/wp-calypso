@@ -406,3 +406,7 @@
 .email-plan-subscription__expired {
 	color: var( --color-error-50 );
 }
+
+.email-plan-warnings__warning.notice {
+	margin-bottom: 1px;
+}

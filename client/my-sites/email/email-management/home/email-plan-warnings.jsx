@@ -7,15 +7,22 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { CompactCard } from '@automattic/components';
+import Notice from 'calypso/components/notice';
+import { EMAIL_WARNING_TYPE_ACTION_REQUIRED } from 'calypso/lib/emails/email-provider-constants';
+
+const getWarningStatus = ( warning ) => {
+	return EMAIL_WARNING_TYPE_ACTION_REQUIRED === warning.warning_type ? 'is-info' : 'is-warning';
+};
 
 const EmailPlanWarnings = ( { warnings } ) =>
 	warnings.map( ( warning, index ) => (
-		<CompactCard highlight="info" className="email-plan-warnings__warning" key={ index }>
-			<span>
-				<em>{ warning.message }</em>
-			</span>
-		</CompactCard>
+		<Notice
+			status={ getWarningStatus( warning ) }
+			text={ warning.message }
+			showDismiss={ false }
+			className="email-plan-warnings__warning"
+			key={ index }
+		/>
 	) );
 
 EmailPlanWarnings.propTypes = {

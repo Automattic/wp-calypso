@@ -261,10 +261,11 @@ class EmailPlan extends React.Component {
 				<EmailPlanHeader
 					domain={ domain }
 					hasEmailSubscription={ hasSubscription }
+					isLoadingEmails={ isLoadingEmailAccounts }
 					isLoadingPurchase={ isLoadingPurchase }
 					purchase={ purchase }
 					selectedSite={ selectedSite }
-					emailAccounts={ this.state?.emailAccounts[ 0 ] }
+					emailAccount={ this.state?.emailAccounts[ 0 ] ?? null }
 				/>
 
 				<EmailPlanMailboxesList

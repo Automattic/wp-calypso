@@ -13,12 +13,12 @@ import {
 	hasPendingGSuiteUsers,
 } from 'calypso/lib/gsuite';
 import {
-	getConfiguredTitanMailboxCount,
 	getMaxTitanMailboxCount,
 	getTitanExpiryDate,
 	getTitanSubscriptionId,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
+import { EMAIL_WARNING_SLUG_UNUSED_MAILBOXES } from 'calypso/lib/emails/email-provider-constants';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 
@@ -98,11 +98,23 @@ export function hasEmailSubscription( domain ) {
 	return !! subscriptionId;
 }
 
-export function resolveEmailPlanStatus( domain ) {
+/**
+ * Determines if any warnings exists with the slug `unused_mailboxes` in an array of warning objects
+ *
+ * @param {Array} warnings - An array of warning objects
+ * @returns {boolean} true if unused mailboxes exists, false otherwise
+ */
+function hasUnusedMailboxWarnings( warnings ) {
+	return ( warnings?.length ? warnings : [] ).some(
+		( warning ) => EMAIL_WARNING_SLUG_UNUSED_MAILBOXES === warning?.warning_slug
+	);
+}
+
+export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) {
 	const defaultActiveStatus = {
 		statusClass: 'success',
-		icon: 'check_circle',
-		text: translate( 'Active' ),
+		icon: isLoadingEmails ? 'cached' : 'check_circle',
+		text: isLoadingEmails ? translate( 'Loading accounts' ) : translate( 'Active' ),
 	};
 
 	const defaultWarningStatus = {
@@ -130,8 +142,8 @@ export function resolveEmailPlanStatus( domain ) {
 				return defaultWarningStatus;
 			}
 		}
-
-		if ( getMaxTitanMailboxCount( domain ) > getConfiguredTitanMailboxCount( domain ) ) {
+		// Check for unused mailboxes
+		if ( hasUnusedMailboxWarnings( emailAccount?.warnings ) ) {
 			return defaultWarningStatus;
 		}
 
