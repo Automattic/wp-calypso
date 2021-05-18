@@ -5,23 +5,31 @@ import React from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
-import Button from '../../components/button';
 import {
 	FormStatus,
 	TransactionStatus,
 	useTransactionStatus,
 	useLineItems,
-} from '../../public-api';
-import { useFormStatus } from '../form-status';
-import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
+	useFormStatus,
+	Button,
+} from '@automattic/composite-checkout';
+import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
-const debug = debugFactory( 'composite-checkout:paypal' );
+/**
+ * Internal dependencies
+ */
+import { PaymentMethodLogos } from '../payment-method-logos';
 
-export function createPayPalMethod( { labelText = null } ) {
+const debug = debugFactory( 'wpcom-checkout:paypal' );
+
+// Disabling this rule to make migrating this easier with fewer changes
+/* eslint-disable @typescript-eslint/no-use-before-define */
+
+export function createPayPalMethod( {
+	labelText = null,
+}: {
+	labelText?: string | null;
+} ): PaymentMethod {
 	debug( 'creating new paypal payment method' );
 	return {
 		id: 'paypal',
@@ -32,7 +40,7 @@ export function createPayPalMethod( { labelText = null } ) {
 	};
 }
 
-export function PaypalLabel( { labelText = null } ) {
+export function PaypalLabel( { labelText = null }: { labelText?: string | null } ): JSX.Element {
 	const { __ } = useI18n();
 
 	return (
@@ -45,12 +53,23 @@ export function PaypalLabel( { labelText = null } ) {
 	);
 }
 
-export function PaypalSubmitButton( { disabled, onClick } ) {
+export function PaypalSubmitButton( {
+	disabled,
+	onClick,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+} ): JSX.Element {
 	const { formStatus } = useFormStatus();
 	const { transactionStatus } = useTransactionStatus();
 	const [ items ] = useLineItems();
 
 	const handleButtonPress = () => {
+		if ( ! onClick ) {
+			throw new Error(
+				'Missing onClick prop; PaypalSubmitButton must be used as a payment button in CheckoutSubmitButton'
+			);
+		}
 		onClick( 'paypal', {
 			items,
 		} );
@@ -68,7 +87,13 @@ export function PaypalSubmitButton( { disabled, onClick } ) {
 	);
 }
 
-function PayPalButtonContents( { formStatus, transactionStatus } ) {
+function PayPalButtonContents( {
+	formStatus,
+	transactionStatus,
+}: {
+	formStatus: FormStatus;
+	transactionStatus: TransactionStatus;
+} ): JSX.Element {
 	const { __ } = useI18n();
 	if ( transactionStatus === TransactionStatus.REDIRECTING ) {
 		return <span>{ __( 'Redirecting to PayPal…' ) }</span>;
@@ -86,12 +111,12 @@ const ButtonPayPalIcon = styled( PaypalLogo )`
 	transform: translateY( 2px );
 `;
 
-function PaypalSummary() {
+function PaypalSummary(): JSX.Element {
 	const { __ } = useI18n();
-	return __( 'PayPal' );
+	return <>{ __( 'PayPal' ) }</>;
 }
 
-function PaypalLogo( { className } ) {
+function PaypalLogo( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			className={ className }

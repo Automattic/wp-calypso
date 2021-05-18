@@ -7,6 +7,7 @@ export * from './transformations';
 export * from './types';
 export * from './product-url-encoding';
 export { useDisplayCartMessages };
+export { createPayPalMethod } from './payment-methods/paypal';
 export { createApplePayMethod } from './payment-methods/apple-pay';
 export * from './postal-code';
 export { default as Field } from './field';
