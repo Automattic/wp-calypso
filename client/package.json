@@ -236,7 +236,7 @@
 		"@testing-library/jest-dom": "^5.11.10",
 		"@testing-library/react": "^11.2.6",
 		"@testing-library/react-hooks": "5.1.2",
-		"autoprefixer": "^9.7.3",
+		"autoprefixer": "^9.8.6",
 		"component-event": "^0.2.0",
 		"component-query": "^0.0.3",
 		"react-test-renderer": "^16.12.0",
