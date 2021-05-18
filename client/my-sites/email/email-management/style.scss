@@ -241,11 +241,17 @@
 	display: flex;
 	flex-direction: column;
 
-	@include break-xlarge {
-		flex-direction: row;
-	}
-
 	&.card {
+		&.is-compact {
+			@include break-xlarge {
+				flex-direction: row;
+				/* The padding jumps as we need the padding on this element instead
+				 * of mailbox-list-item-main when we shift to flex-direction: row
+				 */
+				padding-right: 72px;
+			}
+		}
+
 		&.is-highlight {
 			padding-left: 13px;
 
@@ -266,6 +272,11 @@
 
 		@include break-mobile {
 			padding-right: 48px;
+		}
+
+		@include break-xlarge {
+			/* Padding moves to parent mailbox-list-item when we shift to flex-direction: row */
+			padding-right: 0;
 		}
 
 		> div:not( :first-child ) {
