@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { includes, pick } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -14,7 +14,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
@@ -74,13 +73,12 @@ const Caching = ( {
 						/>
 					) }
 					<FormFieldset>
-						<FormToggle
+						<ToggleControl
 							checked={ !! is_cache_enabled }
 							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'is_cache_enabled' ) }
-						>
-							<span>{ translate( 'Enable Page Caching' ) }</span>
-						</FormToggle>
+							label={ <span>{ translate( 'Enable Page Caching' ) }</span> }
+						/>
 					</FormFieldset>
 
 					<FormFieldset className="wp-super-cache__cache-type-fieldset">
