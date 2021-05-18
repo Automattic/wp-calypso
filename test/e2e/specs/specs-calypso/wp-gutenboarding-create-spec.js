@@ -139,14 +139,4 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			await new DeleteSiteFlow( driver ).deleteSite( newSiteDomain );
 		} );
 	} );
-
-	describe( 'Visit Gutenboarding page as a logged in user @parallel', function () {
-		it( 'Can log in as user', async function () {
-			await new LoginFlow( driver ).login();
-		} );
-
-		it( 'Can visit Gutenboarding', async function () {
-			await NewPage.Visit( driver );
-		} );
-	} );
 } );
