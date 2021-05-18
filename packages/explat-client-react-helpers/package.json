@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/explat-client-react-helpers",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Standalone ExPlat Client: React Helpers",
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
