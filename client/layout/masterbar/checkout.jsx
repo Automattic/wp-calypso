@@ -18,18 +18,13 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 
 class CheckoutMasterbar extends React.Component {
 	clickClose = () => {
-		const {
-			previousPath,
-			siteSlug,
-			visitingFromJetpackCloud,
-			recordTracksEvent: recordEvent,
-		} = this.props;
+		const { previousPath, siteSlug, checkoutBackUrl, recordTracksEvent: recordEvent } = this.props;
 		let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
 
 		recordEvent( 'calypso_masterbar_close_clicked' );
 
-		if ( visitingFromJetpackCloud ) {
-			window.location = `https://cloud.jetpack.com/pricing/${ siteSlug }`;
+		if ( checkoutBackUrl ) {
+			window.location = checkoutBackUrl;
 			return;
 		}
 
@@ -86,7 +81,7 @@ class CheckoutMasterbar extends React.Component {
 
 export default connect(
 	( state ) => ( {
-		visitingFromJetpackCloud: getInitialQueryArguments( state ).source === 'jetpack-plans',
+		checkoutBackUrl: getInitialQueryArguments( state ).checkoutBackUrl,
 	} ),
 	{ recordTracksEvent }
 )( localize( CheckoutMasterbar ) );
