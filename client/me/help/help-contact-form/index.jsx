@@ -14,6 +14,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import config from '@automattic/calypso-config';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import SegmentedControl from 'calypso/components/segmented-control';
 import SelectDropdown from 'calypso/components/select-dropdown';
@@ -31,7 +32,10 @@ import {
 	recordTracksEvent as recordTracksEventAction,
 	composeAnalytics,
 } from 'calypso/state/analytics/actions';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserLocale,
+	getCurrentUserSiteCount,
+} from 'calypso/state/current-user/selectors';
 import isShowingQandAInlineHelpContactForm from 'calypso/state/selectors/is-showing-q-and-a-inline-help-contact-form';
 import { showQandAOnInlineHelpContactForm } from 'calypso/state/inline-help/actions';
 import { getNpsSurveyFeedback } from 'calypso/state/nps-survey/selectors';
@@ -84,6 +88,7 @@ export class HelpContactForm extends React.PureComponent {
 		formDescription: PropTypes.node,
 		buttonLabel: PropTypes.string.isRequired,
 		onSubmit: PropTypes.func.isRequired,
+		showAlternativeSiteOptionsField: PropTypes.bool,
 		showHowCanWeHelpField: PropTypes.bool,
 		showHowYouFeelField: PropTypes.bool,
 		showSubjectField: PropTypes.bool,
@@ -103,6 +108,7 @@ export class HelpContactForm extends React.PureComponent {
 
 	static defaultProps = {
 		formDescription: '',
+		showAlternativeSiteOptionsField: false,
 		showHowCanWeHelpField: false,
 		showHowYouFeelField: false,
 		showSubjectField: false,
@@ -129,6 +135,9 @@ export class HelpContactForm extends React.PureComponent {
 		message: '',
 		subject: '',
 		sibylClicked: false,
+		userDeclaresNoSite: false,
+		userDeclaresUnableToSeeSite: this.props.siteCount === 0,
+		userDeclaredUrl: '',
 		qanda: [],
 	};
 
@@ -293,7 +302,14 @@ export class HelpContactForm extends React.PureComponent {
 	 * Start a chat using the info set in state
 	 */
 	submitForm = () => {
-		const { howCanWeHelp, howYouFeel, message } = this.state;
+		const {
+			howCanWeHelp,
+			howYouFeel,
+			message,
+			userDeclaresUnableToSeeSite,
+			userDeclaredUrl,
+			userDeclaresNoSite,
+		} = this.state;
 		const { additionalSupportOption, currentUserLocale, compact } = this.props;
 		const subject = compact ? generateSubjectFromMessage( message ) : this.state.subject;
 
@@ -324,6 +340,8 @@ export class HelpContactForm extends React.PureComponent {
 			message,
 			subject,
 			site: this.props.helpSite,
+			userDeclaredUrl: userDeclaresUnableToSeeSite && userDeclaredUrl,
+			userDeclaresNoSite,
 		} );
 	};
 
@@ -358,6 +376,8 @@ export class HelpContactForm extends React.PureComponent {
 			additionalSupportOption,
 			formDescription,
 			buttonLabel,
+			siteCount,
+			showAlternativeSiteOptionsField,
 			showHowCanWeHelpField,
 			showHowYouFeelField,
 			showSubjectField,
@@ -368,6 +388,8 @@ export class HelpContactForm extends React.PureComponent {
 			showingQandAStep,
 		} = this.props;
 		const hasQASuggestions = ! isEmpty( this.state.qanda );
+
+		const hasNoSites = siteCount === 0;
 
 		const howCanWeHelpOptions = [
 			{
@@ -433,11 +455,66 @@ export class HelpContactForm extends React.PureComponent {
 
 				{ showSiteField && (
 					<div className="help-contact-form__site-selection">
-						<FormLabel>{ translate( 'Which site do you need help with?' ) }</FormLabel>
-						<SitesDropdown
-							selectedSiteId={ this.props.helpSiteId }
-							onSiteSelect={ this.props.onChangeSite }
-						/>
+						{ ! hasNoSites && (
+							<>
+								<FormLabel>{ translate( 'Which site do you need help with?' ) }</FormLabel>
+								<SitesDropdown
+									selectedSiteId={ this.props.helpSiteId }
+									onSiteSelect={ this.props.onChangeSite }
+								/>
+							</>
+						) }
+						{ showAlternativeSiteOptionsField && (
+							<div className="help-contact-form__site-alternatives">
+								{ ! hasNoSites && (
+									<FormLabel>
+										<FormCheckbox
+											onChange={ () => {
+												this.setState( {
+													userDeclaresUnableToSeeSite: ! this.state.userDeclaresUnableToSeeSite,
+												} );
+											} }
+											disabled={ this.state.userDeclaresNoSite }
+										/>
+										<span>
+											{ translate(
+												"This isn't the site which I need help with",
+												"I don't see my site which I need help with here",
+												{
+													count: siteCount,
+												}
+											) }
+										</span>
+									</FormLabel>
+								) }
+
+								{ showAlternativeSiteOptionsField && hasNoSites && (
+									<FormLabel>
+										<FormCheckbox
+											onChange={ () => {
+												this.setState( { userDeclaresNoSite: ! this.state.userDeclaresNoSite } );
+											} }
+										/>
+										<span>{ translate( "I don't have a site with WordPress.com yet" ) }</span>
+									</FormLabel>
+								) }
+
+								{ this.state.userDeclaresUnableToSeeSite && ! this.state.userDeclaresNoSite && (
+									<div className="help-contact-form__site-alternatives-url">
+										<FormLabel htmlFor="userDeclaredUrl">
+											{ translate( 'What the URL of the site you need help with?' ) }
+										</FormLabel>
+										<FormTextInput
+											id="userDeclaredUrl"
+											name="userDeclaredUrl"
+											value={ this.state.userDeclaredUrl }
+											onChange={ this.handleChange }
+											placeholder="https://"
+										/>
+									</div>
+								) }
+							</div>
+						) }
 					</div>
 				) }
 
@@ -513,6 +590,7 @@ const mapStateToProps = ( state ) => ( {
 	currentUserLocale: getCurrentUserLocale( state ),
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
+	siteCount: getCurrentUserSiteCount( state ),
 	showingQandAStep: isShowingQandAInlineHelpContactForm( state ),
 	npsSurveyFeedback: getNpsSurveyFeedback( state ),
 } );
