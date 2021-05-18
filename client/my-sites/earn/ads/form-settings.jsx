@@ -1,19 +1,18 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
 import StateSelector from 'calypso/components/forms/us-state-selector';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import isSavingWordadsSettings from 'calypso/state/selectors/is-saving-wordads-settings';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -228,58 +227,51 @@ class AdsFormSettings extends Component {
 			<div>
 				<FormFieldset className="ads__settings-display-toggles">
 					<FormLegend>{ translate( 'Display ads below posts on' ) }</FormLegend>
-					<FormToggle
+					<ToggleControl
 						checked={ !! this.state.display_options?.display_front_page }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_front_page' ) }
-					>
-						{ translate( 'Front page' ) }
-					</FormToggle>
-					<FormToggle
+						label={ translate( 'Front page' ) }
+					/>
+					<ToggleControl
 						checked={ !! this.state.display_options?.display_post }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_post' ) }
-					>
-						{ translate( 'Posts' ) }
-					</FormToggle>
-					<FormToggle
+						label={ translate( 'Posts' ) }
+					/>
+					<ToggleControl
 						checked={ !! this.state.display_options?.display_page }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_page' ) }
-					>
-						{ translate( 'Pages' ) }
-					</FormToggle>
-					<FormToggle
+						label={ translate( 'Pages' ) }
+					/>
+					<ToggleControl
 						checked={ !! this.state.display_options?.display_archive }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_archive' ) }
-					>
-						{ translate( 'Archives' ) }
-					</FormToggle>
+						label={ translate( 'Archives' ) }
+					/>
 				</FormFieldset>
 				<FormFieldset className="ads__settings-display-toggles">
 					<FormLegend>{ translate( 'Additional ad placements' ) }</FormLegend>
-					<FormToggle
+					<ToggleControl
 						checked={ !! this.state.display_options?.enable_header_ad }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'enable_header_ad' ) }
-					>
-						{ translate( 'Top of each page' ) }
-					</FormToggle>
-					<FormToggle
+						label={ translate( 'Top of each page' ) }
+					/>
+					<ToggleControl
 						checked={ !! this.state.display_options?.second_belowpost }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'second_belowpost' ) }
-					>
-						{ translate( 'Second ad below post' ) }
-					</FormToggle>
-					<FormToggle
+						label={ translate( 'Second ad below post' ) }
+					/>
+					<ToggleControl
 						checked={ !! this.state.display_options?.sidebar }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'sidebar' ) }
-					>
-						{ translate( 'Sidebar' ) }
-					</FormToggle>
+						label={ translate( 'Sidebar' ) }
+					/>
 				</FormFieldset>
 			</div>
 		);
@@ -483,13 +475,12 @@ class AdsFormSettings extends Component {
 						) }
 						link="https://wordpress.com/support/your-wordpress-com-site-and-the-ccpa/"
 					/>
-					<FormToggle
+					<ToggleControl
 						checked={ !! this.state.ccpa_enabled }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleCompactToggle( 'ccpa_enabled' ) }
-					>
-						{ translate( 'Enable targeted advertising to California site visitors (CCPA)' ) }
-					</FormToggle>
+						label={ translate( 'Enable targeted advertising to California site visitors (CCPA)' ) }
+					/>
 
 					<div className="ads__child-settings">
 						<FormSettingExplanation>
