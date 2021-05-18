@@ -4,6 +4,7 @@ import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
+import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.BuildReportTab
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
@@ -19,6 +20,12 @@ object WPComTests : Project({
 		param("docker_image", "%docker_image_e2e%")
 		param("build.prefix", "1")
 	}
+
+	BuildReportTab {
+		title = "VR Report"
+		startPage= "vr-report.zip!index.html"
+	}
+
 	// Keep the previous ID in order to preserve the historical data
 	buildType(gutenbergBuildType("desktop", "aee94c18-ee11-4c80-b6aa-245b967a97db"));
 	buildType(gutenbergBuildType("mobile","2af2eaed-87d5-41f4-ab1d-4ed589d5ae82"));
@@ -188,7 +195,7 @@ private object VisualRegressionTests : BuildType({
 	description = "Runs visual regression tests"
 
 	artifactRules = """
-		reports => reports
+		vr-report.zip => vr-report.zip
 	""".trimIndent()
 
 	vcs {
@@ -210,13 +217,19 @@ private object VisualRegressionTests : BuildType({
 			name = "Run Visual Regression Tests"
 			scriptContent = """
 				set -x
+				export NODE_ENV="test"
+				export CAPTURE_LIMIT=16
+				export COMPARE_LIMIT=150
+
+				apt-get install -y docker-compose
 
 				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/development.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
 				yarn test-visual
 			""".trimIndent()
+			dockerRunParameters = "-v /var/run/docker.sock:/var/run/docker.sock"
 		}
 		bashNodeScript {
 			name = "Collect results"
@@ -224,8 +237,7 @@ private object VisualRegressionTests : BuildType({
 			scriptContent = """
 				set -x
 
-				mkdir -p screenshots
-				find test/visual -type f -path '*/html_report/*' -print0 | xargs -r -0 mv -t reports
+				zip -r vr-report.zip test/visual/backstop_data/html_report test/visual/backstop_data/bitmaps_test test/visual/backstop_data/bitmaps_reference
 
 			""".trimIndent()
 		}

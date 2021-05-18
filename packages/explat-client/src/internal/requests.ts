@@ -45,7 +45,7 @@ function validateFetchExperimentAssignmentResponse(
 // consistent.
 const localStorageLastAnonIdKey = 'explat-last-anon-id';
 const localStorageLastAnonIdRetrievalTimeKey = 'explat-last-anon-id-retrieval-time';
-const lastAnonIdExpiryTimeMs = 3 * 60 * 60 * 1000; // 3 hours
+const lastAnonIdExpiryTimeMs = 24 * 60 * 60 * 1000; // 24 hours
 /**
  * INTERNAL USE ONLY
  *

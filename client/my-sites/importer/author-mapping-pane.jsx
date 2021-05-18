@@ -135,7 +135,7 @@ class AuthorMappingPane extends React.PureComponent {
 			site,
 			totalUsers,
 		} = this.props;
-		const canStartImport = hasSingleAuthor || sourceAuthors.some( ( author ) => author.mappedTo );
+		const canStartImport = hasSingleAuthor || sourceAuthors.every( ( author ) => author.mappedTo );
 		const mappingDescription = this.getMappingDescription(
 			sourceAuthors.length,
 			totalUsers,

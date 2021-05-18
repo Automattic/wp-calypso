@@ -17,7 +17,6 @@ import {
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_PLAN,
 } from './constants';
-import RecordsDetails from './records-details';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	TERM_ANNUALLY,
@@ -428,9 +427,6 @@ export function itemToSelectorProduct(
 			shortName: getJetpackProductShortName( item ) || '',
 			tagline: getJetpackProductTagline( item ),
 			description: getJetpackProductDescription( item ),
-			children: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug )
-				? createElement( RecordsDetails, { productSlug: item.product_slug } )
-				: undefined,
 			buttonLabel: getJetpackProductCallToAction( item ),
 			monthlyProductSlug,
 			term: item.term,
