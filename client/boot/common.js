@@ -146,16 +146,16 @@ function authorizePath() {
 	const redirectUri = new URL( '/api/oauth/token', window.location );
 	redirectUri.search = new URLSearchParams( {
 		next: window.location.pathname + window.location.search,
-	} );
+	} ).toString();
 
 	const authUri = new URL( 'https://public-api.wordpress.com/oauth2/authorize' );
 	authUri.search = new URLSearchParams( {
 		response_type: 'token',
 		client_id: config( 'oauth_client_id' ),
-		redirect_uri: redirectUri,
+		redirect_uri: redirectUri.toString(),
 		scope: 'global',
 		blog_id: 0,
-	} );
+	} ).toString();
 
 	return authUri.toString();
 }
