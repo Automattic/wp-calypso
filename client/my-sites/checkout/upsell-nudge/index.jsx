@@ -98,6 +98,10 @@ export class UpsellNudge extends React.Component {
 		showPurchaseModal: false,
 	};
 
+	componentDidMount() {
+		window.scrollTo( 0, 0 );
+	}
+
 	render() {
 		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, upsellType } = this.props;
 
