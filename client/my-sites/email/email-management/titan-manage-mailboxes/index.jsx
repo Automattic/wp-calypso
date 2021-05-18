@@ -37,7 +37,7 @@ import {
 	TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP,
 	TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_INTERNAL_FORWARDING,
 	TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP,
-	TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL,
+	TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA,
 } from 'calypso/lib/titan/constants';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItemEnhanced from 'calypso/components/vertical-nav/item/enhanced';
@@ -110,7 +110,9 @@ class TitanManageMailboxes extends Component {
 
 				<VerticalNav>
 					<VerticalNavItemEnhanced
-						description={ translate( 'Configure email in third-party apps' ) }
+						description={ translate(
+							'View settings required to configure third-party email apps'
+						) }
 						external={ true }
 						materialIcon="dvr"
 						path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP ) }
@@ -119,7 +121,7 @@ class TitanManageMailboxes extends Component {
 
 					<VerticalNavItemEnhanced
 						description={ translate(
-							'Access your emails on the go with our Android and iOS apps'
+							'Download our Android and iOS apps to access your emails on the go'
 						) }
 						external={ true }
 						materialIcon="smartphone"
@@ -128,16 +130,16 @@ class TitanManageMailboxes extends Component {
 					/>
 
 					<VerticalNavItemEnhanced
-						description={ translate( 'Migrate existing email data from a remote server via IMAP' ) }
+						description={ translate( 'Migrate existing emails from a remote server via IMAP' ) }
 						external={ true }
 						materialIcon="move_to_inbox"
-						path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL ) }
+						path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA ) }
 						text={ translate( 'Import email data' ) }
 					/>
 
 					<VerticalNavItemEnhanced
 						description={ translate(
-							'Route all undelivered emails to your domain to the catch-all mailbox'
+							'Route all undelivered emails to your domain to a specific mailbox'
 						) }
 						external={ true }
 						materialIcon="mediation"
@@ -147,7 +149,7 @@ class TitanManageMailboxes extends Component {
 
 					<VerticalNavItemEnhanced
 						description={ translate(
-							'Create personalized email addresses for your domain and forward'
+							'Create email aliases that forward messages to one or several mailboxes'
 						) }
 						external={ true }
 						materialIcon="forward_to_inbox"
