@@ -14,7 +14,6 @@ import { requestThemes, requestThemeFilters } from 'calypso/state/themes/actions
 import { getThemeFilters, getThemesForQuery } from 'calypso/state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { sites } from 'calypso/my-sites/controller';
 
 const debug = debugFactory( 'calypso:themes' );
 
@@ -129,14 +128,4 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
 		redirectedSection = 'setup';
 	}
 	res.redirect( '/theme/' + [ theme, redirectedSection, site ].filter( Boolean ).join( '/' ) );
-}
-
-export function selectSiteIfLoggedIn( context, next ) {
-	const state = context.store.getState();
-	const currentUser = getCurrentUser( state );
-
-	if ( currentUser ) {
-		return sites( context, next );
-	}
-	next();
 }

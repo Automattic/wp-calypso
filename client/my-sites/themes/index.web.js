@@ -3,8 +3,8 @@
  */
 import { makeLayout, redirectLoggedOut } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { loggedOut, selectSiteIfLoggedIn } from './controller';
-import { loggedIn, upload } from './controller-logged-in';
+import { loggedOut } from './controller';
+import { loggedIn, upload, selectSiteIfLoggedIn } from './controller-logged-in';
 import {
 	fetchAndValidateVerticalsAndFiltersIfLoggedIn,
 	fetchAndValidateVerticalsAndFiltersIfLoggedOut,

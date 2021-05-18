@@ -11,6 +11,8 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { setBackPath } from 'calypso/state/themes/actions';
 import { getProps } from './controller';
+import { sites } from 'calypso/my-sites/controller';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import SingleSiteComponent from './single-site';
 import Upload from './theme-upload';
 
@@ -44,5 +46,15 @@ export function upload( context, next ) {
 	}
 
 	context.primary = <Upload />;
+	next();
+}
+
+export function selectSiteIfLoggedIn( context, next ) {
+	const state = context.store.getState();
+	const currentUser = getCurrentUser( state );
+
+	if ( currentUser ) {
+		return sites( context, next );
+	}
 	next();
 }
