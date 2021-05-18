@@ -17,7 +17,6 @@
 	"readerFollowingSource": "desktop",
 	"features": {
 		"ad-tracking": true,
-		"fullstory": false,
 		"always_use_logout_url": true,
 		"async-payments": false,
 		"automated-transfer": true,
@@ -43,6 +42,7 @@
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
+		"fullstory": true,
 		"google-workspace-migration": true,
 		"gdpr-banner": false,
 		"help": true,
