@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { isDesktop } from '@automattic/viewport';
 import { ThemeProvider } from 'emotion-theming';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -112,7 +113,7 @@ const MarketplaceThankYou = () => {
 					tipTarget="close"
 				/>
 			</Masterbar>
-			<MarketplaceThankYouContainer className="marketplace-thank-you__container">
+			<MarketplaceThankYouContainer className="marketplace-thank-you__container checkout-thank-you">
 				<MarketplaceThankYouHeader>
 					<img alt="yoast logo" width={ imageWidth } src={ yoastInstalledImage }></img>
 				</MarketplaceThankYouHeader>
@@ -140,8 +141,10 @@ const MarketplaceThankYou = () => {
 									</p>
 									<div>
 										<FullWidthButton
-											onClick={ () => ( window.location.href = yoastSeoPageUrl ) }
+											href={ yoastSeoPageUrl }
 											primary
+											//TODO: To be removed after loading screen for plugin setup is completed
+											disabled={ ! yoastSeoPageUrl }
 										>
 											{ translate( 'Get started' ) }
 										</FullWidthButton>
@@ -155,7 +158,7 @@ const MarketplaceThankYou = () => {
 										) }
 									</p>
 									<div>
-										<FullWidthButton onClick={ () => ( window.location.href = postsPageUrl ) }>
+										<FullWidthButton href={ postsPageUrl }>
 											{ translate( 'View posts' ) }
 										</FullWidthButton>
 									</div>

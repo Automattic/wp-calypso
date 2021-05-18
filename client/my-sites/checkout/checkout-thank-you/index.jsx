@@ -34,7 +34,6 @@ import GuidedTransferDetails from './guided-transfer-details';
 import HappinessSupport from 'calypso/components/happiness-support';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
-import MarketplaceThankYou from './marketplace/marketplace-thank-you';
 import {
 	isChargeback,
 	isDelayedDomainTransfer,
@@ -97,6 +96,7 @@ import { isProductsListFetching } from 'calypso/state/products-list/selectors';
  * Style dependencies
  */
 import './style.scss';
+import AsyncLoad from 'calypso/components/async-load';
 
 function getPurchases( props ) {
 	return [
@@ -392,7 +392,7 @@ export class CheckoutThankYou extends React.Component {
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
-		let wasMarketplaceProduct = true;
+		let wasMarketplaceProduct = false;
 		let delayedTransferPurchase = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
@@ -433,7 +433,9 @@ export class CheckoutThankYou extends React.Component {
 		}
 
 		if ( wasMarketplaceProduct ) {
-			return <MarketplaceThankYou purchases={ purchases } />;
+			return (
+				<AsyncLoad require="calypso/my-sites/checkout/checkout-thank-you/marketplace/marketplace-thank-you" />
+			);
 		} else if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
 				return (
