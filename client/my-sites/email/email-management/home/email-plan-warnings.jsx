@@ -14,8 +14,12 @@ const getWarningStatus = ( warning ) => {
 	return EMAIL_WARNING_TYPE_ACTION_REQUIRED === warning.warning_type ? 'is-info' : 'is-warning';
 };
 
-const EmailPlanWarnings = ( { warnings } ) =>
-	warnings.map( ( warning, index ) => (
+const EmailPlanWarnings = ( { warnings } ) => {
+	if ( ! warnings?.[ 0 ] ) {
+		return null;
+	}
+
+	return warnings.map( ( warning, index ) => (
 		<Notice
 			status={ getWarningStatus( warning ) }
 			text={ warning.message }
@@ -24,9 +28,10 @@ const EmailPlanWarnings = ( { warnings } ) =>
 			key={ index }
 		/>
 	) );
+};
 
 EmailPlanWarnings.propTypes = {
-	warnings: PropTypes.array.isRequired,
+	warnings: PropTypes.array,
 };
 
 export default EmailPlanWarnings;
