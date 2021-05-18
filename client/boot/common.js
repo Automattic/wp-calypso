@@ -117,12 +117,34 @@ const setupContextMiddleware = ( reduxStore ) => {
 	} );
 };
 
+/**
+ * If the URL sets `flags=oauth` explicitly, persist that setting to session storage so
+ * that it persists across redirects and reloads. The `calypso-config` module will pick
+ * them up automatically on init.
+ */
+function saveOauthFlags() {
+	if ( ! window.location.search ) {
+		return;
+	}
+
+	const flags = new URLSearchParams( window.location.search ).get( 'flags' );
+	if ( ! flags ) {
+		return;
+	}
+
+	const oauthFlag = flags.split( ',' ).find( ( flag ) => /^[+-]?oauth$/.test( flag ) );
+	if ( ! oauthFlag ) {
+		return;
+	}
+
+	window.sessionStorage.setItem( 'flags', oauthFlag );
+}
+
 function authorizePath() {
 	// TODO: flags=oauth should be present only in dev-like environments
 	// where we need to preserve the flag on full reloads and redirects
 	const redirectUri = new URL( '/api/oauth/token', window.location );
 	redirectUri.search = new URLSearchParams( {
-		flags: 'oauth',
 		next: window.location.pathname + window.location.search,
 	} );
 
@@ -430,6 +452,7 @@ function renderLayout( reduxStore ) {
 }
 
 const boot = ( currentUser, registerRoutes ) => {
+	saveOauthFlags();
 	utils();
 	loadAllState().then( () => {
 		const initialState = getInitialState( initialReducer );
