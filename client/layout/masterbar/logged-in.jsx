@@ -289,9 +289,7 @@ class MasterbarLoggedIn extends Component {
 							placeholder={ null }
 							className="masterbar__item-cart"
 							tooltip={ translate( 'View my Shopping Cart' ) }
-						>
-							{ translate( 'Cart' ) }
-						</AsyncLoad>
+						/>
 					) }
 					<Item
 						tipTarget="me"
