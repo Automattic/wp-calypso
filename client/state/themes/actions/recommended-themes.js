@@ -7,7 +7,6 @@ import {
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
 } from 'calypso/state/themes/action-types';
-import { getRecommendedThemesFilter } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
 
@@ -25,15 +24,12 @@ export function receiveRecommendedThemes( themes, filter ) {
 }
 
 /**
- * Initiates network request for recommended themes.
- * Recommended themes default to template first themes, denoted by the 'auto-loading-homepage' tag.
- * If Block Themes are preferred, they will use the 'block-templates' tag
+ * Initiates network request for recommended themes, based on `filter`.
  *
- * @param {boolean} blockThemes Whether or not to filter on block themes
+ * @param {string} filter A filter string for a theme query
  * @returns {Function} Action thunk
  */
-export function getRecommendedThemes( blockThemes = false ) {
-	const filter = getRecommendedThemesFilter( blockThemes );
+export function getRecommendedThemes( filter ) {
 	return async ( dispatch ) => {
 		dispatch( { type: RECOMMENDED_THEMES_FETCH, filter } );
 		const query = {

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mapValues, omit, map, camelCase } from 'lodash';
+import { mapValues, omit, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -479,14 +479,13 @@ export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = 
  * @returns {object}        Updated state
  */
 export function recommendedThemes( state = {}, action ) {
-	const key = () => camelCase( action.filter );
 	switch ( action.type ) {
 		case RECOMMENDED_THEMES_FETCH:
-			return { ...state, [ key() ]: { isLoading: true, themes: [] } };
+			return { ...state, [ action.filter ]: { isLoading: true, themes: [] } };
 		case RECOMMENDED_THEMES_SUCCESS:
-			return { ...state, [ key() ]: { isLoading: false, themes: action.payload.themes } };
+			return { ...state, [ action.filter ]: { isLoading: false, themes: action.payload.themes } };
 		case RECOMMENDED_THEMES_FAIL:
-			return { ...state, [ key() ]: { isLoading: false, themes: [] } };
+			return { ...state, [ action.filter ]: { isLoading: false, themes: [] } };
 	}
 
 	return state;

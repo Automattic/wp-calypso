@@ -14,8 +14,8 @@ import { getRecommendedThemes } from 'calypso/state/themes/actions';
 import {
 	getRecommendedThemes as getRecommendedThemesSelector,
 	areRecommendedThemesLoading,
+	getRecommendedThemesFilter,
 } from 'calypso/state/themes/selectors';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class RecommendedThemes extends React.Component {
@@ -27,17 +27,17 @@ class RecommendedThemes extends React.Component {
 
 	componentDidUpdate( prevProps ) {
 		// Wait until rec themes to be loaded to scroll to search input if its in use.
-		const { isLoading, isShowcaseOpen, scrollToSearchInput, isUsingSiteEditor } = this.props;
+		const { isLoading, isShowcaseOpen, scrollToSearchInput, filter } = this.props;
 		if ( prevProps.isLoading !== isLoading && isLoading === false && isShowcaseOpen ) {
 			scrollToSearchInput();
 		}
-		if ( prevProps.isUsingSiteEditor !== isUsingSiteEditor ) {
+		if ( prevProps.filter !== filter ) {
 			this.fetchThemes();
 		}
 	}
 
 	fetchThemes() {
-		this.props.getRecommendedThemes( this.props.isUsingSiteEditor );
+		this.props.getRecommendedThemes( this.props.filter );
 	}
 
 	render() {
@@ -59,11 +59,11 @@ class RecommendedThemes extends React.Component {
 const ConnectedRecommendedThemes = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const isUsingSiteEditor = isSiteUsingCoreSiteEditor( state, siteId );
+		const filter = getRecommendedThemesFilter( state, siteId );
 		return {
-			recommendedThemes: getRecommendedThemesSelector( state, isUsingSiteEditor ),
-			isLoading: areRecommendedThemesLoading( state, isUsingSiteEditor ),
-			isUsingSiteEditor,
+			recommendedThemes: getRecommendedThemesSelector( state, filter ),
+			isLoading: areRecommendedThemesLoading( state, filter ),
+			filter,
 		};
 	},
 	{ getRecommendedThemes }
