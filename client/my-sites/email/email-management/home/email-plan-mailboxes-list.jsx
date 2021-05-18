@@ -258,6 +258,7 @@ const getEmailForwardMenuItems = ( { currentRoute, domain, selectedSite, transla
 	return [
 		{
 			href: emailManagementForwarding( selectedSite.slug, domain.name, currentRoute ),
+			isInternalLink: true,
 			materialIcon: 'create',
 			title: translate( 'Edit', {
 				comment: 'Edit an email forward',
@@ -295,18 +296,20 @@ const ActionMenu = ( { domain, mailbox, selectedSite } ) => {
 	}
 	return (
 		<EllipsisMenu className="email-plan-mailboxes-list__mailbox-action-menu">
-			{ menuItems.map( ( { image, imageAltText, href, materialIcon, title } ) => (
-				<PopoverMenuItem
-					key={ href }
-					className="email-plan-mailboxes-list__mailbox-action-menu-item"
-					isExternalLink
-					href={ href }
-				>
-					{ image && <img src={ image } alt={ imageAltText } /> }
-					{ materialIcon && <MaterialIcon icon={ materialIcon } /> }
-					{ title }
-				</PopoverMenuItem>
-			) ) }
+			{ menuItems.map(
+				( { href, image, imageAltText, isInternalLink = false, materialIcon, title } ) => (
+					<PopoverMenuItem
+						key={ href }
+						className="email-plan-mailboxes-list__mailbox-action-menu-item"
+						isExternalLink={ ! isInternalLink }
+						href={ href }
+					>
+						{ image && <img src={ image } alt={ imageAltText } /> }
+						{ materialIcon && <MaterialIcon icon={ materialIcon } /> }
+						{ title }
+					</PopoverMenuItem>
+				)
+			) }
 		</EllipsisMenu>
 	);
 };
