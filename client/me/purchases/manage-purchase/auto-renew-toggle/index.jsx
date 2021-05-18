@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -20,7 +21,6 @@ import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { createNotice } from 'calypso/state/notices/actions';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
 import { getChangePaymentMethodPath } from '../../utils';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -220,13 +220,12 @@ class AutoRenewToggle extends Component {
 
 		return (
 			<>
-				<FormToggle
+				<ToggleControl
 					checked={ this.getToggleUiStatus() }
 					disabled={ this.isUpdatingAutoRenew() }
 					onChange={ this.onToggleAutoRenew }
-				>
-					{ withTextStatus && this.renderTextStatus() }
-				</FormToggle>
+					label={ withTextStatus && this.renderTextStatus() }
+				/>
 				<AutoRenewDisablingDialog
 					isVisible={ this.state.showAutoRenewDisablingDialog }
 					planName={ planName }
