@@ -80,6 +80,9 @@ for ( let i = 0; i < templates.length; i++ ) {
 	} );
 }
 
+const asyncCaptureLimit = process.env.CAPTURE_LIMIT ? process.env.CAPTURE_LIMIT : 5;
+const asyncCompareLimit = process.env.COMPARE_LIMIT ? process.env.COMPARE_LIMIT : 50;
+
 module.exports = {
 	id: 'backstop_default',
 	viewports: [
@@ -105,8 +108,10 @@ module.exports = {
 			'--user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36',
 		],
 	},
-	asyncCaptureLimit: 5,
-	asyncCompareLimit: 50,
+	asyncCaptureLimit: asyncCaptureLimit,
+	asyncCompareLimit: asyncCompareLimit,
 	debug: false,
 	debugWindow: false,
+	dockerCommandTemplate:
+		'docker run --rm -i --mount type=bind,source="{cwd}",target=/src backstopjs/backstopjs:{version} {backstopCommand} {args}',
 };
