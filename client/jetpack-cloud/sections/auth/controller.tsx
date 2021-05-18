@@ -17,14 +17,12 @@ import userModule from 'calypso/lib/user';
 import wpcom from 'calypso/lib/wp';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 
-import { authTokenRedirectPath } from './paths';
-
 const WP_AUTHORIZE_ENDPOINT = 'https://public-api.wordpress.com/oauth2/authorize';
 const debug = debugFactory( 'calypso:jetpack-cloud-connect' );
 
 export const connect: PageJS.Callback = ( context, next ) => {
 	if ( config.isEnabled( 'oauth' ) && config( 'oauth_client_id' ) ) {
-		const redirectUri = window.location.origin + authTokenRedirectPath();
+		const redirectUri = window.location.origin + '/connect/oauth/token';
 
 		const params = {
 			response_type: 'token',
@@ -47,7 +45,7 @@ export const tokenRedirect: PageJS.Callback = ( context, next ) => {
 	// We didn't get an auth token; take a step back
 	// and ask for authorization from the user again
 	if ( context.hash?.error ) {
-		context.primary = <Connect authUrl={ authTokenRedirectPath() } />;
+		context.primary = <Connect authUrl="/connect/oauth/token" />;
 		return next();
 	}
 
