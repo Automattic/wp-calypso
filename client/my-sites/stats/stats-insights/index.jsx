@@ -39,17 +39,6 @@ const StatsInsights = ( props ) => {
 	const { isJetpack, siteId, siteSlug, translate } = props;
 	const moduleStrings = statsStrings();
 
-	let tagsList;
-	if ( ! isJetpack ) {
-		tagsList = (
-			<StatsModule
-				path="tags-categories"
-				moduleStrings={ moduleStrings.tags }
-				statType="statsTags"
-			/>
-		);
-	}
-
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -81,11 +70,17 @@ const StatsInsights = ( props ) => {
 						<div className="stats__module-column">
 							<LatestPostSummary />
 							<MostPopular />
-							{ tagsList }
+							{ ! isJetpack && (
+								<StatsModule
+									path="tags-categories"
+									moduleStrings={ moduleStrings.tags }
+									statType="statsTags"
+								/>
+							) }
 							<AnnualSiteStats isWidget />
 						</div>
 						<div className="stats__module-column">
-							<StatShares siteId={ siteId } />
+							{ ! isJetpack && <StatShares siteId={ siteId } /> }
 							<Reach />
 							<Followers path={ 'followers' } />
 						</div>
