@@ -231,12 +231,10 @@ private object VisualRegressionTests : BuildType({
 				export CAPTURE_LIMIT=16
 				export COMPARE_LIMIT=150
 
+				apt-get install -y docker-compose
+
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./test/visual/config/encrypted.enc -out ./test/visual/config/development.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
-
-				ls test/visual/config
-
-				apt-get install -y docker-compose
 
 				# Run the test
 				yarn "%vr_task%"
