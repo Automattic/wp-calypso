@@ -13,6 +13,8 @@ import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { requestThemes, requestThemeFilters } from 'calypso/state/themes/actions';
 import { getThemeFilters, getThemesForQuery } from 'calypso/state/themes/selectors';
 import { getAnalyticsData } from './helpers';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { sites } from 'calypso/my-sites/controller';
 
 const debug = debugFactory( 'calypso:themes' );
 
@@ -40,6 +42,13 @@ export function getProps( context ) {
 export function loggedOut( context, next ) {
 	if ( context.isServerSide && Object.keys( context.query ).length > 0 ) {
 		// Don't server-render URLs with query params
+		return next();
+	}
+
+	// If logged in, do nothing:
+	const state = context.store.getState();
+	const currentUser = getCurrentUser( state );
+	if ( currentUser ) {
 		return next();
 	}
 
@@ -120,4 +129,14 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
 		redirectedSection = 'setup';
 	}
 	res.redirect( '/theme/' + [ theme, redirectedSection, site ].filter( Boolean ).join( '/' ) );
+}
+
+export function selectSiteIfLoggedIn( context, next ) {
+	const state = context.store.getState();
+	const currentUser = getCurrentUser( state );
+
+	if ( currentUser ) {
+		return sites( context, next );
+	}
+	next();
 }

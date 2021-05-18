@@ -1,25 +1,16 @@
 /**
  * Internal dependencies
  */
-import userFactory from 'calypso/lib/user';
 import { makeLayout, redirectLoggedOut } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { loggedOut, fetchThemeFilters } from './controller';
+import { loggedOut, selectSiteIfLoggedIn } from './controller';
 import { loggedIn, upload } from './controller-logged-in';
-import { validateFilters, validateVertical } from './validate-filters';
-
-function redirectToLoginIfSiteRequested( context, next ) {
-	if ( context.params.site_id ) {
-		redirectLoggedOut( context, next );
-		return;
-	}
-
-	next();
-}
+import {
+	fetchAndValidateVerticalsAndFiltersIfLoggedIn,
+	fetchAndValidateVerticalsAndFiltersIfLoggedOut,
+} from './validate-filters';
 
 export default function ( router ) {
-	const user = userFactory();
-	const isLoggedIn = !! user.get();
 	const siteId =
 		'\\d+' + // numeric site id
 		'|' + // or
@@ -49,37 +40,21 @@ export default function ( router ) {
 		makeLayout
 	);
 
-	if ( isLoggedIn ) {
-		// routesWithSites - use loggedIn() middleware to display themes showcase
-		router(
-			routesWithSites,
-			fetchThemeFilters,
-			validateVertical,
-			validateFilters,
-			siteSelection,
-			loggedIn,
-			navigation,
-			makeLayout
-		);
-		// routesWithoutSites - use sites() middleware to force site selection first. Don't display navigation()
-		router(
-			routesWithoutSites,
-			fetchThemeFilters,
-			validateVertical,
-			validateFilters,
-			siteSelection,
-			sites,
-			makeLayout
-		);
-	} else {
-		router(
-			routesWithSites.concat( routesWithoutSites ),
-			redirectToLoginIfSiteRequested,
-			fetchThemeFilters,
-			validateVertical,
-			validateFilters,
-			loggedOut,
-			makeLayout
-		);
-	}
+	router(
+		routesWithSites,
+		redirectLoggedOut, // if logged out, redirect to login
+		fetchAndValidateVerticalsAndFiltersIfLoggedIn,
+		siteSelection,
+		loggedIn,
+		navigation,
+		makeLayout
+	);
+
+	router(
+		routesWithoutSites,
+		selectSiteIfLoggedIn,
+		fetchAndValidateVerticalsAndFiltersIfLoggedOut,
+		loggedOut,
+		makeLayout
+	);
 }

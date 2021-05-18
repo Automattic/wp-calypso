@@ -12,6 +12,8 @@ import {
 	getThemeFilterTermFromString,
 	isValidThemeFilterTerm,
 } from 'calypso/state/themes/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { fetchThemeFilters } from './controller';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {
@@ -80,4 +82,56 @@ export function sortFilterTerms( context, terms ) {
 		.map( ( term ) => getThemeFilterStringFromTerm( context.store.getState(), term ) )
 		.sort()
 		.map( ( filter ) => getThemeFilterTermFromString( context.store.getState(), filter ) );
+}
+
+export function fetchAndValidateVerticalsAndFiltersIfLoggedIn( context, next ) {
+	const state = context.store.getState();
+	const currentUser = getCurrentUser( state );
+
+	if ( ! currentUser ) {
+		return next();
+	}
+
+	// Compose method 1
+	// const noop = () => {};
+	// fetchThemeFilters( context, noop );
+	// validateVertical( context, noop );
+	// validateFilters( context, noop );
+	// return next();
+
+	// Compose method 2
+	return fetchThemeFilters( context, () => {
+		return validateVertical( context, () => {
+			return validateFilters( context, next );
+		} );
+	} );
+
+	// Compose method 2b - same as 2, but
+	// less aethestic after prettier formats it imo
+	// return fetchThemeFilters( context, () =>
+	// 	validateVertical( context, () => validateFilters( context, next ) )
+	// );
+}
+
+export function fetchAndValidateVerticalsAndFiltersIfLoggedOut( context, next ) {
+	const state = context.store.getState();
+	const currentUser = getCurrentUser( state );
+
+	if ( currentUser ) {
+		return next();
+	}
+
+	// Compose method 1
+	// const noop = () => {};
+	// fetchThemeFilters( context, noop );
+	// validateVertical( context, noop );
+	// validateFilters( context, noop );
+	// return next();
+
+	// Compose method 2
+	return fetchThemeFilters( context, () => {
+		return validateVertical( context, () => {
+			return validateFilters( context, next );
+		} );
+	} );
 }
