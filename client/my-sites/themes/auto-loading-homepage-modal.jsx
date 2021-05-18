@@ -78,8 +78,8 @@ class AutoLoadingHomepageModal extends Component {
 		this.setState( { homepageAction: event.currentTarget.value } );
 	};
 
-	closeModalHandler = ( activate = false ) => () => {
-		if ( activate ) {
+	closeModalHandler = ( activate = 'dismiss' ) => () => {
+		if ( 'activeTheme' === activate ) {
 			const { installingThemeId, siteId, source } = this.props;
 			this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
 			const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
@@ -94,6 +94,9 @@ class AutoLoadingHomepageModal extends Component {
 				false,
 				keepCurrentHomepage
 			);
+		} else if ( 'keepCurrentTheme' === activate ) {
+			recordTracksEvent( 'calypso_theme_autoloading_modal_keep_theme_click' );
+			return this.props.hideAutoLoadingHomepageWarning();
 		}
 		recordTracksEvent( 'calypso_theme_autoloading_modal_dismiss' );
 		this.props.hideAutoLoadingHomepageWarning();
@@ -139,16 +142,16 @@ class AutoLoadingHomepageModal extends Component {
 						action: 'keepCurrentTheme',
 						label: translate( 'Keep my current theme' ),
 						isPrimary: false,
-						onClick: this.closeModalHandler( false ),
+						onClick: this.closeModalHandler( 'keepCurrentTheme' ),
 					},
 					{
 						action: 'activeTheme',
 						label: translate( 'Activate %(themeName)s', { args: { themeName } } ),
 						isPrimary: true,
-						onClick: this.closeModalHandler( true ),
+						onClick: this.closeModalHandler( 'activeTheme' ),
 					},
 				] }
-				onClose={ this.closeModalHandler( false ) }
+				onClose={ this.closeModalHandler( 'dismiss' ) }
 			>
 				<div>
 					<h1>
