@@ -8,12 +8,11 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-// import config from '@automattic/calypso-config';
+import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { TASK_UPSELL_TITAN } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import titanUpsellIllustration from 'calypso/assets/images/customer-home/illustration--titan-banner.svg';
+import { TASK_UPSELL_TITAN } from 'calypso/my-sites/customer-home/cards/constants';
 
 const TitanBanner = () => {
 	const translate = useTranslate();
@@ -22,17 +21,22 @@ const TitanBanner = () => {
 
 	return (
 		<Task
-			title={ translate( 'Get email @ your domain' ) }
+			title={ translate( 'Get 3 months free Professional Email' ) }
 			description={ translate(
-				'Brand yourself and build trust with a custom email address @ your domain, free for 3 months.'
+				'Build your brand with a custom @%(domain)s email address. Professional Email helps promote your site with every email you send.',
+				{
+					args: {
+						domain: siteSlug,
+					},
+				}
 			) }
-			actionText={ translate( 'Get email' ) }
+			actionText={ translate( 'Add email for free' ) }
 			actionUrl={ emailComparisonPath }
 			completeOnStart={ false }
 			enableSkipOptions={ true }
-			illustration={ titanUpsellIllustration }
+			illustration={ emailIllustration }
 			taskId={ TASK_UPSELL_TITAN }
-			timing={ 2 }
+			timing={ 3 }
 		/>
 	);
 };
