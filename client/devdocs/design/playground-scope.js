@@ -67,7 +67,6 @@ export { default as FormTextarea } from 'calypso/components/forms/form-textarea'
 export { default as FormTextInput } from 'calypso/components/forms/form-text-input';
 export { default as FormTextInputWithAction } from 'calypso/components/forms/form-text-input-with-action';
 export { default as FormTextInputWithAffixes } from 'calypso/components/forms/form-text-input-with-affixes';
-export { default as FormToggle } from 'calypso/components/forms/form-toggle';
 export { default as Gauge } from 'calypso/components/gauge';
 export { default as GlobalNotices } from 'calypso/components/global-notices';
 export { default as Gravatar } from 'calypso/components/gravatar';
