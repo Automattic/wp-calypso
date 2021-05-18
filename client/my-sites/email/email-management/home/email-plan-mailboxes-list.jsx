@@ -180,24 +180,24 @@ const getTitanMenuItems = ( email, translate ) => {
 			href: getTitanEmailUrl( email ),
 			image: titanMailIcon,
 			imageAltText: translate( 'Titan Mail icon' ),
-			title: translate( 'Mail', {
-				comment: 'This refers to the Email application (i.e. the webmail) of Titan',
+			title: translate( 'View Mail', {
+				comment: 'View the Email application (i.e. the webmail) for Titan',
 			} ),
 		},
 		{
 			href: getTitanCalendarlUrl( email ),
 			image: titanCalendarIcon,
 			imageAltText: translate( 'Titan Calendar icon' ),
-			title: translate( 'Calendar', {
-				comment: 'This refers to the Calendar application of Titan',
+			title: translate( 'View Calendar', {
+				comment: 'View the Calendar application for Titan',
 			} ),
 		},
 		{
 			href: getTitanContactsUrl( email ),
 			image: titanContactsIcon,
 			imageAltText: translate( 'Titan Contacts icon' ),
-			title: translate( 'Contacts', {
-				comment: 'This refers to the Contacts application of Titan',
+			title: translate( 'View Contacts', {
+				comment: 'View the Contacts application for Titan',
 			} ),
 		},
 	];
