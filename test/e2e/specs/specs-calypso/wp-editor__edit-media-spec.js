@@ -19,28 +19,27 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
 
 	before( 'Can login and select my site', async function () {
-		const loginFlow = new LoginFlow( driver );
+		const loginFlow = new LoginFlow( this.driver );
 		await loginFlow.loginAndSelectMySite();
 	} );
 
 	it( "Select 'Media' option and see media content", async function () {
-		const sideBarComponent = await SideBarComponent.Expect( driver );
+		const sideBarComponent = await SideBarComponent.Expect( this.driver );
 		await sideBarComponent.selectMedia();
-		return await MediaPage.Expect( driver );
+		return await MediaPage.Expect( this.driver );
 	} );
 
 	it( 'Select a random media item and click edit', async function () {
-		const mediaPage = await MediaPage.Expect( driver );
+		const mediaPage = await MediaPage.Expect( this.driver );
 		await mediaPage.selectFirstImage();
 		await mediaPage.selectEditMedia();
 		return await mediaPage.mediaEditorShowing();
 	} );
 
 	it( 'Click Edit Image', async function () {
-		const mediaPage = await MediaPage.Expect( driver );
+		const mediaPage = await MediaPage.Expect( this.driver );
 		await mediaPage.clickEditImage();
 		return await mediaPage.imageShowingInEditor();
 	} );

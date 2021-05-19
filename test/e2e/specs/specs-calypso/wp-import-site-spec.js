@@ -21,40 +21,35 @@ const screenSize = driverManager.currentScreenSize();
 
 describe( 'Verify Import Option: (' + screenSize + ') @parallel', function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( () => {
-		driver = global.__BROWSER__;
-	} );
 
 	it( 'Can log in as default user', async function () {
-		const loginFlow = new LoginFlow( driver );
+		const loginFlow = new LoginFlow( this.driver );
 		return await loginFlow.login();
 	} );
 
 	it( 'Can open the sidebar', async function () {
-		const navBarComponent = await NavBarComponent.Expect( driver );
+		const navBarComponent = await NavBarComponent.Expect( this.driver );
 		await navBarComponent.clickMySites();
 	} );
 
 	it( "Following 'Import' menu option opens the Import page", async function () {
-		const sideBarComponent = await SideBarComponent.Expect( driver );
+		const sideBarComponent = await SideBarComponent.Expect( this.driver );
 		await sideBarComponent.selectImport();
-		await ImporterPage.Expect( driver );
+		await ImporterPage.Expect( this.driver );
 	} );
 
 	it( 'Can see the WordPress importer', async function () {
-		const importerPage = await ImporterPage.Expect( driver );
+		const importerPage = await ImporterPage.Expect( this.driver );
 		assert( await importerPage.importerIsDisplayed( 'wordpress' ) );
 	} );
 
 	it( 'Can see the Medium importer', async function () {
-		const importerPage = await ImporterPage.Expect( driver );
+		const importerPage = await ImporterPage.Expect( this.driver );
 		assert( await importerPage.importerIsDisplayed( 'medium-logo' ) );
 	} );
 
 	it( 'Can see the Blogger importer', async function () {
-		const importerPage = await ImporterPage.Expect( driver );
+		const importerPage = await ImporterPage.Expect( this.driver );
 		assert( await importerPage.importerIsDisplayed( 'blogger-alt' ) );
 	} );
 } );

@@ -19,11 +19,10 @@ const locale = driverManager.currentLocale();
 
 describe( `Logged out homepage redirect test @i18n (${ locale })`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
 
 	it( `should redirect to the correct url for wordpress.com (${ locale })`, async function () {
 		// No culture here implies 'en'
-		const wpHomePage = await WPHomePage.Visit( driver );
+		const wpHomePage = await WPHomePage.Visit( this.driver );
 		await wpHomePage.checkURL( locale );
 	} );
 } );

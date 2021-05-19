@@ -20,21 +20,20 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Themes: Activate a theme, all sites (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
 
 	it( 'Login and select themes', async function () {
 		this.themeSearchName = 'twenty';
 		this.expectedTheme = 'Twenty F';
 
-		this.loginFlow = new LoginFlow( driver, 'multiSiteUser' );
+		this.loginFlow = new LoginFlow( this.driver, 'multiSiteUser' );
 		await this.loginFlow.loginAndSelectAllSites();
 
-		this.sidebarComponent = await SidebarComponent.Expect( driver );
+		this.sidebarComponent = await SidebarComponent.Expect( this.driver );
 		await this.sidebarComponent.selectAllSitesThemes();
 	} );
 
 	it( 'can search for free themes', async function () {
-		this.themesPage = await ThemesPage.Expect( driver );
+		this.themesPage = await ThemesPage.Expect( this.driver );
 		await this.themesPage.waitUntilThemesLoaded();
 		await this.themesPage.showOnlyFreeThemes();
 		await this.themesPage.searchFor( this.themeSearchName );
@@ -54,7 +53,7 @@ describe( `[${ host }] Themes: Activate a theme, all sites (${ screenSize }) @pa
 
 	it( 'can click activate', async function () {
 		await this.themesPage.clickPopoverItem( 'Activate' );
-		return ( this.siteSelector = await SiteSelectorComponent.Expect( driver ) );
+		return ( this.siteSelector = await SiteSelectorComponent.Expect( this.driver ) );
 	} );
 
 	it( 'shows the site selector', async function () {

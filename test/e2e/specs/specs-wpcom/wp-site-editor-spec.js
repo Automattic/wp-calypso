@@ -20,37 +20,32 @@ const gutenbergUser = 'siteEditorSimpleSiteUser';
 
 describe( `[${ host }] Site Editor (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( () => {
-		driver = global.__BROWSER__;
-	} );
 
 	it( 'Can log in', async function () {
-		this.loginFlow = new LoginFlow( driver, gutenbergUser );
+		this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
 		return await this.loginFlow.loginAndSelectMySite();
 	} );
 
 	it( 'Can open site editor', async function () {
-		const sidebarComponent = await SidebarComponent.Expect( driver );
+		const sidebarComponent = await SidebarComponent.Expect( this.driver );
 		return await sidebarComponent.selectSiteEditor();
 	} );
 
 	it( 'Site editor opens', async function () {
-		return await SiteEditorPage.Expect( driver );
+		return await SiteEditorPage.Expect( this.driver );
 	} );
 
 	it( 'Template loads', async function () {
-		const editor = await SiteEditorComponent.Expect( driver );
+		const editor = await SiteEditorComponent.Expect( this.driver );
 		return await editor.waitForTemplateToLoad();
 	} );
 
 	it( 'Template parts load', async function () {
-		const editor = await SiteEditorComponent.Expect( driver );
+		const editor = await SiteEditorComponent.Expect( this.driver );
 		return await editor.waitForTemplatePartsToLoad();
 	} );
 
 	after( async () => {
-		return await driver.switchTo().defaultContent();
+		return await this.driver.switchTo().defaultContent();
 	} );
 } );

@@ -40,31 +40,30 @@ describe( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @parallel
 	let acceptInviteURL = '';
 	let inviteCreated = false;
 	let inviteAccepted = false;
-	const driver = global.__BROWSER__;
 
 	it( 'As an anonymous user I can not see a private site', async function () {
-		return await PrivateSiteLoginPage.Visit( driver, siteUrl );
+		return await PrivateSiteLoginPage.Visit( this.driver, siteUrl );
 	} );
 
 	it( 'Can log in and navigate to Invite People page', async function () {
-		await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
-		const peoplePage = await PeoplePage.Expect( driver );
+		await new LoginFlow( this.driver, 'privateSiteUser' ).loginAndSelectPeople();
+		const peoplePage = await PeoplePage.Expect( this.driver );
 		return await peoplePage.inviteUser();
 	} );
 
 	it( 'Can invite a new user as a viewer and see its pending', async function () {
-		const invitePeoplePage = await InvitePeoplePage.Expect( driver );
+		const invitePeoplePage = await InvitePeoplePage.Expect( this.driver );
 		await invitePeoplePage.inviteNewUser(
 			newInviteEmailAddress,
 			'viewer',
 			'Automated e2e testing'
 		);
-		const noticesComponent = await NoticesComponent.Expect( driver );
+		const noticesComponent = await NoticesComponent.Expect( this.driver );
 		await noticesComponent.isSuccessNoticeDisplayed();
 		inviteCreated = true;
 		await invitePeoplePage.backToPeopleMenu();
 
-		const peoplePage = await PeoplePage.Expect( driver );
+		const peoplePage = await PeoplePage.Expect( this.driver );
 		await peoplePage.selectInvites();
 		return await peoplePage.waitForPendingInviteDisplayedFor( newInviteEmailAddress );
 	} );
@@ -82,10 +81,10 @@ describe( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @parallel
 	} );
 
 	it( 'Can sign up as new user for the blog via invite link', async function () {
-		await driverManager.ensureNotLoggedIn( driver );
+		await driverManager.ensureNotLoggedIn( this.driver );
 
-		await driver.get( acceptInviteURL );
-		const acceptInvitePage = await AcceptInvitePage.Expect( driver );
+		await this.driver.get( acceptInviteURL );
+		const acceptInvitePage = await AcceptInvitePage.Expect( this.driver );
 
 		const actualEmailAddress = await acceptInvitePage.getEmailPreFilled();
 		const headerInviteText = await acceptInvitePage.getHeaderInviteText();
@@ -99,7 +98,7 @@ describe( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @parallel
 
 	it( 'Can see user has been added as a Viewer', async function () {
 		inviteAccepted = true;
-		const noticesComponent = await NoticesComponent.Expect( driver );
+		const noticesComponent = await NoticesComponent.Expect( this.driver );
 		const followMessageDisplayed = await noticesComponent.getNoticeContent();
 		assert.strictEqual(
 			true,
@@ -107,14 +106,14 @@ describe( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @parallel
 			`The follow message '${ followMessageDisplayed }' does not include 'viewer'`
 		);
 
-		await ReaderPage.Expect( driver );
-		return await ViewBlogPage.Visit( driver, siteUrl );
+		await ReaderPage.Expect( this.driver );
+		return await ViewBlogPage.Visit( this.driver, siteUrl );
 	} );
 
 	it( 'Can see new user added and can be removed', async function () {
-		await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
+		await new LoginFlow( this.driver, 'privateSiteUser' ).loginAndSelectPeople();
 
-		const peoplePage = await PeoplePage.Expect( driver );
+		const peoplePage = await PeoplePage.Expect( this.driver );
 		await peoplePage.selectViewers();
 		let displayed = await peoplePage.viewerDisplayed( newUserName );
 		assert( displayed, `The username of '${ newUserName }' was not displayed as a site viewer` );
@@ -133,18 +132,18 @@ describe( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @parallel
 	} );
 
 	it( 'Can not see the site - see the private site log in page', async function () {
-		const loginPage = await LoginPage.Visit( driver );
+		const loginPage = await LoginPage.Visit( this.driver );
 		await loginPage.login( newUserName, password );
 
-		await ReaderPage.Expect( driver );
-		return await PrivateSiteLoginPage.Visit( driver, siteUrl );
+		await ReaderPage.Expect( this.driver );
+		return await PrivateSiteLoginPage.Visit( this.driver, siteUrl );
 	} );
 
 	after( async function () {
 		if ( inviteCreated ) {
 			try {
-				await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
-				const peoplePageCleanup = await PeoplePage.Expect( driver );
+				await new LoginFlow( this.driver, 'privateSiteUser' ).loginAndSelectPeople();
+				const peoplePageCleanup = await PeoplePage.Expect( this.driver );
 				await peoplePageCleanup.selectInvites();
 
 				// Sometimes, the 'accept invite' step fails. In these cases, we perform cleanup
@@ -155,7 +154,7 @@ describe( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @parallel
 					await peoplePageCleanup.goToRevokeInvitePage( newInviteEmailAddress );
 				}
 
-				const clearOrRevokeInvitePage = await RevokePage.Expect( driver );
+				const clearOrRevokeInvitePage = await RevokePage.Expect( this.driver );
 				await clearOrRevokeInvitePage.revokeUser();
 			} catch {
 				console.log(
@@ -166,8 +165,8 @@ describe( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @parallel
 		}
 
 		if ( ! removedViewerFlag ) {
-			await new LoginFlow( driver, 'privateSiteUser' ).loginAndSelectPeople();
-			const peoplePage = await PeoplePage.Expect( driver );
+			await new LoginFlow( this.driver, 'privateSiteUser' ).loginAndSelectPeople();
+			const peoplePage = await PeoplePage.Expect( this.driver );
 
 			await peoplePage.selectViewers();
 			const displayed = await peoplePage.viewerDisplayed( newUserName );

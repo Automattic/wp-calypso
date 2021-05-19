@@ -22,18 +22,17 @@ describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack
 	this.timeout( mochaTimeOut );
 	let gutenbergEditor;
 	let blockID;
-	const driver = global.__BROWSER__;
 
 	before( async function () {
 		let editorType = 'iframe';
-		const loginFlow = new LoginFlow( driver );
+		const loginFlow = new LoginFlow( this.driver );
 
 		if ( host !== 'WPCOM' ) {
 			editorType = 'wpadmin';
 		}
 		await loginFlow.loginAndStartNewPage( null, true, { editorType: editorType } );
 
-		gutenbergEditor = await GutenbergEditorComponent.Expect( driver, editorType );
+		gutenbergEditor = await GutenbergEditorComponent.Expect( this.driver, editorType );
 		await gutenbergEditor.displayed();
 	} );
 

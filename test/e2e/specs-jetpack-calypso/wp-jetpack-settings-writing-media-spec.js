@@ -20,16 +20,15 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Jetpack Settings on Calypso: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
 
 	before( async function () {
-		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
+		await driverManager.clearCookiesAndDeleteLocalStorage( this.driver );
 	} );
 
 	before( async function () {
-		const loginFlow = new LoginFlow( driver, 'jetpackUser' + host );
+		const loginFlow = new LoginFlow( this.driver, 'jetpackUser' + host );
 		await loginFlow.loginAndSelectSettings();
-		this.settingsPage = await SettingsPage.Expect( driver );
+		this.settingsPage = await SettingsPage.Expect( this.driver );
 		return await this.settingsPage.selectWriting();
 	} );
 

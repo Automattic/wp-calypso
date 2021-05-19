@@ -26,20 +26,19 @@ const host = dataHelper.getJetpackHost();
 // NOTE: test in jetpack env is failing due to some strange issue, when switching to new tab. It fails only in CI
 describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
 
 	it( 'Login', async function () {
-		const loginFlow = new LoginFlow( driver );
+		const loginFlow = new LoginFlow( this.driver );
 		return await loginFlow.loginAndSelectMySite( null, { useFreshLogin: true } );
 	} );
 
 	it( 'Can open Themes menu', async function () {
-		const sidebarComponent = await SidebarComponent.Expect( driver );
+		const sidebarComponent = await SidebarComponent.Expect( this.driver );
 		return await sidebarComponent.selectThemes();
 	} );
 
 	it( 'Can activate a different free theme', async function () {
-		const themesPage = await ThemesPage.Expect( driver );
+		const themesPage = await ThemesPage.Expect( this.driver );
 		await themesPage.waitUntilThemesLoaded();
 		await themesPage.showOnlyFreeThemes();
 		await themesPage.searchFor( 'Twenty F' );
@@ -51,23 +50,23 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function
 	} );
 
 	it( 'Can see the theme thanks dialog', async function () {
-		const themeDialogComponent = await ThemeDialogComponent.Expect( driver );
+		const themeDialogComponent = await ThemeDialogComponent.Expect( this.driver );
 		await themeDialogComponent.customizeSite();
 	} );
 
 	if ( host === 'WPCOM' ) {
 		it( 'Can customize the site from the theme thanks dialog', async function () {
-			return await CustomizerPage.Expect( driver );
+			return await CustomizerPage.Expect( this.driver );
 		} );
 	} else {
 		it( 'Can log in via Jetpack SSO', async function () {
-			const wpAdminLogonPage = await WPAdminLogonPage.Expect( driver );
+			const wpAdminLogonPage = await WPAdminLogonPage.Expect( this.driver );
 			return await wpAdminLogonPage.logonSSO();
 		} );
 
 		it( 'Can customize the site from the theme thanks dialog', async function () {
-			await WPAdminCustomizerPage.refreshIfJNError( driver );
-			return await WPAdminCustomizerPage.Expect( driver );
+			await WPAdminCustomizerPage.refreshIfJNError( this.driver );
+			return await WPAdminCustomizerPage.Expect( this.driver );
 		} );
 	}
 } );

@@ -44,144 +44,146 @@ const siteName = dataHelper.getJetpackSiteName();
 
 describe( `Jetpack Connect: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
 
 	describe( 'Connect From wp-admin: @parallel @jetpack @canary', function () {
 		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
+			return await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'Can log in to WPCOM', async function () {
-			const loginFlow = new LoginFlow( driver, 'jetpackConnectUser' );
+			const loginFlow = new LoginFlow( this.driver, 'jetpackConnectUser' );
 			await loginFlow.login();
 		} );
 
 		it( 'Can create wporg site', async function () {
 			this.timeout( mochaTimeOut * 12 );
 
-			this.jnFlow = new JetpackConnectFlow( driver, null );
+			this.jnFlow = new JetpackConnectFlow( this.driver, null );
 			return await this.jnFlow.createJNSite();
 		} );
 
 		it( 'Can navigate to the Jetpack dashboard', async function () {
-			await WPAdminSidebar.refreshIfJNError( driver );
-			this.wpAdminSidebar = await WPAdminSidebar.Expect( driver );
+			await WPAdminSidebar.refreshIfJNError( this.driver );
+			this.wpAdminSidebar = await WPAdminSidebar.Expect( this.driver );
 			return await this.wpAdminSidebar.selectJetpack();
 		} );
 
 		it( 'Can click the Connect Jetpack button', async function () {
-			await driverHelper.refreshIfJNError( driver );
-			this.wpAdminJetpack = await WPAdminJetpackPage.Expect( driver );
+			await driverHelper.refreshIfJNError( this.driver );
+			this.wpAdminJetpack = await WPAdminJetpackPage.Expect( this.driver );
 			return await this.wpAdminJetpack.inPlaceConnect();
 		} );
 
 		it( 'Can Approve in-place connection', async function () {
-			const inPlaceApprovePage = await WPAdminInPlaceApprovePage.Expect( driver );
+			const inPlaceApprovePage = await WPAdminInPlaceApprovePage.Expect( this.driver );
 			await inPlaceApprovePage.approve();
 		} );
 
 		it( 'Can click the free plan button', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 			return await pickAPlanPage.selectFreePlanJetpack();
 		} );
 
 		it( 'Can assert we are on Jetpack Dashboard', async function () {
-			await WPAdminJetpackPage.Expect( driver );
+			await WPAdminJetpackPage.Expect( this.driver );
 		} );
 	} );
 
 	describe( 'Pre-connect from Jetpack.com using free plan: @parallel @jetpack', function () {
 		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
+			return await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'Can select Get Started', async function () {
-			const jetPackComPage = await JetpackComPage.Visit( driver );
+			const jetPackComPage = await JetpackComPage.Visit( this.driver );
 			return await jetPackComPage.selectGetStarted();
 		} );
 
 		it( 'Can select free plan', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 			return await pickAPlanPage.selectFreePlanJetpack();
 		} );
 
 		it( 'Can see Jetpack connect page', async function () {
-			return await JetpackConnectPage.Expect( driver );
+			return await JetpackConnectPage.Expect( this.driver );
 		} );
 	} );
 
 	describe( 'Connect via SSO: @parallel @jetpack', function () {
 		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
+			return await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'Can register new Subscriber user', async function () {
 			this.accountName = dataHelper.getNewBlogName();
 			this.emailAddress = dataHelper.getEmailAddress( this.accountName, signupInboxId );
 			this.password = config.get( 'passwordForNewTestSignUps' );
-			const signupFlow = new SignUpFlow( driver, {
+			const signupFlow = new SignUpFlow( this.driver, {
 				accountName: this.accountName,
 				emailAddress: this.emailAddress,
 				password: this.password,
 			} );
 			await signupFlow.signupFreeAccount();
 			await signupFlow.activateAccount();
-			return await driverManager.ensureNotLoggedIn( driver );
+			return await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'Can log into WordPress.com', async function () {
-			return await new LoginFlow( driver ).login();
+			return await new LoginFlow( this.driver ).login();
 		} );
 
 		it( 'Can log into site via Jetpack SSO', async function () {
-			const loginPage = await WPAdminLogonPage.Visit( driver, dataHelper.getJetpackSiteName() );
+			const loginPage = await WPAdminLogonPage.Visit(
+				this.driver,
+				dataHelper.getJetpackSiteName()
+			);
 			return await loginPage.logonSSO();
 		} );
 
 		it( 'Add new user as Subscriber in wp-admin', async function () {
-			await WPAdminSidebar.refreshIfJNError( driver );
-			const wpAdminSidebar = await WPAdminSidebar.Expect( driver );
+			await WPAdminSidebar.refreshIfJNError( this.driver );
+			const wpAdminSidebar = await WPAdminSidebar.Expect( this.driver );
 			await wpAdminSidebar.selectAddNewUser();
-			await WPAdminNewUserPage.refreshIfJNError( driver );
-			const wpAdminNewUserPage = await WPAdminNewUserPage.Expect( driver );
+			await WPAdminNewUserPage.refreshIfJNError( this.driver );
+			const wpAdminNewUserPage = await WPAdminNewUserPage.Expect( this.driver );
 			return await wpAdminNewUserPage.addUser( this.emailAddress );
 		} );
 
 		it( 'Log out from WP Admin', async function () {
-			await driverManager.ensureNotLoggedIn( driver );
-			await WPAdminDashboardPage.refreshIfJNError( driver );
+			await driverManager.ensureNotLoggedIn( this.driver );
+			await WPAdminDashboardPage.refreshIfJNError( this.driver );
 			const wPAdminDashboardPage = await WPAdminDashboardPage.Visit(
-				driver,
+				this.driver,
 				WPAdminDashboardPage.getUrl( siteName )
 			);
 			return await wPAdminDashboardPage.logout();
 		} );
 
 		it( 'Can log in as Subscriber', async function () {
-			const loginPage = await LoginPage.Visit( driver );
+			const loginPage = await LoginPage.Visit( this.driver );
 			return await loginPage.login( this.accountName, this.password );
 		} );
 
 		it( 'Can login via SSO into WP Admin', async function () {
-			const wpAdminLogonPage = await WPAdminLogonPage.Visit( driver, siteName );
+			const wpAdminLogonPage = await WPAdminLogonPage.Visit( this.driver, siteName );
 			await wpAdminLogonPage.logonSSO();
-			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
+			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( this.driver );
 			return await jetpackAuthorizePage.approveSSOConnection();
 		} );
 	} );
 
 	describe( 'Pre-connect from Jetpack.com using "Install Jetpack" button: @parallel @jetpack', function () {
 		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
+			return await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'Can select Install Jetpack on Design Page', async function () {
-			const jetpackComFeaturesDesignPage = await JetpackComFeaturesDesignPage.Visit( driver );
+			const jetpackComFeaturesDesignPage = await JetpackComFeaturesDesignPage.Visit( this.driver );
 			return await jetpackComFeaturesDesignPage.installJetpack();
 		} );
 
 		it( 'Can see Jetpack connect page', async function () {
-			return await JetpackConnectPage.Expect( driver );
+			return await JetpackConnectPage.Expect( this.driver );
 		} );
 	} );
 
@@ -189,11 +191,11 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		let jnFlow;
 
 		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
+			return await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'We can set the sandbox cookie for payments', async function () {
-			const wpHomePage = await WPHomePage.Visit( driver );
+			const wpHomePage = await WPHomePage.Visit( this.driver );
 			await wpHomePage.checkURL( locale );
 			return await wpHomePage.setSandboxModeForPayments( sandboxCookieValue );
 		} );
@@ -201,33 +203,33 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		it( 'Can create wporg site', async function () {
 			this.timeout( mochaTimeOut * 12 );
 
-			jnFlow = new JetpackConnectFlow( driver );
+			jnFlow = new JetpackConnectFlow( this.driver );
 			return await jnFlow.createJNSite();
 		} );
 
 		it( 'Can select buy Jetpack Security on Pricing Page', async function () {
-			const jetpackComPricingPage = await JetpackComPricingPage.Visit( driver );
+			const jetpackComPricingPage = await JetpackComPricingPage.Visit( this.driver );
 			return await jetpackComPricingPage.buyJetpackPlan( 'jetpack_security_daily' );
 		} );
 
 		it( 'Can start connection flow using JN site', async function () {
-			const jetPackConnectPage = await JetpackConnectPage.Expect( driver );
+			const jetPackConnectPage = await JetpackConnectPage.Expect( this.driver );
 			return await jetPackConnectPage.addSiteUrl( jnFlow.url );
 		} );
 
 		it( 'Can log into WP.com', async function () {
 			const user = dataHelper.getAccountConfig( 'jetpackConnectUser' );
-			const loginPage = await LoginPage.Expect( driver );
+			const loginPage = await LoginPage.Expect( this.driver );
 			return await loginPage.login( user[ 0 ], user[ 1 ] );
 		} );
 
 		it( 'Can wait for Jetpack get connected', async function () {
-			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
+			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( this.driver );
 			return await jetpackAuthorizePage.waitToDisappear();
 		} );
 
 		it( 'Can see the secure payment page and enter/submit test payment details', async function () {
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 			const securityPlanInCart = await securePaymentComponent.containsPlan(
 				'jetpack_security_daily'
 			);
@@ -238,10 +240,10 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		} );
 
 		it( 'Can see Jetpack Security plan', async function () {
-			const thankYouModal = await ThankYouModalComponent.Expect( driver );
+			const thankYouModal = await ThankYouModalComponent.Expect( this.driver );
 			await thankYouModal.continue();
 
-			const myPlanPage = await MyPlanPage.Expect( driver );
+			const myPlanPage = await MyPlanPage.Expect( this.driver );
 			const isSecurity = await myPlanPage.isSecurityPlan();
 			assert( isSecurity, 'Can not verify Security plan' );
 		} );

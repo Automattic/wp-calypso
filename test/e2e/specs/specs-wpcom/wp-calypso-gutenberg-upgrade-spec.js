@@ -35,7 +35,6 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
 let editor;
 let sampleImages;
 
@@ -99,10 +98,11 @@ async function insertBlock( Block ) {
 /**
  * Starts a new post in the editor. User must be logged-in.
  *
+ * @param {object} driver Instance of WebDriver
  * @param {object} loginFlow Instance of the LoginFlow helper.
  * @returns {object} Instance of the GutenbergEditorComponent.
  */
-async function startNewPost( loginFlow ) {
+async function startNewPost( driver, loginFlow ) {
 	await ReaderPage.Visit( driver );
 	await NavBarComponent.Expect( driver );
 
@@ -135,9 +135,10 @@ function verifyBlockInEditor( Block ) {
 /**
  * Re-usable collection of steps for verifying blocks in the frontend/published page.
  *
+ * @param {object} driver Instance of WebDriver
  * @param {Function} Block A block class.
  */
-function verifyBlockInPublishedPage( Block ) {
+function verifyBlockInPublishedPage( driver, Block ) {
 	it( 'Publish page', async function () {
 		await editor.publish( { visit: true } );
 	} );
@@ -165,9 +166,6 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 		}
 	} );
 
-	before( () => {
-		driver = global.__BROWSER__;
-	} );
 	after( async function () {
 		if ( sampleImages && sampleImages.length ) {
 			await Promise.all(
@@ -197,10 +195,10 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 
 			describe( `Test the block on a non-edge site`, function () {
 				it( `Log in and start a new post`, async function () {
-					const loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
+					const loginFlow = new LoginFlow( this.driver, 'gutenbergUpgradeUser' );
 
 					await loginFlow.login();
-					editor = await startNewPost( loginFlow );
+					editor = await startNewPost( this.driver, loginFlow );
 				} );
 
 				it( `Insert and configure the block`, async function () {
@@ -213,14 +211,14 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 					currentGutenbergBlocksCode = await editor.getBlocksCode();
 				} );
 
-				verifyBlockInPublishedPage( Block );
+				verifyBlockInPublishedPage( this.driver, Block );
 
 				describe( `Test the same block on a corresponding edge site`, function () {
 					it( `Start a new post`, async function () {
-						const loginFlow = new LoginFlow( driver, 'gutenbergUpgradeEdgeUser' );
+						const loginFlow = new LoginFlow( this.driver, 'gutenbergUpgradeEdgeUser' );
 
 						// No need to log in again as the edge site is owned by the same user.
-						editor = await startNewPost( loginFlow );
+						editor = await startNewPost( this.driver, loginFlow );
 					} );
 
 					it( 'Load the block via markup copied from the non-edge site', async function () {

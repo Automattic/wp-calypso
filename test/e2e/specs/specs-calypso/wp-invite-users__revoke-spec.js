@@ -31,32 +31,31 @@ describe( `[${ host }] Invites - New user as Editor and revoke: (${ screenSize }
 	const newUserName = 'e2eflowtestingeditorb' + new Date().getTime().toString();
 	const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 	let acceptInviteURL = '';
-	const driver = global.__BROWSER__;
 
 	it( 'Can log in and navigate to Invite People page', async function () {
-		await new LoginFlow( driver ).loginAndSelectPeople();
-		const peoplePage = await PeoplePage.Expect( driver );
+		await new LoginFlow( this.driver ).loginAndSelectPeople();
+		const peoplePage = await PeoplePage.Expect( this.driver );
 		return await peoplePage.inviteUser();
 	} );
 
 	it( 'Can Invite a New User as an Editor, then revoke the invite', async function () {
-		const invitePeoplePage = await InvitePeoplePage.Expect( driver );
+		const invitePeoplePage = await InvitePeoplePage.Expect( this.driver );
 		await invitePeoplePage.inviteNewUser(
 			newInviteEmailAddress,
 			'editor',
 			'Automated e2e testing'
 		);
-		const noticesComponent = await NoticesComponent.Expect( driver );
+		const noticesComponent = await NoticesComponent.Expect( this.driver );
 		await noticesComponent.isSuccessNoticeDisplayed();
 		await invitePeoplePage.backToPeopleMenu();
 
-		const peoplePage = await PeoplePage.Expect( driver );
+		const peoplePage = await PeoplePage.Expect( this.driver );
 		await peoplePage.selectInvites();
 		await peoplePage.waitForPendingInviteDisplayedFor( newInviteEmailAddress );
 
 		await peoplePage.goToRevokeInvitePage( newInviteEmailAddress );
 
-		const revokePage = await RevokePage.Expect( driver );
+		const revokePage = await RevokePage.Expect( this.driver );
 		await revokePage.revokeUser();
 		const sent = await noticesComponent.isSuccessNoticeDisplayed();
 		return assert( sent, 'The sent confirmation message was not displayed' );
@@ -75,12 +74,12 @@ describe( `[${ host }] Invites - New user as Editor and revoke: (${ screenSize }
 	} );
 
 	it( 'Can open the invite page and see it has been revoked', async function () {
-		await driverManager.ensureNotLoggedIn( driver );
+		await driverManager.ensureNotLoggedIn( this.driver );
 
-		await driver.get( acceptInviteURL );
-		await AcceptInvitePage.Expect( driver );
+		await this.driver.get( acceptInviteURL );
+		await AcceptInvitePage.Expect( this.driver );
 
-		const inviteErrorPage = await InviteErrorPage.Expect( driver );
+		const inviteErrorPage = await InviteErrorPage.Expect( this.driver );
 		const displayed = await inviteErrorPage.inviteErrorTitleDisplayed();
 		return assert( displayed, 'The invite was not successfully revoked' );
 	} );

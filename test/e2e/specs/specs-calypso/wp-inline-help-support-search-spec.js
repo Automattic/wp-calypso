@@ -24,26 +24,21 @@ let inlineHelpPopoverComponent;
 
 describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( () => {
-		driver = global.__BROWSER__;
-	} );
 
 	it( 'Login and select a page that is not the My Home page', async function () {
-		const loginFlow = new LoginFlow( driver );
+		const loginFlow = new LoginFlow( this.driver );
 
 		// The "/home" route is the only one where the "FAB" inline help
 		// is not shown.
 		await loginFlow.loginAndSelectSettings();
 
 		// Initialize the helper component
-		inlineHelpPopoverComponent = await InlineHelpPopoverComponent.Expect( driver );
+		inlineHelpPopoverComponent = await InlineHelpPopoverComponent.Expect( this.driver );
 	} );
 
 	describe( 'Popover UI visibility', function () {
 		it( 'Check help toggle is not visible on My Home page', async function () {
-			const sidebarComponent = await SidebarComponent.Expect( driver );
+			const sidebarComponent = await SidebarComponent.Expect( this.driver );
 			await sidebarComponent.selectMyHome();
 
 			// The toggle only hides once the "Get help" card is rendered so
@@ -52,7 +47,7 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 		} );
 
 		it( 'Check help toggle is visible on Settings page', async function () {
-			const sidebarComponent = await SidebarComponent.Expect( driver );
+			const sidebarComponent = await SidebarComponent.Expect( this.driver );
 
 			// The "inline help" FAB should not appear on the My Home
 			// because there is already a support search "Card" on that
@@ -74,7 +69,7 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 	describe( 'Performing searches', function () {
 		it( 'Open Inline Help popover', async function () {
 			await inlineHelpPopoverComponent.toggleOpen();
-			supportSearchComponent = await SupportSearchComponent.Expect( driver );
+			supportSearchComponent = await SupportSearchComponent.Expect( this.driver );
 		} );
 
 		it( 'Displays contextual search results by default', async function () {

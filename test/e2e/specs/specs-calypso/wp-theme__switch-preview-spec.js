@@ -21,15 +21,14 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Previewing Themes: (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
 
 	it( 'Can login and select themes', async function () {
-		const loginFlow = new LoginFlow( driver );
+		const loginFlow = new LoginFlow( this.driver );
 		await loginFlow.loginAndSelectThemes();
 	} );
 
 	it( 'Can select a different free theme', async function () {
-		this.themesPage = await ThemesPage.Expect( driver );
+		this.themesPage = await ThemesPage.Expect( this.driver );
 		await this.themesPage.waitUntilThemesLoaded();
 		await this.themesPage.showOnlyFreeThemes();
 		await this.themesPage.searchFor( 'Twenty S' );
@@ -38,12 +37,12 @@ describe( `[${ host }] Previewing Themes: (${ screenSize }) @parallel @jetpack`,
 	} );
 
 	it( 'Can see theme details page and open the live demo', async function () {
-		this.themeDetailPage = await ThemeDetailPage.Expect( driver );
+		this.themeDetailPage = await ThemeDetailPage.Expect( this.driver );
 		return await this.themeDetailPage.openLiveDemo();
 	} );
 
 	it( 'Activate button appears on the theme preview page', async function () {
-		this.themePreviewPage = await ThemePreviewPage.Expect( driver );
+		this.themePreviewPage = await ThemePreviewPage.Expect( this.driver );
 		await this.themePreviewPage.activateButtonVisible();
 	} );
 } );

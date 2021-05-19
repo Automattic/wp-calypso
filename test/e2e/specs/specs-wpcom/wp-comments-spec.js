@@ -22,12 +22,7 @@ const blogPostQuote =
 
 describe( `[${ host }] Comments: (${ screenSize })`, function () {
 	let fileDetails;
-	let driver;
 	this.timeout( mochaTimeoutMS );
-
-	before( () => {
-		driver = global.__BROWSER__;
-	} );
 
 	// Create image file for upload
 	before( async function () {
@@ -37,20 +32,20 @@ describe( `[${ host }] Comments: (${ screenSize })`, function () {
 
 	describe( 'Commenting and replying to newly created post in Gutenberg Editor: @parallel', function () {
 		it( 'Can login and create a new post', async function () {
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
+			this.loginFlow = new LoginFlow( this.driver, 'gutenbergSimpleSiteUser' );
 			await this.loginFlow.loginAndStartNewPost( null, true );
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
 			await gEditorComponent.enterTitle( blogPostTitle );
 			await gEditorComponent.enterText( blogPostQuote );
 		} );
 
 		it( 'Can publish and visit site', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
 			await gEditorComponent.publish( { visit: true } );
 		} );
 
 		it( 'Can post a comment', async function () {
-			const commentArea = await CommentsAreaComponent.Expect( driver );
+			const commentArea = await CommentsAreaComponent.Expect( this.driver );
 			const comment = dataHelper.randomPhrase();
 
 			await commentArea._postComment( comment );
@@ -59,7 +54,7 @@ describe( `[${ host }] Comments: (${ screenSize })`, function () {
 		} );
 
 		it( 'Can post a reply', async function () {
-			const commentArea = await CommentsAreaComponent.Expect( driver );
+			const commentArea = await CommentsAreaComponent.Expect( this.driver );
 			const comment = dataHelper.randomPhrase();
 
 			await commentArea.reply( comment );

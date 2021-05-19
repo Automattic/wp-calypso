@@ -18,15 +18,10 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] User Agent: (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( () => {
-		driver = global.__BROWSER__;
-	} );
 
 	it( 'Can see the correct user agent set', async function () {
-		await WPHomePage.Visit( driver );
-		const userAgent = await driver.executeScript( 'return navigator.userAgent;' );
+		await WPHomePage.Visit( this.driver );
+		const userAgent = await this.driver.executeScript( 'return navigator.userAgent;' );
 		assert(
 			userAgent.match( 'wp-e2e-tests' ),
 			`User Agent does not contain 'wp-e2e-tests'.  [${ userAgent }]`

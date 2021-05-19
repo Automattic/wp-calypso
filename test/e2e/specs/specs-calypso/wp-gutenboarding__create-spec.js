@@ -31,26 +31,25 @@ describe( `Gutenboarding - Create new site as existing user: (${ screenSize }) @
 	const siteTitle = dataHelper.randomPhrase();
 	const domainQuery = dataHelper.randomPhrase();
 	let newSiteDomain = '';
-	const driver = global.__BROWSER__;
 
 	it( 'Can log in as user', async function () {
-		await new LoginFlow( driver ).login();
+		await new LoginFlow( this.driver ).login();
 	} );
 
 	it( 'Can visit Gutenboarding page and see Onboarding block', async function () {
-		const page = await NewPage.Visit( driver, NewPage.getGutenboardingURL() );
+		const page = await NewPage.Visit( this.driver, NewPage.getGutenboardingURL() );
 		const blockExists = await page.waitForBlock();
 		assert( blockExists, 'Onboarding block is not rendered' );
 	} );
 
 	it( 'Can see Acquire Intent and set site title', async function () {
-		const acquireIntentPage = await AcquireIntentPage.Expect( driver );
+		const acquireIntentPage = await AcquireIntentPage.Expect( this.driver );
 		await acquireIntentPage.enterSiteTitle( siteTitle );
 	} );
 
 	it( 'Can change language to Spanish and back to English', async function () {
-		const acquireIntentPage = await AcquireIntentPage.Expect( driver );
-		const languagePicker = await LanguagePickerComponent.Expect( driver );
+		const acquireIntentPage = await AcquireIntentPage.Expect( this.driver );
+		const languagePicker = await LanguagePickerComponent.Expect( this.driver );
 
 		await languagePicker.switchLanguage( 'es' );
 
@@ -58,7 +57,7 @@ describe( `Gutenboarding - Create new site as existing user: (${ screenSize }) @
 			acquireIntentPage.nextButtonLocator,
 			'Continuar'
 		);
-		await driverHelper.waitUntilElementLocatedAndVisible( driver, nextButtonLocatorES );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, nextButtonLocatorES );
 
 		await languagePicker.switchLanguage( 'en' );
 
@@ -66,13 +65,13 @@ describe( `Gutenboarding - Create new site as existing user: (${ screenSize }) @
 			acquireIntentPage.nextButtonLocator,
 			'Continue'
 		);
-		await driverHelper.waitUntilElementLocatedAndVisible( driver, nextButtonLocatorEN );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, nextButtonLocatorEN );
 
 		await acquireIntentPage.goToNextStep();
 	} );
 
 	it( 'Can see Domains Page, search for domains, pick a free domain, and continue', async function () {
-		const domainsPage = await DomainsPage.Expect( driver );
+		const domainsPage = await DomainsPage.Expect( this.driver );
 		await domainsPage.enterDomainQuery( domainQuery );
 		await domainsPage.waitForDomainSuggestionsToLoad();
 		newSiteDomain = await domainsPage.getFreeDomainName();
@@ -81,25 +80,25 @@ describe( `Gutenboarding - Create new site as existing user: (${ screenSize }) @
 	} );
 
 	it( 'Can see Design Locator and select a random free design', async function () {
-		const designLocatorPage = await DesignLocatorPage.Expect( driver );
+		const designLocatorPage = await DesignLocatorPage.Expect( this.driver );
 		await designLocatorPage.selectFreeDesign();
 	} );
 
 	it( 'Can see Style Preview, choose a random font pairing, and continue', async function () {
-		const stylePreviewPage = await StylePreviewPage.Expect( driver );
+		const stylePreviewPage = await StylePreviewPage.Expect( this.driver );
 		await stylePreviewPage.selectFontPairing();
 		await stylePreviewPage.continue();
 	} );
 
 	it( 'Can see Feature picker and choose a feature that requires a business plan', async function () {
-		const featuresPage = await FeaturesPage.Expect( driver );
+		const featuresPage = await FeaturesPage.Expect( this.driver );
 		await featuresPage.selectPluginsFeature();
 		await featuresPage.goToNextStep();
 	} );
 
 	it( 'Can see Plans Grid with business plan recommended and can choose free plan', async function () {
-		const plansPage = await PlansPage.Expect( driver );
-		const recommendedPlan = await plansPage.getRecommendedPlan( driver );
+		const plansPage = await PlansPage.Expect( this.driver );
+		const recommendedPlan = await plansPage.getRecommendedPlan( this.driver );
 		assert.strictEqual(
 			recommendedPlan,
 			'Business',
@@ -109,7 +108,7 @@ describe( `Gutenboarding - Create new site as existing user: (${ screenSize }) @
 		await plansPage.selectFreePlan();
 
 		// Redirect console messages that starts with "onboarding-debug" to E2E log.
-		await driver
+		await this.driver
 			.manage()
 			.logs()
 			.get( 'browser' )
@@ -123,11 +122,11 @@ describe( `Gutenboarding - Create new site as existing user: (${ screenSize }) @
 	} );
 
 	it( 'Can see the gutenberg page editor', async function () {
-		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+		const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
 		await gEditorComponent.initEditor();
 	} );
 
 	after( 'Can delete site', async function () {
-		await new DeleteSiteFlow( driver ).deleteSite( newSiteDomain );
+		await new DeleteSiteFlow( this.driver ).deleteSite( newSiteDomain );
 	} );
 } );

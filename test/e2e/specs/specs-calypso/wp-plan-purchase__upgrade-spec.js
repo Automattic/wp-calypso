@@ -21,27 +21,26 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Plans - Upgrade: (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	const driver = global.__BROWSER__;
 
 	before( async function () {
-		return await driverManager.ensureNotLoggedIn( driver );
+		return await driverManager.ensureNotLoggedIn( this.driver );
 	} );
 
 	it( 'Can log into WordPress.com', async function () {
-		const loginFlow = new LoginFlow( driver );
+		const loginFlow = new LoginFlow( this.driver );
 		return await loginFlow.loginAndSelectMySite();
 	} );
 
 	it( 'Can navigate to plans page and select business plan', async function () {
-		const sidebarComponent = await SidebarComponent.Expect( driver );
+		const sidebarComponent = await SidebarComponent.Expect( this.driver );
 		await sidebarComponent.selectPlans();
-		const plansPage = await PlansPage.Expect( driver );
+		const plansPage = await PlansPage.Expect( this.driver );
 		await plansPage.openPlansTab();
 		return await plansPage.selectPaidPlan();
 	} );
 
 	it( 'User is taken to be Payment Details form', async function () {
-		const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 		const businessPlanInCart = await securePaymentComponent.containsBusinessPlan();
 		return assert.strictEqual(
 			businessPlanInCart,

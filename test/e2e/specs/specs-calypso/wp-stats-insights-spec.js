@@ -21,26 +21,21 @@ const screenSize = driverManager.currentScreenSize();
 describe( 'Stats: (' + screenSize + ') @parallel', function () {
 	this.timeout( mochaTimeOut );
 	let statsPage;
-	let driver;
-
-	before( () => {
-		driver = global.__BROWSER__;
-	} );
 
 	it( 'Can log in as user', async function () {
-		this.loginFlow = new LoginFlow( driver );
+		this.loginFlow = new LoginFlow( this.driver );
 		return await this.loginFlow.login();
 	} );
 
 	it( 'Can open the sidebar', async function () {
-		const navBarComponent = await NavBarComponent.Expect( driver );
+		const navBarComponent = await NavBarComponent.Expect( this.driver );
 		await navBarComponent.clickMySites();
 	} );
 
 	it( 'Can open the stats page', async function () {
-		const sidebarComponent = await SidebarComponent.Expect( driver );
+		const sidebarComponent = await SidebarComponent.Expect( this.driver );
 		await sidebarComponent.selectStats();
-		statsPage = await StatsPage.Expect( driver );
+		statsPage = await StatsPage.Expect( this.driver );
 	} );
 
 	it( 'Can open the stats insights page', async function () {
