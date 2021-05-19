@@ -222,11 +222,6 @@ export async function clickIfPresent( driver, locator ) {
 	return null;
 }
 
-export async function getElementCount( driver, locator ) {
-	const elements = await driver.findElements( locator );
-	return elements.length || 0;
-}
-
 /**
  * Types a key sequence on the DOM element.
  *
