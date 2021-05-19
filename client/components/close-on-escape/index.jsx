@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { filter, includes, isEmpty, last } from 'lodash';
+import { includes, isEmpty, last } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -38,7 +38,7 @@ function startCloseOnEscForComponent( component, onEscape ) {
 }
 
 function stopCloseOnEscForComponent( component ) {
-	components = filter( components, ( item ) => item.component !== component );
+	components = components.filter( ( item ) => item.component !== component );
 	if ( isEmpty( components ) ) {
 		removeKeydownListener();
 	}

@@ -4,7 +4,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { keys, filter } from 'lodash';
+import { keys } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,7 @@ const tldSpecificForms = {
 
 export const getApplicableTldsWithAdditionalDetailsForms = ( tlds ) => {
 	const topLevelTlds = tlds.map( getTopLevelOfTld );
-	return filter( keys( tldSpecificForms ), ( tldFormName ) => {
+	return keys( tldSpecificForms ).filter( ( tldFormName ) => {
 		return (
 			config.isEnabled( `domains/cctlds/${ tldFormName }` ) && topLevelTlds.includes( tldFormName )
 		);

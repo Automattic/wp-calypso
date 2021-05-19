@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { map, size, filter, uniqBy } from 'lodash';
+import { map, size, uniqBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,9 +32,9 @@ class GravatarCaterpillar extends React.Component {
 		const gravatarSmallScreenThreshold = maxGravatarsToDisplay / 2;
 
 		// Only display authors with a gravatar, and only display each author once
-		const displayedUsers = filter( uniqBy( users, 'avatar_URL' ), 'avatar_URL' ).slice(
-			-1 * maxGravatarsToDisplay
-		);
+		const displayedUsers = uniqBy( users, 'avatar_URL' )
+			.filter( ( user ) => !! user.avatar_URL )
+			.slice( -1 * maxGravatarsToDisplay );
 		const displayedUsersCount = size( displayedUsers );
 
 		return (

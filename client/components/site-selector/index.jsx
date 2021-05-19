@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
-import { filter, find, flow, get, includes, isEmpty } from 'lodash';
+import { find, flow, get, includes, isEmpty } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -352,7 +352,7 @@ class SiteSelector extends Component {
 		// Filter recentSites
 		if ( this.shouldRenderRecentSites() ) {
 			const recentSites = this.props.recentSites;
-			sites = filter( sites, ( { ID: siteId } ) => ! includes( recentSites, siteId ) );
+			sites = sites.filter( ( { ID: siteId } ) => ! includes( recentSites, siteId ) );
 		}
 
 		// Render sites

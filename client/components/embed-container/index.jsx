@@ -4,7 +4,7 @@
 
 import React, { PureComponent } from 'react';
 import ReactDom from 'react-dom';
-import { filter, forEach } from 'lodash';
+import { forEach } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -38,7 +38,7 @@ const SLIDESHOW_URLS = {
 function processEmbeds( domNode ) {
 	Object.entries( embedsToLookFor ).forEach( ( [ embedSelector, fn ] ) => {
 		const nodes = domNode.querySelectorAll( embedSelector );
-		forEach( filter( nodes, nodeNeedsProcessing ), fn );
+		forEach( nodes.filter( nodeNeedsProcessing ), fn );
 	} );
 }
 

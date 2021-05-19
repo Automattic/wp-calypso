@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { filter, find, get } from 'lodash';
+import { find, get } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -340,14 +340,14 @@ class SelectDropdown extends Component {
 		let focusedIndex;
 
 		if ( this.props.options.length ) {
-			items = filter( this.props.options, ( item ) => item && ! item.isLabel );
+			items = this.props.options.filter( ( item ) => item && ! item.isLabel );
 
 			focusedIndex =
 				typeof this.focused === 'number'
 					? this.focused
 					: items.findIndex( ( item ) => item.value === this.state.selected );
 		} else {
-			items = filter( this.props.children, ( item ) => item.type === DropdownItem );
+			items = this.props.children.filter( ( item ) => item.type === DropdownItem );
 
 			focusedIndex =
 				typeof this.focused === 'number'

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { camelCase, difference, filter, get, includes, isEmpty, keys, map, pick } from 'lodash';
+import { camelCase, difference, get, includes, isEmpty, keys, map, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -202,10 +202,10 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 			...this.props.ccTldDetails,
 		};
 
-		const relevantExtraFields = filter( [
+		const relevantExtraFields = [
 			this.isTradingNameRequired( registrantType ) && 'tradingName',
 			this.isRegistrationNumberRequired( registrantType ) && 'registrationNumber',
-		] );
+		].filter( ( i ) => i );
 		const isValid = Object.keys( this.props.contactDetailsValidationErrors?.extra?.uk ?? {} ).every(
 			( errorKey ) => ! relevantExtraFields.includes( errorKey )
 		);

@@ -8,7 +8,7 @@
  * External dependencies
  */
 import { render, mount } from 'enzyme';
-import { filter, map } from 'lodash';
+import { map } from 'lodash';
 import React from 'react';
 
 /**
@@ -93,8 +93,7 @@ describe( 'TokenField', () => {
 		div.innerHTML = node.find( 'span' ).html();
 
 		return map(
-			filter(
-				div.firstChild.childNodes,
+			Array.from( div.firstChild.childNodes ).filter(
 				( childNode ) => childNode.nodeType !== window.Node.COMMENT_NODE
 			),
 			( childNode ) => childNode.textContent

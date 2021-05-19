@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { concat, filter, flow, map, sortBy } from 'lodash';
+import { concat, flow, map, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,7 +12,7 @@ import PaymentLogo, { POSSIBLE_TYPES } from '../index';
 
 const genVendors = flow(
 	// 'placeholder' is a special case that needs to be demonstrated separately
-	( arr ) => filter( arr, ( type ) => type !== 'placeholder' ),
+	( arr ) => arr.filter( ( type ) => type !== 'placeholder' ),
 
 	( arr ) => map( arr, ( type ) => ( { type, isCompact: false } ) ),
 	( arr ) => concat( arr, [ { type: 'paypal', isCompact: true } ] ),
