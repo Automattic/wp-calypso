@@ -40,3 +40,12 @@ export function getAccountCredential( username: string ): string {
 		throw new Error( `Credential for username: ${ username } not found in configuration file.` );
 	}
 }
+
+/**
+ * Returns the hostname for Jetpack.
+ *
+ * @returns {string} Hostname to be used. Returns value of JETPACKHOST environment variable if set; WPCOM otherwise.
+ */
+export function getJetpackHost(): string {
+	return process.env.JETPACKHOST || 'WPCOM';
+}

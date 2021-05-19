@@ -2,6 +2,7 @@
  * External dependencies
  */
 import config from 'config';
+import { DataHelper, BrowserHelper } from '@automattic/calypso-e2e';
 
 /**
  * Internal dependencies
@@ -12,16 +13,14 @@ import { LoginFlow } from '@automattic/calypso-e2e';
  * Constants
  */
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
+const host = DataHelper.getJetpackHost();
+const viewportName = BrowserHelper.getViewportName();
 
-describe( `Auth Screen Canary: @parallel`, function () {
+describe( `[${ host }] Auth Screen Canary: (${ viewportName }) @parallel @safaricanary`, function () {
 	this.timeout( mochaTimeOut );
 
-	before( 'Can log in', async function () {
+	it( 'Can log in', async function () {
 		const loginFlow = await new LoginFlow( this.page );
 		await loginFlow.login();
-	} );
-
-	it( 'Some dummy step', async function () {
-		await this.page.waitForSelector( '#wpcom' );
 	} );
 } );
