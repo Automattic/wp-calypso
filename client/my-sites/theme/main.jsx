@@ -768,7 +768,7 @@ class ThemeSheet extends React.Component {
 	}
 }
 
-const ConnectedThemeSheet = connectOptions( ( props ) => <ThemeSheet { ...props } /> );
+const ConnectedThemeSheet = connectOptions( ThemeSheet );
 
 const ThemeSheetWithOptions = ( props ) => {
 	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = props;
