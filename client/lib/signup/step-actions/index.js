@@ -53,7 +53,7 @@ import SignupCart from 'calypso/lib/signup/cart';
 import flows from 'calypso/signup/config/flows';
 import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
-import { isBlankCanvasDesign } from '@automattic/design-picker';
+import { getAvailableDesigns, isBlankCanvasDesign } from '@automattic/design-picker';
 
 /**
  * Constants
@@ -163,6 +163,14 @@ function getNewSiteParams( {
 	// when segment and vertical values are not sent. Check pbAok1-p2#comment-834.
 	const shouldUseDefaultAnnotationAsFallback = true;
 
+	let shouldEnableFse = selectedDesign?.is_fse;
+	if ( ! selectedDesign ) {
+		const designs = getAvailableDesigns();
+		const themeSlug = theme.replace( 'pub/', '' );
+		const design = designs.featured.find( ( { slug } ) => slug === themeSlug );
+		shouldEnableFse = design?.is_fse;
+	}
+
 	const newSiteParams = {
 		blog_title: siteTitle,
 		public: Visibility.PublicNotIndexed,
@@ -182,6 +190,7 @@ function getNewSiteParams( {
 			site_creation_flow: flowToCheck,
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: 1,
+			enable_fse: shouldEnableFse,
 		},
 		validate: false,
 	};
