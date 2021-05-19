@@ -9,11 +9,15 @@ module.exports = async ( page, scenario ) => {
 
 	switch ( scenario.label ) {
 		case 'about':
+		case 'about-3':
+		case 'about-4':
+		case 'about-5':
 			await page.click( 'button[data-slug="about"]' );
 			break;
 		case 'edison':
 		case 'cassel':
 		case 'seedlet':
+		case 'blog':
 		case 'blog-2':
 		case 'blog-3':
 		case 'blog-4':
@@ -41,6 +45,10 @@ module.exports = async ( page, scenario ) => {
 		case 'morden':
 		case 'stow':
 		case 'hever':
+		case 'reynolds':
+		case 'rivington':
+		case 'bowen':
+		case 'doyle':
 			await page.click( 'button[data-slug="home"]' );
 			break;
 		case 'portfolio-8':
@@ -48,10 +56,15 @@ module.exports = async ( page, scenario ) => {
 		case 'portfolio-6':
 		case 'portfolio-5':
 		case 'portfolio-4':
+		case 'portfolio-3':
 		case 'portfolio-2':
+		case 'portfolio':
+		case 'team':
 			await page.click( 'button[data-slug="gallery"]' );
 			break;
 		case 'services':
+		case 'services-2':
+		case 'menu':
 			await page.click( 'button[data-slug="services"]' );
 			break;
 		case 'contact-10':
