@@ -1,0 +1,22 @@
+{
+	"viewportName": "desktop",
+	"locale": "en",
+	"viewportSize": {
+		"mobile": {
+			"width": 400,
+			"height": 1000
+		},
+		"tablet": {
+			"width": 1024,
+			"height": 1000
+		},
+		"desktop": {
+			"width": 1440,
+			"height": 1000
+		},
+		"laptop": {
+			"width": 1440,
+			"height": 790
+		}
+	}
+}

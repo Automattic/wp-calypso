@@ -21,12 +21,12 @@
 
 		"forceConsistentCasingInFileNames": true,
 
-		"types": [ "node" ],
+		"types": [ "node", "jest" ],
 
 		"noEmitHelpers": true,
 		"importHelpers": true,
 
 		"composite": true
 	},
-	"include": [ "src" ],
+	"include": [ "src" ]
 }
