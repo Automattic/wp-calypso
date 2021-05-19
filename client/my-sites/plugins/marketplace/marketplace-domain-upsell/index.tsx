@@ -129,6 +129,24 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 		setDomainProductUUID( productAdded?.uuid ?? '' );
 	};
 
+	const freeWpcomStagingDomain: DomainSuggestions.DomainSuggestion = {
+		domain_name: `${ getSiteNameFromURL( selectedSite?.slug ) }.wpcomstaging.com`,
+		cost: 'Free',
+		match_reasons: [ 'Domain name after transfer' ],
+		unavailable: false,
+		currency_code: 'USD',
+		raw_price: 0,
+		is_free: true,
+	};
+
+	const onExistingSubdomainSelect = async () => {
+		setDomain( freeWpcomStagingDomain );
+		if ( selectedDomainProductUUID ) {
+			await removeProductFromCart( selectedDomainProductUUID );
+			setDomainProductUUID( '' );
+		}
+	};
+
 	return (
 		<>
 			<Masterbar>
@@ -153,11 +171,13 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 			>
 				<div className="marketplace-domain-upsell__domain-picker-container">
 					<DomainPicker
+						existingSubdomain={ freeWpcomStagingDomain }
 						initialDomainSearch={ siteName }
 						header={ <MarketplaceDomainUpsellHeader /> }
 						analyticsUiAlgo={ ANALYTICS_UI_LOCATION_MARKETPLACE_DOMAIN_SELECTION }
 						analyticsFlowId={ MARKETPLACE_FLOW_ID }
 						onDomainSelect={ onDomainSelect }
+						onExistingSubdomainSelect={ onExistingSubdomainSelect }
 						currentDomain={ selectedDomain }
 						showRecommendationLabel={ false }
 						onUseYourDomainClick={ redirectToUseDomainFlow }
