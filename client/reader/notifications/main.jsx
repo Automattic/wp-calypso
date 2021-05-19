@@ -16,6 +16,7 @@ import './style.scss';
 
 const Notifications = () => {
 	const locale = useSelector( getCurrentUserLocale );
+
 	return (
 		<Main wideLayout className="notifications__main">
 			<NotificationsPanel isShowing isVisible locale={ locale } wpcom={ wpcom } />
