@@ -28,7 +28,6 @@ It's also possible to build an entirely custom form using the other components e
 Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the following functions:
 
 - [createExistingCardMethod](#createExistingCardMethod)
-- [createPayPalMethod](#createpaypalmethod)
 - [createStripeMethod](#createStripeMethod)
 
 Any component which is a child of `CheckoutProvider` gets access to the following custom hooks:
@@ -368,16 +367,6 @@ An [@emotion/styled](https://emotion.sh/docs/styled) theme object that can be me
 ### createRegistry
 
 Creates a [data store](#data-stores) registry to be passed (optionally) to [CheckoutProvider](#checkoutprovider). See the `@wordpress/data` [docs for this function](https://developer.wordpress.org/block-editor/packages/packages-data/#createRegistry).
-
-### createPayPalMethod
-
-Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
-
-- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
-
-The object returned by this function **must have** the following property added to it:
-
-- `submitTransaction: async object => string`. An async function that sends the request to the endpoint to get the redirect url.
 
 ### createStripeMethod
 

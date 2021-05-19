@@ -17,7 +17,8 @@ import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
 import { bumpStat } from './lib/analytics';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { getSelectedSiteWithFallback, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 
 /**
@@ -153,18 +154,15 @@ function notFoundError( context, next ) {
 
 function redirectIfWooCommerceNotInstalled( context, next ) {
 	const state = context.store.getState();
-	const site = getSelectedSiteWithFallback( state );
-	const siteId = site ? site.ID : null;
-	const isStore = isSiteStore( state, siteId );
+	const site = getSelectedSite( state );
 
-	if ( isStore ) {
-		next();
+	if (
+		site &&
+		! isSiteStore( state, site.ID ) &&
+		! getSiteOption( state, site.ID, 'is_wpcom_store' )
+	) {
+		page.redirect( `/woocommerce-installation/${ site.slug }` );
 		return;
-	}
-	const isSiteWpcomStore = getSiteOption( state, siteId, 'is_wpcom_store' );
-
-	if ( ! isSiteWpcomStore ) {
-		return page.redirect( `/woocommerce-installation/${ site.slug }` );
 	}
 
 	next();
@@ -172,14 +170,7 @@ function redirectIfWooCommerceNotInstalled( context, next ) {
 
 export default async function () {
 	// Without site param
-	page(
-		'/store',
-		siteSelection,
-		redirectIfWooCommerceNotInstalled,
-		sites,
-		makeLayout,
-		clientRender
-	);
+	page( '/store', siteSelection, sites, makeLayout, clientRender );
 
 	// Dashboard
 	page(

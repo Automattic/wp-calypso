@@ -7,12 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * WordPress dependencies
  */
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import Disableable from 'calypso/components/disableable';
+import { Disabled, ToggleControl } from '@wordpress/components';
 
 const noop = () => {};
 
@@ -35,7 +30,7 @@ export default class FormToggle extends PureComponent {
 		const { checked, children, disabled, help, id, onChange } = this.props;
 
 		return (
-			<Disableable disabled={ disabled }>
+			<Disabled isDisabled={ disabled }>
 				<ToggleControl
 					id={ id }
 					onChange={ onChange }
@@ -43,7 +38,7 @@ export default class FormToggle extends PureComponent {
 					label={ children }
 					help={ help }
 				/>
-			</Disableable>
+			</Disabled>
 		);
 	}
 }

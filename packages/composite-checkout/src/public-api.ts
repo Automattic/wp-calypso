@@ -54,7 +54,6 @@ import {
 	createStripeMethod,
 	createStripePaymentMethodStore,
 } from './lib/payment-methods/stripe-credit-card-fields';
-import { createPayPalMethod } from './lib/payment-methods/paypal';
 import { createExistingCardMethod } from './lib/payment-methods/existing-credit-card';
 import CheckoutOrderSummaryStep, {
 	CheckoutOrderSummary,
@@ -125,7 +124,6 @@ export {
 	createIdealPaymentMethodStore,
 	createP24Method,
 	createP24PaymentMethodStore,
-	createPayPalMethod,
 	createRegistry,
 	createSofortMethod,
 	createSofortPaymentMethodStore,

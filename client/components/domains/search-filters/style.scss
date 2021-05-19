@@ -109,39 +109,10 @@
 
 	// Increase specificity to override button styles in signup
 	body.is-section-signup .layout & {
-		.search-filters__tld-button {
-			/*!rtl:ignore*/
-			direction: ltr;
-		}
-
-		button.search-filters__tld-button,
 		button.search-filters__popover-button {
 			font-size: $font-body-small;
 			padding-top: 0.5em;
 			padding-bottom: 0.5em;
-		}
-	}
-
-	@include breakpoint-deprecated( '<960px' ) {
-		.search-filters__tld-button:nth-child( n + 7 ) {
-			display: none;
-		}
-	}
-	@include breakpoint-deprecated( '<800px' ) {
-		.search-filters__tld-button:nth-child( n + 6 ) {
-			display: none;
-		}
-	}
-
-	@include breakpoint-deprecated( '<660px' ) {
-		.search-filters__tld-button:nth-child( n + 5 ) {
-			display: none;
-		}
-	}
-
-	@include breakpoint-deprecated( '<480px' ) {
-		.search-filters__tld-button:nth-child( n + 4 ) {
-			display: none;
 		}
 	}
 }
@@ -154,7 +125,7 @@
 	margin-bottom: 0.25em;
 }
 
-.search-filters__token-field-fieldset {
+.search-filters__tld-filters {
 	.token-field__token {
 		&:first-child {
 			margin-left: 0;
@@ -244,32 +215,8 @@ body.is-section-signup.is-white-signup {
 			margin-right: 0;
 		}
 	}
-	
-	.search-filters__tld-button {
-		background: #fdfdfd;
-		border-radius: 4px; /* stylelint-disable-line */
-		border-color: #d5d5d7;
-		font-weight: 500; /* stylelint-disable-line */
-		color: var( --studio-gray-60 );
 
-		&.is-active {
-			background: var( --studio-white );
-			border: 1px solid #646970;
-			color: #2b2d2f;
-		}
-
-		&:hover {
-			border: 1px solid #646970;
-			color: #2b2d2f;
-			background: var( --studio-white );
-		}
-	}
-	
 	.search-filters__buttons .button {
 		margin-left: 0.5em;
-
-		&.search-filters__tld-button-first {
-			margin-left: 0;
-		}
 	}
 }

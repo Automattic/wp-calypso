@@ -28,7 +28,6 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": false,
-		"fullstory": false,
 		"async-payments": false,
 		"blogger-plan": false,
 		"calypsoify/plugins": true,
@@ -41,6 +40,7 @@
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
+		"fullstory": true,
 		"gdpr-banner": false,
 		"google-my-business": false,
 		"google-workspace-migration": true,

@@ -17,7 +17,6 @@ import {
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_PLAN,
 } from './constants';
-import RecordsDetails from './records-details';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	TERM_ANNUALLY,
@@ -63,12 +62,7 @@ import type {
 	QueryArgs,
 	SiteProduct,
 } from './types';
-import type {
-	JetpackPlanSlug,
-	Plan,
-	JetpackPlanCardFeature,
-	JetpackProductSlug,
-} from '@automattic/calypso-products';
+import type { JetpackPlanSlug, Plan, JetpackProductSlug } from '@automattic/calypso-products';
 
 import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 import ExternalLink from 'calypso/components/external-link';
@@ -433,9 +427,6 @@ export function itemToSelectorProduct(
 			shortName: getJetpackProductShortName( item ) || '',
 			tagline: getJetpackProductTagline( item ),
 			description: getJetpackProductDescription( item ),
-			children: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug )
-				? createElement( RecordsDetails, { productSlug: item.product_slug } )
-				: undefined,
 			buttonLabel: getJetpackProductCallToAction( item ),
 			monthlyProductSlug,
 			term: item.term,
@@ -470,7 +461,6 @@ export function itemToSelectorProduct(
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
 			displayName: getForCurrentCROIteration( item.getTitle ),
-			buttonLabel: getForCurrentCROIteration( item.getButtonLabel ),
 			type: ITEM_TYPE_PLAN,
 			shortName: getForCurrentCROIteration( item.getTitle ),
 			tagline: getForCurrentCROIteration( item.getTagline ) || '',
@@ -496,7 +486,7 @@ export function itemToSelectorProduct(
 /**
  * Builds the feature item of a product card, from a feature key.
  *
- * @param {JetpackPlanCardFeature} featureKey Key of the feature
+ * @param {string[]|string} featureKey Key of the feature
  * @param {object?} options Options
  * @param {string?} options.withoutDescription Whether to build the card with a description
  * @param {string?} options.withoutIcon Whether to build the card with an icon
@@ -504,7 +494,7 @@ export function itemToSelectorProduct(
  * @returns {SelectorProductFeaturesItem} Feature item
  */
 export function buildCardFeatureItemFromFeatureKey(
-	featureKey: JetpackPlanCardFeature,
+	featureKey: string[] | string,
 	options?: { withoutDescription?: boolean; withoutIcon?: boolean },
 	variation?: string
 ): SelectorProductFeaturesItem | undefined {
@@ -541,13 +531,13 @@ export function buildCardFeatureItemFromFeatureKey(
 /**
  * Builds the feature items passed to the product card, from feature keys.
  *
- * @param {JetpackPlanCardFeature[]} features Feature keys
+ * @param {string[]} features Feature keys
  * @param {object?} options Options
  * @param {string?} variation Experiment variation
  * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
 export function buildCardFeaturesFromFeatureKeys(
-	features: JetpackPlanCardFeature[],
+	features: string[],
 	options?: Record< string, unknown >,
 	variation?: Iterations
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {

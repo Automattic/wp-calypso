@@ -2,6 +2,9 @@
 
 ## trunk
 
+- Updated dependencies
+  - thread-loader to ^3.0.4
+
 ## 8.0.0
 
 - Breaking: Drop option `postCssConfig` for Sass loader. The property `postCssOptions` will be passed as is

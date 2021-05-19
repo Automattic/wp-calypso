@@ -1901,6 +1901,27 @@ Undocumented.prototype.updateWhois = function ( domainName, whois, transferLock,
 };
 
 /**
+ * Add domain mapping for eligible clients.
+ *
+ * @param {number} siteId The site ID
+ * @param {string} [domainName] Name of the domain mapping
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ */
+Undocumented.prototype.addDomainMapping = function ( siteId, domainName, fn ) {
+	debug( '/site/:site_id/add-domain-mapping' );
+	return this.wpcom.req.post(
+		{
+			path: `/sites/${ siteId }/add-domain-mapping`,
+			body: {
+				domain: domainName,
+			},
+		},
+		fn
+	);
+};
+
+/**
  * Add domain mapping for VIP clients.
  *
  * @param {number} siteId The site ID

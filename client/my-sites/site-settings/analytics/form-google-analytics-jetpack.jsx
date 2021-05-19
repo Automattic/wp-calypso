@@ -3,16 +3,19 @@
  */
 import React, { useEffect } from 'react';
 import { find } from 'lodash';
-
 import { CompactCard } from '@automattic/components';
 import {
 	FEATURE_GOOGLE_ANALYTICS,
 	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
+import { ToggleControl } from '@wordpress/components';
+
+/**
+ * Internal dependencies
+ */
 import ExternalLink from 'calypso/components/external-link';
 import SupportInfo from 'calypso/components/support-info';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -152,13 +155,12 @@ const GoogleAnalyticsJetpackForm = ( {
 								</ExternalLink>
 							</FormFieldset>
 							<FormFieldset>
-								<FormToggle
+								<ToggleControl
 									checked={ fields.wga ? Boolean( fields.wga.anonymize_ip ) : false }
 									disabled={ isRequestingSettings || ! enableForm }
 									onChange={ handleAnonymizeChange }
-								>
-									{ translate( 'Anonymize IP addresses' ) }
-								</FormToggle>
+									label={ translate( 'Anonymize IP addresses' ) }
+								/>
 								<FormSettingExplanation>
 									{ translate(
 										'Enabling this option is mandatory in certain countries due to national ' +

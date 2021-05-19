@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import config from '@automattic/calypso-config';
@@ -38,6 +37,7 @@ import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'calypso/state/themes/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import ThemesHeader from './themes-header';
 
 const ConnectedThemesSelection = connectOptions( ( props ) => {
 	return (
@@ -89,13 +89,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	return (
 		<Main fullWidthLayout className="themes">
 			<SidebarNavigation />
-			<FormattedHeader
-				brandFont
-				className="themes__page-heading"
-				headerText={ translate( 'Themes' ) }
-				subHeaderText={ translate( 'Select or update the visual design for your site.' ) }
-				align="left"
-			/>
+			<ThemesHeader />
 			<CurrentTheme siteId={ siteId } />
 			{ ! requestingSitePlans && currentPlan && ! hasUnlimitedPremiumThemes && ! isPartnerPlan && (
 				<UpsellNudge

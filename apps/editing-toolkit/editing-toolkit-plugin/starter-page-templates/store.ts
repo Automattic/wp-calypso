@@ -4,7 +4,7 @@
 import { registerStore } from '@wordpress/data';
 import type { Reducer } from 'redux';
 
-type OpenState = 'CLOSED' | 'OPEN_FROM_ADD_PAGE';
+type OpenState = 'CLOSED' | 'OPEN_FROM_ADD_PAGE' | 'OPEN_FOR_BLANK_CANVAS';
 type Action = ReturnType< typeof actions.setOpenState >;
 
 const reducer: Reducer< OpenState, Action > = ( state = 'CLOSED', { type, ...action } ) =>
@@ -19,6 +19,7 @@ const actions = {
 
 const selectors = {
 	isOpen: ( state: OpenState ): boolean => 'CLOSED' !== state,
+	isPatternPicker: ( state: OpenState ): boolean => 'OPEN_FOR_BLANK_CANVAS' === state,
 };
 
 const STORE_KEY = 'automattic/starter-page-layouts';
@@ -39,5 +40,6 @@ declare module '@wordpress/data' {
 		key: 'automattic/starter-page-layouts'
 	): {
 		isOpen: () => ReturnType< typeof selectors.isOpen >;
+		isPatternPicker: () => ReturnType< typeof selectors.isPatternPicker >;
 	};
 }

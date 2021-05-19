@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import { connect } from 'react-redux';
 import { Card } from '@automattic/components';
 import ContactDisplay from './contact-display';
 import { PUBLIC_VS_PRIVATE } from 'calypso/lib/url/support';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import Gridicon from 'calypso/components/gridicon';
 import {
 	enableDomainPrivacy,
@@ -70,13 +70,12 @@ class ContactsPrivacyCard extends React.Component {
 		return (
 			<React.Fragment>
 				<div className="contacts-privacy__settings">
-					<FormToggle
+					<ToggleControl
 						checked={ privateDomain }
 						disabled={ isUpdatingPrivacy || ! privacyAvailable }
 						onChange={ this.togglePrivacy }
-					>
-						{ translate( 'Privacy Protection' ) }
-					</FormToggle>
+						label={ translate( 'Privacy Protection' ) }
+					/>
 				</div>
 				{ privacyProtectionNote }
 			</React.Fragment>
@@ -112,13 +111,12 @@ class ContactsPrivacyCard extends React.Component {
 		return (
 			<React.Fragment>
 				<div className="contacts-privacy__settings">
-					<FormToggle
+					<ToggleControl
 						checked={ contactInfoDisclosed }
 						disabled={ isUpdatingPrivacy || isPendingIcannVerification }
 						onChange={ this.toggleContactInfo }
-					>
-						{ translate( 'Display my contact information in public WHOIS' ) }
-					</FormToggle>
+						label={ translate( 'Display my contact information in public WHOIS' ) }
+					/>
 				</div>
 				{ contactVerificationNotice }
 			</React.Fragment>

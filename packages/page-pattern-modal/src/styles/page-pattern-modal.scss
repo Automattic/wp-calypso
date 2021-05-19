@@ -77,10 +77,11 @@ $sidebar-width-desktop: 324px;
 		font-size: 2.25rem;
 		line-height: 1.1;
 	}
-
-	@media screen and ( min-width: $breakpoint-desktop ) {
-		font-size: 3rem;
-		line-height: 1.35;
+	&--default {
+		@media screen and ( min-width: $breakpoint-desktop ) {
+			font-size: 3rem;
+			line-height: 1.35;
+		}
 	}
 }
 

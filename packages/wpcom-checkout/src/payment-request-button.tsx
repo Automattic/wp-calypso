@@ -59,7 +59,15 @@ export default function PaymentRequestButton( {
 		return <ApplePayButton disabled={ disabled } onClick={ onClick } />;
 	}
 	if ( paymentType === 'google-pay' ) {
-		return <GooglePayButton disabled={ disabled } onClick={ onClick } />;
+		// Google Pay branding does not have a disabled state so we will render a different button
+		if ( disabled ) {
+			return (
+				<Button disabled fullWidth>
+					{ __( 'Select a payment card' ) }
+				</Button>
+			);
+		}
+		return <GooglePayButton onClick={ onClick } />;
 	}
 	return (
 		<Button disabled={ disabled } onClick={ onClick } fullWidth>
