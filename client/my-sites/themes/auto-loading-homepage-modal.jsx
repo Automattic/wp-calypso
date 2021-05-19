@@ -80,11 +80,11 @@ class AutoLoadingHomepageModal extends Component {
 	};
 
 	closeModalHandler = ( action = 'dismiss' ) => () => {
+		const { installingThemeId, siteId, source } = this.props;
 		if ( 'activeTheme' === action ) {
-			const { installingThemeId, siteId, source } = this.props;
 			this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
 			const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
-			recordTracksEvent( 'calypso_theme_autoloading_modal_activate_click', {
+			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_activate_click', {
 				theme: installingThemeId,
 				keep_current_homepage: keepCurrentHomepage,
 			} );
@@ -96,10 +96,16 @@ class AutoLoadingHomepageModal extends Component {
 				keepCurrentHomepage
 			);
 		} else if ( 'keepCurrentTheme' === action ) {
-			recordTracksEvent( 'calypso_theme_autoloading_modal_dismiss', { action: 'button' } );
+			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+				action: 'button',
+				theme: installingThemeId,
+			} );
 			return this.props.hideAutoLoadingHomepageWarning();
 		} else if ( 'dismiss' === action ) {
-			recordTracksEvent( 'calypso_theme_autoloading_modal_dismiss', { action: 'escape' } );
+			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+				action: 'escape',
+				theme: installingThemeId,
+			} );
 			return this.props.hideAutoLoadingHomepageWarning();
 		}
 	};
@@ -133,7 +139,7 @@ class AutoLoadingHomepageModal extends Component {
 			return null;
 		}
 
-		const { name: themeName } = this.props.theme;
+		const { name: themeName, id: themeId } = this.props.theme;
 
 		return (
 			<Dialog
@@ -155,7 +161,10 @@ class AutoLoadingHomepageModal extends Component {
 				] }
 				onClose={ this.closeModalHandler( 'dismiss' ) }
 			>
-				<TrackComponentView eventName={ 'calypso_theme_autoloading_modal_view' } />
+				<TrackComponentView
+					eventName={ 'calypso_theme_autoloading_homepage_modal_view' }
+					eventProperties={ { theme: themeId } }
+				/>
 				<div>
 					<h1>
 						{ translate( 'How would you like to use %(themeName)s on your site?', {
