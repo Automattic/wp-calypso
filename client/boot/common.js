@@ -161,9 +161,7 @@ const oauthTokenMiddleware = () => {
 				! isValidSection &&
 				! ( isJetpackCloud() && inJetpackCloudOAuthOverride() )
 			) {
-				const isDesktop = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
-				const redirectPath =
-					isDesktop || isJetpackCloud() ? config( 'login_url' ) : authorizePath();
+				const redirectPath = isJetpackCloud() ? config( 'login_url' ) : authorizePath();
 
 				const currentPath = window.location.pathname;
 				// In the context of Jetpack Cloud, if the user isn't authorized, we want
