@@ -389,6 +389,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			case 'Premium Content':
 				blockSettings = { blockClass: 'premium-content-container' };
 				break;
+			case 'Search':
+				blockSettings = { blockClass: 'search\\/default' };
 		}
 
 		return { ...defaultSettings, ...blockSettings };
