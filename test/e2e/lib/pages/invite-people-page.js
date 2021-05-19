@@ -23,13 +23,21 @@ export default class InvitePeoplePage extends AsyncBaseContainer {
 			role = 'follower'; // The select input option uses 'follower' for 'viewer'
 		}
 
-		const emailFieldLocator = By.css( 'input.token-field__input' );
-		const userRoleLocator = By.css( `fieldset#role input[value=${ role }]` );
-		const messageFieldLocator = By.css( '#message' );
-		const submitButtonLocator = By.css( '.invite-people button.button.is-primary' );
+		const emailFieldLocator = By.css( 'input#usernamesOrEmails' );
+		const roleLocator = By.css( `input.role-select__role-radio[value=${ role }]` );
+		const messageFieldLocator = By.css( 'textarea#message' );
+		const submitButtonLocator = By.css( '.invite-people button[type="submit"]' );
 
 		await driverHelper.setWhenSettable( this.driver, emailFieldLocator, email );
-		await driverHelper.clickWhenClickable( this.driver, userRoleLocator );
+		await driverHelper.clickWhenClickable( this.driver, roleLocator );
+		if ( this.screenSize === 'mobile' ) {
+			/**
+			 * On mobile viewport, the first click seems to only bring focus to the
+			 * fieldset so we need to click again. This is specific to WebDriver and
+			 * doesn't happen when testing manually.
+			 */
+			await driverHelper.clickWhenClickable( this.driver, roleLocator );
+		}
 		await driverHelper.setWhenSettable( this.driver, messageFieldLocator, message );
 		await driverHelper.clickWhenClickable( this.driver, submitButtonLocator );
 	}
