@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { Button } from '@automattic/components';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	emailManagementManageTitanAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
-import { connect } from 'react-redux';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
@@ -25,6 +25,12 @@ import {
 } from 'calypso/lib/emails/email-provider-constants';
 
 class EmailPlanWarnings extends React.Component {
+	static propTypes = {
+		domain: PropTypes.object.isRequired,
+		emailAccountType: PropTypes.string.isRequired,
+		warnings: PropTypes.array,
+	};
+
 	renderWarningCTAForTitanUnusedMailboxes() {
 		const { selectedSiteSlug, domain, currentRoute, translate } = this.props;
 
@@ -87,12 +93,6 @@ class EmailPlanWarnings extends React.Component {
 		);
 	}
 }
-
-EmailPlanWarnings.propTypes = {
-	domain: PropTypes.object.isRequired,
-	emailAccountType: PropTypes.string.isRequired,
-	warnings: PropTypes.array,
-};
 
 export default connect( ( state ) => {
 	return {
