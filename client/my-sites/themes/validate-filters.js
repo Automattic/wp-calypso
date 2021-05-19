@@ -12,7 +12,6 @@ import {
 	getThemeFilterTermFromString,
 	isValidThemeFilterTerm,
 } from 'calypso/state/themes/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { fetchThemeFilters } from './controller';
 
 // Reorder and remove invalid filters to redirect to canonical URL
@@ -84,32 +83,10 @@ export function sortFilterTerms( context, terms ) {
 		.map( ( filter ) => getThemeFilterTermFromString( context.store.getState(), filter ) );
 }
 
-export function fetchAndValidateVerticalsAndFiltersIfLoggedIn( context, next ) {
-	const state = context.store.getState();
-	const currentUser = getCurrentUser( state );
-
-	if ( ! currentUser ) {
-		return next();
-	}
-
-	return fetchThemeFilters( context, () => {
-		return validateVertical( context, () => {
-			return validateFilters( context, next );
-		} );
-	} );
-}
-
-export function fetchAndValidateVerticalsAndFiltersIfLoggedOut( context, next ) {
-	const state = context.store.getState();
-	const currentUser = getCurrentUser( state );
-
-	if ( currentUser ) {
-		return next();
-	}
-
-	return fetchThemeFilters( context, () => {
-		return validateVertical( context, () => {
-			return validateFilters( context, next );
+export function fetchAndValidateVerticalsAndFilters( context, next ) {
+	fetchThemeFilters( context, () => {
+		validateVertical( context, () => {
+			validateFilters( context, next );
 		} );
 	} );
 }

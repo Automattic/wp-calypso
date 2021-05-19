@@ -13,7 +13,6 @@ import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { requestThemes, requestThemeFilters } from 'calypso/state/themes/actions';
 import { getThemeFilters, getThemesForQuery } from 'calypso/state/themes/selectors';
 import { getAnalyticsData } from './helpers';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 const debug = debugFactory( 'calypso:themes' );
 
@@ -41,13 +40,6 @@ export function getProps( context ) {
 export function loggedOut( context, next ) {
 	if ( context.isServerSide && Object.keys( context.query ).length > 0 ) {
 		// Don't server-render URLs with query params
-		return next();
-	}
-
-	// If logged in, do nothing:
-	const state = context.store.getState();
-	const currentUser = getCurrentUser( state );
-	if ( currentUser ) {
 		return next();
 	}
 

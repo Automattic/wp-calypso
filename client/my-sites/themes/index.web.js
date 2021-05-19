@@ -5,10 +5,7 @@ import { makeLayout, redirectLoggedOut } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { loggedOut } from './controller';
 import { loggedIn, upload, selectSiteIfLoggedIn } from './controller-logged-in';
-import {
-	fetchAndValidateVerticalsAndFiltersIfLoggedIn,
-	fetchAndValidateVerticalsAndFiltersIfLoggedOut,
-} from './validate-filters';
+import { fetchAndValidateVerticalsAndFilters } from './validate-filters';
 
 export default function ( router ) {
 	const siteId =
@@ -43,7 +40,7 @@ export default function ( router ) {
 	router(
 		routesWithSites,
 		redirectLoggedOut,
-		fetchAndValidateVerticalsAndFiltersIfLoggedIn,
+		fetchAndValidateVerticalsAndFilters,
 		siteSelection,
 		loggedIn,
 		navigation,
@@ -53,7 +50,7 @@ export default function ( router ) {
 	router(
 		routesWithoutSites,
 		selectSiteIfLoggedIn,
-		fetchAndValidateVerticalsAndFiltersIfLoggedOut,
+		fetchAndValidateVerticalsAndFilters,
 		loggedOut,
 		makeLayout
 	);

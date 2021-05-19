@@ -11,8 +11,10 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { setBackPath } from 'calypso/state/themes/actions';
 import { getProps } from './controller';
-import { sites } from 'calypso/my-sites/controller';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { sites, siteSelection } from 'calypso/my-sites/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+
 import SingleSiteComponent from './single-site';
 import Upload from './theme-upload';
 
@@ -51,10 +53,19 @@ export function upload( context, next ) {
 
 export function selectSiteIfLoggedIn( context, next ) {
 	const state = context.store.getState();
-	const currentUser = getCurrentUser( state );
-
-	if ( currentUser ) {
-		return sites( context, next );
+	if ( ! isUserLoggedIn( state ) ) {
+		next();
+		return;
 	}
-	next();
+
+	// Logged in: Terminate the regular handler path by not calling next()
+	// and render the site selection screen, redirecting the user if they
+	// only have one site.
+	siteSelection( context, () => {
+		sites( context, () => {
+			makeLayout( context, () => {
+				clientRender( context );
+			} );
+		} );
+	} );
 }
