@@ -96,10 +96,10 @@ class AutoLoadingHomepageModal extends Component {
 				keepCurrentHomepage
 			);
 		} else if ( 'keepCurrentTheme' === action ) {
-			recordTracksEvent( 'calypso_theme_autoloading_modal_keep_theme_click' );
+			recordTracksEvent( 'calypso_theme_autoloading_modal_dismiss', { action: 'button' } );
 			return this.props.hideAutoLoadingHomepageWarning();
 		} else if ( 'dismiss' === action ) {
-			recordTracksEvent( 'calypso_theme_autoloading_modal_dismiss' );
+			recordTracksEvent( 'calypso_theme_autoloading_modal_dismiss', { action: 'escape' } );
 			return this.props.hideAutoLoadingHomepageWarning();
 		}
 	};
