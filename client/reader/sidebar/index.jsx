@@ -120,6 +120,10 @@ export class ReaderSidebar extends React.Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_followed_sites_clicked' );
 	};
 
+	handleReaderSidebarNotificationsClicked = () => {
+		// Do nothing
+	};
+
 	handleReaderSidebarConversationsClicked = () => {
 		recordAction( 'clicked_reader_sidebar_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar Conversations' );
@@ -274,6 +278,16 @@ export class ReaderSidebar extends React.Component {
 					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
 				</li>
 				<SidebarSeparator />
+
+				<SidebarItem
+					className={ ReaderSidebarHelper.itemLinkClass( '/read/notifications', path, {
+						'sidebar-streams__notifications': true,
+					} ) }
+					label={ translate( 'Notifications' ) }
+					onNavigate={ this.handleReaderSidebarNotificationsClicked }
+					materialIcon="notifications"
+					link="/read/notifications"
+				/>
 
 				<SidebarItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {

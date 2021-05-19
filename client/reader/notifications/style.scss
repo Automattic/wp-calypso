@@ -1,0 +1,149 @@
+.notifications__main
+.wpnc__filter__segmented-control {
+	display: flex;
+	list-style: none;
+	padding: 6px 8px;
+}
+
+.notifications__main
+.wpnc__filter__segmented-control-item {
+	display: flex;
+	flex: auto;
+	align-items: center;
+	justify-content: center;
+
+	user-select: none;
+
+	background: var( --color-surface );
+	border: 1px solid var( --color-neutral-light );
+
+	&.selected {
+		background: var( --color-primary );
+		border-color: var( --color-primary );
+		color: var( --color-text-inverted );
+	}
+
+	&:first-of-type {
+		border-top-left-radius: 4px;
+		border-bottom-left-radius: 4px;
+	}
+
+	&:last-of-type {
+		border-top-right-radius: 4px;
+		border-bottom-right-radius: 4px;
+	}
+}
+
+.notifications__main
+.wpnc__notes {
+	background-color: var( --color-surface );
+	list-style: none;
+}
+
+.notifications__main
+.wpnc__time-group-title {
+	display: flex;
+	color: var( --color-neutral-40 );
+	padding: 6px 0;
+	background: white;
+	border-bottom: 1px solid var( --color-neutral-5 );
+
+	text-transform: uppercase;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 12px;
+
+	.gridicons-time {
+		align-self: center;
+		margin-left: 14px;
+		margin-right: 4px;
+	}
+
+	.gridicons-cog {
+		cursor: pointer;
+		align-self: center;
+		margin-left: auto;
+		margin-right: 11px;
+	}
+}
+
+.notifications__main
+.unread {
+	background: rgba( var( --color-primary-rgb ), 0.1 );
+}
+
+.notifications__main
+.wpnc__note {
+	cursor: pointer;
+	border-bottom: 1px solid var( --color-neutral-5 );
+}
+
+.notifications__main
+.wpnc__summary {
+	color: var( --color-text-subtle );
+	padding: 16px 0;
+	min-height: 48px;
+
+	p {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+	}
+}
+
+.notifications__main
+.wpnc__note-icon {
+	display: block;
+	width: 40px;
+	height: 40px;
+	position: relative;
+	float: left;
+	margin: 0 16px 0 16px;
+
+	img {
+		border-radius: 50%;
+	}
+
+	.wpnc__gridicon {
+		position: absolute;
+		bottom: -5px;
+		right: -8px;
+
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 16px;
+		width: 16px;
+
+		border-width: 1px;
+		border-style: solid;
+		border-radius: 50%;
+
+		background-color: var( --color-neutral-20 );
+		border-color: var( --color-border-inverted );
+		color: white;
+	}
+}
+
+.notifications__main
+.wpnc__text-summary {
+	padding: 0 16px 0 72px;
+	word-wrap: break-word;
+	text-align: left;
+
+	.wpnc__user,
+	.wpnc__post {
+		font-weight: 600;
+	}
+
+	.wpnc__excerpt {
+		max-height: 3em;
+		-webkit-line-clamp: 2;
+		color: var( --color-text-subtle );
+		font-size: 14px;
+		letter-spacing: 0.25px;
+		padding-top: 2px;
+	}
+}
