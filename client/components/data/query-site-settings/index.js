@@ -22,7 +22,7 @@ function QuerySiteSettings( { siteId } ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( request( siteId ) );
+		siteId && dispatch( request( siteId ) );
 	}, [ dispatch, siteId ] );
 
 	return null;
