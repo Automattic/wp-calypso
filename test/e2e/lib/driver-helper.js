@@ -98,8 +98,11 @@ export async function clickWhenClickable( driver, locator, timeout = explicitWai
  * element is located or not
  */
 export async function isElementLocated( driver, locator ) {
-	const elements = await driver.findElements( locator );
-	return elements.length > 0;
+	try {
+		return !! ( await driver.findElement( locator ) );
+	} catch {
+		return false;
+	}
 }
 
 /**
@@ -124,10 +127,14 @@ export async function isElementNotLocated( driver, locator ) {
  * @returns {Promise<WebElement>} A promise that will be resolved with
  * the located element
  */
-export function waitUntilElementLocatedAndVisible( driver, locator, timeout = explicitWaitMS ) {
+export async function waitUntilElementLocatedAndVisible(
+	driver,
+	locator,
+	timeout = explicitWaitMS
+) {
 	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
 
-	return driver.wait(
+	return await driver.wait(
 		new WebElementCondition(
 			`for the element to become located and visible ${ locatorStr }`,
 			async function () {
@@ -154,8 +161,8 @@ export function waitUntilElementLocatedAndVisible( driver, locator, timeout = ex
  * @returns {Promise<WebElement>} A promise that will be resolved with
  * the located element
  */
-export function waitUntilElementLocated( driver, locator, timeout ) {
-	return driver.wait( until.elementLocated( locator ), timeout );
+export async function waitUntilElementLocated( driver, locator, timeout ) {
+	return await driver.wait( until.elementLocated( locator ), timeout );
 }
 
 /**
@@ -168,10 +175,10 @@ export function waitUntilElementLocated( driver, locator, timeout ) {
  * @returns {Promise<WebElement>} A promise that will be resolved with true when
  * the element becomes unavaialble
  */
-export function waitUntilElementNotLocated( driver, locator, timeout ) {
+export async function waitUntilElementNotLocated( driver, locator, timeout ) {
 	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
 
-	return driver.wait(
+	return await driver.wait(
 		new Condition( `for element to NOT be located ${ locatorStr }`, function () {
 			return isElementNotLocated( driver, locator );
 		} ),
@@ -209,12 +216,10 @@ export async function isElementEventuallyLocatedAndVisible(
  * @returns {Promise<WebElement>} A promise that will resolve with the located element
  */
 export async function clickIfPresent( driver, locator ) {
-	const element = ( await driver.findElements( locator ) )[ 0 ];
-	if ( ! element ) {
-		return null;
+	if ( await isElementLocated( driver, locator ) ) {
+		return await clickWhenClickable( driver, locator );
 	}
-
-	return clickWhenClickable( driver, locator );
+	return null;
 }
 
 export async function getElementCount( driver, locator ) {
@@ -233,7 +238,7 @@ export async function getElementCount( driver, locator ) {
  * @param {number} options.pauseBetweenKeysMS The time between keystrokes
  * @returns {Promise<WebElement>} A promise that will resolve with the located element
  */
-export function setWhenSettable(
+export async function setWhenSettable(
 	driver,
 	locator,
 	value,
@@ -252,37 +257,38 @@ export function setWhenSettable(
 		timeout = timeout + value.length * pauseBetweenKeysMS;
 	}
 
-	return driver.wait(
+	return await driver.wait(
 		new WebElementCondition( errorMessage, async function () {
-			const element = ( await driver.findElements( locator ) )[ 0 ];
-			if ( ! element ) {
+			try {
+				const element = await driver.findElement( locator );
+				await highlightElement( driver, element );
+				const currentValue = await element.getAttribute( 'value' );
+				if ( currentValue === value ) {
+					// Do nothing if given value is already set
+					return element;
+				}
+
+				if ( currentValue ) {
+					// Clear the input if it has some value
+					await element.sendKeys( Key.END );
+					for ( let i = 0; i < currentValue.length; i++ ) {
+						await element.sendKeys( Key.BACK_SPACE );
+					}
+				}
+				if ( ! pauseBetweenKeysMS ) {
+					await element.sendKeys( value );
+				} else {
+					for ( let i = 0; i < value.length; i++ ) {
+						await driver.sleep( pauseBetweenKeysMS );
+						await element.sendKeys( value[ i ] );
+					}
+				}
+				const newValue = await element.getAttribute( 'value' );
+
+				return newValue === value ? element : null;
+			} catch {
 				return null;
 			}
-			await highlightElement( driver, element );
-			const currentValue = await element.getAttribute( 'value' );
-			if ( currentValue === value ) {
-				// Do nothing if given value is already set
-				return element;
-			}
-
-			if ( currentValue ) {
-				// Clear the input if it has some value
-				await element.sendKeys( Key.END );
-				for ( let i = 0; i < currentValue.length; i++ ) {
-					await element.sendKeys( Key.BACK_SPACE );
-				}
-			}
-			if ( ! pauseBetweenKeysMS ) {
-				await element.sendKeys( value );
-			} else {
-				for ( let i = 0; i < value.length; i++ ) {
-					await driver.sleep( pauseBetweenKeysMS );
-					await element.sendKeys( value[ i ] );
-				}
-			}
-			const newValue = await element.getAttribute( 'value' );
-
-			return newValue === value ? element : null;
 		} ),
 		timeout
 	);
@@ -480,8 +486,8 @@ export async function acceptAlertIfPresent( driver ) {
 	}
 }
 
-export function waitForAlertPresent( driver, timeout = explicitWaitMS ) {
-	return driver.wait( until.alertIsPresent(), timeout );
+export async function waitForAlertPresent( driver, timeout = explicitWaitMS ) {
+	return await driver.wait( until.alertIsPresent(), timeout );
 }
 
 function getInnerTextMatcherFunction( match ) {
@@ -507,8 +513,8 @@ function getInnerTextMatcherFunction( match ) {
  * @returns {Promise<boolean>} A promise that will resolve with true if the
  * switch was succesfull
  */
-export function waitUntilAbleToSwitchToFrame( driver, locator, timeout = explicitWaitMS ) {
-	return driver.wait( until.ableToSwitchToFrame( locator ), timeout );
+export async function waitUntilAbleToSwitchToFrame( driver, locator, timeout = explicitWaitMS ) {
+	return await driver.wait( until.ableToSwitchToFrame( locator ), timeout );
 }
 
 /**
@@ -521,8 +527,12 @@ export function waitUntilAbleToSwitchToFrame( driver, locator, timeout = explici
  * @returns {Promise<boolean>} A promise that will resolve with true if the
  * switch was succesfull
  */
-export function waitUntilAbleToSwitchToWindow( driver, windowIndex, timeout = explicitWaitMS ) {
-	return driver.wait(
+export async function waitUntilAbleToSwitchToWindow(
+	driver,
+	windowIndex,
+	timeout = explicitWaitMS
+) {
+	return await driver.wait(
 		new Condition( `to be able to switch to window #${ windowIndex }`, async function () {
 			try {
 				await switchToWindowByIndex( driver, windowIndex );
@@ -546,12 +556,12 @@ export function waitUntilAbleToSwitchToWindow( driver, windowIndex, timeout = ex
  * @returns {Promise<WebElement>} A promise that will be resolved with
  * the located element
  */
-export function waitUntilElementStopsMoving( driver, locator, timeout = explicitWaitMS ) {
+export async function waitUntilElementStopsMoving( driver, locator, timeout = explicitWaitMS ) {
 	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
 	let elementX;
 	let elementY;
 
-	return driver.wait(
+	return await driver.wait(
 		new Condition( `for an element to stop moving ${ locatorStr }`, async function () {
 			try {
 				const element = await driver.findElement( locator );
