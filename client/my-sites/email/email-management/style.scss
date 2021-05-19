@@ -290,9 +290,9 @@
 		display: none;
 
 		@include break-xlarge {
-			align-self: center;
 			display: unset;
 			margin-left: 10px;
+			margin-top: 3px;
 		}
 	}
 
@@ -329,6 +329,10 @@
 			margin-top: 0;
 			margin-left: auto;
 			text-align: right;
+		}
+
+		> .button > .gridicons-external {
+			margin-left: 6px;
 		}
 	}
 }
