@@ -5,13 +5,18 @@ import i18n from 'i18n-calypso';
 import { find, get } from 'lodash';
 
 /**
+ * Internal Dependencies
+ */
+import config from '@automattic/calypso-config';
+
+/**
  * Internal dependencies
  */
 
 const getSiteTypePropertyDefaults = ( propertyKey ) =>
 	get(
 		{
-			theme: 'pub/hever',
+			theme: config.isEnabled( 'gutenboarding/site-editor' ) ? 'pub/seedlet-blocks' : 'pub/hever',
 			// General copy
 			siteMockupHelpTipCopy: i18n.translate(
 				"Scroll down to see how your site will look. You can customize it with your own text and photos when we're done with the setup basics."
