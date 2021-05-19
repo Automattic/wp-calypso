@@ -204,6 +204,7 @@ export const getTask = (
 				actionText: translate( 'Add a menu' ),
 				isSkippable: true,
 				actionUrl: menusUrl,
+				actionIsLink: true,
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.SITE_THEME_SELECTED:

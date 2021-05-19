@@ -4,6 +4,8 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
+import classnames from 'classnames';
+
 /**
  * Internal dependencies
  */
@@ -37,8 +39,10 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 				<div className="site-setup-list__task-actions task__actions">
 					{ currentTask.actionText && (
 						<Button
-							className="site-setup-list__task-action task__action"
-							primary
+							className={ classnames( 'site-setup-list__task-action', 'task__action', {
+								'is-link': currentTask.actionIsLink,
+							} ) }
+							primary={ ! currentTask.actionIsLink }
 							onClick={ () => startTask() }
 							disabled={
 								currentTask.isDisabled ||
