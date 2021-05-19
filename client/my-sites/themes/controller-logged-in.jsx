@@ -11,8 +11,11 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { setBackPath } from 'calypso/state/themes/actions';
 import { getProps } from './controller';
+import { sites, siteSelection } from 'calypso/my-sites/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+
 import SingleSiteComponent from './single-site';
-import MultiSiteComponent from './multi-site';
 import Upload from './theme-upload';
 
 export function loggedIn( context, next ) {
@@ -28,8 +31,7 @@ export function loggedIn( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	const Component = context.params.site_id ? SingleSiteComponent : MultiSiteComponent;
-	context.primary = <Component { ...getProps( context ) } />;
+	context.primary = <SingleSiteComponent { ...getProps( context ) } />;
 
 	next();
 }
@@ -46,4 +48,23 @@ export function upload( context, next ) {
 
 	context.primary = <Upload />;
 	next();
+}
+
+export function selectSiteIfLoggedIn( context, next ) {
+	const state = context.store.getState();
+	if ( ! isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+
+	// Logged in: Terminate the regular handler path by not calling next()
+	// and render the site selection screen, redirecting the user if they
+	// only have one site.
+	siteSelection( context, () => {
+		sites( context, () => {
+			makeLayout( context, () => {
+				clientRender( context );
+			} );
+		} );
+	} );
 }
