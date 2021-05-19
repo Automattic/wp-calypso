@@ -3,8 +3,13 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
+  - [Naming Branches](#naming-branches)
   - [Async / Await](#async--await)
   - [Tags](#tags)
+  - [At most 1 top-level describe block](#at-most-1-top-level-describe-block)
+  - [Viewport size](#viewport-size)
+    - [Specify one viewport](#specify-one-viewport)
+    - [Specify multiple viewports](#specify-multiple-viewports)
   - [Page Objects](#page-objects)
   - [Use of this, const and lets](#use-of-this-const-and-lets)
   - [Arrow functions](#arrow-functions)
@@ -14,6 +19,10 @@
   - [Waiting for elements](#waiting-for-elements)
 
 <!-- /TOC -->
+
+## Naming Branches
+
+We follow the Automattic [branch naming scheme](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/git-workflow.md#branch-naming-scheme).
 
 ## Async / Await
 
@@ -47,7 +56,7 @@ async function openModal() {
 
 ## Tags
 
-Tags are labels used by `mocha` (our test runner) to determine what tests should be run, depending on the environment. Consider it a form of metadata that conveys various test parameters to the runner.
+Tags are labels used by `mocha` and `magellan` to determine what tests should be run and how it can be parallelized. Consider it a form of metadata that conveys various test parameters to the runner.
 
 Typical example:
 
@@ -73,28 +82,46 @@ Some examples of tags:
 - jetpack
 - signup
 
-## Modes
+Notably, test suites not tagged with the `@parallel` tag will not be recognized by `magellan` as a valid test suite and thus will not be run in CI.
+
+Furthermore, if any test steps fail within the suite tagged with `@parallel` tag, rest of the test steps will be skipped an execution will begin on a new test suite.
+
+## At most 1 top-level describe block
+
+Each test file should only contain at most 1 top-level `describe` block.
+
+There is no restriction on the number `describe` blocks that are not top-level, nor a restriction on the depth of `describe` blocks.
+
+## Viewport size
 
 All tests should be written to work in three modes: desktop (1440 wide), tablet (1024 wide) and mobile (375 wide).
 
 Tests can be run in different modes by setting an environment variable `BROWSERSIZE` to either `desktop`, `tablet` or `mobile`.
 
-### Specify one mode
+### Specify one viewport
+
+eg. using environment variables
 
 ```
-env BROWSERSIZE=<mode> ./node_modules/.bin/mocha <path_to_e2e_spec>
+BROWSERSIZE=<viewport> ./node_modules/.bin/mocha <path_to_e2e_spec>
 ```
 
-Alternatively, use the `-s` flag when calling `run.sh`:
+eg. using run.sh
 
 ```
-./run.sh -g -s <mode>
+./run.sh -g -s <viewport>
 ```
 
-### Specify multiple modes
+### Specify multiple viewports
 
 ```
-./run.sh -g -s <mode1>,<mode2>
+./run.sh -g -s <viewport1>,<viewport2>
+```
+
+eg. using run.sh
+
+```
+./run.sh -g -s mobile,desktop
 ```
 
 ## Page Objects
@@ -178,7 +205,7 @@ step( 'We can set the sandbox cookie for payments', async function() {
 
 Use destructuring for default values as this makes calling the function explicit and avoids boolean traps.
 
-Avoid
+Avoid:
 
 ```
 constructor( driver, visit = true, culture = 'en', flow = '', domainFirst = false, domainFirstDomain = '' ) {
@@ -204,7 +231,7 @@ new StartPage( driver, true, 'en', '', true, '' ).displayed();
 
 ## Nesting step blocks
 
-Since we have a bail suite option, it is not necessary to nest `step` blocks.
+Do not nest test steps.
 
 This is a general structure of an e2e test scenario:
 
@@ -212,17 +239,15 @@ This is a general structure of an e2e test scenario:
 describe(
 	'An e2e test scenario @parallel',
 	function() {
-
-
 		before( async function() {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'First step', async function() {
+		it( 'First step', async function() {
 			// Do something with a page
 		} );
 
-		step( 'Second step', async function() {
+		it( 'Second step', async function() {
 			// Do something next - this will only execute if the first step doesn't fail
 		} );
 
@@ -232,8 +257,6 @@ describe(
 	}
 );
 ```
-
-**Note:** The `describe` blocks shouldn't be `async`
 
 ## Catching errors in a step block
 
@@ -256,7 +279,7 @@ step( 'Can delete our newly created account', async function() {
 
 When waiting for elements we should always use a quantity of the config value defined as `explicitWaitMS` instead of hardcoding values. This allows us to change it readily, and also adjust this for different environments, for example the live branch environment is not as fast as production so it waits twice as long.
 
-Instead of:
+Avoid:
 
 ```
 export default class TransferDomainPrecheckPage extends AsyncBaseContainer {
@@ -266,7 +289,7 @@ export default class TransferDomainPrecheckPage extends AsyncBaseContainer {
 }
 ```
 
-do:
+instead:
 
 ```
 export default class TransferDomainPrecheckPage extends AsyncBaseContainer {
@@ -280,5 +303,3 @@ export default class TransferDomainPrecheckPage extends AsyncBaseContainer {
 	}
 }
 ```
-
-this achieves the same thing as the default explicit wait is presently 20000, and it allows us to adjust for environmental performance.

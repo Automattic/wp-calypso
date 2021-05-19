@@ -268,8 +268,10 @@ class EmailPlan extends React.Component {
 
 				<EmailPlanMailboxesList
 					accountType={ this.getAccountType() }
+					domain={ domain }
 					mailboxes={ this.getMailboxes() }
 					isLoadingEmails={ isLoadingEmailAccounts }
+					selectedSite={ selectedSite }
 				/>
 
 				<div className="email-plan__actions">

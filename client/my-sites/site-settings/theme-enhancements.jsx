@@ -6,6 +6,7 @@ import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -17,7 +18,6 @@ import FormLegend from 'calypso/components/forms/form-legend';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import { getCustomizerUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -49,13 +49,12 @@ class ThemeEnhancements extends Component {
 	renderToggle( name, isDisabled, label ) {
 		const { fields, handleAutosavingToggle } = this.props;
 		return (
-			<FormToggle
+			<ToggleControl
 				checked={ !! fields[ name ] }
 				disabled={ this.isFormPending() || isDisabled }
 				onChange={ handleAutosavingToggle( name ) }
-			>
-				{ label }
-			</FormToggle>
+				label={ label }
+			/>
 		);
 	}
 

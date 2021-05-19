@@ -11,7 +11,6 @@ import {
 	CheckoutSteps,
 	CheckoutSummaryArea,
 	CheckoutProvider,
-	createPayPalMethod,
 	createStripeMethod,
 	createStripePaymentMethodStore,
 	defaultRegistry,
@@ -78,13 +77,6 @@ async function stripeCardProcessor( data ) {
 	// This simulates the transaction and provisioning time
 	await asyncTimeout( 2000 );
 	return makeSuccessResponse( { success: true } );
-}
-
-async function makePayPalExpressRequest( data ) {
-	window.console.log( 'Processing paypal transaction with data', data );
-	// This simulates the transaction and provisioning time
-	await asyncTimeout( 2000 );
-	return window.location.href;
 }
 
 const { registerStore } = defaultRegistry;
@@ -242,18 +234,7 @@ function MyCheckout() {
 		} );
 	}, [ stripeStore, stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
 
-	const paypalMethod = useMemo(
-		() =>
-			createPayPalMethod( {
-				registerStore,
-				getSuccessUrl: () => '#',
-				getCancelUrl: () => '#',
-			} ),
-		[]
-	);
-	paypalMethod.submitTransaction = makePayPalExpressRequest;
-
-	const paymentMethods = [ stripeMethod, paypalMethod ].filter( Boolean );
+	const paymentMethods = [ stripeMethod ].filter( Boolean );
 
 	return (
 		<CheckoutProvider

@@ -18,7 +18,6 @@ import { subscribeToPush, approvePushToken } from '../../lib/push-client';
 import ReaderPage from '../../lib/pages/reader-page';
 import StatsPage from '../../lib/pages/stats-page';
 import ProfilePage from '../../lib/pages/profile-page';
-import WPHomePage from '../../lib/pages/wp-home-page';
 import MagicLoginPage from '../../lib/pages/magic-login-page';
 
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
@@ -460,24 +459,4 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 			} );
 		} );
 	}
-} );
-
-describe( `[${ host }] User Agent: (${ screenSize }) @parallel @jetpack`, function () {
-	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-		await driverManager.ensureNotLoggedIn( driver );
-	} );
-
-	it( 'Can see the correct user agent set', async function () {
-		await WPHomePage.Visit( driver );
-		const userAgent = await driver.executeScript( 'return navigator.userAgent;' );
-		assert(
-			userAgent.match( 'wp-e2e-tests' ),
-			`User Agent does not contain 'wp-e2e-tests'.  [${ userAgent }]`
-		);
-	} );
 } );

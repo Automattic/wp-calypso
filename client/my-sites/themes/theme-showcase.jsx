@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { compact, pickBy } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -20,7 +19,6 @@ import { addTracking, trackClick } from './helpers';
 import DocumentHead from 'calypso/components/data/document-head';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from '@automattic/calypso-config';
@@ -47,18 +45,6 @@ import RecommendedThemes from './recommended-themes';
  * Style dependencies
  */
 import './theme-showcase.scss';
-
-function getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) {
-	if ( ! siteSlug ) {
-		return '/themes/upload';
-	}
-
-	if ( canUploadThemesOrPlugins ) {
-		return `https://${ siteSlug }/wp-admin/theme-install.php`;
-	}
-
-	return `/themes/upload/${ siteSlug }`;
-}
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -111,8 +97,6 @@ class ThemeShowcase extends React.Component {
 		getScreenshotOption: PropTypes.func,
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
-		trackUploadClick: PropTypes.func,
-		trackATUploadClick: PropTypes.func,
 		trackMoreThemesClick: PropTypes.func,
 		loggedOutComponent: PropTypes.bool,
 	};
@@ -218,20 +202,6 @@ class ThemeShowcase extends React.Component {
 		this.scrollToSearchInput();
 	};
 
-	onUploadClick = () => {
-		trackClick( 'upload theme' );
-		this.props.trackUploadClick();
-		if ( this.props.atEnabled ) {
-			this.props.trackATUploadClick();
-		}
-	};
-
-	showUploadButton = () => {
-		const { isMultisite, isLoggedIn } = this.props;
-
-		return isLoggedIn && ! isMultisite;
-	};
-
 	render() {
 		const {
 			currentThemeId,
@@ -241,13 +211,11 @@ class ThemeShowcase extends React.Component {
 			search,
 			filter,
 			translate,
-			siteSlug,
 			isLoggedIn,
 			pathName,
 			title,
 			filterString,
 			isMultisite,
-			canUploadThemesOrPlugins,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -304,17 +272,6 @@ class ThemeShowcase extends React.Component {
 					/>
 				) }
 				<div className="themes__content">
-					{ this.showUploadButton() && (
-						<Button
-							className="themes__upload-button"
-							compact
-							onClick={ this.onUploadClick }
-							href={ getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) }
-						>
-							<Gridicon icon="cloud-upload" />
-							{ translate( 'Install theme' ) }
-						</Button>
-					) }
 					{ ! this.props.loggedOutComponent && ! isQueried && (
 						<>
 							<RecommendedThemes
@@ -455,12 +412,9 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	filterToTermTable: getThemeFilterToTermTable( state ),
 	hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
 	themesBookmark: getThemesBookmark( state ),
-	canUploadThemesOrPlugins: siteCanUploadThemesOrPlugins( state, siteId ),
 } );
 
 const mapDispatchToProps = {
-	trackUploadClick: () => recordTracksEvent( 'calypso_click_theme_upload' ),
-	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' ),
 	trackMoreThemesClick: () => recordTracksEvent( 'calypso_themeshowcase_more_themes_clicked' ),
 	openThemesShowcase: () => openThemesShowcase(),
 };

@@ -53,11 +53,7 @@ import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import DomainSearchResults from 'calypso/components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
 import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
-import {
-	DropdownFilters,
-	FilterResetNotice,
-	TldFilterBar,
-} from 'calypso/components/domains/search-filters';
+import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/search-filters';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
@@ -505,14 +501,22 @@ class RegisterDomainStep extends React.Component {
 			! this.state.loadingResults &&
 			! this.props.showExampleSuggestions;
 		const showFilters = isKrackenUi && ! isRenderingInitialSuggestions && ! this.props.isReskinned;
+
+		const showTldFilter =
+			( Array.isArray( this.state.availableTlds ) && this.state.availableTlds.length > 0 ) ||
+			this.state.loadingResults;
+
 		return (
 			showFilters && (
 				<DropdownFilters
+					availableTlds={ this.state.availableTlds }
 					filters={ this.state.filters }
 					lastFilters={ this.state.lastFilters }
 					onChange={ this.onFiltersChange }
 					onReset={ this.onFiltersReset }
 					onSubmit={ this.onFiltersSubmit }
+					showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
+					showTldFilter={ showTldFilter }
 				/>
 			)
 		);
@@ -1346,13 +1350,6 @@ class RegisterDomainStep extends React.Component {
 			return this.renderExampleSuggestions();
 		}
 
-		const showTldFilterBar =
-			( Array.isArray( this.state.searchResults ) &&
-				this.state.searchResults.length > 0 &&
-				Array.isArray( this.state.availableTlds ) &&
-				this.state.availableTlds.length > 0 ) ||
-			this.state.loadingResults;
-
 		const hasResults =
 			( Array.isArray( this.state.searchResults ) && this.state.searchResults.length ) > 0 &&
 			! this.state.loadingResults;
@@ -1407,20 +1404,6 @@ class RegisterDomainStep extends React.Component {
 					hasResults &&
 					isFreeDomainExplainerVisible &&
 					this.renderFreeDomainExplainer() }
-
-				{ showTldFilterBar && (
-					<TldFilterBar
-						availableTlds={ this.state.availableTlds }
-						filters={ this.state.filters }
-						isSignupStep={ this.props.isSignupStep }
-						lastFilters={ this.state.lastFilters }
-						onChange={ this.onFiltersChange }
-						onReset={ this.onFiltersReset }
-						onSubmit={ this.onFiltersSubmit }
-						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
-						isReskinned={ this.props.isReskinned }
-					/>
-				) }
 				{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
 			</DomainSearchResults>
 		);

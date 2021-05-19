@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { flowRight, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import config from '@automattic/calypso-config';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -31,14 +30,17 @@ const ApiCache = ( {
 
 	return (
 		<CompactCard>
-			<FormToggle
+			<ToggleControl
 				checked={ !! fields.api_cache }
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleAutosavingToggle( 'api_cache' ) }
-			>
-				{ translate( 'Use synchronized data to boost performance' ) } (a8c-only experimental
-				feature)
-			</FormToggle>
+				label={
+					<>
+						{ translate( 'Use synchronized data to boost performance' ) }{ ' ' }
+						<span>(a8c-only experimental feature)</span>
+					</>
+				}
+			/>
 		</CompactCard>
 	);
 };

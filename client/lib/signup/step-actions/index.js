@@ -55,6 +55,7 @@ import flows from 'calypso/signup/config/flows';
 import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'calypso/lib/signup/page-builder';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
+import { isBlankCanvasDesign } from '@automattic/design-picker';
 
 /**
  * Constants
@@ -223,6 +224,7 @@ function getNewSiteParams( {
 		newSiteParams.options.theme = `pub/${ selectedDesign.theme }`;
 		newSiteParams.options.template = selectedDesign.template;
 		newSiteParams.options.use_patterns = true;
+		newSiteParams.options.is_blank_canvas = isBlankCanvasDesign( selectedDesign );
 
 		if ( selectedDesign.fonts ) {
 			newSiteParams.options.font_base = selectedDesign.fonts.base;
