@@ -9,11 +9,20 @@ import { getAccountCredential } from '../../data-helper';
  */
 import { Page } from 'playwright';
 
+/**
+ * Class representing the end-to-end log in process.
+ */
 export class LoginFlow {
 	page: Page;
 	username: string;
 	password: string;
 
+	/**
+	 * Creates an instance of the log in flow.
+	 *
+	 * @param {Page} page Instance of a Playwright page on which test steps are executing.
+	 * @param {string} [accountType] Type of account to be used for the log in process.
+	 */
 	constructor( page: Page, accountType = 'defaultUser' ) {
 		this.page = page;
 
@@ -25,7 +34,7 @@ export class LoginFlow {
 	}
 
 	/**
-	 * Executes the end-to-end steps of logging into WPCOM as a user.
+	 * Executes the basic log in flow as the specified user.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
@@ -34,6 +43,11 @@ export class LoginFlow {
 		await loginPage.login( { username: this.username, password: this.password } );
 	}
 
+	/**
+	 * Log in as the user without performing any additional steps.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
 	async login(): Promise< void > {
 		await this.baseflow();
 	}

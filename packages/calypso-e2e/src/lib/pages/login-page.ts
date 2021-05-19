@@ -8,7 +8,15 @@ import * as DataHelper from '../../data-helper';
  */
 import { Page } from 'playwright';
 
+/**
+ * Represents an instance of the calypso Login page.
+ */
 export class LoginPage {
+	/**
+	 * Creates an instance of the Login page.
+	 *
+	 * @param {Page} page Playwright page on which actions are executed.
+	 */
 	constructor( page: Page ) {
 		this.page = page;
 		this.url = DataHelper.getCalypsoURL( 'log-in' );
@@ -24,9 +32,9 @@ export class LoginPage {
 	alreadyLoggedInSelector = '.continue-as-user';
 
 	/**
-	 * Executes series of interactions on the log-in page to login as a specific user.
+	 * Executes series of interactions on the log-in page to log in as a specific user.
 	 *
-	 * @param {Object} param0 Key/value pair holding the login credentials for a user.
+	 * @param {Object} param0 Key/value pair holding the credentials for a user.
 	 * @param {string} param0.username Username of the user.
 	 * @param {string} param0.password Password of the user.
 	 * @returns {Promise<void>} No return value.
@@ -50,6 +58,8 @@ export class LoginPage {
 		await this.page.waitForSelector( this.passwordSelector );
 		await this.page.fill( this.passwordSelector, password );
 
+		// Wait for all promises. Add more here as necessary, such as waiting for the request to be
+		// completed, or looking for a specific elemen on page.
 		try {
 			await Promise.all( [ this.page.waitForNavigation(), this.page.keyboard.press( 'Enter' ) ] );
 		} catch ( err ) {
