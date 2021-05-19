@@ -255,15 +255,9 @@ const ActionMenu = ( { domain, mailbox, selectedSite } ) => {
 	);
 };
 
-function EmailPlanMailboxesList( {
-	account,
-	accountType,
-	domain,
-	isLoadingEmails,
-	mailboxes,
-	selectedSite,
-} ) {
+function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes, selectedSite } ) {
 	const translate = useTranslate();
+	const accountType = account?.account_type;
 
 	if ( isLoadingEmails ) {
 		return (
@@ -318,7 +312,6 @@ function EmailPlanMailboxesList( {
 
 EmailPlanMailboxesList.propTypes = {
 	account: PropTypes.object,
-	accountType: PropTypes.string,
 	domain: PropTypes.object,
 	isLoadingEmails: PropTypes.bool,
 	mailboxes: PropTypes.array,
