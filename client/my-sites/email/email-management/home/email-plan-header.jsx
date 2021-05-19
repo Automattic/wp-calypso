@@ -51,7 +51,13 @@ const EmailPlanHeader = ( {
 					</span>
 				</div>
 
-				{ hasEmailSubscription && <EmailPlanWarnings warnings={ emailAccount?.warnings } /> }
+				{ hasEmailSubscription && emailAccount && (
+					<EmailPlanWarnings
+						domain={ domain }
+						warnings={ emailAccount.warnings }
+						emailAccountType={ emailAccount.account_type }
+					/>
+				) }
 			</CompactCard>
 
 			{ hasEmailSubscription && (

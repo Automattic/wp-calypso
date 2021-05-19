@@ -413,4 +413,17 @@
 	flex-basis: 100%;
 	line-height: 30px;
 	margin-top: 24px;
+
+	.email-plan-warnings__warning {
+		display: flex;
+		align-items: center;
+
+		.email-plan-warnings__message {
+			flex: 1 1 auto;
+		}
+
+		.email-plan-warnings__cta {
+			margin-left: 15px;
+		}
+	}
 }
