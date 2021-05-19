@@ -184,27 +184,28 @@ export const getTask = (
 			taskData = {
 				timing: 10,
 				title: translate( 'Edit the site menu' ),
-				description: (
-					<>
-						{ translate(
-							"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
-						) }{ ' ' }
-						<InlineSupportLink
-							supportPostId={ 59580 }
-							supportLink={ localizeUrl( 'https://wordpress.com/support/menus/' ) }
-							showIcon={ false }
-							tracksEvent="calypso_customer_home_menus_support_page_view"
-							statsGroup="calypso_customer_home"
-							statsName="menus_view_tutorial"
-						>
-							{ translate( 'View tutorial.' ) }
-						</InlineSupportLink>
-					</>
+				description: translate(
+					"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
 				),
 				actionText: translate( 'Add a menu' ),
 				isSkippable: true,
 				actionUrl: menusUrl,
 				actionIsLink: true,
+				customFirstButton: (
+					<InlineSupportLink
+						// The following classes are globally shared
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className="button is-primary task__action"
+						supportPostId={ 59580 }
+						supportLink={ localizeUrl( 'https://wordpress.com/support/menus/' ) }
+						showIcon={ false }
+						tracksEvent="calypso_customer_home_menus_support_page_view"
+						statsGroup="calypso_customer_home"
+						statsName="menus_view_tutorial"
+					>
+						{ translate( 'View tutorial' ) }
+					</InlineSupportLink>
+				),
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.SITE_THEME_SELECTED:

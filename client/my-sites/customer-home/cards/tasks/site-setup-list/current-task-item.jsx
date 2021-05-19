@@ -37,6 +37,7 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 					{ currentTask.description }
 				</p>
 				<div className="site-setup-list__task-actions task__actions">
+					{ currentTask.customFirstButton }
 					{ currentTask.actionText && (
 						<Button
 							className={ classnames( 'site-setup-list__task-action', 'task__action', {
