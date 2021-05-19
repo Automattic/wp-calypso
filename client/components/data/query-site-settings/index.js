@@ -2,9 +2,9 @@
  * External dependencies
  */
 
-import { Component } from 'react';
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,43 +12,24 @@ import { connect } from 'react-redux';
 import { isRequestingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { requestSiteSettings } from 'calypso/state/site-settings/actions';
 
-class QuerySiteSettings extends Component {
-	UNSAFE_componentWillMount() {
-		this.requestSettings( this.props );
+const request = ( siteId ) => ( dispatch, getState ) => {
+	if ( ! isRequestingSiteSettings( getState(), siteId ) ) {
+		dispatch( requestSiteSettings( siteId ) );
 	}
+};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { siteId } = this.props;
-		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {
-			return;
-		}
+function QuerySiteSettings( { siteId } ) {
+	const dispatch = useDispatch();
 
-		this.requestSettings( nextProps );
-	}
+	useEffect( () => {
+		dispatch( request( siteId ) );
+	}, [ dispatch, siteId ] );
 
-	requestSettings( props ) {
-		const { requestingSiteSettings, siteId } = props;
-		if ( ! requestingSiteSettings && siteId ) {
-			props.requestSiteSettings( siteId );
-		}
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
 QuerySiteSettings.propTypes = {
-	siteId: PropTypes.number,
-	requestingSiteSettings: PropTypes.bool,
-	requestSiteSettings: PropTypes.func,
+	siteId: PropTypes.number.isRequired,
 };
 
-export default connect(
-	( state, { siteId } ) => {
-		return {
-			requestingSiteSettings: isRequestingSiteSettings( state, siteId ),
-		};
-	},
-	{ requestSiteSettings }
-)( QuerySiteSettings );
+export default QuerySiteSettings;
