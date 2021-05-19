@@ -17,9 +17,9 @@ import type { viewportName, localeCode, viewportSize } from './types';
  * @returns {viewportName} Target screen size.
  */
 export function getViewportName(): viewportName {
-	return ! process.env.VIEWPORT_NAME
-		? config.get( 'viewportName' )
-		: ( process.env.VIEWPORT_NAME.toLowerCase() as viewportName );
+	return (
+		process.env.VIEWPORT_NAME || config.get( 'viewportName' )!
+	).toLowerCase() as viewportName;
 }
 
 /**
@@ -31,7 +31,7 @@ export function getViewportName(): viewportName {
  * @returns {localeCode} Target locale code.
  */
 export function getLocale(): localeCode {
-	return ! process.env.LOCALE ? config.get( 'locale' ) : process.env.LOCALE.toLowerCase();
+	return ( process.env.LOCALE || config.get( 'locale' )! ).toLowerCase() as localeCode;
 }
 
 /**
@@ -50,10 +50,9 @@ export function getViewportSize( target?: viewportName ): viewportSize {
 		target = getViewportName();
 	}
 
-	try {
-		const resolutions: { [ key: string ]: viewportSize } = config.get( 'viewportSize' );
-		return resolutions[ target ];
-	} catch ( err ) {
-		throw new Error( 'Unsupported screen size specified.' );
+	const sizes: { [ key: string ]: viewportSize } = config.get( 'viewportSize' );
+	if ( ! Object.keys( sizes ).includes( target ) ) {
+		throw new Error( `Unsupported viewport: ${ target }` );
 	}
+	return sizes[ target ];
 }
