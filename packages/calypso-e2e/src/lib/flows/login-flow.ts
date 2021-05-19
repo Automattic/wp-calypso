@@ -39,6 +39,7 @@ export class LoginFlow {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async baseflow(): Promise< void > {
+		console.log( 'Logging in as ' + this.username );
 		const loginPage = new LoginPage( this.page );
 		await loginPage.login( { username: this.username, password: this.password } );
 	}
