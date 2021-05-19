@@ -296,7 +296,7 @@
 		}
 	}
 
-	.email-plan-mailboxes-list__mailbox-list-item-warning {
+	.email-mailbox-warnings__warning {
 		border-top: 1px solid var( --color-neutral-5 );
 		color: var( --color-error );
 		font-size: $font-body-extra-small;
@@ -321,8 +321,9 @@
 		}
 	}
 
-	.email-plan-mailboxes-list__mailbox-list-item-action {
+	.email-mailbox-warnings__action {
 		margin-top: 12px;
+
 		@include break-xlarge {
 			flex: 0.75;
 			margin-top: 0;
