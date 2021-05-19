@@ -187,16 +187,16 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 			return await enterADomainComponent.enterADomain( blogName );
 		} );
 
-		it( 'Can add domain to the cart', async function () {
+		it.skip( 'Can add domain to the cart', async function () {
 			const enterADomainComponent = await EnterADomainComponent.Expect( driver );
 			return await enterADomainComponent.clickonAddButtonToAddDomainToTheCart();
 		} );
 
-		it( 'Can see checkout page', async function () {
+		it.skip( 'Can see checkout page', async function () {
 			return await MapADomainCheckoutPage.Expect( driver );
 		} );
 
-		it( 'Empty the cart', async function () {
+		it.skip( 'Empty the cart', async function () {
 			await ReaderPage.Visit( driver );
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickMySites();
