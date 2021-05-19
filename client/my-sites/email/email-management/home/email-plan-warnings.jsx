@@ -3,31 +3,34 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Notice from 'calypso/components/notice';
-import { EMAIL_WARNING_TYPE_ACTION_REQUIRED } from 'calypso/lib/emails/email-provider-constants';
-
-const getWarningStatus = ( warning ) => {
-	return EMAIL_WARNING_TYPE_ACTION_REQUIRED === warning.warning_type ? 'is-info' : 'is-warning';
-};
+import { Button } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
 
 const EmailPlanWarnings = ( { warnings } ) => {
+	const translate = useTranslate();
+
 	if ( ! warnings?.[ 0 ] ) {
 		return null;
 	}
 
-	return warnings.map( ( warning, index ) => (
-		<Notice
-			status={ getWarningStatus( warning ) }
-			text={ warning.message }
-			showDismiss={ false }
-			className="email-plan-warnings__warning"
-			key={ index }
-		/>
-	) );
+	return (
+		<div className="email-plan-warnings__container">
+			{ warnings.map( ( warning, index ) => (
+				<div className="email-plan-warnings__warning" key={ index }>
+					<span>{ warning.message }</span>
+					<Button compact primary href={ 'controlPanelUrl' }>
+						{ translate( 'Activate Mailboxes' ) }
+						<Gridicon icon="external" size={ 18 } />
+					</Button>
+				</div>
+			) ) }
+		</div>
+	);
 };
 
 EmailPlanWarnings.propTypes = {

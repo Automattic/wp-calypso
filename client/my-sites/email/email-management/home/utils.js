@@ -13,6 +13,7 @@ import {
 	hasPendingGSuiteUsers,
 } from 'calypso/lib/gsuite';
 import {
+	getConfiguredTitanMailboxCount,
 	getMaxTitanMailboxCount,
 	getTitanExpiryDate,
 	getTitanSubscriptionId,
@@ -114,7 +115,7 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 	const defaultActiveStatus = {
 		statusClass: 'success',
 		icon: isLoadingEmails ? 'cached' : 'check_circle',
-		text: isLoadingEmails ? translate( 'Loading accounts' ) : translate( 'Active' ),
+		text: isLoadingEmails ? translate( 'Loading details' ) : translate( 'Active' ),
 	};
 
 	const defaultWarningStatus = {
@@ -143,7 +144,16 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 			}
 		}
 		// Check for unused mailboxes
-		if ( hasUnusedMailboxWarnings( emailAccount?.warnings ) ) {
+		if ( emailAccount && hasUnusedMailboxWarnings( emailAccount.warnings ) ) {
+			return defaultWarningStatus;
+		}
+
+		// Fallback logic if we don't have an emailAccount - this will initially be the case for the email home page.
+		if (
+			! isLoadingEmails &&
+			! emailAccount &&
+			getMaxTitanMailboxCount( domain ) > getConfiguredTitanMailboxCount( domain )
+		) {
 			return defaultWarningStatus;
 		}
 

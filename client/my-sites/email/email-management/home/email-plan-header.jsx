@@ -50,9 +50,9 @@ const EmailPlanHeader = ( {
 						<MaterialIcon icon={ icon } /> { text }
 					</span>
 				</div>
-			</CompactCard>
 
-			{ hasEmailSubscription && <EmailPlanWarnings warnings={ emailAccount?.warnings } /> }
+				{ hasEmailSubscription && <EmailPlanWarnings warnings={ emailAccount?.warnings } /> }
+			</CompactCard>
 
 			{ hasEmailSubscription && (
 				<EmailPlanSubscription

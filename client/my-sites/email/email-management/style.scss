@@ -173,6 +173,7 @@
 .email-plan-header {
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 
 	h2 {
 		font-size: $font-title-large;
@@ -407,6 +408,9 @@
 	color: var( --color-error-50 );
 }
 
-.email-plan-warnings__warning.notice {
-	margin-bottom: 1px;
+.email-plan-warnings__container {
+	width: 100%;
+	flex-basis: 100%;
+	line-height: 30px;
+	margin-top: 24px;
 }
