@@ -20,7 +20,7 @@ import {
 	getSelectedSite,
 } from 'calypso/state/ui/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { Button } from '@automattic/components';
 import { isATEnabled } from 'calypso/lib/automated-transfer';
 
@@ -44,11 +44,13 @@ function getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) {
 const InstallThemeButton = connectOptions(
 	( {
 		isMultisite,
+		jetpackSite,
 		isLoggedIn,
 		siteSlug,
 		dispatchTracksEvent,
 		canUploadThemesOrPlugins,
 		ATEnabled,
+		allMySites,
 	} ) => {
 		if ( ! isLoggedIn || isMultisite ) {
 			return null;
@@ -58,7 +60,9 @@ const InstallThemeButton = connectOptions(
 			trackClick( 'upload theme' );
 			dispatchTracksEvent( {
 				tracksEventProps: {
+					is_all_my_sites: allMySites,
 					is_atomic: ATEnabled,
+					is_jetpack_connected: jetpackSite,
 				},
 			} );
 		};
@@ -79,11 +83,13 @@ const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const selectedSite = getSelectedSite( state );
 	return {
+		allMySites: ! selectedSite,
 		siteSlug: getSelectedSiteSlug( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 		isMultisite: isJetpackSiteMultiSite( state, selectedSiteId ),
+		jetpackSite: Boolean( isJetpackSite( state, selectedSiteId ) ),
 		canUploadThemesOrPlugins: siteCanUploadThemesOrPlugins( state, selectedSiteId ),
-		ATEnabled: isATEnabled( selectedSite ),
+		ATEnabled: Boolean( isATEnabled( selectedSite ) ),
 	};
 };
 
