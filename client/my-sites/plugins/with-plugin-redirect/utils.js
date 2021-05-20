@@ -24,7 +24,7 @@ export const redirectingPluginsList = {
 	},
 
 	'wordpress-seo': {
-		name: 'WooCommerce',
+		name: 'Yoast',
 		message: translate( 'Redirecting to setup Yoast in five seconds.' ),
 		getUrl: getSiteWordPressSeoWizardUrl,
 	},
