@@ -78,13 +78,13 @@ const InstallThemeButton = connectOptions(
 const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
-		allMySites: ! selectedSiteId,
+		allMySites: selectedSiteId === null,
 		siteSlug: getSelectedSiteSlug( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 		isMultisite: isJetpackSiteMultiSite( state, selectedSiteId ),
-		jetpackSite: Boolean( isJetpackSite( state, selectedSiteId ) ),
+		jetpackSite: isJetpackSite( state, selectedSiteId ),
 		canUploadThemesOrPlugins: siteCanUploadThemesOrPlugins( state, selectedSiteId ),
-		atomicSite: Boolean( isAtomicSite( state, selectedSiteId ) ),
+		atomicSite: isAtomicSite( state, selectedSiteId ),
 	};
 };
 
