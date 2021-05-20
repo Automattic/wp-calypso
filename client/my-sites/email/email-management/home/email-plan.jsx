@@ -23,7 +23,7 @@ import {
 	getEmailPurchaseByDomain,
 	hasEmailSubscription,
 } from 'calypso/my-sites/email/email-management/home/utils';
-import { getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
@@ -159,7 +159,13 @@ class EmailPlan extends React.Component {
 		}
 
 		if ( hasTitanMailWithUs( domain ) ) {
-			return translate( 'Email settings' );
+			return translate( '%(titanProductName)s settings', {
+				args: {
+					titanProductName: getTitanProductName(),
+				},
+				comment:
+					'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
+			} );
 		}
 
 		return translate( 'Email forwarding settings' );
