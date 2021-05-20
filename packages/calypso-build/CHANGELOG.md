@@ -3,6 +3,13 @@
 ## trunk
 
 - Updated dependencies
+  - autoprefixer to ^10.2.5
+  - css-loader to ^5.2.4
+  - mini-css-extract-plugin to ^1.6.0
+  - node-sass to ^6.0.0
+  - postcss to ^8.2.15
+  - postcss-loader to ^5.3.0
+  - sass-loader to ^11.1.1
   - thread-loader to ^3.0.4
 
 ## 8.0.0

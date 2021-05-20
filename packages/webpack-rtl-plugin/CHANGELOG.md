@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- Updated dependencies:
+  - css-loader to ^5.2.4
+  - mini-css-extract-plugin to ^1.6.0
+  - rtlcss to ^3.1.2
+- Removed unused dependency cssnano.
+
 ## 5.0.0 - 2021-03-26
 
 ### Breaking
