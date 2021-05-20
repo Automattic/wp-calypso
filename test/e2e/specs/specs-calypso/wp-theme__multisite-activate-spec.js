@@ -51,8 +51,8 @@ describe( `[${ host }] Themes: Activate a theme, all sites (${ screenSize }) @pa
 	} );
 
 	/*
-    Commented out - using either `By` or `driverHelper` causes CI to not run e2e tests
-    What is the correct way to verify that the thanks modal is shown?
+	Commented out - using either `By` or `driverHelper` causes CI to not run e2e tests
+	What is the correct way to verify that the thanks modal is shown?
 
 	it( 'can click activate', async function () {
 		await this.themesPage.clickPopoverItem( 'Activate' );
