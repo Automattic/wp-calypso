@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { sortBy, values } from 'lodash';
+import { sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,7 +35,7 @@ export const getAllNotes = ( notesState ) => {
 	}
 
 	prevAllNotes = nextAllNotes;
-	sortedNotes = sortBy( values( nextAllNotes ), [ parsedTimestamp, noteId ] ).reverse();
+	sortedNotes = sortBy( Object.values( nextAllNotes ), [ parsedTimestamp, noteId ] ).reverse();
 	return sortedNotes;
 };
 
