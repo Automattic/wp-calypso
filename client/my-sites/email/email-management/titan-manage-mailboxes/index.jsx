@@ -14,6 +14,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	emailManagement,
+	emailManagementManageTitanMailboxes,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
@@ -30,6 +31,7 @@ import {
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import HeaderCake from 'calypso/components/header-cake';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import {
@@ -90,6 +92,11 @@ class TitanManageMailboxes extends Component {
 
 		return (
 			<>
+				<PageViewTracker
+					path={ emailManagementManageTitanMailboxes( ':site', ':domain' ) }
+					title="Email Management > Titan > Manage All Mailboxes"
+				/>
+
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 				{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
