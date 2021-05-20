@@ -26,7 +26,7 @@ const blogPostQuote =
  * This spec ensures likes on wordpress.com posts and comments work as expected
  * for both loggedin and logged out users.
  */
-describe( `[${ host }] Likes: (${ screenSize })`, function () {
+describe( `[${ host }] Likes: (${ screenSize }) @parallel`, function () {
 	let driver;
 	let postUrl;
 	this.timeout( mochaTimeoutMS );
@@ -38,63 +38,61 @@ describe( `[${ host }] Likes: (${ screenSize })`, function () {
 		driver = await driverManager.startBrowser();
 	} );
 
-	describe( 'Like posts and comments @parallel', function () {
-		it( 'Login, create a new post and view it', async function () {
-			const loginFlow = new LoginFlow( driver, accountKey );
-			await loginFlow.loginAndStartNewPost( null, true );
+	it( 'Login, create a new post and view it', async function () {
+		const loginFlow = new LoginFlow( driver, accountKey );
+		await loginFlow.loginAndStartNewPost( null, true );
 
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.enterTitle( blogPostTitle );
-			await gEditorComponent.enterText( blogPostQuote );
-			postUrl = await gEditorComponent.publish( { visit: true } );
-		} );
+		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+		await gEditorComponent.enterTitle( blogPostTitle );
+		await gEditorComponent.enterText( blogPostQuote );
+		postUrl = await gEditorComponent.publish( { visit: true } );
+	} );
 
-		it( 'Like post', async function () {
-			const postLikes = await PostLikesComponent.Expect( driver );
-			await postLikes.clickLike();
-			await postLikes.expectLiked();
-		} );
+	it( 'Like post', async function () {
+		const postLikes = await PostLikesComponent.Expect( driver );
+		await postLikes.clickLike();
+		await postLikes.expectLiked();
+	} );
 
-		it( 'Unlike post', async function () {
-			const postLikes = await PostLikesComponent.Expect( driver );
-			await postLikes.clickUnlike();
-			await postLikes.expectNotLiked();
-		} );
+	it( 'Unlike post', async function () {
+		const postLikes = await PostLikesComponent.Expect( driver );
+		await postLikes.clickUnlike();
+		await postLikes.expectNotLiked();
+	} );
 
-		it( 'Post comment', async function () {
-			const commentArea = await CommentsAreaComponent.Expect( driver );
+	it( 'Post comment', async function () {
+		const commentArea = await CommentsAreaComponent.Expect( driver );
 
-			// commentArea.reply fails to find .comment-reply-link at times,
-			// as we're not concerned with the assertion just call postComment directly
-			await commentArea._postComment( comment );
-		} );
+		// commentArea.reply fails to find .comment-reply-link at times,
+		// as we're not concerned with the assertion just call postComment directly
+		await commentArea._postComment( comment );
+	} );
 
-		it( 'Like comment', async function () {
-			const commentLikes = await CommentLikesComponent.Expect( driver, comment );
-			await commentLikes.likeComment();
-			await commentLikes.expectLiked();
-		} );
+	it( 'Like comment', async function () {
+		const commentLikes = await CommentLikesComponent.Expect( driver, comment );
+		await commentLikes.likeComment();
+		await commentLikes.expectLiked();
+	} );
 
-		it( 'Unlike comment', async function () {
-			const commentLikes = await CommentLikesComponent.Expect( driver, comment );
-			await commentLikes.unlikeComment();
-			await commentLikes.expectNotLiked();
-		} );
+	it( 'Unlike comment', async function () {
+		const commentLikes = await CommentLikesComponent.Expect( driver, comment );
+		await commentLikes.unlikeComment();
+		await commentLikes.expectNotLiked();
+	} );
 
-		it( 'Like post as logged out user', async function () {
-			await driverManager.ensureNotLoggedIntoSite( driver, postUrl );
+	it( 'Like post as logged out user', async function () {
+		await driverManager.ensureNotLoggedIntoSite( driver, postUrl );
 
-			const postLikes = await PostLikesComponent.Visit( driver, postUrl );
-			await postLikes.clickLike();
+		const postLikes = await PostLikesComponent.Visit( driver, postUrl );
+		await postLikes.clickLike();
 
-			const loginFlow = new LoginFlow( driver, accountKey );
-			await loginFlow.loginUsingPopup();
+		const loginFlow = new LoginFlow( driver, accountKey );
+		await loginFlow.loginUsingPopup();
 
-			await postLikes.expectLiked();
+		await postLikes.expectLiked();
 
-			// And Unlike it
-			await postLikes.clickUnlike();
-			await postLikes.expectNotLiked();
-		} );
+		// And Unlike it
+		await postLikes.clickUnlike();
+		await postLikes.expectNotLiked();
 	} );
 } );

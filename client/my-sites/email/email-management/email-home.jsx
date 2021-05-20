@@ -12,13 +12,13 @@ import React from 'react';
 import { Card } from '@automattic/components';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import DocumentHead from 'calypso/components/data/document-head';
+import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -31,7 +31,6 @@ import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteSupportedDomain, hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
-import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import Main from 'calypso/components/main';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SectionHeader from 'calypso/components/section-header';
@@ -155,23 +154,13 @@ class EmailManagementHome extends React.Component {
 		return (
 			<Main wideLayout>
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
+
 				<DocumentHead title={ translate( 'Emails' ) } />
+
 				<SidebarNavigation />
-				<div className="email-home__header">
-					<FormattedHeader
-						brandFont
-						headerText={ translate( 'Emails' ) }
-						subHeaderText={ translate(
-							'Your home base for accessing, setting up, and managing your emails.'
-						) }
-						align="left"
-					/>
-					<div className="email-home__header-cart">
-						{ selectedSite && (
-							<HeaderCart currentRoute={ currentRoute } selectedSite={ selectedSite } />
-						) }
-					</div>
-				</div>
+
+				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+
 				{ content }
 			</Main>
 		);

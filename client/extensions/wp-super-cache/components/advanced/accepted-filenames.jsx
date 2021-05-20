@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { get, pick } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -15,7 +15,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
@@ -46,13 +45,12 @@ class AcceptedFilenames extends Component {
 		} = this.props;
 
 		return (
-			<FormToggle
+			<ToggleControl
 				checked={ get( pages, fieldName, false ) }
 				disabled={ isRequesting || isSaving || isReadOnly || ! get( pages, parent, true ) }
 				onChange={ this.handleToggle( fieldName ) }
-			>
-				<span>{ fieldLabel }</span>
-			</FormToggle>
+				label={ <span>{ fieldLabel }</span> }
+			/>
 		);
 	};
 

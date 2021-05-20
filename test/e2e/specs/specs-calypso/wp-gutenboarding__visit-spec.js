@@ -15,7 +15,7 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 
-describe( 'Gutenboarding: (' + screenSize + ')', function () {
+describe( `Gutenboarding - Visit Gutenboarding page as a logged in user: (${ screenSize }) @parallel @canary`, function () {
 	this.timeout( mochaTimeOut );
 	let driver;
 
@@ -24,13 +24,11 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		driver = await driverManager.startBrowser();
 	} );
 
-	describe( 'Visit Gutenboarding page as a logged in user @parallel', function () {
-		it( 'Can log in as user', async function () {
-			await new LoginFlow( driver ).login();
-		} );
+	it( 'Can log in as user', async function () {
+		await new LoginFlow( driver ).login();
+	} );
 
-		it( 'Can visit Gutenboarding', async function () {
-			await NewPage.Visit( driver );
-		} );
+	it( 'Can visit Gutenboarding', async function () {
+		await NewPage.Visit( driver );
 	} );
 } );

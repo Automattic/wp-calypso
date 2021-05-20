@@ -14,7 +14,6 @@ import ViewPostPage from '../../lib/pages/view-post-page.js';
 import NotFoundPage from '../../lib/pages/not-found-page.js';
 import PostsPage from '../../lib/pages/posts-page.js';
 import ReaderPage from '../../lib/pages/reader-page';
-import ActivityPage from '../../lib/pages/stats/activity-page';
 import PaypalCheckoutPage from '../../lib/pages/external/paypal-checkout-page';
 
 import SidebarComponent from '../../lib/components/sidebar-component.js';
@@ -278,52 +277,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					'The published blog post title is not correct'
 				);
 			} );
-		} );
-	} );
-
-	describe.skip( 'Check Activity Log for Public Post @parallel', function () {
-		const blogPostTitle = dataHelper.randomPhrase();
-		const blogPostQuote =
-			'“We are what we pretend to be, so we must be careful about what we pretend to be”\n- Kurt Vonnegut';
-
-		it( 'Can log in', async function () {
-			const loginFlow = new LoginFlow( driver, gutenbergUser );
-			return await loginFlow.loginAndStartNewPost( null, true );
-		} );
-
-		it( 'Can enter post title and content', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.enterTitle( blogPostTitle );
-			await gEditorComponent.enterText( blogPostQuote );
-		} );
-
-		it( 'Can publish and view content', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.publish( { visit: true } );
-		} );
-
-		it( 'Can see the post in the Activity log', async function () {
-			await ReaderPage.Visit( driver );
-			const navBarComponent = await NavBarComponent.Expect( driver );
-			await navBarComponent.clickMySites();
-			const sidebarComponent = await SidebarComponent.Expect( driver );
-			await sidebarComponent.ensureSidebarMenuVisible();
-
-			if ( host !== 'WPCOM' ) {
-				await sidebarComponent.selectSite( dataHelper.getJetpackSiteName() );
-			}
-
-			await sidebarComponent.selectActivity();
-			const activityPage = await ActivityPage.Expect( driver );
-			const displayed = await activityPage.postTitleDisplayed( blogPostTitle );
-			return assert(
-				displayed,
-				`The published post title '${ blogPostTitle }' was not displayed in activity log after publishing`
-			);
-		} );
-
-		after( async function () {
-			await driverHelper.acceptAlertIfPresent( driver );
 		} );
 	} );
 

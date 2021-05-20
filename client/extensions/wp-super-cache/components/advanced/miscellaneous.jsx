@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { pick } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -11,7 +11,6 @@ import { pick } from 'lodash';
 import { Card } from '@automattic/components';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import SectionHeader from 'calypso/components/section-header';
 import Notice from 'calypso/components/notice';
 import WrapSettingsForm from '../wrap-settings-form';
@@ -58,20 +57,21 @@ const Miscellaneous = ( {
 					) }
 					<FormFieldset>
 						{ ! compressionDisabledMessage && (
-							<FormToggle
+							<ToggleControl
 								checked={ !! cache_compression }
 								disabled={ isDisabled }
 								onChange={ handleAutosavingToggle( 'cache_compression' ) }
-							>
-								<span>
-									{ translate(
-										'Compress pages so they’re served more quickly to visitors. {{em}}(Recommended{{/em}})',
-										{
-											components: { em: <em /> },
-										}
-									) }
-								</span>
-							</FormToggle>
+								label={
+									<span>
+										{ translate(
+											'Compress pages so they’re served more quickly to visitors. {{em}}(Recommended{{/em}})',
+											{
+												components: { em: <em /> },
+											}
+										) }
+									</span>
+								}
+							/>
 						) }
 						{ ! compressionDisabledMessage && (
 							<Notice
@@ -84,49 +84,52 @@ const Miscellaneous = ( {
 							/>
 						) }
 
-						<FormToggle
+						<ToggleControl
 							checked={ !! dont_cache_logged_in }
 							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'dont_cache_logged_in' ) }
-						>
-							<span>
-								{ translate( 'Don’t cache pages for known users. {{em}}(Recommended){{/em}}', {
-									components: { em: <em /> },
-								} ) }
-							</span>
-						</FormToggle>
+							label={
+								<span>
+									{ translate( 'Don’t cache pages for known users. {{em}}(Recommended){{/em}}', {
+										components: { em: <em /> },
+									} ) }
+								</span>
+							}
+						/>
 
-						<FormToggle
+						<ToggleControl
 							checked={ !! cache_rebuild }
 							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'cache_rebuild' ) }
-						>
-							<span>
-								{ translate(
-									'Cache rebuild. Serve a supercache file to anonymous users while a new ' +
-										'file is being generated. {{em}}(Recommended){{/em}}',
-									{
-										components: { em: <em /> },
-									}
-								) }
-							</span>
-						</FormToggle>
+							label={
+								<span>
+									{ translate(
+										'Cache rebuild. Serve a supercache file to anonymous users while a new ' +
+											'file is being generated. {{em}}(Recommended){{/em}}',
+										{
+											components: { em: <em /> },
+										}
+									) }
+								</span>
+							}
+						/>
 
-						<FormToggle
+						<ToggleControl
 							checked={ !! use_304_headers }
 							disabled={ isDisabled || !! cache_mod_rewrite }
 							onChange={ handleAutosavingToggle( 'use_304_headers' ) }
-						>
-							<span>
-								{ translate(
-									'304 Not Modified browser caching. Indicate when a page has not been ' +
-										'modified since it was last requested. {{em}}(Recommended){{/em}}',
-									{
-										components: { em: <em /> },
-									}
-								) }
-							</span>
-						</FormToggle>
+							label={
+								<span>
+									{ translate(
+										'304 Not Modified browser caching. Indicate when a page has not been ' +
+											'modified since it was last requested. {{em}}(Recommended){{/em}}',
+										{
+											components: { em: <em /> },
+										}
+									) }
+								</span>
+							}
+						/>
 
 						{ cache_mod_rewrite && (
 							<Notice
@@ -150,51 +153,56 @@ const Miscellaneous = ( {
 							/>
 						) }
 
-						<FormToggle
+						<ToggleControl
 							checked={ !! no_cache_for_get }
 							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'no_cache_for_get' ) }
-						>
-							<span>
-								{ translate( 'Don’t cache pages with GET parameters. (?x=y at the end of a url)' ) }
-							</span>
-						</FormToggle>
+							label={
+								<span>
+									{ translate(
+										'Don’t cache pages with GET parameters. (?x=y at the end of a url)'
+									) }
+								</span>
+							}
+						/>
 
-						<FormToggle
+						<ToggleControl
 							checked={ !! make_known_anon }
 							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'make_known_anon' ) }
-						>
-							<span>
-								{ translate(
-									'Make known users anonymous so they’re served supercached static files.'
-								) }
-							</span>
-						</FormToggle>
+							label={
+								<span>
+									{ translate(
+										'Make known users anonymous so they’re served supercached static files.'
+									) }
+								</span>
+							}
+						/>
 
-						<FormToggle
+						<ToggleControl
 							checked={ !! cache_hello_world }
 							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'cache_hello_world' ) }
-						>
-							<span>
-								{ translate(
-									'Proudly tell the world your server is {{fry}}Stephen Fry proof{{/fry}}! ' +
-										'(places a message in your blog’s footer)',
-									{
-										components: {
-											fry: (
-												<ExternalLink
-													icon={ true }
-													target="_blank"
-													href="https://twitter.com/#!/HibbsLupusTrust/statuses/136429993059291136"
-												/>
-											),
-										},
-									}
-								) }
-							</span>
-						</FormToggle>
+							label={
+								<span>
+									{ translate(
+										'Proudly tell the world your server is {{fry}}Stephen Fry proof{{/fry}}! ' +
+											'(places a message in your blog’s footer)',
+										{
+											components: {
+												fry: (
+													<ExternalLink
+														icon={ true }
+														target="_blank"
+														href="https://twitter.com/#!/HibbsLupusTrust/statuses/136429993059291136"
+													/>
+												),
+											},
+										}
+									) }
+								</span>
+							}
+						/>
 					</FormFieldset>
 				</form>
 			</Card>
