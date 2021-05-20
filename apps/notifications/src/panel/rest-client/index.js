@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { difference, range } from 'lodash';
+import { difference } from 'lodash';
 
 /**
  * Internal dependencies
@@ -340,19 +340,11 @@ const safelyRemoveKey = ( key ) => {
 	} catch ( e ) {}
 };
 
-const getLocalKeys = () => {
-	try {
-		return range( localStorage.length ).map( ( index ) => localStorage.key( index ) );
-	} catch ( e ) {
-		return [];
-	}
-};
-
 function cleanupLocalCache() {
 	const notes = getAllNotes( store.getState() );
 	const currentNoteIds = notes.map( ( n ) => n.id );
 
-	getLocalKeys()
+	Object.keys( localStorage )
 		.map( ( key ) => obsoleteKeyPattern.exec( key ) )
 		.filter( ( match ) => match && ! currentNoteIds.includes( match[ 1 ] ) )
 		.forEach( safelyRemoveKey );
