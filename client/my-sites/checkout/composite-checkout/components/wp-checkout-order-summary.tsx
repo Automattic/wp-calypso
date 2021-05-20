@@ -10,7 +10,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getCouponLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
-	getTotalLineItemFromCart,
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -27,6 +26,17 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
+export function CheckoutSummaryTotal() {
+	const translate = useTranslate();
+	const { responseCart } = useShoppingCart();
+	return (
+		<CheckoutSummaryTotalWrapper>
+			<span>{ translate( 'Total' ) }</span>
+			<span>{ responseCart.total_cost_display }</span>
+		</CheckoutSummaryTotalWrapper>
+	);
+}
+
 export default function WPCheckoutOrderSummary( {
 	siteId,
 	onChangePlanLength,
@@ -42,7 +52,6 @@ export default function WPCheckoutOrderSummary( {
 	const { responseCart } = useShoppingCart( cartKey );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
-	const totalLineItem = getTotalLineItemFromCart( responseCart );
 
 	const hasRenewalInCart = responseCart.products.some(
 		( product ) => product.extra.purchaseType === 'renewal'
@@ -88,12 +97,7 @@ export default function WPCheckoutOrderSummary( {
 						<span>{ taxLineItem.amount.displayValue }</span>
 					</CheckoutSummaryLineItem>
 				) ) }
-				<CheckoutSummaryTotal>
-					<span>{ translate( 'Total' ) }</span>
-					<span className="wp-checkout-order-summary__total-price">
-						{ totalLineItem.amount.displayValue }
-					</span>
-				</CheckoutSummaryTotal>
+				<CheckoutSummaryTotal />
 			</CheckoutSummaryAmountWrapper>
 		</CheckoutSummaryCard>
 	);
@@ -416,7 +420,7 @@ const CheckoutSummaryLineItem = styled.div`
 	}
 `;
 
-const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
+const CheckoutSummaryTotalWrapper = styled( CheckoutSummaryLineItem )`
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
 
