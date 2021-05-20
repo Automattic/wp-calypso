@@ -34,16 +34,13 @@ import { HorizontalRule } from '@wordpress/components';
 import ExternalLink from 'calypso/components/external-link';
 import MarketplaceShoppingCart from 'calypso/my-sites/plugins/marketplace/components/marketplace-shopping-cart';
 import theme from 'calypso/my-sites/plugins/marketplace/theme';
+import { MarketplaceHeaderTitle } from 'calypso/my-sites/plugins/marketplace/components';
 
 /**
  * Style dependencies
  */
 import 'calypso/my-sites/plugins/marketplace/marketplace-domain-upsell/style.scss';
 
-const MarketplaceHeaderTitle = styled.h1`
-	font-size: 2rem;
-	margin-bottom: 8px;
-`;
 const MarketplaceHeaderSubTitle = styled.h2`
 	font-size: 0.875rem;
 	margin-bottom: 15px;
