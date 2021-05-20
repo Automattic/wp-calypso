@@ -6,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { findIndex, groupBy, reduce, zip } from 'lodash';
+import { groupBy, reduce, zip } from 'lodash';
 
 /**
  * Internal dependencies
@@ -276,7 +276,7 @@ export class NoteList extends React.Component {
 		// Create new groups of messages by time periods
 		const noteGroups = groupBy( this.props.notes, ( { timestamp } ) => {
 			const time = new Date( timestamp );
-			return findIndex( timeGroups, ( [ after, before ] ) => before < time && time <= after );
+			return timeGroups.findIndex( ( [ after, before ] ) => before < time && time <= after );
 		} );
 
 		let [ notes ] = reduce(

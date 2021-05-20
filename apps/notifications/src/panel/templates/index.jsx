@@ -4,7 +4,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { findIndex, matchesProperty } from 'lodash';
+import { matchesProperty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -58,7 +58,7 @@ export const findNextNoteId = ( noteId, notes ) => {
 		return null;
 	}
 
-	const index = findIndex( notes, noteId );
+	const index = notes.indexOf( noteId );
 	if ( -1 === index ) {
 		return null;
 	}
@@ -121,7 +121,7 @@ class Layout extends React.Component {
 			return;
 		}
 
-		const index = findIndex( nextProps.notes, matchesProperty( 'id', nextProps.selectedNoteId ) );
+		const index = nextProps.notes.findIndex( matchesProperty( 'id', nextProps.selectedNoteId ) );
 		this.setState( {
 			index: index >= 0 ? index : null,
 			lastSelectedIndex: index === null ? 0 : index,
@@ -213,7 +213,7 @@ class Layout extends React.Component {
 		};
 
 		/* Find the currently selected note */
-		let currentIndex = findIndex( filteredNotes, matchesProperty( 'id', this.state.selectedNote ) );
+		let currentIndex = filteredNotes.findIndex( matchesProperty( 'id', this.state.selectedNote ) );
 
 		/*
 		 * Sometimes it can occur that a note disappears

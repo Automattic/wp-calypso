@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { escapeRegExp, findIndex } from 'lodash';
+import { escapeRegExp } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -47,7 +47,7 @@ const getSuggestionIndexBySelectedId = function ( suggestions ) {
 		return 0;
 	}
 
-	const index = findIndex( suggestions, ( { ID } ) => ID === this.state.selectedSuggestionId );
+	const index = suggestions.findIndex( ( { ID } ) => ID === this.state.selectedSuggestionId );
 
 	return index > -1 ? index : null;
 };
