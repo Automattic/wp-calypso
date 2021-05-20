@@ -184,9 +184,9 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 				</div>
 				<div className="marketplace-domain-upsell__shopping-cart-container">
 					<MarketplaceShoppingCart
-						onCheckout={ () => {
-							page( `/checkout${ selectedSite ? `/${ selectedSite.slug }` : '' }` );
-						} }
+						onCheckout={ () =>
+							page( `/checkout${ selectedSite ? `/${ selectedSite.slug }` : '' }` )
+						}
 						selectedDomainProductUUID={ selectedDomainProductUUID }
 						isExpandedBasketView={ isExpandedBasketView }
 						toggleExpandedBasketView={ () => setIsExpandedBasketView( ! isExpandedBasketView ) }
