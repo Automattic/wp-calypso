@@ -164,6 +164,8 @@ function getNewSiteParams( {
 	const shouldUseDefaultAnnotationAsFallback = true;
 
 	let shouldEnableFse = selectedDesign?.is_fse;
+	// If the user didn't select any design, then we make sure
+	// the default theme is used to determine the `shouldEnableFse`'s value.
 	if ( ! selectedDesign ) {
 		const designs = getAvailableDesigns();
 		const themeSlug = theme.replace( 'pub/', '' );
