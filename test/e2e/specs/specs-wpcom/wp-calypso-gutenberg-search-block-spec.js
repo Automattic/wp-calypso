@@ -3,6 +3,7 @@
  */
 import { By } from 'selenium-webdriver';
 import config from 'config';
+import assert from 'assert';
 
 /**
  * Internal dependencies
@@ -175,8 +176,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Search Block (${ screenSize })`
 			//Here in publish mode it get 173px though that style value is not there when I inspect the object
 			const width = await driver
 				.findElement( By.css( '.wp-block-search__inside-wrapper' ) )
-				.getCssValue( 'width' );
+				.getAttribute( 'style' );
 			console.log( 'Style Value' + width );
+			assert.deepStrictEqual( width, 'width: 25%;' );
 			return await driverHelper.waitUntilElementLocatedAndVisible(
 				driver,
 				By.css( '.wp-block-search' )
