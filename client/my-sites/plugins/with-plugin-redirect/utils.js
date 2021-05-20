@@ -38,9 +38,5 @@ export const redirectingPluginsList = {
  * @returns {object} Redirect plugin object for the plugin, or False.
  */
 export function getRedirectPluginHandler( slug ) {
-	if ( ! redirectingPluginsList.hasOwnProperty( slug ) ) {
-		return false;
-	}
-
-	return redirectingPluginsList[ slug ];
+	return redirectingPluginsList[ slug ] ?? false;
 }
