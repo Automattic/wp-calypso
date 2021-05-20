@@ -32,8 +32,8 @@ import {
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
 	emailManagementManageTitanAccount,
+	emailManagementManageTitanMailboxes,
 	emailManagementNewTitanAccount,
-	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
@@ -202,12 +202,7 @@ class EmailPlan extends React.Component {
 			}
 
 			return {
-				external: true,
-				path: emailManagementTitanControlPanelRedirect(
-					selectedSite.slug,
-					domain.name,
-					currentRoute
-				),
+				path: emailManagementManageTitanMailboxes( selectedSite.slug, domain.name, currentRoute ),
 			};
 		}
 

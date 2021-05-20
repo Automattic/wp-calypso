@@ -13,6 +13,7 @@ import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import TitanMailAddMailboxes from 'calypso/my-sites/email/titan-mail-add-mailboxes';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
+import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-manage-mailboxes';
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
 
@@ -50,6 +51,19 @@ export default {
 				domainName={ pageContext.params.domain }
 				context={ pageContext.query.context }
 			/>
+		);
+
+		next();
+	},
+
+	emailManagementManageTitanMailboxes( pageContext, next ) {
+		pageContext.primary = (
+			<CalypsoShoppingCartProvider>
+				<TitanManageMailboxes
+					context={ pageContext.query.context }
+					selectedDomainName={ pageContext.params.domain }
+				/>
+			</CalypsoShoppingCartProvider>
 		);
 
 		next();
