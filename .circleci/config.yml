@@ -143,9 +143,9 @@ references:
   desktop-decrypt-assets: &desktop-decrypt-assets
     name: Decrypt desktop app assets
     command: |
-      openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
-      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
-      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      openssl aes-256-cbc -md md5 -d -in desktop/Automattic/WordPress-Desktop/resource/calypso/secrets.json.enc -out desktop/Automattic/WordPress-Desktop/config/secrets.json -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      openssl aes-256-cbc -md md5 -d -in desktop/Automattic/WordPress-Desktop/resource/certificates/mac.p12.enc -out desktop/Automattic/WordPress-Desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      openssl aes-256-cbc -md md5 -d -in desktop/Automattic/WordPress-Desktop/resource/certificates/win.p12.enc -out desktop/Automattic/WordPress-Desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
   desktop-restore-yarn-cache: &desktop-restore-yarn-cache
     name: Restore yarn cache
     keys:
