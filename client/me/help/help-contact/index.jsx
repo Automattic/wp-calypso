@@ -33,6 +33,7 @@ import {
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import QueryTicketSupportConfiguration from 'calypso/components/data/query-ticket-support-configuration';
 import QuerySupportHistory from 'calypso/components/data/query-support-history';
+import { withoutHttp } from 'calypso/lib/url';
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import {
 	sendMessage as sendHappychatMessage,
@@ -256,28 +257,41 @@ class HelpContact extends React.Component {
 	};
 
 	submitSupportForumsTopic = ( contactForm ) => {
-		const { site, subject, message, userDeclaresNoSite, userDeclaredUrl } = contactForm;
+		const {
+			site,
+			subject,
+			message,
+			userDeclaresNoSite,
+			userDeclaredUrl,
+			userRequestsHidingUrl,
+		} = contactForm;
 		const { currentUserLocale, translate } = this.props;
 
 		this.setState( { isSubmitting: true } );
 		this.recordCompactSubmit( 'forums' );
 
-		let blogHelpMessage = translate( "I don't have a site linked to my WordPress.com account yet" );
+		let blogHelpMessage = translate( "I don't have a site linked to this WordPress.com account" );
 
 		if ( userDeclaresNoSite ) {
 			blogHelpMessage = translate( "I don't have a site with WordPress.com yet" );
 		}
 
 		if ( site || userDeclaredUrl ) {
-			blogHelpMessage = translate( 'The blog I need help with is %(siteUrl)s.', {
+			const siteUrl = userDeclaredUrl
+				? withoutHttp( userDeclaredUrl.trim() )
+				: withoutHttp( site.URL );
+
+			blogHelpMessage = translate( 'The site I need help with is %(siteUrl)s.', {
 				args: {
-					siteUrl: userDeclaredUrl ? userDeclaredUrl : site.URL,
+					siteUrl: userRequestsHidingUrl
+						? translate( '[visible only to staff]' ) + ' help@' + siteUrl
+						: siteUrl,
 				},
 			} );
 
 			if ( userDeclaredUrl ) {
 				blogHelpMessage +=
-					' ' + translate( 'This blog is not linked to my WordPress.com account.' );
+					' ' + translate( 'This site is not linked to my WordPress.com account.' );
 			}
 		}
 
@@ -482,6 +496,7 @@ class HelpContact extends React.Component {
 					showHowYouFeelField: false,
 					showSiteField: true,
 					showAlternativeSiteOptionsField: true,
+					showHidingUrlOption: true,
 					showQASuggestions: true,
 				};
 		}
