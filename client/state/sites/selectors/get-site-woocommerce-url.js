@@ -11,6 +11,6 @@ import getSiteAdminUrl from './get-site-admin-url';
  * @param  {number}  siteId Site ID
  * @returns {?string}        Full URL to WooCommerce plugin in wp-admin
  */
-export default function getSiteWoocommerceUrl( state, siteId ) {
+export default function getSiteWooCommerceUrl( state, siteId ) {
 	return getSiteAdminUrl( state, siteId, 'admin.php?page=wc-admin&from-calypso' );
 }

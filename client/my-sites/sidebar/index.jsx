@@ -55,7 +55,7 @@ import {
 	canCurrentUserUseEarn,
 	getSiteOption,
 	canCurrentUserUseWooCommerceCoreStore,
-	getSiteWoocommerceUrl,
+	getSiteWooCommerceUrl,
 } from 'calypso/state/sites/selectors';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
@@ -1207,7 +1207,7 @@ function mapStateToProps( state ) {
 		sitePlanSlug: getSitePlanSlug( state, siteId ),
 		onboardingUrl: getOnboardingUrl( state ),
 		isSiteWpcomStore: getSiteOption( state, siteId, 'is_wpcom_store' ), // 'is_automated_transfer' && 'woocommerce_is_active'
-		woocommerceUrl: getSiteWoocommerceUrl( state, siteId ),
+		woocommerceUrl: getSiteWooCommerceUrl( state, siteId ),
 	};
 }
 

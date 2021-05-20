@@ -211,6 +211,19 @@ export function isPluginActionInProgress( state, siteId, pluginId, action ) {
 }
 
 /**
+ * Whether the plugin's status for one or more recent actions is completed.
+ *
+ * @param  {object}       state    Global state tree
+ * @param  {number}       siteId   ID of the site
+ * @param  {string}       pluginId ID of the plugin
+ * @param  {string|Array} action   Action, or array of actions of interest
+ * @returns {boolean}              True if one or more specified actions are completed, false otherwise.
+ */
+export function isPluginActionCompleted( state, siteId, pluginId, action ) {
+	return isPluginActionStatus( state, siteId, pluginId, action, 'completed' );
+}
+
+/**
  * Retrieve all plugin statuses of a certain type.
  *
  * @param  {object} state    Global state tree
