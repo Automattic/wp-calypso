@@ -22,7 +22,7 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { Button } from '@automattic/components';
-import { isATEnabled } from 'calypso/lib/automated-transfer';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
@@ -49,7 +49,7 @@ const InstallThemeButton = connectOptions(
 		siteSlug,
 		dispatchTracksEvent,
 		canUploadThemesOrPlugins,
-		ATEnabled,
+		atomicSite,
 		allMySites,
 	} ) => {
 		if ( ! isLoggedIn || isMultisite ) {
@@ -61,7 +61,7 @@ const InstallThemeButton = connectOptions(
 			dispatchTracksEvent( {
 				tracksEventProps: {
 					is_all_my_sites: allMySites,
-					is_atomic: ATEnabled,
+					is_atomic: atomicSite,
 					is_jetpack_connected: jetpackSite,
 				},
 			} );
@@ -89,7 +89,7 @@ const mapStateToProps = ( state ) => {
 		isMultisite: isJetpackSiteMultiSite( state, selectedSiteId ),
 		jetpackSite: Boolean( isJetpackSite( state, selectedSiteId ) ),
 		canUploadThemesOrPlugins: siteCanUploadThemesOrPlugins( state, selectedSiteId ),
-		ATEnabled: Boolean( isATEnabled( selectedSite ) ),
+		atomicSite: Boolean( isAtomicSite( selectedSite ) ),
 	};
 };
 
