@@ -67,8 +67,6 @@ import { getTld } from 'calypso/lib/domains';
 import { isDiscountActive } from 'calypso/state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
 import PlanTypeSelector from './plan-type-selector';
-import { ProvideExperimentData } from 'calypso/lib/explat';
-import PulsingDot from 'calypso/components/pulsing-dot';
 
 /**
  * Style dependencies
@@ -105,7 +103,7 @@ export class PlansFeaturesMain extends Component {
 		}
 	}
 
-	showFeatureComparison( experimentVariation ) {
+	showFeatureComparison() {
 		const {
 			basePlansPath,
 			customerType,
@@ -125,7 +123,7 @@ export class PlansFeaturesMain extends Component {
 			isReskinned,
 		} = this.props;
 
-		const plans = this.getPlansForPlanFeatures( experimentVariation );
+		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 
 		return (
@@ -167,7 +165,7 @@ export class PlansFeaturesMain extends Component {
 		);
 	}
 
-	getPlanFeatures( experimentVariation ) {
+	getPlanFeatures() {
 		const {
 			basePlansPath,
 			customerType,
@@ -189,7 +187,7 @@ export class PlansFeaturesMain extends Component {
 			redirectToAddDomainFlow,
 		} = this.props;
 
-		const plans = this.getPlansForPlanFeatures( experimentVariation );
+		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 
 		return (
@@ -246,7 +244,7 @@ export class PlansFeaturesMain extends Component {
 		return plans[ intervalType ] || defaultValue || TERM_ANNUALLY;
 	}
 
-	getPlansForPlanFeatures( experimentVariation ) {
+	getPlansForPlanFeatures() {
 		const {
 			intervalType,
 			selectedPlan,
@@ -287,10 +285,6 @@ export class PlansFeaturesMain extends Component {
 
 		if ( hidePremiumPlan ) {
 			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
-		}
-
-		if ( 'treatment' === experimentVariation ) {
-			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
 		}
 
 		if ( ! isEnabled( 'plans/personal-plan' ) ) {
@@ -440,63 +434,41 @@ export class PlansFeaturesMain extends Component {
 			customHeader,
 			redirectToAddDomainFlow,
 			shouldShowPlansFeatureComparison,
-			flowName,
 		} = this.props;
 
+		const plans = this.getPlansForPlanFeatures();
+		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+		const kindOfPlanTypeSelector = this.getKindOfPlanTypeSelector( this.props );
+
+		// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
+		let hidePlanSelector =
+			kindOfPlanTypeSelector === 'customer' && this.isDisplayingPlansNeededForFeature();
+
+		// In the "purchase a plan and free domain" flow we do not want to show
+		// monthly plans because monthly plans do not come with a free domain.
+		if ( redirectToAddDomainFlow ) {
+			hidePlanSelector = true;
+		}
+
 		return (
-			<ProvideExperimentData
-				name="hide_ecommerce_launch_site"
-				options={ { isEligible: 'launch-site' === flowName } }
-			>
-				{ ( isLoading, experimentAssignment ) => {
-					if ( isLoading ) {
-						const loadingContainerClass = 'plans__loading-container';
-						return (
-							<div className={ loadingContainerClass }>
-								<PulsingDot delay={ 400 } active />
-							</div>
-						);
-					}
+			<div className="plans-features-main">
+				<QueryPlans />
+				<QuerySites siteId={ siteId } />
+				<QuerySitePlans siteId={ siteId } />
+				<HappychatConnection />
+				<div className="plans-features-main__notice" />
 
-					const experimentVariation = experimentAssignment?.variationName;
-					const plans = this.getPlansForPlanFeatures( experimentVariation );
-					const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
-					const kindOfPlanTypeSelector = this.getKindOfPlanTypeSelector( this.props );
-
-					// If advertising plans for a certain feature, ensure user has pressed "View all plans" before they can see others
-					let hidePlanSelector =
-						kindOfPlanTypeSelector === 'customer' && this.isDisplayingPlansNeededForFeature();
-
-					// In the "purchase a plan and free domain" flow we do not want to show
-					// monthly plans because monthly plans do not come with a free domain.
-					if ( redirectToAddDomainFlow ) {
-						hidePlanSelector = true;
-					}
-
-					return (
-						<div className="plans-features-main">
-							<QueryPlans />
-							<QuerySites siteId={ siteId } />
-							<QuerySitePlans siteId={ siteId } />
-							<HappychatConnection />
-							<div className="plans-features-main__notice" />
-
-							{ customHeader }
-							{ ! hidePlanSelector && (
-								<PlanTypeSelector
-									{ ...this.props }
-									kind={ kindOfPlanTypeSelector }
-									plans={ visiblePlans }
-								/>
-							) }
-							{ shouldShowPlansFeatureComparison
-								? this.showFeatureComparison( experimentVariation )
-								: this.getPlanFeatures( experimentVariation ) }
-							{ this.mayRenderFAQ() }
-						</div>
-					);
-				} }
-			</ProvideExperimentData>
+				{ customHeader }
+				{ ! hidePlanSelector && (
+					<PlanTypeSelector
+						{ ...this.props }
+						kind={ kindOfPlanTypeSelector }
+						plans={ visiblePlans }
+					/>
+				) }
+				{ shouldShowPlansFeatureComparison ? this.showFeatureComparison() : this.getPlanFeatures() }
+				{ this.mayRenderFAQ() }
+			</div>
 		);
 	}
 

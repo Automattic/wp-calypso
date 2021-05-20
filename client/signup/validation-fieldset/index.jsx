@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import { head, values } from 'lodash';
+import { values } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:validate-fieldset' );
 
@@ -25,7 +24,7 @@ export default class ValidationFieldset extends Component {
 			<FormInputValidation
 				isError={ true }
 				isValid={ false }
-				text={ head( values( this.props.errorMessages ) ) }
+				text={ values( this.props.errorMessages )[ 0 ] }
 			/>
 		);
 

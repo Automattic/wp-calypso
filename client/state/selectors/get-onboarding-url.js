@@ -16,12 +16,6 @@ import config from '@automattic/calypso-config';
 const GUTENBOARDING_LOCALES = [ 'en', 'en-gb' ];
 
 export default function getOnboardingUrl( state ) {
-	const isDesktopApp = config.isEnabled( 'desktop' );
-
-	if ( isDesktopApp ) {
-		return `https://wordpress.com/new`;
-	}
-
 	if ( isJetpackCloud() ) {
 		return config( 'jetpack_connect_url' );
 	}

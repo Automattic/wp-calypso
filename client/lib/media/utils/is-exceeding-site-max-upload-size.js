@@ -6,7 +6,6 @@ import { includes, startsWith, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import versionCompare from 'calypso/lib/version-compare';
 import { getMimeType } from 'calypso/lib/media/utils/get-mime-type';
 
 /**
@@ -33,7 +32,6 @@ export function isExceedingSiteMaxUploadSize( item, site ) {
 	if (
 		site.jetpack &&
 		includes( get( site, 'options.active_modules' ), 'videopress' ) &&
-		versionCompare( get( site, 'options.jetpack_version' ), '4.5', '>=' ) &&
 		startsWith( getMimeType( item ), 'video/' )
 	) {
 		return null;

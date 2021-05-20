@@ -77,6 +77,7 @@ export function PurchaseModal( {
 export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.Element {
 	const onComplete = useCreatePaymentCompleteCallback( {
 		isComingFromUpsell: true,
+		siteSlug: props.siteSlug,
 	} );
 	const { stripeConfiguration } = useStripe();
 	const reduxDispatch = useDispatch();

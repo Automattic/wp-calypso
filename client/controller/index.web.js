@@ -25,7 +25,7 @@ import {
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
 import { getSiteFragment } from 'calypso/lib/route';
-import { hydrate } from './web-util.js';
+import { render, hydrate } from './web-util.js';
 
 /**
  * Re-export
@@ -73,6 +73,22 @@ export const ProviderWrappedLayout = ( {
 export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
 
 /**
+ * For logged in users with bootstrap (production), ReactDOM.hydrate().
+ * Otherwise (development), ReactDOM.render().
+ * See: https://wp.me/pd2qbF-P#comment-20
+ *
+ * @param context - Middleware context
+ */
+function smartHydrate( context ) {
+	const doHydrate =
+		! config.isEnabled( 'wpcom-user-bootstrap' ) && isUserLoggedIn( context.store.getState() )
+			? render
+			: hydrate;
+
+	doHydrate( context );
+}
+
+/**
  * Isomorphic routing helper, client side
  *
  * @param { string } route - A route path
@@ -87,7 +103,7 @@ export const makeLayout = makeLayoutMiddleware( ProviderWrappedLayout );
  * divs.
  */
 export function clientRouter( route, ...middlewares ) {
-	page( route, ...middlewares, hydrate );
+	page( route, ...middlewares, smartHydrate );
 }
 
 export function redirectLoggedOut( context, next ) {

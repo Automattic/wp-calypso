@@ -177,7 +177,7 @@ class Security2faEnable extends React.Component {
 		return (
 			<button
 				className="security-2fa-enable__toggle"
-				onClick={ function ( event ) {
+				onClick={ ( event ) => {
 					this.toggleMethod( event );
 					gaRecordEvent(
 						'Me',
@@ -185,7 +185,7 @@ class Security2faEnable extends React.Component {
 						'current-method',
 						this.state.method
 					);
-				}.bind( this ) }
+				} }
 			/>
 		);
 	};
@@ -360,9 +360,9 @@ class Security2faEnable extends React.Component {
 				<FormButton
 					className="security-2fa-enable__verify"
 					disabled={ this.getFormDisabled() }
-					onClick={ function () {
+					onClick={ () => {
 						gaRecordEvent( 'Me', 'Clicked On Enable 2fa Button', 'method', this.state.method );
-					}.bind( this ) }
+					} }
 				>
 					{ this.state.submittingCode
 						? this.props.translate( 'Enabling…', {
@@ -377,10 +377,10 @@ class Security2faEnable extends React.Component {
 					<FormButton
 						disabled={ ! this.state.smsRequestsAllowed }
 						isPrimary={ false }
-						onClick={ function ( event ) {
+						onClick={ ( event ) => {
 							gaRecordEvent( 'Me', 'Clicked On Resend SMS Button' );
 							this.onResendCode( event );
-						}.bind( this ) }
+						} }
 					>
 						{ this.props.translate( 'Resend Code', {
 							context: 'A button label to let a user get the SMS code sent again.',
@@ -389,10 +389,10 @@ class Security2faEnable extends React.Component {
 				) : (
 					<FormButton
 						isPrimary={ false }
-						onClick={ function ( event ) {
+						onClick={ ( event ) => {
 							gaRecordEvent( 'Me', 'Clicked On Enable SMS Use SMS Button' );
 							this.onVerifyBySMS( event );
-						}.bind( this ) }
+						} }
 					>
 						{ this.props.translate( 'Use SMS', {
 							context: 'A button label to let a user switch to enabling Two-Step by SMS.',
@@ -403,7 +403,7 @@ class Security2faEnable extends React.Component {
 				<FormButton
 					className="security-2fa-enable__cancel"
 					isPrimary={ false }
-					onClick={ function ( event ) {
+					onClick={ ( event ) => {
 						gaRecordEvent(
 							'Me',
 							'Clicked On Step 2 Cancel 2fa Button',
@@ -411,7 +411,7 @@ class Security2faEnable extends React.Component {
 							this.state.method
 						);
 						this.props.onCancel( event );
-					}.bind( this ) }
+					} }
 				>
 					{ this.props.translate( 'Cancel' ) }
 				</FormButton>

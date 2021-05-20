@@ -1,8 +1,6 @@
 /**
  * Internal dependencies
  */
-
-import config from '@automattic/calypso-config';
 import { makeLayout, redirectLoggedOut } from 'calypso/controller';
 import { details, fetchThemeDetailsData } from './controller';
 import { siteSelection } from 'calypso/my-sites/controller';
@@ -17,14 +15,12 @@ function redirectToLoginIfSiteRequested( context, next ) {
 }
 
 export default function ( router ) {
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		router(
-			'/theme/:slug/:section(setup|support)?/:site_id?',
-			redirectToLoginIfSiteRequested,
-			siteSelection,
-			fetchThemeDetailsData,
-			details,
-			makeLayout
-		);
-	}
+	router(
+		'/theme/:slug/:section(setup|support)?/:site_id?',
+		redirectToLoginIfSiteRequested,
+		siteSelection,
+		fetchThemeDetailsData,
+		details,
+		makeLayout
+	);
 }

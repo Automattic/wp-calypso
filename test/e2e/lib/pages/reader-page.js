@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -15,18 +15,18 @@ export default class ReaderPage extends AsyncBaseContainer {
 		if ( ! url ) {
 			url = ReaderPage.getReaderURL();
 		}
-		super( driver, by.css( '.is-section-reader' ), url );
+		super( driver, By.css( '.is-section-reader' ), url );
 	}
 
 	async siteOfLatestPost() {
 		const href = await this.driver
-			.findElement( by.css( '.reader-visit-link' ) )
+			.findElement( By.css( '.reader-visit-link' ) )
 			.getAttribute( 'href' );
 		return new URL( href ).host;
 	}
 
 	async shareLatestPost() {
-		const shareButtonLocator = by.css( '.reader-share__button' );
+		const shareButtonLocator = By.css( '.reader-share__button' );
 
 		// Allow the components to settle and finish loading, one hopes. There
 		// continues to be errors where the test cannot find the site selector
@@ -38,17 +38,17 @@ export default class ReaderPage extends AsyncBaseContainer {
 		const hasSharablePost = await driverHelper.isElementLocated( this.driver, shareButtonLocator );
 		if ( ! hasSharablePost ) {
 			// no shareable posts on this screen. try moving into a combined card
-			const firstComboCardPostLocator = by.css( '.reader-combined-card__post-title-link' );
+			const firstComboCardPostLocator = By.css( '.reader-combined-card__post-title-link' );
 			await driverHelper.clickWhenClickable( this.driver, firstComboCardPostLocator );
 		}
 
-		const clickAndOpenShareModal = async () => {
+		async function clickAndOpenShareModal() {
 			await driverHelper.clickWhenClickable( this.driver, shareButtonLocator );
-			return await driverHelper.clickWhenClickable(
+			return driverHelper.clickWhenClickable(
 				this.driver,
-				by.css( '.site-selector__sites .site__content' )
+				By.css( '.site-selector__sites .site__content' )
 			);
-		};
+		}
 
 		// Try a second time if the share menu is closed during the operation
 		// the first time.
@@ -62,22 +62,21 @@ export default class ReaderPage extends AsyncBaseContainer {
 	}
 
 	async commentOnLatestPost( comment ) {
-		await driverHelper.clickWhenClickable( this.driver, by.css( '.comment-button' ) );
+		await driverHelper.clickWhenClickable( this.driver, By.css( '.comment-button' ) );
 		await driverHelper.setWhenSettable(
 			this.driver,
-			by.css( '.comments__form textarea' ),
+			By.css( '.comments__form textarea' ),
 			comment
 		);
-		return await driverHelper.clickWhenClickable( this.driver, by.css( '.comments__form button' ) );
+		return driverHelper.clickWhenClickable( this.driver, By.css( '.comments__form button' ) );
 	}
 
-	async waitForCommentToAppear( comment ) {
-		const commentLocator = by.css( '.comments__comment-content' );
-		return await driverHelper.waitUntilElementWithTextLocated(
-			this.driver,
-			commentLocator,
+	waitForCommentToAppear( comment ) {
+		const commentLocator = driverHelper.createTextLocator(
+			By.css( '.comments__comment-content' ),
 			comment
 		);
+		return driverHelper.waitUntilElementLocated( this.driver, commentLocator );
 	}
 
 	static getReaderURL() {

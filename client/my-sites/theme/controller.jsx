@@ -5,7 +5,6 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import debugFactory from 'debug';
-import { startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -15,12 +14,11 @@ import ThemeNotFoundError from './theme-not-found-error';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { requestTheme, setBackPath } from 'calypso/state/themes/actions';
 import { getTheme, getThemeRequestErrors } from 'calypso/state/themes/selectors';
-import config from '@automattic/calypso-config';
 
 const debug = debugFactory( 'calypso:themes' );
 
 export function fetchThemeDetailsData( context, next ) {
-	if ( ! config.isEnabled( 'manage/themes/details' ) || ! context.isServerSide ) {
+	if ( ! context.isServerSide ) {
 		return next();
 	}
 
@@ -53,7 +51,7 @@ export function fetchThemeDetailsData( context, next ) {
 
 export function details( context, next ) {
 	const { slug, section } = context.params;
-	if ( startsWith( context.prevPath, '/themes' ) ) {
+	if ( context.prevPath && context.prevPath.startsWith( '/themes' ) ) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
 	}
 

@@ -60,10 +60,11 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
-	emailManagementForwarding,
 	emailManagementAddGSuiteUsers,
-	emailManagementNewGSuiteAccount,
+	emailManagementForwarding,
 	emailManagementManageTitanAccount,
+	emailManagementManageTitanMailboxes,
+	emailManagementNewGSuiteAccount,
 	emailManagementNewTitanAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
@@ -184,9 +185,10 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		domainManagementTransferToOtherSite,
 		emailManagement,
 		emailManagementAddGSuiteUsers,
-		emailManagementNewGSuiteAccount,
 		emailManagementForwarding,
 		emailManagementManageTitanAccount,
+		emailManagementManageTitanMailboxes,
+		emailManagementNewGSuiteAccount,
 		emailManagementNewTitanAccount,
 		emailManagementTitanControlPanelRedirect,
 	];

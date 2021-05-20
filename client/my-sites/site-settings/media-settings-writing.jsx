@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -70,13 +70,12 @@ class MediaSettingsWriting extends Component {
 							disabled={ isRequestingOrSaving }
 						/>
 						<div className="site-settings__child-settings">
-							<FormToggle
+							<ToggleControl
 								checked={ fields.carousel_display_exif || false }
 								disabled={ isRequestingOrSaving || ! carouselActive }
 								onChange={ handleAutosavingToggle( 'carousel_display_exif' ) }
-							>
-								{ translate( 'Show photo metadata in carousel, when available' ) }
-							</FormToggle>
+								label={ translate( 'Show photo metadata in carousel, when available' ) }
+							/>
 							<FormLabel className={ labelClassName } htmlFor="carousel_background_color">
 								{ translate( 'Background Color' ) }
 							</FormLabel>

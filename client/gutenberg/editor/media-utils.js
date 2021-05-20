@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, head, includes, reduce } from 'lodash';
+import { get, includes, reduce } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -41,7 +41,7 @@ export const mediaCalypsoToGutenberg = ( media ) => {
 			),
 		},
 		title: get( media, 'title' ),
-		type: head( get( media, 'mime_type', '' ).split( '/' ) ),
+		type: get( media, 'mime_type', '' ).split( '/' )[ 0 ],
 		width: get( media, 'width' ),
 	};
 };

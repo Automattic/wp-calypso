@@ -265,11 +265,6 @@ export function serverRender( req, res ) {
 
 	attachBuildTimestamp( context );
 
-	if ( config.isEnabled( 'desktop' ) ) {
-		res.send( renderJsx( 'desktop', context ) );
-		return;
-	}
-
 	res.send( renderJsx( 'index', context ) );
 }
 

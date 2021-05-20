@@ -6,6 +6,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { addFilter, removeFilter } from '@wordpress/hooks';
 import { PagePatternModal, PatternDefinition } from '@automattic/page-pattern-modal';
 import React, { useCallback } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 const INSERTING_HOOK_NAME = 'isInsertingPagePattern';
 const INSERTING_HOOK_NAMESPACE = 'automattic/full-site-editing/inserting-pattern';
@@ -18,19 +19,27 @@ interface PagePatternsPluginProps {
 
 export function PagePatternsPlugin( props: PagePatternsPluginProps ): JSX.Element {
 	const { setOpenState } = useDispatch( 'automattic/starter-page-layouts' );
+	const { setUsedPageOrPatternsModal } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 	const { editPost } = useDispatch( 'core/editor' );
 	const { toggleFeature } = useDispatch( 'core/edit-post' );
 	const { disableTips } = useDispatch( 'core/nux' );
 
 	const selectProps = useSelect( ( select ) => {
-		const { isOpen } = select( 'automattic/starter-page-layouts' );
+		const { isOpen, isPatternPicker } = select( 'automattic/starter-page-layouts' );
 		return {
 			isOpen: isOpen(),
 			isWelcomeGuideActive: select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' ) as boolean, // Gutenberg 7.2.0 or higher
 			areTipsEnabled: select( 'core/nux' )
 				? ( select( 'core/nux' ).areTipsEnabled() as boolean )
 				: false, // Gutenberg 7.1.0 or lower
+			...( isPatternPicker() && {
+				title: __( 'Choose a Pattern', 'full-site-editing' ),
+				description: __(
+					'Pick a pre-defined layout or continue with a blank page',
+					'full-site-editing'
+				),
+			} ),
 		};
 	} );
 
@@ -88,10 +97,15 @@ export function PagePatternsPlugin( props: PagePatternsPluginProps ): JSX.Elemen
 		}
 	}, [ areTipsEnabled, disableTips, isWelcomeGuideActive, toggleFeature ] );
 
+	const handleClose = useCallback( () => {
+		setUsedPageOrPatternsModal();
+		setOpenState( 'CLOSED' );
+	}, [ setOpenState, setUsedPageOrPatternsModal ] );
+
 	return (
 		<PagePatternModal
 			{ ...selectProps }
-			setOpenState={ setOpenState }
+			onClose={ handleClose }
 			savePatternChoice={ savePatternChoice }
 			insertPattern={ insertPattern }
 			hideWelcomeGuide={ hideWelcomeGuide }

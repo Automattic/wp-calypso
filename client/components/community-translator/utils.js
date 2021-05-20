@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { head, find, get } from 'lodash';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,7 +39,7 @@ export function getSingleTranslationData(
 	];
 
 	return post( glotPressUrl, postFormData.join( '' ) ).then( ( glotPressDataEntries ) =>
-		normalizeDetailsFromTranslationData( head( glotPressDataEntries ) )
+		normalizeDetailsFromTranslationData( glotPressDataEntries[ 0 ] )
 	);
 }
 

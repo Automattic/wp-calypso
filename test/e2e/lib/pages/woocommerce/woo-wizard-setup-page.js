@@ -57,12 +57,7 @@ export default class WooWizardSetupPage extends AsyncBaseContainer {
 		// await driverHelper.clickWhenClickable( this.driver, currencyLocator );
 		// await driverHelper.clickWhenClickable( this.driver, productTypeContainerLocator );
 		// await driverHelper.clickWhenClickable( this.driver, productTypeLocator );
-
-		// if ( inPerson ) {
-		// 	await driverHelper.setCheckbox( this.driver, inPersonLocator );
-		// } else {
-		// 	await driverHelper.unsetCheckbox( this.driver, inPersonLocator );
-		// }
+		// await driverHelper.setCheckbox( this.driver, inPersonLocator, inPerson );
 
 		await driverHelper.clickWhenClickable( this.driver, submitButtonLocator );
 

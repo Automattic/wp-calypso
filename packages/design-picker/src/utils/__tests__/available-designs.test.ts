@@ -9,6 +9,7 @@ import '@automattic/calypso-config';
 import '../../constants';
 import { getDesignUrl, getDesignImageUrl, getAvailableDesigns } from '../available-designs';
 import { availableDesignsConfig } from '../available-designs-config';
+import { shuffleArray } from '../shuffle';
 
 import type { Design } from '../../types';
 
@@ -16,6 +17,12 @@ jest.mock( '@automattic/calypso-config', () => ( {
 	// Useful because the getAvailableDesigns function uses feature flags for
 	// arguments default values
 	isEnabled: () => false,
+} ) );
+
+jest.mock( '../shuffle', () => ( {
+	// Mock the shuffleArray function to ensure test repeatability.
+	// The function itself is unit-tested separately
+	shuffleArray: jest.fn( ( array ) => array ),
 } ) );
 
 jest.mock( '../available-designs-config', () => {
@@ -197,39 +204,16 @@ describe( 'Design Picker design utils', () => {
 			);
 		} );
 
-		// The next test is temporarily disabled because of its flakeyness.
-		// Tracked in https://github.com/Automattic/wp-calypso/issues/51743
-		// eslint-disable-next-line jest/no-disabled-tests
-		it.skip( 'should randomize the results order when the randomize flag is specified', () => {
-			// Randomization is checked by comparing randomized and non-randomized
-			// return values, and checking that these values are normally different,
-			// but that they are equal after being sorted.
-			// Testing randomness is hard! Since the results of a random shuffle can be the same
-			// as the non-shuffled version, this check is repeated `maxRepetitions` times
-			// before marking a failed test.
-
-			const sortDesignsBySlug = ( a: Design, b: Design ) => a.slug.localeCompare( b.slug );
-
-			const maxRepetitions = 10;
-
+		it( 'should randomize the results order when the randomize flag is specified', () => {
+			// Since `shuffleArray` is already unit-tested, we just need to check
+			// that it's only called when the `randomize` flag is specified.
 			const designs = getAvailableDesigns( { randomize: false } ).featured;
-			let designsRandom: Design[] = [];
+			expect( shuffleArray ).not.toHaveBeenCalled();
 
-			let isOrderDifferent = false;
-			let i = 0;
-			while ( i < maxRepetitions && ! isOrderDifferent ) {
-				designsRandom = getAvailableDesigns( { randomize: true } ).featured;
+			getAvailableDesigns( { randomize: true } ).featured;
 
-				const differentContent = JSON.stringify( designs ) !== JSON.stringify( designsRandom );
-				const sameContentWhenSorted =
-					JSON.stringify( [ ...designs ].sort( sortDesignsBySlug ) ) ===
-					JSON.stringify( [ ...designsRandom ].sort( sortDesignsBySlug ) );
-
-				isOrderDifferent = differentContent && sameContentWhenSorted;
-				i += 1;
-			}
-
-			expect( isOrderDifferent ).toBeTruthy();
+			expect( shuffleArray ).toBeCalledTimes( 1 );
+			expect( shuffleArray ).toBeCalledWith( designs );
 		} );
 	} );
 } );

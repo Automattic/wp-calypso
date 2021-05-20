@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-
-import { compact, get, head, isEqual, sortBy } from 'lodash';
+import { compact, get, isEqual, sortBy } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:data-layer:remove-duplicate-gets' );
 
@@ -64,7 +63,12 @@ const unionWith = ( a = [], b = [] ) => [
  * @returns {string} unique key up to duplicate request descriptions
  */
 export const buildKey = ( { path, apiNamespace, apiVersion, query = {} } ) =>
-	JSON.stringify( [ path, apiNamespace, apiVersion, sortBy( Object.entries( query ), head ) ] );
+	JSON.stringify( [
+		path,
+		apiNamespace,
+		apiVersion,
+		sortBy( Object.entries( query ), ( q ) => q[ 0 ] ),
+	] );
 
 /**
  * Joins a responder action into a unique list of responder actions

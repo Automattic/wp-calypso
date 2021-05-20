@@ -9,6 +9,7 @@ import debugFactory from 'debug';
 import emailValidator from 'email-validator';
 import { debounce, flowRight as compose, get, has, map, size } from 'lodash';
 import { connect } from 'react-redux';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -59,7 +60,6 @@ import {
 import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
 import user from 'calypso/lib/user';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import {
 	cancelPendingEmailChange,
@@ -1070,27 +1070,30 @@ class Account extends React.Component {
 								<FormLabel id="account__link_destination" htmlFor="link_destination">
 									{ translate( 'Dashboard appearance' ) }
 								</FormLabel>
-								<FormToggle
+								<ToggleControl
 									checked={ !! this.getUserSetting( linkDestinationKey ) }
 									onChange={ this.toggleLinkDestination }
 									disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
-								>
-									{ translate(
-										'{{spanlead}}Show wp-admin pages if available{{/spanlead}} {{spanextra}}Replace your dashboard pages with more advanced wp-admin equivalents.{{/spanextra}}',
-										{
-											components: {
-												spanlead: <strong className="account__link-destination-label-lead" />,
-												spanextra: <span className="account__link-destination-label-extra" />,
-											},
-										}
-									) }
-									<InlineSupportLink
-										supportPostId={ 80368 }
-										supportLink={ localizeUrl(
-											'https://wordpress.com/support/account-settings/#dashboard-appearance'
-										) }
-									/>
-								</FormToggle>
+									label={
+										<>
+											{ translate(
+												'{{spanlead}}Show wp-admin pages if available{{/spanlead}} {{spanextra}}Replace your dashboard pages with more advanced wp-admin equivalents.{{/spanextra}}',
+												{
+													components: {
+														spanlead: <strong className="account__link-destination-label-lead" />,
+														spanextra: <span className="account__link-destination-label-extra" />,
+													},
+												}
+											) }
+											<InlineSupportLink
+												supportPostId={ 80368 }
+												supportLink={ localizeUrl(
+													'https://wordpress.com/support/account-settings/#dashboard-appearance'
+												) }
+											/>
+										</>
+									}
+								/>
 							</FormFieldset>
 						) }
 

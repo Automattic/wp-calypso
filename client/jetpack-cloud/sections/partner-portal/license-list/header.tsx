@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropsWithChildren, ReactElement, useCallback, useContext } from 'react';
+import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import classnames from 'classnames';
@@ -19,6 +20,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { addQueryArgs } from 'calypso/lib/route';
 import { internalToPublicLicenseSortField } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -58,9 +60,17 @@ function SortButton( {
 	currentSortDirection,
 	children,
 }: PropsWithChildren< SortButtonProps > ) {
+	const dispatch = useDispatch();
 	const sort = useCallback( () => {
 		setSortingConfig( sortField, currentSortField, currentSortDirection );
-	}, [ sortField, currentSortField, currentSortDirection ] );
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_license_list_sort_button_click', {
+				sort_field: sortField,
+				current_sort_field: currentSortField,
+				current_sort_direction: currentSortDirection,
+			} )
+		);
+	}, [ dispatch, sortField, currentSortField, currentSortDirection ] );
 
 	return (
 		<h2 className={ classnames( { 'is-selected': sortField === currentSortField } ) }>

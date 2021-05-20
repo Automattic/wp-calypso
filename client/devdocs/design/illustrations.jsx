@@ -14,10 +14,6 @@ import Main from 'calypso/components/main';
  * Illustrations
  */
 import adwordsGoogle from 'calypso/assets/images/illustrations/adwords-google.svg';
-import appBannerEditor from 'calypso/assets/images/illustrations/app-banner-editor.svg';
-import appBannerNotifications from 'calypso/assets/images/illustrations/app-banner-notifications.svg';
-import appBannerReader from 'calypso/assets/images/illustrations/app-banner-reader.svg';
-import appBannerStats from 'calypso/assets/images/illustrations/app-banner-stats.svg';
 import apps from 'calypso/assets/images/illustrations/apps.svg';
 import blockEditorFade from 'calypso/assets/images/illustrations/block-editor-fade.svg';
 import builderReferral from 'calypso/assets/images/illustrations/builder-referral.svg';
@@ -78,18 +74,6 @@ export default class Illustrations extends React.PureComponent {
 					<div className="design__illustrations-illustrations">
 						<div className="design__illustrations-illustration">
 							<img src={ adwordsGoogle } alt="" />
-						</div>
-						<div className="design__illustrations-illustration">
-							<img src={ appBannerEditor } alt="" />
-						</div>
-						<div className="design__illustrations-illustration">
-							<img src={ appBannerNotifications } alt="" />
-						</div>
-						<div className="design__illustrations-illustration">
-							<img src={ appBannerReader } alt="" />
-						</div>
-						<div className="design__illustrations-illustration">
-							<img src={ appBannerStats } alt="" />
 						</div>
 						<div className="design__illustrations-illustration">
 							<img src={ apps } alt="" />

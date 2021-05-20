@@ -6,12 +6,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import FoldableCard from 'calypso/components/foldable-card';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
@@ -96,16 +96,15 @@ class JetpackSiteStats extends Component {
 		}
 
 		return (
-			<FormToggle
+			<ToggleControl
 				checked={ checked }
 				disabled={
 					isRequestingSettings || isSavingSettings || moduleUnavailable || ! statsModuleActive
 				}
 				onChange={ onChange }
 				key={ name }
-			>
-				{ label }
-			</FormToggle>
+				label={ label }
+			/>
 		);
 	}
 

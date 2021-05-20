@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getSelectedSiteWithFallback } from 'calypso/state/sites/selectors';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';

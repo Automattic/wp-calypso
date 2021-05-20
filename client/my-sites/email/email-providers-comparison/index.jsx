@@ -39,6 +39,7 @@ import { getAnnualPrice, getGoogleMailServiceFamily, getMonthlyPrice } from 'cal
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getTitanProductName } from 'calypso/lib/titan';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -392,7 +393,13 @@ class EmailProvidersComparison extends React.Component {
 					busy={ this.state.addingToCart }
 					onClick={ this.onTitanConfirmNewMailboxes }
 				>
-					{ translate( 'Add Email' ) }
+					{ translate( 'Add %(titanProductName)s', {
+						args: {
+							titanProductName: getTitanProductName(),
+						},
+						comment:
+							'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
+					} ) }
 				</Button>
 			</TitanNewMailboxList>
 		);
@@ -401,7 +408,7 @@ class EmailProvidersComparison extends React.Component {
 			<EmailProviderCard
 				providerKey="titan"
 				logo={ logo }
-				title={ translate( 'Email' ) }
+				title={ getTitanProductName() }
 				badge={ poweredByTitan }
 				description={ translate(
 					'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
@@ -412,7 +419,13 @@ class EmailProvidersComparison extends React.Component {
 				discount={ discount }
 				formFields={ formFields }
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
-				expandButtonLabel={ translate( 'Add Email' ) }
+				expandButtonLabel={ translate( 'Add %(titanProductName)s', {
+					args: {
+						titanProductName: getTitanProductName(),
+					},
+					comment:
+						'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
+				} ) }
 				features={ getTitanFeatures() }
 			/>
 		);

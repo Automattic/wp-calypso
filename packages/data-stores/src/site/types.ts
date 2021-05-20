@@ -65,6 +65,7 @@ export interface CreateSiteParams {
 		selected_features?: FeatureId[];
 		wpcom_public_coming_soon?: number;
 		anchor_fm_podcast_id?: string;
+		is_blank_canvas?: boolean;
 	};
 }
 

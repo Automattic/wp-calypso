@@ -113,7 +113,7 @@ export class PlanFeaturesComparison extends Component {
 			const classes = classNames( 'plan-features-comparison__table-item', {
 				'has-border-top': ! isReskinned,
 			} );
-			const audience = planConstantObj.getAudience();
+			const audience = planConstantObj.getAudience?.();
 			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
 			const { annualPricePerMonth, isMonthlyPlan } = properties;
 
@@ -364,7 +364,7 @@ export default connect(
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = true;
-				const features = planConstantObj.getPlanCompareFeatures( abtest );
+				const features = planConstantObj.getPlanCompareFeatures();
 				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject ) {
 					isPlaceholder = true;

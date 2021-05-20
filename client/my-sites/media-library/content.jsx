@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { groupBy, head, isEmpty, map, size, values } from 'lodash';
+import { groupBy, isEmpty, map, size, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
 import classnames from 'classnames';
@@ -46,6 +46,7 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
 import './content.scss';
 
 const noop = () => {};
+const first = ( arr ) => arr[ 0 ];
 
 export class MediaLibraryContent extends React.Component {
 	static propTypes = {
@@ -461,7 +462,7 @@ export class MediaLibraryContent extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const guidedTourState = getGuidedTourState( state );
-		const mediaValidationErrorTypes = values( ownProps.mediaValidationErrors ).map( head );
+		const mediaValidationErrorTypes = values( ownProps.mediaValidationErrors ).map( first );
 		const shouldPauseGuidedTour =
 			! isEmpty( guidedTourState.tour ) && 0 < size( mediaValidationErrorTypes );
 		const googleConnection = getKeyringConnectionsByName( state, 'google_photos' );

@@ -121,19 +121,15 @@ class SiteRedirectStep extends React.Component {
 			return;
 		}
 
-		canRedirect(
-			this.props.selectedSite.ID,
-			domain,
-			function ( error ) {
-				if ( error ) {
-					this.props.errorNotice( this.getValidationErrorMessage( domain, error ) );
-					this.setState( { isSubmitting: false } );
-					return;
-				}
+		canRedirect( this.props.selectedSite.ID, domain, ( error ) => {
+			if ( error ) {
+				this.props.errorNotice( this.getValidationErrorMessage( domain, error ) );
+				this.setState( { isSubmitting: false } );
+				return;
+			}
 
-				this.addSiteRedirectToCart( domain );
-			}.bind( this )
-		);
+			this.addSiteRedirectToCart( domain );
+		} );
 	};
 
 	addSiteRedirectToCart = ( domain ) => {

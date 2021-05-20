@@ -11,7 +11,7 @@ import Gridicon from 'calypso/components/gridicon';
  */
 import ActionButtons from './actions';
 import { Button } from '@automattic/components';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getSelectedSiteWithFallback } from 'calypso/state/sites/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import SiteIcon from 'calypso/blocks/site-icon';
 

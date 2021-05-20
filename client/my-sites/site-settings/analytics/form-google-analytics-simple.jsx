@@ -2,21 +2,24 @@
  * External dependencies
  */
 import React, { useEffect } from 'react';
-
 import { CompactCard } from '@automattic/components';
-import ExternalLink from 'calypso/components/external-link';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import FormToggle from 'calypso/components/forms/form-toggle';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormTextValidation from 'calypso/components/forms/form-input-validation';
-import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import {
 	findFirstSimilarPlanKey,
 	FEATURE_GOOGLE_ANALYTICS,
 	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
+import { ToggleControl } from '@wordpress/components';
+
+/**
+ * Internal dependencies
+ */
+import ExternalLink from 'calypso/components/external-link';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextValidation from 'calypso/components/forms/form-input-validation';
+import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
@@ -191,13 +194,12 @@ const GoogleAnalyticsSimpleForm = ( {
 				) : (
 					<CompactCard>
 						<div className="analytics site-settings__analytics">
-							<FormToggle
+							<ToggleControl
 								checked={ displayForm }
 								disabled={ isRequestingSettings || isSavingSettings }
 								onChange={ () => handleFormToggle( ! displayForm ) }
-							>
-								{ translate( 'Add Google' ) }
-							</FormToggle>
+								label={ translate( 'Add Google' ) }
+							/>
 						</div>
 					</CompactCard>
 				) }

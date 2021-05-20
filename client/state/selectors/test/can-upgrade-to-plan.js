@@ -109,9 +109,6 @@ describe( 'canUpgradeToPlan', () => {
 		[
 			[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS ],
 			[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS_2_YEARS ],
-			[ PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PERSONAL ],
-			[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PREMIUM ],
-			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_BUSINESS ],
 		].forEach( ( [ planOwned, planToPurchase ] ) =>
 			expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).toBe(
 				true
