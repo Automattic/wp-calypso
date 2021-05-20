@@ -39,6 +39,7 @@ function getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) {
 
 const InstallThemeButton = connectOptions(
 	( {
+		selectedSiteId,
 		isMultisite,
 		jetpackSite,
 		isLoggedIn,
@@ -59,6 +60,7 @@ const InstallThemeButton = connectOptions(
 					is_all_my_sites: allMySites,
 					is_atomic: atomicSite,
 					is_jetpack_connected: jetpackSite,
+					site_id: selectedSiteId,
 				},
 			} );
 		};
@@ -78,6 +80,7 @@ const InstallThemeButton = connectOptions(
 const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
+		selectedSiteId,
 		allMySites: ! selectedSiteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		isLoggedIn: isUserLoggedIn( state ),
