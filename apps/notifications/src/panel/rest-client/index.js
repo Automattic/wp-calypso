@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { difference, pick, range } from 'lodash';
+import { difference, range } from 'lodash';
 
 /**
  * Internal dependencies
@@ -221,7 +221,7 @@ function getNotes() {
 		// Store id/hash pairs for now until properly reduxified
 		// this is used as a network optimization to quickly determine
 		// changes without downloading all the data
-		this.noteList = data.notes.map( ( note ) => pick( note, [ 'id', 'note_hash' ] ) );
+		this.noteList = data.notes.map( ( note ) => ( { id: note.id, note_hash: note.note_hash } ) );
 
 		this.updateLastSeenTime( Number( data.last_seen_time ) );
 		if ( parameters.number === settings.max_limit ) {
