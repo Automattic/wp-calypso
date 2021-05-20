@@ -14,9 +14,11 @@ import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import SectionHeader from 'calypso/components/section-header';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import QuerySharingButtons from 'calypso/components/data/query-sharing-buttons';
+import getSharingButtons from 'calypso/state/selectors/get-sharing-buttons';
 import {
 	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData,
+	getSiteStatsForQuery,
 	hasSiteStatsQueryFailed,
 } from 'calypso/state/stats/lists/selectors';
 import { useTranslate } from 'i18n-calypso';
@@ -26,17 +28,9 @@ const StatShares = ( { siteId } ) => {
 	const isLoading = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, 'stats' )
 	);
+	const shareButtons = useSelector( ( state ) => getSharingButtons( state, siteId ) );
 	const hasError = useSelector( ( state ) => hasSiteStatsQueryFailed( state, siteId, 'stats' ) );
-	const {
-		shares,
-		sharesFacebook,
-		sharesPressThis,
-		sharesTwitter,
-		sharesTumblr,
-		sharesLinkedin,
-		sharesEmail,
-	} = useSelector( ( state ) => getSiteStatsNormalizedData( state, siteId, 'stats' ) ) || {};
-
+	const siteStats = useSelector( ( state ) => getSiteStatsForQuery( state, siteId, 'stats' ) );
 	const classes = [
 		'stats-module',
 		{
@@ -48,6 +42,7 @@ const StatShares = ( { siteId } ) => {
 	return (
 		<div>
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" /> }
+			{ siteId && <QuerySharingButtons siteId={ siteId } /> }
 			<SectionHeader label={ translate( 'Shares' ) } />
 			<Card className={ classNames( ...classes ) }>
 				<StatsTabs borderless>
@@ -55,63 +50,25 @@ const StatShares = ( { siteId } ) => {
 						gridicon="share"
 						label={ translate( 'Total' ) }
 						loading={ isLoading }
-						value={ shares }
+						value={ siteStats && siteStats?.stats?.shares }
 						compact
 					/>
-					{ !! sharesFacebook && (
-						<StatsTab
-							gridicon="facebook"
-							label={ translate( 'Facebook' ) }
-							loading={ isLoading }
-							value={ sharesFacebook }
-							compact
-						/>
-					) }
-					{ !! sharesTwitter && (
-						<StatsTab
-							gridicon="twitter"
-							label={ translate( 'Twitter' ) }
-							loading={ isLoading }
-							value={ sharesTwitter }
-							compact
-						/>
-					) }
-					{ !! sharesTumblr && (
-						<StatsTab
-							gridicon="tumblr"
-							label={ translate( 'Tumblr' ) }
-							loading={ isLoading }
-							value={ sharesTumblr }
-							compact
-						/>
-					) }
-					{ !! sharesLinkedin && (
-						<StatsTab
-							gridicon="linkedin"
-							label={ translate( 'LinkedIn' ) }
-							loading={ isLoading }
-							value={ sharesLinkedin }
-							compact
-						/>
-					) }
-					{ !! sharesEmail && (
-						<StatsTab
-							gridicon="email"
-							label={ translate( 'Email' ) }
-							loading={ isLoading }
-							value={ sharesEmail }
-							compact
-						/>
-					) }
-					{ !! sharesPressThis && (
-						<StatsTab
-							gridicon="pressthis"
-							label={ translate( 'Press This' ) }
-							loading={ isLoading }
-							value={ sharesPressThis }
-							compact
-						/>
-					) }
+					{ siteStats &&
+						shareButtons &&
+						shareButtons.map( ( service ) => {
+							let count;
+							if ( ( count = siteStats.stats[ 'shares_' + service.ID ] ) ) {
+								return (
+									<StatsTab
+										gridicon={ service.genericon }
+										label={ service.name }
+										loading={ isLoading }
+										value={ count }
+										compact
+									/>
+								);
+							}
+						} ) }
 				</StatsTabs>
 			</Card>
 		</div>
