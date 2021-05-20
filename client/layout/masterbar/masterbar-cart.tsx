@@ -22,7 +22,7 @@ import { CheckoutSummaryTotal } from 'calypso/my-sites/checkout/composite-checko
 type MasterbarCartProps = { tooltip: string; children: React.ReactNode };
 
 function MasterbarCart( { children, tooltip }: MasterbarCartProps ): JSX.Element | null {
-	const { responseCart } = useShoppingCart();
+	const { responseCart, reloadFromServer } = useShoppingCart();
 	const selectedSite = useSelector( getSelectedSite );
 	const masterbarButtonRef = useRef( null );
 	const [ isActive, setIsActive ] = useState( false );
@@ -31,7 +31,14 @@ function MasterbarCart( { children, tooltip }: MasterbarCartProps ): JSX.Element
 		return null;
 	}
 
-	const onClick = () => setIsActive( ( active ) => ! active );
+	const onClick = () => {
+		setIsActive( ( active ) => {
+			if ( ! active ) {
+				reloadFromServer();
+			}
+			return ! active;
+		} );
+	};
 	const onClose = () => setIsActive( false );
 
 	// TODO: Add dot overlay to show number of items in cart
