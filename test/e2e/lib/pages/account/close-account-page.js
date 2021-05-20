@@ -54,11 +54,14 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 	}
 
 	async confirmAccountHasBeenClosed() {
-		await driverHelper.waitUntilElementWithTextLocated(
-			this.driver,
+		const messageLocator = driverHelper.createTextLocator(
 			by.css( '.empty-content__title' ),
 			'Your account has been closed'
 		);
-		return driverHelper.clickWhenClickable( this.driver, by.css( 'button.empty-content__action' ) );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, messageLocator );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( 'button.empty-content__action' )
+		);
 	}
 }

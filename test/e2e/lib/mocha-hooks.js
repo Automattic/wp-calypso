@@ -22,47 +22,41 @@ before( function () {
 
 // Sauce Breakpoint
 afterEach( function () {
-	const driver = global.__BROWSER__;
-
 	if (
 		process.env.SAUCEDEBUG &&
 		this.currentTest.state === 'failed' &&
 		config.has( 'sauce' ) &&
 		config.get( 'sauce' )
 	) {
-		driver.executeScript( 'sauce: break' );
+		this.driver.executeScript( 'sauce: break' );
 	}
 } );
 
 // Dismiss any alerts for switching away
 afterEach( async function () {
-	await this.timeout( afterHookTimeoutMS );
-	const driver = global.__BROWSER__;
+	this.timeout( afterHookTimeoutMS );
 
 	if (
 		this.currentTest &&
 		this.currentTest.state === 'failed' &&
 		( config.get( 'closeBrowserOnComplete' ) === true || global.isHeadless === true )
 	) {
-		await driverManager.acceptAllAlerts( driver );
+		await driverManager.acceptAllAlerts( this.driver );
 	}
 } );
 
 // Update Sauce Job Status locally
 afterEach( function () {
-	const driver = global.__BROWSER__;
-
 	if ( config.has( 'sauce' ) && config.get( 'sauce' ) ) {
-		driver.allPassed = driver.allPassed && this.currentTest.state === 'passed';
+		this.driver.allPassed = this.driver.allPassed && this.currentTest.state === 'passed';
 	}
 } );
 
 // Push SauceLabs job status update (if applicable)
 after( async function () {
-	await this.timeout( afterHookTimeoutMS );
-	const driver = global.__BROWSER__;
+	this.timeout( afterHookTimeoutMS );
 
 	if ( config.has( 'sauce' ) && config.get( 'sauce' ) ) {
-		await driver.executeScript( 'sauce:job-result=' + driver.allPassed );
+		await this.driver.executeScript( 'sauce:job-result=' + this.driver.allPassed );
 	}
 } );

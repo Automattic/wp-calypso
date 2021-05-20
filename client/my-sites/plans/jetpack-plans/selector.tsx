@@ -22,6 +22,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySites from 'calypso/components/data/query-sites';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import getViewTrackerPath from './get-view-tracker-path';
 import ProductGrid from './product-grid';
 
 /**
@@ -53,6 +54,10 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteSlug = siteSlugProp || siteSlugState;
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
+
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_pricing_page_visit', { site: siteSlug } ) );
+	}, [ dispatch, siteSlug ] );
 
 	useEffect( () => {
 		setDuration( defaultDuration );
@@ -143,7 +148,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		setDuration( selectedDuration );
 	};
 
-	const viewTrackerPath = siteId ? `${ rootUrl }/:site` : rootUrl;
+	const viewTrackerPath = getViewTrackerPath( rootUrl, siteId );
 	const viewTrackerProps = siteId ? { site: siteSlug } : {};
 
 	return (

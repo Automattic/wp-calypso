@@ -21,16 +21,10 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 	async waitForResults() {
 		const driver = this.driver;
 		const resultsLoadingLocator = By.css( '.domain-suggestion.is-placeholder' );
-		await driver.wait(
-			function () {
-				return driverHelper
-					.isElementLocated( driver, resultsLoadingLocator )
-					.then( function ( present ) {
-						return ! present;
-					} );
-			},
-			this.explicitWaitMS * 2,
-			'The domain results loading element was still present when it should have disappeared by now.'
+		await driverHelper.waitUntilElementNotLocated(
+			driver,
+			resultsLoadingLocator,
+			this.explicitWaitMS * 2
 		);
 		return await this.checkForUnknownABTestKeys();
 	}
@@ -128,8 +122,8 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 		}
 	}
 
-	selectPreviousStep() {
-		return driverHelper.clickWhenClickable(
+	async selectPreviousStep() {
+		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( 'a.previous-step' ),
 			this.explicitWaitMS

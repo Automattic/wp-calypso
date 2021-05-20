@@ -33,6 +33,7 @@ import { launchSite } from 'calypso/state/sites/launch/actions';
 import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import getRequest from 'calypso/state/selectors/get-request';
+import { isAtomicSiteWithoutBusinessPlan } from './utils';
 
 /**
  * Style dependencies
@@ -189,7 +190,11 @@ function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'trans
 function isProceedButtonDisabled( isEligible: boolean, holds: string[] ) {
 	const resolvableHolds = [ 'NO_BUSINESS_PLAN', 'SITE_UNLAUNCHED', 'SITE_NOT_PUBLIC' ];
 	const canHandleHoldsAutomatically = holds.every( ( h ) => resolvableHolds.includes( h ) );
-	return ! canHandleHoldsAutomatically && ! isEligible;
+
+	// If it's not eligible for Atomic transfer lets also make sure it's not already Atomic with a plan below business.
+	return (
+		! canHandleHoldsAutomatically && ! isEligible && ! isAtomicSiteWithoutBusinessPlan( holds )
+	);
 }
 
 function siteRequiresUpgrade( holds: string[] ) {

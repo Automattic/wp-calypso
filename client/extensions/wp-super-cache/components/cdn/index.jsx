@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { get, pick } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -14,7 +14,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
@@ -47,13 +46,12 @@ const CdnTab = ( {
 			<Card>
 				<form>
 					<FormFieldset>
-						<FormToggle
+						<ToggleControl
 							checked={ !! ossdlcdn }
 							disabled={ isRequesting || isSaving }
 							onChange={ handleAutosavingToggle( 'ossdlcdn' ) }
-						>
-							<span>{ translate( 'Enable CDN Support' ) }</span>
-						</FormToggle>
+							label={ <span>{ translate( 'Enable CDN Support' ) }</span> }
+						/>
 					</FormFieldset>
 
 					<div className="wp-super-cache__cdn-fieldsets">
@@ -171,13 +169,14 @@ const CdnTab = ( {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormToggle
+							<ToggleControl
 								checked={ !! ossdl_https }
 								disabled={ isRequesting || isSaving || ! ossdlcdn }
 								onChange={ handleAutosavingToggle( 'ossdl_https' ) }
-							>
-								<span>{ translate( 'Skip https URLs to avoid "mixed content" errors' ) }</span>
-							</FormToggle>
+								label={
+									<span>{ translate( 'Skip https URLs to avoid "mixed content" errors' ) }</span>
+								}
+							/>
 						</FormFieldset>
 					</div>
 				</form>

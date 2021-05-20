@@ -3,6 +3,7 @@
  */
 import React, { ReactElement, useCallback, useRef, useState } from 'react';
 import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -13,6 +14,7 @@ import Tooltip from 'calypso/components/tooltip';
 import Gridicon from 'calypso/components/gridicon';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useBillingDashboardQuery from 'calypso/state/partner-portal/licenses/hooks/use-billing-dashboard-query';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 
 /**
@@ -22,11 +24,19 @@ import './style.scss';
 
 function CostTooltip(): ReactElement {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const tooltip = useRef< SVGSVGElement >( null );
 	const [ isOpen, setIsOpen ] = useState( false );
 
-	const open = useCallback( () => setIsOpen( true ), [ setIsOpen ] );
-	const close = useCallback( () => setIsOpen( false ), [ setIsOpen ] );
+	const open = useCallback( () => {
+		setIsOpen( true );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_billing_summary_cost_tooltip_open' ) );
+	}, [ dispatch, setIsOpen ] );
+
+	const close = useCallback( () => {
+		setIsOpen( false );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_billing_summary_cost_tooltip_close' ) );
+	}, [ dispatch, setIsOpen ] );
 
 	return (
 		<>

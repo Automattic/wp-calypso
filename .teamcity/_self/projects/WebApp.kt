@@ -777,8 +777,8 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
-				export BROWSERSIZE="mobile"
-				export BROWSERLOCALE="en"
+				export VIEWPORT_SIZE="mobile"
+				export LOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 
 				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
@@ -794,6 +794,9 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 
 				mkdir -p screenshots
 				find test/e2e/temp -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}

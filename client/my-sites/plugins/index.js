@@ -15,6 +15,7 @@ import {
 	jetpackCanUpdate,
 	plugins,
 	renderDomainsPage,
+	renderPluginsSetupStatusPage,
 	resetHistory,
 	scrollTopIfNoHash,
 	setupPlugins,
@@ -105,7 +106,15 @@ export default function () {
 
 		if ( config.isEnabled( 'marketplace-yoast' ) ) {
 			page( '/plugins/domain/:site', siteSelection, renderDomainsPage, makeLayout, clientRender );
+			page(
+				'/plugins/marketplace/setup/:site',
+				siteSelection,
+				renderPluginsSetupStatusPage,
+				makeLayout,
+				clientRender
+			);
 		}
+
 		page(
 			'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
 			scrollTopIfNoHash,

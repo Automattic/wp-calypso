@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { flowRight, map, mapValues, pick } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -14,7 +14,6 @@ import { Card } from '@automattic/components';
 import ExternalLink from 'calypso/components/external-link';
 import SectionHeader from 'calypso/components/section-header';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import WrapSettingsForm from '../wrap-settings-form';
 import QueryPlugins from '../data/query-plugins';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -85,14 +84,13 @@ class PluginsTab extends Component {
 					{ map( plugins, ( { desc, enabled, key, title, toggling, url } ) => {
 						return (
 							<div key={ key }>
-								<FormToggle
+								<ToggleControl
 									checked={ !! enabled }
 									data-plugin={ key }
 									disabled={ isRequesting || toggling }
 									onChange={ this.togglePlugin( key, ! enabled ) }
-								>
-									<span>{ title }</span>
-								</FormToggle>
+									label={ <span>{ title }</span> }
+								/>
 								<FormSettingExplanation>
 									{ desc + ' ' }
 									{ url && (

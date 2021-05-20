@@ -15,6 +15,7 @@ import Podcasting from 'calypso/my-sites/customer-home/cards/tasks/podcasting';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
 import SiteSetupListEcommerce from 'calypso/my-sites/customer-home/cards/tasks/site-setup-checklist-ecommerce';
+import TitanBanner from 'calypso/my-sites/customer-home/cards/tasks/titan-banner';
 import Webinars from 'calypso/my-sites/customer-home/cards/tasks/webinars';
 import WPCourses from 'calypso/my-sites/customer-home/cards/tasks/wp-courses';
 import Cloudflare from 'calypso/my-sites/customer-home/cards/tasks/cloudflare';
@@ -27,6 +28,7 @@ import {
 	NOTICE_CELEBRATE_SITE_LAUNCH,
 	NOTICE_CELEBRATE_SITE_MIGRATION,
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
+	TASK_CLOUDFLARE,
 	TASK_CONNECT_ACCOUNTS,
 	TASK_EARN_FEATURES,
 	TASK_FIND_DOMAIN,
@@ -38,9 +40,9 @@ import {
 	TASK_RENEW_EXPIRING_PLAN,
 	TASK_SITE_SETUP_CHECKLIST_ECOMMERCE,
 	TASK_SITE_SETUP_CHECKLIST,
+	TASK_UPSELL_TITAN,
 	TASK_WEBINARS,
 	TASK_WP_COURSES,
-	TASK_CLOUDFLARE,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -61,6 +63,7 @@ const cardComponents = {
 	[ TASK_RENEW_EXPIRED_PLAN ]: Renew,
 	[ TASK_RENEW_EXPIRING_PLAN ]: Renew,
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
+	[ TASK_UPSELL_TITAN ]: TitanBanner,
 	[ TASK_SITE_SETUP_CHECKLIST_ECOMMERCE ]: SiteSetupListEcommerce,
 	[ TASK_WEBINARS ]: Webinars,
 	[ TASK_WP_COURSES ]: WPCourses,

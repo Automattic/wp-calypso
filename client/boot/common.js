@@ -117,30 +117,53 @@ const setupContextMiddleware = ( reduxStore ) => {
 	} );
 };
 
+/**
+ * If the URL sets `flags=oauth` explicitly, persist that setting to session storage so
+ * that it persists across redirects and reloads. The `calypso-config` module will pick
+ * them up automatically on init.
+ */
+function saveOauthFlags() {
+	if ( ! window.location.search ) {
+		return;
+	}
+
+	const flags = new URLSearchParams( window.location.search ).get( 'flags' );
+	if ( ! flags ) {
+		return;
+	}
+
+	const oauthFlag = flags.split( ',' ).find( ( flag ) => /^[+-]?oauth$/.test( flag ) );
+	if ( ! oauthFlag ) {
+		return;
+	}
+
+	window.sessionStorage.setItem( 'flags', oauthFlag );
+}
+
 function authorizePath() {
-	// TODO: flags=oauth should be present only in dev-like environments
-	// where we need to preserve the flag on full reloads and redirects
-	const redirectUri = new URL( '/api/oauth/token', window.location );
+	const redirectUri = new URL(
+		isJetpackCloud() ? '/connect/oauth/token' : '/api/oauth/token',
+		window.location
+	);
 	redirectUri.search = new URLSearchParams( {
-		flags: 'oauth',
 		next: window.location.pathname + window.location.search,
-	} );
+	} ).toString();
 
 	const authUri = new URL( 'https://public-api.wordpress.com/oauth2/authorize' );
 	authUri.search = new URLSearchParams( {
 		response_type: 'token',
 		client_id: config( 'oauth_client_id' ),
-		redirect_uri: redirectUri,
+		redirect_uri: redirectUri.toString(),
 		scope: 'global',
 		blog_id: 0,
-	} );
+	} ).toString();
 
 	return authUri.toString();
 }
 
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
-		const loggedOutRoutes = [ '/oauth-login', '/oauth', '/start', '/api/oauth/token', '/connect' ];
+		const loggedOutRoutes = [ '/start', '/api/oauth/token', '/connect' ];
 
 		if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
 			loggedOutRoutes.push( '/jetpack/connect', '/plans' );
@@ -161,27 +184,7 @@ const oauthTokenMiddleware = () => {
 				! isValidSection &&
 				! ( isJetpackCloud() && inJetpackCloudOAuthOverride() )
 			) {
-				const isDesktop = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
-				const redirectPath =
-					isDesktop || isJetpackCloud() ? config( 'login_url' ) : authorizePath();
-
-				const currentPath = window.location.pathname;
-				// In the context of Jetpack Cloud, if the user isn't authorized, we want
-				// to save the current path (/<product>/<site-slug>) so we can redirect
-				// the user back to it once the login flow is finished. We also set an expiration
-				// to this because we don't want to redirect by mistake a user with an old path
-				// stored in their session.
-				if ( isJetpackCloud() && currentPath !== '/' ) {
-					const EXPIRATION_IN_SECONDS = 300;
-					const SESSION_STORAGE_PATH_KEY = 'jetpack_cloud_redirect_path';
-					const SESSION_STORAGE_PATH_KEY_EXPIRES_IN = 'jetpack_cloud_redirect_path_expires_in';
-					window.sessionStorage.setItem( SESSION_STORAGE_PATH_KEY, currentPath );
-					window.sessionStorage.setItem(
-						SESSION_STORAGE_PATH_KEY_EXPIRES_IN,
-						parseInt( new Date().getTime() / 1000 ) + EXPIRATION_IN_SECONDS
-					);
-				}
-				window.location = redirectPath;
+				window.location = authorizePath();
 				return;
 			}
 
@@ -432,6 +435,7 @@ function renderLayout( reduxStore ) {
 }
 
 const boot = ( currentUser, registerRoutes ) => {
+	saveOauthFlags();
 	utils();
 	loadAllState().then( () => {
 		const initialState = getInitialState( initialReducer );

@@ -33,6 +33,7 @@ export const WpcomPluginInstallButton = ( props ) => {
 		initiateTransfer,
 		transferState,
 		trackButtonAction,
+		isTransferring,
 	} = props;
 
 	if ( transferStates.COMPLETE === transferState ) {
@@ -56,9 +57,11 @@ export const WpcomPluginInstallButton = ( props ) => {
 		}
 	}
 
+	const label = isTransferring ? translate( 'Installing…' ) : translate( 'Install' );
+
 	return (
 		<Button onClick={ installButtonAction } primary={ true } disabled={ disabled }>
-			{ translate( 'Install' ) }
+			{ label }
 		</Button>
 	);
 };

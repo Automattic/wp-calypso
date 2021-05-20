@@ -6,6 +6,10 @@ process.env.NODE_CONFIG_DIR = path.join( __dirname, '../../../config' );
 const config = require( 'config' );
 const account = config.get( 'visualRegressionUser' );
 
+// Remove all the logging statements. They are too noisy.
+// eslint-disable-next-line no-console
+console.log = () => {};
+
 function createDir( dir ) {
 	dir = path.resolve( dir );
 	fs.mkdirSync( dir, { recursive: true } );

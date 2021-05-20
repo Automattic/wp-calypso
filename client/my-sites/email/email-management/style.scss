@@ -13,57 +13,84 @@
  * New email home styles
  */
 
-.email-home__header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-}
-
-.email-home__header-cart {
-	display: flex;
-
-	> div {
-		margin-top: auto;
-		margin-bottom: auto;
-	}
-
-	.popover-cart {
-		margin-right: 8px;
-	}
-
-	.popover-cart .header-button,
-	.popover-cart .header-button:hover {
-		min-height: initial;
-		background: none;
-		color: var( --color-text );
-	}
-
-	.cart__count-badge .count {
-		top: -7px;
-		right: -3px;
-	}
-}
-
 .email-list-active {
 	> .card {
-		display: flex;
-		align-items: center;
 		color: var( --color-text );
+		display: flex;
+
+		> div > h2 {
+			word-break: break-all;
+		}
+
 		> div > span {
 			font-size: $font-body-small;
 			color: var( --color-text-subtle );
 		}
+
+		.email-list-active__warning {
+			font-size: $font-body-extra-small;
+			margin-left: 14px;
+
+			> span {
+				color: var( --color-error-50 );
+				display: none;
+				vertical-align: middle;
+
+				@include break-small {
+					display: unset;
+				}
+
+				@include break-medium {
+					display: none;
+				}
+
+				@include break-large {
+					display: unset;
+				}
+			}
+
+			> svg {
+				fill: var( --color-error-50 );
+				height: 18px;
+				margin-right: 6px;
+				/* Push the icon down when there is no warning text */
+				margin-top: 3px;
+				vertical-align: middle;
+				width: 18px;
+
+				@include break-small {
+					margin-top: 0;
+				}
+
+				@include break-medium {
+					margin-top: 3px;
+				}
+
+				@include break-large {
+					margin-top: 0;
+				}
+			}
+		}
 	}
+
 	> .card.is-card-link:hover {
 		background-color: var( --color-neutral-0 );
 	}
 }
 
 .email-list-active__item-icon {
+	align-self: center;
+
 	> img, svg {
 		height: 36px;
+		margin-right: 16px;
+		min-height: 36px;
+		min-width: 36px;
 		width: 36px;
-		margin-right: 20px;
+
+		@include break-large {
+			margin-right: 24px;
+		}
 	}
 	> .gridicon.gridicons-my-sites {
 		fill: var( --color-wordpress-com );
@@ -115,6 +142,7 @@
 .email-plan-header {
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 
 	h2 {
 		font-size: $font-title-large;
@@ -150,23 +178,89 @@
 	margin-top: 15px;
 }
 
+.email-plan-mailboxes-list__mailbox-action-menu {
+	position: absolute;
+	right: 16px;
+	top: 28px;
+
+	@include break-mobile {
+		right: 24px;
+	}
+
+	> .button.is-borderless {
+		padding: 0;
+	}
+}
+
+.popover__menu-item.email-plan-mailboxes-list__mailbox-action-menu-item {
+	align-items: center;
+	display: flex;
+	line-height: 24px;
+
+	> img, > svg {
+		height: 18px;
+		fill: var( --color-neutral-50 );
+		filter: grayscale( 100% );
+		margin-right: 8px;
+		width: 18px;
+	}
+
+	&:hover {
+		> img {
+			filter: grayscale( 100% ) brightness( 0.2 ) invert( 1 );
+		}
+		> svg {
+			fill: white;
+		}
+	}
+
+	&.external-link > .gridicons-external {
+		display: none;
+	}
+}
+
 .email-plan-mailboxes-list__mailbox-list-item {
 	display: flex;
 	flex-direction: column;
 
-	@include break-xlarge {
-		flex-direction: row;
+	&.card {
+		&.is-compact {
+			@include break-xlarge {
+				flex-direction: row;
+				/* The padding jumps as we need the padding on this element instead
+				 * of mailbox-list-item-main when we shift to flex-direction: row
+				 */
+				padding-right: 72px;
+			}
+		}
+
+		&.is-highlight {
+			padding-left: 13px;
+
+			@include break-mobile {
+				padding-left: 21px;
+			}
+		}
+
+		&.is-error {
+			border-left-color: var( --color-error-50 );
+		}
 	}
 
-	&.card.is-highlight {
-		padding-left: 13px;
-	}
-	&.card.is-error {
-		border-left-color: var( --color-error-50 );
-	}
 	.email-plan-mailboxes-list__mailbox-list-item-main {
 		display: flex;
 		flex-direction: column;
+		padding-right: 40px;
+
+		@include break-mobile {
+			padding-right: 48px;
+		}
+
+		@include break-xlarge {
+			/* Padding moves to parent mailbox-list-item when we shift to flex-direction: row */
+			padding-right: 0;
+		}
+
 		> div:not( :first-child ) {
 			margin-top: 0.5em;
 		}
@@ -190,9 +284,18 @@
 		vertical-align: middle;
 		word-break: break-all;
 	}
+
 	> .badge {
-		margin-left: 10px;
+		/* Hide admin badge in mobile layouts */
+		display: none;
+
+		@include break-xlarge {
+			align-self: center;
+			display: unset;
+			margin-left: 10px;
+		}
 	}
+
 	.email-plan-mailboxes-list__mailbox-list-item-warning {
 		border-top: 1px solid var( --color-neutral-5 );
 		color: var( --color-error );
@@ -230,15 +333,29 @@
 }
 
 .email-plan-subscription__card {
-	display: flex;
 	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
 
-	> div:nth-last-child( 2 ) {
-		margin-left: 15px;
-		flex: 1 1 auto;
+	@include break-small {
+		flex-wrap: initial;
 	}
-	> div:last-child {
-		margin-left: 15px;
+
+	.email-plan-subscription__renew {
+		margin-left: auto;
+		margin-right: 16px;
+
+		@include break-small {
+			flex: 1 1 auto;
+			margin-left: 16px;
+		}
+	}
+
+	.email-plan-subscription__auto-renew {
+		/* Ensure auto-renew text is using the standard font size */
+		label {
+			font-size: $font-body;
+		}
 		/* vertically aligns the auto-renew toggle - not sure if there's a better way... */
 		> div > div {
 			margin-top: auto;
@@ -253,5 +370,35 @@
 		margin: 0 auto;
 		width: 150px;
 		height: 28px;
+	}
+}
+
+.email-plan-subscription__expired {
+	color: var( --color-error-50 );
+}
+
+.email-plan-warnings__container {
+	flex-basis: 100%;
+	line-height: 30px;
+	margin-top: 24px;
+	width: 100%;
+
+	.email-plan-warnings__warning {
+		align-items: center;
+		display: flex;
+
+		.email-plan-warnings__message {
+			flex: 1 1 auto;
+		}
+
+		.email-plan-warnings__cta {
+			margin-left: 15px;
+
+			.button .gridicon {
+				height: 16px;
+				margin-left: 8px;
+				width: 16px;
+			}
+		}
 	}
 }

@@ -7,7 +7,7 @@ import waitForExpect from 'wait-for-expect';
  * Internal dependencies
  */
 import { dispatch, select } from '@wordpress/data';
-import { register } from '../store';
+import { register, DEFAULT_VARIANT } from '../store';
 
 const STORE_KEY = 'automattic/wpcom-welcome-guide';
 
@@ -45,7 +45,7 @@ test( 'resetting the store', async () => {
 	expect( select( STORE_KEY ).isWelcomeGuideShown() ).toBe( false );
 	expect( select( STORE_KEY ).isWelcomeGuideStatusLoaded() ).toBe( false );
 	expect( select( STORE_KEY ).getTourRating() ).toBeUndefined();
-	expect( select( STORE_KEY ).getWelcomeGuideVariant() ).toBe( 'tour' );
+	expect( select( STORE_KEY ).getWelcomeGuideVariant() ).toBe( DEFAULT_VARIANT );
 } );
 
 test( "by default the store isn't loaded", () => {
@@ -56,7 +56,7 @@ test( "by default the store isn't loaded", () => {
 test( 'after fetching the guide status the store is loaded', async () => {
 	window.fetch.mockResolvedValue( {
 		status: 200,
-		json: () => Promise.resolve( { show_welcome_guide: true, variant: 'tour' } ),
+		json: () => Promise.resolve( { show_welcome_guide: true, variant: DEFAULT_VARIANT } ),
 	} );
 
 	dispatch( STORE_KEY ).fetchWelcomeGuideStatus();
@@ -75,7 +75,7 @@ test( 'after fetching the guide status the store is loaded', async () => {
 	const isWelcomeGuideShown = select( STORE_KEY ).isWelcomeGuideShown();
 	expect( isWelcomeGuideShown ).toBe( true );
 	const welcomeGuideVariant = select( STORE_KEY ).getWelcomeGuideVariant();
-	expect( welcomeGuideVariant ).toBe( 'tour' );
+	expect( welcomeGuideVariant ).toBe( DEFAULT_VARIANT );
 } );
 
 test( 'toggle welcome guide visibility', () => {

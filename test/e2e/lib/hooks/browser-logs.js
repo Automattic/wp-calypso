@@ -10,13 +10,11 @@ import { getBrowserLogs, getPerformanceLogs } from '../driver-helper';
 import { generatePath } from '../test-utils';
 
 export const saveBrowserLogs = async () => {
-	const driver = global.__BROWSER__;
-
 	try {
 		await Promise.allSettled(
 			[
-				[ () => getBrowserLogs( driver ), 'console.log' ],
-				[ () => getPerformanceLogs( driver ), 'performance.log' ],
+				[ () => getBrowserLogs( this.driver ), 'console.log' ],
+				[ () => getPerformanceLogs( this.driver ), 'performance.log' ],
 			].map( async ( [ logsPromise, file ] ) => {
 				const logs = await logsPromise();
 				return fs.writeFile( generatePath( file ), JSON.stringify( logs, null, 2 ) );

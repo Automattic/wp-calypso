@@ -25,7 +25,3 @@ The search bar for the Showcase.
 ## `themes-selection.jsx`
 
 A large component that composes the search box, and the displayed list of themes below.
-
-## `themes-site-selector-modal.jsx`
-
-Displayed in a multisite scenario, when selection of a site is necessary to exert actions upon a theme, e.g. activation.

@@ -126,7 +126,6 @@ export class ThemesList extends React.Component {
 		return (
 			this.props.emptyContent || (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/no-themes-drake.svg"
 					title={ this.props.translate( 'Sorry, no themes found.' ) }
 					line={ this.props.translate( 'Try a different search or more filters?' ) }
 				/>

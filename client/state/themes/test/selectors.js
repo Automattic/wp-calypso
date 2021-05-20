@@ -39,6 +39,9 @@ import {
 	isThemePurchased,
 	isPremiumThemeAvailable,
 	getWpcomParentThemeId,
+	getRecommendedThemes,
+	getRecommendedThemesFilter,
+	areRecommendedThemesLoading,
 } from '../selectors';
 import {
 	PLAN_FREE,
@@ -2465,5 +2468,72 @@ describe( 'themes selectors', () => {
 			);
 			expect( parentId ).to.equal( 'superhero' );
 		} );
+	} );
+} );
+
+describe( '#getRecommendedThemes', () => {
+	const themes = [ 'a', 'b', 'c' ];
+	const filter = 'foobar';
+	const state = {
+		themes: {
+			recommendedThemes: {
+				[ filter ]: {
+					isLoading: false,
+					themes,
+				},
+			},
+		},
+	};
+	test( 'should return correct themes list for filter', () => {
+		const recommended = getRecommendedThemes( state, filter );
+		expect( recommended ).to.equal( themes );
+	} );
+
+	test( 'should return empty themes list for unfetched filter', () => {
+		const recommended = getRecommendedThemes( state, 'bazbazbaz' );
+		expect( recommended ).to.be.empty;
+	} );
+} );
+
+describe( '#getRecommendedThemesFilter', () => {
+	const state = {
+		sites: {
+			items: {
+				[ 123 ]: { is_core_site_editor_enabled: true },
+				[ 321 ]: { is_core_site_editor_enabled: false },
+			},
+		},
+	};
+
+	test( 'should return `auto-loading-homepage` for non-FSE site', () => {
+		expect( getRecommendedThemesFilter( state, 321 ) ).to.equal( 'auto-loading-homepage' );
+	} );
+
+	test( 'should return `block-templates` for FSE site', () => {
+		expect( getRecommendedThemesFilter( state, 123 ) ).to.equal( 'block-templates' );
+	} );
+} );
+
+describe( '#areRecommendedThemesLoading', () => {
+	const filterForIsLoading = 'foo';
+	const filterForNotLoading = 'bar';
+	const state = {
+		themes: {
+			recommendedThemes: {
+				[ filterForNotLoading ]: { isLoading: false },
+				[ filterForIsLoading ]: { isLoading: true },
+			},
+		},
+	};
+	test( 'should return true when loading', () => {
+		expect( areRecommendedThemesLoading( state, filterForIsLoading ) ).to.be.true;
+	} );
+
+	test( 'should return false when not loading', () => {
+		expect( areRecommendedThemesLoading( state, filterForNotLoading ) ).to.be.false;
+	} );
+
+	test( 'should return false when filter request not initiated', () => {
+		expect( areRecommendedThemesLoading( state, 'lolol' ) ).to.be.false;
 	} );
 } );

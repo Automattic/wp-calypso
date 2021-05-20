@@ -1,14 +1,21 @@
 /**
+ * External dependencies
+ */
+import config from 'config';
+
+/**
  * Internal dependencies
  */
-import { quitBrowser } from '../driver-manager';
+import { quitBrowser, startBrowser, ensureNotLoggedIn } from '../driver-manager';
 
-export const closeBrowser = async () => {
-	if ( ! global.__BROWSER__ ) {
-		// Early return if there's no browser, i.e. when all specs were skipped.
-		return;
-	}
+const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 
-	const driver = global.__BROWSER__;
-	await quitBrowser( driver );
+export const closeBrowser = async function () {
+	await quitBrowser( this.driver );
 };
+
+export async function createBrowser() {
+	this.timeout( startBrowserTimeoutMS );
+	this.driver = await startBrowser();
+	await ensureNotLoggedIn( this.driver );
+}

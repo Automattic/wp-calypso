@@ -10,13 +10,16 @@ import React from 'react';
  * Internal dependencies
  */
 import EmailPlanSubscription from 'calypso/my-sites/email/email-management/home/email-plan-subscription';
+import EmailPlanWarnings from 'calypso/my-sites/email/email-management/home/email-plan-warnings';
 import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';
 import MaterialIcon from 'calypso/components/material-icon';
 import { resolveEmailPlanStatus } from 'calypso/my-sites/email/email-management/home/utils';
 
 const EmailPlanHeader = ( {
 	domain,
+	emailAccount,
 	hasEmailSubscription,
+	isLoadingEmails,
 	isLoadingPurchase,
 	purchase,
 	selectedSite,
@@ -25,7 +28,11 @@ const EmailPlanHeader = ( {
 		return null;
 	}
 
-	const { statusClass, text, icon } = resolveEmailPlanStatus( domain );
+	const { statusClass, text, icon } = resolveEmailPlanStatus(
+		domain,
+		emailAccount,
+		isLoadingEmails
+	);
 
 	const cardClasses = classnames( 'email-plan-header', statusClass );
 
@@ -43,6 +50,14 @@ const EmailPlanHeader = ( {
 						<MaterialIcon icon={ icon } /> { text }
 					</span>
 				</div>
+
+				{ hasEmailSubscription && emailAccount && (
+					<EmailPlanWarnings
+						domain={ domain }
+						warnings={ emailAccount.warnings }
+						emailAccountType={ emailAccount.account_type }
+					/>
+				) }
 			</CompactCard>
 
 			{ hasEmailSubscription && (
@@ -59,6 +74,8 @@ const EmailPlanHeader = ( {
 
 EmailPlanHeader.propTypes = {
 	domain: PropTypes.object.isRequired,
+	emailAccount: PropTypes.object,
+	isLoadingEmails: PropTypes.bool.isRequired,
 	hasEmailSubscription: PropTypes.bool.isRequired,
 	isLoadingPurchase: PropTypes.bool.isRequired,
 	purchase: PropTypes.object,
