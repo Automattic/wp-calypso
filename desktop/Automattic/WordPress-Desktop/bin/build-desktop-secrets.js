@@ -14,7 +14,6 @@ if ( ! CALYPSO_SECRETS_ENCRYPTION_KEY ) {
 }
 
 const PROJECT_DIR = path.resolve( __dirname, '../' );
-const REPO_DIR = path.resolve( PROJECT_DIR, '../' );
 
 const secrets = [
 	path.resolve( PROJECT_DIR, 'resource', 'calypso', 'secrets.json' ),
@@ -27,7 +26,7 @@ for ( let i = 0; i < secrets.length; i++ ) {
 	let decrypted;
 
 	if ( path.basename( secrets[ i ] ) === 'secrets.json' ) {
-		decrypted = path.join( REPO_DIR, 'config', 'secrets.json' );
+		decrypted = path.join( PROJECT_DIR, 'config', 'secrets.json' );
 	} else {
 		decrypted = secrets[ i ];
 	}
