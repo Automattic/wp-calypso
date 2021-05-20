@@ -49,7 +49,7 @@ export function isCalypsoLive(): boolean {
 	return typeof window !== 'undefined' && CALYPSO_LIVE_REGEX.test( window.location.host );
 }
 
-function applyFlags( flagsString: string, modificationMethod: 'cookie' | 'URL' ) {
+function applyFlags( flagsString: string, modificationMethod: string ) {
 	const flags = flagsString.split( ',' );
 	flags.forEach( ( flagRaw ) => {
 		const flag = flagRaw.replace( /^[-+]/, '' );
@@ -76,9 +76,13 @@ if (
 	isCalypsoLive()
 ) {
 	const cookies = cookie.parse( document.cookie );
-
 	if ( cookies.flags ) {
 		applyFlags( cookies.flags, 'cookie' );
+	}
+
+	const session = window.sessionStorage.getItem( 'flags' );
+	if ( session ) {
+		applyFlags( session, 'sessionStorage' );
 	}
 
 	const match =
