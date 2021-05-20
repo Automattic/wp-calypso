@@ -1,0 +1,22 @@
+name: Build
+on:
+  push:
+    branches: [ 'trunk' ]
+
+jobs:
+  update_mirrors:
+    name: Push to desktop mirror
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'push' && github.repository == 'Automattic/wp-calypso'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Push changed projects
+        uses: Automattic/action-push-to-mirrors@v1
+        with:
+          token: ${{ secrets.WP_DESKTOP_API_TOKEN_GITHUB }}
+          username: matticbot
+          working-directory: ./desktop
+        timeout-minutes: 5
