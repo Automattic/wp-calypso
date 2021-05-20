@@ -12,7 +12,7 @@ import path from 'path';
 /**
  * Internal dependencies
  */
-import { getAssetDir, getScreenshotDir } from '../src/media-helper';
+import { getAssetDir, getScreenshotDir, getVideoDir } from '../src/media-helper';
 
 describe( `Test: getAssetDir`, function () {
 	let env: NodeJS.ProcessEnv;
@@ -77,6 +77,42 @@ describe( `Test: getScreenshotDir`, function () {
 		delete process.env.SCREENSHOTDIR;
 		const expected = path.resolve( __dirname, '..', 'screenshots' );
 		expect( getScreenshotDir() ).toBe( expected );
+	} );
+
+	afterAll( function () {
+		process.env = env;
+	} );
+} );
+
+describe( `Test: getVideoDir`, function () {
+	let env: NodeJS.ProcessEnv;
+
+	beforeAll( async function () {
+		env = process.env;
+	} );
+
+	test.each`
+		temp_asset_path          | videodir      | expected
+		${ '/tmp' }              | ${ 'videos' } | ${ '/tmp/videos' }
+		${ '/' }                 | ${ 'vid' }    | ${ '/vid' }
+		${ '/TestUser/assets/' } | ${ '' }       | ${ '/TestUser/assets/screenshots/videos' }
+		${ '' }                  | ${ 'videos' } | ${ path.resolve( __dirname, '..', 'videos' ) }
+		${ '/' }                 | ${ '/' }      | ${ '/' }
+		${ '' }                  | ${ '' }       | ${ path.resolve( __dirname, '..', 'screenshots/videos' ) }
+	`(
+		'Returns $expected when environment variable is set to $temp_asset_path and $videodir',
+		async function ( { temp_asset_path, videodir, expected } ) {
+			process.env.TEMP_ASSET_PATH = temp_asset_path;
+			process.env.VIDEODIR = videodir;
+			expect( getVideoDir() ).toBe( expected );
+		}
+	);
+
+	test( 'Returns default values from config if environment variable not set', async function () {
+		delete process.env.TEMP_ASSET_PATH;
+		delete process.env.VIDEODIR;
+		const expected = path.resolve( __dirname, '..', 'screenshots/videos' );
+		expect( getVideoDir() ).toBe( expected );
 	} );
 
 	afterAll( function () {
