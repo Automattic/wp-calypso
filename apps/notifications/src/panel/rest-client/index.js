@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { difference } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { store } from '../state';
@@ -32,7 +27,6 @@ export function Client() {
 	this.isVisible = false;
 	this.isShowing = false;
 	this.lastSeenTime = 0;
-	this.hasNewNoteData = false;
 	this.noteRequestLimit = settings.initial_limit;
 	this.retries = 0;
 	this.subscribeTry = 0;
@@ -213,7 +207,7 @@ function getNotes() {
 
 		const oldNotes = getAllNotes( store.getState() ).map( ( n ) => n.id );
 		const newNotes = data.notes.map( ( n ) => n.id );
-		const notesToRemove = difference( oldNotes, newNotes );
+		const notesToRemove = oldNotes.filter( ( old ) => ! newNotes.includes( old ) );
 
 		notesToRemove.length && store.dispatch( actions.notes.removeNotes( notesToRemove ) );
 		store.dispatch( actions.notes.addNotes( data.notes ) );
@@ -273,20 +267,21 @@ function getNotesList() {
 		this.retries = 0;
 
 		/* Compare list of notes from server to local copy */
-		const newerNoteList = data.notes.map( ( n ) => n.id );
-		const localNoteList = this.noteList.map( ( n ) => n.id );
-		const notesToRemove = difference( localNoteList, newerNoteList );
-
-		this.hasNewNoteData = difference( newerNoteList, localNoteList ).length;
-
+		const [ localIds, localHashes ] = [
+			this.noteList.map( ( note ) => note.id ),
+			this.noteList.map( ( note ) => note.note_hash ),
+		];
+		const [ serverIds, serverHashes ] = [
+			data.notes.map( ( note ) => note.id ),
+			data.notes.map( ( note ) => note.note_hash ),
+		];
 		const serverHasChanges =
-			this.hasNewNoteData ||
-			difference(
-				data.notes.map( ( n ) => n.note_hash ),
-				this.noteList.map( ( n ) => n.note_hash )
-			).length > 0;
+			serverIds.some( ( sId ) => ! localIds.includes( sId ) ) ||
+			serverHashes.some( ( sHash ) => ! localHashes.includes( sHash ) );
 
 		/* Actually remove the notes from the local copy */
+		const notesToRemove = localIds.filter( ( local ) => ! serverIds.includes( local ) );
+
 		if ( notesToRemove.length ) {
 			store.dispatch( actions.notes.removeNotes( notesToRemove ) );
 		}
@@ -327,7 +322,6 @@ function ready() {
 	const latestType = notes.slice( -1 )[ 0 ]?.type ?? null;
 	store.dispatch( { type: 'APP_RENDER_NOTES', newNoteCount, latestType } );
 
-	this.hasNewNoteData = false;
 	this.firstRender = false;
 }
 
