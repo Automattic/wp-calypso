@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { difference, pick, property, range } from 'lodash';
+import { difference, pick, range } from 'lodash';
 
 /**
  * Internal dependencies
@@ -211,8 +211,8 @@ function getNotes() {
 
 		store.dispatch( actions.ui.loadedNotes() );
 
-		const oldNotes = getAllNotes( store.getState() ).map( property( 'id' ) );
-		const newNotes = data.notes.map( property( 'id' ) );
+		const oldNotes = getAllNotes( store.getState() ).map( ( n ) => n.id );
+		const newNotes = data.notes.map( ( n ) => n.id );
 		const notesToRemove = difference( oldNotes, newNotes );
 
 		notesToRemove.length && store.dispatch( actions.notes.removeNotes( notesToRemove ) );
@@ -273,8 +273,8 @@ function getNotesList() {
 		this.retries = 0;
 
 		/* Compare list of notes from server to local copy */
-		const newerNoteList = data.notes.map( property( 'id' ) );
-		const localNoteList = this.noteList.map( property( 'id' ) );
+		const newerNoteList = data.notes.map( ( n ) => n.id );
+		const localNoteList = this.noteList.map( ( n ) => n.id );
 		const notesToRemove = difference( localNoteList, newerNoteList );
 
 		this.hasNewNoteData = difference( newerNoteList, localNoteList ).length;
@@ -282,8 +282,8 @@ function getNotesList() {
 		const serverHasChanges =
 			this.hasNewNoteData ||
 			difference(
-				data.notes.map( property( 'note_hash' ) ),
-				this.noteList.map( property( 'note_hash' ) )
+				data.notes.map( ( n ) => n.note_hash ),
+				this.noteList.map( ( n ) => n.note_hash )
 			).length > 0;
 
 		/* Actually remove the notes from the local copy */
@@ -350,7 +350,7 @@ const getLocalKeys = () => {
 
 function cleanupLocalCache() {
 	const notes = getAllNotes( store.getState() );
-	const currentNoteIds = notes.map( property( 'id' ) );
+	const currentNoteIds = notes.map( ( n ) => n.id );
 
 	getLocalKeys()
 		.map( ( key ) => obsoleteKeyPattern.exec( key ) )
