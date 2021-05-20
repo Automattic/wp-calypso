@@ -12,6 +12,7 @@ import classNames from 'classnames';
 import { Card } from '@automattic/components';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
+import ErrorPanel from '../stats-error';
 import SectionHeader from 'calypso/components/section-header';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import QuerySharingButtons from 'calypso/components/data/query-sharing-buttons';
@@ -56,6 +57,9 @@ const StatShares = ( { siteId } ) => {
 								);
 							}
 						} ) }
+					{ ! isLoading && ! siteStats?.stats.shares && (
+						<ErrorPanel message={ translate( 'No shares recorded' ) } />
+					) }
 				</StatsTabs>
 			</Card>
 		</div>

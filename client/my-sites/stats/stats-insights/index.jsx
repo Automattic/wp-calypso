@@ -78,9 +78,9 @@ const StatsInsights = ( props ) => {
 								/>
 							) }
 							<AnnualSiteStats isWidget />
+							{ ! isJetpack && <StatShares siteId={ siteId } /> }
 						</div>
 						<div className="stats__module-column">
-							{ ! isJetpack && <StatShares siteId={ siteId } /> }
 							<Reach />
 							<Followers path={ 'followers' } />
 						</div>
