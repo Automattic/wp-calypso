@@ -66,6 +66,12 @@ export function setLocaleMiddleware( context, next ) {
 	next();
 }
 
+/**
+ * Composes multiple handlers into one.
+ *
+ * @param { ...( context, next ) => void } handlers - A list of route handlers to compose
+ * @returns  { ( context, next ) => void } - A new route handler that executes the handlers in succession
+ */
 export function composeHandlers( ...handlers ) {
 	return ( context, next ) => {
 		const it = handlers.values();
