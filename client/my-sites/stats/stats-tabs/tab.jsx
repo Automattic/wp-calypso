@@ -60,6 +60,7 @@ class StatsTabsTab extends React.Component {
 			'is-loading': loading,
 			'is-low': ! value,
 			'is-compact': compact,
+			'no-icon': ! gridicon,
 		} );
 
 		const tabIcon = gridicon ? <Gridicon icon={ gridicon } size={ 18 } /> : null;
