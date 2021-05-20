@@ -4,7 +4,6 @@
 /* eslint-disable import/no-nodejs-modules */
 import { readFile } from 'fs/promises';
 /* eslint-enable import/no-nodejs-modules */
-import { localesToSubdomains } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -27,18 +26,8 @@ export function ssrSetupLocaleMiddleware() {
 			resetLocaleData();
 			return;
 		}
-		const subdomainsToLocales = Object.entries( localesToSubdomains ).reduce(
-			( acc, [ key, value ] ) => {
-				return {
-					...acc,
-					[ value ]: key,
-				};
-			},
-			{}
-		);
-		const langSlug = subdomainsToLocales[ context.params.lang ] || context.params.lang;
-		const language = getLanguage( langSlug );
 
+		const language = getLanguage( context.params.lang );
 		if ( ! language ) {
 			next();
 		}
