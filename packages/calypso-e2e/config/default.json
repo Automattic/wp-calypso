@@ -1,4 +1,9 @@
 {
+	"artifacts": {
+		"screenshot": "screenshots",
+		"video": "screenshots/videos",
+		"log": "."
+	},
 	"viewportName": "desktop",
 	"locale": "en",
 	"viewportSize": {
@@ -18,10 +23,5 @@
 			"width": 1440,
 			"height": 790
 		}
-	},
-	"artifacts": {
-		"screenshot": "screenshots",
-		"video": "screenshots/videos",
-		"log": "."
 	}
 }
