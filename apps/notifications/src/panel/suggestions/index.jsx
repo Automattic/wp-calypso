@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { escapeRegExp, find, findIndex } from 'lodash';
+import { escapeRegExp, findIndex } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -168,7 +168,7 @@ class Suggestions extends React.Component {
 		}
 
 		return (
-			find( this.props.suggestions, ( { ID } ) => ID === this.state.selectedSuggestionId ) || null
+			this.props.suggestions.find( ( { ID } ) => ID === this.state.selectedSuggestionId ) || null
 		);
 	}
 

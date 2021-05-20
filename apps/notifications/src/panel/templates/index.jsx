@@ -4,7 +4,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { find, findIndex, matchesProperty } from 'lodash';
+import { findIndex, matchesProperty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -155,7 +155,7 @@ class Layout extends React.Component {
 			return;
 		}
 
-		if ( ! find( nextProps.notes, matchesProperty( 'id', nextProps.selectedNoteId ) ) ) {
+		if ( ! nextProps.notes.find( matchesProperty( 'id', nextProps.selectedNoteId ) ) ) {
 			this.props.unselectNote();
 		}
 	}
@@ -421,7 +421,7 @@ class Layout extends React.Component {
 		const notes = this.filterController.getFilteredNotes( allNotes );
 		if (
 			this.state.selectedNote &&
-			find( notes, matchesProperty( 'id', this.state.selectedNoteId ) ) === null
+			notes.find( matchesProperty( 'id', this.state.selectedNoteId ) ) === null
 		) {
 			this.props.unselectNote();
 		}
@@ -442,10 +442,7 @@ class Layout extends React.Component {
 	};
 
 	render() {
-		const currentNote = find(
-			this.props.notes,
-			matchesProperty( 'id', this.props.selectedNoteId )
-		);
+		const currentNote = this.props.notes.find( matchesProperty( 'id', this.props.selectedNoteId ) );
 		const filteredNotes = this.filterController.getFilteredNotes( this.props.notes );
 
 		return (
