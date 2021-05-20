@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -20,13 +21,7 @@ import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import { getGSuiteSupportedDomains } from 'calypso/lib/gsuite';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { navigate } from 'calypso/state/ui/actions';
-import {
-	bumpStat,
-	composeAnalytics,
-	recordTracksEvent,
-	withAnalytics,
-} from 'calypso/state/analytics/actions';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import ActionBox from '../quick-links/action-box';
 import isHomeQuickLinksExpanded from 'calypso/state/selectors/is-home-quick-links-expanded';
 import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'calypso/state/home/actions';
@@ -126,49 +121,53 @@ export const QuickLinks = ( {
 	);
 };
 
-const editHomepageAction = ( editHomePageUrl, isStaticHomePage ) =>
-	withAnalytics(
+const editHomepageAction = ( editHomePageUrl, isStaticHomePage ) => ( dispatch ) => {
+	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_edit_homepage_click', {
 				is_static_home_page: isStaticHomePage,
 			} ),
 			bumpStat( 'calypso_customer_home', 'my_site_edit_homepage' )
-		),
-		navigate( editHomePageUrl )
+		)
 	);
+	page( editHomePageUrl );
+};
 
-const writePostAction = ( siteSlug, isStaticHomePage ) =>
-	withAnalytics(
+const writePostAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
+	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_write_post_click', {
 				is_static_home_page: isStaticHomePage,
 			} ),
 			bumpStat( 'calypso_customer_home', 'my_site_write_post' )
-		),
-		navigate( `/post/${ siteSlug }` )
+		)
 	);
+	page( `/post/${ siteSlug }` );
+};
 
-const addPageAction = ( siteSlug, isStaticHomePage ) =>
-	withAnalytics(
+const addPageAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
+	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_add_page_click', {
 				is_static_home_page: isStaticHomePage,
 			} ),
 			bumpStat( 'calypso_customer_home', 'my_site_add_page' )
-		),
-		navigate( `/page/${ siteSlug }` )
+		)
 	);
+	page( `/page/${ siteSlug }` );
+};
 
-const manageCommentsAction = ( siteSlug, isStaticHomePage ) =>
-	withAnalytics(
+const manageCommentsAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
+	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_manage_comments_click', {
 				is_static_home_page: isStaticHomePage,
 			} ),
 			bumpStat( 'calypso_customer_home', 'my_site_manage_comments' )
-		),
-		navigate( `/comments/${ siteSlug }` )
+		)
 	);
+	page( `/comments/${ siteSlug }` );
+};
 
 const trackEditMenusAction = ( isStaticHomePage ) =>
 	composeAnalytics(
