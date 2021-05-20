@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -289,12 +288,14 @@ export const linkProps = ( note, block ) => {
 		case 'site':
 		case 'post':
 		case 'comment':
-			return pickBy( {
-				'data-link-type': type,
-				'data-site-id': site,
-				'data-post-id': post,
-				'data-comment-id': comment,
-			} );
+			return Object.fromEntries(
+				[
+					[ 'data-link-type', type ],
+					[ 'data-site-id', site ],
+					[ 'data-post-id', post ],
+					[ 'data-comment-id', comment ],
+				].filter( ( [ , val ] ) => !! val )
+			);
 		default:
 			return {};
 	}
