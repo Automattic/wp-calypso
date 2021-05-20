@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by, until } from 'selenium-webdriver';
+import { By, until } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -11,7 +11,7 @@ import * as driverHelper from '../../driver-helper.js';
 
 export default class GoogleSearchPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		const frameLocator = by.css( 'iframe.iframe-preview' );
+		const frameLocator = By.css( 'iframe.iframe-preview' );
 		super( driver, frameLocator );
 		this.frameLocator = frameLocator;
 	}
@@ -23,7 +23,7 @@ export default class GoogleSearchPage extends AsyncBaseContainer {
 			'Could not switch to iFrame'
 		);
 		await this.driver.sleep( 2000 ); // https://stackoverflow.com/questions/41429723/unhandled-error-cannot-find-context-with-specified-id-using-robot-framework
-		this.adLinklocator = by.xpath(
+		this.adLinklocator = By.xpath(
 			'//li[@class="ads-ad"]//a[contains(@href, "' + referenceUrl + '")]'
 		);
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.adLinkLocator );
@@ -48,13 +48,13 @@ export default class GoogleSearchPage extends AsyncBaseContainer {
 
 	async getAdText() {
 		const adLink = await this.driver.findElement( this.adLinkLocator );
-		return await adLink.findElement( by.xpath( '../../div[@class="ads-visurl"]/cite' ) ).getText();
+		return await adLink.findElement( By.xpath( '../../div[@class="ads-visurl"]/cite' ) ).getText();
 	}
 
 	async getAdVisibleUrl() {
 		const adLink = await this.driver.findElement( this.adLinkLocator );
 		return await adLink
-			.findElement( by.xpath( '../../div[contains(@class,"ads-creative")]' ) )
+			.findElement( By.xpath( '../../div[contains(@class,"ads-creative")]' ) )
 			.getText();
 	}
 }

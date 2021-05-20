@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import webdriver from 'selenium-webdriver';
+import { By, until } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -9,9 +9,6 @@ import webdriver from 'selenium-webdriver';
 import * as driverHelper from '../driver-helper.js';
 import * as driverManager from '../driver-manager.js';
 import * as dataHelper from '../data-helper';
-
-const by = webdriver.By;
-const until = webdriver.until;
 
 import AsyncBaseContainer from '../async-base-container';
 import NoticesComponent from '../components/notices-component';
@@ -21,13 +18,13 @@ export default class EditorPage extends AsyncBaseContainer {
 		if ( ! url ) {
 			url = EditorPage._getUrl();
 		}
-		super( driver, by.css( '.post-editor' ), url );
-		this.editorFrameName = by.css( '.mce-edit-area iframe' );
+		super( driver, By.css( '.post-editor' ), url );
+		this.editorFrameName = By.css( '.mce-edit-area iframe' );
 	}
 
 	async _postInit() {
-		const contentLocator = by.css( 'div.is-section-post-editor' );
-		const cogLocator = by.css( 'button.editor-ground-control__toggle-sidebar' );
+		const contentLocator = By.css( 'div.is-section-post-editor' );
+		const cogLocator = By.css( 'button.editor-ground-control__toggle-sidebar' );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, contentLocator );
 		const contentElement = await this.driver.findElement( contentLocator );
 		const classes = await contentElement.getAttribute( 'class' );
@@ -44,7 +41,7 @@ export default class EditorPage extends AsyncBaseContainer {
 	async enterTitle( blogPostTitle ) {
 		return await driverHelper.setWhenSettable(
 			this.driver,
-			by.css( '.editor-title__input' ),
+			By.css( '.editor-title__input' ),
 			blogPostTitle
 		);
 	}
@@ -55,19 +52,19 @@ export default class EditorPage extends AsyncBaseContainer {
 			this.explicitWaitMS,
 			'Could not locate the editor iFrame.'
 		);
-		await this.driver.findElement( webdriver.By.id( 'tinymce' ) ).sendKeys( blogPostText );
+		await this.driver.findElement( By.id( 'tinymce' ) ).sendKeys( blogPostText );
 		return await this.driver.switchTo().defaultContent();
 	}
 
 	async chooseInsertMediaOption() {
-		await driverHelper.clickWhenClickable( this.driver, by.css( '.mce-wpcom-insert-menu button' ) );
+		await driverHelper.clickWhenClickable( this.driver, By.css( '.mce-wpcom-insert-menu button' ) );
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			by.css( 'span[data-e2e-insert-type="media"]' )
+			By.css( 'span[data-e2e-insert-type="media"]' )
 		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( 'span[data-e2e-insert-type="media"]' )
+			By.css( 'span[data-e2e-insert-type="media"]' )
 		);
 	}
 
@@ -80,20 +77,18 @@ export default class EditorPage extends AsyncBaseContainer {
 	}
 
 	async sendFile( file ) {
-		const fileNameInputLocator = webdriver.By.css(
-			'.media-library__upload-button input[type="file"]'
-		);
+		const fileNameInputLocator = By.css( '.media-library__upload-button input[type="file"]' );
 		const driver = this.driver;
 
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			driver,
-			by.className( 'media-library__upload-button' )
+			By.className( 'media-library__upload-button' )
 		);
 		const fileNameInput = await driver.findElement( fileNameInputLocator );
 		await fileNameInput.sendKeys( file );
 		await driverHelper.isElementNotLocated(
 			driver,
-			by.css( '.media-library__list-item.is-transient' )
+			By.css( '.media-library__list-item.is-transient' )
 		);
 		const errorShown = await this.isErrorDisplayed();
 		if ( errorShown ) {
@@ -101,31 +96,31 @@ export default class EditorPage extends AsyncBaseContainer {
 		}
 		return await driverHelper.waitUntilElementLocatedAndVisible(
 			driver,
-			by.css( '.media-library__list-item.is-selected' )
+			By.css( '.media-library__list-item.is-selected' )
 		);
 	}
 
 	async saveImage( fileName ) {
 		const driver = this.driver;
 
-		const imageUploadedLocator = webdriver.By.css( 'img[alt="' + fileName + '"]' );
+		const imageUploadedLocator = By.css( 'img[alt="' + fileName + '"]' );
 		await driverHelper.waitUntilElementLocatedAndVisible( driver, imageUploadedLocator );
 		return await driverHelper.clickWhenClickable(
 			driver,
-			by.css( 'button[data-e2e-button="confirm"]' )
+			By.css( 'button[data-e2e-button="confirm"]' )
 		);
 	}
 
 	async openImageDetails() {
-		const editLocator = by.css( 'button[data-e2e-button="edit"]:not([disabled])' );
+		const editLocator = By.css( 'button[data-e2e-button="edit"]:not([disabled])' );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, editLocator );
 		return await driverHelper.clickWhenClickable( this.driver, editLocator );
 	}
 
 	async selectEditImage() {
-		let editLocator = by.css( '.editor-media-modal-detail__edit:not([disabled])' );
+		let editLocator = By.css( '.editor-media-modal-detail__edit:not([disabled])' );
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
-			editLocator = by.css( '.is-mobile .editor-media-modal-detail__edit:not([disabled])' );
+			editLocator = By.css( '.is-mobile .editor-media-modal-detail__edit:not([disabled])' );
 		}
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, editLocator );
 		return await driverHelper.clickWhenClickable( this.driver, editLocator );
@@ -139,26 +134,26 @@ export default class EditorPage extends AsyncBaseContainer {
 	}
 
 	async dismissImageEditor() {
-		const cancelLocator = by.css( 'button[data-e2e-button="cancel"]:not([disabled])' );
+		const cancelLocator = By.css( 'button[data-e2e-button="cancel"]:not([disabled])' );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, cancelLocator );
 		return await driverHelper.clickWhenClickable( this.driver, cancelLocator );
 	}
 
 	async dismissImageDetails() {
-		const backLocator = by.css( '.editor-media-modal-detail .header-cake__back:not([disabled])' );
+		const backLocator = By.css( '.editor-media-modal-detail .header-cake__back:not([disabled])' );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, backLocator );
 		return await driverHelper.clickWhenClickable( this.driver, backLocator );
 	}
 
 	async insertContactForm() {
-		await driverHelper.clickWhenClickable( this.driver, by.css( '.mce-wpcom-insert-menu button' ) );
+		await driverHelper.clickWhenClickable( this.driver, By.css( '.mce-wpcom-insert-menu button' ) );
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( 'span[data-e2e-insert-type="contact-form"]' )
+			By.css( 'span[data-e2e-insert-type="contact-form"]' )
 		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( 'button[data-e2e-button="save"]' )
+			By.css( 'button[data-e2e-button="save"]' )
 		);
 	}
 
@@ -170,58 +165,58 @@ export default class EditorPage extends AsyncBaseContainer {
 		allowQuantity = true,
 		email = 'test@wordpress.com',
 	} = {} ) {
-		await driverHelper.clickWhenClickable( this.driver, by.css( '.mce-wpcom-insert-menu button' ) );
+		await driverHelper.clickWhenClickable( this.driver, By.css( '.mce-wpcom-insert-menu button' ) );
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( 'span[data-e2e-insert-type="payment-button"]' )
+			By.css( 'span[data-e2e-insert-type="payment-button"]' )
 		);
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css(
+			By.css(
 				'.editor-simple-payments-modal__navigation .section-header__actions .gridicons-plus-small'
 			)
 		);
 		await driverHelper.setWhenSettable(
 			this.driver,
-			by.css( '.editor-simple-payments-modal__form #title' ),
+			By.css( '.editor-simple-payments-modal__form #title' ),
 			title
 		);
 		await driverHelper.setWhenSettable(
 			this.driver,
-			by.css( '.editor-simple-payments-modal__form #description' ),
+			By.css( '.editor-simple-payments-modal__form #description' ),
 			description
 		);
 		await driverHelper.setWhenSettable(
 			this.driver,
-			by.css( '.editor-simple-payments-modal__form #price' ),
+			By.css( '.editor-simple-payments-modal__form #price' ),
 			price
 		);
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css(
+			By.css(
 				`.editor-simple-payments-modal__form .form-currency-input__select option[value="${ currency }"]`
 			)
 		);
 		if ( email ) {
 			await driverHelper.setWhenSettable(
 				this.driver,
-				by.css( '.editor-simple-payments-modal__form #email' ),
+				By.css( '.editor-simple-payments-modal__form #email' ),
 				email
 			);
 		}
 		if ( allowQuantity === true ) {
 			await driverHelper.clickWhenClickable(
 				this.driver,
-				by.css( '.editor-simple-payments-modal__form .form-toggle__switch' )
+				By.css( '.editor-simple-payments-modal__form .form-toggle__switch' )
 			);
 		}
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.editor-simple-payments-modal button.is-primary' )
+			By.css( '.editor-simple-payments-modal button.is-primary' )
 		);
 		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			by.css( '.editor-simple-payments-modal' ),
+			By.css( '.editor-simple-payments-modal' ),
 			this.explicitWaitMS * 7
 		);
 	}
@@ -232,30 +227,30 @@ export default class EditorPage extends AsyncBaseContainer {
 
 		await this.chooseInsertMediaOption();
 		await this.sendFile( newFile );
-		const imageUploadedLocator = webdriver.By.css( 'img[alt="' + newImageName + '"]' );
+		const imageUploadedLocator = By.css( 'img[alt="' + newImageName + '"]' );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, imageUploadedLocator );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( 'button[data-e2e-button="confirm"]' )
+			By.css( 'button[data-e2e-button="confirm"]' )
 		);
 	}
 
 	async deleteMedia() {
-		await driverHelper.clickWhenClickable( this.driver, by.css( '.editor-media-modal__delete' ) );
+		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-media-modal__delete' ) );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( 'button[data-e2e-button="accept"]' )
+			By.css( 'button[data-e2e-button="accept"]' )
 		);
 	}
 
 	async dismissMediaModal() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( 'button[data-e2e-button="cancel"]' )
+			By.css( 'button[data-e2e-button="cancel"]' )
 		);
 		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			by.css( '.dialog__backdrop.is-full-screen' )
+			By.css( '.dialog__backdrop.is-full-screen' )
 		);
 	}
 
@@ -268,7 +263,7 @@ export default class EditorPage extends AsyncBaseContainer {
 		);
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			by.css( 'img[alt="' + newImageName + '"]' )
+			By.css( 'img[alt="' + newImageName + '"]' )
 		);
 		return await this.driver.switchTo().defaultContent();
 	}
@@ -278,11 +273,11 @@ export default class EditorPage extends AsyncBaseContainer {
 
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			driver,
-			by.css( '.post-editor__inner-content .editor-featured-image__preview' )
+			By.css( '.post-editor__inner-content .editor-featured-image__preview' )
 		);
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			driver,
-			by.css( '[data-e2e-title="featured-image"] .editor-featured-image__preview img' )
+			By.css( '[data-e2e-title="featured-image"] .editor-featured-image__preview img' )
 		);
 		return await driver.switchTo().defaultContent();
 	}
@@ -300,7 +295,7 @@ export default class EditorPage extends AsyncBaseContainer {
 		);
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			by.css( '.wpview-type-contact-form' )
+			By.css( '.wpview-type-contact-form' )
 		);
 		return await this.driver.switchTo().defaultContent();
 	}
@@ -313,7 +308,7 @@ export default class EditorPage extends AsyncBaseContainer {
 		);
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			by.css( '.wpview-type-simple-payments' )
+			By.css( '.wpview-type-simple-payments' )
 		);
 		return await this.driver.switchTo().defaultContent();
 	}
@@ -321,12 +316,12 @@ export default class EditorPage extends AsyncBaseContainer {
 	async waitForTitle() {
 		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			by.css( '.editor-title.is-loading' )
+			By.css( '.editor-title.is-loading' )
 		);
 	}
 
 	async titleShown() {
-		const titleLocator = by.css( '.editor-title__input' );
+		const titleLocator = By.css( '.editor-title__input' );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, titleLocator );
 		const element = await this.driver.findElement( titleLocator );
 		return await element.getAttribute( 'value' );
@@ -335,14 +330,14 @@ export default class EditorPage extends AsyncBaseContainer {
 	async publishEnabled() {
 		return await driverHelper.isElementLocated(
 			this.driver,
-			by.css( '.editor-publish-button:not([disabled])' )
+			By.css( '.editor-publish-button:not([disabled])' )
 		);
 	}
 
 	async postIsScheduled() {
 		return await driverHelper.isElementLocated(
 			this.driver,
-			by.css(
+			By.css(
 				'.post-editor__inner .post-editor__content .editor-action-bar .editor-status-label.is-future'
 			)
 		);
