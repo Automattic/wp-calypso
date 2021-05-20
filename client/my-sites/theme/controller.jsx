@@ -14,12 +14,11 @@ import ThemeNotFoundError from './theme-not-found-error';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { requestTheme, setBackPath } from 'calypso/state/themes/actions';
 import { getTheme, getThemeRequestErrors } from 'calypso/state/themes/selectors';
-import config from '@automattic/calypso-config';
 
 const debug = debugFactory( 'calypso:themes' );
 
 export function fetchThemeDetailsData( context, next ) {
-	if ( ! config.isEnabled( 'manage/themes/details' ) || ! context.isServerSide ) {
+	if ( ! context.isServerSide ) {
 		return next();
 	}
 
