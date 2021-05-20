@@ -53,7 +53,8 @@ class AutoUpdater extends Updater {
 	}
 
 	ping( isUserRequested ) {
-		if ( process.env.DEBUG ) {
+		// eslint-disable-next-line no-constant-condition
+		if ( true ) {
 			dialogDebug( 'DEBUG is set: skipping auto-update check' );
 			return;
 		}
