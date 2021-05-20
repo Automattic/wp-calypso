@@ -65,3 +65,18 @@ export function setLocaleMiddleware( context, next ) {
 	context.store.dispatch( setLocale( context.lang || config( 'i18n_default_locale_slug' ) ) );
 	next();
 }
+
+export function composeHandlers( ...handlers ) {
+	return ( context, next ) => {
+		const it = handlers.values();
+		function handleNext() {
+			const nextHandler = it.next().value;
+			if ( ! nextHandler ) {
+				next();
+			} else {
+				nextHandler( context, handleNext );
+			}
+		}
+		handleNext();
+	};
+}
