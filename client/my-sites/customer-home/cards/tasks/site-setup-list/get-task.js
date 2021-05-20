@@ -188,7 +188,6 @@ export const getTask = (
 					"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
 				),
 				actionText: translate( 'Add a menu' ),
-				isSkippable: true,
 				actionUrl: menusUrl,
 				actionIsLink: true,
 				customFirstButton: (
