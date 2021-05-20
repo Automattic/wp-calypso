@@ -97,7 +97,7 @@ class ThreatDescription extends React.PureComponent< Props > {
 	}
 
 	render() {
-		const { children, status, problem, fix, diff, rows, context, filename } = this.props;
+		const { children, problem, fix, diff, rows, context, filename } = this.props;
 
 		return (
 			<div className="threat-description">
