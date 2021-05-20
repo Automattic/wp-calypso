@@ -54,8 +54,9 @@ export default class PlansPage extends AsyncBaseContainer {
 			currentScreenSize() === 'mobile'
 				? '.plan-features__mobile .plan-features__actions-button.is-primary'
 				: '.plan-features__table-item.is-top-buttons button.plan-features__actions-button.is-primary';
-		const count = await driverHelper.getElementCount( this.driver, by.css( selector ) );
-		return count === 1;
+
+		const elements = await this.driver.findElements( by.css( selector ) );
+		return elements.length === 1;
 	}
 
 	async confirmCurrentPlan( planName ) {

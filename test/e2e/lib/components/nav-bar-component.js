@@ -19,11 +19,11 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, postButtonLocator );
 		await this.dismissComponentPopover();
 		if ( siteURL !== null ) {
-			return await driverHelper.selectElementByText(
-				this.driver,
+			const siteDomainLocator = driverHelper.createTextLocator(
 				by.css( '.site__domain' ),
 				siteURL
 			);
+			await driverHelper.clickWhenClickable( this.driver, siteDomainLocator );
 		}
 	}
 	async dismissComponentPopover() {

@@ -567,8 +567,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			const viewPagePage = await ViewPagePage.Expect( driver );
 			await viewPagePage.clickPaymentButton();
 			// Skip some lines and checks until Chrome can handle multiple windows in app mode
-			// await driverHelper.waitForNumberOfWindows( driver, 2 );
-			// await driverHelper.switchToWindowByIndex( driver, 1 );
+			// await driverHelper.waitUntilAbleToSwitchToWindow( driver, 1 );
 			await PaypalCheckoutPage.Expect( driver );
 			// const amountDisplayed = await paypalCheckoutPage.priceDisplayed();
 			// assert.strictEqual(
@@ -579,13 +578,13 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			// 	"The amount displayed on Paypal isn't correct"
 			// );
 			// await driverHelper.closeCurrentWindow( driver );
-			// await driverHelper.switchToWindowByIndex( driver, 0 );
+			// await driverHelper.waitUntilAbleToSwitchToWindow( driver, 0 );
 			// viewPagePage = await ViewPagePage.Expect( driver );
 			// assert( await viewPagePage.displayed(), 'view page page is not displayed' );
 		} );
 
 		after( async function () {
-			await driverHelper.ensurePopupsClosed( driver );
+			await driverHelper.closeAllPopupWindows( driver );
 		} );
 	} );
 } );
