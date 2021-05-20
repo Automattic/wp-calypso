@@ -44,7 +44,7 @@ export default class ReaderPage extends AsyncBaseContainer {
 
 		async function clickAndOpenShareModal() {
 			await driverHelper.clickWhenClickable( this.driver, shareButtonLocator );
-			return driverHelper.clickWhenClickable(
+			return await driverHelper.clickWhenClickable(
 				this.driver,
 				By.css( '.site-selector__sites .site__content' )
 			);
@@ -68,15 +68,15 @@ export default class ReaderPage extends AsyncBaseContainer {
 			By.css( '.comments__form textarea' ),
 			comment
 		);
-		return driverHelper.clickWhenClickable( this.driver, By.css( '.comments__form button' ) );
+		return await driverHelper.clickWhenClickable( this.driver, By.css( '.comments__form button' ) );
 	}
 
-	waitForCommentToAppear( comment ) {
+	async waitForCommentToAppear( comment ) {
 		const commentLocator = driverHelper.createTextLocator(
 			By.css( '.comments__comment-content' ),
 			comment
 		);
-		return driverHelper.waitUntilElementLocated( this.driver, commentLocator );
+		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, commentLocator );
 	}
 
 	static getReaderURL() {

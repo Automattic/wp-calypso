@@ -353,7 +353,7 @@ export async function ensureNotLoggedIn( driver ) {
 		'window.document.cookie = "sensitive_pixel_option=no;domain=.wordpress.com;SameSite=None;Secure"'
 	);
 
-	return driver.sleep( 500 );
+	await driver.sleep( 500 );
 }
 
 /**

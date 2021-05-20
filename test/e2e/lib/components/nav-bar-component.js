@@ -42,8 +42,8 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		const mySitesLocator = by.css( 'header.masterbar a.masterbar__item' );
 		await driverHelper.clickWhenClickable( this.driver, mySitesLocator );
 	}
-	hasUnreadNotifications() {
-		return this.driver
+	async hasUnreadNotifications() {
+		return await this.driver
 			.findElement( by.css( '.masterbar__item-notifications' ) )
 			.getAttribute( 'class' )
 			.then( ( classNames ) => {
@@ -55,7 +55,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		const notificationsLocator = by.css( '.masterbar__item-notifications' );
 		const classNames = await driver.findElement( notificationsLocator ).getAttribute( 'class' );
 		if ( classNames.includes( 'is-active' ) === false ) {
-			return driverHelper.clickWhenClickable( driver, notificationsLocator );
+			return await driverHelper.clickWhenClickable( driver, notificationsLocator );
 		}
 		await driver.sleep( 400 ); // Wait for menu animation to complete
 	}

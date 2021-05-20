@@ -16,7 +16,7 @@ export default class DomainsPage extends AsyncBaseContainer {
 	}
 
 	async clickAddDomain() {
-		return driverHelper.clickWhenClickable( this.driver, By.css( '.add-domain-button' ) );
+		return await driverHelper.clickWhenClickable( this.driver, By.css( '.add-domain-button' ) );
 	}
 
 	async clickPopoverItem( name ) {
@@ -24,11 +24,14 @@ export default class DomainsPage extends AsyncBaseContainer {
 			By.css( '.popover__menu-item' ),
 			name
 		);
-		return driverHelper.clickWhenClickable( this.driver, actionItemLocator );
+		return await driverHelper.clickWhenClickable( this.driver, actionItemLocator );
 	}
 
 	async popOverMenuDisplayed() {
 		const popOverMenuLocator = By.css( '.popover__menu' );
-		return driverHelper.isElementEventuallyLocatedAndVisible( this.driver, popOverMenuLocator );
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			popOverMenuLocator
+		);
 	}
 }

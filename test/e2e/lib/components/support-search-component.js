@@ -33,7 +33,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 			'.inline-help__results-placeholder, .help-search__results-placeholder'
 		);
 
-		return driverHelper.waitUntilElementNotLocated(
+		return await driverHelper.waitUntilElementNotLocated(
 			driver,
 			resultsLoadingLocator,
 			this.explicitWaitMS * 2
@@ -57,7 +57,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async waitForDefaultResultsNotToBePresent() {
-		return driverHelper.waitUntilElementNotLocated( this.driver, defaultResultsLocators );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, defaultResultsLocators );
 	}
 
 	async getErrorResults() {
@@ -70,7 +70,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async waitForErrorResultsNotToBePresent() {
-		return driverHelper.waitUntilElementNotLocated( this.driver, errorResultsLocators );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, errorResultsLocators );
 	}
 
 	async getSearchResults() {
@@ -83,7 +83,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async waitForSearchResultsNotToBePresent() {
-		return driverHelper.waitUntilElementNotLocated( this.driver, searchResultsLocators );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, searchResultsLocators );
 	}
 
 	async getAdminSearchResults() {
@@ -96,7 +96,7 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	}
 
 	async waitForAdminResultsNotToBePresent() {
-		return driverHelper.waitUntilElementNotLocated( this.driver, adminSearchResultsLocators );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, adminSearchResultsLocators );
 	}
 
 	async searchFor( query = '' ) {
