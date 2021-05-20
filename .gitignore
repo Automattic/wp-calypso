@@ -73,6 +73,7 @@ cached-requests.json
 # webpack assets
 /assets*.json
 /desktop/assets*.json
+/desktop/Automattic/WordPress-Desktop/assets*.json
 /server/bundler/assets*.json
 /client/server/bundler/assets*.json
 
@@ -90,6 +91,20 @@ cached-requests.json
 /desktop/e2e/logs
 /desktop/e2e/screenshots
 /desktop/e2e/result.xml
+
+/desktop/Automattic/WordPress-Desktop/dist
+/desktop/Automattic/WordPress-Desktop/build
+/desktop/Automattic/WordPress-Desktop/client
+/desktop/Automattic/WordPress-Desktop/config
+/desktop/Automattic/WordPress-Desktop/public
+/desktop/Automattic/WordPress-Desktop/release*
+/desktop/Automattic/WordPress-Desktop/resource/certificates/mac.p12
+/desktop/Automattic/WordPress-Desktop/resource/certificates/win.p12
+/client/dAutomattic/WordPress-Desktop/esktop/config.json
+/desktop/Automattic/WordPress-Desktop/id_rsa
+/desktop/Automattic/WordPress-Desktop/e2e/logs
+/desktop/Automattic/WordPress-Desktop/e2e/screenshots
+/desktop/Automattic/WordPress-Desktop/e2e/result.xml
 
 # Typescript
 *.tsbuildinfo
