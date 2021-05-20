@@ -52,7 +52,8 @@ registerPlugin( 'wpcom-block-editor-nux', {
 
 		// Open patterns panel before Welcome Tour if necessary (e.g. when using Blank Canvas theme)
 		// Do this only when Welcome Tour is not manually opened.
-		if ( variant === BLANK_CANVAS_VARIANT && ! isManuallyOpened ) {
+		// NOTE: at the moment, 'starter-page-templates' assets are not loaded on /site-editor/ page so 'setOpenState' may be undefined
+		if ( variant === BLANK_CANVAS_VARIANT && ! isManuallyOpened && setOpenState ) {
 			setOpenState( 'OPEN_FOR_BLANK_CANVAS' );
 			return null;
 		}
