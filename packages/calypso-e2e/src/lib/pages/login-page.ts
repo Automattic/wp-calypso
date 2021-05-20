@@ -49,13 +49,9 @@ export class LoginPage {
 		}
 
 		// Begin the process of logging in.
-		await this.page.waitForSelector( this.loginContainerSelector );
-		await this.page.waitForSelector( this.usernameSelector );
-
 		await this.page.fill( this.usernameSelector, username );
 		await this.page.keyboard.press( 'Enter' );
 
-		await this.page.waitForSelector( this.passwordSelector );
 		await this.page.fill( this.passwordSelector, password );
 
 		// Wait for all promises. Add more here as necessary, such as waiting for the request to be
