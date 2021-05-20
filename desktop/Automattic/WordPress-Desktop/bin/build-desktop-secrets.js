@@ -4,8 +4,10 @@
 /* eslint-disable no-process-exit*/
 /* eslint-disable import/no-nodejs-modules*/
 
+const fs = require( 'fs' );
 const path = require( 'path' );
 const { execSync } = require( 'child_process' );
+const makeDir = require( 'make-dir' );
 
 const CALYPSO_SECRETS_ENCRYPTION_KEY = process.env.CALYPSO_SECRETS_ENCRYPTION_KEY;
 if ( ! CALYPSO_SECRETS_ENCRYPTION_KEY ) {
@@ -39,6 +41,9 @@ for ( let i = 0; i < secrets.length; i++ ) {
 	}
 
 	try {
+		if ( ! fs.existsSync( path.resolve( PROJECT_DIR, 'config' ) ) ) {
+			makeDir.sync( path.resolve( PROJECT_DIR, 'config' ) );
+		}
 		execSync(
 			`openssl aes-256-cbc ${ decryptFlags } -in ${ encrypted } -out ${ decrypted } -k "${ CALYPSO_SECRETS_ENCRYPTION_KEY }"`
 		);
