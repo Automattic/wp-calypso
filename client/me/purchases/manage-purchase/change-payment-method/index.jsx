@@ -40,8 +40,6 @@ import PaymentMethodSelector from '../payment-method-selector';
 import getPaymentMethodIdFromPayment from '../payment-method-selector/get-payment-method-id-from-payment';
 import useCreateAssignablePaymentMethods from './use-create-assignable-payment-methods';
 
-import 'calypso/me/purchases/components/payment-method-form/style.scss';
-
 function ChangePaymentMethod( props ) {
 	const { isStripeLoading } = useStripe();
 
