@@ -400,7 +400,7 @@ jobs:
           name: Build Desktop Mac
           no_output_timeout: 45m
           environment:
-            CSC_LINK: desktop/Automattic/WordPress-Desktop/resource/certificates/mac.p12
+            CSC_LINK: resource/certificates/mac.p12
             CSC_FOR_PULL_REQUEST: true
           command: |
             set +e
