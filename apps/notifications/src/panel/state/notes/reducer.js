@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { keyBy, omit } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,7 +11,11 @@ import * as types from '../action-types';
 
 export const allNotes = ( state = {}, { type, notes, noteIds } ) => {
 	if ( types.NOTES_ADD === type ) {
-		return { ...state, ...keyBy( notes, 'id' ) };
+		return {
+			...state,
+			// Transform the notes array into an object with IDs as the keys
+			...Object.fromEntries( notes.map( ( note ) => [ note.id, note ] ) ),
+		};
 	}
 
 	if ( types.NOTES_REMOVE === type ) {
