@@ -141,7 +141,11 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 			<h3 className="rewind-flow__title">
 				{ translate( 'Currently creating a downloadable backup of your site' ) }
 			</h3>
-			<ProgressBar percent={ percent } />
+			<ProgressBar
+				isReady={ ! isDownloadURLNotReady }
+				percent={ percent }
+				initializationMessage={ translate( 'Initializing the download process' ) }
+			/>
 			<p className="rewind-flow__info">
 				{ translate(
 					"We're creating a downloadable backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.",
