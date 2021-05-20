@@ -17,18 +17,6 @@ export default class SignupProcessingPage extends AsyncBaseContainer {
 		super( driver, By.css( '.signup-processing-screen__content' ) );
 	}
 
-	async waitForPage() {
-		try {
-			await driverHelper.isElementEventuallyLocatedAndVisible(
-				this.driver,
-				this.expectedElementLocator,
-				this.explicitWaitMS
-			);
-		} catch {
-			console.log( 'Signup Processing Page was not displayed or moved too quickly for the test' );
-		}
-	}
-
 	async waitToDisappear( username, password ) {
 		const signupProcessingTimeout = this.explicitWaitMS * 7.5; // Wait 150s for signup processing
 		try {
