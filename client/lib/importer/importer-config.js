@@ -137,6 +137,48 @@ function getConfig( { siteTitle = '' } = {} ) {
 		weight: 0,
 	};
 
+	importerConfig.substack = {
+		engine: 'substack',
+		key: 'importer-type-substack',
+		type: 'file',
+		title: 'Substack',
+		icon: 'substack',
+		description: translate(
+			'Import posts and images, podcasts and public comments from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
+			{
+				args: {
+					importerName: 'Substack',
+					siteTitle,
+				},
+				components: {
+					b: <strong />,
+				},
+			}
+		),
+		uploadDescription: translate(
+			'A %(importerName)s export file is a ZIP file ' +
+				'containing a CSV file with all posts and individual HTML posts. ' +
+				'{{supportLink/}}',
+			{
+				args: {
+					importerName: 'Substack',
+				},
+				components: {
+					supportLink: (
+						<InlineSupportLink
+							supportPostId={ 87696 } // TODO: update
+							supportLink="https://wordpress.com/support/import/import-from-substack/"
+							showIcon={ false }
+						>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
+					),
+				},
+			}
+		),
+		weight: 0,
+	};
+
 	importerConfig.squarespace = {
 		engine: 'squarespace',
 		key: 'importer-type-squarespace',
