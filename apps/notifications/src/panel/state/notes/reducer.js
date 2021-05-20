@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +18,9 @@ export const allNotes = ( state = {}, { type, notes, noteIds } ) => {
 	}
 
 	if ( types.NOTES_REMOVE === type ) {
-		return omit( state, noteIds );
+		const nextState = { ...state };
+		noteIds.forEach( ( id ) => delete nextState[ id ] );
+		return nextState;
 	}
 
 	return state;
@@ -31,7 +32,9 @@ export const hiddenNoteIds = ( state = {}, { type, noteId } ) => {
 	}
 
 	if ( types.UNDO_ACTION === type ) {
-		return omit( state, [ noteId ] );
+		const nextState = { ...state };
+		delete nextState[ noteId ];
+		return nextState;
 	}
 
 	return state;
@@ -43,7 +46,9 @@ export const noteApprovals = ( state = {}, { type, noteId, isApproved } ) => {
 	}
 
 	if ( types.RESET_LOCAL_APPROVAL === type ) {
-		return omit( state, [ noteId ] );
+		const nextState = { ...state };
+		delete nextState[ noteId ];
+		return nextState;
 	}
 
 	return state;
@@ -55,7 +60,9 @@ export const noteLikes = ( state = {}, { type, noteId, isLiked } ) => {
 	}
 
 	if ( types.RESET_LOCAL_LIKE === type ) {
-		return omit( state, [ noteId ] );
+		const nextState = { ...state };
+		delete nextState[ noteId ];
+		return nextState;
 	}
 
 	return state;
