@@ -116,9 +116,10 @@ export function requestSites() {
  *
  * @param {number|string} siteFragment Site ID or slug
  * @param {boolean} forceWpcom explicitly get info from WPCOM vs Jetpack site
+ * @param {boolean} returnError if the request fails, explicitly return the reason why
  * @returns {Function}              Action thunk
  */
-export function requestSite( siteFragment, forceWpcom = false ) {
+export function requestSite( siteFragment, forceWpcom = false, returnError = false ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_REQUEST,
@@ -157,6 +158,13 @@ export function requestSite( siteFragment, forceWpcom = false ) {
 					! forceWpcom
 				) {
 					return dispatch( requestSite( siteFragment, true ) );
+				}
+				if ( returnError ) {
+					return dispatch( {
+						type: SITE_REQUEST_FAILURE,
+						errorCode: error.error,
+						statusCode: error.status,
+					} );
 				}
 				dispatch( {
 					type: SITE_REQUEST_FAILURE,
