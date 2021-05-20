@@ -46,13 +46,6 @@ const StatShares = ( { siteId } ) => {
 			<SectionHeader label={ translate( 'Shares' ) } />
 			<Card className={ classNames( ...classes ) }>
 				<StatsTabs borderless>
-					<StatsTab
-						gridicon="share"
-						label={ translate( 'Total' ) }
-						loading={ isLoading }
-						value={ siteStats && siteStats?.stats?.shares }
-						compact
-					/>
 					{ siteStats &&
 						shareButtons &&
 						shareButtons.map( ( service ) => {
