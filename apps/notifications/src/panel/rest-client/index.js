@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { difference, get, pick, property, range } from 'lodash';
+import { difference, pick, property, range } from 'lodash';
 
 /**
  * Internal dependencies
@@ -113,7 +113,7 @@ function reschedule( refresh_ms ) {
 }
 
 function pinghubCallback( err, event ) {
-	const responseType = get( event, 'response.type' );
+	const responseType = event?.response?.type;
 
 	this.subscribing = false;
 
@@ -135,7 +135,7 @@ function pinghubCallback( err, event ) {
 		// WebSocket message: add to inbox, call main() to trigger API call
 		let message = true;
 		try {
-			message = JSON.parse( get( event, 'response.data' ) );
+			message = JSON.parse( event?.response?.data );
 		} catch ( e ) {}
 		this.inbox.push( message );
 		debug( 'pinghubCallback: received message', event.response, 'this.inbox =', this.inbox );
@@ -324,7 +324,7 @@ function ready() {
 		newNotes = [];
 	}
 
-	const latestType = get( notes.slice( -1 )[ 0 ], 'type', null );
+	const latestType = notes.slice( -1 )[ 0 ]?.type ?? null;
 	store.dispatch( { type: 'APP_RENDER_NOTES', newNoteCount, latestType } );
 
 	this.hasNewNoteData = false;
