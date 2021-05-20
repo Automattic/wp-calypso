@@ -20,8 +20,8 @@
 		}
 	},
 	"artifacts": {
-		"screenshot": "/user/screenshots",
-		"video": "/user/videos",
+		"screenshot": "screenshots",
+		"video": "screenshots/videos",
 		"log": "."
 	}
 }

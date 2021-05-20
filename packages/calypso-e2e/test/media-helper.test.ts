@@ -6,7 +6,7 @@
 /**
  * External dependencies
  */
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
 import path from 'path';
 
 /**
@@ -56,8 +56,13 @@ describe( `Test: getScreenshotDir`, function () {
 	} );
 
 	test.each`
-		temp_asset_path | screenshotdir      | expected
-		${ '/tmp' }     | ${ 'screenshots' } | ${ '/tmp/screenshots' }
+		temp_asset_path          | screenshotdir      | expected
+		${ '/tmp' }              | ${ 'screenshots' } | ${ '/tmp/screenshots' }
+		${ '/' }                 | ${ 'scr' }         | ${ '/scr' }
+		${ '/TestUser/assets/' } | ${ '' }            | ${ '/TestUser/assets/screenshots' }
+		${ '' }                  | ${ 'screenshots' } | ${ path.resolve( __dirname, '..', 'screenshots' ) }
+		${ '/' }                 | ${ '/' }           | ${ '/' }
+		${ '' }                  | ${ '' }            | ${ path.resolve( __dirname, '..', 'screenshots' ) }
 	`(
 		'Returns $expected when environment variable is set to $temp_asset_path and $screenshotdir',
 		async function ( { temp_asset_path, screenshotdir, expected } ) {
@@ -67,11 +72,12 @@ describe( `Test: getScreenshotDir`, function () {
 		}
 	);
 
-	// test( 'Returns default value if environment variable not set', async function () {
-	// 	delete process.env.TEMP_ASSET_PATH;
-	// 	const expected = path.resolve( __dirname, '..' );
-	// 	expect( v() ).toBe( expected );
-	// } );
+	test( 'Returns default values from config if environment variable not set', async function () {
+		delete process.env.TEMP_ASSET_PATH;
+		delete process.env.SCREENSHOTDIR;
+		const expected = path.resolve( __dirname, '..', 'screenshots' );
+		expect( getScreenshotDir() ).toBe( expected );
+	} );
 
 	afterAll( function () {
 		process.env = env;

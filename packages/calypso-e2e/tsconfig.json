@@ -21,7 +21,7 @@
 
 		"forceConsistentCasingInFileNames": true,
 
-		"types": [ "node", "jest" ],
+		"types": [ "node" ],
 
 		"noEmitHelpers": true,
 		"importHelpers": true,
