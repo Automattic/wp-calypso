@@ -125,3 +125,6 @@
 /packages/i18n-utils @Automattic/i18n
 /packages/language-picker @Automattic/i18n
 /packages/languages @Automattic/i18n
+
+# E2E specs
+/test/e2e @WunderBart
