@@ -56,8 +56,13 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 
 	useEffect( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_pricing_page_visit', { site: siteSlug } ) );
-	}, [ dispatch, siteSlug ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_pricing_page_visit', {
+				site: siteSlug,
+				rootPath: rootUrl,
+			} )
+		);
+	}, [ dispatch, rootUrl, siteSlug ] );
 
 	useEffect( () => {
 		setDuration( defaultDuration );
