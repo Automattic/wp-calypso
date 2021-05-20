@@ -8,6 +8,7 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import { makeLayoutMiddleware } from './shared.js';
+import { ssrSetupLocaleMiddleware } from './ssr-setup-locale.js';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { RouteProvider } from 'calypso/components/route';
@@ -47,6 +48,8 @@ const ProviderWrappedLoggedOutLayout = ( {
  * `context.primary` and `context.secondary` to populate it.
  */
 export const makeLayout = makeLayoutMiddleware( ProviderWrappedLoggedOutLayout );
+
+export const ssrSetupLocale = ssrSetupLocaleMiddleware();
 
 /**
  * These functions are not used by Node. It is here to provide an APi compatible with `./index.web.js`
