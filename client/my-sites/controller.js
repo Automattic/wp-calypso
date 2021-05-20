@@ -75,7 +75,7 @@ import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isSiteWPForTeamsHub from 'calypso/state/selectors/is-site-wpforteams-hub';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 
 /*
@@ -600,7 +600,7 @@ export function wpForTeamsP2PlusNotSupportedRedirect( context, next ) {
  * @param {object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
-export function wpForTeamsRedirectToHubPlans( context, next ) {
+export function p2RedirectToHubPlans( context, next ) {
 	const store = context.store;
 	const selectedSite = getSelectedSite( store.getState() );
 
@@ -608,7 +608,7 @@ export function wpForTeamsRedirectToHubPlans( context, next ) {
 		config.isEnabled( 'p2/p2-plus' ) &&
 		selectedSite &&
 		isSiteWPForTeams( store.getState(), selectedSite.ID ) &&
-		! isSiteWPForTeamsHub( store.getState(), selectedSite.ID )
+		! isSiteP2Hub( store.getState(), selectedSite.ID )
 	) {
 		const hubId = getP2HubBlogId( store.getState(), selectedSite.ID );
 		const hubSlug = getSiteSlug( store.getState(), hubId );

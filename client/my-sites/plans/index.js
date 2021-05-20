@@ -20,7 +20,7 @@ import {
 	siteSelection,
 	sites,
 	wpForTeamsP2PlusNotSupportedRedirect,
-	wpForTeamsRedirectToHubPlans,
+	p2RedirectToHubPlans,
 } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 
@@ -33,7 +33,7 @@ export default function () {
 		'/plans',
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
-		wpForTeamsRedirectToHubPlans,
+		p2RedirectToHubPlans,
 		sites
 	);
 	trackedPage(
@@ -41,7 +41,7 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
-		wpForTeamsRedirectToHubPlans,
+		p2RedirectToHubPlans,
 		redirectToPlans
 	);
 	trackedPage(
@@ -49,7 +49,7 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
-		wpForTeamsRedirectToHubPlans,
+		p2RedirectToHubPlans,
 		redirectToPlans
 	);
 	trackedPage(
@@ -57,7 +57,7 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
-		wpForTeamsRedirectToHubPlans,
+		p2RedirectToHubPlans,
 		redirectToPlans
 	);
 	trackedPage(
@@ -65,7 +65,7 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
-		wpForTeamsRedirectToHubPlans,
+		p2RedirectToHubPlans,
 		redirectToPlans
 	);
 	trackedPage( '/plans/features/:feature/:domain', features );
@@ -75,7 +75,7 @@ export default function () {
 		wpForTeamsP2PlusNotSupportedRedirect,
 		sites,
 		navigation,
-		wpForTeamsRedirectToHubPlans,
+		p2RedirectToHubPlans,
 		currentPlan
 	);
 	trackedPage(
@@ -83,14 +83,14 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
-		wpForTeamsRedirectToHubPlans,
+		p2RedirectToHubPlans,
 		currentPlan
 	);
 	trackedPage(
 		'/plans/select/:plan/:domain',
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
-		wpForTeamsRedirectToHubPlans,
+		p2RedirectToHubPlans,
 		redirectToCheckout
 	);
 
@@ -99,7 +99,7 @@ export default function () {
 		'/plans/:intervalType?/:site',
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
-		wpForTeamsRedirectToHubPlans,
+		p2RedirectToHubPlans,
 		navigation,
 		plans
 	);
