@@ -56,10 +56,6 @@ export class LoginPage {
 
 		// Wait for all promises. Add more here as necessary, such as waiting for the request to be
 		// completed, or looking for a specific elemen on page.
-		try {
-			await Promise.all( [ this.page.waitForNavigation(), this.page.keyboard.press( 'Enter' ) ] );
-		} catch ( err ) {
-			throw new Error( 'Failed to log in.' );
-		}
+		await Promise.all( [ this.page.waitForNavigation(), this.page.keyboard.press( 'Enter' ) ] );
 	}
 }
