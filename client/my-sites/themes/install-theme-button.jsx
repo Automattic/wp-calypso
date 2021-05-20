@@ -14,11 +14,7 @@ import { connectOptions } from './theme-options';
 import { translate } from 'i18n-calypso';
 import { trackClick } from './helpers';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-	getSelectedSite,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { Button } from '@automattic/components';
@@ -81,15 +77,14 @@ const InstallThemeButton = connectOptions(
 
 const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
-	const selectedSite = getSelectedSite( state );
 	return {
-		allMySites: ! selectedSite,
+		allMySites: ! selectedSiteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 		isMultisite: isJetpackSiteMultiSite( state, selectedSiteId ),
 		jetpackSite: Boolean( isJetpackSite( state, selectedSiteId ) ),
 		canUploadThemesOrPlugins: siteCanUploadThemesOrPlugins( state, selectedSiteId ),
-		atomicSite: Boolean( isAtomicSite( selectedSite ) ),
+		atomicSite: Boolean( isAtomicSite( state, selectedSiteId ) ),
 	};
 };
 
