@@ -6,6 +6,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { EMAIL_WARNING_SLUG_UNUSED_MAILBOXES } from 'calypso/lib/emails/email-provider-constants';
 import {
 	getGSuiteMailboxCount,
 	getGSuiteSubscriptionId,
@@ -19,7 +20,6 @@ import {
 	getTitanSubscriptionId,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
-import { EMAIL_WARNING_SLUG_UNUSED_MAILBOXES } from 'calypso/lib/emails/email-provider-constants';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 

@@ -409,14 +409,14 @@
 }
 
 .email-plan-warnings__container {
-	width: 100%;
 	flex-basis: 100%;
 	line-height: 30px;
 	margin-top: 24px;
+	width: 100%;
 
 	.email-plan-warnings__warning {
-		display: flex;
 		align-items: center;
+		display: flex;
 
 		.email-plan-warnings__message {
 			flex: 1 1 auto;
@@ -427,6 +427,8 @@
 
 			.button .gridicon {
 				margin-left: 8px;
+				width: 16px;
+				height: 16px;
 			}
 		}
 	}
