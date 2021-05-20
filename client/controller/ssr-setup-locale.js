@@ -2,7 +2,7 @@
  * External dependencies
  */
 /* eslint-disable import/no-nodejs-modules */
-import fs from 'fs';
+import { readFile } from 'fs/promises';
 /* eslint-enable import/no-nodejs-modules */
 import { localesToSubdomains } from '@automattic/i18n-utils';
 
@@ -17,11 +17,14 @@ export function ssrSetupLocaleMiddleware() {
 	const translationsCache = {};
 
 	return function ssrSetupLocale( context, next ) {
-		if ( ! context.params.lang ) {
+		function resetLocaleData() {
 			const localeDataPlaceholder = { '': {} };
-			context.store.dispatch( setLocaleRawData( localeDataPlaceholder ) ); // Reset to default locale
-
+			context.store.dispatch( setLocaleRawData( localeDataPlaceholder ) );
 			next();
+		}
+
+		if ( ! context.params.lang ) {
+			resetLocaleData();
 			return;
 		}
 		const subdomainsToLocales = Object.entries( localesToSubdomains ).reduce(
@@ -36,24 +39,30 @@ export function ssrSetupLocaleMiddleware() {
 		const langSlug = subdomainsToLocales[ context.params.lang ] || context.params.lang;
 		const language = getLanguage( langSlug );
 
-		if ( language ) {
-			context.lang = language.langSlug;
-			context.isRTL = language.rtl ? true : false;
-
-			if ( typeof translationsCache[ context.lang ] === 'undefined' ) {
-				translationsCache[ context.lang ] = JSON.parse(
-					fs.readFileSync(
-						getAssetFilePath( context.target, `${ context.lang }-v1.1.json` ),
-						'utf-8'
-					)
-				);
-			}
-
-			const translations = translationsCache[ context.lang ];
-
-			context.store.dispatch( setLocaleRawData( translations ) );
+		if ( ! language ) {
+			next();
 		}
 
-		next();
+		context.lang = language.langSlug;
+		context.isRTL = language.rtl ? true : false;
+
+		const cachedTranslations = translationsCache[ context.lang ];
+		if ( typeof cachedTranslations !== 'undefined' ) {
+			context.store.dispatch( setLocaleRawData( cachedTranslations ) );
+			next();
+		} else {
+			readFile(
+				getAssetFilePath( context.target, `languages/${ context.lang }-v1.1.json` ),
+				'utf-8'
+			)
+				.then( ( data ) => {
+					const translations = JSON.parse( data );
+
+					context.store.dispatch( setLocaleRawData( translations ) );
+					translationsCache[ context.lang ] = translations;
+					next();
+				} )
+				.catch( resetLocaleData );
+		}
 	};
 }
