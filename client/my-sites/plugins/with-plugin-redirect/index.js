@@ -179,7 +179,7 @@ const withPluginRedirect = createHigherOrderComponent(
 				);
 			}, pluginInstalledNoticeTime );
 
-			return () => timerId && window.clearTimeout( timerId );
+			return () => window.clearTimeout( timerId );
 		}, [ shouldRedirect, redirectHandler, dispatch, translate, transferringStatus ] );
 
 		return <Component { ...props } />;
