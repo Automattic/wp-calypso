@@ -5,8 +5,13 @@ import PropTypes from 'prop-types';
 import React, { MouseEvent } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
-import styled from '@emotion/styled';
 import type { StripePaymentRequest } from '@automattic/calypso-stripe';
+
+/**
+ * Internal dependencies
+ */
+import styled from './styled';
+import { GooglePayMark } from './google-pay-mark';
 
 // Disabling this rule to make migrating this to calypso easier with fewer changes
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -53,6 +58,17 @@ export default function PaymentRequestButton( {
 	if ( paymentType === 'apple-pay' ) {
 		return <ApplePayButton disabled={ disabled } onClick={ onClick } />;
 	}
+	if ( paymentType === 'google-pay' ) {
+		// Google Pay branding does not have a disabled state so we will render a different button
+		if ( disabled ) {
+			return (
+				<Button disabled fullWidth>
+					{ __( 'Select a payment card' ) }
+				</Button>
+			);
+		}
+		return <GooglePayButton onClick={ onClick } />;
+	}
 	return (
 		<Button disabled={ disabled } onClick={ onClick } fullWidth>
 			{ __( 'Select a payment card' ) }
@@ -79,7 +95,7 @@ const ApplePayButton = styled.button`
 	-apple-pay-button-style: black;
 	-apple-pay-button-type: plain;
 	height: 38px;
-	width: 100%;
+	width: calc( 100% - 60px );
 	position: relative;
 
 	&::after {
@@ -97,4 +113,40 @@ const ApplePayButton = styled.button`
 			left: auto;
 		}
 	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		width: 100%;
+	}
 `;
+
+const GooglePayButtonWrapper = styled.button`
+	background-color: #000;
+	border-radius: 4px;
+	width: calc( 100% - 60px );
+	padding: 12px 24px 10px;
+	position: relative;
+	text-align: center;
+	cursor: pointer;
+
+	svg {
+		height: 18px;
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		width: 100%;
+	}
+`;
+
+function GooglePayButton( {
+	disabled,
+	onClick,
+}: {
+	disabled?: boolean;
+	onClick: ( event: MouseEvent ) => void;
+} ): JSX.Element {
+	return (
+		<GooglePayButtonWrapper disabled={ disabled } onClick={ onClick }>
+			<GooglePayMark fill="white" />
+		</GooglePayButtonWrapper>
+	);
+}

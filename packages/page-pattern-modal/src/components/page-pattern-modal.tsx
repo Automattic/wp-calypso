@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import { memoize } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { Button, MenuItem, Modal, NavigableMenu, VisuallyHidden } from '@wordpress/components';
@@ -28,10 +29,12 @@ interface PagePatternModalProps {
 	isWelcomeGuideActive?: boolean;
 	locale?: string;
 	savePatternChoice: ( name: string ) => void;
-	setOpenState: ( isOpen: false ) => void;
+	onClose: () => void;
 	siteInformation?: Record< string, string >;
 	patterns: PatternDefinition[];
 	theme?: string;
+	title?: string;
+	description?: string;
 }
 
 interface PagePatternModalState {
@@ -129,7 +132,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		// and reset the pattern if so.
 		if ( 'blank' === name ) {
 			this.props.insertPattern( '', [] );
-			this.props.setOpenState( false );
+			this.props.onClose();
 			return;
 		}
 
@@ -145,12 +148,12 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		// Skip inserting if this is not a blank pattern
 		// and there's nothing to insert.
 		if ( ! blocks || ! blocks.length ) {
-			this.props.setOpenState( false );
+			this.props.onClose();
 			return;
 		}
 
 		this.props.insertPattern( title, blocks );
-		this.props.setOpenState( false );
+		this.props.onClose();
 	};
 
 	handleCategorySelection = ( selectedCategory: string | null ) => {
@@ -159,7 +162,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 
 	closeModal = () => {
 		trackDismiss();
-		this.props.setOpenState( false );
+		this.props.onClose();
 	};
 
 	getBlocksByPatternSlug( name: string ) {
@@ -311,18 +314,21 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 					<div className="page-pattern-modal__sidebar">
 						<h1
 							id={ `page-pattern-modal__heading-${ instanceId }` }
-							className="page-pattern-modal__heading"
+							className={ classnames( 'page-pattern-modal__heading', {
+								'page-pattern-modal__heading--default': ! this.props.title,
+							} ) }
 						>
-							{ __( 'Add a page', __i18n_text_domain__ ) }
+							{ this.props.title || __( 'Add a page', __i18n_text_domain__ ) }
 						</h1>
 						<p
 							id={ `page-pattern-modal__description-${ instanceId }` }
 							className="page-pattern-modal__description"
 						>
-							{ __(
-								'Pick a pre-defined layout or start with a blank page.',
-								__i18n_text_domain__
-							) }
+							{ this.props.description ||
+								__(
+									'Pick a pre-defined layout or start with a blank page.',
+									__i18n_text_domain__
+								) }
 						</p>
 						<div className="page-pattern-modal__button-container">
 							<Button

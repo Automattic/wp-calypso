@@ -661,7 +661,7 @@ function isNavSidebarPresent() {
  *
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function openLinksInParentFrame( calypsoPort ) {
+async function openLinksInParentFrame( calypsoPort ) {
 	const viewPostLinkSelectors = [
 		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
 		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
@@ -676,15 +676,157 @@ function openLinksInParentFrame( calypsoPort ) {
 		} );
 	} );
 
-	if ( calypsoifyGutenberg.manageReusableBlocksUrl ) {
-		const manageReusableBlocksLinkSelectors = [
-			'.block-editor-inserter__manage-reusable-blocks', // Link in the Blocks Inserter
-			'a.components-menu-item__button[href*="post_type=wp_block"]', // Link in the More Menu
-		].join( ',' );
-		$( '#editor' ).on( 'click', manageReusableBlocksLinkSelectors, ( e ) => {
-			e.preventDefault();
-			window.open( calypsoifyGutenberg.manageReusableBlocksUrl, '_top' );
+	const { createNewPostUrl, manageReusableBlocksUrl } = calypsoifyGutenberg;
+	if ( ! createNewPostUrl && ! manageReusableBlocksUrl ) {
+		return;
+	}
+
+	await isEditorReadyWithBlocks();
+
+	// Create a new post link in block settings sidebar for Query block
+	const tryToReplaceCreateNewPostLink = () => {
+		// We need to wait for the rendering to be finished.
+		// This is mostly for Safari, but it doesn't hurt for other browsers.
+		setTimeout( () => {
+			const hyperlink = document.querySelector( '.wp-block-query__create-new-link a' );
+			if ( hyperlink ) {
+				hyperlink.href = createNewPostUrl;
+				hyperlink.target = '_top';
+			}
 		} );
+	};
+	const createNewPostLinkObserver = new window.MutationObserver( tryToReplaceCreateNewPostLink );
+
+	// Manage reusable blocks link in the global block inserter's Reusable tab
+	// Post editor only
+	const inserterManageReusableBlocksObserver = new window.MutationObserver( ( mutations ) => {
+		const node = mutations[ 0 ].target;
+		if ( node.attributes.getNamedItem( 'aria-selected' )?.nodeValue === 'true' ) {
+			const hyperlink = document.querySelector( 'a.block-editor-inserter__manage-reusable-blocks' );
+			if ( hyperlink ) {
+				hyperlink.href = manageReusableBlocksUrl;
+				hyperlink.target = '_top';
+			}
+		}
+	} );
+
+	const shouldReplaceCreateNewPostLinksFor = ( node ) =>
+		createNewPostUrl &&
+		( node.classList.contains( 'interface-interface-skeleton__sidebar' ) || // Site editor
+			node.classList.contains( 'edit-post-sidebar' ) ); // Post editor
+
+	const shouldReplaceManageReusableBlockLinksFor = ( node ) =>
+		manageReusableBlocksUrl &&
+		node.classList.contains( 'interface-interface-skeleton__secondary-sidebar' );
+
+	// This observer functions as a "parent" observer, which connects and disconnects
+	// "child" observers as the relevant sidebar settings appear and disappear in the DOM.
+	const sidebarsObserver = new window.MutationObserver( ( mutations ) => {
+		for ( const record of mutations ) {
+			// We are checking for added nodes here to start observing for more specific changes.
+			for ( const node of record.addedNodes ) {
+				if (
+					// Block settings sidebar for Query block.
+					shouldReplaceCreateNewPostLinksFor( node )
+				) {
+					const componentsPanel = node.querySelector(
+						'.interface-interface-skeleton__sidebar .components-panel, .edit-post-sidebar .components-panel'
+					);
+					createNewPostLinkObserver.observe( componentsPanel, {
+						childList: true,
+						subtree: true,
+					} );
+					// If a Query block is selected, then the sidebar will
+					// directly open on the block settings tab
+					tryToReplaceCreateNewPostLink();
+				} else if (
+					// Block inserter sidebar, Reusable tab
+					shouldReplaceManageReusableBlockLinksFor( node )
+				) {
+					const resuableTab = node.querySelector(
+						'.components-tab-panel__tabs-item[id*="reusable"]'
+					);
+					if ( resuableTab ) {
+						inserterManageReusableBlocksObserver.observe( resuableTab, {
+							attributeFilter: [ 'aria-selected' ],
+						} );
+					}
+				}
+			}
+
+			// We are checking the removed nodes here to disconect
+			// the correct observer when a node is removed.
+			for ( const node of record.removedNodes ) {
+				if (
+					// Block settings sidebar for Query block.
+					shouldReplaceCreateNewPostLinksFor( node )
+				) {
+					createNewPostLinkObserver.disconnect();
+				} else if (
+					// Block inserter sidebar, Reusable tab
+					shouldReplaceManageReusableBlockLinksFor( node )
+				) {
+					inserterManageReusableBlocksObserver.disconnect();
+				}
+			}
+		}
+	} );
+	// In the Site editor the `.interface-interface-skeleton__sidebar` element
+	// is totally removed when all the sidebars are closed.
+	// We need to observe the body to make sure we catch when a sidebar is opened or closed.
+	// Block inserter sidebar, post editor
+	// Block settings sidebar, site editor
+	sidebarsObserver.observe( document.querySelector( '.interface-interface-skeleton__body' ), {
+		childList: true,
+	} );
+	// In the Post editor the `.interface-interface-skeleton__sidebar` element
+	// is always present. We can scope down our observer to the sidebar element in this case.
+	// Block settings sidebar, post editor
+	const sidebar = document.querySelector( '.interface-interface-skeleton__sidebar' );
+	if ( sidebar ) {
+		sidebarsObserver.observe( sidebar, {
+			childList: true,
+		} );
+	}
+
+	// Manage reusable blocks link in the 3 dots more menu, post and site editors
+	if ( manageReusableBlocksUrl ) {
+		const toggleButton = document.querySelector(
+			'.edit-post-more-menu button, .edit-site-more-menu button'
+		);
+		const moreMenuManageReusableBlocksObserver = new window.MutationObserver( () => {
+			const isExpanded =
+				toggleButton.attributes.getNamedItem( 'aria-expanded' )?.nodeValue === 'true';
+			if ( isExpanded ) {
+				// The menu has not expanded at this point in Safari, so modify the link
+				// after the call stack has cleared and the menu has rendered.
+				setTimeout( () => {
+					const hyperlink = document.querySelector(
+						'a.components-menu-item__button[href*="post_type=wp_block"]'
+					);
+					hyperlink.href = manageReusableBlocksUrl;
+					hyperlink.target = '_top';
+				} );
+			}
+		} );
+		moreMenuManageReusableBlocksObserver.observe( toggleButton, {
+			attributeFilter: [ 'aria-expanded' ],
+		} );
+	}
+
+	// Sidebar might already be open before this script is executed.
+	// post and site editors
+	if ( createNewPostUrl ) {
+		const sidebarComponentsPanel = document.querySelector(
+			'.interface-interface-skeleton__sidebar .components-panel'
+		);
+		if ( sidebarComponentsPanel ) {
+			createNewPostLinkObserver.observe( sidebarComponentsPanel, {
+				childList: true,
+				subtree: true,
+			} );
+			tryToReplaceCreateNewPostLink();
+		}
 	}
 }
 

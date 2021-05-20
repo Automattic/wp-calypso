@@ -22,7 +22,6 @@ import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import {
 	getSiteUrl,
 	getSiteOption,
-	getSite,
 	isJetpackSite,
 	isSSOEnabled,
 } from 'calypso/state/sites/selectors';
@@ -32,8 +31,6 @@ import { Placeholder } from './placeholder';
 import { makeLayout, render } from 'calypso/controller';
 import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
-import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'calypso/state/desktop/window-events';
-import { notifyDesktopCannotOpenEditor } from 'calypso/state/desktop/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { stopEditingPost } from 'calypso/state/editor/actions';
 
@@ -172,18 +169,7 @@ export const authenticate = ( context, next ) => {
 	const siteUrl = getSiteUrl( state, siteId );
 	const wpAdminLoginUrl = addQueryArgs( { redirect_to: returnUrl }, `${ siteUrl }/wp-login.php` );
 
-	if ( isDesktop ) {
-		context.store.dispatch(
-			notifyDesktopCannotOpenEditor(
-				getSite( state, siteId ),
-				REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO,
-				context.path,
-				wpAdminLoginUrl
-			)
-		);
-	} else {
-		window.location.replace( wpAdminLoginUrl );
-	}
+	window.location.replace( wpAdminLoginUrl );
 };
 
 export const redirect = async ( context, next ) => {

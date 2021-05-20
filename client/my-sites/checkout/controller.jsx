@@ -24,6 +24,7 @@ import GSuiteNudge from './gsuite-nudge';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
+import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
 import { setSectionMiddleware } from 'calypso/controller';
@@ -57,13 +58,28 @@ export function checkout( context, next ) {
 	const isDisallowedForSitePicker =
 		context.pathname.includes( '/checkout/no-site' ) &&
 		( isLoggedOut || ! hasSite || isDomainOnlyFlow );
+	const jetpackPurchaseToken = context.query.purchasetoken;
+	const jetpackPurchaseNonce = context.query.purchaseNonce;
+	const isJetpackCheckout =
+		context.pathname.includes( '/checkout/jetpack' ) &&
+		isLoggedOut &&
+		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
+	const jetpackSiteSlug = context.params.siteSlug;
 
-	if ( ! selectedSite && ! isDisallowedForSitePicker ) {
+	// Do not use Jetpack checkout for Jetpack Anti Spam
+	if ( 'jetpack_anti_spam' === context.params.productSlug ) {
+		page( context.path.replace( '/checkout/jetpack', '/checkout' ) );
+		return;
+	}
+
+	if ( ! selectedSite && ! isDisallowedForSitePicker && ! isJetpackCheckout ) {
 		sites( context, next );
 		return;
 	}
 
-	const product = getDomainOrProductFromContext( context );
+	const product = isJetpackCheckout
+		? context.params.productSlug
+		: getDomainOrProductFromContext( context );
 
 	if ( 'thank-you' === product ) {
 		return;
@@ -77,11 +93,13 @@ export function checkout( context, next ) {
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
-	const isLoggedOutCart = isLoggedOut && context.pathname.includes( '/checkout/no-site' );
+	const isLoggedOutCart =
+		isJetpackCheckout || ( isLoggedOut && context.pathname.includes( '/checkout/no-site' ) );
 	const isNoSiteCart =
-		! isLoggedOut &&
-		context.pathname.includes( '/checkout/no-site' ) &&
-		'no-user' === context.query.cart;
+		isJetpackCheckout ||
+		( ! isLoggedOut &&
+			context.pathname.includes( '/checkout/no-site' ) &&
+			'no-user' === context.query.cart );
 
 	const searchParams = new URLSearchParams( window.location.search );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
@@ -107,6 +125,9 @@ export function checkout( context, next ) {
 			redirectTo={ context.query.redirect_to }
 			isLoggedOutCart={ isLoggedOutCart }
 			isNoSiteCart={ isNoSiteCart }
+			isJetpackCheckout={ isJetpackCheckout }
+			jetpackSiteSlug={ jetpackSiteSlug }
+			jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
 		/>
 	);
 
@@ -258,6 +279,14 @@ export function redirectToSupportSession( context ) {
 		page.redirect( `/checkout/offer-support-session/${ receiptId }/${ site }` );
 	}
 	page.redirect( `/checkout/offer-support-session/${ site }` );
+}
+
+export function jetpackCheckoutThankYou( context, next ) {
+	context.primary = (
+		<JetpackCheckoutThankYou site={ context.params.site } productSlug={ context.params.product } />
+	);
+
+	next();
 }
 
 function getRememberedCoupon() {

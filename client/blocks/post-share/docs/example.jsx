@@ -4,11 +4,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import FormToggle from 'calypso/components/forms/form-toggle';
 import Notice from 'calypso/components/notice';
 import PostShare from 'calypso/blocks/post-share';
 import QueryPosts from 'calypso/components/data/query-posts';
@@ -45,9 +45,11 @@ class PostShareExample extends Component {
 					</p>
 				) }
 
-				<FormToggle onChange={ this.toggleEnable } checked={ this.state.isEnabled }>
-					Live Sharing Enabled
-				</FormToggle>
+				<ToggleControl
+					onChange={ this.toggleEnable }
+					checked={ this.state.isEnabled }
+					label="Live Sharing Enabled"
+				/>
 
 				{ this.state.isEnabled && (
 					<Notice

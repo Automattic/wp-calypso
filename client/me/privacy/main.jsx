@@ -6,6 +6,7 @@ import { flowRight as compose } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { withLocalizeUrl } from '@automattic/i18n-utils';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import ExternalLink from 'calypso/components/external-link';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import Main from 'calypso/components/main';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
@@ -134,12 +134,11 @@ class Privacy extends React.Component {
 								) }
 							</p>
 							<hr />
-							<FormToggle
+							<ToggleControl
 								id="tracks_opt_out"
 								checked={ ! this.props.tracksOptOut }
 								onChange={ this.updateTracksOptOut }
-							>
-								{ translate(
+								label={ translate(
 									'Share information with our analytics tool about your use of services while ' +
 										'logged in to your WordPress.com account. {{cookiePolicyLink}}Learn more' +
 										'{{/cookiePolicyLink}}.',
@@ -149,7 +148,7 @@ class Privacy extends React.Component {
 										},
 									}
 								) }
-							</FormToggle>
+							/>
 						</FormFieldset>
 
 						<FormButton isSubmitting={ isUpdatingUserSettings } disabled={ isSubmitButtonDisabled }>

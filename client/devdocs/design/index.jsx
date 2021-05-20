@@ -42,7 +42,6 @@ import CountedTextareas from 'calypso/components/forms/counted-textarea/docs/exa
 import DatePicker from 'calypso/components/date-picker/docs/example';
 import DateRange from 'calypso/components/date-range/docs/example';
 import DiffViewerExample from 'calypso/components/diff-viewer/docs/example';
-import Disableable from 'calypso/components/disableable/docs/example';
 import DotPager from 'calypso/components/dot-pager/docs/example';
 import DropZones from 'calypso/components/drop-zone/docs/example';
 import EllipsisMenu from 'calypso/components/ellipsis-menu/docs/example';
@@ -103,7 +102,6 @@ import SectionNav from 'calypso/components/section-nav/docs/example';
 import SegmentedControl from 'calypso/components/segmented-control/docs/example';
 import SelectDropdown from 'calypso/components/select-dropdown/docs/example';
 import ShareButton from 'calypso/components/share-button/docs/example';
-import SiteTitleControl from 'calypso/components/site-title/docs/example';
 import SocialLogos from 'calypso/components/social-logo/docs/example';
 import Spinner from 'calypso/components/spinner/docs/example';
 import SpinnerButton from 'calypso/components/spinner-button/docs/example';
@@ -200,7 +198,6 @@ export default class DesignAssets extends React.Component {
 					<DatePicker readmeFilePath="date-picker" />
 					<DateRange readmeFilePath="date-range" />
 					<DiffViewerExample readmeFilePath="diff-viewer" />
-					<Disableable readmeFilePath="disableable" />
 					<DotPager readmeFilePath="dot-pager" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
@@ -261,7 +258,6 @@ export default class DesignAssets extends React.Component {
 					<SegmentedControl readmeFilePath="segmented-control" />
 					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<ShareButton readmeFilePath="share-button" />
-					<SiteTitleControl readmeFilePath="site-title" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />

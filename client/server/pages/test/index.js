@@ -553,30 +553,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		} );
 	} );
 
-	describe( 'sets the target in desktop mode', () => {
-		it( 'defaults to evergreen in desktop mode', async () => {
-			const customApp = buildApp( 'desktop' );
-			customApp.withServerRender( '' );
-			customApp.withMockFilesystem();
-
-			const { request } = await customApp.run( { customApp } );
-
-			expect( request.context.target ).toEqual( 'evergreen' );
-			expect( request.context.env ).toEqual( 'desktop' );
-		} );
-
-		it( 'defaults to evergreen in desktop-development mode', async () => {
-			const customApp = buildApp( 'desktop-development' );
-			customApp.withServerRender( '' );
-			customApp.withMockFilesystem();
-
-			const { request } = await customApp.run( { customApp } );
-
-			expect( request.context.target ).toEqual( 'evergreen' );
-			expect( request.context.env ).toEqual( 'desktop-development' );
-		} );
-	} );
-
 	it( 'translations chunks can be disabled', async () => {
 		app.withConfigEnabled( { 'use-translation-chunks': false } );
 		const { request } = await app.run();

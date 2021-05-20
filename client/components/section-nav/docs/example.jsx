@@ -74,25 +74,22 @@ class SectionNavigation extends PureComponent {
 	render() {
 		const demoSections = {};
 
-		forEach(
-			omit( this.props, 'isolated', 'uniqueInstance', 'readmeFilePath' ),
-			function ( prop, key ) {
-				demoSections[ key ] = [];
+		forEach( omit( this.props, 'isolated', 'uniqueInstance', 'readmeFilePath' ), ( prop, key ) => {
+			demoSections[ key ] = [];
 
-				prop.forEach( function ( item, index ) {
-					demoSections[ key ].push(
-						<NavItem
-							key={ key + '-' + index }
-							count={ item.count }
-							selected={ this.state[ key + 'SelectedIndex' ] === index }
-							onClick={ this.handleNavItemClick( key, index ) }
-						>
-							{ 'object' === typeof item ? item.name : item }
-						</NavItem>
-					);
-				}, this );
-			}.bind( this )
-		);
+			prop.forEach( ( item, index ) => {
+				demoSections[ key ].push(
+					<NavItem
+						key={ key + '-' + index }
+						count={ item.count }
+						selected={ this.state[ key + 'SelectedIndex' ] === index }
+						onClick={ this.handleNavItemClick( key, index ) }
+					>
+						{ 'object' === typeof item ? item.name : item }
+					</NavItem>
+				);
+			} );
+		} );
 
 		return (
 			<div>
@@ -158,14 +155,11 @@ class SectionNavigation extends PureComponent {
 		);
 	};
 
-	handleNavItemClick = ( section, index ) => {
-		return function () {
-			const stateUpdate = {};
-
-			stateUpdate[ section + 'SelectedIndex' ] = index;
-			this.setState( stateUpdate );
-		}.bind( this );
-	};
+	handleNavItemClick( section, index ) {
+		return () => {
+			this.setState( { [ section + 'SelectedIndex' ]: index } );
+		};
+	}
 
 	demoSearch = ( keywords ) => {
 		console.log( 'Section Nav Search (keywords):', keywords );

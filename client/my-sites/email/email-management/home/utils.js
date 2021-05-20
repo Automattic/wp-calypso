@@ -6,9 +6,22 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getGSuiteMailboxCount, hasGSuiteWithUs, hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
-import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { EMAIL_WARNING_SLUG_UNUSED_MAILBOXES } from 'calypso/lib/emails/email-provider-constants';
+import {
+	getGSuiteMailboxCount,
+	getGSuiteSubscriptionId,
+	hasGSuiteWithUs,
+	hasPendingGSuiteUsers,
+} from 'calypso/lib/gsuite';
+import {
+	getConfiguredTitanMailboxCount,
+	getMaxTitanMailboxCount,
+	getTitanExpiryDate,
+	getTitanSubscriptionId,
+	hasTitanMailWithUs,
+} from 'calypso/lib/titan';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 
 export function getNumberOfMailboxesText( domain ) {
 	if ( hasGSuiteWithUs( domain ) ) {
@@ -43,18 +56,109 @@ export function getNumberOfMailboxesText( domain ) {
 	return '';
 }
 
-export function resolveEmailPlanStatus( domain ) {
-	if ( hasPendingGSuiteUsers( domain ) ) {
-		return {
-			statusClass: 'warning',
-			icon: 'info',
-			text: translate( 'Action required' ),
-		};
+/**
+ * Retrieves the email purchase associated to the specified domain.
+ *
+ * @param {object} state - global state
+ * @param {object} domain - domain object
+ * @returns {object|null} the corresponding email purchase, or null if not found
+ */
+export function getEmailPurchaseByDomain( state, domain ) {
+	const subscriptionId = getEmailSubscriptionIdByDomain( domain );
+
+	return subscriptionId ? getByPurchaseId( state, subscriptionId ) : null;
+}
+
+/**
+ * Retrieves the identifier of the email subscription for the specified domain.
+ *
+ * @param {object} domain - domain object
+ * @returns {number|null} the corresponding subscription id, or null if not found
+ */
+function getEmailSubscriptionIdByDomain( domain ) {
+	let subscriptionId = null;
+
+	if ( hasGSuiteWithUs( domain ) ) {
+		subscriptionId = getGSuiteSubscriptionId( domain );
+	} else if ( hasTitanMailWithUs( domain ) ) {
+		subscriptionId = getTitanSubscriptionId( domain );
 	}
 
-	return {
+	return subscriptionId ? parseInt( subscriptionId, 10 ) : null;
+}
+
+/**
+ * Determines whether an email subscription exists for the specified domain.
+ *
+ * @param {object} domain - domain object
+ * @returns {boolean} true if an email subscription exists, false otherwise
+ */
+export function hasEmailSubscription( domain ) {
+	const subscriptionId = getEmailSubscriptionIdByDomain( domain );
+
+	return !! subscriptionId;
+}
+
+/**
+ * Determines if any warnings exists with the slug `unused_mailboxes` in an array of warning objects
+ *
+ * @param {Array} warnings - An array of warning objects
+ * @returns {boolean} true if unused mailboxes exists, false otherwise
+ */
+function hasUnusedMailboxWarnings( warnings ) {
+	return ( warnings?.length ? warnings : [] ).some(
+		( warning ) => EMAIL_WARNING_SLUG_UNUSED_MAILBOXES === warning?.warning_slug
+	);
+}
+
+export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) {
+	const defaultActiveStatus = {
 		statusClass: 'success',
-		icon: 'check_circle',
-		text: translate( 'Active' ),
+		icon: isLoadingEmails ? 'cached' : 'check_circle',
+		text: isLoadingEmails ? translate( 'Loading details' ) : translate( 'Active' ),
 	};
+
+	const defaultWarningStatus = {
+		statusClass: 'warning',
+		icon: 'info',
+		text: translate( 'Action required' ),
+	};
+
+	if ( hasGSuiteWithUs( domain ) ) {
+		if ( hasPendingGSuiteUsers( domain ) ) {
+			return defaultWarningStatus;
+		}
+
+		return defaultActiveStatus;
+	}
+
+	if ( hasTitanMailWithUs( domain ) ) {
+		// Check for expired subscription.
+		const titanExpiryDateString = getTitanExpiryDate( domain );
+		if ( titanExpiryDateString ) {
+			const titanExpiryDate = new Date( titanExpiryDateString );
+			const startOfToday = new Date();
+			startOfToday.setUTCHours( 0, 0, 0, 0 );
+			if ( titanExpiryDate < startOfToday ) {
+				return defaultWarningStatus;
+			}
+		}
+		// Check for unused mailboxes
+		if ( emailAccount && hasUnusedMailboxWarnings( emailAccount.warnings ) ) {
+			return defaultWarningStatus;
+		}
+
+		// Fallback logic if we don't have an emailAccount - this will initially be the case for the email home page.
+		if (
+			! isLoadingEmails &&
+			! emailAccount &&
+			getMaxTitanMailboxCount( domain ) > getConfiguredTitanMailboxCount( domain )
+		) {
+			return defaultWarningStatus;
+		}
+
+		return defaultActiveStatus;
+	}
+
+	return defaultActiveStatus;
 }

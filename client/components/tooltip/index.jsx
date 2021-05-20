@@ -54,7 +54,7 @@ Tooltip.propTypes = {
 	status: PropTypes.string,
 	showDelay: PropTypes.number,
 	showOnMobile: PropTypes.bool,
-	children: PropTypes.element,
+	children: PropTypes.node,
 	context: PropTypes.any,
 };
 

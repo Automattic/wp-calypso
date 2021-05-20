@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.2 (Unreleased)
+## 0.0.2
 
 - Change dangerouslyGetExperimentAssignment to log rather than throw
 - Store state in LocalStorage

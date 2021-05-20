@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import { filter, head, orderBy, values } from 'lodash';
+import { filter, orderBy, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -230,7 +230,7 @@ export function getFileImporters( params = {} ) {
 }
 
 export function getImporterByKey( key, params = {} ) {
-	return head( filter( getImporters( params ), ( importer ) => importer.key === key ) );
+	return filter( getImporters( params ), ( importer ) => importer.key === key )[ 0 ];
 }
 
 export default getConfig;

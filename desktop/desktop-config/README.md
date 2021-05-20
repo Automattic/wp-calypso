@@ -12,7 +12,7 @@ The build process is:
 
 `server_port` - Calypso server port
 
-`server_url` - Calypso server URL
+`server_url` - Calypso server URL for development against localhost
 
 `server_host` - Calypso server host name
 

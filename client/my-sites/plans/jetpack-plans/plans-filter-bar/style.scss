@@ -16,6 +16,10 @@
 		flex-direction: row;
 	}
 
+	.plans-filter-bar__duration-toggle-wrapper {
+		position: relative;
+	}
+
 	.plans-filter-bar__duration-toggle {
 		display: flex;
 		justify-content: center;
@@ -38,7 +42,6 @@
 
 		@include breakpoint-deprecated( '>480px' ) {
 			padding-bottom: 0;
-			margin-right: 20px;
 		}
 	}
 	.plans-filter-bar__toggle-control {
@@ -83,9 +86,14 @@
 	font-size: 0.8125rem;
 	font-weight: 600;
 	padding-top: 2px;
+	color: var( --color-primary );
+	white-space: nowrap;
+	text-align: center;
 
-	&.primary {
-		color: var( --color-primary );
+	@include breakpoint-deprecated( '>480px' ) {
+		position: absolute;
+		left: calc( 100% + 12px );
+		top: 3px;
 	}
 
 	.plans-filter-bar__discount-message-text {

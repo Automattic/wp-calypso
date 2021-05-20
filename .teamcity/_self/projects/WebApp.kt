@@ -69,12 +69,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				# mocha-teamcity-reporter to work.
 				export MAGELLANDEBUG=true
 
-				function join() {
-					local IFS=${'$'}1
-					shift
-					echo "${'$'}*"
-				}
-
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
 				COUNTER=0
@@ -107,9 +101,8 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export BROWSERSIZE="desktop"
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export TEST_FILES=${'$'}(join ',' ${'$'}(find specs*/**/*spec.js -type f -not -path specs-playwright/*))
 
-				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json" --test=${'$'}{TEST_FILES}
+				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
@@ -238,12 +231,6 @@ object RunCalypsoE2eMobileTests : BuildType({
 				# mocha-teamcity-reporter to work.
 				export MAGELLANDEBUG=true
 
-				function join() {
-					local IFS=${'$'}1
-					shift
-					echo "${'$'}*"
-				}
-
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
 				COUNTER=0
@@ -276,9 +263,8 @@ object RunCalypsoE2eMobileTests : BuildType({
 				export BROWSERSIZE="mobile"
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export TEST_FILES=${'$'}(join ',' ${'$'}(find specs*/**/*spec.js -type f -not -path specs-playwright/*))
 
-				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json" --test=${'$'}{TEST_FILES}
+				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
@@ -762,12 +748,6 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				# mocha-teamcity-reporter to work.
 				export MAGELLANDEBUG=true
 
-				function join() {
-					local IFS=${'$'}1
-					shift
-					echo "${'$'}*"
-				}
-
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
 				COUNTER=0
@@ -800,9 +780,8 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				export BROWSERSIZE="mobile"
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs-playwright/**/*spec.js))
 
-				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json" --test=${'$'}{TEST_FILES}
+				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
@@ -815,6 +794,9 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 
 				mkdir -p screenshots
 				find test/e2e/temp -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}

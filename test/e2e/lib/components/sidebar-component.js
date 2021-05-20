@@ -24,20 +24,14 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async expandDrawerItem( itemName ) {
-		const locator = driverHelper.getElementByText(
+		const itemLocator = driverHelper.createTextLocator( By.css( '.sidebar__heading' ), itemName );
+		const itemElement = await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			By.css( '.sidebar__heading' ),
-			itemName
+			itemLocator
 		);
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
-		const itemElement = await this.driver.findElement( locator );
 		const isExpanded = await itemElement.getAttribute( 'aria-expanded' );
 		if ( isExpanded === 'false' ) {
-			await driverHelper.selectElementByText(
-				this.driver,
-				By.css( '.sidebar__heading' ),
-				itemName
-			);
+			await driverHelper.clickWhenClickable( this.driver, itemLocator );
 		}
 	}
 

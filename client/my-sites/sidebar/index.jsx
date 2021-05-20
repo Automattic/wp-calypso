@@ -330,7 +330,7 @@ export class MySitesSidebar extends Component {
 		let activityLink = '/activity-log' + siteSuffix;
 		let activityLabel = translate( 'Activity' );
 
-		if ( this.props.isJetpack && isEnabled( 'manage/themes-jetpack' ) ) {
+		if ( this.props.isJetpack ) {
 			activityLink += '?group=rewind';
 			activityLabel = translate( 'Activity & Backups' );
 		}
@@ -476,16 +476,13 @@ export class MySitesSidebar extends Component {
 			showCustomizerLink,
 			showSiteEditor,
 		} = this.props;
-		const jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
 		if ( site && ! canUserEditThemeOptions ) {
 			return null;
 		}
 
-		if ( this.props.isJetpack && ! jetpackEnabled && site.options ) {
-			themesLink = site.options.admin_url + 'themes.php';
-		} else if ( this.props.siteId ) {
+		if ( this.props.siteId ) {
 			themesLink = '/themes' + this.props.siteSuffix;
 		} else {
 			themesLink = '/themes';

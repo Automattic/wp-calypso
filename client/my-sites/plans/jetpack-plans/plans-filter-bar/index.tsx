@@ -40,14 +40,14 @@ interface FilterBarProps {
 }
 
 type DiscountMessageProps = {
-	primary?: boolean;
+	toggleChecked?: boolean;
 };
 
 const CLOUD_MASTERBAR_STICKY = false;
 const CALYPSO_MASTERBAR_HEIGHT = 47;
 const CLOUD_MASTERBAR_HEIGHT = CLOUD_MASTERBAR_STICKY ? 94 : 0;
 
-const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary } ) => {
+const DiscountMessage: React.FC< DiscountMessageProps > = ( { toggleChecked } ) => {
 	const translate = useTranslate();
 	const isMobile: boolean = useMobileBreakpoint();
 
@@ -64,10 +64,10 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary } ) => {
 		return null;
 	}
 
-	return (
+	return toggleChecked ? (
 		<div
 			className={ classNames( 'plans-filter-bar__discount-message', {
-				primary,
+				toggleChecked,
 			} ) }
 		>
 			<div>
@@ -85,7 +85,7 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary } ) => {
 				{ String.fromCodePoint( 0x1f389 ) } { /* Celebration emoji 🎉 */ }
 			</div>
 		</div>
-	);
+	) : null;
 };
 
 const PlansFilterBar: React.FC< FilterBarProps > = ( {
@@ -111,20 +111,24 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 
 	return (
 		<div ref={ barRef } className={ classNames( 'plans-filter-bar', { sticky: hasCrossed } ) }>
-			<div
-				className={ classNames( 'plans-filter-bar__duration-toggle', {
-					checked: durationChecked,
-				} ) }
-			>
-				<span className="plans-filter-bar__toggle-off-label">{ translate( 'Bill monthly' ) }</span>
-				<ToggleControl
-					className="plans-filter-bar__toggle-control"
-					checked={ durationChecked }
-					onChange={ () => setDurationChecked( ( prevState ) => ! prevState ) }
-				/>
-				<span className="plans-filter-bar__toggle-on-label">{ translate( 'Bill yearly' ) }</span>
+			<div className="plans-filter-bar__duration-toggle-wrapper">
+				<div
+					className={ classNames( 'plans-filter-bar__duration-toggle', {
+						checked: durationChecked,
+					} ) }
+				>
+					<span className="plans-filter-bar__toggle-off-label">
+						{ translate( 'Bill monthly' ) }
+					</span>
+					<ToggleControl
+						className="plans-filter-bar__toggle-control"
+						checked={ durationChecked }
+						onChange={ () => setDurationChecked( ( prevState ) => ! prevState ) }
+					/>
+					<span className="plans-filter-bar__toggle-on-label">{ translate( 'Bill yearly' ) }</span>
+				</div>
+				{ showDiscountMessage && <DiscountMessage toggleChecked={ durationChecked } /> }
 			</div>
-			{ showDiscountMessage && <DiscountMessage primary={ durationChecked } /> }
 		</div>
 	);
 };

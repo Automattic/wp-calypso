@@ -344,8 +344,8 @@ export class PlanFeatures extends Component {
 			} = properties;
 			const { rawPrice, discountPrice, isMonthlyPlan } = properties;
 			const planDescription = isInVerticalScrollingPlansExperiment
-				? planConstantObj.getShortDescription( abtest )
-				: planConstantObj.getDescription( abtest );
+				? planConstantObj.getShortDescription()
+				: planConstantObj.getDescription();
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
@@ -369,7 +369,7 @@ export class PlanFeatures extends Component {
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						isMonthlyPlan={ isMonthlyPlan }
-						audience={ planConstantObj.getAudience() }
+						audience={ planConstantObj.getAudience?.() }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 						isLoggedInMonthlyPricing={ this.props.isLoggedInMonthlyPricing }
 						isInSignup={ isInSignup }
@@ -441,7 +441,7 @@ export class PlanFeatures extends Component {
 			let { discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
 			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
-			let audience = planConstantObj.getAudience();
+			let audience = planConstantObj.getAudience?.();
 
 			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
 				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
@@ -461,7 +461,7 @@ export class PlanFeatures extends Component {
 						audience = planConstantObj.getStoreAudience();
 						break;
 					default:
-						audience = planConstantObj.getAudience();
+						audience = planConstantObj.getAudience?.();
 				}
 			}
 
@@ -513,9 +513,9 @@ export class PlanFeatures extends Component {
 
 			let description = null;
 			if ( withScroll ) {
-				description = planConstantObj.getShortDescription( abtest );
+				description = planConstantObj.getShortDescription();
 			} else {
-				description = planConstantObj.getDescription( abtest );
+				description = planConstantObj.getDescription();
 			}
 
 			return (
@@ -981,16 +981,14 @@ const ConnectedPlanFeatures = connect(
 					switch ( siteType ) {
 						case 'blog':
 							if ( planConstantObj.getBlogSignupFeatures ) {
-								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getBlogSignupFeatures( abtest )
-								);
+								planFeatures = getPlanFeaturesObject( planConstantObj.getBlogSignupFeatures() );
 							}
 
 							break;
 						case 'grid':
 							if ( planConstantObj.getPortfolioSignupFeatures ) {
 								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getPortfolioSignupFeatures( abtest )
+									planConstantObj.getPortfolioSignupFeatures()
 								);
 							}
 

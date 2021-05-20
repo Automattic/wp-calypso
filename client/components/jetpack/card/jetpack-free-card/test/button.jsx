@@ -92,6 +92,15 @@ describe( 'JetpackFreeCardButton', () => {
 		expect( getHref() ).toEqual( jetpackAdminUrl.replace( siteUrl, subSiteUrl ) );
 	} );
 
+	it( 'should link to the "admin_url" query arg value, when "admin_url" query arg is present', () => {
+		const wpAdminQueryArg = `http://non-https-site.com/wp-admin/`;
+		const jetpackAdminUrlFromQueryArg = `${ wpAdminQueryArg }admin.php?page=jetpack#/recommendations`;
+
+		render( <JetpackFreeCardButton urlQueryArgs={ { admin_url: wpAdminQueryArg } } /> );
+
+		expect( getHref() ).toEqual( jetpackAdminUrlFromQueryArg );
+	} );
+
 	it( 'should link to the connect page, if site in context is invalid', () => {
 		render( <JetpackFreeCardButton urlQueryArgs={ { site: '%' } } /> );
 

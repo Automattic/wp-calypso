@@ -558,7 +558,7 @@ export default function pages() {
 
 	app.use( logSectionResponse );
 	app.use( cookieParser() );
-	app.use( middlewareBuildTarget( calypsoEnv ) );
+	app.use( middlewareBuildTarget() );
 	app.use( middlewareAssets() );
 	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );

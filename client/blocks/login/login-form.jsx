@@ -54,7 +54,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
-import JetpackConnectSkipUser from 'calypso/blocks/jetpack-connect-skip-user';
+import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -608,28 +608,26 @@ export class LoginForm extends Component {
 						</div>
 					</div>
 
-					{ config.isEnabled( 'signup/social' ) && (
-						<p className="login__form-terms">
-							{ preventWidows(
-								this.props.translate(
-									// To make any changes to this copy please speak to the legal team
-									'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
-									{
-										components: {
-											tosLink: (
-												<a
-													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-								),
-								5
-							) }
-						</p>
-					) }
+					<p className="login__form-terms">
+						{ preventWidows(
+							this.props.translate(
+								// To make any changes to this copy please speak to the legal team
+								'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+								{
+									components: {
+										tosLink: (
+											<a
+												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							),
+							5
+						) }
+					</p>
 
 					<div className="login__form-action">
 						<FormsButton primary disabled={ isFormDisabled }>
@@ -668,8 +666,8 @@ export class LoginForm extends Component {
 					</Fragment>
 				) }
 
-				{ currentQuery?.skip_user && (
-					<JetpackConnectSkipUser
+				{ ( currentQuery?.skip_user || currentQuery?.allow_site_connection ) && (
+					<JetpackConnectSiteOnly
 						homeUrl={ currentQuery?.site }
 						redirectAfterAuth={ currentQuery?.redirect_after_auth }
 						source="login"

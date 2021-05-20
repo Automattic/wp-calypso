@@ -40,6 +40,7 @@ const SiteSettingsTraffic = ( {
 	handleAutosavingRadio,
 	handleSubmitForm,
 	isAdmin,
+	isJetpack,
 	isJetpackAdmin,
 	isRequestingSettings,
 	isSavingSettings,
@@ -68,7 +69,9 @@ const SiteSettingsTraffic = ( {
 				fields={ fields }
 			/>
 		) }
-		{ isAdmin && config.isEnabled( 'cloudflare' ) && <CloudflareAnalyticsSettings /> }
+		{ ! isJetpack && isAdmin && config.isEnabled( 'cloudflare' ) && (
+			<CloudflareAnalyticsSettings />
+		) }
 
 		{ isJetpackAdmin && (
 			<JetpackSiteStats
@@ -109,6 +112,7 @@ const connectComponent = connect( ( state ) => {
 
 	return {
 		isAdmin,
+		isJetpack,
 		isJetpackAdmin,
 	};
 } );

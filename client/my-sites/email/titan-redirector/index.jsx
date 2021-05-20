@@ -21,6 +21,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { login } from 'calypso/lib/paths';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getTitanProductName } from 'calypso/lib/titan';
 import QuerySites from 'calypso/components/data/query-sites';
 
 class TitanRedirector extends Component {
@@ -115,7 +116,14 @@ class TitanRedirector extends Component {
 				<EmptyContent
 					title={ translate( "We couldn't locate your account details" ) }
 					line={ translate(
-						'Please check that you purchased the Email subscription, as only the original purchaser can manage billing and add more accounts'
+						'Please check that you purchased the %(titanProductName)s subscription, as only the original purchaser can manage billing and add more accounts',
+						{
+							args: {
+								titanProductName: getTitanProductName(),
+							},
+							comment:
+								'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
+						}
 					) }
 					action={ translate( 'Contact support' ) }
 					actionURL={ SUPPORT_ROOT }

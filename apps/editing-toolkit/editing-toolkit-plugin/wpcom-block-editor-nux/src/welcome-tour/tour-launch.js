@@ -21,7 +21,7 @@ function LaunchWpcomWelcomeTour() {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 	const { show, isNewPageLayoutModalOpen, isManuallyOpened } = useSelect( ( select ) => ( {
 		show: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideShown(),
-		// Handle the case where the new page layout modal is initialized and open
+		// Handle the case where the new page pattern modal is initialized and open
 		isNewPageLayoutModalOpen:
 			select( 'automattic/starter-page-layouts' ) &&
 			select( 'automattic/starter-page-layouts' ).isOpen(),

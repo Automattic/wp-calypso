@@ -77,7 +77,6 @@ class MediaModalSecondaryActions extends Component {
 						compact
 						disabled={ button.disabled }
 						onClick={ button.onClick }
-						primary={ button.primary }
 					>
 						{ button.icon && <Gridicon icon={ button.icon } /> }
 						{ button.text }

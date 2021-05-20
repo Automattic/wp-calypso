@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import Gridicon from 'calypso/components/gridicon';
 import { getMailboxPropTypeShape } from 'calypso/lib/titan/new-mailbox';
 
@@ -148,15 +148,14 @@ const TitanNewMailbox = ( {
 				<div className="titan-mail-add-mailboxes__new-mailbox-password-and-is-admin">
 					{ showIsAdminToggle && (
 						<FormFieldset>
-							<FormToggle
+							<ToggleControl
 								checked={ isAdmin }
 								onChange={ ( newValue ) => {
 									onMailboxValueChange( 'isAdmin', newValue );
 								} }
 								help={ translate( 'Should this user have control panel access?' ) }
-							>
-								{ translate( 'Is admin?' ) }
-							</FormToggle>
+								label={ translate( 'Is admin?' ) }
+							/>
 						</FormFieldset>
 					) }
 				</div>

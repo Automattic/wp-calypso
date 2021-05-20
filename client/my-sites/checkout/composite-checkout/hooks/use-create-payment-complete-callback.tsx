@@ -42,11 +42,7 @@ import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
 import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
-import {
-	getSelectedSite,
-	getSelectedSiteSlug,
-	getSelectedSiteId,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -63,6 +59,8 @@ export default function useCreatePaymentCompleteCallback( {
 	isInEditor,
 	isComingFromUpsell,
 	isFocusedLaunch,
+	siteSlug,
+	isJetpackCheckout = false,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
@@ -72,6 +70,8 @@ export default function useCreatePaymentCompleteCallback( {
 	isInEditor?: boolean;
 	isComingFromUpsell?: boolean;
 	isFocusedLaunch?: boolean;
+	siteSlug: string | undefined;
+	isJetpackCheckout?: boolean;
 } ): PaymentCompleteCallback {
 	const { responseCart } = useShoppingCart();
 	const reduxDispatch = useDispatch();
@@ -84,7 +84,6 @@ export default function useCreatePaymentCompleteCallback( {
 	const selectedSiteData = useSelector( getSelectedSite );
 	const adminUrl = selectedSiteData?.options?.admin_url;
 	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart );
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const isJetpackNotAtomic =
 		useSelector(
 			( state ) => siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
@@ -108,6 +107,7 @@ export default function useCreatePaymentCompleteCallback( {
 				isEligibleForSignupDestinationResult,
 				hideNudge: isComingFromUpsell,
 				isInEditor,
+				isJetpackCheckout,
 			};
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 			const url = getThankYouPageUrl( getThankYouPageUrlArguments );
@@ -231,6 +231,7 @@ export default function useCreatePaymentCompleteCallback( {
 			responseCart,
 			createUserAndSiteBeforeTransaction,
 			isFocusedLaunch,
+			isJetpackCheckout,
 		]
 	);
 }

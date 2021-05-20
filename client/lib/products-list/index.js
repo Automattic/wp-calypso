@@ -73,38 +73,35 @@ ProductsList.prototype.fetch = function () {
 
 	this.isFetching = true;
 
-	wpcom.req.get(
-		'/products',
-		function ( error, data ) {
-			if ( error ) {
-				debug( 'error fetching ProductsList from api', error );
+	wpcom.req.get( '/products', ( error, data ) => {
+		if ( error ) {
+			debug( 'error fetching ProductsList from api', error );
 
-				return;
+			return;
+		}
+
+		const productsList = data;
+
+		debug( 'ProductsList fetched from api:', productsList );
+
+		if ( ! this.initialized ) {
+			this.initialize( productsList );
+		} else {
+			this.data = productsList;
+		}
+
+		this.isFetching = false;
+
+		this.emit( 'change' );
+
+		if ( typeof localStorage !== 'undefined' ) {
+			try {
+				localStorage.setItem( 'ProductsList', JSON.stringify( productsList ) );
+			} catch ( e ) {
+				// ignore problems storing the list into local storage
 			}
-
-			const productsList = data;
-
-			debug( 'ProductsList fetched from api:', productsList );
-
-			if ( ! this.initialized ) {
-				this.initialize( productsList );
-			} else {
-				this.data = productsList;
-			}
-
-			this.isFetching = false;
-
-			this.emit( 'change' );
-
-			if ( typeof localStorage !== 'undefined' ) {
-				try {
-					localStorage.setItem( 'ProductsList', JSON.stringify( productsList ) );
-				} catch ( e ) {
-					// ignore problems storing the list into local storage
-				}
-			}
-		}.bind( this )
-	);
+		}
+	} );
 };
 
 /**

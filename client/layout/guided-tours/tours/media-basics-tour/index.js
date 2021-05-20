@@ -135,14 +135,14 @@ export const MediaBasicsTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<Next step="done" />
+						<Next step="adjust-image" />
 						<Quit />
 					</ButtonRow>
 				</Fragment>
 			) }
 		</Step>
 
-		<Step name="done" placement="center">
+		<Step name="adjust-image" placement="center">
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>
@@ -155,6 +155,52 @@ export const MediaBasicsTour = makeTour(
 							}
 						) }
 					</p>
+					<ButtonRow>
+						<Next step="personal-files-warning" />
+						<Quit />
+					</ButtonRow>
+				</Fragment>
+			) }
+		</Step>
+
+		<Step
+			name="personal-files-warning"
+			target=".detail__url-field"
+			placement="below"
+			arrow="top-left"
+			style={ { marginTop: '-8px' } }
+		>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							'{{strong}}Make sure you are okay with these files being public:{{/strong}} ' +
+								'all files you upload to WordPress.com get their own web address. ' +
+								'If your site is public, anyone with this address can access the file, ' +
+								"even if you haven't included it in a post. It's unlikely, but possible.",
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+					<ButtonRow>
+						<Next step="done" />
+						<Quit />
+					</ButtonRow>
+				</Fragment>
+			) }
+		</Step>
+
+		<Step
+			name="done"
+			target=".dialog__action-buttons .button.is-primary"
+			placement="above"
+			arrow="bottom-right"
+		>
+			{ ( { translate } ) => (
+				<Fragment>
 					<p>
 						{ translate(
 							'Click {{doneButton /}} to go back to your full library. Happy uploading!',
