@@ -27,29 +27,27 @@ describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, 
 		driver = await driverManager.startBrowser();
 	} );
 
-	describe( 'Edit Existing Media:', function () {
-		before( 'Can login and select my site', async function () {
-			const loginFlow = new LoginFlow( driver );
-			await loginFlow.loginAndSelectMySite();
-		} );
+	before( 'Can login and select my site', async function () {
+		const loginFlow = new LoginFlow( driver );
+		await loginFlow.loginAndSelectMySite();
+	} );
 
-		it( "Select 'Media' option and see media content", async function () {
-			const sideBarComponent = await SideBarComponent.Expect( driver );
-			await sideBarComponent.selectMedia();
-			return await MediaPage.Expect( driver );
-		} );
+	it( "Select 'Media' option and see media content", async function () {
+		const sideBarComponent = await SideBarComponent.Expect( driver );
+		await sideBarComponent.selectMedia();
+		return await MediaPage.Expect( driver );
+	} );
 
-		it( 'Select a random media item and click edit', async function () {
-			const mediaPage = await MediaPage.Expect( driver );
-			await mediaPage.selectFirstImage();
-			await mediaPage.selectEditMedia();
-			return await mediaPage.mediaEditorShowing();
-		} );
+	it( 'Select a random media item and click edit', async function () {
+		const mediaPage = await MediaPage.Expect( driver );
+		await mediaPage.selectFirstImage();
+		await mediaPage.selectEditMedia();
+		return await mediaPage.mediaEditorShowing();
+	} );
 
-		it( 'Click Edit Image', async function () {
-			const mediaPage = await MediaPage.Expect( driver );
-			await mediaPage.clickEditImage();
-			return await mediaPage.imageShowingInEditor();
-		} );
+	it( 'Click Edit Image', async function () {
+		const mediaPage = await MediaPage.Expect( driver );
+		await mediaPage.clickEditImage();
+		return await mediaPage.imageShowingInEditor();
 	} );
 } );
