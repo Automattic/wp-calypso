@@ -137,9 +137,9 @@ references:
       npm install -g yarn
       yarn run build-desktop:install-app-deps
   desktop-cache-paths: &desktop-cache-paths
-    - desktop/config
-    - desktop/resource/certificates/win.p12
-    - desktop/resource/certificates/mac.p12
+    - desktop/Automattic/WordPress-Desktop/config
+    - desktop/Automattic/WordPress-Desktop/resource/certificates/win.p12
+    - desktop/Automattic/WordPress-Desktop/resource/certificates/mac.p12
   desktop-decrypt-assets: &desktop-decrypt-assets
     name: Decrypt desktop app assets
     command: |
@@ -182,11 +182,11 @@ references:
   desktop-notify-github-success: &desktop-notify-github-success
     name: Notify Github Success
     when: on_success
-    command: cd desktop && yarn ci:github:dismiss-review
+    command: cd desktop/Automattic/WordPress-Desktop && yarn ci:github:dismiss-review
   desktop-notify-github-failure: &desktop-notify-github-failure
     name: Notify Github Failure
     when: on_fail
-    command: cd desktop && yarn ci:github:add-review
+    command: cd desktop/Automattic/WordPress-Desktop && yarn ci:github:add-review
   desktop-notify-slack-failure: &desktop-notify-slack-failure
     webhook: '$SLACK_WP_DESKTOP_E2E'
     fail_only: true
