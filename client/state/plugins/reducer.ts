@@ -17,7 +17,7 @@ import recommended from './recommended/reducer';
 import { default as marketplace, IPurchaseFlowState } from './marketplace/reducer';
 
 export interface IAppState extends DefaultRootState {
-	plugins?: IPluginsState;
+	plugins: IPluginsState;
 }
 
 export interface IPluginsState {

@@ -13,11 +13,11 @@ export interface IPurchaseFlowState {
 	primaryDomain: string | undefined;
 }
 
-const defaultState: IPurchaseFlowState = {
+export const defaultState: IPurchaseFlowState = {
 	primaryDomain: undefined,
 };
 
-function purchaseFlow(
+export function purchaseFlow(
 	state: IPurchaseFlowState = defaultState,
 	action: AnyAction
 ): IPurchaseFlowState {
