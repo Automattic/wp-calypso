@@ -18,5 +18,10 @@
 			"width": 1440,
 			"height": 790
 		}
+	},
+	"artifacts": {
+		"screenshot": "/user/screenshots",
+		"video": "/user/videos",
+		"log": "."
 	}
 }
