@@ -51,7 +51,7 @@ class EmailPlanWarnings extends React.Component {
 				target={ showExternalControlPanelLink ? '_blank' : null }
 			>
 				{ translate( 'Activate Mailboxes' ) }
-				{ showExternalControlPanelLink || <Gridicon icon="external" /> }
+				{ showExternalControlPanelLink && <Gridicon icon="external" /> }
 			</Button>
 		);
 	}
