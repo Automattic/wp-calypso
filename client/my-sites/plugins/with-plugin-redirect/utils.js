@@ -1,9 +1,4 @@
 /**
- * WordPress dependencies
- */
-import { translate } from 'i18n-calypso';
-
-/**
  * Internal dependencies
  */
 import {
@@ -19,13 +14,11 @@ import {
 export const redirectingPluginsList = {
 	woocommerce: {
 		name: 'WooCommerce',
-		message: translate( 'Redirecting to setup WooCommerce in five seconds.' ),
 		getUrl: getSiteWooCommerceWizardUrl,
 	},
 
 	'wordpress-seo': {
 		name: 'Yoast',
-		message: translate( 'Redirecting to setup Yoast in five seconds.' ),
 		getUrl: getSiteWordPressSeoWizardUrl,
 	},
 };
