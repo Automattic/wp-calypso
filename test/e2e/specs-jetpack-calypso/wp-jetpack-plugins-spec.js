@@ -18,46 +18,39 @@ import LoginFlow from '../lib/flows/login-flow';
 import NoticesComponent from '../lib/components/notices-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = getJetpackHost();
 
 describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	it( 'Can login and select Manage Plugins', async function () {
-		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
+		await driverManager.clearCookiesAndDeleteLocalStorage( this.driver );
 
-		const loginFlow = new LoginFlow( driver );
+		const loginFlow = new LoginFlow( this.driver );
 		await loginFlow.loginAndSelectManagePluginsJetpack();
 	} );
 
 	it( 'Can ensure Hello Dolly is deactivated', async function () {
-		const pluginsPage = await PluginsPage.Expect( driver );
+		const pluginsPage = await PluginsPage.Expect( this.driver );
 		await pluginsPage.viewPlugin( 'hello' );
-		const pluginDetailsPage = await PluginDetailsPage.Expect( driver );
+		const pluginDetailsPage = await PluginDetailsPage.Expect( this.driver );
 		await pluginDetailsPage.waitForPlugin();
 		await pluginDetailsPage.ensureDeactivated();
 		return await pluginDetailsPage.goBack();
 	} );
 
 	it( 'Can view the plugin details to activate Hello Dolly', async function () {
-		const pluginsPage = await PluginsPage.Expect( driver );
+		const pluginsPage = await PluginsPage.Expect( this.driver );
 		await pluginsPage.viewPlugin( 'hello' );
-		const pluginDetailsPage = await PluginDetailsPage.Expect( driver );
+		const pluginDetailsPage = await PluginDetailsPage.Expect( this.driver );
 		await pluginDetailsPage.waitForPlugin();
 		return await pluginDetailsPage.clickActivateToggleForPlugin();
 	} );
 
 	it( 'Can see a success message contains Hello Dolly', async function () {
 		const expectedPartialText = 'Successfully activated Hello Dolly';
-		const noticesComponent = await NoticesComponent.Expect( driver );
+		const noticesComponent = await NoticesComponent.Expect( this.driver );
 		await noticesComponent.isSuccessNoticeDisplayed();
 		const successMessageText = await noticesComponent.getNoticeContent();
 		return assert.strictEqual(
@@ -70,24 +63,18 @@ describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) 
 
 describe( `[${ host }] Jetpack Plugins - Searching a plugin: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	it( 'Can login and select Plugins', async function () {
-		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
+		await driverManager.clearCookiesAndDeleteLocalStorage( this.driver );
 
-		const loginFlow = new LoginFlow( driver );
+		const loginFlow = new LoginFlow( this.driver );
 		await loginFlow.loginAndSelectPluginsJetpack();
 	} );
 
 	it( 'Can open the plugins browser and find WP Job Manager by searching for Automattic', async function () {
 		const pluginVendor = 'WP Job Manager';
 		const pluginTitle = 'WP Job Manager';
-		const pluginsBrowserPage = await PluginsBrowserPage.Expect( driver );
+		const pluginsBrowserPage = await PluginsBrowserPage.Expect( this.driver );
 		await pluginsBrowserPage.searchForPlugin( pluginVendor );
 		const pluginDisplayed = await pluginsBrowserPage.pluginTitledShown( pluginTitle, pluginVendor );
 		assert( pluginDisplayed, `The plugin titled ${ pluginTitle } was not displayed` );

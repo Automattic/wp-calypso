@@ -21,47 +21,33 @@ import LoginPage from '../../lib/pages/login-page';
 import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Auth Screen Canary: (${ screenSize }) @parallel @safaricanary`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-		return await driverManager.ensureNotLoggedIn( driver );
-	} );
 
 	it( 'Can see the log in screen', async function () {
-		await LoginPage.Visit( driver, LoginPage.getLoginURL() );
+		await LoginPage.Visit( this.driver, LoginPage.getLoginURL() );
 	} );
 } );
 
 describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	describe( 'Logging In and Out: @jetpack', function () {
 		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
+			return await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		describe( 'Can Log In', function () {
 			it( 'Can log in', async function () {
-				const loginFlow = new LoginFlow( driver );
+				const loginFlow = new LoginFlow( this.driver );
 				await loginFlow.login( { useFreshLogin: true } );
 			} );
 
 			it( 'Can see Stats Page after logging in', async function () {
-				return await StatsPage.Expect( driver );
+				return await StatsPage.Expect( this.driver );
 			} );
 		} );
 
@@ -69,29 +55,32 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 		if ( host !== 'WPCOM' ) {
 			describe( 'Can Log via Jetpack SSO', function () {
 				it( 'Can log into site via Jetpack SSO', async function () {
-					const loginPage = await WPAdminLogonPage.Visit( driver, dataHelper.getJetpackSiteName() );
+					const loginPage = await WPAdminLogonPage.Visit(
+						this.driver,
+						dataHelper.getJetpackSiteName()
+					);
 					return await loginPage.logonSSO();
 				} );
 
 				it( 'Can return to Reader', async function () {
-					return await ReaderPage.Visit( driver );
+					return await ReaderPage.Visit( this.driver );
 				} );
 			} );
 		}
 
 		describe( 'Can Log Out', function () {
 			it( 'Can view profile to log out', async function () {
-				const navbarComponent = await NavBarComponent.Expect( driver );
+				const navbarComponent = await NavBarComponent.Expect( this.driver );
 				await navbarComponent.clickProfileLink();
 			} );
 
 			it( 'Can logout from profile page', async function () {
-				const profilePage = await ProfilePage.Expect( driver );
+				const profilePage = await ProfilePage.Expect( this.driver );
 				await profilePage.clickSignOut();
 			} );
 
 			it( 'Can see wordpress.com home when after logging out', async function () {
-				return await LoggedOutMasterbarComponent.Expect( driver );
+				return await LoggedOutMasterbarComponent.Expect( this.driver );
 			} );
 		} );
 	} );

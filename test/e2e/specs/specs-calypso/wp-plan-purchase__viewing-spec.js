@@ -16,37 +16,30 @@ import SidebarComponent from '../../lib/components/sidebar-component.js';
 import SecurePaymentComponent from '../../lib/components/secure-payment-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
 	let originalCartAmount;
 	let loginFlow;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
-
 	before( async function () {
-		return await driverManager.ensureNotLoggedIn( driver );
+		return await driverManager.ensureNotLoggedIn( this.driver );
 	} );
 
 	it( 'Login and Select My Site', async function () {
-		loginFlow = new LoginFlow( driver );
+		loginFlow = new LoginFlow( this.driver );
 		return await loginFlow.loginAndSelectMySite();
 	} );
 
 	it( 'Can Select Plans', async function () {
-		const sideBarComponent = await SidebarComponent.Expect( driver );
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectPlans();
 	} );
 
 	it( 'Can Compare Plans', async function () {
-		const plansPage = await PlansPage.Expect( driver );
+		const plansPage = await PlansPage.Expect( this.driver );
 		await plansPage.openPlansTab();
 		if ( host === 'WPCOM' ) {
 			await plansPage.openAdvancedPlansSegment();
@@ -55,12 +48,12 @@ describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, f
 	} );
 
 	it( 'Select Business Plan', async function () {
-		const plansPage = await PlansPage.Expect( driver );
+		const plansPage = await PlansPage.Expect( this.driver );
 		return await plansPage.selectPaidPlan();
 	} );
 
 	it( 'Remove any existing coupon', async function () {
-		const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 
 		if ( await securePaymentComponent.hasCouponApplied() ) {
 			await securePaymentComponent.removeCoupon();
@@ -68,7 +61,7 @@ describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, f
 	} );
 
 	it( 'Can Correctly Apply Coupon', async function () {
-		const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 
 		await securePaymentComponent.toggleCartSummary();
 		originalCartAmount = await securePaymentComponent.cartTotalAmount();
@@ -83,7 +76,7 @@ describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, f
 	} );
 
 	it( 'Can Remove Coupon', async function () {
-		const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 
 		await securePaymentComponent.removeCoupon();
 
@@ -92,7 +85,7 @@ describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, f
 	} );
 
 	it( 'Remove from cart', async function () {
-		const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 
 		return await securePaymentComponent.removeBusinessPlan();
 	} );

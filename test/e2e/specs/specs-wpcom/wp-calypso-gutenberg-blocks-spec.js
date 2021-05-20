@@ -15,7 +15,6 @@ import * as driverManager from '../../lib/driver-manager';
 import * as dataHelper from '../../lib/data-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 const gutenbergUser =
@@ -23,21 +22,15 @@ const gutenbergUser =
 
 describe( `[${ host }] Calypso Gutenberg Editor: Blocks (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	describe( 'Can see monetization blocks in block inserter @canary @parallel', function () {
 		it( 'Can log in', async function () {
-			this.loginFlow = new LoginFlow( driver, gutenbergUser );
+			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
 		it( 'Can see the Earn blocks', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
 			await gEditorComponent.openBlockInserterAndSearch( 'earn' );
 			const shownItems = await gEditorComponent.getShownBlockInserterItems();
 
@@ -58,7 +51,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Blocks (${ screenSize })`, func
 		} );
 
 		it( 'Can see the Grow blocks', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
 			await gEditorComponent.openBlockInserterAndSearch( 'grow' );
 			const shownItems = await gEditorComponent.getShownBlockInserterItems();
 

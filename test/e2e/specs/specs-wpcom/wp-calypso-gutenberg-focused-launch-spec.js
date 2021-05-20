@@ -17,33 +17,26 @@ import GutenboardingFlow from '../../lib/flows/gutenboarding-flow.js';
 import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 
 const host = dataHelper.getJetpackHost();
 const screenSize = driverManager.currentScreenSize();
 
 describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
 	let selectedSubdomain;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	describe( 'Launch a free site', function () {
 		const siteName = dataHelper.getNewBlogName();
 
 		before( 'Can log in', async function () {
-			const loginFlow = new LoginFlow( driver );
+			const loginFlow = new LoginFlow( this.driver );
 			await loginFlow.login();
 		} );
 
 		it( 'Can create a free site', async function () {
 			const gutenboardingUrl = dataHelper.getCalypsoURL( '/new' );
-			await driver.get( gutenboardingUrl );
-			await new GutenboardingFlow( driver ).createFreeSite( siteName );
+			await this.driver.get( gutenboardingUrl );
+			await new GutenboardingFlow( this.driver ).createFreeSite( siteName );
 		} );
 
 		it( 'Can open focused launch modal', async function () {
@@ -51,11 +44,11 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 				By.css( '.editor-gutenberg-launch__launch-button' ),
 				'Launch'
 			);
-			await driverHelper.clickWhenClickable( driver, launchButtonLocator );
+			await driverHelper.clickWhenClickable( this.driver, launchButtonLocator );
 
 			const focusedLaunchModalLocator = By.css( '.launch__focused-modal' );
 			const isFocusedLaunchModalPresent = await driverHelper.isElementLocated(
-				driver,
+				this.driver,
 				focusedLaunchModalLocator
 			);
 
@@ -71,7 +64,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			// If the site title input is not rendered, skip this step.
 			// Note: This is currently parked here but unused as we are using the `/start` flow.
 			const isSiteTitleInputPresent = await driverHelper.isElementLocated(
-				driver,
+				this.driver,
 				siteTitleInputLocator
 			);
 
@@ -81,13 +74,13 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 			// Set a site title
 			const siteTitle = dataHelper.randomPhrase();
-			await driverHelper.setWhenSettable( driver, siteTitleInputLocator, siteTitle, {
+			await driverHelper.setWhenSettable( this.driver, siteTitleInputLocator, siteTitle, {
 				pauseBetweenKeysMS: 10,
 			} );
 
 			// Wait for domain suggestions to reload.
 			// Prevent the driver from picking up the previously displayed suggestion.
-			await driver.sleep( 2000 );
+			await this.driver.sleep( 2000 );
 
 			// Wait for the new suggestion items to be rendered,
 			// and get the first domain suggestion item.
@@ -95,7 +88,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 				'.domain-picker__suggestion-item:first-child'
 			);
 			await driverHelper.waitUntilElementLocatedAndVisible(
-				driver,
+				this.driver,
 				firstDomainSuggestionItemLocator
 			);
 
@@ -110,7 +103,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			);
 
 			const domainSuggestionsContainUserEnteredSiteTitle = await driverHelper.isElementLocated(
-				driver,
+				this.driver,
 				domainSuggestionsContainUserEnteredSiteTitleLocator
 			);
 
@@ -124,7 +117,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			// Click on the free domain suggestion item
 			const freeDomainButtonLocator = By.css( '.domain-picker__suggestion-item.is-free' );
 
-			await driverHelper.clickWhenClickable( driver, freeDomainButtonLocator );
+			await driverHelper.clickWhenClickable( this.driver, freeDomainButtonLocator );
 
 			// Check if the free domain suggestion item is now selected
 			const selectedFreeDomainSuggestionItemLocator = By.css(
@@ -132,7 +125,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			);
 
 			const isSelectedFreeDomainSuggestionItemPresent = await driverHelper.isElementLocated(
-				driver,
+				this.driver,
 				selectedFreeDomainSuggestionItemLocator
 			);
 
@@ -142,7 +135,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 				'.domain-picker__suggestion-item.is-free.is-selected .domain-picker__suggestion-item-name'
 			);
 
-			const selectedFreeDomainSuggestionItemName = await driver.findElement(
+			const selectedFreeDomainSuggestionItemName = await this.driver.findElement(
 				selectedFreeDomainSuggestionItemNameLocator
 			);
 
@@ -162,13 +155,13 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 				'View all plans'
 			);
 
-			await driverHelper.clickWhenClickable( driver, viewAllPlansButtonLocator );
+			await driverHelper.clickWhenClickable( this.driver, viewAllPlansButtonLocator );
 
 			// Check if detailed plans grid is displayed
 			const plansGridInDetailedViewLocator = By.css( '.focused-launch-details__body .plans-grid' );
 
 			const isPlansGridInDetailedViewPresent = await driverHelper.isElementLocated(
-				driver,
+				this.driver,
 				plansGridInDetailedViewLocator
 			);
 
@@ -185,7 +178,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 				'Monthly'
 			);
 
-			await driverHelper.clickWhenClickable( driver, monthlyButtonLocator );
+			await driverHelper.clickWhenClickable( this.driver, monthlyButtonLocator );
 
 			// Check if plans grid is really switched over to monthly view
 			// by checking if the price note "per month, billed monthly" exists.
@@ -195,7 +188,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			);
 
 			const isPerMonthBilledMonthlyPricePresent = await driverHelper.isElementLocated(
-				driver,
+				this.driver,
 				perMonthBilledMonthlyPriceNoteLocator
 			);
 
@@ -212,7 +205,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 				'Select Personal'
 			);
 
-			await driverHelper.clickWhenClickable( driver, selectPersonalPlanButtonLocator );
+			await driverHelper.clickWhenClickable( this.driver, selectPersonalPlanButtonLocator );
 
 			// When the detailed plans grid is closed and user returns to the summary view,
 			// check if the selected monthly plan item is "Personal Plan".
@@ -222,7 +215,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			);
 
 			const selectedPlanIsPersonalMonthlyPlan = await driverHelper.isElementLocated(
-				driver,
+				this.driver,
 				selectedPlanIsPersonalMonthlyPlanLocator
 			);
 
@@ -231,12 +224,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 
 		it( 'Can reload block editor and reopen focused launch', async function () {
 			// Reload block editor
-			await driver.navigate().refresh();
+			await this.driver.navigate().refresh();
 
 			// Press "Reload" on confirmation dialog when block editor asks if user really wants to navigate away.
 			try {
-				await driver.wait( until.alertIsPresent(), 4000 );
-				const alert = await driver.switchTo().alert();
+				await this.driver.wait( until.alertIsPresent(), 4000 );
+				const alert = await this.driver.switchTo().alert();
 				await alert.accept();
 			} catch ( e ) {
 				// This doesn't happen when autosave hasn't kicked in so
@@ -245,19 +238,19 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			}
 
 			// Wait for block editor to load and switch frame context to block editor
-			await GutenbergEditorComponent.Expect( driver );
+			await GutenbergEditorComponent.Expect( this.driver );
 
 			// Click on the launch button
 			const launchButtonLocator = driverHelper.createTextLocator(
 				By.css( '.editor-gutenberg-launch__launch-button' ),
 				'Launch'
 			);
-			await driverHelper.clickWhenClickable( driver, launchButtonLocator );
+			await driverHelper.clickWhenClickable( this.driver, launchButtonLocator );
 
 			// See if focused launch modal can be reopened
 			const focusedLaunchModalLocator = By.css( '.launch__focused-modal' );
 			const isFocusedLaunchModalPresent = await driverHelper.isElementLocated(
-				driver,
+				this.driver,
 				focusedLaunchModalLocator
 			);
 
@@ -271,7 +264,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			);
 
 			const selectedDomainSuggestionIsPreviouslySelectedSubdomain = await driverHelper.isElementLocated(
-				driver,
+				this.driver,
 				selectedDomainSuggestionContainingPreviouslySelectedSubdomainLocator
 			);
 
@@ -289,7 +282,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			);
 
 			const selectedPlanIsPersonalMonthlyPlan = await driverHelper.isElementLocated(
-				driver,
+				this.driver,
 				selectedPlanIsPersonalMonthlyPlanLocator
 			);
 
@@ -306,7 +299,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 				/Free Plan/
 			);
 
-			await driverHelper.clickWhenClickable( driver, freePlanLocator );
+			await driverHelper.clickWhenClickable( this.driver, freePlanLocator );
 
 			// When the detailed plans grid is closed and user returns to the summary view,
 			// check if the selected monthly plan item is "Free Plan".
@@ -316,7 +309,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			);
 
 			const selectedPlanIsFreePlan = await driverHelper.isElementLocated(
-				driver,
+				this.driver,
 				selectedPlanIsFreePlanLocator
 			);
 
@@ -326,13 +319,13 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 		it( 'Can launch site with Free plan.', async function () {
 			// Click on the launch button
 			const siteLaunchButtonLocator = By.css( '.focused-launch-summary__launch-button' );
-			await driverHelper.clickWhenClickable( driver, siteLaunchButtonLocator );
+			await driverHelper.clickWhenClickable( this.driver, siteLaunchButtonLocator );
 
 			// Wait for the focused launch success view to show up
 			const focusedLaunchSuccessViewLocator = By.css( '.focused-launch-success__wrapper' );
 
 			const isFocusedLaunchSuccessViewPresent = await driverHelper.isElementLocated(
-				driver,
+				this.driver,
 				focusedLaunchSuccessViewLocator
 			);
 
@@ -340,7 +333,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 		} );
 
 		after( 'Delete the newly created site', async function () {
-			const deleteSite = new DeleteSiteFlow( driver );
+			const deleteSite = new DeleteSiteFlow( this.driver );
 			await deleteSite.deleteSite( siteName + '.wordpress.com' );
 		} );
 	} );

@@ -15,32 +15,25 @@ import SidebarComponent from '../../lib/components/sidebar-component';
 import LoginFlow from '../../lib/flows/login-flow.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Themes: Preview a theme, all sites (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	it( 'Login and select themes', async function () {
 		this.themeSearchName = 'twenty';
 		this.expectedTheme = 'Twenty F';
 
-		this.loginFlow = new LoginFlow( driver, 'multiSiteUser' );
+		this.loginFlow = new LoginFlow( this.driver, 'multiSiteUser' );
 		await this.loginFlow.loginAndSelectAllSites();
 
-		this.sidebarComponent = await SidebarComponent.Expect( driver );
+		this.sidebarComponent = await SidebarComponent.Expect( this.driver );
 		await this.sidebarComponent.selectAllSitesThemes();
 	} );
 
 	it( 'can search for free themes', async function () {
-		this.themesPage = await ThemesPage.Expect( driver );
+		this.themesPage = await ThemesPage.Expect( this.driver );
 		await this.themesPage.waitUntilThemesLoaded();
 		await this.themesPage.showOnlyFreeThemes();
 		await this.themesPage.searchFor( this.themeSearchName );
