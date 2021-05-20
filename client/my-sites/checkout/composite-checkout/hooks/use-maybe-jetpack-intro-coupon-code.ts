@@ -25,13 +25,19 @@ const useMaybeJetpackIntroCouponCode = (
 		if ( isCouponApplied ) {
 			return undefined;
 		}
-		const includesJetpackItems = products
-			.map( ( p ) => p.product_slug )
-			.some( ( slug ) => isJetpackProductSlug( slug ) || isJetpackPlanSlug( slug ) );
+		const jetpackProducts = products.filter(
+			( product ) =>
+				isJetpackProductSlug( product.product_slug ) || isJetpackPlanSlug( product.product_slug )
+		);
 
 		// Only apply FRESHPACK if there's a Jetpack
 		// product or plan present in the cart
-		if ( ! includesJetpackItems ) {
+		if ( jetpackProducts.length < 1 ) {
+			return undefined;
+		}
+
+		// Only apply FRESHPACK for new purchases, not renewals.
+		if ( jetpackProducts.some( ( product ) => product.extra.purchaseType === 'renewal' ) ) {
 			return undefined;
 		}
 
