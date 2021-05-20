@@ -3,55 +3,32 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { get, includes, omit } from 'lodash';
+import page from 'page';
 
-/**
- * Internal dependencies
- */
-import { navigate } from 'calypso/state/ui/actions';
-
-export class CommentLink extends PureComponent {
+export default class CommentLink extends PureComponent {
 	static propTypes = {
-		children: PropTypes.any,
 		commentId: PropTypes.number,
 		href: PropTypes.string,
-		navigate: PropTypes.func,
 	};
 
 	handleClick = ( event ) => {
-		if ( ! window ) {
-			return;
-		}
 		event.preventDefault();
 		window.scrollTo( 0, 0 );
 
 		const { commentId, href } = this.props;
-		const path = get( window, 'history.state.path' );
+		const { path } = window.history.state;
 
-		const newPath = includes( path, '#' )
+		const newPath = path.includes( '#' )
 			? path.replace( /[#].*/, `#comment-${ commentId }` )
 			: `${ path }#comment-${ commentId }`;
 
 		window.history.replaceState( { ...window.history.state, path: newPath }, null );
 
-		this.props.navigate( href );
+		page( href );
 	};
 
 	render() {
-		const { children, href } = this.props;
-		return (
-			<a
-				href={ href }
-				onClick={ this.handleClick }
-				{ ...omit( this.props, [ 'children', 'commentId', 'href', 'navigate' ] ) }
-			>
-				{ children }
-			</a>
-		);
+		const { href, commentId, ...props } = this.props;
+		return <a href={ href } { ...props } onClick={ this.handleClick } />;
 	}
 }
-
-const mapDispatchToProps = { navigate };
-
-export default connect( null, mapDispatchToProps )( CommentLink );
