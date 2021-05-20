@@ -433,13 +433,16 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async removeBusinessPlan() {
-		const productSlug = this.businessPlanSlug;
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css(
-				`button.cart__remove-item,.checkout-line-item[data-e2e-product-slug="${ productSlug }"] button.checkout-line-item__remove-product`
-			)
+		const trashButtonLocator = By.css(
+			`.checkout-line-item[data-e2e-product-slug="${ this.businessPlanSlug }"] button.checkout-line-item__remove-product`
 		);
+		const confirmButtonLocator = driverHelper.createTextLocator(
+			By.css( '.checkout-modal .checkout-button' ),
+			'Continue'
+		);
+
+		await driverHelper.clickWhenClickable( this.driver, trashButtonLocator );
+		await driverHelper.clickWhenClickable( this.driver, confirmButtonLocator );
 	}
 
 	async cartTotalDisplayed() {
