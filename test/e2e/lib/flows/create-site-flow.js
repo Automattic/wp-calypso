@@ -32,7 +32,7 @@ export default class CreateSiteFlow {
 			By.css( '.signup-processing-screen__title' ),
 			/your site will be ready shortly/i
 		);
-		await driverHelper.waitUntilElementLocated( this.driver, hoorayTitleLocator );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, hoorayTitleLocator );
 		/**
 		 * Let's give the create request enough time to finish. Sometimes it takes
 		 * way more than the default 20 seconds, and the cost of waiting a bit
@@ -45,6 +45,6 @@ export default class CreateSiteFlow {
 		);
 
 		const myHomePage = await MyHomePage.Expect( this.driver );
-		return myHomePage.siteSetupListExists();
+		return await myHomePage.siteSetupListExists();
 	}
 }

@@ -29,7 +29,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async isCompositeCheckout() {
-		return driverHelper.isElementLocated( this.driver, By.css( '.composite-checkout' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '.composite-checkout' ) );
 	}
 
 	async _postInit() {
@@ -154,7 +154,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			this.driver,
 			By.css( `#country-selector option[value="${ cardCountryCode }"]` )
 		);
-		return driverHelper.clickWhenClickable(
+		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( 'button[aria-label="Continue with the entered contact details"]' )
 		);
@@ -349,23 +349,23 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async hasCouponApplied() {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
-			return driverHelper.isElementLocated(
+			return await driverHelper.isElementLocated(
 				this.driver,
 				By.css( '#checkout-line-item-coupon-line-item' )
 			);
 		}
-		return driverHelper.isElementLocated( this.driver, By.css( '.cart__remove-link' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '.cart__remove-link' ) );
 	}
 
 	async waitForCouponToBeApplied() {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
-			return driverHelper.waitUntilElementLocatedAndVisible(
+			return await driverHelper.waitUntilElementLocatedAndVisible(
 				this.driver,
 				By.css( '.checkout-review-order.is-summary #checkout-line-item-coupon-line-item' )
 			);
 		}
-		return driverHelper.waitUntilElementLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.cart__remove-link' )
 		);

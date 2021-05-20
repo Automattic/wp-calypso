@@ -47,7 +47,10 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 			this.driver,
 			by.css( '.dialog button.is-scary[disabled]' )
 		);
-		return driverHelper.clickWhenClickable( this.driver, by.css( '.dialog button.is-scary' ) );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( '.dialog button.is-scary' )
+		);
 	}
 
 	async confirmAccountHasBeenClosed() {
@@ -55,7 +58,10 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 			by.css( '.empty-content__title' ),
 			'Your account has been closed'
 		);
-		await driverHelper.waitUntilElementLocated( this.driver, messageLocator );
-		return driverHelper.clickWhenClickable( this.driver, by.css( 'button.empty-content__action' ) );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, messageLocator );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( 'button.empty-content__action' )
+		);
 	}
 }
