@@ -13,7 +13,7 @@ import SelectorPage from './selector';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
-import { getHighlightedProduct } from './utils';
+import { getHighlightedProduct, stringToDuration } from './utils';
 
 /**
  * Type dependencies
@@ -24,11 +24,9 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 	// Get the selected site's current plan term, and set it as default duration
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	const duration: Duration =
-		( siteId && ( getCurrentPlanTerm( state, siteId ) as Duration ) ) ||
-		( TERM_ANNUALLY as Duration );
 	const urlQueryArgs: QueryArgs = context.query;
-	const { site } = getParamsFromContext( context );
+	const { site: siteParam, duration: durationParam } = getParamsFromContext( context );
+	const duration = siteId && ( getCurrentPlanTerm( state, siteId ) as Duration );
 	const planRecommendation = isEnabled( 'jetpack/redirect-legacy-plans' )
 		? getPlanRecommendationFromContext( context )
 		: undefined;
@@ -36,9 +34,9 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 
 	context.primary = (
 		<SelectorPage
-			defaultDuration={ duration }
+			defaultDuration={ stringToDuration( durationParam ) || duration || TERM_ANNUALLY }
 			rootUrl={ rootUrl }
-			siteSlug={ site || context.query.site }
+			siteSlug={ siteParam || context.query.site }
 			urlQueryArgs={ urlQueryArgs }
 			highlightedProducts={ highlightedProducts }
 			header={ context.header }
