@@ -23,6 +23,8 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormButton from 'calypso/components/forms/form-button';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import InlineHelpCompactResults from 'calypso/blocks/inline-help/inline-help-compact-results';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import { selectSiteId } from 'calypso/state/help/actions';
 import { getHelpSelectedSite, getHelpSelectedSiteId } from 'calypso/state/help/selectors';
 import wpcomLib from 'calypso/lib/wp';
@@ -36,9 +38,11 @@ import {
 	getCurrentUserLocale,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
 import isShowingQandAInlineHelpContactForm from 'calypso/state/selectors/is-showing-q-and-a-inline-help-contact-form';
 import { showQandAOnInlineHelpContactForm } from 'calypso/state/inline-help/actions';
 import { getNpsSurveyFeedback } from 'calypso/state/nps-survey/selectors';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { generateSubjectFromMessage } from './utils';
 
 /**
@@ -94,6 +98,7 @@ export class HelpContactForm extends React.PureComponent {
 		showSubjectField: PropTypes.bool,
 		showSiteField: PropTypes.bool,
 		showHelpLanguagePrompt: PropTypes.bool,
+		showHidingUrlOption: PropTypes.bool,
 		helpSite: PropTypes.object,
 		helpSiteId: PropTypes.number,
 		siteFilter: PropTypes.func,
@@ -108,12 +113,14 @@ export class HelpContactForm extends React.PureComponent {
 
 	static defaultProps = {
 		formDescription: '',
+		hasRequestedSiteData: false,
 		showAlternativeSiteOptionsField: false,
 		showHowCanWeHelpField: false,
 		showHowYouFeelField: false,
 		showSubjectField: false,
 		showSiteField: false,
 		showHelpLanguagePrompt: false,
+		showHidingUrlOption: false,
 		disabled: false,
 		valueLink: {
 			value: null,
@@ -136,8 +143,9 @@ export class HelpContactForm extends React.PureComponent {
 		subject: '',
 		sibylClicked: false,
 		userDeclaresNoSite: false,
-		userDeclaresUnableToSeeSite: this.props.siteCount === 0,
+		userDeclaresUnableToSeeSite: this.props.hasNoSites,
 		userDeclaredUrl: '',
+		userRequestsHidingUrl: false,
 		qanda: [],
 	};
 
@@ -154,6 +162,7 @@ export class HelpContactForm extends React.PureComponent {
 
 	componentDidMount() {
 		this.debouncedQandA = debounce( this.doQandASearch, 500 );
+		this.requestSite = debounce( this.doRequestSite, 500 );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -167,6 +176,10 @@ export class HelpContactForm extends React.PureComponent {
 	componentDidUpdate( prevProps, prevState ) {
 		if ( prevState.subject !== this.state.subject || prevState.message !== this.state.message ) {
 			this.debouncedQandA();
+		}
+
+		if ( prevState.userDeclaredUrl !== this.state.userDeclaredUrl ) {
+			this.requestSite();
 		}
 		this.props.valueLink.requestChange( this.state );
 	}
@@ -183,6 +196,17 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	getSibylQuery = () => ( this.state.subject + ' ' + this.state.message ).trim();
+
+	doRequestSite = () => {
+		if ( this.state.userDeclaredUrl ) {
+			this.props.requestSite( this.state.userDeclaredUrl, false, true ).then( ( siteData ) =>
+				this.setState( {
+					siteData,
+					hasRequestedSiteData: true,
+				} )
+			);
+		}
+	};
 
 	doQandASearch = () => {
 		const query = this.getSibylQuery();
@@ -309,6 +333,7 @@ export class HelpContactForm extends React.PureComponent {
 			userDeclaresUnableToSeeSite,
 			userDeclaredUrl,
 			userDeclaresNoSite,
+			userRequestsHidingUrl,
 		} = this.state;
 		const { additionalSupportOption, currentUserLocale, compact } = this.props;
 		const subject = compact ? generateSubjectFromMessage( message ) : this.state.subject;
@@ -342,6 +367,7 @@ export class HelpContactForm extends React.PureComponent {
 			site: this.props.helpSite,
 			userDeclaredUrl: userDeclaresUnableToSeeSite && userDeclaredUrl,
 			userDeclaresNoSite,
+			userRequestsHidingUrl,
 		} );
 	};
 
@@ -376,7 +402,7 @@ export class HelpContactForm extends React.PureComponent {
 			additionalSupportOption,
 			formDescription,
 			buttonLabel,
-			siteCount,
+			hasNoSites,
 			showAlternativeSiteOptionsField,
 			showHowCanWeHelpField,
 			showHowYouFeelField,
@@ -384,12 +410,11 @@ export class HelpContactForm extends React.PureComponent {
 			showSiteField,
 			showQASuggestions,
 			showHelpLanguagePrompt,
+			showHidingUrlOption,
 			translate,
 			showingQandAStep,
 		} = this.props;
 		const hasQASuggestions = ! isEmpty( this.state.qanda );
-
-		const hasNoSites = siteCount === 0;
 
 		const howCanWeHelpOptions = [
 			{
@@ -416,6 +441,51 @@ export class HelpContactForm extends React.PureComponent {
 			{ value: 'upset', label: translate( 'Upset' ) },
 			{ value: 'panicked', label: translate( 'Panicked' ) },
 		];
+
+		const siteData = this.state.siteData && this.state.siteData.site;
+		const errorData = this.state.siteData && this.state.siteData.errorCode;
+
+		let noticeMessage;
+		let actionLink;
+		let actionMessage;
+
+		// "Unauthorized" means it's still a WP.com site - just a private one.
+		const isWpComConnectedSite =
+			( siteData && siteData.ID ) ||
+			( errorData && errorData === 'unauthorized' && this.state.userDeclaredUrl );
+
+		const isNonWpComHostedSite =
+			errorData && errorData === 'unknown_blog' && this.state.userDeclaredUrl;
+
+		if ( isWpComConnectedSite ) {
+			// The site is linked to WordPress.com but not appearing for the user, so they've probably lost access to the account which owns it.
+			noticeMessage = translate(
+				"%(siteName)s is linked to another WordPress.com account. If you're trying to access it, please follow our Account Recovery procedure.",
+				{
+					args: {
+						siteName:
+							siteData && siteData.name
+								? siteData.name
+								: translate( 'This site', {
+										comment: 'Full phrase: "This site is linked to another WordPress.com account"',
+								  } ) + ' ',
+					},
+				}
+			);
+			actionLink = localizeUrl( 'https://wordpress.com/wp-login.php?action=recovery' );
+			actionMessage = translate( 'Learn more' );
+		}
+
+		if ( isNonWpComHostedSite ) {
+			noticeMessage = translate(
+				"Your site is not hosted on our services, so your {{link}}hosting provider{{/link}} might offer enhanced help. If you're not sure, share your question with a link, and we'll point you in the right direction!",
+				{
+					components: {
+						link: <a href={ localizeUrl( 'https://wordpress.com/support/com-vs-org/' ) } />,
+					},
+				}
+			);
+		}
 
 		if ( showingQandAStep && hasQASuggestions ) {
 			return (
@@ -472,19 +542,12 @@ export class HelpContactForm extends React.PureComponent {
 											onChange={ () => {
 												this.setState( {
 													userDeclaresUnableToSeeSite: ! this.state.userDeclaresUnableToSeeSite,
+													userDeclaredUrl: '',
 												} );
 											} }
 											disabled={ this.state.userDeclaresNoSite }
 										/>
-										<span>
-											{ translate(
-												"This isn't the site which I need help with",
-												"I don't see my site which I need help with here",
-												{
-													count: siteCount,
-												}
-											) }
-										</span>
+										<span>{ translate( 'I need help with a different site' ) }</span>
 									</FormLabel>
 								) }
 
@@ -502,7 +565,7 @@ export class HelpContactForm extends React.PureComponent {
 								{ this.state.userDeclaresUnableToSeeSite && ! this.state.userDeclaresNoSite && (
 									<div className="help-contact-form__site-alternatives-url">
 										<FormLabel htmlFor="userDeclaredUrl">
-											{ translate( 'What the URL of the site you need help with?' ) }
+											{ translate( 'What is the URL of the site you need help with?' ) }
 										</FormLabel>
 										<FormTextInput
 											id="userDeclaredUrl"
@@ -512,6 +575,21 @@ export class HelpContactForm extends React.PureComponent {
 											placeholder="https://"
 										/>
 									</div>
+								) }
+
+								{ noticeMessage && (
+									<Notice
+										className="help-contact-form__site-notice"
+										status="is-warning"
+										showDismiss={ false }
+										text={ noticeMessage }
+									>
+										{ actionMessage && (
+											<NoticeAction href={ actionLink } external>
+												{ actionMessage }
+											</NoticeAction>
+										) }
+									</Notice>
 								) }
 							</div>
 						) }
@@ -538,6 +616,24 @@ export class HelpContactForm extends React.PureComponent {
 					value={ this.state.message }
 					onChange={ this.handleChange }
 				/>
+
+				{ ! this.state.userDeclaresNoSite && showHidingUrlOption && (
+					<FormLabel>
+						<FormCheckbox
+							onChange={ () => {
+								this.setState( {
+									userRequestsHidingUrl: ! this.state.userRequestsHidingUrl,
+								} );
+							} }
+						/>
+						<span>{ translate( "Don't display my site's URL publicly" ) }</span>
+						<p className="help-contact-form__public-url-checkbox-text">
+							{ translate(
+								"This may result in a longer response time, but WordPress.com staff in the forums will still be able to view your site's URL."
+							) }
+						</p>
+					</FormLabel>
+				) }
 
 				{ showHelpLanguagePrompt && (
 					<strong className="help-contact-form__help-language-prompt">
@@ -588,9 +684,9 @@ export class HelpContactForm extends React.PureComponent {
 
 const mapStateToProps = ( state ) => ( {
 	currentUserLocale: getCurrentUserLocale( state ),
+	hasNoSites: getCurrentUserSiteCount( state ) === 0,
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
-	siteCount: getCurrentUserSiteCount( state ),
 	showingQandAStep: isShowingQandAInlineHelpContactForm( state ),
 	npsSurveyFeedback: getNpsSurveyFeedback( state ),
 } );
@@ -598,6 +694,7 @@ const mapStateToProps = ( state ) => ( {
 const mapDispatchToProps = {
 	onChangeSite: selectSiteId,
 	recordTracksEventAction,
+	requestSite,
 	trackSibylClick,
 	trackSibylFirstClick,
 	trackSupportAfterSibylClick,
