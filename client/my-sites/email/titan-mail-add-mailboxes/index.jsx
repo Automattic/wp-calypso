@@ -278,7 +278,7 @@ class TitanMailAddMailboxes extends React.Component {
 
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-				<Main>
+				<Main wideLayout={ true }>
 					<DocumentHead title={ pageTitle } />
 
 					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
