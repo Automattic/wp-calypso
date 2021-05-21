@@ -54,10 +54,18 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteSlug = siteSlugProp || siteSlugState;
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
+	const viewTrackerPath = getViewTrackerPath( rootUrl, siteSlugProp );
+	const viewTrackerProps = siteId ? { site: siteSlug } : {};
 
 	useEffect( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_pricing_page_visit', { site: siteSlug } ) );
-	}, [ dispatch, siteSlug ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_pricing_page_visit', {
+				site: siteSlug,
+				path: viewTrackerPath,
+				root_path: rootUrl,
+			} )
+		);
+	}, [ dispatch, rootUrl, siteSlug, viewTrackerPath ] );
 
 	useEffect( () => {
 		setDuration( defaultDuration );
@@ -147,9 +155,6 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		);
 		setDuration( selectedDuration );
 	};
-
-	const viewTrackerPath = getViewTrackerPath( rootUrl, siteId );
-	const viewTrackerProps = siteId ? { site: siteSlug } : {};
 
 	return (
 		<Main className="selector__main" wideLayout>

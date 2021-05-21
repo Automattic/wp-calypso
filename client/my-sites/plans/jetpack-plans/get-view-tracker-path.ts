@@ -1,8 +1,8 @@
 const sitePattern = /\/:site\??/;
 const siteSegment = '/:site';
 
-export default function getViewTrackerPath( path: string, siteId?: number | null ): string {
-	if ( siteId ) {
+export default function getViewTrackerPath( path: string, siteSlug?: string ): string {
+	if ( siteSlug ) {
 		if ( ! path.match( sitePattern ) ) {
 			return path + siteSegment;
 		}
