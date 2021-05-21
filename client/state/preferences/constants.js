@@ -8,4 +8,5 @@ export const DEFAULT_PREFERENCE_VALUES = {
 	mediaScale: 0.157,
 	editorConfirmationDisabledSites: [],
 	colorScheme: 'default',
+	linkDestination: false,
 };
