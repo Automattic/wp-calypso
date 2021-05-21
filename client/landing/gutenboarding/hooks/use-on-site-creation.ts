@@ -61,20 +61,27 @@ export default function useOnSiteCreation(): void {
 		if ( newSite && ! isRedirecting ) {
 			setIsRedirecting( true );
 
-			if ( selectedPlan && ! selectedPlan?.isFree ) {
+			if (
+				selectedPlan &&
+				! selectedPlan?.isFree &&
+				planProductSource &&
+				domain &&
+				domain.product_id &&
+				domain.product_slug
+			) {
 				const planProduct: RequestCartProduct = createRequestCartProduct( {
-					product_id: planProductSource?.productId,
-					product_slug: planProductSource?.storeSlug,
+					product_id: planProductSource.productId,
+					product_slug: planProductSource.storeSlug,
 					extra: {
 						source: 'gutenboarding',
 					},
 				} );
 				const domainProduct: RequestCartProduct = createRequestCartProduct( {
-					meta: domain?.domain_name,
-					product_id: domain?.product_id,
+					meta: domain.domain_name,
+					product_id: domain.product_id,
+					product_slug: domain.product_slug,
 					extra: {
-						privacy_available: domain?.supports_privacy,
-						privacy: domain?.supports_privacy,
+						privacy: domain.supports_privacy,
 						source: 'gutenboarding',
 					},
 				} );
