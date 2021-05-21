@@ -11,6 +11,7 @@ import {
 	getGSuiteSubscriptionId,
 	hasGSuiteWithUs,
 	hasPendingGSuiteUsers,
+	isPendingGSuiteTOSAcceptance,
 } from 'calypso/lib/gsuite';
 import {
 	getConfiguredTitanMailboxCount,
@@ -21,7 +22,7 @@ import {
 } from 'calypso/lib/titan';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import { hasUnusedMailboxWarning, hasGoogleAccountTOSWarning } from 'calypso/lib/emails';
+import { hasGoogleAccountTOSWarning, hasUnusedMailboxWarning, hasUnverifiedEmailForward } from 'calypso/lib/emails';
 
 export function getNumberOfMailboxesText( domain ) {
 	if ( hasGSuiteWithUs( domain ) ) {
@@ -114,7 +115,7 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 
 	if ( hasGSuiteWithUs( domain ) ) {
 		// Check for pending TOS acceptance warnings at the account level
-		if ( hasGoogleAccountTOSWarning( emailAccount ) ) {
+		if ( isPendingGSuiteTOSAcceptance( domain ) || ( emailAccount && hasGoogleAccountTOSWarning( emailAccount ) ) ) {
 			return defaultWarningStatus;
 		}
 
@@ -151,6 +152,12 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 		}
 
 		return defaultActiveStatus;
+	}
+
+	if ( hasEmailForwards( domain ) && emailAccount ) {
+		if ( hasUnverifiedEmailForward( emailAccount ) ) {
+			return defaultWarningStatus;
+		}
 	}
 
 	return defaultActiveStatus;
