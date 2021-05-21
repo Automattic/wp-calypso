@@ -117,6 +117,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			<h3 className="rewind-flow__title">{ translate( 'Currently restoring your site' ) }</h3>
 			<ProgressBar
 				isReady={ 'running' === status }
+				initializationMessage={ translate( 'Initializing the restore process' ) }
 				message={ message }
 				entry={ currentEntry }
 				percent={ percent }

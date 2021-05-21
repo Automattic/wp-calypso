@@ -17,7 +17,6 @@ import SupportSearchComponent from '../../lib/components/support-search-componen
 import SidebarComponent from '../../lib/components/sidebar-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
@@ -27,33 +26,30 @@ const helpCardLocator = By.css( '.help-search' );
 
 describe( `[${ host }] My Home "Get help" support search card: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	it( 'Login and select the My Home page', async function () {
-		const loginFlow = new LoginFlow( driver );
+		const loginFlow = new LoginFlow( this.driver );
 
 		await loginFlow.loginAndSelectMySite();
 
 		// The "/home" route is the only one this support search
 		// "Card" will show on
-		const sidebarComponent = await SidebarComponent.Expect( driver );
+		const sidebarComponent = await SidebarComponent.Expect( this.driver );
 		await sidebarComponent.selectMyHome();
 	} );
 
 	it( 'Verify "Get help" support card is displayed', async function () {
 		// Card can take a little while to display, so let's wait...
-		await driverHelper.waitUntilElementLocatedAndVisible( driver, helpCardLocator );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, helpCardLocator );
 
 		// For safety also scroll into viewport - also helps when visually verify test runs.
-		await driverHelper.scrollIntoView( driver, helpCardLocator );
+		await driverHelper.scrollIntoView( this.driver, helpCardLocator );
 
 		// Verify it is there.
-		const isGetHelpCardPresent = await driverHelper.isElementLocated( driver, helpCardLocator );
+		const isGetHelpCardPresent = await driverHelper.isElementLocated(
+			this.driver,
+			helpCardLocator
+		);
 		assert.equal(
 			isGetHelpCardPresent,
 			true,
@@ -62,7 +58,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 	} );
 
 	it( 'Displays Default Results initially', async function () {
-		supportSearchComponent = await SupportSearchComponent.Expect( driver );
+		supportSearchComponent = await SupportSearchComponent.Expect( this.driver );
 		const resultsCount = await supportSearchComponent.getDefaultResultsCount();
 		assert.equal( resultsCount, 6, 'There are not 6 Default Results displayed.' );
 	} );

@@ -23,7 +23,7 @@ import {
 	getEmailPurchaseByDomain,
 	hasEmailSubscription,
 } from 'calypso/my-sites/email/email-management/home/utils';
-import { getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
@@ -32,8 +32,8 @@ import {
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
 	emailManagementManageTitanAccount,
+	emailManagementManageTitanMailboxes,
 	emailManagementNewTitanAccount,
-	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
@@ -159,7 +159,13 @@ class EmailPlan extends React.Component {
 		}
 
 		if ( hasTitanMailWithUs( domain ) ) {
-			return translate( 'Email settings' );
+			return translate( '%(titanProductName)s settings', {
+				args: {
+					titanProductName: getTitanProductName(),
+				},
+				comment:
+					'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
+			} );
 		}
 
 		return translate( 'Email forwarding settings' );
@@ -202,12 +208,7 @@ class EmailPlan extends React.Component {
 			}
 
 			return {
-				external: true,
-				path: emailManagementTitanControlPanelRedirect(
-					selectedSite.slug,
-					domain.name,
-					currentRoute
-				),
+				path: emailManagementManageTitanMailboxes( selectedSite.slug, domain.name, currentRoute ),
 			};
 		}
 
@@ -261,9 +262,11 @@ class EmailPlan extends React.Component {
 				<EmailPlanHeader
 					domain={ domain }
 					hasEmailSubscription={ hasSubscription }
+					isLoadingEmails={ isLoadingEmailAccounts }
 					isLoadingPurchase={ isLoadingPurchase }
 					purchase={ purchase }
 					selectedSite={ selectedSite }
+					emailAccount={ this.state.emailAccounts?.[ 0 ] }
 				/>
 
 				<EmailPlanMailboxesList

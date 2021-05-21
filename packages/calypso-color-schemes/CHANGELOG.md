@@ -1,5 +1,11 @@
 # Release Notes
 
+## trunk
+
+- Updated dependencies:
+  - postcss to ^8.2.15
+  - node-sass to ^6.0.0
+
 ## 2.1.1
 
 - Updated the color palette to the most recent version.

@@ -16,6 +16,11 @@ export const MobileHiddenHorizontalRule = styled( HorizontalRule )< MarketplaceT
 	}
 `;
 
+export const MarketplaceHeaderTitle = styled.h1`
+	font-size: ${ ( { subtitle = false } ) => ( subtitle ? '1.5em' : '2em' ) };
+	margin-bottom: 8px;
+`;
+
 export const FullWidthButton = styled( Button )`
 	justify-content: center;
 	width: 100%;

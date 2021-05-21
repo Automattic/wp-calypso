@@ -30,13 +30,13 @@ export default class ProfilePage extends AsyncBaseContainer {
 		await driverHelper.waitUntilElementNotLocated( this.driver, buttonLocator );
 	}
 
-	chooseManagePurchases() {
+	async chooseManagePurchases() {
 		const itemLocator = By.css( '.sidebar a[href$="purchases"]' );
-		return driverHelper.clickWhenClickable( this.driver, itemLocator );
+		return await driverHelper.clickWhenClickable( this.driver, itemLocator );
 	}
 
-	chooseAccountSettings() {
+	async chooseAccountSettings() {
 		const itemLocator = By.css( '.sidebar a[href$="account"]' );
-		return driverHelper.clickWhenClickable( this.driver, itemLocator );
+		return await driverHelper.clickWhenClickable( this.driver, itemLocator );
 	}
 }

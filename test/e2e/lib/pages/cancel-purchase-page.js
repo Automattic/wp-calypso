@@ -24,7 +24,7 @@ export default class CancelPurchasePage extends AsyncBaseContainer {
 			by.css( 'input[name="cancel_bundled_domain_false"]' )
 		);
 		// Agree to cancelling domain
-		return await driverHelper.setCheckbox( this.driver, by.css( 'input[type="checkbox"]' ) );
+		await driverHelper.setCheckbox( this.driver, by.css( 'input[type="checkbox"]' ) );
 	}
 
 	async clickCancelPurchase() {

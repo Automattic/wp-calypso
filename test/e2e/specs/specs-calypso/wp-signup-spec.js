@@ -57,7 +57,6 @@ import MyHomePage from '../../lib/pages/my-home-page';
 import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const signupInboxId = config.get( 'signupInboxId' );
 const host = dataHelper.getJetpackHost();
@@ -67,12 +66,6 @@ const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 
 describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		this.driver = driver = await driverManager.startBrowser();
-	} );
 
 	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @signup @email', function () {
 		const blogName = dataHelper.getNewBlogName();
@@ -81,15 +74,15 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		let magicLoginLink;
 
 		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
+			return await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'Can create a new WordPress site', async function () {
-			await StartPage.Visit( driver, StartPage.getStartURL() );
+			await StartPage.Visit( this.driver, StartPage.getStartURL() );
 		} );
 
 		it( 'Can see the account page and enter account details', async function () {
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			const createYourAccountPage = await CreateYourAccountPage.Expect( this.driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
 				blogName,
@@ -98,7 +91,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results', async function () {
-			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			const findADomainComponent = await FindADomainComponent.Expect( this.driver );
 			await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
 			// See https://github.com/Automattic/wp-calypso/pull/38641/
 			// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
@@ -114,12 +107,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can see the plans page and pick the free plan', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 			return await pickAPlanPage.selectFreePlan();
 		} );
 
 		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
-			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+			return await new SignUpStep( this.driver ).continueAlong( blogName, passwordForTestAccounts );
 		} );
 
 		sharedSteps.canSeeTheOnboardingChecklist();
@@ -128,8 +121,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			if ( process.env.HORIZON_TESTS === 'true' ) {
 				return this.skip();
 			}
-			await driverManager.ensureNotLoggedIn( driver );
-			const loginPage = await LoginPage.Visit( driver );
+			await driverManager.ensureNotLoggedIn( this.driver );
+			const loginPage = await LoginPage.Visit( this.driver );
 			return await loginPage.requestMagicLink( emailAddress );
 		} );
 
@@ -161,18 +154,18 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			if ( process.env.HORIZON_TESTS === 'true' ) {
 				return this.skip();
 			}
-			await driver.get( magicLoginLink );
-			const magicLoginPage = await MagicLoginPage.Expect( driver );
+			await this.driver.get( magicLoginLink );
+			const magicLoginPage = await MagicLoginPage.Expect( this.driver );
 			await magicLoginPage.finishLogin();
 			try {
-				await CustomerHomePage.Expect( driver );
+				await CustomerHomePage.Expect( this.driver );
 			} catch ( e ) {
-				await ReaderPage.Expect( driver );
+				await ReaderPage.Expect( this.driver );
 			}
 		} );
 
 		after( 'Can delete our newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+			return await new DeleteAccountFlow( this.driver ).deleteAccount( blogName );
 		} );
 	} );
 
@@ -182,15 +175,15 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
 
 		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
+			return await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'Can visit the start page', async function () {
-			await StartPage.Visit( driver, StartPage.getStartURL( { culture: locale } ) );
+			await StartPage.Visit( this.driver, StartPage.getStartURL( { culture: locale } ) );
 		} );
 
 		it( 'Can see the account page and enter account details', async function () {
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			const createYourAccountPage = await CreateYourAccountPage.Expect( this.driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
 				blogName,
@@ -199,7 +192,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results', async function () {
-			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			const findADomainComponent = await FindADomainComponent.Expect( this.driver );
 			await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
 			// See https://github.com/Automattic/wp-calypso/pull/38641/
 			// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
@@ -215,18 +208,18 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can see the plans page and pick the free plan', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 			return await pickAPlanPage.selectFreePlan();
 		} );
 
 		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
-			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+			return await new SignUpStep( this.driver ).continueAlong( blogName, passwordForTestAccounts );
 		} );
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		after( 'Can delete our newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+			return await new DeleteAccountFlow( this.driver ).deleteAccount( blogName );
 		} );
 	} );
 
@@ -237,15 +230,18 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		let originalCartAmount;
 
 		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
+			return await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'Can visit the start page', async function () {
-			await StartPage.Visit( driver, StartPage.getStartURL( { flow: 'main', culture: locale } ) );
+			await StartPage.Visit(
+				this.driver,
+				StartPage.getStartURL( { flow: 'main', culture: locale } )
+			);
 		} );
 
 		it( 'Can see the account page and enter account details', async function () {
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			const createYourAccountPage = await CreateYourAccountPage.Expect( this.driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
 				blogName,
@@ -254,43 +250,43 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can see the "About" page, and enter some site information', async function () {
-			const aboutPage = await AboutPage.Expect( driver );
+			const aboutPage = await AboutPage.Expect( this.driver );
 			return await aboutPage.enterSiteDetails( blogName, '', {
 				showcase: true,
 			} );
 		} );
 
 		it( 'Can accept defaults for about page', async function () {
-			const aboutPage = await AboutPage.Expect( driver );
+			const aboutPage = await AboutPage.Expect( this.driver );
 			await aboutPage.submitForm();
 		} );
 
 		it( 'Can then see the domains page ', async function () {
-			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			const findADomainComponent = await FindADomainComponent.Expect( this.driver );
 			const displayed = await findADomainComponent.displayed();
 			return assert.strictEqual( displayed, true, 'The choose a domain page is not displayed' );
 		} );
 
 		it( 'Can search for a blog name, can see and select a free WordPress.com blog address in results', async function () {
-			return await new SignUpStep( driver ).selectFreeWordPressDotComAddresss(
+			return await new SignUpStep( this.driver ).selectFreeWordPressDotComAddresss(
 				blogName,
 				expectedBlogAddresses
 			);
 		} );
 
 		it( 'Can then see the plans page and select the premium plan ', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 			const displayed = await pickAPlanPage.displayed();
 			assert.strictEqual( displayed, true, 'The pick a plan page is not displayed' );
 			return await pickAPlanPage.selectPremiumPlan();
 		} );
 
 		it( 'Can then see the sign up processing page which will automatically move along', async function () {
-			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+			return await new SignUpStep( this.driver ).continueAlong( blogName, passwordForTestAccounts );
 		} );
 
 		it( 'Can then see the secure payment page with the premium plan in the cart', async function () {
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 			const premiumPlanInCart = await securePaymentComponent.containsPremiumPlan();
 			assert.strictEqual( premiumPlanInCart, true, "The cart doesn't contain the premium plan" );
 			const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
@@ -302,7 +298,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can Correctly Apply Coupon discount', async function () {
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 			await securePaymentComponent.toggleCartSummary();
 			originalCartAmount = await securePaymentComponent.cartTotalAmount();
 
@@ -322,7 +318,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can Remove Coupon', async function () {
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 
 			await securePaymentComponent.removeCoupon();
 
@@ -331,7 +327,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		after( 'Can delete our newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+			return await new DeleteAccountFlow( this.driver ).deleteAccount( blogName );
 		} );
 	} );
 
@@ -343,11 +339,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		const expectedCurrencySymbol = '£';
 
 		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
+			return await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'We can set the sandbox cookie for payments', async function () {
-			const wPHomePage = await WPHomePage.Visit( driver );
+			const wPHomePage = await WPHomePage.Visit( this.driver );
 			await wPHomePage.checkURL( locale );
 			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
 			return await wPHomePage.setCurrencyForPayments( currencyValue );
@@ -355,13 +351,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		it( 'Can visit the start page', async function () {
 			await StartPage.Visit(
-				driver,
+				this.driver,
 				StartPage.getStartURL( { culture: locale, flow: 'personal' } )
 			);
 		} );
 
 		it( 'Can see the account details page and enter account details', async function () {
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			const createYourAccountPage = await CreateYourAccountPage.Expect( this.driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
 				blogName,
@@ -370,18 +366,18 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the domains page and can search for a blog name, can see and select a free WordPress.com blog address in results', async function () {
-			return await new SignUpStep( driver ).selectFreeWordPressDotComAddresss(
+			return await new SignUpStep( this.driver ).selectFreeWordPressDotComAddresss(
 				blogName,
 				expectedBlogAddresses
 			);
 		} );
 
 		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
-			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+			return await new SignUpStep( this.driver ).continueAlong( blogName, passwordForTestAccounts );
 		} );
 
 		it( 'Can then see the secure payment page with the expected currency in the cart', async function () {
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 			if ( driverManager.currentScreenSize() === 'desktop' ) {
 				const totalShown = await securePaymentComponent.cartTotalDisplayed();
 				assert.strictEqual(
@@ -398,7 +394,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the secure payment page with the expected products in the cart', async function () {
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 			const personalPlanInCart = await securePaymentComponent.containsPersonalPlan();
 			assert.strictEqual( personalPlanInCart, true, "The cart doesn't contain the personal plan" );
 			const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
@@ -411,7 +407,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		it( 'Can submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
@@ -421,11 +417,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		it( 'Can delete the plan', async function () {
-			return await new DeletePlanFlow( driver ).deletePlan( 'personal' );
+			return await new DeletePlanFlow( this.driver ).deletePlan( 'personal' );
 		} );
 
 		after( 'Can delete our newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+			return await new DeleteAccountFlow( this.driver ).deleteAccount( blogName );
 		} );
 	} );
 
@@ -448,11 +444,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
+			return await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'We can visit set the sandbox cookie for payments', async function () {
-			const wPHomePage = await WPHomePage.Visit( driver );
+			const wPHomePage = await WPHomePage.Visit( this.driver );
 			await wPHomePage.checkURL( locale );
 			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
 			return await wPHomePage.setCurrencyForPayments( currencyValue );
@@ -460,7 +456,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		it( 'Can visit the domains start page', async function () {
 			await StartPage.Visit(
-				driver,
+				this.driver,
 				StartPage.getStartURL( {
 					culture: locale,
 					flow: 'domain-first',
@@ -470,12 +466,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can select domain only from the domain first choice page', async function () {
-			const domainFirstPage = await DomainFirstPage.Expect( driver );
+			const domainFirstPage = await DomainFirstPage.Expect( this.driver );
 			return await domainFirstPage.chooseJustBuyTheDomain();
 		} );
 
 		it( 'Can then enter account details', async function () {
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			const createYourAccountPage = await CreateYourAccountPage.Expect( this.driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
 				siteName,
@@ -484,17 +480,20 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
-			return await new SignUpStep( driver ).continueAlong( siteName, passwordForTestAccounts );
+			return await new SignUpStep( this.driver ).continueAlong( siteName, passwordForTestAccounts );
 		} );
 
 		it( 'Can see checkout page and enter registrar details', async function () {
 			let checkOutPage;
 			try {
-				checkOutPage = await CheckOutPage.Expect( driver );
+				checkOutPage = await CheckOutPage.Expect( this.driver );
 			} catch ( err ) {
 				//TODO: Check this code once more when domain registration is not available
 				if (
-					driverHelper.isElementEventuallyLocatedAndVisible( driver, By.css( '.empty-content' ) )
+					driverHelper.isElementEventuallyLocatedAndVisible(
+						this.driver,
+						By.css( '.empty-content' )
+					)
 				) {
 					await SlackNotifier.warn(
 						"OOPS! Something went wrong, you don't have a site! Check if domains registrations is available."
@@ -507,7 +506,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the secure payment page with the correct products in the cart', async function () {
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 			const domainInCart = await securePaymentComponent.containsDotLiveDomain();
 			assert.strictEqual( domainInCart, true, "The cart doesn't contain the .live domain product" );
 			const numberOfProductsInCart = await securePaymentComponent.numberOfProductsInCart();
@@ -519,7 +518,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the secure payment page with the expected currency in the cart', async function () {
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 			if ( driverManager.currentScreenSize() === 'desktop' ) {
 				const totalShown = await securePaymentComponent.cartTotalDisplayed();
 				assert.strictEqual(
@@ -537,7 +536,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		it( 'Can enter/submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 			// No need to fill out contact details here as they already have been completed
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
@@ -546,12 +545,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can open the sidebar', async function () {
-			const navBarComponent = await NavBarComponent.Expect( driver );
+			const navBarComponent = await NavBarComponent.Expect( this.driver );
 			await navBarComponent.clickMySites();
 		} );
 
 		it( 'We should only see one option - the settings option', async function () {
-			const sidebarComponent = await SidebarComponent.Expect( driver );
+			const sidebarComponent = await SidebarComponent.Expect( this.driver );
 			const numberMenuItems = await sidebarComponent.numberOfMenuItems();
 			assert.strictEqual(
 				numberMenuItems,
@@ -564,22 +563,22 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		after( 'We can cancel the domain and delete newly created account', async function () {
 			return await ( async () => {
-				await ReaderPage.Visit( driver );
-				const navBarComponent = await NavBarComponent.Expect( driver );
+				await ReaderPage.Visit( this.driver );
+				const navBarComponent = await NavBarComponent.Expect( this.driver );
 				await navBarComponent.clickMySites();
-				const sidebarComponent = await SidebarComponent.Expect( driver );
+				const sidebarComponent = await SidebarComponent.Expect( this.driver );
 				await sidebarComponent.settingsOptionExists( true );
-				const domainOnlySettingsPage = await DomainOnlySettingsPage.Expect( driver );
+				const domainOnlySettingsPage = await DomainOnlySettingsPage.Expect( this.driver );
 				await domainOnlySettingsPage.manageDomain();
-				const domainDetailsPage = await DomainDetailsPage.Expect( driver );
+				const domainDetailsPage = await DomainDetailsPage.Expect( this.driver );
 				await domainDetailsPage.cancelDomain();
 
-				const cancelPurchasePage = await CancelPurchasePage.Expect( driver );
+				const cancelPurchasePage = await CancelPurchasePage.Expect( this.driver );
 				await cancelPurchasePage.clickCancelPurchase();
 
-				const cancelDomainPage = await CancelDomainPage.Expect( driver );
+				const cancelDomainPage = await CancelDomainPage.Expect( this.driver );
 				await cancelDomainPage.completeSurveyAndConfirm();
-				return await new DeleteAccountFlow( driver ).deleteAccount( siteName );
+				return await new DeleteAccountFlow( this.driver ).deleteAccount( siteName );
 			} )().catch( ( err ) => {
 				SlackNotifier.warn(
 					`There was an error in the hooks that clean up the test account but since it is cleaning up we really don't care: '${ err }'`,
@@ -608,11 +607,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
+			return await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'We can set the sandbox cookie for payments', async function () {
-			const wPHomePage = await WPHomePage.Visit( driver );
+			const wPHomePage = await WPHomePage.Visit( this.driver );
 			await wPHomePage.checkURL( locale );
 			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
 			return await wPHomePage.setCurrencyForPayments( currencyValue );
@@ -620,13 +619,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		it( 'Can visit the start page', async function () {
 			await StartPage.Visit(
-				driver,
+				this.driver,
 				StartPage.getStartURL( { culture: locale, flow: 'business' } )
 			);
 		} );
 
 		it( 'Can then enter account details and continue', async function () {
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			const createYourAccountPage = await CreateYourAccountPage.Expect( this.driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
 				siteName,
@@ -635,12 +634,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the domains page, and can search for a blog name, can see and select a paid .live address in results ', async function () {
-			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			const findADomainComponent = await FindADomainComponent.Expect( this.driver );
 			await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
 			try {
 				return await findADomainComponent.selectDomainAddress( expectedDomainName );
 			} catch ( err ) {
-				if ( await NewUserRegistrationUnavailableComponent.Expect( driver ) ) {
+				if ( await NewUserRegistrationUnavailableComponent.Expect( this.driver ) ) {
 					await SlackNotifier.warn( 'SKIPPING: Domain registration is currently unavailable. ' );
 					return this.skip();
 				}
@@ -648,17 +647,17 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
-			return await new SignUpStep( driver ).continueAlong( siteName, passwordForTestAccounts );
+			return await new SignUpStep( this.driver ).continueAlong( siteName, passwordForTestAccounts );
 		} );
 
 		it( 'Can see checkout page and enter registrar details', async function () {
-			const checkOutPage = await CheckOutPage.Expect( driver );
+			const checkOutPage = await CheckOutPage.Expect( this.driver );
 			await checkOutPage.enterRegistrarDetails( testDomainRegistarDetails );
 			return await checkOutPage.submitForm();
 		} );
 
 		it( 'Can then see the secure payment page with the correct products in the cart', async function () {
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 			const domainInCart = await securePaymentComponent.containsDotLiveDomain();
 			assert.strictEqual( domainInCart, true, "The cart doesn't contain the .live domain product" );
 			const businessPlanInCart = await securePaymentComponent.containsBusinessPlan();
@@ -677,7 +676,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the secure payment page with the expected currency in the cart', async function () {
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 			if ( driverManager.currentScreenSize() === 'desktop' ) {
 				const totalShown = await securePaymentComponent.cartTotalDisplayed();
 				assert.strictEqual(
@@ -695,7 +694,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		it( 'Can enter/submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 			// No need to fill out contact details here as they already have been completed
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
@@ -706,13 +705,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		it( 'Can delete the plan', async function () {
-			return await new DeletePlanFlow( driver ).deletePlan( 'business', {
+			return await new DeletePlanFlow( this.driver ).deletePlan( 'business', {
 				deleteDomainAlso: true,
 			} );
 		} );
 
 		after( 'Can delete our newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( siteName );
+			return await new DeleteAccountFlow( this.driver ).deleteAccount( siteName );
 		} );
 	} );
 
@@ -720,16 +719,16 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		const blogName = dataHelper.getNewBlogName();
 
 		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
+			return await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'Can visit the start page', async function () {
-			await StartPage.Visit( driver, StartPage.getStartURL( { culture: locale } ) );
+			await StartPage.Visit( this.driver, StartPage.getStartURL( { culture: locale } ) );
 		} );
 
 		it( 'Can then enter account details and continue', async function () {
 			const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			const createYourAccountPage = await CreateYourAccountPage.Expect( this.driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
 				blogName,
@@ -739,7 +738,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		it( 'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results', async function () {
 			// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
-			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			const findADomainComponent = await FindADomainComponent.Expect( this.driver );
 			await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
 			// See https://github.com/Automattic/wp-calypso/pull/38641/
 			// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
@@ -755,12 +754,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the plans page and pick the free plan', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 			return await pickAPlanPage.selectFreePlan();
 		} );
 
 		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
-			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+			return await new SignUpStep( this.driver ).continueAlong( blogName, passwordForTestAccounts );
 		} );
 
 		sharedSteps.canSeeTheOnboardingChecklist();
@@ -771,9 +770,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			if ( dataHelper.getTargetType() === 'IE11' ) {
 				return this.skip();
 			}
-			const myHomePage = await MyHomePage.Expect( driver );
+			const myHomePage = await MyHomePage.Expect( this.driver );
 			await myHomePage.updateHomepageFromSiteSetup();
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
 			await gEditorComponent.initEditor();
 
 			const hasInvalidBlocks = await gEditorComponent.hasInvalidBlocks();
@@ -786,7 +785,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		after( 'Can delete our newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+			return await new DeleteAccountFlow( this.driver ).deleteAccount( blogName );
 		} );
 	} );
 
@@ -805,12 +804,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		before( async function () {
-			await driverManager.ensureNotLoggedIn( driver );
+			await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'Can enter the onboarding flow with vertical set', async function () {
 			await StartPage.Visit(
-				driver,
+				this.driver,
 				StartPage.getStartURL( {
 					culture: locale,
 					flow: 'onboarding-with-preview',
@@ -821,7 +820,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		it( 'Can then enter account details and continue', async function () {
 			const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			const createYourAccountPage = await CreateYourAccountPage.Expect( this.driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
 				blogName,
@@ -830,18 +829,18 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can see the "Site Type" page, and enter some site information', async function () {
-			const siteTypePage = await SiteTypePage.Expect( driver );
+			const siteTypePage = await SiteTypePage.Expect( this.driver );
 			return await siteTypePage.selectBlogType();
 		} );
 
 		it( 'Can see the "Site title" page, and enter the site title', async function () {
-			const siteTitlePage = await SiteTitlePage.Expect( driver );
+			const siteTitlePage = await SiteTitlePage.Expect( this.driver );
 			await siteTitlePage.enterSiteTitle( blogName );
 			return await siteTitlePage.submitForm();
 		} );
 
 		it( 'Can then see the domains page, and Can search for a blog name, can see and select a free .art.blog address in the results', async function () {
-			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			const findADomainComponent = await FindADomainComponent.Expect( this.driver );
 			await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
 			// More details: https://github.com/Automattic/wp-calypso/pull/35347
 			// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
@@ -857,25 +856,25 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the plans page and pick the free plan', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 			return await pickAPlanPage.selectFreePlan();
 		} );
 
 		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
-			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+			return await new SignUpStep( this.driver ).continueAlong( blogName, passwordForTestAccounts );
 		} );
 
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		it( 'Can delete site', async function () {
-			const sidebarComponent = await SidebarComponent.Expect( driver );
+			const sidebarComponent = await SidebarComponent.Expect( this.driver );
 			await sidebarComponent.selectSettings();
-			const settingsPage = await SettingsPage.Expect( driver );
+			const settingsPage = await SettingsPage.Expect( this.driver );
 			return await settingsPage.deleteSite( expectedDomainName );
 		} );
 
 		after( 'Can delete our newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+			return await new DeleteAccountFlow( this.driver ).deleteAccount( blogName );
 		} );
 	} );
 
@@ -884,23 +883,23 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		const blogName = dataHelper.getNewBlogName();
 
 		before( async function () {
-			await driverManager.ensureNotLoggedIn( driver );
+			await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'Can enter the account flow and see the account details page', async function () {
 			await StartPage.Visit(
-				driver,
+				this.driver,
 				StartPage.getStartURL( {
 					culture: locale,
 					flow: 'account',
 				} )
 			);
-			await CreateYourAccountPage.Expect( driver );
+			await CreateYourAccountPage.Expect( this.driver );
 		} );
 
 		it( 'Can then enter account details and continue', async function () {
 			const emailAddress = dataHelper.getEmailAddress( userName, signupInboxId );
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			const createYourAccountPage = await CreateYourAccountPage.Expect( this.driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
 				userName,
@@ -909,23 +908,23 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
-			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+			return await new SignUpStep( this.driver ).continueAlong( blogName, passwordForTestAccounts );
 		} );
 
 		it( 'We are then on the Reader page and have no sites - we click Create Site', async function () {
-			await ReaderPage.Expect( driver );
-			const navBarComponent = await NavBarComponent.Expect( driver );
+			await ReaderPage.Expect( this.driver );
+			const navBarComponent = await NavBarComponent.Expect( this.driver );
 			await navBarComponent.clickMySites();
-			const noSitesComponent = await NoSitesComponent.Expect( driver );
+			const noSitesComponent = await NoSitesComponent.Expect( this.driver );
 			return await noSitesComponent.createSite();
 		} );
 
 		it( 'We are creating the site using the New Onboarding (Gutenboarding)', async function () {
-			return await new GutenboardingFlow( driver ).createFreeSite();
+			return await new GutenboardingFlow( this.driver ).createFreeSite();
 		} );
 
 		after( 'Can delete our newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
+			return await new DeleteAccountFlow( this.driver ).deleteAccount( userName );
 		} );
 	} );
 
@@ -933,28 +932,28 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		const userName = dataHelper.getNewBlogName();
 
 		before( async function () {
-			await driverManager.ensureNotLoggedIn( driver );
+			await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'Can enter the reader flow and see the Reader landing page', async function () {
 			await StartPage.Visit(
-				driver,
+				this.driver,
 				StartPage.getStartURL( {
 					culture: locale,
 					flow: 'reader',
 				} )
 			);
-			return await ReaderLandingPage.Expect( driver );
+			return await ReaderLandingPage.Expect( this.driver );
 		} );
 
 		it( 'Can choose Start Using The Reader', async function () {
-			const readerLandingPage = await ReaderLandingPage.Expect( driver );
+			const readerLandingPage = await ReaderLandingPage.Expect( this.driver );
 			return await readerLandingPage.clickStartUsingTheReader();
 		} );
 
 		it( 'Can see the account details page and enter account details and continue', async function () {
 			const emailAddress = dataHelper.getEmailAddress( userName, signupInboxId );
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			const createYourAccountPage = await CreateYourAccountPage.Expect( this.driver );
 			return await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
 				userName,
@@ -963,15 +962,15 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
-			return await new SignUpStep( driver ).continueAlong( userName, passwordForTestAccounts );
+			return await new SignUpStep( this.driver ).continueAlong( userName, passwordForTestAccounts );
 		} );
 
 		it( 'We are then on the Reader page', async function () {
-			return await ReaderPage.Expect( driver );
+			return await ReaderPage.Expect( this.driver );
 		} );
 
 		after( 'Can delete our newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
+			return await new DeleteAccountFlow( this.driver ).deleteAccount( userName );
 		} );
 	} );
 
@@ -979,22 +978,22 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		const emailAddress = dataHelper.getEmailAddress( dataHelper.getNewBlogName(), signupInboxId );
 
 		before( async function () {
-			await driverManager.ensureNotLoggedIn( driver );
+			await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'Signup and create site using default options', async function () {
-			await NewPage.Visit( driver );
+			await NewPage.Visit( this.driver );
 
-			await new GutenboardingFlow( driver ).signupAndCreateFreeSite( { emailAddress } );
+			await new GutenboardingFlow( this.driver ).signupAndCreateFreeSite( { emailAddress } );
 		} );
 
 		after( 'Can delete our newly created account', async function () {
 			// Gutenboarding creates users with auto-generated usernames so we need
 			// to find the username before we can delete it.
-			const accountSettingsPage = await AccountSettingsPage.Visit( driver );
+			const accountSettingsPage = await AccountSettingsPage.Visit( this.driver );
 			const username = await accountSettingsPage.getUsername();
 
-			return await new DeleteAccountFlow( driver ).deleteAccount( username );
+			return await new DeleteAccountFlow( this.driver ).deleteAccount( username );
 		} );
 	} );
 } );

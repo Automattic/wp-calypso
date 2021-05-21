@@ -114,6 +114,7 @@ export default function () {
 				clientRender
 			);
 		}
+
 		page(
 			'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
 			scrollTopIfNoHash,

@@ -33,8 +33,11 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 	}
 
 	async selectCommentByText( commentText ) {
-		const commentLocator = by.css( '.wpnc__excerpt' );
-		return await driverHelper.selectElementByText( this.driver, commentLocator, commentText );
+		const commentLocator = driverHelper.createTextLocator(
+			by.css( '.wpnc__excerpt' ),
+			commentText
+		);
+		return await driverHelper.clickWhenClickable( this.driver, commentLocator );
 	}
 
 	async trashComment() {

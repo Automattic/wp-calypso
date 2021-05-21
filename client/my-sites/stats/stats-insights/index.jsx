@@ -28,6 +28,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SectionHeader from 'calypso/components/section-header';
 import StatsViews from '../stats-views';
 import Followers from '../stats-followers';
+import StatShares from '../stats-shares';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -37,17 +38,6 @@ import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 const StatsInsights = ( props ) => {
 	const { isJetpack, siteId, siteSlug, translate } = props;
 	const moduleStrings = statsStrings();
-
-	let tagsList;
-	if ( ! isJetpack ) {
-		tagsList = (
-			<StatsModule
-				path="tags-categories"
-				moduleStrings={ moduleStrings.tags }
-				statType="statsTags"
-			/>
-		);
-	}
 
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -80,8 +70,15 @@ const StatsInsights = ( props ) => {
 						<div className="stats__module-column">
 							<LatestPostSummary />
 							<MostPopular />
-							{ tagsList }
+							{ ! isJetpack && (
+								<StatsModule
+									path="tags-categories"
+									moduleStrings={ moduleStrings.tags }
+									statType="statsTags"
+								/>
+							) }
 							<AnnualSiteStats isWidget />
+							{ ! isJetpack && <StatShares siteId={ siteId } /> }
 						</div>
 						<div className="stats__module-column">
 							<Reach />

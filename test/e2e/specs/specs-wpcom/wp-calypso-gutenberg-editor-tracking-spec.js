@@ -16,7 +16,6 @@ import * as driverManager from '../../lib/driver-manager.js';
 import * as dataHelper from '../../lib/data-helper.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
@@ -41,36 +40,30 @@ function getTotalEventsFiredForBlock( eventsStack, event, block ) {
 
 describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	describe( 'Tracking: @parallel', function () {
 		it( 'Can log in to WPAdmin and create new Post', async function () {
-			this.loginFlow = new LoginFlow( driver, gutenbergUser );
+			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
 
 			if ( host !== 'WPCOM' ) {
-				this.loginFlow = new LoginFlow( driver );
+				this.loginFlow = new LoginFlow( this.driver );
 			}
 
 			await this.loginFlow.loginAndSelectWPAdmin();
 
-			const wpadminSidebarComponent = await WPAdminSidebar.Expect( driver );
+			const wpadminSidebarComponent = await WPAdminSidebar.Expect( this.driver );
 			await wpadminSidebarComponent.selectNewPost();
 		} );
 
 		it( 'Check for presence of e2e specific tracking events stack on global', async function () {
-			await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
-			const eventsStack = await driver.executeScript( `return window._e2eEventsStack;` );
+			await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
+			const eventsStack = await this.driver.executeScript( `return window._e2eEventsStack;` );
 			// Check evaluates to truthy
 			assert( eventsStack, 'Tracking events stack missing from window._e2eEventsStack' );
 		} );
 
 		it( 'Tracks "wpcom_block_inserted" event', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
 
 			// Insert some Blocks
 			await gEditorComponent.addBlock( 'Heading' );
@@ -79,7 +72,7 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 
 			// Grab the events stack (only present on e2e test envs).
 			// see: https://github.com/Automattic/wp-calypso/pull/41329
-			const eventsStack = await driver.executeScript( `return window._e2eEventsStack;` );
+			const eventsStack = await this.driver.executeScript( `return window._e2eEventsStack;` );
 
 			// Assert that all block insertion events were tracked correctly
 			assert.strictEqual(
@@ -98,7 +91,7 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 		afterEach( async function () {
 			// Reset e2e tests events stack after each step in order
 			// that we have a test specific stack to assert against.
-			await driver.executeScript( `window._e2eEventsStack = [];` );
+			await this.driver.executeScript( `window._e2eEventsStack = [];` );
 		} );
 	} );
 } );
