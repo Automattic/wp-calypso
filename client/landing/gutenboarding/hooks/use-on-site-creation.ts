@@ -46,12 +46,15 @@ export default function useOnSiteCreation(): void {
 	const flow = useOnboardingFlow();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
-	const flowCompleteTrackingParams = {
-		isNewSite: !! newSite,
-		isNewUser: !! newUser,
-		blogId: newSite?.blogid,
-		hasCartItems: false,
-	};
+	const flowCompleteTrackingParams = React.useMemo(
+		() => ( {
+			isNewSite: !! newSite,
+			isNewUser: !! newUser,
+			blogId: newSite?.blogid,
+			hasCartItems: false,
+		} ),
+		[ newSite, newUser ]
+	);
 
 	React.useEffect( () => {
 		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call
