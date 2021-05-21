@@ -102,7 +102,7 @@ const setupContextMiddleware = ( reduxStore ) => {
 		// Some paths live outside of Calypso and should be opened separately
 		// Examples: /support, /forums
 		if ( isOutsideCalypso( context.pathname ) ) {
-			window.location.href = context.pathname;
+			window.location.href = context.path;
 			return;
 		}
 
