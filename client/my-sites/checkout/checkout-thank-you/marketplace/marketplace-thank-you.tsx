@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { isDesktop } from '@automattic/viewport';
 import { ThemeProvider } from 'emotion-theming';
@@ -14,8 +14,7 @@ import page from 'page';
  */
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import Item from 'calypso/layout/masterbar/item';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import getPreviousPath from 'calypso/state/selectors/get-previous-path';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import yoastInstalledImage from 'calypso/assets/images/marketplace/yoast-installed.svg';
 import theme from 'calypso/my-sites/plugins/marketplace/theme';
 import type { MarketplaceThemeProps } from 'calypso/my-sites/plugins/marketplace/theme';
@@ -27,11 +26,19 @@ import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import useSiteMenuItems from 'calypso/my-sites/sidebar-unified/use-site-menu-items';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+import { getPurchaseFlowState } from 'calypso/state/plugins/marketplace/selectors';
+import {
+	isFetchingAutomatedTransferStatus,
+	getAutomatedTransferStatus,
+} from 'calypso/state/automated-transfer/selectors';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import MarketplacePluginSetupStatus from 'calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status';
 
 /**
  * style dependencies
  */
 import './style.scss';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 
 const MarketplaceThankYouContainer = styled.div< MarketplaceThemeProps >`
 	background-color: #fff;
@@ -86,8 +93,19 @@ const MarketplaceNextSteps = styled.div< MarketplaceThemeProps >`
 `;
 
 const MarketplaceThankYou = () => {
-	const selectedSite = useSelector( getSelectedSite );
-	const previousPath = useSelector( getPreviousPath );
+	const [ pollCount, setPollCount ] = useState( 0 );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const dispatch = useDispatch();
+
+	const isFetchingTransferStatus = useSelector( ( state ) =>
+		isFetchingAutomatedTransferStatus( state, selectedSiteId ?? 0 )
+	);
+
+	const { isPluginInstalledDuringPurchase } = useSelector( getPurchaseFlowState );
+	const transferStatus = useSelector( ( state ) =>
+		getAutomatedTransferStatus( state, selectedSiteId ?? 0 )
+	);
 	const menuItems = useSiteMenuItems();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const { url: postsPageUrl } =
@@ -99,107 +117,133 @@ const MarketplaceThankYou = () => {
 	const translate = useTranslate();
 	const imageWidth = isDesktop() ? 200 : 150;
 
+	useEffect( () => {
+		if ( ! postsPageUrl || ! yoastSeoPageUrl ) {
+			selectedSiteId && dispatch( requestAdminMenu( selectedSiteId ) );
+		}
+	}, [ postsPageUrl, yoastSeoPageUrl ] );
+
+	useEffect( () => {
+		if (
+			isPluginInstalledDuringPurchase &&
+			transferStatus !== 'complete' &&
+			! isFetchingTransferStatus
+		) {
+			setTimeout( () => {
+				selectedSiteId && dispatch( fetchAutomatedTransferStatus( selectedSiteId ) );
+				setPollCount( ( c ) => c + 1 );
+			}, 1500 );
+		}
+	}, [
+		isFetchingTransferStatus,
+		isPluginInstalledDuringPurchase,
+		pollCount,
+		setPollCount,
+		dispatch,
+		transferStatus,
+	] );
+
 	return (
 		<>
-			<Masterbar>
-				<Item
-					icon="cross"
-					// TODO: Immediately after purchasing a domain and going through a transfer the selected site id remains uncertain
-					// We have to prevent the user from entering the flow before we finish provisioning the SSL certificate forsomeone with a fresh domains
-					onClick={ () =>
-						previousPath
-							? page( previousPath )
-							: page(
-									`/plugins/wordpress-seo${ selectedSite?.slug ? `/${ selectedSite.slug }` : '' }`
-							  )
-					}
-					tooltip={ translate( 'Go to plugin' ) }
-					tipTarget="close"
-				/>
-			</Masterbar>
-			<MarketplaceThankYouContainer className="marketplace-thank-you__container checkout-thank-you">
-				<MarketplaceThankYouHeader>
-					<img alt="yoast logo" width={ imageWidth } src={ yoastInstalledImage }></img>
-				</MarketplaceThankYouHeader>
-				<ThankYouBody>
-					<div>
-						<MarketplaceThankyouSection>
-							<MarketplaceHeaderTitle className="marketplace-thank-you__body-header wp-brand-font">
-								{ translate( 'Yoast SEO Premium is installed' ) }
-							</MarketplaceHeaderTitle>
-						</MarketplaceThankyouSection>
-						<MarketplaceThankyouSection>
-							<MarketplaceHeaderTitle
-								subtitle
-								className="marketplace-thank-you__body-header wp-brand-font"
-							>
-								{ translate( 'What’s next?' ) }
-							</MarketplaceHeaderTitle>
-							<MarketplaceNextSteps>
-								<h3>{ translate( 'Plugin setup' ) }</h3>
-								<div>
+			{ isPluginInstalledDuringPurchase && transferStatus !== 'complete' ? (
+				<MarketplacePluginSetupStatus />
+			) : (
+				<>
+					<Masterbar>
+						<Item
+							icon="cross"
+							onClick={ () =>
+								page( `/marketplace/product/details/wordpress-seo/${ selectedSiteSlug }` )
+							}
+							tooltip={ translate( 'Go to plugin' ) }
+							tipTarget="close"
+						/>
+					</Masterbar>
+					<MarketplaceThankYouContainer className="marketplace-thank-you__container checkout-thank-you">
+						<MarketplaceThankYouHeader>
+							<img alt="yoast logo" width={ imageWidth } src={ yoastInstalledImage }></img>
+						</MarketplaceThankYouHeader>
+						<ThankYouBody>
+							<div>
+								<MarketplaceThankyouSection>
+									<MarketplaceHeaderTitle className="marketplace-thank-you__body-header wp-brand-font">
+										{ translate( 'Yoast SEO Premium is installed' ) }
+									</MarketplaceHeaderTitle>
+								</MarketplaceThankyouSection>
+								<MarketplaceThankyouSection>
+									<MarketplaceHeaderTitle
+										subtitle
+										className="marketplace-thank-you__body-header wp-brand-font"
+									>
+										{ translate( 'What’s next?' ) }
+									</MarketplaceHeaderTitle>
+									<MarketplaceNextSteps>
+										<h3>{ translate( 'Plugin setup' ) }</h3>
+										<div>
+											<p>
+												{ translate(
+													'Get to know Yoast SEO and customize it, so you can hit the ground running.'
+												) }
+											</p>
+											<div>
+												<FullWidthButton
+													href={ yoastSeoPageUrl }
+													primary
+													busy={ isRequestingMenu }
+													// TODO: Menu links are not properly loading on initial request, post transfer so yoastSeoPageUrl will remain empty post transfer
+													// This should be fixed with perhaps a work around to periodically poll for the menu with various domains until it loads
+													// or maybe blocking the user from entering this flow until a domain acquires SSL
+													disabled={ !! yoastSeoPageUrl }
+												>
+													{ translate( 'Get started' ) }
+												</FullWidthButton>
+											</div>
+										</div>
+										<h3>{ translate( 'Start putting SEO to work' ) }</h3>
+										<div>
+											<p>
+												{ translate(
+													"Improve your site's performance and rank higher with a few tips."
+												) }
+											</p>
+											<div>
+												<FullWidthButton
+													href={ postsPageUrl }
+													busy={ isRequestingMenu }
+													disabled={ !! yoastSeoPageUrl }
+												>
+													{ translate( 'View posts' ) }
+												</FullWidthButton>
+											</div>
+										</div>
+									</MarketplaceNextSteps>
+								</MarketplaceThankyouSection>
+								<MarketplaceThankyouSection>
+									<MarketplaceHeaderTitle
+										subtitle
+										className="marketplace-thank-you__body-header wp-brand-font"
+									>
+										{ translate( 'How can we help?' ) }
+									</MarketplaceHeaderTitle>
 									<p>
 										{ translate(
-											'Get to know Yoast SEO and customize it, so you can hit the ground running.'
+											'Our Happiness Engineers are here if you need help, or if you have any questions.'
 										) }
 									</p>
-									<div>
-										<FullWidthButton
-											href={ yoastSeoPageUrl }
-											primary
-											busy={ isRequestingMenu }
-											// TODO: Menu links are not properly loading on initial request, post transfer so yoastSeoPageUrl will remain empty post transfer
-											// This should be fixed with perhaps a work around to periodically poll for the menu with various domains until it loads
-											// or maybe blocking the user from entering this flow until a domain acquires SSL
-											disabled={ !! yoastSeoPageUrl }
-										>
-											{ translate( 'Get started' ) }
-										</FullWidthButton>
-									</div>
-								</div>
-								<h3>{ translate( 'Start putting SEO to work' ) }</h3>
-								<div>
-									<p>
-										{ translate(
-											"Improve your site's performance and rank higher with a few tips."
-										) }
-									</p>
-									<div>
-										<FullWidthButton
-											href={ postsPageUrl }
-											busy={ isRequestingMenu }
-											disabled={ !! yoastSeoPageUrl }
-										>
-											{ translate( 'View posts' ) }
-										</FullWidthButton>
-									</div>
-								</div>
-							</MarketplaceNextSteps>
-						</MarketplaceThankyouSection>
-						<MarketplaceThankyouSection>
-							<MarketplaceHeaderTitle
-								subtitle
-								className="marketplace-thank-you__body-header wp-brand-font"
-							>
-								{ translate( 'How can we help?' ) }
-							</MarketplaceHeaderTitle>
-							<p>
-								{ translate(
-									'Our Happiness Engineers are here if you need help, or if you have any questions.'
-								) }
-							</p>
-							<VerticalNav>
-								<VerticalNavItem path={ '/help/contact' }>
-									{ translate( 'Ask a question' ) }
-								</VerticalNavItem>
-								<VerticalNavItem path={ 'https://wordpress.com/support' }>
-									{ translate( 'Support documentation' ) }
-								</VerticalNavItem>
-							</VerticalNav>
-						</MarketplaceThankyouSection>
-					</div>
-				</ThankYouBody>
-			</MarketplaceThankYouContainer>
+									<VerticalNav>
+										<VerticalNavItem path={ '/help/contact' }>
+											{ translate( 'Ask a question' ) }
+										</VerticalNavItem>
+										<VerticalNavItem path={ 'https://wordpress.com/support' }>
+											{ translate( 'Support documentation' ) }
+										</VerticalNavItem>
+									</VerticalNav>
+								</MarketplaceThankyouSection>
+							</div>
+						</ThankYouBody>
+					</MarketplaceThankYouContainer>
+				</>
+			) }
 		</>
 	);
 };

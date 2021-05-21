@@ -5,6 +5,8 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import page from 'page';
+import { useTranslate } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -17,7 +19,6 @@ import {
 import PluginProductMappingInterface, {
 	getProductSlug,
 } from 'calypso/my-sites/plugins/marketplace/constants';
-import formatCurrency from '@automattic/format-currency';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
@@ -35,6 +36,11 @@ import {
 	setPrimaryDomainCandidate,
 	setIsPluginInstalledDuringPurchase,
 } from 'calypso/state/plugins/marketplace/actions';
+import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
+import { getEligibility } from 'calypso/state/automated-transfer/selectors';
+import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
+import { requestEligibility } from 'calypso/state/automated-transfer/actions';
+import Notice from 'calypso/components/notice';
 
 interface MarketplacePluginDetailsInterface {
 	marketplacePluginSlug: keyof PluginProductMappingInterface;
@@ -43,6 +49,7 @@ interface MarketplacePluginDetailsInterface {
 function MarketplacePluginDetails( {
 	marketplacePluginSlug,
 }: MarketplacePluginDetailsInterface ): JSX.Element {
+	const translate = useTranslate();
 	const productSlug = getProductSlug( marketplacePluginSlug );
 	const { replaceProductsInCart } = useShoppingCart();
 	const products = useSelector( getProductsList );
@@ -58,10 +65,12 @@ function MarketplacePluginDetails( {
 	const wporgFetching = useSelector( ( state ) =>
 		isWporgPluginFetching( state, marketplacePluginSlug )
 	);
+	const eligibilityDetails = useSelector( ( state ) => getEligibility( state, selectedSiteId ) );
 
 	useEffect( () => {
 		dispatch( wporgFetchPluginData( marketplacePluginSlug ) );
-	}, [ dispatch, marketplacePluginSlug ] );
+		selectedSiteId && dispatch( requestEligibility( selectedSiteId ) );
+	}, [ dispatch, marketplacePluginSlug, selectedSiteId ] );
 
 	const onAddYoastPremiumToCart = async () => {
 		dispatch( setIsPluginInstalledDuringPurchase( true ) );
@@ -73,11 +82,26 @@ function MarketplacePluginDetails( {
 		return replaceProductsInCart( [] );
 	};
 
+	const allBlockingMessages = getBlockingMessages( translate );
+	const holds = eligibilityDetails.eligibilityHolds || [];
+	const raisedBlockingMessages = holds
+		.filter( ( message: string ) => allBlockingMessages[ message ] )
+		.map( ( message: string ) => allBlockingMessages[ message ] );
+	const hardBlockSingleMessages = holds.filter(
+		( message: string ) => message !== 'TRANSFER_ALREADY_EXISTS' || ! allBlockingMessages[ message ]
+	);
+	const hasHardBlock =
+		isAtomicSiteWithoutBusinessPlan( holds ) || hardBlockSingleMessages.length > 0;
 	return (
 		<>
 			<SidebarNavigation />
+			{ hasHardBlock &&
+				raisedBlockingMessages.map( ( message ) => (
+					<Notice status={ message.status } text={ message.message } showDismiss={ false }></Notice>
+				) ) }
 			{ ! wporgFetching ? (
 				<PurchaseArea
+					isDisabled={ hasHardBlock }
 					siteDomains={ siteDomains }
 					isProductListLoading={ isProductListLoading }
 					displayCost={ displayCost }
