@@ -46,7 +46,6 @@ const InstallThemeButton = connectOptions(
 		dispatchTracksEvent,
 		canUploadThemesOrPlugins,
 		atomicSite,
-		allMySites,
 	} ) => {
 		if ( ! isLoggedIn || isMultisite ) {
 			return null;
@@ -56,7 +55,6 @@ const InstallThemeButton = connectOptions(
 			trackClick( 'upload theme' );
 			dispatchTracksEvent( {
 				tracksEventProps: {
-					is_all_my_sites: allMySites,
 					is_atomic: atomicSite,
 					is_jetpack_connected: jetpackSite,
 				},
@@ -78,7 +76,6 @@ const InstallThemeButton = connectOptions(
 const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
-		allMySites: selectedSiteId === null,
 		siteSlug: getSelectedSiteSlug( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 		isMultisite: isJetpackSiteMultiSite( state, selectedSiteId ),
