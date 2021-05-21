@@ -100,6 +100,9 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 		args: { currentStep: currentNumericStep, stepCount: steps.length },
 	} );
 
+	if ( simulatedProgressPercentage > 50 && currentStage === 1 ) {
+		setCurrentStage( 2 );
+	}
 	return (
 		<>
 			{ selectedSiteId ? <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> : '' }
