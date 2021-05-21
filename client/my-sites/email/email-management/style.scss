@@ -379,25 +379,24 @@
 
 .email-plan-warnings__container {
 	flex-basis: 100%;
-	line-height: 30px;
-	margin-top: 24px;
+	margin: 5px 0;
 	width: 100%;
 
 	.email-plan-warnings__warning {
-		align-items: center;
-		display: flex;
-
-		.email-plan-warnings__message {
-			flex: 1 1 auto;
-		}
+		padding-top: 30px;
 
 		.email-plan-warnings__cta {
-			margin-left: 15px;
+			margin-top: 25px;
 
-			.button .gridicon {
-				height: 16px;
-				margin-left: 8px;
-				width: 16px;
+			.button {
+				font-size: $font-body-small;
+
+				.gridicon {
+					height: 16px;
+					margin-left: 8px;
+					top: 3px;
+					width: 16px;
+				}
 			}
 		}
 	}

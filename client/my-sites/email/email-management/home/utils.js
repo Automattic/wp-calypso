@@ -6,7 +6,6 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { EMAIL_WARNING_SLUG_UNUSED_MAILBOXES } from 'calypso/lib/emails/email-provider-constants';
 import {
 	getGSuiteMailboxCount,
 	getGSuiteSubscriptionId,
@@ -22,6 +21,10 @@ import {
 } from 'calypso/lib/titan';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import {
+	hasUnusedMailboxWarnings,
+	hasGooglePendingTosAcceptanceWarnings,
+} from 'calypso/lib/emails';
 
 export function getNumberOfMailboxesText( domain ) {
 	if ( hasGSuiteWithUs( domain ) ) {
@@ -99,18 +102,6 @@ export function hasEmailSubscription( domain ) {
 	return !! subscriptionId;
 }
 
-/**
- * Determines if any warnings exists with the slug `unused_mailboxes` in an array of warning objects
- *
- * @param {Array} warnings - An array of warning objects
- * @returns {boolean} true if unused mailboxes exists, false otherwise
- */
-function hasUnusedMailboxWarnings( warnings ) {
-	return ( warnings?.length ? warnings : [] ).some(
-		( warning ) => EMAIL_WARNING_SLUG_UNUSED_MAILBOXES === warning?.warning_slug
-	);
-}
-
 export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) {
 	const defaultActiveStatus = {
 		statusClass: 'success',
@@ -125,6 +116,11 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 	};
 
 	if ( hasGSuiteWithUs( domain ) ) {
+		// Check for pending TOS acceptance warnings at the account level
+		if ( hasGooglePendingTosAcceptanceWarnings( emailAccount ) ) {
+			return defaultWarningStatus;
+		}
+
 		if ( hasPendingGSuiteUsers( domain ) ) {
 			return defaultWarningStatus;
 		}
@@ -144,7 +140,7 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 			}
 		}
 		// Check for unused mailboxes
-		if ( emailAccount && hasUnusedMailboxWarnings( emailAccount.warnings ) ) {
+		if ( emailAccount && hasUnusedMailboxWarnings( emailAccount ) ) {
 			return defaultWarningStatus;
 		}
 
