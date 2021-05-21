@@ -253,7 +253,7 @@ class Block_Patterns_From_API {
 				// This will ensure we remove `query/*` blocks for example.
 				// TODO: We need to revisit our usage or $pattern['blockTypes']: they are currently an experimental feature and not guaranteed to reference `core/*` blocks.
 				$pattern_block_type_or_name =
-					isset( $pattern['blockTypes'] ) && is_array( $pattern['blockTypes'] ) && ! empty( $pattern['blockTypes'][0] )
+					isset( $pattern['blockTypes'] ) && ! empty( $pattern['blockTypes'][0] )
 					? $pattern['blockTypes'][0]
 					: $pattern['name'];
 				if ( 'core/' === substr( $pattern_block_type_or_name, 0, 5 ) ) {
