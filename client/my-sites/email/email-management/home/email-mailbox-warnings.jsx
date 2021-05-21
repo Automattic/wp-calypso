@@ -17,10 +17,9 @@ import {
 import {
 	getEmailForwardAddress,
 	hasGoogleAccountTOSWarning,
-	isEmailUserAdmin,
 	isGoogleEmailAccount,
 } from 'calypso/lib/emails';
-import { getGmailUrl, getGoogleAdminWithTosUrl } from 'calypso/lib/gsuite';
+import { getGmailUrl } from 'calypso/lib/gsuite';
 import Gridicon from 'calypso/components/gridicon';
 import { isEmailForwardAccount } from 'calypso/lib/emails/is-email-forward-account';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -65,31 +64,17 @@ const getDetailsForWarning = ( { account, dispatch, mailbox, translate, warning 
 	const warningSlug = warning.warning_slug;
 
 	if ( isGoogleEmailAccount( account ) ) {
+		// If we need the account-level ToS agreed to, just show a pending message and no CTA.
+		if ( hasGoogleAccountTOSWarning( account ) ) {
+			return {
+				warningText: translate( 'Pending' ),
+			};
+		}
+
 		if ( warningSlug === EMAIL_WARNING_SLUG_GOOGLE_MAILBOX_TOS ) {
 			const emailAddress = `${ mailbox.mailbox }@${ mailbox.domain }`;
 
-			// If the the account-level Terms of Service need to be accepted, only admins can fix that
-			// issue, so ensure that we show the correct link for those users.
-			// For non-admins, not much can be done until the account-level Terms have been accepted.
-			if ( hasGoogleAccountTOSWarning( account ) ) {
-				if ( ! isEmailUserAdmin( mailbox ) ) {
-					return {
-						warningText: translate( 'Action required' ),
-					};
-				}
-
-				return {
-					actionProps: {
-						buttonText: translate( 'Finish setup' ),
-						isExternal: true,
-						href: getGoogleAdminWithTosUrl( emailAddress, mailbox.domain ),
-						target: '_blank',
-					},
-					warningText: translate( 'Action required' ),
-				};
-			}
-
-			// If the account-level Terms of Service have been accepted, link to Gmail for the user.
+			// The account-level Terms of Service have been accepted, so link to Gmail for the user.
 			return {
 				actionProps: {
 					buttonText: translate( 'Finish setup' ),
