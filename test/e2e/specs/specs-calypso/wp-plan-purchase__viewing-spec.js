@@ -53,7 +53,7 @@ describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, f
 	} );
 
 	it( 'Remove any existing coupon', async function () {
-		const securePaymentComponent = await SecurePaymentComponent.Expect( this.this.driver );
+		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 
 		if ( await securePaymentComponent.hasCouponApplied() ) {
 			await securePaymentComponent.removeCoupon();
