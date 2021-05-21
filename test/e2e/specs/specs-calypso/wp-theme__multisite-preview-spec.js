@@ -21,15 +21,30 @@ const host = dataHelper.getJetpackHost();
 describe( `[${ host }] Themes: Preview a theme, all sites (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
-	it( 'Login and select themes', async function () {
-		this.themeSearchName = 'twenty';
-		this.expectedTheme = 'Twenty F';
-
+	// TODO: Add test that verifies when visiting /themes,
+	// you're asked to select a site before proceeding.
+	/*
+	it( 'asks to select a site when visiting /themes logged in', async function () {
 		this.loginFlow = new LoginFlow( this.driver, 'multiSiteUser' );
 		await this.loginFlow.loginAndSelectAllSites();
 
 		this.sidebarComponent = await SidebarComponent.Expect( this.driver );
 		await this.sidebarComponent.selectAllSitesThemes();
+
+		// Check to see if "choose a site" screen is shown
+		// ? Unsure how to implement ?
+	} );
+    */
+
+	it( 'Login and select themes', async function () {
+		this.themeSearchName = 'twenty';
+		this.expectedTheme = 'Twenty F';
+
+		this.loginFlow = new LoginFlow( this.driver, 'multiSiteUser' );
+		await this.loginFlow.loginAndSelectMySite();
+
+		this.sidebarComponent = await SidebarComponent.Expect( this.driver );
+		await this.sidebarComponent.selectThemes();
 	} );
 
 	it( 'can search for free themes', async function () {

@@ -37,7 +37,7 @@ export default class NotificationsComponent extends AsyncBaseContainer {
 			by.css( '.wpnc__excerpt' ),
 			commentText
 		);
-		return driverHelper.clickWhenClickable( this.driver, commentLocator );
+		return await driverHelper.clickWhenClickable( this.driver, commentLocator );
 	}
 
 	async trashComment() {

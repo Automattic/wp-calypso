@@ -72,7 +72,7 @@ export default class LoginPage extends AsyncBaseContainer {
 		await driverHelper.waitUntilElementNotLocated( driver, userNameLocator );
 	}
 
-	use2FAMethod( twoFAMethod ) {
+	async use2FAMethod( twoFAMethod ) {
 		let actionLocator;
 
 		if ( twoFAMethod === 'sms' ) {
@@ -84,13 +84,7 @@ export default class LoginPage extends AsyncBaseContainer {
 		}
 
 		if ( actionLocator ) {
-			return driverHelper
-				.isElementLocated( this.driver, actionLocator )
-				.then( ( actionAvailable ) => {
-					if ( actionAvailable ) {
-						return driverHelper.clickWhenClickable( this.driver, actionLocator );
-					}
-				} );
+			return await driverHelper.clickIfPresent( this.driver, actionLocator );
 		}
 	}
 

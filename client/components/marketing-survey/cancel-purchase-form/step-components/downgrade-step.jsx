@@ -50,8 +50,7 @@ export class DowngradeStep extends Component {
 			refundReason = (
 				<p>
 					{ translate(
-						'WordPress.com Personal still gives you access to email and chat support, ' +
-							'removal of ads, and more — and for 50% of the cost of your current plan.'
+						'WordPress.com Personal still gives you access to email support, removal of ads, and more — and for 50% of the cost of your current plan.'
 					) }
 				</p>
 			);

@@ -75,7 +75,7 @@ export default class CheckOutPage extends AsyncBaseContainer {
 	}
 
 	async isCompositeCheckout() {
-		return driverHelper.isElementLocated( this.driver, By.css( '.composite-checkout' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '.composite-checkout' ) );
 	}
 
 	async submitForm() {

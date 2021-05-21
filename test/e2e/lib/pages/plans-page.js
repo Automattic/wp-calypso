@@ -72,7 +72,10 @@ export default class PlansPage extends AsyncBaseContainer {
 			selector = `.is-${ planName }-plan`;
 		}
 
-		return driverHelper.isElementEventuallyLocatedAndVisible( this.driver, by.css( selector ) );
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			by.css( selector )
+		);
 	}
 
 	async planTypesShown( planType ) {

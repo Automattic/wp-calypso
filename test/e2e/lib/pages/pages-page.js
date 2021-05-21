@@ -18,17 +18,7 @@ export default class PagesPage extends AsyncBaseContainer {
 	async waitForPages() {
 		const driver = this.driver;
 		const resultsLoadingLocator = By.css( '.pages__page-list .is-placeholder:not(.page)' );
-		return await driver.wait(
-			function () {
-				return driverHelper
-					.isElementLocated( driver, resultsLoadingLocator )
-					.then( function ( present ) {
-						return ! present;
-					} );
-			},
-			this.explicitWaitMS,
-			'The page results loading element was still present when it should have disappeared by now.'
-		);
+		return await driverHelper.waitUntilElementNotLocated( driver, resultsLoadingLocator );
 	}
 
 	async editPageWithTitle( title ) {

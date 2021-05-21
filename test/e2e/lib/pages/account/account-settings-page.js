@@ -21,8 +21,8 @@ export default class AccountSettingsPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, closeAccountLocator );
 	}
 
-	getUsername() {
-		return this.driver.wait(
+	async getUsername() {
+		return await this.driver.wait(
 			new Condition( 'for username to be available', async () => {
 				try {
 					const element = await this.driver.findElement( By.css( 'input#user_login' ) );
