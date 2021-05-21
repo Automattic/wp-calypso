@@ -47,6 +47,21 @@ export function getGoogleAdminUrl( emailOrDomain ) {
 }
 
 /**
+ * Generates an url pointing to Google Admin and its Reseller ToS page for the specified user.
+ *
+ * @param {string} email - email address
+ * @param {string} domainName - domain name
+ * @returns {string} - the corresponding url
+ */
+export function getGoogleAdminWithTosUrl( email, domainName ) {
+	return getAccountChooserUrl(
+		email,
+		'CPanel',
+		`https://admin.google.com/${ domainName }/AcceptTermsOfService`
+	);
+}
+
+/**
  * Generates an url pointing to Google Calendar.
  *
  * @param {string} emailOrDomain - email or domain name
