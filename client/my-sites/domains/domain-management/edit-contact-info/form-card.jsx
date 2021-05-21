@@ -261,11 +261,12 @@ class EditContactInfoFormCard extends React.Component {
 
 	handleContactDetailsChange = ( newContactDetails ) => {
 		const { email } = newContactDetails;
+		const { updateWpcomEmail, ...onlyContactDetails } = newContactDetails;
 		const registrantWhoisData = this.getContactFormFieldValues();
 
 		this.setState( {
 			newContactDetails,
-			haveContactDetailsChanged: ! isEqual( registrantWhoisData, newContactDetails ),
+			haveContactDetailsChanged: ! isEqual( registrantWhoisData, onlyContactDetails ),
 			hasEmailChanged: get( registrantWhoisData, 'email' ) !== email,
 		} );
 	};

@@ -33,6 +33,7 @@ import {
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
+import FormTextInputWithCheckbox from './form-text-input-with-checkbox';
 
 /**
  * Style dependencies
@@ -102,6 +103,7 @@ export class ContactDetailsFormFields extends Component {
 			phoneCountryCode: this.props.countryCode || this.props.userCountryCode,
 			form: null,
 			submissionCount: 0,
+			updateWpcomEmail: false,
 		};
 
 		this.inputRefs = {};
@@ -124,7 +126,8 @@ export class ContactDetailsFormFields extends Component {
 			! isEqual( nextProps.hasCountryStates, this.props.hasCountryStates ) ||
 			nextProps.needsFax !== this.props.needsFax ||
 			nextProps.disableSubmitButton !== this.props.disableSubmitButton ||
-			nextProps.needsOnlyGoogleAppsDetails !== this.props.needsOnlyGoogleAppsDetails
+			nextProps.needsOnlyGoogleAppsDetails !== this.props.needsOnlyGoogleAppsDetails ||
+			nextState.updateWpcomEmail !== this.state.updateWpcomEmail
 		);
 	}
 
@@ -177,6 +180,7 @@ export class ContactDetailsFormFields extends Component {
 			fax,
 			state,
 			phone: toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] ),
+			updateWpcomEmail: this.state.updateWpcomEmail,
 		};
 	}
 
@@ -319,6 +323,15 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	};
 
+	handleWpcomEmailUpdateCheckbox = ( event ) => {
+		this.formStateController.handleFieldChange( {
+			name: 'updateWpcomEmail',
+			value: event.target.checked,
+		} );
+
+		this.setState( { updateWpcomEmail: event.target.checked } );
+	};
+
 	getFieldProps = ( name, { customErrorMessage = null, needsChildRef = false } ) => {
 		const ref = needsChildRef
 			? { inputRef: this.getRefCallback( name ) }
@@ -378,11 +391,16 @@ export class ContactDetailsFormFields extends Component {
 				<div className="contact-details-form-fields__row">
 					{ this.createField(
 						'email',
-						Input,
+						FormTextInputWithCheckbox,
 						{
 							label: translate( 'Email' ),
+							checkboxLabel: translate( 'Apply contact update to My Account email.' ),
+							checkboxDisabled: false,
+							onCheckboxChanged: this.handleWpcomEmailUpdateCheckbox,
+							checkboxDefaultChecked: this.state.updateWpcomEmail,
 						},
 						{
+							needsChildRef: true,
 							customErrorMessage: this.props.contactDetailsErrors?.email,
 						}
 					) }
