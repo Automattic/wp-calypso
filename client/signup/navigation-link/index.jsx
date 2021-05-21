@@ -18,7 +18,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getFilteredSteps } from '../utils';
-import { getABTestVariation } from 'calypso/lib/abtest';
 
 /**
  * Style dependencies
@@ -156,8 +155,6 @@ export class NavigationLink extends Component {
 			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;
 			if ( labelText ) {
 				text = labelText;
-			} else if ( 'reskinned' === getABTestVariation( 'reskinSignupFlow' ) ) {
-				text = translate( 'Go Back' );
 			} else {
 				text = translate( 'Back' );
 			}

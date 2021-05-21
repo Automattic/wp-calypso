@@ -39,15 +39,6 @@ export default {
 		allowExistingUsers: false,
 		countryCodeTargets: [ 'US', 'CA' ],
 	},
-	reskinSignupFlow: {
-		datestamp: '20300928',
-		variations: {
-			reskinned: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: false,
-	},
 	newUsersWithFreePlan: {
 		datestamp: '20210107',
 		variations: {
