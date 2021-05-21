@@ -252,7 +252,10 @@ class Block_Patterns_From_API {
 				// Gutenberg registers patterns with varying prefixes, but categorizes them using `core/*` in a blockTypes array.
 				// This will ensure we remove `query/*` blocks for example.
 				// TODO: We need to revisit our usage or $pattern['blockTypes']: they are currently an experimental feature and not guaranteed to reference `core/*` blocks.
-				$pattern_block_type_or_name = ! empty( $pattern['blockTypes'][0] ) ? $pattern['blockTypes'][0] : $pattern['name'];
+				$pattern_block_type_or_name =
+					isset( $pattern['blockTypes'] ) && is_array( $pattern['blockTypes'] ) && ! empty( $pattern['blockTypes'][0] )
+					? $pattern['blockTypes'][0]
+					: $pattern['name'];
 				if ( 'core/' === substr( $pattern_block_type_or_name, 0, 5 ) ) {
 					unregister_block_pattern( $pattern['name'] );
 				}
@@ -275,8 +278,11 @@ class Block_Patterns_From_API {
 	private function update_core_patterns_with_wpcom_categories() {
 		if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
 			foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
-				$wpcom_categories = $this->core_to_wpcom_categories_dictionary[ $pattern['name'] ];
-				if ( isset( $wpcom_categories ) ) {
+				$wpcom_categories =
+					$pattern['name'] && isset( $this->core_to_wpcom_categories_dictionary[ $pattern['name'] ] )
+					? $this->core_to_wpcom_categories_dictionary[ $pattern['name'] ]
+					: null;
+				if ( $wpcom_categories ) {
 					unregister_block_pattern( $pattern['name'] );
 					$pattern_properties = array_merge(
 						$pattern,
