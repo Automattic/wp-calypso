@@ -612,8 +612,9 @@ export function p2RedirectToHubPlans( context, next ) {
 	) {
 		const hubId = getP2HubBlogId( store.getState(), selectedSite.ID );
 		const hubSlug = getSiteSlug( store.getState(), hubId );
-
-		return page.redirect( `/plans/my-plan/${ hubSlug }` );
+		if ( hubSlug ) {
+			return page.redirect( `/plans/my-plan/${ hubSlug }` );
+		}
 	}
 
 	next();
