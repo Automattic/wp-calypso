@@ -281,10 +281,10 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes, 
 	}
 
 	const mailboxItems = mailboxes.map( ( mailbox ) => {
-		const mailboxHasWarnings = ( mailbox?.warnings?.length ?? 0 ) > 0;
+		const mailboxHasWarnings = Boolean( mailbox?.warnings?.length );
 
 		return (
-			<MailboxListItem key={ mailbox.mailbox } isError={ !! mailboxHasWarnings }>
+			<MailboxListItem key={ mailbox.mailbox } isError={ mailboxHasWarnings }>
 				<div className="email-plan-mailboxes-list__mailbox-list-item-main">
 					<div>
 						<MaterialIcon icon="email" />
