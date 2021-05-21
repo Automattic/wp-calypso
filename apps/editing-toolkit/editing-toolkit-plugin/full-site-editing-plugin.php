@@ -342,3 +342,11 @@ function load_error_reporting() {
 	require_once __DIR__ . '/error-reporting/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_error_reporting' );
+
+/**
+ * Enhancements to support wpcom onboarding checklist tasks
+ */
+function load_wpcom_tasks() {
+	require_once __DIR__ . '/wpcom-tasks/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_tasks' );
