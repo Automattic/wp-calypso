@@ -10,6 +10,9 @@
 /**************************************************************************************************/
 
 export default {
+	// ⚠️ The ExPlat team is monitoring additions to this object 😈
+	// Let us know if there is use-case we have missed adding in ExPlat.
+
 	conciergeUpsellDial: {
 		//this test is used to dial down the upsell offer
 		datestamp: '20200910',
