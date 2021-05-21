@@ -42,7 +42,6 @@ import { login } from 'calypso/lib/paths';
 import { waitForHttpData } from 'calypso/state/data-layer/http-data';
 import { requestGeoLocation } from 'calypso/state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
-import { abtest } from 'calypso/lib/abtest';
 import getSiteId from 'calypso/state/selectors/get-site-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -68,6 +67,7 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
+// eslint-disable-next-line no-unused-vars -- Used for a planned experiment rerun, see newUsersWithFreePlan below.
 const gutenbergRedirect = function ( flowName, locale ) {
 	const url = new URL( window.location );
 	let path = '/new';
@@ -135,20 +135,26 @@ export default {
 		} else {
 			waitForHttpData( () => ( { geo: requestGeoLocation() } ) )
 				.then( () => {
-					const localeFromParams = context.params.lang;
-					const flowName = getFlowName( context.params );
-
-					if ( flowName === 'free' && 'newOnboarding' === abtest( 'newUsersWithFreePlan' ) ) {
-						gutenbergRedirect( flowName, localeFromParams );
-						return;
-					}
-
 					next();
 					return;
 
+					// Code for the newUsersWithFreePlan experiment, previously implemented in calypso-abtest.
+					// Planned to be rerun see pbxNRc-xd-p2#comment-1949
+					// Commented out for eslint, to rerun next() has to be placed below this.
+					// const localeFromParams = context.params.lang;
+					// const flowName = getFlowName( context.params );
+					// if (
+					// 	flowName === 'free' &&
+					//  	// Checking for treatment variation previously happened here:
+					// 	false
+					// ) {
+					// 	gutenbergRedirect( flowName, localeFromParams );
+					// 	return;
+					// }
+
 					// Code for the variantUserless experiment, previously implemented in calypso-abtest.
 					// Planned to be rerun, see pbmo2S-Bv-p2#comment-1382
-					// Commented out for eslint
+					// Commented out for eslint, to rerun next() has to be placed below this.
 					// if (
 					// 	( ! user() || ! user().get() ) &&
 					// 	-1 === context.pathname.indexOf( 'free' ) &&
