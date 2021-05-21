@@ -19,8 +19,8 @@ import {
 	transformMailboxForCart,
 } from 'calypso/lib/titan/new-mailbox';
 import { Button, Card } from '@automattic/components';
-import DomainManagementHeader from 'calypso/my-sites/domains/domain-management/components/header';
-import SectionHeader from 'calypso/components/section-header';
+import DocumentHead from 'calypso/components/data/document-head';
+import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	emailManagement,
 	emailManagementManageTitanAccount,
@@ -43,6 +43,7 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -52,12 +53,12 @@ import {
 	TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
 	TITAN_MAIL_MONTHLY_SLUG,
 } from 'calypso/lib/titan/constants';
+import SectionHeader from 'calypso/components/section-header';
 import TitanExistingForwardsNotice from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-existing-forwards-notice';
 import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-mailbox-pricing-notice';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-new-mailbox-list';
 import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-unused-mailbox-notice';
-
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
@@ -266,6 +267,7 @@ class TitanMailAddMailboxes extends React.Component {
 		}
 
 		const analyticsPath = emailManagementNewTitanAccount( ':site', ':domain', currentRoute );
+		const pageTitle = getTitanProductName() + ': ' + selectedDomainName;
 		const finishSetupLinkIsExternal = ! isEnabled( 'titan/iframe-control-panel' );
 
 		return (
@@ -277,12 +279,11 @@ class TitanMailAddMailboxes extends React.Component {
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 				<Main>
-					<DomainManagementHeader
-						onClick={ this.goToEmail }
-						selectedDomainName={ selectedDomainName }
-					>
-						{ getTitanProductName() + ': ' + selectedDomainName }
-					</DomainManagementHeader>
+					<DocumentHead title={ pageTitle } />
+
+					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+
+					<HeaderCake onClick={ this.goToEmail }>{ pageTitle }</HeaderCake>
 
 					<TitanExistingForwardsNotice domainsWithForwards={ domainsWithForwards } />
 					{ selectedDomain && (
