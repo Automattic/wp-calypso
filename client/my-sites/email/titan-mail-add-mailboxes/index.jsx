@@ -24,6 +24,7 @@ import SectionHeader from 'calypso/components/section-header';
 import {
 	emailManagement,
 	emailManagementManageTitanAccount,
+	emailManagementNewTitanAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
@@ -43,6 +44,7 @@ import { getProductBySlug, getProductsList } from 'calypso/state/products-list/s
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -247,13 +249,14 @@ class TitanMailAddMailboxes extends React.Component {
 
 	render() {
 		const {
+			currentRoute,
 			domainsWithForwards,
+			isLoadingDomains,
+			isSelectedDomainNameValid,
+			maxTitanMailboxCount,
 			selectedDomain,
 			selectedDomainName,
 			selectedSite,
-			isSelectedDomainNameValid,
-			isLoadingDomains,
-			maxTitanMailboxCount,
 			titanMonthlyProduct,
 		} = this.props;
 
@@ -262,10 +265,13 @@ class TitanMailAddMailboxes extends React.Component {
 			return null;
 		}
 
+		const analyticsPath = emailManagementNewTitanAccount( ':site', ':domain', currentRoute );
 		const finishSetupLinkIsExternal = ! isEnabled( 'titan/iframe-control-panel' );
 
 		return (
 			<>
+				<PageViewTracker path={ analyticsPath } title="Email Management > Add Titan Mailboxes" />
+
 				<QueryProductsList />
 
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
