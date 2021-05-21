@@ -35,12 +35,12 @@ const MailboxListItemWarning = ( { warningText } ) => {
 	);
 };
 
-const MailboxListItemAction = ( { buttonText, external, ...otherProps } ) => {
+const EmailMailboxWarningAction = ( { buttonText, isExternal, ...otherProps } ) => {
 	return (
 		<div className="email-mailbox-warnings__action">
 			<Button compact { ...otherProps }>
 				<span>{ buttonText }</span>
-				{ external && <Gridicon icon="external" /> }
+				{ isExternal && <Gridicon icon="external" /> }
 			</Button>
 		</div>
 	);
@@ -69,7 +69,7 @@ const getDetailsForWarning = ( { account, dispatch, mailbox, translate, warning 
 			const finishSetupForGoogle = {
 				actionProps: {
 					buttonText: translate( 'Finish setup' ),
-					external: true,
+					isExternal: true,
 					href: getGoogleAdminUrl( mailbox.domain ),
 					target: '_blank',
 				},
