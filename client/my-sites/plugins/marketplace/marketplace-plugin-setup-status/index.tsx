@@ -20,10 +20,14 @@ import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getPurchaseFlowState } from 'calypso/state/plugins/marketplace/selectors';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import { installPlugin } from 'calypso/state/plugins/installed/actions';
+
 /**
+ *
  * Style dependencies
  */
 import 'calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status/style.scss';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 
 const StyledProgressBar = styled( ProgressBar )`
 	margin: 20px 0px;
@@ -45,21 +49,26 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 	const [ simulatedProgressPercentage, setSimulatedProgressPercentage ] = useState( 1 );
 
 	const dispatch = useDispatch();
-	const selectedSiteId = useSelector( getSelectedSiteId );
+
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const transferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, selectedSiteId )
 	);
+	const isAtomicSite = useSelector( ( state ) => isSiteWpcomAtomic( state, selectedSiteId ?? 0 ) );
+
 	const { pluginSlugToBeInstalled, isPluginInstalledDuringPurchase } = useSelector(
 		getPurchaseFlowState
 	);
 
 	useEffect( () => {
 		dispatch( fetchAutomatedTransferStatus( selectedSiteId ?? 0 ) );
-	}, [ fetchAutomatedTransferStatus ] );
+	}, [ dispatch, selectedSiteId ] );
 
 	useEffect( () => {
-		if ( pluginSlugToBeInstalled && selectedSiteId ) {
+		if ( pluginSlugToBeInstalled && isAtomicSite ) {
+			dispatch( installPlugin( selectedSiteId, pluginSlugToBeInstalled ) );
+		} else if ( pluginSlugToBeInstalled && selectedSiteId ) {
 			dispatch( initiateThemeTransfer( selectedSiteId, null, pluginSlugToBeInstalled ) );
 		} else if ( ! isPluginInstalledDuringPurchase ) {
 			// Invalid State redirect to Yoast marketplace page for now, and maybe a marketplace home view in the future
@@ -67,7 +76,14 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 				`/marketplace/product/details/wordpress-seo/${ selectedSiteSlug }?flags=marketplace-yoast`
 			);
 		}
-	}, [ dispatch, pluginSlugToBeInstalled, isPluginInstalledDuringPurchase, selectedSiteId ] );
+	}, [
+		dispatch,
+		pluginSlugToBeInstalled,
+		isPluginInstalledDuringPurchase,
+		selectedSiteId,
+		isAtomicSite,
+		selectedSiteSlug,
+	] );
 
 	const TIMEOUT_BEFORE_REDIRECTING_ON_TRANSFER_COMPLETE = 4000;
 	const SIMULATION_REFRESH_INTERVAL = 2000;
@@ -85,7 +101,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 
 			SIMULATION_REFRESH_INTERVAL
 		);
-	}, [ simulatedProgressPercentage ] );
+	}, [ MAX_PERCENTAGE_SIMULATED, simulatedProgressPercentage ] );
 
 	useEffect( () => {
 		if ( transferStatus === 'complete' ) {
@@ -95,7 +111,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 				page( `/marketplace/thank-you/${ selectedSiteId }?flags=marketplace-yoast` );
 			}, TIMEOUT_BEFORE_REDIRECTING_ON_TRANSFER_COMPLETE );
 		}
-	}, [ selectedSiteSlug, transferStatus ] );
+	}, [ selectedSiteId, selectedSiteSlug, transferStatus ] );
 
 	if ( simulatedProgressPercentage > 50 && currentStep === STEP_1 ) {
 		setCurrentStep( STEP_2 );
