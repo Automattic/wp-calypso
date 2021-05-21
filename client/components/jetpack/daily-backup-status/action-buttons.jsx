@@ -20,7 +20,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
  */
 import './style.scss';
 
-const DownloadButton = ( { disabled, rewindId } ) => {
+const DownloadButton = ( { disabled, rewindId, isMultiSite } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -31,7 +31,7 @@ const DownloadButton = ( { disabled, rewindId } ) => {
 
 	return (
 		<Button
-			isPrimary={ false }
+			isPrimary={ isMultiSite }
 			className="daily-backup-status__download-button"
 			href={ href }
 			disabled={ disabled }
@@ -70,10 +70,14 @@ const RestoreButton = ( { disabled, rewindId } ) => {
 	);
 };
 
-const ActionButtons = ( { rewindId, disabled } ) => (
+const ActionButtons = ( { rewindId, disabled, isMultiSite } ) => (
 	<>
-		<DownloadButton disabled={ disabled || ! rewindId } rewindId={ rewindId } />
-		<RestoreButton disabled={ disabled || ! rewindId } rewindId={ rewindId } />
+		<DownloadButton
+			disabled={ disabled || ! rewindId }
+			rewindId={ rewindId }
+			primary={ isMultiSite }
+		/>
+		<RestoreButton disabled={ isMultiSite || disabled || ! rewindId } rewindId={ rewindId } />
 	</>
 );
 

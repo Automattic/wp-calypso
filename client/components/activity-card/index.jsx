@@ -163,7 +163,7 @@ class ActivityCard extends Component {
 	}
 
 	renderActionButton( isTopToolbar = true ) {
-		const { activity, doesRewindNeedCredentials, siteSlug, translate } = this.props;
+		const { activity, allowRestore, doesRewindNeedCredentials, siteSlug, translate } = this.props;
 
 		const context = isTopToolbar ? this.topPopoverContext : this.bottomPopoverContext;
 
@@ -201,7 +201,7 @@ class ActivityCard extends Component {
 							! doesRewindNeedCredentials && backupRestorePath( siteSlug, actionableRewindId )
 						}
 						className="activity-card__restore-button"
-						disabled={ doesRewindNeedCredentials }
+						disabled={ ! allowRestore || doesRewindNeedCredentials }
 					>
 						{ translate( 'Restore to this point' ) }
 					</Button>
