@@ -30,7 +30,11 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import PurchaseArea from './purchase-area';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import MainComponent from 'calypso/components/main';
+import {
+	setPluginSlugToBeInstalled,
+	setPrimaryDomainCandidate,
+	setIsPluginInstalledDuringPurchase,
+} from 'calypso/state/plugins/marketplace/actions';
 
 interface MarketplacePluginDetailsInterface {
 	marketplacePluginSlug: keyof PluginProductMappingInterface;
@@ -60,7 +64,8 @@ function MarketplacePluginDetails( {
 		dispatch( wporgFetchPluginData( marketplacePluginSlug ) );
 	}, [ dispatch, marketplacePluginSlug ] );
 
-	const onAddYoastPremiumToCart = () => {
+	const onAddYoastPremiumToCart = async () => {
+		await dispatch( setIsPluginInstalledDuringPurchase( true ) );
 		const yoastProduct = fillInSingleCartItemAttributes( { product_slug: productSlug }, products );
 		return replaceProductsInCart( [ yoastProduct ] );
 	};
@@ -70,7 +75,7 @@ function MarketplacePluginDetails( {
 	};
 
 	return (
-		<MainComponent>
+		<>
 			<SidebarNavigation />
 			{ ! wporgFetching ? (
 				<PurchaseArea
@@ -90,11 +95,20 @@ function MarketplacePluginDetails( {
 							}`
 						)
 					}
+					onInstallPluginManually={ async ( { primaryDomain } ) => {
+						await dispatch( setPluginSlugToBeInstalled( marketplacePluginSlug ) );
+						await dispatch( setPrimaryDomainCandidate( primaryDomain ) );
+						page(
+							`/plugins/marketplace/setup${
+								selectedSite?.slug ? `/${ selectedSite?.slug }?flags=marketplace-yoast` : ''
+							}`
+						);
+					} }
 				/>
 			) : (
 				'Loading...'
 			) }
-		</MainComponent>
+		</>
 	);
 }
 

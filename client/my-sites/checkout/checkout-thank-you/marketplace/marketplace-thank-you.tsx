@@ -26,6 +26,8 @@ import {
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import useSiteMenuItems from 'calypso/my-sites/sidebar-unified/use-site-menu-items';
+import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+
 /**
  * style dependencies
  */
@@ -87,7 +89,7 @@ const MarketplaceThankYou = () => {
 	const selectedSite = useSelector( getSelectedSite );
 	const previousPath = useSelector( getPreviousPath );
 	const menuItems = useSiteMenuItems();
-
+	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const { url: postsPageUrl } =
 		menuItems.find( ( { slug }: { slug: string } ) => slug === 'edit-php' ) ?? {};
 
@@ -141,10 +143,11 @@ const MarketplaceThankYou = () => {
 									</p>
 									<div>
 										<FullWidthButton
+											//TODO: Menu links not properly loading after installing the plugin
 											href={ yoastSeoPageUrl }
 											primary
-											//TODO: To be removed after loading screen for plugin setup is completed
-											disabled={ ! yoastSeoPageUrl }
+											busy={ isRequestingMenu }
+											disabled={ isRequestingMenu }
 										>
 											{ translate( 'Get started' ) }
 										</FullWidthButton>
@@ -158,7 +161,11 @@ const MarketplaceThankYou = () => {
 										) }
 									</p>
 									<div>
-										<FullWidthButton href={ postsPageUrl }>
+										<FullWidthButton
+											href={ postsPageUrl }
+											busy={ isRequestingMenu }
+											disabled={ isRequestingMenu }
+										>
 											{ translate( 'View posts' ) }
 										</FullWidthButton>
 									</div>

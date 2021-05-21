@@ -18,6 +18,7 @@ interface PurchaseArea {
 	onNavigateToCheckout: () => void;
 	onNavigateToDomainsSelection: () => void;
 	onRemoveEverythingFromCart: () => Promise< ResponseCart >;
+	onInstallPluginManually: ( { primaryDomain }: { primaryDomain: string } ) => Promise< void >;
 }
 
 export default function PurchaseArea( {
@@ -29,6 +30,7 @@ export default function PurchaseArea( {
 	onNavigateToCheckout,
 	onNavigateToDomainsSelection,
 	onRemoveEverythingFromCart,
+	onInstallPluginManually,
 }: PurchaseArea ): JSX.Element {
 	const [ isButtonClicked, setIsButtonClicked ] = useState( false );
 
@@ -49,6 +51,9 @@ export default function PurchaseArea( {
 			siteDomains.find( isCustomDomain )?.isPrimary
 		);
 	}
+	function getPrimaryDomain( siteDomains: any[] ): any {
+		return siteDomains.find( ( { isPrimary } ) => isPrimary );
+	}
 
 	const onAddPlugin = async ( isProductPurchased: boolean ) => {
 		setIsButtonClicked( true );
@@ -63,8 +68,8 @@ export default function PurchaseArea( {
 			if ( isProductPurchased ) {
 				onNavigateToCheckout();
 			} else {
-				//To be replaced with loading screen and then thank-you page
-				alert( 'To be implemented : Loading Screen -> Thank You Page' );
+				const primaryDomain = getPrimaryDomain( siteDomains ).domain;
+				onInstallPluginManually( { primaryDomain } );
 			}
 		} else if ( isCustomDomainAvailable && ! isCustomDomainPrimary ) {
 			//Pop up Modal for deciding on primary domain and related logic
