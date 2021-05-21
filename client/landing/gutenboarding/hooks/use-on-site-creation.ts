@@ -131,6 +131,8 @@ export default function useOnSiteCreation(): void {
 			window.location.href = destination;
 		}
 	}, [
+		flow,
+		planProductSource,
 		domain,
 		selectedPlan,
 		isRedirecting,
