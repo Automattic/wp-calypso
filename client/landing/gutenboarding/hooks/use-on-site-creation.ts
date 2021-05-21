@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
-import type { RequestCartProduct } from '@automattic/shopping-cart';
+import type { RequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import wp from '../../../lib/wp';
 
 /**
@@ -20,37 +20,6 @@ import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
 import { useOnboardingFlow } from '../path';
 
 const wpcom = wp.undocumented();
-
-interface Cart {
-	blog_id: number;
-	cart_key: number;
-	coupon: string;
-	coupon_discounts: unknown[];
-	coupon_discounts_integer: unknown[];
-	is_coupon_applied: boolean;
-	has_bundle_credit: boolean;
-	next_domain_is_free: boolean;
-	next_domain_condition: string;
-	products: unknown[];
-	total_cost: number;
-	currency: string;
-	total_cost_display: string;
-	total_cost_integer: number;
-	temporary: boolean;
-	tax: unknown;
-	sub_total: number;
-	sub_total_display: string;
-	sub_total_integer: number;
-	total_tax: number;
-	total_tax_display: string;
-	total_tax_integer: number;
-	credits: number;
-	credits_display: string;
-	credits_integer: number;
-	allowed_payment_methods: unknown[];
-	create_new_blog: boolean;
-	messages: Record< 'errors' | 'success', unknown >;
-}
 
 /**
  * After a new site has been created there are 3 scenarios to cover:
@@ -107,7 +76,7 @@ export default function useOnSiteCreation(): void {
 					},
 				} );
 				const go = async () => {
-					const cart: Cart = await wpcom.getCart( newSite.site_slug );
+					const cart: ResponseCart = await wpcom.getCart( newSite.site_slug );
 					await wpcom.setCart( newSite.blogid, {
 						...cart,
 						products: [ ...cart.products, planProduct, domainProduct ],
