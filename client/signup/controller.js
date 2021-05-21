@@ -43,7 +43,6 @@ import { waitForHttpData } from 'calypso/state/data-layer/http-data';
 import { requestGeoLocation } from 'calypso/state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'calypso/lib/abtest';
-import user from 'calypso/lib/user';
 import getSiteId from 'calypso/state/selectors/get-site-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -135,8 +134,7 @@ export default {
 			next();
 		} else {
 			waitForHttpData( () => ( { geo: requestGeoLocation() } ) )
-				.then( ( { geo } ) => {
-					const countryCode = geo.data;
+				.then( () => {
 					const localeFromParams = context.params.lang;
 					const flowName = getFlowName( context.params );
 
@@ -145,29 +143,36 @@ export default {
 						return;
 					}
 
-					if (
-						( ! user() || ! user().get() ) &&
-						-1 === context.pathname.indexOf( 'free' ) &&
-						-1 === context.pathname.indexOf( 'personal' ) &&
-						-1 === context.pathname.indexOf( 'premium' ) &&
-						-1 === context.pathname.indexOf( 'business' ) &&
-						-1 === context.pathname.indexOf( 'ecommerce' ) &&
-						-1 === context.pathname.indexOf( 'with-theme' ) &&
-						'variantUserless' === abtest( 'userlessCheckout', countryCode )
-					) {
-						removeWhiteBackground();
-						const stepName = getStepName( context.params );
-						const stepSectionName = getStepSectionName( context.params );
-						const urlWithLocale = getStepUrl(
-							'onboarding-registrationless',
-							stepName,
-							stepSectionName,
-							localeFromParams
-						);
-						window.location = urlWithLocale;
-					} else {
-						next();
-					}
+					next();
+					return;
+
+					// Code for the variantUserless experiment, previously implemented in calypso-abtest.
+					// Planned to be rerun, see pbmo2S-Bv-p2#comment-1382
+					// Commented out for eslint
+					// if (
+					// 	( ! user() || ! user().get() ) &&
+					// 	-1 === context.pathname.indexOf( 'free' ) &&
+					// 	-1 === context.pathname.indexOf( 'personal' ) &&
+					// 	-1 === context.pathname.indexOf( 'premium' ) &&
+					// 	-1 === context.pathname.indexOf( 'business' ) &&
+					// 	-1 === context.pathname.indexOf( 'ecommerce' ) &&
+					// 	-1 === context.pathname.indexOf( 'with-theme' ) &&
+					// 	// Checking for treatment variation previously happened here:
+					// 	false
+					// ) {
+					// 	removeWhiteBackground();
+					// 	const stepName = getStepName( context.params );
+					// 	const stepSectionName = getStepSectionName( context.params );
+					// 	const urlWithLocale = getStepUrl(
+					// 		'onboarding-registrationless',
+					// 		stepName,
+					// 		stepSectionName,
+					// 		localeFromParams
+					// 	);
+					// 	window.location = urlWithLocale;
+					// } else {
+					// 	next();
+					// }
 				} )
 				.catch( () => {
 					removeWhiteBackground();

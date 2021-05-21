@@ -20,16 +20,6 @@ export default {
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
-	userlessCheckout: {
-		datestamp: '20210806',
-		variations: {
-			variantUserless: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: false,
-		countryCodeTargets: [ 'US', 'CA' ],
-	},
 	newUsersWithFreePlan: {
 		datestamp: '20210107',
 		variations: {
