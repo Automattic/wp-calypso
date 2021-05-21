@@ -12,15 +12,6 @@
 export default {
 	// ⚠️ The ExPlat team is monitoring additions to this object 😈
 	// Let us know if there is a use-case we have missed adding in ExPlat.
-
-	conciergeUpsellDial: {
-		//this test is used to dial down the upsell offer
-		datestamp: '20200910',
-		variations: {
-			offer: 75,
-			noOffer: 25,
-		},
-		defaultVariation: 'noOffer',
-		allowExistingUsers: true,
-	},
+	// If you are looking for the conciergeUpsellDial experiment it has been replaced with
+	// a naiveClientSideRollout in `client/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url.ts`
 };

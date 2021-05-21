@@ -36,7 +36,7 @@ import {
 	redirectCloudCheckoutToWpAdmin,
 } from '@automattic/calypso-products';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
-import { abtest } from 'calypso/lib/abtest';
+import { naiveClientSideRollout } from 'calypso/lib/explat';
 
 type SaveUrlToCookie = ( url: string ) => void;
 type GetUrlFromCookie = () => string | undefined;
@@ -394,10 +394,11 @@ function getRedirectUrlForConciergeNudge( {
 			return upgradePath;
 		}
 
-		// The conciergeUpsellDial test is used when we need to quickly dial back the volume of concierge sessions
-		// being offered and so sold, to be inline with HE availability.
-		// To dial back, uncomment the condition below and modify the test config.
-		if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
+		// This is used when we need to quickly dial back the volume of concierge sessions
+		// being offered and sold, to be inline with HE availability.
+		// Change this percentage to change the amount of offers given out:
+		const percentConciergeOffers = 75;
+		if ( naiveClientSideRollout( percentConciergeOffers ) ) {
 			return getQuickstartUrl( { pendingOrReceiptId, siteSlug, orderId } );
 		}
 	}
