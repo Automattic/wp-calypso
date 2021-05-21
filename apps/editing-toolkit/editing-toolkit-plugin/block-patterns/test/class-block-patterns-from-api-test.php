@@ -1,7 +1,9 @@
 <?php
 /**
- * Coming Soon Tests File
- * Run: yarn run test:php --testsuite block-patterns
+ * Block patterns API tests
+ * Run:
+ * cd apps/editing-toolkit
+ * yarn run test:php --testsuite block-patterns
  *
  * @package full-site-editing-plugin
  */
@@ -19,14 +21,14 @@ class Block_Patterns_From_Api_Test extends TestCase {
 	/**
 	 * PHPUnit_Framework_MockObject_MockObject.
 	 *
-	 * @var string
+	 * @var object
 	 */
 	protected $utils_mock;
 
 	/**
 	 * Representation of a Pattern as returned by the API.
 	 *
-	 * @var string
+	 * @var array
 	 */
 	protected $pattern_mock_object;
 
