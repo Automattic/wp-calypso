@@ -53,7 +53,6 @@ import SignupCart from 'calypso/lib/signup/cart';
 // Others
 import flows from 'calypso/signup/config/flows';
 import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
-import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'calypso/lib/signup/page-builder';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 
@@ -213,10 +212,6 @@ function getNewSiteParams( {
 	// Provide the default business starter content for the FSE user testing flow.
 	if ( 'test-fse' === lastKnownFlow ) {
 		newSiteParams.options.site_segment = 1;
-	}
-
-	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
-		newSiteParams.options.in_page_builder = true;
 	}
 
 	if ( selectedDesign ) {
