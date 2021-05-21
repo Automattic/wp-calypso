@@ -21,6 +21,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
 	/* handles /jetpack-search, see `jetpackSearchMainPath` */
 	page( jetpackSearchMainPath(), siteSelection, sites, makeLayout, clientRender );
 }
