@@ -17,7 +17,12 @@ import EmailMailboxWarnings from 'calypso/my-sites/email/email-management/home/e
 import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
 import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getEmailForwardAddress, isEmailForward, isEmailUserAdmin } from 'calypso/lib/emails';
+import {
+	getEmailForwardAddress,
+	hasGoogleAccountTOSWarning,
+	isEmailForward,
+	isEmailUserAdmin,
+} from 'calypso/lib/emails';
 import {
 	getGmailUrl,
 	getGoogleAdminUrl,
@@ -144,7 +149,11 @@ const getTitanMenuItems = ( email, translate ) => {
 	];
 };
 
-const getGSuiteMenuItems = ( email, mailbox, translate ) => {
+const getGSuiteMenuItems = ( { account, email, mailbox, translate } ) => {
+	if ( hasGoogleAccountTOSWarning( account ) ) {
+		return null;
+	}
+
 	return [
 		{
 			href: getGmailUrl( email ),
@@ -208,13 +217,16 @@ const getEmailForwardMenuItems = ( { currentRoute, domain, selectedSite, transla
 	];
 };
 
-const getMenuItems = ( { currentRoute, domain, email, mailbox, selectedSite }, translate ) => {
+const getMenuItems = (
+	{ account, currentRoute, domain, email, mailbox, selectedSite },
+	translate
+) => {
 	if ( hasTitanMailWithUs( domain ) ) {
 		return getTitanMenuItems( email, translate );
 	}
 
 	if ( hasGSuiteWithUs( domain ) ) {
-		return getGSuiteMenuItems( email, mailbox, translate );
+		return getGSuiteMenuItems( { account, email, mailbox, translate } );
 	}
 
 	if ( hasEmailForwards( domain ) ) {
@@ -224,12 +236,12 @@ const getMenuItems = ( { currentRoute, domain, email, mailbox, selectedSite }, t
 	return null;
 };
 
-const ActionMenu = ( { domain, mailbox, selectedSite } ) => {
+const ActionMenu = ( { account, domain, mailbox, selectedSite } ) => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const translate = useTranslate();
 	const email = `${ mailbox.mailbox }@${ mailbox.domain }`;
 	const menuItems = getMenuItems(
-		{ currentRoute, domain, email, mailbox, selectedSite },
+		{ account, currentRoute, domain, email, mailbox, selectedSite },
 		translate
 	);
 	if ( ! menuItems ) {
@@ -302,7 +314,12 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes, 
 					</Badge>
 				) }
 				<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
-				<ActionMenu domain={ domain } mailbox={ mailbox } selectedSite={ selectedSite } />
+				<ActionMenu
+					account={ account }
+					domain={ domain }
+					mailbox={ mailbox }
+					selectedSite={ selectedSite }
+				/>
 			</MailboxListItem>
 		);
 	} );
