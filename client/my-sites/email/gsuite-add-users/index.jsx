@@ -40,6 +40,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -253,37 +254,51 @@ class GSuiteAddUsers extends React.Component {
 	}
 
 	render() {
-		const { currentRoute, isNewAccount, productType, translate, selectedDomainName, selectedSite } = this.props;
+		const {
+			currentRoute,
+			isNewAccount,
+			productType,
+			translate,
+			selectedDomainName,
+			selectedSite,
+		} = this.props;
 
 		const analyticsPath = isNewAccount
-			? emailManagementNewGSuiteAccount( ':site', ':domain', ':productType' )
-			: emailManagementAddGSuiteUsers( ':site', selectedDomainName ? ':domain' : undefined );
+			? emailManagementNewGSuiteAccount( ':site', ':domain', ':productType', currentRoute )
+			: emailManagementAddGSuiteUsers(
+					':site',
+					selectedDomainName ? ':domain' : undefined,
+					':productType',
+					currentRoute
+			  );
 
 		const googleMailServiceFamily = getGoogleMailServiceFamily( getProductSlug( productType ) );
 
 		return (
 			<>
-				<PageViewTracker path={ analyticsPath } title="Email Management > Add New Users" />
+				<PageViewTracker path={ analyticsPath } title="Email Management > Add Google Users" />
 
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 				{ selectedSite && <QueryGSuiteUsers siteId={ selectedSite.ID } /> }
 
-				<DocumentHead title={ translate( 'Add New Users' ) } />
+				<Main wideLayout={ true }>
+					<DocumentHead title={ translate( 'Add New Users' ) } />
 
-				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
-				<HeaderCake onClick={ this.handleBack }>{ translate( 'Add new users' ) }</HeaderCake>
+					<HeaderCake onClick={ this.goToEmail }>{ translate( 'Add new users' ) }</HeaderCake>
 
-				<EmailVerificationGate
-					noticeText={ translate( 'You must verify your email to purchase %(productFamily)s.', {
-						args: { productFamily: googleMailServiceFamily },
-						comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
-					} ) }
-					noticeStatus="is-info"
-				>
-					{ this.renderAddGSuite() }
-				</EmailVerificationGate>
+					<EmailVerificationGate
+						noticeText={ translate( 'You must verify your email to purchase %(productFamily)s.', {
+							args: { productFamily: googleMailServiceFamily },
+							comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
+						} ) }
+						noticeStatus="is-info"
+					>
+						{ this.renderAddGSuite() }
+					</EmailVerificationGate>
+				</Main>
 			</>
 		);
 	}
