@@ -106,8 +106,8 @@ class SinglePlugin extends React.Component {
 		return ! shouldUseHistoryBack ? '/plugins/manage/' + ( siteUrl || '' ) : null;
 	};
 
-	displayHeader( calypsoify ) {
-		if ( ! this.props.selectedSite || calypsoify ) {
+	displayHeader() {
+		if ( ! this.props.selectedSite ) {
 			return <Card className="plugins__installed-header" />;
 		}
 
@@ -287,7 +287,7 @@ class SinglePlugin extends React.Component {
 				<PluginNotices pluginId={ plugin.id } sites={ this.props.sites } plugins={ [ plugin ] } />
 
 				<div className="plugin__page">
-					{ this.displayHeader( calypsoify ) }
+					{ this.displayHeader() }
 					<PluginMeta
 						plugin={ plugin }
 						siteUrl={ this.props.siteUrl }
