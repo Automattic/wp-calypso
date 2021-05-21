@@ -3,6 +3,8 @@
  */
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { createRequestCartProduct } from '@automattic/shopping-cart';
+import type { RequestCartProduct } from '@automattic/shopping-cart';
 import wp from '../../../lib/wp';
 
 /**
@@ -88,14 +90,14 @@ export default function useOnSiteCreation(): void {
 			setIsRedirecting( true );
 
 			if ( selectedPlan && ! selectedPlan?.isFree ) {
-				const planProduct = {
+				const planProduct: RequestCartProduct = createRequestCartProduct( {
 					product_id: planProductSource?.productId,
 					product_slug: planProductSource?.storeSlug,
 					extra: {
 						source: 'gutenboarding',
 					},
-				};
-				const domainProduct = {
+				} );
+				const domainProduct: RequestCartProduct = createRequestCartProduct( {
 					meta: domain?.domain_name,
 					product_id: domain?.product_id,
 					extra: {
@@ -103,7 +105,7 @@ export default function useOnSiteCreation(): void {
 						privacy: domain?.supports_privacy,
 						source: 'gutenboarding',
 					},
-				};
+				} );
 				const go = async () => {
 					const cart: Cart = await wpcom.getCart( newSite.site_slug );
 					await wpcom.setCart( newSite.blogid, {
