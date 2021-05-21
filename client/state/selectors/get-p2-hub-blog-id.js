@@ -16,5 +16,5 @@ export default function getP2HubBlogId( state, siteId ) {
 	if ( ! isSiteWPForTeams( state, siteId ) ) {
 		return null;
 	}
-	return get( state, [ 'sites', 'items', siteId, 'options', 'p2_hub_blog_id' ], 0 );
+	return get( state, [ 'sites', 'items', siteId, 'options', 'p2_hub_blog_id' ], null );
 }
