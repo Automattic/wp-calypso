@@ -26,11 +26,11 @@ import { isEmailForwardAccount } from 'calypso/lib/emails/is-email-forward-accou
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resendVerificationEmail } from 'calypso/state/email-forwarding/actions';
 
-const MailboxListItemWarning = ( { warningText } ) => {
+const EmailMailboxWarningText = ( { text } ) => {
 	return (
 		<div className="email-mailbox-warnings__warning">
 			<Gridicon icon="info-outline" size={ 18 } />
-			<span>{ warningText }</span>
+			<span>{ text }</span>
 		</div>
 	);
 };
@@ -114,15 +114,11 @@ const getDetailsForWarning = ( { account, dispatch, mailbox, translate, warning 
 	return null;
 };
 
-const EmailMailboxWarning = ( { warningActionProps, warningText } ) => {
-	if ( ! warningActionProps ) {
-		return <MailboxListItemWarning warningText={ warningText } />;
-	}
-
+const EmailMailboxWarning = ( { actionProps, text } ) => {
 	return (
 		<>
-			<MailboxListItemWarning warningText={ warningText } />
-			{ warningActionProps && <MailboxListItemAction { ...warningActionProps } /> }
+			<EmailMailboxWarningText text={ text } />
+			{ actionProps && <EmailMailboxWarningAction { ...actionProps } /> }
 		</>
 	);
 };
@@ -150,8 +146,8 @@ const EmailMailboxWarnings = ( { account, mailbox } ) => {
 				return (
 					<EmailMailboxWarning
 						key={ warningKey }
-						warningActionProps={ warningDetails?.actionProps }
-						warningText={ warningDetails?.warningText }
+						actionProps={ warningDetails?.actionProps }
+						text={ warningDetails?.warningText }
 					/>
 				);
 			} ) }
