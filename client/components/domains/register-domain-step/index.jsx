@@ -67,6 +67,7 @@ import {
 	getTldWeightOverrides,
 	isNumberString,
 	isUnknownSuggestion,
+	isUnsupportedPremiumSuggestion,
 	isMissingVendor,
 	markFeaturedSuggestions,
 } from 'calypso/components/domains/register-domain-step/utility';
@@ -888,6 +889,7 @@ class RegisterDomainStep extends React.Component {
 					const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
 					const isDomainTransferrable = TRANSFERRABLE === status;
 					const isDomainMapped = MAPPED === mappable;
+					const isAvailablePremiumDomain = AVAILABLE_PREMIUM === status;
 					const isAvailableSupportedPremiumDomain =
 						config.isEnabled( 'domains/premium-domain-purchases' ) &&
 						AVAILABLE_PREMIUM === status &&
@@ -931,7 +933,11 @@ class RegisterDomainStep extends React.Component {
 					);
 
 					this.props.onDomainsAvailabilityChange( true );
-					resolve( isDomainAvailable || isAvailableSupportedPremiumDomain ? result : null );
+					resolve(
+						isDomainAvailable || isAvailableSupportedPremiumDomain || isAvailablePremiumDomain
+							? result
+							: null
+					);
 				}
 			);
 		} );
@@ -1010,16 +1016,19 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		const suggestionMap = new Map();
+
 		flatten( compact( results ) ).forEach( ( result ) => {
 			const { domain_name: domainName } = result;
 			suggestionMap.has( domainName )
 				? suggestionMap.set( domainName, { ...suggestionMap.get( domainName ), ...result } )
 				: suggestionMap.set( domainName, result );
 		} );
+
 		const suggestions = reject(
-			reject( [ ...suggestionMap.values() ], isUnknownSuggestion ),
-			isMissingVendor
+			reject( reject( [ ...suggestionMap.values() ], isUnknownSuggestion ), isMissingVendor ),
+			isUnsupportedPremiumSuggestion
 		);
+
 		const markedSuggestions = markFeaturedSuggestions(
 			suggestions,
 			this.state.exactMatchDomain,

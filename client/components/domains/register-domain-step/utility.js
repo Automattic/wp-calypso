@@ -68,6 +68,14 @@ export function isUnknownSuggestion( suggestion ) {
 	return suggestion.status === domainAvailability.UNKNOWN;
 }
 
+export function isUnsupportedPremiumSuggestion( suggestion ) {
+	return (
+		domainAvailability.AVAILABLE_PREMIUM === suggestion.status &&
+		suggestion.hasOwnProperty( 'is_supported_premium_domain' ) &&
+		suggestion?.is_supported_premium_domain === false
+	);
+}
+
 export function isMissingVendor( suggestion ) {
 	return ! ( 'vendor' in suggestion );
 }
