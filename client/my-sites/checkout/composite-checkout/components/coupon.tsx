@@ -2,19 +2,34 @@
  * External dependencies
  */
 import React from 'react';
-import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/composite-checkout';
-import { Field } from '@automattic/wpcom-checkout';
+import { Field, styled } from '@automattic/wpcom-checkout';
+import type { CouponStatus } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import joinClasses from './join-classes';
+import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 
-export default function Coupon( { id, className, disabled, couponStatus, couponFieldStateProps } ) {
+/* eslint-disable @typescript-eslint/no-use-before-define */
+
+export default function Coupon( {
+	id,
+	className,
+	disabled,
+	couponStatus,
+	couponFieldStateProps,
+}: {
+	id: string;
+	className?: string;
+	disabled?: boolean;
+	couponStatus: CouponStatus;
+	couponFieldStateProps: CouponFieldStateProps;
+} ): JSX.Element {
 	const translate = useTranslate();
 	const {
 		couponFieldValue,
@@ -25,7 +40,7 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 		handleCouponSubmit,
 	} = couponFieldStateProps;
 
-	const hasCouponError = couponStatus === 'invalid' || couponStatus === 'rejected';
+	const hasCouponError = couponStatus === 'rejected';
 	const isPending = couponStatus === 'pending';
 
 	const errorMessage = getCouponErrorMessageFromStatus( translate, couponStatus, isFreshOrEdited );
@@ -44,7 +59,7 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 				inputClassName="coupon-code"
 				value={ couponFieldValue }
 				disabled={ disabled || isPending }
-				placeholder={ translate( 'Enter your coupon code' ) }
+				placeholder={ String( translate( 'Enter your coupon code' ) ) }
 				isError={ hasCouponError && ! isFreshOrEdited }
 				errorMessage={ errorMessage }
 				onChange={ ( input ) => {
@@ -93,7 +108,7 @@ const animateInRTL = keyframes`
 `;
 
 const CouponWrapper = styled.form`
-	margin: ${ ( props ) => props.marginTop } 0 0;
+	margin: 0;
 	padding-top: 0;
 	position: relative;
 `;
@@ -114,14 +129,15 @@ const ApplyButton = styled( Button )`
 	}
 `;
 
-function getCouponErrorMessageFromStatus( translate, status, isFreshOrEdited ) {
-	if ( status === 'invalid' && ! isFreshOrEdited ) {
-		return translate(
-			"We couldn't find your coupon. Please check your coupon code and try again."
+function getCouponErrorMessageFromStatus(
+	translate: ReturnType< typeof useTranslate >,
+	status: CouponStatus,
+	isFreshOrEdited: boolean
+): string | undefined {
+	if ( status === 'rejected' && ! isFreshOrEdited ) {
+		return String(
+			translate( "We couldn't find your coupon. Please check your coupon code and try again." )
 		);
 	}
-	if ( status === 'rejected' ) {
-		return translate( 'This coupon does not apply to any items in the cart.' );
-	}
-	return null;
+	return undefined;
 }

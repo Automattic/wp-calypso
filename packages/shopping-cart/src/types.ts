@@ -77,10 +77,9 @@ export type CacheStatus = 'fresh' | 'fresh-pending' | 'valid' | 'invalid' | 'pen
  *   - 'fresh': User has not (yet) attempted to apply a coupon.
  *   - 'pending': Coupon request has been sent, awaiting response.
  *   - 'applied': Coupon has been applied to the cart.
- *   - 'invalid': Coupon code is not recognized.
- *   - 'rejected': Valid code, but does not apply to the cart items.
+ *   - 'rejected': Coupon code did not apply. The reason should be in the cart errors.
  */
-export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'invalid' | 'rejected' | 'error';
+export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'rejected';
 
 export type ShoppingCartAction =
 	| { type: 'CLEAR_QUEUED_ACTIONS' }
