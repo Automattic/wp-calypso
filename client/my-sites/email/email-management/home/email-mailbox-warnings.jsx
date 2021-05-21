@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { Button } from '@automattic/components';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'calypso/components/gridicon';
-import { resendVerificationEmail } from 'calypso/state/email-forwarding/actions';
+import {
+	EMAIL_WARNING_SLUG_GOOGLE_MAILBOX_TOS,
+	EMAIL_WARNING_SLUG_UNVERIFIED_FORWARD,
+} from 'calypso/lib/emails/email-provider-constants';
 import {
 	getEmailForwardAddress,
 	hasGoogleAccountTOSWarning,
@@ -19,12 +21,10 @@ import {
 	isGoogleEmailAccount,
 } from 'calypso/lib/emails';
 import { getGoogleAdminUrl } from 'calypso/lib/gsuite';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	EMAIL_WARNING_SLUG_GOOGLE_MAILBOX_TOS,
-	EMAIL_WARNING_SLUG_UNVERIFIED_FORWARD,
-} from 'calypso/lib/emails/email-provider-constants';
+import Gridicon from 'calypso/components/gridicon';
 import { isEmailForwardAccount } from 'calypso/lib/emails/is-email-forward-account';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { resendVerificationEmail } from 'calypso/state/email-forwarding/actions';
 
 const MailboxListItemWarning = ( { warningText } ) => {
 	return (
