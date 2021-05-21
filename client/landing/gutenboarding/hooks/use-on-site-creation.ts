@@ -87,10 +87,12 @@ export default function useOnSiteCreation(): void {
 				} );
 				const go = async () => {
 					const cart: ResponseCart = await wpcom.getCart( newSite.site_slug );
-					await wpcom.setCart( newSite.blogid, {
-						...cart,
-						products: [ ...cart.products, planProduct, domainProduct ],
-					} );
+					if ( planProduct || domainProduct ) {
+						await wpcom.setCart( newSite.blogid, {
+							...cart,
+							products: [ ...cart.products, planProduct, domainProduct ].filter( Boolean ),
+						} );
+					}
 					resetOnboardStore();
 					clearLastNonEditorRoute();
 					setSelectedSite( newSite.blogid );
