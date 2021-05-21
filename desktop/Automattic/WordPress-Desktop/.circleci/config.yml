@@ -1,0 +1,344 @@
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.2.0
+
+references:
+  desktop_defaults: &desktop_defaults
+    working_directory: ~/WordPress-Desktop
+
+  yarn-install: &yarn-install
+    name: Install dependencies
+    command: |
+      source "$HOME/.nvm/nvm.sh"
+      nvm use
+      npm install -g yarn
+      yarn install --frozen-lockfile
+
+  update-node: &update-node
+    name: Update node
+    command: |
+      set +e
+      set +x
+      export NVM_DIR="$HOME/.nvm" && (
+        git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
+        cd "$NVM_DIR"
+        git checkout v0.35.3
+      ) && \. "$NVM_DIR/nvm.sh" --no-use
+      nvm install
+      nvm use
+
+  save-yarn-cache: &save-yarn-cache
+    name: 'Save yarn cache'
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
+    paths:
+      - ~/.cache/yarn
+
+  desktop-install-app-deps: &desktop-install-app-deps
+    name: Install Desktop Dependencies
+    command: |
+      source "$HOME/.nvm/nvm.sh"
+      nvm use
+      npm install -g yarn
+      yarn install --frozen-lockfile
+  desktop-cache-paths: &desktop-cache-paths
+    - config
+    - resource/certificates/win.p12
+    - resource/certificates/mac.p12
+  desktop-decrypt-assets: &desktop-decrypt-assets
+    name: Decrypt desktop app assets
+    command: |
+      mkdir config
+      openssl aes-256-cbc -md md5 -d -in resource/calypso/secrets.json.enc -out config/secrets.json -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      openssl aes-256-cbc -md md5 -d -in resource/certificates/mac.p12.enc -out resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      openssl aes-256-cbc -md md5 -d -in resource/certificates/win.p12.enc -out resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+  desktop-restore-yarn-cache: &desktop-restore-yarn-cache
+    name: Restore yarn cache
+    keys:
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
+  desktop-save-yarn-cache: &desktop-save-yarn-cache
+    name: Save yarn cache
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
+    paths:
+      - ~/.cache/yarn
+  desktop-notify-slack-failure: &desktop-notify-slack-failure
+    webhook: '$SLACK_WP_DESKTOP_E2E'
+    fail_only: true
+    mentions: '$CIRCLE_USERNAME'
+    failure_message: ':red_circle: WP-Desktop relase build ($CIRCLE_TAG) failed.\n'
+
+jobs:
+  # TODO: Make this local to the Win, Linux and Mac jobs
+  wp-desktop-assets:
+    machine:
+      image: ubuntu-1604:202004-01
+    resource_class: medium
+    <<: *desktop_defaults
+    environment:
+      NVM_DIR: '/opt/circleci/.nvm'
+      VERSION: << pipeline.git.tag >>
+      CONFIG_ENV: release
+    steps:
+      - checkout
+      - when:
+          condition: << pipeline.git.tag >>
+          steps:
+            - run:
+                name: Ensure package.json Version And Tag Match
+                command: cd bin && node validate_tag.js $VERSION
+      - run: *desktop-decrypt-assets
+      - persist_to_workspace:
+          root: /home/circleci/WordPress-Desktop
+          paths: *desktop-cache-paths
+      - run: *desktop-notify-github-failure
+      - slack/status: *desktop-notify-slack-failure
+
+  wp-desktop-mac:
+    macos:
+      xcode: '12.3.0'
+    shell: /bin/bash --login
+    working_directory: /Users/distiller/WordPress-Desktop
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /Users/distiller/WordPress-Desktop
+      - run: *update-node
+      - run: *desktop-install-app-deps
+      - run:
+          name: Build Desktop Mac
+          no_output_timeout: 45m
+          environment:
+            CSC_LINK: resource/certificates/mac.p12
+            CSC_FOR_PULL_REQUEST: true
+          command: |
+            set +e
+            source $HOME/.nvm/nvm.sh
+            nvm use
+
+            # Override SDKROOT and MACOSX_DEPLOYMENT_TARGET to ensure correct SDK configuration:
+            # https://github.com/Homebrew/homebrew-core/pull/19296#issuecomment-352867571
+            export SDKROOT='/Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk'
+            export MACOSX_DEPLOYMENT_TARGET=11.1
+
+            yarn run ci:build-mac
+      - run:
+          name: e2e Tests
+          command: |
+            source $HOME/.nvm/nvm.sh
+            nvm use
+            npm install -g yarn
+
+            node e2e/run.js
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            rm -rf release/mac
+            rm -rf release/mac-arm64
+      - store_artifacts:
+          when: always
+          path: release
+      - store_artifacts:
+          when: always
+          path: e2e/logs
+      - store_artifacts:
+          when: always
+          path: e2e/screenshots
+      - persist_to_workspace:
+          root: ~/WordPress-Desktop
+          paths:
+            - release
+      - slack/status: *desktop-notify-slack-failure
+
+  wp-desktop-linux:
+    docker:
+      - image: circleci/node:14.16.1-browsers
+    <<: *desktop_defaults
+    shell: /bin/bash --login
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/WordPress-Desktop
+      - run: *update-node
+      - run:
+          name: Install Linux deps
+          command: |
+            sudo apt update
+            sudo apt-get install -y libsecret-1-dev
+      - run: *desktop-install-app-deps
+      - run:
+          name: Build Desktop Linux
+          environment:
+            CSC_LINK: resource/certificates/win.p12
+          command: |
+            set +e
+            source $HOME/.nvm/nvm.sh
+            nvm use
+
+            yarn run build
+      - run:
+          name: e2e Tests
+          command: |
+            source $HOME/.nvm/nvm.sh
+            nvm use
+            npm install -g yarn
+
+            node e2e/run.js
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            set +e
+            rm -rf release/github
+            rm -rf release/linux-unpacked
+            rm -rf release/.icon-set
+      - store_artifacts:
+          when: always
+          path: release
+      - store_artifacts:
+          when: always
+          path: e2e/logs
+      - store_artifacts:
+          when: always
+          path: e2e/screenshots
+      - persist_to_workspace:
+          root: ~/WordPress-Desktop
+          paths:
+            - release
+
+  wp-desktop-windows:
+    executor:
+      name: win/default
+    working_directory: C:\Users\circleci\WordPress-Desktop
+    environment:
+    steps:
+      - checkout
+      - attach_workspace:
+          at: C:\Users\circleci\WordPress-Desktop
+      - run:
+          name: Install Node Version
+          command: |
+            $NODE_VERSION = Get-Content .nvmrc
+            nvm install $NODE_VERSION
+            nvm use $NODE_VERSION
+      - run:
+          name: Install Yarn
+          command: npm install -g yarn
+      - run:
+          name: Install Make
+          command: cinst make
+      - run:
+          name: Install Desktop Dependencies
+          command: yarn install --frozen-lockfile
+      - run:
+          name: Import Codesigning Certificate
+          command: |
+            # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
+            # Ref: https://travis-ci.community/t/codesigning-on-windows/
+            #
+            # Fix: Import .p12 into the local certificate store. Sign Tool will use
+            # package.json's `certificateSubjectName` to find the imported cert.
+            $env:CSC_LINK='C:\Users\circleci\WordPress-Desktop\resource\certificates\win.p12'
+            Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
+      - run:
+          name: Build Desktop Windows
+          command: |
+            # Use make for bash-like environment variable substitution
+
+            make build-main
+            make package
+      - run:
+          name: Archive Unpacked Directories
+          command: |
+            tar -zcf release/win-unpacked-x64.tar.gz release/win-unpacked
+            tar -zcf release/win-unpacked-ia32.tar.gz release/win-ia32-unpacked
+      - run:
+          when: always
+          name: Clean Up
+          command: |
+            set +e
+            rm -rf release/github
+            rm -rf release/win-unpacked
+            rm -rf release/win-ia32-unpacked
+          shell: bash.exe
+      - store_artifacts:
+          when: always
+          path: release
+      - persist_to_workspace:
+          root: C:\Users\circleci\WordPress-Desktop
+          paths:
+            - release
+
+  # Publish all the artifacts generated by the previous wp-desktop- jobs to a
+  # GitHub release and generate the release notes using the Git commits history
+  wp-desktop-publish:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /home/circleci/WordPress-Desktop
+    environment:
+      VERSION: << pipeline.git.tag >>
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /home/circleci/WordPress-Desktop
+      - run:
+          name: Install Dependencies
+          command: go get github.com/tcnksm/ghr
+      - run:
+          name: Publish Github Release
+          command: |
+            echo "Publishing draft release for wp-desktop $VERSION..."
+            NAME="WP-Desktop ${VERSION#?}"
+
+            chmod +x bin/make-changelog.sh
+            ./bin/make-changelog.sh > desktop/CHANGELOG.md
+
+            ghr \
+              --token "${GH_TOKEN}" \
+              --username "${CIRCLE_PROJECT_USERNAME}" \
+              --repository "${CIRCLE_PROJECT_REPONAME}" \
+              --commitish "${CIRCLE_SHA1}" \
+              --name "${NAME}" \
+              --body "$(cat CHANGELOG.md)" \
+              --delete \
+              --draft \
+              "${VERSION}" release/
+
+            echo "Publish complete"
+
+workflows:
+  version: 2
+  wp-desktop-release:
+    when: << pipeline.git.tag >>
+    jobs:
+      - wp-desktop-assets:
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-mac:
+          requires:
+            - wp-desktop-assets
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-linux:
+          requires:
+            - wp-desktop-assets
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-windows:
+          requires:
+            - wp-desktop-assets
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-publish:
+          requires:
+            - wp-desktop-mac
+            - wp-desktop-linux
+            - wp-desktop-windows
+          filters:
+            tags:
+              only: /v.*/
