@@ -404,6 +404,12 @@ class EditContactInfoFormCard extends React.Component {
 		return formSubmitting === true || haveContactDetailsChanged === false;
 	}
 
+	shouldDisableUpdateWpcomEmailCheckbox() {
+		const { email: newContactEmail = null } = this.state.newContactDetails || {};
+		const { email: wpcomEmail = null } = this.props.currentUser || {};
+		return wpcomEmail === newContactEmail;
+	}
+
 	render() {
 		const { selectedDomain, showContactInfoNote, translate } = this.props;
 		const canUseDesignatedAgent = selectedDomain.transferLockOnWhoisUpdateOptional;
@@ -434,6 +440,7 @@ class EditContactInfoFormCard extends React.Component {
 						labelTexts={ { submitButton: translate( 'Save contact info' ) } }
 						disableSubmitButton={ this.shouldDisableSubmitButton() }
 						isSubmitting={ this.state.formSubmitting }
+						updateWpcomEmailCheckboxDisabled={ this.shouldDisableUpdateWpcomEmailCheckbox() }
 					>
 						{ canUseDesignatedAgent && this.renderTransferLockOptOut() }
 					</ContactDetailsFormFields>

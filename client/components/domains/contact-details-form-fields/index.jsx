@@ -73,6 +73,7 @@ export class ContactDetailsFormFields extends Component {
 		needsAlternateEmailForGSuite: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
 		shouldForceRenderOnPropChange: PropTypes.bool,
+		updateWpcomEmailCheckboxDisabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -95,6 +96,7 @@ export class ContactDetailsFormFields extends Component {
 		hasCountryStates: false,
 		userCountryCode: 'US',
 		shouldForceRenderOnPropChange: false,
+		updateWpcomEmailCheckboxDisabled: false,
 	};
 
 	constructor( props ) {
@@ -395,7 +397,7 @@ export class ContactDetailsFormFields extends Component {
 						{
 							label: translate( 'Email' ),
 							checkboxLabel: translate( 'Apply contact update to My Account email.' ),
-							checkboxDisabled: false,
+							checkboxDisabled: this.props.updateWpcomEmailCheckboxDisabled,
 							onCheckboxChanged: this.handleWpcomEmailUpdateCheckbox,
 							checkboxDefaultChecked: this.state.updateWpcomEmail,
 						},
