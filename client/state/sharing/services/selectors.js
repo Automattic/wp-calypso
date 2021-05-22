@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-
 import { filter } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { isJetpackSite, isJetpackModuleActive } from 'state/sites/selectors';
-import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-business-eligible';
+import config from '@automattic/calypso-config';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { isJetpackSite, isJetpackModuleActive } from 'calypso/state/sites/selectors';
+import isSiteGoogleMyBusinessEligible from 'calypso/state/selectors/is-site-google-my-business-eligible';
+
+import 'calypso/state/sharing/init';
 
 /**
  * Returns an object of service objects.
@@ -66,7 +67,7 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 		return services;
 	}
 
-	return services.filter( service => {
+	return services.filter( ( service ) => {
 		// Omit if the site is Jetpack and service doesn't support Jetpack
 		if ( isJetpackSite( state, siteId ) && ! service.jetpack_support ) {
 			return false;
@@ -121,11 +122,6 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 
 		// Omit Eventbrite as the API that is used by Eventbrite plugin was disabled 20/02/2020
 		if ( service.ID === 'eventbrite' ) {
-			return false;
-		}
-
-		// Omit Instagram Basic Display, which is still in testing
-		if ( 'instagram-basic-display' === service.ID ) {
 			return false;
 		}
 

@@ -6,7 +6,7 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import getPublicizeConnection from 'state/selectors/get-publicize-connection';
+import getPublicizeConnection from 'calypso/state/selectors/get-publicize-connection';
 
 /**
  * Propagate publicize-connections with the share actions

@@ -9,7 +9,7 @@ const SITE_FRAGMENT_REGEX = /\/(:site|:site_id|:siteid|:blogid|:blog_id|:siteslu
  * @param {string} path The tracked path.
  * @returns {boolean} If the report should null `blog_id`.
  */
-export default path => {
+export default ( path ) => {
 	if ( ! path ) {
 		return true;
 	}

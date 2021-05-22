@@ -9,14 +9,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import { localizeUrl } from 'lib/i18n-utils';
-import { composeAnalytics, recordTracksEvent, bumpStat } from 'state/analytics/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption } from 'state/sites/selectors';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import CardHeading from 'calypso/components/card-heading';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { composeAnalytics, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 
 /**
  * Style dependencies
@@ -26,7 +26,7 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import happinessIllustration from 'assets/images/customer-home/happiness.png';
+import happinessIllustration from 'calypso/assets/images/customer-home/happiness.png';
 
 const Support = ( { trackContactAction, trackDocsAction } ) => {
 	const translate = useTranslate();
@@ -35,13 +35,13 @@ const Support = ( { trackContactAction, trackDocsAction } ) => {
 		<Card className="support">
 			<CardHeading>{ translate( 'Support' ) }</CardHeading>
 			<h6 className="support__header customer-home__card-subheader">
-				{ translate( 'Get all the help you need' ) }
+				{ translate( 'Get all the help you need.' ) }
 			</h6>
 			<div className="support__content">
 				<img src={ happinessIllustration } alt={ translate( 'Support' ) } />
 				<VerticalNav>
 					<VerticalNavItem
-						path={ localizeUrl( 'https://en.support.wordpress.com' ) }
+						path={ localizeUrl( 'https://wordpress.com/support' ) }
 						external
 						onClick={ trackDocsAction }
 					>
@@ -56,7 +56,7 @@ const Support = ( { trackContactAction, trackDocsAction } ) => {
 	);
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 	const isStaticHomePage =
@@ -67,7 +67,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const trackDocsAction = isStaticHomePage =>
+const trackDocsAction = ( isStaticHomePage ) =>
 	composeAnalytics(
 		recordTracksEvent( 'calypso_customer_home_support_docs_click', {
 			is_static_home_page: isStaticHomePage,
@@ -75,7 +75,7 @@ const trackDocsAction = isStaticHomePage =>
 		bumpStat( 'calypso_customer_home', 'support_docs' )
 	);
 
-const trackContactAction = isStaticHomePage =>
+const trackContactAction = ( isStaticHomePage ) =>
 	composeAnalytics(
 		recordTracksEvent( 'calypso_customer_home_support_contact_click', {
 			is_static_home_page: isStaticHomePage,

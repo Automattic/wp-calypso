@@ -20,7 +20,7 @@ import reducer, {
 	completedActivationRequests,
 	recommendedThemes,
 } from '../reducer';
-import ThemeQueryManager from 'lib/query-manager/theme';
+import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
@@ -41,8 +41,8 @@ import {
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
 	RECOMMENDED_THEMES_FAIL,
-} from 'state/themes/action-types';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+} from 'calypso/state/themes/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 
 const twentysixteen = {
 	id: 'twentysixteen',
@@ -316,7 +316,7 @@ describe( 'reducer', () => {
 				} )
 			);
 
-			const state = queries( original, { type: SERIALIZE } );
+			const state = serialize( queries, original );
 
 			// _timestamp is not part of the data
 			delete state._timestamp;
@@ -361,7 +361,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			const state = queries( original, { type: DESERIALIZE } );
+			const state = deserialize( queries, original );
 
 			expect( state ).toEqual( {
 				2916284: new ThemeQueryManager(
@@ -387,7 +387,7 @@ describe( 'reducer', () => {
 				2916284: '{INVALID',
 			} );
 
-			const state = queries( original, { type: DESERIALIZE } );
+			const state = deserialize( queries, original );
 
 			expect( state ).toEqual( {} );
 		} );
@@ -615,18 +615,12 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'persists state', () => {
-			const state = themeRequestErrors( themeError, {
-				type: SERIALIZE,
-			} );
-
+			const state = serialize( themeRequestErrors, themeError );
 			expect( state ).toEqual( themeError );
 		} );
 
 		test( 'loads persisted state', () => {
-			const state = themeRequestErrors( themeError, {
-				type: DESERIALIZE,
-			} );
-
+			const state = deserialize( themeRequestErrors, themeError );
 			expect( state ).toEqual( themeError );
 		} );
 	} );
@@ -688,8 +682,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should persist state', () => {
-			const state = activeThemes( { 2211888: 'twentysixteen' }, { type: SERIALIZE } );
-
+			const state = serialize( activeThemes, { 2211888: 'twentysixteen' } );
 			expect( state ).toEqual( { 2211888: 'twentysixteen' } );
 		} );
 
@@ -698,7 +691,7 @@ describe( 'reducer', () => {
 				2211888: 'twentysixteen',
 			} );
 
-			const state = activeThemes( original, { type: DESERIALIZE } );
+			const state = deserialize( activeThemes, original );
 			expect( state ).toEqual( { 2211888: 'twentysixteen' } );
 		} );
 
@@ -708,7 +701,7 @@ describe( 'reducer', () => {
 				2916284: 1234,
 			} );
 
-			const state = activeThemes( original, { type: DESERIALIZE } );
+			const state = deserialize( activeThemes, original );
 			expect( state ).toEqual( {} );
 		} );
 	} );
@@ -970,45 +963,52 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#recommendedThemes()', () => {
-		test( 'should default to isLoading and empty themes array', () => {
+		const filter = 'some-filter-string';
+
+		test( 'should default to an empty object', () => {
 			const state = recommendedThemes( undefined, {} );
-			expect( state ).toEqual( { isLoading: true, themes: [] } );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should update isLoading when fetch is called', () => {
 			const state = recommendedThemes(
-				{ isLoading: false, themes: [] },
+				{},
 				{
 					type: RECOMMENDED_THEMES_FETCH,
+					filter,
 				}
 			);
-			expect( state ).toEqual( { isLoading: true, themes: [] } );
+			expect( state ).toEqual( { [ filter ]: { isLoading: true, themes: [] } } );
 		} );
 
 		test( 'should update isLoading and themes on fetch success', () => {
 			const state = recommendedThemes(
-				{ isLoading: true, themes: [] },
+				{ [ filter ]: { isLoading: true, themes: [] } },
 				{
 					type: RECOMMENDED_THEMES_SUCCESS,
+					filter,
 					payload: {
 						themes: [ 'a', 'b', 'c' ],
 					},
 				}
 			);
 			expect( state ).toEqual( {
-				isLoading: false,
-				themes: [ 'a', 'b', 'c' ],
+				[ filter ]: {
+					isLoading: false,
+					themes: [ 'a', 'b', 'c' ],
+				},
 			} );
 		} );
 
 		test( 'should update isLoading on fetch fail', () => {
 			const state = recommendedThemes(
-				{ isLoading: true, themes: [] },
+				{ [ filter ]: { isLoading: true, themes: [] } },
 				{
 					type: RECOMMENDED_THEMES_FAIL,
+					filter,
 				}
 			);
-			expect( state ).toEqual( { isLoading: false, themes: [] } );
+			expect( state ).toEqual( { [ filter ]: { isLoading: false, themes: [] } } );
 		} );
 	} );
 } );

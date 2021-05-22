@@ -2,10 +2,9 @@
  * External	dependencies
  *
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { identity, includes, noop } from 'lodash';
+import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -19,7 +18,9 @@ import {
 import UsAddressFieldset from './us-address-fieldset';
 import EuAddressFieldset from './eu-address-fieldset';
 import UkAddressFieldset from './uk-address-fieldset';
-import { Input, HiddenInput } from 'my-sites/domains/components/form';
+import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+
+const noop = () => {};
 
 export class RegionAddressFieldsets extends Component {
 	static propTypes = {
@@ -31,14 +32,13 @@ export class RegionAddressFieldsets extends Component {
 		contactDetailsErrors: PropTypes.shape(
 			Object.assign(
 				{},
-				...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: PropTypes.string } ) )
+				...CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => ( { [ field ]: PropTypes.string } ) )
 			)
 		),
 	};
 
 	static defaultProps = {
 		getFieldProps: noop,
-		translate: identity,
 		countryCode: 'US',
 		shouldAutoFocusAddressField: false,
 		hasCountryStates: false,

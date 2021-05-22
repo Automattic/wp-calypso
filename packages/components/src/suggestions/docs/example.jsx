@@ -6,17 +6,18 @@ import React, { useCallback, useMemo, useState } from 'react';
 /**
  * Internal dependencies
  */
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import Suggestions from '..';
 
 export default function SuggestionsExample() {
 	const [ query, setQuery ] = useState( '' );
-	const updateInput = useCallback( e => setQuery( e.target.value ), [ setQuery ] );
+	const updateInput = useCallback( ( e ) => setQuery( e.target.value ), [ setQuery ] );
 
 	const suggestions = useMemo( () => {
 		if ( ! query ) {
 			return [];
 		}
-		const allSuggestions = [ 'Foo', 'Bar', 'Baz' ].map( s => ( { label: s } ) );
+		const allSuggestions = [ 'Foo', 'Bar', 'Baz' ].map( ( s ) => ( { label: s } ) );
 		const r = new RegExp( query, 'i' );
 		return allSuggestions.filter( ( { label } ) => r.test( label ) );
 	}, [ query ] );
@@ -24,8 +25,7 @@ export default function SuggestionsExample() {
 	return (
 		<div className="docs__suggestions-container">
 			<div>
-				<input
-					type="text"
+				<FormTextInput
 					value={ query }
 					onChange={ updateInput }
 					autoComplete="off"

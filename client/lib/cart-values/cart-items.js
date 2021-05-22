@@ -1,45 +1,24 @@
 /**
- * External dependencies
- */
-import update from 'immutability-helper';
-import {
-	assign,
-	concat,
-	every,
-	filter,
-	find,
-	flatten,
-	flow,
-	get,
-	isEqual,
-	map,
-	merge,
-	reject,
-	some,
-	toLower,
-	uniq,
-} from 'lodash';
-import emailValidator from 'email-validator';
-
-/**
  * Internal dependencies
  */
-import { GSUITE_BASIC_SLUG, GSUITE_EXTRA_LICENSE_SLUG } from 'lib/gsuite/constants';
+import config from '@automattic/calypso-config';
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_BASIC_SLUG,
+	GSUITE_EXTRA_LICENSE_SLUG,
+} from 'calypso/lib/gsuite/constants';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import {
 	formatProduct,
-	getDomain,
 	isCustomDesign,
-	isDependentProduct,
 	isDomainMapping,
 	isDomainProduct,
-	isDomainRedemption,
 	isDomainRegistration,
 	isDomainTransfer,
-	isBundled,
 	isEcommerce,
-	isFreeTrial,
 	isFreeWordPressComDomain,
-	isGoogleApps,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isJetpackProduct,
 	isNoAds,
@@ -47,231 +26,40 @@ import {
 	isBlogger,
 	isPersonal,
 	isPremium,
+	isBusiness,
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
 	isConciergeSession,
-} from 'lib/products-values';
-import sortProducts from 'lib/products-values/sort';
-import { getTld } from 'lib/domains';
-import { domainProductSlugs } from 'lib/domains/constants';
-import {
+	isTrafficGuide,
+	isTitanMail,
+	isP2Plus,
+	isMonthlyProduct,
+	getTermDuration,
 	getPlan,
 	isBloggerPlan,
-	isBusinessPlan,
-	isPersonalPlan,
-	isPremiumPlan,
 	isWpComFreePlan,
 	isWpComBloggerPlan,
-} from 'lib/plans';
-import { getTermDuration } from 'lib/plans/constants';
-
-/**
- * Adds the specified item to a shopping cart.
- *
- * @param {object} newCartItem - new item as `CartItemValue` object
- * @returns {Function} the function that adds the item to a shopping cart
- */
-export function addCartItem( newCartItem ) {
-	function appendItem( products ) {
-		products = products || [];
-
-		const isDuplicate = products.some( function( existingCartItem ) {
-			return isEqual( newCartItem, existingCartItem );
-		} );
-
-		return isDuplicate ? products : products.concat( [ newCartItem ] );
-	}
-
-	return function( cart ) {
-		if ( cartItemShouldReplaceCart( newCartItem, cart ) ) {
-			return update( cart, { products: { $set: [ newCartItem ] } } );
-		}
-
-		return update( cart, { products: { $apply: appendItem } } );
-	};
-}
-
-export function clearCart() {
-	return function( cart ) {
-		return update( cart, { products: { $set: [] } } );
-	};
-}
-
-/**
- * Adds the specified item to a shopping cart without replacing the cart
- *
- * @param {object} newCartItem - new item as `CartItemValue` object
- * @returns {Function} the function that adds the item to a shopping cart
- */
-export function addCartItemWithoutReplace( newCartItem ) {
-	function appendItem( products ) {
-		products = products || [];
-
-		const isDuplicate = products.some( function( existingCartItem ) {
-			return isEqual( newCartItem, existingCartItem );
-		} );
-
-		return isDuplicate ? products : products.concat( [ newCartItem ] );
-	}
-
-	return function( cart ) {
-		return update( cart, { products: { $apply: appendItem } } );
-	};
-}
-
-/**
- * Determines if the given cart item should replace the cart.
- * This can happen if the given item:
- * - will result in mixed renewals/non-renewals or multiple renewals (excluding privacy protection).
- * - is a free trial plan
- *
- * @param {object} cartItem - `CartItemValue` object
- * @param {object} cart - the existing shopping cart
- * @returns {boolean} whether or not the item should replace the cart
- */
-export function cartItemShouldReplaceCart( cartItem, cart ) {
-	if ( isRenewal( cartItem ) && ! isDomainRedemption( cartItem ) ) {
-		// adding a renewal replaces the cart unless it is a privacy protection
-		return true;
-	}
-
-	if ( ! isRenewal( cartItem ) && hasRenewalItem( cart ) ) {
-		// all items should replace the cart if the cart contains a renewal
-		return true;
-	}
-
-	if ( isFreeTrial( cartItem ) || hasFreeTrial( cart ) ) {
-		// adding a free trial plan to your cart replaces the cart
-		// adding another product to a cart containing a free trial removes the free trial
-		return true;
-	}
-
-	if ( isJetpackPlan( cartItem ) ) {
-		// adding a jetpack bundle should replace the cart
-		return true;
-	}
-
-	if ( isJetpackProduct( cartItem ) ) {
-		// adding a Jetpack product should replace the cart
-		return true;
-	}
-
-	return false;
-}
-
-/**
- * Removes the specified item from a shopping cart.
- *
- * @param {object} cartItemToRemove - item as `CartItemValue` object
- * @returns {Function} the function that removes the item from a shopping cart
- */
-export function remove( cartItemToRemove ) {
-	function rejectItem( products ) {
-		const productsLeft = reject( products, function( existingCartItem ) {
-			return (
-				cartItemToRemove.product_slug === existingCartItem.product_slug &&
-				cartItemToRemove.meta === existingCartItem.meta
-			);
-		} );
-
-		const isRemovingDomainProduct =
-			isDomainMapping( cartItemToRemove ) || isDomainRegistration( cartItemToRemove );
-		return productsLeft.map( existingCartItem => {
-			if (
-				isPlan( existingCartItem ) &&
-				isRemovingDomainProduct &&
-				getDomain( cartItemToRemove ) === getDomain( existingCartItem )
-			) {
-				return update( existingCartItem, { extra: { $merge: { domain_to_bundle: '' } } } );
-			}
-
-			return existingCartItem;
-		} );
-	}
-
-	return function( cart ) {
-		return update( cart, { products: { $apply: rejectItem } } );
-	};
-}
-
-/**
- * Removes the specified item and its dependency items from a shopping cart.
- *
- * @param {object} cartItemToRemove - item as `CartItemValue` object
- * @param {object} cart - cart as `CartValue` object
- * @param {boolean} domainsWithPlansOnly - Whether we should consider domains as dependents of products
- * @returns {Function} the function that removes the items from a shopping cart
- */
-export function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPlansOnly ) {
-	const dependencies = getDependentProducts( cartItemToRemove, cart, domainsWithPlansOnly );
-	const changes = dependencies.map( remove ).concat( remove( cartItemToRemove ) );
-
-	return flow.apply( null, changes );
-}
-
-/**
- * Removes the specified item and its dependency items from a shopping cart.
- *
- * @param {object} oldItem - item as `CartItemValue` object
- * @param {object} newItem - item as `CartItemValue` object
- * @returns {Function} the function that removes the items from a shopping cart
- */
-export function replaceItem( oldItem, newItem ) {
-	return function( cart ) {
-		return flow( [ remove( oldItem ), addCartItem( newItem ) ] )( cart );
-	};
-}
-
-/**
- * Retrieves the dependency items from the shopping cart for the given cart item.
- *
- * @param {object} cartItem - item as `CartItemValue` object
- * @param {object} cart - cart as `CartValue` object
- * @param {boolean} domainsWithPlansOnly - Whether we should consider domains as dependents of products
- * @returns {object[]} the list of dependency items in the shopping cart
- */
-export function getDependentProducts( cartItem, cart, domainsWithPlansOnly ) {
-	const dependentProducts = getAllCartItems( cart ).filter( function( existingCartItem ) {
-		return isDependentProduct( cartItem, existingCartItem, domainsWithPlansOnly );
-	} );
-
-	return uniq(
-		flatten(
-			dependentProducts.concat(
-				dependentProducts.map( dependentProduct => getDependentProducts( dependentProduct, cart ) )
-			)
-		)
-	);
-}
+} from '@automattic/calypso-products';
+import { getTld } from 'calypso/lib/domains';
+import { domainProductSlugs } from 'calypso/lib/domains/constants';
 
 /**
  * Retrieves all the items in the specified shopping cart.
  *
- * @param {object} cart - cart as `CartValue` object
- * @returns {object[]} the list of items in the shopping cart as `CartItemValue` objects
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct[]} the list of items in the shopping cart as `ResponseCartProduct` objects
  */
 export function getAllCartItems( cart ) {
 	return ( cart && cart.products ) || [];
 }
 
 /**
- * Retrieves all the items in the shopping cart sorted
- *
- * @param {object} cart - cart as `CartValue` object
- *
- * @returns {object[]} the sorted list of items in the shopping cart
- */
-export function getAllCartItemsSorted( cart ) {
-	return sortProducts( getAllCartItems( cart ) );
-}
-
-/**
  * Gets the renewal items from the specified shopping cart.
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
  * @returns {Array} an array of renewal items
  */
 export function getRenewalItems( cart ) {
@@ -279,159 +67,134 @@ export function getRenewalItems( cart ) {
 }
 
 /**
- * Determines whether there is at least one item with free trial in the specified shopping cart.
- *
- * @param {object} cart - cart as `CartValue` object
- * @returns {boolean} true if there is at least one item with free trial, false otherwise
- */
-export function hasFreeTrial( cart ) {
-	return some( getAllCartItems( cart ), 'free_trial' );
-}
-
-/**
  * Determines whether there is any kind of plan (e.g. Premium or Business) in the shopping cart.
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
  * @returns {boolean} true if there is at least one plan, false otherwise
  */
 export function hasPlan( cart ) {
-	return cart && some( getAllCartItems( cart ), isPlan );
+	return cart && getAllCartItems( cart ).some( isPlan );
 }
 
 /**
  * Determines whether there is a Jetpack plan in the shopping cart.
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
  * @returns {boolean} true if there is at least one Jetpack plan, false otherwise
  */
 export function hasJetpackPlan( cart ) {
-	return some( getAllCartItems( cart ), isJetpackPlan );
+	return getAllCartItems( cart ).some( isJetpackPlan );
+}
+
+/**
+ * Determines whether there is a P2+ plan in the shopping cart.
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
+ * @returns {boolean} true if there is at least one P2+ plan, false otherwise
+ */
+export function hasP2PlusPlan( cart ) {
+	return getAllCartItems( cart ).some( isP2Plus );
 }
 
 /**
  * Determines whether there is an ecommerce plan in the shopping cart.
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
  * @returns {boolean} true if there is at least one plan, false otherwise
  */
 export function hasEcommercePlan( cart ) {
-	return cart && some( getAllCartItems( cart ), isEcommerce );
-}
-
-/**
- * Does the cart contain only bundled domains and transfers
- *
- * @param {object} cart - cart as `CartValue` object
- * @returns {boolean} true if there are only bundled domains and transfers
- */
-export function hasOnlyBundledDomainProducts( cart ) {
-	return (
-		cart && every( [ ...getDomainRegistrations( cart ), ...getDomainTransfers( cart ) ], isBundled )
-	);
+	return cart && getAllCartItems( cart ).some( isEcommerce );
 }
 
 export function hasBloggerPlan( cart ) {
-	return some( getAllCartItems( cart ), isBlogger );
+	return getAllCartItems( cart ).some( isBlogger );
 }
 
 export function hasPersonalPlan( cart ) {
-	return some( getAllCartItems( cart ), isPersonal );
+	return getAllCartItems( cart ).some( isPersonal );
 }
 
 export function hasPremiumPlan( cart ) {
-	return some( getAllCartItems( cart ), isPremium );
+	return getAllCartItems( cart ).some( isPremium );
+}
+
+export function hasBusinessPlan( cart ) {
+	return getAllCartItems( cart ).some( isBusiness );
 }
 
 export function hasDomainCredit( cart ) {
 	return cart.has_bundle_credit || hasPlan( cart );
 }
 
-/**
- * Whether the cart has a registration with a specific TLD
- *
- * @param {object} cart - cart as `CartValue` object
- * @param {string} tld - TLD to look for, no leading dot
- *
- * @returns {boolean} - Whether or not the cart contains a domain with that TLD
- */
-export function hasTld( cart, tld ) {
-	const domains = concat( getDomainRegistrations( cart ), getDomainTransfers( cart ) );
-
-	return some( domains, cartItem => getTld( cartItem.meta ) === tld );
-}
-
-export function getTlds( cart ) {
-	const domains = concat( getDomainRegistrations( cart ), getDomainTransfers( cart ) );
-
-	return uniq( map( domains, cartItem => getTld( cartItem.meta ) ) );
-}
-
-/**
- * Determines whether all items in the specified shopping are free trial or free domains
- *
- * @param {object} cart - cart as `CartValue` object
- * @returns {boolean} true if all items have free trial, false otherwise
- * @todo This will fail when a domain is purchased with a plan, as the domain will be included in the free trial
- */
-export function hasOnlyFreeTrial( cart ) {
-	return cart.products && findFreeTrial( cart ) && every( getAllCartItems( cart ), { cost: 0 } );
+export function hasMonthlyCartItem( cart ) {
+	return getAllCartItems( cart ).some( isMonthlyProduct );
 }
 
 /**
  * Determines whether there is at least one item of a given product in the specified shopping cart.
  *
- * @param {object} cart - cart as `CartValue` object
- * @param {object} productSlug - the unique string that identifies the product
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
+ * @param {string} productSlug - the unique string that identifies the product
  * @returns {boolean} true if there is at least one item of the specified product type, false otherwise
  */
 export function hasProduct( cart, productSlug ) {
-	return getAllCartItems( cart ).some( function( cartItem ) {
+	return getAllCartItems( cart ).some( function ( cartItem ) {
 		return cartItem.product_slug === productSlug;
 	} );
 }
 
 /**
- * Determines whether every product in the specified shopping cart is of the same productSlug.
- * Will return false if the cart is empty.
- *
- * @param {object} cart - cart as `CartValue` object
- * @param {object} productSlug - the unique string that identifies the product
- * @returns {boolean} true if all the products in the cart are of the productSlug type
- */
-export function hasOnlyProductsOf( cart, productSlug ) {
-	return cart.products && every( getAllCartItems( cart ), { product_slug: productSlug } );
-}
-
-/**
  * Determines whether there is at least one domain registration item in the specified shopping cart.
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
  * @returns {boolean} true if there is at least one domain registration item, false otherwise
  */
 export function hasDomainRegistration( cart ) {
-	return some( getAllCartItems( cart ), isDomainRegistration );
+	return getAllCartItems( cart ).some( isDomainRegistration );
 }
 
-export function hasAllDomainProductsWithPrivacySupport( cart ) {
-	return every(
-		concat( getDomainTransfers( cart ), getDomainRegistrations( cart ) ),
-		privacyAvailable
-	);
+/**
+ * Determines whether there is at least one new domain registration item in the specified shopping cart.
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
+ * @returns {boolean} true if there is at least one new domain registration item, false otherwise
+ */
+export function hasNewDomainRegistration( cart ) {
+	return getAllCartItems( cart ).some( isNewDomainRegistration );
 }
 
-export function hasSomeDomainProductsWithPrivacySupport( cart ) {
-	return some(
-		concat( getDomainTransfers( cart ), getDomainRegistrations( cart ) ),
-		privacyAvailable
-	);
+/**
+ * Determines whether there is at least one domain registration renewal item in the specified shopping cart.
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
+ * @returns {boolean} true if there is at least one domain registration renewal item, false otherwise
+ */
+export function hasDomainRenewal( cart ) {
+	return getAllCartItems( cart ).some( isDomainRenewal );
 }
 
-export function hasDomainMapping( cart ) {
-	return some( getAllCartItems( cart ), isDomainMapping );
+/**
+ * Determines whether the supplied cart item is a new domain registration (i.e. not a renewal).
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCartProduct} cartItem - cart item
+ * @returns {boolean} true if the cart item is a new domain registration, false otherwise.
+ */
+function isNewDomainRegistration( cartItem ) {
+	return isDomainRegistration( cartItem ) && ! isRenewal( cartItem );
+}
+
+/**
+ * Determines whether the supplied cart item is a domain renewal.
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCartProduct} cartItem - cart item
+ * @returns {boolean} true if the cart item is a domain renewal, false otherwise.
+ */
+function isDomainRenewal( cartItem ) {
+	return isRenewal( cartItem ) && isDomainRegistration( cartItem );
 }
 
 export function hasDomainBeingUsedForPlan( cart ) {
-	return some( getDomainRegistrations( cart ), registration =>
+	return getDomainRegistrations( cart ).some( ( registration ) =>
 		isDomainBeingUsedForPlan( cart, registration.meta )
 	);
 }
@@ -439,51 +202,65 @@ export function hasDomainBeingUsedForPlan( cart ) {
 /**
  * Determines whether there is at least one renewal item in the specified shopping cart.
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
  * @returns {boolean} true if there is at least one renewal item, false otherwise
  */
 export function hasRenewalItem( cart ) {
-	return some( getAllCartItems( cart ), isRenewal );
+	return getAllCartItems( cart ).some( isRenewal );
 }
 
 /**
  * Determines whether there is at least one domain transfer item in the specified shopping cart.
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
  * @returns {boolean} true if there is at least one domain transfer item, false otherwise
  */
 export function hasTransferProduct( cart ) {
-	return some( getAllCartItems( cart ), isDomainTransfer );
+	return getAllCartItems( cart ).some( isDomainTransfer );
 }
 
 /**
  * Retrieves all the domain transfer items in the specified shopping cart.
  *
- * @param {object} cart - cart as `CartValue` object
- * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct[]} the list of the corresponding items in the shopping cart as `ResponseCartProduct` objects
  */
 export function getDomainTransfers( cart ) {
-	return filter( getAllCartItems( cart ), { product_slug: domainProductSlugs.TRANSFER_IN } );
+	return getAllCartItems( cart ).filter(
+		( product ) => product.product_slug === domainProductSlugs.TRANSFER_IN
+	);
 }
 
 /**
  * Determines whether all items are renewal items in the specified shopping cart.
  *
- * @param {object} cart - cart as `CartValue` object
+ * Ignores partial credits, which aren't really a line item in this sense.
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
  * @returns {boolean} true if there are only renewal items, false otherwise
  */
 export function hasOnlyRenewalItems( cart ) {
-	return every( getAllCartItems( cart ), isRenewal );
+	return getAllCartItems( cart ).every( ( item ) => isRenewal( item ) || isPartialCredits( item ) );
 }
 
 /**
  * Determines whether there is at least one concierge session item in the specified shopping cart.
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
  * @returns {boolean} true if there is at least one concierge session item, false otherwise
  */
 export function hasConciergeSession( cart ) {
-	return some( getAllCartItems( cart ), isConciergeSession );
+	return getAllCartItems( cart ).some( isConciergeSession );
+}
+
+/**
+ * Determines whether there is a traffic guide item in the specified shopping cart.
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
+ * @returns {boolean} true if there is a traffic guide item, false otherwise
+ */
+export function hasTrafficGuide( cart ) {
+	return getAllCartItems( cart ).some( isTrafficGuide );
 }
 
 /**
@@ -507,22 +284,22 @@ export function getCartItemBillPeriod( cartItem ) {
  * Determines whether any product in the specified shopping cart is a renewable subscription.
  * Will return false if the cart is empty.
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
  * @returns {boolean} true if any product in the cart renews
  */
 export function hasRenewableSubscription( cart ) {
 	return (
 		cart.products &&
-		some( getAllCartItems( cart ), cartItem => getCartItemBillPeriod( cartItem ) > 0 )
+		getAllCartItems( cart ).some( ( cartItem ) => getCartItemBillPeriod( cartItem ) > 0 )
 	);
 }
 
 /**
  * Creates a new shopping cart item for a plan.
  *
- * @param {object} productSlug - the unique string that identifies the product
- * @param {object} properties - list of properties
- * @returns {object} the new item as `CartItemValue` object
+ * @param {string} productSlug - the unique string that identifies the product
+ * @param {object} [properties] - list of properties
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct | null} the new item
  */
 export function planItem( productSlug, properties ) {
 	// Free plan doesn't have shopping cart.
@@ -530,67 +307,34 @@ export function planItem( productSlug, properties ) {
 		return null;
 	}
 
-	const domainToBundle = get( properties, 'domainToBundle', '' );
+	const domainToBundle = properties?.domainToBundle ?? '';
 
 	return {
 		product_slug: productSlug,
-		free_trial: get( properties, 'isFreeTrialItem', false ),
 		...( domainToBundle ? { extra: { domain_to_bundle: domainToBundle } } : {} ),
 	};
-}
-
-/**
- * Creates a new shopping cart item for a Personal plan.
- *
- * @param {string} slug - e.g. value_bundle, jetpack_premium
- * @param {object} properties - list of properties
- * @returns {object} the new item as `CartItemValue` object
- */
-export function personalPlan( slug, properties ) {
-	return planItem( slug, properties );
-}
-
-/**
- * Creates a new shopping cart item for a Premium plan.
- *
- * @param {string} slug - e.g. value_bundle, jetpack_premium
- * @param {object} properties - list of properties
- * @returns {object} the new item as `CartItemValue` object
- */
-export function premiumPlan( slug, properties ) {
-	return planItem( slug, properties );
-}
-
-/**
- * Creates a new shopping cart item for a Business plan.
- *
- * @param {string} slug - e.g. business-bundle, jetpack_business
- * @param {object} properties - list of properties
- * @returns {object} the new item as `CartItemValue` object
- */
-export function businessPlan( slug, properties ) {
-	return planItem( slug, properties );
 }
 
 /**
  * Determines whether a domain Item supports purchasing a privacy subscription
  *
  * @param {string} productSlug - e.g. domain_reg, dotblog_domain
- * @param {Array} productsList - The list of products retrieved using getProductsList from state/products-list/selectors
+ * @param {object} productsList - The list of products retrieved using getProductsList from state/products-list/selectors
  * @returns {boolean} true if the domainItem supports privacy protection purchase
  */
 export function supportsPrivacyProtectionPurchase( productSlug, productsList ) {
-	const product = find( productsList, [ 'product_slug', productSlug ] ) || {};
-	return get( product, 'is_privacy_protection_product_purchase_allowed', false );
+	const product =
+		Object.values( productsList ).find( ( item ) => item.product_slug === productSlug ) || {};
+	return product?.is_privacy_protection_product_purchase_allowed ?? false;
 }
 
 /**
  * Creates a new shopping cart item for a domain.
  *
- * @param {object} productSlug - the unique string that identifies the product
+ * @param {string} productSlug - the unique string that identifies the product
  * @param {string} domain - domain name
  * @param {string} source - optional source for the domain item, e.g. `getdotblog`.
- * @returns {object} the new item as `CartItemValue` object
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct} the new item
  */
 export function domainItem( productSlug, domain, source ) {
 	const extra = source ? { extra: { source: source } } : undefined;
@@ -604,6 +348,13 @@ export function domainItem( productSlug, domain, source ) {
 	);
 }
 
+/**
+ * Creates a new shopping cart item for a premium theme.
+ *
+ * @param {string} themeSlug - the unique string that identifies the product
+ * @param {string} [source] - optional source for the domain item, e.g. `getdotblog`.
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct} the new item
+ */
 export function themeItem( themeSlug, source ) {
 	return {
 		product_slug: 'premium_theme',
@@ -618,20 +369,21 @@ export function themeItem( themeSlug, source ) {
  * Creates a new shopping cart item for a domain registration.
  *
  * @param {object} properties - list of properties
- * @returns {object} the new item as `CartItemValue` object
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct} the new item
  */
 export function domainRegistration( properties ) {
-	return assign( domainItem( properties.productSlug, properties.domain, properties.source ), {
+	return {
+		...domainItem( properties.productSlug, properties.domain, properties.source ),
 		is_domain_registration: true,
 		...( properties.extra ? { extra: properties.extra } : {} ),
-	} );
+	};
 }
 
 /**
  * Creates a new shopping cart item for a domain mapping.
  *
  * @param {object} properties - list of properties
- * @returns {object} the new item as `CartItemValue` object
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct} the new item
  */
 export function domainMapping( properties ) {
 	return domainItem( 'domain_map', properties.domain, properties.source );
@@ -641,7 +393,7 @@ export function domainMapping( properties ) {
  * Creates a new shopping cart item for Site Redirect.
  *
  * @param {object} properties - list of properties
- * @returns {object} the new item as `CartItemValue` object
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct} the new item
  */
 export function siteRedirect( properties ) {
 	return domainItem( 'offsite_redirect', properties.domain, properties.source );
@@ -651,107 +403,92 @@ export function siteRedirect( properties ) {
  * Creates a new shopping cart item for an incoming domain transfer.
  *
  * @param {object} properties - list of properties
- * @returns {object} the new item as `CartItemValue` object
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct} the new item
  */
 export function domainTransfer( properties ) {
-	return assign(
-		domainItem( domainProductSlugs.TRANSFER_IN, properties.domain, properties.source ),
-		{
-			...( properties.extra ? { extra: properties.extra } : {} ),
-		}
-	);
+	return {
+		...domainItem( domainProductSlugs.TRANSFER_IN, properties.domain, properties.source ),
+		...( properties.extra ? { extra: properties.extra } : {} ),
+	};
 }
 
 /**
- * Retrieves all the G Suite items in the specified shopping cart.
- * Out-dated name Google Apps is still used here for consistency in naming.
+ * Retrieves all the items in the specified shopping cart for G Suite or Google Workspace.
  *
- * @param {object} cart - cart as `CartValue` object
- * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct[]} the list of the corresponding items in the shopping cart as `ResponseCartProduct` objects
  */
 export function getGoogleApps( cart ) {
-	return filter( getAllCartItems( cart ), isGoogleApps );
+	return getAllCartItems( cart ).filter( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 }
 
+/**
+ * Creates a new shopping cart item for G Suite or Google Workspace.
+ *
+ * @param {object} properties - list of properties
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct} the new item
+ */
 export function googleApps( properties ) {
-	const productSlug = properties.product_slug || GSUITE_BASIC_SLUG,
-		item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
+	const { domain, meta, product_slug, quantity, new_quantity, users } = properties;
 
-	return assign( item, { extra: { google_apps_users: properties.users } } );
+	const domainName = meta ?? domain;
+
+	const productSlug =
+		product_slug ||
+		( config.isEnabled( 'google-workspace-migration' )
+			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+			: GSUITE_BASIC_SLUG );
+
+	const extra = {
+		google_apps_users: users,
+		...( new_quantity ? { new_quantity } : {} ),
+	};
+
+	return {
+		...domainItem( productSlug, domainName ),
+		...( quantity ? { quantity } : {} ),
+		extra,
+	};
 }
 
 export function googleAppsExtraLicenses( properties ) {
 	const item = domainItem( GSUITE_EXTRA_LICENSE_SLUG, properties.domain, properties.source );
 
-	return assign( item, { extra: { google_apps_users: properties.users } } );
-}
-
-export function fillGoogleAppsRegistrationData( cart, registrationData ) {
-	const googleAppsItems = filter( getAllCartItems( cart ), isGoogleApps );
-	return flow.apply(
-		null,
-		googleAppsItems.map( function( item ) {
-			item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
-			return addCartItem( item );
-		} )
-	);
+	return {
+		...item,
+		extra: { google_apps_users: properties.users },
+	};
 }
 
 /**
- * Returns the domain part of an email address.
+ * Creates a new shopping cart item for Titan Mail Monthly.
  *
- * @param {string} emailAddress - a valid email address
- * @returns {string} the domain
+ * @param {object} properties - list of properties
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct} the new item
  */
-const getDomainPartFromEmail = emailAddress =>
-	// Domain is any string after `@` character
-	'string' === typeof emailAddress || 0 < emailAddress.indexOf( '@' )
-		? emailAddress.replace( /.*@([^@>]+)>?$/, '$1' )
-		: null;
-
-/**
- * Returns a predicate that determines if a domain matches a product meta.
- *
- * @param {string} domain domain to compare.
- * @returns {Function(*=): (boolean)} true if the domain matches.
- */
-const isSameDomainAsProductMeta = domain => product =>
-	product &&
-	product.meta &&
-	'string' === typeof domain &&
-	'string' === typeof product.meta &&
-	product.meta.trim().toUpperCase() === domain.trim().toUpperCase();
-
-export function needsExplicitAlternateEmailForGSuite( cart, contactDetails ) {
-	return (
-		! emailValidator.validate( contactDetails.email ) ||
-		some(
-			cart.products,
-			isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.email ) )
-		)
-	);
-}
-
-export function hasInvalidAlternateEmailDomain( cart, contactDetails ) {
-	return some(
-		cart.products,
-		isSameDomainAsProductMeta( getDomainPartFromEmail( contactDetails.alternateEmail ) )
-	);
+export function titanMailMonthly( properties ) {
+	return {
+		...domainItem(
+			TITAN_MAIL_MONTHLY_SLUG,
+			properties.meta ?? properties.domain,
+			properties.source
+		),
+		quantity: properties.quantity,
+		extra: properties.extra,
+	};
 }
 
 export function hasGoogleApps( cart ) {
-	return some( getAllCartItems( cart ), isGoogleApps );
+	return getAllCartItems( cart ).some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
+}
+
+export function hasTitanMail( cart ) {
+	return getAllCartItems( cart ).some( isTitanMail );
 }
 
 export function customDesignItem() {
 	return {
 		product_slug: 'custom-design',
-	};
-}
-
-export function guidedTransferItem() {
-	return {
-		product_slug: 'guided_transfer',
 	};
 }
 
@@ -785,12 +522,12 @@ export function spaceUpgradeItem( slug ) {
 	};
 }
 
-export function conciergeSessionItem() {
-	return {
-		product_slug: 'concierge-session',
-	};
-}
-
+/**
+ * Creates a new shopping cart item for a jetpack product.
+ *
+ * @param {string} slug - the slug for the product
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct} the new item
+ */
 export function jetpackProductItem( slug ) {
 	return {
 		product_slug: slug,
@@ -798,66 +535,31 @@ export function jetpackProductItem( slug ) {
 }
 
 /**
- * Creates a new shopping cart item for the specified plan.
- *
- * @param {object} plan - plan provided by the `PlansList` object
- * @param {object} properties - list of properties
- * @returns {object} the new item as `CartItemValue` object
- */
-export function getItemForPlan( plan, properties ) {
-	properties = properties || {};
-
-	if ( isPersonalPlan( plan.product_slug ) ) {
-		return personalPlan( plan.product_slug, properties );
-	}
-
-	if ( isPremiumPlan( plan.product_slug ) ) {
-		return premiumPlan( plan.product_slug, properties );
-	}
-
-	if ( isBusinessPlan( plan.product_slug ) ) {
-		return businessPlan( plan.product_slug, properties );
-	}
-
-	throw new Error( 'Invalid plan product slug: ' + plan.product_slug );
-}
-
-/**
- * Retrieves the first item with free trial in the specified shopping cart.
- *
- * @param {object} cart - cart as `CartValue` object
- * @returns {object} the corresponding item in the shopping cart as `CartItemValue` object
- */
-export function findFreeTrial( cart ) {
-	return find( getAllCartItems( cart ), { free_trial: true } );
-}
-
-/**
  * Retrieves all the domain registration items in the specified shopping cart.
  *
- * @param {object} cart - cart as `CartValue` object
- * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct[]} the list of the corresponding items in the shopping cart as `import('@automattic/shopping-cart').ResponseCartProduct` objects
  */
 export function getDomainRegistrations( cart ) {
-	return filter( getAllCartItems( cart ), { is_domain_registration: true } );
+	return getAllCartItems( cart ).filter( ( product ) => product.is_domain_registration === true );
 }
 
 /**
  * Retrieves all the domain mapping items in the specified shopping cart.
  *
- * @param {object} cart - cart as `CartValue` object
- * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct[]} the list of the corresponding items in the shopping cart as `import('@automattic/shopping-cart').ResponseCartProduct` objects
  */
 export function getDomainMappings( cart ) {
-	return filter( getAllCartItems( cart ), { product_slug: 'domain_map' } );
+	return getAllCartItems( cart ).filter( ( product ) => product.product_slug === 'domain_map' );
 }
 
 /**
  * Returns a renewal CartItem object with the given properties and product slug.
  *
- * @param {string} product - the product object
+ * @param {string|object} product - the product object
  * @param {object} [properties] - properties to be included in the new CartItem object
- * @returns {object} a CartItem object
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct} a CartItem object
  */
 export function getRenewalItemFromProduct( product, properties ) {
 	product = formatProduct( product );
@@ -872,8 +574,12 @@ export function getRenewalItemFromProduct( product, properties ) {
 		cartItem = planItem( product.product_slug );
 	}
 
-	if ( isGoogleApps( product ) ) {
+	if ( isGSuiteOrGoogleWorkspace( product ) ) {
 		cartItem = googleApps( product );
+	}
+
+	if ( isTitanMail( product ) ) {
+		cartItem = titanMailMonthly( product );
 	}
 
 	if ( isSiteRedirect( product ) ) {
@@ -918,151 +624,63 @@ export function getRenewalItemFromProduct( product, properties ) {
 /**
  * Returns a renewal CartItem object from the given cartItem and properties.
  *
- * @param {object} cartItem - item as `CartItemValue` object
+ * @param {import('@automattic/shopping-cart').ResponseCartProduct} cartItem - item
  * @param {object} properties - properties to be included in the new CartItem object
- * @returns {object} a CartItem object
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct} a CartItem object
  */
 export function getRenewalItemFromCartItem( cartItem, properties ) {
-	return merge( {}, cartItem, {
+	return {
+		...cartItem,
 		extra: {
+			...cartItem.extra,
 			purchaseId: properties.id,
-			purchaseDomain: properties.domain,
 			purchaseType: 'renewal',
-			includedDomain: properties.includedDomain,
 		},
-	} );
-}
-
-/**
- * Retrieves all the site redirect items in the specified shopping cart.
- *
- * @param {object} cart - cart as `CartValue` object
- * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
- */
-export function getSiteRedirects( cart ) {
-	return filter( getAllCartItems( cart ), { product_slug: 'offsite_redirect' } );
+	};
 }
 
 export function hasDomainInCart( cart, domain ) {
-	return some( getAllCartItems( cart ), { is_domain_registration: true, meta: domain } );
-}
-
-/**
- * Retrieves the domain registration items in the specified shopping cart that do not have corresponding
- * private whois items.
- *
- * @param {object} cart - cart as `CartValue` object
- * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
- */
-export function getDomainRegistrationsWithoutPrivacy( cart ) {
-	return getDomainRegistrations( cart ).filter( function( cartItem ) {
-		return ! some( cart.products, {
-			meta: cartItem.meta,
-			extra: { privacy: true },
-		} );
+	return getAllCartItems( cart ).some( ( product ) => {
+		return product.is_domain_registration === true && product.meta === domain;
 	} );
-}
-
-/**
- * Retrieves the domain incoming transfer items in the specified shopping cart that do not have corresponding
- * private incoming transfer item.
- *
- * @param {object} cart - cart as `CartValue` object
- * @returns {object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
- */
-export function getDomainTransfersWithoutPrivacy( cart ) {
-	return getDomainTransfers( cart ).filter( function( cartItem ) {
-		return ! some( cart.products, {
-			meta: cartItem.meta,
-			extra: { privacy: true },
-		} );
-	} );
-}
-
-/**
- * Changes presence of a privacy protection for the given domain cart items.
- *
- * @param {object} cart - cart as `CartValue` object
- * @param {object[]} domainItems - the list of `CartItemValue` objects for domain registrations
- * @param {Function} changeFunction - the function that adds/removes the privacy protection to a shopping cart
- * @param {boolean} value - whether privacy is on or off
- *
- * @returns {Function} the function that adds/removes privacy protections from the shopping cart
- */
-export function changePrivacyForDomains( cart, domainItems, changeFunction, value ) {
-	return flow.apply(
-		null,
-		domainItems.map( function( item ) {
-			return changeFunction( item, updatePrivacyForDomain( item, value ) );
-		} )
-	);
 }
 
 /**
  * Changes presence of a privacy protection for the given domain cart item.
  *
- * @param {object} item - the `CartItemValue` object for domain registrations
+ * @param {import('@automattic/shopping-cart').ResponseCartProduct} item - the object for domain registrations
  * @param {boolean} value - whether privacy is on or off
  *
- * @returns {object} the new `CartItemValue` with added/removed privacy
+ * @returns {import('@automattic/shopping-cart').ResponseCartProduct} the new ResponseCartProduct with added/removed privacy
  */
 export function updatePrivacyForDomain( item, value ) {
-	return merge( {}, item, {
+	return {
+		...item,
 		extra: {
+			...item.extra,
 			privacy: value,
 		},
-	} );
+	};
 }
 
-export function addPrivacyToAllDomains( cart ) {
-	return changePrivacyForDomains(
-		cart,
-		[
-			...getDomainRegistrationsWithoutPrivacy( cart ),
-			...getDomainTransfersWithoutPrivacy( cart ),
-		],
-		replaceItem,
-		true
-	);
-}
-
-export function removePrivacyFromAllDomains( cart ) {
-	return changePrivacyForDomains(
-		cart,
-		[ ...getDomainRegistrations( cart ), ...getDomainTransfers( cart ) ],
-		replaceItem,
-		false
-	);
+/**
+ * Determines whether a cart item is partial credits
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCartProduct} cartItem - the cart product
+ * @returns {boolean} true if item is credits
+ */
+function isPartialCredits( cartItem ) {
+	return cartItem.product_slug === 'wordpress-com-credits';
 }
 
 /**
  * Determines whether a cart item is a renewal
  *
- * @param {object} cartItem - `CartItemValue` object
+ * @param {{extra?: import('@automattic/shopping-cart').ResponseCartProductExtra}} cartItem - object with `extra` property
  * @returns {boolean} true if item is a renewal
  */
 export function isRenewal( cartItem ) {
 	return cartItem.extra && cartItem.extra.purchaseType === 'renewal';
-}
-
-/**
- * Determines whether a cart item supports privacy
- *
- * @param {object} cartItem - `CartItemValue` object
- * @returns {boolean} true if item supports privacy
- */
-export function privacyAvailable( cartItem ) {
-	return get( cartItem, 'extra.privacy_available', true );
-}
-
-/**
- * Get the included domain for a cart item
- *
- * @param {object} cartItem - `CartItemValue` object
- * @returns {string} the included domain
- */
-export function getIncludedDomain( cartItem ) {
-	return cartItem.extra && cartItem.extra.includedDomain;
 }
 
 /**
@@ -1087,9 +705,8 @@ export function isNextDomainFree( cart, domain = '' ) {
 }
 
 export function isDomainBundledWithPlan( cart, domain ) {
-	const bundledDomain = get( cart, 'bundled_domain', '' );
-
-	return '' !== bundledDomain && toLower( domain ) === toLower( get( cart, 'bundled_domain', '' ) );
+	const bundledDomain = cart?.bundledDomain ?? '';
+	return '' !== bundledDomain && ( domain ?? '' ).toLowerCase() === bundledDomain.toLowerCase();
 }
 
 /**
@@ -1108,8 +725,8 @@ export function isDomainBeingUsedForPlan( cart, domain ) {
 		return false;
 	}
 
-	const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) ),
-		domainProduct = domainProducts.shift() || {};
+	const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) );
+	const domainProduct = domainProducts.shift() || {};
 	const processedDomainInCart = domain === domainProduct.meta;
 	if ( ! processedDomainInCart ) {
 		return false;
@@ -1181,9 +798,37 @@ export function isPaidDomain( domainPriceRule ) {
 	return 'PRICE' === domainPriceRule;
 }
 
-export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion, isDomainOnly ) {
+const isMonthlyOrFreeFlow = ( flowName ) => {
+	return (
+		flowName &&
+		[
+			'free',
+			'personal-monthly',
+			'premium-monthly',
+			'business-monthly',
+			'ecommerce-monthly',
+		].includes( flowName )
+	);
+};
+
+export function getDomainPriceRule(
+	withPlansOnly,
+	selectedSite,
+	cart,
+	suggestion,
+	isDomainOnly,
+	flowName
+) {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
+	}
+
+	if ( suggestion?.is_premium ) {
+		return 'PRICE';
+	}
+
+	if ( isMonthlyOrFreeFlow( flowName ) ) {
+		return 'PRICE';
 	}
 
 	if ( isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) {
@@ -1224,11 +869,11 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 /**
  * Determines whether any items in the cart were added more than X time ago (10 minutes)
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
  * @returns {boolean} true if there is at least one cart item added more than X time ago, false otherwise
  */
 export function hasStaleItem( cart ) {
-	return some( getAllCartItems( cart ), function( cartItem ) {
+	return getAllCartItems( cart ).some( function ( cartItem ) {
 		// time_added_to_cart is in seconds, Date.now() returns milliseconds
 		return (
 			cartItem.time_added_to_cart &&

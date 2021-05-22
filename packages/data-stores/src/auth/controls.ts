@@ -22,7 +22,7 @@ const makeRemoteLoginRequest = ( loginLink: string, requestTimeout = 25000 ) => 
 	}
 
 	let iframe: HTMLIFrameElement | undefined;
-	const iframeLoadPromise = new Promise( resolve => {
+	const iframeLoadPromise = new Promise( ( resolve ) => {
 		iframe = document.createElement( 'iframe' );
 		iframe.style.display = 'none';
 		iframe.setAttribute( 'scrolling', 'no' );
@@ -48,8 +48,8 @@ export const controls = {
 	REMOTE_LOGIN_USER: ( { loginLinks }: ReturnType< typeof remoteLoginUser > ) =>
 		Promise.all(
 			loginLinks
-				.map( loginLink => makeRemoteLoginRequest( loginLink ) )
+				.map( ( loginLink ) => makeRemoteLoginRequest( loginLink ) )
 				// make sure we continue even when a remote login fails
-				.map( promise => promise.catch( () => undefined ) )
+				.map( ( promise ) => promise.catch( () => undefined ) )
 		),
 };

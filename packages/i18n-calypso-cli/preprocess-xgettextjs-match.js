@@ -21,7 +21,7 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 	const args = match.arguments;
 	let options;
 
-	[ 'single', 'plural', 'options' ].slice( 0, args.length ).forEach( function( field, i ) {
+	[ 'single', 'plural', 'options' ].slice( 0, args.length ).forEach( function ( field, i ) {
 		if ( 'StringLiteral' === args[ i ].type ) {
 			finalProps[ field ] = makeDoubleQuoted( args[ i ].extra.raw );
 		} else if ( 'BinaryExpression' === args[ i ].type ) {
@@ -35,7 +35,7 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 
 	if ( 'undefined' !== typeof options ) {
 		// map options to finalProps object
-		options.properties.forEach( function( property ) {
+		options.properties.forEach( function ( property ) {
 			// key might be an  Identifier (name), or a StringLiteral (value)
 			const key = property.key.name || property.key.value;
 			if ( 'StringLiteral' === property.value.type ) {
@@ -45,7 +45,7 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 			} else if ( 'ObjectExpression' === property.value.type && 'original' === key ) {
 				// Get pluralization strings. This clause can be removed when all translations
 				// are updated to the new approach for plurals.
-				property.value.properties.forEach( function( innerProp ) {
+				property.value.properties.forEach( function ( innerProp ) {
 					if ( 'StringLiteral' === innerProp.value.type ) {
 						finalProps[ innerProp.key.name || innerProp.key.value ] = makeDoubleQuoted(
 							innerProp.value.extra.raw

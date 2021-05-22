@@ -6,15 +6,15 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	READER_TAG_IMAGES_REQUEST,
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
 	READER_TAG_IMAGES_REQUEST_FAILURE,
 	READER_TAG_IMAGES_RECEIVE,
-} from 'state/reader/action-types';
+} from 'calypso/state/reader/action-types';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 /**
  * Module variables
@@ -44,7 +44,7 @@ export function receiveTagImages( tag, images ) {
  * @returns {Function} Action thunk
  */
 export function requestTagImages( tag, limit = 5 ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_TAG_IMAGES_REQUEST,
 			tag,
@@ -61,7 +61,7 @@ export function requestTagImages( tag, limit = 5 ) {
 			.undocumented()
 			.readTagImages( query )
 			.then(
-				data => {
+				( data ) => {
 					dispatch( receiveTagImages( tag, ( data && data.images ) || [] ) );
 
 					dispatch( {
@@ -70,7 +70,7 @@ export function requestTagImages( tag, limit = 5 ) {
 						data,
 					} );
 				},
-				error => {
+				( error ) => {
 					// dispatch an empty array so we stop requesting it
 					dispatch( receiveTagImages( tag, [] ) );
 

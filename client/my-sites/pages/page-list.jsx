@@ -6,46 +6,44 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
 import { flowRight, isEqual, size, without } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import ListEnd from 'components/list-end';
-import QueryPosts from 'components/data/query-posts';
+import ListEnd from 'calypso/components/list-end';
+import QueryPosts from 'calypso/components/data/query-posts';
 import Page from './page';
-import { preload } from 'sections-helper';
-import InfiniteScroll from 'components/infinite-scroll';
-import EmptyContent from 'components/empty-content';
-import NoResults from 'my-sites/no-results';
+import { preloadEditor } from 'calypso/sections-preloaders';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
+import EmptyContent from 'calypso/components/empty-content';
+import NoResults from 'calypso/my-sites/no-results';
 import Placeholder from './placeholder';
-import { mapPostStatus as mapStatus } from 'lib/route';
-import { POST_STATUSES } from 'state/posts/constants';
 import { sortPagesHierarchically } from './helpers';
 import BlogPostsPage from './blog-posts-page';
-import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import {
 	getPostsForQueryIgnoringPage,
 	isRequestingPostsForQuery,
 	isPostsLastPageForQuery,
-} from 'state/posts/selectors';
-import { getSite } from 'state/sites/selectors';
-import getEditorUrl from 'state/selectors/get-editor-url';
-import SectionHeader from 'components/section-header';
+} from 'calypso/state/posts/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import SectionHeader from 'calypso/components/section-header';
 import { Button } from '@automattic/components';
-import { withLocalizedMoment } from 'components/localized-moment';
-import config from 'config';
-
-function preloadEditor() {
-	preload( 'post-editor' );
-}
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import config from '@automattic/calypso-config';
 
 export default class PageList extends Component {
 	static propTypes = {
 		search: PropTypes.string,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
+		query: PropTypes.shape( {
+			author: PropTypes.number, // User ID
+			status: PropTypes.string,
+			type: PropTypes.string.isRequired,
+		} ),
 	};
 
 	state = {
@@ -71,19 +69,8 @@ export default class PageList extends Component {
 	};
 
 	render() {
-		const { search, siteId, status } = this.props;
-
-		const query = {
-			page: this.state.page,
-			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
-			search,
-			// When searching, search across all statuses so the user can
-			// always find what they are looking for, regardless of what tab
-			// the search was initiated from. Use POST_STATUSES rather than
-			// "any" to do this, since the latter excludes trashed posts.
-			status: search ? POST_STATUSES.join( ',' ) : mapStatus( status ),
-			type: 'page',
-		};
+		const { search, siteId, query } = this.props;
+		const { page } = this.state;
 
 		if ( config.isEnabled( 'page/export' ) ) {
 			// we need the raw content of the pages to be able to export them
@@ -96,10 +83,10 @@ export default class PageList extends Component {
 
 		return (
 			<div>
-				<QueryPosts siteId={ siteId } query={ query } />
+				<QueryPosts siteId={ siteId } query={ { ...query, page } } />
 				<ConnectedPages
 					incrementPage={ this.incrementPage }
-					query={ query }
+					query={ { ...query, page } }
 					siteId={ siteId }
 					showPublishedStatus={ showPublishedStatus }
 				/>
@@ -130,7 +117,7 @@ class Pages extends Component {
 		lastPage: false,
 		page: 0,
 		pages: [],
-		trackScrollPage: function() {},
+		trackScrollPage: function () {},
 		query: {},
 		showPublishedStatus: false,
 	};
@@ -149,7 +136,7 @@ class Pages extends Component {
 		}
 	}
 
-	fetchPages = options => {
+	fetchPages = ( options ) => {
 		if ( this.props.loading || this.props.lastPage ) {
 			return;
 		}
@@ -159,42 +146,8 @@ class Pages extends Component {
 		this.props.incrementPage();
 	};
 
-	_insertTimeMarkers( pages ) {
-		const markedPages = [];
-		const now = this.props.moment();
-		let lastMarker;
-
-		const buildMarker = pageDate => {
-			pageDate = this.props.moment( pageDate );
-			const days = now.diff( pageDate, 'days' );
-			if ( days <= 0 ) {
-				return this.props.translate( 'Today' );
-			}
-			if ( days === 1 ) {
-				return this.props.translate( 'Yesterday' );
-			}
-			return pageDate.from( now );
-		};
-
-		pages.forEach( page => {
-			const date = this.props.moment( page.date );
-			const marker = buildMarker( date );
-			if ( lastMarker !== marker ) {
-				markedPages.push(
-					<div key={ 'marker-' + date.unix() } className="pages__page-list-header">
-						<Gridicon icon="time" size={ 12 } /> { marker }
-					</div>
-				);
-			}
-			lastMarker = marker;
-			markedPages.push( page );
-		} );
-
-		return markedPages;
-	}
-
 	updateShadowStatus = ( globalID, shadowStatus ) =>
-		new Promise( resolve =>
+		new Promise( ( resolve ) =>
 			this.setState( ( state, props ) => {
 				if ( shadowStatus ) {
 					// add or update the `globalID` key in the `shadowItems` map
@@ -347,7 +300,7 @@ class Pages extends Component {
 
 	renderHierarchical( { pages, site, showPublishedStatus } ) {
 		pages = sortPagesHierarchically( pages );
-		const rows = pages.map( function( page ) {
+		const rows = pages.map( function ( page ) {
 			return (
 				<Page
 					key={ 'page-' + page.global_ID }
@@ -365,7 +318,7 @@ class Pages extends Component {
 		return (
 			<div id="pages" className="pages__page-list">
 				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
-				{ this.renderSectionHeader() }
+				{ site && this.renderSectionHeader() }
 				{ rows }
 				{ this.renderListEnd() }
 			</div>
@@ -375,11 +328,7 @@ class Pages extends Component {
 	renderChronological( { pages, site, showPublishedStatus } ) {
 		const { search, status } = this.props.query;
 
-		if ( ! search ) {
-			// we're listing in reverse chrono. use the markers.
-			pages = this._insertTimeMarkers( pages );
-		}
-		const rows = pages.map( page => {
+		const rows = pages.map( ( page ) => {
 			if ( ! ( 'site_ID' in page ) ) {
 				return page;
 			}
@@ -408,7 +357,7 @@ class Pages extends Component {
 				{ showBlogPostsPage && (
 					<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
 				) }
-				{ this.renderSectionHeader() }
+				{ site && this.renderSectionHeader() }
 				{ rows }
 				<InfiniteScroll nextPageMethod={ this.fetchPages } />
 				{ this.renderListEnd() }

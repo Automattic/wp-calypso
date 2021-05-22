@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { isJetpackSite } from 'state/sites/selectors';
-import { getTheme } from 'state/themes/selectors/get-theme';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * When wpcom themes are installed on Jetpack sites, the

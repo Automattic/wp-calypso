@@ -23,13 +23,13 @@
 
 .suggestions__label {
 	&.is-emphasized {
-		font-weight: bold;
+		font-weight: 600;
 	}
 }
 
 .suggestions__category-heading {
 	font-size: 10px;
-	font-weight: 500;
+	font-weight: 600;
 	text-transform: uppercase;
 	padding: 12px 24px 8px 42px;
 	color: var( --color-neutral-400 );

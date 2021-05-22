@@ -17,9 +17,10 @@ import {
 	getPathParts,
 	filterLanguageRevisions,
 	translationExists,
-} from 'lib/i18n-utils';
+	isMagnificentLocale,
+} from 'calypso/lib/i18n-utils';
 
-jest.mock( 'config', () => key => {
+jest.mock( '@automattic/calypso-config', () => ( key ) => {
 	if ( 'i18n_default_locale_slug' === key ) {
 		return 'en';
 	}
@@ -49,6 +50,7 @@ jest.mock( 'config', () => key => {
 			'zh-tw',
 			'ko',
 			'ar',
+			'sv',
 		];
 	}
 
@@ -243,144 +245,13 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#localizeUrl', () => {
-		test( 'should not change URL for `en`', () => {
-			[
-				'https://wordpress.com/',
-				'https://de.wordpress.com/',
-				'https://wordpress.com/start/',
-				'https://wordpress.com/wp-login.php?action=lostpassword',
-			].forEach( fullUrl => {
-				getLocaleSlug.mockImplementationOnce( () => 'en' );
-				expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
-			} );
-		} );
-
-		test( 'should not change relative URLs', () => {
-			[ '/me/account', '/settings' ].forEach( fullUrl => {
-				getLocaleSlug.mockImplementationOnce( () => 'en' );
-				expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
-				getLocaleSlug.mockImplementationOnce( () => 'fr' );
-				expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
-			} );
-		} );
-
-		test( 'handles invalid URLs', () => {
-			[ undefined, null, [], {}, { href: 'https://test' }, 'not-a-url', () => {} ].forEach(
-				fullUrl => {
-					getLocaleSlug.mockImplementationOnce( () => 'en' );
-					expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
-					getLocaleSlug(); // make sure to consume it.
-					getLocaleSlug.mockImplementationOnce( () => 'en' );
-					expect( localizeUrl( fullUrl, 'fr' ) ).toEqual( fullUrl );
-					getLocaleSlug(); // make sure to consume it.
-					getLocaleSlug.mockImplementationOnce( () => 'fr' );
-					expect( localizeUrl( fullUrl ) ).toEqual( fullUrl );
-					getLocaleSlug(); // make sure to consume it.
-				}
+		test( 'localizeUrl is still provided by client/lib/i18n-utils', () => {
+			expect( localizeUrl( 'https://wordpress.com/', 'de' ) ).toEqual(
+				'https://wordpress.com/de/'
 			);
 		} );
 
-		test( 'handles double localizeUrl', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'de' ).mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( localizeUrl( 'https://automattic.com/cookies/' ) ) ).toEqual(
-				'https://automattic.com/de/cookies/'
-			);
-			getLocaleSlug();
-			getLocaleSlug(); // make sure to consume it.
-
-			getLocaleSlug.mockImplementationOnce( () => 'de' ).mockImplementationOnce( () => 'de' );
-			expect(
-				localizeUrl( localizeUrl( 'https://en.support.wordpress.com/all-about-domains/' ) )
-			).toEqual( 'https://wordpress.com/de/support/all-about-domains/' );
-			getLocaleSlug();
-			getLocaleSlug(); // make sure to consume it.
-
-			getLocaleSlug.mockImplementationOnce( () => 'de' ).mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( localizeUrl( 'https://wordpress.com/' ) ) ).toEqual(
-				'https://de.wordpress.com/'
-			);
-			getLocaleSlug();
-			getLocaleSlug(); // make sure to consume it.
-
-			getLocaleSlug.mockImplementationOnce( () => 'de' ).mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( localizeUrl( 'https://en.blog.wordpress.com/' ) ) ).toEqual(
-				'https://wordpress.com/blog/'
-			);
-			getLocaleSlug();
-			getLocaleSlug(); // make sure to consume it.
-		} );
-
-		test( 'trailing slash variations', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://automattic.com/cookies/' ) ).toEqual(
-				'https://automattic.com/de/cookies/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://automattic.com/cookies' ) ).toEqual(
-				'https://automattic.com/de/cookies/'
-			);
-		} );
-
-		test( 'overriding locale', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'ru' );
-			expect( localizeUrl( 'https://automattic.com/cookies/', 'de' ) ).toEqual(
-				'https://automattic.com/de/cookies/'
-			);
-			getLocaleSlug(); // make sure to consume it.
-
-			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://automattic.com/cookies', 'fr' ) ).toEqual(
-				'https://automattic.com/fr/cookies/'
-			);
-			getLocaleSlug(); // make sure to consume it.
-
-			// Finally make sure that no overriding has stuck and it uses the getLocaleSlug() when no override is specified.
-			getLocaleSlug.mockImplementationOnce( () => 'ru' );
-			expect( localizeUrl( 'https://automattic.com/cookies/' ) ).toEqual(
-				'https://automattic.com/cookies/'
-			);
-			getLocaleSlug(); // make sure to consume it.
-
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://automattic.com/cookies/' ) ).toEqual(
-				'https://automattic.com/de/cookies/'
-			);
-			getLocaleSlug(); // make sure to consume it.
-		} );
-
-		test( 'logged-out homepage', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://wordpress.com/' ) ).toEqual( 'https://wordpress.com/' );
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://wordpress.com/' ) ).toEqual( 'https://de.wordpress.com/' );
-			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
-			expect( localizeUrl( 'https://wordpress.com/' ) ).toEqual( 'https://br.wordpress.com/' );
-			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://wordpress.com/' ) ).toEqual( 'https://wordpress.com/' );
-			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://en.wordpress.com/' ) ).toEqual( 'https://wordpress.com/' );
-		} );
-
-		test( 'blog url', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://en.blog.wordpress.com/' ) ).toEqual(
-				'https://wordpress.com/blog/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://en.blog.wordpress.com/' ) ).toEqual(
-				'https://wordpress.com/blog/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
-			expect( localizeUrl( 'https://en.blog.wordpress.com/' ) ).toEqual(
-				'https://wordpress.com/br/blog/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://en.blog.wordpress.com/' ) ).toEqual(
-				'https://wordpress.com/blog/'
-			);
-		} );
-
-		test( 'support url', () => {
+		test( 'client/lib/i18n-utils/localizeUrl still uses getLocaleSlug', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'en' );
 			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
 				'https://wordpress.com/support/'
@@ -388,165 +259,6 @@ describe( 'utils', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'de' );
 			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
 				'https://wordpress.com/de/support/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
-			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
-				'https://wordpress.com/br/support/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
-				'https://wordpress.com/support/'
-			);
-
-			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://en.support.wordpress.com/path/' ) ).toEqual(
-				'https://wordpress.com/support/path/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://en.support.wordpress.com/path/' ) ).toEqual(
-				'https://wordpress.com/de/support/path/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
-			expect( localizeUrl( 'https://en.support.wordpress.com/path/' ) ).toEqual(
-				'https://wordpress.com/br/support/path/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://en.support.wordpress.com/path/' ) ).toEqual(
-				'https://wordpress.com/support/path/'
-			);
-
-			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://wordpress.com/support/' ) ).toEqual(
-				'https://wordpress.com/support/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://wordpress.com/support/' ) ).toEqual(
-				'https://wordpress.com/de/support/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
-			expect( localizeUrl( 'https://wordpress.com/support/' ) ).toEqual(
-				'https://wordpress.com/br/support/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://wordpress.com/support/' ) ).toEqual(
-				'https://wordpress.com/support/'
-			);
-
-			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://wordpress.com/support/path/' ) ).toEqual(
-				'https://wordpress.com/support/path/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://wordpress.com/support/path/' ) ).toEqual(
-				'https://wordpress.com/de/support/path/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
-			expect( localizeUrl( 'https://wordpress.com/support/path/' ) ).toEqual(
-				'https://wordpress.com/br/support/path/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://wordpress.com/support/path/' ) ).toEqual(
-				'https://wordpress.com/support/path/'
-			);
-		} );
-
-		test( 'forums url', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
-				'https://en.forums.wordpress.com/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
-				'https://de.forums.wordpress.com/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
-			expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
-				'https://br.forums.wordpress.com/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'th' );
-			expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
-				'https://th.forums.wordpress.com/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
-				'https://en.forums.wordpress.com/'
-			);
-		} );
-
-		test( 'privacy policy', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://automattic.com/privacy/' ) ).toEqual(
-				'https://automattic.com/privacy/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://automattic.com/privacy/' ) ).toEqual(
-				'https://automattic.com/de/privacy/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://automattic.com/privacy/' ) ).toEqual(
-				'https://automattic.com/privacy/'
-			);
-		} );
-
-		test( 'cookie policy', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://automattic.com/cookies/' ) ).toEqual(
-				'https://automattic.com/cookies/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://automattic.com/cookies/' ) ).toEqual(
-				'https://automattic.com/de/cookies/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://automattic.com/cookies/' ) ).toEqual(
-				'https://automattic.com/cookies/'
-			);
-		} );
-
-		test( 'tos', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://wordpress.com/tos/' ) ).toEqual( 'https://wordpress.com/tos/' );
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://wordpress.com/tos/' ) ).toEqual(
-				'https://de.wordpress.com/tos/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://wordpress.com/tos/' ) ).toEqual( 'https://wordpress.com/tos/' );
-			getLocaleSlug.mockImplementationOnce( () => 'th' );
-			expect( localizeUrl( 'https://wordpress.com/tos/' ) ).toEqual( 'https://wordpress.com/tos/' );
-		} );
-
-		test( 'jetpack', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
-				'https://jetpack.com/features/comparison/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
-				'https://de.jetpack.com/features/comparison/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pt-br' );
-			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
-				'https://br.jetpack.com/features/comparison/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'zh-tw' );
-			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
-				'https://zh-tw.jetpack.com/features/comparison/'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'pl' );
-			expect( localizeUrl( 'https://jetpack.com/features/comparison/' ) ).toEqual(
-				'https://jetpack.com/features/comparison/'
-			);
-		} );
-
-		test( 'WordPress.com URLs', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'en' );
-			expect( localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword' ) ).toEqual(
-				'https://wordpress.com/wp-login.php?action=lostpassword'
-			);
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
-			expect( localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword' ) ).toEqual(
-				'https://de.wordpress.com/wp-login.php?action=lostpassword'
 			);
 		} );
 	} );
@@ -600,12 +312,12 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe( 'translationExists()', function() {
-		it( 'should return true for a simple translation', function() {
+	describe( 'translationExists()', function () {
+		it( 'should return true for a simple translation', function () {
 			expect( translationExists( 'test1' ) ).toBe( true );
 		} );
 
-		it( 'should return false for a string without translation', function() {
+		it( 'should return false for a string without translation', function () {
 			getLocaleSlug.mockImplementationOnce( () => 'fr' );
 			expect(
 				translationExists(
@@ -614,16 +326,50 @@ describe( 'utils', () => {
 			).toBe( false );
 		} );
 
-		it( 'should return true for a simple translation when using default locale', function() {
+		it( 'should return true for a simple translation when using default locale', function () {
 			expect( translationExists( 'test1' ) ).toBe( true );
 		} );
 
-		it( 'should return true for a string without translation when using default locale', function() {
+		it( 'should return true for a string without translation when using default locale', function () {
 			expect(
 				translationExists(
 					'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness…'
 				)
 			).toBe( true );
+		} );
+	} );
+
+	describe( 'isMagnificentLocale()', function () {
+		it( 'should return true for magnificent locales', function () {
+			[
+				'es',
+				'pt-br',
+				'de',
+				'fr',
+				'he',
+				'ja',
+				'it',
+				'nl',
+				'ru',
+				'tr',
+				'id',
+				'zh-cn',
+				'zh-tw',
+				'ko',
+				'ar',
+				'sv',
+			].forEach( ( locale ) => {
+				expect( isMagnificentLocale( locale ) ).toBe( true );
+			} );
+		} );
+
+		it( 'should return false for non-magnificent locales', function () {
+			expect( isMagnificentLocale( 'bg' ) ).toBe( false );
+			expect( isMagnificentLocale( 'ro' ) ).toBe( false );
+		} );
+
+		it( 'should return false for english locale', function () {
+			expect( isMagnificentLocale( 'en' ) ).toBe( false );
 		} );
 	} );
 } );

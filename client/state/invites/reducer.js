@@ -1,13 +1,14 @@
-/* eslint-disable no-case-declarations */
 /**
  * External dependencies
  */
 import { includes, map, pick, zipObject } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
@@ -18,8 +19,8 @@ import {
 	INVITE_RESEND_REQUEST,
 	INVITE_RESEND_REQUEST_FAILURE,
 	INVITE_RESEND_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { inviteItemsSchema } from './schema';
+} from 'calypso/state/action-types';
+import { inviteItemsSchema, inviteLinksSchema } from './schema';
 
 /**
  * Returns the updated site invites requests state after an action has been
@@ -58,7 +59,7 @@ export const items = withSchemaValidation( inviteItemsSchema, ( state = {}, acti
 			// `invite_date`, which is what we want here.
 
 			const siteInvites = { pending: [], accepted: [] };
-			action.invites.forEach( invite => {
+			action.invites.forEach( ( invite ) => {
 				// Not renaming `avatar_URL` because it is used as-is by <Gravatar>
 				const user = pick( invite.user, 'login', 'email', 'name', 'avatar_URL' );
 				const invitedBy = pick( invite.invited_by, 'name', 'login', 'avatar_URL' );
@@ -98,6 +99,40 @@ export const items = withSchemaValidation( inviteItemsSchema, ( state = {}, acti
 	return state;
 } );
 
+export const links = withSchemaValidation( inviteLinksSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case INVITES_REQUEST_SUCCESS: {
+			let inviteLinks = {};
+			const currentDate = moment();
+			Object.values( action.links ).forEach( ( link ) => {
+				// Do not process expired links
+				if ( link.expiry && currentDate.isAfter( link.expiry * 1000 ) ) {
+					return;
+				}
+				const linkForState = {
+					key: link.invite_key,
+					link: link.link,
+					role: link.role,
+					inviteDate: link.invite_date,
+					expiry: link.expiry,
+				};
+
+				inviteLinks = {
+					...inviteLinks,
+					[ link.role ]: linkForState,
+				};
+			} );
+
+			return {
+				...state,
+				[ action.siteId ]: inviteLinks,
+			};
+		}
+	}
+
+	return state;
+} );
+
 /**
  * Returns an array of site invites, without the deleted invite objects.
  *
@@ -106,7 +141,7 @@ export const items = withSchemaValidation( inviteItemsSchema, ( state = {}, acti
  * @returns {Array}                  Updated array of invite objects.
  */
 function deleteInvites( siteInvites, invitesToDelete ) {
-	return siteInvites.filter( siteInvite => ! includes( invitesToDelete, siteInvite.key ) );
+	return siteInvites.filter( ( siteInvite ) => ! includes( invitesToDelete, siteInvite.key ) );
 }
 
 /**
@@ -117,7 +152,7 @@ function deleteInvites( siteInvites, invitesToDelete ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const counts = withoutPersistence( ( state = {}, action ) => {
+export const counts = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case INVITES_REQUEST_SUCCESS: {
 			return {
@@ -134,7 +169,7 @@ export const counts = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated site invites resend requests state after an action has been
@@ -147,16 +182,18 @@ export const counts = withoutPersistence( ( state = {}, action ) => {
  */
 export function requestingResend( state = {}, action ) {
 	switch ( action.type ) {
-		case INVITE_RESEND_REQUEST:
+		case INVITE_RESEND_REQUEST: {
 			const inviteResendRequests = Object.assign( {}, state[ action.siteId ], {
 				[ action.inviteId ]: 'requesting',
 			} );
 			return Object.assign( {}, state, { [ action.siteId ]: inviteResendRequests } );
-		case INVITE_RESEND_REQUEST_SUCCESS:
+		}
+		case INVITE_RESEND_REQUEST_SUCCESS: {
 			const inviteResendSuccesses = Object.assign( {}, state[ action.siteId ], {
 				[ action.inviteId ]: 'success',
 			} );
 			return Object.assign( {}, state, { [ action.siteId ]: inviteResendSuccesses } );
+		}
 		case INVITE_RESEND_REQUEST_FAILURE: {
 			const inviteResendFailures = Object.assign( {}, state[ action.siteId ], {
 				[ action.inviteId ]: 'failure',
@@ -179,7 +216,7 @@ export function requestingResend( state = {}, action ) {
  */
 export function deleting( state = {}, action ) {
 	switch ( action.type ) {
-		case INVITES_DELETE_REQUEST:
+		case INVITES_DELETE_REQUEST: {
 			const inviteDeletionRequests = Object.assign(
 				{},
 				state[ action.siteId ],
@@ -189,7 +226,8 @@ export function deleting( state = {}, action ) {
 				)
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionRequests } );
-		case INVITES_DELETE_REQUEST_FAILURE:
+		}
+		case INVITES_DELETE_REQUEST_FAILURE: {
 			const inviteDeletionFailures = Object.assign(
 				{},
 				state[ action.siteId ],
@@ -199,7 +237,8 @@ export function deleting( state = {}, action ) {
 				)
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionFailures } );
-		case INVITES_DELETE_REQUEST_SUCCESS:
+		}
+		case INVITES_DELETE_REQUEST_SUCCESS: {
 			const inviteDeletionSuccesses = Object.assign(
 				{},
 				state[ action.siteId ],
@@ -209,9 +248,19 @@ export function deleting( state = {}, action ) {
 				)
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionSuccesses } );
+		}
 	}
 
 	return state;
 }
 
-export default combineReducers( { requesting, items, counts, requestingResend, deleting } );
+const combinedReducer = combineReducers( {
+	requesting,
+	items,
+	counts,
+	requestingResend,
+	deleting,
+	links,
+} );
+
+export default withStorageKey( 'invites', combinedReducer );

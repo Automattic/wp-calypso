@@ -4,13 +4,13 @@
 
 import superagent from 'superagent';
 import { v4 as uuid } from 'uuid';
-import { isUndefined, omit, assign, get, has } from 'lodash';
+import { omit, get, has } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd';
+import config from '@automattic/calypso-config';
+import { statsdTimingUrl, statsdCountingUrl } from 'calypso/lib/analytics/statsd-utils';
 const URL = require( 'url' );
 
 function getUserFromRequest( request ) {
@@ -52,14 +52,14 @@ function getUserFromRequest( request ) {
 
 const analytics = {
 	statsd: {
-		recordTiming: function( featureSlug, eventType, duration ) {
+		recordTiming: function ( featureSlug, eventType, duration ) {
 			if ( config( 'server_side_boom_analytics_enabled' ) ) {
 				const url = statsdTimingUrl( featureSlug, eventType, duration );
 				superagent.get( url ).end();
 			}
 		},
 
-		recordCounting: function( featureSlug, eventType, increment = 1 ) {
+		recordCounting: function ( featureSlug, eventType, increment = 1 ) {
 			if ( config( 'server_side_boom_analytics_enabled' ) ) {
 				const url = statsdCountingUrl( featureSlug, eventType, increment );
 				superagent.get( url ).end();
@@ -68,7 +68,7 @@ const analytics = {
 	},
 
 	tracks: {
-		createPixel: function( data ) {
+		createPixel: function ( data ) {
 			data._rt = new Date().getTime();
 			data._ = '_';
 			const pixelUrl = URL.format( {
@@ -80,7 +80,7 @@ const analytics = {
 			superagent.get( pixelUrl ).end();
 		},
 
-		recordEvent: function( eventName, eventProperties, req ) {
+		recordEvent: function ( eventName, eventProperties, req ) {
 			eventProperties = eventProperties || {};
 
 			if ( eventName.indexOf( 'calypso_' ) !== 0 ) {
@@ -90,27 +90,23 @@ const analytics = {
 
 			// Remove properties that have an undefined value
 			// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-			eventProperties = omit( eventProperties, isUndefined );
+			eventProperties = omit( eventProperties, ( prop ) => typeof prop === 'undefined' );
 
 			const date = new Date();
 			const acceptLanguageHeader = req.get( 'Accept-Language' ) || '';
 
-			this.createPixel(
-				assign(
-					{
-						_en: eventName,
-						_ts: date.getTime(),
-						_tz: date.getTimezoneOffset() / 60,
-						_dl: req.get( 'Referer' ),
-						_lg: acceptLanguageHeader.split( ',' )[ 0 ],
-						_pf: req.useragent.platform,
-						_via_ip: req.get( 'x-forwarded-for' ) || req.connection.remoteAddress,
-						_via_ua: req.useragent.source,
-					},
-					getUserFromRequest( req ),
-					eventProperties
-				)
-			);
+			this.createPixel( {
+				_en: eventName,
+				_ts: date.getTime(),
+				_tz: date.getTimezoneOffset() / 60,
+				_dl: req.get( 'Referer' ),
+				_lg: acceptLanguageHeader.split( ',' )[ 0 ],
+				_pf: req.useragent.platform,
+				_via_ip: req.get( 'x-forwarded-for' ) || req.connection.remoteAddress,
+				_via_ua: req.useragent.source,
+				...getUserFromRequest( req ),
+				...eventProperties,
+			} );
 		},
 	},
 };

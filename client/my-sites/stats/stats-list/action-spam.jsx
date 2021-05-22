@@ -9,10 +9,10 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import wpcom from 'calypso/lib/wp';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { Button } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 const debug = debugFactory( 'calypso:stats:action-spam' );
 
@@ -23,7 +23,7 @@ class StatsActionSpam extends React.Component {
 		spammed: false,
 	};
 
-	clickHandler = event => {
+	clickHandler = ( event ) => {
 		const spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew';
 		const gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam';
 		event.stopPropagation();
@@ -38,7 +38,7 @@ class StatsActionSpam extends React.Component {
 		}
 
 		const wpcomSite = wpcom.site( this.props.data.siteID );
-		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function() {} );
+		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function () {} );
 		gaRecordEvent( 'Stats', gaEvent + ' in ' + this.props.moduleName + ' List' );
 	};
 

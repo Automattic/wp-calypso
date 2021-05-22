@@ -1,11 +1,15 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { POST_REQUEST_FAILURE, POST_REQUEST_SUCCESS, POST_REQUEST } from 'state/action-types';
-import { receivePost } from 'state/posts/actions/receive-post';
+import wpcom from 'calypso/lib/wp';
+import {
+	POST_REQUEST_FAILURE,
+	POST_REQUEST_SUCCESS,
+	POST_REQUEST,
+} from 'calypso/state/action-types';
+import { receivePost } from 'calypso/state/posts/actions/receive-post';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Triggers a network request to fetch a specific post from a site.
@@ -15,7 +19,7 @@ import 'state/posts/init';
  * @returns {Function}        Action thunk
  */
 export function requestSitePost( siteId, postId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_REQUEST,
 			siteId,
@@ -26,7 +30,7 @@ export function requestSitePost( siteId, postId ) {
 			.site( siteId )
 			.post( postId )
 			.get()
-			.then( post => {
+			.then( ( post ) => {
 				dispatch( receivePost( post ) );
 				dispatch( {
 					type: POST_REQUEST_SUCCESS,
@@ -34,7 +38,7 @@ export function requestSitePost( siteId, postId ) {
 					postId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: POST_REQUEST_FAILURE,
 					siteId,

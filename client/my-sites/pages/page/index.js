@@ -1,57 +1,60 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
-import { flow, get, includes, noop, partial } from 'lodash';
+import { get, includes, partial } from 'lodash';
 import { saveAs } from 'browser-filesaver';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import Gridicon from 'components/gridicon';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuItemClipboard from 'components/popover/menu-item-clipboard';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import SiteIcon from 'blocks/site-icon';
+import Gridicon from 'calypso/components/gridicon';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItemClipboard from 'calypso/components/popover/menu-item-clipboard';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import SiteIcon from 'calypso/blocks/site-icon';
 import { statsLinkForPage } from '../helpers';
-import * as utils from 'state/posts/utils';
-import classNames from 'classnames';
-import MenuSeparator from 'components/popover/menu-separator';
+import { getPreviewURL, userCan } from 'calypso/state/posts/utils';
+import MenuSeparator from 'calypso/components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
-import InfoPopover from 'components/info-popover';
-import { preload } from 'sections-helper';
-import { getSite, hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isFrontPage, isPostsPage } from 'state/pages/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { setPreviewUrl } from 'state/ui/preview/actions';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
-import { infoNotice, withoutNotice } from 'state/notices/actions';
-import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
-import getEditorUrl from 'state/selectors/get-editor-url';
-import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
-import { updateSiteFrontPage } from 'state/sites/actions';
-import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
-import canCurrentUser from 'state/selectors/can-current-user';
-import config from 'config';
+import InfoPopover from 'calypso/components/info-popover';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import { preloadEditor } from 'calypso/sections-preloaders';
+import {
+	getSite,
+	hasStaticFrontPage,
+	isJetpackSite,
+	isSitePreviewable,
+} from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { savePost, deletePost, trashPost, restorePost } from 'calypso/state/posts/actions';
+import { infoNotice } from 'calypso/state/notices/actions';
+import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe/';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
+import { updateSiteFrontPage } from 'calypso/state/sites/actions';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import config from '@automattic/calypso-config';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
-
-function preloadEditor() {
-	preload( 'post-editor' );
-}
+const noop = () => {};
 
 function sleep( ms ) {
-	return new Promise( r => setTimeout( r, ms ) );
+	return new Promise( ( r ) => setTimeout( r, ms ) );
 }
 
 const ShadowNotice = localize( ( { shadowStatus, onUndoClick, translate } ) => (
@@ -149,9 +152,7 @@ class Page extends Component {
 
 		// This is technically if you can edit the current page, not the parent.
 		// Capabilities are not exposed on the parent page.
-		const parentHref = utils.userCan( 'edit_post', this.props.page )
-			? parentEditorUrl
-			: page.parent.URL;
+		const parentHref = userCan( 'edit_post', this.props.page ) ? parentEditorUrl : page.parent.URL;
 		const parentLink = <a href={ parentHref }>{ parentTitle }</a>;
 
 		return (
@@ -180,7 +181,7 @@ class Page extends Component {
 	getPublishItem() {
 		if (
 			this.props.page.status === 'publish' ||
-			! utils.userCan( 'publish_post', this.props.page ) ||
+			! userCan( 'publish_post', this.props.page ) ||
 			this.props.page.status === 'trash'
 		) {
 			return null;
@@ -199,7 +200,7 @@ class Page extends Component {
 			return null;
 		}
 
-		if ( ! utils.userCan( 'edit_post', this.props.page ) ) {
+		if ( ! userCan( 'edit_post', this.props.page ) ) {
 			return null;
 		}
 
@@ -251,7 +252,7 @@ class Page extends Component {
 		];
 	}
 
-	setPostsPage = pageId => () =>
+	setPostsPage = ( pageId ) => () =>
 		this.props.updateSiteFrontPage( this.props.siteId, {
 			show_on_front: 'page',
 			page_for_posts: pageId,
@@ -292,7 +293,7 @@ class Page extends Component {
 			return null;
 		}
 
-		if ( ! utils.userCan( 'delete_post', this.props.page ) ) {
+		if ( ! userCan( 'delete_post', this.props.page ) ) {
 			return null;
 		}
 
@@ -316,11 +317,12 @@ class Page extends Component {
 	}
 
 	getCopyPageItem() {
-		const { wpAdminGutenberg, page: post, duplicateUrl } = this.props;
+		const { copyPagesModuleDisabled, wpAdminGutenberg, page: post, duplicateUrl } = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
-			! utils.userCan( 'edit_post', post ) ||
-			wpAdminGutenberg
+			! userCan( 'edit_post', post ) ||
+			wpAdminGutenberg ||
+			copyPagesModuleDisabled
 		) {
 			return null;
 		}
@@ -339,10 +341,13 @@ class Page extends Component {
 		}
 
 		return (
-			<PopoverMenuItem onClick={ this.exportPage }>
-				<Gridicon icon="cloud-download" size={ 18 } />
-				{ this.props.translate( 'Export page' ) }
-			</PopoverMenuItem>
+			<>
+				<MenuSeparator key="separator" />
+				<PopoverMenuItem onClick={ this.exportPage }>
+					<Gridicon icon="cloud-download" size={ 18 } />
+					{ this.props.translate( 'Export page' ) }
+				</PopoverMenuItem>
+			</>
 		);
 	}
 
@@ -356,7 +361,7 @@ class Page extends Component {
 	}
 
 	getRestoreItem() {
-		if ( this.props.page.status !== 'trash' || ! utils.userCan( 'delete_post', this.props.page ) ) {
+		if ( this.props.page.status !== 'trash' || ! userCan( 'delete_post', this.props.page ) ) {
 			return null;
 		}
 
@@ -446,13 +451,13 @@ class Page extends Component {
 			page,
 			shadowStatus,
 			showPublishedStatus,
+			siteId,
 			translate,
 			isPostsPage: latestPostsPage,
 		} = this.props;
 		const title = page.title || translate( 'Untitled' );
-		const canEdit = utils.userCan( 'edit_post', page ) && ! latestPostsPage;
+		const canEdit = userCan( 'edit_post', page ) && ! latestPostsPage;
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
-
 		const viewItem = this.getViewItem();
 		const publishItem = this.getPublishItem();
 		const editItem = this.getEditItem();
@@ -497,6 +502,8 @@ class Page extends Component {
 			</EllipsisMenu>
 		);
 
+		const isTrashed = page.status === 'trash';
+
 		const shadowNotice = shadowStatus && (
 			<ShadowNotice shadowStatus={ shadowStatus } onUndoClick={ this.undoPostStatus } />
 		);
@@ -521,34 +528,46 @@ class Page extends Component {
 			<div className={ classNames( hierarchyIndentClasses ) } />
 		);
 
+		const innerPageTitle = (
+			<>
+				{ depthIndicator }
+				{ title }
+				{ ! isTrashed && latestPostsPage && (
+					<InfoPopover position="right">
+						{ translate(
+							'The content of your latest posts page is automatically generated and cannot be edited.'
+						) }
+					</InfoPopover>
+				) }
+			</>
+		);
+
 		return (
 			<CompactCard className={ classNames( cardClasses ) }>
+				<QueryJetpackModules siteId={ siteId } />
 				{ hierarchyIndent }
 				{ this.props.multisite ? <SiteIcon siteId={ page.site_ID } size={ 34 } /> : null }
 				<div className="page__main">
-					<a
-						className="page__title"
-						href={ canEdit ? editorUrl : page.URL }
-						title={
-							canEdit
-								? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
-								: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
-						}
-						onClick={ this.props.recordPageTitle }
-						onMouseOver={ preloadEditor }
-						onFocus={ preloadEditor }
-						data-tip-target={ 'page-' + page.slug }
-					>
-						{ depthIndicator }
-						{ title }
-						{ latestPostsPage && (
-							<InfoPopover position="right">
-								{ translate(
-									'The content of your latest posts page is automatically generated and cannot be edited.'
-								) }
-							</InfoPopover>
-						) }
-					</a>
+					{ ! isTrashed && (
+						<a
+							className="page__title"
+							href={ canEdit ? editorUrl : page.URL }
+							title={
+								canEdit
+									? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
+									: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
+							}
+							onClick={ this.props.recordPageTitle }
+							onMouseOver={ preloadEditor }
+							onFocus={ preloadEditor }
+							data-tip-target={ 'page-' + page.slug }
+						>
+							{ innerPageTitle }
+						</a>
+					) }
+
+					{ isTrashed && <span className="page__title">{ innerPageTitle }</span> }
+
 					<PageCardInfo
 						page={ page }
 						showTimestamp
@@ -594,7 +613,7 @@ class Page extends Component {
 		switch ( status ) {
 			case 'delete':
 				this.performUpdate( {
-					action: () => this.props.deletePost( page.site_ID, page.ID ),
+					action: () => this.props.deletePost( page.site_ID, page.ID, true ),
 					progressNotice: {
 						status: 'is-error',
 						icon: 'trash',
@@ -613,7 +632,7 @@ class Page extends Component {
 
 			case 'trash':
 				this.performUpdate( {
-					action: () => this.props.trashPost( page.site_ID, page.ID, page ),
+					action: () => this.props.trashPost( page.site_ID, page.ID, true ),
 					undo: page.status !== 'trash' ? 'restore' : 'undo',
 					progressNotice: {
 						status: 'is-error',
@@ -633,7 +652,7 @@ class Page extends Component {
 
 			case 'restore':
 				this.performUpdate( {
-					action: () => this.props.restorePost( page.site_ID, page.ID ),
+					action: () => this.props.restorePost( page.site_ID, page.ID, true ),
 					undo: page.status === 'trash' ? 'trash' : 'undo',
 					progressNotice: {
 						status: 'is-warning',
@@ -653,7 +672,7 @@ class Page extends Component {
 
 			case 'publish':
 				this.performUpdate( {
-					action: () => this.props.savePost( page.site_ID, page.ID, { status } ),
+					action: () => this.props.savePost( page.site_ID, page.ID, { status }, true ),
 					progressNotice: {
 						status: 'is-info',
 						icon: 'reader',
@@ -706,7 +725,6 @@ class Page extends Component {
 			__file: 'wp_template',
 			language: 'en',
 			title: page.title,
-			author: page.author,
 			demoURL: page.URL,
 			content: page.rawContent,
 		} );
@@ -722,10 +740,11 @@ class Page extends Component {
 		this.props.recordEvent( 'Clicked Copy Page Link' );
 	};
 
-	handleMenuToggle = isVisible => {
+	handleMenuToggle = ( isVisible ) => {
 		if ( isVisible ) {
 			// record a GA event when the menu is opened
 			this.props.recordMoreOptions();
+			preloadEditor();
 		}
 	};
 }
@@ -743,13 +762,16 @@ const mapState = ( state, props ) => {
 		isFrontPage: isFrontPage( state, pageSiteId, props.page.ID ),
 		isPostsPage: isPostsPage( state, pageSiteId, props.page.ID ),
 		isPreviewable,
-		previewURL: utils.getPreviewURL( site, props.page ),
+		previewURL: getPreviewURL( site, props.page ),
 		site,
 		siteId: pageSiteId,
 		siteSlugOrId,
 		editorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.ID' ), 'page' ),
 		parentEditorUrl: getEditorUrl( state, pageSiteId, get( props, 'page.parent.ID' ), 'page' ),
-		wpAdminGutenberg: shouldRedirectGutenberg( state, pageSiteId ),
+		copyPagesModuleDisabled:
+			! isJetpackModuleActive( state, pageSiteId, 'copy-post' ) &&
+			isJetpackSite( state, pageSiteId ),
+		wpAdminGutenberg: ! shouldLoadGutenframe( state, pageSiteId ),
 		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
 		isFullSiteEditing: isSiteUsingFullSiteEditing( state, pageSiteId ),
 		canManageOptions: canCurrentUser( state, pageSiteId, 'manage_options' ),
@@ -758,10 +780,10 @@ const mapState = ( state, props ) => {
 
 const mapDispatch = {
 	infoNotice,
-	savePost: withoutNotice( savePost ),
-	deletePost: withoutNotice( deletePost ),
-	trashPost: withoutNotice( trashPost ),
-	restorePost: withoutNotice( restorePost ),
+	savePost,
+	deletePost,
+	trashPost,
+	restorePost,
 	setPreviewUrl,
 	setLayoutFocus,
 	recordEvent,
@@ -773,4 +795,4 @@ const mapDispatch = {
 	updateSiteFrontPage,
 };
 
-export default flow( localize, connect( mapState, mapDispatch ) )( Page );
+export default connect( mapState, mapDispatch )( localize( Page ) );

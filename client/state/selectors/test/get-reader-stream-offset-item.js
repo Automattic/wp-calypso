@@ -6,11 +6,11 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getOffsetItem } from 'state/reader/streams/selectors';
+import { getOffsetItem } from 'calypso/state/reader/streams/selectors';
 
-jest.mock( 'lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
-jest.mock( 'reader/stream/utils' );
-jest.mock( 'state/reader/follows/selectors/get-reader-follows' );
+jest.mock( 'calypso/lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
+jest.mock( 'calypso/reader/stream/utils' );
+jest.mock( 'calypso/state/reader/follows/selectors/get-reader-follows' );
 
 const postKey1 = { postId: 1, feedId: 1 };
 const postKey2 = { postId: 1, blogId: 1 };
@@ -18,7 +18,7 @@ const postKey3 = { postId: 2, feedId: 1 };
 const postKey4 = { postId: 1, feedId: 4, xPostMetadata: { blogId: 123, postId: 456 } };
 const postKey5 = { postId: 2, feedId: 4 };
 
-const currentStream = { ui: { reader: { currentStream: 'following' } } };
+const currentStream = { readerUi: { currentStream: 'following' } };
 
 describe( 'getOffsetItem', () => {
 	test( 'should return null when not given a currentItem', () => {

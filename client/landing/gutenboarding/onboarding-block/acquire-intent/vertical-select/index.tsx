@@ -2,22 +2,23 @@
  * External dependencies
  */
 import React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { Suggestions } from '@automattic/components';
-import { useI18n } from '@automattic/react-i18n';
-import { __experimentalCreateInterpolateElement } from '@wordpress/element';
-import { ENTER, TAB } from '@wordpress/keycodes';
-import classnames from 'classnames';
 import { remove } from 'lodash';
+import classnames from 'classnames';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { ENTER, TAB } from '@wordpress/keycodes';
+import { useViewportMatch } from '@wordpress/compose';
+import { Suggestions } from '@automattic/components';
+import { useI18n } from '@wordpress/react-i18n';
+import AcquireIntentTextInput from '../acquire-intent-text-input';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../../stores/onboard';
 import { Verticals } from '@automattic/data-stores';
-import { SiteVertical } from '../../../stores/onboard/types';
 import useTyper from '../../../hooks/use-typer';
-import Arrow from '../arrow';
+import { recordVerticalSelection } from '../../../lib/analytics';
+import type { SiteVertical } from '../../../stores/onboard/types';
 
 /**
  * Style dependencies
@@ -28,11 +29,15 @@ type Suggestion = SiteVertical & { category?: string };
 
 const VERTICALS_STORE = Verticals.register();
 
-const VerticalSelect: React.FunctionComponent = () => {
-	const { __: NO__ } = useI18n();
-	const inputRef = React.useRef< HTMLSpanElement >( document.createElement( 'span' ) );
+interface Props {
+	onNext: () => void;
+}
+
+const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
+	const { __ } = useI18n();
 	const [ isFocused, setIsFocused ] = React.useState< boolean >( false );
 	const [ suggestions, setSuggestions ] = React.useState< Suggestion[] >( [] );
+	const [ textValue, setTextValue ] = React.useState< string >( '' );
 
 	/**
 	 * Ref to the <Suggestions />, necessary for handling input events
@@ -45,35 +50,45 @@ const VerticalSelect: React.FunctionComponent = () => {
 	 */
 	const suggestionRef = React.createRef< any >();
 
-	const verticals = useSelect( select =>
+	const verticals = useSelect( ( select ) =>
 		select( VERTICALS_STORE )
 			.getVerticals()
-			.map( x => ( {
+			.map( ( x ) => ( {
 				label: x.vertical_name,
 				id: x.vertical_id,
 				slug: x.vertical_slug,
 			} ) )
 	);
 
-	const { siteVertical, siteTitle } = useSelect( select => select( ONBOARD_STORE ).getState() );
+	const { siteVertical } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
+	const isMobile = useViewportMatch( 'small', '<' );
 
-	const inputText = inputRef.current.innerText || '';
-	const isInputEmpty = ! inputText.length;
-	const showArrow = ! siteTitle && ! siteVertical && inputText.length > 2;
+	const inputText = textValue ?? '';
+	const isInputEmpty = ! textValue.length;
 
 	const animatedPlaceholder = useTyper(
 		[
-			NO__( 'photography' ),
-			NO__( 'blogging' ),
-			NO__( 'travel' ),
-			NO__( 'marketing' ),
-			NO__( 'fashion' ),
-			NO__( 'shopping' ),
-			NO__( 'design' ),
-			NO__( 'real estate' ),
-			NO__( 'food' ),
-			NO__( 'sports' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ photography ]]" */
+			__( 'photography' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ blogging ]]" */
+			__( 'blogging' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ travel ]]" */
+			__( 'travel' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ marketing ]]" */
+			__( 'marketing' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ fashion ]]" */
+			__( 'fashion' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ shopping ]]" */
+			__( 'shopping' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ design ]]" */
+			__( 'design' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ real estate ]]" */
+			__( 'real estate' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ food ]]" */
+			__( 'food' ),
+			/* translators: Input placeholder content, e.g. "My site is about [[ sports ]]" */
+			__( 'sports' ),
 		],
 		isInputEmpty,
 		{ delayBetweenWords: 800, delayBetweenCharacters: 110 }
@@ -87,7 +102,8 @@ const VerticalSelect: React.FunctionComponent = () => {
 
 		const normalizedInputValue = inputValue.toLowerCase();
 
-		let newSuggestions = verticals.filter( vertical =>
+		// TODO: write a more advanced compare fn https://github.com/Automattic/wp-calypso/pull/40645#discussion_r402156751
+		const newSuggestions = verticals.filter( ( vertical ) =>
 			vertical.label.toLowerCase().includes( normalizedInputValue )
 		);
 
@@ -95,7 +111,7 @@ const VerticalSelect: React.FunctionComponent = () => {
 		// If yes, we store it in firstSuggestion (for later use), and remove it from newSuggestions...
 		const firstSuggestion = remove(
 			newSuggestions,
-			suggestion => suggestion.label.toLowerCase() === normalizedInputValue
+			( suggestion ) => suggestion.label.toLowerCase() === normalizedInputValue
 		)[ 0 ] ?? {
 			// ...otherwise, we set firstSuggestion to the user-supplied vertical...
 			label: inputValue.trim(),
@@ -106,120 +122,100 @@ const VerticalSelect: React.FunctionComponent = () => {
 		// ...and finally, we prepend firstSuggestion to our suggestions list.
 		newSuggestions.unshift( firstSuggestion );
 
-		// If there is only one suggestion and that suggestion matches the user input value,
-		// do not show any suggestions.
-
-		// TODO: write a more advanced compare fn https://github.com/Automattic/wp-calypso/pull/40645#discussion_r402156751
-		if (
-			newSuggestions.length === 1 &&
-			newSuggestions[ 0 ].label.toLowerCase() === normalizedInputValue
-		) {
-			newSuggestions = [];
-		}
-
 		setSuggestions( newSuggestions );
 	};
-	const handleInputKeyUpEvent = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
-		const input = e.currentTarget.innerText.trim();
+
+	const handleSelect = ( vertical: SiteVertical ) => {
+		setSiteVertical( vertical );
+		setIsFocused( false ); // prevent executing handleBlur()
+		// empty suggestions cache once a vertical is selected
+		setSuggestions( [] );
+	};
+
+	const selectLastInputValue = () => {
+		const lastQuery = inputText.trim();
+		if ( ! siteVertical && isFocused && lastQuery.length ) {
+			const vertical = suggestions[ 0 ] ?? { label: lastQuery, id: '', slug: '' };
+			handleSelect( vertical );
+		}
+	};
+
+	const handleSuggestAction = ( vertical: SiteVertical ) => {
+		handleSelect( vertical );
+		onNext();
+	};
+
+	const handleInputKeyUpEvent = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
+		const input = e.currentTarget.value.trim();
 		if ( ! input.length ) {
 			resetSiteVertical();
 		}
 		updateSuggestions( input );
 	};
 
-	const handleSelect = ( vertical: SiteVertical ) => {
-		setSiteVertical( vertical );
-		setIsFocused( false ); // prevent executing handleBlur()
-	};
-
-	const handleBlur = () => {
-		const lastQuery = inputText.trim();
-		if ( isFocused && lastQuery.length ) {
-			const vertical = suggestions[ 0 ] ?? { label: lastQuery, id: '', slug: '' };
-			handleSelect( vertical );
-		}
-	};
-
-	const handleInputKeyDownEvent = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
-		const input = e.currentTarget.innerText.trim();
+	const handleInputKeyDownEvent = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
+		const input = e.currentTarget.value.trim();
 
 		if ( suggestionRef.current ) {
 			suggestionRef.current.handleKeyEvent( e );
 		}
+
 		if ( e.keyCode === ENTER ) {
 			e.preventDefault();
-			input.length && ! suggestions.length && handleSelect( { label: input } );
+			if ( input.length && ! suggestions.length ) {
+				handleSelect( { label: input } );
+			}
 			return;
 		}
-		if ( e.keyCode === TAB ) {
+		if ( e.keyCode === TAB && input.length ) {
 			e.preventDefault();
-			handleBlur();
+			selectLastInputValue();
 		}
 	};
 
 	React.useEffect( () => {
-		if ( isInputEmpty ) {
-			inputRef.current.focus();
-		}
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+		const { slug, label } = siteVertical || {};
+		setTextValue( label ?? '' );
+		recordVerticalSelection( slug, label );
+	}, [ siteVertical ] );
 
 	React.useEffect( () => {
-		inputRef.current.innerText = siteVertical?.label || '';
-	}, [ siteVertical, inputRef ] );
-
-	// translators: Form input for a site's topic where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
-	const madlibTemplate = NO__( 'My site is about <Input />' );
-	// translators: Form input for a site's topic where "<Input />" is replaced with the topic selected by the user.
-	const madlibTemplateWithPeriod = NO__( 'My site is about <Input />.' );
-	const madlib = __experimentalCreateInterpolateElement(
-		siteVertical ? madlibTemplateWithPeriod : madlibTemplate,
-		{
-			Input: (
-				<span className="vertical-select__suggestions-wrapper">
-					<span className="vertical-select__input-wrapper">
-						{ isInputEmpty && (
-							<span className="vertical-select__placeholder">{ animatedPlaceholder }</span>
-						) }
-						<span
-							contentEditable
-							tabIndex={ 0 }
-							role="textbox"
-							aria-multiline="true"
-							spellCheck={ false }
-							ref={ inputRef }
-							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-							className="madlib__input"
-							onKeyDown={ handleInputKeyDownEvent }
-							onKeyUp={ handleInputKeyUpEvent }
-							onFocus={ () => setIsFocused( true ) }
-							onBlur={ handleBlur }
-						/>
-					</span>
-					{ /* us visibility to keep the layout fixed with and without the arrow */ }
-					{ showArrow && <Arrow className="vertical-select__arrow" /> }
-					<div className="vertical-select__suggestions">
-						{ isFocused && !! verticals.length && (
-							<Suggestions
-								ref={ suggestionRef }
-								query={ inputText }
-								suggestions={ suggestions }
-								suggest={ handleSelect }
-								title={ NO__( 'Suggestions' ) }
-							/>
-						) }
-					</div>
-				</span>
-			),
+		if ( isMobile ) {
+			window.scrollTo( 0, 0 );
 		}
-	);
+	}, [ suggestions, isMobile ] );
 
 	return (
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 		<form
 			className={ classnames( 'vertical-select', {
-				'vertical-select--without-value': isInputEmpty,
+				'vertical-select--with-suggestions': !! suggestions.length && isMobile,
 			} ) }
 		>
-			{ madlib }
+			<label htmlFor="vertical-input">{ __( 'My site is about' ) } </label>
+			<span className="vertical-select__suggestions-wrapper">
+				<AcquireIntentTextInput
+					placeholder={ animatedPlaceholder }
+					value={ textValue }
+					onKeyDown={ handleInputKeyDownEvent }
+					onKeyUp={ handleInputKeyUpEvent }
+					onFocus={ () => setIsFocused( true ) }
+					onChange={ setTextValue }
+					onBlur={ selectLastInputValue }
+				/>
+				{ !! suggestions.length && isFocused && (
+					<div className="vertical-select__suggestions">
+						<Suggestions
+							ref={ suggestionRef }
+							query={ inputText }
+							suggestions={ suggestions }
+							suggest={ handleSuggestAction }
+							title={ __( 'Suggestions' ) }
+						/>
+					</div>
+				) }
+			</span>
 		</form>
 	);
 };

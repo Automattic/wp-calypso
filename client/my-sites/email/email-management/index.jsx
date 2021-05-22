@@ -1,45 +1,55 @@
 /**
  * External dependencies
  */
+import config from '@automattic/calypso-config';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Header from 'my-sites/domains/domain-management/components/header';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import Main from 'calypso/components/main';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
 import {
-	getEligibleGSuiteDomain,
 	hasGSuiteSupportedDomain,
 	hasGSuiteWithAnotherProvider,
 	hasGSuiteWithUs,
-	isGSuiteRestricted,
-} from 'lib/gsuite';
-import { getEligibleEmailForwardingDomain } from 'lib/domains/email-forwarding';
-import getGSuiteUsers from 'state/selectors/get-gsuite-users';
-import hasLoadedGSuiteUsers from 'state/selectors/has-loaded-gsuite-users';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getDomainsBySiteId, hasLoadedSiteDomains } from 'state/sites/domains/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import GSuitePurchaseCta from 'my-sites/email/gsuite-purchase-cta';
-import GSuiteUsersCard from 'my-sites/email/email-management/gsuite-users-card';
-import Placeholder from 'my-sites/email/email-management/gsuite-users-card/placeholder';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import PlansNavigation from 'my-sites/plans/navigation';
-import EmptyContent from 'components/empty-content';
-import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
-import { emailManagement, emailManagementForwarding } from 'my-sites/email/paths';
-import { getSelectedDomain, isMappedDomain, isMappedDomainWithWpcomNameservers } from 'lib/domains';
-import DocumentHead from 'components/data/document-head';
-import QueryGSuiteUsers from 'components/data/query-gsuite-users';
-import QuerySiteDomains from 'components/data/query-site-domains';
+} from 'calypso/lib/gsuite';
+import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
+import hasLoadedGSuiteUsers from 'calypso/state/selectors/has-loaded-gsuite-users';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import GSuiteUsersCard from 'calypso/my-sites/email/email-management/gsuite-users-card';
+import Placeholder from 'calypso/my-sites/email/email-management/gsuite-users-card/placeholder';
+import EmptyContent from 'calypso/components/empty-content';
+import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import {
+	emailManagement,
+	emailManagementForwarding,
+	isUnderEmailManagementAll,
+} from 'calypso/my-sites/email/paths';
+import {
+	getSelectedDomain,
+	isMappedDomain,
+	isMappedDomainWithWpcomNameservers,
+} from 'calypso/lib/domains';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryEmailAccounts from 'calypso/components/data/query-email-accounts';
+import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
+import { hasTitanMailWithUs } from 'calypso/lib/titan';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 
 /**
  * Style dependencies
@@ -49,7 +59,7 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import customDomainImage from 'assets/images/illustrations/custom-domain.svg';
+import customDomainImage from 'calypso/assets/images/illustrations/custom-domain.svg';
 
 class EmailManagement extends React.Component {
 	static propTypes = {
@@ -80,14 +90,19 @@ class EmailManagement extends React.Component {
 
 		return (
 			<Main className="email-management" wideLayout>
+				{ config.isEnabled( 'email-accounts/enabled' ) && selectedSiteId && (
+					<QueryEmailAccounts siteId={ selectedSiteId } />
+				) }
 				{ selectedSiteId && <QueryGSuiteUsers siteId={ selectedSiteId } /> }
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
 				{ ! selectedDomainName && (
 					<FormattedHeader
+						brandFont
 						className="email-management__page-heading"
 						headerText={ this.props.translate( 'Email' ) }
+						subHeaderText={ this.props.translate( 'Add a custom email address to your domain.' ) }
 						align="left"
 					/>
 				) }
@@ -99,7 +114,7 @@ class EmailManagement extends React.Component {
 	}
 
 	headerOrPlansNavigation() {
-		const { cart, selectedSiteSlug, selectedDomainName, translate } = this.props;
+		const { selectedDomainName, translate } = this.props;
 
 		if ( selectedDomainName ) {
 			return (
@@ -109,12 +124,7 @@ class EmailManagement extends React.Component {
 			);
 		}
 
-		return (
-			<PlansNavigation
-				cart={ cart }
-				path={ emailManagement( selectedSiteSlug, selectedDomainName ) }
-			/>
-		);
+		return null;
 	}
 
 	content() {
@@ -126,21 +136,29 @@ class EmailManagement extends React.Component {
 
 		const domainList = selectedDomainName ? [ getSelectedDomain( this.props ) ] : domains;
 
-		if ( domainList.some( hasGSuiteWithUs ) ) {
+		const validDomains = domainList.filter(
+			( domain ) => domain.type === domainTypes.REGISTERED || domain.type === domainTypes.MAPPED
+		);
+
+		if ( validDomains.some( hasGSuiteWithUs ) || validDomains.some( hasTitanMailWithUs ) ) {
 			return this.googleAppsUsersCard();
 		}
 
-		if ( hasGSuiteSupportedDomain( domainList ) ) {
-			return this.addGSuiteCta();
+		if ( validDomains.length === 0 ) {
+			return this.emptyContent();
 		}
 
-		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
+		const selectedDomain = validDomains[ 0 ];
+		const isGSuiteSupported = hasGSuiteSupportedDomain( [ selectedDomain ] );
 
-		if ( emailForwardingDomain && isGSuiteRestricted() && selectedDomainName ) {
-			return this.addEmailForwardingCard( emailForwardingDomain );
-		}
-
-		return this.emptyContent();
+		return (
+			<CalypsoShoppingCartProvider>
+				<EmailProvidersComparison
+					domain={ selectedDomain }
+					isGSuiteSupported={ isGSuiteSupported }
+				/>
+			</CalypsoShoppingCartProvider>
+		);
 	}
 
 	emptyContent() {
@@ -188,8 +206,9 @@ class EmailManagement extends React.Component {
 					{ args: { domain: selectedDomainName } }
 				),
 				action: translate( 'How to change your name servers' ),
-				actionURL:
-					'https://support.wordpress.com/domains/map-existing-domain/#change-your-domains-name-servers',
+				actionURL: localizeUrl(
+					'https://wordpress.com/support/domains/map-existing-domain/#change-your-domains-name-servers'
+				),
 				actionTarget: '_blank',
 				...emailForwardingAction,
 			};
@@ -225,52 +244,36 @@ class EmailManagement extends React.Component {
 		);
 	}
 
-	addGSuiteCta() {
-		const { domains, selectedDomainName } = this.props;
-		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
-		const gsuiteDomainName = getEligibleGSuiteDomain( selectedDomainName, domains );
-
-		return (
-			<Fragment>
-				<GSuitePurchaseCta domainName={ gsuiteDomainName } />
-
-				{ emailForwardingDomain && this.addEmailForwardingCard( emailForwardingDomain ) }
-			</Fragment>
-		);
-	}
-
-	addEmailForwardingCard( domain ) {
-		const { selectedSiteSlug, translate } = this.props;
-
-		return (
-			<VerticalNav>
-				<VerticalNavItem path={ emailManagementForwarding( selectedSiteSlug, domain ) }>
-					{ translate( 'Email Forwarding' ) }
-				</VerticalNavItem>
-			</VerticalNav>
-		);
-	}
-
 	goToEditOrList = () => {
-		const { selectedDomainName, selectedSiteSlug } = this.props;
+		const { selectedDomainName, selectedSiteSlug, currentRoute, previousRoute } = this.props;
+		const domainPath = domainManagementEdit( selectedSiteSlug, selectedDomainName, currentRoute );
+		const emailPath = emailManagement( selectedSiteSlug );
 
-		if ( selectedDomainName ) {
-			page( domainManagementEdit( selectedSiteSlug, selectedDomainName ) );
+		if (
+			selectedDomainName &&
+			( previousRoute.startsWith( domainPath ) ||
+				currentRoute.startsWith( emailPath ) ||
+				isUnderEmailManagementAll( currentRoute ) )
+		) {
+			page( domainPath );
 		} else {
-			page( domainManagementList( selectedSiteSlug ) );
+			page( domainManagementList( selectedSiteSlug, currentRoute ) );
 		}
 	};
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
+
 	return {
+		currentRoute: getCurrentRoute( state ),
 		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
 		domains: getDomainsBySiteId( state, selectedSiteId ),
 		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
 		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
+		previousRoute: getPreviousRoute( state ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 	};
-}, {} )( localize( EmailManagement ) );
+} )( localize( EmailManagement ) );

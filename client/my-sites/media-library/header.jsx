@@ -1,25 +1,26 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenu from 'calypso/components/popover/menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import Gridicon from 'calypso/components/gridicon';
 import MediaLibraryScale from './scale';
 import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
-import { userCan } from 'lib/site/utils';
-import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-actions';
+import { userCan } from 'calypso/lib/site/utils';
+import MediaModalSecondaryActions from 'calypso/post-editor/media-modal/secondary-actions';
 import { Card, Button, ScreenReaderText } from '@automattic/components';
-import ButtonGroup from 'components/button-group';
-import StickyPanel from 'components/sticky-panel';
+import ButtonGroup from 'calypso/components/button-group';
+import StickyPanel from 'calypso/components/sticky-panel';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
 class MediaLibraryHeader extends React.Component {
 	static displayName = 'MediaLibraryHeader';
@@ -44,7 +45,7 @@ class MediaLibraryHeader extends React.Component {
 		isMoreOptionsVisible: false,
 	};
 
-	setMoreOptionsContext = component => {
+	setMoreOptionsContext = ( component ) => {
 		if ( ! component ) {
 			return;
 		}
@@ -54,21 +55,22 @@ class MediaLibraryHeader extends React.Component {
 		} );
 	};
 
-	toggleAddViaUrl = state => {
+	toggleAddViaUrl = ( state ) => {
 		this.setState( {
 			addingViaUrl: state,
 			isMoreOptionsVisible: false,
 		} );
 	};
 
-	toggleMoreOptions = state => {
+	toggleMoreOptions = ( state ) => {
 		this.setState( {
 			isMoreOptionsVisible: state,
 		} );
 	};
 
 	renderUploadButtons = () => {
-		const { site, filter, onAddMedia } = this.props;
+		const { sectionName, site, filter, onAddMedia } = this.props;
+		const isMediaLibrary = sectionName === 'media';
 
 		if ( ! userCan( 'upload_files', site ) ) {
 			return;
@@ -89,9 +91,10 @@ class MediaLibraryHeader extends React.Component {
 				</UploadButton>
 				<Button
 					compact
+					primary={ isMediaLibrary }
 					ref={ this.setMoreOptionsContext }
 					onClick={ this.toggleMoreOptions.bind( this, ! this.state.isMoreOptionsVisible ) }
-					className="button media-library__upload-more"
+					className="media-library__upload-more button"
 					data-tip-target="media-library-upload-more"
 				>
 					<ScreenReaderText>{ this.props.translate( 'More Options' ) }</ScreenReaderText>
@@ -134,7 +137,6 @@ class MediaLibraryHeader extends React.Component {
 					onViewDetails={ this.props.onViewDetails }
 					onDelete={ this.props.onDeleteItem }
 					site={ this.props.site }
-					view={ 'LIST' }
 				/>
 				<MediaLibraryScale onChange={ this.props.onMediaScaleChange } />
 			</Card>
@@ -147,4 +149,6 @@ class MediaLibraryHeader extends React.Component {
 	}
 }
 
-export default localize( MediaLibraryHeader );
+export default connect( ( state ) => ( {
+	sectionName: getSectionName( state ),
+} ) )( localize( MediaLibraryHeader ) );

@@ -65,4 +65,27 @@ describe( 'getCurrentUser', () => {
 
 		expect( finalResult.done ).toBe( true );
 	} );
+
+	it( 'should return a receiveCurrentUser action object with server rendered currentUser when available', async () => {
+		const serverRenderedUser = {
+			ID: 2,
+			username: 'server-rendered-user',
+			display_name: 'server-rendered-user',
+			language: 'en',
+			localeSlug: 'en',
+			localeVariant: '',
+			locale_variant: '',
+		};
+		window.currentUser = serverRenderedUser;
+
+		const generator = getCurrentUser();
+
+		const finalResult = generator.next();
+		expect( finalResult.value ).toEqual( {
+			type: 'RECEIVE_CURRENT_USER',
+			currentUser: serverRenderedUser,
+		} );
+
+		expect( finalResult.done ).toBe( true );
+	} );
 } );

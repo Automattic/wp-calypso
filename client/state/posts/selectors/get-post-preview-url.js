@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/url';
-import { getSitePost } from 'state/posts/selectors/get-site-post';
-import { getSite } from 'state/sites/selectors';
+import { addQueryArgs } from 'calypso/lib/url';
+import { getSitePost } from 'calypso/state/posts/selectors/get-site-post';
+import { getSite } from 'calypso/state/sites/selectors';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns the most reliable preview URL for the post by site ID, post ID pair,

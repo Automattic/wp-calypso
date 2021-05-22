@@ -13,10 +13,15 @@ import * as driverHelper from '../../driver-helper.js';
 
 export default class CheckOutPage extends AsyncBaseContainer {
 	constructor( driver, url = null ) {
-		super( driver, By.css( '.checkout' ), url, config.get( 'explicitWaitMS' ) * 2 );
+		super(
+			driver,
+			By.css( '.checkout,.composite-checkout' ),
+			url,
+			2 * config.get( 'explicitWaitMS' )
+		);
 	}
 
-	async enterRegistarDetails( {
+	async enterRegistrarDetails( {
 		firstName,
 		lastName,
 		emailAddress,
@@ -27,6 +32,21 @@ export default class CheckOutPage extends AsyncBaseContainer {
 		stateCode,
 		postalCode,
 	} ) {
+		const isCompositeCheckout = await this.isCompositeCheckout();
+		if ( isCompositeCheckout ) {
+			await driverHelper.waitUntilElementLocatedAndVisible(
+				this.driver,
+				By.css( '.checkout-review-order.is-summary' )
+			);
+			// If the contact details are already pre-filled and valid, the contact
+			// details step will be skipped in composite checkout. Therefore we'll
+			// need to click to edit that step before being able to modify it.
+			await driverHelper.clickIfPresent(
+				this.driver,
+				By.css( 'button[aria-label="Edit the contact details"]' )
+			);
+		}
+
 		await driverHelper.setWhenSettable( this.driver, By.id( 'first-name' ), firstName );
 		await driverHelper.setWhenSettable( this.driver, By.id( 'last-name' ), lastName );
 		await driverHelper.setWhenSettable( this.driver, By.id( 'email' ), emailAddress );
@@ -51,10 +71,21 @@ export default class CheckOutPage extends AsyncBaseContainer {
 			By.css( `select[name=state] option[value="${ stateCode }"]` )
 		);
 
-		return await driverHelper.setWhenSettable( this.driver, By.id( 'postal-code' ), postalCode );
+		await driverHelper.setWhenSettable( this.driver, By.id( 'postal-code' ), postalCode );
+	}
+
+	async isCompositeCheckout() {
+		return await driverHelper.isElementLocated( this.driver, By.css( '.composite-checkout' ) );
 	}
 
 	async submitForm() {
+		const isCompositeCheckout = await this.isCompositeCheckout();
+		if ( isCompositeCheckout ) {
+			return await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( 'button[aria-label="Continue with the entered contact details"]' )
+			);
+		}
 		return await driverHelper.clickWhenClickable( this.driver, By.css( 'button[type="submit"]' ) );
 	}
 }

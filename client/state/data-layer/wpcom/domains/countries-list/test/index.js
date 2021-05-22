@@ -6,8 +6,8 @@ import {
 	updateCountriesDomains,
 	showCountriesDomainsLoadingError,
 } from '../';
-import { COUNTRIES_DOMAINS_UPDATED, NOTICE_CREATE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { COUNTRIES_DOMAINS_UPDATED, NOTICE_CREATE } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'domains countries-list', () => {

@@ -6,7 +6,7 @@ import { clone, cloneDeep } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isAdTrackingAllowed } from 'lib/analytics/utils';
+import { isAdTrackingAllowed } from 'calypso/lib/analytics/utils';
 
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import { debug, isCriteoEnabled, TRACKING_IDS } from './constants';
@@ -72,7 +72,7 @@ export function recordPlansViewInCriteo() {
 /**
  * Records that a user viewed the checkout page
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `ResponseCart` object
  * @returns {void}
  */
 export function recordViewCheckoutInCriteo( cart ) {
@@ -99,11 +99,11 @@ export function recordViewCheckoutInCriteo( cart ) {
 /**
  * Converts the products in a cart to the format Criteo expects for its `items` property
  *
- * @param {object} cart - cart as `CartValue` object
+ * @param {object} cart - cart as `ResponseCart` object
  * @returns {Array} - An array of items to include in the Criteo tracking call
  */
 export function cartToCriteoItems( cart ) {
-	return cart.products.map( product => {
+	return cart.products.map( ( product ) => {
 		return {
 			id: product.product_id,
 			price: product.cost,

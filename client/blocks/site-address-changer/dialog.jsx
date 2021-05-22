@@ -4,16 +4,17 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormLabel from 'components/forms/form-label';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import TrackComponentView from 'lib/analytics/track-component-view';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+
+const noop = () => {};
 
 class SiteAddressChangerConfirmationDialog extends PureComponent {
 	static propTypes = {
@@ -43,7 +44,7 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 		} );
 	};
 
-	onConfirm = closeDialog => {
+	onConfirm = ( closeDialog ) => {
 		this.onClose();
 		this.props.onConfirm( this.props.targetSite, closeDialog );
 	};

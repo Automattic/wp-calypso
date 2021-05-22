@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/effective-module-tree",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "A tool to generate the effective list of dependencies of any project",
 	"main": "index.js",
 	"author": "Automattic Inc.",
@@ -20,6 +20,6 @@
 	"dependencies": {
 		"debug": "^4.1.1",
 		"object-treeify": "^1.1.23",
-		"yargs": "^15.1.0"
+		"yargs": "^17.0.1"
 	}
 }

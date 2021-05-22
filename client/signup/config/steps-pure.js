@@ -1,24 +1,29 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	PLAN_PERSONAL_MONTHLY,
+	PLAN_PREMIUM_MONTHLY,
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_ECOMMERCE_MONTHLY,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
+
+const noop = () => {};
 
 export function generateSteps( {
 	addPlanToCart = noop,
@@ -35,6 +40,7 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
+	maybeRemoveStepForUserlessCheckout = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -99,11 +105,11 @@ export function generateSteps( {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
 			fulfilledStepCallback: isDomainFulfilled,
-			providesDependencies: [ 'domainItem' ],
+			providesDependencies: [ 'domainItem', 'shouldHideFreePlan' ],
+			optionalDependencies: [ 'shouldHideFreePlan' ],
 			props: {
 				isDomainOnly: false,
 				showExampleSuggestions: false,
-				shouldShowDomainTestCopy: false,
 				includeWordPressDotCom: false,
 				showSkipButton: true,
 				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
@@ -144,7 +150,38 @@ export function generateSteps( {
 			stepName: 'user',
 			apiRequestFunction: createAccount,
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'plans_reorder_abtest_variation',
+			],
+			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+			},
+		},
+
+		'user-new': {
+			stepName: 'user-new',
+			apiRequestFunction: createAccount,
+			fulfilledStepCallback: maybeRemoveStepForUserlessCheckout,
+			providesToken: true,
+			dependencies: [ 'cartItem', 'domainItem' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'plans_reorder_abtest_variation',
+				'allowUnauthenticated',
+			],
+			optionalDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'plans_reorder_abtest_variation',
+				'allowUnauthenticated',
+			],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
@@ -163,6 +200,12 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
+
+		'plans-new': {
+			stepName: 'plans',
 			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
@@ -243,9 +286,6 @@ export function generateSteps( {
 			props: {
 				headerText: i18n.translate( 'Getting ready to launch your website' ),
 				subHeaderText: i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." ),
-				fallbackHeaderText: i18n.translate(
-					"Almost there, pick a plan that's right for you. Upgrade as you grow."
-				),
 				isLaunchPage: true,
 			},
 		},
@@ -256,7 +296,6 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug', 'domainItem' ],
 			providesDependencies: [ 'cartItem' ],
 		},
-
 		domains: {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
@@ -266,8 +305,9 @@ export function generateSteps( {
 				'domainItem',
 				'themeItem',
 				'shouldHideFreePlan',
+				'isManageSiteFlow',
 			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
+			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
 			props: {
 				isDomainOnly: false,
 			},
@@ -279,7 +319,17 @@ export function generateSteps( {
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
 			props: {
 				isDomainOnly: true,
-				shouldShowDomainTestCopy: false,
+				forceHideFreeDomainExplainerAndStrikeoutUi: true,
+			},
+		},
+
+		'select-domain': {
+			stepName: 'select-domain',
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
+			props: {
+				isAllDomains: true,
+				isDomainOnly: true,
+				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 			},
 		},
 
@@ -302,8 +352,8 @@ export function generateSteps( {
 				'siteSlug',
 				'domainItem',
 				'themeItem',
-				'shouldHideFreePlan',
 				'useThemeHeadstart',
+				'shouldHideFreePlan',
 			],
 			optionalDependencies: [ 'shouldHideFreePlan', 'useThemeHeadstart' ],
 			props: {
@@ -330,14 +380,30 @@ export function generateSteps( {
 				oauth2Signup: true,
 			},
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'oauth2_client_id',
+				'oauth2_redirect',
+				'marketing_price_group',
+				'plans_reorder_abtest_variation',
+			],
+			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 		},
 
 		'oauth2-name': {
 			stepName: 'oauth2-name',
 			apiRequestFunction: createAccount,
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'oauth2_client_id',
+				'oauth2_redirect',
+				'marketing_price_group',
+				'plans_reorder_abtest_variation',
+			],
+			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,
@@ -592,10 +658,65 @@ export function generateSteps( {
 			unstorableDependencies: [ 'bearer_token' ],
 		},
 
-		'team-site': {
-			stepName: 'team-site',
+		'p2-details': {
+			stepName: 'p2-details',
+		},
+
+		'p2-site': {
+			stepName: 'p2-site',
 			apiRequestFunction: createWpForTeamsSite,
 			providesDependencies: [ 'siteSlug' ],
+		},
+
+		'plans-personal-monthly': {
+			stepName: 'plans-personal-monthly',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PERSONAL_MONTHLY,
+			},
+		},
+
+		'plans-premium-monthly': {
+			stepName: 'plans-premium-monthly',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PREMIUM_MONTHLY,
+			},
+		},
+
+		'plans-business-monthly': {
+			stepName: 'plans-business-monthly',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_BUSINESS_MONTHLY,
+			},
+		},
+
+		'plans-ecommerce-monthly': {
+			stepName: 'plans-ecommerce-monthly',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_ECOMMERCE_MONTHLY,
+			},
+		},
+
+		design: {
+			stepName: 'design-picker',
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'selectedDesign' ],
+			optionalDependencies: [ 'selectedDesign' ],
 		},
 	};
 }

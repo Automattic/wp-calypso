@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import TokenField from 'components/token-field';
-import { unescapeAndFormatSpaces } from 'lib/formatting';
+import TokenField from 'calypso/components/token-field';
+import { unescapeAndFormatSpaces } from 'calypso/lib/formatting';
 
 const suggestions = [
 	'the',
@@ -64,7 +64,7 @@ class TokenFieldWrapper extends React.Component {
 		);
 	}
 
-	_onTokensChange = value => {
+	_onTokensChange = ( value ) => {
 		this.setState( { tokens: value } );
 	};
 }

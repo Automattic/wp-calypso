@@ -6,13 +6,12 @@
  * External dependencies
  */
 import { shallow } from 'enzyme';
-import { pick, identity } from 'lodash';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import { isEnabled } from '@automattic/calypso-config';
 import { CartItem } from '../cart-item';
 import {
 	isPlan,
@@ -21,35 +20,22 @@ import {
 	isBiennially,
 	isBundled,
 	isDomainProduct,
-} from 'lib/products-values';
-import {
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_PERSONAL,
-	PLAN_BLOGGER,
-	PLAN_PREMIUM,
-} from 'lib/plans/constants';
+	calculateMonthlyPriceForPlan,
+	getBillingMonthsForPlan,
+} from '@automattic/calypso-products';
 
-const plansModule = require( 'lib/plans' );
-const originalPlansModuleFunctions = pick( plansModule, [
-	'calculateMonthlyPriceForPlan',
-	'getBillingMonthsForPlan',
-] );
-const mockPlansModule = () => {
-	plansModule.calculateMonthlyPriceForPlan = jest.fn( () => 120 );
-	plansModule.getBillingMonthsForPlan = jest.fn( () => 10 );
-};
-mockPlansModule();
-
-jest.mock( 'config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const fn = () => {};
 	fn.isEnabled = jest.fn( () => null );
 	return fn;
 } );
 jest.mock( '@automattic/format-currency', () => ( {
-	getCurrencyObject: price => ( { integer: price } ),
+	getCurrencyObject: ( price ) => ( { integer: price } ),
 } ) );
-jest.mock( 'lib/products-values', () => ( {
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
+	calculateMonthlyPriceForPlan: jest.fn( () => 120 ),
+	getBillingMonthsForPlan: jest.fn( () => 10 ),
 	isPlan: jest.fn( () => null ),
 	isTheme: jest.fn( () => null ),
 	isMonthly: jest.fn( () => null ),
@@ -58,7 +44,7 @@ jest.mock( 'lib/products-values', () => ( {
 	isBundled: jest.fn( () => null ),
 	isDomainProduct: jest.fn( () => null ),
 	isCredits: jest.fn( () => null ),
-	isGoogleApps: jest.fn( () => null ),
+	isGSuiteOrExtraLicenseOrGoogleWorkspace: jest.fn( () => null ),
 } ) );
 
 const cartItem = {
@@ -69,7 +55,7 @@ const cartItem = {
 	product_slug: 'plan_value_bundle',
 };
 
-const translate = jest.fn( identity );
+const translate = jest.fn( ( string ) => string );
 const props = {
 	cartItem,
 	translate,
@@ -82,9 +68,10 @@ describe( 'cart-item', () => {
 	} );
 
 	describe( 'monthlyPrice', () => {
-		let myTranslate, instance;
+		let myTranslate;
+		let instance;
 		beforeEach( () => {
-			myTranslate = jest.fn( identity );
+			myTranslate = jest.fn( ( string ) => string );
 			instance = new CartItem( {
 				translate: myTranslate,
 				cartItem: {
@@ -180,7 +167,6 @@ describe( 'cart-item', () => {
 	} );
 
 	describe( 'calcMonthlyBillingDetails - mocks', () => {
-		const { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } = plansModule;
 		beforeEach( () => {
 			calculateMonthlyPriceForPlan.mockReset();
 			calculateMonthlyPriceForPlan.mockImplementation( () => 299 );
@@ -206,66 +192,6 @@ describe( 'cart-item', () => {
 				monthlyPrice: 299,
 				months: 36,
 			} );
-		} );
-	} );
-
-	describe( 'calcMonthlyBillingDetails - real callbacks', () => {
-		beforeAll( () => {
-			// restore original functions
-			for ( const key in originalPlansModuleFunctions ) {
-				plansModule[ key ] = originalPlansModuleFunctions[ key ];
-			}
-		} );
-
-		afterAll( () => {
-			mockPlansModule();
-		} );
-
-		const expectations = [
-			[
-				{ product_slug: PLAN_BLOGGER, cost: 60 },
-				{ months: 12, monthlyPrice: 5 },
-			],
-			[
-				{ product_slug: PLAN_PERSONAL, cost: 120 },
-				{ months: 12, monthlyPrice: 10 },
-			],
-			[
-				{ product_slug: PLAN_PREMIUM, cost: 180 },
-				{ months: 12, monthlyPrice: 15 },
-			],
-			[
-				{ product_slug: PLAN_BUSINESS_2_YEARS, cost: 480 },
-				{ months: 24, monthlyPrice: 20 },
-			],
-			[
-				{ product_slug: PLAN_JETPACK_PERSONAL, cost: 288 },
-				{ months: 12, monthlyPrice: 24 },
-			],
-		];
-
-		expectations.forEach( ( [ input, output ] ) => {
-			test( `Returns correct values for annual plan ${ input.product_slug }`, () => {
-				const instance = new CartItem( {
-					...props,
-					cartItem: {
-						...cartItem,
-						...input,
-					},
-				} );
-				expect( instance.calcMonthlyBillingDetails() ).toEqual( output );
-			} );
-		} );
-
-		test( 'Throws an error for an unknown plan', () => {
-			const instance = new CartItem( {
-				...props,
-				cartItem: {
-					...cartItem,
-					product_slug: 'fake',
-				},
-			} );
-			expect( () => instance.calcMonthlyBillingDetails() ).toThrow();
 		} );
 	} );
 

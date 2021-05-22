@@ -10,22 +10,21 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import { domainManagementEdit } from 'my-sites/domains/paths';
-import { emailManagement } from 'my-sites/email/paths';
-import { getThemeDetailsUrl } from 'state/themes/selectors';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getThemeDetailsUrl } from 'calypso/state/themes/selectors';
 import {
 	isDomainProduct,
-	isGoogleApps,
+	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isSiteRedirect,
 	isTheme,
-} from 'lib/products-values';
+	isTitanMail,
+} from '@automattic/calypso-products';
 
 const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
-	let props = {},
-		url,
-		text;
+	let url;
+	let text;
 
 	if ( ! selectedSite ) {
 		return <span />;
@@ -33,7 +32,7 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 
 	if ( isPlan( purchase ) ) {
 		url = '/plans/my-plan/' + selectedSite.slug;
-		text = i18n.translate( 'View Plan Features' );
+		text = i18n.translate( 'Plan Features' );
 	}
 
 	if ( isDomainProduct( purchase ) || isSiteRedirect( purchase ) ) {
@@ -41,7 +40,7 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 		text = i18n.translate( 'Domain Settings' );
 	}
 
-	if ( isGoogleApps( purchase ) ) {
+	if ( isGSuiteOrGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
 		url = emailManagement( selectedSite.slug, purchase.meta );
 		text = i18n.translate( 'Email Settings' );
 	}
@@ -49,15 +48,11 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 	if ( isTheme( purchase ) ) {
 		url = productUrl;
 		text = i18n.translate( 'Theme Details' );
-
-		if ( ! config.isEnabled( 'manage/themes/details' ) ) {
-			props = { target: '_blank' };
-		}
 	}
 
 	if ( url && text ) {
 		return (
-			<a className="product-link" href={ url } { ...props }>
+			<a className="product-link" href={ url }>
 				{ text }
 			</a>
 		);

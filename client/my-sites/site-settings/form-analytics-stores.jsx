@@ -1,25 +1,24 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import ExternalLink from 'components/external-link';
-import FormLegend from 'components/forms/form-legend';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import ExternalLink from 'calypso/components/external-link';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
 class FormAnalyticsStores extends Component {
-	handleToggleChange = name => () => {
+	handleToggleChange = ( name ) => () => {
 		this.props.handleToggleChange( name );
 	};
 
-	renderExplanation = setting => {
+	renderExplanation = ( setting ) => {
 		const link = setting.link ? (
 			<ExternalLink icon href={ setting.link.url } target="_blank" rel="noopener noreferrer">
 				{ setting.link.label }
@@ -44,17 +43,16 @@ class FormAnalyticsStores extends Component {
 
 		return (
 			<div className={ classes }>
-				{ settings.map( setting => {
+				{ settings.map( ( setting ) => {
 					const checked = fields.wga ? Boolean( fields.wga[ setting.key ] ) : false;
 					return (
 						<div key={ setting.key }>
-							<CompactFormToggle
+							<ToggleControl
 								checked={ checked }
 								disabled={ disableAll }
 								onChange={ this.handleToggleChange( setting.key ) }
-							>
-								{ setting.label }
-							</CompactFormToggle>
+								label={ setting.label }
+							/>
 							{ setting.explanation && this.renderExplanation( setting ) }
 							{ setting.children &&
 								this.renderSettings( setting.children, disableAll || ! checked, true ) }
@@ -65,7 +63,7 @@ class FormAnalyticsStores extends Component {
 		);
 	};
 
-	renderBasicSettings = disableAll => {
+	renderBasicSettings = ( disableAll ) => {
 		const { translate } = this.props;
 		const settings = [
 			{
@@ -88,7 +86,7 @@ class FormAnalyticsStores extends Component {
 		return this.renderSettings( settings, disableAll );
 	};
 
-	renderEnhancedSettings = disableAll => {
+	renderEnhancedSettings = ( disableAll ) => {
 		const { translate } = this.props;
 		const settings = [
 			{

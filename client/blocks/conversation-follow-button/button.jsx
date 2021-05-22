@@ -1,14 +1,12 @@
 /**
- */
-
-/**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
+
+const noop = () => {};
 
 class ConversationFollowButton extends React.Component {
 	static propTypes = {
@@ -23,7 +21,7 @@ class ConversationFollowButton extends React.Component {
 		tagName: 'button',
 	};
 
-	toggleFollow = event => {
+	toggleFollow = ( event ) => {
 		if ( event ) {
 			event.preventDefault();
 		}

@@ -8,8 +8,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import Gridicon from 'calypso/components/gridicon';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import titlecase from 'to-title-case';
 
 class StatsModuleHeader extends React.Component {
@@ -35,7 +35,7 @@ class StatsModuleHeader extends React.Component {
 		onActionClick: () => {},
 	};
 
-	toggleInfo = event => {
+	toggleInfo = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 		const { path, onActionClick, showInfo } = this.props;
@@ -50,7 +50,7 @@ class StatsModuleHeader extends React.Component {
 		} );
 	};
 
-	toggleModule = event => {
+	toggleModule = ( event ) => {
 		event.preventDefault();
 		const { path, onActionClick, showModule } = this.props;
 		const gaEvent = showModule ? 'Collapsed' : 'Expanded';

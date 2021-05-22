@@ -31,9 +31,8 @@ export default function CommentLike( cid, sid, wpcom ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-CommentLike.prototype.mine =
-CommentLike.prototype.state = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine';
+CommentLike.prototype.mine = CommentLike.prototype.state = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine';
 	return this.wpcom.req.get( path, query, fn );
 };
 
@@ -44,8 +43,8 @@ CommentLike.prototype.state = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-CommentLike.prototype.add = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/new';
+CommentLike.prototype.add = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/new';
 	return this.wpcom.req.post( path, query, fn );
 };
 
@@ -56,8 +55,7 @@ CommentLike.prototype.add = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-CommentLike.prototype.del =
-CommentLike.prototype.delete = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine/delete';
+CommentLike.prototype.del = CommentLike.prototype.delete = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes/mine/delete';
 	return this.wpcom.req.del( path, query, fn );
 };

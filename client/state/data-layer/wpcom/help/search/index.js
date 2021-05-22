@@ -1,16 +1,13 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { HELP_LINKS_REQUEST } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveHelpLinks } from 'state/help/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { HELP_LINKS_REQUEST } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { receiveHelpLinks } from 'calypso/state/help/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 /**
  * Dispatches a request to fetch help links that match a certain search query
@@ -18,7 +15,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const requestHelpLinks = action =>
+export const requestHelpLinks = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

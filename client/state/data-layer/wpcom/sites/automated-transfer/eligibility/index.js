@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import { get, identity, isEmpty, map } from 'lodash';
+import { get, isEmpty, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST } from 'state/action-types';
-import { updateEligibility } from 'state/automated-transfer/actions';
-import { eligibilityHolds } from 'state/automated-transfer/constants';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST } from 'calypso/state/action-types';
+import { updateEligibility } from 'calypso/state/automated-transfer/actions';
+import { eligibilityHolds } from 'calypso/state/automated-transfer/constants';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 
 /**
  * Maps the constants used in the WordPress.com API with
@@ -56,7 +56,7 @@ export const eligibilityHoldsFromApi = ( { errors = [] }, options = {} ) =>
 			}
 			return get( statusMapping, code, '' );
 		} )
-		.filter( identity );
+		.filter( Boolean );
 
 /**
  * Maps from API response the issues which trigger a confirmation for automated transfer
@@ -93,7 +93,7 @@ const fromApi = ( data, options = {} ) => ( {
  * @param {object} data eligibility data from the api
  * @returns {object} An analytics event object
  */
-const trackEligibility = data => {
+const trackEligibility = ( data ) => {
 	const isEligible = get( data, 'is_eligible', false );
 	const pluginWarnings = get( data, 'warnings.plugins', [] );
 	const widgetWarnings = get( data, 'warnings.widgets', [] );
@@ -121,7 +121,7 @@ const trackEligibility = data => {
  *
  * @returns {object} action
  */
-export const requestAutomatedTransferEligibility = action =>
+export const requestAutomatedTransferEligibility = ( action ) =>
 	http(
 		{
 			method: 'GET',

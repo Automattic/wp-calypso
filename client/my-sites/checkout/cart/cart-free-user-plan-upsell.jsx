@@ -5,40 +5,46 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@automattic/components';
-import { getSelectedSite } from 'state/ui/selectors';
-import { siteHasPaidPlan } from 'signup/steps/site-picker/site-picker-submit';
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
-	getDomainRegistrations,
 	hasDomainRegistration,
+	hasTransferProduct,
 	hasPlan,
 	planItem,
-} from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/cart/actions';
-import SectionHeader from 'components/section-header';
-import { PLAN_PERSONAL } from 'lib/plans/constants';
-import { isRequestingSitePlans } from 'state/sites/plans/selectors';
-import { isRequestingPlans } from 'state/plans/selectors';
-import { getPlan } from 'lib/plans';
-import { getPlanPrice } from 'state/products-list/selectors';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/lib/cart-values/cart-items';
+import SectionHeader from 'calypso/components/section-header';
+import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { isRequestingPlans } from 'calypso/state/plans/selectors';
+import {
+	getPlan,
+	PLAN_PERSONAL,
+	isDomainRegistration,
+	isDomainTransfer,
+} from '@automattic/calypso-products';
+import { getPlanPrice } from 'calypso/state/products-list/selectors';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getAllCartItems } from '../../../lib/cart-values/cart-items';
 
 class CartFreeUserPlanUpsell extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object,
+		addItemToCart: PropTypes.func.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		hasPaidPlan: PropTypes.bool,
 		hasPlanInCart: PropTypes.bool,
 		isPlansListFetching: PropTypes.bool,
-		isRegisteringDomain: PropTypes.bool,
+		isRegisteringOrTransferringDomain: PropTypes.bool,
 		isSitePlansListFetching: PropTypes.bool,
 		personalPlan: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		planPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
@@ -54,9 +60,13 @@ class CartFreeUserPlanUpsell extends React.Component {
 		return isLoadingCart || isLoadingPlans || isLoadingSitePlans;
 	}
 
+	isRegistrationOrTransfer = ( item ) => {
+		return isDomainRegistration( item ) || isDomainTransfer( item );
+	};
+
 	getUpgradeText() {
 		const { cart, planPrice, translate } = this.props;
-		const firstDomain = getDomainRegistrations( cart )[ 0 ];
+		const firstDomain = find( getAllCartItems( cart ), this.isRegistrationOrTransfer );
 
 		if ( planPrice > firstDomain.cost ) {
 			const extraToPay = planPrice - firstDomain.cost;
@@ -107,20 +117,26 @@ class CartFreeUserPlanUpsell extends React.Component {
 		const {
 			hasPaidPlan,
 			hasPlanInCart,
-			isRegisteringDomain,
+			isRegisteringOrTransferringDomain,
 			selectedSite,
 			showPlanUpsell,
 		} = this.props;
 
 		return (
-			isRegisteringDomain && showPlanUpsell && selectedSite && ! hasPaidPlan && ! hasPlanInCart
+			isRegisteringOrTransferringDomain &&
+			showPlanUpsell &&
+			selectedSite &&
+			! hasPaidPlan &&
+			! hasPlanInCart
 		);
 	}
 
 	addPlanToCart = () => {
 		const planCartItem = planItem( PLAN_PERSONAL, {} );
-		addItem( planCartItem );
-		this.props.clickUpsellAddToCart();
+		if ( planCartItem ) {
+			this.props.addItemToCart( planCartItem );
+			this.props.clickUpsellAddToCart();
+		}
 	};
 
 	render() {
@@ -131,9 +147,12 @@ class CartFreeUserPlanUpsell extends React.Component {
 		const { translate } = this.props;
 
 		return (
-			<div>
-				<SectionHeader className="cart__header" label={ translate( 'Upgrade and save' ) } />
-				<div style={ { padding: '16px' } }>
+			<div className="cart__upsell-wrapper">
+				<SectionHeader
+					className="cart__header cart__upsell-header"
+					label={ translate( 'Upgrade and save' ) }
+				/>
+				<div className="cart__upsell-body">
 					<p>{ this.getUpgradeText() }</p>
 					<Button onClick={ this.addPlanToCart }>{ translate( 'Add to Cart' ) }</Button>
 				</div>
@@ -143,7 +162,7 @@ class CartFreeUserPlanUpsell extends React.Component {
 	}
 }
 
-const mapStateToProps = ( state, { cart } ) => {
+const mapStateToProps = ( state, { cart, addItemToCart } ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = selectedSite ? selectedSite.ID : null;
 	const isPlansListFetching = isRequestingPlans( state );
@@ -153,7 +172,7 @@ const mapStateToProps = ( state, { cart } ) => {
 		hasPaidPlan: siteHasPaidPlan( selectedSite ),
 		hasPlanInCart: hasPlan( cart ),
 		isPlansListFetching: isPlansListFetching,
-		isRegisteringDomain: hasDomainRegistration( cart ),
+		isRegisteringOrTransferringDomain: hasDomainRegistration( cart ) || hasTransferProduct( cart ),
 		isSitePlansListFetching: isRequestingSitePlans( state ),
 		personalPlan: personalPlan,
 		planPrice:
@@ -164,10 +183,11 @@ const mapStateToProps = ( state, { cart } ) => {
 		showPlanUpsell: getCurrentUser( state )
 			? selectedSiteId && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 			: false,
+		addItemToCart,
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return {
 		clickUpsellAddToCart: () =>
 			dispatch( recordTracksEvent( 'calypso_non_dwpo_checkout_plan_upsell_add_to_cart', {} ) ),

@@ -11,7 +11,7 @@ import {
 	hasExpiredSecretError,
 	hasXmlrpcError,
 	isRemoteSiteOnSitesList,
-	isSiteBlacklistedError,
+	isSiteBlockedError,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -371,9 +371,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isSiteBlacklistedError', () => {
+	describe( '#isSiteBlockedError', () => {
 		test( 'should be false when there is an empty state', () => {
-			const hasError = isSiteBlacklistedError( { jetpackConnect: {} } );
+			const hasError = isSiteBlockedError( { jetpackConnect: {} } );
 			expect( hasError ).toBe( false );
 		} );
 
@@ -385,7 +385,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const hasError = isSiteBlacklistedError( stateHasNoError );
+			const hasError = isSiteBlockedError( stateHasNoError );
 			expect( hasError ).toBe( false );
 		} );
 
@@ -399,12 +399,12 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const hasError = isSiteBlacklistedError( stateHasOtherError );
+			const hasError = isSiteBlockedError( stateHasOtherError );
 			expect( hasError ).toBe( false );
 		} );
 
-		test( 'should be true if site has been blacklisted', () => {
-			const stateHasBeenBlacklistedError = {
+		test( 'should be true if site has been blocked', () => {
+			const stateHasBeenBlockedError = {
 				jetpackConnect: {
 					jetpackConnectAuthorize: {
 						authorizeError: {
@@ -413,7 +413,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			const hasError = isSiteBlacklistedError( stateHasBeenBlacklistedError );
+			const hasError = isSiteBlockedError( stateHasBeenBlockedError );
 			expect( hasError ).toBe( true );
 		} );
 	} );
@@ -461,7 +461,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getUserAlreadyConnected()', () => {
-		const makeUserAlreadyConnectedState = result => ( {
+		const makeUserAlreadyConnectedState = ( result ) => ( {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
 					userAlreadyConnected: result,

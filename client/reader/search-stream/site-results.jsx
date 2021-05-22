@@ -12,17 +12,17 @@ import { connect } from 'react-redux';
 import {
 	getReaderFeedsForQuery,
 	getReaderFeedsCountForQuery,
-} from 'state/reader/feed-searches/selectors';
-import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
-import ReaderInfiniteStream from 'reader/components/reader-infinite-stream';
+} from 'calypso/state/reader/feed-searches/selectors';
+import QueryReaderFeedsSearch from 'calypso/components/data/query-reader-feeds-search';
+import ReaderInfiniteStream from 'calypso/reader/components/reader-infinite-stream';
 import {
 	requestFeedSearch,
 	SORT_BY_RELEVANCE,
 	SORT_BY_LAST_UPDATED,
-} from 'state/reader/feed-searches/actions';
-import { SEARCH_RESULTS_SITES } from 'reader/follow-sources';
-import { siteRowRenderer } from 'reader/components/reader-infinite-stream/row-renderers';
-import withDimensions from 'lib/with-dimensions';
+} from 'calypso/state/reader/feed-searches/actions';
+import { SEARCH_RESULTS_SITES } from 'calypso/reader/follow-sources';
+import { siteRowRenderer } from 'calypso/reader/components/reader-infinite-stream/row-renderers';
+import withDimensions from 'calypso/lib/with-dimensions';
 
 class SiteResults extends React.Component {
 	static propTypes = {
@@ -35,7 +35,7 @@ class SiteResults extends React.Component {
 		showLastUpdatedDate: PropTypes.bool,
 	};
 
-	fetchNextPage = offset => {
+	fetchNextPage = ( offset ) => {
 		this.props.requestFeedSearch( {
 			query: this.props.query,
 			offset,
@@ -44,7 +44,7 @@ class SiteResults extends React.Component {
 		} );
 	};
 
-	hasNextPage = offset => offset < this.props.searchResultsCount;
+	hasNextPage = ( offset ) => offset < this.props.searchResultsCount;
 
 	render() {
 		const { query, searchResults, width, sort, showLastUpdatedDate } = this.props;

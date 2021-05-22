@@ -6,11 +6,11 @@ import { filter, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getThemeFilters } from 'state/themes/selectors/get-theme-filters';
-import { getThemeFilterTerm } from 'state/themes/selectors/get-theme-filter-term';
+import { createSelector } from '@automattic/state-utils';
+import { getThemeFilters } from 'calypso/state/themes/selectors/get-theme-filters';
+import { getThemeFilterTerm } from 'calypso/state/themes/selectors/get-theme-filter-term';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns a theme filter term object that corresponds to a given filter term slug
@@ -28,7 +28,7 @@ export const findThemeFilterTerm = createSelector(
 
 		const filters = getThemeFilters( state );
 
-		const results = filter( filters, terms => !! get( terms, left ) );
+		const results = filter( filters, ( terms ) => !! get( terms, left ) );
 
 		if ( results.length !== 1 ) {
 			// No or ambiguous results
@@ -36,5 +36,5 @@ export const findThemeFilterTerm = createSelector(
 		}
 		return results[ 0 ][ left ];
 	},
-	state => [ getThemeFilters( state ) ]
+	( state ) => [ getThemeFilters( state ) ]
 );

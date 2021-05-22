@@ -2,17 +2,19 @@
  * External dependencies
  */
 
-import { get, isUndefined, map, noop, omit, omitBy } from 'lodash';
+import { get, map, omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { POST_REVISIONS_AUTHORS_REQUEST } from 'state/action-types';
-import { dispatchRequest, getHeaders } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receivePostRevisionAuthors } from 'state/posts/revisions/authors/actions';
+import { POST_REVISIONS_AUTHORS_REQUEST } from 'calypso/state/action-types';
+import { dispatchRequest, getHeaders } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { receivePostRevisionAuthors } from 'calypso/state/posts/revisions/authors/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 export const DEFAULT_PER_PAGE = 10;
 
@@ -23,14 +25,14 @@ export const DEFAULT_PER_PAGE = 10;
  * @param {object} user Raw user from the API
  * @returns {object} the normalized user
  */
-export const normalizeUser = user =>
+export const normalizeUser = ( user ) =>
 	omitBy(
 		{
 			ID: user.id,
 			display_name: user.name,
 			username: user.slug,
 		},
-		isUndefined
+		( prop ) => typeof prop === 'undefined'
 	);
 
 /**
@@ -39,7 +41,7 @@ export const normalizeUser = user =>
  * @param {object} action The `POST_REVISIONS_AUTHORS_REQUEST` action used to trigger the fetch
  * @returns {object} The low-level action used to execute the fetch
  */
-export const fetchPostRevisionAuthors = action => {
+export const fetchPostRevisionAuthors = ( action ) => {
 	const { siteId, ids, page = 1, perPage = DEFAULT_PER_PAGE } = action;
 	return http(
 		{
@@ -63,7 +65,7 @@ export const fetchPostRevisionAuthors = action => {
  * @param {Array} users raw data from post revisions API
  * @returns {object|Function} Action or action thunk that handles the response
  */
-export const receivePostRevisionAuthorsSuccess = ( action, users ) => dispatch => {
+export const receivePostRevisionAuthorsSuccess = ( action, users ) => ( dispatch ) => {
 	// receive users from response into Redux state
 	const normalizedUsers = map( users, normalizeUser );
 	dispatch( receivePostRevisionAuthors( normalizedUsers ) );

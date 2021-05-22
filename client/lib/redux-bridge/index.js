@@ -1,12 +1,7 @@
-/**
- * Internal Dependencies
- */
-import Dispatcher from 'dispatcher';
-
 let reduxStore = null;
 
 let resolveReduxStorePromise;
-const reduxStorePromise = new Promise( resolve => {
+const reduxStorePromise = new Promise( ( resolve ) => {
 	resolveReduxStorePromise = resolve;
 } );
 
@@ -48,26 +43,3 @@ export function reduxDispatch( ...args ) {
 	}
 	return reduxStore.dispatch( ...args );
 }
-
-function markedFluxAction( action ) {
-	return Object.assign( {}, action, { type: `FLUX_${ action.type }` } );
-}
-
-// this is a Map<ActionType:string, transform:action=>action
-const actionsToForward = new Set();
-
-export function registerActionForward( actionName ) {
-	actionsToForward.add( actionName );
-}
-
-export function clearActionForwards() {
-	actionsToForward.clear();
-}
-
-function forwardAction( { action = {} } ) {
-	if ( actionsToForward.has( action.type ) ) {
-		reduxDispatch( markedFluxAction( action ) );
-	}
-}
-
-Dispatcher.register( forwardAction );

@@ -1,7 +1,7 @@
 .product-card {
 	width: 100%;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		min-width: 460px;
 	}
 }
@@ -11,11 +11,11 @@
 	padding: 16px 0;
 	border-bottom: solid 2px var( --color-jetpack );
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin: -24px -24px 24px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: flex;
 		flex-flow: row wrap;
 		align-items: baseline;
@@ -27,7 +27,7 @@
 	padding-left: 40px;
 	padding-right: 40px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding-left: 16px;
 		padding-right: 16px;
 	}
@@ -37,7 +37,7 @@
 	display: flex;
 	justify-content: center;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex-grow: 1;
 	}
 
@@ -49,7 +49,7 @@
 		align-self: center;
 		margin: 0 8px 0 -26px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			width: 16px;
 			height: 16px;
 			margin-left: 0;
@@ -66,12 +66,8 @@
 }
 
 .product-card__title {
-	font-size: 20px;
+	font-size: $font-title-small;
 	line-height: 24px;
-
-	@include breakpoint( '>960px' ) {
-		font-size: 22px;
-	}
 
 	em,
 	strong,
@@ -81,7 +77,7 @@
 }
 
 .product-card__subtitle {
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 20px;
 	font-style: italic;
 	color: var( --color-text-subtle );
@@ -100,8 +96,8 @@
 
 		&,
 		& * {
-			@include breakpoint( '>660px' ) {
-				font-size: 14px;
+			@include breakpoint-deprecated( '>660px' ) {
+				font-size: $font-body-small;
 				vertical-align: baseline;
 			}
 		}
@@ -109,17 +105,17 @@
 }
 
 .product-card__billing-timeframe {
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-weight: 400;
 	line-height: 13px;
 	color: var( --color-text-subtle );
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		font-style: italic;
 	}
 
-	@include breakpoint( '>960px' ) {
-		font-size: 12px;
+	@include breakpoint-deprecated( '>960px' ) {
+		font-size: $font-body-extra-small;
 	}
 }
 
@@ -127,7 +123,7 @@
 .product-card__header {
 	.plan-price,
 	.plan-price * {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			font-weight: 600;
 		}
 	}
@@ -135,9 +131,9 @@
 	.product-card__billing-timeframe {
 		width: 100%;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			width: auto;
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			font-weight: 600;
 		}
 	}
@@ -147,12 +143,12 @@
 .product-card__option {
 	.plan-price,
 	.plan-price * {
-		font-size: 16px;
+		font-size: $font-body;
 		font-weight: 400;
 		vertical-align: baseline;
 
-		@include breakpoint( '>960px' ) {
-			font-size: 14px;
+		@include breakpoint-deprecated( '>960px' ) {
+			font-size: $font-body-small;
 		}
 	}
 
@@ -168,7 +164,7 @@
 
 // Description
 .product-card__description {
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 20px;
 	color: var( --color-text-subtle );
 
@@ -184,19 +180,24 @@
 	justify-content: space-around; // IE11 fallback.
 	justify-content: space-evenly;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-flow: row wrap;
 	}
 }
 
 .product-card__options-label {
 	margin-top: 16px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	text-align: center;
 	color: var( --color-text-subtle );
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		flex: 0 0 100%;
+	}
+
+	.info-popover {
+		margin-left: 4px;
+		vertical-align: middle;
 	}
 }
 
@@ -209,10 +210,10 @@
 	margin: 16px 0 8px;
 	padding: 16px;
 	border: 1px solid var( --color-neutral-20 );
-	border-radius: 4px;
+	border-radius: 2px;
 	cursor: pointer;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: column;
 	}
 
@@ -225,7 +226,7 @@
 	& + .product-card__option.form-label {
 		margin-top: 0;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			margin-top: 16px;
 			margin-left: 8px;
 		}
@@ -238,27 +239,27 @@
 	align-items: flex-start;
 	margin-left: 8px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		align-items: center;
 		margin-top: 6px;
 		margin-left: 0;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin-top: 0;
 	}
 }
 
 .product-card__radio.form-radio {
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin-bottom: 10px;
 	}
 }
 
 .product-card__option-name {
 	margin-bottom: 2px;
-	font-size: 14px;
-	font-weight: 700;
+	font-size: $font-body-small;
+	font-weight: 600;
 	line-height: 20px;
 	text-align: center;
 }
@@ -271,7 +272,7 @@
 
 .product-card__action-intro {
 	margin-bottom: 12px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	color: var( --color-neutral-90 );
 }
@@ -307,7 +308,7 @@
 	color: var( --studio-white );
 	background: url( '/calypso/images/illustrations/promo-star.svg' ) no-repeat center;
 	background-size: contain;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	line-height: 17px;
 	text-align: center;
@@ -319,7 +320,7 @@
 	border-radius: 16px;
 	background-color: var( --color-neutral-0 );
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 18px;
 	text-align: left;
 	text-transform: uppercase;
@@ -327,7 +328,7 @@
 	strong {
 		display: block;
 		color: var( --color-text );
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: 600;
 		text-transform: none;
 	}
@@ -348,13 +349,13 @@
 		height: 32px;
 		margin: 0 0 4px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			height: 18px;
 		}
 	}
 
 	.product-card__billing-timeframe {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			display: none;
 		}
 	}
@@ -374,7 +375,7 @@
 		height: 16px;
 		margin: 0;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			margin: 5px 0 0;
 		}
 	}

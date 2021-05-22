@@ -2,21 +2,21 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { getCurrencyObject } from '@automattic/format-currency';
+import { localize } from 'i18n-calypso';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { canRemoveFromCart } from 'lib/cart-values';
-import { getIncludedDomain } from 'lib/cart-values/cart-items';
+import Gridicon from 'calypso/components/gridicon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { canRemoveFromCart } from 'calypso/lib/cart-values';
 import {
 	isCredits,
-	isGoogleApps,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isTheme,
 	isMonthly,
 	isYearly,
@@ -24,17 +24,18 @@ import {
 	isPlan,
 	isBundled,
 	isDomainProduct,
-} from 'lib/products-values';
-import { isGSuiteProductSlug } from 'lib/gsuite';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'lib/gsuite/constants';
-import { removeItem } from 'lib/cart/actions';
-import { localize } from 'i18n-calypso';
-import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
+	calculateMonthlyPriceForPlan,
+	getBillingMonthsForPlan,
+} from '@automattic/calypso-products';
+import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_BASIC_SLUG,
+	GSUITE_BUSINESS_SLUG,
+} from 'calypso/lib/gsuite/constants';
 
 export class CartItem extends React.Component {
-	removeFromCart = event => {
+	removeFromCart = ( event ) => {
 		event.preventDefault();
 		gaRecordEvent(
 			'Upgrades',
@@ -42,7 +43,7 @@ export class CartItem extends React.Component {
 			'Product ID',
 			this.props.cartItem.product_id
 		);
-		removeItem( this.props.cartItem, this.props.domainsWithPlansOnly );
+		this.props.shoppingCartManager.removeProductFromCart( this.props.cartItem.uuid );
 	};
 
 	price() {
@@ -66,7 +67,7 @@ export class CartItem extends React.Component {
 			return <span className="cart__free-text">{ translate( 'Free' ) }</span>;
 		}
 
-		if ( isGSuiteProductSlug( cartItem.product_slug ) ) {
+		if ( isGSuiteOrGoogleWorkspaceProductSlug( cartItem.product_slug ) ) {
 			const {
 				cost_before_coupon: costPerProductBeforeCoupon,
 				is_sale_coupon_applied: isSaleCouponApplied,
@@ -185,14 +186,12 @@ export class CartItem extends React.Component {
 			( selectedSite && selectedSite.domain );
 		let info = null;
 
-		if ( isGoogleApps( cartItem ) && cartItem.extra.google_apps_users ) {
-			info = cartItem.extra.google_apps_users.map( user => (
+		if ( isGSuiteOrExtraLicenseOrGoogleWorkspace( cartItem ) && cartItem.extra.google_apps_users ) {
+			info = cartItem.extra.google_apps_users.map( ( user ) => (
 				<div key={ `user-${ user.email }` }>{ user.email }</div>
 			) );
 		} else if ( isCredits( cartItem ) ) {
 			info = null;
-		} else if ( getIncludedDomain( cartItem ) ) {
-			info = getIncludedDomain( cartItem );
 		} else if ( isTheme( cartItem ) ) {
 			info = selectedSite && selectedSite.domain;
 		} else {
@@ -241,6 +240,10 @@ export class CartItem extends React.Component {
 
 		if ( isTheme( cartItem ) ) {
 			name += ' - ' + translate( 'never expires' );
+		}
+
+		if ( isDomainProduct( cartItem ) && cartItem?.extra?.premium ) {
+			name = translate( 'Premium' ) + ' ' + name;
 		}
 
 		/*eslint-disable wpcalypso/jsx-classname-namespace*/
@@ -305,6 +308,7 @@ export class CartItem extends React.Component {
 			return cartItem.product_name;
 		} else if ( cartItem.volume === 1 ) {
 			switch ( cartItem.product_slug ) {
+				case GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY:
 				case GSUITE_BASIC_SLUG:
 				case GSUITE_BUSINESS_SLUG:
 					return translate( '%(productName)s (1 User)', {
@@ -318,6 +322,7 @@ export class CartItem extends React.Component {
 			}
 		} else {
 			switch ( cartItem.product_slug ) {
+				case GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY:
 				case GSUITE_BASIC_SLUG:
 				case GSUITE_BUSINESS_SLUG:
 					return translate(
@@ -355,6 +360,4 @@ export class CartItem extends React.Component {
 	}
 }
 
-export default connect( state => ( {
-	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
-} ) )( localize( withLocalizedMoment( CartItem ) ) );
+export default withShoppingCart( localize( withLocalizedMoment( CartItem ) ) );

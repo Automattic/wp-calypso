@@ -12,27 +12,30 @@ import { Button, Card, CompactCard, ProgressBar } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import Gridicon from 'components/gridicon';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Spinner from 'components/spinner';
-import { FEATURE_UPLOAD_THEMES_PLUGINS } from 'lib/plans/constants';
-import { planHasFeature } from 'lib/plans';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Gridicon from 'calypso/components/gridicon';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import Spinner from 'calypso/components/spinner';
+import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
 import StepConfirmMigration from './step-confirm-migration';
 import StepImportOrMigrate from './step-import-or-migrate';
 import StepSourceSelect from './step-source-select';
 import StepUpgrade from './step-upgrade';
-import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import { getSite, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
-import { receiveSite, updateSiteMigrationMeta, requestSite } from 'state/sites/actions';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { urlToSlug } from 'lib/url';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import wpcom from 'lib/wp';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { receiveSite, updateSiteMigrationMeta, requestSite } from 'calypso/state/sites/actions';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import { urlToSlug } from 'calypso/lib/url';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -108,8 +111,8 @@ class SectionMigrate extends Component {
 			if ( data.themes ) {
 				const sourceSiteThemes = [
 					// Put active theme first
-					...data.themes.filter( theme => theme.active ),
-					...data.themes.filter( theme => ! theme.active ),
+					...data.themes.filter( ( theme ) => theme.active ),
+					...data.themes.filter( ( theme ) => ! theme.active ),
 				];
 				this.setState( { sourceSiteThemes } );
 			}
@@ -159,7 +162,7 @@ class SectionMigrate extends Component {
 			} );
 	};
 
-	setMigrationState = state => {
+	setMigrationState = ( state ) => {
 		// A response from the status endpoint may come in after the
 		// migrate/from endpoint has returned an error. This avoids that
 		// response accidentally clearing the error state.
@@ -201,7 +204,7 @@ class SectionMigrate extends Component {
 				.get( {
 					apiVersion: '1.2',
 				} )
-				.then( site => {
+				.then( ( site ) => {
 					if ( ! ( site && site.capabilities ) ) {
 						// A site isn't connected if we cannot manage it.
 						return this.setState( { isJetpackConnected: false } );
@@ -219,11 +222,11 @@ class SectionMigrate extends Component {
 		} );
 	};
 
-	setSourceSiteId = sourceSiteId => {
+	setSourceSiteId = ( sourceSiteId ) => {
 		this.props.navigateToSelectedSourceSite( sourceSiteId );
 	};
 
-	setUrl = event => this.setState( { url: event.target.value } );
+	setUrl = ( event ) => this.setState( { url: event.target.value } );
 
 	startMigration = () => {
 		const { sourceSiteId, targetSiteId, targetSite } = this.props;
@@ -250,7 +253,7 @@ class SectionMigrate extends Component {
 			.undocumented()
 			.startMigration( sourceSiteId, targetSiteId )
 			.then( () => this.updateFromAPI() )
-			.catch( error => {
+			.catch( ( error ) => {
 				const { code = '', message = '' } = error;
 
 				if ( 'no_supported_plan' === code ) {
@@ -279,7 +282,7 @@ class SectionMigrate extends Component {
 		wpcom
 			.undocumented()
 			.getMigrationStatus( targetSiteId )
-			.then( response => {
+			.then( ( response ) => {
 				const {
 					status: migrationStatus,
 					percent,
@@ -334,7 +337,7 @@ class SectionMigrate extends Component {
 					} );
 				}
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				const { message = '' } = error;
 				this.setMigrationState( {
 					migrationStatus: 'error',
@@ -469,6 +472,11 @@ class SectionMigrate extends Component {
 					{ this.renderStartTime() }
 					{ this.renderProgressBar() }
 					{ this.renderProgressList() }
+					<p class="migrate__note">
+						{ translate(
+							"You can safely navigate away from this page if you need to; we'll send you a notification when it's done."
+						) }
+					</p>
 				</Card>
 			</>
 		);
@@ -591,7 +599,7 @@ class SectionMigrate extends Component {
 
 		return (
 			<ul className="migrate__progress-list">
-				{ steps.map( step => this.renderProgressItem( step ) ) }
+				{ steps.map( ( step ) => this.renderProgressItem( step ) ) }
 			</ul>
 		);
 	}
@@ -683,7 +691,7 @@ class SectionMigrate extends Component {
 	}
 }
 
-const navigateToSelectedSourceSite = sourceSiteId => ( dispatch, getState ) => {
+const navigateToSelectedSourceSite = ( sourceSiteId ) => ( dispatch, getState ) => {
 	const state = getState();
 	const sourceSite = getSite( state, sourceSiteId );
 	const sourceSiteSlug = get( sourceSite, 'slug', sourceSiteId );

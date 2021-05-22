@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 const FetchError = ( { selectedDomainName, translate } ) => {
 	return (

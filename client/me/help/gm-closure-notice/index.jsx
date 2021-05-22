@@ -11,12 +11,18 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEcommercePlan, isBusinessPlan, isPremiumPlan, isPersonalPlan } from 'lib/plans';
-import FoldableCard from 'components/foldable-card';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import { useLocalizedMoment } from 'components/localized-moment';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getUserPurchases } from 'state/purchases/selectors';
+import {
+	isEcommercePlan,
+	isBusinessPlan,
+	isPremiumPlan,
+	isPersonalPlan,
+} from '@automattic/calypso-products';
+import FoldableCard from 'calypso/components/foldable-card';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -104,18 +110,24 @@ const GMClosureNotice = ( {
 
 	const REASON_MESSAGES = {
 		hasPlan: translate(
-			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, you can submit an email ticket through the contact form: {{contactLink}}https://wordpress.com/help/contact{{/contactLink}}',
+			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, you can submit an email ticket through the contact form: {{contactLink}}{{/contactLink}}',
 			{
 				components: {
 					contactLink: <a href="/help/contact" />,
 				},
+				args: {
+					linkUrl: 'https://wordpress.com/help/contact',
+				},
 			}
 		),
 		nonPlan: translate(
-			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, check our support site at {{supportLink}}https://en.support.wordpress.com{{/supportLink}}',
+			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, check our support site at {{supportLink}}%(linkUrl)s{{/supportLink}}',
 			{
 				components: {
-					supportLink: <a href="https://en.support.wordpress.com" />,
+					supportLink: <a href={ localizeUrl( 'https://wordpress.com/support/' ) } />,
+				},
+				args: {
+					linkUrl: localizeUrl( 'https://wordpress.com/support/' ),
 				},
 			}
 		),
@@ -125,7 +137,7 @@ const GMClosureNotice = ( {
 		'Our staff will be keeping an eye on the {{link}}Forums{{/link}} for urgent matters.',
 		{
 			components: {
-				link: <a href="https://en.forums.wordpress.com/forum/support/" />,
+				link: <a href={ localizeUrl( 'https://en.forums.wordpress.com/forum/support/' ) } />,
 			},
 		}
 	);
@@ -165,7 +177,7 @@ const GMClosureNotice = ( {
 	);
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const userId = getCurrentUserId( state );
 	return { purchases: getUserPurchases( state, userId ) };
 } )( GMClosureNotice );

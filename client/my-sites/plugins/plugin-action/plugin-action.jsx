@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import classNames from 'classnames';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import CompactToggle from 'components/forms/form-toggle/compact';
-import InfoPopover from 'components/info-popover';
+import InfoPopover from 'calypso/components/info-popover';
 
 /**
  * Style dependencies
@@ -17,7 +16,7 @@ import InfoPopover from 'components/info-popover';
 import './style.scss';
 
 class PluginAction extends React.Component {
-	handleAction = event => {
+	handleAction = ( event ) => {
 		if ( ! this.props.disabledInfo ) {
 			this.props.action();
 		} else {
@@ -25,7 +24,7 @@ class PluginAction extends React.Component {
 		}
 	};
 
-	disabledInfoLabelRef = ref => {
+	disabledInfoLabelRef = ( ref ) => {
 		this.disabledInfoLabel = ref;
 	};
 
@@ -46,7 +45,7 @@ class PluginAction extends React.Component {
 		);
 	}
 
-	infoPopoverRef = ref => {
+	infoPopoverRef = ( ref ) => {
 		this.infoPopover = ref;
 	};
 
@@ -71,15 +70,13 @@ class PluginAction extends React.Component {
 
 	renderToggle() {
 		return (
-			<CompactToggle
+			<ToggleControl
 				onChange={ this.props.action }
 				checked={ this.props.status }
-				toggling={ this.props.inProgress }
-				disabled={ this.props.disabled || !! this.props.disabledInfo }
+				disabled={ this.props.inProgress || this.props.disabled || !! this.props.disabledInfo }
 				id={ this.props.htmlFor }
-			>
-				{ this.renderLabel() }
-			</CompactToggle>
+				label={ this.renderLabel() }
+			/>
 		);
 	}
 

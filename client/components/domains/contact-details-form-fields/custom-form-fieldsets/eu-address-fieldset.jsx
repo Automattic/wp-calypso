@@ -3,15 +3,16 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { Input } from 'my-sites/domains/components/form';
+import { Input } from 'calypso/my-sites/domains/components/form';
 
-const EuAddressFieldset = props => {
+const noop = () => {};
+
+const EuAddressFieldset = ( props ) => {
 	const { getFieldProps, translate, contactDetailsErrors } = props;
 	return (
 		<div className="custom-form-fieldsets__address-fields eu-address-fieldset">
@@ -37,7 +38,6 @@ EuAddressFieldset.propTypes = {
 
 EuAddressFieldset.defaultProps = {
 	getFieldProps: noop,
-	translate: identity,
 };
 
 export default localize( EuAddressFieldset );

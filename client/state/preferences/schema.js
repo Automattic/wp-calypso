@@ -2,30 +2,15 @@ export const remoteValuesSchema = {
 	type: [ 'null', 'object' ],
 	patternProperties: {
 		'^dismissible-card-.+$': {
-			type: 'boolean',
+			type: [ 'boolean', 'object' ],
+		},
+		'^time-mismatch-warning-\\d+$': {
+			type: [ 'boolean', 'number' ],
 		},
 	},
 	properties: {
-		'editor-mode': {
-			type: 'string',
-			enum: [ 'html', 'tinymce' ],
-		},
 		mediaModalGalleryInstructionsDismissed: {
 			type: 'boolean',
-		},
-		'google-my-business-dismissible-nudge': {
-			type: 'object',
-			'^[1-9]+$': {
-				type: 'array',
-				items: {
-					type: 'object',
-					properties: {
-						dismissedAt: { type: 'number', minimum: 0 },
-						type: { type: 'string', enum: [ 'dismiss' ] },
-					},
-					required: [ 'dismissedAt', 'type' ],
-				},
-			},
 		},
 		'guided-tours-history': {
 			type: 'array',
@@ -51,9 +36,6 @@ export const remoteValuesSchema = {
 			minimum: 0,
 			maximum: 1,
 		},
-		editorAdvancedVisible: {
-			type: 'boolean',
-		},
 		editorConfirmationDisabledSites: {
 			type: 'array',
 			items: { type: 'number' },
@@ -61,20 +43,24 @@ export const remoteValuesSchema = {
 		colorScheme: {
 			type: 'string',
 			enum: [
+				'aquatic',
+				'blue',
 				'classic-blue',
 				'classic-bright',
+				'classic-dark',
+				'coffee',
 				'contrast',
+				'ectoplasm',
+				'light',
 				'midnight',
+				'modern',
 				'nightfall',
 				'ocean',
 				'powder-snow',
 				'sakura',
+				'sunrise',
 				'sunset',
 			],
-		},
-		'store-dashboardStatsWidgetUnit': {
-			type: 'string',
-			enum: [ 'day', 'week', 'month' ],
 		},
 		'upwork-dismissible-banner': {
 			type: 'object',
@@ -89,6 +75,30 @@ export const remoteValuesSchema = {
 					required: [ 'dismissedAt', 'type' ],
 				},
 			},
+		},
+		'jetpack-review-prompt': {
+			type: 'object',
+			properties: {
+				scan: {
+					type: 'object',
+					properties: {
+						'/[0-9]+/': { $ref: '#/definitions/dismissiblePrompt' },
+					},
+				},
+				restore: { $ref: '#/definitions/dismissiblePrompt' },
+			},
+		},
+	},
+	definitions: {
+		dismissiblePrompt: {
+			type: 'object',
+			properties: {
+				dismissedAt: { type: [ 'number', 'null' ] },
+				dismissedCount: { type: 'number', minimum: 0 },
+				reviewed: { type: 'number' },
+				validFrom: { type: [ 'number', 'null' ] },
+			},
+			required: [ 'dismissedAt', 'dismissedCount', 'reviewed', 'validFrom' ],
 		},
 	},
 };

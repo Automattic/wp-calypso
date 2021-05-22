@@ -13,11 +13,13 @@ import {
 	USER_PROFILE_LINKS_RECEIVE,
 	USER_PROFILE_LINKS_REQUEST,
 	USER_PROFILE_LINKS_RESET_ERRORS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/me/settings/profile-links';
-import 'state/data-layer/wpcom/me/settings/profile-links/delete';
-import 'state/data-layer/wpcom/me/settings/profile-links/new';
+import 'calypso/state/profile-links/init';
+
+import 'calypso/state/data-layer/wpcom/me/settings/profile-links';
+import 'calypso/state/data-layer/wpcom/me/settings/profile-links/delete';
+import 'calypso/state/data-layer/wpcom/me/settings/profile-links/new';
 
 /**
  * Returns an action object to signal the request of the user's profile links.
@@ -32,7 +34,7 @@ export const requestUserProfileLinks = () => ( { type: USER_PROFILE_LINKS_REQUES
  * @param  {Array}  profileLinks Array containing the profile links of the current user.
  * @returns {object}              Action object
  */
-export const receiveUserProfileLinks = profileLinks => ( {
+export const receiveUserProfileLinks = ( profileLinks ) => ( {
 	type: USER_PROFILE_LINKS_RECEIVE,
 	profileLinks,
 } );
@@ -43,7 +45,7 @@ export const receiveUserProfileLinks = profileLinks => ( {
  * @param  {Array}  profileLinks Array containing the new profile links.
  * @returns {object}              Action object
  */
-export const addUserProfileLinks = profileLinks => ( {
+export const addUserProfileLinks = ( profileLinks ) => ( {
 	type: USER_PROFILE_LINKS_ADD,
 	profileLinks,
 } );
@@ -54,7 +56,7 @@ export const addUserProfileLinks = profileLinks => ( {
  * @param  {Array}  profileLinks Array containing the new profile links.
  * @returns {object}              Action object
  */
-export const addUserProfileLinksSuccess = profileLinks => ( {
+export const addUserProfileLinksSuccess = ( profileLinks ) => ( {
 	type: USER_PROFILE_LINKS_ADD_SUCCESS,
 	profileLinks,
 } );
@@ -78,7 +80,7 @@ export const addUserProfileLinksError = ( profileLinks, error ) => ( {
  * @param  {Array}  profileLinks Array containing the duplicate profile links.
  * @returns {object}              Action object
  */
-export const addUserProfileLinksDuplicate = profileLinks => ( {
+export const addUserProfileLinksDuplicate = ( profileLinks ) => ( {
 	type: USER_PROFILE_LINKS_ADD_DUPLICATE,
 	profileLinks,
 } );
@@ -89,7 +91,7 @@ export const addUserProfileLinksDuplicate = profileLinks => ( {
  * @param  {Array}  profileLinks Array containing the malformed profile links.
  * @returns {object}              Action object
  */
-export const addUserProfileLinksMalformed = profileLinks => ( {
+export const addUserProfileLinksMalformed = ( profileLinks ) => ( {
 	type: USER_PROFILE_LINKS_ADD_MALFORMED,
 	profileLinks,
 } );
@@ -109,7 +111,7 @@ export const resetUserProfileLinkErrors = () => ( {
  * @param  {string} linkSlug Slug of the user profile link to delete.
  * @returns {object}          Action object
  */
-export const deleteUserProfileLink = linkSlug => ( {
+export const deleteUserProfileLink = ( linkSlug ) => ( {
 	type: USER_PROFILE_LINKS_DELETE,
 	linkSlug,
 } );
@@ -120,7 +122,7 @@ export const deleteUserProfileLink = linkSlug => ( {
  * @param  {string} linkSlug Slug of the user profile link to delete.
  * @returns {object}          Action object
  */
-export const deleteUserProfileLinkSuccess = linkSlug => ( {
+export const deleteUserProfileLinkSuccess = ( linkSlug ) => ( {
 	type: USER_PROFILE_LINKS_DELETE_SUCCESS,
 	linkSlug,
 } );

@@ -7,7 +7,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { keyedReducer, combineReducers } from 'state/utils';
+import { keyedReducer, combineReducers } from 'calypso/state/utils';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
@@ -17,15 +17,18 @@ import {
 	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_SHOW_UPDATES,
 	READER_DISMISS_POST,
-} from 'state/reader/action-types';
-import { keysAreEqual } from 'reader/post-key';
+} from 'calypso/state/reader/action-types';
+import { keysAreEqual } from 'calypso/reader/post-key';
 import { combineXPosts } from './utils';
 
 /*
  * Contains a list of post-keys representing the items of a stream.
  */
 export const items = ( state = [], action ) => {
-	let streamItems, gap, newState, newXPosts;
+	let streamItems;
+	let gap;
+	let newState;
+	let newXPosts;
 
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
@@ -33,8 +36,8 @@ export const items = ( state = [], action ) => {
 			streamItems = action.payload.streamItems;
 
 			if ( gap ) {
-				const beforeGap = takeWhile( state, postKey => ! keysAreEqual( postKey, gap ) );
-				const afterGap = takeRightWhile( state, postKey => ! keysAreEqual( postKey, gap ) );
+				const beforeGap = takeWhile( state, ( postKey ) => ! keysAreEqual( postKey, gap ) );
+				const afterGap = takeRightWhile( state, ( postKey ) => ! keysAreEqual( postKey, gap ) );
 
 				// after query param is inclusive, so we need to drop duplicate post
 				if ( keysAreEqual( last( streamItems ), afterGap[ 0 ] ) ) {
@@ -60,7 +63,7 @@ export const items = ( state = [], action ) => {
 			newState = uniqWith( [ ...state, ...streamItems ], keysAreEqual );
 
 			// Find any x-posts
-			newXPosts = filter( streamItems, postKey => postKey.xPostMetadata );
+			newXPosts = filter( streamItems, ( postKey ) => postKey.xPostMetadata );
 
 			if ( ! newXPosts ) {
 				return newState;
@@ -73,7 +76,7 @@ export const items = ( state = [], action ) => {
 			return combineXPosts( [ ...action.payload.items, ...state ] );
 		case READER_DISMISS_POST: {
 			const postKey = action.payload.postKey;
-			const indexToRemove = findIndex( state, item => keysAreEqual( item, postKey ) );
+			const indexToRemove = findIndex( state, ( item ) => keysAreEqual( item, postKey ) );
 
 			if ( indexToRemove === -1 ) {
 				return state;
@@ -94,7 +97,11 @@ export const PENDING_ITEMS_DEFAULT = { lastUpdated: null, items: [] };
  * This is the data backing the orange "${number} new posts" pill.
  */
 export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
-	let streamItems, maxDate, minDate, newItems, newXPosts;
+	let streamItems;
+	let maxDate;
+	let minDate;
+	let newItems;
+	let newXPosts;
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
 			streamItems = action.payload.streamItems;
@@ -120,7 +127,7 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 
 			// only retain posts that are newer than ones we already have
 			if ( state.lastUpdated ) {
-				streamItems = streamItems.filter( item =>
+				streamItems = streamItems.filter( ( item ) =>
 					moment( item.date ).isAfter( state.lastUpdated )
 				);
 			}
@@ -132,7 +139,7 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 			newItems = [ ...streamItems ];
 
 			// Find any x-posts and filter out duplicates
-			newXPosts = filter( newItems, postKey => postKey.xPostMetadata );
+			newXPosts = filter( newItems, ( postKey ) => postKey.xPostMetadata );
 
 			if ( newXPosts ) {
 				newItems = combineXPosts( newItems );
@@ -164,10 +171,10 @@ export const selected = ( state = null, action ) => {
 		case READER_STREAMS_SELECT_ITEM:
 			return action.payload.postKey;
 		case READER_STREAMS_SELECT_NEXT_ITEM:
-			idx = findIndex( action.payload.items, item => keysAreEqual( item, state ) );
+			idx = findIndex( action.payload.items, ( item ) => keysAreEqual( item, state ) );
 			return idx === action.payload.items.length - 1 ? state : action.payload.items[ idx + 1 ];
 		case READER_STREAMS_SELECT_PREV_ITEM:
-			idx = findIndex( action.payload.items, item => keysAreEqual( item, state ) );
+			idx = findIndex( action.payload.items, ( item ) => keysAreEqual( item, state ) );
 			return idx === 0 ? state : action.payload.items[ idx - 1 ];
 	}
 	return state;

@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
 import {
 	ALREADY_CONNECTED,
 	ALREADY_CONNECTED_BY_OTHER_USER,
-	ALREADY_OWNED,
 	DEFAULT_AUTHORIZE_ERROR,
 	INSTALL_RESPONSE_ERROR,
 	INVALID_CREDENTIALS,
@@ -27,13 +26,13 @@ import {
 	RETRY_AUTH,
 	RETRYING_AUTH,
 	SECRET_EXPIRED,
-	SITE_BLACKLISTED,
+	SITE_BLOCKED,
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	WORDPRESS_DOT_COM,
 	XMLRPC_ERROR,
 } from './connection-notice-types';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 
 export class JetpackConnectNotices extends Component {
 	static propTypes = {
@@ -44,7 +43,6 @@ export class JetpackConnectNotices extends Component {
 		noticeType: PropTypes.oneOf( [
 			ALREADY_CONNECTED,
 			ALREADY_CONNECTED_BY_OTHER_USER,
-			ALREADY_OWNED,
 			DEFAULT_AUTHORIZE_ERROR,
 			INSTALL_RESPONSE_ERROR,
 			INVALID_CREDENTIALS,
@@ -60,7 +58,7 @@ export class JetpackConnectNotices extends Component {
 			RETRY_AUTH,
 			RETRYING_AUTH,
 			SECRET_EXPIRED,
-			SITE_BLACKLISTED,
+			SITE_BLOCKED,
 			USER_IS_ALREADY_CONNECTED_TO_SITE,
 			WORDPRESS_DOT_COM,
 			XMLRPC_ERROR,
@@ -86,9 +84,10 @@ export class JetpackConnectNotices extends Component {
 
 		switch ( noticeType ) {
 			case NOT_EXISTS:
+				noticeValues.userCanRetry = true;
 				return noticeValues;
 
-			case SITE_BLACKLISTED:
+			case SITE_BLOCKED:
 				noticeValues.text = translate(
 					"This site can't be connected to WordPress.com because it violates our {{a}}Terms of Service{{/a}}.",
 					{

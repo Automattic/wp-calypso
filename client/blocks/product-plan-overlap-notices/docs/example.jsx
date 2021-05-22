@@ -6,9 +6,8 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import SitesDropdown from 'components/sites-dropdown';
-import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
-import { JETPACK_PLANS } from 'lib/plans/constants';
+import SitesDropdown from 'calypso/components/sites-dropdown';
+import { JETPACK_PRODUCTS_LIST, JETPACK_PLANS } from '@automattic/calypso-products';
 import ProductPlanOverlapNotices from '../';
 
 class ProductPlanOverlapNoticesExample extends Component {
@@ -20,7 +19,7 @@ class ProductPlanOverlapNoticesExample extends Component {
 		return (
 			<div style={ { maxWidth: 520, margin: '0 auto' } }>
 				<div style={ { maxWidth: 300, margin: '0 auto 10px' } }>
-					<SitesDropdown onSiteSelect={ siteId => this.setState( { siteId } ) } />
+					<SitesDropdown onSiteSelect={ ( siteId ) => this.setState( { siteId } ) } />
 				</div>
 
 				{ this.state.siteId ? (

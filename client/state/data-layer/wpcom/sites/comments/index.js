@@ -7,22 +7,22 @@ import { forEach, get, groupBy, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_LIST_REQUEST,
 	COMMENT_REQUEST,
 	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_EDIT,
-} from 'state/action-types';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+} from 'calypso/state/action-types';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import replies from './replies';
 import likes from './likes';
-import { errorNotice, removeNotice } from 'state/notices/actions';
-import getRawSite from 'state/selectors/get-raw-site';
-import { getSiteComment } from 'state/comments/selectors';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import { getSiteComment } from 'calypso/state/comments/selectors';
 import {
 	changeCommentStatus,
 	editComment as editCommentAction,
@@ -30,13 +30,13 @@ import {
 	receiveCommentsError as receiveCommentErrorAction,
 	requestComment as requestCommentAction,
 	requestCommentsList,
-} from 'state/comments/actions';
-import { updateCommentsQuery } from 'state/ui/comments/actions';
-import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+} from 'calypso/state/comments/actions';
+import { updateCommentsQuery } from 'calypso/state/comments/ui/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-const requestChangeCommentStatus = action => {
+const requestChangeCommentStatus = ( action ) => {
 	const { siteId, commentId, status } = action;
 
 	return http(
@@ -60,7 +60,7 @@ export const handleChangeCommentStatusSuccess = ( { commentId, refreshCommentLis
 	return actions;
 };
 
-const announceStatusChangeFailure = action => dispatch => {
+const announceStatusChangeFailure = ( action ) => ( dispatch ) => {
 	const { siteId, postId, commentId, status, refreshCommentListQuery } = action;
 	const previousStatus = get( action, 'meta.comment.previousStatus' );
 
@@ -92,7 +92,7 @@ const announceStatusChangeFailure = action => dispatch => {
 	);
 };
 
-export const requestComment = action => {
+export const requestComment = ( action ) => {
 	const { siteId, commentId, query } = action;
 	return http(
 		Object.assign(
@@ -126,7 +126,7 @@ export const receiveCommentError = ( { siteId, commentId, query = {} } ) => {
 };
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
-export const fetchCommentsList = action => {
+export const fetchCommentsList = ( action ) => {
 	if ( 'site' !== get( action, 'query.listType' ) ) {
 		return;
 	}
@@ -202,7 +202,7 @@ const announceFailure = ( { query: { siteId } } ) => ( dispatch, getState ) => {
 };
 
 // @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/
-export const editComment = action => ( dispatch, getState ) => {
+export const editComment = ( action ) => ( dispatch, getState ) => {
 	const { siteId, commentId, comment } = action;
 	const originalComment = getSiteComment( getState(), siteId, commentId );
 
@@ -237,7 +237,7 @@ export const updateComment = ( action, data ) => [
 	bypassDataLayer( editCommentAction( action.siteId, action.postId, action.commentId, data ) ),
 ];
 
-export const announceEditFailure = action => [
+export const announceEditFailure = ( action ) => [
 	bypassDataLayer(
 		editCommentAction( action.siteId, action.postId, action.commentId, action.originalComment )
 	),

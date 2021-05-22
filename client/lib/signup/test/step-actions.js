@@ -1,4 +1,7 @@
 /**
+ * @jest-environment jsdom
+ */
+/**
  * Internal dependencies
  */
 import {
@@ -8,38 +11,39 @@ import {
 	isSiteTopicFulfilled,
 	isSiteTypeFulfilled,
 } from '../step-actions';
-import { useNock } from 'test/helpers/use-nock';
-import flows from 'signup/config/flows';
-import { isDomainStepSkippable } from 'signup/config/steps';
-import { getUserStub } from 'lib/user';
+import { useNock } from 'calypso/test-helpers/use-nock';
+import flows from 'calypso/signup/config/flows';
+import { isDomainStepSkippable } from 'calypso/signup/config/steps';
+import user from 'calypso/lib/user';
 
-jest.mock( 'lib/abtest', () => ( { abtest: () => '' } ) );
+jest.mock( 'calypso/lib/abtest', () => ( { abtest: () => '' } ) );
 
-jest.mock( 'lib/user', () => {
+jest.mock( 'calypso/lib/user', () => {
 	const getStub = jest.fn();
 
-	const user = () => ( {
+	const userInstance = () => ( {
 		get: getStub,
 	} );
-	user.getUserStub = getStub;
+	userInstance.getUserStub = getStub;
 
-	return user;
+	return userInstance;
 } );
 
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
-jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps-pure' ) );
-jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
-jest.mock( 'signup/config/flows-pure', () => require( './mocks/signup/config/flows-pure' ) );
+jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );
+jest.mock( 'calypso/signup/config/flows-pure', () =>
+	require( './mocks/signup/config/flows-pure' )
+);
 
 describe( 'createSiteWithCart()', () => {
 	// createSiteWithCart() function is not designed to be easy for test at the moment.
 	// Thus we intentionally mock the failing case here so that the parts we want to test
 	// would be easier to write.
-	useNock( nock => {
+	useNock( ( nock ) => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.persist()
 			.post( '/rest/v1.1/sites/new' )
-			.reply( 400, function( uri, requestBody ) {
+			.reply( 400, function ( uri, requestBody ) {
 				return {
 					error: 'error',
 					message: 'something goes wrong!',
@@ -50,7 +54,7 @@ describe( 'createSiteWithCart()', () => {
 
 	beforeEach( () => {
 		isDomainStepSkippable.mockReset();
-		getUserStub.mockReset();
+		user.getUserStub.mockReset();
 	} );
 
 	test( 'should use the vertical field in the survey tree if the site topic one is empty.', () => {
@@ -68,7 +72,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.options.site_vertical ).toBeUndefined();
 			},
 			[],
@@ -98,7 +102,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.options.site_vertical ).toEqual( verticalId );
 			},
 			[],
@@ -115,7 +119,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.find_available_url ).toBe( true );
 			},
 			[],
@@ -132,7 +136,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.find_available_url ).toBeFalsy();
 			},
 			[],
@@ -143,14 +147,14 @@ describe( 'createSiteWithCart()', () => {
 
 	test( 'use username for blog_name if user data available', () => {
 		isDomainStepSkippable.mockReturnValue( true );
-		getUserStub.mockReturnValue( { username: 'alex' } );
+		user.getUserStub.mockReturnValue( { username: 'alex' } );
 
 		const fakeStore = {
 			getState: () => ( {} ),
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'alex' );
 			},
 			[],
@@ -169,7 +173,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'alex' );
 			},
 			[],
@@ -188,7 +192,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'mytitle' );
 			},
 			[],
@@ -207,7 +211,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'blog' );
 			},
 			[],
@@ -226,7 +230,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'art' );
 			},
 			[],
@@ -321,7 +325,7 @@ describe( 'isPlanFulfilled()', () => {
 			submitSignupStep,
 		};
 		const defaultDependencies = { cartItem: 'testPlan' };
-		const cartItem = { free_trial: false, product_slug: defaultDependencies.cartItem };
+		const cartItem = { product_slug: defaultDependencies.cartItem };
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();

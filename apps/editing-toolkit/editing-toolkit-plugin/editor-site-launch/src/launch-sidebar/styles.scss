@@ -1,0 +1,58 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@automattic/onboarding/styles/mixins';
+
+.nux-launch-sidebar {
+	@include onboarding-block-margin;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	background: var( --studio-white );
+	padding-top: $onboarding-header-height;
+
+	@include break-medium {
+		display: block;
+		height: auto;
+		margin: 0 24px;
+		padding-top: 0;
+
+		// On mobile & tablet, inherit onboarding title & subtitle styling.
+		// On desktop, use designated title & subtitle styling.
+		h1.onboarding-title {
+			font-size: $font-title-medium;
+		}
+
+		h2.onboarding-subtitle {
+			font-family: $default-font;
+			font-weight: normal;
+			font-size: $font-body-small;
+			line-height: 1.5;
+			color: var( --studio-gray-60 );
+		}
+	}
+}
+
+.nux-launch-sidebar__header {
+	@include onboarding-heading-padding;
+}
+
+.nux-launch-sidebar__body {
+	flex-grow: 1;
+	@include onboarding-body-margin;
+}
+
+.nux-launch-sidebar__footer {
+	// On mobile & tablet, show sidebar footer, sticky at bottom.
+	@include onboarding-block-edge2edge;
+	position: sticky;
+	bottom: 0;
+
+	.action-buttons {
+		position: relative;
+		justify-content: flex-end;
+	}
+
+	// On desktop, hide sidebar footer.
+	@include break-medium {
+		display: none;
+	}
+}

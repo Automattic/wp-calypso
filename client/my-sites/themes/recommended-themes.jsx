@@ -8,33 +8,43 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { ConnectedThemesSelection } from './themes-selection';
-import Spinner from 'components/spinner';
-import { getRecommendedThemes } from 'state/themes/actions';
+import Spinner from 'calypso/components/spinner';
+import { getRecommendedThemes } from 'calypso/state/themes/actions';
+
 import {
 	getRecommendedThemes as getRecommendedThemesSelector,
 	areRecommendedThemesLoading,
-} from 'state/themes/selectors';
+	getRecommendedThemesFilter,
+} from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class RecommendedThemes extends React.Component {
 	componentDidMount() {
 		if ( ! this.props.recommendedThemes.length ) {
-			this.props.getRecommendedThemes();
+			this.fetchThemes();
 		}
 	}
 
 	componentDidUpdate( prevProps ) {
 		// Wait until rec themes to be loaded to scroll to search input if its in use.
-		const { isLoading, isShowcaseOpen, scrollToSearchInput } = this.props;
+		const { isLoading, isShowcaseOpen, scrollToSearchInput, filter } = this.props;
 		if ( prevProps.isLoading !== isLoading && isLoading === false && isShowcaseOpen ) {
 			scrollToSearchInput();
 		}
+		if ( prevProps.filter !== filter ) {
+			this.fetchThemes();
+		}
+	}
+
+	fetchThemes() {
+		this.props.getRecommendedThemes( this.props.filter );
 	}
 
 	render() {
 		return (
 			<>
 				<h2>
-					<strong>{ translate( 'Recommended Themes' ) }</strong>
+					<strong>{ translate( 'Recommended themes' ) }</strong>
 				</h2>
 				{ this.props.isLoading ? (
 					<Spinner size={ 100 } />
@@ -47,10 +57,13 @@ class RecommendedThemes extends React.Component {
 }
 
 const ConnectedRecommendedThemes = connect(
-	state => {
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const filter = getRecommendedThemesFilter( state, siteId );
 		return {
-			recommendedThemes: getRecommendedThemesSelector( state ),
-			isLoading: areRecommendedThemesLoading( state ),
+			recommendedThemes: getRecommendedThemesSelector( state, filter ),
+			isLoading: areRecommendedThemesLoading( state, filter ),
+			filter,
 		};
 	},
 	{ getRecommendedThemes }

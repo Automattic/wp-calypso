@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ThemesList from 'components/themes-list';
+import ThemesList from 'calypso/components/themes-list';
 
 const demoThemes = [
 	{
@@ -36,21 +36,21 @@ const demoThemes = [
 export default class extends React.Component {
 	static displayName = 'ThemesListExample';
 
-	getActionLabel = theme => {
+	getActionLabel = ( theme ) => {
 		return theme.actionLabel;
 	};
 
-	getButtonOptions = themeId => {
+	getButtonOptions = ( themeId ) => {
 		return {
 			action1: {
 				label: 'Menu Item 1',
-				action: function() {
+				action: function () {
 					console.log( `Menu Item 1 for theme ${ themeId } selected` );
 				},
 			},
 			action2: {
 				label: 'Menu Item 2',
-				action: function() {
+				action: function () {
 					console.log( `Menu Item 2 for theme ${ themeId } selected` );
 				},
 			},

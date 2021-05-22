@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { pick } from 'lodash';
 import moment from 'moment';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import FormToggle from 'components/forms/form-toggle/compact';
-import SectionHeader from 'components/section-header';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
 class DebugTab extends Component {
@@ -70,13 +69,12 @@ class DebugTab extends Component {
 					</SectionHeader>
 					<Card>
 						<FormFieldset>
-							<FormToggle
+							<ToggleControl
 								checked={ !! wp_super_cache_debug }
 								disabled={ isRequesting || isSaving }
 								onChange={ handleAutosavingToggle( 'wp_super_cache_debug' ) }
-							>
-								{ translate( 'Enable Debugging' ) }
-							</FormToggle>
+								label={ translate( 'Enable Debugging' ) }
+							/>
 						</FormFieldset>
 						<div className="wp-super-cache__debug-fieldsets">
 							<FormFieldset>
@@ -123,13 +121,12 @@ class DebugTab extends Component {
 								</FormSettingExplanation>
 							</FormFieldset>
 							<FormFieldset>
-								<FormToggle
+								<ToggleControl
 									checked={ !! wp_super_cache_comments }
 									disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
 									onChange={ handleAutosavingToggle( 'wp_super_cache_comments' ) }
-								>
-									{ translate( 'Cache Status Messages' ) }
-								</FormToggle>
+									label={ translate( 'Cache Status Messages' ) }
+								/>
 								<FormSettingExplanation isIndented>
 									{ translate( 'Display comments at the end of every page like this:' ) }
 									<span className="wp-super-cache__debug-cache-comment-snippet">
@@ -139,9 +136,7 @@ class DebugTab extends Component {
 												'<!-- super cache -->',
 											{
 												args: {
-													date: moment()
-														.utc()
-														.format( 'YYYY-MM-DD HH:mm:ss' ),
+													date: moment().utc().format( 'YYYY-MM-DD HH:mm:ss' ),
 												},
 											}
 										) }
@@ -164,13 +159,12 @@ class DebugTab extends Component {
 					</SectionHeader>
 					<Card>
 						<FormFieldset>
-							<FormToggle
+							<ToggleControl
 								checked={ !! wp_super_cache_front_page_check }
 								disabled={ isRequesting || isSaving || ! wp_super_cache_debug }
 								onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_check' ) }
-							>
-								{ translate( 'Check front page every 5 minutes.' ) }
-							</FormToggle>
+								label={ translate( 'Check front page every 5 minutes.' ) }
+							/>
 							<FormSettingExplanation isIndented>
 								{ translate( " If there are errors you'll receive an email." ) }
 							</FormSettingExplanation>
@@ -199,7 +193,7 @@ class DebugTab extends Component {
 								</FormSettingExplanation>
 							</FormFieldset>
 							<FormFieldset>
-								<FormToggle
+								<ToggleControl
 									checked={ !! wp_super_cache_front_page_clear }
 									disabled={
 										isRequesting ||
@@ -208,10 +202,9 @@ class DebugTab extends Component {
 										! wp_super_cache_front_page_check
 									}
 									onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_clear' ) }
-								>
-									{ translate( 'Clear cache on error.' ) }
-								</FormToggle>
-								<FormToggle
+									label={ translate( 'Clear cache on error.' ) }
+								/>
+								<ToggleControl
 									checked={ !! wp_super_cache_front_page_notification }
 									disabled={
 										isRequesting ||
@@ -220,9 +213,10 @@ class DebugTab extends Component {
 										! wp_super_cache_front_page_check
 									}
 									onChange={ handleAutosavingToggle( 'wp_super_cache_front_page_notification' ) }
-								>
-									{ translate( 'Email the blog admin when checks are made. (useful for testing)' ) }
-								</FormToggle>
+									label={ translate(
+										'Email the blog admin when checks are made. (useful for testing)'
+									) }
+								/>
 							</FormFieldset>
 						</div>
 					</Card>
@@ -232,7 +226,7 @@ class DebugTab extends Component {
 	}
 }
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'cache_path',
 		'cache_path_url',

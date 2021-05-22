@@ -1,5 +1,10 @@
 /**
- * Module dependencies.
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
  */
 import Like from './site.post.like';
 import Reblog from './site.post.reblog';
@@ -7,7 +12,6 @@ import Comment from './site.comment';
 import Subscriber from './site.post.subscriber';
 import runtimeBuilder from './util/runtime-builder';
 import sitePostGetMethods from './runtime/site.post.get';
-import debugFactory from 'debug';
 
 /**
  * Module vars
@@ -34,10 +38,10 @@ class SitePost {
 
 		this.wpcom = wpcom;
 		this._sid = sid;
-		this.path = `${root}/${this._sid}/posts`;
+		this.path = `${ root }/${ this._sid }/posts`;
 
 		// set `id` and/or `slug` properties
-		id = id || {}
+		id = id || {};
 		if ( 'object' !== typeof id ) {
 			this._id = id;
 		} else {
@@ -71,7 +75,7 @@ class SitePost {
 	 */
 
 	getPostPath() {
-		return `${this.path}/${this._id}`;
+		return `${ this.path }/${ this._id }`;
 	}
 
 	/**
@@ -97,7 +101,7 @@ class SitePost {
 	 * @returns {Function} request handler
 	 */
 	getBySlug( query, fn ) {
-		return this.wpcom.req.get( `${this.path}/slug:${this._slug}`, query, fn );
+		return this.wpcom.req.get( `${ this.path }/slug:${ this._slug }`, query, fn );
 	}
 
 	/**
@@ -112,16 +116,17 @@ class SitePost {
 		if ( undefined === fn ) {
 			if ( undefined === body ) {
 				body = query;
-				query = {}
+				query = {};
 			} else if ( 'function' === typeof body ) {
 				fn = body;
 				body = query;
-				query = {}
+				query = {};
 			}
 		}
 
-		return this.wpcom.req.post( `${this.path}/new`, query, body )
-			.then( data => {
+		return this.wpcom.req
+			.post( `${ this.path }/new`, query, body )
+			.then( ( data ) => {
 				// update POST object
 				this._id = data.ID;
 				debug( 'Set post _id: %s', this._id );
@@ -135,7 +140,7 @@ class SitePost {
 					return Promise.resolve( data );
 				}
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				if ( 'function' === typeof fn ) {
 					fn( err );
 				} else {
@@ -164,7 +169,7 @@ class SitePost {
 	 * @returns {Promise} Promise
 	 */
 	delete( query, fn ) {
-		const path = `${this.getPostPath()}/delete`;
+		const path = `${ this.getPostPath() }/delete`;
 		return this.wpcom.req.del( path, query, fn );
 	}
 
@@ -187,7 +192,7 @@ class SitePost {
 	 * @returns {Function} request handler
 	 */
 	restore( query, fn ) {
-		return this.wpcom.req.put( `${this.getPostPath()}/restore`, query, null, fn );
+		return this.wpcom.req.put( `${ this.getPostPath() }/restore`, query, null, fn );
 	}
 
 	/**
@@ -198,7 +203,7 @@ class SitePost {
 	 * @returns {Function} request handler
 	 */
 	related( body, fn ) {
-		return this.wpcom.req.put( `${this.getPostPath()}/related`, body, null, fn );
+		return this.wpcom.req.put( `${ this.getPostPath() }/related`, body, null, fn );
 	}
 
 	/**
@@ -219,7 +224,7 @@ class SitePost {
 	 * @returns {Function} request handler
 	 */
 	comments( query, fn ) {
-		var comment = new Comment( null, this._id, this._sid, this.wpcom );
+		const comment = new Comment( null, this._id, this._sid, this.wpcom );
 		return comment.replies( query, fn );
 	}
 
@@ -253,12 +258,12 @@ class SitePost {
 	 */
 	subscriber() {
 		return new Subscriber( this._id, this._sid, this.wpcom );
-	};
+	}
 }
 
 // add methods in runtime
 runtimeBuilder( SitePost, sitePostGetMethods, ( item, ctx ) => {
-	return `/sites/${ctx._sid}/posts/${ctx._id}/${item.subpath}`;
+	return `/sites/${ ctx._sid }/posts/${ ctx._id }/${ item.subpath }`;
 } );
 
 export default SitePost;

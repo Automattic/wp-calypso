@@ -6,14 +6,14 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { addQueryArgs, externalRedirect } from 'lib/route';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
-import { urlToSlug } from 'lib/url';
-import { JETPACK_CONNECT_RETRY_AUTH } from 'state/jetpack-connect/action-types';
+import config from '@automattic/calypso-config';
+import { addQueryArgs, externalRedirect } from 'calypso/lib/route';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { REMOTE_PATH_AUTH } from 'calypso/jetpack-connect/constants';
+import { urlToSlug } from 'calypso/lib/url';
+import { JETPACK_CONNECT_RETRY_AUTH } from 'calypso/state/jetpack-connect/action-types';
 
-import 'state/jetpack-connect/init';
+import 'calypso/state/jetpack-connect/init';
 
 /**
  * Module constants
@@ -22,7 +22,7 @@ const calypsoEnv = config( 'env_id' );
 const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 
 export function retryAuth( url, attemptNumber, fromParam, redirectAfterAuth ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'retrying auth', url, attemptNumber );
 		dispatch( {
 			type: JETPACK_CONNECT_RETRY_AUTH,

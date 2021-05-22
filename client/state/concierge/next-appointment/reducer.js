@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
-import { CONCIERGE_INITIAL_REQUEST, CONCIERGE_INITIAL_UPDATE } from 'state/action-types';
 
-export const nextAppointment = withoutPersistence( ( state = null, action ) => {
+import { CONCIERGE_INITIAL_REQUEST, CONCIERGE_INITIAL_UPDATE } from 'calypso/state/action-types';
+
+export const nextAppointment = ( state = null, action ) => {
 	switch ( action.type ) {
 		case CONCIERGE_INITIAL_REQUEST:
 			return null;
@@ -13,6 +13,6 @@ export const nextAppointment = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default nextAppointment;

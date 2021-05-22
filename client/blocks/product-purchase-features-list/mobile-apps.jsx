@@ -4,18 +4,19 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import { addQueryArgs } from 'lib/route';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { addQueryArgs } from 'calypso/lib/route';
 
 /**
  * Image dependencies
  */
-import appsImage from 'assets/images/illustrations/apps.svg';
+import appsImage from 'calypso/assets/images/illustrations/apps.svg';
+
+const noop = () => {};
 
 export default localize( ( { translate, onClick = noop } ) => {
 	return (

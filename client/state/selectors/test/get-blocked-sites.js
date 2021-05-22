@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getBlockedSites } from 'state/reader/site-blocks/selectors';
+import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 
 describe( 'getBlockedSites()', () => {
 	test( 'should return an array of blocked site IDs', () => {

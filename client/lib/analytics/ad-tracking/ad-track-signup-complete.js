@@ -6,7 +6,11 @@ import { v4 as uuid } from 'uuid';
 /**
  * Internal dependencies
  */
-import { costToUSD, isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'lib/analytics/utils';
+import {
+	costToUSD,
+	isAdTrackingAllowed,
+	refreshCountryCodeCookieGdpr,
+} from 'calypso/lib/analytics/utils';
 
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import {
@@ -120,7 +124,9 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 			TRACKING_IDS.facebookInit,
 			'Subscribe',
 			{
-				product_slug: syntheticCart.products.map( product => product.product_slug ).join( ', ' ),
+				product_slug: syntheticCart.products
+					.map( ( product ) => product.product_slug )
+					.join( ', ' ),
 				value: syntheticCart.total_cost,
 				currency: syntheticCart.currency,
 				user_id: currentUser ? currentUser.hashedPii.ID : 0,
@@ -147,7 +153,7 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 			qacct: TRACKING_IDS.quantcast,
 			labels:
 				'_fp.event.WordPress Signup,_fp.pcat.' +
-				syntheticCart.products.map( product => product.product_slug ).join( ' ' ),
+				syntheticCart.products.map( ( product ) => product.product_slug ).join( ' ' ),
 			orderid: syntheticOrderId,
 			revenue: usdCost,
 			event: 'refresh',

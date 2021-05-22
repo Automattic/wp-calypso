@@ -14,8 +14,8 @@ export default class AcceptInvitePage extends AsyncBaseContainer {
 		super( driver, By.css( '.invite-accept' ) );
 	}
 
-	getEmailPreFilled() {
-		return this.driver.findElement( By.css( '#email' ) ).getAttribute( 'value' );
+	async getEmailPreFilled() {
+		return await this.driver.findElement( By.css( '#email' ) ).getAttribute( 'value' );
 	}
 
 	async enterUsernameAndPasswordAndSignUp( username, password ) {
@@ -29,7 +29,7 @@ export default class AcceptInvitePage extends AsyncBaseContainer {
 	}
 
 	async waitUntilNotVisible() {
-		return await DriverHelper.waitTillNotPresent(
+		return await DriverHelper.waitUntilElementNotLocated(
 			this.driver,
 			By.css( '#username' ),
 			this.explicitWaitMS * 2

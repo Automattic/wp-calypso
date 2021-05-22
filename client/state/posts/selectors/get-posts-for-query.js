@@ -6,11 +6,11 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getQueryManager } from 'state/posts/selectors/get-query-manager';
-import { getSerializedPostsQuery, normalizePostForDisplay } from 'state/posts/utils';
+import { createSelector } from '@automattic/state-utils';
+import { getQueryManager } from 'calypso/state/posts/selectors/get-query-manager';
+import { getSerializedPostsQuery, normalizePostForDisplay } from 'calypso/state/posts/utils';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns an array of normalized posts for the posts query, or null if no
@@ -49,6 +49,6 @@ export const getPostsForQuery = createSelector(
 
 		return posts.map( normalizePostForDisplay );
 	},
-	state => [ state.posts.queries, state.posts.allSitesQueries ],
+	( state ) => [ state.posts.queries, state.posts.allSitesQueries ],
 	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
 );

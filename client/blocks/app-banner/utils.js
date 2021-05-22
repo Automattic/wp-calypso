@@ -6,16 +6,18 @@ import { get, includes, reduce } from 'lodash';
 
 export const APP_BANNER_DISMISS_TIMES_PREFERENCE = 'appBannerDismissTimes';
 export const EDITOR = 'post-editor';
+export const GUTENBERG = 'gutenberg-editor';
 export const NOTES = 'notifications';
 export const READER = 'reader';
 export const STATS = 'stats';
-export const ALLOWED_SECTIONS = [ EDITOR, NOTES, READER, STATS ];
+export const ALLOWED_SECTIONS = [ EDITOR, GUTENBERG, NOTES, READER, STATS ];
 export const ONE_WEEK_IN_MILLISECONDS = 604800000;
 export const ONE_MONTH_IN_MILLISECONDS = 2419200000; // 28 days
 
 export function getAppBannerData( translate, sectionName ) {
 	switch ( sectionName ) {
 		case EDITOR:
+		case GUTENBERG:
 			return {
 				title: translate( 'Rich mobile publishing.' ),
 				copy: translate(
@@ -47,14 +49,9 @@ export function getAppBannerData( translate, sectionName ) {
 	}
 }
 
-export function getCurrentSection( currentSection, isNotesOpen, currentRoute ) {
+export function getCurrentSection( currentSection, isNotesOpen ) {
 	if ( isNotesOpen ) {
 		return NOTES;
-	}
-
-	if ( currentRoute && currentRoute.indexOf( '/stats/activity/' ) !== -1 ) {
-		//don't show app banner in activity log
-		return null;
 	}
 
 	if ( includes( ALLOWED_SECTIONS, currentSection ) ) {

@@ -1,0 +1,64 @@
+.upcoming-renewals-dialog {
+	.button {
+		margin-left: 10px;
+		padding: 8px 10px;
+	}
+
+	hr {
+		margin-bottom: 1em;
+		margin-top: 1em;
+	}
+
+	&.dialog {
+		width: 660px;
+	}
+
+	&__header {
+		font-size: $font-title-medium;
+		margin-bottom: 0;
+	}
+	&__subheader {
+		font-size: $font-body-small;
+		color: var( --color-neutral-50 );
+		margin-bottom: 16px;
+	}
+	&__row {
+		display: flex;
+	}
+	&__label.form-label {
+		display: flex;
+		flex-grow: 1;
+		font-weight: normal;
+	}
+	&__checkbox {
+		width: 24px;
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+	}
+	&__name {
+		font-size: $font-body;
+	}
+	&__detail {
+		font-size: $font-body-small;
+		color: var( --color-neutral-50 );
+		.expired {
+			color: var( --color-error-dark );
+		}
+	}
+	&__side {
+		text-align: right;
+	}
+	&__price {
+		font-size: $font-body;
+	}
+	&__renewal-settings-link a {
+		font-size: $font-body-small;
+		color: var( --color-neutral-50 );
+		text-decoration: underline;
+	}
+	&__actions {
+		text-align: right;
+		margin-top: 1.5em;
+	}
+}

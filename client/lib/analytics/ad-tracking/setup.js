@@ -104,7 +104,7 @@ function setupQuoraGlobal() {
 		return;
 	}
 
-	const quoraPixel = ( window.qp = function() {
+	const quoraPixel = ( window.qp = function () {
 		quoraPixel.qp
 			? quoraPixel.qp.apply( quoraPixel, arguments )
 			: quoraPixel.queue.push( arguments );
@@ -121,7 +121,7 @@ function setupFacebookGlobal() {
 		return;
 	}
 
-	const facebookEvents = ( window.fbq = function() {
+	const facebookEvents = ( window.fbq = function () {
 		if ( facebookEvents.callMethod ) {
 			facebookEvents.callMethod.apply( facebookEvents, arguments );
 		} else {
@@ -158,7 +158,7 @@ function setupTwitterGlobal() {
 		return;
 	}
 
-	const twq = ( window.twq = function() {
+	const twq = ( window.twq = function () {
 		twq.exe ? twq.exe.apply( twq, arguments ) : twq.queue.push( arguments );
 	} );
 	twq.version = '1.1';
@@ -166,7 +166,7 @@ function setupTwitterGlobal() {
 }
 
 function setupOutbrainGlobal() {
-	const api = ( window.obApi = function() {
+	const api = ( window.obApi = function () {
 		api.dispatch ? api.dispatch.apply( api, arguments ) : api.queue.push( arguments );
 	} );
 	api.version = '1.0';
@@ -177,7 +177,7 @@ function setupOutbrainGlobal() {
 
 function setupPinterestGlobal() {
 	if ( ! window.pintrk ) {
-		window.pintrk = function() {
+		window.pintrk = function () {
 			window.pintrk.queue.push( Array.prototype.slice.call( arguments ) );
 		};
 		const n = window.pintrk;
@@ -189,11 +189,11 @@ function setupPinterestGlobal() {
 function setupAdRollGlobal() {
 	if ( ! window.adRoll ) {
 		window.adRoll = {
-			trackPageview: function() {
+			trackPageview: function () {
 				new window.Image().src = ADROLL_PAGEVIEW_PIXEL_URL_1;
 				new window.Image().src = ADROLL_PAGEVIEW_PIXEL_URL_2;
 			},
-			trackPurchase: function() {
+			trackPurchase: function () {
 				new window.Image().src = ADROLL_PURCHASE_PIXEL_URL_1;
 				new window.Image().src = ADROLL_PURCHASE_PIXEL_URL_2;
 			},

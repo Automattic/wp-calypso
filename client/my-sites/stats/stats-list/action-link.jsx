@@ -8,8 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import Gridicon from 'calypso/components/gridicon';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 class StatsActionLink extends PureComponent {
 	static propTypes = {
@@ -18,7 +18,7 @@ class StatsActionLink extends PureComponent {
 		translate: PropTypes.func,
 	};
 
-	onClick = event => {
+	onClick = ( event ) => {
 		event.stopPropagation();
 		gaRecordEvent(
 			'Stats',

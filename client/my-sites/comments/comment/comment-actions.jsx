@@ -5,30 +5,30 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
-import { get, includes, isEqual, isUndefined, noop } from 'lodash';
+import { get, includes, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import scrollTo from 'lib/scroll-to';
-import { getMinimumComment } from 'my-sites/comments/comment/utils';
+import scrollTo from 'calypso/lib/scroll-to';
+import { getMinimumComment } from 'calypso/my-sites/comments/comment/utils';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
+} from 'calypso/state/analytics/actions';
 import {
 	changeCommentStatus,
 	deleteComment,
 	likeComment,
 	unlikeComment,
-} from 'state/comments/actions';
-import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/comments/selectors';
+} from 'calypso/state/comments/actions';
+import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSiteComment } from 'calypso/state/comments/selectors';
 
 const commentActions = {
 	unapproved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash' ],
@@ -36,6 +36,7 @@ const commentActions = {
 	spam: [ 'approve', 'delete' ],
 	trash: [ 'approve', 'spam', 'delete' ],
 };
+const noop = () => {};
 
 export class CommentActions extends Component {
 	static propTypes = {
@@ -55,22 +56,22 @@ export class CommentActions extends Component {
 		updateLastUndo: noop,
 	};
 
-	shouldComponentUpdate = nextProps => ! isEqual( this.props, nextProps );
+	shouldComponentUpdate = ( nextProps ) => ! isEqual( this.props, nextProps );
 
 	delete = () => {
 		if (
-			isUndefined( window ) ||
+			typeof window === 'undefined' ||
 			window.confirm( this.props.translate( 'Delete this comment permanently?' ) )
 		) {
 			this.props.deletePermanently();
 		}
 	};
 
-	hasAction = action => includes( commentActions[ this.props.commentStatus ], action );
+	hasAction = ( action ) => includes( commentActions[ this.props.commentStatus ], action );
 
 	setSpam = () => this.setStatus( 'spam' );
 
-	setStatus = status => {
+	setStatus = ( status ) => {
 		const { changeStatus, commentIsLiked, commentStatus, unlike, updateLastUndo } = this.props;
 
 		const alsoUnlike = commentIsLiked && 'approved' !== status;
@@ -91,7 +92,7 @@ export class CommentActions extends Component {
 
 	setTrash = () => this.setStatus( 'trash' );
 
-	showNotice = status => {
+	showNotice = ( status ) => {
 		const { minimumComment, translate } = this.props;
 
 		this.props.removeNotice( 'comment-notice' );
@@ -323,7 +324,7 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, commentsList
 				likeComment( siteId, postId, commentId )
 			)
 		),
-	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
+	removeNotice: ( noticeId ) => dispatch( removeNotice( noticeId ) ),
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 	unlike: () =>
 		dispatch(

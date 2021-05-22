@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import getNotes from './get-notes';
 
 export const getNote = ( notesState, noteId ) => notesState.allNotes[ noteId ];

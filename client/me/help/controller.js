@@ -8,14 +8,14 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { login } from 'lib/paths';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import config from 'config';
+import { login } from 'calypso/lib/paths';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import config from '@automattic/calypso-config';
 import HelpComponent from './main';
 import CoursesComponent from './help-courses';
 import ContactComponent from './help-contact';
-import { CONTACT, SUPPORT_ROOT } from 'lib/url/support';
-import userUtils from 'lib/user/utils';
+import { CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
+import userUtils from 'calypso/lib/user/utils';
 
 export function loggedOut( context, next ) {
 	if ( userUtils.isLoggedIn() ) {
@@ -39,10 +39,15 @@ export function loggedOut( context, next ) {
 }
 
 export function help( context, next ) {
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// Scroll to the top
+	if ( typeof window !== 'undefined' ) {
+		window.scrollTo( 0, 0 );
+	}
+
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Help', { textOnly: true } ) ) );
 
-	context.primary = <HelpComponent isCoursesEnabled={ config.isEnabled( 'help/courses' ) } />;
+	context.primary = <HelpComponent />;
 	next();
 }
 

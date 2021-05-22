@@ -8,15 +8,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import accept from 'lib/accept';
-import { recordTracksEvent } from 'state/analytics/actions';
+import accept from 'calypso/lib/accept';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class MigrateButton extends Component {
 	state = {
 		busy: false,
 	};
 
-	confirmCallback = accepted => {
+	confirmCallback = ( accepted ) => {
 		if ( accepted ) {
 			this.props.recordTracksEvent( 'calypso_site_migration_start_confirm_clicked' );
 			this.setState( { busy: true }, this.props.onClick );

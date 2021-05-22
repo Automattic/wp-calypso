@@ -6,30 +6,32 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, find, noop, assign } from 'lodash';
+import { get, find } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import TermTreeSelectorTerms from 'blocks/term-tree-selector/terms';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormToggle from 'components/forms/form-toggle';
-import FormLegend from 'components/forms/form-legend';
-import FormFieldset from 'components/forms/form-fieldset';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
-import { getTerms } from 'state/terms/selectors';
-import { addTerm, updateTerm } from 'state/terms/actions';
-import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
+import TermTreeSelectorTerms from 'calypso/blocks/term-tree-selector/terms';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
+import { getTerms } from 'calypso/state/terms/selectors';
+import { addTerm, updateTerm } from 'calypso/state/terms/actions';
+import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class TermFormDialog extends Component {
 	static initialState = {
@@ -66,7 +68,7 @@ class TermFormDialog extends Component {
 		showDialog: false,
 	};
 
-	onSearch = searchTerm => {
+	onSearch = ( searchTerm ) => {
 		this.setState( { searchTerm: searchTerm } );
 	};
 
@@ -77,7 +79,7 @@ class TermFormDialog extends Component {
 		this.props.onClose();
 	};
 
-	onParentChange = item => {
+	onParentChange = ( item ) => {
 		this.setState(
 			{
 				selectedParent: [ item.ID ],
@@ -99,19 +101,19 @@ class TermFormDialog extends Component {
 		);
 	};
 
-	onNameChange = event => {
+	onNameChange = ( event ) => {
 		this.setState( {
 			name: event.target.value,
 		} );
 	};
 
-	onDescriptionChange = event => {
+	onDescriptionChange = ( event ) => {
 		this.setState( {
 			description: event.target.value,
 		} );
 	};
 
-	validateInput = event => {
+	validateInput = ( event ) => {
 		if ( 13 === event.keyCode ) {
 			this.saveTerm();
 		} else {
@@ -144,7 +146,7 @@ class TermFormDialog extends Component {
 		this.props.bumpStat( 'taxonomy_manager', statLabels.mc );
 		this.props.recordGoogleEvent( 'Taxonomy Manager', statLabels.ga );
 
-		savePromise.then( savedTerm => {
+		savePromise.then( ( savedTerm ) => {
 			this.setState( { saving: false } );
 			this.props.onSuccess( savedTerm );
 			this.closeDialog();
@@ -160,9 +162,10 @@ class TermFormDialog extends Component {
 		if ( ! props.term ) {
 			if ( props.searchTerm && props.searchTerm.trim().length ) {
 				this.setState(
-					assign( {}, this.constructor.initialState, {
+					{
+						...this.constructor.initialState,
 						name: props.searchTerm,
-					} ),
+					},
 					this.isValid
 				);
 				return;
@@ -173,14 +176,13 @@ class TermFormDialog extends Component {
 		}
 
 		const { name, description, parent = false } = props.term;
-		this.setState(
-			assign( {}, this.constructor.initialState, {
-				name,
-				description,
-				isTopLevel: parent ? false : true,
-				selectedParent: parent ? [ parent ] : [],
-			} )
-		);
+		this.setState( {
+			...this.constructor.initialState,
+			name,
+			description,
+			isTopLevel: parent ? false : true,
+			selectedParent: parent ? [ parent ] : [],
+		} );
 	}
 
 	UNSAFE_componentWillReceiveProps( newProps ) {
@@ -219,7 +221,7 @@ class TermFormDialog extends Component {
 			errors.name = this.props.translate( 'Name required', { textOnly: true } );
 		}
 		const lowerCasedTermName = values.name.toLowerCase();
-		const matchingTerm = find( this.props.terms, term => {
+		const matchingTerm = find( this.props.terms, ( term ) => {
 			return (
 				term.name.toLowerCase() === lowerCasedTermName &&
 				( ! this.props.term || term.ID !== this.props.term.ID )
@@ -269,25 +271,26 @@ class TermFormDialog extends Component {
 
 		return (
 			<FormFieldset>
-				<FormToggle checked={ isTopLevel } onChange={ this.onTopLevelChange }>
-					<span>
-						{ translate( 'Top level %(term)s', {
-							args: { term: labels.singular_name },
-							context: 'Terms: New term being created is top level',
-							comment:
-								'term is the singular_name label of a hierarchical taxonomy, e.g. "Category"',
-						} ) }
-					</span>
-					{ isTopLevel && (
-						<span className="term-form-dialog__top-level-description">
-							{ translate( 'Disable to select a %(parentTerm)s', {
-								args: { parentTerm: labels.parent_item },
-								comment:
-									'parentTerm is the parent_item label of a hierarchical taxonomy, e.g. "Parent Category"',
-							} ) }
-						</span>
-					) }
-				</FormToggle>
+				<ToggleControl
+					checked={ isTopLevel }
+					onChange={ this.onTopLevelChange }
+					help={
+						isTopLevel && (
+							<span className="term-form-dialog__top-level-description">
+								{ translate( 'Disable to select a %(parentTerm)s', {
+									args: { parentTerm: labels.parent_item },
+									comment:
+										'parentTerm is the parent_item label of a hierarchical taxonomy, e.g. "Parent Category"',
+								} ) }
+							</span>
+						)
+					}
+					label={ translate( 'Top level %(term)s', {
+						args: { term: labels.singular_name },
+						context: 'Terms: New term being created is top level',
+						comment: 'term is the singular_name label of a hierarchical taxonomy, e.g. "Category"',
+					} ) }
+				/>
 				{ ! isTopLevel && (
 					<div className="term-form-dialog__parent-tree-selector">
 						<FormLegend>

@@ -82,7 +82,7 @@ module.exports = function formatInPHP( matches, options ) {
 		'<?php',
 		'/* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */',
 		'$' + arrayName + ' = array(',
-		matches.map( element => buildPHPString( element, options.textdomain ) ).join( '\n' ),
+		matches.map( ( element ) => buildPHPString( element, options.textdomain ) ).join( '\n' ),
 		');',
 		'/* THIS IS THE END OF THE GENERATED FILE */',
 	].join( '\n' );

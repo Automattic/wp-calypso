@@ -14,11 +14,11 @@ import { map } from 'lodash';
 import * as MediaUtils from '../utils';
 import { ValidationErrors as MediaValidationErrors } from '../constants';
 
-jest.mock( 'lib/impure-lodash', () => ( {
-	uniqueId: () => 'media-13',
+jest.mock( 'uuid', () => ( {
+	v4: () => 'someid',
 } ) );
 
-const UNIQUEID = 'media-13';
+const UNIQUEID = 'media-someid';
 const DUMMY_FILENAME = 'test.jpg';
 const DUMMY_FILE_BLOB = {
 	fileContents: {
@@ -285,7 +285,7 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( 'should return the item with the greater ID if the dates are not set', () => {
-			items = items.map( function( item ) {
+			items = items.map( function ( item ) {
 				item.date = null;
 				return item;
 			} );
@@ -294,7 +294,7 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( 'should return the item with the greater ID if the dates are equal', () => {
-			items = items.map( function( item ) {
+			items = items.map( function ( item ) {
 				item.date = '2015-06-19T09:36:09-04:00';
 				return item;
 			} );
@@ -303,7 +303,7 @@ describe( 'MediaUtils', () => {
 		} );
 
 		test( 'should parse dates in string format', () => {
-			items = items.map( function( item ) {
+			items = items.map( function ( item ) {
 				item.date = item.date.toString();
 				return item;
 			} );
@@ -364,9 +364,6 @@ describe( 'MediaUtils', () => {
 				{ extension: 'exe' },
 				{
 					jetpack: true,
-					options: {
-						jetpack_version: '3.8.0',
-					},
 				}
 			);
 
@@ -398,7 +395,6 @@ describe( 'MediaUtils', () => {
 		const jetpackSite = {
 			jetpack: true,
 			options: {
-				jetpack_version: '4.5',
 				max_upload_size: 1024,
 				active_modules: [ 'videopress' ],
 			},
@@ -434,22 +430,6 @@ describe( 'MediaUtils', () => {
 			).to.be.null;
 		} );
 
-		test( 'should not return null if a video is being uploaded for a pre-4.5 Jetpack site with VideoPress enabled', () => {
-			const isAcceptableSize = MediaUtils.isExceedingSiteMaxUploadSize(
-				{ size: 1024, mime_type: 'video/mp4' },
-				{
-					jetpack: true,
-					options: {
-						jetpack_version: '3.8.1',
-						max_upload_size: 1024,
-						active_modules: [ 'videopress' ],
-					},
-				}
-			);
-
-			expect( isAcceptableSize ).to.not.be.null;
-		} );
-
 		test( 'should not return null if an image is being uploaded for a Jetpack site with VideoPress enabled', () => {
 			expect(
 				MediaUtils.isExceedingSiteMaxUploadSize(
@@ -465,7 +445,6 @@ describe( 'MediaUtils', () => {
 				{
 					jetpack: true,
 					options: {
-						jetpack_version: '4.5',
 						max_upload_size: 1024,
 					},
 				}

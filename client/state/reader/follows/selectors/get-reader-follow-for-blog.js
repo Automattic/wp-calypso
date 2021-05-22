@@ -3,7 +3,7 @@
  */
 import { find } from 'lodash';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 /*
  * Find the first follow for a given blog ID
@@ -13,4 +13,4 @@ import 'state/reader/init';
  * @returns {object} The subscription
  */
 export default ( state, blogId ) =>
-	find( state.reader.follows.items, item => item.blog_ID == blogId ); // eslint-disable-line eqeqeq
+	find( state.reader.follows.items, ( item ) => item.blog_ID == blogId ); // eslint-disable-line eqeqeq

@@ -1,5 +1,29 @@
 # Style Guide
 
+<!-- TOC -->
+
+- [Style Guide](#style-guide)
+  - [Naming Branches](#naming-branches)
+  - [Async / Await](#async--await)
+  - [Tags](#tags)
+  - [At most 1 top-level describe block](#at-most-1-top-level-describe-block)
+  - [Viewport size](#viewport-size)
+    - [Specify one viewport](#specify-one-viewport)
+    - [Specify multiple viewports](#specify-multiple-viewports)
+  - [Page Objects](#page-objects)
+  - [Use of this, const and lets](#use-of-this-const-and-lets)
+  - [Arrow functions](#arrow-functions)
+  - [Default values using destructuring](#default-values-using-destructuring)
+  - [Nesting step blocks](#nesting-step-blocks)
+  - [Catching errors in a step block](#catching-errors-in-a-step-block)
+  - [Waiting for elements](#waiting-for-elements)
+
+<!-- /TOC -->
+
+## Naming Branches
+
+We follow the Automattic [branch naming scheme](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/git-workflow.md#branch-naming-scheme).
+
 ## Async / Await
 
 We use async functions and `await` to wait for commands to finish. This lets asynchronous methods execute like synchronous methods.
@@ -10,25 +34,97 @@ We don't chain function calls together and avoid using `.then` calls.
 Avoid doing:
 
 ```
-async selectContinue() {
-	const continueSelector = By.css( '.card[data-e2e-type="continue"] button' );
-	return await driverHelper
-		.waitTillPresentAndDisplayed( this.driver, continueSelector )
-		.then( () => driverHelper.clickWhenClickable( this.driver, continueSelector ) );
-	}
+async function openModal() {
+	const modalButtonLocator = By.css( 'button.open-modal' );
+	const modalLocator = By.css( '.modal' );
+	await driverHelper
+		.clickWhenClickable( this.driver, modalButtonLocator )
+		.then( () => driverHelper.waitUntilElementLocatedAndVisible( modalLocator ) );
+}
 ```
 
 Instead use `await` for each function call:
 
 ```
-async selectContinue() {
-	const continueSelector = By.css( 'a.card[data-e2e-type="continue"] button' );
-	await driverHelper.waitTillPresentAndDisplayed( this.driver, continueSelector );
-	return await driverHelper.clickWhenClickable( this.driver, continueSelector );
+async function openModal() {
+	const modalButtonLocator = By.css( 'button.open-modal' );
+	const modalLocator = By.css( '.modal' );
+	await driverHelper.clickWhenClickable( this.driver, modalButtonLocator );
+	await driverHelper.waitUntilElementLocatedAndVisible( modalLocator );
 }
 ```
 
-## Constructing page objects
+## Tags
+
+Tags are labels used by `mocha` and `magellan` to determine what tests should be run and how it can be parallelized. Consider it a form of metadata that conveys various test parameters to the runner.
+
+Typical example:
+
+```(javascript)
+describe( "Block under test @parallel", function() {
+  describe( "Test case 1", function() {
+    step( 'Test step 1', function() {
+      ...
+    } )
+    step( 'Test step 2', function() {
+      ...
+    } )
+  } )
+  describe( "Test case 2", function() {
+    ...
+  } )
+} )
+```
+
+Some examples of tags:
+
+- parallel
+- jetpack
+- signup
+
+Notably, test suites not tagged with the `@parallel` tag will not be recognized by `magellan` as a valid test suite and thus will not be run in CI.
+
+Furthermore, if any test steps fail within the suite tagged with `@parallel` tag, rest of the test steps will be skipped an execution will begin on a new test suite.
+
+## At most 1 top-level describe block
+
+Each test file should only contain at most 1 top-level `describe` block.
+
+There is no restriction on the number `describe` blocks that are not top-level, nor a restriction on the depth of `describe` blocks.
+
+## Viewport size
+
+All tests should be written to work in three modes: desktop (1440 wide), tablet (1024 wide) and mobile (375 wide).
+
+Tests can be run in different modes by setting an environment variable `BROWSERSIZE` to either `desktop`, `tablet` or `mobile`.
+
+### Specify one viewport
+
+eg. using environment variables
+
+```
+BROWSERSIZE=<viewport> ./node_modules/.bin/mocha <path_to_e2e_spec>
+```
+
+eg. using run.sh
+
+```
+./run.sh -g -s <viewport>
+```
+
+### Specify multiple viewports
+
+```
+./run.sh -g -s <viewport1>,<viewport2>
+```
+
+eg. using run.sh
+
+```
+./run.sh -g -s mobile,desktop
+```
+
+## Page Objects
 
 All pages have asynchronous functions. Constructors for pages can't be asynchronous so we never construct a page object directly (using something like `new PageObjectPage(...)`), instead we use the static methods `Expect` and `Visit`, which are on the asyncBaseContainer and hence available for every page, to construct the page object.
 
@@ -51,7 +147,6 @@ step( 'Can select domain only from the domain first choice page', function() {
 ```
 
 or this to directly visit a page:
-
 
 ```
 step( 'Can select domain only from the domain first choice page', function() {
@@ -110,8 +205,7 @@ step( 'We can set the sandbox cookie for payments', async function() {
 
 Use destructuring for default values as this makes calling the function explicit and avoids boolean traps.
 
-Avoid
-
+Avoid:
 
 ```
 constructor( driver, visit = true, culture = 'en', flow = '', domainFirst = false, domainFirstDomain = '' ) {
@@ -131,14 +225,13 @@ new StartPage( driver, { visit: true, domainFirst: true } ).displayed();
 
 instead of:
 
-
 ```
 new StartPage( driver, true, 'en', '', true, '' ).displayed();
 ```
 
 ## Nesting step blocks
 
-Since we have a bail suite option, it is not necessary to nest `step` blocks.
+Do not nest test steps.
 
 This is a general structure of an e2e test scenario:
 
@@ -146,33 +239,29 @@ This is a general structure of an e2e test scenario:
 describe(
 	'An e2e test scenario @parallel',
 	function() {
-		
-		
 		before( async function() {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'First step', async function() {
+		it( 'First step', async function() {
 			// Do something with a page
 		} );
 
-		step( 'Second step', async function() {
+		it( 'Second step', async function() {
 			// Do something next - this will only execute if the first step doesn't fail
 		} );
-		
+
 		after( async function() {
 			// Do some cleanup
-		} );	
+		} );
 	}
 );
 ```
 
-**Note:** The `describe` blocks shouldn't be `async`
-
-
 ## Catching errors in a step block
 
 Sometimes we don't want a `step` block to fail on error - say if we're cleaning up after doing an action and it doesn't matter what happens. As we use async methods using a standard try/catch won't work as the promise itself will still fail. Instead, return an async method that catches the error result:
+
 ```
 step( 'Can delete our newly created account', async function() {
 	return ( async () => {
@@ -190,7 +279,8 @@ step( 'Can delete our newly created account', async function() {
 
 When waiting for elements we should always use a quantity of the config value defined as `explicitWaitMS` instead of hardcoding values. This allows us to change it readily, and also adjust this for different environments, for example the live branch environment is not as fast as production so it waits twice as long.
 
-Instead of:
+Avoid:
+
 ```
 export default class TransferDomainPrecheckPage extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -199,7 +289,7 @@ export default class TransferDomainPrecheckPage extends AsyncBaseContainer {
 }
 ```
 
-do:
+instead:
 
 ```
 export default class TransferDomainPrecheckPage extends AsyncBaseContainer {
@@ -213,5 +303,3 @@ export default class TransferDomainPrecheckPage extends AsyncBaseContainer {
 	}
 }
 ```
-
-this achieves the same thing as the default explicit wait is presently 20000, and it allows us to adjust for environmental performance.

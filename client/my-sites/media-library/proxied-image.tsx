@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
  * Internal dependencies
  */
 import debugFactory from 'debug';
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 
 const debug = debugFactory( 'calypso:my-sites:media-library:proxied-image' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
@@ -57,37 +57,29 @@ const ProxiedImage: React.FC< ProxiedImageProps > = function ProxiedImage( {
 	...rest
 } ) {
 	const [ imageObjectUrl, setImageObjectUrl ] = useState< string >( '' );
-	const requestId = `media-library-proxied-image-${ siteSlug }${ filePath }${ query }`;
 
 	useEffect( () => {
-		if ( ! imageObjectUrl ) {
-			if ( cache[ requestId ] ) {
-				const url = URL.createObjectURL( cache[ requestId ] );
-				setImageObjectUrl( url );
-				debug( 'set image from cache', { url } );
-			} else {
-				debug( 'requesting image from API', { requestId, imageObjectUrl } );
-				const options = { query };
-				if ( maxSize !== null ) {
-					options.maxSize = maxSize;
-				}
-				wpcom
-					.undocumented()
-					.getAtomicSiteMediaViaProxyRetry(
-						siteSlug,
-						filePath,
-						options,
-						( err: Error, data: Blob | null ) => {
-							if ( data instanceof Blob ) {
-								cacheResponse( requestId, data );
-								setImageObjectUrl( URL.createObjectURL( data ) );
-								debug( 'got image from API', { requestId, imageObjectUrl, data } );
-							} else if ( onError ) {
-								onError( err );
-							}
-						}
-					);
+		const requestId = `media-library-proxied-image-${ siteSlug }${ filePath }${ query }`;
+
+		if ( cache[ requestId ] ) {
+			const url = URL.createObjectURL( cache[ requestId ] );
+			setImageObjectUrl( url );
+			debug( 'set image from cache', { url } );
+		} else {
+			debug( 'requesting image from API', { requestId, imageObjectUrl } );
+			const options = { query };
+			if ( maxSize !== null ) {
+				options.maxSize = maxSize;
 			}
+			wpcom
+				.undocumented()
+				.getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, options )
+				.then( ( data: Blob ) => {
+					cacheResponse( requestId, data );
+					setImageObjectUrl( URL.createObjectURL( data ) );
+					debug( 'got image from API', { requestId, imageObjectUrl, data } );
+				} )
+				.catch( onError );
 		}
 
 		return () => {
@@ -96,7 +88,7 @@ const ProxiedImage: React.FC< ProxiedImageProps > = function ProxiedImage( {
 				URL.revokeObjectURL( imageObjectUrl );
 			}
 		};
-	}, [ filePath, requestId, siteSlug ] );
+	}, [ siteSlug, filePath, query ] );
 
 	if ( ! imageObjectUrl ) {
 		return placeholder as React.ReactElement;

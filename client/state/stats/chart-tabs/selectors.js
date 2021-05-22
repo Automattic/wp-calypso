@@ -6,9 +6,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { QUERY_FIELDS } from 'state/stats/chart-tabs/constants';
+import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
 
-import 'state/stats/init';
+import 'calypso/state/stats/init';
 
 const EMPTY_RESULT = [];
 
@@ -33,7 +33,7 @@ export function getCountRecords( state, siteId, period ) {
  * @returns {Array}          	 Array of stat types as strings
  */
 export function getLoadingTabs( state, siteId, period ) {
-	return QUERY_FIELDS.filter( type =>
+	return QUERY_FIELDS.filter( ( type ) =>
 		get( state, [ 'stats', 'chartTabs', 'isLoading', siteId, period, type ] )
 	);
 }

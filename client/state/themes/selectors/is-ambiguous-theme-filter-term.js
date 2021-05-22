@@ -6,10 +6,10 @@ import { filter, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getThemeFilters } from 'state/themes/selectors/get-theme-filters';
+import { createSelector } from '@automattic/state-utils';
+import { getThemeFilters } from 'calypso/state/themes/selectors/get-theme-filters';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns true if a theme filter term belongs to more
@@ -23,9 +23,9 @@ export const isAmbiguousThemeFilterTerm = createSelector(
 	( state, term ) => {
 		const filters = getThemeFilters( state );
 
-		const results = filter( filters, terms => !! get( terms, term ) );
+		const results = filter( filters, ( terms ) => !! get( terms, term ) );
 
 		return results.length > 1;
 	},
-	state => [ getThemeFilters( state ) ]
+	( state ) => [ getThemeFilters( state ) ]
 );

@@ -1,0 +1,90 @@
+.step-progress {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+}
+
+.step-progress__element-complete,
+.step-progress__element-current,
+.step-progress__element-future {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.step-progress__element-complete:not( :last-child ),
+.step-progress__element-current:not( :last-child ),
+.step-progress__element-future:not( :last-child ) {
+	position: relative;
+	&::before {
+		content: '';
+		height: 2px;
+		left: 50%;
+		position: absolute;
+		top: 11px;
+		width: 100%;
+		z-index: 1;
+	}
+}
+
+.step-progress__element-complete:not( :last-child )::before {
+	background: var( --color-neutral-70 );
+}
+
+.step-progress__element-future:not( :last-child )::before,
+.step-progress__element-current:not( :last-child )::before {
+	background: var( --color-neutral-10 );
+}
+
+.step-progress__element-step-name {
+	font-style: normal;
+	font-weight: normal;
+	margin-top: 9px;
+}
+
+.step-progress__element-button {
+	border-radius: 50%;
+	font-size: 0.8rem;
+	font-weight: 700;
+	height: 24px;
+	width: 24px;
+	z-index: 2;
+
+	&:not( :disabled ) {
+		cursor: pointer;
+	}
+}
+
+.step-progress__element-complete {
+	.step-progress__element-button {
+		background-color: var( --color-neutral-70 );
+		border: 2px solid var( --color-neutral-70 );
+		color: var( --studio-white );
+	}
+	.step-progress__element-step-name {
+		color: var( --color-neutral-10 );
+	}
+}
+
+.step-progress__element-current {
+	.step-progress__element-button {
+		background-color: var( --studio-white );
+		border: 2px solid var( --color-neutral-70 );
+		color: var( --color-neutral-70 );
+	}
+	.step-progress__element-step-name {
+		color: var( --color-neutral-90 );
+	}
+}
+
+.step-progress__element-future {
+	.step-progress__element-button {
+		background-color: var( --studio-white );
+		border: 2px solid var( --color-neutral-10 );
+		color: var( --color-neutral-10 );
+	}
+	.step-progress__element-step-name {
+		color: var( --color-neutral-10 );
+	}
+}

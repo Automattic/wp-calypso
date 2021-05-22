@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import { includes, uniq } from 'lodash';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSerializedThemesQuery } from 'state/themes/utils';
+import { createSelector } from '@automattic/state-utils';
+import { getSerializedThemesQuery } from 'calypso/state/themes/utils';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns an array of normalized themes for the themes query, or null if no
@@ -43,8 +43,8 @@ export const getThemesForQuery = createSelector(
 
 		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
 		// over different pages) which we need to remove manually here for now.
-		return uniq( themes );
+		return [ ...new Set( themes ) ];
 	},
-	state => state.themes.queries,
+	( state ) => state.themes.queries,
 	( state, siteId, query ) => getSerializedThemesQuery( query, siteId )
 );

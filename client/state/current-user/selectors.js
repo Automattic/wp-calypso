@@ -1,13 +1,7 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getUser } from 'state/users/selectors';
 
 /**
  * Returns the current user ID
@@ -36,22 +30,18 @@ export function isUserLoggedIn( state ) {
  * @returns {?object}        Current user
  */
 export function getCurrentUser( state ) {
-	const userId = getCurrentUserId( state );
-	if ( ! userId ) {
-		return null;
-	}
-
-	return getUser( state, userId );
+	return get( state, [ 'currentUser', 'user' ], null );
 }
 
 /**
  * Returns a selector that fetches a property from the current user object
  *
+ * @template S,T
  * @param {string} path Path to the property in the user object
- * @param {?Any} otherwise A default value that is returned if no user or property is found
- * @returns {Function} A selector which takes the state as a parameter
+ * @param {?T} otherwise A default value that is returned if no user or property is found
+ * @returns {(state: S) => T} A selector which takes the state as a parameter
  */
-export const createCurrentUserSelector = ( path, otherwise = null ) => state => {
+export const createCurrentUserSelector = ( path, otherwise = null ) => ( state ) => {
 	const user = getCurrentUser( state );
 	return get( user, path, otherwise );
 };
@@ -145,6 +135,14 @@ export const getCurrentUserName = createCurrentUserSelector( 'username' );
 export const getCurrentUserEmail = createCurrentUserSelector( 'email' );
 
 /**
+ *  Returns the primary email of the current user.
+ *
+ *  @param {object} state Global state tree
+ *  @returns {?string} The primary email of the current user.
+ */
+export const getCurrentUserDisplayName = createCurrentUserSelector( 'display_name' );
+
+/**
  * Returns true if the capability name is valid for the current user on a given
  * site, false if capabilities are known for the site but the name is invalid,
  * or null if capabilities are not known for the site.
@@ -181,3 +179,21 @@ export function currentUserHasFlag( state, flagName ) {
  * @returns {boolean}       Whether the current user is email-verified.
  */
 export const isCurrentUserEmailVerified = createCurrentUserSelector( 'email_verified', false );
+
+/**
+ * Returns the Lasagna JWT for the current user.
+ *
+ * @param  {object}  state  Global state tree
+ * @returns {?string}       Lasagna JWT
+ */
+export function getCurrentUserLasagnaJwt( state ) {
+	return state.currentUser.lasagnaJwt;
+}
+
+/**
+ * Returns true if the user was bootstrapped (i.e. user data was fetched by the server
+ * and hydrated using window.currentUser)
+ *
+ * @returns {boolean} Whether the current user is bootstrapped
+ */
+export const isCurrentUserBootstrapped = createCurrentUserSelector( 'bootstrapped', false );

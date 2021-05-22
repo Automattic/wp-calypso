@@ -1,20 +1,22 @@
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["verifyClassification", "expect"] }] */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import { forEach, repeat } from 'lodash';
+import { forEach } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import * as DISPLAY_TYPES from '../display-types';
+import DISPLAY_TYPES from '../display-types';
 import { classifyPost } from '../normalization-rules';
-import addDiscoverProperties from 'lib/post-normalizer/rule-add-discover-properties';
-import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
+import addDiscoverProperties from 'calypso/lib/post-normalizer/rule-add-discover-properties';
+import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 
 function verifyClassification( post, displayTypes ) {
 	classifyPost( post );
-	forEach( displayTypes, displayType => {
+	forEach( displayTypes, ( displayType ) => {
 		expect( post.display_type & displayType ).to.equal( displayType );
 	} );
 }
@@ -32,7 +34,7 @@ describe( 'normalization-rules', () => {
 						mediaType: 'image',
 						width: 1000,
 					},
-					better_excerpt_no_html: repeat( 'no ', 10 ),
+					better_excerpt_no_html: 'no '.repeat( 10 ),
 				},
 				[ DISPLAY_TYPES.PHOTO_ONLY ]
 			);
@@ -45,7 +47,7 @@ describe( 'normalization-rules', () => {
 						mediaType: 'image',
 						width: 1000,
 					},
-					better_excerpt_no_html: repeat( 'no ', 100 ),
+					better_excerpt_no_html: 'no '.repeat( 100 ),
 				},
 				[ DISPLAY_TYPES.UNCLASSIFIED ]
 			);
@@ -72,7 +74,7 @@ describe( 'normalization-rules', () => {
 							width: 50,
 						},
 					],
-					better_excerpt_no_html: repeat( 'no ', 5 ),
+					better_excerpt_no_html: 'no '.repeat( 5 ),
 				},
 				[ DISPLAY_TYPES.PHOTO_ONLY ]
 			);

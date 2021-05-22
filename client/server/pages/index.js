@@ -9,186 +9,63 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import {
-	defaults,
-	endsWith,
-	get,
-	includes,
-	pick,
-	flatten,
-	groupBy,
-	intersection,
-	snakeCase,
-	split,
-} from 'lodash';
+import { get, includes, pick, snakeCase } from 'lodash';
 import bodyParser from 'body-parser';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
-import { matchesUA } from 'browserslist-useragent';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import sanitize from 'server/sanitize';
-import utils from 'server/bundler/utils';
-import { pathToRegExp } from 'utils';
-import sections from 'sections';
-import isSectionEnabled from 'sections-filter';
-import loginRouter, { LOGIN_SECTION_DEFINITION } from 'login';
-import { serverRouter, getNormalizedPath } from 'server/isomorphic-routing';
+import config from '@automattic/calypso-config';
+import sanitize from 'calypso/server/sanitize';
+import { pathToRegExp } from 'calypso/utils';
+import sections from 'calypso/sections';
+import isSectionEnabled from 'calypso/sections-filter';
+import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
+import { serverRouter, getNormalizedPath } from 'calypso/server/isomorphic-routing';
 import {
 	serverRender,
 	renderJsx,
 	attachBuildTimestamp,
 	attachHead,
 	attachI18n,
-} from 'server/render';
-import stateCache from 'server/state-cache';
-import { createReduxStore } from 'state';
-import { setStore } from 'state/redux-store';
-import initialReducer from 'state/reducer';
-import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
-import { setCurrentUser } from 'state/current-user/actions';
-import { login } from 'lib/paths';
+} from 'calypso/server/render';
+import stateCache from 'calypso/server/state-cache';
+import getBootstrappedUser from 'calypso/server/user-bootstrap';
+import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
+import { createReduxStore } from 'calypso/state';
+import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
+import { setStore } from 'calypso/state/redux-store';
+import initialReducer from 'calypso/state/reducer';
+import { LOCALE_SET } from 'calypso/state/action-types';
+import { setCurrentUser } from 'calypso/state/current-user/actions';
+import { login } from 'calypso/lib/paths';
 import { logSectionResponse } from './analytics';
-import analytics from 'server/lib/analytics';
-import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
-import { isWooOAuth2Client } from 'lib/oauth2-clients';
-import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
+import analytics from 'calypso/server/lib/analytics';
+import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
+import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { deserialize } from 'calypso/state/utils';
+import middlewareBuildTarget from '../middleware/build-target.js';
+import middlewareAssets from '../middleware/assets.js';
+import middlewareCache from '../middleware/cache.js';
 
 const debug = debugFactory( 'calypso:pages' );
 
-const SERVER_BASE_PATH = '/public';
 const calypsoEnv = config( 'env_id' );
-
-const staticFiles = [ { path: 'editor.css' }, { path: 'tinymce/skins/wordpress/wp-content.css' } ];
-
-const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
-	if ( ! file.hash ) {
-		file.hash = utils.hashFile( process.cwd() + SERVER_BASE_PATH + '/' + file.path );
-	}
-	result[ file.path ] = utils.getUrl( file.path, file.hash );
-	return result;
-}, {} );
-
-// List of browser languages to show pride styling for.
-// Add a '*' element to show the styling for all visitors.
-const prideLanguages = [];
-
-// List of geolocated locations to show pride styling for.
-// Geolocation may not be 100% accurate.
-const prideLocations = [];
 
 // TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
 function getInitialServerState( serializedServerState ) {
 	// Bootstrapped state from a server-render
-	const serverState = initialReducer( serializedServerState, { type: DESERIALIZE } );
+	const serverState = deserialize( initialReducer, serializedServerState );
 	return pick( serverState, Object.keys( serializedServerState ) );
 }
 
-/**
- * Checks whether a user agent is included in the browser list for an environment.
- *
- * @param {string} userAgentString The user agent string.
- * @param {string} environment The `browserslist` environment.
- *
- * @returns {boolean} Whether the user agent is included in the browser list.
- */
-function isUAInBrowserslist( userAgentString, environment = 'defaults' ) {
-	return matchesUA( userAgentString, {
-		env: environment,
-		ignorePatch: true,
-		ignoreMinor: true,
-		allowHigherVersions: true,
-	} );
-}
-
-function getBuildTargetFromRequest( request ) {
-	const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
-	const isEvergreen = ! isDesktop && isUAInBrowserslist( request.useragent.source, 'evergreen' );
-	const isForcedFallback = request.query.forceFallback;
-	// Development is always evergreen, except desktop
-	const isDevelopment = process.env.NODE_ENV === 'development';
-	return ( isDevelopment && ! isDesktop ) || ( isEvergreen && ! isForcedFallback )
-		? 'evergreen'
-		: null;
-}
-
-const ASSETS_PATH = path.join( __dirname, '../', 'bundler' );
-function getAssetsPath( target ) {
-	const result = path.join(
-		ASSETS_PATH,
-		target ? `assets-${ target }.json` : 'assets-fallback.json'
-	);
-	return result;
-}
-
-const cachedAssets = {};
-const getAssets = target => {
-	if ( ! cachedAssets[ target ] ) {
-		cachedAssets[ target ] = JSON.parse( fs.readFileSync( getAssetsPath( target ), 'utf8' ) );
-	}
-	return cachedAssets[ target ];
-};
-
-const EMPTY_ASSETS = { js: [], 'css.ltr': [], 'css.rtl': [] };
-
-const getAssetType = asset => {
-	if ( asset.endsWith( '.rtl.css' ) ) {
-		return 'css.rtl';
-	}
-	if ( asset.endsWith( '.css' ) ) {
-		return 'css.ltr';
-	}
-
-	return 'js';
-};
-
-const groupAssetsByType = assets => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
-
-const getFilesForChunk = ( chunkName, request ) => {
-	const target = getBuildTargetFromRequest( request );
-
-	const assets = getAssets( target );
-
-	function getChunkByName( _chunkName ) {
-		return assets.chunks.find( chunk => chunk.names.some( name => name === _chunkName ) );
-	}
-
-	function getChunkById( chunkId ) {
-		return assets.chunks.find( chunk => chunk.id === chunkId );
-	}
-
-	const chunk = getChunkByName( chunkName );
-	if ( ! chunk ) {
-		console.warn( 'cannot find the chunk ' + chunkName );
-		console.warn( 'available chunks:' );
-		assets.chunks.forEach( c => {
-			console.log( '    ' + c.id + ': ' + c.names.join( ',' ) );
-		} );
-		return EMPTY_ASSETS;
-	}
-
-	const allTheFiles = chunk.files.concat(
-		flatten( chunk.siblings.map( sibling => getChunkById( sibling ).files ) )
-	);
-
-	return groupAssetsByType( allTheFiles );
-};
-
-const getFilesForEntrypoint = ( target, name ) => {
-	const entrypointAssets = getAssets( target ).entrypoints[ name ].assets.filter(
-		asset => ! asset.startsWith( 'manifest' )
-	);
-	return groupAssetsByType( entrypointAssets );
-};
-
 function getCurrentBranchName() {
 	try {
-		return execSync( 'git rev-parse --abbrev-ref HEAD' )
-			.toString()
-			.replace( /\s/gm, '' );
+		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
 	} catch ( err ) {
 		return undefined;
 	}
@@ -196,39 +73,10 @@ function getCurrentBranchName() {
 
 function getCurrentCommitShortChecksum() {
 	try {
-		return execSync( 'git rev-parse --short HEAD' )
-			.toString()
-			.replace( /\s/gm, '' );
+		return execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
 	} catch ( err ) {
 		return undefined;
 	}
-}
-
-/**
- * Given the content of an 'Accept-Language' request header, returns an array of the languages.
- *
- * This differs slightly from other language functions, as it doesn't try to validate the language codes,
- * or merge similar language codes.
- *
- * @param  {string} header - The content of the AcceptedLanguages header.
- * @returns {Array} An array of language codes in the header, all in lowercase.
- */
-function getAcceptedLanguagesFromHeader( header ) {
-	if ( ! header ) {
-		return [];
-	}
-
-	return header
-		.split( ',' )
-		.map( lang => {
-			const match = lang.match( /^[A-Z]{2,3}(-[A-Z]{2,3})?/i );
-			if ( ! match ) {
-				return false;
-			}
-
-			return match[ 0 ].toLowerCase();
-		} )
-		.filter( lang => lang );
 }
 
 /*
@@ -253,13 +101,11 @@ function setupLoggedInContext( req, res, next ) {
 function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	let initialServerState = {};
 	let lang = config( 'i18n_default_locale_slug' );
-	const bodyClasses = [];
-	// We don't compare context.query against a whitelist here. Whitelists are route-specific,
+	// We don't compare context.query against an allowed list here. Explicit allowance lists are route-specific,
 	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
 	// called before route-specific middleware, so it's up to the cache *writes* in server
-	// render to make sure that Redux state and markup are only cached for whitelisted query args.
+	// render to make sure that Redux state and markup are only cached for specified query args.
 	const cacheKey = getNormalizedPath( request.path, request.query );
-	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 
@@ -268,25 +114,13 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		initialServerState = getInitialServerState( serializeCachedServerState );
 	}
 
-	// Note: The x-geoip-country-code header should *not* be considered 100% accurate.
-	// It should only be used for guestimating the visitor's location.
-	const acceptedLanguages = getAcceptedLanguagesFromHeader( request.headers[ 'accept-language' ] );
-	if (
-		prideLanguages.indexOf( '*' ) > -1 ||
-		intersection( prideLanguages, acceptedLanguages ).length > 0 ||
-		prideLocations.indexOf( '*' ) > -1 ||
-		prideLocations.indexOf( geoLocation ) > -1
-	) {
-		bodyClasses.push( 'pride' );
-	}
-
 	// We assign request.context.lang in the handleLocaleSubdomains()
 	// middleware function if we detect a language slug in subdomain
 	if ( request.context && request.context.lang ) {
 		lang = request.context.lang;
 	}
 
-	const target = getBuildTargetFromRequest( request );
+	const target = request.getTarget();
 
 	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
 	const isWCComConnect =
@@ -298,6 +132,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	const reduxStore = createReduxStore( initialServerState );
 	setStore( reduxStore );
 
+	const flags = ( request.query.flags || '' ).split( ',' );
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
@@ -307,25 +142,29 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		isRTL: config( 'rtl' ),
 		requestFrom: request.query.from,
 		isWCComConnect,
+		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
 		badge: false,
 		lang,
-		entrypoint: getFilesForEntrypoint( target, entrypoint ),
-		manifest: getAssets( target ).manifests.manifest,
-		faviconURL: config( 'favicon_url' ),
+		entrypoint: request.getFilesForEntrypoint( entrypoint ),
+		manifests: request.getAssets().manifests,
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
+		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
 		devDocsURL: '/devdocs',
 		store: reduxStore,
-		bodyClasses,
 		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
 		target: target || 'fallback',
+		useTranslationChunks:
+			config.isEnabled( 'use-translation-chunks' ) ||
+			flags.includes( 'use-translation-chunks' ) ||
+			request.query.hasOwnProperty( 'useTranslationChunks' ),
 	} );
 
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
+		isWpMobileApp: isWpMobileApp( request.useragent.source ),
 		isDebug,
-		staticUrls: staticFilesUrls,
 	};
 
 	if ( calypsoEnv === 'wpcalypso' ) {
@@ -371,21 +210,57 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	return context;
 }
 
-const setupDefaultContext = entrypoint => ( req, res, next ) => {
+const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
 	req.context = getDefaultContext( req, entrypoint );
 	next();
 };
+
+function setUpLocalLanguageRevisions( req ) {
+	const targetFromRequest = req.getTarget();
+	const target = targetFromRequest === null ? 'fallback' : targetFromRequest;
+	const rootPath = path.join( __dirname, '..', '..', '..' );
+	const langRevisionsPath = path.join(
+		rootPath,
+		'public',
+		target,
+		'languages',
+		'lang-revisions.json'
+	);
+	const langPromise = fs.promises
+		.readFile( langRevisionsPath, 'utf8' )
+		.then( ( languageRevisions ) => {
+			req.context.languageRevisions = JSON.parse( languageRevisions );
+
+			return languageRevisions;
+		} )
+		.catch( ( error ) => {
+			console.error( 'Failed to read the language revision files.', error );
+
+			throw error;
+		} );
+
+	return langPromise;
+}
 
 function setUpLoggedOutRoute( req, res, next ) {
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
 
-	next();
+	const setupRequests = [];
+
+	if ( req.context.useTranslationChunks ) {
+		setupRequests.push( setUpLocalLanguageRevisions( req ) );
+	}
+
+	Promise.all( setupRequests )
+		.then( () => next() )
+		.catch( ( error ) => next( error ) );
 }
 
 function setUpLoggedInRoute( req, res, next ) {
-	let redirectUrl, start;
+	let redirectUrl;
+	let start;
 
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
@@ -393,42 +268,20 @@ function setUpLoggedInRoute( req, res, next ) {
 
 	const setupRequests = [];
 
-	if ( config.isEnabled( 'use-translation-chunks' ) ) {
-		const target = getBuildTargetFromRequest( req );
-		const rootPath = path.join( __dirname, '..', '..', '..' );
-		const langRevisionsPath = path.join(
-			rootPath,
-			'public',
-			target,
-			'languages',
-			'lang-revisions.json'
-		);
-		const langPromise = fs.promises
-			.readFile( langRevisionsPath, 'utf8' )
-			.then( languageRevisions => {
-				req.context.languageRevisions = languageRevisions;
-
-				return languageRevisions;
-			} )
-			.catch( error => {
-				console.error( 'Failed to read the language revision files.', error );
-
-				throw error;
-			} );
-
-		setupRequests.push( langPromise );
+	if ( req.context.useTranslationChunks ) {
+		setupRequests.push( setUpLocalLanguageRevisions( req ) );
 	} else {
 		const LANG_REVISION_FILE_URL = 'https://widgets.wp.com/languages/calypso/lang-revisions.json';
 		const langPromise = superagent
 			.get( LANG_REVISION_FILE_URL )
-			.then( response => {
+			.then( ( response ) => {
 				const languageRevisions = filterLanguageRevisions( response.body );
 
 				req.context.languageRevisions = languageRevisions;
 
 				return languageRevisions;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				console.error( 'Failed to fetch the language revision files.', error );
 
 				throw error;
@@ -451,14 +304,12 @@ function setUpLoggedInRoute( req, res, next ) {
 			return;
 		}
 
-		const user = require( 'server/user-bootstrap' );
-
 		start = new Date().getTime();
 
 		debug( 'Issuing API call to fetch user object' );
 
-		const userPromise = user( req )
-			.then( data => {
+		const userPromise = getBootstrappedUser( req )
+			.then( ( data ) => {
 				const end = new Date().getTime() - start;
 
 				debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
@@ -501,7 +352,7 @@ function setUpLoggedInRoute( req, res, next ) {
 					}
 				}
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				if ( error.error === 'authorization_required' ) {
 					debug( 'User public API authorization required. Redirecting to %s', redirectUrl );
 					res.clearCookie( 'wordpress_logged_in', {
@@ -530,7 +381,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 	Promise.all( setupRequests )
 		.then( () => next() )
-		.catch( error => next( error ) );
+		.catch( ( error ) => next( error ) );
 }
 
 /**
@@ -574,7 +425,7 @@ function setUpCSP( req, res, next ) {
 			'https://appleid.cdn-apple.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'www.google-analytics.com',
-			...inlineScripts.map( hash => `'${ hash }'` ),
+			...inlineScripts.map( ( hash ) => `'${ hash }'` ),
 		],
 		'base-uri': [ "'none'" ],
 		'style-src': [ "'self'", '*.wp.com', 'https://fonts.googleapis.com' ],
@@ -589,8 +440,14 @@ function setUpCSP( req, res, next ) {
 			'https://www.google-analytics.com',
 			'https://amplifypixel.outbrain.com',
 			'https://img.youtube.com',
+			'localhost:8888',
 		],
-		'frame-src': [ "'self'", 'https://public-api.wordpress.com', 'https://accounts.google.com/' ],
+		'frame-src': [
+			"'self'",
+			'https://public-api.wordpress.com',
+			'https://accounts.google.com/',
+			'https://jetpack.com',
+		],
 		'font-src': [
 			"'self'",
 			'*.wp.com',
@@ -598,12 +455,17 @@ function setUpCSP( req, res, next ) {
 			'data:', // should remove 'data:' ASAP
 		],
 		'media-src': [ "'self'" ],
-		'connect-src': [ "'self'", 'https://*.wordpress.com/', 'https://*.wp.com' ],
+		'connect-src': [
+			"'self'",
+			'https://*.wordpress.com/',
+			'https://*.wp.com',
+			'https://wordpress.com',
+		],
 		'report-uri': [ '/cspreport' ],
 	};
 
 	const policyString = Object.keys( policy )
-		.map( key => `${ key } ${ policy[ key ].join( ' ' ) }` )
+		.map( ( key ) => `${ key } ${ policy[ key ].join( ' ' ) }` )
 		.join( '; ' );
 
 	// For now we're just logging policy violations and not blocking them
@@ -623,8 +485,7 @@ function setUpRoute( req, res, next ) {
 
 const render404 = ( entrypoint = 'entry-main' ) => ( req, res ) => {
 	const ctx = {
-		faviconURL: config( 'favicon_url' ),
-		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), entrypoint ),
+		entrypoint: req.getFilesForEntrypoint( entrypoint ),
 	};
 
 	res.status( 404 ).send( renderJsx( '404', ctx ) );
@@ -635,13 +496,18 @@ const render404 = ( entrypoint = 'entry-main' ) => ( req, res ) => {
 	 eslint-disable. */
 // eslint-disable-next-line no-unused-vars
 const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next ) => {
-	if ( process.env.NODE_ENV !== 'production' ) {
-		console.error( err );
+	// If the response is not writable it means someone else already rendered a page, do nothing
+	// Hopefully they logged the error as well.
+	if ( res.writableEnded ) return;
+
+	try {
+		req.logger.error( err );
+	} catch ( error ) {
+		console.error( error );
 	}
 
 	const ctx = {
-		faviconURL: config( 'favicon_url' ),
-		entrypoint: getFilesForEntrypoint( getBuildTargetFromRequest( req ), entrypoint ),
+		entrypoint: req.getFilesForEntrypoint( entrypoint ),
 	};
 
 	res.status( err.status || 500 ).send( renderJsx( '500', ctx ) );
@@ -657,8 +523,8 @@ const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next
  * @returns {Function|undefined} res.redirect if not logged in
  */
 function handleLocaleSubdomains( req, res, next ) {
-	const langSlug = endsWith( req.hostname, config( 'hostname' ) )
-		? split( req.hostname, '.' )[ 0 ]
+	const langSlug = req.hostname?.endsWith( config( 'hostname' ) )
+		? req.hostname.split( '.' )[ 0 ]
 		: null;
 
 	if ( langSlug && includes( config( 'magnificent_non_en_locales' ), langSlug ) ) {
@@ -685,26 +551,21 @@ function handleLocaleSubdomains( req, res, next ) {
 	next();
 }
 
-module.exports = function() {
+export default function pages() {
 	const app = express();
 
 	app.set( 'views', __dirname );
 
 	app.use( logSectionResponse );
 	app.use( cookieParser() );
+	app.use( middlewareBuildTarget() );
+	app.use( middlewareAssets() );
+	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
 
-	// Temporarily redirect cloud.jetpack.com to jetpack.com in the production enviroment
-	app.use( function( req, res, next ) {
-		if ( 'jetpack-cloud-production' === calypsoEnv ) {
-			res.redirect( 'https://jetpack.com/' );
-		}
-		next();
-	} );
-
 	// redirect homepage if the Reader is disabled
-	app.get( '/', function( request, response, next ) {
+	app.get( '/', function ( request, response, next ) {
 		if ( ! config.isEnabled( 'reader' ) && config.isEnabled( 'stats' ) ) {
 			response.redirect( '/stats' );
 		} else {
@@ -713,7 +574,7 @@ module.exports = function() {
 	} );
 
 	// redirects to handle old newdash formats
-	app.use( '/sites/:site/:section', function( req, res, next ) {
+	app.use( '/sites/:site/:section', function ( req, res, next ) {
 		const redirectedSections = [
 			'posts',
 			'pages',
@@ -740,7 +601,7 @@ module.exports = function() {
 	} );
 
 	if ( process.env.NODE_ENV !== 'development' ) {
-		app.get( '/discover', function( req, res, next ) {
+		app.get( '/discover', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
 				res.redirect( config( 'discover_logged_out_redirect_url' ) );
 			} else {
@@ -749,7 +610,7 @@ module.exports = function() {
 		} );
 
 		// redirect logged-out searches to en.search.wordpress.com
-		app.get( '/read/search', function( req, res, next ) {
+		app.get( '/read/search', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
 				res.redirect( 'https://en.search.wordpress.com/?q=' + encodeURIComponent( req.query.q ) );
 			} else {
@@ -757,19 +618,20 @@ module.exports = function() {
 			}
 		} );
 
-		app.get( '/plans', function( req, res, next ) {
+		app.get( '/plans', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
-				const queryFor = req.query && req.query.for;
+				const queryFor = req.query?.for;
+
 				if ( queryFor && 'jetpack' === queryFor ) {
 					res.redirect(
 						'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 					);
-				} else {
+				} else if ( ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
 					res.redirect( 'https://wordpress.com/pricing' );
 				}
-			} else {
-				next();
 			}
+
+			next();
 		} );
 	}
 
@@ -781,7 +643,7 @@ module.exports = function() {
 		res.redirect( 301, newRoute );
 	} );
 
-	app.get( [ '/domains', '/start/domain-first' ], function( req, res ) {
+	app.get( [ '/domains', '/start/domain-first' ], function ( req, res ) {
 		let redirectUrl = '/start/domain';
 		const domain = get( req, 'query.new', false );
 		if ( domain ) {
@@ -815,21 +677,23 @@ module.exports = function() {
 	function handleSectionPath( section, sectionPath, entrypoint ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
-		app.get( pathRegex, setupDefaultContext( entrypoint ), function( req, res, next ) {
+		app.get( pathRegex, setupDefaultContext( entrypoint ), function ( req, res, next ) {
 			req.context.sectionName = section.name;
 
 			if ( ! entrypoint ) {
-				req.context.chunkFiles = getFilesForChunk( section.name, req );
+				req.context.chunkFiles = req.getFilesForChunk( section.name );
 			} else {
-				req.context.chunkFiles = EMPTY_ASSETS;
-			}
-
-			if ( section.secondary && req.context ) {
-				req.context.hasSecondary = true;
+				req.context.chunkFiles = req.getEmptyAssets();
 			}
 
 			if ( section.group && req.context ) {
 				req.context.sectionGroup = section.group;
+			}
+
+			if ( Array.isArray( section.links ) ) {
+				section.links.forEach( ( link ) =>
+					req.context.store.dispatch( setDocumentHeadLink( link ) )
+				);
 			}
 
 			next();
@@ -841,14 +705,14 @@ module.exports = function() {
 	}
 
 	sections
-		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
+		.filter( ( section ) => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.filter( isSectionEnabled )
-		.forEach( section => {
-			section.paths.forEach( sectionPath => handleSectionPath( section, sectionPath ) );
+		.forEach( ( section ) => {
+			section.paths.forEach( ( sectionPath ) => handleSectionPath( section, sectionPath ) );
 
 			if ( section.isomorphic ) {
 				// section.load() uses require on the server side so we also need to access the
-				// default export of it. See webpack/bundler/sections-loader.js
+				// default export of it. See build-tools/webpack/sections-loader.js
 				// TODO: section initialization is async function since #28301. At the moment when
 				// some isomorphic section really starts doing something async, we should start
 				// awaiting the result here. Will be solved together with server-side dynamic reducers.
@@ -860,13 +724,13 @@ module.exports = function() {
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
-	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/gutenboarding', 'entry-gutenboarding' );
+	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/new', 'entry-gutenboarding' );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(
 		'/cspreport',
 		bodyParser.json( { type: [ 'json', 'application/csp-report' ] } ),
-		function( req, res ) {
+		function ( req, res ) {
 			const cspReport = req.body[ 'csp-report' ] || {};
 			const cspReportSnakeCase = Object.keys( cspReport ).reduce( ( report, key ) => {
 				report[ snakeCase( key ) ] = cspReport[ key ];
@@ -880,12 +744,12 @@ module.exports = function() {
 			res.status( 200 ).send( 'Got it!' );
 		},
 		// eslint-disable-next-line no-unused-vars
-		function( err, req, res, next ) {
+		function ( err, req, res, next ) {
 			res.status( 500 ).send( 'Bad report!' );
 		}
 	);
 
-	app.get( '/browsehappy', setupDefaultContext(), setUpRoute, function( req, res ) {
+	app.get( '/browsehappy', setupDefaultContext(), setUpRoute, function ( req, res ) {
 		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
 		const primaryBlogUrl = get( req, 'context.user.primary_blog_url', '' );
 		const isWpcom = wpcomRe.test( primaryBlogUrl );
@@ -897,7 +761,7 @@ module.exports = function() {
 		res.send( renderJsx( 'browsehappy', req.context ) );
 	} );
 
-	app.get( '/support-user', function( req, res ) {
+	app.get( '/support-user', function ( req, res ) {
 		// Do not iframe
 		res.set( {
 			'X-Frame-Options': 'DENY',
@@ -919,12 +783,9 @@ module.exports = function() {
 		}
 
 		// Maybe not logged in, note that you need docker to test this properly
-		const user = require( 'server/user-bootstrap' );
-
 		debug( 'Issuing API call to fetch user object' );
-
-		user( req )
-			.then( data => {
+		getBootstrappedUser( req )
+			.then( ( data ) => {
 				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
 
 				// A8C check
@@ -933,7 +794,7 @@ module.exports = function() {
 				}
 
 				// Passed all checks, prepare support user session
-				return res.send(
+				res.send(
 					renderJsx( 'support-user', {
 						authorized: true,
 						supportUser: req.query.support_user,
@@ -949,15 +810,15 @@ module.exports = function() {
 					domain: '.wordpress.com',
 				} );
 
-				return res.send( renderJsx( 'support-user' ) );
+				res.send( renderJsx( 'support-user' ) );
 			} );
 	} );
 
-	// catchall to render 404 for all routes not whitelisted in client/sections
+	// catchall to render 404 for all routes not explicitly allowed in client/sections
 	app.use( render404() );
 
 	// Error handling middleware for displaying the server error 500 page must be the very last middleware defined
 	app.use( renderServerError() );
 
 	return app;
-};
+}

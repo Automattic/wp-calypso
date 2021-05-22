@@ -3,19 +3,17 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { noop, flow } from 'lodash';
-import Gridicon from 'components/gridicon';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import QueryPreferences from 'components/data/query-preferences';
-import { savePreference, setPreference } from 'state/preferences/actions';
-import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import { savePreference, setPreference } from 'calypso/state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 
 /**
  * Style dependencies
@@ -24,69 +22,36 @@ import './style.scss';
 
 const PREFERENCE_PREFIX = 'dismissible-card-';
 
-class DismissibleCard extends Component {
-	static propTypes = {
-		className: PropTypes.string,
-		dismissCard: PropTypes.func,
-		highlight: PropTypes.oneOf( [ 'error', 'info', 'success', 'warning' ] ),
-		isDismissed: PropTypes.bool,
-		temporary: PropTypes.bool,
-		onClick: PropTypes.func,
-		preferenceName: PropTypes.string.isRequired,
-	};
+function DismissibleCard( { className, highlight, temporary, onClick, preferenceName, children } ) {
+	const preference = `${ PREFERENCE_PREFIX }${ preferenceName }`;
+	const isDismissed = useSelector( ( state ) => getPreference( state, preference ) );
+	const hasReceivedPreferences = useSelector( hasReceivedRemotePreferences );
+	const dispatch = useDispatch();
 
-	static defaultProps = {
-		onClick: noop,
-	};
-
-	render() {
-		const {
-			className,
-			highlight,
-			isDismissed,
-			onClick,
-			dismissCard,
-			hasReceivedPreferences,
-		} = this.props;
-
-		if ( isDismissed || ! hasReceivedPreferences ) {
-			return null;
-		}
-
-		return (
-			<Card className={ className } highlight={ highlight }>
-				<QueryPreferences />
-				<Gridicon
-					icon="cross"
-					className="dismissible-card__close-icon"
-					onClick={ flow( onClick, dismissCard ) }
-				/>
-				{ this.props.children }
-			</Card>
-		);
+	if ( isDismissed || ! hasReceivedPreferences ) {
+		return null;
 	}
+
+	function handleClick( event ) {
+		onClick?.( event );
+		dispatch( ( temporary ? setPreference : savePreference )( preference, true ) );
+	}
+
+	return (
+		<Card className={ className } highlight={ highlight }>
+			<QueryPreferences />
+			<Gridicon icon="cross" className="dismissible-card__close-icon" onClick={ handleClick } />
+			{ children }
+		</Card>
+	);
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const preference = `${ PREFERENCE_PREFIX }${ ownProps.preferenceName }`;
+DismissibleCard.propTypes = {
+	className: PropTypes.string,
+	highlight: PropTypes.oneOf( [ 'error', 'info', 'success', 'warning' ] ),
+	temporary: PropTypes.bool,
+	onClick: PropTypes.func,
+	preferenceName: PropTypes.string.isRequired,
+};
 
-		return {
-			isDismissed: getPreference( state, preference ),
-			hasReceivedPreferences: hasReceivedRemotePreferences( state ),
-		};
-	},
-	( dispatch, ownProps ) =>
-		bindActionCreators(
-			{
-				dismissCard: () => {
-					const preference = `${ PREFERENCE_PREFIX }${ ownProps.preferenceName }`;
-					if ( ownProps.temporary ) {
-						return setPreference( preference, true );
-					}
-					return savePreference( preference, true );
-				},
-			},
-			dispatch
-		)
-)( DismissibleCard );
+export default DismissibleCard;

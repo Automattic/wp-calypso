@@ -7,31 +7,29 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { compact, pickBy } from 'lodash';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { Button } from '@automattic/components';
 import ThemesSelection from './themes-selection';
-import SubMasterbarNav from 'components/sub-masterbar-nav';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addTracking, trackClick } from './helpers';
-import DocumentHead from 'components/data/document-head';
-import { buildRelativeSearchUrl } from 'lib/build-url';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import DocumentHead from 'calypso/components/data/document-head';
+import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ThemePreview from './theme-preview';
-import config from 'config';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { openThemesShowcase } from 'state/themes/themes-ui/actions';
+import config from '@automattic/calypso-config';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { openThemesShowcase } from 'calypso/state/themes/themes-ui/actions';
 import {
 	getThemesBookmark,
 	hasShowcaseOpened as hasShowcaseOpenedSelector,
-} from 'state/themes/themes-ui/selectors';
+} from 'calypso/state/themes/themes-ui/selectors';
 import ThemesSearchCard from './themes-magic-search-card';
-import QueryThemeFilters from 'components/data/query-theme-filters';
+import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import {
 	getActiveTheme,
 	getThemeFilterTerms,
@@ -39,8 +37,8 @@ import {
 	getThemeShowcaseDescription,
 	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
-} from 'state/themes/selectors';
-import UpworkBanner from 'blocks/upwork-banner';
+} from 'calypso/state/themes/selectors';
+import UpworkBanner from 'calypso/blocks/upwork-banner';
 import RecommendedThemes from './recommended-themes';
 
 /**
@@ -99,8 +97,6 @@ class ThemeShowcase extends React.Component {
 		getScreenshotOption: PropTypes.func,
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
-		trackUploadClick: PropTypes.func,
-		trackATUploadClick: PropTypes.func,
 		trackMoreThemesClick: PropTypes.func,
 		loggedOutComponent: PropTypes.bool,
 	};
@@ -157,20 +153,17 @@ class ThemeShowcase extends React.Component {
 		this.props.trackMoreThemesClick();
 	};
 
-	doSearch = searchBoxContent => {
+	doSearch = ( searchBoxContent ) => {
 		const filterRegex = /([\w-]*):([\w-]*)/g;
 		const { filterToTermTable } = this.props;
 
 		const filters = searchBoxContent.match( filterRegex ) || [];
-		const validFilters = filters.map( filter => filterToTermTable[ filter ] );
+		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
 
 		const url = this.constructUrl( {
 			filter: compact( validFilters ).join( '+' ),
 			// Strip filters and excess whitespace
-			searchString: searchBoxContent
-				.replace( filterRegex, '' )
-				.replace( /\s+/g, ' ' )
-				.trim(),
+			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
 		} );
 		page( url );
 		this.scrollToSearchInput();
@@ -188,7 +181,7 @@ class ThemeShowcase extends React.Component {
 	 *
 	 * @returns {string} Theme showcase url
 	 */
-	constructUrl = sections => {
+	constructUrl = ( sections ) => {
 		const { vertical, tier, filter, siteSlug, searchString } = { ...this.props, ...sections };
 
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
@@ -209,20 +202,6 @@ class ThemeShowcase extends React.Component {
 		this.scrollToSearchInput();
 	};
 
-	onUploadClick = () => {
-		trackClick( 'upload theme' );
-		this.props.trackUploadClick();
-		if ( this.props.atEnabled ) {
-			this.props.trackATUploadClick();
-		}
-	};
-
-	showUploadButton = () => {
-		const { isMultisite, isLoggedIn } = this.props;
-
-		return isLoggedIn && ! isMultisite;
-	};
-
 	render() {
 		const {
 			currentThemeId,
@@ -232,7 +211,6 @@ class ThemeShowcase extends React.Component {
 			search,
 			filter,
 			translate,
-			siteSlug,
 			isLoggedIn,
 			pathName,
 			title,
@@ -262,7 +240,7 @@ class ThemeShowcase extends React.Component {
 		].concat(
 			Object.keys( this.props.subjects )
 				.map(
-					subject =>
+					( subject ) =>
 						subjectsMeta[ subject ] && {
 							label: subject,
 							uri: this.constructUrl( { vertical: subject } ),
@@ -270,7 +248,7 @@ class ThemeShowcase extends React.Component {
 							order: subjectsMeta[ subject ].order,
 						}
 				)
-				.filter( icon => !! icon )
+				.filter( ( icon ) => !! icon )
 				.sort( ( a, b ) => a.order - b.order )
 		);
 
@@ -294,17 +272,6 @@ class ThemeShowcase extends React.Component {
 					/>
 				) }
 				<div className="themes__content">
-					{ this.showUploadButton() && (
-						<Button
-							className="themes__upload-button"
-							compact
-							onClick={ this.onUploadClick }
-							href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
-						>
-							<Gridicon icon="cloud-upload" />
-							{ translate( 'Install theme' ) }
-						</Button>
-					) }
 					{ ! this.props.loggedOutComponent && ! isQueried && (
 						<>
 							<RecommendedThemes
@@ -318,25 +285,25 @@ class ThemeShowcase extends React.Component {
 								defaultOption={ this.props.defaultOption }
 								secondaryOption={ this.props.secondaryOption }
 								placeholderCount={ this.props.placeholderCount }
-								getScreenshotUrl={ function( theme ) {
+								getScreenshotUrl={ function ( theme ) {
 									if ( ! getScreenshotOption( theme ).getUrl ) {
 										return null;
 									}
 									return getScreenshotOption( theme ).getUrl( theme );
 								} }
-								onScreenshotClick={ function( themeId ) {
+								onScreenshotClick={ function ( themeId ) {
 									if ( ! getScreenshotOption( themeId ).action ) {
 										return;
 									}
 									getScreenshotOption( themeId ).action( themeId );
 								} }
-								getActionLabel={ function( theme ) {
+								getActionLabel={ function ( theme ) {
 									return getScreenshotOption( theme ).label;
 								} }
-								getOptions={ function( theme ) {
+								getOptions={ function ( theme ) {
 									return pickBy(
 										addTracking( options ),
-										option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+										( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
 									);
 								} }
 								trackScrollPage={ this.props.trackScrollPage }
@@ -375,11 +342,7 @@ class ThemeShowcase extends React.Component {
 										'These themes offer more power and flexibility, but can be harder to setup and customize.'
 									) }
 								</p>
-								{ showBanners &&
-									abtest &&
-									abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
-										<UpworkBanner location={ 'theme-banner' } />
-									) }
+								{ showBanners && <UpworkBanner location={ 'theme-banner' } /> }
 							</>
 						) }
 						<QueryThemeFilters />
@@ -404,25 +367,25 @@ class ThemeShowcase extends React.Component {
 							defaultOption={ this.props.defaultOption }
 							secondaryOption={ this.props.secondaryOption }
 							placeholderCount={ this.props.placeholderCount }
-							getScreenshotUrl={ function( theme ) {
+							getScreenshotUrl={ function ( theme ) {
 								if ( ! getScreenshotOption( theme ).getUrl ) {
 									return null;
 								}
 								return getScreenshotOption( theme ).getUrl( theme );
 							} }
-							onScreenshotClick={ function( themeId ) {
+							onScreenshotClick={ function ( themeId ) {
 								if ( ! getScreenshotOption( themeId ).action ) {
 									return;
 								}
 								getScreenshotOption( themeId ).action( themeId );
 							} }
-							getActionLabel={ function( theme ) {
+							getActionLabel={ function ( theme ) {
 								return getScreenshotOption( theme ).label;
 							} }
-							getOptions={ function( theme ) {
+							getOptions={ function ( theme ) {
 								return pickBy(
 									addTracking( options ),
-									option => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+									( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
 								);
 							} }
 							trackScrollPage={ this.props.trackScrollPage }
@@ -452,8 +415,6 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 } );
 
 const mapDispatchToProps = {
-	trackUploadClick: () => recordTracksEvent( 'calypso_click_theme_upload' ),
-	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' ),
 	trackMoreThemesClick: () => recordTracksEvent( 'calypso_themeshowcase_more_themes_clicked' ),
 	openThemesShowcase: () => openThemesShowcase(),
 };

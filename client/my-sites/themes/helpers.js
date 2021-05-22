@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { gaRecordEvent } from 'lib/analytics/ga';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import titlecase from 'to-title-case';
 import { mapValues } from 'lodash';
 
@@ -18,7 +18,7 @@ function appendActionTracking( option, name ) {
 	const { action } = option;
 
 	return Object.assign( {}, option, {
-		action: t => {
+		action: ( t ) => {
 			action && action( t );
 			trackClick( 'more button', name );
 		},

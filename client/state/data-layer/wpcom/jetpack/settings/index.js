@@ -7,25 +7,28 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'state/action-types';
-import getJetpackSettings from 'state/selectors/get-jetpack-settings';
-import getSiteUrl from 'state/selectors/get-site-url';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'calypso/state/action-types';
+import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import {
 	filterSettingsByActiveModules,
 	normalizeSettings,
 	sanitizeSettings,
-} from 'state/jetpack/settings/utils';
-import { saveJetpackSettingsSuccess, updateJetpackSettings } from 'state/jetpack/settings/actions';
-import { trailingslashit } from 'lib/route';
+} from 'calypso/state/jetpack/settings/utils';
+import {
+	saveJetpackSettingsSuccess,
+	updateJetpackSettings,
+} from 'calypso/state/jetpack/settings/actions';
+import { trailingslashit } from 'calypso/lib/route';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const MAX_WOOCOMMERCE_INSTALL_RETRIES = 2;
 
-export const fromApi = response => {
+export const fromApi = ( response ) => {
 	if ( ! response.data ) {
 		throw new Error( 'missing settings' );
 	}
@@ -33,7 +36,7 @@ export const fromApi = response => {
 	return normalizeSettings( response.data );
 };
 
-const toApi = settings => filterSettingsByActiveModules( sanitizeSettings( settings ) );
+const toApi = ( settings ) => filterSettingsByActiveModules( sanitizeSettings( settings ) );
 
 const receiveJetpackSettings = ( { siteId }, settings ) =>
 	updateJetpackSettings( siteId, settings );
@@ -43,7 +46,7 @@ const receiveJetpackSettings = ( { siteId }, settings ) =>
  * @param   {object}   action         Redux action
  * @returns {object}   Dispatched http action
  */
-export const requestJetpackSettings = action => {
+export const requestJetpackSettings = ( action ) => {
 	const { siteId, query } = action;
 
 	return http(
@@ -82,7 +85,7 @@ export const announceRequestFailure = ( { siteId } ) => ( dispatch, getState ) =
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const saveJetpackSettings = action => ( dispatch, getState ) => {
+export const saveJetpackSettings = ( action ) => ( dispatch, getState ) => {
 	const { settings, siteId } = action;
 	const previousSettings = getJetpackSettings( getState(), siteId );
 

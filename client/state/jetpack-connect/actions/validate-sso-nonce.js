@@ -7,15 +7,15 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { recordTracksEvent } from 'state/analytics/actions';
+import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-} from 'state/jetpack-connect/action-types';
+} from 'calypso/state/jetpack-connect/action-types';
 
-import 'state/jetpack-connect/init';
+import 'calypso/state/jetpack-connect/init';
 
 /**
  * Module constants
@@ -23,7 +23,7 @@ import 'state/jetpack-connect/init';
 const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 
 export function validateSSONonce( siteId, ssoNonce ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'Attempting to validate SSO for ' + siteId );
 		dispatch( {
 			type: JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
@@ -33,7 +33,7 @@ export function validateSSONonce( siteId, ssoNonce ) {
 		return wpcom
 			.undocumented()
 			.jetpackValidateSSONonce( siteId, ssoNonce )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( recordTracksEvent( 'calypso_jpc_validate_sso_success' ) );
 				dispatch( {
 					type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
@@ -42,7 +42,7 @@ export function validateSSONonce( siteId, ssoNonce ) {
 					sharedDetails: data.shared_details,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch(
 					recordTracksEvent( 'calypso_jpc_validate_sso_error', {
 						error: error,

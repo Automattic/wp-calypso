@@ -1,20 +1,16 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .search-filters__dropdown-filters {
 	align-items: center;
-	border-left: 1px solid var( --color-neutral-10 );
 	height: 51px; // same as .search
 	z-index: z-index( 'root', '.search' );
-
-	// Move the filter so its "inside" the
-	// search input
-	body.is-section-signup & {
-		position: absolute;
-		top: 0;
-		right: 0;
-	}
+	/*!rtl:ignore*/
+	border-left: 1px solid var( --color-neutral-10 );
 
 	.button {
 		align-items: center;
-		border-radius: 0 3px 3px 0;
+		border-radius: 0 3px 3px 0; /* stylelint-disable-line */
 		display: flex;
 		flex-direction: column;
 		font-weight: normal;
@@ -36,15 +32,16 @@
 			top: 0;
 			margin-right: 0;
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				top: 2px;
 			}
 		}
 
 		.search-filters__dropdown-filters-button-text {
 			line-height: 1.2;
+			white-space: nowrap;
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				display: none;
 			}
 		}
@@ -89,8 +86,6 @@
 	}
 }
 
-
-
 .search-filters__buttons {
 	display: flex;
 	flex-flow: row;
@@ -114,43 +109,10 @@
 
 	// Increase specificity to override button styles in signup
 	body.is-section-signup .layout & {
-		button.search-filters__tld-button,
 		button.search-filters__popover-button {
-			font-size: 14px;
+			font-size: $font-body-small;
 			padding-top: 0.5em;
 			padding-bottom: 0.5em;
-		}
-	}
-
-	@include breakpoint( '<960px' ) {
-		&.is-compact {
-			padding-bottom: 0.5em;
-		}
-
-		.button {
-			margin-bottom: 0.5em;
-		}
-
-		.search-filters__tld-button:nth-child( n + 7 ) {
-			display: none;
-		}
-	}
-
-	@include breakpoint( '<800px' ) {
-		.search-filters__tld-button:nth-child( n + 5 ) {
-			display: none;
-		}
-	}
-
-	@include breakpoint( '<660px' ) {
-		.search-filters__tld-button:nth-child( n + 4 ) {
-			display: none;
-		}
-	}
-
-	@include breakpoint( '<480px' ) {
-		.search-filters__tld-button:nth-child( n + 2 ) {
-			display: none;
 		}
 	}
 }
@@ -163,7 +125,7 @@
 	margin-bottom: 0.25em;
 }
 
-.search-filters__token-field-fieldset {
+.search-filters__tld-filters {
 	.token-field__token {
 		&:first-child {
 			margin-left: 0;
@@ -210,5 +172,51 @@
 		&.is-selected span {
 			color: var( --color-text-inverted );
 		}
+	}
+}
+
+body.is-section-signup.is-white-signup {
+	$accent-blue: #117ac9;
+
+	.search-filters-extensions__popover {
+		@include break-medium {
+			transform: translateX( 65px );
+		}
+
+		.token-field__suggestion {
+			&.is-selected {
+				background: $accent-blue;
+			}
+		}
+	}
+	.search-filters__popover-button {
+		order: 7;
+		margin-left: 1em;
+		background: #fdfdfd;
+		border: 1px solid #d5d5d7;
+		border-radius: 4px; /* stylelint-disable-line */
+		font-weight: 500; /* stylelint-disable-line */
+		color: var( --studio-gray-60 );
+
+		&.is-active {
+			background: initial;
+			font-weight: 500; /* stylelint-disable-line */
+			border-color: var( --studio-gray-50 );
+			color: #2b2d2f;
+		}
+	}
+	.search-filters__buttons {
+		margin: 0 20px 48px;
+		padding: 0;
+		box-shadow: none;
+
+		@include break-large {
+			margin-left: 0;
+			margin-right: 0;
+		}
+	}
+
+	.search-filters__buttons .button {
+		margin-left: 0.5em;
 	}
 }

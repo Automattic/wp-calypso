@@ -14,7 +14,7 @@ import 'isomorphic-fetch';
 
 // polyfill for CustomEvent otherwise Apple login breaks on IE 11
 // see: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill
-( function() {
+( function () {
 	if ( typeof window === 'undefined' || typeof window.CustomEvent === 'function' ) return false;
 	function CustomEvent( event, params ) {
 		params = params || { bubbles: false, cancelable: false, detail: null };

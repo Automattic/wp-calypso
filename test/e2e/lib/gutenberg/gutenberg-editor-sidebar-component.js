@@ -17,18 +17,30 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		super( driver, By.css( '.edit-post-header' ) );
 	}
 
-	async selectTab( name ) {
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( `.edit-post-sidebar__panel-tab[aria-label^=${ name }]` )
+	async selectTab( ...names ) {
+		if ( ! names.length ) {
+			throw new Error( 'No tab name provided.' );
+		}
+		const by = By.css(
+			names.map( ( name ) => `.edit-post-sidebar__panel-tab[aria-label^=${ name }]` ).join()
 		);
-	}
-	async selectDocumentTab() {
-		await this.selectTab( 'Document' );
-		return await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.scrollIntoView( this.driver, by );
+		await driverHelper.clickWhenClickable( this.driver, by );
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.components-panel' )
 		);
+	}
+
+	async selectDocumentTab() {
+		// Recent versions of Gutenberg use "Post" or "Page"
+		// Older versions use "Document"
+		// @TODO: Remove "Document"
+		await this.selectTab( 'Post', 'Page', 'Document' );
+	}
+
+	async selectBlockTab() {
+		await this.selectTab( 'Block' );
 	}
 
 	async expandStatusAndVisibility() {
@@ -48,7 +60,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async expandFeaturedImage() {
-		return await this._expandOrCollapseSectionByText( 'Featured Image', true );
+		return await this._expandOrCollapseSectionByText( 'Featured image', true );
 	}
 
 	async expandExcerpt() {
@@ -88,76 +100,67 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async _expandOrCollapseSectionByText( text, expand = true ) {
-		const sectionSelector = await driverHelper.getElementByText(
-			this.driver,
+		const sectionLocator = driverHelper.createTextLocator(
 			By.css( '.components-panel__body-toggle' ),
 			text
 		);
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, sectionSelector );
-		const sectionButton = await this.driver.findElement( sectionSelector );
+		const sectionButton = await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			sectionLocator
+		);
 		const c = await sectionButton.getAttribute( 'aria-expanded' );
 		if ( expand && c === 'false' ) {
-			await driverHelper.scrollIntoView( this.driver, sectionSelector );
+			await driverHelper.scrollIntoView( this.driver, sectionLocator );
 			return await sectionButton.click();
 		}
 		if ( ! expand && c === 'true' ) {
-			await driverHelper.scrollIntoView( this.driver, sectionSelector );
+			await driverHelper.scrollIntoView( this.driver, sectionLocator );
 			return await sectionButton.click();
 		}
 	}
 
 	async setCommentsPreference( { allow = true } = {} ) {
-		const labelSelector = await driverHelper.getElementByText(
-			this.driver,
+		const labelLocator = driverHelper.createTextLocator(
 			By.css( '.components-checkbox-control__label' ),
 			'Allow comments'
 		);
-		const checkBoxSelectorID = await this.driver.findElement( labelSelector ).getAttribute( 'for' );
-		const checkBoxSelector = By.id( checkBoxSelectorID );
-		if ( allow === true ) {
-			await driverHelper.setCheckbox( this.driver, checkBoxSelector );
-		} else {
-			await driverHelper.unsetCheckbox( this.driver, checkBoxSelector );
-		}
+		const checkBoxSelector = await this.driver.findElement( labelLocator ).getAttribute( 'for' );
+		const checkBoxLocator = By.id( checkBoxSelector );
+
+		await driverHelper.setCheckbox( this.driver, checkBoxLocator, allow );
 	}
 
 	async addNewCategory( category ) {
-		const addNewCategoryButtonSelector = By.css(
-			'.editor-post-taxonomies__hierarchical-terms-add'
-		);
-		const categoryNameInputSelector = By.css(
+		const addNewCategoryButtonLocator = By.css( '.editor-post-taxonomies__hierarchical-terms-add' );
+		const categoryNameInputLocator = By.css(
 			'input.editor-post-taxonomies__hierarchical-terms-input[type=text]'
 		);
-		const saveCategoryButtonSelector = By.css(
+		const saveCategoryButtonLocator = By.css(
 			'button.editor-post-taxonomies__hierarchical-terms-submit'
 		);
 		const driver = this.driver;
 
-		await driverHelper.clickWhenClickable( driver, addNewCategoryButtonSelector );
-		await driverHelper.waitForFieldClearable( driver, categoryNameInputSelector );
-
-		await driverHelper.setWhenSettable( driver, categoryNameInputSelector, category );
-		await driverHelper.clickWhenClickable( driver, saveCategoryButtonSelector );
-		return await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.clickWhenClickable( driver, addNewCategoryButtonLocator );
+		await driverHelper.setWhenSettable( driver, categoryNameInputLocator, category );
+		await driverHelper.clickWhenClickable( driver, saveCategoryButtonLocator );
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			driver,
 			By.xpath( `//label[contains(text(), '${ category }')]` )
 		);
 	}
 
 	async addNewTag( tag ) {
-		const tagEntrySelector = By.css( 'input.components-form-token-field__input' );
+		const tagEntryLocator = By.css( 'input.components-form-token-field__input' );
 
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, tagEntrySelector );
-		await driverHelper.scrollIntoView( this.driver, tagEntrySelector );
-		await driverHelper.waitForFieldClearable( this.driver, tagEntrySelector );
-		const tagEntryElement = await this.driver.findElement( tagEntrySelector );
-		await tagEntryElement.sendKeys( tag );
-		return await tagEntryElement.sendKeys( Key.ENTER );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, tagEntryLocator );
+		await driverHelper.scrollIntoView( this.driver, tagEntryLocator );
+		const tagInput = await driverHelper.setWhenSettable( this.driver, tagEntryLocator, tag );
+		await tagInput.sendKeys( Key.ENTER );
 	}
 
 	async tagEventuallyDisplayed( tag ) {
-		const selector = await driverHelper.getElementByText( this.driver, By.css( 'span' ), tag );
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+		const locator = By.xpath( `//span[text()='${ tag }']` );
+		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, locator );
 	}
 
 	async _postInit() {
@@ -181,62 +184,57 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	async chooseDocumentSettings() {
 		const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
 		await gEditorComponent.openSidebar();
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '[aria-label^="Document settings"], [data-label^="Document"]' )
-		);
+		return this.selectDocumentTab();
+	}
+
+	async chooseBlockSettings() {
+		const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+		await gEditorComponent.openSidebar();
+		return this.selectBlockTab();
 	}
 
 	async setVisibilityToPasswordProtected( password ) {
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.edit-post-post-visibility__toggle' )
-		);
-		await this.driver.sleep( 1000 ); // wait for popover to be fully loaded
-		await driverHelper.setCheckbox(
-			this.driver,
-			By.css( 'input#editor-post-password-0[value="password"]' )
-		);
-		return await driverHelper.setWhenSettable(
-			this.driver,
-			By.css( '.editor-post-visibility__dialog-password-input' ),
-			password,
-			{
-				secureValue: true,
-			}
-		);
+		const visibilityToggleLocator = By.css( '.edit-post-post-visibility__toggle' );
+		const visibilityOptionLocator = By.css( 'input#editor-post-password-0[value="password"]' );
+		const passwordInputLocator = By.css( '.editor-post-visibility__dialog-password-input' );
+
+		await driverHelper.clickWhenClickable( this.driver, visibilityToggleLocator );
+		await driverHelper.clickWhenClickable( this.driver, visibilityOptionLocator );
+		await driverHelper.setWhenSettable( this.driver, passwordInputLocator, password, {
+			secureValue: true,
+		} );
 	}
 
 	async setVisibilityToPrivate() {
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.edit-post-post-visibility__toggle' )
-		);
-		await this.driver.sleep( 1000 ); // wait for popover to be fully loaded
-		await driverHelper.setCheckbox(
-			this.driver,
-			By.css( 'input#editor-post-private-0[value="private"]' )
-		);
+		const visibilityToggleLocator = By.css( '.edit-post-post-visibility__toggle' );
+		const visibilityOptionLocator = By.css( 'input#editor-post-private-0[value="private"]' );
 
+		await driverHelper.clickWhenClickable( this.driver, visibilityToggleLocator );
+		await driverHelper.clickWhenClickable( this.driver, visibilityOptionLocator );
 		await driverHelper.waitForAlertPresent( this.driver );
-		const publishPrivateAlert = await this.driver.switchTo().alert();
-		return await publishPrivateAlert.accept();
+		await driverHelper.acceptAlertIfPresent( this.driver );
 	}
 
 	async scheduleFuturePost() {
-		const nextMonthSelector = By.css( '.DayPickerNavigation_rightButton__horizontalDefault' );
-		const firstDay = By.css( '.CalendarDay' );
-		const publishDateSelector = By.css( '.edit-post-post-schedule__toggle' );
+		await this.expandStatusAndVisibility();
+		const nextMonthLocator = By.css( '.DayPickerNavigation_rightButton__horizontalDefault' );
+		const firstDayLocator = driverHelper.createTextLocator( By.css( '.CalendarDay' ), '1' );
+		const publishDateLocator = By.css( '.edit-post-post-schedule__toggle' );
 
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.edit-post-post-schedule__toggle' )
 		);
 		// schedulePost post for the first day of the next month
-		await driverHelper.clickWhenClickable( this.driver, nextMonthSelector );
-		await driverHelper.selectElementByText( this.driver, firstDay, '1' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, publishDateSelector );
-		const publishDate = await this.driver.findElement( publishDateSelector ).getText();
+		await driverHelper.clickWhenClickable( this.driver, nextMonthLocator );
+		await driverHelper.clickWhenClickable( this.driver, firstDayLocator );
+		// Add another click so the calendar modal disappears and makes space for
+		// the follow-up clicks. This is because of a bug reported in
+		// https://github.com/WordPress/gutenberg/issues/30415 and can be reverted
+		// once an upstream fix is in.
+		await driverHelper.clickWhenClickable( this.driver, firstDayLocator );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, publishDateLocator );
+		const publishDate = await this.driver.findElement( publishDateLocator ).getText();
 
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
 			await this.hideComponentIfNecessary();
@@ -245,23 +243,23 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async getSelectedPublishDate() {
-		const publishDateSelector = By.css( '.edit-post-post-schedule__toggle' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, publishDateSelector );
-		return await this.driver.findElement( publishDateSelector ).getText();
+		const publishDateLocator = By.css( '.edit-post-post-schedule__toggle' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, publishDateLocator );
+		return await this.driver.findElement( publishDateLocator ).getText();
 	}
 
 	async trashPost() {
-		const trashSelector = By.css( 'button.editor-post-trash' );
+		const trashLocator = By.css( 'button.editor-post-trash' );
 
 		await this.selectDocumentTab();
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, trashSelector );
-		await driverHelper.clickWhenClickable( this.driver, trashSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, trashLocator );
+		await driverHelper.clickWhenClickable( this.driver, trashLocator );
 
 		// wait for 'Move to trash' button to disappear
 		try {
-			return await driverHelper.waitTillNotPresent(
+			return await driverHelper.waitUntilElementNotLocated(
 				this.driver,
-				trashSelector,
+				trashLocator,
 				this.explicitWaitMS * 3
 			);
 		} catch ( e ) {
@@ -276,11 +274,11 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async enterImageAltText( fileDetails ) {
-		const altTextInputSelector = By.css( '.components-textarea-control__input' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, altTextInputSelector );
+		const altTextInputLocator = By.css( '.components-textarea-control__input' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, altTextInputLocator );
 		return await driverHelper.setWhenSettable(
 			this.driver,
-			altTextInputSelector,
+			altTextInputLocator,
 			fileDetails.imageName
 		);
 	}
@@ -289,6 +287,20 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.edit-post-last-revision__panel' )
+		);
+	}
+
+	async openFeaturedImageDialog() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.editor-post-featured-image__container button' )
+		);
+	}
+
+	async removeFeaturedImage() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.editor-post-featured-image button.is-destructive' )
 		);
 	}
 }

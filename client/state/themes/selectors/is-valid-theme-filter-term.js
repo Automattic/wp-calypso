@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { findThemeFilterTerm } from 'state/themes/selectors/find-theme-filter-term';
+import { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-filter-term';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Whether a filter term slug is valid

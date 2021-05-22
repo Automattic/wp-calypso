@@ -8,9 +8,9 @@ import { map, sampleSize, times } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { getLocaleSlug } from 'lib/i18n-utils';
-import { suggestions } from 'reader/search-stream/suggestions';
-import { getReaderFollowedTags } from 'state/reader/tags/selectors';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { suggestions } from 'calypso/reader/search-stream/suggestions';
+import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
 function createRandomId( randomBytesLength = 9 ) {
 	// 9 * 4/3 = 12
@@ -89,7 +89,7 @@ const SuggestionsProvider = ( Element, count = 3 ) =>
 		// never let the suggestions change once its been set to non-null so that suggestions
 		// don't keep getting recalulated every redux-store change
 		memoizedSuggestions = null;
-		getFirstSuggestions = state =>
+		getFirstSuggestions = ( state ) =>
 			this.memoizedSuggestions
 				? this.memoizedSuggestions
 				: ( this.memoizedSuggestions = getSuggestions( count, getReaderFollowedTags( state ) ) );
@@ -99,7 +99,7 @@ const SuggestionsProvider = ( Element, count = 3 ) =>
 			this.memoizedSuggestions = null;
 		}
 
-		EnhancedComponent = connect( state => ( {
+		EnhancedComponent = connect( ( state ) => ( {
 			suggestions: this.getFirstSuggestions( state ),
 		} ) )( Element );
 

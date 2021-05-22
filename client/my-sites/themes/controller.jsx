@@ -1,31 +1,27 @@
 /**
  * External dependencies
  */
-import { compact, includes, isEmpty, startsWith } from 'lodash';
 import debugFactory from 'debug';
 import React from 'react';
 
 /**
  * Internal Dependencies
  */
-import SingleSiteComponent from 'my-sites/themes/single-site';
-import MultiSiteComponent from 'my-sites/themes/multi-site';
 import LoggedOutComponent from './logged-out';
-import Upload from 'my-sites/themes/theme-upload';
-import trackScrollPage from 'lib/track-scroll-page';
-import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
-import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/actions';
-import { getThemeFilters, getThemesForQuery } from 'state/themes/selectors';
+import trackScrollPage from 'calypso/lib/track-scroll-page';
+import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
+import { requestThemes, requestThemeFilters } from 'calypso/state/themes/actions';
+import { getThemeFilters, getThemesForQuery } from 'calypso/state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 
 const debug = debugFactory( 'calypso:themes' );
 
-function getProps( context ) {
+export function getProps( context ) {
 	const { tier, filter, vertical } = context.params;
 
 	const { analyticsPath, analyticsPageTitle } = getAnalyticsData( context.path, context.params );
 
-	const boundTrackScrollPage = function() {
+	const boundTrackScrollPage = function () {
 		trackScrollPage( analyticsPath, analyticsPageTitle, 'Themes' );
 	};
 
@@ -41,33 +37,8 @@ function getProps( context ) {
 	};
 }
 
-export function upload( context, next ) {
-	// Store previous path to return to only if it was main showcase page
-	if (
-		startsWith( context.prevPath, '/themes' ) &&
-		! startsWith( context.prevPath, '/themes/upload' )
-	) {
-		context.store.dispatch( setBackPath( context.prevPath ) );
-	}
-
-	context.primary = <Upload />;
-	next();
-}
-
-export function loggedIn( context, next ) {
-	// Scroll to the top
-	if ( typeof window !== 'undefined' ) {
-		window.scrollTo( 0, 0 );
-	}
-
-	const Component = context.params.site_id ? SingleSiteComponent : MultiSiteComponent;
-	context.primary = <Component { ...getProps( context ) } />;
-
-	next();
-}
-
 export function loggedOut( context, next ) {
-	if ( context.isServerSide && ! isEmpty( context.query ) ) {
+	if ( context.isServerSide && Object.keys( context.query ).length > 0 ) {
 		// Don't server-render URLs with query params
 		return next();
 	}
@@ -87,7 +58,7 @@ export function fetchThemeData( context, next ) {
 	const query = {
 		search: context.query.s,
 		tier: context.params.tier,
-		filter: compact( [ context.params.filter, context.params.vertical ] ).join( ',' ),
+		filter: [ context.params.filter, context.params.vertical ].filter( Boolean ).join( ',' ),
 		page: 1,
 		number: DEFAULT_THEME_QUERY.number,
 	};
@@ -98,22 +69,19 @@ export function fetchThemeData( context, next ) {
 		return next();
 	}
 
-	context.store
-		.dispatch( requestThemes( siteId, query ) )
-		.then( next )
-		.catch( next );
+	context.store.dispatch( requestThemes( siteId, query ) ).then( next ).catch( next );
 }
 
 export function fetchThemeFilters( context, next ) {
 	const { store } = context;
 
-	if ( ! isEmpty( getThemeFilters( store.getState() ) ) ) {
+	if ( Object.keys( getThemeFilters( store.getState() ) ).length > 0 ) {
 		debug( 'found theme filters in cache' );
 		return next();
 	}
 
 	const unsubscribe = store.subscribe( () => {
-		if ( ! isEmpty( getThemeFilters( store.getState() ) ) ) {
+		if ( Object.keys( getThemeFilters( store.getState() ) ).length > 0 ) {
 			unsubscribe();
 			return next();
 		}
@@ -124,7 +92,7 @@ export function fetchThemeFilters( context, next ) {
 // Legacy (Atlas-based Theme Showcase v4) route redirects
 
 export function redirectSearchAndType( { res, params: { site, search, tier } } ) {
-	const target = '/themes/' + compact( [ tier, site ] ).join( '/' ); // tier before site!
+	const target = '/themes/' + [ tier, site ].filter( Boolean ).join( '/' ); // tier before site!
 	if ( search ) {
 		res.redirect( `${ target }?s=${ search }` );
 	} else {
@@ -139,17 +107,17 @@ export function redirectFilterAndType( { res, params: { site, filter, tier } } )
 	} else {
 		parts = [ tier, site ];
 	}
-	res.redirect( '/themes/' + compact( parts ).join( '/' ) );
+	res.redirect( '/themes/' + parts.filter( Boolean ).join( '/' ) );
 }
 
 export function redirectToThemeDetails( { res, params: { site, theme, section } }, next ) {
 	// Make sure we aren't matching a site -- e.g. /themes/example.wordpress.com or /themes/1234567
-	if ( includes( theme, '.' ) || isFinite( theme ) ) {
+	if ( theme.includes( '.' ) || Number.isInteger( parseInt( theme, 10 ) ) ) {
 		return next();
 	}
 	let redirectedSection;
 	if ( section === 'support' ) {
 		redirectedSection = 'setup';
 	}
-	res.redirect( '/theme/' + compact( [ theme, redirectedSection, site ] ).join( '/' ) );
+	res.redirect( '/theme/' + [ theme, redirectedSection, site ].filter( Boolean ).join( '/' ) );
 }

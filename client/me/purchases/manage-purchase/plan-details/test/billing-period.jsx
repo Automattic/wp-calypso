@@ -11,8 +11,6 @@ import { translate } from 'i18n-calypso';
  */
 import { PlanBillingPeriod } from '../billing-period';
 import page from 'page';
-import { planItem } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/cart/actions';
 
 const props = {
 	purchase: {
@@ -31,17 +29,14 @@ const props = {
 		ID: 123,
 		name: 'Site Name',
 	},
+	isProductOwner: true,
 	recordTracksEvent: jest.fn(),
 	translate,
 	moment,
 };
 
-jest.mock( 'lib/cart-values/cart-items', () => ( {
+jest.mock( 'calypso/lib/cart-values/cart-items', () => ( {
 	planItem: jest.fn(),
-} ) );
-
-jest.mock( 'lib/cart/actions', () => ( {
-	addItem: jest.fn(),
 } ) );
 
 jest.mock( 'page', () => jest.fn() );
@@ -50,34 +45,25 @@ describe( 'PlanBillingPeriod', () => {
 	describe( 'a monthly plan', () => {
 		it( 'should display the current period', () => {
 			const wrapper = shallow( <PlanBillingPeriod { ...props } /> );
-			expect(
-				wrapper
-					.find( 'FormSettingExplanation' )
-					.shallow()
-					.text()
-			).toContain( 'Billed monthly' );
+			expect( wrapper.find( 'FormSettingExplanation' ).shallow().text() ).toContain(
+				'Billed monthly'
+			);
 		} );
 
 		it( 'should upgrade to a yearly plan when the button is clicked', () => {
 			const wrapper = shallow( <PlanBillingPeriod { ...props } /> );
-			wrapper.find( 'Button' ).simulate( 'click' );
-			expect( planItem ).toHaveBeenCalledWith( 'jetpack_premium' );
-			expect( addItem ).toHaveBeenCalled();
-			expect( page ).toHaveBeenCalledWith( '/checkout/site.com' );
+			wrapper.find( 'ForwardRef(Button)' ).simulate( 'click' );
+			expect( page ).toHaveBeenCalledWith( '/checkout/site.com/jetpack_premium' );
 		} );
 
 		describe( 'a disconnected site', () => {
 			test( 'should display a message instead of the upgrade button', () => {
 				const site = null;
 				const wrapper = shallow( <PlanBillingPeriod { ...props } site={ site } /> );
-				expect( wrapper.find( 'Button' ) ).toHaveLength( 0 );
-				expect(
-					wrapper
-						.find( 'FormSettingExplanation' )
-						.last()
-						.shallow()
-						.text()
-				).toContain( 'To manage your plan, please reconnect your site.' );
+				expect( wrapper.find( 'ForwardRef(Button)' ) ).toHaveLength( 0 );
+				expect( wrapper.find( 'FormSettingExplanation' ).last().shallow().text() ).toContain(
+					'To manage your plan, please reconnect your site.'
+				);
 			} );
 		} );
 	} );
@@ -95,22 +81,15 @@ describe( 'PlanBillingPeriod', () => {
 
 		it( 'should display the current period', () => {
 			const wrapper = shallow( <PlanBillingPeriod { ...annualPlanProps } /> );
-			expect(
-				wrapper
-					.find( 'FormSettingExplanation' )
-					.shallow()
-					.text()
-			).toEqual( 'Billed yearly' );
+			expect( wrapper.find( 'FormSettingExplanation' ).shallow().text() ).toEqual(
+				'Billed yearly'
+			);
 		} );
 
 		describe( 'when credit card is expiring', () => {
 			it( 'should display a warning to the user', () => {
-				const planExpiryDate = moment()
-					.add( 3, 'months' )
-					.format();
-				const cardExpiryDate = moment()
-					.add( 1, 'months' )
-					.format( 'MM/YY' );
+				const planExpiryDate = moment().add( 3, 'months' ).format();
+				const cardExpiryDate = moment().add( 1, 'months' ).format( 'MM/YY' );
 				const purchase = {
 					...annualPlanProps.purchase,
 					expiryDate: planExpiryDate,
@@ -124,12 +103,9 @@ describe( 'PlanBillingPeriod', () => {
 				const wrapper = shallow(
 					<PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } />
 				);
-				expect(
-					wrapper
-						.find( 'FormSettingExplanation' )
-						.shallow()
-						.text()
-				).toEqual( 'Billed yearly, credit card expiring soon' );
+				expect( wrapper.find( 'FormSettingExplanation' ).shallow().text() ).toEqual(
+					'Billed yearly, credit card expiring soon'
+				);
 			} );
 		} );
 		describe( 'when plan is renewing', () => {
@@ -141,12 +117,9 @@ describe( 'PlanBillingPeriod', () => {
 				const wrapper = shallow(
 					<PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } />
 				);
-				expect(
-					wrapper
-						.find( 'FormSettingExplanation' )
-						.shallow()
-						.text()
-				).toEqual( 'Billed yearly, renews on January 1, 2020' );
+				expect( wrapper.find( 'FormSettingExplanation' ).shallow().text() ).toEqual(
+					'Billed yearly, renews on January 1, 2020'
+				);
 			} );
 		} );
 		describe( 'when plan is expiring', () => {
@@ -159,32 +132,24 @@ describe( 'PlanBillingPeriod', () => {
 				const wrapper = shallow(
 					<PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } />
 				);
-				expect(
-					wrapper
-						.find( 'FormSettingExplanation' )
-						.shallow()
-						.text()
-				).toEqual( 'Billed yearly, expires on January 1, 2020' );
+				expect( wrapper.find( 'FormSettingExplanation' ).shallow().text() ).toEqual(
+					'Billed yearly, expires on January 1, 2020'
+				);
 			} );
 		} );
 		describe( 'when plan is expired', () => {
 			it( 'should display a warning to the user', () => {
 				const purchase = {
 					...annualPlanProps.purchase,
-					expiryDate: moment()
-						.subtract( 1, 'month' )
-						.format(),
+					expiryDate: moment().subtract( 1, 'month' ).format(),
 					expiryStatus: 'expired',
 				};
 				const wrapper = shallow(
 					<PlanBillingPeriod { ...annualPlanProps } purchase={ purchase } />
 				);
-				expect(
-					wrapper
-						.find( 'FormSettingExplanation' )
-						.shallow()
-						.text()
-				).toEqual( 'Billed yearly, expired a month ago' );
+				expect( wrapper.find( 'FormSettingExplanation' ).shallow().text() ).toEqual(
+					'Billed yearly, expired a month ago'
+				);
 			} );
 		} );
 	} );

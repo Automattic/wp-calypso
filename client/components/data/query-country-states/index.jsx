@@ -3,46 +3,33 @@
  */
 
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { isCountryStatesFetching } from 'state/country-states/selectors';
-import { requestCountryStates } from 'state/country-states/actions';
+import { isCountryStatesFetching } from 'calypso/state/country-states/selectors';
+import { requestCountryStates } from 'calypso/state/country-states/actions';
 
-class QueryCountryStates extends Component {
-	UNSAFE_componentWillMount() {
-		this.request( this.props );
+const request = ( countryCode ) => ( dispatch, getState ) => {
+	if ( ! isCountryStatesFetching( getState(), countryCode ) ) {
+		dispatch( requestCountryStates( countryCode ) );
 	}
+};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.countryCode !== nextProps.countryCode ) {
-			this.request( nextProps );
-		}
-	}
+function QueryCountryStates( { countryCode } ) {
+	const dispatch = useDispatch();
 
-	request( props ) {
-		if ( ! props.isRequesting ) {
-			props.requestCountryStates( props.countryCode );
-		}
-	}
+	useEffect( () => {
+		dispatch( request( countryCode ) );
+	}, [ dispatch, countryCode ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
 
 QueryCountryStates.propTypes = {
 	countryCode: PropTypes.string.isRequired,
-	isRequesting: PropTypes.bool,
-	requestCountryStates: PropTypes.func,
 };
 
-export default connect(
-	( state, { countryCode } ) => ( {
-		isRequesting: isCountryStatesFetching( state, countryCode ),
-	} ),
-	{ requestCountryStates }
-)( QueryCountryStates );
+export default QueryCountryStates;

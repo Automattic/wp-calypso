@@ -4,6 +4,7 @@
 	"description": "JavaScript library for formatting currency",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -24,12 +25,16 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
-		"@babel/runtime": "^7.8.4",
-		"i18n-calypso": "file:../i18n-calypso"
+		"@babel/runtime": "^7.14.0",
+		"i18n-calypso": "^5.0.0"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
-		"prepare": "transpile"
-	}
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
+	},
+	"peerDependencies": {
+		"react": "^16.8"
+	},
+	"types": "types"
 }

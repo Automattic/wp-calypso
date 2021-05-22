@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, head, isEmpty, last, map } from 'lodash';
+import { get, isEmpty, last, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,8 +15,8 @@ import EditorRevisionsListHeader from './header';
 import EditorRevisionsListViewButtons from './view-buttons';
 import EditorRevisionsListNavigation from './navigation';
 import EditorRevisionsListItem from './item';
-import { selectPostRevision } from 'state/posts/revisions/actions';
-import KeyboardShortcuts from 'lib/keyboard-shortcuts';
+import { selectPostRevision } from 'calypso/state/posts/revisions/actions';
+import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 
 /**
  * Style dependencies
@@ -34,7 +34,7 @@ class EditorRevisionsList extends PureComponent {
 		prevIsDisabled: PropTypes.bool,
 	};
 
-	selectRevision = revisionId => {
+	selectRevision = ( revisionId ) => {
 		this.props.selectPostRevision( revisionId );
 	};
 
@@ -160,7 +160,7 @@ class EditorRevisionsList extends PureComponent {
 				/>
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
-						{ map( revisions, revision => {
+						{ map( revisions, ( revision ) => {
 							const itemClasses = classNames( 'editor-revisions-list__revision', {
 								'is-selected': revision.id === selectedRevisionId,
 							} );
@@ -186,7 +186,7 @@ class EditorRevisionsList extends PureComponent {
 export default connect(
 	( state, { comparisons, revisions, selectedRevisionId } ) => {
 		const { nextRevisionId, prevRevisionId } = get( comparisons, [ selectedRevisionId ], {} );
-		const latestRevisionId = get( head( revisions ), 'id' );
+		const latestRevisionId = get( revisions[ 0 ], 'id' );
 		const latestRevisionIsSelected = latestRevisionId === selectedRevisionId;
 		const earliestRevisionIsSelected =
 			! latestRevisionIsSelected && get( last( revisions ), 'id' ) === selectedRevisionId;

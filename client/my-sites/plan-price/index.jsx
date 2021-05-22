@@ -11,7 +11,7 @@ import { getCurrencyObject } from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
+import Badge from 'calypso/components/badge';
 
 /**
  * Style dependencies
@@ -26,9 +26,9 @@ export class PlanPrice extends Component {
 			original,
 			discounted,
 			className,
-			isInSignup,
+			displayFlatPrice,
+			displayPerMonthNotation,
 			isOnSale,
-			isEligibleForPlanStepTest,
 			taxText,
 			translate,
 		} = this.props;
@@ -43,7 +43,7 @@ export class PlanPrice extends Component {
 			return null;
 		}
 
-		const priceRange = rawPriceRange.map( item => {
+		const priceRange = rawPriceRange.map( ( item ) => {
 			return {
 				price: getCurrencyObject( item, currencyCode ),
 				raw: item,
@@ -55,11 +55,7 @@ export class PlanPrice extends Component {
 			'is-discounted': discounted,
 		} );
 
-		const currencySymbolClasses = classNames( 'plan-price__currency-symbol', {
-			'plan-price__currency-symbol-plan-step-test': isEligibleForPlanStepTest,
-		} );
-
-		const renderPrice = priceObj => {
+		const renderPrice = ( priceObj ) => {
 			const fraction = priceObj.raw - priceObj.price.integer > 0 && priceObj.price.fraction;
 			if ( fraction ) {
 				return `${ priceObj.price.integer }${ fraction }`;
@@ -67,7 +63,7 @@ export class PlanPrice extends Component {
 			return priceObj.price.integer;
 		};
 
-		if ( isInSignup ) {
+		if ( displayFlatPrice ) {
 			const smallerPrice = renderPrice( priceRange[ 0 ] );
 			const higherPrice = priceRange[ 1 ] && renderPrice( priceRange[ 1 ] );
 
@@ -84,7 +80,7 @@ export class PlanPrice extends Component {
 			);
 		}
 
-		const renderPriceHtml = priceObj => {
+		const renderPriceHtml = ( priceObj ) => {
 			return (
 				<>
 					<span className="plan-price__integer">{ priceObj.price.integer }</span>
@@ -104,7 +100,7 @@ export class PlanPrice extends Component {
 
 		return (
 			<h4 className={ classes }>
-				<sup className={ currencySymbolClasses }>{ priceRange[ 0 ].price.symbol }</sup>
+				<sup className="plan-price__currency-symbol">{ priceRange[ 0 ].price.symbol }</sup>
 				{ ! higherPriceHtml && renderPriceHtml( priceRange[ 0 ] ) }
 				{ higherPriceHtml &&
 					translate( '{{smallerPrice/}}-{{higherPrice/}}', {
@@ -116,8 +112,14 @@ export class PlanPrice extends Component {
 						{ translate( '(+%(taxText)s tax)', { args: { taxText } } ) }
 					</sup>
 				) }
-				{ isEligibleForPlanStepTest && (
-					<sub className="plan-price__timeframe-month"> per month</sub>
+				{ displayPerMonthNotation && (
+					<span className="plan-price__term">
+						{ translate( 'per{{newline/}}month', {
+							components: { newline: <br /> },
+							comment:
+								'Displays next to the price. You can remove the "{{newline/}}" if it is not proper for your language.',
+						} ) }
+					</span>
 				) }
 				{ isOnSale && <Badge>{ saleBadgeText }</Badge> }
 			</h4>
@@ -136,6 +138,7 @@ PlanPrice.propTypes = {
 	isOnSale: PropTypes.bool,
 	taxText: PropTypes.string,
 	translate: PropTypes.func.isRequired,
+	displayPerMonthNotation: PropTypes.bool,
 };
 
 PlanPrice.defaultProps = {
@@ -144,4 +147,5 @@ PlanPrice.defaultProps = {
 	discounted: false,
 	className: '',
 	isOnSale: false,
+	displayPerMonthNotation: false,
 };

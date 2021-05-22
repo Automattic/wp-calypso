@@ -7,7 +7,9 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { AutoSizer, List } from '@automattic/react-virtualized';
-import { debounce, noop, range } from 'lodash';
+import { debounce, range } from 'lodash';
+
+const noop = () => {};
 
 export class VirtualList extends Component {
 	static propTypes = {
@@ -116,7 +118,7 @@ export class VirtualList extends Component {
 		return count;
 	}
 
-	setListRef = ref => {
+	setListRef = ( ref ) => {
 		this.list = ref;
 	};
 
@@ -148,7 +150,7 @@ export class VirtualList extends Component {
 		}
 	};
 
-	renderRow = props => {
+	renderRow = ( props ) => {
 		const element = this.props.renderRow( props );
 		if ( ! element ) {
 			return element;

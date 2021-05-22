@@ -6,8 +6,8 @@
  * Internal dependencies
  */
 import { fetchStats, receiveStats } from '..';
-import { receiveGoogleMyBusinessStats } from 'state/google-my-business/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { receiveGoogleMyBusinessStats } from 'calypso/state/google-my-business/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( '#fetchStats', () => {
 	test( 'should dispatch HTTP request to Google My Business stats endpoint', () => {

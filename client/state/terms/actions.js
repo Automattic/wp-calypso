@@ -1,25 +1,27 @@
 /**
  * External dependencies
  */
-
-import { filter, get, uniqueId } from 'lodash';
+import { filter, get } from 'lodash';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	TERM_REMOVE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
 	TERMS_REQUEST_SUCCESS,
 	TERMS_REQUEST_FAILURE,
-} from 'state/action-types';
-import { editPost } from 'state/posts/actions';
-import { updateSiteSettings } from 'state/site-settings/actions';
-import { getSitePostsByTerm } from 'state/posts/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
+} from 'calypso/state/action-types';
+import { editPost } from 'calypso/state/posts/actions';
+import { updateSiteSettings } from 'calypso/state/site-settings/actions';
+import { getSitePostsByTerm } from 'calypso/state/posts/selectors';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getTerm, getTerms } from './selectors';
+
+import 'calypso/state/terms/init';
 
 /**
  * Returns an action thunk, dispatching progress of a request to add a new term
@@ -31,8 +33,8 @@ import { getTerm, getTerms } from './selectors';
  * @returns {object}          Action object
  */
 export function addTerm( siteId, taxonomy, term ) {
-	return dispatch => {
-		const temporaryId = uniqueId( 'temporary' );
+	return ( dispatch ) => {
+		const temporaryId = 'temporary' + uuid();
 
 		dispatch(
 			receiveTerm( siteId, taxonomy, {
@@ -47,13 +49,13 @@ export function addTerm( siteId, taxonomy, term ) {
 			.term()
 			.add( term )
 			.then(
-				data => {
+				( data ) => {
 					dispatch( receiveTerm( siteId, taxonomy, data ) );
 					return data;
 				},
 				() => Promise.resolve() // Silently ignore failure so we can proceed to remove temporary
 			)
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( removeTerm( siteId, taxonomy, temporaryId ) );
 				return data;
 			} );
@@ -77,21 +79,21 @@ export function updateTerm( siteId, taxonomy, termId, termSlug, term ) {
 			.taxonomy( taxonomy )
 			.term( termSlug )
 			.update( term )
-			.then( updatedTerm => {
+			.then( ( updatedTerm ) => {
 				const state = getState();
 				// When updating a term, we receive a newId and a new Slug
 				// We have to remove the old term and add the new one
 				// We also have to update the parent ID of its children
 				const children = filter( getTerms( state, siteId, taxonomy ), {
 					parent: termId,
-				} ).map( child => ( { ...child, parent: updatedTerm.ID } ) );
+				} ).map( ( child ) => ( { ...child, parent: updatedTerm.ID } ) );
 				dispatch( removeTerm( siteId, taxonomy, termId ) );
 				dispatch( receiveTerms( siteId, taxonomy, children.concat( [ updatedTerm ] ) ) );
 
 				// We also have to update post terms
 				const postsToUpdate = getSitePostsByTerm( state, siteId, taxonomy, termId );
-				postsToUpdate.forEach( post => {
-					const newTerms = filter( post.terms[ taxonomy ], postTerm => postTerm.ID !== termId );
+				postsToUpdate.forEach( ( post ) => {
+					const newTerms = filter( post.terms[ taxonomy ], ( postTerm ) => postTerm.ID !== termId );
 					newTerms.push( updatedTerm );
 					dispatch(
 						editPost( siteId, post.ID, {
@@ -159,9 +161,9 @@ const removeTermFromState = ( { dispatch, getState, siteId, taxonomy, termId } )
 	const deletedTermPostCount = get( deletedTerm, 'post_count', 0 );
 
 	// Update the parentId of its children
-	const termsToUpdate = filter( getTerms( state, siteId, taxonomy ), term => {
+	const termsToUpdate = filter( getTerms( state, siteId, taxonomy ), ( term ) => {
 		return term.parent === termId;
-	} ).map( term => {
+	} ).map( ( term ) => {
 		return { ...term, parent: deletedTerm.parent };
 	} );
 	if ( termsToUpdate.length ) {
@@ -170,8 +172,8 @@ const removeTermFromState = ( { dispatch, getState, siteId, taxonomy, termId } )
 
 	// Drop the term from posts
 	const postsToUpdate = getSitePostsByTerm( state, siteId, taxonomy, termId );
-	postsToUpdate.forEach( post => {
-		const newTerms = filter( post.terms[ taxonomy ], postTerm => postTerm.ID !== termId );
+	postsToUpdate.forEach( ( post ) => {
+		const newTerms = filter( post.terms[ taxonomy ], ( postTerm ) => postTerm.ID !== termId );
 		dispatch(
 			editPost( siteId, post.ID, {
 				terms: {
@@ -219,7 +221,7 @@ export function deleteTerm( siteId, taxonomy, termId ) {
 			// Taxonomy Slugs are not unique! Use wp/v2 for deletion to avoid deleting the wrong term!
 			// https://github.com/Automattic/wp-calypso/issues/36620
 			getTaxonomyRestBase( siteId, taxonomy )
-				.then( taxonomyRestBase => {
+				.then( ( taxonomyRestBase ) => {
 					wpcom.req
 						.get( {
 							path: `/sites/${ siteId }/${ taxonomyRestBase }/${ termId }?force=true`,
@@ -297,7 +299,7 @@ export function removeTerm( siteId, taxonomy, termId ) {
  * @returns {Function}        Action thunk
  */
 export function requestSiteTerms( siteId, taxonomy, query = {} ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: TERMS_REQUEST,
 			siteId,
@@ -309,7 +311,7 @@ export function requestSiteTerms( siteId, taxonomy, query = {} ) {
 			.site( siteId )
 			.taxonomy( taxonomy )
 			.termsList( query )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( {
 					type: TERMS_REQUEST_SUCCESS,
 					siteId,
@@ -318,7 +320,7 @@ export function requestSiteTerms( siteId, taxonomy, query = {} ) {
 				} );
 				dispatch( receiveTerms( siteId, taxonomy, data.terms, query, data.found ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: TERMS_REQUEST_FAILURE,
 					siteId,

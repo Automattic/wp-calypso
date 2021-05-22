@@ -24,7 +24,7 @@ let isShowing = true;
 let isVisible = document.visibilityState === 'visible';
 
 let store = { dispatch: () => {}, getState: () => {} };
-const customEnhancer = next => ( reducer, initialState ) =>
+const customEnhancer = ( next ) => ( reducer, initialState ) =>
 	( store = next( reducer, initialState ) );
 
 const customMiddleware = {
@@ -78,14 +78,12 @@ const customMiddleware = {
 const render = () => {
 	ReactDOM.render(
 		React.createElement( AuthWrapper( Notifications ), {
-			clientId: 56641,
 			customEnhancer,
 			customMiddleware,
 			isShowing,
 			isVisible,
 			locale,
 			receiveMessage: sendMessage,
-			redirectPath: '/',
 		} ),
 		document.getElementsByClassName( 'wpnc__main' )[ 0 ]
 	);

@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -12,14 +11,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard, ProgressBar } from '@automattic/components';
-import Notice from 'components/notice';
-import { getSelectedSite } from 'state/ui/selectors';
-import syncSelectors from 'state/jetpack-sync/selectors';
-import { getSyncStatus, scheduleJetpackFullysync } from 'state/jetpack-sync/actions';
-import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
-import NoticeAction from 'components/notice/notice-action';
-import { withLocalizedMoment } from 'components/localized-moment';
-import analytics from 'lib/analytics';
+import Notice from 'calypso/components/notice';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import syncSelectors from 'calypso/state/jetpack-sync/selectors';
+import { getSyncStatus, scheduleJetpackFullysync } from 'calypso/state/jetpack-sync/actions';
+import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -51,17 +50,17 @@ class JetpackSyncPanel extends React.Component {
 		return !! ( this.props.isFullSyncing || this.props.isPendingSyncStart );
 	};
 
-	onSyncRequestButtonClick = event => {
+	onSyncRequestButtonClick = ( event ) => {
 		event.preventDefault();
 		debug( 'Perform full sync button clicked' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_request_button_clicked' );
+		recordTracksEvent( 'calypso_jetpack_sync_panel_request_button_clicked' );
 		this.props.scheduleJetpackFullysync( this.props.siteId );
 	};
 
-	onTryAgainClick = event => {
+	onTryAgainClick = ( event ) => {
 		event.preventDefault();
 		debug( 'Try again button clicked' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_try_again_button_clicked', {
+		recordTracksEvent( 'calypso_jetpack_sync_panel_try_again_button_clicked', {
 			errorCode: get( this.props, 'fullSyncRequest.error.error', '' ),
 			errorMsg: get( this.props, 'fullSyncRequest.error.message', '' ),
 		} );
@@ -70,7 +69,7 @@ class JetpackSyncPanel extends React.Component {
 
 	onClickDebug = () => {
 		debug( 'Clicked check connection button' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_check_connection_button_clicked', {
+		recordTracksEvent( 'calypso_jetpack_sync_panel_check_connection_button_clicked', {
 			error_code: get( this.props, 'syncStatus.error.error', '' ),
 			error_msg: get( this.props, 'syncStatus.error.message', '' ),
 		} );
@@ -107,16 +106,18 @@ class JetpackSyncPanel extends React.Component {
 					{ syncRequestError.message
 						? syncRequestError.message
 						: translate( 'There was an error scheduling a full sync.' ) }
-					{ // We show a Try again action for a generic error on the assumption
-					// that the error was a network issue.
-					//
-					// If an error message was returned from the API, then there's likely
-					// a good reason the request failed, such as an unauthorized user.
-					! syncRequestError.message && (
-						<NoticeAction onClick={ this.onTryAgainClick }>
-							{ translate( 'Try again' ) }
-						</NoticeAction>
-					) }
+					{
+						// We show a Try again action for a generic error on the assumption
+						// that the error was a network issue.
+						//
+						// If an error message was returned from the API, then there's likely
+						// a good reason the request failed, such as an unauthorized user.
+						! syncRequestError.message && (
+							<NoticeAction onClick={ this.onTryAgainClick }>
+								{ translate( 'Try again' ) }
+							</NoticeAction>
+						)
+					}
 				</Notice>
 			);
 		}
@@ -194,9 +195,9 @@ class JetpackSyncPanel extends React.Component {
 }
 
 export default connect(
-	state => {
-		const site = getSelectedSite( state ),
-			siteId = site.ID;
+	( state ) => {
+		const site = getSelectedSite( state );
+		const siteId = site.ID;
 		return {
 			site,
 			siteId,
@@ -207,5 +208,5 @@ export default connect(
 			syncProgress: syncSelectors.getSyncProgressPercentage( state, siteId ),
 		};
 	},
-	dispatch => bindActionCreators( { getSyncStatus, scheduleJetpackFullysync }, dispatch )
+	{ getSyncStatus, scheduleJetpackFullysync }
 )( localize( withLocalizedMoment( JetpackSyncPanel ) ) );

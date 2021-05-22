@@ -25,7 +25,7 @@ Check if a current user is logged in:
 import { useSelect } from '@wordpress/data';
 
 function MyComponent() {
-	const isLoggedIn = useSelect( select => select( USER_STORE ).isCurrentUserLoggedIn() );
+	const isLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 	// …snip
 }
 ```
@@ -59,10 +59,10 @@ const USER_STORE = User.register(/* app credentials… */);
 function SignupComponent() {
 	const [ email, setEmail ] = useState( '' );
 
-	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
-	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
-	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
-	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
+	const newUserError = useSelect( ( select ) => select( USER_STORE ).getNewUserError() );
+	const isFetchingNewUser = useSelect( ( select ) => select( USER_STORE ).isFetchingNewUser() );
 
 	const { createAccount } = useDispatch( USER_STORE );
 
@@ -89,7 +89,7 @@ function SignupComponent() {
 					<TextControl
 						label="Email address"
 						value={ email }
-						onChange={ newEmail => setEmail( newEmail ) }
+						onChange={ ( newEmail ) => setEmail( newEmail ) }
 					/>
 					<Button isPrimary isLarge type="submit" value="Submit">
 						Create Account

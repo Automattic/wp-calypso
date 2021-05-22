@@ -1,12 +1,13 @@
 {
 	"name": "@automattic/components",
-	"version": "1.0.0-alpha.1",
+	"version": "1.0.0-alpha.3",
 	"description": "Automattic Components",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -28,20 +29,27 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@babel/runtime": "^7.8.4",
+		"@babel/runtime": "^7.14.0",
 		"classnames": "^2.2.6",
 		"gridicons": "^3.3.1",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.21",
 		"prop-types": "^15.7.2",
-		"react-modal": "^3.8.1"
+		"react-modal": "^3.8.1",
+		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {
 		"react": "^16.8",
 		"react-dom": "^16.8"
 	},
+	"devDependencies": {
+		"@storybook/addon-actions": "^6.1.10",
+		"@storybook/preset-scss": "^1.0.3",
+		"sass-loader": "^10.1.1",
+		"enzyme": "^3.11.0"
+	},
 	"scripts": {
-		"clean": "npx rimraf dist \"../../.tsc-cache/packages__components*\"",
-		"prepublish": "npm run clean",
-		"prepare": "transpile && tsc && copy-assets"
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build"
 	}
 }

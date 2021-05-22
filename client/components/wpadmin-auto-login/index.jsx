@@ -14,7 +14,7 @@ function tryLogin( requestUrl, initalDelay, attempt ) {
 	const image = new Image();
 
 	if ( attempt < 9 ) {
-		image.onerror = function() {
+		image.onerror = function () {
 			setTimeout(
 				tryLogin.bind( null, requestUrl, initalDelay, attempt + 1 ),
 				initalDelay * attempt

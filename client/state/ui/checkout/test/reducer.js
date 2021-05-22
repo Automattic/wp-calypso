@@ -1,52 +1,23 @@
 /**
  * Internal dependencies
  */
-import {
-	CHECKOUT_TOGGLE_CART_ON_MOBILE,
-	DESERIALIZE,
-	SECTION_SET,
-	SERIALIZE,
-} from 'state/action-types';
-import reducer, { isShowingCartOnMobile, upgradeIntent } from '../reducer';
+import { SECTION_SET } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import reducer, { upgradeIntent } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
-		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual( [
-			'isShowingCartOnMobile',
-			'upgradeIntent',
-		] );
-	} );
-
-	describe( '#isShowingCartOnMobile', () => {
-		test( 'should default to false', () => {
-			const state = isShowingCartOnMobile( undefined, {} );
-			expect( state ).toBeFalse;
-		} );
-
-		test( 'should be true after toggle when false', () => {
-			const state = isShowingCartOnMobile( false, { type: CHECKOUT_TOGGLE_CART_ON_MOBILE } );
-			expect( state ).toBeTrue;
-		} );
-
-		test( 'should be false after toggle when true', () => {
-			const state = isShowingCartOnMobile( true, { type: CHECKOUT_TOGGLE_CART_ON_MOBILE } );
-			expect( state ).toBeFalse;
-		} );
-
-		test( 'should be unchanged after other action', () => {
-			const state = isShowingCartOnMobile( true, { type: 'WRONSKI_FEINT' } );
-			expect( state ).toBeTrue;
-		} );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual( [ 'upgradeIntent' ] );
 	} );
 
 	describe( '#upgradeIntent()', () => {
 		test( 'should persist value', () => {
-			const state = upgradeIntent( 'hallows', { type: SERIALIZE } );
+			const state = serialize( upgradeIntent, 'hallows' );
 			expect( state ).toBe( 'hallows' );
 		} );
 
 		test( 'should restore value', () => {
-			const state = upgradeIntent( 'always', { type: DESERIALIZE } );
+			const state = deserialize( upgradeIntent, 'always' );
 			expect( state ).toBe( 'always' );
 		} );
 

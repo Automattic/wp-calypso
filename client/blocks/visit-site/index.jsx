@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Style dependencies
@@ -18,10 +18,7 @@ function useSite( siteSlug ) {
 	const [ site, setSite ] = useState( null );
 
 	useEffect( () => {
-		wpcom
-			.site( siteSlug )
-			.get( { apiVersion: '1.2' } )
-			.then( setSite );
+		wpcom.site( siteSlug ).get( { apiVersion: '1.2' } ).then( setSite );
 	}, [ siteSlug ] );
 
 	return site;

@@ -7,19 +7,19 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import userFactory from 'lib/user';
-import wpcom from 'lib/wp';
-import { receiveSite } from 'state/sites/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants';
+import userFactory from 'calypso/lib/user';
+import wpcom from 'calypso/lib/wp';
+import { receiveSite } from 'calypso/state/sites/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
 import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-} from 'state/jetpack-connect/action-types';
+} from 'calypso/state/jetpack-connect/action-types';
 
-import 'state/jetpack-connect/init';
+import 'calypso/state/jetpack-connect/init';
 
 /**
  * Module constants
@@ -27,7 +27,7 @@ import 'state/jetpack-connect/init';
 const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 
 export function authorize( queryObject ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		const {
 			_wp_nonce,
 			client_id,
@@ -47,7 +47,7 @@ export function authorize( queryObject ) {
 		return wpcom
 			.undocumented()
 			.jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state )
-			.then( data => {
+			.then( ( data ) => {
 				debug( 'Jetpack login complete. Trying Jetpack authorize.', data );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
@@ -57,7 +57,7 @@ export function authorize( queryObject ) {
 					.undocumented()
 					.jetpackAuthorize( client_id, data.code, state, redirect_uri, secret, jp_version, from );
 			} )
-			.then( data => {
+			.then( ( data ) => {
 				debug( 'Jetpack authorize complete. Updating sites list.', data );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
@@ -75,7 +75,7 @@ export function authorize( queryObject ) {
 				// Currently, we need it to make sure user has been refetched before we continue.
 				// Otherwise the user might see a confusing message that they have no sites.
 				// See p8oabR-j3-p2/#comment-2399 for more information.
-				return new Promise( resolve => {
+				return new Promise( ( resolve ) => {
 					const userFetched = setInterval( () => {
 						const loadedUser = user.get();
 						if ( loadedUser ) {
@@ -93,7 +93,7 @@ export function authorize( queryObject ) {
 					options: SITE_REQUEST_OPTIONS,
 				} );
 			} )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch(
 					recordTracksEvent( 'calypso_jpc_auth_sitesrefresh', {
 						site: client_id,
@@ -113,7 +113,7 @@ export function authorize( queryObject ) {
 					} )
 				);
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				debug( 'Authorize error', error );
 				dispatch(
 					recordTracksEvent( 'calypso_jpc_authorize_error', {

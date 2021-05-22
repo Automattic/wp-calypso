@@ -5,13 +5,13 @@
 import { flatMap } from 'lodash';
 
 // only require keymaster if this is a browser environment
-const keymaster = typeof window === 'undefined' ? undefined : require( 'keymaster' ),
-	defaultFilter = keymaster ? keymaster.filter : undefined;
+const keymaster = typeof window === 'undefined' ? undefined : require( 'keymaster' );
+const defaultFilter = keymaster ? keymaster.filter : undefined;
 
 /**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
+import Emitter from 'calypso/lib/mixins/emitter';
 import KEY_BINDINGS from './key-bindings';
 
 // Flatten the key-bindings object to create an array of key-bindings. `_.flatMap` converts
@@ -59,9 +59,9 @@ function KeyboardShortcuts( keyBindings ) {
 	}
 }
 
-KeyboardShortcuts.prototype.bindShortcuts = function( keyBindings ) {
+KeyboardShortcuts.prototype.bindShortcuts = function ( keyBindings ) {
 	// bind keys from the key bindings to their named events
-	keyBindings.forEach( keyBinding => {
+	keyBindings.forEach( ( keyBinding ) => {
 		this.bindShortcut(
 			keyBinding.eventName,
 			keyBinding.keys,
@@ -74,9 +74,9 @@ KeyboardShortcuts.prototype.bindShortcuts = function( keyBindings ) {
 	window.addEventListener( 'keydown', this.boundKeyHandler, false );
 };
 
-KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, checkKeys ) {
-	let keyCombinations = [],
-		matches;
+KeyboardShortcuts.prototype.bindShortcut = function ( eventName, keys, type, checkKeys ) {
+	let keyCombinations = [];
+	let matches;
 
 	if ( typeof keys[ 0 ] === 'string' ) {
 		// this is a single key combination
@@ -86,7 +86,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 		keyCombinations = keys;
 	}
 
-	keyCombinations.forEach( combo => {
+	keyCombinations.forEach( ( combo ) => {
 		if ( 'sequence' === type ) {
 			keymaster( combo[ 1 ], ( event, handler ) => {
 				// if the notifications panel is open, do not handle any sequences
@@ -123,7 +123,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 				if ( checkKeys && checkKeys.length > 0 ) {
 					keyValue = this._getKey( event );
 					// TODO: Could this be replaced by Array#some ?
-					matches = checkKeys.filter( function( key ) {
+					matches = checkKeys.filter( function ( key ) {
 						return key === keyValue;
 					} );
 					if ( matches.length === 1 ) {
@@ -147,7 +147,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
  * @returns {string} - key
  * @private
  */
-KeyboardShortcuts.prototype._getKey = function( event ) {
+KeyboardShortcuts.prototype._getKey = function ( event ) {
 	let key;
 	if ( event.key ) {
 		return event.key;
@@ -157,11 +157,11 @@ KeyboardShortcuts.prototype._getKey = function( event ) {
 	return String.fromCharCode( parseInt( key, 16 ) );
 };
 
-KeyboardShortcuts.prototype.emitEvent = function() {
+KeyboardShortcuts.prototype.emitEvent = function () {
 	this.emit.apply( this, arguments );
 };
 
-KeyboardShortcuts.prototype.handleKeyPress = function( event ) {
+KeyboardShortcuts.prototype.handleKeyPress = function ( event ) {
 	// make sure this key press is not targeted at an input/select/textarea with keymaster's filter
 	if ( keymaster.filter( event ) ) {
 		this.lastKey = String.fromCharCode( event.keyCode ).toLowerCase();
@@ -169,7 +169,7 @@ KeyboardShortcuts.prototype.handleKeyPress = function( event ) {
 	}
 };
 
-KeyboardShortcuts.prototype.setNotificationsOpen = function( isOpen ) {
+KeyboardShortcuts.prototype.setNotificationsOpen = function ( isOpen ) {
 	this.isNotificationsOpen = isOpen;
 };
 

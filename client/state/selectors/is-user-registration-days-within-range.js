@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getCurrentUserDate } from 'state/current-user/selectors';
+import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 

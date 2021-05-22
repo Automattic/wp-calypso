@@ -1,0 +1,63 @@
+@import '~@wordpress/base-styles/_breakpoints.scss';
+@import '~@wordpress/base-styles/_mixins.scss';
+
+.revoke-license-dialog {
+	.dialog__content {
+		max-width: 628px;
+
+		&, & p {
+			font-size: 1rem;
+		}
+	}
+
+	.dialog__action-buttons {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		background: var( --studio-gray-0 );
+		border: 0;
+
+		a {
+			margin-right: auto;
+			font-weight: 600;
+			text-decoration: underline;
+		}
+	}
+
+	&__heading {
+		margin: -16px -16px 16px;
+		padding: 9px 16px;
+		font-size: 1.25rem;
+		font-weight: 600;
+		line-height: 20px;
+		color: var( --studio-red-60 );
+		border-bottom: 1px solid var( --studio-gray-5 );
+
+		@include break-mobile() {
+			margin: -24px -24px 24px;
+			padding: 9px 24px;
+			line-height: 36px;
+		}
+	}
+
+	&__warning {
+		font-weight: 600;
+		color: var( --studio-red-60 );
+
+		.gridicon {
+			position: relative;
+			top: 2px;
+			margin-right: 7px;
+		}
+	}
+
+	ul {
+		margin-left: 39px;
+		font-weight: 600;
+		line-height: 30px;
+
+		code {
+			font-size: 0.875rem;
+		}
+	}
+}

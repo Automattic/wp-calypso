@@ -6,14 +6,14 @@ import { isEqual, omit, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import {
 	getDeserializedPostsQueryDetails,
 	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
-} from 'state/posts/utils';
+} from 'calypso/state/posts/utils';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns true if currently requesting posts for the posts query, regardless
@@ -45,6 +45,6 @@ export const isRequestingPostsForQueryIgnoringPage = createSelector(
 			return isEqual( normalizedQueryWithoutPage, omit( queryDetails.query, 'page' ) );
 		} );
 	},
-	state => state.posts.queryRequests,
+	( state ) => state.posts.queryRequests,
 	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
 );

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import moment from 'moment';
-import { every, some, includes, get } from 'lodash';
+import { some, includes, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,9 +27,9 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	 */
 	static matches( query, post ) {
 		const queryWithDefaults = Object.assign( {}, this.DefaultQuery, query );
-		return every( queryWithDefaults, ( value, key ) => {
+		return Object.entries( queryWithDefaults ).every( ( [ key, value ] ) => {
 			switch ( key ) {
-				case 'search':
+				case 'search': {
 					if ( ! value ) {
 						return true;
 					}
@@ -39,6 +39,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 						( post.title && includes( post.title.toLowerCase(), search ) ) ||
 						( post.content && includes( post.content.toLowerCase(), search ) )
 					);
+				}
 
 				case 'after':
 				case 'before':
@@ -51,7 +52,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 				}
 
 				case 'term':
-					return every( value, ( slugs, taxonomy ) => {
+					return Object.entries( value ).every( ( [ taxonomy, slugs ] ) => {
 						slugs = slugs.split( ',' );
 						return some( post.terms[ taxonomy ], ( { slug } ) => includes( slugs, slug ) );
 					} );
@@ -102,7 +103,7 @@ export default class PostQueryManager extends PaginatedQueryManager {
 						'any' === value ||
 						String( value )
 							.split( ',' )
-							.some( status => {
+							.some( ( status ) => {
 								return status === post[ key ];
 							} )
 					);

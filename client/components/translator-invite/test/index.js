@@ -15,7 +15,7 @@ import { TranslatorInvite } from '../';
 
 describe( 'TranslatorInvite', () => {
 	const defaultProps = {
-		translate: x => x,
+		translate: ( x ) => x,
 		localizedLanguageNames: {
 			'en-gb': {
 				localized: 'British English',

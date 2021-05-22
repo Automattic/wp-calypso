@@ -6,32 +6,36 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { includes, find, isEmpty, flowRight } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
+import Main from 'calypso/components/main';
+import HeaderCake from 'calypso/components/header-cake';
 import { Card, ProgressBar, Button } from '@automattic/components';
-import UploadDropZone from 'blocks/upload-drop-zone';
-import EmptyContent from 'components/empty-content';
-import ThanksModal from 'my-sites/themes/thanks-modal';
+import UploadDropZone from 'calypso/blocks/upload-drop-zone';
+import EmptyContent from 'calypso/components/empty-content';
+import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import ThemeActivationConfirmationModal from 'my-sites/themes/theme-activation-confirmation-modal';
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 // Necessary for ThanksModal
-import QueryActiveTheme from 'components/data/query-active-theme';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
-import notices from 'notices';
 import debugFactory from 'debug';
-import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
-import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'calypso/state/themes/actions';
+import {
+	getSelectedSiteId,
+	getSelectedSite,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
-} from 'state/sites/selectors';
+} from 'calypso/state/sites/selectors';
 import {
 	isUploadInProgress,
 	isUploadComplete,
@@ -41,21 +45,22 @@ import {
 	getUploadProgressTotal,
 	getUploadProgressLoaded,
 	isInstallInProgress,
-} from 'state/themes/upload-theme/selectors';
-import { getCanonicalTheme } from 'state/themes/selectors';
-import { connectOptions } from 'my-sites/themes/theme-options';
-import EligibilityWarnings from 'blocks/eligibility-warnings';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import { getBackPath } from 'state/themes/themes-ui/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
-import QueryEligibility from 'components/data/query-atat-eligibility';
-import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import WpAdminAutoLogin from 'components/wpadmin-auto-login';
-import redirectIf from 'my-sites/feature-upsell/redirect-if';
-import config from 'config';
-import { abtest } from 'lib/abtest';
+} from 'calypso/state/themes/upload-theme/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
+import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { connectOptions } from 'calypso/my-sites/themes/theme-options';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from '@automattic/calypso-products';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer,
+} from 'calypso/state/automated-transfer/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 
 /**
  * Style dependencies
@@ -78,7 +83,6 @@ class Upload extends React.Component {
 		progressLoaded: PropTypes.number,
 		installing: PropTypes.bool,
 		isJetpack: PropTypes.bool,
-		upgradeJetpack: PropTypes.bool,
 		backPath: PropTypes.string,
 		showEligibility: PropTypes.bool,
 	};
@@ -90,6 +94,9 @@ class Upload extends React.Component {
 	componentDidMount() {
 		const { siteId, inProgress } = this.props;
 		! inProgress && this.props.clearThemeUpload( siteId );
+		if ( this.props.canUploadThemesOrPlugins ) {
+			this.redirectToWpAdmin();
+		}
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -108,6 +115,9 @@ class Upload extends React.Component {
 	};
 
 	componentDidUpdate( prevProps ) {
+		if ( this.props.canUploadThemesOrPlugins ) {
+			this.redirectToWpAdmin();
+		}
 		if ( this.props.complete && ! prevProps.complete ) {
 			this.successMessage();
 		} else if ( this.props.failed && ! prevProps.failed ) {
@@ -115,9 +125,13 @@ class Upload extends React.Component {
 		}
 	}
 
+	redirectToWpAdmin() {
+		page( `https://${ this.props.siteSlug }/wp-admin/theme-install.php` );
+	}
+
 	successMessage() {
 		const { translate, uploadedTheme, themeId } = this.props;
-		notices.success(
+		this.props.successNotice(
 			translate( 'Successfully uploaded theme %(name)s', {
 				args: {
 					// using themeId lets us show a message before theme data arrives
@@ -151,7 +165,7 @@ class Upload extends React.Component {
 		} );
 
 		const unknownCause = error.error ? `: ${ error.error }` : '';
-		notices.error( cause || translate( 'Problem installing theme' ) + unknownCause );
+		this.props.errorNotice( cause || translate( 'Problem installing theme' ) + unknownCause );
 	}
 
 	renderProgressBar() {
@@ -243,15 +257,7 @@ class Upload extends React.Component {
 	}
 
 	render() {
-		const {
-			translate,
-			complete,
-			siteId,
-			themeId,
-			upgradeJetpack,
-			backPath,
-			isMultisite,
-		} = this.props;
+		const { backPath, complete, isMultisite, siteId, themeId, translate } = this.props;
 
 		const { showEligibility } = this.state;
 
@@ -268,18 +274,10 @@ class Upload extends React.Component {
 				<ThanksModal source="upload" />
 				<ThemeActivationConfirmationModal source="upload" />
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
-				{ upgradeJetpack && (
-					<JetpackManageErrorPage
-						template="updateJetpack"
-						siteId={ siteId }
-						featureExample={ this.renderUploadCard() }
-						version="4.7"
-					/>
-				) }
 				{ showEligibility && (
 					<EligibilityWarnings backUrl={ backPath } onProceed={ this.onProceedClick } />
 				) }
-				{ ! upgradeJetpack && ! showEligibility && this.renderUploadCard() }
+				{ ! showEligibility && this.renderUploadCard() }
 			</Main>
 		);
 	}
@@ -287,12 +285,12 @@ class Upload extends React.Component {
 
 const ConnectedUpload = connectOptions( Upload );
 
-const UploadWithOptions = props => {
+const UploadWithOptions = ( props ) => {
 	const { siteId, uploadedTheme } = props;
 	return <ConnectedUpload { ...props } siteId={ siteId } theme={ uploadedTheme } />;
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
 	const themeId = getUploadedThemeId( state, siteId );
@@ -304,6 +302,8 @@ const mapStateToProps = state => {
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
+	const canUploadThemesOrPlugins = siteCanUploadThemesOrPlugins( state, siteId );
+	const isAtomic = isSiteWpcomAtomic( state, siteId );
 
 	return {
 		siteId,
@@ -321,29 +321,25 @@ const mapStateToProps = state => {
 		progressTotal: getUploadProgressTotal( state, siteId ),
 		progressLoaded: getUploadProgressLoaded( state, siteId ),
 		installing: isInstallInProgress( state, siteId ),
-		upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
 		backPath: getBackPath( state ),
-		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
+		showEligibility:
+			( isAtomic || ! isJetpack ) &&
+			( hasEligibilityMessages || ! isEligible || ! canUploadThemesOrPlugins ),
 		isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
+		canUploadThemesOrPlugins,
 	};
 };
 
 const flowRightArgs = [
-	connect( mapStateToProps, { uploadTheme, clearThemeUpload, initiateThemeTransfer } ),
+	connect( mapStateToProps, {
+		errorNotice,
+		successNotice,
+		uploadTheme,
+		clearThemeUpload,
+		initiateThemeTransfer,
+	} ),
 	localize,
 ];
-
-if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
-	flowRightArgs.push(
-		redirectIf(
-			( state, siteId ) =>
-				! isJetpackSite( state, siteId ) &&
-				! hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ) &&
-				abtest( 'themesUpsellLandingPage' ) === 'test',
-			'/feature/themes'
-		)
-	);
-}
 
 export default flowRight( ...flowRightArgs )( UploadWithOptions );

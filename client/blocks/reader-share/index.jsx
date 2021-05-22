@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { defer } from 'lodash';
-import config from 'config';
+import config from '@automattic/calypso-config';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import page from 'page';
@@ -13,23 +13,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ReaderPopoverMenu from 'reader/components/reader-popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import Gridicon from 'components/gridicon';
-import SocialLogo from 'components/social-logo';
-import * as stats from 'reader/stats';
-import { preload } from 'sections-helper';
-import SiteSelector from 'components/site-selector';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import Gridicon from 'calypso/components/gridicon';
+import SocialLogo from 'calypso/components/social-logo';
+import * as stats from 'calypso/reader/stats';
+import { preloadEditor } from 'calypso/sections-preloaders';
+import SiteSelector from 'calypso/components/site-selector';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { Button } from '@automattic/components';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-function preloadEditor() {
-	preload( 'post-editor' );
-}
 
 /**
  * Local variables
@@ -74,6 +71,7 @@ function buildQuerystringForPost( post ) {
 	args.title = `${ post.title } — ${ post.site_name }`;
 	args.text = post.excerpt;
 	args.url = post.URL;
+	args.is_post_share = true; // There is a dependency on this here https://github.com/Automattic/wp-calypso/blob/a69ded693a99fa6a957b590b1a538f32a581eb8a/client/gutenberg/editor/controller.js#L209
 
 	const params = new URLSearchParams( args );
 	return params.toString();
@@ -86,7 +84,6 @@ class ReaderShare extends React.Component {
 
 	static defaultProps = {
 		position: 'bottom',
-		tagName: 'li',
 		iconSize: 24,
 	};
 
@@ -112,7 +109,7 @@ class ReaderShare extends React.Component {
 		this.mounted = false;
 	}
 
-	deferMenuChange = showing => {
+	deferMenuChange = ( showing ) => {
 		if ( this.closeHandle ) {
 			clearTimeout( this.closeHandle );
 		}
@@ -123,8 +120,7 @@ class ReaderShare extends React.Component {
 		} );
 	};
 
-	toggle = event => {
-		event.preventDefault();
+	toggle = () => {
 		if ( ! this.state.showingMenu ) {
 			stats.recordAction( 'open_share' );
 			stats.recordGaEvent( 'Opened Share' );
@@ -144,7 +140,7 @@ class ReaderShare extends React.Component {
 		}
 	};
 
-	pickSiteToShareTo = slug => {
+	pickSiteToShareTo = ( slug ) => {
 		stats.recordAction( 'share_wordpress' );
 		stats.recordGaEvent( 'Clicked on Share to WordPress' );
 		stats.recordTrack( 'calypso_reader_share_to_site' );
@@ -152,7 +148,7 @@ class ReaderShare extends React.Component {
 		return true;
 	};
 
-	closeExternalShareMenu = action => {
+	closeExternalShareMenu = ( action ) => {
 		this.closeMenu();
 		const actionFunc = actionMap[ action ];
 		if ( actionFunc ) {
@@ -173,22 +169,27 @@ class ReaderShare extends React.Component {
 			'is-active': this.state.showingMenu,
 		} );
 
-		return React.createElement(
-			this.props.tagName,
-			{
-				className: 'reader-share',
-				onClick: this.toggle,
-				onTouchStart: preloadEditor,
-				onMouseEnter: preloadEditor,
-			},
-			[
-				<span key="button" ref={ this.shareButton } className={ buttonClasses }>
-					<Gridicon icon="share" size={ this.props.iconSize } />
+		// The event.preventDefault() on the wrapping div is needed to prevent the
+		// full post opening when a share method is selected in the popover
+		return (
+			// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
+			<div className="reader-share" onClick={ ( event ) => event.preventDefault() }>
+				<Button
+					borderless
+					className={ buttonClasses }
+					compact={ this.props.iconSize === 18 }
+					key="button"
+					onClick={ this.toggle }
+					onMouseEnter={ preloadEditor }
+					onTouchStart={ preloadEditor }
+					ref={ this.shareButton }
+				>
+					<Gridicon aria-hidden="true" icon="share" />
 					<span className="reader-share__button-label">
 						{ translate( 'Share', { comment: 'Share the post' } ) }
 					</span>
-				</span>,
-				this.state.showingMenu && (
+				</Button>
+				{ this.state.showingMenu && (
 					<ReaderPopoverMenu
 						key="menu"
 						context={ this.shareButton.current }
@@ -224,12 +225,12 @@ class ReaderShare extends React.Component {
 							/>
 						) }
 					</ReaderPopoverMenu>
-				),
-			]
+				) }
+			</div>
 		);
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	hasSites: !! getPrimarySiteId( state ),
 } ) )( localize( ReaderShare ) );

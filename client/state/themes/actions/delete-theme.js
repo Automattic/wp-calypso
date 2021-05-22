@@ -1,10 +1,20 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { THEME_DELETE_FAILURE, THEME_DELETE_SUCCESS, THEME_DELETE } from 'state/themes/action-types';
+import wpcom from 'calypso/lib/wp';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import {
+	THEME_DELETE_FAILURE,
+	THEME_DELETE_SUCCESS,
+	THEME_DELETE,
+} from 'calypso/state/themes/action-types';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Deletes a theme from the given Jetpack site.
@@ -15,7 +25,7 @@ import 'state/themes/init';
  * @returns {Function} Action thunk
  */
 export function deleteTheme( themeId, siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: THEME_DELETE,
 			themeId,
@@ -24,21 +34,38 @@ export function deleteTheme( themeId, siteId ) {
 		return wpcom
 			.undocumented()
 			.deleteThemeFromJetpack( siteId, themeId )
-			.then( theme => {
+			.then( ( { name: themeName } ) => {
 				dispatch( {
 					type: THEME_DELETE_SUCCESS,
 					themeId,
 					siteId,
-					themeName: theme.name,
+					themeName,
 				} );
+				dispatch(
+					successNotice(
+						translate( 'Deleted theme %(themeName)s.', {
+							args: { themeName },
+							context: 'Themes: Theme delete confirmation',
+						} ),
+						{ duration: 5000 }
+					)
+				);
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: THEME_DELETE_FAILURE,
 					themeId,
 					siteId,
 					error,
 				} );
+				dispatch(
+					errorNotice(
+						translate( 'Problem deleting %(themeId)s. Check theme is not active.', {
+							args: { themeId },
+							context: 'Themes: Theme delete failure',
+						} )
+					)
+				);
 			} );
 	};
 }

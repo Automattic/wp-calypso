@@ -9,13 +9,14 @@ import { registerStore } from '@wordpress/data';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import { createActions } from './actions';
+import * as resolvers from './resolvers';
 import * as selectors from './selectors';
-import { DispatchFromMap, SelectFromMap } from '../mapped-types';
-import { WpcomClientCredentials } from '../shared-types';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
+import type { WpcomClientCredentials } from '../shared-types';
 import { controls } from '../wpcom-request-controls';
 
 export * from './types';
-export { State };
+export type { State };
 
 let isRegistered = false;
 export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KEY {
@@ -25,6 +26,7 @@ export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KE
 			actions: createActions( clientCreds ),
 			controls: controls as any,
 			reducer,
+			resolvers,
 			selectors,
 		} );
 	}

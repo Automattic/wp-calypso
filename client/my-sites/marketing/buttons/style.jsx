@@ -9,10 +9,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 
 class SharingButtonsStyle extends React.Component {
 	static displayName = 'SharingButtonsStyle';
@@ -24,15 +27,15 @@ class SharingButtonsStyle extends React.Component {
 	};
 
 	static defaultProps = {
-		onChange: function() {},
+		onChange: function () {},
 		disabled: false,
 	};
 
-	onChange = value => {
+	onChange = ( value ) => {
 		const { path } = this.props;
 
 		this.props.onChange( value );
-		analytics.tracks.recordEvent( 'calypso_sharing_buttons_style_radio_button_click', {
+		recordTracksEvent( 'calypso_sharing_buttons_style_radio_button_click', {
 			value,
 			path,
 		} );
@@ -65,36 +68,35 @@ class SharingButtonsStyle extends React.Component {
 					context: 'Sharing: Sharing button option label',
 				} ),
 			},
-		].map( function( option ) {
+		].map( function ( option ) {
 			return (
-				<label key={ option.value }>
-					<input
+				<FormLabel key={ option.value }>
+					<FormRadio
 						name="sharing_button_style"
-						type="radio"
 						checked={ option.value === this.props.value }
 						onChange={ this.onChange.bind( null, option.value ) }
 						disabled={ this.props.disabled }
 					/>
 					{ option.label }
-				</label>
+				</FormLabel>
 			);
 		}, this );
 	};
 
 	render() {
 		return (
-			<fieldset className="sharing-buttons__fieldset">
+			<FormFieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
 					{ this.props.translate( 'Button style', {
 						context: 'Sharing: Sharing button option heading',
 					} ) }
 				</legend>
 				{ this.getOptions() }
-			</fieldset>
+			</FormFieldset>
 		);
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return { path: getCurrentRouteParameterized( state, getSelectedSiteId( state ) ) };
 } )( localize( SharingButtonsStyle ) );

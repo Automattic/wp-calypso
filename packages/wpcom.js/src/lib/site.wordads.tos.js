@@ -31,7 +31,7 @@ export default function SiteWordAdsTOS( sid, wpcom ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-SiteWordAdsTOS.prototype.get = function( query, fn ) {
+SiteWordAdsTOS.prototype.get = function ( query, fn ) {
 	return this.wpcom.req.get( '/sites/' + this._sid + '/wordads/tos', query, fn );
 };
 
@@ -53,8 +53,8 @@ SiteWordAdsTOS.prototype.get = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-SiteWordAdsTOS.prototype.update = function( query, body, fn ) {
-	var path = '/sites/' + this._sid + '/wordads/tos';
+SiteWordAdsTOS.prototype.update = function ( query, body, fn ) {
+	const path = '/sites/' + this._sid + '/wordads/tos';
 	return this.wpcom.req.post( path, query, body, fn );
 };
 
@@ -75,7 +75,7 @@ SiteWordAdsTOS.prototype.update = function( query, body, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-SiteWordAdsTOS.prototype.sign = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/wordads/tos';
+SiteWordAdsTOS.prototype.sign = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/wordads/tos';
 	return this.wpcom.req.post( path, query, { tos: 'signed' }, fn );
 };

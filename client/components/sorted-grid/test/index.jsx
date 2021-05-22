@@ -7,17 +7,17 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import Label from '../label';
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
+import Label from '../label';
+import SortedGrid from '../';
+
 describe( 'SortedGrid', () => {
-	let SortedGrid;
 	const nullfunc = () => {};
 	const getItemGroup = () => 'item-group';
-
-	beforeAll( () => {
-		SortedGrid = require( '../' );
-	} );
 
 	test( 'should not render labels if the group label is an empty string', () => {
 		const wrapper = shallow(

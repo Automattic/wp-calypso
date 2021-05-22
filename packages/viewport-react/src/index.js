@@ -29,7 +29,7 @@ export function useBreakpoint( breakpoint ) {
 
 	useEffect( () => {
 		function handleBreakpointChange( isActive ) {
-			setState( prevState => {
+			setState( ( prevState ) => {
 				// Ensure we bail out without rendering if nothing changes, by preserving state.
 				if ( prevState.isActive === isActive && prevState.breakpoint === breakpoint ) {
 					return prevState;
@@ -75,9 +75,9 @@ export function useDesktopBreakpoint() {
  * @returns {Function} A function that given a component returns the
  * wrapped component.
  */
-export const withBreakpoint = breakpoint =>
+export const withBreakpoint = ( breakpoint ) =>
 	createHigherOrderComponent(
-		WrappedComponent =>
+		( WrappedComponent ) =>
 			forwardRef( ( props, ref ) => {
 				const isActive = useBreakpoint( breakpoint );
 				return <WrappedComponent { ...props } isBreakpointActive={ isActive } ref={ ref } />;
@@ -94,7 +94,7 @@ export const withBreakpoint = breakpoint =>
  * @returns {Function} The wrapped component.
  */
 export const withMobileBreakpoint = createHigherOrderComponent(
-	WrappedComponent =>
+	( WrappedComponent ) =>
 		forwardRef( ( props, ref ) => {
 			const isActive = useBreakpoint( MOBILE_BREAKPOINT );
 			return <WrappedComponent { ...props } isBreakpointActive={ isActive } ref={ ref } />;
@@ -111,7 +111,7 @@ export const withMobileBreakpoint = createHigherOrderComponent(
  * @returns {Function} The wrapped component.
  */
 export const withDesktopBreakpoint = createHigherOrderComponent(
-	WrappedComponent =>
+	( WrappedComponent ) =>
 		forwardRef( ( props, ref ) => {
 			const isActive = useBreakpoint( DESKTOP_BREAKPOINT );
 			return <WrappedComponent { ...props } isBreakpointActive={ isActive } ref={ ref } />;

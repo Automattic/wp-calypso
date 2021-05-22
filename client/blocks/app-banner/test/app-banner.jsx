@@ -5,8 +5,8 @@
 /**
  * Internal dependencies
  */
-import { getiOSDeepLink, buildDeepLinkFragment } from 'blocks/app-banner';
-import { EDITOR, NOTES, READER, STATS, getCurrentSection } from 'blocks/app-banner/utils';
+import { getiOSDeepLink, buildDeepLinkFragment } from 'calypso/blocks/app-banner';
+import { EDITOR, NOTES, READER, STATS, getCurrentSection } from 'calypso/blocks/app-banner/utils';
 
 describe( 'iOS deep link fragments', () => {
 	test( 'properly encodes tricky fragments', () => {
@@ -21,7 +21,7 @@ describe( 'iOS deep link fragments', () => {
 	} );
 
 	test( 'returns a fragment for each section', () => {
-		[ STATS, READER, EDITOR, NOTES ].forEach( section =>
+		[ STATS, READER, EDITOR, NOTES ].forEach( ( section ) =>
 			expect( buildDeepLinkFragment( '/test', section ) ).toMatchSnapshot()
 		);
 	} );
@@ -51,7 +51,7 @@ describe( 'iOS deep links', () => {
 	} );
 
 	test( 'returns URIs for each path', () => {
-		[ STATS, READER, EDITOR, NOTES ].forEach( section =>
+		[ STATS, READER, EDITOR, NOTES ].forEach( ( section ) =>
 			expect( getiOSDeepLink( '/test', section ) ).toMatchSnapshot()
 		);
 	} );
@@ -65,10 +65,6 @@ describe( 'iOS deep links', () => {
 describe( 'getCurrentSection', () => {
 	test( 'returns stats if in stats section', () => {
 		expect( getCurrentSection( STATS, false, '/stats/123' ) ).toBe( STATS );
-	} );
-
-	test( 'returns null for activity log page', () => {
-		expect( getCurrentSection( STATS, false, '/stats/activity/123' ) ).toBe( null );
 	} );
 
 	test( 'returns notes if notes is open', () => {

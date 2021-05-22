@@ -80,21 +80,14 @@ export async function recordGoogleRecaptchaAction( clientId, action ) {
 }
 
 /**
- * @typedef RecaptchaActionResult
- * @property {string} token
- * @property {number} clientId
- */
-
-/**
  * Records reCAPTCHA action, loading Google script if necessary.
  *
  * @param {string} elementId - a DOM id in which to render the reCAPTCHA client
- * @param {string} action - name of action to record in reCAPTCHA
  * @param {string} siteKey - reCAPTCHA site key
  *
- * @returns {RecaptchaActionResult|null} either the reCAPTCHA token and clientId, or null if the function fails
+ * @returns {number|null} either the reCAPTCHA clientId, or null if the function fails
  */
-export async function initGoogleRecaptcha( elementId, action, siteKey ) {
+export async function initGoogleRecaptcha( elementId, siteKey ) {
 	if ( ! siteKey ) {
 		return null;
 	}
@@ -103,7 +96,7 @@ export async function initGoogleRecaptcha( elementId, action, siteKey ) {
 		return null;
 	}
 
-	await new Promise( resolve => window.grecaptcha.ready( resolve ) );
+	await new Promise( ( resolve ) => window.grecaptcha.ready( resolve ) );
 
 	try {
 		const clientId = await renderRecaptchaClient( elementId, siteKey );
@@ -111,17 +104,12 @@ export async function initGoogleRecaptcha( elementId, action, siteKey ) {
 			return null;
 		}
 
-		const token = await recordGoogleRecaptchaAction( clientId, action );
-		if ( token == null ) {
-			return null;
-		}
-
-		debug( 'initGoogleRecaptcha: [Success]', action, token, clientId );
-		return { token, clientId };
+		debug( 'initGoogleRecaptcha: [Success]', clientId );
+		return clientId;
 	} catch ( error ) {
 		// We don't want errors interrupting our flow, so convert any exceptions
 		// into return values.
-		debug( 'initGoogleRecaptcha: [Error]', action, error );
+		debug( 'initGoogleRecaptcha: [Error]', error );
 		return null;
 	}
 }

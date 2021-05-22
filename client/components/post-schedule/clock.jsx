@@ -6,16 +6,17 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop, flowRight as compose } from 'lodash';
+import { flowRight as compose } from 'lodash';
 import 'moment-timezone'; // monkey patches the existing moment.js
 
 /**
  * Internal dependencies
  */
-import SegmentedControl from 'components/segmented-control';
-import InfoPopover from 'components/info-popover';
-import { withLocalizedMoment } from 'components/localized-moment';
-import getSiteSetting from 'state/selectors/get-site-setting';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import SegmentedControl from 'calypso/components/segmented-control';
+import InfoPopover from 'calypso/components/info-popover';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 
 /**
  * Local dependencies
@@ -28,12 +29,14 @@ import {
 	convertMinutesToHHMM,
 } from './utils';
 
-class PostScheduleClock extends Component {
-	adjustHour = event => this.handleKeyDown( event, 'hour' );
-	adjustMinute = event => this.handleKeyDown( event, 'minute' );
+const noop = () => {};
 
-	setAm = event => this.setAmPm( event, 'AM' );
-	setPm = event => this.setAmPm( event, 'PM' );
+class PostScheduleClock extends Component {
+	adjustHour = ( event ) => this.handleKeyDown( event, 'hour' );
+	adjustMinute = ( event ) => this.handleKeyDown( event, 'minute' );
+
+	setAm = ( event ) => this.setAmPm( event, 'AM' );
+	setPm = ( event ) => this.setAmPm( event, 'PM' );
 
 	amPmRef = React.createRef();
 	hourRef = React.createRef();
@@ -133,7 +136,8 @@ class PostScheduleClock extends Component {
 			return;
 		}
 
-		let diffInMinutes, tzDateOffset;
+		let diffInMinutes;
+		let tzDateOffset;
 
 		if ( timezone ) {
 			const tzDate = date.clone().tz( timezone );
@@ -184,26 +188,24 @@ class PostScheduleClock extends Component {
 
 		return (
 			<div className="post-schedule__clock">
-				<input
+				<FormTextInput
 					className="post-schedule__clock-time"
 					name="post-schedule__clock_hour"
-					ref={ this.hourRef }
+					inputRef={ this.hourRef }
 					value={ date.format( is12hour ? 'hh' : 'HH' ) }
 					onChange={ this.setTime }
 					onKeyDown={ this.adjustHour }
-					type="text"
 				/>
 
 				<span className="post-schedule__clock-divisor">:</span>
 
-				<input
+				<FormTextInput
 					className="post-schedule__clock-time"
 					name="post-schedule__clock_minute"
-					ref={ this.minRef }
+					inputRef={ this.minRef }
 					value={ date.format( 'mm' ) }
 					onChange={ this.setTime }
 					onKeyDown={ this.adjustMinute }
-					type="text"
 				/>
 
 				{ is12hour && (

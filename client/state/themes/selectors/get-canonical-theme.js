@@ -6,9 +6,9 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getTheme } from 'state/themes/selectors/get-theme';
+import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns a theme object from what is considered the 'canonical' source, i.e.
@@ -22,6 +22,6 @@ import 'state/themes/init';
  * @returns {?object}         Theme object
  */
 export function getCanonicalTheme( state, siteId, themeId ) {
-	const source = find( [ 'wpcom', 'wporg', siteId ], s => getTheme( state, s, themeId ) );
+	const source = find( [ 'wpcom', 'wporg', siteId ], ( s ) => getTheme( state, s, themeId ) );
 	return getTheme( state, source, themeId );
 }

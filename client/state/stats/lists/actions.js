@@ -1,19 +1,19 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * External dependencies
  */
 import { includes } from 'lodash';
 
-import 'state/stats/init';
+import 'calypso/state/stats/init';
 
 /**
  * Returns an action object to be used in signalling that stats for a given type of stats and query
@@ -47,7 +47,7 @@ export function receiveSiteStats( siteId, statType, query, data, date ) {
  * @returns {Function}        Action thunk
  */
 export function requestSiteStats( siteId, statType, query ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_STATS_REQUEST,
 			statType,
@@ -71,8 +71,8 @@ export function requestSiteStats( siteId, statType, query ) {
 		const site = isUndocumented ? wpcom.undocumented().site( siteId ) : wpcom.site( siteId );
 
 		return site[ statType ]( options )
-			.then( data => dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) ) )
-			.catch( error => {
+			.then( ( data ) => dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) ) )
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_STATS_REQUEST_FAILURE,
 					statType,

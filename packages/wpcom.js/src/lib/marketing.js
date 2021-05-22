@@ -1,5 +1,5 @@
 /**
- * Local module dependencies.
+ * Internal dependencies
  */
 import MarketingSurvey from './marketing.survey';
 
@@ -26,5 +26,5 @@ export default class Marketing {
 	 */
 	survey( id, siteId ) {
 		return new MarketingSurvey( id, siteId, this.wpcom );
-	};
+	}
 }

@@ -5,47 +5,102 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
+import { pick } from 'lodash';
+import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { isURL } from '@wordpress/url';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import QuerySites from 'components/data/query-sites';
-import QueryProductsList from 'components/data/query-products-list';
-import QuerySitePlans from 'components/data/query-site-plans';
+import Main from 'calypso/components/main';
+import QuerySites from 'calypso/components/data/query-sites';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { CompactCard } from '@automattic/components';
-import { getCurrentUserCurrencyCode, isUserLoggedIn } from 'state/current-user/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getCurrentUserCurrencyCode, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getProductsList,
 	getProductDisplayCost,
 	getProductCost,
+	getProductBySlug,
 	isProductsListFetching,
-} from 'state/products-list/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'calypso/state/products-list/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { localize } from 'i18n-calypso';
 import {
 	isRequestingSitePlans,
 	getPlansBySiteId,
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
-} from 'state/sites/plans/selectors';
+} from 'calypso/state/sites/plans/selectors';
 import { ConciergeQuickstartSession } from './concierge-quickstart-session';
 import { ConciergeSupportSession } from './concierge-support-session';
-import { PlanUpgradeUpsell } from './plan-upgrade-upsell';
-import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
+import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
+import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
+import PurchaseModal from './purchase-modal';
+import Gridicon from 'calypso/components/gridicon';
+import { isMonthly, getPlanByPathSlug } from '@automattic/calypso-products';
+import { isFetchingStoredCards, getStoredCards } from 'calypso/state/stored-cards/selectors';
+import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
+import { extractStoredCardMetaValue } from './purchase-modal/util';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
+import {
+	retrieveSignupDestination,
+	clearSignupDestinationCookie,
+} from 'calypso/signup/storageUtils';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+/**
+ * Upsell Types
+ */
+export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
+export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
+export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
+
 export class UpsellNudge extends React.Component {
 	static propTypes = {
 		receiptId: PropTypes.number,
-		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
+		upsellType: PropTypes.string,
+		upgradeItem: PropTypes.string,
+		siteSlugParam: PropTypes.string,
+
+		// Below are provided by HOCs
+		currencyCode: PropTypes.string,
+		isLoading: PropTypes.bool,
+		hasProductsList: PropTypes.bool,
+		hasSitePlans: PropTypes.bool,
+		product: PropTypes.object,
+		productCost: PropTypes.number,
+		productDisplayCost: PropTypes.string,
+		planRawPrice: PropTypes.string,
+		planDiscountedRawPrice: PropTypes.string,
+		isLoggedIn: PropTypes.bool,
+		siteSlug: PropTypes.string,
+		selectedSiteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+		hasSevenDayRefundPeriod: PropTypes.bool,
+		trackUpsellButtonClick: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+		cards: PropTypes.arrayOf( PropTypes.object ),
+		cart: PropTypes.object,
+		isFetchingStoredCards: PropTypes.bool,
 	};
+
+	state = {
+		showPurchaseModal: false,
+	};
+
+	componentDidMount() {
+		window.scrollTo( 0, 0 );
+	}
 
 	render() {
 		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, upsellType } = this.props;
@@ -53,9 +108,12 @@ export class UpsellNudge extends React.Component {
 		return (
 			<Main className={ upsellType }>
 				<QuerySites siteId={ selectedSiteId } />
+				<QueryStoredCards />
 				{ ! hasProductsList && <QueryProductsList /> }
 				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
 				{ isLoading ? this.renderPlaceholders() : this.renderContent() }
+				{ this.state.showPurchaseModal && this.renderPurchaseModal() }
+				{ this.preloadIconsForPurchaseModal() }
 			</Main>
 		);
 	}
@@ -118,10 +176,11 @@ export class UpsellNudge extends React.Component {
 			upsellType,
 			translate,
 			siteSlug,
+			hasSevenDayRefundPeriod,
 		} = this.props;
 
 		switch ( upsellType ) {
-			case 'concierge-quickstart-session':
+			case CONCIERGE_QUICKSTART_SESSION:
 				return (
 					<ConciergeQuickstartSession
 						currencyCode={ currencyCode }
@@ -136,7 +195,7 @@ export class UpsellNudge extends React.Component {
 					/>
 				);
 
-			case 'concierge-support-session':
+			case CONCIERGE_SUPPORT_SESSION:
 				return (
 					<ConciergeSupportSession
 						currencyCode={ currencyCode }
@@ -151,9 +210,9 @@ export class UpsellNudge extends React.Component {
 					/>
 				);
 
-			case 'plan-upgrade-upsell':
+			case BUSINESS_PLAN_UPGRADE_UPSELL:
 				return (
-					<PlanUpgradeUpsell
+					<BusinessPlanUpgradeUpsell
 						currencyCode={ currencyCode }
 						planRawPrice={ planRawPrice }
 						planDiscountedRawPrice={ planDiscountedRawPrice }
@@ -161,39 +220,144 @@ export class UpsellNudge extends React.Component {
 						translate={ translate }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
+						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
 					/>
 				);
 		}
 	}
 
-	handleClickDecline = () => {
-		const { trackUpsellButtonClick, upsellType, handleCheckoutCompleteRedirect } = this.props;
+	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
+		const { trackUpsellButtonClick, upsellType } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
-		handleCheckoutCompleteRedirect();
+
+		const getThankYouPageUrlArguments = {
+			siteSlug: this.props.siteSlug,
+			receiptId: this.props.receiptId || 'noPreviousPurchase',
+			cart: this.props.cart,
+			hideNudge: shouldHideUpsellNudges,
+			isEligibleForSignupDestinationResult: this.props.isEligibleForSignupDestinationResult,
+		};
+		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
+
+		// Removes the destination cookie only if redirecting to the signup destination.
+		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
+		const destinationFromCookie = retrieveSignupDestination();
+		if ( url.includes( destinationFromCookie ) ) {
+			clearSignupDestinationCookie();
+		}
+
+		// If url starts with http, use browser redirect.
+		// If url is a route, use page router.
+		if ( isURL( url ) ) {
+			window.location.href = url;
+		} else {
+			page.redirect( url );
+		}
 	};
 
-	handleClickAccept = buttonAction => {
+	handleClickAccept = ( buttonAction ) => {
 		const { trackUpsellButtonClick, upsellType, siteSlug, upgradeItem } = this.props;
 
 		trackUpsellButtonClick(
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
 
+		if ( this.isEligibleForOneClickUpsell( buttonAction ) ) {
+			this.setState( {
+				showPurchaseModal: true,
+			} );
+			const storedCard = this.props.cards[ 0 ];
+			const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
+			const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
+			this.props.shoppingCartManager.updateLocation( {
+				countryCode,
+				postalCode,
+				subdivisionCode: null,
+			} );
+			this.props.shoppingCartManager.replaceProductsInCart( [ this.props.product ] );
+			return;
+		}
+
 		return siteSlug
 			? page( `/checkout/${ upgradeItem }/${ siteSlug }` )
 			: page( `/checkout/${ upgradeItem }` );
 	};
+
+	isEligibleForOneClickUpsell = ( buttonAction ) => {
+		const { product, cards, siteSlug, upsellType } = this.props;
+
+		if ( ! product ) {
+			return false;
+		}
+
+		const supportedUpsellTypes = [ CONCIERGE_QUICKSTART_SESSION, BUSINESS_PLAN_UPGRADE_UPSELL ];
+		if ( 'accept' !== buttonAction || ! supportedUpsellTypes.includes( upsellType ) ) {
+			return false;
+		}
+
+		if ( ! siteSlug ) {
+			return false;
+		}
+
+		// stored cards should exist
+		if ( cards.length === 0 ) {
+			return false;
+		}
+
+		return true;
+	};
+
+	renderPurchaseModal = () => {
+		const isCartUpdating = this.props.shoppingCartManager.isPendingUpdate;
+
+		const onCloseModal = () => {
+			this.props.shoppingCartManager.replaceProductsInCart( [] );
+			this.setState( { showPurchaseModal: false } );
+		};
+
+		return (
+			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
+				<PurchaseModal
+					cart={ this.props.cart }
+					cards={ this.props.cards }
+					onClose={ onCloseModal }
+					siteId={ this.props.selectedSiteId }
+					siteSlug={ this.props.siteSlug }
+					isCartUpdating={ isCartUpdating }
+				/>
+			</StripeHookProvider>
+		);
+	};
+
+	preloadIconsForPurchaseModal = () => {
+		return (
+			<div className="upsell-nudge__hidden">
+				<Gridicon icon="cross-small" />
+			</div>
+		);
+	};
 }
 
-const trackUpsellButtonClick = eventName => {
+const trackUpsellButtonClick = ( eventName ) => {
 	// Track upsell get started / accept / decline events
 	return recordTracksEvent( eventName, { section: 'checkout' } );
 };
 
+const resolveProductSlug = ( upsellType, productAlias ) => {
+	switch ( upsellType ) {
+		case BUSINESS_PLAN_UPGRADE_UPSELL:
+			return getPlanByPathSlug( productAlias )?.getStoreSlug();
+		case CONCIERGE_QUICKSTART_SESSION:
+		case CONCIERGE_SUPPORT_SESSION:
+		default:
+			return 'concierge-session';
+	}
+};
+
 export default connect(
 	( state, props ) => {
-		const { siteSlugParam } = props;
+		const { siteSlugParam, upgradeItem, upsellType } = props;
 		const selectedSiteId = getSelectedSiteId( state );
 		const productsList = getProductsList( state );
 		const sitePlans = getPlansBySiteId( state ).data;
@@ -205,22 +369,40 @@ export default connect(
 		const annualPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 			isMonthly: false,
 		} );
+		const isFetchingCards = isFetchingStoredCards( state );
+		const productSlug = resolveProductSlug( upsellType, upgradeItem );
+		const productProperties = pick( getProductBySlug( state, productSlug ), [
+			'product_slug',
+			'product_id',
+		] );
+		const product =
+			productProperties.product_slug && productProperties.product_id
+				? createRequestCartProduct( productProperties )
+				: null;
 
 		return {
+			isFetchingStoredCards: isFetchingCards,
+			cards: getStoredCards( state ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			isLoading: isProductsListFetching( state ) || isRequestingSitePlans( state, selectedSiteId ),
+			isLoading:
+				isFetchingCards ||
+				isProductsListFetching( state ) ||
+				isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
 			hasSitePlans: sitePlans && sitePlans.length > 0,
-			productCost: getProductCost( state, 'concierge-session' ),
-			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
+			product,
+			productCost: getProductCost( state, productSlug ),
+			productDisplayCost: getProductDisplayCost( state, productSlug ),
 			planRawPrice: annualPrice,
 			planDiscountedRawPrice: annualDiscountPrice,
 			isLoggedIn: isUserLoggedIn( state ),
 			siteSlug,
 			selectedSiteId,
+			hasSevenDayRefundPeriod: isMonthly( planSlug ),
+			isEligibleForSignupDestinationResult: isEligibleForSignupDestination( props.cart ),
 		};
 	},
 	{
 		trackUpsellButtonClick,
 	}
-)( localize( UpsellNudge ) );
+)( withShoppingCart( localize( UpsellNudge ) ) );

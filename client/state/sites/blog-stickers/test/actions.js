@@ -11,13 +11,13 @@ import {
 	SITES_BLOG_STICKER_REMOVE,
 	SITES_BLOG_STICKER_LIST,
 	SITES_BLOG_STICKER_LIST_RECEIVE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import {
 	addBlogSticker,
 	removeBlogSticker,
 	listBlogStickers,
 	receiveBlogStickers,
-} from 'state/sites/blog-stickers/actions';
+} from 'calypso/state/sites/blog-stickers/actions';
 
 describe( 'actions', () => {
 	describe( '#addBlogSticker', () => {

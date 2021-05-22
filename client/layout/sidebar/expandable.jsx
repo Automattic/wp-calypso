@@ -3,19 +3,27 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
-import { get, uniqueId } from 'lodash';
+import React, { useMemo, useState, useRef, useLayoutEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { get } from 'lodash';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
  */
+import TranslatableString from 'calypso/components/translatable/proptype';
 import ExpandableSidebarHeading from './expandable-heading';
-import SidebarMenu from 'layout/sidebar/menu';
+import SidebarMenu from 'calypso/layout/sidebar/menu';
+import { hasTouch } from 'calypso/lib/touch-detect';
+import HoverIntent from 'calypso/lib/hover-intent';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+
+const isTouch = hasTouch();
 
 function containsSelectedSidebarItem( children ) {
 	let selectedItemFound = false;
 
-	React.Children.forEach( children, child => {
+	React.Children.forEach( children, ( child ) => {
 		if ( selectedItemFound ) {
 			return true;
 		}
@@ -34,54 +42,121 @@ function containsSelectedSidebarItem( children ) {
 	return selectedItemFound;
 }
 
-export const ExpandableSidebarMenu = props => {
-	const { className, title, count, onClick, icon, materialIcon, materialIconStyle } = props;
+const offScreen = ( submenu ) => {
+	const rect = submenu.getBoundingClientRect();
+	return rect.y + rect.height > window.innerHeight;
+};
 
+export const ExpandableSidebarMenu = ( {
+	className,
+	title,
+	count,
+	onClick,
+	icon,
+	materialIcon,
+	materialIconStyle,
+	customIcon,
+	children,
+	disableFlyout,
+	...props
+} ) => {
 	let { expanded } = props;
+	const menu = React.createRef(); // Needed for HoverIntent.
+	const submenu = useRef();
+	const [ submenuHovered, setSubmenuHovered ] = useState( false );
+	const isUnifiedMenuEnabled = useSelector( isNavUnificationEnabled );
+
+	if ( submenu.current ) {
+		// Sets flyout to expand towards bottom.
+		submenu.current.style.bottom = 'auto';
+		submenu.current.style.top = 0;
+	}
 
 	if ( null === expanded ) {
-		expanded = containsSelectedSidebarItem( props.children );
+		expanded = containsSelectedSidebarItem( children );
 	}
 
 	const classes = classNames( className, {
 		'is-toggle-open': !! expanded,
 		'is-togglable': true,
+		hovered: submenuHovered,
 	} );
 
-	const menuId = uniqueId( 'menu' );
+	const onEnter = () => {
+		if ( disableFlyout || expanded || isTouch || ! isUnifiedMenuEnabled ) {
+			return;
+		}
+
+		setSubmenuHovered( true );
+	};
+
+	const onLeave = () => {
+		// Remove "hovered" state even if menu is expanded.
+		if ( isTouch || ! isUnifiedMenuEnabled ) {
+			return;
+		}
+
+		setSubmenuHovered( false );
+	};
+
+	const menuId = useMemo( () => 'menu' + uuid(), [] );
+
+	useLayoutEffect( () => {
+		if ( submenuHovered && offScreen( submenu.current ) ) {
+			// Sets flyout to expand towards top.
+			submenu.current.style.bottom = 0;
+			submenu.current.style.top = 'auto';
+		}
+	}, [ submenuHovered ] );
 
 	return (
-		<SidebarMenu className={ classes }>
-			<ExpandableSidebarHeading
-				title={ title }
-				count={ count }
-				onClick={ onClick }
-				icon={ icon }
-				materialIcon={ materialIcon }
-				materialIconStyle={ materialIconStyle }
-				expanded={ expanded }
-				menuId={ menuId }
-			/>
-			<div
-				role="region"
-				id={ menuId }
-				className="sidebar__expandable-content"
-				hidden={ ! expanded }
-			>
-				{ props.children }
-			</div>
-		</SidebarMenu>
+		<HoverIntent
+			onMouseOver={ () => onEnter() }
+			onMouseOut={ () => onLeave() }
+			sensitivity={ 7 }
+			interval={ 90 }
+			timeout={ 200 }
+		>
+			<SidebarMenu ref={ menu } className={ classes }>
+				<ExpandableSidebarHeading
+					title={ title }
+					count={ count }
+					onClick={ () => {
+						setSubmenuHovered( false );
+						onClick();
+					} }
+					customIcon={ customIcon }
+					icon={ icon }
+					materialIcon={ materialIcon }
+					materialIconStyle={ materialIconStyle }
+					expanded={ expanded }
+					menuId={ menuId }
+					{ ...props }
+				/>
+				<li
+					role="region"
+					ref={ submenu }
+					id={ menuId }
+					className="sidebar__expandable-content"
+					hidden={ ! expanded }
+				>
+					<ul>{ children }</ul>
+				</li>
+			</SidebarMenu>
+		</HoverIntent>
 	);
 };
 
 ExpandableSidebarMenu.propTypes = {
-	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
+	title: PropTypes.oneOfType( [ TranslatableString, PropTypes.element ] ).isRequired,
 	count: PropTypes.number,
 	onClick: PropTypes.func,
+	customIcon: PropTypes.node,
 	icon: PropTypes.string,
 	materialIcon: PropTypes.string,
 	materialIconStyle: PropTypes.string,
 	expanded: PropTypes.bool,
+	disableFlyout: PropTypes.bool,
 };
 
 export default ExpandableSidebarMenu;

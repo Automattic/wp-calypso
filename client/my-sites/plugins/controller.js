@@ -8,25 +8,25 @@ import { includes, some } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { getSiteFragment, sectionify } from 'lib/route';
-import notices from 'notices';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import { getSiteFragment, sectionify } from 'calypso/lib/route';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginEligibility from './plugin-eligibility';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
-import { hideSidebar } from 'state/ui/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import AsyncLoad from 'calypso/components/async-load';
 
 /**
  * Module variables
  */
 const allowedCategoryNames = [ 'new', 'popular', 'featured' ];
 
-let lastPluginsListVisited, lastPluginsQuerystring;
+let lastPluginsListVisited;
+let lastPluginsQuerystring;
 
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
@@ -115,10 +115,8 @@ function renderPluginWarnings( context ) {
 }
 
 function renderProvisionPlugins( context ) {
-	context.store.dispatch( hideSidebar() );
-
 	context.primary = React.createElement( PlanSetup, {
-		whitelist: context.query.only || false,
+		forSpecificPlugin: context.query.only || false,
 	} );
 }
 
@@ -127,15 +125,12 @@ export function plugins( context, next ) {
 	const basePath = sectionify( context.path ).replace( '/' + filter, '' );
 
 	context.params.pluginFilter = filter;
-	notices.clearNotices( 'notices' );
 	renderPluginList( context, basePath );
 	next();
 }
 
 function plugin( context, next ) {
 	const siteUrl = getSiteFragment( context.path );
-
-	notices.clearNotices( 'notices' );
 	renderSinglePlugin( context, siteUrl );
 	next();
 }
@@ -173,7 +168,7 @@ export function jetpackCanUpdate( context, next ) {
 	let redirectToPlugins = false;
 
 	if ( 'updates' === context.params.pluginFilter && selectedSites.length ) {
-		redirectToPlugins = ! some( selectedSites, function( site ) {
+		redirectToPlugins = ! some( selectedSites, function ( site ) {
 			return site && site.jetpack && site.canUpdateFiles;
 		} );
 
@@ -208,5 +203,19 @@ export function scrollTopIfNoHash( context, next ) {
 	if ( typeof window !== 'undefined' && ! window.location.hash ) {
 		window.scrollTo( 0, 0 );
 	}
+	next();
+}
+
+export function renderDomainsPage( context, next ) {
+	context.primary = (
+		<AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-domain-upsell" />
+	);
+	next();
+}
+
+export function renderPluginsSetupStatusPage( context, next ) {
+	context.primary = (
+		<AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status" />
+	);
 	next();
 }

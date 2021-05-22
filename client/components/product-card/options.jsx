@@ -5,12 +5,14 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { isEmpty } from 'lodash';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import InfoPopover from 'calypso/components/info-popover';
 import ProductCardPriceGroup from './price-group';
 
 const ProductCardOptions = ( {
@@ -20,6 +22,8 @@ const ProductCardOptions = ( {
 	selectedSlug,
 	forceRadiosEvenIfOnlyOneOption,
 } ) => {
+	const translate = useTranslate();
+
 	if ( isEmpty( options ) ) {
 		return null;
 	}
@@ -29,10 +33,19 @@ const ProductCardOptions = ( {
 	return (
 		<Fragment>
 			{ ! hideRadios && optionsLabel && (
-				<h4 className="product-card__options-label">{ optionsLabel }</h4>
+				<h4 className="product-card__options-label">
+					{ optionsLabel }
+					{ selectedSlug === 'jetpack_search' && (
+						<InfoPopover position="right">
+							{ translate(
+								'Records are all posts, pages, custom post types, and other types of content indexed by Jetpack Search.'
+							) }
+						</InfoPopover>
+					) }
+				</h4>
 			) }
 			<div className="product-card__options">
-				{ options.map( option => (
+				{ options.map( ( option ) => (
 					<FormLabel
 						key={ `product-option-${ option.slug }` }
 						className={ classnames( 'product-card__option', {

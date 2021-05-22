@@ -6,9 +6,9 @@ import { find, includes, some } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { prepareComparableUrl } from 'state/reader/follows/utils';
+import { prepareComparableUrl } from 'calypso/state/reader/follows/utils';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 export const commonExtensions = [ 'rss', 'rss.xml', 'feed', 'feed/atom', 'atom.xml', 'atom' ];
 
@@ -35,7 +35,7 @@ export default function getReaderAliasedFollowFeedUrl( state, feedUrl ) {
 		state.reader.follows.items,
 		( follow, key ) =>
 			includes( follow.alias_feed_URLs, urlKey ) ||
-			some( commonExtensions, ext => `${ urlKey }/${ ext }` === key )
+			some( commonExtensions, ( ext ) => `${ urlKey }/${ ext }` === key )
 	);
 	if ( foundAlias ) {
 		return foundAlias.feed_URL;

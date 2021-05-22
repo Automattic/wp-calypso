@@ -1,25 +1,24 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import SupportInfo from 'components/support-info';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import SupportInfo from 'calypso/components/support-info';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 
 const Sso = ( {
 	fields,
@@ -48,12 +47,12 @@ const Sso = ( {
 						siteId={ selectedSiteId }
 						moduleSlug="sso"
 						label={ translate( 'Allow users to log in to this site using WordPress.com accounts' ) }
-						description="Use WordPress.com's secure authentication"
+						description={ translate( "Use WordPress.com's secure authentication" ) }
 						disabled={ isRequestingSettings || isSavingSettings || ssoModuleUnavailable }
 					/>
 
 					<div className="sso__module-settings site-settings__child-settings">
-						<CompactFormToggle
+						<ToggleControl
 							checked={ !! fields.jetpack_sso_match_by_email }
 							disabled={
 								isRequestingSettings ||
@@ -62,11 +61,10 @@ const Sso = ( {
 								ssoModuleUnavailable
 							}
 							onChange={ handleAutosavingToggle( 'jetpack_sso_match_by_email' ) }
-						>
-							{ translate( 'Match accounts using email addresses' ) }
-						</CompactFormToggle>
+							label={ translate( 'Match accounts using email addresses' ) }
+						/>
 
-						<CompactFormToggle
+						<ToggleControl
 							checked={ !! fields.jetpack_sso_require_two_step }
 							disabled={
 								isRequestingSettings ||
@@ -75,9 +73,8 @@ const Sso = ( {
 								ssoModuleUnavailable
 							}
 							onChange={ handleAutosavingToggle( 'jetpack_sso_require_two_step' ) }
-						>
-							{ translate( 'Require two-step authentication' ) }
-						</CompactFormToggle>
+							label={ translate( 'Require two-step authentication' ) }
+						/>
 					</div>
 				</FormFieldset>
 			</Card>
@@ -98,7 +95,7 @@ Sso.propTypes = {
 	fields: PropTypes.object,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(

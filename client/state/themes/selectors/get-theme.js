@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import createSelector from 'lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns a theme object by site ID, theme ID pair.
@@ -25,5 +25,5 @@ export const getTheme = createSelector(
 
 		return manager.getItem( themeId );
 	},
-	state => state.themes.queries
+	( state ) => state.themes.queries
 );

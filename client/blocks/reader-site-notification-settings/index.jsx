@@ -5,16 +5,16 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { find, get } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
-import ReaderPopover from 'reader/components/reader-popover';
-import SegmentedControl from 'components/segmented-control';
-import FormToggle from 'components/forms/form-toggle';
-import { getReaderFollows } from 'state/reader/follows/selectors';
+import Gridicon from 'calypso/components/gridicon';
+import ReaderPopover from 'calypso/reader/components/reader-popover';
+import SegmentedControl from 'calypso/components/segmented-control';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import {
 	subscribeToNewPostEmail,
 	updateNewPostEmailSubscription,
@@ -23,10 +23,10 @@ import {
 	unsubscribeToNewCommentEmail,
 	subscribeToNewPostNotifications,
 	unsubscribeToNewPostNotifications,
-} from 'state/reader/follows/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import QueryUserSettings from 'components/data/query-user-settings';
-import getUserSetting from 'state/selectors/get-user-setting';
+} from 'calypso/state/reader/follows/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 /**
  * Style dependencies
@@ -61,7 +61,7 @@ class ReaderSiteNotificationSettings extends Component {
 		this.setState( { showPopover: false } );
 	};
 
-	setSelected = text => () => {
+	setSelected = ( text ) => () => {
 		const { siteId } = this.props;
 		this.setState( { selected: text } );
 		this.props.updateNewPostEmailSubscription( siteId, text );
@@ -154,12 +154,11 @@ class ReaderSiteNotificationSettings extends Component {
 					className="reader-site-notification-settings__popout"
 				>
 					<div className="reader-site-notification-settings__popout-toggle">
-						{ translate( 'Notify me of new posts' ) }
-						<Gridicon icon="bell" size={ 18 } />
-						<FormToggle
+						<ToggleControl
 							onChange={ this.toggleNewPostNotification }
 							checked={ sendNewPostsByNotification }
-							wrapperClassName="reader-site-notification-settings__popout-form-toggle"
+							id="reader-site-notification-settings__notifications"
+							label={ translate( 'Notify me of new posts' ) }
 						/>
 						<p className="reader-site-notification-settings__popout-hint">
 							{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
@@ -172,21 +171,29 @@ class ReaderSiteNotificationSettings extends Component {
 								: 'reader-site-notification-settings__popout-toggle'
 						}
 					>
-						{ translate( 'Email me new posts' ) }
 						{ ! isEmailBlocked && (
-							<FormToggle onChange={ this.toggleNewPostEmail } checked={ sendNewPostsByEmail } />
+							<ToggleControl
+								onChange={ this.toggleNewPostEmail }
+								checked={ sendNewPostsByEmail }
+								id={ 'reader-site-notification-settings__email-posts' }
+								label={ translate( 'Email me new posts' ) }
+							/>
 						) }
+
 						{ isEmailBlocked && (
-							<p className="reader-site-notification-settings__popout-instructions-hint">
-								{ translate(
-									'You currently have email delivery turned off. Visit your {{a}}Notification Settings{{/a}} to turn it back on.',
-									{
-										components: {
-											a: <a href="/me/notifications/subscriptions" />,
-										},
-									}
-								) }
-							</p>
+							<div>
+								{ translate( 'Email me new posts' ) }
+								<p className="reader-site-notification-settings__popout-instructions-hint">
+									{ translate(
+										'You currently have email delivery turned off. Visit your {{a}}Notification Settings{{/a}} to turn it back on.',
+										{
+											components: {
+												a: <a href="/me/notifications/subscriptions" />,
+											},
+										}
+									) }
+								</p>
+							</div>
 						) }
 					</div>
 
@@ -214,10 +221,11 @@ class ReaderSiteNotificationSettings extends Component {
 					) }
 					{ ! isEmailBlocked && (
 						<div className="reader-site-notification-settings__popout-toggle">
-							{ translate( 'Email me new comments' ) }
-							<FormToggle
+							<ToggleControl
 								onChange={ this.toggleNewCommentEmail }
 								checked={ sendNewCommentsByEmail }
+								id="reader-site-notification-settings__email-comments"
+								label={ translate( 'Email me new comments' ) }
 							/>
 						</div>
 					) }

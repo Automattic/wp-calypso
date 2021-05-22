@@ -16,25 +16,43 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 	}
 
 	async connectWordPressCom() {
-		const selector = By.css( ".jp-connect-full__button-container a[href*='register']" );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		const locator = By.css( ".jp-connect-full__button-container a[href*='register']" );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
 		await this.driver.sleep( 1000 );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
+	}
+
+	async inPlaceConnect() {
+		const locator = By.css( ".jp-connect-full__button-container a[href*='register']" );
+		const spinnerLocator = By.css(
+			'.jp-connect-full__button-container:not([style="display: none;"]) .jp-spinner'
+		);
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
+		await this.driver.sleep( 1000 );
+		await driverHelper.clickWhenClickable( this.driver, locator );
+
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, spinnerLocator );
+
+		return await driverHelper.waitUntilElementNotLocated(
+			this.driver,
+			spinnerLocator,
+			this.explicitWaitMS * 3
+		);
 	}
 
 	async atAGlanceDisplayed() {
-		return await driverHelper.isElementPresent( this.driver, By.css( '.jp-at-a-glance' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '.jp-at-a-glance' ) );
 	}
 
 	async openPlansTab() {
-		const selector = By.css( '.dops-section-nav__panel li.dops-section-nav-tab:nth-child(2) a' );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		const locator = By.css( '.dops-section-nav__panel li.dops-section-nav-tab:nth-child(2) a' );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
 	async clickUpgradeNudge() {
-		const selector = By.css( '.dops-banner a[href*="aag-search"]' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		const locator = By.css( '.dops-banner a[href*="aag-search"]' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
 	async disconnectSite() {
@@ -46,7 +64,7 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, manageConnectionButton );
 		await driverHelper.clickWhenClickable( this.driver, disconnectButton );
 
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			successDisconnectNotice,
 			this.explicitWaitMS * 2

@@ -1,21 +1,27 @@
 /**
  * External dependencies
  */
-import { random, map, includes, get, noop } from 'lodash';
+import { random, map, includes, get } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import warn from 'lib/warn';
-import { READER_STREAMS_PAGE_REQUEST } from 'state/reader/action-types';
-import { receivePage, receiveUpdates } from 'state/reader/streams/actions';
-import { receivePosts } from 'state/reader/posts/actions';
-import { keyForPost } from 'reader/post-key';
-import { recordTracksEvent } from 'state/analytics/actions';
-import XPostHelper from 'reader/xpost-helper';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
+import { receivePage, receiveUpdates } from 'calypso/state/reader/streams/actions';
+import { receivePosts } from 'calypso/state/reader/posts/actions';
+import { keyForPost } from 'calypso/reader/post-key';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import XPostHelper from 'calypso/reader/xpost-helper';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 /**
  * Pull the suffix off of a stream key
@@ -49,11 +55,11 @@ function analyticsForStream( { streamKey, algorithm, posts } ) {
 
 	const eventName = 'calypso_traintracks_render';
 	const analyticsActions = posts
-		.filter( post => !! post.railcar )
-		.map( post => recordTracksEvent( eventName, post.railcar ) );
+		.filter( ( post ) => !! post.railcar )
+		.map( ( post ) => recordTracksEvent( eventName, post.railcar ) );
 	return analyticsActions;
 }
-const getAlgorithmForStream = streamKey => analyticsAlgoMap.get( streamKey );
+const getAlgorithmForStream = ( streamKey ) => analyticsAlgoMap.get( streamKey );
 
 export const PER_FETCH = 7;
 export const INITIAL_FETCH = 4;
@@ -118,6 +124,10 @@ const streamApis = {
 		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/featured`,
 		dateProperty: 'date',
 	},
+	p2: {
+		path: () => '/read/following/p2',
+		dateProperty: 'date',
+	},
 	a8c: {
 		path: () => '/read/a8c',
 		dateProperty: 'date',
@@ -125,7 +135,7 @@ const streamApis = {
 	'conversations-a8c': {
 		path: () => '/read/conversations',
 		dateProperty: 'last_comment_date_gmt',
-		query: extras => getQueryString( { ...extras, index: 'a8c' } ),
+		query: ( extras ) => getQueryString( { ...extras, index: 'a8c' } ),
 		pollQuery: () =>
 			getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ], { index: 'a8c' } ),
 	},
@@ -144,7 +154,7 @@ const streamApis = {
 	custom_recs_posts_with_images: {
 		path: () => '/read/recommendations/posts',
 		dateProperty: 'date',
-		query: extras =>
+		query: ( extras ) =>
 			getQueryString( {
 				...extras,
 				seed,
@@ -193,6 +203,7 @@ export function requestPage( action ) {
 		: {};
 
 	const fetchCount = pageHandle ? PER_FETCH : INITIAL_FETCH;
+	// eslint-disable-next-line no-extra-boolean-cast
 	const number = !! gap ? PER_GAP : fetchCount;
 
 	return http( {
@@ -229,7 +240,7 @@ export function handlePage( action, data ) {
 
 	const actions = analyticsForStream( { streamKey, algorithm: data.algorithm, posts } );
 
-	const streamItems = posts.map( post => ( {
+	const streamItems = posts.map( ( post ) => ( {
 		...keyForPost( post ),
 		date: post[ dateProperty ],
 		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations

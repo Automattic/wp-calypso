@@ -12,28 +12,29 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import afterLayoutFlush from 'lib/after-layout-flush';
-import QueryPosts from 'components/data/query-posts';
-import QueryRecentPostViews from 'components/data/query-stats-recent-post-views';
-import { DEFAULT_POST_QUERY } from 'lib/query-manager/post/constants';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isVipSite from 'state/selectors/is-vip-site';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
+import QueryPosts from 'calypso/components/data/query-posts';
+import QueryRecentPostViews from 'calypso/components/data/query-stats-recent-post-views';
+import { DEFAULT_POST_QUERY } from 'calypso/lib/query-manager/post/constants';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import {
 	isRequestingPostsForQueryIgnoringPage,
 	getPostsForQueryIgnoringPage,
 	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
-} from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
-import { getEditorUrl } from 'state/selectors/get-editor-url';
-import ListEnd from 'components/list-end';
-import PostItem from 'blocks/post-item';
+} from 'calypso/state/posts/selectors';
+import { getPostType, getPostTypeLabel } from 'calypso/state/post-types/selectors';
+import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
+import ListEnd from 'calypso/components/list-end';
+import PostItem from 'calypso/blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'calypso/components/section-header';
 import { Button } from '@automattic/components';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { FEATURE_NO_ADS } from 'lib/plans/constants';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { FEATURE_NO_ADS } from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -143,7 +144,7 @@ class PostTypeList extends Component {
 	}
 
 	postIdsFromPosts( posts ) {
-		return ! isEmpty( posts ) ? posts.map( post => post.ID ) : [];
+		return ! isEmpty( posts ) ? posts.map( ( post ) => post.ID ) : [];
 	}
 
 	getPostsPerPageCount() {
@@ -196,29 +197,16 @@ class PostTypeList extends Component {
 	}
 
 	renderSectionHeader() {
-		const { editorUrl, postLabels, localeSlug } = this.props;
+		const { editorUrl, postLabels, addNewItemLabel } = this.props;
 
 		if ( ! postLabels ) {
 			return null;
 		}
 
-		/*
-		 * Temporary workaround to Sentence case label from core API for EN langs
-		 * @TODO: Remove when https://core.trac.wordpress.org/ticket/49616 is merged
-		 */
-
-		let addNewLabel = postLabels.add_new_item;
-
-		if ( 'en' === localeSlug || 'en-gb' === localeSlug ) {
-			addNewLabel =
-				postLabels.add_new_item[ 0 ].toUpperCase() +
-				postLabels.add_new_item.slice( 1 ).toLowerCase();
-		}
-
 		return (
 			<SectionHeader label={ postLabels.name }>
 				<Button primary compact className="post-type-list__add-post" href={ editorUrl }>
-					{ addNewLabel }
+					{ addNewItemLabel }
 				</Button>
 			</SectionHeader>
 		);
@@ -264,7 +252,7 @@ class PostTypeList extends Component {
 	}
 
 	render() {
-		const { query, siteId, isRequestingPosts, translate, isVip } = this.props;
+		const { query, siteId, isRequestingPosts, translate, isVip, isJetpack } = this.props;
 		const { maxRequestedPage, recentViewIds } = this.state;
 		const posts = this.props.posts || [];
 		const postStatuses = query.status.split( ',' );
@@ -272,10 +260,14 @@ class PostTypeList extends Component {
 		const classes = classnames( 'post-type-list', {
 			'is-empty': isLoadedAndEmpty,
 		} );
+
+		const isSingleSite = !! siteId;
+
 		const showUpgradeNudge =
 			siteId &&
 			posts.length > 10 &&
 			! isVip &&
+			! isJetpack &&
 			query &&
 			( query.type === 'post' || ! query.type ) &&
 			( postStatuses.includes( 'publish' ) || postStatuses.includes( 'private' ) );
@@ -284,10 +276,11 @@ class PostTypeList extends Component {
 			<div className={ classes }>
 				{ this.renderSectionHeader() }
 				{ query &&
-					range( 1, maxRequestedPage + 1 ).map( page => (
+					range( 1, maxRequestedPage + 1 ).map( ( page ) => (
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
 					) ) }
-				{ recentViewIds.length > 0 && (
+				{ /* Disable Querying recent views in all-sites mode as it doesn't work without sideId. */ }
+				{ isSingleSite && recentViewIds.length > 0 && (
 					<QueryRecentPostViews siteId={ siteId } postIds={ recentViewIds } num={ 30 } />
 				) }
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
@@ -320,17 +313,24 @@ export default connect( ( state, ownProps ) => {
 	const totalPageCount = getPostsLastPageForQuery( state, siteId, ownProps.query );
 	const lastPageToRequest =
 		siteId === null ? Math.min( MAX_ALL_SITES_PAGES, totalPageCount ) : totalPageCount;
-
+	const localeSlug = getLocaleSlug( state );
 	return {
 		siteId,
 		posts: getPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		isVip: isVipSite( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
 		isRequestingPosts: isRequestingPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		totalPostCount: getPostsFoundForQuery( state, siteId, ownProps.query ),
 		totalPageCount,
 		lastPageToRequest,
 		editorUrl: getEditorUrl( state, siteId, null, ownProps.query.type ),
 		postLabels: get( getPostType( state, siteId, ownProps.query.type ), 'labels' ),
-		localeSlug: getLocaleSlug( state ),
+		addNewItemLabel: getPostTypeLabel(
+			state,
+			siteId,
+			ownProps.query.type,
+			'add_new_item',
+			localeSlug
+		),
 	};
 } )( localize( PostTypeList ) );

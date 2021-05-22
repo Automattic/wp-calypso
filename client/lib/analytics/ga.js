@@ -13,7 +13,7 @@ import {
 	fireGoogleAnalyticsPageView,
 	fireGoogleAnalyticsEvent,
 	fireGoogleAnalyticsTiming,
-} from 'lib/analytics/ad-tracking';
+} from 'calypso/lib/analytics/ad-tracking';
 
 const gaDebug = debug( 'calypso:analytics:ga' );
 
@@ -100,7 +100,7 @@ export const gaRecordTiming = makeGoogleAnalyticsTrackingFunction( function reco
  * @returns {Function} Wrapped function
  */
 export function makeGoogleAnalyticsTrackingFunction( func ) {
-	return function( ...args ) {
+	return function ( ...args ) {
 		if ( ! isGoogleAnalyticsAllowed() ) {
 			gaDebug( '[Disallowed] analytics %s( %o )', func.name, args );
 			return;

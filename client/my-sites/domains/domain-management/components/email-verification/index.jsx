@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get } from 'lodash';
@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -51,7 +51,7 @@ class EmailVerificationCard extends React.Component {
 		this.setState( { emailSent: false } );
 	};
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		const {
 			errorMessage,
 			resendVerification,
@@ -65,7 +65,7 @@ class EmailVerificationCard extends React.Component {
 
 		this.setState( { submitting: true } );
 
-		resendVerification( selectedDomainName, error => {
+		resendVerification( selectedDomainName, ( error ) => {
 			if ( error ) {
 				const message = get( error, 'message', errorMessage );
 				this.props.errorNotice( message );
@@ -134,15 +134,20 @@ class EmailVerificationCard extends React.Component {
 	}
 
 	renderCompact() {
-		const { translate } = this.props;
+		const { changeEmailHref, translate } = this.props;
 		const { submitting } = this.state;
 
 		return (
 			<div>
 				<p>{ this.props.verificationExplanation }</p>
-				<Button busy={ submitting } disabled={ submitting } onClick={ this.handleSubmit }>
-					{ submitting ? translate( 'Sending…' ) : translate( 'Resend email' ) }
-				</Button>
+				<div className="email-verification__actions">
+					<Button busy={ submitting } disabled={ submitting } onClick={ this.handleSubmit }>
+						{ submitting ? translate( 'Sending…' ) : translate( 'Resend email' ) }
+					</Button>
+					{ changeEmailHref && (
+						<a href={ changeEmailHref }>{ translate( 'Change your email address' ) }</a>
+					) }
+				</div>
 			</div>
 		);
 	}

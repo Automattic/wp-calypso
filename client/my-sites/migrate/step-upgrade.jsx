@@ -11,17 +11,16 @@ import { CompactCard, ProductIcon } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
-import Gridicon from 'components/gridicon';
-import HeaderCake from 'components/header-cake';
+import CardHeading from 'calypso/components/card-heading';
+import Gridicon from 'calypso/components/gridicon';
+import HeaderCake from 'calypso/components/header-cake';
 import MigrateButton from './migrate-button.jsx';
-import PlanPrice from 'my-sites/plan-price';
-import QueryPlans from 'components/data/query-plans';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getPlan } from 'lib/plans';
-import { getPlanRawPrice } from 'state/plans/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
-import { recordTracksEvent } from 'state/analytics/actions';
+import PlanPrice from 'calypso/my-sites/plan-price';
+import QueryPlans from 'calypso/components/data/query-plans';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -140,7 +139,7 @@ class StepUpgrade extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const plan = getPlan( PLAN_BUSINESS );
 		const planId = plan.getProductId();
 

@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import afterLayoutFlush from 'lib/after-layout-flush';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
 /**
  * Style dependencies
@@ -31,8 +31,9 @@ const commonDefaultProps = {
 };
 
 export function calculateOffset() {
-	// Offset to account for Master Bar
-	return document.getElementById( 'header' ).getBoundingClientRect().height;
+	// Offset to account for Masterbar
+	const headerEl = document.getElementById( 'header' );
+	return headerEl ? headerEl.getBoundingClientRect().height : 0;
 }
 
 export function getBlockStyle( state ) {
@@ -90,7 +91,7 @@ class StickyPanelWithIntersectionObserver extends React.Component {
 		blockWidth: 0,
 	};
 
-	onIntersection = afterLayoutFlush( entries => {
+	onIntersection = afterLayoutFlush( ( entries ) => {
 		if ( ! entries || ! entries[ 0 ] ) {
 			return;
 		}
@@ -100,7 +101,7 @@ class StickyPanelWithIntersectionObserver extends React.Component {
 	} );
 
 	throttleOnResize = throttle(
-		() => this.setState( prevState => getDimensions( this, prevState.isSticky ) ),
+		() => this.setState( ( prevState ) => getDimensions( this, prevState.isSticky ) ),
 		RESIZE_RATE_IN_MS
 	);
 
@@ -163,7 +164,7 @@ class StickyPanelWithScrollEvent extends React.Component {
 	} );
 
 	throttleOnResize = throttle(
-		() => this.setState( prevState => getDimensionUpdates( this, prevState ) ),
+		() => this.setState( ( prevState ) => getDimensionUpdates( this, prevState ) ),
 		RESIZE_RATE_IN_MS
 	);
 

@@ -22,20 +22,20 @@ import {
 	READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
 	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
-} from 'state/reader/action-types';
+} from 'calypso/state/reader/action-types';
 
-import 'state/data-layer/wpcom/read/following/mine';
-import 'state/data-layer/wpcom/read/following/mine/delete';
-import 'state/data-layer/wpcom/read/following/mine/new';
-import 'state/data-layer/wpcom/read/site/comment-email-subscriptions/delete';
-import 'state/data-layer/wpcom/read/site/comment-email-subscriptions/new';
-import 'state/data-layer/wpcom/read/site/post-email-subscriptions/delete';
-import 'state/data-layer/wpcom/read/site/post-email-subscriptions/new';
-import 'state/data-layer/wpcom/read/site/post-email-subscriptions/update';
-import 'state/data-layer/wpcom/read/sites/notification-subscriptions/delete';
-import 'state/data-layer/wpcom/read/sites/notification-subscriptions/new';
+import 'calypso/state/data-layer/wpcom/read/following/mine';
+import 'calypso/state/data-layer/wpcom/read/following/mine/delete';
+import 'calypso/state/data-layer/wpcom/read/following/mine/new';
+import 'calypso/state/data-layer/wpcom/read/site/comment-email-subscriptions/delete';
+import 'calypso/state/data-layer/wpcom/read/site/comment-email-subscriptions/new';
+import 'calypso/state/data-layer/wpcom/read/site/post-email-subscriptions/delete';
+import 'calypso/state/data-layer/wpcom/read/site/post-email-subscriptions/new';
+import 'calypso/state/data-layer/wpcom/read/site/post-email-subscriptions/update';
+import 'calypso/state/data-layer/wpcom/read/sites/notification-subscriptions/delete';
+import 'calypso/state/data-layer/wpcom/read/sites/notification-subscriptions/new';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 /**
  * Module variables
@@ -106,7 +106,7 @@ export function recordFollowError( feedUrl, error ) {
  * @returns {Function} Action thunk
  */
 export function recordFollow( url ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'User followed ' + url );
 		dispatch( {
 			type: READER_RECORD_FOLLOW,
@@ -122,7 +122,7 @@ export function recordFollow( url ) {
  * @returns {Function} Action thunk
  */
 export function recordUnfollow( url ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		debug( 'User unfollowed ' + url );
 		dispatch( {
 			type: READER_RECORD_UNFOLLOW,

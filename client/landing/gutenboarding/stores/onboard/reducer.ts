@@ -1,20 +1,23 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
+import type { DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
+import type { Design, FontPair } from '@automattic/design-picker';
 
 /**
  * Internal dependencies
  */
-import { SiteVertical, Design } from './types';
-import { OnboardAction } from './actions';
-import { FontPair } from 'landing/gutenboarding/constants';
+import type { SiteVertical } from './types';
+import type { OnboardAction } from './actions';
 
-const domain: Reducer<
-	import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined,
-	OnboardAction
-> = ( state, action ) => {
+type FeatureId = WPCOMFeatures.FeatureId;
+
+const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, OnboardAction > = (
+	state,
+	action
+) => {
 	if ( action.type === 'SET_DOMAIN' ) {
 		return action.domain;
 	}
@@ -28,11 +31,97 @@ const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
 		return action.domainSearch;
 	}
-	if ( action.type === 'SET_SITE_TITLE' ) {
-		return action.siteTitle;
-	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
+	}
+	return state;
+};
+
+const domainCategory: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_DOMAIN_CATEGORY' ) {
+		return action.domainCategory;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const hasUsedDomainsStep: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HAS_USED_DOMAINS_STEP' ) {
+		return action.hasUsedDomainsStep;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
+const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HAS_USED_PLANS_STEP' ) {
+		return action.hasUsedPlansStep;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
+const isRedirecting: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_IS_REDIRECTING' ) {
+		return action.isRedirecting;
+	}
+	// This reducer is intentionally not cleared by 'RESET_ONBOARD_STORE' to prevent
+	// a flash of the IntentGathering step after the store is reset.
+	return state;
+};
+
+const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) => {
+	if ( action.type === 'TOGGLE_PAGE_LAYOUT' ) {
+		const layout = action.pageLayout;
+		if ( state.includes( layout.slug ) ) {
+			return state.filter( ( item ) => item !== layout.slug );
+		}
+		return [ ...state, layout.slug ];
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return [];
+	}
+	return state;
+};
+
+const planProductId: Reducer< number | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_PLAN_PRODUCT_ID' ) {
+		return action.planProductId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const randomizedDesigns: Reducer< { featured: Design[] }, OnboardAction > = (
+	state = { featured: [] },
+	action
+) => {
+	if ( action.type === 'SET_RANDOMIZED_DESIGNS' ) {
+		return action.randomizedDesigns;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return { featured: [] };
+	}
+	return state;
+};
+
+const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_FONTS' ) {
+		return action.fonts;
+	}
+	if ( action.type === 'RESET_FONTS' || action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
 	}
 	return state;
 };
@@ -43,6 +132,56 @@ const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, ac
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
+	}
+	return state;
+};
+
+const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
+	state: FeatureId[] = [],
+	action
+) => {
+	if ( action.type === 'ADD_FEATURE' ) {
+		return [ ...state, action.featureId ];
+	}
+
+	if ( action.type === 'SET_DOMAIN' && action.domain && ! action.domain?.is_free ) {
+		return [ ...state, 'domain' ];
+	}
+
+	if ( action.type === 'SET_DOMAIN' && action.domain?.is_free ) {
+		return state.filter( ( id ) => id !== 'domain' );
+	}
+
+	if ( action.type === 'REMOVE_FEATURE' ) {
+		return state.filter( ( id ) => id !== action.featureId );
+	}
+
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return [];
+	}
+
+	return state;
+};
+
+const selectedSite: Reducer< number | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_SELECTED_SITE' ) {
+		return action.selectedSite;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const showSignupDialog: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_SHOW_SIGNUP_DIALOG' ) {
+		return action.showSignup;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
 	}
 	return state;
 };
@@ -67,45 +206,32 @@ const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state
 	return state;
 };
 
-const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) => {
-	if ( action.type === 'TOGGLE_PAGE_LAYOUT' ) {
-		const layout = action.pageLayout;
-		if ( state.includes( layout.slug ) ) {
-			return state.filter( item => item !== layout.slug );
-		}
-		return [ ...state, layout.slug ];
+const wasVerticalSkipped: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SKIP_SITE_VERTICAL' ) {
+		return true;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return [];
+		return false;
 	}
 	return state;
 };
 
-const siteWasCreatedForDomainPurchase: Reducer< boolean, OnboardAction > = (
-	state = false,
-	action
-) => {
-	switch ( action.type ) {
-		case 'SET_SITE_WAS_CREATED_FOR_DOMAIN_PURCHASE':
-			return action.siteWasCreatedForDomainPurchase;
-
-		case 'RESET_ONBOARD_STORE':
-			return false;
-
-		default:
-			return state;
+const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'ONBOARDING_START' ) {
+		return true;
 	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
 };
 
-const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
-	state = undefined,
-	action
-) => {
-	if ( action.type === 'SET_FONTS' ) {
-		return action.fonts;
+const lastLocation: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_LAST_LOCATION' ) {
+		return action.path;
 	}
-	if ( action.type === 'RESET_FONTS' || action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
 	}
 	return state;
 };
@@ -113,12 +239,23 @@ const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
+	domainCategory,
+	isRedirecting,
+	hasUsedDomainsStep,
+	hasUsedPlansStep,
+	pageLayouts,
+	selectedFeatures,
 	selectedFonts,
 	selectedDesign,
+	selectedSite,
 	siteTitle,
 	siteVertical,
-	pageLayouts,
-	siteWasCreatedForDomainPurchase,
+	showSignupDialog,
+	planProductId,
+	wasVerticalSkipped,
+	randomizedDesigns,
+	hasOnboardingStarted,
+	lastLocation,
 } );
 
 export type State = ReturnType< typeof reducer >;

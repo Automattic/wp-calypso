@@ -1,20 +1,22 @@
+const path = require( 'path' );
+
 module.exports = {
-	entry: __dirname + '/../build/index.js',
+	entry: path.join( __dirname, '../build/index.js' ),
 
 	node: {
-		fs: 'empty'
+		fs: 'empty',
 	},
 
 	output: {
-		path: __dirname + '/dist/',
+		path: path.join( __dirname, 'dist/' ),
 		filename: 'wpcom-proxy-request.js',
 		libraryTarget: 'var',
-		library: 'WPCOMProxyRequest'
+		library: 'WPCOMProxyRequest',
 	},
 
 	resolve: {
-		extensions: [ '', '.js' ]
+		extensions: [ '', '.js' ],
 	},
 
-	devtool: 'sourcemap'
+	devtool: 'sourcemap',
 };

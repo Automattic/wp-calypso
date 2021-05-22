@@ -5,7 +5,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 export default class PlanCompareCardItem extends React.Component {
 	static propTypes = {

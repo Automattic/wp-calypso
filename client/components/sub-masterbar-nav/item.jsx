@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
-export const Item = props => {
+const noop = () => {};
+
+export const Item = ( props ) => {
 	const { isSelected, onClick, label, icon, href } = props;
 
 	const classes = classNames( 'sub-masterbar-nav__item', { 'is-selected': isSelected } );

@@ -3,13 +3,12 @@
  */
 import React from 'react';
 import { get, omit } from 'lodash';
-import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { localizeUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export function getSMSMessageFromResponse( response ) {
 	const phoneNumber = get( response, 'body.data.phone_number' );
@@ -140,7 +139,7 @@ export function getErrorFromHTTPError( httpError ) {
  * @param {object} wpcomError HTTP error
  * @returns {{message: string, field: string, code: string}} an error message and the id of the corresponding field
  */
-export const getErrorFromWPCOMError = wpcomError => ( {
+export const getErrorFromWPCOMError = ( wpcomError ) => ( {
 	message: wpcomError.message,
 	code: wpcomError.error,
 	field: 'global',
@@ -153,7 +152,7 @@ export const getErrorFromWPCOMError = wpcomError => ( {
  * @param {string} authAccountType - authentication account type
  * @returns {boolean} true if the account is regular, false otherwise
  */
-export const isRegularAccount = authAccountType => authAccountType === 'regular';
+export const isRegularAccount = ( authAccountType ) => authAccountType === 'regular';
 
 /**
  * Determines whether the user account uses authentication without password.
@@ -161,7 +160,15 @@ export const isRegularAccount = authAccountType => authAccountType === 'regular'
  * @param {string} authAccountType - authentication account type
  * @returns {boolean} true if the account is passwordless, false otherwise
  */
-export const isPasswordlessAccount = authAccountType => authAccountType === 'passwordless';
+export const isPasswordlessAccount = ( authAccountType ) => authAccountType === 'passwordless';
+
+export function stringifyBody( bodyObj ) {
+	// Clone bodyObj, replacing null or undefined values with empty strings.
+	const body = Object.fromEntries(
+		Object.entries( bodyObj ?? {} ).map( ( [ key, val ] ) => [ key, val ?? '' ] )
+	);
+	return new globalThis.URLSearchParams( body ).toString();
+}
 
 export async function postLoginRequest( action, bodyObj ) {
 	const response = await window.fetch(
@@ -170,7 +177,7 @@ export async function postLoginRequest( action, bodyObj ) {
 			method: 'POST',
 			credentials: 'include',
 			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: stringify( bodyObj ),
+			body: stringifyBody( bodyObj ),
 		}
 	);
 

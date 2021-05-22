@@ -17,8 +17,8 @@ import {
 	SITE_PRODUCTS_FETCH_COMPLETED,
 	SITE_PRODUCTS_FETCH_FAILED,
 	SITE_PRODUCTS_REMOVE,
-} from 'state/action-types';
-import wpcom from 'lib/wp';
+} from 'calypso/state/action-types';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Returns an action object to be used in signalling that products for the given site have been cleared.
@@ -40,13 +40,13 @@ export function clearSiteProducts( siteId ) {
  * @returns {Function} a promise that will resolve once fetching is completed
  */
 export function fetchSiteProducts( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_PRODUCTS_FETCH,
 			siteId,
 		} );
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			wpcom.undocumented().getSiteProducts( siteId, ( error, data ) => {
 				if ( error ) {
 					debug( 'Fetching site products failed: ', error );
@@ -95,7 +95,7 @@ export function fetchSiteProductsCompleted( siteId, products ) {
  * @returns {Function} the corresponding action thunk
  */
 export function refreshSiteProducts( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( clearSiteProducts( siteId ) );
 		dispatch( fetchSiteProducts( siteId ) );
 	};

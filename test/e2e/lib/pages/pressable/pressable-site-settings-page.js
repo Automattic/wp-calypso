@@ -17,14 +17,13 @@ export default class PressableSiteSettingsPage extends AsyncBaseContainer {
 		super( driver, By.css( '.site-show-sections' ) );
 	}
 
-	waitForJetpackPremium() {
-		const loadingSelector = By.css( '.activating img.loading-image' );
-		return driverHelper.waitTillNotPresent( this.driver, loadingSelector, explicitWaitMS * 4 );
-	}
-
-	gotoWPAdmin() {
-		const buttonSelector = By.css( '.site-show-bar-wp-btn' );
-		return driverHelper.followLinkWhenFollowable( this.driver, buttonSelector );
+	async waitForJetpackPremium() {
+		const loadingLocator = By.css( '.activating img.loading-image' );
+		return await driverHelper.waitUntilElementNotLocated(
+			this.driver,
+			loadingLocator,
+			explicitWaitMS * 4
+		);
 	}
 
 	async activateJetpackPremium() {

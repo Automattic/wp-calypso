@@ -13,9 +13,9 @@ import {
 	READER_THUMBNAIL_REQUEST_SUCCESS,
 	READER_THUMBNAIL_REQUEST_FAILURE,
 	READER_THUMBNAIL_RECEIVE,
-} from 'state/reader/action-types';
+} from 'calypso/state/reader/action-types';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 /**
  * Module variables
@@ -61,7 +61,7 @@ function requestFailure( embedUrl, error ) {
  * @param  {string} embedUrl -  the url of the embed for which to get the thumbnail
  * @returns {Function|object} Action thunk | Action object
  */
-export const requestThumbnail = embedUrl => dispatch => {
+export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 	const { id, service } = getEmbedMetadata( embedUrl ) || {};
 	switch ( service ) {
 		case 'youtube': {
@@ -83,7 +83,7 @@ export const requestThumbnail = embedUrl => dispatch => {
 
 			const fetchUrl = `https://vimeo.com/api/v2/video/${ id }.json`;
 			return globalThis.fetch( fetchUrl ).then(
-				async response => {
+				async ( response ) => {
 					let json;
 					try {
 						json = await response.json();
@@ -108,7 +108,7 @@ export const requestThumbnail = embedUrl => dispatch => {
 						);
 					}
 				},
-				error => {
+				( error ) => {
 					dispatch( requestFailure( embedUrl, error ) );
 				}
 			);

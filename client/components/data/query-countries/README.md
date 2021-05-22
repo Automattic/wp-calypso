@@ -1,5 +1,4 @@
-Query Countries
-===============
+# Query Countries
 
 `QueryDomainCountries`, `QueryPaymentCountries`, and `QuerySmsCountries` are React components used in managing network requests for lists of countries.
 
@@ -9,13 +8,15 @@ Render the component without props. It does not accept any children, nor does it
 
 ```jsx
 import React from 'react';
-import QueryDomainCountries from 'components/data/query-countries/domains';
+import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 
 export default function CountriesList( { countries } ) {
 	return (
 		<ul>
 			<QueryDomainCountries />
-			{ countries.map( ( country ) => <li>{ country.label }</li> ) }
+			{ countries.map( ( country ) => (
+				<li>{ country.label }</li>
+			) ) }
 		</ul>
 	);
 }

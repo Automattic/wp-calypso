@@ -6,10 +6,10 @@ import { flowRight as compose } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { transferStates } from 'state/automated-transfer/constants';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors/get-automated-transfer-status';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors/get-automated-transfer-status';
 
-import 'state/automated-transfer/init';
+import 'calypso/state/automated-transfer/init';
 
 /**
  * Maps automated transfer status value to indication if transfer is active
@@ -17,7 +17,7 @@ import 'state/automated-transfer/init';
  * @param {string} status name of current state in automated transfer
  * @returns {?boolean} is transfer currently active? null if unknown
  */
-export const isActive = status => ( status ? status === transferStates.START : null );
+export const isActive = ( status ) => ( status ? status === transferStates.START : null );
 
 /**
  * Indicates whether or not an automated transfer is active for a given site

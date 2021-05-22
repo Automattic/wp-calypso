@@ -3,14 +3,14 @@
  */
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
-import { forEach, includes } from 'lodash';
+import { forEach, includes, throttle } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import { isDefaultLocale, getLanguage } from './utils';
-import { getUrlFromParts } from 'lib/url/url-parts';
+import { getUrlFromParts, getUrlParts } from '@automattic/calypso-url';
 
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -43,6 +43,16 @@ export function getLanguageFilePathUrl() {
 	const protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
 
 	return `${ protocol }widgets.wp.com/languages/calypso/`;
+}
+
+/**
+ * Get the base path for language related files that are served from within Calypso.
+ *
+ * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
+ * @returns {string} The internal base file path for language files.
+ */
+export function getLanguagesInternalBasePath( targetBuild = 'evergreen' ) {
+	return `/calypso/${ targetBuild }/languages`;
 }
 
 /**
@@ -90,9 +100,7 @@ function setLocaleInDOM() {
 	switchWebpackCSS( isRTL );
 }
 
-export async function getLanguageFile( targetLocaleSlug ) {
-	const url = getLanguageFileUrl( targetLocaleSlug, 'json', window.languageRevisions || {} );
-
+export async function getFile( url ) {
 	const response = await dedupedGet( url );
 	if ( response.ok ) {
 		if ( response.bodyUsed ) {
@@ -108,8 +116,215 @@ export async function getLanguageFile( targetLocaleSlug ) {
 	throw new Error();
 }
 
+export function getLanguageFile( targetLocaleSlug ) {
+	const url = getLanguageFileUrl( targetLocaleSlug, 'json', window.languageRevisions || {} );
+
+	return getFile( url );
+}
+
+/**
+ * Get the language manifest file URL for the given locale.
+ * A revision cache buster will be appended automatically if `setLangRevisions` has been called beforehand.
+ *
+ * @param {string} options Funciton options object
+ * @param {string} options.localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {string} options.fileType The desired file type, js or json. Default to json.
+ * @param {string} options.targetBuild The build target. e.g. fallback, evergreen, etc.
+ * @param {string} options.hash Build hash string that will be used as cache buster.
+ *
+ * @returns {string} A language manifest file URL.
+ */
+
+export function getLanguageManifestFileUrl( {
+	localeSlug,
+	fileType = 'json',
+	targetBuild = 'evergreen',
+	hash = null,
+} = {} ) {
+	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
+		fileType = 'json';
+	}
+
+	if ( typeof hash === 'number' ) {
+		hash = hash.toString();
+	}
+
+	const fileBasePath = getLanguagesInternalBasePath( targetBuild );
+	const fileUrl = `${ fileBasePath }/${ localeSlug }-language-manifest.${ fileType }`;
+
+	return typeof hash === 'string' ? fileUrl + `?v=${ hash }` : fileUrl;
+}
+
+/**
+ * Get the language manifest file for the given locale.
+ *
+ * @param  {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param  {string} targetBuild The build target. e.g. fallback, evergreen, etc.
+ *
+ * @returns {Promise} Language manifest json content
+ */
+export function getLanguageManifestFile( localeSlug, targetBuild = 'evergreen' ) {
+	if (
+		window?.i18nLanguageManifest &&
+		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug
+	) {
+		return Promise.resolve( window.i18nLanguageManifest );
+	}
+
+	const url = getLanguageManifestFileUrl( {
+		localeSlug,
+		fileType: 'json',
+		targetBuild,
+		hash: window?.languageRevisions?.hashes?.[ localeSlug ] || null,
+	} );
+
+	return getFile( url );
+}
+
+/**
+ * Get the translation chunk file URL for the given chunk id and locale.
+ * A revision cache buster will be appended automatically if `setLangRevisions` has been called beforehand.
+ *
+ * @param {string} options Funciton options object
+ * @param {string} options.chunkId A chunk id. e.g. chunk-abc.min
+ * @param {string} options.localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {string} options.fileType The desired file type, js or json. Default to json.
+ * @param {string} options.targetBuild The build target. e.g. fallback, evergreen, etc.
+ * @param {string} options.hash Build hash string that will be used as cache buster.
+ *
+ * @returns {string} A translation chunk file URL.
+ */
+export function getTranslationChunkFileUrl( {
+	chunkId,
+	localeSlug,
+	fileType = 'json',
+	targetBuild = 'evergreen',
+	hash = null,
+} = {} ) {
+	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
+		fileType = 'json';
+	}
+
+	if ( typeof hash === 'number' ) {
+		hash = hash.toString();
+	}
+
+	const fileBasePath = getLanguagesInternalBasePath( targetBuild );
+	const fileName = `${ localeSlug }-${ chunkId }.${ fileType }`;
+	const fileUrl = `${ fileBasePath }/${ fileName }`;
+
+	return typeof hash === 'string' ? fileUrl + `?v=${ hash }` : fileUrl;
+}
+
+/**
+ * Whether the translation chunk is preloaded, i.e. exists in window.i18nTranslationChunks.
+ *
+ * @param   {string} chunkId    chunkId A chunk id. e.g. chunk-abc.min
+ * @param   {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @returns {boolean}           Whether the chunk translations are preloaded
+ */
+function getIsTranslationChunkPreloaded( chunkId, localeSlug ) {
+	return (
+		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug &&
+		chunkId in window?.i18nTranslationChunks
+	);
+}
+
+/**
+ * Get the translation chunk file for the given chunk id and locale.
+ *
+ * @param {string} chunkId A chunk id. e.g. chunk-abc.min
+ * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
+ *
+ * @returns {Promise} Translation chunk json content
+ */
+export function getTranslationChunkFile( chunkId, localeSlug, targetBuild = 'evergreen' ) {
+	if ( getIsTranslationChunkPreloaded( chunkId, localeSlug ) ) {
+		return Promise.resolve( window.i18nTranslationChunks[ chunkId ] );
+	}
+
+	const url = getTranslationChunkFileUrl( {
+		chunkId,
+		localeSlug,
+		fileType: 'json',
+		targetBuild,
+		hash: window?.languageRevisions?.[ localeSlug ] || null,
+	} );
+
+	return getFile( url );
+}
+
+/**
+ * Get the ids of all loaded chunks via either script tag on the page
+ * or loaded asynchronously with dynamic imports.
+ *
+ * @returns {Array} Chunk ids
+ */
+function getInstalledChunks() {
+	const installedChunksFromContext = window.installedChunks ?? [];
+	const installedChunksAsync = window?.__requireChunkCallback__?.getInstalledChunks?.() ?? [];
+	const installedChunksSet = new Set(
+		[].concat( installedChunksFromContext, installedChunksAsync )
+	);
+
+	return Array.from( installedChunksSet );
+}
+
+/**
+ * Used to keep the reference to the require chunk translations handler.
+ */
+let lastRequireChunkTranslationsHandler = null;
+
+/**
+ * Adds require chunk handler for fetching translations.
+ *
+ * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
+ * @param {Object} options Handler additional options
+ * @param {Array}  options.translatedChunks Array of chunk ids that have available translation for the given locale
+ * @param {Object} options.userTranslations User translations data that will override chunk translations
+ */
+function addRequireChunkTranslationsHandler(
+	localeSlug = i18n.getLocaleSlug(),
+	targetBuild = 'evergreen',
+	options = {}
+) {
+	const { translatedChunks = [], userTranslations = {} } = options;
+	const loadedTranslationChunks = {};
+
+	const handler = ( { scriptSrc, publicPath }, promises ) => {
+		const chunkId = scriptSrc.replace( publicPath, '' ).replace( /\.js$/, '' );
+
+		if ( ! translatedChunks.includes( chunkId ) || loadedTranslationChunks[ chunkId ] ) {
+			return;
+		}
+
+		const translationChunkPromise = getTranslationChunkFile(
+			chunkId,
+			localeSlug,
+			targetBuild
+		).then( ( translations ) => {
+			addTranslations( translations, userTranslations );
+			loadedTranslationChunks[ chunkId ] = true;
+		} );
+
+		promises.push( translationChunkPromise );
+	};
+
+	window?.__requireChunkCallback__?.add?.( handler );
+	lastRequireChunkTranslationsHandler = handler;
+}
+
+/**
+ * Removes require chunk translations handler.
+ */
+function removeRequireChunkTranslationsHandler() {
+	window?.__requireChunkCallback__?.remove?.( lastRequireChunkTranslationsHandler );
+}
+
 let lastRequestedLocale = null;
-export default function switchLocale( localeSlug ) {
+export default async function switchLocale( localeSlug ) {
 	// check if the language exists in config.languages
 	const language = getLanguage( localeSlug );
 
@@ -125,20 +340,87 @@ export default function switchLocale( localeSlug ) {
 
 	lastRequestedLocale = localeSlug;
 
-	if ( config.isEnabled( 'use-translation-chunks' ) ) {
-		i18n.configure( { defaultLocaleSlug: localeSlug } );
-		setLocaleInDOM();
-
-		return;
-	}
+	const useTranslationChunks =
+		config.isEnabled( 'use-translation-chunks' ) ||
+		getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
 
 	if ( isDefaultLocale( localeSlug ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );
 		setLocaleInDOM();
+	} else if ( useTranslationChunks ) {
+		// If requested locale is same as current locale, we don't need to
+		// re-fetch the manifest and translation chunks.
+		if ( localeSlug === i18n.getLocaleSlug() ) {
+			setLocaleInDOM();
+			return;
+		}
+
+		// Switching the locale requires fetching the translation chunks
+		// locale data, which consists of the locale manifest data and
+		// translations for currently installed chunks.
+		try {
+			const { translatedChunks, locale } =
+				( await getLanguageManifestFile( localeSlug, window?.BUILD_TARGET ) ) ?? {};
+
+			if ( ! locale || ! translatedChunks ) {
+				return;
+			}
+
+			i18n.setLocale( locale );
+			setLocaleInDOM();
+			addRequireChunkTranslationsHandler( localeSlug, window?.BUILD_TARGET, { translatedChunks } );
+
+			const translatedInstalledChunks = getInstalledChunks().filter( ( chunkId ) =>
+				translatedChunks.includes( chunkId )
+			);
+			const preloadedTranslatedInstalledChunks = translatedInstalledChunks.filter( ( chunkId ) =>
+				getIsTranslationChunkPreloaded( chunkId, localeSlug )
+			);
+			const translatedInstalledChunksToBeLoaded = translatedInstalledChunks.filter(
+				( chunkId ) => ! getIsTranslationChunkPreloaded( chunkId, localeSlug )
+			);
+
+			// Add preloaded translation chunks
+			Promise.all(
+				preloadedTranslatedInstalledChunks.map( ( chunkId ) =>
+					getTranslationChunkFile( chunkId, localeSlug, window?.BUILD_TARGET )
+				)
+			).then( ( allTranslations ) =>
+				addTranslations(
+					allTranslations.reduce( ( acc, translations ) => Object.assign( acc, translations ), {} )
+				)
+			);
+
+			// Load individual translation chunks
+			translatedInstalledChunksToBeLoaded.forEach( ( chunkId ) =>
+				getTranslationChunkFile( chunkId, localeSlug, window?.BUILD_TARGET )
+					.then( ( translations ) => addTranslations( translations ) )
+					.catch( ( error ) => {
+						debug( `Encountered an error loading translation chunk ${ chunkId }.` );
+						debug( error );
+					} )
+			);
+
+			const userTranslations = await loadUserUndeployedTranslations( localeSlug );
+
+			// Re-attach require chunk translations handler if user translations are available
+			if ( userTranslations ) {
+				removeRequireChunkTranslationsHandler();
+				addRequireChunkTranslationsHandler( localeSlug, window?.BUILD_TARGET, {
+					translatedChunks,
+					userTranslations,
+				} );
+			}
+		} catch ( error ) {
+			debug(
+				`Encountered an error loading language manifest and/or translation chunks for ${ localeSlug }. Falling back to English.`
+			);
+			debug( error );
+		}
 	} else {
 		getLanguageFile( localeSlug ).then(
 			// Success.
-			body => {
+			( body ) => {
 				if ( body ) {
 					// Handle race condition when we're requested to switch to a different
 					// locale while we're in the middle of request, we should abandon result
@@ -199,17 +481,17 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		'export-translations',
 	].join( '/' );
 
-	const query = {
+	const searchParams = new URLSearchParams( {
 		'filters[user_login]': username,
 		'filters[status]': translationStatus,
 		format: 'json',
-	};
+	} );
 
 	const requestUrl = getUrlFromParts( {
 		protocol: 'https:',
 		host: 'translate.wordpress.com',
 		pathname,
-		query,
+		searchParams,
 	} );
 
 	return window
@@ -217,8 +499,12 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 			headers: { Accept: 'application/json' },
 			credentials: 'include',
 		} )
-		.then( res => res.json() )
-		.then( translations => i18n.addTranslations( translations ) );
+		.then( ( res ) => res.json() )
+		.then( ( translations ) => {
+			addTranslations( translations );
+
+			return translations;
+		} );
 }
 
 /*
@@ -242,7 +528,7 @@ function setRTLFlagOnCSSLink( url, isRTL ) {
 export function switchWebpackCSS( isRTL ) {
 	const currentLinks = document.querySelectorAll( 'link[rel="stylesheet"][data-webpack]' );
 
-	forEach( currentLinks, async currentLink => {
+	forEach( currentLinks, async ( currentLink ) => {
 		const currentHref = currentLink.getAttribute( 'href' );
 		const newHref = setRTLFlagOnCSSLink( currentHref, isRTL );
 		if ( currentHref === newHref ) {
@@ -266,7 +552,7 @@ export function switchWebpackCSS( isRTL ) {
  * @returns {Promise<string>} the new <link> DOM element after the CSS has been loaded
  */
 function loadCSS( cssUrl, currentLink ) {
-	return new Promise( resolve => {
+	return new Promise( ( resolve ) => {
 		const link = document.createElement( 'link' );
 		link.rel = 'stylesheet';
 		link.type = 'text/css';
@@ -286,4 +572,36 @@ function loadCSS( cssUrl, currentLink ) {
 
 		document.head.insertBefore( link, currentLink ? currentLink.nextSibling : null );
 	} );
+}
+
+/**
+ * Translation data batch strore.
+ *
+ * @type {Array}
+ */
+const _translationsBatch = [];
+
+/**
+ * A throttle wrapper around i18n.addTranslations.
+ *
+ * This function also saves the duration of the call as a performance measure
+ *
+ * @param {Object} userTranslations User translations data that will override chunk translations
+ */
+const _addTranslationsBatch = throttle( function ( userTranslations ) {
+	window.performance?.mark( 'add_translations_start' );
+	i18n.addTranslations( Object.assign( {}, ..._translationsBatch.splice( 0 ), userTranslations ) );
+	window.performance?.measure( 'add_translations', 'add_translations_start' );
+	window.performance?.clearMarks( 'add_translations_start' );
+}, 50 );
+
+/**
+ * Adds new translations to the existing locale data.
+ *
+ * @param {Object} translations       Translations data
+ * @param {Object} [userTranslations] User translations data that will override chunk translations
+ */
+function addTranslations( translations, userTranslations ) {
+	_translationsBatch.push( translations );
+	_addTranslationsBatch( userTranslations );
 }

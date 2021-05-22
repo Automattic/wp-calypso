@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import { uniq, flatMap } from 'lodash';
-import createSelector from 'lib/create-selector';
+import { flatMap } from 'lodash';
+import { createSelector } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
-import { getSerializedThemesQueryWithoutPage } from 'state/themes/utils';
+import { getSerializedThemesQueryWithoutPage } from 'calypso/state/themes/utils';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns an array of normalized themes for the themes query, including all
@@ -35,18 +35,18 @@ export const getThemesForQueryIgnoringPage = createSelector(
 		// If query is default, filter out recommended themes.
 		if ( ! ( query.search || query.filter || query.tier ) ) {
 			const recommendedThemes = state.themes.recommendedThemes.themes;
-			const themeIds = flatMap( recommendedThemes, theme => {
+			const themeIds = flatMap( recommendedThemes, ( theme ) => {
 				return theme.id;
 			} );
-			themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter( theme => {
+			themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter( ( theme ) => {
 				return ! themeIds.includes( theme.id );
 			} );
 		}
 
 		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
 		// over different pages) which we need to remove manually here for now.
-		return uniq( themesForQueryIgnoringPage );
+		return [ ...new Set( themesForQueryIgnoringPage ) ];
 	},
-	state => state.themes.queries,
+	( state ) => state.themes.queries,
 	( state, siteId, query ) => getSerializedThemesQueryWithoutPage( query, siteId )
 );

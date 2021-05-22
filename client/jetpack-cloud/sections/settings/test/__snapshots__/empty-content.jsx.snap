@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NoSitePurchasesMessage should render correctly 1`] = `
+<div>
+  <main
+    class="empty-content main"
+    role="main"
+  >
+    <div
+      class="empty-content"
+    >
+      <img
+        alt=""
+        class="empty-content__illustration"
+        src="/calypso/images/illustrations/security.svg"
+        width="200"
+      />
+      <h2
+        class="empty-content__title"
+      >
+        Upgrade for quick restores
+      </h2>
+      <h3
+        class="empty-content__line"
+      >
+        Server credentials are used to restore your site and fix any vulnerabilities
+      </h3>
+      <a
+        class="empty-content__action button is-primary"
+        href="https://jetpack.com/pricing/"
+      >
+        Upgrade for quick restores
+      </a>
+    </div>
+  </main>
+</div>
+`;

@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import shouldSyncReaderFollows, {
 	MS_BETWEEN_SYNCS,
-} from 'state/selectors/should-sync-reader-follows';
+} from 'calypso/state/selectors/should-sync-reader-follows';
 
 describe( 'shouldSyncReaderFollows', () => {
 	test( 'should return true when last time is null', () => {

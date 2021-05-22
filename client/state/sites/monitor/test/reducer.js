@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -16,18 +15,29 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE,
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
+
+// mock the real selectors with the same names
+function isRequestingSiteMonitorSettings( state, siteId ) {
+	return state[ siteId ] ?? false;
+}
+
+function isUpdatingSiteMonitorSettings( state, siteId ) {
+	return state[ siteId ] ?? false;
+}
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'updating' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual( [
+			'items',
+			'requesting',
+			'updating',
+		] );
 	} );
 
 	describe( '#items()', () => {
@@ -44,7 +54,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should store monitor settings when received', () => {
@@ -54,7 +64,7 @@ describe( 'reducer', () => {
 				settings,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: settings,
 			} );
 		} );
@@ -69,7 +79,7 @@ describe( 'reducer', () => {
 				settings: otherSettings,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: settings,
 				77203074: otherSettings,
 			} );
@@ -86,28 +96,10 @@ describe( 'reducer', () => {
 				settings: otherSettings,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: otherSettings,
 				77203074: settings,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const original = deepFreeze( {
-				2916284: true,
-			} );
-			const state = items( original, { type: SERIALIZE } );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const original = deepFreeze( {
-				2916284: true,
-			} );
-			const state = items( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 
@@ -115,7 +107,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track monitor settings request when started', () => {
@@ -124,9 +116,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
-				2916284: true,
-			} );
+			expect( isRequestingSiteMonitorSettings( state, 2916284 ) ).toBe( true );
 		} );
 
 		test( 'should accumulate monitor settings requests when started', () => {
@@ -138,10 +128,8 @@ describe( 'reducer', () => {
 				siteId: 77203074,
 			} );
 
-			expect( state ).to.eql( {
-				2916284: true,
-				77203074: true,
-			} );
+			expect( isRequestingSiteMonitorSettings( state, 2916284 ) ).toBe( true );
+			expect( isRequestingSiteMonitorSettings( state, 77203074 ) ).toBe( true );
 		} );
 
 		test( 'should track monitor settings request when succeeded', () => {
@@ -149,15 +137,14 @@ describe( 'reducer', () => {
 				2916284: true,
 				77203074: true,
 			} );
+
 			const state = requesting( original, {
 				type: SITE_MONITOR_SETTINGS_REQUEST_SUCCESS,
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
-				2916284: false,
-				77203074: true,
-			} );
+			expect( isRequestingSiteMonitorSettings( state, 2916284 ) ).toBe( false );
+			expect( isRequestingSiteMonitorSettings( state, 77203074 ) ).toBe( true );
 		} );
 
 		test( 'should track monitor settings request when failed', () => {
@@ -165,15 +152,14 @@ describe( 'reducer', () => {
 				2916284: false,
 				77203074: true,
 			} );
+
 			const state = requesting( original, {
 				type: SITE_MONITOR_SETTINGS_REQUEST_FAILURE,
 				siteId: 77203074,
 			} );
 
-			expect( state ).to.eql( {
-				2916284: false,
-				77203074: false,
-			} );
+			expect( isRequestingSiteMonitorSettings( state, 2916284 ) ).toBe( false );
+			expect( isRequestingSiteMonitorSettings( state, 77203074 ) ).toBe( false );
 		} );
 	} );
 
@@ -181,7 +167,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = updating( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track monitor settings update when started', () => {
@@ -190,9 +176,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
-				2916284: true,
-			} );
+			expect( isUpdatingSiteMonitorSettings( state, 2916284 ) ).toBe( true );
 		} );
 
 		test( 'should accumulate monitor settings updates when started', () => {
@@ -204,10 +188,8 @@ describe( 'reducer', () => {
 				siteId: 77203074,
 			} );
 
-			expect( state ).to.eql( {
-				2916284: true,
-				77203074: true,
-			} );
+			expect( isUpdatingSiteMonitorSettings( state, 2916284 ) ).toBe( true );
+			expect( isUpdatingSiteMonitorSettings( state, 77203074 ) ).toBe( true );
 		} );
 
 		test( 'should track monitor settings update when succeeded', () => {
@@ -215,15 +197,14 @@ describe( 'reducer', () => {
 				2916284: true,
 				77203074: true,
 			} );
+
 			const state = updating( original, {
 				type: SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
-				2916284: false,
-				77203074: true,
-			} );
+			expect( isUpdatingSiteMonitorSettings( state, 2916284 ) ).toBe( false );
+			expect( isUpdatingSiteMonitorSettings( state, 77203074 ) ).toBe( true );
 		} );
 
 		test( 'should track monitor settings update when failed', () => {
@@ -231,15 +212,14 @@ describe( 'reducer', () => {
 				2916284: false,
 				77203074: true,
 			} );
+
 			const state = updating( original, {
 				type: SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 				siteId: 77203074,
 			} );
 
-			expect( state ).to.eql( {
-				2916284: false,
-				77203074: false,
-			} );
+			expect( isUpdatingSiteMonitorSettings( state, 2916284 ) ).toBe( false );
+			expect( isUpdatingSiteMonitorSettings( state, 77203074 ) ).toBe( false );
 		} );
 	} );
 } );

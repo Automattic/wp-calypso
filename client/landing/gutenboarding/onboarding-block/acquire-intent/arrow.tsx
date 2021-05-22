@@ -4,7 +4,7 @@
 import React from 'react';
 import { SVG, Path } from '@wordpress/components';
 
-const Arrow: React.FunctionComponent< React.SVGProps< SVGSVGElement > > = props => (
+const Arrow: React.FunctionComponent< React.SVGProps< SVGSVGElement > > = ( props ) => (
 	<SVG
 		{ ...props }
 		width="26"

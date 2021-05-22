@@ -2,12 +2,12 @@
  * Internal dependencies
  */
 import productListSchema from './schema';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	MEMBERSHIPS_PRODUCTS_RECEIVE,
 	MEMBERSHIPS_PRODUCT_RECEIVE,
 	MEMBERSHIPS_PRODUCT_DELETE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Edits existing product if one with matching ID found.
@@ -19,7 +19,7 @@ import {
  */
 function addOrEditProduct( list = [], newProduct ) {
 	let found = 0;
-	const products = list.map( product => {
+	const products = list.map( ( product ) => {
 		if ( product.ID === newProduct.ID ) {
 			found = 1;
 			return newProduct;
@@ -62,7 +62,9 @@ export const items = withSchemaValidation( productListSchema, ( state = {}, acti
 
 			return {
 				...state,
-				[ siteId ]: state[ siteId ].filter( existingProduct => existingProduct.ID !== product.ID ),
+				[ siteId ]: state[ siteId ].filter(
+					( existingProduct ) => existingProduct.ID !== product.ID
+				),
 			};
 		}
 	}

@@ -1,12 +1,12 @@
 
 .chart__title {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 
 	.chart__title-label {
 		font-weight: 600;
 		margin-right: 6px;
 	}
 	.chart__title-referrer {
-		font-weight: 300;
+		font-weight: 400;
 	}
 }

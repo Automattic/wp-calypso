@@ -9,39 +9,35 @@ import React from 'react';
  */
 import { CheckoutThankYouHeader } from '../header';
 
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.unmock( 'lib/plans' );
-const plans = require( 'lib/plans' );
-plans.getFeatureByKey = () => null;
-plans.shouldFetchSitePlans = () => false;
+jest.unmock( '@automattic/calypso-products' );
+jest.mock( '@automattic/calypso-products', () => ( {
+	...jest.requireActual( '@automattic/calypso-products' ),
+	shouldFetchSitePlans: () => false,
+	isDotComPlan: jest.fn( () => false ),
+} ) );
 
-jest.unmock( 'lib/products-values' );
-const productValues = require( 'lib/products-values' );
-productValues.isDotComPlan = jest.fn( () => false );
-
-jest.mock( 'lib/analytics', () => ( {
-	tracks: {
-		recordEvent: () => null,
-	},
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: () => null,
 } ) );
 jest.mock( '../domain-registration-details', () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => 'component--google-apps-details' );
 jest.mock( '../jetpack-plan-details', () => 'component--jetpack-plan-details' );
 jest.mock( '../rebrand-cities-thank-you', () => 'component--RebrandCitiesThankYou' );
 jest.mock( '../atomic-store-thank-you-card', () => 'component--AtomicStoreThankYouCard' );
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'components/happiness-support', () => 'HappinessSupport' );
-jest.mock( 'lib/rebrand-cities', () => ( {
+jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock( 'calypso/components/happiness-support', () => 'HappinessSupport' );
+jest.mock( 'calypso/lib/rebrand-cities', () => ( {
 	isRebrandCitiesSiteUrl: jest.fn( () => false ),
 } ) );
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
-const translate = x => x;
+const translate = ( x ) => x;
 
 describe( 'CheckoutThankYouHeader', () => {
 	const defaultProps = {

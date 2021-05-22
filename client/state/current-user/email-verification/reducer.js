@@ -2,15 +2,15 @@
  * Internal dependencies
  */
 
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	EMAIL_VERIFY_REQUEST,
 	EMAIL_VERIFY_REQUEST_SUCCESS,
 	EMAIL_VERIFY_REQUEST_FAILURE,
 	EMAIL_VERIFY_STATE_RESET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-export const status = withoutPersistence( ( state = null, action ) => {
+export const status = ( state = null, action ) => {
 	switch ( action.type ) {
 		case EMAIL_VERIFY_REQUEST:
 			return 'requesting';
@@ -23,9 +23,9 @@ export const status = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const errorMessage = withoutPersistence( ( state = '', action ) => {
+export const errorMessage = ( state = '', action ) => {
 	switch ( action.type ) {
 		case EMAIL_VERIFY_REQUEST:
 			return '';
@@ -40,7 +40,7 @@ export const errorMessage = withoutPersistence( ( state = '', action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	status,

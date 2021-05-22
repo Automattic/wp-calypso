@@ -9,17 +9,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import QueryProductsList from 'components/data/query-products-list';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import { getAvailableProductsList } from 'state/products-list/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSitePlanSlug } from 'state/sites/plans/selectors';
-import { getSitePurchases } from 'state/purchases/selectors';
-import { planHasFeature, planHasSuperiorFeature } from 'lib/plans';
-import { managePurchase } from 'me/purchases/paths';
-import { isJetpackProduct } from 'lib/products-values';
+import Notice from 'calypso/components/notice';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import {
+	isJetpackProduct,
+	planHasFeature,
+	planHasSuperiorFeature,
+} from '@automattic/calypso-products';
+import { managePurchase } from 'calypso/me/purchases/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
@@ -60,7 +64,7 @@ class ProductPlanOverlapNotices extends Component {
 
 		// Does the current plan include the current product as a feature, or have a superior version of it?
 		return currentProductSlugs.filter(
-			productSlug =>
+			( productSlug ) =>
 				planHasFeature( currentPlanSlug, productSlug ) ||
 				planHasSuperiorFeature( currentPlanSlug, productSlug )
 		);
@@ -69,10 +73,10 @@ class ProductPlanOverlapNotices extends Component {
 	getCurrentProductSlugs() {
 		const { products, purchases } = this.props;
 
-		const currentProducts = purchases.filter( purchase =>
+		const currentProducts = purchases.filter( ( purchase ) =>
 			products.includes( purchase.productSlug )
 		);
-		return currentProducts.map( product => product.productSlug );
+		return currentProducts.map( ( product ) => product.productSlug );
 	}
 
 	getProductName( currentProductSlug ) {
@@ -95,9 +99,15 @@ class ProductPlanOverlapNotices extends Component {
 		return availableProducts[ currentPlanSlug ].product_name;
 	}
 
+	clickPurchaseHandler = ( productSlug ) => {
+		this.props.recordTracksEvent( 'calypso_product_overlap_purchase_click', {
+			purchase_slug: productSlug,
+		} );
+	};
+
 	getProductItem( productSlug ) {
 		const { purchases } = this.props;
-		const productPurchase = purchases.find( purchase => purchase.productSlug === productSlug );
+		const productPurchase = purchases.find( ( purchase ) => purchase.productSlug === productSlug );
 
 		if ( ! productPurchase ) {
 			return false;
@@ -105,7 +115,10 @@ class ProductPlanOverlapNotices extends Component {
 
 		return (
 			<li key={ productSlug }>
-				<a href={ managePurchase( productPurchase.domain, productPurchase.id ) }>
+				<a
+					href={ managePurchase( productPurchase.domain, productPurchase.id ) }
+					onClick={ () => this.clickPurchaseHandler( productSlug ) }
+				>
 					{ this.getProductName( productSlug ) }
 				</a>
 			</li>
@@ -150,7 +163,7 @@ class ProductPlanOverlapNotices extends Component {
 								components: {
 									list: (
 										<ul className="product-plan-overlap-notices__product-list">
-											{ overlappingProductSlugs.map( productSlug =>
+											{ overlappingProductSlugs.map( ( productSlug ) =>
 												this.getProductItem( productSlug )
 											) }
 										</ul>
@@ -165,13 +178,18 @@ class ProductPlanOverlapNotices extends Component {
 	}
 }
 
-export default connect( ( state, { siteId } ) => {
-	const selectedSiteId = siteId || getSelectedSiteId( state );
+export default connect(
+	( state, { siteId } ) => {
+		const selectedSiteId = siteId || getSelectedSiteId( state );
 
-	return {
-		availableProducts: getAvailableProductsList( state ),
-		currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
-		purchases: getSitePurchases( state, selectedSiteId ),
-		selectedSiteId,
-	};
-} )( localize( ProductPlanOverlapNotices ) );
+		return {
+			availableProducts: getAvailableProductsList( state ),
+			currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
+			purchases: getSitePurchases( state, selectedSiteId ),
+			selectedSiteId,
+		};
+	},
+	{
+		recordTracksEvent,
+	}
+)( localize( ProductPlanOverlapNotices ) );

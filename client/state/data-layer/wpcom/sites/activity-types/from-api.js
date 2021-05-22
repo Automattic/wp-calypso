@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { get, forOwn } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import apiResponseSchema from './schema';
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 
 /**
  * Transforms API response into array of activities
@@ -17,7 +17,7 @@ import makeJsonSchemaParser from 'lib/make-json-schema-parser';
  */
 export function transformer( apiResponse ) {
 	const groups = [];
-	forOwn( get( apiResponse, [ 'groups' ], {} ), ( group, slug ) => {
+	Object.entries( get( apiResponse, [ 'groups' ], {} ) ).forEach( ( [ slug, group ] ) => {
 		groups.push( {
 			key: slug,
 			name: group.name,

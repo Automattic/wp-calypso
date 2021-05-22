@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import getReaderStreamOffsetItem from 'state/reader/streams/selectors/get-reader-stream-offset-item';
+import getReaderStreamOffsetItem from 'calypso/state/reader/streams/selectors/get-reader-stream-offset-item';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 function getPrevItem( state, currentItem ) {
 	return getReaderStreamOffsetItem( state, currentItem, -1 );

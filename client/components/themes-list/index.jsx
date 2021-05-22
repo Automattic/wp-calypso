@@ -4,22 +4,24 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { isEqual, isEmpty, noop, times } from 'lodash';
+import { isEqual, isEmpty, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Theme from 'components/theme';
-import EmptyContent from 'components/empty-content';
-import InfiniteScroll from 'components/infinite-scroll';
-import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
-import { getThemesBookmark } from 'state/themes/themes-ui/selectors';
+import Theme from 'calypso/components/theme';
+import EmptyContent from 'calypso/components/empty-content';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
+import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
+import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class ThemesList extends React.Component {
 	static propTypes = {
@@ -56,7 +58,7 @@ export class ThemesList extends React.Component {
 		isInstalling: () => false,
 	};
 
-	fetchNextPage = options => {
+	fetchNextPage = ( options ) => {
 		this.props.fetchNextPage( options );
 	};
 
@@ -101,7 +103,7 @@ export class ThemesList extends React.Component {
 	}
 
 	renderLoadingPlaceholders() {
-		return times( this.props.placeholderCount, function( i ) {
+		return times( this.props.placeholderCount, function ( i ) {
 			return (
 				<Theme
 					key={ 'placeholder-' + i }
@@ -115,7 +117,7 @@ export class ThemesList extends React.Component {
 	// Invisible trailing items keep all elements same width in flexbox grid.
 	renderTrailingItems() {
 		const NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
-		return times( NUM_SPACERS, function( i ) {
+		return times( NUM_SPACERS, function ( i ) {
 			return <div className="themes-list__spacer" key={ 'themes-list__spacer-' + i } />;
 		} );
 	}
@@ -124,7 +126,6 @@ export class ThemesList extends React.Component {
 		return (
 			this.props.emptyContent || (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/no-themes-drake.svg"
 					title={ this.props.translate( 'Sorry, no themes found.' ) }
 					line={ this.props.translate( 'Try a different search or more filters?' ) }
 				/>
@@ -148,7 +149,7 @@ export class ThemesList extends React.Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	themesBookmark: getThemesBookmark( state ),
 } );
 

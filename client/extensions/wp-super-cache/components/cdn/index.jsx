@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { get, pick } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import ExternalLink from 'components/external-link';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import FormToggle from 'components/forms/form-toggle/compact';
-import SectionHeader from 'components/section-header';
+import ExternalLink from 'calypso/components/external-link';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
 const CdnTab = ( {
@@ -47,13 +46,12 @@ const CdnTab = ( {
 			<Card>
 				<form>
 					<FormFieldset>
-						<FormToggle
+						<ToggleControl
 							checked={ !! ossdlcdn }
 							disabled={ isRequesting || isSaving }
 							onChange={ handleAutosavingToggle( 'ossdlcdn' ) }
-						>
-							<span>{ translate( 'Enable CDN Support' ) }</span>
-						</FormToggle>
+							label={ <span>{ translate( 'Enable CDN Support' ) }</span> }
+						/>
 					</FormFieldset>
 
 					<div className="wp-super-cache__cdn-fieldsets">
@@ -171,13 +169,14 @@ const CdnTab = ( {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormToggle
+							<ToggleControl
 								checked={ !! ossdl_https }
 								disabled={ isRequesting || isSaving || ! ossdlcdn }
 								onChange={ handleAutosavingToggle( 'ossdl_https' ) }
-							>
-								<span>{ translate( 'Skip https URLs to avoid "mixed content" errors' ) }</span>
-							</FormToggle>
+								label={
+									<span>{ translate( 'Skip https URLs to avoid "mixed content" errors' ) }</span>
+								}
+							/>
 						</FormFieldset>
 					</div>
 				</form>
@@ -185,7 +184,7 @@ const CdnTab = ( {
 		</div>
 	);
 };
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'ossdl_cname',
 		'ossdl_https',

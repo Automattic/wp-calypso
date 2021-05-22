@@ -1,0 +1,16 @@
+.backup-upsell__content {
+	padding-top: 40px;
+}
+
+.backup-upsell__icon-header {
+	text-align: center;
+
+	img {
+		height: 72px;
+		width: auto;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		text-align: start;
+	}
+}

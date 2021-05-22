@@ -1,0 +1,45 @@
+// Typeface Variables
+$monospace: 'Courier 10 Pitch', Courier, monospace;
+$code: Monaco, Consolas, 'Andale Mono', 'DejaVu Sans Mono', $monospace;
+
+$serif-fallback: Georgia, 'Times New Roman', Times, serif;
+$serif: 'Noto Serif', $serif-fallback;
+
+$sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu', 'Cantarell',
+	'Helvetica Neue', sans-serif;
+$sans-rtl: Tahoma, $sans;
+
+$serif: 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
+$brand-serif: 'Recoleta', $serif;
+
+// ======================================================================
+// Rem function
+//
+// Convert px to rem in a readable fashion.
+//
+// Example: font-size: rem( 21px );
+// ======================================================================
+
+$root-font-size: 16px;
+
+@function rem( $pixels, $context: $root-font-size ) {
+	@return $pixels / $context * 1rem;
+}
+
+// NOTE:
+// If there are exceptions to these stacks,
+// please mark them with a //typography-exception comment
+// so we can easily search for them later.
+
+// Typography size variables
+
+$font-headline-large: rem( 54px );
+$font-headline-medium: rem( 48px );
+$font-headline-small: rem( 36px );
+$font-title-large: rem( 32px );
+$font-title-medium: rem( 24px );
+$font-title-small: rem( 20px );
+$font-body: rem( 16px );
+$font-body-small: rem( 14px );
+$font-body-extra-small: rem( 12px );
+$font-code: rem( 15px );

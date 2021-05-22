@@ -4,37 +4,43 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { isEqual, pick } from 'lodash';
+import { includes, isEqual, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import ValidationFieldset from 'signup/validation-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import Popover from 'components/popover';
+import config from '@automattic/calypso-config';
+import TokenField from 'calypso/components/token-field';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import Popover from 'calypso/components/popover';
 import { Button } from '@automattic/components';
 
-const HANDLED_FILTER_KEYS = [ 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' ];
+const HANDLED_FILTER_KEYS = [ 'tlds', 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' ];
 
 export class DropdownFilters extends Component {
 	static propTypes = {
+		availableTlds: PropTypes.array,
 		filters: PropTypes.shape( {
 			includeDashes: PropTypes.bool,
 			maxCharacters: PropTypes.string,
 			exactSldMatchesOnly: PropTypes.bool,
+			tlds: PropTypes.array,
 		} ).isRequired,
 		lastFilters: PropTypes.shape( {
 			includeDashes: PropTypes.bool,
 			maxCharacters: PropTypes.string,
 			exactSldMatchesOnly: PropTypes.bool,
+			tlds: PropTypes.array,
 		} ).isRequired,
 		popoverId: PropTypes.string,
+		showTldFilter: PropTypes.bool,
+		showTldFilterPlaceholder: PropTypes.bool,
 		onChange: PropTypes.func.isRequired,
 		onReset: PropTypes.func.isRequired,
 		onSubmit: PropTypes.func.isRequired,
@@ -102,7 +108,7 @@ export class DropdownFilters extends Component {
 		} );
 	};
 
-	handleOnChange = event => {
+	handleOnChange = ( event ) => {
 		const { currentTarget } = event;
 		if ( currentTarget.type === 'checkbox' ) {
 			this.updateFilterValues( currentTarget.name, currentTarget.checked );
@@ -114,7 +120,7 @@ export class DropdownFilters extends Component {
 	handleFiltersReset = () => {
 		this.setState( { showOverallValidationError: false }, () => {
 			this.togglePopover( { discardChanges: false } );
-			this.props.onReset( 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' );
+			this.props.onReset( 'tlds', 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' );
 		} );
 	};
 	handleFiltersSubmit = () => {
@@ -173,11 +179,17 @@ export class DropdownFilters extends Component {
 		);
 	}
 
+	handleTokenChange = ( newTlds ) => {
+		const tlds = newTlds.filter( ( tld ) => includes( this.props.availableTlds, tld ) );
+		this.props.onChange( { tlds } );
+	};
+
 	renderPopover() {
 		const {
 			filters: { includeDashes, maxCharacters, exactSldMatchesOnly },
 			popoverId,
 			translate,
+			showTldFilter,
 		} = this.props;
 
 		const isDashesFilterEnabled = config.isEnabled( 'domains/kracken-ui/dashes-filter' );
@@ -212,6 +224,25 @@ export class DropdownFilters extends Component {
 							placeholder="14"
 							type="number"
 							value={ maxCharacters }
+						/>
+					</ValidationFieldset>
+				) }
+
+				{ showTldFilter && (
+					<ValidationFieldset className="search-filters__tld-filters">
+						<FormLabel className="search-filters__label" htmlFor="search-filters-max-characters">
+							{ translate( 'Extensions' ) }:
+						</FormLabel>
+						<TokenField
+							isExpanded
+							displayTransform={ ( item ) => `.${ item }` }
+							saveTransform={ ( query ) => ( query[ 0 ] === '.' ? query.substr( 1 ) : query ) }
+							maxSuggestions={ 500 }
+							onChange={ this.handleTokenChange }
+							placeholder={ translate( 'Select an extension' ) }
+							suggestions={ [ ...this.props.availableTlds ].sort() }
+							tokenizeOnSpace
+							value={ this.props.filters.tlds }
 						/>
 					</ValidationFieldset>
 				) }

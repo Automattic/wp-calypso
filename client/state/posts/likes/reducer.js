@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import { dropWhile, some } from 'lodash';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import itemSchema from './schema';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import {
 	POST_LIKES_ADD_LIKER,
 	POST_LIKES_RECEIVE,
 	POST_LIKES_REMOVE_LIKER,
 	POST_LIKE,
 	POST_UNLIKE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -32,7 +32,7 @@ export const itemReducer = withSchemaValidation(
 				const { likes, iLike, found } = action;
 				return {
 					likes: Array.isArray( likes )
-						? likes.map( like => {
+						? likes.map( ( like ) => {
 								return {
 									ID: like.ID,
 									avatar_URL: like.avatar_URL,
@@ -74,9 +74,9 @@ export const itemReducer = withSchemaValidation(
 			}
 			case POST_LIKES_ADD_LIKER: {
 				const { likeCount, liker } = action;
-				const hasLiker = some( state.likes, like => like.ID === liker.ID );
+				const hasLiker = some( state.likes, ( like ) => like.ID === liker.ID );
 
-				if ( state.likeCount === likeCount && hasLiker ) {
+				if ( state.found === likeCount && hasLiker ) {
 					// if the like count matches and we already have this liker, bail
 					return state;
 				}
@@ -95,16 +95,16 @@ export const itemReducer = withSchemaValidation(
 			}
 			case POST_LIKES_REMOVE_LIKER: {
 				const { likeCount, liker } = action;
-				const hasLiker = some( state.likes, like => like.ID === liker.ID );
+				const hasLiker = some( state.likes, ( like ) => like.ID === liker.ID );
 
-				if ( state.likeCount === likeCount && ! hasLiker ) {
+				if ( state.found === likeCount && ! hasLiker ) {
 					// if the like count matches and we don't have this liker, bail
 					return state;
 				}
 
 				let likes = state.likes;
 				if ( hasLiker ) {
-					likes = dropWhile( state.likes, l => liker.ID === l.ID );
+					likes = state.likes.filter( ( l ) => liker.ID !== l.ID );
 				}
 
 				return {
@@ -120,10 +120,7 @@ export const itemReducer = withSchemaValidation(
 	}
 );
 
-const postIdReducer = keyedReducer( 'postId', itemReducer );
-postIdReducer.hasCustomPersistence = true;
-export const items = keyedReducer( 'siteId', postIdReducer );
-items.hasCustomPersistence = true;
+export const items = keyedReducer( 'siteId', keyedReducer( 'postId', itemReducer ) );
 
 export default combineReducers( {
 	items,

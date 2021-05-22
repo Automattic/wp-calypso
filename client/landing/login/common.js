@@ -7,13 +7,12 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import analytics from 'lib/analytics';
-import getSuperProps from 'lib/analytics/super-props';
-import { bindState as bindWpLocaleState } from 'lib/wp/localization';
-import { getUrlParts } from 'lib/url';
-import { setCurrentUser } from 'state/current-user/actions';
-import setRouteAction from 'state/ui/actions/set-route';
+import config from '@automattic/calypso-config';
+import { initializeAnalytics } from 'calypso/lib/analytics/init';
+import getSuperProps from 'calypso/lib/analytics/super-props';
+import { getUrlParts } from '@automattic/calypso-url';
+import { setCurrentUser } from 'calypso/state/current-user/actions';
+import { setRoute } from 'calypso/state/route/actions';
 
 const debug = debugFactory( 'calypso' );
 
@@ -63,7 +62,7 @@ function renderDevHelpers( reduxStore ) {
 	if ( config.isEnabled( 'dev/test-helper' ) ) {
 		const testHelperEl = document.querySelector( '.environment.is-tests' );
 		if ( testHelperEl ) {
-			asyncRequire( 'lib/abtest/test-helper', testHelper => {
+			asyncRequire( 'calypso/lib/abtest/test-helper', ( testHelper ) => {
 				testHelper( testHelperEl );
 			} );
 		}
@@ -72,8 +71,17 @@ function renderDevHelpers( reduxStore ) {
 	if ( config.isEnabled( 'dev/preferences-helper' ) ) {
 		const prefHelperEl = document.querySelector( '.environment.is-prefs' );
 		if ( prefHelperEl ) {
-			asyncRequire( 'lib/preferences-helper', prefHelper => {
+			asyncRequire( 'calypso/lib/preferences-helper', ( prefHelper ) => {
 				prefHelper( prefHelperEl, reduxStore );
+			} );
+		}
+	}
+
+	if ( config.isEnabled( 'features-helper' ) ) {
+		const featureHelperEl = document.querySelector( '.environment.is-features' );
+		if ( featureHelperEl ) {
+			asyncRequire( 'calypso/lib/features-helper', ( featureHelper ) => {
+				featureHelper( featureHelperEl );
 			} );
 		}
 	}
@@ -81,8 +89,6 @@ function renderDevHelpers( reduxStore ) {
 
 export const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
-
-	bindWpLocaleState( reduxStore );
 
 	if ( currentUser.get() ) {
 		// Set current user in Redux store
@@ -93,22 +99,22 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'lib/network-connection', networkConnection =>
+		asyncRequire( 'calypso/lib/network-connection', ( networkConnection ) =>
 			networkConnection.init( reduxStore )
 		);
 	}
 };
 
-const setRouteMiddleware = reduxStore => {
+const setRouteMiddleware = ( reduxStore ) => {
 	page( '*', ( context, next ) => {
-		reduxStore.dispatch( setRouteAction( context.pathname, context.query ) );
+		reduxStore.dispatch( setRoute( context.pathname, context.query ) );
 
 		next();
 	} );
 };
 
 const setAnalyticsMiddleware = ( currentUser, reduxStore ) => {
-	analytics.initialize( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
+	initializeAnalytics( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
 };
 
 export function setupMiddlewares( currentUser, reduxStore ) {

@@ -6,14 +6,15 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 import {
 	HAPPINESS_ENGINEERS_FETCH,
 	HAPPINESS_ENGINEERS_RECEIVE,
 	HAPPINESS_ENGINEERS_FETCH_FAILURE,
 	HAPPINESS_ENGINEERS_FETCH_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
@@ -23,7 +24,7 @@ import {
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = false, action ) => {
+export const requesting = ( state = false, action ) => {
 	switch ( action.type ) {
 		case HAPPINESS_ENGINEERS_FETCH:
 			return true;
@@ -34,7 +35,7 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated items state after an action has been dispatched. Items
@@ -56,7 +57,9 @@ export const items = withSchemaValidation( itemsSchema, ( state = null, action )
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	requesting,
 	items,
 } );
+
+export default withStorageKey( 'happinessEngineers', combinedReducer );

@@ -8,8 +8,8 @@ import page from 'page';
  * Internal Dependencies
  */
 import CurrentPlan from './';
-import { getSelectedSite } from 'state/ui/selectors';
-import { isFreePlan } from 'lib/products-values';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isFreePlanProduct } from '@automattic/calypso-products';
 
 export function currentPlan( context, next ) {
 	const state = context.store.getState();
@@ -22,7 +22,7 @@ export function currentPlan( context, next ) {
 		return null;
 	}
 
-	if ( isFreePlan( selectedSite.plan ) ) {
+	if ( isFreePlanProduct( selectedSite.plan ) ) {
 		page.redirect( `/plans/${ selectedSite.slug }` );
 
 		return null;
@@ -30,15 +30,9 @@ export function currentPlan( context, next ) {
 
 	const product = context.query.product;
 	const requestThankYou = context.query.hasOwnProperty( 'thank-you' );
-	const requestProduct = context.query.hasOwnProperty( 'product' );
 
 	context.primary = (
-		<CurrentPlan
-			path={ context.path }
-			product={ product }
-			requestThankYou={ requestThankYou }
-			requestProduct={ requestProduct }
-		/>
+		<CurrentPlan path={ context.path } product={ product } requestThankYou={ requestThankYou } />
 	);
 
 	next();

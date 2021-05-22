@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import { resendIcannVerification } from 'lib/domains';
-import notices from 'notices';
-import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
+import { resendIcannVerification } from 'calypso/lib/domains';
+import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 class IcannVerification extends React.Component {
 	state = {
@@ -21,11 +21,11 @@ class IcannVerification extends React.Component {
 	handleClick = () => {
 		this.setState( { submitting: true } );
 
-		resendIcannVerification( this.props.selectedDomainName, error => {
+		resendIcannVerification( this.props.selectedDomainName, ( error ) => {
 			if ( error ) {
-				notices.error( error.message );
+				this.props.errorNotice( error.message );
 			} else {
-				notices.success(
+				this.props.successNotice(
 					this.props.translate(
 						'We sent the ICANN verification email to your ' +
 							'email address. Please check your inbox and click the link in the email.'
@@ -74,4 +74,7 @@ class IcannVerification extends React.Component {
 	}
 }
 
-export default localize( IcannVerification );
+export default connect( null, {
+	errorNotice,
+	successNotice,
+} )( localize( IcannVerification ) );

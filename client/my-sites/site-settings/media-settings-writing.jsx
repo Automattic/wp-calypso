@@ -5,21 +5,21 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import SupportInfo from 'components/support-info';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import SupportInfo from 'calypso/components/support-info';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 class MediaSettingsWriting extends Component {
 	static propTypes = {
@@ -70,13 +70,12 @@ class MediaSettingsWriting extends Component {
 							disabled={ isRequestingOrSaving }
 						/>
 						<div className="site-settings__child-settings">
-							<CompactFormToggle
+							<ToggleControl
 								checked={ fields.carousel_display_exif || false }
 								disabled={ isRequestingOrSaving || ! carouselActive }
 								onChange={ handleAutosavingToggle( 'carousel_display_exif' ) }
-							>
-								{ translate( 'Show photo metadata in carousel, when available' ) }
-							</CompactFormToggle>
+								label={ translate( 'Show photo metadata in carousel, when available' ) }
+							/>
 							<FormLabel className={ labelClassName } htmlFor="carousel_background_color">
 								{ translate( 'Background Color' ) }
 							</FormLabel>
@@ -102,7 +101,7 @@ class MediaSettingsWriting extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {

@@ -6,10 +6,10 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSiteSlug } from 'state/sites/selectors';
-import getPostTypeAllPostsUrl from 'state/selectors/get-post-type-all-posts-url';
-import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import getLastNonEditorRoute from 'state/selectors/get-last-non-editor-route';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import getPostTypeAllPostsUrl from 'calypso/state/selectors/get-post-type-all-posts-url';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
 
 /**
  * Gets the URL for the close button for the block editor, dependent previous referral state
@@ -28,7 +28,7 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 	if ( 'wp_template_part' === postType && fseParentPageId ) {
 		// Note: the label is handled correctly by the FSE plugin in this case.
 		return {
-			url: getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' ),
+			url: getEditorUrl( state, siteId, fseParentPageId, 'page' ),
 		};
 	}
 
@@ -36,15 +36,7 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 
 	const lastNonEditorRoute = getLastNonEditorRoute( state );
 
-	const doesRouteMatch = matcher => lastNonEditorRoute.match( matcher );
-
-	// Back to the checklist.
-	if ( doesRouteMatch( /^\/checklist\/?/ ) ) {
-		return {
-			url: `/checklist/${ getSiteSlug( state, siteId ) }`,
-			label: translate( 'Checklist' ),
-		};
-	}
+	const doesRouteMatch = ( matcher ) => lastNonEditorRoute.match( matcher );
 
 	// Back to the themes list.
 	if ( doesRouteMatch( /^\/themes\/?/ ) ) {
@@ -60,12 +52,21 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 	if ( ! lastNonEditorRoute || ! postType || doesRouteMatch( /^\/home\/?/ ) ) {
 		return {
 			url: `/home/${ getSiteSlug( state, siteId ) }`,
-			label: translate( 'Home' ),
+			label: translate( 'Dashboard' ),
 		};
 	}
 
 	// Otherwise, just return to post type listings
+
+	let label = translate( 'Back' );
+	if ( postType === 'post' ) {
+		label = translate( 'View Posts' );
+	} else if ( postType === 'page' ) {
+		label = translate( 'View Pages' );
+	}
+
 	return {
 		url: getPostTypeAllPostsUrl( state, postType ),
+		label,
 	};
 }

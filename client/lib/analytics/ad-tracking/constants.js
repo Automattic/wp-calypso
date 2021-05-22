@@ -6,22 +6,23 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 // Enable/disable ad-tracking
 // These should not be put in the json config as they must not differ across environments
 export const isGoogleAnalyticsEnabled = true;
+export const isGoogleAnalyticsEnhancedEcommerceEnabled = true;
 export const isFloodlightEnabled = true;
 export const isFacebookEnabled = true;
 export const isBingEnabled = true;
-export const isGeminiEnabled = true;
+export const isGeminiEnabled = false;
 export const isWpcomGoogleAdsGtagEnabled = true;
-export const isQuantcastEnabled = true;
+export const isQuantcastEnabled = false;
 export const isExperianEnabled = true;
 export const isOutbrainEnabled = true;
 export const isPinterestEnabled = true;
 export const isIconMediaEnabled = false;
-export const isTwitterEnabled = false;
+export const isTwitterEnabled = true;
 export const isLinkedinEnabled = false;
 export const isCriteoEnabled = false;
 export const isPandoraEnabled = false;
@@ -66,15 +67,17 @@ export const OUTBRAIN_SCRIPT_URL = 'https://amplify.outbrain.com/cp/obtp.js';
 export const PINTEREST_SCRIPT_URL = 'https://s.pinimg.com/ct/core.js';
 export const TRACKING_IDS = {
 	bingInit: '4074038',
+	criteo: '31321',
+	dcmFloodlightAdvertiserId: '6355556',
 	facebookInit: '823166884443641',
 	facebookJetpackInit: '919484458159593',
-	criteo: '31321',
-	quantcast: 'p-3Ma3jHaQMB_bS',
-	twitterPixelId: 'nvzbs',
-	dcmFloodlightAdvertiserId: '6355556',
+	fullStory: '120RG4',
 	linkedInPartnerId: '195308',
-	quoraPixelId: '420845cb70e444938cf0728887a74ca1',
 	outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
+	pinterestInit: '2613194105266',
+	quantcast: 'p-3Ma3jHaQMB_bS',
+	quoraPixelId: '420845cb70e444938cf0728887a74ca1',
+	twitterPixelId: 'nvzbs',
 	wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ),
 	wpcomFloodlightGtag: 'DC-6355556',
 	wpcomGoogleAdsGtag: 'AW-946162814',
@@ -83,8 +86,10 @@ export const TRACKING_IDS = {
 	wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
 	wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
 	wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
-	pinterestInit: '2613194105266',
 };
 // This name is something we created to store a session id for DCM Floodlight session tracking
 export const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';
 export const DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
+
+export const GA_PRODUCT_BRAND_WPCOM = 'WordPress.com';
+export const GA_PRODUCT_BRAND_JETPACK = 'Jetpack';

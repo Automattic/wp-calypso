@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import getBillingTransactionDateFilterValues from 'state/selectors/get-billing-transaction-date-filter-values';
+import getBillingTransactionDateFilterValues from 'calypso/state/selectors/get-billing-transaction-date-filter-values';
 
 jest.mock( 'i18n-calypso', () => {
 	return {
-		translate: str => str,
+		translate: ( str ) => str,
 	};
 } );
 

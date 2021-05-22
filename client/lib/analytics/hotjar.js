@@ -6,10 +6,10 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import { mayWeTrackCurrentUserGdpr, isPiiUrl } from './utils';
 import { getDoNotTrack } from '@automattic/calypso-analytics';
-import { isE2ETest } from 'lib/e2e';
+import { isE2ETest } from 'calypso/lib/e2e';
 
 const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 
@@ -28,11 +28,11 @@ export function addHotJarScript() {
 		return;
 	}
 
-	( function( h, o, t, j, a, r ) {
+	( function ( h, o, t, j, a, r ) {
 		hotjarDebug( 'Loading HotJar script' );
 		h.hj =
 			h.hj ||
-			function() {
+			function () {
 				( h.hj.q = h.hj.q || [] ).push( arguments );
 			};
 		h._hjSettings = { hjid: 227769, hjsv: 5 };

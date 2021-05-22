@@ -8,7 +8,9 @@ import wpcomProxyRequest, {
 
 type WpcomProxyRequestOptions = Parameters< typeof wpcomProxyRequest >[ 0 ];
 
-export const wpcomRequest = ( request: WpcomProxyRequestOptions ) =>
+export const wpcomRequest = (
+	request: WpcomProxyRequestOptions
+): { type: 'WPCOM_REQUEST'; request: WpcomProxyRequestOptions } =>
 	( { type: 'WPCOM_REQUEST', request } as const );
 
 /**
@@ -20,8 +22,8 @@ export const wpcomRequest = ( request: WpcomProxyRequestOptions ) =>
  * @param options request options
  */
 export const fetchAndParse = (
-	resource: Parameters< typeof window.fetch >[ 0 ],
-	options: Parameters< typeof window.fetch >[ 1 ]
+	resource: Parameters< Window[ 'fetch' ] >[ 0 ],
+	options?: Parameters< Window[ 'fetch' ] >[ 1 ]
 ) =>
 	( {
 		type: 'FETCH_AND_PARSE',
@@ -56,5 +58,5 @@ export const controls = {
 	},
 	REQUEST_ALL_BLOGS_ACCESS: () => triggerRequestAllBlogsAccess(),
 	WAIT: ( { ms }: ReturnType< typeof wait > ) =>
-		new Promise( resolve => setTimeout( resolve, ms ) ),
+		new Promise( ( resolve ) => setTimeout( resolve, ms ) ),
 } as const;

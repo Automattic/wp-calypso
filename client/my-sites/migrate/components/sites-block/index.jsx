@@ -10,18 +10,18 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import './style.scss';
-import Site from 'blocks/site';
-import Gridicon from 'components/gridicon';
-import FormTextInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import Badge from 'components/badge';
-import { getUrlParts } from 'lib/url';
-import Spinner from 'components/spinner';
+import Site from 'calypso/blocks/site';
+import Gridicon from 'calypso/components/gridicon';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import Badge from 'calypso/components/badge';
+import { getUrlParts } from '@automattic/calypso-url';
+import Spinner from 'calypso/components/spinner';
 
 class SitesBlock extends Component {
 	state = {};
 
-	onSubmit = event => {
+	onSubmit = ( event ) => {
 		event.preventDefault();
 
 		this.props.onSubmit( event );
@@ -78,7 +78,7 @@ class SitesBlock extends Component {
 		return <Site site={ site } indicator={ false } />;
 	};
 
-	convertSourceSiteInfoToSourceSite = sourceSiteInfo => {
+	convertSourceSiteInfoToSourceSite = ( sourceSiteInfo ) => {
 		const { hostname } = getUrlParts( sourceSiteInfo.site_url );
 		return {
 			icon: { img: sourceSiteInfo.site_favicon },

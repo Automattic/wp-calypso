@@ -1,5 +1,5 @@
 /**
- * Module dependencies.
+ * Internal dependencies
  */
 import commentLike from './site.comment.like';
 
@@ -34,8 +34,8 @@ export default function Comment( cid, pid, sid, wpcom ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Comment.prototype.get = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/comments/' + this._cid;
+Comment.prototype.get = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/comments/' + this._cid;
 	return this.wpcom.req.get( path, query, fn );
 };
 
@@ -46,8 +46,8 @@ Comment.prototype.get = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Comment.prototype.replies = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/';
+Comment.prototype.replies = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/';
 	return this.wpcom.req.get( path, query, fn );
 };
 
@@ -59,7 +59,7 @@ Comment.prototype.replies = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Comment.prototype.add = function( query, body, fn ) {
+Comment.prototype.add = function ( query, body, fn ) {
 	if ( undefined === fn ) {
 		if ( undefined === body ) {
 			body = query;
@@ -73,7 +73,7 @@ Comment.prototype.add = function( query, body, fn ) {
 
 	body = 'string' === typeof body ? { content: body } : body;
 
-	let path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/new';
+	const path = '/sites/' + this._sid + '/posts/' + this._pid + '/replies/new';
 	return this.wpcom.req.post( path, query, body, fn );
 };
 
@@ -85,7 +85,7 @@ Comment.prototype.add = function( query, body, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Comment.prototype.update = function( query, body, fn ) {
+Comment.prototype.update = function ( query, body, fn ) {
 	if ( 'function' === typeof body ) {
 		fn = body;
 		body = query;
@@ -94,7 +94,7 @@ Comment.prototype.update = function( query, body, fn ) {
 
 	body = 'string' === typeof body ? { content: body } : body;
 
-	let path = '/sites/' + this._sid + '/comments/' + this._cid;
+	const path = '/sites/' + this._sid + '/comments/' + this._cid;
 	return this.wpcom.req.put( path, query, body, fn );
 };
 
@@ -106,7 +106,7 @@ Comment.prototype.update = function( query, body, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Comment.prototype.reply = function( query, body, fn ) {
+Comment.prototype.reply = function ( query, body, fn ) {
 	if ( 'function' === typeof body ) {
 		fn = body;
 		body = query;
@@ -115,7 +115,7 @@ Comment.prototype.reply = function( query, body, fn ) {
 
 	body = 'string' === typeof body ? { content: body } : body;
 
-	let path = '/sites/' + this._sid + '/comments/' + this._cid + '/replies/new';
+	const path = '/sites/' + this._sid + '/comments/' + this._cid + '/replies/new';
 	return this.wpcom.req.post( path, query, body, fn );
 };
 
@@ -126,9 +126,8 @@ Comment.prototype.reply = function( query, body, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Comment.prototype.del =
-Comment.prototype.delete = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/comments/' + this._cid + '/delete';
+Comment.prototype.del = Comment.prototype.delete = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/comments/' + this._cid + '/delete';
 	return this.wpcom.req.del( path, query, fn );
 };
 
@@ -137,7 +136,7 @@ Comment.prototype.delete = function( query, fn ) {
  *
  * @returns {CommentLink} CommentLink instance
  */
-Comment.prototype.like = function() {
+Comment.prototype.like = function () {
 	return commentLike( this._cid, this._sid, this.wpcom );
 };
 
@@ -148,7 +147,7 @@ Comment.prototype.like = function() {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Comment.prototype.likesList = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes';
+Comment.prototype.likesList = function ( query, fn ) {
+	const path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes';
 	return this.wpcom.req.get( path, query, fn );
 };

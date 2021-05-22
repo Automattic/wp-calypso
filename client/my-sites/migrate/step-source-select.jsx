@@ -12,18 +12,18 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
-import HeaderCake from 'components/header-cake';
-import Notice from 'components/notice';
-import wpLib from 'lib/wp';
-import { recordTracksEvent } from 'state/analytics/actions';
+import CardHeading from 'calypso/components/card-heading';
+import HeaderCake from 'calypso/components/header-cake';
+import Notice from 'calypso/components/notice';
+import wpLib from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './section-migrate.scss';
-import SitesBlock from 'my-sites/migrate/components/sites-block';
-import { getImportSectionLocation, redirectTo } from 'my-sites/migrate/helpers';
+import SitesBlock from 'calypso/my-sites/migrate/components/sites-block';
+import { getImportSectionLocation, redirectTo } from 'calypso/my-sites/migrate/helpers';
 
 const wpcom = wpLib.undocumented();
 
@@ -40,7 +40,7 @@ class StepSourceSelect extends Component {
 		isLoading: false,
 	};
 
-	onUrlChange = args => {
+	onUrlChange = ( args ) => {
 		this.setState( { error: null } );
 		this.props.onUrlChange( args );
 	};
@@ -60,7 +60,7 @@ class StepSourceSelect extends Component {
 		this.setState( { error: null, isLoading: true }, () => {
 			wpcom
 				.isSiteImportable( this.props.url )
-				.then( result => {
+				.then( ( result ) => {
 					const importUrl = `/import/${ this.props.targetSiteSlug }?not-wp=1&engine=${ result.site_engine }&from-site=${ result.site_url }`;
 
 					this.props.recordTracksEvent( 'calypso_importer_wordpress_enter_url', {
@@ -94,7 +94,7 @@ class StepSourceSelect extends Component {
 							return redirectTo( importUrl );
 					}
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					switch ( error.code ) {
 						case 'rest_invalid_param':
 							return this.setState( {

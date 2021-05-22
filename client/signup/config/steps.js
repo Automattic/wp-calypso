@@ -21,8 +21,8 @@ import {
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
-} from 'lib/signup/step-actions';
-import { abtest } from 'lib/abtest';
+	maybeRemoveStepForUserlessCheckout,
+} from 'calypso/lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
 export default generateSteps( {
@@ -40,11 +40,9 @@ export default generateSteps( {
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
+	maybeRemoveStepForUserlessCheckout,
 } );
 
 export function isDomainStepSkippable( flowName ) {
-	return (
-		flowName === 'test-fse' ||
-		( flowName === 'onboarding' && abtest( 'skippableDomainStep' ) === 'skippable' )
-	);
+	return flowName === 'test-fse';
 }

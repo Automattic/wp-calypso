@@ -23,7 +23,11 @@ describe( 'cart-buttons', () => {
 			const recordGoogleEvent = jest.fn();
 
 			const cartButtonsComponent = mount(
-				<CartButtons selectedSite={ selectedSite } recordGoogleEvent={ recordGoogleEvent } />
+				<CartButtons
+					selectedSite={ selectedSite }
+					recordGoogleEvent={ recordGoogleEvent }
+					translate={ ( string ) => string }
+				/>
 			);
 			cartButtonsComponent.find( 'button.cart-checkout-button' ).simulate( 'click' );
 

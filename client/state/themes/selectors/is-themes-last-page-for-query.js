@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
-import { getThemesLastPageForQuery } from 'state/themes/selectors/get-themes-last-page-for-query';
+import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
+import { getThemesLastPageForQuery } from 'calypso/state/themes/selectors/get-themes-last-page-for-query';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 const emptyObject = {};
 

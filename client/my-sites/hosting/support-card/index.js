@@ -9,16 +9,16 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import HappinessEngineersTray from 'components/happiness-engineers-tray';
-import CardHeading from 'components/card-heading';
+import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
+import CardHeading from 'calypso/components/card-heading';
 import {
 	withAnalytics,
 	composeAnalytics,
 	recordTracksEvent,
 	recordGoogleEvent,
 	bumpStat,
-} from 'state/analytics/actions';
-import { navigate } from 'state/ui/actions';
+} from 'calypso/state/analytics/actions';
+import { navigate } from 'calypso/state/ui/actions';
 
 /**
  * Style dependencies
@@ -42,7 +42,7 @@ const SupportCard = ( { translate, navigateToContactSupport } ) => {
 	);
 };
 
-const navigateToContactSupport = event => {
+const navigateToContactSupport = ( event ) => {
 	event.preventDefault();
 	return withAnalytics(
 		composeAnalytics(

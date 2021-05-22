@@ -7,12 +7,18 @@ import { isEmpty, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { errorNotice } from 'state/notices/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { REWIND_BACKUP_PROGRESS_REQUEST, REWIND_BACKUP_DISMISS_PROGRESS } from 'state/action-types';
-import { updateRewindBackupProgress, rewindBackupUpdateError } from 'state/activity-log/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import {
+	REWIND_BACKUP_PROGRESS_REQUEST,
+	REWIND_BACKUP_DISMISS_PROGRESS,
+} from 'calypso/state/action-types';
+import {
+	updateRewindBackupProgress,
+	rewindBackupUpdateError,
+} from 'calypso/state/activity-log/actions';
 
 /** @type {number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;
@@ -29,7 +35,7 @@ const recentRequests = new Map();
  *
  * @param {object} action Redux action
  */
-const fetchProgress = action => {
+const fetchProgress = ( action ) => {
 	const { downloadId, siteId } = action;
 	const key = `${ siteId }-${ downloadId }`;
 
@@ -58,7 +64,7 @@ const fetchProgress = action => {
  * @param   {object} data The data received from API response.
  * @returns {object}      Parsed response data.
  */
-const fromApi = data => ( {
+const fromApi = ( data ) => ( {
 	backupPoint: data.backupPoint,
 	downloadId: +data.downloadId,
 	progress: +data.progress,
@@ -81,8 +87,9 @@ const fromApi = data => ( {
  */
 export const updateProgress = ( { siteId }, apiData ) => {
 	const [ latestDownloadableBackup ] = apiData;
+
 	if ( isEmpty( latestDownloadableBackup ) ) {
-		return;
+		return updateRewindBackupProgress( siteId );
 	}
 
 	const data = fromApi( latestDownloadableBackup );
@@ -108,7 +115,7 @@ export const announceError = () =>
  * @param   {object}   action   Changeset to update state.
  * @returns {object}          The dispatched action.
  */
-export const dismissBackup = action =>
+export const dismissBackup = ( action ) =>
 	http(
 		{
 			method: 'POST',
@@ -147,7 +154,7 @@ export const backupDismissFailed = () =>
  * @param   {object} data   The data received from API response.
  * @returns {object} Parsed response data.
  */
-const fromBackupDismiss = data => ( {
+const fromBackupDismiss = ( data ) => ( {
 	downloadId: +data.download_id,
 	dismissed: data.is_dismissed,
 } );

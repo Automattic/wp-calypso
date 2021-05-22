@@ -3,17 +3,20 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { connect } from 'react-redux';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { bumpStat } from 'lib/analytics/mc';
-import DropZone from 'components/drop-zone';
-import MediaActions from 'lib/media/actions';
-import { userCan } from 'lib/site/utils';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import DropZone from 'calypso/components/drop-zone';
+import { userCan } from 'calypso/lib/site/utils';
+import { clearMediaItemErrors } from 'calypso/state/media/actions';
+import { addMedia } from 'calypso/state/media/thunks';
+
+const noop = () => {};
 
 class MediaLibraryDropZone extends React.Component {
 	static displayName = 'MediaLibraryDropZone';
@@ -23,6 +26,7 @@ class MediaLibraryDropZone extends React.Component {
 		fullScreen: PropTypes.bool,
 		onAddMedia: PropTypes.func,
 		trackStats: PropTypes.bool,
+		addMedia: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -31,13 +35,13 @@ class MediaLibraryDropZone extends React.Component {
 		trackStats: true,
 	};
 
-	uploadFiles = files => {
+	uploadFiles = ( files ) => {
 		if ( ! this.props.site || ! userCan( 'upload_files', this.props.site ) ) {
 			return;
 		}
 
-		MediaActions.clearValidationErrors( this.props.site.ID );
-		MediaActions.add( this.props.site, files );
+		this.props.clearMediaItemErrors( this.props.site.ID );
+		this.props.addMedia( files, this.props.site );
 		this.props.onAddMedia();
 
 		if ( this.props.trackStats ) {
@@ -45,7 +49,7 @@ class MediaLibraryDropZone extends React.Component {
 		}
 	};
 
-	isValidTransfer = transfer => {
+	isValidTransfer = ( transfer ) => {
 		if ( ! transfer ) {
 			return false;
 		}
@@ -64,7 +68,7 @@ class MediaLibraryDropZone extends React.Component {
 		// using the Array prototype. Safari may pass types as `null` which
 		// makes detection impossible, so we err on allowing the transfer.
 		//
-		// See: http://www.w3.org/html/wg/drafts/html/master/editing.html#the-datatransfer-interface
+		// See: https://html.spec.whatwg.org/multipage/dnd.html#the-datatransfer-interface
 		return ! transfer.types || -1 !== Array.prototype.indexOf.call( transfer.types, 'Files' );
 	};
 
@@ -91,4 +95,6 @@ class MediaLibraryDropZone extends React.Component {
 	}
 }
 
-export default localize( MediaLibraryDropZone );
+export default connect( null, { addMedia, clearMediaItemErrors } )(
+	localize( MediaLibraryDropZone )
+);

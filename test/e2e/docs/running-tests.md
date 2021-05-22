@@ -2,108 +2,225 @@
 
 ## Table of Contents
 
-- [Getting started](#getting-started)
-- [To run the default specs](#to-run-the-default-specs-in-parallel-in-default-browser-sizes---mobile-and-desktop)
-- [To run an individual spec](#to-run-an-individual-spec)
-- [To run with different modes](#to-run-with-different-modes)
-- [To run a specific suite of specs](#to-run-a-specific-suite-of-specs)
-- [To run headlessly](#to-run-headlessly)
+<!-- TOC -->
 
-## Getting started
+- [Run tests](#run-tests)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Target environment](#target-environment)
+    - [Staging](#staging)
+    - [Localhost](#localhost)
+  - [Running tests Selenium](#running-tests-selenium)
+    - [All tests](#all-tests)
+    - [Individual spec files](#individual-spec-files)
+    - [Individual suite](#individual-suite)
+  - [Running tests Playwright](#running-tests-playwright)
+    - [All tests](#all-tests)
+    - [Individual spec files](#individual-spec-files)
+    - [Individual suite](#individual-suite)
+  - [Options](#options)
+    - [Headless](#headless)
+  - [TeamCity](#teamcity)
 
-You will need to generate a `config/local-decrypted.json` file by following these [fieldguide steps](https://fieldguide.automattic.com/automated-end-to-end-testing/).
+<!-- /TOC -->
 
-```bash
-# in another terminal session/tab start the devlopment server
-npm start
+## Overview
 
-# in the e2e tests tab
-cd test/e2e
-npm ci
-# Follow these instructions to get the secret (https://fieldguide.automattic.com/automated-end-to-end-testing/
-export CONFIG_KEY='<SECRET_FROM_SECRET_STORE>' 
-export NODE_CONFIG_ENV='decrypted'
-npm run decryptconfig
-# a file `config/local-decrypted.json` will be generated and ignored by git. Make sure to set the `NODE_CONFIG_ENV` variable on every bash/zsh session
+Calypso e2e tests use a combination of [`mocha`](https://mochajs.org/) and [`magellan`](https://github.com/TestArmada/magellan) to run its tests.
 
-# now run tests
+`mocha` is the test framework and runner.
+`magellan` is a test runner runner that parallelizes `mocha` instances and adds automatic retries and suite support.
+
+Calypso e2e when run in the CI environment uses `magellan` to spin up multiple `mocha` processes, each tasked with running one scenario (tagged with `@parallel`) from beginning to end. If any failures are encountered, the `mocha` process bails early (due to the `--bail` flag) and `magellan` schedules an automatic retry of the suite until the maximum number of attempts are reached.
+
+Calypso e2e when run locally can use either `magellan` for identical behavior as in CI, or alternatively invoke `mocha` directly.
+
+## Target environment
+
+### Staging
+
+By default, end-to-end tests run from the developer's hardware will hit the WPCOM Staging environment. This is specified inside the [`default.json`](config/default.json) file, under `calypsoBaseUrl`.
+
+### Localhost
+
+Local development environment refers to a locally served instance of the `wp-calypso` frontend.
+
+1. ensure required [dependencies](setup.md#software-environment#steps) are set up.
+
+2. change the `calypsoBaseURL` value in `test/e2e/config/default.json` to `http://calypso.localhost:3000`.
+
+   Alternatively: create a new local-<name>.json under `test/e2e/config` and set the `calypsoBaseURL` value to `http://calypso.localhost:3000`.
+
+3. start the webapp:
+
+```shell
+yarn start
+```
+
+4. once webapp is started, open `http://calypso.localhost:3000` in your browser.
+
+5. ensure requests to `http://calypso.localhost:3000` are registering in your local instance.
+
+The local environment is now ready for testing. When a test is run, it will hit againt the local development server instead of the WordPress.com staging environment.
+
+## Running tests (Selenium)
+
+### All tests
+
+```
 ./run.sh -g
 ```
 
-## To run the default specs in parallel (in default browser sizes - mobile and desktop)
+Configuration values for this command is read from `magellan.json`.
 
-`./run.sh -g`
+This command will run all tests in the `test/e2e/spec` directory using `magellan` with retries enabled.
 
-- or -
+### Individual spec file(s)
 
-`./node_modules/.bin/magellan`
+Specify spec file(s) directly to mocha:
 
-See the magellan.json file for the default parameters.  This is the process used in CI.
+```
+./node_modules/.bin/mocha <path_to_e2e_spec>
+```
 
-**NOTE!** - The magellan mocha plugin will search for all suites tagged with `@parallel`.  If you add a new test to this repo, you MUST add that tag to ensure that your test is run via CircleCI.
+<details>
+<summary>Example (mocha)</summary>
 
-## To run an individual spec
+```
+./node_modules/.bin/mocha specs/wp-calypso-gutenberg-coblocks-spec.js
+```
 
-`./node_modules/.bin/mocha specs/wp-log-in-out-spec.js`
+</details>
 
-Note: you can also change the spec _temporarily_ the use the `.only` syntax so it is the only spec that runs (making sure this isn't committed)
+<details>
+<summary>Example (magellan)</summary>
+
+```
+yarn magellan --test=specs/wp-log-in-out-spec.js
+```
+
+</details>
+
+Alternatively, append the `.only` postfix to a `describe` block:
+
+<details>
+<summary>Example</summary>
+
+```
+describe.only( 'Logging In and Out:', function() {
+```
+
+</details>
+
+:warning: ensure this syntax should be removed once the test is to be committed to the repository.
+There is an ESLint rule that checks for `.only` syntax, but please also exercise due diligence.
+
+### Individual suite
+
+```
+./node_modules/.bin/mocha <path_to_e2e_spec> -g "<test_case_name>"
+```
 
 eg.
 
-`describe.only( 'Logging In and Out:', function() {`
+```
+./node_modules/.bin/mocha specs/wp-calypso-gutenberg-coblocks-spec.js -g 'Insert a Pricing Table block'
+```
 
-## To run with different modes
+## Running tests (Playwright)
 
-All tests should be written to work in three modes: desktop (1440 wide), tablet (1024 wide) and mobile (375 wide).
+Playwright is the new framework and the intention is to migrate most (if not all) of our Selenium-based tests to this new framework.
 
-You can run tests in different modes by setting an environment variable `BROWSERSIZE` to either `desktop`, `tablet` or `mobile`.
+The steps to run calypso e2e tests developed for Playwright are very similar to Selenium-based suites.
 
-Eg:
+### All tests
 
-`env BROWSERSIZE=tablet ./node_modules/.bin/mocha specs`
+Specify a directory to `mocha`:
 
-Or you can use the -s option on the run.sh script:
+<details>
+<summary>Example (mocha)</summary>
 
-`./run.sh -g -s mobile`
-`./run.sh -g -s desktop,tablet`
+```
+mocha --config .mocharc_playwright.yml specs/specs-playwright
+```
 
-## To run a specific suite of specs
+</details>
 
-The `run.sh` script takes the following parameters, which can be combined to execute a variety of suites
+<details>
+<summary>Example (magellan)</summary>
 
-    -a [workers]  - Number of parallel workers in Magellan (defaults to 3)
-    -R  - Use custom Slack/Spec/XUnit reporter, otherwise just use Spec reporter
-    -p  - Execute the tests in parallel via CircleCI envvars (implies -g -s mobile,desktop)
-    -S [commitHash]   - Run tests against given commit via https://calypso.live
-    -B [branch]  - Run Jetpack tests on given Jetpack branch via https://jurassic.ninja
-    -s  - Screensizes in a comma-separated list (defaults to mobile,desktop)
-    -g  - Execute general tests in the specs/ directory
-    -j  - Execute Jetpack tests in the specs-jetpack-calypso/ directory (desktop and mobile)
-    -W  - Execute WooCommerce tests in the specs-woocommerce/ directory (desktop and mobile)
-    -C  - Execute tests tagged with @canary
-    -J  - Execute Jetpack connect tests tagged with @canary
-    -H [host]  - Specify an alternate host for Jetpack tests
-    -w - Only execute signup tests on Windows/IE11, not compatible with -g flag
-    -z  - Only execute canary tests on Windows/IE11, not compatible with -g flag
-    -y  - Only execute canary tests on Safari 10 on Mac, not compatible with -g flag
-    -l [config]  - Execute the tests via Sauce Labs with the given configuration
-    -c  - Exit with status code 0 regardless of test results
-    -m [browsers]  - Execute the multi-browser visual-diff tests with the given list of browsers via grunt.  Specify browsers in comma-separated list or 'all'
-    -i  - Execute i18n NUX screenshot tests, not compatible with -g flag
-    -I  - Execute tests in specs-i18n/ directory
-    -x  - Execute the tests from the context of xvfb-run
-    -u [baseUrl]  - Override the calypsoBaseURL config
-    -h  - This help listing
+```
+yarn magellan --config=magellan-playwright.json
+```
 
-## To run headlessly
+</details>
 
-By default the tests start their own Selenium server in the background, which in turn launches a Chrome browser on your desktop where you can watch the tests execute.  This can be a bit of a headache if you're trying to do other work while the tests are running, as the browser may occasionally steal focus back (although that's mostly been resolved).
+### Individual spec file(s)
 
-The easiest way to run "headlessly" without a visible window is to add the `-x` flag when running `run.sh` or using the `HEADLESS=1` environment variable which will run Chrome with the --headless flag.
+Specify the file(s) directly to `mocha`:
 
-1. `./run.sh -g -x`
+```
+mocha --config .mocharc_playwright.yml specs/specs-playwright/<spec_file>
+```
 
-or
+<details>
+<summary>Example (mocha)</summary>
 
-1. `export HEADLESS=1`
-1. `./node_modules/.bin/mocha specs/wp-log-in-out-spec.js`
+```
+mocha --config .mocharc_playwright.yml specs/specs-playwright/wp-log-in-out-spec.js
+```
+
+</details>
+
+<details>
+<summary>Example (magellan)</summary>
+
+```
+yarn magellan --config=magellan-playwright.json --test=specs-playwright/wp-log-in-out-spec.js
+```
+
+</details>
+
+### Individual suite
+
+Specify the name to `mocha`:
+
+</details>
+
+<details>
+<summary>Example (mocha)</summary>
+
+```
+mocha --config .mocharc_playwright.yml specs/specs-playwright -g 'Subsuite 2-1 @parallel'
+```
+
+</details>
+
+## Options
+
+### Headless
+
+By default the tests start their own Selenium server in the background, which in turn launches a Chrome browser on your desktop where you can watch the tests execute. This can be a bit of a headache if you're trying to do other work while the tests are running, as the browser may occasionally steal focus back.
+
+If using `run.sh`, add the `-x` flag:
+
+```shell
+./run.sh -g -x
+```
+
+If using `mocha` or `magellan`, export an environment variable:
+
+```shell
+export HEADLESS=1
+./node_modules/.bin/mocha <path_to_e2e_spec>
+```
+
+## TeamCity
+
+Calypso end-to-end tests have migrated to TeamCity as of 2021-01.
+
+Both sets of E2E Tests (desktop, mobile) are run against all branches, PRs and trunk. This process is automatic.
+
+Note that access to TeamCity is available only to Automatticians.
+
+OSS Citizens (including Trialmatticians), please request an Automattician to execute the required e2e tests in the PR.

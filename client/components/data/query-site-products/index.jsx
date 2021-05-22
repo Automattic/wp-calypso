@@ -8,10 +8,10 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSiteProducts } from 'state/sites/products/selectors';
-import { fetchSiteProducts } from 'state/sites/products/actions';
+import { isRequestingSiteProducts } from 'calypso/state/sites/products/selectors';
+import { fetchSiteProducts } from 'calypso/state/sites/products/actions';
 
-const request = siteId => ( dispatch, getState ) => {
+const request = ( siteId ) => ( dispatch, getState ) => {
 	if ( siteId && ! isRequestingSiteProducts( getState(), siteId ) ) {
 		dispatch( fetchSiteProducts( siteId ) );
 	}

@@ -1,82 +1,137 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { useHistory } from 'react-router-dom';
-import classnames from 'classnames';
+import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
-import { __experimentalCreateInterpolateElement } from '@wordpress/element';
-import { ENTER } from '@wordpress/keycodes';
+import { useI18n } from '@wordpress/react-i18n';
+import { Icon } from '@wordpress/icons';
+import classnames from 'classnames';
+import { useViewportMatch } from '@wordpress/compose';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { Step, usePath } from '../../path';
+import { recordSiteTitleSelection } from '../../lib/analytics';
+import tip from './tip';
+import AcquireIntentTextInput from './acquire-intent-text-input';
+import useTyper from '../../hooks/use-typer';
+import { useIsAnchorFm } from '../../path';
 
 interface Props {
-	isVisible: boolean;
+	onSubmit: () => void;
+	inputRef: React.MutableRefObject< HTMLInputElement | undefined >;
 }
 
-const SiteTitle: React.FunctionComponent< Props > = ( { isVisible } ) => {
-	const { __: NO__ } = useI18n();
-	const { siteTitle, siteVertical } = useSelect( select => select( STORE_KEY ).getState() );
+const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) => {
+	const { __, _x } = useI18n();
+	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
+	const isAnchorFmSignup = useIsAnchorFm();
 	const { setSiteTitle } = useDispatch( STORE_KEY );
-	const history = useHistory();
-	const makePath = usePath();
-	const inputRef = React.useRef< HTMLSpanElement >( document.createElement( 'span' ) );
+	const [ isTouched, setIsTouched ] = React.useState( false );
+	const showVerticalInput = config.isEnabled( 'gutenboarding/show-vertical-input' );
+	const siteTitleExamples = [
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'The Local Latest', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'North Peak Cycling', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Sunshine Daycare', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Quick Wins Consulting', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Puns and Pedantry', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Yoga For Everyone', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Pugs Wearing Bowties', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Behind the Lens', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Marketing Magic', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Cortado Coffee', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Mumbai Bites', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'RPM Motors', 'sample site title' ),
+		/* translators: This is an example of a site name,
+		   feel free to create your own but please keep it under 22 characters */
+		_x( 'Max’s Burger Bar', 'sample site title' ),
+	];
 
-	const handleKeyDown = ( e: React.KeyboardEvent< HTMLSpanElement > ) => {
-		if ( e.keyCode === ENTER ) {
-			// As last input on first step, hitting 'Enter' should direct to next step.
-			e.preventDefault();
-			history.push( makePath( Step.DesignSelection ) );
-		}
+	const handleFormSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
+		// hitting 'Enter' when focused on the input field should direct to next step.
+		e.preventDefault();
+		onSubmit();
 	};
 
-	const handleKeyUp = ( e: React.KeyboardEvent< HTMLSpanElement > ) =>
-		setSiteTitle( e.currentTarget.innerText.trim().length ? e.currentTarget.innerText : '' );
+	const handleBlur = () => {
+		recordSiteTitleSelection( !! siteTitle );
+	};
 
-	React.useEffect( () => {
-		if ( siteTitle ) {
-			inputRef.current.innerText = siteTitle;
-		}
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+	const handleFocus = () => {
+		setIsTouched( true );
+	};
 
-	React.useEffect( () => {
-		if ( siteVertical?.label ) {
-			inputRef.current.focus();
-		}
-	}, [ siteVertical, inputRef ] );
+	const isMobile = useViewportMatch( 'small', '<' );
 
-	// translators: Form input for a site's title where "<Input />" is replaced by user input and must be preserved verbatim in translated string.
-	const madlibTemplate = NO__( 'Itʼs called <Input />' );
-	const madlib = __experimentalCreateInterpolateElement( madlibTemplate, {
-		Input: (
-			<span
-				contentEditable
-				tabIndex={ 0 }
-				role="textbox"
-				aria-multiline="true"
-				spellCheck={ false }
-				ref={ inputRef }
-				/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-				className="madlib__input"
-				onKeyDown={ handleKeyDown }
-				onKeyUp={ handleKeyUp }
-			/>
-		),
+	// translators: label for site title input in Gutenboarding
+	let inputLabel;
+	if ( showVerticalInput && ! isMobile ) {
+		inputLabel = __( "It's called" );
+	} else if ( isAnchorFmSignup ) {
+		inputLabel = __( 'My podcast is called' );
+	} else {
+		inputLabel = __( 'My site is called' );
+	}
+
+	const placeHolder = useTyper( siteTitleExamples, ! siteTitle, {
+		delayBetweenCharacters: 70,
 	} );
 
 	return (
 		<form
-			className={ classnames( 'site-title', {
-				'site-title--without-value': ! siteTitle.length,
-				'site-title--hidden': ! isVisible,
-			} ) }
+			className={ classnames( 'site-title', { 'is-touched': isTouched } ) }
+			onSubmit={ handleFormSubmit }
 		>
-			{ madlib }
+			<label htmlFor="site-title__input" className="site-title__input-label">
+				{ inputLabel }
+			</label>
+			<div className="site-title__input-wrapper">
+				{ /* Adding key makes it more performant
+					because without it the element is recreated
+					for every letter in the typing animation
+					*/ }
+				<AcquireIntentTextInput
+					ref={ inputRef as React.MutableRefObject< HTMLInputElement | null > }
+					key="site-title__input"
+					onChange={ setSiteTitle }
+					onFocus={ handleFocus }
+					onBlur={ handleBlur }
+					value={ siteTitle }
+					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+					placeholder={ placeHolder }
+				></AcquireIntentTextInput>
+				<p className="site-title__input-hint">
+					<Icon icon={ tip } size={ 18 } />
+					{ /* translators: The "it" here refers to the site title. */ }
+					<span>{ __( "Don't worry, you can change it later." ) }</span>
+				</p>
+			</div>
 		</form>
 	);
 };

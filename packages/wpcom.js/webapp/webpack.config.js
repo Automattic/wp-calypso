@@ -1,12 +1,13 @@
+const path = require( 'path' );
 
 module.exports = {
-	entry: __dirname + '/main.js',
+	entry: path.join( __dirname, 'main.js' ),
 
 	output: {
 		path: __dirname,
 		filename: 'webapp-bundle.js',
 		libraryTarget: 'var',
-		library: 'WPCOMWebApp'
+		library: 'WPCOMWebApp',
 	},
 
 	module: {
@@ -14,19 +15,19 @@ module.exports = {
 			{
 				test: /\.js$/,
 				exclude: /node_modules/,
-				loader: 'babel-loader'
+				loader: 'babel-loader',
 			},
 			{
 				test: /\.json$/,
 				exclude: /node_modules/,
-				loader: 'json-loader'
-			}
-		]
+				loader: 'json-loader',
+			},
+		],
 	},
 
 	resolve: {
-		extensions: [ '', '.js', '.json' ]
+		extensions: [ '', '.js', '.json' ],
 	},
 
-	devtool: 'sourcemap'
+	devtool: 'sourcemap',
 };

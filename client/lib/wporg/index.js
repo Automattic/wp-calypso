@@ -9,8 +9,8 @@ import { stringify as stringifyQs } from 'qs';
 /**
  * Internal dependencies
  */
+import languages from '@automattic/languages';
 import jsonp from './jsonp';
-import { languages } from 'languages';
 
 const debug = debugFactory( 'wporg' );
 
@@ -81,7 +81,7 @@ export function fetchPluginInformation( pluginSlug ) {
 	const baseUrl = 'https://api.wordpress.org/plugins/info/1.0/' + pluginSlug + '.jsonp';
 
 	return new Promise( ( resolve, reject ) => {
-		jsonp( baseUrl, query, function( error, data ) {
+		jsonp( baseUrl, query, function ( error, data ) {
 			if ( error ) {
 				debug( 'error downloading plugin details from .org: %s', error );
 				reject( error );

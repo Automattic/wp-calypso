@@ -11,11 +11,9 @@
 // Y-axis
 
 // Y-axis markers (lines)
-// 1: Corresponds to padding of chart
 
 .chart .chart__y-axis-markers {
 	position: absolute;
-	top: 8px; // 1
 	left: 0;
 	right: 0;
 	height: 200px;
@@ -60,7 +58,7 @@ $y-axis-padding: 0 20px 0 10px;
 	float: right;
 	height: 200px;
 	padding: $y-axis-padding;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral-40 );
 	margin-bottom: 30px;
 }
@@ -92,7 +90,7 @@ $y-axis-padding: 0 20px 0 10px;
 	position: absolute;
 	display: inline-block;
 	vertical-align: top;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	text-align: center;
 }
 
@@ -188,7 +186,7 @@ $y-axis-padding: 0 20px 0 10px;
 	height: 100%;
 	transform: scaleY( 0 ); // 2
 	transition: transform 0.3s ease-in-out; // 3
-	transform-origin: 0% 100%; // 4 
+	transform-origin: 0% 100%; // 4
 	z-index: z-index( 'root', '.chart__bar-section' );
 
 	.chart__bar:hover &.is-bar {
@@ -227,11 +225,11 @@ $y-axis-padding: 0 20px 0 10px;
 	color: var( --color-neutral );
 	list-style-type: none;
 	margin: 0;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		width: 100%;
 	}
 }
@@ -243,7 +241,7 @@ $y-axis-padding: 0 20px 0 10px;
 	text-align: left;
 
 	// Expand labels to create bigger touch targets
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		width: 50%;
 		display: inline-block;
 	}
@@ -256,6 +254,13 @@ $y-axis-padding: 0 20px 0 10px;
 	display: inline-block;
 	padding: 12px 19px 10px 20px; // 1
 
+	&.form-label {
+		display: inline-block;
+		margin-bottom: 0;
+		font-weight: 400;
+		font-size: $font-body-extra-small;
+	}
+
 	&.is-selectable {
 		cursor: pointer;
 
@@ -265,7 +270,7 @@ $y-axis-padding: 0 20px 0 10px;
 		}
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: block;
 	}
 }
@@ -284,7 +289,7 @@ $y-axis-padding: 0 20px 0 10px;
 	margin: 3px 5px 3px 8px; // 1
 }
 
-@include breakpoint( '<480px' ) {
+@include breakpoint-deprecated( '<480px' ) {
 	.chart__legend-option:first-child .chart__legend-color {
 		margin-left: 2px; // 2
 	}
@@ -315,6 +320,7 @@ $y-axis-padding: 0 20px 0 10px;
 	bottom: 0;
 	left: 0;
 	z-index: z-index( 'root', '.chart__empty' );
+	padding: 0 50px;
 }
 
 // Chart tooltip
@@ -331,9 +337,9 @@ $y-axis-padding: 0 20px 0 10px;
 			padding: 0;
 
 			li {
-				font-size: 11px;
+				font-size: $font-body-extra-small;
 				text-transform: uppercase;
-				font-weight: 100;
+				font-weight: 400;
 				height: 24px;
 				letter-spacing: 0.1em;
 				border: 0;
@@ -380,11 +386,11 @@ $y-axis-padding: 0 20px 0 10px;
 					text-align: center;
 
 					.rtl & {
-						font-size: 11px;
+						font-size: $font-body-extra-small;
 					}
 
 					.post-count {
-						font-weight: bold;
+						font-weight: 600;
 					}
 				}
 				.value {
@@ -397,10 +403,10 @@ $y-axis-padding: 0 20px 0 10px;
 
 .chart__tooltip .module-content-list-item {
 	&.is-date-label {
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		margin-bottom: 2px;
 		text-transform: uppercase;
-		font-weight: bold;
+		font-weight: 600;
 		border-bottom: 1px solid var( --color-neutral-60 );
 		padding-bottom: 2px;
 	}
@@ -427,6 +433,20 @@ $y-axis-padding: 0 20px 0 10px;
 				width: 30px;
 				height: 24px;
 			}
+		}
+	}
+}
+
+.chart.is-placeholder {
+	padding: 8px 20px;
+
+	.chart__bar,
+	.chart__bar:hover {
+		cursor: default;
+		background-color: transparent;
+
+		.chart__bar-section {
+			background-color: rgba( var( --color-neutral-0-rgb ), 0.5 );
 		}
 	}
 }

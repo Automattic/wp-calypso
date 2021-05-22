@@ -29,13 +29,14 @@ class CartEmpty extends React.Component {
 	}
 
 	shouldShowPlanButton = () => {
-		if ( this.props.selectedSite.jetpack ) {
+		const { path, selectedSite } = this.props;
+		if ( selectedSite.jetpack && ! selectedSite.options.is_automated_transfer ) {
 			return true; // always show the plan button for jetpack sites (not the domain button)
 		}
-		return startsWith( this.props.path, '/domains' );
+		return ! startsWith( path, '/domains' );
 	};
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		event.preventDefault();
 
 		page(

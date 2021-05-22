@@ -5,14 +5,18 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import Toggle from 'components/forms/form-toggle';
-import { CHANGE_NAME_SERVERS } from 'lib/url/support';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
 class NameserversToggle extends React.PureComponent {
 	static propTypes = {
@@ -28,11 +32,10 @@ class NameserversToggle extends React.PureComponent {
 				</span>
 
 				<form className="name-servers__toggle">
-					<Toggle
+					<ToggleControl
 						id="wp-nameservers"
 						name="wp-nameservers"
 						onChange={ this.handleToggle }
-						type="checkbox"
 						checked={ this.props.enabled }
 						value="active"
 					/>
@@ -102,7 +105,7 @@ const wpcomNameServersToggleButtonClick = ( domainName, enabled ) => {
 	);
 };
 
-const wpcomNameServersLearnMoreClick = domainName =>
+const wpcomNameServersLearnMoreClick = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',

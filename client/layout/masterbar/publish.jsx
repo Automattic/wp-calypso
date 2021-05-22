@@ -10,19 +10,19 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import AsyncLoad from 'calypso/components/async-load';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import MasterbarItem from './item';
-import { preload } from 'sections-helper';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
+import { preloadEditor } from 'calypso/sections-preloaders';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';
 import MasterbarDrafts from './drafts';
-import TranslatableString from 'components/translatable/proptype';
-import { getEditorUrl } from 'state/selectors/get-editor-url';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import getSectionGroup from 'state/ui/selectors/get-section-group';
-import { reduxGetState } from 'lib/redux-bridge';
-import { navigate } from 'state/ui/actions';
+import TranslatableString from 'calypso/components/translatable/proptype';
+import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import getSectionGroup from 'calypso/state/ui/selectors/get-section-group';
+import { reduxGetState } from 'calypso/lib/redux-bridge';
+import { navigate } from 'calypso/state/ui/actions';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {
@@ -41,7 +41,7 @@ class MasterbarItemNew extends React.Component {
 	postButtonRef = React.createRef();
 
 	toggleSitesPopover = () => {
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			isShowingPopover: ! state.isShowingPopover,
 		} ) );
 	};
@@ -50,7 +50,7 @@ class MasterbarItemNew extends React.Component {
 		this.setState( { isShowingPopover: false } );
 	};
 
-	onClick = event => {
+	onClick = ( event ) => {
 		// if the user has multiple sites and none is selected, show site selector
 		if ( this.props.shouldOpenSiteSelector ) {
 			this.toggleSitesPopover();
@@ -58,13 +58,11 @@ class MasterbarItemNew extends React.Component {
 		}
 	};
 
-	preloadPostEditor = () => preload( 'post-editor' );
-
 	getPopoverPosition() {
 		return isMobile() ? 'bottom' : 'bottom left';
 	}
 
-	onSiteSelect = siteId => {
+	onSiteSelect = ( siteId ) => {
 		const redirectUrl = getEditorUrl( reduxGetState(), siteId, null, 'post' );
 		this.props.openEditor( redirectUrl );
 		return true; // handledByHost = true, don't let the component nav
@@ -77,7 +75,7 @@ class MasterbarItemNew extends React.Component {
 
 		return (
 			<AsyncLoad
-				require="components/sites-popover"
+				require="calypso/components/sites-popover"
 				placeholder={ null }
 				id="popover__sites-popover-masterbar"
 				visible
@@ -104,7 +102,7 @@ class MasterbarItemNew extends React.Component {
 					isActive={ this.props.isActive }
 					tooltip={ this.props.tooltip }
 					className={ classes }
-					preloadSection={ this.preloadPostEditor }
+					preloadSection={ preloadEditor }
 				>
 					{ this.props.children }
 				</MasterbarItem>
@@ -115,14 +113,14 @@ class MasterbarItemNew extends React.Component {
 	}
 }
 
-const openEditor = editorUrl =>
+const openEditor = ( editorUrl ) =>
 	withAnalytics(
 		recordTracksEvent( 'calypso_masterbar_write_button_clicked' ),
 		navigate( editorUrl )
 	);
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const isSitesGroup = getSectionGroup( state ) === 'sites';
 		const hasMoreThanOneVisibleSite = getCurrentUserVisibleSiteCount( state ) > 1;

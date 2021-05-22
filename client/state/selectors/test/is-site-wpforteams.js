@@ -6,9 +6,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isSiteWPforteams from 'state/selectors/is-site-wpforteams';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
-describe( 'isSiteWPforteams()', () => {
+describe( 'isSiteWPForTeams()', () => {
 	test( 'should return null if the specified site was not found in the state', () => {
 		const state = {
 			sites: {
@@ -16,7 +16,7 @@ describe( 'isSiteWPforteams()', () => {
 			},
 		};
 
-		expect( isSiteWPforteams( state, 12345 ) ).to.be.null;
+		expect( isSiteWPForTeams( state, 12345 ) ).to.be.null;
 	} );
 
 	test( 'should return false if site is not a WP for Teams one', () => {
@@ -32,7 +32,7 @@ describe( 'isSiteWPforteams()', () => {
 			},
 		};
 
-		expect( isSiteWPforteams( state, 12345 ) ).to.be.false;
+		expect( isSiteWPForTeams( state, 12345 ) ).to.be.false;
 	} );
 
 	test( 'should return true if site is a WP for Teams one', () => {
@@ -48,6 +48,6 @@ describe( 'isSiteWPforteams()', () => {
 			},
 		};
 
-		expect( isSiteWPforteams( state, 12345 ) ).to.be.true;
+		expect( isSiteWPForTeams( state, 12345 ) ).to.be.true;
 	} );
 } );

@@ -9,8 +9,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { playtime } from 'lib/media/utils';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { playtime } from 'calypso/lib/media/utils';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 
 class EditorMediaModalDetailFileInfo extends React.Component {
 	static displayName = 'EditorMediaModalDetailFileInfo';
@@ -19,7 +20,7 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 		item: PropTypes.object,
 	};
 
-	getItemValue = attribute => {
+	getItemValue = ( attribute ) => {
 		let value;
 
 		if ( ! this.props.item ) {
@@ -84,6 +85,38 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 		);
 	};
 
+	renderFileSize = () => {
+		const fileSize = this.getItemValue( 'size' );
+
+		if ( ! fileSize || fileSize === 0 ) {
+			return;
+		}
+
+		return (
+			<tr>
+				<th>{ this.props.translate( 'File Size' ) }</th>
+				<td>{ fileSize }</td>
+			</tr>
+		);
+	};
+
+	renderVideoPressShortcode = () => {
+		const videopressGuid = this.getItemValue( 'videopress_guid' );
+
+		if ( ! videopressGuid ) {
+			return;
+		}
+
+		return (
+			<tr>
+				<th>{ this.props.translate( 'Shortcode' ) }</th>
+				<td>
+					<ClipboardButtonInput value={ '[wpvideo ' + videopressGuid + ']' } />
+				</td>
+			</tr>
+		);
+	};
+
 	render() {
 		const classes = classNames( 'editor-media-modal-detail__file-info', {
 			'is-loading': ! this.props.item,
@@ -102,8 +135,10 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 						<th>{ this.props.translate( 'File Type' ) }</th>
 						<td>{ this.getItemValue( 'extension' ) }</td>
 					</tr>
+					{ this.renderFileSize() }
 					{ this.renderDimensions() }
 					{ this.renderDuration() }
+					{ this.renderVideoPressShortcode() }
 					<tr>
 						<th>{ this.props.translate( 'Upload Date' ) }</th>
 						<td>{ this.getItemValue( 'date' ) }</td>

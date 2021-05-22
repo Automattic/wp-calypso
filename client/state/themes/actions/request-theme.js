@@ -6,19 +6,23 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { fetchThemeInformation as fetchWporgThemeInformation } from 'lib/wporg';
-import { THEME_REQUEST, THEME_REQUEST_SUCCESS, THEME_REQUEST_FAILURE } from 'state/themes/action-types';
-import { receiveTheme } from 'state/themes/actions/receive-theme';
-import { receiveThemes } from 'state/themes/actions/receive-themes';
-import { themeRequestFailure } from 'state/themes/actions/theme-request-failure';
+import wpcom from 'calypso/lib/wp';
+import { fetchThemeInformation as fetchWporgThemeInformation } from 'calypso/lib/wporg';
+import {
+	THEME_REQUEST,
+	THEME_REQUEST_SUCCESS,
+	THEME_REQUEST_FAILURE,
+} from 'calypso/state/themes/action-types';
+import { receiveTheme } from 'calypso/state/themes/actions/receive-theme';
+import { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
+import { themeRequestFailure } from 'calypso/state/themes/actions/theme-request-failure';
 import {
 	normalizeJetpackTheme,
 	normalizeWpcomTheme,
 	normalizeWporgTheme,
-} from 'state/themes/utils';
+} from 'calypso/state/themes/utils';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Triggers a network request to fetch a specific theme from a site.
@@ -28,7 +32,7 @@ import 'state/themes/init';
  * @returns {Function}         Action thunk
  */
 export function requestTheme( themeId, siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: THEME_REQUEST,
 			siteId,
@@ -37,7 +41,7 @@ export function requestTheme( themeId, siteId ) {
 
 		if ( siteId === 'wporg' ) {
 			return fetchWporgThemeInformation( themeId )
-				.then( theme => {
+				.then( ( theme ) => {
 					// Apparently, the WP.org REST API endpoint doesn't 404 but instead returns false
 					// if a theme can't be found.
 					if ( ! theme ) {
@@ -50,7 +54,7 @@ export function requestTheme( themeId, siteId ) {
 						themeId,
 					} );
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					dispatch( {
 						type: THEME_REQUEST_FAILURE,
 						siteId,
@@ -64,7 +68,7 @@ export function requestTheme( themeId, siteId ) {
 			return wpcom
 				.undocumented()
 				.themeDetails( themeId )
-				.then( theme => {
+				.then( ( theme ) => {
 					dispatch( receiveTheme( normalizeWpcomTheme( theme ), siteId ) );
 					dispatch( {
 						type: THEME_REQUEST_SUCCESS,
@@ -72,7 +76,7 @@ export function requestTheme( themeId, siteId ) {
 						themeId,
 					} );
 				} )
-				.catch( error => {
+				.catch( ( error ) => {
 					dispatch( {
 						type: THEME_REQUEST_FAILURE,
 						siteId,
@@ -95,7 +99,7 @@ export function requestTheme( themeId, siteId ) {
 					themeId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( themeRequestFailure( siteId, themeId, error ) );
 			} );
 	};

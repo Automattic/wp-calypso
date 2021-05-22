@@ -8,8 +8,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { getSelectedSite } from 'state/ui/selectors';
-import EmptyContent from 'components/empty-content';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import EmptyContent from 'calypso/components/empty-content';
 
 class JetpackImporter extends PureComponent {
 	render() {
@@ -35,6 +35,6 @@ class JetpackImporter extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 } ) )( localize( JetpackImporter ) );

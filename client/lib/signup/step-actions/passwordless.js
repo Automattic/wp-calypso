@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Creates a user account and sends the user a verification code via email to confirm the account.
@@ -14,8 +14,8 @@ export function createPasswordlessUser( callback, { email } ) {
 	wpcom
 		.undocumented()
 		.usersEmailNew( { email }, null )
-		.then( response => callback( null, response ) )
-		.catch( err => callback( err ) );
+		.then( ( response ) => callback( null, response ) )
+		.catch( ( err ) => callback( err ) );
 }
 
 /**
@@ -28,8 +28,8 @@ export function verifyPasswordlessUser( callback, { email, code } ) {
 	wpcom
 		.undocumented()
 		.usersEmailVerification( { email, code }, null )
-		.then( response =>
+		.then( ( response ) =>
 			callback( null, { email, username: email, bearer_token: response.token.access_token } )
 		)
-		.catch( err => callback( err ) );
+		.catch( ( err ) => callback( err ) );
 }

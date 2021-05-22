@@ -14,7 +14,7 @@ import { parse } from 'qs';
 import wpcomRequest from 'wpcom-proxy-request';
 import 'jest-fetch-mock';
 import nock from 'nock';
-import { wait } from '@testing-library/react';
+import waitForExpect from 'wait-for-expect';
 
 /**
  * Internal dependencies
@@ -65,7 +65,7 @@ describe( 'password login flow', () => {
 		expect( getLoginFlowState() ).toBe( 'ENTER_PASSWORD' );
 
 		nock( 'https://wordpress.com' )
-			.post( '/wp-login.php?action=login-endpoint', body => {
+			.post( '/wp-login.php?action=login-endpoint', ( body ) => {
 				expect( parse( body ) ).toEqual(
 					expect.objectContaining( {
 						username: 'user1',
@@ -130,7 +130,7 @@ describe( 'password login flow', () => {
 		expect( getLoginFlowState() ).toBe( 'ENTER_PASSWORD' );
 
 		nock( 'https://wordpress.com' )
-			.post( '/wp-login.php?action=login-endpoint', body => {
+			.post( '/wp-login.php?action=login-endpoint', ( body ) => {
 				expect( parse( body ) ).toEqual(
 					expect.objectContaining( {
 						username: 'user1',
@@ -185,7 +185,7 @@ describe( 'password login flow', () => {
 
 		nock( 'https://wordpress.com' )
 			.persist()
-			.post( '/wp-login.php?action=login-endpoint', body => {
+			.post( '/wp-login.php?action=login-endpoint', ( body ) => {
 				expect( parse( body ) ).toEqual(
 					expect.objectContaining( {
 						username: 'user1',
@@ -205,7 +205,7 @@ describe( 'password login flow', () => {
 					push_web_token: two_step_push_token,
 				},
 			} )
-			.post( '/wp-login.php?action=two-step-authentication-endpoint', body => {
+			.post( '/wp-login.php?action=two-step-authentication-endpoint', ( body ) => {
 				expect( parse( body ) ).toEqual(
 					expect.objectContaining( {
 						user_id: user_id.toString( 10 ),
@@ -237,11 +237,11 @@ describe( 'password login flow', () => {
 		// Don't await the promise, it doesn't resolve until login flow is complete
 		submitPassword( 'passw0rd' );
 
-		await wait( () => expect( getLoginFlowState() ).toBe( 'WAITING_FOR_2FA_APP' ) );
+		await waitForExpect( () => expect( getLoginFlowState() ).toBe( 'WAITING_FOR_2FA_APP' ) );
 
 		userHandledPushNotification = true;
 
-		await wait( () => expect( getLoginFlowState() ).toBe( 'LOGGED_IN' ) );
+		await waitForExpect( () => expect( getLoginFlowState() ).toBe( 'LOGGED_IN' ) );
 	} );
 } );
 

@@ -21,9 +21,9 @@ module.exports = {
 		},
 		schema: [],
 	},
-	create: function( context ) {
+	create: function ( context ) {
 		return {
-			CallExpression: function( node ) {
+			CallExpression: function ( node ) {
 				if (
 					node.callee.type === 'MemberExpression' &&
 					node.callee.object.type === 'ThisExpression' &&

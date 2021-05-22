@@ -1,17 +1,17 @@
 /**
  * Internal dependencies
  */
-
 import {
 	MEMBERSHIPS_SUBSCRIBERS_LIST,
 	MEMBERSHIPS_SUBSCRIPTION_STOP,
 	MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS,
 	MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
-	NOTICE_CREATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
-import 'state/data-layer/wpcom/sites/memberships';
-import wpcom from 'lib/wp';
+import 'calypso/state/data-layer/wpcom/sites/memberships';
+import 'calypso/state/memberships/init';
 
 export const requestSubscribers = ( siteId, offset ) => ( {
 	siteId,
@@ -20,7 +20,7 @@ export const requestSubscribers = ( siteId, offset ) => ( {
 } );
 
 export const requestSubscriptionStop = ( siteId, subscriber, noticeText ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			siteId,
 			type: MEMBERSHIPS_SUBSCRIPTION_STOP,
@@ -31,7 +31,7 @@ export const requestSubscriptionStop = ( siteId, subscriber, noticeText ) => {
 			.post( `/sites/${ siteId }/memberships/subscriptions/${ subscriber.id }/cancel`, {
 				user_id: subscriber.user.ID,
 			} )
-			.then( result => {
+			.then( ( result ) => {
 				const errorMsg = result.error || '';
 
 				if ( errorMsg.length > 0 ) {
@@ -41,14 +41,11 @@ export const requestSubscriptionStop = ( siteId, subscriber, noticeText ) => {
 						errorMsg,
 					} );
 
-					dispatch( {
-						type: NOTICE_CREATE,
-						notice: {
+					dispatch(
+						errorNotice( errorMsg, {
 							duration: 5000,
-							text: errorMsg,
-							status: 'is-error',
-						},
-					} );
+						} )
+					);
 				}
 
 				dispatch( {
@@ -57,15 +54,9 @@ export const requestSubscriptionStop = ( siteId, subscriber, noticeText ) => {
 					subscriptionId: subscriber.id,
 				} );
 
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
-						text: noticeText,
-						status: 'is-success',
-					},
-				} );
+				dispatch( successNotice( noticeText ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
 					subscriptionId: subscriber.id,

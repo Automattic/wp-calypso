@@ -8,7 +8,7 @@
 .profile-gravatar__user-secondary-info {
 	margin-bottom: 30px;
 	text-align: center;
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	.profile-gravatar.is-in-sidebar & {
 		color: var( --color-sidebar-text-alternative );
@@ -16,7 +16,7 @@
 }
 
 .profile-gravatar__user-display-name {
-	font-size: 20px;
+	font-size: $font-title-small;
 	font-weight: 600;
 	line-height: 1.1;
 	margin: 16px 16px 4px;

@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, get, each, includes, union, find } from 'lodash';
+import { isEmpty, get, includes, find } from 'lodash';
 import page from 'page';
 
 /**
@@ -15,18 +15,18 @@ import page from 'page';
 import ActivityLogTaskUpdate from './update';
 import WithItemsToUpdate from './to-update';
 import { Card } from '@automattic/components';
-import PopoverMenuItem from 'components/popover/menu-item';
-import SplitButton from 'components/split-button';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { getSite } from 'state/sites/selectors';
-import { updatePlugin } from 'state/plugins/installed/actions';
-import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { getStatusForPlugin } from 'state/plugins/installed/selectors';
-import { errorNotice, infoNotice, successNotice } from 'state/notices/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { navigate } from 'state/ui/actions';
-import { decodeEntities } from 'lib/formatting';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import SplitButton from 'calypso/components/split-button';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getSite } from 'calypso/state/sites/selectors';
+import { updatePlugin } from 'calypso/state/plugins/installed/actions';
+import { getHttpData, requestHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { navigate } from 'calypso/state/ui/actions';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies
@@ -40,8 +40,8 @@ import './style.scss';
  *
  * @returns {boolean}  True if one or more plugins or themes are updating.
  */
-const isItemUpdating = updatables =>
-	updatables.some( item => 'inProgress' === get( item, 'updateStatus.status' ) );
+const isItemUpdating = ( updatables ) =>
+	updatables.some( ( item ) => 'inProgress' === get( item, 'updateStatus.status' ) );
 
 /**
  * Checks if the plugin, theme or core update is enqueued to be updated, searching it in the list by its slug.
@@ -52,6 +52,8 @@ const isItemUpdating = updatables =>
  * @returns {boolean}   True if the plugin or theme is enqueued to be updated.
  */
 const isItemEnqueued = ( updateSlug, updateQueue ) => !! find( updateQueue, { slug: updateSlug } );
+
+const union = ( ...arrays ) => [ ...new Set( [].concat( ...arrays ) ) ];
 
 const MAX_UPDATED_TO_SHOW = 3;
 
@@ -103,7 +105,7 @@ class ActivityLogTasklist extends Component {
 	 *
 	 * @param {object} item Plugin or theme to dismiss.
 	 */
-	dismiss = item => {
+	dismiss = ( item ) => {
 		// ToDo: this should update some record in the tasklist API
 		const {
 			pluginWithUpdate,
@@ -119,11 +121,11 @@ class ActivityLogTasklist extends Component {
 			trackDismiss( item );
 		} else {
 			items = union(
-				pluginWithUpdate.map( plugin => plugin.slug ),
-				themeWithUpdate.map( theme => theme.slug ),
+				pluginWithUpdate.map( ( plugin ) => plugin.slug ),
+				themeWithUpdate.map( ( theme ) => theme.slug ),
 				// Although core doesn't have a slug, we call it 'wordpress'
 				// to work with it like plugins or themes.
-				coreWithUpdate.map( core => core.slug )
+				coreWithUpdate.map( ( core ) => core.slug )
 			);
 			trackDismissAll();
 		}
@@ -216,7 +218,7 @@ class ActivityLogTasklist extends Component {
 	 *
 	 * @param {object} event Synthetic event
 	 */
-	showAllUpdates = event => {
+	showAllUpdates = ( event ) => {
 		recordTracksEvent( 'calypso_activitylog_tasklist_expand_view' );
 		this.setState( { expandedView: true } );
 		event.preventDefault();
@@ -231,7 +233,7 @@ class ActivityLogTasklist extends Component {
 	 * 		{string} name Plugin or theme name, like "Hello Dolly". Name for core updates is "WordPress".
 	 * }
 	 */
-	updateItem = item => {
+	updateItem = ( item ) => {
 		const { showInfoNotice, siteName, updateSingle, translate, trackUpdate } = this.props;
 
 		trackUpdate( item );
@@ -276,7 +278,7 @@ class ActivityLogTasklist extends Component {
 
 		const { showErrorNotice, showSuccessNotice, siteName, translate } = this.props;
 
-		each( itemsWithUpdate, item => {
+		itemsWithUpdate.forEach( ( item ) => {
 			const { slug, updateStatus, type, name } = item;
 			// Finds in prevProps.pluginWithUpdate, prevProps.themeWithUpdate or prevpros.coreWithUpdate
 			const prevItemWithUpdate = find( prevProps[ `${ type }WithUpdate` ], { slug } );
@@ -327,7 +329,7 @@ class ActivityLogTasklist extends Component {
 	showAllItemsToUpdate( itemsToUpdate ) {
 		// Show if plugin update didn't start, is still running or errored,
 		// but hide plugin if it was updated successfully.
-		return itemsToUpdate.map( item => {
+		return itemsToUpdate.map( ( item ) => {
 			return (
 				<ActivityLogTaskUpdate
 					key={ item.slug }
@@ -370,7 +372,7 @@ class ActivityLogTasklist extends Component {
 			this.props.coreWithUpdate,
 			this.props.pluginWithUpdate,
 			this.props.themeWithUpdate
-		).filter( item => ! includes( this.state.dismissed, item.slug ) );
+		).filter( ( item ) => ! includes( this.state.dismissed, item.slug ) );
 
 		if ( isEmpty( itemsToUpdate ) ) {
 			return null;
@@ -384,17 +386,19 @@ class ActivityLogTasklist extends Component {
 			<Card className="activity-log-tasklist" highlight="warning">
 				<TrackComponentView eventName={ 'calypso_activitylog_tasklist_update_impression' } />
 				<div className="activity-log-tasklist__heading">
-					{ // Not using count method since we want a "one" string.
-					1 < numberOfUpdates
-						? translate(
-								'You have %(updates)s update available',
-								'You have %(updates)s updates available',
-								{
-									count: numberOfUpdates,
-									args: { updates: numberOfUpdates },
-								}
-						  )
-						: translate( 'You have one update available' ) }
+					{
+						// Not using count method since we want a "one" string.
+						1 < numberOfUpdates
+							? translate(
+									'You have %(updates)s update available',
+									'You have %(updates)s updates available',
+									{
+										count: numberOfUpdates,
+										args: { updates: numberOfUpdates },
+									}
+							  )
+							: translate( 'You have one update available' )
+					}
 					{ 1 < numberOfUpdates && (
 						<SplitButton
 							compact
@@ -507,7 +511,7 @@ const getStatusForCore = ( siteId, coreVersion ) => {
  * @returns {Array} List of plugins/themes to update with their status.
  */
 const makeUpdatableList = ( itemList, siteId, state = null ) =>
-	itemList.map( item => ( {
+	itemList.map( ( item ) => ( {
 		...item,
 		updateStatus:
 			'plugin' === item.type
@@ -532,7 +536,6 @@ const updateTheme = ( siteId, themeId ) =>
 			body: { action: 'update', themes: themeId },
 		} ),
 		{
-			fromApi: () => ( { themes } ) => themes.map( ( { id } ) => [ id, true ] ),
 			freshness: -Infinity,
 		}
 	);
@@ -544,7 +547,7 @@ const updateTheme = ( siteId, themeId ) =>
  *
  * @returns {*} Stored data container for request.
  */
-const updateCore = siteId =>
+const updateCore = ( siteId ) =>
 	requestHttpData(
 		`core-update-${ siteId }`,
 		http( {
@@ -553,9 +556,6 @@ const updateCore = siteId =>
 			// No need to pass version: if it's missing, WP will be updated to latest core version.
 		} ),
 		{
-			fromApi: () => ( { version } ) => {
-				return [ [ version, true ] ];
-			},
 			freshness: -Infinity,
 		}
 	);
@@ -580,7 +580,7 @@ const mapStateToProps = ( state, { siteId, plugins, themes, core } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	updateSingle: item => {
+	updateSingle: ( item ) => {
 		if ( 'core' === item.type ) {
 			return updateCore( siteId );
 		}
@@ -600,7 +600,7 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_all' ) ),
 	trackDismiss: ( { type, slug } ) =>
 		dispatch( recordTracksEvent( `calypso_activitylog_tasklist_dismiss_${ type }`, { slug } ) ),
-	goManagePlugins: siteSlug =>
+	goManagePlugins: ( siteSlug ) =>
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_tasklist_manage_plugins' ),

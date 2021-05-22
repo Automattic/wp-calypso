@@ -22,8 +22,10 @@
 	"hotjar_enabled": false,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",
+	"lasagna_url": "wss://rt-api.wordpress.com/socket",
 	"login_url": false,
 	"logout_url": false,
+	"jetpack_connect_url": false,
 	"mc_analytics_enabled": false,
 	"oauth_client_id": false,
 	"protocol": "http",
@@ -120,6 +122,7 @@
 	"rtl": false,
 	"siftscience_key": false,
 	"signup_url": false,
+	"gutenboarding_url": false,
 	"signup/social-management": false,
 	"twemoji_cdn_url": "https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/",
 	"woocommerce_blog_id": 113771570,
@@ -132,9 +135,20 @@
 	"enable_all_sections": true,
 	"sections": {
 		"jetpack-cloud": false,
-		"scan": false,
-		"backups": false,
-		"jetpack-cloud-settings": false
+		"jetpack-cloud-settings": false,
+		"jetpack-cloud-auth": false,
+		"jetpack-cloud-pricing": false,
+		"jetpack-cloud-partner-portal": false
 	},
-	"theme": "default"
+	"site_filter": [],
+	"theme": "default",
+	"site_name": "WordPress.com",
+	"meta": [
+		{
+			"property": "og:site_name",
+			"content": "WordPress.com"
+		}
+	],
+	"restricted_me_access": true,
+	"theme_color": "#055d9c"
 }

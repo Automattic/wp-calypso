@@ -6,14 +6,14 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import {
+import type {
 	CurrentUser,
 	CreateAccountParams,
 	NewUserErrorResponse,
 	NewUserSuccessResponse,
 } from './types';
 import { wpcomRequest, requestAllBlogsAccess, reloadProxy } from '../wpcom-request-controls';
-import { WpcomClientCredentials } from '../shared-types';
+import type { WpcomClientCredentials } from '../shared-types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const receiveCurrentUser = ( currentUser: CurrentUser ) => ( {
@@ -46,7 +46,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	function* createAccount( params: CreateAccountParams ) {
 		yield fetchNewUser();
 		try {
-			const newUser = yield wpcomRequest( {
+			const newUser: NewUserSuccessResponse = yield wpcomRequest( {
 				body: {
 					// defaults
 					is_passwordless: true,
@@ -70,11 +70,13 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			// Need to rerequest access after the proxy is reloaded
 			yield requestAllBlogsAccess();
 
-			return receiveNewUser( newUser );
-		} catch ( err ) {
-			yield receiveNewUserFailed( err );
+			yield receiveNewUser( newUser );
 
-			return false;
+			return { ok: true } as const;
+		} catch ( newUserError ) {
+			yield receiveNewUserFailed( newUserError );
+
+			return { ok: false, newUserError } as const;
 		}
 	}
 

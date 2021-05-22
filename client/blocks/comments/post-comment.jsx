@@ -3,38 +3,41 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get, noop, some, flatMap } from 'lodash';
+import { get, some, flatMap } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { getCurrentUser } from 'state/current-user/selectors';
-import TimeSince from 'components/time-since';
-import Gravatar from 'components/gravatar';
-import { recordAction, recordGaEvent, recordTrack, recordPermalinkClick } from 'reader/stats';
-import { getStreamUrl } from 'reader/route';
+import { isEnabled } from '@automattic/calypso-config';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import TimeSince from 'calypso/components/time-since';
+import Gravatar from 'calypso/components/gravatar';
+import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reader/stats';
+import { getStreamUrl } from 'calypso/reader/route';
 import PostCommentContent from './post-comment-content';
 import PostCommentForm from './form';
 import CommentEditForm from './comment-edit-form';
-import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
-import { decodeEntities } from 'lib/formatting';
+import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
+import { decodeEntities } from 'calypso/lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback';
 import CommentActions from './comment-actions';
-import Emojify from 'components/emojify';
-import ConversationCaterpillar from 'blocks/conversation-caterpillar';
-import withDimensions from 'lib/with-dimensions';
-import { expandComments } from 'state/comments/actions';
+import Emojify from 'calypso/components/emojify';
+import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
+import withDimensions from 'calypso/lib/with-dimensions';
+import { expandComments } from 'calypso/state/comments/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './post-comment.scss';
+
+const noop = () => {};
 
 /**
  * A PostComment is the visual representation for a comment within a tree of comments.
@@ -86,6 +89,7 @@ class PostComment extends React.PureComponent {
 
 		// connect()ed props:
 		currentUser: PropTypes.object.isRequired,
+		shouldHighlightNew: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -98,6 +102,7 @@ class PostComment extends React.PureComponent {
 		showNestingReplyArrow: false,
 		showReadMoreInActions: false,
 		hidePingbacksAndTrackbacks: false,
+		shouldHighlightNew: false,
 	};
 
 	state = {
@@ -114,10 +119,10 @@ class PostComment extends React.PureComponent {
 		this.setState( { showReplies: true } ); // show the comments when replying
 	};
 
-	handleAuthorClick = event => {
+	handleAuthorClick = ( event ) => {
 		recordAction( 'comment_author_click' );
 		recordGaEvent( 'Clicked Author Name' );
-		recordTrack( 'calypso_reader_comment_author_click', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_comment_author_click', {
 			blog_id: this.props.post.site_ID,
 			post_id: this.props.post.ID,
 			comment_id: this.props.commentId,
@@ -125,7 +130,7 @@ class PostComment extends React.PureComponent {
 		} );
 	};
 
-	handleCommentPermalinkClick = event => {
+	handleCommentPermalinkClick = ( event ) => {
 		recordPermalinkClick(
 			'timestamp_comment',
 			{},
@@ -138,7 +143,7 @@ class PostComment extends React.PureComponent {
 		);
 	};
 
-	getAllChildrenIds = id => {
+	getAllChildrenIds = ( id ) => {
 		const { commentsTree } = this.props;
 
 		if ( ! id ) {
@@ -147,7 +152,7 @@ class PostComment extends React.PureComponent {
 
 		const immediateChildren = get( commentsTree, [ id, 'children' ], [] );
 		return immediateChildren.concat(
-			flatMap( immediateChildren, childId => this.getAllChildrenIds( childId ) )
+			flatMap( immediateChildren, ( childId ) => this.getAllChildrenIds( childId ) )
 		);
 	};
 
@@ -156,7 +161,9 @@ class PostComment extends React.PureComponent {
 		const { enableCaterpillar, commentsToShow, commentId } = this.props;
 		const childIds = this.getAllChildrenIds( commentId );
 
-		return enableCaterpillar && commentsToShow && some( childIds, id => ! commentsToShow[ id ] );
+		return (
+			enableCaterpillar && commentsToShow && some( childIds, ( id ) => ! commentsToShow[ id ] )
+		);
 	};
 
 	// has visisble child --> true
@@ -164,7 +171,7 @@ class PostComment extends React.PureComponent {
 		const { commentsToShow, commentId } = this.props;
 		const childIds = this.getAllChildrenIds( commentId );
 
-		return commentsToShow && some( childIds, id => commentsToShow[ id ] );
+		return commentsToShow && some( childIds, ( id ) => commentsToShow[ id ] );
 	};
 
 	renderRepliesList() {
@@ -223,7 +230,7 @@ class PostComment extends React.PureComponent {
 				) }
 				{ showReplies && (
 					<ol className="comments__list">
-						{ commentChildrenIds.map( childId => (
+						{ commentChildrenIds.map( ( childId ) => (
 							<ConnectedPostComment
 								showNestingReplyArrow={ this.props.showNestingReplyArrow }
 								showReadMoreInActions={ this.props.showReadMoreInActions }
@@ -243,6 +250,7 @@ class PostComment extends React.PureComponent {
 								activeEditCommentId={ this.props.activeEditCommentId }
 								onUpdateCommentText={ this.props.onUpdateCommentText }
 								onCommentSubmit={ this.props.onCommentSubmit }
+								shouldHighlightNew={ this.props.shouldHighlightNew }
 							/>
 						) ) }
 					</ol>
@@ -277,7 +285,7 @@ class PostComment extends React.PureComponent {
 		);
 	}
 
-	getAuthorDetails = commentId => {
+	getAuthorDetails = ( commentId ) => {
 		const comment = get( this.props.commentsTree, [ commentId, 'data' ], {} );
 		const commentAuthor = get( comment, 'author', {} );
 		const commentAuthorName = decodeEntities( commentAuthor.name );
@@ -315,7 +323,7 @@ class PostComment extends React.PureComponent {
 			} );
 		recordAction( 'comment_read_more_click' );
 		recordGaEvent( 'Clicked Comment Read More' );
-		recordTrack( 'calypso_reader_comment_read_more_click', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_comment_read_more_click', {
 			blog_id: this.props.post.site_ID,
 			post_id: this.props.post.ID,
 			comment_id: this.props.commentId,
@@ -334,6 +342,7 @@ class PostComment extends React.PureComponent {
 			overflowY,
 			showReadMoreInActions,
 			hidePingbacksAndTrackbacks,
+			shouldHighlightNew,
 		} = this.props;
 
 		const comment = get( commentsTree, [ commentId, 'data' ] );
@@ -354,7 +363,7 @@ class PostComment extends React.PureComponent {
 		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = some(
 			get( commentsTree, [ this.props.commentId, 'children' ] ),
-			childId =>
+			( childId ) =>
 				get( commentsTree, [ childId, 'data', 'placeholderState' ] ) === PLACEHOLDER_STATE.ERROR
 		);
 
@@ -384,8 +393,13 @@ class PostComment extends React.PureComponent {
 			commentAuthorName: parentAuthorName,
 		} = this.getAuthorDetails( parentCommentId );
 
+		// highlight comments not older than 10s
+		const isHighlighted =
+			shouldHighlightNew && new Date().getTime() - new Date( comment.date ).getTime() < 10000;
+
 		const postCommentClassnames = classnames( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
+			'is-highlighted': isHighlighted,
 		} );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
@@ -485,10 +499,10 @@ class PostComment extends React.PureComponent {
 }
 
 const ConnectedPostComment = connect(
-	state => ( {
+	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 	} ),
-	{ expandComments }
+	{ expandComments, recordReaderTracksEvent }
 )( withDimensions( PostComment ) );
 
 export default ConnectedPostComment;

@@ -6,9 +6,9 @@ import { get, flowRight as compose } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getAutomatedTransfer } from 'state/automated-transfer/selectors/get-automated-transfer';
+import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors/get-automated-transfer';
 
-import 'state/automated-transfer/init';
+import 'calypso/state/automated-transfer/init';
 
 /**
  * Helper to get status state from local transfer state sub-tree
@@ -16,7 +16,7 @@ import 'state/automated-transfer/init';
  * @param {object} state automated transfer state sub-tree for a site
  * @returns {string} status of transfer
  */
-export const getStatusData = state => get( state, 'status', null );
+export const getStatusData = ( state ) => get( state, 'status', null );
 
 /**
  * Returns status info for transfer

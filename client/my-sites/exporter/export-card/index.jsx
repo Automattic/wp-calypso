@@ -9,18 +9,22 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import SpinnerButton from 'components/spinner-button';
-import FoldableCard from 'components/foldable-card';
-import { Interval, EVERY_SECOND } from 'lib/interval';
+import SpinnerButton from 'calypso/components/spinner-button';
+import FoldableCard from 'calypso/components/foldable-card';
+import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import AdvancedSettings from './advanced-settings';
-import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { withAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	advancedSettingsFetch,
 	exportStatusFetch,
 	setPostType,
 	startExport,
-} from 'state/exporter/actions';
-import { shouldShowProgress, getSelectedPostType, isExporting } from 'state/exporter/selectors';
+} from 'calypso/state/exporter/actions';
+import {
+	shouldShowProgress,
+	getSelectedPostType,
+	isExporting,
+} from 'calypso/state/exporter/selectors';
 
 class ExportCard extends Component {
 	UNSAFE_componentWillMount() {
@@ -53,7 +57,7 @@ class ExportCard extends Component {
 					actionButtonIcon="cog"
 					header={
 						<div>
-							<h1 className="export-card__title">{ translate( 'Export your content' ) }</h1>
+							<h1 className="export-card__title">{ translate( 'Export content' ) }</h1>
 							<h2 className="export-card__subtitle">
 								{ translate(
 									'Export all (or specific) text content (pages, posts, feedback) from your site.'

@@ -7,13 +7,13 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestHomeLayout } from 'state/home/actions';
+import { requestHomeLayout } from 'calypso/state/home/actions';
 
-export default function QueryHomeLayout( { siteId, isNowLaunched } ) {
+export default function QueryHomeLayout( { isDev, forcedView, siteId, shuffle } ) {
 	const dispatch = useDispatch();
 	React.useEffect( () => {
-		dispatch( requestHomeLayout( siteId, isNowLaunched ) );
-	}, [ dispatch, siteId, isNowLaunched ] );
+		dispatch( requestHomeLayout( siteId, isDev, forcedView, shuffle ) );
+	}, [ dispatch, siteId ] );
 
 	return null;
 }

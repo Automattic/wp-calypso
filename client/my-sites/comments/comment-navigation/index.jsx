@@ -1,44 +1,42 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { each, get, includes, isEqual, isUndefined, map } from 'lodash';
+import { get, includes, isEqual, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import ButtonGroup from 'components/button-group';
-import Count from 'components/count';
+import ButtonGroup from 'calypso/components/button-group';
+import Count from 'calypso/components/count';
 import CommentNavigationTab from './comment-navigation-tab';
-import FormCheckbox from 'components/forms/form-checkbox';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import Search from 'components/search';
-import SectionNav from 'components/section-nav';
-import SegmentedControl from 'components/segmented-control';
-import UrlSearch from 'lib/url-search';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
+import SegmentedControl from 'calypso/components/segmented-control';
+import UrlSearch from 'calypso/lib/url-search';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
+} from 'calypso/state/analytics/actions';
 import {
 	changeCommentStatus,
 	deleteComment,
 	requestCommentsList,
 	unlikeComment,
-} from 'state/comments/actions';
-import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/comments/selectors';
-import hasPendingCommentRequests from 'state/selectors/has-pending-comment-requests';
+} from 'calypso/state/comments/actions';
+import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSiteComment } from 'calypso/state/comments/selectors';
+import hasPendingCommentRequests from 'calypso/state/selectors/has-pending-comment-requests';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
-import { extendAction } from 'state/utils';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -56,9 +54,9 @@ export class CommentNavigation extends Component {
 		order: NEWEST_FIRST,
 	};
 
-	shouldComponentUpdate = nextProps => ! isEqual( this.props, nextProps );
+	shouldComponentUpdate = ( nextProps ) => ! isEqual( this.props, nextProps );
 
-	componentDidUpdate = prevProps => {
+	componentDidUpdate = ( prevProps ) => {
 		const { commentsListQuery, hasPendingBulkAction, refreshPage } = this.props;
 		if ( commentsListQuery && ! hasPendingBulkAction && prevProps.hasPendingBulkAction ) {
 			refreshPage( commentsListQuery );
@@ -68,14 +66,14 @@ export class CommentNavigation extends Component {
 	bulkDeletePermanently = () => {
 		const { translate } = this.props;
 		if (
-			isUndefined( window ) ||
+			typeof window === 'undefined' ||
 			window.confirm( translate( 'Delete these comments permanently?' ) )
 		) {
 			this.setBulkStatus( 'delete' )();
 		}
 	};
 
-	changeFilter = status => () => this.props.recordChangeFilter( status );
+	changeFilter = ( status ) => () => this.props.recordChangeFilter( status );
 
 	getNavItems = () => {
 		const { translate, counts } = this.props;
@@ -105,7 +103,7 @@ export class CommentNavigation extends Component {
 		return navItems;
 	};
 
-	getStatusPath = status => {
+	getStatusPath = ( status ) => {
 		const { postId } = this.props;
 
 		const appendPostId = postId ? `/${ postId }` : '';
@@ -115,7 +113,7 @@ export class CommentNavigation extends Component {
 			: `/comments/pending/${ this.props.siteFragment }${ appendPostId }`;
 	};
 
-	setBulkStatus = newStatus => () => {
+	setBulkStatus = ( newStatus ) => () => {
 		const {
 			changeStatus,
 			deletePermanently,
@@ -127,7 +125,7 @@ export class CommentNavigation extends Component {
 			unlike,
 		} = this.props;
 		this.props.removeNotice( 'comment-notice' );
-		each( selectedComments, ( { commentId, isLiked, postId, status } ) => {
+		selectedComments.forEach( ( { commentId, isLiked, postId, status } ) => {
 			if ( 'delete' === newStatus ) {
 				deletePermanently( postId, commentId );
 				return;
@@ -149,7 +147,7 @@ export class CommentNavigation extends Component {
 		toggleBulkMode();
 	};
 
-	showBulkNotice = newStatus => {
+	showBulkNotice = ( newStatus ) => {
 		const { translate } = this.props;
 
 		const message = get(
@@ -175,7 +173,7 @@ export class CommentNavigation extends Component {
 		this.props.successNotice( message, noticeOptions );
 	};
 
-	statusHasAction = action => includes( bulkActions[ this.props.status ], action );
+	statusHasAction = ( action ) => includes( bulkActions[ this.props.status ], action );
 
 	toggleSelectAll = () => {
 		if ( this.props.isSelectedAll ) {
@@ -330,7 +328,7 @@ export class CommentNavigation extends Component {
 
 const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-	const visibleComments = map( commentsPage, commentId => {
+	const visibleComments = map( commentsPage, ( commentId ) => {
 		const comment = getSiteComment( state, siteId, commentId );
 		if ( comment ) {
 			return {
@@ -352,32 +350,26 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
 	changeStatus: ( postId, commentId, status, analytics = { alsoUnlike: false } ) =>
 		dispatch(
-			extendAction(
-				withAnalytics(
-					composeAnalytics(
-						recordTracksEvent( 'calypso_comment_management_change_status', {
-							also_unlike: analytics.alsoUnlike,
-							previous_status: analytics.previousStatus,
-							status,
-						} ),
-						bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
-					),
-					changeCommentStatus( siteId, postId, commentId, status )
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_comment_management_change_status', {
+						also_unlike: analytics.alsoUnlike,
+						previous_status: analytics.previousStatus,
+						status,
+					} ),
+					bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
 				),
-				{ meta: { comment: { commentsListQuery: commentsListQuery } } }
+				changeCommentStatus( siteId, postId, commentId, status, commentsListQuery )
 			)
 		),
 	deletePermanently: ( postId, commentId ) =>
 		dispatch(
-			extendAction(
-				withAnalytics(
-					composeAnalytics(
-						recordTracksEvent( 'calypso_comment_management_delete' ),
-						bumpStat( 'calypso_comment_management', 'comment_deleted' )
-					),
-					deleteComment( siteId, postId, commentId, { showSuccessNotice: true } )
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_comment_management_delete' ),
+					bumpStat( 'calypso_comment_management', 'comment_deleted' )
 				),
-				{ meta: { comment: { commentsListQuery: commentsListQuery } } }
+				deleteComment( siteId, postId, commentId, { showSuccessNotice: true }, commentsListQuery )
 			)
 		),
 	recordBulkAction: ( action, count, fromList, view = 'site' ) =>
@@ -392,15 +384,15 @@ const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
 				bumpStat( 'calypso_comment_management', 'bulk_action' )
 			)
 		),
-	recordChangeFilter: status =>
+	recordChangeFilter: ( status ) =>
 		dispatch(
 			composeAnalytics(
 				recordTracksEvent( 'calypso_comment_management_change_filter', { status } ),
 				bumpStat( 'calypso_comment_management', 'change_filter_to_' + status )
 			)
 		),
-	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
-	refreshPage: query => dispatch( requestCommentsList( query ) ),
+	removeNotice: ( noticeId ) => dispatch( removeNotice( noticeId ) ),
+	refreshPage: ( query ) => dispatch( requestCommentsList( query ) ),
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 	unlike: ( postId, commentId ) =>
 		dispatch(

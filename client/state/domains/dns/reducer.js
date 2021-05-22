@@ -1,18 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	filter,
-	find,
-	findIndex,
-	matches,
-	negate,
-	pick,
-	reject,
-	some,
-	startsWith,
-	without,
-} from 'lodash';
+import { filter, find, findIndex, matches, pick, reject, some, startsWith, without } from 'lodash';
 import update from 'immutability-helper';
 
 /**
@@ -29,7 +18,7 @@ import {
 	DOMAINS_DNS_FETCH,
 	DOMAINS_DNS_FETCH_COMPLETED,
 	DOMAINS_DNS_FETCH_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 function isWpcomRecord( record ) {
 	return startsWith( record.id, 'wpcom:' );
@@ -46,7 +35,7 @@ function isNsRecord( domain ) {
 function removeDuplicateWpcomRecords( domain, records ) {
 	const rootARecords = filter( records, isRootARecord( domain ) );
 	const wpcomARecord = find( rootARecords, isWpcomRecord );
-	const customARecord = find( rootARecords, negate( isWpcomRecord ) );
+	const customARecord = find( rootARecords, ( record ) => ! isWpcomRecord( record ) );
 
 	if ( wpcomARecord && customARecord ) {
 		return without( records, wpcomARecord );
@@ -111,7 +100,7 @@ function addDns( state, domainName, record ) {
 		[ domainName ]: {
 			isSubmittingForm: { $set: true },
 			records: {
-				$apply: records => {
+				$apply: ( records ) => {
 					const added = records.concat( [ newRecord ] );
 					return removeDuplicateWpcomRecords( domainName, added );
 				},
@@ -130,7 +119,7 @@ function deleteDns( state, domainName, record ) {
 	const command = {
 		[ domainName ]: {
 			records: {
-				$apply: records => {
+				$apply: ( records ) => {
 					const deleted = reject( records, ( _, current ) => {
 						return index === current;
 					} );

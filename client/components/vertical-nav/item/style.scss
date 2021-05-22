@@ -1,5 +1,5 @@
 .vertical-nav-item {
-	.gridicon {
+	> .gridicon {
 		box-sizing: border-box;
 		color: var( --color-neutral-20 );
 		display: block;
@@ -24,5 +24,32 @@
 			float: right;
 			width: 22px;
 		}
+	}
+}
+
+.vertical-nav-item-enhanced {
+	span {
+		display: flex;
+		align-items: center;
+
+		.vertical-nav-item-enhanced__icon {
+			fill: var( --color-neutral-60 );
+			width: 32px;
+			height: 32px;
+			margin-right: 16px;
+		}
+
+		div {
+			color: var( --color-neutral-90 );
+
+			small {
+				color: var( --color-neutral-50 );
+				font-size: $font-body-small;
+			}
+		}
+	}
+
+	a:hover & {
+		background: var( --color-neutral-0 );
 	}
 }

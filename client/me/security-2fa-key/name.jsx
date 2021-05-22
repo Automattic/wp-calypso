@@ -9,10 +9,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 class Security2faKeyAddName extends React.Component {
 	static propTypes = {
@@ -29,12 +29,12 @@ class Security2faKeyAddName extends React.Component {
 		this.keyNameInput.focus();
 	};
 
-	submitName = e => {
+	submitName = ( e ) => {
 		e.preventDefault();
 		this.props.onNameSubmit( this.state.keyName );
 	};
 
-	handleChange = e => {
+	handleChange = ( e ) => {
 		const { value } = e.currentTarget;
 		this.setState( { keyName: value } );
 	};
@@ -51,19 +51,19 @@ class Security2faKeyAddName extends React.Component {
 						className="security-2fa-key__key-name"
 						id="security-2fa-key__key_name"
 						name="security_key_name"
-						ref={ input => ( this.keyNameInput = input ) }
+						ref={ ( input ) => ( this.keyNameInput = input ) }
 						placeholder={ this.props.translate( 'ex: My FIDO Key' ) }
 						onChange={ this.handleChange }
 						value={ this.state.keyName }
 					/>
 				</FormFieldset>
-				<Button onClick={ this.props.onCancel }>{ this.props.translate( 'Cancel' ) }</Button>
 				<FormButton
 					className="security-2fa-key__register-key"
 					disabled={ 0 === this.state.keyName.length }
 				>
 					{ this.props.translate( 'Register key' ) }
 				</FormButton>
+				<Button onClick={ this.props.onCancel }>{ this.props.translate( 'Cancel' ) }</Button>
 			</form>
 		);
 	}

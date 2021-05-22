@@ -60,12 +60,12 @@ class Domains {
 	 * @returns {Function} request handler
 	 */
 	supportedStates( countryCode, query, fn ) {
-		var path = root + 'supported-states/' + countryCode;
+		const path = root + 'supported-states/' + countryCode;
 		return this.wpcom.req.get( path, query, fn );
 	}
 }
 
 /**
-* Expose `Domains` module
-*/
+ * Expose `Domains` module
+ */
 export default Domains;

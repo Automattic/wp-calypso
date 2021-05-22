@@ -10,7 +10,7 @@ As we develop the different view components in React for Calypso, we should work
 
 _**Middleware**_ is a stage in the **Redux** pipeline that runs between dispatching an action and when that action runs through the reducers. By incorporating the side-effecting operations at this point, we decouple those breaking effects from the other parts of the app.
 
-This module provides just such a middleware: it allows React components to now fire off Redux actions indicating the _intent_ to send an analytics metric instead of actually sending it, keeping the otherwise-unreleted dependencies out of the components.
+This module provides just such a middleware: it allows React components to now fire off Redux actions indicating the _intent_ to send an analytics metric instead of actually sending it, keeping the otherwise-unrelated dependencies out of the components.
 
 ## Usage
 
@@ -22,47 +22,46 @@ A suite of pure analytics action creators are also exposed which can be used in 
 
 ```js
 import {
-    withAnalytics,
-    bumpStat,
-    recordGoogleEvent,
-    recordTracksEvent,
-    recordPageView
-} from 'state/analytics/actions';
+	withAnalytics,
+	bumpStat,
+	recordGoogleEvent,
+	recordTracksEvent,
+	recordPageView,
+} from 'calypso/state/analytics/actions';
 
 // track a page-view
-dispatch( recordPageView( '/path/to/page', 'Page Title' ) )
+dispatch( recordPageView( '/path/to/page', 'Page Title' ) );
 
 // add event-tracking to an action
-dispatch( withAnalytics(
-    recordGoogleEvent( 'selected_thing', 'my_thing' ),
-    selectThing( myThing )
-) );
+dispatch(
+	withAnalytics( recordGoogleEvent( 'selected_thing', 'my_thing' ), selectThing( myThing ) )
+);
 
 // withAnalytics() is auto-curried for convenience
 const statBumper = withAnalytics( bumpStat( 'api_calls', 'success' ) );
 dispatch( statBumper( apiSuccessAction() ) );
 
-
 // works with pure actions and thunks
-dispatch( withAnalytics(
-    recordPageView( '/api/users', 'Fetch Users' ),
-    fetchUsers( siteId ) // returns a thunk which makes an API call
-) );
+dispatch(
+	withAnalytics(
+		recordPageView( '/api/users', 'Fetch Users' ),
+		fetchUsers( siteId ) // returns a thunk which makes an API call
+	)
+);
 
 // passed as a component prop
-const trackSelection =
-    withAnalytics( recordTracksEvent( 'selected_page', { page: 'somePage' } ) );
+const trackSelection = withAnalytics( recordTracksEvent( 'selected_page', { page: 'somePage' } ) );
 
 const mapDispatchToProps = {
-    selectPage: trackSelection( selectPage ),
-    recordPageLoad: bumpStat( 'page_loaded', 'page_selected_page' )
+	selectPage: trackSelection( selectPage ),
+	recordPageLoad: bumpStat( 'page_loaded', 'page_selected_page' ),
 };
 ```
 
 ## API
 
 `composeAnalytics :: [ Object ] -> Object`<br />
-`composeAnalytics( ...analytics )`: Combines analytics actions by themselves into one mutli-analytic-tracking action.
+`composeAnalytics( ...analytics )`: Combines analytics actions by themselves into one multi-analytic-tracking action.
 
 `withAnalytics :: Object -> ( Object | function ) -> ( Object | function )`<br />
 `withAnalytics( analytics, action )`: Combines analytics action with other action. Can be called with two arguments, which returns a new action, or with only an `analytics` action, which returns a new function of a single argument taking an action. This curried form is useful for reusing a single analytics action with multiple other actions.

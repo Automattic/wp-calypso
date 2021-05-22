@@ -3,17 +3,19 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import { omit, noop } from 'lodash';
+import { omit } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { like, unlike } from 'state/posts/likes/actions';
+import { like, unlike } from 'calypso/state/posts/likes/actions';
 import LikeButton from './button';
-import getPostLikeCount from 'state/selectors/get-post-like-count';
-import isLikedPost from 'state/selectors/is-liked-post';
-import QueryPostLikes from 'components/data/query-post-likes';
+import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-count';
+import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
+import QueryPostLikes from 'calypso/components/data/query-post-likes';
+
+const noop = () => {};
 
 class LikeButtonContainer extends Component {
 	static propTypes = {
@@ -31,7 +33,7 @@ class LikeButtonContainer extends Component {
 		onLikeToggle: noop,
 	};
 
-	handleLikeToggle = liked => {
+	handleLikeToggle = ( liked ) => {
 		const toggler = liked ? this.props.like : this.props.unlike;
 		toggler( this.props.siteId, this.props.postId, { source: this.props.likeSource } );
 

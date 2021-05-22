@@ -8,14 +8,14 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { isLegacyRoute } from '../legacy-routes';
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 let features = [];
 
 describe( 'legacy-routes', () => {
 	describe( '#isLegacyRoute()', () => {
 		beforeAll( () => {
-			sinon.stub( config, 'isEnabled' ).callsFake( flag => {
+			sinon.stub( config, 'isEnabled' ).callsFake( ( flag ) => {
 				return features.indexOf( flag ) > -1;
 			} );
 		} );
@@ -46,34 +46,12 @@ describe( 'legacy-routes', () => {
 			expect( isLegacyRoute( '/some/nested/page.php' ) ).to.be.true;
 		} );
 
-		describe( 'when `me/my-profile` feature flag is enabled', () => {
-			// config.isEnabled( 'me/my-profile' ) === true
-			beforeEach( () => {
-				features = [ 'me/my-profile' ];
-			} );
-
-			test( 'should return false for /me', () => {
-				expect( isLegacyRoute( '/me' ) ).to.be.false;
-			} );
-
-			test( 'should return false for /me/billing', () => {
-				expect( isLegacyRoute( '/me/billing' ) ).to.be.false;
-			} );
+		test( 'should return false for /me', () => {
+			expect( isLegacyRoute( '/me' ) ).to.be.false;
 		} );
 
-		describe( 'when `me/my-profile` feature flag is disabled', () => {
-			// config.isEnabled( 'me/my-profile' ) === false
-			beforeEach( () => {
-				features = [];
-			} );
-
-			test( 'should return true for /me', () => {
-				expect( isLegacyRoute( '/me' ) ).to.be.true;
-			} );
-
-			test( 'should return false for /me/billing', () => {
-				expect( isLegacyRoute( '/me/billing' ) ).to.be.false;
-			} );
+		test( 'should return false for /me/billing', () => {
+			expect( isLegacyRoute( '/me/billing' ) ).to.be.false;
 		} );
 	} );
 } );

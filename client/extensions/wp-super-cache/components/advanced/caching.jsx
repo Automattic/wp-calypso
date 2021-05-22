@@ -1,22 +1,21 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { includes, pick } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import ExternalLink from 'components/external-link';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormToggle from 'components/forms/form-toggle/compact';
-import Notice from 'components/notice';
-import SectionHeader from 'components/section-header';
+import ExternalLink from 'calypso/components/external-link';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import Notice from 'calypso/components/notice';
+import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
 const Caching = ( {
@@ -74,13 +73,12 @@ const Caching = ( {
 						/>
 					) }
 					<FormFieldset>
-						<FormToggle
+						<ToggleControl
 							checked={ !! is_cache_enabled }
 							disabled={ isDisabled }
 							onChange={ handleAutosavingToggle( 'is_cache_enabled' ) }
-						>
-							<span>{ translate( 'Enable Page Caching' ) }</span>
-						</FormToggle>
+							label={ <span>{ translate( 'Enable Page Caching' ) }</span> }
+						/>
 					</FormFieldset>
 
 					<FormFieldset className="wp-super-cache__cache-type-fieldset">
@@ -91,12 +89,10 @@ const Caching = ( {
 								name="cache_type"
 								onChange={ handleRadio }
 								value="PHP"
-							/>
-							<span>
-								{ translate( 'Simple {{em}}(Recommended){{/em}}', {
+								label={ translate( 'Simple {{em}}(Recommended){{/em}}', {
 									components: { em: <em /> },
 								} ) }
-							</span>
+							/>
 						</FormLabel>
 
 						<FormLabel>
@@ -106,8 +102,8 @@ const Caching = ( {
 								name="cache_type"
 								onChange={ handleRadio }
 								value="mod_rewrite"
+								label={ translate( 'Expert' ) }
 							/>
-							<span>{ translate( 'Expert' ) }</span>
 						</FormLabel>
 						<FormSettingExplanation>
 							{ translate(
@@ -122,7 +118,7 @@ const Caching = ( {
 	);
 };
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_type', 'is_cache_enabled' ] );
 };
 

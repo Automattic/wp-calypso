@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { getThemeFilterStringFromTerm } from 'state/themes/selectors/get-theme-filter-string-from-term';
+import { getThemeFilterStringFromTerm } from 'calypso/state/themes/selectors/get-theme-filter-string-from-term';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * For a string of terms, recreate full search string in
@@ -17,7 +17,7 @@ import 'state/themes/init';
 export function prependThemeFilterKeys( state, terms = '' ) {
 	const result = terms
 		.split( /[+\s]/ )
-		.map( term => getThemeFilterStringFromTerm( state, term ) )
+		.map( ( term ) => getThemeFilterStringFromTerm( state, term ) )
 		.join( ' ' )
 		.trim();
 

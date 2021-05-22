@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import SupportInfo from 'components/support-info';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import SupportInfo from 'calypso/components/support-info';
 import RelatedContentPreview from './related-content-preview';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 
 /**
  * Style dependencies
@@ -31,7 +30,7 @@ const RelatedPosts = ( {
 } ) => {
 	return (
 		<div>
-			<SettingsSectionHeader title={ translate( 'Related Posts' ) } />
+			<SettingsSectionHeader title={ translate( 'Related posts' ) } />
 
 			<Card className="related-posts__card site-settings__traffic-settings">
 				<FormFieldset>
@@ -42,34 +41,31 @@ const RelatedPosts = ( {
 						link="https://jetpack.com/support/related-posts/"
 					/>
 
-					<CompactFormToggle
+					<ToggleControl
 						checked={ !! fields.jetpack_relatedposts_enabled }
 						disabled={ isRequestingSettings || isSavingSettings }
 						onChange={ handleAutosavingToggle( 'jetpack_relatedposts_enabled' ) }
-					>
-						{ translate( 'Show related content after posts' ) }
-					</CompactFormToggle>
+						label={ translate( 'Show related content after posts' ) }
+					/>
 
 					<div className="related-posts__module-settings site-settings__child-settings">
-						<CompactFormToggle
+						<ToggleControl
 							checked={ !! fields.jetpack_relatedposts_show_headline }
 							disabled={
 								isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
 							}
 							onChange={ handleAutosavingToggle( 'jetpack_relatedposts_show_headline' ) }
-						>
-							{ translate( 'Highlight related content with a heading' ) }
-						</CompactFormToggle>
+							label={ translate( 'Highlight related content with a heading' ) }
+						/>
 
-						<CompactFormToggle
+						<ToggleControl
 							checked={ !! fields.jetpack_relatedposts_show_thumbnails }
 							disabled={
 								isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
 							}
 							onChange={ handleAutosavingToggle( 'jetpack_relatedposts_show_thumbnails' ) }
-						>
-							{ translate( 'Show a thumbnail image where available' ) }
-						</CompactFormToggle>
+							label={ translate( 'Show a thumbnail image where available' ) }
+						/>
 					</div>
 
 					<FormSettingExplanation>

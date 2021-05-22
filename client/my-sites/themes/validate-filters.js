@@ -11,7 +11,8 @@ import {
 	getThemeFilterTerm,
 	getThemeFilterTermFromString,
 	isValidThemeFilterTerm,
-} from 'state/themes/selectors';
+} from 'calypso/state/themes/selectors';
+import { fetchThemeFilters } from './controller';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {
@@ -25,7 +26,7 @@ export function validateFilters( context, next ) {
 	// Accept commas, which were previously used as canonical filter separators
 	const validFilters = filterParam
 		.split( /[,+]/ )
-		.filter( term => isValidThemeFilterTerm( context.store.getState(), term ) );
+		.filter( ( term ) => isValidThemeFilterTerm( context.store.getState(), term ) );
 	const sortedValidFilters = sortFilterTerms( context, validFilters ).join( '+' );
 
 	if ( sortedValidFilters !== filterParam ) {
@@ -77,7 +78,15 @@ export function validateVertical( context, next ) {
  */
 export function sortFilterTerms( context, terms ) {
 	return terms
-		.map( term => getThemeFilterStringFromTerm( context.store.getState(), term ) )
+		.map( ( term ) => getThemeFilterStringFromTerm( context.store.getState(), term ) )
 		.sort()
-		.map( filter => getThemeFilterTermFromString( context.store.getState(), filter ) );
+		.map( ( filter ) => getThemeFilterTermFromString( context.store.getState(), filter ) );
+}
+
+export function fetchAndValidateVerticalsAndFilters( context, next ) {
+	fetchThemeFilters( context, () => {
+		validateVertical( context, () => {
+			validateFilters( context, next );
+		} );
+	} );
 }

@@ -9,17 +9,17 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { localizeUrl } from 'lib/i18n-utils';
-import { acceptTos, requestLegalData } from 'state/legal/actions';
-import { shouldDisplayTosUpdateBanner } from 'state/selectors/should-display-tos-update-banner';
-import ExternalLink from 'components/external-link';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { acceptTos, requestLegalData } from 'calypso/state/legal/actions';
+import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
+import ExternalLink from 'calypso/components/external-link';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const LegalUpdateBanner = props => {
+const LegalUpdateBanner = ( props ) => {
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -63,7 +63,7 @@ const LegalUpdateBanner = props => {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		needsAcceptTos: shouldDisplayTosUpdateBanner( state ),
 	} ),
 	{

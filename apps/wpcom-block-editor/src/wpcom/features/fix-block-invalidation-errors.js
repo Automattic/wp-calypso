@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 /**
  * External dependencies
  */
@@ -53,7 +51,7 @@ async function fixInvalidBlocks() {
 	// If any blocks have validation issues auto-fix them for now, until core is less strict.
 	select( 'core/editor' )
 		.getBlocks()
-		.filter( block => ! block.isValid )
+		.filter( ( block ) => ! block.isValid )
 		.forEach( ( { clientId, name, attributes, innerBlocks } ) => {
 			const replacement = createBlock( name, attributes, innerBlocks );
 			if ( blockHasContent( replacement ) ) {

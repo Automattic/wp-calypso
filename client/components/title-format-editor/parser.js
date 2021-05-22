@@ -1,12 +1,7 @@
-import {
-	compact,
-	flowRight as compose,
-	fromPairs,
-	get,
-	map,
-	matchesProperty,
-	reduce,
-} from 'lodash';
+/**
+ * External dependencies
+ */
+import { compact, flowRight as compose, get, map, matchesProperty, reduce } from 'lodash';
 import { convertFromRaw, convertToRaw } from 'draft-js';
 
 /*
@@ -80,7 +75,7 @@ import { convertFromRaw, convertToRaw } from 'draft-js';
  * @param {ContentState} content Content of editor
  * @returns {Array} title format
  */
-export const fromEditor = content => {
+export const fromEditor = ( content ) => {
 	const rawContent = convertToRaw( content );
 	const text = get( rawContent, 'blocks[0].text', '' );
 	const ranges = get( rawContent, 'blocks[0].entityRanges', [] );
@@ -132,7 +127,7 @@ const emptyBlockMap = {
  * @param {string} title - Token's title
  * @returns string - Processed title
  */
-export const mapTokenTitleForEditor = title => `\u205f\u205f${ title }\u205f\u205f`;
+export const mapTokenTitleForEditor = ( title ) => `\u205f\u205f${ title }\u205f\u205f`;
 
 /**
  * Returns the translated name for the chip
@@ -211,7 +206,7 @@ export const toEditor = ( format, tokens ) => {
 
 	return convertFromRaw( {
 		blocks: [ blocks ],
-		entityMap: fromPairs(
+		entityMap: Object.fromEntries(
 			map( entityGuide, ( name, key ) => [
 				key, // entity key is position in list
 				{

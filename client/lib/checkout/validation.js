@@ -2,19 +2,18 @@
  * External dependencies
  */
 import creditcards from 'creditcards';
-import { capitalize, compact, isArray, isEmpty, mergeWith, union, isString } from 'lodash';
+import { capitalize, compact, isEmpty, mergeWith } from 'lodash';
 import i18n from 'i18n-calypso';
-import { isValidPostalCode } from 'lib/postal-code';
+import { isValidPostalCode } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
 import {
-	isEbanxCreditCardProcessingEnabledForCountry,
 	isValidCPF,
 	isValidCNPJ,
 	countrySpecificFieldRules,
-} from 'lib/checkout/processor-specific';
+} from 'calypso/lib/checkout/processor-specific';
 
 /**
  * Returns the credit card validation rule set
@@ -91,7 +90,6 @@ export function getStripeElementsRules() {
 
 /**
  * Returns the tef payment validation rule set
- * See: client/my-sites/checkout/checkout/redirect-payment-box.jsx
  *
  * @returns {object} the ruleset
  */
@@ -106,6 +104,10 @@ export function tefPaymentFieldRules() {
 			'tef-bank': {
 				description: i18n.translate( 'Bank' ),
 				rules: [ 'required' ],
+			},
+
+			country: {
+				rules: [ 'isBrazil' ],
 			},
 		},
 		countrySpecificFieldRules( 'BR' )
@@ -139,16 +141,21 @@ export function tokenFieldRules() {
  * Returns a validation ruleset to use for the given payment type
  *
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef|token|stripe
+ * @param {string} paymentType credit-card|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe|ebanx
  * @returns {object|null} the ruleset
  */
 export function paymentFieldRules( paymentDetails, paymentType ) {
 	switch ( paymentType ) {
-		case 'credit-card':
+		case 'ebanx':
 			return mergeValidationRules(
 				getCreditCardFieldRules(),
 				getConditionalCreditCardRules( paymentDetails ),
 				getEbanxCreditCardRules( paymentDetails )
+			);
+		case 'credit-card':
+			return mergeValidationRules(
+				getCreditCardFieldRules(),
+				getConditionalCreditCardRules( paymentDetails )
 			);
 		case 'brazil-tef':
 			return tefPaymentFieldRules();
@@ -174,7 +181,9 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
  */
 export function mergeValidationRules( ...rulesets ) {
 	return mergeWith( {}, ...rulesets, ( objValue, srcValue ) =>
-		isArray( objValue ) && isArray( srcValue ) ? union( objValue, srcValue ) : undefined
+		Array.isArray( objValue ) && Array.isArray( srcValue )
+			? [ ...new Set( [].concat( objValue, srcValue ) ) ]
+			: undefined
 	);
 }
 
@@ -199,7 +208,7 @@ validators.required = {
 		return ! isEmpty( value );
 	},
 
-	error: function( description ) {
+	error: function ( description ) {
 		return i18n.translate( 'Missing required %(description)s field', {
 			args: { description: description },
 		} );
@@ -227,7 +236,7 @@ validators.validCvvNumber = {
 };
 
 validators.validExpirationDate = {
-	isValid: function( value ) {
+	isValid: function ( value ) {
 		if ( ! value ) {
 			return false;
 		}
@@ -242,6 +251,17 @@ validators.validExpirationDate = {
 	error: validationError,
 };
 
+validators.isBrazil = {
+	isValid( value ) {
+		return value === 'BR';
+	},
+	error: function () {
+		return i18n.translate(
+			'Country code is invalid. This payment method is only available in Brazil.'
+		);
+	},
+};
+
 validators.validBrazilTaxId = {
 	isValid( value ) {
 		if ( ! value ) {
@@ -249,7 +269,7 @@ validators.validBrazilTaxId = {
 		}
 		return isValidCPF( value ) || isValidCNPJ( value );
 	},
-	error: function( description ) {
+	error: function ( description ) {
 		return i18n.translate(
 			'%(description)s is invalid. Must be in format: 111.444.777-XX or 11.444.777/0001-XX',
 			{
@@ -268,28 +288,44 @@ validators.validIndiaPan = {
 		}
 		return panRegex.test( value );
 	},
-	error: function( description ) {
+	error: function ( description ) {
 		return i18n.translate( '%(description)s is invalid', {
-			args: { description: capitalize( description ) },
+			args: { description },
 		} );
 	},
 };
 
 validators.validIndonesiaNik = {
 	isValid( value ) {
-		const digitsOnly = isString( value ) ? value.replace( /[^0-9]/g, '' ) : '';
+		const digitsOnly = typeof value === 'string' ? value.replace( /[^0-9]/g, '' ) : '';
 		return digitsOnly.length === 16;
 	},
-	error: function( description ) {
+	error: function ( description ) {
 		return i18n.translate( '%(description)s is invalid', {
 			args: { description: capitalize( description ) },
 		} );
 	},
 };
 
+validators.validIndiaGstin = {
+	isValid( value ) {
+		const gstinRegex = /^([0-2][0-9]|[3][0-7])[A-Z]{3}[ABCFGHLJPTK][A-Z]\d{4}[A-Z][A-Z0-9][Z][A-Z0-9]$/i;
+
+		if ( ! value ) {
+			return true;
+		}
+		return gstinRegex.test( value );
+	},
+	error: function ( description ) {
+		return i18n.translate( '%(description)s is invalid', {
+			args: { description },
+		} );
+	},
+};
+
 validators.validPostalCodeUS = {
-	isValid: value => isValidPostalCode( value, 'US' ),
-	error: function( description ) {
+	isValid: ( value ) => isValidPostalCode( value, 'US' ),
+	error: function ( description ) {
 		return i18n.translate( '%(description)s is invalid. Must be a 5 digit number', {
 			args: { description: description },
 		} );
@@ -314,12 +350,12 @@ validators.validStreetNumber = {
  * property of that object is an array of error strings.
  *
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef|token|stripe
+ * @param {string} paymentType credit-card|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe|ebanx
  * @returns {object} validation errors, if any
  */
-export function validatePaymentDetails( paymentDetails, paymentType = 'credit-card' ) {
+export function validatePaymentDetails( paymentDetails, paymentType ) {
 	const rules = paymentFieldRules( paymentDetails, paymentType ) || {};
-	const errors = Object.keys( rules ).reduce( function( allErrors, fieldName ) {
+	const errors = Object.keys( rules ).reduce( function ( allErrors, fieldName ) {
 		const field = rules[ fieldName ];
 		const newErrors = getErrors( field, paymentDetails[ fieldName ], paymentDetails );
 
@@ -374,7 +410,7 @@ export function getCreditCardType( number ) {
  */
 function getErrors( field, value, paymentDetails ) {
 	return compact(
-		field.rules.map( function( rule ) {
+		field.rules.map( function ( rule ) {
 			const validator = getValidator( rule );
 
 			if ( ! validator.isValid( value, paymentDetails ) ) {
@@ -385,16 +421,12 @@ function getErrors( field, value, paymentDetails ) {
 }
 
 function getEbanxCreditCardRules( { country } ) {
-	return (
-		country &&
-		isEbanxCreditCardProcessingEnabledForCountry( country ) &&
-		countrySpecificFieldRules( country )
-	);
+	return country && countrySpecificFieldRules( country );
 }
 
 /**
  *
- * @param {object} cardDetails - a map of credit card field key value pairs
+ * @param {{country: string}} cardDetails - a map of credit card field key value pairs
  * @returns {object|null} If match is found,
  * an object containing rule sets for specific credit card processing providers,
  * otherwise `null`
@@ -416,7 +448,7 @@ function getConditionalCreditCardRules( { country } ) {
 }
 
 function getValidator( rule ) {
-	if ( isArray( rule ) ) {
+	if ( Array.isArray( rule ) ) {
 		return validators[ rule[ 0 ] ].apply( null, rule.slice( 1 ) );
 	}
 

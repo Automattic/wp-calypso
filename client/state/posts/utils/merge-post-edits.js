@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import { cloneDeep, concat, find, isString, mergeWith, reduce, reject } from 'lodash';
+import { cloneDeep, concat, find, mergeWith, reduce, reject } from 'lodash';
 
 function mergeMetadataEdits( edits, nextEdits ) {
 	// remove existing edits that get updated in `nextEdits`
-	const newEdits = reject( edits, edit => find( nextEdits, { key: edit.key } ) );
+	const newEdits = reject( edits, ( edit ) => find( nextEdits, { key: edit.key } ) );
 	// append the new edits at the end
 	return concat( newEdits, nextEdits );
 }
@@ -25,7 +25,7 @@ export const mergePostEdits = ( ...postEditsLog ) =>
 		postEditsLog,
 		( mergedEdits, nextEdits ) => {
 			// filter out save markers
-			if ( isString( nextEdits ) ) {
+			if ( typeof nextEdits === 'string' ) {
 				return mergedEdits;
 			}
 

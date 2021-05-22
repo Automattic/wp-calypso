@@ -6,13 +6,13 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSitePlanSlug } from 'state/sites/plans/selectors';
-import { getSitePurchases } from 'state/purchases/selectors';
-import { planHasFeature } from 'lib/plans';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import {
+	planHasFeature,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-} from 'lib/products-values/constants';
+} from '@automattic/calypso-products';
 
 /**
  * Module variables
@@ -34,13 +34,14 @@ export default function siteSupportsRealtimeBackup( state, siteId ) {
 	const currentPlanSlug = getSitePlanSlug( state, siteId );
 	const purchases = getSitePurchases( state, siteId );
 
-	const currentPlanSupportsRealtimeBackup = some( productSlugs, productSlug =>
+	const currentPlanSupportsRealtimeBackup = some( productSlugs, ( productSlug ) =>
 		planHasFeature( currentPlanSlug, productSlug )
 	);
 	const hasActiveRealtimeBackupProduct = some(
 		purchases,
-		purchase =>
-			purchase.active && some( productSlugs, productSlug => productSlug === purchase.productSlug )
+		( purchase ) =>
+			purchase.active &&
+			some( productSlugs, ( productSlug ) => productSlug === purchase.productSlug )
 	);
 
 	return currentPlanSupportsRealtimeBackup || hasActiveRealtimeBackupProduct;

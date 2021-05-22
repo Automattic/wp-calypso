@@ -3,7 +3,7 @@
  */
 import React, { Fragment } from 'react';
 import getCaretCoordinates from 'textarea-caret';
-import { escapeRegExp, findIndex, get, head, includes, throttle, pick } from 'lodash';
+import { escapeRegExp, findIndex, get, includes, throttle, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,12 +22,13 @@ const keys = { tab: 9, enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow:
  * @param {object} WrappedComponent - React component to wrap
  * @returns {object} the enhanced component
  */
-export default WrappedComponent =>
+export default ( WrappedComponent ) =>
 	class AddUserMentions extends React.Component {
 		matchingSuggestions = [];
 
-		static displayName = `withUserMentions( ${ WrappedComponent.displayName ||
-			WrappedComponent.name } )`;
+		static displayName = `withUserMentions( ${
+			WrappedComponent.displayName || WrappedComponent.name
+		} )`;
 		static propTypes = {};
 
 		state = {
@@ -79,7 +80,7 @@ export default WrappedComponent =>
 			}
 		}
 
-		handleKeyDown = event => {
+		handleKeyDown = ( event ) => {
 			if ( ! this.state.showPopover ) {
 				return;
 			}
@@ -115,7 +116,7 @@ export default WrappedComponent =>
 			this.setState( { selectedSuggestionId: this.matchingSuggestions[ nextIndex ].ID } );
 		};
 
-		handleKeyUp = event => {
+		handleKeyUp = ( event ) => {
 			if ( includes( [ keys.downArrow, keys.upArrow ], event.keyCode ) ) {
 				return;
 			}
@@ -259,6 +260,14 @@ export default WrappedComponent =>
 
 			// Move the caret to the end of the inserted username
 			node.selectionStart = lastAtSymbolPosition + newTextValue.length;
+
+			// Fire the onChange handler with a simulated event so the new text value is persisted to state
+			if ( ! this.props.onChange ) {
+				return;
+			}
+
+			const changeEvent = { target: { value: newTextValue } };
+			this.props.onChange( changeEvent );
 		};
 
 		updatePosition = ( state = this.state, newPosition ) => {
@@ -279,7 +288,7 @@ export default WrappedComponent =>
 
 			this.matchingSuggestions = this.getMatchingSuggestions( suggestions, query );
 			const selectedSuggestionId =
-				this.state.selectedSuggestionId || get( head( this.matchingSuggestions ), 'ID' );
+				this.state.selectedSuggestionId || get( this.matchingSuggestions[ 0 ], 'ID' );
 
 			const popoverPosition = pick( this.state.popoverPosition, [ 'top', 'left' ] );
 

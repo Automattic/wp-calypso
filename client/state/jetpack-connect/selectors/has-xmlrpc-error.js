@@ -6,9 +6,9 @@ import { get, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getAuthorizationData } from 'state/jetpack-connect/selectors/get-authorization-data';
+import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors/get-authorization-data';
 
-import 'state/jetpack-connect/init';
+import 'calypso/state/jetpack-connect/init';
 
 /**
  * Returns true if there is an XMLRPC error.
@@ -19,7 +19,7 @@ import 'state/jetpack-connect/init';
  * @param  {object}  state Global state tree
  * @returns {boolean}       True if there's an xmlrpc error otherwise false
  */
-export const hasXmlrpcError = function( state ) {
+export const hasXmlrpcError = function ( state ) {
 	const authorizeData = getAuthorizationData( state );
 
 	return (

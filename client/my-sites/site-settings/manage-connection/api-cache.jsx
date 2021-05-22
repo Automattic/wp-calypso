@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { flowRight, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import config from 'config';
-import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import config from '@automattic/calypso-config';
+import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 const ApiCache = ( {
 	fields,
@@ -31,23 +30,26 @@ const ApiCache = ( {
 
 	return (
 		<CompactCard>
-			<CompactFormToggle
+			<ToggleControl
 				checked={ !! fields.api_cache }
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleAutosavingToggle( 'api_cache' ) }
-			>
-				{ translate( 'Use synchronized data to boost performance' ) } (a8c-only experimental
-				feature)
-			</CompactFormToggle>
+				label={
+					<>
+						{ translate( 'Use synchronized data to boost performance' ) }{ ' ' }
+						<span>(a8c-only experimental feature)</span>
+					</>
+				}
+			/>
 		</CompactCard>
 	);
 };
 
-const connectComponent = connect( state => ( {
+const connectComponent = connect( ( state ) => ( {
 	siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
 } ) );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'api_cache' ] );
 };
 

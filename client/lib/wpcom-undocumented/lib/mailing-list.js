@@ -42,7 +42,7 @@ function MailingList( category, wpcom ) {
  * @public
  */
 
-MailingList.prototype.subscribe = function( emailAddress, hmac, context, callback ) {
+MailingList.prototype.subscribe = function ( emailAddress, hmac, context, callback ) {
 	debug( '/mailing-lists/:category/subscribers/:emailAddress/new' );
 
 	// `context` is optional
@@ -78,7 +78,7 @@ MailingList.prototype.subscribe = function( emailAddress, hmac, context, callbac
  * @public
  */
 
-MailingList.prototype.unsubscribe = function( emailAddress, hmac, context, callback ) {
+MailingList.prototype.unsubscribe = function ( emailAddress, hmac, context, callback ) {
 	debug( '/mailing-lists/:category/subscribers/:emailAddress/delete' );
 
 	// `context` is optional

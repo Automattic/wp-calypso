@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { READER_DISMISS_POST, READER_DISMISS_SITE } from 'state/reader/action-types';
+import { READER_DISMISS_POST, READER_DISMISS_SITE } from 'calypso/state/reader/action-types';
 
-import 'state/data-layer/wpcom/me/dismiss/sites/new';
+import 'calypso/state/data-layer/wpcom/me/dismiss/sites/new';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 export const dismissPost = ( { streamKey, postKey } ) => {
 	return {
@@ -14,7 +14,7 @@ export const dismissPost = ( { streamKey, postKey } ) => {
 	};
 };
 
-export const dismissSite = siteId => {
+export const dismissSite = ( siteId ) => {
 	return {
 		type: READER_DISMISS_SITE,
 		payload: { siteId },

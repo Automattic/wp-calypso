@@ -2,13 +2,13 @@
  * Internal dependencies
  */
 
-import getUnseenCount from 'state/selectors/get-notification-unseen-count';
-import { getCurrentUser } from 'state/current-user/selectors';
+import getUnseenCount from 'calypso/state/selectors/get-notification-unseen-count';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 // Named export `hasUnseenNotifications` is for testing purposes only!
 // We want to use the `getUser` mock as we want to avoid testing the state system of `getUser` AND of the unseen count.
 // Complete thread: https://github.com/Automattic/wp-calypso/pull/26491#pullrequestreview-145316736
-export const hasUnseenNotifications = getUser => state => {
+export const hasUnseenNotifications = ( getUser ) => ( state ) => {
 	const unseenCount = getUnseenCount( state );
 	if ( null !== unseenCount ) {
 		return unseenCount > 0;

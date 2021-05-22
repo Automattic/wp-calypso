@@ -1,14 +1,15 @@
 /**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	DOMAINS_SUGGESTIONS_RECEIVE,
 	DOMAINS_SUGGESTIONS_REQUEST,
 	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/domains/init';
 
 /**
  * Returns an action object to be used in signalling that a domains suggestion object
@@ -37,7 +38,7 @@ export function receiveDomainsSuggestions( suggestions, queryObject ) {
  * @returns {Function}                                      Action thunk
  */
 export function requestDomainsSuggestions( queryObject ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAINS_SUGGESTIONS_REQUEST,
 			queryObject,
@@ -45,14 +46,14 @@ export function requestDomainsSuggestions( queryObject ) {
 		return wpcom
 			.domains()
 			.suggestions( queryObject )
-			.then( suggestions => {
+			.then( ( suggestions ) => {
 				dispatch( receiveDomainsSuggestions( suggestions, queryObject ) );
 				dispatch( {
 					type: DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
 					queryObject,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 					queryObject,

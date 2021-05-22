@@ -1,72 +1,17 @@
 /**
  * External dependencies
  */
-import { isMobile } from '@automattic/viewport';
-import { head, find, get } from 'lodash';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import userSettings from 'lib/user-settings';
-import { postRequest } from 'lib/i18n-utils/glotpress';
+import { postRequest } from 'calypso/lib/i18n-utils/glotpress';
 import {
 	GP_PROJECT,
 	GP_BASE_URL,
 	GP_PROJECT_TRANSLATION_SET_SLUGS,
-	ENABLE_TRANSLATOR_KEY,
-} from 'lib/i18n-utils/constants';
-import { canBeTranslated } from 'lib/i18n-utils';
-
-/**
- * Checks whether the CT can be displayed, that is, if the chosen locale and device allow it
- *
- * @param {string} locale user's localeSlug
- * @param {object} localeVariant user's localeVariant slug (if any)
- * @returns {boolean} whether the CT can be displayed
- */
-export function canDisplayCommunityTranslator(
-	locale = userSettings.getSetting( 'language' ),
-	localeVariant = userSettings.getSetting( 'locale_variant' )
-) {
-	// restrict mobile devices from translator for now while we refine touch interactions
-	if ( isMobile() ) {
-		return false;
-	}
-
-	// disable for locales with no official GP translation sets.
-	if ( ! locale || ! canBeTranslated( locale ) ) {
-		return false;
-	}
-
-	// likewise, disable for locale variants with no official GP translation sets
-	if ( localeVariant && ! canBeTranslated( localeVariant ) ) {
-		return false;
-	}
-
-	return true;
-}
-
-/**
- * Checks whether the CT is enabled, that is, if
- * 1) the user has chosen to enable it,
- * 2) it can be displayed based on the user's language and device settings
- *
- * @returns {Bool} whether the CT should be enabled
- */
-export function isCommunityTranslatorEnabled() {
-	if (
-		! userSettings.getSettings() ||
-		! userSettings.getOriginalSetting( ENABLE_TRANSLATOR_KEY )
-	) {
-		return false;
-	}
-
-	if ( ! canDisplayCommunityTranslator() ) {
-		return false;
-	}
-
-	return true;
-}
+} from 'calypso/lib/i18n-utils/constants';
 
 /**
  * Prepares and triggers a request to get GP string
@@ -93,8 +38,8 @@ export function getSingleTranslationData(
 		`&original_strings=${ encodeURIComponent( JSON.stringify( [ originalStringData ] ) ) }`,
 	];
 
-	return post( glotPressUrl, postFormData.join( '' ) ).then( glotPressDataEntries =>
-		normalizeDetailsFromTranslationData( head( glotPressDataEntries ) )
+	return post( glotPressUrl, postFormData.join( '' ) ).then( ( glotPressDataEntries ) =>
+		normalizeDetailsFromTranslationData( glotPressDataEntries[ 0 ] )
 	);
 }
 
@@ -123,13 +68,13 @@ export function submitTranslation(
 		`&locale_slug=${ locale.parentLangSlug || locale.langSlug }`,
 		`&translation_set_slug=${ GP_PROJECT_TRANSLATION_SET_SLUGS[ locale.langSlug ] || 'default' }`,
 		...Object.keys( translationObject ).map(
-			key =>
+			( key ) =>
 				translationObject[ key ] &&
 				`&translation[${ originalId }][]=${ encodeURIComponent( translationObject[ key ] ) }`
 		),
 	];
 
-	return post( glotPressUrl, postFormData.join( '' ) ).then( glotPressData =>
+	return post( glotPressUrl, postFormData.join( '' ) ).then( ( glotPressData ) =>
 		normalizeDetailsFromTranslationData( glotPressData )
 	);
 }

@@ -7,6 +7,7 @@ import webdriver from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
+import SectionNavComponent from '../components/section-nav-component';
 import * as driverHelper from '../driver-helper';
 import * as dataHelper from '../data-helper';
 import { currentScreenSize } from '../driver-manager';
@@ -20,24 +21,27 @@ export default class PlansPage extends AsyncBaseContainer {
 	}
 
 	async openPlansTab() {
-		await driverHelper.ensureMobileMenuOpen( this.driver );
-		const selector = by.css(
+		const sectionNav = await SectionNavComponent.Expect( this.driver );
+		await sectionNav.ensureMobileMenuOpen();
+		const locator = by.css(
 			'.current-plan a[href*="plans"]:not([href*="my-plan"]).section-nav-tab__link'
 		);
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
 	async openAdvancedPlansSegment() {
-		const selector = by.css(
+		const locator = by.css(
 			'.plans-features-main ul.segmented-control.is-primary.plan-features__interval-type.is-customer-type-toggle li:nth-child(2)'
 		);
-		return await driverHelper.clickWhenClickable( this.driver, selector );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
 	async waitForComparison() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		const plansPageMainCssClass =
+			host === 'WPCOM' ? '.plans-features-main__group' : '.selector__main';
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			by.css( '.plans-features-main__group' )
+			by.css( plansPageMainCssClass )
 		);
 	}
 
@@ -50,29 +54,47 @@ export default class PlansPage extends AsyncBaseContainer {
 			currentScreenSize() === 'mobile'
 				? '.plan-features__mobile .plan-features__actions-button.is-primary'
 				: '.plan-features__table-item.is-top-buttons button.plan-features__actions-button.is-primary';
-		const count = await driverHelper.getElementCount( this.driver, by.css( selector ) );
-		return count === 1;
+
+		const elements = await this.driver.findElements( by.css( selector ) );
+		return elements.length === 1;
 	}
 
 	async confirmCurrentPlan( planName ) {
-		let selector = by.css( `.is-current.is-${ planName }-plan` );
-		if ( host !== 'WPCOM' ) {
-			selector = by.css( `.is-${ planName }-plan` );
+		let selector = `.is-${ planName }-plan .plan-pill`;
+
+		if ( this.screenSize === 'mobile' ) {
+			selector = '.plan-features__mobile ' + selector;
+		} else {
+			selector = '.plan-features__table ' + selector;
 		}
 
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
-	}
+		if ( host !== 'WPCOM' ) {
+			selector = `.is-${ planName }-plan`;
+		}
 
-	async planTypesShown( planType ) {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			by.css( `[data-e2e-plans="${ planType }"]` )
+			by.css( selector )
 		);
 	}
 
-	async selectBusinessPlan() {
+	async planTypesShown( planType ) {
+		const plansCssHandle =
+			planType === 'jetpack' ? '.selector__main' : `[data-e2e-plans="${ planType }"]`;
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			by.css( plansCssHandle )
+		);
+	}
+
+	async selectPaidPlan() {
 		// Wait a little for loading animation
 		await this.driver.sleep( 1000 );
+
+		if ( host !== 'WPCOM' ) {
+			return await this.selectJetpackSecurity();
+		}
+
 		if ( currentScreenSize() === 'mobile' ) {
 			return await driverHelper.clickWhenClickable(
 				this.driver,
@@ -83,6 +105,13 @@ export default class PlansPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( 'td.is-top-buttons button.is-business-plan' )
+		);
+	}
+
+	async selectJetpackSecurity() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( '[data-e2e-product-slug="jetpack_security_daily"] .button' )
 		);
 	}
 }

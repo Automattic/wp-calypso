@@ -6,26 +6,26 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, get, isEqual, map, orderBy, slice } from 'lodash';
+import { filter, find, get, isEqual, map, orderBy } from 'lodash';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import CSSTransition from 'react-transition-group/CSSTransition';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import Comment from 'my-sites/comments/comment';
-import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
-import CommentNavigation from 'my-sites/comments/comment-navigation';
-import EmptyContent from 'components/empty-content';
-import Pagination from 'components/pagination';
-import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/comments/selectors';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { isEnabled } from '@automattic/calypso-config';
+import Comment from 'calypso/my-sites/comments/comment';
+import CommentListHeader from 'calypso/my-sites/comments/comment-list/comment-list-header';
+import CommentNavigation from 'calypso/my-sites/comments/comment-navigation';
+import EmptyContent from 'calypso/components/empty-content';
+import Pagination from 'calypso/components/pagination';
+import QuerySiteCommentsTree from 'calypso/components/data/query-site-comments-tree';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import { getSiteCommentsTree, isCommentsTreeInitialized } from 'calypso/state/comments/selectors';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { COMMENTS_PER_PAGE } from '../constants';
 
-const CommentTransition = props => (
+const CommentTransition = ( props ) => (
 	<CSSTransition { ...props } classNames="comment-list__transition" timeout={ 150 } />
 );
 
@@ -67,7 +67,7 @@ export class CommentTree extends Component {
 	shouldComponentUpdate = ( nextProps, nextState ) =>
 		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
 
-	changePage = page => {
+	changePage = ( page ) => {
 		const { recordChangePage, changePage } = this.props;
 
 		recordChangePage( page, this.getTotalPages() );
@@ -81,7 +81,7 @@ export class CommentTree extends Component {
 
 	getCommentsPage = ( comments, page ) => {
 		const startingIndex = ( page - 1 ) * COMMENTS_PER_PAGE;
-		return slice( comments, startingIndex, startingIndex + COMMENTS_PER_PAGE );
+		return comments.slice( startingIndex, startingIndex + COMMENTS_PER_PAGE );
 	};
 
 	getEmptyMessage = () => {
@@ -104,9 +104,9 @@ export class CommentTree extends Component {
 
 	getTotalPages = () => Math.ceil( this.props.comments.length / COMMENTS_PER_PAGE );
 
-	hasCommentJustMovedBackToCurrentStatus = commentId => this.state.lastUndo === commentId;
+	hasCommentJustMovedBackToCurrentStatus = ( commentId ) => this.state.lastUndo === commentId;
 
-	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
+	isCommentSelected = ( commentId ) => !! find( this.state.selectedComments, { commentId } );
 
 	isRequestedPageValid = () => this.getTotalPages() >= this.props.page;
 
@@ -121,7 +121,7 @@ export class CommentTree extends Component {
 		this.setState( ( { isBulkMode } ) => ( { isBulkMode: ! isBulkMode, selectedComments: [] } ) );
 	};
 
-	toggleCommentSelected = comment => {
+	toggleCommentSelected = ( comment ) => {
 		if ( this.isCommentSelected( comment.commentId ) ) {
 			return this.setState( ( { selectedComments } ) => ( {
 				selectedComments: selectedComments.filter(
@@ -134,9 +134,9 @@ export class CommentTree extends Component {
 		} ) );
 	};
 
-	toggleSelectAll = selectedComments => this.setState( { selectedComments } );
+	toggleSelectAll = ( selectedComments ) => this.setState( { selectedComments } );
 
-	updateLastUndo = commentId => this.setState( { lastUndo: commentId } );
+	updateLastUndo = ( commentId ) => this.setState( { lastUndo: commentId } );
 
 	render() {
 		const {
@@ -185,7 +185,7 @@ export class CommentTree extends Component {
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<TransitionGroup className="comment-list__transition-wrapper">
 					{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
-					{ map( commentsPage, commentId => (
+					{ map( commentsPage, ( commentId ) => (
 						<CommentTransition key={ `comment-${ siteId }-${ commentId }` }>
 							<Comment
 								commentId={ commentId }
@@ -250,7 +250,7 @@ const mapStateToProps = ( state, { postId, siteId, status } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	recordChangePage: ( page, total ) =>
 		dispatch(
 			composeAnalytics(

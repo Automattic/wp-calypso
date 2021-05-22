@@ -12,29 +12,31 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import { Card } from '@automattic/components';
-import SiteSelector from 'components/site-selector';
-import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import getSites from 'state/selectors/get-sites';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import { domainManagementList, domainManagementTransfer } from 'my-sites/domains/paths';
-import { getSelectedDomain } from 'lib/domains';
-import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
+import SiteSelector from 'calypso/components/site-selector';
+import getSites from 'calypso/state/selectors/get-sites';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import Main from 'calypso/components/main';
+import { domainManagementList, domainManagementTransfer } from 'calypso/my-sites/domains/paths';
+import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
+import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import TransferConfirmationDialog from './confirmation-dialog';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import wp from 'lib/wp';
-import { isWpComFreePlan } from 'lib/plans';
-import { requestSites } from 'state/sites/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import wp from 'calypso/lib/wp';
+import { requestSites } from 'calypso/state/sites/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const wpcom = wp.undocumented();
 
 export class TransferToOtherSite extends React.Component {
 	static propTypes = {
-		currentUser: PropTypes.object.isRequired,
+		currentUserCanManage: PropTypes.bool.isRequired,
+		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
 		isDomainOnly: PropTypes.bool.isRequired,
+		isMapping: PropTypes.bool.isRequired,
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.object.isRequired,
@@ -47,10 +49,10 @@ export class TransferToOtherSite extends React.Component {
 	};
 
 	isDataReady() {
-		return ! this.props.isRequestingSiteDomains;
+		return ! this.props.isRequestingSiteDomains && this.props.hasSiteDomainsLoaded;
 	}
 
-	isSiteEligible = site => {
+	isSiteEligible = ( site ) => {
 		// check if it's an Atomic site from the site options
 		const isAtomic = get( site, 'options.is_automated_transfer', false );
 
@@ -58,14 +60,11 @@ export class TransferToOtherSite extends React.Component {
 			site.capabilities.manage_options &&
 			! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
 			! get( site, 'options.is_domain_only', false ) &&
-			! (
-				this.props.domainsWithPlansOnly && isWpComFreePlan( get( site, 'plan.product_slug' ) )
-			) &&
 			site.ID !== this.props.selectedSite.ID
 		);
 	};
 
-	handleSiteSelect = targetSiteId => {
+	handleSiteSelect = ( targetSiteId ) => {
 		this.setState( {
 			targetSiteId,
 			showConfirmationDialog: true,
@@ -100,7 +99,7 @@ export class TransferToOtherSite extends React.Component {
 						page( domainManagementList( this.props.selectedSite.slug ) );
 					}
 				},
-				error => {
+				( error ) => {
 					this.setState( { disableDialogButtons: false } );
 					closeDialog();
 					this.props.errorNotice( error.message || defaultErrorMessage );
@@ -114,21 +113,43 @@ export class TransferToOtherSite extends React.Component {
 		}
 	};
 
-	render() {
-		if ( ! this.isDataReady() ) {
-			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
+	getMessage() {
+		const { selectedDomainName: domainName, isMapping, translate } = this.props;
+		const translateArgs = { args: { domainName }, components: { strong: <strong /> } };
+
+		if ( isMapping ) {
+			return translate(
+				"Please choose a site you're an administrator on to transfer domain mapping for {{strong}}%(domainName)s{{/strong}} to:",
+				translateArgs
+			);
 		}
 
-		const { selectedSite, selectedDomainName } = this.props;
+		return translate(
+			"Please choose a site you're an administrator on to transfer {{strong}}%(domainName)s{{/strong}} to:",
+			translateArgs
+		);
+	}
+
+	render() {
+		const { selectedSite, selectedDomainName, currentRoute, isMapping } = this.props;
 		const { slug } = selectedSite;
+		if ( ! this.isDataReady() ) {
+			return (
+				<DomainMainPlaceholder
+					backHref={ domainManagementTransfer( slug, selectedDomainName, currentRoute ) }
+				/>
+			);
+		}
 
 		return (
 			<Main className="transfer-to-other-site">
 				<Header
 					selectedDomainName={ selectedDomainName }
-					backHref={ domainManagementTransfer( slug, selectedDomainName ) }
+					backHref={ domainManagementTransfer( slug, selectedDomainName, currentRoute ) }
 				>
-					{ this.props.translate( 'Transfer Domain To Another Site' ) }
+					{ isMapping
+						? this.props.translate( 'Transfer Domain Mapping To Another Site' )
+						: this.props.translate( 'Transfer Domain To Another Site' ) }
 				</Header>
 				{ this.renderSection() }
 			</Main>
@@ -136,30 +157,15 @@ export class TransferToOtherSite extends React.Component {
 	}
 
 	renderSection() {
-		const { currentUserCanManage } = getSelectedDomain( this.props );
+		const { currentUserCanManage, selectedDomainName } = this.props;
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...omit( this.props, [ 'children' ] ) } />;
-		}
-
-		const { selectedDomainName: domainName, domainsWithPlansOnly, translate } = this.props;
-		let message;
-		if ( domainsWithPlansOnly ) {
-			message = translate(
-				'Please choose a site with a paid plan ' +
-					"you're an administrator on to transfer {{strong}}%(domainName)s{{/strong}} to:",
-				{ args: { domainName }, components: { strong: <strong /> } }
-			);
-		} else {
-			message = translate(
-				"Please choose a site you're an administrator on to transfer {{strong}}%(domainName)s{{/strong}} to:",
-				{ args: { domainName }, components: { strong: <strong /> } }
-			);
 		}
 
 		return (
 			<div>
 				<Card className="transfer-to-other-site__card">
-					<p>{ message }</p>
+					<p>{ this.getMessage() }</p>
 					<SiteSelector
 						filter={ this.isSiteEligible }
 						sites={ this.props.sites }
@@ -168,12 +174,13 @@ export class TransferToOtherSite extends React.Component {
 				</Card>
 				{ this.state.targetSiteId && (
 					<TransferConfirmationDialog
-						targetSiteId={ this.state.targetSiteId }
-						domainName={ this.props.selectedDomainName }
+						disableDialogButtons={ this.state.disableDialogButtons }
+						domainName={ selectedDomainName }
+						isMapping={ this.props.isMapping }
+						isVisible={ this.state.showConfirmationDialog }
 						onConfirmTransfer={ this.handleConfirmTransfer }
 						onClose={ this.handleDialogClose }
-						isVisible={ this.state.showConfirmationDialog }
-						disableDialogButtons={ this.state.disableDialogButtons }
+						targetSiteId={ this.state.targetSiteId }
 					/>
 				) }
 			</div>
@@ -182,12 +189,18 @@ export class TransferToOtherSite extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		currentUser: getCurrentUser( state ),
-		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
-		isDomainOnly: isDomainOnlySite( state, get( ownProps, 'selectedSite.ID', null ) ),
-		sites: getSites( state ),
-	} ),
+	( state, ownProps ) => {
+		const domain = ! ownProps.isRequestingSiteDomains && getSelectedDomain( ownProps );
+		const siteId = getSelectedSiteId( state );
+		return {
+			currentRoute: getCurrentRoute( state ),
+			currentUserCanManage: Boolean( domain ) && domain.currentUserCanManage,
+			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
+			isDomainOnly: isDomainOnlySite( state, siteId ),
+			isMapping: Boolean( domain ) && isMappedDomain( domain ),
+			sites: getSites( state ),
+		};
+	},
 	{
 		errorNotice,
 		requestSites,

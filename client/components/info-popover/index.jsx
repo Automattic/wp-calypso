@@ -9,9 +9,9 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import Popover from 'components/popover';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import Gridicon from 'calypso/components/gridicon';
+import Popover from 'calypso/components/popover';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -29,6 +29,8 @@ export default class InfoPopover extends Component {
 		ignoreContext: PropTypes.shape( {
 			getDOMNode: PropTypes.func,
 		} ),
+		onOpen: PropTypes.func,
+		onClose: PropTypes.func,
 		popoverName: PropTypes.string,
 		position: PropTypes.oneOf( [
 			'top',
@@ -40,6 +42,7 @@ export default class InfoPopover extends Component {
 			'left',
 			'top left',
 		] ),
+		showOnHover: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -47,19 +50,38 @@ export default class InfoPopover extends Component {
 		icon: 'info-outline',
 		iconSize: 18,
 		position: 'bottom',
+		showOnHover: false,
 	};
 
 	iconRef = React.createRef();
 
 	state = { showPopover: false };
 
-	handleClick = e => {
+	handleClick = ( e ) => {
+		const { onOpen, showOnHover } = this.props;
+		const { showPopover } = this.state;
+
 		e.preventDefault();
 		e.stopPropagation();
-		this.setState( { showPopover: ! this.state.showPopover }, this.recordStats );
+
+		if ( showOnHover ) {
+			return;
+		}
+
+		// There's no "handleOpen" method for us to hook into,
+		// so we check here to see if the intent is to open the popover
+		// and fire onOpen accordingly
+		if ( ! showPopover ) {
+			onOpen?.();
+		}
+
+		this.setState( { showPopover: ! showPopover }, this.recordStats );
 	};
 
-	handleClose = () => this.setState( { showPopover: false }, this.recordStats );
+	handleClose = () => {
+		this.props.onClose?.();
+		this.setState( { showPopover: false }, this.recordStats );
+	};
 
 	recordStats = () => {
 		const { gaEventCategory, popoverName } = this.props;
@@ -68,6 +90,42 @@ export default class InfoPopover extends Component {
 			const dialogState = this.state.showPopover ? ' Opened' : ' Closed';
 			gaRecordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + dialogState );
 		}
+	};
+
+	handleOnMouseEnterButton = () => {
+		const { onOpen, showOnHover } = this.props;
+
+		if ( ! showOnHover ) {
+			return;
+		}
+
+		onOpen?.();
+		this.setState( { showPopover: true }, this.recordStats );
+	};
+
+	handleOnMouseLeave = () => {
+		setTimeout( () => {
+			const { showOnHover } = this.props;
+
+			if ( ! showOnHover ) {
+				return;
+			}
+
+			if ( this.inPopover ) {
+				return;
+			}
+
+			this.setState( { showPopover: false }, this.recordStats );
+		}, 250 );
+	};
+
+	handleOnMouseEnterPopover = () => {
+		this.inPopover = true;
+	};
+
+	handleOnMouseLeavePopover = () => {
+		this.inPopover = false;
+		this.handleOnMouseLeave();
 	};
 
 	render() {
@@ -79,6 +137,8 @@ export default class InfoPopover extends Component {
 					aria-expanded={ this.state.showPopover }
 					aria-label={ translate( 'More information' ) }
 					onClick={ this.handleClick }
+					onMouseEnter={ this.handleOnMouseEnterButton }
+					onMouseLeave={ this.handleOnMouseLeave }
 					ref={ this.iconRef }
 					className={ classNames( 'info-popover', this.props.className, {
 						'is-active': this.state.showPopover,
@@ -96,6 +156,8 @@ export default class InfoPopover extends Component {
 						position={ this.props.position }
 						onClose={ this.handleClose }
 						className={ classNames( 'info-popover__tooltip', this.props.className ) }
+						onMouseEnter={ this.handleOnMouseEnterPopover }
+						onMouseLeave={ this.handleOnMouseLeavePopover }
 					>
 						{ this.props.children }
 					</Popover>

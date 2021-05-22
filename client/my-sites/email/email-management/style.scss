@@ -1,18 +1,404 @@
-
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
 
 .email-management {
-	.is-placeholder {
-		.section-header__label {
-			@include placeholder();
-
-			&::before {
-				display: none;
-			}
-		}
-	}
 	.empty-content__illustration {
 		width: 250px;
 		height: auto;
 		margin: 20px 0 40px;
+	}
+}
+
+/**
+ * New email home styles
+ */
+
+.email-list-active {
+	> .card {
+		color: var( --color-text );
+		display: flex;
+
+		> div > h2 {
+			word-break: break-all;
+		}
+
+		> div > span {
+			font-size: $font-body-small;
+			color: var( --color-text-subtle );
+		}
+
+		.email-list-active__warning {
+			font-size: $font-body-extra-small;
+			margin-left: 14px;
+
+			> span {
+				color: var( --color-error-50 );
+				display: none;
+				vertical-align: middle;
+
+				@include break-small {
+					display: unset;
+				}
+
+				@include break-medium {
+					display: none;
+				}
+
+				@include break-large {
+					display: unset;
+				}
+			}
+
+			> svg {
+				fill: var( --color-error-50 );
+				height: 18px;
+				margin-right: 6px;
+				/* Push the icon down when there is no warning text */
+				margin-top: 3px;
+				vertical-align: middle;
+				width: 18px;
+
+				@include break-small {
+					margin-top: 0;
+				}
+
+				@include break-medium {
+					margin-top: 3px;
+				}
+
+				@include break-large {
+					margin-top: 0;
+				}
+			}
+		}
+	}
+
+	> .card.is-card-link:hover {
+		background-color: var( --color-neutral-0 );
+	}
+}
+
+.email-list-active__item-icon {
+	align-self: center;
+
+	> img, svg {
+		height: 36px;
+		margin-right: 16px;
+		min-height: 36px;
+		min-width: 36px;
+		width: 36px;
+
+		@include break-large {
+			margin-right: 24px;
+		}
+	}
+	> .gridicon.gridicons-my-sites {
+		fill: var( --color-wordpress-com );
+	}
+}
+
+.email-list-inactive {
+	margin-top: 15px;
+	> .card {
+		align-items: center;
+		display: flex;
+		margin-bottom: 0;
+		padding-bottom: 20px;
+		padding-top: 20px;
+		> span {
+			flex: 1 1 auto;
+			line-height: 40px;
+		}
+	}
+}
+
+@mixin email_plan_header_status_color( $color ) {
+	border-top: 5px solid $color;
+
+	.email-plan-header__status {
+		color: $color;
+
+		> svg {
+			fill: $color;
+		}
+	}
+}
+
+.email-plan__actions .vertical-nav-item.card,
+.email-plan-mailboxes-list__mailbox-list-item.card {
+	padding-bottom: 28px;
+	padding-top: 28px;
+}
+
+.email-plan-header__status {
+	display: flex;
+	align-items: center;
+
+	> svg {
+		margin-right: 5px;
+	}
+}
+
+.email-plan-header {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+
+	h2 {
+		font-size: $font-title-large;
+		word-break: break-all;
+	}
+
+	&.success {
+		@include email_plan_header_status_color( var( --color-success ) );
+	}
+
+	&.warning {
+		@include email_plan_header_status_color( var( --color-warning ) );
+	}
+
+	&.error {
+		@include email_plan_header_status_color( var( --color-error ) );
+	}
+}
+
+.email-plan-header__icon {
+	> img, svg {
+		height: 36px;
+		width: 36px;
+		margin-right: 20px;
+	}
+
+	> .gridicon.gridicons-my-sites {
+		fill: var( --color-wordpress-com );
+	}
+}
+
+.email-plan-mailboxes-list__mailbox-list {
+	margin-top: 15px;
+}
+
+.email-plan-mailboxes-list__mailbox-action-menu {
+	position: absolute;
+	right: 16px;
+	top: 28px;
+
+	@include break-mobile {
+		right: 24px;
+	}
+
+	> .button.is-borderless {
+		padding: 0;
+	}
+}
+
+.popover__menu-item.email-plan-mailboxes-list__mailbox-action-menu-item {
+	align-items: center;
+	display: flex;
+	line-height: 24px;
+
+	> img, > svg {
+		height: 18px;
+		fill: var( --color-neutral-50 );
+		filter: grayscale( 100% );
+		margin-right: 8px;
+		width: 18px;
+	}
+
+	&:hover {
+		> img {
+			filter: grayscale( 100% ) brightness( 0.2 ) invert( 1 );
+		}
+		> svg {
+			fill: white;
+		}
+	}
+
+	&.external-link > .gridicons-external {
+		display: none;
+	}
+}
+
+.email-plan-mailboxes-list__mailbox-list-item {
+	display: flex;
+	flex-direction: column;
+
+	&.card {
+		&.is-compact {
+			@include break-xlarge {
+				flex-direction: row;
+				/* The padding jumps as we need the padding on this element instead
+				 * of mailbox-list-item-main when we shift to flex-direction: row
+				 */
+				padding-right: 72px;
+			}
+		}
+
+		&.is-highlight {
+			padding-left: 13px;
+
+			@include break-mobile {
+				padding-left: 21px;
+			}
+		}
+
+		&.is-error {
+			border-left-color: var( --color-error-50 );
+		}
+	}
+
+	.email-plan-mailboxes-list__mailbox-list-item-main {
+		display: flex;
+		flex-direction: column;
+		padding-right: 40px;
+
+		@include break-mobile {
+			padding-right: 48px;
+		}
+
+		@include break-xlarge {
+			/* Padding moves to parent mailbox-list-item when we shift to flex-direction: row */
+			padding-right: 0;
+		}
+
+		> div:not( :first-child ) {
+			margin-top: 0.5em;
+		}
+	}
+	&.is-placeholder > span,
+	&.is-placeholder .email-plan-mailboxes-list__mailbox-list-item-main {
+		@include placeholder( --color-neutral-5 );
+		width: 50%;
+	}
+	&.no-emails > span {
+		color: var( --color-text-subtle );
+		font-style: italic;
+	}
+	> svg,
+	.email-plan-mailboxes-list__mailbox-list-item-main svg {
+		fill: var( --studio-gray-40 );
+		margin-right: 10px;
+		vertical-align: middle;
+	}
+	.email-plan-mailboxes-list__mailbox-list-item-main span {
+		vertical-align: middle;
+		word-break: break-all;
+	}
+
+	> .badge {
+		/* Hide admin badge in mobile layouts */
+		display: none;
+
+		@include break-xlarge {
+			align-self: center;
+			display: unset;
+			margin-left: 10px;
+		}
+	}
+
+	.email-plan-mailboxes-list__mailbox-list-item-warning {
+		border-top: 1px solid var( --color-neutral-5 );
+		color: var( --color-error );
+		font-size: $font-body-extra-small;
+		line-height: 24px;
+		margin-top: 18px;
+		padding-top: 18px;
+
+		@include break-xlarge {
+			border-top: none;
+			margin-left: 16px;
+			margin-right: 16px;
+			margin-top: 0;
+			padding-top: 0;
+		}
+
+		> svg {
+			margin-right: 6px;
+			vertical-align: middle;
+		}
+		> span {
+			vertical-align: middle;
+		}
+	}
+
+	.email-plan-mailboxes-list__mailbox-list-item-action {
+		margin-top: 12px;
+		@include break-xlarge {
+			flex: 0.75;
+			margin-top: 0;
+			margin-left: auto;
+			text-align: right;
+		}
+	}
+}
+
+.email-plan-subscription__card {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+
+	@include break-small {
+		flex-wrap: initial;
+	}
+
+	.email-plan-subscription__renew {
+		margin-left: auto;
+		margin-right: 16px;
+
+		@include break-small {
+			flex: 1 1 auto;
+			margin-left: 16px;
+		}
+	}
+
+	.email-plan-subscription__auto-renew {
+		/* Ensure auto-renew text is using the standard font size */
+		label {
+			font-size: $font-body;
+		}
+		/* vertically aligns the auto-renew toggle - not sure if there's a better way... */
+		> div > div {
+			margin-top: auto;
+			margin-bottom: auto;
+		}
+	}
+}
+
+.email-plan-subscription__placeholder {
+	div {
+		@include placeholder( --color-neutral-5 );
+		margin: 0 auto;
+		width: 150px;
+		height: 28px;
+	}
+}
+
+.email-plan-subscription__expired {
+	color: var( --color-error-50 );
+}
+
+.email-plan-warnings__container {
+	flex-basis: 100%;
+	line-height: 30px;
+	margin-top: 24px;
+	width: 100%;
+
+	.email-plan-warnings__warning {
+		align-items: center;
+		display: flex;
+
+		.email-plan-warnings__message {
+			flex: 1 1 auto;
+		}
+
+		.email-plan-warnings__cta {
+			margin-left: 15px;
+
+			.button .gridicon {
+				height: 16px;
+				margin-left: 8px;
+				width: 16px;
+			}
+		}
 	}
 }

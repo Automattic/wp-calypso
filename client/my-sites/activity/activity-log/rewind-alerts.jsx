@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import ThreatAlert from './threat-alert';
-import getSiteThreats from 'state/selectors/get-site-threats';
+import getSiteThreats from 'calypso/state/selectors/get-site-threats';
 
 /**
  * Style dependencies
@@ -31,7 +31,7 @@ export class RewindAlerts extends Component {
 					{ translate( 'These items require your immediate attention' ) }
 				</div>
 				{ 'function' === typeof threats.map &&
-					threats.map( threat => (
+					threats.map( ( threat ) => (
 						<ThreatAlert key={ threat.id } threat={ threat } siteId={ siteId } />
 					) ) }
 			</Card>

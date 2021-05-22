@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/home/init';
+
+/**
  * Returns the Home layout for a given site.
  *
  * @param  {object}  state   Global state tree
@@ -6,5 +11,5 @@
  * @returns {object} Object with list of cards for each region
  */
 export function getHomeLayout( state, siteId ) {
-	return state.home?.[ siteId ]?.layout ?? null;
+	return state.home?.sites?.[ siteId ]?.layout ?? null;
 }

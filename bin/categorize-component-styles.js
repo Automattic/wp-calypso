@@ -6,8 +6,8 @@ const componentsStyle = fs.readFileSync( 'assets/stylesheets/_components.scss', 
 } );
 const components = componentsStyle
 	.split( '\n' )
-	.filter( line => line.startsWith( '@import' ) )
-	.map( component => component.substring( 9, component.length - 2 ) );
+	.filter( ( line ) => line.startsWith( '@import' ) )
+	.map( ( component ) => component.substring( 9, component.length - 2 ) );
 console.log( `Scoring ${ components.length } components...` );
 
 const zero = { score: 0 };
@@ -34,7 +34,7 @@ function hasNonCompliantToplevelSelectors( f, name ) {
 	while ( ( topLevelSelectors = re.exec( f ) ) !== null ) {
 		const classes = topLevelSelectors[ 0 ].split( '.' ).filter( Boolean );
 
-		if ( ! classes.some( cls => cls.startsWith( name ) ) ) {
+		if ( ! classes.some( ( cls ) => cls.startsWith( name ) ) ) {
 			// suspect
 			//console.log( '  saw %s\n  expected %s', topLevelSelectors[0], name );
 			++violations;
@@ -68,8 +68,8 @@ function overridenByOthers( f, name, componentPath ) {
 		{ encoding: 'utf8', shell: true }
 	);
 	const r = results.stdout.split( '\n' );
-	const componentsFullPath = components.map( c => 'client/' + c + '.scss' );
-	const matches = r.filter( p => componentsFullPath.includes( p ) );
+	const componentsFullPath = components.map( ( c ) => 'client/' + c + '.scss' );
+	const matches = r.filter( ( p ) => componentsFullPath.includes( p ) );
 	const matchCount = matches.length;
 	if ( matchCount > 0 ) {
 		return {
@@ -85,16 +85,16 @@ function score( c ) {
 	const name = path.basename( c.replace( /\/style$/, '' ) );
 	const componentPath = `client/${ path.dirname( c ) }/`;
 	const checks = [ hasImports, hasNonCompliantToplevelSelectors, overridenByOthers ];
-	const scores = checks.map( check => check( styles, name, componentPath ) );
+	const scores = checks.map( ( check ) => check( styles, name, componentPath ) );
 	scores.score = scores.reduce( ( totalScore, { score: s } ) => totalScore + s, 0 );
 	scores.summary = scores
-		.filter( s => s.name )
-		.map( s => s.name )
+		.filter( ( s ) => s.name )
+		.map( ( s ) => s.name )
 		.join( ', ' );
 	return scores;
 }
 
-const scored = components.map( c => ( { component: c, scores: score( c ) } ) );
+const scored = components.map( ( c ) => ( { component: c, scores: score( c ) } ) );
 
 scored.sort( ( a, b ) => {
 	const scoreDiff = b.scores.score - a.scores.score;

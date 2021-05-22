@@ -2,25 +2,25 @@
  * External dependencies
  */
 import React, { useState } from 'react';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormToggle from 'components/forms/form-toggle';
+import FormLabel from 'calypso/components/forms/form-label';
 import { CompactCard as Card } from '@automattic/components';
-import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
+import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import {
 	areAllUsersValid,
 	GSuiteNewUser,
 	GSuiteNewUserField,
 	newUsers,
-} from 'lib/gsuite/new-users';
+} from 'calypso/lib/gsuite/new-users';
 
 const domainOne = { name: 'example.blog' };
 const domainTwo = { name: 'test.blog' };
 
-const GSuiteNewUserListExample = () => {
+const GSuiteNewUserListExample = (): React.FunctionComponent => {
 	const [ users, setUsers ] = useState( newUsers( domainOne.name ) );
 	const [ domains, setDomains ] = useState( [ domainOne ] );
 	const [ useMultipleDomains, setUseMultipleDomains ] = useState( false );
@@ -43,7 +43,14 @@ const GSuiteNewUserListExample = () => {
 		error: ! error && value.includes( 'a' ) ? "No a's permitted!" : error,
 	} );
 
-	const extraValidation = ( { domain, mailBox, firstName, lastName }: GSuiteNewUser ) => ( {
+	const extraValidation = ( {
+		uuid,
+		domain,
+		mailBox,
+		firstName,
+		lastName,
+	}: GSuiteNewUser ): GSuiteNewUser => ( {
+		uuid,
 		firstName: noAs( firstName ),
 		lastName: noAs( lastName ),
 		domain,
@@ -54,9 +61,9 @@ const GSuiteNewUserListExample = () => {
 		<Card>
 			<GSuiteNewUserList
 				domains={ domains }
-				extraValidation={ useExtraValidation ? extraValidation : user => user }
+				extraValidation={ useExtraValidation ? extraValidation : ( user ) => user }
 				selectedDomainName={ domainOne.name }
-				onUsersChange={ changedUsers => setUsers( changedUsers ) }
+				onUsersChange={ ( changedUsers ) => setUsers( changedUsers ) }
 				users={ users }
 				onReturnKeyPress={ () => void 0 }
 			>
@@ -78,15 +85,18 @@ const GSuiteNewUserListExample = () => {
 			</GSuiteNewUserList>
 			<hr />
 			<FormLabel key="mulitple-domains">
-				<FormToggle checked={ useMultipleDomains } onChange={ toggleUseMultipleDomains } />{ ' ' }
-				<span>{ 'Use multiple domains' }</span>
+				<ToggleControl
+					checked={ useMultipleDomains }
+					onChange={ toggleUseMultipleDomains }
+					label="Use multiple domains"
+				/>
 			</FormLabel>
 			<FormLabel key="extra-validation">
-				<FormToggle
+				<ToggleControl
 					checked={ useExtraValidation }
 					onChange={ () => setUseExtraValidation( ! useExtraValidation ) }
-				/>{ ' ' }
-				<span>{ "Use extra validation ( no a's in name )" }</span>
+					label="Use extra validation ( no a's in name )"
+				/>
 			</FormLabel>
 		</Card>
 	);

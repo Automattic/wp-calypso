@@ -13,26 +13,26 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import { login } from 'lib/paths';
-import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import getMagicLoginCurrentView from 'state/selectors/get-magic-login-current-view';
-import { getCurrentRoute } from 'state/selectors/get-current-route';
-import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import LocaleSuggestions from 'components/locale-suggestions';
+import config from '@automattic/calypso-config';
+import { login } from 'calypso/lib/paths';
+import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
-} from 'state/analytics/actions';
-import { withEnhancers } from 'state/utils';
-import Main from 'components/main';
-import JetpackHeader from 'components/jetpack-header';
+} from 'calypso/state/analytics/actions';
+import { withEnhancers } from 'calypso/state/utils';
+import Main from 'calypso/components/main';
+import JetpackHeader from 'calypso/components/jetpack-header';
 import RequestLoginEmailForm from './request-login-email-form';
-import GlobalNotices from 'components/global-notices';
-import Gridicon from 'components/gridicon';
+import GlobalNotices from 'calypso/components/global-notices';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
@@ -61,7 +61,7 @@ class MagicLogin extends React.Component {
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
 	}
 
-	onClickEnterPasswordInstead = event => {
+	onClickEnterPasswordInstead = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_email_link_page_click_back' );
@@ -142,6 +142,15 @@ class MagicLogin extends React.Component {
 	}
 
 	render() {
+		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature
+		// flag is enabled, some steps will display a different UI
+		const requestLoginEmailFormProps = {
+			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
+			...( this.props.isJetpackLogin && config.isEnabled( 'jetpack/magic-link-signup' )
+				? { isJetpackMagicLinkSignUpEnabled: true }
+				: {} ),
+		};
+
 		return (
 			<Main
 				className={ classNames( 'magic-login', 'magic-login__request-link', {
@@ -153,9 +162,9 @@ class MagicLogin extends React.Component {
 
 				{ this.renderLocaleSuggestions() }
 
-				<GlobalNotices id="notices" notices={ notices.list } />
+				<GlobalNotices id="notices" />
 
-				<RequestLoginEmailForm />
+				<RequestLoginEmailForm { ...requestLoginEmailFormProps } />
 
 				{ this.renderLinks() }
 			</Main>
@@ -163,12 +172,12 @@ class MagicLogin extends React.Component {
 	}
 }
 
-const mapState = state => ( {
+const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
 	query: getCurrentQueryArguments( state ),
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
-	isGutenboardingLogin: getCurrentRoute( state )?.startsWith( '/log-in/gutenboarding/link' ),
+	isGutenboardingLogin: getCurrentRoute( state )?.startsWith( '/log-in/new/link' ),
 } );
 
 const mapDispatch = {

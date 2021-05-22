@@ -3,7 +3,7 @@
 }
 
 .plugins-list .plugin-item {
-	@include breakpoint( '<1040px' ) {
+	@include breakpoint-deprecated( '<1040px' ) {
 		width: 100%;
 
 		&:nth-last-child( n + 2 ) {
@@ -11,7 +11,7 @@
 		}
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		flex-direction: column;
 		width: 33.33%;
 		border-right-width: 1px;
@@ -39,11 +39,11 @@
 
 		.plugin-item__count,
 		.plugin-item__actions {
-			align-self: flex-start;
+			align-self: flex-end;
 			flex-direction: column;
 			margin-top: -6px;
 			padding-top: 0;
-			text-align: left;
+			text-align: right;
 		}
 
 		.plugin-item__count {

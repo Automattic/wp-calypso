@@ -9,13 +9,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AppleLoginButton from 'components/social-buttons/apple';
-import config from 'config';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import GoogleLoginButton from 'components/social-buttons/google';
-import { localizeUrl } from 'lib/i18n-utils';
-import { preventWidows } from 'lib/formatting';
-import { recordTracksEvent } from 'state/analytics/actions';
+import AppleLoginButton from 'calypso/components/social-buttons/apple';
+import config from '@automattic/calypso-config';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import GoogleLoginButton from 'calypso/components/social-buttons/google';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -30,7 +30,7 @@ class SocialSignupForm extends Component {
 		compact: false,
 	};
 
-	handleAppleResponse = response => {
+	handleAppleResponse = ( response ) => {
 		if ( ! response.id_token ) {
 			return;
 		}
@@ -61,7 +61,7 @@ class SocialSignupForm extends Component {
 		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token );
 	};
 
-	trackSocialLogin = service => {
+	trackSocialLogin = ( service ) => {
 		this.props.recordTracksEvent( 'calypso_login_social_button_click', {
 			social_account_type: service,
 		} );
@@ -105,6 +105,7 @@ class SocialSignupForm extends Component {
 						socialServiceResponse={
 							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 						}
+						isReskinned={ this.props.isReskinned }
 					/>
 
 					<AppleLoginButton
@@ -143,7 +144,7 @@ class SocialSignupForm extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentRoute: getCurrentRoute( state ),
 	} ),
 	{ recordTracksEvent }

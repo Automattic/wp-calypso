@@ -77,7 +77,7 @@ function getTrackingScriptsToLoad() {
 		isGoogleAnalyticsEnabled && TRACKING_IDS.wpcomGoogleAnalyticsGtag,
 		isWpcomGoogleAdsGtagEnabled && TRACKING_IDS.wpcomGoogleAdsGtag,
 		isFloodlightEnabled && TRACKING_IDS.wpcomFloodlightGtag,
-	].filter( id => false !== id );
+	].filter( ( id ) => false !== id );
 	if ( enabledGtags.length > 0 ) {
 		scripts.push( GOOGLE_GTAG_SCRIPT_URL + enabledGtags[ 0 ] );
 	}
@@ -166,7 +166,7 @@ function attemptLoad( loader ) {
 	let setLoadResult;
 	let status = 'not-loading';
 
-	const loadResult = new Promise( resolve => {
+	const loadResult = new Promise( ( resolve ) => {
 		setLoadResult = resolve;
 	} );
 
@@ -174,7 +174,7 @@ function attemptLoad( loader ) {
 		if ( status === 'not-loading' ) {
 			status = 'loading';
 			loader().then(
-				result => {
+				( result ) => {
 					status = 'loaded';
 					setLoadResult( result );
 				},

@@ -2,13 +2,13 @@ export const purchasesRoot = '/me/purchases';
 
 export const addCreditCard = purchasesRoot + '/add-credit-card';
 
+export const addNewPaymentMethod = purchasesRoot + '/add-payment-method';
+
 export const billingHistory = purchasesRoot + '/billing';
 
-export const upcomingCharges = purchasesRoot + '/upcoming';
+export const paymentMethods = purchasesRoot + '/payment-methods';
 
 export const pendingPayments = purchasesRoot + '/pending';
-
-export const myMemberships = purchasesRoot + '/other';
 
 export function billingHistoryReceipt( receiptId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
@@ -46,6 +46,7 @@ export function confirmCancelDomain( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/confirm-cancel-domain';
 }
 
+// legacy path
 export function addCardDetails( siteName, purchaseId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
@@ -55,6 +56,7 @@ export function addCardDetails( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/payment/add';
 }
 
+// legacy path
 export function editCardDetails( siteName, purchaseId, cardId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if (
@@ -67,3 +69,30 @@ export function editCardDetails( siteName, purchaseId, cardId ) {
 	}
 	return managePurchase( siteName, purchaseId ) + `/payment/edit/${ cardId }`;
 }
+
+export function addPaymentMethod( siteName, purchaseId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
+			throw new Error( 'siteName and purchaseId must be provided' );
+		}
+	}
+	return managePurchase( siteName, purchaseId ) + '/payment-method/add';
+}
+
+export function changePaymentMethod( siteName, purchaseId, cardId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if (
+			'undefined' === typeof siteName ||
+			'undefined' === typeof purchaseId ||
+			'undefined' === typeof cardId
+		) {
+			throw new Error( 'siteName, purchaseId, and cardId must be provided' );
+		}
+	}
+	return managePurchase( siteName, purchaseId ) + `/payment-method/change/${ cardId }`;
+}
+
+export const deprecated = {
+	upcomingCharges: purchasesRoot + '/upcoming',
+	otherPurchases: purchasesRoot + '/other',
+};

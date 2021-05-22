@@ -6,10 +6,10 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flowRight, get, includes, noop } from 'lodash';
+import { flowRight, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -22,14 +22,15 @@ import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
 import { Button, ScreenReaderText } from '@automattic/components';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import versionCompare from 'lib/version-compare';
-import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'lib/media/utils';
-import config from 'config';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import isPrivateSite from 'state/selectors/is-private-site';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'calypso/lib/media/utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+
+const noop = () => {};
 
 export class EditorMediaModalDetailItem extends Component {
 	static propTypes = {
@@ -84,32 +85,18 @@ export class EditorMediaModalDetailItem extends Component {
 	 * enabled/shown
 	 *
 	 * @param  {object} item - media item
-	 * @param  {object} site - current site
 	 * @returns {boolean} `true` if the image-editor can be enabled.
 	 */
-	shouldShowImageEditingButtons( item, site ) {
-		const { isSitePrivate } = this.props;
+	shouldShowImageEditingButtons( item ) {
+		const { isSitePrivate, isSiteAtomic } = this.props;
 
 		// do not allow if, for some reason, there isn't a valid item yet
 		if ( ! item ) {
 			return false;
 		}
 
-		// do not show if the feature flag isn't set
-		if ( ! config.isEnabled( 'post-editor/image-editor' ) ) {
-			return false;
-		}
-
-		// do not allow for private sites
-		if ( isSitePrivate ) {
-			return false;
-		}
-
-		// do not allow for Jetpack site with a non-valid version
-		if (
-			get( site, 'jetpack', false ) &&
-			versionCompare( get( site, 'options.jetpack_version', '0.0' ), '4.7-alpha', '<' )
-		) {
+		// do not allow for non-atomic private sites
+		if ( isSitePrivate && ! isSiteAtomic ) {
 			return false;
 		}
 
@@ -184,9 +171,9 @@ export class EditorMediaModalDetailItem extends Component {
 	}
 
 	renderImageEditorButtons( classname ) {
-		const { item, site } = this.props;
+		const { item } = this.props;
 
-		if ( ! this.shouldShowImageEditingButtons( item, site ) ) {
+		if ( ! this.shouldShowImageEditingButtons( item ) ) {
 			return null;
 		}
 
@@ -301,9 +288,11 @@ export class EditorMediaModalDetailItem extends Component {
 					</div>
 
 					<div className="editor-media-modal-detail__sidebar">
-						{ isJetpack && (
-							<QueryJetpackModules siteId={ siteId } />
-						) /* Is the VideoPress module active? */ }
+						{
+							isJetpack && (
+								<QueryJetpackModules siteId={ siteId } />
+							) /* Is the VideoPress module active? */
+						}
 						{ this.renderMediaEditorButtons( item, 'is-mobile' ) }
 						{ this.renderFields() }
 						<EditorMediaModalDetailFileInfo item={ item } />
@@ -314,7 +303,7 @@ export class EditorMediaModalDetailItem extends Component {
 	}
 }
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const canUserUploadFiles = canCurrentUser( state, siteId, 'upload_files' );
 
@@ -323,6 +312,7 @@ const connectComponent = connect( state => {
 		isVideoPressEnabled: getSiteOption( state, siteId, 'videopress_enabled' ),
 		isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
 		isSitePrivate: isPrivateSite( state, siteId ),
+		isSiteAtomic: isSiteAutomatedTransfer( state, siteId ),
 		siteId,
 		canUserUploadFiles,
 	};

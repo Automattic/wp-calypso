@@ -1,16 +1,9 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
-import {
-	getSiteSlug,
-	getSiteOption,
-	isJetpackSite,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
-} from 'state/sites/selectors';
-import { oldShowcaseUrl } from 'state/themes/utils';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns the URL for a given theme's details sheet.
@@ -25,20 +18,6 @@ export function getThemeDetailsUrl( state, themeId, siteId ) {
 		return null;
 	}
 
-	if (
-		isJetpackSite( state, siteId ) &&
-		! (
-			config.isEnabled( 'manage/themes/details/jetpack' ) &&
-			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId )
-		)
-	) {
-		return getSiteOption( state, siteId, 'admin_url' ) + 'themes.php?theme=' + themeId;
-	}
-
-	let baseUrl = oldShowcaseUrl + themeId;
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		baseUrl = `/theme/${ themeId }`;
-	}
-
-	return baseUrl + ( siteId ? `/${ getSiteSlug( state, siteId ) }` : '' );
+	const sitePart = siteId ? `/${ getSiteSlug( state, siteId ) }` : '';
+	return `/theme/${ themeId }${ sitePart }`;
 }

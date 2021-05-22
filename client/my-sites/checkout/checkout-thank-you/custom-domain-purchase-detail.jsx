@@ -1,29 +1,27 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { head } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import { hasCustomDomain } from 'lib/site/utils';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { hasCustomDomain } from 'calypso/lib/site/utils';
 
 /**
  * Image dependencies
  */
-import customDomainImage from 'assets/images/illustrations/custom-domain.svg';
-import customDomainBloggerImage from 'assets/images/illustrations/custom-domain-blogger.svg';
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { getRegisteredDomains } from 'lib/domains';
+import customDomainImage from 'calypso/assets/images/illustrations/custom-domain.svg';
+import customDomainBloggerImage from 'calypso/assets/images/illustrations/custom-domain-blogger.svg';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getRegisteredDomains } from 'calypso/lib/domains';
 
 const CustomDomainPurchaseDetail = ( {
 	selectedSite,
@@ -104,7 +102,7 @@ CustomDomainPurchaseDetail.propTypes = {
 	siteDomains: PropTypes.array,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteDomains = getDomainsBySiteId( state, siteId );
 	const registeredDomains = getRegisteredDomains( siteDomains );
@@ -113,6 +111,6 @@ export default connect( state => {
 		hasNonPrimaryDomainsFlag: getCurrentUser( state )
 			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 			: false,
-		registeredDomain: head( registeredDomains ),
+		registeredDomain: registeredDomains[ 0 ],
 	};
 } )( localize( CustomDomainPurchaseDetail ) );

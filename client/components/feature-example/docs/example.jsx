@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import FeatureExample from '..';
-import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
+import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
 
 export default class FeatureExampleExample extends React.Component {
 	static displayName = 'FeatureExampleExample';
@@ -40,7 +40,7 @@ export default class FeatureExampleExample extends React.Component {
 			name: 'Not a real site',
 		};
 
-		return plugins.map( plugin => {
+		return plugins.map( ( plugin ) => {
 			return (
 				<PluginItem
 					key={ `plugin-item-mock-${ plugin.slug }` }

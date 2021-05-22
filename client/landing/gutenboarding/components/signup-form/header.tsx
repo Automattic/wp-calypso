@@ -2,8 +2,9 @@
  * External dependencies
  */
 import React from 'react';
-import { Button, Icon } from '@wordpress/components';
-import { useI18n } from '@automattic/react-i18n';
+import { Button } from '@wordpress/components';
+import { Icon, wordpress } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 
 interface SignupFormHeaderProps {
 	onRequestClose: () => void;
@@ -14,9 +15,9 @@ interface CloseButtonProps {
 }
 
 const CustomCloseButton = ( { onClose }: CloseButtonProps ) => {
-	const { __: NO__ } = useI18n();
+	const { __ } = useI18n();
 	return (
-		<Button onClick={ onClose } label={ NO__( 'Close dialog' ) }>
+		<Button onClick={ onClose } label={ __( 'Close dialog' ) }>
 			<svg
 				width="16"
 				height="16"
@@ -35,7 +36,7 @@ const SignupFormHeader = ( { onRequestClose }: SignupFormHeaderProps ) => {
 		<div className="signup-form__header">
 			<div className="signup-form__header-section">
 				<div className="signup-form__header-section-item signup-form__header-wp-logo">
-					<Icon icon="wordpress-alt" size={ 24 } />
+					<Icon icon={ wordpress } size={ 28 } />
 				</div>
 			</div>
 

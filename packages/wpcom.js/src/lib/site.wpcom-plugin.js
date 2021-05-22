@@ -4,7 +4,6 @@
 const root = '/sites';
 
 class SiteWPComPlugin {
-
 	/**
 	 * `SiteWPComPlugin` constructor.
 	 *
@@ -26,7 +25,7 @@ class SiteWPComPlugin {
 		this._sid = sid;
 		this.wpcom = wpcom;
 
-		const path = `${root}/${ this._sid }/wpcom-plugins`;
+		const path = `${ root }/${ this._sid }/wpcom-plugins`;
 		this.pluginPath = `${ path }/${ this._slug }`;
 	}
 
@@ -40,7 +39,7 @@ class SiteWPComPlugin {
 	 */
 	update( query, body, fn ) {
 		return this.wpcom.req.put( this.pluginPath, query, body, fn );
-	};
+	}
 
 	/**
 	 * Activate the plugin
@@ -52,7 +51,7 @@ class SiteWPComPlugin {
 	 */
 	activate( query, fn ) {
 		return this.update( query, { active: true }, fn );
-	};
+	}
 
 	/**
 	 * Deactivate the plugin

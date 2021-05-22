@@ -2,13 +2,13 @@
  * Internal dependencies
  */
 
-import { isJetpackSite } from 'state/sites/selectors';
-import { installAndTryAndCustomizeTheme } from 'state/themes/actions/install-and-try-and-customize-theme';
-import { suffixThemeIdForInstall } from 'state/themes/actions/suffix-theme-id-for-install';
-import { tryAndCustomizeTheme } from 'state/themes/actions/try-and-customize-theme';
-import { getTheme } from 'state/themes/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { installAndTryAndCustomizeTheme } from 'calypso/state/themes/actions/install-and-try-and-customize-theme';
+import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
+import { tryAndCustomizeTheme } from 'calypso/state/themes/actions/try-and-customize-theme';
+import { getTheme } from 'calypso/state/themes/selectors';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Switches to the customizer to preview a given theme.

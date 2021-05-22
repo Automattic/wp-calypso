@@ -2,31 +2,38 @@
  * External dependencies
  */
 import React from 'react';
-import { get } from 'lodash';
 import page from 'page';
 
 /**
  * Internal Dependencies
  */
 import CustomerHome from './main';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import { canCurrentUserUseCustomerHome } from 'state/sites/selectors';
-import isRecentlyMigratedSite from 'state/selectors/is-site-recently-migrated';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
 
-export default function( context, next ) {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
+export default async function ( context, next ) {
+	const state = await context.store.getState();
+	const siteId = await getSelectedSiteId( state );
+
+	const isDev = context.query.dev === 'true';
+	const forcedView = context.query.view;
+	const noticeType = context.query.notice;
+	const shuffle = context.query.hasOwnProperty( 'shuffle' );
+
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	let checklistMode = get( context, 'query.d' );
-	if ( isRecentlyMigratedSite( state, siteId ) ) {
-		checklistMode = 'migrated';
-	}
-
-	context.primary = <CustomerHome checklistMode={ checklistMode } key={ siteId } />;
+	context.primary = (
+		<CustomerHome
+			key={ siteId }
+			isDev={ isDev }
+			forcedView={ forcedView }
+			noticeType={ noticeType }
+			shuffleViews={ shuffle }
+		/>
+	);
 
 	next();
 }

@@ -8,10 +8,10 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormSelect from 'components/forms/form-select';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormSelect from 'calypso/components/forms/form-select';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 export default class Select extends PureComponent {
 	static propTypes = {
@@ -57,7 +57,7 @@ export default class Select extends PureComponent {
 					onClick={ this.recordFieldClick }
 					isError={ this.props.isError }
 				>
-					{ this.props.options.map( option => (
+					{ this.props.options.map( ( option ) => (
 						<option key={ option.value } value={ option.value } disabled={ option.disabled }>
 							{ option.label }
 						</option>

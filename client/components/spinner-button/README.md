@@ -1,12 +1,11 @@
-SpinnerButton
-===========
+# SpinnerButton
 
 `<SpinnerButton />` is a React component for rendering a button with an attached loading indicator.
 
 ## Usage
 
 ```jsx
-import SpinnerButton from 'components/spinner-button';
+import SpinnerButton from 'calypso/components/spinner-button';
 
 export default function MyComponent() {
 	return <SpinnerButton />;

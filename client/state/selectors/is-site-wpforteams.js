@@ -10,6 +10,6 @@ import { get } from 'lodash';
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is a WP for Teams site
  */
-export default function isSiteWPforteams( state, siteId ) {
+export default function isSiteWPForTeams( state, siteId ) {
 	return get( state, [ 'sites', 'items', siteId, 'options', 'is_wpforteams_site' ], null );
 }

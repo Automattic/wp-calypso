@@ -9,8 +9,8 @@ import {
 	requestAutomatedTransferEligibility,
 	updateAutomatedTransferEligibility,
 	eligibilityHoldsFromApi,
-} from 'state/data-layer/wpcom/sites/automated-transfer/eligibility';
-import { http } from 'state/data-layer/wpcom-http/actions';
+} from 'calypso/state/data-layer/wpcom/sites/automated-transfer/eligibility';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( 'requestAutomatedTransferEligibility', () => {
 	test( 'should dispatch an http request', () => {
@@ -30,7 +30,7 @@ describe( 'requestAutomatedTransferEligibility', () => {
 } );
 
 describe( 'updateAutomatedTransferEligibility', () => {
-	test( 'should dispatch an update eligibility action ', () => {
+	test( 'should dispatch an update eligibility action', () => {
 		const dispatch = jest.fn();
 		const getState = () => ( {
 			sites: { items: { 2916284: { ID: 2916284, launch_status: 'unlaunched' } } },
@@ -51,7 +51,7 @@ describe( 'updateAutomatedTransferEligibility', () => {
 		);
 	} );
 
-	test( 'should dispatch an update eligibility action and map SITE_UNLAUNCHED ', () => {
+	test( 'should dispatch an update eligibility action and map SITE_UNLAUNCHED', () => {
 		const dispatch = jest.fn();
 		const getState = () => ( {
 			sites: { items: { 2916284: { ID: 2916284, launch_status: 'unlaunched' } } },

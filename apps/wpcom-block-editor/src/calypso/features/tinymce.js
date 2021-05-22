@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ function replaceMediaModalOnClassicBlocks() {
 		return;
 	}
 
-	tinymce.PluginManager.add( 'gutenberg-wpcom-iframe-media-modal', editor => {
+	tinymce.PluginManager.add( 'gutenberg-wpcom-iframe-media-modal', ( editor ) => {
 		editor.addCommand( 'WP_Medialib', () => {
 			sendMessage( {
 				action: 'classicBlockOpenMediaModal',

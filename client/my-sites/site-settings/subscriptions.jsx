@@ -1,25 +1,24 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import SupportInfo from 'components/support-info';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import SupportInfo from 'calypso/components/support-info';
 
 const Subscriptions = ( {
 	fields,
@@ -54,7 +53,7 @@ const Subscriptions = ( {
 					/>
 
 					<div className="subscriptions__module-settings site-settings__child-settings">
-						<CompactFormToggle
+						<ToggleControl
 							checked={ !! fields.stb_enabled }
 							disabled={
 								isRequestingSettings ||
@@ -63,11 +62,10 @@ const Subscriptions = ( {
 								moduleUnavailable
 							}
 							onChange={ handleAutosavingToggle( 'stb_enabled' ) }
-						>
-							{ translate( 'Enable the "subscribe to site" option on your comment form' ) }
-						</CompactFormToggle>
+							label={ translate( 'Enable the "subscribe to site" option on your comment form' ) }
+						/>
 
-						<CompactFormToggle
+						<ToggleControl
 							checked={ !! fields.stc_enabled }
 							disabled={
 								isRequestingSettings ||
@@ -76,9 +74,10 @@ const Subscriptions = ( {
 								moduleUnavailable
 							}
 							onChange={ handleAutosavingToggle( 'stc_enabled' ) }
-						>
-							{ translate( 'Enable the "subscribe to comments" option on your comment form' ) }
-						</CompactFormToggle>
+							label={ translate(
+								'Enable the "subscribe to comments" option on your comment form'
+							) }
+						/>
 					</div>
 				</FormFieldset>
 			</CompactCard>
@@ -108,7 +107,7 @@ Subscriptions.propTypes = {
 	fields: PropTypes.object,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const selectedSiteSlug = getSelectedSiteSlug( state );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );

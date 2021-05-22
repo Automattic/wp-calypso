@@ -7,10 +7,10 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import PollerPool from 'lib/data-poller';
-import Emitter from 'lib/mixins/emitter';
-import { connectionLost, connectionRestored } from 'state/application/actions';
+import config from '@automattic/calypso-config';
+import PollerPool from 'calypso/lib/data-poller';
+import Emitter from 'calypso/lib/mixins/emitter';
+import { connectionLost, connectionRestored } from 'calypso/state/application/actions';
 
 const debug = debugFactory( 'calypso:network-connection' );
 
@@ -36,16 +36,16 @@ const NetworkConnectionApp = {
 	 *
 	 * @returns {boolean} whether the network connection is enabled in config
 	 */
-	isEnabled: function() {
+	isEnabled: function () {
 		return config.isEnabled( 'network-connection' );
 	},
 
 	/**
 	 * Bootstraps network connection status change handler.
 	 *
-	 * @param {Store} reduxStore The Redux store.
+	 * @param {object} reduxStore The Redux store.
 	 */
-	init: function( reduxStore ) {
+	init: function ( reduxStore ) {
 		if ( ! this.isEnabled( 'network-connection' ) ) {
 			return;
 		}
@@ -62,33 +62,23 @@ const NetworkConnectionApp = {
 			}
 		};
 
-		if ( config.isEnabled( 'desktop' ) ) {
-			connected = typeof navigator !== 'undefined' ? !! navigator.onLine : true;
-
-			window.addEventListener( 'online', this.emitConnected.bind( this ) );
-			window.addEventListener( 'offline', this.emitDisconnected.bind( this ) );
-		} else {
-			PollerPool.add( this, 'checkNetworkStatus', {
-				interval: STATUS_CHECK_INTERVAL,
-			} );
-		}
+		PollerPool.add( this, 'checkNetworkStatus', {
+			interval: STATUS_CHECK_INTERVAL,
+		} );
 
 		this.on( 'change', changeCallback );
 
-		window.addEventListener(
-			'beforeunload',
-			function() {
-				debug( 'Removing listener.' );
-				this.off( 'change', changeCallback );
-			}.bind( this )
-		);
+		window.addEventListener( 'beforeunload', () => {
+			debug( 'Removing listener.' );
+			this.off( 'change', changeCallback );
+		} );
 	},
 
 	/**
 	 * Checks network status by sending request to /version Calypso endpoint.
 	 * When an error occurs it emits disconnected event, otherwise connected event.
 	 */
-	checkNetworkStatus: function() {
+	checkNetworkStatus: function () {
 		debug( 'Checking network status.' );
 
 		fetchWithTimeout(
@@ -106,7 +96,7 @@ const NetworkConnectionApp = {
 	/**
 	 * Emits event when user's network connection is active.
 	 */
-	emitConnected: function() {
+	emitConnected: function () {
 		if ( ! this.isEnabled( 'network-connection' ) ) {
 			return;
 		}
@@ -120,7 +110,7 @@ const NetworkConnectionApp = {
 	/**
 	 * Emits event when user's network connection is broken.
 	 */
-	emitDisconnected: function() {
+	emitDisconnected: function () {
 		if ( ! this.isEnabled( 'network-connection' ) ) {
 			return;
 		}
@@ -136,7 +126,7 @@ const NetworkConnectionApp = {
 	 *
 	 * @returns {boolean} whether the connections is currently active.
 	 */
-	isConnected: function() {
+	isConnected: function () {
 		return connected;
 	},
 };

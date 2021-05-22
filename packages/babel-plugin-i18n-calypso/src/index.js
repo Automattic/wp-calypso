@@ -96,7 +96,11 @@ function getExtractedComment( path, _originalNodeLine ) {
 	}
 
 	let comment;
-	forEach( node.leadingComments, commentNode => {
+	forEach( node.leadingComments, ( commentNode ) => {
+		if ( ! commentNode.loc ) {
+			return;
+		}
+
 		const { line } = commentNode.loc.end;
 		if ( line < _originalNodeLine - 1 || line > _originalNodeLine ) {
 			return;
@@ -107,7 +111,7 @@ function getExtractedComment( path, _originalNodeLine ) {
 			// Extract text from matched translator prefix
 			comment = match[ 1 ]
 				.split( '\n' )
-				.map( text => text.trim() )
+				.map( ( text ) => text.trim() )
 				.join( ' ' );
 
 			// False return indicates to Lodash to break iteration
@@ -180,14 +184,45 @@ function isValidFunctionName( name ) {
  * @returns {boolean} Whether key is valid for assignment.
  */
 function isValidTranslationKey( key ) {
-	return Object.values( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).some( args => args.includes( key ) );
+	return Object.values( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).some( ( args ) =>
+		args.includes( key )
+	);
 }
 
-module.exports = function() {
-	let strings = {},
-		nplurals = 2,
-		baseData,
-		functions = { ...DEFAULT_FUNCTIONS_ARGUMENTS_ORDER };
+/**
+ * Merge the properties of extracted string objects.
+ *
+ * @param   {object} source left-hand string object
+ * @param   {object} target right-hand string object
+ *
+ * @returns {void}
+ */
+function mergeStrings( source, target ) {
+	if ( ! source.comments.reference.includes( target.comments.reference ) ) {
+		source.comments.reference += '\n' + target.comments.reference;
+	}
+
+	if ( ! source.comments.extracted ) {
+		source.comments.extracted = target.comments.extracted;
+	} else if (
+		target.comments.extracted &&
+		! source.comments.extracted.includes( target.comments.extracted )
+	) {
+		source.comments.extracted += '\n' + target.comments.extracted;
+	}
+
+	// A previous singular string matches a plural string. In PO files those are merged.
+	if ( ! source.hasOwnProperty( 'msgid_plural' ) && target.hasOwnProperty( 'msgid_plural' ) ) {
+		source.msgid_plural = target.msgid_plural;
+		source.msgstr = target.msgstr;
+	}
+}
+
+module.exports = function () {
+	let strings = {};
+	let nplurals = 2;
+	let baseData;
+	let functions = { ...DEFAULT_FUNCTIONS_ARGUMENTS_ORDER };
 
 	return {
 		visitor: {
@@ -198,7 +233,7 @@ module.exports = function() {
 					return;
 				}
 
-				path.node.specifiers.forEach( specifier => {
+				path.node.specifiers.forEach( ( specifier ) => {
 					if ( specifier.imported && 'translate' === specifier.imported.name && specifier.local ) {
 						functions[ specifier.local.name ] = functions.translate;
 					}
@@ -269,9 +304,7 @@ module.exports = function() {
 
 				const { filename } = this.file.opts;
 				const base = state.opts.base || '.';
-				const pathname = relative( base, filename )
-					.split( sep )
-					.join( '/' );
+				const pathname = relative( base, filename ).split( sep ).join( '/' );
 				translation.comments.reference = pathname + ':' + path.node.loc.start.line;
 
 				const functionKeys = state.opts.functions || functions[ name ];
@@ -281,7 +314,7 @@ module.exports = function() {
 						const key = functionKeys[ index ];
 
 						if ( 'ObjectExpression' === arg.type ) {
-							arg.properties.forEach( property => {
+							arg.properties.forEach( ( property ) => {
 								if ( 'ObjectProperty' !== property.type ) {
 									return;
 								}
@@ -313,12 +346,8 @@ module.exports = function() {
 
 				if ( ! strings[ msgctxt ].hasOwnProperty( msgid ) ) {
 					strings[ msgctxt ][ msgid ] = translation;
-				} else if (
-					! strings[ msgctxt ][ msgid ].comments.reference.includes(
-						translation.comments.reference
-					)
-				) {
-					strings[ msgctxt ][ msgid ].comments.reference += '\n' + translation.comments.reference;
+				} else {
+					mergeStrings( strings[ msgctxt ][ msgid ], translation );
 				}
 			},
 			Program: {
@@ -340,9 +369,7 @@ module.exports = function() {
 
 					const { filename } = this.file.opts;
 					const base = state.opts.base || '.';
-					const pathname = relative( base, filename )
-						.split( sep )
-						.join( '-' );
+					const pathname = relative( base, filename ).split( sep ).join( '-' );
 					writeFileSync( dir + pathname + '.pot', compiled );
 				},
 			},

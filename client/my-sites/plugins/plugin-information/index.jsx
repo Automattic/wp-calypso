@@ -10,16 +10,15 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { Button, Card } from '@automattic/components';
-import ExternalLink from 'components/external-link';
-import { withLocalizedMoment } from 'components/localized-moment';
-import Version from 'components/version';
-import PluginRatings from 'my-sites/plugins/plugin-ratings/';
-import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
-import versionCompare from 'lib/version-compare';
-import analytics from 'lib/analytics';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import ExternalLink from 'calypso/components/external-link';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Version from 'calypso/components/version';
+import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
+import { getExtensionSettingsPath } from 'calypso/my-sites/plugins/utils';
+import versionCompare from 'calypso/lib/version-compare';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -57,8 +56,7 @@ class PluginInformation extends React.Component {
 		) {
 			return;
 		}
-		const recordEvent = gaRecordEvent.bind(
-			analytics,
+		const recordEvent = gaRecordEvent(
 			'Plugins',
 			'Clicked Plugin Homepage Link',
 			'Plugin Name',
@@ -81,8 +79,7 @@ class PluginInformation extends React.Component {
 		if ( ! this.props.plugin.slug ) {
 			return;
 		}
-		const recordEvent = gaRecordEvent.bind(
-			analytics,
+		const recordEvent = gaRecordEvent(
 			'Plugins',
 			'Clicked wp.org Plugin Link',
 			'Plugin Name',
@@ -182,7 +179,7 @@ class PluginInformation extends React.Component {
 		return {};
 	};
 
-	getActionLinks = plugin => {
+	getActionLinks = ( plugin ) => {
 		if ( this.props.calypsoify ) {
 			return null;
 		}

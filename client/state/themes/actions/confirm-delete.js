@@ -6,12 +6,12 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import accept from 'lib/accept';
-import { getSiteTitle } from 'state/sites/selectors';
-import { deleteTheme } from 'state/themes/actions/delete-theme';
-import { getTheme } from 'state/themes/selectors';
+import accept from 'calypso/lib/accept';
+import { getSiteTitle } from 'calypso/state/sites/selectors';
+import { deleteTheme } from 'calypso/state/themes/actions/delete-theme';
+import { getTheme } from 'calypso/state/themes/selectors';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Shows dialog asking user to confirm delete of theme
@@ -31,7 +31,7 @@ export function confirmDelete( themeId, siteId ) {
 				args: { themeName, siteTitle },
 				comment: 'Themes: theme delete confirmation dialog',
 			} ),
-			accepted => {
+			( accepted ) => {
 				accepted && dispatch( deleteTheme( themeId, siteId ) );
 			},
 			i18n.translate( 'Delete %(themeName)s', {

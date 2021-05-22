@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
-
 import page from 'page';
 
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
-import canCurrentUser from 'state/selectors/can-current-user';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import titlecase from 'to-title-case';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { sectionify } from 'lib/route';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { sectionify } from 'calypso/lib/route';
 
 export function siteSettings( context, next ) {
 	let analyticsPageTitle = 'Site Settings';
@@ -32,7 +31,7 @@ export function siteSettings( context, next ) {
 	if ( 'undefined' !== typeof section ) {
 		analyticsPageTitle += ' > ' + titlecase( section );
 	}
-	analytics.pageView.record( basePath + '/:site', analyticsPageTitle );
+	recordPageView( basePath + '/:site', analyticsPageTitle );
 
 	next();
 }

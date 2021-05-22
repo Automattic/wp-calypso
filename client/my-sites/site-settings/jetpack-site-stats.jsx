@@ -6,29 +6,29 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FoldableCard from 'components/foldable-card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import SupportInfo from 'components/support-info';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import QuerySiteRoles from 'components/data/query-site-roles';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteRoles } from 'state/site-roles/selectors';
-import { getStatsPathForTab } from 'lib/route';
-import { recordTracksEvent } from 'state/analytics/actions';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
+import FoldableCard from 'calypso/components/foldable-card';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import SupportInfo from 'calypso/components/support-info';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import QuerySiteRoles from 'calypso/components/data/query-site-roles';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSiteRoles } from 'calypso/state/site-roles/selectors';
+import { getStatsPathForTab } from 'calypso/lib/route';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
 
 class JetpackSiteStats extends Component {
 	static defaultProps = {
@@ -59,7 +59,7 @@ class JetpackSiteStats extends Component {
 			let groupFields = this.getCurrentGroupFields( groupName );
 
 			if ( includes( groupFields, fieldName ) ) {
-				groupFields = groupFields.filter( field => field !== fieldName );
+				groupFields = groupFields.filter( ( field ) => field !== fieldName );
 			} else {
 				groupFields.push( fieldName );
 			}
@@ -96,16 +96,15 @@ class JetpackSiteStats extends Component {
 		}
 
 		return (
-			<CompactFormToggle
+			<ToggleControl
 				checked={ checked }
 				disabled={
 					isRequestingSettings || isSavingSettings || moduleUnavailable || ! statsModuleActive
 				}
 				onChange={ onChange }
 				key={ name }
-			>
-				{ label }
-			</CompactFormToggle>
+				label={ label }
+			/>
 		);
 	}
 
@@ -156,7 +155,7 @@ class JetpackSiteStats extends Component {
 					<FormFieldset>
 						<FormLegend>{ translate( 'Count logged in page views from' ) }</FormLegend>
 						{ siteRoles &&
-							siteRoles.map( role =>
+							siteRoles.map( ( role ) =>
 								this.renderToggle(
 									'count_roles_' + role.name,
 									role.display_name,
@@ -169,7 +168,7 @@ class JetpackSiteStats extends Component {
 					<FormFieldset>
 						<FormLegend>{ translate( 'Allow stats reports to be viewed by' ) }</FormLegend>
 						{ siteRoles &&
-							siteRoles.map( role =>
+							siteRoles.map( ( role ) =>
 								this.renderToggle(
 									'roles_' + role.name,
 									role.display_name,
@@ -189,7 +188,7 @@ class JetpackSiteStats extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
 		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(

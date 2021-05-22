@@ -1,48 +1,49 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
-} from 'state/themes/action-types';
+} from 'calypso/state/themes/action-types';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Receives themes and dispatches them with recommended themes success signal.
  *
  * @param {Array} themes array of received theme objects
+ * @param {string} filter The active themes filter
  * @returns {Function} Action thunk
  */
-export function receiveRecommendedThemes( themes ) {
-	return dispatch => {
-		dispatch( { type: RECOMMENDED_THEMES_SUCCESS, payload: themes } );
+export function receiveRecommendedThemes( themes, filter ) {
+	return ( dispatch ) => {
+		dispatch( { type: RECOMMENDED_THEMES_SUCCESS, payload: themes, filter } );
 	};
 }
 
 /**
- * Initiates network request for recommended themes.
- * Recommended themes are template first themes and are denoted by the 'auto-loading-homepage' tag.
+ * Initiates network request for recommended themes, based on `filter`.
  *
+ * @param {string} filter A filter string for a theme query
  * @returns {Function} Action thunk
  */
-export function getRecommendedThemes() {
-	return async dispatch => {
-		dispatch( { type: RECOMMENDED_THEMES_FETCH } );
+export function getRecommendedThemes( filter ) {
+	return async ( dispatch ) => {
+		dispatch( { type: RECOMMENDED_THEMES_FETCH, filter } );
 		const query = {
 			search: '',
 			number: 50,
 			tier: '',
-			filter: 'auto-loading-homepage',
+			filter,
 			apiVersion: '1.2',
 		};
 		try {
 			const res = await wpcom.undocumented().themes( null, query );
-			dispatch( receiveRecommendedThemes( res ) );
+			dispatch( receiveRecommendedThemes( res, filter ) );
 		} catch ( error ) {
-			dispatch( { type: RECOMMENDED_THEMES_FAIL } );
+			dispatch( { type: RECOMMENDED_THEMES_FAIL, filter } );
 		}
 	};
 }

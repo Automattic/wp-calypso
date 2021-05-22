@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	SHARING_BUTTONS_RECEIVE,
 	SHARING_BUTTONS_REQUEST,
@@ -12,7 +12,7 @@ import {
 	SHARING_BUTTONS_SAVE_FAILURE,
 	SHARING_BUTTONS_SAVE_SUCCESS,
 	SHARING_BUTTONS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Returns an action object to be used in signalling that sharing buttons have been received.
@@ -52,7 +52,7 @@ export function updateSharingButtons( siteId, settings ) {
  * @returns {Function}      Action thunk
  */
 export function requestSharingButtons( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SHARING_BUTTONS_REQUEST,
 			siteId,
@@ -68,7 +68,7 @@ export function requestSharingButtons( siteId ) {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SHARING_BUTTONS_REQUEST_FAILURE,
 					siteId,
@@ -87,7 +87,7 @@ export function requestSharingButtons( siteId ) {
  * @returns {Function}      Action thunk
  */
 export function saveSharingButtons( siteId, settings ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SHARING_BUTTONS_SAVE,
 			siteId,
@@ -104,7 +104,7 @@ export function saveSharingButtons( siteId, settings ) {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SHARING_BUTTONS_SAVE_FAILURE,
 					siteId,

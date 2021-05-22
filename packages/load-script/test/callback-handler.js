@@ -26,7 +26,7 @@ describe( 'loadScript/callback-handler', () => {
 	describe( 'addScriptCallback( url, callback )', () => {
 		// NOTE: This test is tightly coupled with removeAllScriptCallbacks tests
 
-		beforeAll( function() {
+		beforeAll( function () {
 			removeAllScriptCallbacks();
 		} );
 
@@ -78,7 +78,7 @@ describe( 'loadScript/callback-handler', () => {
 	} );
 
 	describe( 'isLoading( url )', () => {
-		beforeAll( function() {
+		beforeAll( function () {
 			removeAllScriptCallbacks();
 		} );
 
@@ -100,7 +100,7 @@ describe( 'loadScript/callback-handler', () => {
 	} );
 
 	describe( 'removeScriptCallback( url, callback )', () => {
-		beforeAll( function() {
+		beforeAll( function () {
 			removeAllScriptCallbacks();
 		} );
 
@@ -129,7 +129,7 @@ describe( 'loadScript/callback-handler', () => {
 
 	describe( 'removeScriptCallbacks( url )', () => {
 		// NOTE: This test is tightly coupled with addScriptCallback tests
-		beforeAll( function() {
+		beforeAll( function () {
 			removeAllScriptCallbacks();
 		} );
 		afterEach( () => {
@@ -159,7 +159,7 @@ describe( 'loadScript/callback-handler', () => {
 	} );
 
 	describe( 'executeCallbacks( url, callbackArguments )', () => {
-		beforeAll( function() {
+		beforeAll( function () {
 			removeAllScriptCallbacks();
 		} );
 
@@ -201,7 +201,7 @@ describe( 'loadScript/callback-handler', () => {
 		const eventObject = { target: elementObject };
 		const callback = jest.fn();
 
-		beforeAll( function() {
+		beforeAll( function () {
 			addScriptCallback( url, callback );
 			handleRequestSuccess.bind( elementObject )( eventObject );
 		} );
@@ -222,7 +222,7 @@ describe( 'loadScript/callback-handler', () => {
 		const eventObject = { target: elementObject };
 		const callback = jest.fn();
 
-		beforeAll( function() {
+		beforeAll( function () {
 			addScriptCallback( url, callback );
 			handleRequestError.bind( elementObject )( eventObject );
 		} );

@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getPreviousQuery from 'state/selectors/get-previous-query';
+import getPreviousQuery from 'calypso/state/selectors/get-previous-query';
 
 describe( 'getPreviousQuery()', () => {
 	test( 'should return empty if the previous Route is not set', () => {
@@ -17,11 +17,9 @@ describe( 'getPreviousQuery()', () => {
 
 	test( 'should return previous query if one is found', () => {
 		const stateIn = {
-			ui: {
-				route: {
-					query: {
-						previous: { filter: 'howdy' },
-					},
+			route: {
+				query: {
+					previous: { filter: 'howdy' },
 				},
 			},
 		};

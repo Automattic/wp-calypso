@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
@@ -19,8 +19,8 @@ import {
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../action-types';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteTitle } from 'state/sites/selectors';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSiteTitle } from 'calypso/state/sites/selectors';
 
 /*
  * Tests the cache for a site.
@@ -31,7 +31,7 @@ import { getSiteTitle } from 'state/sites/selectors';
  * @returns {Function} Action thunk that tests the cache for a given site
  */
 export const testCache = ( siteId, siteTitle, httpOnly ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( removeNotice( 'wpsc-test-cache' ) );
 		dispatch( { type: WP_SUPER_CACHE_TEST_CACHE, siteId } );
 
@@ -75,7 +75,7 @@ export const testCache = ( siteId, siteTitle, httpOnly ) => {
  * @returns {Function} Action thunk that deletes the cache for a given site
  */
 export const deleteCache = ( siteId, deleteAll, deleteExpired ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: WP_SUPER_CACHE_DELETE_CACHE,
 			siteId,
@@ -112,7 +112,7 @@ export const deleteCache = ( siteId, deleteAll, deleteExpired ) => {
  * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that preloads the cache for a given site
  */
-export const preloadCache = siteId => {
+export const preloadCache = ( siteId ) => {
 	return ( dispatch, getState ) => {
 		dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE, siteId } );
 		dispatch( removeNotice( 'wpsc-preload-cache' ) );
@@ -150,7 +150,7 @@ export const preloadCache = siteId => {
  * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that cancels preloading the cache for a given site
  */
-export const cancelPreloadCache = siteId => {
+export const cancelPreloadCache = ( siteId ) => {
 	return ( dispatch, getState ) => {
 		dispatch( { type: WP_SUPER_CACHE_PRELOAD_CACHE, siteId } );
 		dispatch( removeNotice( 'wpsc-cancel-preload' ) );

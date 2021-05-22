@@ -1,0 +1,24 @@
+{
+	"name": "@automattic/calypso-doctor",
+	"version": "0.1.0",
+	"description": "A tool to verify that the developer's system is optimal for wp-calypso development",
+	"main": "index.js",
+	"author": "Automattic Inc.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/calypso-doctor"
+	},
+	"keywords": [
+		"doctor",
+		"calypso"
+	],
+	"license": "GPL-2.0-or-later",
+	"bin": {
+		"calypso-doctor": "./cli.js"
+	},
+	"dependencies": {
+		"chalk": "^4.1.0",
+		"yargs": "^17.0.1"
+	}
+}

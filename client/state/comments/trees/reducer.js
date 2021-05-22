@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, map, reject, unionBy } from 'lodash';
+import { get, map, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,13 +11,18 @@ import {
 	COMMENTS_DELETE,
 	COMMENTS_RECEIVE,
 	COMMENTS_TREE_SITE_ADD,
-} from 'state/action-types';
-import { keyedReducer } from 'state/utils';
+} from 'calypso/state/action-types';
+import { keyedReducer } from 'calypso/state/utils';
 
-const convertToTree = comments =>
+const unionByCommentId = ( a = [], b = [] ) => [
+	...a,
+	...b.filter( ( bc ) => ! a.some( ( ac ) => ac.commentId === bc.commentId ) ),
+];
+
+const convertToTree = ( comments ) =>
 	map(
 		reject( comments, ( { ID } ) => ! parseInt( ID, 10 ) ),
-		comment => ( {
+		( comment ) => ( {
 			commentId: get( comment, 'ID' ),
 			commentParentId: get( comment, 'parent.ID', 0 ),
 			postId: get( comment, 'post.ID' ),
@@ -30,7 +35,7 @@ const siteTree = ( state = [], action ) => {
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS:
 			// Update the comment status in the state
-			return map( state, comment => {
+			return map( state, ( comment ) => {
 				if ( comment.commentId === action.commentId ) {
 					return {
 						...comment,
@@ -44,10 +49,10 @@ const siteTree = ( state = [], action ) => {
 			return reject( state, { commentId: action.commentId } );
 		case COMMENTS_RECEIVE:
 			// Add the new comments to the state
-			return unionBy( convertToTree( action.comments ), state, 'commentId' );
+			return unionByCommentId( convertToTree( action.comments ), state );
 		case COMMENTS_TREE_SITE_ADD:
 			// Replace the comments of a given status with the comments freshly fetched from the server
-			return unionBy( action.tree, reject( state, { status: action.status } ), 'commentId' );
+			return unionByCommentId( action.tree, reject( state, { status: action.status } ) );
 	}
 	return state;
 };

@@ -6,9 +6,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
-export const getSiteBlocksCurrentPage = state => {
+export const getSiteBlocksCurrentPage = ( state ) => {
 	const page = get( state, [ 'reader', 'siteBlocks', 'currentPage' ], 1 );
 
 	if ( ! page ) {
