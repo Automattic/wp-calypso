@@ -1,11 +1,11 @@
-export { acceptActivateModalWarning } from 'calypso/state/themes/actions/accept-auto-loading-homepage-warning';
+export { acceptActivateModalWarning } from 'calypso/state/themes/actions/accept-activate-modal-warning';
 export { activate } from 'calypso/state/themes/actions/activate';
 export { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 export { clearActivated } from 'calypso/state/themes/actions/clear-activated';
 export { clearThemeUpload } from 'calypso/state/themes/actions/clear-theme-upload';
 export { confirmDelete } from 'calypso/state/themes/actions/confirm-delete';
 export { deleteTheme } from 'calypso/state/themes/actions/delete-theme';
-export { hideActivateModalWarning } from 'calypso/state/themes/actions/hide-auto-loading-homepage-warning';
+export { hideActivateModalWarning } from 'calypso/state/themes/actions/hide-activate-modal-warning';
 export { hideThemePreview } from 'calypso/state/themes/actions/hide-theme-preview';
 export { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
 export { installAndTryAndCustomizeTheme } from 'calypso/state/themes/actions/install-and-try-and-customize-theme';
