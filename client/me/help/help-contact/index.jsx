@@ -258,6 +258,8 @@ class HelpContact extends React.Component {
 
 	submitSupportForumsTopic = ( contactForm ) => {
 		const {
+			helpSiteIsJetpack,
+			helpSiteIsNotWpCom,
 			site,
 			subject,
 			message,
@@ -288,6 +290,14 @@ class HelpContact extends React.Component {
 						: siteUrl,
 				},
 			} );
+
+			if ( helpSiteIsNotWpCom ) {
+				const jetpackMessage = helpSiteIsJetpack
+					? translate( 'It is not hosted by WordPress.com, but it is connected with Jetpack.' )
+					: translate( 'It is not hosted by WordPress.com or connected with Jetpack.' );
+
+				blogHelpMessage += ' ' + jetpackMessage;
+			}
 
 			if ( userDeclaredUrl ) {
 				blogHelpMessage +=
