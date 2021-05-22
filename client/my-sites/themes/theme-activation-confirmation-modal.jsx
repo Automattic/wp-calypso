@@ -162,11 +162,9 @@ class ThemeActivationConfirmationModal extends Component {
 			);
 		} else if ( hasAutoLoadingHomepage ) {
 			dialogMessage = translate(
-				'{{strong}}%(themeName)s{{/strong}} will automatically change your homepage layout. ' +
-					'Your current homepage will become a draft. Would you like to continue?',
+				'How would you like to use %(themeName)s on your site?',
 				{
 					args: { themeName },
-					components: { strong: <strong /> },
 				}
 			);
 		}
