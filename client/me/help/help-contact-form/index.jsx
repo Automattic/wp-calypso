@@ -42,6 +42,7 @@ import { requestSite } from 'calypso/state/sites/actions';
 import isShowingQandAInlineHelpContactForm from 'calypso/state/selectors/is-showing-q-and-a-inline-help-contact-form';
 import { showQandAOnInlineHelpContactForm } from 'calypso/state/inline-help/actions';
 import { getNpsSurveyFeedback } from 'calypso/state/nps-survey/selectors';
+import { resemblesUrl } from 'calypso/lib/url';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { generateSubjectFromMessage } from './utils';
 
@@ -113,7 +114,6 @@ export class HelpContactForm extends React.PureComponent {
 
 	static defaultProps = {
 		formDescription: '',
-		hasRequestedSiteData: false,
 		showAlternativeSiteOptionsField: false,
 		showHowCanWeHelpField: false,
 		showHowYouFeelField: false,
@@ -198,11 +198,16 @@ export class HelpContactForm extends React.PureComponent {
 	getSibylQuery = () => ( this.state.subject + ' ' + this.state.message ).trim();
 
 	doRequestSite = () => {
-		if ( this.state.userDeclaredUrl ) {
-			this.props.requestSite( this.state.userDeclaredUrl, false, true ).then( ( siteData ) =>
+		if ( resemblesUrl( this.state.userDeclaredUrl ) ) {
+			// The API would reject something like "https://wp.com/slug" - it'd need to be "wp.com".
+			const url = this.state.userDeclaredUrl;
+			const query = url.includes( '://' )
+				? new URL( this.state.userDeclaredUrl ).hostname
+				: new URL( 'http://' + this.state.userDeclaredUrl ).hostname;
+
+			this.props.requestSite( query, false, true ).then( ( siteData ) =>
 				this.setState( {
 					siteData,
-					hasRequestedSiteData: true,
 				} )
 			);
 		}
@@ -303,6 +308,43 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	/**
+	 * For the forums: check if we're dealing with a WP.com site.
+	 */
+	analyseSiteData = () => {
+		const siteData = this.state.userDeclaredUrl && this.state.siteData && this.state.siteData.site;
+		const errorData =
+			this.state.userDeclaredUrl && this.state.siteData && this.state.siteData.errorCode;
+
+		// "Unauthorized" means it's still a WP.com site - just a private one.
+		const isWpComConnectedSite =
+			( siteData && siteData.ID && ! siteData.jetpack ) ||
+			( errorData && errorData === 'unauthorized' );
+
+		// Returns true for self-hosted sites, irrespective of Jetpack connection status, and non-WordPress sites.
+		const isNonWpComHostedSite =
+			( siteData && siteData.jetpack ) ||
+			( errorData && errorData === 'unknown_blog' ) ||
+			( this.props.helpSite &&
+				this.props.helpSite.jetpack &&
+				! this.state.userDeclaresUnableToSeeSite );
+
+		if ( isWpComConnectedSite ) {
+			return 'isWpComConnectedSite';
+		}
+
+		if ( isNonWpComHostedSite ) {
+			// If the site is considered unknown, Jetpack isn't installed on it.
+			// Note: it's possible that the site isn't even a WordPress one if that happens.
+			return errorData === 'unknown_blog'
+				? 'isNonWpComHostedSiteWithoutJetpack'
+				: 'isNonWpComHostedSiteWithJetpack';
+		}
+
+		// Doesn't return anything for WP.com sites, and avoids directing blogs with "jetpack_error" to the self-hosted forums.
+		return null;
+	};
+
+	/**
 	 * Determine if this form is ready to submit
 	 *
 	 * @returns {boolean}	Return true if this form can be submitted
@@ -359,12 +401,16 @@ export class HelpContactForm extends React.PureComponent {
 			);
 		}
 
+		const analyseSiteData = this.analyseSiteData();
+
 		this.props.onSubmit( {
 			howCanWeHelp,
 			howYouFeel,
 			message,
 			subject,
 			site: this.props.helpSite,
+			helpSiteIsJetpack: analyseSiteData === 'isNonWpComHostedSiteWithJetpack',
+			helpSiteIsNotWpCom: analyseSiteData && analyseSiteData.startsWith( 'isNonWpComHosted' ),
 			userDeclaredUrl: userDeclaresUnableToSeeSite && userDeclaredUrl,
 			userDeclaresNoSite,
 			userRequestsHidingUrl,
@@ -442,22 +488,14 @@ export class HelpContactForm extends React.PureComponent {
 			{ value: 'panicked', label: translate( 'Panicked' ) },
 		];
 
-		const siteData = this.state.siteData && this.state.siteData.site;
-		const errorData = this.state.siteData && this.state.siteData.errorCode;
+		let analyseSiteData = this.analyseSiteData();
+		const siteData = this.state.userDeclaredUrl && this.state.siteData && this.state.siteData.site;
 
 		let noticeMessage;
 		let actionLink;
 		let actionMessage;
 
-		// "Unauthorized" means it's still a WP.com site - just a private one.
-		const isWpComConnectedSite =
-			( siteData && siteData.ID ) ||
-			( errorData && errorData === 'unauthorized' && this.state.userDeclaredUrl );
-
-		const isNonWpComHostedSite =
-			errorData && errorData === 'unknown_blog' && this.state.userDeclaredUrl;
-
-		if ( isWpComConnectedSite ) {
+		if ( analyseSiteData === 'isWpComConnectedSite' ) {
 			// The site is linked to WordPress.com but not appearing for the user, so they've probably lost access to the account which owns it.
 			noticeMessage = translate(
 				"%(siteName)s is linked to another WordPress.com account. If you're trying to access it, please follow our Account Recovery procedure.",
@@ -476,12 +514,16 @@ export class HelpContactForm extends React.PureComponent {
 			actionMessage = translate( 'Learn more' );
 		}
 
-		if ( isNonWpComHostedSite ) {
+		if ( analyseSiteData && analyseSiteData.startsWith( 'isNonWpComHosted' ) ) {
 			noticeMessage = translate(
-				"Your site is not hosted on our services, so your {{link}}hosting provider{{/link}} might offer enhanced help. If you're not sure, share your question with a link, and we'll point you in the right direction!",
+				'Your site is not {{comVsOrg}}hosted on our services{{/comVsOrg}}. ' +
+					'Support for the self-hosted version of WordPress is provided by the {{orgForums}}WordPress.org community forums{{/orgForums}}, ' +
+					'or if the problem relates to a specific plugin or theme, contact support for that product instead. ' +
+					"If you're not sure, share your question with a link, and we'll point you in the right direction!",
 				{
 					components: {
-						link: <a href={ localizeUrl( 'https://wordpress.com/support/com-vs-org/' ) } />,
+						comVsOrg: <a href={ localizeUrl( 'https://wordpress.com/support/com-vs-org/' ) } />,
+						orgForums: <a href="https://wordpress.org/support/forums/" />,
 					},
 				}
 			);
