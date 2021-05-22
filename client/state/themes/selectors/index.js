@@ -1,4 +1,3 @@
-
 export { areRecommendedThemesLoading } from 'calypso/state/themes/selectors/are-recommended-themes-loading';
 export { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-filter-term';
 export { getActiveTheme } from 'calypso/state/themes/selectors/get-active-theme';
@@ -34,7 +33,7 @@ export { getThemeSignupUrl } from 'calypso/state/themes/selectors/get-theme-sign
 export { getThemesLastPageForQuery } from 'calypso/state/themes/selectors/get-themes-last-page-for-query';
 export { getThemeSupportUrl } from 'calypso/state/themes/selectors/get-theme-support-url';
 export { getWpcomParentThemeId } from 'calypso/state/themes/selectors/get-wpcom-parent-theme-id';
-export { hasActivateConfirmationModalAccepted } from 'state/themes/selectors/has-activate-confirmation-modal-accepted';
+export { hasActivateConfirmationModalAccepted } from 'calypso/state/themes/selectors/has-activate-confirmation-modal-accepted';
 export { hasActivatedTheme } from 'calypso/state/themes/selectors/has-activated-theme';
 export { isActivatingTheme } from 'calypso/state/themes/selectors/is-activating-theme';
 export { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors/is-ambiguous-theme-filter-term';
@@ -50,7 +49,7 @@ export { isThemeGutenbergFirst } from 'calypso/state/themes/selectors/is-theme-g
 export { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 export { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 export { isThemesLastPageForQuery } from 'calypso/state/themes/selectors/is-themes-last-page-for-query';
-export { isUsingRetiredTheme } from 'state/themes/selectors/is-using-retired-theme';
+export { isUsingRetiredTheme } from 'calypso/state/themes/selectors/is-using-retired-theme';
 export { isValidThemeFilterTerm } from 'calypso/state/themes/selectors/is-valid-theme-filter-term';
 export { isWpcomTheme } from 'calypso/state/themes/selectors/is-wpcom-theme';
 export { isWporgTheme } from 'calypso/state/themes/selectors/is-wporg-theme';

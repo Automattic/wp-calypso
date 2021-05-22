@@ -35,8 +35,8 @@ import {
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
 	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
-	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
-	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
+	THEME_HIDE_ACTIVATE_MODAL_WARNING,
+	THEME_ACCEPT_ACTIVATE_MODAL_WARNING,
 } from 'calypso/state/themes/action-types';
 import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
 import {
@@ -440,7 +440,7 @@ export const themeHasAutoLoadingHomepageWarning = ( state = null, action ) => {
 			};
 		}
 
-		case THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING: {
+		case THEME_ACCEPT_ACTIVATE_MODAL_WARNING: {
 			return {
 				themeId: action.themeId,
 				show: false,
@@ -451,7 +451,7 @@ export const themeHasAutoLoadingHomepageWarning = ( state = null, action ) => {
 		case THEME_ACTIVATE:
 		case THEME_ACTIVATE_SUCCESS:
 		case THEME_ACTIVATE_FAILURE:
-		case THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING: {
+		case THEME_HIDE_ACTIVATE_MODAL_WARNING: {
 			return null;
 		}
 	}

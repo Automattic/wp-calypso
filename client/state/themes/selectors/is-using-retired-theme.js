@@ -2,8 +2,9 @@
  * Internal dependencies
  */
 import { get } from 'lodash';
-import { getActiveTheme } from 'state/themes/selectors/get-active-theme';
-import 'state/themes/init';
+import { getActiveTheme } from 'calypso/state/themes/selectors/get-active-theme';
+
+import 'calypso/state/themes/init';
 
 /**
  * Returns true if the site is currently using a retired theme.

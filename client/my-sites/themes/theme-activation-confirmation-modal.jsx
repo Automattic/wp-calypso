@@ -4,7 +4,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { translate } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -26,8 +28,8 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
-	acceptAutoLoadingHomepageWarning,
-	hideAutoLoadingHomepageWarning,
+	acceptActivateModalWarning,
+	hideActivateModalWarning,
 	activate as activateTheme,
 } from 'calypso/state/themes/actions';
 
@@ -38,13 +40,13 @@ import './theme-activation-confirmation-modal.scss';
 
 class ThemeActivationConfirmationModal extends Component {
 	static propTypes = {
-		source: PropTypes.oneOf(['details', 'list', 'upload']).isRequired,
-		theme: PropTypes.shape({
+		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
+		theme: PropTypes.shape( {
 			author: PropTypes.string,
 			author_uri: PropTypes.string,
 			id: PropTypes.string,
 			name: PropTypes.string,
-		}),
+		} ),
 		hasActivated: PropTypes.bool.isRequired,
 		isActivating: PropTypes.bool.isRequired,
 		hasAutoLoadingHomepage: PropTypes.bool,
@@ -54,8 +56,8 @@ class ThemeActivationConfirmationModal extends Component {
 		installingThemeId: PropTypes.string,
 	};
 
-	constructor(props) {
-		super(props);
+	constructor( props ) {
+		super( props );
 		this.state = {
 			homepageAction: 'keep_current_homepage',
 
@@ -64,54 +66,52 @@ class ThemeActivationConfirmationModal extends Component {
 		};
 	}
 
-	static getDerivedStateFromProps(nextProps, prevState) {
+	static getDerivedStateFromProps( nextProps, prevState ) {
 		// This component doesn't unmount when the dialog closes, so the state
 		// needs to be reset back to defaults each time it opens.
 		// Reseting `homepageAction` ensures the default option will be selected.
-		if (nextProps.isVisible && !prevState.wasVisible) {
+		if ( nextProps.isVisible && ! prevState.wasVisible ) {
 			return { homepageAction: 'keep_current_homepage', wasVisible: true };
-		} else if (!nextProps.isVisible && prevState.wasVisible) {
+		} else if ( ! nextProps.isVisible && prevState.wasVisible ) {
 			return { wasVisible: false };
 		}
 		return null;
 	}
 
-	handleHomepageAction = (event) => {
-		this.setState({ homepageAction: event.currentTarget.value });
+	handleHomepageAction = ( event ) => {
+		this.setState( { homepageAction: event.currentTarget.value } );
 	};
 
-	closeModalHandler =
-		(action = 'dismiss') =>
-		() => {
-			const { installingThemeId, siteId, source } = this.props;
-			if ('activeTheme' === action) {
-				this.props.acceptAutoLoadingHomepageWarning(installingThemeId);
-				const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
-				recordTracksEvent('calypso_theme_autoloading_homepage_modal_activate_click', {
-					theme: installingThemeId,
-					keep_current_homepage: keepCurrentHomepage,
-				});
-				return this.props.activateTheme(
-					installingThemeId,
-					siteId,
-					source,
-					false,
-					keepCurrentHomepage
-				);
-			} else if ('keepCurrentTheme' === action) {
-				recordTracksEvent('calypso_theme_autoloading_homepage_modal_dismiss', {
-					action: 'button',
-					theme: installingThemeId,
-				});
-				return this.props.hideAutoLoadingHomepageWarning();
-			} else if ('dismiss' === action) {
-				recordTracksEvent('calypso_theme_autoloading_homepage_modal_dismiss', {
-					action: 'escape',
-					theme: installingThemeId,
-				});
-				return this.props.hideAutoLoadingHomepageWarning();
-			}
-		};
+	closeModalHandler = ( action = 'dismiss' ) => () => {
+		const { installingThemeId, siteId, source } = this.props;
+		if ( 'activeTheme' === action ) {
+			this.props.acceptActivateModalWarning( installingThemeId );
+			const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
+			recordTracksEvent( 'calypso_theme_activation_confirmation_modal_activate_click', {
+				theme: installingThemeId,
+				keep_current_homepage: keepCurrentHomepage,
+			} );
+			return this.props.activateTheme(
+				installingThemeId,
+				siteId,
+				source,
+				false,
+				keepCurrentHomepage
+			);
+		} else if ( 'keepCurrentTheme' === action ) {
+			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+				action: 'button',
+				theme: installingThemeId,
+			} );
+			return this.props.hideActivateModalWarning();
+		} else if ( 'dismiss' === action ) {
+			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+				action: 'escape',
+				theme: installingThemeId,
+			} );
+			return this.props.hideActivateModalWarning();
+		}
+	};
 
 	render() {
 		const {
@@ -124,16 +124,16 @@ class ThemeActivationConfirmationModal extends Component {
 		} = this.props;
 
 		// Nothing to do when it's the current theme.
-		if (isCurrentTheme) {
+		if ( isCurrentTheme ) {
 			return null;
 		}
 
 		// Hide while is activating or when it's activated.
-		if (isActivating || hasActivated) {
+		if ( isActivating || hasActivated ) {
 			return null;
 		}
 
-		if (!theme) {
+		if ( ! theme ) {
 			return null;
 		}
 
@@ -145,9 +145,13 @@ class ThemeActivationConfirmationModal extends Component {
 			? this.props.activeThemeName
 			: this.props.installingThemeName;
 
+		const classes = classNames( 'theme-activation-confirmation-modal', {
+			'is-retired-modal': isCurrentThemeRetired,
+		} );
+
 		let dialogMessage;
 
-		if (isCurrentThemeRetired) {
+		if ( isCurrentThemeRetired ) {
 			dialogMessage = translate(
 				'Your active theme {{strong}}%(themeName)s{{/strong}} is retired. ' +
 					'If you activate a new theme, you might not be able to switch back to %(themeName)s.',
@@ -156,7 +160,7 @@ class ThemeActivationConfirmationModal extends Component {
 					components: { strong: <strong /> },
 				}
 			);
-		} else if (hasAutoLoadingHomepage) {
+		} else if ( hasAutoLoadingHomepage ) {
 			dialogMessage = translate(
 				'{{strong}}%(themeName)s{{/strong}} will automatically change your homepage layout. ' +
 					'Your current homepage will become a draft. Would you like to continue?',
@@ -169,59 +173,60 @@ class ThemeActivationConfirmationModal extends Component {
 
 		return (
 			<Dialog
-				className="theme-activation-confirmation-modal"
+				className={ classes }
 				isVisible
-				buttons={[
+				buttons={ [
 					{
 						action: 'keepCurrentTheme',
-						label: translate('Keep my current theme'),
+						label: translate( 'Keep my current theme' ),
 						isPrimary: false,
-						onClick: this.closeModalHandler('keepCurrentTheme'),
+						onClick: this.closeModalHandler( 'keepCurrentTheme' ),
 					},
 					{
 						action: 'activeTheme',
-						label: translate('Activate %(themeName)s', { args: { themeName } }),
+						label: translate( 'Activate %(themeName)s', { args: { themeName: theme.name } } ),
 						isPrimary: true,
-						onClick: this.closeModalHandler('activeTheme'),
+						onClick: this.closeModalHandler( 'activeTheme' ),
 					},
-				]}
-				onClose={this.closeModalHandler('dismiss')}
+				] }
+				onClose={ this.closeModalHandler( 'dismiss' ) }
 			>
 				<TrackComponentView
-					eventName={'calypso_theme_activation_confirmation_modal_view'}
-					eventProperties={{ theme: themeId }}
+					eventName={ 'calypso_theme_activation_confirmation_modal_view' }
+					eventProperties={ {
+						theme: themeId,
+						modal_type: isCurrentThemeRetired ? 'retired' : 'homepage',
+					} }
 				/>
 				<div>
-					<h1>
-						<h1 className="theme-activation-confirmation-modal__title">{dialogMessage}</h1>
-					</h1>
-					{hasAutoLoadingHomepage && (
+					<h1 className="theme-activation-confirmation-modal__title">{ dialogMessage }</h1>
+					{ ! isCurrentThemeRetired && (
 						<>
 							<FormLabel>
 								<FormRadio
 									value="keep_current_homepage"
-									checked={'keep_current_homepage' === this.state.homepageAction}
-									onChange={this.handleHomepageAction}
-									label={translate('Use %(themeName)s without changing my homepage content.', {
+									checked={ 'keep_current_homepage' === this.state.homepageAction }
+									onChange={ this.handleHomepageAction }
+									label={ translate( 'Use %(themeName)s without changing my homepage content.', {
 										args: { themeName },
-									})}
+									} ) }
 								/>
 							</FormLabel>
 							<FormLabel>
 								<FormRadio
 									value="use_new_homepage"
-									checked={'use_new_homepage' === this.state.homepageAction}
-									onChange={this.handleHomepageAction}
-									label={translate(
+									checked={ 'use_new_homepage' === this.state.homepageAction }
+									onChange={ this.handleHomepageAction }
+									label={ translate(
 										"Use %(themeName)s's homepage content and make my existing homepage a draft.",
 										{
 											args: { themeName },
 										}
-									)}
+									) }
 								/>
 							</FormLabel>
 						</>
-					)}
+					) }
 				</div>
 			</Dialog>
 		);
@@ -229,32 +234,32 @@ class ThemeActivationConfirmationModal extends Component {
 }
 
 export default connect(
-	(state) => {
-		const siteId = getSelectedSiteId(state);
-		const installingThemeId = getPreActivateThemeId(state);
-		const activeThemeId = getActiveTheme(state, siteId);
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const installingThemeId = getPreActivateThemeId( state );
+		const activeThemeId = getActiveTheme( state, siteId );
 
 		return {
 			siteId,
 			activeThemeId,
-			activeThemeName: get(state, 'themes.queries.wpcom.data.items.' + activeThemeId + '.name'),
+			activeThemeName: get( state, 'themes.queries.wpcom.data.items.' + activeThemeId + '.name' ),
 			installingThemeName: get(
 				state,
 				'themes.queries.wpcom.data.items.' + installingThemeId + '.name'
 			),
 			installingThemeId,
-			theme: installingThemeId && getCanonicalTheme(state, siteId, installingThemeId),
-			isActivating: !!isActivatingTheme(state, siteId),
-			hasActivated: !!hasActivatedTheme(state, siteId),
-			hasAutoLoadingHomepage: themeHasAutoLoadingHomepage(state, installingThemeId),
-			isCurrentTheme: isThemeActive(state, installingThemeId, siteId),
-			isCurrentThemeRetired: isUsingRetiredTheme(state, siteId),
+			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
+			isActivating: !! isActivatingTheme( state, siteId ),
+			hasActivated: !! hasActivatedTheme( state, siteId ),
+			hasAutoLoadingHomepage: themeHasAutoLoadingHomepage( state, installingThemeId ),
+			isCurrentTheme: isThemeActive( state, installingThemeId, siteId ),
+			isCurrentThemeRetired: isUsingRetiredTheme( state, siteId ),
 		};
 	},
 	{
-		acceptAutoLoadingHomepageWarning,
-		hideAutoLoadingHomepageWarning,
+		acceptActivateModalWarning,
+		hideActivateModalWarning,
 		activateTheme,
 		recordTracksEvent,
 	}
-)(ThemeActivationConfirmationModal);
+)( ThemeActivationConfirmationModal );

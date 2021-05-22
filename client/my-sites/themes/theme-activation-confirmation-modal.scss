@@ -24,4 +24,15 @@
 		font-style: italic;
 		margin-top: -5px;
 	}
+
+	&.is-retired-modal {
+		.theme-activation-confirmation-modal__title {
+			font-weight: normal;
+			text-align: center;
+		}
+
+		.dialog__action-buttons {
+			text-align: center;
+		}
+	}
 }

@@ -8,7 +8,7 @@ import { showAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/sho
 import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
 import {
 	getTheme,
-	hasAutoLoadingHomepageModalAccepted,
+	hasActivateConfirmationModalAccepted,
 	themeHasAutoLoadingHomepage,
 	isUsingRetiredTheme,
 } from 'calypso/state/themes/selectors';
