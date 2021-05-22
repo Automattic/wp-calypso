@@ -8,7 +8,7 @@ import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 function addProductsToCart( cart, newCartItems ) {
 	const productsData = productsList.get();
-	const newProducts = Object.entries( newCartItems ).map( function ( [ , cartItem ] ) {
+	const newProducts = newCartItems.map( function ( cartItem ) {
 		cartItem.extra = { ...cartItem.extra, context: 'signup' };
 		return fillInSingleCartItemAttributes( cartItem, productsData );
 	} );
