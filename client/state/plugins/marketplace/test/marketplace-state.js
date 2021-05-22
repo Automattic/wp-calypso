@@ -5,7 +5,7 @@ import {
 	purchaseFlow as purchaseFlowReducer,
 	defaultState as defaultMarketPlaceState,
 } from '../reducer';
-import { setPrimaryDomain } from 'calypso/state/plugins/marketplace/actions';
+import { setPrimaryDomainCandidate } from 'calypso/state/plugins/marketplace/actions';
 
 describe( 'Marketplace reducer', () => {
 	test( 'purchaseFlow reducer should default to an empty object', () => {
@@ -19,7 +19,7 @@ describe( 'Marketplace reducer', () => {
 		const domainName = 'awesome.com';
 		const recievedState = purchaseFlowReducer(
 			defaultMarketPlaceState,
-			setPrimaryDomain( domainName )
+			setPrimaryDomainCandidate( domainName )
 		);
 		const expectedState = { primaryDomain: domainName };
 

@@ -8,15 +8,17 @@ import type { Action } from 'redux';
  */
 import 'calypso/state/plugins/init';
 
-import { PLUGINS_MARKETPLACE_PRIMARY_DOMAIN_UPDATE } from 'calypso/state/action-types';
+import { PLUGINS_MARKETPLACE_PRIMARY_DOMAIN_CANDIDATE_UPDATE } from 'calypso/state/action-types';
 
-interface ISetPrimaryDomainAction extends Action {
+interface ISetPrimaryDomainCandidateAction extends Action {
 	domainName: string | undefined;
 }
 
-export function setPrimaryDomain( domainName: string | undefined ): ISetPrimaryDomainAction {
+export function setPrimaryDomainCandidate(
+	domainName: string | undefined
+): ISetPrimaryDomainCandidateAction {
 	return {
-		type: PLUGINS_MARKETPLACE_PRIMARY_DOMAIN_UPDATE,
+		type: PLUGINS_MARKETPLACE_PRIMARY_DOMAIN_CANDIDATE_UPDATE,
 		domainName,
 	};
 }

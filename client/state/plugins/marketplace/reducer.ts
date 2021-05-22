@@ -6,7 +6,7 @@ import type { AnyAction } from 'redux';
 /**
  * Internal dependencies
  */
-import { PLUGINS_MARKETPLACE_PRIMARY_DOMAIN_UPDATE } from 'calypso/state/action-types';
+import { PLUGINS_MARKETPLACE_PRIMARY_DOMAIN_CANDIDATE_UPDATE } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
 export interface IPurchaseFlowState {
@@ -22,7 +22,7 @@ export function purchaseFlow(
 	action: AnyAction
 ): IPurchaseFlowState {
 	switch ( action.type ) {
-		case PLUGINS_MARKETPLACE_PRIMARY_DOMAIN_UPDATE:
+		case PLUGINS_MARKETPLACE_PRIMARY_DOMAIN_CANDIDATE_UPDATE:
 			return {
 				...state,
 				primaryDomain: action.domainName,
