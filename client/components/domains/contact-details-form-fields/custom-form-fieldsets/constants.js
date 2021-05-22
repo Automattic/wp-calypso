@@ -12,7 +12,6 @@ export const CONTACT_DETAILS_FORM_FIELDS = [
 	'postalCode',
 	'countryCode',
 	'fax',
-	'updateWpcomEmail',
 ];
 
 export const CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES = [ 'GB', 'IE' ];

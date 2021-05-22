@@ -74,6 +74,7 @@ export class ContactDetailsFormFields extends Component {
 		hasCountryStates: PropTypes.bool,
 		shouldForceRenderOnPropChange: PropTypes.bool,
 		updateWpcomEmailCheckboxDisabled: PropTypes.bool,
+		onUpdateWpcomEmailCheckboxChange: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -182,7 +183,6 @@ export class ContactDetailsFormFields extends Component {
 			fax,
 			state,
 			phone: toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] ),
-			updateWpcomEmail: this.state.updateWpcomEmail,
 		};
 	}
 
@@ -325,13 +325,12 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	};
 
-	handleWpcomEmailUpdateCheckbox = ( event ) => {
-		this.formStateController.handleFieldChange( {
-			name: 'updateWpcomEmail',
-			value: event.target.checked,
-		} );
+	handleUpdateWpcomEmailCheckboxChanged = ( event ) => {
+		const value = event.target.checked;
 
-		this.setState( { updateWpcomEmail: event.target.checked } );
+		this.props.onUpdateWpcomEmailCheckboxChange( value );
+
+		this.setState( { updateWpcomEmail: value } );
 	};
 
 	getFieldProps = ( name, { customErrorMessage = null, needsChildRef = false } ) => {
@@ -398,7 +397,7 @@ export class ContactDetailsFormFields extends Component {
 							label: translate( 'Email' ),
 							checkboxLabel: translate( 'Apply contact update to My Account email.' ),
 							checkboxDisabled: this.props.updateWpcomEmailCheckboxDisabled,
-							onCheckboxChanged: this.handleWpcomEmailUpdateCheckbox,
+							onCheckboxChanged: this.handleUpdateWpcomEmailCheckboxChanged,
 							checkboxDefaultChecked: this.state.updateWpcomEmail,
 						},
 						{

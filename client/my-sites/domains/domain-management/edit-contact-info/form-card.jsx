@@ -65,6 +65,7 @@ class EditContactInfoFormCard extends React.Component {
 			hasEmailChanged: false,
 			requiresConfirmation: false,
 			haveContactDetailsChanged: false,
+			updateWpcomEmail: false,
 		};
 
 		this.contactFormFieldValues = this.getContactFormFieldValues();
@@ -261,19 +262,22 @@ class EditContactInfoFormCard extends React.Component {
 
 	handleContactDetailsChange = ( newContactDetails ) => {
 		const { email } = newContactDetails;
-		const { updateWpcomEmail, ...onlyContactDetails } = newContactDetails;
 		const registrantWhoisData = this.getContactFormFieldValues();
 
 		this.setState( {
 			newContactDetails,
-			haveContactDetailsChanged: ! isEqual( registrantWhoisData, onlyContactDetails ),
+			haveContactDetailsChanged: ! isEqual( registrantWhoisData, newContactDetails ),
 			hasEmailChanged: get( registrantWhoisData, 'email' ) !== email,
 		} );
 	};
 
+	handleUpdateWpcomEmailCheckboxChange = ( value ) => {
+		this.setState( { updateWpcomEmail: value } );
+	};
+
 	saveContactInfo = () => {
 		const { selectedDomain } = this.props;
-		const { formSubmitting, transferLock, newContactDetails } = this.state;
+		const { formSubmitting, transferLock, newContactDetails, updateWpcomEmail } = this.state;
 
 		if ( formSubmitting ) {
 			return;
@@ -287,7 +291,12 @@ class EditContactInfoFormCard extends React.Component {
 				showNonDaConfirmationDialog: false,
 			},
 			() => {
-				this.props.saveWhois( selectedDomain.name, newContactDetails, transferLock );
+				this.props.saveWhois(
+					selectedDomain.name,
+					newContactDetails,
+					transferLock,
+					updateWpcomEmail
+				);
 			}
 		);
 	};
@@ -441,6 +450,7 @@ class EditContactInfoFormCard extends React.Component {
 						disableSubmitButton={ this.shouldDisableSubmitButton() }
 						isSubmitting={ this.state.formSubmitting }
 						updateWpcomEmailCheckboxDisabled={ this.shouldDisableUpdateWpcomEmailCheckbox() }
+						onUpdateWpcomEmailCheckboxChange={ this.handleUpdateWpcomEmailCheckboxChange }
 					>
 						{ canUseDesignatedAgent && this.renderTransferLockOptOut() }
 					</ContactDetailsFormFields>

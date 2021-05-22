@@ -1885,7 +1885,13 @@ Undocumented.prototype.fetchWhois = function ( domainName, fn ) {
  * @param {object} [whois]
  * @param {Function} [fn]
  */
-Undocumented.prototype.updateWhois = function ( domainName, whois, transferLock, fn ) {
+Undocumented.prototype.updateWhois = function (
+	domainName,
+	whois,
+	transferLock,
+	updateWpcomEmail,
+	fn
+) {
 	debug( '/domains/:domainName/whois' );
 	return this.wpcom.req.post(
 		{
@@ -1894,6 +1900,7 @@ Undocumented.prototype.updateWhois = function ( domainName, whois, transferLock,
 			body: {
 				whois,
 				transfer_lock: transferLock,
+				update_wpcom_email: updateWpcomEmail,
 			},
 		},
 		fn
