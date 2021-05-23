@@ -10,6 +10,8 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import {
@@ -77,11 +79,15 @@ class AutoLoadingHomepageModal extends Component {
 		this.setState( { homepageAction: event.currentTarget.value } );
 	};
 
-	closeModalHandler = ( activate = false ) => () => {
-		if ( activate ) {
-			const { installingThemeId, siteId, source } = this.props;
+	closeModalHandler = ( action = 'dismiss' ) => () => {
+		const { installingThemeId, siteId, source } = this.props;
+		if ( 'activeTheme' === action ) {
 			this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
 			const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
+			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_activate_click', {
+				theme: installingThemeId,
+				keep_current_homepage: keepCurrentHomepage,
+			} );
 			return this.props.activateTheme(
 				installingThemeId,
 				siteId,
@@ -89,8 +95,19 @@ class AutoLoadingHomepageModal extends Component {
 				false,
 				keepCurrentHomepage
 			);
+		} else if ( 'keepCurrentTheme' === action ) {
+			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+				action: 'button',
+				theme: installingThemeId,
+			} );
+			return this.props.hideAutoLoadingHomepageWarning();
+		} else if ( 'dismiss' === action ) {
+			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+				action: 'escape',
+				theme: installingThemeId,
+			} );
+			return this.props.hideAutoLoadingHomepageWarning();
 		}
-		this.props.hideAutoLoadingHomepageWarning();
 	};
 
 	render() {
@@ -122,7 +139,7 @@ class AutoLoadingHomepageModal extends Component {
 			return null;
 		}
 
-		const { name: themeName } = this.props.theme;
+		const { name: themeName, id: themeId } = this.props.theme;
 
 		return (
 			<Dialog
@@ -133,17 +150,21 @@ class AutoLoadingHomepageModal extends Component {
 						action: 'keepCurrentTheme',
 						label: translate( 'Keep my current theme' ),
 						isPrimary: false,
-						onClick: this.closeModalHandler( false ),
+						onClick: this.closeModalHandler( 'keepCurrentTheme' ),
 					},
 					{
 						action: 'activeTheme',
 						label: translate( 'Activate %(themeName)s', { args: { themeName } } ),
 						isPrimary: true,
-						onClick: this.closeModalHandler( true ),
+						onClick: this.closeModalHandler( 'activeTheme' ),
 					},
 				] }
-				onClose={ this.closeModalHandler( false ) }
+				onClose={ this.closeModalHandler( 'dismiss' ) }
 			>
+				<TrackComponentView
+					eventName={ 'calypso_theme_autoloading_homepage_modal_view' }
+					eventProperties={ { theme: themeId } }
+				/>
 				<div>
 					<h1>
 						{ translate( 'How would you like to use %(themeName)s on your site?', {
@@ -199,5 +220,6 @@ export default connect(
 		acceptAutoLoadingHomepageWarning,
 		hideAutoLoadingHomepageWarning,
 		activateTheme,
+		recordTracksEvent,
 	}
 )( AutoLoadingHomepageModal );

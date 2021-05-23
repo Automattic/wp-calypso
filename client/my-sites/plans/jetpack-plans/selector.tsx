@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { useExperiment } from 'calypso/lib/explat';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import {
@@ -38,6 +39,9 @@ import type {
 
 import './style.scss';
 
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:plans:abtesting' );
+
 const SelectorPage: React.FC< SelectorPageProps > = ( {
 	defaultDuration = TERM_ANNUALLY,
 	siteSlug: siteSlugProp,
@@ -50,14 +54,39 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 }: SelectorPageProps ) => {
 	const dispatch = useDispatch();
 
+	const [ loadingExperiment, experiment ] = useExperiment( 'jetpack_explat_testing_20210510' );
+	useEffect( () => {
+		if ( loadingExperiment ) {
+			debug( 'Loading experiment ...' );
+			return;
+		}
+
+		if ( ! experiment ) {
+			debug( 'ERROR CONDITION: Experiment not loading, but no information found.' );
+			return;
+		}
+
+		debug( 'Experiment loaded!' );
+		debug( 'Experiment name:', experiment.experimentName );
+		debug( 'Assigned variation:', experiment.variationName );
+	}, [ loadingExperiment, experiment ] );
+
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteSlug = siteSlugProp || siteSlugState;
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
+	const viewTrackerPath = getViewTrackerPath( rootUrl, siteSlugProp );
+	const viewTrackerProps = siteId ? { site: siteSlug } : {};
 
 	useEffect( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_pricing_page_visit', { site: siteSlug } ) );
-	}, [ dispatch, siteSlug ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_pricing_page_visit', {
+				site: siteSlug,
+				path: viewTrackerPath,
+				root_path: rootUrl,
+			} )
+		);
+	}, [ dispatch, rootUrl, siteSlug, viewTrackerPath ] );
 
 	useEffect( () => {
 		setDuration( defaultDuration );
@@ -147,9 +176,6 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		);
 		setDuration( selectedDuration );
 	};
-
-	const viewTrackerPath = getViewTrackerPath( rootUrl, siteId );
-	const viewTrackerProps = siteId ? { site: siteSlug } : {};
 
 	return (
 		<Main className="selector__main" wideLayout>

@@ -621,7 +621,7 @@ export default function CompositeCheckout( {
 		);
 	}
 
-	const updatedSiteId = isJetpackCheckout ? parseInt( responseCart.blog_id ) : siteId;
+	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
 
 	return (
 		<React.Fragment>
@@ -659,7 +659,6 @@ export default function CompositeCheckout( {
 					isLoggedOutCart={ !! isLoggedOutCart }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }
-					isJetpackCheckout={ isJetpackCheckout }
 				/>
 			</CheckoutProvider>
 		</React.Fragment>

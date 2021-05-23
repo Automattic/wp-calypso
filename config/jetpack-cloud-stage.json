@@ -31,7 +31,7 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
-		"checkout/google-pay": true,
+		"checkout/google-pay": false,
 		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
 		"jetpack-cloud/connect": false,

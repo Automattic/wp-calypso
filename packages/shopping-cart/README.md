@@ -25,7 +25,7 @@ This is a React hook that can be used in any child component under [ShoppingCart
 - `isPendingUpdate: boolean`. True if the cart is loading in any way, either during its initial load, when a `cartKey` changes, or when a modification request is pending.
 - `loadingError: string | null | undefined`. If fetching or updating the cart causes an error, this will be a string that contains the error message.
 - `loadingErrorType: ShoppingCartError | undefined`. If fetching or updating the cart causes an error, this will contain a string that explains what type of error.
-- `couponStatus: 'fresh' | 'pending' | 'applied' | 'invalid' | 'rejected' | 'error'`. A string that can be used to determine if a coupon is applied.
+- `couponStatus: 'fresh' | 'pending' | 'applied' | 'rejected'. A string that can be used to determine if a coupon is applied.
 
 The following actions are also properties. Each one returns a Promise that resolves when the cart is next valid (this may be after several queued actions are complete).
 

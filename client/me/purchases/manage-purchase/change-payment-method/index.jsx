@@ -35,7 +35,6 @@ import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
-import { concatTitle } from 'calypso/lib/react-helpers';
 import PaymentMethodSelector from '../payment-method-selector';
 import getPaymentMethodIdFromPayment from '../payment-method-selector/get-payment-method-id-from-payment';
 import useCreateAssignablePaymentMethods from './use-create-assignable-payment-methods';
@@ -82,7 +81,7 @@ function ChangePaymentMethod( props ) {
 			/>
 			<PageViewTracker
 				path="/me/purchases/:site/:purchaseId/payment-method/change/:cardId"
-				title={ concatTitle( titles.activeUpgrades, changePaymentMethodTitle ) }
+				title={ `${ titles.activeUpgrades } › ${ changePaymentMethodTitle }` }
 			/>
 
 			<HeaderCake backHref={ props.getManagePurchaseUrlFor( props.siteSlug, props.purchaseId ) }>

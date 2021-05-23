@@ -22,6 +22,7 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'localValues',
 			'remoteValues',
+			'failed',
 			'fetching',
 			'lastFetchedTimestamp',
 		] );
