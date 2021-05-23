@@ -447,9 +447,7 @@ export class ContactDetailsFormFields extends Component {
 
 	handleUpdateWpcomEmailCheckboxChanged = ( event ) => {
 		const value = event.target.checked;
-
 		this.props.onUpdateWpcomEmailCheckboxChange( value );
-
 		this.setState( { updateWpcomEmail: value } );
 	};
 
@@ -457,7 +455,7 @@ export class ContactDetailsFormFields extends Component {
 		const emailInputFieldProps = this.getFieldProps( 'email', {
 			customErrorMessage: this.props.contactDetailsErrors?.email,
 		} );
-		emailInputFieldProps.additionalClasses = null;
+		delete emailInputFieldProps.additionalClasses;
 
 		return (
 			<div
