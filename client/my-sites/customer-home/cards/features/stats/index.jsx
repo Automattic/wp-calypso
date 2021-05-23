@@ -3,7 +3,7 @@
  */
 import React, { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import i18nCalypso, { numberFormat, useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import { times } from 'lodash';
 import moment from 'moment';
@@ -70,24 +70,16 @@ export const StatsV2 = ( {
 		}
 	}, [ isSiteUnlaunched ] );
 
-	const newSiteCopy =
-		[ 'en', 'en-gb' ].includes( i18nCalypso.getLocaleSlug() ) ||
-		i18nCalypso.hasTranslation(
-			'No stats to display yet. Publish or share a post to get some traffic to your site.'
-		)
-			? preventWidows(
-					translate(
-						'No stats to display yet. Publish or share a post to get some traffic to your site.'
-					),
-					4
-			  )
-			: translate( "No traffic yet, but you'll get there!" );
-
 	const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
 	const siteOlderThanAWeek = Date.now() - new Date( siteCreatedAt ).getTime() > WEEK_IN_MS;
 	const statsPlaceholderMessage = siteOlderThanAWeek
 		? translate( "No traffic this week, but don't give up!" )
-		: newSiteCopy;
+		: preventWidows(
+				translate(
+					'No stats to display yet. Publish or share a post to get some traffic to your site.'
+				),
+				4
+		  );
 
 	return (
 		<div className="stats">
