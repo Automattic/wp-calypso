@@ -19,7 +19,7 @@ import {
 	domainManagementEdit,
 } from 'calypso/my-sites/domains/paths';
 import wp from 'calypso/lib/wp';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice, infoNotice } from 'calypso/state/notices/actions';
 import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
 import { registrar as registrarNames } from 'calypso/lib/domains/constants';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
@@ -299,6 +299,38 @@ class EditContactInfoFormCard extends React.Component {
 				);
 			}
 		);
+
+		const { email } = newContactDetails;
+		if ( updateWpcomEmail && email && this.props.currentUser.email !== email ) {
+			wpcom
+				.me()
+				.settings()
+				.update( { user_email: email } )
+				.then( ( data ) => {
+					if ( data.user_email_change_pending ) {
+						this.props.infoNotice(
+							this.props.translate(
+								'There is a pending change of your WordPress.com email to %(newEmail)s. Please check your inbox for a confirmation link.',
+								{
+									args: { newEmail: data.new_user_email },
+								}
+							)
+						);
+					}
+				} )
+				.catch( () => {
+					this.props.errorNotice(
+						this.props.translate(
+							'There was a problem updating your WordPress.com Account email.'
+						),
+						{
+							showDismiss: true,
+							isPersistent: true,
+							duration: null,
+						}
+					);
+				} );
+		}
 	};
 
 	onWhoisUpdateSuccess = () => {
@@ -475,6 +507,7 @@ export default connect(
 	{
 		errorNotice,
 		fetchSiteDomains,
+		infoNotice,
 		requestWhois,
 		saveWhois,
 		successNotice,

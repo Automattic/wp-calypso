@@ -33,12 +33,14 @@ import {
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
-import FormTextInputWithCheckbox from './form-text-input-with-checkbox';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import classNames from 'classnames';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 
 const noop = () => {};
 
@@ -325,14 +327,6 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	};
 
-	handleUpdateWpcomEmailCheckboxChanged = ( event ) => {
-		const value = event.target.checked;
-
-		this.props.onUpdateWpcomEmailCheckboxChange( value );
-
-		this.setState( { updateWpcomEmail: value } );
-	};
-
 	getFieldProps = ( name, { customErrorMessage = null, needsChildRef = false } ) => {
 		const ref = needsChildRef
 			? { inputRef: this.getRefCallback( name ) }
@@ -390,21 +384,7 @@ export class ContactDetailsFormFields extends Component {
 				</div>
 
 				<div className="contact-details-form-fields__row">
-					{ this.createField(
-						'email',
-						FormTextInputWithCheckbox,
-						{
-							label: translate( 'Email' ),
-							checkboxLabel: translate( 'Apply contact update to My Account email.' ),
-							checkboxDisabled: this.props.updateWpcomEmailCheckboxDisabled,
-							onCheckboxChanged: this.handleUpdateWpcomEmailCheckboxChanged,
-							checkboxDefaultChecked: this.state.updateWpcomEmail,
-						},
-						{
-							needsChildRef: true,
-							customErrorMessage: this.props.contactDetailsErrors?.email,
-						}
-					) }
+					{ this.renderContactEmailInputWithCheckbox() }
 
 					{ this.createField(
 						'phone',
@@ -461,6 +441,45 @@ export class ContactDetailsFormFields extends Component {
 						contactDetailsErrors={ this.props.contactDetailsErrors }
 					/>
 				) }
+			</div>
+		);
+	}
+
+	handleUpdateWpcomEmailCheckboxChanged = ( event ) => {
+		const value = event.target.checked;
+
+		this.props.onUpdateWpcomEmailCheckboxChange( value );
+
+		this.setState( { updateWpcomEmail: value } );
+	};
+
+	renderContactEmailInputWithCheckbox() {
+		const emailInputFieldProps = this.getFieldProps( 'email', {
+			customErrorMessage: this.props.contactDetailsErrors?.email,
+		} );
+		emailInputFieldProps.additionalClasses = null;
+
+		return (
+			<div
+				className={ classNames(
+					'contact-details-form-fields__field',
+					'email-text-input-with-checkbox'
+				) }
+			>
+				<Input label={ this.props.translate( 'Email' ) } { ...emailInputFieldProps } />
+				<FormLabel
+					className={ classNames( 'email-text-input-with-checkbox__checkbox-label', {
+						'is-disabled': this.props.updateWpcomEmailCheckboxDisabled,
+					} ) }
+				>
+					<FormCheckbox
+						name="update-wpcom-email"
+						disabled={ this.props.updateWpcomEmailCheckboxDisabled }
+						onChange={ this.handleUpdateWpcomEmailCheckboxChanged }
+						checked={ this.state.updateWpcomEmail && ! this.props.updateWpcomEmailCheckboxDisabled }
+					/>
+					<span>{ this.props.translate( 'Apply contact update to My Account email.' ) }</span>
+				</FormLabel>
 			</div>
 		);
 	}
