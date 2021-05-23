@@ -314,7 +314,12 @@ class EditContactInfoFormCard extends React.Component {
 								{
 									args: { newEmail: data.new_user_email },
 								}
-							)
+							),
+							{
+								showDismiss: true,
+								isPersistent: true,
+								duration: null,
+							}
 						);
 					}
 				} )
