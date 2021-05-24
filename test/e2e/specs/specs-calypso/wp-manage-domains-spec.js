@@ -110,9 +110,9 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 			await DomainsPage.Expect( this.driver );
 			try {
 				const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( this.driver );
-				await shoppingCartWidgetComponent.removeDomainRegistraion( expectedDomainName );
+				await shoppingCartWidgetComponent.empty();
 			} catch {
-				console.log( `Can't clean up domain registration for ${ expectedDomainName } from cart` );
+				console.log( 'Cart already empty' );
 			}
 		} );
 	} );
