@@ -5,7 +5,7 @@
  * @param {object} emailAccount - The email account being investigated for warnings of a certain slug
  * @returns {boolean} Returns true if warnings with the slug are found, false otherwise
  */
-export function hasWarningsWithSlug( warningSlug, emailAccount ) {
+export function accountHasWarningWithSlug( warningSlug, emailAccount ) {
 	const warnings = emailAccount?.warnings;
 	return ( warnings?.[ 0 ] ? warnings : [] ).some(
 		( warning ) => warningSlug === warning?.warning_slug

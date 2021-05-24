@@ -15,14 +15,15 @@ import {
 	emailManagementManageTitanAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
+import { getConfiguredTitanMailboxCount, getMaxTitanMailboxCount } from 'calypso/lib/titan';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getGoogleAdminUrl } from 'calypso/lib/gsuite';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Gridicon from 'calypso/components/gridicon';
 import {
-	hasUnusedMailboxWarnings,
-	hasGooglePendingTosAcceptanceWarnings,
-	isTitanMailAccountType,
+	hasUnusedMailboxWarning,
+	hasGoogleAccountTOSWarning,
+	isTitanMailAccount,
 } from 'calypso/lib/emails';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 
@@ -51,7 +52,9 @@ class EmailPlanWarnings extends React.Component {
 				href={ controlPanelUrl }
 				target={ showExternalControlPanelLink ? '_blank' : null }
 			>
-				{ translate( 'Activate Mailboxes' ) }
+				{ translate( 'Activate Mailbox', 'Activate Mailboxes', {
+					count: getMaxTitanMailboxCount( domain ) - getConfiguredTitanMailboxCount( domain ),
+				} ) }
 				{ showExternalControlPanelLink && <Gridicon icon="external" /> }
 			</Button>
 		);
@@ -61,6 +64,7 @@ class EmailPlanWarnings extends React.Component {
 		const { domain, translate } = this.props;
 
 		return (
+			// TODO: Change to `getGoogleAdminWithTosUrl()` function flagged in https://github.com/Automattic/wp-calypso/pull/53032#pullrequestreview-664396027
 			<Button compact primary href={ getGoogleAdminUrl( domain.name ) } target="_blank">
 				{ translate( 'Finish Setup' ) }
 				<Gridicon icon="external" />
@@ -71,13 +75,11 @@ class EmailPlanWarnings extends React.Component {
 	renderCTA() {
 		const { emailAccount } = this.props;
 
-		if ( hasUnusedMailboxWarnings( emailAccount ) ) {
-			if ( isTitanMailAccountType( emailAccount ) ) {
-				return this.renderCTAForTitanUnusedMailboxes();
-			}
+		if ( hasUnusedMailboxWarning( emailAccount ) && isTitanMailAccount( emailAccount ) ) {
+			return this.renderCTAForTitanUnusedMailboxes();
 		}
 
-		if ( hasGooglePendingTosAcceptanceWarnings( emailAccount ) ) {
+		if ( hasGoogleAccountTOSWarning( emailAccount ) ) {
 			return this.renderCTAForGooglePendingTOSAcceptance();
 		}
 

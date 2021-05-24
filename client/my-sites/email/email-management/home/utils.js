@@ -21,10 +21,7 @@ import {
 } from 'calypso/lib/titan';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import {
-	hasUnusedMailboxWarnings,
-	hasGooglePendingTosAcceptanceWarnings,
-} from 'calypso/lib/emails';
+import { hasUnusedMailboxWarning, hasGoogleAccountTOSWarning } from 'calypso/lib/emails';
 
 export function getNumberOfMailboxesText( domain ) {
 	if ( hasGSuiteWithUs( domain ) ) {
@@ -117,7 +114,7 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 
 	if ( hasGSuiteWithUs( domain ) ) {
 		// Check for pending TOS acceptance warnings at the account level
-		if ( hasGooglePendingTosAcceptanceWarnings( emailAccount ) ) {
+		if ( hasGoogleAccountTOSWarning( emailAccount ) ) {
 			return defaultWarningStatus;
 		}
 
@@ -140,7 +137,7 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 			}
 		}
 		// Check for unused mailboxes
-		if ( emailAccount && hasUnusedMailboxWarnings( emailAccount ) ) {
+		if ( emailAccount && hasUnusedMailboxWarning( emailAccount ) ) {
 			return defaultWarningStatus;
 		}
 
