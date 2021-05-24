@@ -55,3 +55,7 @@ A function that returns an empty but valid `ResponseCart` object. Useful for tes
 ## getEmptyResponseCartProduct
 
 A function that returns an empty but valid `ResponseCartProduct` object. Useful for tests where we need to mock the shopping cart response.
+
+## convertResponseCartToRequestCart
+
+A function that converts a `ResponseCart` to a `RequestCart`. Usually this should be handled by the shopping cart manager but if you need to manupulate a cart object manually this may be helpful.
