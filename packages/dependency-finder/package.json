@@ -1,0 +1,32 @@
+{
+	"name": "@automattic/dependency-finder",
+	"version": "0.1.0",
+	"description": "Generate the list of dependencies of a set of files, recursively",
+	"main": "index.ts",
+	"author": "Automattic Inc.",
+	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/dependency-finder"
+	},
+	"keywords": [
+		"dependencies",
+		"node_modules"
+	],
+	"license": "GPL-2.0-or-later",
+	"dependencies": {
+		"dependency-tree": "^8.1.0",
+		"globby": "^11.0.3",
+		"jest-config": "^26.6.3",
+		"read-pkg": "^6.0.0",
+		"read-pkg-up": "^8.0.0",
+		"tslib": "^2.2.0"
+	},
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	}
+}
