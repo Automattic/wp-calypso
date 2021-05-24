@@ -16,6 +16,7 @@ import user from 'calypso/lib/user';
 export default function naiveClientSideRollout( percentage: number ): boolean {
 	const maybeUserId = user()?.get()?.ID;
 
+	// zero-indexed buckets: 0-99
 	let bucket;
 	if ( maybeUserId ) {
 		bucket = Number( maybeUserId ) % 100;
@@ -23,5 +24,5 @@ export default function naiveClientSideRollout( percentage: number ): boolean {
 		bucket = Math.random() * 100;
 	}
 
-	return bucket + 1 <= percentage;
+	return bucket < percentage;
 }
