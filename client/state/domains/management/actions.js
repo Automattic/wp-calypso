@@ -126,10 +126,9 @@ export function requestWhois( domain ) {
  * @param   {string}   domain		    domain to query
  * @param   {object}   whoisData	    whois details object
  * @param	{boolean}  transferLock     set 60-day transfer lock after update
- * @param	{boolean}  updateWpcomEmail Also update the WordPres.com email
  * @returns {Function}				    Action thunk
  */
-export function saveWhois( domain, whoisData, transferLock, updateWpcomEmail ) {
+export function saveWhois( domain, whoisData, transferLock ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_WHOIS_SAVE,
@@ -138,7 +137,7 @@ export function saveWhois( domain, whoisData, transferLock, updateWpcomEmail ) {
 
 		return wpcom
 			.undocumented()
-			.updateWhois( domain, whoisData, transferLock, updateWpcomEmail )
+			.updateWhois( domain, whoisData, transferLock )
 			.then( ( data ) => {
 				dispatch( updateWhois( domain, whoisData ) );
 				dispatch( {
