@@ -290,16 +290,16 @@
 		display: none;
 
 		@include break-xlarge {
-			align-self: center;
 			display: unset;
 			margin-left: 10px;
+			margin-top: 3px;
 		}
 	}
 
-	.email-plan-mailboxes-list__mailbox-list-item-warning {
+	.email-mailbox-warnings__warning {
 		border-top: 1px solid var( --color-neutral-5 );
 		color: var( --color-error );
-		font-size: $font-body-extra-small;
+		font-size: $font-body-small;
 		line-height: 24px;
 		margin-top: 18px;
 		padding-top: 18px;
@@ -321,13 +321,18 @@
 		}
 	}
 
-	.email-plan-mailboxes-list__mailbox-list-item-action {
+	.email-mailbox-warnings__action {
 		margin-top: 12px;
+
 		@include break-xlarge {
 			flex: 0.75;
 			margin-top: 0;
 			margin-left: auto;
 			text-align: right;
+		}
+
+		> .button > .gridicons-external {
+			margin-left: 6px;
 		}
 	}
 }

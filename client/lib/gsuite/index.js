@@ -5,6 +5,7 @@ export { getEligibleGSuiteDomain } from './get-eligible-gsuite-domain';
 export {
 	getGmailUrl,
 	getGoogleAdminUrl,
+	getGoogleAdminWithTosUrl,
 	getGoogleCalendarUrl,
 	getGoogleDocsUrl,
 	getGoogleDriveUrl,

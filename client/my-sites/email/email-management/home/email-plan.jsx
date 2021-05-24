@@ -104,15 +104,13 @@ class EmailPlan extends React.Component {
 			);
 	}
 
-	getAccountType() {
-		return this.state?.emailAccounts[ 0 ]?.account_type ?? null;
+	getAccount() {
+		return this.state?.emailAccounts[ 0 ];
 	}
 
 	getMailboxes() {
-		if ( this.state.emailAccounts[ 0 ] ) {
-			return this.state.emailAccounts[ 0 ].emails;
-		}
-		return [];
+		const account = this.getAccount();
+		return account?.emails ?? [];
 	}
 
 	handleBack = () => {
@@ -286,7 +284,7 @@ class EmailPlan extends React.Component {
 				/>
 
 				<EmailPlanMailboxesList
-					accountType={ this.getAccountType() }
+					account={ this.getAccount() }
 					domain={ domain }
 					mailboxes={ this.getMailboxes() }
 					isLoadingEmails={ isLoadingEmailAccounts }
