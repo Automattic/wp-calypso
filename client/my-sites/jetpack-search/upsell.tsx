@@ -17,7 +17,7 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import JetpackSearchFooter from './footer';
 
 /**
  * Asset dependencies
@@ -47,7 +47,7 @@ export default function JetpackSearchUpsell(): ReactElement {
 				image={ { path: JetpackSearchSVG } }
 				isPrimary
 			>
-				<p>
+				<p className="jetpack-search__text">
 					{ translate(
 						'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
 					) }
@@ -68,7 +68,7 @@ export default function JetpackSearchUpsell(): ReactElement {
 				/>
 			</PromoCard>
 
-			<WhatIsJetpack />
+			<JetpackSearchFooter />
 		</Main>
 	);
 }

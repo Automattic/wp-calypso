@@ -23,15 +23,14 @@ import {
 } from 'calypso/state/ui/selectors';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import JetpackSearchUpsell from './upsell';
 import JetpackSearchPlaceholder from './placeholder';
+import JetpackSearchFooter from './footer';
 import { isJetpackSearch, planHasJetpackSearch } from '@automattic/calypso-products';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 
 /**
  * Asset dependencies
@@ -51,7 +50,6 @@ export default function JetpackSearchMain(): ReactElement {
 		sitePurchases.find( checkForSearchProduct ) || planHasJetpackSearch( site?.plan?.product_slug );
 	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
 	const onSettingsClick = useTrackCallback( undefined, 'calypso_jetpack_search_settings' );
-	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 
 	if ( ! hasLoadedSitePurchases ) {
 		return <JetpackSearchPlaceholder siteId={ siteId } />;
@@ -102,7 +100,7 @@ export default function JetpackSearchMain(): ReactElement {
 				/>
 			</PromoCard>
 
-			{ isWPCOM && <WhatIsJetpack /> }
+			<JetpackSearchFooter />
 		</Main>
 	);
 }
