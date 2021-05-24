@@ -25,6 +25,10 @@ const isWpAdmin = ( url ) => url.href.includes( 'wp-admin' );
 
 const isWpLogin = ( url ) => url.pathname.includes( 'wp-login.php' );
 
+const extensions = [ 'zip', 'pdf', 'jpg', 'jpeg', 'gif', 'png' ];
+
+const isFile = ( url ) => extensions.includes( url.split( /[#?]/ )[ 0 ].split( '.' ).pop().trim() );
+
 module.exports = function ( mainWindow ) {
 	const webContents = mainWindow.webContents;
 
@@ -36,11 +40,12 @@ module.exports = function ( mainWindow ) {
 		event.preventDefault();
 
 		if (
-			isWordPress( parsed ) ||
-			isDevBuild( parsed ) ||
-			isJetpack( parsed ) ||
-			isWpAdmin( parsed ) ||
-			isWpLogin( parsed ) // Disable wp-login/self-hosted for now ?
+			( isWordPress( parsed ) ||
+				isDevBuild( parsed ) ||
+				isJetpack( parsed ) ||
+				isWpAdmin( parsed ) ||
+				isWpLogin( parsed ) ) && // Disable wp-login/self-hosted for now ?
+			! isFile( parsed.href )
 		) {
 			mainWindow.webContents.loadURL( url );
 			return;
@@ -64,11 +69,12 @@ module.exports = function ( mainWindow ) {
 		}
 
 		if (
-			isWordPress( parsed ) ||
-			isDevBuild( parsed ) ||
-			isJetpack( parsed ) ||
-			isWpAdmin( parsed ) ||
-			isWpLogin( parsed ) // Disable wp-login/self-hosted for now ?
+			( isWordPress( parsed ) ||
+				isDevBuild( parsed ) ||
+				isJetpack( parsed ) ||
+				isWpAdmin( parsed ) ||
+				isWpLogin( parsed ) ) && // Disable wp-login/self-hosted for now ?
+			! isFile( parsed.href )
 		) {
 			return;
 		}
