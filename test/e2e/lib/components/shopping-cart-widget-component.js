@@ -48,10 +48,6 @@ export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 		return this.remove( 'domain_reg', domain );
 	}
 
-	async removeDomainMapping( domain ) {
-		return this.remove( 'domain_map', domain );
-	}
-
 	async remove( type, name ) {
 		const cartBadgeLocator = by.css( '.cart__count-badge' );
 
