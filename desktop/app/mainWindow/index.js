@@ -45,12 +45,16 @@ function showAppWindow() {
 		windowConfig.webPreferences.allowRunningInsecureContent = true;
 	}
 
-	mainWindow = new BrowserWindow( { ...windowConfig, ...bounds } );
+	mainWindow = new BrowserWindow( {
+		...windowConfig,
+		...bounds,
+		...{ frame: false, titleBarStyle: 'hiddenInset' },
+	} );
 
 	const view = new BrowserView( windowConfig );
 
 	mainWindow.setBrowserView( view );
-	view.setBounds( { ...bounds, ...{ x: 0, y: 0 } } );
+	view.setBounds( { ...bounds, ...{ x: 0, y: 40 } } );
 	view.setAutoResize( { horizontal: true, vertical: true } );
 
 	SessionManager.init( mainWindow );
