@@ -53,8 +53,10 @@ function showAppWindow() {
 
 	const view = new BrowserView( windowConfig );
 
+	mainWindow.webContents.loadURL( `file://${ getPath( 'index.html' ) }` );
+
 	mainWindow.setBrowserView( view );
-	view.setBounds( { ...bounds, ...{ x: 0, y: 40 } } );
+	view.setBounds( { ...bounds, ...{ x: 0, y: 38 } } );
 	view.setAutoResize( { horizontal: true, vertical: true } );
 
 	SessionManager.init( mainWindow );
