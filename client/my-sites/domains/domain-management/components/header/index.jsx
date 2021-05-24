@@ -21,8 +21,14 @@ import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
 import './style.scss';
 
 const DomainManagementHeader = ( props ) => {
-	const { isManagingAllDomains, onClick, backHref, children } = props;
+	const { selectedDomainName, isManagingAllDomains, onClick, backHref, children } = props;
 	const translate = useTranslate();
+	let formattedHeaderText = selectedDomainName;
+	if ( ! selectedDomainName ) {
+		formattedHeaderText = isManagingAllDomains
+			? translate( 'All Domains' )
+			: translate( 'Site Domains' );
+	}
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -30,9 +36,7 @@ const DomainManagementHeader = ( props ) => {
 			<FormattedHeader
 				brandFont
 				className="stats__section-header"
-				headerText={
-					isManagingAllDomains ? translate( 'All Domains' ) : translate( 'Site Domains' )
-				}
+				headerText={ formattedHeaderText }
 				align="left"
 			/>
 			<HeaderCake className="domain-management-header" onClick={ onClick } backHref={ backHref }>
