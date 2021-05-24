@@ -56,7 +56,7 @@ export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 		}
 	}
 
-	async removeDomainRegistraion( domain ) {
+	async removeDomainRegistration( domain ) {
 		return this.remove( 'domain_reg', domain );
 	}
 
