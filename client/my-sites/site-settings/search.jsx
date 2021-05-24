@@ -110,7 +110,7 @@ class Search extends Component {
 	}
 
 	renderUpgradeNotice() {
-		const { siteIsJetpack, siteSlug, translate } = this.props;
+		const { siteIsJetpack, siteSlug, translate, isOldJetpackSearchIncluded } = this.props;
 
 		const href = siteIsJetpack
 			? `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_SEARCH_MONTHLY }`
@@ -119,7 +119,11 @@ class Search extends Component {
 		return (
 			<Fragment>
 				<UpsellNudge
-					title={ translate( 'Upgrade your Jetpack Search and get the instant search experience' ) }
+					title={
+						isOldJetpackSearchIncluded
+							? translate( 'Upgrade your Jetpack Search and get the instant search experience' )
+							: translate( 'Upgrade to Jetpack Search and get the instant search experience' )
+					}
 					description={ translate(
 						'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
 					) }
@@ -333,9 +337,9 @@ export default connect( ( state, { isRequestingSettings } ) => {
 	const hasSearchProduct =
 		getSitePurchases( state, siteId ).find( checkForSearchProduct ) ||
 		planHasJetpackSearch( site.plan?.product_slug );
-	const isSearchEligible =
-		( site && site.plan && ( hasBusinessPlan( site.plan ) || isVipPlan( site.plan ) ) ) ||
-		!! hasSearchProduct;
+	const isOldJetpackSearchIncluded =
+		site && site.plan && ( hasBusinessPlan( site.plan ) || isVipPlan( site.plan ) );
+	const isSearchEligible = isOldJetpackSearchIncluded || !! hasSearchProduct;
 	const upgradeLink =
 		'/checkout/' +
 		getSelectedSiteSlug( state ) +
@@ -358,5 +362,6 @@ export default connect( ( state, { isRequestingSettings } ) => {
 		upgradeLink,
 		isSearchModuleActive:
 			( isSearchModuleActive && ! deactivating ) || ( ! isSearchModuleActive && activating ),
+		isOldJetpackSearchIncluded,
 	};
 } )( localize( Search ) );
