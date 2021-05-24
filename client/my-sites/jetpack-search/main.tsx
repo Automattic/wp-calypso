@@ -84,7 +84,7 @@ export default function JetpackSearchMain(): ReactElement {
 				image={ { path: JetpackSearchSVG } }
 				isPrimary
 			>
-				<p>
+				<p className="jetpack-search__text">
 					{ isSearchEnabled
 						? translate( 'Your visitors are getting our fastest search experience.' )
 						: translate( 'Enable it to ensure your visitors get our fastest search experience.' ) }
