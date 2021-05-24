@@ -13,37 +13,39 @@ import PropTypes from 'prop-types';
  */
 import wp from 'calypso/lib/wp';
 import {
-	getGoogleAdminUrl,
-	getGoogleMailServiceFamily,
-	getGSuiteProductSlug,
-	getProductType,
-	hasGSuiteWithUs,
-} from 'calypso/lib/gsuite';
-import {
-	getEmailPurchaseByDomain,
-	hasEmailSubscription,
-} from 'calypso/my-sites/email/email-management/home/utils';
-import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
-import HeaderCake from 'calypso/components/header-cake';
-import VerticalNav from 'calypso/components/vertical-nav';
-import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import {
 	emailManagement,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
 	emailManagementNewTitanAccount,
+	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import {
+	getEmailPurchaseByDomain,
+	hasEmailSubscription,
+} from 'calypso/my-sites/email/email-management/home/utils';
+import {
+	getGoogleAdminUrl,
+	getGoogleMailServiceFamily,
+	getGSuiteProductSlug,
+	getProductType,
+	hasGSuiteWithUs,
+} from 'calypso/lib/gsuite';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import HeaderCake from 'calypso/components/header-cake';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
 
 class EmailPlan extends React.Component {
 	static propTypes = {
@@ -133,10 +135,24 @@ class EmailPlan extends React.Component {
 		}
 
 		if ( hasTitanMailWithUs( domain ) ) {
-			const hasSubscriptionId = !! getTitanSubscriptionId( domain );
+			if ( getTitanSubscriptionId( domain ) ) {
+				return {
+					path: emailManagementNewTitanAccount( selectedSite.slug, domain.name, currentRoute ),
+				};
+			}
+
+			const showExternalControlPanelLink = ! isEnabled( 'titan/iframe-control-panel' );
+			const controlPanelUrl = showExternalControlPanelLink
+				? emailManagementTitanControlPanelRedirect( selectedSite.slug, domain.name, currentRoute, {
+						context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
+				  } )
+				: emailManagementManageTitanAccount( selectedSite.slug, domain.name, currentRoute, {
+						context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
+				  } );
+
 			return {
-				external: ! hasSubscriptionId,
-				path: emailManagementNewTitanAccount( selectedSite.slug, domain.name, currentRoute ),
+				external: showExternalControlPanelLink,
+				path: controlPanelUrl,
 			};
 		}
 
