@@ -32,19 +32,25 @@ function showAppWindow() {
 	}
 	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
-	const config = Settings.getSettingGroup( Config.mainWindow, null );
-	const bounds = Settings.getSettingGroup( {}, 'window', [ 'x', 'y', 'width', 'height' ] );
-	config.webPreferences.spellcheck = Settings.getSetting( 'spellcheck-enabled' );
-	config.webPreferences.preload = preloadFile;
+	const windowConfig = Settings.getSettingGroup( Config.mainWindow, null );
+	windowConfig.webPreferences.spellcheck = Settings.getSetting( 'spellcheck-enabled' );
+	windowConfig.webPreferences.preload = preloadFile;
+
+	const bounds = {
+		...{ width: 800, height: 600 },
+		...Settings.getSettingGroup( {}, 'window', [ 'x', 'y', 'width', 'height' ] ),
+	};
 
 	if ( USE_LOCALHOST ) {
-		config.webPreferences.allowRunningInsecureContent = true;
+		windowConfig.webPreferences.allowRunningInsecureContent = true;
 	}
 
-	mainWindow = new BrowserWindow( config );
-	const view = new BrowserView();
+	mainWindow = new BrowserWindow( { ...windowConfig, ...bounds } );
+
+	const view = new BrowserView( windowConfig );
+
 	mainWindow.setBrowserView( view );
-	view.setBounds( bounds );
+	view.setBounds( { ...bounds, ...{ x: 0, y: 0 } } );
 	view.setAutoResize( { horizontal: true, vertical: true } );
 
 	SessionManager.init( mainWindow );
@@ -98,7 +104,7 @@ function showAppWindow() {
 		return Settings.toRenderer();
 	} );
 
-	mainWindow.loadURL( appUrl );
+	view.webContents.loadURL( appUrl );
 
 	mainWindow.on( 'close', function () {
 		const currentURL = mainWindow.webContents.getURL();
