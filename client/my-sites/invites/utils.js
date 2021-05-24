@@ -158,6 +158,12 @@ export function getRedirectAfterAccept( invite ) {
 
 	const readerPath = '/read';
 	const postsListPath = '/posts/' + invite.site.ID;
+	const remoteLoginBackUrl = ( destinationUri ) =>
+		`https://${ invite.site.domain }/remote-login.php/?r_login_redirect=https://wordpress.com${ destinationUri }`;
+	const remoteLoginUrl = ( destinationUri ) =>
+		`https://r-login.wordpress.com/remote-login.php?action=link&back=${ remoteLoginBackUrl(
+			destinationUri
+		) }`;
 
 	if ( invite.site.is_vip ) {
 		switch ( invite.role ) {
@@ -173,9 +179,9 @@ export function getRedirectAfterAccept( invite ) {
 	switch ( invite.role ) {
 		case 'viewer':
 		case 'follower':
-			return readerPath;
+			return remoteLoginUrl( readerPath );
 
 		default:
-			return postsListPath;
+			return remoteLoginUrl( postsListPath );
 	}
 }
