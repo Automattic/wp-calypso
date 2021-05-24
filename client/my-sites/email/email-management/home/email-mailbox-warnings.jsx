@@ -12,7 +12,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import {
 	EMAIL_WARNING_SLUG_GOOGLE_MAILBOX_TOS,
-	EMAIL_WARNING_SLUG_UNVERIFIED_FORWARD,
+	EMAIL_WARNING_SLUG_UNVERIFIED_FORWARDS,
 } from 'calypso/lib/emails/email-provider-constants';
 import {
 	getEmailForwardAddress,
@@ -90,7 +90,7 @@ const getDetailsForWarning = ( { account, dispatch, mailbox, translate, warning 
 	}
 
 	if ( isEmailForwardAccount( account ) ) {
-		if ( warningSlug === EMAIL_WARNING_SLUG_UNVERIFIED_FORWARD ) {
+		if ( warningSlug === EMAIL_WARNING_SLUG_UNVERIFIED_FORWARDS ) {
 			return {
 				actionProps: {
 					buttonText: translate( 'Resend verification email' ),
