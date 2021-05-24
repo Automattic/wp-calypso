@@ -203,8 +203,7 @@ fun jetpackBuildType(screenSize: String): BuildType {
 				name = "JETPACKHOST",
 				value = "WPCOM",
 				label = "Jetpack Host",
-				allowEmpty = false,
-				options = "WPCOM,PRESSABLE,PRESSABLEBLEEDINGEDGE"
+				options = listOf("WPCOM","PRESSABLE","PRESSABLEBLEEDINGEDGE")
 			)
 		}
 
