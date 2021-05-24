@@ -198,9 +198,8 @@ class Search extends Component {
 							}
 							disabled={ ! hasSearchProduct || isRequestingSettings || isSavingSettings }
 							onChange={ handleInstantSearchToggle }
-						>
-							{ translate( 'Enable instant search experience (recommended)' ) }
-						</ToggleControl>
+							label={ translate( 'Enable instant search experience (recommended)' ) }
+						></ToggleControl>
 						{ isLoading || activatingSearchModule || isSavingSettings
 							? this.renderSettingsUpdating()
 							: this.renderInstantSearchExplanation() }
@@ -260,9 +259,8 @@ class Search extends Component {
 					checked={ !! fields.jetpack_search_enabled }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleJetpackSearchToggle }
-				>
-					{ translate( 'Enable Jetpack Search' ) }
-				</ToggleControl>
+					label={ translate( 'Enable Jetpack Search' ) }
+				></ToggleControl>
 				{ /** Business plan could be simple sites too, unless user triggers certain actions  */ }
 				{ this.props.hasSearchProduct && (
 					<div className="site-settings__jetpack-instant-search-toggle">
@@ -270,9 +268,8 @@ class Search extends Component {
 							checked={ !! fields.jetpack_search_enabled && !! fields.instant_search_enabled }
 							disabled={ isRequestingSettings || isSavingSettings || ! hasSearchProduct }
 							onChange={ handleInstantSearchToggle }
-						>
-							{ translate( 'Enable instant search experience (recommended)' ) }
-						</ToggleControl>
+							label={ translate( 'Enable instant search experience (recommended)' ) }
+						></ToggleControl>
 						{ isLoading || activatingSearchModule || isSavingSettings
 							? this.renderSettingsUpdating()
 							: this.renderInstantSearchExplanation() }
