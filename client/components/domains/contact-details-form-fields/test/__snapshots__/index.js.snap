@@ -7,8 +7,10 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
   <div
     className="contact-details-form-fields__row"
   >
+   <div
+	 className="contact-details-form-fields__field email-text-input-with-checkbox"
+   >
     <Input
-      additionalClasses="contact-details-form-fields__field"
       autoComplete="on"
       autoFocus={false}
       disabled={false}
@@ -77,7 +79,21 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
         onBlur={[Function]}
         onChange={[Function]}
         value="osso@buco.com"
-      />
+	  />
+      <FormLabel
+	    className="email-text-input-with-checkbox__checkbox-label"
+	  >
+	    <FormInputCheckbox
+		  checked={false}
+		  disabled={false}
+		  name="update-wpcom-email"
+		  onChange={[Function]}
+        />
+        <span>
+           Apply contact update to My Account email.
+        </span>
+      </FormLabel>
+      </div>
       <FormPhoneMediaInput
         additionalClasses="contact-details-form-fields__field"
         countriesList={
