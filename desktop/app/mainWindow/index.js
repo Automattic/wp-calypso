@@ -25,9 +25,6 @@ let mainWindow = null;
 function showAppWindow() {
 	const preloadFile = getPath( 'preload.js' );
 	let appUrl = Config.loginURL();
-	// TODO:
-	// - Handle migration from prior relative path implementation
-	// - Developer mode with localhost webapp configuration
 
 	const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
 	if ( lastLocation && lastLocation.startsWith( 'http' ) ) {
