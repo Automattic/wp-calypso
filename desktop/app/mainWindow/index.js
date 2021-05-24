@@ -45,6 +45,7 @@ function showAppWindow() {
 	const view = new BrowserView();
 	mainWindow.setBrowserView( view );
 	view.setBounds( bounds );
+	view.setAutorize( { horizontal: true, vertical: true } );
 
 	SessionManager.init( mainWindow );
 
