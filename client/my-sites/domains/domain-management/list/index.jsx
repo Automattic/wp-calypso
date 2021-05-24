@@ -9,6 +9,7 @@ import page from 'page';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { PRODUCT_YOAST_PREMIUM } from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -44,6 +45,7 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { hasSiteProduct } from 'calypso/state/sites/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getDomainManagementPath } from './utils';
 import DomainItem from './domain-item';
@@ -344,7 +346,12 @@ export class List extends React.Component {
 	};
 
 	shouldUpgradeToMakeDomainPrimary( domain ) {
-		const { isDomainOnly, isOnFreePlan, hasNonPrimaryDomainsFlag } = this.props;
+		const {
+			isDomainOnly,
+			isOnFreePlan,
+			hasNonPrimaryDomainsFlag,
+			hasYoastPremiumProduct,
+		} = this.props;
 
 		return (
 			hasNonPrimaryDomainsFlag &&
@@ -353,7 +360,8 @@ export class List extends React.Component {
 			! isDomainOnly &&
 			! domain.isPrimary &&
 			! domain.isWPCOMDomain &&
-			! domain.isWpcomStagingDomain
+			! domain.isWpcomStagingDomain &&
+			! hasYoastPremiumProduct
 		);
 	}
 
@@ -542,6 +550,7 @@ export default connect(
 			hasSingleSite: siteCount === 1,
 			isOnFreePlan,
 			userCanManageOptions,
+			hasYoastPremiumProduct: hasSiteProduct( state, siteId, PRODUCT_YOAST_PREMIUM ),
 		};
 	},
 	( dispatch ) => {
