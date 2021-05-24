@@ -10,7 +10,6 @@ import config from '@automattic/calypso-config';
 
 const requestLayout = ( action ) => {
 	const isDev = config.isEnabled( 'home/layout-dev' ) || action.isDev;
-
 	return http(
 		{
 			method: 'GET',
@@ -19,7 +18,6 @@ const requestLayout = ( action ) => {
 			query: {
 				...( isDev && { dev: true } ),
 				...( isDev && action.forcedView && { view: action.forcedView } ),
-				...( action.shuffle && { shuffle: true } ),
 			},
 		},
 		action
