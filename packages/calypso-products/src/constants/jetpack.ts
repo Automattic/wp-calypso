@@ -23,6 +23,7 @@ export const PRODUCT_JETPACK_CRM = 'jetpack_crm';
 export const PRODUCT_JETPACK_CRM_MONTHLY = 'jetpack_crm_monthly';
 export const PRODUCT_JETPACK_CRM_FREE = 'jetpack_crm_free';
 export const PRODUCT_JETPACK_CRM_FREE_MONTHLY = 'jetpack_crm_free_monthly';
+export const PRODUCT_YOAST_PREMIUM = 'yoast_premium';
 
 // Backup
 export const JETPACK_BACKUP_PRODUCTS_YEARLY = <const>[
