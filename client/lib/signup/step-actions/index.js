@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { defer, difference, get, includes, isEmpty, omitBy, pick, startsWith } from 'lodash';
+import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -90,9 +90,8 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 
 		SignupCart.createCart(
 			siteId,
-			omitBy(
-				pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ),
-				( dep ) => dep === null
+			[ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ].filter(
+				Boolean
 			),
 			( error ) => {
 				callback( error, providedDependencies );
