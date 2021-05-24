@@ -6,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { groupBy, reduce, zip } from 'lodash';
+import { groupBy, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -239,7 +239,9 @@ export class NoteList extends React.Component {
 			new Date( now - DAY_MILLISECONDS * 30 ),
 			-Infinity,
 		];
-		const timeGroups = zip( timeBoundaries.slice( 0, -1 ), timeBoundaries.slice( 1 ) );
+		const timeGroups = timeBoundaries
+			.slice( 0, -1 )
+			.map( ( val, index ) => [ val, timeBoundaries[ index + 1 ] ] );
 
 		const createNoteComponent = ( note ) => {
 			if ( this.state.undoNote && note.id === this.state.undoNote.id ) {
