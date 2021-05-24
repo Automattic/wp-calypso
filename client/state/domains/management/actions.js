@@ -123,10 +123,10 @@ export function requestWhois( domain ) {
  * Sends a network request to the server to save updated WHOIS details
  * at the domain's registrar.
  *
- * @param   {string}   domain		    domain to query
- * @param   {object}   whoisData	    whois details object
- * @param	{boolean}  transferLock     set 60-day transfer lock after update
- * @returns {Function}				    Action thunk
+ * @param   {string}   domain		domain to query
+ * @param   {object}   whoisData	whois details object
+ * @param	  {boolean}  transferLock set 60-day transfer lock after update
+ * @returns {Function}				Action thunk
  */
 export function saveWhois( domain, whoisData, transferLock ) {
 	return ( dispatch ) => {
