@@ -1,22 +1,46 @@
 #!/usr/bin/env node
 
-const { renderSync } = require( 'sass' );
+const sass = require( 'sass' );
 const fs = require( 'fs' );
-const packageImporter = require( 'node-sass-package-importer' );
+const resolve = require( 'enhanced-resolve' );
+const yargs = require( 'yargs' );
 
-if ( ! process.argv[ 2 ] ) {
-	throw new Error( 'No input file provided.' );
-}
+// parse CLI, require --in and --out args
+const args = yargs
+	.usage( 'Usage: $0' )
+	.option( 'in', { describe: 'Input file' } )
+	.option( 'out', { describe: 'Output file' } )
+	.demandOption( [ 'in', 'out' ] ).argv;
 
-if ( ! process.argv[ 3 ] ) {
-	throw new Error( 'No output file provided.' );
-}
-
-const { css } = renderSync( {
-	file: process.argv[ 2 ],
-	outputStyle: 'compressed',
-	includePaths: [ 'client' ],
-	importer: packageImporter(),
+// create a webpack resolver that finds SCSS files. Inspired by `sass-loader` resolver.
+const resolver = resolve.create( {
+	conditionNames: [ 'sass', 'style' ],
+	mainFields: [ 'sass', 'style', 'main' ],
+	mainFiles: [ '_index', 'index' ],
+	extensions: [ '.sass', '.scss', '.css' ],
+	restrictions: [ /\.((sa|sc|c)ss)$/i ],
+	preferRelative: true,
 } );
 
-fs.writeFileSync( process.argv[ 3 ], css );
+// `dart-sass` custom importer
+const importer = ( url, prev, done ) => {
+	// Strip the leading tilde.
+	url = url.replace( /^~/, '' );
+	resolver( prev, url, ( error, result ) => {
+		if ( error ) {
+			// If webpack can't resolve the module, let further importers resolve the original URL.
+			done( { file: url } );
+		} else {
+			// Resolve with the webpack result.
+			done( { file: result } );
+		}
+	} );
+};
+
+sass.render( { file: args.in, importer, outputStyle: 'compressed' }, ( err, output ) => {
+	if ( err ) {
+		console.error( 'error', err );
+		return;
+	}
+	fs.writeFileSync( args.out, output.css );
+} );
