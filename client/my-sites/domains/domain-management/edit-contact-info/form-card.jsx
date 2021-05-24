@@ -465,6 +465,8 @@ class EditContactInfoFormCard extends React.Component {
 			return null;
 		}
 
+		const updateWpcomEmailCheckboxDisabled = this.shouldDisableUpdateWpcomEmailCheckbox();
+
 		return (
 			<Card>
 				{ showContactInfoNote && (
@@ -486,7 +488,7 @@ class EditContactInfoFormCard extends React.Component {
 						labelTexts={ { submitButton: translate( 'Save contact info' ) } }
 						disableSubmitButton={ this.shouldDisableSubmitButton() }
 						isSubmitting={ this.state.formSubmitting }
-						updateWpcomEmailCheckboxDisabled={ this.shouldDisableUpdateWpcomEmailCheckbox() }
+						updateWpcomEmailCheckboxDisabled={ updateWpcomEmailCheckboxDisabled }
 						onUpdateWpcomEmailCheckboxChange={ this.handleUpdateWpcomEmailCheckboxChange }
 					>
 						{ canUseDesignatedAgent && this.renderTransferLockOptOut() }
