@@ -243,7 +243,7 @@ fun jetpackBuildType(screenSize: String): BuildType {
 					export HIGHLIGHT_ELEMENT=true
 					export BROWSERSIZE=$screenSize
 					export BROWSERLOCALE=en
-					expirt JETPACKHOST=%JETPACKHOST%
+					export JETPACKHOST=%JETPACKHOST%
 
 					# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 					# mocha-teamcity-reporter to work.
