@@ -29,3 +29,4 @@ export { hasGSuiteWithUs } from './has-gsuite-with-us';
 export { hasPendingGSuiteUsers } from './has-pending-gsuite-users';
 export { getGoogleMailServiceFamily } from './get-google-mail-service-family';
 export { getProductSlug, getProductType } from './gsuite-product-type';
+export { isPendingGSuiteTOSAcceptance } from './is-pending-gsuite-tos-acceptance';
