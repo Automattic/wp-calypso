@@ -76,27 +76,14 @@ function enqueue_launch_button_script_and_style( $site_launch_options ) {
  * @param array $site_launch_options Site launch options.
  */
 function enqueue_launch_flow_script_and_style( $site_launch_options ) {
-
-	$launch_flow = $site_launch_options['launch_flow'];
-
-	// Determine script name by launch flow.
-	// We are avoiding string concatenation for security reasons.
-	switch ( $launch_flow ) {
-		case 'gutenboarding-launch':
-			$script_name = 'gutenboarding-launch';
-			break;
-		case 'focused-launch':
-			$script_name = 'focused-launch';
-			break;
-		default:
-			// For redirect or invalid flows, skip & exit early.
-			return;
-	}
-
-	// @TODO: remove this once $launch_flow value is 'focused-launch' for AnchorFM sites
 	$anchor_podcast = $site_launch_options['anchor_podcast'];
+
 	if ( ! empty( $anchor_podcast ) ) {
+		// AnchorFM flow runs on focused-launch.
 		$script_name = 'focused-launch';
+	} else {
+		// For redirect or non-AnchorFM sites, skip & exit early.
+		return;
 	}
 
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/' . $script_name . '.asset.php';
