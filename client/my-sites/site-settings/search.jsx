@@ -284,7 +284,7 @@ class Search extends Component {
 	}
 
 	renderSettingsCard() {
-		const { fields, translate, siteIsJetpack } = this.props;
+		const { fields, translate, siteIsJetpack, hasSearchProduct } = this.props;
 
 		return (
 			<Fragment>
@@ -296,7 +296,7 @@ class Search extends Component {
 							: this.renderSearchTogglesForSimpleSites() }
 					</FormFieldset>
 				</CompactCard>
-				{ fields.instant_search_enabled && (
+				{ hasSearchProduct && fields.instant_search_enabled && (
 					<CompactCard
 						href={ this.props.customizerUrl }
 						target={ siteIsJetpack ? 'external' : null }
