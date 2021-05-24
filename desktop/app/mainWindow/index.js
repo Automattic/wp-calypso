@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { app, BrowserWindow, ipcMain: ipc } = require( 'electron' );
+const { app, BrowserWindow, BrowserView, ipcMain: ipc } = require( 'electron' );
 
 /**
  * Internal dependencies
@@ -26,7 +26,6 @@ function showAppWindow() {
 	const preloadFile = getPath( 'preload.js' );
 	let appUrl = Config.loginURL();
 	// TODO:
-	// - Use BrowserView
 	// - Handle migration from prior relative path implementation
 	// - Developer mode with localhost webapp configuration
 
@@ -36,12 +35,8 @@ function showAppWindow() {
 	}
 	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
-	const config = Settings.getSettingGroup( Config.mainWindow, 'window', [
-		'x',
-		'y',
-		'width',
-		'height',
-	] );
+	const config = Settings.getSettingGroup( Config.mainWindow, null );
+	const bounds = Settings.getSettingGroup( {}, 'window', [ 'x', 'y', 'width', 'height' ] );
 	config.webPreferences.spellcheck = Settings.getSetting( 'spellcheck-enabled' );
 	config.webPreferences.preload = preloadFile;
 
@@ -50,6 +45,9 @@ function showAppWindow() {
 	}
 
 	mainWindow = new BrowserWindow( config );
+	const view = new BrowserView();
+	mainWindow.setBrowserView( view );
+	view.setBounds( bounds );
 
 	SessionManager.init( mainWindow );
 
