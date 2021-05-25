@@ -19,11 +19,12 @@ import {
 	transformMailboxForCart,
 } from 'calypso/lib/titan/new-mailbox';
 import { Button, Card } from '@automattic/components';
-import DomainManagementHeader from 'calypso/my-sites/domains/domain-management/components/header';
-import SectionHeader from 'calypso/components/section-header';
+import DocumentHead from 'calypso/components/data/document-head';
+import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	emailManagement,
 	emailManagementManageTitanAccount,
+	emailManagementNewTitanAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
@@ -42,7 +43,9 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -50,12 +53,12 @@ import {
 	TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
 	TITAN_MAIL_MONTHLY_SLUG,
 } from 'calypso/lib/titan/constants';
+import SectionHeader from 'calypso/components/section-header';
 import TitanExistingForwardsNotice from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-existing-forwards-notice';
 import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-mailbox-pricing-notice';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-new-mailbox-list';
 import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-unused-mailbox-notice';
-
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
@@ -247,13 +250,14 @@ class TitanMailAddMailboxes extends React.Component {
 
 	render() {
 		const {
+			currentRoute,
 			domainsWithForwards,
+			isLoadingDomains,
+			isSelectedDomainNameValid,
+			maxTitanMailboxCount,
 			selectedDomain,
 			selectedDomainName,
 			selectedSite,
-			isSelectedDomainNameValid,
-			isLoadingDomains,
-			maxTitanMailboxCount,
 			titanMonthlyProduct,
 		} = this.props;
 
@@ -262,21 +266,24 @@ class TitanMailAddMailboxes extends React.Component {
 			return null;
 		}
 
+		const analyticsPath = emailManagementNewTitanAccount( ':site', ':domain', currentRoute );
+		const pageTitle = getTitanProductName() + ': ' + selectedDomainName;
 		const finishSetupLinkIsExternal = ! isEnabled( 'titan/iframe-control-panel' );
 
 		return (
 			<>
+				<PageViewTracker path={ analyticsPath } title="Email Management > Add Titan Mailboxes" />
+
 				<QueryProductsList />
 
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-				<Main>
-					<DomainManagementHeader
-						onClick={ this.goToEmail }
-						selectedDomainName={ selectedDomainName }
-					>
-						{ getTitanProductName() + ': ' + selectedDomainName }
-					</DomainManagementHeader>
+				<Main wideLayout={ true }>
+					<DocumentHead title={ pageTitle } />
+
+					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+
+					<HeaderCake onClick={ this.goToEmail }>{ pageTitle }</HeaderCake>
 
 					<TitanExistingForwardsNotice domainsWithForwards={ domainsWithForwards } />
 					{ selectedDomain && (

@@ -172,7 +172,7 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.FRONT_PAGE_UPDATED:
 			taskData = {
 				timing: 20,
-				title: translate( 'Update your Home page' ),
+				title: translate( 'Update your homepage' ),
 				description: translate(
 					"We've created the basics, now it's time for you to update the images and text. Make a great first impression. Everything you do can be changed anytime."
 				),
@@ -212,7 +212,7 @@ export const getTask = (
 				title: translate( 'Choose a theme' ),
 				description: translate(
 					'Make your site uniquely yours! ' +
-						'Themes don’t just change the look and feel of your site, they can also add new features such as a unique home page layout, interactive post sliders, and more!'
+						'Themes don’t just change the look and feel of your site, they can also add new features such as a unique homepage layout, interactive post sliders, and more!'
 				),
 				actionText: translate( 'Choose a theme' ),
 				isSkippable: false,

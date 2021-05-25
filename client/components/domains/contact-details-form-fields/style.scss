@@ -94,6 +94,14 @@
 		min-width: 0;
 	}
 
+	.email-text-input-with-checkbox {
+		.email-text-input-with-checkbox__checkbox-label {
+			margin-top: 0.5em;
+			&.is-disabled {
+				color: var( --color-neutral-20 );
+			}
+		}
+	}
 }
 
 .contact-details-form-fields__contact-details {

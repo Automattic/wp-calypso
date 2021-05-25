@@ -3,9 +3,9 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import { Button, CompactCard } from '@automattic/components';
+import { CompactCard } from '@automattic/components';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -13,13 +13,14 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import EmailMailboxWarnings from 'calypso/my-sites/email/email-management/home/email-mailbox-warnings';
 import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
 import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
 	getEmailForwardAddress,
+	hasGoogleAccountTOSWarning,
 	isEmailForward,
-	isEmailForwardVerified,
 	isEmailUserAdmin,
 } from 'calypso/lib/emails';
 import {
@@ -49,8 +50,6 @@ import Gridicon from 'calypso/components/gridicon';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import MaterialIcon from 'calypso/components/material-icon';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { resendVerificationEmail } from 'calypso/state/email-forwarding/actions';
 import SectionHeader from 'calypso/components/section-header';
 import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/calendar.svg';
 import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/contacts.svg';
@@ -102,40 +101,6 @@ const MailboxListItemSecondaryDetails = ( { children, className } ) => {
 	return <div className={ fullClassName }>{ children }</div>;
 };
 
-const MailboxListItemWarning = ( { warningText } ) => {
-	return (
-		<div className="email-plan-mailboxes-list__mailbox-list-item-warning">
-			<Gridicon icon="info-outline" size={ 18 } />
-			<span>{ warningText }</span>
-		</div>
-	);
-};
-
-const MailboxListItemAction = ( { buttonText, onClick } ) => {
-	return (
-		<div className="email-plan-mailboxes-list__mailbox-list-item-action">
-			<Button compact onClick={ onClick }>
-				{ buttonText }
-			</Button>
-		</div>
-	);
-};
-
-const resendEmailForwardVerification = ( mailbox, dispatch ) => {
-	const destination = getEmailForwardAddress( mailbox );
-	dispatch(
-		recordTracksEvent(
-			'calypso_email_management_email_forwarding_resend_verification_email_click',
-			{
-				destination,
-				domain_name: mailbox.domain,
-				mailbox: mailbox.mailbox,
-			}
-		)
-	);
-	dispatch( resendVerificationEmail( mailbox.domain, mailbox.mailbox, destination ) );
-};
-
 const getSecondaryContentForMailbox = ( mailbox ) => {
 	if ( isEmailForward( mailbox ) ) {
 		return (
@@ -146,25 +111,6 @@ const getSecondaryContentForMailbox = ( mailbox ) => {
 		);
 	}
 	return null;
-};
-
-const getActionsForMailbox = ( mailbox, translate, dispatch ) => {
-	if ( isEmailForward( mailbox ) && ! isEmailForwardVerified( mailbox ) ) {
-		return {
-			action: (
-				<MailboxListItemAction
-					buttonText={ translate( 'Resend verification email' ) }
-					onClick={ () => resendEmailForwardVerification( mailbox, dispatch ) }
-				/>
-			),
-			warning: <MailboxListItemWarning warningText={ translate( 'Verification required' ) } />,
-		};
-	}
-
-	return {
-		action: null,
-		warning: null,
-	};
 };
 
 /**
@@ -203,7 +149,11 @@ const getTitanMenuItems = ( email, translate ) => {
 	];
 };
 
-const getGSuiteMenuItems = ( email, mailbox, translate ) => {
+const getGSuiteMenuItems = ( { account, email, mailbox, translate } ) => {
+	if ( hasGoogleAccountTOSWarning( account ) ) {
+		return null;
+	}
+
 	return [
 		{
 			href: getGmailUrl( email ),
@@ -267,13 +217,16 @@ const getEmailForwardMenuItems = ( { currentRoute, domain, selectedSite, transla
 	];
 };
 
-const getMenuItems = ( { currentRoute, domain, email, mailbox, selectedSite }, translate ) => {
+const getMenuItems = (
+	{ account, currentRoute, domain, email, mailbox, selectedSite },
+	translate
+) => {
 	if ( hasTitanMailWithUs( domain ) ) {
 		return getTitanMenuItems( email, translate );
 	}
 
 	if ( hasGSuiteWithUs( domain ) ) {
-		return getGSuiteMenuItems( email, mailbox, translate );
+		return getGSuiteMenuItems( { account, email, mailbox, translate } );
 	}
 
 	if ( hasEmailForwards( domain ) ) {
@@ -283,12 +236,12 @@ const getMenuItems = ( { currentRoute, domain, email, mailbox, selectedSite }, t
 	return null;
 };
 
-const ActionMenu = ( { domain, mailbox, selectedSite } ) => {
+const ActionMenu = ( { account, domain, mailbox, selectedSite } ) => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const translate = useTranslate();
 	const email = `${ mailbox.mailbox }@${ mailbox.domain }`;
 	const menuItems = getMenuItems(
-		{ currentRoute, domain, email, mailbox, selectedSite },
+		{ account, currentRoute, domain, email, mailbox, selectedSite },
 		translate
 	);
 	if ( ! menuItems ) {
@@ -314,15 +267,9 @@ const ActionMenu = ( { domain, mailbox, selectedSite } ) => {
 	);
 };
 
-function EmailPlanMailboxesList( {
-	accountType,
-	domain,
-	isLoadingEmails,
-	mailboxes,
-	selectedSite,
-} ) {
-	const dispatch = useDispatch();
+function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes, selectedSite } ) {
 	const translate = useTranslate();
+	const accountType = account?.account_type;
 
 	if ( isLoadingEmails ) {
 		return (
@@ -346,10 +293,10 @@ function EmailPlanMailboxesList( {
 	}
 
 	const mailboxItems = mailboxes.map( ( mailbox ) => {
-		const { action, warning } = getActionsForMailbox( mailbox, translate, dispatch );
+		const mailboxHasWarnings = Boolean( mailbox?.warnings?.length );
 
 		return (
-			<MailboxListItem key={ mailbox.mailbox } isError={ !! warning }>
+			<MailboxListItem key={ mailbox.mailbox } isError={ mailboxHasWarnings }>
 				<div className="email-plan-mailboxes-list__mailbox-list-item-main">
 					<div>
 						<MaterialIcon icon="email" />
@@ -366,9 +313,13 @@ function EmailPlanMailboxesList( {
 						} ) }
 					</Badge>
 				) }
-				{ warning }
-				{ action }
-				<ActionMenu domain={ domain } mailbox={ mailbox } selectedSite={ selectedSite } />
+				<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
+				<ActionMenu
+					account={ account }
+					domain={ domain }
+					mailbox={ mailbox }
+					selectedSite={ selectedSite }
+				/>
 			</MailboxListItem>
 		);
 	} );
@@ -377,7 +328,7 @@ function EmailPlanMailboxesList( {
 }
 
 EmailPlanMailboxesList.propTypes = {
-	accountType: PropTypes.string,
+	account: PropTypes.object,
 	domain: PropTypes.object,
 	isLoadingEmails: PropTypes.bool,
 	mailboxes: PropTypes.array,

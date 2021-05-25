@@ -25,8 +25,6 @@ import {
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import Item from 'calypso/layout/masterbar/item';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
@@ -35,6 +33,7 @@ import ExternalLink from 'calypso/components/external-link';
 import MarketplaceShoppingCart from 'calypso/my-sites/plugins/marketplace/components/marketplace-shopping-cart';
 import theme from 'calypso/my-sites/plugins/marketplace/theme';
 import { MarketplaceHeaderTitle } from 'calypso/my-sites/plugins/marketplace/components';
+import { setPrimaryDomainCandidate } from 'calypso/state/plugins/marketplace/actions';
 
 /**
  * Style dependencies
@@ -80,10 +79,8 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 		undefined
 	);
 	const [ isExpandedBasketView, setIsExpandedBasketView ] = useState( false );
-	const { addProductsToCart, replaceProductsInCart, removeProductFromCart } = useShoppingCart();
-	const products = useSelector( getProductsList );
+	const { addProductsToCart, removeProductFromCart } = useShoppingCart();
 	const previousPath = useSelector( getPreviousPath );
-	const isFetchingProducts = useSelector( isProductsListFetching );
 	const selectedSite = useSelector( getSelectedSite );
 	const domainObject = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSite?.ID )
@@ -97,17 +94,6 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 		setIsExpandedBasketView( isDesktop() );
 		selectedSite && dispatch( fetchSiteDomains( selectedSite.ID ) );
 	}, [ setIsExpandedBasketView, selectedSite, dispatch ] );
-
-	useEffect( () => {
-		//FIXME: This code segment simulates yoast premium already being added when arriving here. To be removed when plugins page is completed.
-		if ( ! isFetchingProducts && products[ 'yoast_premium' ] ) {
-			const yoastProduct = fillInSingleCartItemAttributes(
-				{ product_slug: 'yoast_premium' },
-				products
-			);
-			replaceProductsInCart( [ yoastProduct ] );
-		}
-	}, [ isFetchingProducts, products, replaceProductsInCart ] );
 
 	const redirectToUseDomainFlow = (): void => {
 		const currentUrl = '/plugins/domain';
@@ -139,6 +125,25 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 			( { product_slug: added_product_slug } ) => added_product_slug === product_slug
 		);
 		setDomainProductUUID( productAdded?.uuid ?? '' );
+		dispatch( setPrimaryDomainCandidate( suggestion?.domain_name ) );
+	};
+
+	const freeWpcomStagingDomain: DomainSuggestions.DomainSuggestion = {
+		domain_name: `${ getSiteNameFromURL( selectedSite?.slug ) }.wpcomstaging.com`,
+		cost: 'Free',
+		match_reasons: [ 'Domain name after transfer' ],
+		unavailable: false,
+		currency_code: 'USD',
+		raw_price: 0,
+		is_free: true,
+	};
+
+	const onExistingSubdomainSelect = async () => {
+		setDomain( freeWpcomStagingDomain );
+		if ( selectedDomainProductUUID ) {
+			await removeProductFromCart( selectedDomainProductUUID );
+			setDomainProductUUID( '' );
+		}
 	};
 
 	return (
@@ -165,11 +170,13 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 			>
 				<div className="marketplace-domain-upsell__domain-picker-container">
 					<DomainPicker
+						existingSubdomain={ freeWpcomStagingDomain }
 						initialDomainSearch={ siteName }
 						header={ <MarketplaceDomainUpsellHeader /> }
 						analyticsUiAlgo={ ANALYTICS_UI_LOCATION_MARKETPLACE_DOMAIN_SELECTION }
 						analyticsFlowId={ MARKETPLACE_FLOW_ID }
 						onDomainSelect={ onDomainSelect }
+						onExistingSubdomainSelect={ onExistingSubdomainSelect }
 						currentDomain={ selectedDomain }
 						showRecommendationLabel={ false }
 						onUseYourDomainClick={ redirectToUseDomainFlow }

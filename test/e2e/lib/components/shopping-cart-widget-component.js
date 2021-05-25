@@ -16,10 +16,22 @@ export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 	}
 
 	async open() {
-		return await driverHelper.clickWhenClickable(
+		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.popover-cart .header-button' ),
 			this.explicitWaitMS
+		);
+		// Ensure it is open and interactive before returning
+		return await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			By.css( '.popover-cart__popover .cart-checkout-button' )
+		);
+	}
+
+	async expand() {
+		return await driverHelper.clickIfPresent(
+			this.driver,
+			By.css( '.popover-cart__popover .cart-items__expander' )
 		);
 	}
 
@@ -44,7 +56,7 @@ export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 		}
 	}
 
-	async removeDomainRegistraion( domain ) {
+	async removeDomainRegistration( domain ) {
 		return this.remove( 'domain_reg', domain );
 	}
 
@@ -55,19 +67,18 @@ export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 	async remove( type, name ) {
 		const cartBadgeLocator = By.css( '.cart__count-badge' );
 
-		const present = await driverHelper.isElementLocated( this.driver, cartBadgeLocator );
-		if ( present ) {
-			await this.open();
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.xpath(
-					// Find an element X with class=.cart-item
-					//    that contains an element with data-e2e-product-slug=`type`
-					//    and a sibling with class="product-domain" and text=`name`
-					// and then select an element inside X that matches class=cart__remove-item
-					`//*[@class="cart-item"][.//*[@data-e2e-product-slug="${ type }"]/following-sibling::*[@class="product-domain"][text()="${ name }"]]//*[@class="cart__remove-item"]`
-				)
-			);
-		}
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, cartBadgeLocator );
+		await this.open();
+		await this.expand();
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.xpath(
+				// Find an element X with class=.cart-item
+				//    that contains an element with data-e2e-product-slug=`type`
+				//    and a sibling with class="product-domain" and text=`name`
+				// and then select an element inside X that matches class=cart__remove-item
+				`//*[@class="cart-item"][.//*[@data-e2e-product-slug="${ type }"]/following-sibling::*[@class="product-domain"][text()="${ name }"]]//*[@class="cart__remove-item"]`
+			)
+		);
 	}
 }
