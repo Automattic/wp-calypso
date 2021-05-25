@@ -81,10 +81,6 @@ export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 		return this.remove( 'domain_reg', domain );
 	}
 
-	async removeDomainMapping( domain ) {
-		return this.remove( 'domain_map', domain );
-	}
-
 	async remove( type, name ) {
 		const itemLocator = By.xpath(
 			// Find an element X with class=.cart-item that contains an element with
