@@ -39,7 +39,7 @@ export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 			this.cartCheckoutButtonLocator
 		);
 
-		this.expand();
+		await this.expand();
 	}
 
 	async expand() {
