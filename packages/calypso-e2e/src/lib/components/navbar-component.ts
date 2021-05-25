@@ -10,6 +10,8 @@ import { Page } from 'playwright';
 
 /**
  * Component representing the navbar/masterbar at top of WPCOM.
+ *
+ * @augments {BaseContainer}
  */
 export class NavbarComponent extends BaseContainer {
 	// Selectors

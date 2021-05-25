@@ -10,6 +10,8 @@ import { Frame, Page, ElementHandle } from 'playwright';
 
 /**
  * Component representing the like component on a post/page.
+ *
+ * @augments {BaseContainer}
  */
 export class LikesComponent extends BaseContainer {
 	frame!: Frame;
