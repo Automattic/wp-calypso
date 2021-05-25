@@ -43,8 +43,8 @@ const receiveChannels = [
 
 ( async () => {
 	const config = await ipcRenderer.invoke( 'get-config' );
-	const styles = { 
-		titleBarPaddingLeft: process.platform !== 'darwin' ? '0px' : '77px' 
+	const styles = {
+		titleBarPaddingLeft: process.platform !== 'darwin' ? '0px' : '77px',
 	};
 	contextBridge.exposeInMainWorld( 'electron', {
 		send: ( channel, ...args ) => {
