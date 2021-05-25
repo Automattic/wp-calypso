@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -37,6 +38,7 @@ const Icon = ( { gridicon, materialIcon } ) => {
 };
 
 const VerticalNavItemEnhanced = ( {
+	className,
 	description,
 	external,
 	gridicon,
@@ -45,10 +47,12 @@ const VerticalNavItemEnhanced = ( {
 	onClick,
 	text,
 } ) => {
+	const classes = classnames( 'vertical-nav-item-enhanced', className );
+
 	return (
 		<VerticalNavItem
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			className="vertical-nav-item-enhanced"
+			className={ classes }
 			external={ external }
 			onClick={ onClick }
 			path={ path }
@@ -67,6 +71,7 @@ const VerticalNavItemEnhanced = ( {
 };
 
 VerticalNavItemEnhanced.propTypes = {
+	className: PropTypes.string,
 	description: PropTypes.string.isRequired,
 	external: PropTypes.bool,
 	gridicon: PropTypes.string,

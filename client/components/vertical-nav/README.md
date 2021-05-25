@@ -40,6 +40,7 @@ The following components can be used to display rows of links.
 `VerticalNavItemEnhanced` can also display a description as well as an icon. It no longer relies on `children` but
 instead on the following props:
 
+- **className** - String _optional_ - additional class name to tag this component with.
 - **description** - String _required_ - some longer copy displayed below the text.
 - **external** - Boolean _optional_ - determines whether or not the link is opened in a new window.
 - **gridicon** - String _optional_ - the identifier of the [Gridicon icon](../../../docs/icons.md) to show in front of the text and description (if `materialIcon` wasn't specified).
