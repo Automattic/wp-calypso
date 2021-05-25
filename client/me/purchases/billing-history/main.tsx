@@ -2,13 +2,13 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
+import { CompactCard, Card } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import { billingHistoryReceipt } from 'calypso/me/purchases/paths';
-import { Card } from '@automattic/components';
+import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import Main from 'calypso/components/main';
@@ -39,6 +39,8 @@ export function BillingHistoryContent( {
 }
 
 function BillingHistory(): JSX.Element {
+	const translate = useTranslate();
+
 	return (
 		<Main wideLayout className="billing-history">
 			<DocumentHead title={ titles.billingHistory } />
@@ -48,6 +50,8 @@ function BillingHistory(): JSX.Element {
 			<QueryBillingTransactions />
 			<PurchasesNavigation section="billingHistory" />
 			<BillingHistoryContent siteId={ null } getReceiptUrlFor={ billingHistoryReceipt } />
+
+			<CompactCard href={ vatDetailsPath }>{ translate( 'Edit VAT details' ) }</CompactCard>
 		</Main>
 	);
 }
