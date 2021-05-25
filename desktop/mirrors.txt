@@ -1,2 +1,2 @@
-Automattic/WordPress-Desktop
+Automattic/wp-desktop
 
