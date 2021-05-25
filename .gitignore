@@ -92,19 +92,19 @@ cached-requests.json
 /desktop/e2e/screenshots
 /desktop/e2e/result.xml
 
-/desktop/Automattic/WordPress-Desktop/dist
-/desktop/Automattic/WordPress-Desktop/build
-/desktop/Automattic/WordPress-Desktop/client
-/desktop/Automattic/WordPress-Desktop/config
-/desktop/Automattic/WordPress-Desktop/public
-/desktop/Automattic/WordPress-Desktop/release*
-/desktop/Automattic/WordPress-Desktop/resource/certificates/mac.p12
-/desktop/Automattic/WordPress-Desktop/resource/certificates/win.p12
-/client/dAutomattic/WordPress-Desktop/esktop/config.json
-/desktop/Automattic/WordPress-Desktop/id_rsa
-/desktop/Automattic/WordPress-Desktop/e2e/logs
-/desktop/Automattic/WordPress-Desktop/e2e/screenshots
-/desktop/Automattic/WordPress-Desktop/e2e/result.xml
+/desktop/Automattic/wp-desktop/dist
+/desktop/Automattic/wp-desktop/build
+/desktop/Automattic/wp-desktop/client
+/desktop/Automattic/wp-desktop/config
+/desktop/Automattic/wp-desktop/public
+/desktop/Automattic/wp-desktop/release*
+/desktop/Automattic/wp-desktop/resource/certificates/mac.p12
+/desktop/Automattic/wp-desktop/resource/certificates/win.p12
+/desktop/Automattic/wp-desktop/id_rsa
+/desktop/Automattic/wp-desktop/e2e/logs
+/desktop/Automattic/wp-desktop/e2e/screenshots
+/desktop/Automattic/wp-desktop/e2e/result.xml
+/client/desktop/config.json
 
 # Typescript
 *.tsbuildinfo
