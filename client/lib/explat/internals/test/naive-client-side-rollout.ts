@@ -24,7 +24,7 @@ const numUserIds = 10000;
 const userIds = range( 1, numUserIds + 1 );
 const naiveClientSideRolloutWithMockedUserId = ( percent, userId ) => {
 	setUserId( userId );
-	return naiveClientSideRollout( percent );
+	return naiveClientSideRollout( 'feature-id', percent );
 };
 
 const numRandomNums = 1000;
@@ -34,7 +34,7 @@ afterEach( () => {
 } );
 const naiveClientSideRolloutWithMockedRandom = ( percent, randomNumber ) => {
 	jest.spyOn( global.Math, 'random' ).mockReturnValueOnce( randomNumber );
-	return naiveClientSideRollout( percent );
+	return naiveClientSideRollout( 'feature-id', percent );
 };
 
 it( 'should match percentages for userIds', () => {

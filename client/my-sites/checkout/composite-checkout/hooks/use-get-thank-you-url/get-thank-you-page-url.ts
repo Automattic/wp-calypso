@@ -398,7 +398,7 @@ function getRedirectUrlForConciergeNudge( {
 		// being offered and sold, to be inline with HE availability.
 		// Change this percentage to change the amount of offers given out:
 		const percentConciergeOffers = 75;
-		if ( naiveClientSideRollout( percentConciergeOffers ) ) {
+		if ( naiveClientSideRollout( 'conciergeUpsellDial', percentConciergeOffers ) ) {
 			return getQuickstartUrl( { pendingOrReceiptId, siteSlug, orderId } );
 		}
 	}
