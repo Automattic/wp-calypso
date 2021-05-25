@@ -24,6 +24,9 @@ import {
 	isKeyringConnectionsFetching,
 	getKeyringConnections,
 } from 'calypso/state/sharing/keyring/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import { selectMediaItems } from 'calypso/state/media/actions';
 
@@ -127,17 +130,17 @@ class MediaLibrary extends Component {
 	};
 
 	filterRequiresUpgrade() {
-		const { filter, site, source } = this.props;
+		const { filter, site, source, isJetpack, isAtomic } = this.props;
 		if ( source ) {
 			return false;
 		}
 
 		switch ( filter ) {
 			case 'audio':
-				return ! ( ( site && site.options.upgraded_filetypes_enabled ) || site.jetpack );
+				return ! ( ( site && site.options.upgraded_filetypes_enabled ) || isJetpack );
 
 			case 'videos':
-				return ! ( ( site && site.options.videopress_enabled ) || site.jetpack );
+				return ! ( ( site && site.options.videopress_enabled ) || ( isJetpack && ! isAtomic ) );
 		}
 
 		return false;
@@ -214,6 +217,8 @@ export default connect(
 		mediaValidationErrors: getMediaErrors( state, site?.ID ),
 		needsKeyring: needsKeyring( state, source ),
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
+		isJetpack: isJetpackSite( state, site?.ID ),
+		isAtomic: isAtomicSite( state, site?.ID ),
 	} ),
 	{
 		requestKeyringConnections,
