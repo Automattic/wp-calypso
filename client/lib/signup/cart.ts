@@ -32,13 +32,12 @@ export default {
 		newCartItems: RequestCartProduct[],
 		callback: ErrorCallback
 	): void {
-		let newCart = getEmptyResponseCart();
-		newCart = {
-			...newCart,
+		const newCart = {
+			...getEmptyResponseCart(),
 			cart_key: cartKey,
 		};
 
-		const updatedCart: RequestCart = addProductsToCart( newCart, newCartItems );
+		const updatedCart = addProductsToCart( newCart, newCartItems );
 
 		wpcom.undocumented().setCart( cartKey, updatedCart, function ( postError: unknown ) {
 			callback( postError );
