@@ -90,6 +90,8 @@ const DisplayPrice = ( {
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		'calypso_jetpack_yearly_total_discount'
 	);
+	const withTreatmentVariation =
+		experimentAssignment?.variationName === 'treatment' && billingTerm === TERM_ANNUALLY;
 
 	if ( isDeprecated ) {
 		return (
@@ -156,20 +158,19 @@ const DisplayPrice = ( {
 	const couponDiscountedPrice = parseFloat(
 		( ( discountedPrice ?? originalPrice ) * FRESHPACK_PERCENTAGE ).toFixed( 2 )
 	);
-	const discountElt =
-		experimentAssignment?.variationName === 'treatment' && billingTerm === TERM_ANNUALLY
-			? translate( '* Save %(percent)d%% for the first year', {
-					args: {
-						percent: ( ( originalPrice - couponDiscountedPrice ) / originalPrice ) * 100,
-					},
-					comment: 'Asterisk clause describing the displayed price adjustment',
-			  } )
-			: translate( '* You Save %(percent)d%%', {
-					args: {
-						percent: INTRO_PRICING_DISCOUNT_PERCENTAGE,
-					},
-					comment: 'Asterisk clause describing the displayed price adjustment',
-			  } );
+	const discountElt = withTreatmentVariation
+		? translate( '* Save %(percent)d%% for the first year', {
+				args: {
+					percent: ( ( originalPrice - couponDiscountedPrice ) / originalPrice ) * 100,
+				},
+				comment: 'Asterisk clause describing the displayed price adjustment',
+		  } )
+		: translate( '* You Save %(percent)d%%', {
+				args: {
+					percent: INTRO_PRICING_DISCOUNT_PERCENTAGE,
+				},
+				comment: 'Asterisk clause describing the displayed price adjustment',
+		  } );
 
 	return (
 		<div className="jetpack-product-card__price">
@@ -179,7 +180,7 @@ const DisplayPrice = ( {
 					<PlanPrice
 						original
 						className="jetpack-product-card__original-price"
-						rawPrice={ couponOriginalPrice as number }
+						rawPrice={ ( withTreatmentVariation ? originalPrice : couponOriginalPrice ) as number }
 						currencyCode={ currencyCode }
 					/>
 					<PlanPrice
