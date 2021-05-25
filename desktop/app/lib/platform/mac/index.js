@@ -10,17 +10,17 @@ const appQuit = require( '../../../lib/app-quit' );
 const menuSetter = require( '../../../lib/menu-setter' );
 const log = require( '../../../lib/logger' )( 'platform:mac' );
 
-function MacPlatform( mainWindow ) {
-	this.window = mainWindow;
-	this.dockMenu = Menu.buildFromTemplate( require( './dock-menu' )( app, mainWindow ) );
+function MacPlatform( appWindow ) {
+	this.window = appWindow.window;
+	this.dockMenu = Menu.buildFromTemplate( require( './dock-menu' )( app, appWindow ) );
 
 	app.dock.setMenu( this.dockMenu );
 
 	app.on( 'activate', function () {
 		log.info( 'Window activated' );
 
-		mainWindow.show();
-		mainWindow.focus();
+		this.window.show();
+		this.window.focus();
 	} );
 
 	app.on( 'window-all-closed', function () {
@@ -34,12 +34,12 @@ function MacPlatform( mainWindow ) {
 		appQuit.allowQuit();
 	} );
 
-	mainWindow.on( 'close', function ( ev ) {
+	this.window.on( 'close', function ( ev ) {
 		if ( appQuit.shouldQuitToBackground() ) {
 			log.info( `User clicked 'close': hiding main window...` );
 			ev.preventDefault();
-			mainWindow.hide();
-			mainWindow.webContents.send( 'notifications-panel-show', false );
+			this.window.hide();
+			appWindow.view.webContents.send( 'notifications-panel-show', false );
 		}
 	} );
 }

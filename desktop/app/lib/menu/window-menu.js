@@ -4,8 +4,8 @@
 const calypsoMenu = require( './calypso-menu' );
 const platform = require( '../../lib/platform' );
 
-module.exports = function ( mainWindow ) {
-	const menu = calypsoMenu( mainWindow ).concat(
+module.exports = function ( appWindow ) {
+	const menu = calypsoMenu( appWindow ).concat(
 		{
 			type: 'separator',
 		},

@@ -51,25 +51,25 @@ function showAppWindow() {
 		...{ frame: false, titleBarStyle: 'hiddenInset' },
 	} );
 
-	const view = new BrowserView( windowConfig );
+	const mainView = new BrowserView( windowConfig );
 
 	mainWindow.webContents.loadURL( `file://${ getPath( 'index.html' ) }` );
 
-	mainWindow.setBrowserView( view );
-	view.setBounds( { ...bounds, ...{ x: 0, y: 38 } } );
-	view.setAutoResize( { horizontal: true, vertical: true } );
+	mainWindow.setBrowserView( mainView );
+	mainView.setBounds( { ...bounds, ...{ x: 0, y: 38 } } );
+	mainView.setAutoResize( { horizontal: true, vertical: true } );
 
 	SessionManager.init( mainWindow );
 
-	mainWindow.webContents.on( 'did-finish-load', function () {
-		mainWindow.webContents.send( 'app-config', System.getDetails() );
+	mainView.webContents.on( 'did-finish-load', function () {
+		mainView.webContents.send( 'app-config', System.getDetails() );
 
 		ipc.on( 'mce-contextmenu', function ( ev ) {
-			mainWindow.webContents.send( 'mce-contextmenu', ev );
+			mainView.webContents.send( 'mce-contextmenu', ev );
 		} );
 	} );
 
-	mainWindow.webContents.session.webRequest.onBeforeRequest( function ( details, callback ) {
+	mainView.webContents.session.webRequest.onBeforeRequest( function ( details, callback ) {
 		if (
 			! USE_LOCALHOST &&
 			details.resourceType === 'script' &&
@@ -84,7 +84,7 @@ function showAppWindow() {
 		}
 	} );
 
-	mainWindow.webContents.session.webRequest.onHeadersReceived( function ( details, callback ) {
+	mainView.webContents.session.webRequest.onHeadersReceived( function ( details, callback ) {
 		// always allow previews to be loaded in iframes
 		if ( details.resourceType === 'subFrame' ) {
 			const headers = Object.assign( {}, details.responseHeaders );
@@ -110,7 +110,7 @@ function showAppWindow() {
 		return Settings.toRenderer();
 	} );
 
-	view.webContents.loadURL( appUrl );
+	mainView.webContents.loadURL( appUrl );
 
 	mainWindow.on( 'close', function () {
 		const currentURL = mainWindow.webContents.getURL();
@@ -123,15 +123,16 @@ function showAppWindow() {
 		mainWindow = null;
 	} );
 
-	require( '../window-handlers/failed-to-load' )( mainWindow );
-	require( '../window-handlers/login-status' )( mainWindow );
-	require( '../window-handlers/notifications' )( mainWindow );
-	require( '../window-handlers/external-links' )( mainWindow );
-	require( '../window-handlers/window-saver' )( mainWindow );
-	require( '../window-handlers/debug-tools' )( mainWindow );
-	require( '../window-handlers/spellcheck' )( mainWindow );
+	const appWindow = { view: mainView, window: mainWindow };
+	require( '../window-handlers/failed-to-load' )( appWindow );
+	require( '../window-handlers/login-status' )( appWindow );
+	require( '../window-handlers/notifications' )( appWindow );
+	require( '../window-handlers/external-links' )( appWindow );
+	require( '../window-handlers/window-saver' )( appWindow );
+	require( '../window-handlers/debug-tools' )( appWindow );
+	require( '../window-handlers/spellcheck' )( appWindow );
 
-	platform.setMainWindow( mainWindow );
+	platform.setMainWindow( appWindow );
 
 	return mainWindow;
 }

@@ -8,11 +8,11 @@ const windowMenu = require( './window-menu' );
 const helpMenu = require( './help-menu' );
 const platform = require( '../../lib/platform' );
 
-module.exports = function ( app, mainWindow ) {
+module.exports = function ( app, appWindow ) {
 	const menu = [
 		{
 			label: platform.isOSX() ? 'WordPress.com' : 'File',
-			submenu: appMenu( app, mainWindow ),
+			submenu: appMenu( app, appWindow ),
 		},
 		{
 			label: 'Edit',
@@ -25,12 +25,12 @@ module.exports = function ( app, mainWindow ) {
 		{
 			label: 'Window',
 			role: 'window',
-			submenu: windowMenu( mainWindow ),
+			submenu: windowMenu( appWindow ),
 		},
 		{
 			label: 'Help',
 			role: 'help',
-			submenu: helpMenu( mainWindow ),
+			submenu: helpMenu( appWindow ),
 		},
 	];
 
