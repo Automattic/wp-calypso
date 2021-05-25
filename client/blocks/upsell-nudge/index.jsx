@@ -29,6 +29,7 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 
 /**
  * Style dependencies
@@ -53,6 +54,7 @@ export const UpsellNudge = ( {
 	href,
 	isJetpackDevDocs,
 	jetpack,
+	isAtomic,
 	isVip,
 	siteIsWPForTeams,
 	list,
@@ -128,7 +130,7 @@ export const UpsellNudge = ( {
 			horizontal={ horizontal }
 			href={ href }
 			icon="star"
-			jetpack={ jetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
+			jetpack={ ( jetpack && ! isAtomic ) || isJetpackDevDocs } //Force show Jetpack example in Devdocs
 			list={ list }
 			onClick={ onClick }
 			onDismissClick={ onDismissClick }
@@ -160,6 +162,7 @@ export default connect( ( state, ownProps ) => {
 		planHasFeature: hasFeature( state, siteId, ownProps.feature ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
 		jetpack: isJetpackSite( state, siteId ),
+		isAtomic: isSiteWpcomAtomic( state, siteId ),
 		isVip: isVipSite( state, siteId ),
 		siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),

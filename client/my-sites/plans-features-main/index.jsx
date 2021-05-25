@@ -67,6 +67,7 @@ import { getTld } from 'calypso/lib/domains';
 import { isDiscountActive } from 'calypso/state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
 import PlanTypeSelector from './plan-type-selector';
+import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 
 /**
  * Style dependencies
@@ -535,11 +536,16 @@ export default connect(
 		const eligibleForWpcomMonthlyPlans =
 			isWpComFreePlan( sitePlanSlug ) || isWpComMonthlyPlan( sitePlanSlug );
 
-		const customerType = chooseDefaultCustomerType( {
+		let customerType = chooseDefaultCustomerType( {
 			currentCustomerType: props.customerType,
 			selectedPlan: props.selectedPlan,
 			currentPlan,
 		} );
+
+		// Make sure the plans for the default customer type can be purchased.
+		if ( customerType === 'personal' && ! canUpgradeToPlan( state, siteId, PLAN_PERSONAL ) ) {
+			customerType = 'business';
+		}
 
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and

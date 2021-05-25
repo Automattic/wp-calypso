@@ -750,7 +750,7 @@ export class PlanFeatures extends Component {
 		const { planProperties, selectedFeature, withScroll } = this.props;
 
 		return map( planProperties, ( properties ) => {
-			const { features, planName } = properties;
+			const { availableForPurchase, features, planName } = properties;
 
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
@@ -760,7 +760,10 @@ export class PlanFeatures extends Component {
 				'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
 				'is-last-feature': rowIndex + 1 === featureKeys.length,
 				'is-highlighted':
-					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
+					selectedFeature &&
+					currentFeature &&
+					selectedFeature === currentFeature.getSlug() &&
+					availableForPurchase,
 			} );
 
 			return currentFeature ? (
