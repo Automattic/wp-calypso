@@ -1,6 +1,6 @@
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/mixins';
-@import '~@automattic/typography/styles/fonts';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@automattic/typography/styles/fonts';
 
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
 	--color-accent: var( --studio-jetpack-green-40 );

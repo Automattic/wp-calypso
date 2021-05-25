@@ -1,6 +1,6 @@
 @import 'woocommerce/components/text-control/style.scss';
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .signup-form .signup-form__input.form-text-input {
 	margin-bottom: 20px;

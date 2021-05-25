@@ -1,4 +1,4 @@
-@import '~@wordpress/base-styles/_mixins.scss';
+@import '@wordpress/base-styles/_mixins.scss';
 
 .partner-portal-text-placeholder {
 	@include placeholder( --color-neutral-10 );
