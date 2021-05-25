@@ -21,8 +21,13 @@ import titles from './titles';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { managePurchase as managePurchaseUrl, purchasesRoot } from 'calypso/me/purchases/paths';
+import {
+	managePurchase as managePurchaseUrl,
+	purchasesRoot,
+	vatDetails as vatDetailsPath,
+} from 'calypso/me/purchases/paths';
 import FormattedHeader from 'calypso/components/formatted-header';
+import VatInfoPage from './vat-info';
 
 const PurchasesWrapper = ( { title = null, children } ) => {
 	return (
@@ -112,6 +117,25 @@ export function list( context, next ) {
 	} );
 
 	context.primary = <ListWrapper />;
+	next();
+}
+
+export function vatDetails( context, next ) {
+	const VatInfoWrapper = localize( () => {
+		const classes = 'manage-purchase';
+
+		return (
+			<PurchasesWrapper title={ titles.managePurchase }>
+				<Main wideLayout className={ classes }>
+					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<PageViewTracker path={ vatDetailsPath } title="Purchases > VAT Information" />
+					<VatInfoPage siteSlug={ context.params.site } />
+				</Main>
+			</PurchasesWrapper>
+		);
+	} );
+
+	context.primary = <VatInfoWrapper />;
 	next();
 }
 
