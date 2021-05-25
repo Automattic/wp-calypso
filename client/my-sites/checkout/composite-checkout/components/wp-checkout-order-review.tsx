@@ -94,18 +94,25 @@ export default function WPCheckoutOrderReview( {
 	const { responseCart, removeCoupon, couponStatus } = useShoppingCart();
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 
-	const firstDomainItem = responseCart.products.find(
-		( product ) =>
-			isDomainTransfer( product ) || isDomainRegistration( product ) || isDomainMapping( product )
-	);
-	const domainUrl = firstDomainItem ? firstDomainItem.meta : siteUrl;
+	const selectedSiteData = useSelector( getSelectedSite );
+
+	const primaryDomain = selectedSiteData?.options?.is_mapped_domain
+		? selectedSiteData?.domain
+		: null;
+	const domainUrl =
+		primaryDomain ??
+		responseCart.products.find(
+			( product ) =>
+				isDomainTransfer( product ) || isDomainRegistration( product ) || isDomainMapping( product )
+		)?.meta ??
+		siteUrl;
+
 	const removeCouponAndClearField = () => {
 		couponFieldStateProps.setCouponFieldValue( '' );
 		setCouponFieldVisible( false );
 		return removeCoupon();
 	};
 
-	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
 
 	return (

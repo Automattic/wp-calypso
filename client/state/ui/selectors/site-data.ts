@@ -15,5 +15,6 @@ export interface SiteData {
 
 export interface SiteDataOptions {
 	admin_url: string | undefined;
+	is_mapped_domain: boolean;
 	// TODO: fill out the rest of this
 }
