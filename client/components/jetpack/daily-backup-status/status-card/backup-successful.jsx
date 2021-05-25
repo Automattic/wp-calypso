@@ -11,7 +11,6 @@ import { useSelector } from 'react-redux';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteTitle } from 'calypso/state/sites/selectors';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
@@ -20,9 +19,9 @@ import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id'
 import ActionButtons from '../action-buttons';
 import BackupChanges from '../backup-changes';
 import useGetDisplayDate from '../use-get-display-date';
-import Gridicon from 'calypso/components/gridicon';
 import ExternalLink from 'calypso/components/external-link';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies
@@ -33,7 +32,6 @@ import cloudSuccessIcon from './icons/cloud-success.svg';
 const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 	const hasRealtimeBackups = useSelector( ( state ) => {
 		const capabilities = getRewindCapabilities( state, siteId );
@@ -64,7 +62,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 
 	const actionableRewindId = useActionableRewindId( backup );
 
-	const multiSiteInfoLink = `https://jetpack.com/support/backup/#does-jetpack-backup-support-multisite`;
+	const multiSiteInfoLink = `https://jetpack.com/redirect?source=jetpack-support-backup&anchor=does-jetpack-backup-support-multisite`;
 
 	return (
 		<>
@@ -84,28 +82,26 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 			{ isMultiSite && (
 				<div className="status-card__multisite-warning">
 					<div className="status-card__multisite-warning-title">
-						<Gridicon icon="notice-outline" />
-						{ translate( 'Your site, %(siteTitle)s, is a Multisite WordPress installation.', {
-							args: {
-								siteTitle: siteTitle,
-							},
-						} ) }
+						{ preventWidows( translate( 'This site is a WordPress Multisite installation.' ) ) }
 					</div>
 					<p className="status-card__multisite-warning-info">
-						{ translate(
-							"Jetpack Backup is not fully supported with Multisite WordPress installations. Backup archive downloads are available, however one-click restore's are not supported. For more information visit {{ExternalLink}}here{{/ExternalLink}}.",
-							{
-								components: {
-									ExternalLink: (
-										<ExternalLink
-											href={ multiSiteInfoLink }
-											target="_blank"
-											rel="noopener noreferrer"
-											icon={ true }
-										/>
-									),
-								},
-							}
+						{ preventWidows(
+							translate(
+								'Jetpack Backup for Multisite installations provides downloadable backups, no one-click restores. ' +
+									'For more information {{ExternalLink}}visit our documentation page{{/ExternalLink}}.',
+								{
+									components: {
+										ExternalLink: (
+											<ExternalLink
+												href={ multiSiteInfoLink }
+												target="_blank"
+												rel="noopener noreferrer"
+												icon={ true }
+											/>
+										),
+									},
+								}
+							)
 						) }
 					</p>
 				</div>
