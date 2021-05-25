@@ -28,17 +28,17 @@ describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, f
 		return await driverManager.ensureNotLoggedIn( this.driver );
 	} );
 
-	it( 'Login and Select My Site', async function () {
+	it( 'Login and select my site', async function () {
 		loginFlow = new LoginFlow( this.driver );
 		return await loginFlow.loginAndSelectMySite();
 	} );
 
-	it( 'Can Select Plans', async function () {
+	it( 'Select plans', async function () {
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectPlans();
 	} );
 
-	it( 'Can Compare Plans', async function () {
+	it( 'Compare plans', async function () {
 		const plansPage = await PlansPage.Expect( this.driver );
 		await plansPage.openPlansTab();
 		if ( host === 'WPCOM' ) {
@@ -47,7 +47,7 @@ describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, f
 		return await plansPage.waitForComparison();
 	} );
 
-	it( 'Select Business Plan', async function () {
+	it( 'Select Business plan', async function () {
 		const plansPage = await PlansPage.Expect( this.driver );
 		return await plansPage.selectPaidPlan();
 	} );
@@ -60,7 +60,7 @@ describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, f
 		}
 	} );
 
-	it( 'Can Correctly Apply Coupon', async function () {
+	it( 'Apply coupon', async function () {
 		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 
 		await securePaymentComponent.toggleCartSummary();
@@ -75,7 +75,7 @@ describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, f
 		assert.strictEqual( newCartAmount, expectedCartAmount, 'Coupon not applied properly' );
 	} );
 
-	it( 'Can Remove Coupon', async function () {
+	it( 'Remove coupon', async function () {
 		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 
 		await securePaymentComponent.removeCoupon();
@@ -84,9 +84,13 @@ describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, f
 		assert.strictEqual( removedCouponAmount, originalCartAmount, 'Coupon not removed properly' );
 	} );
 
-	it( 'Remove from cart', async function () {
+	it( 'Remove Business plan', async function () {
 		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
 
 		return await securePaymentComponent.removeBusinessPlan();
+	} );
+
+	it( 'Redirect back to Plans page', async function () {
+		await PlansPage.Expect( this.driver ); // Redirect means the plan was successfully removed
 	} );
 } );

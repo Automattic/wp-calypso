@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import webdriver from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 import assert from 'assert';
 
 /**
@@ -10,11 +10,9 @@ import assert from 'assert';
 import AsyncBaseContainer from '../async-base-container';
 import localizationData from '../../localization-data.json';
 
-const by = webdriver.By;
-
 export default class WPHomePage extends AsyncBaseContainer {
 	constructor( driver, url = 'https://wordpress.com/' ) {
-		super( driver, by.css( 'body' ), url );
+		super( driver, By.css( 'body' ), url );
 	}
 
 	async setSandboxModeForPayments( sandboxCookieValue ) {

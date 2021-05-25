@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by, until } from 'selenium-webdriver';
+import { By, until } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -13,11 +13,11 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class CustomizerPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		const expectedElementLocator = by.css( '.is-section-customize' );
+		const expectedElementLocator = By.css( '.is-section-customize' );
 		super( driver, expectedElementLocator );
-		this.metaiFrameElementLocator = by.css( 'iframe.is-iframe-loaded' );
-		this.reloadCustomizerLocator = by.css( '.empty-content__action.button' );
-		this.saveLocator = by.css( '#save' );
+		this.metaiFrameElementLocator = By.css( 'iframe.is-iframe-loaded' );
+		this.reloadCustomizerLocator = By.css( '.empty-content__action.button' );
+		this.saveLocator = By.css( '#save' );
 		this.shortSleepMS = 1000;
 	}
 
@@ -66,7 +66,7 @@ export default class CustomizerPage extends AsyncBaseContainer {
 		await self._ensureMetaViewOnMobile();
 		await self._switchToMetaiFrame();
 		await self.driver.sleep( self.shortSleepMS );
-		await driverHelper.clickWhenClickable( self.driver, by.css( '.customize-controls-close' ) );
+		await driverHelper.clickWhenClickable( self.driver, By.css( '.customize-controls-close' ) );
 		return await self._switchToDefaultContent();
 	}
 
@@ -76,12 +76,12 @@ export default class CustomizerPage extends AsyncBaseContainer {
 			await this._switchToMetaiFrame();
 			const previewDisplayed = await driverHelper.isElementLocated(
 				driver,
-				by.css( 'div.preview-desktop.preview-only' )
+				By.css( 'div.preview-desktop.preview-only' )
 			);
 			if ( previewDisplayed === true ) {
 				await driverHelper.clickWhenClickable(
 					driver,
-					by.css( 'button.customize-controls-preview-toggle' )
+					By.css( 'button.customize-controls-preview-toggle' )
 				);
 			}
 			return await this._switchToDefaultContent();

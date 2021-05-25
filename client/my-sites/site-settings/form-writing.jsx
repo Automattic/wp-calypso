@@ -30,7 +30,7 @@ import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import { getPreference } from 'calypso/state/preferences/selectors';
 
 class SiteSettingsFormWriting extends Component {
 	isMobile() {
@@ -202,8 +202,7 @@ const connectComponent = connect(
 		const siteIsAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
 		const isPodcastingSupported = ! siteIsJetpack || siteIsAutomatedTransfer;
 		const isNavUnification = isNavUnificationEnabled( state );
-		const showAdvancedDashboard =
-			isNavUnification && getUserSettings( state )?.calypso_preferences?.linkDestination;
+		const showAdvancedDashboard = isNavUnification && getPreference( state, 'linkDestination' );
 
 		return {
 			siteIsJetpack,

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -12,36 +12,36 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class NotificationsComponent extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '#wpnc-panel' ) );
-		this.undoLocator = by.css( '.wpnc__undo-item' );
+		super( driver, By.css( '#wpnc-panel' ) );
+		this.undoLocator = By.css( '.wpnc__undo-item' );
 	}
 
 	async selectComments() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( 'li[data-filter-name="comments"]' )
+			By.css( 'li[data-filter-name="comments"]' )
 		);
 		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			by.css( 'li.wpnc__comment' )
+			By.css( 'li.wpnc__comment' )
 		);
 	}
 
 	async allCommentsContent() {
-		const element = await this.driver.findElement( by.css( '.wpnc__notes' ) );
+		const element = await this.driver.findElement( By.css( '.wpnc__notes' ) );
 		return await element.getText();
 	}
 
 	async selectCommentByText( commentText ) {
 		const commentLocator = driverHelper.createTextLocator(
-			by.css( '.wpnc__excerpt' ),
+			By.css( '.wpnc__excerpt' ),
 			commentText
 		);
 		return await driverHelper.clickWhenClickable( this.driver, commentLocator );
 	}
 
 	async trashComment() {
-		const trashPostLocator = by.css( 'button[title="Trash comment"]' );
+		const trashPostLocator = By.css( 'button[title="Trash comment"]' );
 
 		await driverHelper.clickWhenClickable( this.driver, trashPostLocator );
 	}

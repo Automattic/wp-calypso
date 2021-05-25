@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -11,7 +11,7 @@ import AsyncBaseContainer from '../../async-base-container';
 
 export default class WPAdminCustomizerPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '.wp-customizer' ) );
+		super( driver, By.css( '.wp-customizer' ) );
 	}
 
 	static async refreshIfJNError( driver ) {

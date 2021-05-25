@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import webdriver from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -9,11 +9,9 @@ import webdriver from 'selenium-webdriver';
 import * as driverHelper from '../driver-helper.js';
 import AsyncBaseContainer from '../async-base-container';
 
-const by = webdriver.By;
-
 export default class PurchasesPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( 'main.purchases-list' ) );
+		super( driver, By.css( 'main.purchases-list' ) );
 	}
 
 	async _postInit() {
@@ -40,21 +38,21 @@ export default class PurchasesPage extends AsyncBaseContainer {
 		await this._waitForPurchases();
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( 'a.purchase-item svg.gridicons-themes' )
+			By.css( 'a.purchase-item svg.gridicons-themes' )
 		);
 	}
 
 	async dismissGuidedTour() {
 		return await driverHelper.clickIfPresent(
 			this.driver,
-			by.css( '.guided-tours__choice-button-row button:not(.is-primary)' )
+			By.css( '.guided-tours__choice-button-row button:not(.is-primary)' )
 		);
 	}
 
 	async _waitForPurchases() {
 		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			by.css( '.is-placeholder' ),
+			By.css( '.is-placeholder' ),
 			this.explicitWaitMS * 3
 		);
 	}
@@ -63,7 +61,7 @@ export default class PurchasesPage extends AsyncBaseContainer {
 		await this._waitForPurchases();
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( `a.purchase-item img.is-${ planName }-plan` )
+			By.css( `a.purchase-item img.is-${ planName }-plan` )
 		);
 	}
 
@@ -71,7 +69,7 @@ export default class PurchasesPage extends AsyncBaseContainer {
 		await this._waitForPurchases();
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( `a.purchase-item[data-e2e-connected-site=true] svg` )
+			By.css( `a.purchase-item[data-e2e-connected-site=true] svg` )
 		);
 	}
 }

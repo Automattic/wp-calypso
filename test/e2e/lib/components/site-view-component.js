@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { By as by, until } from 'selenium-webdriver';
+import { By, until } from 'selenium-webdriver';
 import config from 'config';
 
 /**
@@ -14,14 +14,14 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class SiteViewComponent extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '.main .web-preview__frame' ) );
+		super( driver, By.css( '.main .web-preview__frame' ) );
 	}
 
 	async isWebPreviewPresent() {
 		await this.driver.switchTo().defaultContent();
 		return await driverHelper.isElementLocated(
 			this.driver,
-			by.css( '.main .web-preview__external' )
+			By.css( '.main .web-preview__external' )
 		);
 	}
 
@@ -29,39 +29,39 @@ export default class SiteViewComponent extends AsyncBaseContainer {
 		await this.driver.switchTo().defaultContent();
 		return await driverHelper.isElementLocated(
 			this.driver,
-			by.css( '.main .web-preview__toolbar .web-preview__external' )
+			By.css( '.main .web-preview__toolbar .web-preview__external' )
 		);
 	}
 
 	async isSitePresent() {
 		await SiteViewComponent.switchToIFrame( this.driver );
-		return await driverHelper.isElementLocated( this.driver, by.css( 'body.home' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( 'body.home' ) );
 	}
 
 	async selectSearchAndSocialPreview() {
 		await this.driver.switchTo().defaultContent();
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.main .web-preview__device-switcher' )
+			By.css( '.main .web-preview__device-switcher' )
 		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( 'a[data-e2e-title="seo"]' )
+			By.css( 'a[data-e2e-title="seo"]' )
 		);
 	}
 
 	async close() {
 		await this.driver.switchTo().defaultContent();
-		return await driverHelper.clickWhenClickable( this.driver, by.css( '.web-preview__close' ) );
+		return await driverHelper.clickWhenClickable( this.driver, By.css( '.web-preview__close' ) );
 	}
 
 	static async switchToIFrame( driver ) {
-		const iFrameLocator = by.css( '.web-preview__frame' );
+		const iFrameLocator = By.css( '.web-preview__frame' );
 		const explicitWaitMS = config.get( 'explicitWaitMS' );
 		driver.switchTo().defaultContent();
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			driver,
-			by.css( '.web-preview__inner.is-loaded' )
+			By.css( '.web-preview__inner.is-loaded' )
 		);
 		return await driver.wait(
 			until.ableToSwitchToFrame( iFrameLocator ),

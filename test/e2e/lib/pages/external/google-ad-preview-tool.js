@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by, until } from 'selenium-webdriver';
+import { By, until } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -11,7 +11,7 @@ import * as driverManager from '../../driver-manager';
 
 export default class GoogleAdPreviewTool extends AsyncBaseContainer {
 	constructor( driver, url ) {
-		super( driver, by.css( '.adt-root' ), url );
+		super( driver, By.css( '.adt-root' ), url );
 	}
 
 	static getURL( screenSize, domain, location, query ) {
@@ -39,7 +39,7 @@ export default class GoogleAdPreviewTool extends AsyncBaseContainer {
 	}
 
 	async getSearchPageUrl() {
-		const locator = by.css( 'iframe.iframe-preview' );
+		const locator = By.css( 'iframe.iframe-preview' );
 		await this.driver.wait(
 			until.elementLocated( locator ),
 			this.explicitWaitMS,
