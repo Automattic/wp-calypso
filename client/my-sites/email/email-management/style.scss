@@ -17,60 +17,6 @@
 	> .card {
 		color: var( --color-text );
 		display: flex;
-
-		> div > h2 {
-			word-break: break-all;
-		}
-
-		> div > span {
-			font-size: $font-body-small;
-			color: var( --color-text-subtle );
-		}
-
-		.email-list-active__warning {
-			font-size: $font-body-extra-small;
-			margin-left: 14px;
-
-			> span {
-				color: var( --color-error-50 );
-				display: none;
-				vertical-align: middle;
-
-				@include break-small {
-					display: unset;
-				}
-
-				@include break-medium {
-					display: none;
-				}
-
-				@include break-large {
-					display: unset;
-				}
-			}
-
-			> svg {
-				fill: var( --color-error-50 );
-				height: 18px;
-				margin-right: 6px;
-				/* Push the icon down when there is no warning text */
-				margin-top: 3px;
-				vertical-align: middle;
-				width: 18px;
-
-				@include break-small {
-					margin-top: 0;
-				}
-
-				@include break-medium {
-					margin-top: 3px;
-				}
-
-				@include break-large {
-					margin-top: 0;
-				}
-			}
-		}
 	}
 
 	> .card.is-card-link:hover {
@@ -92,8 +38,83 @@
 			margin-right: 24px;
 		}
 	}
+
 	> .gridicon.gridicons-my-sites {
 		fill: var( --color-wordpress-com );
+	}
+}
+
+.email-list-active__item-domain {
+	h2 {
+		word-break: break-all;
+	}
+
+	span {
+		font-size: $font-body-small;
+		color: var( --color-text-subtle );
+	}
+}
+
+.email-list-active__warning {
+	font-size: $font-body-small;
+	margin-left: 14px;
+
+	> span {
+		display: none;
+		vertical-align: middle;
+
+		@include break-small {
+			display: unset;
+		}
+
+		@include break-medium {
+			display: none;
+		}
+
+		@include break-large {
+			display: unset;
+		}
+	}
+
+	> svg {
+		height: 18px;
+		margin-right: 6px;
+		/* Push the icon down when there is no warning text */
+		margin-top: 3px;
+		vertical-align: middle;
+		width: 18px;
+
+		@include break-small {
+			margin-top: 0;
+		}
+
+		@include break-medium {
+			margin-top: 3px;
+		}
+
+		@include break-large {
+			margin-top: 0;
+		}
+	}
+
+	&.error {
+		> span {
+			color: var( --color-error );
+		}
+
+		> svg {
+			fill: var( --color-error );
+		}
+	}
+
+	&.warning {
+		> span {
+			color: var( --color-warning );
+		}
+
+		> svg {
+			fill: var( --color-warning );
+		}
 	}
 }
 
