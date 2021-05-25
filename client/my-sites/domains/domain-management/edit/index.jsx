@@ -43,10 +43,7 @@ class Edit extends React.Component {
 
 		return (
 			<Main>
-				<Header
-					onClick={ this.goToDomainManagement }
-					selectedDomainName={ this.props.selectedDomainName }
-				>
+				<Header onClick={ this.goToDomainManagement }>
 					{ this.props.translate( '%(domainType)s Settings', {
 						args: {
 							domainType: this.getDomainTypeText( domain ),
