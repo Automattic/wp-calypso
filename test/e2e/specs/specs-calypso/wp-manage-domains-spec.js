@@ -22,7 +22,6 @@ import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import MyOwnDomainPage from '../../lib/pages/domain-my-own-page';
 import MapADomainPage from '../../lib/pages/domain-map-page';
 import EnterADomainComponent from '../../lib/components/enter-a-domain-component';
-import MapADomainCheckoutPage from '../../lib/pages/domain-map-checkout-page';
 
 import LoginFlow from '../../lib/flows/login-flow.js';
 
@@ -178,30 +177,6 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 		it( 'Can enter the domain name', async function () {
 			const enterADomainComponent = await EnterADomainComponent.Expect( this.driver );
 			return await enterADomainComponent.enterADomain( blogName );
-		} );
-
-		it.skip( 'Can add domain to the cart', async function () {
-			const enterADomainComponent = await EnterADomainComponent.Expect( this.driver );
-			return await enterADomainComponent.clickonAddButtonToAddDomainToTheCart();
-		} );
-
-		it.skip( 'Can see checkout page', async function () {
-			return await MapADomainCheckoutPage.Expect( this.driver );
-		} );
-
-		it.skip( 'Empty the cart', async function () {
-			await ReaderPage.Visit( this.driver );
-			const navBarComponent = await NavBarComponent.Expect( this.driver );
-			await navBarComponent.clickMySites();
-			const sideBarComponent = await SidebarComponent.Expect( this.driver );
-			await sideBarComponent.selectDomains();
-			await DomainsPage.Expect( this.driver );
-			try {
-				const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( this.driver );
-				await shoppingCartWidgetComponent.removeDomainMapping( blogName );
-			} catch {
-				console.log( 'Cart already empty' );
-			}
 		} );
 	} );
 } );
