@@ -1,9 +1,4 @@
 /**
- * @file Tests the BrowserHelper functions using process.env and stubbed config file.
- * @author Edwin Takahashi
- */
-
-/**
  * External dependencies
  */
 import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';

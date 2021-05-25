@@ -1,9 +1,4 @@
 /**
- * @file Tests the MediaHelper functions using process.env and stubbed config file.
- * @author Edwin Takahashi
- */
-
-/**
  * External dependencies
  */
 import path from 'path';
