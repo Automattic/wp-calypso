@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 import assert from 'assert';
 
 /**
@@ -11,7 +11,7 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class LandingPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
-		super( driver, by.css( 'header.masterbar' ), url );
+		super( driver, By.css( 'header.masterbar' ), url );
 	}
 
 	checkURL() {
@@ -27,7 +27,7 @@ export default class LandingPage extends AsyncBaseContainer {
 	checkLocalizedString( targetString ) {
 		this.waitForPage();
 		return assert(
-			this.driver.findElement( by.linkText( targetString ) ),
+			this.driver.findElement( By.linkText( targetString ) ),
 			'The landing page does not have the expected localized string "' + targetString + '"'
 		);
 	}

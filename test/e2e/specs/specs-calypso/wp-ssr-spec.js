@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 import config from 'config';
 import assert from 'assert';
 
@@ -16,7 +16,7 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 
 async function ssrWorksForPage( driver, url ) {
 	await driver.get( url );
-	const layoutLocator = by.css( '#wpcom[data-calypso-ssr="true"]' );
+	const layoutLocator = By.css( '#wpcom[data-calypso-ssr="true"]' );
 	assert( await driver.findElement( layoutLocator ) );
 }
 

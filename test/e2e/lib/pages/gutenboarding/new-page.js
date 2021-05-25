@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -16,7 +16,7 @@ export default class NewPage extends AsyncBaseContainer {
 		if ( ! url ) {
 			url = NewPage.getGutenboardingURL();
 		}
-		super( driver, by.css( '.is-section-gutenboarding' ), url );
+		super( driver, By.css( '.is-section-gutenboarding' ), url );
 	}
 
 	static getGutenboardingURL( { locale = 'en', query = '' } = {} ) {
@@ -37,7 +37,7 @@ export default class NewPage extends AsyncBaseContainer {
 	async waitForBlock() {
 		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			by.css( '[data-type="automattic/onboarding"]' )
+			By.css( '[data-type="automattic/onboarding"]' )
 		);
 	}
 }
