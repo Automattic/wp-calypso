@@ -16,7 +16,11 @@ import { useSelector } from 'react-redux';
 import joinClasses from './join-classes';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
-import { isDomainRegistration, isDomainTransfer } from '@automattic/calypso-products';
+import {
+	isDomainMapping,
+	isDomainRegistration,
+	isDomainTransfer,
+} from '@automattic/calypso-products';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { GetProductVariants } from '../hooks/product-variants';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -91,7 +95,8 @@ export default function WPCheckoutOrderReview( {
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 
 	const firstDomainItem = responseCart.products.find(
-		( product ) => isDomainTransfer( product ) || isDomainRegistration( product )
+		( product ) =>
+			isDomainTransfer( product ) || isDomainRegistration( product ) || isDomainMapping( product )
 	);
 	const domainUrl = firstDomainItem ? firstDomainItem.meta : siteUrl;
 	const removeCouponAndClearField = () => {
