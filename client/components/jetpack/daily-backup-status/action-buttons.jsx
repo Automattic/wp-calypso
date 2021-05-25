@@ -77,7 +77,7 @@ const ActionButtons = ( { rewindId, disabled, isMultiSite } ) => (
 			rewindId={ rewindId }
 			primary={ isMultiSite }
 		/>
-		<RestoreButton disabled={ isMultiSite || disabled || ! rewindId } rewindId={ rewindId } />
+		{ ! isMultiSite && <RestoreButton disabled={ disabled || ! rewindId } rewindId={ rewindId } /> }
 	</>
 );
 

@@ -30,6 +30,7 @@ import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover/menu';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import StreamsMediaPreview from './activity-card-streams-media-preview';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 
 /**
  * Style dependencies
@@ -163,7 +164,7 @@ class ActivityCard extends Component {
 	}
 
 	renderActionButton( isTopToolbar = true ) {
-		const { activity, allowRestore, doesRewindNeedCredentials, siteSlug, translate } = this.props;
+		const { activity, isMultiSite, doesRewindNeedCredentials, siteSlug, translate } = this.props;
 
 		const context = isTopToolbar ? this.topPopoverContext : this.bottomPopoverContext;
 
@@ -175,6 +176,19 @@ class ActivityCard extends Component {
 		// streams should be; if this is the case, make sure we send the user
 		// to a valid restore/download point when they click an action button
 		const actionableRewindId = getActionableRewindId( activity );
+
+		if ( isMultiSite ) {
+			return (
+				<Button
+					compact
+					isPrimary={ true }
+					href={ backupDownloadPath( siteSlug, actionableRewindId ) }
+					className="activity-card__download-button-multisite"
+				>
+					{ translate( 'Download backup' ) }
+				</Button>
+			);
+		}
 
 		return (
 			<>
@@ -201,7 +215,7 @@ class ActivityCard extends Component {
 							! doesRewindNeedCredentials && backupRestorePath( siteSlug, actionableRewindId )
 						}
 						className="activity-card__restore-button"
-						disabled={ ! allowRestore || doesRewindNeedCredentials }
+						disabled={ doesRewindNeedCredentials }
 					>
 						{ translate( 'Restore to this point' ) }
 					</Button>
@@ -336,12 +350,14 @@ class ActivityCard extends Component {
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
+	const isMultiSite = isJetpackSiteMultiSite( state, siteId );
 
 	return {
 		allowRestore: getAllowRestore( state, siteId ),
 		doesRewindNeedCredentials: getDoesRewindNeedCredentials( state, siteId ),
 		siteId,
 		siteSlug,
+		isMultiSite,
 	};
 };
 
