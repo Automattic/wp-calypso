@@ -49,6 +49,8 @@ export default ( router ) => {
 		} );
 	}
 
+	router( paths.vatDetails, sidebar, controller.vatDetails, makeLayout, clientRender );
+
 	router(
 		paths.billingHistory,
 		sidebar,
