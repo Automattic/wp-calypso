@@ -201,9 +201,9 @@ fun jetpackBuildType(screenSize: String): BuildType {
 		params {
 			select(
 				name = "JETPACKHOST",
-				value = "WPCOM",
+				value = "PRESSABLEBLEEDINGEDGE",
 				label = "Jetpack Host",
-				options = listOf("WPCOM","PRESSABLE","PRESSABLEBLEEDINGEDGE")
+				options = listOf("PRESSABLE","PRESSABLEBLEEDINGEDGE")
 			)
 		}
 
