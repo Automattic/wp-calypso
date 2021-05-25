@@ -13,7 +13,6 @@ body {
 	top: 0;
 	left: 0;
 	right: 0;
-	padding-left: 77px;
 	user-select: none;
 	box-sizing: border-box;
 }
@@ -21,7 +20,6 @@ body {
 #title-bar-buttons {
 	-webkit-app-region: no-drag;
 	position: fixed;
-	left: 77px;
 }
 
 .nav-button {

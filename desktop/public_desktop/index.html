@@ -63,6 +63,13 @@
 		</div>
 		<script>
 			function Navigate() {
+				const titleBarButtons = document.getElementById( 'title-bar-buttons' );
+				// Override title bar button padding on window load (Linux, Windows)
+				window.addEventListener( 'load', function() {
+					const padding = window.electron.styles.titleBarPaddingLeft;
+					titleBarButtons.style.paddingLeft = padding;
+				})
+
 				const backButton = document.getElementById( 'nav-button-back' );
 				backButton.addEventListener( 'click', function() {
 					window.electron.send( 'back-button-clicked' );
