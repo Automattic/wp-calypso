@@ -7,7 +7,7 @@
 	"startBrowserTimeoutMS": 60000,
 	"startAppTimeoutMS": 240000,
 	"afterHookTimeoutMS": 60000,
-	"playwrightTimeoutMS": 9000,
+	"playwrightTimeoutMS": 15000,
 	"browser": "chrome",
 	"proxy": "direct",
 	"saveAllScreenshots": false,

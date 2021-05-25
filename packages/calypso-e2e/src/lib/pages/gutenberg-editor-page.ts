@@ -74,21 +74,28 @@ export class GutenbergEditorPage extends BaseContainer {
 		await this.frame.fill( this.paragraphSelector, text );
 	}
 
+	/**
+	 * Publishes the post or page.
+	 *
+	 * @param {boolean} visit Whether to then visit the page.
+	 * @returns {Promise<void} No return value.
+	 */
 	async publish( visit = false ): Promise< void > {
 		await this.frame.click( this.firstPublishButtonSelector );
 		await this.frame.click( this.secondPublishButtonSelector );
 
-		await this._clickConfirmPublish();
+		await this.frame.waitForSelector( this.snackBarNoticeSelector );
 
 		if ( visit ) {
 			await this._visitPublishedPost();
 		}
 	}
 
-	async _clickConfirmPublish() {
-		await this.frame.waitForSelector( this.snackBarNoticeSelector );
-	}
-
+	/**
+	 * Visits the published post or page.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
 	async _visitPublishedPost() {
 		await Promise.all( [
 			this.frame.click( this.snackBarNoticeLinkSelector ),

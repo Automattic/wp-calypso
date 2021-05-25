@@ -7,4 +7,4 @@ file:
 reporter:
   - 'spec-junit-reporter'
 # Timeout for mocha when starting up only.
-timeout: 9000
+timeout: 15000

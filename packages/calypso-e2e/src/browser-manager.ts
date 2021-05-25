@@ -49,7 +49,7 @@ export async function start(): Promise< Page > {
  */
 export async function launchPage(): Promise< Page > {
 	const browserContext = await launchBrowserContext();
-	browserContext.setDefaultTimeout( 5000 );
+	browserContext.setDefaultTimeout( playwrightTimeoutMS );
 	return await browserContext.newPage();
 }
 

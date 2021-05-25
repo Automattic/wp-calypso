@@ -49,11 +49,13 @@ export class LikesComponent extends BaseContainer {
 	 */
 	async clickLike(): Promise< void > {
 		const state = await this._isLiked();
+
 		try {
 			await this.frame.click( this.likeButtonSelector );
 		} catch {
 			await this.frame.click( this.likedButtonSelector );
 		}
+
 		const newState = await this._isLiked();
 		if ( state === newState ) {
 			throw new Error( `Liked state did not change.` );
