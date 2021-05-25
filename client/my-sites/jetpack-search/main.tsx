@@ -31,6 +31,7 @@ import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 /**
  * Asset dependencies
@@ -58,6 +59,13 @@ export default function JetpackSearchMain(): ReactElement {
 	if ( ! hasSearchProduct ) {
 		return <JetpackSearchUpsell />;
 	}
+
+	const isCloud = isJetpackCloud();
+
+	// Send Jetpack Cloud users to wp-admin settings and everyone else to Calypso blue
+	const settingsUrl = isCloud
+		? `${ site.options.admin_url }admin.php?page=jetpack#/performance`
+		: `/settings/performance/${ siteSlug }`;
 
 	return (
 		<Main className="jetpack-search">
@@ -92,7 +100,7 @@ export default function JetpackSearchMain(): ReactElement {
 					cta={ {
 						text: translate( 'Settings' ),
 						action: {
-							url: `/settings/performance/${ siteSlug }`,
+							url: settingsUrl,
 							onClick: onSettingsClick,
 							selfTarget: true,
 						},
