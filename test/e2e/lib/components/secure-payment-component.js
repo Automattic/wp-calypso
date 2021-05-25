@@ -395,19 +395,10 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 		if ( isCompositeCheckout ) {
 			// Open review step for editing
-			try {
-				await driverHelper.clickWhenClickable(
-					this.driver,
-					By.css( '.wp-checkout__review-order-step .checkout-step__edit-button' )
-				);
-			} catch {
-				await driverHelper.isElementLocated(
-					this.driver,
-					By.css(
-						'.checkout-steps__step-content .checkout-line-item[data-product-type="coupon"] button'
-					)
-				);
-			}
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.wp-checkout__review-order-step .checkout-step__edit-button' )
+			);
 
 			// Click delete button on coupon line item
 			await driverHelper.clickWhenClickable(

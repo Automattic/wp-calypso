@@ -34,7 +34,7 @@ export default class NewPage extends AsyncBaseContainer {
 		return dataHelper.getCalypsoURL( route, queryStrings );
 	}
 
-	async waitForBlock() {
+	async isOnboardingBlockDisplayed() {
 		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '[data-type="automattic/onboarding"]' )

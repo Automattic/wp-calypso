@@ -490,7 +490,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			} catch ( err ) {
 				//TODO: Check this code once more when domain registration is not available
 				if (
-					driverHelper.isElementEventuallyLocatedAndVisible(
+					await driverHelper.isElementEventuallyLocatedAndVisible(
 						this.driver,
 						By.css( '.empty-content' )
 					)

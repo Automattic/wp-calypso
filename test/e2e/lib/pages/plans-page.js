@@ -58,7 +58,7 @@ export default class PlansPage extends AsyncBaseContainer {
 		return elements.length === 1;
 	}
 
-	async confirmCurrentPlan( planName ) {
+	async isCurrentPlanPresent( planName ) {
 		let selector = `.is-${ planName }-plan .plan-pill`;
 
 		if ( this.screenSize === 'mobile' ) {

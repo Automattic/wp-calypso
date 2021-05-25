@@ -231,13 +231,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await this.blockDisplayedInEditor( 'jetpack/contact-form' );
 	}
 
-	async errorDisplayed() {
-		return await driverHelper.isElementEventuallyLocatedAndVisible(
-			this.driver,
-			By.css( '.editor-error-boundary' )
-		);
-	}
-
 	async hasInvalidBlocks() {
 		return await driverHelper.isElementLocated( this.driver, By.css( '.block-editor-warning' ) );
 	}
@@ -465,7 +458,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async removeBlock( blockID ) {
 		const blockLocator = By.css( `.wp-block[id="${ blockID }"]` );
-		await driverHelper.isElementEventuallyLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			blockLocator,
 			this.explicitWaitMS / 5
@@ -475,7 +468,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.block-editor-block-settings-menu' )
 		);
-		await driverHelper.isElementEventuallyLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.components-menu-group' ),
 			this.explicitWaitMS / 5
