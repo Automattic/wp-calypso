@@ -1,11 +1,12 @@
 version: 2.1
 
 orbs:
+  slack: circleci/slack@3.4.2
   win: circleci/windows@2.2.0
 
 references:
   desktop_defaults: &desktop_defaults
-    working_directory: ~/WordPress-Desktop
+    working_directory: ~/wp-desktop
 
   yarn-install: &yarn-install
     name: Install dependencies
@@ -71,16 +72,18 @@ references:
 jobs:
   # TODO: Make this local to the Win, Linux and Mac jobs
   wp-desktop-assets:
-    machine:
-      image: ubuntu-1604:202004-01
-    resource_class: medium
+    docker:
+      - image: circleci/node:12.16.2-browsers
     <<: *desktop_defaults
     environment:
-      NVM_DIR: '/opt/circleci/.nvm'
       VERSION: << pipeline.git.tag >>
       CONFIG_ENV: release
+    working_directory: ~/wp-desktop
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/wp-desktop
+      - run: *update-node
       - when:
           condition: << pipeline.git.tag >>
           steps:
@@ -89,20 +92,19 @@ jobs:
                 command: cd bin && node validate_tag.js $VERSION
       - run: *desktop-decrypt-assets
       - persist_to_workspace:
-          root: /home/circleci/WordPress-Desktop
+          root: ~/wp-desktop
           paths: *desktop-cache-paths
-      - run: *desktop-notify-github-failure
       - slack/status: *desktop-notify-slack-failure
 
   wp-desktop-mac:
     macos:
       xcode: '12.3.0'
     shell: /bin/bash --login
-    working_directory: /Users/distiller/WordPress-Desktop
+    working_directory: /Users/distiller/wp-desktop
     steps:
       - checkout
       - attach_workspace:
-          at: /Users/distiller/WordPress-Desktop
+          at: /Users/distiller/wp-desktop
       - run: *update-node
       - run: *desktop-install-app-deps
       - run:
@@ -146,7 +148,7 @@ jobs:
           when: always
           path: e2e/screenshots
       - persist_to_workspace:
-          root: ~/WordPress-Desktop
+          root: ~/wp-desktop
           paths:
             - release
       - slack/status: *desktop-notify-slack-failure
@@ -159,7 +161,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/WordPress-Desktop
+          at: ~/wp-desktop
       - run: *update-node
       - run:
           name: Install Linux deps
@@ -203,19 +205,19 @@ jobs:
           when: always
           path: e2e/screenshots
       - persist_to_workspace:
-          root: ~/WordPress-Desktop
+          root: ~/wp-desktop
           paths:
             - release
 
   wp-desktop-windows:
     executor:
       name: win/default
-    working_directory: C:\Users\circleci\WordPress-Desktop
+    working_directory: C:\Users\circleci\wp-desktop
     environment:
     steps:
       - checkout
       - attach_workspace:
-          at: C:\Users\circleci\WordPress-Desktop
+          at: C:\Users\circleci\wp-desktop
       - run:
           name: Install Node Version
           command: |
@@ -239,7 +241,7 @@ jobs:
             #
             # Fix: Import .p12 into the local certificate store. Sign Tool will use
             # package.json's `certificateSubjectName` to find the imported cert.
-            $env:CSC_LINK='C:\Users\circleci\WordPress-Desktop\resource\certificates\win.p12'
+            $env:CSC_LINK='C:\Users\circleci\wp-desktop\resource\certificates\win.p12'
             Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
       - run:
           name: Build Desktop Windows
@@ -266,7 +268,7 @@ jobs:
           when: always
           path: release
       - persist_to_workspace:
-          root: C:\Users\circleci\WordPress-Desktop
+          root: C:\Users\circleci\wp-desktop
           paths:
             - release
 
@@ -275,13 +277,13 @@ jobs:
   wp-desktop-publish:
     docker:
       - image: circleci/golang:1.12
-    working_directory: /home/circleci/WordPress-Desktop
+    working_directory: /home/circleci/wp-desktop
     environment:
       VERSION: << pipeline.git.tag >>
     steps:
       - checkout
       - attach_workspace:
-          at: /home/circleci/WordPress-Desktop
+          at: /home/circleci/wp-desktop
       - run:
           name: Install Dependencies
           command: go get github.com/tcnksm/ghr
@@ -291,16 +293,12 @@ jobs:
             echo "Publishing draft release for wp-desktop $VERSION..."
             NAME="WP-Desktop ${VERSION#?}"
 
-            chmod +x bin/make-changelog.sh
-            ./bin/make-changelog.sh > desktop/CHANGELOG.md
-
             ghr \
               --token "${GH_TOKEN}" \
               --username "${CIRCLE_PROJECT_USERNAME}" \
               --repository "${CIRCLE_PROJECT_REPONAME}" \
               --commitish "${CIRCLE_SHA1}" \
               --name "${NAME}" \
-              --body "$(cat CHANGELOG.md)" \
               --delete \
               --draft \
               "${VERSION}" release/
