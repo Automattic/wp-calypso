@@ -65,8 +65,11 @@ export default function JetpackSearchMain(): ReactElement {
 		getSiteSetting( state, siteId, 'jetpack_search_enabled' )
 	);
 	const isSearchEnabled = isJetpack ? isJetpackSearchModuleActive : isJetpackSearchSettingEnabled;
+	const isRelevantSettingLoaded = isJetpack
+		? !! jetpackModules
+		: siteSettings && 'jetpack_search_enabled' in siteSettings;
 
-	if ( ! hasLoadedSitePurchases || ! ( siteSettings || jetpackModules ) ) {
+	if ( ! hasLoadedSitePurchases || ! isRelevantSettingLoaded ) {
 		return <JetpackSearchPlaceholder siteId={ siteId } />;
 	}
 
