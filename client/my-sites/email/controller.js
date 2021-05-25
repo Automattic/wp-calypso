@@ -10,7 +10,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
 import EmailManagement from 'calypso/my-sites/email/email-management';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
-import TitanMailAddMailboxes from 'calypso/my-sites/email/titan-mail-add-mailboxes';
+import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
 import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-manage-mailboxes';
@@ -72,7 +72,7 @@ export default {
 	emailManagementNewTitanAccount( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<TitanMailAddMailboxes selectedDomainName={ pageContext.params.domain } />
+				<TitanAddMailboxes selectedDomainName={ pageContext.params.domain } />
 			</CalypsoShoppingCartProvider>
 		);
 

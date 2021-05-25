@@ -54,11 +54,11 @@ import {
 	TITAN_MAIL_MONTHLY_SLUG,
 } from 'calypso/lib/titan/constants';
 import SectionHeader from 'calypso/components/section-header';
-import TitanExistingForwardsNotice from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-existing-forwards-notice';
-import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-mailbox-pricing-notice';
+import TitanExistingForwardsNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-existing-forwards-notice';
+import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-mailbox-pricing-notice';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
-import TitanNewMailboxList from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-new-mailbox-list';
-import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-unused-mailbox-notice';
+import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
+import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-unused-mailbox-notice';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
@@ -66,7 +66,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
  */
 import './style.scss';
 
-class TitanMailAddMailboxes extends React.Component {
+class TitanAddMailboxes extends React.Component {
 	state = {
 		mailboxes: [ buildNewTitanMailbox( this.props.selectedDomainName, false ) ],
 		isAddingToCart: false,
@@ -228,14 +228,11 @@ class TitanMailAddMailboxes extends React.Component {
 						mailboxes={ this.state.mailboxes }
 						onMailboxesChange={ this.onMailboxesChange }
 					>
-						<Button
-							className="titan-mail-add-mailboxes__action-cancel"
-							onClick={ this.handleCancel }
-						>
+						<Button className="titan-add-mailboxes__action-cancel" onClick={ this.handleCancel }>
 							{ translate( 'Cancel' ) }
 						</Button>
 						<Button
-							className="titan-mail-add-mailboxes__action-continue"
+							className="titan-add-mailboxes__action-continue"
 							primary
 							busy={ this.state.isAddingToCart || this.state.isCheckingAvailability }
 							onClick={ this.handleContinue }
@@ -333,4 +330,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( withLocalizedMoment( localize( TitanMailAddMailboxes ) ) ) );
+)( withShoppingCart( withLocalizedMoment( localize( TitanAddMailboxes ) ) ) );
