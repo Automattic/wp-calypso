@@ -158,6 +158,7 @@ export function getRedirectAfterAccept( invite ) {
 
 	const readerPath = '/read';
 	const postsListPath = '/posts/' + invite.site.ID;
+	const subdomainRegExp = /^https?:\/\/([a-z0-9]*).wordpress.com/;
 	const remoteLoginBackUrl = ( destinationUri ) =>
 		`https://${ invite.site.domain }/remote-login.php/?r_login_redirect=https://wordpress.com${ destinationUri }`;
 	const remoteLoginUrl = ( destinationUri ) =>
@@ -179,9 +180,11 @@ export function getRedirectAfterAccept( invite ) {
 	switch ( invite.role ) {
 		case 'viewer':
 		case 'follower':
-			return remoteLoginUrl( readerPath );
+			return subdomainRegExp.test( invite.site.URL ) ? readerPath : remoteLoginUrl( readerPath );
 
 		default:
-			return remoteLoginUrl( postsListPath );
+			return subdomainRegExp.test( invite.site.URL )
+				? postsListPath
+				: remoteLoginUrl( postsListPath );
 	}
 }
