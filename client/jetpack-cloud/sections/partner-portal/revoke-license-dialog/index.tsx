@@ -15,6 +15,7 @@ import { noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/use-refresh-license-list';
 import useRevokeLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-revoke-license-mutation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -24,14 +25,14 @@ import './style.scss';
 interface Props {
 	licenseKey: string;
 	product: string;
-	domain: string;
+	siteUrl: string | null;
 	onClose: ( action?: string ) => void;
 }
 
 export default function RevokeLicenseDialog( {
 	licenseKey,
 	product,
-	domain,
+	siteUrl,
 	onClose,
 	...rest
 }: Props ): ReactElement {
@@ -56,6 +57,7 @@ export default function RevokeLicenseDialog( {
 	}, [ onClose, mutation.isLoading ] );
 
 	const revoke = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_revoke_dialog_revoke' ) );
 		mutation.mutate( { licenseKey } );
 	}, [ licenseKey, mutation.mutate ] );
 
@@ -100,9 +102,9 @@ export default function RevokeLicenseDialog( {
 			</p>
 
 			<ul>
-				{ domain && (
+				{ siteUrl && (
 					<li>
-						<strong>{ translate( 'Site:' ) }</strong> { domain }
+						<strong>{ translate( 'Site:' ) }</strong> { siteUrl }
 					</li>
 				) }
 				<li>

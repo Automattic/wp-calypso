@@ -9,10 +9,12 @@ import cookie from 'cookie';
 
 import createConfig from '@automattic/create-calypso-config';
 import type { ConfigData } from '@automattic/create-calypso-config';
+import desktopOverride from './desktop';
 
 declare global {
 	interface Window {
 		configData: ConfigData;
+		electron: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 	}
 }
 
@@ -27,7 +29,15 @@ if ( 'undefined' === typeof window || ! window.configData ) {
 	);
 }
 
-const configData = window.configData;
+const isDesktop = window.electron !== undefined;
+
+let configData: ConfigData;
+
+if ( isDesktop ) {
+	configData = desktopOverride( window.configData );
+} else {
+	configData = window.configData;
+}
 
 // calypso.live matches
 // hash-abcd1234.calypso.live matches
@@ -39,7 +49,7 @@ export function isCalypsoLive(): boolean {
 	return typeof window !== 'undefined' && CALYPSO_LIVE_REGEX.test( window.location.host );
 }
 
-function applyFlags( flagsString: string, modificationMethod: 'cookie' | 'URL' ) {
+function applyFlags( flagsString: string, modificationMethod: string ) {
 	const flags = flagsString.split( ',' );
 	flags.forEach( ( flagRaw ) => {
 		const flag = flagRaw.replace( /^[-+]/, '' );
@@ -66,9 +76,13 @@ if (
 	isCalypsoLive()
 ) {
 	const cookies = cookie.parse( document.cookie );
-
 	if ( cookies.flags ) {
 		applyFlags( cookies.flags, 'cookie' );
+	}
+
+	const session = window.sessionStorage.getItem( 'flags' );
+	if ( session ) {
+		applyFlags( session, 'sessionStorage' );
 	}
 
 	const match =

@@ -43,10 +43,10 @@ function Poller( dataStore, fetcher, options ) {
 }
 
 Poller.prototype.start = function () {
-	const fetch = function () {
+	const fetch = () => {
 		debug( 'Calling fetcher for %o', { fetcher: this.fetcher, store: this.dataStore } );
 		this.fetch();
-	}.bind( this );
+	};
 
 	if ( ! this.timer ) {
 		debug( 'Starting poller for %o', this.dataStore );

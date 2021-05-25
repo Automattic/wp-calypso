@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { defer, difference, get, includes, isEmpty, omitBy, pick, startsWith } from 'lodash';
+import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -55,6 +55,7 @@ import flows from 'calypso/signup/config/flows';
 import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'calypso/lib/signup/page-builder';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
+import { isBlankCanvasDesign } from '@automattic/design-picker';
 
 /**
  * Constants
@@ -89,9 +90,8 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 
 		SignupCart.createCart(
 			siteId,
-			omitBy(
-				pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ),
-				( dep ) => dep === null
+			[ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ].filter(
+				Boolean
 			),
 			( error ) => {
 				callback( error, providedDependencies );
@@ -223,6 +223,7 @@ function getNewSiteParams( {
 		newSiteParams.options.theme = `pub/${ selectedDesign.theme }`;
 		newSiteParams.options.template = selectedDesign.template;
 		newSiteParams.options.use_patterns = true;
+		newSiteParams.options.is_blank_canvas = isBlankCanvasDesign( selectedDesign );
 
 		if ( selectedDesign.fonts ) {
 			newSiteParams.options.font_base = selectedDesign.fonts.base;
@@ -379,31 +380,6 @@ export function addDomainToCart(
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
 }
 
-export function addDomainUpsellToCart(
-	callback,
-	dependencies,
-	stepProvidedItems,
-	reduxStore,
-	siteSlug,
-	stepProvidedDependencies
-) {
-	const slug = siteSlug || dependencies.siteSlug;
-	const { selectedDomainUpsellItem } = stepProvidedItems;
-
-	if ( isEmpty( selectedDomainUpsellItem ) ) {
-		defer( callback );
-		return;
-	}
-	processItemCart(
-		stepProvidedDependencies,
-		[ selectedDomainUpsellItem ],
-		callback,
-		reduxStore,
-		slug,
-		null,
-		null
-	);
-}
 function processItemCart(
 	providedDependencies,
 	newCartItems,
@@ -801,23 +777,6 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );
-	}
-}
-
-export function isFreePlansDomainUpsellFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { submitSignupStep, isPaidPlan } = nextProps;
-	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
-	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
-
-	if ( isPaidPlan || domainItem || cartItem ) {
-		const selectedDomainUpsellItem = null;
-		submitSignupStep(
-			{ stepName, selectedDomainUpsellItem, wasSkipped: true },
-			{ selectedDomainUpsellItem }
-		);
-		flows.excludeStep( stepName );
-	} else {
-		flows.resetExcludedStep( stepName );
 	}
 }
 

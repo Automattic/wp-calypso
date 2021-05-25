@@ -33,7 +33,7 @@ import { shallow } from 'enzyme';
 import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import React from 'react';
-import { createStore } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import {
 	PLAN_FREE,
@@ -45,6 +45,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 } from '@automattic/calypso-products';
+import thunkMiddleware from 'redux-thunk';
 
 /**
  * Internal dependencies
@@ -74,7 +75,11 @@ const initialReduxState = {
 };
 
 function renderWithRedux( ui ) {
-	const store = createStore( ( state ) => state, initialReduxState );
+	const store = createStore(
+		( state ) => state,
+		initialReduxState,
+		applyMiddleware( thunkMiddleware )
+	);
 	return render( <Provider store={ store }>{ ui }</Provider> );
 }
 

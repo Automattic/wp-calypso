@@ -157,6 +157,7 @@ $font-size: rem( 14px );
 		}
 
 		.sidebar__menu-icon {
+			background-size: contain;
 			color: var( --color-sidebar-gridicon-fill );
 			margin-right: 8px;
 		}
@@ -418,6 +419,7 @@ $font-size: rem( 14px );
 		// client/blocks/upsell-nudge/style.scss
 		.upsell-nudge.banner.card.is-compact {
 			margin: 8px 3px 7px;
+			padding: 2px 12px 2px 4px;
 		}
 
 		.current-site__notices > .banner {
@@ -696,5 +698,18 @@ $font-size: rem( 14px );
 		.sidebar {
 			position: absolute;
 		}
+	}
+}
+
+@supports ( mask-image: none ) or ( -webkit-mask-image: none ) {
+	.sidebar__menu-icon-img {
+		background-image: none !important;
+		background-color: currentColor;
+		mask-size: contain;
+		mask-repeat: no-repeat;
+		mask-position: center center;
+		-webkit-mask-size: contain;
+		-webkit-mask-repeat: no-repeat;
+		-webkit-mask-position: center center;
 	}
 }

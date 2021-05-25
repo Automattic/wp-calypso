@@ -14,8 +14,8 @@ export default class AcceptInvitePage extends AsyncBaseContainer {
 		super( driver, By.css( '.invite-accept' ) );
 	}
 
-	getEmailPreFilled() {
-		return this.driver.findElement( By.css( '#email' ) ).getAttribute( 'value' );
+	async getEmailPreFilled() {
+		return await this.driver.findElement( By.css( '#email' ) ).getAttribute( 'value' );
 	}
 
 	async enterUsernameAndPasswordAndSignUp( username, password ) {

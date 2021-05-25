@@ -26,7 +26,6 @@ import {
 	FEATURE_ALL_FREE_FEATURES,
 	FEATURE_ALL_FREE_FEATURES_JETPACK,
 	FEATURE_ALL_PERSONAL_FEATURES,
-	FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
 	FEATURE_ALL_PREMIUM_FEATURES,
 	FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 	FEATURE_ANTISPAM_V2,
@@ -41,6 +40,7 @@ import {
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
 	FEATURE_BUSINESS_ONBOARDING,
+	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
 	FEATURE_CRM_V2,
@@ -192,13 +192,11 @@ const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed e
 const getAnnualTimeframe = () => ( {
 	term: TERM_ANNUALLY,
 	getBillingTimeFrame: () => translate( 'per year' ),
-	getSignupBillingTimeFrame: () => translate( 'per year' ),
 } );
 
 const getMonthlyTimeframe = () => ( {
 	term: TERM_MONTHLY,
 	getBillingTimeFrame: () => translate( 'per month, billed monthly' ),
-	getSignupBillingTimeFrame: () => translate( 'per month' ),
 } );
 
 const getDotcomPlanDetails = () => ( {
@@ -438,6 +436,7 @@ const getPlanEcommerceDetails = () => ( {
 	getHiddenFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
 		FEATURE_GOOGLE_MY_BUSINESS,
+		FEATURE_CLOUDFLARE_ANALYTICS,
 		FEATURE_UPLOAD_THEMES_PLUGINS,
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
@@ -521,7 +520,7 @@ const getPlanPremiumDetails = () => ( {
 		FEATURE_GOOGLE_ANALYTICS,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_CLOUDFLARE_ANALYTICS ],
 	getInferiorHiddenFeatures: () => [],
 } );
 
@@ -619,31 +618,180 @@ const getPlanBusinessDetails = () => ( {
 	getHiddenFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
 		FEATURE_GOOGLE_MY_BUSINESS,
+		FEATURE_CLOUDFLARE_ANALYTICS,
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
 	],
 	getInferiorHiddenFeatures: () => [],
 } );
 
+const getJetpackPersonalDetails = () => ( {
+	group: GROUP_JETPACK,
+	type: TYPE_PERSONAL,
+	getTitle: () => i18n.translate( 'Personal' ),
+	availableFor: ( plan ) => [ PLAN_JETPACK_FREE ].includes( plan ),
+	getDescription: () =>
+		i18n.translate(
+			'{{strong}}Best for personal use:{{/strong}} Security essentials for your WordPress site, including ' +
+				'automated backups and priority support.',
+			plansDescriptionHeadingComponent
+		),
+	getTagline: () =>
+		i18n.translate(
+			'Your data is being securely backed up and you have access to priority support.'
+		),
+	getPlanCardFeatures: () => [ FEATURE_BACKUP_DAILY_V2, FEATURE_ANTISPAM_V2 ],
+	getBillingTimeFrame: () => i18n.translate( 'per year' ),
+	getHiddenFeatures: () => [
+		FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+		FEATURE_BACKUP_ARCHIVE_30,
+		FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
+		FEATURE_AUTOMATED_RESTORES,
+		FEATURE_SPAM_AKISMET_PLUS,
+		FEATURE_EASY_SITE_MIGRATION,
+		FEATURE_PREMIUM_SUPPORT,
+		FEATURE_JETPACK_BACKUP_DAILY,
+		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		FEATURE_JETPACK_ANTI_SPAM,
+		FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+		FEATURE_SEO_PREVIEW_TOOLS,
+		FEATURE_ADVANCED_SEO,
+		FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+		FEATURE_SPAM_AKISMET_PLUS,
+		FEATURE_ACTIVITY_LOG,
+		FEATURE_PREMIUM_SUPPORT,
+		FEATURE_ALL_FREE_FEATURES_JETPACK,
+	],
+} );
+
+const getJetpackPremiumDetails = () => ( {
+	group: GROUP_JETPACK,
+	type: TYPE_PREMIUM,
+	availableFor: ( plan ) =>
+		[ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ].includes( plan ),
+	getTitle: () => i18n.translate( 'Premium' ),
+	getDescription: () =>
+		i18n.translate(
+			'{{strong}}Best for small businesses:{{/strong}} Comprehensive, automated scanning for security vulnerabilities, ' +
+				'fast video hosting, and marketing automation.',
+			plansDescriptionHeadingComponent
+		),
+	getTagline: () =>
+		i18n.translate(
+			'Your site is being secured and you have access to marketing tools and priority support.'
+		),
+	getPlanCardFeatures: () => [ FEATURE_BACKUP_DAILY_V2, FEATURE_SCAN_V2, FEATURE_ANTISPAM_V2 ],
+	getHiddenFeatures: () =>
+		compact( [
+			// pay attention to ordering, shared features should align on /plan page
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+			FEATURE_BACKUP_ARCHIVE_30,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
+			FEATURE_AUTOMATED_RESTORES,
+			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_EASY_SITE_MIGRATION,
+			FEATURE_PREMIUM_SUPPORT,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			FEATURE_SIMPLE_PAYMENTS,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+			FEATURE_MALWARE_SCANNING_DAILY,
+			FEATURE_ADVANCED_SEO,
+			FEATURE_GOOGLE_ANALYTICS,
+			FEATURE_JETPACK_BACKUP_DAILY,
+			FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+			FEATURE_JETPACK_SCAN_DAILY,
+			FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+			FEATURE_JETPACK_ANTI_SPAM,
+			FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			FEATURE_SEO_PREVIEW_TOOLS,
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_MALWARE_SCANNING_DAILY,
+			FEATURE_AUTOMATIC_SECURITY_FIXES,
+			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_ADVANCED_SEO,
+			FEATURE_ALL_FREE_FEATURES_JETPACK,
+		] ),
+} );
+
+const getJetpackBusinessDetails = () => ( {
+	group: GROUP_JETPACK,
+	type: TYPE_BUSINESS,
+	getTitle: () => i18n.translate( 'Professional' ),
+	availableFor: ( plan ) =>
+		[
+			PLAN_JETPACK_FREE,
+			PLAN_JETPACK_PREMIUM,
+			PLAN_JETPACK_PREMIUM_MONTHLY,
+			PLAN_JETPACK_PERSONAL,
+			PLAN_JETPACK_PERSONAL_MONTHLY,
+		].includes( plan ),
+	getDescription: () =>
+		i18n.translate(
+			'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
+				'and unlimited premium themes.',
+			plansDescriptionHeadingComponent
+		),
+	getTagline: () => i18n.translate( 'You have the full suite of security and performance tools.' ),
+	getPlanCardFeatures: () => [
+		FEATURE_BACKUP_REALTIME_V2,
+		FEATURE_PRODUCT_SCAN_REALTIME_V2,
+		FEATURE_ANTISPAM_V2,
+	],
+	getHiddenFeatures: () =>
+		compact( [
+			// pay attention to ordering, shared features should align on /plan page
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
+			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
+			FEATURE_AUTOMATED_RESTORES,
+			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_EASY_SITE_MIGRATION,
+			FEATURE_PREMIUM_SUPPORT,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			FEATURE_SIMPLE_PAYMENTS,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
+			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
+			FEATURE_ADVANCED_SEO,
+			FEATURE_GOOGLE_ANALYTICS,
+			FEATURE_UNLIMITED_PREMIUM_THEMES,
+			FEATURE_JETPACK_BACKUP_REALTIME,
+			FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+			FEATURE_JETPACK_SCAN_DAILY,
+			FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+			FEATURE_JETPACK_ANTI_SPAM,
+			FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			FEATURE_SEO_PREVIEW_TOOLS,
+			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
+			FEATURE_UNLIMITED_PREMIUM_THEMES,
+			FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
+		] ),
+	getInferiorHiddenFeatures: () => [
+		FEATURE_JETPACK_BACKUP_DAILY,
+		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+	],
+} );
+
 const getPlanJetpackSecurityDailyDetails = () => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_SECURITY_DAILY,
 	getTitle: () => translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
-	getAudience: () => translate(),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(
 			'All of the essential Jetpack Security features in one package including Backup, Scan, Anti-spam and more.'
 		),
 	getTagline: () => translate( 'Best for sites with occasional updates' ),
-	getPlanCompareFeatures: () => [],
 	getPlanCardFeatures: () => [
 		FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		FEATURE_PRODUCT_SCAN_DAILY_V2,
 		FEATURE_ANTISPAM_V2,
 		FEATURE_VIDEO_HOSTING_V2,
 	],
-	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
 		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -661,7 +809,6 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
 	],
-	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanJetpackSecurityRealtimeDetails = () => ( {
@@ -671,7 +818,6 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		translate( 'Security {{em}}Real-time{{/em}}', {
 			components: { em: <em style={ { whiteSpace: 'nowrap' } } /> },
 		} ),
-	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[
 			PLAN_JETPACK_FREE,
@@ -684,14 +830,12 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
 		),
 	getTagline: () => translate( 'Best for sites with frequent updates' ),
-	getPlanCompareFeatures: () => [],
 	getPlanCardFeatures: () => [
 		FEATURE_PLAN_SECURITY_DAILY,
 		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 		FEATURE_PRODUCT_SCAN_REALTIME_V2,
 		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 	],
-	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
 		FEATURE_JETPACK_BACKUP_REALTIME,
 		FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
@@ -720,8 +864,10 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 const getPlanJetpackCompleteDetails = () => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_ALL,
-	getTitle: () => translate( 'Complete' ),
-	getAudience: () => translate(),
+	getTitle: () =>
+		translate( 'Complete', {
+			context: 'Jetpack plan name',
+		} ),
 	availableFor: ( plan ) =>
 		[ PLAN_JETPACK_FREE, ...JETPACK_SECURITY_PLANS, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
@@ -729,7 +875,6 @@ const getPlanJetpackCompleteDetails = () => ( {
 			'Get the full Jetpack suite with real-time security, enhanced search, CRM, marketing, growth, and design tools.'
 		),
 	getTagline: () => translate( 'For best-in-class WordPress sites' ),
-	getPlanCompareFeatures: () => [],
 	getPlanCardFeatures: () => [
 		FEATURE_PLAN_SECURITY_DAILY,
 		FEATURE_BACKUP_REALTIME_V2,
@@ -737,7 +882,6 @@ const getPlanJetpackCompleteDetails = () => ( {
 		FEATURE_CRM_V2,
 		FEATURE_PRODUCT_SEARCH_V2,
 	],
-	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
 		FEATURE_JETPACK_BACKUP_REALTIME,
 		FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
@@ -1073,7 +1217,6 @@ export const PLANS_LIST = {
 		group: GROUP_JETPACK,
 		type: TYPE_FREE,
 		getTitle: () => i18n.translate( 'Free' ),
-		getAudience: () => i18n.translate( 'Best for students' ),
 		getProductId: () => 2002,
 		getStoreSlug: () => PLAN_JETPACK_FREE,
 		getTagline: ( siteFeatures = [] ) => {
@@ -1110,420 +1253,68 @@ export const PLANS_LIST = {
 				'The features most needed by WordPress sites' +
 					' — perfectly packaged and optimized for everyone.'
 			),
-		getPlanCompareFeatures: () => [
-			// pay attention to ordering, shared features should align on /plan page
+		getBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getHiddenFeatures: () => [
 			FEATURE_STANDARD_SECURITY_TOOLS,
 			FEATURE_SITE_STATS,
 			FEATURE_TRAFFIC_TOOLS,
 			FEATURE_MANAGE,
-		],
-		getSignupFeatures: () => [
+			FEATURE_ADVANCED_SEO,
+			FEATURE_SEO_PREVIEW_TOOLS,
 			FEATURE_FREE_WORDPRESS_THEMES,
 			FEATURE_SITE_STATS,
 			FEATURE_STANDARD_SECURITY_TOOLS,
 			FEATURE_TRAFFIC_TOOLS,
 			FEATURE_BLANK,
 		],
-		getBillingTimeFrame: () => i18n.translate( 'for life' ),
-		getSignupBillingTimeFrame: () => i18n.translate( 'for life' ),
-		getHiddenFeatures: () => [ FEATURE_ADVANCED_SEO, FEATURE_SEO_PREVIEW_TOOLS ],
-		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ PLAN_JETPACK_PREMIUM ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_PREMIUM,
-		term: TERM_ANNUALLY,
-		getTitle: () => i18n.translate( 'Premium' ),
-		getAudience: () => i18n.translate( 'Best for small businesses' ),
-		getSubtitle: () => i18n.translate( 'Protection, speed, and revenue.' ),
+		...getJetpackPremiumDetails(),
+		...getAnnualTimeframe(),
 		getProductId: () => 2000,
 		getStoreSlug: () => PLAN_JETPACK_PREMIUM,
-		availableFor: ( plan ) =>
-			[
-				PLAN_JETPACK_FREE,
-				PLAN_JETPACK_PERSONAL,
-				PLAN_JETPACK_PERSONAL_MONTHLY,
-				PLAN_JETPACK_PREMIUM_MONTHLY,
-			].includes( plan ),
 		getPathSlug: () => 'premium',
-		getDescription: () =>
-			i18n.translate(
-				'{{strong}}Best for small businesses:{{/strong}} Comprehensive, automated scanning for security vulnerabilities, ' +
-					'fast video hosting, and marketing automation.',
-				plansDescriptionHeadingComponent
-			),
-		getTagline: () =>
-			i18n.translate(
-				'Your site is being secured and you have access to marketing tools and priority support.'
-			),
-		getPlanCompareFeatures: () =>
-			compact( [
-				// pay attention to ordering, shared features should align on /plan page
-				FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-				FEATURE_BACKUP_ARCHIVE_30,
-				FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-				FEATURE_AUTOMATED_RESTORES,
-				FEATURE_SPAM_AKISMET_PLUS,
-				FEATURE_EASY_SITE_MIGRATION,
-				FEATURE_PREMIUM_SUPPORT,
-				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-				FEATURE_SIMPLE_PAYMENTS,
-				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-				FEATURE_MALWARE_SCANNING_DAILY,
-				FEATURE_ADVANCED_SEO,
-				FEATURE_GOOGLE_ANALYTICS,
-			] ),
-		getPlanCardFeatures: () => [ FEATURE_BACKUP_DAILY_V2, FEATURE_SCAN_V2, FEATURE_ANTISPAM_V2 ],
-		getSignupFeatures: ( currentPlan ) => {
-			const showPersonalPlan =
-				isEnabled( 'jetpack/personal-plan' ) || PLAN_JETPACK_PERSONAL === currentPlan;
-
-			return compact( [
-				! showPersonalPlan && FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-				! showPersonalPlan && FEATURE_SPAM_AKISMET_PLUS,
-				FEATURE_MALWARE_SCANNING_DAILY,
-				FEATURE_AUTOMATIC_SECURITY_FIXES,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-				FEATURE_WORDADS_INSTANT,
-				FEATURE_ADVANCED_SEO,
-				showPersonalPlan
-					? FEATURE_ALL_PERSONAL_FEATURES_JETPACK
-					: FEATURE_ALL_FREE_FEATURES_JETPACK,
-			] );
-		},
-		getBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getHiddenFeatures: () => [
-			FEATURE_JETPACK_BACKUP_DAILY,
-			FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
-			FEATURE_JETPACK_SCAN_DAILY,
-			FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
-			FEATURE_JETPACK_ANTI_SPAM,
-			FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
-			FEATURE_SEO_PREVIEW_TOOLS,
-		],
-		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ PLAN_JETPACK_PREMIUM_MONTHLY ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_PREMIUM,
-		term: TERM_MONTHLY,
-		getTitle: () => i18n.translate( 'Premium' ),
-		getAudience: () => i18n.translate( 'Best for small businesses' ),
+		...getJetpackPremiumDetails(),
+		...getMonthlyTimeframe(),
 		getProductId: () => 2003,
 		getStoreSlug: () => PLAN_JETPACK_PREMIUM_MONTHLY,
 		getPathSlug: () => 'premium-monthly',
-		availableFor: ( plan ) =>
-			[ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ].includes( plan ),
-		getDescription: () =>
-			i18n.translate(
-				'{{strong}}Best for small businesses:{{/strong}} Comprehensive, automated scanning for security vulnerabilities, ' +
-					'fast video hosting, and marketing automation.',
-				plansDescriptionHeadingComponent
-			),
-		getTagline: () =>
-			i18n.translate(
-				'Your site is being secured and you have access to marketing tools and priority support.'
-			),
-		getPlanCompareFeatures: () =>
-			compact( [
-				// pay attention to ordering, shared features should align on /plan page
-				FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-				FEATURE_BACKUP_ARCHIVE_30,
-				FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-				FEATURE_AUTOMATED_RESTORES,
-				FEATURE_SPAM_AKISMET_PLUS,
-				FEATURE_EASY_SITE_MIGRATION,
-				FEATURE_PREMIUM_SUPPORT,
-				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-				FEATURE_SIMPLE_PAYMENTS,
-				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-				FEATURE_MALWARE_SCANNING_DAILY,
-				FEATURE_ADVANCED_SEO,
-				FEATURE_GOOGLE_ANALYTICS,
-			] ),
-		getPlanCardFeatures: () => [ FEATURE_BACKUP_DAILY_V2, FEATURE_SCAN_V2, FEATURE_ANTISPAM_V2 ],
-		getSignupFeatures: ( currentPlan ) => {
-			const showPersonalPlan =
-				isEnabled( 'jetpack/personal-plan' ) || PLAN_JETPACK_PERSONAL === currentPlan;
-
-			return compact( [
-				! showPersonalPlan && FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-				! showPersonalPlan && FEATURE_SPAM_AKISMET_PLUS,
-				FEATURE_MALWARE_SCANNING_DAILY,
-				FEATURE_AUTOMATIC_SECURITY_FIXES,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-				FEATURE_WORDADS_INSTANT,
-				FEATURE_ADVANCED_SEO,
-				showPersonalPlan
-					? FEATURE_ALL_PERSONAL_FEATURES_JETPACK
-					: FEATURE_ALL_FREE_FEATURES_JETPACK,
-			] );
-		},
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
-		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
-		getHiddenFeatures: () => [
-			FEATURE_JETPACK_BACKUP_DAILY,
-			FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
-			FEATURE_JETPACK_SCAN_DAILY,
-			FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
-			FEATURE_JETPACK_ANTI_SPAM,
-			FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
-			FEATURE_SEO_PREVIEW_TOOLS,
-		],
-		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ PLAN_JETPACK_PERSONAL ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_PERSONAL,
-		term: TERM_ANNUALLY,
-		getTitle: () => i18n.translate( 'Personal' ),
-		getAudience: () => i18n.translate( 'Best for personal use' ),
+		...getJetpackPersonalDetails(),
+		...getAnnualTimeframe(),
 		getProductId: () => 2005,
 		getStoreSlug: () => PLAN_JETPACK_PERSONAL,
-		availableFor: ( plan ) => [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL_MONTHLY ].includes( plan ),
 		getPathSlug: () => 'jetpack-personal',
-		getDescription: () =>
-			i18n.translate(
-				'{{strong}}Best for personal use:{{/strong}} Security essentials for your WordPress site, including ' +
-					'automated backups and priority support.',
-				plansDescriptionHeadingComponent
-			),
-		getTagline: () =>
-			i18n.translate(
-				'Your data is being securely backed up and you have access to priority support.'
-			),
-		getPlanCompareFeatures: () => [
-			// pay attention to ordering, shared features should align on /plan page
-			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-			FEATURE_BACKUP_ARCHIVE_30,
-			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-			FEATURE_AUTOMATED_RESTORES,
-			FEATURE_SPAM_AKISMET_PLUS,
-			FEATURE_EASY_SITE_MIGRATION,
-			FEATURE_PREMIUM_SUPPORT,
-		],
-		getPlanCardFeatures: () => [ FEATURE_BACKUP_DAILY_V2, FEATURE_ANTISPAM_V2 ],
-		getSignupFeatures: () => [
-			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-			FEATURE_SPAM_AKISMET_PLUS,
-			FEATURE_ACTIVITY_LOG,
-			FEATURE_PREMIUM_SUPPORT,
-			FEATURE_ALL_FREE_FEATURES_JETPACK,
-		],
-		getBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getHiddenFeatures: () => [
-			FEATURE_JETPACK_BACKUP_DAILY,
-			FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
-			FEATURE_JETPACK_ANTI_SPAM,
-			FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
-			FEATURE_SEO_PREVIEW_TOOLS,
-			FEATURE_ADVANCED_SEO,
-		],
-		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ PLAN_JETPACK_PERSONAL_MONTHLY ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_PERSONAL,
-		term: TERM_MONTHLY,
-		getTitle: () => i18n.translate( 'Personal' ),
-		getAudience: () => i18n.translate( 'Best for personal use' ),
-		getStoreSlug: () => PLAN_JETPACK_PERSONAL_MONTHLY,
+		...getJetpackPersonalDetails(),
+		...getMonthlyTimeframe(),
 		getProductId: () => 2006,
+		getStoreSlug: () => PLAN_JETPACK_PERSONAL_MONTHLY,
 		getPathSlug: () => 'jetpack-personal-monthly',
-		availableFor: ( plan ) => [ PLAN_JETPACK_FREE ].includes( plan ),
-		getDescription: () =>
-			i18n.translate(
-				'{{strong}}Best for personal use:{{/strong}} Security essentials for your WordPress site, including ' +
-					'automated backups and priority support.',
-				plansDescriptionHeadingComponent
-			),
-		getTagline: () =>
-			i18n.translate(
-				'Your data is being securely backed up and you have access to priority support.'
-			),
-		getPlanCompareFeatures: () => [
-			// pay attention to ordering, shared features should align on /plan page
-			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-			FEATURE_BACKUP_ARCHIVE_30,
-			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-			FEATURE_AUTOMATED_RESTORES,
-			FEATURE_SPAM_AKISMET_PLUS,
-			FEATURE_EASY_SITE_MIGRATION,
-			FEATURE_PREMIUM_SUPPORT,
-		],
-		getPlanCardFeatures: () => [ FEATURE_BACKUP_DAILY_V2, FEATURE_ANTISPAM_V2 ],
-		getSignupFeatures: () => [
-			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-			FEATURE_SPAM_AKISMET_PLUS,
-			FEATURE_ACTIVITY_LOG,
-			FEATURE_PREMIUM_SUPPORT,
-			FEATURE_ALL_FREE_FEATURES_JETPACK,
-		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
-		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
-		getHiddenFeatures: () => [
-			FEATURE_JETPACK_BACKUP_DAILY,
-			FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
-			FEATURE_JETPACK_ANTI_SPAM,
-			FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
-			FEATURE_ADVANCED_SEO,
-			FEATURE_SEO_PREVIEW_TOOLS,
-		],
-		getInferiorHiddenFeatures: () => [],
 	},
 
 	[ PLAN_JETPACK_BUSINESS ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_BUSINESS,
-		term: TERM_ANNUALLY,
-		getTitle: () => i18n.translate( 'Professional' ),
-		getAudience: () => i18n.translate( 'Best for organizations' ),
-		getStoreSlug: () => PLAN_JETPACK_BUSINESS,
+		...getJetpackBusinessDetails(),
+		...getAnnualTimeframe(),
 		getProductId: () => 2001,
-		availableFor: ( plan ) =>
-			[
-				PLAN_JETPACK_BUSINESS_MONTHLY,
-				PLAN_JETPACK_FREE,
-				PLAN_JETPACK_PREMIUM,
-				PLAN_JETPACK_PREMIUM_MONTHLY,
-				PLAN_JETPACK_PERSONAL,
-				PLAN_JETPACK_PERSONAL_MONTHLY,
-			].includes( plan ),
+		getStoreSlug: () => PLAN_JETPACK_BUSINESS,
 		getPathSlug: () => 'professional',
-		getDescription: () =>
-			i18n.translate(
-				'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
-					'and unlimited premium themes.',
-				plansDescriptionHeadingComponent
-			),
-		getTagline: () =>
-			i18n.translate( 'You have the full suite of security and performance tools.' ),
-		getPlanCompareFeatures: () =>
-			compact( [
-				// pay attention to ordering, shared features should align on /plan page
-				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-				FEATURE_BACKUP_ARCHIVE_UNLIMITED,
-				FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-				FEATURE_AUTOMATED_RESTORES,
-				FEATURE_SPAM_AKISMET_PLUS,
-				FEATURE_EASY_SITE_MIGRATION,
-				FEATURE_PREMIUM_SUPPORT,
-				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-				FEATURE_SIMPLE_PAYMENTS,
-				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-				FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
-				FEATURE_ONE_CLICK_THREAT_RESOLUTION,
-				FEATURE_ADVANCED_SEO,
-				FEATURE_GOOGLE_ANALYTICS,
-				FEATURE_UNLIMITED_PREMIUM_THEMES,
-			] ),
-		getPlanCardFeatures: () => [
-			FEATURE_BACKUP_REALTIME_V2,
-			FEATURE_PRODUCT_SCAN_REALTIME_V2,
-			FEATURE_ANTISPAM_V2,
-		],
-		getSignupFeatures: () => [
-			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
-			FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
-		],
-		getBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
-		getHiddenFeatures: () => [
-			FEATURE_JETPACK_BACKUP_REALTIME,
-			FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
-			FEATURE_JETPACK_SCAN_DAILY,
-			FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
-			FEATURE_JETPACK_ANTI_SPAM,
-			FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
-			FEATURE_SEO_PREVIEW_TOOLS,
-		],
-		getInferiorHiddenFeatures: () => [
-			FEATURE_JETPACK_BACKUP_DAILY,
-			FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
-		],
 	},
 
 	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_BUSINESS,
-		term: TERM_MONTHLY,
-		getTitle: () => i18n.translate( 'Professional' ),
-		getAudience: () => i18n.translate( 'Best for organizations' ),
-		getSubtitle: () => i18n.translate( 'Ultimate security and traffic tools.' ),
+		...getJetpackBusinessDetails(),
+		...getMonthlyTimeframe(),
 		getProductId: () => 2004,
 		getStoreSlug: () => PLAN_JETPACK_BUSINESS_MONTHLY,
 		getPathSlug: () => 'professional-monthly',
-		availableFor: ( plan ) =>
-			[
-				PLAN_JETPACK_FREE,
-				PLAN_JETPACK_PREMIUM,
-				PLAN_JETPACK_PREMIUM_MONTHLY,
-				PLAN_JETPACK_PERSONAL,
-				PLAN_JETPACK_PERSONAL_MONTHLY,
-			].includes( plan ),
-		getDescription: () =>
-			i18n.translate(
-				'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
-					'and unlimited premium themes.',
-				plansDescriptionHeadingComponent
-			),
-		getTagline: () =>
-			i18n.translate( 'You have the full suite of security and performance tools.' ),
-		getPlanCompareFeatures: () =>
-			compact( [
-				// pay attention to ordering, shared features should align on /plan page
-				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-				FEATURE_BACKUP_ARCHIVE_UNLIMITED,
-				FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-				FEATURE_AUTOMATED_RESTORES,
-				FEATURE_SPAM_AKISMET_PLUS,
-				FEATURE_EASY_SITE_MIGRATION,
-				FEATURE_PREMIUM_SUPPORT,
-				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-				FEATURE_SIMPLE_PAYMENTS,
-				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-				FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
-				FEATURE_ONE_CLICK_THREAT_RESOLUTION,
-				FEATURE_ADVANCED_SEO,
-				FEATURE_GOOGLE_ANALYTICS,
-				FEATURE_UNLIMITED_PREMIUM_THEMES,
-			] ),
-		getPlanCardFeatures: () => [
-			FEATURE_BACKUP_REALTIME_V2,
-			FEATURE_PRODUCT_SCAN_REALTIME_V2,
-			FEATURE_ANTISPAM_V2,
-		],
-		getSignupFeatures: () => [
-			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
-			FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
-		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
-		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
-		getHiddenFeatures: () => [
-			FEATURE_JETPACK_BACKUP_REALTIME,
-			FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
-			FEATURE_JETPACK_SCAN_DAILY,
-			FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
-			FEATURE_JETPACK_ANTI_SPAM,
-			FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
-			FEATURE_SEO_PREVIEW_TOOLS,
-		],
-		getInferiorHiddenFeatures: () => [
-			FEATURE_JETPACK_BACKUP_DAILY,
-			FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
-		],
 	},
 
 	[ PLAN_JETPACK_SECURITY_DAILY ]: {

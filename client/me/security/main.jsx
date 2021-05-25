@@ -50,7 +50,7 @@ class Security extends React.Component {
 		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
 
 		return (
-			<Main className="security is-wide-layout">
+			<Main wideLayout className="security">
 				<PageViewTracker path={ path } title="Me > Password" />
 				<DocumentHead title={ translate( 'Password' ) } />
 				<MeSidebarNavigation />

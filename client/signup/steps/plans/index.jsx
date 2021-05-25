@@ -181,7 +181,6 @@ export class PlansStep extends Component {
 						intervalType={ this.getIntervalType() }
 						onUpgradeClick={ this.onSelectPlan }
 						showFAQ={ false }
-						displayJetpackPlans={ false }
 						domainName={ this.getDomainName() }
 						customerType={ this.getCustomerType() }
 						disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }

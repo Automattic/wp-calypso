@@ -39,6 +39,11 @@ export function loggedOut( context, next ) {
 }
 
 export function help( context, next ) {
+	// Scroll to the top
+	if ( typeof window !== 'undefined' ) {
+		window.scrollTo( 0, 0 );
+	}
+
 	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Help', { textOnly: true } ) ) );
 

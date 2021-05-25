@@ -42,6 +42,7 @@
 
 		.manage-purchase__plan-icon {
 			height: 56px;
+			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 			border-radius: 50%;
 		}
 
@@ -130,6 +131,7 @@
 	.gridicon {
 		box-sizing: border-box;
 		padding: 4px;
+		/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		background: var( --color-accent );
 		fill: var( --color-text-inverted );
@@ -145,6 +147,7 @@
 	}
 
 	.gridicons-themes {
+		/* stylelint-disable-next-line  scales/radii */
 		border-radius: 8px;
 	}
 }
@@ -325,4 +328,8 @@
 
 .manage-purchase__detail-date-span {
 	white-space: nowrap;
+}
+
+.manage-purchase__savings-badge {
+	margin-left: 12px;
 }

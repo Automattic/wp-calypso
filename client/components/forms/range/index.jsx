@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
-import { omit, uniqueId } from 'lodash';
+import { omit } from 'lodash';
 import classnames from 'classnames';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -37,7 +37,7 @@ export default class extends React.Component {
 	};
 
 	state = {
-		id: uniqueId( 'range' ),
+		id: 'range' + uuid(),
 	};
 
 	getMinContentElement = () => {

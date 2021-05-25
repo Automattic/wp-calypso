@@ -4,6 +4,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import { PLAN_PREMIUM, FEATURE_CLOUDFLARE_ANALYTICS } from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ const Cloudflare = () => {
 	const showCloudflare = config.isEnabled( 'cloudflare' );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
 	const sitePlan = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
-	const showUpsell = [ 'personal-bundle', 'free_plan' ].includes( sitePlan );
+	const showUpsell = [ 'personal-bundle', 'free_plan', 'jetpack_free' ].includes( sitePlan );
 
 	if ( ! showCloudflare ) return null;
 
@@ -53,7 +54,8 @@ const Cloudflare = () => {
 					description={ translate(
 						'Get deeper insights into your site traffic and performance with Cloudflare Analytics.'
 					) }
-					customerType="business"
+					plan={ PLAN_PREMIUM }
+					feature={ FEATURE_CLOUDFLARE_ANALYTICS }
 					tracksImpressionName="calypso_stats_cloudflare_upsell_view"
 					event="calypso_stats_cloudflare_analytics_upsell_nudge_click"
 					tracksClickProperties={ { plan: sitePlan } }

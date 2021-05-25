@@ -47,14 +47,6 @@ import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-dis
  */
 import './style.scss';
 
-/**
- * Image dependencies
- */
-import editorBannerImage from 'calypso/assets/images/illustrations/app-banner-editor.svg';
-import notificationsBannerImage from 'calypso/assets/images/illustrations/app-banner-notifications.svg';
-import readerBannerImage from 'calypso/assets/images/illustrations/app-banner-reader.svg';
-import statsBannerImage from 'calypso/assets/images/illustrations/app-banner-stats.svg';
-
 const IOS_REGEX = /iPad|iPod|iPhone/i;
 const ANDROID_REGEX = /Android (\d+(\.\d+)?(\.\d+)?)/i;
 const noop = () => {};
@@ -133,20 +125,6 @@ export class AppBanner extends Component {
 		this.props.recordAppBannerOpen( this.props.currentSection );
 	};
 
-	getBannerImage() {
-		switch ( this.props.currentSection ) {
-			case EDITOR:
-			case GUTENBERG:
-				return editorBannerImage;
-			case NOTES:
-				return notificationsBannerImage;
-			case READER:
-				return readerBannerImage;
-			case STATS:
-				return statsBannerImage;
-		}
-	}
-
 	getDeepLink() {
 		const { currentRoute, currentSection } = this.props;
 
@@ -202,7 +180,9 @@ export class AppBanner extends Component {
 					statGroup="calypso_mobile_app_banner"
 					statName="impression"
 				/>
-				<img className="app-banner__illustration" src={ this.getBannerImage() } alt="" />
+				<div className="app-banner__circle is-top-left is-yellow" />
+				<div className="app-banner__circle is-top-right is-blue" />
+				<div className="app-banner__circle is-bottom-right is-red" />
 				<div className="app-banner__text-content">
 					<div className="app-banner__title">
 						<span> { title } </span>

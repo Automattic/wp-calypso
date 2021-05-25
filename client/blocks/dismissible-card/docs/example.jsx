@@ -2,8 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
-import { partial } from 'lodash';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,7 +11,13 @@ import { Button } from '@automattic/components';
 import DismissibleCard from '../';
 import { savePreference } from 'calypso/state/preferences/actions';
 
-function DismissibleCardExample( { clearPreference } ) {
+function DismissibleCardExample() {
+	const dispatch = useDispatch();
+
+	function clearPreference() {
+		dispatch( savePreference( 'dismissible-card-example', null ) );
+	}
+
 	return (
 		<div className="docs__design-assets-group">
 			<h2>
@@ -29,10 +34,6 @@ function DismissibleCardExample( { clearPreference } ) {
 	);
 }
 
-const ConnectedDismissibleCardExample = connect( null, {
-	clearPreference: partial( savePreference, 'dismissible-card-example', null ),
-} )( DismissibleCardExample );
+DismissibleCardExample.displayName = 'DismissibleCard';
 
-ConnectedDismissibleCardExample.displayName = 'DismissibleCard';
-
-export default ConnectedDismissibleCardExample;
+export default DismissibleCardExample;

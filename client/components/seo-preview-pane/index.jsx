@@ -14,7 +14,6 @@ import SeoPreviewUpgradeNudge from 'calypso/components/seo/preview-upgrade-nudge
 import ReaderPreview from 'calypso/components/seo/reader-preview';
 import { FacebookPreview, TwitterPreview, SearchPreview } from '@automattic/social-previews';
 import VerticalMenu from 'calypso/components/vertical-menu';
-import PostMetadata from 'calypso/lib/post-metadata';
 import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
 import { parseHtml } from 'calypso/lib/formatting';
 import { SocialItem } from 'calypso/components/vertical-menu/items';
@@ -72,7 +71,14 @@ const getSeoExcerptForPost = ( post ) => {
 	}
 
 	return formatExcerpt(
-		find( [ PostMetadata.metaDescription( post ), post.excerpt, post.content ], Boolean )
+		find(
+			[
+				post.metadata?.find( ( { key } ) => key === 'advanced_seo_description' )?.value,
+				post.excerpt,
+				post.content,
+			],
+			Boolean
+		)
 	);
 };
 

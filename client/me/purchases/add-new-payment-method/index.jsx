@@ -11,7 +11,6 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { errorNotice } from 'calypso/state/notices/actions';
-import { concatTitle } from 'calypso/lib/react-helpers';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -55,13 +54,12 @@ function AddNewPaymentMethod() {
 		return <PaymentMethodLoader title={ addPaymentMethodTitle } />;
 	}
 
+	const title = `${ titles.activeUpgrades } › ${ addPaymentMethodTitle }`;
+
 	return (
-		<Main className="add-new-payment-method is-wide-layout">
-			<PageViewTracker
-				path="/me/purchases/add-payment-method"
-				title={ concatTitle( titles.activeUpgrades, addPaymentMethodTitle ) }
-			/>
-			<DocumentHead title={ concatTitle( titles.activeUpgrades, addPaymentMethodTitle ) } />
+		<Main wideLayout className="add-new-payment-method">
+			<PageViewTracker path="/me/purchases/add-payment-method" title={ title } />
+			<DocumentHead title={ title } />
 
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<HeaderCake onClick={ goToPaymentMethods }>{ addPaymentMethodTitle }</HeaderCake>

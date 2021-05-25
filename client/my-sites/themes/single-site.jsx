@@ -23,7 +23,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 	// this component is still being rendered with site unset, so we need to guard
 	// against that case.
 	if ( ! siteId ) {
-		return <Main className="themes" />;
+		return <Main fullWidthLayout className="themes" />;
 	}
 
 	if ( isJetpack ) {

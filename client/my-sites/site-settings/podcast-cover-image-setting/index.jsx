@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { head, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -121,7 +121,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		}
 
 		const { selectedItems } = this.props;
-		const selectedItem = head( selectedItems );
+		const selectedItem = selectedItems[ 0 ];
 		if ( ! selectedItem ) {
 			return;
 		}

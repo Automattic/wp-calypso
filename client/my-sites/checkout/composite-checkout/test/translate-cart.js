@@ -123,11 +123,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 
 		describe( 'allowed payment methods', function () {
 			it( 'contains the expected slugs', function () {
-				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [
-					'card',
-					'ebanx',
-					'apple-pay',
-				] );
+				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [ 'card', 'ebanx', 'web-pay' ] );
 			} );
 		} );
 	} );
@@ -307,11 +303,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 
 		describe( 'allowed payment methods', function () {
 			it( 'contains the expected slugs', function () {
-				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [
-					'card',
-					'ebanx',
-					'apple-pay',
-				] );
+				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [ 'card', 'ebanx', 'web-pay' ] );
 			} );
 		} );
 	} );
@@ -513,11 +505,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 
 		describe( 'allowed payment methods', function () {
 			it( 'contains the expected slugs', function () {
-				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [
-					'card',
-					'ebanx',
-					'apple-pay',
-				] );
+				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [ 'card', 'ebanx', 'web-pay' ] );
 			} );
 		} );
 	} );
@@ -644,11 +632,7 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 
 		describe( 'allowed payment methods', function () {
 			it( 'contains the expected slugs', function () {
-				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [
-					'card',
-					'ebanx',
-					'apple-pay',
-				] );
+				expect( clientCart.allowedPaymentMethods ).toStrictEqual( [ 'card', 'ebanx', 'web-pay' ] );
 			} );
 		} );
 	} );

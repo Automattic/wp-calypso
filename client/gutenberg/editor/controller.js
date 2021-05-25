@@ -8,8 +8,12 @@ import { get, has } from 'lodash';
  * Internal dependencies
  */
 import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import { hasUserSettingsRequestFailed } from 'calypso/state/user-settings/selectors';
+import {
+	getPreference,
+	isFetchingPreferences,
+	hasPreferencesRequestFailed,
+} from 'calypso/state/preferences/selectors';
+import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -18,11 +22,9 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
-import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import {
 	getSiteUrl,
 	getSiteOption,
-	getSite,
 	isJetpackSite,
 	isSSOEnabled,
 } from 'calypso/state/sites/selectors';
@@ -32,8 +34,6 @@ import { Placeholder } from './placeholder';
 import { makeLayout, render } from 'calypso/controller';
 import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
-import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'calypso/state/desktop/window-events';
-import { notifyDesktopCannotOpenEditor } from 'calypso/state/desktop/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { stopEditingPost } from 'calypso/state/editor/actions';
 
@@ -89,21 +89,26 @@ function waitForSiteIdAndSelectedEditor( context ) {
 	} );
 }
 
-function areCalypsoPreferencesAvailable( state ) {
-	return 'undefined' !== typeof getUserSettings( state )?.calypso_preferences;
+function isDashboardAppearancePreferenceAvailable( state ) {
+	return null !== getPreference( state, 'linkDestination' );
 }
 
 function waitForCalypsoPreferences( context ) {
 	return new Promise( ( resolve ) => {
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
-			if ( ! areCalypsoPreferencesAvailable( state ) && ! hasUserSettingsRequestFailed( state ) ) {
+			if (
+				! isDashboardAppearancePreferenceAvailable( state ) &&
+				! hasPreferencesRequestFailed( state )
+			) {
 				return;
 			}
 			unsubscribe();
 			resolve();
 		} );
-		context.store.dispatch( fetchUserSettings() );
+		if ( ! isFetchingPreferences( context.store.getState() ) ) {
+			context.store.dispatch( fetchPreferences() );
+		}
 	} );
 }
 
@@ -172,31 +177,20 @@ export const authenticate = ( context, next ) => {
 	const siteUrl = getSiteUrl( state, siteId );
 	const wpAdminLoginUrl = addQueryArgs( { redirect_to: returnUrl }, `${ siteUrl }/wp-login.php` );
 
-	if ( isDesktop ) {
-		context.store.dispatch(
-			notifyDesktopCannotOpenEditor(
-				getSite( state, siteId ),
-				REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO,
-				context.path,
-				wpAdminLoginUrl
-			)
-		);
-	} else {
-		window.location.replace( wpAdminLoginUrl );
-	}
+	window.location.replace( wpAdminLoginUrl );
 };
 
 export const redirect = async ( context, next ) => {
 	const {
 		store: { getState },
 	} = context;
-	const tmpState = await getState();
+	const tmpState = getState();
 	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
 	const checkPromises = [];
 	if ( ! selectedEditor ) {
 		checkPromises.push( waitForSiteIdAndSelectedEditor( context ) );
 	}
-	if ( ! areCalypsoPreferencesAvailable( tmpState ) ) {
+	if ( ! isDashboardAppearancePreferenceAvailable( tmpState ) ) {
 		checkPromises.push( waitForCalypsoPreferences( context ) );
 	}
 	await Promise.all( checkPromises );

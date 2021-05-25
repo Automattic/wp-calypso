@@ -14,13 +14,6 @@ $plan-features-sidebar-width: 272px;
 	margin-top: 300px;
 }
 
-.plan-features-comparison__table.has-3-cols {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	max-width: 980px;
-}
-
 .plan-features-comparison__table.has-2-cols {
 	display: block;
 	margin-left: auto;
@@ -182,6 +175,9 @@ $plan-features-sidebar-width: 272px;
 
 		.plan-features-comparison__header-annual-discount {
 			color: var( --studio-green-60 );
+			&-is-loading {
+				@include placeholder();
+			}
 		}
 
 		.plan-price.is-original {
@@ -234,7 +230,7 @@ $plan-features-sidebar-width: 272px;
 		@include breakpoint-deprecated( '<1040px' ) {
 			padding: 0 12px 12px;
 		}
-	
+
 		@include breakpoint-deprecated( '<660px' ) {
 			padding: 0 20px 20px;
 			border-bottom: solid 1px var( --color-neutral-0 );
@@ -350,7 +346,7 @@ $plan-features-sidebar-width: 272px;
 		border: 1px solid;
 		border-radius: 6px; /* stylelint-disable-line */
 		border-color: var( --studio-gray-5 );
-		
+
 		&.is-selected {
 			padding: 1px 0 0 1px;
 		}
@@ -376,7 +372,8 @@ $plan-features-sidebar-width: 272px;
 			border-radius: 5px; /* stylelint-disable-line */
 			background-color: var( --studio-white );
 			border-color: var( --studio-white );
-			box-shadow: 0 4px 4px rgba( 0, 0, 0, 0.25 ), 0 3px 8px rgba( 0, 0, 0, 0.12 ), inset 0 0 0 rgba( 0, 0, 0, 0.2 );
+			box-shadow: 0 4px 4px rgba( 0, 0, 0, 0.25 ), 0 3px 8px rgba( 0, 0, 0, 0.12 ),
+				inset 0 0 0 rgba( 0, 0, 0, 0.2 );
 			border: 0.5px solid rgba( 0, 0, 0, 0.07 );
 			padding: 11px 20px;
 			color: var( --color-text );
@@ -436,7 +433,6 @@ body.is-section-signup.is-white-signup {
 		}
 	}
 
-
 	.plan-pill.is-in-signup {
 		font-size: 0.75rem;
 		font-weight: 500; /* stylelint-disable-line */
@@ -450,7 +446,8 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.plan-features-comparison__item.plan-features-comparison__item-available {
-		.plan-features-comparison__item-annual-plan-container .plan-features-comparison__item-annual-plan {
+		.plan-features-comparison__item-annual-plan-container
+			.plan-features-comparison__item-annual-plan {
 			color: var( --studio-orange-40 );
 		}
 	}

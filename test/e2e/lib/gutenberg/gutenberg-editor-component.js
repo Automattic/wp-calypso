@@ -109,7 +109,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async enterTitle( title ) {
 		const titleLocator = By.css( '.editor-post-title__input' );
-		return driverHelper.setWhenSettable( this.driver, titleLocator, title );
+		return await driverHelper.setWhenSettable( this.driver, titleLocator, title );
 	}
 
 	async getTitle() {
@@ -220,19 +220,19 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await this.exitCodeEditor();
 	}
 
-	blockDisplayedInEditor( dataTypeLocatorVal ) {
-		return driverHelper.isElementEventuallyLocatedAndVisible(
+	async blockDisplayedInEditor( dataTypeLocatorVal ) {
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( `[data-type="${ dataTypeLocatorVal }"]` )
 		);
 	}
 
-	contactFormDisplayedInEditor() {
-		return this.blockDisplayedInEditor( 'jetpack/contact-form' );
+	async contactFormDisplayedInEditor() {
+		return await this.blockDisplayedInEditor( 'jetpack/contact-form' );
 	}
 
 	async errorDisplayed() {
-		return driverHelper.isElementEventuallyLocatedAndVisible(
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( '.editor-error-boundary' )
 		);
@@ -294,7 +294,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	 * @returns {string[]} Array of block titles (i.e ['Open Table', 'Paypal']);
 	 */
 	async getShownBlockInserterItems() {
-		return this.driver
+		return await this.driver
 			.findElements(
 				By.css(
 					'.edit-post-layout__inserter-panel .block-editor-block-types-list span.block-editor-block-types-list__item-title'
@@ -420,7 +420,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemLocator );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, insertedBlockLocator );
 
-		return this.driver.findElement( insertedBlockLocator ).getAttribute( 'id' );
+		return await this.driver.findElement( insertedBlockLocator ).getAttribute( 'id' );
 	}
 
 	/**
@@ -591,18 +591,18 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async schedulePost( publishDate ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonLocator );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.publishHeaderLocator );
-		await driverHelper.waitUntilElementWithTextLocated(
-			this.driver,
+		const publishDateLocator = driverHelper.createTextLocator(
 			By.css( '.editor-post-publish-panel__link' ),
 			publishDate
 		);
+		await driverHelper.waitUntilElementLocated( this.driver, publishDateLocator );
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonLocator );
 		await driverHelper.waitUntilElementNotLocated( this.driver, this.publishingSpinnerLocator );
-		await driverHelper.waitUntilElementWithTextLocated(
-			this.driver,
+		const scheduleDateLocator = driverHelper.createTextLocator(
 			By.css( '.post-publish-panel__postpublish-header' ),
 			/scheduled/i
 		);
+		await driverHelper.waitUntilElementLocated( this.driver, scheduleDateLocator );
 	}
 
 	async closeScheduledPanel() {

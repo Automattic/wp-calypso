@@ -14,13 +14,15 @@ import { COMPARE_PLANS_QUERY_PARAM } from './constants';
  */
 import {
 	JetpackLegacyPlanSlug,
-	JetpackPurchasableItem,
+	JetpackPurchasableItemSlug,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import type { PlanRecommendation } from './types';
 import type { Duration } from '../types';
 
-export function getComparePlansFromContext( { query }: PageJS.Context ): JetpackPurchasableItem[] {
+export function getComparePlansFromContext( {
+	query,
+}: PageJS.Context ): JetpackPurchasableItemSlug[] {
 	const value = query[ COMPARE_PLANS_QUERY_PARAM ] ?? '';
 	const plans = value.split( ',' );
 
@@ -51,7 +53,10 @@ export function getPlanRecommendationFromContext(
 		return;
 	}
 
-	return [ legacyPlan, resetPlans as Exclude< JetpackPurchasableItem, JetpackLegacyPlanSlug >[] ];
+	return [
+		legacyPlan,
+		resetPlans as Exclude< JetpackPurchasableItemSlug, JetpackLegacyPlanSlug >[],
+	];
 }
 
 export function getItemSlugByDuration< T extends string >( slug: T, duration: Duration ): T {

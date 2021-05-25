@@ -9,6 +9,7 @@ import { isEnabled } from '@automattic/calypso-config';
  */
 import { availableDesignsConfig } from './available-designs-config';
 import { DESIGN_IMAGE_FOLDER } from '../constants';
+import { shuffleArray } from './shuffle';
 import type { MShotsOptions } from '../components/mshots-image';
 import type { Design } from '../types';
 import type { AvailableDesigns } from './available-designs-config';
@@ -94,14 +95,7 @@ export function getAvailableDesigns( {
 	};
 
 	if ( randomize ) {
-		// Durstenfeld algorithm https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
-		for ( let i = designs.featured.length - 1; i > 0; i-- ) {
-			const j = Math.floor( Math.random() * ( i + 1 ) );
-			[ designs.featured[ i ], designs.featured[ j ] ] = [
-				designs.featured[ j ],
-				designs.featured[ i ],
-			];
-		}
+		designs.featured = shuffleArray( designs.featured );
 	}
 
 	// Force blank canvas design to always be first in the list

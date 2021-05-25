@@ -71,14 +71,54 @@ export function getProxyType() {
 	}
 }
 
+/**
+ * This proxy is meant to only catch & re-throw internal driver.wait() errors
+ * ("Waiting for ... timed out.") in order to provide a full stack to the
+ * relevant line. Without it, the stack provides merely a single line to the
+ * webdriver.js source.
+ *
+ * @param {webdriver.ThenableWebDriver} twd A ThenableWebDriver instance
+ * @returns {webdriver.WebDriver} A WebDriver instance
+ */
+export async function createDriverProxy( twd ) {
+	const driver = await twd;
+
+	return new Proxy( driver, {
+		get: function ( target, prop ) {
+			const orig = target[ prop ];
+			if ( 'function' !== typeof orig ) {
+				return orig;
+			}
+
+			if ( 'wait' === prop ) {
+				return async function ( ...args ) {
+					try {
+						const result = await orig.apply( target, args );
+						return result;
+					} catch ( error ) {
+						if ( error instanceof webdriver.error.TimeoutError ) {
+							/**
+							 * By re-throwing the same error we're only replacing its stack.
+							 * The message will stay the same.
+							 */
+							throw new Error( error );
+						}
+
+						throw error;
+					}
+				};
+			}
+
+			return orig.bind( target );
+		},
+	} );
+}
+
 export async function startBrowser( {
 	useCustomUA = true,
 	resizeBrowserWindow = true,
 	disableThirdPartyCookies = false,
 } = {} ) {
-	if ( global.__BROWSER__ ) {
-		return global.__BROWSER__;
-	}
 	const screenSize = currentScreenSize();
 	const locale = currentLocale();
 	let driver;
@@ -127,7 +167,7 @@ export async function startBrowser( {
 		} );
 
 		global.browserName = caps.browserName;
-		global.__BROWSER__ = driver = builder.usingServer( sauceURL ).withCapabilities( caps ).build();
+		driver = builder.usingServer( sauceURL ).withCapabilities( caps ).build();
 
 		driver.setFileDetector( new remote.FileDetector() );
 
@@ -192,10 +232,7 @@ export async function startBrowser( {
 
 				builder = new webdriver.Builder();
 				builder.setChromeOptions( options );
-				global.__BROWSER__ = driver = builder
-					.forBrowser( 'chrome' )
-					.setLoggingPrefs( pref )
-					.build();
+				driver = builder.forBrowser( 'chrome' ).setLoggingPrefs( pref ).build();
 				global.browserName = 'chrome';
 				break;
 			case 'firefox':
@@ -219,10 +256,7 @@ export async function startBrowser( {
 				options.setProxy( getProxyType() );
 				builder = new webdriver.Builder();
 				builder.setFirefoxOptions( options );
-				global.__BROWSER__ = driver = builder
-					.forBrowser( 'firefox' )
-					.setLoggingPrefs( pref )
-					.build();
+				driver = builder.forBrowser( 'firefox' ).setLoggingPrefs( pref ).build();
 				global.browserName = 'firefox';
 				break;
 			default:
@@ -238,7 +272,7 @@ export async function startBrowser( {
 		await resizeBrowser( driver, screenSize );
 	}
 
-	return driver;
+	return createDriverProxy( driver );
 }
 
 export async function resizeBrowser( driver, screenSize ) {
@@ -310,7 +344,7 @@ export async function ensureNotLoggedIn( driver ) {
 		'window.document.cookie = "sensitive_pixel_option=no;domain=.wordpress.com;SameSite=None;Secure"'
 	);
 
-	return driver.sleep( 500 );
+	await driver.sleep( 500 );
 }
 
 /**
@@ -356,7 +390,6 @@ export async function acceptAllAlerts( driver ) {
 }
 
 export function quitBrowser( driver ) {
-	global.__BROWSER__ = null;
 	return driver.quit();
 }
 

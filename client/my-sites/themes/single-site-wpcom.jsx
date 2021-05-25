@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { connectOptions } from './theme-options';
@@ -21,6 +20,7 @@ import { hasFeature, isRequestingSitePlans } from 'calypso/state/sites/plans/sel
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
+import ThemesHeader from './themes-header';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 
@@ -70,15 +70,9 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 		}
 	}
 	return (
-		<Main className="themes">
+		<Main fullWidthLayout className="themes">
 			<SidebarNavigation />
-			<FormattedHeader
-				brandFont
-				className="themes__page-heading"
-				headerText={ translate( 'Themes' ) }
-				subHeaderText={ translate( 'Select or update the visual design for your site.' ) }
-				align="left"
-			/>
+			<ThemesHeader />
 			<CurrentTheme siteId={ siteId } />
 			{ bannerLocationBelowSearch ? null : upsellBanner }
 

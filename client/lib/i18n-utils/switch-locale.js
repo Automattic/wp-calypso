@@ -217,6 +217,20 @@ export function getTranslationChunkFileUrl( {
 }
 
 /**
+ * Whether the translation chunk is preloaded, i.e. exists in window.i18nTranslationChunks.
+ *
+ * @param   {string} chunkId    chunkId A chunk id. e.g. chunk-abc.min
+ * @param   {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @returns {boolean}           Whether the chunk translations are preloaded
+ */
+function getIsTranslationChunkPreloaded( chunkId, localeSlug ) {
+	return (
+		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug &&
+		chunkId in window?.i18nTranslationChunks
+	);
+}
+
+/**
  * Get the translation chunk file for the given chunk id and locale.
  *
  * @param {string} chunkId A chunk id. e.g. chunk-abc.min
@@ -226,10 +240,7 @@ export function getTranslationChunkFileUrl( {
  * @returns {Promise} Translation chunk json content
  */
 export function getTranslationChunkFile( chunkId, localeSlug, targetBuild = 'evergreen' ) {
-	if (
-		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug &&
-		window?.i18nTranslationChunks?.[ chunkId ]
-	) {
+	if ( getIsTranslationChunkPreloaded( chunkId, localeSlug ) ) {
 		return Promise.resolve( window.i18nTranslationChunks[ chunkId ] );
 	}
 
@@ -362,9 +373,26 @@ export default async function switchLocale( localeSlug ) {
 			const translatedInstalledChunks = getInstalledChunks().filter( ( chunkId ) =>
 				translatedChunks.includes( chunkId )
 			);
+			const preloadedTranslatedInstalledChunks = translatedInstalledChunks.filter( ( chunkId ) =>
+				getIsTranslationChunkPreloaded( chunkId, localeSlug )
+			);
+			const translatedInstalledChunksToBeLoaded = translatedInstalledChunks.filter(
+				( chunkId ) => ! getIsTranslationChunkPreloaded( chunkId, localeSlug )
+			);
+
+			// Add preloaded translation chunks
+			Promise.all(
+				preloadedTranslatedInstalledChunks.map( ( chunkId ) =>
+					getTranslationChunkFile( chunkId, localeSlug, window?.BUILD_TARGET )
+				)
+			).then( ( allTranslations ) =>
+				addTranslations(
+					allTranslations.reduce( ( acc, translations ) => Object.assign( acc, translations ), {} )
+				)
+			);
 
 			// Load individual translation chunks
-			translatedInstalledChunks.forEach( ( chunkId ) =>
+			translatedInstalledChunksToBeLoaded.forEach( ( chunkId ) =>
 				getTranslationChunkFile( chunkId, localeSlug, window?.BUILD_TARGET )
 					.then( ( translations ) => addTranslations( translations ) )
 					.catch( ( error ) => {

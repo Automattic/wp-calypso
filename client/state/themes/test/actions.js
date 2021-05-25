@@ -1170,19 +1170,22 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#getRecommendedThemes()', () => {
+		const filter = 'nonsense-test-filter';
 		test( 'should dispatch fetch action', () => {
-			getRecommendedThemes()( spy );
-			expect( spy ).to.have.been.calledWith( { type: RECOMMENDED_THEMES_FETCH } );
+			getRecommendedThemes( filter )( spy );
+			expect( spy ).to.have.been.calledWith( { type: RECOMMENDED_THEMES_FETCH, filter } );
 		} );
 	} );
 
 	describe( '#receiveRecommendedThemes()', () => {
-		const themes = [];
+		const themes = [ 'a', 'b', 'c' ];
+		const filter = 'test-filter-nonsense';
 		test( 'should dispatch success action with themes as payload', () => {
-			receiveRecommendedThemes( themes )( spy );
+			receiveRecommendedThemes( themes, filter )( spy );
 			expect( spy ).to.have.been.calledWith( {
 				type: RECOMMENDED_THEMES_SUCCESS,
 				payload: themes,
+				filter,
 			} );
 		} );
 	} );

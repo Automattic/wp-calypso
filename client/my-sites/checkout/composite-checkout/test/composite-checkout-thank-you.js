@@ -936,4 +936,30 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 		expect( url ).toBe( redirectTo );
 	} );
+
+	it( 'redirects to the jetpack checkout thank you when jetpack checkout arg is set', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'jetpack_backup_daily',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			isJetpackCheckout: true,
+		} );
+		expect( url ).toBe( '/checkout/jetpack/thank-you/foo.bar/jetpack_backup_daily' );
+	} );
+
+	it( 'redirects to the jetpack checkout thank you with `no_product` when jetpack checkout arg is set and the cart is empty', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			isJetpackCheckout: true,
+		} );
+		expect( url ).toBe( '/checkout/jetpack/thank-you/foo.bar/no_product' );
+	} );
 } );

@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get, includes, invoke } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,7 +62,7 @@ class ImportURLStepComponent extends Component {
 
 	handleInputRef = ( el ) => ( this.inputRef = el );
 
-	focusInput = () => invoke( this.inputRef, 'focus' );
+	focusInput = () => this.inputRef?.focus();
 
 	setUrlError = ( urlValidationMessage ) =>
 		this.setState( { urlValidationMessage }, this.focusInput );

@@ -13,6 +13,7 @@ import { isEnabled } from '@automattic/calypso-config';
  * Internal dependencies
  */
 import MShotsImage from './mshots-image';
+export { default as MShotsImage } from './mshots-image';
 import {
 	getAvailableDesigns,
 	getDesignImageUrl,

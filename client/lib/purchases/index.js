@@ -29,6 +29,9 @@ import {
 	isTitanMail,
 	isConciergeSession,
 	getJetpackProductsDisplayNames,
+	isWpComPlan,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
 } from '@automattic/calypso-products';
 import { MembershipSubscription, MembershipSubscriptionsSite } from 'calypso/lib/purchases/types';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -733,6 +736,38 @@ function getDomainRegistrationAgreementUrl( purchase ) {
 	return purchase.domainRegistrationAgreementUrl;
 }
 
+function shouldRenderMonthlyRenewalOption( purchase ) {
+	if ( ! purchase || ! purchase.expiryDate ) {
+		return false;
+	}
+
+	if ( ! isWpComPlan( purchase.productSlug ) ) {
+		return false;
+	}
+
+	const plan = getPlan( purchase.productSlug );
+
+	if ( ! [ TERM_ANNUALLY, TERM_BIENNIALLY ].includes( plan.term ) ) {
+		return false;
+	}
+
+	const isAutorenewalEnabled = ! isExpiring( purchase );
+	const daysTillExpiry = moment( purchase.expiryDate ).diff( Date.now(), 'days' );
+
+	// Auto renew is off and expiration is <90 days from now
+	if ( ! isAutorenewalEnabled && daysTillExpiry < 90 ) {
+		return true;
+	}
+
+	// We attempted to bill them <30 days prior to their annual renewal and
+	// we weren’t able to do so for any other reason besides having auto renew off.
+	if ( isAutorenewalEnabled && daysTillExpiry < 30 ) {
+		return true;
+	}
+
+	return false;
+}
+
 export {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
@@ -783,6 +818,7 @@ export {
 	subscribedWithinPastWeek,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 	shouldRenderExpiringCreditCard,
+	shouldRenderMonthlyRenewalOption,
 };
 
 export { isGoogleWorkspaceExtraLicence } from './is-google-workspace-extra-license';

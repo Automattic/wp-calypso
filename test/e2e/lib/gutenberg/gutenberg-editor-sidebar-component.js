@@ -26,7 +26,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		);
 		await driverHelper.scrollIntoView( this.driver, by );
 		await driverHelper.clickWhenClickable( this.driver, by );
-		return driverHelper.waitUntilElementLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.components-panel' )
 		);
@@ -100,13 +100,14 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async _expandOrCollapseSectionByText( text, expand = true ) {
-		const sectionLocator = await driverHelper.getElementByText(
-			this.driver,
+		const sectionLocator = driverHelper.createTextLocator(
 			By.css( '.components-panel__body-toggle' ),
 			text
 		);
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, sectionLocator );
-		const sectionButton = await this.driver.findElement( sectionLocator );
+		const sectionButton = await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			sectionLocator
+		);
 		const c = await sectionButton.getAttribute( 'aria-expanded' );
 		if ( expand && c === 'false' ) {
 			await driverHelper.scrollIntoView( this.driver, sectionLocator );
@@ -119,18 +120,14 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async setCommentsPreference( { allow = true } = {} ) {
-		const labelLocator = await driverHelper.getElementByText(
-			this.driver,
+		const labelLocator = driverHelper.createTextLocator(
 			By.css( '.components-checkbox-control__label' ),
 			'Allow comments'
 		);
-		const checkBoxLocatorID = await this.driver.findElement( labelLocator ).getAttribute( 'for' );
-		const checkBoxLocator = By.id( checkBoxLocatorID );
-		if ( allow === true ) {
-			await driverHelper.setCheckbox( this.driver, checkBoxLocator );
-		} else {
-			await driverHelper.unsetCheckbox( this.driver, checkBoxLocator );
-		}
+		const checkBoxSelector = await this.driver.findElement( labelLocator ).getAttribute( 'for' );
+		const checkBoxLocator = By.id( checkBoxSelector );
+
+		await driverHelper.setCheckbox( this.driver, checkBoxLocator, allow );
 	}
 
 	async addNewCategory( category ) {
@@ -197,45 +194,31 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async setVisibilityToPasswordProtected( password ) {
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.edit-post-post-visibility__toggle' )
-		);
-		await this.driver.sleep( 1000 ); // wait for popover to be fully loaded
-		await driverHelper.setCheckbox(
-			this.driver,
-			By.css( 'input#editor-post-password-0[value="password"]' )
-		);
-		return await driverHelper.setWhenSettable(
-			this.driver,
-			By.css( '.editor-post-visibility__dialog-password-input' ),
-			password,
-			{
-				secureValue: true,
-			}
-		);
+		const visibilityToggleLocator = By.css( '.edit-post-post-visibility__toggle' );
+		const visibilityOptionLocator = By.css( 'input#editor-post-password-0[value="password"]' );
+		const passwordInputLocator = By.css( '.editor-post-visibility__dialog-password-input' );
+
+		await driverHelper.clickWhenClickable( this.driver, visibilityToggleLocator );
+		await driverHelper.clickWhenClickable( this.driver, visibilityOptionLocator );
+		await driverHelper.setWhenSettable( this.driver, passwordInputLocator, password, {
+			secureValue: true,
+		} );
 	}
 
 	async setVisibilityToPrivate() {
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.edit-post-post-visibility__toggle' )
-		);
-		await this.driver.sleep( 1000 ); // wait for popover to be fully loaded
-		await driverHelper.setCheckbox(
-			this.driver,
-			By.css( 'input#editor-post-private-0[value="private"]' )
-		);
+		const visibilityToggleLocator = By.css( '.edit-post-post-visibility__toggle' );
+		const visibilityOptionLocator = By.css( 'input#editor-post-private-0[value="private"]' );
 
+		await driverHelper.clickWhenClickable( this.driver, visibilityToggleLocator );
+		await driverHelper.clickWhenClickable( this.driver, visibilityOptionLocator );
 		await driverHelper.waitForAlertPresent( this.driver );
-		const publishPrivateAlert = await this.driver.switchTo().alert();
-		return await publishPrivateAlert.accept();
+		await driverHelper.acceptAlertIfPresent( this.driver );
 	}
 
 	async scheduleFuturePost() {
 		await this.expandStatusAndVisibility();
 		const nextMonthLocator = By.css( '.DayPickerNavigation_rightButton__horizontalDefault' );
-		const firstDay = By.css( '.CalendarDay' );
+		const firstDayLocator = driverHelper.createTextLocator( By.css( '.CalendarDay' ), '1' );
 		const publishDateLocator = By.css( '.edit-post-post-schedule__toggle' );
 
 		await driverHelper.clickWhenClickable(
@@ -244,12 +227,12 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		);
 		// schedulePost post for the first day of the next month
 		await driverHelper.clickWhenClickable( this.driver, nextMonthLocator );
-		await driverHelper.selectElementByText( this.driver, firstDay, '1' );
+		await driverHelper.clickWhenClickable( this.driver, firstDayLocator );
 		// Add another click so the calendar modal disappears and makes space for
 		// the follow-up clicks. This is because of a bug reported in
 		// https://github.com/WordPress/gutenberg/issues/30415 and can be reverted
 		// once an upstream fix is in.
-		await driverHelper.selectElementByText( this.driver, firstDay, '1' );
+		await driverHelper.clickWhenClickable( this.driver, firstDayLocator );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, publishDateLocator );
 		const publishDate = await this.driver.findElement( publishDateLocator ).getText();
 

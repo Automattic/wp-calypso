@@ -5,7 +5,6 @@ import LoginPage from '../pages/login-page.js';
 import EditorPage from '../pages/editor-page';
 import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page';
 import ReaderPage from '../pages/reader-page.js';
-import StoreDashboardPage from '../pages/woocommerce/store-dashboard-page';
 import PluginsBrowserPage from '../pages/plugins-browser-page';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
 import CustomerHome from '../pages/customer-home-page';
@@ -262,29 +261,15 @@ export default class LoginFlow {
 		await driverHelper.waitUntilAbleToSwitchToWindow( this.driver, 1 );
 		const loginPage = await LoginPage.Expect( this.driver );
 
-		try {
-			await loginPage.login(
-				this.account.email || this.account.username,
-				this.account.password,
-				false,
-				{ retry: false }
-			);
-		} catch ( error ) {
-			// Popup login window closes itself so let's handle WebDriver complaints
-			if ( 'NoSuchWindowError' !== error.name ) {
-				throw error;
-			}
-		}
+		await loginPage.login(
+			this.account.email || this.account.username,
+			this.account.password,
+			false,
+			{ isPopup: true }
+		);
 
 		// Make sure we've switched back to the post window
 		await driverHelper.waitUntilAbleToSwitchToWindow( this.driver, 0 );
-	}
-
-	async loginAndOpenWooStore() {
-		await this.loginAndSelectMySite();
-		this.sideBarComponent = await SidebarComponent.Expect( this.driver );
-		await this.sideBarComponent.selectStoreOption();
-		return await StoreDashboardPage.Expect( this.driver );
 	}
 
 	async loginAndSelectWPAdmin() {

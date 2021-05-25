@@ -42,32 +42,10 @@ export default function filterAppropriatePaymentMethods( {
 			return isFullCredits ? false : true;
 		} )
 		.filter( ( methodObject ) => {
-			// Some country-specific payment methods should only be available if that
-			// country is selected in the contact information.
-			if ( methodObject.id === 'netbanking' && countryCode !== 'IN' ) {
-				return false;
-			}
-			if ( methodObject.id === 'ebanx-tef' && countryCode !== 'BR' ) {
-				return false;
-			}
-			return true;
-		} )
-		.filter( ( methodObject ) => {
-			if ( methodObject.id.startsWith( 'existingCard-' ) ) {
-				return isPaymentMethodEnabled( 'card', allowedPaymentMethods );
-			}
 			const slug = readCheckoutPaymentMethodSlug( methodObject.id );
 			if ( ! slug ) {
 				return false;
 			}
-			if ( slug === 'full-credits' ) {
-				// If the full-credits payment method still exists here (see above filter), it's enabled
-				return true;
-			}
-			if ( slug === 'free-purchase' ) {
-				// If the free payment method still exists here (see above filter), it's enabled
-				return true;
-			}
-			return isPaymentMethodEnabled( slug, allowedPaymentMethods );
+			return isPaymentMethodEnabled( slug, allowedPaymentMethods, countryCode );
 		} );
 }

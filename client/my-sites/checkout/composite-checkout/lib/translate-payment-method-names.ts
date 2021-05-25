@@ -49,7 +49,7 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 		case 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet':
 			return 'id_wallet';
 		case 'WPCOM_Billing_Web_Payment':
-			return 'apple-pay';
+			return 'web-pay';
 	}
 }
 
@@ -94,6 +94,7 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'wechat':
 			return 'WPCOM_Billing_Stripe_Source_Wechat';
 		case 'apple-pay':
+		case 'google-pay':
 			return 'WPCOM_Billing_Web_Payment';
 		case 'full-credits':
 			return 'WPCOM_Billing_WPCOM';
@@ -129,6 +130,9 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 }
 
 export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMethodSlug | null {
+	if ( slug.startsWith( 'existingCard-' ) ) {
+		slug = 'card';
+	}
 	switch ( slug ) {
 		case 'ebanx':
 		case 'brazil-tef':
@@ -146,10 +150,13 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'sofort':
 		case 'stripe-three-d-secure':
 		case 'wechat':
-		case 'apple-pay':
+		case 'web-pay':
 		case 'full-credits':
 		case 'free-purchase':
 			return slug;
+		case 'apple-pay':
+		case 'google-pay':
+			return 'web-pay';
 	}
 	return null;
 }
@@ -166,6 +173,7 @@ export function translateCheckoutPaymentMethodToTracksPaymentMethod(
 		case 'card':
 			return 'credit_card';
 		case 'apple-pay':
+		case 'google-pay':
 			return 'web_payment';
 	}
 	return snakeCase( paymentMethodSlug );

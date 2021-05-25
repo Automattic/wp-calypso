@@ -295,7 +295,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 						primary={ buttonPrimary }
 						className="jetpack-product-card__button"
 						onClick={ onButtonClick }
-						disabled={ isDisabled || isDeprecated }
+						disabled={ isDeprecated }
 					>
 						{ buttonLabel }
 					</Button>

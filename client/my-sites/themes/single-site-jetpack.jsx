@@ -12,12 +12,9 @@ import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
-import config from '@automattic/calypso-config';
 import { isPartnerPurchase } from 'calypso/lib/purchases';
-import JetpackReferrerMessage from './jetpack-referrer-message';
 import { connectOptions } from './theme-options';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import {
@@ -38,6 +35,7 @@ import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'calypso/state/themes/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import ThemesHeader from './themes-header';
 
 const ConnectedThemesSelection = connectOptions( ( props ) => {
 	return (
@@ -55,8 +53,6 @@ const ConnectedThemesSelection = connectOptions( ( props ) => {
 
 const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	const {
-		analyticsPath,
-		analyticsPageTitle,
 		currentPlan,
 		emptyContent,
 		filter,
@@ -72,30 +68,13 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 		requestingSitePlans,
 		siteSlug,
 	} = props;
-	const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
-
-	if ( ! jetpackEnabled ) {
-		return (
-			<JetpackReferrerMessage
-				siteId={ siteId }
-				analyticsPath={ analyticsPath }
-				analyticsPageTitle={ analyticsPageTitle }
-			/>
-		);
-	}
 
 	const isPartnerPlan = purchase && isPartnerPurchase( purchase );
 
 	return (
-		<Main className="themes">
+		<Main fullWidthLayout className="themes">
 			<SidebarNavigation />
-			<FormattedHeader
-				brandFont
-				className="themes__page-heading"
-				headerText={ translate( 'Themes' ) }
-				subHeaderText={ translate( 'Select or update the visual design for your site.' ) }
-				align="left"
-			/>
+			<ThemesHeader />
 			<CurrentTheme siteId={ siteId } />
 			{ ! requestingSitePlans && currentPlan && ! hasUnlimitedPremiumThemes && ! isPartnerPlan && (
 				<UpsellNudge

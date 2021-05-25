@@ -55,7 +55,7 @@ import {
 	canCurrentUserUseEarn,
 	getSiteOption,
 	canCurrentUserUseWooCommerceCoreStore,
-	getSiteWoocommerceUrl,
+	getSiteWooCommerceUrl,
 } from 'calypso/state/sites/selectors';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
@@ -330,7 +330,7 @@ export class MySitesSidebar extends Component {
 		let activityLink = '/activity-log' + siteSuffix;
 		let activityLabel = translate( 'Activity' );
 
-		if ( this.props.isJetpack && isEnabled( 'manage/themes-jetpack' ) ) {
+		if ( this.props.isJetpack ) {
 			activityLink += '?group=rewind';
 			activityLabel = translate( 'Activity & Backups' );
 		}
@@ -476,16 +476,13 @@ export class MySitesSidebar extends Component {
 			showCustomizerLink,
 			showSiteEditor,
 		} = this.props;
-		const jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
 		if ( site && ! canUserEditThemeOptions ) {
 			return null;
 		}
 
-		if ( this.props.isJetpack && ! jetpackEnabled && site.options ) {
-			themesLink = site.options.admin_url + 'themes.php';
-		} else if ( this.props.siteId ) {
+		if ( this.props.siteId ) {
 			themesLink = '/themes' + this.props.siteSuffix;
 		} else {
 			themesLink = '/themes';
@@ -500,7 +497,7 @@ export class MySitesSidebar extends Component {
 						link={ this.props.customizeUrl }
 						onNavigate={ this.trackCustomizeClick }
 						preloadSectionName="customize"
-						forceInternalLink
+						forceInternalLink={ ! this.props.isJetpack || this.props.isAtomicSite }
 						expandSection={ this.expandDesignSection }
 					/>
 				) }
@@ -1210,7 +1207,7 @@ function mapStateToProps( state ) {
 		sitePlanSlug: getSitePlanSlug( state, siteId ),
 		onboardingUrl: getOnboardingUrl( state ),
 		isSiteWpcomStore: getSiteOption( state, siteId, 'is_wpcom_store' ), // 'is_automated_transfer' && 'woocommerce_is_active'
-		woocommerceUrl: getSiteWoocommerceUrl( state, siteId ),
+		woocommerceUrl: getSiteWooCommerceUrl( state, siteId ),
 	};
 }
 

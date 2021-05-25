@@ -77,6 +77,13 @@ export default function useJetpackFreeButtonProps(
 	urlQueryArgs: QueryArgs = {}
 ): Props {
 	const recommendationsUrl = useSelector( getJetpackRecommendationsUrl );
+	const siteWpAdminUrl = urlQueryArgs?.admin_url
+		? getUrlFromParts( {
+				...getUrlParts( urlQueryArgs.admin_url + 'admin.php' ),
+				search: '?page=jetpack',
+				hash: '/recommendations',
+		  } ).href
+		: recommendationsUrl;
 	const trackCallback = useTrackCallback( undefined, 'calypso_product_jpfree_click', {
 		site_id: siteId || undefined,
 	} );
@@ -84,8 +91,8 @@ export default function useJetpackFreeButtonProps(
 		storePlan( PLAN_JETPACK_FREE );
 		trackCallback();
 	}, [ trackCallback ] );
-	const href = useMemo( () => buildHref( recommendationsUrl, siteId, urlQueryArgs ), [
-		recommendationsUrl,
+	const href = useMemo( () => buildHref( siteWpAdminUrl, siteId, urlQueryArgs ), [
+		siteWpAdminUrl,
 		siteId,
 		urlQueryArgs,
 	] );

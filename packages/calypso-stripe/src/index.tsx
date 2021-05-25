@@ -99,7 +99,7 @@ export type GetStripeConfiguration = (
 ) => Promise< StripeConfiguration >;
 
 export interface StripePaymentRequest {
-	canMakePayment: () => Promise< undefined | { applePay: boolean } >;
+	canMakePayment: () => Promise< undefined | { applePay?: boolean; googlePay?: boolean } >;
 	on: ( event: string, handler: StripePaymentRequestHandler ) => void;
 	show: () => void;
 }

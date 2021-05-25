@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { flowRight, get, isEmpty, pick } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -14,7 +14,6 @@ import { isHttps } from 'calypso/lib/url';
 import { Button, Card } from '@automattic/components';
 import Notice from 'calypso/components/notice';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import Gridicon from 'calypso/components/gridicon';
 import QueryStatus from '../data/query-status';
 import SectionHeader from 'calypso/components/section-header';
@@ -99,13 +98,12 @@ class EasyTab extends Component {
 				<SectionHeader label={ translate( 'Caching' ) } />
 				<Card>
 					<form>
-						<FormToggle
+						<ToggleControl
 							checked={ !! is_cache_enabled }
 							disabled={ isRequesting || isSaving || isReadOnly }
 							onChange={ handleAutosavingToggle( 'is_cache_enabled' ) }
-						>
-							<span>{ translate( 'Enable Page Caching' ) }</span>
-						</FormToggle>
+							label={ <span>{ translate( 'Enable Page Caching' ) }</span> }
+						/>
 					</form>
 				</Card>
 
@@ -130,14 +128,15 @@ class EasyTab extends Component {
 							{ isHttps( get( site, 'options.admin_url', '' ) ) && (
 								<form>
 									<FormFieldset>
-										<FormToggle
+										<ToggleControl
 											checked={ this.state.httpOnly }
 											onChange={ this.handleHttpOnlyChange }
-										>
-											<span>
-												{ translate( 'Send non-secure (non https) request for homepage' ) }
-											</span>
-										</FormToggle>
+											label={
+												<span>
+													{ translate( 'Send non-secure (non https) request for homepage' ) }
+												</span>
+											}
+										/>
 									</FormFieldset>
 								</form>
 							) }

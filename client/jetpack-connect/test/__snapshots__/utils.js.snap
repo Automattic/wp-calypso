@@ -2,6 +2,7 @@
 
 exports[`parseAuthorizationQuery should return transformed data on valid input 1`] = `
 Object {
+  "allowSiteConnection": "1",
   "alreadyAuthorized": false,
   "authApproved": false,
   "blogname": "Just Another WordPress.com Site",
@@ -19,7 +20,6 @@ Object {
   "site": "https://yourjetpack.blog",
   "siteIcon": null,
   "siteUrl": "https://yourjetpack.blog",
-  "skipUser": null,
   "state": "1",
   "userEmail": null,
   "woodna_help_url": null,

@@ -4,15 +4,18 @@
 import styled from '@emotion/styled';
 
 export const PaymentMethodLogos = styled.span`
-	flex: 1;
-	transform: translateY( 3px );
 	text-align: right;
+	transform: translateY( 3px );
 
 	.rtl & {
 		text-align: left;
 	}
 
 	svg {
-		display: inline-block;
+		display: block;
+	}
+
+	&.google-pay__logo svg {
+		height: 16px;
 	}
 `;

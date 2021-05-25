@@ -12,9 +12,9 @@ import {
 	pickBy,
 	property,
 	some,
-	uniqueId,
 } from 'lodash';
 import update from 'immutability-helper';
+import { v4 as uuid } from 'uuid';
 
 function Controller( options ) {
 	if ( ! ( this instanceof Controller ) ) {
@@ -60,16 +60,14 @@ Controller.prototype.getInitialState = function () {
 };
 
 Controller.prototype._loadFieldValues = function () {
-	this._loadFunction(
-		function ( error, fieldValues ) {
-			if ( error ) {
-				this._onError( error );
-				return;
-			}
+	this._loadFunction( ( error, fieldValues ) => {
+		if ( error ) {
+			this._onError( error );
+			return;
+		}
 
-			this._setState( initializeFields( this._currentState, fieldValues ) );
-		}.bind( this )
-	);
+		this._setState( initializeFields( this._currentState, fieldValues ) );
+	} );
 };
 
 Controller.prototype.handleFieldChange = function ( change ) {
@@ -99,10 +97,10 @@ Controller.prototype.handleSubmit = function ( onComplete ) {
 		return;
 	}
 
-	this._onValidationComplete = function () {
+	this._onValidationComplete = () => {
 		this._setState( showAllErrors( this._currentState ) );
 		onComplete( hasErrors( this._currentState ) );
-	}.bind( this );
+	};
 
 	if ( ! this._pendingValidation ) {
 		this.sanitize();
@@ -122,45 +120,39 @@ Controller.prototype.sanitize = function () {
 		return;
 	}
 
-	this._sanitizerFunction(
-		fieldValues,
-		function ( newFieldValues ) {
-			this._setState( changeFieldValues( this._currentState, newFieldValues ) );
-		}.bind( this )
-	);
+	this._sanitizerFunction( fieldValues, ( newFieldValues ) => {
+		this._setState( changeFieldValues( this._currentState, newFieldValues ) );
+	} );
 };
 
 Controller.prototype.validate = function () {
 	const fieldValues = getAllFieldValues( this._currentState );
-	const id = uniqueId();
+	const id = uuid();
 
 	this._setState( setFieldsValidating( this._currentState ) );
 
 	this._pendingValidation = id;
 
-	this._validatorFunction(
-		fieldValues,
-		function ( error, fieldErrors ) {
-			if ( id !== this._pendingValidation ) {
-				return;
-			}
+	this._validatorFunction( fieldValues, ( error, fieldErrors ) => {
+		if ( id !== this._pendingValidation ) {
+			return;
+		}
 
-			if ( error ) {
-				this._onError( error );
-				return;
-			}
+		if ( error ) {
+			this._onError( error );
+			return;
+		}
 
-			this._pendingValidation = null;
-			this._setState(
-				setFieldErrors( this._currentState, fieldErrors, this._hideFieldErrorsOnChange )
-			);
+		this._pendingValidation = null;
+		this._setState(
+			setFieldErrors( this._currentState, fieldErrors, this._hideFieldErrorsOnChange )
+		);
 
-			if ( this._onValidationComplete ) {
-				this._onValidationComplete();
-				this._onValidationComplete = null;
-			}
-		}.bind( this )
-	);
+		if ( this._onValidationComplete ) {
+			this._onValidationComplete();
+			this._onValidationComplete = null;
+		}
+	} );
 };
 
 Controller.prototype.resetFields = function ( fieldValues ) {

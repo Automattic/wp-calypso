@@ -1,16 +1,26 @@
 const testFramework = require( '../index' );
 const TestRun = testFramework.TestRun;
+const mockFs = require( 'mock-fs' );
 
 describe( 'TestRun class', function () {
 	let run;
 
 	beforeEach( function () {
+		mockFs( {
+			'/tmp': {},
+		} );
+
 		run = new TestRun( {
 			locator: {
 				name: 'The full name of the test to run',
 			},
 			mockingPort: 10,
+			tempAssetPath: '/tmp',
 		} );
+	} );
+
+	afterEach( () => {
+		mockFs.restore();
 	} );
 
 	it( 'instantiates', function () {
@@ -30,6 +40,7 @@ describe( 'TestRun class', function () {
 		// these values are super important, to be used by the testing tools in the worker processes
 		expect( env ).toEqual( {
 			NODE_CONFIG: { foo: 'bar' },
+			TEMP_ASSET_PATH: '/the-full-name-of-the-test-to-run',
 		} );
 	} );
 
@@ -44,10 +55,12 @@ describe( 'TestRun class', function () {
 				name: 'The full name of the test to run',
 			},
 			mockingPort: 10,
+			tempAssetPath: '/tmp',
 		} );
 
 		const args = localRun.getArguments();
 		expect( args ).toEqual( [
+			'--bail',
 			'--mocking_port=10',
 			'--worker=1',
 			'-g',

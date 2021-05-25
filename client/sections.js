@@ -350,7 +350,7 @@ const sections = [
 	},
 	{
 		name: 'auth',
-		paths: [ '/oauth-login', '/authorize', '/api/oauth/token' ],
+		paths: [ '/api/oauth/token' ],
 		module: 'calypso/auth',
 		enableLoggedOut: true,
 	},

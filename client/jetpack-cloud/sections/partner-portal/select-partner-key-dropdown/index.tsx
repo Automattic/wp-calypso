@@ -13,6 +13,7 @@ import {
 	getCurrentPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { setActivePartnerKey } from 'calypso/state/partner-portal/partner/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SelectDropdown from 'calypso/components/select-dropdown';
 
 /**
@@ -28,6 +29,9 @@ export default function SelectPartnerKeyDropdown(): ReactElement | null {
 	const onKeySelect = useCallback(
 		( option ) => {
 			dispatch( setActivePartnerKey( parseInt( option.value ) ) );
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_select_partner_key_dropdown_option_select' )
+			);
 		},
 		[ dispatch ]
 	);

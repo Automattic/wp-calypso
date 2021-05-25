@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { find, get } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
 import SegmentedControl from 'calypso/components/segmented-control';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import {
 	subscribeToNewPostEmail,
@@ -154,13 +154,12 @@ class ReaderSiteNotificationSettings extends Component {
 					className="reader-site-notification-settings__popout"
 				>
 					<div className="reader-site-notification-settings__popout-toggle">
-						<FormToggle
+						<ToggleControl
 							onChange={ this.toggleNewPostNotification }
 							checked={ sendNewPostsByNotification }
 							id="reader-site-notification-settings__notifications"
-						>
-							{ translate( 'Notify me of new posts' ) }
-						</FormToggle>
+							label={ translate( 'Notify me of new posts' ) }
+						/>
 						<p className="reader-site-notification-settings__popout-hint">
 							{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
 						</p>
@@ -173,13 +172,12 @@ class ReaderSiteNotificationSettings extends Component {
 						}
 					>
 						{ ! isEmailBlocked && (
-							<FormToggle
+							<ToggleControl
 								onChange={ this.toggleNewPostEmail }
 								checked={ sendNewPostsByEmail }
 								id={ 'reader-site-notification-settings__email-posts' }
-							>
-								{ translate( 'Email me new posts' ) }
-							</FormToggle>
+								label={ translate( 'Email me new posts' ) }
+							/>
 						) }
 
 						{ isEmailBlocked && (
@@ -223,13 +221,12 @@ class ReaderSiteNotificationSettings extends Component {
 					) }
 					{ ! isEmailBlocked && (
 						<div className="reader-site-notification-settings__popout-toggle">
-							<FormToggle
+							<ToggleControl
 								onChange={ this.toggleNewCommentEmail }
 								checked={ sendNewCommentsByEmail }
 								id="reader-site-notification-settings__email-comments"
-							>
-								{ translate( 'Email me new comments' ) }
-							</FormToggle>
+								label={ translate( 'Email me new comments' ) }
+							/>
 						</div>
 					) }
 				</ReaderPopover>

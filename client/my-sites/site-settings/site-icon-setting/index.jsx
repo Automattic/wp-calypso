@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { head, isEqual, flow, compact, includes } from 'lodash';
+import { isEqual, flow, compact, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -104,7 +104,7 @@ class SiteIconSetting extends Component {
 		}
 
 		const { siteId, selectedItems } = this.props;
-		const selectedItem = head( selectedItems );
+		const selectedItem = selectedItems[ 0 ];
 		if ( ! selectedItem ) {
 			return;
 		}
