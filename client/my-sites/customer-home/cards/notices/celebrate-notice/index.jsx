@@ -31,6 +31,7 @@ const CelebrateNotice = ( {
 	skipText,
 	siteId,
 	title,
+	tracksEventExtras = {},
 } ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( true );
@@ -50,6 +51,7 @@ const CelebrateNotice = ( {
 			composeAnalytics(
 				recordTracksEvent( 'calypso_customer_home_notice_show_next', {
 					notice: noticeId,
+					...tracksEventExtras,
 				} )
 			)
 		);
@@ -64,6 +66,7 @@ const CelebrateNotice = ( {
 			composeAnalytics(
 				recordTracksEvent( 'calypso_customer_home_notice_skip', {
 					notice: noticeId,
+					...tracksEventExtras,
 				} )
 			)
 		);
