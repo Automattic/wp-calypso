@@ -25,7 +25,17 @@ export function recordSignupStart( flow, ref, optionalProps ) {
 }
 
 export function recordSignupComplete(
-	{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite, theme, intent, startingPoint },
+	{
+		flow,
+		siteId,
+		isNewUser,
+		isBlankCanvas,
+		hasCartItems,
+		isNew7DUserSite,
+		theme,
+		intent,
+		startingPoint,
+	},
 	now
 ) {
 	const isNewSite = !! siteId;
@@ -35,7 +45,17 @@ export function recordSignupComplete(
 		return addToQueue(
 			'signup',
 			'recordSignupComplete',
-			{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite, theme, intent, startingPoint },
+			{
+				flow,
+				siteId,
+				isNewUser,
+				isBlankCanvas,
+				hasCartItems,
+				isNew7DUserSite,
+				theme,
+				intent,
+				startingPoint,
+			},
 			true
 		);
 	}
@@ -49,6 +69,7 @@ export function recordSignupComplete(
 		blog_id: siteId,
 		is_new_user: isNewUser,
 		is_new_site: isNewSite,
+		is_blank_canvas: isBlankCanvas,
 		has_cart_items: hasCartItems,
 		theme,
 		intent,
@@ -86,6 +107,7 @@ export function recordSignupComplete(
 		blog_id: siteId,
 		is_new_user: isNewUser,
 		is_new_site: isNewSite,
+		is_blank_canvas: isBlankCanvas,
 		has_cart_items: hasCartItems,
 		theme,
 		intent,
