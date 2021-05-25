@@ -75,6 +75,8 @@ import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -586,6 +588,33 @@ export function wpForTeamsP2PlusNotSupportedRedirect( context, next ) {
 		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
 
 		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
+}
+
+/**
+ * For P2s, only hubs can have a plan. If we are on P2 a site that is a site under
+ * a hub, we redirect the hub's plans page.
+ *
+ * @param {object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function p2RedirectToHubPlans( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if (
+		config.isEnabled( 'p2/p2-plus' ) &&
+		selectedSite &&
+		isSiteWPForTeams( store.getState(), selectedSite.ID ) &&
+		! isSiteP2Hub( store.getState(), selectedSite.ID )
+	) {
+		const hubId = getP2HubBlogId( store.getState(), selectedSite.ID );
+		const hubSlug = getSiteSlug( store.getState(), hubId );
+		if ( hubSlug ) {
+			return page.redirect( `/plans/my-plan/${ hubSlug }` );
+		}
 	}
 
 	next();
