@@ -131,6 +131,7 @@ function showAppWindow() {
 	require( '../window-handlers/window-saver' )( appWindow );
 	require( '../window-handlers/debug-tools' )( appWindow );
 	require( '../window-handlers/spellcheck' )( appWindow );
+	require( '../window-handlers/navigation' )( appWindow );
 
 	platform.setMainWindow( appWindow );
 

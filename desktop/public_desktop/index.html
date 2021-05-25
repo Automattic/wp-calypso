@@ -8,7 +8,7 @@
 		<div id="title-bar">
 			<div id="title-bar-buttons">
 				<div class="nav-button">
-					<div class="nav-button-icon">
+					<div class="nav-button-icon" id="nav-button-back">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="10"
@@ -23,7 +23,7 @@
 					</div>
 				</div>
 				<div class="nav-button">
-					<div class="nav-button-icon">
+					<div class="nav-button-icon" id="nav-button-forward">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							width="10"
@@ -37,7 +37,7 @@
 					</div>
 				</div>
 				<div class="nav-button">
-					<div class="nav-button-icon">
+					<div class="nav-button-icon" id="nav-button-home">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -61,6 +61,25 @@
 					</div>
 			</div>
 		</div>
-		<script src="default.js"></script>
+		<script>
+			function Navigate() {
+				const backButton = document.getElementById( 'nav-button-back' );
+				backButton.addEventListener( 'click', function() {
+					window.electron.send( 'back-button-clicked' );
+				});
+
+				const forwardButton = document.getElementById( 'nav-button-forward' );
+				forwardButton.addEventListener( 'click', function() {
+					window.electron.send( 'forward-button-clicked' );
+				});
+
+				const homeButton = document.getElementById( 'nav-button-home' );
+				homeButton.addEventListener( 'click', function() {
+					window.electron.send( 'home-button-clicked' );
+				});
+			};
+
+			var nav = new Navigate();
+		</script>
 	</body>
 </html>
