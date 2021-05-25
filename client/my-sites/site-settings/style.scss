@@ -566,3 +566,9 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 .site-settings__cloudflare-spacer {
 	margin-bottom: 16px;
 }
+
+.settings-performance__loading-placeholder {
+	@include placeholder();
+	margin-bottom: 1em;
+	height: 128px;
+}

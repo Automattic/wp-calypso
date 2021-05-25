@@ -32,8 +32,85 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import config from '@automattic/calypso-config';
+import { Experiment } from 'calypso/lib/explat';
 
 class SiteSettingsPerformance extends Component {
+	renderDefaultExperience() {
+		const {
+			fields,
+			handleAutosavingToggle,
+			isRequestingSettings,
+			isSavingSettings,
+			siteIsJetpack,
+			siteIsAtomic,
+			showCloudflare,
+			submitForm,
+			trackEvent,
+			updateFields,
+			saveJetpackSettings,
+		} = this.props;
+		const siteIsJetpackNonAtomic = siteIsJetpack && ! siteIsAtomic;
+		return (
+			<Fragment>
+				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
+
+				<Search
+					handleAutosavingToggle={ handleAutosavingToggle }
+					updateFields={ updateFields }
+					submitForm={ submitForm }
+					saveJetpackSettings={ saveJetpackSettings }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+					trackEvent={ trackEvent }
+				/>
+			</Fragment>
+		);
+	}
+
+	renderTreatmentExperience() {
+		const {
+			fields,
+			handleAutosavingToggle,
+			isRequestingSettings,
+			isSavingSettings,
+			siteIsJetpack,
+			siteIsAtomic,
+			showCloudflare,
+			submitForm,
+			trackEvent,
+			updateFields,
+			saveJetpackSettings,
+		} = this.props;
+		const siteIsJetpackNonAtomic = siteIsJetpack && ! siteIsAtomic;
+		return (
+			<Fragment>
+				<Search
+					handleAutosavingToggle={ handleAutosavingToggle }
+					updateFields={ updateFields }
+					submitForm={ submitForm }
+					saveJetpackSettings={ saveJetpackSettings }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+					trackEvent={ trackEvent }
+				/>
+
+				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
+			</Fragment>
+		);
+	}
+
+	renderLoadingExperience() {
+		// Renders two placeholders: One for Search and another for Cloudflare.
+		return (
+			<Fragment>
+				<div className="settings-performance__loading-placeholder" />
+				<div className="settings-performance__loading-placeholder" />
+			</Fragment>
+		);
+	}
+
 	render() {
 		const {
 			fields,
@@ -44,18 +121,14 @@ class SiteSettingsPerformance extends Component {
 			site,
 			siteId,
 			siteIsJetpack,
-			siteIsAtomic,
 			siteIsAtomicPrivate,
 			siteIsUnlaunched,
 			siteSlug,
-			showCloudflare,
 			submitForm,
 			translate,
 			trackEvent,
 			updateFields,
-			saveJetpackSettings,
 		} = this.props;
-		const siteIsJetpackNonAtomic = siteIsJetpack && ! siteIsAtomic;
 
 		return (
 			<Main className="settings-performance site-settings site-settings__performance-settings">
@@ -71,17 +144,11 @@ class SiteSettingsPerformance extends Component {
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
 
-				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
-
-				<Search
-					handleAutosavingToggle={ handleAutosavingToggle }
-					updateFields={ updateFields }
-					submitForm={ submitForm }
-					saveJetpackSettings={ saveJetpackSettings }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-					trackEvent={ trackEvent }
+				<Experiment
+					name="jetpack_search_performance_settings_placement"
+					defaultExperience={ this.renderDefaultExperience() }
+					treatmentExperience={ this.renderTreatmentExperience() }
+					loadingExperience={ this.renderLoadingExperience() }
 				/>
 
 				{ siteIsJetpack && (
