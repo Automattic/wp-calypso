@@ -63,8 +63,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Search Block (${ screenSize })`
 
 		it( 'Can publish and view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			// We need to save the post to get a stable post slug for the block's `url` attribute.
-			// See https://github.com/godaddy-wordpress/coblocks/issues/1663.
 			await gEditorComponent.ensureSaved();
 			return await gEditorComponent.publish( { visit: true } );
 		} );
@@ -120,7 +118,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Search Block (${ screenSize })`
 		} );
 
 		it( 'Can remove search button', async function () {
-			//html/body/div[1]/div[2]/div[1]/div[1]/div[3]/div[1]/div[2]/div/div/div/div/div/div/button[3]
 			const textLocator = By.css( 'button[aria-label="Change button position"]' );
 			await driverHelper.waitUntilElementLocatedAndVisible( driver, textLocator );
 			await driver.findElement( textLocator ).click();
@@ -162,8 +159,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Search Block (${ screenSize })`
 
 		it( 'Can publish and view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			// We need to save the post to get a stable post slug for the block's `url` attribute.
-			// See https://github.com/godaddy-wordpress/coblocks/issues/1663.
 			await gEditorComponent.ensureSaved();
 			return await gEditorComponent.publish( { visit: true } );
 		} );
@@ -171,13 +166,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Search Block (${ screenSize })`
 		it( 'Can see the 25% Search block in published post without label and button', async function () {
 			driverHelper.waitUntilElementNotLocated( driver, By.css( '.wp-block-search__label' ) );
 			driverHelper.waitUntilElementNotLocated( driver, By.css( '.wp-block-search__button' ) );
-
-			//Unable to get width of the search block here and neither in edit mode. In edit mode it gets the  min-width:290px
-			//Here in publish mode it get 173px though that style value is not there when I inspect the object
 			const width = await driver
 				.findElement( By.css( '.wp-block-search__inside-wrapper' ) )
 				.getAttribute( 'style' );
-			console.log( 'Style Value' + width );
 			assert.deepStrictEqual( width, 'width: 25%;' );
 			return await driverHelper.waitUntilElementLocatedAndVisible(
 				driver,
