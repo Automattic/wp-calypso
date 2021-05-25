@@ -176,7 +176,7 @@ class AutoLoadingHomepageModal extends Component {
 							value="keep_current_homepage"
 							checked={ 'keep_current_homepage' === this.state.homepageAction }
 							onChange={ this.handleHomepageAction }
-							label={ translate( 'Use %(themeName)s without changing my homepage.', {
+							label={ translate( 'Switch to %(themeName)s without changing the homepage content.', {
 								args: { themeName },
 							} ) }
 						/>
@@ -187,7 +187,7 @@ class AutoLoadingHomepageModal extends Component {
 							checked={ 'use_new_homepage' === this.state.homepageAction }
 							onChange={ this.handleHomepageAction }
 							label={ translate(
-								"Use %(themeName)s's homepage for my site and make my existing homepage a draft.",
+								'Replace the homepage content with the %(themeName)s demo content. The existing homepage will be saved as a draft under Pages → Drafts.',
 								{
 									args: { themeName },
 								}
