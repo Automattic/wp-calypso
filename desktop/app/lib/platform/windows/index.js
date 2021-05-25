@@ -21,8 +21,8 @@ const TRAY_SETTING = 'win_tray';
 const TRAY_NO_NOTIFICATION = '-tray-icon.ico';
 const TRAY_NOTIFICATION = '-tray-icon-notification.ico';
 
-function WindowsPlatform( mainWindow ) {
-	this.window = mainWindow;
+function WindowsPlatform( { window } ) {
+	this.window = window;
 	this.trayMenu = Menu.buildFromTemplate( windowsTrayMenu( this.restore.bind( this ) ) );
 	this.tray = new Tray( this.getIcon( TRAY_NO_NOTIFICATION ) );
 
@@ -30,7 +30,7 @@ function WindowsPlatform( mainWindow ) {
 	this.tray.setContextMenu( this.trayMenu );
 	this.tray.on( 'click', this.restore.bind( this ) );
 
-	mainWindow.on( 'close', this.onClosed.bind( this ) );
+	window.on( 'close', this.onClosed.bind( this ) );
 
 	app.on( 'before-quit', function () {
 		log.info( "Responding to app event 'before-quit', destroying tray" );
