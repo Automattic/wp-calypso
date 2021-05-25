@@ -137,16 +137,16 @@ references:
       npm install -g yarn
       yarn run build-desktop:install-app-deps
   desktop-cache-paths: &desktop-cache-paths
-    - desktop/Automattic/WordPress-Desktop/config
-    - desktop/Automattic/WordPress-Desktop/resource/certificates/win.p12
-    - desktop/Automattic/WordPress-Desktop/resource/certificates/mac.p12
+    - desktop/Automattic/wp-desktop/config
+    - desktop/Automattic/wp-desktop/resource/certificates/win.p12
+    - desktop/Automattic/wp-desktop/resource/certificates/mac.p12
   desktop-decrypt-assets: &desktop-decrypt-assets
     name: Decrypt desktop app assets
     command: |
-      mkdir desktop/Automattic/WordPress-Desktop/config
-      openssl aes-256-cbc -md md5 -d -in desktop/Automattic/WordPress-Desktop/resource/calypso/secrets.json.enc -out desktop/Automattic/WordPress-Desktop/config/secrets.json -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
-      openssl aes-256-cbc -md md5 -d -in desktop/Automattic/WordPress-Desktop/resource/certificates/mac.p12.enc -out desktop/Automattic/WordPress-Desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
-      openssl aes-256-cbc -md md5 -d -in desktop/Automattic/WordPress-Desktop/resource/certificates/win.p12.enc -out desktop/Automattic/WordPress-Desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      mkdir desktop/Automattic/wp-desktop/config
+      openssl aes-256-cbc -md md5 -d -in desktop/Automattic/wp-desktop/resource/calypso/secrets.json.enc -out desktop/Automattic/wp-desktop/config/secrets.json -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      openssl aes-256-cbc -md md5 -d -in desktop/Automattic/wp-desktop/resource/certificates/mac.p12.enc -out desktop/Automattic/wp-desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
+      openssl aes-256-cbc -md md5 -d -in desktop/Automattic/wp-desktop/resource/certificates/win.p12.enc -out desktop/Automattic/wp-desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
   desktop-restore-yarn-cache: &desktop-restore-yarn-cache
     name: Restore yarn cache
     keys:
@@ -182,11 +182,11 @@ references:
   desktop-notify-github-success: &desktop-notify-github-success
     name: Notify Github Success
     when: on_success
-    command: cd desktop/Automattic/WordPress-Desktop && yarn ci:github:dismiss-review
+    command: cd desktop/Automattic/wp-desktop && yarn ci:github:dismiss-review
   desktop-notify-github-failure: &desktop-notify-github-failure
     name: Notify Github Failure
     when: on_fail
-    command: cd desktop/Automattic/WordPress-Desktop && yarn ci:github:add-review
+    command: cd desktop/Automattic/wp-desktop && yarn ci:github:add-review
   desktop-notify-slack-failure: &desktop-notify-slack-failure
     webhook: '$SLACK_WP_DESKTOP_E2E'
     fail_only: true
@@ -377,7 +377,7 @@ jobs:
           steps:
             - run:
                 name: Ensure package.json Version And Tag Match
-                command: cd desktop/Automattic/WordPress-Desktop/bin && node validate_tag.js $VERSION
+                command: cd desktop/Automattic/wp-desktop/bin && node validate_tag.js $VERSION
       - run: *desktop-decrypt-assets
       - persist_to_workspace:
           root: /home/circleci/wp-calypso
@@ -416,7 +416,7 @@ jobs:
             export SDKROOT='/Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk'
             export MACOSX_DEPLOYMENT_TARGET=11.1
 
-            cd desktop/Automattic/WordPress-Desktop && ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
+            cd desktop/Automattic/wp-desktop && ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
       - run:
           name: e2e Tests
           command: |
@@ -430,29 +430,29 @@ jobs:
           name: Persist Mac Executable
           command: |
             # If this isn't a full artifact build, ensure to persist the built application for inspection
-            if ! ls desktop/Automattic/WordPress-Desktop/release/*.zip &>/dev/null
+            if ! ls desktop/Automattic/wp-desktop/release/*.zip &>/dev/null
             then
-              ditto -ck --rsrc --sequesterRsrc desktop/Automattic/WordPress-Desktop/release/mac desktop/Automattic/WordPress-Desktop/release/mac.app.zip
+              ditto -ck --rsrc --sequesterRsrc desktop/Automattic/wp-desktop/release/mac desktop/Automattic/wp-desktop/release/mac.app.zip
             fi
       - run:
           when: always
           name: Clean Up
           command: |
-            rm -rf desktop/Automattic/WordPress-Desktop/release/mac
-            rm -rf desktop/Automattic/WordPress-Desktop/release/mac-arm64
+            rm -rf desktop/Automattic/wp-desktop/release/mac
+            rm -rf desktop/Automattic/wp-desktop/release/mac-arm64
       - store_artifacts:
           when: always
-          path: desktop/Automattic/WordPress-Desktop/release
+          path: desktop/Automattic/wp-desktop/release
       - store_artifacts:
           when: always
-          path: desktop/Automattic/WordPress-Desktop/e2e/logs
+          path: desktop/Automattic/wp-desktop/e2e/logs
       - store_artifacts:
           when: always
-          path: desktop/Automattic/WordPress-Desktop/e2e/screenshots
+          path: desktop/Automattic/wp-desktop/e2e/screenshots
       - persist_to_workspace:
           root: ~/wp-calypso
           paths:
-            - desktop/Automattic/WordPress-Desktop/release
+            - desktop/Automattic/wp-desktop/release
       - run: *desktop-notify-github-success
       - run: *desktop-notify-github-failure
       - slack/status: *desktop-notify-slack-failure
@@ -484,7 +484,7 @@ jobs:
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
-            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/Automattic/WordPress-Desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
+            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/Automattic/wp-desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 
             ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop
       - run:
@@ -500,28 +500,28 @@ jobs:
           name: Persist Linux Executable
           command: |
             # If this isn't a full artifact build, ensure to persist the built application for inspection
-            test -f desktop/Automattic/WordPress-Desktop/release/*.tar.gz || tar -zcf desktop/Automattic/WordPress-Desktop/release/linux-unpacked.tar.gz desktop/Automattic/WordPress-Desktop/release/linux-unpacked
+            test -f desktop/Automattic/wp-desktop/release/*.tar.gz || tar -zcf desktop/Automattic/wp-desktop/release/linux-unpacked.tar.gz desktop/Automattic/wp-desktop/release/linux-unpacked
       - run:
           when: always
           name: Clean Up
           command: |
             set +e
-            rm -rf desktop/Automattic/WordPress-Desktop/release/github
-            rm -rf desktop/Automattic/WordPress-Desktop/release/linux-unpacked
-            rm -rf desktop/Automattic/WordPress-Desktop/release/.icon-set
+            rm -rf desktop/Automattic/wp-desktop/release/github
+            rm -rf desktop/Automattic/wp-desktop/release/linux-unpacked
+            rm -rf desktop/Automattic/wp-desktop/release/.icon-set
       - store_artifacts:
           when: always
-          path: desktop/Automattic/WordPress-Desktop/release
+          path: desktop/Automattic/wp-desktop/release
       - store_artifacts:
           when: always
-          path: desktop/Automattic/WordPress-Desktop/e2e/logs
+          path: desktop/Automattic/wp-desktop/e2e/logs
       - store_artifacts:
           when: always
-          path: desktop/Automattic/WordPress-Desktop/e2e/screenshots
+          path: desktop/Automattic/wp-desktop/e2e/screenshots
       - persist_to_workspace:
           root: ~/wp-calypso
           paths:
-            - desktop/Automattic/WordPress-Desktop/release
+            - desktop/Automattic/wp-desktop/release
 
   wp-desktop-windows:
     executor:
@@ -558,7 +558,7 @@ jobs:
                   #
                   # Fix: Import .p12 into the local certificate store. Sign Tool will use
                   # package.json's `certificateSubjectName` to find the imported cert.
-                  $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\Automattic\WordPress-Desktop\resource\certificates\win.p12'
+                  $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\Automattic\wp-desktop\resource\certificates\win.p12'
                   Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
       - run:
           name: Build Desktop Windows
@@ -570,76 +570,39 @@ jobs:
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
-            If ( -Not $(git diff --name-only origin/trunk...HEAD | Select-String -Pattern desktop/Automattic/WordPress-Desktop/package.json,desktop/Automattic/WordPress-Desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
+            If ( -Not $(git diff --name-only origin/trunk...HEAD | Select-String -Pattern desktop/Automattic/wp-desktop/package.json,desktop/Automattic/wp-desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
 
 
-            make -f desktop/Automattic/WordPress-Desktop/Makefile build-main
-            make -f desktop/Automattic/WordPress-Desktop/Makefile package ELECTRON_BUILDER_ARGS=$($env:ARG1,$env:ARG2 -join " ")
+            make -f desktop/Automattic/wp-desktop/Makefile build-main
+            make -f desktop/Automattic/wp-desktop/Makefile package ELECTRON_BUILDER_ARGS=$($env:ARG1,$env:ARG2 -join " ")
       - run:
           name: Archive Unpacked Directories
           command: |
-            tar -zcf desktop/Automattic/WordPress-Desktop/release/win-unpacked-x64.tar.gz desktop/Automattic/WordPress-Desktop/release/win-unpacked
+            tar -zcf desktop/Automattic/wp-desktop/release/win-unpacked-x64.tar.gz desktop/Automattic/wp-desktop/release/win-unpacked
 
             # Check if win-ia32 build is present before archiving. If this is a full
             # artifact build, the win-ia32-unpacked executable will be generated and we can archive it.
-            If ( $(Test-Path -Path desktop\Automattic\WordPress-Desktop\release\win-ia32-unpacked) ) {
-              tar -zcf desktop/Automattic/WordPress-Desktop/release/win-unpacked-ia32.tar.gz desktop/Automattic/WordPress-Desktop/release/win-ia32-unpacked
+            If ( $(Test-Path -Path desktop\Automattic\wp-desktop\release\win-ia32-unpacked) ) {
+              tar -zcf desktop/Automattic/wp-desktop/release/win-unpacked-ia32.tar.gz desktop/Automattic/wp-desktop/release/win-ia32-unpacked
             } else {
-              echo "Skipping tar archive for 'desktop\Automattic\WordPress-Desktop\release\win-ia32-unpacked' (not built)"
+              echo "Skipping tar archive for 'desktop\Automattic\wp-desktop\release\win-ia32-unpacked' (not built)"
             }
       - run:
           when: always
           name: Clean Up
           command: |
             set +e
-            rm -rf desktop/Automattic/WordPress-Desktop/release/github
-            rm -rf desktop/Automattic/WordPress-Desktop/release/win-unpacked
-            rm -rf desktop/Automattic/WordPress-Desktop/release/win-ia32-unpacked
+            rm -rf desktop/Automattic/wp-desktop/release/github
+            rm -rf desktop/Automattic/wp-desktop/release/win-unpacked
+            rm -rf desktop/Automattic/wp-desktop/release/win-ia32-unpacked
           shell: bash.exe
       - store_artifacts:
           when: always
-          path: desktop\Automattic\WordPress-Desktop\release
+          path: desktop\Automattic\wp-desktop\release
       - persist_to_workspace:
           root: C:\Users\circleci\wp-calypso
           paths:
-            - desktop\Automattic\WordPress-Desktop\release
-
-  # Publish all the artifacts generated by the previous wp-desktop- jobs to a
-  # GitHub release and generate the release notes using the Git commits history
-  wp-desktop-publish:
-    docker:
-      - image: circleci/golang:1.12
-    working_directory: /home/circleci/wp-calypso
-    environment:
-      VERSION: << pipeline.git.tag >>
-    steps:
-      - checkout
-      - attach_workspace:
-          at: /home/circleci/wp-calypso
-      - run:
-          name: Install Dependencies
-          command: go get github.com/tcnksm/ghr
-      - run:
-          name: Publish Github Release
-          command: |
-            echo "Publishing draft release for wp-desktop $VERSION..."
-            NAME="WP-Desktop ${VERSION#?}"
-
-            chmod +x desktop/Automattic/WordPress-Desktop/bin/make-changelog.sh
-            ./desktop/Automattic/WordPress-Desktop/bin/make-changelog.sh > desktop/CHANGELOG.md
-
-            ghr \
-              --token "${GH_TOKEN}" \
-              --username "${CIRCLE_PROJECT_USERNAME}" \
-              --repository "${CIRCLE_PROJECT_REPONAME}" \
-              --commitish "${CIRCLE_SHA1}" \
-              --name "${NAME}" \
-              --body "$(cat desktop/Automattic/WordPress-Desktop/CHANGELOG.md)" \
-              --delete \
-              --draft \
-              "${VERSION}" desktop/Automattic/WordPress-Desktop/release/
-
-            echo "Publish complete"
+            - desktop\Automattic\wp-desktop\release
 
 workflows:
   version: 2
@@ -656,7 +619,6 @@ workflows:
             branches:
               only:
               - trunk
-              - /release\/.*/
               - /desktop\/.*/
       - wp-desktop-mac:
           requires:
@@ -665,7 +627,6 @@ workflows:
             branches:
               only:
                 - trunk
-                - /release\/.*/
                 - /desktop\/.*/
       - wp-desktop-linux:
           requires:
@@ -674,7 +635,6 @@ workflows:
             branches:
               only:
                 - trunk
-                - /release\/.*/
                 - /desktop\/.*/
       - wp-desktop-windows:
           requires:
@@ -683,41 +643,7 @@ workflows:
             branches:
               only:
                 - trunk
-                - /release\/.*/
                 - /desktop\/.*/
-  wp-desktop-release:
-    when: << pipeline.git.tag >>
-    jobs:
-      - wp-desktop-assets:
-          filters:
-            tags:
-              only: /v.*/
-      - wp-desktop-mac:
-          requires:
-            - wp-desktop-assets
-          filters:
-            tags:
-              only: /v.*/
-      - wp-desktop-linux:
-          requires:
-            - wp-desktop-assets
-          filters:
-            tags:
-              only: /v.*/
-      - wp-desktop-windows:
-          requires:
-            - wp-desktop-assets
-          filters:
-            tags:
-              only: /v.*/
-      - wp-desktop-publish:
-          requires:
-            - wp-desktop-mac
-            - wp-desktop-linux
-            - wp-desktop-windows
-          filters:
-            tags:
-              only: /v.*/
 
   e2e-jetpack-be-scheduled:
     jobs:
