@@ -231,13 +231,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await this.blockDisplayedInEditor( 'jetpack/contact-form' );
 	}
 
-	async errorDisplayed() {
-		return await driverHelper.isElementEventuallyLocatedAndVisible(
-			this.driver,
-			By.css( '.editor-error-boundary' )
-		);
-	}
-
 	async hasInvalidBlocks() {
 		return await driverHelper.isElementLocated( this.driver, By.css( '.block-editor-warning' ) );
 	}
