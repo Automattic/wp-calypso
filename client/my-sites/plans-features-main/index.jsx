@@ -543,7 +543,11 @@ export default connect(
 		} );
 
 		// Make sure the plans for the default customer type can be purchased.
-		if ( customerType === 'personal' && ! canUpgradeToPlan( state, siteId, PLAN_PERSONAL ) ) {
+		if (
+			! props.customerType &&
+			customerType === 'personal' &&
+			! canUpgradeToPlan( state, siteId, PLAN_PERSONAL )
+		) {
 			customerType = 'business';
 		}
 
