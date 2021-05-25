@@ -8,31 +8,31 @@ import config from 'config';
  * Internal dependencies
  */
 
-import LoginFlow from '../lib/flows/login-flow';
-import SignUpFlow from '../lib/flows/sign-up-flow';
+import LoginFlow from '../../lib/flows/login-flow';
+import SignUpFlow from '../../lib/flows/sign-up-flow';
 
-import JetpackAuthorizePage from '../lib/pages/jetpack-authorize-page';
-import PickAPlanPage from '../lib/pages/signup/pick-a-plan-page';
-import WPAdminJetpackPage from '../lib/pages/wp-admin/wp-admin-jetpack-page.js';
-import WPAdminDashboardPage from '../lib/pages/wp-admin/wp-admin-dashboard-page';
-import WPAdminNewUserPage from '../lib/pages/wp-admin/wp-admin-new-user-page';
-import WPAdminLogonPage from '../lib/pages/wp-admin/wp-admin-logon-page';
-import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar.js';
-import JetpackConnectFlow from '../lib/flows/jetpack-connect-flow';
-import JetpackConnectPage from '../lib/pages/jetpack/jetpack-connect-page';
-import LoginPage from '../lib/pages/login-page';
-import JetpackComPage from '../lib/pages/external/jetpackcom-page';
-import JetpackComFeaturesDesignPage from '../lib/pages/external/jetpackcom-features-design-page';
+import JetpackAuthorizePage from '../../lib/pages/jetpack-authorize-page';
+import PickAPlanPage from '../../lib/pages/signup/pick-a-plan-page';
+import WPAdminJetpackPage from '../../lib/pages/wp-admin/wp-admin-jetpack-page.js';
+import WPAdminDashboardPage from '../../lib/pages/wp-admin/wp-admin-dashboard-page';
+import WPAdminNewUserPage from '../../lib/pages/wp-admin/wp-admin-new-user-page';
+import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page';
+import WPAdminSidebar from '../../lib/pages/wp-admin/wp-admin-sidebar.js';
+import JetpackConnectFlow from '../../lib/flows/jetpack-connect-flow';
+import JetpackConnectPage from '../../lib/pages/jetpack/jetpack-connect-page';
+import LoginPage from '../../lib/pages/login-page';
+import JetpackComPage from '../../lib/pages/external/jetpackcom-page';
+import JetpackComFeaturesDesignPage from '../../lib/pages/external/jetpackcom-features-design-page';
 
-import * as driverManager from '../lib/driver-manager';
-import * as driverHelper from '../lib/driver-helper';
-import * as dataHelper from '../lib/data-helper';
-import JetpackComPricingPage from '../lib/pages/external/jetpackcom-pricing-page';
-import SecurePaymentComponent from '../lib/components/secure-payment-component';
-import WPHomePage from '../lib/pages/wp-home-page';
-import ThankYouModalComponent from '../lib/components/thank-you-modal-component';
-import MyPlanPage from '../lib/pages/my-plan-page';
-import WPAdminInPlaceApprovePage from '../lib/pages/wp-admin/wp-admin-in-place-approve-page';
+import * as driverManager from '../../lib/driver-manager';
+import * as driverHelper from '../../lib/driver-helper';
+import * as dataHelper from '../../lib/data-helper';
+import JetpackComPricingPage from '../../lib/pages/external/jetpackcom-pricing-page';
+import SecurePaymentComponent from '../../lib/components/secure-payment-component';
+import WPHomePage from '../../lib/pages/wp-home-page';
+import ThankYouModalComponent from '../../lib/components/thank-you-modal-component';
+import MyPlanPage from '../../lib/pages/my-plan-page';
+import WPAdminInPlaceApprovePage from '../../lib/pages/wp-admin/wp-admin-in-place-approve-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

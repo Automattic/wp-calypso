@@ -4,6 +4,7 @@
 import React from 'react';
 import page from 'page';
 import { includes, some } from 'lodash';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal Dependencies
@@ -19,6 +20,8 @@ import PluginUpload from './plugin-upload';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import AsyncLoad from 'calypso/components/async-load';
+import { isMarketplaceProduct } from 'calypso/my-sites/plugins/marketplace/constants';
+import MarketplacePluginDetails from 'calypso/my-sites/plugins/marketplace/marketplace-plugin-details';
 
 /**
  * Module variables
@@ -31,9 +34,6 @@ let lastPluginsQuerystring;
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
 
-	// Scroll to the top
-	window.scrollTo( 0, 0 );
-
 	let prevPath;
 	if ( lastPluginsListVisited ) {
 		prevPath = lastPluginsListVisited;
@@ -41,14 +41,27 @@ function renderSinglePlugin( context, siteUrl ) {
 		prevPath = sectionify( context.prevPath );
 	}
 
-	// Render single plugin component
-	context.primary = React.createElement( PluginComponent, {
-		path: context.path,
-		prevQuerystring: lastPluginsQuerystring,
-		prevPath,
-		pluginSlug,
-		siteUrl,
-	} );
+	//Add condition to check if business/ecommerce plan before committing
+	if ( config.isEnabled( 'marketplace-yoast' ) && isMarketplaceProduct( pluginSlug ) ) {
+		context.primary = (
+			<MarketplacePluginDetails
+				path={ context.path }
+				prevQuerystring={ lastPluginsQuerystring }
+				prevPath={ prevPath }
+				marketplacePluginSlug={ pluginSlug }
+				siteUrl={ siteUrl }
+			/>
+		);
+	} else {
+		// Render single plugin component
+		context.primary = React.createElement( PluginComponent, {
+			path: context.path,
+			prevQuerystring: lastPluginsQuerystring,
+			prevPath,
+			pluginSlug,
+			siteUrl,
+		} );
+	}
 }
 
 function getPathWithoutSiteSlug( context, site ) {

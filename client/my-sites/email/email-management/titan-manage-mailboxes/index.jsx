@@ -43,6 +43,7 @@ import {
 } from 'calypso/lib/titan/constants';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItemEnhanced from 'calypso/components/vertical-nav/item/enhanced';
+import Main from 'calypso/components/main';
 
 class TitanManageMailboxes extends Component {
 	static propTypes = {
@@ -101,69 +102,74 @@ class TitanManageMailboxes extends Component {
 
 				{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 
-				<DocumentHead title={ translate( 'Manage all mailboxes' ) } />
+				<Main wideLayout={ true }>
+					<DocumentHead title={ translate( 'Manage all mailboxes' ) } />
 
-				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
-				<HeaderCake onClick={ this.handleBack }>{ translate( 'Manage all mailboxes' ) }</HeaderCake>
+					<HeaderCake onClick={ this.handleBack }>
+						{ translate( 'Manage all mailboxes' ) }
+					</HeaderCake>
 
-				<EmailPlanHeader
-					domain={ domain }
-					hasEmailSubscription={ hasSubscription }
-					isLoadingPurchase={ isLoadingPurchase }
-					purchase={ purchase }
-					selectedSite={ selectedSite }
-				/>
-
-				<VerticalNav>
-					<VerticalNavItemEnhanced
-						description={ translate(
-							'View settings required to configure third-party email apps'
-						) }
-						external={ true }
-						materialIcon="dvr"
-						path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP ) }
-						text={ translate( 'Configure desktop app' ) }
+					<EmailPlanHeader
+						domain={ domain }
+						hasEmailSubscription={ hasSubscription }
+						isLoadingEmails={ false }
+						isLoadingPurchase={ isLoadingPurchase }
+						purchase={ purchase }
+						selectedSite={ selectedSite }
 					/>
 
-					<VerticalNavItemEnhanced
-						description={ translate(
-							'Download our Android and iOS apps to access your emails on the go'
-						) }
-						external={ true }
-						materialIcon="smartphone"
-						path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP ) }
-						text={ translate( 'Get mobile app' ) }
-					/>
+					<VerticalNav>
+						<VerticalNavItemEnhanced
+							description={ translate(
+								'View settings required to configure third-party email apps'
+							) }
+							external={ true }
+							materialIcon="dvr"
+							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP ) }
+							text={ translate( 'Configure desktop app' ) }
+						/>
 
-					<VerticalNavItemEnhanced
-						description={ translate( 'Migrate existing emails from a remote server via IMAP' ) }
-						external={ true }
-						materialIcon="move_to_inbox"
-						path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA ) }
-						text={ translate( 'Import email data' ) }
-					/>
+						<VerticalNavItemEnhanced
+							description={ translate(
+								'Download our Android and iOS apps to access your emails on the go'
+							) }
+							external={ true }
+							materialIcon="smartphone"
+							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP ) }
+							text={ translate( 'Get mobile app' ) }
+						/>
 
-					<VerticalNavItemEnhanced
-						description={ translate(
-							'Route all undelivered emails to your domain to a specific mailbox'
-						) }
-						external={ true }
-						materialIcon="mediation"
-						path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL ) }
-						text={ translate( 'Configure catch-all email' ) }
-					/>
+						<VerticalNavItemEnhanced
+							description={ translate( 'Migrate existing emails from a remote server via IMAP' ) }
+							external={ true }
+							materialIcon="move_to_inbox"
+							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA ) }
+							text={ translate( 'Import email data' ) }
+						/>
 
-					<VerticalNavItemEnhanced
-						description={ translate(
-							'Create email aliases that forward messages to one or several mailboxes'
-						) }
-						external={ true }
-						materialIcon="forward_to_inbox"
-						path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_INTERNAL_FORWARDING ) }
-						text={ translate( 'Set up internal forwarding' ) }
-					/>
-				</VerticalNav>
+						<VerticalNavItemEnhanced
+							description={ translate(
+								'Route all undelivered emails to your domain to a specific mailbox'
+							) }
+							external={ true }
+							materialIcon="mediation"
+							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL ) }
+							text={ translate( 'Configure catch-all email' ) }
+						/>
+
+						<VerticalNavItemEnhanced
+							description={ translate(
+								'Create email aliases that forward messages to one or several mailboxes'
+							) }
+							external={ true }
+							materialIcon="forward_to_inbox"
+							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_INTERNAL_FORWARDING ) }
+							text={ translate( 'Set up internal forwarding' ) }
+						/>
+					</VerticalNav>
+				</Main>
 			</>
 		);
 	}

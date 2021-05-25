@@ -15,6 +15,7 @@ export const MobileHiddenHorizontalRule = styled( HorizontalRule )< MarketplaceT
 		display: none;
 	}
 `;
+
 export const MarketplaceHeaderTitle = styled.h1`
 	font-size: ${ ( { subtitle = false } ) => ( subtitle ? '1.5em' : '2em' ) };
 	margin-bottom: 8px;

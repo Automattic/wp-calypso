@@ -22,7 +22,7 @@ const Cloudflare = () => {
 	const showCloudflare = config.isEnabled( 'cloudflare' );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
 	const sitePlan = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
-	const showUpsell = [ 'personal-bundle', 'free_plan' ].includes( sitePlan );
+	const showUpsell = [ 'personal-bundle', 'free_plan', 'jetpack_free' ].includes( sitePlan );
 
 	if ( ! showCloudflare ) return null;
 
