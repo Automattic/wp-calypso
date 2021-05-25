@@ -481,7 +481,7 @@ export async function acceptAlertIfPresent( driver ) {
 	}
 }
 
-export async function waitForAlertPresent( driver, timeout = explicitWaitMS ) {
+export async function waitUntilAlertPresent( driver, timeout = explicitWaitMS ) {
 	return await driver.wait( until.alertIsPresent(), timeout );
 }
 

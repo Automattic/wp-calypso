@@ -2,7 +2,7 @@
  * External dependencies
  */
 import config from 'config';
-import { By, promise, until } from 'selenium-webdriver';
+import { By, promise } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -41,18 +41,12 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		);
 	}
 
-	async setInElementsIframe( iframeLocator, what, value ) {
-		await this.driver.wait(
-			until.ableToSwitchToFrame( By.css( iframeLocator ) ),
-			this.explicitWaitMS,
-			'Could not locate the ElementInput iFrame.'
-		);
-
+	async setInElementsIframe( iframeSelector, what, value ) {
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, By.css( iframeSelector ) );
 		await driverHelper.setWhenSettable( this.driver, By.name( what ), value, {
 			pauseBetweenKeysMS: 50,
 		} );
-
-		return await this.driver.switchTo().defaultContent();
+		await this.driver.switchTo().defaultContent();
 	}
 
 	async enterTestCreditCardDetails( {
