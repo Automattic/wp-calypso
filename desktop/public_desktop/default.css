@@ -3,7 +3,7 @@ body {
 }
 
 #title-bar {
-	-webkit-app-region: no-drag;
+	-webkit-app-region: drag;
 	display: block;
 	user-select: none;
 	background-color: #24282d;
@@ -19,6 +19,7 @@ body {
 }
 
 #title-bar-buttons {
+	-webkit-app-region: no-drag;
 	position: fixed;
 	left: 77px;
 }
