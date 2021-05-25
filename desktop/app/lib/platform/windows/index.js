@@ -21,8 +21,9 @@ const TRAY_SETTING = 'win_tray';
 const TRAY_NO_NOTIFICATION = '-tray-icon.ico';
 const TRAY_NOTIFICATION = '-tray-icon-notification.ico';
 
-function WindowsPlatform( { window } ) {
+function WindowsPlatform( { view, window } ) {
 	this.window = window;
+	this.view = view;
 	this.trayMenu = Menu.buildFromTemplate( windowsTrayMenu( this.restore.bind( this ) ) );
 	this.tray = new Tray( this.getIcon( TRAY_NO_NOTIFICATION ) );
 
@@ -34,7 +35,9 @@ function WindowsPlatform( { window } ) {
 
 	app.on( 'before-quit', function () {
 		log.info( "Responding to app event 'before-quit', destroying tray" );
-		this.tray.destroy();
+		if ( this.tray ) {
+			this.tray.destroy();
+		}
 	} );
 }
 
@@ -45,7 +48,7 @@ WindowsPlatform.prototype.onClosed = function ( ev ) {
 		ev.preventDefault();
 
 		this.window.hide();
-		this.window.webContents.send( 'notifications-panel-show', false );
+		this.view.webContents.send( 'notifications-panel-show', false );
 		this.showBackgroundBubble();
 
 		return;

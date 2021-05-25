@@ -48,7 +48,10 @@ function showAppWindow() {
 	mainWindow = new BrowserWindow( {
 		...windowConfig,
 		...bounds,
-		...{ frame: false, titleBarStyle: 'hiddenInset' },
+		...{ 
+			frame: process.platform !== 'darwin', 
+			titleBarStyle: 'hiddenInset' 
+		},
 	} );
 
 	const mainView = new BrowserView( windowConfig );
