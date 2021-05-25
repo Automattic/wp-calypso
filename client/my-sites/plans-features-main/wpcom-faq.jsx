@@ -93,9 +93,9 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 			<FAQItem
 				question={ translate( 'Do you offer email accounts?' ) }
 				answer={ translate(
-					'Yes. If you register a new domain with our Personal, Premium, Business, or eCommerce plans, you can' +
-						' add Google-powered G Suite. You can also set up email forwarding for any custom domain' +
-						' registered through WordPress.com. {{a}}Find out more about email{{/a}}.',
+					'Yes. We offer Professional Email which is a robust hosted email solution for any custom domain ' +
+						'registered through WordPress.com. You can also set up free email forwarding, or use our Google ' +
+						'Workspace integration to power your emails. {{a}}Learn more about our email solutions{{/a}}.',
 					{
 						components: {
 							a: (
