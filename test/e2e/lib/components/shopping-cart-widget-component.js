@@ -24,14 +24,14 @@ export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 		// Ensure it is open and interactive before returning
 		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			'.popover-cart__popover .cart-checkout-button'
+			By.css( '.popover-cart__popover .cart-checkout-button' )
 		);
 	}
 
 	async expand() {
 		return await driverHelper.clickIfPresent(
 			this.driver,
-			By.css( 'popover-cart__popover .cart-items__expander' )
+			By.css( '.popover-cart__popover .cart-items__expander' )
 		);
 	}
 
