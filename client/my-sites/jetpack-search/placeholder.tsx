@@ -3,6 +3,7 @@
  */
 import React, { ReactElement } from 'react';
 import { translate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,6 +14,9 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 /**
  * Style dependencies
@@ -29,9 +33,14 @@ interface Props {
 }
 
 export default function JetpackSearchPlaceholder( { siteId }: Props ): ReactElement {
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+
 	return (
 		<Main className="jetpack-search__placeholder">
 			<QuerySitePurchases siteId={ siteId } />
+			<QuerySiteSettings siteId={ siteId } />
+			{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
+
 			<DocumentHead title="Jetpack Search" />
 			<SidebarNavigation />
 
