@@ -361,7 +361,7 @@ export class List extends React.Component {
 			! domain.isPrimary &&
 			! domain.isWPCOMDomain &&
 			! domain.isWpcomStagingDomain &&
-			! hasYoastPremiumProduct
+			! hasYoastPremiumProduct // <- Yoast Premium Product - Marketplace add-on.
 		);
 	}
 
