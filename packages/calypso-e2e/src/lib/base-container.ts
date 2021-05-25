@@ -15,10 +15,10 @@ export class BaseContainer {
 	 * Constructs an instance of a class.
 	 *
 	 * @param {Page} page The page on which interactions take place.
-	 * @param {string} [url] URL of the page represented by the object.
 	 * @param {string} [selector] CSS selector that is expected to be located on page.
+	 * @param {string} [url] URL of the page represented by the object.
 	 */
-	constructor( page: Page, url = '', selector = '' ) {
+	constructor( page: Page, selector = '', url = '' ) {
 		this.page = page;
 		this.url = url;
 		this.selector = selector;
