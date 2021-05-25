@@ -9,9 +9,11 @@ module.exports = async ( page, scenario ) => {
 
 	switch ( scenario.label ) {
 		case 'about':
+		case 'about-2':
 		case 'about-3':
 		case 'about-4':
 		case 'about-5':
+		case 'about-me-3':				
 			await page.click( 'button[data-slug="about"]' );
 			break;
 		case 'edison':
