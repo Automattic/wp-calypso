@@ -57,6 +57,17 @@ export const findDependencies = async ( {
 		}
 	} )();
 
+	const webpackConfig = ( () => {
+		try {
+			const webpackPath = path.join( pkg, 'webpack.config.js' );
+			fs.accessSync( webpackPath );
+			modules.add( webpackPath );
+			return webpackPath;
+		} catch {
+			return null;
+		}
+	} )();
+
 	const absoluteAdditionalEntryPoints = await findAdditionalEntryPoints( additionalEntryPoints );
 
 	// Handles monorepo and npm results from parsed files.
@@ -77,10 +88,13 @@ export const findDependencies = async ( {
 		return true;
 	};
 
+	// Entrypoints need to be absolute paths at this point so that the webpack resolver
+	// knows to parse up the filesystem further. (Otherwise, it stops short before reaching the root node_modules.)
 	for ( const entrypoint of [ ...entrypoints, ...jestTests, ...absoluteAdditionalEntryPoints ] ) {
 		const tree = dependencyTree.toList( {
 			filename: entrypoint,
 			directory: path.dirname( entrypoint ),
+			webpackConfig: webpackConfig ?? undefined,
 			tsConfig: tsConfig ?? undefined,
 			visited,
 			filter: fileFilter,
