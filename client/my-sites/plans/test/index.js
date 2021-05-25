@@ -42,6 +42,7 @@ import {
 	siteSelection,
 	sites,
 	wpForTeamsP2PlusNotSupportedRedirect,
+	p2RedirectToHubPlans,
 } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 
@@ -51,6 +52,7 @@ const routes = {
 	'/plans': [
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
+		p2RedirectToHubPlans,
 		sites,
 		makeLayout,
 		clientRender,
@@ -59,6 +61,7 @@ const routes = {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
+		p2RedirectToHubPlans,
 		redirectToPlans,
 		makeLayout,
 		clientRender,
@@ -67,6 +70,7 @@ const routes = {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
+		p2RedirectToHubPlans,
 		redirectToPlans,
 		makeLayout,
 		clientRender,
@@ -75,6 +79,7 @@ const routes = {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
+		p2RedirectToHubPlans,
 		redirectToPlans,
 		makeLayout,
 		clientRender,
@@ -83,6 +88,7 @@ const routes = {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
+		p2RedirectToHubPlans,
 		redirectToPlans,
 		makeLayout,
 		clientRender,
@@ -93,6 +99,7 @@ const routes = {
 		wpForTeamsP2PlusNotSupportedRedirect,
 		sites,
 		navigation,
+		p2RedirectToHubPlans,
 		currentPlan,
 		makeLayout,
 		clientRender,
@@ -101,6 +108,7 @@ const routes = {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
+		p2RedirectToHubPlans,
 		currentPlan,
 		makeLayout,
 		clientRender,
@@ -108,6 +116,7 @@ const routes = {
 	'/plans/select/:plan/:domain': [
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
+		p2RedirectToHubPlans,
 		redirectToCheckout,
 		makeLayout,
 		clientRender,
@@ -115,6 +124,7 @@ const routes = {
 	'/plans/:intervalType?/:site': [
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
+		p2RedirectToHubPlans,
 		navigation,
 		plans,
 		makeLayout,
