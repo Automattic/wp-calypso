@@ -13,26 +13,47 @@ import AsyncBaseContainer from '../async-base-container';
 export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.popover-cart .header-button' ) );
+
+		this.cartButtonLocator = this.expectedElementLocator;
+		this.cartPopoverLocator = By.css( '.popover-cart__popover' );
+		this.cartExpandButtonLocator = By.css( '.popover-cart__popover .cart-items__expander' );
+		this.cartCheckoutButtonLocator = By.css( '.popover-cart__popover .cart-checkout-button' );
+		this.cartLoadingPlaceholderLocator = By.css( '.cart-body__loading-placeholder' );
 	}
 
 	async open() {
+		const isOpen = await driverHelper.isElementLocated( this.driver, this.cartPopoverLocator );
+		if ( isOpen ) {
+			return;
+		}
+
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.popover-cart .header-button' ),
+			this.expectedElementLocator,
 			this.explicitWaitMS
 		);
+
 		// Ensure it is open and interactive before returning
-		return await driverHelper.waitUntilElementLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			By.css( '.popover-cart__popover .cart-checkout-button' )
+			this.cartCheckoutButtonLocator
 		);
+
+		this.expand();
 	}
 
 	async expand() {
-		return await driverHelper.clickIfPresent(
-			this.driver,
-			By.css( '.popover-cart__popover .cart-items__expander' )
-		);
+		await driverHelper.clickIfPresent( this.driver, this.cartExpandButtonLocator );
+	}
+
+	async close() {
+		const isClosed = await driverHelper.isElementNotLocated( this.driver, this.cartPopoverLocator );
+		if ( isClosed ) {
+			return;
+		}
+
+		await driverHelper.clickWhenClickable( this.driver, this.expectedElementLocator );
+		await driverHelper.waitUntilElementNotLocated( this.driver, this.cartPopoverLocator );
 	}
 
 	async removeItem( self ) {
@@ -65,20 +86,19 @@ export default class ShoppingCartWidgetComponent extends AsyncBaseContainer {
 	}
 
 	async remove( type, name ) {
-		const cartBadgeLocator = By.css( '.cart__count-badge' );
-
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, cartBadgeLocator );
-		await this.open();
-		await this.expand();
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.xpath(
-				// Find an element X with class=.cart-item
-				//    that contains an element with data-e2e-product-slug=`type`
-				//    and a sibling with class="product-domain" and text=`name`
-				// and then select an element inside X that matches class=cart__remove-item
-				`//*[@class="cart-item"][.//*[@data-e2e-product-slug="${ type }"]/following-sibling::*[@class="product-domain"][text()="${ name }"]]//*[@class="cart__remove-item"]`
-			)
+		const itemLocator = By.xpath(
+			// Find an element X with class=.cart-item that contains an element with
+			// data-e2e-product-slug=`type` and a sibling with class="product-domain" and text=`name` and
+			// then select an element inside X that matches class=cart__remove-item
+			`//*[@class="cart-item"][.//*[@data-e2e-product-slug="${ type }"]/following-sibling::*[@class="product-domain"][text()="${ name }"]]//*[@class="cart__remove-item"]`
 		);
+
+		await this.open();
+		await driverHelper.clickWhenClickable( this.driver, itemLocator );
+		await driverHelper.waitUntilElementNotLocated(
+			this.driver,
+			this.cartLoadingPlaceholderLocator
+		);
+		await this.close();
 	}
 }

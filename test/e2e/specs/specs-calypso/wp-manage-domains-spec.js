@@ -98,22 +98,19 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 		} );
 
 		it( 'Can then see secure payment component', async function () {
-			return await SecurePaymentComponent.Expect( this.driver );
+			await SecurePaymentComponent.Expect( this.driver );
 		} );
 
-		it( 'Empty the cart', async function () {
-			await ReaderPage.Visit( this.driver );
-			const navBarComponent = await NavBarComponent.Expect( this.driver );
-			await navBarComponent.clickMySites();
+		it( 'Can close the checkout page', async function () {
+			const checkOutPage = await CheckOutPage.Expect( this.driver );
+			await checkOutPage.close();
+		} );
+
+		it( 'Can remove added item from cart', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( this.driver );
 			await sidebarComponent.selectDomains();
-			await DomainsPage.Expect( this.driver );
-			try {
-				const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( this.driver );
-				await shoppingCartWidgetComponent.removeDomainRegistration( expectedDomainName );
-			} catch {
-				console.log( `Can't clean up domain registration for ${ expectedDomainName } from cart` );
-			}
+			const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( this.driver );
+			await shoppingCartWidgetComponent.removeDomainRegistration( expectedDomainName );
 		} );
 	} );
 
