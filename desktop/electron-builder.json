@@ -6,6 +6,13 @@
 		"buildResources": "./resource/icons",
 		"output": "./release"
 	},
+	"publish": [
+		{
+			"provider": "github",
+			"owner": "Automattic",
+			"repo": "wp-desktop"
+		}
+	],
 	"files": [
 		"package.json",
 		"build/desktop.js",
