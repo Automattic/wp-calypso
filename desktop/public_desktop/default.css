@@ -44,7 +44,8 @@ body {
 	height: 100%;
 }
 
-#nav-button-icon-wordpress {
-	width: 35px;
-	height: 35px;
+/* FIXME: Unable to override SVG "viewbox property with CSS */
+#nav-button-icon-wordpress svg {
+	width: 30px;
+	height: 30px;
 }
