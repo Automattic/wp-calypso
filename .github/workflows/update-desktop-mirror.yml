@@ -11,10 +11,7 @@ jobs:
     if: github.event_name == 'push' && github.repository == 'Automattic/wp-calypso'
 
     steps:
-      - name: Copy .nvmrc
-        run: cp .nvmrc ./desktop/Automattic/WordPress-Desktop
-
-      - name: Push changed projects
+      - name: Push to wp-desktop repository
         uses: Automattic/action-push-to-mirrors@v1
         with:
           token: ${{ secrets.WP_DESKTOP_API_TOKEN_GITHUB }}
