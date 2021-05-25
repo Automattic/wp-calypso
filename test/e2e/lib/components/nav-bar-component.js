@@ -66,7 +66,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		);
 		return await this.driver.findElement( By.css( 'body' ) ).sendKeys( 'n' );
 	}
-	async confirmNotificationsOpen() {
+	async isNotificationsTabOpen() {
 		const locator = By.css( '.wpnt-open' );
 		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, locator );
 	}

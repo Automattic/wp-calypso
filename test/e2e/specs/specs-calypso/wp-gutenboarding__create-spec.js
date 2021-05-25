@@ -37,9 +37,9 @@ describe( `Gutenboarding - Create new site as existing user: (${ screenSize }) @
 	} );
 
 	it( 'Can visit Gutenboarding page and see Onboarding block', async function () {
-		const page = await NewPage.Visit( this.driver, NewPage.getGutenboardingURL() );
-		const blockExists = await page.waitForBlock();
-		assert( blockExists, 'Onboarding block is not rendered' );
+		const newPage = await NewPage.Visit( this.driver, NewPage.getGutenboardingURL() );
+		const isDisplayed = await newPage.isOnboardingBlockDisplayed();
+		assert( isDisplayed, 'Onboarding block is not displayed' );
 	} );
 
 	it( 'Can see Acquire Intent and set site title', async function () {
