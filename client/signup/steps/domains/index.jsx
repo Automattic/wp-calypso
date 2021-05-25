@@ -271,7 +271,7 @@ class DomainsStep extends React.Component {
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {
-			this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan );
+			this.submitWithDomain( googleAppsCartItem, shouldHideFreePlan, true );
 		} );
 	};
 
@@ -285,7 +285,7 @@ class DomainsStep extends React.Component {
 		page( this.getUseYourDomainUrl() );
 	};
 
-	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
+	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false, isSkipped ) => {
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
@@ -326,7 +326,8 @@ class DomainsStep extends React.Component {
 				{ domainItem },
 				this.isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
 				useThemeHeadstartItem
-			)
+			),
+			isSkipped
 		);
 
 		this.props.setDesignType( this.getDesignType() );
