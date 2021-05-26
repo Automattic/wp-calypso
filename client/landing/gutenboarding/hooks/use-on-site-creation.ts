@@ -61,14 +61,7 @@ export default function useOnSiteCreation(): void {
 		if ( newSite && ! isRedirecting ) {
 			setIsRedirecting( true );
 
-			if (
-				selectedPlan &&
-				! selectedPlan?.isFree &&
-				planProductSource &&
-				domain &&
-				domain.product_id &&
-				domain.product_slug
-			) {
+			if ( selectedPlan && ! selectedPlan?.isFree && planProductSource ) {
 				const planProduct: RequestCartProduct = createRequestCartProduct( {
 					product_id: planProductSource.productId,
 					product_slug: planProductSource.storeSlug,
@@ -76,15 +69,20 @@ export default function useOnSiteCreation(): void {
 						source: 'gutenboarding',
 					},
 				} );
-				const domainProduct: RequestCartProduct = createRequestCartProduct( {
-					meta: domain.domain_name,
-					product_id: domain.product_id,
-					product_slug: domain.product_slug,
-					extra: {
-						privacy: domain.supports_privacy,
-						source: 'gutenboarding',
-					},
-				} );
+
+				let domainProduct: RequestCartProduct | null = null;
+				if ( domain?.product_id && domain?.product_slug ) {
+					domainProduct = createRequestCartProduct( {
+						meta: domain.domain_name,
+						product_id: domain.product_id,
+						product_slug: domain.product_slug,
+						extra: {
+							privacy: domain.supports_privacy,
+							source: 'gutenboarding',
+						},
+					} );
+				}
+
 				const go = async () => {
 					if ( planProduct || domainProduct ) {
 						const cart: ResponseCart = await wpcom.getCart( newSite.site_slug );
