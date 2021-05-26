@@ -10,18 +10,18 @@ import { CompactCard, Button } from '@automattic/components';
  */
 import SectionHeader from 'calypso/components/section-header';
 import useVatDetails from './use-vat-details';
-import type { VatDetails } from './use-vat-details';
+import type { VatDetails, UpdateError } from './use-vat-details';
 
 export default function VatInfoPage(): JSX.Element {
 	const translate = useTranslate();
 	const [ currentVatDetails, setCurrentVatDetails ] = useState< VatDetails >( {} );
-	const { vatDetails, isLoading, error, setVatDetails } = useVatDetails();
+	const { vatDetails, isLoading, fetchError, updateError, setVatDetails } = useVatDetails();
 
 	const saveDetails = () => {
 		setVatDetails( { ...vatDetails, ...currentVatDetails } );
 	};
 
-	if ( error ) {
+	if ( fetchError ) {
 		return (
 			<div className="vat-info">
 				<SectionHeader label={ translate( 'VAT Details' ) } />
@@ -44,6 +44,8 @@ export default function VatInfoPage(): JSX.Element {
 	return (
 		<div className="vat-info">
 			<SectionHeader label={ translate( 'VAT Details' ) } />
+
+			<VatUpdateErrorNotice error={ updateError } />
 
 			<CompactCard>
 				<div>
@@ -86,5 +88,26 @@ export default function VatInfoPage(): JSX.Element {
 				<Button onClick={ saveDetails }>{ translate( 'Validate and save' ) }</Button>
 			</CompactCard>
 		</div>
+	);
+}
+
+function VatUpdateErrorNotice( { error }: { error: UpdateError | null } ): JSX.Element | null {
+	const translate = useTranslate();
+	if ( ! error ) {
+		return null;
+	}
+
+	if ( error.error === 'validation_failed' ) {
+		return (
+			<CompactCard highlight="error">
+				{ translate( 'Your VAT details are not valid. Please check each field and try again.' ) }
+			</CompactCard>
+		);
+	}
+
+	return (
+		<CompactCard highlight="error">
+			{ translate( 'An error occurred while updating your VAT details.' ) }
+		</CompactCard>
 	);
 }
