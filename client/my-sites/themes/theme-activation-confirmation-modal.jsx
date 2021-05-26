@@ -99,13 +99,13 @@ class ThemeActivationConfirmationModal extends Component {
 				keepCurrentHomepage
 			);
 		} else if ( 'keepCurrentTheme' === action ) {
-			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+			recordTracksEvent( 'calypso_theme_activation_confirmation_modal_dismiss', {
 				action: 'button',
 				theme: installingThemeId,
 			} );
 			return this.props.hideActivateModalWarning();
 		} else if ( 'dismiss' === action ) {
-			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+			recordTracksEvent( 'calypso_theme_activation_confirmation_modal_dismiss', {
 				action: 'escape',
 				theme: installingThemeId,
 			} );
@@ -115,7 +115,8 @@ class ThemeActivationConfirmationModal extends Component {
 
 	render() {
 		const {
-			theme,
+			activeTheme,
+			installingTheme,
 			hasActivated,
 			isActivating,
 			hasAutoLoadingHomepage,
@@ -133,46 +134,42 @@ class ThemeActivationConfirmationModal extends Component {
 			return null;
 		}
 
-		if ( ! theme ) {
+		if ( ! installingTheme ) {
 			return null;
 		}
 
-		const themeName = isCurrentThemeRetired
-			? this.props.activeThemeName
-			: this.props.installingThemeName;
+		const themeName = isCurrentThemeRetired ? activeTheme.name : installingTheme.name;
 
-		const themeId = isCurrentThemeRetired
-			? this.props.activeThemeName
-			: this.props.installingThemeName;
+		const themeId = isCurrentThemeRetired ? activeTheme.name : installingTheme.name;
 
 		const classes = classNames( 'theme-activation-confirmation-modal', {
-			'is-retired-modal': isCurrentThemeRetired,
+			'is-retired-modal': isCurrentThemeRetired && hasAutoLoadingHomepage,
 		} );
 
-		let dialogMessage;
+		const retiredMessage = translate(
+			'Your active theme {{strong}}%(themeName)s{{/strong}} is retired. ' +
+				'If you activate a new theme, you might not be able to switch back to %(themeName)s.',
+			{
+				args: { themeName },
+				components: { strong: <strong /> },
+			}
+		);
 
-		if ( isCurrentThemeRetired ) {
-			dialogMessage = translate(
-				'Your active theme {{strong}}%(themeName)s{{/strong}} is retired. ' +
-					'If you activate a new theme, you might not be able to switch back to %(themeName)s.',
-				{
-					args: { themeName },
-					components: { strong: <strong /> },
-				}
-			);
-		} else if ( hasAutoLoadingHomepage ) {
-			dialogMessage = translate(
-				'How would you like to use %(themeName)s on your site?',
-				{
-					args: { themeName },
-				}
-			);
+		let dialogHeading;
+
+		if ( hasAutoLoadingHomepage ) {
+			dialogHeading = translate( 'How would you like to use %(themeName)s on your site?', {
+				args: { themeName: installingTheme.name },
+			} );
+		} else if ( isCurrentThemeRetired ) {
+			dialogHeading = retiredMessage;
 		}
 
 		return (
 			<Dialog
 				className={ classes }
 				isVisible
+				baseClassName="theme-activation-confirmation-modal__dialog dialog"
 				buttons={ [
 					{
 						action: 'keepCurrentTheme',
@@ -182,7 +179,9 @@ class ThemeActivationConfirmationModal extends Component {
 					},
 					{
 						action: 'activeTheme',
-						label: translate( 'Activate %(themeName)s', { args: { themeName: theme.name } } ),
+						label: translate( 'Activate %(themeName)s', {
+							args: { themeName: installingTheme.name },
+						} ),
 						isPrimary: true,
 						onClick: this.closeModalHandler( 'activeTheme' ),
 					},
@@ -197,16 +196,16 @@ class ThemeActivationConfirmationModal extends Component {
 					} }
 				/>
 				<div>
-					<h1 className="theme-activation-confirmation-modal__title">{ dialogMessage }</h1>
-					{ ! isCurrentThemeRetired && (
-						<>
+					<h1 className="theme-activation-confirmation-modal__title">{ dialogHeading }</h1>
+					{ hasAutoLoadingHomepage && (
+						<div>
 							<FormLabel>
 								<FormRadio
 									value="keep_current_homepage"
 									checked={ 'keep_current_homepage' === this.state.homepageAction }
 									onChange={ this.handleHomepageAction }
 									label={ translate( 'Use %(themeName)s without changing my homepage content.', {
-										args: { themeName },
+										args: { themeName: installingTheme.name },
 									} ) }
 								/>
 							</FormLabel>
@@ -218,12 +217,17 @@ class ThemeActivationConfirmationModal extends Component {
 									label={ translate(
 										"Use %(themeName)s's homepage content and make my existing homepage a draft.",
 										{
-											args: { themeName },
+											args: { themeName: installingTheme.name },
 										}
 									) }
 								/>
 							</FormLabel>
-						</>
+						</div>
+					) }
+					{ hasAutoLoadingHomepage && isCurrentThemeRetired && (
+						<p className="theme-activation-confirmation-modal__retired-message">
+							{ retiredMessage }
+						</p>
 					) }
 				</div>
 			</Dialog>
@@ -240,13 +244,9 @@ export default connect(
 		return {
 			siteId,
 			activeThemeId,
-			activeThemeName: get( state, 'themes.queries.wpcom.data.items.' + activeThemeId + '.name' ),
-			installingThemeName: get(
-				state,
-				'themes.queries.wpcom.data.items.' + installingThemeId + '.name'
-			),
 			installingThemeId,
-			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
+			activeTheme: activeThemeId && getCanonicalTheme( state, siteId, activeThemeId ),
+			installingTheme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
 			hasAutoLoadingHomepage: themeHasAutoLoadingHomepage( state, installingThemeId ),
