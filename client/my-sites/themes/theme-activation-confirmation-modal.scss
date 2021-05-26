@@ -31,8 +31,12 @@
 			text-align: center;
 		}
 
-		.dialog__action-buttons {
-			text-align: center;
+		.theme-activation-confirmation-modal__retired-message {
+			margin-top: 12px;
 		}
 	}
+}
+
+.theme-activation-confirmation-modal__dialog .dialog__action-buttons {
+	text-align: center;
 }
