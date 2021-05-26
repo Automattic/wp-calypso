@@ -7,7 +7,6 @@ body {
 	display: block;
 	user-select: none;
 	background-color: #24282d;
-	padding: none;
 	position: absolute;
 	height: 38px;
 	top: 0;
@@ -33,6 +32,10 @@ body {
 	background-color: inherit;
 	text-align: center;
 	border-right: 1px solid #3a3d4d;
+}
+
+.nav-button:hover {
+	background-color: #3e4247;
 }
 
 .nav-button-icon {
