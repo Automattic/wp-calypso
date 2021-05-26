@@ -58,6 +58,8 @@ const InstallThemeButton = connectOptions(
 			siteType = 'jetpack';
 		} else if ( siteSlug ) {
 			siteType = 'simple';
+		} else if ( ! isLoggedIn ) {
+			siteType = 'logged_out';
 		}
 
 		const clickHandler = () => {
