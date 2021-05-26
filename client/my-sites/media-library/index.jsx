@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { includes, isEqual, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { FEATURE_VIDEO_UPLOADS } from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -26,9 +27,9 @@ import {
 } from 'calypso/state/sharing/keyring/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import { selectMediaItems } from 'calypso/state/media/actions';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
 
 /**
  * Style dependencies
@@ -130,7 +131,7 @@ class MediaLibrary extends Component {
 	};
 
 	filterRequiresUpgrade() {
-		const { filter, site, source, isJetpack, isAtomic } = this.props;
+		const { filter, site, source, isJetpack, isAtomic, hasVideoUploadFeature } = this.props;
 		if ( source ) {
 			return false;
 		}
@@ -140,7 +141,11 @@ class MediaLibrary extends Component {
 				return ! ( ( site && site.options.upgraded_filetypes_enabled ) || isJetpack );
 
 			case 'videos':
-				return ! ( ( site && site.options.videopress_enabled ) || ( isJetpack && ! isAtomic ) );
+				return ! (
+					( site && site.options.videopress_enabled ) ||
+					( isJetpack && ! isAtomic ) ||
+					( isAtomic && hasVideoUploadFeature )
+				);
 		}
 
 		return false;
@@ -219,6 +224,7 @@ export default connect(
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		isJetpack: isJetpackSite( state, site?.ID ),
 		isAtomic: isAtomicSite( state, site?.ID ),
+		hasVideoUploadFeature: hasFeature( state, site?.ID, FEATURE_VIDEO_UPLOADS ),
 	} ),
 	{
 		requestKeyringConnections,
