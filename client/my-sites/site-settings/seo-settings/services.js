@@ -5,7 +5,7 @@
  * Returns the Site Verification services.
  *
  * @param  {Function}  translate  Translate needed for the name.
- * @returns {object}              Site Verification services data.
+ * @returns {Array}              Site Verification services data.
  */
 export default function ( translate = () => {} ) {
 	return [
