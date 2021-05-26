@@ -10,10 +10,10 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
 export interface VatDetails {
-	country: string;
-	id: string;
-	name: string;
-	address: string;
+	country?: string | null;
+	id?: string | null;
+	name?: string | null;
+	address?: string | null;
 }
 
 type SetVatDetails = ( vatDetails: VatDetails ) => void;
@@ -36,12 +36,7 @@ async function setVatDetails( vatDetails: VatDetails ): Promise< VatDetails > {
 	} );
 }
 
-const emptyVatDetails = {
-	country: '',
-	id: '',
-	name: '',
-	address: '',
-};
+const emptyVatDetails = {};
 
 export default function useVatDetails(): VatDetailsManager {
 	const queryClient = useQueryClient();
