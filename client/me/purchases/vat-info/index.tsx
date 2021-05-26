@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { useState } from 'react';
+import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { CompactCard, Button } from '@automattic/components';
 
@@ -12,6 +13,10 @@ import SectionHeader from 'calypso/components/section-header';
 import useVatDetails from './use-vat-details';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import type { VatDetails, UpdateError } from './use-vat-details';
+
+const VatActionArea = styled.div`
+	margin-top: 1em;
+`;
 
 export default function VatInfoPage(): JSX.Element {
 	const translate = useTranslate();
@@ -97,9 +102,11 @@ export default function VatInfoPage(): JSX.Element {
 					/>
 				</div>
 
-				<Button busy={ isUpdating } disabled={ isUpdating } onClick={ saveDetails }>
-					{ translate( 'Validate and save' ) }
-				</Button>
+				<VatActionArea>
+					<Button busy={ isUpdating } disabled={ isUpdating } onClick={ saveDetails }>
+						{ translate( 'Validate and save' ) }
+					</Button>
+				</VatActionArea>
 			</CompactCard>
 		</div>
 	);
