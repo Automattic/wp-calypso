@@ -198,28 +198,6 @@ User.prototype.getLanguage = function () {
 };
 
 /**
- * Get the URL for a user's avatar (from Gravatar). Uses
- * the short-form query string parameters as options,
- * sets some sane defaults.
- *
- * @param {object} options Options per https://secure.gravatar.com/site/implement/images/
- *
- * @returns {string} The user's avatar URL based on the options parameter.
- */
-User.prototype.getAvatarUrl = function ( options = {} ) {
-	const defaultOptions = {
-		s: 80,
-		d: 'mm',
-		r: 'G',
-	};
-	const avatarURL = this.get().avatar_URL;
-	const avatar = typeof avatarURL === 'string' ? avatarURL.split( '?' )[ 0 ] : '';
-
-	options = { ...options, ...defaultOptions };
-	return avatar + '?' + new URLSearchParams( options ).toString();
-};
-
-/**
  * Clear any user data.
  */
 User.prototype.clear = async function () {
