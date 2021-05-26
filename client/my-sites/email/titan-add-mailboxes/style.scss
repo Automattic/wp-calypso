@@ -1,11 +1,11 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.titan-mail-add-mailboxes__new-mailbox .form-label .form-text-input-with-affixes__suffix {
+.titan-add-mailboxes__new-mailbox .form-label .form-text-input-with-affixes__suffix {
 	font-weight: normal;
 }
-.titan-mail-add-mailboxes__new-mailbox-email-and-password,
-.titan-mail-add-mailboxes__new-mailbox-password-and-is-admin {
+.titan-add-mailboxes__new-mailbox-email-and-password,
+.titan-add-mailboxes__new-mailbox-password-and-is-admin {
 	display: flex;
 	flex-direction: column;
 
@@ -21,7 +21,7 @@
 	}
 }
 
-.titan-mail-add-mailboxes__new-mailbox-name-and-remove {
+.titan-add-mailboxes__new-mailbox-name-and-remove {
 	display: flex;
 	flex-direction: column-reverse;
 
@@ -32,7 +32,7 @@
 			flex-grow: 2;
 		}
 
-		.titan-mail-add-mailboxes__new-mailbox-remove-mailbox-button {
+		.titan-add-mailboxes__new-mailbox-remove-mailbox-button {
 			height: 40px;
 			margin-left: 1em;
 			width: 50px;
@@ -47,7 +47,7 @@
 		}
 	}
 
-	.titan-mail-add-mailboxes__new-mailbox-remove-mailbox-button,
+	.titan-add-mailboxes__new-mailbox-remove-mailbox-button,
 	.form-fieldset:not( :first-child ) {
 		margin-bottom: 1em;
 		margin-left: 1em;
@@ -59,7 +59,7 @@
 	}
 }
 
-.titan-mail-add-mailboxes__new-mailbox.show-labels {
+.titan-add-mailboxes__new-mailbox.show-labels {
 	.form-fieldset .form-label {
 		color: var( --color-text );
 
@@ -68,13 +68,13 @@
 		}
 	}
 
-	.titan-mail-add-mailboxes__new-mailbox-remove-mailbox-button {
+	.titan-add-mailboxes__new-mailbox-remove-mailbox-button {
 		margin-top: calc( 1.5em + 5px );
 	}
 
 }
 
-.titan-mail-add-mailboxes__new-mailbox-separator {
+.titan-add-mailboxes__new-mailbox-separator {
 	margin-top: 1.5em;
 }
 
@@ -91,11 +91,11 @@
 		@include break-mobile {
 			flex-direction: row;
 
-			.titan-mail-add-mailboxes__action-cancel {
+			.titan-add-mailboxes__action-cancel {
 				margin-left: auto;
 			}
 
-			.titan-mail-add-mailboxes__action-continue {
+			.titan-add-mailboxes__action-continue {
 				margin-left: 1.5em;
 			}
 		}

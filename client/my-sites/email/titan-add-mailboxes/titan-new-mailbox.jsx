@@ -65,11 +65,11 @@ const TitanNewMailbox = ( {
 	return (
 		<>
 			<div
-				className={ classNames( 'titan-mail-add-mailboxes__new-mailbox', {
+				className={ classNames( 'titan-add-mailboxes__new-mailbox', {
 					'show-labels': showLabels,
 				} ) }
 			>
-				<div className="titan-mail-add-mailboxes__new-mailbox-name-and-remove">
+				<div className="titan-add-mailboxes__new-mailbox-name-and-remove">
 					<FormFieldset>
 						<FormLabel>
 							{ showLabels && translate( 'Full name' ) }
@@ -93,7 +93,7 @@ const TitanNewMailbox = ( {
 
 					{ showTrashButton && (
 						<Button
-							className="titan-mail-add-mailboxes__new-mailbox-remove-mailbox-button"
+							className="titan-add-mailboxes__new-mailbox-remove-mailbox-button"
 							onClick={ onMailboxRemove }
 						>
 							<Gridicon icon="trash" />
@@ -102,7 +102,7 @@ const TitanNewMailbox = ( {
 					) }
 				</div>
 
-				<div className="titan-mail-add-mailboxes__new-mailbox-email-and-password">
+				<div className="titan-add-mailboxes__new-mailbox-email-and-password">
 					<FormFieldset>
 						<FormLabel>
 							{ showLabels && translate( 'Email address' ) }
@@ -145,7 +145,7 @@ const TitanNewMailbox = ( {
 					</FormFieldset>
 				</div>
 
-				<div className="titan-mail-add-mailboxes__new-mailbox-password-and-is-admin">
+				<div className="titan-add-mailboxes__new-mailbox-password-and-is-admin">
 					{ showIsAdminToggle && (
 						<FormFieldset>
 							<ToggleControl
@@ -190,7 +190,7 @@ const TitanNewMailbox = ( {
 					) }
 				</FormFieldset>
 			</div>
-			<hr className="titan-mail-add-mailboxes__new-mailbox-separator" />
+			<hr className="titan-add-mailboxes__new-mailbox-separator" />
 		</>
 	);
 };
