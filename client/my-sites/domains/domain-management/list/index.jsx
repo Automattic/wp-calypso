@@ -53,6 +53,8 @@ import InfoPopover from 'calypso/components/info-popover';
 import ExternalLink from 'calypso/components/external-link';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/add-domain-button';
+import { logmeinUrl } from 'calypso/lib/logmein';
+import getSitesMappedDomains from 'calypso/state/selectors/get-sites-mapped-domains';
 
 /**
  * Style dependencies
@@ -358,7 +360,7 @@ export class List extends React.Component {
 	}
 
 	renderPrimaryDomain() {
-		const { domains, selectedSite, translate } = this.props;
+		const { domains, selectedSite, translate, siteUrls } = this.props;
 		const primaryDomain = find( domains, 'isPrimary' );
 
 		if ( this.isLoading() || ! primaryDomain ) {
@@ -398,7 +400,7 @@ export class List extends React.Component {
 				<div className="list__header-primary-domain-content">
 					<ExternalLink
 						className="list__header-primary-domain-url"
-						href={ selectedSite.URL }
+						href={ logmeinUrl( selectedSite.URL, siteUrls ) }
 						title={ translate( 'Launch your site' ) }
 						target="_blank"
 						icon={ true }
@@ -542,6 +544,7 @@ export default connect(
 			hasSingleSite: siteCount === 1,
 			isOnFreePlan,
 			userCanManageOptions,
+			siteUrls: getSitesMappedDomains( state ),
 		};
 	},
 	( dispatch ) => {
