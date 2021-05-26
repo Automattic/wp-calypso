@@ -142,7 +142,7 @@ class ThemeActivationConfirmationModal extends Component {
 		const themeId = isCurrentThemeRetired ? activeTheme.name : installingTheme.name;
 
 		const classes = classNames( 'theme-activation-confirmation-modal', {
-			'is-retired-modal': isCurrentThemeRetired && hasAutoLoadingHomepage,
+			'is-solely-retired-modal': isCurrentThemeRetired && ! hasAutoLoadingHomepage,
 		} );
 
 		const retiredMessage = translate(
