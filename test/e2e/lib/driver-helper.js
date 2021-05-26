@@ -323,7 +323,7 @@ export async function setCheckbox( driver, locator, check = true ) {
  * image is visible or not
  */
 export async function isImageVisible( driver, element ) {
-	const tagName = await element.getTagName();
+	const tagName = ( await element.getTagName() ).toUpperCase();
 	if ( tagName !== 'IMG' ) {
 		throw new Error( `Element is not an image: ${ tagName }` );
 	}
