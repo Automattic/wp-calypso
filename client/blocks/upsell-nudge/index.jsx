@@ -29,7 +29,7 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
