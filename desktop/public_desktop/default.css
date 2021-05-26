@@ -22,6 +22,7 @@ body {
 }
 
 .nav-button {
+	display: flex;
 	width: 39px;
 	height: 38px;
 	float: left;
@@ -31,7 +32,6 @@ body {
 	background-position: center center;
 	background-color: inherit;
 	text-align: center;
-	border-right: 1px solid #3a3d4d;
 }
 
 .nav-button:hover {
@@ -39,15 +39,9 @@ body {
 }
 
 .nav-button-icon {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	height: 100%;
+	margin: auto;
 }
 
-/* FIXME: Unable to override SVG "viewbox property with CSS */
-#nav-button-icon-wordpress svg {
-	width: 30px;
-	height: 30px;
+.nav-button-icon-wordpress {
+	margin: 6px 0 0 6px;
 }
