@@ -3,8 +3,8 @@
  */
 const { Menu, MenuItem } = require( 'electron' );
 
-module.exports = function ( mainWindow ) {
-	mainWindow.webContents.on( 'context-menu', ( event, params ) => {
+module.exports = function ( { view } ) {
+	view.webContents.on( 'context-menu', ( event, params ) => {
 		const menu = new Menu();
 
 		const copy = new MenuItem( { label: 'Copy', role: 'copy' } );
@@ -18,7 +18,7 @@ module.exports = function ( mainWindow ) {
 				menu.append(
 					new MenuItem( {
 						label: suggestion,
-						click: () => mainWindow.webContents.replaceMisspelling( suggestion ),
+						click: () => view.webContents.replaceMisspelling( suggestion ),
 					} )
 				);
 			}
@@ -30,9 +30,7 @@ module.exports = function ( mainWindow ) {
 					new MenuItem( {
 						label: 'Add to Dictionary',
 						click: () =>
-							mainWindow.webContents.session.addWordToSpellCheckerDictionary(
-								params.misspelledWord
-							),
+							view.webContents.session.addWordToSpellCheckerDictionary( params.misspelledWord ),
 					} )
 				);
 			}

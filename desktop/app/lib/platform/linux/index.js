@@ -8,13 +8,13 @@ const { app } = require( 'electron' );
  */
 const log = require( '../../../lib/logger' )( 'platform:linux' );
 
-function LinuxPlatform( mainWindow ) {
-	this.window = mainWindow;
+function LinuxPlatform( { window } ) {
+	this.window = window;
 
 	app.on( 'activate', function () {
 		log.info( 'Window activated' );
-		mainWindow.show();
-		mainWindow.focus();
+		window.show();
+		window.focus();
 	} );
 
 	app.on( 'window-all-closed', function () {
@@ -22,7 +22,7 @@ function LinuxPlatform( mainWindow ) {
 		app.quit();
 	} );
 
-	mainWindow.on( 'close', function () {
+	window.on( 'close', function () {
 		app.quit();
 	} );
 }

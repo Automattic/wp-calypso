@@ -8,6 +8,9 @@ const sendChannels = [
 	'log',
 	'request-site-response',
 	'clear-notices-count',
+	'back-button-clicked',
+	'forward-button-clicked',
+	'home-button-clicked',
 	'user-auth',
 	'user-login-status',
 	'view-post-clicked',
@@ -40,6 +43,9 @@ const receiveChannels = [
 
 ( async () => {
 	const config = await ipcRenderer.invoke( 'get-config' );
+	const styles = {
+		titleBarPaddingLeft: process.platform !== 'darwin' ? '0px' : '77px',
+	};
 	contextBridge.exposeInMainWorld( 'electron', {
 		send: ( channel, ...args ) => {
 			if ( sendChannels.includes( channel ) ) {
@@ -67,5 +73,6 @@ const receiveChannels = [
 			};
 		},
 		config,
+		styles,
 	} );
 } )();
