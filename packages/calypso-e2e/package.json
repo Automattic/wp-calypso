@@ -21,6 +21,7 @@
 	},
 	"devDependencies": {
 		"@types/config": "^0.0.38",
+		"@types/jest": "^25.2.3",
 		"@types/node": "^15.0.2"
 	},
 	"scripts": {
