@@ -208,9 +208,10 @@ class EmailPlan extends React.Component {
 		}
 
 		const managePurchaseUrl = getManagePurchaseUrlFor( selectedSite.slug, purchase.id );
+
 		return (
 			<VerticalNavItem path={ managePurchaseUrl }>
-				{ translate( 'Billing and payment settings' ) }
+				{ translate( 'View billing and payment settings' ) }
 			</VerticalNavItem>
 		);
 	}
