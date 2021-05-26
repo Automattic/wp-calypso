@@ -19,8 +19,10 @@ function MacPlatform( appWindow ) {
 	app.on( 'activate', function () {
 		log.info( 'Window activated' );
 
-		this.window.show();
-		this.window.focus();
+		if ( this.window ) {
+			this.window.show();
+			this.window.focus();
+		}
 	} );
 
 	app.on( 'window-all-closed', function () {
