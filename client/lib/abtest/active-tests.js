@@ -48,15 +48,4 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
-	newUsersWithFreePlan: {
-		datestamp: '20210107',
-		variations: {
-			newOnboarding: 0,
-			control: 100,
-		},
-		localeTargets: 'any',
-		localeExceptions: [ 'en', 'es' ],
-		defaultVariation: 'control',
-		allowExistingUsers: false,
-	},
 };
