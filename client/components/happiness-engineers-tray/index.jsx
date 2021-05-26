@@ -2,39 +2,35 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 import { shuffle } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import useHappinessEngineersQuery from 'calypso/data/happiness-engineers/use-happiness-engineers-query';
 import Gravatar from 'calypso/components/gravatar';
-import QueryHappinessEngineers from 'calypso/components/data/query-happiness-engineers';
-import {
-	getHappinessEngineers,
-	hasReceivedHappinessEngineers,
-} from 'calypso/state/happiness-engineers/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const HappinessEngineersTray = ( { alreadyReceivedHappinessEngineers, happinessEngineers } ) => (
-	<div className="happiness-engineers-tray">
-		{ ! alreadyReceivedHappinessEngineers && <QueryHappinessEngineers /> }
-		{ shuffle( happinessEngineers ).map( ( happinessEngineer ) => (
-			<Gravatar
-				key={ happinessEngineer }
-				user={ { avatar_URL: happinessEngineer } }
-				size={ 42 }
-				className="happiness-engineers-tray__gravatar"
-			/>
-		) ) }
-	</div>
-);
+const HappinessEngineersTray = () => {
+	const { data } = useHappinessEngineersQuery();
 
-export default connect( ( state ) => ( {
-	happinessEngineers: getHappinessEngineers( state ),
-	alreadyReceivedHappinessEngineers: hasReceivedHappinessEngineers( state ),
-} ) )( HappinessEngineersTray );
+	return (
+		<div className="happiness-engineers-tray">
+			{ data &&
+				shuffle( data ).map( ( { avatar_URL } ) => (
+					<Gravatar
+						key={ avatar_URL }
+						user={ { avatar_URL } }
+						size={ 42 }
+						className="happiness-engineers-tray__gravatar"
+					/>
+				) ) }
+		</div>
+	);
+};
+
+export default HappinessEngineersTray;
