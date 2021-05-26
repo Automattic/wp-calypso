@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
-import React, { ChangeEvent, Fragment, FunctionComponent, useState } from 'react';
+import React, { ChangeEvent, FunctionComponent, useState } from 'react';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 
 /**

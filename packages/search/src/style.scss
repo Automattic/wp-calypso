@@ -2,9 +2,9 @@
 * @component Search
 */
 
-@import '~@automattic/typography/styles/variables';
-@import '~@wordpress/base-styles/variables';
-@import '~@wordpress/base-styles/mixins';
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
 
 $input-z-index: 20;
 

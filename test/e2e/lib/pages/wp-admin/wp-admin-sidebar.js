@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -12,32 +12,32 @@ import AsyncBaseContainer from '../../async-base-container';
 
 export default class WPAdminSidebar extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '#adminmenumain' ) );
+		super( driver, By.css( '#adminmenumain' ) );
 	}
 
 	async _postInit() {
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
 			await this.driver
-				.findElement( by.css( '#wpwrap' ) )
+				.findElement( By.css( '#wpwrap' ) )
 				.getAttribute( 'class' )
 				.then( ( classValue ) => {
 					if ( classValue !== 'wp-responsive-open' ) {
-						driverHelper.clickWhenClickable( this.driver, by.css( '#wp-admin-bar-menu-toggle' ) );
+						driverHelper.clickWhenClickable( this.driver, By.css( '#wp-admin-bar-menu-toggle' ) );
 					}
 				} );
 		}
 	}
 
 	async selectPlugins() {
-		const plugInMenuLocator = by.css( '#menu-plugins' );
-		const plugInMenuItemLocator = by.css( '#menu-plugins li a[href="plugins.php"]' );
+		const plugInMenuLocator = By.css( '#menu-plugins' );
+		const plugInMenuItemLocator = By.css( '#menu-plugins li a[href="plugins.php"]' );
 
 		return await this._selectMenuItem( plugInMenuLocator, plugInMenuItemLocator );
 	}
 
 	async selectJetpack() {
-		const jetpackMenuLocator = by.css( '#toplevel_page_jetpack' );
-		const menuItemLocator = by.css(
+		const jetpackMenuLocator = By.css( '#toplevel_page_jetpack' );
+		const menuItemLocator = By.css(
 			'#toplevel_page_jetpack li a[href$="jetpack#/dashboard"], ' +
 				'#toplevel_page_jetpack li a[href$="jetpack"]'
 		);
@@ -46,50 +46,50 @@ export default class WPAdminSidebar extends AsyncBaseContainer {
 	}
 
 	async selectJetpackSettings() {
-		const jetpackMenuLocator = by.css( '#toplevel_page_jetpack' );
-		const menuItemLocator = by.css( '#toplevel_page_jetpack li a[href$="jetpack#/settings"]' );
+		const jetpackMenuLocator = By.css( '#toplevel_page_jetpack' );
+		const menuItemLocator = By.css( '#toplevel_page_jetpack li a[href$="jetpack#/settings"]' );
 
 		return await this._selectMenuItem( jetpackMenuLocator, menuItemLocator );
 	}
 
 	async selectSettingsSharing() {
-		const settingsLocator = by.css( '#menu-settings' );
-		const itemLocator = by.css( '#menu-settings a[href$="sharing"]' );
+		const settingsLocator = By.css( '#menu-settings' );
+		const itemLocator = By.css( '#menu-settings a[href$="sharing"]' );
 
 		return await this._selectMenuItem( settingsLocator, itemLocator );
 	}
 
 	async selectSnippets() {
-		const settingsLocator = by.css( '#toplevel_page_snippets' );
-		const itemLocator = by.css( '#toplevel_page_snippets a.wp-first-item[href$="snippets"]' );
+		const settingsLocator = By.css( '#toplevel_page_snippets' );
+		const itemLocator = By.css( '#toplevel_page_snippets a.wp-first-item[href$="snippets"]' );
 
 		return await this._selectMenuItem( settingsLocator, itemLocator );
 	}
 
 	async selectAppearanceEditCSS() {
-		const settingsLocator = by.css( '#menu-appearance' );
-		const itemLocator = by.css( '#menu-appearance a[href$="editcss"]' );
+		const settingsLocator = By.css( '#menu-appearance' );
+		const itemLocator = By.css( '#menu-appearance a[href$="editcss"]' );
 
 		return await this._selectMenuItem( settingsLocator, itemLocator );
 	}
 
 	async selectAddNewUser() {
-		const usersLocator = by.css( '#menu-users' );
-		const itemLocator = by.css( '#menu-users a[href*="user-new"]' );
+		const usersLocator = By.css( '#menu-users' );
+		const itemLocator = By.css( '#menu-users a[href*="user-new"]' );
 
 		return await this._selectMenuItem( usersLocator, itemLocator );
 	}
 
 	async selectAllPosts() {
-		const postsLocator = by.css( '#menu-posts' );
-		const itemLocator = by.css( '#menu-posts a[href*="edit"]' );
+		const postsLocator = By.css( '#menu-posts' );
+		const itemLocator = By.css( '#menu-posts a[href*="edit"]' );
 
 		return await this._selectMenuItem( postsLocator, itemLocator );
 	}
 
 	async selectNewPost() {
-		const postsLocator = by.css( '#menu-posts' );
-		const itemLocator = by.css( '#menu-posts a[href*="post-new"]' );
+		const postsLocator = By.css( '#menu-posts' );
+		const itemLocator = By.css( '#menu-posts a[href*="post-new"]' );
 
 		return await this._selectMenuItem( postsLocator, itemLocator );
 	}

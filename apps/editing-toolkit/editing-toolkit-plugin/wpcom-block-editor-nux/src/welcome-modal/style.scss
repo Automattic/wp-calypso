@@ -1,8 +1,8 @@
 // @TODO: remove the ignore rule and replace font sizes accordingly
 /* stylelint-disable scales/font-size */
 
-@import '~@automattic/typography/styles/fonts';
-@import '~@automattic/onboarding/styles/mixins';
+@import '@automattic/typography/styles/fonts';
+@import '@automattic/onboarding/styles/mixins';
 
 $wpcom-modal-breakpoint: 660px;
 

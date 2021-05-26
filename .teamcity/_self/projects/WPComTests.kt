@@ -198,6 +198,15 @@ fun jetpackBuildType(screenSize: String): BuildType {
 		name = "Jetpack tests ($screenSize)"
 		description = "Runs Calypso Jetpack E2E tests using $screenSize screen resolution"
 
+		params {
+			select(
+				name = "JETPACKHOST",
+				value = "PRESSABLEBLEEDINGEDGE",
+				label = "Jetpack Host",
+				options = listOf("PRESSABLE","PRESSABLEBLEEDINGEDGE")
+			)
+		}
+
 		artifactRules = """
 			reports => reports
 			logs.tgz => logs.tgz
@@ -234,6 +243,8 @@ fun jetpackBuildType(screenSize: String): BuildType {
 					export HIGHLIGHT_ELEMENT=true
 					export BROWSERSIZE=$screenSize
 					export BROWSERLOCALE=en
+					export JETPACKHOST=%JETPACKHOST%
+					export TARGET=JETPACK
 
 					# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 					# mocha-teamcity-reporter to work.

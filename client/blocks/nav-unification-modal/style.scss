@@ -1,9 +1,9 @@
 // @TODO: remove the ignore rule and replace font sizes accordingly
 /* stylelint-disable scales/font-size */
 
-@import '~@automattic/typography/styles/fonts';
-@import '~@automattic/onboarding/styles/mixins';
-@import '~@wordpress/base-styles/breakpoints';
+@import '@automattic/typography/styles/fonts';
+@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
 
 $modal-breakpoint: 600px;
 $modal-padding-v: 40px;

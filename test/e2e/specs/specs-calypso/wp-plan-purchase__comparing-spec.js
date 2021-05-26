@@ -41,7 +41,7 @@ describe( `[${ host }] Plans - Comparing plans: (${ screenSize }) @parallel @jet
 		it( 'Can Verify Current Plan', async function () {
 			const planName = 'premium';
 			const plansPage = await PlansPage.Expect( this.driver );
-			const present = await plansPage.confirmCurrentPlan( planName );
+			const present = await plansPage.isCurrentPlanPresent( planName );
 			return assert( present, `Failed to detect correct plan (${ planName })` );
 		} );
 

@@ -4,3 +4,4 @@ export { default as ShoppingCartProvider } from './shopping-cart-provider';
 export { default as createRequestCartProduct } from './create-request-cart-product';
 export * from './empty-carts';
 export * from './types';
+export { convertResponseCartToRequestCart } from './cart-functions';

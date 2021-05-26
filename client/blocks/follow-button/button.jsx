@@ -33,13 +33,6 @@ class FollowButton extends React.Component {
 		disabled: false,
 	};
 
-	UNSAFE_componentWillMount() {
-		this.strings = {
-			FOLLOW: this.props.translate( 'Follow' ),
-			FOLLOWING: this.props.translate( 'Following' ),
-		};
-	}
-
 	toggleFollow = ( event ) => {
 		if ( event ) {
 			event.preventDefault();
@@ -55,13 +48,15 @@ class FollowButton extends React.Component {
 	};
 
 	render() {
-		let label = this.props.followLabel ? this.props.followLabel : this.strings.FOLLOW;
+		let label = this.props.followLabel ? this.props.followLabel : this.props.translate( 'Follow' );
 		const menuClasses = [ 'button', 'follow-button', 'has-icon', this.props.className ];
 		const iconSize = this.props.iconSize;
 
 		if ( this.props.following ) {
 			menuClasses.push( 'is-following' );
-			label = this.props.followingLabel ? this.props.followingLabel : this.strings.FOLLOWING;
+			label = this.props.followingLabel
+				? this.props.followingLabel
+				: this.props.translate( 'Following' );
 		}
 
 		if ( this.props.disabled ) {

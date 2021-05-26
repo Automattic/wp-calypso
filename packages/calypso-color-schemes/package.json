@@ -30,6 +30,6 @@
 	"devDependencies": {
 		"postcss": "^8.2.15",
 		"postcss-custom-properties": "^11.0.0",
-		"node-sass": "^6.0.0"
+		"sass": "^1.32.13"
 	}
 }

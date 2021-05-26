@@ -25,7 +25,7 @@ export default function (): void {
 			jetpackPlans( `/plans`, jetpackPricingContext );
 		}
 	} else {
-		jetpackPlans( `/pricing/:site?`, siteSelection, jetpackPricingContext );
+		jetpackPlans( `/pricing`, siteSelection, jetpackPricingContext );
 
 		if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
 			jetpackPlans( `/plans/:site?`, siteSelection, jetpackPricingContext );
