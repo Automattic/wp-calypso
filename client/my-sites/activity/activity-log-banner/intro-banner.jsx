@@ -29,7 +29,7 @@ import {
 	siteHasBackupProductPurchase,
 	siteHasScanProductPurchase,
 } from 'calypso/state/purchases/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
