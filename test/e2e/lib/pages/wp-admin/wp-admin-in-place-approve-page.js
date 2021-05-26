@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By, until } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -16,12 +16,8 @@ export default class WPAdminInPlaceApprovePage extends AsyncBaseContainer {
 
 	async approve() {
 		const approveButtonLocator = By.css( '#approve' );
-		await this.driver.wait(
-			until.ableToSwitchToFrame( this.expectedElementLocator ),
-			this.explicitWaitMS,
-			'Could not locate the payment button iFrame.'
-		);
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.expectedElementLocator );
 		await driverHelper.clickWhenClickable( this.driver, approveButtonLocator );
-		return await this.driver.switchTo().defaultContent();
+		await this.driver.switchTo().defaultContent();
 	}
 }

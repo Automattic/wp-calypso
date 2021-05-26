@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import webdriver, { By, until } from 'selenium-webdriver';
+import webdriver, { By } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
 
 /**
@@ -49,12 +49,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			return;
 		}
 		await this.driver.switchTo().defaultContent();
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.editoriFrameLocator );
-		await this.driver.wait(
-			until.ableToSwitchToFrame( this.editoriFrameLocator ),
-			this.explicitWaitMS,
-			'Could not locate the editor iFrame.'
-		);
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.editoriFrameLocator );
 	}
 
 	async initEditor( { dismissPageTemplateLocator = false } = {} ) {
