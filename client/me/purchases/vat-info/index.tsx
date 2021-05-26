@@ -15,7 +15,14 @@ import type { VatDetails, UpdateError } from './use-vat-details';
 export default function VatInfoPage(): JSX.Element {
 	const translate = useTranslate();
 	const [ currentVatDetails, setCurrentVatDetails ] = useState< VatDetails >( {} );
-	const { vatDetails, isLoading, fetchError, updateError, setVatDetails } = useVatDetails();
+	const {
+		vatDetails,
+		isLoading,
+		isUpdating,
+		fetchError,
+		updateError,
+		setVatDetails,
+	} = useVatDetails();
 
 	const saveDetails = () => {
 		setVatDetails( { ...vatDetails, ...currentVatDetails } );
@@ -51,6 +58,7 @@ export default function VatInfoPage(): JSX.Element {
 				<div>
 					<label>{ translate( 'Country' ) }</label>
 					<input
+						disabled={ isUpdating }
 						value={ currentVatDetails.country ?? vatDetails.country ?? '' }
 						onChange={ ( event ) =>
 							setCurrentVatDetails( { ...currentVatDetails, country: event.target.value } )
@@ -60,6 +68,7 @@ export default function VatInfoPage(): JSX.Element {
 				<div>
 					<label>{ translate( 'VAT' ) }</label>
 					<input
+						disabled={ isUpdating }
 						value={ currentVatDetails.id ?? vatDetails.id ?? '' }
 						onChange={ ( event ) =>
 							setCurrentVatDetails( { ...currentVatDetails, id: event.target.value } )
@@ -69,6 +78,7 @@ export default function VatInfoPage(): JSX.Element {
 				<div>
 					<label>{ translate( 'Name' ) }</label>
 					<input
+						disabled={ isUpdating }
 						value={ currentVatDetails.name ?? vatDetails.name ?? '' }
 						onChange={ ( event ) =>
 							setCurrentVatDetails( { ...currentVatDetails, name: event.target.value } )
@@ -78,6 +88,7 @@ export default function VatInfoPage(): JSX.Element {
 				<div>
 					<label>{ translate( 'Address' ) }</label>
 					<input
+						disabled={ isUpdating }
 						value={ currentVatDetails.address ?? vatDetails.address ?? '' }
 						onChange={ ( event ) =>
 							setCurrentVatDetails( { ...currentVatDetails, address: event.target.value } )
@@ -85,7 +96,9 @@ export default function VatInfoPage(): JSX.Element {
 					/>
 				</div>
 
-				<Button onClick={ saveDetails }>{ translate( 'Validate and save' ) }</Button>
+				<Button busy={ isUpdating } disabled={ isUpdating } onClick={ saveDetails }>
+					{ translate( 'Validate and save' ) }
+				</Button>
 			</CompactCard>
 		</div>
 	);
