@@ -21,6 +21,10 @@ import { CheckoutSummaryTotal } from 'calypso/my-sites/checkout/composite-checko
 
 type MasterbarCartProps = { tooltip: string; children: React.ReactNode };
 
+const MasterbarCartOuterWrapper = styled.div`
+	display: flex;
+`;
+
 function MasterbarCart( { children, tooltip }: MasterbarCartProps ): JSX.Element | null {
 	const { responseCart, reloadFromServer } = useShoppingCart();
 	const selectedSite = useSelector( getSelectedSite );
@@ -41,13 +45,13 @@ function MasterbarCart( { children, tooltip }: MasterbarCartProps ): JSX.Element
 	};
 	const onClose = () => setIsActive( false );
 
-	// TODO: Add dot overlay to show number of items in cart
 	return (
-		<div className="masterbar__cart" ref={ masterbarButtonRef }>
+		<MasterbarCartOuterWrapper className="masterbar__cart" ref={ masterbarButtonRef }>
 			<CheckoutErrorBoundary errorMessage="Error">
 				<MasterbarItem icon="cart" tooltip={ tooltip } onClick={ onClick }>
 					{ children }
 				</MasterbarItem>
+				<MasterbarCartCount productsInCart={ responseCart.products.length } />
 				<Popover
 					isVisible={ isActive }
 					onClose={ onClose }
@@ -57,13 +61,33 @@ function MasterbarCart( { children, tooltip }: MasterbarCartProps ): JSX.Element
 					<MasterbarCartContents selectedSiteSlug={ selectedSite.slug } />
 				</Popover>
 			</CheckoutErrorBoundary>
-		</div>
+		</MasterbarCartOuterWrapper>
 	);
 }
 
 function noop() {
 	// TODO: get rid of this and provide actual handlers for CheckoutProvider
 }
+
+const MasterbarCartCountWrapper = styled.div`
+	position: relative;
+`;
+
+const MasterbarCartCountContainer = styled.span`
+	display: inline-block;
+	padding: 1px 6px;
+	border: 1px solid var( --color-accent );
+	border-radius: 12px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 14px;
+	text-align: center;
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	color: var( --color-text-inverted );
+	background-color: var( --color-accent );
+`;
 
 const MasterbarCartContentsWrapper = styled.div`
 	margin: 10px;
@@ -80,6 +104,14 @@ const MasterbarCartTitle = styled.h2`
 	border-bottom: 1px solid #ccc;
 	padding-bottom: 10px;
 `;
+
+function MasterbarCartCount( { productsInCart }: { productsInCart: number } ): JSX.Element {
+	return (
+		<MasterbarCartCountWrapper>
+			<MasterbarCartCountContainer>{ productsInCart }</MasterbarCartCountContainer>
+		</MasterbarCartCountWrapper>
+	);
+}
 
 function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string } ) {
 	const { removeCoupon } = useShoppingCart();
