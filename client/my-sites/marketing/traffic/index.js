@@ -28,6 +28,7 @@ import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form'
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isFreeAtomicSite } from 'calypso/lib/site/utils';
 
 /**
  * Style dependencies
@@ -108,7 +109,7 @@ const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 	const isJetpack = isJetpackSite( state, siteId );
-	const isJetpackAdmin = isJetpack && isAdmin;
+	const isJetpackAdmin = isJetpack && isAdmin && ! isFreeAtomicSite;
 
 	return {
 		isAdmin,

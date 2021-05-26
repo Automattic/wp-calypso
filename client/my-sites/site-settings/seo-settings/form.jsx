@@ -27,6 +27,8 @@ import {
 	isJetpackSite,
 	isRequestingSite,
 } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isFreeAtomicSite } from 'calypso/lib/site/utils';
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
@@ -271,6 +273,7 @@ export class SeoForm extends React.Component {
 			isFetchingSite,
 			siteId,
 			siteIsJetpack,
+			siteIsFreeAtomic,
 			siteIsComingSoon,
 			showAdvancedSeo,
 			showWebsiteMeta,
@@ -299,23 +302,24 @@ export class SeoForm extends React.Component {
 
 		const generalTabUrl = getGeneralTabUrl( slug );
 
-		const upsellProps = siteIsJetpack
-			? {
-					title: translate( 'Boost your search engine ranking' ),
-					feature: FEATURE_SEO_PREVIEW_TOOLS,
-					href: `/checkout/${ slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ADVANCED_SEO ] }`,
-			  }
-			: {
-					title: translate(
-						'Boost your search engine ranking with the powerful SEO tools in the Business plan'
-					),
-					feature: FEATURE_ADVANCED_SEO,
-					plan:
-						selectedSite.plan &&
-						findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-							type: TYPE_BUSINESS,
-						} ),
-			  };
+		const upsellProps =
+			siteIsJetpack && ! siteIsFreeAtomic
+				? {
+						title: translate( 'Boost your search engine ranking' ),
+						feature: FEATURE_SEO_PREVIEW_TOOLS,
+						href: `/checkout/${ slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ADVANCED_SEO ] }`,
+				  }
+				: {
+						title: translate(
+							'Boost your search engine ranking with the powerful SEO tools in the Business plan'
+						),
+						feature: FEATURE_ADVANCED_SEO,
+						plan:
+							selectedSite.plan &&
+							findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
+								type: TYPE_BUSINESS,
+							} ),
+				  };
 
 		// To ensure two Coming Soon badges don't appear while sites with Coming Soon v1 (isSitePrivate && siteIsComingSoon) still exist.
 		const isPublicComingSoon = ! isSitePrivate && siteIsComingSoon;
@@ -325,7 +329,7 @@ export class SeoForm extends React.Component {
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				{ ( isSitePrivate || isSiteHidden ) && hasSiteSeoFeature( selectedSite ) && (
+				{ ( isSitePrivate || isSiteHidden ) && showAdvancedSeo && (
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -475,13 +479,17 @@ const mapStateToProps = ( state ) => {
 	const selectedSite = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
+	const siteIsAtomic = isAtomicSite( state, siteId );
+	const siteIsFreeAtomic = isFreeAtomicSite( selectedSite, siteIsAtomic );
 	// SEO Tools are available with Business plan on WordPress.com, and
 	// will soon be available on all Jetpack sites, so we're checking
 	// the availability of the module.
 	const isAdvancedSeoEligible =
 		selectedSite.plan &&
 		hasSiteSeoFeature( selectedSite ) &&
-		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
+		( ! siteIsJetpack ||
+			get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) ) &&
+		! siteIsFreeAtomic;
 
 	const activePlugins = getPlugins( state, [ siteId ], 'active' );
 	const conflictedSeoPlugin = siteIsJetpack
@@ -492,6 +500,8 @@ const mapStateToProps = ( state ) => {
 		isFetchingSite: isRequestingSite( state, siteId ),
 		siteId,
 		siteIsJetpack,
+		siteIsAtomic,
+		siteIsFreeAtomic,
 		selectedSite,
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible,

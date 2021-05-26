@@ -176,3 +176,16 @@ export function hasSiteFeature( site, feature ) {
 		return planHasFeature( site.plan.product_slug, feature );
 	}
 }
+
+/**
+ * Checks if the site has a free plan and is Atomic.
+ *
+ * @param {object} site Site to check
+ * @param {boolean} isAtomic is Atomic
+ * @returns {boolean} True if it is
+ */
+export function isFreeAtomicSite( site, isAtomic ) {
+	if ( site && site.plan ) {
+		return isAtomic && site.plan.is_free;
+	}
+}
