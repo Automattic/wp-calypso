@@ -10,6 +10,7 @@ import { CompactCard, Button } from '@automattic/components';
  */
 import SectionHeader from 'calypso/components/section-header';
 import useVatDetails from './use-vat-details';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import type { VatDetails, UpdateError } from './use-vat-details';
 
 export default function VatInfoPage(): JSX.Element {
@@ -57,40 +58,40 @@ export default function VatInfoPage(): JSX.Element {
 			<CompactCard>
 				<div>
 					<label>{ translate( 'Country' ) }</label>
-					<input
+					<FormTextInput
 						disabled={ isUpdating }
 						value={ currentVatDetails.country ?? vatDetails.country ?? '' }
-						onChange={ ( event ) =>
+						onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 							setCurrentVatDetails( { ...currentVatDetails, country: event.target.value } )
 						}
 					/>
 				</div>
 				<div>
 					<label>{ translate( 'VAT' ) }</label>
-					<input
+					<FormTextInput
 						disabled={ isUpdating }
 						value={ currentVatDetails.id ?? vatDetails.id ?? '' }
-						onChange={ ( event ) =>
+						onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 							setCurrentVatDetails( { ...currentVatDetails, id: event.target.value } )
 						}
 					/>
 				</div>
 				<div>
 					<label>{ translate( 'Name' ) }</label>
-					<input
+					<FormTextInput
 						disabled={ isUpdating }
 						value={ currentVatDetails.name ?? vatDetails.name ?? '' }
-						onChange={ ( event ) =>
+						onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 							setCurrentVatDetails( { ...currentVatDetails, name: event.target.value } )
 						}
 					/>
 				</div>
 				<div>
 					<label>{ translate( 'Address' ) }</label>
-					<input
+					<FormTextInput
 						disabled={ isUpdating }
 						value={ currentVatDetails.address ?? vatDetails.address ?? '' }
-						onChange={ ( event ) =>
+						onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 							setCurrentVatDetails( { ...currentVatDetails, address: event.target.value } )
 						}
 					/>
