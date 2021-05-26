@@ -58,6 +58,16 @@
 	}
 }
 
+.license-list-no-payment-method {
+	text-align: center;
+	padding-bottom: 3rem 0 4rem 0;
+}
+
+.license-list-no-payment-method__description {
+	margin-bottom: 1.5rem;
+	font-size: $font-body;
+}
+
 @keyframes license-list__transition-enter {
 	0% {
 		display: none;
