@@ -99,13 +99,11 @@ export default function WPCheckoutOrderReview( {
 	const primaryDomain = selectedSiteData?.options?.is_mapped_domain
 		? selectedSiteData?.domain
 		: null;
-	const domainUrl =
-		primaryDomain ??
-		responseCart.products.find(
-			( product ) =>
-				isDomainTransfer( product ) || isDomainRegistration( product ) || isDomainMapping( product )
-		)?.meta ??
-		siteUrl;
+	const firstDomainProduct = responseCart.products.find(
+		( product ) =>
+			isDomainTransfer( product ) || isDomainRegistration( product ) || isDomainMapping( product )
+	);
+	const domainUrl = primaryDomain ?? firstDomainProduct?.meta ?? siteUrl;
 
 	const removeCouponAndClearField = () => {
 		couponFieldStateProps.setCouponFieldValue( '' );
