@@ -20,6 +20,7 @@ import {
 	buildGlobalStylesContentEvents,
 	getFlattenedBlockNames,
 	getBlockEventContextProperties,
+	getIsEditingCustomPostTemplate,
 } from './utils';
 
 // Debugger.
@@ -304,6 +305,7 @@ const trackBlockInsertion = ( blocks, ...args ) => {
 	const context = getBlockEventContextProperties( rootClientId );
 
 	const insert_method = getBlockInserterUsed();
+	const is_editing_custom_post_template = getIsEditingCustomPostTemplate();
 
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
 		block_name: name,
@@ -311,6 +313,7 @@ const trackBlockInsertion = ( blocks, ...args ) => {
 		pattern_name: patternName,
 		insert_method,
 		...context,
+		is_editing_custom_post_template,
 	} ) );
 };
 
@@ -353,6 +356,7 @@ const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
 	const context = getBlockEventContextProperties( rootClientId );
 
 	const insert_method = getBlockInserterUsed( originalBlockIds );
+	const is_editing_custom_post_template = getIsEditingCustomPostTemplate();
 
 	trackBlocksHandler( blocks, 'wpcom_block_picker_block_inserted', ( { name } ) => ( {
 		block_name: name,
@@ -360,6 +364,7 @@ const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
 		pattern_name: patternName,
 		insert_method,
 		...context,
+		is_editing_custom_post_template,
 	} ) );
 };
 
@@ -404,6 +409,7 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 		}
 	}
 	const context = getBlockEventContextProperties( rootClientId );
+	const is_editing_custom_post_template = getIsEditingCustomPostTemplate();
 
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
 		block_name: name,
@@ -414,7 +420,21 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 			applyFilters( 'isInsertingPagePattern', false ) ||
 			applyFilters( 'isInsertingPageTemplate', false ),
 		...context,
+		is_editing_custom_post_template,
 	} ) );
+};
+
+/**
+ * Track templates created via template UI. (Page editor)
+ *
+ * @param {object} template template object to be created
+ */
+const trackEditPostCreateTemplate = ( template ) => {
+	const isCreatingTemplate = !! template;
+
+	if ( isCreatingTemplate ) {
+		tracksRecordEvent( 'wpcom_block_editor_custom_post_template_created', {} );
+	}
 };
 
 /**
@@ -696,6 +716,7 @@ const REDUX_TRACKING = {
 	},
 	'core/edit-post': {
 		setIsListViewOpened: trackListViewToggle,
+		__unstableSwitchToTemplateMode: trackEditPostCreateTemplate,
 	},
 	'core/interface': {
 		enableComplementaryArea: trackEnableComplementaryArea,

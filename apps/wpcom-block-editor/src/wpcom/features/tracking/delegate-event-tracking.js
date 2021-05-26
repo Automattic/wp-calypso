@@ -22,6 +22,8 @@ import {
 import wpcomTemplatePartChooseExisting from './wpcom-template-part-choose-existing';
 import wpcomBlockEditorListViewSelect from './wpcom-block-editor-list-view-select';
 import wpcomBlockEditorTemplatePartDetachBlocks from './wpcom-block-editor-template-part-detach-blocks';
+import wpcomBlockEditorCustomPostTemplateSave from './wpcom-block-editor-custom-post-template-save';
+import wpcomBlockEditorCustomPostTemplateActionsClick from './wpcom-block-editor-custom-post-template-actions-click';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -64,6 +66,8 @@ const EVENTS_MAPPING = [
 	wpcomTemplatePartChooseExisting(),
 	wpcomBlockEditorListViewSelect(),
 	wpcomBlockEditorTemplatePartDetachBlocks(),
+	wpcomBlockEditorCustomPostTemplateSave(),
+	wpcomBlockEditorCustomPostTemplateActionsClick(),
 ];
 const EVENTS_MAPPING_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => capture );
 const EVENTS_MAPPING_NON_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => ! capture );
