@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { escapeRegExp } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -26,6 +25,13 @@ const KEY_DOWN = 40;
  * @type {RegExp} matches @mentions
  */
 const suggestionMatcher = /(?:^|\s)@([^\s]*)$/i;
+
+/**
+ * This pattern looks for special regex characters.
+ * Extracted directly from lodash@4.17.21.
+ */
+const reRegExpChars = /[\\^$.*+?()[\]{}|]/g;
+const reHasRegExpChars = RegExp( reRegExpChars.source );
 
 /**
  * This pattern looks for a query
@@ -122,7 +128,12 @@ class Suggestions extends React.Component {
 
 		const [ , suggestion ] = match;
 
-		return escapeRegExp( suggestion );
+		// NOTE: This test logic was extracted directly from lodash@4.17.21.
+		if ( suggestion && reHasRegExpChars.test( suggestion ) ) {
+			return suggestion.replace( reRegExpChars, '\\$&' );
+		}
+
+		return suggestion;
 	}
 
 	handleSuggestionsKeyDown = ( event ) => {
