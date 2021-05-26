@@ -56,9 +56,6 @@ jest.mock( 'calypso/lib/rebrand-cities', () => ( {
 	isRebrandCitiesSiteUrl: jest.fn( () => false ),
 } ) );
 
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'calypso/lib/user', () => () => {} );
-
 const translate = ( x ) => x;
 
 const defaultProps = {

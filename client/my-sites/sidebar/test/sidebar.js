@@ -15,8 +15,6 @@ import { MySitesSidebar } from '..';
 import config from '@automattic/calypso-config';
 import { abtest } from 'calypso/lib/abtest';
 
-jest.mock( 'calypso/lib/user', () => () => null );
-jest.mock( 'calypso/lib/user/index', () => () => {} );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/abtest', () => ( {

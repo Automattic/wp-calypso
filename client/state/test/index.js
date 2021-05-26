@@ -4,9 +4,6 @@
 import { createReduxStore } from '../';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'calypso/lib/user', () => () => {} );
-
 const noop = () => {};
 
 describe( 'index', () => {

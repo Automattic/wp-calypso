@@ -16,7 +16,6 @@ import { isUserNewerThan } from '../contexts';
 jest.mock( 'calypso/layout/guided-tours/config', () => {
 	return require( 'calypso/state/guided-tours/test/fixtures/config' );
 } );
-jest.mock( 'calypso/lib/user', () => () => {} );
 
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
