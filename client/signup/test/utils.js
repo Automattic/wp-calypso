@@ -22,9 +22,6 @@ import flows from 'calypso/signup/config/flows';
 jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
-jest.mock( 'calypso/lib/user', () => () => ( {
-	get: () => {},
-} ) );
 
 jest.mock( 'calypso/signup/config/flows-pure', () => ( {
 	generateFlows: () => require( './fixtures/flows' ).default,

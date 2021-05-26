@@ -38,9 +38,6 @@ import { serialize, deserialize } from 'calypso/state/utils';
 
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'calypso/lib/user', () => () => {} );
-
 describe( 'reducer', () => {
 	let sandbox;
 

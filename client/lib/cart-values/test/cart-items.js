@@ -18,9 +18,6 @@ import {
 } from '@automattic/calypso-products';
 import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
 
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'calypso/lib/user', () => () => {} );
-
 const cartItems = require( '../cart-items' );
 const { getPlan, getTermDuration } = require( '@automattic/calypso-products' );
 const {

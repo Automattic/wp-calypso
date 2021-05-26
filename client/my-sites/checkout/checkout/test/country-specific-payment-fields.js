@@ -13,9 +13,6 @@ import { shallow } from 'enzyme';
 
 import { CountrySpecificPaymentFields } from '../country-specific-payment-fields';
 
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'calypso/lib/user', () => () => {} );
-
 const defaultProps = {
 	countryCode: 'BR',
 	countriesList: [
