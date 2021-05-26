@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
+import { CompactCard } from '@automattic/components';
 import { connect } from 'react-redux';
+import { isMobile } from '@automattic/viewport';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -31,6 +33,7 @@ import {
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import HeaderCake from 'calypso/components/header-cake';
+import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -44,6 +47,11 @@ import {
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItemEnhanced from 'calypso/components/vertical-nav/item/enhanced';
 import Main from 'calypso/components/main';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class TitanManageMailboxes extends Component {
 	static propTypes = {
@@ -80,6 +88,70 @@ class TitanManageMailboxes extends Component {
 		} );
 	};
 
+	getPathObject = ( context ) => {
+		const { isMobileViewport } = this.props;
+
+		if ( isMobileViewport ) {
+			return {};
+		}
+
+		return {
+			path: this.getPath( context ),
+		};
+	};
+
+	getTitanItems = () => {
+		const { translate, isMobileViewport } = this.props;
+		const navItemClass = isMobileViewport ? 'titan-manage-mailboxes__disable-on-mobile' : '';
+		return [
+			{
+				className: navItemClass,
+				description: translate( 'View settings required to configure third-party email apps' ),
+				external: true,
+				materialIcon: 'dvr',
+				text: translate( 'Configure desktop app' ),
+				...this.getPathObject( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP ),
+			},
+			{
+				description: translate(
+					'Download our Android and iOS apps to access your emails on the go'
+				),
+				external: true,
+				materialIcon: 'smartphone',
+				text: translate( 'Get mobile app' ),
+				...this.getPathObject( TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP ),
+			},
+			{
+				className: navItemClass,
+				description: translate( 'Migrate existing emails from a remote server via IMAP' ),
+				external: true,
+				materialIcon: 'move_to_inbox',
+				text: translate( 'Import email data' ),
+				...this.getPathObject( TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA ),
+			},
+			{
+				className: navItemClass,
+				description: translate(
+					'Route all undelivered emails to your domain to a specific mailbox'
+				),
+				external: true,
+				materialIcon: 'mediation',
+				text: translate( 'Configure catch-all email' ),
+				...this.getPathObject( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL ),
+			},
+			{
+				className: navItemClass,
+				description: translate(
+					'Create email aliases that forward messages to one or several mailboxes'
+				),
+				external: true,
+				materialIcon: 'forward_to_inbox',
+				text: translate( 'Set up internal forwarding' ),
+				...this.getPathObject( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_INTERNAL_FORWARDING ),
+			},
+		];
+	};
+
 	render() {
 		const {
 			currentRoute,
@@ -89,7 +161,10 @@ class TitanManageMailboxes extends Component {
 			purchase,
 			selectedSite,
 			translate,
+			isMobileViewport,
 		} = this.props;
+
+		const manageTitanItems = this.getTitanItems();
 
 		return (
 			<>
@@ -120,54 +195,24 @@ class TitanManageMailboxes extends Component {
 						selectedSite={ selectedSite }
 					/>
 
+					{ isMobileViewport ? (
+						<CompactCard>
+							<Notice
+								className="titan-manage-mailboxes__mobile-warning"
+								status="is-error"
+								showDismiss={ false }
+							>
+								{ translate(
+									'Please switch to a desktop device to access all email management features.'
+								) }
+							</Notice>
+						</CompactCard>
+					) : null }
+
 					<VerticalNav>
-						<VerticalNavItemEnhanced
-							description={ translate(
-								'View settings required to configure third-party email apps'
-							) }
-							external={ true }
-							materialIcon="dvr"
-							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP ) }
-							text={ translate( 'Configure desktop app' ) }
-						/>
-
-						<VerticalNavItemEnhanced
-							description={ translate(
-								'Download our Android and iOS apps to access your emails on the go'
-							) }
-							external={ true }
-							materialIcon="smartphone"
-							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP ) }
-							text={ translate( 'Get mobile app' ) }
-						/>
-
-						<VerticalNavItemEnhanced
-							description={ translate( 'Migrate existing emails from a remote server via IMAP' ) }
-							external={ true }
-							materialIcon="move_to_inbox"
-							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA ) }
-							text={ translate( 'Import email data' ) }
-						/>
-
-						<VerticalNavItemEnhanced
-							description={ translate(
-								'Route all undelivered emails to your domain to a specific mailbox'
-							) }
-							external={ true }
-							materialIcon="mediation"
-							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL ) }
-							text={ translate( 'Configure catch-all email' ) }
-						/>
-
-						<VerticalNavItemEnhanced
-							description={ translate(
-								'Create email aliases that forward messages to one or several mailboxes'
-							) }
-							external={ true }
-							materialIcon="forward_to_inbox"
-							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_INTERNAL_FORWARDING ) }
-							text={ translate( 'Set up internal forwarding' ) }
-						/>
+						{ manageTitanItems.map( ( navProps ) => (
+							<VerticalNavItemEnhanced { ...navProps } />
+						) ) }
 					</VerticalNav>
 				</Main>
 			</>
@@ -192,5 +237,6 @@ export default connect( ( state, ownProps ) => {
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 		purchase: getEmailPurchaseByDomain( state, domain ),
 		selectedSite,
+		isMobileViewport: isMobile(),
 	};
 } )( localize( TitanManageMailboxes ) );
