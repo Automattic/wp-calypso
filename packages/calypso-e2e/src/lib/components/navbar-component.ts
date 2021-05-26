@@ -8,24 +8,24 @@ import { BaseContainer } from '../base-container';
  */
 import { Page } from 'playwright';
 
+const selectors = {
+	navBarSelector: '.masterbar',
+	newPostButtonSelector: '.masterbar__item-new',
+	newPostContentSelector: '.masterbar__item-content',
+};
 /**
  * Component representing the navbar/masterbar at top of WPCOM.
  *
  * @augments {BaseContainer}
  */
 export class NavbarComponent extends BaseContainer {
-	// Selectors
-	navBarSelector = '.masterbar';
-	newPostButtonSelector = '.masterbar__item-new';
-	newPostContentSelector = '.masterbar__item-new';
-
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page, '.masterbar' );
+		super( page, selectors.navBarSelector );
 	}
 
 	/**
@@ -35,15 +35,19 @@ export class NavbarComponent extends BaseContainer {
 	 */
 	async clickNewPost(): Promise< void > {
 		await Promise.all( [
-			this.page.isVisible( this.navBarSelector ),
-			this.page.isVisible( this.newPostButtonSelector ),
+			this.page.isVisible( selectors.navBarSelector ),
+			this.page.isVisible( selectors.newPostButtonSelector ),
 			this.page.waitForNavigation(),
 		] );
 
+		// Note the nested Promise calls.
+		// Originally there were issues on TeamCity CI where
+		// this would fail to locate the newPostButtonSelector.
+		// The newPostContentSelector is clicked for redundancy.
 		await Promise.all( [
 			Promise.race( [
-				this.page.click( this.newPostButtonSelector ),
-				this.page.click( this.newPostContentSelector ),
+				this.page.click( selectors.newPostButtonSelector ),
+				this.page.click( selectors.newPostContentSelector ),
 			] ),
 			this.page.waitForNavigation(),
 		] );

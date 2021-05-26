@@ -24,10 +24,10 @@ describe( `[${ host }] Likes: (${ viewportName }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
 	describe( 'New post', function () {
-		let gEditor;
+		let gutenbergEditorPage;
 		let likesComponent;
 
-		before( 'Can log in', async function () {
+		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
 			await loginFlow.login();
 		} );
@@ -38,14 +38,17 @@ describe( `[${ host }] Likes: (${ viewportName }) @parallel`, function () {
 		} );
 
 		it( 'Enter post title', async function () {
-			gEditor = await GutenbergEditorPage.Expect( this.page );
+			gutenbergEditorPage = await GutenbergEditorPage.Expect( this.page );
 			const title = DataHelper.randomPhrase();
-			await gEditor.enterTitle( title );
-			await gEditor.enterText( quote );
+			await gutenbergEditorPage.enterTitle( title );
+		} );
+
+		it( 'Enter post text', async function () {
+			await gutenbergEditorPage.enterText( quote );
 		} );
 
 		it( 'Publish and visit post', async function () {
-			await gEditor.publish( true );
+			await gutenbergEditorPage.publish( { visit: true } );
 		} );
 
 		it( 'Like post', async function () {

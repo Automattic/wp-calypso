@@ -8,6 +8,24 @@
 import { ElementHandle, Frame, Page } from 'playwright';
 import { BaseContainer } from '../base-container';
 
+const selectors = {
+	editorFrameSelector: 'div.main.main-column.calypsoify.is-iframe > iframe',
+
+	// Selectors within the editor.
+	titleSelector: '.editor-post-title__input',
+	appenderSelector: '.block-editor-default-block-appender',
+	paragraphSelector: 'p.block-editor-rich-text__editable:first-of-type',
+
+	// Top bar selectors.
+	headerPublishButtonSelector: '.editor-post-publish-panel__toggle',
+
+	// Publish pane selectors (including post-publish).
+	publishPaneSelector: '.editor-post-publish-panel',
+	publishPaneButtonSelector:
+		'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button',
+	publishPaneViewPostSelector: 'text=View Post',
+};
+
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
  *
@@ -16,28 +34,13 @@ import { BaseContainer } from '../base-container';
 export class GutenbergEditorPage extends BaseContainer {
 	frame!: Frame;
 
-	// Page and Frame related selectors.
-	editorSelector = 'div.main.main-column.calypsoify.is-iframe > iframe';
-
-	// Editor element selectors.
-	titleSelector = `.editor-post-title__input`;
-	appenderSelector = '.block-editor-default-block-appender';
-	paragraphSelector = 'p.block-editor-rich-text__editable:first-of-type';
-
-	// Publish flow selectors.
-	firstPublishButtonSelector = '.editor-post-publish-panel__toggle';
-	secondPublishButtonSelector =
-		'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button';
-	snackBarNoticeSelector = '.components-snackbar';
-	snackBarNoticeLinkSelector = '.components-snackbar__content a';
-
 	/**
 	 * Constructs an instance of this object.
 	 *
 	 * @param {Page} page The page where actions take place.
 	 */
 	constructor( page: Page ) {
-		super( page, 'div.main.main-column.calypsoify.is-iframe > iframe' );
+		super( page, selectors.editorFrameSelector );
 	}
 
 	/**
@@ -48,7 +51,7 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _postInit(): Promise< void > {
-		const handle = ( await this.page.$( this.editorSelector ) ) as ElementHandle;
+		const handle = ( await this.page.$( selectors.editorFrameSelector ) ) as ElementHandle;
 		this.frame = ( await handle.contentFrame() ) as Frame;
 	}
 
@@ -59,8 +62,8 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async enterTitle( title: string ): Promise< void > {
-		await this.frame.click( this.titleSelector );
-		await this.frame.fill( this.titleSelector, title );
+		await this.frame.click( selectors.titleSelector );
+		await this.frame.fill( selectors.titleSelector, title );
 	}
 
 	/**
@@ -70,8 +73,8 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async enterText( text: string ): Promise< void > {
-		await this.frame.click( this.appenderSelector );
-		await this.frame.fill( this.paragraphSelector, text );
+		await this.frame.click( selectors.appenderSelector );
+		await this.frame.fill( selectors.paragraphSelector, text );
 	}
 
 	/**
@@ -80,25 +83,25 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @param {boolean} visit Whether to then visit the page.
 	 * @returns {Promise<void} No return value.
 	 */
-	async publish( visit = false ): Promise< void > {
-		await this.frame.click( this.firstPublishButtonSelector );
-		await this.frame.click( this.secondPublishButtonSelector );
+	async publish( { visit = false }: { visit?: boolean } ): Promise< void > {
+		await this.frame.click( selectors.headerPublishButtonSelector );
+		await this.frame.click( selectors.publishPaneButtonSelector );
 
-		await this.frame.waitForSelector( this.snackBarNoticeSelector );
+		await this.frame.waitForSelector( selectors.publishPaneViewPostSelector );
 
 		if ( visit ) {
-			await this._visitPublishedPost();
+			await this._visitPublishedEntryFromPublishPane();
 		}
 	}
 
 	/**
-	 * Visits the published post or page.
+	 * Visits the published entry from the post-publish sidebar.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async _visitPublishedPost(): Promise< void > {
+	async _visitPublishedEntryFromPublishPane(): Promise< void > {
 		await Promise.all( [
-			this.frame.click( this.snackBarNoticeLinkSelector ),
+			this.frame.click( selectors.publishPaneViewPostSelector ),
 			this.page.waitForNavigation(),
 			this.page.waitForLoadState( 'networkidle' ),
 		] );
