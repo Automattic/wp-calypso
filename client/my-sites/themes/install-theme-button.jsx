@@ -51,12 +51,20 @@ const InstallThemeButton = connectOptions(
 			return null;
 		}
 
+		let siteType = null;
+		if ( atomicSite ) {
+			siteType = 'atomic';
+		} else if ( jetpackSite ) {
+			siteType = 'jetpack';
+		} else if ( siteSlug ) {
+			siteType = 'simple';
+		}
+
 		const clickHandler = () => {
 			trackClick( 'upload theme' );
 			dispatchTracksEvent( {
 				tracksEventProps: {
-					is_atomic: atomicSite,
-					is_jetpack_connected: jetpackSite,
+					site_type: siteType,
 				},
 			} );
 		};
