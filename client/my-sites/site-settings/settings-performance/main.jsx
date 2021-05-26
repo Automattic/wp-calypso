@@ -32,11 +32,15 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import config from '@automattic/calypso-config';
+import { useExperiment } from 'calypso/lib/explat';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { isJetpackSearch, isP2Plus, planHasJetpackSearch } from '@automattic/calypso-products';
 
 function SiteSettingsPerformance( props ) {
 	const {
 		fields,
 		handleAutosavingToggle,
+		hasSearchProduct,
 		isRequestingSettings,
 		isSavingSettings,
 		onChangeField,
@@ -56,6 +60,13 @@ function SiteSettingsPerformance( props ) {
 	} = props;
 	const siteIsJetpackNonAtomic = siteIsJetpack && ! siteIsAtomic;
 
+	const { isLoading, experimentAssignment } = useExperiment(
+		'jetpack_search_performance_settings_placement',
+		// Targets experiment assignments to users without search purchases but eligible for Cloudflare promo.
+		{ isEligible: showCloudflare && ! siteIsJetpackNonAtomic && ! hasSearchProduct }
+	);
+	const isJetpackNudgeAtTop = experimentAssignment?.variation === 'treatment';
+
 	return (
 		<Main className="settings-performance site-settings site-settings__performance-settings">
 			<DocumentHead title={ translate( 'Site Settings' ) } />
@@ -70,17 +81,29 @@ function SiteSettingsPerformance( props ) {
 			/>
 			<SiteSettingsNavigation site={ site } section="performance" />
 
-			{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
-			<Search
-				handleAutosavingToggle={ handleAutosavingToggle }
-				updateFields={ updateFields }
-				submitForm={ submitForm }
-				saveJetpackSettings={ saveJetpackSettings }
-				isSavingSettings={ isSavingSettings }
-				isRequestingSettings={ isRequestingSettings }
-				fields={ fields }
-				trackEvent={ trackEvent }
-			/>
+			{ isLoading ? (
+				// Renders two placeholders: One for Search and another for Cloudflare.
+				<Fragment>
+					<div className="settings-performance__loading-placeholder" />
+					<div className="settings-performance__loading-placeholder" />
+				</Fragment>
+			) : (
+				<Fragment>
+					{ ! isJetpackNudgeAtTop && showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
+					<Search
+						handleAutosavingToggle={ handleAutosavingToggle }
+						updateFields={ updateFields }
+						submitForm={ submitForm }
+						saveJetpackSettings={ saveJetpackSettings }
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+						fields={ fields }
+						trackEvent={ trackEvent }
+					/>
+
+					{ isJetpackNudgeAtTop && showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
+				</Fragment>
+			) }
 
 			{ siteIsJetpack && (
 				<Fragment>
@@ -136,6 +159,9 @@ function SiteSettingsPerformance( props ) {
 	);
 }
 
+const checkForSearchProduct = ( purchase ) =>
+	purchase.active && ( isJetpackSearch( purchase ) || isP2Plus( purchase ) );
+
 const connectComponent = connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
@@ -143,8 +169,12 @@ const connectComponent = connect( ( state ) => {
 	const siteIsAtomic = isSiteAutomatedTransfer( state, siteId );
 	const siteIsAtomicPrivate = siteIsAtomic && isPrivateSite( state, siteId );
 	const showCloudflare = config.isEnabled( 'cloudflare' );
+	const hasSearchProduct =
+		getSitePurchases( state, siteId ).find( checkForSearchProduct ) ||
+		planHasJetpackSearch( site.plan?.product_slug );
 
 	return {
+		hasSearchProduct,
 		site,
 		siteIsJetpack,
 		siteIsAtomic,
