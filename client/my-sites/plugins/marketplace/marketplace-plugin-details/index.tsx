@@ -63,6 +63,10 @@ function MarketplacePluginDetails( {
 		return replaceProductsInCart( [ yoastProduct ] );
 	};
 
+	const onRemoveEverythingFromCart = () => {
+		return replaceProductsInCart( [] );
+	};
+
 	return (
 		<div>
 			{ ! wporgFetching ? (
@@ -72,6 +76,7 @@ function MarketplacePluginDetails( {
 					displayCost={ displayCost }
 					wporgPluginName={ wporgPlugin?.name }
 					onAddYoastPremiumToCart={ onAddYoastPremiumToCart }
+					onRemoveEverythingFromCart={ onRemoveEverythingFromCart }
 					onNavigateToCheckout={ () =>
 						page( `/checkout${ selectedSite?.slug ? `/${ selectedSite?.slug }` : '' }` )
 					}

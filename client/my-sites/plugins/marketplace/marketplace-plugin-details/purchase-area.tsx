@@ -16,6 +16,7 @@ interface PurchseArea {
 	onAddYoastPremiumToCart: () => void;
 	onNavigateToCheckout: () => void;
 	onNavigateToDomainsSelection: () => void;
+	onRemoveEverythingFromCart: () => void;
 }
 
 export default function PurchaseArea( {
@@ -26,6 +27,7 @@ export default function PurchaseArea( {
 	onAddYoastPremiumToCart,
 	onNavigateToCheckout,
 	onNavigateToDomainsSelection,
+	onRemoveEverythingFromCart,
 }: PurchseArea ): JSX.Element {
 	const [ isButtonClicked, setIsButtonClicked ] = useState( false );
 
@@ -51,6 +53,7 @@ export default function PurchaseArea( {
 		setIsButtonClicked( true );
 		const isCustomDomainAvailable = evaluateIsCustomDomainAvailable( siteDomains );
 		const isCustomDomainPrimary = evaluateIsCustomDomainPrimary( siteDomains );
+		await onRemoveEverythingFromCart();
 		if ( isProductPurchased ) {
 			await onAddYoastPremiumToCart();
 		}
