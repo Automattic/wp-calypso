@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { CompactCard, Button } from '@automattic/components';
 
@@ -10,10 +10,16 @@ import { CompactCard, Button } from '@automattic/components';
  */
 import SectionHeader from 'calypso/components/section-header';
 import useVatDetails from './use-vat-details';
+import type { VatDetails } from './use-vat-details';
 
 export default function VatInfoPage(): JSX.Element {
 	const translate = useTranslate();
-	const { vatDetails, isLoading, error } = useVatDetails();
+	const [ currentVatDetails, setCurrentVatDetails ] = useState< VatDetails >( {} );
+	const { vatDetails, isLoading, error, setVatDetails } = useVatDetails();
+
+	const saveDetails = () => {
+		setVatDetails( { ...vatDetails, ...currentVatDetails } );
+	};
 
 	if ( error ) {
 		return (
@@ -35,8 +41,6 @@ export default function VatInfoPage(): JSX.Element {
 		);
 	}
 
-	const saveDetails = () => {};
-
 	return (
 		<div className="vat-info">
 			<SectionHeader label={ translate( 'VAT Details' ) } />
@@ -44,19 +48,39 @@ export default function VatInfoPage(): JSX.Element {
 			<CompactCard>
 				<div>
 					<label>{ translate( 'Country' ) }</label>
-					<input value={ vatDetails.country ?? '' } />
+					<input
+						value={ currentVatDetails.country ?? vatDetails.country ?? '' }
+						onChange={ ( event ) =>
+							setCurrentVatDetails( { ...currentVatDetails, country: event.target.value } )
+						}
+					/>
 				</div>
 				<div>
 					<label>{ translate( 'VAT' ) }</label>
-					<input value={ vatDetails.id ?? '' } />
+					<input
+						value={ vatDetails.id ?? '' }
+						onChange={ ( event ) =>
+							setCurrentVatDetails( { ...currentVatDetails, id: event.target.value } )
+						}
+					/>
 				</div>
 				<div>
 					<label>{ translate( 'Name' ) }</label>
-					<input value={ vatDetails.name ?? '' } />
+					<input
+						value={ vatDetails.name ?? '' }
+						onChange={ ( event ) =>
+							setCurrentVatDetails( { ...currentVatDetails, name: event.target.value } )
+						}
+					/>
 				</div>
 				<div>
 					<label>{ translate( 'Address' ) }</label>
-					<input value={ vatDetails.address ?? '' } />
+					<input
+						value={ vatDetails.address ?? '' }
+						onChange={ ( event ) =>
+							setCurrentVatDetails( { ...currentVatDetails, address: event.target.value } )
+						}
+					/>
 				</div>
 
 				<Button onClick={ saveDetails }>{ translate( 'Validate and save' ) }</Button>
