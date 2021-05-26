@@ -68,15 +68,11 @@ import deleteIcon from './delete-icon.svg';
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	box-sizing: border-box;
-	margin: 20px 30px 20px 0;
+	margin: 20px 36px 20px 0;
 	padding: 0;
 
 	.rtl & {
-		margin: 20px 0 20px 30px;
-	}
-
-	.is-summary & {
-		border-top: 0;
+		margin: 20px 0 20px 36px;
 	}
 `;
 
@@ -107,11 +103,6 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 		total ? 0 : '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
 
-	.is-summary & {
-		padding: 10px 0;
-		border-bottom: 0;
-	}
-
 	.checkout-line-item__price {
 		position: relative;
 	}
@@ -129,11 +120,6 @@ export const LineItem = styled( WPLineItem )< {
 	padding: 20px 0;
 	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
-
-	.is-summary & {
-		padding: 10px 0;
-		border-bottom: 0;
-	}
 
 	.checkout-line-item__price {
 		position: relative;
