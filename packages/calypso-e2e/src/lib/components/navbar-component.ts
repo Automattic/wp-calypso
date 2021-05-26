@@ -15,8 +15,8 @@ import { Page } from 'playwright';
  */
 export class NavbarComponent extends BaseContainer {
 	// Selectors
-	barSelector = '.masterbar';
-	newPostSelector = 'a.masterbar__item-new';
+	navBarSelector = '.masterbar';
+	newPostButtonSelector = '.masterbar__item-new';
 
 	/**
 	 * Constructs an instance of the component.
@@ -33,7 +33,10 @@ export class NavbarComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickNewPost(): Promise< void > {
-		await this.page.click( this.newPostSelector );
-		await Promise.all( [ this.page.waitForNavigation() ] );
+		await Promise.all( [
+			this.page.isVisible( this.navBarSelector ),
+			this.page.click( this.newPostButtonSelector ),
+			this.page.waitForNavigation(),
+		] );
 	}
 }

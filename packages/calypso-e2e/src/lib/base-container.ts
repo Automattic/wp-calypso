@@ -7,6 +7,7 @@ import { Page } from 'playwright';
  * Base class for asynchronously initializing objects.
  */
 export class BaseContainer {
+	[ x: string ]: any;
 	page: Page;
 	url: string;
 	selector: string;

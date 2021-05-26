@@ -96,10 +96,11 @@ export class GutenbergEditorPage extends BaseContainer {
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async _visitPublishedPost() {
+	async _visitPublishedPost(): Promise< void > {
 		await Promise.all( [
 			this.frame.click( this.snackBarNoticeLinkSelector ),
 			this.page.waitForNavigation(),
+			this.page.waitForLoadState( 'networkidle' ),
 		] );
 	}
 }

@@ -48,27 +48,8 @@ export class LikesComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickLike(): Promise< void > {
-		const state = await this._isLiked();
-
-		try {
-			await this.frame.click( this.likeButtonSelector );
-		} catch {
-			await this.frame.click( this.likedButtonSelector );
-		}
-
-		const newState = await this._isLiked();
-		if ( state === newState ) {
-			throw new Error( `Liked state did not change.` );
-		}
-	}
-
-	/**
-	 * Gets state of the Like button.
-	 *
-	 * @returns {Promise<boolean} True if liked. False otherwise.
-	 */
-	async _isLiked(): Promise< boolean > {
-		const state = await this.frame.isVisible( this.likeButtonSelector );
-		return !! state;
+		await Promise.race(
+			[ 'text=Like', 'text=Liked' ].map( ( selector ) => this.frame.click( selector ) )
+		);
 	}
 }
