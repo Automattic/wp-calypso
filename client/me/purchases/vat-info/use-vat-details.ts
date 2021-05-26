@@ -26,6 +26,7 @@ export interface UpdateError {
 export interface VatDetailsManager {
 	vatDetails: VatDetails;
 	isLoading: boolean;
+	isUpdating: boolean;
 	fetchError: Error | null;
 	updateError: UpdateError | null;
 	setVatDetails: SetVatDetails;
@@ -62,7 +63,8 @@ export default function useVatDetails(): VatDetailsManager {
 	return useMemo(
 		() => ( {
 			vatDetails: query.data ?? emptyVatDetails,
-			isLoading: query.isLoading || mutation.isLoading,
+			isLoading: query.isLoading,
+			isUpdating: mutation.isLoading,
 			fetchError: query.error,
 			updateError: mutation.error,
 			setVatDetails: setDetails,
