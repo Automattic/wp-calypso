@@ -3,8 +3,8 @@
  */
 
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,50 +12,27 @@ import { connect } from 'react-redux';
 import { requestPostTypeTaxonomies } from 'calypso/state/post-types/taxonomies/actions';
 import { isRequestingPostTypeTaxonomies } from 'calypso/state/post-types/taxonomies/selectors';
 
-class QueryTaxonomies extends Component {
-	UNSAFE_componentWillMount() {
-		this.request( this.props );
+const request = ( siteId, postType ) => ( dispatch, getState ) => {
+	if ( ! isRequestingPostTypeTaxonomies( getState(), siteId, postType ) ) {
+		dispatch( requestPostTypeTaxonomies( siteId, postType ) );
 	}
+};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId && this.props.postType === nextProps.postType ) {
-			return;
+function QueryTaxonomies( { siteId, postType } ) {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		if ( siteId && postType ) {
+			dispatch( request( siteId, postType ) );
 		}
+	}, [ dispatch, siteId, postType ] );
 
-		this.request( nextProps );
-	}
-
-	request( props ) {
-		if ( props.requesting || ! props.siteId ) {
-			return;
-		}
-
-		props.requestPostTypeTaxonomies( props.siteId, props.postType );
-	}
-
-	shouldComponentUpdate() {
-		return false;
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
 QueryTaxonomies.propTypes = {
-	siteId: PropTypes.number,
+	siteId: PropTypes.number.isRequired,
 	postType: PropTypes.string.isRequired,
-	requesting: PropTypes.bool.isRequired,
-	requestPostTypeTaxonomies: PropTypes.func.isRequired,
 };
 
-export default connect(
-	( state, ownProps ) => {
-		return {
-			requesting: isRequestingPostTypeTaxonomies( state, ownProps.siteId, ownProps.postType ),
-		};
-	},
-	{
-		requestPostTypeTaxonomies,
-	}
-)( QueryTaxonomies );
+export default QueryTaxonomies;
