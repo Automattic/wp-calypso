@@ -25,15 +25,13 @@
 		margin-top: -5px;
 	}
 
-	&.is-retired-modal {
-		.theme-activation-confirmation-modal__title {
-			font-weight: normal;
-			text-align: center;
-		}
+	.theme-activation-confirmation-modal__retired-message {
+		margin-top: 12px;
+	}
 
-		.theme-activation-confirmation-modal__retired-message {
-			margin-top: 12px;
-		}
+	&.is-solely-retired-modal .theme-activation-confirmation-modal__title {
+		font-weight: normal;
+		text-align: center;
 	}
 }
 
