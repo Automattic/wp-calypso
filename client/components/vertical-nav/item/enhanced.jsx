@@ -74,6 +74,7 @@ const VerticalNavItemEnhanced = ( {
 
 VerticalNavItemEnhanced.propTypes = {
 	className: PropTypes.string,
+	disabled: PropTypes.bool,
 	description: PropTypes.string.isRequired,
 	external: PropTypes.bool,
 	gridicon: PropTypes.string,
