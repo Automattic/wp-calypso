@@ -88,7 +88,7 @@ class TitanManageMailboxes extends Component {
 		} );
 	};
 
-	getPathObject = ( context ) => {
+	getResponsiveConfig = ( context, description ) => {
 		const { isMobileViewport } = this.props;
 
 		if ( isMobileViewport ) {
@@ -97,6 +97,7 @@ class TitanManageMailboxes extends Component {
 
 		return {
 			path: this.getPath( context ),
+			description,
 		};
 	};
 
@@ -106,48 +107,52 @@ class TitanManageMailboxes extends Component {
 		return [
 			{
 				className: navItemClass,
-				description: translate( 'View settings required to configure third-party email apps' ),
 				external: true,
 				materialIcon: 'dvr',
 				text: translate( 'Configure desktop app' ),
-				...this.getPathObject( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP ),
+				...this.getResponsiveConfig(
+					TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP,
+					translate( 'View settings required to configure third-party email apps' )
+				),
 			},
 			{
-				description: translate(
-					'Download our Android and iOS apps to access your emails on the go'
-				),
 				external: true,
 				materialIcon: 'smartphone',
 				text: translate( 'Get mobile app' ),
-				...this.getPathObject( TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP ),
+				...this.getResponsiveConfig(
+					TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP,
+					translate( 'Download our Android and iOS apps to access your emails on the go' )
+				),
 			},
 			{
 				className: navItemClass,
-				description: translate( 'Migrate existing emails from a remote server via IMAP' ),
 				external: true,
 				materialIcon: 'move_to_inbox',
 				text: translate( 'Import email data' ),
-				...this.getPathObject( TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA ),
+				...this.getResponsiveConfig(
+					TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA,
+					translate( 'Migrate existing emails from a remote server via IMAP' )
+				),
 			},
 			{
 				className: navItemClass,
-				description: translate(
-					'Route all undelivered emails to your domain to a specific mailbox'
-				),
 				external: true,
 				materialIcon: 'mediation',
 				text: translate( 'Configure catch-all email' ),
-				...this.getPathObject( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL ),
+				...this.getResponsiveConfig(
+					TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL,
+					translate( 'Route all undelivered emails to your domain to a specific mailbox' )
+				),
 			},
 			{
 				className: navItemClass,
-				description: translate(
-					'Create email aliases that forward messages to one or several mailboxes'
-				),
 				external: true,
 				materialIcon: 'forward_to_inbox',
 				text: translate( 'Set up internal forwarding' ),
-				...this.getPathObject( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_INTERNAL_FORWARDING ),
+				...this.getResponsiveConfig(
+					TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_INTERNAL_FORWARDING,
+					translate( 'Create email aliases that forward messages to one or several mailboxes' )
+				),
 			},
 		];
 	};
