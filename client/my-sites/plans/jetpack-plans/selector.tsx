@@ -111,26 +111,25 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		isUpgradeableToYearly = false,
 		purchase
 	) => {
+		const trackingProps = {
+			site_id: siteId || undefined,
+			product_slug: product.productSlug,
+			duration: currentDuration,
+			path: viewTrackerPath,
+		};
+
 		if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
-			dispatch(
-				recordTracksEvent( 'calypso_product_external_click', {
-					site_id: siteId || undefined,
-					product_slug: product.productSlug,
-					duration: currentDuration,
-				} )
-			);
+			dispatch( recordTracksEvent( 'calypso_product_external_click', trackingProps ) );
 			window.location.href = product.externalUrl || '';
 			return;
 		}
 
 		if ( purchase && isUpgradeableToYearly ) {
-			dispatch(
-				recordTracksEvent( 'calypso_product_checkout_click', {
-					site_id: siteId || undefined,
-					product_slug: product.productSlug,
-					duration: currentDuration,
-				} )
-			);
+			// Name of `calypso_product_checkout_click` is misleading, since it's only triggered
+			// for Jetpack products. Leaving it here to not break current analysis, but please
+			// use `calypso_jetpack_product_click` instead when using tracking tools.
+			dispatch( recordTracksEvent( 'calypso_product_checkout_click', trackingProps ) );
+			dispatch( recordTracksEvent( 'calypso_jetpack_product_click', trackingProps ) );
 
 			const { productSlug: slug } = product;
 			const yearlySlug = getYearlySlugFromMonthly( slug );
@@ -142,24 +141,16 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		}
 
 		if ( purchase ) {
-			dispatch(
-				recordTracksEvent( 'calypso_product_manage_click', {
-					site_id: siteId || undefined,
-					product_slug: product.productSlug,
-					duration: currentDuration,
-				} )
-			);
+			dispatch( recordTracksEvent( 'calypso_product_manage_click', trackingProps ) );
 			manageSitePurchase( siteSlug, purchase.id );
 			return;
 		}
 
-		dispatch(
-			recordTracksEvent( 'calypso_product_checkout_click', {
-				site_id: siteId || undefined,
-				product_slug: product.productSlug,
-				duration: currentDuration,
-			} )
-		);
+		// Name of `calypso_product_checkout_click` is misleading, since it's only triggered
+		// for Jetpack products. Leaving it here to not break current analysis, but please
+		// use `calypso_jetpack_product_click` instead when using tracking tools.
+		dispatch( recordTracksEvent( 'calypso_product_checkout_click', trackingProps ) );
+		dispatch( recordTracksEvent( 'calypso_jetpack_product_click', trackingProps ) );
 		checkout( siteSlug, product.productSlug, urlQueryArgs );
 	};
 
