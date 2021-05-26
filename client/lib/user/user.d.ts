@@ -3,7 +3,6 @@
  */
 import { EventEmitter } from 'events';
 import { Language } from '@automattic/languages';
-import { GravatarOptions } from '../../gravatar/types';
 import { URL, JSONSerializable } from '../../types';
 
 type WPCOMError = { message: string };
@@ -32,7 +31,6 @@ export interface User extends EventEmitter {
 	handleFetchFailure: ( error: Error ) => void;
 	handleFetchSuccess: ( userdata: UserData ) => void;
 	getLanguage: () => Language | undefined;
-	getAvatarUrl: ( options: GravatarOptions ) => URL;
 	clear: () => Promise< void > | void;
 	sendVerificationEmail< Callback extends WPCOMCallback >( callback: Callback ): XMLHttpRequest;
 	sendVerificationEmail(): Promise< void >;
