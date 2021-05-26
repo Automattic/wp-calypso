@@ -88,70 +88,57 @@ class TitanManageMailboxes extends Component {
 		} );
 	};
 
-	getResponsiveConfig = ( context, description ) => {
-		const { isMobileViewport } = this.props;
-
-		if ( isMobileViewport ) {
-			return {};
-		}
-
-		return {
-			path: this.getPath( context ),
-			description,
-		};
-	};
-
 	getTitanItems = () => {
-		const { translate, isMobileViewport } = this.props;
-		const navItemClass = isMobileViewport ? 'titan-manage-mailboxes__disable-on-mobile' : '';
+		const { translate } = this.props;
 		return [
 			{
-				className: navItemClass,
+				className: 'titan-manage-mailboxes__manage-titan-link',
+				disabled: isMobile(),
 				external: true,
 				materialIcon: 'dvr',
 				text: translate( 'Configure desktop app' ),
-				...this.getResponsiveConfig(
-					TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP,
-					translate( 'View settings required to configure third-party email apps' )
-				),
+				path: this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP ),
+				description: translate( 'View settings required to configure third-party email apps' ),
 			},
 			{
+				className: 'titan-manage-mailboxes__manage-titan-link',
 				external: true,
 				materialIcon: 'smartphone',
 				text: translate( 'Get mobile app' ),
-				...this.getResponsiveConfig(
-					TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP,
-					translate( 'Download our Android and iOS apps to access your emails on the go' )
+				path: this.getPath( TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP ),
+				description: translate(
+					'Download our Android and iOS apps to access your emails on the go'
 				),
 			},
 			{
-				className: navItemClass,
+				className: 'titan-manage-mailboxes__manage-titan-link',
+				disabled: isMobile(),
 				external: true,
 				materialIcon: 'move_to_inbox',
 				text: translate( 'Import email data' ),
-				...this.getResponsiveConfig(
-					TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA,
-					translate( 'Migrate existing emails from a remote server via IMAP' )
-				),
+				path: this.getPath( TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA ),
+				description: translate( 'Migrate existing emails from a remote server via IMAP' ),
 			},
 			{
-				className: navItemClass,
+				className: 'titan-manage-mailboxes__manage-titan-link',
+				disabled: isMobile(),
 				external: true,
 				materialIcon: 'mediation',
 				text: translate( 'Configure catch-all email' ),
-				...this.getResponsiveConfig(
-					TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL,
-					translate( 'Route all undelivered emails to your domain to a specific mailbox' )
+				path: this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL ),
+				description: translate(
+					'Route all undelivered emails to your domain to a specific mailbox'
 				),
 			},
 			{
-				className: navItemClass,
+				className: 'titan-manage-mailboxes__manage-titan-link',
+				disabled: isMobile(),
 				external: true,
 				materialIcon: 'forward_to_inbox',
 				text: translate( 'Set up internal forwarding' ),
-				...this.getResponsiveConfig(
-					TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_INTERNAL_FORWARDING,
-					translate( 'Create email aliases that forward messages to one or several mailboxes' )
+				path: this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_INTERNAL_FORWARDING ),
+				description: translate(
+					'Create email aliases that forward messages to one or several mailboxes'
 				),
 			},
 		];
@@ -166,7 +153,6 @@ class TitanManageMailboxes extends Component {
 			purchase,
 			selectedSite,
 			translate,
-			isMobileViewport,
 		} = this.props;
 
 		const manageTitanItems = this.getTitanItems();
@@ -200,7 +186,7 @@ class TitanManageMailboxes extends Component {
 						selectedSite={ selectedSite }
 					/>
 
-					{ isMobileViewport ? (
+					{ isMobile() ? (
 						<CompactCard>
 							<Notice
 								className="titan-manage-mailboxes__mobile-warning"
@@ -242,6 +228,5 @@ export default connect( ( state, ownProps ) => {
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 		purchase: getEmailPurchaseByDomain( state, domain ),
 		selectedSite,
-		isMobileViewport: isMobile(),
 	};
 } )( localize( TitanManageMailboxes ) );
