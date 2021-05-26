@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight, partialRight, pick } from 'lodash';
@@ -32,178 +32,108 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import config from '@automattic/calypso-config';
-import { Experiment } from 'calypso/lib/explat';
 
-class SiteSettingsPerformance extends Component {
-	renderDefaultExperience() {
-		const {
-			fields,
-			handleAutosavingToggle,
-			isRequestingSettings,
-			isSavingSettings,
-			siteIsJetpack,
-			siteIsAtomic,
-			showCloudflare,
-			submitForm,
-			trackEvent,
-			updateFields,
-			saveJetpackSettings,
-		} = this.props;
-		const siteIsJetpackNonAtomic = siteIsJetpack && ! siteIsAtomic;
-		return (
-			<Fragment>
-				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
+function SiteSettingsPerformance( props ) {
+	const {
+		fields,
+		handleAutosavingToggle,
+		isRequestingSettings,
+		isSavingSettings,
+		onChangeField,
+		saveJetpackSettings,
+		showCloudflare,
+		site,
+		siteId,
+		siteIsAtomic,
+		siteIsAtomicPrivate,
+		siteIsJetpack,
+		siteIsUnlaunched,
+		siteSlug,
+		submitForm,
+		trackEvent,
+		translate,
+		updateFields,
+	} = props;
+	const siteIsJetpackNonAtomic = siteIsJetpack && ! siteIsAtomic;
 
-				<Search
-					handleAutosavingToggle={ handleAutosavingToggle }
-					updateFields={ updateFields }
-					submitForm={ submitForm }
-					saveJetpackSettings={ saveJetpackSettings }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-					trackEvent={ trackEvent }
-				/>
-			</Fragment>
-		);
-	}
+	return (
+		<Main className="settings-performance site-settings site-settings__performance-settings">
+			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<JetpackDevModeNotice />
+			<SidebarNavigation />
+			<FormattedHeader
+				brandFont
+				className="settings-performance__page-heading"
+				headerText={ translate( 'Settings' ) }
+				subHeaderText={ translate( "Explore settings to improve your site's performance." ) }
+				align="left"
+			/>
+			<SiteSettingsNavigation site={ site } section="performance" />
 
-	renderTreatmentExperience() {
-		const {
-			fields,
-			handleAutosavingToggle,
-			isRequestingSettings,
-			isSavingSettings,
-			siteIsJetpack,
-			siteIsAtomic,
-			showCloudflare,
-			submitForm,
-			trackEvent,
-			updateFields,
-			saveJetpackSettings,
-		} = this.props;
-		const siteIsJetpackNonAtomic = siteIsJetpack && ! siteIsAtomic;
-		return (
-			<Fragment>
-				<Search
-					handleAutosavingToggle={ handleAutosavingToggle }
-					updateFields={ updateFields }
-					submitForm={ submitForm }
-					saveJetpackSettings={ saveJetpackSettings }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-					trackEvent={ trackEvent }
-				/>
+			{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
+			<Search
+				handleAutosavingToggle={ handleAutosavingToggle }
+				updateFields={ updateFields }
+				submitForm={ submitForm }
+				saveJetpackSettings={ saveJetpackSettings }
+				isSavingSettings={ isSavingSettings }
+				isRequestingSettings={ isRequestingSettings }
+				fields={ fields }
+				trackEvent={ trackEvent }
+			/>
 
-				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
-			</Fragment>
-		);
-	}
+			{ siteIsJetpack && (
+				<Fragment>
+					<QueryJetpackModules siteId={ siteId } />
 
-	renderLoadingExperience() {
-		// Renders two placeholders: One for Search and another for Cloudflare.
-		return (
-			<Fragment>
-				<div className="settings-performance__loading-placeholder" />
-				<div className="settings-performance__loading-placeholder" />
-			</Fragment>
-		);
-	}
+					<SettingsSectionHeader title={ translate( 'Performance & speed' ) } />
 
-	render() {
-		const {
-			fields,
-			handleAutosavingToggle,
-			isRequestingSettings,
-			isSavingSettings,
-			onChangeField,
-			site,
-			siteId,
-			siteIsJetpack,
-			siteIsAtomicPrivate,
-			siteIsUnlaunched,
-			siteSlug,
-			submitForm,
-			translate,
-			trackEvent,
-			updateFields,
-		} = this.props;
-
-		return (
-			<Main className="settings-performance site-settings site-settings__performance-settings">
-				<DocumentHead title={ translate( 'Site Settings' ) } />
-				<JetpackDevModeNotice />
-				<SidebarNavigation />
-				<FormattedHeader
-					brandFont
-					className="settings-performance__page-heading"
-					headerText={ translate( 'Settings' ) }
-					subHeaderText={ translate( "Explore settings to improve your site's performance." ) }
-					align="left"
-				/>
-				<SiteSettingsNavigation site={ site } section="performance" />
-
-				<Experiment
-					name="jetpack_search_performance_settings_placement"
-					defaultExperience={ this.renderDefaultExperience() }
-					treatmentExperience={ this.renderTreatmentExperience() }
-					loadingExperience={ this.renderLoadingExperience() }
-				/>
-
-				{ siteIsJetpack && (
-					<Fragment>
-						<QueryJetpackModules siteId={ siteId } />
-
-						<SettingsSectionHeader title={ translate( 'Performance & speed' ) } />
-
-						{ siteIsAtomicPrivate ? (
-							<EligibilityWarnings
-								isEligible={ true }
-								backUrl={ `/settings/performance/${ siteSlug }` }
-								eligibilityData={ {
-									eligibilityHolds: [ siteIsUnlaunched ? 'SITE_UNLAUNCHED' : 'SITE_NOT_PUBLIC' ],
-								} }
+					{ siteIsAtomicPrivate ? (
+						<EligibilityWarnings
+							isEligible={ true }
+							backUrl={ `/settings/performance/${ siteSlug }` }
+							eligibilityData={ {
+								eligibilityHolds: [ siteIsUnlaunched ? 'SITE_UNLAUNCHED' : 'SITE_NOT_PUBLIC' ],
+							} }
+						/>
+					) : (
+						<>
+							<SpeedUpYourSite
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+								submitForm={ submitForm }
+								updateFields={ updateFields }
 							/>
-						) : (
-							<>
-								<SpeedUpYourSite
-									isSavingSettings={ isSavingSettings }
-									isRequestingSettings={ isRequestingSettings }
-									submitForm={ submitForm }
-									updateFields={ updateFields }
-								/>
 
-								<SettingsSectionHeader title={ translate( 'Media' ) } />
+							<SettingsSectionHeader title={ translate( 'Media' ) } />
 
-								<MediaSettingsPerformance
-									siteId={ siteId }
-									handleAutosavingToggle={ handleAutosavingToggle }
-									onChangeField={ onChangeField }
-									isSavingSettings={ isSavingSettings }
-									isRequestingSettings={ isRequestingSettings }
-									fields={ fields }
-								/>
-							</>
-						) }
-					</Fragment>
-				) }
+							<MediaSettingsPerformance
+								siteId={ siteId }
+								handleAutosavingToggle={ handleAutosavingToggle }
+								onChangeField={ onChangeField }
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+								fields={ fields }
+							/>
+						</>
+					) }
+				</Fragment>
+			) }
 
-				{ siteIsJetpack ? (
-					<AmpJetpack />
-				) : (
-					<AmpWpcom
-						submitForm={ submitForm }
-						trackEvent={ trackEvent }
-						updateFields={ updateFields }
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-						fields={ fields }
-					/>
-				) }
-			</Main>
-		);
-	}
+			{ siteIsJetpack ? (
+				<AmpJetpack />
+			) : (
+				<AmpWpcom
+					submitForm={ submitForm }
+					trackEvent={ trackEvent }
+					updateFields={ updateFields }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+			) }
+		</Main>
+	);
 }
 
 const connectComponent = connect( ( state ) => {
