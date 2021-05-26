@@ -39,6 +39,7 @@ const Icon = ( { gridicon, materialIcon } ) => {
 
 const VerticalNavItemEnhanced = ( {
 	className,
+	disabled,
 	description,
 	external,
 	gridicon,
@@ -47,12 +48,13 @@ const VerticalNavItemEnhanced = ( {
 	onClick,
 	text,
 } ) => {
-	const classes = classnames( 'vertical-nav-item-enhanced', className );
+	const classes = classnames( 'vertical-nav-item-enhanced', className, { disabled } );
 
 	return (
 		<VerticalNavItem
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			className={ classes }
+			disabled={ disabled }
 			external={ external }
 			onClick={ onClick }
 			path={ path }

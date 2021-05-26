@@ -32,6 +32,7 @@ The following components can be used to display rows of links.
 `VerticalNavItem` is usually used to display some text passed as `children`, and accepts the following props:
 
 - **className** - String _optional_ - additional class name to tag this component with.
+- **disabled** - Boolean _optional_ - determines whether or not the link should be clickable.
 - **external** - Boolean _optional_ - determines whether or not the link is opened in a new window.
 - **isPlaceholder** - Boolean _optional_ - determines whether or not the placeholder styles are used.
 - **onClick** - Function _optional_ - called when the item is clicked.
@@ -41,6 +42,7 @@ The following components can be used to display rows of links.
 instead on the following props:
 
 - **className** - String _optional_ - additional class name to tag this component with.
+- **disabled** - Boolean _optional_ - determines whether or not the link should be clickable.
 - **description** - String _required_ - some longer copy displayed below the text.
 - **external** - Boolean _optional_ - determines whether or not the link is opened in a new window.
 - **gridicon** - String _optional_ - the identifier of the [Gridicon icon](../../../docs/icons.md) to show in front of the text and description (if `materialIcon` wasn't specified).
