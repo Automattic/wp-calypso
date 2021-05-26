@@ -196,7 +196,7 @@ class EmailPlan extends React.Component {
 		return translate( 'Email forwarding settings' );
 	}
 
-	renderBillingNavItem() {
+	renderViewBillingAndPaymentSettingsNavItem() {
 		const { hasSubscription, purchase, selectedSite, translate } = this.props;
 
 		if ( ! hasSubscription ) {
@@ -242,7 +242,7 @@ class EmailPlan extends React.Component {
 		};
 	}
 
-	renderManageAllNavItem() {
+	renderManageAllMailboxesNavItem() {
 		const { domain, translate } = this.props;
 
 		if ( ! domain ) {
@@ -265,7 +265,7 @@ class EmailPlan extends React.Component {
 		);
 	}
 
-	renderAddNewMailboxOrRenewalNavItem() {
+	renderAddNewMailboxesOrRenewNavItem() {
 		const { domain, hasSubscription, purchase, selectedSite, translate } = this.props;
 
 		if ( ! domain.currentUserCanManage || ! hasSubscription ) {
@@ -322,9 +322,11 @@ class EmailPlan extends React.Component {
 
 				<div className="email-plan__actions">
 					<VerticalNav>
-						{ this.renderAddNewMailboxOrRenewalNavItem() }
-						{ this.renderManageAllNavItem() }
-						{ this.renderBillingNavItem() }
+						{ this.renderAddNewMailboxesOrRenewNavItem() }
+
+						{ this.renderManageAllMailboxesNavItem() }
+
+						{ this.renderViewBillingAndPaymentSettingsNavItem() }
 					</VerticalNav>
 				</div>
 			</>
