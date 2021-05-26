@@ -86,4 +86,33 @@ class Block_Patterns_Utils {
 		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
 		return \A8C\FSE\Common\get_iso_639_locale( $language );
 	}
+
+	/**
+	 * Check for block type values in the pattern_meta tag.
+	 * When tags have a prefix of `block_type_`, we expect the remaining suffix to be a blockType value.
+	 * We'll add these values to the `(array) blockType` options property when registering the pattern
+	 * via `register_block_pattern`.
+	 *
+	 * @param array $pattern A pattern with a 'pattern_meta' array.
+	 *
+	 * @return array         An array of block types defined in pattern meta.
+	 */
+	public function maybe_get_pattern_block_types_from_pattern_meta( $pattern ) {
+		$block_types = array();
+
+		if ( ! isset( $pattern['pattern_meta'] ) || empty( $pattern['pattern_meta'] ) ) {
+			return $block_types;
+		}
+
+		foreach ( $pattern['pattern_meta'] as $pattern_meta => $value ) {
+			// Match against tags starting with `block_type_`.
+			$split_slug = preg_split( '/^block_type_/', $pattern_meta );
+
+			if ( isset( $split_slug[1] ) ) {
+				$block_types[] = $split_slug[1];
+			}
+		}
+
+		return $block_types;
+	}
 }

@@ -133,6 +133,7 @@ class Block_Patterns_From_API {
 					$viewport_width = isset( $pattern['pattern_meta']['viewport_width'] ) ? intval( $pattern['pattern_meta']['viewport_width'] ) : 1280;
 					$viewport_width = $viewport_width < 320 ? 320 : $viewport_width;
 					$pattern_name   = self::PATTERN_NAMESPACE . $pattern['name'];
+					$block_types    = $this->utils->maybe_get_pattern_block_types_from_pattern_meta( $pattern );
 
 					$results[ $pattern_name ] = register_block_pattern(
 						$pattern_name,
@@ -145,6 +146,7 @@ class Block_Patterns_From_API {
 								$pattern['categories']
 							),
 							'isPremium'     => $is_premium,
+							'blockTypes'    => $block_types,
 						)
 					);
 				}
