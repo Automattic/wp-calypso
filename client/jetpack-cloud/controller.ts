@@ -52,10 +52,12 @@ const fetchSite = (
 ): Promise< { id: number | undefined; slug: string | undefined } > => {
 	const { getState, dispatch } = context.store;
 
-	return dispatch( requestSite( siteIdOrSlug ) ).then( () => ( {
-		id: getSiteId( getState(), siteIdOrSlug ),
-		slug: getSiteSlug( getState(), siteIdOrSlug ),
-	} ) );
+	return dispatch( requestSite( siteIdOrSlug ) )
+		.catch( () => null )
+		.then( () => ( {
+			id: getSiteId( getState(), siteIdOrSlug ),
+			slug: getSiteSlug( getState(), siteIdOrSlug ),
+		} ) );
 };
 
 /**

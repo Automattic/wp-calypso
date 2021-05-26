@@ -115,55 +115,52 @@ export function requestSites() {
  * a site.
  *
  * @param {number|string} siteFragment Site ID or slug
- * @param {boolean} forceWpcom explicitly get info from WPCOM vs Jetpack site
  * @returns {Function}              Action thunk
  */
-export function requestSite( siteFragment, forceWpcom = false ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_REQUEST,
-			siteId: siteFragment,
-		} );
+export function requestSite( siteFragment ) {
+	function doRequest( forceWpcom = false ) {
+		const query = { apiVersion: '1.2' };
+		if ( forceWpcom ) {
+			query.force = 'wpcom';
+		}
+
 		const siteFilter = config( 'site_filter' );
-		return wpcom
-			.site( siteFragment )
-			.get( {
-				apiVersion: '1.2',
-				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
-				force: forceWpcom ? 'wpcom' : undefined,
-			} )
+		if ( siteFilter.length > 0 ) {
+			query.filters = siteFilter.join( ',' );
+		}
+
+		return wpcom.site( siteFragment ).get( query );
+	}
+
+	return ( dispatch ) => {
+		dispatch( { type: SITE_REQUEST, siteId: siteFragment } );
+
+		const result = doRequest( siteFragment ).catch( ( error ) => {
+			// if there is Jetpack JSON API module error, retry with force: 'wpcom'
+			if (
+				error?.status === 403 &&
+				error?.message === 'API calls to this blog have been disabled.'
+			) {
+				return doRequest( siteFragment, true );
+			}
+
+			return Promise.reject( error );
+		} );
+
+		result
 			.then( ( site ) => {
 				// If we can't manage the site, don't add it to state.
-				if ( ! ( site && site.capabilities ) ) {
-					return dispatch( {
-						type: SITE_REQUEST_FAILURE,
-						siteId: siteFragment,
-						site,
-						error: translate( 'No access to manage the site' ),
-					} );
+				if ( site && site.capabilities ) {
+					dispatch( receiveSite( omit( site, '_headers' ) ) );
 				}
 
-				dispatch( receiveSite( omit( site, '_headers' ) ) );
-
-				dispatch( {
-					type: SITE_REQUEST_SUCCESS,
-					siteId: siteFragment,
-				} );
+				dispatch( { type: SITE_REQUEST_SUCCESS, siteId: siteFragment } );
 			} )
-			.catch( ( error ) => {
-				if (
-					error?.status === 403 &&
-					error?.message === 'API calls to this blog have been disabled.' &&
-					! forceWpcom
-				) {
-					return dispatch( requestSite( siteFragment, true ) );
-				}
-				dispatch( {
-					type: SITE_REQUEST_FAILURE,
-					siteId: siteFragment,
-					error,
-				} );
+			.catch( () => {
+				dispatch( { type: SITE_REQUEST_FAILURE, siteId: siteFragment } );
 			} );
+
+		return result;
 	};
 }
 
