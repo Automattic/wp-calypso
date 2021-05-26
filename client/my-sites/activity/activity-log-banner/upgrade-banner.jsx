@@ -17,7 +17,7 @@ import {
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
