@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
+import { needsToRenewSoon } from 'calypso/lib/purchases';
 import page from 'page';
 import PropTypes from 'prop-types';
 
@@ -43,6 +44,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import HeaderCake from 'calypso/components/header-cake';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
@@ -254,17 +256,47 @@ class EmailPlan extends React.Component {
 		);
 	}
 
-	render() {
-		const {
-			domain,
-			selectedSite,
-			hasSubscription,
-			purchase,
-			isLoadingPurchase,
-			translate,
-		} = this.props;
+	renderRenewalNavItem() {
+		const { purchase, selectedSite, translate } = this.props;
+
+		return (
+			<VerticalNavItem>
+				<RenewButton
+					purchase={ purchase }
+					selectedSite={ selectedSite }
+					subscriptionId={ parseInt( purchase.id, 10 ) }
+					tracksProps={ { source: 'email-plan-view' } }
+					customLabel={ translate( 'Renew now to add new mailboxes' ) }
+				/>
+			</VerticalNavItem>
+		);
+	}
+
+	renderAddNewMailboxOrRenewalNavItem() {
+		const { domain, hasSubscription, purchase, selectedSite, translate } = this.props;
+
+		if ( ! domain.currentUserCanManage || ! hasSubscription ) {
+			return null;
+		}
+
+		if ( ! selectedSite || ! purchase ) {
+			return <VerticalNavItem isPlaceholder />;
+		}
+
+		if ( needsToRenewSoon( purchase ) ) {
+			return this.renderRenewalNavItem();
+		}
 
 		const addMailboxProps = this.getAddMailboxProps();
+
+		return (
+			<VerticalNavItem { ...addMailboxProps }>{ translate( 'Add new mailbox' ) }</VerticalNavItem>
+		);
+	}
+
+	render() {
+		const { domain, selectedSite, hasSubscription, purchase, isLoadingPurchase } = this.props;
+
 		const { isLoadingEmailAccounts } = this.state;
 
 		return (
@@ -293,9 +325,7 @@ class EmailPlan extends React.Component {
 
 				<div className="email-plan__actions">
 					<VerticalNav>
-						<VerticalNavItem { ...addMailboxProps }>
-							{ translate( 'Add new mailbox' ) }
-						</VerticalNavItem>
+						{ this.renderAddNewMailboxOrRenewalNavItem() }
 						{ this.renderManageAllNavItem() }
 						{ this.renderBillingNavItem() }
 					</VerticalNav>
