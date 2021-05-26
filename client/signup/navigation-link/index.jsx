@@ -113,7 +113,7 @@ export class NavigationLink extends Component {
 			this.props.submitSignupStep(
 				{ stepName: this.props.stepName },
 				this.props.defaultDependencies,
-				this.props.direction === 'forward'
+				true
 			);
 
 			this.props.goToNextStep();
