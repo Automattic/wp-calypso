@@ -918,7 +918,6 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 			app.withConfigEnabled( {
 				'wpcom-user-bootstrap': true,
 				'use-translation-chunks': true,
-				'login/native-login-links': true,
 			} );
 			app.withBootstrapUser( {} );
 			app.withReduxStore( theStore );

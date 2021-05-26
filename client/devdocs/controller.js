@@ -9,7 +9,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 // This is a custom AsyncLoad component for devdocs that includes a
 // `props.component`-aware placeholder. It still needs to be imported as
 // `AsyncLoad` though–see https://github.com/Automattic/babel-plugin-transform-wpcalypso-async/blob/HEAD/index.js#L12
@@ -147,7 +146,7 @@ const devdocs = {
 				line: 'Required to access the WordPress.com API',
 				action: 'Log In to WordPress.com',
 				actionURL: login( {
-					isNative: config.isEnabled( 'login/native-login-links' ),
+					isNative: true,
 					redirectTo,
 				} ),
 				secondaryAction: 'Register',

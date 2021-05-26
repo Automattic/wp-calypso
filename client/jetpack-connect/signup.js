@@ -149,7 +149,7 @@ export class JetpackSignup extends Component {
 			emailAddress,
 			from: this.props.authQuery.from,
 			isJetpack: true,
-			isNative: isEnabled( 'login/native-login-links' ),
+			isNative: true,
 			locale: this.props.locale,
 			redirectTo: window.location.href,
 			allowSiteConnection: this.props.authQuery?.allowSiteConnection,

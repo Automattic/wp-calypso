@@ -65,8 +65,6 @@
 		"layout/support-article-dialog": true,
 		"layout/query-selected-editor": true,
 		"legal-updates-banner": true,
-		"login/native-login-links": true,
-		"login/wp-login": true,
 		"keyboard-shortcuts": true,
 		"mailchimp": true,
 		"manage/customize": true,

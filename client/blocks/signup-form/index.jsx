@@ -208,7 +208,7 @@ class SignupForm extends Component {
 			this.props.createSocialUserFailed( socialInfo, userExistsError );
 			page(
 				login( {
-					isNative: config.isEnabled( 'login/native-login-links' ),
+					isNative: true,
 					redirectTo: this.props.redirectToAfterLoginUrl,
 				} )
 			);
@@ -424,7 +424,7 @@ class SignupForm extends Component {
 		return login( {
 			isJetpack: this.isJetpack(),
 			from: this.props.from,
-			isNative: config.isEnabled( 'login/native-login-links' ),
+			isNative: true,
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
@@ -867,9 +867,7 @@ class SignupForm extends Component {
 	footerLink() {
 		const { flowName, showRecaptchaToS, translate } = this.props;
 
-		const logInUrl = config.isEnabled( 'login/native-login-links' )
-			? this.getLoginLink()
-			: localizeUrl( config( 'login_url' ), this.props.locale );
+		const logInUrl = this.getLoginLink();
 
 		return (
 			<>
@@ -928,9 +926,7 @@ class SignupForm extends Component {
 				'socialServiceResponse',
 			] );
 
-			const logInUrl = config.isEnabled( 'login/native-login-links' )
-				? this.getLoginLink()
-				: localizeUrl( config( 'login_url' ), this.props.locale );
+			const logInUrl = this.getLoginLink();
 
 			return (
 				<CrowdsignalSignupForm
@@ -954,9 +950,7 @@ class SignupForm extends Component {
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom )
 		) {
-			const logInUrl = config.isEnabled( 'login/native-login-links' )
-				? this.getLoginLink()
-				: localizeUrl( config( 'login_url' ), this.props.locale );
+			const logInUrl = this.getLoginLink();
 
 			return (
 				<div className={ classNames( 'signup-form__woocommerce', this.props.className ) }>

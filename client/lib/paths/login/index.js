@@ -3,7 +3,7 @@
  */
 import { addQueryArgs } from 'calypso/lib/url';
 import { addLocaleToPath, localizeUrl } from 'calypso/lib/i18n-utils';
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 
 export function login( {
 	isJetpack = undefined,
@@ -24,7 +24,7 @@ export function login( {
 } = {} ) {
 	let url = config( 'login_url' );
 
-	if ( isNative && isEnabled( 'login/wp-login' ) ) {
+	if ( isNative ) {
 		url = '/log-in';
 
 		if ( socialService ) {

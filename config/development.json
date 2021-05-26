@@ -107,8 +107,6 @@
 		"layout/query-selected-editor": true,
 		"legal-updates-banner": true,
 		"login/magic-login": true,
-		"login/native-login-links": true,
-		"login/wp-login": true,
 		"happychat": true,
 		"mailchimp": true,
 		"manage/comments": true,

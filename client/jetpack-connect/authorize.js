@@ -713,7 +713,7 @@ export class JetpackAuthorize extends Component {
 				<LoggedOutFormLinkItem
 					href={ login( {
 						isJetpack: true,
-						isNative: config.isEnabled( 'login/native-login-links' ),
+						isNative: true,
 						redirectTo: window.location.href,
 						from,
 					} ) }

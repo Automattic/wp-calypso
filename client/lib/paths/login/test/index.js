@@ -10,11 +10,6 @@ jest.mock( '@automattic/calypso-config', () => ( {
 			return 'https://wordpress.com/wp-login.php';
 		}
 	} ),
-	isEnabled: jest.fn( ( key ) => {
-		if ( 'login/wp-login' === key ) {
-			return true;
-		}
-	} ),
 } ) );
 
 describe( 'index', () => {
