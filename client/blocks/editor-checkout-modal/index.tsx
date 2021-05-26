@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useMemo, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { Icon, wordpress } from '@wordpress/icons';
 import { Modal } from '@wordpress/components';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
@@ -17,8 +17,7 @@ import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/comp
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getCartKey from 'calypso/my-sites/checkout/get-cart-key';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
-import userFactory from 'calypso/lib/user';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import wp from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
@@ -56,8 +55,7 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 
 	const translate = useTranslate();
 
-	const user = userFactory();
-	const isLoggedOutCart = ! user?.get();
+	const isLoggedOutCart = ! useSelector( isUserLoggedIn );
 
 	const cartKey = useMemo( () => getCartKey( { selectedSite: site, isLoggedOutCart } ), [
 		site,
