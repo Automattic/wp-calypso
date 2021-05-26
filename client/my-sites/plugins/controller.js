@@ -20,7 +20,7 @@ import PluginUpload from './plugin-upload';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import AsyncLoad from 'calypso/components/async-load';
-import { isMarketplaceProduct } from 'calypso/my-sites/plugins/marketplace/constants';
+import { isMarketplacePlugin } from 'calypso/my-sites/plugins/marketplace/constants';
 import MarketplacePluginDetails from 'calypso/my-sites/plugins/marketplace/marketplace-plugin-details';
 
 /**
@@ -42,7 +42,7 @@ function renderSinglePlugin( context, siteUrl ) {
 	}
 
 	//Add condition to check if business/ecommerce plan before committing
-	if ( config.isEnabled( 'marketplace-yoast' ) && isMarketplaceProduct( pluginSlug ) ) {
+	if ( config.isEnabled( 'marketplace-yoast' ) && isMarketplacePlugin( pluginSlug ) ) {
 		context.primary = (
 			<MarketplacePluginDetails
 				path={ context.path }

@@ -15,7 +15,7 @@ import {
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
 import PluginProductMappingInterface, {
-	getProductSlug,
+	getMappedProductSlug,
 } from 'calypso/my-sites/plugins/marketplace/constants';
 import formatCurrency from '@automattic/format-currency';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
@@ -37,7 +37,7 @@ interface MarketplacePluginDetailsInterface {
 function MarketplacePluginDetails( {
 	marketplacePluginSlug,
 }: MarketplacePluginDetailsInterface ): JSX.Element {
-	const productSlug = getProductSlug( marketplacePluginSlug );
+	const productSlug = getMappedProductSlug( marketplacePluginSlug );
 	const { replaceProductsInCart } = useShoppingCart();
 	const products = useSelector( getProductsList );
 	const cost = useSelector( ( state ) => getProductCost( state, productSlug ) );
