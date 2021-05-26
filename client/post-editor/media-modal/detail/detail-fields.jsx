@@ -34,14 +34,19 @@ class EditorMediaModalDetailFields extends Component {
 
 	constructor() {
 		super( ...arguments );
-		this.persistChange = debounce( this.persistChange, 1000, { leading: true } );
+		this.persistChange = debounce( this._persistChange, 1000 );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.item && nextProps.item && nextProps.item.ID !== this.props.item.ID ) {
-			this.setState( { modifiedItem: null } );
+		if ( nextProps.item && nextProps.item.ID !== this.props.item?.ID ) {
 			this.persistChange.cancel();
+			this._persistChange();
+			this.setState( { modifiedItem: null } );
 		}
+	}
+
+	componentWillUnmount() {
+		this._persistChange();
 	}
 
 	bumpTitleStat = () => {
@@ -68,8 +73,8 @@ class EditorMediaModalDetailFields extends Component {
 		return getMimePrefix( this.props.item ) === prefix;
 	}
 
-	persistChange() {
-		if ( ! this.props.site || ! this.state.modifiedItem ) {
+	_persistChange() {
+		if ( ! this.props.site || ! this.state?.modifiedItem ) {
 			return;
 		}
 
