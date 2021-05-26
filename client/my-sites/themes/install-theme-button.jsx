@@ -52,14 +52,14 @@ const InstallThemeButton = connectOptions(
 		}
 
 		let siteType = null;
-		if ( atomicSite ) {
+		if ( ! isLoggedIn ) {
+			siteType = 'logged_out';
+		} else if ( atomicSite ) {
 			siteType = 'atomic';
 		} else if ( jetpackSite ) {
 			siteType = 'jetpack';
 		} else if ( siteSlug ) {
 			siteType = 'simple';
-		} else if ( ! isLoggedIn ) {
-			siteType = 'logged_out';
 		}
 
 		const clickHandler = () => {
