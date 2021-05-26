@@ -58,7 +58,7 @@ export default function VatInfoPage(): JSX.Element {
 				<div>
 					<label>{ translate( 'VAT' ) }</label>
 					<input
-						value={ vatDetails.id ?? '' }
+						value={ currentVatDetails.id ?? vatDetails.id ?? '' }
 						onChange={ ( event ) =>
 							setCurrentVatDetails( { ...currentVatDetails, id: event.target.value } )
 						}
@@ -67,7 +67,7 @@ export default function VatInfoPage(): JSX.Element {
 				<div>
 					<label>{ translate( 'Name' ) }</label>
 					<input
-						value={ vatDetails.name ?? '' }
+						value={ currentVatDetails.name ?? vatDetails.name ?? '' }
 						onChange={ ( event ) =>
 							setCurrentVatDetails( { ...currentVatDetails, name: event.target.value } )
 						}
@@ -76,7 +76,7 @@ export default function VatInfoPage(): JSX.Element {
 				<div>
 					<label>{ translate( 'Address' ) }</label>
 					<input
-						value={ vatDetails.address ?? '' }
+						value={ currentVatDetails.address ?? vatDetails.address ?? '' }
 						onChange={ ( event ) =>
 							setCurrentVatDetails( { ...currentVatDetails, address: event.target.value } )
 						}
