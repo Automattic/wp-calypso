@@ -17,7 +17,7 @@ import {
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
@@ -73,7 +73,7 @@ class UpgradeBanner extends Component {
 }
 
 export default connect( ( state, { siteId } ) => ( {
-	isAtomic: isSiteWpcomAtomic( state, siteId ),
+	isAtomic: isSiteAutomatedTransfer( state, siteId ),
 	isJetpack: isJetpackSite( state, siteId ),
 	siteId: siteId,
 	siteSlug: getSiteSlug( state, siteId ),

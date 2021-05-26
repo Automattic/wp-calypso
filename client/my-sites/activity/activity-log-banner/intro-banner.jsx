@@ -29,7 +29,7 @@ import {
 	siteHasBackupProductPurchase,
 	siteHasScanProductPurchase,
 } from 'calypso/state/purchases/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
@@ -146,7 +146,7 @@ export default connect(
 		return {
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
-			siteIsAtomic: isSiteWpcomAtomic( state, siteId ),
+			siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
 			siteIsJetpack: isJetpackSite( state, siteId ),
 
 			// TODO: Eventually use getRewindCapabilities to determine this?
