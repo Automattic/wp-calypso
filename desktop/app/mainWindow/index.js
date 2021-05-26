@@ -116,7 +116,7 @@ function showAppWindow() {
 	mainView.webContents.loadURL( appUrl );
 
 	mainWindow.on( 'close', function () {
-		const currentURL = mainWindow.webContents.getURL();
+		const currentURL = mainView.webContents.getURL();
 		log.info( `Closing main window, last location: '${ currentURL }'` );
 		Settings.saveSetting( settingConstants.LAST_LOCATION, currentURL );
 	} );
