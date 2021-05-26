@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useMemo, useEffect } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Icon, wordpress } from '@wordpress/icons';
 import { Modal } from '@wordpress/components';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
@@ -16,7 +16,6 @@ import { fetchStripeConfiguration } from 'calypso/my-sites/checkout/composite-ch
 import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/composite-checkout';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getCartKey from 'calypso/my-sites/checkout/get-cart-key';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import wp from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -44,7 +43,6 @@ function removeHashFromUrl(): void {
 
 const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 	const {
-		site,
 		isOpen,
 		onClose,
 		cartData,
@@ -56,6 +54,8 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 	const translate = useTranslate();
 
 	const isLoggedOutCart = ! useSelector( isUserLoggedIn );
+	const site = useSelector( getSelectedSite );
+	const locale = useSelector( getCurrentUserLocale );
 
 	const cartKey = useMemo( () => getCartKey( { selectedSite: site, isLoggedOutCart } ), [
 		site,
@@ -96,7 +96,7 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 			<CalypsoShoppingCartProvider cartKey={ cartKey }>
 				<StripeHookProvider
 					fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
-					locale={ props.locale }
+					locale={ locale }
 				>
 					<CompositeCheckout
 						redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
@@ -114,10 +114,8 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 };
 
 interface Props {
-	site: SiteData | null;
 	onClose: () => void;
 	isOpen: boolean;
-	locale: string | undefined;
 	checkoutOnSuccessCallback?: () => void;
 	isFocusedLaunch?: boolean;
 	cartData?: RequestCart;
@@ -125,14 +123,10 @@ interface Props {
 }
 
 EditorCheckoutModal.defaultProps = {
-	site: null,
 	isOpen: false,
 	onClose: () => {
 		return;
 	},
 };
 
-export default connect( ( state ) => ( {
-	site: getSelectedSite( state ),
-	locale: getCurrentUserLocale( state ),
-} ) )( EditorCheckoutModal );
+export default EditorCheckoutModal;
