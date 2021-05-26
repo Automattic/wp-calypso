@@ -17,6 +17,7 @@ export class NavbarComponent extends BaseContainer {
 	// Selectors
 	navBarSelector = '.masterbar';
 	newPostButtonSelector = '.masterbar__item-new';
+	newPostContentSelector = '.masterbar__item-new';
 
 	/**
 	 * Constructs an instance of the component.
@@ -35,7 +36,15 @@ export class NavbarComponent extends BaseContainer {
 	async clickNewPost(): Promise< void > {
 		await Promise.all( [
 			this.page.isVisible( this.navBarSelector ),
-			this.page.click( this.newPostButtonSelector ),
+			this.page.isVisible( this.newPostButtonSelector ),
+			this.page.waitForNavigation(),
+		] );
+
+		await Promise.all( [
+			Promise.race( [
+				this.page.click( this.newPostButtonSelector ),
+				this.page.click( this.newPostContentSelector ),
+			] ),
 			this.page.waitForNavigation(),
 		] );
 	}
