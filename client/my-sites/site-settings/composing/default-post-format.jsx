@@ -3,8 +3,8 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -21,10 +21,10 @@ const DefaultPostFormat = ( {
 	eventTracker,
 	isRequestingSettings,
 	isSavingSettings,
-	translate,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const { data } = usePostFormatsQuery( siteId );
+	const translate = useTranslate();
 
 	return (
 		<FormFieldset>
@@ -63,4 +63,4 @@ DefaultPostFormat.propTypes = {
 	fields: PropTypes.object,
 };
 
-export default localize( DefaultPostFormat );
+export default DefaultPostFormat;
