@@ -36,11 +36,8 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
-
-/**
- * Asset dependencies
- */
-import JetpackSearchSVG from 'calypso/assets/images/illustrations/jetpack-search.svg';
+import Upsell from 'calypso/components/jetpack/upsell';
+import JetpackSearchLogo from './logo';
 
 export default function JetpackSearchMain(): ReactElement {
 	const site = useSelector( getSelectedSite );
@@ -91,39 +88,22 @@ export default function JetpackSearchMain(): ReactElement {
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
 			<QuerySiteSettings siteId={ siteId } />
 
-			<FormattedHeader
-				headerText={ translate( 'Jetpack Search' ) }
-				id="jetpack-search-header"
-				align="left"
-				brandFont
-			/>
-
-			<PromoCard
-				title={
+			<Upsell
+				headerText={
 					isSearchEnabled
 						? translate( 'Jetpack Search is enabled on your site.' )
 						: translate( 'Jetpack Search is disabled on your site.' )
 				}
-				image={ { path: JetpackSearchSVG } }
-				isPrimary
-			>
-				<p className="jetpack-search__text">
-					{ isSearchEnabled
+				bodyText={
+					isSearchEnabled
 						? translate( 'Your visitors are getting our fastest search experience.' )
-						: translate( 'Enable it to ensure your visitors get our fastest search experience.' ) }
-				</p>
-
-				<PromoCardCTA
-					cta={ {
-						text: translate( 'Settings' ),
-						action: {
-							url: settingsUrl,
-							onClick: onSettingsClick,
-							selfTarget: true,
-						},
-					} }
-				/>
-			</PromoCard>
+						: translate( 'Enable it to ensure your visitors get our fastest search experience.' )
+				}
+				buttonLink={ settingsUrl }
+				buttonText={ translate( 'Settings' ) }
+				onClick={ onSettingsClick }
+				iconComponent={ <JetpackSearchLogo /> }
+			/>
 
 			<JetpackSearchFooter />
 		</Main>

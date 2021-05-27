@@ -18,6 +18,8 @@ import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackSearchFooter from './footer';
+import Upsell from 'calypso/components/jetpack/upsell';
+import JetpackSearchLogo from './logo';
 
 /**
  * Asset dependencies
@@ -28,6 +30,10 @@ export default function JetpackSearchUpsell(): ReactElement {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_search_upsell' );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
+	const upgradeUrl =
+		'/checkout/' +
+		siteSlug +
+		'/jetpack_search_monthly?utm_campaign=my-sites-jetpack-search&utm_source=calypso';
 
 	return (
 		<Main className="jetpack-search">
@@ -35,38 +41,16 @@ export default function JetpackSearchUpsell(): ReactElement {
 			<SidebarNavigation />
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
 
-			<FormattedHeader
-				headerText={ translate( 'Jetpack Search' ) }
-				id="jetpack-search-header"
-				align="left"
-				brandFont
+			<Upsell
+				headerText={ translate( 'Finely-tuned search for your site.' ) }
+				bodyText={ translate(
+					'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
+				) }
+				buttonLink={ upgradeUrl }
+				buttonText={ translate( 'Upgrade to Jetpack Search' ) }
+				onClick={ onUpgradeClick }
+				iconComponent={ <JetpackSearchLogo /> }
 			/>
-
-			<PromoCard
-				title={ translate( 'Finely-tuned search for your site.' ) }
-				image={ { path: JetpackSearchSVG } }
-				isPrimary
-			>
-				<p className="jetpack-search__text">
-					{ translate(
-						'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
-					) }
-				</p>
-
-				<PromoCardCTA
-					cta={ {
-						text: translate( 'Upgrade to Jetpack Search' ),
-						action: {
-							url:
-								'/checkout/' +
-								siteSlug +
-								'/jetpack_search_monthly?utm_campaign=my-sites-jetpack-search&utm_source=calypso',
-							onClick: onUpgradeClick,
-							selfTarget: true,
-						},
-					} }
-				/>
-			</PromoCard>
 
 			<JetpackSearchFooter />
 		</Main>

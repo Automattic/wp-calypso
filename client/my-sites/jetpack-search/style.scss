@@ -8,6 +8,10 @@
 	font-size: 1rem;
 }
 
-.jetpack-search__disconnected {
+.jetpack-search__logo {
 	padding-top: 40px; // to match Backup and Scan
+	img {
+		height: 72px;
+		width: auto;
+	}
 }
