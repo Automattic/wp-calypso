@@ -2,8 +2,7 @@
  * External dependencies
  */
 import path from 'path';
-import fs from 'fs';
-import { readFile } from 'fs/promises';
+import { readFile, readdir } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import childProcess from 'child_process';
 import { promisify } from 'util';
@@ -39,8 +38,8 @@ type PackageMapEntry = {
 };
 type PackageMap = Array< PackageMapEntry >;
 
-function getMonorepoPackages() {
-	const packages = fs.readdirSync( 'packages', { withFileTypes: true } );
+async function getMonorepoPackages() {
+	const packages = await readdir( 'packages', { withFileTypes: true } );
 	return packages
 		.filter( ( entry ) => entry.isDirectory() )
 		.map( ( entry ) => path.resolve( 'packages', entry.name ) );
@@ -129,14 +128,13 @@ type VCSFileChange = {
 };
 async function readTeamCityMatchedFiles( filePath: string ) {
 	const rawContents = await readFile( filePath, 'utf8' );
-	return rawContents.split( '\n' ).map( ( entry ) => {
+	return rawContents.split( '\n' ).reduce< VCSFileChange[] >( ( acc, entry ) => {
 		const [ path, changeType, revision ] = entry.split( ':' );
-		return {
-			path,
-			changeType,
-			revision,
-		} as VCSFileChange;
-	} );
+		if ( path && changeType && revision ) {
+			acc.push( { path, changeType, revision } as VCSFileChange );
+		}
+		return acc;
+	}, [] );
 }
 
 const main = async () => {
