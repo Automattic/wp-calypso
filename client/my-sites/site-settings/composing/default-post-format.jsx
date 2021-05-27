@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import { useSelector } from 'react-redux';
 
 /**
@@ -40,7 +39,7 @@ const DefaultPostFormat = ( {
 			>
 				<option value="0">{ translate( 'Standard', { context: 'Post format' } ) }</option>
 				{ data &&
-					map( data.formats, ( label, slug ) => (
+					Object.values( data.formats ?? {} ).map( ( label, slug ) => (
 						<option key={ slug } value={ slug }>
 							{ label }
 						</option>
