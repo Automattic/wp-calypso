@@ -1,12 +1,10 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { map } from 'lodash';
+import { useSelector } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,9 +12,8 @@ import { map } from 'lodash';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
-import QueryPostFormats from 'calypso/components/data/query-post-formats';
+import usePostFormatsQuery from 'calypso/data/post-formats/use-post-formats-query';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getPostFormats } from 'calypso/state/post-formats/selectors';
 
 const DefaultPostFormat = ( {
 	fields,
@@ -24,14 +21,13 @@ const DefaultPostFormat = ( {
 	eventTracker,
 	isRequestingSettings,
 	isSavingSettings,
-	postFormats,
-	siteId,
-	translate,
 } ) => {
+	const siteId = useSelector( getSelectedSiteId );
+	const { data } = usePostFormatsQuery( siteId );
+	const translate = useTranslate();
+
 	return (
 		<FormFieldset>
-			{ siteId && <QueryPostFormats siteId={ siteId } /> }
-
 			<FormLabel htmlFor="default_post_format">{ translate( 'Default post format' ) }</FormLabel>
 			<FormSelect
 				name="default_post_format"
@@ -42,14 +38,12 @@ const DefaultPostFormat = ( {
 				onClick={ eventTracker( 'Selected Default Post Format' ) }
 			>
 				<option value="0">{ translate( 'Standard', { context: 'Post format' } ) }</option>
-				{ postFormats &&
-					map( postFormats, ( label, slug ) => {
-						return (
-							<option key={ slug } value={ slug }>
-								{ label }
-							</option>
-						);
-					} ) }
+				{ data &&
+					Object.values( data.formats ?? {} ).map( ( label, slug ) => (
+						<option key={ slug } value={ slug }>
+							{ label }
+						</option>
+					) ) }
 			</FormSelect>
 		</FormFieldset>
 	);
@@ -69,11 +63,4 @@ DefaultPostFormat.propTypes = {
 	fields: PropTypes.object,
 };
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-
-	return {
-		siteId,
-		postFormats: getPostFormats( state, siteId ),
-	};
-} )( localize( DefaultPostFormat ) );
+export default DefaultPostFormat;
