@@ -39,11 +39,7 @@ import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/action
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
 import { login } from 'calypso/lib/paths';
-import { waitForHttpData } from 'calypso/state/data-layer/http-data';
-import { requestGeoLocation } from 'calypso/state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
-import { abtest } from 'calypso/lib/abtest';
-import user from 'calypso/lib/user';
 import getSiteId from 'calypso/state/selectors/get-site-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -70,6 +66,7 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
+// eslint-disable-next-line no-unused-vars -- Used for a planned experiment rerun, see newUsersWithFreePlan below.
 const gutenbergRedirect = function ( flowName, locale ) {
 	const url = new URL( window.location );
 	let path = '/new';
@@ -135,45 +132,50 @@ export default {
 
 			next();
 		} else {
-			waitForHttpData( () => ( { geo: requestGeoLocation() } ) )
-				.then( ( { geo } ) => {
-					const countryCode = geo.data;
-					const localeFromParams = context.params.lang;
-					const flowName = getFlowName( context.params );
+			next();
+			return;
 
-					if ( flowName === 'free' && 'newOnboarding' === abtest( 'newUsersWithFreePlan' ) ) {
-						gutenbergRedirect( flowName, localeFromParams );
-						return;
-					}
+			// Code for the newUsersWithFreePlan experiment, previously implemented in calypso-abtest.
+			// Planned to be rerun see pbxNRc-xd-p2#comment-1949
+			// Commented out for eslint, to rerun next() has to be placed below this.
+			// const localeFromParams = context.params.lang;
+			// const flowName = getFlowName( context.params );
+			// if (
+			// 	flowName === 'free' &&
+			//  	// Checking for treatment variation previously happened here:
+			// 	false
+			// ) {
+			// 	gutenbergRedirect( flowName, localeFromParams );
+			// 	return;
+			// }
 
-					if (
-						( ! user() || ! user().get() ) &&
-						-1 === context.pathname.indexOf( 'free' ) &&
-						-1 === context.pathname.indexOf( 'personal' ) &&
-						-1 === context.pathname.indexOf( 'premium' ) &&
-						-1 === context.pathname.indexOf( 'business' ) &&
-						-1 === context.pathname.indexOf( 'ecommerce' ) &&
-						-1 === context.pathname.indexOf( 'with-theme' ) &&
-						'variantUserless' === abtest( 'userlessCheckout', countryCode )
-					) {
-						removeWhiteBackground();
-						const stepName = getStepName( context.params );
-						const stepSectionName = getStepSectionName( context.params );
-						const urlWithLocale = getStepUrl(
-							'onboarding-registrationless',
-							stepName,
-							stepSectionName,
-							localeFromParams
-						);
-						window.location = urlWithLocale;
-					} else {
-						next();
-					}
-				} )
-				.catch( () => {
-					removeWhiteBackground();
-					next();
-				} );
+			// Code for the variantUserless experiment, previously implemented in calypso-abtest.
+			// Planned to be rerun, see pbmo2S-Bv-p2#comment-1382
+			// Commented out for eslint, to rerun next() has to be placed below this.
+			// if (
+			// 	( ! user() || ! user().get() ) &&
+			// 	-1 === context.pathname.indexOf( 'free' ) &&
+			// 	-1 === context.pathname.indexOf( 'personal' ) &&
+			// 	-1 === context.pathname.indexOf( 'premium' ) &&
+			// 	-1 === context.pathname.indexOf( 'business' ) &&
+			// 	-1 === context.pathname.indexOf( 'ecommerce' ) &&
+			// 	-1 === context.pathname.indexOf( 'with-theme' ) &&
+			// 	// Checking for treatment variation previously happened here:
+			// 	false
+			// ) {
+			// 	removeWhiteBackground();
+			// 	const stepName = getStepName( context.params );
+			// 	const stepSectionName = getStepSectionName( context.params );
+			// 	const urlWithLocale = getStepUrl(
+			// 		'onboarding-registrationless',
+			// 		stepName,
+			// 		stepSectionName,
+			// 		localeFromParams
+			// 	);
+			// 	window.location = urlWithLocale;
+			// } else {
+			// 	next();
+			// }
 		}
 	},
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
