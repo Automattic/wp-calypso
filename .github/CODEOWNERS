@@ -127,4 +127,5 @@
 /packages/languages @Automattic/i18n
 
 # E2E specs
-/test/e2e @WunderBart @scinos 
+/test/e2e @WunderBart @scinos
+/packages/calypso-e2e @worldomonation
