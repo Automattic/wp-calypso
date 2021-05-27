@@ -21,22 +21,27 @@ const TRAY_SETTING = 'win_tray';
 const TRAY_NO_NOTIFICATION = '-tray-icon.ico';
 const TRAY_NOTIFICATION = '-tray-icon-notification.ico';
 
-function WindowsPlatform( { view, window } ) {
-	this.window = window;
-	this.view = view;
-	this.trayMenu = Menu.buildFromTemplate( windowsTrayMenu( this.restore.bind( this ) ) );
-	this.tray = new Tray( this.getIcon( TRAY_NO_NOTIFICATION ) );
+let window;
+let view;
+let trayMenu;
+let tray;
 
-	this.tray.setToolTip( 'WordPress.com' );
-	this.tray.setContextMenu( this.trayMenu );
-	this.tray.on( 'click', this.restore.bind( this ) );
+function WindowsPlatform( appWindow ) {
+	window = appWindow.window;
+	view = appWindow.view;
+	trayMenu = Menu.buildFromTemplate( windowsTrayMenu( this.restore.bind( this ) ) );
+	tray = new Tray( this.getIcon( TRAY_NO_NOTIFICATION ) );
+
+	tray.setToolTip( 'WordPress.com' );
+	tray.setContextMenu( trayMenu );
+	tray.on( 'click', this.restore.bind( this ) );
 
 	window.on( 'close', this.onClosed.bind( this ) );
 
 	app.on( 'before-quit', function () {
 		log.info( "Responding to app event 'before-quit', destroying tray" );
-		if ( this.tray ) {
-			this.tray.destroy();
+		if ( tray ) {
+			tray.destroy();
 		}
 	} );
 }
@@ -47,8 +52,8 @@ WindowsPlatform.prototype.onClosed = function ( ev ) {
 
 		ev.preventDefault();
 
-		this.window.hide();
-		this.view.webContents.send( 'notifications-panel-show', false );
+		window.hide();
+		view.webContents.send( 'notifications-panel-show', false );
 		this.showBackgroundBubble();
 
 		return;
@@ -64,7 +69,7 @@ WindowsPlatform.prototype.showBackgroundBubble = function () {
 
 		Settings.saveSetting( TRAY_SETTING, true );
 
-		this.tray.displayBalloon( {
+		tray.displayBalloon( {
 			icon: assets.getPath( 'windows-tray-bubble.png' ),
 			title: 'WordPress.com',
 			content: "We've minimized WordPress.com to your tray. Click on the icon to restore it.",
@@ -73,7 +78,7 @@ WindowsPlatform.prototype.showBackgroundBubble = function () {
 };
 
 WindowsPlatform.prototype.restore = function () {
-	this.window.show();
+	window.show();
 };
 
 WindowsPlatform.prototype.getIcon = function ( filename ) {
@@ -81,15 +86,15 @@ WindowsPlatform.prototype.getIcon = function ( filename ) {
 };
 
 WindowsPlatform.prototype.showNotificationsBadge = function () {
-	this.tray.setImage( this.getIcon( TRAY_NOTIFICATION ) );
+	tray.setImage( this.getIcon( TRAY_NOTIFICATION ) );
 };
 
 WindowsPlatform.prototype.clearNotificationsBadge = function () {
-	this.tray.setImage( this.getIcon( TRAY_NO_NOTIFICATION ) );
+	tray.setImage( this.getIcon( TRAY_NO_NOTIFICATION ) );
 };
 
 WindowsPlatform.prototype.setDockMenu = function ( enabled ) {
-	menuSetter.setRequiresUser( this.trayMenu, enabled );
+	menuSetter.setRequiresUser( trayMenu, enabled );
 };
 
 module.exports = WindowsPlatform;
