@@ -30,7 +30,6 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
@@ -163,8 +162,6 @@ export default connect( ( state, ownProps ) => {
 		site: getSite( state, siteId ),
 		planHasFeature: hasFeature( state, siteId, ownProps.feature ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
-		jetpack: isJetpackSite( state, siteId ),
-		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
 		isAtomic: isAtomicSite( state, siteId ),
 		isVip: isVipSite( state, siteId ),
