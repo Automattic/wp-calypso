@@ -28,8 +28,8 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
@@ -163,7 +163,7 @@ export default connect( ( state, ownProps ) => {
 		planHasFeature: hasFeature( state, siteId, ownProps.feature ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
 		isJetpack: isJetpackSite( state, siteId ),
-		isAtomic: isAtomicSite( state, siteId ),
+		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isVip: isVipSite( state, siteId ),
 		siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
