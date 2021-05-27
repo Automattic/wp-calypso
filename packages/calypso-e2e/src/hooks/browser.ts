@@ -8,6 +8,17 @@ import { Context } from 'mocha';
  */
 import { start, close } from '../browser-manager';
 
+import { Page } from 'playwright';
+
+declare global {
+	// eslint-disable-next-line @typescript-eslint/no-namespace
+	namespace NodeJS {
+		interface Global {
+			page: Page;
+		}
+	}
+}
+
 /**
  * Hook to start a new Browser instance.
  *
@@ -15,7 +26,7 @@ import { start, close } from '../browser-manager';
  * @returns {void} No return value.
  */
 export async function startBrowser( this: Context ): Promise< void > {
-	this.page = await start();
+	global.page = await start();
 }
 
 /**
@@ -25,7 +36,7 @@ export async function startBrowser( this: Context ): Promise< void > {
  * @returns {void} No return value.
  */
 export async function closePage( this: Context ): Promise< void > {
-	await this.page.close();
+	await global.page.close();
 }
 
 /**

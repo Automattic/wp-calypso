@@ -16,6 +16,7 @@ import type { Context } from 'mocha';
  */
 export async function saveScreenshot( this: Context ): Promise< void > {
 	// If no test has been run, skip.
+	console.log( 'screenshot' );
 	const test = this.currentTest;
 	if ( ! test ) {
 		return;

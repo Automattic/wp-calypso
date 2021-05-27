@@ -81,6 +81,8 @@ module.exports = {
 				'mocha/no-top-level-hooks': 'error',
 				'mocha/max-top-level-suites': [ 'error', { limit: 1 } ],
 				'no-console': 'off',
+				'no-undef': 'off',
+				'@typescript-eslint/no-namespace': 'off',
 				// Disable all rules from "plugin:jest/recommended", as e2e tests use mocha
 				...Object.keys( require( 'eslint-plugin-jest' ).configs.recommended.rules ).reduce(
 					( disabledRules, key ) => ( { ...disabledRules, [ key ]: 'off' } ),
