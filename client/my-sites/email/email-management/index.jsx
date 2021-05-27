@@ -21,6 +21,7 @@ import {
 	hasGSuiteWithAnotherProvider,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
 import hasLoadedGSuiteUsers from 'calypso/state/selectors/has-loaded-gsuite-users';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
@@ -128,7 +129,13 @@ class EmailManagement extends React.Component {
 	}
 
 	content() {
-		const { domains, hasGSuiteUsersLoaded, hasSiteDomainsLoaded, selectedDomainName } = this.props;
+		const {
+			domains,
+			hasGSuiteUsersLoaded,
+			hasSiteDomainsLoaded,
+			selectedDomainName,
+			userCanPurchaseGSuite,
+		} = this.props;
 
 		if ( ! hasGSuiteUsersLoaded || ! hasSiteDomainsLoaded ) {
 			return <Placeholder />;
@@ -155,7 +162,7 @@ class EmailManagement extends React.Component {
 			<CalypsoShoppingCartProvider>
 				<EmailProvidersComparison
 					domain={ selectedDomain }
-					isGSuiteSupported={ isGSuiteSupported }
+					isGSuiteSupported={ isGSuiteSupported && userCanPurchaseGSuite }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -275,5 +282,6 @@ export default connect( ( state ) => {
 		previousRoute: getPreviousRoute( state ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
+		userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
 	};
 } )( localize( EmailManagement ) );

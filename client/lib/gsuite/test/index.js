@@ -3,7 +3,6 @@
  */
 import {
 	canDomainAddGSuite,
-	canUserPurchaseGSuite,
 	getAnnualPrice,
 	getEligibleGSuiteDomain,
 	getGSuiteSupportedDomains,
@@ -12,16 +11,6 @@ import {
 	hasGSuiteWithUs,
 	hasPendingGSuiteUsers,
 } from 'calypso/lib/gsuite';
-
-jest.mock( 'calypso/lib/redux-bridge', () => {
-	return {
-		reduxGetState: () => ( {
-			currentUser: {
-				user: { is_valid_google_apps_country: true },
-			},
-		} ),
-	};
-} );
 
 describe( 'index', () => {
 	describe( '#canDomainAddGSuite', () => {
@@ -257,12 +246,6 @@ describe( 'index', () => {
 			expect(
 				hasPendingGSuiteUsers( { googleAppsSubscription: { pendingUsers: [ 'foo' ] } } )
 			).toEqual( true );
-		} );
-	} );
-
-	describe( '#canUserPurchaseGSuite', () => {
-		test( 'returns true if the user is allowed to purchase G Suite', () => {
-			expect( canUserPurchaseGSuite() ).toEqual( true );
 		} );
 	} );
 } );
