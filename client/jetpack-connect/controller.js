@@ -20,7 +20,7 @@ import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
 import SearchPurchase from './search';
 import StoreHeader from './store-header';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
@@ -357,5 +357,27 @@ export function sso( context, next ) {
 			ssoNonce={ context.params.ssoNonce }
 		/>
 	);
+	next();
+}
+
+export function authorizeOrSignup( context, next ) {
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+
+	if ( isLoggedIn ) {
+		authorizeForm( context, next );
+		return;
+	}
+
+	signupForm( context, next );
+}
+
+export function redirectToLoginIfLoggedOut( context, next ) {
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+
+	if ( ! isLoggedIn ) {
+		page( login( { isNative: true, isJetpack: true, redirectTo: context.path } ) );
+		return;
+	}
+
 	next();
 }

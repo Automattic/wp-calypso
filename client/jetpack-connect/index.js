@@ -7,9 +7,7 @@ import page from 'page';
  * Internal dependencies
  */
 import config from '@automattic/calypso-config';
-import userFactory from 'calypso/lib/user';
 import * as controller from './controller';
-import { login } from 'calypso/lib/paths';
 import { siteSelection } from 'calypso/my-sites/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
@@ -23,8 +21,6 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import './style.scss';
 
 export default function () {
-	const user = userFactory();
-	const isLoggedOut = ! user.get();
 	const locale = getLanguageRouteParam( 'locale' );
 
 	const planTypeString = [
@@ -67,24 +63,14 @@ export default function () {
 		clientRender
 	);
 
-	if ( isLoggedOut ) {
-		page(
-			`/jetpack/connect/authorize/${ locale }`,
-			controller.setMasterbar,
-			controller.signupForm,
-			makeLayout,
-			clientRender
-		);
-	} else {
-		page(
-			`/jetpack/connect/authorize/${ locale }`,
-			controller.redirectWithoutLocaleIfLoggedIn,
-			controller.setMasterbar,
-			controller.authorizeForm,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		`/jetpack/connect/authorize/${ locale }`,
+		controller.redirectWithoutLocaleIfLoggedIn,
+		controller.setMasterbar,
+		controller.authorizeOrSignup,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/jetpack/connect/instructions',
@@ -102,11 +88,10 @@ export default function () {
 			page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : '' }` )
 	);
 
-	if ( isLoggedOut ) {
-		page( '/jetpack/connect/plans/:interval(yearly|monthly)?/:site', ( { path } ) =>
-			page( login( { isJetpack: true, redirectTo: path } ) )
-		);
-	}
+	page(
+		'/jetpack/connect/plans/:interval(yearly|monthly)?/:site',
+		controller.redirectToLoginIfLoggedOut
+	);
 
 	jetpackPlans(
 		`/jetpack/connect/plans`,
