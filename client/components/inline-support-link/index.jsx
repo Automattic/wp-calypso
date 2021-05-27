@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -33,6 +34,7 @@ class InlineSupportLink extends Component {
 	};
 
 	static propTypes = {
+		className: PropTypes.string,
 		supportPostId: PropTypes.number,
 		supportLink: PropTypes.string,
 		showText: PropTypes.bool,
@@ -59,6 +61,7 @@ class InlineSupportLink extends Component {
 
 	render() {
 		const {
+			className,
 			showText,
 			supportPostId,
 			supportLink,
@@ -101,7 +104,7 @@ class InlineSupportLink extends Component {
 
 		return (
 			<LinkComponent
-				className="inline-support-link"
+				className={ classnames( 'inline-support-link', className ) }
 				href={ url }
 				onClick={ openDialog }
 				onMouseEnter={
