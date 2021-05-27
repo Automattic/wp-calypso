@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import { connect } from 'react-redux';
+import classNames from 'classnames';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -21,27 +21,23 @@ import './style.scss';
 // it's the popular value for large Gravatars in Calypso
 const GRAVATAR_IMG_SIZE = 400;
 
-// Action creator to record clicks on non-interactive profile picture
-function recordGravatarMisclick() {
-	return recordGoogleEvent( 'Me', 'Clicked on Unclickable Gravatar Image in Sidebar' );
-}
+export default function ProfileGravatar( { user, inSidebar } ) {
+	const dispatch = useDispatch();
 
-function ProfileGravatar( props ) {
-	const parentClassName = [ 'profile-gravatar', props.inSidebar ? 'is-in-sidebar' : '' ].join(
-		' '
-	);
+	// record clicks on non-interactive profile picture
+	function recordGravatarMisclick() {
+		dispatch( recordGoogleEvent( 'Me', 'Clicked on Unclickable Gravatar Image in Sidebar' ) );
+	}
 
 	return (
-		<div className={ parentClassName }>
-			<div role="presentation" onClick={ props.recordGravatarMisclick }>
+		<div className={ classNames( 'profile-gravatar', { 'is-in-sidebar': inSidebar } ) }>
+			<div role="presentation" onClick={ recordGravatarMisclick }>
 				<Animate type="appear">
-					<Gravatar user={ props.user } size={ 150 } imgSize={ GRAVATAR_IMG_SIZE } />
+					<Gravatar user={ user } size={ 150 } imgSize={ GRAVATAR_IMG_SIZE } />
 				</Animate>
 			</div>
-			<h2 className="profile-gravatar__user-display-name">{ props.user.display_name }</h2>
-			<div className="profile-gravatar__user-secondary-info">@{ props.user.username }</div>
+			<h2 className="profile-gravatar__user-display-name">{ user.display_name }</h2>
+			<div className="profile-gravatar__user-secondary-info">@{ user.username }</div>
 		</div>
 	);
 }
-
-export default connect( null, { recordGravatarMisclick } )( ProfileGravatar );
