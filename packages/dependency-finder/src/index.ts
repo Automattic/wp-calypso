@@ -148,9 +148,12 @@ const main = async () => {
 		const packageEntry = packageMap.find( ( { path } ) => path === args.package );
 		if ( packageEntry ) {
 			const project = await findPackageDependencies( packageEntry );
+			console.log( project );
+			console.log( changedFiles );
 			if ( changedFiles ) {
+				console.log( 'Finding builds...' );
 				const builds = await findMatchingBuilds( [ project ], changedFiles );
-				builds.forEach( console.log );
+				console.log( Array.from( builds ) );
 			}
 		}
 	} else {
