@@ -718,24 +718,6 @@ workflows:
             tags:
               only: /v.*/
 
-  e2e-jetpack-be-scheduled:
-    jobs:
-      - setup
-      - test-e2e-canary:
-          name: test-e2e-jetpack
-          requires:
-            - setup
-          test-flags: '-j -s desktop'
-          jetpack-host: 'PRESSABLEBLEEDINGEDGE'
-          test-target: 'JETPACK'
-          slack-webhook: '$SLACK_JP'
-    triggers:
-      - schedule:
-          cron: '0 7 * * *'
-          filters:
-            branches:
-              only: trunk
-
   e2e-canary-i18n-monthly:
     jobs:
       - setup
