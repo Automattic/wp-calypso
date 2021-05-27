@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import Debug from 'debug';
+import { isJetpackBackupSlug, JETPACK_BACKUP_PRODUCTS } from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -21,13 +22,11 @@ import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-sit
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isJetpackBackupSlug, getPlan } from '@automattic/calypso-products';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
-import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
-import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
+import siteHasSubscription from 'calypso/state/selectors/site-has-subscription';
 
 const debug = new Debug( 'calypso:my-sites:backup:controller' );
 
@@ -107,30 +106,11 @@ export function showUnavailableForMultisites( context, next ) {
 
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	const sitePlan = getSitePlan( state, siteId );
-	const siteProducts = getSiteProducts( state, siteId );
 
-	const siteHasBackupPlan = () => {
-		if ( ! siteProducts && ! sitePlan ) {
-			return false;
-		}
-
-		let productsList = [];
-		if ( siteProducts ) {
-			productsList = siteProducts.map( ( { productSlug } ) => productSlug );
-		}
-		if ( sitePlan ) {
-			const sitePlanDetails = getPlan( sitePlan.product_slug );
-			productsList = [
-				...productsList,
-				...sitePlanDetails.getHiddenFeatures(),
-				...( sitePlanDetails.getInferiorHiddenFeatures?.() ?? [] ),
-			];
-		}
-		return !! productsList.find( isJetpackBackupSlug );
-	};
-
-	if ( isJetpackSiteMultiSite( state, siteId ) && ! siteHasBackupPlan() ) {
+	if (
+		isJetpackSiteMultiSite( state, siteId ) &&
+		! siteHasSubscription( state, siteId, JETPACK_BACKUP_PRODUCTS )
+	) {
 		// Only show "Multisite not supported" card if the multisite does Not already own a Backup subscription.
 		// https://href.li/?https://wp.me/pbuNQi-1jg
 		context.primary = isJetpackCloud() ? (
