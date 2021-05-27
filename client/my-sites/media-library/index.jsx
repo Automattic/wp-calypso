@@ -224,7 +224,7 @@ export default connect(
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		isJetpack: isJetpackSite( state, site?.ID ),
 		isAtomic: isAtomicSite( state, site?.ID ),
-		hasVideoUploadFeature: hasFeature( state, site?.ID, FEATURE_VIDEO_UPLOADS ),
+		hasVideoUploadFeature: hasSiteFeature( site, FEATURE_VIDEO_UPLOADS ),
 	} ),
 	{
 		requestKeyringConnections,
