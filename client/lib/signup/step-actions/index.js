@@ -168,7 +168,7 @@ function getNewSiteParams( {
 	// the default theme is used to determine the `shouldEnableFse`'s value.
 	if ( ! selectedDesign ) {
 		const designs = getAvailableDesigns();
-		const themeSlug = theme.replace( 'pub/', '' );
+		const themeSlug = theme.replace( 'pub/', '' ).replace( 'premium/', '' );
 		const design = designs.featured.find( ( { slug } ) => slug === themeSlug );
 		shouldEnableFse = design?.is_fse;
 	}
