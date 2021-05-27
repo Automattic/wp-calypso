@@ -17,6 +17,7 @@ import {
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
@@ -25,10 +26,10 @@ import './upgrade-banner.scss';
 
 class UpgradeBanner extends Component {
 	render() {
-		const { translate, isJetpack, siteSlug } = this.props;
+		const { translate, isAtomic, isJetpack, siteSlug } = this.props;
 		return (
 			<div className="activity-log-banner__upgrade">
-				{ isJetpack ? (
+				{ isJetpack && ! isAtomic ? (
 					<UpsellNudge
 						callToAction={ translate( 'Learn more' ) }
 						event="activity_log_upgrade_click_jetpack"
@@ -72,6 +73,7 @@ class UpgradeBanner extends Component {
 }
 
 export default connect( ( state, { siteId } ) => ( {
+	isAtomic: isSiteAutomatedTransfer( state, siteId ),
 	isJetpack: isJetpackSite( state, siteId ),
 	siteId: siteId,
 	siteSlug: getSiteSlug( state, siteId ),
