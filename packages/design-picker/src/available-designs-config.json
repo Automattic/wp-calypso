@@ -433,7 +433,7 @@
 			"categories": [ "featured" ],
 			"is_premium": false,
 			"is_fse": false,
-			"is_alpha": true,
+			"is_alpha": false,
 			"features": []
 		},
 		{
