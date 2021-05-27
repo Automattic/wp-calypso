@@ -32,6 +32,7 @@ export default () => ( req, res, next ) => {
 	}
 
 	req.getTarget = () => ( target === 'fallback' ? null : target );
+	req.bypassTargetRedirection = () => req.query.bypassTargetRedirection === 'true';
 
 	next();
 };

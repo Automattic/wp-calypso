@@ -115,6 +115,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	}
 
 	const target = request.getTarget();
+	const bypassTargetRedirection = request.bypassTargetRedirection();
 
 	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
 	const isWCComConnect =
@@ -145,7 +146,8 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
 		devDocsURL: '/devdocs',
 		store: reduxStore,
-		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
+		addEvergreenCheck:
+			bypassTargetRedirection === false && target === 'evergreen' && calypsoEnv !== 'development',
 		target: target || 'fallback',
 		useTranslationChunks:
 			config.isEnabled( 'use-translation-chunks' ) ||
