@@ -43,6 +43,7 @@ import { pathToRegExp } from 'calypso/utils';
 import middlewareAssets from '../middleware/assets.js';
 import middlewareBuildTarget from '../middleware/build-target.js';
 import middlewareCache from '../middleware/cache.js';
+import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
 
 const debug = debugFactory( 'calypso:pages' );
@@ -554,6 +555,7 @@ export default function pages() {
 	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
+	app.use( middlewareUnsupportedBrowser() );
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function ( request, response, next ) {
