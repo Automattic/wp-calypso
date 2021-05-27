@@ -38,13 +38,13 @@ type PackageMapEntry = {
 };
 type PackageMap = Array< PackageMapEntry >;
 
+// TODO: import from build-tools
 async function getMonorepoPackages() {
 	const packages = await readdir( 'packages', { withFileTypes: true } );
 	return packages
 		.filter( ( entry ) => entry.isDirectory() )
 		.map( ( entry ) => path.resolve( 'packages', entry.name ) );
 }
-const monorepoPackages = getMonorepoPackages();
 
 type Project = {
 	matchingFiles: Array< string >;
@@ -58,7 +58,7 @@ const findPackageDependencies = async ( entry: PackageMapEntry ): Promise< Proje
 	const { missing, packages, modules } = await findDependencies( {
 		pkg: absolutePkgPath,
 		additionalEntryPoints,
-		monorepoPackages,
+		monorepoPackages: await getMonorepoPackages(),
 	} );
 	const { stdout } = await exec(
 		`find ${ absolutePkgPath } -type f -not \\( -path '*/node_modules/*' -o -path '*/.cache/*' -o -path '*/dist/*' \\)`
@@ -99,11 +99,12 @@ const findPackageDependencies = async ( entry: PackageMapEntry ): Promise< Proje
  * @param modifiedFiles The list of currently modified files.
  * @returns A Set of CI Job IDs to launch.
  */
-// TODO: make sure project files are relative to repo root.
+// TODO: make sure project files are relative to repo root. Currently, modifiedFiles
+// are relative to the repo root, but project files are absolute.
 function findMatchingBuilds( projects: Project[], modifiedFiles: VCSFileChange[] ) {
 	return modifiedFiles.reduce< Set< string > >( ( acc, modifiedFile ) => {
 		const matchingProject = projects.find( ( proj ) =>
-			proj.matchingFiles.some( ( file ) => file === modifiedFile.path )
+			proj.matchingFiles.some( ( file ) => file.includes( modifiedFile.path ) )
 		);
 		if ( matchingProject?.buildIds ) {
 			matchingProject.buildIds.forEach( ( id ) => acc.add( id ) );
@@ -139,18 +140,18 @@ async function readTeamCityMatchedFiles( filePath: string ) {
 
 const main = async () => {
 	const packageMap: PackageMap = JSON.parse( await readFile( packageMapPath, 'utf8' ) );
-	if ( args.changedFiles ) {
-		const changedFiles = await readTeamCityMatchedFiles( args.changedFiles );
-		console.log( changedFiles );
-		return;
-	}
+	const changedFiles = args.changedFiles
+		? await readTeamCityMatchedFiles( args.changedFiles )
+		: null;
 
-	// Allow parsing a single package.
 	if ( args.package ) {
 		const packageEntry = packageMap.find( ( { path } ) => path === args.package );
 		if ( packageEntry ) {
 			const project = await findPackageDependencies( packageEntry );
-			findMatchingBuilds( [ project ], [] );
+			if ( changedFiles ) {
+				const builds = await findMatchingBuilds( [ project ], changedFiles );
+				builds.forEach( console.log );
+			}
 		}
 	} else {
 		for ( const packageEntry of packageMap ) {
