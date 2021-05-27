@@ -4,8 +4,10 @@
 import user from 'calypso/lib/user';
 
 /**
+ * HIGHLY LIMITED! No waranty provided.
+ * 
  * Naively ship a feature to a percentage of our users.
- * - Very basic, this exists to replace the last remaining calypso-abtest use-case.
+ * - Very basic, this exists to replace the a calypso-abtest use-case.
  * - Works best for logged-in users.
  * - Uses randomisation for logged out users.
  * - Won't work across the log-in boundary.

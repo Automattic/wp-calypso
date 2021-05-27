@@ -13,5 +13,5 @@ export default {
 	// ⚠️ The ExPlat team is monitoring additions to this object 😈
 	// Let us know if there is a use-case we have missed adding in ExPlat.
 	// If you are looking for the conciergeUpsellDial experiment it has been replaced with
-	// a naiveClientSideRollout in `client/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url.ts`
+	// naiveClientSideRollout in `client/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url.ts`
 };

@@ -11,7 +11,6 @@ import { getAnonId, initializeAnonId } from './internals/anon-id';
 import fetchExperimentAssignment from './internals/fetch-experiment-assignment';
 import { logError } from './internals/log-error';
 import { isDevelopmentMode } from './internals/misc';
-import naiveClientSideRollout from './internals/naive-client-side-rollout';
 
 initializeAnonId().catch( ( e ) => logError( { message: e.message } ) );
 
@@ -25,4 +24,3 @@ const exPlatClient = createExPlatClient( {
 export const { loadExperimentAssignment, dangerouslyGetExperimentAssignment } = exPlatClient;
 const exPlatClientReactHelpers = createExPlatClientReactHelpers( exPlatClient );
 export const { useExperiment, Experiment, ProvideExperimentData } = exPlatClientReactHelpers;
-export { naiveClientSideRollout };
