@@ -90,10 +90,6 @@ UndocumentedSite.prototype.domains = function () {
 	return this.wpcom.req.get( `/sites/${ this._id }/domains`, { apiVersion: '1.2' } );
 };
 
-UndocumentedSite.prototype.postFormatsList = function ( callback ) {
-	return this.wpcom.req.get( '/sites/' + this._id + '/post-formats', {}, callback );
-};
-
 UndocumentedSite.prototype.postAutosave = function ( postId, attributes, callback ) {
 	return this.wpcom.req.post(
 		{
