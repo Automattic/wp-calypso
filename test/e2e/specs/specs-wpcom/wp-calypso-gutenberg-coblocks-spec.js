@@ -210,17 +210,17 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			'div[aria-label="Editor settings"] div[aria-label="Gutter"]'
 		);
 
-		async function setGutter( buttonText ) {
-			const controlsEl = await this.driver.findElement( gutterControlsLocator );
-			const buttonEl = await controlsEl.findElement(
-				By.xpath( `//button[text()='${ buttonText }']` )
-			);
-			const name = { None: 'no', S: 'small', M: 'medium', L: 'large', XL: 'huge' }[ buttonText ];
+		const gutters = { None: 'no', S: 'small', M: 'medium', L: 'large', XL: 'huge' };
+		async function setGutter( driver, buttonText ) {
+			const gutterName = gutters[ buttonText ];
+			const buttonEl = await driver
+				.findElement( gutterControlsLocator )
+				.findElement( By.xpath( `//button[text()='${ buttonText }']` ) );
 
-			await buttonEl.click();
+			await driverHelper.clickWhenClickable( driver, () => buttonEl );
 			await driverHelper.waitUntilElementLocatedAndVisible(
-				this.driver,
-				By.css( `.wp-block-coblocks-pricing-table__inner.has-${ name }-gutter` )
+				driver,
+				By.css( `.wp-block-coblocks-pricing-table__inner.has-${ gutterName }-gutter` )
 			);
 		}
 
@@ -240,24 +240,10 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			await driverHelper.waitUntilElementLocatedAndVisible( this.driver, gutterControlsLocator );
 		} );
 
-		it( 'Can set the "None" gutter value', async function () {
-			await setGutter( 'None' );
-		} );
-
-		it( 'Can set the "S" gutter value', async function () {
-			await setGutter( 'S' );
-		} );
-
-		it( 'Can set the "M" gutter value', async function () {
-			await setGutter( 'M' );
-		} );
-
-		it( 'Can set the "L" gutter value', async function () {
-			await setGutter( 'L' );
-		} );
-
-		it( 'Can set the "XL" gutter value', async function () {
-			await setGutter( 'XL' );
+		Object.keys( gutters ).forEach( ( gutter ) => {
+			it( `Can set the ${ gutter } gutter value`, async function () {
+				await setGutter( this.driver, gutter );
+			} );
 		} );
 	} );
 } );
