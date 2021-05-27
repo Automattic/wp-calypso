@@ -13,13 +13,13 @@ import {
 	hasPendingGSuiteUsers,
 } from 'calypso/lib/gsuite';
 
-jest.mock( 'calypso/lib/user/', () => {
-	return () => {
-		return {
-			get: () => {
-				return { is_valid_google_apps_country: true };
+jest.mock( 'calypso/lib/redux-bridge', () => {
+	return {
+		reduxGetState: () => ( {
+			currentUser: {
+				user: { is_valid_google_apps_country: true },
 			},
-		};
+		} ),
 	};
 } );
 
