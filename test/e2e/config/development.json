@@ -1,4 +1,4 @@
 {
-	"calypsoBaseURL": "http://calypso.localhost:3000",
+	"calypsoBaseURL": "https://wordpress.com",
 	"checkForConsoleErrors": true
 }

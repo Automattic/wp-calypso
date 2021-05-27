@@ -11,6 +11,7 @@ import assert from 'assert';
 import LoginFlow from '../../lib/flows/login-flow.js';
 
 import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
+import SearchBlockComponent from '../../lib/gutenberg/blocks/search-block-component';
 
 import * as driverManager from '../../lib/driver-manager';
 import * as driverHelper from '../../lib/driver-helper';
@@ -41,10 +42,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Search Block (${ screenSize })`
 		it( 'Can Insert the Search block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Search' );
-			return await driverHelper.waitUntilElementLocatedAndVisible(
-				driver,
-				By.css( '.wp-block-search' )
-			);
+			const searchBlock = await SearchBlockComponent.Expect( driver );
+			return await searchBlock.searchBlockVisible();
 		} );
 
 		it( 'Can see search block elements', async function () {
