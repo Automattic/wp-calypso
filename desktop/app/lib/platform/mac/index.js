@@ -10,19 +10,18 @@ const appQuit = require( '../../../lib/app-quit' );
 const menuSetter = require( '../../../lib/menu-setter' );
 const log = require( '../../../lib/logger' )( 'platform:mac' );
 
-function MacPlatform( appWindow ) {
-	this.window = appWindow.window;
-	this.dockMenu = Menu.buildFromTemplate( require( './dock-menu' )( app, appWindow ) );
+let window;
+let dockMenu;
 
-	app.dock.setMenu( this.dockMenu );
+function MacPlatform( appWindow ) {
+	window = appWindow.window;
+	dockMenu = Menu.buildFromTemplate( require( './dock-menu' )( app, appWindow ) );
+
+	app.dock.setMenu( dockMenu );
 
 	app.on( 'activate', function () {
-		log.info( 'Window activated' );
-
-		if ( this.window ) {
-			this.window.show();
-			this.window.focus();
-		}
+		window.show();
+		window.focus();
 	} );
 
 	app.on( 'window-all-closed', function () {
@@ -36,22 +35,22 @@ function MacPlatform( appWindow ) {
 		appQuit.allowQuit();
 	} );
 
-	this.window.on( 'close', function ( ev ) {
+	window.on( 'close', function ( ev ) {
 		if ( appQuit.shouldQuitToBackground() ) {
 			log.info( `User clicked 'close': hiding main window...` );
 			ev.preventDefault();
-			this.window.hide();
+			window.hide();
 			appWindow.view.webContents.send( 'notifications-panel-show', false );
 		}
 	} );
 }
 
 MacPlatform.prototype.restore = function () {
-	if ( this.window.isMinimized() ) {
-		this.window.restore();
+	if ( window.isMinimized() ) {
+		window.restore();
 	}
 
-	this.window.show();
+	window.show();
 };
 
 MacPlatform.prototype.showNotificationsBadge = function ( count, bounce ) {
@@ -73,7 +72,7 @@ MacPlatform.prototype.clearNotificationsBadge = function () {
 };
 
 MacPlatform.prototype.setDockMenu = function ( enabled ) {
-	menuSetter.setRequiresUser( this.dockMenu, enabled );
+	menuSetter.setRequiresUser( dockMenu, enabled );
 };
 
 module.exports = MacPlatform;
