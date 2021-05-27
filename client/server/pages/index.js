@@ -294,7 +294,6 @@ function setUpLoggedInRoute( req, res, next ) {
 		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
 		redirectUrl = login( {
-			isNative: true,
 			redirectTo: protocol + '://' + config( 'hostname' ) + req.originalUrl,
 		} );
 

@@ -324,10 +324,7 @@ class P2Site extends React.Component {
 	};
 
 	getErrorMessagesWithLogin = ( fieldName ) => {
-		const link = login( {
-			isNative: true,
-			redirectTo: window.location.href,
-		} );
+		const link = login( { redirectTo: window.location.href } );
 		const messages = formState.getFieldErrorMessages( this.state.form, fieldName );
 
 		if ( ! messages ) {

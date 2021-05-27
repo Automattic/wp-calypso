@@ -145,10 +145,7 @@ const devdocs = {
 				title: 'Log In to start hacking',
 				line: 'Required to access the WordPress.com API',
 				action: 'Log In to WordPress.com',
-				actionURL: login( {
-					isNative: true,
-					redirectTo,
-				} ),
+				actionURL: login( { redirectTo } ),
 				secondaryAction: 'Register',
 				secondaryActionURL: '/start/developer',
 				illustration: '/calypso/images/illustrations/illustration-nosites.svg',

@@ -11,7 +11,6 @@ import page from 'page';
  * Internal dependencies
  */
 import { login } from 'calypso/lib/paths';
-import { addQueryArgs } from 'calypso/lib/route';
 import EmptyContent from 'calypso/components/empty-content';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
@@ -21,14 +20,8 @@ import {
 } from 'calypso/state/analytics/actions';
 import { withEnhancers } from 'calypso/state/utils';
 
-const nativeLoginUrl = login( { isNative: true, twoFactorAuthType: 'link' } );
-
-const lostPasswordURL = addQueryArgs(
-	{
-		action: 'lostpassword',
-	},
-	login()
-);
+const nativeLoginUrl = login( { twoFactorAuthType: 'link' } );
+const lostPasswordUrl = 'https://wordpress.com/wp-login.php?action=lostpassword';
 
 class EmailedLoginLinkExpired extends React.Component {
 	static propTypes = {
@@ -69,7 +62,7 @@ class EmailedLoginLinkExpired extends React.Component {
 					illustrationWidth={ 500 }
 					line={ translate( 'Maybe try resetting your password instead' ) }
 					secondaryAction={ translate( 'Reset my password' ) }
-					secondaryActionURL={ lostPasswordURL }
+					secondaryActionURL={ lostPasswordUrl }
 					title={ translate( 'Login link is expired or invalid' ) }
 				/>
 			</div>

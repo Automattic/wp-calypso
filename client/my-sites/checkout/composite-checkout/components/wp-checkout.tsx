@@ -179,11 +179,7 @@ export default function WPCheckout( {
 	] = useState( false );
 
 	const emailTakenLoginRedirectMessage = ( emailAddress: string ) => {
-		const loginUrl = login( {
-			redirectTo: '/checkout/no-site?cart=no-user',
-			emailAddress,
-			isNative: true,
-		} );
+		const loginUrl = login( { redirectTo: '/checkout/no-site?cart=no-user', emailAddress } );
 
 		return translate(
 			'That email address is already in use. If you have an existing account, {{a}}please log in{{/a}}.',

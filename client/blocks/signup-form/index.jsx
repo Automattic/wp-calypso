@@ -206,12 +206,7 @@ class SignupForm extends Component {
 			const socialInfo = { service, id_token, access_token };
 
 			this.props.createSocialUserFailed( socialInfo, userExistsError );
-			page(
-				login( {
-					isNative: true,
-					redirectTo: this.props.redirectToAfterLoginUrl,
-				} )
-			);
+			page( login( { redirectTo: this.props.redirectToAfterLoginUrl } ) );
 		}
 	}
 

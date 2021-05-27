@@ -114,7 +114,6 @@ export function redirectLoggedOut( context, next ) {
 		const siteFragment = context.params.site || getSiteFragment( context.path );
 
 		const loginParameters = {
-			isNative: true,
 			redirectTo: context.path,
 			site: siteFragment,
 		};

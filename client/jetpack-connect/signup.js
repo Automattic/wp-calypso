@@ -55,6 +55,7 @@ import { resetAuthAccountType as resetAuthAccountTypeAction } from 'calypso/stat
 import FormattedHeader from 'calypso/components/formatted-header';
 import wooDnaConfig from './woo-dna-config';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 const noop = () => {};
@@ -149,7 +150,6 @@ export class JetpackSignup extends Component {
 			emailAddress,
 			from: this.props.authQuery.from,
 			isJetpack: true,
-			isNative: true,
 			locale: this.props.locale,
 			redirectTo: window.location.href,
 			allowSiteConnection: this.props.authQuery?.allowSiteConnection,
@@ -344,7 +344,7 @@ export class JetpackSignup extends Component {
 	}
 
 	renderWooDna() {
-		const { authQuery, isFullLoginFormVisible, translate, usernameOrEmail } = this.props;
+		const { authQuery, isFullLoginFormVisible, locale, translate, usernameOrEmail } = this.props;
 		const {
 			isCreatingAccount,
 			signUpUsernameOrEmail,
@@ -380,18 +380,15 @@ export class JetpackSignup extends Component {
 				pageTitle = translate( 'Login to WordPress.com' );
 				footerLinks.push(
 					<LoggedOutFormLinkItem key="signup" onClick={ this.showWooDnaSignupView }>
-						{ this.props.translate( 'Create a new account' ) }
+						{ translate( 'Create a new account' ) }
 					</LoggedOutFormLinkItem>
 				);
 				footerLinks.push(
 					<LoggedOutFormLinkItem
 						key="lostpassword"
-						href={ addQueryArgs(
-							{ action: 'lostpassword' },
-							login( { locale: this.props.locale } )
-						) }
+						href={ localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword', locale ) }
 					>
-						{ this.props.translate( 'Lost your password?' ) }
+						{ translate( 'Lost your password?' ) }
 					</LoggedOutFormLinkItem>
 				);
 			} else {

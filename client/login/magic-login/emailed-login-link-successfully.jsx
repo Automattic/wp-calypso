@@ -45,9 +45,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 
 		this.props.hideMagicLoginRequestForm();
 
-		page(
-			login( { isNative: true, isJetpack: this.props.isJetpackLogin, locale: this.props.locale } )
-		);
+		page( login( { isJetpack: this.props.isJetpackLogin, locale: this.props.locale } ) );
 	};
 
 	render() {
@@ -82,7 +80,6 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 				<div className="magic-login__footer">
 					<a
 						href={ login( {
-							isNative: true,
 							isJetpack: this.props.isJetpackLogin,
 							isGutenboarding: this.props.isGutenboardingLogin,
 							locale: this.props.locale,
