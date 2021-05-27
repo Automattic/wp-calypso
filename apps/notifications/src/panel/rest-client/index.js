@@ -488,24 +488,6 @@ function setVisibility( { isShowing, isVisible } ) {
 	}
 }
 
-// Persists the latest note timestamp sent to the Desktop app.
-function setlatestTimestampSeen( timestamp ) {
-	const parsedTimestamp = Date.parse( timestamp );
-	const latestTimestamp = localStorage.getItem( 'desktop_latest_timestamp_seen' ) || 0;
-
-	if ( parsedTimestamp > latestTimestamp ) {
-		debug( 'Update desktop_latest_timestamp_seen: ', parsedTimestamp );
-
-		try {
-			localStorage.setItem( 'desktop_latest_timestamp_seen', parsedTimestamp );
-			return true;
-		} catch ( e ) {
-			debug( 'Failed to set desktop_latest_timestamp_seen: ', e.message );
-		}
-	}
-	return false;
-}
-
 Client.prototype.main = main;
 Client.prototype.reschedule = reschedule;
 Client.prototype.getNote = getNote;
