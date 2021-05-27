@@ -43,6 +43,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import Notice from 'calypso/components/notice';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import { login } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/url';
 import formState from 'calypso/lib/form-state';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
@@ -419,7 +420,6 @@ class SignupForm extends Component {
 		return login( {
 			isJetpack: this.isJetpack(),
 			from: this.props.from,
-			isNative: true,
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
@@ -428,8 +428,6 @@ class SignupForm extends Component {
 	}
 
 	getNoticeMessageWithLogin( notice ) {
-		const link = this.getLoginLink();
-
 		if ( notice.error === '2FA_enabled' ) {
 			return (
 				<span>
@@ -438,7 +436,7 @@ class SignupForm extends Component {
 						&nbsp;
 						{ this.props.translate( '{{a}}Log in now{{/a}} to finish signing up.', {
 							components: {
-								a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />,
+								a: <a href={ this.getLoginLink() } onClick={ this.props.trackLoginMidFlow } />,
 							},
 						} ) }
 					</p>
@@ -481,12 +479,10 @@ class SignupForm extends Component {
 			return;
 		}
 
-		let link = this.getLoginLink();
-
 		return map( messages, ( message, error_code ) => {
 			if ( error_code === 'taken' ) {
 				const fieldValue = formState.getFieldValue( this.state.form, fieldName );
-				link += '&email_address=' + encodeURIComponent( fieldValue );
+				const link = addQueryArgs( { email_address: fieldValue }, this.getLoginLink() );
 				return (
 					<span key={ error_code }>
 						<p>
@@ -862,13 +858,11 @@ class SignupForm extends Component {
 	footerLink() {
 		const { flowName, showRecaptchaToS, translate } = this.props;
 
-		const logInUrl = this.getLoginLink();
-
 		return (
 			<>
 				{ ! this.props.isReskinned && (
 					<LoggedOutFormLinks>
-						<LoggedOutFormLinkItem href={ logInUrl }>
+						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
 							{ flowName === 'onboarding'
 								? translate( 'Log in to create a site for your existing account.' )
 								: translate( 'Already have a WordPress.com account?' ) }
@@ -921,14 +915,12 @@ class SignupForm extends Component {
 				'socialServiceResponse',
 			] );
 
-			const logInUrl = this.getLoginLink();
-
 			return (
 				<CrowdsignalSignupForm
 					disabled={ this.props.disabled }
 					formFields={ this.formFields() }
 					handleSubmit={ this.handleSubmit }
-					loginLink={ logInUrl }
+					loginLink={ this.getLoginLink() }
 					oauth2Client={ this.props.oauth2Client }
 					recordBackLinkClick={ this.recordBackLinkClick }
 					submitting={ this.props.submitting }
@@ -945,8 +937,6 @@ class SignupForm extends Component {
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom )
 		) {
-			const logInUrl = this.getLoginLink();
-
 			return (
 				<div className={ classNames( 'signup-form__woocommerce', this.props.className ) }>
 					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate={ true }>
@@ -966,7 +956,7 @@ class SignupForm extends Component {
 					</LoggedOutForm>
 
 					{ this.props.footerLink || (
-						<LoggedOutFormLinkItem href={ logInUrl }>
+						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
 							{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
 						</LoggedOutFormLinkItem>
 					) }
