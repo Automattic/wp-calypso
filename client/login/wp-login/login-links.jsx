@@ -27,11 +27,10 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { login } from 'calypso/lib/paths';
+import { login, lostPassword } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
@@ -258,10 +257,7 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
-		let lostPasswordUrl = localizeUrl(
-			'https://wordpress.com/wp-login.php?action=lostpassword',
-			this.props.locale
-		);
+		let lostPasswordUrl = lostPassword( this.props.locale );
 
 		// If we got here coming from Jetpack Cloud login page, we want to go back
 		// to it after we finish the process

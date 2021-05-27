@@ -35,7 +35,7 @@ import {
 	warningNotice as warningNoticeAction,
 } from 'calypso/state/notices/actions';
 import { isEnabled } from '@automattic/calypso-config';
-import { login } from 'calypso/lib/paths';
+import { login, lostPassword } from 'calypso/lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { sendEmailLogin as sendEmailLoginAction } from 'calypso/state/auth/actions';
 import {
@@ -55,7 +55,6 @@ import { resetAuthAccountType as resetAuthAccountTypeAction } from 'calypso/stat
 import FormattedHeader from 'calypso/components/formatted-header';
 import wooDnaConfig from './woo-dna-config';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 const noop = () => {};
@@ -384,10 +383,7 @@ export class JetpackSignup extends Component {
 					</LoggedOutFormLinkItem>
 				);
 				footerLinks.push(
-					<LoggedOutFormLinkItem
-						key="lostpassword"
-						href={ localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword', locale ) }
-					>
+					<LoggedOutFormLinkItem key="lostpassword" href={ lostPassword( locale ) }>
 						{ translate( 'Lost your password?' ) }
 					</LoggedOutFormLinkItem>
 				);

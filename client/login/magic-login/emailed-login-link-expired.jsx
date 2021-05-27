@@ -10,7 +10,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { login } from 'calypso/lib/paths';
+import { login, lostPassword } from 'calypso/lib/paths';
 import EmptyContent from 'calypso/components/empty-content';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
@@ -21,7 +21,7 @@ import {
 import { withEnhancers } from 'calypso/state/utils';
 
 const nativeLoginUrl = login( { twoFactorAuthType: 'link' } );
-const lostPasswordUrl = 'https://wordpress.com/wp-login.php?action=lostpassword';
+const lostPasswordUrl = lostPassword();
 
 class EmailedLoginLinkExpired extends React.Component {
 	static propTypes = {
