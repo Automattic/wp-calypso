@@ -29,6 +29,7 @@ import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import {
 	getPlan,
@@ -176,6 +177,7 @@ export default connect( ( state ) => {
 	const currentPlanIntervalType = getIntervalTypeForTerm(
 		getPlan( currentPlan?.productSlug )?.term
 	);
+	const sitePlanSlug = currentPlan?.productSlug;
 
 	return {
 		currentPlanIntervalType,
@@ -184,7 +186,9 @@ export default connect( ( state ) => {
 		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
 		isEligibleForWpComMonthlyPlan:
-			isWpComMonthlyPlan( currentPlan?.productSlug ) || isWpComFreePlan( currentPlan?.productSlug ),
+			( isAtomicSite( state, selectedSiteId ) && sitePlanSlug === 'jetpack_free' ) ||
+			isWpComMonthlyPlan( sitePlanSlug ) ||
+			isWpComFreePlan( sitePlanSlug ),
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
