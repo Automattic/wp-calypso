@@ -10,12 +10,11 @@ import { Frame, Page, ElementHandle } from 'playwright';
 
 const selectors = {
 	// Note the variation of 'Like' button for when the button is already clicked.
-	likeWidgetSelector: 'iframe.post-likes-widget',
+	likeWidget: 'iframe.post-likes-widget',
 
 	// Selectors within the Like Widget iframe.
-	likeBoxSelector: '.sd-content wpl-likebox',
-	likeButtonSelector: 'text=Like',
-	likedButtonSelector: 'text=Liked',
+	likeButton: 'text=Like',
+	likedButton: 'text=Liked',
 	likedText: 'text="You like this."',
 };
 
@@ -33,7 +32,7 @@ export class LikesComponent extends BaseContainer {
 	 * @param {Page} page Instance of the page on which the component resides.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.likeWidgetSelector );
+		super( page, selectors.likeWidget );
 	}
 
 	/**
@@ -43,7 +42,7 @@ export class LikesComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _postInit(): Promise< void > {
-		const handle = ( await this.page.$( selectors.likeWidgetSelector ) ) as ElementHandle;
+		const handle = ( await this.page.$( selectors.likeWidget ) ) as ElementHandle;
 		this.frame = ( await handle.contentFrame() ) as Frame;
 		await this.page.waitForLoadState( 'networkidle' );
 	}
@@ -67,20 +66,13 @@ export class LikesComponent extends BaseContainer {
 			this.frame.waitForLoadState( 'networkidle' ),
 		];
 
-		// Depending on the state of the Like button, request endpoints vary
-		// and so do the selector itself.
 		if ( isLiked ) {
-			promises.push( this.frame.click( selectors.likedButtonSelector ) );
-			promises.push(
-				this.page.waitForEvent( 'request', ( request ) =>
-					request.url().includes( 'likes/mine/delete' )
-				)
-			);
+			// Like button is already clicked. Check for unlike status at end.
+			promises.push( this.frame.waitForSelector( selectors.likeButton ) );
+			promises.push( this.frame.click( selectors.likedButton ) );
 		} else {
-			promises.push( this.frame.click( selectors.likeButtonSelector ) );
-			promises.push(
-				this.page.waitForEvent( 'request', ( request ) => request.url().includes( 'likes/new' ) )
-			);
+			promises.push( this.frame.waitForSelector( selectors.likedButton ) );
+			promises.push( this.frame.click( selectors.likeButton ) );
 		}
 
 		await Promise.all( promises );
