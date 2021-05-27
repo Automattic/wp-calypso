@@ -60,6 +60,7 @@
 	{ "path": "packages/wpcom.js" },
 	{
 		"path": "apps/editing-toolkit",
+		"buildIds": [ "calypso_WPComPlugins_EditorToolKit" ],
 		"additionalEntryPoints": [
 			"apps/editing-toolkit/editing-toolkit-plugin/block-inserter-modifications/contextual-tips.js",
 			"apps/editing-toolkit/editing-toolkit-plugin/block-patterns/index.ts",

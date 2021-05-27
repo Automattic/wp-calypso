@@ -313,7 +313,7 @@ object SmartBuildLauncher : BuildType({
 		bashNodeScript {
 			name = "Launch relevant builds"
 			scriptContent = """
-				node ./packages/dependency-finder/dist/esm/index.js
+				node ./packages/dependency-finder/dist/esm/index.js --changedFiles %teamcity.build.changedFiles.file%
 			"""
 		}
 	}

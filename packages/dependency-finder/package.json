@@ -21,7 +21,8 @@
 		"jest-config": "^26.6.3",
 		"read-pkg": "^6.0.0",
 		"read-pkg-up": "^8.0.0",
-		"tslib": "^2.2.0"
+		"tslib": "^2.2.0",
+		"yargs": "^17.0.1"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json --clean && npx rimraf dist",

@@ -3,9 +3,22 @@
  */
 import path from 'path';
 import fs from 'fs';
+import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import childProcess from 'child_process';
 import { promisify } from 'util';
+import yargs from 'yargs';
+
+const args = yargs( process.argv.slice( 2 ) )
+	.usage( 'Usage: $0' )
+	.option( 'changedFiles', {
+		describe: 'A path to the list of VCS changed files',
+		type: 'string',
+	} )
+	.option( 'package', {
+		describe: 'The package to process from package-map.json',
+		type: 'string',
+	} ).argv;
 
 const exec = promisify( childProcess.exec );
 
@@ -22,9 +35,9 @@ const packageMapPath = path.join(
 type PackageMapEntry = {
 	path: string;
 	additionalEntryPoints: Array< string > | undefined;
+	buildIds: Array< string > | undefined;
 };
 type PackageMap = Array< PackageMapEntry >;
-const packageMap: PackageMap = JSON.parse( fs.readFileSync( packageMapPath, 'utf8' ) );
 
 function getMonorepoPackages() {
 	const packages = fs.readdirSync( 'packages', { withFileTypes: true } );
@@ -34,10 +47,13 @@ function getMonorepoPackages() {
 }
 const monorepoPackages = getMonorepoPackages();
 
-const findPackageDependencies = async ( {
-	path: pkgPath,
-	additionalEntryPoints,
-}: PackageMapEntry ) => {
+type Project = {
+	matchingFiles: Array< string >;
+	buildIds: Array< string > | undefined;
+};
+
+const findPackageDependencies = async ( entry: PackageMapEntry ): Promise< Project > => {
+	const { path: pkgPath, additionalEntryPoints } = entry;
 	const absolutePkgPath = path.resolve( pkgPath );
 
 	const { missing, packages, modules } = await findDependencies( {
@@ -68,15 +84,75 @@ const findPackageDependencies = async ( {
 	console.log( unknownFiles.length ? unknownFiles.map( ( m ) => '  ' + m ).join( '\n' ) : '  -' );
 	console.log();
 	console.log();
+	return {
+		...entry,
+		matchingFiles: modules,
+	};
 };
 
+/**
+ * Given a list of currently modified files, returns the CI jobs which need to be
+ * launched.
+ *
+ * TODO: improve algorithmic complexity. Currently O(modifiedFiles * projects * matchingFiles).
+ *
+ * @param projects The list of projects.
+ * @param modifiedFiles The list of currently modified files.
+ * @returns A Set of CI Job IDs to launch.
+ */
+// TODO: make sure project files are relative to repo root.
+function findMatchingBuilds( projects: Project[], modifiedFiles: VCSFileChange[] ) {
+	return modifiedFiles.reduce< Set< string > >( ( acc, modifiedFile ) => {
+		const matchingProject = projects.find( ( proj ) =>
+			proj.matchingFiles.some( ( file ) => file === modifiedFile.path )
+		);
+		if ( matchingProject?.buildIds ) {
+			matchingProject.buildIds.forEach( ( id ) => acc.add( id ) );
+		}
+		return acc;
+	}, new Set() );
+}
+
+// <relative file path>:<change type>:<revision>
+// see https://plugins.jetbrains.com/docs/teamcity/risk-tests-reordering-in-custom-test-runner.html
+type VCSFileChange = {
+	path: string;
+	changeType:
+		| 'CHANGED'
+		| 'ADDED'
+		| 'REMOVED'
+		| 'NOT_CHANGED'
+		| 'DIRECTORY_CHANGED'
+		| 'DIRECTORY_ADDED'
+		| 'DIRECTORY_REMOVED';
+	revision: string;
+};
+async function readTeamCityMatchedFiles( filePath: string ) {
+	const rawContents = await readFile( filePath, 'utf8' );
+	return rawContents.split( '\n' ).map( ( entry ) => {
+		const [ path, changeType, revision ] = entry.split( ':' );
+		return {
+			path,
+			changeType,
+			revision,
+		} as VCSFileChange;
+	} );
+}
+
 const main = async () => {
-	const packageToParse = process.argv.slice( 2 )[ 0 ];
+	const packageMap: PackageMap = JSON.parse( await readFile( packageMapPath, 'utf8' ) );
+	if ( args.changedFiles ) {
+		const changedFiles = await readTeamCityMatchedFiles( args.changedFiles );
+		console.log( changedFiles );
+		return;
+	}
+
 	// Allow parsing a single package.
-	if ( packageToParse ) {
-		const packageEntry = packageMap.find( ( { path } ) => path === packageToParse );
+	if ( args.package ) {
+		const packageEntry = packageMap.find( ( { path } ) => path === args.package );
 		if ( packageEntry ) {
-			findPackageDependencies( packageEntry );
+			const project = await findPackageDependencies( packageEntry );
+			findMatchingBuilds( [ project ], [] );
 		}
 	} else {
 		for ( const packageEntry of packageMap ) {
