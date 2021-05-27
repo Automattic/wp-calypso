@@ -279,7 +279,7 @@ fun jetpackBuildType(screenSize: String): BuildType {
 			notifications {
 				notifierSettings = slackNotifier {
 					connection = "PROJECT_EXT_11"
-					sendTo = "#e2e-jetpack-notiff"
+					sendTo = "#e2e-jetpack-notif"
 					messageFormat = verboseMessageFormat {
 						addBranch = true
 						addStatusText = true
