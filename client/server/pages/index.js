@@ -51,6 +51,7 @@ import { deserialize } from 'calypso/state/utils';
 import middlewareBuildTarget from '../middleware/build-target.js';
 import middlewareAssets from '../middleware/assets.js';
 import middlewareCache from '../middleware/cache.js';
+import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -563,6 +564,7 @@ export default function pages() {
 	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
+	app.use( middlewareUnsupportedBrowser() );
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function ( request, response, next ) {

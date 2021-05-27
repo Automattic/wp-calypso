@@ -27,8 +27,9 @@ export default () => ( req, res, next ) => {
 	if ( isDevelopment ) {
 		target = process.env.DEV_TARGET || 'evergreen';
 	} else if ( req.query.forceFallback ) {
-		// Did the user force fallback, via query parameter?
 		target = 'fallback';
+	} else if ( req.query.forceEvergreen ) {
+		target = 'evergreen';
 	} else {
 		target = isUAInBrowserslist( req.useragent.source, 'evergreen' ) ? 'evergreen' : 'fallback';
 	}
