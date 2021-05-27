@@ -16,7 +16,7 @@ import { fetchStripeConfiguration } from 'calypso/my-sites/checkout/composite-ch
 import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/composite-checkout';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getCartKey from 'calypso/my-sites/checkout/get-cart-key';
-import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import wp from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
@@ -55,7 +55,6 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 
 	const isLoggedOutCart = ! useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
-	const locale = useSelector( getCurrentUserLocale );
 
 	const cartKey = useMemo( () => getCartKey( { selectedSite: site, isLoggedOutCart } ), [
 		site,
@@ -96,7 +95,7 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 			<CalypsoShoppingCartProvider cartKey={ cartKey }>
 				<StripeHookProvider
 					fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
-					locale={ locale }
+					locale={ translate.locale }
 				>
 					<CompositeCheckout
 						redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
