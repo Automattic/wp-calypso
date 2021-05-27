@@ -1004,15 +1004,15 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		const testDomainRegistarDetails = dataHelper.getTestDomainRegistarDetails( emailAddress );
 
 		before( async function () {
-			await driverManager.ensureNotLoggedIn( driver );
+			await driverManager.ensureNotLoggedIn( this.driver );
 		} );
 
 		it( 'Can visit the start page', async function () {
-			await StartPage.Visit( driver, StartPage.getStartURL() );
+			await StartPage.Visit( this.driver, StartPage.getStartURL() );
 		} );
 
 		it( 'Can see the account page and enter account details', async function () {
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+			const createYourAccountPage = await CreateYourAccountPage.Expect( this.driver );
 			await createYourAccountPage.enterAccountDetailsAndSubmit(
 				emailAddress,
 				siteName,
@@ -1021,12 +1021,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the domains page, and can search for a blog name, can see and select a paid .live address in results ', async function () {
-			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			const findADomainComponent = await FindADomainComponent.Expect( this.driver );
 			await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
 			try {
 				await findADomainComponent.selectDomainAddress( expectedDomainName );
 			} catch ( err ) {
-				if ( await NewUserRegistrationUnavailableComponent.Expect( driver ) ) {
+				if ( await NewUserRegistrationUnavailableComponent.Expect( this.driver ) ) {
 					await SlackNotifier.warn( 'SKIPPING: Domain registration is currently unavailable. ' );
 					return this.skip();
 				}
@@ -1034,29 +1034,29 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		it( 'Can then see the plans page and select the premium plan ', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 			const displayed = await pickAPlanPage.displayed();
 			assert.strictEqual( displayed, true, 'The pick a plan page is not displayed' );
 			await pickAPlanPage.selectPremiumPlan();
 		} );
 
 		it( 'Can then see the sign up processing page which will finish automatically move along', async function () {
-			return await new SignUpStep( driver ).continueAlong( siteName, passwordForTestAccounts );
+			return await new SignUpStep( this.driver ).continueAlong( siteName, passwordForTestAccounts );
 		} );
 
 		it( 'Can see checkout page and enter registrar details', async function () {
-			const checkOutPage = await CheckOutPage.Expect( driver );
+			const checkOutPage = await CheckOutPage.Expect( this.driver );
 			await checkOutPage.enterRegistrarDetails( testDomainRegistarDetails );
 		} );
 
 		it( 'Can see the domain suggestions when moves back from the checkout page', async function () {
-			await driver.navigate().back();
-			const findADomainComponent = await FindADomainComponent.Expect( driver );
+			await this.driver.navigate().back();
+			const findADomainComponent = await FindADomainComponent.Expect( this.driver );
 			await findADomainComponent.selectFreeAddress();
 		} );
 
 		after( 'Can delete our newly created account', async function () {
-			await new DeleteAccountFlow( driver ).deleteAccount( siteName );
+			await new DeleteAccountFlow( this.driver ).deleteAccount( siteName );
 		} );
 	} );
 } );
