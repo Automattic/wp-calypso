@@ -205,7 +205,7 @@ function getNotes() {
 
 		store.dispatch( actions.ui.loadedNotes() );
 
-		const oldNotes = getAllNotes( store.getState() ).map( ( n ) => n.id );
+		const oldNotes = getAllNotes( store.getState() ).map( ( { id } ) => id );
 		const newNotes = data.notes.map( ( n ) => n.id );
 		const notesToRemove = oldNotes.filter( ( old ) => ! newNotes.includes( old ) );
 
@@ -215,7 +215,7 @@ function getNotes() {
 		// Store id/hash pairs for now until properly reduxified
 		// this is used as a network optimization to quickly determine
 		// changes without downloading all the data
-		this.noteList = data.notes.map( ( note ) => ( { id: note.id, note_hash: note.note_hash } ) );
+		this.noteList = data.notes.map( ( { id, note_hash } ) => ( { id, note_hash } ) );
 
 		this.updateLastSeenTime( Number( data.last_seen_time ) );
 		if ( parameters.number === settings.max_limit ) {

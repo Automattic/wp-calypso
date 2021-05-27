@@ -6,29 +6,8 @@ import getNotes from './get-notes';
 let prevAllNotes;
 let sortedNotes = [];
 
-const byTimestamp = ( a, b ) => {
-	const difference = Date.parse( a.timestamp ) - Date.parse( b.timestamp );
-	if ( difference < 0 ) {
-		return -1;
-	}
-
-	if ( difference > 0 ) {
-		return 1;
-	}
-
-	return 0;
-};
-const byId = ( a, b ) => {
-	if ( a.id < b.id ) {
-		return -1;
-	}
-
-	if ( a.id > b.id ) {
-		return 1;
-	}
-
-	return 0;
-};
+const byTimestamp = ( a, b ) => Date.parse( a.timestamp ) - Date.parse( b.timestamp );
+const byId = ( a, b ) => a.id - b.id;
 
 /**
  * Returns all available notification data
