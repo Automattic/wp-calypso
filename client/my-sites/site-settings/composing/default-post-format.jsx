@@ -24,7 +24,7 @@ const DefaultPostFormat = ( {
 	isSavingSettings,
 	translate,
 } ) => {
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const { data } = usePostFormatsQuery( siteId );
 
 	return (
