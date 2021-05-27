@@ -29,7 +29,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import { selectMediaItems } from 'calypso/state/media/actions';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { hasSiteFeature } from 'calypso/lib/site/utils';
 
 /**
  * Style dependencies
