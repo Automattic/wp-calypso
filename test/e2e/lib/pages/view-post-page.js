@@ -82,8 +82,8 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	}
 
 	async imageDisplayed( { imageName } ) {
-		const imageElement = await this.driver.findElement( By.css( `img[alt='${ imageName }']` ) );
-		return await driverHelper.isImageVisible( this.driver, imageElement );
+		const imageLocator = By.css( `img[alt='${ imageName }']` );
+		return await driverHelper.isImageVisible( this.driver, imageLocator );
 	}
 
 	async leaveAComment( comment ) {
