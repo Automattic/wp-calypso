@@ -207,7 +207,7 @@ class Media extends Component {
 
 	updateItem = ( itemId, detail ) => {
 		const { selectedItems } = this.state;
-		const index = findIndex( selectedItems, ( item ) => item.ID === itemId );
+		const index = selectedItems.findIndex( ( item ) => item.ID === itemId );
 
 		if ( index === -1 ) {
 			return;
