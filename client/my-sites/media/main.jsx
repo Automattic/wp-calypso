@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import { findIndex } from 'lodash';
 
 /**
  * Internal dependencies
