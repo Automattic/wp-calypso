@@ -249,36 +249,6 @@ export const errors = withSchemaValidation( errorsSchema, ( state = {}, action )
 	return state;
 } );
 
-/**
- * A missing list is one that's been requested, but we couldn't find (API response 404-ed).
- *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
- */
-export function missingLists( state = [], action ) {
-	switch ( action.type ) {
-		case READER_LISTS_RECEIVE:
-			// Remove any valid lists from missingLists
-			return filter( state, ( list ) => {
-				return ! find( action.lists, { owner: list.owner, slug: list.slug } );
-			} );
-		case READER_LIST_REQUEST_SUCCESS:
-			// Remove any valid lists from missingLists
-			return filter( state, ( list ) => {
-				return action.data.list.owner !== list.owner && action.data.list.slug !== list.slug;
-			} );
-		case READER_LIST_REQUEST_FAILURE:
-			// Add lists that have failed with a 403 or 404 to missingLists
-			if ( ! action.error || ! includes( [ 403, 404 ], action.error.statusCode ) ) {
-				return state;
-			}
-			return union( state, [ { owner: action.owner, slug: action.slug } ] );
-	}
-
-	return state;
-}
-
 export default combineReducers( {
 	items,
 	listItems,
@@ -289,5 +259,4 @@ export default combineReducers( {
 	isRequestingLists,
 	isUpdatingList,
 	errors,
-	missingLists,
 } );
