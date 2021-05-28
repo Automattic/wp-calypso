@@ -611,7 +611,7 @@ jobs:
       - image: circleci/golang:1.12-node
     working_directory: /home/circleci/wp-calypso
     environment:
-      VERSION: "desktop-v0.0.5"
+      VERSION: << pipeline.git.tag >>
     steps:
       - checkout
       - attach_workspace:
@@ -654,75 +654,75 @@ workflows:
       - translate:
           requires:
             - setup
-  # wp-desktop:
-  #   jobs:
-  #     - wp-desktop-assets:
-  #         filters:
-  #           branches:
-  #             only:
-  #             - trunk
-  #             - /release\/.*/
-  #             - /desktop\/.*/
-  #     - wp-desktop-mac:
-  #         requires:
-  #           - wp-desktop-assets
-  #         filters:
-  #           branches:
-  #             only:
-  #               - trunk
-  #               - /release\/.*/
-  #               - /desktop\/.*/
-  #     - wp-desktop-linux:
-  #         requires:
-  #           - wp-desktop-assets
-  #         filters:
-  #           branches:
-  #             only:
-  #               - trunk
-  #               - /release\/.*/
-  #               - /desktop\/.*/
-  #     - wp-desktop-windows:
-  #         requires:
-  #           - wp-desktop-assets
-  #         filters:
-  #           branches:
-  #             only:
-  #               - trunk
-  #               - /release\/.*/
-  #               - /desktop\/.*/
-  wp-desktop-release:
-    # when: << pipeline.git.tag >>
+  wp-desktop:
     jobs:
-      - wp-desktop-assets
-          # filters:
-          #   tags:
-          #     only: /v.*/
+      - wp-desktop-assets:
+          filters:
+            branches:
+              only:
+              - trunk
+              - /release\/.*/
+              - /desktop\/.*/
       - wp-desktop-mac:
           requires:
             - wp-desktop-assets
-          # filters:
-          #   tags:
-          #     only: /v.*/
+          filters:
+            branches:
+              only:
+                - trunk
+                - /release\/.*/
+                - /desktop\/.*/
       - wp-desktop-linux:
           requires:
             - wp-desktop-assets
-          # filters:
-          #   tags:
-          #     only: /v.*/
+          filters:
+            branches:
+              only:
+                - trunk
+                - /release\/.*/
+                - /desktop\/.*/
       - wp-desktop-windows:
           requires:
             - wp-desktop-assets
-          # filters:
-          #   tags:
-          #     only: /v.*/
+          filters:
+            branches:
+              only:
+                - trunk
+                - /release\/.*/
+                - /desktop\/.*/
+  wp-desktop-release:
+    when: << pipeline.git.tag >>
+    jobs:
+      - wp-desktop-assets:
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-mac:
+          requires:
+            - wp-desktop-assets
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-linux:
+          requires:
+            - wp-desktop-assets
+          filters:
+            tags:
+              only: /v.*/
+      - wp-desktop-windows:
+          requires:
+            - wp-desktop-assets
+          filters:
+            tags:
+              only: /v.*/
       - wp-desktop-publish:
           requires:
             - wp-desktop-mac
             - wp-desktop-linux
             - wp-desktop-windows
-          # filters:
-          #   tags:
-          #     only: /v.*/
+          filters:
+            tags:
+              only: /v.*/
 
   e2e-jetpack-be-scheduled:
     jobs:

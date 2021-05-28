@@ -50,8 +50,7 @@ echo "## Latest Changes"
 echo ""
 
 # Fill and sort changelog (final sort in commit-date order)
-# git_log=$(git log --oneline --pretty=format:"$git_log_format" $last_stable_tag...$current_tag -- "$CALYPSO_DIR/desktop/" "$CALYPSO_DIR/client/lib/desktop-listeners" "$CALYPSO_DIR/client/desktop")
-git_log=""
+git_log=$(git log --oneline --pretty=format:"$git_log_format" $last_stable_tag...$current_tag -- "$CALYPSO_DIR/desktop/" "$CALYPSO_DIR/client/lib/desktop-listeners" "$CALYPSO_DIR/client/desktop")
 
 if [ ! -z "$git_log" ]; then
   echo "$git_log" | while IFS=$'\r' read change; do
