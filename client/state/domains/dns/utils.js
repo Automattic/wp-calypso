@@ -21,7 +21,7 @@ function validateField( { name, value, type, domainName } ) {
 		case 'name':
 			return isValidName( value, type, domainName );
 		case 'target':
-			return isValidDomain( value );
+			return isValidDomain( value, type );
 		case 'data':
 			return isValidData( value, type );
 		case 'protocol':
@@ -39,10 +39,15 @@ function validateField( { name, value, type, domainName } ) {
 	}
 }
 
-function isValidDomain( name ) {
+function isValidDomain( name, type ) {
 	if ( name.length > 253 ) {
 		return false;
 	}
+
+	if ( type === 'SRV' && name === '.' ) {
+		return true;
+	}
+
 	return /^([a-z0-9-_]{1,63}\.)*[a-z0-9-]{1,63}\.[a-z]{2,63}$/i.test( name );
 }
 
