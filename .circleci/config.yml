@@ -359,18 +359,19 @@ jobs:
       - slack/status:
           webhook: << parameters.slack-webhook >>
 
-  # TODO: Make this local to the Win, Linux and Mac jobs
   wp-desktop-assets:
-    machine:
-      image: ubuntu-1604:202004-01
-    resource_class: medium
+    docker:
+      - image: circleci/node:12.16.2-browsers
     <<: *desktop_defaults
     environment:
-      NVM_DIR: '/opt/circleci/.nvm'
       VERSION: << pipeline.git.tag >>
       CONFIG_ENV: release
+    working_directory: ~/wp-calypso
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/wp-calypso
+      - run: *update-node
       - when:
           condition: << pipeline.git.tag >>
           steps:
@@ -379,7 +380,7 @@ jobs:
                 command: cd desktop/bin && node validate_tag.js $VERSION
       - run: *desktop-decrypt-assets
       - persist_to_workspace:
-          root: /home/circleci/wp-calypso
+          root: ~/wp-calypso
           paths: *desktop-cache-paths
       - run: *desktop-notify-github-failure
       - slack/status: *desktop-notify-slack-failure
@@ -607,7 +608,7 @@ jobs:
   # GitHub release and generate the release notes using the Git commits history
   wp-desktop-publish:
     docker:
-      - image: circleci/golang:1.12
+      - image: circleci/golang:1.12-node
     working_directory: /home/circleci/wp-calypso
     environment:
       VERSION: << pipeline.git.tag >>
@@ -619,8 +620,13 @@ jobs:
           name: Install Dependencies
           command: go get github.com/tcnksm/ghr
       - run:
+          name: Update wp-desktop repo README
+          command: |
+            node desktop/bin/github/update-desktop-repo-readme.js
+      - run:
           name: Publish Github Release
           command: |
+            VERSION="${VERSION#desktop-}"
             echo "Publishing draft release for wp-desktop $VERSION..."
             NAME="WP-Desktop ${VERSION#?}"
 
@@ -628,10 +634,10 @@ jobs:
             ./desktop/bin/make-changelog.sh > desktop/CHANGELOG.md
 
             ghr \
-              --token "${GH_TOKEN}" \
+              --token "${WP_DESKTOP_SECRET}" \
               --username "${CIRCLE_PROJECT_USERNAME}" \
-              --repository "${CIRCLE_PROJECT_REPONAME}" \
-              --commitish "${CIRCLE_SHA1}" \
+              --repository "wp-desktop" \
+              --commitish "trunk" \
               --name "${NAME}" \
               --body "$(cat desktop/CHANGELOG.md)" \
               --delete \
