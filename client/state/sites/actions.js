@@ -118,7 +118,7 @@ export function requestSites() {
  * @returns {Function}              Action thunk
  */
 export function requestSite( siteFragment ) {
-	function doRequest( forceWpcom = false ) {
+	function doRequest( forceWpcom ) {
 		const query = { apiVersion: '1.2' };
 		if ( forceWpcom ) {
 			query.force = 'wpcom';
@@ -135,13 +135,13 @@ export function requestSite( siteFragment ) {
 	return ( dispatch ) => {
 		dispatch( { type: SITE_REQUEST, siteId: siteFragment } );
 
-		const result = doRequest( siteFragment ).catch( ( error ) => {
+		const result = doRequest( false ).catch( ( error ) => {
 			// if there is Jetpack JSON API module error, retry with force: 'wpcom'
 			if (
 				error?.status === 403 &&
 				error?.message === 'API calls to this blog have been disabled.'
 			) {
-				return doRequest( siteFragment, true );
+				return doRequest( true );
 			}
 
 			return Promise.reject( error );
