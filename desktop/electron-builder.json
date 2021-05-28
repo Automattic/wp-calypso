@@ -6,6 +6,13 @@
 		"buildResources": "./resource/icons",
 		"output": "./release"
 	},
+	"publish": [
+		{
+			"provider": "github",
+			"owner": "Automattic",
+			"repo": "wp-desktop"
+		}
+	],
 	"files": [ "dist", "package.json", "config/*.json" ],
 	"mac": {
 		"category": "public.app-category.social-networking",
