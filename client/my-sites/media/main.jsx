@@ -204,6 +204,25 @@ class Media extends Component {
 		this.maybeRedirectToAll();
 	};
 
+	updateItem = ( itemId, detail ) => {
+		const { selectedItems } = this.state;
+		const index = selectedItems.findIndex( ( item ) => item.ID === itemId );
+
+		if ( index === -1 ) {
+			return;
+		}
+
+		selectedItems.splice( index, 1, {
+			...selectedItems[ index ],
+			...detail,
+		} );
+
+		this.setState( {
+			...this.state,
+			selectedItems,
+		} );
+	};
+
 	setDetailSelectedIndex = ( index ) => {
 		this.setState( { currentDetail: index } );
 	};
@@ -377,6 +396,7 @@ class Media extends Component {
 								onEditImageItem={ this.editImage }
 								onEditVideoItem={ this.editVideo }
 								onRestoreItem={ this.restoreOriginalMedia }
+								onUpdateItem={ this.updateItem }
 								onSelectedIndexChange={ this.setDetailSelectedIndex }
 							/>
 						) }
