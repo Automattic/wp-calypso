@@ -27,10 +27,11 @@ export class NavbarComponent extends BaseContainer {
 		super( page, selectors.navbar );
 	}
 
-	async __postInit(): Promise< void > {
+	async _postInit(): Promise< void > {
 		// Ensure that navigation is completed and the required
 		// elements are visible on page.
 		await this.page.waitForLoadState( 'domcontentloaded' );
+		await this.page.waitForSelector( selectors.newPostButton );
 	}
 
 	/**
@@ -39,11 +40,6 @@ export class NavbarComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickNewPost(): Promise< void > {
-		await Promise.all( [
-			this.page.waitForSelector( selectors.newPostButton ),
-			this.page.waitForNavigation(),
-		] );
-
 		await Promise.all( [
 			this.page.waitForLoadState( 'networkidle' ),
 			this.page.waitForNavigation(),
