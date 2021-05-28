@@ -42,7 +42,10 @@ function cyrb53( str: string, seed = 0 ) {
  * @param percentage 0-100
  * @returns Boolean of whether the user should have the feature enabled, i.e. true = rolled out, false = not rolled out.
  */
-export default function naiveClientSideRollout( featureId: string, percentage: number ): boolean {
+export default function badNaiveClientSideRollout(
+	featureId: string,
+	percentage: number
+): boolean {
 	const maybeUserId = user()?.get()?.ID;
 
 	// zero-indexed buckets: 0-99

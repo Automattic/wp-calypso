@@ -36,7 +36,7 @@ import {
 	redirectCloudCheckoutToWpAdmin,
 } from '@automattic/calypso-products';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
-import naiveClientSideRollout from 'calypso/lib/naive-client-side-rollout';
+import badNaiveClientSideRollout from 'calypso/lib/naive-client-side-rollout';
 
 type SaveUrlToCookie = ( url: string ) => void;
 type GetUrlFromCookie = () => string | undefined;
@@ -398,7 +398,7 @@ function getRedirectUrlForConciergeNudge( {
 		// being offered and sold, to be inline with HE availability.
 		// Change this percentage to change the amount of offers given out:
 		const percentConciergeOffers = 75;
-		if ( naiveClientSideRollout( 'conciergeUpsellDial', percentConciergeOffers ) ) {
+		if ( badNaiveClientSideRollout( 'conciergeUpsellDial', percentConciergeOffers ) ) {
 			return getQuickstartUrl( { pendingOrReceiptId, siteSlug, orderId } );
 		}
 	}

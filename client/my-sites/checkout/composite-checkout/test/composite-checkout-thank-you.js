@@ -37,7 +37,7 @@ jest.mock( '@automattic/calypso-config', () => {
 
 // Temporary A/B test to dial down the concierge upsell, check pau2Xa-1bk-p2.
 jest.mock( 'calypso/lib/naive-client-side-rollout', () => ( {
-	naiveClientSideRollout: jest.fn( () => true ),
+	badNaiveClientSideRollout: jest.fn( () => true ),
 } ) );
 
 const defaultArgs = {
