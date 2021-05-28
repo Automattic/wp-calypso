@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -20,9 +19,6 @@ import {
 } from 'calypso/state/analytics/actions';
 import { withEnhancers } from 'calypso/state/utils';
 
-const nativeLoginUrl = login( { twoFactorAuthType: 'link' } );
-const lostPasswordUrl = lostPassword();
-
 class EmailedLoginLinkExpired extends React.Component {
 	static propTypes = {
 		hideMagicLoginRequestForm: PropTypes.func.isRequired,
@@ -34,12 +30,8 @@ class EmailedLoginLinkExpired extends React.Component {
 		this.props.recordPageView( '/log-in/link/use', 'Login > Link > Expired' );
 	}
 
-	onClickTryAgainLink = ( event ) => {
-		event.preventDefault();
-
+	onClickTryAgainLink = () => {
 		this.props.hideMagicLoginRequestForm();
-
-		page( nativeLoginUrl );
 	};
 
 	render() {
@@ -56,13 +48,13 @@ class EmailedLoginLinkExpired extends React.Component {
 				<EmptyContent
 					action={ translate( 'Try again' ) }
 					actionCallback={ this.onClickTryAgainLink }
-					actionURL={ nativeLoginUrl }
+					actionURL={ login( { twoFactorAuthType: 'link' } ) }
 					className="magic-login__link-expired"
 					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					illustrationWidth={ 500 }
 					line={ translate( 'Maybe try resetting your password instead' ) }
 					secondaryAction={ translate( 'Reset my password' ) }
-					secondaryActionURL={ lostPasswordUrl }
+					secondaryActionURL={ lostPassword() }
 					title={ translate( 'Login link is expired or invalid' ) }
 				/>
 			</div>
