@@ -16,6 +16,7 @@ import PurchaseArea from '../purchase-area';
 const onNavigateToCheckoutMockFunction = jest.fn();
 const onNavigateToDomainsSelectionMockFunction = jest.fn();
 const onAddYoastPremiumToCart = jest.fn();
+const onRemoveEverythingFromCart = jest.fn();
 
 describe( '<PurchaseArea/> Plugin details next step tests', () => {
 	const wpcomDomain = { isWpcomStagingDomain: true };
@@ -33,6 +34,7 @@ describe( '<PurchaseArea/> Plugin details next step tests', () => {
 				onAddYoastPremiumToCart={ onAddYoastPremiumToCart }
 				onNavigateToCheckout={ onNavigateToCheckoutMockFunction }
 				onNavigateToDomainsSelection={ onNavigateToDomainsSelectionMockFunction }
+				onRemoveEverythingFromCart={ onRemoveEverythingFromCart }
 			/>
 		);
 		const yoastPremiumButton = await marketplacePluginDetails.findByText( 'Buy Yoast Premium' );
@@ -55,6 +57,7 @@ describe( '<PurchaseArea/> Plugin details next step tests', () => {
 				onAddYoastPremiumToCart={ onAddYoastPremiumToCart }
 				onNavigateToCheckout={ onNavigateToCheckoutMockFunction }
 				onNavigateToDomainsSelection={ onNavigateToDomainsSelectionMockFunction }
+				onRemoveEverythingFromCart={ onRemoveEverythingFromCart }
 			/>
 		);
 		const yoastPremiumButton = await marketplacePluginDetails.findByText( 'Buy Yoast Premium' );
@@ -72,5 +75,29 @@ describe( '<PurchaseArea/> Plugin details next step tests', () => {
 		expect( onAddYoastPremiumToCart ).not.toHaveBeenCalled();
 		expect( onNavigateToCheckoutMockFunction ).not.toHaveBeenCalled();
 		expect( onNavigateToDomainsSelectionMockFunction ).toHaveBeenCalled();
+	} );
+
+	test( 'Remove all other products from basket when adding a marketplace plugin', async () => {
+		const marketplacePluginDetails = render(
+			<PurchaseArea
+				siteDomains={ [ primaryWpcomDomain ] }
+				isProductListLoading={ false }
+				displayCost={ '$ 100' }
+				wporgPluginName={ 'Yoast SEO' }
+				onAddYoastPremiumToCart={ onAddYoastPremiumToCart }
+				onNavigateToCheckout={ onNavigateToCheckoutMockFunction }
+				onNavigateToDomainsSelection={ onNavigateToDomainsSelectionMockFunction }
+				onRemoveEverythingFromCart={ onRemoveEverythingFromCart }
+			/>
+		);
+		const yoastPremiumButton = await marketplacePluginDetails.findByText( 'Buy Yoast Premium' );
+		const yoastFreeButton = await marketplacePluginDetails.findByText( 'Add Yoast Free' );
+
+		await fireEvent.click( yoastPremiumButton );
+		expect( onRemoveEverythingFromCart ).toHaveBeenCalled();
+		await onRemoveEverythingFromCart.mockReset();
+
+		await fireEvent.click( yoastFreeButton );
+		expect( onRemoveEverythingFromCart ).toHaveBeenCalled();
 	} );
 } );
