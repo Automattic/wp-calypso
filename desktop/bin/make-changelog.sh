@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 
 CALYPSO_DIR=$(cd $(dirname $0)/../../ && pwd)
 
@@ -60,6 +60,5 @@ if [ ! -z "$git_log" ]; then
 else
   echo "No changes"
 fi
-
 
 printf "\n"
