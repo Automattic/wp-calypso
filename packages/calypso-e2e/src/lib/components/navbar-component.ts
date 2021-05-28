@@ -10,7 +10,6 @@ import { Page } from 'playwright';
 
 const selectors = {
 	navbar: '.masterbar',
-	publishButton: '.masterbar__publish',
 	newPostButton: '.masterbar__item-new',
 };
 /**
@@ -40,14 +39,15 @@ export class NavbarComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickNewPost(): Promise< void > {
-		// Series of promises that ensure editor page is loaded.
-		await this.page.waitForSelector( selectors.newPostButton );
-		await this.page.waitForSelector( selectors.publishButton );
-		await Promise.race( [
-			this.page.click( selectors.newPostButton ),
-			this.page.click( selectors.publishButton ),
-			this.page.click( 'text=Write' ),
+		await Promise.all( [
+			this.page.waitForSelector( selectors.newPostButton ),
+			this.page.waitForNavigation(),
 		] );
-		await this.page.waitForLoadState( 'networkidle' );
+
+		await Promise.all( [
+			this.page.waitForLoadState( 'networkidle' ),
+			this.page.waitForNavigation(),
+			this.page.click( selectors.newPostButton, { timeout: 120, clickCount: 10 } ),
+		] );
 	}
 }
