@@ -12,7 +12,7 @@ import '@wordpress/editor';
  * Internal dependencies
  */
 import { inIframe } from '../../../block-inserter-modifications/contextual-tips/utils';
-import { GUTENBOARDING_LAUNCH_FLOW, FOCUSED_LAUNCH_FLOW, SITE_LAUNCH_FLOW } from '../constants';
+import { GUTENBOARDING_LAUNCH_FLOW } from '../constants';
 import './styles.scss';
 
 let handled = false;
@@ -40,7 +40,14 @@ domReady( () => {
 			return;
 		}
 
-		const { launchUrl, launchFlow, isGutenboarding, anchorFmPodcastId } = siteLaunchOptions;
+		const { launchFlow, isGutenboarding, anchorFmPodcastId } = siteLaunchOptions;
+		// Enable anchor-flavoured features (the launch button works immediately).
+		const isAnchorFm = !! anchorFmPodcastId;
+
+		// Display the Launch button only for the AnchorFM flow
+		if ( launchFlow !== GUTENBOARDING_LAUNCH_FLOW || ! isAnchorFm ) {
+			return;
+		}
 
 		// Wrap 'Launch' button link to control launch flow.
 		const launchButton = document.createElement( 'button' );
@@ -55,8 +62,6 @@ domReady( () => {
 				is_in_iframe: inIframe(),
 			} );
 
-			// Enable anchor-flavoured features (the launch button works immediately).
-			const isAnchorFm = !! anchorFmPodcastId;
 			if ( isAnchorFm ) {
 				dispatch( 'automattic/launch' ).enableAnchorFm();
 			}
@@ -74,18 +79,6 @@ domReady( () => {
 					// Save post in the background while step-by-step flow opens
 					dispatch( 'automattic/launch' ).openSidebar();
 					delayedSavePost();
-					break;
-				case FOCUSED_LAUNCH_FLOW:
-					// Save post in the background while focused launch flow opens
-					dispatch( 'automattic/launch' ).openFocusedLaunch();
-					delayedSavePost();
-					break;
-				case SITE_LAUNCH_FLOW:
-					// Save post first before redirecting to launch url
-					( async () => {
-						await savePost();
-						window.top.location.href = launchUrl;
-					} )();
 					break;
 			}
 		} );
