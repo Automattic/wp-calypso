@@ -15,10 +15,10 @@ import HelpComponent from './main';
 import CoursesComponent from './help-courses';
 import ContactComponent from './help-contact';
 import { CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
-import userUtils from 'calypso/lib/user/utils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 export function loggedOut( context, next ) {
-	if ( userUtils.isLoggedIn() ) {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
 		return next();
 	}
 
