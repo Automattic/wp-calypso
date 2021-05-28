@@ -32,6 +32,7 @@ import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -47,7 +48,7 @@ class TranslatorLauncher extends React.Component {
 		config.isEnabled( 'i18n/translation-scanner' ) && new TranslationScanner();
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
-		translator.init( nextProps.isUserSettingsReady );
+		translator.init( nextProps.currentUser, nextProps.isUserSettingsReady );
 		trackTranslatorStatus( nextProps.isTranslatorEnabled );
 
 		if ( prevState.isEnabled !== translator.isEnabled() )
@@ -411,6 +412,7 @@ class TranslatorLauncher extends React.Component {
 
 export default connect(
 	( state ) => ( {
+		currentUser: getCurrentUser( state ),
 		isUserSettingsReady: !! getUserSettings( state ),
 		isTranslatorEnabled: getOriginalUserSetting( state, 'enable_translator' ),
 		isEmpathyModeEnabled:
