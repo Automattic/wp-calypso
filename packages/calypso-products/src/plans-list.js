@@ -364,7 +364,7 @@ const getPlanEcommerceDetails = () => ( {
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT,
+			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ADVANCED,
@@ -470,7 +470,7 @@ const getPlanPremiumDetails = () => ( {
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT,
+			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ESSENTIAL,
@@ -494,7 +494,7 @@ const getPlanPremiumDetails = () => ( {
 		FEATURE_13GB_STORAGE,
 	],
 	getSignupFeatures: () => [
-		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		FEATURE_ADVANCED_CUSTOMIZATION,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
@@ -553,7 +553,7 @@ const getPlanBusinessDetails = () => ( {
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT,
+			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ADVANCED,

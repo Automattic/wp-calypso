@@ -42,7 +42,7 @@ import {
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
 	FEATURE_BUSINESS_ONBOARDING,
-  FEATURE_CLOUDFLARE_ANALYTICS,
+	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
 	FEATURE_CRM_LEADS_AND_FUNNEL,
@@ -1338,13 +1338,14 @@ export const FEATURES_LIST = {
 	[ FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
 		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		getTitle: () => i18n.translate( 'Live chat support 24X5' ),
-		getDescription: () => {},
+		getDescription: () =>
+			i18n.translate( 'Live chat is available 24 hours a day from Monday through Friday.' ),
 	},
 
 	[ FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
 		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 		getTitle: () => i18n.translate( 'Live chat support 24X7' ),
-		getDescription: () => {},
+		getDescription: () => i18n.translate( 'Live chat is available 24/7.' ),
 	},
 };
 
