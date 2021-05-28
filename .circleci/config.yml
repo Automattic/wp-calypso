@@ -696,25 +696,25 @@ workflows:
       - wp-desktop-assets:
           filters:
             tags:
-              only: /v.*/
+              only: /desktop-v.*/
       - wp-desktop-mac:
           requires:
             - wp-desktop-assets
           filters:
             tags:
-              only: /v.*/
+              only: /desktop-v.*/
       - wp-desktop-linux:
           requires:
             - wp-desktop-assets
           filters:
             tags:
-              only: /v.*/
+              only: /desktop-v.*/
       - wp-desktop-windows:
           requires:
             - wp-desktop-assets
           filters:
             tags:
-              only: /v.*/
+              only: /desktop-v.*/
       - wp-desktop-publish:
           requires:
             - wp-desktop-mac
@@ -722,7 +722,7 @@ workflows:
             - wp-desktop-windows
           filters:
             tags:
-              only: /v.*/
+              only: /desktop-v.*/
 
   e2e-jetpack-be-scheduled:
     jobs:
