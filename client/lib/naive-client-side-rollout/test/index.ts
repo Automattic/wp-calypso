@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import user from 'calypso/lib/user';
-import badNaiveClientSideRollout from '../naive-client-side-rollout';
+import { badNaiveClientSideRollout } from '../index';
 
 jest.mock( 'calypso/lib/user' );
 const mockedUser = user as jest.MockedFunction< typeof user >;

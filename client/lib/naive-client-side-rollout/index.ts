@@ -44,7 +44,7 @@ function cyrb53( str: string, seed = 0 ) {
  * @param percentage 0-100
  * @returns Boolean of whether the user should have the feature enabled, i.e. true = rolled out, false = not rolled out.
  */
-export default function badNaiveClientSideRollout(
+export function badNaiveClientSideRollout(
 	featureId: string,
 	percentage: number
 ): boolean {
