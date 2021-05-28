@@ -87,6 +87,10 @@ export function domainManagementEditContactInfo( siteName, domainName, relativeT
 	return domainManagementEditBase( siteName, domainName, 'edit-contact-info', relativeTo );
 }
 
+export function domainManagementAllEditContactInfo() {
+	return domainManagementAllRoot() + '/edit-contact-info';
+}
+
 export function domainManagementManageConsent( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'manage-consent', relativeTo );
 }

@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import BulkEditContactInfo from './bulk-edit-contact-info';
 import ChangeSiteAddress from './change-site-address';
 import ContactsPrivacy from './contacts-privacy';
 import Dns from './dns';
