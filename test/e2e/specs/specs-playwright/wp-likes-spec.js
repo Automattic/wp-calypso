@@ -17,9 +17,8 @@ import {
  */
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const host = DataHelper.getJetpackHost();
+DataHelper.createSuiteTitle( 'Likes' );
 const viewportName = BrowserHelper.getViewportName();
-// const quote =
-// 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
