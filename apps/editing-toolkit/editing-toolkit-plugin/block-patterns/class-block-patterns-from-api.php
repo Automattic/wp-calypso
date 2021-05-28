@@ -244,31 +244,19 @@ class Block_Patterns_From_API {
 	}
 
 	/**
-	 * Unregister all core patterns, then reregister core patterns in core WordPress only,
-	 * that is those in wp-includes/block-patterns.php
+	 * Because we prevent core pattern registation in full-site-editing-plugin.php in `remove_theme_support_for_core_block_patterns()`
+	 * we have to reregister core WordPress patterns,
+	 * that is, those in wp-includes/block-patterns.php
 	 * Gutenberg adds new and overrides existing core patterns. We don't want these for now.
 	 */
 	private function reregister_core_patterns() {
-		if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
-			foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
-				// Gutenberg registers patterns with varying prefixes, but categorizes them using `core/*` in a blockTypes array.
-				// This will ensure we remove `query/*` blocks for example.
-				// TODO: We need to revisit our usage or $pattern['blockTypes']: they are currently an experimental feature and not guaranteed to reference `core/*` blocks.
-				$pattern_block_type_or_name =
-					isset( $pattern['blockTypes'] ) && ! empty( $pattern['blockTypes'][0] )
-					? $pattern['blockTypes'][0]
-					: $pattern['name'];
-				if ( 'core/' === substr( $pattern_block_type_or_name, 0, 5 ) ) {
-					unregister_block_pattern( $pattern['name'] );
-				}
-			}
-			if ( function_exists( '_register_core_block_patterns_and_categories' ) ) {
-				$did_switch_locale = switch_to_locale( $this->utils->get_block_patterns_locale() );
-				_register_core_block_patterns_and_categories();
-				// The site locale might be the same as the current locale so switching could have failed in such instances.
-				if ( false !== $did_switch_locale ) {
-					restore_previous_locale();
-				}
+		if ( function_exists( '_register_core_block_patterns_and_categories' ) ) {
+			$did_switch_locale = switch_to_locale( $this->utils->get_block_patterns_locale() );
+			add_theme_support( 'core-block-patterns' );
+			_register_core_block_patterns_and_categories();
+			// The site locale might be the same as the current locale so switching could have failed in such instances.
+			if ( false !== $did_switch_locale ) {
+				restore_previous_locale();
 			}
 		}
 	}
@@ -300,4 +288,3 @@ class Block_Patterns_From_API {
 		}
 	}
 }
-

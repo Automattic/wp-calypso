@@ -269,6 +269,20 @@ function load_block_patterns_from_api( $current_screen ) {
 add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
 
 /**
+ * Removes the core patterns that we can prevent Gutenberg patterns from loading.
+ *
+ * @return void
+ */
+function remove_theme_support_for_core_block_patterns() {
+	/*
+		Gutenberg performs a check of `get_theme_support( 'core-block-patterns' )`
+		before loading its own patterns, overriding core patterns, and loading remote patterns.
+	*/
+	remove_theme_support( 'core-block-patterns' );
+}
+add_action( 'after_setup_theme', __NAMESPACE__ . '\remove_theme_support_for_core_block_patterns' );
+
+/**
  * Load WPCOM Block Patterns Modifications.
  *
  * This is responsible for modifying how block patterns behave in the editor,
