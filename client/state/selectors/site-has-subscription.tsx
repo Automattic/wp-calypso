@@ -39,12 +39,15 @@ export default function siteHasSubscription(
 
 	let productsList: string[] = [];
 	if ( siteProducts ) {
-		productsList = siteProducts.map( ( { productSlug } ) => productSlug );
+		productsList = siteProducts
+			.filter( ( product ) => ! product.expired )
+			.map( ( { productSlug } ) => productSlug );
 	}
 	if ( sitePlan ) {
 		const sitePlanDetails = getPlan( sitePlan.product_slug );
 		productsList = [
 			...productsList,
+			...[ sitePlan.product_slug ],
 			...sitePlanDetails.getHiddenFeatures(),
 			...( sitePlanDetails.getInferiorHiddenFeatures?.() ?? [] ),
 		];
