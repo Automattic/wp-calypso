@@ -47,7 +47,7 @@ export class NavbarComponent extends BaseContainer {
 		await Promise.all( [
 			this.page.waitForLoadState( 'networkidle' ),
 			this.page.waitForNavigation(),
-			this.page.click( selectors.newPostButton, { timeout: 120, clickCount: 10 } ),
+			this.page.click( selectors.newPostButton, { timeout: 120000, clickCount: 10 } ),
 		] );
 	}
 }
