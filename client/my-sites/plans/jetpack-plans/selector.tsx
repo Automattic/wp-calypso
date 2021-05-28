@@ -127,9 +127,9 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		if ( purchase && isUpgradeableToYearly ) {
 			// Name of `calypso_product_checkout_click` is misleading, since it's only triggered
 			// for Jetpack products. Leaving it here to not break current analysis, but please
-			// use `calypso_jetpack_product_click` instead when using tracking tools.
+			// use `calypso_jetpack_pricing_page_product_click` instead when using tracking tools.
 			dispatch( recordTracksEvent( 'calypso_product_checkout_click', trackingProps ) );
-			dispatch( recordTracksEvent( 'calypso_jetpack_product_click', trackingProps ) );
+			dispatch( recordTracksEvent( 'calypso_jetpack_pricing_page_product_click', trackingProps ) );
 
 			const { productSlug: slug } = product;
 			const yearlySlug = getYearlySlugFromMonthly( slug );
@@ -148,9 +148,9 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 		// Name of `calypso_product_checkout_click` is misleading, since it's only triggered
 		// for Jetpack products. Leaving it here to not break current analysis, but please
-		// use `calypso_jetpack_product_click` instead when using tracking tools.
+		// use `calypso_jetpack_pricing_page_product_click` instead when using tracking tools.
 		dispatch( recordTracksEvent( 'calypso_product_checkout_click', trackingProps ) );
-		dispatch( recordTracksEvent( 'calypso_jetpack_product_click', trackingProps ) );
+		dispatch( recordTracksEvent( 'calypso_jetpack_pricing_page_product_click', trackingProps ) );
 		checkout( siteSlug, product.productSlug, urlQueryArgs );
 	};
 
