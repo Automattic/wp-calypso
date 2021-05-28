@@ -85,7 +85,7 @@ class EmailManagementHome extends React.Component {
 					<EmailProvidersComparison
 						domain={ selectedDomain }
 						isGSuiteSupported={
-							hasGSuiteSupportedDomain( [ selectedDomain ] ) && userCanPurchaseGSuite
+							userCanPurchaseGSuite && hasGSuiteSupportedDomain( [ selectedDomain ] )
 						}
 					/>
 				);
@@ -110,7 +110,7 @@ class EmailManagementHome extends React.Component {
 				<EmailProvidersComparison
 					domain={ firstDomainWithNoEmail }
 					isGSuiteSupported={
-						hasGSuiteSupportedDomain( [ firstDomainWithNoEmail ] ) && userCanPurchaseGSuite
+						userCanPurchaseGSuite && hasGSuiteSupportedDomain( [ firstDomainWithNoEmail ] )
 					}
 				/>
 			);
