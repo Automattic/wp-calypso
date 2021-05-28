@@ -9,9 +9,9 @@ import { BaseContainer } from '../base-container';
 import { Page } from 'playwright';
 
 const selectors = {
-	navBarSelector: '.masterbar',
-	newPostButtonSelector: '.masterbar__item-new',
-	newPostContentSelector: '.masterbar__item-content',
+	navbar: '.masterbar',
+	publishButton: '.masterbar__publish',
+	newPostButton: '.masterbar__item-new',
 };
 /**
  * Component representing the navbar/masterbar at top of WPCOM.
@@ -25,7 +25,18 @@ export class NavbarComponent extends BaseContainer {
 	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.navBarSelector );
+		super( page, selectors.navbar );
+	}
+
+	async __postInit(): Promise< void > {
+		// Ensure that navigation is completed and the required
+		// elements are visible on page.
+		await Promise.all( [
+			this.page.waitForLoadState( 'domcontentloaded' ),
+			this.page.waitForSelector( selectors.navbar ),
+			this.page.waitForSelector( selectors.publishButton ),
+			this.page.waitForSelector( selectors.newPostButton ),
+		] );
 	}
 
 	/**
@@ -34,22 +45,11 @@ export class NavbarComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickNewPost(): Promise< void > {
+		// Series of promises that ensure editor page is loaded.
 		await Promise.all( [
-			this.page.isVisible( selectors.navBarSelector ),
-			this.page.isVisible( selectors.newPostButtonSelector ),
-			this.page.waitForNavigation(),
-		] );
-
-		// Note the nested Promise calls.
-		// Originally there were issues on TeamCity CI where
-		// this would fail to locate the newPostButtonSelector.
-		// The newPostContentSelector is clicked for redundancy.
-		await Promise.all( [
-			Promise.race( [
-				this.page.click( selectors.newPostButtonSelector ),
-				this.page.click( selectors.newPostContentSelector ),
-			] ),
-			this.page.waitForNavigation(),
+			this.page.waitForLoadState( 'networkidle' ),
+			this.page.click( selectors.newPostButton ),
+			this.page.click( selectors.publishButton ),
 		] );
 	}
 }

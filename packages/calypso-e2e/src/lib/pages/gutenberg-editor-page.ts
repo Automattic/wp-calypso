@@ -9,21 +9,23 @@ import { ElementHandle, Frame, Page } from 'playwright';
 import { BaseContainer } from '../base-container';
 
 const selectors = {
-	editorFrameSelector: 'div.main.main-column.calypsoify.is-iframe > iframe',
+	// Editor selectors.
+	editorFrame: 'div.main.main-column.calypsoify.is-iframe > iframe',
+	editorTitle: '.editor-post-title__input',
+	editorBody: '.block-editor-block-list__layout is-root-container',
 
-	// Selectors within the editor.
-	titleSelector: '.editor-post-title__input',
-	appenderSelector: '.block-editor-default-block-appender',
-	paragraphSelector: 'p.block-editor-rich-text__editable:first-of-type',
+	// Within the editor body.
+	blockAppender: '.block-editor-default-block-appender',
+	paragraphBlocks: 'p.block-editor-rich-text__editable',
 
 	// Top bar selectors.
-	headerPublishButtonSelector: '.editor-post-publish-panel__toggle',
+	publishPanelToggle: '.editor-post-publish-panel__toggle',
 
-	// Publish pane selectors (including post-publish).
-	publishPaneSelector: '.editor-post-publish-panel',
-	publishPaneButtonSelector:
+	// Publish panel selectors (including post-publish).
+	publishPanel: '.editor-post-publish-panel',
+	publishButton:
 		'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button',
-	publishPaneViewPostSelector: 'text=View Post',
+	viewPostButton: 'text=View Post',
 };
 
 /**
@@ -40,7 +42,7 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @param {Page} page The page where actions take place.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.editorFrameSelector );
+		super( page, selectors.editorFrame );
 	}
 
 	/**
@@ -51,8 +53,9 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _postInit(): Promise< void > {
-		const handle = ( await this.page.$( selectors.editorFrameSelector ) ) as ElementHandle;
+		const handle = ( await this.page.$( selectors.editorFrame ) ) as ElementHandle;
 		this.frame = ( await handle.contentFrame() ) as Frame;
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 
 	/**
@@ -62,19 +65,72 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async enterTitle( title: string ): Promise< void > {
-		await this.frame.click( selectors.titleSelector );
-		await this.frame.fill( selectors.titleSelector, title );
+		await this.frame.click( selectors.editorTitle );
+		await this.frame.fill( selectors.editorTitle, title );
 	}
 
 	/**
-	 * Enters text into the body.
+	 * Returns the text as entered in the title block, or an empty string if
+	 * not found.
+	 *
+	 * @returns {Promise<string>} Text value of the title block.
+	 */
+	async getTitle(): Promise< string > {
+		await this.frame.waitForSelector( selectors.editorTitle );
+		return ( await this.frame.$eval( selectors.editorTitle, ( el ) => el.textContent ) ) || '';
+	}
+
+	/**
+	 * Enters text into the body, splitting newlines into new pragraph blocks as necessary.
 	 *
 	 * @param {string} text Text to be entered into the body.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async enterText( text: string ): Promise< void > {
-		await this.frame.click( selectors.appenderSelector );
-		await this.frame.fill( selectors.paragraphSelector, text );
+		const lines = text.split( '\n' );
+		await this.frame.click( selectors.blockAppender );
+
+		// Playwright does not break up newlines in Gutenberg. This causes issues when we expect
+		// text to be broken into new lines/blocks. This presents an unexpected issue when entering
+		// text such as 'First sentence\nSecond sentence', as it is all put in one line.
+		// frame.type() will respect newlines like a human would, but it is slow.
+		// This approach will run faster than using frame.type() while respecting the newline chars.
+		await Promise.all(
+			lines.map( async ( line, index ) => {
+				await this.frame.fill( `${ selectors.paragraphBlocks }:nth-of-type(${ index + 1 })`, line );
+				await this.page.keyboard.press( 'Enter' );
+			} )
+		);
+	}
+
+	/**
+	 * Returns the text as entered in the paragraph blocks.
+	 *
+	 * @returns {string} Visible text in the paragraph blocks, concatenated into one string.
+	 */
+	async getText(): Promise< string > {
+		// Each blocks have the same overall selector. This will obtain a list of
+		// blocks that are paragraph type and return an array of ElementHandles.
+		const paragraphBlocks = await this.frame.$$( selectors.paragraphBlocks );
+
+		// Extract the textContent of each paragraph block into a list.
+		// Note the special condition for an empty paragraph block, noted below.
+		const lines = await Promise.all(
+			paragraphBlocks.map( async function ( block ) {
+				// This U+FEFF character is present in the textContent of an otherwise
+				// empty paragraph block and will evaluate to truthy.
+				const text = String( await block.textContent() ).replace( /\ufeff/g, '' );
+
+				if ( ! text ) {
+					return;
+				}
+
+				return text;
+			} )
+		);
+
+		// Strip out falsey values.
+		return lines.filter( Boolean ).join( '\n' );
 	}
 
 	/**
@@ -84,10 +140,10 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @returns {Promise<void} No return value.
 	 */
 	async publish( { visit = false }: { visit?: boolean } ): Promise< void > {
-		await this.frame.click( selectors.headerPublishButtonSelector );
-		await this.frame.click( selectors.publishPaneButtonSelector );
-
-		await this.frame.waitForSelector( selectors.publishPaneViewPostSelector );
+		await this.frame.click( selectors.publishPanelToggle );
+		await this.frame.waitForSelector( selectors.publishPanel );
+		await this.frame.click( selectors.publishButton );
+		await this.frame.waitForSelector( selectors.viewPostButton );
 
 		if ( visit ) {
 			await this._visitPublishedEntryFromPublishPane();
@@ -101,7 +157,7 @@ export class GutenbergEditorPage extends BaseContainer {
 	 */
 	async _visitPublishedEntryFromPublishPane(): Promise< void > {
 		await Promise.all( [
-			this.frame.click( selectors.publishPaneViewPostSelector ),
+			this.frame.click( selectors.viewPostButton ),
 			this.page.waitForNavigation(),
 			this.page.waitForLoadState( 'networkidle' ),
 		] );
