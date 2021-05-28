@@ -58,7 +58,6 @@ async function request( method = 'GET', postData ) {
 async function updateWpDesktopREADME() {
 	// Get blob sha for resource
 	const { sha } = JSON.parse( await request( 'GET' ) );
-	console.log( 'Got sha: ', sha );
 
 	// Make changelog
 	const { stdout: changelog } = await exec(
