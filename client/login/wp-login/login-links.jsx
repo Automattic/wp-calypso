@@ -257,7 +257,7 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
-		let lostPasswordUrl = lostPassword( this.props.locale );
+		let lostPasswordUrl = lostPassword( { locale: this.props.locale } );
 
 		// If we got here coming from Jetpack Cloud login page, we want to go back
 		// to it after we finish the process

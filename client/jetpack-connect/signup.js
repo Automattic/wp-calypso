@@ -383,7 +383,7 @@ export class JetpackSignup extends Component {
 					</LoggedOutFormLinkItem>
 				);
 				footerLinks.push(
-					<LoggedOutFormLinkItem key="lostpassword" href={ lostPassword( locale ) }>
+					<LoggedOutFormLinkItem key="lostpassword" href={ lostPassword( { locale } ) }>
 						{ translate( 'Lost your password?' ) }
 					</LoggedOutFormLinkItem>
 				);
