@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import QueryReaderList from 'calypso/components/data/query-reader-list';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -40,6 +41,7 @@ class ListMissing extends React.Component {
 
 		return (
 			<div>
+				<DocumentHead title={ this.props.translate( 'List not found' ) } />
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<EmptyContent
 					title={ this.props.translate( 'List not found' ) }
