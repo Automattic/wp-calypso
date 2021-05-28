@@ -37,17 +37,17 @@ const naiveClientSideRolloutWithMockedRandom = ( percent, randomNumber ) => {
 	return naiveClientSideRollout( 'feature-id', percent );
 };
 
-it( 'should match percentages for userIds', () => {
+it( 'should roughly match percentages for userIds', () => {
 	let returns = [];
 
 	returns = userIds.map( ( userId ) => naiveClientSideRolloutWithMockedUserId( 21, userId ) );
-	expect( returns.filter( ( x ) => x === true ) ).toHaveLength( numUserIds * 0.21 );
+	expect( returns.filter( ( x ) => x === true ).length / numUserIds ).toBeCloseTo( 0.21 );
 
 	returns = userIds.map( ( userId ) => naiveClientSideRolloutWithMockedUserId( 50, userId ) );
-	expect( returns.filter( ( x ) => x === true ) ).toHaveLength( numUserIds * 0.5 );
+	expect( returns.filter( ( x ) => x === true ).length / numUserIds ).toBeCloseTo( 0.5 );
 
 	returns = userIds.map( ( userId ) => naiveClientSideRolloutWithMockedUserId( 68, userId ) );
-	expect( returns.filter( ( x ) => x === true ) ).toHaveLength( Math.floor( numUserIds * 0.68 ) ); // Floor is needed because of floats...
+	expect( returns.filter( ( x ) => x === true ).length / numUserIds ).toBeCloseTo( 0.68 );
 } );
 
 it( 'should continue to give same experience for already rolled out users on increased roll out for logged-in users', () => {
