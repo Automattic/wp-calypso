@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import config from 'config';
+import assert from 'assert';
 import {
-	BrowserHelper,
 	DataHelper,
 	LoginFlow,
 	NewPostFlow,
@@ -14,15 +13,10 @@ import {
 /**
  * Constants
  */
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const host = DataHelper.getJetpackHost();
-const viewportName = BrowserHelper.getViewportName();
 const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
-describe( `[${ host }] Likes: (${ viewportName }) @parallel`, function () {
-	this.timeout( mochaTimeOut );
-
+describe( DataHelper.createSuiteTitle( 'Like' ), function () {
 	describe( 'New post', function () {
 		let gutenbergEditorPage;
 		let likesComponent;

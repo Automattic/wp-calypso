@@ -74,3 +74,20 @@ export function randomPhrase(): string {
 	const generated: Array< string > = phrase.default32BitFactory().randomPhrase();
 	return toTitleCase( generated );
 }
+
+/**
+ * Generates a structured test suite name from environmental and user-provided parameters.
+ *
+ * @param {string} title Title of the test.
+ * @returns {string} Test suite name.
+ */
+export function createSuiteTitle( title: string ): string {
+	const parts = [
+		`[${ getJetpackHost() }]`,
+		`${ title.toProperCase() }:`,
+		`(${ getViewportName() })`,
+		'@parallel',
+	];
+
+	return parts.join( ' ' );
+}
