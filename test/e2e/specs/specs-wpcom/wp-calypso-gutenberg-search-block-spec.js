@@ -27,6 +27,7 @@ const gutenbergUser =
 describe( `[${ host }] Calypso Gutenberg Editor: Search Block (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 	let driver;
+	let searchBlock;
 
 	before( 'Start browser', async function () {
 		this.timeout( startBrowserTimeoutMS );
@@ -42,22 +43,16 @@ describe( `[${ host }] Calypso Gutenberg Editor: Search Block (${ screenSize })`
 		it( 'Can Insert the Search block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Search' );
-			const searchBlock = await SearchBlockComponent.Expect( driver );
+			searchBlock = await SearchBlockComponent.Expect( driver );
 			return await searchBlock.searchBlockVisible();
 		} );
 
 		it( 'Can see search block elements', async function () {
-			const textLocator = By.css( '.wp-block-search__label' );
-			await driverHelper.waitUntilElementLocatedAndVisible( driver, textLocator );
-			await driverHelper.waitUntilElementLocatedAndVisible(
-				driver,
-				By.css( '.wp-block-search__input' )
-			);
-
-			return driverHelper.waitUntilElementLocatedAndVisible(
-				driver,
-				By.css( '.wp-block-search__button' )
-			);
+			searchBlock = await SearchBlockComponent.Expect( driver );
+			await searchBlock.searchLabelVisible();
+			await searchBlock.searchInputVisible();
+			await searchBlock.searchInputSendKeys( 'Type Here' );
+			return searchBlock.searchButtonVisible();
 		} );
 
 		it( 'Can publish and view content', async function () {
@@ -67,14 +62,39 @@ describe( `[${ host }] Calypso Gutenberg Editor: Search Block (${ screenSize })`
 		} );
 
 		it( 'Can see the Search block in our published post', async function () {
-			return await driverHelper.waitUntilElementLocatedAndVisible(
-				driver,
-				By.css( '.wp-block-search' )
-			);
+			searchBlock = await SearchBlockComponent.Expect( driver );
+			const placeholderValue = driver
+				.findElement( SearchBlockComponent.getsearchInputElement )
+				.getAttribute( 'placeholder' );
+			placeholderValue.then( function ( s ) {
+				assert.strictEqual( s, 'Type Here' );
+			} );
+			return await searchBlock.searchBlockVisible();
+		} );
+
+		it( 'Can Search non-existent content', async function () {
+			searchBlock = await SearchBlockComponent.Expect( driver );
+			await searchBlock.searchInputSendKeys( '123456' );
+
+			await searchBlock.searchButtonClick();
+
+			await searchBlock.searchResultsPageTitleVisible();
+			const pageTitle = SearchBlockComponent.getsearchResultsPageTitle;
+			const textValue = driver.findElement( pageTitle ).getText();
+			textValue.then( function ( s ) {
+				assert.strictEqual( s, 'Nothing Found' );
+			} );
 		} );
 	} );
 
 	describe( 'Verify Search block Menubar and Settings Side bar: @parallel', function () {
+		async function selectSearchBlockWidth( width ) {
+			const percentageWidthSetting = By.css( 'div[aria-label="Percentage Width"]' );
+			const selectWidth = await driver.findElement( percentageWidthSetting );
+			const select = await selectWidth.findElement( By.xpath( `//button[text()='${ width }']` ) );
+			await select.click();
+		}
+
 		it( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
@@ -83,77 +103,47 @@ describe( `[${ host }] Calypso Gutenberg Editor: Search Block (${ screenSize })`
 		it( 'Can Insert the Search block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Search' );
-			return await driverHelper.waitUntilElementLocatedAndVisible(
-				driver,
-				By.css( '.wp-block-search' )
-			);
+			searchBlock = await SearchBlockComponent.Expect( driver );
+			return await searchBlock.searchBlockVisible();
 		} );
 
-		it( 'Can Toggle Search Block', async function () {
-			const textLocator = By.css( '.wp-block-search__input' );
-			await driverHelper.waitUntilElementLocatedAndVisible( driver, textLocator );
-			await driver.findElement( textLocator ).click();
-			const labelToggleButton = By.css( 'button[aria-label="Toggle search label"]' );
-
-			await driverHelper.waitUntilElementLocatedAndVisible( driver, labelToggleButton );
-			await driver.findElement( labelToggleButton ).click();
-
-			return driverHelper.waitUntilElementNotLocated( driver, By.css( '.wp-block-search__label' ) );
+		it( 'Can Toggle Search Block Label', async function () {
+			searchBlock = await SearchBlockComponent.Expect( driver );
+			await searchBlock.searchInputClick();
+			await searchBlock.searchLabelToggleButtonVisible();
+			await searchBlock.searchLabelToggleButtonClick();
+			return await driverHelper.waitUntilElementNotLocated(
+				driver,
+				SearchBlockComponent.getsearchLabelElement
+			);
 		} );
 
 		it( 'Can change search button to icon', async function () {
-			const textLocator = By.css( '.wp-block-search__input' );
-			await driverHelper.waitUntilElementLocatedAndVisible( driver, textLocator );
-			await driver.findElement( textLocator ).click();
-			const labelToggleButton = By.css( 'button[aria-label="Use button with icon"]' );
-
-			await driverHelper.waitUntilElementLocatedAndVisible( driver, labelToggleButton );
-			await driver.findElement( labelToggleButton ).click();
-
-			return driverHelper.waitUntilElementLocatedAndVisible(
-				driver,
-				By.css( '.wp-block-search__button.has-icon' )
-			);
+			searchBlock = await SearchBlockComponent.Expect( driver );
+			await searchBlock.searchInputClick();
+			await searchBlock.searchToggleButtonIconVisible();
+			await searchBlock.searchToggleButtonIconClick();
+			return await searchBlock.searchHasIconButtonVisible();
 		} );
 
 		it( 'Can remove search button', async function () {
-			const textLocator = By.css( 'button[aria-label="Change button position"]' );
-			await driverHelper.waitUntilElementLocatedAndVisible( driver, textLocator );
-			await driver.findElement( textLocator ).click();
-			await driverHelper.waitUntilElementLocatedAndVisible(
+			searchBlock = await SearchBlockComponent.Expect( driver );
+			await searchBlock.changeSearchButtonPositionClick();
+			await searchBlock.changeSearchButtonPositionMenuVisible();
+			await searchBlock.changeSearchButtonPositionMenuNoButtonClick();
+			return await driverHelper.waitUntilElementNotLocated(
 				driver,
-				By.css( '.wp-block-search__button-position-menu' )
-			);
-			const buttonEl = await driver.findElement( By.xpath( `//span[text()='No Button']` ) );
-			await buttonEl.click();
-
-			return driverHelper.waitUntilElementNotLocated(
-				driver,
-				By.css( '.wp-block-search__button' )
+				SearchBlockComponent.getsearchButtonElement
 			);
 		} );
 
 		it( 'Can Search block settings', async function () {
-			const textLocator = By.css( '.wp-block-search__input' );
-			await driverHelper.waitUntilElementLocatedAndVisible( driver, textLocator );
-			await driver.findElement( textLocator ).click();
-
-			const settingsButton = By.css( 'button[aria-label="Settings"]' );
-			await driverHelper.waitUntilElementLocatedAndVisible( driver, settingsButton );
-			await driver.findElement( settingsButton ).click();
-
-			const percentageWidth = By.css( 'div[aria-label="Percentage Width"]' );
-
-			const selectFirst = await driver.findElement( percentageWidth );
-
-			const primarySelect = await selectFirst.findElement( By.xpath( `//button[text()='25']` ) );
-
-			await primarySelect.click();
-
-			return await driverHelper.waitUntilElementLocatedAndVisible(
-				driver,
-				By.css( '.wp-block-search__inside-wrapper' )
-			);
+			searchBlock = await SearchBlockComponent.Expect( driver );
+			await searchBlock.searchInputClick();
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.openSidebar();
+			selectSearchBlockWidth( 25 );
+			return await searchBlock.searchBlockInsideWrapperVisible();
 		} );
 
 		it( 'Can publish and view content', async function () {
@@ -163,16 +153,20 @@ describe( `[${ host }] Calypso Gutenberg Editor: Search Block (${ screenSize })`
 		} );
 
 		it( 'Can see the 25% Search block in published post without label and button', async function () {
-			driverHelper.waitUntilElementNotLocated( driver, By.css( '.wp-block-search__label' ) );
-			driverHelper.waitUntilElementNotLocated( driver, By.css( '.wp-block-search__button' ) );
+			searchBlock = await SearchBlockComponent.Expect( driver );
+			await driverHelper.waitUntilElementNotLocated(
+				driver,
+				SearchBlockComponent.getsearchLabelElement
+			);
+			await driverHelper.waitUntilElementNotLocated(
+				driver,
+				SearchBlockComponent.getsearchButtonElement
+			);
 			const width = await driver
-				.findElement( By.css( '.wp-block-search__inside-wrapper' ) )
+				.findElement( SearchBlockComponent.getSearchBlockInsideWrapper )
 				.getAttribute( 'style' );
 			assert.deepStrictEqual( width, 'width: 25%;' );
-			return await driverHelper.waitUntilElementLocatedAndVisible(
-				driver,
-				By.css( '.wp-block-search' )
-			);
+			return await searchBlock.searchBlockVisible();
 		} );
 	} );
 } );
