@@ -282,8 +282,14 @@ export function redirectToSupportSession( context ) {
 }
 
 export function jetpackCheckoutThankYou( context, next ) {
+	const isUserlessCheckoutFlow = context.path.includes( '/checkout/jetpack' );
+
 	context.primary = (
-		<JetpackCheckoutThankYou site={ context.params.site } productSlug={ context.params.product } />
+		<JetpackCheckoutThankYou
+			site={ context.params.site }
+			productSlug={ context.params.product }
+			isUserlessCheckoutFlow={ isUserlessCheckoutFlow }
+		/>
 	);
 
 	next();
