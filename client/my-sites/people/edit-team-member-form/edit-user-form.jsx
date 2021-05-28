@@ -269,9 +269,7 @@ class EditUserForm extends React.Component {
 				{ hasWPCOMAccountLinked && (
 					<p className="edit-team-member-form__explanation">
 						{ translate(
-							'This user has a WordPress.com account, ' +
-								'they can change their First Name, Last Name, Display Name that ' +
-								'is also shown in your site through their WordPress.com profile settings.'
+							'This user has a WordPress.com account, only they are allowed to update their personal information through their WordPress.com profile settings.'
 						) }
 					</p>
 				) }
