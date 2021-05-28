@@ -23,7 +23,9 @@ import './style.scss';
 const DomainManagementHeader = ( props ) => {
 	const { selectedDomainName, isManagingAllDomains, onClick, backHref, children } = props;
 	const translate = useTranslate();
-	let formattedHeaderText = selectedDomainName;
+	let formattedHeaderText = selectedDomainName?.domain
+		? selectedDomainName.domain
+		: selectedDomainName;
 	if ( ! selectedDomainName ) {
 		formattedHeaderText = isManagingAllDomains
 			? translate( 'All Domains' )
