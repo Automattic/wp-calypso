@@ -36,7 +36,7 @@ import {
 	redirectCloudCheckoutToWpAdmin,
 } from '@automattic/calypso-products';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
-import badNaiveClientSideRollout from 'calypso/lib/naive-client-side-rollout';
+import badNaiveClientSideRollout from 'calypso/lib/naive-client-side-rollout/naive-client-side-rollout';
 
 type SaveUrlToCookie = ( url: string ) => void;
 type GetUrlFromCookie = () => string | undefined;

@@ -32,8 +32,10 @@ function cyrb53( str: string, seed = 0 ) {
 /**
  * HIGHLY LIMITED! No waranty provided.
  *
+ * It is bad because it doesn't work well for any conditions involving logged out users.
+ * This can be fixed by storing the logged-out user assignment in local storage, which would make it not bad.
+ *
  * Naively ship a feature to a percentage of our users.
- * - Very basic, this exists to replace the a calypso-abtest use-case.
  * - Works best for logged-in users.
  * - Uses randomisation for logged out users.
  * - Won't work across the log-in boundary.
