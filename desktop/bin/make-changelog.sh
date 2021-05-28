@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 CALYPSO_DIR=$(cd $(dirname $0)/../../ && pwd)
 
@@ -12,7 +12,7 @@ function get_desktop_tags() {
       continue;
     fi
 
-    if [[ $tag == v* ]]; then
+    if [[ $tag == desktop-v* ]]; then
       if [ $x -gt 0 ]; then
         desktop_tags="$desktop_tags"$'\n'"$tag"
       else
@@ -30,7 +30,7 @@ tags=$(get_desktop_tags | tr - \~ | sort -V -r | tr \~ - | awk '{if(NR>1)print}'
 
 # get tag for previous stable release from the sorted list
 # (first match without `-`, e.g. v1.2.3, not v1.2.3-alpha1)
-last_stable_tag=$(for tag in $tags; do if [[ ! "$tag" == *"-"* ]]; then
+last_stable_tag=$(for tag in $tags; do if [[ ! "$tag" == *"alpha"* && ! "$tag" == *"beta"* ]]; then
   echo "$tag"
   break
 fi; done)
@@ -46,15 +46,20 @@ fi
 # be included if desired.
 git_log_format="%s"
 
-echo "## What's Changed"
+echo "## Latest Changes"
 echo ""
 
 # Fill and sort changelog (final sort in commit-date order)
-git_log=$(git log --oneline --pretty=format:"$git_log_format" $last_stable_tag...$current_tag -- "$CALYPSO_DIR/desktop/" "$CALYPSO_DIR/client/lib/desktop" "$CALYPSO_DIR/client/desktop")
+git_log=$(git log --oneline --pretty=format:"$git_log_format" $last_stable_tag...$current_tag -- "$CALYPSO_DIR/desktop/" "$CALYPSO_DIR/client/lib/desktop-listeners" "$CALYPSO_DIR/client/desktop")
 
-echo "$git_log" | while IFS=$'\r' read change; do
-  # Don't include application version bump commits
-  awk '$0 !~ /([0-9])+\.([0-9])+\.([0-9])+/ {print "* " $0}' <<< $change
-done
+if [ ! -z "$git_log" ]; then
+  echo "$git_log" | while IFS=$'\r' read change; do
+    # Don't include application version bump commits
+    awk '$0 !~ /([0-9])+\.([0-9])+\.([0-9])+/ {print "* " $0}' <<< $change
+  done
+else
+  echo "No changes"
+fi
+
 
 printf "\n"
