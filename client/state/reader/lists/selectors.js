@@ -185,7 +185,5 @@ export function isMissingByOwnerAndSlug( state, owner, slug ) {
 	const preparedOwner = owner.toLowerCase();
 	const preparedSlug = slug.toLowerCase();
 
-	return !! find( state.reader.lists.missingLists, ( list ) => {
-		return list.owner === preparedOwner && list.slug === preparedSlug;
-	} );
+	return ! state.reader?.lists?.isRequestingLists && ! getListByOwnerAndSlug( state, owner, slug );
 }
