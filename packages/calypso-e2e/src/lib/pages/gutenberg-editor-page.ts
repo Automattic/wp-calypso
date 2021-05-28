@@ -12,7 +12,7 @@ const selectors = {
 	// Editor selectors.
 	editorFrame: 'div.main.main-column.calypsoify.is-iframe > iframe',
 	editorTitle: '.editor-post-title__input',
-	editorBody: '.block-editor-block-list__layout is-root-container',
+	editorBody: '.edit-post-visual-editor',
 
 	// Within the editor body.
 	blockAppender: '.block-editor-default-block-appender',
@@ -56,7 +56,7 @@ export class GutenbergEditorPage extends BaseContainer {
 		const handle = ( await this.page.$( selectors.editorFrame ) ) as ElementHandle;
 		this.frame = ( await handle.contentFrame() ) as Frame;
 		await this.page.waitForLoadState( 'networkidle' );
-		await this.page.waitForSelector( selectors.editorBody );
+		await this.frame.waitForSelector( selectors.editorBody );
 	}
 
 	/**
