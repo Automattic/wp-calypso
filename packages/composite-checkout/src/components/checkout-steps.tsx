@@ -228,7 +228,7 @@ export function Checkout( {
 
 	const classNames = joinClasses( [
 		'composite-checkout',
-		'fs-exclude',
+		'fs-exclude', // this class is used by FullStory to exclude recording session activity
 		...( className ? [ className ] : [] ),
 		...( isRTL() ? [ 'rtl' ] : [] ),
 	] );
