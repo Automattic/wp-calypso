@@ -27,12 +27,13 @@ const badNaiveClientSideRolloutWithMockedUserId = ( percent, userId ) => {
 	return badNaiveClientSideRollout( 'feature-id', percent );
 };
 
-const numRandomNums = 1000;
-const randomNums = range( 0, numRandomNums ).map( ( x ) => x / numRandomNums );
+const numMockRandomNums = 1000;
+const mockRandomNums = range( 0, numMockRandomNums ).map( ( x ) => x / numMockRandomNums );
 afterEach( () => {
 	jest.spyOn( global.Math, 'random' ).mockRestore();
 } );
 const badNaiveClientSideRolloutWithMockedRandom = ( percent, randomNumber ) => {
+	setUserId( null );
 	jest.spyOn( global.Math, 'random' ).mockReturnValueOnce( randomNumber );
 	return badNaiveClientSideRollout( 'feature-id', percent );
 };
@@ -67,29 +68,29 @@ it( 'should continue to give same experience for already rolled out users on inc
 	).toEqual( returns1.filter( ( isRollout ) => isRollout === true ) );
 } );
 
-it( 'should match percentages for randomIds', () => {
+it( 'should match percentages for random assignment without a logged-in user', () => {
 	let returns = [];
 
-	returns = randomNums.map( ( x ) => badNaiveClientSideRolloutWithMockedRandom( 21, x ) );
-	expect( returns.filter( ( x ) => x === true ) ).toHaveLength( numRandomNums * 0.21 );
+	returns = mockRandomNums.map( ( x ) => badNaiveClientSideRolloutWithMockedRandom( 21, x ) );
+	expect( returns.filter( ( x ) => x === true ) ).toHaveLength( numMockRandomNums * 0.21 );
 
-	returns = randomNums.map( ( x ) => badNaiveClientSideRolloutWithMockedRandom( 50, x ) );
-	expect( returns.filter( ( x ) => x === true ) ).toHaveLength( numRandomNums * 0.5 );
+	returns = mockRandomNums.map( ( x ) => badNaiveClientSideRolloutWithMockedRandom( 50, x ) );
+	expect( returns.filter( ( x ) => x === true ) ).toHaveLength( numMockRandomNums * 0.5 );
 
-	returns = randomNums.map( ( x ) => badNaiveClientSideRolloutWithMockedRandom( 68, x ) );
-	expect( returns.filter( ( x ) => x === true ) ).toHaveLength( numRandomNums * 0.68 );
+	returns = mockRandomNums.map( ( x ) => badNaiveClientSideRolloutWithMockedRandom( 68, x ) );
+	expect( returns.filter( ( x ) => x === true ) ).toHaveLength( numMockRandomNums * 0.68 );
 } );
 
 it( 'should always return false for 0 percent', () => {
 	const userReturns = userIds.map( ( userId ) =>
 		badNaiveClientSideRolloutWithMockedUserId( 0, userId )
 	);
-	expect( userReturns.filter( ( x ) => x === false ) ).toHaveLength( numUserIds );
+	expect( userReturns.every( ( x ) => x === false ) ).toBe( true );
 
-	const randomReturns = randomNums.map( ( x ) =>
+	const randomReturns = mockRandomNums.map( ( x ) =>
 		badNaiveClientSideRolloutWithMockedRandom( 0, x )
 	);
-	expect( randomReturns.filter( ( x ) => x === false ) ).toHaveLength( numRandomNums );
+	expect( randomReturns.every( ( x ) => x === false ) ).toBe( true );
 } );
 
 it( 'should always return true for 100 percent', () => {
@@ -98,8 +99,8 @@ it( 'should always return true for 100 percent', () => {
 	);
 	expect( userReturns.filter( ( x ) => x === true ) ).toHaveLength( numUserIds );
 
-	const randomReturns = randomNums.map( ( x ) =>
+	const randomReturns = mockRandomNums.map( ( x ) =>
 		badNaiveClientSideRolloutWithMockedRandom( 100, x )
 	);
-	expect( randomReturns.filter( ( x ) => x === true ) ).toHaveLength( numRandomNums );
+	expect( randomReturns.filter( ( x ) => x === true ) ).toHaveLength( numMockRandomNums );
 } );
