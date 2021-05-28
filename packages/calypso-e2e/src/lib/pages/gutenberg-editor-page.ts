@@ -56,6 +56,7 @@ export class GutenbergEditorPage extends BaseContainer {
 		const handle = ( await this.page.$( selectors.editorFrame ) ) as ElementHandle;
 		this.frame = ( await handle.contentFrame() ) as Frame;
 		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForSelector( selectors.editorBody );
 	}
 
 	/**

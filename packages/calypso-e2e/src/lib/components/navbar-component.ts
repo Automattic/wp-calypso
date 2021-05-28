@@ -31,12 +31,7 @@ export class NavbarComponent extends BaseContainer {
 	async __postInit(): Promise< void > {
 		// Ensure that navigation is completed and the required
 		// elements are visible on page.
-		await Promise.all( [
-			this.page.waitForLoadState( 'domcontentloaded' ),
-			this.page.waitForSelector( selectors.navbar ),
-			this.page.waitForSelector( selectors.publishButton ),
-			this.page.waitForSelector( selectors.newPostButton ),
-		] );
+		await this.page.waitForLoadState( 'domcontentloaded' );
 	}
 
 	/**
@@ -46,10 +41,13 @@ export class NavbarComponent extends BaseContainer {
 	 */
 	async clickNewPost(): Promise< void > {
 		// Series of promises that ensure editor page is loaded.
-		await Promise.all( [
-			this.page.waitForLoadState( 'networkidle' ),
+		await this.page.waitForSelector( selectors.newPostButton );
+		await this.page.waitForSelector( selectors.publishButton );
+		await Promise.race( [
 			this.page.click( selectors.newPostButton ),
 			this.page.click( selectors.publishButton ),
+			this.page.click( 'text=Write' ),
 		] );
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 }
