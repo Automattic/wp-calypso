@@ -228,6 +228,7 @@ export function Checkout( {
 
 	const classNames = joinClasses( [
 		'composite-checkout',
+		'fs-exclude',
 		...( className ? [ className ] : [] ),
 		...( isRTL() ? [ 'rtl' ] : [] ),
 	] );
