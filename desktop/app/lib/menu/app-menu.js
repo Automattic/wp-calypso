@@ -22,7 +22,7 @@ const isCalypso = require( '../../lib/is-calypso' );
  */
 const debugEnabled = Settings.getSettingGroup( Config.debug.enabled_by_default, 'debug' );
 
-module.exports = function ( app, mainWindow ) {
+module.exports = function ( app, { view, window } ) {
 	const menuItems = [
 		{
 			label: 'Preferences...',
@@ -40,12 +40,12 @@ module.exports = function ( app, mainWindow ) {
 			enabled: false,
 			id: 'loggedin',
 			click: async function () {
-				mainWindow.show();
-				if ( isCalypso( mainWindow ) ) {
-					ipc.signOut( mainWindow );
+				window.show();
+				if ( isCalypso( view ) ) {
+					ipc.signOut( view );
 				} else {
-					await mainWindow.webContents.session.clearStorageData();
-					mainWindow.webContents.loadURL( Config.loginURL() );
+					await view.webContents.session.clearStorageData();
+					view.webContents.loadURL( Config.loginURL() );
 				}
 			},
 		},

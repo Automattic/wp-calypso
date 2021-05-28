@@ -34,6 +34,6 @@ export default class ThemeDialogComponent extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.dialog button[data-e2e-button="customizeSite"]' )
 		);
-		return await driverHelper.switchToWindowByIndex( this.driver, 1 );
+		return await driverHelper.waitUntilAbleToSwitchToWindow( this.driver, 1 );
 	}
 }

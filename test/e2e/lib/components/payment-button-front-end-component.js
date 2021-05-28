@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By, until } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -23,12 +23,11 @@ export default class PaymentButtonFrontEndComponent extends AsyncBaseContainer {
 
 	async clickPaymentButton() {
 		const payPalPayButtonLocator = By.css( '.paypal-button-card' );
-		await this.driver.wait(
-			until.ableToSwitchToFrame( By.css( '.xcomponent-component-frame,.zoid-component-frame' ) ),
-			this.explicitWaitMS,
-			'Could not locate the payment button iFrame.'
+		await driverHelper.waitUntilAbleToSwitchToFrame(
+			this.driver,
+			By.css( '.xcomponent-component-frame,.zoid-component-frame' )
 		);
 		await driverHelper.clickWhenClickable( this.driver, payPalPayButtonLocator );
-		return await this.driver.switchTo().defaultContent();
+		await this.driver.switchTo().defaultContent();
 	}
 }

@@ -19,8 +19,8 @@ function AppMenu() {
 	this.menu = false;
 }
 
-AppMenu.prototype.set = function ( app, mainWindow ) {
-	this.menu = Menu.buildFromTemplate( template( app, mainWindow ) );
+AppMenu.prototype.set = function ( app, appWindow ) {
+	this.menu = Menu.buildFromTemplate( template( app, appWindow ) );
 
 	Menu.setApplicationMenu( this.menu );
 };

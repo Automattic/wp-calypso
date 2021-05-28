@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { By, until } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -30,11 +30,7 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 			return;
 		}
 		await this.driver.switchTo().defaultContent();
-		await this.driver.wait(
-			until.ableToSwitchToFrame( this.editoriFrameLocator ),
-			this.explicitWaitMS,
-			'Could not locate the editor iFrame.'
-		);
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.editoriFrameLocator );
 		await this.driver.sleep( 2000 );
 	}
 
@@ -43,11 +39,7 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 	}
 
 	async runInCanvas( fn ) {
-		await this.driver.wait(
-			until.ableToSwitchToFrame( this.editorCanvasiFrameLocator ),
-			this.explicitWaitMS,
-			'Could not locate the editor canvas iFrame.'
-		);
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.editorCanvasiFrameLocator );
 		await fn();
 		await this.driver.switchTo().parentFrame();
 	}

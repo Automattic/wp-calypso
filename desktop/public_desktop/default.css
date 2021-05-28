@@ -1,0 +1,47 @@
+body {
+	-webkit-font-smoothing: antialiased;
+}
+
+#title-bar {
+	-webkit-app-region: drag;
+	display: block;
+	user-select: none;
+	background-color: #24282d;
+	position: absolute;
+	height: 38px;
+	top: 0;
+	left: 0;
+	right: 0;
+	user-select: none;
+	box-sizing: border-box;
+}
+
+#title-bar-buttons {
+	-webkit-app-region: no-drag;
+	position: fixed;
+}
+
+.nav-button {
+	display: flex;
+	width: 39px;
+	height: 38px;
+	float: left;
+	cursor: pointer;
+	background-size: 10px 16px;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-color: inherit;
+	text-align: center;
+}
+
+.nav-button:hover {
+	background-color: #3e4247;
+}
+
+.nav-button-icon {
+	margin: auto;
+}
+
+.nav-button-icon-wordpress {
+	margin: 6px 0 0 6px;
+}

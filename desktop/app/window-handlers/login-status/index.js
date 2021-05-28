@@ -12,14 +12,14 @@ const platform = require( '../../lib/platform' );
 const SessionManager = require( '../../lib/session' );
 const WPNotificationsAPI = require( '../../lib/notifications/api' );
 
-module.exports = function ( mainWindow ) {
-	menu.set( app, mainWindow );
+module.exports = function ( appWindow ) {
+	menu.set( app, appWindow );
 
 	SessionManager.on( 'logged-in', () => {
-		handleLogin( mainWindow );
+		handleLogin();
 	} );
 	SessionManager.on( 'logged-out', () => {
-		handleLogout( mainWindow );
+		handleLogout( appWindow );
 	} );
 
 	SessionManager.on( 'api:connect', () => {
@@ -30,13 +30,13 @@ module.exports = function ( mainWindow ) {
 	} );
 };
 
-function handleLogin( mainWindow ) {
-	menu.enableLoggedInItems( app, mainWindow );
+function handleLogin() {
+	menu.enableLoggedInItems();
 	platform.setDockMenu( true );
 }
 
-function handleLogout( mainWindow ) {
+function handleLogout( { view } ) {
 	platform.setDockMenu( false );
-	menu.disableLoggedInItems( app, mainWindow );
-	mainWindow.webContents.loadURL( Config.loginURL() );
+	menu.disableLoggedInItems();
+	view.webContents.loadURL( Config.loginURL() );
 }

@@ -318,13 +318,14 @@ export async function setCheckbox( driver, locator, check = true ) {
  * screen - not just having a reference in the DOM.
  *
  * @param {WebDriver} driver The parent WebDriver instance
- * @param {WebElement} element The image element
+ * @param {By|Function} locator The image element locator
  * @returns {Promise<boolean>} A promise that will resolve with whether the
  * image is visible or not
  */
-export async function isImageVisible( driver, element ) {
+export async function isImageVisible( driver, locator ) {
+	const element = await driver.findElement( locator );
 	const tagName = await element.getTagName();
-	if ( tagName !== 'IMG' ) {
+	if ( tagName.toUpperCase() !== 'IMG' ) {
 		throw new Error( `Element is not an image: ${ tagName }` );
 	}
 
@@ -481,7 +482,7 @@ export async function acceptAlertIfPresent( driver ) {
 	}
 }
 
-export async function waitForAlertPresent( driver, timeout = explicitWaitMS ) {
+export async function waitUntilAlertPresent( driver, timeout = explicitWaitMS ) {
 	return await driver.wait( until.alertIsPresent(), timeout );
 }
 

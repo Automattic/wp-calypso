@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { app, BrowserWindow, ipcMain: ipc } = require( 'electron' );
+const { app, BrowserWindow, BrowserView, ipcMain: ipc } = require( 'electron' );
 
 /**
  * Internal dependencies
@@ -25,10 +25,6 @@ let mainWindow = null;
 function showAppWindow() {
 	const preloadFile = getPath( 'preload.js' );
 	let appUrl = Config.loginURL();
-	// TODO:
-	// - Use BrowserView
-	// - Handle migration from prior relative path implementation
-	// - Developer mode with localhost webapp configuration
 
 	const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
 	if ( lastLocation && lastLocation.startsWith( 'http' ) ) {
@@ -36,32 +32,47 @@ function showAppWindow() {
 	}
 	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
-	const config = Settings.getSettingGroup( Config.mainWindow, 'window', [
-		'x',
-		'y',
-		'width',
-		'height',
-	] );
-	config.webPreferences.spellcheck = Settings.getSetting( 'spellcheck-enabled' );
-	config.webPreferences.preload = preloadFile;
+	const windowConfig = Settings.getSettingGroup( Config.mainWindow, null );
+	windowConfig.webPreferences.spellcheck = Settings.getSetting( 'spellcheck-enabled' );
+	windowConfig.webPreferences.preload = preloadFile;
+
+	const bounds = {
+		...{ width: 800, height: 600 },
+		...Settings.getSettingGroup( {}, 'window', [ 'x', 'y', 'width', 'height' ] ),
+	};
 
 	if ( USE_LOCALHOST ) {
-		config.webPreferences.allowRunningInsecureContent = true;
+		windowConfig.webPreferences.allowRunningInsecureContent = true;
 	}
 
-	mainWindow = new BrowserWindow( config );
+	mainWindow = new BrowserWindow( {
+		...windowConfig,
+		...bounds,
+		...{
+			frame: process.platform !== 'darwin',
+			titleBarStyle: 'hiddenInset',
+		},
+	} );
+
+	const mainView = new BrowserView( windowConfig );
+
+	mainWindow.webContents.loadURL( `file://${ getPath( 'index.html' ) }` );
+
+	mainWindow.setBrowserView( mainView );
+	mainView.setBounds( { ...bounds, ...{ x: 0, y: 38 } } );
+	mainView.setAutoResize( { horizontal: true, vertical: true } );
 
 	SessionManager.init( mainWindow );
 
-	mainWindow.webContents.on( 'did-finish-load', function () {
-		mainWindow.webContents.send( 'app-config', System.getDetails() );
+	mainView.webContents.on( 'did-finish-load', function () {
+		mainView.webContents.send( 'app-config', System.getDetails() );
 
 		ipc.on( 'mce-contextmenu', function ( ev ) {
-			mainWindow.webContents.send( 'mce-contextmenu', ev );
+			mainView.webContents.send( 'mce-contextmenu', ev );
 		} );
 	} );
 
-	mainWindow.webContents.session.webRequest.onBeforeRequest( function ( details, callback ) {
+	mainView.webContents.session.webRequest.onBeforeRequest( function ( details, callback ) {
 		if (
 			! USE_LOCALHOST &&
 			details.resourceType === 'script' &&
@@ -76,7 +87,7 @@ function showAppWindow() {
 		}
 	} );
 
-	mainWindow.webContents.session.webRequest.onHeadersReceived( function ( details, callback ) {
+	mainView.webContents.session.webRequest.onHeadersReceived( function ( details, callback ) {
 		// always allow previews to be loaded in iframes
 		if ( details.resourceType === 'subFrame' ) {
 			const headers = Object.assign( {}, details.responseHeaders );
@@ -102,10 +113,10 @@ function showAppWindow() {
 		return Settings.toRenderer();
 	} );
 
-	mainWindow.loadURL( appUrl );
+	mainView.webContents.loadURL( appUrl );
 
 	mainWindow.on( 'close', function () {
-		const currentURL = mainWindow.webContents.getURL();
+		const currentURL = mainView.webContents.getURL();
 		log.info( `Closing main window, last location: '${ currentURL }'` );
 		Settings.saveSetting( settingConstants.LAST_LOCATION, currentURL );
 	} );
@@ -115,15 +126,17 @@ function showAppWindow() {
 		mainWindow = null;
 	} );
 
-	require( '../window-handlers/failed-to-load' )( mainWindow );
-	require( '../window-handlers/login-status' )( mainWindow );
-	require( '../window-handlers/notifications' )( mainWindow );
-	require( '../window-handlers/external-links' )( mainWindow );
-	require( '../window-handlers/window-saver' )( mainWindow );
-	require( '../window-handlers/debug-tools' )( mainWindow );
-	require( '../window-handlers/spellcheck' )( mainWindow );
+	const appWindow = { view: mainView, window: mainWindow };
+	require( '../window-handlers/failed-to-load' )( appWindow );
+	require( '../window-handlers/login-status' )( appWindow );
+	require( '../window-handlers/notifications' )( appWindow );
+	require( '../window-handlers/external-links' )( appWindow );
+	require( '../window-handlers/window-saver' )( appWindow );
+	require( '../window-handlers/debug-tools' )( appWindow );
+	require( '../window-handlers/spellcheck' )( appWindow );
+	require( '../window-handlers/navigation' )( appWindow );
 
-	platform.setMainWindow( mainWindow );
+	platform.setMainWindow( appWindow );
 
 	return mainWindow;
 }

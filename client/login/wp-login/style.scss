@@ -1,9 +1,9 @@
 @import 'jetpack-connect/colors.scss';
 @import 'woocommerce/components/text-control/style.scss';
-@import '~@automattic/onboarding/styles/mixins';
-@import '~@automattic/typography/styles/fonts';
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/mixins';
+@import '@automattic/onboarding/styles/mixins';
+@import '@automattic/typography/styles/fonts';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 $image-height: 47px;
 

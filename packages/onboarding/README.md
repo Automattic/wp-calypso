@@ -12,8 +12,8 @@ yarn add @automattic/onboarding
 
 Import the variables or mixins that you need.
 
-`@import '~@automattic/onboarding/styles/variables'`
-`@import '~@automattic/onboarding/styles/mixins'`
+`@import '@automattic/onboarding/styles/variables'`
+`@import '@automattic/onboarding/styles/mixins'`
 
 Import the components that you need.
 

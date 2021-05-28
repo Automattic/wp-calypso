@@ -20,11 +20,11 @@ Take a component called `site/index.jsx` that renders a site item on the picker.
 
 ```scss
 .site__title {
-    color: #333;
+	color: #333;
 
-    &.is-jetpack {
-        color: #444;
-    }
+	&.is-jetpack {
+		color: #444;
+	}
 }
 ```
 
@@ -32,13 +32,13 @@ Take a component called `site/index.jsx` that renders a site item on the picker.
 
 ```scss
 .site {
-    .title {
-        color: #333;
+	.title {
+		color: #333;
 
-        .jetpack {
-            color: #444;
-        }
-    }
+		.jetpack {
+			color: #444;
+		}
+	}
 }
 ```
 
@@ -47,7 +47,7 @@ The modifier classes are always attached to a base element (the wrapper of a com
 ```scss
 // Modify 'site__title' for in CurrentSite component's display
 .current-site .site__title {
-    color: #444;
+	color: #444;
 }
 ```
 
@@ -101,17 +101,17 @@ Under the hood, we are using webpack and its `sass-loader`, for compiling the st
 To avoid code bloat and have a more consistent experience we use the same breakpoints in all SCSS files whenever possible. DO NOT define your own media queries. We should use the `break-*` mixins from [Gutenberg](https://github.com/WordPress/gutenberg/blob/0f1f5e75408705f0ec014f5d2ea3d9fcc8a97817/packages/base-styles/_mixins.scss). For example:
 
 ```scss
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .class-name {
-    margin-bottom: 8px;
-    padding: 12px;
+	margin-bottom: 8px;
+	padding: 12px;
 
-    @include break-mobile {
-        margin-bottom: 16px;
-        padding: 24px;
-    }
+	@include break-mobile {
+		margin-bottom: 16px;
+		padding: 24px;
+	}
 }
 ```
 
@@ -142,14 +142,14 @@ Example of the above:
 
 ```scss
 .parent {
-    @extend %awesomeness;
-    border: 1px solid;
-    font-size: 2em;
-    @include moar-awesome( true );
+	@extend %awesomeness;
+	border: 1px solid;
+	font-size: 2em;
+	@include moar-awesome( true );
 
-    &::before {
-        // and so on
-    }
+	&::before {
+		// and so on
+	}
 }
 ```
 
@@ -186,13 +186,13 @@ We're using [RTLCSS](https://github.com/MohammadYounes/rtlcss) to convert `publi
 ```scss
 /*rtl:ignore*/
 div.alignright {
-  float: right;
-  clear: right;
-  margin: 0.5em 0 0.8em 1.4em;
+	float: right;
+	clear: right;
+	margin: 0.5em 0 0.8em 1.4em;
 }
 /*rtl:ignore*/
 input.email {
-    direction:ltr
+	direction: ltr;
 }
 ```
 
@@ -201,7 +201,7 @@ If you need custom RTL css code, add it to your stylesheet with a .rtl class pre
 ```scss
 /*rtl:ignore*/
 .rtl div.onlyinrtl {
-    font-family:Tahoma;
+	font-family: Tahoma;
 }
 ```
 
@@ -209,18 +209,18 @@ Note for either of the above that because of the SCSS build process, if you're n
 
 ```scss
 .rtl {
-  .onlyinrtl {
-    margin-right: 5px #{"/*rtl:ignore*/"};;
-  }
+	.onlyinrtl {
+		margin-right: 5px #{'/*rtl:ignore*/'};
+	}
 }
 ```
 
 You can also define specific values for RTL like so:
 
 ```scss
-  .class {
-    margin-right: 5px #{"/*rtl:2px*/"};;
-  }
+.class {
+	margin-right: 5px #{'/*rtl:2px*/'};
+}
 ```
 
 You can find more details in the [RTLCSS documentation](https://github.com/MohammadYounes/rtlcss/blob/HEAD/README.md).
@@ -231,9 +231,9 @@ When defining positioning properties, indent the top/right/bottom/left one level
 
 ```css
 selector {
-  position: absolute;
-    left: 0;
-    top: 20px;
+	position: absolute;
+	left: 0;
+	top: 20px;
 }
 ```
 
@@ -243,9 +243,9 @@ selector {
 - DO use a single space before an opening brace
 
 ```scss
-@include breakpoint-deprecated( ">480px" ) {
-  color: rgb( 0, 0, 0 );
-  transform: translate( -50%, -50% ) scale( 1 );
+@include breakpoint-deprecated( '>480px' ) {
+	color: rgb( 0, 0, 0 );
+	transform: translate( -50%, -50% ) scale( 1 );
 }
 ```
 
@@ -290,9 +290,9 @@ As a simple example, imagine that we have a page with the following markup:
 ```html
 <div class="masterbar"></div>
 <div class="modal">
-  <div class="modal__icon"></div>
-  <div class="modal__content"></div>
-  <div class="modal__header"></div>
+	<div class="modal__icon"></div>
+	<div class="modal__content"></div>
+	<div class="modal__header"></div>
 </div>
 ```
 
@@ -300,22 +300,22 @@ With CSS of:
 
 ```css
 div {
-    position: relative;
+	position: relative;
 }
 .masterbar {
-    z-index: 2;
+	z-index: 2;
 }
 .modal {
-    z-index: 1;
+	z-index: 1;
 }
 .modal__icon {
-    z-index: 100;
+	z-index: 100;
 }
 .modal__content {
-   z-index: 300;
+	z-index: 300;
 }
 .modal__header {
-   z-index: 200;
+	z-index: 200;
 }
 ```
 
@@ -339,21 +339,21 @@ values sorted from lowest to highest within a stacking context:
 
 ```scss
 $z-layers: (
-    'root': (
-        '.modal': 1,
-        '.masterbar': 2
-    ),
-    '.modal': (
-        '.modal__icon': 100,
-        '.modal__header': 200,
-        '.modal__content': 300
-    )
+	'root': (
+		'.modal': 1,
+		'.masterbar': 2,
+	),
+	'.modal': (
+		'.modal__icon': 100,
+		'.modal__header': 200,
+		'.modal__content': 300,
+	),
 );
 ```
 
 ```scss
 .modal__icon {
-    z-index: z-index( '.modal', '.modal__icon' ); // returns 100
+	z-index: z-index( '.modal', '.modal__icon' ); // returns 100
 }
 ```
 

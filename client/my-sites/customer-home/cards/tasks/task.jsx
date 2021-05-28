@@ -43,6 +43,7 @@ const Task = ( {
 	illustration,
 	isLoading: forceIsLoading = false,
 	isUrgent = false,
+	showSkip = true,
 	enableSkipOptions = true,
 	scary,
 	siteId,
@@ -146,15 +147,17 @@ const Task = ( {
 				<p className="task__description">{ description }</p>
 				<div className="task__actions">
 					{ renderAction() }
-					<Button
-						className="task__skip is-link"
-						ref={ skipButtonRef }
-						onClick={ () => ( enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask() ) }
-					>
-						{ enableSkipOptions ? translate( 'Hide this' ) : translate( 'Dismiss' ) }
-						{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
-					</Button>
-					{ enableSkipOptions && areSkipOptionsVisible && (
+					{ showSkip && (
+						<Button
+							className="task__skip is-link"
+							ref={ skipButtonRef }
+							onClick={ () => ( enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask() ) }
+						>
+							{ enableSkipOptions ? translate( 'Hide this' ) : translate( 'Dismiss' ) }
+							{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
+						</Button>
+					) }
+					{ showSkip && enableSkipOptions && areSkipOptionsVisible && (
 						<PopoverMenu
 							context={ skipButtonRef.current }
 							isVisible={ areSkipOptionsVisible }

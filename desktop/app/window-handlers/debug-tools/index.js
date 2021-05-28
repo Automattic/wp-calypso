@@ -1,7 +1,7 @@
 const { ipcMain: ipc } = require( 'electron' );
 
-module.exports = function ( mainWindow ) {
+module.exports = function ( { view } ) {
 	ipc.on( 'toggle-dev-tools', function () {
-		mainWindow.toggleDevTools();
+		view.webContents.toggleDevTools();
 	} );
 };
