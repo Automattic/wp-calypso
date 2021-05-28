@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { LoginPage } from '../pages/login-page';
+import { LoginPage, MyHomePage } from '../pages';
 import { getAccountCredential } from '../../data-helper';
 
 /**
@@ -51,5 +51,6 @@ export class LoginFlow {
 	 */
 	async login(): Promise< void > {
 		await this.baseflow();
+		await MyHomePage.Expect( this.page );
 	}
 }

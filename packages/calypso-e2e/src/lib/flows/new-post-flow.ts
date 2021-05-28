@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import { NavbarComponent } from '../components';
+import { NavbarComponent, SidebarComponent } from '../components';
+import { GutenbergEditorPage } from '../pages';
 
 /**
  * Type dependencies
@@ -29,7 +30,9 @@ export class NewPostFlow {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async newPostFromNavbar(): Promise< void > {
-		const navbar = await NavbarComponent.Expect( this.page );
-		await navbar.clickNewPost();
+		await SidebarComponent.Expect( this.page );
+		const navbarComponent = await NavbarComponent.Expect( this.page );
+		await navbarComponent.clickNewPost();
+		await GutenbergEditorPage.Expect( this.page );
 	}
 }
