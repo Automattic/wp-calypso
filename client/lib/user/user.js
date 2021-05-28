@@ -19,7 +19,6 @@ import wpcom from 'calypso/lib/wp';
 import Emitter from 'calypso/lib/mixins/emitter';
 import { isE2ETest } from 'calypso/lib/e2e';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
-import { getLanguage } from 'calypso/lib/i18n-utils/utils';
 import { clearStorage } from 'calypso/lib/browser-storage';
 import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'calypso/lib/abtest/utility';
 
@@ -191,10 +190,6 @@ User.prototype.handleFetchSuccess = function ( userData ) {
 	}
 	this.data = userData;
 	this.emit( 'change' );
-};
-
-User.prototype.getLanguage = function () {
-	return getLanguage( this.data.localeSlug );
 };
 
 /**
