@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
