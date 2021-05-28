@@ -6,7 +6,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { items, listItems, updatedLists, missingLists, subscribedLists } from '../reducer';
+import { items, listItems, updatedLists, subscribedLists } from '../reducer';
 import {
 	READER_LIST_DELETE,
 	READER_LIST_FOLLOW_RECEIVE,
@@ -115,84 +115,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).toEqual( [ 841 ] );
-		} );
-	} );
-
-	describe( '#missingLists()', () => {
-		test( 'should default to an empty array', () => {
-			const state = missingLists( undefined, {} );
-			expect( state ).toEqual( [] );
-		} );
-
-		test( 'should store new missing lists in the case of a 404', () => {
-			const state = missingLists( undefined, {
-				type: READER_LIST_REQUEST_FAILURE,
-				error: {
-					statusCode: 404,
-				},
-				owner: 'lister',
-				slug: 'banana',
-			} );
-
-			expect( state ).toEqual( [ { owner: 'lister', slug: 'banana' } ] );
-		} );
-
-		test( 'should not store new missing lists in the case of a different error', () => {
-			const state = missingLists( undefined, {
-				type: READER_LIST_REQUEST_FAILURE,
-				error: {
-					statusCode: 400,
-				},
-				owner: 'lister',
-				slug: 'banana',
-			} );
-
-			expect( state ).toEqual( [] );
-		} );
-
-		test( 'should remove a missing list if a successful lists response is received', () => {
-			const initialState = missingLists( undefined, {
-				type: READER_LIST_REQUEST_FAILURE,
-				error: {
-					statusCode: 404,
-				},
-				owner: 'lister',
-				slug: 'banana',
-			} );
-
-			expect( initialState ).toEqual( [ { owner: 'lister', slug: 'banana' } ] );
-
-			const state = missingLists( initialState, {
-				type: READER_LISTS_RECEIVE,
-				lists: [
-					{ ID: 841, title: 'Hello World', owner: 'lister', slug: 'banana' },
-					{ ID: 413, title: 'Mangos and feijoas', owner: 'lister', slug: 'mango' },
-				],
-			} );
-
-			expect( state ).toEqual( [] );
-		} );
-
-		test( 'should remove a missing list if a successful single list response is received', () => {
-			const initialState = missingLists( undefined, {
-				type: READER_LIST_REQUEST_FAILURE,
-				error: {
-					statusCode: 404,
-				},
-				owner: 'lister',
-				slug: 'banana',
-			} );
-
-			expect( initialState ).toEqual( [ { owner: 'lister', slug: 'banana' } ] );
-
-			const state = missingLists( initialState, {
-				type: READER_LIST_REQUEST_SUCCESS,
-				data: {
-					list: { ID: 841, title: 'Hello World', owner: 'lister', slug: 'banana' },
-				},
-			} );
-
-			expect( state ).toEqual( [] );
 		} );
 	} );
 
