@@ -6,7 +6,7 @@ import {
 	LoginFlow,
 	NewPostFlow,
 	GutenbergEditorPage,
-	LikesComponent,
+	PostLikesComponent,
 } from '@automattic/calypso-e2e';
 
 /**
@@ -20,6 +20,7 @@ describe( DataHelper.createSuiteTitle( 'Likes' ), function () {
 		let gutenbergEditorPage;
 		let likesComponent;
 
+	describe( 'New post', function () {
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
 			await loginFlow.login();
@@ -45,8 +46,8 @@ describe( DataHelper.createSuiteTitle( 'Likes' ), function () {
 		} );
 
 		it( 'Like post', async function () {
-			likesComponent = await LikesComponent.Expect( this.page );
-			await likesComponent.clickLike();
+			postLikesComponent = await PostLikesComponent.Expect( this.page );
+			await postLikesComponent.clickLikePost();
 		} );
 	} );
 } );

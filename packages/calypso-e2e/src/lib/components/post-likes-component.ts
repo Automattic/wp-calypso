@@ -23,7 +23,7 @@ const selectors = {
  *
  * @augments {BaseContainer}
  */
-export class LikesComponent extends BaseContainer {
+export class PostLikesComponent extends BaseContainer {
 	frame!: Frame;
 
 	/**
@@ -55,7 +55,7 @@ export class LikesComponent extends BaseContainer {
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async clickLike(): Promise< void > {
+	async clickLikePost(): Promise< void > {
 		const isLiked = await this.frame.isVisible( selectors.likedText );
 
 		// In subsequent statement this will be assigned an ElementHandler
