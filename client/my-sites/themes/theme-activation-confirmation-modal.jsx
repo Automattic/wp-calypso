@@ -82,11 +82,20 @@ class ThemeActivationConfirmationModal extends Component {
 	};
 
 	closeModalHandler = ( action = 'dismiss' ) => () => {
-		const { installingThemeId, siteId, source } = this.props;
+		const {
+			hasAutoLoadingHomepage,
+			installingThemeId,
+			isCurrentThemeRetired,
+			siteId,
+			source,
+		} = this.props;
+		const isSolelyRetiredThemeModal = isCurrentThemeRetired && ! hasAutoLoadingHomepage;
+		const tracksPrefix = isSolelyRetiredThemeModal ? 'retired_theme' : 'autoloading_homepage';
+
 		if ( 'activeTheme' === action ) {
 			this.props.acceptActivateModalWarning( installingThemeId );
 			const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
-			recordTracksEvent( 'calypso_theme_activation_confirmation_modal_activate_click', {
+			recordTracksEvent( `calypso_theme_${ tracksPrefix }_modal_activate_click`, {
 				theme: installingThemeId,
 				keep_current_homepage: keepCurrentHomepage,
 			} );
@@ -98,13 +107,13 @@ class ThemeActivationConfirmationModal extends Component {
 				keepCurrentHomepage
 			);
 		} else if ( 'keepCurrentTheme' === action ) {
-			recordTracksEvent( 'calypso_theme_activation_confirmation_modal_dismiss', {
+			recordTracksEvent( `calypso_theme_${ tracksPrefix }_modal_dismiss`, {
 				action: 'button',
 				theme: installingThemeId,
 			} );
 			return this.props.hideActivateModalWarning();
 		} else if ( 'dismiss' === action ) {
-			recordTracksEvent( 'calypso_theme_activation_confirmation_modal_dismiss', {
+			recordTracksEvent( `calypso_theme_${ tracksPrefix }_modal_dismiss`, {
 				action: 'escape',
 				theme: installingThemeId,
 			} );
@@ -138,8 +147,6 @@ class ThemeActivationConfirmationModal extends Component {
 		}
 
 		const themeName = isCurrentThemeRetired ? activeTheme.name : installingTheme.name;
-
-		const themeId = isCurrentThemeRetired ? activeTheme.name : installingTheme.name;
 
 		const classes = classNames( 'theme-activation-confirmation-modal', {
 			'is-solely-retired-modal': isCurrentThemeRetired && ! hasAutoLoadingHomepage,
@@ -188,10 +195,13 @@ class ThemeActivationConfirmationModal extends Component {
 				onClose={ this.closeModalHandler( 'dismiss' ) }
 			>
 				<TrackComponentView
-					eventName={ 'calypso_theme_activation_confirmation_modal_view' }
+					eventName={
+						isCurrentThemeRetired && hasAutoLoadingHomepage
+							? 'calypso_theme_activation_retired_and_autoloading_homepage_confirmation_modal_view'
+							: 'calypso_theme_activation_confirmation_modal_view'
+					}
 					eventProperties={ {
-						theme: themeId,
-						modal_type: isCurrentThemeRetired ? 'retired' : 'homepage',
+						theme: installingTheme.id,
 					} }
 				/>
 				<div>
