@@ -137,7 +137,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Search Block (${ screenSize })`
 			);
 		} );
 
-		it( 'Can Search block settings', async function () {
+		it( 'Can update Search block width to 25% in settings', async function () {
 			searchBlock = await SearchBlockComponent.Expect( driver );
 			await searchBlock.searchInputClick();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
