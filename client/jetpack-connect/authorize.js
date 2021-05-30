@@ -206,7 +206,7 @@ export class JetpackAuthorize extends Component {
 
 	redirect() {
 		const { isMobileAppFlow, mobileAppRedirect } = this.props;
-		const { from, redirectAfterAuth, scope } = this.props.authQuery;
+		const { from, redirectAfterAuth, scope, closeWindowAfterAuthorize } = this.props.authQuery;
 		const { isRedirecting } = this.state;
 
 		if ( isRedirecting ) {
@@ -217,6 +217,14 @@ export class JetpackAuthorize extends Component {
 			debug( `Redirecting to mobile app ${ mobileAppRedirect }` );
 			window.location.replace( mobileAppRedirect );
 			return;
+		}
+
+		if ( closeWindowAfterAuthorize && typeof window !== 'undefined' ) {
+			// Certain connection flows may complete the login step within a popup window.
+			// In these cases, we'll want to automatically close the window when the login
+			// step is complete, and continue authorization in the parent window.
+			debug( 'Closing window after authorize' );
+			window.close();
 		}
 
 		if (
