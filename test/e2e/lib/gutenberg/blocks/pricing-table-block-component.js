@@ -22,8 +22,8 @@ const pricingTableParentSelector = By.css( '.block-editor-block-parent-selector_
 const pricingTableChangeTextAlignment = By.css( 'button[aria-label="Align"]' );
 const pricingTableChangeTableCount = By.css( 'button[aria-label="Change pricing table count"]' );
 const pricingTableCountPopOver = By.css( '.components-popover__content' );
-const pricingTableCellSelect = By.xpath( `//svg[text()='${ countVar } Pricing Table']` );
-const pricingTableCellCountCheck = By.xpath(
+let pricingTableCellSelect = By.xpath( `//svg[text()='${ countVar } Pricing Table']` );
+let pricingTableCellCountCheck = By.xpath(
 	`.wp-block-coblocks-pricing-table__inner.has-${ countVar }-columns.has-medium-gutter']`
 );
 
@@ -43,7 +43,11 @@ const pricingTableToWordpressOrg = By.xpath( `//*[@id="wporg-header"]/div/h1/a` 
 export default class PricingTableBlockComponent extends AsyncBaseContainer {
 	constructor( driver, count ) {
 		super( driver, By.css( '.wp-block-coblocks-pricing-table' ) );
-		this.countVar = count;
+		this.count = count;
+		pricingTableCellSelect = By.xpath( `//svg[text()='${ this.count } Pricing Table']` );
+		pricingTableCellCountCheck = By.xpath(
+			`.wp-block-coblocks-pricing-table__inner.has-${ this.count }-columns.has-medium-gutter']`
+		);
 	}
 
 	static get getPricingBlock() {
