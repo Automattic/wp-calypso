@@ -282,6 +282,7 @@ function load_wpcom_block_patterns_modifications() {
 	// 	require_once __DIR__ . '/block-patterns/class-block-patterns-modifications.php';
 	// }
 	// phpcs:enable
+
 	/*
 		Removes the core patterns that we can prevent Gutenberg patterns from loading.
 		Gutenberg performs a check of `get_theme_support( 'core-block-patterns' )`
