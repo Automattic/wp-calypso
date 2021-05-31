@@ -11,6 +11,7 @@ import React from 'react';
  */
 import { Card } from '@automattic/components';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
@@ -60,6 +61,7 @@ class EmailManagementHome extends React.Component {
 			selectedSite,
 			selectedDomainName,
 			currentRoute,
+			userCanPurchaseGSuite,
 		} = this.props;
 
 		if ( ! hasSiteDomainsLoaded || ! hasSitesLoaded || ! selectedSite ) {
@@ -82,7 +84,9 @@ class EmailManagementHome extends React.Component {
 				return this.renderContentWithHeader(
 					<EmailProvidersComparison
 						domain={ selectedDomain }
-						isGSuiteSupported={ hasGSuiteSupportedDomain( [ selectedDomain ] ) }
+						isGSuiteSupported={
+							userCanPurchaseGSuite && hasGSuiteSupportedDomain( [ selectedDomain ] )
+						}
 					/>
 				);
 			}
@@ -105,7 +109,9 @@ class EmailManagementHome extends React.Component {
 			return this.renderContentWithHeader(
 				<EmailProvidersComparison
 					domain={ firstDomainWithNoEmail }
-					isGSuiteSupported={ hasGSuiteSupportedDomain( [ firstDomainWithNoEmail ] ) }
+					isGSuiteSupported={
+						userCanPurchaseGSuite && hasGSuiteSupportedDomain( [ firstDomainWithNoEmail ] )
+					}
 				/>
 			);
 		}
@@ -180,5 +186,6 @@ export default connect( ( state ) => {
 		selectedSite: getSelectedSite( state ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
+		userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
 	};
 } )( localize( EmailManagementHome ) );

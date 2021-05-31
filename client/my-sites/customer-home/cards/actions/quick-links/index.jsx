@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import FoldableCard from 'calypso/components/foldable-card';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getSiteFrontPage,
@@ -297,7 +298,8 @@ const mapStateToProps = ( state ) => {
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),
 		showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
-		hasCustomDomain: getGSuiteSupportedDomains( domains ).length > 0,
+		hasCustomDomain:
+			getGSuiteSupportedDomains( domains ).length > 0 && canUserPurchaseGSuite( state ),
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
