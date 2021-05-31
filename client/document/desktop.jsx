@@ -9,11 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import EnvironmentBadge, {
-	Branch,
-	DevDocsLink,
-	TestHelper,
-} from 'calypso/components/environment-badge';
+import EnvironmentBadge, { Branch, DevDocsLink } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
 import { chunkCssLinks } from './utils';
 import WordPressLogo from 'calypso/components/wordpress-logo';
@@ -29,7 +25,6 @@ class Desktop extends React.Component {
 			lang,
 			clientData,
 			badge,
-			abTestHelper,
 			branchName,
 			commitChecksum,
 			devDocs,
@@ -55,7 +50,6 @@ class Desktop extends React.Component {
 					</div>
 					{ badge && (
 						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
-							{ abTestHelper && <TestHelper /> }
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }

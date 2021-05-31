@@ -33,7 +33,6 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": false,
 		"devdocs/color-scheme-picker": true,
-		"dev/test-helper": true,
 		"dev/preferences-helper": true,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,

@@ -1,9 +1,9 @@
 name: Repo gardening
 
 on:
-  # Listen to this event for PRs from forks (see Flag OSS task).
+  # Listen to this event for PRs from forks (see Flag OSS and Notify tasks).
   pull_request_target:
-    types: [opened]
+    types: [opened, labeled]
   # We need to listen to all these events to catch all scenarios
   pull_request:
     types: ['opened', 'synchronize', 'edited', 'closed', 'labeled']
@@ -29,7 +29,7 @@ jobs:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
      - name: 'Run gardening action'
-       uses: automattic/action-repo-gardening@v1.2.0
+       uses: automattic/action-repo-gardening@v1.3.0
        with:
          github_token: ${{ secrets.GITHUB_TOKEN }}
          slack_token: ${{ secrets.SLACK_TOKEN }}

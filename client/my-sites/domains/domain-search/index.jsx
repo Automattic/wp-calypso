@@ -20,6 +20,7 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import Main from 'calypso/components/main';
 import FormattedHeader from 'calypso/components/formatted-header';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { canDomainAddGSuite, getProductType } from 'calypso/lib/gsuite';
 import {
 	hasPlan,
@@ -163,7 +164,7 @@ class DomainSearch extends Component {
 				fillInSingleCartItemAttributes( registration, this.props.productsList ),
 			] )
 			.then( () => {
-				if ( canDomainAddGSuite( domain ) ) {
+				if ( this.props.userCanPurchaseGSuite && canDomainAddGSuite( domain ) ) {
 					const gSuiteProductSlug = config.isEnabled( 'google-workspace-migration' )
 						? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
 						: GSUITE_BASIC_SLUG;
@@ -315,6 +316,7 @@ export default connect(
 			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 			isSiteUpgradeable: isSiteUpgradeable( state, siteId ),
 			productsList: getProductsList( state ),
+			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
 		};
 	},
 	{

@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Spinner from 'calypso/components/spinner';
-import user from 'calypso/lib/user';
+import wpcom from 'calypso/lib/wp';
 
 class EmailUnverifiedNotice extends React.Component {
 	state = {
@@ -48,13 +48,16 @@ class EmailUnverifiedNotice extends React.Component {
 			pendingRequest: true,
 		} );
 
-		user().sendVerificationEmail( ( error, response ) => {
-			this.setState( {
-				emailSent: response && response.success,
-				error: error,
-				pendingRequest: false,
+		wpcom
+			.undocumented()
+			.me()
+			.sendVerificationEmail( ( error, response ) => {
+				this.setState( {
+					emailSent: response && response.success,
+					error: error,
+					pendingRequest: false,
+				} );
 			} );
-		} );
 	};
 
 	renderEmailSendPending() {

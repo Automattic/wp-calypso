@@ -1,9 +1,4 @@
 /**
- * Internal dependencies
- */
-import { canUserPurchaseGSuite } from './can-user-purchase-gsuite';
-
-/**
  * Determines whether G Suite is allowed for the specified domain.
  *
  * @param {string} domainName - domain name
@@ -14,5 +9,5 @@ export function canDomainAddGSuite( domainName ) {
 		return false;
 	}
 
-	return canUserPurchaseGSuite();
+	return true;
 }

@@ -77,22 +77,29 @@ class EditUserForm extends React.Component {
 	}
 
 	getAllowedSettingsToChange() {
-		const { currentUser, user, isJetpack } = this.props;
+		const { currentUser, user, isJetpack, hasWPCOMAccountLinked } = this.props;
 		const allowedSettings = [];
 
 		if ( ! user.ID ) {
 			return allowedSettings;
 		}
 
-		// On WP.com sites, a user should only be able to update role.
-		// A user should not be able to update own role.
+		// On any site, admins should be able to change only other
+		// user's role or isExternalContributor.
 		if ( isJetpack ) {
+			// Jetpack self hosted or Atomic.
 			if ( ! user.linked_user_ID || user.linked_user_ID !== currentUser.ID ) {
 				allowedSettings.push( 'roles', 'isExternalContributor' );
 			}
-			allowedSettings.push( 'first_name', 'last_name', 'name' );
 		} else if ( user.ID !== currentUser.ID ) {
+			// WP.com Simple sites.
 			allowedSettings.push( 'roles', 'isExternalContributor' );
+		}
+
+		// On any site, allow editing 'first_name', 'last_name', 'name'
+		// only for users without WP.com account.
+		if ( ! hasWPCOMAccountLinked ) {
+			allowedSettings.push( 'first_name', 'last_name', 'name' );
 		}
 
 		return allowedSettings;
@@ -249,16 +256,25 @@ class EditUserForm extends React.Component {
 			return null;
 		}
 
+		const { translate, hasWPCOMAccountLinked, disabled, markChanged, isUpdating } = this.props;
+
 		return (
 			<form
 				className="edit-team-member-form__form" // eslint-disable-line
-				disabled={ this.props.disabled }
+				disabled={ disabled }
 				onSubmit={ this.updateUser }
-				onChange={ this.props.markChanged }
+				onChange={ markChanged }
 			>
-				{ editableFields.map( ( fieldId ) => this.renderField( fieldId, this.props.isUpdating ) ) }
+				{ editableFields.map( ( fieldId ) => this.renderField( fieldId, isUpdating ) ) }
+				{ hasWPCOMAccountLinked && (
+					<p className="edit-team-member-form__explanation">
+						{ translate(
+							'This user has a WordPress.com account, only they are allowed to update their personal information through their WordPress.com profile settings.'
+						) }
+					</p>
+				) }
 				<FormButtonsBar>
-					<FormButton disabled={ ! this.hasUnsavedSettings() || this.props.isUpdating }>
+					<FormButton disabled={ ! this.hasUnsavedSettings() || isUpdating }>
 						{ this.props.translate( 'Save changes', {
 							context: 'Button label that prompts user to save form',
 						} ) }
@@ -280,6 +296,7 @@ export default localize(
 				isExternalContributor: userId && externalContributors.includes( userId ),
 				isVip: isVipSite( state, siteId ),
 				isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+				hasWPCOMAccountLinked: user?.linked_user_ID !== false,
 			};
 		},
 		{

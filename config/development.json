@@ -48,7 +48,6 @@
 		"devdocs/color-scheme-picker": true,
 		"dev/features-helper": true,
 		"dev/preferences-helper": true,
-		"dev/test-helper": true,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,

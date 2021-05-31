@@ -8,7 +8,7 @@ import { startsWith } from 'lodash';
  * Internal dependencies
  */
 import { tagListing } from './controller';
-import { initAbTests, sidebar, updateLastRoute } from 'calypso/reader/controller';
+import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 
 const redirectHashtaggedTags = ( context, next ) => {
@@ -19,6 +19,6 @@ const redirectHashtaggedTags = ( context, next ) => {
 };
 
 export default function () {
-	page( '/tag/*', redirectHashtaggedTags, initAbTests );
+	page( '/tag/*', redirectHashtaggedTags );
 	page( '/tag/:tag', updateLastRoute, sidebar, tagListing, makeLayout, clientRender );
 }
