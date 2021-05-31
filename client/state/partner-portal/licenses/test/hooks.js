@@ -320,6 +320,43 @@ describe( 'useBillingDashboardQuery', () => {
 		expect( result.current.data ).toEqual( formattedStub );
 	} );
 
+	it( 'dispatches notification on no invoice available', async () => {
+		const queryClient = new QueryClient( {
+			defaultOptions: {
+				queries: {
+					retry: false,
+				},
+			},
+		} );
+		const wrapper = ( { children } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/jetpack-licensing/licenses/billing' )
+			.reply( 403, {
+				code: 'no_billing_invoice_available',
+			} );
+
+		const dispatch = jest.fn();
+		useDispatch.mockReturnValue( dispatch );
+
+		const { result, waitFor } = renderHook( () => useBillingDashboardQuery(), {
+			wrapper,
+		} );
+
+		// Test that the response has been converted to "Success".
+		await waitFor( () => result.current.isSuccess );
+		expect( result.current.isError ).toBe( false );
+
+		// Test that the correct notification is being triggered.
+		expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
+		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
+			'partner-portal-billing-dashboard-no-billing-invoice-available'
+		);
+		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.status ).toBe( 'is-plain' );
+	} );
+
 	it( 'dispatches notice on error', async () => {
 		const queryClient = new QueryClient( {
 			defaultOptions: {
