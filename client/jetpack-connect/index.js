@@ -88,13 +88,9 @@ export default function () {
 			page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : '' }` )
 	);
 
-	page(
-		'/jetpack/connect/plans/:interval(yearly|monthly)?/:site',
-		controller.redirectToLoginIfLoggedOut
-	);
-
 	jetpackPlans(
 		`/jetpack/connect/plans`,
+		controller.redirectToLoginIfLoggedOut,
 		siteSelection,
 		controller.offerResetRedirects,
 		controller.offerResetContext
