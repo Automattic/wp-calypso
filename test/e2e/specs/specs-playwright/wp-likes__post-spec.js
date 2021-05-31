@@ -83,6 +83,7 @@ describe( `[${ host }] Likes (Post): (${ viewportName }) @parallel`, function ()
 		} );
 
 		it( 'Like post', async function () {
+			postLikesComponent = await PostLikesComponent.Expect( this.page );
 			await postLikesComponent.clickLikePost();
 		} );
 	} );

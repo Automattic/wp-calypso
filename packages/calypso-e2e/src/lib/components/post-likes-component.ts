@@ -56,6 +56,7 @@ export class PostLikesComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickLikePost(): Promise< void > {
+		await this.page.waitForSelector( selectors.likeWidget );
 		const isLiked = await this.frame.isVisible( selectors.likedText );
 
 		// In subsequent statement this will be assigned an ElementHandler

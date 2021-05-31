@@ -49,6 +49,8 @@ export class CommentsLikesComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickLikeComment( commentNum = 1 ): Promise< void > {
+		await this.page.waitForSelector( selectors.topLevelComments );
+
 		// For now, only works with top level comments since child comments introduce
 		// a whole new layer of complexity.
 		const topLevelComments = await this.page.$$( selectors.topLevelComments );
