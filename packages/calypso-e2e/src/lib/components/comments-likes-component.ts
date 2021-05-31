@@ -1,8 +1,4 @@
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
 import { BaseContainer } from '../base-container';
@@ -36,7 +32,6 @@ export class CommentsLikesComponent extends BaseContainer {
 
 	/**
 	 * Overrides the parent method for post-initialization steps.
-	 * This ensures the iframe is enabled and interactable.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
@@ -75,10 +70,8 @@ export class CommentsLikesComponent extends BaseContainer {
 
 		// Check for intended outcome depending on the original liked state.
 		if ( isLiked.length ) {
-			console.log( 'comment is liked, unliking' );
 			await comment.waitForSelector( selectors.notLiked );
 		} else {
-			console.log( 'comment is not liked, liking' );
 			await comment.waitForSelector( selectors.liked );
 		}
 	}
