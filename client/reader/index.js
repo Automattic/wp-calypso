@@ -11,12 +11,15 @@ import {
 	feedDiscovery,
 	feedListing,
 	following,
+	unreadFollowing,
 	incompleteUrlRedirects,
 	initAbTests,
 	legacyRedirects,
 	prettyRedirects,
 	readA8C,
+	unreadA8C,
 	readFollowingP2,
+	unreadFollowingP2,
 	sidebar,
 	updateLastRoute,
 } from './controller';
@@ -49,6 +52,15 @@ export default async function () {
 
 	if ( config.isEnabled( 'reader' ) ) {
 		page( '/read', initAbTests, updateLastRoute, sidebar, following, makeLayout, clientRender );
+		page(
+			'/read/following/unread',
+			initAbTests,
+			updateLastRoute,
+			sidebar,
+			unreadFollowing,
+			makeLayout,
+			clientRender
+		);
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/read' );
@@ -96,7 +108,17 @@ export default async function () {
 
 	// Automattic Employee Posts
 	page( '/read/a8c', updateLastRoute, sidebar, forceTeamA8C, readA8C, makeLayout, clientRender );
+	page(
+		'/read/a8c/unread',
+		updateLastRoute,
+		sidebar,
+		forceTeamA8C,
+		unreadA8C,
+		makeLayout,
+		clientRender
+	);
 
 	// new P2 Posts
 	page( '/read/p2', updateLastRoute, sidebar, readFollowingP2, makeLayout, clientRender );
+	page( '/read/p2/unread', updateLastRoute, sidebar, unreadFollowingP2, makeLayout, clientRender );
 }

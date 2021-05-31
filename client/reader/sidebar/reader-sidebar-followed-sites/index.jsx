@@ -56,6 +56,23 @@ export class ReaderSidebarFollowedSites extends Component {
 		);
 	}
 
+	renderUnread() {
+		const { path, translate, sites } = this.props;
+		const sum = sites.reduce( ( acc, { unseen_count } ) => acc + ( unseen_count | 0 ), 0 );
+		return (
+			<SidebarItem
+				className={ ReaderSidebarHelper.itemLinkClass( '/read/following/unread', path, {
+					'sidebar-streams__following': true,
+				} ) }
+				label={ translate( 'Unread' ) }
+				onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
+				link="/read/following/unread"
+			>
+				{ sum > 0 && <Count count={ sum } compact /> }
+			</SidebarItem>
+		);
+	}
+
 	renderSites() {
 		const { sites, path } = this.props;
 		return map(
@@ -79,6 +96,7 @@ export class ReaderSidebarFollowedSites extends Component {
 				disableFlyout={ true }
 				className={
 					( '/read' === path ||
+						'/read/following/unread' === path ||
 						sites.some(
 							( site ) =>
 								`/read/feeds/${ site.feed_ID }` === path || `/read/blogs/${ site.blog_ID }` === path
@@ -87,6 +105,7 @@ export class ReaderSidebarFollowedSites extends Component {
 				}
 			>
 				{ this.renderAll() }
+				{ this.renderUnread() }
 				{ this.renderSites() }
 			</ExpandableSidebarMenu>
 		);

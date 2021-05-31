@@ -127,7 +127,7 @@ const exported = {
 		next();
 	},
 
-	following( context, next ) {
+	following( context, next, includeSeenPosts = true ) {
 		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Following';
 		const mcKey = 'following';
@@ -172,6 +172,7 @@ const exported = {
 				mcKey
 			),
 			onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+			includeSeenPosts,
 		} );
 		next();
 	},
@@ -262,7 +263,7 @@ const exported = {
 		next();
 	},
 
-	readA8C( context, next ) {
+	readA8C( context, next, includeSeenPosts = true ) {
 		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > A8C';
 		const mcKey = 'a8c';
@@ -292,13 +293,14 @@ const exported = {
 				showPrimaryFollowButtonOnCards={ false }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 				placeholder={ null }
+				includeSeenPosts={ includeSeenPosts }
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 		next();
 	},
 
-	readFollowingP2( context, next ) {
+	readFollowingP2( context, next, includeSeenPosts = true ) {
 		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > P2';
 		const mcKey = 'p2';
@@ -327,6 +329,7 @@ const exported = {
 				showPrimaryFollowButtonOnCards={ false }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 				placeholder={ null }
+				includeSeenPosts={ includeSeenPosts }
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -349,3 +352,7 @@ export const {
 	readA8C,
 	readFollowingP2,
 } = exported;
+
+export const unreadFollowing = ( context, next ) => exported.following( context, next, false );
+export const unreadA8C = ( context, next ) => exported.readA8C( context, next, false );
+export const unreadFollowingP2 = ( context, next ) => exported.following( context, next, false );
