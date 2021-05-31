@@ -52,7 +52,6 @@
 		"inline-help": true,
 		"ive/use-external-assignment": true,
 		"jetpack/concierge-sessions": false,
-		"jetpack/connect/remote-install": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,

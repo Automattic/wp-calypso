@@ -67,7 +67,6 @@
 		"jetpack/blocks/beta": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/mobile-app-flow": true,
-		"jetpack/connect/remote-install": true,
 		"jetpack/connect/woocommerce": true,
 		"jetpack/happychat": true,
 		"jetpack/features-section/simple": true,

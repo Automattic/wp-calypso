@@ -3,7 +3,6 @@
  */
 import classnames from 'classnames';
 import React, { Component, Fragment } from 'react';
-import config from '@automattic/calypso-config';
 import page from 'page';
 import { connect } from 'react-redux';
 import { flowRight, includes } from 'lodash';
@@ -81,10 +80,8 @@ export class OrgCredentialsForm extends Component {
 	UNSAFE_componentWillMount() {
 		const { siteToConnect } = this.props;
 
-		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
-			if ( ! siteToConnect ) {
-				page.redirect( '/jetpack/connect' );
-			}
+		if ( ! siteToConnect ) {
+			page.redirect( '/jetpack/connect' );
 		}
 
 		this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_view', {
