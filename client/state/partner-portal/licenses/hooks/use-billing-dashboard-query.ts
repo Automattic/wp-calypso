@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { getActivePartnerKeyId } from 'calypso/state/partner-portal/partner/selectors';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, plainNotice } from 'calypso/state/notices/actions';
 
 // API interfaces.
 interface APIBillingCounts {
@@ -99,12 +99,30 @@ export default function useBillingDashboardQuery< TError = unknown >(
 	const dispatch = useDispatch();
 	const activeKeyId = useSelector( getActivePartnerKeyId );
 
-	return useQuery< APIBilling, TError, Billing >(
+	const response = useQuery< APIBilling, TError, Billing >(
 		[ 'partner-portal', 'billing-dashboard', activeKeyId ],
 		queryBillingDashboard,
 		{
 			select: selectBillingDashboard,
-			onError: () => {
+			onError: ( error ) => {
+				// We wish to handle the "no billing invoice available" response differently
+				// from hard errors. We want this because the response itself did not encounter
+				// any errors but the upcoming invoice has not been created yet.
+				if ( error.hasOwnProperty( 'code' ) && 'no_billing_invoice_available' === error.code ) {
+					dispatch(
+						plainNotice(
+							translate(
+								'We have not started calculating your upcoming invoice yet. The statistics might not be correct.'
+							),
+							{
+								id: 'partner-portal-billing-dashboard-no-billing-invoice-available',
+							}
+						)
+					);
+
+					return;
+				}
+
 				dispatch(
 					errorNotice( translate( 'We were unable to retrieve your billing details.' ), {
 						id: 'partner-portal-billing-dashboard-failure',
@@ -114,4 +132,35 @@ export default function useBillingDashboardQuery< TError = unknown >(
 			...options,
 		}
 	);
+
+	// Convert the "No billing invoice available" response to a success response with
+	// default values since the should not care about the difference anyways and we
+	// can still maintain "isError" checks for hard errors.
+	// A notice has also been shipped with the default values to indicate potential
+	// the current status of the billing dashboard.
+	if (
+		response.isError &&
+		response.error.hasOwnProperty( 'code' ) &&
+		'no_billing_invoice_available' === response.error.code
+	) {
+		response.isSuccess = true;
+		response.isError = false;
+		response.status = 'success';
+		response.data = {
+			date: '',
+			products: [],
+			costs: {
+				total: 0,
+				assigned: 0,
+				unassigned: 0,
+			},
+			licenses: {
+				total: 0,
+				assigned: 0,
+				unassigned: 0,
+			},
+		};
+	}
+
+	return response;
 }
