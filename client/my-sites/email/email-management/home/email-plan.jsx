@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { needsToRenewSoon } from 'calypso/lib/purchases';
+import { handleRenewNowClick, needsToRenewSoon } from 'calypso/lib/purchases';
 import page from 'page';
 import PropTypes from 'prop-types';
 
@@ -44,7 +44,6 @@ import {
 } from 'calypso/state/purchases/selectors';
 import HeaderCake from 'calypso/components/header-cake';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
@@ -118,6 +117,13 @@ class EmailPlan extends React.Component {
 	handleBack = () => {
 		const { selectedSite } = this.props;
 		page( emailManagement( selectedSite.slug ) );
+	};
+
+	handleRenew = () => {
+		const { purchase, selectedSite } = this.props;
+		handleRenewNowClick( purchase, selectedSite.slug, {
+			tracksProps: { source: 'email-plan-view' },
+		} );
 	};
 
 	getAddMailboxProps() {
@@ -256,22 +262,6 @@ class EmailPlan extends React.Component {
 		);
 	}
 
-	renderRenewalNavItem() {
-		const { purchase, selectedSite, translate } = this.props;
-
-		return (
-			<VerticalNavItem>
-				<RenewButton
-					purchase={ purchase }
-					selectedSite={ selectedSite }
-					subscriptionId={ parseInt( purchase.id, 10 ) }
-					tracksProps={ { source: 'email-plan-view' } }
-					customLabel={ translate( 'Renew now to add new mailboxes' ) }
-				/>
-			</VerticalNavItem>
-		);
-	}
-
 	renderAddNewMailboxOrRenewalNavItem() {
 		const { domain, hasSubscription, purchase, selectedSite, translate } = this.props;
 
@@ -284,13 +274,17 @@ class EmailPlan extends React.Component {
 		}
 
 		if ( needsToRenewSoon( purchase ) ) {
-			return this.renderRenewalNavItem();
+			return (
+				<VerticalNavItem onClick={ this.handleRenew }>
+					{ translate( 'Renew to add new mailboxes' ) }
+				</VerticalNavItem>
+			);
 		}
 
-		const addMailboxProps = this.getAddMailboxProps();
-
 		return (
-			<VerticalNavItem { ...addMailboxProps }>{ translate( 'Add new mailbox' ) }</VerticalNavItem>
+			<VerticalNavItem { ...this.getAddMailboxProps() }>
+				{ translate( 'Add new mailboxes' ) }
+			</VerticalNavItem>
 		);
 	}
 
