@@ -244,7 +244,7 @@ class Block_Patterns_From_API {
 	}
 
 	/**
-	 * Because we prevent core pattern registation in full-site-editing-plugin.php in `remove_theme_support_for_core_block_patterns()`
+	 * Because we prevent core pattern registration in full-site-editing-plugin.php in `remove_theme_support_for_core_block_patterns()`
 	 * we have to reregister core WordPress patterns,
 	 * that is, those in wp-includes/block-patterns.php
 	 * Gutenberg adds new and overrides existing core patterns. We don't want these for now.
