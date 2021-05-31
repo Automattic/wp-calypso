@@ -37,6 +37,13 @@ import './style.scss';
  */
 const debug = debugModule( 'calypso:my-sites:people:edit-team-member-form' );
 
+const fieldKeys = {
+	firstName: 'first_name',
+	lastName: 'last_name',
+	name: 'name',
+	roles: 'roles',
+};
+
 class EditUserForm extends React.Component {
 	state = this.getStateObject( this.props );
 
@@ -89,17 +96,17 @@ class EditUserForm extends React.Component {
 		if ( isJetpack ) {
 			// Jetpack self hosted or Atomic.
 			if ( ! user.linked_user_ID || user.linked_user_ID !== currentUser.ID ) {
-				allowedSettings.push( 'roles', 'isExternalContributor' );
+				allowedSettings.push( fieldKeys.roles, 'isExternalContributor' );
 			}
 		} else if ( user.ID !== currentUser.ID ) {
 			// WP.com Simple sites.
-			allowedSettings.push( 'roles', 'isExternalContributor' );
+			allowedSettings.push( fieldKeys.roles, 'isExternalContributor' );
 		}
 
 		// On any site, allow editing 'first_name', 'last_name', 'name'
 		// only for users without WP.com account.
 		if ( ! hasWPCOMAccountLinked ) {
-			allowedSettings.push( 'first_name', 'last_name', 'name' );
+			allowedSettings.push( fieldKeys.firstName, fieldKeys.lastName, fieldKeys.name );
 		}
 
 		return allowedSettings;
@@ -159,16 +166,16 @@ class EditUserForm extends React.Component {
 	renderField = ( fieldId, isDisabled ) => {
 		let returnField = null;
 		switch ( fieldId ) {
-			case 'roles':
+			case fieldKeys.roles:
 				returnField = (
-					<Fragment key="roles">
+					<Fragment key={ fieldKeys.roles }>
 						<RoleSelect
-							id="roles"
-							name="roles"
+							id={ fieldKeys.roles }
+							name={ fieldKeys.roles }
 							siteId={ this.props.siteId }
 							value={ this.state.roles }
 							onChange={ this.handleChange }
-							onFocus={ this.recordFieldFocus( 'roles' ) }
+							onFocus={ this.recordFieldFocus( fieldKeys.roles ) }
 							disabled={ isDisabled }
 						/>
 						{ ! this.props.isVip &&
@@ -183,58 +190,58 @@ class EditUserForm extends React.Component {
 					</Fragment>
 				);
 				break;
-			case 'first_name':
+			case fieldKeys.firstName:
 				returnField = (
-					<FormFieldset key="first_name">
-						<FormLabel htmlFor="first_name">
+					<FormFieldset key={ fieldKeys.firstName }>
+						<FormLabel htmlFor={ fieldKeys.firstName }>
 							{ this.props.translate( 'First Name', {
 								context: 'Text that is displayed in a label of a form.',
 							} ) }
 						</FormLabel>
 						<FormTextInput
-							id="first_name"
-							name="first_name"
+							id={ fieldKeys.firstName }
+							name={ fieldKeys.firstName }
 							value={ this.state.first_name }
 							onChange={ this.handleChange }
-							onFocus={ this.recordFieldFocus( 'first_name' ) }
+							onFocus={ this.recordFieldFocus( fieldKeys.firstName ) }
 							disabled={ isDisabled }
 						/>
 					</FormFieldset>
 				);
 				break;
-			case 'last_name':
+			case fieldKeys.lastName:
 				returnField = (
-					<FormFieldset key="last_name">
-						<FormLabel htmlFor="last_name">
+					<FormFieldset key={ fieldKeys.lastName }>
+						<FormLabel htmlFor={ fieldKeys.lastName }>
 							{ this.props.translate( 'Last Name', {
 								context: 'Text that is displayed in a label of a form.',
 							} ) }
 						</FormLabel>
 						<FormTextInput
-							id="last_name"
-							name="last_name"
+							id={ fieldKeys.lastName }
+							name={ fieldKeys.lastName }
 							value={ this.state.last_name }
 							onChange={ this.handleChange }
-							onFocus={ this.recordFieldFocus( 'last_name' ) }
+							onFocus={ this.recordFieldFocus( fieldKeys.lastName ) }
 							disabled={ isDisabled }
 						/>
 					</FormFieldset>
 				);
 				break;
-			case 'name':
+			case fieldKeys.name:
 				returnField = (
-					<FormFieldset key="name">
-						<FormLabel htmlFor="name">
+					<FormFieldset key={ fieldKeys.name }>
+						<FormLabel htmlFor={ fieldKeys.name }>
 							{ this.props.translate( 'Public Display Name', {
 								context: 'Text that is displayed in a label of a form.',
 							} ) }
 						</FormLabel>
 						<FormTextInput
-							id="name"
-							name="name"
+							id={ fieldKeys.name }
+							name={ fieldKeys.name }
 							value={ this.state.name }
 							onChange={ this.handleChange }
-							onFocus={ this.recordFieldFocus( 'name' ) }
+							onFocus={ this.recordFieldFocus( fieldKeys.name ) }
 							disabled={ isDisabled }
 						/>
 					</FormFieldset>
