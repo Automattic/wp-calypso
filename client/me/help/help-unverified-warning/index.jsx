@@ -4,13 +4,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import user from 'calypso/lib/user';
 
 /**
  * Internal dependencies
  */
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import wpcom from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /**
@@ -58,7 +58,9 @@ class HelpUnverifiedWarning extends Component {
 				resendState: RESEND_IN_PROGRESS,
 			} );
 
-			user()
+			wpcom
+				.undocumented()
+				.me()
 				.sendVerificationEmail()
 				.then( () => {
 					const nextResendState = RESEND_SUCCESS;

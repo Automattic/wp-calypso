@@ -205,19 +205,6 @@ User.prototype.clear = async function () {
 	await clearStorage();
 };
 
-/**
- * Sends the user an email with a link to verify their account if they
- * are unverified.
- *
- * @param {Function} [fn] A callback to receive the HTTP response from the send-verification-email endpoint.
- *
- * @returns {(Promise|object)} If a callback is provided, this is an object representing an XMLHttpRequest.
- *                             If no callback is provided, this is a Promise.
- */
-User.prototype.sendVerificationEmail = function ( fn ) {
-	return wpcom.undocumented().me().sendVerificationEmail( fn );
-};
-
 User.prototype.set = function ( attributes ) {
 	let changed = false;
 
