@@ -20,10 +20,6 @@ const noop = () => {};
 const translate = ( string ) => string;
 
 jest.mock( 'calypso/blocks/signup-form', () => require( 'calypso/components/empty-component' ) );
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-	getABTestVariation: () => null,
-} ) );
 jest.mock( 'calypso/signup/step-wrapper', () => require( 'calypso/components/empty-component' ) );
 jest.mock( 'calypso/signup/utils', () => ( {
 	getFlowSteps: ( flow ) => {
