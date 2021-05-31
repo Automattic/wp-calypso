@@ -174,7 +174,7 @@ User.prototype.handleFetchSuccess = function ( userData ) {
 	store.set( 'wpcom_user_id', userData.ID );
 
 	if ( userData.abtests ) {
-		if ( config.isEnabled( 'dev/test-helper' ) || isE2ETest() ) {
+		if ( isE2ETest() ) {
 			// This section will preserve the existing localStorage A/B variation values,
 			// This is necessary for the A/B test helper component and e2e tests..
 			const initialVariationsFromStore = store.get( ABTEST_LOCALSTORAGE_KEY );

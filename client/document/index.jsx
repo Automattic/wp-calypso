@@ -12,7 +12,6 @@ import path from 'path';
 import config from '@automattic/calypso-config';
 import Head from 'calypso/components/head';
 import EnvironmentBadge, {
-	TestHelper,
 	Branch,
 	DevDocsLink,
 	PreferencesHelper,
@@ -45,7 +44,6 @@ class Document extends React.Component {
 			clientData,
 			env,
 			badge,
-			abTestHelper,
 			preferencesHelper,
 			branchName,
 			commitChecksum,
@@ -155,7 +153,6 @@ class Document extends React.Component {
 					{ badge && (
 						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
 							{ preferencesHelper && <PreferencesHelper /> }
-							{ abTestHelper && <TestHelper /> }
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }

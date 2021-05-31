@@ -59,15 +59,6 @@ export function setupContextMiddleware() {
 }
 
 function renderDevHelpers( reduxStore ) {
-	if ( config.isEnabled( 'dev/test-helper' ) ) {
-		const testHelperEl = document.querySelector( '.environment.is-tests' );
-		if ( testHelperEl ) {
-			asyncRequire( 'calypso/lib/abtest/test-helper', ( testHelper ) => {
-				testHelper( testHelperEl );
-			} );
-		}
-	}
-
 	if ( config.isEnabled( 'dev/preferences-helper' ) ) {
 		const prefHelperEl = document.querySelector( '.environment.is-prefs' );
 		if ( prefHelperEl ) {
