@@ -12,7 +12,7 @@ namespace A8C\FSE\WPCOMTasks;
  */
 function page_post_saved( $post_ID, $post, $update ) {
 	if ( get_option( 'show_on_front' ) === 'page' && (int) get_option( 'page_on_front' ) === $post_ID ) {
-		set_option( 'onboarding_checklist_task_front_page_updated', true );
+		update_option( 'onboarding_checklist_task_front_page_updated', true );
 	}
 }
 add_action( 'save_post_page', __NAMESPACE__ . '\\page_post_saved', 10, 3 );
@@ -25,7 +25,7 @@ function update_option_page_on_front( $old_value, $new_value ) {
 		return;
 	}
 
-	set_option( 'onboarding_checklist_task_front_page_updated', true );
+	update_option( 'onboarding_checklist_task_front_page_updated', true );
 }
 add_action( 'update_option_page_on_front', __NAMESPACE__ . '\\update_option_page_on_front', 10, 3 );
 
