@@ -42,6 +42,7 @@ const fieldKeys = {
 	lastName: 'last_name',
 	name: 'name',
 	roles: 'roles',
+	isExternalContributor: 'isExternalContributor',
 };
 
 class EditUserForm extends React.Component {
@@ -85,7 +86,7 @@ class EditUserForm extends React.Component {
 
 	getAllowedSettingsToChange() {
 		const { currentUser, user, isJetpack, hasWPCOMAccountLinked } = this.props;
-		const allowedSettings = [];
+		const allowedSettings = new Set();
 
 		if ( ! user.ID ) {
 			return allowedSettings;
@@ -96,20 +97,24 @@ class EditUserForm extends React.Component {
 		if ( isJetpack ) {
 			// Jetpack self hosted or Atomic.
 			if ( ! user.linked_user_ID || user.linked_user_ID !== currentUser.ID ) {
-				allowedSettings.push( fieldKeys.roles, 'isExternalContributor' );
+				allowedSettings.add( fieldKeys.roles );
+				allowedSettings.add( fieldKeys.isExternalContributor );
 			}
 		} else if ( user.ID !== currentUser.ID ) {
 			// WP.com Simple sites.
-			allowedSettings.push( fieldKeys.roles, 'isExternalContributor' );
+			allowedSettings.add( fieldKeys.roles );
+			allowedSettings.add( fieldKeys.isExternalContributor );
 		}
 
 		// On any site, allow editing 'first_name', 'last_name', 'name'
 		// only for users without WP.com account.
 		if ( ! hasWPCOMAccountLinked ) {
-			allowedSettings.push( fieldKeys.firstName, fieldKeys.lastName, fieldKeys.name );
+			allowedSettings.add( fieldKeys.firstName );
+			allowedSettings.add( fieldKeys.lastName );
+			allowedSettings.add( fieldKeys.name );
 		}
 
-		return allowedSettings;
+		return Array.from( allowedSettings );
 	}
 
 	hasUnsavedSettings() {
