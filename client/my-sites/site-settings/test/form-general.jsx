@@ -357,5 +357,18 @@ describe( 'SiteSettingsFormGeneral', () => {
 				expect( hiddenCheckbox ).toBeChecked();
 			} );
 		} );
+
+		describe( 'P2 Hub', () => {
+			it( 'Should not show the privacy settings UI', () => {
+				testProps = {
+					...testProps,
+					isP2HubSite: true,
+				};
+
+				const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
+
+				expect( container.querySelectorAll( '#site-privacy-settings' ) ).toHaveLength( 0 );
+			} );
+		} );
 	} );
 } );

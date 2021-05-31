@@ -45,6 +45,7 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isAtomicAndEditingToolkitPluginDeactivated from 'calypso/state/selectors/is-atomic-and-editing-toolkit-plugin-deactivated';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 
@@ -552,8 +553,12 @@ export class SiteSettingsFormGeneral extends Component {
 			handleSubmitForm,
 			isSavingSettings,
 			siteId,
+			isP2HubSite,
 		} = this.props;
 
+		if ( isP2HubSite ) {
+			return <></>;
+		}
 		return (
 			<>
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
@@ -681,6 +686,7 @@ const connectComponent = connect(
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 			siteDomains: getDomainsBySiteId( state, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+			isP2HubSite: isSiteP2Hub( state, siteId ),
 			isAtomicAndEditingToolkitDeactivated: isAtomicAndEditingToolkitPluginDeactivated(
 				state,
 				siteId
