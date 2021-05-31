@@ -8,7 +8,6 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'calypso/lib/abtest';
 import { sectionify } from 'calypso/lib/route';
 import {
 	trackPageLoad,
@@ -32,10 +31,6 @@ import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 
 const analyticsPageTitle = 'Reader';
-
-const activeAbTests = [
-	// active tests would go here
-];
 let lastRoute = null;
 
 function userHasHistory( context ) {
@@ -48,12 +43,6 @@ function renderFeedError( context, next ) {
 }
 
 const exported = {
-	initAbTests( context, next ) {
-		// spin up the ab tests that are currently active for the reader
-		activeAbTests.forEach( ( test ) => abtest( test ) );
-		next();
-	},
-
 	prettyRedirects( context, next ) {
 		// Do we have a 'pretty' site or feed URL? We only use this for /discover.
 		let redirect;
@@ -335,7 +324,6 @@ const exported = {
 };
 
 export const {
-	initAbTests,
 	prettyRedirects,
 	legacyRedirects,
 	updateLastRoute,
