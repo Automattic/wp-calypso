@@ -467,18 +467,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		] );
 	} );
 
-	it( 'sets the abTestHepler when config is enabled', async () => {
-		app.withConfigEnabled( { 'dev/test-helper': true } );
-		const { request } = await app.run();
-		expect( request.context.abTestHelper ).toEqual( true );
-	} );
-
-	it( 'sets the abTestHepler when config is disabled', async () => {
-		app.withConfigEnabled( { 'dev/test-helper': false } );
-		const { request } = await app.run();
-		expect( request.context.abTestHelper ).toEqual( false );
-	} );
-
 	it( 'sets the preferencesHelper when config is enabled', async () => {
 		app.withConfigEnabled( { 'dev/preferences-helper': true } );
 		const { request } = await app.run();
