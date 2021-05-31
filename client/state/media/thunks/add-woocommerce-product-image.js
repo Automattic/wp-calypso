@@ -18,13 +18,14 @@ import { getFileUploader } from 'calypso/lib/media/utils';
  * @param {(object) => void} onFinish Function to run when the uploading finishes
  */
 export const addWoocommerceProductImage = ( files, site, onUpload, onError, onFinish ) => async (
-	dispatch
+	dispatch,
+	getState
 ) => {
 	const uploadedItems = await dispatch(
 		uploadMedia(
 			files,
 			site,
-			getFileUploader(),
+			getFileUploader( getState ),
 			( uploadedMedia, originalFile ) =>
 				onUpload( {
 					ID: uploadedMedia.ID,
