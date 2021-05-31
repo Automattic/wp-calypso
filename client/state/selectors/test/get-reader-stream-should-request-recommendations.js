@@ -1,16 +1,10 @@
 /**
- * External Dependencies
- */
-import _ from 'lodash';
-
-/**
  * Internal Dependencies
  */
 import { getDistanceBetweenRecs } from 'calypso/reader/stream/utils';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { shouldRequestRecs } from 'calypso/state/reader/streams/selectors';
 
-jest.mock( 'calypso/lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
 jest.mock( 'calypso/reader/stream/utils' );
 jest.mock( 'calypso/state/reader/follows/selectors/get-reader-follows' );
 
@@ -18,8 +12,8 @@ describe( 'shouldRequestRecs', () => {
 	const generateState = ( { following, recs } ) => ( {
 		reader: {
 			streams: {
-				following: { items: _.fill( Array( following ), {} ) },
-				recs: { items: _.fill( Array( recs ), {} ) },
+				following: { items: Array( following ).fill( {} ) },
+				recs: { items: Array( recs ).fill( {} ) },
 			},
 		},
 	} );
