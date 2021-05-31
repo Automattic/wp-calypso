@@ -6,3 +6,5 @@ file:
   - 'lib/before.js'
 reporter:
   - 'spec-junit-reporter'
+# If not defined, in slower environment the default 2000ms timeout is exhausted before browser launches.
+timeout: 30000
