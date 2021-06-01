@@ -146,13 +146,13 @@ const handler = ( dispatch, action, getState ) => {
 
 		case INVITE_ACCEPTED:
 			if ( ! [ 'follower', 'viewer' ].includes( action.invite.role ) ) {
-				user().incrementSiteCount();
+				user().fetch();
 			}
 			return;
 
 		case SITE_DELETE_RECEIVE:
 		case JETPACK_DISCONNECT_RECEIVE:
-			user().decrementSiteCount();
+			user().fetch();
 			return;
 	}
 };

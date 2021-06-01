@@ -33,8 +33,6 @@ export interface User extends EventEmitter {
 	getLanguage: () => Language | undefined;
 	clear: () => Promise< void > | void;
 	set: ( attributes: UserData ) => boolean;
-	decrementSiteCount: () => void;
-	incrementSiteCount: () => void;
 	verificationPollerCallback: ( signal?: true ) => void;
 	checkVerification: () => void;
 	signalVerification: () => void;

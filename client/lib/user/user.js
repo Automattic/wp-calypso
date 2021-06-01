@@ -211,28 +211,6 @@ User.prototype.set = function ( attributes ) {
 	return changed;
 };
 
-User.prototype.decrementSiteCount = function () {
-	const user = this.get();
-	if ( user ) {
-		this.set( {
-			visible_site_count: user.visible_site_count - 1,
-			site_count: user.site_count - 1,
-		} );
-	}
-	this.fetch();
-};
-
-User.prototype.incrementSiteCount = function () {
-	const user = this.get();
-	if ( user ) {
-		return this.set( {
-			visible_site_count: user.visible_site_count + 1,
-			site_count: user.site_count + 1,
-		} );
-	}
-	this.fetch();
-};
-
 /**
  * Called every VERIFICATION_POLL_INTERVAL milliseconds
  * if the email is not verified.
