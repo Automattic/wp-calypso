@@ -17,9 +17,8 @@ import SupportInfo from 'calypso/components/support-info';
 import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isFreeAtomicSite } from 'calypso/lib/site/utils';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 
 const SeoSettingsHelpCard = ( {
@@ -80,11 +79,9 @@ const SeoSettingsHelpCard = ( {
 };
 
 export default connect( ( state ) => {
-	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const siteIsAtomic = isAtomicSite( state, siteId );
-	const siteIsFreeAtomic = isFreeAtomicSite( site, siteIsAtomic );
+	const siteIsFreeAtomic = isFreeAtomicSite( state, siteId );
 	const hasAdvancedSEOFeature =
 		hasFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
 		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
@@ -92,7 +89,6 @@ export default connect( ( state ) => {
 	return {
 		siteId,
 		siteIsJetpack,
-		siteIsAtomic,
 		siteIsFreeAtomic,
 		hasAdvancedSEOFeature,
 	};

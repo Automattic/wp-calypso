@@ -109,7 +109,8 @@ const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 	const isJetpack = isJetpackSite( state, siteId );
-	const isJetpackAdmin = isJetpack && isAdmin && ! isFreeAtomicSite;
+	const isFreeAtomic = isFreeAtomicSite( state, siteId );
+	const isJetpackAdmin = isJetpack && isAdmin && ! isFreeAtomic;
 
 	return {
 		isAdmin,

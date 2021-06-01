@@ -13,7 +13,6 @@ import wrapSettingsForm from '../wrap-settings-form';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isFreeAtomicSite } from 'calypso/lib/site/utils';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -103,8 +102,7 @@ const mapStateToProps = ( state ) => {
 	const isGoogleAnalyticsEligible = hasSiteAnalyticsFeature( site );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const siteIsAtomic = isAtomicSite( state, siteId );
-	const siteIsFreeAtomic = isFreeAtomicSite( site, siteIsAtomic );
+	const siteIsFreeAtomic = isFreeAtomicSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
 	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
 	const path = getCurrentRouteParameterized( state, siteId );
@@ -116,7 +114,6 @@ const mapStateToProps = ( state ) => {
 		site,
 		siteId,
 		siteIsJetpack,
-		siteIsAtomic,
 		siteIsFreeAtomic,
 		sitePlugins,
 		jetpackModuleActive,

@@ -8,7 +8,9 @@ import { withoutHttp } from 'calypso/lib/url';
 /**
  * Internal dependencies
  */
-import { planHasFeature } from '@automattic/calypso-products';
+import { planHasFeature, isFreePlan } from '@automattic/calypso-products';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 
 export function userCan( capability, site ) {
 	return site && site.capabilities && site.capabilities[ capability ];
@@ -180,12 +182,12 @@ export function hasSiteFeature( site, feature ) {
 /**
  * Checks if the site has a free plan and is Atomic.
  *
- * @param {object} site Site to check
- * @param {boolean} isAtomic is Atomic
- * @returns {boolean} True if it is
+ * @param {object} state  Global state tree
+ * @param {number} siteId Site ID
+ * @returns {boolean} True if site is free and Atomic
  */
-export function isFreeAtomicSite( site, isAtomic ) {
-	if ( site && site.plan ) {
-		return isAtomic && site.plan.is_free;
-	}
+export function isFreeAtomicSite( state, siteId ) {
+	const isAtomic = isAtomicSite( state, siteId );
+	const isFree = isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) );
+	return isAtomic && isFree;
 }
