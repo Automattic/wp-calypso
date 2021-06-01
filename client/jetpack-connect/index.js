@@ -104,7 +104,7 @@ export default function () {
 
 	if ( isLoggedOut ) {
 		page( '/jetpack/connect/plans/:interval(yearly|monthly)?/:site', ( { path } ) =>
-			page( login( { isNative: true, isJetpack: true, redirectTo: path } ) )
+			page( login( { isJetpack: true, redirectTo: path } ) )
 		);
 	}
 

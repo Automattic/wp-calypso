@@ -5,13 +5,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
-import { login } from 'calypso/lib/paths';
-import { addQueryArgs } from 'calypso/lib/route';
+import { login, lostPassword } from 'calypso/lib/paths';
 import EmptyContent from 'calypso/components/empty-content';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
@@ -20,15 +18,6 @@ import {
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
 import { withEnhancers } from 'calypso/state/utils';
-
-const nativeLoginUrl = login( { isNative: true, twoFactorAuthType: 'link' } );
-
-const lostPasswordURL = addQueryArgs(
-	{
-		action: 'lostpassword',
-	},
-	login()
-);
 
 class EmailedLoginLinkExpired extends React.Component {
 	static propTypes = {
@@ -41,12 +30,8 @@ class EmailedLoginLinkExpired extends React.Component {
 		this.props.recordPageView( '/log-in/link/use', 'Login > Link > Expired' );
 	}
 
-	onClickTryAgainLink = ( event ) => {
-		event.preventDefault();
-
+	onClickTryAgainLink = () => {
 		this.props.hideMagicLoginRequestForm();
-
-		page( nativeLoginUrl );
 	};
 
 	render() {
@@ -63,13 +48,13 @@ class EmailedLoginLinkExpired extends React.Component {
 				<EmptyContent
 					action={ translate( 'Try again' ) }
 					actionCallback={ this.onClickTryAgainLink }
-					actionURL={ nativeLoginUrl }
+					actionURL={ login( { twoFactorAuthType: 'link' } ) }
 					className="magic-login__link-expired"
 					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					illustrationWidth={ 500 }
 					line={ translate( 'Maybe try resetting your password instead' ) }
 					secondaryAction={ translate( 'Reset my password' ) }
-					secondaryActionURL={ lostPasswordURL }
+					secondaryActionURL={ lostPassword() }
 					title={ translate( 'Login link is expired or invalid' ) }
 				/>
 			</div>

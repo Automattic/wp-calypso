@@ -102,7 +102,6 @@ class HandleEmailedLinkForm extends React.Component {
 		} else {
 			page(
 				login( {
-					isNative: true,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: twoFactorNotificationSent.replace( 'none', 'authenticator' ),
 					redirectTo: redirectToSanitized,

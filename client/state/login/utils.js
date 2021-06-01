@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { lostPassword } from 'calypso/lib/paths';
 
 export function getSMSMessageFromResponse( response ) {
 	const phoneNumber = get( response, 'body.data.phone_number' );
@@ -66,22 +67,19 @@ export function getErrorFromHTTPError( httpError ) {
 		if ( code in errorFields ) {
 			field = errorFields[ code ];
 		} else if ( code === 'compromisable_account' ) {
-			const url = localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword' );
 			return {
 				code,
 				message: (
 					<p>
 						{ translate(
 							'Your account has been blocked as a security precaution. To continue, you must {{a}}reset your password{{/a}}.',
-							{ components: { a: <a href={ url } rel="external" /> } }
+							{ components: { a: <a href={ lostPassword() } rel="external" /> } }
 						) }
 					</p>
 				),
 				field,
 			};
 		} else if ( code === 'admin_login_attempt' ) {
-			const url = localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword' );
-
 			return {
 				code,
 				message: (
@@ -112,7 +110,7 @@ export function getErrorFromHTTPError( httpError ) {
 									'by providing your email address.',
 								{
 									components: {
-										a: <a href={ url } rel="external" />,
+										a: <a href={ lostPassword() } rel="external" />,
 									},
 								}
 							) }

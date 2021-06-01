@@ -906,7 +906,6 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 			app.withConfigEnabled( {
 				'wpcom-user-bootstrap': true,
 				'use-translation-chunks': true,
-				'login/native-login-links': true,
 			} );
 			app.withBootstrapUser( {} );
 			app.withReduxStore( theStore );
@@ -930,26 +929,24 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 			expect( request.context.languageRevisions ).toEqual( { en: 1234 } );
 		} );
 
-		it( 'gets the redirect url for https requestss', async () => {
+		it( 'gets the redirect url for https requests', async () => {
 			await app.run( {
 				request: {
 					get: jest.fn( ( header ) => ( header === 'X-Forwarded-Proto' ? 'https' : undefined ) ),
 				},
 			} );
 			expect( app.getMocks().login ).toHaveBeenCalledWith( {
-				isNative: true,
 				redirectTo: `https://valid.hostname${ url }`,
 			} );
 		} );
 
-		it( 'gets the redirect url for http requestss', async () => {
+		it( 'gets the redirect url for http requests', async () => {
 			await app.run( {
 				request: {
 					get: jest.fn( ( header ) => ( header === 'X-Forwarded-Proto' ? 'http' : undefined ) ),
 				},
 			} );
 			expect( app.getMocks().login ).toHaveBeenCalledWith( {
-				isNative: true,
 				redirectTo: `http://valid.hostname${ url }`,
 			} );
 		} );

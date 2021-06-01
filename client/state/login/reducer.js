@@ -261,7 +261,7 @@ export const requestNotice = ( state = null, action ) => {
 			return null;
 		case ROUTE_SET: {
 			// if we just navigated to the sms 2fa page, keep the notice (if any) from the loginUser action
-			if ( action.path === login( { isNative: true, twoFactorAuthType: 'sms' } ) ) {
+			if ( action.path === login( { twoFactorAuthType: 'sms' } ) ) {
 				return state;
 			}
 			return null;

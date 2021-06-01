@@ -255,7 +255,7 @@ export default {
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
 		if ( ! userLoggedIn && shouldForceLogin( flowName ) ) {
-			return page.redirect( login( { isNative: true, redirectTo: context.path } ) );
+			return page.redirect( login( { redirectTo: context.path } ) );
 		}
 
 		// if flow can be resumed, use saved locale

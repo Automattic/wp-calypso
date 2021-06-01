@@ -115,7 +115,6 @@ export class UserStep extends Component {
 		return login( {
 			isJetpack: 'jetpack-connect' === this.props.sectionName,
 			from: this.props.from,
-			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo: this.getRedirectToAfterLoginUrl(),
 			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,

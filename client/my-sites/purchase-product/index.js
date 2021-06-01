@@ -23,7 +23,7 @@ export default function () {
 	if ( isLoggedOut ) {
 		page(
 			'/purchase-product/:type(jetpack_search|wpcom_search)/:interval(yearly|monthly)?',
-			( { path } ) => page( login( { isNative: true, isJetpack: true, redirectTo: path } ) )
+			( { path } ) => page( login( { isJetpack: true, redirectTo: path } ) )
 		);
 	} else {
 		page(

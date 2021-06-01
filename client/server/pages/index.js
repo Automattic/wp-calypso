@@ -293,7 +293,6 @@ function setUpLoggedInRoute( req, res, next ) {
 		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
 		redirectUrl = login( {
-			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo: protocol + '://' + config( 'hostname' ) + req.originalUrl,
 		} );
 
