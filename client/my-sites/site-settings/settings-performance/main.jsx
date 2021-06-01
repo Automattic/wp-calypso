@@ -71,8 +71,6 @@ class SiteSettingsPerformance extends Component {
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
 
-				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
-
 				<Search
 					handleAutosavingToggle={ handleAutosavingToggle }
 					updateFields={ updateFields }
@@ -83,6 +81,8 @@ class SiteSettingsPerformance extends Component {
 					fields={ fields }
 					trackEvent={ trackEvent }
 				/>
+
+				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
 
 				{ siteIsJetpack && (
 					<Fragment>
