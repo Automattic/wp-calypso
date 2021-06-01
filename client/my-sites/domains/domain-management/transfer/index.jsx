@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import React from 'react';
-
+import PropTypes from 'prop-types';
 /**
  * Internal Dependencies
  */
@@ -85,6 +85,10 @@ function Transfer( props ) {
 		</Main>
 	);
 }
+
+Transfer.propTypes = {
+	selectedDomainName: PropTypes.string.isRequired,
+};
 
 export default connect( ( state, ownProps ) => {
 	const domain = getSelectedDomain( ownProps );
