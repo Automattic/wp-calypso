@@ -243,7 +243,7 @@ class ThemeSheet extends React.Component {
 		return (
 			<div className="theme__sheet-preview-link">
 				<span className="theme__sheet-preview-link-text">
-					{ i18n.translate( 'Open Live Demo', {
+					{ i18n.translate( 'Open live demo', {
 						context: 'Individual theme live preview button',
 					} ) }
 				</span>
@@ -252,7 +252,7 @@ class ThemeSheet extends React.Component {
 	}
 
 	renderScreenshot() {
-		const { isWpcomTheme, name: themeName } = this.props;
+		const { isWpcomTheme, name: themeName, demo_uri } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
 		const width = 735;
 		// Photon may return null, allow fallbacks
@@ -275,7 +275,8 @@ class ThemeSheet extends React.Component {
 			return (
 				<a
 					className="theme__sheet-screenshot is-active"
-					href={ this.props.demo_uri }
+					// Hacky replacement of Storefront theme demo URI with something nicer
+					href={ demo_uri }
 					onClick={ this.previewAction }
 					rel="noopener noreferrer"
 				>
@@ -295,7 +296,7 @@ class ThemeSheet extends React.Component {
 			support: i18n.translate( 'Support', { context: 'Filter label for theme content' } ),
 		};
 
-		const { siteSlug, id } = this.props;
+		const { siteSlug, id, demo_uri } = this.props;
 		const sitePart = siteSlug ? `/${ siteSlug }` : '';
 
 		const nav = (
@@ -311,11 +312,11 @@ class ThemeSheet extends React.Component {
 				) ) }
 				{ this.shouldRenderPreviewButton() ? (
 					<NavItem
-						path={ this.props.demo_uri }
+						path={ demo_uri }
 						onClick={ this.previewAction }
 						className="theme__sheet-preview-nav-item"
 					>
-						{ i18n.translate( 'Open Live Demo', {
+						{ i18n.translate( 'Open live demo', {
 							context: 'Individual theme live preview button',
 						} ) }
 					</NavItem>
@@ -555,7 +556,7 @@ class ThemeSheet extends React.Component {
 						</div>
 					</div>
 					<Button primary={ true } href={ '/themes/' }>
-						{ i18n.translate( 'See All Themes' ) }
+						{ i18n.translate( 'See all themes' ) }
 					</Button>
 				</Card>
 
@@ -771,7 +772,17 @@ class ThemeSheet extends React.Component {
 const ConnectedThemeSheet = connectOptions( ThemeSheet );
 
 const ThemeSheetWithOptions = ( props ) => {
-	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = props;
+	const {
+		siteId,
+		isActive,
+		isLoggedIn,
+		isPremium,
+		isPurchased,
+		isJetpack,
+		demo_uri,
+		name: themeName,
+	} = props;
+	const storefrontDemoUri = 'https://themes.woocommerce.com/storefront/';
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
@@ -797,6 +808,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	return (
 		<ConnectedThemeSheet
 			{ ...props }
+			demo_uri={ 'Storefront' === themeName ? storefrontDemoUri : demo_uri }
 			siteId={ siteId }
 			defaultOption={ defaultOption }
 			secondaryOption={ secondaryOption }
