@@ -27,7 +27,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { login } from 'calypso/lib/paths';
+import { login, lostPassword } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
@@ -74,13 +74,7 @@ export class LoginLinks extends React.Component {
 
 		this.props.recordTracksEvent( 'calypso_login_lost_phone_link_click' );
 
-		page(
-			login( {
-				isNative: true,
-				twoFactorAuthType: 'backup',
-				isGutenboarding: this.props.isGutenboarding,
-			} )
-		);
+		page( login( { twoFactorAuthType: 'backup', isGutenboarding: this.props.isGutenboarding } ) );
 	};
 
 	handleMagicLoginLinkClick = ( event ) => {
@@ -113,7 +107,6 @@ export class LoginLinks extends React.Component {
 		// here deliberately, to ensure that if someone copies this link to
 		// paste somewhere else, their email address isn't included in it.
 		const loginParameters = {
-			isNative: true,
 			locale: this.props.locale,
 			twoFactorAuthType: 'link',
 		};
@@ -264,24 +257,27 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
-		const queryArgs = { action: 'lostpassword' };
+		let lostPasswordUrl = lostPassword( { locale: this.props.locale } );
 
 		// If we got here coming from Jetpack Cloud login page, we want to go back
 		// to it after we finish the process
 		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
 			const currentUrl = new URL( window.location.href );
 			currentUrl.searchParams.append( 'lostpassword_flow', true );
-			queryArgs.redirect_to = currentUrl.toString();
+			const queryArgs = {
+				redirect_to: currentUrl.toString(),
 
-			// This parameter tells WPCOM that we are coming from Jetpack.com,
-			// so it can present the user a Lost password page that works in
-			// the context of Jetpack.com.
-			queryArgs.client_id = this.props.oauth2Client.id;
+				// This parameter tells WPCOM that we are coming from Jetpack.com,
+				// so it can present the user a Lost password page that works in
+				// the context of Jetpack.com.
+				client_id: this.props.oauth2Client.id,
+			};
+			lostPasswordUrl = addQueryArgs( queryArgs, lostPasswordUrl );
 		}
 
 		return (
 			<a
-				href={ addQueryArgs( queryArgs, login( { locale: this.props.locale } ) ) }
+				href={ lostPasswordUrl }
 				key="lost-password-link"
 				onClick={ this.recordResetPasswordLinkClick }
 				rel="external"

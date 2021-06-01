@@ -1,7 +1,3 @@
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
 jest.mock( '../shared/upsell', () => 'Upsell' );
 jest.mock( '../shared/no-available-times', () => 'NoAvailableTimes' );
 

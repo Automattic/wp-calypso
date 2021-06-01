@@ -1,7 +1,3 @@
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
 jest.mock( 'calypso/blocks/dismissible-card', () => {
 	const React = require( 'react' );
 	return class DismissibleCard extends React.Component {};
@@ -11,19 +7,6 @@ jest.mock( 'calypso/lib/analytics/track-component-view', () => {
 	const React = require( 'react' );
 	return class TrackComponentView extends React.Component {};
 } );
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Comp ) => ( props ) => (
-		<Comp
-			{ ...props }
-			translate={ function ( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: ( x ) => x,
-	translate: ( x ) => x,
-} ) );
 
 /**
  * External dependencies

@@ -234,7 +234,7 @@ export function loginBeforeJetpackSearch( context, next ) {
 	// Log in to WP.com happens at the start of the flow for Search products
 	// ( to facilitate site selection ).
 	if ( JETPACK_SEARCH_PRODUCTS.includes( type ) && isLoggedOut ) {
-		return page( login( { isNative: true, isJetpack: true, redirectTo: path } ) );
+		return page( login( { isJetpack: true, redirectTo: path } ) );
 	}
 	next();
 }
@@ -304,7 +304,7 @@ export function signupForm( context, next ) {
 	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
 	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
 		// Force login for mobile app flow. App will intercept this request and prompt native login.
-		return window.location.replace( login( { isNative: true, redirectTo: context.path } ) );
+		return window.location.replace( login( { redirectTo: context.path } ) );
 	}
 
 	const { query } = context;

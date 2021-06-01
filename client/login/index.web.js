@@ -81,25 +81,23 @@ export default ( router ) => {
 		);
 	}
 
-	if ( config.isEnabled( 'login/wp-login' ) ) {
-		router(
-			[
-				`/log-in/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
-				`/log-in/:flow(social-connect|private-site)/${ lang }`,
-				`/log-in/:socialService(google|apple)/callback/${ lang }`,
-				`/log-in/:isJetpack(jetpack)/${ lang }`,
-				`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
-				`/log-in/:isGutenboarding(new)/${ lang }`,
-				`/log-in/:isGutenboarding(new)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
-				`/log-in/${ lang }`,
-			],
-			redirectJetpack,
-			redirectDefaultLocale,
-			setLocaleMiddleware,
-			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-			login,
-			setShouldServerSideRenderLogin,
-			makeLoggedOutLayout
-		);
-	}
+	router(
+		[
+			`/log-in/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
+			`/log-in/:flow(social-connect|private-site)/${ lang }`,
+			`/log-in/:socialService(google|apple)/callback/${ lang }`,
+			`/log-in/:isJetpack(jetpack)/${ lang }`,
+			`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
+			`/log-in/:isGutenboarding(new)/${ lang }`,
+			`/log-in/:isGutenboarding(new)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
+			`/log-in/${ lang }`,
+		],
+		redirectJetpack,
+		redirectDefaultLocale,
+		setLocaleMiddleware,
+		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+		login,
+		setShouldServerSideRenderLogin,
+		makeLoggedOutLayout
+	);
 };

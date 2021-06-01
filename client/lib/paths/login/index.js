@@ -2,13 +2,11 @@
  * Internal dependencies
  */
 import { addQueryArgs } from 'calypso/lib/url';
-import { addLocaleToPath, localizeUrl } from 'calypso/lib/i18n-utils';
-import config, { isEnabled } from '@automattic/calypso-config';
+import { addLocaleToPath } from 'calypso/lib/i18n-utils';
 
 export function login( {
 	isJetpack = undefined,
 	isGutenboarding = undefined,
-	isNative = undefined,
 	locale = undefined,
 	redirectTo = undefined,
 	twoFactorAuthType = undefined,
@@ -22,36 +20,28 @@ export function login( {
 	from = undefined,
 	allowSiteConnection = undefined,
 } = {} ) {
-	let url = config( 'login_url' );
+	let url = '/log-in';
 
-	if ( isNative && isEnabled( 'login/wp-login' ) ) {
-		url = '/log-in';
-
-		if ( socialService ) {
-			url += '/' + socialService + '/callback';
-		} else if ( twoFactorAuthType && isJetpack ) {
-			url += '/jetpack/' + twoFactorAuthType;
-		} else if ( twoFactorAuthType && isGutenboarding ) {
-			url += '/new/' + twoFactorAuthType;
-		} else if ( twoFactorAuthType ) {
-			url += '/' + twoFactorAuthType;
-		} else if ( socialConnect ) {
-			url += '/social-connect';
-		} else if ( isJetpack ) {
-			url += '/jetpack';
-		} else if ( isGutenboarding ) {
-			url += '/new';
-		} else if ( useMagicLink ) {
-			url += '/link';
-		}
+	if ( socialService ) {
+		url += '/' + socialService + '/callback';
+	} else if ( twoFactorAuthType && isJetpack ) {
+		url += '/jetpack/' + twoFactorAuthType;
+	} else if ( twoFactorAuthType && isGutenboarding ) {
+		url += '/new/' + twoFactorAuthType;
+	} else if ( twoFactorAuthType ) {
+		url += '/' + twoFactorAuthType;
+	} else if ( socialConnect ) {
+		url += '/social-connect';
+	} else if ( isJetpack ) {
+		url += '/jetpack';
+	} else if ( isGutenboarding ) {
+		url += '/new';
+	} else if ( useMagicLink ) {
+		url += '/link';
 	}
 
 	if ( locale && locale !== 'en' ) {
-		if ( isNative ) {
-			url = addLocaleToPath( url, locale );
-		} else {
-			url = localizeUrl( url, locale );
-		}
+		url = addLocaleToPath( url, locale );
 	}
 
 	if ( site ) {
