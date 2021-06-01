@@ -3,6 +3,7 @@
  */
 import React, { useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 import { CompactCard, Button, Card } from '@automattic/components';
 
 /**
@@ -16,6 +17,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import type { VatDetails, UpdateError } from './use-vat-details';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import './style.scss';
 
@@ -36,6 +38,8 @@ export default function VatInfoPage(): JSX.Element {
 		setVatDetails( { ...vatDetails, ...currentVatDetails } );
 	};
 
+	useDisplayVatNotices( { error: updateError, success: isUpdateSuccessful } );
+
 	if ( fetchError ) {
 		return (
 			<div className="vat-info">
@@ -55,8 +59,6 @@ export default function VatInfoPage(): JSX.Element {
 	return (
 		<Layout>
 			<Column type="main" className="vat-info">
-				<VatUpdateStatusNotice error={ updateError } success={ isUpdateSuccessful } />
-
 				<CompactCard>
 					<FormFieldset className="vat-info__country-field">
 						<FormLabel htmlFor="country">{ translate( 'Country' ) }</FormLabel>
@@ -124,37 +126,33 @@ export default function VatInfoPage(): JSX.Element {
 	);
 }
 
-function VatUpdateStatusNotice( {
+function useDisplayVatNotices( {
 	error,
 	success,
 }: {
 	error: UpdateError | null;
 	success: boolean;
-} ): JSX.Element | null {
+} ): void {
+	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	if ( error?.error === 'validation_failed' ) {
-		return (
-			<CompactCard highlight="error">
-				{ translate( 'Your VAT details are not valid. Please check each field and try again.' ) }
-			</CompactCard>
+		reduxDispatch(
+			errorNotice(
+				translate( 'Your VAT details are not valid. Please check each field and try again.' )
+			)
 		);
+		return;
 	}
 
 	if ( error ) {
-		return (
-			<CompactCard highlight="error">
-				{ translate( 'An error occurred while updating your VAT details.' ) }
-			</CompactCard>
+		reduxDispatch(
+			errorNotice( translate( 'An error occurred while updating your VAT details.' ) )
 		);
+		return;
 	}
 
 	if ( success ) {
-		return (
-			<CompactCard highlight="success">
-				{ translate( 'Your VAT details have been updated!' ) }
-			</CompactCard>
-		);
+		reduxDispatch( successNotice( translate( 'Your VAT details have been updated!' ) ) );
+		return;
 	}
-
-	return null;
 }
