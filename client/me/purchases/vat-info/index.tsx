@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { CompactCard, Button, Card } from '@automattic/components';
@@ -135,24 +135,27 @@ function useDisplayVatNotices( {
 } ): void {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
-	if ( error?.error === 'validation_failed' ) {
-		reduxDispatch(
-			errorNotice(
-				translate( 'Your VAT details are not valid. Please check each field and try again.' )
-			)
-		);
-		return;
-	}
 
-	if ( error ) {
-		reduxDispatch(
-			errorNotice( translate( 'An error occurred while updating your VAT details.' ) )
-		);
-		return;
-	}
+	useEffect( () => {
+		if ( error?.error === 'validation_failed' ) {
+			reduxDispatch(
+				errorNotice(
+					translate( 'Your VAT details are not valid. Please check each field and try again.' )
+				)
+			);
+			return;
+		}
 
-	if ( success ) {
-		reduxDispatch( successNotice( translate( 'Your VAT details have been updated!' ) ) );
-		return;
-	}
+		if ( error ) {
+			reduxDispatch(
+				errorNotice( translate( 'An error occurred while updating your VAT details.' ) )
+			);
+			return;
+		}
+
+		if ( success ) {
+			reduxDispatch( successNotice( translate( 'Your VAT details have been updated!' ) ) );
+			return;
+		}
+	}, [ error, success, reduxDispatch, translate ] );
 }
