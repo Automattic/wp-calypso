@@ -275,12 +275,11 @@ class PeopleProfile extends Component {
 }
 
 export default connect( ( _state, { siteId, user } ) => {
-	const userId = user && user.ID;
-	const linkedUserId = user && user.linked_user_ID;
+	const hasWPCOMAccountLinked = false !== user?.linked_user_ID;
 	const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
 	return {
 		isExternalContributor: externalContributors.includes(
-			undefined !== linkedUserId ? linkedUserId : userId
+			hasWPCOMAccountLinked ? user?.linked_user_ID || user?.ID : user?.ID
 		),
 	};
 } )( localize( withLocalizedMoment( PeopleProfile ) ) );

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
@@ -85,7 +85,14 @@ class EditUserForm extends React.Component {
 	}
 
 	getAllowedSettingsToChange() {
-		const { currentUser, user, isJetpack, hasWPCOMAccountLinked } = this.props;
+		const {
+			currentUser,
+			user,
+			isJetpack,
+			hasWPCOMAccountLinked,
+			isVip,
+			isWPForTeamsSite,
+		} = this.props;
 		const allowedSettings = new Set();
 
 		if ( ! user.ID ) {
@@ -93,17 +100,15 @@ class EditUserForm extends React.Component {
 		}
 
 		// On any site, admins should be able to change only other
-		// user's role or isExternalContributor.
+		// user's role.
 		if ( isJetpack ) {
 			// Jetpack self hosted or Atomic.
 			if ( ! user.linked_user_ID || user.linked_user_ID !== currentUser.ID ) {
 				allowedSettings.add( fieldKeys.roles );
-				allowedSettings.add( fieldKeys.isExternalContributor );
 			}
 		} else if ( user.ID !== currentUser.ID ) {
 			// WP.com Simple sites.
 			allowedSettings.add( fieldKeys.roles );
-			allowedSettings.add( fieldKeys.isExternalContributor );
 		}
 
 		// On any site, allow editing 'first_name', 'last_name', 'name'
@@ -112,6 +117,18 @@ class EditUserForm extends React.Component {
 			allowedSettings.add( fieldKeys.firstName );
 			allowedSettings.add( fieldKeys.lastName );
 			allowedSettings.add( fieldKeys.name );
+		}
+
+		// Allow changing isExternalContributor for connected Users only
+		// who aren't VIP on a site that's not WP for Teams
+		// and belong to the External Roles array.
+		if (
+			hasWPCOMAccountLinked &&
+			! isVip &&
+			! isWPForTeamsSite &&
+			this.isExternalRole( this.state.roles )
+		) {
+			allowedSettings.add( fieldKeys.isExternalContributor );
 		}
 
 		return Array.from( allowedSettings );
@@ -124,7 +141,7 @@ class EditUserForm extends React.Component {
 	updateUser = ( event ) => {
 		event.preventDefault();
 
-		const { siteId, user, markSaved } = this.props;
+		const { siteId, user, markSaved, hasWPCOMAccountLinked } = this.props;
 		const changedSettings = this.getChangedSettings();
 		debug( 'Changed settings: ' + JSON.stringify( changedSettings ) );
 
@@ -142,12 +159,12 @@ class EditUserForm extends React.Component {
 		if ( true === changedSettings.isExternalContributor ) {
 			requestExternalContributorsAddition(
 				siteId,
-				undefined !== user.linked_user_ID ? user.linked_user_ID : user.ID
+				hasWPCOMAccountLinked ? user?.linked_user_ID || user.ID : user.ID // On simple sites linked_user_ID is undefined for connected users.
 			);
 		} else if ( false === changedSettings.isExternalContributor ) {
 			requestExternalContributorsRemoval(
 				siteId,
-				undefined !== user.linked_user_ID ? user.linked_user_ID : user.ID
+				hasWPCOMAccountLinked ? user?.linked_user_ID || user.ID : user.ID // On simple sites linked_user_ID is undefined for connected users.
 			);
 		}
 
@@ -173,26 +190,25 @@ class EditUserForm extends React.Component {
 		switch ( fieldId ) {
 			case fieldKeys.roles:
 				returnField = (
-					<Fragment key={ fieldKeys.roles }>
-						<RoleSelect
-							id={ fieldKeys.roles }
-							name={ fieldKeys.roles }
-							siteId={ this.props.siteId }
-							value={ this.state.roles }
-							onChange={ this.handleChange }
-							onFocus={ this.recordFieldFocus( fieldKeys.roles ) }
-							disabled={ isDisabled }
-						/>
-						{ ! this.props.isVip &&
-							! this.props.isWPForTeamsSite &&
-							this.isExternalRole( this.state.roles ) && (
-								<ContractorSelect
-									onChange={ this.handleExternalChange }
-									checked={ this.state.isExternalContributor }
-									disabled={ isDisabled }
-								/>
-							) }
-					</Fragment>
+					<RoleSelect
+						id={ fieldKeys.roles }
+						name={ fieldKeys.roles }
+						siteId={ this.props.siteId }
+						value={ this.state.roles }
+						onChange={ this.handleChange }
+						onFocus={ this.recordFieldFocus( fieldKeys.roles ) }
+						disabled={ isDisabled }
+					/>
+				);
+				break;
+			case fieldKeys.isExternalContributor:
+				returnField = (
+					<ContractorSelect
+						key={ fieldKeys.isExternalContributor }
+						onChange={ this.handleExternalChange }
+						checked={ this.state.isExternalContributor }
+						disabled={ isDisabled }
+					/>
 				);
 				break;
 			case fieldKeys.firstName:
@@ -308,7 +324,7 @@ export default localize(
 				isExternalContributor: userId && externalContributors.includes( userId ),
 				isVip: isVipSite( state, siteId ),
 				isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-				hasWPCOMAccountLinked: user?.linked_user_ID !== false,
+				hasWPCOMAccountLinked: false !== user?.linked_user_ID,
 			};
 		},
 		{
