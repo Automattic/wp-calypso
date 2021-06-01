@@ -58,7 +58,6 @@
 		"ive/use-external-assignment": true,
 		"jetpack/api-cache": true,
 		"jetpack/concierge-sessions": false,
-		"jetpack/connect/remote-install": true,
 		"jetpack/happychat": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/features-section/atomic": true,

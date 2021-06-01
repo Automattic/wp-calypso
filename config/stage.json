@@ -59,7 +59,6 @@
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/mobile-app-flow": true,
-		"jetpack/connect/remote-install": true,
 		"jetpack/connect/woocommerce": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/features-section/atomic": true,

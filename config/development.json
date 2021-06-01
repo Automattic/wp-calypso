@@ -85,7 +85,6 @@
 		"jetpack/blocks/beta": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect-redirect-pressable-credential-approval": true,
-		"jetpack/connect/remote-install": true,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/connect/woocommerce": true,
 		"jetpack/happychat": true,

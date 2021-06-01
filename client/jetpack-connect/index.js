@@ -50,25 +50,13 @@ export default function () {
 		clientRender
 	);
 
-	if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
-		page(
-			'/jetpack/connect/install',
-			controller.setMasterbar,
-			controller.credsForm,
-			makeLayout,
-			clientRender
-		);
-	} else {
-		page(
-			`/jetpack/connect/:type(install)/${ locale }`,
-			controller.redirectWithoutLocaleIfLoggedIn,
-			controller.persistMobileAppFlow,
-			controller.setMasterbar,
-			controller.connect,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/jetpack/connect/install',
+		controller.setMasterbar,
+		controller.credsForm,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/jetpack/connect',

@@ -41,7 +41,6 @@
 		"jetpack-cloud/search": true,
 		"jetpack/backups-date-picker": true,
 		"jetpack/search-product": true,
-		"jetpack/connect/remote-install": true,
 		"jetpack/pricing-page": true,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/redirect-legacy-plans": true,
