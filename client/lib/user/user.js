@@ -19,7 +19,6 @@ import wpcom from 'calypso/lib/wp';
 import Emitter from 'calypso/lib/mixins/emitter';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
 import { clearStorage } from 'calypso/lib/browser-storage';
-import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'calypso/lib/abtest/utility';
 
 const debug = debugFactory( 'calypso:user' );
 
@@ -122,10 +121,7 @@ User.prototype.fetch = function () {
 	debug( 'Getting user from api' );
 	this.fetching = wpcom
 		.me()
-		.get( {
-			meta: 'flags',
-			abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
-		} )
+		.get()
 		.then( ( data ) => {
 			debug( 'User successfully retrieved from api:', data );
 			const userData = filterUserObject( data );
@@ -172,11 +168,8 @@ User.prototype.handleFetchSuccess = function ( userData ) {
 	// Store user ID in local storage so that we can detect a change and clear the storage
 	store.set( 'wpcom_user_id', userData.ID );
 
-	if ( userData.abtests ) {
-		store.set( ABTEST_LOCALSTORAGE_KEY, userData.abtests );
-	}
-
 	this.data = userData;
+
 	this.emit( 'change' );
 };
 
