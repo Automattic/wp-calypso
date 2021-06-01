@@ -49,7 +49,8 @@ import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
-	PLAN_BUSINESS,
+	TYPE_BUSINESS,
+	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -313,7 +314,11 @@ export class SeoForm extends React.Component {
 							'Boost your search engine ranking with the powerful SEO tools in the Business plan'
 						),
 						feature: FEATURE_ADVANCED_SEO,
-						plan: PLAN_BUSINESS,
+						plan:
+							selectedSite.plan &&
+							findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
+								type: TYPE_BUSINESS,
+							} ),
 				  };
 
 		// To ensure two Coming Soon badges don't appear while sites with Coming Soon v1 (isSitePrivate && siteIsComingSoon) still exist.
