@@ -6,7 +6,7 @@ import { BaseContainer } from '../base-container';
 /**
  * Type dependencies
  */
-import { ElementHandle, Page } from 'playwright';
+import { Page } from 'playwright';
 
 const selectors = {
 	sidebar: '.sidebar',
@@ -31,31 +31,15 @@ export class SidebarComponent extends BaseContainer {
 	}
 
 	/**
-	 * Locates and returns the ElementHandle matching the given string identifier.
-	 *
-	 * @param {string} name Plaintext name of the menu item in the sidebar.
-	 * @returns {Promise<ElementHandle>} ElementHandle matching the name.
-	 * @throws {Error} If name did not match any visible sidebar menu item.
-	 */
-	async _getMenuItemHandle( name: string ): Promise< ElementHandle > {
-		const sanitizedName = name.toProperCase();
-		const handle = await this.page.$( `text=${ sanitizedName }` );
-		if ( ! handle ) {
-			throw new Error( `Menu item ${ sanitizedName } not found in the sidebar.` );
-		}
-		return handle;
-	}
-
-	/**
 	 * Clicks on the sidebar menu item matching the name.
 	 * Note that the menu item must be visible in some shape or form.
+	 * If there are multiple elements that match the selector, the first
+	 * matching element will be clicked (as per Playwright documentation).
 	 *
 	 * @param {string} name Plaintext name of the menu item in the sidebar.
 	 */
 	async clickMenuItem( name: string ): Promise< void > {
-		const handle = await this._getMenuItemHandle( name );
-
-		await handle.click();
+		await this.page.click( `text=${ name.toProperCase() }` );
 	}
 
 	/**
@@ -64,8 +48,7 @@ export class SidebarComponent extends BaseContainer {
 	 * @param {string} name Plaintext name of the menu item in the sidebar.
 	 */
 	async hoverMenuItem( name: string ): Promise< void > {
-		const handle = await this._getMenuItemHandle( name );
-
-		await handle.hover();
+		const element = await this.page.waitForSelector( `text=${ name.toProperCase() }` );
+		await element.hover();
 	}
 }
