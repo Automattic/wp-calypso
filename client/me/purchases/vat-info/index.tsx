@@ -151,9 +151,14 @@ function useDisplayVatNotices( {
 		if ( error ) {
 			reduxDispatch( removeNotice( 'vat_info_notice' ) );
 			reduxDispatch(
-				errorNotice( translate( 'An error occurred while updating your VAT details.' ), {
-					id: 'vat_info_notice',
-				} )
+				errorNotice(
+					translate(
+						'An error occurred while updating your VAT details. Please try again or contact support.'
+					),
+					{
+						id: 'vat_info_notice',
+					}
+				)
 			);
 			return;
 		}
