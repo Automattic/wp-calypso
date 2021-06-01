@@ -173,11 +173,13 @@ class EmailPlan extends React.Component {
 		const { domain } = this.props;
 
 		if ( hasTitanMailWithUs( domain ) ) {
-			return 5;
+			return 3;
 		}
+
 		if ( hasGSuiteWithUs( domain ) ) {
-			return 30;
+			return 20;
 		}
+
 		return 0;
 	}
 
