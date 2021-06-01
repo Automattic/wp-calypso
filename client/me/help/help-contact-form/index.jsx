@@ -317,7 +317,7 @@ export class HelpContactForm extends React.PureComponent {
 
 		// "Unauthorized" means it's still a WP.com site - just a private one.
 		const isWpComConnectedSite =
-			( siteData && siteData.ID && ! siteData.jetpack ) ||
+			( siteData && siteData.ID && ( ! siteData.jetpack || siteData.is_wpcom_atomic ) ) ||
 			( errorData && errorData === 'unauthorized' );
 
 		// Returns true for self-hosted sites, irrespective of Jetpack connection status, and non-WordPress sites.
@@ -340,7 +340,7 @@ export class HelpContactForm extends React.PureComponent {
 				: 'isNonWpComHostedSiteWithJetpack';
 		}
 
-		// Doesn't return anything for WP.com sites, and avoids directing blogs with "jetpack_error" to the self-hosted forums.
+		// Avoids directing blogs with "jetpack_error" to the self-hosted forums.
 		return null;
 	};
 
