@@ -114,13 +114,12 @@ function MasterbarCartCount( { productsInCart }: { productsInCart: number } ): J
 }
 
 function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string } ) {
-	const { removeCoupon } = useShoppingCart();
+	const { removeCoupon, removeProductFromCart } = useShoppingCart();
 	const translate = useTranslate();
 	const goToCheckout = () => {
 		const checkoutUrl = `/checkout/${ selectedSiteSlug }`;
 		page( checkoutUrl );
 	};
-	// TODO: Add trash icon to every item (probably requires https://github.com/Automattic/wp-calypso/pull/52850)
 	return (
 		<CheckoutProvider
 			paymentMethods={ [] }
@@ -132,7 +131,11 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 		>
 			<MasterbarCartContentsWrapper>
 				<MasterbarCartTitle>{ translate( 'Cart' ) }</MasterbarCartTitle>
-				<WPOrderReviewLineItems removeCoupon={ removeCoupon } isCompact />
+				<WPOrderReviewLineItems
+					removeCoupon={ removeCoupon }
+					removeProductFromCart={ removeProductFromCart }
+					isCompact
+				/>
 				<CheckoutSummaryTotal />
 				<ButtonSection>
 					<Button buttonType={ 'primary' } fullWidth onClick={ goToCheckout }>
