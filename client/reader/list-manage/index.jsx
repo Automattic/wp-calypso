@@ -140,6 +140,11 @@ function ReaderListEdit( props ) {
 		);
 	}
 
+	// The list does not exist
+	if ( isMissing ) {
+		return <Missing />;
+	}
+
 	return (
 		<>
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
@@ -150,8 +155,7 @@ function ReaderListEdit( props ) {
 						args: { listName: list?.title || decodeURIComponent( props.slug ) },
 					} ) }
 				/>
-				{ ! list && ! isMissing && <Card>{ translate( 'Loading…' ) }</Card> }
-				{ isMissing && <Missing /> }
+				{ ! list && <Card>{ translate( 'Loading…' ) }</Card> }
 				{ list && (
 					<>
 						<SectionNav>
