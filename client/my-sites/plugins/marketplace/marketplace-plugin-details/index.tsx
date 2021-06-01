@@ -80,7 +80,7 @@ function MarketplacePluginDetails( {
 					}
 					onNavigateToDomainsSelection={ () =>
 						page(
-							`/plugins/domain${
+							`/plugins/marketplace/domain${
 								selectedSite?.slug ? `/${ selectedSite?.slug }?flags=marketplace-yoast` : ''
 							}`
 						)
