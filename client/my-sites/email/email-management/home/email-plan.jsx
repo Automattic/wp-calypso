@@ -123,6 +123,7 @@ class EmailPlan extends React.Component {
 		event.preventDefault();
 
 		const { purchase, selectedSite } = this.props;
+
 		handleRenewNowClick( purchase, selectedSite.slug, {
 			tracksProps: { source: 'email-plan-view' },
 		} );
@@ -202,7 +203,7 @@ class EmailPlan extends React.Component {
 			return null;
 		}
 
-		if ( ! selectedSite || ! purchase ) {
+		if ( ! purchase ) {
 			return <VerticalNavItem isPlaceholder />;
 		}
 
