@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
+import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
 import page from 'page';
 import PropTypes from 'prop-types';
 
@@ -118,6 +119,16 @@ class EmailPlan extends React.Component {
 		page( emailManagement( selectedSite.slug ) );
 	};
 
+	handleRenew = ( event ) => {
+		event.preventDefault();
+
+		const { purchase, selectedSite } = this.props;
+
+		handleRenewNowClick( purchase, selectedSite.slug, {
+			tracksProps: { source: 'email-plan-view' },
+		} );
+	};
+
 	getAddMailboxProps() {
 		const { currentRoute, domain, selectedSite } = this.props;
 
@@ -192,7 +203,7 @@ class EmailPlan extends React.Component {
 			return null;
 		}
 
-		if ( ! selectedSite || ! purchase ) {
+		if ( ! purchase ) {
 			return <VerticalNavItem isPlaceholder />;
 		}
 
@@ -254,17 +265,35 @@ class EmailPlan extends React.Component {
 		);
 	}
 
-	render() {
-		const {
-			domain,
-			selectedSite,
-			hasSubscription,
-			purchase,
-			isLoadingPurchase,
-			translate,
-		} = this.props;
+	renderAddNewMailboxOrRenewalNavItem() {
+		const { domain, hasSubscription, purchase, selectedSite, translate } = this.props;
 
-		const addMailboxProps = this.getAddMailboxProps();
+		if ( ! domain.currentUserCanManage || ! hasSubscription ) {
+			return null;
+		}
+
+		if ( ! selectedSite || ! purchase ) {
+			return <VerticalNavItem isPlaceholder />;
+		}
+
+		if ( isExpired( purchase ) ) {
+			return (
+				<VerticalNavItem onClick={ this.handleRenew } path="#">
+					{ translate( 'Renew to add new mailboxes' ) }
+				</VerticalNavItem>
+			);
+		}
+
+		return (
+			<VerticalNavItem { ...this.getAddMailboxProps() }>
+				{ translate( 'Add new mailboxes' ) }
+			</VerticalNavItem>
+		);
+	}
+
+	render() {
+		const { domain, selectedSite, hasSubscription, purchase, isLoadingPurchase } = this.props;
+
 		const { isLoadingEmailAccounts } = this.state;
 
 		return (
@@ -293,9 +322,7 @@ class EmailPlan extends React.Component {
 
 				<div className="email-plan__actions">
 					<VerticalNav>
-						<VerticalNavItem { ...addMailboxProps }>
-							{ translate( 'Add new mailbox' ) }
-						</VerticalNavItem>
+						{ this.renderAddNewMailboxOrRenewalNavItem() }
 						{ this.renderManageAllNavItem() }
 						{ this.renderBillingNavItem() }
 					</VerticalNav>
