@@ -40,7 +40,7 @@ import {
 	getSelectedImportEngine,
 	getNuxUrlInputValue,
 } from 'calypso/state/importer-nux/temp-selectors';
-import getSiteId from 'calypso/state/selectors/get-site-id';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import { Site } from '@automattic/data-stores';
 const Visibility = Site.Visibility;
 

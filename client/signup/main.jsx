@@ -58,8 +58,7 @@ import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/prog
 import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
 import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
-import getSiteId from 'calypso/state/selectors/get-site-id';
-import { isCurrentPlanPaid, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getSiteId, isCurrentPlanPaid, getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';

@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { getSite } from 'calypso/state/sites/selectors';
+import getSite from './get-site';
 
 /**
  * Returns a normalized site ID from any key accepted by `getSite`. Intends to

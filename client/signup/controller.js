@@ -40,7 +40,7 @@ import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
 import { login } from 'calypso/lib/paths';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
-import getSiteId from 'calypso/state/selectors/get-site-id';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { loadExperimentAssignment } from 'calypso/lib/explat';

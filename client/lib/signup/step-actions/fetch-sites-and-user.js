@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 import user from 'calypso/lib/user';
 
 // State actions and selectors
-import getSiteId from 'calypso/state/selectors/get-site-id';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import { requestSites } from 'calypso/state/sites/actions';
 import { promisify } from 'calypso/utils';
 

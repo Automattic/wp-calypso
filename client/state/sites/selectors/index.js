@@ -25,6 +25,7 @@ export { default as getSiteDomain } from './get-site-domain';
 export { default as getSiteFrontPage } from './get-site-front-page';
 export { default as getSiteFrontPageType } from './get-site-front-page-type';
 export { default as getSiteHomeUrl } from './get-site-home-url';
+export { default as getSiteId } from './get-site-id';
 export { default as getSiteOption } from './get-site-option';
 export { default as getSitePlan } from './get-site-plan';
 export { default as getSitePlanSlug } from './get-site-plan-slug';
