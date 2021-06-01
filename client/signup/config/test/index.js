@@ -9,9 +9,6 @@ import { intersection, isEmpty, keys } from 'lodash';
 import flows from '../flows';
 import steps from '../steps';
 
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
 jest.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );
 
 describe( 'index', () => {

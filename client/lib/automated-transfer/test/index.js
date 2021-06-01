@@ -1,7 +1,3 @@
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
 jest.mock( '@automattic/calypso-config', () => {
 	const defaultExport = jest.fn();
 	defaultExport.isEnabled = jest.fn();
