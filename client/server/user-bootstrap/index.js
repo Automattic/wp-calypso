@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { stringify } from 'qs';
 import superagent from 'superagent';
 import debugFactory from 'debug';
 import crypto from 'crypto';
@@ -10,7 +9,6 @@ import crypto from 'crypto';
  * Internal dependencies
  */
 import { filterUserObject } from 'calypso/lib/user/shared-utils';
-import { getActiveTestNames } from 'calypso/lib/abtest/utility';
 import config from '@automattic/calypso-config';
 
 const debug = debugFactory( 'calypso:bootstrap' );
@@ -20,11 +18,6 @@ const SUPPORT_SESSION_COOKIE_NAME = 'support_session_id';
  * WordPress.com REST API /me endpoint.
  */
 const API_PATH = 'https://public-api.wordpress.com/rest/v1/me';
-const apiQuery = {
-	meta: 'flags',
-	abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
-};
-const url = `${ API_PATH }?${ stringify( apiQuery ) }`;
 
 const getApiKey = () => config( 'wpcom_calypso_rest_api_key' );
 const getSupportSessionApiKey = () => config( 'wpcom_calypso_support_session_rest_api_key' );
@@ -56,7 +49,7 @@ export default async function getBootstrappedUser( request ) {
 	const decodedAuthCookieValue = decodeURIComponent( authCookieValue );
 
 	// create HTTP Request object
-	const req = superagent.get( url );
+	const req = superagent.get( API_PATH );
 	req.set( 'User-Agent', 'WordPress.com Calypso' );
 	req.set( 'X-Forwarded-GeoIP-Country-Code', geoCountry );
 
@@ -97,7 +90,7 @@ export default async function getBootstrappedUser( request ) {
 	// start the request
 	try {
 		const res = await req;
-		debug( '%o -> %o status code', url, res.status );
+		debug( '%o -> %o status code', API_PATH, res.status );
 		return {
 			...filterUserObject( res.body ),
 			bootstrapped: true,
@@ -108,7 +101,7 @@ export default async function getBootstrappedUser( request ) {
 		}
 
 		const { body, status } = err.response;
-		debug( '%o -> %o status code', url, status );
+		debug( '%o -> %o status code', API_PATH, status );
 		const error = new Error();
 		error.statusCode = status;
 		for ( const key in body ) {
