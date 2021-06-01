@@ -8,7 +8,6 @@ import config from 'config';
  */
 import * as driverManager from './driver-manager';
 import * as driverHelper from './driver-helper';
-import * as overrideABTests from './override-abtest';
 
 export default class AsyncBaseContainer {
 	constructor(
@@ -55,7 +54,6 @@ export default class AsyncBaseContainer {
 			await this._preInit();
 		}
 		await this.waitForPage();
-		await this.checkForUnknownABTestKeys();
 		if ( typeof this._postInit === 'function' ) {
 			await this._postInit();
 		}
@@ -83,20 +81,5 @@ export default class AsyncBaseContainer {
 
 	async urlDisplayed() {
 		return await this.driver.getCurrentUrl();
-	}
-
-	async checkForUnknownABTestKeys() {
-		return await overrideABTests.checkForUnknownABTestKeys( this.driver );
-	}
-
-	async setABTestControlGroupsInLocalStorage() {
-		await overrideABTests.setABTestControlGroups( this.driver );
-		return await this.waitForPage();
-	}
-
-	async overrideABTestInLocalStorage( name, variation ) {
-		await overrideABTests.setOverriddenABTests( this.driver, name, variation );
-		await this.waitForPage();
-		return await this.driver.navigate().refresh();
 	}
 }

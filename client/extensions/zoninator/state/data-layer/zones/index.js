@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -9,7 +10,6 @@ import { translate } from 'i18n-calypso';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { navigate } from 'calypso/state/ui/actions';
 import { resetLock } from '../../locks/actions';
 import {
 	requestError,
@@ -84,7 +84,7 @@ const announceZoneSaved = ( action, zone ) => [
 ];
 
 export const handleZoneCreated = ( action, zone ) => [
-	navigate( `${ settingsPath }/zone/${ action.siteSlug }/${ zone.id }` ),
+	() => page( `${ settingsPath }/zone/${ action.siteSlug }/${ zone.id }` ),
 	...announceZoneSaved( action, zone ),
 ];
 
@@ -112,7 +112,7 @@ export const deleteZone = ( action ) => [
 ];
 
 export const announceZoneDeleted = ( action ) => [
-	navigate( `${ settingsPath }/${ action.siteSlug }` ),
+	() => page( `${ settingsPath }/${ action.siteSlug }` ),
 	requestZones( action.siteId ),
 	successNotice( translate( 'The zone has been deleted.' ), { id: deleteZoneNotice } ),
 ];

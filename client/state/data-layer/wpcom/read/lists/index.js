@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -27,7 +28,6 @@ import {
 	receiveUpdatedListDetails,
 } from 'calypso/state/reader/lists/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { navigate } from 'calypso/state/ui/actions';
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 
 const noop = () => {};
@@ -53,7 +53,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 				if ( list?.owner && list?.slug ) {
 					return [
 						receiveReaderList( { list } ),
-						navigate( `/read/list/${ list.owner }/${ list.slug }/edit` ),
+						() => page( `/read/list/${ list.owner }/${ list.slug }/edit` ),
 						successNotice( translate( 'List created successfully.' ), {
 							duration: DEFAULT_NOTICE_DURATION,
 						} ),

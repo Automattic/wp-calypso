@@ -2,9 +2,9 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { Button, Card } from '@automattic/components';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,20 +12,29 @@ import { connect } from 'react-redux';
 import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 import CardHeading from 'calypso/components/card-heading';
 import {
-	withAnalytics,
 	composeAnalytics,
 	recordTracksEvent,
 	recordGoogleEvent,
 	bumpStat,
 } from 'calypso/state/analytics/actions';
-import { navigate } from 'calypso/state/ui/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const SupportCard = ( { translate, navigateToContactSupport } ) => {
+function trackNavigateToContactSupport() {
+	return composeAnalytics(
+		recordGoogleEvent( 'Hosting Configuration', 'Clicked "Contact us" Button in Support card' ),
+		recordTracksEvent( 'calypso_hosting_configuration_contact_support' ),
+		bumpStat( 'hosting-config', 'contact-support' )
+	);
+}
+
+export default function SupportCard() {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	return (
 		<Card className="support-card">
 			<CardHeading>{ translate( 'Support' ) }</CardHeading>
@@ -35,23 +44,9 @@ const SupportCard = ( { translate, navigateToContactSupport } ) => {
 					'If you need help or have any questions, our Happiness Engineers are here when you need them.'
 				) }
 			</p>
-			<Button onClick={ navigateToContactSupport } href={ '/help/contact/' }>
+			<Button onClick={ () => dispatch( trackNavigateToContactSupport ) } href="/help/contact">
 				{ translate( 'Contact us' ) }
 			</Button>
 		</Card>
 	);
-};
-
-const navigateToContactSupport = ( event ) => {
-	event.preventDefault();
-	return withAnalytics(
-		composeAnalytics(
-			recordGoogleEvent( 'Hosting Configuration', 'Clicked "Contact us" Button in Support card' ),
-			recordTracksEvent( 'calypso_hosting_configuration_contact_support' ),
-			bumpStat( 'hosting-config', 'contact-support' )
-		),
-		navigate( '/help/contact/' )
-	);
-};
-
-export default connect( null, { navigateToContactSupport } )( localize( SupportCard ) );
+}

@@ -21,12 +21,11 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 	async waitForResults() {
 		const driver = this.driver;
 		const resultsLoadingLocator = By.css( '.domain-suggestion.is-placeholder' );
-		await driverHelper.waitUntilElementNotLocated(
+		return await driverHelper.waitUntilElementNotLocated(
 			driver,
 			resultsLoadingLocator,
 			this.explicitWaitMS * 2
 		);
-		return await this.checkForUnknownABTestKeys();
 	}
 
 	async getSearchInputValue() {

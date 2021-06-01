@@ -9,6 +9,7 @@ import { map, partial, pickBy, flowRight } from 'lodash';
 import url from 'url';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import type { RequestCart } from '@automattic/shopping-cart';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -25,7 +26,6 @@ import {
 } from 'calypso/state/sites/selectors';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
-import { replaceHistory, navigate } from 'calypso/state/ui/actions';
 import { clearLastNonEditorRoute, setRoute } from 'calypso/state/route/actions';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -53,6 +53,7 @@ import {
 } from 'calypso/lib/performance-tracking';
 import { selectMediaItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
+import { navigate } from 'calypso/lib/navigate';
 import Iframe from './iframe';
 
 /**
@@ -366,7 +367,8 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			const { siteId, currentRoute, postType } = this.props;
 
 			if ( ! currentRoute.endsWith( `/${ postId }` ) ) {
-				this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
+				// Replace the URL in history but don't dispatch a new navigation event
+				page.replace( `${ currentRoute }/${ postId }`, null, false, false );
 				this.props.setRoute( `${ currentRoute }/${ postId }` );
 
 				//set postId on state.editor.postId, so components like editor revisions can read from it
@@ -380,7 +382,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		if ( EditorActions.TrashPost === action ) {
 			const { siteId, editedPostId, postTypeTrashUrl } = this.props;
 			this.props.trashPost( siteId, editedPostId );
-			this.props.navigate( postTypeTrashUrl );
+			navigate( postTypeTrashUrl );
 		}
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
@@ -669,7 +671,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	navigate = ( navUrl: string, unsavedChanges: boolean ) => {
 		const { markChanged, markSaved } = this.props;
 		unsavedChanges ? markChanged() : markSaved();
-		this.props.navigate( navUrl );
+		navigate( navUrl );
 	};
 
 	getStatsPath = () => {
@@ -912,9 +914,7 @@ const mapStateToProps = (
 };
 
 const mapDispatchToProps = {
-	replaceHistory,
 	setRoute,
-	navigate,
 	openPostRevisionsDialog,
 	setEditorIframeLoaded,
 	startEditingPost,

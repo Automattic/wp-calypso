@@ -12,10 +12,11 @@ import userUtilities from 'calypso/lib/user/utils';
 import * as oAuthToken from 'calypso/lib/oauth-token';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
-import { toggleNotificationsPanel, navigate } from 'calypso/state/ui/actions';
+import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_RESET } from 'calypso/state/desktop/window-events';
 import { setForceRefresh as forceNotificationsRefresh } from 'calypso/state/notifications-panel/actions';
+import { navigate } from 'calypso/lib/navigate';
 
 /**
  * Module variables
@@ -65,7 +66,7 @@ const DesktopListeners = {
 
 	navigate: function ( to ) {
 		this.onNotificationsPanelShow( null, false );
-		this.store.dispatch( navigate( to ) );
+		navigate( to );
 	},
 
 	toggleNotificationsPanel: function () {
