@@ -89,7 +89,6 @@ import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
-import user from 'calypso/lib/user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 
@@ -290,7 +289,7 @@ class Signup extends React.Component {
 
 		const p2SiteStep = this.props.progress[ 'p2-site' ];
 
-		if ( p2SiteStep && p2SiteStep.status === 'pending' && user() && user().get() ) {
+		if ( p2SiteStep && p2SiteStep.status === 'pending' && this.props.isLoggedIn ) {
 			// By removing and adding the p2-site step, we trigger the `SignupFlowController` store listener
 			// to process the signup flow.
 			this.props.removeStep( p2SiteStep );
