@@ -143,7 +143,6 @@ function getNewSiteParams( {
 	const siteStyle = getSiteStyle( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
-	const selectedDesign = get( signupDependencies, 'selectedDesign', false );
 
 	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
 	const shouldHideFreePlan = get( getSignupDependencyStore( state ), 'shouldHideFreePlan', false );
@@ -163,16 +162,16 @@ function getNewSiteParams( {
 	// when segment and vertical values are not sent. Check pbAok1-p2#comment-834.
 	const shouldUseDefaultAnnotationAsFallback = true;
 
-	let shouldEnableFse = selectedDesign?.is_fse;
-	// If the user didn't select any design, then we make sure
-	// the default theme is used to determine the `shouldEnableFse`'s value.
+	// If the user didn't select any design, then we try
+	// to lookup the theme object based on the theme slug.
+	let selectedDesign = get( signupDependencies, 'selectedDesign', false );
 	if ( ! selectedDesign ) {
 		const designs = getAvailableDesigns();
 		const themeSlug = theme.replace( 'pub/', '' ).replace( 'premium/', '' );
-		const design = designs.featured.find( ( { slug } ) => slug === themeSlug );
-		shouldEnableFse = design?.is_fse;
+		selectedDesign = designs.featured.find( ( { slug } ) => slug === themeSlug );
 	}
 
+	const shouldEnableFse = selectedDesign?.is_fse;
 	const newSiteParams = {
 		blog_title: siteTitle,
 		public: Visibility.PublicNotIndexed,
@@ -224,7 +223,6 @@ function getNewSiteParams( {
 	}
 
 	if ( selectedDesign ) {
-		// If there's a selected design, it means that the current flow contains the "design" step.
 		newSiteParams.options.theme = `pub/${ selectedDesign.theme }`;
 		newSiteParams.options.template = selectedDesign.template;
 		newSiteParams.options.use_patterns = true;
