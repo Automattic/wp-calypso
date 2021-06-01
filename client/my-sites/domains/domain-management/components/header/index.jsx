@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
@@ -50,9 +51,15 @@ const DomainManagementHeader = ( props ) => {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-export default connect( ( state ) => {
+const connectComponent = connect( ( state ) => {
 	const path = getCurrentRoute( state );
 	return {
 		isManagingAllDomains: isUnderDomainManagementAll( path ),
 	};
 } )( DomainManagementHeader );
+
+connectComponent.propTypes = {
+	selectedDomainName: PropTypes.string,
+};
+
+export default connectComponent;
