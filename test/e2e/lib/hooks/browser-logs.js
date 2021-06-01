@@ -2,19 +2,19 @@
  * External dependencies
  */
 import fs from 'fs/promises';
+import { logging } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
  */
-import { getBrowserLogs, getPerformanceLogs } from '../driver-helper';
 import { generatePath } from '../test-utils';
 
 export const saveBrowserLogs = async () => {
 	try {
 		await Promise.allSettled(
 			[
-				[ () => getBrowserLogs( this.driver ), 'console.log' ],
-				[ () => getPerformanceLogs( this.driver ), 'performance.log' ],
+				[ () => this.driver.manage().logs().get( logging.Type.BROWSER ) ],
+				[ () => this.driver.manage().logs().get( logging.Type.PERFORMANCE ) ],
 			].map( async ( [ logsPromise, file ] ) => {
 				const logs = await logsPromise();
 				return fs.writeFile( generatePath( file ), JSON.stringify( logs, null, 2 ) );

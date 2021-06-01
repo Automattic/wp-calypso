@@ -5,7 +5,6 @@ import webdriver, {
 	By,
 	Condition,
 	Key,
-	logging,
 	WebDriver,
 	WebElement,
 	WebElementCondition,
@@ -329,13 +328,6 @@ export async function isImageVisible( driver, locator ) {
 	}
 
 	return driver.executeScript( 'return arguments[ 0 ].naturalWidth > 0', element );
-}
-
-export function getBrowserLogs( driver ) {
-	return driver.manage().logs().get( logging.Type.BROWSER );
-}
-export function getPerformanceLogs( driver ) {
-	return driver.manage().logs().get( logging.Type.PERFORMANCE );
 }
 
 export async function switchToWindowByIndex( driver, index ) {
