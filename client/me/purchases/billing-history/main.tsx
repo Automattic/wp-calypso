@@ -18,6 +18,7 @@ import QueryBillingTransactions from 'calypso/components/data/query-billing-tran
 import titles from 'calypso/me/purchases/titles';
 import FormattedHeader from 'calypso/components/formatted-header';
 import BillingHistoryList from 'calypso/me/purchases/billing-history/billing-history-list';
+import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 
 /**
  * Style dependencies
@@ -40,6 +41,8 @@ export function BillingHistoryContent( {
 
 function BillingHistory(): JSX.Element {
 	const translate = useTranslate();
+	const { vatDetails } = useVatDetails();
+	const vatText = vatDetails.id ? translate( 'Edit VAT details' ) : translate( 'Add VAT details' );
 
 	return (
 		<Main wideLayout className="billing-history">
@@ -51,7 +54,7 @@ function BillingHistory(): JSX.Element {
 			<PurchasesNavigation section="billingHistory" />
 			<BillingHistoryContent siteId={ null } getReceiptUrlFor={ billingHistoryReceipt } />
 
-			<CompactCard href={ vatDetailsPath }>{ translate( 'Edit VAT details' ) }</CompactCard>
+			<CompactCard href={ vatDetailsPath }>{ vatText }</CompactCard>
 		</Main>
 	);
 }
