@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { escapeRegExp, find, findIndex } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -28,6 +27,13 @@ const KEY_DOWN = 40;
 const suggestionMatcher = /(?:^|\s)@([^\s]*)$/i;
 
 /**
+ * This pattern looks for special regex characters.
+ * Extracted directly from lodash@4.17.21.
+ */
+const reRegExpChars = /[\\^$.*+?()[\]{}|]/g;
+const reHasRegExpChars = RegExp( reRegExpChars.source );
+
+/**
  * This pattern looks for a query
  *
  * @type {RegExp} matches @query
@@ -47,7 +53,7 @@ const getSuggestionIndexBySelectedId = function ( suggestions ) {
 		return 0;
 	}
 
-	const index = findIndex( suggestions, ( { ID } ) => ID === this.state.selectedSuggestionId );
+	const index = suggestions.findIndex( ( { ID } ) => ID === this.state.selectedSuggestionId );
 
 	return index > -1 ? index : null;
 };
@@ -122,7 +128,12 @@ class Suggestions extends React.Component {
 
 		const [ , suggestion ] = match;
 
-		return escapeRegExp( suggestion );
+		// NOTE: This test logic was extracted directly from lodash@4.17.21.
+		if ( suggestion && reHasRegExpChars.test( suggestion ) ) {
+			return suggestion.replace( reRegExpChars, '\\$&' );
+		}
+
+		return suggestion;
 	}
 
 	handleSuggestionsKeyDown = ( event ) => {
@@ -168,7 +179,7 @@ class Suggestions extends React.Component {
 		}
 
 		return (
-			find( this.props.suggestions, ( { ID } ) => ID === this.state.selectedSuggestionId ) || null
+			this.props.suggestions.find( ( { ID } ) => ID === this.state.selectedSuggestionId ) || null
 		);
 	}
 

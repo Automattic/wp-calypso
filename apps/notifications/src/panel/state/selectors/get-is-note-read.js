@@ -1,3 +1,4 @@
+/* global localStorage */
 /**
  * Internal dependencies
  */

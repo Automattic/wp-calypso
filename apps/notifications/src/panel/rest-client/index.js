@@ -1,8 +1,4 @@
-/**
- * External dependencies
- */
-import { difference, get, pick, property, range } from 'lodash';
-
+/* global localStorage */
 /**
  * Internal dependencies
  */
@@ -32,7 +28,6 @@ export function Client() {
 	this.isVisible = false;
 	this.isShowing = false;
 	this.lastSeenTime = 0;
-	this.hasNewNoteData = false;
 	this.noteRequestLimit = settings.initial_limit;
 	this.retries = 0;
 	this.subscribeTry = 0;
@@ -113,7 +108,7 @@ function reschedule( refresh_ms ) {
 }
 
 function pinghubCallback( err, event ) {
-	const responseType = get( event, 'response.type' );
+	const responseType = event?.response?.type;
 
 	this.subscribing = false;
 
@@ -135,7 +130,7 @@ function pinghubCallback( err, event ) {
 		// WebSocket message: add to inbox, call main() to trigger API call
 		let message = true;
 		try {
-			message = JSON.parse( get( event, 'response.data' ) );
+			message = JSON.parse( event?.response?.data );
 		} catch ( e ) {}
 		this.inbox.push( message );
 		debug( 'pinghubCallback: received message', event.response, 'this.inbox =', this.inbox );
@@ -211,9 +206,9 @@ function getNotes() {
 
 		store.dispatch( actions.ui.loadedNotes() );
 
-		const oldNotes = getAllNotes( store.getState() ).map( property( 'id' ) );
-		const newNotes = data.notes.map( property( 'id' ) );
-		const notesToRemove = difference( oldNotes, newNotes );
+		const oldNotes = getAllNotes( store.getState() ).map( ( { id } ) => id );
+		const newNotes = data.notes.map( ( n ) => n.id );
+		const notesToRemove = oldNotes.filter( ( old ) => ! newNotes.includes( old ) );
 
 		notesToRemove.length && store.dispatch( actions.notes.removeNotes( notesToRemove ) );
 		store.dispatch( actions.notes.addNotes( data.notes ) );
@@ -221,7 +216,7 @@ function getNotes() {
 		// Store id/hash pairs for now until properly reduxified
 		// this is used as a network optimization to quickly determine
 		// changes without downloading all the data
-		this.noteList = data.notes.map( ( note ) => pick( note, [ 'id', 'note_hash' ] ) );
+		this.noteList = data.notes.map( ( { id, note_hash } ) => ( { id, note_hash } ) );
 
 		this.updateLastSeenTime( Number( data.last_seen_time ) );
 		if ( parameters.number === settings.max_limit ) {
@@ -273,20 +268,21 @@ function getNotesList() {
 		this.retries = 0;
 
 		/* Compare list of notes from server to local copy */
-		const newerNoteList = data.notes.map( property( 'id' ) );
-		const localNoteList = this.noteList.map( property( 'id' ) );
-		const notesToRemove = difference( localNoteList, newerNoteList );
-
-		this.hasNewNoteData = difference( newerNoteList, localNoteList ).length;
-
+		const [ localIds, localHashes ] = [
+			this.noteList.map( ( note ) => note.id ),
+			this.noteList.map( ( note ) => note.note_hash ),
+		];
+		const [ serverIds, serverHashes ] = [
+			data.notes.map( ( note ) => note.id ),
+			data.notes.map( ( note ) => note.note_hash ),
+		];
 		const serverHasChanges =
-			this.hasNewNoteData ||
-			difference(
-				data.notes.map( property( 'note_hash' ) ),
-				this.noteList.map( property( 'note_hash' ) )
-			).length > 0;
+			serverIds.some( ( sId ) => ! localIds.includes( sId ) ) ||
+			serverHashes.some( ( sHash ) => ! localHashes.includes( sHash ) );
 
 		/* Actually remove the notes from the local copy */
+		const notesToRemove = localIds.filter( ( local ) => ! serverIds.includes( local ) );
+
 		if ( notesToRemove.length ) {
 			store.dispatch( actions.notes.removeNotes( notesToRemove ) );
 		}
@@ -324,10 +320,9 @@ function ready() {
 		newNotes = [];
 	}
 
-	const latestType = get( notes.slice( -1 )[ 0 ], 'type', null );
+	const latestType = notes.slice( -1 )[ 0 ]?.type ?? null;
 	store.dispatch( { type: 'APP_RENDER_NOTES', newNoteCount, latestType } );
 
-	this.hasNewNoteData = false;
 	this.firstRender = false;
 }
 
@@ -340,19 +335,11 @@ const safelyRemoveKey = ( key ) => {
 	} catch ( e ) {}
 };
 
-const getLocalKeys = () => {
-	try {
-		return range( localStorage.length ).map( ( index ) => localStorage.key( index ) );
-	} catch ( e ) {
-		return [];
-	}
-};
-
 function cleanupLocalCache() {
 	const notes = getAllNotes( store.getState() );
-	const currentNoteIds = notes.map( property( 'id' ) );
+	const currentNoteIds = notes.map( ( n ) => n.id );
 
-	getLocalKeys()
+	Object.keys( localStorage )
 		.map( ( key ) => obsoleteKeyPattern.exec( key ) )
 		.filter( ( match ) => match && ! currentNoteIds.includes( match[ 1 ] ) )
 		.forEach( safelyRemoveKey );
@@ -500,24 +487,6 @@ function setVisibility( { isShowing, isVisible } ) {
 		this.updateLastSeenTime( 0 );
 		this.main();
 	}
-}
-
-// Persists the latest note timestamp sent to the Desktop app.
-function setlatestTimestampSeen( timestamp ) {
-	const parsedTimestamp = Date.parse( timestamp );
-	const latestTimestamp = localStorage.getItem( 'desktop_latest_timestamp_seen' ) || 0;
-
-	if ( parsedTimestamp > latestTimestamp ) {
-		debug( 'Update desktop_latest_timestamp_seen: ', parsedTimestamp );
-
-		try {
-			localStorage.setItem( 'desktop_latest_timestamp_seen', parsedTimestamp );
-			return true;
-		} catch ( e ) {
-			debug( 'Failed to set desktop_latest_timestamp_seen: ', e.message );
-		}
-	}
-	return false;
 }
 
 Client.prototype.main = main;
