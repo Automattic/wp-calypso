@@ -114,7 +114,7 @@ export default function VatInfoPage(): JSX.Element {
 					</CardHeading>
 					<p className="vat-info__sidebar-paragraph">
 						{ translate(
-							"We currently only provide VAT invoices to users who are properly listed in the VIES (VAT Information Exchange System) or the UK VAT database. VAT information saved on this page will be applied to all of your account's receipts."
+							"We currently only provide VAT invoices to users who are properly listed in the VIES (VAT Information Exchange System) or the UK VAT databases. VAT information saved on this page will be applied to all of your account's receipts."
 						) }
 					</p>
 				</Card>
