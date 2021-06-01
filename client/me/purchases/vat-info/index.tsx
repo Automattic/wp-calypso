@@ -17,7 +17,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import type { VatDetails, UpdateError } from './use-vat-details';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 
 import './style.scss';
 
@@ -138,23 +138,33 @@ function useDisplayVatNotices( {
 
 	useEffect( () => {
 		if ( error?.error === 'validation_failed' ) {
+			reduxDispatch( removeNotice( 'vat_info_notice' ) );
 			reduxDispatch(
 				errorNotice(
-					translate( 'Your VAT details are not valid. Please check each field and try again.' )
+					translate( 'Your VAT details are not valid. Please check each field and try again.' ),
+					{ id: 'vat_info_notice' }
 				)
 			);
 			return;
 		}
 
 		if ( error ) {
+			reduxDispatch( removeNotice( 'vat_info_notice' ) );
 			reduxDispatch(
-				errorNotice( translate( 'An error occurred while updating your VAT details.' ) )
+				errorNotice( translate( 'An error occurred while updating your VAT details.' ), {
+					id: 'vat_info_notice',
+				} )
 			);
 			return;
 		}
 
 		if ( success ) {
-			reduxDispatch( successNotice( translate( 'Your VAT details have been updated!' ) ) );
+			reduxDispatch( removeNotice( 'vat_info_notice' ) );
+			reduxDispatch(
+				successNotice( translate( 'Your VAT details have been updated!' ), {
+					id: 'vat_info_notice',
+				} )
+			);
 			return;
 		}
 	}, [ error, success, reduxDispatch, translate ] );
