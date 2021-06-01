@@ -9,7 +9,7 @@ import { Button, Card } from '@automattic/components';
  * Internal dependencies
  */
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import SectionHeader from 'calypso/components/section-header';
 
 class EmailListInactive extends React.Component {
@@ -25,7 +25,13 @@ class EmailListInactive extends React.Component {
 				<Card key={ domain.name }>
 					<span>{ domain.name }</span>
 					{ canCurrentUserAddEmail( domain ) && (
-						<Button href={ emailManagement( selectedSiteSlug, domain.name, currentRoute ) }>
+						<Button
+							href={ emailManagementPurchaseNewEmailAccount(
+								selectedSiteSlug,
+								domain.name,
+								currentRoute
+							) }
+						>
 							{ translate( 'Add Email' ) }
 						</Button>
 					) }
