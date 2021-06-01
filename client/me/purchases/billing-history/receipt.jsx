@@ -203,7 +203,7 @@ function VatDetails() {
 	return (
 		<>
 			<li>
-				<strong>{ translate( 'Vat Details' ) }</strong>
+				<strong>{ translate( 'VAT Details' ) }</strong>
 				{ vatDetails.name }
 				<br />
 				{ vatDetails.address }
