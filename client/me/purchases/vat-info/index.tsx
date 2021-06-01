@@ -26,6 +26,7 @@ export default function VatInfoPage(): JSX.Element {
 		vatDetails,
 		isLoading,
 		isUpdating,
+		isUpdateSuccessful,
 		fetchError,
 		updateError,
 		setVatDetails,
@@ -54,7 +55,7 @@ export default function VatInfoPage(): JSX.Element {
 	return (
 		<Layout>
 			<Column type="main" className="vat-info">
-				<VatUpdateErrorNotice error={ updateError } />
+				<VatUpdateStatusNotice error={ updateError } success={ isUpdateSuccessful } />
 
 				<CompactCard>
 					<FormFieldset className="vat-info__country-field">
@@ -123,13 +124,15 @@ export default function VatInfoPage(): JSX.Element {
 	);
 }
 
-function VatUpdateErrorNotice( { error }: { error: UpdateError | null } ): JSX.Element | null {
+function VatUpdateStatusNotice( {
+	error,
+	success,
+}: {
+	error: UpdateError | null;
+	success: boolean;
+} ): JSX.Element | null {
 	const translate = useTranslate();
-	if ( ! error ) {
-		return null;
-	}
-
-	if ( error.error === 'validation_failed' ) {
+	if ( error?.error === 'validation_failed' ) {
 		return (
 			<CompactCard highlight="error">
 				{ translate( 'Your VAT details are not valid. Please check each field and try again.' ) }
@@ -137,9 +140,21 @@ function VatUpdateErrorNotice( { error }: { error: UpdateError | null } ): JSX.E
 		);
 	}
 
-	return (
-		<CompactCard highlight="error">
-			{ translate( 'An error occurred while updating your VAT details.' ) }
-		</CompactCard>
-	);
+	if ( error ) {
+		return (
+			<CompactCard highlight="error">
+				{ translate( 'An error occurred while updating your VAT details.' ) }
+			</CompactCard>
+		);
+	}
+
+	if ( success ) {
+		return (
+			<CompactCard highlight="success">
+				{ translate( 'Your VAT details have been updated!' ) }
+			</CompactCard>
+		);
+	}
+
+	return null;
 }
