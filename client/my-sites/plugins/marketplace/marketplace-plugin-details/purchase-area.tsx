@@ -7,16 +7,17 @@ import React, { useState } from 'react';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
-interface PurchseArea {
+interface PurchaseArea {
 	siteDomains: any[];
 	isProductListLoading: boolean;
 	displayCost?: string | null;
 	wporgPluginName?: string;
-	onAddYoastPremiumToCart: () => void;
+	onAddYoastPremiumToCart: () => Promise< ResponseCart >;
 	onNavigateToCheckout: () => void;
 	onNavigateToDomainsSelection: () => void;
-	onRemoveEverythingFromCart: () => void;
+	onRemoveEverythingFromCart: () => Promise< ResponseCart >;
 }
 
 export default function PurchaseArea( {
@@ -28,7 +29,7 @@ export default function PurchaseArea( {
 	onNavigateToCheckout,
 	onNavigateToDomainsSelection,
 	onRemoveEverythingFromCart,
-}: PurchseArea ): JSX.Element {
+}: PurchaseArea ): JSX.Element {
 	const [ isButtonClicked, setIsButtonClicked ] = useState( false );
 
 	const isCustomDomain = ( {

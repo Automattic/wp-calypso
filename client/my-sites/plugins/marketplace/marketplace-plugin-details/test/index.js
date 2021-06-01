@@ -23,7 +23,9 @@ describe( '<PurchaseArea/> Plugin details next step tests', () => {
 	const customDomain = { isWpcomStagingDomain: false };
 	const primaryWpcomDomain = { isPrimary: true, ...wpcomDomain };
 	const primaryCustomDomain = { isPrimary: true, ...customDomain };
-
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
 	test( 'If user has a primary custom domain and purchases a paid product, redirects to checkout', async () => {
 		const marketplacePluginDetails = render(
 			<PurchaseArea
@@ -39,7 +41,7 @@ describe( '<PurchaseArea/> Plugin details next step tests', () => {
 		);
 		const yoastPremiumButton = await marketplacePluginDetails.findByText( 'Buy Yoast Premium' );
 		await fireEvent.click( yoastPremiumButton );
-		//onAddPlugin call in the PurchaseArea component is async so we have to queue and await a promise  for the following mocks to be called
+		// onAddPlugin call in the PurchaseArea component is async so we have to queue and await a promise for the following mocks to be called
 		await Promise.resolve();
 
 		expect( onAddYoastPremiumToCart ).toHaveBeenCalled();
@@ -65,7 +67,7 @@ describe( '<PurchaseArea/> Plugin details next step tests', () => {
 		);
 		const yoastPremiumButton = await marketplacePluginDetails.findByText( 'Buy Yoast Premium' );
 		await fireEvent.click( yoastPremiumButton );
-		//onAddPlugin call in the PurchaseArea component is async so we have to queue and await a promise  for the following mocks to be called
+		// onAddPlugin call in the PurchaseArea component is async so we have to queue and await a promise for the following mocks to be called
 		await Promise.resolve();
 
 		expect( onAddYoastPremiumToCart ).toHaveBeenCalled();
