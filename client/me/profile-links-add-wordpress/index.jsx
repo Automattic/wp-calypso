@@ -143,7 +143,7 @@ class ProfileLinksAddWordPress extends Component {
 					disabled={ 0 === checkedCount ? true : false }
 					onClick={ this.getClickHandler( 'Add WordPress Sites Button' ) }
 				>
-					{ translate( 'Add Site', 'Add Sites', { count: checkedCount } ) }
+					{ translate( 'Add Site', 'Add Sites', { context: 'bulk action', count: checkedCount } ) }
 				</FormButton>
 				<FormButton
 					className="profile-links-add-wordpress__cancel"
