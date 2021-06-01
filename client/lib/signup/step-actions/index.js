@@ -12,7 +12,6 @@ import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lod
 import wpcom from 'calypso/lib/wp';
 import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import user from 'calypso/lib/user';
-import { getSavedVariations } from 'calypso/lib/abtest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import {
@@ -575,7 +574,7 @@ export function createAccount(
 				{},
 				userData,
 				{
-					ab_test_variations: getSavedVariations(),
+					ab_test_variations: {},
 					validate: false,
 					signup_flow_name: flowName,
 					nux_q_site_type: surveySiteType,
