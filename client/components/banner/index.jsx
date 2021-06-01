@@ -272,6 +272,7 @@ export class Banner extends Component {
 			forceHref,
 			horizontal,
 			jetpack,
+			isAtomic,
 			plan,
 		} = this.props;
 
@@ -294,7 +295,8 @@ export class Banner extends Component {
 			{ 'is-compact': compact },
 			{ 'is-dismissible': dismissPreferenceName },
 			{ 'is-horizontal': horizontal },
-			{ 'is-jetpack': jetpack }
+			{ 'is-jetpack': jetpack },
+			{ 'is-atomic': isAtomic }
 		);
 
 		if ( dismissPreferenceName ) {
