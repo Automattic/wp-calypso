@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
@@ -26,7 +21,7 @@ export default function getSiteThemeShowcasePath( state, siteId ) {
 	const [ type, slug ] = getSiteOption( state, siteId, 'theme_slug' )?.split( '/', 2 ) ?? [];
 
 	// to accomodate a8c and other theme types
-	if ( ! includes( [ 'pub', 'premium' ], type ) ) {
+	if ( ! [ 'pub', 'premium' ].includes( type ) ) {
 		return null;
 	}
 

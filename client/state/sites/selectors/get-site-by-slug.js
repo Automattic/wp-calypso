@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { find } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { createSelector } from '@automattic/state-utils';
@@ -19,6 +14,6 @@ import getSiteSlug from './get-site-slug';
  */
 export default createSelector(
 	( state, siteSlug ) =>
-		find( getSitesItems( state ), ( site ) => getSiteSlug( state, site.ID ) === siteSlug ) || null,
+		getSitesItems( state ).find( ( site ) => getSiteSlug( state, site.ID ) === siteSlug ) ?? null,
 	getSitesItems
 );

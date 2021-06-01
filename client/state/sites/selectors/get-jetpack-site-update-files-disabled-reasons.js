@@ -2,7 +2,6 @@
  * External dependencies
  */
 import i18n from 'i18n-calypso';
-import { compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,8 +30,8 @@ export default function getJetpackSiteUpdateFilesDisabledReasons(
 
 	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
 
-	return compact(
-		fileModDisabled.map( ( clue ) => {
+	return fileModDisabled
+		.map( ( clue ) => {
 			if (
 				action === 'modifyFiles' ||
 				action === 'autoupdateFiles' ||
@@ -62,5 +61,5 @@ export default function getJetpackSiteUpdateFilesDisabledReasons(
 			}
 			return null;
 		} )
-	);
+		.filter( Boolean );
 }

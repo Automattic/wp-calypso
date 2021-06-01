@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { compact } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { getCustomizerFocus } from 'calypso/my-sites/customize/panels';
@@ -24,7 +19,7 @@ import isJetpackSite from './is-jetpack-site';
 export default function getCustomizerUrl( state, siteId, panel, returnUrl ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
 		const siteSlug = getSiteSlug( state, siteId );
-		const url = [ '' ].concat( compact( [ 'customize', panel, siteSlug ] ) ).join( '/' );
+		const url = [ '' ].concat( [ 'customize', panel, siteSlug ].filter( Boolean ) ).join( '/' );
 		return addQueryArgs(
 			{
 				return: returnUrl,

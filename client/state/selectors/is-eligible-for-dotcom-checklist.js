@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getSiteOptions from 'calypso/state/selectors/get-site-options';
@@ -33,7 +28,7 @@ export default function isEligibleForDotcomChecklist( state, siteId ) {
 	const siteOptions = getSiteOptions( state, siteId );
 
 	// Checklist should not show up if the site is created before the feature was launched.
-	if ( get( siteOptions, 'created_at', '' ) < '2018-02-01' ) {
+	if ( siteOptions?.created_at ?? '' < '2018-02-01' ) {
 		return false;
 	}
 

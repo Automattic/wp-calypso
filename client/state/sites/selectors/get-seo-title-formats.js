@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { flowRight as compose } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
@@ -19,4 +14,4 @@ import getSeoTitleFormatsForSite from './get-seo-title-formats-for-site';
  * @param  {number} siteId Selected site
  * @returns {object} Formats by type e.g. { frontPage: { type: 'siteName' } }
  */
-export default compose( getSeoTitleFormatsForSite, getRawSite );
+export default ( state, siteId ) => getSeoTitleFormatsForSite( getRawSite( state, siteId ) );
