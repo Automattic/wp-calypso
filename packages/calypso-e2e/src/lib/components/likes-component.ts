@@ -58,23 +58,21 @@ export class LikesComponent extends BaseContainer {
 	async clickLike(): Promise< void > {
 		const isLiked = await this.frame.isVisible( selectors.likedText );
 
-		// Build the list of promises to be resolved at end.
-		const promises: any = [
-			// Clicking the Like triggers an navigation event.
-			// Wait for this event to complete, as the response typically takes
-			// ~1.5s.
-			this.frame.waitForLoadState( 'networkidle' ),
-		];
+		// In subsequent statement this will be assigned an ElementHandler
+		// of the Like/Liked button.
+		let button;
 
 		if ( isLiked ) {
-			// Like button is already clicked. Check for unlike status at end.
-			promises.push( this.frame.waitForSelector( selectors.likeButton ) );
-			promises.push( this.frame.click( selectors.likedButton ) );
+			// Post is liked. Click to unlike.
+			await this.frame.click( selectors.likedButton );
+			button = await this.frame.waitForSelector( selectors.likeButton );
 		} else {
-			promises.push( this.frame.waitForSelector( selectors.likedButton ) );
-			promises.push( this.frame.click( selectors.likeButton ) );
+			// Post is not yet liked. Click to like.
+			await this.frame.click( selectors.likeButton );
+			button = await this.frame.waitForSelector( selectors.likedButton );
 		}
 
-		await Promise.all( promises );
+		await button.waitForElementState( 'stable' );
+		await this.frame.waitForLoadState( 'networkidle' );
 	}
 }
