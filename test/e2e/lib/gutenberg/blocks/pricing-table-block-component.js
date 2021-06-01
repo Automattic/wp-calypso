@@ -8,8 +8,8 @@ import { By } from 'selenium-webdriver';
  */
 import AsyncBaseContainer from '../../async-base-container';
 import * as driverHelper from '../../driver-helper';
-let countVar;
-const pricingBlock = By.css( '.entry-content .wp-block-coblocks-pricing-table' );
+
+const pricingBlock = By.css( '.wp-block-coblocks-pricing-table' );
 const defaultPricingTable = By.css(
 	'.wp-block-coblocks-pricing-table__inner.has-columns.has-2-columns.has-responsive-columns.has-medium-gutter'
 );
@@ -19,35 +19,29 @@ const pricingTableItemAmount = By.css( '.wp-block-coblocks-pricing-table-item__a
 const pricingTableItemFeatures = By.css( '.wp-block-coblocks-pricing-table-item__features' );
 const pricingTableItemButton = By.css( '.wp-block-button__link' );
 const pricingTableParentSelector = By.css( '.block-editor-block-parent-selector__button' );
-const pricingTableChangeTextAlignment = By.css( 'button[aria-label="Align"]' );
+const pricingTableChangeTextAlignment = By.id( 'id-vde5ot-6' );
+const pricingTableAlignLeft = By.xpath( `//div/button[text()='Align text left']` );
+
+const pricingTableLeftAlignedBlock = By.css(
+	'wp-block-coblocks-pricing-table has-text-align-left'
+);
 const pricingTableChangeTableCount = By.css( 'button[aria-label="Change pricing table count"]' );
 const pricingTableCountPopOver = By.css( '.components-popover__content' );
-let pricingTableCellSelect = By.xpath( `//svg[text()='${ countVar } Pricing Table']` );
-let pricingTableCellCountCheck = By.xpath(
-	`.wp-block-coblocks-pricing-table__inner.has-${ countVar }-columns.has-medium-gutter']`
-);
-
+let pricingTableCellSelect;
 const pricingTableItemMenu = By.xpath( 'button[aria-label="Pricing Table Item"]' );
-
 const pricingTableItemButtonLink = By.css( 'button[aria-label="Link"]' );
-const pricingTableItemButtonLinkInput = By.css( '.block-editor-link-control__search-input' );
+const pricingTableItemButtonLinkInput = By.css( '.block-editor-url-input__input' );
 const pricingTableItemButtonLinkSubmitButton = By.css(
-	'.components-button.block-editor-link-control__search-submit has-icon'
+	'.components-button.block-editor-link-control__search-submit.has-icon'
 );
 const pricingTableItemButtonLinkInputSelected = By.css(
 	'.block-editor-link-control__search-item.is-current'
 );
-
 const pricingTableToWordpressOrg = By.xpath( `//*[@id="wporg-header"]/div/h1/a` );
 
 export default class PricingTableBlockComponent extends AsyncBaseContainer {
-	constructor( driver, count ) {
+	constructor( driver ) {
 		super( driver, By.css( '.wp-block-coblocks-pricing-table' ) );
-		this.count = count;
-		pricingTableCellSelect = By.xpath( `//svg[text()='${ this.count } Pricing Table']` );
-		pricingTableCellCountCheck = By.xpath(
-			`.wp-block-coblocks-pricing-table__inner.has-${ this.count }-columns.has-medium-gutter']`
-		);
 	}
 
 	static get getPricingBlock() {
@@ -75,6 +69,10 @@ export default class PricingTableBlockComponent extends AsyncBaseContainer {
 			this.driver,
 			pricingTableItemTitle
 		);
+	}
+
+	async pricingTableItemTitleClick() {
+		return await this.driver.findElement( pricingTableItemButton ).click();
 	}
 
 	async pricingTableItemTitleSendKeys( itemTitleText ) {
@@ -195,6 +193,31 @@ export default class PricingTableBlockComponent extends AsyncBaseContainer {
 		return await this.driver.findElement( pricingTableChangeTextAlignment ).click();
 	}
 
+	static get getPricingTableAlignLeftElement() {
+		return pricingTableAlignLeft;
+	}
+
+	async pricingTableAlignLeftVisible() {
+		return await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			pricingTableAlignLeft
+		);
+	}
+
+	async pricingTableAlignLeftClick() {
+		return await this.driver.findElement( pricingTableAlignLeft ).click();
+	}
+
+	static get getpricingTableLeftAlignedBlockElement() {
+		return pricingTableLeftAlignedBlock;
+	}
+
+	async pricingTableLeftAlignedBlockVisible() {
+		return await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			pricingTableLeftAlignedBlock
+		);
+	}
 	static get getPricingTableChangeTableCountElement() {
 		return pricingTableChangeTableCount;
 	}
@@ -221,30 +244,17 @@ export default class PricingTableBlockComponent extends AsyncBaseContainer {
 		);
 	}
 
-	static get getPricingTableCellSelectElement() {
-		return pricingTableCellSelect;
-	}
-
-	async pricingTableCellSelectVisible() {
+	async pricingTableCellSelectVisible( count ) {
+		pricingTableCellSelect = By.xpath( `//button[text()='${ count }']` );
 		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			pricingTableCellSelect
 		);
 	}
 
-	async pricingTableCellSelectClick() {
+	async pricingTableCellSelectClick( count ) {
+		pricingTableCellSelect = By.xpath( `//button[text()='${ count }']` );
 		return await this.driver.findElement( pricingTableCellSelect ).click();
-	}
-
-	static get getPricingTableCellCountCheckElement() {
-		return pricingTableCellCountCheck;
-	}
-
-	async pricingTableCellCountCheckVisible() {
-		return await driverHelper.waitUntilElementLocatedAndVisible(
-			this.driver,
-			pricingTableCellCountCheck
-		);
 	}
 
 	static get getPricingTableItemMenuElement() {

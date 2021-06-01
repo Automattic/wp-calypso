@@ -43,12 +43,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pricing Table (${ screenSize })
 		it( 'Can insert the Pricing Table block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Pricing Table' );
-			pricingTableBlock = await PricingTableBlockComponent.Expect( driver, 2 );
+			pricingTableBlock = await PricingTableBlockComponent.Expect( driver );
 			return await pricingTableBlock.pricingBlockVisible();
 		} );
 
 		it( 'Can see Pricing Table block cell elements', async function () {
-			pricingTableBlock = await PricingTableBlockComponent.Expect( driver, 2 );
+			pricingTableBlock = await PricingTableBlockComponent.Expect( driver );
 			await pricingTableBlock.pricingBlockVisible();
 			await pricingTableBlock.defaultPricingTableVisible();
 			await pricingTableBlock.pricingTableItemTitleVisible();
@@ -58,8 +58,19 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pricing Table (${ screenSize })
 			return await pricingTableBlock.pricingTableItemButtonVisible();
 		} );
 
+		it( 'Can Edit Submit button to add a link', async function () {
+			pricingTableBlock = await PricingTableBlockComponent.Expect( driver );
+			await pricingTableBlock.pricingTableItemButtonClick();
+			await pricingTableBlock.pricingTableItemButtonLinkVisible();
+			await pricingTableBlock.pricingTableItemButtonLinkClick();
+			await pricingTableBlock.pricingTableItemButtonLinkInputVisible();
+			await pricingTableBlock.pricingTableItemButtonLinkInputSendKeys( 'https://wordpress.org/' );
+			await pricingTableBlock.pricingTableItemButtonLinkSubmitButtonClick();
+			return await pricingTableBlock.pricingTableItemButtonLinkInputSelectedVisible();
+		} );
+
 		it( 'Can Edit Pricing Table block cell elements', async function () {
-			pricingTableBlock = await PricingTableBlockComponent.Expect( driver, 2 );
+			pricingTableBlock = await PricingTableBlockComponent.Expect( driver );
 			await pricingTableBlock.defaultPricingTableVisible();
 			await pricingTableBlock.pricingTableItemTitleSendKeys( 'Title Plan' );
 			await pricingTableBlock.pricingTableItemCurrencySendKeys( '$' );
@@ -69,12 +80,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pricing Table (${ screenSize })
 		} );
 
 		it( 'Can publish and view content', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver, 2 );
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			return await gEditorComponent.publish( { visit: true } );
 		} );
 
 		it( 'Can see the Edited Pricing Table block in our published post', async function () {
-			pricingTableBlock = await PricingTableBlockComponent.Expect( driver, 2 );
+			pricingTableBlock = await PricingTableBlockComponent.Expect( driver );
 			await pricingTableBlock.pricingBlockVisible();
 
 			await pricingTableBlock.pricingTableItemTitleVisible();
@@ -107,6 +118,12 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pricing Table (${ screenSize })
 				assert.strictEqual( s, 'Select' );
 			} );
 		} );
+
+		it( 'Can click on Select button and check after submit page', async function () {
+			pricingTableBlock = await PricingTableBlockComponent.Expect( driver );
+			await pricingTableBlock.pricingTableItemButtonClick();
+			return await pricingTableBlock.pricingTableToWordpressOrgVisible();
+		} );
 	} );
 
 	describe( 'WPCOM-specific gutter controls: @parallel', function () {
@@ -136,7 +153,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pricing Table (${ screenSize })
 		it( 'Can see gutter controls for supporting block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Pricing Table' );
-			pricingTableBlock = await PricingTableBlockComponent.Expect( driver, 2 );
+			pricingTableBlock = await PricingTableBlockComponent.Expect( driver );
 			await await pricingTableBlock.pricingBlockVisible();
 			await gEditorComponent.openSidebar();
 			await driverHelper.waitUntilElementLocatedAndVisible( driver, gutterControlsLocator );
@@ -160,6 +177,85 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pricing Table (${ screenSize })
 
 		it( 'Can set the "XL" gutter value', async function () {
 			await setGutter( 'XL' );
+		} );
+
+		it( 'Can publish and view content', async function () {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			return await gEditorComponent.publish( { visit: true } );
+		} );
+	} );
+
+	describe( 'Pricing Table block change table count: @parallel', function () {
+		it( 'Can log in', async function () {
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
+			return await this.loginFlow.loginAndStartNewPost( null, true );
+		} );
+
+		it( 'Can insert the Pricing Table block and default table count is 2', async function () {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.addBlock( 'Pricing Table' );
+			pricingTableBlock = await PricingTableBlockComponent.Expect( driver );
+			return await pricingTableBlock.defaultPricingTableVisible();
+		} );
+
+		it( 'Can change Pricing table count to 1 ', async function () {
+			pricingTableBlock = await PricingTableBlockComponent.Expect( driver );
+			await pricingTableBlock.pricingTableItemTitleClick();
+			await pricingTableBlock.pricingTableParentSelectorVisible();
+			await pricingTableBlock.pricingTableParentSelectorClick();
+			await pricingTableBlock.pricingTableParentSelectorVisible();
+			await pricingTableBlock.pricingTableParentSelectorClick();
+			await pricingTableBlock.pricingTableChangeTableCountVisible();
+			await pricingTableBlock.pricingTableChangeTableCountClick();
+			await pricingTableBlock.pricingTableCountPopOverVisible();
+			await pricingTableBlock.pricingTableCellSelectClick( 'One Pricing Table' );
+			await driverHelper.waitUntilElementLocatedAndVisible(
+				driver,
+				By.css( `.wp-block-coblocks-pricing-table__inner.has-1-columns.has-medium-gutter` )
+			);
+		} );
+
+		it( 'Can change Pricing table count to 3 ', async function () {
+			pricingTableBlock = await PricingTableBlockComponent.Expect( driver );
+			await pricingTableBlock.pricingTableItemButtonClick();
+			await pricingTableBlock.pricingTableParentSelectorVisible();
+			await pricingTableBlock.pricingTableParentSelectorClick();
+			await pricingTableBlock.pricingTableParentSelectorVisible();
+			await pricingTableBlock.pricingTableParentSelectorClick();
+			await pricingTableBlock.pricingTableChangeTableCountVisible();
+			await pricingTableBlock.pricingTableChangeTableCountClick();
+			await pricingTableBlock.pricingTableCountPopOverVisible();
+			await pricingTableBlock.pricingTableCellSelectClick( 'Three Pricing Tables' );
+			await driverHelper.waitUntilElementLocatedAndVisible(
+				driver,
+				By.css(
+					`.wp-block-coblocks-pricing-table__inner.has-columns.has-3-columns.has-responsive-columns.has-medium-gutter`
+				)
+			);
+		} );
+
+		it( 'Can change Pricing table count to 4 ', async function () {
+			pricingTableBlock = await PricingTableBlockComponent.Expect( driver );
+			await pricingTableBlock.pricingTableItemButtonClick();
+			await pricingTableBlock.pricingTableParentSelectorVisible();
+			await pricingTableBlock.pricingTableParentSelectorClick();
+			await pricingTableBlock.pricingTableParentSelectorVisible();
+			await pricingTableBlock.pricingTableParentSelectorClick();
+			await pricingTableBlock.pricingTableChangeTableCountVisible();
+			await pricingTableBlock.pricingTableChangeTableCountClick();
+			await pricingTableBlock.pricingTableCountPopOverVisible();
+			await pricingTableBlock.pricingTableCellSelectClick( 'Four Pricing Tables' );
+			await driverHelper.waitUntilElementLocatedAndVisible(
+				driver,
+				By.css(
+					`.wp-block-coblocks-pricing-table__inner.has-columns.has-4-columns.has-responsive-columns.has-medium-gutter`
+				)
+			);
+		} );
+
+		it( 'Can publish and view content', async function () {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			return await gEditorComponent.publish( { visit: true } );
 		} );
 	} );
 } );
