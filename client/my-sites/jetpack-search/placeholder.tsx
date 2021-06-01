@@ -10,19 +10,14 @@ import { translate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import PromoCard from 'calypso/components/promo-section/promo-card';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import Upsell from 'calypso/components/jetpack/upsell';
+import JetpackSearchLogo from './logo';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-/**
- * Asset dependencies
- */
-import JetpackSearchSVG from 'calypso/assets/images/illustrations/jetpack-search.svg';
 
 interface Props {
 	siteId: number;
@@ -35,17 +30,17 @@ export default function JetpackSearchPlaceholder( { siteId }: Props ): ReactElem
 			<DocumentHead title="Jetpack Search" />
 			<SidebarNavigation />
 
-			<FormattedHeader
-				headerText={ translate( 'Jetpack Search' ) }
-				id="jetpack-search-header"
-				align="left"
-				brandFont
+			<Upsell
+				headerText={ translate( 'Finely-tuned search for your site.' ) }
+				bodyText={ translate(
+					'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
+				) }
+				buttonLink={ null }
+				buttonText={ translate( 'Upgrade to Jetpack Search' ) }
+				className="jetpack-search__placeholder"
+				onClick={ null }
+				iconComponent={ <JetpackSearchLogo /> }
 			/>
-
-			<PromoCard title={ 'Placeholder' } image={ { path: JetpackSearchSVG } } isPrimary>
-				<p className="jetpack-search__placeholder-description">Placeholder</p>
-				<button className="jetpack-search__placeholder-button">Placeholder</button>
-			</PromoCard>
 		</Main>
 	);
 }
