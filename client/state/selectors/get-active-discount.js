@@ -2,12 +2,10 @@
  * Internal dependencies
  */
 import { activeDiscounts } from 'calypso/lib/discounts';
-import { abtest } from 'calypso/lib/abtest';
 import { planMatches } from '@automattic/calypso-products';
 import { hasActivePromotion } from 'calypso/state/active-promotions/selectors';
 import { getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import memoizeLast from 'calypso/lib/memoize-last';
 
 export const isDiscountActive = ( discount, state ) => {
 	const now = new Date();
@@ -29,23 +27,8 @@ export const isDiscountActive = ( discount, state ) => {
 		return targetPlans.some( ( plan ) => planMatches( selectedSitePlanSlug, plan ) );
 	}
 
-	if ( ! discount.abTestName ) {
-		return true;
-	}
-
-	const variant = abtest( discount.abTestName );
-	if ( variant === 'control' ) {
-		return false;
-	}
-
 	return true;
 };
-
-// Some simple last value memoization to avoid constant re-renders.
-const composeActiveDiscount = memoizeLast( ( discount, activeVariation ) => ( {
-	...discount,
-	...activeVariation,
-} ) );
 
 /**
  * Returns info whether the site is eligible for spring discount or not.
@@ -59,13 +42,5 @@ export default ( state ) => {
 		return null;
 	}
 
-	const activeVariation = discount.variations
-		? discount.variations[ abtest( discount.abTestName ) ]
-		: null;
-
-	if ( ! activeVariation ) {
-		return discount;
-	}
-
-	return composeActiveDiscount( discount, activeVariation );
+	return discount;
 };
