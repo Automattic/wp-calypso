@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { handleRenewNowClick, needsToRenewSoon } from 'calypso/lib/purchases';
+import { handleRenewNowClick, isExpired, isExpiringSoon } from 'calypso/lib/purchases';
 import page from 'page';
 import PropTypes from 'prop-types';
 
@@ -119,7 +119,9 @@ class EmailPlan extends React.Component {
 		page( emailManagement( selectedSite.slug ) );
 	};
 
-	handleRenew = () => {
+	handleRenew = ( event ) => {
+		event.preventDefault();
+
 		const { purchase, selectedSite } = this.props;
 		handleRenewNowClick( purchase, selectedSite.slug, {
 			tracksProps: { source: 'email-plan-view' },
@@ -165,6 +167,18 @@ class EmailPlan extends React.Component {
 		return {
 			path: emailManagementForwarding( selectedSite.slug, domain.name, currentRoute ),
 		};
+	}
+
+	getExpiryThresholdInDays() {
+		const { domain } = this.props;
+
+		if ( hasTitanMailWithUs( domain ) ) {
+			return 5;
+		}
+		if ( hasGSuiteWithUs( domain ) ) {
+			return 30;
+		}
+		return 0;
 	}
 
 	getHeaderText() {
@@ -239,6 +253,16 @@ class EmailPlan extends React.Component {
 		};
 	}
 
+	needsToRenewSoon() {
+		const { purchase } = this.props;
+
+		if ( isExpired( purchase ) ) {
+			return true;
+		}
+
+		return isExpiringSoon( purchase, this.getExpiryThresholdInDays() );
+	}
+
 	renderManageAllNavItem() {
 		const { domain, translate } = this.props;
 
@@ -273,9 +297,9 @@ class EmailPlan extends React.Component {
 			return <VerticalNavItem isPlaceholder />;
 		}
 
-		if ( needsToRenewSoon( purchase ) ) {
+		if ( this.needsToRenewSoon() ) {
 			return (
-				<VerticalNavItem onClick={ this.handleRenew }>
+				<VerticalNavItem onClick={ this.handleRenew } path="#">
 					{ translate( 'Renew to add new mailboxes' ) }
 				</VerticalNavItem>
 			);
