@@ -201,14 +201,32 @@ function VatDetails() {
 	}
 
 	return (
-		<li>
-			<strong>{ translate( 'Vat Details' ) }</strong>
-			{ vatDetails.name }
-			<br />
-			{ vatDetails.address }
-			<br />
-			{ vatDetails.id }
-		</li>
+		<>
+			<li>
+				<strong>{ translate( 'Vat Details' ) }</strong>
+				{ vatDetails.name }
+				<br />
+				{ vatDetails.address }
+				<br />
+				{ translate( 'VAT #: %(vatCountry)s %(vatId)s', {
+					args: {
+						vatCountry: vatDetails.country,
+						vatId: vatDetails.id,
+					},
+				} ) }
+			</li>
+			<li>
+				{ translate( '{{strong}}Vendor VAT #{{/strong}} %(ieVatNumber)s and %(ukVatNumber)s', {
+					components: {
+						strong: <strong />,
+					},
+					args: {
+						ieVatNumber: 'IE 3255131SH',
+						ukVatNumber: 'UK 376 1703 88',
+					},
+				} ) }
+			</li>
+		</>
 	);
 }
 
@@ -332,7 +350,7 @@ function ReceiptLabels() {
 				id="billing-history__billing-details-description"
 			>
 				{ translate(
-					'Use this field to add your billing information (eg. VAT number, business address) before printing.'
+					'Use this field to add your billing information (eg. business address) before printing.'
 				) }
 			</div>
 		</div>
