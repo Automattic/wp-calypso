@@ -9,7 +9,6 @@ import { get } from 'lodash';
  */
 import { toApi, fromApi } from 'calypso/state/imports/api';
 import wpcom from 'calypso/lib/wp';
-import user from 'calypso/lib/user';
 import {
 	mapAuthor,
 	startMappingAuthors,
@@ -29,6 +28,7 @@ import {
 } from 'calypso/state/action-types';
 import { getImporterStatus } from 'calypso/state/imports/selectors';
 import { prefetchmShotsPreview } from 'calypso/lib/mshots';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
  * Redux dependencies
@@ -80,7 +80,7 @@ export const startMappingSiteImporterAuthors = ( { importerStatus, site, targetS
 
 	// WXR was uploaded, map the authors
 	if ( singleAuthorSite ) {
-		const currentUserData = user().get();
+		const currentUserData = getCurrentUser( getState() );
 		const currentUser = {
 			...currentUserData,
 			name: currentUserData.display_name,
