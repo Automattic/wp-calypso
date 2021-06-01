@@ -3,20 +3,15 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-  - [Naming Branches](#naming-branches)
-  - [Async / Await](#async--await)
-  - [Tags](#tags)
-  - [At most 1 top-level describe block](#at-most-1-top-level-describe-block)
-  - [Viewport size](#viewport-size)
-    - [Specify one viewport](#specify-one-viewport)
-    - [Specify multiple viewports](#specify-multiple-viewports)
-  - [Page Objects](#page-objects)
-  - [Use of this, const and lets](#use-of-this-const-and-lets)
-  - [Arrow functions](#arrow-functions)
-  - [Default values using destructuring](#default-values-using-destructuring)
-  - [Nesting step blocks](#nesting-step-blocks)
-  - [Catching errors in a step block](#catching-errors-in-a-step-block)
-  - [Waiting for elements](#waiting-for-elements)
+    - [Naming Branches](#naming-branches)
+    - [Async / Await](#async--await)
+    - [Page Objects](#page-objects)
+    - [Use of this, const and let](#use-of-this-const-and-let)
+    - [Arrow functions](#arrow-functions)
+    - [Default values using destructuring](#default-values-using-destructuring)
+    - [Nesting step blocks](#nesting-step-blocks)
+    - [Catching errors in a step block](#catching-errors-in-a-step-block)
+    - [Waiting for elements](#waiting-for-elements)
 
 <!-- /TOC -->
 
@@ -31,7 +26,7 @@ For every method which returns a promise or thenable object `await` should be us
 
 We don't chain function calls together and avoid using `.then` calls.
 
-Avoid doing:
+**Avoid**:
 
 ```
 async function openModal() {
@@ -43,7 +38,7 @@ async function openModal() {
 }
 ```
 
-Instead use `await` for each function call:
+**Instead**:
 
 ```
 async function openModal() {
@@ -54,81 +49,11 @@ async function openModal() {
 }
 ```
 
-## Tags
-
-Tags are labels used by `mocha` and `magellan` to determine what tests should be run and how it can be parallelized. Consider it a form of metadata that conveys various test parameters to the runner.
-
-Typical example:
-
-```(javascript)
-describe( "Block under test @parallel", function() {
-  describe( "Test case 1", function() {
-    step( 'Test step 1', function() {
-      ...
-    } )
-    step( 'Test step 2', function() {
-      ...
-    } )
-  } )
-  describe( "Test case 2", function() {
-    ...
-  } )
-} )
-```
-
-Some examples of tags:
-
-- parallel
-- jetpack
-- signup
-
-Notably, test suites not tagged with the `@parallel` tag will not be recognized by `magellan` as a valid test suite and thus will not be run in CI.
-
-Furthermore, if any test steps fail within the suite tagged with `@parallel` tag, rest of the test steps will be skipped an execution will begin on a new test suite.
-
-## At most 1 top-level describe block
-
-Each test file should only contain at most 1 top-level `describe` block.
-
-There is no restriction on the number `describe` blocks that are not top-level, nor a restriction on the depth of `describe` blocks.
-
-## Viewport size
-
-All tests should be written to work in three modes: desktop (1440 wide), tablet (1024 wide) and mobile (375 wide).
-
-Tests can be run in different modes by setting an environment variable `BROWSERSIZE` to either `desktop`, `tablet` or `mobile`.
-
-### Specify one viewport
-
-eg. using environment variables
-
-```
-BROWSERSIZE=<viewport> ./node_modules/.bin/mocha <path_to_e2e_spec>
-```
-
-eg. using run.sh
-
-```
-./run.sh -g -s <viewport>
-```
-
-### Specify multiple viewports
-
-```
-./run.sh -g -s <viewport1>,<viewport2>
-```
-
-eg. using run.sh
-
-```
-./run.sh -g -s mobile,desktop
-```
-
 ## Page Objects
 
 All pages have asynchronous functions. Constructors for pages can't be asynchronous so we never construct a page object directly (using something like `new PageObjectPage(...)`), instead we use the static methods `Expect` and `Visit`, which are on the asyncBaseContainer and hence available for every page, to construct the page object.
 
-Don't do:
+**Avoid**:
 
 ```
 step( 'Can select domain only from the domain first choice page', function() {
@@ -137,7 +62,7 @@ step( 'Can select domain only from the domain first choice page', function() {
 } );
 ```
 
-Instead you should do this if you're expecting a page to appear during a flow:
+**Instead** if you're expecting a page to appear during a flow:
 
 ```
 step( 'Can select domain only from the domain first choice page', function() {
@@ -146,7 +71,7 @@ step( 'Can select domain only from the domain first choice page', function() {
 } );
 ```
 
-or this to directly visit a page:
+or to directly visit a page:
 
 ```
 step( 'Can select domain only from the domain first choice page', function() {
@@ -155,13 +80,13 @@ step( 'Can select domain only from the domain first choice page', function() {
 } );
 ```
 
-**Note:** not all pages can be visited as they require a direct URL to be defined, some pages come only as part of flows (eg. sign up pages)
+> :warning: not all pages can be visited as they require a direct URL to be defined, some pages come only as part of flows (eg. sign up pages)
 
-## Use of this, const and lets
+## Use of this, const and let
 
-It is preferred to use `const`, or `lets`, instead of `this.`, as the scope is narrower and less likely to cause confusion across test steps.
+It is preferred to use `const`, or `let`, instead of `this`, as the scope is narrower and less likely to cause confusion across test steps.
 
-For example:
+**Avoid**:
 
 ```
 step( 'Can select domain only from the domain first choice page', function() {
@@ -170,7 +95,7 @@ step( 'Can select domain only from the domain first choice page', function() {
 } );
 ```
 
-can use a `const` instead:
+**Instead**:
 
 ```
 step( 'Can select domain only from the domain first choice page', function() {
@@ -181,9 +106,9 @@ step( 'Can select domain only from the domain first choice page', function() {
 
 ## Arrow functions
 
-Passing arrow functions (“lambdas”) to Mocha is discouraged. Lambdas lexically bind this and cannot access the Mocha context [(source)](https://mochajs.org/#arrow-functions)
+Passing arrow functions (“lambdas”) to Mocha is discouraged. Lambdas lexically bind `this` and thus access to the Mocha context is lost. [(source)](https://mochajs.org/#arrow-functions)
 
-Avoid:
+**Avoid**:
 
 ```
 step( 'We can set the sandbox cookie for payments', () => {
@@ -192,7 +117,7 @@ step( 'We can set the sandbox cookie for payments', () => {
 } );
 ```
 
-instead:
+**Instead**:
 
 ```
 step( 'We can set the sandbox cookie for payments', async function() {
@@ -205,28 +130,24 @@ step( 'We can set the sandbox cookie for payments', async function() {
 
 Use destructuring for default values as this makes calling the function explicit and avoids boolean traps.
 
-Avoid:
+**Avoid**:
 
 ```
-constructor( driver, visit = true, culture = 'en', flow = '', domainFirst = false, domainFirstDomain = '' ) {
+constructor( driver, visit = true, culture = 'en', flow = '', domainFirst = false, domainFirstDomain = '' ) {}
+
+// In another file
+
+const startPage = new StartPage( driver, true, 'en', '', true, '' ).displayed();
 ```
 
-instead:
+**Instead**:
 
 ```
-constructor( driver, { visit = true, culture = 'en', flow = '', domainFirst = false, domainFirstDomain = '' } = {} ) {
-```
+constructor( driver, { visit = true, culture = 'en', flow = '', domainFirst = false, domainFirstDomain = '' } = {} ) {}
 
-that way, the page can be called like:
+// In another file
 
-```
-new StartPage( driver, { visit: true, domainFirst: true } ).displayed();
-```
-
-instead of:
-
-```
-new StartPage( driver, true, 'en', '', true, '' ).displayed();
+const startPage = new StartPage( driver, { visit: true, domainFirst: true } ).displayed();
 ```
 
 ## Nesting step blocks

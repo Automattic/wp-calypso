@@ -3,13 +3,10 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-    - [Naming Branches](#naming-branches)
+    - [General structure - test](#general-structure---test)
+    - [General structure - pages and components](#general-structure---pages-and-components)
+    - [General structure - flows](#general-structure---flows)
     - [Async / Await](#async--await)
-    - [Tags](#tags)
-    - [At most 1 top-level describe block](#at-most-1-top-level-describe-block)
-    - [Viewport size](#viewport-size)
-        - [Specify one viewport](#specify-one-viewport)
-        - [Specify multiple viewports](#specify-multiple-viewports)
     - [Page Objects](#page-objects)
     - [Use of this, const and lets](#use-of-this-const-and-lets)
     - [Arrow functions](#arrow-functions)
@@ -20,9 +17,132 @@
 
 <!-- /TOC -->
 
-## Naming Branches
+## General structure - test
 
-We follow the Automattic [branch naming scheme](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/git-workflow.md#branch-naming-scheme).
+Tests for Playwright E2E continue to be written in JavaScript.
+
+There should only be [one top-level describe block](style-guide.md#maximum-1-top-level-describe-block) per file.
+
+<details>
+<summary>Example Test File</summary>
+
+```javascript
+
+/**
+ * External dependencies
+ */ 
+
+/**
+ * Internal dependencies
+ */
+
+/**
+ * Constants
+ */
+
+describe( 'Feature: @parallel', function() {
+	describe( 'Test case 1', function() {
+		let someComponent;
+		
+		it( 'Check title', async function() {
+			someComponent = await SomeComponent.Expect( this.page );
+			await someComponent.clickMyPages();
+			const resultValue = await someComponent.getTitle();
+			assert( resultValue === expectedValue );
+		} );
+	} );
+
+	describe( 'Test case 2', function() {
+		let anotherComponent;
+
+		before( 'Set up before all test steps', async function() {
+			anotherComponent = await AnotherComponent.Expect( this.page, 'param' );
+		} );
+
+		it( 'Test step', async function() {
+			...
+		} );
+	} );
+} );
+```
+
+</details>
+
+## General structure - pages and components
+
+Playwright E2E tests rely heavily on the `@automattic/calypso-e2e` library, written in TypeScript.
+
+`Pages` and `Components` often have fuzzy boundaries and is not precisely defined. With that said, it is possible to draw a distinction between the two.
+
+**Pages**: represent an overall page on WPCOM. A good example of is the [Login Page](https://github.com/Automattic/wp-calypso/blob/trunk/packages/calypso-e2e/src/lib/pages/login-page.ts); it encapsulates element selectors and actions that can be performed on the given page.
+
+**Components**: represent a sub-portion of the page, and are often shared across multiple pages (_though not always!_). A good example is the Sidebar Component, persisting across multiple pages in the My Home dashboard. It encapsulates element selectors and actions for only the Sidebar, leaving interactions on the main content pane for the respective Page objects.
+
+<details>
+<summary>Example Page Object</summary>
+
+```typescript
+
+/**
+ * External dependencies
+ */ 
+
+/**
+ * Internal dependencies
+ */
+
+/**
+ * Type dependencies
+ */
+
+/**
+ * Constants
+ */
+
+const selectors = {
+	titleInput: '.editor-post-title__input',
+	publishPanelToggle: '.editor-post-publish-panel__toggle',
+	...
+}
+
+/**
+ * JSDoc is expected for Class definitions.
+ * 
+ * @augments {BaseContainer}
+ */
+export class SomePage extends BaseContainer {
+	/**
+	 * JSDoc is expected for constructor.
+	 * 
+	 * @param {Page} page Page object.
+	 */
+	constructor( page: Page ) {
+		...
+	}
+
+	/**
+	 * JSDoc is expected for functions.
+	 * 
+	 * @param {string} text Text to be entered into the field.
+	 */
+	async enterText( text: string ): Promise<void> {
+		await this.page.waitForSelector( selectors.selectorName );
+
+		//Some tricky section of code
+		await Promise.all([
+			...
+		])
+		...
+	}
+}
+```
+</details>
+
+## General structure - flows
+
+Flows in the `@automattic/calypso-e2e` library encapsulate the sequence of steps required to perform an action.
+
+For instance, the Log in process is a flow, as it spans across multiple pages
 
 ## Async / Await
 
@@ -50,77 +170,12 @@ async function openModal() {
 }
 ```
 
-## Tags
-
-Tags are labels used by `mocha` and `magellan` to determine what tests should be run and how it can be parallelized. Consider it a form of metadata that conveys various test parameters to the runner.
-
-Typical example:
-
-```(javascript)
-describe( "Block under test @parallel", function() {
-  describe( "Test case 1", function() {
-    step( 'Test step 1', function() {
-      ...
-    } )
-    step( 'Test step 2', function() {
-      ...
-    } )
-  } )
-  describe( "Test case 2", function() {
-    ...
-  } )
-} )
-```
-
-Some examples of tags:
-
-- parallel
-- jetpack
-- signup
-
-Notably, test suites not tagged with the `@parallel` tag will not be recognized by `magellan` as a valid test suite and thus will not be run in CI.
-
-Furthermore, if any test steps fail within the suite tagged with `@parallel` tag, rest of the test steps will be skipped an execution will begin on a new test suite.
-
-## At most 1 top-level describe block
-
-Each test file should only contain at most 1 top-level `describe` block.
-
-There is no restriction on the number `describe` blocks that are not top-level, nor a restriction on the depth of `describe` blocks.
-
-## Viewport size
-
-All tests should be written to work in three modes: desktop (1440 wide), tablet (1024 wide) and mobile (375 wide).
-
-Tests can be run in different modes by setting an environment variable `BROWSERSIZE` to either `desktop`, `tablet` or `mobile`.
-
-### Specify one viewport
-
-eg. using environment variables
-
-```
-BROWSERSIZE=<viewport> ./node_modules/.bin/mocha <path_to_e2e_spec>
-```
-
-eg. using run.sh
-
-```
-./run.sh -g -s <viewport>
-```
-
-### Specify multiple viewports
-
-```
-./run.sh -g -s <viewport1>,<viewport2>
-```
-
-eg. using run.sh
-
-```
-./run.sh -g -s mobile,desktop
-```
-
 ## Page Objects
+
+Page Objects are to be used to represent a corresponding page on WPCOM. 
+
+
+
 
 All pages have asynchronous functions. Constructors for pages can't be asynchronous so we never construct a page object directly (using something like `new PageObjectPage(...)`), instead we use the static methods `Expect` and `Visit`, which are on the asyncBaseContainer and hence available for every page, to construct the page object.
 
