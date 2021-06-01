@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
  */
 
 import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
-import { connectOptions } from './theme-options';
 import { translate } from 'i18n-calypso';
 import { trackClick } from './helpers';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -36,28 +35,33 @@ function getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) {
 	return `/themes/upload/${ siteSlug }`;
 }
 
-const InstallThemeButton = connectOptions(
-	( { isMultisite, isLoggedIn, siteSlug, dispatchTracksEvent, canUploadThemesOrPlugins } ) => {
-		if ( ! isLoggedIn || isMultisite ) {
-			return null;
-		}
-
-		const clickHandler = () => {
-			trackClick( 'upload theme' );
-			dispatchTracksEvent();
-		};
-
-		return (
-			<Button
-				className="themes__upload-button"
-				onClick={ clickHandler }
-				href={ getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) }
-			>
-				{ translate( 'Install theme' ) }
-			</Button>
-		);
+const InstallThemeButton = ( props ) => {
+	const {
+		isMultisite,
+		isLoggedIn,
+		siteSlug,
+		dispatchTracksEvent,
+		canUploadThemesOrPlugins,
+	} = props;
+	if ( ! isLoggedIn || isMultisite ) {
+		return null;
 	}
-);
+
+	const clickHandler = () => {
+		trackClick( 'upload theme' );
+		dispatchTracksEvent();
+	};
+
+	return (
+		<Button
+			className="themes__upload-button"
+			onClick={ clickHandler }
+			href={ getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) }
+		>
+			{ translate( 'Install theme' ) }
+		</Button>
+	);
+};
 
 const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
