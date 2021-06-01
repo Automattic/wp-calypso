@@ -5,6 +5,11 @@ import phrase from 'asana-phrase';
 import config from 'config';
 
 /**
+ * Internal dependencies
+ */
+import { getViewportName } from './browser-helper';
+
+/**
  * Assembles and returns the URL to a specific route/asset/query in Calypso.
  *
  * @param {string} route Additional state or page to build into the returned URL.
@@ -84,7 +89,7 @@ export function randomPhrase(): string {
 export function createSuiteTitle( title: string ): string {
 	const parts = [
 		`[${ getJetpackHost() }]`,
-		`${ title.toProperCase() }:`,
+		`${ toTitleCase( [ title ] ) }:`,
 		`(${ getViewportName() })`,
 		'@parallel',
 	];

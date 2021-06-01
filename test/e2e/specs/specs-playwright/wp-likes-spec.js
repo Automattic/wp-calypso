@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
 import {
 	DataHelper,
 	LoginFlow,
@@ -16,7 +15,7 @@ import {
 const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
-describe( DataHelper.createSuiteTitle( 'Like' ), function () {
+describe( DataHelper.createSuiteTitle( 'Likes' ), function () {
 	describe( 'New post', function () {
 		let gutenbergEditorPage;
 		let likesComponent;
