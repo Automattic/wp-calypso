@@ -178,11 +178,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pricing Table (${ screenSize })
 		it( 'Can set the "XL" gutter value', async function () {
 			await setGutter( 'XL' );
 		} );
-
-		it( 'Can publish and view content', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			return await gEditorComponent.publish( { visit: true } );
-		} );
 	} );
 
 	describe( 'Pricing Table block change table count: @parallel', function () {
@@ -251,11 +246,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pricing Table (${ screenSize })
 					`.wp-block-coblocks-pricing-table__inner.has-columns.has-4-columns.has-responsive-columns.has-medium-gutter`
 				)
 			);
-		} );
-
-		it( 'Can publish and view content', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			return await gEditorComponent.publish( { visit: true } );
 		} );
 	} );
 } );

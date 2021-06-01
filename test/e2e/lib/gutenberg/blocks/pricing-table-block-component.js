@@ -72,7 +72,7 @@ export default class PricingTableBlockComponent extends AsyncBaseContainer {
 	}
 
 	async pricingTableItemTitleClick() {
-		return await this.driver.findElement( pricingTableItemButton ).click();
+		return await this.driver.findElement( pricingTableItemTitle ).click();
 	}
 
 	async pricingTableItemTitleSendKeys( itemTitleText ) {
