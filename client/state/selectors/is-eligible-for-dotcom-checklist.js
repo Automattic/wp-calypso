@@ -1,8 +1,7 @@
 /**
  * Internal dependencies
  */
-import getSiteOptions from 'calypso/state/selectors/get-site-options';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import { getSiteOptions, isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 

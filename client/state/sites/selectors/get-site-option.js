@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getSiteOptions from 'calypso/state/selectors/get-site-options';
+import getSiteOptions from './get-site-options';
 
 /**
  * Returns a site option for a site

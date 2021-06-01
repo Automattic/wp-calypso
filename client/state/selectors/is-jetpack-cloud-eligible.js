@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getSiteOptions from 'calypso/state/selectors/get-site-options';
+import getSiteOptions from 'calypso/state/sites/selectors/get-site-options';
 
 /**
  * Indicates whether a site is eligible for Jetpack Cloud.
@@ -13,7 +13,7 @@ import getSiteOptions from 'calypso/state/selectors/get-site-options';
 export default function isJetpackCloudEligible( state, siteId ) {
 	const site = getSiteOptions( state, siteId );
 	if ( ! site ) {
-		return undefined;
+		return null;
 	}
-	return site?.is_cloud_eligible;
+	return site.is_cloud_eligible ?? false;
 }
