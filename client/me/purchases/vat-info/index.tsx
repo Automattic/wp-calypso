@@ -9,7 +9,6 @@ import { CompactCard, Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'calypso/components/section-header';
 import useVatDetails from './use-vat-details';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import type { VatDetails, UpdateError } from './use-vat-details';
@@ -37,8 +36,6 @@ export default function VatInfoPage(): JSX.Element {
 	if ( fetchError ) {
 		return (
 			<div className="vat-info">
-				<SectionHeader label={ translate( 'VAT Details' ) } />
-
 				<CompactCard>{ translate( 'An error occurred while fetching VAT details.' ) }</CompactCard>
 			</div>
 		);
@@ -47,8 +44,6 @@ export default function VatInfoPage(): JSX.Element {
 	if ( isLoading ) {
 		return (
 			<div className="vat-info">
-				<SectionHeader label={ translate( 'VAT Details' ) } />
-
 				<CompactCard>{ translate( 'Loading…' ) }</CompactCard>
 			</div>
 		);
@@ -56,8 +51,6 @@ export default function VatInfoPage(): JSX.Element {
 
 	return (
 		<div className="vat-info">
-			<SectionHeader label={ translate( 'VAT Details' ) } />
-
 			<VatUpdateErrorNotice error={ updateError } />
 
 			<CompactCard>
