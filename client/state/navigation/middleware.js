@@ -8,12 +8,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { addQueryArgs } from 'calypso/lib/url';
-import {
-	ACTIVITY_LOG_FILTER_SET,
-	ACTIVITY_LOG_FILTER_UPDATE,
-	NAVIGATE,
-	HISTORY_REPLACE,
-} from 'calypso/state/action-types';
+import { ACTIVITY_LOG_FILTER_SET, ACTIVITY_LOG_FILTER_UPDATE } from 'calypso/state/action-types';
 import { filterStateToQuery } from 'calypso/state/activity-log/utils';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 
@@ -42,23 +37,6 @@ export const navigationMiddleware = ( store ) => {
 				/* eslint-enable no-case-declarations */
 				return afterFilter;
 
-			case NAVIGATE:
-				if ( action.path ) {
-					page( action.path );
-				}
-
-				return next( action );
-			case HISTORY_REPLACE:
-				if ( action.path ) {
-					if ( action.saveContext ) {
-						// Replace the history entry, but don't dispatch a new navigation context.
-						//path, state, init, dispatch
-						page.replace( action.path, null, false, false );
-					} else {
-						page.replace( action.path );
-					}
-				}
-				return next( action );
 			default:
 				return next( action );
 		}

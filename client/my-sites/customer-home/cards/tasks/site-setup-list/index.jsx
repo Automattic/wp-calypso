@@ -6,7 +6,6 @@ import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@aut
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useState, Fragment } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import page from 'page';
 import classnames from 'classnames';
 
 /**
@@ -15,6 +14,7 @@ import classnames from 'classnames';
 import CardHeading from 'calypso/components/card-heading';
 import Spinner from 'calypso/components/spinner';
 import { getTaskList } from 'calypso/lib/checklist';
+import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
 import { resetVerifyEmailState } from 'calypso/state/current-user/email-verification/actions';
@@ -54,7 +54,7 @@ const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodca
 	}
 
 	if ( task.actionUrl ) {
-		page.show( task.actionUrl );
+		navigate( task.actionUrl );
 	}
 
 	if ( task.actionDispatch ) {

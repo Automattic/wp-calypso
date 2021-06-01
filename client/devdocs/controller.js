@@ -21,7 +21,6 @@ import Sidebar from './sidebar';
 import EmptyContent from 'calypso/components/empty-content';
 import WizardComponent from './wizard-component';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { navigate } from 'calypso/state/ui/actions';
 
 const devdocs = {
 	/*
@@ -138,8 +137,7 @@ const devdocs = {
 	},
 
 	pleaseLogIn: function ( context, next ) {
-		const currentUrl = new URL( window.location.href );
-		const redirectTo = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
+		const redirectTo = window.location.origin + '/devdocs/welcome';
 		if ( ! getCurrentUserId( context.store.getState() ) ) {
 			context.primary = React.createElement( EmptyContent, {
 				title: 'Log In to start hacking',
@@ -152,7 +150,7 @@ const devdocs = {
 			} );
 			next();
 		} else {
-			context.store.dispatch( navigate( redirectTo ) );
+			page( redirectTo );
 		}
 	},
 

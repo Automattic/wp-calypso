@@ -7,6 +7,7 @@ import React, { PureComponent } from 'react';
 import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -14,13 +15,9 @@ import { localize } from 'i18n-calypso';
 import { Button, Card } from '@automattic/components';
 import HappychatButton from 'calypso/components/happychat/button';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import {
-	recordGoogleEvent as recordGoogleEventAction,
-	recordTracksEvent as recordTracksEventAction,
-	withAnalytics,
-} from 'calypso/state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { disconnect } from 'calypso/state/jetpack/connection/actions';
-import { setAllSitesSelected, navigate } from 'calypso/state/ui/actions';
+import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import {
 	successNotice,
 	errorNotice,
@@ -167,14 +164,12 @@ class DisconnectJetpack extends PureComponent {
 			infoNotice: showInfoNotice,
 			removeNotice: removeInfoNotice,
 			disconnect: disconnectSite,
-			recordGoogleEvent,
-			recordTracksEvent,
 		} = this.props;
 
 		onDisconnectClick();
 
-		recordTracksEvent( 'calypso_jetpack_disconnect_confirm' );
-		recordGoogleEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
+		this.props.recordTracksEvent( 'calypso_jetpack_disconnect_confirm' );
+		this.props.recordGoogleEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
 
 		const { notice } = showInfoNotice(
 			translate( 'Disconnecting %(siteName)s.', { args: { siteName: siteTitle } } ),
@@ -191,19 +186,26 @@ class DisconnectJetpack extends PureComponent {
 				showSuccessNotice(
 					translate( 'Successfully disconnected %(siteName)s.', { args: { siteName: siteTitle } } )
 				);
-				recordGoogleEvent( 'Jetpack', 'Successfully Disconnected' );
+				this.props.recordGoogleEvent( 'Jetpack', 'Successfully Disconnected' );
 			},
 			() => {
 				removeInfoNotice( notice.noticeId );
 				showErrorNotice(
 					translate( '%(siteName)s failed to disconnect', { args: { siteName: siteTitle } } )
 				);
-				recordGoogleEvent( 'Jetpack', 'Failed Disconnected Site' );
+				this.props.recordGoogleEvent( 'Jetpack', 'Failed Disconnected Site' );
 			}
 		);
 	};
 
-	handleTryRewind = () => this.props.trackTryRewind( this.props.siteSlug );
+	handleTryRewind = () => {
+		this.props.recordTracksEvent( 'calypso_disconnect_jetpack_try_rewind' );
+		page( `/activity-log/${ this.props.siteSlug }` );
+	};
+
+	trackTryRewindHelp = () => {
+		this.props.recordTracksEvent( 'calypso_disconnect_jetpack_try_rewind_help' );
+	};
 
 	render() {
 		const {
@@ -280,7 +282,7 @@ class DisconnectJetpack extends PureComponent {
 					</p>
 					<div className="disconnect-jetpack__try-rewind-button-wrap">
 						<Button onClick={ this.handleTryRewind }>{ translate( 'Restore site' ) }</Button>
-						<HappychatButton borderless={ false } onClick={ this.props.trackTryRewindHelp } primary>
+						<HappychatButton borderless={ false } onClick={ this.trackTryRewindHelp } primary>
 							<Gridicon icon="chat" size={ 18 } />
 							{ translate( 'Get help' ) }
 						</HappychatButton>
@@ -305,19 +307,12 @@ export default connect(
 	},
 	{
 		setAllSitesSelected,
-		recordGoogleEvent: recordGoogleEventAction,
-		recordTracksEvent: recordTracksEventAction,
+		recordGoogleEvent,
+		recordTracksEvent,
 		disconnect,
 		successNotice,
 		errorNotice,
 		infoNotice,
 		removeNotice,
-		trackTryRewind: ( siteSlug ) =>
-			withAnalytics(
-				recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind' ),
-				navigate( `/activity-log/${ siteSlug }` )
-			),
-		trackTryRewindHelp: () =>
-			recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind_help' ),
 	}
 )( localize( DisconnectJetpack ) );
