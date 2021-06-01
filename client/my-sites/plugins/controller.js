@@ -4,7 +4,6 @@
 import React from 'react';
 import page from 'page';
 import { includes, some } from 'lodash';
-import config from '@automattic/calypso-config';
 
 /**
  * Internal Dependencies
@@ -20,7 +19,6 @@ import PluginUpload from './plugin-upload';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import AsyncLoad from 'calypso/components/async-load';
-import { isMarketplaceProduct } from 'calypso/my-sites/plugins/marketplace/constants';
 import MarketplacePluginDetails from 'calypso/my-sites/plugins/marketplace/marketplace-plugin-details';
 
 /**
@@ -41,27 +39,39 @@ function renderSinglePlugin( context, siteUrl ) {
 		prevPath = sectionify( context.prevPath );
 	}
 
-	//Add condition to check if business/ecommerce plan before committing
-	if ( config.isEnabled( 'marketplace-yoast' ) && isMarketplaceProduct( pluginSlug ) ) {
-		context.primary = (
-			<MarketplacePluginDetails
-				path={ context.path }
-				prevQuerystring={ lastPluginsQuerystring }
-				prevPath={ prevPath }
-				marketplacePluginSlug={ pluginSlug }
-				siteUrl={ siteUrl }
-			/>
-		);
-	} else {
-		// Render single plugin component
-		context.primary = React.createElement( PluginComponent, {
-			path: context.path,
-			prevQuerystring: lastPluginsQuerystring,
-			prevPath,
-			pluginSlug,
-			siteUrl,
-		} );
+	// Render single plugin component
+	context.primary = React.createElement( PluginComponent, {
+		path: context.path,
+		prevQuerystring: lastPluginsQuerystring,
+		prevPath,
+		pluginSlug,
+		siteUrl,
+	} );
+}
+
+export function renderMarketplacePlugin( context, next ) {
+	const siteUrl = getSiteFragment( context.path );
+
+	const pluginSlug = decodeURIComponent( context.params.plugin );
+
+	let prevPath;
+	if ( lastPluginsListVisited ) {
+		prevPath = lastPluginsListVisited;
+	} else if ( context.prevPath ) {
+		prevPath = sectionify( context.prevPath );
 	}
+
+	context.primary = (
+		<MarketplacePluginDetails
+			path={ context.path }
+			prevQuerystring={ lastPluginsQuerystring }
+			prevPath={ prevPath }
+			marketplacePluginSlug={ pluginSlug }
+			siteUrl={ siteUrl }
+		/>
+	);
+
+	next();
 }
 
 function getPathWithoutSiteSlug( context, site ) {

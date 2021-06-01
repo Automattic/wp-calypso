@@ -29,6 +29,8 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import PurchaseArea from './purchase-area';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import MainComponent from 'calypso/components/main';
 
 interface MarketplacePluginDetailsInterface {
 	marketplacePluginSlug: keyof PluginProductMappingInterface;
@@ -68,7 +70,8 @@ function MarketplacePluginDetails( {
 	};
 
 	return (
-		<div>
+		<MainComponent>
+			<SidebarNavigation />
 			{ ! wporgFetching ? (
 				<PurchaseArea
 					siteDomains={ siteDomains }
@@ -82,7 +85,7 @@ function MarketplacePluginDetails( {
 					}
 					onNavigateToDomainsSelection={ () =>
 						page(
-							`/plugins/domain${
+							`/plugins/marketplace/domain${
 								selectedSite?.slug ? `/${ selectedSite?.slug }?flags=marketplace-yoast` : ''
 							}`
 						)
@@ -91,7 +94,7 @@ function MarketplacePluginDetails( {
 			) : (
 				'Loading...'
 			) }
-		</div>
+		</MainComponent>
 	);
 }
 

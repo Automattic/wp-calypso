@@ -156,7 +156,9 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 						previousPath
 							? page( previousPath )
 							: page(
-									`/plugins/wordpress-seo${ selectedSite?.slug ? `/${ selectedSite.slug }` : '' }`
+									`/plugins/marketplace/product/details/wordpress-seo${
+										selectedSite?.slug ? `/${ selectedSite.slug }` : ''
+									}`
 							  )
 					}
 					tooltip={ translate( 'Close Domain Selection' ) }
