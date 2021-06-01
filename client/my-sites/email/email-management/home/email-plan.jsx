@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { handleRenewNowClick, isExpired, isExpiringSoon } from 'calypso/lib/purchases';
+import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
 import page from 'page';
 import PropTypes from 'prop-types';
 
@@ -169,20 +169,6 @@ class EmailPlan extends React.Component {
 		};
 	}
 
-	getExpiryThresholdInDays() {
-		const { domain } = this.props;
-
-		if ( hasTitanMailWithUs( domain ) ) {
-			return 3;
-		}
-
-		if ( hasGSuiteWithUs( domain ) ) {
-			return 20;
-		}
-
-		return 0;
-	}
-
 	getHeaderText() {
 		const { domain, translate } = this.props;
 
@@ -255,16 +241,6 @@ class EmailPlan extends React.Component {
 		};
 	}
 
-	needsToRenewSoon() {
-		const { purchase } = this.props;
-
-		if ( isExpired( purchase ) ) {
-			return true;
-		}
-
-		return isExpiringSoon( purchase, this.getExpiryThresholdInDays() );
-	}
-
 	renderManageAllNavItem() {
 		const { domain, translate } = this.props;
 
@@ -299,7 +275,7 @@ class EmailPlan extends React.Component {
 			return <VerticalNavItem isPlaceholder />;
 		}
 
-		if ( this.needsToRenewSoon() ) {
+		if ( isExpired( purchase ) ) {
 			return (
 				<VerticalNavItem onClick={ this.handleRenew } path="#">
 					{ translate( 'Renew to add new mailboxes' ) }

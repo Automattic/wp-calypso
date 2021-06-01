@@ -288,13 +288,6 @@ function isExpiring( purchase ) {
 	return includes( [ 'manualRenew', 'expiring' ], purchase.expiryStatus );
 }
 
-function isExpiringSoon( purchase, expiresWithinDays ) {
-	return (
-		! isExpired( purchase ) &&
-		moment.utc( purchase.expiryDate ).isBefore( moment.utc().add( expiresWithinDays, 'days' ) )
-	);
-}
-
 function isIncludedWithPlan( purchase ) {
 	return 'included' === purchase.expiryStatus;
 }
@@ -802,7 +795,6 @@ export {
 	isCloseToExpiration,
 	isExpired,
 	isExpiring,
-	isExpiringSoon,
 	isIncludedWithPlan,
 	isMonthlyPurchase,
 	isOneTimePurchase,
