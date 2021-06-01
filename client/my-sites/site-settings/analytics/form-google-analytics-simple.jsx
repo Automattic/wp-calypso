@@ -3,11 +3,7 @@
  */
 import React, { useEffect } from 'react';
 import { CompactCard } from '@automattic/components';
-import {
-	findFirstSimilarPlanKey,
-	FEATURE_GOOGLE_ANALYTICS,
-	TYPE_PREMIUM,
-} from '@automattic/calypso-products';
+import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { ToggleControl } from '@wordpress/components';
 
 /**
@@ -73,10 +69,6 @@ const GoogleAnalyticsSimpleForm = ( {
 	};
 
 	const renderForm = () => {
-		const plan = findFirstSimilarPlanKey( site.plan.product_slug, {
-			type: TYPE_PREMIUM,
-		} );
-
 		const nudge = (
 			<UpsellNudge
 				description={ translate(
@@ -84,7 +76,7 @@ const GoogleAnalyticsSimpleForm = ( {
 				) }
 				event={ 'google_analytics_settings' }
 				feature={ FEATURE_GOOGLE_ANALYTICS }
-				plan={ plan }
+				plan={ PLAN_PREMIUM }
 				showIcon={ true }
 				title={ nudgeTitle }
 			/>
