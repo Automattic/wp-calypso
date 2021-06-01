@@ -160,10 +160,10 @@ export function getRedirectAfterAccept( invite ) {
 	const postsListPath = '/posts/' + invite.site.ID;
 	const subdomainRegExp = /^https?:\/\/([a-z0-9]*).wordpress.com/;
 	const remoteLoginBackUrl = ( destinationUri ) =>
-		`https://${ invite.site.domain }/remote-login.php/?r_login_redirect=https://wordpress.com${ destinationUri }`;
+		`https://${ invite.site.domain }/remote-login.php/?action=r_login_redirect&r_login_back=https://wordpress.com${ destinationUri }`;
 	const remoteLoginUrl = ( destinationUri ) =>
-		`https://r-login.wordpress.com/remote-login.php?action=link&back=${ remoteLoginBackUrl(
-			destinationUri
+		`https://r-login.wordpress.com/remote-login.php?action=link&back=${ encodeURIComponent(
+			remoteLoginBackUrl( destinationUri )
 		) }`;
 
 	if ( invite.site.is_vip ) {
@@ -180,10 +180,10 @@ export function getRedirectAfterAccept( invite ) {
 	switch ( invite.role ) {
 		case 'viewer':
 		case 'follower':
-			return subdomainRegExp.test( invite.site.URL ) ? readerPath : remoteLoginUrl( readerPath );
+			return subdomainRegExp.test( invite.site.domain ) ? readerPath : remoteLoginUrl( readerPath );
 
 		default:
-			return subdomainRegExp.test( invite.site.URL )
+			return subdomainRegExp.test( invite.site.domain )
 				? postsListPath
 				: remoteLoginUrl( postsListPath );
 	}
