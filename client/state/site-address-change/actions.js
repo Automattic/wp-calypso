@@ -23,6 +23,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 import 'calypso/state/site-address-change/init';
 
@@ -111,7 +112,7 @@ export const requestSiteAddressChange = (
 	oldDomain,
 	siteType,
 	discard = true
-) => async ( dispatch ) => {
+) => async ( dispatch, getState ) => {
 	dispatch( {
 		type: SITE_ADDRESS_CHANGE_REQUEST,
 		siteId,
@@ -157,8 +158,11 @@ export const requestSiteAddressChange = (
 				} )
 			);
 
-			const newAddress = newSlug + '.' + domain;
-			page( domainManagementEdit( newAddress, newAddress ) );
+			// site slug, potentially freshly updated by the `requestSite` above
+			const siteSlug = getSiteSlug( getState(), siteId );
+			// new name of the `*.wordpress.com` domain that we just changed
+			const newDomain = newSlug + '.' + domain;
+			page( domainManagementEdit( siteSlug, newDomain ) );
 		}
 	} catch ( error ) {
 		dispatch(
