@@ -89,7 +89,7 @@ class EditUserForm extends React.Component {
 		const allowedSettings = new Set();
 
 		if ( ! user.ID ) {
-			return allowedSettings;
+			return [];
 		}
 
 		// On any site, admins should be able to change only other
