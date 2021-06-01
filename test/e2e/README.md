@@ -7,7 +7,6 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
 - [Overview](docs/overview.md)
 - [Setup](docs/setup.md)
 - [Running tests](docs/running-tests.md)
-- [Debugging](docs/debugging.md#debugging)
 - [Writing tests](docs/writing_tests.md)
 - [Style Guide](docs/style-guide.md)
 - [Debugging](docs/debugging.md)
