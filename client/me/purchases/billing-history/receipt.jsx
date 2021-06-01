@@ -35,6 +35,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
 import titles from 'calypso/me/purchases/titles';
 import FormattedHeader from 'calypso/components/formatted-header';
+import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {
@@ -138,6 +139,7 @@ export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
 					) : (
 						<EmptyReceiptDetails />
 					) }
+					<VatDetails />
 				</ul>
 				<ReceiptLineItems transaction={ transaction } />
 
@@ -186,6 +188,26 @@ function ReceiptPaymentMethod( { transaction } ) {
 		<li>
 			<strong>{ translate( 'Payment Method' ) }</strong>
 			<span>{ text }</span>
+		</li>
+	);
+}
+
+function VatDetails() {
+	const translate = useTranslate();
+	const { vatDetails, isLoading, fetchError } = useVatDetails();
+
+	if ( isLoading || fetchError || ! vatDetails.id ) {
+		return null;
+	}
+
+	return (
+		<li>
+			<strong>{ translate( 'Vat Details' ) }</strong>
+			{ vatDetails.name }
+			<br />
+			{ vatDetails.address }
+			<br />
+			{ vatDetails.id }
 		</li>
 	);
 }
