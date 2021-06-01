@@ -13,7 +13,6 @@
 	"saveAllScreenshots": false,
 	"slackChannelForScreenshots": "#e2eflowtesting-notif",
 	"neverSaveScreenshots": false,
-	"checkForConsoleErrors": false,
 	"logNetworkRequests": false,
 	"printConsoleLogs": false,
 	"reportWarningsToSlack": false,

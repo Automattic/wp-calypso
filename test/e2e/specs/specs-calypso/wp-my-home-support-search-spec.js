@@ -59,6 +59,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 
 	it( 'Displays Default Results initially', async function () {
 		supportSearchComponent = await SupportSearchComponent.Expect( this.driver );
+		await this.driver.sleep( 10000 );
 		const resultsCount = await supportSearchComponent.getDefaultResultsCount();
 		assert.equal( resultsCount, 6, 'There are not 6 Default Results displayed.' );
 	} );
