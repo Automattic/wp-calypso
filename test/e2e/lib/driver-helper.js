@@ -1,10 +1,12 @@
 /**
  * External dependencies
  */
-import webdriver, {
+import {
 	By,
 	Condition,
 	Key,
+	promise,
+	until,
 	WebDriver,
 	WebElement,
 	WebElementCondition,
@@ -28,36 +30,36 @@ export async function highlightElement( driver, element ) {
 	}
 }
 
-const until = {
-	...webdriver.until,
-	/**
-	 * Creates a condition that will loop until element is clickable. A clickable
-	 * element must be located and not (aria-)disabled.
-	 *
-	 * @param {By|Function} locator The element's locator
-	 * @returns {WebElementCondition} The new condition
-	 */
-	elementIsClickable( locator ) {
-		const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+/**
+ * Waits until given element is clickable. A clickable element must be located and not
+ * (aria-)disabled.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By|Function} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will be resolved with
+ * the clickable element
+ */
+export async function waitUntilElementClickable( driver, locator, timeout = explicitWaitMS ) {
+	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
 
-		return new WebElementCondition(
-			`for element to be clickable ${ locatorStr }`,
-			async function ( driver ) {
-				try {
-					const element = await waitUntilElementStopsMoving( driver, locator );
-					const isEnabled = await element.isEnabled();
-					const isAriaEnabled = await element
-						.getAttribute( 'aria-disabled' )
-						.then( ( v ) => v !== 'true' );
+	return await driver.wait(
+		new WebElementCondition( `for element to be clickable ${ locatorStr }`, async function () {
+			try {
+				const element = await waitUntilElementStopsMoving( driver, locator );
+				const isEnabled = await element.isEnabled();
+				const isAriaEnabled = await element
+					.getAttribute( 'aria-disabled' )
+					.then( ( v ) => v !== 'true' );
 
-					return isEnabled && isAriaEnabled ? element : null;
-				} catch {
-					return null;
-				}
+				return isEnabled && isAriaEnabled ? element : null;
+			} catch {
+				return null;
 			}
-		);
-	},
-};
+		} ),
+		timeout
+	);
+}
 
 /**
  * Clicks an element when it becomes clickable. Throws an error after it
@@ -70,7 +72,7 @@ const until = {
  * the clicked element
  */
 export async function clickWhenClickable( driver, locator, timeout = explicitWaitMS ) {
-	const element = await driver.wait( until.elementIsClickable( locator ), timeout );
+	const element = await waitUntilElementClickable( driver, locator, timeout );
 
 	try {
 		await highlightElement( driver, element );
@@ -422,7 +424,7 @@ export async function scrollIntoView( driver, locator, position = 'center' ) {
 export function createTextLocator( locator, text ) {
 	return async function ( driver ) {
 		const allElements = await driver.findElements( locator );
-		return webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
+		return promise.filter( allElements, getInnerTextMatcherFunction( text ) );
 	};
 }
 
