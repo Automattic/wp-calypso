@@ -8,7 +8,6 @@ import { defaultRegistry } from '@automattic/composite-checkout';
  * Internal dependencies
  */
 import wp from 'calypso/lib/wp';
-import { getSavedVariations } from 'calypso/lib/abtest';
 import { stringifyBody } from 'calypso/state/login/utils';
 import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 
@@ -89,7 +88,7 @@ export async function createAccount( { signupFlowName } ) {
 				extra: { username_hint: blogName },
 				signup_flow_name: signupFlowName,
 				validate: false,
-				ab_test_variations: getSavedVariations(),
+				ab_test_variations: {},
 				new_site_params: newSiteParams,
 				should_create_site: ! siteId,
 			},
