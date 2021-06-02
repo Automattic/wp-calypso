@@ -632,10 +632,12 @@ export default function pages() {
 					);
 				} else if ( ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
 					res.redirect( 'https://wordpress.com/pricing' );
+				} else {
+					next();
 				}
+			} else {
+				next();
 			}
-
-			next();
 		} );
 	}
 
