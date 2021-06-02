@@ -10,7 +10,9 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { useAutoscroll } from './autoscroll';
+import { Button } from '@automattic/components';
 import Emojify from 'calypso/components/emojify';
+import Gridicon from 'calypso/components/gridicon';
 import { useScrollbleed } from './scrollbleed';
 import { addSchemeIfMissing, setUrlScheme } from './url';
 
@@ -179,27 +181,45 @@ function Timeline( props ) {
 
 	const { timeline, isCurrentUser, isExternalUrl = () => true, twemojiUrl } = props;
 
+	const unreadMessages = autoscroll.disabledAt
+		? timeline.filter( ( { timestamp } ) => timestamp >= autoscroll.disabledAt )
+		: [];
+
 	return (
-		<div
-			className="happychat__conversation"
-			ref={ onScrollContainer }
-			onMouseEnter={ scrollbleed.lock }
-			onMouseLeave={ scrollbleed.unlock }
-		>
-			{ groupMessages( timeline ).map( ( item ) => {
-				const firstItem = item[ 0 ];
-				if ( firstItem.type !== 'message' ) {
-					debug( 'no handler for message type', firstItem.type, firstItem );
-					return null;
-				}
-				return renderGroupedMessages( {
-					item,
-					isCurrentUser: isCurrentUser( firstItem ),
-					isExternalUrl,
-					twemojiUrl,
-				} );
-			} ) }
-		</div>
+		<>
+			<div
+				className="happychat__conversation"
+				ref={ onScrollContainer }
+				onMouseEnter={ scrollbleed.lock }
+				onMouseLeave={ scrollbleed.unlock }
+			>
+				{ groupMessages( timeline ).map( ( item ) => {
+					const firstItem = item[ 0 ];
+					if ( firstItem.type !== 'message' ) {
+						debug( 'no handler for message type', firstItem.type, firstItem );
+						return null;
+					}
+					return renderGroupedMessages( {
+						item,
+						isCurrentUser: isCurrentUser( firstItem ),
+						isExternalUrl,
+						twemojiUrl,
+					} );
+				} ) }
+			</div>
+			{ unreadMessages.length > 0 && (
+				<div className="happychat__unread-messages-container">
+					<Button
+						primary
+						className="happychat__unread-messages-button"
+						onClick={ autoscroll.enableAutoscroll }
+					>
+						{ unreadMessages.length } new message{ unreadMessages.length > 1 ? 's' : '' }
+						<Gridicon icon="arrow-down" />
+					</Button>
+				</div>
+			) }
+		</>
 	);
 }
 
