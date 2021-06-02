@@ -9,8 +9,7 @@ import { withoutHttp } from 'calypso/lib/url';
  * Internal dependencies
  */
 import { planHasFeature, isFreePlan } from '@automattic/calypso-products';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import isSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 
 export function userCan( capability, site ) {
 	return site && site.capabilities && site.capabilities[ capability ];
@@ -180,14 +179,15 @@ export function hasSiteFeature( site, feature ) {
 }
 
 /**
- * Checks if the site has a free plan and is Atomic.
+ * Checks if the site is eligible for SEO features.
  *
- * @param {object} state  Global state tree
- * @param {number} siteId Site ID
- * @returns {boolean} True if site is free and Atomic
+ * @param {object} site Site to check
+ * @param {string} state State tree
+ * @param {string} siteId Site id
+ * @returns {boolean} True if does
  */
-export function isFreeAtomicSite( state, siteId ) {
-	const isAtomic = isAtomicSite( state, siteId );
-	const isFree = isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) );
-	return isAtomic && isFree;
+export function isEligibleForSEOFeatures( site, state, siteId ) {
+	if ( site && site.plan ) {
+		return ! ( isFreePlan( site.plan.product_slug ) && isSiteWPCOM( state, siteId ) );
+	}
 }

@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Card, Button } from '@automattic/components';
 import { hasSiteSeoFeature } from './utils';
+import { isEligibleForSEOFeatures } from 'calypso/lib/site/utils';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'calypso/components/seo/meta-title-editor';
@@ -27,8 +28,6 @@ import {
 	isJetpackSite,
 	isRequestingSite,
 } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isFreeAtomicSite } from 'calypso/lib/site/utils';
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
@@ -273,9 +272,9 @@ export class SeoForm extends React.Component {
 			isFetchingSite,
 			siteId,
 			siteIsJetpack,
-			siteIsAtomic,
 			siteIsComingSoon,
 			showAdvancedSeo,
+			isSEOEligible,
 			showWebsiteMeta,
 			selectedSite,
 			isSeoToolsActive,
@@ -303,7 +302,7 @@ export class SeoForm extends React.Component {
 		const generalTabUrl = getGeneralTabUrl( slug );
 
 		const upsellProps =
-			siteIsJetpack && ! siteIsAtomic
+			siteIsJetpack && isSEOEligible
 				? {
 						title: translate( 'Boost your search engine ranking' ),
 						feature: FEATURE_SEO_PREVIEW_TOOLS,
@@ -476,20 +475,16 @@ export class SeoForm extends React.Component {
 }
 
 const mapStateToProps = ( state ) => {
-	const selectedSite = getSelectedSite( state );
+	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const siteIsAtomic = isAtomicSite( state, siteId );
-	const siteIsFreeAtomic = isFreeAtomicSite( state, siteId );
 	// SEO Tools are available with Business plan on WordPress.com, and
 	// will soon be available on all Jetpack sites, so we're checking
 	// the availability of the module.
 	const isAdvancedSeoEligible =
-		selectedSite.plan &&
-		hasSiteSeoFeature( selectedSite ) &&
-		( ! siteIsJetpack ||
-			get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) ) &&
-		! siteIsFreeAtomic;
+		site.plan &&
+		hasSiteSeoFeature( site, state, siteId ) &&
+		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
 
 	const activePlugins = getPlugins( state, [ siteId ], 'active' );
 	const conflictedSeoPlugin = siteIsJetpack
@@ -500,12 +495,11 @@ const mapStateToProps = ( state ) => {
 		isFetchingSite: isRequestingSite( state, siteId ),
 		siteId,
 		siteIsJetpack,
-		siteIsAtomic,
-		siteIsFreeAtomic,
-		selectedSite,
+		selectedSite: site,
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible,
-		showWebsiteMeta: !! get( selectedSite, 'options.advanced_seo_front_page_description', '' ),
+		isSEOEligible: isEligibleForSEOFeatures( site, state, siteId ),
+		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),

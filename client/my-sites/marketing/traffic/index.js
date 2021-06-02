@@ -26,9 +26,9 @@ import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { isFreeAtomicSite } from 'calypso/lib/site/utils';
+import { isEligibleForSEOFeatures } from 'calypso/lib/site/utils';
 
 /**
  * Style dependencies
@@ -106,11 +106,12 @@ const SiteSettingsTraffic = ( {
 );
 
 const connectComponent = connect( ( state ) => {
+	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 	const isJetpack = isJetpackSite( state, siteId );
-	const isFreeAtomic = isFreeAtomicSite( state, siteId );
-	const isJetpackAdmin = isJetpack && isAdmin && ! isFreeAtomic;
+	const isEligible = isEligibleForSEOFeatures( site, state, siteId );
+	const isJetpackAdmin = isJetpack && isAdmin && isEligible;
 
 	return {
 		isAdmin,

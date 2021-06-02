@@ -13,7 +13,6 @@ import wrapSettingsForm from '../wrap-settings-form';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { isFreeAtomicSite } from 'calypso/lib/site/utils';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -39,6 +38,7 @@ export const GoogleAnalyticsForm = ( props ) => {
 		eventTracker,
 		uniqueEventTracker,
 		path,
+		isGoogleAnalyticsEligible,
 	} = props;
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ loggedGoogleAnalyticsModified, setLoggedGoogleAnalyticsModified ] = useState( false );
@@ -90,7 +90,7 @@ export const GoogleAnalyticsForm = ( props ) => {
 		recordSupportLinkClick,
 		setDisplayForm,
 	};
-	if ( props.siteIsJetpack && ! props.siteIsFreeAtomic ) {
+	if ( props.siteIsJetpack && isGoogleAnalyticsEligible ) {
 		return <GoogleAnalyticsJetpackForm { ...newProps } />;
 	}
 	return <GoogleAnalyticsSimpleForm { ...newProps } />;
@@ -99,10 +99,9 @@ export const GoogleAnalyticsForm = ( props ) => {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isGoogleAnalyticsEligible = hasSiteAnalyticsFeature( site );
+	const isGoogleAnalyticsEligible = hasSiteAnalyticsFeature( site, state, siteId );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const siteIsFreeAtomic = isFreeAtomicSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
 	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
 	const path = getCurrentRouteParameterized( state, siteId );
@@ -114,9 +113,9 @@ const mapStateToProps = ( state ) => {
 		site,
 		siteId,
 		siteIsJetpack,
-		siteIsFreeAtomic,
 		sitePlugins,
 		jetpackModuleActive,
+		isGoogleAnalyticsEligible,
 	};
 };
 

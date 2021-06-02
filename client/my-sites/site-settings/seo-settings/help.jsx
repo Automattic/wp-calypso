@@ -15,29 +15,25 @@ import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-t
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import SupportInfo from 'calypso/components/support-info';
 import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { isFreeAtomicSite } from 'calypso/lib/site/utils';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { hasSiteSeoFeature } from './utils';
 
 const SeoSettingsHelpCard = ( {
 	disabled,
 	hasAdvancedSEOFeature,
 	siteId,
 	siteIsJetpack,
-	siteIsFreeAtomic,
 	translate,
 } ) => {
-	const seoHelpLink =
-		siteIsJetpack && ! siteIsFreeAtomic
-			? 'https://jetpack.com/support/seo-tools/'
-			: 'https://wpbizseo.wordpress.com/';
+	const seoHelpLink = siteIsJetpack
+		? 'https://jetpack.com/support/seo-tools/'
+		: 'https://wpbizseo.wordpress.com/';
 
 	return (
 		<div id="seo">
 			<SettingsSectionHeader title={ translate( 'Search engine optimization' ) } />
-			{ hasAdvancedSEOFeature && ! siteIsFreeAtomic && (
+			{ hasAdvancedSEOFeature && (
 				<Card className="seo-settings__help">
 					<p>
 						{ translate(
@@ -54,7 +50,7 @@ const SeoSettingsHelpCard = ( {
 						) }
 					</p>
 
-					{ siteIsJetpack && ! siteIsFreeAtomic && (
+					{ siteIsJetpack && (
 						<SupportInfo
 							text={ translate(
 								'To help improve your search page ranking, you can customize how the content titles' +
@@ -64,7 +60,7 @@ const SeoSettingsHelpCard = ( {
 							link="https://jetpack.com/support/seo-tools/"
 						/>
 					) }
-					{ siteIsJetpack && ! siteIsFreeAtomic && (
+					{ siteIsJetpack && (
 						<JetpackModuleToggle
 							siteId={ siteId }
 							moduleSlug="seo-tools"
@@ -79,17 +75,16 @@ const SeoSettingsHelpCard = ( {
 };
 
 export default connect( ( state ) => {
+	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const siteIsFreeAtomic = isFreeAtomicSite( state, siteId );
 	const hasAdvancedSEOFeature =
-		hasFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
+		hasSiteSeoFeature( site, state, siteId ) &&
 		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
 
 	return {
 		siteId,
 		siteIsJetpack,
-		siteIsFreeAtomic,
 		hasAdvancedSEOFeature,
 	};
 } )( localize( SeoSettingsHelpCard ) );
