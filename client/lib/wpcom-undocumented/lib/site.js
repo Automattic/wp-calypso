@@ -168,10 +168,11 @@ UndocumentedSite.prototype.getConnection = function ( connectionId ) {
  *
  * @param {string} service - external media service name (i.e 'google_photos')
  * @param {Array} files - array of external media file IDs
+ * @param {number} postId - ID of the post to attach the media item to
  *
  * @returns {object} promise - resolves on completion of the GET request
  */
-UndocumentedSite.prototype.uploadExternalMedia = function ( service, files ) {
+UndocumentedSite.prototype.uploadExternalMedia = function ( service, files, postId = 0 ) {
 	debug( '/sites/:site_id:/external-media-upload query' );
 
 	return this.wpcom.req.post(
@@ -181,6 +182,7 @@ UndocumentedSite.prototype.uploadExternalMedia = function ( service, files ) {
 		{
 			external_ids: files,
 			service,
+			post_id: postId,
 		}
 	);
 };

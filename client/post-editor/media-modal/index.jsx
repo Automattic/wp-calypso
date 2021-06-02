@@ -149,7 +149,7 @@ export class EditorMediaModal extends Component {
 	}
 
 	copyExternalAfterLoadingWordPressLibrary( selectedMedia, originalSource ) {
-		const { site } = this.props;
+		const { postId, site } = this.props;
 
 		// Trigger the action to clear pointers/selected items
 		this.props.changeMediaSource( site.ID );
@@ -164,7 +164,7 @@ export class EditorMediaModal extends Component {
 				// Reset the query so that we're adding the new media items to the correct
 				// list, with no external source.
 				this.props.setQuery( site.ID, {} );
-				this.props.addExternalMedia( selectedMedia, site, originalSource );
+				this.props.addExternalMedia( selectedMedia, site, postId, originalSource );
 			}
 		);
 	}
