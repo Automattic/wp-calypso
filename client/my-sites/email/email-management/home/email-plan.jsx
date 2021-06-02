@@ -111,11 +111,13 @@ class EmailPlan extends React.Component {
 
 	getMailboxes() {
 		const account = this.getAccount();
+
 		return account?.emails ?? [];
 	}
 
 	handleBack = () => {
 		const { selectedSite } = this.props;
+
 		page( emailManagement( selectedSite.slug ) );
 	};
 
@@ -175,6 +177,7 @@ class EmailPlan extends React.Component {
 
 		if ( hasGSuiteWithUs( domain ) ) {
 			const googleMailService = getGoogleMailServiceFamily( getGSuiteProductSlug( domain ) );
+
 			return translate( '%(googleMailService)s settings', {
 				args: {
 					googleMailService,
@@ -246,10 +249,6 @@ class EmailPlan extends React.Component {
 	renderManageAllMailboxesNavItem() {
 		const { domain, translate } = this.props;
 
-		if ( ! domain ) {
-			return null;
-		}
-
 		if ( ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain ) ) {
 			return null;
 		}
@@ -267,27 +266,39 @@ class EmailPlan extends React.Component {
 	}
 
 	renderAddNewMailboxesOrRenewNavItem() {
-		const { domain, hasSubscription, purchase, selectedSite, translate } = this.props;
+		const { domain, hasSubscription, purchase, translate } = this.props;
 
-		if ( ! domain.currentUserCanManage || ! hasSubscription ) {
-			return null;
-		}
-
-		if ( ! selectedSite || ! purchase ) {
-			return <VerticalNavItem isPlaceholder />;
-		}
-
-		if ( isExpired( purchase ) ) {
+		if ( hasTitanMailWithUs( domain ) && ! hasSubscription ) {
 			return (
-				<VerticalNavItem onClick={ this.handleRenew } path="#">
-					{ translate( 'Renew to add new mailboxes' ) }
+				<VerticalNavItem { ...this.getAddMailboxProps() }>
+					{ translate( 'Add new mailboxes' ) }
+				</VerticalNavItem>
+			);
+		}
+
+		if ( hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) ) {
+			if ( ! purchase ) {
+				return <VerticalNavItem isPlaceholder />;
+			}
+
+			if ( isExpired( purchase ) ) {
+				return (
+					<VerticalNavItem onClick={ this.handleRenew } path="#">
+						{ translate( 'Renew to add new mailboxes' ) }
+					</VerticalNavItem>
+				);
+			}
+
+			return (
+				<VerticalNavItem { ...this.getAddMailboxProps() }>
+					{ translate( 'Add new mailboxes' ) }
 				</VerticalNavItem>
 			);
 		}
 
 		return (
 			<VerticalNavItem { ...this.getAddMailboxProps() }>
-				{ translate( 'Add new mailboxes' ) }
+				{ translate( 'Add new email forwards' ) }
 			</VerticalNavItem>
 		);
 	}
