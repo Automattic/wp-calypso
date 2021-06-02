@@ -212,11 +212,13 @@ class ThemeSheet extends React.Component {
 		return null;
 	}
 
-	previewAction = ( event ) => {
+	previewAction = ( event, type ) => {
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
 		}
 		event.preventDefault();
+
+		this.props.recordTracksEvent( `calypso_theme_live_demo_${ type }_preview` );
 
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions( this.props.defaultOption, this.props.secondaryOption );
@@ -276,7 +278,9 @@ class ThemeSheet extends React.Component {
 				<a
 					className="theme__sheet-screenshot is-active"
 					href={ this.props.demo_uri }
-					onClick={ this.previewAction }
+					onClick={ ( e ) => {
+						this.previewAction( e, 'screenshot' );
+					} }
 					rel="noopener noreferrer"
 				>
 					{ this.shouldRenderPreviewButton() && this.renderPreviewButton() }
@@ -312,7 +316,9 @@ class ThemeSheet extends React.Component {
 				{ this.shouldRenderPreviewButton() ? (
 					<NavItem
 						path={ this.props.demo_uri }
-						onClick={ this.previewAction }
+						onClick={ ( e ) => {
+							this.previewAction( e, 'link' );
+						} }
 						className="theme__sheet-preview-nav-item"
 					>
 						{ i18n.translate( 'Open Live Demo', {
