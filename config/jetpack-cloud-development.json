@@ -41,6 +41,7 @@
 		"jetpack-cloud/search": true,
 		"jetpack/backups-date-picker": true,
 		"jetpack/search-product": true,
+		"jetpack/partner-portal-payment": true,
 		"jetpack/pricing-page": true,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/redirect-legacy-plans": true,

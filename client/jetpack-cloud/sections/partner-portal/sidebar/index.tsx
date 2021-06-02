@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, translate as TranslateType } from 'i18n-calypso';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -42,8 +43,14 @@ class PartnerPortalSidebar extends Component< Props > {
 				<SidebarRegion>
 					<SidebarMenu>
 						<SidebarItem
-							materialIcon="credit_card"
-							materialIconStyle="outline"
+							materialIcon={
+								config.isEnabled( 'jetpack/partner-portal-payment' )
+									? 'attach_money'
+									: 'credit_card'
+							}
+							materialIconStyle={
+								config.isEnabled( 'jetpack/partner-portal-payment' ) ? 'filled' : 'outline'
+							}
 							label={ translate( 'Billing', {
 								comment: 'Jetpack sidebar navigation item',
 							} ) }
@@ -62,6 +69,19 @@ class PartnerPortalSidebar extends Component< Props > {
 							onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Licenses' ) }
 							selected={ itemLinkMatches( [ '/partner-portal/licenses' ], path ) }
 						/>
+
+						{ config.isEnabled( 'jetpack/partner-portal-payment' ) && (
+							<SidebarItem
+								materialIcon="credit_card"
+								materialIconStyle="outline"
+								label={ translate( 'Payment Method', {
+									comment: 'Jeptack sidebar navigation item',
+								} ) }
+								link="/partner-portal/payment-method"
+								onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Payment Method' ) }
+								selected={ itemLinkMatches( [ '/partner-portal/payment-method' ], path ) }
+							/>
+						) }
 					</SidebarMenu>
 				</SidebarRegion>
 			</Sidebar>
