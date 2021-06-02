@@ -30,8 +30,50 @@ export async function highlightElement( driver, element ) {
 	}
 }
 
+/**
+ * Returns a human-readable version of the given locator. Used for providing better error stack.
+ *
+ * @param {By|Function} locator The element's locator
+ * @returns {string} The stringified locator
+ */
 function getLocatorString( locator ) {
-	return typeof locator === 'function' ? 'by function()' : locator + '';
+	if ( typeof locator === 'function' && locator.name !== 'textLocator' ) {
+		return locator.name ? `by function ${ locator.name }()` : 'by function()';
+	}
+	return locator.toString();
+}
+
+/**
+ * Creates a locator function for finding elements with given inner text.
+ *
+ * @example
+ * const profileButtonLocator = driverHelper.createTextLocator( By.css( '.menu-item' ), 'Profile' );
+ * await driverHelper.clickWhenClickable( driver, profileButtonLocator );
+ *
+ * @param {By|Function} locator The element's locator
+ * @param {string|RegExp} text The element's inner text
+ * @returns {Function} An element locator function
+ */
+export function createTextLocator( locator, text ) {
+	async function textLocator( driver ) {
+		const allElements = await driver.findElements( locator );
+		return await promise.filter( allElements, async ( element ) => {
+			const elementText = await element.getText();
+			if ( typeof text === 'string' ) {
+				return elementText === text;
+			}
+			if ( typeof text.test === 'function' ) {
+				return text.test( elementText );
+			}
+			throw new Error( 'Unknown matcher type; must be a string or a regular expression' );
+		} );
+	}
+
+	textLocator.toString = function () {
+		return `${ getLocatorString( locator ) } and text "${ text }"`;
+	};
+
+	return textLocator;
 }
 
 /**
@@ -412,33 +454,6 @@ export async function scrollIntoView( driver, locator, position = 'center' ) {
 		`arguments[0].scrollIntoView( { block: "${ position }", inline: "center" } )`,
 		selectorElement
 	);
-}
-
-/**
- * Creates a locator function for finding elements with given inner text.
- *
- * @example
- * const profileButtonLocator = driverHelper.createTextLocator( By.css( '.menu-item' ), 'Profile' );
- * await driverHelper.clickWhenClickable( driver, profileButtonLocator );
- *
- * @param {By|Function} locator The element's locator
- * @param {string|RegExp} text The element's inner text
- * @returns {Function} An element locator function
- */
-export function createTextLocator( locator, text ) {
-	return async function ( driver ) {
-		const allElements = await driver.findElements( locator );
-		return await promise.filter( allElements, async ( element ) => {
-			const elementText = await element.getText();
-			if ( typeof text === 'string' ) {
-				return elementText === text;
-			}
-			if ( typeof text.test === 'function' ) {
-				return text.test( elementText );
-			}
-			throw new Error( 'Unknown matcher type; must be a string or a regular expression' );
-		} );
-	};
 }
 
 export async function dismissAlertIfPresent( driver ) {
