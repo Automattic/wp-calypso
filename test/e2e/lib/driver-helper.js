@@ -83,8 +83,7 @@ export function createTextLocator( locator, text ) {
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<WebElement>} A promise that will be resolved with
- * the clickable element
+ * @returns {Promise<WebElement>} A promise that will be resolved with the clickable element
  */
 export async function waitUntilElementClickable( driver, locator, timeout = explicitWaitMS ) {
 	const locatorStr = getLocatorString( locator );
@@ -108,14 +107,12 @@ export async function waitUntilElementClickable( driver, locator, timeout = expl
 }
 
 /**
- * Clicks an element when it becomes clickable. Throws an error after it
- * times out.
+ * Waits for an element to become clickable and clicks it.
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<WebElement>} A promise that will be resolved with
- * the clicked element
+ * @returns {Promise<WebElement>} A promise that will be resolved with the clicked element
  */
 export async function clickWhenClickable( driver, locator, timeout = explicitWaitMS ) {
 	const element = await waitUntilElementClickable( driver, locator, timeout );
@@ -140,8 +137,8 @@ export async function clickWhenClickable( driver, locator, timeout = explicitWai
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
- * @returns {Promise<boolean>} A promise that will be resolved with whether the
- * element is located or not
+ * @returns {Promise<boolean>} A promise that will be resolved with whether the element is located
+ * or not
  */
 export async function isElementLocated( driver, locator ) {
 	try {
@@ -156,22 +153,19 @@ export async function isElementLocated( driver, locator ) {
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
- * @returns {Promise<boolean>} A promise that will be resolved with true if the
- * element is not in DOM
+ * @returns {Promise<boolean>} A promise that will be resolved to true if the element is not located
  */
 export async function isElementNotLocated( driver, locator ) {
 	return ! ( await isElementLocated( driver, locator ) );
 }
 
 /**
- * Waits until an element is located in DOM and visible. Throws an error after
- * it times out.
+ * Waits until an element is located in DOM and visible. Throws an error after it times out.
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<WebElement>} A promise that will be resolved with
- * the located element
+ * @returns {Promise<WebElement>} A promise that will be resolved with the located element
  */
 export async function waitUntilElementLocatedAndVisible(
 	driver,
@@ -204,8 +198,7 @@ export async function waitUntilElementLocatedAndVisible(
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<WebElement>} A promise that will be resolved with
- * the located element
+ * @returns {Promise<WebElement>} A promise that will be resolved with the located element
  */
 export async function waitUntilElementLocated( driver, locator, timeout ) {
 	return await driver.wait( until.elementLocated( locator ), timeout );
@@ -218,8 +211,8 @@ export async function waitUntilElementLocated( driver, locator, timeout ) {
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<WebElement>} A promise that will be resolved with true when
- * the element becomes unavaialble
+ * @returns {Promise<WebElement>} A promise that will be resolved with true when the element becomes
+ * unavaialble
  */
 export async function waitUntilElementNotLocated( driver, locator, timeout ) {
 	const locatorStr = getLocatorString( locator );
@@ -238,8 +231,8 @@ export async function waitUntilElementNotLocated( driver, locator, timeout ) {
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<WebElement>} A promise that will be resolved with whether
- * the element is located and visible
+ * @returns {Promise<WebElement>} A promise that will be resolved with whether the element is
+ * located and visible
  */
 export async function isElementEventuallyLocatedAndVisible(
 	driver,
@@ -360,13 +353,12 @@ export async function setCheckbox( driver, locator, check = true ) {
 }
 
 /**
- * Check whether an image element is actually visible - that is rendered to the
- * screen - not just having a reference in the DOM.
+ * Check whether an image element is actually visible - that is rendered to the screen - not just
+ * having a reference in the DOM.
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The image element locator
- * @returns {Promise<boolean>} A promise that will resolve with whether the
- * image is visible or not
+ * @returns {Promise<boolean>} A promise that will resolve with whether the image is visible or not
  */
 export async function isImageVisible( driver, locator ) {
 	const element = await driver.findElement( locator );
@@ -514,28 +506,25 @@ export async function waitUntilAlertPresent( driver, timeout = explicitWaitMS ) 
 }
 
 /**
- * Waits until the input driver is able to switch to the designated frame.
- * Upon successful resolution, the driver will be left focused on the new frame.
+ * Waits until the input driver is able to switch to the designated frame. Upon successful
+ * resolution, the driver will be left focused on the new frame.
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The frame element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<boolean>} A promise that will resolve with true if the
- * switch was succesfull
+ * @returns {Promise<boolean>} A promise that will resolve with true if the switch was succesfull
  */
 export async function waitUntilAbleToSwitchToFrame( driver, locator, timeout = explicitWaitMS ) {
 	return await driver.wait( until.ableToSwitchToFrame( locator ), timeout );
 }
 
 /**
- * Waits until a window of a given index is ready to be switched to and switches
- * to it.
+ * Waits until a window of a given index is ready to be switched to and switches to it.
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {number} windowIndex The index of the window to switch to
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<boolean>} A promise that will resolve with true if the
- * switch was succesfull
+ * @returns {Promise<boolean>} A promise that will resolve with true if the switch was succesfull
  */
 export async function waitUntilAbleToSwitchToWindow(
 	driver,
@@ -557,14 +546,12 @@ export async function waitUntilAbleToSwitchToWindow(
 }
 
 /**
- * Waits until an element stops moving. Useful for interacting with animated
- * elements.
+ * Waits until an element stops moving. Useful for interacting with animated elements.
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<WebElement>} A promise that will be resolved with
- * the located element
+ * @returns {Promise<WebElement>} A promise that will be resolved with the located element
  */
 export async function waitUntilElementStopsMoving( driver, locator, timeout = explicitWaitMS ) {
 	const locatorStr = getLocatorString( locator );
