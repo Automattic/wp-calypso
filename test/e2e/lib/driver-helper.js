@@ -30,6 +30,10 @@ export async function highlightElement( driver, element ) {
 	}
 }
 
+function getLocatorString( locator ) {
+	return typeof locator === 'function' ? 'by function()' : locator + '';
+}
+
 /**
  * Waits until given element is clickable. A clickable element must be located and not
  * (aria-)disabled.
@@ -41,7 +45,7 @@ export async function highlightElement( driver, element ) {
  * the clickable element
  */
 export async function waitUntilElementClickable( driver, locator, timeout = explicitWaitMS ) {
-	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+	const locatorStr = getLocatorString( locator );
 
 	return await driver.wait(
 		new WebElementCondition( `for element to be clickable ${ locatorStr }`, async function () {
@@ -132,7 +136,7 @@ export async function waitUntilElementLocatedAndVisible(
 	locator,
 	timeout = explicitWaitMS
 ) {
-	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+	const locatorStr = getLocatorString( locator );
 
 	return await driver.wait(
 		new WebElementCondition(
@@ -176,7 +180,7 @@ export async function waitUntilElementLocated( driver, locator, timeout ) {
  * the element becomes unavaialble
  */
 export async function waitUntilElementNotLocated( driver, locator, timeout ) {
-	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+	const locatorStr = getLocatorString( locator );
 
 	return await driver.wait(
 		new Condition( `for element to NOT be located ${ locatorStr }`, function () {
@@ -239,7 +243,7 @@ export async function setWhenSettable(
 	value,
 	{ secureValue = false, pauseBetweenKeysMS = 0 } = {}
 ) {
-	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+	const locatorStr = getLocatorString( locator );
 	let timeout = explicitWaitMS;
 	let errorMessage = `for element to be settable ${ locatorStr }`;
 
@@ -513,7 +517,7 @@ export async function waitUntilAbleToSwitchToWindow(
  * the located element
  */
 export async function waitUntilElementStopsMoving( driver, locator, timeout = explicitWaitMS ) {
-	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+	const locatorStr = getLocatorString( locator );
 	let elementX;
 	let elementY;
 
