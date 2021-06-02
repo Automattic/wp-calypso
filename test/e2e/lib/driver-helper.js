@@ -378,6 +378,12 @@ export async function isImageVisible( driver, locator ) {
 	return driver.executeScript( 'return arguments[ 0 ].naturalWidth > 0', element );
 }
 
+/**
+ * Switches to a window with given index.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {number} index The index of the target window
+ */
 export async function switchToWindowByIndex( driver, index ) {
 	const currentScreenSize = driverManager.currentScreenSize();
 	const handles = await driver.getAllWindowHandles();
@@ -389,15 +395,31 @@ export async function switchToWindowByIndex( driver, index ) {
 	}
 }
 
+/**
+ * Returns the number of all currently open windows.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @returns {number} The number of open windows
+ */
 export async function numberOfOpenWindows( driver ) {
 	const handles = await driver.getAllWindowHandles();
 	return handles.length;
 }
 
+/**
+ * Closes a window that is currently active.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ */
 export async function closeCurrentWindow( driver ) {
-	return await driver.close();
+	await driver.close();
 }
 
+/**
+ * Closes all open windows except the one that is currently active.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ */
 export async function closeAllPopupWindows( driver ) {
 	const numWindows = await numberOfOpenWindows( driver );
 	let windowIndex;
@@ -405,7 +427,7 @@ export async function closeAllPopupWindows( driver ) {
 		await switchToWindowByIndex( driver, windowIndex );
 		await closeCurrentWindow( driver );
 	}
-	return switchToWindowByIndex( driver, 0 );
+	await switchToWindowByIndex( driver, 0 );
 }
 
 /**
@@ -442,7 +464,7 @@ export async function refreshIfJNError( driver ) {
 }
 
 /**
- * Scroll element on a page to desired position
+ * Scrolls the page to an element with the given locator.
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
@@ -458,24 +480,35 @@ export async function scrollIntoView( driver, locator, position = 'center' ) {
 	);
 }
 
+/**
+ * Dismisses window alert if present.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ */
 export async function dismissAlertIfPresent( driver ) {
 	try {
 		await driver.switchTo().alert().dismiss();
-		return true;
-	} catch ( error ) {
-		return false;
-	}
+	} catch {}
 }
 
+/**
+ * Accepts window alert if present.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ */
 export async function acceptAlertIfPresent( driver ) {
 	try {
 		await driver.switchTo().alert().accept();
-		return true;
-	} catch ( error ) {
-		return false;
-	}
+	} catch {}
 }
 
+/**
+ * Waits until a window alert becomes present.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise} A promise that will be resolved when alert is present
+ */
 export async function waitUntilAlertPresent( driver, timeout = explicitWaitMS ) {
 	return await driver.wait( until.alertIsPresent(), timeout );
 }
