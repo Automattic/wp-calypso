@@ -3,14 +3,14 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-    - [Naming Branches](#naming-branches)
-    - [Tags](#tags)
-    - [Maximum 1 top-level describe block](#maximum-1-top-level-describe-block)
-    - [Viewport size](#viewport-size)
-    - [Arrow functions](#arrow-functions)
-    - [Nesting step blocks](#nesting-step-blocks)
-    - [Use destructuring](#use-destructuring)
-    - [Use of this, const and lets](#use-of-this-const-and-lets)
+  - [Naming Branches](#naming-branches)
+  - [Tags](#tags)
+  - [Maximum 1 top-level describe block](#maximum-1-top-level-describe-block)
+  - [Viewport size](#viewport-size)
+  - [Arrow functions](#arrow-functions)
+  - [Nesting step blocks](#nesting-step-blocks)
+  - [Use destructuring](#use-destructuring)
+  - [Use of this, const and lets](#use-of-this-const-and-lets)
 
 <!-- /TOC -->
 
@@ -62,11 +62,12 @@ describe( "Block Under Test", function() {
 } )
 ```
 
-In the example above, note the `@parallel` tag has shifted to be inside the second-level suites. 
+In the example above, note the `@parallel` tag has shifted to be inside the second-level suites.
 
 When executed with `mocha` + `magellan`, this would result in `Test case 1` and `Test case 2` being run in parallel.
 
 Some currently supported tags:
+
 - parallel
 - jetpack
 - signup

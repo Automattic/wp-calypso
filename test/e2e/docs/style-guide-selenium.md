@@ -3,12 +3,12 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-    - [Naming Branches](#naming-branches)
-    - [Async / Await](#async--await)
-    - [Page Objects](#page-objects)
-    - [Use of this, const and let](#use-of-this-const-and-let)
-    - [Catching errors in a step block](#catching-errors-in-a-step-block)
-    - [Waiting for elements](#waiting-for-elements)
+  - [Naming Branches](#naming-branches)
+  - [Async / Await](#async--await)
+  - [Page Objects](#page-objects)
+  - [Use of this, const and let](#use-of-this-const-and-let)
+  - [Catching errors in a step block](#catching-errors-in-a-step-block)
+  - [Waiting for elements](#waiting-for-elements)
 
 <!-- /TOC -->
 

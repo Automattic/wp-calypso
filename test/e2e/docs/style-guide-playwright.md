@@ -3,15 +3,15 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-    - [Tests](#tests)
-    - [Components](#components)
-    - [Page Objects](#page-objects)
-    - [Flows](#flows)
-    - [Async / Await](#async--await)
-    - [Selectors](#selectors)
-        - [Type](#type)
-        - [Naming](#naming)
-    - [Test Naming](#test-naming)
+  - [Tests](#tests)
+  - [Components](#components)
+  - [Page Objects](#page-objects)
+  - [Flows](#flows)
+  - [Async / Await](#async--await)
+  - [Selectors](#selectors)
+    - [Type](#type)
+    - [Naming](#naming)
+  - [Test Naming](#test-naming)
 
 <!-- /TOC -->
 
@@ -29,7 +29,7 @@ There should only be [one top-level describe block](style-guide.md#maximum-1-top
 describe( 'Feature: @parallel', function() {
 	describe( 'Test case 1', function() {
 		let someComponent;
-		
+
 		it( 'Check title', async function() {
 			someComponent = await SomeComponent.Expect( this.page );
 			await someComponent.clickMyPages();
@@ -73,13 +73,13 @@ const selectors = {
 
 /**
  * JSDoc is expected for Class definitions.
- * 
+ *
  * @augments {BaseContainer}
  */
 export class SomeComponent extends BaseContainer {
 	/**
 	 * JSDoc is expected for constructor.
-	 * 
+	 *
 	 * @param {Page} page Page object.
 	 */
 	constructor( page: Page ) {
@@ -88,7 +88,7 @@ export class SomeComponent extends BaseContainer {
 
 	/**
 	 * JSDoc is expected for functions.
-	 * 
+	 *
 	 * @param {string} menu Menu to be clicked.
 	 * @returns {Promise<void>} No return value.
 	 */
@@ -107,6 +107,7 @@ export class SomeComponent extends BaseContainer {
 	await someComponent.clickOnMenu();
 
 ```
+
 </details>
 
 ---
@@ -115,13 +116,14 @@ export class SomeComponent extends BaseContainer {
 
 Page objects are to be used to represent a corresponding page on WPCOM. It can hold element selectors, class methods to interact with the page and define other helper functions.
 
-A well-implemented page object will abstract complex interactions on the page to an easily understandable method call. The method should be well-contained, predictable and easy to understand. 
+A well-implemented page object will abstract complex interactions on the page to an easily understandable method call. The method should be well-contained, predictable and easy to understand.
 
 Every page object file should contain an object outside of the class definition to hold element selectors. The Page object should access element selector values using dot notation within the method calls.
 
 On many pages of WPCOM elements will load asynchronously. This leads to issues when initializing page objects as constructors cannot be asynchronous. To address this, page objects almost always inherit from the `BaseContainer` class as it provides asynchronous initialization of the page object through use of static method `Expect`. Only use synchronous class constructor if the page in question does not require any post-initialization setup.
 
 Some in-repo example pages:
+
 - [Login Page](packages/calypso-e2e/src/lib/pages/login-page.ts)
 
 <details>
@@ -137,13 +139,13 @@ const selectors = {
 
 /**
  * JSDoc is expected for Class definitions.
- * 
+ *
  * @augments {BaseContainer}
  */
 export class SomePage extends BaseContainer {
 	/**
 	 * JSDoc is expected for constructor.
-	 * 
+	 *
 	 * @param {Page} page Page object.
 	 */
 	constructor( page: Page ) {
@@ -152,7 +154,7 @@ export class SomePage extends BaseContainer {
 
 	/**
 	 * JSDoc is expected for functions.
-	 * 
+	 *
 	 * @param {string} text Text to be entered into the field.
 	 * @returns {Promise<void>} No return value.
 	 */
@@ -175,6 +177,7 @@ it('Test case', async function() {
 })
 
 ```
+
 </details>
 
 ---
@@ -202,7 +205,7 @@ export class SomeFlow {
 	/**
 	 * JSDoc is expected for methods.
 	 */
-	async executeFlow(): Promise<void> {
+	async executeFlow(): Promise< void > {
 		const componentA = await ComponentA.Expect( this.page );
 		await componentA.clickOnSomething();
 		const componentB = await ComponentB.Expect( this.page );
@@ -213,9 +216,8 @@ export class SomeFlow {
 
 // Then in a test file...
 
-	const someFlow = await SomeFlow( this.page );
-	await someFlow.executeFlow();
-
+const someFlow = await SomeFlow( this.page );
+await someFlow.executeFlow();
 ```
 
 </details>
@@ -230,6 +232,7 @@ For every method which returns a promise or thenable object `await` should be us
 We don't chain function calls together and avoid using `.then` calls.
 
 **Avoid**:
+
 ```
 async function openModal() {
 	const modal = await this.page.waitForSelector('modal-open');
@@ -240,6 +243,7 @@ async function openModal() {
 ```
 
 **Instead**:
+
 ```
 async function openModal() {
 	const modal = await this.page.waitForSelector('modal-open');
