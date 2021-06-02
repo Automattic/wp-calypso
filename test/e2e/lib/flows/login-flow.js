@@ -138,8 +138,7 @@ export default class LoginFlow {
 		if ( ! usingGutenberg ) {
 			this.editorPage = await EditorPage.Expect( this.driver );
 
-			const urlDisplayed = await this.driver.getCurrentUrl();
-			return await this.editorPage.setABTestControlGroupsInLocalStorage( urlDisplayed );
+			return await this.editorPage.waitForPage();
 		}
 	}
 
@@ -168,8 +167,7 @@ export default class LoginFlow {
 		if ( ! usingGutenberg ) {
 			this.editorPage = await EditorPage.Expect( this.driver );
 
-			const urlDisplayed = await this.driver.getCurrentUrl();
-			return await this.editorPage.setABTestControlGroupsInLocalStorage( urlDisplayed );
+			return await this.editorPage.waitForPage();
 		}
 	}
 

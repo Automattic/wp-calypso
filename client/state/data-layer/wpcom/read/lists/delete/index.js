@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { READER_LIST_DELETE } from 'calypso/state/reader/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { navigate } from 'calypso/state/ui/actions';
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 
 registerHandlers( 'state/data-layer/wpcom/read/lists/delete/index.js', {
@@ -27,14 +27,12 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/delete/index.js', {
 					},
 					action
 				),
-			onSuccess: () => {
-				return [
-					navigate( `/read` ),
-					successNotice( translate( 'List deleted successfully.' ), {
-						duration: DEFAULT_NOTICE_DURATION,
-					} ),
-				];
-			},
+			onSuccess: () => [
+				() => page( `/read` ),
+				successNotice( translate( 'List deleted successfully.' ), {
+					duration: DEFAULT_NOTICE_DURATION,
+				} ),
+			],
 			onError: () => errorNotice( translate( 'Unable to delete list.' ) ),
 		} ),
 	],

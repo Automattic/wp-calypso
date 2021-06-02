@@ -30,10 +30,6 @@ import {
 import { CheckoutThankYou } from '../index';
 import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
 jest.unmock( '@automattic/calypso-products' );
 jest.mock( '@automattic/calypso-products', () => ( {
 	...jest.requireActual( '@automattic/calypso-products' ),

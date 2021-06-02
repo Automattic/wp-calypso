@@ -7,14 +7,12 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	navigate,
 	setAllSitesSelected,
 	setSection,
 	setSelectedSiteId,
 	toggleNotificationsPanel,
 } from '../actions';
 import {
-	NAVIGATE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	SECTION_SET,
 	SELECTED_SITE_SET,
@@ -59,18 +57,6 @@ describe( 'actions', () => {
 		test( 'should return an action object with just the action type', () => {
 			expect( toggleNotificationsPanel() ).to.eql( {
 				type: NOTIFICATIONS_PANEL_TOGGLE,
-			} );
-		} );
-	} );
-
-	describe( 'navigate()', () => {
-		test( 'should return an action object with the path specified', () => {
-			const path = '/test/path';
-			const action = navigate( path );
-
-			expect( action ).to.eql( {
-				type: NAVIGATE,
-				path,
 			} );
 		} );
 	} );

@@ -50,25 +50,13 @@ export default function () {
 		clientRender
 	);
 
-	if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
-		page(
-			'/jetpack/connect/install',
-			controller.setMasterbar,
-			controller.credsForm,
-			makeLayout,
-			clientRender
-		);
-	} else {
-		page(
-			`/jetpack/connect/:type(install)/${ locale }`,
-			controller.redirectWithoutLocaleIfLoggedIn,
-			controller.persistMobileAppFlow,
-			controller.setMasterbar,
-			controller.connect,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/jetpack/connect/install',
+		controller.setMasterbar,
+		controller.credsForm,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/jetpack/connect',
@@ -116,7 +104,7 @@ export default function () {
 
 	if ( isLoggedOut ) {
 		page( '/jetpack/connect/plans/:interval(yearly|monthly)?/:site', ( { path } ) =>
-			page( login( { isNative: true, isJetpack: true, redirectTo: path } ) )
+			page( login( { isJetpack: true, redirectTo: path } ) )
 		);
 	}
 

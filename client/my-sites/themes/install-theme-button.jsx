@@ -16,8 +16,9 @@ import { trackClick } from './helpers';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { Button } from '@automattic/components';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
@@ -37,14 +38,37 @@ function getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) {
 }
 
 const InstallThemeButton = connectOptions(
-	( { isMultisite, isLoggedIn, siteSlug, dispatchTracksEvent, canUploadThemesOrPlugins } ) => {
+	( {
+		isMultisite,
+		jetpackSite,
+		isLoggedIn,
+		siteSlug,
+		dispatchTracksEvent,
+		canUploadThemesOrPlugins,
+		atomicSite,
+	} ) => {
 		if ( ! isLoggedIn || isMultisite ) {
 			return null;
 		}
 
+		let siteType = null;
+		if ( ! isLoggedIn ) {
+			siteType = 'logged_out';
+		} else if ( atomicSite ) {
+			siteType = 'atomic';
+		} else if ( jetpackSite ) {
+			siteType = 'jetpack';
+		} else if ( siteSlug ) {
+			siteType = 'simple';
+		}
+
 		const clickHandler = () => {
 			trackClick( 'upload theme' );
-			dispatchTracksEvent();
+			dispatchTracksEvent( {
+				tracksEventProps: {
+					site_type: siteType,
+				},
+			} );
 		};
 
 		return (
@@ -65,12 +89,15 @@ const mapStateToProps = ( state ) => {
 		siteSlug: getSelectedSiteSlug( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 		isMultisite: isJetpackSiteMultiSite( state, selectedSiteId ),
+		jetpackSite: isJetpackSite( state, selectedSiteId ),
 		canUploadThemesOrPlugins: siteCanUploadThemesOrPlugins( state, selectedSiteId ),
+		atomicSite: isAtomicSite( state, selectedSiteId ),
 	};
 };
 
 const mapDispatchToProps = ( dispatch ) => ( {
-	dispatchTracksEvent: () => dispatch( recordTracksEvent( 'calypso_click_theme_upload' ) ),
+	dispatchTracksEvent: ( { tracksEventProps } ) =>
+		dispatch( recordTracksEvent( 'calypso_click_theme_upload', tracksEventProps ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( InstallThemeButton );

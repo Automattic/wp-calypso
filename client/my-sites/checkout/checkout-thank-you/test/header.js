@@ -9,10 +9,6 @@ import React from 'react';
  */
 import { CheckoutThankYouHeader } from '../header';
 
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
 jest.unmock( '@automattic/calypso-products' );
 jest.mock( '@automattic/calypso-products', () => ( {
 	...jest.requireActual( '@automattic/calypso-products' ),

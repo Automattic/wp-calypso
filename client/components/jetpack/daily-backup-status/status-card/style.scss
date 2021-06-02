@@ -163,3 +163,22 @@
 		font-size: $font-body;
 	}
 }
+.status-card__multisite-warning {
+	padding-bottom: 10px;
+	text-align: left;
+}
+
+.status-card__multisite-warning-title {
+	display: flex;
+	font-size: 1rem;
+	font-weight: 600;
+	padding-bottom: 6px;
+	svg {
+		padding-right: 5px;
+	}
+}
+
+.status-card__multisite-warning-info {
+	font-size: 0.875rem;
+	color: var( --studio-gray-40 );
+}

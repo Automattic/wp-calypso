@@ -16,8 +16,6 @@ import flows from 'calypso/signup/config/flows';
 import { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import user from 'calypso/lib/user';
 
-jest.mock( 'calypso/lib/abtest', () => ( { abtest: () => '' } ) );
-
 jest.mock( 'calypso/lib/user', () => {
 	const getStub = jest.fn();
 

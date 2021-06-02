@@ -1,14 +1,9 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { geocode, reverseGeocode } from '../';
 
-jest.mock( '@automattic/load-script', () => require( './mocks/load-script' ) );
+jest.mock( '@automattic/load-script', () => require( './mocks/load-script' ).default );
 /**
  * Module variables
  */
@@ -22,18 +17,11 @@ describe( 'geocoding', () => {
 	describe( 'when converting a search string to location results', () => {
 		describe( '#geocode()', () => {
 			test( 'should return a promise', () => {
-				expect( geocode( TEST_ADDRESS ) ).to.be.an.instanceof( Promise );
+				expect( geocode( TEST_ADDRESS ) ).toBeInstanceOf( Promise );
 			} );
 
-			test( 'should call to the Google Maps API', () => {
-				return new Promise( ( done ) => {
-					geocode( TEST_ADDRESS )
-						.then( ( results ) => {
-							expect( results ).to.eql( [ 1, 2, 3 ] );
-							done();
-						} )
-						.catch( done );
-				} );
+			test( 'should call to the Google Maps API', async () => {
+				await expect( geocode( TEST_ADDRESS ) ).resolves.toEqual( [ 1, 2, 3 ] );
 			} );
 		} );
 	} );
@@ -41,18 +29,15 @@ describe( 'geocoding', () => {
 	describe( 'when converting from coordinates to address labels', () => {
 		describe( '#reverseGeocode()', () => {
 			test( 'should return a promise', () => {
-				expect( reverseGeocode( TEST_LATITUDE, TEST_LONGITUDE ) ).to.be.an.instanceof( Promise );
+				expect( reverseGeocode( TEST_LATITUDE, TEST_LONGITUDE ) ).toBeInstanceOf( Promise );
 			} );
 
-			test( 'should call to the Google Maps API', () => {
-				return new Promise( ( done ) => {
-					reverseGeocode( TEST_LATITUDE, TEST_LONGITUDE )
-						.then( ( results ) => {
-							expect( results ).to.eql( [ 1, 2, 3 ] );
-							done();
-						} )
-						.catch( done );
-				} );
+			test( 'should call to the Google Maps API', async () => {
+				await expect( reverseGeocode( TEST_LATITUDE, TEST_LONGITUDE ) ).resolves.toEqual( [
+					1,
+					2,
+					3,
+				] );
 			} );
 		} );
 	} );

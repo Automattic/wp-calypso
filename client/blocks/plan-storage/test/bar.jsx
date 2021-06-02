@@ -1,20 +1,4 @@
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
 const translate = ( x ) => x;
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Comp ) => ( props ) => (
-		<Comp
-			{ ...props }
-			translate={ function ( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: ( x ) => x,
-	translate: ( x ) => x,
-} ) );
 
 /**
  * External dependencies

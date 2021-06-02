@@ -2,10 +2,6 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
 jest.mock( 'store', () => ( {
 	get: () => {},
 	User: () => {},
