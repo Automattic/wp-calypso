@@ -424,7 +424,16 @@ export async function scrollIntoView( driver, locator, position = 'center' ) {
 export function createTextLocator( locator, text ) {
 	return async function ( driver ) {
 		const allElements = await driver.findElements( locator );
-		return promise.filter( allElements, getInnerTextMatcherFunction( text ) );
+		return await promise.filter( allElements, async ( element ) => {
+			const elementText = await element.getText();
+			if ( typeof text === 'string' ) {
+				return elementText === text;
+			}
+			if ( typeof text.test === 'function' ) {
+				return text.test( elementText );
+			}
+			throw new Error( 'Unknown matcher type; must be a string or a regular expression' );
+		} );
 	};
 }
 
@@ -448,19 +457,6 @@ export async function acceptAlertIfPresent( driver ) {
 
 export async function waitUntilAlertPresent( driver, timeout = explicitWaitMS ) {
 	return await driver.wait( until.alertIsPresent(), timeout );
-}
-
-function getInnerTextMatcherFunction( match ) {
-	return async ( element ) => {
-		const elementText = await element.getText();
-		if ( typeof match === 'string' ) {
-			return elementText === match;
-		}
-		if ( match.test ) {
-			return match.test( elementText );
-		}
-		throw new Error( 'Unknown matcher type; must be a string or a regular expression' );
-	};
 }
 
 /**
