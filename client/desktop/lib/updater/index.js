@@ -11,15 +11,22 @@ const platform = require( 'calypso/desktop/lib/platform' );
 const config = require( 'calypso/desktop/lib/config' );
 const log = require( 'calypso/desktop/lib/logger' )( 'desktop:updater' );
 
+const isMacOSBigSur =
+	process.platform === 'darwin' && process.getSystemVersion().startsWith( '11' );
+
+// FIXME: Auto-restart does not work on MacOS Big Sur and requires an upgrade of Electron v11: https://github.com/electron/electron/issues/25626
+const defaultConfirmLabel = isMacOSBigSur ? 'Update & Quit' : 'Update & Restart';
+const defaultDialogMessage = isMacOSBigSur
+	? '{name} {newVersion} is now available — you have {currentVersion}.\n\nPlease quit and restart the app to apply changes.'
+	: '{name} {newVersion} is now available — you have {currentVersion}. Would you like to update now?';
+
 class Updater extends EventEmitter {
 	constructor( options ) {
 		super();
 
-		this.confirmLabel = options.confirmLabel || 'Update & Restart';
+		this.confirmLabel = options.confirmLabel || defaultConfirmLabel;
 		this.dialogTitle = options.dialogTitle || 'A new version of {name} is available!';
-		this.dialogMessage =
-			options.dialogMessage ||
-			'{name} {newVersion} is now available — you have {currentVersion}. Would you like to update now?';
+		this.dialogMessage = options.dialogMessage || defaultDialogMessage;
 		this.beta = options.beta || false;
 
 		this._version = '';
