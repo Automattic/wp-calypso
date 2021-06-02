@@ -63,7 +63,7 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		} );
 
 		it( 'Can navigate to the Jetpack dashboard', async function () {
-			await WPAdminSidebar.refreshIfJNError( this.driver );
+			await driverHelper.refreshIfJNError( this.driver );
 			this.wpAdminSidebar = await WPAdminSidebar.Expect( this.driver );
 			return await this.wpAdminSidebar.selectJetpack();
 		} );
@@ -141,17 +141,17 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		} );
 
 		it( 'Add new user as Subscriber in wp-admin', async function () {
-			await WPAdminSidebar.refreshIfJNError( this.driver );
+			await driverHelper.refreshIfJNError( this.driver );
 			const wpAdminSidebar = await WPAdminSidebar.Expect( this.driver );
 			await wpAdminSidebar.selectAddNewUser();
-			await WPAdminNewUserPage.refreshIfJNError( this.driver );
+			await driverHelper.refreshIfJNError( this.driver );
 			const wpAdminNewUserPage = await WPAdminNewUserPage.Expect( this.driver );
 			return await wpAdminNewUserPage.addUser( this.emailAddress );
 		} );
 
 		it( 'Log out from WP Admin', async function () {
 			await driverManager.ensureNotLoggedIn( this.driver );
-			await WPAdminDashboardPage.refreshIfJNError( this.driver );
+			await driverHelper.refreshIfJNError( this.driver );
 			const wPAdminDashboardPage = await WPAdminDashboardPage.Visit(
 				this.driver,
 				WPAdminDashboardPage.getUrl( siteName )

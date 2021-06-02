@@ -408,16 +408,19 @@ export async function closeAllPopupWindows( driver ) {
 	return switchToWindowByIndex( driver, 0 );
 }
 
-export async function refreshIfJNError( driver, timeout = 2000 ) {
+/**
+ * When called, it will keep refreshing the page as long as the JN error is thrown.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ */
+export async function refreshIfJNError( driver ) {
 	if ( dataHelper.getTargetType() !== 'JETPACK' ) {
 		return false;
 	}
-
 	// Match only 503 Error codes
 	const jnSiteError = By.xpath(
 		"//pre[@class='error' and .='/srv/users/SYSUSER/log/APPNAME/APPNAME_apache.error.log' and //title[.='503 Service Unavailable']]"
 	);
-
 	// Match WP DB error
 	const jnDBError = By.xpath( '//h1[.="Error establishing a database connection"]' );
 
@@ -425,18 +428,17 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
 		const jnErrorDisplayed = await isElementEventuallyLocatedAndVisible(
 			driver,
 			jnSiteError,
-			timeout
+			2000
 		);
 		const jnDBErrorDisplayed = await isElementLocated( driver, jnDBError );
 		if ( jnErrorDisplayed || jnDBErrorDisplayed ) {
 			console.log( 'JN Error! Refreshing the page' );
 			await driver.navigate().refresh();
-			return await refreshIfNeeded();
+			await refreshIfNeeded();
 		}
-		return true;
 	};
 
-	return await refreshIfNeeded();
+	await refreshIfNeeded();
 }
 
 /**

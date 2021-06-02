@@ -103,8 +103,4 @@ export default class WPAdminSidebar extends AsyncBaseContainer {
 		}
 		return await driverHelper.clickWhenClickable( this.driver, menuItemLocator );
 	}
-
-	static async refreshIfJNError( driver ) {
-		return await driverHelper.refreshIfJNError( driver );
-	}
 }
