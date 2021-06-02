@@ -11,7 +11,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import Upsell from 'calypso/components/jetpack/upsell';
+import JetpackSearchContent from './content';
 import JetpackSearchLogo from './logo';
 
 /**
@@ -30,14 +30,11 @@ export default function JetpackSearchPlaceholder( { siteId }: Props ): ReactElem
 			<DocumentHead title="Jetpack Search" />
 			<SidebarNavigation />
 
-			<Upsell
+			<JetpackSearchContent
 				headerText={ translate( 'Finely-tuned search for your site.' ) }
-				bodyText={ translate(
-					'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
-				) }
+				bodyText={ translate( 'Your visitors are getting our fastest search experience.' ) }
 				buttonLink={ null }
 				buttonText={ translate( 'Upgrade to Jetpack Search' ) }
-				className="jetpack-search__placeholder"
 				onClick={ null }
 				iconComponent={ <JetpackSearchLogo /> }
 			/>

@@ -14,9 +14,9 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import JetpackSearchContent from './content';
 import JetpackSearchFooter from './footer';
 import JetpackSearchLogo from './logo';
-import Upsell from 'calypso/components/jetpack/upsell';
 
 export default function JetpackSearchUpsell(): ReactElement {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_search_upsell' );
@@ -33,7 +33,7 @@ export default function JetpackSearchUpsell(): ReactElement {
 			<SidebarNavigation />
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
 
-			<Upsell
+			<JetpackSearchContent
 				headerText={ translate( 'Finely-tuned search for your site.' ) }
 				bodyText={ translate(
 					'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'

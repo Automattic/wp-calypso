@@ -20,16 +20,16 @@ import {
 } from 'calypso/state/ui/selectors';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import JetpackSearchUpsell from './upsell';
-import JetpackSearchPlaceholder from './placeholder';
 import { isJetpackSearch, planHasJetpackSearch } from '@automattic/calypso-products';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
+import JetpackSearchContent from './content';
 import JetpackSearchFooter from './footer';
 import JetpackSearchLogo from './logo';
-import Upsell from 'calypso/components/jetpack/upsell';
+import JetpackSearchPlaceholder from './placeholder';
+import JetpackSearchUpsell from './upsell';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 export default function JetpackSearchMain(): ReactElement {
@@ -67,7 +67,7 @@ export default function JetpackSearchMain(): ReactElement {
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
 			<QuerySiteSettings siteId={ siteId } />
 
-			<Upsell
+			<JetpackSearchContent
 				headerText={
 					isSearchEnabled
 						? translate( 'Jetpack Search is enabled on your site.' )
