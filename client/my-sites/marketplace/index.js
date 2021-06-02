@@ -20,7 +20,7 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 export default function () {
 	if ( config.isEnabled( 'marketplace-yoast' ) ) {
 		page(
-			'/marketplace/test/:site',
+			'/marketplace/test/:site?',
 			siteSelection,
 			navigation,
 			renderMarketplaceTestPage,
@@ -28,22 +28,22 @@ export default function () {
 			clientRender
 		);
 
-		page( '/marketplace/domain/:site', renderDomainsPage, makeLayout, clientRender );
+		page( '/marketplace/domain/:site?', renderDomainsPage, makeLayout, clientRender );
 		page(
-			'/marketplace/product/setup/:site',
+			'/marketplace/product/setup/:site?',
 			siteSelection,
 			renderPluginsSetupStatusPage,
 			makeLayout,
 			clientRender
 		);
 		page(
-			'/marketplace/product/details/:plugin/:site',
+			'/marketplace/product/details/:plugin/:site?',
 			navigation,
 			siteSelection,
 			renderMarketplacePlugin,
 			makeLayout,
 			clientRender
 		);
-		page( '/marketplace/thank-you/:site', renderMarketplaceThankYou, makeLayout, clientRender );
+		page( '/marketplace/thank-you/:site?', renderMarketplaceThankYou, makeLayout, clientRender );
 	}
 }

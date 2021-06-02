@@ -109,10 +109,9 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		// TODO: Move this out to its own root folder
 		name: 'marketplace',
 		paths: [ '/marketplace' ],
-		module: 'calypso/my-sites/plugins/marketplace',
+		module: 'calypso/my-sites/marketplace',
 		group: 'sites',
 	},
 	{
