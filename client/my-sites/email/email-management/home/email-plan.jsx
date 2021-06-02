@@ -38,7 +38,6 @@ import {
 } from 'calypso/lib/gsuite';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
@@ -178,6 +177,7 @@ class EmailPlan extends React.Component {
 
 		if ( hasGSuiteWithUs( domain ) ) {
 			const googleMailService = getGoogleMailServiceFamily( getGSuiteProductSlug( domain ) );
+
 			return translate( '%(googleMailService)s settings', {
 				args: {
 					googleMailService,
@@ -266,31 +266,39 @@ class EmailPlan extends React.Component {
 	}
 
 	renderAddNewMailboxesOrRenewNavItem() {
-		const { domain, purchase, translate } = this.props;
+		const { domain, hasSubscription, purchase, translate } = this.props;
 
-		if ( hasEmailForwards( domain ) ) {
+		if ( hasTitanMailWithUs( domain ) && ! hasSubscription ) {
 			return (
 				<VerticalNavItem { ...this.getAddMailboxProps() }>
-					{ translate( 'Add new email forwards' ) }
+					{ translate( 'Add new mailboxes' ) }
 				</VerticalNavItem>
 			);
 		}
 
-		if ( ! purchase ) {
-			return <VerticalNavItem isPlaceholder />;
-		}
+		if ( hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) ) {
+			if ( ! purchase ) {
+				return <VerticalNavItem isPlaceholder />;
+			}
 
-		if ( isExpired( purchase ) ) {
+			if ( isExpired( purchase ) ) {
+				return (
+					<VerticalNavItem onClick={ this.handleRenew } path="#">
+						{ translate( 'Renew to add new mailboxes' ) }
+					</VerticalNavItem>
+				);
+			}
+
 			return (
-				<VerticalNavItem onClick={ this.handleRenew } path="#">
-					{ translate( 'Renew to add new mailboxes' ) }
+				<VerticalNavItem { ...this.getAddMailboxProps() }>
+					{ translate( 'Add new mailboxes' ) }
 				</VerticalNavItem>
 			);
 		}
 
 		return (
 			<VerticalNavItem { ...this.getAddMailboxProps() }>
-				{ translate( 'Add new mailboxes' ) }
+				{ translate( 'Add new email forwards' ) }
 			</VerticalNavItem>
 		);
 	}
