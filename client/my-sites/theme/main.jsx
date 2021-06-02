@@ -50,6 +50,7 @@ import {
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
 	getThemeForumUrl,
+	getThemeDemoUrl,
 } from 'calypso/state/themes/selectors';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -772,17 +773,7 @@ class ThemeSheet extends React.Component {
 const ConnectedThemeSheet = connectOptions( ThemeSheet );
 
 const ThemeSheetWithOptions = ( props ) => {
-	const {
-		siteId,
-		isActive,
-		isLoggedIn,
-		isPremium,
-		isPurchased,
-		isJetpack,
-		demo_uri,
-		name: themeName,
-	} = props;
-	const storefrontDemoUri = 'https://themes.woocommerce.com/storefront/';
+	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = props;
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
@@ -808,7 +799,6 @@ const ThemeSheetWithOptions = ( props ) => {
 	return (
 		<ConnectedThemeSheet
 			{ ...props }
-			demo_uri={ 'Storefront' === themeName ? storefrontDemoUri : demo_uri }
 			siteId={ siteId }
 			defaultOption={ defaultOption }
 			secondaryOption={ secondaryOption }
@@ -828,9 +818,11 @@ export default connect(
 		const theme = getCanonicalTheme( state, siteId, id );
 		const siteIdOrWpcom = siteId || 'wpcom';
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
+		const demo_uri = getThemeDemoUrl( state, id, siteId );
 
 		return {
 			...theme,
+			demo_uri,
 			id,
 			price: getPremiumThemePrice( state, id, siteId ),
 			error,
