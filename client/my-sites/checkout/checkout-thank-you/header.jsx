@@ -42,6 +42,12 @@ import { Button } from '@automattic/components';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { downloadTrafficGuide } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 import { emailManagementEdit } from 'calypso/my-sites/email/paths';
+import { getTitanEmailUrl } from 'calypso/lib/titan';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -368,6 +374,10 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = '/me/concierge/' + selectedSite.slug + '/book';
 	};
 
+	trackTitanWebmailClick = () => {
+		this.props.recordTracksEvent( 'calypso_thank_you_titan_webmail_click' );
+	};
+
 	downloadTrafficGuideHandler = ( event ) => {
 		event.preventDefault();
 
@@ -459,12 +469,25 @@ export class CheckoutThankYouHeader extends PureComponent {
 	};
 
 	maybeGetSecondaryButton() {
-		const { upgradeIntent, translate } = this.props;
+		const { primaryPurchase, upgradeIntent, translate } = this.props;
 
 		if ( upgradeIntent === 'hosting' ) {
 			return (
 				<Button onClick={ this.visitSiteHostingSettings }>
 					{ translate( 'Return to Hosting' ) }
+				</Button>
+			);
+		}
+
+		if ( isTitanMail( primaryPurchase ) ) {
+			return (
+				<Button
+					href={ getTitanEmailUrl( '' ) }
+					onClick={ this.trackTitanWebmailClick }
+					target="_blank"
+				>
+					{ translate( 'Log in to my email' ) }
+					<Gridicon icon="external" />
 				</Button>
 			);
 		}
