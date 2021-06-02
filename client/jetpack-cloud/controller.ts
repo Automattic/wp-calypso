@@ -18,9 +18,8 @@ import {
 } from 'calypso/my-sites/controller';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import getSiteId from 'calypso/state/selectors/get-site-id';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 
 /**

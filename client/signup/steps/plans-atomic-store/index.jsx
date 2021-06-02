@@ -4,14 +4,13 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { filter } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import getSiteId from 'calypso/state/selectors/get-site-id';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -100,16 +99,13 @@ export class PlansAtomicStoreStep extends Component {
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
-		let plans = filter(
-			[
-				hideFreePlan ? null : PLAN_FREE,
-				isPersonalPlanEnabled ? PLAN_PERSONAL : null,
-				PLAN_PREMIUM,
-				PLAN_BUSINESS,
-				PLAN_ECOMMERCE,
-			],
-			( value ) => !! value
-		);
+		let plans = [
+			hideFreePlan ? null : PLAN_FREE,
+			isPersonalPlanEnabled ? PLAN_PERSONAL : null,
+			PLAN_PREMIUM,
+			PLAN_BUSINESS,
+			PLAN_ECOMMERCE,
+		].filter( Boolean );
 
 		if ( designType === DESIGN_TYPE_STORE ) {
 			plans = [ PLAN_BUSINESS ];
