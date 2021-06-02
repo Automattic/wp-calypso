@@ -101,7 +101,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 			<div className="gsuite-new-user-list__actions">
 				<Button className="gsuite-new-user-list__add-another-user-button" onClick={ onUserAdd }>
 					<Gridicon icon="plus" />
-					<span>{ translate( 'Add another user' ) }</span>
+					<span>{ translate( 'Add another mailbox' ) }</span>
 				</Button>
 
 				{ children }
