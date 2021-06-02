@@ -35,7 +35,7 @@ registerPlugin( 'wpcom-block-editor-nux', {
 			[]
 		);
 
-		const { setOpenState } = useDispatch( 'automattic/starter-page-layouts' );
+		const setOpenState = useDispatch( 'automattic/starter-page-layouts' )?.setOpenState;
 
 		const { fetchWelcomeGuideStatus } = useDispatch( 'automattic/wpcom-welcome-guide' );
 
