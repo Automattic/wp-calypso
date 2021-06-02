@@ -175,7 +175,6 @@ const SiteSetupList = ( {
 				emailVerificationStatus,
 				isDomainUnverified,
 				isEmailUnverified,
-				isPodcastingSite,
 				menusUrl,
 				siteId,
 				siteSlug,
