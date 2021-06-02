@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+const semver = require( 'semver' );
 const { app } = require( 'electron' );
 const { autoUpdater } = require( 'electron-updater' );
 
@@ -41,6 +42,7 @@ class AutoUpdater extends Updater {
 		autoUpdater.allowDowngrade = true;
 		autoUpdater.channel = 'stable';
 		autoUpdater.allowPrerelease = false;
+		autoUpdater.autoDownload = false;
 
 		if ( this.beta ) {
 			autoUpdater.channel = 'beta';
@@ -65,8 +67,20 @@ class AutoUpdater extends Updater {
 	// ignore (available), confirm (available), cancel (available)
 	// not available ( do nothing ) - user initiated
 	onAvailable( info ) {
-		log.info( 'New update is available: ', info.version );
-		bumpStat( 'wpcom-desktop-update-check', `${ getStatsString( this.beta ) }-needs-update` );
+		if ( semver.lt( app.getVersion(), info.version ) ) {
+			log.info( 'New update is available: ', info.version );
+			bumpStat( 'wpcom-desktop-update-check', `${ getStatsString( this.beta ) }-needs-update` );
+			autoUpdater.downloadUpdate();
+		} else {
+			log.info(
+				`Latest upstream version ${
+					info.version
+				} is older than current app version ${ app.getVersion() }, autoDownload set to ${
+					autoUpdater.autoDownload
+				}, skipping auto-update ...`
+			);
+			this.onNotAvailable();
+		}
 	}
 
 	onNotAvailable() {
