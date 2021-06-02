@@ -40,7 +40,7 @@ import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
 import { login } from 'calypso/lib/paths';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
-import getSiteId from 'calypso/state/selectors/get-site-id';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -354,19 +354,24 @@ export default {
 			next();
 		} else {
 			// Fetch the site by siteSlug and then try to select again
-			dispatch( requestSite( siteSlug ) ).then( () => {
-				let freshSiteId = getSiteId( getState(), siteSlug );
+			dispatch( requestSite( siteSlug ) )
+				.catch( () => null )
+				.then( () => {
+					let freshSiteId = getSiteId( getState(), siteSlug );
 
-				if ( ! freshSiteId ) {
-					const wpcomStagingFragment = siteSlug.replace( /\.wordpress\.com$/, '.wpcomstaging.com' );
-					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
-				}
+					if ( ! freshSiteId ) {
+						const wpcomStagingFragment = siteSlug.replace(
+							/\.wordpress\.com$/,
+							'.wpcomstaging.com'
+						);
+						freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+					}
 
-				if ( freshSiteId ) {
-					dispatch( setSelectedSiteId( freshSiteId ) );
-					next();
-				}
-			} );
+					if ( freshSiteId ) {
+						dispatch( setSelectedSiteId( freshSiteId ) );
+						next();
+					}
+				} );
 			next();
 		}
 	},

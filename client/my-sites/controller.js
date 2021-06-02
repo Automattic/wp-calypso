@@ -15,6 +15,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	getSite,
+	getSiteId,
 	getSiteAdminUrl,
 	getSiteSlug,
 	isJetpackModuleActive,
@@ -42,7 +43,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import getSiteId from 'calypso/state/selectors/get-site-id';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -426,16 +426,18 @@ export function siteSelection( context, next ) {
 			redirectToPrimary( context, primarySiteSlug );
 		} else {
 			// Fetch the primary site by ID and then try to determine its slug again.
-			dispatch( requestSite( primarySiteId ) ).then( () => {
-				const freshPrimarySiteSlug = getSiteSlug( getState(), primarySiteId );
-				if ( freshPrimarySiteSlug ) {
-					redirectToPrimary( context, freshPrimarySiteSlug );
-				} else {
-					// If the primary site does not exist, skip redirect
-					// and display a useful error notification
-					showMissingPrimaryError( currentUser, dispatch );
-				}
-			} );
+			dispatch( requestSite( primarySiteId ) )
+				.catch( () => null )
+				.then( () => {
+					const freshPrimarySiteSlug = getSiteSlug( getState(), primarySiteId );
+					if ( freshPrimarySiteSlug ) {
+						redirectToPrimary( context, freshPrimarySiteSlug );
+					} else {
+						// If the primary site does not exist, skip redirect
+						// and display a useful error notification
+						showMissingPrimaryError( currentUser, dispatch );
+					}
+				} );
 		}
 
 		return;
@@ -457,35 +459,37 @@ export function siteSelection( context, next ) {
 		}
 	} else {
 		// Fetch the site by siteFragment and then try to select again
-		dispatch( requestSite( siteFragment ) ).then( ( response ) => {
-			let freshSiteId = getSiteId( getState(), siteFragment );
+		dispatch( requestSite( siteFragment ) )
+			.catch( () => null )
+			.then( ( site ) => {
+				let freshSiteId = getSiteId( getState(), siteFragment );
 
-			if ( ! freshSiteId ) {
-				const wpcomStagingFragment = siteFragment.replace(
-					/\b.wordpress.com/,
-					'.wpcomstaging.com'
-				);
-				freshSiteId = getSiteId( getState(), wpcomStagingFragment );
-			}
-
-			if ( freshSiteId ) {
-				// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
-				// to wp-admin. In that case, don't continue handling the route.
-				dispatch( setSelectedSiteId( freshSiteId ) );
-				if ( onSelectedSiteAvailable( context, basePath ) ) {
-					next();
+				if ( ! freshSiteId ) {
+					const wpcomStagingFragment = siteFragment.replace(
+						/\b.wordpress.com/,
+						'.wpcomstaging.com'
+					);
+					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 				}
-			} else if ( shouldRedirectToJetpackAuthorize( context, response ) ) {
-				externalRedirect( getJetpackAuthorizeURL( context, response ) );
-			} else {
-				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
-				const allSitesPath = addQueryArgs(
-					{ site: siteFragment },
-					sectionify( context.path, siteFragment )
-				);
-				page.redirect( allSitesPath );
-			}
-		} );
+
+				if ( freshSiteId ) {
+					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
+					// to wp-admin. In that case, don't continue handling the route.
+					dispatch( setSelectedSiteId( freshSiteId ) );
+					if ( onSelectedSiteAvailable( context, basePath ) ) {
+						next();
+					}
+				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
+					externalRedirect( getJetpackAuthorizeURL( context, site ) );
+				} else {
+					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
+					const allSitesPath = addQueryArgs(
+						{ site: siteFragment },
+						sectionify( context.path, siteFragment )
+					);
+					page.redirect( allSitesPath );
+				}
+			} );
 	}
 }
 
@@ -677,27 +681,27 @@ export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
  * Whether we need to redirect user to the Jetpack site for authorization.
  *
  * @param {object} context -- The context object.
- * @param {object} response -- The site information HTTP response.
+ * @param {object} site -- The site information.
  * @returns {boolean} shouldRedirect -- Whether we need to redirect user to the Jetpack site for authorization.
  */
-export function shouldRedirectToJetpackAuthorize( context, response ) {
-	return '1' === context.query?.unlinked && !! response?.site?.URL;
+export function shouldRedirectToJetpackAuthorize( context, site ) {
+	return '1' === context.query?.unlinked && !! site?.URL;
 }
 
 /**
  * Get redirect URL to the Jetpack site for authorization.
  *
  * @param {object} context -- The context object.
- * @param {object} response -- The site information HTTP response.
+ * @param {object} site -- The site information.
  * @returns {string} redirectURL -- The redirect URL.
  */
-export function getJetpackAuthorizeURL( context, response ) {
+export function getJetpackAuthorizeURL( context, site ) {
 	return addQueryArgs(
 		{
 			page: 'jetpack',
 			action: 'authorize_redirect',
 			dest_url: removeQueryArgs( window.origin + context.path, 'unlinked' ),
 		},
-		trailingslashit( response?.site?.URL ) + 'wp-admin/'
+		trailingslashit( site?.URL ) + 'wp-admin/'
 	);
 }

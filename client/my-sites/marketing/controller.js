@@ -41,7 +41,11 @@ export const redirectDefaultConnectionsDomain = async ( context ) => {
 
 	let recentSiteSlug = getSiteSlug( state, recentSiteId );
 	if ( ! recentSiteSlug ) {
-		await dispatch( requestSite( recentSiteId ) );
+		try {
+			await dispatch( requestSite( recentSiteId ) );
+		} catch {
+			// proceed despite a failed site request
+		}
 		recentSiteSlug = getSiteSlug( getState(), recentSiteId );
 		if ( ! recentSiteSlug ) {
 			// TODO Maybe get the primary site slug, but for now redirect to site selection.
