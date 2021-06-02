@@ -10,7 +10,6 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
@@ -201,10 +200,7 @@ class Site extends React.Component {
 	};
 
 	getErrorMessagesWithLogin = ( fieldName ) => {
-		const link = login( {
-			isNative: config.isEnabled( 'login/native-login-links' ),
-			redirectTo: window.location.href,
-		} );
+		const link = login( { redirectTo: window.location.href } );
 		const messages = formState.getFieldErrorMessages( this.state.form, fieldName );
 
 		if ( ! messages ) {

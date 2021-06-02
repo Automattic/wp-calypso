@@ -16,6 +16,7 @@ import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 import { Button, Card } from '@automattic/components';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmailHeader from 'calypso/my-sites/email/email-header';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import {
 	emailManagementAddGSuiteUsers,
 	emailManagementNewGSuiteAccount,
@@ -66,10 +67,10 @@ class GSuiteAddUsers extends React.Component {
 	isMounted = false;
 
 	static getDerivedStateFromProps(
-		{ domains, isRequestingDomains, selectedDomainName },
+		{ domains, isRequestingDomains, selectedDomainName, userCanPurchaseGSuite },
 		{ users }
 	) {
-		if ( ! isRequestingDomains && 0 === users.length ) {
+		if ( ! isRequestingDomains && 0 === users.length && userCanPurchaseGSuite ) {
 			const domainName = getEligibleGSuiteDomain( selectedDomainName, domains );
 			if ( '' !== domainName ) {
 				return {
@@ -187,6 +188,7 @@ class GSuiteAddUsers extends React.Component {
 			isRequestingDomains,
 			selectedDomainName,
 			translate,
+			userCanPurchaseGSuite,
 		} = this.props;
 
 		const { users } = this.state;
@@ -217,17 +219,18 @@ class GSuiteAddUsers extends React.Component {
 					''
 				) }
 
-				{ selectedDomainInfo.map( ( domain ) => {
-					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
-				} ) }
+				{ userCanPurchaseGSuite &&
+					selectedDomainInfo.map( ( domain ) => {
+						return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
+					} ) }
 
 				<SectionHeader
-					label={ translate( 'Add New Users', {
+					label={ translate( 'Add New Mailboxes', {
 						comment: 'This refers to Google Workspace user accounts',
 					} ) }
 				/>
 
-				{ gsuiteUsers && selectedDomainInfo && ! isRequestingDomains ? (
+				{ gsuiteUsers && userCanPurchaseGSuite && selectedDomainInfo && ! isRequestingDomains ? (
 					<Card>
 						<GSuiteNewUserList
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
@@ -283,11 +286,13 @@ class GSuiteAddUsers extends React.Component {
 				{ selectedSite && <QueryGSuiteUsers siteId={ selectedSite.ID } /> }
 
 				<Main wideLayout={ true }>
-					<DocumentHead title={ translate( 'Add New Users' ) } />
+					<DocumentHead title={ translate( 'Add New Mailboxes' ) } />
 
 					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
-					<HeaderCake onClick={ this.goToEmail }>{ translate( 'Add new users' ) }</HeaderCake>
+					<HeaderCake onClick={ this.goToEmail }>
+						{ googleMailServiceFamily + ': ' + selectedDomainName }
+					</HeaderCake>
 
 					<EmailVerificationGate
 						noticeText={ translate( 'You must verify your email to purchase %(productFamily)s.', {
@@ -331,6 +336,7 @@ export default connect(
 			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
 			productsList: getProductsList( state ),
 			selectedSite,
+			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }

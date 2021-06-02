@@ -10,9 +10,6 @@ import { renderToString } from 'react-dom/server';
  */
 import LayoutLoggedOut from '../logged-out';
 
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
 jest.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );
 
 describe( 'index', () => {

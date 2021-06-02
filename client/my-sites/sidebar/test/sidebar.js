@@ -13,15 +13,9 @@ import { shallow } from 'enzyme';
  */
 import { MySitesSidebar } from '..';
 import config from '@automattic/calypso-config';
-import { abtest } from 'calypso/lib/abtest';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: jest.fn( () => {
-		return 'sidebarUpsells';
-	} ),
-} ) );
 jest.mock( 'calypso/lib/analytics/track-component-view', () => 'TrackComponentView' );
 jest.mock( 'calypso/my-sites/sidebar/utils', () => ( {
 	itemLinkMatches: jest.fn( () => true ),
@@ -43,7 +37,6 @@ describe( 'MySitesSidebar', () => {
 
 		beforeEach( () => {
 			config.isEnabled.mockImplementation( () => true );
-			abtest.mockImplementation( () => 'sidebarUpsells' );
 		} );
 
 		test( 'Should return null item if woocommerce/extension-dashboard is disabled', () => {
@@ -108,8 +101,7 @@ describe( 'MySitesSidebar', () => {
 			expect( wrapper ).toEqual( {} );
 		} );
 
-		test( 'Should return null item if user who can upgrade can not use store on this site (control a/b group)', () => {
-			abtest.mockImplementation( () => 'control' );
+		test( 'Should return null item if user who can upgrade can not use store on this site', () => {
 			const Sidebar = new MySitesSidebar( {
 				canUserUseCalypsoStore: false,
 				canUserUpgradeSite: true,
@@ -126,11 +118,10 @@ describe( 'MySitesSidebar', () => {
 			expect( wrapper.html() ).toEqual( null );
 		} );
 
-		test( "Should return null if user who can't upgrade user can not use store on this site (control a/b group)", () => {
-			abtest.mockImplementation( () => 'control' );
+		test( "Should return null if user who can't upgrade user can not use store on this site", () => {
 			const Sidebar = new MySitesSidebar( {
 				canUserUseCalypsoStore: false,
-				canUserUpgradeSite: true,
+				canUserUpgradeSite: false,
 				...defaultProps,
 				site: {
 					plan: {

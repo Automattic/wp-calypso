@@ -147,7 +147,6 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		lang,
 		entrypoint: request.getFilesForEntrypoint( entrypoint ),
 		manifests: request.getAssets().manifests,
-		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
 		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
 		devDocsURL: '/devdocs',
@@ -294,7 +293,6 @@ function setUpLoggedInRoute( req, res, next ) {
 		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
 		redirectUrl = login( {
-			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo: protocol + '://' + config( 'hostname' ) + req.originalUrl,
 		} );
 

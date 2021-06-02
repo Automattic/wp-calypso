@@ -55,7 +55,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 
 		it( 'Can see the Domains page and choose add a domain', async function () {
 			const domainsPage = await DomainsPage.Expect( this.driver );
-			await domainsPage.setABTestControlGroupsInLocalStorage();
+			await domainsPage.waitForPage();
 			await domainsPage.clickAddDomain();
 			await domainsPage.popOverMenuDisplayed();
 			return await domainsPage.clickPopoverItem( 'to this site' );
@@ -130,7 +130,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function 
 
 		it( 'Can see the Domains page and choose add a domain', async function () {
 			const domainsPage = await DomainsPage.Expect( this.driver );
-			await domainsPage.setABTestControlGroupsInLocalStorage();
+			await domainsPage.waitForPage();
 			await domainsPage.clickAddDomain();
 			await domainsPage.popOverMenuDisplayed();
 			return await domainsPage.clickPopoverItem( 'to this site' );

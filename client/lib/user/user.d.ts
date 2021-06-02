@@ -32,8 +32,6 @@ export interface User extends EventEmitter {
 	handleFetchSuccess: ( userdata: UserData ) => void;
 	getLanguage: () => Language | undefined;
 	clear: () => Promise< void > | void;
-	sendVerificationEmail< Callback extends WPCOMCallback >( callback: Callback ): XMLHttpRequest;
-	sendVerificationEmail(): Promise< void >;
 	set: ( attributes: UserData ) => boolean;
 	decrementSiteCount: () => void;
 	incrementSiteCount: () => void;

@@ -52,7 +52,7 @@ class ChangeSiteAddress extends React.Component {
 
 		return (
 			<Main className="change-site-address">
-				<Header onClick={ this.goBack } selectedDomainName={ domain }>
+				<Header onClick={ this.goBack } selectedDomainName={ domain.name }>
 					{ translate( 'Change Site Address' ) }
 				</Header>
 

@@ -256,6 +256,7 @@ class TitanAddMailboxes extends React.Component {
 			selectedDomainName,
 			selectedSite,
 			titanMonthlyProduct,
+			translate,
 		} = this.props;
 
 		if ( ! isLoadingDomains && ! isSelectedDomainNameValid ) {
@@ -264,7 +265,6 @@ class TitanAddMailboxes extends React.Component {
 		}
 
 		const analyticsPath = emailManagementNewTitanAccount( ':site', ':domain', currentRoute );
-		const pageTitle = getTitanProductName() + ': ' + selectedDomainName;
 		const finishSetupLinkIsExternal = ! isEnabled( 'titan/iframe-control-panel' );
 
 		return (
@@ -276,11 +276,13 @@ class TitanAddMailboxes extends React.Component {
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 				<Main wideLayout={ true }>
-					<DocumentHead title={ pageTitle } />
+					<DocumentHead title={ translate( 'Add New Mailboxes' ) } />
 
 					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
-					<HeaderCake onClick={ this.goToEmail }>{ pageTitle }</HeaderCake>
+					<HeaderCake onClick={ this.goToEmail }>
+						{ getTitanProductName() + ': ' + selectedDomainName }
+					</HeaderCake>
 
 					<TitanExistingForwardsNotice domainsWithForwards={ domainsWithForwards } />
 					{ selectedDomain && (

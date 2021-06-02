@@ -26,7 +26,7 @@ import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutThankYouComponent from './checkout-thank-you';
-import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { setSectionMiddleware } from 'calypso/controller';
 import { sites } from 'calypso/my-sites/controller';
 import userFactory from 'calypso/lib/user';
@@ -213,7 +213,7 @@ export function gsuiteNudge( context, next ) {
 		return null;
 	}
 
-	if ( ! canUserPurchaseGSuite() ) {
+	if ( ! canUserPurchaseGSuite( context.store.getState() ) ) {
 		next();
 	}
 

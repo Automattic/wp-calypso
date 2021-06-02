@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -9,17 +8,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import QueryReaderList from 'calypso/components/data/query-reader-list';
+import ReaderMain from 'calypso/reader/components/reader-main';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 class ListMissing extends React.Component {
-	static propTypes = {
-		owner: PropTypes.string.isRequired,
-		slug: PropTypes.string.isRequired,
-	};
-
 	recordAction = () => {
 		recordAction( 'clicked_following_on_empty' );
 		recordGaEvent( 'Clicked Following on EmptyContent' );
@@ -27,30 +22,20 @@ class ListMissing extends React.Component {
 	};
 
 	render() {
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		const action = (
-			<a
-				className="empty-content__action button is-primary"
-				onClick={ this.recordAction }
-				href="/read"
-			>
-				{ this.props.translate( 'Back to Followed Sites' ) }
-			</a>
-		);
-
 		return (
-			<div>
-				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
+			<ReaderMain>
+				<DocumentHead title={ this.props.translate( 'List not found' ) } />
 				<EmptyContent
 					title={ this.props.translate( 'List not found' ) }
 					line={ this.props.translate( "Sorry, we couldn't find that list." ) }
-					action={ action }
+					action={ this.props.translate( 'Back to Followed Sites' ) }
+					actionURL="/read"
+					actionCallback={ this.recordAction }
 					illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 					illustrationWidth={ 500 }
 				/>
-			</div>
+			</ReaderMain>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

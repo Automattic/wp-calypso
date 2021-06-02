@@ -113,7 +113,7 @@ class GSuiteUsersCard extends React.Component {
 				) }
 				onClick={ this.goToAddGoogleApps }
 			>
-				{ translate( 'Add New Users' ) }
+				{ translate( 'Add New Mailboxes' ) }
 			</Button>
 		);
 

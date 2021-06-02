@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import AsyncLoad from 'calypso/components/async-load';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MasterbarItem from './item';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -22,7 +22,7 @@ import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSectionGroup from 'calypso/state/ui/selectors/get-section-group';
 import { reduxGetState } from 'calypso/lib/redux-bridge';
-import { navigate } from 'calypso/state/ui/actions';
+import { navigate } from 'calypso/lib/navigate';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {
@@ -113,11 +113,10 @@ class MasterbarItemNew extends React.Component {
 	}
 }
 
-const openEditor = ( editorUrl ) =>
-	withAnalytics(
-		recordTracksEvent( 'calypso_masterbar_write_button_clicked' ),
-		navigate( editorUrl )
-	);
+const openEditor = ( editorUrl ) => ( dispatch ) => {
+	dispatch( recordTracksEvent( 'calypso_masterbar_write_button_clicked' ) );
+	navigate( editorUrl );
+};
 
 export default connect(
 	( state ) => {

@@ -9,7 +9,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 // This is a custom AsyncLoad component for devdocs that includes a
 // `props.component`-aware placeholder. It still needs to be imported as
 // `AsyncLoad` though–see https://github.com/Automattic/babel-plugin-transform-wpcalypso-async/blob/HEAD/index.js#L12
@@ -22,7 +21,6 @@ import Sidebar from './sidebar';
 import EmptyContent from 'calypso/components/empty-content';
 import WizardComponent from './wizard-component';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { navigate } from 'calypso/state/ui/actions';
 
 const devdocs = {
 	/*
@@ -139,24 +137,20 @@ const devdocs = {
 	},
 
 	pleaseLogIn: function ( context, next ) {
-		const currentUrl = new URL( window.location.href );
-		const redirectTo = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
+		const redirectTo = window.location.origin + '/devdocs/welcome';
 		if ( ! getCurrentUserId( context.store.getState() ) ) {
 			context.primary = React.createElement( EmptyContent, {
 				title: 'Log In to start hacking',
 				line: 'Required to access the WordPress.com API',
 				action: 'Log In to WordPress.com',
-				actionURL: login( {
-					isNative: config.isEnabled( 'login/native-login-links' ),
-					redirectTo,
-				} ),
+				actionURL: login( { redirectTo } ),
 				secondaryAction: 'Register',
 				secondaryActionURL: '/start/developer',
 				illustration: '/calypso/images/illustrations/illustration-nosites.svg',
 			} );
 			next();
 		} else {
-			context.store.dispatch( navigate( redirectTo ) );
+			page( redirectTo );
 		}
 	},
 

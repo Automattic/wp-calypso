@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import nock from 'nock';
+
+/**
  * Internal dependencies
  */
 import {
@@ -21,7 +26,6 @@ import {
 	TERMS_REQUEST_SUCCESS,
 	TERMS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-import useNock from 'calypso/test-helpers/use-nock';
 
 /**
  * Module Variables
@@ -50,7 +54,7 @@ const categoryTaxonomyName = 'category';
 
 describe( 'actions', () => {
 	describe( 'addTerm()', () => {
-		useNock( ( nock ) => {
+		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/new` )
@@ -64,6 +68,10 @@ describe( 'actions', () => {
 					message: 'The taxonomy does not exist',
 					error: 'invalid_taxonomy',
 				} );
+		} );
+
+		afterAll( () => {
+			nock.cleanAll();
 		} );
 
 		test( 'should dispatch a TERMS_RECEIVE', () => {
@@ -85,47 +93,44 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch a TERMS_RECEIVE event on success', () => {
+		test( 'should dispatch a TERMS_RECEIVE event on success', async () => {
 			const spy = jest.fn();
-			return addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: TERMS_RECEIVE,
-					siteId: siteId,
-					taxonomy: taxonomyName,
-					terms: [
-						{
-							ID: 123,
-							name: 'ribs',
-							description: '',
-						},
-					],
-					query: undefined,
-					found: undefined,
-				} );
+			await addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: TERMS_RECEIVE,
+				siteId: siteId,
+				taxonomy: taxonomyName,
+				terms: [
+					{
+						ID: 123,
+						name: 'ribs',
+						description: '',
+					},
+				],
+				query: undefined,
+				found: undefined,
 			} );
 		} );
 
-		test( 'should dispatch a TERM_REMOVE event on success', () => {
+		test( 'should dispatch a TERM_REMOVE event on success', async () => {
 			const spy = jest.fn();
-			return addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: TERM_REMOVE,
-					siteId: siteId,
-					taxonomy: taxonomyName,
-					termId: expect.stringMatching( /^temporary/ ),
-				} );
+			await addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: TERM_REMOVE,
+				siteId: siteId,
+				taxonomy: taxonomyName,
+				termId: expect.stringMatching( /^temporary/ ),
 			} );
 		} );
 
-		test( 'should dispatch a TERM_REMOVE event on failure', () => {
+		test( 'should dispatch a TERM_REMOVE event on failure', async () => {
 			const spy = jest.fn();
-			return addTerm( siteId, 'chicken-and-ribs', { name: 'new term' } )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: TERM_REMOVE,
-					siteId: siteId,
-					taxonomy: 'chicken-and-ribs',
-					termId: expect.stringMatching( /^temporary/ ),
-				} );
+			await addTerm( siteId, 'chicken-and-ribs', { name: 'new term' } )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: TERM_REMOVE,
+				siteId: siteId,
+				taxonomy: 'chicken-and-ribs',
+				termId: expect.stringMatching( /^temporary/ ),
 			} );
 		} );
 	} );
@@ -187,7 +192,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSiteTerms()', () => {
-		useNock( ( nock ) => {
+		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms` )
@@ -202,6 +207,10 @@ describe( 'actions', () => {
 				} );
 		} );
 
+		afterAll( () => {
+			nock.cleanAll();
+		} );
+
 		test( 'should dispatch a TERMS_REQUEST', () => {
 			const spy = jest.fn();
 			requestSiteTerms( siteId, taxonomyName )( spy );
@@ -214,57 +223,45 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch a TERMS_RECEIVE event on success', () => {
+		test( 'should dispatch a TERMS_RECEIVE event on success', async () => {
 			const spy = jest.fn();
-			return requestSiteTerms(
-				siteId,
-				taxonomyName
-			)( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: TERMS_RECEIVE,
-					siteId: siteId,
-					taxonomy: taxonomyName,
-					terms: testTerms,
-					query: {},
-					found: 2,
-				} );
+			await requestSiteTerms( siteId, taxonomyName )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: TERMS_RECEIVE,
+				siteId: siteId,
+				taxonomy: taxonomyName,
+				terms: testTerms,
+				query: {},
+				found: 2,
 			} );
 		} );
 
-		test( 'should dispatch TERMS_REQUEST_SUCCESS action when request succeeds', () => {
+		test( 'should dispatch TERMS_REQUEST_SUCCESS action when request succeeds', async () => {
 			const spy = jest.fn();
-			return requestSiteTerms(
-				siteId,
-				taxonomyName
-			)( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: TERMS_REQUEST_SUCCESS,
-					siteId: siteId,
-					taxonomy: taxonomyName,
-					query: {},
-				} );
+			await requestSiteTerms( siteId, taxonomyName )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: TERMS_REQUEST_SUCCESS,
+				siteId: siteId,
+				taxonomy: taxonomyName,
+				query: {},
 			} );
 		} );
 
-		test( 'should dispatch TERMS_REQUEST_FAILURE action when request fails', () => {
+		test( 'should dispatch TERMS_REQUEST_FAILURE action when request fails', async () => {
 			const spy = jest.fn();
-			return requestSiteTerms(
-				12345,
-				'chicken-and-ribs'
-			)( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: TERMS_REQUEST_FAILURE,
-					siteId: 12345,
-					taxonomy: 'chicken-and-ribs',
-					query: {},
-					error: expect.objectContaining( { error: 'invalid_taxonomy' } ),
-				} );
+			await requestSiteTerms( 12345, 'chicken-and-ribs' )( spy );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: TERMS_REQUEST_FAILURE,
+				siteId: 12345,
+				taxonomy: 'chicken-and-ribs',
+				query: {},
+				error: expect.objectContaining( { error: 'invalid_taxonomy' } ),
 			} );
 		} );
 	} );
 
 	describe( 'updateTerm()', () => {
-		useNock( ( nock ) => {
+		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/slug:rib` )
@@ -286,7 +283,11 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		test( 'should dispatch a TERMS_RECEIVE, TERM_REMOVE POST_EDIT and SITE_SETTINGS_UPDATE on Success', () => {
+		afterAll( () => {
+			nock.cleanAll();
+		} );
+
+		test( 'should dispatch a TERMS_RECEIVE, TERM_REMOVE POST_EDIT and SITE_SETTINGS_UPDATE on Success', async () => {
 			const postObjects = {
 				[ siteId ]: {
 					'0fcb4eb16f493c19b627438fdc18d57c': {
@@ -331,48 +332,48 @@ describe( 'actions', () => {
 			const getState = () => state;
 
 			const spy = jest.fn();
-			return updateTerm( siteId, categoryTaxonomyName, 10, 'rib', { name: 'ribs' } )(
+			await updateTerm( siteId, categoryTaxonomyName, 10, 'rib', { name: 'ribs' } )(
 				spy,
 				getState
-			).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: TERM_REMOVE,
-					siteId: siteId,
-					taxonomy: categoryTaxonomyName,
-					termId: 10,
-				} );
-				expect( spy ).toHaveBeenCalledWith( {
-					type: TERMS_RECEIVE,
-					siteId: siteId,
-					taxonomy: categoryTaxonomyName,
-					terms: [
-						{ ID: 11, name: 'chicken', slug: 'chicken', parent: 123 },
-						{ ID: 123, name: 'ribs', description: '' },
-					],
-					query: undefined,
-					found: undefined,
-				} );
-				expect( spy ).toHaveBeenCalledWith( {
-					type: POST_EDIT,
-					siteId: siteId,
-					postId: 120,
-					post: {
-						terms: {
-							[ categoryTaxonomyName ]: [ { ID: 123, name: 'ribs', description: '' } ],
-						},
+			);
+
+			expect( spy ).toHaveBeenCalledWith( {
+				type: TERM_REMOVE,
+				siteId: siteId,
+				taxonomy: categoryTaxonomyName,
+				termId: 10,
+			} );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: TERMS_RECEIVE,
+				siteId: siteId,
+				taxonomy: categoryTaxonomyName,
+				terms: [
+					{ ID: 11, name: 'chicken', slug: 'chicken', parent: 123 },
+					{ ID: 123, name: 'ribs', description: '' },
+				],
+				query: undefined,
+				found: undefined,
+			} );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: POST_EDIT,
+				siteId: siteId,
+				postId: 120,
+				post: {
+					terms: {
+						[ categoryTaxonomyName ]: [ { ID: 123, name: 'ribs', description: '' } ],
 					},
-				} );
-				expect( spy ).toHaveBeenCalledWith( {
-					type: SITE_SETTINGS_UPDATE,
-					siteId: siteId,
-					settings: {
-						default_category: 123,
-					},
-				} );
+				},
+			} );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: SITE_SETTINGS_UPDATE,
+				siteId: siteId,
+				settings: {
+					default_category: 123,
+				},
 			} );
 		} );
 
-		test( 'should not dispatch SITE_SETTINGS_UPDATE on Success if the taxonomy is not equal to "category"', () => {
+		test( 'should not dispatch SITE_SETTINGS_UPDATE on Success if the taxonomy is not equal to "category"', async () => {
 			const state = {
 				posts: { queries: {} },
 				siteSettings: {
@@ -398,22 +399,19 @@ describe( 'actions', () => {
 			const getState = () => state;
 
 			const spy = jest.fn();
-			return updateTerm( siteId, taxonomyName, 10, 'rib', { name: 'ribs' } )( spy, getState ).then(
-				() => {
-					expect( spy ).not.toHaveBeenCalledWith( {
-						type: SITE_SETTINGS_UPDATE,
-						siteId: siteId,
-						settings: {
-							default_category: 123,
-						},
-					} );
-				}
-			);
+			await updateTerm( siteId, taxonomyName, 10, 'rib', { name: 'ribs' } )( spy, getState );
+			expect( spy ).not.toHaveBeenCalledWith( {
+				type: SITE_SETTINGS_UPDATE,
+				siteId: siteId,
+				settings: {
+					default_category: 123,
+				},
+			} );
 		} );
 	} );
 
 	describe( 'deleteTerm()', () => {
-		useNock( ( nock ) => {
+		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/wp/v2/sites/${ siteId }/taxonomies/${ taxonomyName }/` )
@@ -424,7 +422,11 @@ describe( 'actions', () => {
 				.reply( 200, { status: 'ok' } );
 		} );
 
-		test( 'should dispatch a TERMS_RECEIVE, TERM_REMOVE and POST_EDIT on Success', () => {
+		afterAll( () => {
+			nock.cleanAll();
+		} );
+
+		test( 'should dispatch a TERMS_RECEIVE, TERM_REMOVE and POST_EDIT on Success', async () => {
 			const postObjects = {
 				[ siteId ]: {
 					'0fcb4eb16f493c19b627438fdc18d57c': {
@@ -464,46 +466,41 @@ describe( 'actions', () => {
 			const getState = () => state;
 
 			const spy = jest.fn();
-			return deleteTerm(
-				siteId,
-				taxonomyName,
-				10,
-				'ribs'
-			)( spy, getState ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: TERMS_RECEIVE,
-					siteId: siteId,
-					taxonomy: taxonomyName,
-					terms: [ { ID: 15, name: 'chicken ribs', slug: 'chicken-ribs', parent: 5 } ],
-					query: undefined,
-					found: undefined,
-				} );
-				expect( spy ).toHaveBeenCalledWith( {
-					type: POST_EDIT,
-					siteId: siteId,
-					postId: 120,
-					post: {
-						terms: {
-							[ taxonomyName ]: [],
-						},
+			await deleteTerm( siteId, taxonomyName, 10, 'ribs' )( spy, getState );
+
+			expect( spy ).toHaveBeenCalledWith( {
+				type: TERMS_RECEIVE,
+				siteId: siteId,
+				taxonomy: taxonomyName,
+				terms: [ { ID: 15, name: 'chicken ribs', slug: 'chicken-ribs', parent: 5 } ],
+				query: undefined,
+				found: undefined,
+			} );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: POST_EDIT,
+				siteId: siteId,
+				postId: 120,
+				post: {
+					terms: {
+						[ taxonomyName ]: [],
 					},
-				} );
-				expect( spy ).toHaveBeenCalledWith( {
-					type: TERM_REMOVE,
-					siteId: siteId,
-					taxonomy: taxonomyName,
-					termId: 10,
-				} );
-				expect( spy ).not.toHaveBeenCalledWith( {
-					type: TERMS_RECEIVE,
-					siteId: siteId,
-					taxonomy: taxonomyName,
-					terms: [],
-				} );
+				},
+			} );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: TERM_REMOVE,
+				siteId: siteId,
+				taxonomy: taxonomyName,
+				termId: 10,
+			} );
+			expect( spy ).not.toHaveBeenCalledWith( {
+				type: TERMS_RECEIVE,
+				siteId: siteId,
+				taxonomy: taxonomyName,
+				terms: [],
 			} );
 		} );
 
-		test( 'should dispatch a TERMS_RECEIVE for default category on Success', () => {
+		test( 'should dispatch a TERMS_RECEIVE for default category on Success', async () => {
 			const state = {
 				posts: {
 					queries: {
@@ -534,30 +531,25 @@ describe( 'actions', () => {
 			const getState = () => state;
 
 			const spy = jest.fn();
-			return deleteTerm(
-				siteId,
-				categoryTaxonomyName,
-				10,
-				'ribs'
-			)( spy, getState ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: TERMS_RECEIVE,
-					siteId: siteId,
-					taxonomy: categoryTaxonomyName,
-					terms: [ { ID: 5, name: 'chicken', slug: 'chicken', parent: 0, post_count: 12 } ],
-					query: undefined,
-					found: undefined,
-				} );
-				expect( spy ).toHaveBeenCalledWith( {
-					type: TERM_REMOVE,
-					siteId: siteId,
-					taxonomy: categoryTaxonomyName,
-					termId: 10,
-				} );
+			await deleteTerm( siteId, categoryTaxonomyName, 10, 'ribs' )( spy, getState );
+
+			expect( spy ).toHaveBeenCalledWith( {
+				type: TERMS_RECEIVE,
+				siteId: siteId,
+				taxonomy: categoryTaxonomyName,
+				terms: [ { ID: 5, name: 'chicken', slug: 'chicken', parent: 0, post_count: 12 } ],
+				query: undefined,
+				found: undefined,
+			} );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: TERM_REMOVE,
+				siteId: siteId,
+				taxonomy: categoryTaxonomyName,
+				termId: 10,
 			} );
 		} );
 
-		test( 'should not dispatch a TERMS_RECEIVE for default category when prior category had no post_count', () => {
+		test( 'should not dispatch a TERMS_RECEIVE for default category when prior category had no post_count', async () => {
 			const state = {
 				posts: {
 					queries: {
@@ -588,34 +580,32 @@ describe( 'actions', () => {
 			const getState = () => state;
 
 			const spy = jest.fn();
-			return deleteTerm(
-				siteId,
-				categoryTaxonomyName,
-				10,
-				'ribs'
-			)( spy, getState ).then( () => {
-				expect( spy ).not.toHaveBeenCalledWith( {
-					type: TERMS_RECEIVE,
-					siteId: siteId,
-					taxonomy: categoryTaxonomyName,
-					terms: [ { ID: 5, name: 'chicken', slug: 'chicken', parent: 0, post_count: 10 } ],
-					query: undefined,
-					found: undefined,
-				} );
-				expect( spy ).toHaveBeenCalledWith( {
-					type: TERM_REMOVE,
-					siteId: siteId,
-					taxonomy: categoryTaxonomyName,
-					termId: 10,
-				} );
+			await deleteTerm( siteId, categoryTaxonomyName, 10, 'ribs' )( spy, getState );
+
+			expect( spy ).not.toHaveBeenCalledWith( {
+				type: TERMS_RECEIVE,
+				siteId: siteId,
+				taxonomy: categoryTaxonomyName,
+				terms: [ { ID: 5, name: 'chicken', slug: 'chicken', parent: 0, post_count: 10 } ],
+				query: undefined,
+				found: undefined,
+			} );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: TERM_REMOVE,
+				siteId: siteId,
+				taxonomy: categoryTaxonomyName,
+				termId: 10,
 			} );
 		} );
 
-		test( 'should not dispatch any action on Failure', () => {
+		test( 'should not dispatch any action on Failure', async () => {
 			const spy = jest.fn();
-			return updateTerm( siteId, taxonomyName, 10, 'toto', { name: 'ribs' } )( spy ).catch( () => {
-				expect( spy ).not.toHaveBeenCalled();
-			} );
+
+			await expect(
+				updateTerm( siteId, taxonomyName, 10, 'toto', { name: 'ribs' } )( spy )
+			).rejects.toThrow();
+
+			expect( spy ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

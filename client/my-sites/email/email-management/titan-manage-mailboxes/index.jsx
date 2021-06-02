@@ -103,7 +103,7 @@ class TitanManageMailboxes extends Component {
 				{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 
 				<Main wideLayout={ true }>
-					<DocumentHead title={ translate( 'Manage all mailboxes' ) } />
+					<DocumentHead title={ translate( 'Manage All Mailboxes' ) } />
 
 					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
