@@ -5,21 +5,6 @@ import phrase from 'asana-phrase';
 import config from 'config';
 
 /**
- *
- */
-declare global {
-	interface String {
-		toProperCase(): string;
-	}
-}
-
-String.prototype.toProperCase = function (): string {
-	return this.replace( /\w\S*/g, function ( txt ) {
-		return txt.charAt( 0 ).toUpperCase() + txt.substr( 1 ).toLowerCase();
-	} );
-};
-
-/**
  * Assembles and returns the URL to a specific route/asset/query in Calypso.
  *
  * @param {string} route Additional state or page to build into the returned URL.
@@ -67,11 +52,25 @@ export function getJetpackHost(): string {
 }
 
 /**
+ * Given an array of strings, returns a single string with each word in TitleCase.
+ *
+ * @param {string[]} words Array of strings to be converted to TitleCase.
+ * @returns {string} Array of strings converted to TitleCase.
+ */
+export function toTitleCase( words: string[] ): string {
+	const result = words.map( function ( word ) {
+		return word.charAt( 0 ).toUpperCase() + word.slice( 1 ).toLowerCase();
+	} );
+
+	return result.join( ' ' );
+}
+
+/**
  * Generates a random phrase in proper case (Sample Sentence Text).
  *
  * @returns {string} Generated text.
  */
 export function randomPhrase(): string {
-	const gen: Array< string > = phrase.default32BitFactory().randomPhrase();
-	return `${ gen[ 1 ].toProperCase() } ${ gen[ 2 ].toProperCase() } ${ gen[ 3 ].toProperCase() } ${ gen[ 4 ].toProperCase() }`;
+	const generated: Array< string > = phrase.default32BitFactory().randomPhrase();
+	return toTitleCase( generated );
 }
