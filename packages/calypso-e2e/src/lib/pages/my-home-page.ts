@@ -17,8 +17,4 @@ export class MyHomePage extends BaseContainer {
 	constructor( page: Page ) {
 		super( page, selectors.dashboard );
 	}
-
-	// async _postInit(): Promise< void > {
-	// 	await this.page.waitForSelector( selectors.statsCard );
-	// }
 }
