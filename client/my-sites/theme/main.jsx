@@ -218,7 +218,7 @@ class ThemeSheet extends React.Component {
 		}
 		event.preventDefault();
 
-		this.props.recordTracksEvent( `calypso_theme_live_demo_${ type }_preview` );
+		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview', { type } );
 
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions( this.props.defaultOption, this.props.secondaryOption );
