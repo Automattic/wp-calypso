@@ -16,6 +16,7 @@ import useVatDetails from './use-vat-details';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormSelect from 'calypso/components/forms/form-select';
 import type { VatDetails, UpdateError } from './use-vat-details';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 
@@ -62,7 +63,7 @@ export default function VatInfoPage(): JSX.Element {
 				<CompactCard>
 					<FormFieldset className="vat-info__country-field">
 						<FormLabel htmlFor="country">{ translate( 'Country' ) }</FormLabel>
-						<FormTextInput
+						<CountryCodeInput
 							name="country"
 							disabled={ isUpdating }
 							value={ currentVatDetails.country ?? vatDetails.country ?? '' }
@@ -123,6 +124,69 @@ export default function VatInfoPage(): JSX.Element {
 				</Card>
 			</Column>
 		</Layout>
+	);
+}
+
+function CountryCodeInput( {
+	name,
+	disabled,
+	value,
+	onChange,
+}: {
+	name: string;
+	disabled?: boolean;
+	value: string;
+	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
+} ) {
+	const countries = [
+		'AT',
+		'BE',
+		'BG',
+		'CY',
+		'CZ',
+		'DE',
+		'DK',
+		'EE',
+		'EL',
+		'ES',
+		'FI',
+		'FR',
+		'HR',
+		'HU',
+		'IE',
+		'IT',
+		'LT',
+		'LU',
+		'LV',
+		'MT',
+		'NL',
+		'PL',
+		'PT',
+		'RO',
+		'SE',
+		'SI',
+		'SK',
+		'UK',
+		'XI',
+	];
+
+	return (
+		<FormSelect
+			name={ name }
+			disabled={ disabled }
+			value={ value }
+			onChange={ onChange }
+			className="vat-info__country-select"
+		>
+			<option value="">--</option>
+			{ countries.map( ( countryCode ) => {
+				return (
+					<option key={ countryCode } value={ countryCode }>
+						{ countryCode }
+					</option>
+				);
+			} ) }
+		</FormSelect>
 	);
 }
 
