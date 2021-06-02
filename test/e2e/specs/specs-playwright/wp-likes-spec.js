@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
 import config from 'config';
 import {
 	BrowserHelper,
@@ -42,14 +41,10 @@ describe( `[${ host }] Likes: (${ viewportName }) @parallel`, function () {
 			gutenbergEditorPage = await GutenbergEditorPage.Expect( this.page );
 			const title = DataHelper.randomPhrase();
 			await gutenbergEditorPage.enterTitle( title );
-			const enteredTitle = await gutenbergEditorPage.getTitle();
-			assert( title === enteredTitle );
 		} );
 
 		it( 'Enter post text', async function () {
 			await gutenbergEditorPage.enterText( quote );
-			const enteredText = await gutenbergEditorPage.getText();
-			assert( quote === enteredText );
 		} );
 
 		it( 'Publish and visit post', async function () {

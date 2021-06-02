@@ -1,12 +1,17 @@
 /**
+ * External dependencies
+ */
+import assert from 'assert';
+
+/**
  * Internal dependencies
  */
+import { BaseContainer } from '../base-container';
 
 /**
  * Type dependencies
  */
 import { ElementHandle, Frame, Page } from 'playwright';
-import { BaseContainer } from '../base-container';
 
 const selectors = {
 	// Editor selectors.
@@ -60,12 +65,26 @@ export class GutenbergEditorPage extends BaseContainer {
 	}
 
 	/**
-	 * Enters text into the title block.
+	 * Enters the text into the title block and verifies the result.
+	 *
+	 * @param {string} title Text to be used as the title.
+	 * @returns {Promise<void>} No return value.
+	 * @throws {assert.AssertionError} If text entered and text read back do not match.
+	 */
+	async enterTitle( title: string ): Promise< void > {
+		const sanitizedTitle = title.trim();
+		await this.setTitle( sanitizedTitle );
+		const readBack = await this.getTitle();
+		assert( readBack === sanitizedTitle );
+	}
+
+	/**
+	 * Fills the title block with text.
 	 *
 	 * @param {string} title Text to be used as the title.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async enterTitle( title: string ): Promise< void > {
+	async setTitle( title: string ): Promise< void > {
 		await this.frame.click( selectors.editorTitle );
 		await this.frame.fill( selectors.editorTitle, title );
 	}
@@ -82,12 +101,25 @@ export class GutenbergEditorPage extends BaseContainer {
 	}
 
 	/**
+	 * Enters text into the paragraph block(s) and verifies the result.
+	 *
+	 * @param {string} text Text to be entered into the paragraph blocks, separated by newline characters.
+	 * @returns {Promise<void>} No return value.
+	 * @throws {assert.AssertionError} If text entered and text read back do not match.
+	 */
+	async enterText( text: string ): Promise< void > {
+		await this.setText( text );
+		const readBack = await this.getText();
+		assert( readBack === text );
+	}
+
+	/**
 	 * Enters text into the body, splitting newlines into new pragraph blocks as necessary.
 	 *
 	 * @param {string} text Text to be entered into the body.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async enterText( text: string ): Promise< void > {
+	async setText( text: string ): Promise< void > {
 		const lines = text.split( '\n' );
 		await this.frame.click( selectors.blockAppender );
 
