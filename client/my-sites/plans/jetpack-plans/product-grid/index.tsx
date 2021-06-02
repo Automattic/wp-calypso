@@ -20,8 +20,8 @@ import useGetPlansGridProducts from '../use-get-plans-grid-products';
 import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
-	PLAN_JETPACK_SECURITY_DAILY,
-	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 } from '@automattic/calypso-products';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -189,8 +189,8 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 								selectedTerm={ duration }
 								isAligned={ ! isPlanRowWrapping }
 								featuredPlans={ [
-									PLAN_JETPACK_SECURITY_DAILY,
-									PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+									PLAN_JETPACK_SECURITY_REALTIME,
+									PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 								] }
 								scrollCardIntoView={ scrollCardIntoView }
 							/>

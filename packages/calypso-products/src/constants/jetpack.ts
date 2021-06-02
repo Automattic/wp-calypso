@@ -130,6 +130,11 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
 	},
 };
 
+export const JETPACK_PRODUCTS_DAILY = [
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+];
+
 // Plans
 export const PLAN_JETPACK_FREE = 'jetpack_free';
 export const PLAN_JETPACK_PERSONAL = 'jetpack_personal';
@@ -214,6 +219,11 @@ export const JETPACK_PLANS_BY_TERM = <const>[
 	...JETPACK_RESET_PLANS_BY_TERM,
 ];
 export const BEST_VALUE_PLANS = <const>[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
+
+export const JETPACK_PLANS_DAILY = [
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+];
 
 // URL
 export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';

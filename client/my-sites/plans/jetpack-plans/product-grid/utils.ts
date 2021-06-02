@@ -2,6 +2,8 @@
  * Internal dependencies
  */
 import {
+	JETPACK_PLANS_DAILY,
+	JETPACK_PRODUCTS_DAILY,
 	JETPACK_RESET_PLANS,
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
@@ -34,7 +36,8 @@ export const getPlansToDisplay = ( {
 				product.term === duration &&
 				// Don't include a plan the user already owns, regardless of the term
 				! currentPlanTerms.includes( product.productSlug )
-		);
+		)
+		.filter( ( plan ) => ! JETPACK_PLANS_DAILY.includes( plan.productSlug ) );
 	if ( currentPlanSlug && JETPACK_RESET_PLANS.includes( currentPlanSlug ) ) {
 		const currentPlanSelectorProduct = slugToSelectorProduct( currentPlanSlug );
 		if ( currentPlanSelectorProduct ) {
@@ -76,7 +79,8 @@ export const getProductsToDisplay = ( {
 			}
 
 			return true;
-		} );
+		} )
+		.filter( ( product ) => ! JETPACK_PRODUCTS_DAILY.includes( product.productSlug ) );
 	return (
 		[ ...purchasedProducts, ...filteredProducts ]
 			// Make sure we don't allow any null or invalid products
