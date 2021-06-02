@@ -114,8 +114,6 @@ export {
 	createEpsMethod,
 	createEpsPaymentMethodStore,
 	createExistingCardMethod,
-	createGiropayMethod,
-	createGiropayPaymentMethodStore,
 	createIdealMethod,
 	createIdealPaymentMethodStore,
 	createP24Method,
