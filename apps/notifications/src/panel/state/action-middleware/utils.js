@@ -1,28 +1,36 @@
 /**
- * External dependencies
+ * @typedef {Object.<string, Array.<Function>>} ActionHandler
+ * 		An object that maps action types to arrays of handler methods.
  */
-import { mergeWith } from 'lodash';
 
 /**
- * Merge handler for lodash.mergeWith
+ * Combines an array of action types and handler methods into one larger object,
+ * containing one key for each action type and an associated array that
+ * contains all that type's handler methods.
  *
- * Note that a return value of `undefined`
- * indicates to lodash that it should use
- * its normal merge algorithm.
- *
- * In this case, we want to merge keys if
- * they don't exists but when they do, we
- * prefer to concatenate lists instead of
- * overwriting them.
- *
- * @param {?Array<Function>} left existing handlers
- * @param {Array<Function>} right new handlers to add
- * @returns {Array<Function>} combined handlers
+ * @param  {Array.<ActionHandler>} handlers An array of ActionHandlers.
+ * @returns {ActionHandler} A combined representation of the inputs in one object.
  */
-const concatHandlers = ( left, right ) =>
-	Array.isArray( left ) ? left.concat( right ) : undefined;
+export const mergeHandlers = ( ...handlers ) => {
+	if ( handlers.length === 1 ) {
+		return handlers[ 0 ];
+	}
 
-export const mergeHandlers = ( ...handlers ) =>
-	handlers.length > 1
-		? mergeWith( Object.create( null ), ...handlers, concatHandlers )
-		: handlers[ 0 ];
+	// For every handler passed in,
+	return handlers.reduce( ( merged, nextHandler ) => {
+		// get each of its action types and methods;
+		Object.entries( nextHandler ).forEach( ( [ key, vals ] ) => {
+			// if the current key doesn't exist in the reduced object,
+			// initialize it to an empty array
+			if ( ! ( key in merged ) ) {
+				merged[ key ] = [];
+			}
+
+			// ... and add all those methods to that action type's key
+			// in the reduced object
+			merged[ key ].push( ...vals );
+		} );
+
+		return merged;
+	}, {} );
+};
