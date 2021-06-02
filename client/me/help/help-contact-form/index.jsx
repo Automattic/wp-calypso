@@ -143,7 +143,7 @@ export class HelpContactForm extends React.PureComponent {
 		subject: '',
 		sibylClicked: false,
 		userDeclaresNoSite: false,
-		userDeclaresUnableToSeeSite: this.props.hasNoSites,
+		userDeclaresUnableToSeeSite: this.props.siteCount === 0,
 		userDeclaredUrl: '',
 		userRequestsHidingUrl: false,
 		qanda: [],
@@ -449,7 +449,7 @@ export class HelpContactForm extends React.PureComponent {
 			additionalSupportOption,
 			formDescription,
 			buttonLabel,
-			hasNoSites,
+			siteCount,
 			showAlternativeSiteOptionsField,
 			showHowCanWeHelpField,
 			showHowYouFeelField,
@@ -491,6 +491,8 @@ export class HelpContactForm extends React.PureComponent {
 
 		const analyseSiteData = this.analyseSiteData();
 		const siteData = this.state.userDeclaredUrl && this.state.siteData;
+
+		const hasNoSites = siteCount === 0;
 
 		let noticeMessage;
 		let actionLink;
@@ -570,7 +572,11 @@ export class HelpContactForm extends React.PureComponent {
 					<div className="help-contact-form__site-selection">
 						{ ! hasNoSites && (
 							<>
-								<FormLabel>{ translate( 'Which site do you need help with?' ) }</FormLabel>
+								<FormLabel>
+									{ siteCount === 1
+										? translate( 'Is this the site which you need help with?' )
+										: translate( 'Which site do you need help with?' ) }
+								</FormLabel>
 								<SitesDropdown
 									selectedSiteId={ this.props.helpSiteId }
 									onSiteSelect={ this.props.onChangeSite }
@@ -594,7 +600,7 @@ export class HelpContactForm extends React.PureComponent {
 									</FormLabel>
 								) }
 
-								{ showAlternativeSiteOptionsField && hasNoSites && (
+								{ hasNoSites && (
 									<FormLabel>
 										<FormCheckbox
 											onChange={ () => {
@@ -727,7 +733,7 @@ export class HelpContactForm extends React.PureComponent {
 
 const mapStateToProps = ( state ) => ( {
 	currentUserLocale: getCurrentUserLocale( state ),
-	hasNoSites: getCurrentUserSiteCount( state ) === 0,
+	siteCount: getCurrentUserSiteCount( state ),
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
 	showingQandAStep: isShowingQandAInlineHelpContactForm( state ),
