@@ -14,9 +14,7 @@ import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
-import config from '@automattic/calypso-config';
 import { isPartnerPurchase } from 'calypso/lib/purchases';
-import JetpackReferrerMessage from './jetpack-referrer-message';
 import { connectOptions } from './theme-options';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import {
@@ -55,8 +53,6 @@ const ConnectedThemesSelection = connectOptions( ( props ) => {
 
 const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	const {
-		analyticsPath,
-		analyticsPageTitle,
 		currentPlan,
 		emptyContent,
 		filter,
@@ -72,17 +68,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 		requestingSitePlans,
 		siteSlug,
 	} = props;
-	const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
-
-	if ( ! jetpackEnabled ) {
-		return (
-			<JetpackReferrerMessage
-				siteId={ siteId }
-				analyticsPath={ analyticsPath }
-				analyticsPageTitle={ analyticsPageTitle }
-			/>
-		);
-	}
 
 	const isPartnerPlan = purchase && isPartnerPurchase( purchase );
 

@@ -61,11 +61,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const currentPlanSlug = currentPlan?.product_slug || null;
-	const currentPlanTranslatedName =
-		currentPlan && currentPlan.product_name_short
-			? // eslint-disable-next-line wpcalypso/i18n-no-variables
-			  translate( currentPlan.product_name_short )
-			: null;
 
 	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
 		siteId
@@ -73,12 +68,34 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 
 	const isInConnectFlow = useMemo( isConnectionFlow, [] );
 	const isInJetpackCloud = useMemo( isJetpackCloud, [] );
+	// Retrieve and cache the plans array, which might be already translated.
+	const untranslatedSortedPlans = useMemo(
+		() =>
+			sortBy( getPlansToDisplay( { duration, currentPlanSlug } ), ( item ) =>
+				getProductPosition( item.productSlug as JetpackPlanSlug )
+			),
+		[ duration, currentPlanSlug ]
+	);
+	// Get the first plan description and pass it through `translate` so that
+	// if it wasn't translated at the start the cache key for sortedPlans
+	// would change once translation becomes available, but if it was translated
+	// from the start the call to `translate` won't have any effect on it.
+	const translatedFirstPlanDescription = untranslatedSortedPlans?.[ 0 ]?.description
+		? // eslint-disable-next-line wpcalypso/i18n-no-variables
+		  translate( untranslatedSortedPlans[ 0 ].description )
+		: null;
+	const translatedFirstPlanFirstFeature = untranslatedSortedPlans?.[ 0 ]?.features?.items?.[ 0 ]
+		?.text
+		? // eslint-disable-next-line wpcalypso/i18n-no-variables
+		  translate( untranslatedSortedPlans[ 0 ].features.items[ 0 ].text )
+		: null;
+
 	const sortedPlans = useMemo(
 		() =>
 			sortBy( getPlansToDisplay( { duration, currentPlanSlug } ), ( item ) =>
 				getProductPosition( item.productSlug as JetpackPlanSlug )
 			),
-		[ duration, currentPlanSlug, currentPlanTranslatedName ]
+		[ duration, currentPlanSlug, translatedFirstPlanDescription, translatedFirstPlanFirstFeature ]
 	);
 	const sortedProducts = useMemo(
 		() =>

@@ -30,20 +30,24 @@ export default class AboutPage extends AsyncBaseContainer {
 		await driverHelper.setWhenSettable( this.driver, By.css( '#siteTopic' ), siteTopic );
 		await driverHelper.setWhenSettable( this.driver, By.css( '#siteTitle' ), siteTitle );
 
+		async function setOption( optionSelector ) {
+			await driverHelper.setCheckbox( this.driver, By.css( optionSelector ) );
+		}
+
 		if ( showcase === true ) {
-			await driverHelper.setCheckbox( this.driver, By.css( '#showcase' ) );
+			await setOption( '#showcase' );
 		}
 		if ( share === true ) {
-			await driverHelper.setCheckbox( this.driver, By.css( '#share' ) );
+			await setOption( '#share' );
 		}
 		if ( sell === true ) {
-			await driverHelper.setCheckbox( this.driver, By.css( '#sell' ) );
+			await setOption( '#sell' );
 		}
 		if ( educate === true ) {
-			await driverHelper.setCheckbox( this.driver, By.css( '#educate' ) );
+			await setOption( '#educate' );
 		}
 		if ( promote === true ) {
-			await driverHelper.setCheckbox( this.driver, By.css( '#promote' ) );
+			await setOption( '#promote' );
 		}
 	}
 }

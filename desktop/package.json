@@ -25,7 +25,7 @@
 		"ci:build-mac": "yarn run build:main && node bin/build-mac-ci",
 		"build": "yarn run build:main && ELECTRON_BUILDER_ARGS=${ELECTRON_BUILDER_ARGS} yarn run build:app",
 		"build:app": "yarn electron-builder ${ELECTRON_BUILDER_ARGS} build --publish never",
-		"build:main": "webpack --display errors-only",
+		"build:main": "webpack --stats-preset errors-only",
 		"build:config": "node bin/build-desktop-config.js",
 		"build:secrets": "node bin/build-desktop-secrets.js",
 		"ci:github:add-review": "node bin/github/add-review.js",
@@ -50,8 +50,8 @@
 		"mocha-steps": "1.3.0",
 		"ncp": "^2.0.0",
 		"selenium-webdriver": "4.0.0-alpha.1",
-		"webpack": "^4.44.2",
-		"webpack-cli": "^3.3.12"
+		"webpack": "^5.36.2",
+		"webpack-cli": "^4.6.0"
 	},
 	"dependencies": {
 		"archiver": "^3.1.1",

@@ -29,7 +29,7 @@ interface Event {
 	data?: Record< string, unknown >;
 }
 
-export = class DebugReporter extends Mocha.reporters.Base {
+export default class DebugReporter extends Mocha.reporters.Base {
 	events: Event[];
 	reporterOptions?: Record< string, unknown >;
 
@@ -91,4 +91,4 @@ export = class DebugReporter extends Mocha.reporters.Base {
 		};
 		this.events.push( event );
 	}
-};
+}

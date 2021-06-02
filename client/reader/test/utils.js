@@ -13,7 +13,6 @@ import page from 'page';
  */
 import { showSelectedPost } from '../utils';
 
-jest.mock( 'calypso/lib/user', () => () => {} );
 jest.mock( 'page', () => ( {
 	show: require( 'sinon' ).spy(),
 } ) );

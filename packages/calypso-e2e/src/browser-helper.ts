@@ -1,55 +1,58 @@
 /**
+ * External dependencies
+ */
+import config from 'config';
+
+/**
  * Internal dependencies
  */
-import type { screenSize, localeCode } from './types';
+import type { viewportName, localeCode, viewportSize } from './types';
 
 /**
  * Returns the target screen size for tests to run against.
  *
- * By default, this function will return 'desktop' as the target.
- * To specify another screen size, set the BROWSERSIZE environment variable.
+ * If the environment variable BROWSERSIZE is set, this will override all configuration
+ * values. Otherwise, the default path contained in the configuration file is returned.
  *
- * @returns {screenSize} Target screen size.
+ * @returns {viewportName} Target screen size.
  */
-export function getTargetScreenSize(): screenSize {
-	return ! process.env.BROWSERSIZE
-		? 'desktop'
-		: ( process.env.BROWSERSIZE.toLowerCase() as screenSize );
+export function getViewportName(): viewportName {
+	return (
+		process.env.VIEWPORT_NAME || config.get( 'viewportName' )!
+	).toLowerCase() as viewportName;
 }
 
 /**
  * Returns the locale under test.
  *
- * By default, this function will return 'en' as the locale.
- * To set the locale, set the BROWSERLOCALE environment variable.
+ * If the environment variable BROWSERLOCALE is set, this will override all configuration
+ * values. Otherwise, the default path contained in the configuration file is returned.
  *
  * @returns {localeCode} Target locale code.
  */
-export function getTargetLocale(): localeCode {
-	return ! process.env.BROWSERLOCALE ? 'en' : process.env.BROWSERLOCALE.toLowerCase();
+export function getLocale(): localeCode {
+	return ( process.env.LOCALE || config.get( 'locale' )! ).toLowerCase() as localeCode;
 }
 
 /**
  * Returns a set of screen dimensions in numbers.
  *
- * This function takes the output of `getTargetScreenSize` and returns an
+ * This function takes the output of `getViewportName` and returns an
  * object key/value mapping of the screen diemensions represented by
  * the output.
  *
- * @returns {number, number} Object with key/value mapping of screen dimensions.
+ * @param {viewportName} [target] Target display size to use, overriding defaults.
+ * @returns {viewportSize} Object with key/value mapping of screen dimensions.
  * @throws {Error} If target screen size was not set.
  */
-export function getScreenDimension(): { width: number; height: number } {
-	switch ( getTargetScreenSize() ) {
-		case 'mobile':
-			return { width: 400, height: 1000 };
-		case 'tablet':
-			return { width: 1024, height: 1000 };
-		case 'desktop':
-			return { width: 1440, height: 1000 };
-		case 'laptop':
-			return { width: 1400, height: 790 };
-		default:
-			throw new Error( 'Unsupported screen size specified.' );
+export function getViewportSize( target?: viewportName ): viewportSize {
+	if ( ! target ) {
+		target = getViewportName();
 	}
+
+	const sizes: { [ key: string ]: viewportSize } = config.get( 'viewportSize' );
+	if ( ! Object.keys( sizes ).includes( target ) ) {
+		throw new Error( `Unsupported viewport: ${ target }` );
+	}
+	return sizes[ target ];
 }

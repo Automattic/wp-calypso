@@ -30,10 +30,6 @@ import {
 import { CheckoutThankYou } from '../index';
 import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
 jest.unmock( '@automattic/calypso-products' );
 jest.mock( '@automattic/calypso-products', () => ( {
 	...jest.requireActual( '@automattic/calypso-products' ),
@@ -55,9 +51,6 @@ jest.mock( 'calypso/components/happiness-support', () => 'HappinessSupport' );
 jest.mock( 'calypso/lib/rebrand-cities', () => ( {
 	isRebrandCitiesSiteUrl: jest.fn( () => false ),
 } ) );
-
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'calypso/lib/user', () => () => {} );
 
 const translate = ( x ) => x;
 

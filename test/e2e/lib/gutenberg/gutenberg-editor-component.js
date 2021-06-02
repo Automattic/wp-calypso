@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import webdriver, { By, until } from 'selenium-webdriver';
+import webdriver, { By } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
 
 /**
@@ -49,12 +49,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			return;
 		}
 		await this.driver.switchTo().defaultContent();
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.editoriFrameLocator );
-		await this.driver.wait(
-			until.ableToSwitchToFrame( this.editoriFrameLocator ),
-			this.explicitWaitMS,
-			'Could not locate the editor iFrame.'
-		);
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.editoriFrameLocator );
 	}
 
 	async initEditor( { dismissPageTemplateLocator = false } = {} ) {
@@ -109,7 +104,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async enterTitle( title ) {
 		const titleLocator = By.css( '.editor-post-title__input' );
-		return driverHelper.setWhenSettable( this.driver, titleLocator, title );
+		return await driverHelper.setWhenSettable( this.driver, titleLocator, title );
 	}
 
 	async getTitle() {
@@ -220,22 +215,15 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await this.exitCodeEditor();
 	}
 
-	blockDisplayedInEditor( dataTypeLocatorVal ) {
-		return driverHelper.isElementEventuallyLocatedAndVisible(
+	async blockDisplayedInEditor( dataTypeLocatorVal ) {
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
 			By.css( `[data-type="${ dataTypeLocatorVal }"]` )
 		);
 	}
 
-	contactFormDisplayedInEditor() {
-		return this.blockDisplayedInEditor( 'jetpack/contact-form' );
-	}
-
-	async errorDisplayed() {
-		return driverHelper.isElementEventuallyLocatedAndVisible(
-			this.driver,
-			By.css( '.editor-error-boundary' )
-		);
+	async contactFormDisplayedInEditor() {
+		return await this.blockDisplayedInEditor( 'jetpack/contact-form' );
 	}
 
 	async hasInvalidBlocks() {
@@ -294,7 +282,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	 * @returns {string[]} Array of block titles (i.e ['Open Table', 'Paypal']);
 	 */
 	async getShownBlockInserterItems() {
-		return this.driver
+		return await this.driver
 			.findElements(
 				By.css(
 					'.edit-post-layout__inserter-panel .block-editor-block-types-list span.block-editor-block-types-list__item-title'
@@ -422,7 +410,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemLocator );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, insertedBlockLocator );
 
-		return this.driver.findElement( insertedBlockLocator ).getAttribute( 'id' );
+		return await this.driver.findElement( insertedBlockLocator ).getAttribute( 'id' );
 	}
 
 	/**
@@ -467,7 +455,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async removeBlock( blockID ) {
 		const blockLocator = By.css( `.wp-block[id="${ blockID }"]` );
-		await driverHelper.isElementEventuallyLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			blockLocator,
 			this.explicitWaitMS / 5
@@ -477,7 +465,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.block-editor-block-settings-menu' )
 		);
-		await driverHelper.isElementEventuallyLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.components-menu-group' ),
 			this.explicitWaitMS / 5
@@ -593,18 +581,18 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async schedulePost( publishDate ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonLocator );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.publishHeaderLocator );
-		await driverHelper.waitUntilElementWithTextLocated(
-			this.driver,
+		const publishDateLocator = driverHelper.createTextLocator(
 			By.css( '.editor-post-publish-panel__link' ),
 			publishDate
 		);
+		await driverHelper.waitUntilElementLocated( this.driver, publishDateLocator );
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonLocator );
 		await driverHelper.waitUntilElementNotLocated( this.driver, this.publishingSpinnerLocator );
-		await driverHelper.waitUntilElementWithTextLocated(
-			this.driver,
+		const scheduleDateLocator = driverHelper.createTextLocator(
 			By.css( '.post-publish-panel__postpublish-header' ),
 			/scheduled/i
 		);
+		await driverHelper.waitUntilElementLocated( this.driver, scheduleDateLocator );
 	}
 
 	async closeScheduledPanel() {

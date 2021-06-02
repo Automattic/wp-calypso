@@ -10,53 +10,8 @@
 /**************************************************************************************************/
 
 export default {
-	pageBuilderMVP: {
-		datestamp: '20190419',
-		variations: {
-			control: 100,
-			test: 0,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	conciergeUpsellDial: {
-		//this test is used to dial down the upsell offer
-		datestamp: '20200910',
-		variations: {
-			offer: 75,
-			noOffer: 25,
-		},
-		defaultVariation: 'noOffer',
-		allowExistingUsers: true,
-	},
-	userlessCheckout: {
-		datestamp: '20210806',
-		variations: {
-			variantUserless: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: false,
-		countryCodeTargets: [ 'US', 'CA' ],
-	},
-	reskinSignupFlow: {
-		datestamp: '20300928',
-		variations: {
-			reskinned: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: false,
-	},
-	newUsersWithFreePlan: {
-		datestamp: '20210107',
-		variations: {
-			newOnboarding: 0,
-			control: 100,
-		},
-		localeTargets: 'any',
-		localeExceptions: [ 'en', 'es' ],
-		defaultVariation: 'control',
-		allowExistingUsers: false,
-	},
+	// ⚠️ The ExPlat team is monitoring additions to this object 😈
+	// Let us know if there is a use-case we have missed adding in ExPlat.
+	// If you are looking for the conciergeUpsellDial experiment it has been replaced with
+	// badNaiveClientSideRollout in `client/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url.ts`
 };

@@ -1,9 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { oldShowcaseUrl } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
 
@@ -20,10 +18,6 @@ export function getThemeHelpUrl( state, themeId, siteId ) {
 		return null;
 	}
 
-	let baseUrl = oldShowcaseUrl + themeId;
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		baseUrl = `/theme/${ themeId }/support`;
-	}
-
-	return baseUrl + ( siteId ? `/${ getSiteSlug( state, siteId ) }` : '' );
+	const sitePart = siteId ? `/${ getSiteSlug( state, siteId ) }` : '';
+	return `/theme/${ themeId }/support${ sitePart }`;
 }

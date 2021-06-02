@@ -24,8 +24,7 @@ import { getHttpData, requestHttpData } from 'calypso/state/data-layer/http-data
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-import { navigate } from 'calypso/state/ui/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
@@ -600,25 +599,18 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_all' ) ),
 	trackDismiss: ( { type, slug } ) =>
 		dispatch( recordTracksEvent( `calypso_activitylog_tasklist_dismiss_${ type }`, { slug } ) ),
-	goManagePlugins: ( siteSlug ) =>
-		dispatch(
-			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_tasklist_manage_plugins' ),
-				navigate( `/plugins/manage/${ siteSlug }` )
-			)
-		),
-	goToPage: ( slug, type, siteSlug ) =>
-		dispatch(
+	goManagePlugins: ( siteSlug ) => {
+		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_manage_plugins' ) );
+		page( `/plugins/manage/${ siteSlug }` );
+	},
+	goToPage: ( slug, type, siteSlug ) => {
+		const tracksEvent =
 			'plugin' === type
-				? withAnalytics(
-						recordTracksEvent( 'calypso_activitylog_tasklist_manage_single_plugin' ),
-						navigate( `/plugins/${ slug }/${ siteSlug }` )
-				  )
-				: withAnalytics(
-						recordTracksEvent( 'calypso_activitylog_tasklist_manage_single_theme' ),
-						navigate( `/theme/${ slug }/${ siteSlug }` )
-				  )
-		),
+				? 'calypso_activitylog_tasklist_manage_single_plugin'
+				: 'calypso_activitylog_tasklist_manage_single_theme';
+		dispatch( recordTracksEvent( tracksEvent ) );
+		page( `/plugins/${ slug }/${ siteSlug }` );
+	},
 } );
 
 export default WithItemsToUpdate(

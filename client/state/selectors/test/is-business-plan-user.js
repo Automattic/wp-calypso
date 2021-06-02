@@ -9,9 +9,6 @@ import deepFreeze from 'deep-freeze';
 import isBusinessPlanUser from 'calypso/state/selectors/is-business-plan-user';
 import { PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS } from '@automattic/calypso-products';
 
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'calypso/lib/user', () => () => {} );
-
 describe( 'isBusinessPlanUser()', () => {
 	test( 'should return true if any purchase is a business plan.', () => {
 		const state = deepFreeze( {

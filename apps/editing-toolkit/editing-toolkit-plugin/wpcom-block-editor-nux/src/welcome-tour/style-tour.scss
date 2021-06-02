@@ -1,7 +1,7 @@
-@import '~@wordpress/base-styles/colors';
-@import '~@wordpress/base-styles/mixins';
-@import '~@wordpress/base-styles/variables';
-@import '~@wordpress/base-styles/z-index';
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/z-index';
 
 $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: replace with standard color
 

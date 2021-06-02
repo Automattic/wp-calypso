@@ -24,20 +24,14 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async expandDrawerItem( itemName ) {
-		const locator = driverHelper.getElementByText(
+		const itemLocator = driverHelper.createTextLocator( By.css( '.sidebar__heading' ), itemName );
+		const itemElement = await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			By.css( '.sidebar__heading' ),
-			itemName
+			itemLocator
 		);
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
-		const itemElement = await this.driver.findElement( locator );
 		const isExpanded = await itemElement.getAttribute( 'aria-expanded' );
 		if ( isExpanded === 'false' ) {
-			await driverHelper.selectElementByText(
-				this.driver,
-				By.css( '.sidebar__heading' ),
-				itemName
-			);
+			await driverHelper.clickWhenClickable( this.driver, itemLocator );
 		}
 	}
 
@@ -76,7 +70,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		await this.expandDrawerItem( 'Feedback' );
 
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
-			return await this._scrollToAndClickMenuItem( 'Feedback' );
+			return await this._scrollToAndClickMenuItem( 'Form Responses' );
 		}
 	}
 
@@ -169,13 +163,6 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, this.storeLocator );
 	}
 
-	async storeOptionDisplayed() {
-		return await driverHelper.isElementEventuallyLocatedAndVisible(
-			this.driver,
-			this.storeLocator
-		);
-	}
-
 	async settingsOptionExists( click = false ) {
 		const isDisplayed = await driverHelper.isElementLocated(
 			this.driver,
@@ -197,7 +184,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	async _scrollToAndClickMenuItem( target, { clickButton = false } = {} ) {
 		const locator = SidebarComponent._getSidebarLocator( target, { getButton: clickButton } );
 
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
+		await driverHelper.scrollIntoView( this.driver, locator );
 		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 

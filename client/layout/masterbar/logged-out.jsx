@@ -59,7 +59,6 @@ class MasterbarLoggedOut extends React.Component {
 			// We may know the email from Jetpack connection details
 			emailAddress: isJetpack && get( currentQuery, 'user_email', false ),
 			isJetpack,
-			isNative: config.isEnabled( 'login/native-login-links' ),
 			locale: getLocaleSlug(),
 			redirectTo,
 		} );

@@ -28,6 +28,9 @@ export default class RevisionsModalComponent extends AsyncBaseContainer {
 		await this.driver.executeScript( 'arguments[0].click()', firstRevision );
 		await this.driver.executeScript( 'arguments[0].click()', loadButton );
 
-		return driverHelper.waitUntilElementNotLocated( this.driver, this.expectedElementLocator );
+		return await driverHelper.waitUntilElementNotLocated(
+			this.driver,
+			this.expectedElementLocator
+		);
 	}
 }

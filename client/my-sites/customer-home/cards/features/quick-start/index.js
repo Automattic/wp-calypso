@@ -2,42 +2,32 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { Button, Card } from '@automattic/components';
 import { connect } from 'react-redux';
 import 'moment-timezone';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 import CardHeading from 'calypso/components/card-heading';
-import {
-	withAnalytics,
-	composeAnalytics,
-	recordTracksEvent,
-	bumpStat,
-} from 'calypso/state/analytics/actions';
-import { navigate } from 'calypso/state/ui/actions';
+import { composeAnalytics, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const QuickStart = ( {
-	moment,
-	nextSession,
-	reschedule,
-	siteId,
-	siteSlug,
-	translate,
-	viewDetails,
-} ) => {
+const QuickStart = ( { nextSession, reschedule, siteId, siteSlug, viewDetails } ) => {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+
 	return (
 		<>
 			{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
@@ -94,30 +84,28 @@ export default connect(
 		siteSlug: getSelectedSiteSlug( state ),
 		nextSession: getConciergeNextAppointment( state ),
 	} ),
-	( dispatch ) => ( {
-		viewDetails: ( siteId, siteSlug ) =>
+	{
+		viewDetails: ( siteId, siteSlug ) => ( dispatch ) => {
 			dispatch(
-				withAnalytics(
-					composeAnalytics(
-						recordTracksEvent( 'calypso_customer_home_quick_start_view_details_click', {
-							site_id: siteId,
-						} ),
-						bumpStat( 'calypso_customer_home', 'view_quick_start_session_details' )
-					),
-					navigate( `/me/concierge/${ siteSlug }/book` )
+				composeAnalytics(
+					recordTracksEvent( 'calypso_customer_home_quick_start_view_details_click', {
+						site_id: siteId,
+					} ),
+					bumpStat( 'calypso_customer_home', 'view_quick_start_session_details' )
 				)
-			),
-		reschedule: ( siteId, siteSlug, sessionId ) =>
+			);
+			page( `/me/concierge/${ siteSlug }/book` );
+		},
+		reschedule: ( siteId, siteSlug, sessionId ) => ( dispatch ) => {
 			dispatch(
-				withAnalytics(
-					composeAnalytics(
-						recordTracksEvent( 'calypso_customer_home_quick_start_reschedule_click', {
-							site_id: siteId,
-						} ),
-						bumpStat( 'calypso_customer_home', 'reschedule_quick_start_session' )
-					),
-					navigate( `/me/concierge/${ siteSlug }/${ sessionId }/cancel` )
+				composeAnalytics(
+					recordTracksEvent( 'calypso_customer_home_quick_start_reschedule_click', {
+						site_id: siteId,
+					} ),
+					bumpStat( 'calypso_customer_home', 'reschedule_quick_start_session' )
 				)
-			),
-	} )
-)( localize( withLocalizedMoment( QuickStart ) ) );
+			);
+			page( `/me/concierge/${ siteSlug }/${ sessionId }/cancel` );
+		},
+	}
+)( QuickStart );

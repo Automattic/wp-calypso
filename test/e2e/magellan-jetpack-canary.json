@@ -1,5 +1,5 @@
 {
-	"mocha_tests": [ "specs-jetpack-calypso" ],
+	"mocha_tests": [ "specs/specs-jetpack" ],
 	"mocha_args": "-R spec-junit-reporter",
 	"max_test_attempts": 2,
 	"max_workers": 3,

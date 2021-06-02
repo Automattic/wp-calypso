@@ -6,7 +6,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { findIndex, groupBy, reduce, zip } from 'lodash';
 
 /**
  * Internal dependencies
@@ -229,18 +228,6 @@ export class NoteList extends React.Component {
 			} ),
 		];
 
-		// create groups of (before, after) times for grouping notes
-		const now = new Date().setHours( 0, 0, 0, 0 );
-		const timeBoundaries = [
-			Infinity,
-			now,
-			new Date( now - DAY_MILLISECONDS ),
-			new Date( now - DAY_MILLISECONDS * 6 ),
-			new Date( now - DAY_MILLISECONDS * 30 ),
-			-Infinity,
-		];
-		const timeGroups = zip( timeBoundaries.slice( 0, -1 ), timeBoundaries.slice( 1 ) );
-
 		const createNoteComponent = ( note ) => {
 			if ( this.state.undoNote && note.id === this.state.undoNote.id ) {
 				return (
@@ -273,19 +260,41 @@ export class NoteList extends React.Component {
 			}
 		};
 
-		// Create new groups of messages by time periods
-		const noteGroups = groupBy( this.props.notes, ( { timestamp } ) => {
-			const time = new Date( timestamp );
-			return findIndex( timeGroups, ( [ after, before ] ) => before < time && time <= after );
-		} );
+		// create groups of (before, after) times for grouping notes
+		const now = new Date().setHours( 0, 0, 0, 0 );
+		const timeBoundaries = [
+			Infinity,
+			now,
+			new Date( now - DAY_MILLISECONDS ),
+			new Date( now - DAY_MILLISECONDS * 6 ),
+			new Date( now - DAY_MILLISECONDS * 30 ),
+			-Infinity,
+		];
+		const timeGroups = timeBoundaries
+			.slice( 0, -1 )
+			.map( ( val, index ) => [ val, timeBoundaries[ index + 1 ] ] );
 
-		let [ notes ] = reduce(
-			noteGroups,
-			( [ list, isFirst ], group, index ) => {
-				const title = groupTitles[ index ];
+		// Create new groups of messages by time periods
+		const noteGroups = this.props.notes.reduce( ( groups, note ) => {
+			const time = new Date( note.timestamp );
+			const groupKey = timeGroups.findIndex(
+				( [ after, before ] ) => before < time && time <= after
+			);
+
+			if ( ! ( groupKey in groups ) ) {
+				groups[ groupKey ] = [];
+			}
+
+			groups[ groupKey ].push( note );
+			return groups;
+		}, {} );
+
+		let [ notes ] = Object.entries( noteGroups ).reduce(
+			( [ list, isFirst ], [ timeGroupKey, timeGroupNotes ] ) => {
+				const title = groupTitles[ timeGroupKey ];
 				const header = <ListHeader { ...{ key: title, title, isFirst } } />;
 
-				return [ [ ...list, header, ...group.map( createNoteComponent ) ], false ];
+				return [ [ ...list, header, ...timeGroupNotes.map( createNoteComponent ) ], false ];
 			},
 			[ [], true ]
 		);

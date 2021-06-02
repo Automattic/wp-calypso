@@ -68,6 +68,21 @@ export function emailManagementManageTitanAccount(
 	return emailManagementEdit( siteName, domainName, 'titan/manage', relativeTo, urlParameters );
 }
 
+export function emailManagementManageTitanMailboxes(
+	siteName,
+	domainName,
+	relativeTo = null,
+	urlParameters = {}
+) {
+	return emailManagementEdit(
+		siteName,
+		domainName,
+		'titan/manage-mailboxes',
+		relativeTo,
+		urlParameters
+	);
+}
+
 export function emailManagementNewTitanAccount( siteName, domainName, relativeTo = null ) {
 	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo );
 }

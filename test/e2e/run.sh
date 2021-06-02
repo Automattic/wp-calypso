@@ -46,7 +46,6 @@ usage () {
 -s		  - Screensizes in a comma-separated list (defaults to mobile,desktop)
 -g		  - Execute general tests in the specs/ directory
 -j 		  - Execute Jetpack tests in the specs-jetpack-calypso/ directory (desktop and mobile)
--F		  - Execute tests tagged with @secure-auth
 -C		  - Execute tests tagged with @canary
 -J		  - Execute Jetpack connect tests tagged with @canary
 -H [host]	  - Specify an alternate host for Jetpack tests
@@ -70,7 +69,7 @@ if [ $# -eq 0 ]; then
   usage
 fi
 
-while getopts ":a:RpS:B:s:gjCJH:wzyl:cm:f:iIUvxu:h:F" opt; do
+while getopts ":a:RpS:B:s:gjCJH:wzyl:cm:f:iIUvxu:h" opt; do
   case $opt in
     a)
       WORKERS=$OPTARG
@@ -160,10 +159,6 @@ while getopts ":a:RpS:B:s:gjCJH:wzyl:cm:f:iIUvxu:h:F" opt; do
     C)
       SCREENSIZES="mobile"
       MAGELLAN_CONFIG="magellan-canary.json"
-      ;;
-    F)
-      SCREENSIZES="desktop"
-      MAGELLAN_CONFIG="magellan-2fa.json"
       ;;
     H)
       export JETPACKHOST=$OPTARG

@@ -1,7 +1,3 @@
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
 /**
  * External dependencies
  */

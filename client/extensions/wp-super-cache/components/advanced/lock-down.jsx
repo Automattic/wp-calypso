@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { pick } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
 import SectionHeader from 'calypso/components/section-header';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import Gridicon from 'calypso/components/gridicon';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -37,17 +36,18 @@ const LockDown = ( {
 			<Card>
 				<form>
 					<FormFieldset>
-						<FormToggle
+						<ToggleControl
 							checked={ !! cache_lock_down }
 							disabled={ isRequesting || isSaving || isReadOnly }
 							onChange={ handleAutosavingToggle( 'cache_lock_down' ) }
-						>
-							<span>
-								{ translate(
-									'Enable lock down to prepare your server for an expected spike in traffic.'
-								) }
-							</span>
-						</FormToggle>
+							label={
+								<span>
+									{ translate(
+										'Enable lock down to prepare your server for an expected spike in traffic.'
+									) }
+								</span>
+							}
+						/>
 					</FormFieldset>
 
 					<div className="wp-super-cache__lock-down-container">

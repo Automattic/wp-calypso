@@ -4,7 +4,6 @@ declare module 'a8c-fse-common-data-stores' {}
 
 interface Window {
 	wpcomEditorSiteLaunch?: {
-		launchUrl: string;
 		launchFlow: string;
 		// property does not exist when not isGutenboarding
 		// property holds the value '1' when isGutenboarding

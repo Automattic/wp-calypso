@@ -8,8 +8,12 @@ import { get, has } from 'lodash';
  * Internal dependencies
  */
 import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import { hasUserSettingsRequestFailed } from 'calypso/state/user-settings/selectors';
+import {
+	getPreference,
+	isFetchingPreferences,
+	hasPreferencesRequestFailed,
+} from 'calypso/state/preferences/selectors';
+import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -18,7 +22,6 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
-import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import {
 	getSiteUrl,
 	getSiteOption,
@@ -86,21 +89,26 @@ function waitForSiteIdAndSelectedEditor( context ) {
 	} );
 }
 
-function areCalypsoPreferencesAvailable( state ) {
-	return 'undefined' !== typeof getUserSettings( state )?.calypso_preferences;
+function isDashboardAppearancePreferenceAvailable( state ) {
+	return null !== getPreference( state, 'linkDestination' );
 }
 
 function waitForCalypsoPreferences( context ) {
 	return new Promise( ( resolve ) => {
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
-			if ( ! areCalypsoPreferencesAvailable( state ) && ! hasUserSettingsRequestFailed( state ) ) {
+			if (
+				! isDashboardAppearancePreferenceAvailable( state ) &&
+				! hasPreferencesRequestFailed( state )
+			) {
 				return;
 			}
 			unsubscribe();
 			resolve();
 		} );
-		context.store.dispatch( fetchUserSettings() );
+		if ( ! isFetchingPreferences( context.store.getState() ) ) {
+			context.store.dispatch( fetchPreferences() );
+		}
 	} );
 }
 
@@ -176,13 +184,13 @@ export const redirect = async ( context, next ) => {
 	const {
 		store: { getState },
 	} = context;
-	const tmpState = await getState();
+	const tmpState = getState();
 	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
 	const checkPromises = [];
 	if ( ! selectedEditor ) {
 		checkPromises.push( waitForSiteIdAndSelectedEditor( context ) );
 	}
-	if ( ! areCalypsoPreferencesAvailable( tmpState ) ) {
+	if ( ! isDashboardAppearancePreferenceAvailable( tmpState ) ) {
 		checkPromises.push( waitForCalypsoPreferences( context ) );
 	}
 	await Promise.all( checkPromises );

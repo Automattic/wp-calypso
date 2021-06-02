@@ -11,6 +11,7 @@ import {
 	getGSuiteSubscriptionId,
 	hasGSuiteWithUs,
 	hasPendingGSuiteUsers,
+	isPendingGSuiteTOSAcceptance,
 } from 'calypso/lib/gsuite';
 import {
 	getConfiguredTitanMailboxCount,
@@ -21,6 +22,11 @@ import {
 } from 'calypso/lib/titan';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import {
+	hasGoogleAccountTOSWarning,
+	hasUnusedMailboxWarning,
+	hasUnverifiedEmailForward,
+} from 'calypso/lib/emails';
 
 export function getNumberOfMailboxesText( domain ) {
 	if ( hasGSuiteWithUs( domain ) ) {
@@ -98,45 +104,69 @@ export function hasEmailSubscription( domain ) {
 	return !! subscriptionId;
 }
 
-export function resolveEmailPlanStatus( domain ) {
-	const defaultActiveStatus = {
+export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) {
+	const activeStatus = {
 		statusClass: 'success',
-		icon: 'check_circle',
-		text: translate( 'Active' ),
+		icon: isLoadingEmails ? 'cached' : 'check_circle',
+		text: isLoadingEmails ? translate( 'Loading details' ) : translate( 'Active' ),
 	};
 
-	const defaultWarningStatus = {
-		statusClass: 'warning',
+	const errorStatus = {
+		statusClass: 'error',
 		icon: 'info',
 		text: translate( 'Action required' ),
 	};
 
 	if ( hasGSuiteWithUs( domain ) ) {
-		if ( hasPendingGSuiteUsers( domain ) ) {
-			return defaultWarningStatus;
+		// Check for pending TOS acceptance warnings at the account level
+		if (
+			isPendingGSuiteTOSAcceptance( domain ) ||
+			( emailAccount && hasGoogleAccountTOSWarning( emailAccount ) )
+		) {
+			return errorStatus;
 		}
 
-		return defaultActiveStatus;
+		if ( hasPendingGSuiteUsers( domain ) ) {
+			return errorStatus;
+		}
+
+		return activeStatus;
 	}
 
 	if ( hasTitanMailWithUs( domain ) ) {
-		// Check for expired subscription.
+		// Check for expired subscription
 		const titanExpiryDateString = getTitanExpiryDate( domain );
+
 		if ( titanExpiryDateString ) {
 			const titanExpiryDate = new Date( titanExpiryDateString );
 			const startOfToday = new Date();
 			startOfToday.setUTCHours( 0, 0, 0, 0 );
+
 			if ( titanExpiryDate < startOfToday ) {
-				return defaultWarningStatus;
+				return errorStatus;
 			}
 		}
 
-		if ( getMaxTitanMailboxCount( domain ) > getConfiguredTitanMailboxCount( domain ) ) {
-			return defaultWarningStatus;
+		// Check for unused mailboxes
+		if ( emailAccount && hasUnusedMailboxWarning( emailAccount ) ) {
+			return errorStatus;
 		}
 
-		return defaultActiveStatus;
+		// Fallback logic if we don't have an emailAccount - this will initially be the case for the email home page
+		if (
+			! isLoadingEmails &&
+			! emailAccount &&
+			getMaxTitanMailboxCount( domain ) > getConfiguredTitanMailboxCount( domain )
+		) {
+			return errorStatus;
+		}
+
+		return activeStatus;
 	}
 
-	return defaultActiveStatus;
+	if ( hasEmailForwards( domain ) && emailAccount && hasUnverifiedEmailForward( emailAccount ) ) {
+		return errorStatus;
+	}
+
+	return activeStatus;
 }

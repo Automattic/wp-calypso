@@ -8,7 +8,6 @@ import deepFreeze from 'deep-freeze';
  */
 import { getOffsetItem } from 'calypso/state/reader/streams/selectors';
 
-jest.mock( 'calypso/lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
 jest.mock( 'calypso/reader/stream/utils' );
 jest.mock( 'calypso/state/reader/follows/selectors/get-reader-follows' );
 

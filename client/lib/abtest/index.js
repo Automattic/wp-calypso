@@ -61,18 +61,6 @@ export const getABTestVariation = ( name ) => new ABTest( name ).getVariation();
  */
 export const getSavedVariations = () => store.get( ABTEST_LOCALSTORAGE_KEY ) || {};
 
-/**
- * Save the variation for a test - useful for testing!
- *
- * @param {string} name - The name of the A/B test
- * @param {string} variation - The test variation to save
- * @returns {undefined}
- */
-export const saveABTestVariation = ( name, variation ) =>
-	new ABTest( name ).saveVariation( variation );
-
-export const getAllTests = () => keys( activeTests ).map( ABTest );
-
 const isUserSignedIn = () => user() && user().get() !== false;
 
 const parseDateStamp = ( datestamp ) => {

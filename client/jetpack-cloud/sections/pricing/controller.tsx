@@ -22,10 +22,12 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 	if ( locale ) {
 		context.store.dispatch( setLocale( locale ) );
 		page.redirect( addQueryArgs( urlQueryArgs, `/pricing` ) );
+		return;
 	}
 
 	if ( /\/(pricing|plans)$/.test( pathname ) && siteFromUrl ) {
 		page.redirect( addQueryArgs( urlQueryArgs, `${ pathname }/${ siteFromUrl }` ) );
+		return;
 	}
 
 	context.store.dispatch( hideMasterbar() );

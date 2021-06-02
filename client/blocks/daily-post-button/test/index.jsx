@@ -23,7 +23,6 @@ jest.mock( 'calypso/reader/stats', () => ( {
 	recordGaEvent: () => {},
 	recordTrackForPost: () => {},
 } ) );
-jest.mock( 'calypso/lib/user', () => () => {} );
 jest.mock( 'page', () => require( 'sinon' ).spy() );
 const markPostSeen = jest.fn();
 const noop = () => {};

@@ -317,7 +317,7 @@ class Pages extends Component {
 
 		return (
 			<div id="pages" className="pages__page-list">
-				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+				<BlogPostsPage key="blog-posts-page" site={ site } />
 				{ site && this.renderSectionHeader() }
 				{ rows }
 				{ this.renderListEnd() }
@@ -354,9 +354,7 @@ class Pages extends Component {
 
 		return (
 			<div id="pages" className="pages__page-list">
-				{ showBlogPostsPage && (
-					<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
-				) }
+				{ showBlogPostsPage && <BlogPostsPage key="blog-posts-page" site={ site } /> }
 				{ site && this.renderSectionHeader() }
 				{ rows }
 				<InfiniteScroll nextPageMethod={ this.fetchPages } />
@@ -366,8 +364,14 @@ class Pages extends Component {
 	}
 
 	renderNoContent() {
+		const { site } = this.props;
+		const { search, status } = this.props.query;
+
+		const showBlogPostsPage = site && status === 'publish,private' && ! search;
+
 		return (
 			<div id="pages" className="pages__page-list">
+				{ showBlogPostsPage && <BlogPostsPage key="blog-posts-page" site={ site } /> }
 				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
 			</div>
 		);

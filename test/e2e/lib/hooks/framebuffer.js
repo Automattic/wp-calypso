@@ -60,7 +60,7 @@ export const buildHooks = ( displayNum ) => {
 			);
 			await mkdir( path.dirname( fileName ), { recursive: true } );
 
-			const driver = global.__BROWSER__;
+			const driver = this.driver;
 			const screenshotData = await driver.takeScreenshot();
 			await writeFile( fileName, screenshotData, { encoding: 'base64' } );
 		} catch ( err ) {

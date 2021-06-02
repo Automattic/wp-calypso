@@ -1,5 +1,5 @@
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .layout:not( .is-jetpack-woocommerce-flow ):not( .is-jetpack-woo-dna-flow ):not( .is-wccom-oauth-flow ) {
 	.login.is-jetpack {

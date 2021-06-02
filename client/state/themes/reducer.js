@@ -474,18 +474,18 @@ export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = 
  * Returns updated state for recommended themes after
  * corresponding actions have been dispatched.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
+ * @param   {object} state  Current state
+ * @param   {object} action Action payload
  * @returns {object}        Updated state
  */
-export function recommendedThemes( state = { isLoading: true, themes: [] }, action ) {
+export function recommendedThemes( state = {}, action ) {
 	switch ( action.type ) {
 		case RECOMMENDED_THEMES_FETCH:
-			return { ...state, isLoading: true };
+			return { ...state, [ action.filter ]: { isLoading: true, themes: [] } };
 		case RECOMMENDED_THEMES_SUCCESS:
-			return { ...state, isLoading: false, themes: action.payload.themes };
+			return { ...state, [ action.filter ]: { isLoading: false, themes: action.payload.themes } };
 		case RECOMMENDED_THEMES_FAIL:
-			return { ...state, isLoading: false };
+			return { ...state, [ action.filter ]: { isLoading: false, themes: [] } };
 	}
 
 	return state;

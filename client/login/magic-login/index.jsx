@@ -67,7 +67,6 @@ class MagicLogin extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_email_link_page_click_back' );
 
 		const loginParameters = {
-			isNative: true,
 			isJetpack: this.props.isJetpackLogin,
 			isGutenboarding: this.props.isGutenboardingLogin,
 			locale: this.props.locale,
@@ -97,7 +96,6 @@ class MagicLogin extends React.Component {
 		// here deliberately, to ensure that if someone copies this link to
 		// paste somewhere else, their email address isn't included in it.
 		const loginParameters = {
-			isNative: true,
 			isJetpack: isJetpackLogin,
 			isGutenboarding: isGutenboardingLogin,
 			locale: locale,

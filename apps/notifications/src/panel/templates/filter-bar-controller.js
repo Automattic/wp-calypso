@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { some } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import actions from '../state/actions';
@@ -44,10 +39,8 @@ FilterBarController.prototype.getFilteredNotes = function ( notes ) {
 	}
 
 	const filterFunction = ( note ) =>
-		some( [
-			'unread' === filterName && noteHasFilteredRead( state, note.id ),
-			activeTab().filter( note ),
-		] );
+		( 'unread' === filterName && noteHasFilteredRead( state, note.id ) ) ||
+		activeTab().filter( note );
 
 	return notes.filter( filterFunction );
 };

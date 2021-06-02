@@ -165,7 +165,7 @@ class SocialLoginForm extends Component {
 
 	getRedirectUrl = ( service ) => {
 		const host = typeof window !== 'undefined' && window.location.host;
-		return `https://${ host + login( { isNative: true, socialService: service } ) }`;
+		return `https://${ host + login( { socialService: service } ) }`;
 	};
 
 	renderSocialTos = () => {

@@ -12,7 +12,6 @@ import * as driverManager from '../../lib/driver-manager';
 import * as dataHelper from '../../lib/data-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 const gutenbergUser =
@@ -44,15 +43,9 @@ function camelCaseDash( string ) {
 
 describe( `[${ host }] Experimental features we depend on are available (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	it( 'Can log in', async function () {
-		this.loginFlow = new LoginFlow( driver, gutenbergUser );
+		this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
 		return await this.loginFlow.loginAndStartNewPost( null, true );
 	} );
 
@@ -63,7 +56,7 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 			const wpGlobalName = camelCaseDash( packageName.substr( '@wordpress/'.length ) );
 
 			it( `"${ wpGlobalName }" package should be available in the global window object`, async function () {
-				const typeofPackage = await driver.executeScript(
+				const typeofPackage = await this.driver.executeScript(
 					`return typeof window.wp['${ wpGlobalName }']`
 				);
 				assert.notStrictEqual(
@@ -75,7 +68,7 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 
 			for ( const feature of features ) {
 				it( `${ feature } should be available in ${ packageName }`, async function () {
-					const typeofExperimentalFeature = await driver.executeScript(
+					const typeofExperimentalFeature = await this.driver.executeScript(
 						`return typeof window.wp['${ wpGlobalName }']['${ feature }']`
 					);
 					assert.notStrictEqual(
@@ -90,7 +83,7 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 
 	describe( 'Experimental data we depend on is available', function () {
 		it( `is iterable: wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns`, async function () {
-			const __experimentalBlockPatternsAreIterable = await driver.executeScript(
+			const __experimentalBlockPatternsAreIterable = await this.driver.executeScript(
 				`return Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns )`
 			);
 			assert(
@@ -109,7 +102,7 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 		// change in the number to the lower end, then something is probably wrong.
 		it( `number of block patterns loaded should be greater than the default`, async function () {
 			const expectedExperimentalBlockPatternsLength = 50;
-			const __experimentalBlockPatternsLength = await driver.executeScript(
+			const __experimentalBlockPatternsLength = await this.driver.executeScript(
 				`return window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns.length`
 			);
 			assert(
@@ -120,6 +113,6 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 	} );
 
 	after( async () => {
-		return await driver.switchTo().defaultContent();
+		return await this.driver.switchTo().defaultContent();
 	} );
 } );

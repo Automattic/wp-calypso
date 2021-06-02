@@ -17,7 +17,6 @@ import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import HeaderCake from 'calypso/components/header-cake';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 
-jest.mock( 'calypso/lib/user', () => () => {} );
 jest.mock( 'page', () => {
 	const sinon = require( 'sinon' );
 	const spy = sinon.spy();

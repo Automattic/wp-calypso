@@ -1,8 +1,8 @@
-@import '~@wordpress/base-styles/mixins';
-@import '~@wordpress/base-styles/variables';
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/z-index';
-@import '~@automattic/onboarding/styles/variables';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/z-index';
+@import '@automattic/onboarding/styles/variables';
 
 body.is-focused-launch-complete .editor-gutenberg-launch__launch-button {
 	display: none;

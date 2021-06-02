@@ -6,14 +6,13 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { authConnectPath, authTokenRedirectPath } from './paths';
 import { connect, tokenRedirect } from './controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import config from '@automattic/calypso-config';
 
-export default () => {
+export default (): void => {
 	if ( config.isEnabled( 'jetpack-cloud' ) ) {
-		page( authConnectPath(), connect, makeLayout, clientRender );
-		page( authTokenRedirectPath(), tokenRedirect, makeLayout, clientRender );
+		page( '/connect', connect, makeLayout, clientRender );
+		page( '/connect/oauth/token', tokenRedirect, makeLayout, clientRender );
 	}
 };

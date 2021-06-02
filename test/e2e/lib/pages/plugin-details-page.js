@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import webdriver from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -9,13 +9,11 @@ import webdriver from 'selenium-webdriver';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 
-const by = webdriver.By;
-
 export default class PluginDetailsPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '.plugin__page' ) );
-		this.successNoticeLocator = by.css( '.notice.is-success.is-dismissable' );
-		this.activatePluginLocator = by.css( '.plugin-activate-toggle .components-form-toggle' );
+		super( driver, By.css( '.plugin__page' ) );
+		this.successNoticeLocator = By.css( '.notice.is-success.is-dismissable' );
+		this.activatePluginLocator = By.css( '.plugin-activate-toggle .components-form-toggle' );
 	}
 
 	async clickActivateToggleForPlugin() {
@@ -42,7 +40,7 @@ export default class PluginDetailsPage extends AsyncBaseContainer {
 
 	async ensureDeactivated() {
 		const element = await this.driver.findElement( this.activatePluginLocator );
-		const active = await element.isDisplayed( by.css( '.is-checked' ) );
+		const active = await element.isDisplayed( By.css( '.is-checked' ) );
 		if ( active === true ) {
 			await driverHelper.clickWhenClickable( this.driver, this.activatePluginLocator );
 			await this.waitForSuccessNotice();
@@ -50,6 +48,6 @@ export default class PluginDetailsPage extends AsyncBaseContainer {
 	}
 
 	async goBack() {
-		return await driverHelper.clickWhenClickable( this.driver, by.css( '.header-cake__back' ) );
+		return await driverHelper.clickWhenClickable( this.driver, By.css( '.header-cake__back' ) );
 	}
 }

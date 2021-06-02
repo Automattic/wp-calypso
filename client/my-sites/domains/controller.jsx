@@ -37,7 +37,7 @@ import { isATEnabled } from 'calypso/lib/automated-transfer';
 import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 const noop = () => {};
@@ -190,7 +190,7 @@ const transferDomainPrecheck = ( context, next ) => {
 };
 
 const googleAppsWithRegistration = ( context, next ) => {
-	if ( canUserPurchaseGSuite() ) {
+	if ( canUserPurchaseGSuite( context.store.getState() ) ) {
 		context.primary = (
 			<Main>
 				<PageViewTracker

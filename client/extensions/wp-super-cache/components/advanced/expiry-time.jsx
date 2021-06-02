@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { pick } from 'lodash';
 import moment from 'moment';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -16,7 +16,6 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
@@ -157,14 +156,13 @@ const ExpiryTime = ( {
 			<FormFieldset>
 				<FormLabel htmlFor="cache_gc_email_me">{ translate( 'Notification Emails' ) }</FormLabel>
 
-				<FormToggle
+				<ToggleControl
 					checked={ !! cache_gc_email_me }
 					disabled={ isDisabled }
 					id="cache_gc_email_me"
 					onChange={ handleAutosavingToggle( 'cache_gc_email_me' ) }
-				>
-					<span>{ translate( 'Email me when the garbage collection runs.' ) }</span>
-				</FormToggle>
+					label={ <span>{ translate( 'Email me when the garbage collection runs.' ) }</span> }
+				/>
 			</FormFieldset>
 		);
 	};

@@ -12,7 +12,7 @@ function Platform() {
 	this.platform = false;
 }
 
-Platform.prototype.setMainWindow = function ( mainWindow ) {
+Platform.prototype.setMainWindow = function ( appWindow ) {
 	let PlatformHandler = false;
 
 	if ( this.isOSX() ) {
@@ -28,10 +28,10 @@ Platform.prototype.setMainWindow = function ( mainWindow ) {
 			delete this.platform;
 		}
 
-		this.platform = new PlatformHandler( mainWindow );
+		this.platform = new PlatformHandler( appWindow );
 
-		mainWindow.on( 'blur', () => {
-			mainWindow.webContents.send( 'notifications-panel-show', false );
+		appWindow.window.on( 'blur', () => {
+			appWindow.view.webContents.send( 'notifications-panel-show', false );
 		} );
 	}
 };

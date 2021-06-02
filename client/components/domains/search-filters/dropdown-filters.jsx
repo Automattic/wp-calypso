@@ -120,7 +120,7 @@ export class DropdownFilters extends Component {
 	handleFiltersReset = () => {
 		this.setState( { showOverallValidationError: false }, () => {
 			this.togglePopover( { discardChanges: false } );
-			this.props.onReset( 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' );
+			this.props.onReset( 'tlds', 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' );
 		} );
 	};
 	handleFiltersSubmit = () => {

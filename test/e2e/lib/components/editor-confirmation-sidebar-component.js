@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -12,22 +12,22 @@ import AsyncBaseContainer from '../async-base-container.js';
 
 export default class EditorConfirmationSidebarComponent extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '.editor-confirmation-sidebar.is-active' ) );
+		super( driver, By.css( '.editor-confirmation-sidebar.is-active' ) );
 	}
 
 	async confirmAndPublish() {
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			by.css( '.editor-confirmation-sidebar__action button.button' )
+			By.css( '.editor-confirmation-sidebar__action button.button' )
 		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.editor-confirmation-sidebar__action button.button' )
+			By.css( '.editor-confirmation-sidebar__action button.button' )
 		);
 	}
 
 	async publishDateShown() {
-		const dateLocator = by.css(
+		const dateLocator = By.css(
 			'.editor-confirmation-sidebar .editor-publish-date__header-chrono'
 		);
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, dateLocator );

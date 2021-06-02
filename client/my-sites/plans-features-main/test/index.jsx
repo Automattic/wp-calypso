@@ -1,7 +1,3 @@
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
 jest.mock( 'react-redux', () => ( {
 	connect: () => ( component ) => component,
 } ) );

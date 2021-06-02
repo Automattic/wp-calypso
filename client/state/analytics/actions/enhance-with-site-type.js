@@ -15,7 +15,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
  *
  * @param {object} action - Redux action as a plain object
  * @param {Function} getState - Redux function that can be used to retrieve the current state tree
- * @returns {object} the new Redux action
+ * @returns {import('redux').AnyAction} the new Redux action
  * @see client/state/utils/withEnhancers
  */
 export function enhanceWithSiteType( action, getState ) {

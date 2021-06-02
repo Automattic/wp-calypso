@@ -1,3 +1,5 @@
+const { BrowserWindow } = require( 'electron' );
+
 module.exports = [
 	{
 		role: 'reload',
@@ -6,6 +8,11 @@ module.exports = [
 		role: 'forceReload',
 	},
 	{
-		role: 'toggleDevTools',
+		label: 'Developer Tools',
+		accelerator: 'Alt+CmdOrCtrl+I',
+		click: function () {
+			const window = BrowserWindow.getFocusedWindow();
+			window.openDevTools( { mode: 'undocked' } );
+		},
 	},
 ];

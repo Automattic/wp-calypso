@@ -4,7 +4,6 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import page from 'page';
 import { connect } from 'react-redux';
 
 /**
@@ -17,6 +16,7 @@ import { acceptInvite } from 'calypso/state/invites/actions';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { navigate } from 'calypso/lib/navigate';
 
 /**
  * Style dependencies
@@ -31,15 +31,7 @@ class InviteAcceptLoggedIn extends React.Component {
 		this.props
 			.acceptInvite( this.props.invite )
 			.then( () => {
-				const { redirectTo } = this.props;
-
-				// Using page() for cross origin navigations would throw a `History.pushState` exception
-				// about creating state object with a cross-origin URL.
-				if ( new URL( redirectTo, window.location.href ).origin !== window.location.origin ) {
-					window.location = redirectTo;
-				} else {
-					page( redirectTo );
-				}
+				navigate( this.props.redirectTo );
 			} )
 			.catch( () => {
 				this.setState( { submitting: false } );

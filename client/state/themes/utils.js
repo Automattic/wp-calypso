@@ -17,8 +17,6 @@ const REGEXP_SERIALIZED_QUERY = /^(?:(\d+):)?(.*)$/;
 // we normalize to taxonomies.theme_feature to be consistent with results from WPCOM.)
 const SEARCH_TAXONOMIES = [ 'feature' ];
 
-export const oldShowcaseUrl = '//wordpress.com/themes/';
-
 /**
  * Utility
  */

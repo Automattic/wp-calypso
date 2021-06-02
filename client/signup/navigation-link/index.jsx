@@ -13,12 +13,11 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getPreviousStepName, getStepUrl, isFirstStepInFlow } from 'calypso/signup/utils';
+import { getStepUrl, isFirstStepInFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getFilteredSteps } from '../utils';
-import { getABTestVariation } from 'calypso/lib/abtest';
 
 /**
  * Style dependencies
@@ -47,7 +46,7 @@ export class NavigationLink extends Component {
 	};
 
 	getPreviousStep( flowName, signupProgress, currentStepName ) {
-		let previousStep = { stepName: null };
+		const previousStep = { stepName: null };
 
 		if ( isFirstStepInFlow( flowName, currentStepName ) ) {
 			return previousStep;
@@ -62,24 +61,17 @@ export class NavigationLink extends Component {
 			return previousStep;
 		}
 
-		//Get the previous step according to the step definition
-		const previousStepName = getPreviousStepName( flowName, currentStepName );
-
 		//Find previous step in current relevant filtered progress
-		const previousStepFromProgress = filteredProgressedSteps.find(
-			( step ) => step.stepName === previousStepName
+		const currentStepIndexInProgress = filteredProgressedSteps.findIndex(
+			( step ) => step.stepName === currentStepName
 		);
-		if ( previousStepFromProgress ) {
-			previousStep = previousStepFromProgress;
-		} else {
-			//If no previous step found in progress, go to the last step of the progress that belongs to the current flow
-			const [ lastKnownStepInFlow ] = filteredProgressedSteps
-				.filter( ( step ) => step.stepName !== currentStepName )
-				.slice( -1 );
-			previousStep = lastKnownStepInFlow;
+
+		// Current step isn't finished, so isn't part of the progress array yet, go to the top of the progress array.
+		if ( currentStepIndexInProgress === -1 ) {
+			return filteredProgressedSteps.pop();
 		}
 
-		return previousStep;
+		return filteredProgressedSteps[ currentStepIndexInProgress - 1 ] || previousStep;
 	}
 
 	getBackUrl() {
@@ -156,8 +148,6 @@ export class NavigationLink extends Component {
 			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;
 			if ( labelText ) {
 				text = labelText;
-			} else if ( 'reskinned' === getABTestVariation( 'reskinSignupFlow' ) ) {
-				text = translate( 'Go Back' );
 			} else {
 				text = translate( 'Back' );
 			}

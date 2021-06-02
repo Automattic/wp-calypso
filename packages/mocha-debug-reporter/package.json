@@ -2,7 +2,7 @@
 	"name": "@automattic/mocha-debug-reporter",
 	"version": "0.1.0",
 	"description": "Mocha reporter that dumps all info about the test execution",
-	"main": "dist/cjs/index.js",
+	"main": "dist/cjs/cjs.js",
 	"author": "Automattic Inc.",
 	"repository": {
 		"type": "git",

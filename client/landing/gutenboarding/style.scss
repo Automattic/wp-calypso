@@ -1,7 +1,7 @@
 // @TODO: Remove this line and restore the import in `./gutenboard.tsx` when a release after @wordpress/components@8.5.0 is published.
 // See https://github.com/WordPress/gutenberg/pull/19535
-@import '~@wordpress/components/build-style/style';
-@import '~@automattic/typography/styles/fonts';
+@import '@wordpress/components/build-style/style';
+@import '@automattic/typography/styles/fonts';
 @import 'assets/stylesheets/gutenberg-base-styles';
 
 // Override core variables: we don't have wp-admin header and sidebar in Calypso
@@ -13,9 +13,9 @@ $admin-sidebar-width-big: 0;
 $admin-sidebar-width-collapsed: 0;
 
 // Gutenberg styles
-@import '~@wordpress/edit-post/src/style.scss';
-@import '~@wordpress/block-editor/src/style.scss';
-@import '~@wordpress/format-library/src/style.scss';
+@import '@wordpress/edit-post/src/style.scss';
+@import '@wordpress/block-editor/src/style.scss';
+@import '@wordpress/format-library/src/style.scss';
 
 // Own/Gutenboarding styles
 @import './variables.scss';

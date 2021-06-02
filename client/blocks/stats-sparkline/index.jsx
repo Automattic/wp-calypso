@@ -3,7 +3,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import classnames from 'classnames';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
