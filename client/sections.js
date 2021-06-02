@@ -4,6 +4,16 @@
 const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
 const path = require( 'path' ); // eslint-disable-line import/no-nodejs-modules
 
+/**
+ * Internal dependencies
+ */
+const config = require( 'calypso/server/config' );
+
+/**
+ * Locales path segment in RegExp string format.
+ */
+const localePathSegment = config( 'magnificent_non_en_locales' ).join( '|' );
+
 const sections = [
 	{
 		name: 'root',
@@ -212,7 +222,7 @@ const sections = [
 	// or it'll be falsely associated with the latter section.
 	{
 		name: 'themes',
-		paths: [ '/themes', '/[a-zA-Z-]+/themes', '/design' ],
+		paths: [ '/themes', `/(${ localePathSegment })/themes`, '/design' ],
 		module: 'calypso/my-sites/themes',
 		enableLoggedOut: true,
 		group: 'sites',
@@ -221,7 +231,7 @@ const sections = [
 	},
 	{
 		name: 'theme',
-		paths: [ '/theme', '/[a-zA-Z-]+/theme' ],
+		paths: [ '/theme', `/(${ localePathSegment })/theme` ],
 		module: 'calypso/my-sites/theme',
 		enableLoggedOut: true,
 		group: 'sites',
