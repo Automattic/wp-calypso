@@ -266,7 +266,7 @@ class EmailPlan extends React.Component {
 	}
 
 	renderAddNewMailboxesOrRenewNavItem() {
-		const { domain, hasSubscription, purchase, translate } = this.props;
+		const { domain, purchase, translate } = this.props;
 
 		if ( hasEmailForwards( domain ) ) {
 			return (
@@ -278,10 +278,6 @@ class EmailPlan extends React.Component {
 
 		if ( ! purchase ) {
 			return <VerticalNavItem isPlaceholder />;
-		}
-
-		if ( ! hasSubscription ) {
-			return null;
 		}
 
 		if ( isExpired( purchase ) ) {
