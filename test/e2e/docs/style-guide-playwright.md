@@ -3,21 +3,19 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-    - [General structure - test](#general-structure---test)
-    - [General structure - pages and components](#general-structure---pages-and-components)
-    - [General structure - flows](#general-structure---flows)
-    - [Async / Await](#async--await)
+    - [Tests](#tests)
+    - [Components](#components)
     - [Page Objects](#page-objects)
-    - [Use of this, const and lets](#use-of-this-const-and-lets)
-    - [Arrow functions](#arrow-functions)
-    - [Default values using destructuring](#default-values-using-destructuring)
-    - [Nesting step blocks](#nesting-step-blocks)
-    - [Catching errors in a step block](#catching-errors-in-a-step-block)
-    - [Waiting for elements](#waiting-for-elements)
+    - [Flows](#flows)
+    - [Async / Await](#async--await)
+    - [Selectors](#selectors)
+        - [Type](#type)
+        - [Naming](#naming)
+    - [Test Naming](#test-naming)
 
 <!-- /TOC -->
 
-## General structure - test
+## Tests
 
 Tests for Playwright E2E continue to be written in JavaScript.
 
@@ -27,18 +25,6 @@ There should only be [one top-level describe block](style-guide.md#maximum-1-top
 <summary>Example Test File</summary>
 
 ```javascript
-
-/**
- * External dependencies
- */ 
-
-/**
- * Internal dependencies
- */
-
-/**
- * Constants
- */
 
 describe( 'Feature: @parallel', function() {
 	describe( 'Test case 1', function() {
@@ -68,36 +54,80 @@ describe( 'Feature: @parallel', function() {
 
 </details>
 
-## General structure - pages and components
+---
 
-Playwright E2E tests rely heavily on the `@automattic/calypso-e2e` library, written in TypeScript.
+## Components
 
-`Pages` and `Components` often have fuzzy boundaries and is not precisely defined. With that said, it is possible to draw a distinction between the two.
+Components represent a sub-portion of the page, and are often shared across multiple pages (_though not always!_). A good example is the Sidebar Component, persisting across multiple pages in the My Home dashboard. It encapsulates element selectors and actions for only the Sidebar, leaving interactions on the main content pane for the respective Page objects.
 
-**Pages**: represent an overall page on WPCOM. A good example of is the [Login Page](https://github.com/Automattic/wp-calypso/blob/trunk/packages/calypso-e2e/src/lib/pages/login-page.ts); it encapsulates element selectors and actions that can be performed on the given page.
+<details>
+<summary>Example Component Object</summary>
 
-**Components**: represent a sub-portion of the page, and are often shared across multiple pages (_though not always!_). A good example is the Sidebar Component, persisting across multiple pages in the My Home dashboard. It encapsulates element selectors and actions for only the Sidebar, leaving interactions on the main content pane for the respective Page objects.
+```typescript
+
+const selectors = {
+	sidebar: '.sidebar',
+	myHome: '.my-home',
+	...
+}
+
+/**
+ * JSDoc is expected for Class definitions.
+ * 
+ * @augments {BaseContainer}
+ */
+export class SomeComponent extends BaseContainer {
+	/**
+	 * JSDoc is expected for constructor.
+	 * 
+	 * @param {Page} page Page object.
+	 */
+	constructor( page: Page ) {
+		...
+	}
+
+	/**
+	 * JSDoc is expected for functions.
+	 * 
+	 * @param {string} menu Menu to be clicked.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async clickOnMenu( menu: string ): Promise<void> {
+		await this.page.waitForSelector( selectors.selectorName );
+
+		await this.page.click( menu );
+		await this.page.waitForNavigation();
+		...
+	}
+}
+
+// Then, in a test file, page, or flow...
+
+	const someComponent = await SomeComponent.Expect( this.page );
+	await someComponent.clickOnMenu();
+
+```
+</details>
+
+---
+
+## Page Objects
+
+Page objects are to be used to represent a corresponding page on WPCOM. It can hold element selectors, class methods to interact with the page and define other helper functions.
+
+A well-implemented page object will abstract complex interactions on the page to an easily understandable method call. The method should be well-contained, predictable and easy to understand. 
+
+Every page object file should contain an object outside of the class definition to hold element selectors. The Page object should access element selector values using dot notation within the method calls.
+
+On many pages of WPCOM elements will load asynchronously. This leads to issues when initializing page objects as constructors cannot be asynchronous. To address this, page objects almost always inherit from the `BaseContainer` class as it provides asynchronous initialization of the page object through use of static method `Expect`. Only use synchronous class constructor if the page in question does not require any post-initialization setup.
+
+Some in-repo example pages:
+- [Login Page](packages/calypso-e2e/src/lib/pages/login-page.ts)
 
 <details>
 <summary>Example Page Object</summary>
 
 ```typescript
-
-/**
- * External dependencies
- */ 
-
-/**
- * Internal dependencies
- */
-
-/**
- * Type dependencies
- */
-
-/**
- * Constants
- */
 
 const selectors = {
 	titleInput: '.editor-post-title__input',
@@ -124,6 +154,7 @@ export class SomePage extends BaseContainer {
 	 * JSDoc is expected for functions.
 	 * 
 	 * @param {string} text Text to be entered into the field.
+	 * @returns {Promise<void>} No return value.
 	 */
 	async enterText( text: string ): Promise<void> {
 		await this.page.waitForSelector( selectors.selectorName );
@@ -135,14 +166,61 @@ export class SomePage extends BaseContainer {
 		...
 	}
 }
+
+// Then, in a test file...
+
+it('Test case', async function() {
+	const somePage = await SomePage.Expect( this.page );
+	await somePage.enterText( 'blah' );
+})
+
 ```
 </details>
 
-## General structure - flows
+---
+
+## Flows
 
 Flows in the `@automattic/calypso-e2e` library encapsulate the sequence of steps required to perform an action.
 
-For instance, the Log in process is a flow, as it spans across multiple pages
+For instance, the Log In process is considered a flow as it spans across multiple pages.
+
+Another example of a flow could be the Sign Up flow as the user interacts with multiple screens to achieve an end result.
+
+<details>
+<summary>Example Flow Object</summary>
+
+```typescript
+/**
+ * JSDoc is expected for flow class.
+ */
+export class SomeFlow {
+	constructor( page: Page ) {
+		// construct here
+	}
+
+	/**
+	 * JSDoc is expected for methods.
+	 */
+	async executeFlow(): Promise<void> {
+		const componentA = await ComponentA.Expect( this.page );
+		await componentA.clickOnSomething();
+		const componentB = await ComponentB.Expect( this.page );
+		const componentC = await ComponentC.Expect( this.page );
+		await componentC.doFinalSomething();
+	}
+}
+
+// Then in a test file...
+
+	const someFlow = await SomeFlow( this.page );
+	await someFlow.executeFlow();
+
+```
+
+</details>
+
+---
 
 ## Async / Await
 
@@ -170,187 +248,80 @@ async function openModal() {
 }
 ```
 
-## Page Objects
+---
 
-Page Objects are to be used to represent a corresponding page on WPCOM. 
+## Selectors
 
+### Type
 
+Where possible, prioritize selector types as follows:
 
+`CSS > Text = CSS with Attribute > Xpath`
 
-All pages have asynchronous functions. Constructors for pages can't be asynchronous so we never construct a page object directly (using something like `new PageObjectPage(...)`), instead we use the static methods `Expect` and `Visit`, which are on the asyncBaseContainer and hence available for every page, to construct the page object.
+Please refer to the [Playwright documentation](https://playwright.dev/docs/selectors/#quick-guide) for more information.
 
-Don't do:
-
-```
-step( 'Can select domain only from the domain first choice page', function() {
-	const domainFirstChoicePage = new DomainFirstPage( driver );
-	return await domainFirstChoicePage.chooseJustBuyTheDomain();
-} );
-```
-
-Instead you should do this if you're expecting a page to appear during a flow:
+**Avoid**:
 
 ```
-step( 'Can select domain only from the domain first choice page', function() {
-	const domainFirstChoicePage = await DomainFirstPage.Expect( driver );
-	return await domainFirstChoicePage.chooseJustBuyTheDomain();
-} );
+await page.click( 'xpath=//button' );
 ```
 
-or this to directly visit a page:
+**Instead**:
 
 ```
-step( 'Can select domain only from the domain first choice page', function() {
-	const domainFirstChoicePage = await DomainFirstPage.Visit( driver );
-	return await domainFirstChoicePage.chooseJustBuyTheDomain();
-} );
+await page.click( '.button text("Contact us")' );
 ```
 
-**Note:** not all pages can be visited as they require a direct URL to be defined, some pages come only as part of flows (eg. sign up pages)
+### Naming
 
-## Use of this, const and lets
+Where possible, name selectors based on the CSS selector instead its location.
 
-It is preferred to use `const`, or `lets`, instead of `this.`, as the scope is narrower and less likely to cause confusion across test steps.
+If the above is not possible, fall back to describing its usage, function or type.
 
-For example:
+Avoid appending the term 'Selector' or something similar to the selector name. It is redundant.
 
-```
-step( 'Can select domain only from the domain first choice page', function() {
-	this.domainFirstChoicePage = await DomainFirstPage.Expect( driver );
-	return await this.domainFirstChoicePage.chooseJustBuyTheDomain();
-} );
-```
+Avoid using the location of the element as its name. Element placement can shift, but its role likely does not change.
 
-can use a `const` instead:
+**Avoid**:
 
 ```
-step( 'Can select domain only from the domain first choice page', function() {
-	const domainFirstChoicePage = new DomainFirstPage( driver );
-	return await domainFirstChoicePage.chooseJustBuyTheDomain();
-} );
-```
-
-## Arrow functions
-
-Passing arrow functions (“lambdas”) to Mocha is discouraged. Lambdas lexically bind this and cannot access the Mocha context [(source)](https://mochajs.org/#arrow-functions)
-
-Avoid:
-
-```
-step( 'We can set the sandbox cookie for payments', () => {
-	const wPHomePage = await WPHomePage.Visit( driver );
-	await wPHomePage.checkURL( locale );
-} );
-```
-
-instead:
-
-```
-step( 'We can set the sandbox cookie for payments', async function() {
-	const wPHomePage = await WPHomePage.Visit( driver );
-	await wPHomePage.checkURL( locale );
-} );
-```
-
-## Default values using destructuring
-
-Use destructuring for default values as this makes calling the function explicit and avoids boolean traps.
-
-Avoid:
-
-```
-constructor( driver, visit = true, culture = 'en', flow = '', domainFirst = false, domainFirstDomain = '' ) {
-```
-
-instead:
-
-```
-constructor( driver, { visit = true, culture = 'en', flow = '', domainFirst = false, domainFirstDomain = '' } = {} ) {
-```
-
-that way, the page can be called like:
-
-```
-new StartPage( driver, { visit: true, domainFirst: true } ).displayed();
-```
-
-instead of:
-
-```
-new StartPage( driver, true, 'en', '', true, '' ).displayed();
-```
-
-## Nesting step blocks
-
-Do not nest test steps.
-
-This is a general structure of an e2e test scenario:
-
-```
-describe(
-	'An e2e test scenario @parallel',
-	function() {
-		before( async function() {
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
-
-		it( 'First step', async function() {
-			// Do something with a page
-		} );
-
-		it( 'Second step', async function() {
-			// Do something next - this will only execute if the first step doesn't fail
-		} );
-
-		after( async function() {
-			// Do some cleanup
-		} );
-	}
-);
-```
-
-## Catching errors in a step block
-
-Sometimes we don't want a `step` block to fail on error - say if we're cleaning up after doing an action and it doesn't matter what happens. As we use async methods using a standard try/catch won't work as the promise itself will still fail. Instead, return an async method that catches the error result:
-
-```
-step( 'Can delete our newly created account', async function() {
-	return ( async () => {
-		const closeAccountPage = await new CloseAccountPage( driver );
-		await closeAccountPage.chooseCloseAccount();
-		await closeAccountPage.enterAccountNameAndClose( blogName );
-		return await new LoggedOutMasterbarComponent( driver ).displayed();
-	} )().catch( err => {
-		SlackNotifier.warn( `There was an error in the hooks that clean up the test account but since it is cleaning up we really don't care: '${ err }'` );
-	} );
-} );
-```
-
-## Waiting for elements
-
-When waiting for elements we should always use a quantity of the config value defined as `explicitWaitMS` instead of hardcoding values. This allows us to change it readily, and also adjust this for different environments, for example the live branch environment is not as fast as production so it waits twice as long.
-
-Avoid:
-
-```
-export default class TransferDomainPrecheckPage extends AsyncBaseContainer {
-	constructor( driver ) {
-		super( driver, By.css( '.transfer-domain-step__precheck' ), null, 40000 );
-	}
+const selectors = {
+	buttonOnHeaderPane: '.button contact-us',
+	secondButtonOnPopupSelector: '.button send-form',
+	...
 }
 ```
 
-instead:
+**Instead**:
 
 ```
-export default class TransferDomainPrecheckPage extends AsyncBaseContainer {
-	constructor( driver ) {
-		super(
-			driver,
-			By.css( '.transfer-domain-step__precheck' ),
-			null,
-			config.get( 'explicitWaitMS' ) * 2
-		);
-	}
+const selectors = {
+	contactUsButton: '.button contact-us',
+	submitFormButton: '.button send-form',
+	...
 }
+```
+
+---
+
+## Test Naming
+
+Use step description.
+
+Avoid the use of modal verbs such as `can`, `should`, `could` or `must`.
+
+**Avoid**:
+
+```
+it( 'Can log in' )
+
+it( 'Should be able to start new post' )
+```
+
+**Instead**:
+
+```
+it( 'Log In' )
+
+it( 'Start new post' )
 ```
