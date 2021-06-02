@@ -58,8 +58,7 @@ import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/prog
 import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
 import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
-import getSiteId from 'calypso/state/selectors/get-site-id';
-import { isCurrentPlanPaid, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getSiteId, isCurrentPlanPaid, getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -89,7 +88,6 @@ import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
-import user from 'calypso/lib/user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 
@@ -290,7 +288,7 @@ class Signup extends React.Component {
 
 		const p2SiteStep = this.props.progress[ 'p2-site' ];
 
-		if ( p2SiteStep && p2SiteStep.status === 'pending' && user() && user().get() ) {
+		if ( p2SiteStep && p2SiteStep.status === 'pending' && this.props.isLoggedIn ) {
 			// By removing and adding the p2-site step, we trigger the `SignupFlowController` store listener
 			// to process the signup flow.
 			this.props.removeStep( p2SiteStep );

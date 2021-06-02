@@ -42,7 +42,7 @@ export default function PaymentRequestButton( {
 
 	if ( formStatus === FormStatus.SUBMITTING ) {
 		return (
-			<Button disabled fullWidth>
+			<Button isBusy disabled fullWidth>
 				{ __( 'Completing your purchase' ) }
 			</Button>
 		);

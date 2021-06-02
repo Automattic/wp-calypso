@@ -21,7 +21,6 @@ import MyHomePage from '../../lib/pages/my-home-page.js';
 
 const host = dataHelper.getJetpackHost();
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const signupInboxId = config.get( 'signupInboxId' );
 
@@ -40,31 +39,25 @@ const createAndActivateAccount = async function ( driver, accountName ) {
 
 describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	describe( 'Launch a free site', function () {
 		const siteName = dataHelper.getNewBlogName();
 
 		before( 'Can log in', async function () {
-			const loginFlow = new LoginFlow( driver );
+			const loginFlow = new LoginFlow( this.driver );
 			await loginFlow.login();
 		} );
 
 		it( 'Can create a free site', async function () {
-			return await new CreateSiteFlow( driver, siteName ).createFreeSite();
+			return await new CreateSiteFlow( this.driver, siteName ).createFreeSite();
 		} );
 
 		it( 'Can launch a site', async function () {
-			return await new LaunchSiteFlow( driver ).launchFreeSite();
+			return await new LaunchSiteFlow( this.driver ).launchFreeSite();
 		} );
 
 		after( 'Delete the newly created site', async function () {
-			const deleteSite = new DeleteSiteFlow( driver );
+			const deleteSite = new DeleteSiteFlow( this.driver );
 			return await deleteSite.deleteSite( siteName + '.wordpress.com' );
 		} );
 	} );
@@ -79,34 +72,34 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 		const secondSiteName = dataHelper.getNewBlogName();
 
 		before( 'Create 2 free sites as a new user', async function () {
-			await createAndActivateAccount( driver, accountName );
-			await new CreateSiteFlow( driver, firstSiteName ).createFreeSite();
-			await new CreateSiteFlow( driver, secondSiteName ).createFreeSite();
+			await createAndActivateAccount( this.driver, accountName );
+			await new CreateSiteFlow( this.driver, firstSiteName ).createFreeSite();
+			await new CreateSiteFlow( this.driver, secondSiteName ).createFreeSite();
 		} );
 
 		it( 'Can start launch flow and abandon', async function () {
-			const myHomePage = await MyHomePage.Expect( driver );
+			const myHomePage = await MyHomePage.Expect( this.driver );
 			await myHomePage.launchSiteFromSiteSetup();
-			await FindADomainComponent.Expect( driver );
+			await FindADomainComponent.Expect( this.driver );
 			// force reloading the page from the server to simulate an expired cache
-			await driver.executeScript( 'window.location.reload(true);' );
-			await FindADomainComponent.Expect( driver );
-			return await driver.navigate().back();
+			await this.driver.executeScript( 'window.location.reload(true);' );
+			await FindADomainComponent.Expect( this.driver );
+			return await this.driver.navigate().back();
 		} );
 
 		it( 'Can switch sites and launch the first site', async function () {
-			const sideBarComponent = await SidebarComponent.Expect( driver );
+			const sideBarComponent = await SidebarComponent.Expect( this.driver );
 			await sideBarComponent.selectSiteSwitcher();
 			await sideBarComponent.searchForSite( firstSiteName );
 			if ( driverManager.currentScreenSize() === 'mobile' ) {
 				await sideBarComponent.ensureSidebarMenuVisible();
 				await sideBarComponent.selectMyHome();
 			}
-			return await new LaunchSiteFlow( driver ).launchFreeSite();
+			return await new LaunchSiteFlow( this.driver ).launchFreeSite();
 		} );
 
 		after( 'Delete the newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( accountName );
+			return await new DeleteAccountFlow( this.driver ).deleteAccount( accountName );
 		} );
 	} );
 } );

@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import { JETPACK_ADMIN_PATH } from 'calypso/jetpack-connect/constants';
@@ -118,11 +117,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 				includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], status ) ||
 				( status === NOT_CONNECTED_JETPACK && forceRemoteInstall )
 			) {
-				if (
-					config.isEnabled( 'jetpack/connect/remote-install' ) &&
-					! isMobileAppFlow &&
-					! skipRemoteInstall
-				) {
+				if ( ! isMobileAppFlow && ! skipRemoteInstall ) {
 					debug( 'Redirecting to remote_install' );
 					this.redirect( 'remote_install' );
 				} else {

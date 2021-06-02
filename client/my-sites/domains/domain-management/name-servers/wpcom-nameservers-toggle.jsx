@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
 import {
 	composeAnalytics,
@@ -32,7 +32,7 @@ class NameserversToggle extends React.PureComponent {
 				</span>
 
 				<form className="name-servers__toggle">
-					<FormToggle
+					<ToggleControl
 						id="wp-nameservers"
 						name="wp-nameservers"
 						onChange={ this.handleToggle }

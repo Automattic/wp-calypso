@@ -4,7 +4,7 @@
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { debounce, get } from 'lodash';
+import { debounce, get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -25,18 +25,28 @@ class EditorMediaModalDetailFields extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		item: PropTypes.object,
+		onUpdate: PropTypes.func,
+	};
+
+	static defaultProps = {
+		onUpdate: noop,
 	};
 
 	constructor() {
 		super( ...arguments );
-		this.persistChange = debounce( this.persistChange, 1000 );
+		this.persistChange = debounce( this._persistChange, 1000 );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.item && nextProps.item && nextProps.item.ID !== this.props.item.ID ) {
-			this.setState( { modifiedItem: null } );
+		if ( nextProps.item && nextProps.item.ID !== this.props.item?.ID ) {
 			this.persistChange.cancel();
+			this._persistChange();
+			this.setState( { modifiedItem: null } );
 		}
+	}
+
+	componentWillUnmount() {
+		this._persistChange();
 	}
 
 	bumpTitleStat = () => {
@@ -63,12 +73,13 @@ class EditorMediaModalDetailFields extends Component {
 		return getMimePrefix( this.props.item ) === prefix;
 	}
 
-	persistChange() {
-		if ( ! this.props.site || ! this.state.modifiedItem ) {
+	_persistChange() {
+		if ( ! this.props.site || ! this.state?.modifiedItem ) {
 			return;
 		}
 
 		this.props.updateMedia( this.props.site.ID, this.state.modifiedItem );
+		this.props.onUpdate( this.props.item.ID, this.state.modifiedItem );
 	}
 
 	setFieldValue = ( { target } ) => {
@@ -78,8 +89,7 @@ class EditorMediaModalDetailFields extends Component {
 			{ [ target.name ]: target.value }
 		);
 
-		this.setState( { modifiedItem } );
-		this.persistChange();
+		this.setState( { modifiedItem }, this.persistChange );
 	};
 
 	getItemValue( attribute ) {

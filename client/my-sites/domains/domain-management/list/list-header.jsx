@@ -73,7 +73,7 @@ class ListHeader extends React.PureComponent {
 									titanMailService: getTitanProductName(),
 								},
 								comment:
-									'%(googleMailService)s can be either "G Suite" or "Google Workspace"; %(titanMailService)s can be either "Email" or "Titan Mail"',
+									'%(googleMailService)s can be either "G Suite" or "Google Workspace"; %(titanMailService)s will be "Professional Email" translated',
 							}
 						) }
 					</InfoPopover>

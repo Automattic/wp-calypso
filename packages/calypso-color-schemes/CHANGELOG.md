@@ -1,5 +1,14 @@
 # Release Notes
 
+## trunk
+
+- Switched from `node-sass` to `sass` (Dart Sass) for processing Sass files.
+  - Removed dependency `node-sass`
+  - Added dependency `sass ^1.32.13`
+- Updated dependencies:
+  - postcss to ^8.2.15
+  - node-sass to ^6.0.0
+
 ## 2.1.1
 
 - Updated the color palette to the most recent version.

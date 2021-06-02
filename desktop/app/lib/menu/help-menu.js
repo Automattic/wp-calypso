@@ -26,15 +26,15 @@ if ( platform.isWindows() || platform.isLinux() ) {
 	menuItems.push( { type: 'separator' } );
 }
 
-module.exports = function ( mainWindow ) {
+module.exports = function ( { window } ) {
 	return menuItems.concat( [
 		{
 			label: 'How Can We Help?',
 			click: function () {
 				// on login page - user logged out
 				if ( state.isLoggedIn() ) {
-					mainWindow.show();
-					ipc.showHelp( mainWindow );
+					window.show();
+					ipc.showHelp( window );
 				} else {
 					shell.openExternal( 'https://en.support.wordpress.com/' );
 				}
@@ -59,7 +59,7 @@ module.exports = function ( mainWindow ) {
 			label: 'Get Application Logs',
 			click: function () {
 				log.info( "User selected 'Get Application Logs'..." );
-				zipLogs( mainWindow );
+				zipLogs( window );
 			},
 		},
 	] );

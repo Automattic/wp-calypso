@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
 import { By } from 'selenium-webdriver';
 
 /**
@@ -82,12 +81,9 @@ export default class ViewPostPage extends AsyncBaseContainer {
 		);
 	}
 
-	async imageDisplayed( fileDetails ) {
-		return await this.driver
-			.findElement( By.css( `img[alt='${ fileDetails.imageName }']` ) )
-			.then( ( imageElement ) => {
-				return driverHelper.isImageVisible( this.driver, imageElement );
-			} );
+	async imageDisplayed( { imageName } ) {
+		const imageLocator = By.css( `img[alt='${ imageName }']` );
+		return await driverHelper.isImageVisible( this.driver, imageLocator );
 	}
 
 	async leaveAComment( comment ) {
@@ -103,16 +99,16 @@ export default class ViewPostPage extends AsyncBaseContainer {
 		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, commentLocator );
 	}
 
-	async embedContentDisplayed( selector ) {
-		const element = By.css( selector );
-		const displayed = await driverHelper.isElementEventuallyLocatedAndVisible(
+	async isEmbedDisplayed( name ) {
+		const selector = {
+			YouTube: '.youtube-player',
+			Instagram: '.instagram-media-rendered',
+			Twitter: '.twitter-tweet-rendered',
+		}[ name ];
+
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			element
-		);
-		return assert.strictEqual(
-			displayed,
-			true,
-			`The published post does not contain ${ selector } element`
+			By.css( selector )
 		);
 	}
 }

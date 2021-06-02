@@ -15,6 +15,7 @@ import {
 } from 'calypso/state/partner-portal/partner/selectors';
 import { receivePartner } from 'calypso/state/partner-portal/partner/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import Main from 'calypso/components/main';
@@ -38,11 +39,13 @@ export default function TermsOfServiceConsent(): ReactElement | null {
 	const consent = useTOSConsentMutation( {
 		onSuccess: ( partner ) => {
 			dispatch( receivePartner( formatApiPartner( partner ) ) );
+			dispatch( recordTracksEvent( 'calypso_partner_portal_tos_agree_success' ) );
 		},
 		onError: () => {
 			dispatch(
 				errorNotice( translate( 'We were unable to update your partner account details.' ) )
 			);
+			dispatch( recordTracksEvent( 'calypso_partner_portal_tos_agree_error' ) );
 		},
 	} );
 	const partner = useSelector( getCurrentPartner );
@@ -53,11 +56,17 @@ export default function TermsOfServiceConsent(): ReactElement | null {
 	const checkTOS = useCallback(
 		( event ) => {
 			setCheckedTOS( event.target.checked );
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_tos_toggle', {
+					checked: event.target.checked,
+				} )
+			);
 		},
 		[ setCheckedTOS ]
 	);
 
 	const agreeToTOS = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_partner_portal_tos_agree_click' ) );
 		consent.mutate();
 	}, [] );
 

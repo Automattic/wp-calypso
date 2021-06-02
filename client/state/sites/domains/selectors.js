@@ -18,7 +18,7 @@ export const getDomainsBySiteId = ( state, siteId ) => {
 };
 
 /**
- * Returns the  wpcom domain for the proved site id.
+ * Returns the  wpcom domain for the provided site id.
  *
  * @param {object} state - global state tree
  * @param {number | undefined} siteId - identifier of the site

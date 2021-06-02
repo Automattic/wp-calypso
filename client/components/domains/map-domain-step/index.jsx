@@ -44,6 +44,7 @@ class MapDomainStep extends React.Component {
 		products: PropTypes.object,
 		cart: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		isBusyMapping: PropTypes.bool,
 		initialQuery: PropTypes.string,
 		analyticsSection: PropTypes.string.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
@@ -54,6 +55,7 @@ class MapDomainStep extends React.Component {
 	};
 
 	static defaultProps = {
+		isBusyMapping: false,
 		onSave: noop,
 		initialQuery: '',
 	};
@@ -124,7 +126,7 @@ class MapDomainStep extends React.Component {
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						/>
 						<Button
-							busy={ this.state.isPendingSubmit }
+							busy={ this.state.isPendingSubmit || this.props.isBusyMapping }
 							disabled={ ! getTld( searchQuery ) || this.state.isPendingSubmit }
 							className="map-domain-step__go button is-primary"
 							onClick={ this.handleAddButtonClick }
@@ -248,8 +250,8 @@ class MapDomainStep extends React.Component {
 					! includes( [ AVAILABILITY_CHECK_ERROR, NOT_REGISTRABLE ], status ) &&
 					includes( [ MAPPABLE, UNKNOWN ], mappableStatus )
 				) {
-					// No need to disable isPendingSubmit because this handler should perform a redirect
 					this.props.onMapDomain( domain );
+					this.setState( { isPendingSubmit: false } );
 					return;
 				}
 

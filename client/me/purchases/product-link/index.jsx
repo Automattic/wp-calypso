@@ -10,7 +10,6 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import config from '@automattic/calypso-config';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { getThemeDetailsUrl } from 'calypso/state/themes/selectors';
@@ -24,7 +23,6 @@ import {
 } from '@automattic/calypso-products';
 
 const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
-	let props = {};
 	let url;
 	let text;
 
@@ -50,15 +48,11 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 	if ( isTheme( purchase ) ) {
 		url = productUrl;
 		text = i18n.translate( 'Theme Details' );
-
-		if ( ! config.isEnabled( 'manage/themes/details' ) ) {
-			props = { target: '_blank' };
-		}
 	}
 
 	if ( url && text ) {
 		return (
-			<a className="product-link" href={ url } { ...props }>
+			<a className="product-link" href={ url }>
 				{ text }
 			</a>
 		);

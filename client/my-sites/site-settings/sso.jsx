@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -13,7 +13,6 @@ import { connect } from 'react-redux';
 import { Card } from '@automattic/components';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
@@ -53,7 +52,7 @@ const Sso = ( {
 					/>
 
 					<div className="sso__module-settings site-settings__child-settings">
-						<FormToggle
+						<ToggleControl
 							checked={ !! fields.jetpack_sso_match_by_email }
 							disabled={
 								isRequestingSettings ||
@@ -62,11 +61,10 @@ const Sso = ( {
 								ssoModuleUnavailable
 							}
 							onChange={ handleAutosavingToggle( 'jetpack_sso_match_by_email' ) }
-						>
-							{ translate( 'Match accounts using email addresses' ) }
-						</FormToggle>
+							label={ translate( 'Match accounts using email addresses' ) }
+						/>
 
-						<FormToggle
+						<ToggleControl
 							checked={ !! fields.jetpack_sso_require_two_step }
 							disabled={
 								isRequestingSettings ||
@@ -75,9 +73,8 @@ const Sso = ( {
 								ssoModuleUnavailable
 							}
 							onChange={ handleAutosavingToggle( 'jetpack_sso_require_two_step' ) }
-						>
-							{ translate( 'Require two-step authentication' ) }
-						</FormToggle>
+							label={ translate( 'Require two-step authentication' ) }
+						/>
 					</div>
 				</FormFieldset>
 			</Card>

@@ -22,6 +22,7 @@ import Main from 'calypso/components/main';
 interface Props {
 	site: number | string;
 	productSlug: string | 'no_product';
+	isUserlessCheckoutFlow: boolean;
 }
 
 const getRequestUnauthorizedSiteId = ( siteId: string | number ): string =>
@@ -49,6 +50,7 @@ const requestUnauthorizedSite = ( siteId: string | number ) =>
 const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 	site: siteFragment,
 	productSlug,
+	isUserlessCheckoutFlow = false,
 } ) => {
 	const translate = useTranslate();
 
@@ -101,6 +103,19 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 						} ) }
 					</p>
 				) }
+
+				{ isUserlessCheckoutFlow && (
+					<p
+						className={
+							isLoading
+								? 'jetpack-checkout-thank-you__email-message-loading'
+								: 'jetpack-checkout-thank-you__email-message'
+						}
+					>
+						{ translate( 'We sent you an email with your receipt and further instructions.' ) }
+					</p>
+				) }
+
 				{ ( isLoading || ( siteName && siteUrl ) ) && (
 					<Button
 						className="jetpack-checkout-thank-you__button"

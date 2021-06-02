@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -78,13 +77,12 @@ class AmpWpcom extends Component {
 				<SettingsSectionHeader title={ translate( 'Accelerated Mobile Pages (AMP)' ) } />
 
 				<CompactCard className="amp__explanation site-settings__amp-explanation">
-					<FormToggle
+					<ToggleControl
 						checked={ !! ampIsEnabled }
 						disabled={ isDisabled }
 						onChange={ this.handleToggle }
-					>
-						{ translate( 'Improve the loading speed of your site on phones and tablets' ) }
-					</FormToggle>
+						label={ translate( 'Improve the loading speed of your site on phones and tablets' ) }
+					/>
 					<FormSettingExplanation isIndented>
 						{ translate(
 							'Your WordPress.com site supports the use of {{a}}Accelerated Mobile Pages{{/a}}, ' +

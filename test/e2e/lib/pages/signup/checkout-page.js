@@ -75,7 +75,7 @@ export default class CheckOutPage extends AsyncBaseContainer {
 	}
 
 	async isCompositeCheckout() {
-		return driverHelper.isElementLocated( this.driver, By.css( '.composite-checkout' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '.composite-checkout' ) );
 	}
 
 	async submitForm() {
@@ -87,5 +87,10 @@ export default class CheckOutPage extends AsyncBaseContainer {
 			);
 		}
 		return await driverHelper.clickWhenClickable( this.driver, By.css( 'button[type="submit"]' ) );
+	}
+
+	async close() {
+		const closeButtonLocator = By.css( '.masterbar__secure-checkout .masterbar__close-button' );
+		await driverHelper.clickIfPresent( this.driver, closeButtonLocator );
 	}
 }

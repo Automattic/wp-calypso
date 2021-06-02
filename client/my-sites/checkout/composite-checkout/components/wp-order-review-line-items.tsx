@@ -63,19 +63,16 @@ import {
 } from 'calypso/state/products-list/selectors';
 import { getPriceTierForUnits } from 'calypso/my-sites/plans/jetpack-plans/utils';
 
+import deleteIcon from './delete-icon.svg';
+
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	box-sizing: border-box;
-	margin: 20px 30px 20px 0;
+	margin: 20px 36px 20px 0;
 	padding: 0;
 
 	.rtl & {
-		margin: 20px 0 20px 30px;
-	}
-
-	.is-summary & {
-		border-top: 0;
-		margin: 0;
+		margin: 20px 0 20px 36px;
 	}
 `;
 
@@ -106,11 +103,6 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 		total ? 0 : '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
 
-	.is-summary & {
-		padding: 10px 0;
-		border-bottom: 0;
-	}
-
 	.checkout-line-item__price {
 		position: relative;
 	}
@@ -128,11 +120,6 @@ export const LineItem = styled( WPLineItem )< {
 	padding: 20px 0;
 	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
-
-	.is-summary & {
-		padding: 10px 0;
-		border-bottom: 0;
-	}
 
 	.checkout-line-item__price {
 		position: relative;
@@ -227,41 +214,12 @@ function LineItemPrice( {
 
 function DeleteIcon( { uniqueID, product }: { uniqueID: string; product: string } ) {
 	const translate = useTranslate();
-
-	return (
-		<svg
-			width="25"
-			height="24"
-			viewBox="0 0 25 24"
-			xmlns="http://www.w3.org/2000/svg"
-			aria-labelledby={ uniqueID }
-		>
-			<title id={ uniqueID }>
-				{ translate( 'Remove %s from cart', {
-					args: product,
-				} ) }
-			</title>
-			<mask
-				id="trashIcon"
-				mask-type="alpha"
-				maskUnits="userSpaceOnUse"
-				x="5"
-				y="3"
-				width="15"
-				height="18"
-			>
-				<path
-					fillRule="evenodd"
-					clipRule="evenodd"
-					d="M15.4456 3L16.4456 4H19.9456V6H5.94557V4H9.44557L10.4456 3H15.4456ZM6.94557 19C6.94557 20.1 7.84557 21 8.94557 21H16.9456C18.0456 21 18.9456 20.1 18.9456 19V7H6.94557V19ZM8.94557 9H16.9456V19H8.94557V9Z"
-					fill="white"
-				/>
-			</mask>
-			<g mask="url(#trashIcon)">
-				<rect x="0.945572" width="24" height="24" fill="#8E9196" />
-			</g>
-		</svg>
+	const text = String(
+		translate( 'Remove %s from cart', {
+			args: product,
+		} )
 	);
+	return <img id={ uniqueID } alt={ text } src={ deleteIcon } />;
 }
 
 export function WPNonProductLineItem( {
@@ -375,7 +333,7 @@ export function WPOrderReviewLineItems( {
 					<WPOrderReviewListItem key={ product.uuid }>
 						<LineItem
 							product={ product }
-							hasDeleteButton={ ! isSummary && canItemBeDeleted( product ) }
+							hasDeleteButton={ canItemBeDeleted( product ) }
 							removeProductFromCart={ removeProductFromCart }
 							getItemVariants={ getItemVariants }
 							onChangePlanLength={ onChangePlanLength }
@@ -895,7 +853,7 @@ function WPLineItem( {
 	);
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
-	const deleteButtonId = `checkout-delete-button-${ id }`;
+	const deleteButtonId = `checkout-delete-button-${ id }-${ isSummary ? 'summary' : 'edit' }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const isPwpoUser = useSelector(
 		( state ) =>
@@ -933,6 +891,12 @@ function WPLineItem( {
 		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
 	);
 
+	const deleteButtonText = String(
+		translate( 'Remove %s from cart', {
+			args: label,
+		} )
+	);
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -967,6 +931,7 @@ function WPLineItem( {
 				<>
 					<DeleteButton
 						className="checkout-line-item__remove-product"
+						aria-label={ deleteButtonText }
 						buttonType="borderless"
 						disabled={ isDisabled }
 						onClick={ () => {

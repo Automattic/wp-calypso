@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, get, pick } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -16,7 +16,6 @@ import FormLegend from 'calypso/components/forms/form-legend';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import Notice from 'calypso/components/notice';
 import QueryStatus from '../data/query-status';
 import SectionHeader from 'calypso/components/section-header';
@@ -172,53 +171,60 @@ class PreloadTab extends Component {
 				<Card>
 					<form>
 						<FormFieldset>
-							<FormToggle
+							<ToggleControl
 								checked={ !! preload_on }
 								disabled={ isRequesting || isSaving }
 								onChange={ handleAutosavingToggle( 'preload_on' ) }
-							>
-								<span>
-									{ translate(
-										'Preload mode. (Garbage collection only on legacy cache files. Recommended.)'
-									) }
-								</span>
-							</FormToggle>
+								label={
+									<span>
+										{ translate(
+											'Preload mode. (Garbage collection only on legacy cache files. Recommended.)'
+										) }
+									</span>
+								}
+							/>
 
-							<FormToggle
+							<ToggleControl
 								checked={ this.state.preloadRefresh }
 								disabled={ isRequesting || isSaving }
 								onChange={ this.handlePreloadRefreshChange }
-							>
-								<span>
-									{ translate(
-										'Refresh preloaded cache files every {{number /}} minute ',
-										'Refresh preloaded cache files every {{number /}} minutes ',
-										{
-											count: preload_interval || 0,
-											components: {
-												number: CachePreloadInterval( {
-													handleChange,
-													isDisabled: isRequesting || isSaving || ! this.state.preloadRefresh,
-													preload_interval,
-												} ),
-											},
-										}
-									) }
+								label={
+									<span>
+										{ translate(
+											'Refresh preloaded cache files every {{number /}} minute ',
+											'Refresh preloaded cache files every {{number /}} minutes ',
+											{
+												count: preload_interval || 0,
+												components: {
+													number: CachePreloadInterval( {
+														handleChange,
+														isDisabled: isRequesting || isSaving || ! this.state.preloadRefresh,
+														preload_interval,
+													} ),
+												},
+											}
+										) }
 
-									{ translate( '(minimum %(minutes)d minute).', '(minimum %(minutes)d minutes).', {
-										args: { minutes: minimum_preload_interval || 0 },
-										count: minimum_preload_interval || 0,
-									} ) }
-								</span>
-							</FormToggle>
+										{ translate(
+											'(minimum %(minutes)d minute).',
+											'(minimum %(minutes)d minutes).',
+											{
+												args: { minutes: minimum_preload_interval || 0 },
+												count: minimum_preload_interval || 0,
+											}
+										) }
+									</span>
+								}
+							/>
 
-							<FormToggle
+							<ToggleControl
 								checked={ !! preload_taxonomies }
 								disabled={ isRequesting || isSaving }
 								onChange={ handleAutosavingToggle( 'preload_taxonomies' ) }
-							>
-								<span>{ translate( 'Preload tags, categories and other taxonomies.' ) }</span>
-							</FormToggle>
+								label={
+									<span>{ translate( 'Preload tags, categories and other taxonomies.' ) }</span>
+								}
+							/>
 						</FormFieldset>
 
 						{ post_count && post_count > 100 && (

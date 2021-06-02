@@ -25,10 +25,10 @@ const isWpAdmin = ( url ) => url.href.includes( 'wp-admin' );
 
 const isWpLogin = ( url ) => url.pathname.includes( 'wp-login.php' );
 
-module.exports = function ( mainWindow ) {
-	const webContents = mainWindow.webContents;
+module.exports = function ( { view } ) {
+	const webContents = view.webContents;
 
-	mainWindow.webContents.on( 'new-window', function ( event, url ) {
+	view.webContents.on( 'new-window', function ( event, url ) {
 		const parsed = new URL( url );
 		log.info( `Navigating to URL: '${ parsed.href }'` );
 
@@ -42,7 +42,7 @@ module.exports = function ( mainWindow ) {
 			isWpAdmin( parsed ) ||
 			isWpLogin( parsed ) // Disable wp-login/self-hosted for now ?
 		) {
-			mainWindow.webContents.loadURL( url );
+			view.webContents.loadURL( url );
 			return;
 		}
 
@@ -59,7 +59,7 @@ module.exports = function ( mainWindow ) {
 			event.preventDefault();
 			log.info( `Redirecting to 'wordpress.com/log-in'` );
 
-			mainWindow.webContents.loadURL( Config.loginURL() );
+			view.webContents.loadURL( Config.loginURL() );
 			return;
 		}
 

@@ -19,7 +19,7 @@ export default class StartPage extends AsyncBaseContainer {
 
 	async _postInit() {
 		if ( this.visiting ) {
-			await this.setABTestControlGroupsInLocalStorage();
+			await this.waitForPage();
 			await this.driver.get( this.startURL ); // this is the actual calculated start URL
 		}
 		return await driverHelper.waitUntilElementLocatedAndVisible(

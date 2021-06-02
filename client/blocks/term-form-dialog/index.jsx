@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, find } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -17,7 +18,6 @@ import FormInputValidation from 'calypso/components/forms/form-input-validation'
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -271,7 +271,7 @@ class TermFormDialog extends Component {
 
 		return (
 			<FormFieldset>
-				<FormToggle
+				<ToggleControl
 					checked={ isTopLevel }
 					onChange={ this.onTopLevelChange }
 					help={
@@ -285,13 +285,12 @@ class TermFormDialog extends Component {
 							</span>
 						)
 					}
-				>
-					{ translate( 'Top level %(term)s', {
+					label={ translate( 'Top level %(term)s', {
 						args: { term: labels.singular_name },
 						context: 'Terms: New term being created is top level',
 						comment: 'term is the singular_name label of a hierarchical taxonomy, e.g. "Category"',
 					} ) }
-				</FormToggle>
+				/>
 				{ ! isTopLevel && (
 					<div className="term-form-dialog__parent-tree-selector">
 						<FormLegend>

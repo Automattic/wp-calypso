@@ -44,10 +44,10 @@ function isErrorPage( sender ) {
 	return false;
 }
 
-function failedToLoadError( mainWindow ) {
+function failedToLoadError( view ) {
 	// We had an error loading the error page. Try a final time to load it via the server now the proxy has been disabled
 	if ( finalTry === false ) {
-		mainWindow.loadURL( 'http://127.0.0.1:41050/desktop/failed-to-start.html#-666' );
+		view.webContents.loadURL( 'http://127.0.0.1:41050/desktop/failed-to-start.html#-666' );
 		finalTry = true;
 	} else {
 		// Last resort. We don't want to get in a loop trying to load the error page. Disable the proxy, show a dialog, and quit
@@ -69,16 +69,16 @@ function failedToLoadError( mainWindow ) {
 
 // TODO: evaluate if this is still the way to go to handle requests.
 // @adlk: Keep in mind that every request, even the ones we do not control (e.g. atomic- or self hosted sites), might cause the app to "soft-crash" even though the user experience might not be affected directly by some requests that fail.
-module.exports = function ( mainWindow ) {
+module.exports = function ( { view } ) {
 	// This attempts to catch some network errors and display an error screen in order to avoid a blank white page
-	mainWindow.webContents.on(
+	view.webContents.on(
 		'did-fail-load',
 		async function ( event, errorCode, errorDescription, validatedURL ) {
 			log.error( `Failed to load URL '${ validatedURL }'` );
 
 			if ( ERRORS_TO_IGNORE.indexOf( errorCode ) === -1 ) {
 				if ( isErrorPage( event.sender ) ) {
-					failedToLoadError( mainWindow );
+					failedToLoadError( view );
 				} else {
 					log.error(
 						'Failed to load from server, showing fallback page: code=' +
@@ -87,8 +87,8 @@ module.exports = function ( mainWindow ) {
 							errorDescription
 					);
 
-					await mainWindow.webContents.session.setProxy( { proxyRules: 'direct://' } );
-					mainWindow.loadURL( FAILED_FILE + '#' + errorCode );
+					await view.webContents.session.setProxy( { proxyRules: 'direct://' } );
+					view.webContents.loadURL( FAILED_FILE + '#' + errorCode );
 				}
 			}
 		}

@@ -6,6 +6,7 @@ import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { overSome } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
@@ -174,7 +174,7 @@ class Search extends Component {
 				/>
 
 				<div className="site-settings__jetpack-instant-search-toggle">
-					<FormToggle
+					<ToggleControl
 						checked={ isSearchModuleActive && !! fields.instant_search_enabled }
 						disabled={
 							isRequestingSettings ||
@@ -183,9 +183,8 @@ class Search extends Component {
 							! this.props.hasSearchProduct
 						}
 						onChange={ handleInstantSearchToggle }
-					>
-						{ translate( 'Enable instant search experience (recommended)' ) }
-					</FormToggle>
+						label={ translate( 'Enable instant search experience (recommended)' ) }
+					/>
 					{ isLoading || activatingSearchModule || isSavingSettings
 						? this.renderSettingsUpdating()
 						: this.renderInstantSearchExplanation() }
@@ -227,16 +226,15 @@ class Search extends Component {
 
 		return (
 			<Fragment>
-				<FormToggle
+				<ToggleControl
 					checked={ !! fields.jetpack_search_enabled }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleJetpackSearchToggle }
-				>
-					{ translate( 'Enable Jetpack Search' ) }
-				</FormToggle>
+					label={ translate( 'Enable Jetpack Search' ) }
+				/>
 
 				<div className="site-settings__jetpack-instant-search-toggle">
-					<FormToggle
+					<ToggleControl
 						checked={ !! fields.instant_search_enabled }
 						disabled={
 							isRequestingSettings ||
@@ -245,9 +243,8 @@ class Search extends Component {
 							! this.props.hasSearchProduct
 						}
 						onChange={ handleAutosavingToggle( 'instant_search_enabled' ) }
-					>
-						{ translate( 'Enable instant search experience (recommended)' ) }
-					</FormToggle>
+						label={ translate( 'Enable instant search experience (recommended)' ) }
+					/>
 					{ isLoading || activatingSearchModule || isSavingSettings
 						? this.renderSettingsUpdating()
 						: this.renderInstantSearchExplanation() }

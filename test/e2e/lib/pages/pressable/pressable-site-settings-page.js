@@ -17,9 +17,9 @@ export default class PressableSiteSettingsPage extends AsyncBaseContainer {
 		super( driver, By.css( '.site-show-sections' ) );
 	}
 
-	waitForJetpackPremium() {
+	async waitForJetpackPremium() {
 		const loadingLocator = By.css( '.activating img.loading-image' );
-		return driverHelper.waitUntilElementNotLocated(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			loadingLocator,
 			explicitWaitMS * 4

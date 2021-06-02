@@ -9,17 +9,7 @@ import { intersection, isEmpty, keys } from 'lodash';
 import flows from '../flows';
 import steps from '../steps';
 
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
 jest.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );
-jest.mock( 'calypso/lib/user', () => () => {
-	return {
-		get() {
-			return {};
-		},
-	};
-} );
 
 describe( 'index', () => {
 	// eslint-disable-next-line jest/expect-expect

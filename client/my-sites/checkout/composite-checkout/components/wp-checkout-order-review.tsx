@@ -16,7 +16,11 @@ import { useSelector } from 'react-redux';
 import joinClasses from './join-classes';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
-import { isDomainRegistration, isDomainTransfer } from '@automattic/calypso-products';
+import {
+	isDomainMapping,
+	isDomainRegistration,
+	isDomainTransfer,
+} from '@automattic/calypso-products';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { GetProductVariants } from '../hooks/product-variants';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -90,17 +94,23 @@ export default function WPCheckoutOrderReview( {
 	const { responseCart, removeCoupon, couponStatus } = useShoppingCart();
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 
-	const firstDomainItem = responseCart.products.find(
-		( product ) => isDomainTransfer( product ) || isDomainRegistration( product )
+	const selectedSiteData = useSelector( getSelectedSite );
+
+	const primaryDomain = selectedSiteData?.options?.is_mapped_domain
+		? selectedSiteData?.domain
+		: null;
+	const firstDomainProduct = responseCart.products.find(
+		( product ) =>
+			isDomainTransfer( product ) || isDomainRegistration( product ) || isDomainMapping( product )
 	);
-	const domainUrl = firstDomainItem ? firstDomainItem.meta : siteUrl;
+	const domainUrl = primaryDomain ?? firstDomainProduct?.meta ?? siteUrl;
+
 	const removeCouponAndClearField = () => {
 		couponFieldStateProps.setCouponFieldValue( '' );
 		setCouponFieldVisible( false );
 		return removeCoupon();
 	};
 
-	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
 
 	return (

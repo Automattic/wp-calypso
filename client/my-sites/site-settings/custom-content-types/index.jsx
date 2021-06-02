@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -13,7 +14,6 @@ import classnames from 'classnames';
 import { Card } from '@automattic/components';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -79,13 +79,12 @@ class CustomContentTypes extends Component {
 		return (
 			<div className="custom-content-types__module-settings">
 				{ hasToggle ? (
-					<FormToggle
+					<ToggleControl
 						checked={ !! fields[ name ] }
 						disabled={ this.isFormPending() || activatingCustomContentTypesModule }
 						onChange={ handleAutosavingToggle( name ) }
-					>
-						<span className="custom-content-types__label">{ label }</span>
-					</FormToggle>
+						label={ <span className="custom-content-types__label">{ label }</span> }
+					/>
 				) : (
 					<div
 						id={ numberFieldIdentifier }

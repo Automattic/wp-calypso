@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, partialRight, pick } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextValidation from 'calypso/components/forms/form-input-validation';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
@@ -219,13 +219,12 @@ export function CloudflareAnalyticsSettings( {
 				) : (
 					<CompactCard>
 						<div className="analytics site-settings__analytics">
-							<FormToggle
+							<ToggleControl
 								checked={ isCloudflareEnabled }
 								disabled={ isRequestingSettings || isSavingSettings || ! enableForm }
 								onChange={ () => handleFormToggle( ! isCloudflareEnabled ) }
-							>
-								{ translate( 'Add Cloudflare' ) }
-							</FormToggle>
+								label={ translate( 'Add Cloudflare' ) }
+							/>
 						</div>
 					</CompactCard>
 				) }

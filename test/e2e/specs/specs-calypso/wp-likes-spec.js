@@ -16,7 +16,6 @@ import CommentLikesComponent from '../../lib/pages/frontend/comment-likes-compon
 
 const host = dataHelper.getJetpackHost();
 const screenSize = driverManager.currentScreenSize();
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const mochaTimeoutMS = config.get( 'mochaTimeoutMS' );
 const blogPostTitle = dataHelper.randomPhrase();
 const blogPostQuote =
@@ -26,75 +25,67 @@ const blogPostQuote =
  * This spec ensures likes on wordpress.com posts and comments work as expected
  * for both loggedin and logged out users.
  */
-describe( `[${ host }] Likes: (${ screenSize })`, function () {
-	let driver;
+describe( `[${ host }] Likes: (${ screenSize }) @parallel`, function () {
 	let postUrl;
 	this.timeout( mochaTimeoutMS );
 	const comment = dataHelper.randomPhrase();
 	const accountKey = 'gutenbergSimpleSiteUser';
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
+	it( 'Login, create a new post and view it', async function () {
+		const loginFlow = new LoginFlow( this.driver, accountKey );
+		await loginFlow.loginAndStartNewPost( null, true );
+
+		const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+		await gEditorComponent.enterTitle( blogPostTitle );
+		await gEditorComponent.enterText( blogPostQuote );
+		postUrl = await gEditorComponent.publish( { visit: true } );
 	} );
 
-	describe( 'Like posts and comments @parallel', function () {
-		it( 'Login, create a new post and view it', async function () {
-			const loginFlow = new LoginFlow( driver, accountKey );
-			await loginFlow.loginAndStartNewPost( null, true );
+	it( 'Like post', async function () {
+		const postLikes = await PostLikesComponent.Expect( this.driver );
+		await postLikes.clickLike();
+		await postLikes.expectLiked();
+	} );
 
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.enterTitle( blogPostTitle );
-			await gEditorComponent.enterText( blogPostQuote );
-			postUrl = await gEditorComponent.publish( { visit: true } );
-		} );
+	it( 'Unlike post', async function () {
+		const postLikes = await PostLikesComponent.Expect( this.driver );
+		await postLikes.clickUnlike();
+		await postLikes.expectNotLiked();
+	} );
 
-		it( 'Like post', async function () {
-			const postLikes = await PostLikesComponent.Expect( driver );
-			await postLikes.clickLike();
-			await postLikes.expectLiked();
-		} );
+	it( 'Post comment', async function () {
+		const commentArea = await CommentsAreaComponent.Expect( this.driver );
 
-		it( 'Unlike post', async function () {
-			const postLikes = await PostLikesComponent.Expect( driver );
-			await postLikes.clickUnlike();
-			await postLikes.expectNotLiked();
-		} );
+		// commentArea.reply fails to find .comment-reply-link at times,
+		// as we're not concerned with the assertion just call postComment directly
+		await commentArea._postComment( comment );
+	} );
 
-		it( 'Post comment', async function () {
-			const commentArea = await CommentsAreaComponent.Expect( driver );
+	it( 'Like comment', async function () {
+		const commentLikes = await CommentLikesComponent.Expect( this.driver, comment );
+		await commentLikes.likeComment();
+		await commentLikes.expectLiked();
+	} );
 
-			// commentArea.reply fails to find .comment-reply-link at times,
-			// as we're not concerned with the assertion just call postComment directly
-			await commentArea._postComment( comment );
-		} );
+	it( 'Unlike comment', async function () {
+		const commentLikes = await CommentLikesComponent.Expect( this.driver, comment );
+		await commentLikes.unlikeComment();
+		await commentLikes.expectNotLiked();
+	} );
 
-		it( 'Like comment', async function () {
-			const commentLikes = await CommentLikesComponent.Expect( driver, comment );
-			await commentLikes.likeComment();
-			await commentLikes.expectLiked();
-		} );
+	it( 'Like post as logged out user', async function () {
+		await driverManager.ensureNotLoggedIntoSite( this.driver, postUrl );
 
-		it( 'Unlike comment', async function () {
-			const commentLikes = await CommentLikesComponent.Expect( driver, comment );
-			await commentLikes.unlikeComment();
-			await commentLikes.expectNotLiked();
-		} );
+		const postLikes = await PostLikesComponent.Visit( this.driver, postUrl );
+		await postLikes.clickLike();
 
-		it( 'Like post as logged out user', async function () {
-			await driverManager.ensureNotLoggedIntoSite( driver, postUrl );
+		const loginFlow = new LoginFlow( this.driver, accountKey );
+		await loginFlow.loginUsingPopup();
 
-			const postLikes = await PostLikesComponent.Visit( driver, postUrl );
-			await postLikes.clickLike();
+		await postLikes.expectLiked();
 
-			const loginFlow = new LoginFlow( driver, accountKey );
-			await loginFlow.loginUsingPopup();
-
-			await postLikes.expectLiked();
-
-			// And Unlike it
-			await postLikes.clickUnlike();
-			await postLikes.expectNotLiked();
-		} );
+		// And Unlike it
+		await postLikes.clickUnlike();
+		await postLikes.expectNotLiked();
 	} );
 } );

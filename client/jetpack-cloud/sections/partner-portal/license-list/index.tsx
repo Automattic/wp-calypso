@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropsWithChildren, ReactElement, useContext } from 'react';
-import { useSelector } from 'react-redux';
+import React, { PropsWithChildren, ReactElement, useContext, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import page from 'page';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import CSSTransition from 'react-transition-group/CSSTransition';
@@ -11,6 +11,7 @@ import CSSTransition from 'react-transition-group/CSSTransition';
  * Internal dependencies
  */
 import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { addQueryArgs } from 'calypso/lib/route';
 import { License, PaginatedItems } from 'calypso/state/partner-portal/types';
 import {
@@ -49,6 +50,7 @@ const LicenseTransition = ( props: PropsWithChildren< LicenseTransitionProps > )
 );
 
 export default function LicenseList(): ReactElement {
+	const dispatch = useDispatch();
 	const { filter, search, sortField, sortDirection, currentPage } = useContext(
 		LicenseListContext
 	);
@@ -58,6 +60,18 @@ export default function LicenseList(): ReactElement {
 	const showLicenses = hasFetched && ! isFetching && !! licenses;
 	const showPagination = showLicenses && licenses.totalPages > 1;
 	const showNoResults = hasFetched && ! isFetching && licenses && licenses.items.length === 0;
+
+	const onPageClick = useCallback(
+		( pageNumber: number ) => {
+			setPage( pageNumber );
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_license_list_pagination_page_click', {
+					page: pageNumber,
+				} )
+			);
+		},
+		[ dispatch ]
+	);
 
 	return (
 		<div className="license-list">
@@ -106,7 +120,7 @@ export default function LicenseList(): ReactElement {
 							page={ currentPage }
 							perPage={ LICENSES_PER_PAGE }
 							total={ licenses.totalItems }
-							pageClick={ setPage }
+							pageClick={ onPageClick }
 						/>
 					</LicenseTransition>
 				) }

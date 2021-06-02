@@ -1,6 +1,6 @@
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@automattic/onboarding/styles/mixins';
-@import '~@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@automattic/onboarding/styles/mixins';
+@import '@automattic/typography/styles/variables';
 @import '../variables.scss';
 
 $plans-accordion-item-border-radius: 5px; /* stylelint-disable-line scales/radii */

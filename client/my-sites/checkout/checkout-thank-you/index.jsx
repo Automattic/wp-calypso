@@ -57,6 +57,7 @@ import {
 	isJetpackBusinessPlan,
 	isWpComBusinessPlan,
 	shouldFetchSitePlans,
+	isMarketplaceProduct,
 } from '@automattic/calypso-products';
 import { isExternal } from 'calypso/lib/url';
 import JetpackPlanDetails from './jetpack-plan-details';
@@ -95,6 +96,7 @@ import { isProductsListFetching } from 'calypso/state/products-list/selectors';
  * Style dependencies
  */
 import './style.scss';
+import AsyncLoad from 'calypso/components/async-load';
 
 function getPurchases( props ) {
 	return [
@@ -390,6 +392,7 @@ export class CheckoutThankYou extends React.Component {
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
+		let wasMarketplaceProduct = false;
 		let delayedTransferPurchase = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
@@ -398,6 +401,7 @@ export class CheckoutThankYou extends React.Component {
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
+			wasMarketplaceProduct = purchases.some( isMarketplaceProduct );
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -428,7 +432,11 @@ export class CheckoutThankYou extends React.Component {
 			);
 		}
 
-		if ( wasEcommercePlanPurchased ) {
+		if ( wasMarketplaceProduct ) {
+			return (
+				<AsyncLoad require="calypso/my-sites/checkout/checkout-thank-you/marketplace/marketplace-thank-you" />
+			);
+		} else if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
 				return (
 					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
@@ -508,7 +516,6 @@ export class CheckoutThankYou extends React.Component {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			const purchases = getPurchases( this.props );
 			const failedPurchases = getFailedPurchases( this.props );
-
 			if ( failedPurchases.length > 0 ) {
 				return [ FailedPurchaseDetails ];
 			} else if ( purchases.some( isJetpackPlan ) ) {

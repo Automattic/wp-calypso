@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import { hasTitanMail } from 'calypso/lib/cart-values/cart-items';
 import Gridicon from 'calypso/components/gridicon';
+import { getTitanProductName } from 'calypso/lib/titan';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -18,8 +19,13 @@ function TitanTermsOfService( { cart, translate } ) {
 	}
 
 	const titanTerms = translate(
-		"You understand that your Email service will be powered by Titan and is subject to Titan's {{titanCustomerTos}}Customer Terms of Service{{/titanCustomerTos}}, {{titanAup}}Acceptable Use Policy{{/titanAup}}, and {{titanPrivacy}}Privacy Policy{{/titanPrivacy}}.",
+		"You understand that your %(productName)s service will be powered by Titan and is subject to Titan's {{titanCustomerTos}}Customer Terms of Service{{/titanCustomerTos}}, {{titanAup}}Acceptable Use Policy{{/titanAup}}, and {{titanPrivacy}}Privacy Policy{{/titanPrivacy}}.",
 		{
+			args: {
+				productName: getTitanProductName(),
+			},
+			comment:
+				'%(productName) is the name of the product, which should be "Professional Email" translated',
 			components: {
 				titanCustomerTos: (
 					<a

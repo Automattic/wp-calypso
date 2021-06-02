@@ -18,17 +18,7 @@ export default class PagesPage extends AsyncBaseContainer {
 	async waitForPages() {
 		const driver = this.driver;
 		const resultsLoadingLocator = By.css( '.pages__page-list .is-placeholder:not(.page)' );
-		return await driver.wait(
-			function () {
-				return driverHelper
-					.isElementLocated( driver, resultsLoadingLocator )
-					.then( function ( present ) {
-						return ! present;
-					} );
-			},
-			this.explicitWaitMS,
-			'The page results loading element was still present when it should have disappeared by now.'
-		);
+		return await driverHelper.waitUntilElementNotLocated( driver, resultsLoadingLocator );
 	}
 
 	async editPageWithTitle( title ) {
@@ -37,25 +27,12 @@ export default class PagesPage extends AsyncBaseContainer {
 	}
 
 	async selectAddNewPage() {
-		const addPageLocator = By.css( '.pages__add-page' ); // Add button when there are pages
-		const startPageLocator = By.css( '.empty-content__action' ); // Add button when there are no pages
+		const startAPageButtonSelector = 'a.empty-content__action'; // When there are no pages
+		const addNewPageButtonSelector = 'a.pages__add-page'; // When there are any pages
 
-		if (
-			await driverHelper.isElementEventuallyLocatedAndVisible(
-				this.driver,
-				addPageLocator,
-				this.explicitWaitMS / 5
-			)
-		) {
-			return await driverHelper.clickWhenClickable( this.driver, addPageLocator );
-		} else if (
-			await driverHelper.isElementEventuallyLocatedAndVisible(
-				this.driver,
-				startPageLocator,
-				this.explicitWaitMS / 5
-			)
-		) {
-			return await driverHelper.clickWhenClickable( this.driver, startPageLocator );
-		}
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( `${ startAPageButtonSelector }, ${ addNewPageButtonSelector }` )
+		);
 	}
 }

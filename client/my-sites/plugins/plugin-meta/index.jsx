@@ -63,6 +63,7 @@ import {
 	ENABLE_AUTOUPDATE_PLUGIN,
 	REMOVE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
+import withPluginRedirect from '../with-plugin-redirect';
 
 const activationPreventionActions = [
 	ENABLE_AUTOUPDATE_PLUGIN,
@@ -281,9 +282,9 @@ export class PluginMeta extends Component {
 	}
 
 	isWpcomInstallDisabled() {
-		const { isTransfering, plugin } = this.props;
+		const { isTransferring, plugin } = this.props;
 
-		return ! this.hasBusinessPlan() || ! isCompatiblePlugin( plugin.slug ) || isTransfering;
+		return ! this.hasBusinessPlan() || ! isCompatiblePlugin( plugin.slug ) || isTransferring;
 	}
 
 	isJetpackInstallDisabled() {
@@ -304,6 +305,7 @@ export class PluginMeta extends Component {
 				<WpcomPluginInstallButton
 					disabled={ this.isWpcomInstallDisabled() }
 					plugin={ this.props.plugin }
+					isTransferring={ this.props.isTransferring }
 				/>
 			);
 		}
@@ -668,5 +670,5 @@ const mapStateToProps = ( state, { plugin, sites } ) => {
 };
 
 export default connect( mapStateToProps, { removePluginStatuses, updatePlugin } )(
-	localize( PluginMeta )
+	localize( withPluginRedirect( PluginMeta ) )
 );

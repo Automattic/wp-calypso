@@ -1,7 +1,7 @@
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@automattic/onboarding/styles/variables';
-@import '~@automattic/onboarding/styles/mixins';
-@import '~@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@automattic/onboarding/styles/variables';
+@import '@automattic/onboarding/styles/mixins';
+@import '@automattic/typography/styles/variables';
 @import '../variables.scss';
 
 /* stylelint-disable scales/font-size */

@@ -32,12 +32,14 @@ class EditorMediaModalDetailBase extends React.Component {
 		onSelectedIndexChange: PropTypes.func,
 		onReturnToList: PropTypes.func,
 		onEdit: PropTypes.func,
-		onRestore: PropTypes.func,
+		onRestoreItem: PropTypes.func,
+		onUpdateItem: PropTypes.func,
 	};
 
 	static defaultProps = {
 		selectedIndex: 0,
 		onSelectedIndexChange: noop,
+		onUpdateItem: noop,
 	};
 
 	componentDidMount() {
@@ -71,6 +73,7 @@ class EditorMediaModalDetailBase extends React.Component {
 			onEditImageItem,
 			onEditVideoItem,
 			onRestoreItem,
+			onUpdateItem,
 			onReturnToList,
 			translate,
 		} = this.props;
@@ -78,6 +81,7 @@ class EditorMediaModalDetailBase extends React.Component {
 		const item = items[ selectedIndex ];
 		const mimePrefix = getMimePrefix( item );
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="editor-media-modal-detail">
 				<HeaderCake
@@ -93,9 +97,11 @@ class EditorMediaModalDetailBase extends React.Component {
 					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
 					onRestore={ onRestoreItem }
 					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem }
+					onUpdate={ onUpdateItem }
 				/>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

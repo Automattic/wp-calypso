@@ -28,7 +28,7 @@ import SetupNotices from './setup/notices';
 import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import { getSelectedSiteWithFallback, getSiteWoocommerceUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSiteWithFallback, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import { recordTrack } from '../lib/analytics';
 
@@ -640,7 +640,7 @@ function mapStateToProps( state ) {
 	const siteId = site.ID;
 	const sitePlugins = site ? getInstalledPlugins( state, [ siteId ] ) : [];
 	const pluginsStatus = getStatusForSite( state, siteId );
-	const woocommerceUrl = getSiteWoocommerceUrl( state, siteId );
+	const woocommerceUrl = getSiteWooCommerceUrl( state, siteId );
 
 	return {
 		site,

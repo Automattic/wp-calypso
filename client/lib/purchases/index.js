@@ -33,7 +33,6 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 } from '@automattic/calypso-products';
-import { MembershipSubscription, MembershipSubscriptionsSite } from 'calypso/lib/purchases/types';
 import { errorNotice } from 'calypso/state/notices/actions';
 
 const debug = debugFactory( 'calypso:purchases' );
@@ -80,8 +79,8 @@ function getPurchasesBySite( purchases, sites ) {
 /**
  * Returns an array of sites objects, each of which contains an array of subscriptions.
  *
- * @param {MembershipSubscription[]} subscriptions An array of subscription objects.
- * @returns {MembershipSubscriptionsSite[]} An array of sites with subscriptions attached.
+ * @param {import('calypso/lib/purchases/types').MembershipSubscription[]} subscriptions An array of subscription objects.
+ * @returns {import('calypso/lib/purchases/types').MembershipSubscriptionsSite[]} An array of sites with subscriptions attached.
  */
 function getSubscriptionsBySite( subscriptions ) {
 	return subscriptions

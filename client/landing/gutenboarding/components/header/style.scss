@@ -1,6 +1,6 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../variables.scss';
-@import '~@automattic/onboarding/styles/z-index';
+@import '@automattic/onboarding/styles/z-index';
 
 $margin--gutenboarding__header-section-item: 13px; // matches design
 $padding--gutenboarding__header: $grid-unit-10;

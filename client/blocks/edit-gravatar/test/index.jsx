@@ -25,7 +25,6 @@ jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
 jest.mock( 'calypso/lib/oauth-token', () => ( {
 	getToken: () => 'bearerToken',
 } ) );
-jest.mock( 'calypso/lib/user', () => () => {} );
 
 const noop = () => {};
 

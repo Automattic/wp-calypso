@@ -119,9 +119,6 @@ export async function startBrowser( {
 	resizeBrowserWindow = true,
 	disableThirdPartyCookies = false,
 } = {} ) {
-	if ( global.__BROWSER__ ) {
-		return global.__BROWSER__;
-	}
 	const screenSize = currentScreenSize();
 	const locale = currentLocale();
 	let driver;
@@ -170,7 +167,7 @@ export async function startBrowser( {
 		} );
 
 		global.browserName = caps.browserName;
-		global.__BROWSER__ = driver = builder.usingServer( sauceURL ).withCapabilities( caps ).build();
+		driver = builder.usingServer( sauceURL ).withCapabilities( caps ).build();
 
 		driver.setFileDetector( new remote.FileDetector() );
 
@@ -235,10 +232,7 @@ export async function startBrowser( {
 
 				builder = new webdriver.Builder();
 				builder.setChromeOptions( options );
-				global.__BROWSER__ = driver = builder
-					.forBrowser( 'chrome' )
-					.setLoggingPrefs( pref )
-					.build();
+				driver = builder.forBrowser( 'chrome' ).setLoggingPrefs( pref ).build();
 				global.browserName = 'chrome';
 				break;
 			case 'firefox':
@@ -262,10 +256,7 @@ export async function startBrowser( {
 				options.setProxy( getProxyType() );
 				builder = new webdriver.Builder();
 				builder.setFirefoxOptions( options );
-				global.__BROWSER__ = driver = builder
-					.forBrowser( 'firefox' )
-					.setLoggingPrefs( pref )
-					.build();
+				driver = builder.forBrowser( 'firefox' ).setLoggingPrefs( pref ).build();
 				global.browserName = 'firefox';
 				break;
 			default:
@@ -353,7 +344,7 @@ export async function ensureNotLoggedIn( driver ) {
 		'window.document.cookie = "sensitive_pixel_option=no;domain=.wordpress.com;SameSite=None;Secure"'
 	);
 
-	return driver.sleep( 500 );
+	await driver.sleep( 500 );
 }
 
 /**
@@ -399,7 +390,6 @@ export async function acceptAllAlerts( driver ) {
 }
 
 export function quitBrowser( driver ) {
-	global.__BROWSER__ = null;
 	return driver.quit();
 }
 

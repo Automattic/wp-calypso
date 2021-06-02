@@ -9,7 +9,11 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
-import { JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION } from '@automattic/calypso-products';
+import {
+	JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION,
+	PLAN_JETPACK_FREE,
+	JETPACK_PRODUCTS_LIST,
+} from '@automattic/calypso-products';
 import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
 import { preventWidows } from 'calypso/lib/formatting';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
@@ -18,7 +22,7 @@ import Notice from 'calypso/components/notice';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
-import { PLAN_JETPACK_FREE, JETPACK_PRODUCTS_LIST } from '@automattic/calypso-products';
+
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 
 type HeaderProps = {

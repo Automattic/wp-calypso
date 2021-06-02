@@ -12,6 +12,7 @@ import {
 	getThemeFilterTermFromString,
 	isValidThemeFilterTerm,
 } from 'calypso/state/themes/selectors';
+import { fetchThemeFilters } from './controller';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {
@@ -80,4 +81,12 @@ export function sortFilterTerms( context, terms ) {
 		.map( ( term ) => getThemeFilterStringFromTerm( context.store.getState(), term ) )
 		.sort()
 		.map( ( filter ) => getThemeFilterTermFromString( context.store.getState(), filter ) );
+}
+
+export function fetchAndValidateVerticalsAndFilters( context, next ) {
+	fetchThemeFilters( context, () => {
+		validateVertical( context, () => {
+			validateFilters( context, next );
+		} );
+	} );
 }

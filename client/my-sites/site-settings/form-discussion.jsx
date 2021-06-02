@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, pick } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -19,7 +19,6 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import Subscriptions from './subscriptions';
@@ -52,27 +51,26 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<FormFieldset>
-				<FormToggle
+				<ToggleControl
 					checked={ !! fields.default_pingback_flag }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'default_pingback_flag' ) }
-				>
-					{ translate( 'Attempt to notify any blogs linked to from the article' ) }
-				</FormToggle>
-				<FormToggle
+					label={ translate( 'Attempt to notify any blogs linked to from the article' ) }
+				/>
+				<ToggleControl
 					checked={ !! fields.default_ping_status }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'default_ping_status' ) }
-				>
-					{ translate( 'Allow link notifications from other blogs (pingbacks and trackbacks)' ) }
-				</FormToggle>
-				<FormToggle
+					label={ translate(
+						'Allow link notifications from other blogs (pingbacks and trackbacks)'
+					) }
+				/>
+				<ToggleControl
 					checked={ !! fields.default_comment_status }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'default_comment_status' ) }
-				>
-					{ translate( 'Allow people to post comments on new articles' ) }
-				</FormToggle>
+					label={ translate( 'Allow people to post comments on new articles' ) }
+				/>
 				<FormSettingExplanation>
 					{ translate( 'These settings may be overridden for individual articles.' ) }
 				</FormSettingExplanation>
@@ -117,26 +115,23 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<FormFieldset className="site-settings__other-comment-settings">
-				<FormToggle
+				<ToggleControl
 					checked={ !! fields.require_name_email }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'require_name_email' ) }
-				>
-					{ translate( 'Comment author must fill out name and e-mail' ) }
-				</FormToggle>
-				<FormToggle
+					label={ translate( 'Comment author must fill out name and e-mail' ) }
+				/>
+				<ToggleControl
 					checked={ !! fields.comment_registration }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'comment_registration' ) }
-				>
-					{ translate( 'Users must be registered and logged in to comment' ) }
-				</FormToggle>
-				<FormToggle
+					label={ translate( 'Users must be registered and logged in to comment' ) }
+				/>
+				<ToggleControl
 					checked={ !! fields.close_comments_for_old_posts }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'close_comments_for_old_posts' ) }
-				>
-					{ translate(
+					label={ translate(
 						'Automatically close comments on articles older than {{numberOfDays /}} day',
 						'Automatically close comments on articles older than {{numberOfDays /}} days',
 						{
@@ -146,24 +141,22 @@ class SiteSettingsFormDiscussion extends Component {
 							},
 						}
 					) }
-				</FormToggle>
-				<FormToggle
+				/>
+				<ToggleControl
 					checked={ !! fields.thread_comments }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'thread_comments' ) }
-				>
-					{ translate( 'Enable threaded (nested) comments up to {{number /}} levels deep', {
+					label={ translate( 'Enable threaded (nested) comments up to {{number /}} levels deep', {
 						components: {
 							number: this.renderInputThreadDepth(),
 						},
 					} ) }
-				</FormToggle>
-				<FormToggle
+				/>
+				<ToggleControl
 					checked={ !! fields.page_comments }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'page_comments' ) }
-				>
-					{ translate(
+					label={ translate(
 						'Break comments into pages with {{numComments /}} top level comments per page and the ' +
 							'{{firstOrLast /}} page displayed by default',
 						{
@@ -173,16 +166,15 @@ class SiteSettingsFormDiscussion extends Component {
 							},
 						}
 					) }
-				</FormToggle>
-				<FormToggle
+				/>
+				<ToggleControl
 					checked={ 'asc' === fields.comment_order }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ this.handleCommentOrder }
-				>
-					{ translate(
+					label={ translate(
 						'Comments should be displayed with the older comments at the top of each page'
 					) }
-				</FormToggle>
+				/>
 
 				{ this.props.isJetpack && (
 					<SupportInfo
@@ -341,20 +333,18 @@ class SiteSettingsFormDiscussion extends Component {
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'E-mail me whenever' ) }</FormLegend>
-				<FormToggle
+				<ToggleControl
 					checked={ !! fields.comments_notify }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'comments_notify' ) }
-				>
-					{ translate( 'Anyone posts a comment' ) }
-				</FormToggle>
-				<FormToggle
+					label={ translate( 'Anyone posts a comment' ) }
+				/>
+				<ToggleControl
 					checked={ !! fields.moderation_notify }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'moderation_notify' ) }
-				>
-					{ translate( 'A comment is held for moderation' ) }
-				</FormToggle>
+					label={ translate( 'A comment is held for moderation' ) }
+				/>
 				{ this.emailMeLikes() }
 				{ this.emailMeReblogs() }
 				{ this.emailMeFollows() }
@@ -378,13 +368,12 @@ class SiteSettingsFormDiscussion extends Component {
 		}
 
 		return (
-			<FormToggle
+			<ToggleControl
 				checked={ !! fields.social_notifications_like }
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleAutosavingToggle( 'social_notifications_like' ) }
-			>
-				{ translate( 'Someone likes one of my posts' ) }
-			</FormToggle>
+				label={ translate( 'Someone likes one of my posts' ) }
+			/>
 		);
 	}
 
@@ -403,13 +392,12 @@ class SiteSettingsFormDiscussion extends Component {
 		}
 
 		return (
-			<FormToggle
+			<ToggleControl
 				checked={ !! fields.social_notifications_reblog }
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleAutosavingToggle( 'social_notifications_reblog' ) }
-			>
-				{ translate( 'Someone reblogs one of my posts' ) }
-			</FormToggle>
+				label={ translate( 'Someone reblogs one of my posts' ) }
+			/>
 		);
 	}
 
@@ -423,13 +411,12 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 
 		return (
-			<FormToggle
+			<ToggleControl
 				checked={ !! fields.social_notifications_subscribe }
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleAutosavingToggle( 'social_notifications_subscribe' ) }
-			>
-				{ translate( 'Someone follows my blog' ) }
-			</FormToggle>
+				label={ translate( 'Someone follows my blog' ) }
+			/>
 		);
 	}
 
@@ -444,20 +431,18 @@ class SiteSettingsFormDiscussion extends Component {
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Before a comment appears' ) }</FormLegend>
-				<FormToggle
+				<ToggleControl
 					checked={ !! fields.comment_moderation }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'comment_moderation' ) }
-				>
-					{ translate( 'Comment must be manually approved' ) }
-				</FormToggle>
-				<FormToggle
+					label={ translate( 'Comment must be manually approved' ) }
+				/>
+				<ToggleControl
 					checked={ !! fields.comment_previously_approved }
 					disabled={ isRequestingSettings || isSavingSettings }
 					onChange={ handleAutosavingToggle( 'comment_previously_approved' ) }
-				>
-					{ translate( 'Comment author must have a previously approved comment' ) }
-				</FormToggle>
+					label={ translate( 'Comment author must have a previously approved comment' ) }
+				/>
 			</FormFieldset>
 		);
 	}

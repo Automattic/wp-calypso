@@ -20,14 +20,11 @@ function isUAInBrowserslist( userAgentString, environment = 'defaults' ) {
 	} );
 }
 
-export default ( calypsoEnv ) => ( req, res, next ) => {
+export default () => ( req, res, next ) => {
 	let target;
 	const isDevelopment = process.env.NODE_ENV === 'development';
-	const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 
-	if ( isDesktop ) {
-		target = 'evergreen';
-	} else if ( isDevelopment ) {
+	if ( isDevelopment ) {
 		target = process.env.DEV_TARGET || 'evergreen';
 	} else if ( req.query.forceFallback ) {
 		// Did the user force fallback, via query parameter?

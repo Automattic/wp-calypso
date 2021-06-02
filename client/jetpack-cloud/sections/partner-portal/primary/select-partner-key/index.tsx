@@ -17,6 +17,7 @@ import {
 	hasActivePartnerKey,
 	hasFetchedPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
@@ -38,6 +39,11 @@ export default function SelectPartnerKey(): ReactElement | null {
 	const keys = ( partner?.keys || [] ) as PartnerKey[];
 	const showKeys = hasFetched && ! isFetching && keys.length > 0;
 
+	const onSelectPartnerKey = ( keyId: number ) => {
+		dispatch( setActivePartnerKey( keyId ) );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_select_partner_key_click' ) );
+	};
+
 	useReturnUrl( hasKey );
 
 	return (
@@ -55,7 +61,7 @@ export default function SelectPartnerKey(): ReactElement | null {
 					{ keys.map( ( key ) => (
 						<Card key={ key.id } className="select-partner-key__card" compact>
 							<div className="select-partner-key__key-name">{ key.name }</div>
-							<Button primary onClick={ () => dispatch( setActivePartnerKey( key.id ) ) }>
+							<Button primary onClick={ () => onSelectPartnerKey( key.id ) }>
 								{ translate( 'Select' ) }
 							</Button>
 						</Card>

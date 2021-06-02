@@ -15,7 +15,6 @@ import { THEMES_REQUEST_FAILURE } from 'calypso/state/themes/action-types';
 import { receiveThemes } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 
-jest.mock( 'calypso/lib/abtest', () => ( { abtest: () => {} } ) );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () =>
 	require( 'calypso/components/empty-component' )

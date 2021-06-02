@@ -6,6 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { CURRENCIES } from '@automattic/format-currency';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -34,7 +35,6 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import getCountries from 'calypso/state/selectors/get-countries';
 import PhoneInput from 'calypso/components/phone-input';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
@@ -204,12 +204,14 @@ class FormFields extends React.PureComponent {
 						<FormPasswordInput id="password" name="password" />
 					</FormFieldset>
 
-					<FormLegend>Form Toggle</FormLegend>
-					<FormToggle checked={ this.state.toggled } onChange={ this.handleToggle } />
+					<FormLegend>
+						Form Toggle (uses Gutenberg's <code>ToggleControl</code> component)
+					</FormLegend>
+					<ToggleControl checked={ this.state.toggled } onChange={ this.handleToggle } />
 					<br />
-					<FormToggle checked={ false } disabled />
+					<ToggleControl checked={ false } disabled />
 					<br />
-					<FormToggle checked={ true } disabled />
+					<ToggleControl checked={ true } disabled />
 					<br />
 
 					<FormButtonsBar>

@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
 import classnames from 'classnames';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -20,7 +20,6 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
@@ -281,16 +280,22 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					) }
 				</FormFieldset>
 				<FormFieldset>
-					<FormToggle onChange={ handlePayWhatYouWant } checked={ editedPayWhatYouWant }>
-						{ translate( 'Enable customers to pick their own amount ("Pay what you want").' ) }
-					</FormToggle>
+					<ToggleControl
+						onChange={ handlePayWhatYouWant }
+						checked={ editedPayWhatYouWant }
+						label={ translate(
+							'Enable customers to pick their own amount ("Pay what you want").'
+						) }
+					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormToggle onChange={ handleMultiplePerUser } checked={ editedMultiplePerUser }>
-						{ translate(
+					<ToggleControl
+						onChange={ handleMultiplePerUser }
+						checked={ editedMultiplePerUser }
+						label={ translate(
 							'Allow the same customer to purchase or sign up to this plan multiple times.'
 						) }
-					</FormToggle>
+					/>
 				</FormFieldset>
 			</>
 		);
@@ -313,12 +318,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 							{ translate( 'Learn more.' ) }
 						</InlineSupportLink>
 					</p>
-					<FormToggle
+					<ToggleControl
 						onChange={ ( newValue ) => setEditedPostsEmail( newValue ) }
 						checked={ editedPostsEmail }
-					>
-						{ translate( 'Email newly published posts to your customers.' ) }
-					</FormToggle>
+						label={ translate( 'Email newly published posts to your customers.' ) }
+					/>
 				</FormFieldset>
 				<FormFieldset>
 					<h6 className="memberships__dialog-form-header">

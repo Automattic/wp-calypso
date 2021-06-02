@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import SupportInfo from 'calypso/components/support-info';
 import RelatedContentPreview from './related-content-preview';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -42,34 +41,31 @@ const RelatedPosts = ( {
 						link="https://jetpack.com/support/related-posts/"
 					/>
 
-					<FormToggle
+					<ToggleControl
 						checked={ !! fields.jetpack_relatedposts_enabled }
 						disabled={ isRequestingSettings || isSavingSettings }
 						onChange={ handleAutosavingToggle( 'jetpack_relatedposts_enabled' ) }
-					>
-						{ translate( 'Show related content after posts' ) }
-					</FormToggle>
+						label={ translate( 'Show related content after posts' ) }
+					/>
 
 					<div className="related-posts__module-settings site-settings__child-settings">
-						<FormToggle
+						<ToggleControl
 							checked={ !! fields.jetpack_relatedposts_show_headline }
 							disabled={
 								isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
 							}
 							onChange={ handleAutosavingToggle( 'jetpack_relatedposts_show_headline' ) }
-						>
-							{ translate( 'Highlight related content with a heading' ) }
-						</FormToggle>
+							label={ translate( 'Highlight related content with a heading' ) }
+						/>
 
-						<FormToggle
+						<ToggleControl
 							checked={ !! fields.jetpack_relatedposts_show_thumbnails }
 							disabled={
 								isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
 							}
 							onChange={ handleAutosavingToggle( 'jetpack_relatedposts_show_thumbnails' ) }
-						>
-							{ translate( 'Show a thumbnail image where available' ) }
-						</FormToggle>
+							label={ translate( 'Show a thumbnail image where available' ) }
+						/>
 					</div>
 
 					<FormSettingExplanation>

@@ -5,7 +5,6 @@ import LoginPage from '../pages/login-page.js';
 import EditorPage from '../pages/editor-page';
 import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page';
 import ReaderPage from '../pages/reader-page.js';
-import StoreDashboardPage from '../pages/woocommerce/store-dashboard-page';
 import PluginsBrowserPage from '../pages/plugins-browser-page';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
 import CustomerHome from '../pages/customer-home-page';
@@ -139,8 +138,7 @@ export default class LoginFlow {
 		if ( ! usingGutenberg ) {
 			this.editorPage = await EditorPage.Expect( this.driver );
 
-			const urlDisplayed = await this.driver.getCurrentUrl();
-			return await this.editorPage.setABTestControlGroupsInLocalStorage( urlDisplayed );
+			return await this.editorPage.waitForPage();
 		}
 	}
 
@@ -169,8 +167,7 @@ export default class LoginFlow {
 		if ( ! usingGutenberg ) {
 			this.editorPage = await EditorPage.Expect( this.driver );
 
-			const urlDisplayed = await this.driver.getCurrentUrl();
-			return await this.editorPage.setABTestControlGroupsInLocalStorage( urlDisplayed );
+			return await this.editorPage.waitForPage();
 		}
 	}
 
@@ -271,13 +268,6 @@ export default class LoginFlow {
 
 		// Make sure we've switched back to the post window
 		await driverHelper.waitUntilAbleToSwitchToWindow( this.driver, 0 );
-	}
-
-	async loginAndOpenWooStore() {
-		await this.loginAndSelectMySite();
-		this.sideBarComponent = await SidebarComponent.Expect( this.driver );
-		await this.sideBarComponent.selectStoreOption();
-		return await StoreDashboardPage.Expect( this.driver );
 	}
 
 	async loginAndSelectWPAdmin() {

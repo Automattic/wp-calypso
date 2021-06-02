@@ -31,7 +31,6 @@ import {
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'calypso/lib/user', () => () => {} );
 jest.mock( 'calypso/components/main', () => 'Main' );
 jest.mock( 'calypso/components/section-header', () => 'SectionHeader' );
 jest.mock( 'calypso/me/sidebar-navigation', () => 'MeSidebarNavigation' );

@@ -12,6 +12,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getUrlParts } from '@automattic/calypso-url';
 import { infoNotice } from 'calypso/state/notices/actions';
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
@@ -64,10 +65,12 @@ export default function LicensePreview( {
 
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
-	}, [ isOpen ] );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_preview_toggle' ) );
+	}, [ dispatch, isOpen ] );
 
 	const onCopyLicense = useCallback( () => {
 		dispatch( infoNotice( translate( 'License copied!' ), { duration: 2000 } ) );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_copy_license_click' ) );
 	}, [ dispatch, translate ] );
 
 	useEffect( () => {

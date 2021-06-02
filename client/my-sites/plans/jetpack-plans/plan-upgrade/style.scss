@@ -1,5 +1,5 @@
-@import '~@wordpress/base-styles/mixins';
-@import '~@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
 
 .plan-upgrade__product {
 	border-bottom: solid 2px var( --color-primary );

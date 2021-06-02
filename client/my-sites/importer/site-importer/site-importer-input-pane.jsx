@@ -19,7 +19,6 @@ import TextInput from 'calypso/components/forms/form-text-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setSelectedEditor } from 'calypso/state/selected-editor/actions';
 import {
 	importSite,
 	validateSiteIsImportable,
@@ -301,7 +300,6 @@ export default flowRight(
 		} ),
 		{
 			recordTracksEvent,
-			setSelectedEditor,
 			importSite,
 			validateSiteIsImportable,
 			resetSiteImporterImport,

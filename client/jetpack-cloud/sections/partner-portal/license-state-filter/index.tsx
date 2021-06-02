@@ -3,7 +3,7 @@
  */
 import React, { ReactElement, useContext } from 'react';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ import Count from 'calypso/components/count';
 import Search from 'calypso/components/search';
 import UrlSearch from 'calypso/lib/url-search';
 import { getLicenseCounts } from 'calypso/state/partner-portal/licenses/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { internalToPublicLicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 
@@ -31,6 +32,7 @@ interface Props {
 }
 
 function LicenseStateFilter( { doSearch }: Props ): ReactElement {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { filter, search } = useContext( LicenseListContext );
 	const counts = useSelector( getLicenseCounts );
@@ -58,10 +60,22 @@ function LicenseStateFilter( { doSearch }: Props ): ReactElement {
 		count: counts[ navItem.key ] || 0,
 		selected: filter === navItem.key,
 		path: basePath + internalToPublicLicenseFilter( navItem.key ),
+		onClick: () => {
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_license_list_state_filter_click', {
+					status: navItem.key,
+				} )
+			);
+		},
 		children: navItem.label,
 	} ) );
 
 	const selectedItem = navItems.find( ( i ) => i.selected ) || navItems[ 0 ];
+
+	const onSearch = ( query: string ) => {
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_search', { query } ) );
+		doSearch( query );
+	};
 
 	return (
 		<SectionNav
@@ -88,7 +102,7 @@ function LicenseStateFilter( { doSearch }: Props ): ReactElement {
 				pinned
 				fitsContainer
 				initialValue={ search }
-				onSearch={ doSearch }
+				onSearch={ onSearch }
 				placeholder={ translate( 'Search licenses' ) }
 				delaySearch={ true }
 			/>

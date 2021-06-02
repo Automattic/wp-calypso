@@ -1,7 +1,7 @@
-@import '~@wordpress/base-styles/colors';
-@import '~@wordpress/base-styles/mixins';
-@import '~@wordpress/base-styles/variables';
-@import '~@wordpress/base-styles/z-index';
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/z-index';
 
 $sidebar-width: 272px;
 $sidebar-transition-period: 100ms;

@@ -1,10 +1,8 @@
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
-import { oldShowcaseUrl } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
 
@@ -22,10 +20,5 @@ export function getThemeSupportUrl( state, themeId, siteId ) {
 	}
 
 	const sitePart = siteId ? `/${ getSiteSlug( state, siteId ) }` : '';
-
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		return `/theme/${ themeId }/setup${ sitePart }`;
-	}
-
-	return `${ oldShowcaseUrl }${ sitePart }${ themeId }/support`;
+	return `/theme/${ themeId }/setup${ sitePart }`;
 }

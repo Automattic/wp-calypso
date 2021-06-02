@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import classNames from 'classnames';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import FormToggle from 'calypso/components/forms/form-toggle';
 import InfoPopover from 'calypso/components/info-popover';
 
 /**
@@ -71,14 +70,13 @@ class PluginAction extends React.Component {
 
 	renderToggle() {
 		return (
-			<FormToggle
+			<ToggleControl
 				onChange={ this.props.action }
 				checked={ this.props.status }
 				disabled={ this.props.inProgress || this.props.disabled || !! this.props.disabledInfo }
 				id={ this.props.htmlFor }
-			>
-				{ this.renderLabel() }
-			</FormToggle>
+				label={ this.renderLabel() }
+			/>
 		);
 	}
 

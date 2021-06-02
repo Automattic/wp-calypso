@@ -963,45 +963,52 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#recommendedThemes()', () => {
-		test( 'should default to isLoading and empty themes array', () => {
+		const filter = 'some-filter-string';
+
+		test( 'should default to an empty object', () => {
 			const state = recommendedThemes( undefined, {} );
-			expect( state ).toEqual( { isLoading: true, themes: [] } );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should update isLoading when fetch is called', () => {
 			const state = recommendedThemes(
-				{ isLoading: false, themes: [] },
+				{},
 				{
 					type: RECOMMENDED_THEMES_FETCH,
+					filter,
 				}
 			);
-			expect( state ).toEqual( { isLoading: true, themes: [] } );
+			expect( state ).toEqual( { [ filter ]: { isLoading: true, themes: [] } } );
 		} );
 
 		test( 'should update isLoading and themes on fetch success', () => {
 			const state = recommendedThemes(
-				{ isLoading: true, themes: [] },
+				{ [ filter ]: { isLoading: true, themes: [] } },
 				{
 					type: RECOMMENDED_THEMES_SUCCESS,
+					filter,
 					payload: {
 						themes: [ 'a', 'b', 'c' ],
 					},
 				}
 			);
 			expect( state ).toEqual( {
-				isLoading: false,
-				themes: [ 'a', 'b', 'c' ],
+				[ filter ]: {
+					isLoading: false,
+					themes: [ 'a', 'b', 'c' ],
+				},
 			} );
 		} );
 
 		test( 'should update isLoading on fetch fail', () => {
 			const state = recommendedThemes(
-				{ isLoading: true, themes: [] },
+				{ [ filter ]: { isLoading: true, themes: [] } },
 				{
 					type: RECOMMENDED_THEMES_FAIL,
+					filter,
 				}
 			);
-			expect( state ).toEqual( { isLoading: false, themes: [] } );
+			expect( state ).toEqual( { [ filter ]: { isLoading: false, themes: [] } } );
 		} );
 	} );
 } );

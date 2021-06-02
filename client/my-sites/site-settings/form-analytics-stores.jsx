@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import FormToggle from 'calypso/components/forms/form-toggle';
 import ExternalLink from 'calypso/components/external-link';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -48,13 +47,12 @@ class FormAnalyticsStores extends Component {
 					const checked = fields.wga ? Boolean( fields.wga[ setting.key ] ) : false;
 					return (
 						<div key={ setting.key }>
-							<FormToggle
+							<ToggleControl
 								checked={ checked }
 								disabled={ disableAll }
 								onChange={ this.handleToggleChange( setting.key ) }
-							>
-								{ setting.label }
-							</FormToggle>
+								label={ setting.label }
+							/>
 							{ setting.explanation && this.renderExplanation( setting ) }
 							{ setting.children &&
 								this.renderSettings( setting.children, disableAll || ! checked, true ) }

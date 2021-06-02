@@ -25,7 +25,6 @@ import fixtures from './fixtures';
 const DUMMY_SITE_ID = 2916284;
 const mockSelectedItems = [];
 
-jest.mock( 'calypso/lib/user', () => () => {} );
 jest.mock( 'calypso/components/infinite-list', () =>
 	require( 'calypso/components/empty-component' )
 );

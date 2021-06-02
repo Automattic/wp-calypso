@@ -12,7 +12,7 @@ import { getSiteFragment } from 'calypso/lib/route';
 import {
 	getSelectedSiteWithFallback,
 	getSiteOption,
-	getSiteWoocommerceUrl,
+	getSiteWooCommerceUrl,
 } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
@@ -28,7 +28,7 @@ export function checkPrerequisites( context, next ) {
 
 	// WooCommerce plugin is already installed, redirect to Woo.
 	if ( getSiteOption( state, siteId, 'is_wpcom_store' ) ) {
-		const redirectUrl = getSiteWoocommerceUrl( state, siteId );
+		const redirectUrl = getSiteWooCommerceUrl( state, siteId );
 		window.location.href = redirectUrl;
 		return;
 	}

@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { flowRight as compose } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -17,7 +18,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import Main from 'calypso/components/main';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import ProfileLinks from 'calypso/me/profile-links';
@@ -117,11 +117,10 @@ class Profile extends React.Component {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormToggle
+							<ToggleControl
 								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
 								onChange={ this.toggleGravatarHidden }
-							>
-								{ this.props.translate(
+								label={ this.props.translate(
 									'{{spanLead}}Hide my Gravatar profile.{{/spanLead}} {{spanExtra}}This will prevent your {{profileLink}}Gravatar profile{{/profileLink}} and photo from appearing on any site. It may take some time for the changes to take effect. Gravatar profiles can be deleted at {{deleteLink}}Gravatar.com{{/deleteLink}}.{{/spanExtra}}',
 									{
 										components: {
@@ -140,7 +139,7 @@ class Profile extends React.Component {
 										},
 									}
 								) }
-							</FormToggle>
+							/>
 						</FormFieldset>
 
 						<p className="profile__submit-button-wrapper">

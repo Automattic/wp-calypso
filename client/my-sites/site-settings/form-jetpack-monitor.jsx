@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEmpty, partial } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import SupportInfo from 'calypso/components/support-info';
@@ -65,12 +64,11 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		const { monitorActive, translate } = this.props;
 
 		return (
-			<FormToggle
+			<ToggleControl
 				disabled={ this.disableForm() || ! monitorActive }
 				onChange={ this.handleToggle( 'email_notifications' ) }
 				checked={ !! this.state.email_notifications }
-			>
-				{ translate( 'Send notifications to your {{a}}WordPress.com email address{{/a}}', {
+				label={ translate( 'Send notifications to your {{a}}WordPress.com email address{{/a}}', {
 					components: {
 						a: (
 							<a
@@ -82,20 +80,19 @@ class SiteSettingsFormJetpackMonitor extends Component {
 						),
 					},
 				} ) }
-			</FormToggle>
+			/>
 		);
 	}
 
 	settingsMonitorWpNoteCheckbox() {
 		const { monitorActive, translate } = this.props;
 		return (
-			<FormToggle
+			<ToggleControl
 				disabled={ this.disableForm() || ! monitorActive }
 				onChange={ this.handleToggle( 'wp_note_notifications' ) }
 				checked={ !! this.state.wp_note_notifications }
-			>
-				{ translate( 'Send notifications via WordPress.com notification' ) }
-			</FormToggle>
+				label={ translate( 'Send notifications via WordPress.com notification' ) }
+			/>
 		);
 	}
 

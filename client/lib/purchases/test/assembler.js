@@ -8,9 +8,6 @@ import { expect } from 'chai';
  */
 import { createPurchasesArray } from '../assembler';
 
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'calypso/lib/user', () => () => {} );
-
 describe( 'assembler', () => {
 	test( 'should be a function', () => {
 		expect( createPurchasesArray ).to.be.an( 'function' );

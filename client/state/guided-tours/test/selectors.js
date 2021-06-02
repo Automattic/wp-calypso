@@ -16,7 +16,6 @@ import { findEligibleTour, getGuidedTourState, hasTourJustBeenVisible } from '..
 jest.mock( 'calypso/layout/guided-tours/config', () => {
 	return require( 'calypso/state/guided-tours/test/fixtures/config' );
 } );
-jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'selectors', () => {
 	describe( '#hasTourJustBeenVisible', () => {

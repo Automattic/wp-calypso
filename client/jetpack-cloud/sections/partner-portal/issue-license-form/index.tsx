@@ -16,6 +16,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -54,11 +55,22 @@ export default function IssueLicenseForm(): ReactElement {
 	} );
 	const [ product, setProduct ] = useState( '' );
 
-	const onSelectProduct = useCallback( ( option ) => setProduct( option.value ), [ setProduct ] );
+	const onSelectProduct = useCallback(
+		( option ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_issue_license_product_select', {
+					product: option.value,
+				} )
+			);
+			setProduct( option.value );
+		},
+		[ setProduct ]
+	);
 
 	const onIssueLicense = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_submit', { product } ) );
 		issueLicense.mutate( { product } );
-	}, [ product, issueLicense.mutate ] );
+	}, [ dispatch, product, issueLicense.mutate ] );
 
 	useEffect( () => {
 		// Make sure we keep product in sync with the query results.
@@ -72,6 +84,10 @@ export default function IssueLicenseForm(): ReactElement {
 			setProduct( products.data[ 0 ].value );
 		}
 	}, [ product, products.data, setProduct ] );
+
+	const onGoBack = () => {
+		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_back' ) );
+	};
 
 	return (
 		<Card className="issue-license-form">
@@ -88,7 +104,11 @@ export default function IssueLicenseForm(): ReactElement {
 			) }
 
 			<div className="issue-license-form__actions">
-				<Button href="/partner-portal/licenses" disabled={ issueLicense.isLoading }>
+				<Button
+					href="/partner-portal/licenses"
+					disabled={ issueLicense.isLoading }
+					onClick={ onGoBack }
+				>
 					{ translate( 'Go back' ) }
 				</Button>
 

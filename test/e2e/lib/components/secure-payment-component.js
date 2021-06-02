@@ -2,7 +2,7 @@
  * External dependencies
  */
 import config from 'config';
-import { By, promise, until } from 'selenium-webdriver';
+import { By, promise } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -29,7 +29,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async isCompositeCheckout() {
-		return driverHelper.isElementLocated( this.driver, By.css( '.composite-checkout' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '.composite-checkout' ) );
 	}
 
 	async _postInit() {
@@ -41,18 +41,12 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		);
 	}
 
-	async setInElementsIframe( iframeLocator, what, value ) {
-		await this.driver.wait(
-			until.ableToSwitchToFrame( By.css( iframeLocator ) ),
-			this.explicitWaitMS,
-			'Could not locate the ElementInput iFrame.'
-		);
-
+	async setInElementsIframe( iframeSelector, what, value ) {
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, By.css( iframeSelector ) );
 		await driverHelper.setWhenSettable( this.driver, By.name( what ), value, {
 			pauseBetweenKeysMS: 50,
 		} );
-
-		return await this.driver.switchTo().defaultContent();
+		await this.driver.switchTo().defaultContent();
 	}
 
 	async enterTestCreditCardDetails( {
@@ -74,16 +68,15 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		// SecurePaymentComponent.completeTaxDetailsInContactSection.
 		await this.completeTaxDetailsForCreditCard( { cardPostCode, cardCountryCode } );
 
-		const creditCardHandleLocator = By.css( 'label[for="card"]' );
+		const creditCardHandleLocator = driverHelper.createTextLocator(
+			By.css( 'label[for="card"]' ),
+			'Credit or debit card'
+		);
 		await driverHelper.scrollIntoView( this.driver, creditCardHandleLocator );
 
 		// Sometimes the credit card form will be closed and it will require a click to be opened.
 		// This can happen when users have a credit card already associated with their account.
-		await driverHelper.selectElementByText(
-			this.driver,
-			creditCardHandleLocator,
-			'Credit or debit card'
-		);
+		await driverHelper.clickWhenClickable( this.driver, creditCardHandleLocator );
 
 		await driverHelper.setWhenSettable(
 			this.driver,
@@ -155,7 +148,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			this.driver,
 			By.css( `#country-selector option[value="${ cardCountryCode }"]` )
 		);
-		return driverHelper.clickWhenClickable(
+		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( 'button[aria-label="Continue with the entered contact details"]' )
 		);
@@ -350,23 +343,23 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async hasCouponApplied() {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
-			return driverHelper.isElementLocated(
+			return await driverHelper.isElementLocated(
 				this.driver,
 				By.css( '#checkout-line-item-coupon-line-item' )
 			);
 		}
-		return driverHelper.isElementLocated( this.driver, By.css( '.cart__remove-link' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '.cart__remove-link' ) );
 	}
 
 	async waitForCouponToBeApplied() {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
-			return driverHelper.waitUntilElementLocatedAndVisible(
+			return await driverHelper.waitUntilElementLocatedAndVisible(
 				this.driver,
 				By.css( '.checkout-review-order.is-summary #checkout-line-item-coupon-line-item' )
 			);
 		}
-		return driverHelper.waitUntilElementLocatedAndVisible(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.cart__remove-link' )
 		);
@@ -396,19 +389,10 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 		if ( isCompositeCheckout ) {
 			// Open review step for editing
-			try {
-				await driverHelper.clickWhenClickable(
-					this.driver,
-					By.css( '.wp-checkout__review-order-step .checkout-step__edit-button' )
-				);
-			} catch {
-				await driverHelper.isElementLocated(
-					this.driver,
-					By.css(
-						'.checkout-steps__step-content .checkout-line-item[data-product-type="coupon"] button'
-					)
-				);
-			}
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.wp-checkout__review-order-step .checkout-step__edit-button' )
+			);
 
 			// Click delete button on coupon line item
 			await driverHelper.clickWhenClickable(
@@ -443,13 +427,16 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async removeBusinessPlan() {
-		const productSlug = this.businessPlanSlug;
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css(
-				`button.cart__remove-item,.checkout-line-item[data-e2e-product-slug="${ productSlug }"] button.checkout-line-item__remove-product`
-			)
+		const trashButtonLocator = By.css(
+			`.checkout-line-item[data-e2e-product-slug="${ this.businessPlanSlug }"] button.checkout-line-item__remove-product`
 		);
+		const confirmButtonLocator = driverHelper.createTextLocator(
+			By.css( '.checkout-modal .checkout-button' ),
+			'Continue'
+		);
+
+		await driverHelper.clickWhenClickable( this.driver, trashButtonLocator );
+		await driverHelper.clickWhenClickable( this.driver, confirmButtonLocator );
 	}
 
 	async cartTotalDisplayed() {

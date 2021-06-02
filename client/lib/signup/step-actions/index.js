@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { defer, difference, get, includes, isEmpty, omitBy, pick, startsWith } from 'lodash';
+import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,7 +40,7 @@ import {
 	getSelectedImportEngine,
 	getNuxUrlInputValue,
 } from 'calypso/state/importer-nux/temp-selectors';
-import getSiteId from 'calypso/state/selectors/get-site-id';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import { Site } from '@automattic/data-stores';
 const Visibility = Site.Visibility;
 
@@ -53,7 +53,6 @@ import SignupCart from 'calypso/lib/signup/cart';
 // Others
 import flows from 'calypso/signup/config/flows';
 import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
-import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'calypso/lib/signup/page-builder';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 
@@ -90,9 +89,8 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 
 		SignupCart.createCart(
 			siteId,
-			omitBy(
-				pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ),
-				( dep ) => dep === null
+			[ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ].filter(
+				Boolean
 			),
 			( error ) => {
 				callback( error, providedDependencies );
@@ -213,10 +211,6 @@ function getNewSiteParams( {
 	// Provide the default business starter content for the FSE user testing flow.
 	if ( 'test-fse' === lastKnownFlow ) {
 		newSiteParams.options.site_segment = 1;
-	}
-
-	if ( isEligibleForPageBuilder( siteSegment, flowToCheck ) && shouldEnterPageBuilder() ) {
-		newSiteParams.options.in_page_builder = true;
 	}
 
 	if ( selectedDesign ) {

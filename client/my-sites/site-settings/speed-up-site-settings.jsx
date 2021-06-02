@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -78,13 +78,12 @@ class SpeedUpSiteSettings extends Component {
 									'and static files (like CSS and JavaScript) from our global network of servers.'
 							) }
 						</FormSettingExplanation>
-						<FormToggle
+						<ToggleControl
 							checked={ siteAcceleratorStatus }
 							disabled={ isRequestingOrSaving || photonModuleUnavailable }
 							onChange={ this.handleCdnChange }
-						>
-							{ translate( 'Enable site accelerator' ) }
-						</FormToggle>
+							label={ translate( 'Enable site accelerator' ) }
+						/>
 						<div className="site-settings__child-settings">
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }

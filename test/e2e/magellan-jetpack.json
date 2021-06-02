@@ -1,8 +1,8 @@
 {
-	"mocha_tests": [ "specs/specs-calypso", "specs-jetpack-calypso", "specs-blocks" ],
+	"mocha_tests": [ "specs/specs-calypso", "specs/specs-jetpack" ],
 	"mocha_args": "-R spec-junit-reporter",
 	"max_test_attempts": 3,
-	"max_workers": 3,
+	"max_workers": 1,
 	"suiteTag": "jetpack",
 	"sauce": false,
 	"framework": "@automattic/testarmada-magellan-mocha-plugin",

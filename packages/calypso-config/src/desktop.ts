@@ -16,7 +16,9 @@ const config = {
 const features = {
 	desktop: true,
 	'desktop-promo': false,
-	'sign-in-with-apple': 'false',
+	'sign-in-with-apple': false,
+	'signup/social': false,
+	'login/magic-login': false,
 };
 
 export default ( data: ConfigData ): ConfigData => {

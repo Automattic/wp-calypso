@@ -69,50 +69,6 @@ function activate_error_reporting() {
 }
 
 /**
- * Temporary function to feature flag by segment. We'll be gradually testing
- * it on production simple sites, observing how it works and and gradually
- * increase the segment until we reach 100 and eventually just remove this logic.
- *
- * It's important to note that we'll only gradually roll-out for simple sites.
- * Once we're confident enough it works well on simple-sites, we'll work on
- * addressing issues that are preventing this module from working on WoA, test
- * on real AT sites and finally deploy the plugin to WoA while removing the
- * guard above that prevents it from loading on WoA. The reason for that in WoA
- * it's actually trivial to test a custom build in production without affecting
- * other customers, and on simple sites, it's not, hence the need for a gradual
- * roll-out as an additional safety measure.
- *
- * @todo Remove once the roll-out is complete.
- *
- * @param int $user_id the user id.
- * @return bool
- */
-function user_in_test_segment( $user_id ) {
-	$current_segment = 25; // segment of existing users that will get this feature in %.
-	$user_segment    = $user_id % 100;
-
-	// We get the last two digits of the user id and that will be used to decide in what
-	// segment the user is. i.e if current_segment is 10, then only ids that end in < 10
-	// will be considered part of the segment.
-	return $user_segment < $current_segment;
-}
-
-/**
- * Returns whether or not the user is an automattician, but first verifies
- * if the function `is_automattician` exists in the current context. If not,
- * then we consider the user to not be an automattician. This guard is needed
- * because this function is not present in some envs, namely the testing env.
- *
- * @todo Remove once roll-out is complete
- *
- * @param int $user_id the user id.
- * @return bool
- */
-function user_is_automattician( $user_id ) {
-	return function_exists( 'is_automattician' ) && is_automattician( $user_id );
-}
-
-/**
  * Returns whether or not the site loading ETK is in the WoA env.
  *
  * @return bool
@@ -124,9 +80,5 @@ function is_atomic() {
 // We don't want to activate this module in AT just yet. See https://wp.me/p4TIVU-9DI#comment-10922.
 // @todo Remove once we have a version that works for WPCOM simple sites and WoA.
 if ( ! is_atomic() ) {
-	// @todo Remove once the roll-out is complete.
-	$user_id = get_current_user_id();
-	if ( user_is_automattician( $user_id ) || user_in_test_segment( $user_id ) ) {
-		activate_error_reporting();
-	}
+	activate_error_reporting();
 }

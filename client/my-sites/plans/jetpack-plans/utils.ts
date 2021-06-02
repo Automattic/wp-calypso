@@ -605,6 +605,21 @@ export function checkout(
 	const productsArray = Array.isArray( products ) ? products : [ products ];
 	const productsString = productsArray.join( ',' );
 
+	if ( isJetpackCloud() ) {
+		// Unauthenticated users will be presented with a Jetpack branded version of the login form
+		// if the URL has the query parameter `source=jetpack-plans`. We only want to do this if the
+		// user is in Jetpack Cloud.
+		if ( ! urlQueryArgs.source ) {
+			urlQueryArgs.source = 'jetpack-plans';
+		}
+
+		// This URL is used when clicking the back button in the checkout screen to redirect users
+		// back to cloud instead of wordpress.com
+		if ( ! urlQueryArgs.checkoutBackUrl ) {
+			urlQueryArgs.checkoutBackUrl = window.location.href;
+		}
+	}
+
 	if ( config.isEnabled( 'jetpack/userless-checkout' ) ) {
 		const { unlinked, purchasetoken, purchaseNonce, site } = urlQueryArgs;
 		const canDoUnlinkedCheckout = unlinked && !! site && ( !! purchasetoken || purchaseNonce );
@@ -631,18 +646,10 @@ export function checkout(
 		? `/checkout/${ siteSlug }/${ productsString }`
 		: `/jetpack/connect/${ productsString }`;
 
-	// Unauthenticated users will be presented with a Jetpack branded version of the login form
-	// if the URL has the query parameter `source=jetpack-plans`. We only want to do this if the
-	// user is in Jetpack Cloud.
-	const urlQueryArgsWithSource =
-		isJetpackCloud() && ! urlQueryArgs.source
-			? { ...urlQueryArgs, source: 'jetpack-plans' }
-			: urlQueryArgs;
-
 	if ( isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
-		window.location.href = addQueryArgs( urlQueryArgsWithSource, `https://wordpress.com${ path }` );
+		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
 	} else {
-		page( addQueryArgs( urlQueryArgsWithSource, path ) );
+		page( addQueryArgs( urlQueryArgs, path ) );
 	}
 }
 

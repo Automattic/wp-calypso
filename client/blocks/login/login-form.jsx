@@ -608,28 +608,26 @@ export class LoginForm extends Component {
 						</div>
 					</div>
 
-					{ config.isEnabled( 'signup/social' ) && (
-						<p className="login__form-terms">
-							{ preventWidows(
-								this.props.translate(
-									// To make any changes to this copy please speak to the legal team
-									'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
-									{
-										components: {
-											tosLink: (
-												<a
-													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-								),
-								5
-							) }
-						</p>
-					) }
+					<p className="login__form-terms">
+						{ preventWidows(
+							this.props.translate(
+								// To make any changes to this copy please speak to the legal team
+								'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+								{
+									components: {
+										tosLink: (
+											<a
+												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							),
+							5
+						) }
+					</p>
 
 					<div className="login__form-action">
 						<FormsButton primary disabled={ isFormDisabled }>

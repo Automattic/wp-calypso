@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { useExperiment } from 'calypso/lib/explat';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import {
@@ -22,6 +23,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySites from 'calypso/components/data/query-sites';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import getViewTrackerPath from './get-view-tracker-path';
 import ProductGrid from './product-grid';
 
 /**
@@ -37,6 +39,9 @@ import type {
 
 import './style.scss';
 
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:plans:abtesting' );
+
 const SelectorPage: React.FC< SelectorPageProps > = ( {
 	defaultDuration = TERM_ANNUALLY,
 	siteSlug: siteSlugProp,
@@ -49,10 +54,39 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 }: SelectorPageProps ) => {
 	const dispatch = useDispatch();
 
+	const [ loadingExperiment, experiment ] = useExperiment( 'jetpack_explat_testing_20210510' );
+	useEffect( () => {
+		if ( loadingExperiment ) {
+			debug( 'Loading experiment ...' );
+			return;
+		}
+
+		if ( ! experiment ) {
+			debug( 'ERROR CONDITION: Experiment not loading, but no information found.' );
+			return;
+		}
+
+		debug( 'Experiment loaded!' );
+		debug( 'Experiment name:', experiment.experimentName );
+		debug( 'Assigned variation:', experiment.variationName );
+	}, [ loadingExperiment, experiment ] );
+
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteSlug = siteSlugProp || siteSlugState;
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
+	const viewTrackerPath = getViewTrackerPath( rootUrl, siteSlugProp );
+	const viewTrackerProps = siteId ? { site: siteSlug } : {};
+
+	useEffect( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_pricing_page_visit', {
+				site: siteSlug,
+				path: viewTrackerPath,
+				root_path: rootUrl,
+			} )
+		);
+	}, [ dispatch, rootUrl, siteSlug, viewTrackerPath ] );
 
 	useEffect( () => {
 		setDuration( defaultDuration );
@@ -77,26 +111,25 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		isUpgradeableToYearly = false,
 		purchase
 	) => {
+		const trackingProps = {
+			site_id: siteId || undefined,
+			product_slug: product.productSlug,
+			duration: currentDuration,
+			path: viewTrackerPath,
+		};
+
 		if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
-			dispatch(
-				recordTracksEvent( 'calypso_product_external_click', {
-					site_id: siteId || undefined,
-					product_slug: product.productSlug,
-					duration: currentDuration,
-				} )
-			);
+			dispatch( recordTracksEvent( 'calypso_product_external_click', trackingProps ) );
 			window.location.href = product.externalUrl || '';
 			return;
 		}
 
 		if ( purchase && isUpgradeableToYearly ) {
-			dispatch(
-				recordTracksEvent( 'calypso_product_checkout_click', {
-					site_id: siteId || undefined,
-					product_slug: product.productSlug,
-					duration: currentDuration,
-				} )
-			);
+			// Name of `calypso_product_checkout_click` is misleading, since it's only triggered
+			// for Jetpack products. Leaving it here to not break current analysis, but please
+			// use `calypso_jetpack_pricing_page_product_click` instead when using tracking tools.
+			dispatch( recordTracksEvent( 'calypso_product_checkout_click', trackingProps ) );
+			dispatch( recordTracksEvent( 'calypso_jetpack_pricing_page_product_click', trackingProps ) );
 
 			const { productSlug: slug } = product;
 			const yearlySlug = getYearlySlugFromMonthly( slug );
@@ -108,24 +141,16 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		}
 
 		if ( purchase ) {
-			dispatch(
-				recordTracksEvent( 'calypso_product_manage_click', {
-					site_id: siteId || undefined,
-					product_slug: product.productSlug,
-					duration: currentDuration,
-				} )
-			);
+			dispatch( recordTracksEvent( 'calypso_product_manage_click', trackingProps ) );
 			manageSitePurchase( siteSlug, purchase.id );
 			return;
 		}
 
-		dispatch(
-			recordTracksEvent( 'calypso_product_checkout_click', {
-				site_id: siteId || undefined,
-				product_slug: product.productSlug,
-				duration: currentDuration,
-			} )
-		);
+		// Name of `calypso_product_checkout_click` is misleading, since it's only triggered
+		// for Jetpack products. Leaving it here to not break current analysis, but please
+		// use `calypso_jetpack_pricing_page_product_click` instead when using tracking tools.
+		dispatch( recordTracksEvent( 'calypso_product_checkout_click', trackingProps ) );
+		dispatch( recordTracksEvent( 'calypso_jetpack_pricing_page_product_click', trackingProps ) );
 		checkout( siteSlug, product.productSlug, urlQueryArgs );
 	};
 
@@ -142,9 +167,6 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		);
 		setDuration( selectedDuration );
 	};
-
-	const viewTrackerPath = siteId ? `${ rootUrl }/:site` : rootUrl;
-	const viewTrackerProps = siteId ? { site: siteSlug } : {};
 
 	return (
 		<Main className="selector__main" wideLayout>

@@ -36,6 +36,7 @@ export default function isSiteChecklistComplete( state, siteId ) {
 	 *	Any other case leads to a pending task.
 	 *	C) the mobile_app_installed task, because it shouldn't affect the site setup status.
 	 *	D) the start_site_setup task, because it autocompletes on view as a way of starting the checklist.
+	 *	E) the site_menu_updated task, because it shouldn't affect the site setup status.
 	 *
 	 *		@param   {object}  task The task that we'll check to see if it's completed.
 	 *		@returns {boolean}      Whether the task is considered to be completed or not.
@@ -56,6 +57,13 @@ export default function isSiteChecklistComplete( state, siteId ) {
 
 		// Starting site setup autocompletes, so it shouldn't cause an incomplete checklist.
 		if ( CHECKLIST_KNOWN_TASKS.START_SITE_SETUP === task.id ) {
+			return true;
+		}
+
+		// The menu updating task isn't mandatory because not every site needs menu changes
+		// to be made. However the task also isn't skippable (#47334), so if a user chooses
+		// to leave the task undone it shouldn't count towards not completing setup.
+		if ( CHECKLIST_KNOWN_TASKS.SITE_MENU_UPDATED === task.id ) {
 			return true;
 		}
 
