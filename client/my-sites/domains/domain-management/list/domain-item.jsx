@@ -43,7 +43,7 @@ import Spinner from 'calypso/components/spinner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
@@ -295,6 +295,7 @@ class DomainItem extends PureComponent {
 
 		if ( hasGSuiteWithUs( domainDetails ) ) {
 			const gSuiteMailboxCount = getGSuiteMailboxCount( domainDetails );
+
 			return translate( '%(gSuiteMailboxCount)d mailbox', '%(gSuiteMailboxCount)d mailboxes', {
 				count: gSuiteMailboxCount,
 				args: {
@@ -306,6 +307,7 @@ class DomainItem extends PureComponent {
 
 		if ( hasTitanMailWithUs( domainDetails ) ) {
 			const titanMailboxCount = getMaxTitanMailboxCount( domainDetails );
+
 			return translate( '%(titanMailboxCount)d mailbox', '%(titanMailboxCount)d mailboxes', {
 				args: {
 					titanMailboxCount,
@@ -316,10 +318,12 @@ class DomainItem extends PureComponent {
 		}
 
 		if ( hasEmailForwards( domainDetails ) ) {
+			const emailForwardsCount = getEmailForwardsCount( domainDetails );
+
 			return translate( '%(emailForwardsCount)d forward', '%(emailForwardsCount)d forwards', {
-				count: domainDetails.emailForwardsCount,
+				count: emailForwardsCount,
 				args: {
-					emailForwardsCount: domainDetails.emailForwardsCount,
+					emailForwardsCount,
 				},
 				comment: 'The number of email forwards active for the current domain',
 			} );
