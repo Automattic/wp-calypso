@@ -30,7 +30,12 @@ const screenSize = driverManager.currentScreenSize();
 const domainsInboxId = config.get( 'domainsInboxId' );
 const host = dataHelper.getJetpackHost();
 
-describe( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function () {
+/**
+ * This test adds domains to the shopping cart, assert their status and try to clean them up. The problem is
+ * the shopping carg is per-site, so all test runs will share the same shopping cart. It causes
+ * this test to be flaky when run in parallel.
+ */
+describe.skip( `[${ host }] Managing Domains: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Adding a domain to an existing site', function () {
