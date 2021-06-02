@@ -38,6 +38,7 @@ import {
 } from 'calypso/lib/gsuite';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
@@ -111,11 +112,13 @@ class EmailPlan extends React.Component {
 
 	getMailboxes() {
 		const account = this.getAccount();
+
 		return account?.emails ?? [];
 	}
 
 	handleBack = () => {
 		const { selectedSite } = this.props;
+
 		page( emailManagement( selectedSite.slug ) );
 	};
 
@@ -246,10 +249,6 @@ class EmailPlan extends React.Component {
 	renderManageAllMailboxesNavItem() {
 		const { domain, translate } = this.props;
 
-		if ( ! domain ) {
-			return null;
-		}
-
 		if ( ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain ) ) {
 			return null;
 		}
@@ -267,14 +266,22 @@ class EmailPlan extends React.Component {
 	}
 
 	renderAddNewMailboxesOrRenewNavItem() {
-		const { domain, hasSubscription, purchase, selectedSite, translate } = this.props;
+		const { domain, hasSubscription, purchase, translate } = this.props;
 
-		if ( ! domain.currentUserCanManage || ! hasSubscription ) {
-			return null;
+		if ( hasEmailForwards( domain ) ) {
+			return (
+				<VerticalNavItem { ...this.getAddMailboxProps() }>
+					{ translate( 'Add new email forwards' ) }
+				</VerticalNavItem>
+			);
 		}
 
-		if ( ! selectedSite || ! purchase ) {
+		if ( ! purchase ) {
 			return <VerticalNavItem isPlaceholder />;
+		}
+
+		if ( ! hasSubscription ) {
+			return null;
 		}
 
 		if ( isExpired( purchase ) ) {
