@@ -17,7 +17,7 @@ const isMacOSBigSur =
 // FIXME: Auto-restart does not work on MacOS Big Sur and requires an upgrade of Electron v11: https://github.com/electron/electron/issues/25626
 const defaultConfirmLabel = isMacOSBigSur ? 'Update & Quit' : 'Update & Restart';
 const defaultDialogMessage = isMacOSBigSur
-	? '{name} {newVersion} is now available — you have {currentVersion}.\n\nPlease quit and restart the app to apply changes.'
+	? '{name} {newVersion} is now available — you have {currentVersion}.\n\nUpdate requires manual restart.'
 	: '{name} {newVersion} is now available — you have {currentVersion}. Would you like to update now?';
 
 class Updater extends EventEmitter {
