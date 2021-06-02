@@ -70,7 +70,17 @@ export default function () {
 			controller.requireAccessContext,
 			controller.requireTermsOfServiceConsentContext,
 			controller.requireSelectedPartnerKeyContext,
-			controller.paymentMethodContext,
+			controller.paymentMethodListContext,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			`/partner-portal/payment-method/add`,
+			controller.requireAccessContext,
+			controller.requireTermsOfServiceConsentContext,
+			controller.requireSelectedPartnerKeyContext,
+			controller.paymentMethodAddContext,
 			makeLayout,
 			clientRender
 		);

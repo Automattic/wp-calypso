@@ -1,0 +1,106 @@
+.payment-method__body {
+	display: flex;
+	gap: 1rem;
+	flex-wrap: wrap;
+	align-content: flex-start;
+}
+
+.payment-method__stored-card {
+	display: flex;
+	flex-wrap: wrap;
+	flex: 1;
+	max-width: 32%;
+	background: var( --studio-white );
+	border-radius: 8px;
+	height: 150px;
+	padding: 1rem;
+	display: flex;
+}
+
+.payment-method__stored-card-primary-text {
+	background: rgb(246, 247, 247);
+	color: var( --color-masterbar-text );
+	font-size: .8rem;
+    padding: 2px 4px;
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+.payment-method__stored-card-header {
+	flex-grow: 1;
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+}
+
+.payment-method__stored-card-header-left svg {
+	filter: grayscale( 100% );
+}
+
+.payment-method__stored-card-header-right {	
+	display: flex;
+}
+
+.payment-method__stored-card-header-right svg {
+	color: var( --color-primary );
+	padding-top: 3px;
+	padding-right: 5px;
+}
+
+.payment-method__stored-card-ellipsis button {
+	padding: 0;
+	margin-top: -4px;
+	margin-left: 10px;
+}
+
+.payment-method__stored-card-footer {
+	width: 100%;
+	display: flex;
+	flex-grow: 1;
+	justify-content: space-between;
+}
+
+.payment-method__stored-card-footer-left,
+.payment-method__stored-card-footer-right {
+	align-self: flex-end;
+}
+
+.payment-method__stored-card-name {
+	font-size: .9rem;
+	color: var( --color-masterbar-text );
+}
+
+.payment-method__stored-card-number,
+.payment-method__stored-card-expiry {
+	font-size: .8rem;
+	color: var( --color-masterbar-text );
+}
+
+.payment-method__add-card {
+	flex: 1;
+	max-width: 32%;
+	box-shadow: none;
+	border-radius: 8px;
+	height: 150px;
+	padding: 1rem;
+	background: transparent;
+	border: 1px dashed var( --studio-gray-5 );
+	display: flex;
+	cursor: pointer;
+}
+
+.payment-method__add-card-content {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+}
+
+.payment-method__add-card-text {
+	display: block;
+}
+
+.payment-method__add-card-icon {
+	display: block;
+}

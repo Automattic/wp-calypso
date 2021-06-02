@@ -26,7 +26,8 @@ import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary
 import TermsOfServiceConsent from 'calypso/jetpack-cloud/sections/partner-portal/primary/terms-of-service-consent';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
 import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
-import PaymentMethod from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method';
+import PaymentMethodList from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-list';
+import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
 import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
 import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import {
@@ -99,10 +100,18 @@ export function issueLicenseContext( context: PageJS.Context, next: () => void )
 	next();
 }
 
-export function paymentMethodContext( context: PageJS.Context, next: () => void ): void {
+export function paymentMethodListContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <PaymentMethod />;
+	context.primary = <PaymentMethodList />;
+	context.footer = <JetpackComFooter />;
+	next();
+}
+
+export function paymentMethodAddContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <PaymentMethodAdd />;
 	context.footer = <JetpackComFooter />;
 	next();
 }

@@ -1,0 +1,19 @@
+.payment-method-add__body {
+	display: flex;
+	padding: 2.5rem 4.5rem;
+	align-items: center;
+}
+
+.payment-method-add__body-left,
+.payment-method-add__body-right {
+	width: 100%;
+}
+
+.payment-method-add__body-left {
+	align-self: flex-start;
+	padding-right: 1rem;
+}
+
+.payment-method-add__body-right {
+	padding-left: 1rem;
+}

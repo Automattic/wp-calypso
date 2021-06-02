@@ -1,0 +1,38 @@
+.credit-card-entry-form__header {
+	margin-bottom: 2.5rem;
+}
+
+.credit-card-entry-form__field {
+	margin-bottom: 1rem;
+}
+
+.credit-card-entry-form__field label {
+	font-weight: 400;
+	margin-bottom: 0;
+}
+
+.credit-card-entry-form__buttons {
+	margin-top: 2rem;
+}
+
+.credit-card-entry-form button {
+	background: white;
+	color: black;
+	border: 1px solid black;
+	font-weight: 500;
+	margin-right: 1rem;
+}
+
+.credit-card-entry-form button.is-primary {
+	background: black;
+	color: white;
+	border: 1px solid black;
+	font-weight: 500;
+}
+
+.credit-card-entry-form__card-field {
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 2px;
+	padding: 11px 14px;
+	height: 17px;
+}
