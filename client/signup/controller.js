@@ -354,19 +354,24 @@ export default {
 			next();
 		} else {
 			// Fetch the site by siteSlug and then try to select again
-			dispatch( requestSite( siteSlug ) ).then( () => {
-				let freshSiteId = getSiteId( getState(), siteSlug );
+			dispatch( requestSite( siteSlug ) )
+				.catch( () => null )
+				.then( () => {
+					let freshSiteId = getSiteId( getState(), siteSlug );
 
-				if ( ! freshSiteId ) {
-					const wpcomStagingFragment = siteSlug.replace( /\.wordpress\.com$/, '.wpcomstaging.com' );
-					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
-				}
+					if ( ! freshSiteId ) {
+						const wpcomStagingFragment = siteSlug.replace(
+							/\.wordpress\.com$/,
+							'.wpcomstaging.com'
+						);
+						freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+					}
 
-				if ( freshSiteId ) {
-					dispatch( setSelectedSiteId( freshSiteId ) );
-					next();
-				}
-			} );
+					if ( freshSiteId ) {
+						dispatch( setSelectedSiteId( freshSiteId ) );
+						next();
+					}
+				} );
 			next();
 		}
 	},
