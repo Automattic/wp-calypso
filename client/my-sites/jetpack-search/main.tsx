@@ -30,6 +30,7 @@ import {
 import JetpackSearchFooter from './footer';
 import JetpackSearchLogo from './logo';
 import Upsell from 'calypso/components/jetpack/upsell';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 export default function JetpackSearchMain(): ReactElement {
 	const site = useSelector( getSelectedSite );

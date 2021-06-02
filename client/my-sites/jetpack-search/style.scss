@@ -4,6 +4,16 @@
 	}
 }
 
-.theme-jetpack-cloud .jetpack-search__disconnected {
-	padding-top: 40px;
+.theme-jetpack-cloud {
+	.jetpack-search__disconnected {
+		padding-top: 40px;
+	}
+
+	.jetpack-search__logo {
+		padding-top: 40px; // to match Backup and Scan
+		img {
+			height: 72px;
+			width: auto;
+		}
+	}
 }
