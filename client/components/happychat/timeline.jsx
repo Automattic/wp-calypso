@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -13,6 +13,7 @@ import { useAutoscroll } from './autoscroll';
 import { Button } from '@automattic/components';
 import Emojify from 'calypso/components/emojify';
 import Gridicon from 'calypso/components/gridicon';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useScrollbleed } from './scrollbleed';
 import { addSchemeIfMissing, setUrlScheme } from './url';
 
@@ -166,24 +167,48 @@ function WelcomeMessage( { currentUserEmail } ) {
 	);
 }
 
+function getMessagesOlderThan( timestamp, messages ) {
+	if ( ! timestamp ) {
+		return [];
+	}
+	return messages.filter( ( m ) => m.timestamp >= timestamp );
+}
+
 function Timeline( props ) {
+	const { timeline, isCurrentUser, isExternalUrl = () => true, twemojiUrl } = props;
 	const autoscroll = useAutoscroll();
 	const scrollbleed = useScrollbleed();
 
-	if ( props.timeline.length === 0 ) {
-		return <WelcomeMessage currentUserEmail={ props.currentUserEmail } />;
-	}
+	const unreadMessagesCount = useMemo(
+		() => getMessagesOlderThan( autoscroll.disabledAt, timeline ).length,
+		[ autoscroll.disabledAt, timeline ]
+	);
+
+	const prevUnreadMessagesCount = useRef( unreadMessagesCount );
+
+	useEffect( () => {
+		if ( prevUnreadMessagesCount.current === 0 && unreadMessagesCount > 0 ) {
+			recordTracksEvent( 'calypso_happychat_unread_messages_button_show' );
+		} else if ( prevUnreadMessagesCount.current > 0 && unreadMessagesCount === 0 ) {
+			recordTracksEvent( 'calypso_happychat_unread_messages_button_hide' );
+		}
+
+		prevUnreadMessagesCount.current = unreadMessagesCount;
+	}, [ unreadMessagesCount ] );
 
 	function onScrollContainer( el ) {
 		autoscroll.setTarget( el );
 		scrollbleed.setTarget( el );
 	}
 
-	const { timeline, isCurrentUser, isExternalUrl = () => true, twemojiUrl } = props;
+	const handleUnreadMessagesButtonClick = useCallback( () => {
+		recordTracksEvent( 'calypso_happychat_unread_messages_button_click' );
+		autoscroll.enableAutoscroll();
+	}, [ autoscroll ] );
 
-	const unreadMessages = autoscroll.disabledAt
-		? timeline.filter( ( { timestamp } ) => timestamp >= autoscroll.disabledAt )
-		: [];
+	if ( timeline.length === 0 ) {
+		return <WelcomeMessage currentUserEmail={ props.currentUserEmail } />;
+	}
 
 	return (
 		<>
@@ -207,14 +232,14 @@ function Timeline( props ) {
 					} );
 				} ) }
 			</div>
-			{ unreadMessages.length > 0 && (
+			{ unreadMessagesCount > 0 && (
 				<div className="happychat__unread-messages-container">
 					<Button
 						primary
 						className="happychat__unread-messages-button"
-						onClick={ autoscroll.enableAutoscroll }
+						onClick={ handleUnreadMessagesButtonClick }
 					>
-						{ unreadMessages.length } new message{ unreadMessages.length > 1 ? 's' : '' }
+						{ unreadMessagesCount } new message{ unreadMessagesCount ? 's' : '' }
 						<Gridicon icon="arrow-down" />
 					</Button>
 				</div>
