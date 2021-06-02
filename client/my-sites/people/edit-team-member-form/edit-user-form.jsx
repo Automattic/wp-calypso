@@ -141,7 +141,7 @@ class EditUserForm extends React.Component {
 	updateUser = ( event ) => {
 		event.preventDefault();
 
-		const { siteId, user, markSaved, hasWPCOMAccountLinked } = this.props;
+		const { siteId, user, markSaved } = this.props;
 		const changedSettings = this.getChangedSettings();
 		debug( 'Changed settings: ' + JSON.stringify( changedSettings ) );
 
@@ -159,12 +159,12 @@ class EditUserForm extends React.Component {
 		if ( true === changedSettings.isExternalContributor ) {
 			requestExternalContributorsAddition(
 				siteId,
-				hasWPCOMAccountLinked ? user?.linked_user_ID || user.ID : user.ID // On simple sites linked_user_ID is undefined for connected users.
+				user?.linked_user_ID ?? user?.ID // On simple sites linked_user_ID is undefined for connected users.
 			);
 		} else if ( false === changedSettings.isExternalContributor ) {
 			requestExternalContributorsRemoval(
 				siteId,
-				hasWPCOMAccountLinked ? user?.linked_user_ID || user.ID : user.ID // On simple sites linked_user_ID is undefined for connected users.
+				user?.linked_user_ID ?? user?.ID // On simple sites linked_user_ID is undefined for connected users.
 			);
 		}
 
