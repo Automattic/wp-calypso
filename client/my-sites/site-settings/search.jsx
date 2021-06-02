@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { overSome } from 'lodash';
 import { ToggleControl } from '@wordpress/components';
 
 /**
@@ -31,17 +30,13 @@ import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchas
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { isJetpackSite, getCustomizerUrl } from 'calypso/state/sites/selectors';
 import {
-	isBusiness,
-	isEnterprise,
-	isVipPlan,
-	isJetpackBusiness,
-	isEcommerce,
 	isJetpackSearch,
 	isP2Plus,
 	planHasJetpackSearch,
 	FEATURE_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
+	planHasJetpackClassicSearch,
 } from '@automattic/calypso-products';
 
 class Search extends Component {
@@ -110,7 +105,7 @@ class Search extends Component {
 	}
 
 	renderUpgradeNotice() {
-		const { siteIsJetpack, siteSlug, translate, isOldJetpackSearchIncluded } = this.props;
+		const { siteIsJetpack, siteSlug, translate, isJetpackClassicSearchIncluded } = this.props;
 
 		const href = siteIsJetpack
 			? `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_SEARCH_MONTHLY }`
@@ -120,7 +115,7 @@ class Search extends Component {
 			<Fragment>
 				<UpsellNudge
 					title={
-						isOldJetpackSearchIncluded
+						isJetpackClassicSearchIncluded
 							? translate( 'Upgrade your Jetpack Search and get the instant search experience' )
 							: translate( 'Upgrade to Jetpack Search and get the instant search experience' )
 					}
@@ -328,7 +323,6 @@ class Search extends Component {
 	}
 }
 
-const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise, isEcommerce );
 const checkForSearchProduct = ( purchase ) =>
 	purchase.active && ( isJetpackSearch( purchase ) || isP2Plus( purchase ) );
 export default connect( ( state, { isRequestingSettings } ) => {
@@ -337,9 +331,8 @@ export default connect( ( state, { isRequestingSettings } ) => {
 	const hasSearchProduct =
 		getSitePurchases( state, siteId ).find( checkForSearchProduct ) ||
 		planHasJetpackSearch( site.plan?.product_slug );
-	const isOldJetpackSearchIncluded =
-		site && site.plan && ( hasBusinessPlan( site.plan ) || isVipPlan( site.plan ) );
-	const isSearchEligible = isOldJetpackSearchIncluded || !! hasSearchProduct;
+	const isJetpackClassicSearchIncluded = planHasJetpackClassicSearch( site?.plan );
+	const isSearchEligible = isJetpackClassicSearchIncluded || !! hasSearchProduct;
 	const upgradeLink =
 		'/checkout/' +
 		getSelectedSiteSlug( state ) +
@@ -362,6 +355,6 @@ export default connect( ( state, { isRequestingSettings } ) => {
 		upgradeLink,
 		isSearchModuleActive:
 			( isSearchModuleActive && ! deactivating ) || ( ! isSearchModuleActive && activating ),
-		isOldJetpackSearchIncluded,
+		isJetpackClassicSearchIncluded,
 	};
 } )( localize( Search ) );

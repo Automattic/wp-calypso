@@ -28,6 +28,7 @@ import {
 	TYPE_P2_PLUS,
 } from './constants';
 import { PLANS_LIST } from './plans-list';
+import { isJetpackBusiness, isBusiness, isEnterprise, isEcommerce, isVipPlan } from '.';
 
 export function getPlans() {
 	return PLANS_LIST;
@@ -552,3 +553,20 @@ export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, 
 export const planHasJetpackSearch = ( planSlug ) =>
 	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH ) ||
 	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH_MONTHLY );
+
+/**
+ * Determines if a plan includes Jetpack Search Classic by checking available plans.
+ *
+ * @param   {object}  plan  Plan object.
+ * @returns {boolean}           Whether the specified plan includes Jetpack Search Classic.
+ */
+export function planHasJetpackClassicSearch( plan ) {
+	return (
+		plan &&
+		( isJetpackBusiness( plan ) ||
+			isBusiness( plan ) ||
+			isEnterprise( plan ) ||
+			isEcommerce( plan ) ||
+			isVipPlan( plan ) )
+	);
+}
