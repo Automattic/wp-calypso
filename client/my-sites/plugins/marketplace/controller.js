@@ -41,13 +41,15 @@ export function renderPluginsSetupStatusPage( context, next ) {
 }
 
 export function renderMarketplaceThankYou( context, next ) {
-	context.primary = (
-		<AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-stand-alone-thank-you" />
-	);
+	// context.primary = (
+	// 	<AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-stand-alone-thank-you" />
+	// );
+	context.primary = <div>Not Implemented</div>;
 	next();
 }
 
 export function renderMarketplaceTestPage( context, next ) {
-	context.primary = <AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-test" />;
+	// context.primary = <AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-test" />;
+	context.primary = <div>Not Implemented</div>;
 	next();
 }
