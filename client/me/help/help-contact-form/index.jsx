@@ -199,17 +199,17 @@ export class HelpContactForm extends React.PureComponent {
 
 	doRequestSite = () => {
 		if ( resemblesUrl( this.state.userDeclaredUrl ) ) {
-			// The API would reject something like "https://wp.com/slug" - it'd need to be "wp.com".
+			// The API would reject something like "https://wp.com/slug".
+			// It'd need to either be "https://wp.com" or "wp.com".
 			const url = this.state.userDeclaredUrl;
 			const query = url.includes( '://' )
 				? new URL( this.state.userDeclaredUrl ).hostname
 				: new URL( 'http://' + this.state.userDeclaredUrl ).hostname;
 
-			this.props.requestSite( query, false, true ).then( ( siteData ) =>
-				this.setState( {
-					siteData,
-				} )
-			);
+			this.props
+				.requestSite( query )
+				.catch( ( error ) => this.setState( { errorData: error.error } ) )
+				.then( ( siteData ) => this.setState( { siteData } ) );
 		}
 	};
 
@@ -311,19 +311,20 @@ export class HelpContactForm extends React.PureComponent {
 	 * For the forums: check if we're dealing with a WP.com site.
 	 */
 	analyseSiteData = () => {
-		const siteData = this.state.userDeclaredUrl && this.state.siteData && this.state.siteData.site;
-		const errorData =
-			this.state.userDeclaredUrl && this.state.siteData && this.state.siteData.errorCode;
+		const requestData =
+			this.state.userDeclaredUrl && ( this.state.siteData || this.state.errorData );
 
 		// "Unauthorized" means it's still a WP.com site - just a private one.
 		const isWpComConnectedSite =
-			( siteData && siteData.ID && ( ! siteData.jetpack || siteData.is_wpcom_atomic ) ) ||
-			( errorData && errorData === 'unauthorized' );
+			( requestData &&
+				requestData.ID &&
+				( ! requestData.jetpack || requestData.is_wpcom_atomic ) ) ||
+			( requestData && requestData === 'unauthorized' );
 
 		// Returns true for self-hosted sites, irrespective of Jetpack connection status, and non-WordPress sites.
 		const isNonWpComHostedSite =
-			( siteData && siteData.jetpack ) ||
-			( errorData && errorData === 'unknown_blog' ) ||
+			( requestData && requestData.jetpack ) ||
+			( requestData && requestData === 'unknown_blog' ) ||
 			( this.props.helpSite &&
 				this.props.helpSite.jetpack &&
 				! this.state.userDeclaresUnableToSeeSite );
@@ -335,7 +336,7 @@ export class HelpContactForm extends React.PureComponent {
 		if ( isNonWpComHostedSite ) {
 			// If the site is considered unknown, Jetpack isn't installed on it.
 			// Note: it's possible that the site isn't even a WordPress one if that happens.
-			return errorData === 'unknown_blog'
+			return requestData === 'unknown_blog'
 				? 'isNonWpComHostedSiteWithoutJetpack'
 				: 'isNonWpComHostedSiteWithJetpack';
 		}
@@ -488,8 +489,8 @@ export class HelpContactForm extends React.PureComponent {
 			{ value: 'panicked', label: translate( 'Panicked' ) },
 		];
 
-		let analyseSiteData = this.analyseSiteData();
-		const siteData = this.state.userDeclaredUrl && this.state.siteData && this.state.siteData.site;
+		const analyseSiteData = this.analyseSiteData();
+		const siteData = this.state.userDeclaredUrl && this.state.siteData;
 
 		let noticeMessage;
 		let actionLink;
