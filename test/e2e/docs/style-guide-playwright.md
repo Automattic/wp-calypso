@@ -3,15 +3,15 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-  - [Tests](#tests)
-  - [Components](#components)
-  - [Page Objects](#page-objects)
-  - [Flows](#flows)
-  - [Async / Await](#async--await)
-  - [Selectors](#selectors)
-    - [Type](#type)
-    - [Naming](#naming)
-  - [Test Naming](#test-naming)
+    - [Tests](#tests)
+    - [Components](#components)
+    - [Page Objects](#page-objects)
+    - [Flows](#flows)
+    - [Async / Await](#async--await)
+    - [Selectors](#selectors)
+        - [Type](#type)
+        - [Naming](#naming)
+    - [Test Naming](#test-naming)
 
 <!-- /TOC -->
 
@@ -25,12 +25,11 @@ There should only be [one top-level describe block](style-guide.md#maximum-1-top
 <summary>Example Test File</summary>
 
 ```javascript
-
-describe( 'Feature: @parallel', function() {
-	describe( 'Test case 1', function() {
+describe( 'Feature: @parallel', function () {
+	describe( 'Test case 1', function () {
 		let someComponent;
 
-		it( 'Check title', async function() {
+		it( 'Check title', async function () {
 			someComponent = await SomeComponent.Expect( this.page );
 			await someComponent.clickMyPages();
 			const resultValue = await someComponent.getTitle();
@@ -38,15 +37,15 @@ describe( 'Feature: @parallel', function() {
 		} );
 	} );
 
-	describe( 'Test case 2', function() {
+	describe( 'Test case 2', function () {
 		let anotherComponent;
 
-		before( 'Set up before all test steps', async function() {
+		before( 'Set up before all test steps', async function () {
 			anotherComponent = await AnotherComponent.Expect( this.page, 'param' );
 		} );
 
-		it( 'Test step', async function() {
-			...
+		it( 'Test step', async function () {
+			// tests here
 		} );
 	} );
 } );
@@ -68,7 +67,6 @@ Components represent a sub-portion of the page, and are often shared across mult
 const selectors = {
 	sidebar: '.sidebar',
 	myHome: '.my-home',
-	...
 }
 
 /**
@@ -83,7 +81,6 @@ export class SomeComponent extends BaseContainer {
 	 * @param {Page} page Page object.
 	 */
 	constructor( page: Page ) {
-		...
 	}
 
 	/**
@@ -97,7 +94,6 @@ export class SomeComponent extends BaseContainer {
 
 		await this.page.click( menu );
 		await this.page.waitForNavigation();
-		...
 	}
 }
 
@@ -134,7 +130,6 @@ Some in-repo example pages:
 const selectors = {
 	titleInput: '.editor-post-title__input',
 	publishPanelToggle: '.editor-post-publish-panel__toggle',
-	...
 }
 
 /**
@@ -149,7 +144,6 @@ export class SomePage extends BaseContainer {
 	 * @param {Page} page Page object.
 	 */
 	constructor( page: Page ) {
-		...
 	}
 
 	/**
@@ -163,9 +157,8 @@ export class SomePage extends BaseContainer {
 
 		//Some tricky section of code
 		await Promise.all([
-			...
+			// calls
 		])
-		...
 	}
 }
 
@@ -233,7 +226,7 @@ We don't chain function calls together and avoid using `.then` calls.
 
 **Avoid**:
 
-```
+```typescript
 async function openModal() {
 	const modal = await this.page.waitForSelector('modal-open');
 	await modal
@@ -244,7 +237,7 @@ async function openModal() {
 
 **Instead**:
 
-```
+```typescript
 async function openModal() {
 	const modal = await this.page.waitForSelector('modal-open');
 	await modal.click();
