@@ -5,7 +5,7 @@ import getSeoTitleFormats from './get-seo-title-formats';
 import buildSeoTitle from './build-seo-title';
 
 export default ( state, type, data ) => {
-	if ( data?.site?.ID ) {
+	if ( ! data?.site?.ID ) {
 		return '';
 	}
 

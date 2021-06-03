@@ -1915,7 +1915,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSitePlanSlug()', () => {
-		test( 'should return undefined if the plan slug is not known', () => {
+		test( 'should return null if the plan slug is not known', () => {
 			const planSlug = getSitePlanSlug(
 				{
 					sites: {
@@ -1925,7 +1925,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			chaiExpect( planSlug ).to.be.undefined;
+			chaiExpect( planSlug ).to.be.null;
 		} );
 
 		test( 'should return the plan slug if it is known', () => {
