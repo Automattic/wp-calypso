@@ -3,7 +3,17 @@ import EmptyContent from 'calypso/components/empty-content';
 import Head from 'calypso/components/head';
 import { chunkCssLinks } from './utils';
 
-function Browsehappy( { entrypoint, dashboardUrl } ) {
+function Browsehappy( { entrypoint, dashboardUrl, bypassUrl } ) {
+	const bypassLink = bypassUrl ? (
+		<p>
+			Alternatively you can{ ' ' }
+			<a key="bypass-link" href={ bypassUrl }>
+				continue loading the page
+			</a>{ ' ' }
+			but some features may not work as expected.
+		</p>
+	) : null;
+
 	return (
 		<html lang="en">
 			<Head title="Unsupported Browser — WordPress.com">{ chunkCssLinks( entrypoint ) }</Head>
@@ -17,17 +27,22 @@ function Browsehappy( { entrypoint, dashboardUrl } ) {
 									<EmptyContent
 										illustration="/calypso/images/drake/drake-browser.svg"
 										title="Unsupported Browser"
-										line={ [
-											'Unfortunately this page cannot be used by your browser. You can either ',
-											<a key="dashboard-link" href={ dashboardUrl }>
-												use the classic WordPress dashboard
-											</a>,
-											', or ',
-											<a key="browsehappy-link" href="https://browsehappy.com">
-												upgrade your browser
-											</a>,
-											'.',
-										] }
+										line={
+											<>
+												<p>
+													Unfortunately this page cannot be used by your browser. You can either{ ' ' }
+													<a key="dashboard-link" href={ dashboardUrl }>
+														use the classic WordPress dashboard
+													</a>
+													, or{ ' ' }
+													<a key="browsehappy-link" href="https://browsehappy.com">
+														upgrade your browser
+													</a>
+													.
+												</p>
+												{ bypassLink }
+											</>
+										}
 									/>
 								</main>
 							</div>

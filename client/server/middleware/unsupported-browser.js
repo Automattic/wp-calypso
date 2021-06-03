@@ -1,13 +1,15 @@
 export default () => ( req, res, next ) => {
 	if (
-		// The redirection is not disabled
-		req.bypassTargetRedirection() === false &&
-		// ... and this is fallback target
-		req.getTarget() === null &&
-		// ... and we are not already in /browsehappy
-		req.path !== '/browsehappy'
+		req.cookies.bypass_target_redirection === 'true' ||
+		req.query.bypassTargetRedirection === 'true'
 	) {
-		return res.redirect( '/browsehappy' );
+		return next();
 	}
+
+	const isFallback = req.getTarget() === null;
+	if ( isFallback && req.path !== '/browsehappy' ) {
+		return res.redirect( '/browsehappy?url=' + encodeURIComponent( req.url ) );
+	}
+
 	next();
 };

@@ -747,6 +747,17 @@ export default function pages() {
 	);
 
 	app.get( '/browsehappy', setupDefaultContext(), setUpRoute, function ( req, res ) {
+		if ( req.query.bypassTargetRedirection === 'true' ) {
+			res.cookie( 'bypass_target_redirection', true, {
+				httpOnly: true,
+				secure: true,
+			} );
+
+			if ( req.query.url ) {
+				return res.redirect( decodeURIComponent( req.query.url ) );
+			}
+		}
+
 		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
 		const primaryBlogUrl = get( req, 'context.user.primary_blog_url', '' );
 		const isWpcom = wpcomRe.test( primaryBlogUrl );
@@ -754,6 +765,10 @@ export default function pages() {
 		req.context.dashboardUrl = isWpcom
 			? primaryBlogUrl + '/wp-admin'
 			: 'https://dashboard.wordpress.com/wp-admin/';
+
+		if ( req.query.url ) {
+			req.context.bypassUrl = req.url + '&bypassTargetRedirection=true';
+		}
 
 		res.send( renderJsx( 'browsehappy', req.context ) );
 	} );
