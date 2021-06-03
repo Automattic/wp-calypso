@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { ReactElement } from 'react';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -31,11 +30,9 @@ export default function JetpackSearchPlaceholder( { siteId }: Props ): ReactElem
 			<SidebarNavigation />
 
 			<JetpackSearchContent
-				headerText={ translate( 'Finely-tuned search for your site.' ) }
-				bodyText={ translate( 'Your visitors are getting our fastest search experience.' ) }
-				buttonLink={ null }
-				buttonText={ translate( 'Upgrade to Jetpack Search' ) }
-				onClick={ null }
+				headerText={ 'Placeholder header' }
+				bodyText={ 'Placeholder body text' }
+				buttonText={ 'Button text' }
 				iconComponent={ <JetpackSearchLogo /> }
 			/>
 		</Main>

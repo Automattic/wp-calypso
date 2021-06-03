@@ -48,9 +48,10 @@ export default function JetpackSearchMain(): ReactElement {
 	const isCloud = isJetpackCloud();
 
 	// Send Jetpack Cloud users to wp-admin settings and everyone else to Calypso blue
-	const settingsUrl = isCloud
-		? `${ site.options.admin_url }admin.php?page=jetpack#/performance`
-		: `/settings/performance/${ siteSlug }`;
+	const settingsUrl =
+		isCloud && site?.options?.admin_url
+			? `${ site.options.admin_url }admin.php?page=jetpack#/performance`
+			: `/settings/performance/${ siteSlug }`;
 
 	if ( ! hasLoadedSitePurchases ) {
 		return <JetpackSearchPlaceholder siteId={ siteId } />;
