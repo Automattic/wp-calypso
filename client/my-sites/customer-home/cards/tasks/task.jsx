@@ -22,8 +22,9 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
-import { skipCurrentViewHomeLayout } from 'calypso/state/home/actions';
+import { skipViewHomeLayout } from 'calypso/state/home/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 
 /**
  * Style dependencies
@@ -50,6 +51,7 @@ const Task = ( {
 	taskId,
 	timing,
 	title,
+	currentView,
 } ) => {
 	const [ isLoading, setIsLoading ] = useState( forceIsLoading );
 	const [ areSkipOptionsVisible, setSkipOptionsVisible ] = useState( false );
@@ -66,7 +68,7 @@ const Task = ( {
 
 		if ( completeOnStart ) {
 			setIsLoading( true );
-			dispatch( skipCurrentViewHomeLayout( siteId ) );
+			dispatch( skipViewHomeLayout( siteId, currentView ) );
 		}
 
 		dispatch(
@@ -92,7 +94,7 @@ const Task = ( {
 					} ),
 					bumpStat( 'calypso_customer_home', 'task_skip' )
 				),
-				skipCurrentViewHomeLayout( siteId, reminder )
+				skipViewHomeLayout( siteId, currentView, reminder )
 			)
 		);
 	};
@@ -187,8 +189,12 @@ const Task = ( {
 	);
 };
 
-const mapStateToProps = ( state ) => ( {
-	siteId: getSelectedSiteId( state ),
-} );
+const mapStateToProps = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		siteId,
+		currentView: getHomeLayout( state, siteId )?.view_name,
+	};
+};
 
 export default connect( mapStateToProps )( Task );

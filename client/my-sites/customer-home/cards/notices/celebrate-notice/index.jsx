@@ -11,10 +11,11 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Spinner from 'calypso/components/spinner';
-import { skipCurrentViewHomeLayout } from 'calypso/state/home/actions';
+import { skipViewHomeLayout } from 'calypso/state/home/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 
 /**
  * Image dependencies
@@ -32,6 +33,7 @@ const CelebrateNotice = ( {
 	siteId,
 	title,
 	tracksEventExtras = {},
+	currentView,
 } ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( true );
@@ -45,7 +47,7 @@ const CelebrateNotice = ( {
 
 	const showNextTask = () => {
 		setIsLoading( true );
-		dispatch( skipCurrentViewHomeLayout( siteId ) );
+		dispatch( skipViewHomeLayout( siteId, currentView ) );
 
 		dispatch(
 			composeAnalytics(
@@ -103,8 +105,12 @@ const CelebrateNotice = ( {
 	);
 };
 
-const mapStateToProps = ( state ) => ( {
-	siteId: getSelectedSiteId( state ),
-} );
+const mapStateToProps = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		siteId,
+		currentView: getHomeLayout( state, siteId )?.view_name,
+	};
+};
 
 export default connect( mapStateToProps )( CelebrateNotice );
