@@ -14,6 +14,7 @@ import {
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isFreePlan,
+	isWpComPremiumPlan,
 } from '@automattic/calypso-products';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -50,7 +51,9 @@ export default function ( state, siteId, planKey ) {
 
 	// Exception for AutomatedTransfer on a free plan (expired subscription) to wpcom business plan
 	if (
-		( isWpComBusinessPlan( planKey ) || isWpComEcommercePlan( planKey ) ) &&
+		( isWpComBusinessPlan( planKey ) ||
+			isWpComEcommercePlan( planKey ) ||
+			isWpComPremiumPlan( planKey ) ) &&
 		isFreePlan( currentPlanSlug ) &&
 		isSiteAutomatedTransfer( state, siteId )
 	) {
