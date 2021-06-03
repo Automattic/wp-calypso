@@ -385,10 +385,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			title
 		);
 
-		// @todo Remove the deprecated query once GB v10.7+ is up on prod. This is needed for now to make sure all tests (more specifically upgrade tests that use non-edge sites) pass.
-		const insertedBlockItemDeprecatedQuery = `.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`;
 		const inserterBlockItemLocator = By.css(
-			`.edit-post-editor__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }, ${ insertedBlockItemDeprecatedQuery }`
+			`.edit-post-editor__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
 		);
 
 		const insertedBlockLocator = By.css(
