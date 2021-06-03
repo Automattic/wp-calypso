@@ -70,7 +70,6 @@ export class UserBlock extends React.Component {
 		let timeIndicator;
 		let homeTemplate;
 		let followLink;
-		let noteActions;
 
 		if ( this.props.block.meta ) {
 			if ( this.props.block.meta.links ) {
