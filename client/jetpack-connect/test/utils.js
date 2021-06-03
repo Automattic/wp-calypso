@@ -98,7 +98,7 @@ describe( 'parseAuthorizationQuery', () => {
 		expect( result ).toMatchSnapshot();
 	} );
 
-	test( 'isPopup, closeWindowAfterLogin, closeWindowAfterAuth should be true if string is 1', () => {
+	test( 'isPopup, closeWindowAfterLogin, closeWindowAfterAuthorize should be true if string is 1', () => {
 		const data = {
 			_wp_nonce: 'foobar',
 			blogname: 'Just Another WordPress.com Site',
@@ -117,10 +117,10 @@ describe( 'parseAuthorizationQuery', () => {
 		const result = parseAuthorizationQuery( data );
 		expect( result.isPopup ).toBe( true );
 		expect( result.closeWindowAfterLogin ).toBe( true );
-		expect( result.closeWindowAfterAuth ).toBe( true );
+		expect( result.closeWindowAfterAuthorize ).toBe( true );
 	} );
 
-	test( 'isPopup, closeWindowAfterLogin, closeWindowAfterAuth should be false if string is not 1', () => {
+	test( 'isPopup, closeWindowAfterLogin, closeWindowAfterAuthorize should be false if string is not 1', () => {
 		const data = {
 			_wp_nonce: 'foobar',
 			blogname: 'Just Another WordPress.com Site',
@@ -139,7 +139,7 @@ describe( 'parseAuthorizationQuery', () => {
 		const result = parseAuthorizationQuery( data );
 		expect( result.isPopup ).toBe( false );
 		expect( result.closeWindowAfterLogin ).toBe( false );
-		expect( result.closeWindowAfterAuth ).toBe( false );
+		expect( result.closeWindowAfterAuthorize ).toBe( false );
 	} );
 
 	test( 'should return null data on valid input', () => {
