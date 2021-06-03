@@ -8,7 +8,7 @@ import { By } from 'selenium-webdriver';
  */
 import AsyncBaseContainer from '../async-base-container';
 
-import * as DriverHelper from '../driver-helper.js';
+import * as driverHelper from '../driver-helper.js';
 
 export default class RevokePage extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -16,7 +16,7 @@ export default class RevokePage extends AsyncBaseContainer {
 	}
 
 	async revokeUser() {
-		return await DriverHelper.clickWhenClickable(
+		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.people-invite-details__clear-revoke [type]' )
 		);

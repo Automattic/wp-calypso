@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By, until } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -21,19 +21,10 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 	async waitForResults() {
 		const driver = this.driver;
 		const resultsLoadingLocator = By.css( '.domain-suggestion.is-placeholder' );
-		await driverHelper.waitUntilElementNotLocated(
+		return await driverHelper.waitUntilElementNotLocated(
 			driver,
 			resultsLoadingLocator,
 			this.explicitWaitMS * 2
-		);
-		return await this.checkForUnknownABTestKeys();
-	}
-
-	async waitForGoogleApps() {
-		return await this.driver.wait(
-			until.elementLocated( this.declineGoogleAppsLinkLocator ),
-			this.explicitWaitMS,
-			'Could not locate the link to decline google apps.'
 		);
 	}
 
@@ -65,18 +56,7 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 
 	async selectDomainAddress( domainAddress ) {
 		const locator = By.css( `[data-e2e-domain="${ domainAddress }"]` );
-		await this.driver.wait(
-			until.elementLocated( locator ),
-			this.explicitWaitMS,
-			'Could not locate the select button for the paid address: ' + domainAddress
-		);
-		const element = await this.driver.findElement( locator );
-		await this.driver.wait(
-			until.elementIsEnabled( element ),
-			this.explicitWaitMS,
-			'The paid address button for ' + domainAddress + ' does not appear to be enabled to click'
-		);
-		return await driverHelper.clickWhenClickable( this.driver, locator, this.explicitWaitMS );
+		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
 	async selectFreeAddress() {

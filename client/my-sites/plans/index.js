@@ -20,6 +20,7 @@ import {
 	siteSelection,
 	sites,
 	wpForTeamsP2PlusNotSupportedRedirect,
+	p2RedirectToHubPlans,
 } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 
@@ -28,12 +29,19 @@ const trackedPage = ( url, ...rest ) => {
 };
 
 export default function () {
-	trackedPage( '/plans', siteSelection, wpForTeamsP2PlusNotSupportedRedirect, sites );
+	trackedPage(
+		'/plans',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		p2RedirectToHubPlans,
+		sites
+	);
 	trackedPage(
 		'/plans/compare',
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
+		p2RedirectToHubPlans,
 		redirectToPlans
 	);
 	trackedPage(
@@ -41,6 +49,7 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
+		p2RedirectToHubPlans,
 		redirectToPlans
 	);
 	trackedPage(
@@ -48,6 +57,7 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
+		p2RedirectToHubPlans,
 		redirectToPlans
 	);
 	trackedPage(
@@ -55,6 +65,7 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
+		p2RedirectToHubPlans,
 		redirectToPlans
 	);
 	trackedPage( '/plans/features/:feature/:domain', features );
@@ -64,6 +75,7 @@ export default function () {
 		wpForTeamsP2PlusNotSupportedRedirect,
 		sites,
 		navigation,
+		p2RedirectToHubPlans,
 		currentPlan
 	);
 	trackedPage(
@@ -71,12 +83,14 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
+		p2RedirectToHubPlans,
 		currentPlan
 	);
 	trackedPage(
 		'/plans/select/:plan/:domain',
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
+		p2RedirectToHubPlans,
 		redirectToCheckout
 	);
 
@@ -85,6 +99,7 @@ export default function () {
 		'/plans/:intervalType?/:site',
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
+		p2RedirectToHubPlans,
 		navigation,
 		plans
 	);

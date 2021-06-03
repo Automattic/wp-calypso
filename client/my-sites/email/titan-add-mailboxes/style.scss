@@ -1,0 +1,111 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.titan-add-mailboxes__new-mailbox .form-label .form-text-input-with-affixes__suffix {
+	font-weight: normal;
+}
+.titan-add-mailboxes__new-mailbox-email-and-password,
+.titan-add-mailboxes__new-mailbox-password-and-is-admin {
+	display: flex;
+	flex-direction: column;
+
+	@include break-mobile {
+		align-items: flex-start;
+		flex-direction: row;
+		justify-content: space-between;
+
+		.form-fieldset:first-child {
+			flex-grow: 2;
+			margin-right: 1em;
+		}
+	}
+}
+
+.titan-add-mailboxes__new-mailbox-name-and-remove {
+	display: flex;
+	flex-direction: column-reverse;
+
+	@include break-mobile {
+		flex-direction: row;
+
+		.form-fieldset:first-child {
+			flex-grow: 2;
+		}
+
+		.titan-add-mailboxes__new-mailbox-remove-mailbox-button {
+			height: 40px;
+			margin-left: 1em;
+			width: 50px;
+
+			.gridicon {
+				margin-right: 0;
+			}
+
+			span {
+				display: none;
+			}
+		}
+	}
+
+	.titan-add-mailboxes__new-mailbox-remove-mailbox-button,
+	.form-fieldset:not( :first-child ) {
+		margin-bottom: 1em;
+		margin-left: 1em;
+		margin-top: 0;
+
+		.components-toggle-control p {
+			margin-bottom: 0;
+		}
+	}
+}
+
+.titan-add-mailboxes__new-mailbox.show-labels {
+	.form-fieldset .form-label {
+		color: var( --color-text );
+
+		> div, > input {
+			margin-top: 5px;
+		}
+	}
+
+	.titan-add-mailboxes__new-mailbox-remove-mailbox-button {
+		margin-top: calc( 1.5em + 5px );
+	}
+
+}
+
+.titan-add-mailboxes__new-mailbox-separator {
+	margin-top: 1.5em;
+}
+
+.titan-new-mailbox-list__main {
+
+	.form-fieldset .form-label {
+		margin-bottom: 0;
+	}
+
+	.titan-new-mailbox-list__actions {
+		display: flex;
+		flex-direction: column;
+
+		@include break-mobile {
+			flex-direction: row;
+
+			.titan-add-mailboxes__action-cancel {
+				margin-left: auto;
+			}
+
+			.titan-add-mailboxes__action-continue {
+				margin-left: 1.5em;
+			}
+		}
+
+		> button {
+			margin-bottom: 1em;
+
+			@include break-mobile {
+				margin-bottom: 0;
+			}
+		}
+	}
+}

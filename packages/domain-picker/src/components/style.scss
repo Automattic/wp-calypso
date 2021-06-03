@@ -1,6 +1,6 @@
-@import '~@automattic/calypso-color-schemes';
-@import '~@automattic/onboarding/styles/mixins';
-@import '~@automattic/typography/styles/fonts';
+@import '@automattic/calypso-color-schemes';
+@import '@automattic/onboarding/styles/mixins';
+@import '@automattic/typography/styles/fonts';
 
 $accent-blue: #117ac9;
 
@@ -314,7 +314,8 @@ $accent-blue: #117ac9;
 .domain-picker__badge {
 	display: inline-flex;
 	border-radius: 2px;
-	padding: 0 10px;
+	padding: 0 2%; // adjust according padding to screen size
+	white-space: nowrap;
 	line-height: 20px;
 	height: 20px;
 	align-items: center;

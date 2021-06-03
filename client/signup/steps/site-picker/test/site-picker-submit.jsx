@@ -1,7 +1,3 @@
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
@@ -11,10 +7,6 @@ jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-
-jest.mock( 'i18n-calypso', () => ( {
-	translate: ( str ) => str,
-} ) );
 
 /**
  * Internal dependencies

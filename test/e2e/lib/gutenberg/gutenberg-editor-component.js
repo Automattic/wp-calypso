@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import webdriver, { By, until } from 'selenium-webdriver';
+import webdriver, { By } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
 
 /**
@@ -49,12 +49,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			return;
 		}
 		await this.driver.switchTo().defaultContent();
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.editoriFrameLocator );
-		await this.driver.wait(
-			until.ableToSwitchToFrame( this.editoriFrameLocator ),
-			this.explicitWaitMS,
-			'Could not locate the editor iFrame.'
-		);
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.editoriFrameLocator );
 	}
 
 	async initEditor( { dismissPageTemplateLocator = false } = {} ) {
@@ -229,13 +224,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async contactFormDisplayedInEditor() {
 		return await this.blockDisplayedInEditor( 'jetpack/contact-form' );
-	}
-
-	async errorDisplayed() {
-		return await driverHelper.isElementEventuallyLocatedAndVisible(
-			this.driver,
-			By.css( '.editor-error-boundary' )
-		);
 	}
 
 	async hasInvalidBlocks() {
@@ -465,7 +453,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async removeBlock( blockID ) {
 		const blockLocator = By.css( `.wp-block[id="${ blockID }"]` );
-		await driverHelper.isElementEventuallyLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			blockLocator,
 			this.explicitWaitMS / 5
@@ -475,7 +463,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.block-editor-block-settings-menu' )
 		);
-		await driverHelper.isElementEventuallyLocatedAndVisible(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.components-menu-group' ),
 			this.explicitWaitMS / 5

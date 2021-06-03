@@ -7,7 +7,7 @@ import { By } from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
-import * as DriverHelper from '../driver-helper.js';
+import * as driverHelper from '../driver-helper.js';
 
 export default class AcceptInvitePage extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -19,9 +19,9 @@ export default class AcceptInvitePage extends AsyncBaseContainer {
 	}
 
 	async enterUsernameAndPasswordAndSignUp( username, password ) {
-		await DriverHelper.setWhenSettable( this.driver, By.css( '#username' ), username );
-		await DriverHelper.setWhenSettable( this.driver, By.css( '#password' ), password, true );
-		return await DriverHelper.clickWhenClickable( this.driver, By.css( '.signup-form__submit' ) );
+		await driverHelper.setWhenSettable( this.driver, By.css( '#username' ), username );
+		await driverHelper.setWhenSettable( this.driver, By.css( '#password' ), password, true );
+		return await driverHelper.clickWhenClickable( this.driver, By.css( '.signup-form__submit' ) );
 	}
 
 	async getHeaderInviteText() {
@@ -29,7 +29,7 @@ export default class AcceptInvitePage extends AsyncBaseContainer {
 	}
 
 	async waitUntilNotVisible() {
-		return await DriverHelper.waitUntilElementNotLocated(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
 			By.css( '#username' ),
 			this.explicitWaitMS * 2

@@ -4,12 +4,14 @@
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import React, { createElement, ReactNode, useEffect, useRef } from 'react';
+import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { Button, ProductIcon } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
 import Gridicon from 'calypso/components/gridicon';
+import { useExperiment } from 'calypso/lib/explat';
 import { preventWidows } from 'calypso/lib/formatting';
 import JetpackProductCardTimeFrame from './time-frame';
 import PlanPrice from 'calypso/my-sites/plan-price';
@@ -85,6 +87,11 @@ const DisplayPrice = ( {
 	hideSavingLabel,
 } ) => {
 	const translate = useTranslate();
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'calypso_jetpack_yearly_total_discount'
+	);
+	const withTreatmentVariation =
+		experimentAssignment?.variationName === 'treatment' && billingTerm === TERM_ANNUALLY;
 
 	if ( isDeprecated ) {
 		return (
@@ -151,16 +158,29 @@ const DisplayPrice = ( {
 	const couponDiscountedPrice = parseFloat(
 		( ( discountedPrice ?? originalPrice ) * FRESHPACK_PERCENTAGE ).toFixed( 2 )
 	);
+	const discountElt = withTreatmentVariation
+		? translate( '* Save %(percent)d%% for the first year', {
+				args: {
+					percent: ( ( originalPrice - couponDiscountedPrice ) / originalPrice ) * 100,
+				},
+				comment: 'Asterisk clause describing the displayed price adjustment',
+		  } )
+		: translate( '* You Save %(percent)d%%', {
+				args: {
+					percent: INTRO_PRICING_DISCOUNT_PERCENTAGE,
+				},
+				comment: 'Asterisk clause describing the displayed price adjustment',
+		  } );
 
 	return (
 		<div className="jetpack-product-card__price">
-			{ currencyCode && originalPrice ? (
+			{ currencyCode && originalPrice && ! isLoadingExperimentAssignment ? (
 				<>
 					{ displayFrom && <span className="jetpack-product-card__price-from">from</span> }
 					<PlanPrice
 						original
 						className="jetpack-product-card__original-price"
-						rawPrice={ couponOriginalPrice as number }
+						rawPrice={ ( withTreatmentVariation ? originalPrice : couponOriginalPrice ) as number }
 						currencyCode={ currencyCode }
 					/>
 					<PlanPrice
@@ -175,12 +195,7 @@ const DisplayPrice = ( {
 					) }
 					<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
 					{ ! hideSavingLabel && (
-						<span className="jetpack-product-card__you-save">
-							{ translate( '* You Save %(percent)d%%', {
-								args: { percent: INTRO_PRICING_DISCOUNT_PERCENTAGE },
-								comment: 'Asterisk clause describing the displayed price adjustment',
-							} ) }
-						</span>
+						<span className="jetpack-product-card__you-save">{ discountElt }</span>
 					) }
 				</>
 			) : (

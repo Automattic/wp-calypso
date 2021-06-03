@@ -7,12 +7,12 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import * as driverManager from '../lib/driver-manager';
-import * as dataHelper from '../lib/data-helper';
+import * as driverManager from '../../lib/driver-manager';
+import * as dataHelper from '../../lib/data-helper';
 
-import SettingsPage from '../lib/pages/settings-page';
+import SettingsPage from '../../lib/pages/settings-page';
 
-import LoginFlow from '../lib/flows/login-flow';
+import LoginFlow from '../../lib/flows/login-flow';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

@@ -12,7 +12,6 @@ import { find } from 'lodash';
  */
 import languages from '@automattic/languages';
 import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
-import user from 'calypso/lib/user';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { canBeTranslated } from 'calypso/lib/i18n-utils';
 
@@ -43,6 +42,7 @@ const translationDataFromPage = {
 let injectUrl;
 let initialized;
 let _isTranslatorEnabled;
+let _user = null;
 let _isUserSettingsReady = false;
 let _shouldWrapTranslations = false;
 
@@ -53,7 +53,7 @@ let _shouldWrapTranslations = false;
  */
 const communityTranslatorJumpstart = {
 	isEnabled() {
-		const currentUser = user().get();
+		const currentUser = _user;
 
 		// disable for locales
 		if (
@@ -138,9 +138,15 @@ const communityTranslatorJumpstart = {
 		return dataElement;
 	},
 
-	init( isUserSettingsReady ) {
+	init( user, isUserSettingsReady ) {
 		const languageJson = i18n.getLocale() || { '': {} };
 		const { localeSlug: localeCode, localeVariant } = languageJson[ '' ];
+
+		_user = user;
+		if ( ! _user ) {
+			debug( 'initialization failed because user data is not ready' );
+			return;
+		}
 
 		if ( localeCode && languageJson ) {
 			this.updateTranslationData( localeCode, languageJson, localeVariant );
@@ -155,6 +161,7 @@ const communityTranslatorJumpstart = {
 		if ( typeof isUserSettingsReady !== 'undefined' ) {
 			_isUserSettingsReady = isUserSettingsReady;
 		}
+
 		if ( ! _isUserSettingsReady ) {
 			debug( 'initialization failed because userSettings are not ready' );
 			return;
@@ -187,7 +194,7 @@ const communityTranslatorJumpstart = {
 			languageJson[ '' ][ 'Plural-Forms' ] ||
 			languageJson[ '' ][ 'plural-forms' ] ||
 			translationDataFromPage.pluralForms;
-		translationDataFromPage.currentUserId = user().get().ID;
+		translationDataFromPage.currentUserId = _user.ID;
 
 		const currentLocale = find( languages, ( lang ) => lang.langSlug === localeCode );
 		if ( currentLocale ) {
@@ -322,7 +329,7 @@ export function trackTranslatorStatus( isTranslatorEnabled ) {
 
 	if ( changed && _isTranslatorEnabled !== undefined ) {
 		debug( tracksEvent );
-		recordTracksEvent( tracksEvent, { locale: user().get().localeSlug } );
+		recordTracksEvent( tracksEvent, { locale: i18n.getLocaleSlug } );
 	}
 
 	_isTranslatorEnabled = newSetting;

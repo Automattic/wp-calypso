@@ -3,10 +3,12 @@
  */
 import SignupCart from '../cart';
 import wp from 'calypso/lib/wp';
+import { getEmptyResponseCart, convertResponseCartToRequestCart } from '@automattic/shopping-cart';
 
 jest.mock( 'calypso/lib/wp' );
 
 const mockCart = {
+	...getEmptyResponseCart(),
 	cart_key: 'original_key',
 	products: [ { product_id: 25, product_slug: 'something_original' } ],
 };
@@ -33,11 +35,11 @@ describe( 'SignupCart', () => {
 			const callback = () => {};
 			SignupCart.createCart( cartKey, productsToAdd, callback );
 
-			const expectedCart = {
+			const expectedCart = convertResponseCartToRequestCart( {
+				...getEmptyResponseCart(),
 				cart_key: cartKey,
 				products: productsToAdd,
-				temporary: false,
-			};
+			} );
 			expect( setCart ).toHaveBeenCalledWith( cartKey, expectedCart, expect.anything() );
 		} );
 
@@ -47,11 +49,11 @@ describe( 'SignupCart', () => {
 			const callback = () => {};
 			SignupCart.createCart( cartKey, productsToAdd, callback );
 
-			const expectedCart = {
+			const expectedCart = convertResponseCartToRequestCart( {
+				...getEmptyResponseCart(),
 				cart_key: cartKey,
 				products: productsToAdd,
-				temporary: false,
-			};
+			} );
 			expect( setCart ).toHaveBeenCalledWith( cartKey, expectedCart, expect.anything() );
 		} );
 
@@ -77,10 +79,11 @@ describe( 'SignupCart', () => {
 			const callback = jest.fn();
 			SignupCart.addToCart( cartKey, productsToAdd, callback );
 
-			const expectedCart = {
+			const expectedCart = convertResponseCartToRequestCart( {
+				...getEmptyResponseCart(),
 				cart_key: cartKey,
 				products: [ ...mockCart.products, ...productsToAdd ],
-			};
+			} );
 			expect( setCart ).toHaveBeenCalledWith( cartKey, expectedCart, callback );
 		} );
 	} );

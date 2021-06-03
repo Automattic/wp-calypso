@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
@@ -21,8 +22,14 @@ import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
 import './style.scss';
 
 const DomainManagementHeader = ( props ) => {
-	const { isManagingAllDomains, onClick, backHref, children } = props;
+	const { selectedDomainName, isManagingAllDomains, onClick, backHref, children } = props;
 	const translate = useTranslate();
+	let formattedHeaderText = selectedDomainName;
+	if ( ! selectedDomainName ) {
+		formattedHeaderText = isManagingAllDomains
+			? translate( 'All Domains' )
+			: translate( 'Site Domains' );
+	}
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -30,9 +37,7 @@ const DomainManagementHeader = ( props ) => {
 			<FormattedHeader
 				brandFont
 				className="stats__section-header"
-				headerText={
-					isManagingAllDomains ? translate( 'All Domains' ) : translate( 'Site Domains' )
-				}
+				headerText={ formattedHeaderText }
 				align="left"
 			/>
 			<HeaderCake className="domain-management-header" onClick={ onClick } backHref={ backHref }>
@@ -46,9 +51,15 @@ const DomainManagementHeader = ( props ) => {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-export default connect( ( state ) => {
+const connectComponent = connect( ( state ) => {
 	const path = getCurrentRoute( state );
 	return {
 		isManagingAllDomains: isUnderDomainManagementAll( path ),
 	};
 } )( DomainManagementHeader );
+
+connectComponent.propTypes = {
+	selectedDomainName: PropTypes.string,
+};
+
+export default connectComponent;

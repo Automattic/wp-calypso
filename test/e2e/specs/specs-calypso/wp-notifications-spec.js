@@ -71,8 +71,8 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 	it( 'Can open notifications tab with keyboard shortcut', async function () {
 		const navBarComponent = await NavBarComponent.Expect( this.driver );
 		await navBarComponent.openNotificationsShortcut();
-		const present = await navBarComponent.confirmNotificationsOpen();
-		return assert( present, 'Notifications tab is not open' );
+		const isOpen = await navBarComponent.isNotificationsTabOpen();
+		return assert( isOpen, 'Notifications tab is not open' );
 	} );
 
 	it( 'Can see the notification of the comment', async function () {

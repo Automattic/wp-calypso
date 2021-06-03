@@ -40,7 +40,7 @@ function updateNotificationBadge() {
 	}
 }
 
-module.exports = function ( mainWindow ) {
+module.exports = function ( { window, view } ) {
 	ipc.on( 'clear-notices-count', function ( _, count ) {
 		log.info( 'Notification count received: ' + count );
 		notificationBadgeCount = count;
@@ -61,7 +61,7 @@ module.exports = function ( mainWindow ) {
 		'notification',
 		debounce(
 			() => {
-				mainWindow.webContents.send( 'notifications-panel-refresh' );
+				view.webContents.send( 'notifications-panel-refresh' );
 			},
 			100,
 			{ leading: true, trailing: false }
@@ -97,41 +97,41 @@ module.exports = function ( mainWindow ) {
 				ViewModel.didClickNotification( id, () =>
 					// Manually refresh notifications panel when a message is clicked
 					// to reflect read/unread highlighting.
-					mainWindow.webContents.send( 'notifications-panel-refresh' )
+					window.webContents.send( 'notifications-panel-refresh' )
 				);
 
-				if ( ! mainWindow.isVisible() ) {
-					mainWindow.show();
+				if ( ! window.isVisible() ) {
+					window.show();
 					await delay( 300 );
 				}
 
-				mainWindow.focus();
+				window.focus();
 
 				if ( navigate ) {
 					// if we have a specific URL, then navigate Calypso there
 					log.info( `Navigating user to URL: ${ navigate }` );
-					if ( isCalypso( mainWindow ) ) {
+					if ( isCalypso( view ) ) {
 						log.info( `Navigating to '${ navigate }'` );
-						mainWindow.webContents.send( 'navigate', navigate );
+						view.webContents.send( 'navigate', navigate );
 					} else {
 						log.info( `Navigating to '${ webBase + navigate }'` );
-						mainWindow.webContents.loadURL( webBase + navigate );
+						view.webContents.loadURL( webBase + navigate );
 					}
 				} else {
 					// else just display the notifications panel
-					if ( isCalypso( mainWindow ) ) {
-						mainWindow.webContents.send( 'navigate', '/' );
+					if ( isCalypso( view ) ) {
+						view.webContents.send( 'navigate', '/' );
 					} else {
-						mainWindow.webContents.loadURL( webBase );
+						view.webContents.loadURL( webBase );
 					}
 
 					await delay( 300 );
 
-					mainWindow.webContents.send( 'notifications-panel-show', true );
+					view.webContents.send( 'notifications-panel-show', true );
 				}
 
 				// Tracks API call
-				mainWindow.webContents.send( 'notification-clicked', notification );
+				view.webContents.send( 'notification-clicked', notification );
 
 				notificationBadgeCount = Math.max( notificationBadgeCount - 1, 0 );
 				updateNotificationBadge();

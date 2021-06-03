@@ -35,7 +35,7 @@ import {
 	warningNotice as warningNoticeAction,
 } from 'calypso/state/notices/actions';
 import { isEnabled } from '@automattic/calypso-config';
-import { login } from 'calypso/lib/paths';
+import { login, lostPassword } from 'calypso/lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { sendEmailLogin as sendEmailLoginAction } from 'calypso/state/auth/actions';
 import {
@@ -149,7 +149,6 @@ export class JetpackSignup extends Component {
 			emailAddress,
 			from: this.props.authQuery.from,
 			isJetpack: true,
-			isNative: isEnabled( 'login/native-login-links' ),
 			locale: this.props.locale,
 			redirectTo: window.location.href,
 			allowSiteConnection: this.props.authQuery?.allowSiteConnection,
@@ -344,7 +343,7 @@ export class JetpackSignup extends Component {
 	}
 
 	renderWooDna() {
-		const { authQuery, isFullLoginFormVisible, translate, usernameOrEmail } = this.props;
+		const { authQuery, isFullLoginFormVisible, locale, translate, usernameOrEmail } = this.props;
 		const {
 			isCreatingAccount,
 			signUpUsernameOrEmail,
@@ -380,18 +379,12 @@ export class JetpackSignup extends Component {
 				pageTitle = translate( 'Login to WordPress.com' );
 				footerLinks.push(
 					<LoggedOutFormLinkItem key="signup" onClick={ this.showWooDnaSignupView }>
-						{ this.props.translate( 'Create a new account' ) }
+						{ translate( 'Create a new account' ) }
 					</LoggedOutFormLinkItem>
 				);
 				footerLinks.push(
-					<LoggedOutFormLinkItem
-						key="lostpassword"
-						href={ addQueryArgs(
-							{ action: 'lostpassword' },
-							login( { locale: this.props.locale } )
-						) }
-					>
-						{ this.props.translate( 'Lost your password?' ) }
+					<LoggedOutFormLinkItem key="lostpassword" href={ lostPassword( { locale } ) }>
+						{ translate( 'Lost your password?' ) }
 					</LoggedOutFormLinkItem>
 				);
 			} else {

@@ -54,7 +54,7 @@ import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-wo
 import gSuiteLogo from 'calypso/assets/images/email-providers/gsuite.svg';
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
-import TitanNewMailboxList from 'calypso/my-sites/email/titan-mail-add-mailboxes/titan-new-mailbox-list';
+import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
 import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**

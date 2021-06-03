@@ -24,7 +24,7 @@ function resolveRootPath( relativeTo ) {
 }
 
 /**
- * Retrieves the url of the Add New Users page either for G Suite or Google Workspace:
+ * Retrieves the url of the Add New Mailboxes page either for G Suite or Google Workspace:
  *
  * https://wordpress.com/email/:domainName/google-workspace/add-users/:siteName
  * https://wordpress.com/email/:domainName/gsuite/add-users/:siteName

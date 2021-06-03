@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By, until } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ export default class PagePreviewComponent extends AsyncBaseContainer {
 	async _switchToPreviewFrame() {
 		await this._switchToDefaultContent();
 		const frameLocator = By.css( '.web-preview__frame' );
-		await this.driver.wait( until.ableToSwitchToFrame( frameLocator ), this.explicitWaitMS );
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, frameLocator );
 	}
 
 	async _switchToDefaultContent() {

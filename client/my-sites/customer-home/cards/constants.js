@@ -30,3 +30,4 @@ export const TASK_WEBINARS = 'home-task-webinars';
 export const TASK_WP_COURSES = 'home-task-wp-courses';
 export const TASK_CLOUDFLARE = 'home-task-cloudflare';
 export const TASK_UPSELL_TITAN = 'home-task-upsell-titan';
+export const TASK_VERIFY_EMAIL = 'home-task-verify-email';

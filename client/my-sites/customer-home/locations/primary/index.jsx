@@ -19,6 +19,7 @@ import TitanBanner from 'calypso/my-sites/customer-home/cards/tasks/titan-banner
 import Webinars from 'calypso/my-sites/customer-home/cards/tasks/webinars';
 import WPCourses from 'calypso/my-sites/customer-home/cards/tasks/wp-courses';
 import Cloudflare from 'calypso/my-sites/customer-home/cards/tasks/cloudflare';
+import VerifyEmail from 'calypso/my-sites/customer-home/cards/tasks/verify-email';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
 import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
@@ -41,6 +42,7 @@ import {
 	TASK_SITE_SETUP_CHECKLIST_ECOMMERCE,
 	TASK_SITE_SETUP_CHECKLIST,
 	TASK_UPSELL_TITAN,
+	TASK_VERIFY_EMAIL,
 	TASK_WEBINARS,
 	TASK_WP_COURSES,
 } from 'calypso/my-sites/customer-home/cards/constants';
@@ -68,6 +70,7 @@ const cardComponents = {
 	[ TASK_WEBINARS ]: Webinars,
 	[ TASK_WP_COURSES ]: WPCourses,
 	[ TASK_CLOUDFLARE ]: Cloudflare,
+	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
 };
 
 const Primary = ( { cards, trackCards } ) => {

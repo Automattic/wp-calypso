@@ -187,7 +187,7 @@ class AutoLoadingHomepageModal extends Component {
 							checked={ 'use_new_homepage' === this.state.homepageAction }
 							onChange={ this.handleHomepageAction }
 							label={ translate(
-								'Replace the homepage content with the %(themeName)s demo content. The existing homepage will be saved as a conflict under Pages → Drafts.',
+								'Replace the homepage content with the %(themeName)s demo content. The existing homepage will be saved as a draft under Pages → Drafts.',
 								{
 									args: { themeName },
 								}

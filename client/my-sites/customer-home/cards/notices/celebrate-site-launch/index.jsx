@@ -62,6 +62,7 @@ const CelebrateSiteLaunch = ( { isSiteSetupComplete, pendingSiteSetupTasks, site
 			showSkip={ true }
 			skipText={ isSiteSetupComplete ? translate( 'Dismiss' ) : translate( 'Skip site setup' ) }
 			onSkip={ ! isSiteSetupComplete ? skipSiteSetup : null }
+			tracksEventExtras={ { is_site_setup_complete: isSiteSetupComplete } }
 		/>
 	);
 };

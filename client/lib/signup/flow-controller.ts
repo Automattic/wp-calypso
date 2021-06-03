@@ -31,12 +31,17 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { ProgressState } from 'calypso/state/signup/progress/schema';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { resetSignup, updateDependencies } from 'calypso/state/signup/actions';
+import {
+	resetSignup,
+	updateDependencies,
+	removeSiteSlugDependency,
+} from 'calypso/state/signup/actions';
 import {
 	completeSignupStep,
 	invalidateStep,
 	processStep,
 } from 'calypso/state/signup/progress/actions';
+import { getCurrentFlowName, getPreviousFlowName } from 'calypso/state/signup/flow/selectors';
 
 interface Dependencies {
 	[ other: string ]: string[];
@@ -123,6 +128,7 @@ export default class SignupFlowController {
 
 		this._resetStoresIfProcessing(); // reset the stores if the cached progress contained a processing step
 		this._resetStoresIfUserHasLoggedIn(); // reset the stores if user has newly authenticated
+		this._resetSiteSlugIfUserEnteredAnotherFlow(); // reset the site slug if user entered another flow
 
 		if ( this._flow.providesDependenciesInQuery || options.providedDependencies ) {
 			this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
@@ -130,6 +136,7 @@ export default class SignupFlowController {
 		} else {
 			// TODO: synces deps from progress to dep store: are they ever out of sync?
 			const storedDependencies = this._getStoredDependencies();
+
 			if ( ! isEmpty( storedDependencies ) ) {
 				this._reduxStore.dispatch( updateDependencies( storedDependencies ) );
 			}
@@ -148,6 +155,42 @@ export default class SignupFlowController {
 			find( getSignupProgress( this._reduxStore.getState() ), { stepName: 'user' } )
 		) {
 			this.reset();
+		}
+	}
+
+	_resetSiteSlugIfUserEnteredAnotherFlow() {
+		// If siteSlug exists when when entering another flow,
+		// removing the siteSlug prevents plans from being added to the wrong cart.
+		const dependencies = getSignupDependencyStore( this._reduxStore.getState() );
+		if ( ! dependencies.siteSlug ) {
+			return;
+		}
+
+		// If we are entering from one flow to another, e.g. 'new-launch' to 'onboarding',
+		// we should remove the siteSlug stored by previous flow if the following conditions are met:
+		// - the previous flow does not contain a step that provides the siteSlug dependency
+		// - the current flow contains a step that provides the siteSlug dependency
+		const previousFlowName = getPreviousFlowName( this._reduxStore.getState() );
+		const currentFlowName = getCurrentFlowName( this._reduxStore.getState() );
+
+		const hasStepThatProvidesSiteSlug = ( flowName: string ) => {
+			let foundStepThatProvidesSiteSlug = false;
+			forEach( pick( steps, flows.getFlow( flowName ).steps ), ( step ) => {
+				if ( ( step.providesDependencies || [] ).indexOf( 'siteSlug' ) > -1 ) {
+					foundStepThatProvidesSiteSlug = true;
+					return false;
+				}
+			} );
+			return foundStepThatProvidesSiteSlug;
+		};
+
+		if ( previousFlowName !== currentFlowName ) {
+			if (
+				! hasStepThatProvidesSiteSlug( previousFlowName ) &&
+				hasStepThatProvidesSiteSlug( currentFlowName )
+			) {
+				this._reduxStore.dispatch( removeSiteSlugDependency() );
+			}
 		}
 	}
 

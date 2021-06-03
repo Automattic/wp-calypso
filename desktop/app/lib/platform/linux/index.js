@@ -8,13 +8,19 @@ const { app } = require( 'electron' );
  */
 const log = require( '../../../lib/logger' )( 'platform:linux' );
 
-function LinuxPlatform( mainWindow ) {
-	this.window = mainWindow;
+/**
+ *
+ * Module variables
+ */
+let window;
+
+function LinuxPlatform( appWindow ) {
+	window = appWindow.window;
 
 	app.on( 'activate', function () {
 		log.info( 'Window activated' );
-		mainWindow.show();
-		mainWindow.focus();
+		window.show();
+		window.focus();
 	} );
 
 	app.on( 'window-all-closed', function () {
@@ -22,17 +28,17 @@ function LinuxPlatform( mainWindow ) {
 		app.quit();
 	} );
 
-	mainWindow.on( 'close', function () {
+	window.on( 'close', function () {
 		app.quit();
 	} );
 }
 
 LinuxPlatform.prototype.restore = function () {
-	if ( this.window.isMinimized() ) {
-		this.window.restore();
+	if ( window.isMinimized() ) {
+		window.restore();
 	}
 
-	this.window.show();
+	window.show();
 };
 
 LinuxPlatform.prototype.showNotificationsBadge = function ( count ) {

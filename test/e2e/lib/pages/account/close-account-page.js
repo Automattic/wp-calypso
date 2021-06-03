@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 import config from 'config';
 
 /**
@@ -15,13 +15,13 @@ const explicitWaitMS = config.get( 'explicitWaitMS' );
 
 export default class CloseAccountPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '.account-close' ) );
+		super( driver, By.css( '.account-close' ) );
 	}
 
 	async chooseCloseAccount() {
-		const buttonLocator = by.css( '.account-close button.is-scary' );
-		const confirmButtonLocator = by.css( '.dialog__action-buttons button.is-primary' );
-		const confirmDialogLocator = by.css( '.account-close__confirm-dialog' );
+		const buttonLocator = By.css( '.account-close button.is-scary' );
+		const confirmButtonLocator = By.css( '.dialog__action-buttons button.is-primary' );
+		const confirmDialogLocator = By.css( '.account-close__confirm-dialog' );
 		const pauseBetweenClickAttemptsMS = 100;
 
 		// Click doesn't always fire even if the button is already displayed.
@@ -40,28 +40,28 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 	async enterAccountNameAndClose( accountName ) {
 		await driverHelper.setWhenSettable(
 			this.driver,
-			by.css( '.account-close__confirm-dialog-confirm-input' ),
+			By.css( '.account-close__confirm-dialog-confirm-input' ),
 			accountName
 		);
 		await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			by.css( '.dialog button.is-scary[disabled]' )
+			By.css( '.dialog button.is-scary[disabled]' )
 		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.dialog button.is-scary' )
+			By.css( '.dialog button.is-scary' )
 		);
 	}
 
 	async confirmAccountHasBeenClosed() {
 		const messageLocator = driverHelper.createTextLocator(
-			by.css( '.empty-content__title' ),
+			By.css( '.empty-content__title' ),
 			'Your account has been closed'
 		);
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, messageLocator );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( 'button.empty-content__action' )
+			By.css( 'button.empty-content__action' )
 		);
 	}
 }

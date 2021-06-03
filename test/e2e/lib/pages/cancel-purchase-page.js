@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import webdriver from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -9,22 +9,20 @@ import webdriver from 'selenium-webdriver';
 import * as driverHelper from '../driver-helper.js';
 import AsyncBaseContainer from '../async-base-container';
 
-const by = webdriver.By;
-
 export default class CancelPurchasePage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '.purchases__cancel.main' ) );
-		this.cancelButtonLocator = by.css( 'button.cancel-purchase__button' );
+		super( driver, By.css( '.purchases__cancel.main' ) );
+		this.cancelButtonLocator = By.css( 'button.cancel-purchase__button' );
 	}
 
 	async chooseCancelPlanAndDomain() {
 		// Choose both plan and domain option
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( 'input[name="cancel_bundled_domain_false"]' )
+			By.css( 'input[name="cancel_bundled_domain_false"]' )
 		);
 		// Agree to cancelling domain
-		await driverHelper.setCheckbox( this.driver, by.css( 'input[type="checkbox"]' ) );
+		await driverHelper.setCheckbox( this.driver, By.css( 'input[type="checkbox"]' ) );
 	}
 
 	async clickCancelPurchase() {
@@ -35,23 +33,23 @@ export default class CancelPurchasePage extends AsyncBaseContainer {
 		const e2eReason = 'e2e testing';
 		const dialogClass = '.cancel-purchase-form__dialog';
 		const buttonDialogClass = '.dialog__action-buttons';
-		const nextButtonLocator = by.css( `${ buttonDialogClass } button[data-e2e-button="next"]` );
+		const nextButtonLocator = By.css( `${ buttonDialogClass } button[data-e2e-button="next"]` );
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( `${ dialogClass } input[value="anotherReasonOne"]` )
+			By.css( `${ dialogClass } input[value="anotherReasonOne"]` )
 		);
 		await driverHelper.setWhenSettable(
 			this.driver,
-			by.css( `${ dialogClass } input[name="anotherReasonOneInput"]` ),
+			By.css( `${ dialogClass } input[name="anotherReasonOneInput"]` ),
 			e2eReason
 		);
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( `${ dialogClass } input[value="anotherReasonTwo"]` )
+			By.css( `${ dialogClass } input[value="anotherReasonTwo"]` )
 		);
 		await driverHelper.setWhenSettable(
 			this.driver,
-			by.css( `${ dialogClass } input[name="anotherReasonTwoInput"]` ),
+			By.css( `${ dialogClass } input[name="anotherReasonTwoInput"]` ),
 			e2eReason
 		);
 		await driverHelper.clickWhenClickable( this.driver, nextButtonLocator );
@@ -59,18 +57,18 @@ export default class CancelPurchasePage extends AsyncBaseContainer {
 		await driverHelper.clickIfPresent( this.driver, nextButtonLocator );
 		await driverHelper.setWhenSettable(
 			this.driver,
-			by.css( `${ dialogClass } textarea[name="improvementInput"]` ),
+			By.css( `${ dialogClass } textarea[name="improvementInput"]` ),
 			e2eReason
 		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( `${ buttonDialogClass } button[data-e2e-button="cancel"]` )
+			By.css( `${ buttonDialogClass } button[data-e2e-button="cancel"]` )
 		);
 	}
 
 	async completeThemeCancellation() {
 		const buttonDialogClass = '.dialog__action-buttons';
-		const cancelButtonLocator = by.css( `${ buttonDialogClass } button[data-e2e-button="cancel"]` );
+		const cancelButtonLocator = By.css( `${ buttonDialogClass } button[data-e2e-button="cancel"]` );
 		return await driverHelper.clickWhenClickable( this.driver, cancelButtonLocator );
 	}
 }

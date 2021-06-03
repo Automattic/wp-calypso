@@ -19,6 +19,9 @@ import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id'
 import ActionButtons from '../action-buttons';
 import BackupChanges from '../backup-changes';
 import useGetDisplayDate from '../use-get-display-date';
+import ExternalLink from 'calypso/components/external-link';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies
@@ -29,6 +32,7 @@ import cloudSuccessIcon from './icons/cloud-success.svg';
 const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
+	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 	const hasRealtimeBackups = useSelector( ( state ) => {
 		const capabilities = getRewindCapabilities( state, siteId );
 		return Array.isArray( capabilities ) && capabilities.includes( 'backup-realtime' );
@@ -58,6 +62,8 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 
 	const actionableRewindId = useActionableRewindId( backup );
 
+	const multiSiteInfoLink = `https://jetpack.com/redirect?source=jetpack-support-backup&anchor=does-jetpack-backup-support-multisite`;
+
 	return (
 		<>
 			<div className="status-card__message-head">
@@ -73,7 +79,34 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 				<div className="status-card__title">{ displayDateNoLatest }</div>
 			</div>
 			<div className="status-card__meta">{ meta }</div>
-			<ActionButtons rewindId={ actionableRewindId } />
+			{ isMultiSite && (
+				<div className="status-card__multisite-warning">
+					<div className="status-card__multisite-warning-title">
+						{ preventWidows( translate( 'This site is a WordPress Multisite installation.' ) ) }
+					</div>
+					<p className="status-card__multisite-warning-info">
+						{ preventWidows(
+							translate(
+								'Jetpack Backup for Multisite installations provides downloadable backups, no one-click restores. ' +
+									'For more information {{ExternalLink}}visit our documentation page{{/ExternalLink}}.',
+								{
+									components: {
+										ExternalLink: (
+											<ExternalLink
+												href={ multiSiteInfoLink }
+												target="_blank"
+												rel="noopener noreferrer"
+												icon={ true }
+											/>
+										),
+									},
+								}
+							)
+						) }
+					</p>
+				</div>
+			) }
+			<ActionButtons rewindId={ actionableRewindId } isMultiSite={ isMultiSite } />
 			{ showBackupDetails && (
 				<div className="status-card__realtime-details">
 					<div className="status-card__realtime-details-card">

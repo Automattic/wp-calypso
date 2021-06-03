@@ -22,7 +22,7 @@
 
 	@include banner-color( var( --color-accent ) );
 
-	&.is-jetpack {
+	&.is-jetpack:not(.is-atomic) {
 		@include banner-color( var( --color-jetpack ) );
 	}
 

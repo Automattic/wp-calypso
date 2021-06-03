@@ -1,7 +1,7 @@
-@import '~@wordpress/base-styles/variables';
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@automattic/typography/styles/fonts';
-@import '~@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@automattic/typography/styles/fonts';
+@import '@automattic/onboarding/styles/mixins';
 
 .nux-launch-step__header {
 	@include onboarding-heading-padding;

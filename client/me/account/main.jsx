@@ -73,6 +73,7 @@ import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-chang
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 
 export const noticeId = 'me-settings-notice';
@@ -85,8 +86,8 @@ const noticeOptions = {
  */
 import './style.scss';
 
-const linkDestinationKey = 'calypso_preferences.linkDestination';
-const colorSchemeKey = 'calypso_preferences.colorScheme';
+const linkDestinationKey = 'linkDestination';
+const colorSchemeKey = 'colorScheme';
 
 /**
  * Debug instance
@@ -229,21 +230,15 @@ class Account extends React.Component {
 		}
 	};
 
-	toggleLinkDestination = ( linkDestination ) => {
-		this.updateUserSetting( linkDestinationKey, linkDestination );
-		this.saveInterfaceSettings( {} );
-	};
-
 	updateColorScheme = ( colorScheme ) => {
 		this.props.recordTracksEvent( 'calypso_color_schemes_select', { color_scheme: colorScheme } );
 		this.props.recordGoogleEvent( 'Me', 'Selected Color Scheme', 'scheme', colorScheme );
-		this.updateUserSetting( colorSchemeKey, colorScheme );
+		this.props.saveColorSchemePreference( colorScheme );
 		this.props.recordTracksEvent( 'calypso_color_schemes_save', {
 			color_scheme: colorScheme,
 		} );
 		this.props.recordGoogleEvent( 'Me', 'Saved Color Scheme', 'scheme', colorScheme );
 		this.props.bumpStat( 'calypso_changed_color_scheme', colorScheme );
-		this.saveInterfaceSettings( {} );
 	};
 
 	getEmailAddress() {
@@ -709,14 +704,6 @@ class Account extends React.Component {
 			this.props.markSaved();
 		}
 
-		// In order to keep the app preference in-sync,
-		// we'd like to save the color scheme property
-		// once the user settings was successfuly saved.
-		// https://github.com/Automattic/wp-calypso/issues/48220
-		if ( this.shouldUpdateColorSchemePreference ) {
-			this.props.saveColorSchemePreference( this.shouldUpdateColorSchemePreference );
-		}
-
 		if ( this.state.redirect ) {
 			user()
 				.clear()
@@ -759,10 +746,6 @@ class Account extends React.Component {
 		} );
 
 		try {
-			// Store in a class property if the color scheme should be saved
-			// once the user settings save successfully.
-			this.shouldUpdateColorSchemePreference = this.props.unsavedUserSettings.calypso_preferences?.colorScheme;
-
 			const response = await this.props.saveUnsavedUserSettings( fields );
 			this.handleSubmitSuccess( response, formName );
 		} catch ( error ) {
@@ -1036,7 +1019,7 @@ class Account extends React.Component {
 
 				<SectionHeader label={ translate( 'Interface settings' ) } />
 				<Card className="account__settings">
-					<form onChange={ markChanged } onSubmit={ this.saveInterfaceSettings }>
+					<form onSubmit={ this.saveInterfaceSettings }>
 						<FormFieldset>
 							<FormLabel id="account__language" htmlFor="language">
 								{ translate( 'Interface language' ) }
@@ -1071,8 +1054,8 @@ class Account extends React.Component {
 									{ translate( 'Dashboard appearance' ) }
 								</FormLabel>
 								<ToggleControl
-									checked={ !! this.getUserSetting( linkDestinationKey ) }
-									onChange={ this.toggleLinkDestination }
+									checked={ this.props.linkDestination }
+									onChange={ this.props.saveLinkDestinationPreference }
 									disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
 									label={
 										<>
@@ -1137,6 +1120,7 @@ export default compose(
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			onboardingUrl: getOnboardingUrl( state ),
 			isNavUnificationEnabled: isNavUnificationEnabled( state ),
+			linkDestination: getPreference( state, linkDestinationKey ),
 		} ),
 		{
 			bumpStat,
@@ -1150,8 +1134,10 @@ export default compose(
 			saveUnsavedUserSettings,
 			setUserSetting,
 			successNotice,
+			saveLinkDestinationPreference: ( linkDestination ) =>
+				savePreference( linkDestinationKey, linkDestination ),
 			saveColorSchemePreference: ( newColorScheme ) =>
-				savePreference( 'colorScheme', newColorScheme ),
+				savePreference( colorSchemeKey, newColorScheme ),
 		}
 	),
 	localize,

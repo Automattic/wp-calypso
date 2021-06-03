@@ -3,7 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
-import { By, until } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ import GutenboardingFlow from '../../lib/flows/gutenboarding-flow.js';
 import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
+const explicitWaitMS = config.get( 'explicitWaitMS' );
 
 const host = dataHelper.getJetpackHost();
 const screenSize = driverManager.currentScreenSize();
@@ -226,15 +227,14 @@ describe( `[${ host }] Calypso Gutenberg Editor: Focused launch on (${ screenSiz
 			// Reload block editor
 			await this.driver.navigate().refresh();
 
-			// Press "Reload" on confirmation dialog when block editor asks if user really wants to navigate away.
+			// Press "Reload" on confirmation dialog when block editor asks if user really wants to
+			// navigate away.
 			try {
-				await this.driver.wait( until.alertIsPresent(), 4000 );
-				const alert = await this.driver.switchTo().alert();
-				await alert.accept();
-			} catch ( e ) {
-				// This doesn't happen when autosave hasn't kicked in so
-				// if driver.wait throws and error we catch it here to allow
-				// the step to continue running.
+				await driverHelper.waitUntilAlertPresent( this.driver, explicitWaitMS / 5 );
+				await driverHelper.acceptAlertIfPresent( this.driver );
+			} catch {
+				// This doesn't happen when autosave hasn't kicked in so if driver.wait throws and error we
+				// catch it here to allow the step to continue running.
 			}
 
 			// Wait for block editor to load and switch frame context to block editor

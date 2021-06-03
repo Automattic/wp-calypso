@@ -1047,6 +1047,21 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 	} );
 
 	describe( 'Insert embeds: @parallel', function () {
+		const embeds = [
+			{
+				name: 'Instagram',
+				url: 'https://www.instagram.com/p/BlDOZMil933/',
+			},
+			{
+				name: 'Twitter',
+				url: 'https://twitter.com/automattic/status/1067120832676327424',
+			},
+			{
+				name: 'YouTube',
+				url: 'https://www.youtube.com/watch?v=xifhQyopjZM',
+			},
+		];
+
 		it( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
@@ -1060,45 +1075,30 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			assert.strictEqual( title, blogPostTitle );
 		} );
 
-		[
-			{
-				name: 'Instagram',
-				url: 'https://www.instagram.com/p/BlDOZMil933/',
-				selector: '.wp-block-embed iframe[title="Embedded content from instagram.com"]',
-			},
-			{
-				name: 'Twitter',
-				url: 'https://twitter.com/automattic/status/1067120832676327424',
-				selector: '.wp-block-embed iframe[title="Embedded content from twitter"]',
-			},
-			{
-				name: 'YouTube',
-				url: 'https://www.youtube.com/watch?v=xifhQyopjZM',
-				selector: '.wp-block-embed iframe[title="Embedded content from youtube.com"]',
-			},
-		].forEach( ( Block ) => {
-			it( `Can insert ${ Block.name } block`, async function () {
+		embeds.forEach( ( embed ) => {
+			it( `Can insert ${ embed.name } embed`, async function () {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
-				const embedBlock = await gEditorComponent.addBlock( Block.name );
+				const embedBlock = await gEditorComponent.addBlock( embed.name );
 				const gEmbedsComponent = await EmbedsBlockComponent.Expect( this.driver, embedBlock );
-				await gEmbedsComponent.embedUrl( Block.url );
-				await gEmbedsComponent.isEmbeddedInEditor( Block.selector );
+				await gEmbedsComponent.embedUrl( embed.url );
+				const isDisplayed = await gEmbedsComponent.isEmbedDisplayed( embed.name );
+
+				assert( isDisplayed, `${ embed.name } embed is not displayed in the editor` );
 			} );
 		} );
 
-		it( 'Can publish and view content', async function () {
+		it( 'Can publish content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
-			return await gEditorComponent.publish( { visit: true } );
+			await gEditorComponent.publish( { visit: true } );
 		} );
 
-		it( 'Can see embedded content in our published post', async function () {
-			const viewPostPage = await ViewPostPage.Expect( this.driver );
-			this.youtubePostLocator = '.youtube-player';
-			await viewPostPage.embedContentDisplayed( this.youtubePostLocator ); // check YouTube content
-			this.instagramPostLocator = '.instagram-media-rendered';
-			await viewPostPage.embedContentDisplayed( this.instagramPostLocator ); // check Instagram content
-			this.instagramPostLocator = '.twitter-tweet-rendered';
-			return await viewPostPage.embedContentDisplayed( this.instagramPostLocator ); // check Twitter content
+		embeds.forEach( ( embed ) => {
+			it( `Can see ${ embed.name } embed in the published post`, async function () {
+				const viewPostPage = await ViewPostPage.Expect( this.driver );
+				const isDisplayed = await viewPostPage.isEmbedDisplayed( embed.name );
+
+				assert( isDisplayed, `${ embed.name } embed is not displayed in the published post` );
+			} );
 		} );
 
 		after( async function () {

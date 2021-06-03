@@ -55,7 +55,7 @@ export default class FormVerificationCodeInput extends React.Component {
 
 		return (
 			<FormTextInput
-				autoComplete="off"
+				autoComplete="one-time-code"
 				className={ classes }
 				pattern="[0-9 ]*"
 				placeholder={ placeholder }

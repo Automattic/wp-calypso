@@ -1,6 +1,6 @@
 @import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap' );
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .p2-step-wrapper {
 	box-sizing: border-box;

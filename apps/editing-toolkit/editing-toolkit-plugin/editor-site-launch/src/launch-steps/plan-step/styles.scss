@@ -1,5 +1,5 @@
-@import '~@automattic/onboarding/styles/mixins';
-@import '~@automattic/plans-grid/src/variables';
+@import '@automattic/onboarding/styles/mixins';
+@import '@automattic/plans-grid/src/variables';
 
 .nux-launch-modal.step-plan {
 	// Remove extraneous whitespace after plans details.

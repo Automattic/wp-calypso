@@ -18,7 +18,7 @@ Note that this package contains two sass files and there are use cases for `@imp
 
 ### Import the `variables.scss` file
 
-`@import '~@automattic/typography/styles/variables';`
+`@import '@automattic/typography/styles/variables';`
 
 Apply font variables as needed:
 
@@ -30,7 +30,7 @@ Apply font variables as needed:
 
 ### Import the `fonts.sccc` file
 
-`@import '~@automattic/typography/styles/fonts';`
+`@import '@automattic/typography/styles/fonts';`
 
 Extend the .wp-brand-font selector in your SCSS:
 

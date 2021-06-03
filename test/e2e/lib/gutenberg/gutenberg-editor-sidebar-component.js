@@ -211,7 +211,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 
 		await driverHelper.clickWhenClickable( this.driver, visibilityToggleLocator );
 		await driverHelper.clickWhenClickable( this.driver, visibilityOptionLocator );
-		await driverHelper.waitForAlertPresent( this.driver );
+		await driverHelper.waitUntilAlertPresent( this.driver );
 		await driverHelper.acceptAlertIfPresent( this.driver );
 	}
 

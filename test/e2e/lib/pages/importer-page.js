@@ -7,7 +7,7 @@ import { By } from 'selenium-webdriver';
  * Internal dependencies
  */
 import AsyncBaseContainer from '../async-base-container';
-import * as DriverHelper from '../driver-helper.js';
+import * as driverHelper from '../driver-helper.js';
 
 export default class ImporterPage extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -15,7 +15,7 @@ export default class ImporterPage extends AsyncBaseContainer {
 	}
 
 	async importerIsDisplayed( importerClass ) {
-		return await DriverHelper.isElementLocated(
+		return await driverHelper.isElementLocated(
 			this.driver,
 			By.css( `.importer__file-importer-card .${ importerClass }` )
 		);

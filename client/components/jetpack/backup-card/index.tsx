@@ -33,9 +33,6 @@ import cloudIcon from 'calypso/components/jetpack/daily-backup-status/status-car
  */
 import type { Activity } from 'calypso/state/activity-log/types';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
-
 type Props = {
 	activity: Activity;
 	subActivities?: Activity[];

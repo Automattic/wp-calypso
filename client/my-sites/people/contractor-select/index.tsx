@@ -13,6 +13,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import SupportInfo from 'calypso/components/support-info';
 
 interface Props {
+	key: string;
 	checked: boolean;
 	onChange: ( event ) => void;
 	disabled: boolean;
@@ -23,11 +24,11 @@ interface Props {
  */
 import './style.scss';
 
-const ContractorSelect: FunctionComponent< Props > = ( { checked, onChange, disabled } ) => {
+const ContractorSelect: FunctionComponent< Props > = ( { key, checked, onChange, disabled } ) => {
 	const translate = useTranslate();
 
 	return (
-		<FormFieldset className="contractor-select">
+		<FormFieldset key={ key } className="contractor-select">
 			<FormLabel>
 				<FormCheckbox
 					className="contractor-select__checkbox"

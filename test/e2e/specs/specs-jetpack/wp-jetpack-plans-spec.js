@@ -6,24 +6,24 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import * as driverManager from '../lib/driver-manager';
-import * as driverHelper from '../lib/driver-helper';
-import * as dataHelper from '../lib/data-helper';
+import * as driverManager from '../../lib/driver-manager';
+import * as driverHelper from '../../lib/driver-helper';
+import * as dataHelper from '../../lib/data-helper';
 
-import LoginFlow from '../lib/flows/login-flow';
+import LoginFlow from '../../lib/flows/login-flow';
 
-import PlansPage from '../lib/pages/plans-page';
-import WPAdminJetpackPage from '../lib/pages/wp-admin/wp-admin-jetpack-page';
+import PlansPage from '../../lib/pages/plans-page';
+import WPAdminJetpackPage from '../../lib/pages/wp-admin/wp-admin-jetpack-page';
 
-import ReaderPage from '../lib/pages/reader-page.js';
-import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
-import ShoppingCartWidgetComponent from '../lib/components/shopping-cart-widget-component.js';
-import SidebarComponent from '../lib/components/sidebar-component.js';
-import NavBarComponent from '../lib/components/nav-bar-component.js';
+import ReaderPage from '../../lib/pages/reader-page.js';
+import SecurePaymentComponent from '../../lib/components/secure-payment-component.js';
+import ShoppingCartWidgetComponent from '../../lib/components/shopping-cart-widget-component.js';
+import SidebarComponent from '../../lib/components/sidebar-component.js';
+import NavBarComponent from '../../lib/components/nav-bar-component.js';
 
-import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
+import WPAdminSidebar from '../../lib/pages/wp-admin/wp-admin-sidebar';
 
-import WPAdminLogonPage from '../lib/pages/wp-admin/wp-admin-logon-page';
+import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

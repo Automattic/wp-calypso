@@ -157,11 +157,14 @@ const withPluginRedirect = createHigherOrderComponent(
 					return ( window.location.href = shouldRedirect );
 				}, 6000 );
 
-				const redirectMessage = translate( 'Redirecting to setup %(pluginName)s in five seconds.', {
-					args: {
-						pluginName: redirectHandler.name,
-					},
-				} );
+				const redirectMessage = translate(
+					'Redirecting to the setup for %(pluginName)s in five seconds.',
+					{
+						args: {
+							pluginName: redirectHandler.name,
+						},
+					}
+				);
 
 				dispatch(
 					successNotice( redirectMessage, {

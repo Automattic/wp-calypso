@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
@@ -36,6 +36,14 @@ import './style.scss';
  * Module Variables
  */
 const debug = debugModule( 'calypso:my-sites:people:edit-team-member-form' );
+
+const fieldKeys = {
+	firstName: 'first_name',
+	lastName: 'last_name',
+	name: 'name',
+	roles: 'roles',
+	isExternalContributor: 'isExternalContributor',
+};
 
 class EditUserForm extends React.Component {
 	state = this.getStateObject( this.props );
@@ -77,25 +85,53 @@ class EditUserForm extends React.Component {
 	}
 
 	getAllowedSettingsToChange() {
-		const { currentUser, user, isJetpack } = this.props;
-		const allowedSettings = [];
+		const {
+			currentUser,
+			user,
+			isJetpack,
+			hasWPCOMAccountLinked,
+			isVip,
+			isWPForTeamsSite,
+		} = this.props;
+		const allowedSettings = new Set();
 
 		if ( ! user.ID ) {
-			return allowedSettings;
+			return [];
 		}
 
-		// On WP.com sites, a user should only be able to update role.
-		// A user should not be able to update own role.
+		// On any site, admins should be able to change only other
+		// user's role.
 		if ( isJetpack ) {
+			// Jetpack self hosted or Atomic.
 			if ( ! user.linked_user_ID || user.linked_user_ID !== currentUser.ID ) {
-				allowedSettings.push( 'roles', 'isExternalContributor' );
+				allowedSettings.add( fieldKeys.roles );
 			}
-			allowedSettings.push( 'first_name', 'last_name', 'name' );
 		} else if ( user.ID !== currentUser.ID ) {
-			allowedSettings.push( 'roles', 'isExternalContributor' );
+			// WP.com Simple sites.
+			allowedSettings.add( fieldKeys.roles );
 		}
 
-		return allowedSettings;
+		// On any site, allow editing 'first_name', 'last_name', 'name'
+		// only for users without WP.com account.
+		if ( ! hasWPCOMAccountLinked ) {
+			allowedSettings.add( fieldKeys.firstName );
+			allowedSettings.add( fieldKeys.lastName );
+			allowedSettings.add( fieldKeys.name );
+		}
+
+		// Allow changing isExternalContributor for connected Users only
+		// who aren't VIP on a site that's not WP for Teams
+		// and belong to the External Roles array.
+		if (
+			hasWPCOMAccountLinked &&
+			! isVip &&
+			! isWPForTeamsSite &&
+			this.isExternalRole( this.state.roles )
+		) {
+			allowedSettings.add( fieldKeys.isExternalContributor );
+		}
+
+		return Array.from( allowedSettings );
 	}
 
 	hasUnsavedSettings() {
@@ -123,12 +159,12 @@ class EditUserForm extends React.Component {
 		if ( true === changedSettings.isExternalContributor ) {
 			requestExternalContributorsAddition(
 				siteId,
-				undefined !== user.linked_user_ID ? user.linked_user_ID : user.ID
+				user?.linked_user_ID ?? user?.ID // On simple sites linked_user_ID is undefined for connected users.
 			);
 		} else if ( false === changedSettings.isExternalContributor ) {
 			requestExternalContributorsRemoval(
 				siteId,
-				undefined !== user.linked_user_ID ? user.linked_user_ID : user.ID
+				user?.linked_user_ID ?? user?.ID // On simple sites linked_user_ID is undefined for connected users.
 			);
 		}
 
@@ -152,82 +188,81 @@ class EditUserForm extends React.Component {
 	renderField = ( fieldId, isDisabled ) => {
 		let returnField = null;
 		switch ( fieldId ) {
-			case 'roles':
+			case fieldKeys.roles:
 				returnField = (
-					<Fragment key="roles">
-						<RoleSelect
-							id="roles"
-							name="roles"
-							siteId={ this.props.siteId }
-							value={ this.state.roles }
-							onChange={ this.handleChange }
-							onFocus={ this.recordFieldFocus( 'roles' ) }
-							disabled={ isDisabled }
-						/>
-						{ ! this.props.isVip &&
-							! this.props.isWPForTeamsSite &&
-							this.isExternalRole( this.state.roles ) && (
-								<ContractorSelect
-									onChange={ this.handleExternalChange }
-									checked={ this.state.isExternalContributor }
-									disabled={ isDisabled }
-								/>
-							) }
-					</Fragment>
+					<RoleSelect
+						id={ fieldKeys.roles }
+						name={ fieldKeys.roles }
+						siteId={ this.props.siteId }
+						value={ this.state.roles }
+						onChange={ this.handleChange }
+						onFocus={ this.recordFieldFocus( fieldKeys.roles ) }
+						disabled={ isDisabled }
+					/>
 				);
 				break;
-			case 'first_name':
+			case fieldKeys.isExternalContributor:
 				returnField = (
-					<FormFieldset key="first_name">
-						<FormLabel htmlFor="first_name">
+					<ContractorSelect
+						key={ fieldKeys.isExternalContributor }
+						onChange={ this.handleExternalChange }
+						checked={ this.state.isExternalContributor }
+						disabled={ isDisabled }
+					/>
+				);
+				break;
+			case fieldKeys.firstName:
+				returnField = (
+					<FormFieldset key={ fieldKeys.firstName }>
+						<FormLabel htmlFor={ fieldKeys.firstName }>
 							{ this.props.translate( 'First Name', {
 								context: 'Text that is displayed in a label of a form.',
 							} ) }
 						</FormLabel>
 						<FormTextInput
-							id="first_name"
-							name="first_name"
+							id={ fieldKeys.firstName }
+							name={ fieldKeys.firstName }
 							value={ this.state.first_name }
 							onChange={ this.handleChange }
-							onFocus={ this.recordFieldFocus( 'first_name' ) }
+							onFocus={ this.recordFieldFocus( fieldKeys.firstName ) }
 							disabled={ isDisabled }
 						/>
 					</FormFieldset>
 				);
 				break;
-			case 'last_name':
+			case fieldKeys.lastName:
 				returnField = (
-					<FormFieldset key="last_name">
-						<FormLabel htmlFor="last_name">
+					<FormFieldset key={ fieldKeys.lastName }>
+						<FormLabel htmlFor={ fieldKeys.lastName }>
 							{ this.props.translate( 'Last Name', {
 								context: 'Text that is displayed in a label of a form.',
 							} ) }
 						</FormLabel>
 						<FormTextInput
-							id="last_name"
-							name="last_name"
+							id={ fieldKeys.lastName }
+							name={ fieldKeys.lastName }
 							value={ this.state.last_name }
 							onChange={ this.handleChange }
-							onFocus={ this.recordFieldFocus( 'last_name' ) }
+							onFocus={ this.recordFieldFocus( fieldKeys.lastName ) }
 							disabled={ isDisabled }
 						/>
 					</FormFieldset>
 				);
 				break;
-			case 'name':
+			case fieldKeys.name:
 				returnField = (
-					<FormFieldset key="name">
-						<FormLabel htmlFor="name">
+					<FormFieldset key={ fieldKeys.name }>
+						<FormLabel htmlFor={ fieldKeys.name }>
 							{ this.props.translate( 'Public Display Name', {
 								context: 'Text that is displayed in a label of a form.',
 							} ) }
 						</FormLabel>
 						<FormTextInput
-							id="name"
-							name="name"
+							id={ fieldKeys.name }
+							name={ fieldKeys.name }
 							value={ this.state.name }
 							onChange={ this.handleChange }
-							onFocus={ this.recordFieldFocus( 'name' ) }
+							onFocus={ this.recordFieldFocus( fieldKeys.name ) }
 							disabled={ isDisabled }
 						/>
 					</FormFieldset>
@@ -249,16 +284,25 @@ class EditUserForm extends React.Component {
 			return null;
 		}
 
+		const { translate, hasWPCOMAccountLinked, disabled, markChanged, isUpdating } = this.props;
+
 		return (
 			<form
 				className="edit-team-member-form__form" // eslint-disable-line
-				disabled={ this.props.disabled }
+				disabled={ disabled }
 				onSubmit={ this.updateUser }
-				onChange={ this.props.markChanged }
+				onChange={ markChanged }
 			>
-				{ editableFields.map( ( fieldId ) => this.renderField( fieldId, this.props.isUpdating ) ) }
+				{ editableFields.map( ( fieldId ) => this.renderField( fieldId, isUpdating ) ) }
+				{ hasWPCOMAccountLinked && (
+					<p className="edit-team-member-form__explanation">
+						{ translate(
+							'This user has a WordPress.com account, only they are allowed to update their personal information through their WordPress.com profile settings.'
+						) }
+					</p>
+				) }
 				<FormButtonsBar>
-					<FormButton disabled={ ! this.hasUnsavedSettings() || this.props.isUpdating }>
+					<FormButton disabled={ ! this.hasUnsavedSettings() || isUpdating }>
 						{ this.props.translate( 'Save changes', {
 							context: 'Button label that prompts user to save form',
 						} ) }
@@ -280,6 +324,7 @@ export default localize(
 				isExternalContributor: userId && externalContributors.includes( userId ),
 				isVip: isVipSite( state, siteId ),
 				isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+				hasWPCOMAccountLinked: false !== user?.linked_user_ID,
 			};
 		},
 		{

@@ -31,7 +31,6 @@ import { mapStateToProps } from '../main';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'calypso/lib/user', () => jest.fn() );
 jest.mock( '../help-unverified-warning', () => 'HelpUnverifiedWarning' );
 jest.mock( 'calypso/components/main', () => 'Main' );
 jest.mock( 'calypso/components/section-header', () => 'SectionHeader' );

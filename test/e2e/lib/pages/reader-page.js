@@ -42,10 +42,10 @@ export default class ReaderPage extends AsyncBaseContainer {
 			await driverHelper.clickWhenClickable( this.driver, firstComboCardPostLocator );
 		}
 
-		async function clickAndOpenShareModal() {
-			await driverHelper.clickWhenClickable( this.driver, shareButtonLocator );
+		async function clickAndOpenShareModal( driver ) {
+			await driverHelper.clickWhenClickable( driver, shareButtonLocator );
 			return await driverHelper.clickWhenClickable(
-				this.driver,
+				driver,
 				By.css( '.site-selector__sites .site__content' )
 			);
 		}
@@ -54,9 +54,9 @@ export default class ReaderPage extends AsyncBaseContainer {
 		// the first time.
 		let result;
 		try {
-			result = await clickAndOpenShareModal();
+			result = await clickAndOpenShareModal( this.driver );
 		} catch {
-			result = await clickAndOpenShareModal();
+			result = await clickAndOpenShareModal( this.driver );
 		}
 		return result;
 	}

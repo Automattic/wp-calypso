@@ -1,6 +1,6 @@
-@import '~@automattic/typography/styles/variables';
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/mixins';
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .editor-checkout-modal {
 	z-index: z-index( 'root', '.main.calypsoify.is-iframe' );

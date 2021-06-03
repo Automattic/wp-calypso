@@ -1,6 +1,6 @@
-@import '~@automattic/onboarding/styles/mixins';
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/mixins';
+@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 @media ( max-height: 450px ) {
 	.magic-login__handle-link,

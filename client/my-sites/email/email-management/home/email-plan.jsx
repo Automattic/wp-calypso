@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
+import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
 import page from 'page';
 import PropTypes from 'prop-types';
 
@@ -13,37 +14,39 @@ import PropTypes from 'prop-types';
  */
 import wp from 'calypso/lib/wp';
 import {
-	getGoogleAdminUrl,
-	getGoogleMailServiceFamily,
-	getGSuiteProductSlug,
-	getProductType,
-	hasGSuiteWithUs,
-} from 'calypso/lib/gsuite';
-import {
-	getEmailPurchaseByDomain,
-	hasEmailSubscription,
-} from 'calypso/my-sites/email/email-management/home/utils';
-import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
-import HeaderCake from 'calypso/components/header-cake';
-import VerticalNav from 'calypso/components/vertical-nav';
-import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import {
 	emailManagement,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
 	emailManagementNewTitanAccount,
+	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import {
+	getEmailPurchaseByDomain,
+	hasEmailSubscription,
+} from 'calypso/my-sites/email/email-management/home/utils';
+import {
+	getGoogleAdminUrl,
+	getGoogleMailServiceFamily,
+	getGSuiteProductSlug,
+	getProductType,
+	hasGSuiteWithUs,
+} from 'calypso/lib/gsuite';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import HeaderCake from 'calypso/components/header-cake';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
 
 class EmailPlan extends React.Component {
 	static propTypes = {
@@ -102,20 +105,30 @@ class EmailPlan extends React.Component {
 			);
 	}
 
-	getAccountType() {
-		return this.state?.emailAccounts[ 0 ]?.account_type ?? null;
+	getAccount() {
+		return this.state?.emailAccounts[ 0 ];
 	}
 
 	getMailboxes() {
-		if ( this.state.emailAccounts[ 0 ] ) {
-			return this.state.emailAccounts[ 0 ].emails;
-		}
-		return [];
+		const account = this.getAccount();
+
+		return account?.emails ?? [];
 	}
 
 	handleBack = () => {
 		const { selectedSite } = this.props;
+
 		page( emailManagement( selectedSite.slug ) );
+	};
+
+	handleRenew = ( event ) => {
+		event.preventDefault();
+
+		const { purchase, selectedSite } = this.props;
+
+		handleRenewNowClick( purchase, selectedSite.slug, {
+			tracksProps: { source: 'email-plan-view' },
+		} );
 	};
 
 	getAddMailboxProps() {
@@ -133,10 +146,24 @@ class EmailPlan extends React.Component {
 		}
 
 		if ( hasTitanMailWithUs( domain ) ) {
-			const hasSubscriptionId = !! getTitanSubscriptionId( domain );
+			if ( getTitanSubscriptionId( domain ) ) {
+				return {
+					path: emailManagementNewTitanAccount( selectedSite.slug, domain.name, currentRoute ),
+				};
+			}
+
+			const showExternalControlPanelLink = ! isEnabled( 'titan/iframe-control-panel' );
+			const controlPanelUrl = showExternalControlPanelLink
+				? emailManagementTitanControlPanelRedirect( selectedSite.slug, domain.name, currentRoute, {
+						context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
+				  } )
+				: emailManagementManageTitanAccount( selectedSite.slug, domain.name, currentRoute, {
+						context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
+				  } );
+
 			return {
-				external: ! hasSubscriptionId,
-				path: emailManagementNewTitanAccount( selectedSite.slug, domain.name, currentRoute ),
+				external: showExternalControlPanelLink,
+				path: controlPanelUrl,
 			};
 		}
 
@@ -150,6 +177,7 @@ class EmailPlan extends React.Component {
 
 		if ( hasGSuiteWithUs( domain ) ) {
 			const googleMailService = getGoogleMailServiceFamily( getGSuiteProductSlug( domain ) );
+
 			return translate( '%(googleMailService)s settings', {
 				args: {
 					googleMailService,
@@ -171,21 +199,22 @@ class EmailPlan extends React.Component {
 		return translate( 'Email forwarding settings' );
 	}
 
-	renderBillingNavItem() {
+	renderViewBillingAndPaymentSettingsNavItem() {
 		const { hasSubscription, purchase, selectedSite, translate } = this.props;
 
 		if ( ! hasSubscription ) {
 			return null;
 		}
 
-		if ( ! selectedSite || ! purchase ) {
+		if ( ! purchase ) {
 			return <VerticalNavItem isPlaceholder />;
 		}
 
 		const managePurchaseUrl = getManagePurchaseUrlFor( selectedSite.slug, purchase.id );
+
 		return (
 			<VerticalNavItem path={ managePurchaseUrl }>
-				{ translate( 'Billing and payment settings' ) }
+				{ translate( 'View billing and payment settings' ) }
 			</VerticalNavItem>
 		);
 	}
@@ -217,12 +246,8 @@ class EmailPlan extends React.Component {
 		};
 	}
 
-	renderManageAllNavItem() {
+	renderManageAllMailboxesNavItem() {
 		const { domain, translate } = this.props;
-
-		if ( ! domain ) {
-			return null;
-		}
 
 		if ( ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain ) ) {
 			return null;
@@ -240,17 +265,47 @@ class EmailPlan extends React.Component {
 		);
 	}
 
-	render() {
-		const {
-			domain,
-			selectedSite,
-			hasSubscription,
-			purchase,
-			isLoadingPurchase,
-			translate,
-		} = this.props;
+	renderAddNewMailboxesOrRenewNavItem() {
+		const { domain, hasSubscription, purchase, translate } = this.props;
 
-		const addMailboxProps = this.getAddMailboxProps();
+		if ( hasTitanMailWithUs( domain ) && ! hasSubscription ) {
+			return (
+				<VerticalNavItem { ...this.getAddMailboxProps() }>
+					{ translate( 'Add new mailboxes' ) }
+				</VerticalNavItem>
+			);
+		}
+
+		if ( hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) ) {
+			if ( ! purchase ) {
+				return <VerticalNavItem isPlaceholder />;
+			}
+
+			if ( isExpired( purchase ) ) {
+				return (
+					<VerticalNavItem onClick={ this.handleRenew } path="#">
+						{ translate( 'Renew to add new mailboxes' ) }
+					</VerticalNavItem>
+				);
+			}
+
+			return (
+				<VerticalNavItem { ...this.getAddMailboxProps() }>
+					{ translate( 'Add new mailboxes' ) }
+				</VerticalNavItem>
+			);
+		}
+
+		return (
+			<VerticalNavItem { ...this.getAddMailboxProps() }>
+				{ translate( 'Add new email forwards' ) }
+			</VerticalNavItem>
+		);
+	}
+
+	render() {
+		const { domain, selectedSite, hasSubscription, purchase, isLoadingPurchase } = this.props;
+
 		const { isLoadingEmailAccounts } = this.state;
 
 		return (
@@ -270,7 +325,7 @@ class EmailPlan extends React.Component {
 				/>
 
 				<EmailPlanMailboxesList
-					accountType={ this.getAccountType() }
+					account={ this.getAccount() }
 					domain={ domain }
 					mailboxes={ this.getMailboxes() }
 					isLoadingEmails={ isLoadingEmailAccounts }
@@ -279,11 +334,11 @@ class EmailPlan extends React.Component {
 
 				<div className="email-plan__actions">
 					<VerticalNav>
-						<VerticalNavItem { ...addMailboxProps }>
-							{ translate( 'Add new mailbox' ) }
-						</VerticalNavItem>
-						{ this.renderManageAllNavItem() }
-						{ this.renderBillingNavItem() }
+						{ this.renderAddNewMailboxesOrRenewNavItem() }
+
+						{ this.renderManageAllMailboxesNavItem() }
+
+						{ this.renderViewBillingAndPaymentSettingsNavItem() }
 					</VerticalNav>
 				</div>
 			</>

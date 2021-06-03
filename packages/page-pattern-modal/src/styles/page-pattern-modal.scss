@@ -1,7 +1,7 @@
-@import '~@automattic/color-studio/dist/color-variables';
-@import '~@automattic/typography/styles/fonts';
-@import '~@automattic/typography/styles/variables';
-@import '~@wordpress/base-styles/variables';
+@import '@automattic/color-studio/dist/color-variables';
+@import '@automattic/typography/styles/fonts';
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/variables';
 
 @mixin screen-reader-text() {
 	border: 0;

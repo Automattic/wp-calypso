@@ -15,12 +15,17 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	getSite,
+	getSiteId,
 	getSiteAdminUrl,
 	getSiteSlug,
 	isJetpackModuleActive,
 	isJetpackSite,
 } from 'calypso/state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
@@ -38,7 +43,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import getSiteId from 'calypso/state/selectors/get-site-id';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -75,6 +79,8 @@ import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -420,16 +426,18 @@ export function siteSelection( context, next ) {
 			redirectToPrimary( context, primarySiteSlug );
 		} else {
 			// Fetch the primary site by ID and then try to determine its slug again.
-			dispatch( requestSite( primarySiteId ) ).then( () => {
-				const freshPrimarySiteSlug = getSiteSlug( getState(), primarySiteId );
-				if ( freshPrimarySiteSlug ) {
-					redirectToPrimary( context, freshPrimarySiteSlug );
-				} else {
-					// If the primary site does not exist, skip redirect
-					// and display a useful error notification
-					showMissingPrimaryError( currentUser, dispatch );
-				}
-			} );
+			dispatch( requestSite( primarySiteId ) )
+				.catch( () => null )
+				.then( () => {
+					const freshPrimarySiteSlug = getSiteSlug( getState(), primarySiteId );
+					if ( freshPrimarySiteSlug ) {
+						redirectToPrimary( context, freshPrimarySiteSlug );
+					} else {
+						// If the primary site does not exist, skip redirect
+						// and display a useful error notification
+						showMissingPrimaryError( currentUser, dispatch );
+					}
+				} );
 		}
 
 		return;
@@ -451,35 +459,37 @@ export function siteSelection( context, next ) {
 		}
 	} else {
 		// Fetch the site by siteFragment and then try to select again
-		dispatch( requestSite( siteFragment ) ).then( ( response ) => {
-			let freshSiteId = getSiteId( getState(), siteFragment );
+		dispatch( requestSite( siteFragment ) )
+			.catch( () => null )
+			.then( ( site ) => {
+				let freshSiteId = getSiteId( getState(), siteFragment );
 
-			if ( ! freshSiteId ) {
-				const wpcomStagingFragment = siteFragment.replace(
-					/\b.wordpress.com/,
-					'.wpcomstaging.com'
-				);
-				freshSiteId = getSiteId( getState(), wpcomStagingFragment );
-			}
-
-			if ( freshSiteId ) {
-				// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
-				// to wp-admin. In that case, don't continue handling the route.
-				dispatch( setSelectedSiteId( freshSiteId ) );
-				if ( onSelectedSiteAvailable( context, basePath ) ) {
-					next();
+				if ( ! freshSiteId ) {
+					const wpcomStagingFragment = siteFragment.replace(
+						/\b.wordpress.com/,
+						'.wpcomstaging.com'
+					);
+					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 				}
-			} else if ( shouldRedirectToJetpackAuthorize( context, response ) ) {
-				externalRedirect( getJetpackAuthorizeURL( context, response ) );
-			} else {
-				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
-				const allSitesPath = addQueryArgs(
-					{ site: siteFragment },
-					sectionify( context.path, siteFragment )
-				);
-				page.redirect( allSitesPath );
-			}
-		} );
+
+				if ( freshSiteId ) {
+					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
+					// to wp-admin. In that case, don't continue handling the route.
+					dispatch( setSelectedSiteId( freshSiteId ) );
+					if ( onSelectedSiteAvailable( context, basePath ) ) {
+						next();
+					}
+				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
+					externalRedirect( getJetpackAuthorizeURL( context, site ) );
+				} else {
+					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
+					const allSitesPath = addQueryArgs(
+						{ site: siteFragment },
+						sectionify( context.path, siteFragment )
+					);
+					page.redirect( allSitesPath );
+				}
+			} );
 	}
 }
 
@@ -592,6 +602,60 @@ export function wpForTeamsP2PlusNotSupportedRedirect( context, next ) {
 }
 
 /**
+ * For P2s, only hubs can have a plan. If we are on P2 a site that is a site under
+ * a hub, we redirect the hub's plans page.
+ *
+ * @param {object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function p2RedirectToHubPlans( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if (
+		config.isEnabled( 'p2/p2-plus' ) &&
+		selectedSite &&
+		isSiteWPForTeams( store.getState(), selectedSite.ID ) &&
+		! isSiteP2Hub( store.getState(), selectedSite.ID )
+	) {
+		const hubId = getP2HubBlogId( store.getState(), selectedSite.ID );
+		const hubSlug = getSiteSlug( store.getState(), hubId );
+		if ( hubSlug ) {
+			return page.redirect( `/plans/my-plan/${ hubSlug }` );
+		}
+	}
+
+	next();
+}
+
+/**
+ * For P2s, we sometimes want to redirect to the hub of a P2 site. If we are on
+ * a P2 site under a hub this will redirect to the same path on the hub.
+ *
+ * @param {object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function p2RedirectToHub( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if (
+		selectedSite &&
+		isSiteWPForTeams( store.getState(), selectedSite.ID ) &&
+		! isSiteP2Hub( store.getState(), selectedSite.ID )
+	) {
+		const hubId = getP2HubBlogId( store.getState(), selectedSite.ID );
+		const hubSlug = getSiteSlug( store.getState(), hubId );
+		if ( hubSlug ) {
+			const selectedSiteSlug = getSelectedSiteSlug( store.getState() );
+			return page.redirect( context.path.replace( selectedSiteSlug, hubSlug ) );
+		}
+	}
+
+	next();
+}
+
+/**
  * Use this middleware to prevent navigation to pages which are not supported by the P2 project in general.
  *
  * If you need to prevent navigation to pages based on whether the P2+ paid plan is enabled or disabled,
@@ -617,27 +681,27 @@ export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
  * Whether we need to redirect user to the Jetpack site for authorization.
  *
  * @param {object} context -- The context object.
- * @param {object} response -- The site information HTTP response.
+ * @param {object} site -- The site information.
  * @returns {boolean} shouldRedirect -- Whether we need to redirect user to the Jetpack site for authorization.
  */
-export function shouldRedirectToJetpackAuthorize( context, response ) {
-	return '1' === context.query?.unlinked && !! response?.site?.URL;
+export function shouldRedirectToJetpackAuthorize( context, site ) {
+	return '1' === context.query?.unlinked && !! site?.URL;
 }
 
 /**
  * Get redirect URL to the Jetpack site for authorization.
  *
  * @param {object} context -- The context object.
- * @param {object} response -- The site information HTTP response.
+ * @param {object} site -- The site information.
  * @returns {string} redirectURL -- The redirect URL.
  */
-export function getJetpackAuthorizeURL( context, response ) {
+export function getJetpackAuthorizeURL( context, site ) {
 	return addQueryArgs(
 		{
 			page: 'jetpack',
 			action: 'authorize_redirect',
 			dest_url: removeQueryArgs( window.origin + context.path, 'unlinked' ),
 		},
-		trailingslashit( response?.site?.URL ) + 'wp-admin/'
+		trailingslashit( site?.URL ) + 'wp-admin/'
 	);
 }

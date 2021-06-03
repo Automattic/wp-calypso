@@ -74,6 +74,7 @@ export class PlanFeaturesHeader extends Component {
 
 	renderPlansHeader() {
 		const {
+			availableForPurchase,
 			newPlan,
 			bestValue,
 			planType,
@@ -104,7 +105,7 @@ export class PlanFeaturesHeader extends Component {
 				{ ! isInSignup && isCurrent && (
 					<PlanPill isInSignup={ isInSignup }>{ translate( 'Your Plan' ) }</PlanPill>
 				) }
-				{ planLevelsMatch( selectedPlan, planType ) && ! isCurrent && (
+				{ planLevelsMatch( selectedPlan, planType ) && ! isCurrent && availableForPurchase && (
 					<PlanPill isInSignup={ isInSignup }>{ translate( 'Suggested' ) }</PlanPill>
 				) }
 				{ popular && ! selectedPlan && ! isCurrent && (
@@ -122,6 +123,7 @@ export class PlanFeaturesHeader extends Component {
 
 	renderPlansHeaderNoTabs() {
 		const {
+			availableForPurchase,
 			newPlan,
 			bestValue,
 			planType,
@@ -140,7 +142,7 @@ export class PlanFeaturesHeader extends Component {
 				<header className={ headerClasses }>
 					<h4 className="plan-features__header-title">{ title }</h4>
 					<div className="plan-features__audience">{ audience }</div>
-					{ planLevelsMatch( selectedPlan, planType ) && (
+					{ planLevelsMatch( selectedPlan, planType ) && availableForPurchase && (
 						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Suggested' ) }</PlanPill>
 					) }
 					{ popular && ! selectedPlan && (
