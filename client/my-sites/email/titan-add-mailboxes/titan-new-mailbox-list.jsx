@@ -27,6 +27,7 @@ const TitanNewMailboxList = ( {
 	onMailboxesChange,
 	onReturnKeyPress = noop,
 	showLabels = true,
+	validatedMailboxUuids = [],
 } ) => {
 	const translate = useTranslate();
 
@@ -75,6 +76,7 @@ const TitanNewMailboxList = ( {
 					onMailboxValueChange={ onMailboxValueChange( mailbox.uuid ) }
 					mailbox={ mailbox }
 					onReturnKeyPress={ onReturnKeyPress }
+					showAllErrors={ validatedMailboxUuids.includes( mailbox.uuid ) }
 					showLabels={ showLabels }
 					showTrashButton={ index > 0 }
 				/>
