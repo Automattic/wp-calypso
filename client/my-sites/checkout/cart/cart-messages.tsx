@@ -175,7 +175,7 @@ function showMessages(
 	messages.map( ( message ) => {
 		reduxDispatch(
 			messageActionCreator( <CartMessage message={ message } />, {
-				isPersistent: true,
+				isPersistent: messageType === 'error',
 				id: getNoticeIdForMessage( message ),
 			} )
 		);
