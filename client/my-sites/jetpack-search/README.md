@@ -1,5 +1,4 @@
-Jetpack Search
-==============
+# Jetpack Search
 
 This section can be found at `/jetpack-search`. 
 
