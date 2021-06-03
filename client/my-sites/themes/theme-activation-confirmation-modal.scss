@@ -27,6 +27,12 @@
 	&.is-solely-retired-modal .theme-activation-confirmation-modal__title {
 		font-weight: normal;
 		text-align: center;
+		margin-bottom: 0;
+
+		.external-link {
+			display: block;
+			font-size: $font-body-small;
+		}
 	}
 }
 
