@@ -17,6 +17,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import type { VatDetails, UpdateError } from './use-vat-details';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 
@@ -40,6 +41,8 @@ export default function VatInfoPage(): JSX.Element {
 	};
 
 	useDisplayVatNotices( { error: updateError, success: isUpdateSuccessful } );
+
+	const isVatAlreadySet = !! vatDetails.id;
 
 	if ( fetchError ) {
 		return (
@@ -65,7 +68,7 @@ export default function VatInfoPage(): JSX.Element {
 						<FormLabel htmlFor="country">{ translate( 'Country' ) }</FormLabel>
 						<CountryCodeInput
 							name="country"
-							disabled={ isUpdating }
+							disabled={ isUpdating || isVatAlreadySet }
 							value={ currentVatDetails.country ?? vatDetails.country ?? '' }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								setCurrentVatDetails( { ...currentVatDetails, country: event.target.value } )
@@ -76,12 +79,17 @@ export default function VatInfoPage(): JSX.Element {
 						<FormLabel htmlFor="vat">{ translate( 'VAT Number' ) }</FormLabel>
 						<FormTextInput
 							name="vat"
-							disabled={ isUpdating }
+							disabled={ isUpdating || isVatAlreadySet }
 							value={ currentVatDetails.id ?? vatDetails.id ?? '' }
 							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 								setCurrentVatDetails( { ...currentVatDetails, id: event.target.value } )
 							}
 						/>
+						{ isVatAlreadySet && (
+							<FormSettingExplanation>
+								{ translate( 'To change your VAT number, please contact support.' ) }
+							</FormSettingExplanation>
+						) }
 					</FormFieldset>
 					<FormFieldset className="vat-info__name-field">
 						<FormLabel htmlFor="name">{ translate( 'Name' ) }</FormLabel>
