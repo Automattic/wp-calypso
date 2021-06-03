@@ -29,13 +29,12 @@ class UserHeader extends React.Component {
 						{ children }
 					</a>
 				);
-			} else {
-				return (
-					<a className={ classNames + ' disabled' } disabled="disabled">
-						{ children }
-					</a>
-				);
 			}
+			return (
+				<a className={ classNames + ' disabled' } disabled="disabled">
+					{ children }
+				</a>
+			);
 		};
 
 		if ( this.props.user.ranges.length > 1 ) {
@@ -54,19 +53,18 @@ class UserHeader extends React.Component {
 					<Snippet note={ note } snippet={ this.props.snippet } url={ this.props.url } />
 				</div>
 			);
-		} else {
-			return (
-				<div className="wpnc__user wpnc__header">
-					{ get_home_link( 'wpnc__user__site', grav_tag ) }
-					<div>
-						<span className="wpnc__user__username">
-							{ get_home_link( 'wpnc__user__home', this.props.user.text ) }
-						</span>
-					</div>
-					<Snippet note={ note } snippet={ this.props.snippet } url={ this.props.url } />
-				</div>
-			);
 		}
+		return (
+			<div className="wpnc__user wpnc__header">
+				{ get_home_link( 'wpnc__user__site', grav_tag ) }
+				<div>
+					<span className="wpnc__user__username">
+						{ get_home_link( 'wpnc__user__home', this.props.user.text ) }
+					</span>
+				</div>
+				<Snippet note={ note } snippet={ this.props.snippet } url={ this.props.url } />
+			</div>
+		);
 	}
 }
 
@@ -128,16 +126,15 @@ class SummaryInSingle extends React.Component {
 					url={ this.props.note.url }
 				/>
 			);
-		} else {
-			return (
-				<Header
-					note={ this.props.note }
-					snippet={ '' }
-					subject={ this.props.note.header[ 0 ] }
-					url={ this.props.note.url }
-				/>
-			);
 		}
+		return (
+			<Header
+				note={ this.props.note }
+				snippet={ '' }
+				subject={ this.props.note.header[ 0 ] }
+				url={ this.props.note.url }
+			/>
+		);
 	}
 }
 
