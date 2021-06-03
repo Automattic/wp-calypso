@@ -63,7 +63,7 @@ const JetpackSearchContent: FunctionComponent< Props > = ( {
 						text: buttonText,
 						action: {
 							url: buttonLink,
-							onClick: onClick,
+							onClick: onClick ? onClick : null,
 							selfTarget: true,
 						},
 					} }
