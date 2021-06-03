@@ -41,7 +41,7 @@ function getTotalEventsFiredForBlock( eventsStack, event, block ) {
 describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Tracking: @parallel', function () {
+	describe( 'Tracking Post Editor: @parallel', function () {
 		it( 'Can log in to WPAdmin and create new Post', async function () {
 			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
 
@@ -126,7 +126,7 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 		} );
 	} );
 
-	describe( 'Tracking: @parallel', function () {
+	describe( 'Tracking Page Editor: @parallel', function () {
 		it( 'Can log in to WPAdmin and create new Page', async function () {
 			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
 
