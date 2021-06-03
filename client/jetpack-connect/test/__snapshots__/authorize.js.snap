@@ -30,6 +30,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
             "blogname": "Example Blog",
             "clientId": 98765,
             "closeWindowAfterLogin": false,
+            "closeWindowAfterAuthorize": false,
             "from": "banner-44-slide-1-dashboard",
             "homeUrl": "http://an.example.site",
             "jpVersion": "5.4",
@@ -95,7 +96,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
             icon="arrow-left"
             size={18}
           />
-           
+
           Return to %(sitename)s
         </LoggedOutFormLinkItem>
         <LoggedOutFormLinkItem

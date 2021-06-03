@@ -8,6 +8,7 @@ Object {
   "blogname": "Just Another WordPress.com Site",
   "clientId": 12345,
   "closeWindowAfterLogin": false,
+  "closeWindowAfterAuthorize": false,
   "from": "[unknown]",
   "homeUrl": "https://yourjetpack.blog",
   "isPopup": false,
