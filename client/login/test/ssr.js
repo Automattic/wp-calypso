@@ -3,13 +3,23 @@
  */
 import { setShouldServerSideRenderLogin } from '../ssr';
 
-function getSomeCleanLoginContext( queryValues ) {
+function getSomeCleanLoginContext( queryValues, lang = 'en' ) {
 	return {
 		query: queryValues,
+		lang,
 	};
 }
 
 describe( 'setShouldServerSideRenderLogin', () => {
+	test( 'when lang is non-default, then sets context.serverSideRender to FALSE - and calls next()', () => {
+		const next = jest.fn();
+		const contextWithNonDefaultLang = getSomeCleanLoginContext( {}, 'ar' );
+
+		setShouldServerSideRenderLogin( contextWithNonDefaultLang, next );
+		expect( contextWithNonDefaultLang.serverSideRender ).toBe( false );
+		expect( next ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	test( 'when query is empty, then sets context.serverSideRender to TRUE - and calls next()', () => {
 		const next = jest.fn();
 		const contextWithoutQueryKeys = getSomeCleanLoginContext( {} );
