@@ -388,7 +388,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 
 		const inserterBlockItemLocator = By.css(
-			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
+			`.edit-post-editor__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
 		);
 
 		const insertedBlockLocator = By.css(
