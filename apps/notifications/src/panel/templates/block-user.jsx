@@ -157,16 +157,15 @@ export class UserBlock extends React.Component {
 					{ followLink }
 				</div>
 			);
-		} else {
-			return (
-				<div className="wpnc__user">
-					<img src={ grav.url } height={ grav.height } width={ grav.width } />
-					<span className="wpnc__user__username">{ this.props.block.text }</span>
-					{ homeTemplate }
-					{ followLink }
-				</div>
-			);
 		}
+		return (
+			<div className="wpnc__user">
+				<img src={ grav.url } height={ grav.height } width={ grav.width } />
+				<span className="wpnc__user__username">{ this.props.block.text }</span>
+				{ homeTemplate }
+				{ followLink }
+			</div>
+		);
 	}
 }
 
