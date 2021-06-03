@@ -74,7 +74,7 @@ function init( wpcom ) {
 			.me()
 			.get()
 			.then( ( data ) => {
-				siteId = data.primary_blog_url.replace( /http\:\/\//, '' );
+				siteId = data.primary_blog_url.replace( /http:\/\//, '' );
 				siteNode.value = siteId;
 				input.removeAttribute( 'disabled' );
 			} );
