@@ -282,10 +282,12 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	 * @returns {string[]} Array of block titles (i.e ['Open Table', 'Paypal']);
 	 */
 	async getShownBlockInserterItems() {
+		// @todo Remove the deprecated query once GB v10.7+ is up on prod.
+		const inserterItemsDeprecatedQuery = `.edit-post-layout__inserter-panel .block-editor-block-types-list span.block-editor-block-types-list__item-title`;
 		return await this.driver
 			.findElements(
 				By.css(
-					'.edit-post-layout__inserter-panel .block-editor-block-types-list span.block-editor-block-types-list__item-title'
+					`.edit-post-editor__inserter-panel .block-editor-block-types-list span.block-editor-block-types-list__item-title, ${ inserterItemsDeprecatedQuery }`
 				)
 			)
 			.then( ( els ) => webdriver.promise.map( els, ( el ) => el.getAttribute( 'innerText' ) ) );
