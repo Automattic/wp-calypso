@@ -14,6 +14,7 @@ import {
 	renderMarketplaceTestPage,
 	renderMarketplaceThankYou,
 	renderPluginsSetupStatusPage,
+	redirectToHome,
 } from './controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 
@@ -46,4 +47,6 @@ export default function () {
 		);
 		page( '/marketplace/thank-you/:site?', renderMarketplaceThankYou, makeLayout, clientRender );
 	}
+
+	page( '/marketplace/*', siteSelection, redirectToHome );
 }

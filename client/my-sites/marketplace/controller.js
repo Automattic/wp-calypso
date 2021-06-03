@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -52,4 +53,12 @@ export function renderMarketplaceTestPage( context, next ) {
 	// context.primary = <AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-test" />;
 	context.primary = <div>Not Implemented</div>;
 	next();
+}
+
+export function redirectToHome( { path } ) {
+	const siteFragment = getSiteFragment( path );
+	if ( siteFragment ) {
+		return page.redirect( `/home/${ siteFragment }` );
+	}
+	return page.redirect( '/home' );
 }
