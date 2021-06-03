@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import config from '@automattic/calypso-config';
@@ -45,7 +40,10 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
 
 		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
-		const languageSlug = get( i18nLocaleStringsObject, [ '', 'localeSlug' ] );
+
+		// This looks weird, but we really _do_ have an object with an empty string as its key
+		// (see: generate_translated_json in WPCOM)
+		const languageSlug = i18nLocaleStringsObject?.[ '' ]?.localeSlug;
 		if ( languageSlug ) {
 			loadUserUndeployedTranslations( languageSlug );
 		}

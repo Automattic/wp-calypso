@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import page from 'page';
-import { startsWith } from 'lodash';
 import React from 'react';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
@@ -175,7 +174,7 @@ const oauthTokenMiddleware = () => {
 
 		// Forces OAuth users to the /login page if no token is present
 		page( '*', function ( context, next ) {
-			const isValidSection = loggedOutRoutes.some( ( route ) => startsWith( context.path, route ) );
+			const isValidSection = loggedOutRoutes.some( ( route ) => context.path.startsWith( route ) );
 
 			// Check we have an OAuth token, otherwise redirect to auth/login page
 			if (
@@ -350,7 +349,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	page( '*', emailVerification );
 
 	// delete any lingering local storage data from signup
-	if ( ! startsWith( window.location.pathname, '/start' ) ) {
+	if ( ! window.location.pathname.startsWith( '/start' ) ) {
 		[ 'signupProgress', 'signupDependencies' ].forEach( ( item ) => store.remove( item ) );
 	}
 
