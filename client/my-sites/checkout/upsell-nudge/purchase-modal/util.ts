@@ -9,7 +9,7 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { translateResponseCartToWPCOMCart } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-cart';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
@@ -28,14 +28,12 @@ export function useSubmitTransaction( {
 	storedCard,
 	setStep,
 	onClose,
-	successMessage,
 }: {
 	cart: ResponseCart;
 	siteId: string | number;
 	storedCard: StoredCard;
 	setStep: SetStep;
 	onClose: OnClose;
-	successMessage: string;
 } ): SubmitTransactionFunction {
 	const callPaymentProcessor = useProcessPayment();
 	const reduxDispatch = useDispatch();
@@ -56,11 +54,6 @@ export function useSubmitTransaction( {
 			siteId: siteId ? String( siteId ) : undefined,
 		} )
 			.then( () => {
-				reduxDispatch(
-					successNotice( successMessage, {
-						displayOnNextPage: true,
-					} )
-				);
 				recordTracksEvent( 'calypso_oneclick_upsell_payment_success', {} );
 			} )
 			.catch( ( error ) => {
@@ -71,16 +64,7 @@ export function useSubmitTransaction( {
 				reduxDispatch( errorNotice( error.message ) );
 				onClose();
 			} );
-	}, [
-		siteId,
-		callPaymentProcessor,
-		cart,
-		storedCard,
-		setStep,
-		onClose,
-		reduxDispatch,
-		successMessage,
-	] );
+	}, [ siteId, callPaymentProcessor, cart, storedCard, setStep, onClose, reduxDispatch ] );
 }
 
 export function formatDate( cardExpiry: string ): string {
