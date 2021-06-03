@@ -15,7 +15,6 @@ import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
 import { PlanFeaturesItem } from './item';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
-import { abtest } from 'calypso/lib/abtest';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import {
 	getPlan,
@@ -352,7 +351,7 @@ export default connect(
 		let planProperties = compact(
 			map( plans, ( plan ) => {
 				let isPlaceholder = false;
-				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
+				const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 				const planProductId = planConstantObj.getProductId();
 				const planObject = getPlan( state, planProductId );
 				const showMonthly = ! isMonthly( plan );

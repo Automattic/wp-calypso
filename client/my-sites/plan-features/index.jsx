@@ -22,7 +22,6 @@ import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
 import SpinnerLine from 'calypso/components/spinner-line';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
-import { abtest } from 'calypso/lib/abtest';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import {
 	getPlan,
@@ -723,7 +722,7 @@ export class PlanFeatures extends Component {
 
 	renderFeatureItem( feature, index ) {
 		const description = feature.getDescription
-			? feature.getDescription( abtest, this.props.domainName )
+			? feature.getDescription( undefined, this.props.domainName )
 			: null;
 		const classes = classNames( 'plan-features__item-info', {
 			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
@@ -947,7 +946,7 @@ const ConnectedPlanFeatures = connect(
 		let planProperties = compact(
 			map( plans, ( plan ) => {
 				let isPlaceholder = false;
-				const planConstantObj = applyTestFiltersToPlansList( plan, abtest, {
+				const planConstantObj = applyTestFiltersToPlansList( plan, undefined, {
 					isLoggedInMonthlyPricing,
 				} );
 				const planProductId = planConstantObj.getProductId();

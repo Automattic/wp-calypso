@@ -12,7 +12,6 @@ import React, { Component, Fragment } from 'react';
  * Internal Dependencies
  */
 import AsyncLoad from 'calypso/components/async-load';
-import { abtest } from 'calypso/lib/abtest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
 import config from '@automattic/calypso-config';
@@ -932,7 +931,7 @@ export default connect( ( state, props ) => {
 		isProductOwner,
 		site,
 		renewableSitePurchases,
-		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, abtest ),
+		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, undefined ),
 		isPurchaseTheme,
 		theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),
 		isAtomicSite: isSiteAtomic( state, siteId ),
