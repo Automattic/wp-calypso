@@ -503,7 +503,7 @@ class SignupForm extends Component {
 						<p>
 							{ message }
 							&nbsp;
-							{ this.props.translate( 'If this is you {{a}}log in now{{/a}}.', {
+							{ this.props.translate( 'Go to the {{a}}login page{{/a}}.', {
 								components: {
 									a: (
 										<a
