@@ -13,6 +13,56 @@ import { v4 as uuidv4 } from 'uuid';
 import { validatePasswordField } from 'calypso/lib/gsuite/new-users';
 import wp from 'calypso/lib/wp';
 
+/**
+ * A Titan mailbox error value.
+ *
+ * @typedef {null|import('i18n-calypso').TranslateResult} TitanMailboxValueError
+ */
+
+/**
+ * A Titan mailbox with a boolean value
+ *
+ * @typedef {Object} TitanMailboxBooleanValue
+ * @property {boolean} value
+ * @property {TitanMailboxValueError} error
+ */
+
+/**
+ * A Titan mailbox with a string value
+ *
+ * @typedef {Object} TitanMailboxStringValue
+ * @property {string} value
+ * @property {TitanMailboxValueError} error
+ */
+
+/**
+ * A Titan mailbox with a string value
+ *
+ * @typedef {TitanMailboxBooleanValue|TitanMailboxStringValue} TitanMailboxValue
+ */
+
+/**
+ * A Titan mailbox object
+ *
+ * @typedef {Object} TitanMailbox
+ * @property {TitanMailboxStringValue} alternativeEmail
+ * @property {TitanMailboxStringValue} domain
+ * @property {TitanMailboxBooleanValue} isAdmin
+ * @property {TitanMailboxStringValue} mailbox
+ * @property {TitanMailboxStringValue} name
+ * @property {TitanMailboxStringValue} password
+ * @property {string} uuid
+ */
+
+/**
+ * A callback intended for the mapMailboxFields function.
+ *
+ * @callback TitanMapMailboxFieldsCallback
+ * @param {TitanMailboxValue} fieldValue
+ * @param {string} fieldName
+ * @returns {TitanMailboxValue}
+ */
+
 const valueIsBoolean = ( value ) => typeof value === 'boolean';
 const valueIsNonEmpty = ( value ) => value !== '';
 const valueIsOptional = () => true;
@@ -66,6 +116,12 @@ const sanitizeEmailSuggestion = ( emailSuggestion ) =>
 		.replace( /[^0-9a-z_'.-]/gi, '' )
 		.toLowerCase();
 
+/**
+ * Validate that mailboxes don't contain duplicate mailbox names.
+ *
+ * @param {TitanMailbox[]} mailboxes The list of mailboxes.
+ * @returns {TitanMailbox[]} The validated list of mailboxes.
+ */
 const validateMailboxesAreUnique = ( mailboxes ) => {
 	const mailboxNameCounts = mailboxes.reduce( ( nameCount, mailbox ) => {
 		const mailboxName = mailbox.mailbox.value;
@@ -85,6 +141,13 @@ const validateMailboxesAreUnique = ( mailboxes ) => {
 	} );
 };
 
+/**
+ *
+ * @param {TitanMailbox} mailbox The mailbox object.
+ * @param {TitanMapMailboxFieldsCallback} callback Callback to apply to all value objects in the mailbox.
+ * @param {string[]} skipFields The names of any fields that should not have the callback applied.
+ * @returns {TitanMailbox} The updated mailbox object.
+ */
 const mapMailboxFields = ( mailbox, callback, skipFields = [] ) => {
 	return Object.entries( mailbox )
 		.map( ( entry ) => {
@@ -101,12 +164,30 @@ const mapMailboxFields = ( mailbox, callback, skipFields = [] ) => {
 		}, {} );
 };
 
+/**
+ * Callback to remove previous error for a mailbox value.
+ *
+ * @param {TitanMailboxValue} mailboxValue The mailbox value object.
+ * @returns {TitanMailboxValue} The mailbox value object with the error removed.
+ */
 const removePreviousError = ( { value } ) => ( { value, error: null } );
 
+/**
+ * Remove all errors for a list of mailboxes.
+ *
+ * @param {TitanMailbox[]} mailboxes The list of mailboxes.
+ * @returns {TitanMailbox[]} The list of mailboxes with all errors removed.
+ */
 const clearPreviousErrors = ( mailboxes ) => {
 	return mailboxes.map( ( mailbox ) => mapMailboxFields( mailbox, removePreviousError ) );
 };
 
+/**
+ * Validate that the field value is present and not empty.
+ *
+ * @param {TitanMailboxValue} mailboxValue The mailbox value object.
+ * @returns {TitanMailboxValue} The validated value object.
+ */
 const validateRequiredField = ( { value, error } ) => ( {
 	value,
 	error:
@@ -115,10 +196,24 @@ const validateRequiredField = ( { value, error } ) => ( {
 			: error,
 } );
 
+/**
+ * Validate that a mailbox has all required fields.
+ *
+ * @param {TitanMailbox} mailbox The mailbox object.
+ * @param {string[]} optionalFields A list of optional field names.
+ * @returns {TitanMailbox} The validated mailbox object.
+ */
 const validateRequiredMailboxFields = ( mailbox, optionalFields = [] ) => {
 	return mapMailboxFields( mailbox, validateRequiredField, optionalFields );
 };
 
+/**
+ * Validate an email address to check that it is valid.
+ *
+ * @param {TitanMailboxStringValue} emailAddress The email address value object.
+ * @param {boolean} allowEmpty Allow an empty email address.
+ * @returns {TitanMailboxStringValue} The validated email address value object.
+ */
 const validateFullEmailAddress = ( { value, error }, allowEmpty = false ) => {
 	if ( error ) {
 		return { value, error };
@@ -135,6 +230,14 @@ const validateFullEmailAddress = ( { value, error }, allowEmpty = false ) => {
 	};
 };
 
+/**
+ * Validate the alternative email address.
+ *
+ * @param {TitanMailboxStringValue} emailAddress The email address value object.
+ * @param {string} domainName The domain name for the mailbox.
+ * @param {boolean} allowEmpty Whether an empty email address is permitted.
+ * @returns {TitanMailboxStringValue} The validated email address value object.
+ */
 const validateAlternativeEmailAddress = ( { value, error }, domainName, allowEmpty = false ) => {
 	if ( ! error && value && domainName ) {
 		const parts = `${ value }`.split( '@' );
@@ -159,6 +262,12 @@ const validateAlternativeEmailAddress = ( { value, error }, domainName, allowEmp
 	return validateFullEmailAddress( { value, error }, allowEmpty );
 };
 
+/**
+ *
+ * @param {TitanMailboxStringValue} mailboxValue The mailbox value object.
+ * @param {TitanMailboxStringValue} domainValue The domain value object.
+ * @returns {TitanMailboxStringValue} The validated mailbox value object.
+ */
 const validateMailboxName = ( { value, error }, { value: domainName, error: domainError } ) => {
 	if ( error ) {
 		return { value, error };
@@ -183,8 +292,21 @@ const validateName = ( name ) => {
 	return name;
 };
 
+/**
+ * Validate a password.
+ *
+ * @param {TitanMailboxStringValue} passwordValue The password value object.
+ * @returns {TitanMailboxStringValue} The validated password value object.
+ */
 const validatePassword = ( { value, error } ) => validatePasswordField( { value, error }, 10 );
 
+/**
+ * Validate a mailbox.
+ *
+ * @param {TitanMailbox} mailbox The mailbox object.
+ * @param {string[]} optionalFields A list of optional field names.
+ * @returns {TitanMailbox} The validated mailbox object.
+ */
 const validateMailbox = ( mailbox, optionalFields = [] ) => {
 	const {
 		alternativeEmail,
@@ -209,12 +331,26 @@ const validateMailbox = ( mailbox, optionalFields = [] ) => {
 	};
 };
 
+/**
+ * Validate an array of mailboxes.
+ *
+ * @param {TitanMailbox[]} mailboxes The list of mailboxes.
+ * @param {string[]} optionalFields A list of optional field names.
+ * @returns {TitanMailbox[]} The list of validated mailboxes.
+ */
 const validateMailboxes = ( mailboxes, optionalFields = [] ) => {
 	return validateMailboxesAreUnique( clearPreviousErrors( mailboxes ) ).map( ( mailbox ) =>
 		validateMailbox( mailbox, optionalFields )
 	);
 };
 
+/**
+ * Construct a new mailbox object.
+ *
+ * @param {string} domain The domain name for the mailbox.
+ * @param {boolean} isAdmin Flag to indicate if the user should be created as an administrator.
+ * @returns {TitanMailbox} The new mailbox object.
+ */
 const buildNewTitanMailbox = ( domain, isAdmin = false ) => {
 	return {
 		uuid: uuidv4(),
@@ -227,6 +363,13 @@ const buildNewTitanMailbox = ( domain, isAdmin = false ) => {
 	};
 };
 
+/**
+ * Indicate whether a mailbox has all required fields.
+ *
+ * @param {TitanMailbox} mailbox The mailbox object.
+ * @param {string[]} optionalFields A list of optional field names.
+ * @returns {boolean} True if the mailbox has all required fields; false if not.
+ */
 const isMailboxComplete = ( mailbox, optionalFields = [] ) =>
 	Object.entries( MAILBOX_FIELDS ).every( ( requiredField ) => {
 		const [ fieldName, validator ] = requiredField;
@@ -236,12 +379,34 @@ const isMailboxComplete = ( mailbox, optionalFields = [] ) =>
 		return validator( mailbox[ fieldName ].value );
 	} );
 
+/**
+ * Indicate whether a mailbox has any validation errors.
+ *
+ * @param {TitanMailbox} mailbox The mailbox object.
+ * @returns {boolean} True if any of the mailbox fields have validation errors; false if not.
+ */
 const doesMailboxHaveErrors = ( mailbox ) =>
 	Object.keys( MAILBOX_FIELDS ).some( ( fieldName ) => null !== mailbox[ fieldName ].error );
 
+/**
+ * Indicate if a mailbox is valid.
+ *
+ * @param {TitanMailbox} mailbox The mailbox object.
+ * @param {string[]} optionalFields A list of optional field names.
+ * @returns {boolean} True if the mailbox is valid; false if not.
+ */
 const isMailboxValid = ( mailbox, optionalFields = [] ) =>
 	isMailboxComplete( mailbox, optionalFields ) && ! doesMailboxHaveErrors( mailbox );
 
+/**
+ * Indicate whether mailboxes has any *existing* validation errors.
+ * You may need to call validateMailboxes() first to get freshly validated mailbox objects.
+ *
+ * @see validateMailboxes
+ * @param {TitanMailbox[]} mailboxes The list of mailboxes.
+ * @param {string[]} optionalFields A list of optional field names.
+ * @returns {boolean} True if all the mailboxes are valid; false if not.
+ */
 const areAllMailboxesValid = ( mailboxes, optionalFields = [] ) =>
 	0 < mailboxes.length &&
 	mailboxes.every( ( mailbox ) => isMailboxValid( mailbox, optionalFields ) );
