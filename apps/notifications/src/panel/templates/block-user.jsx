@@ -38,7 +38,6 @@ export class UserBlock extends React.Component {
 		const DAY_IN_SECONDS = 3600 * 24;
 		const MAX_LENGTH = 15;
 		const parsedTime = Date.parse( timestamp );
-		let momentTime;
 		let timeString;
 
 		if ( isNaN( parsedTime ) ) {
@@ -46,7 +45,7 @@ export class UserBlock extends React.Component {
 		}
 
 		const localeSlug = getLocaleSlug();
-		momentTime = moment( timestamp ).locale( localeSlug );
+		const momentTime = moment( timestamp ).locale( localeSlug );
 
 		if ( Date.now() - parsedTime > 1000 * DAY_IN_SECONDS * 5 ) {
 			// 30 Apr 2015
