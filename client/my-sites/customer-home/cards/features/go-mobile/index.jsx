@@ -29,8 +29,8 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 	const isDesktopView = isDesktop();
 	const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
 	const isIos = isiPad || isiPod || isiPhone;
-	const showIosBadge = isDesktopView || isIos || ! isAndroid;
-	const showAndroidBadge = isDesktopView || isAndroid || ! isIos;
+	const showIosBadge = ! isAndroid;
+	const showAndroidBadge = ! isIos;
 	const showOnlyOneBadge = showIosBadge !== showAndroidBadge;
 	const isDesktopApp = config.isEnabled( 'desktop' );
 
