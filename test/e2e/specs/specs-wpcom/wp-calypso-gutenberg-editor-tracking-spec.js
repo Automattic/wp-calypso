@@ -62,6 +62,37 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 			assert( eventsStack, 'Tracking events stack missing from window._e2eEventsStack' );
 		} );
 
+		it( 'Make sure required and custom properties are added to the events', async function () {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
+
+			// Populate the event stack by inserting a few blocks
+			await gEditorComponent.addBlock( 'Heading' );
+			await gEditorComponent.addBlock( 'Columns' );
+			await gEditorComponent.addBlock( 'Columns' );
+
+			const eventsStack = await this.driver.executeScript( `return window._e2eEventsStack;` );
+
+			const requiredProperties = [ 'blog_id', 'site_type', 'user_locale' ];
+			const customProperties = [ 'editor_type', 'post_type' ];
+			const allProperties = [ ...requiredProperties, customProperties ];
+			const allEventIncludesProperties = allProperties.every(
+				( property ) =>
+					eventsStack && eventsStack.every( ( event ) => typeof event[ property ] !== 'undefined' )
+			);
+			assert.strictEqual( allEventIncludesProperties, true );
+		} );
+
+		it( '`editor_type` and `post_type` property should be `post` when editing a post', async function () {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
+
+			await gEditorComponent.addBlock( 'Heading' );
+
+			const eventsStack = await this.driver.executeScript( `return window._e2eEventsStack;` );
+
+			assert.strictEqual( eventsStack[ 0 ].editor_type, 'post' );
+			assert.strictEqual( eventsStack[ 0 ].post_type, 'post' );
+		} );
+
 		it( 'Tracks "wpcom_block_inserted" event', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
 
@@ -86,6 +117,45 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 				2,
 				`"wpcom_block_inserted" editor tracking event failed to fire twice for core/columns`
 			);
+		} );
+
+		afterEach( async function () {
+			// Reset e2e tests events stack after each step in order
+			// that we have a test specific stack to assert against.
+			await this.driver.executeScript( `window._e2eEventsStack = [];` );
+		} );
+	} );
+
+	describe( 'Tracking: @parallel', function () {
+		it( 'Can log in to WPAdmin and create new Page', async function () {
+			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
+
+			if ( host !== 'WPCOM' ) {
+				this.loginFlow = new LoginFlow( this.driver );
+			}
+
+			await this.loginFlow.loginAndSelectWPAdmin();
+
+			const wpadminSidebarComponent = await WPAdminSidebar.Expect( this.driver );
+			await wpadminSidebarComponent.selectNewPage();
+		} );
+
+		it( 'Check for presence of e2e specific tracking events stack on global', async function () {
+			await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
+			const eventsStack = await this.driver.executeScript( `return window._e2eEventsStack;` );
+			// Check evaluates to truthy
+			assert( eventsStack, 'Tracking events stack missing from window._e2eEventsStack' );
+		} );
+
+		it( '`editor_type` should be `post` and `post_type` property should be `page` when editing a page', async function () {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
+
+			await gEditorComponent.addBlock( 'Heading' );
+
+			const eventsStack = await this.driver.executeScript( `return window._e2eEventsStack;` );
+
+			assert.strictEqual( eventsStack[ 0 ].editor_type, 'post' );
+			assert.strictEqual( eventsStack[ 0 ].post_type, 'page' );
 		} );
 
 		afterEach( async function () {
