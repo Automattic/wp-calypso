@@ -18,9 +18,7 @@ export default createSelector(
 		return (
 			typeof lastMessageTimestamp === 'number' &&
 			typeof lostFocusAt === 'number' &&
-			// Message timestamps are reported in seconds. We need to multiply by 1000 to convert
-			// to milliseconds, so we can compare it to other JS-generated timestamps
-			lastMessageTimestamp * 1000 >= lostFocusAt
+			lastMessageTimestamp >= lostFocusAt
 		);
 	},
 	[ getHappychatTimeline, getLostFocusTimestamp ]
