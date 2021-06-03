@@ -46,7 +46,6 @@ import {
 	isJetpackSiteSecondaryNetworkSite,
 	verifyJetpackModulesActive,
 	hasJetpackSiteCustomDomain,
-	getJetpackSiteUpdateFilesDisabledReasons,
 	isJetpackSiteMainNetworkSite,
 	getSiteAdminUrl,
 	getCustomizerUrl,
@@ -2865,76 +2864,6 @@ describe( 'selectors', () => {
 
 			const hasCustomDomain = hasJetpackSiteCustomDomain( state, siteId );
 			chaiExpect( hasCustomDomain ).to.equal( false );
-		} );
-	} );
-
-	describe( '#getJetpackSiteUpdateFilesDisabledReasons()', () => {
-		test( 'it should have the correct reason for the clue `has_no_file_system_write_access`', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						file_mod_disabled: [ 'has_no_file_system_write_access' ],
-					},
-				},
-			} );
-
-			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId );
-			chaiExpect( reason ).to.deep.equal( [
-				'The file permissions on this host prevent editing files.',
-			] );
-		} );
-
-		test( 'it should have the correct reason for the clue `disallow_file_mods`', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						file_mod_disabled: [ 'disallow_file_mods' ],
-					},
-				},
-			} );
-
-			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId );
-			chaiExpect( reason ).to.deep.equal( [
-				'File modifications are explicitly disabled by a site administrator.',
-			] );
-		} );
-
-		test( 'it should have the correct reason for the clue `automatic_updater_disabled`', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						file_mod_disabled: [ 'automatic_updater_disabled' ],
-					},
-				},
-			} );
-
-			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId, 'autoupdateCore' );
-			chaiExpect( reason ).to.deep.equal( [
-				'Any autoupdates are explicitly disabled by a site administrator.',
-			] );
-		} );
-
-		test( 'it should have the correct reason for the clue `wp_auto_update_core_disabled`', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						file_mod_disabled: [ 'wp_auto_update_core_disabled' ],
-					},
-				},
-			} );
-
-			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId, 'autoupdateCore' );
-			chaiExpect( reason ).to.deep.equal( [
-				'Core autoupdates are explicitly disabled by a site administrator.',
-			] );
 		} );
 	} );
 
