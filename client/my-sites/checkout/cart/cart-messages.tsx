@@ -11,11 +11,11 @@ import type { ResponseCart, ResponseCartMessage } from '@automattic/shopping-car
 /**
  * Internal dependencies
  */
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 
-function WrappedCartMessage( { message }: { message: ResponseCartMessage } ): JSX.Element {
+function CartMessage( { message }: { message: ResponseCartMessage } ): JSX.Element {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 
@@ -23,7 +23,7 @@ function WrappedCartMessage( { message }: { message: ResponseCartMessage } ): JS
 		translate,
 		selectedSiteSlug,
 	] );
-	return <p key={ `${ message.code }-${ message.message }` }>{ getPrettyMessage( message ) }</p>;
+	return <>{ getPrettyMessage( message ) }</>;
 }
 
 export default function CartMessages( {
@@ -153,10 +153,17 @@ function showMessages(
 	messageType: 'error' | 'success'
 ): void {
 	const messageActionCreator = messageType === 'error' ? errorNotice : successNotice;
-	reduxDispatch(
-		messageActionCreator(
-			messages.map( ( message ): React.ReactNode => <WrappedCartMessage message={ message } /> ),
-			{ isPersistent: true }
-		)
-	);
+	// Remove previous messages that match the codes we are about to display
+	messages.map( ( message ) => {
+		reduxDispatch( removeNotice( message.code ) );
+	} );
+
+	messages.map( ( message ) => {
+		reduxDispatch(
+			messageActionCreator( <CartMessage message={ message } />, {
+				isPersistent: true,
+				id: message.code,
+			} )
+		);
+	} );
 }
