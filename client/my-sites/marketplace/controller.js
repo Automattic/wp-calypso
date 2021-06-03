@@ -5,7 +5,7 @@ import React from 'react';
 import page from 'page';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { getSiteFragment } from 'calypso/lib/route';
 import AsyncLoad from 'calypso/components/async-load';
