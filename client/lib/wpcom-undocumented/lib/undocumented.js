@@ -1492,29 +1492,6 @@ Undocumented.prototype.supportAlternates = function ( query, fn ) {
 };
 
 /**
- * Saves a user's A/B test variation on the backend
- *
- * @param {string} name - The name of the A/B test. No leading 'abtest_' needed
- * @param {string} variation - The variation the user is assigned to
- * @param {Function} callback - Function to invoke when request is complete
- * @returns {object} wpcomRequest
- */
-Undocumented.prototype.saveABTestData = function ( name, variation, callback ) {
-	const body = {
-		name,
-		variation,
-	};
-	debug( `POST /me/abtests with ${ JSON.stringify( body ) }` );
-	return this.wpcom.req.post(
-		{
-			path: '/me/abtests',
-			body,
-		},
-		callback
-	);
-};
-
-/**
  * Sign up for a new user account
  * Create a new user
  *
