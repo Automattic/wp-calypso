@@ -60,22 +60,7 @@ class ThemeActivationConfirmationModal extends Component {
 		super( props );
 		this.state = {
 			homepageAction: 'keep_current_homepage',
-
-			// Used to reset state when dialog re-opens, see `getDerivedStateFromProps`
-			wasVisible: props.isVisible,
 		};
-	}
-
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		// This component doesn't unmount when the dialog closes, so the state
-		// needs to be reset back to defaults each time it opens.
-		// Reseting `homepageAction` ensures the default option will be selected.
-		if ( nextProps.isVisible && ! prevState.wasVisible ) {
-			return { homepageAction: 'keep_current_homepage', wasVisible: true };
-		} else if ( ! nextProps.isVisible && prevState.wasVisible ) {
-			return { wasVisible: false };
-		}
-		return null;
 	}
 
 	handleHomepageAction = ( event ) => {
@@ -212,7 +197,7 @@ class ThemeActivationConfirmationModal extends Component {
 					eventName={
 						isCurrentThemeRetired && hasAutoLoadingHomepage
 							? 'calypso_theme_activation_retired_and_autoloading_homepage_confirmation_modal_view'
-							: 'calypso_theme_activation_confirmation_modal_view'
+							: 'calypso_theme_autoloading_homepage_modal_view'
 					}
 					eventProperties={ {
 						theme: installingTheme.id,
