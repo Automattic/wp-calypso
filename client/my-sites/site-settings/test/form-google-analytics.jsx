@@ -71,7 +71,11 @@ describe( 'UpsellNudge should get appropriate plan constant for both forms', () 
 	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL ].forEach( ( product_slug ) => {
 		test( `Business 1 year for (${ product_slug })`, () => {
 			const comp = shallow(
-				<GoogleAnalyticsSimpleForm { ...myProps } site={ { plan: { product_slug } } } />
+				<GoogleAnalyticsSimpleForm
+					{ ...myProps }
+					site={ { plan: { product_slug } } }
+					isSEOEligible={ true }
+				/>
 			);
 			expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
 			expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ).props().plan ).toBe(
@@ -83,7 +87,11 @@ describe( 'UpsellNudge should get appropriate plan constant for both forms', () 
 	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS ].forEach( ( product_slug ) => {
 		test( `Business 2 year for (${ product_slug })`, () => {
 			const comp = shallow(
-				<GoogleAnalyticsSimpleForm { ...myProps } site={ { plan: { product_slug } } } />
+				<GoogleAnalyticsSimpleForm
+					{ ...myProps }
+					site={ { plan: { product_slug } } }
+					isSEOEligible={ true }
+				/>
 			);
 			expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
 			expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ).props().plan ).toBe(
@@ -96,7 +104,11 @@ describe( 'UpsellNudge should get appropriate plan constant for both forms', () 
 		( product_slug ) => {
 			test( `Jetpack Security for (${ product_slug })`, () => {
 				const comp = shallow(
-					<GoogleAnalyticsJetpackForm { ...myProps } site={ { plan: { product_slug } } } />
+					<GoogleAnalyticsJetpackForm
+						{ ...myProps }
+						site={ { plan: { product_slug } } }
+						isSEOEligible={ true }
+					/>
 				);
 				expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
 				expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ).props().plan ).toBe(
