@@ -4,6 +4,7 @@
 import React from 'react';
 import { localize, useTranslate } from 'i18n-calypso';
 import { CompactCard, Card } from '@automattic/components';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -42,7 +43,9 @@ export function BillingHistoryContent( {
 function BillingHistory(): JSX.Element {
 	const translate = useTranslate();
 	const { vatDetails } = useVatDetails();
-	const vatText = vatDetails.id ? translate( 'Edit VAT details' ) : translate( 'Add VAT details' );
+	const editVatText = translate( 'Edit VAT details' );
+	const addVatText = translate( 'Add VAT details' );
+	const vatText = vatDetails.id ? editVatText : addVatText;
 
 	return (
 		<Main wideLayout className="billing-history">
@@ -54,7 +57,9 @@ function BillingHistory(): JSX.Element {
 			<PurchasesNavigation section="billingHistory" />
 			<BillingHistoryContent siteId={ null } getReceiptUrlFor={ billingHistoryReceipt } />
 
-			<CompactCard href={ vatDetailsPath }>{ vatText }</CompactCard>
+			{ config.isEnabled( 'me/vat-details' ) && (
+				<CompactCard href={ vatDetailsPath }>{ vatText }</CompactCard>
+			) }
 		</Main>
 	);
 }

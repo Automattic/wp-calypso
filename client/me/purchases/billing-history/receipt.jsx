@@ -5,6 +5,7 @@ import React from 'react';
 import page from 'page';
 import { connect, useDispatch } from 'react-redux';
 import { localize, useTranslate } from 'i18n-calypso';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -140,7 +141,7 @@ export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
 					) : (
 						<EmptyReceiptDetails />
 					) }
-					<VatDetails transaction={ transaction } />
+					{ config.isEnabled( 'me/vat-details' ) && <VatDetails transaction={ transaction } /> }
 				</ul>
 				<ReceiptLineItems transaction={ transaction } />
 
@@ -386,6 +387,15 @@ export function ReceiptPlaceholder() {
 
 function ReceiptLabels() {
 	const translate = useTranslate();
+
+	let labelContent = translate(
+		'Use this field to add your billing information (eg. VAT number, business address) before printing.'
+	);
+	if ( config.isEnabled( 'me/vat-details' ) ) {
+		labelContent = translate(
+			'Use this field to add your billing information (eg. business address) before printing.'
+		);
+	}
 	return (
 		<div>
 			<FormLabel htmlFor="billing-history__billing-details-textarea">
@@ -395,9 +405,7 @@ function ReceiptLabels() {
 				className="billing-history__billing-details-description"
 				id="billing-history__billing-details-description"
 			>
-				{ translate(
-					'Use this field to add your billing information (eg. business address) before printing.'
-				) }
+				{ labelContent }
 			</div>
 		</div>
 	);
