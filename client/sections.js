@@ -12,7 +12,7 @@ const config = require( 'calypso/server/config' );
 /**
  * Locales path segment in RegExp string format.
  */
-const localePathSegment = config( 'magnificent_non_en_locales' ).join( '|' );
+const localePathSegment = config( 'magnificent_non_en_locales' )?.join( '|' );
 
 const sections = [
 	{
