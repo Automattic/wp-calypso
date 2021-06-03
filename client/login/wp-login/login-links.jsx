@@ -338,7 +338,7 @@ export class LoginLinks extends React.Component {
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-				{ this.renderBackLink() }
+				{ ! config.isEnabled( 'desktop' ) && this.renderBackLink() }
 			</div>
 		);
 	}
