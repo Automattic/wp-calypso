@@ -16,6 +16,7 @@ import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/actions';
 import user from 'calypso/lib/user';
 import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
+import { navigate } from 'calypso/lib/navigate';
 
 /**
  * Module variables
@@ -48,14 +49,7 @@ export function acceptInvite( context, next ) {
 			.then( () => {
 				const redirect = getRedirectAfterAccept( acceptedInvite );
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
-
-				// Using page() for cross origin navigations would throw a `History.pushState` exception
-				// about creating state object with a cross-origin URL.
-				if ( new URL( redirect, window.location.href ).origin !== window.location.origin ) {
-					window.location = redirect;
-				} else {
-					page( redirect );
-				}
+				navigate( redirect );
 			} )
 			.catch( ( error ) => {
 				debug( 'Accept invite error: ' + JSON.stringify( error ) );

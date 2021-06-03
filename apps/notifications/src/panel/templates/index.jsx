@@ -4,7 +4,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { find, findIndex, matchesProperty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -58,7 +57,7 @@ export const findNextNoteId = ( noteId, notes ) => {
 		return null;
 	}
 
-	const index = findIndex( notes, noteId );
+	const index = notes.indexOf( noteId );
 	if ( -1 === index ) {
 		return null;
 	}
@@ -121,7 +120,7 @@ class Layout extends React.Component {
 			return;
 		}
 
-		const index = findIndex( nextProps.notes, matchesProperty( 'id', nextProps.selectedNoteId ) );
+		const index = nextProps.notes.findIndex( ( n ) => n.id === nextProps.selectedNoteId );
 		this.setState( {
 			index: index >= 0 ? index : null,
 			lastSelectedIndex: index === null ? 0 : index,
@@ -155,7 +154,7 @@ class Layout extends React.Component {
 			return;
 		}
 
-		if ( ! find( nextProps.notes, matchesProperty( 'id', nextProps.selectedNoteId ) ) ) {
+		if ( ! nextProps.notes.find( ( n ) => n.id === nextProps.selectedNoteId ) ) {
 			this.props.unselectNote();
 		}
 	}
@@ -213,7 +212,7 @@ class Layout extends React.Component {
 		};
 
 		/* Find the currently selected note */
-		let currentIndex = findIndex( filteredNotes, matchesProperty( 'id', this.state.selectedNote ) );
+		let currentIndex = filteredNotes.findIndex( ( n ) => n.id === this.state.selectedNote );
 
 		/*
 		 * Sometimes it can occur that a note disappears
@@ -421,7 +420,7 @@ class Layout extends React.Component {
 		const notes = this.filterController.getFilteredNotes( allNotes );
 		if (
 			this.state.selectedNote &&
-			find( notes, matchesProperty( 'id', this.state.selectedNoteId ) ) === null
+			notes.find( ( n ) => n.id === this.state.selectedNoteId ) === undefined
 		) {
 			this.props.unselectNote();
 		}
@@ -442,10 +441,7 @@ class Layout extends React.Component {
 	};
 
 	render() {
-		const currentNote = find(
-			this.props.notes,
-			matchesProperty( 'id', this.props.selectedNoteId )
-		);
+		const currentNote = this.props.notes.find( ( n ) => n.id === this.props.selectedNoteId );
 		const filteredNotes = this.filterController.getFilteredNotes( this.props.notes );
 
 		return (

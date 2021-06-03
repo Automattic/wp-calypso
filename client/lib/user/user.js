@@ -17,9 +17,7 @@ import {
 } from 'calypso/lib/user/support-user-interop';
 import wpcom from 'calypso/lib/wp';
 import Emitter from 'calypso/lib/mixins/emitter';
-import { isE2ETest } from 'calypso/lib/e2e';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
-import { getLanguage } from 'calypso/lib/i18n-utils/utils';
 import { clearStorage } from 'calypso/lib/browser-storage';
 import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'calypso/lib/abtest/utility';
 
@@ -175,48 +173,11 @@ User.prototype.handleFetchSuccess = function ( userData ) {
 	store.set( 'wpcom_user_id', userData.ID );
 
 	if ( userData.abtests ) {
-		if ( config.isEnabled( 'dev/test-helper' ) || isE2ETest() ) {
-			// This section will preserve the existing localStorage A/B variation values,
-			// This is necessary for the A/B test helper component and e2e tests..
-			const initialVariationsFromStore = store.get( ABTEST_LOCALSTORAGE_KEY );
-			const initialVariations =
-				typeof initialVariationsFromStore === 'object' ? initialVariationsFromStore : undefined;
-			store.set( ABTEST_LOCALSTORAGE_KEY, {
-				...userData.abtests,
-				...initialVariations,
-			} );
-		} else {
-			store.set( ABTEST_LOCALSTORAGE_KEY, userData.abtests );
-		}
+		store.set( ABTEST_LOCALSTORAGE_KEY, userData.abtests );
 	}
+
 	this.data = userData;
 	this.emit( 'change' );
-};
-
-User.prototype.getLanguage = function () {
-	return getLanguage( this.data.localeSlug );
-};
-
-/**
- * Get the URL for a user's avatar (from Gravatar). Uses
- * the short-form query string parameters as options,
- * sets some sane defaults.
- *
- * @param {object} options Options per https://secure.gravatar.com/site/implement/images/
- *
- * @returns {string} The user's avatar URL based on the options parameter.
- */
-User.prototype.getAvatarUrl = function ( options = {} ) {
-	const defaultOptions = {
-		s: 80,
-		d: 'mm',
-		r: 'G',
-	};
-	const avatarURL = this.get().avatar_URL;
-	const avatar = typeof avatarURL === 'string' ? avatarURL.split( '?' )[ 0 ] : '';
-
-	options = { ...options, ...defaultOptions };
-	return avatar + '?' + new URLSearchParams( options ).toString();
 };
 
 /**
@@ -230,19 +191,6 @@ User.prototype.clear = async function () {
 	this.data = false;
 	store.clearAll();
 	await clearStorage();
-};
-
-/**
- * Sends the user an email with a link to verify their account if they
- * are unverified.
- *
- * @param {Function} [fn] A callback to receive the HTTP response from the send-verification-email endpoint.
- *
- * @returns {(Promise|object)} If a callback is provided, this is an object representing an XMLHttpRequest.
- *                             If no callback is provided, this is a Promise.
- */
-User.prototype.sendVerificationEmail = function ( fn ) {
-	return wpcom.undocumented().me().sendVerificationEmail( fn );
 };
 
 User.prototype.set = function ( attributes ) {

@@ -4,6 +4,7 @@ import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.BuildReportTab
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
@@ -152,6 +153,15 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 				buildFailed = true
 				buildFinishedSuccessfully = true
 			}
+			commitStatusPublisher {
+				vcsRootExtId = "${Settings.WpCalypso.id}"
+				publisher = github {
+					githubUrl = "https://api.github.com"
+					authType = personalToken {
+						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+					}
+				}
+			}
 		}
 
 		failureConditions {
@@ -279,7 +289,7 @@ fun jetpackBuildType(screenSize: String): BuildType {
 			notifications {
 				notifierSettings = slackNotifier {
 					connection = "PROJECT_EXT_11"
-					sendTo = "#e2e-jetpack-notiff"
+					sendTo = "#e2e-jetpack-notif"
 					messageFormat = verboseMessageFormat {
 						addBranch = true
 						addStatusText = true

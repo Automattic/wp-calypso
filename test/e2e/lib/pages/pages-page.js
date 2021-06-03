@@ -27,25 +27,12 @@ export default class PagesPage extends AsyncBaseContainer {
 	}
 
 	async selectAddNewPage() {
-		const addPageLocator = By.css( '.pages__add-page' ); // Add button when there are pages
-		const startPageLocator = By.css( '.empty-content__action' ); // Add button when there are no pages
+		const startAPageButtonSelector = 'a.empty-content__action'; // When there are no pages
+		const addNewPageButtonSelector = 'a.pages__add-page'; // When there are any pages
 
-		if (
-			await driverHelper.isElementEventuallyLocatedAndVisible(
-				this.driver,
-				addPageLocator,
-				this.explicitWaitMS / 5
-			)
-		) {
-			return await driverHelper.clickWhenClickable( this.driver, addPageLocator );
-		} else if (
-			await driverHelper.isElementEventuallyLocatedAndVisible(
-				this.driver,
-				startPageLocator,
-				this.explicitWaitMS / 5
-			)
-		) {
-			return await driverHelper.clickWhenClickable( this.driver, startPageLocator );
-		}
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( `${ startAPageButtonSelector }, ${ addNewPageButtonSelector }` )
+		);
 	}
 }

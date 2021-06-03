@@ -1,5 +1,4 @@
 export { canDomainAddGSuite } from './can-domain-add-gsuite';
-export { canUserPurchaseGSuite } from './can-user-purchase-gsuite';
 export { getAnnualPrice } from './get-annual-price';
 export { getEligibleGSuiteDomain } from './get-eligible-gsuite-domain';
 export {

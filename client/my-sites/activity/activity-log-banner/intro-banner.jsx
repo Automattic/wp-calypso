@@ -29,6 +29,7 @@ import {
 	siteHasBackupProductPurchase,
 	siteHasScanProductPurchase,
 } from 'calypso/state/purchases/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
@@ -49,10 +50,11 @@ class IntroBanner extends Component {
 	recordDismiss = () => this.props.recordTracksEvent( 'calypso_activitylog_intro_banner_dismiss' );
 
 	renderCardContent() {
-		const { siteIsJetpack, siteSlug, translate, siteHasActivityLog } = this.props;
-		const buttonHref = siteIsJetpack
-			? `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ACTIVITY_LOG ] }`
-			: `/plans/${ siteSlug }?feature=${ FEATURE_JETPACK_ESSENTIAL }&plan=${ PLAN_PERSONAL }`;
+		const { siteIsAtomic, siteIsJetpack, siteSlug, translate, siteHasActivityLog } = this.props;
+		const buttonHref =
+			siteIsJetpack && ! siteIsAtomic
+				? `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ACTIVITY_LOG ] }`
+				: `/plans/${ siteSlug }?feature=${ FEATURE_JETPACK_ESSENTIAL }&plan=${ PLAN_PERSONAL }`;
 
 		return (
 			<>
@@ -144,6 +146,7 @@ export default connect(
 		return {
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
+			siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
 			siteIsJetpack: isJetpackSite( state, siteId ),
 
 			// TODO: Eventually use getRewindCapabilities to determine this?

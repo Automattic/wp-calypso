@@ -19,7 +19,6 @@ import Emojify from 'calypso/components/emojify';
 import QueryComment from 'calypso/components/data/query-comment';
 import { stripHTML, decodeEntities } from 'calypso/lib/formatting';
 import { getParentComment, getSiteComment } from 'calypso/state/comments/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export class CommentContent extends Component {
@@ -118,7 +117,6 @@ export class CommentContent extends Component {
 const mapStateToProps = ( state, { commentId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
-	const isJetpack = isJetpackSite( state, siteId );
 
 	const comment = getSiteComment( state, siteId, commentId );
 	const postId = get( comment, 'post.ID' );
@@ -127,14 +125,11 @@ const mapStateToProps = ( state, { commentId } ) => {
 	const parentCommentId = get( comment, 'parent.ID', 0 );
 	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
 
-	const parentCommentUrl = isJetpack
-		? get( parentComment, 'URL' )
-		: `/comment/${ siteSlug }/${ parentCommentId }`;
+	const parentCommentUrl = `/comment/${ siteSlug }/${ parentCommentId }`;
 
 	return {
 		commentContent: get( comment, 'content' ),
 		commentStatus: get( comment, 'status' ),
-		isJetpack,
 		isParentCommentLoaded: ! parentCommentId || !! parentCommentContent,
 		parentCommentContent,
 		parentCommentId,

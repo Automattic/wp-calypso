@@ -31,7 +31,8 @@ import {
 export function getNumberOfMailboxesText( domain ) {
 	if ( hasGSuiteWithUs( domain ) ) {
 		const count = getGSuiteMailboxCount( domain );
-		return translate( '%(count)d user', '%(count)d users', {
+
+		return translate( '%(count)d mailbox', '%(count)d mailboxes', {
 			count,
 			args: {
 				count,
@@ -41,6 +42,7 @@ export function getNumberOfMailboxesText( domain ) {
 
 	if ( hasTitanMailWithUs( domain ) ) {
 		const count = getMaxTitanMailboxCount( domain );
+
 		return translate( '%(count)d mailbox', '%(count)d mailboxes', {
 			count,
 			args: {
@@ -51,6 +53,7 @@ export function getNumberOfMailboxesText( domain ) {
 
 	if ( hasEmailForwards( domain ) ) {
 		const count = getEmailForwardsCount( domain );
+
 		return translate( '%(count)d email forward', '%(count)d email forwards', {
 			count,
 			args: {
@@ -58,6 +61,7 @@ export function getNumberOfMailboxesText( domain ) {
 			},
 		} );
 	}
+
 	return '';
 }
 
@@ -105,14 +109,14 @@ export function hasEmailSubscription( domain ) {
 }
 
 export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) {
-	const defaultActiveStatus = {
+	const activeStatus = {
 		statusClass: 'success',
 		icon: isLoadingEmails ? 'cached' : 'check_circle',
 		text: isLoadingEmails ? translate( 'Loading details' ) : translate( 'Active' ),
 	};
 
-	const defaultWarningStatus = {
-		statusClass: 'warning',
+	const errorStatus = {
+		statusClass: 'error',
 		icon: 'info',
 		text: translate( 'Action required' ),
 	};
@@ -123,49 +127,50 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 			isPendingGSuiteTOSAcceptance( domain ) ||
 			( emailAccount && hasGoogleAccountTOSWarning( emailAccount ) )
 		) {
-			return defaultWarningStatus;
+			return errorStatus;
 		}
 
 		if ( hasPendingGSuiteUsers( domain ) ) {
-			return defaultWarningStatus;
+			return errorStatus;
 		}
 
-		return defaultActiveStatus;
+		return activeStatus;
 	}
 
 	if ( hasTitanMailWithUs( domain ) ) {
-		// Check for expired subscription.
+		// Check for expired subscription
 		const titanExpiryDateString = getTitanExpiryDate( domain );
+
 		if ( titanExpiryDateString ) {
 			const titanExpiryDate = new Date( titanExpiryDateString );
 			const startOfToday = new Date();
 			startOfToday.setUTCHours( 0, 0, 0, 0 );
+
 			if ( titanExpiryDate < startOfToday ) {
-				return defaultWarningStatus;
+				return errorStatus;
 			}
 		}
+
 		// Check for unused mailboxes
 		if ( emailAccount && hasUnusedMailboxWarning( emailAccount ) ) {
-			return defaultWarningStatus;
+			return errorStatus;
 		}
 
-		// Fallback logic if we don't have an emailAccount - this will initially be the case for the email home page.
+		// Fallback logic if we don't have an emailAccount - this will initially be the case for the email home page
 		if (
 			! isLoadingEmails &&
 			! emailAccount &&
 			getMaxTitanMailboxCount( domain ) > getConfiguredTitanMailboxCount( domain )
 		) {
-			return defaultWarningStatus;
+			return errorStatus;
 		}
 
-		return defaultActiveStatus;
+		return activeStatus;
 	}
 
-	if ( hasEmailForwards( domain ) && emailAccount ) {
-		if ( hasUnverifiedEmailForward( emailAccount ) ) {
-			return defaultWarningStatus;
-		}
+	if ( hasEmailForwards( domain ) && emailAccount && hasUnverifiedEmailForward( emailAccount ) ) {
+		return errorStatus;
 	}
 
-	return defaultActiveStatus;
+	return activeStatus;
 }

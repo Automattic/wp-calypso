@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { isDesktop } from '@automattic/viewport';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,28 +12,29 @@ import ExternalLink from 'calypso/components/external-link';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Gridicon from 'calypso/components/gridicon';
 import MaterialIcon from 'calypso/components/material-icon';
-import {
-	bumpStat,
-	composeAnalytics,
-	recordTracksEvent,
-	withAnalytics,
-} from 'calypso/state/analytics/actions';
-import { navigate } from 'calypso/state/ui/actions';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const EducationalContent = ( {
+function trackNavigation( url, cardName ) {
+	return composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_education', { url, card_name: cardName } ),
+		bumpStat( 'calypso_customer_home', cardName )
+	);
+}
+
+export default function EducationalContent( {
 	title,
 	description,
 	links,
 	illustration,
 	cardName,
-	calypsoNavigation,
-	trackExternalClick,
-} ) => {
+} ) {
+	const dispatch = useDispatch();
+
 	return (
 		<div className="educational-content">
 			<div className="educational-content__wrapper">
@@ -65,22 +66,14 @@ const EducationalContent = ( {
 							{ externalLink && (
 								<ExternalLink
 									href={ url }
-									onClick={ () => {
-										trackExternalClick( url, cardName );
-									} }
+									onClick={ () => dispatch( trackNavigation( url, cardName ) ) }
 									icon
 								>
 									{ text }
 								</ExternalLink>
 							) }
 							{ calypsoLink && (
-								<a
-									href={ url }
-									onClick={ ( event ) => {
-										event.preventDefault();
-										calypsoNavigation( url, cardName );
-									} }
-								>
+								<a href={ url } onClick={ () => dispatch( trackNavigation( url, cardName ) ) }>
 									{ text }
 								</a>
 							) }
@@ -95,26 +88,4 @@ const EducationalContent = ( {
 			) }
 		</div>
 	);
-};
-
-const calypsoNavigation = ( url, cardName ) => {
-	return withAnalytics(
-		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_education', { url, card_name: cardName } ),
-			bumpStat( 'calypso_customer_home', cardName )
-		),
-		navigate( url )
-	);
-};
-
-const trackExternalClick = ( url, cardName ) => {
-	return composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_education', { url, card_name: cardName } ),
-		bumpStat( 'calypso_customer_home', cardName )
-	);
-};
-
-export default connect( null, {
-	calypsoNavigation,
-	trackExternalClick,
-} )( EducationalContent );
+}

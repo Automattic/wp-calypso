@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import React from 'react';
-
+import PropTypes from 'prop-types';
 /**
  * Internal Dependencies
  */
@@ -86,7 +86,7 @@ function Transfer( props ) {
 	);
 }
 
-export default connect( ( state, ownProps ) => {
+const connectComponent = connect( ( state, ownProps ) => {
 	const domain = getSelectedDomain( ownProps );
 	const siteId = getSelectedSiteId( state );
 	return {
@@ -99,3 +99,9 @@ export default connect( ( state, ownProps ) => {
 		primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
 	};
 } )( localize( Transfer ) );
+
+connectComponent.propTypes = {
+	selectedDomainName: PropTypes.string.isRequired,
+};
+
+export default connectComponent;

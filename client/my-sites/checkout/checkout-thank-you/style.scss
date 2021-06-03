@@ -705,6 +705,12 @@
 			margin-bottom: 64px;
 		}
 
+		.jetpack-checkout-thank-you__email-message-loading,
+		.jetpack-checkout-thank-you__email-message {
+			margin-top: -32px;
+			margin-bottom: 64px;
+		}
+
 		.jetpack-checkout-thank-you__button,
 		.jetpack-checkout-thank-you__button:visited {
 			border-radius: 4px;
@@ -730,7 +736,8 @@
 		}
 	}
 
-	.jetpack-checkout-thank-you__sub-message-loading {
+	.jetpack-checkout-thank-you__sub-message-loading,
+	.jetpack-checkout-thank-you__email-message-loading {
 		@include placeholder( --color-neutral-30 );
 	}
 }

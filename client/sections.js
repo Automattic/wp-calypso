@@ -109,6 +109,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'marketplace',
+		paths: [ '/marketplace' ],
+		module: 'calypso/my-sites/marketplace',
+		group: 'sites',
+	},
+	{
 		name: 'pages',
 		paths: [ '/pages' ],
 		module: 'calypso/my-sites/pages',

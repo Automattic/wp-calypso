@@ -216,7 +216,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						{ translate( 'Monthly plans are 7-day money back guarantee.' ) }
 					</li>
 					<li className="product-grid__asterisk-item">
-						{ translate( 'All plans include priority support' ) }
+						{ translate( 'All paid products and plans include priority support.' ) }
 					</li>
 				</ul>
 			</ProductGridSection>

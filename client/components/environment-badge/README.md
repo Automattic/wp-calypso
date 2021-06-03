@@ -6,7 +6,7 @@ In the `development` environment, it also displays the current branch name.
 
 ![Badge](https://cldup.com/eS40s3u70a.png)
 
-The component already provides a few helpers which are used for Calypso e.g. _PreferencesHelper_ or _TestHelper_ which are located in the same file.
+The component already provides a few helpers which are used for Calypso e.g. _PreferencesHelper_ which are located in the same file.
 
 ## Usage
 

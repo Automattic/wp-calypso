@@ -57,10 +57,8 @@ export default class ViewPagePage extends AsyncBaseContainer {
 	}
 
 	async imageDisplayed( fileDetails ) {
-		const imageElement = await this.driver.findElement(
-			By.css( `img[alt='${ fileDetails.imageName }']` )
-		);
-		return await driverHelper.isImageVisible( this.driver, imageElement );
+		const imageLocator = By.css( `img[alt='${ fileDetails.imageName }']` );
+		return await driverHelper.isImageVisible( this.driver, imageLocator );
 	}
 
 	async paymentButtonDisplayed( retries = 3 ) {

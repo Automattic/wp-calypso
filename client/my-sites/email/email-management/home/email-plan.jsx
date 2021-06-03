@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
+import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
 import page from 'page';
 import PropTypes from 'prop-types';
 
@@ -110,12 +111,24 @@ class EmailPlan extends React.Component {
 
 	getMailboxes() {
 		const account = this.getAccount();
+
 		return account?.emails ?? [];
 	}
 
 	handleBack = () => {
 		const { selectedSite } = this.props;
+
 		page( emailManagement( selectedSite.slug ) );
+	};
+
+	handleRenew = ( event ) => {
+		event.preventDefault();
+
+		const { purchase, selectedSite } = this.props;
+
+		handleRenewNowClick( purchase, selectedSite.slug, {
+			tracksProps: { source: 'email-plan-view' },
+		} );
 	};
 
 	getAddMailboxProps() {
@@ -164,6 +177,7 @@ class EmailPlan extends React.Component {
 
 		if ( hasGSuiteWithUs( domain ) ) {
 			const googleMailService = getGoogleMailServiceFamily( getGSuiteProductSlug( domain ) );
+
 			return translate( '%(googleMailService)s settings', {
 				args: {
 					googleMailService,
@@ -185,21 +199,22 @@ class EmailPlan extends React.Component {
 		return translate( 'Email forwarding settings' );
 	}
 
-	renderBillingNavItem() {
+	renderViewBillingAndPaymentSettingsNavItem() {
 		const { hasSubscription, purchase, selectedSite, translate } = this.props;
 
 		if ( ! hasSubscription ) {
 			return null;
 		}
 
-		if ( ! selectedSite || ! purchase ) {
+		if ( ! purchase ) {
 			return <VerticalNavItem isPlaceholder />;
 		}
 
 		const managePurchaseUrl = getManagePurchaseUrlFor( selectedSite.slug, purchase.id );
+
 		return (
 			<VerticalNavItem path={ managePurchaseUrl }>
-				{ translate( 'Billing and payment settings' ) }
+				{ translate( 'View billing and payment settings' ) }
 			</VerticalNavItem>
 		);
 	}
@@ -231,12 +246,8 @@ class EmailPlan extends React.Component {
 		};
 	}
 
-	renderManageAllNavItem() {
+	renderManageAllMailboxesNavItem() {
 		const { domain, translate } = this.props;
-
-		if ( ! domain ) {
-			return null;
-		}
 
 		if ( ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain ) ) {
 			return null;
@@ -254,17 +265,47 @@ class EmailPlan extends React.Component {
 		);
 	}
 
-	render() {
-		const {
-			domain,
-			selectedSite,
-			hasSubscription,
-			purchase,
-			isLoadingPurchase,
-			translate,
-		} = this.props;
+	renderAddNewMailboxesOrRenewNavItem() {
+		const { domain, hasSubscription, purchase, translate } = this.props;
 
-		const addMailboxProps = this.getAddMailboxProps();
+		if ( hasTitanMailWithUs( domain ) && ! hasSubscription ) {
+			return (
+				<VerticalNavItem { ...this.getAddMailboxProps() }>
+					{ translate( 'Add new mailboxes' ) }
+				</VerticalNavItem>
+			);
+		}
+
+		if ( hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) ) {
+			if ( ! purchase ) {
+				return <VerticalNavItem isPlaceholder />;
+			}
+
+			if ( isExpired( purchase ) ) {
+				return (
+					<VerticalNavItem onClick={ this.handleRenew } path="#">
+						{ translate( 'Renew to add new mailboxes' ) }
+					</VerticalNavItem>
+				);
+			}
+
+			return (
+				<VerticalNavItem { ...this.getAddMailboxProps() }>
+					{ translate( 'Add new mailboxes' ) }
+				</VerticalNavItem>
+			);
+		}
+
+		return (
+			<VerticalNavItem { ...this.getAddMailboxProps() }>
+				{ translate( 'Add new email forwards' ) }
+			</VerticalNavItem>
+		);
+	}
+
+	render() {
+		const { domain, selectedSite, hasSubscription, purchase, isLoadingPurchase } = this.props;
+
 		const { isLoadingEmailAccounts } = this.state;
 
 		return (
@@ -293,11 +334,11 @@ class EmailPlan extends React.Component {
 
 				<div className="email-plan__actions">
 					<VerticalNav>
-						<VerticalNavItem { ...addMailboxProps }>
-							{ translate( 'Add new mailbox' ) }
-						</VerticalNavItem>
-						{ this.renderManageAllNavItem() }
-						{ this.renderBillingNavItem() }
+						{ this.renderAddNewMailboxesOrRenewNavItem() }
+
+						{ this.renderManageAllMailboxesNavItem() }
+
+						{ this.renderViewBillingAndPaymentSettingsNavItem() }
 					</VerticalNav>
 				</div>
 			</>

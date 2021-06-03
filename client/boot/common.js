@@ -399,14 +399,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	}
 
 	if (
-		config.isEnabled( 'dev/test-helper' ) &&
-		document.querySelector( '.environment.is-tests' )
-	) {
-		asyncRequire( 'calypso/lib/abtest/test-helper', ( testHelper ) => {
-			testHelper( document.querySelector( '.environment.is-tests' ) );
-		} );
-	}
-	if (
 		config.isEnabled( 'dev/preferences-helper' ) &&
 		document.querySelector( '.environment.is-prefs' )
 	) {

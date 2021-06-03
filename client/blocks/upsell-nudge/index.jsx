@@ -29,6 +29,7 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
@@ -52,7 +53,8 @@ export const UpsellNudge = ( {
 	horizontal,
 	href,
 	isJetpackDevDocs,
-	jetpack,
+	isJetpack,
+	isAtomic,
 	isVip,
 	siteIsWPForTeams,
 	list,
@@ -83,8 +85,8 @@ export const UpsellNudge = ( {
 		( feature && planHasFeature ) ||
 		( ! feature && ! isFreePlanProduct( site.plan ) ) ||
 		( feature === FEATURE_NO_ADS && site.options.wordads ) ||
-		( ! jetpack && site.jetpack ) ||
-		( jetpack && ! site.jetpack );
+		( ! isJetpack && site.jetpack ) ||
+		( isJetpack && ! site.jetpack );
 
 	if ( shouldNotDisplay && ! forceDisplay ) {
 		return null;
@@ -128,7 +130,8 @@ export const UpsellNudge = ( {
 			horizontal={ horizontal }
 			href={ href }
 			icon="star"
-			jetpack={ jetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
+			jetpack={ isJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
+			isAtomic={ isAtomic }
 			list={ list }
 			onClick={ onClick }
 			onDismissClick={ onDismissClick }
@@ -159,7 +162,8 @@ export default connect( ( state, ownProps ) => {
 		site: getSite( state, siteId ),
 		planHasFeature: hasFeature( state, siteId, ownProps.feature ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
-		jetpack: isJetpackSite( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
+		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isVip: isVipSite( state, siteId ),
 		siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),

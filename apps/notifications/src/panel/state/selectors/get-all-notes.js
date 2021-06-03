@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { sortBy, values } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getNotes from './get-notes';
@@ -11,8 +6,8 @@ import getNotes from './get-notes';
 let prevAllNotes;
 let sortedNotes = [];
 
-const noteId = ( { id } ) => id;
-const parsedTimestamp = ( { timestamp } ) => Date.parse( timestamp );
+const byTimestamp = ( a, b ) => Date.parse( a.timestamp ) - Date.parse( b.timestamp );
+const byId = ( a, b ) => a.id - b.id;
 
 /**
  * Returns all available notification data
@@ -35,7 +30,16 @@ export const getAllNotes = ( notesState ) => {
 	}
 
 	prevAllNotes = nextAllNotes;
-	sortedNotes = sortBy( values( nextAllNotes ), [ parsedTimestamp, noteId ] ).reverse();
+	sortedNotes = Object.values( nextAllNotes )
+		.sort( ( a, b ) => {
+			const chronologicalOrder = byTimestamp( a, b );
+			if ( chronologicalOrder === 0 ) {
+				return byId( a, b );
+			}
+
+			return chronologicalOrder;
+		} )
+		.reverse();
 	return sortedNotes;
 };
 

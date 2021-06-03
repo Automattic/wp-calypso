@@ -1,25 +1,8 @@
-jest.mock( 'calypso/lib/abtest', () => ( {
-	abtest: () => '',
-} ) );
-
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'calypso/lib/analytics/track-component-view', () => 'TrackComponentView' );
 jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Comp ) => ( props ) => (
-		<Comp
-			{ ...props }
-			translate={ function ( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: ( x ) => x,
-	translate: ( x ) => x,
-} ) );
 
 /**
  * External dependencies

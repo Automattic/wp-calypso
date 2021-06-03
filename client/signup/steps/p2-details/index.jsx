@@ -25,11 +25,7 @@ function getRedirectToAfterLoginUrl( { flowName } ) {
 }
 
 function getLoginLink( { flowName, locale } ) {
-	return login( {
-		redirectTo: getRedirectToAfterLoginUrl( { flowName } ),
-		isNative: true,
-		locale: locale,
-	} );
+	return login( { redirectTo: getRedirectToAfterLoginUrl( { flowName } ), locale } );
 }
 
 function P2Details( {

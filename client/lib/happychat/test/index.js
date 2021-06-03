@@ -79,17 +79,14 @@ describe( 'connection', () => {
 				return expect( openSocket ).resolves.toBe( socket );
 			} );
 
-			test( 'unauthorized event', () => {
+			test( 'unauthorized event', async () => {
 				socket.close = jest.fn();
-				expect.assertions( 3 );
 				socket.emit( 'unauthorized' );
-				return openSocket.catch( () => {
-					expect( dispatch ).toHaveBeenCalledTimes( 1 );
-					expect( dispatch ).toHaveBeenCalledWith(
-						receiveUnauthorized( 'User is not authorized' )
-					);
-					expect( socket.close ).toHaveBeenCalled();
-				} );
+
+				await expect( openSocket ).rejects.toBe( 'user is not authorized' );
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith( receiveUnauthorized( 'User is not authorized' ) );
+				expect( socket.close ).toHaveBeenCalled();
 			} );
 
 			test( 'disconnect event', () => {
@@ -262,18 +259,16 @@ describe( 'connection', () => {
 		} );
 
 		describe( 'connection.request should emit a SocketIO event', () => {
-			test( 'and dispatch callbackTimeout if request ran out of time', () => {
+			test( 'and dispatch callbackTimeout if request ran out of time', async () => {
 				socket.emit( 'init' ); // resolve internal openSocket promise
 
 				const action = requestTranscript( null );
 				socket.emit = jest.fn();
-				return connection.request( action, 100 ).catch( ( error ) => {
-					expect( socket.emit ).toHaveBeenCalled();
-					expect( socket.emit.mock.calls[ 0 ][ 0 ] ).toBe( action.event );
-					expect( socket.emit.mock.calls[ 0 ][ 1 ] ).toBe( action.payload );
-					expect( dispatch ).toHaveBeenCalledWith( receiveTranscriptTimeout() );
-					expect( error.message ).toBe( 'timeout' );
-				} );
+				await expect( () => connection.request( action, 100 ) ).rejects.toThrow( 'timeout' );
+				expect( socket.emit ).toHaveBeenCalled();
+				expect( socket.emit.mock.calls[ 0 ][ 0 ] ).toBe( action.event );
+				expect( socket.emit.mock.calls[ 0 ][ 1 ] ).toBe( action.payload );
+				expect( dispatch ).toHaveBeenCalledWith( receiveTranscriptTimeout() );
 			} );
 
 			test( 'and dispatch callback if request responded successfully', () => {
@@ -292,19 +287,18 @@ describe( 'connection', () => {
 				} );
 			} );
 
-			test( 'and dispatch error if request was not successful', () => {
+			test( 'and dispatch error if request was not successful', async () => {
 				socket.emit( 'init' ); // resolve internal openSocket promise
 
 				const action = requestTranscript( null );
 				socket.on( action.event, ( payload, callback ) => {
 					callback( 'no data', null ); // fake server responded with error
 				} );
-				return connection.request( action, 100 ).catch( ( error ) => {
-					expect( error.message ).toBe( 'no data' );
-					expect( dispatch ).toHaveBeenCalledWith(
-						receiveError( action.event + ' request failed: ' + error.message )
-					);
-				} );
+
+				await expect( () => connection.request( action, 100 ) ).rejects.toThrow( 'no data' );
+				expect( dispatch ).toHaveBeenCalledWith(
+					receiveError( action.event + ' request failed: no data' )
+				);
 			} );
 		} );
 	} );
@@ -322,24 +316,22 @@ describe( 'connection', () => {
 			connection.init( dispatch, config );
 		} );
 
-		test( 'connection.send should dispatch receiveError action', () => {
+		test( 'connection.send should dispatch receiveError action', async () => {
 			socket.emit = jest.fn();
 			const action = sendTyping( 'content' );
-			return connection.send( action ).catch( ( e ) => {
-				expect( dispatch ).toHaveBeenCalledWith(
-					receiveError( 'failed to send ' + action.event + ': ' + e )
-				);
-			} );
+			await expect( () => connection.send( action ) ).rejects.toBe( 'no auth' );
+			expect( dispatch ).toHaveBeenCalledWith(
+				receiveError( 'failed to send ' + action.event + ': no auth' )
+			);
 		} );
 
-		test( 'connection.request should dispatch receiveError action', () => {
+		test( 'connection.request should dispatch receiveError action', async () => {
 			socket.emit = jest.fn();
 			const action = requestTranscript( null );
-			return connection.request( action, 100 ).catch( ( e ) => {
-				expect( dispatch ).toHaveBeenCalledWith(
-					receiveError( 'failed to send ' + action.event + ': ' + e )
-				);
-			} );
+			await expect( () => connection.request( action, 100 ) ).rejects.toBe( 'no auth' );
+			expect( dispatch ).toHaveBeenCalledWith(
+				receiveError( 'failed to send ' + action.event + ': no auth' )
+			);
 		} );
 	} );
 } );

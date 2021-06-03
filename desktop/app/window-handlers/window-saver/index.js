@@ -13,16 +13,16 @@ const Settings = require( '../../lib/settings' );
  */
 const SAVE_SETTINGS_DELAY = 1000;
 
-module.exports = function ( mainWindow ) {
+module.exports = function ( { window } ) {
 	const settingSaver = debounce( function () {
-		Settings.saveSetting( 'window', mainWindow.getBounds() );
+		Settings.saveSetting( 'window', window.getBounds() );
 	}, SAVE_SETTINGS_DELAY );
 
-	mainWindow.on( 'resize', function () {
+	window.on( 'resize', function () {
 		settingSaver();
 	} );
 
-	mainWindow.on( 'move', function () {
+	window.on( 'move', function () {
 		settingSaver();
 	} );
 };

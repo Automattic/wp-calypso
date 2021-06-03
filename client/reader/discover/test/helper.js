@@ -16,7 +16,6 @@ import * as fixtures from './fixtures';
 jest.mock( '@automattic/calypso-config', () => {
 	return () => require( './fixtures' ).discoverSiteId;
 } );
-jest.mock( 'calypso/lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
 
 describe( 'helper', () => {
 	const { discoverPost } = fixtures;
