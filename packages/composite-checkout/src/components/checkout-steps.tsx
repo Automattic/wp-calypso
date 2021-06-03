@@ -226,9 +226,9 @@ export function Checkout( {
 
 	const getDefaultCheckoutSteps = () => <DefaultCheckoutSteps />;
 
+	// the `composite-checkout` class name is used by FullStory to avoid recording WordPress.com checkout session activity
 	const classNames = joinClasses( [
 		'composite-checkout',
-		'fs-exclude', // this class is used by FullStory to exclude recording session activity
 		...( className ? [ className ] : [] ),
 		...( isRTL() ? [ 'rtl' ] : [] ),
 	] );
