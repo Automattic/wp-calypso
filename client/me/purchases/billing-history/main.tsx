@@ -43,8 +43,8 @@ export function BillingHistoryContent( {
 function BillingHistory(): JSX.Element {
 	const translate = useTranslate();
 	const { vatDetails } = useVatDetails();
-	const editVatText = translate( 'Edit VAT details' );
-	const addVatText = translate( 'Add VAT details' );
+	const editVatText = translate( 'Edit VAT details (for EU and UK only)' );
+	const addVatText = translate( 'Add VAT details (for EU and UK only)' );
 	const vatText = vatDetails.id ? editVatText : addVatText;
 
 	return (
