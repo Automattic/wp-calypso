@@ -7,7 +7,7 @@
 	<body style="background: #24282d; color: #24282d">
 		<div id="title-bar">
 			<div id="title-bar-buttons">
-				<div class="nav-button" id="nav-button-back" onclick="navButtonClicked(this.id)">
+				<div class="nav-button" id="nav-button-back">
 					<svg class="nav-button-icon"
 						xmlns="http://www.w3.org/2000/svg"
 						width="10"
@@ -20,7 +20,7 @@
 						<path fill="#8F93A3" fill-rule="nonzero" d="M8 16L0 8l8-8 2 2-6 6 6 6z"></path>
 					</svg>
 				</div>
-				<div class="nav-button" id="nav-button-forward" onclick="navButtonClicked(this.id)">
+				<div class="nav-button" id="nav-button-forward">
 					<svg class="nav-button-icon"
 						xmlns="http://www.w3.org/2000/svg"
 						width="10"
@@ -31,7 +31,7 @@
 						<path fill="#8F93A3" fill-rule="nonzero" d="M2 16l8-8-8-8-2 2 6 6-6 6z"></path>
 					</svg>
 				</div>
-				<div class="nav-button" id="nav-button-home" onclick="navButtonClicked(this.id)">
+				<div class="nav-button" id="nav-button-home">
 					<svg class="nav-button-icon nav-button-icon-wordpress"
 						xmlns="http://www.w3.org/2000/svg"
 						xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -76,15 +76,6 @@
 					window.electron.send( 'home-button-clicked' );
 				});
 			};
-
-			function navButtonClicked( id ) {
-				const button = document.getElementById( id );
-				backgroundColor = button.style.backgroundColor;
-				button.style.backgroundColor = "#ffffff";
-				setTimeout(function() {
-					button.style.backgroundColor = backgroundColor;
-				}, 30);
-			}
 
 			var nav = new Navigate();
 		</script>
