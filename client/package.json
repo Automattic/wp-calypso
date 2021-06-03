@@ -121,7 +121,7 @@
 		"deep-freeze": "^0.0.1",
 		"diff": "^4.0.2",
 		"dom-helpers": "^5.1.3",
-		"dompurify": "^2.2.3",
+		"dompurify": "^2.2.9",
 		"draft-js": "^0.11.7",
 		"duplicate-package-checker-webpack-plugin": "^3.0.0",
 		"electron-fetch": "^1.2.1",
