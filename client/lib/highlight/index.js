@@ -7,10 +7,6 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:highlight' );
 
 /**
- * @param innerHtml
- * @param wrapperNode
- * @param innerHtml
- * @param wrapperNode
  * @private
  */
 function wrap( innerHtml, wrapperNode ) {
@@ -33,15 +29,6 @@ function replaceChildNodesWithGroup( node, newChildren, oldChild ) {
 }
 
 /**
- * @param node
- * @param term
- * @param wrapperNode
- * @param node
- * @param term
- * @param wrapperNode
- * @param node
- * @param term
- * @param wrapperNode
  * @private
  */
 function highlightNode( node, term, wrapperNode ) {
@@ -80,15 +67,6 @@ function highlightNode( node, term, wrapperNode ) {
 }
 
 /**
- * @param node
- * @param term
- * @param wrapperNode
- * @param node
- * @param term
- * @param wrapperNode
- * @param node
- * @param term
- * @param wrapperNode
  * @private
  */
 function walk( node, term, wrapperNode ) {
