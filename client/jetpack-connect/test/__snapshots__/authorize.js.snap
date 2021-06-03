@@ -96,6 +96,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
             icon="arrow-left"
             size={18}
           />
+           
           Return to %(sitename)s
         </LoggedOutFormLinkItem>
         <LoggedOutFormLinkItem
