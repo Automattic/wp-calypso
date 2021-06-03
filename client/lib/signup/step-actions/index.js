@@ -574,7 +574,6 @@ export function createAccount(
 				{},
 				userData,
 				{
-					ab_test_variations: {},
 					validate: false,
 					signup_flow_name: flowName,
 					nux_q_site_type: surveySiteType,

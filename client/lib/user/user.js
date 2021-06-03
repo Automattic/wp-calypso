@@ -121,7 +121,9 @@ User.prototype.fetch = function () {
 	debug( 'Getting user from api' );
 	this.fetching = wpcom
 		.me()
-		.get()
+		.get( {
+			meta: 'flags',
+		} )
 		.then( ( data ) => {
 			debug( 'User successfully retrieved from api:', data );
 			const userData = filterUserObject( data );

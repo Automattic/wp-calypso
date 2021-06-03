@@ -88,7 +88,6 @@ export async function createAccount( { signupFlowName } ) {
 				extra: { username_hint: blogName },
 				signup_flow_name: signupFlowName,
 				validate: false,
-				ab_test_variations: {},
 				new_site_params: newSiteParams,
 				should_create_site: ! siteId,
 			},

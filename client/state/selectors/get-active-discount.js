@@ -37,10 +37,5 @@ export const isDiscountActive = ( discount, state ) => {
  * @returns {object|null}  Promo description
  */
 export default ( state ) => {
-	const discount = activeDiscounts.find( ( p ) => isDiscountActive( p, state ) );
-	if ( ! discount ) {
-		return null;
-	}
-
-	return discount;
+	return activeDiscounts.find( ( p ) => isDiscountActive( p, state ) ) ?? null;
 };

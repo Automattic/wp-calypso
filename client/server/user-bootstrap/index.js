@@ -18,6 +18,10 @@ const SUPPORT_SESSION_COOKIE_NAME = 'support_session_id';
  * WordPress.com REST API /me endpoint.
  */
 const API_PATH = 'https://public-api.wordpress.com/rest/v1/me';
+const apiQuery = new URLSearchParams( {
+	meta: 'flags',
+} );
+const url = `${ API_PATH }?${ apiQuery.toString() }`;
 
 const getApiKey = () => config( 'wpcom_calypso_rest_api_key' );
 const getSupportSessionApiKey = () => config( 'wpcom_calypso_support_session_rest_api_key' );
@@ -49,7 +53,7 @@ export default async function getBootstrappedUser( request ) {
 	const decodedAuthCookieValue = decodeURIComponent( authCookieValue );
 
 	// create HTTP Request object
-	const req = superagent.get( API_PATH );
+	const req = superagent.get( url );
 	req.set( 'User-Agent', 'WordPress.com Calypso' );
 	req.set( 'X-Forwarded-GeoIP-Country-Code', geoCountry );
 
@@ -90,7 +94,7 @@ export default async function getBootstrappedUser( request ) {
 	// start the request
 	try {
 		const res = await req;
-		debug( '%o -> %o status code', API_PATH, res.status );
+		debug( '%o -> %o status code', url, res.status );
 		return {
 			...filterUserObject( res.body ),
 			bootstrapped: true,
@@ -101,7 +105,7 @@ export default async function getBootstrappedUser( request ) {
 		}
 
 		const { body, status } = err.response;
-		debug( '%o -> %o status code', API_PATH, status );
+		debug( '%o -> %o status code', url, status );
 		const error = new Error();
 		error.statusCode = status;
 		for ( const key in body ) {
