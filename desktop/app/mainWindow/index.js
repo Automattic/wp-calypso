@@ -20,6 +20,8 @@ const { getPath } = require( '../lib/assets' );
  * Module variables
  */
 const USE_LOCALHOST = process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined;
+const TITLE_BAR_HEIGHT = 38;
+
 let mainWindow = null;
 
 function showAppWindow() {
@@ -59,8 +61,15 @@ function showAppWindow() {
 	mainWindow.webContents.loadURL( `file://${ getPath( 'index.html' ) }` );
 
 	mainWindow.setBrowserView( mainView );
-	mainView.setBounds( { ...bounds, ...{ x: 0, y: 38 } } );
-	mainView.setAutoResize( { horizontal: true, vertical: true } );
+	mainView.setBounds( { ...bounds, ...{ x: 0, y: TITLE_BAR_HEIGHT } } );
+	mainWindow.on( 'will-resize', ( _, newBounds ) => {
+		mainView.setBounds( {
+			x: 0,
+			y: TITLE_BAR_HEIGHT,
+			width: newBounds.width,
+			height: newBounds.height - TITLE_BAR_HEIGHT,
+		} );
+	} );
 
 	SessionManager.init( mainWindow );
 
