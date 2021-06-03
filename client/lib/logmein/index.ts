@@ -10,7 +10,7 @@ import { isEnabled } from '@automattic/calypso-config';
 // Used as placeholder / default domain to detect when we're looking at a relative url
 const INVALID_URL = `http://__domain__.invalid`;
 
-export function logmeinUrl( url: string, allow: string[], isWPComLoggedIn: boolean ): string {
+export function logmeinUrl( url: string, allow: string[], isWPComLoggedIn = true ): string {
 	let newurl: URL;
 
 	if ( ! isEnabled( 'logmein' ) ) {

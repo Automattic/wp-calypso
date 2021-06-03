@@ -17,28 +17,28 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 describe( 'logmeinUrl', () => {
-	const allow = [ 'https://test.blog' ];
-
 	it( 'appends logmein', () => {
-		expect( logmeinUrl( 'https://test.blog', allow ) ).toBe( 'https://test.blog/?logmein=direct' );
+		expect( logmeinUrl( 'https://test.blog', [ 'https://test.blog' ] ) ).toBe(
+			'https://test.blog/?logmein=direct'
+		);
 	} );
 
 	it( 'works with other params', () => {
-		expect( logmeinUrl( 'https://test.blog/?test=1', allow ) ).toBe(
+		expect( logmeinUrl( 'https://test.blog/?test=1', [ 'https://test.blog' ] ) ).toBe(
 			'https://test.blog/?test=1&logmein=direct'
 		);
 	} );
 
 	it( 'works with paths', () => {
-		expect( logmeinUrl( 'https://test.blog/path/abc/?test=1', allow ) ).toBe(
+		expect( logmeinUrl( 'https://test.blog/path/abc/?test=1', [ 'https://test.blog' ] ) ).toBe(
 			'https://test.blog/path/abc/?test=1&logmein=direct'
 		);
 	} );
 
 	it( 'overrides existing logmein', () => {
-		expect( logmeinUrl( 'https://test.blog/path/abc/?logmein=0&test=1', allow ) ).toBe(
-			'https://test.blog/path/abc/?logmein=direct&test=1'
-		);
+		expect(
+			logmeinUrl( 'https://test.blog/path/abc/?logmein=0&test=1', [ 'https://test.blog' ] )
+		).toBe( 'https://test.blog/path/abc/?logmein=direct&test=1' );
 	} );
 
 	it( 'ignores domains not in the allow list', () => {
@@ -52,5 +52,11 @@ describe( 'logmeinUrl', () => {
 
 	it( 'ignores all when allow list is empty', () => {
 		expect( logmeinUrl( 'https://test.blog', [] ) ).toBe( 'https://test.blog' );
+	} );
+
+	it( 'appends logmein=1 when logged out', () => {
+		expect( logmeinUrl( 'https://test.blog', [ 'https://test.blog' ], false ) ).toBe(
+			'https://test.blog/?logmein=1'
+		);
 	} );
 } );
