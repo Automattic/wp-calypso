@@ -249,9 +249,7 @@ export class SiteNotice extends React.Component {
 	}
 
 	promotionEndsToday( { endsAt } ) {
-		const now = new Date();
-		const format = 'YYYYMMDD';
-		return moment( now ).format( format ) === moment( endsAt ).format( format );
+		return moment().isSame( endsAt, 'day' );
 	}
 
 	render() {
