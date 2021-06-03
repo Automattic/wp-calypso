@@ -22,9 +22,11 @@ describe( '#isMappedDomainSite()', () => {
 		},
 		domains: {
 			items: {
-				[ siteId ]: {
-					isWPCOMDomain: true,
-				},
+				[ siteId ]: [
+					{
+						isWPCOMDomain: false,
+					},
+				],
 			},
 		},
 	};

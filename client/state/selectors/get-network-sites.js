@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { filter } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { createSelector } from '@automattic/state-utils';
@@ -26,10 +20,9 @@ export default createSelector(
 			return null;
 		}
 
-		return filter(
-			getSitesItems( state ),
-			( site ) => mainSiteId === site.ID || isMainSiteOf( state, mainSiteId, site.ID )
-		).map( ( site ) => getSite( state, site.ID ) );
+		return Object.values( getSitesItems( state ) )
+			.filter( ( site ) => mainSiteId === site.ID || isMainSiteOf( state, mainSiteId, site.ID ) )
+			.map( ( site ) => getSite( state, site.ID ) );
 	},
 	( state ) => [ getSitesItems( state ), state.currentUser.capabilities ]
 );
