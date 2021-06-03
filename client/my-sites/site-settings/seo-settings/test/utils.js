@@ -18,6 +18,13 @@ import {
 import { hasSiteSeoFeature } from '../utils';
 
 describe( 'hasSiteSeoFeature', () => {
+	const state = {
+		ui: {
+			selectedSiteId: 123,
+		},
+	};
+	const siteId = state.ui.selectedSiteId;
+
 	it( 'returns undefined if the site is not defined', () => {
 		expect( hasSiteSeoFeature() ).toBeUndefined();
 	} );
@@ -27,20 +34,20 @@ describe( 'hasSiteSeoFeature', () => {
 	} );
 
 	it( 'returns false if the site does not have the SEO feature', () => {
-		expect( hasSiteSeoFeature( { plan: wpcomFreePlan } ) ).toEqual( false );
-		expect( hasSiteSeoFeature( { plan: wpcomPremiumPlan } ) ).toEqual( false );
+		expect( hasSiteSeoFeature( { plan: wpcomFreePlan, state, siteId } ) ).toEqual( false );
+		expect( hasSiteSeoFeature( { plan: wpcomPremiumPlan, state, siteId } ) ).toEqual( false );
 	} );
 
 	it( 'returns true if the site has the SEO feature', () => {
-		expect( hasSiteSeoFeature( { plan: wpcomBusinessPlan } ) ).toEqual( true );
-		expect( hasSiteSeoFeature( { plan: wpcomEcommercePlan } ) ).toEqual( true );
-		expect( hasSiteSeoFeature( { plan: wpcomEnterprisePlan } ) ).toEqual( true );
-		expect( hasSiteSeoFeature( { plan: jpFreePlan } ) ).toEqual( true );
-		expect( hasSiteSeoFeature( { plan: jpPersonalPlan } ) ).toEqual( true );
-		expect( hasSiteSeoFeature( { plan: jpPremiumPlan } ) ).toEqual( true );
-		expect( hasSiteSeoFeature( { plan: jpBusinessPlan } ) ).toEqual( true );
-		expect( hasSiteSeoFeature( { plan: jpSecurityDailyPlan } ) ).toEqual( true );
-		expect( hasSiteSeoFeature( { plan: jpSecurityRealtimePlan } ) ).toEqual( true );
-		expect( hasSiteSeoFeature( { plan: jpCompletePlan } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: wpcomBusinessPlan, state, siteId } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: wpcomEcommercePlan, state, siteId } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: wpcomEnterprisePlan, state, siteId } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: jpFreePlan, state, siteId } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: jpPersonalPlan, state, siteId } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: jpPremiumPlan, state, siteId } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: jpBusinessPlan, state, siteId } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: jpSecurityDailyPlan, state, siteId } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: jpSecurityRealtimePlan, state, siteId } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: jpCompletePlan, state, siteId } ) ).toEqual( true );
 	} );
 } );

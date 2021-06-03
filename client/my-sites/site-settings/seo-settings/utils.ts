@@ -18,7 +18,7 @@ export function hasSiteSeoFeature(
 	state: string,
 	siteId: string
 ): boolean | undefined {
-	if ( ! isEligibleForSEOFeatures( site, state, siteId ) ) {
+	if ( state && siteId && ! isEligibleForSEOFeatures( site, state, siteId ) ) {
 		return false;
 	}
 
