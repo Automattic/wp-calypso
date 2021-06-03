@@ -126,6 +126,7 @@ function getInvalidMultisitePurchaseErrorMessage( {
 	);
 }
 
+// Use this to transform message strings into React components
 function getMessagePrettifier(
 	translate: ReturnType< typeof useTranslate >,
 	selectedSiteSlug: string | null | undefined
@@ -147,6 +148,19 @@ function getMessagePrettifier(
 	};
 }
 
+// Use this to group messages so that they will replace existing messages with the same id
+function getNoticeIdForMessage( message: ResponseCartMessage ): string {
+	switch ( message.code ) {
+		case 'coupon-not-found':
+		case 'coupon-removed':
+		case 'coupon-removed-invalid':
+		case 'coupon-applied':
+			return 'coupon-message';
+		default:
+			return message.code;
+	}
+}
+
 function showMessages(
 	messages: ResponseCartMessage[],
 	reduxDispatch: ReturnType< typeof useDispatch >,
@@ -155,14 +169,14 @@ function showMessages(
 	const messageActionCreator = messageType === 'error' ? errorNotice : successNotice;
 	// Remove previous messages that match the codes we are about to display
 	messages.map( ( message ) => {
-		reduxDispatch( removeNotice( message.code ) );
+		reduxDispatch( removeNotice( getNoticeIdForMessage( message ) ) );
 	} );
 
 	messages.map( ( message ) => {
 		reduxDispatch(
 			messageActionCreator( <CartMessage message={ message } />, {
 				isPersistent: true,
-				id: message.code,
+				id: getNoticeIdForMessage( message ),
 			} )
 		);
 	} );
