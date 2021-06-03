@@ -90,6 +90,7 @@ export const GoogleAnalyticsForm = ( props ) => {
 		placeholderText,
 		recordSupportLinkClick,
 		setDisplayForm,
+		isSEOEligible,
 	};
 	if ( props.siteIsJetpack && isSEOEligible ) {
 		return <GoogleAnalyticsJetpackForm { ...newProps } />;

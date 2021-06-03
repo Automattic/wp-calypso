@@ -7,6 +7,7 @@ import {
 	findFirstSimilarPlanKey,
 	FEATURE_GOOGLE_ANALYTICS,
 	TYPE_PREMIUM,
+	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import { ToggleControl } from '@wordpress/components';
 
@@ -47,6 +48,7 @@ const GoogleAnalyticsSimpleForm = ( {
 	showUpgradeNudge,
 	site,
 	translate,
+	isSEOEligible,
 } ) => {
 	const analyticsSupportUrl = 'https://wordpress.com/support/google-analytics/';
 	const nudgeTitle = translate(
@@ -73,9 +75,11 @@ const GoogleAnalyticsSimpleForm = ( {
 	};
 
 	const renderForm = () => {
-		const plan = findFirstSimilarPlanKey( site.plan.product_slug, {
-			type: TYPE_PREMIUM,
-		} );
+		const plan = ! isSEOEligible
+			? PLAN_PREMIUM
+			: findFirstSimilarPlanKey( site.plan.product_slug, {
+					type: TYPE_PREMIUM,
+			  } );
 
 		const nudge = (
 			<UpsellNudge
