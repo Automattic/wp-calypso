@@ -84,7 +84,7 @@ object BuildDockerImage : BuildType({
 					--label com.a8c.image-builder=teamcity
 					--label com.a8c.target=calypso-live
 					--label com.a8c.build-id=%teamcity.build.id%
-					--build-arg workers=16
+					--build-arg workers=32
 					--build-arg node_memory=32768
 					--build-arg use_cache=true
 					--build-arg base_image=%base_image%
