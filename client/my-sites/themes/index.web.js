@@ -2,7 +2,11 @@
  * Internal dependencies
  */
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
-import { makeLayout, redirectLoggedOut } from 'calypso/controller';
+import {
+	makeLayout,
+	redirectLoggedOut,
+	redirectWithoutLocaleParamIfLoggedIn,
+} from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { loggedOut } from './controller';
 import { loggedIn, upload, selectSiteIfLoggedIn } from './controller-logged-in';
@@ -41,6 +45,7 @@ export default function ( router ) {
 
 	router(
 		routesWithSites,
+		redirectWithoutLocaleParamIfLoggedIn,
 		redirectLoggedOut,
 		fetchAndValidateVerticalsAndFilters,
 		siteSelection,
@@ -51,6 +56,7 @@ export default function ( router ) {
 
 	router(
 		routesWithoutSites,
+		redirectWithoutLocaleParamIfLoggedIn,
 		selectSiteIfLoggedIn,
 		fetchAndValidateVerticalsAndFilters,
 		loggedOut,

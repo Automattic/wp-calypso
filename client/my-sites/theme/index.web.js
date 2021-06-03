@@ -1,7 +1,11 @@
 /**
  * Internal dependencies
  */
-import { makeLayout, redirectLoggedOut } from 'calypso/controller';
+import {
+	makeLayout,
+	redirectLoggedOut,
+	redirectWithoutLocaleParamIfLoggedIn,
+} from 'calypso/controller';
 import { details, fetchThemeDetailsData } from './controller';
 import { siteSelection } from 'calypso/my-sites/controller';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
@@ -20,6 +24,7 @@ export default function ( router ) {
 
 	router(
 		`/${ langParam }/theme/:slug/:section(setup|support)?/:site_id?`,
+		redirectWithoutLocaleParamIfLoggedIn,
 		redirectToLoginIfSiteRequested,
 		siteSelection,
 		fetchThemeDetailsData,

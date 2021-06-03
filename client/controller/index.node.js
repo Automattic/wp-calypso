@@ -55,6 +55,7 @@ export const ssrSetupLocale = ssrSetupLocaleMiddleware();
  * These functions are not used by Node. It is here to provide an APi compatible with `./index.web.js`
  */
 export const redirectLoggedOut = () => {};
+export const redirectWithoutLocaleParamIfLoggedIn = () => {};
 export const render = () => {};
 export const ProviderWrappedLayout = () => null;
 export const notFound = () => null;
