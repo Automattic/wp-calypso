@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import type { TranslateResult } from 'i18n-calypso';
@@ -15,10 +15,16 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 
-export type CalypsoCartMessage = {
-	code: string;
-	message: string | TranslateResult;
-};
+function WrappedCartMessage( { message }: { message: ResponseCartMessage } ): JSX.Element {
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const translate = useTranslate();
+
+	const getPrettyMessage = useMemo( () => getMessagePrettifier( translate, selectedSiteSlug ), [
+		translate,
+		selectedSiteSlug,
+	] );
+	return <p key={ `${ message.code }-${ message.message }` }>{ getPrettyMessage( message ) }</p>;
+}
 
 export default function CartMessages( {
 	cart,
@@ -28,38 +34,17 @@ export default function CartMessages( {
 	isLoadingCart: boolean;
 } ): null {
 	const reduxDispatch = useDispatch();
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const translate = useTranslate();
 
 	const showErrorMessages = useCallback(
 		( messages: ResponseCartMessage[] ) => {
-			reduxDispatch(
-				errorNotice(
-					messages.map(
-						( message ): React.ReactNode => (
-							<p key={ `${ message.code }-${ message.message }` }>
-								{ getPrettyErrorMessage( message, { translate, selectedSiteSlug } ) }
-							</p>
-						)
-					),
-					{ isPersistent: true }
-				)
-			);
+			showMessages( messages, reduxDispatch, 'error' );
 		},
-		[ selectedSiteSlug, reduxDispatch, translate ]
+		[ reduxDispatch ]
 	);
 
 	const showSuccessMessages = useCallback(
 		( messages: ResponseCartMessage[] ) => {
-			reduxDispatch(
-				successNotice(
-					messages.map(
-						( message: CalypsoCartMessage ): React.ReactNode => (
-							<p key={ `${ message.code }-${ message.message }` }>{ message.message }</p>
-						)
-					)
-				)
-			);
+			showMessages( messages, reduxDispatch, 'success' );
 		},
 		[ reduxDispatch ]
 	);
@@ -141,27 +126,37 @@ function getInvalidMultisitePurchaseErrorMessage( {
 	);
 }
 
-function getPrettyErrorMessage(
-	error: ResponseCartMessage,
-	{
-		translate,
-		selectedSiteSlug,
-	}: {
-		translate: ReturnType< typeof useTranslate >;
-		selectedSiteSlug: string | null | undefined;
-	}
-): TranslateResult | string {
-	switch ( error.code ) {
-		case 'chargeback':
-			return getChargebackErrorMessage( { translate, selectedSiteSlug } );
+function getMessagePrettifier(
+	translate: ReturnType< typeof useTranslate >,
+	selectedSiteSlug: string | null | undefined
+) {
+	return function getPrettyMessage( message: ResponseCartMessage ): TranslateResult | string {
+		switch ( message.code ) {
+			case 'chargeback':
+				return getChargebackErrorMessage( { translate, selectedSiteSlug } );
 
-		case 'blocked':
-			return getBlockedPurchaseErrorMessage( { translate, selectedSiteSlug } );
+			case 'blocked':
+				return getBlockedPurchaseErrorMessage( { translate, selectedSiteSlug } );
 
-		case 'invalid-product-multisite':
-			return getInvalidMultisitePurchaseErrorMessage( { translate, message: error.message } );
+			case 'invalid-product-multisite':
+				return getInvalidMultisitePurchaseErrorMessage( { translate, message: message.message } );
 
-		default:
-			return error.message;
-	}
+			default:
+				return message.message;
+		}
+	};
+}
+
+function showMessages(
+	messages: ResponseCartMessage[],
+	reduxDispatch: ReturnType< typeof useDispatch >,
+	messageType: 'error' | 'success'
+): void {
+	const messageActionCreator = messageType === 'error' ? errorNotice : successNotice;
+	reduxDispatch(
+		messageActionCreator(
+			messages.map( ( message ): React.ReactNode => <WrappedCartMessage message={ message } /> ),
+			{ isPersistent: true }
+		)
+	);
 }
