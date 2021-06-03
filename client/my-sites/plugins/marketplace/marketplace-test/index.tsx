@@ -22,10 +22,10 @@ export const Container = styled.div`
 export default function MarketplaceTest() {
 	const selectedSite = useSelector( getSelectedSite );
 	const marketplacePages = [
-		{ name: 'Plugin Details Page', path: '/plugins/marketplace/product/details/wordpress-seo' },
-		{ name: 'Loading Page', path: '/plugins/marketplace/product/setup' },
-		{ name: 'Domains Page', path: '/plugins/marketplace/domain' },
-		{ name: 'Thank You Page', path: '/plugins/marketplace/thank-you' },
+		{ name: 'Plugin Details Page', path: '/marketplace/product/details/wordpress-seo' },
+		{ name: 'Loading Page', path: '/marketplace/product/setup' },
+		{ name: 'Domains Page', path: '/marketplace/domain' },
+		{ name: 'Thank You Page', path: '/marketplace/thank-you' },
 	];
 
 	return (

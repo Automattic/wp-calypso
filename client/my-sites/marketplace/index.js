@@ -45,8 +45,14 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
-		page( '/marketplace/thank-you/:site?', renderMarketplaceThankYou, makeLayout, clientRender );
+		page(
+			'/marketplace/thank-you/:site?',
+			siteSelection,
+			renderMarketplaceThankYou,
+			makeLayout,
+			clientRender
+		);
 	}
 
-	page( '/marketplace/*', siteSelection, redirectToHome );
+	page( '/marketplace/*', redirectToHome );
 }

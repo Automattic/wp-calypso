@@ -90,18 +90,18 @@ function MarketplacePluginDetails( {
 					}
 					onNavigateToDomainsSelection={ () =>
 						page(
-							`/plugins/marketplace/domain${
+							`/marketplace/domain${
 								selectedSite?.slug ? `/${ selectedSite?.slug }?flags=marketplace-yoast` : ''
-							}`
+							}?flags=marketplace-yoast`
 						)
 					}
 					onInstallPluginManually={ async ( { primaryDomain } ) => {
 						await dispatch( setPluginSlugToBeInstalled( marketplacePluginSlug ) );
 						await dispatch( setPrimaryDomainCandidate( primaryDomain ) );
 						page(
-							`/plugins/marketplace/setup${
-								selectedSite?.slug ? `/${ selectedSite?.slug }?flags=marketplace-yoast` : ''
-							}`
+							`/marketplace/product/setup${
+								selectedSite?.slug ? `/${ selectedSite?.slug }` : ''
+							}?flags=marketplace-yoast`
 						);
 					} }
 				/>

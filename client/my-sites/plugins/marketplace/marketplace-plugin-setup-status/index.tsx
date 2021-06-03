@@ -50,7 +50,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 		} else {
 			//Invalid State redirect to Yoast marketplace page for now, and maybe a marketplace home view in the future
 			page(
-				`/plugins/marketplace/product/details/wordpress-seo${
+				`/marketplace/product/details/wordpress-seo${
 					selectedSite?.slug ? `/${ selectedSite.slug }` : ''
 				}`
 			);
@@ -77,7 +77,9 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 			setSimulatedProgressPercentage( 100 );
 			setTimeout( () => {
 				page(
-					`/plugins/marketplace/thank-you${ selectedSite?.slug ? `/${ selectedSite.slug }` : '' }`
+					`/marketplace/thank-you${
+						selectedSite?.slug ? `/${ selectedSite.slug }` : ''
+					}?flags=marketplace-yoast`
 				);
 			}, 4000 );
 		}
