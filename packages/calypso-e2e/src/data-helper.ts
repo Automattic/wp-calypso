@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import phrase from 'asana-phrase';
 import config from 'config';
 
 /**
@@ -48,4 +49,28 @@ export function getAccountCredential( username: string ): string {
  */
 export function getJetpackHost(): string {
 	return process.env.JETPACKHOST || 'WPCOM';
+}
+
+/**
+ * Given an array of strings, returns a single string with each word in TitleCase.
+ *
+ * @param {string[]} words Array of strings to be converted to TitleCase.
+ * @returns {string} Array of strings converted to TitleCase.
+ */
+export function toTitleCase( words: string[] ): string {
+	const result = words.map( function ( word ) {
+		return word.charAt( 0 ).toUpperCase() + word.slice( 1 ).toLowerCase();
+	} );
+
+	return result.join( ' ' );
+}
+
+/**
+ * Generates a random phrase in proper case (Sample Sentence Text).
+ *
+ * @returns {string} Generated text.
+ */
+export function randomPhrase(): string {
+	const generated: Array< string > = phrase.default32BitFactory().randomPhrase();
+	return toTitleCase( generated );
 }

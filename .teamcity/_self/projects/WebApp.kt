@@ -780,6 +780,7 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				export VIEWPORT_SIZE="mobile"
 				export LOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export DEBUG=pw:api
 
 				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
 			""".trimIndent()
