@@ -3,6 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
+import { until } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -11,6 +12,9 @@ import LoginFlow from '../../lib/flows/login-flow.js';
 
 import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 import WPAdminSidebar from '../../lib/pages/wp-admin/wp-admin-sidebar';
+import SidebarComponent from '../../lib/components/sidebar-component.js';
+import SiteEditorPage from '../../lib/pages/site-editor-page.js';
+import SiteEditorComponent from '../../lib/components/site-editor-component.js';
 
 import * as driverManager from '../../lib/driver-manager.js';
 import * as dataHelper from '../../lib/data-helper.js';
@@ -65,11 +69,11 @@ async function testRequiredAndCustomProperties() {
 	const requiredProperties = [ 'blog_id', 'site_type', 'user_locale' ];
 	const customProperties = [ 'editor_type', 'post_type' ];
 	const allProperties = [ ...requiredProperties, customProperties ];
-	const allEventIncludesProperties = allProperties.every(
-		( property ) =>
-			eventsStack && eventsStack.every( ( event ) => typeof event[ property ] !== 'undefined' )
-	);
-	assert.strictEqual( allEventIncludesProperties, true );
+	allProperties.forEach( ( property ) => {
+		eventsStack.forEach( ( [ , eventData ] ) => {
+			assert.notStrictEqual( typeof eventData[ property ], undefined );
+		} );
+	} );
 }
 
 function testEditorAndPostTypeProps( editorType, postType ) {
@@ -80,8 +84,9 @@ function testEditorAndPostTypeProps( editorType, postType ) {
 
 		const eventsStack = await this.driver.executeScript( `return window._e2eEventsStack;` );
 
-		assert.strictEqual( eventsStack[ 0 ].editor_type, editorType );
-		assert.strictEqual( eventsStack[ 0 ].post_type, postType );
+		const lastEventData = eventsStack[ 0 ][ 1 ];
+		assert.strictEqual( lastEventData.editor_type, editorType );
+		assert.strictEqual( lastEventData.post_type, postType );
 	};
 }
 
@@ -144,20 +149,21 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 		} );
 
 		afterEach( clearEventStack );
+		after( async function () {
+			await this.driver.navigate().back();
+			await this.driver.wait( until.alertIsPresent() );
+			const alert = await this.driver.switchTo().alert();
+			await alert.accept();
+		} );
 	} );
 
 	describe( 'Tracking Page Editor: @parallel', function () {
-		it( 'Can log in to WPAdmin and create new Page', async function () {
-			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
-
-			if ( host !== 'WPCOM' ) {
-				this.loginFlow = new LoginFlow( this.driver );
-			}
-
-			await this.loginFlow.loginAndSelectWPAdmin();
-
+		it( 'Can open Page Editor', async function () {
 			const wpadminSidebarComponent = await WPAdminSidebar.Expect( this.driver );
 			await wpadminSidebarComponent.selectNewPage();
+
+			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
+			await gEditorComponent.initEditor( { dismissPageTemplateLocator: true } );
 		} );
 
 		it(
@@ -176,20 +182,28 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 		);
 
 		afterEach( clearEventStack );
+		after( async function () {
+			await this.driver.navigate().back();
+			await this.driver.wait( until.alertIsPresent() );
+			const alert = await this.driver.switchTo().alert();
+			await alert.accept();
+			// We logout so we can login with the site editor user
+			await driverManager.ensureNotLoggedIn( this.driver );
+		} );
 	} );
 
 	describe( 'Tracking Site Editor: @parallel', function () {
-		it( 'Can log in to WPAdmin and create new Page', async function () {
+		it( 'Site Editor opens', async function () {
 			this.loginFlow = new LoginFlow( this.driver, siteEditorUser );
+			await this.loginFlow.loginAndSelectMySite();
 
-			if ( host !== 'WPCOM' ) {
-				this.loginFlow = new LoginFlow( this.driver );
-			}
+			const sidebarComponent = await SidebarComponent.Expect( this.driver );
+			await sidebarComponent.selectSiteEditor();
+			await SiteEditorPage.Expect( this.driver );
 
-			await this.loginFlow.loginAndSelectWPAdmin();
-
-			const wpadminSidebarComponent = await WPAdminSidebar.Expect( this.driver );
-			await wpadminSidebarComponent.selectNewPage();
+			const editor = await SiteEditorComponent.Expect( this.driver );
+			await editor.waitForTemplateToLoad();
+			await editor.waitForTemplatePartsToLoad();
 		} );
 
 		it(
@@ -208,5 +222,8 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 		);
 
 		afterEach( clearEventStack );
+		after( async function () {
+			await this.driver.switchTo().defaultContent();
+		} );
 	} );
 } );
