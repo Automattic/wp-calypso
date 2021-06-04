@@ -187,7 +187,9 @@ export function hasSiteFeature( site, feature ) {
  * @returns {boolean} True if does
  */
 export function isEligibleForSEOFeatures( site, state, siteId ) {
-	if ( site && site.plan && state ) {
-		return ! ( isFreePlan( site.plan.product_slug ) && isSiteWPCOM( state, siteId ) );
+	if ( ! ( site && site.plan && state ) ) {
+		return false;
 	}
+
+	return ! ( isFreePlan( site.plan.product_slug ) && isSiteWPCOM( state, siteId ) );
 }
