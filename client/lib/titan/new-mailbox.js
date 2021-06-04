@@ -14,13 +14,13 @@ import { validatePasswordField } from 'calypso/lib/gsuite/new-users';
 import wp from 'calypso/lib/wp';
 
 /**
- * A Titan mailbox error value.
+ * A Titan mailbox error, which is null or a translation result.
  *
  * @typedef {null|import('i18n-calypso').TranslateResult} TitanMailboxValueError
  */
 
 /**
- * A Titan mailbox with a boolean value
+ * A Titan mailbox value object with a boolean value.
  *
  * @typedef {Object} TitanMailboxBooleanValue
  * @property {boolean} value
@@ -28,7 +28,7 @@ import wp from 'calypso/lib/wp';
  */
 
 /**
- * A Titan mailbox with a string value
+ * A Titan mailbox value object with a string value.
  *
  * @typedef {Object} TitanMailboxStringValue
  * @property {string} value
@@ -36,7 +36,7 @@ import wp from 'calypso/lib/wp';
  */
 
 /**
- * A Titan mailbox with a string value
+ * A Titan mailbox value object, which may contain a string or boolean value.
  *
  * @typedef {TitanMailboxBooleanValue|TitanMailboxStringValue} TitanMailboxValue
  */
