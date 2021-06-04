@@ -4,7 +4,6 @@
 import { isDesktop } from '@automattic/viewport';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { minBy } from 'lodash';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
 
@@ -97,16 +96,15 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 			includesJetpackBackup( sitePurchase.productSlug )
 		);
 
-		const earliestPurchaseWithJetpackBackup = minBy( purchasesWithJetpackBackup, ( purchase ) =>
-			moment( purchase.subscribedDate )
-		);
+		const earliestJetpackBackupSubscribeDate = purchasesWithJetpackBackup
+			.map( ( purchase ) => moment( purchase.subscribedDate ) )
+			.sort( ( a, b ) => a.valueOf() - b.valueOf() )?.[ 0 ];
 
-		return (
-			!! earliestPurchaseWithJetpackBackup &&
-			moment( earliestPurchaseWithJetpackBackup.subscribedDate ).isAfter(
-				moment().subtract( 5, 'minutes' )
-			)
-		);
+		if ( ! earliestJetpackBackupSubscribeDate ) {
+			return false;
+		}
+
+		return earliestJetpackBackupSubscribeDate.isAfter( moment().subtract( 5, 'minutes' ) );
 	}
 
 	isComplete( taskId: string ): boolean {
