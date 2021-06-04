@@ -59,20 +59,20 @@ export default function PurchaseArea( {
 		setIsButtonClicked( true );
 		const isCustomDomainAvailable = evaluateIsCustomDomainAvailable( siteDomains );
 		const isCustomDomainPrimary = evaluateIsCustomDomainPrimary( siteDomains );
+
 		await onRemoveEverythingFromCart();
+
 		if ( isProductPurchased ) {
 			await onAddYoastPremiumToCart();
+		} else {
+			const primaryDomain = getPrimaryDomain( siteDomains ).domain;
+			onInstallPluginManually( { primaryDomain } );
 		}
 
-		if ( isCustomDomainAvailable && isCustomDomainPrimary ) {
-			if ( isProductPurchased ) {
-				onNavigateToCheckout();
-			} else {
-				const primaryDomain = getPrimaryDomain( siteDomains ).domain;
-				onInstallPluginManually( { primaryDomain } );
-			}
+		if ( isCustomDomainAvailable && isCustomDomainPrimary && isProductPurchased ) {
+			onNavigateToCheckout();
 		} else if ( isCustomDomainAvailable && ! isCustomDomainPrimary ) {
-			//Pop up Modal for deciding on primary domain and related logic
+			// TODO: Pop up Modal for deciding on primary domain and related logic
 			setIsButtonClicked( false );
 			alert( 'To be implemented : Domain deciding Pop up modal ' );
 		} else if ( ! isCustomDomainAvailable ) {
