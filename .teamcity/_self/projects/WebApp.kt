@@ -6,6 +6,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
@@ -357,6 +358,18 @@ object BuildDockerImage : BuildType({
 	}
 
 	steps {
+		script {
+			name = "Post PR comment"
+			scriptContent = """
+				if [ "%teamcity.build.branch.is_default%" == "true" ] ; then
+					exit 0
+				fi
+
+				export GH_TOKEN="%matticbot_oauth_token%"
+				. ./bin/post-link-live-branch.sh "%teamcity.build.branch%"
+			"""
+		}
+
 		dockerCommand {
 			name = "Build docker image"
 			commandType = build {
@@ -379,6 +392,7 @@ object BuildDockerImage : BuildType({
 			}
 			param("dockerImage.platform", "linux")
 		}
+
 		dockerCommand {
 			commandType = push {
 				namesAndTags = """
@@ -386,6 +400,18 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 				""".trimIndent()
 			}
+		}
+
+		script {
+			name = "Post PR comment with link"
+			scriptContent = """
+				if [ "%teamcity.build.branch.is_default%" == "true" ] ; then
+					exit 0
+				fi
+
+				export GH_TOKEN="%matticbot_oauth_token%"
+				. ./bin/post-link-live-branch.sh "%vcsroot.branch%" "https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%"
+			"""
 		}
 	}
 
