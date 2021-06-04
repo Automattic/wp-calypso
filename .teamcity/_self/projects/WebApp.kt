@@ -412,7 +412,7 @@ object BuildDockerImage : BuildType({
 				fi
 
 				export GH_TOKEN="%matticbot_oauth_token%"
-				. ./bin/post-link-live-branch.sh "%vcsroot.branch%" "https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%"
+				. ./bin/post-link-live-branch.sh "%teamcity.build.branch%" "https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%"
 			"""
 		}
 	}
