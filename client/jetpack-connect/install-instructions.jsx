@@ -76,7 +76,7 @@ class InstallInstructions extends Component {
 	}
 
 	render() {
-		const { jetpackVersion, remoteSiteUrl } = this.props;
+		const { remoteSiteUrl } = this.props;
 		const instructionsData = this.getInstructionsData();
 
 		return (
@@ -93,7 +93,6 @@ class InstallInstructions extends Component {
 								<JetpackInstallStep
 									key={ 'instructions-step-' + key }
 									stepName={ stepName }
-									jetpackVersion={ jetpackVersion }
 									currentUrl={ remoteSiteUrl }
 									confirmJetpackInstallStatus={ this.props.confirmJetpackInstallStatus }
 									onClick={ instructionsData.buttonOnClick }
@@ -128,7 +127,6 @@ const connectComponent = connect(
 		}
 
 		return {
-			jetpackVersion: remoteSiteData.jetpackVersion || false,
 			notJetpack,
 		};
 	},
