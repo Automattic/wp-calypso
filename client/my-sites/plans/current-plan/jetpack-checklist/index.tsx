@@ -4,7 +4,7 @@
 import { isDesktop } from '@automattic/viewport';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { includes, minBy } from 'lodash';
+import { minBy } from 'lodash';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
 
@@ -418,7 +418,7 @@ function mapStateToProps( state ) {
 		akismetFinished: productInstallStatus && productInstallStatus.akismet_status === 'installed',
 		vaultpressFinished:
 			productInstallStatus &&
-			includes( [ 'installed', 'skipped' ], productInstallStatus.vaultpress_status ),
+			[ 'installed', 'skipped' ].includes( productInstallStatus.vaultpress_status ),
 		widgetCustomizerPaneUrl: siteId ? getCustomizerUrl( state, siteId, 'widgets' ) : null,
 		isPaidPlan,
 		hasAntiSpam,
