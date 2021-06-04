@@ -28,16 +28,10 @@ function LaunchWpcomWelcomeTour() {
 		isManuallyOpened: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideManuallyOpened(),
 	} ) );
 
-	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
 	const localeSlug = useLocale();
 
 	// Preload first card image (others preloaded after open state confirmed)
 	new window.Image().src = getTourContent( localeSlug )[ 0 ].imgSrc;
-
-	// Hide editor sidebar first time user sees the editor
-	useEffect( () => {
-		show && closeGeneralSidebar();
-	}, [ closeGeneralSidebar, show ] );
 
 	useEffect( () => {
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
