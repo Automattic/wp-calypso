@@ -57,12 +57,16 @@ export function getJetpackHost(): string {
 }
 
 /**
- * Given an array of strings, returns a single string with each word in TitleCase.
+ * Given either a string or array of strings, returns a single string with each word in TitleCase.
  *
- * @param {string[]} words Array of strings to be converted to TitleCase.
- * @returns {string} Array of strings converted to TitleCase.
+ * @param {string[]|string} words Either string or array of strings to be converted to TitleCase.
+ * @returns {string} String with each distinct word converted to TitleCase.
  */
-export function toTitleCase( words: string[] ): string {
+export function toTitleCase( words: string[] | string ): string {
+	if ( typeof words === 'string' ) {
+		words = words.trim().split( ' ' );
+	}
+
 	const result = words.map( function ( word ) {
 		return word.charAt( 0 ).toUpperCase() + word.slice( 1 ).toLowerCase();
 	} );
@@ -89,7 +93,7 @@ export function randomPhrase(): string {
 export function createSuiteTitle( title: string ): string {
 	const parts = [
 		`[${ getJetpackHost() }]`,
-		`${ toTitleCase( [ title ] ) }:`,
+		`${ toTitleCase( title ) }:`,
 		`(${ getViewportName() })`,
 		'@parallel',
 	];
