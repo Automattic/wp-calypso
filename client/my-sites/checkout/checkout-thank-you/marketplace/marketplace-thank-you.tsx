@@ -145,7 +145,6 @@ const MarketplaceThankYou = () => {
 									</p>
 									<div>
 										<FullWidthButton
-											//TODO: Menu links not properly loading after installing the plugin
 											href={ yoastSeoPageUrl }
 											primary
 											busy={ isRequestingMenu }
