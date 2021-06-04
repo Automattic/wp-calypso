@@ -3,7 +3,6 @@
  */
 import page from 'page';
 import React from 'react';
-import { get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -49,7 +48,7 @@ export function plans( context, next ) {
 
 export function features( context ) {
 	const domain = context.params.domain;
-	const feature = get( context, 'params.feature' );
+	const feature = context?.params?.feature;
 	let comparePath = domain ? `/plans/${ domain }` : '/plans/';
 
 	if ( isValidFeatureKey( feature ) ) {

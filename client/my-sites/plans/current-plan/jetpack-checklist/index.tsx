@@ -4,7 +4,7 @@
 import { isDesktop } from '@automattic/viewport';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { get, includes, minBy } from 'lodash';
+import { includes, minBy } from 'lodash';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
 
@@ -398,7 +398,7 @@ function mapStateToProps( state ) {
 
 	const siteId = getSelectedSiteId( state );
 	const productInstallStatus = getJetpackProductInstallStatus( state, siteId );
-	const rewindState = get( getRewindState( state, siteId ), 'state', 'uninitialized' );
+	const rewindState = getRewindState( state, siteId )?.state ?? 'uninitialized';
 	const isMinimumVersion =
 		siteId && isJetpackMinimumVersion( state, siteId, OFFER_RESET_VIDEO_MINIMUM_JETPACK_VERSION );
 
@@ -426,7 +426,7 @@ function mapStateToProps( state ) {
 		productInstallStatus,
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		taskStatuses: get( getSiteChecklist( state, siteId ), 'tasks' ),
+		taskStatuses: getSiteChecklist( state, siteId )?.tasks,
 		wpAdminUrl,
 		hasVideoHosting:
 			siteId &&
