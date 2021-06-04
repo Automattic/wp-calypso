@@ -25,7 +25,7 @@ object WPComTests : Project({
 	features {
 		buildReportTab {
 			title = "VR Report"
-			startPage= "vr-report.zip!/vr-report.zip!/test/visual/backstop_data/html_report/index.html"
+			startPage= "vr-report.zip!vr-report.zip!/test/visual/backstop_data/html_report/index.html"
 		}
 	}
 
