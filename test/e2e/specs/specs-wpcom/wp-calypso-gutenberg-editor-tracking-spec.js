@@ -23,8 +23,7 @@ const host = dataHelper.getJetpackHost();
 // will be deployed to Dotcom) as well as the current version of Gutenberg.
 const gutenbergUser =
 	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
-const siteEditorUser =
-	process.env.GUTENBERG_EDGE === 'true' ? 'siteEditorSimpleSiteUser' : 'siteEditorSimpleSiteUser';
+const siteEditorUser = 'siteEditorSimpleSiteUser';
 
 function getEventsFiredForBlock( eventsStack, event, block ) {
 	if ( ! eventsStack || ! event || ! block ) {
