@@ -80,11 +80,7 @@ export function getSignupUrl(
 		signupUrl = `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
 	}
 
-	if (
-		config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-		oauth2Client &&
-		isWooOAuth2Client( oauth2Client )
-	) {
+	if ( oauth2Client && isWooOAuth2Client( oauth2Client ) ) {
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
 			oauth2_redirect: redirectTo,

@@ -368,7 +368,7 @@ export class JetpackAuthorize extends Component {
 	handleSignIn = () => {
 		const { recordTracksEvent } = this.props;
 		const { from } = this.props.authQuery;
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
+		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
 		}
 	};
@@ -378,7 +378,7 @@ export class JetpackAuthorize extends Component {
 		const { from } = this.props.authQuery;
 		recordTracksEvent( 'calypso_jpc_signout_click' );
 
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
+		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { create_jetpack: true } );
 		}
 
@@ -432,7 +432,7 @@ export class JetpackAuthorize extends Component {
 
 		recordTracksEvent( 'calypso_jpc_approve_click' );
 
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
+		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
 		}
 
