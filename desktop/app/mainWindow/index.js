@@ -61,7 +61,12 @@ function showAppWindow() {
 	mainWindow.webContents.loadURL( `file://${ getPath( 'index.html' ) }` );
 
 	mainWindow.setBrowserView( mainView );
-	mainView.setBounds( { ...bounds, ...{ x: 0, y: TITLE_BAR_HEIGHT } } );
+	mainView.setBounds( {
+		x: 0,
+		y: TITLE_BAR_HEIGHT,
+		width: bounds.width,
+		height: bounds.height - TITLE_BAR_HEIGHT,
+	} );
 	mainWindow.on( 'will-resize', ( _, newBounds ) => {
 		mainView.setBounds( {
 			x: 0,
