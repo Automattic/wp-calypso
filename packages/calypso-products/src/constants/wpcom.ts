@@ -3,6 +3,7 @@ export const GROUP_WPCOM = 'GROUP_WPCOM';
 // Products
 export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
 export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
+export const PRODUCT_YOAST_PREMIUM = 'yoast_premium';
 
 export const WPCOM_SEARCH_PRODUCTS = <const>[ PRODUCT_WPCOM_SEARCH, PRODUCT_WPCOM_SEARCH_MONTHLY ];
 
@@ -66,5 +67,3 @@ export const WPCOM_TRAFFIC_GUIDE = 'traffic-guide';
 
 export const PLAN_BUSINESS_ONBOARDING_EXPIRE = '2021-07-31T00:00:00+00:00';
 export const PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE = '2022-07-31T00:00:00+00:00';
-
-export const PRODUCT_YOAST_PREMIUM = 'yoast_premium';
