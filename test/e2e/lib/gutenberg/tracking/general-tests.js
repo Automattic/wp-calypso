@@ -36,7 +36,7 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		const allProperties = [ ...requiredProperties, customProperties ];
 		allProperties.forEach( ( property ) => {
 			eventsStack.forEach( ( [ , eventData ] ) => {
-				assert.notStrictEqual( typeof eventData[ property ], undefined );
+				assert.notStrictEqual( typeof eventData[ property ], 'undefined' );
 			} );
 		} );
 	} );
