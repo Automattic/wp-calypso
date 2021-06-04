@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
-import config from 'config';
 import {
-	BrowserHelper,
 	DataHelper,
 	LoginFlow,
 	MyHomePage,
@@ -18,15 +15,10 @@ import {
 /**
  * Constants
  */
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const host = DataHelper.getJetpackHost();
-const viewportName = BrowserHelper.getViewportName();
 const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
-describe( `[${ host }] Likes (Comment): (${ viewportName }) @parallel`, function () {
-	this.timeout( mochaTimeOut );
-
+describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	describe( 'Comment and like on an existing post', function () {
 		let commentsLikesComponent;
 
@@ -75,14 +67,10 @@ describe( `[${ host }] Likes (Comment): (${ viewportName }) @parallel`, function
 			gutenbergEditorPage = await GutenbergEditorPage.Expect( this.page );
 			const title = DataHelper.randomPhrase();
 			await gutenbergEditorPage.enterTitle( title );
-			const enteredTitle = await gutenbergEditorPage.getTitle();
-			assert( title === enteredTitle );
 		} );
 
 		it( 'Enter post text', async function () {
 			await gutenbergEditorPage.enterText( quote );
-			const enteredText = await gutenbergEditorPage.getText();
-			assert( quote === enteredText );
 		} );
 
 		it( 'Publish and visit post', async function () {

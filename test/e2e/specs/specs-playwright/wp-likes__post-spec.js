@@ -17,19 +17,9 @@ import {
 const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
-<<<<<<< HEAD
-describe( DataHelper.createSuiteTitle( 'Likes' ), function () {
-	describe( 'New post', function () {
-		let gutenbergEditorPage;
-		let likesComponent;
-=======
-describe( `[${ host }] Likes (Post): (${ viewportName }) @parallel`, function () {
-	this.timeout( mochaTimeOut );
-
-	let postLikesComponent;
->>>>>>> 5e61b22aa5 (Remove console.log and update JSDoc on CommentLikesComponent.)
-
-	describe( 'New post', function () {
+describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
+	describe( 'Like a new post', function () {
+		let postLikesComponent;
 		let gutenbergEditorPage;
 
 		it( 'Log in', async function () {
@@ -66,7 +56,9 @@ describe( `[${ host }] Likes (Post): (${ viewportName }) @parallel`, function ()
 		} );
 	} );
 
-	describe( 'Existing post', function () {
+	describe( 'Like an existing post', function () {
+		let postLikesComponent;
+
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
 			await loginFlow.login();
