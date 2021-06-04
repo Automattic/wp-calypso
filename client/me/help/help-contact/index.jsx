@@ -71,7 +71,7 @@ import getInlineHelpSupportVariation, {
 	SUPPORT_UPWORK_TICKET,
 } from 'calypso/state/selectors/get-inline-help-support-variation';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { getPlanTermLabel } from '@automattic/calypso-products';
+import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -193,7 +193,7 @@ class HelpContact extends React.Component {
 		const { currentUserLocale, supportVariation } = this.props;
 		let plan = 'N/A';
 		if ( site ) {
-			plan = `${ site.plan.product_name_short } (${ getPlanTermLabel(
+			plan = `${ getPlan( site.plan.product_slug ).getNonLocalizedTitle() } (${ getPlanTermLabel(
 				site.plan.product_slug,
 				( val ) => val // Passing an identity function instead of `translate` to always return the English string
 			) })`;

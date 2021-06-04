@@ -225,6 +225,7 @@ const getPlanBloggerDetails = () => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_BLOGGER,
 	getTitle: () => i18n.translate( 'Blogger' ),
+	getNonLocalizedTitle: () => 'Blogger',
 	// @TODO not updating copy for now, we need to update it after the first round of design {{{
 	getAudience: () => i18n.translate( 'Best for bloggers' ),
 	getBlogAudience: () => i18n.translate( 'Best for bloggers' ),
@@ -277,6 +278,7 @@ const getPlanPersonalDetails = () => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PERSONAL,
 	getTitle: () => i18n.translate( 'Personal' ),
+	getNonLocalizedTitle: () => 'Personal',
 	getAudience: () => i18n.translate( 'Best for personal use' ),
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
@@ -338,6 +340,7 @@ const getPlanEcommerceDetails = () => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_ECOMMERCE,
 	getTitle: () => i18n.translate( 'eCommerce' ),
+	getNonLocalizedTitle: () => 'eCommerce',
 	getAudience: () => i18n.translate( 'Best for online stores' ),
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
@@ -449,6 +452,7 @@ const getPlanPremiumDetails = () => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PREMIUM,
 	getTitle: () => i18n.translate( 'Premium' ),
+	getNonLocalizedTitle: () => 'Premium',
 	getAudience: () => i18n.translate( 'Best for freelancers' ),
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
@@ -529,6 +533,7 @@ const getPlanBusinessDetails = () => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_BUSINESS,
 	getTitle: () => i18n.translate( 'Business' ),
+	getNonLocalizedTitle: () => 'Business',
 	getAudience: () => i18n.translate( 'Best for small businesses' ),
 	getBlogAudience: () => i18n.translate( 'Best for small businesses' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
@@ -629,6 +634,7 @@ const getJetpackPersonalDetails = () => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_PERSONAL,
 	getTitle: () => i18n.translate( 'Personal' ),
+	getNonLocalizedTitle: () => 'Personal',
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE ].includes( plan ),
 	getDescription: () =>
 		i18n.translate(
@@ -670,6 +676,7 @@ const getJetpackPremiumDetails = () => ( {
 	availableFor: ( plan ) =>
 		[ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ].includes( plan ),
 	getTitle: () => i18n.translate( 'Premium' ),
+	getNonLocalizedTitle: () => 'Premium',
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for small businesses:{{/strong}} Comprehensive, automated scanning for security vulnerabilities, ' +
@@ -720,6 +727,7 @@ const getJetpackBusinessDetails = () => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_BUSINESS,
 	getTitle: () => i18n.translate( 'Professional' ),
+	getNonLocalizedTitle: () => 'Professional',
 	availableFor: ( plan ) =>
 		[
 			PLAN_JETPACK_FREE,
@@ -780,6 +788,7 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_SECURITY_DAILY,
 	getTitle: () => translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
+	getNonLocalizedTitle: () => 'Security Daily',
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(
@@ -818,6 +827,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		translate( 'Security {{em}}Real-time{{/em}}', {
 			components: { em: <em style={ { whiteSpace: 'nowrap' } } /> },
 		} ),
+	getNonLocalizedTitle: () => 'Security Real-time',
 	availableFor: ( plan ) =>
 		[
 			PLAN_JETPACK_FREE,
@@ -868,6 +878,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 		translate( 'Complete', {
 			context: 'Jetpack plan name',
 		} ),
+	getNonLocalizedTitle: () => 'Complete',
 	availableFor: ( plan ) =>
 		[ PLAN_JETPACK_FREE, ...JETPACK_SECURITY_PLANS, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
@@ -918,6 +929,7 @@ export const PLANS_LIST = {
 		type: TYPE_FREE,
 		term: TERM_ANNUALLY,
 		getTitle: () => i18n.translate( 'Free' ),
+		getNonLocalizedTitle: () => 'Free',
 		getAudience: () => i18n.translate( 'Best for students' ),
 		getBlogAudience: () => i18n.translate( 'Best for students' ),
 		getPortfolioAudience: () => i18n.translate( 'Best for students' ),
@@ -1217,6 +1229,7 @@ export const PLANS_LIST = {
 		group: GROUP_JETPACK,
 		type: TYPE_FREE,
 		getTitle: () => i18n.translate( 'Free' ),
+		getNonLocalizedTitle: () => 'Free',
 		getProductId: () => 2002,
 		getStoreSlug: () => PLAN_JETPACK_FREE,
 		getTagline: ( siteFeatures = [] ) => {
@@ -1373,6 +1386,7 @@ export const PLANS_LIST = {
 		group: GROUP_WPCOM,
 		type: TYPE_P2_PLUS,
 		getTitle: () => i18n.translate( 'P2+' ),
+		getNonLocalizedTitle: () => 'P2+',
 		getDescription: () =>
 			i18n.translate(
 				'{{strong}}Best for professionals:{{/strong}} Enhance your P2 with more space for audio and video, advanced search, an activity overview panel, and priority customer support.',
@@ -1421,6 +1435,7 @@ PLANS_LIST[ PLAN_P2_FREE ] = {
 			plansDescriptionHeadingComponent
 		),
 	getTitle: () => i18n.translate( 'P2 Free' ),
+	getNonLocalizedTitle: () => 'P2 Free',
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_P2_3GB_STORAGE,
