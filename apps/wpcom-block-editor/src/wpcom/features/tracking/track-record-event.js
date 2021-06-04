@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { omit } from 'lodash';
+import { omitBy } from 'lodash';
 import debug from 'debug';
 import { select } from '@wordpress/data';
 
@@ -87,7 +87,7 @@ export default ( eventName, eventProperties ) => {
 
 	// Remove properties that have an undefined value
 	// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-	eventProperties = omit( eventProperties, ( prop ) => typeof prop === 'undefined' );
+	eventProperties = omitBy( eventProperties, ( prop ) => typeof prop === 'undefined' );
 
 	// Populate required properties.
 	eventProperties = { ...eventProperties, ...requiredProperties };
