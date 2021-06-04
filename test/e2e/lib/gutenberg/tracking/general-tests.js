@@ -49,9 +49,7 @@ export function createGeneralTests( { it, editorType, postType } ) {
 				assert.notStrictEqual(
 					typeof eventData[ property ],
 					'undefined',
-					`'${ property }' is missing from an event: '${ eventName }' '${ JSON.stringify(
-						eventData
-					) }`
+					`'${ property }' is missing from an event: '${ eventName }'`
 				);
 			} );
 		} );
