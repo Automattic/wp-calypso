@@ -1,24 +1,9 @@
 /**
  * External dependencies
  */
-import config from 'config';
-import {
-	DataHelper,
-	BrowserHelper,
-	LoginFlow,
-	SidebarComponent,
-	MarketingPage,
-} from '@automattic/calypso-e2e';
+import { DataHelper, LoginFlow, SidebarComponent, MarketingPage } from '@automattic/calypso-e2e';
 
-/**
- * Constants
- */
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const host = DataHelper.getJetpackHost();
-const viewportName = BrowserHelper.getViewportName();
-
-describe( `[${ host }] SEO Preview Page: (${ viewportName }) @canary @parallel @safaricanary`, function () {
-	this.timeout( mochaTimeOut );
+describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
 	let marketingPage;
 
 	it( 'Log in', async function () {
@@ -42,7 +27,6 @@ describe( `[${ host }] SEO Preview Page: (${ viewportName }) @canary @parallel @
 
 	it( 'Open and close SEO preview', async function () {
 		await marketingPage.openSEOPreview();
-		await this.page.waitForTimeout( 2000 );
 		await marketingPage.closeSEOPreview();
 	} );
 } );

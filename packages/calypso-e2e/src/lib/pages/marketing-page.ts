@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { BaseContainer } from '../base-container';
+import { toTitleCase } from '../../data-helper';
 
 /**
  * Type dependencies
@@ -34,7 +35,7 @@ export class MarketingPage extends BaseContainer {
 	}
 
 	async clickTabItem( name: string ): Promise< void > {
-		const sanitizedName = name.toProperCase();
+		const sanitizedName = toTitleCase( [ name ] );
 
 		await this.page.click( `text=${ sanitizedName }` );
 	}

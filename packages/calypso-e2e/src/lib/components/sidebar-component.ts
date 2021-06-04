@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { BaseContainer } from '../base-container';
+import { toTitleCase } from '../../data-helper';
 
 /**
  * Type dependencies
@@ -39,7 +40,7 @@ export class SidebarComponent extends BaseContainer {
 	 * @param {string} name Plaintext name of the menu item in the sidebar.
 	 */
 	async clickMenuItem( name: string ): Promise< void > {
-		await this.page.click( `text=${ name.toProperCase() }` );
+		await this.page.click( `text=${ toTitleCase( name ) }` );
 	}
 
 	/**
@@ -48,7 +49,7 @@ export class SidebarComponent extends BaseContainer {
 	 * @param {string} name Plaintext name of the menu item in the sidebar.
 	 */
 	async hoverMenuItem( name: string ): Promise< void > {
-		const element = await this.page.waitForSelector( `text=${ name.toProperCase() }` );
+		const element = await this.page.waitForSelector( `text=${ toTitleCase( name ) }` );
 		await element.hover();
 	}
 }
