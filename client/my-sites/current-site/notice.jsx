@@ -220,7 +220,7 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		const { site, activeDiscount } = this.props;
+		const { translate, site, activeDiscount } = this.props;
 		const { nudgeText, nudgeEndsTodayText, ctaText, name } = activeDiscount;
 
 		const bannerText =
@@ -236,12 +236,12 @@ export class SiteNotice extends React.Component {
 		return (
 			<UpsellNudge
 				event="calypso_upgrade_nudge_impression"
-				forceDisplay={ true }
+				forceDisplay
 				tracksClickName="calypso_upgrade_nudge_cta_click"
 				tracksClickProperties={ eventProperties }
 				tracksImpressionName="calypso_upgrade_nudge_impression"
 				tracksImpressionProperties={ eventProperties }
-				callToAction={ ctaText || 'Upgrade' }
+				callToAction={ ctaText || translate( 'Upgrade' ) }
 				href={ `/plans/${ site.slug }?discount=${ name }` }
 				title={ bannerText }
 			/>
@@ -249,9 +249,7 @@ export class SiteNotice extends React.Component {
 	}
 
 	promotionEndsToday( { endsAt } ) {
-		const now = new Date();
-		const format = 'YYYYMMDD';
-		return moment( now ).format( format ) === moment( endsAt ).format( format );
+		return moment().isSame( endsAt, 'day' );
 	}
 
 	render() {
