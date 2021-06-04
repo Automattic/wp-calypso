@@ -1,7 +1,7 @@
 /**
  * Determines the type of the block editor.
  *
- * @returns {'post'|'site'|undefined} editor's type
+ * @returns {(string|undefined)} editor's type
  */
 export const getEditorType = () => {
 	if ( document.querySelector( '.edit-post-layout' ) ) {
