@@ -29,8 +29,6 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
-	isWpComFreePlan,
-	isWpComMonthlyPlan,
 	planMatches,
 	TYPE_FREE,
 	TYPE_BLOGGER,
@@ -61,7 +59,7 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getTld } from 'calypso/lib/domains';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
@@ -518,10 +516,7 @@ export default connect(
 		const siteId = get( props.site, [ 'ID' ] );
 		const currentPlan = getSitePlan( state, siteId );
 		const sitePlanSlug = currentPlan?.product_slug;
-		const eligibleForWpcomMonthlyPlans =
-			( isAtomicSite( state, siteId ) && sitePlanSlug === 'jetpack_free' ) ||
-			isWpComFreePlan( sitePlanSlug ) ||
-			isWpComMonthlyPlan( sitePlanSlug );
+		const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
 
 		let customerType = chooseDefaultCustomerType( {
 			currentCustomerType: props.customerType,
