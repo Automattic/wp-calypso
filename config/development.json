@@ -46,6 +46,7 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"devdocs/color-scheme-picker": true,
+		"dev/auth-helper": true,
 		"dev/features-helper": true,
 		"dev/preferences-helper": true,
 		"domains/cctlds": true,

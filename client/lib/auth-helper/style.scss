@@ -1,0 +1,22 @@
+.auth-helper__popover {
+	display: none;
+}
+
+.environment.is-auth:hover .auth-helper__popover {
+	display: block;
+	position: absolute;
+	bottom: 100%;
+	padding: 4px;
+	background: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+}
+
+.auth-helper__label {
+	display: block;
+	margin-bottom: 4px;
+	line-height: 16px;
+
+	.form-radio {
+		margin: 0 4px 0 0;
+	}
+}

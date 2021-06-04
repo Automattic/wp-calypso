@@ -395,6 +395,11 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		DesktopListeners.init( reduxStore );
 	}
 
+	if ( config.isEnabled( 'dev/auth-helper' ) && document.querySelector( '.environment.is-auth' ) ) {
+		asyncRequire( 'calypso/lib/auth-helper', ( authHelper ) => {
+			authHelper( document.querySelector( '.environment.is-auth' ), reduxStore );
+		} );
+	}
 	if (
 		config.isEnabled( 'dev/preferences-helper' ) &&
 		document.querySelector( '.environment.is-prefs' )

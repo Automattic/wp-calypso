@@ -13,6 +13,7 @@ import config from '@automattic/calypso-config';
 import Head from 'calypso/components/head';
 import EnvironmentBadge, {
 	Branch,
+	AuthHelper,
 	DevDocsLink,
 	PreferencesHelper,
 	FeaturesHelper,
@@ -26,6 +27,7 @@ class Document extends React.Component {
 	render() {
 		const {
 			app,
+			authHelper,
 			chunkFiles,
 			commitSha,
 			buildTimestamp,
@@ -153,11 +155,12 @@ class Document extends React.Component {
 					{ badge && (
 						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
 							{ preferencesHelper && <PreferencesHelper /> }
+							{ featuresHelper && <FeaturesHelper /> }
+							{ authHelper && <AuthHelper /> }
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }
 							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
-							{ featuresHelper && <FeaturesHelper /> }
 						</EnvironmentBadge>
 					) }
 
