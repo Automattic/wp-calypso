@@ -292,6 +292,66 @@ describe( '#localizeUrl', () => {
 		);
 	} );
 
+	test( 'theme', () => {
+		expect( localizeUrl( 'https://wordpress.com/theme/maywood/', 'en', true ) ).toEqual(
+			'https://wordpress.com/theme/maywood/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/theme/maywood/', 'de', true ) ).toEqual(
+			'https://wordpress.com/theme/maywood/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/theme/maywood/', 'pl', true ) ).toEqual(
+			'https://wordpress.com/theme/maywood/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/theme/maywood/', 'en', false ) ).toEqual(
+			'https://wordpress.com/theme/maywood/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/theme/maywood/', 'de', false ) ).toEqual(
+			'https://wordpress.com/de/theme/maywood/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/theme/maywood/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/theme/maywood/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/theme/maywood/setup/99999/', 'de', true ) ).toEqual(
+			'https://wordpress.com/theme/maywood/setup/99999/'
+		);
+		expect(
+			localizeUrl( 'https://wordpress.com/theme/maywood/setup/99999/', 'de', false )
+		).toEqual( 'https://wordpress.com/de/theme/maywood/setup/99999/' );
+	} );
+
+	test( 'themes', () => {
+		expect( localizeUrl( 'https://wordpress.com/themes/', 'en', true ) ).toEqual(
+			'https://wordpress.com/themes/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/themes/', 'de', true ) ).toEqual(
+			'https://wordpress.com/themes/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/themes/', 'pl', true ) ).toEqual(
+			'https://wordpress.com/themes/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/themes/', 'en', false ) ).toEqual(
+			'https://wordpress.com/themes/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/themes/', 'de', false ) ).toEqual(
+			'https://wordpress.com/de/themes/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/themes/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/themes/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/themes/free/', 'de', true ) ).toEqual(
+			'https://wordpress.com/themes/free/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/themes/free/', 'de', false ) ).toEqual(
+			'https://wordpress.com/de/themes/free/'
+		);
+		expect(
+			localizeUrl( 'https://wordpress.com/themes/free/filter/example-filter/', 'de', true )
+		).toEqual( 'https://wordpress.com/themes/free/filter/example-filter/' );
+		expect(
+			localizeUrl( 'https://wordpress.com/themes/free/filter/example-filter/', 'de', false )
+		).toEqual( 'https://wordpress.com/de/themes/free/filter/example-filter/' );
+	} );
+
 	test( 'tos', () => {
 		expect( localizeUrl( 'https://wordpress.com/tos/', 'en' ) ).toEqual(
 			'https://wordpress.com/tos/'
