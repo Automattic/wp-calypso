@@ -361,7 +361,8 @@ object BuildDockerImage : BuildType({
 		script {
 			name = "Post PR comment"
 			scriptContent = """
-				if [ "%teamcity.build.branch.is_default%" == "true" ] ; then
+				#!/usr/bin/env bash
+				if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
 					exit 0
 				fi
 
@@ -405,7 +406,8 @@ object BuildDockerImage : BuildType({
 		script {
 			name = "Post PR comment with link"
 			scriptContent = """
-				if [ "%teamcity.build.branch.is_default%" == "true" ] ; then
+				#!/usr/bin/env bash
+				if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
 					exit 0
 				fi
 
