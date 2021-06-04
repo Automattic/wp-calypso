@@ -41,8 +41,8 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 
 		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
 
-		// This looks weird, but we really _do_ have an object with an empty string as its key
-		// (see: generate_translated_json in WPCOM)
+		// The empty string key [ '' ] where metadata about the translation file
+		// (e.g., the locale name, plurals definitions, etc.) are stored.
 		const languageSlug = i18nLocaleStringsObject?.[ '' ]?.localeSlug;
 		if ( languageSlug ) {
 			loadUserUndeployedTranslations( languageSlug );
