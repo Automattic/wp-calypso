@@ -20,6 +20,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import type { VatDetails, UpdateError } from './use-vat-details';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 
 import './style.scss';
 
@@ -87,7 +88,16 @@ export default function VatInfoPage(): JSX.Element {
 						/>
 						{ isVatAlreadySet && (
 							<FormSettingExplanation>
-								{ translate( 'To change your VAT number, please contact support.' ) }
+								{ translate(
+									'To change your VAT number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+									{
+										components: {
+											contactSupportLink: (
+												<a target="_blank" href={ CALYPSO_CONTACT } rel="noreferrer" />
+											),
+										},
+									}
+								) }
 							</FormSettingExplanation>
 						) }
 					</FormFieldset>
