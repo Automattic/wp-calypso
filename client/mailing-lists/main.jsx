@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Gridicon from 'calypso/components/gridicon';
-import utils from './utils';
+import { addSubscriber, deleteSubscriber } from './utils';
 import { Card } from '@automattic/components';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -197,13 +197,7 @@ class MainComponent extends React.Component {
 	};
 
 	onUnsubscribeClick = () => {
-		utils
-			.deleteSubscriber(
-				this.props.category,
-				this.props.email,
-				this.props.hmac,
-				this.props.context
-			)
+		deleteSubscriber( this.props.category, this.props.email, this.props.hmac, this.props.context )
 			.then( () => {
 				this.setState( { isError: false, isSubscribed: false } );
 			} )
@@ -213,8 +207,7 @@ class MainComponent extends React.Component {
 	};
 
 	onResubscribeClick = () => {
-		utils
-			.addSubscriber( this.props.category, this.props.email, this.props.hmac, this.props.context )
+		addSubscriber( this.props.category, this.props.email, this.props.hmac, this.props.context )
 			.then( () => {
 				this.setState( { isError: false, isSubscribed: true } );
 			} )
