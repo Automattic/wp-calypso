@@ -160,24 +160,6 @@ UndocumentedSite.prototype.getUser = function ( login, callback ) {
 	return this.wpcom.req.get( '/sites/' + this._id + '/users/login:' + login, callback );
 };
 
-UndocumentedSite.prototype.removeFollower = function ( followerId, callback ) {
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + this._id + '/followers/' + followerId + '/delete',
-		},
-		callback
-	);
-};
-
-UndocumentedSite.prototype.removeEmailFollower = function ( followerId, callback ) {
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + this._id + '/email-followers/' + followerId + '/delete',
-		},
-		callback
-	);
-};
-
 UndocumentedSite.prototype.setOption = function ( query, callback ) {
 	return this.wpcom.req.post(
 		'/sites/' + this._id + '/option',
