@@ -52,7 +52,7 @@ describe( 'Marketplace reducer', () => {
 
 		const expectedState = {
 			...defaultMarketPlaceState,
-			pluginSlugToBeInstalled: true,
+			isPluginInstalledDuringPurchase: true,
 		};
 
 		expect( recievedState ).toEqual( expectedState );
