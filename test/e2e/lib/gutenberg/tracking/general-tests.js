@@ -6,8 +6,8 @@ import assert from 'assert';
 /**
  * Internal dependencies
  */
-import GutenbergEditorComponent from '../../../lib/gutenberg/gutenberg-editor-component';
-import SiteEditorComponent from '../../../lib/components/site-editor-component';
+import GutenbergEditorComponent from '../gutenberg-editor-component';
+import SiteEditorComponent from '../../components/site-editor-component';
 import { getEventsStack, getTotalEventsFiredForBlock } from './utils';
 
 export function createGeneralTests( { it, editorType, postType } ) {

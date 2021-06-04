@@ -8,13 +8,12 @@ import config from 'config';
  */
 import LoginFlow from '../../../lib/flows/login-flow.js';
 
-import GutenbergEditorComponent from '../../../lib/gutenberg/gutenberg-editor-component';
 import WPAdminSidebar from '../../../lib/pages/wp-admin/wp-admin-sidebar';
 
 import * as driverManager from '../../../lib/driver-manager.js';
 import * as dataHelper from '../../../lib/data-helper.js';
-import { clearEventsStack } from './utils.js';
-import { createGeneralTests } from './general-tests.js';
+import { clearEventsStack } from '../../lib/gutenberg/tracking/utils.js';
+import { createGeneralTests } from '../../lib/gutenberg/tracking/general-tests.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
@@ -25,22 +24,23 @@ const host = dataHelper.getJetpackHost();
 const gutenbergUser =
 	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
 
-describe( `[${ host }] Calypso Gutenberg Page Editor Tracking: (${ screenSize })`, function () {
+describe( `[${ host }] Calypso Gutenberg Post Editor Tracking: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Tracking Page Editor: @parallel', function () {
-		it( 'Can log in to WPAdmin and create new Page', async function () {
+	describe( 'Tracking Post Editor: @parallel', function () {
+		it( 'Can log in to WPAdmin and create new Post', async function () {
 			const loginFlow = new LoginFlow( this.driver, host === 'WPCOM' ? gutenbergUser : undefined );
 			await loginFlow.loginAndSelectWPAdmin();
 
 			const wpadminSidebarComponent = await WPAdminSidebar.Expect( this.driver );
-			await wpadminSidebarComponent.selectNewPage();
-
-			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
-			await gEditorComponent.initEditor( { dismissPageTemplateLocator: true } );
+			await wpadminSidebarComponent.selectNewPost();
 		} );
 
-		createGeneralTests( { it, editorType: 'post', postType: 'page' } );
+		createGeneralTests( {
+			it,
+			editorType: 'post',
+			postType: 'post',
+		} );
 
 		afterEach( clearEventsStack );
 	} );
