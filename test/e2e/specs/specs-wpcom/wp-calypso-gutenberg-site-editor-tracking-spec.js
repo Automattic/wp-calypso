@@ -6,14 +6,14 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import LoginFlow from '../../../lib/flows/login-flow.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
 
-import SidebarComponent from '../../../lib/components/sidebar-component.js';
-import SiteEditorPage from '../../../lib/pages/site-editor-page.js';
-import SiteEditorComponent from '../../../lib/components/site-editor-component.js';
+import SidebarComponent from '../../lib/components/sidebar-component.js';
+import SiteEditorPage from '../../lib/pages/site-editor-page.js';
+import SiteEditorComponent from '../../lib/components/site-editor-component.js';
 
-import * as driverManager from '../../../lib/driver-manager.js';
-import * as dataHelper from '../../../lib/data-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
+import * as dataHelper from '../../lib/data-helper.js';
 import { clearEventsStack } from '../../lib/gutenberg/tracking/utils.js';
 import { createGeneralTests } from '../../lib/gutenberg/tracking/general-tests.js';
 
