@@ -11,8 +11,9 @@ import SiteEditorComponent from '../../components/site-editor-component';
 import { getEventsStack, getTotalEventsFiredForBlock } from './utils';
 
 export function createGeneralTests( { it, editorType, postType } ) {
-	const gutenbergEditorType = editorType === 'site' ? 'iframe' : 'wp-admin';
-	const EditorComponent = editorType === 'site' ? SiteEditorComponent : GutenbergEditorComponent;
+	const isSiteEditor = editorType === 'site';
+	const gutenbergEditorType = isSiteEditor ? 'iframe' : 'wp-admin';
+	const EditorComponent = isSiteEditor ? SiteEditorComponent : GutenbergEditorComponent;
 
 	it( 'Check for presence of e2e specific tracking events stack on global', async function () {
 		await EditorComponent.Expect( this.driver, gutenbergEditorType );
