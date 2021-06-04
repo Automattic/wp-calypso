@@ -22,11 +22,6 @@ import { getViewportSize } from './browser-helper';
  */
 import { viewportSize } from './types';
 
-/**
- * Constants
- */
-const playwrightTimeoutMS: number = config.get( 'playwrightTimeoutMS' );
-
 export let browser: Browser;
 
 /**
@@ -49,7 +44,6 @@ export async function start(): Promise< Page > {
  */
 export async function launchPage(): Promise< Page > {
 	const browserContext = await launchBrowserContext();
-	browserContext.setDefaultTimeout( playwrightTimeoutMS );
 	return await browserContext.newPage();
 }
 
@@ -105,7 +99,6 @@ export async function launchBrowser(): Promise< Browser > {
 	return await chromium.launch( {
 		headless: isHeadless,
 		args: [ '--window-position=0,0', `--window-size=${ dimension.width },${ dimension.height }` ],
-		timeout: playwrightTimeoutMS,
 	} );
 }
 
