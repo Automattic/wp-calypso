@@ -18,5 +18,5 @@ export interface ISetPluginToBeInstalledAction extends Action {
 }
 
 export interface ISetPluginInstalledDuringPurchaseFlag extends Action {
-	isPluginInstalledDuringPurchase: string | undefined;
+	isPluginInstalledDuringPurchase: boolean;
 }
