@@ -19,7 +19,10 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		await EditorComponent.Expect( this.driver, gutenbergEditorType );
 		const eventsStack = await getEventsStack( this.driver );
 		// Check evaluates to truthy
-		assert( eventsStack, 'Tracking events stack missing from window._e2eEventsStack' );
+		assert(
+			Array.isArray( eventsStack ),
+			'Tracking events stack missing from window._e2eEventsStack'
+		);
 	} );
 
 	it( 'Make sure required and custom properties are added to the events', async function () {
