@@ -220,6 +220,9 @@ These are the fonts available via the font selector in the sidebar and for the t
 - Source Serif Pro
 - Space Mono
 - Work Sans
+- Inter
+- DM Sans
+- Bodoni Mona
 
 ### What will happen when the user changes to another theme that supports GlobalStyles?
 

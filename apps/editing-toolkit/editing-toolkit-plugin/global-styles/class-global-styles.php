@@ -116,6 +116,9 @@ class Global_Styles {
 		'Source Serif Pro',
 		'Space Mono',
 		'Work Sans',
+		'Inter',
+		'DM Sans',
+		'Bodoni Mona',
 	);
 
 	/**
@@ -199,6 +202,16 @@ class Global_Styles {
 							'label'    => 'Space Mono / Roboto',
 							'headings' => 'Space Mono',
 							'base'     => 'Roboto',
+						),
+						array(
+							'label'    => 'Bodoni Mona / Overpass',
+							'headings' => 'Bodoni Mona',
+							'base'     => 'Overpass',
+						),
+						array(
+							'label'    => 'Inter / Source Serif Pro',
+							'headings' => 'Inter',
+							'base'     => 'Source Serif Pro',
 						),
 					),
 				),
