@@ -375,7 +375,7 @@ export function redirectToLoginIfLoggedOut( context, next ) {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 
 	if ( ! isLoggedIn ) {
-		page( login( { isNative: true, isJetpack: true, redirectTo: context.path } ) );
+		page( login( { isJetpack: true, redirectTo: context.path } ) );
 		return;
 	}
 
