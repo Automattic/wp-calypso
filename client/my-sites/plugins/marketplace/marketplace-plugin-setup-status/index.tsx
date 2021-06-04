@@ -48,7 +48,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 		} else if ( isPluginInstalledDuringPurchase ) {
 			alert( 'To be implemented: polling wait to be implemented to check for transfer' );
 		} else {
-			//Invalid State redirect to Yoast marketplace page for now, and maybe a marketplace home view in the future
+			// Invalid State redirect to Yoast marketplace page for now, and maybe a marketplace home view in the future
 			page(
 				`/marketplace/product/details/wordpress-seo${
 					selectedSite?.slug ? `/${ selectedSite.slug }` : ''
@@ -73,7 +73,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 
 	useEffect( () => {
 		if ( transferStatus === 'complete' ) {
-			//TODO: Make sure the primary domain is set to the relevant domain
+			// TODO: Make sure the primary domain is set to the relevant domain before redireting to thank-you page
 			setSimulatedProgressPercentage( 100 );
 			setTimeout( () => {
 				page(

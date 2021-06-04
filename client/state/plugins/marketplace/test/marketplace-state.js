@@ -33,28 +33,26 @@ describe( 'Marketplace reducer', () => {
 	} );
 
 	test( 'should set the plugin slug to be installed', () => {
-		const pluginSlugToBeInstalled = 'wordpress-seo';
-		const action = setPluginSlugToBeInstalled( pluginSlugToBeInstalled );
+		const action = setPluginSlugToBeInstalled( 'wordpress-seo' );
 
 		const recievedState = purchaseFlowReducer( defaultMarketPlaceState, action );
 
 		const expectedState = {
 			...defaultMarketPlaceState,
-			pluginSlugToBeInstalled,
+			pluginSlugToBeInstalled: 'wordpress-seo',
 		};
 
 		expect( recievedState ).toEqual( expectedState );
 	} );
 
 	test( 'should set flag to indicate if plugin was istalled during checkout purchase', () => {
-		const pluginSlugToBeInstalled = 'wordpress-seo';
-		const action = setIsPluginInstalledDuringPurchase( pluginSlugToBeInstalled );
+		const action = setIsPluginInstalledDuringPurchase( true );
 
 		const recievedState = purchaseFlowReducer( defaultMarketPlaceState, action );
 
 		const expectedState = {
 			...defaultMarketPlaceState,
-			pluginSlugToBeInstalled,
+			pluginSlugToBeInstalled: true,
 		};
 
 		expect( recievedState ).toEqual( expectedState );

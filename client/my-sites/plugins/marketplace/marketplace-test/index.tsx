@@ -7,7 +7,7 @@ import page from 'page';
 import styled from '@emotion/styled';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import CardHeading from 'calypso/components/card-heading';
 import { Button, Card } from '@automattic/components';

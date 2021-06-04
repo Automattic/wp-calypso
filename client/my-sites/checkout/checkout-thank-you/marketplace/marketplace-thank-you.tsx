@@ -104,6 +104,8 @@ const MarketplaceThankYou = () => {
 			<Masterbar>
 				<Item
 					icon="cross"
+					// TODO: Immediately after purchasing a domain and going through a transfer the selected site id remains uncertain
+					// We have to prevent the user from entering the flow before we finish provisioning the SSL certificate forsomeone with a fresh domains
 					onClick={ () =>
 						previousPath
 							? page( previousPath )
@@ -143,11 +145,13 @@ const MarketplaceThankYou = () => {
 									</p>
 									<div>
 										<FullWidthButton
-											//TODO: Menu links not properly loading after installing the plugin
 											href={ yoastSeoPageUrl }
 											primary
 											busy={ isRequestingMenu }
-											disabled={ isRequestingMenu }
+											// TODO: Menu links are not properly loading on initial request, post transfer so yoastSeoPageUrl will remain empty post transfer
+											// This should be fixed with perhaps a work around to periodically poll for the menu with various domains until it loads
+											// or maybe blocking the user from entering this flow until a domain acquires SSL
+											disabled={ !! yoastSeoPageUrl }
 										>
 											{ translate( 'Get started' ) }
 										</FullWidthButton>
@@ -164,7 +168,7 @@ const MarketplaceThankYou = () => {
 										<FullWidthButton
 											href={ postsPageUrl }
 											busy={ isRequestingMenu }
-											disabled={ isRequestingMenu }
+											disabled={ !! yoastSeoPageUrl }
 										>
 											{ translate( 'View posts' ) }
 										</FullWidthButton>
