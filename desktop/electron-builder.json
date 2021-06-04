@@ -3,7 +3,7 @@
 	"appId": "com.automattic.wordpress",
 	"asar": false,
 	"directories": {
-		"buildResources": "./resource/icons",
+		"buildResources": "./resource",
 		"output": "./release"
 	},
 	"publish": [
@@ -41,10 +41,25 @@
 		"artifactName": "wordpress.com-macOS-dmg-${version}-${arch}.${ext}"
 	},
 	"win": {
-		"target": {
-			"target": "nsis",
-			"arch": [ "x64", "ia32" ]
-		}
+		"icon": "./resource/icons/icon.ico",
+		"target": [
+			{
+				"target": "nsis",
+				"arch": [ "x64", "ia32" ]
+			},
+			{
+				"target": "appx",
+				"arch": [ "x64", "ia32" ]
+			}
+		]
+	},
+	"appx": {
+		"applicationId": "WordPress.com",
+		"identityName": "22490Automattic.WordPress.com",
+		"publisher": "CN=E2E5A157-746D-4B04-9116-ABE5CB928306",
+		"publisherDisplayName": "Automattic, Inc.",
+		"backgroundColor": "transparent",
+		"artifactName": "WordPress.com-win-store-${version}-${arch}.${ext}"
 	},
 	"nsis": {
 		"oneClick": false,
