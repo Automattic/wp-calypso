@@ -37,10 +37,22 @@ export function createGeneralTests( { it, editorType, postType } ) {
 
 		const requiredProperties = [ 'blog_id', 'site_type', 'user_locale' ];
 		const customProperties = [ 'editor_type', 'post_type' ];
-		const allProperties = [ ...requiredProperties, customProperties ];
+		const allProperties = [ ...requiredProperties, ...customProperties ];
 		allProperties.forEach( ( property ) => {
-			eventsStack.forEach( ( [ , eventData ] ) => {
-				assert.notStrictEqual( typeof eventData[ property ], 'undefined' );
+			eventsStack.forEach( ( [ eventName, eventData ] ) => {
+				// `post_type` is only set when `editor_type` is set to `post`.
+				// We skip the assert in other cases.
+				if ( eventData.editor_type !== 'post' && property === 'post_type' ) {
+					return;
+				}
+
+				assert.notStrictEqual(
+					typeof eventData[ property ],
+					'undefined',
+					`'${ property }' is missing from an event: '${ eventName }' '${ JSON.stringify(
+						eventData
+					) }`
+				);
 			} );
 		} );
 	} );
