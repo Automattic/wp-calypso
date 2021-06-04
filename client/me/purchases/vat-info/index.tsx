@@ -26,24 +26,7 @@ import './style.scss';
 
 export default function VatInfoPage(): JSX.Element {
 	const translate = useTranslate();
-	const [ currentVatDetails, setCurrentVatDetails ] = useState< VatDetails >( {} );
-	const {
-		vatDetails,
-		isLoading,
-		isUpdating,
-		isUpdateSuccessful,
-		fetchError,
-		updateError,
-		setVatDetails,
-	} = useVatDetails();
-
-	const saveDetails = () => {
-		setVatDetails( { ...vatDetails, ...currentVatDetails } );
-	};
-
-	useDisplayVatNotices( { error: updateError, success: isUpdateSuccessful } );
-
-	const isVatAlreadySet = !! vatDetails.id;
+	const { isLoading, fetchError } = useVatDetails();
 
 	if ( fetchError ) {
 		return (
@@ -53,86 +36,12 @@ export default function VatInfoPage(): JSX.Element {
 		);
 	}
 
-	const loadingPlaceholder = (
-		<>
-			<div className="vat-info__form-placeholder"></div>
-			<div className="vat-info__form-placeholder"></div>
-			<div className="vat-info__form-placeholder"></div>
-			<div className="vat-info__form-placeholder"></div>
-		</>
-	);
-
 	return (
 		<Layout className={ isLoading ? 'vat-info is-loading' : 'vat-info' }>
 			<Column type="main">
 				<CompactCard className="vat-info__form">
-					{ isLoading && loadingPlaceholder }
-					{ ! isLoading && (
-						<>
-							<FormFieldset className="vat-info__country-field">
-								<FormLabel htmlFor="country">{ translate( 'Country' ) }</FormLabel>
-								<CountryCodeInput
-									name="country"
-									disabled={ isUpdating || isVatAlreadySet }
-									value={ currentVatDetails.country ?? vatDetails.country ?? '' }
-									onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-										setCurrentVatDetails( { ...currentVatDetails, country: event.target.value } )
-									}
-								/>
-							</FormFieldset>
-							<FormFieldset className="vat-info__vat-field">
-								<FormLabel htmlFor="vat">{ translate( 'VAT Number' ) }</FormLabel>
-								<FormTextInput
-									name="vat"
-									disabled={ isUpdating || isVatAlreadySet }
-									value={ currentVatDetails.id ?? vatDetails.id ?? '' }
-									onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-										setCurrentVatDetails( { ...currentVatDetails, id: event.target.value } )
-									}
-								/>
-								{ isVatAlreadySet && (
-									<FormSettingExplanation>
-										{ translate(
-											'To change your VAT number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
-											{
-												components: {
-													contactSupportLink: (
-														<a target="_blank" href={ CALYPSO_CONTACT } rel="noreferrer" />
-													),
-												},
-											}
-										) }
-									</FormSettingExplanation>
-								) }
-							</FormFieldset>
-							<FormFieldset className="vat-info__name-field">
-								<FormLabel htmlFor="name">{ translate( 'Name' ) }</FormLabel>
-								<FormTextInput
-									name="name"
-									disabled={ isUpdating }
-									value={ currentVatDetails.name ?? vatDetails.name ?? '' }
-									onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-										setCurrentVatDetails( { ...currentVatDetails, name: event.target.value } )
-									}
-								/>
-							</FormFieldset>
-							<FormFieldset className="vat-info__address-field">
-								<FormLabel htmlFor="address">{ translate( 'Address' ) }</FormLabel>
-								<FormTextInput
-									name="address"
-									disabled={ isUpdating }
-									value={ currentVatDetails.address ?? vatDetails.address ?? '' }
-									onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-										setCurrentVatDetails( { ...currentVatDetails, address: event.target.value } )
-									}
-								/>
-							</FormFieldset>
-
-							<Button primary busy={ isUpdating } disabled={ isUpdating } onClick={ saveDetails }>
-								{ translate( 'Validate and save' ) }
-							</Button>
-						</>
-					) }
+					{ isLoading && <LoadingPlaceholder /> }
+					{ ! isLoading && <VatForm /> }
 				</CompactCard>
 			</Column>
 			<Column type="sidebar">
@@ -148,6 +57,93 @@ export default function VatInfoPage(): JSX.Element {
 				</Card>
 			</Column>
 		</Layout>
+	);
+}
+
+function VatForm(): JSX.Element {
+	const translate = useTranslate();
+	const [ currentVatDetails, setCurrentVatDetails ] = useState< VatDetails >( {} );
+	const {
+		vatDetails,
+		isUpdating,
+		isUpdateSuccessful,
+		setVatDetails,
+		updateError,
+	} = useVatDetails();
+
+	const saveDetails = () => {
+		setVatDetails( { ...vatDetails, ...currentVatDetails } );
+	};
+
+	useDisplayVatNotices( { error: updateError, success: isUpdateSuccessful } );
+
+	const isVatAlreadySet = !! vatDetails.id;
+
+	return (
+		<>
+			<FormFieldset className="vat-info__country-field">
+				<FormLabel htmlFor="country">{ translate( 'Country' ) }</FormLabel>
+				<CountryCodeInput
+					name="country"
+					disabled={ isUpdating || isVatAlreadySet }
+					value={ currentVatDetails.country ?? vatDetails.country ?? '' }
+					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+						setCurrentVatDetails( { ...currentVatDetails, country: event.target.value } )
+					}
+				/>
+			</FormFieldset>
+			<FormFieldset className="vat-info__vat-field">
+				<FormLabel htmlFor="vat">{ translate( 'VAT Number' ) }</FormLabel>
+				<FormTextInput
+					name="vat"
+					disabled={ isUpdating || isVatAlreadySet }
+					value={ currentVatDetails.id ?? vatDetails.id ?? '' }
+					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+						setCurrentVatDetails( { ...currentVatDetails, id: event.target.value } )
+					}
+				/>
+				{ isVatAlreadySet && (
+					<FormSettingExplanation>
+						{ translate(
+							'To change your VAT number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+							{
+								components: {
+									contactSupportLink: (
+										<a target="_blank" href={ CALYPSO_CONTACT } rel="noreferrer" />
+									),
+								},
+							}
+						) }
+					</FormSettingExplanation>
+				) }
+			</FormFieldset>
+			<FormFieldset className="vat-info__name-field">
+				<FormLabel htmlFor="name">{ translate( 'Name' ) }</FormLabel>
+				<FormTextInput
+					name="name"
+					disabled={ isUpdating }
+					value={ currentVatDetails.name ?? vatDetails.name ?? '' }
+					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+						setCurrentVatDetails( { ...currentVatDetails, name: event.target.value } )
+					}
+				/>
+			</FormFieldset>
+			<FormFieldset className="vat-info__address-field">
+				<FormLabel htmlFor="address">{ translate( 'Address' ) }</FormLabel>
+				<FormTextInput
+					name="address"
+					disabled={ isUpdating }
+					value={ currentVatDetails.address ?? vatDetails.address ?? '' }
+					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+						setCurrentVatDetails( { ...currentVatDetails, address: event.target.value } )
+					}
+				/>
+			</FormFieldset>
+
+			<Button primary busy={ isUpdating } disabled={ isUpdating } onClick={ saveDetails }>
+				{ translate( 'Validate and save' ) }
+			</Button>
+		</>
 	);
 }
 
@@ -261,4 +257,15 @@ function useDisplayVatNotices( {
 			return;
 		}
 	}, [ error, success, reduxDispatch, translate ] );
+}
+
+function LoadingPlaceholder(): JSX.Element {
+	return (
+		<>
+			<div className="vat-info__form-placeholder"></div>
+			<div className="vat-info__form-placeholder"></div>
+			<div className="vat-info__form-placeholder"></div>
+			<div className="vat-info__form-placeholder"></div>
+		</>
+	);
 }
