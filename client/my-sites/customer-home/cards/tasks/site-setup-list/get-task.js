@@ -136,7 +136,7 @@ export const getTask = (
 					'Give your new site a title to let people know what your site is about. A good title introduces your brand and the primary topics of your site.'
 				),
 				actionText: translate( 'Name your site' ),
-				actionUrl: `/settings/general/${ siteSlug }`,
+				actionUrl: `https://${ siteSlug }/wp-admin/customize.php?autofocus[section]=title_tagline`,
 				tour: 'checklistSiteTitle',
 			};
 			break;
