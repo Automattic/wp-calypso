@@ -4,7 +4,6 @@
 import config from 'config';
 import {
 	DataHelper,
-	BrowserHelper,
 	LoginFlow,
 	SidebarComponent,
 	DomainsPage,
@@ -13,13 +12,7 @@ import {
 	CartComponent,
 } from '@automattic/calypso-e2e';
 
-/**
- * Constants
- */
-const host = DataHelper.getJetpackHost();
-const viewportName = BrowserHelper.getViewportName();
-
-describe( `[${ host }] Domains (Manage): (${ viewportName }) @parallel`, function () {
+describe( DataHelper.createSuiteTitle( 'Domains (Management) ' ), function () {
 	describe( 'Add domain to existing site', function () {
 		let domainsSearchComponent;
 		let sidebarComponent;
