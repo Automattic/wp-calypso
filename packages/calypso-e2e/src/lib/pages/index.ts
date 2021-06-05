@@ -4,5 +4,6 @@
 export * from './login-page';
 export * from './gutenberg-editor-page';
 export * from './my-home-page';
-export * from './domains-page';
+export * from './marketing-page';
 export * from './checkout-page';
+export * from './domains-page';
