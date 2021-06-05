@@ -33,7 +33,6 @@ export class CommentsComponent extends BaseContainer {
 	async postComment( comment: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.commentTextArea );
 		await this.page.fill( selectors.commentTextArea, comment );
-
 		await this.page.click( selectors.submitButton );
 	}
 }

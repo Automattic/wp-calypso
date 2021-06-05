@@ -47,6 +47,7 @@ export class CommentsLikesComponent extends BaseContainer {
 	 *
 	 * @param {number} commentNum The nth comment to click like on. Defaults to 1.
 	 * @returns {Promise<void>} No return value.
+	 * @throws {Error} If no comments exist.
 	 */
 	async clickLikeComment( commentNum = 1 ): Promise< void > {
 		await this.page.waitForSelector( selectors.topLevelComments );
@@ -61,13 +62,13 @@ export class CommentsLikesComponent extends BaseContainer {
 			);
 		}
 
-		// Set the stage to check for liked status of the comment and the element
-		// to click.
+		// Get the nth top-level comment, which is the target to have the like button toggled.
+		// Check whether the CSS class for the post having been 'liked' exists.
 		const comment = topLevelComments[ commentNum - 1 ];
 		const isLiked = await comment.$$( selectors.liked );
 		const likeButton = ( await comment.$( selectors.likeButton ) ) as ElementHandle;
 
-		// Click the element and attempt to wait until the animations and such are done.
+		// Click the like button and attempt to wait until the animations and such are done.
 		await Promise.all( [ likeButton.click(), likeButton.waitForElementState( 'enabled' ) ] );
 
 		// Check for intended outcome depending on the original liked state.
