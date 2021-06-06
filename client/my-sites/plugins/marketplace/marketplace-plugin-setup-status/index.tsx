@@ -7,6 +7,7 @@ import { ProgressBar } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useSelector, useDispatch } from 'react-redux';
 import page from 'page';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -27,10 +28,18 @@ const StyledProgressBar = styled( ProgressBar )`
 	margin: 20px 0px;
 `;
 
+// Stages
+
 function WrappedMarketplacePluginSetup(): JSX.Element {
-	const [ currentStage, setCurrentStage ] = useState( 1 );
+	const translate = useTranslate();
+
+	const STAGE_1 = translate( 'Installing plugin' );
+	const STAGE_2 = translate( 'Activating plugin' );
+	const stages = [ STAGE_1, STAGE_2 ];
+
+	const [ currentStage, setCurrentStage ] = useState( STAGE_1 );
 	const [ simulatedProgressPercentage, setSimulatedProgressPercentage ] = useState( 0 );
-	const stages = [ 'Installing plugin', 'Activating plugin' ];
+
 	const interval = 2000;
 
 	const dispatch = useDispatch();
@@ -85,9 +94,15 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 		}
 	}, [ selectedSite.slug, transferStatus ] );
 
-	if ( simulatedProgressPercentage > 50 && currentStage === 1 ) {
-		setCurrentStage( 2 );
+	if ( simulatedProgressPercentage > 50 && currentStage === STAGE_1 ) {
+		setCurrentStage( STAGE_2 );
 	}
+
+	const currentNumericStage = stages.indexOf( currentStage ) + 1;
+	const stageIndication = translate( 'Step %(currentStage)s of %(stageCount)s', {
+		args: { currentStage: currentNumericStage, stageCount: stages.length },
+	} );
+
 	return (
 		<>
 			{ selectedSite?.ID ? <QueryJetpackPlugins siteIds={ [ selectedSite.ID ] } /> : '' }
@@ -95,14 +110,10 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 			<div className="marketplace-plugin-setup-status__root">
 				<div>
 					<h1 className="marketplace-plugin-setup-status__title wp-brand-font">
-						{ <div>{ stages[ currentStage - 1 ] }</div> }
+						{ <div>{ currentStage }</div> }
 					</h1>
 					<StyledProgressBar value={ simulatedProgressPercentage } color="#C9356E" compact />
-					{
-						<div>
-							Step { currentStage } of { stages.length }
-						</div>
-					}
+					<div>{ stageIndication }</div>
 				</div>
 			</div>
 		</>
