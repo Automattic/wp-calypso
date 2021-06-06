@@ -18,7 +18,7 @@ interface PurchaseArea {
 	onNavigateToCheckout: () => void;
 	onNavigateToDomainsSelection: () => void;
 	onRemoveEverythingFromCart: () => Promise< ResponseCart >;
-	onInstallPluginManually: ( { primaryDomain }: { primaryDomain: string } ) => Promise< void >;
+	onInstallPluginManually: ( primaryDomain: string ) => Promise< void >;
 }
 
 export default function PurchaseArea( {
@@ -66,7 +66,7 @@ export default function PurchaseArea( {
 			await onAddYoastPremiumToCart();
 		} else {
 			const primaryDomain = getPrimaryDomain( siteDomains ).domain;
-			onInstallPluginManually( { primaryDomain } );
+			onInstallPluginManually( primaryDomain );
 		}
 
 		if ( isCustomDomainAvailable && isCustomDomainPrimary && isProductPurchased ) {

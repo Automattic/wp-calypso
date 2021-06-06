@@ -95,7 +95,7 @@ function MarketplacePluginDetails( {
 							}?flags=marketplace-yoast`
 						)
 					}
-					onInstallPluginManually={ async ( { primaryDomain } ) => {
+					onInstallPluginManually={ async ( primaryDomain ) => {
 						await dispatch( setPluginSlugToBeInstalled( marketplacePluginSlug ) );
 						await dispatch( setPrimaryDomainCandidate( primaryDomain ) );
 						page(

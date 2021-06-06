@@ -20,8 +20,8 @@ const onRemoveEverythingFromCart = jest.fn();
 const onInstallPluginManually = jest.fn();
 
 describe( '<PurchaseArea/> Plugin details next step tests', () => {
-	const wpcomDomain = { isWpcomStagingDomain: true };
-	const customDomain = { isWpcomStagingDomain: false };
+	const wpcomDomain = { isWpcomStagingDomain: true, domain: 'awesomecustomdomain.wordpress.com' };
+	const customDomain = { isWpcomStagingDomain: false, domain: 'awesome-custom-domain.io' };
 	const primaryWpcomDomain = { isPrimary: true, ...wpcomDomain };
 	const primaryCustomDomain = { isPrimary: true, ...customDomain };
 	afterEach( () => {
@@ -131,10 +131,10 @@ describe( '<PurchaseArea/> Plugin details next step tests', () => {
 		const yoastFreeButton = await marketplacePluginDetails.findByText( 'Add Yoast Free' );
 
 		await fireEvent.click( yoastPremiumButton );
-		expect( onInstallPluginManually ).not.toHaveBeenCalled();
+		expect( onInstallPluginManually ).not.toHaveBeenCalledWith();
 		await onInstallPluginManually.mockReset();
 
 		await fireEvent.click( yoastFreeButton );
-		expect( onInstallPluginManually ).toHaveBeenCalled();
+		expect( onInstallPluginManually ).toHaveBeenCalledWith( primaryWpcomDomain.domain );
 	} );
 } );
