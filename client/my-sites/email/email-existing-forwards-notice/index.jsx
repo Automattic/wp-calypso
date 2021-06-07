@@ -9,9 +9,12 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Notice from 'calypso/components/notice';
-import { getTitanProductName } from 'calypso/lib/titan';
 
-const TitanExistingForwardsNotice = ( { domainsWithForwards, selectedDomainName } ) => {
+const EmailExistingForwardsNotice = ( {
+	domainsWithForwards,
+	productName,
+	selectedDomainName,
+} ) => {
 	const translate = useTranslate();
 
 	if ( ! domainsWithForwards.includes( selectedDomainName ) ) {
@@ -26,19 +29,19 @@ const TitanExistingForwardsNotice = ( { domainsWithForwards, selectedDomainName 
 				{
 					args: {
 						domainName: selectedDomainName,
-						productName: getTitanProductName(),
+						productName,
 					},
 					comment:
-						'%(productName)s is the name of the product, e.g. Titan Mail or Email; %(domainName)s is a domain name, e.g. example.org',
+						'%(productName)s is the name of the product, e.g. Professional Email, Google Workspace; %(domainName)s is a domain name, e.g. example.org',
 				}
 			) }
 		</Notice>
 	);
 };
 
-TitanExistingForwardsNotice.propTypes = {
+EmailExistingForwardsNotice.propTypes = {
 	domainsWithForwards: PropTypes.arrayOf( PropTypes.string ).isRequired,
 	selectedDomainName: PropTypes.string.isRequired,
 };
 
-export default TitanExistingForwardsNotice;
+export default EmailExistingForwardsNotice;
