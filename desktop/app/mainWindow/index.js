@@ -152,7 +152,6 @@ function showAppWindow() {
 	require( '../window-handlers/failed-to-load' )( appWindow );
 	require( '../window-handlers/login-status' )( appWindow );
 	require( '../window-handlers/notifications' )( appWindow );
-	require( '../window-handlers/external-links' )( appWindow );
 	require( '../window-handlers/window-saver' )( appWindow );
 	require( '../window-handlers/debug-tools' )( appWindow );
 	require( '../window-handlers/spellcheck' )( appWindow );
