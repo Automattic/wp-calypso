@@ -10,8 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import { hasSiteSeoFeature } from './utils';
-import { isEligibleForSEOFeatures } from 'calypso/lib/site/utils';
+import { hasSiteSeoFeature, isFreeWPCOMSite } from '../utils';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'calypso/components/seo/meta-title-editor';
@@ -275,7 +274,7 @@ export class SeoForm extends React.Component {
 			siteIsJetpack,
 			siteIsComingSoon,
 			showAdvancedSeo,
-			isSEOEligible,
+			isFreeWPCOM,
 			showWebsiteMeta,
 			selectedSite,
 			isSeoToolsActive,
@@ -303,7 +302,7 @@ export class SeoForm extends React.Component {
 		const generalTabUrl = getGeneralTabUrl( slug );
 
 		const upsellProps =
-			siteIsJetpack && isSEOEligible
+			siteIsJetpack && ! isFreeWPCOM
 				? {
 						title: translate( 'Boost your search engine ranking' ),
 						feature: FEATURE_SEO_PREVIEW_TOOLS,
@@ -314,7 +313,7 @@ export class SeoForm extends React.Component {
 							'Boost your search engine ranking with the powerful SEO tools in the Business plan'
 						),
 						feature: FEATURE_ADVANCED_SEO,
-						plan: ! isSEOEligible
+						plan: isFreeWPCOM
 							? PLAN_BUSINESS
 							: selectedSite.plan &&
 							  findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
@@ -500,7 +499,7 @@ const mapStateToProps = ( state ) => {
 		selectedSite: site,
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible,
-		isSEOEligible: isEligibleForSEOFeatures( site, state, siteId ),
+		isFreeWPCOM: isFreeWPCOMSite( site, state, siteId ),
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),

@@ -8,7 +8,7 @@ import { flowRight, partialRight, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { hasSiteAnalyticsFeature } from '../utils';
+import { hasSiteAnalyticsFeature, isFreeWPCOMSite } from '../utils';
 import wrapSettingsForm from '../wrap-settings-form';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -18,7 +18,6 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import GoogleAnalyticsJetpackForm from './form-google-analytics-jetpack';
 import GoogleAnalyticsSimpleForm from './form-google-analytics-simple';
-import { isEligibleForSEOFeatures } from 'calypso/lib/site/utils';
 
 /**
  * Style dependencies
@@ -39,7 +38,7 @@ export const GoogleAnalyticsForm = ( props ) => {
 		eventTracker,
 		uniqueEventTracker,
 		path,
-		isSEOEligible,
+		isFreeWPCOM,
 	} = props;
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ loggedGoogleAnalyticsModified, setLoggedGoogleAnalyticsModified ] = useState( false );
@@ -90,9 +89,9 @@ export const GoogleAnalyticsForm = ( props ) => {
 		placeholderText,
 		recordSupportLinkClick,
 		setDisplayForm,
-		isSEOEligible,
+		isFreeWPCOM,
 	};
-	if ( props.siteIsJetpack && isSEOEligible ) {
+	if ( props.siteIsJetpack && ! isFreeWPCOM ) {
 		return <GoogleAnalyticsJetpackForm { ...newProps } />;
 	}
 	return <GoogleAnalyticsSimpleForm { ...newProps } />;
@@ -102,7 +101,6 @@ const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const isGoogleAnalyticsEligible = hasSiteAnalyticsFeature( site, state, siteId );
-	const isSEOEligible = isEligibleForSEOFeatures( site, state, siteId );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
@@ -118,7 +116,7 @@ const mapStateToProps = ( state ) => {
 		siteIsJetpack,
 		sitePlugins,
 		jetpackModuleActive,
-		isSEOEligible,
+		isFreeWPCOM: isFreeWPCOMSite( site, state, siteId ),
 	};
 };
 

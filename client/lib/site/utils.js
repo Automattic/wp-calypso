@@ -8,8 +8,7 @@ import { withoutHttp } from 'calypso/lib/url';
 /**
  * Internal dependencies
  */
-import { planHasFeature, isFreePlan } from '@automattic/calypso-products';
-import isSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import { planHasFeature } from '@automattic/calypso-products';
 
 export function userCan( capability, site ) {
 	return site && site.capabilities && site.capabilities[ capability ];
@@ -176,20 +175,4 @@ export function hasSiteFeature( site, feature ) {
 	if ( site && site.plan ) {
 		return planHasFeature( site.plan.product_slug, feature );
 	}
-}
-
-/**
- * Checks if the site is eligible for SEO features.
- *
- * @param {object} site Site to check
- * @param {string} state State tree
- * @param {string} siteId Site id
- * @returns {boolean} True if does
- */
-export function isEligibleForSEOFeatures( site, state, siteId ) {
-	if ( ! ( site && site.plan && state ) ) {
-		return false;
-	}
-
-	return ! ( isFreePlan( site.plan.product_slug ) && isSiteWPCOM( state, siteId ) );
 }

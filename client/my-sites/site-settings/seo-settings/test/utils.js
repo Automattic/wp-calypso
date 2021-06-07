@@ -15,7 +15,7 @@ import {
 	jpSecurityRealtimePlan,
 	jpCompletePlan,
 } from '../fixture';
-import { hasSiteSeoFeature } from '../utils';
+import { hasSiteSeoFeature } from '../../utils';
 
 describe( 'hasSiteSeoFeature', () => {
 	const state = {
