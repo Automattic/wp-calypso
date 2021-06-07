@@ -146,7 +146,7 @@ export default function () {
 	);
 
 	page(
-		paths.domainManagementRoot(),
+		paths.domainManagementAllEditContactInfo(),
 		...getCommonHandlers( { noSitePath: false } ),
 		domainManagementController.domainManagementBulkEditContactInfo,
 		makeLayout,

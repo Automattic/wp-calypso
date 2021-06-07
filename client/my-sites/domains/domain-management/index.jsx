@@ -22,6 +22,7 @@ import TransferToOtherUser from './transfer/transfer-to-other-user';
 import ListAll from './list/list-all';
 
 export default {
+	BulkEditContactInfo,
 	ChangeSiteAddress,
 	ContactsPrivacy,
 	Dns,

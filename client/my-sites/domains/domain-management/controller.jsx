@@ -28,7 +28,6 @@ import {
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
 	domainManagementRoot,
-	domainManagementBulkUpdateContactInfo,
 	domainManagementAllEditContactInfo,
 } from 'calypso/my-sites/domains/paths';
 import { emailManagement, emailManagementForwarding } from 'calypso/my-sites/email/paths';
@@ -69,7 +68,7 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementAllEditContactInfo() }
 				analyticsTitle="Domain Management > All Domains > Edit Contact Info"
-				component={ DomainManagement.EditContactInfo }
+				component={ DomainManagement.BulkEditContactInfo }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }
