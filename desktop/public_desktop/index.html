@@ -53,6 +53,13 @@
 			</div>
 		</div>
 		<script>
+      function handleDoubleClick() {
+        const titleBar = document.getElementById('title-bar');
+        titleBar.addEventListener('dblclick', function () {
+          window.electron.send('title-bar-double-click');
+        });
+      }
+      handleDoubleClick();
 			function Navigate() {
 				const titleBarButtons = document.getElementById( 'title-bar-buttons' );
 				// Override title bar button padding on window load (Linux, Windows)
