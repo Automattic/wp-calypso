@@ -79,7 +79,6 @@
 		"mailchimp": true,
 		"manage/edit-user": true,
 		"manage/payment-methods": true,
-		"manage/plugins": true,
 		"manage/security": true,
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/categories": true,

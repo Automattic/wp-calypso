@@ -111,7 +111,6 @@
 		"manage/export/guided-transfer": true,
 		"manage/import/site-importer-endpoints": true,
 		"manage/payment-methods": true,
-		"manage/plugins": true,
 		"manage/plugins/compatibility-warning": false,
 		"manage/security": true,
 		"manage/site-settings/analytics": true,
