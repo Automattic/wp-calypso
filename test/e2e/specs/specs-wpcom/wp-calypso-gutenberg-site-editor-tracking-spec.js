@@ -26,6 +26,13 @@ const siteEditorUser = 'siteEditorSimpleSiteUser';
 describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
+	// TODO: Create an edge user with a Site Editor enabled site
+	before( async function () {
+		if ( process.env.GUTENBERG_EDGE === 'true' ) {
+			this.skip();
+		}
+	} );
+
 	describe( 'Tracking Site Editor: @parallel', function () {
 		it( 'Log in with site editor user and Site Editor opens successfully', async function () {
 			const loginFlow = new LoginFlow( this.driver, siteEditorUser );
