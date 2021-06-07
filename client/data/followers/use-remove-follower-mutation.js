@@ -13,8 +13,8 @@ function useRemoveFollowerMutation() {
 	const queryClient = useQueryClient();
 	const mutation = useMutation(
 		( { siteId, type, followerId } ) => {
-			const method = type === 'email' ? 'removeEmailFollower' : 'removeFollower';
-			return wp.undocumented().site( siteId )[ method ]( followerId );
+			const typeSlug = type === 'email' ? 'email-followers' : 'followers';
+			return wp.req.post( `/sites/${ siteId }/${ typeSlug }/${ followerId }/delete` );
 		},
 		{
 			onSuccess( data, variables ) {
