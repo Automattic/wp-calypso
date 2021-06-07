@@ -154,6 +154,7 @@ function showAppWindow() {
 	require( '../window-handlers/notifications' )( appWindow );
 	require( '../window-handlers/window-saver' )( appWindow );
 	require( '../window-handlers/debug-tools' )( appWindow );
+	require( '../window-handlers/external-links' )( appWindow );
 	require( '../window-handlers/spellcheck' )( appWindow );
 	require( '../window-handlers/navigation' )( appWindow );
 

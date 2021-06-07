@@ -9,8 +9,6 @@ const { URL } = require( 'url' );
 const log = require( '../../lib/logger' )( 'desktop:external-links' );
 
 module.exports = function ( { view } ) {
-	const webContents = view.webContents;
-
 	const loadURL = ( event, url ) => {
 		const parsed = new URL( url );
 		log.info( `Navigating to URL: '${ parsed.href }'` );
@@ -21,10 +19,6 @@ module.exports = function ( { view } ) {
 	};
 
 	view.webContents.on( 'new-window', function ( event, url ) {
-		loadURL( event, url );
-	} );
-
-	webContents.on( 'will-navigate', async function ( event, url ) {
 		loadURL( event, url );
 	} );
 };
