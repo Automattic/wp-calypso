@@ -159,12 +159,12 @@ export function getRedirectAfterAccept( invite ) {
 	const readerPath = '/read';
 	const postsListPath = '/posts/' + invite.site.ID;
 	const subdomainRegExp = /^https?:\/\/([a-z0-9]*).wordpress.com/;
-	const remoteLoginBackUrl = ( destinationUri ) =>
-		`https://${ invite.site.domain }/remote-login.php/?action=r_login_redirect&r_login_back=https://wordpress.com${ destinationUri }`;
+	const remoteLoginBackUrl = ( destinationUri ) => `https://wordpress.com${ destinationUri }`;
+	const remoteLoginHost = `https://${ invite.site.domain }`;
 	const remoteLoginUrl = ( destinationUri ) =>
-		`https://r-login.wordpress.com/remote-login.php?action=link&back=${ encodeURIComponent(
-			remoteLoginBackUrl( destinationUri )
-		) }`;
+		`https://r-login.wordpress.com/remote-login.php?action=link&host=${ encodeURIComponent(
+			remoteLoginHost
+		) }&back=${ encodeURIComponent( remoteLoginBackUrl( destinationUri ) ) }`;
 
 	if ( invite.site.is_vip ) {
 		switch ( invite.role ) {
