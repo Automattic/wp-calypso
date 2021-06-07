@@ -18,9 +18,9 @@ export function createGeneralTests( { it, editorType, postType } ) {
 	it( 'Check for presence of e2e specific tracking events stack on global', async function () {
 		await EditorComponent.Expect( this.driver, gutenbergEditorType );
 		const eventsStack = await getEventsStack( this.driver );
-		// Check evaluates to truthy
-		assert(
+		assert.strictEqual(
 			Array.isArray( eventsStack ),
+			true,
 			'Tracking events stack missing from window._e2eEventsStack'
 		);
 	} );
