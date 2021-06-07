@@ -80,31 +80,19 @@ export default function BillingDetails(): ReactElement {
 				<Card compact>
 					<div className="billing-details__row">
 						<div className="billing-details__product">
-							<TextPlaceholder />
-							<span className="billing-details__line-item-meta">
-								<TextPlaceholder />
-							</span>
+							{ billing.isLoading ? <TextPlaceholder /> : '-' }
 						</div>
 
 						<div className="billing-details__assigned">
-							<TextPlaceholder />
-							<span className="billing-details__line-item-meta billing-details__line-item-meta--is-mobile">
-								<TextPlaceholder />
-							</span>
+							{ billing.isLoading ? <TextPlaceholder /> : '-' }
 						</div>
 
 						<div className="billing-details__unassigned">
-							<TextPlaceholder />
-							<span className="billing-details__line-item-meta billing-details__line-item-meta--is-mobile">
-								<TextPlaceholder />
-							</span>
+							{ billing.isLoading ? <TextPlaceholder /> : '-' }
 						</div>
 
 						<div className="billing-details__subtotal">
-							<TextPlaceholder />
-							<span className="billing-details__line-item-meta">
-								<TextPlaceholder />
-							</span>
+							{ billing.isLoading ? <TextPlaceholder /> : '-' }
 						</div>
 					</div>
 				</Card>
@@ -119,12 +107,12 @@ export default function BillingDetails(): ReactElement {
 								args: { date: moment( billing.data.date ).format( 'MMMM, YYYY' ) },
 							} ) }
 
-						{ ! billing.isSuccess && <TextPlaceholder /> }
+						{ ! billing.isSuccess && billing.isLoading && <TextPlaceholder /> }
 					</span>
 					<strong className="billing-details__cost-amount">
 						{ billing.isSuccess && formatCurrency( billing.data.costs.total, 'USD' ) }
 
-						{ ! billing.isSuccess && <TextPlaceholder /> }
+						{ ! billing.isSuccess && ( billing.isLoading ? <TextPlaceholder /> : '-' ) }
 					</strong>
 
 					<span className="billing-details__total-label billing-details__line-item-meta">
@@ -133,7 +121,7 @@ export default function BillingDetails(): ReactElement {
 					<span className="billing-details__line-item-meta">
 						{ billing.isSuccess && formatCurrency( billing.data.costs.assigned, 'USD' ) }
 
-						{ ! billing.isSuccess && <TextPlaceholder /> }
+						{ ! billing.isSuccess && ( billing.isLoading ? <TextPlaceholder /> : '-' ) }
 					</span>
 
 					<span className="billing-details__total-label billing-details__line-item-meta">
@@ -142,7 +130,7 @@ export default function BillingDetails(): ReactElement {
 					<span className="billing-details__line-item-meta">
 						{ billing.isSuccess && formatCurrency( billing.data.costs.unassigned, 'USD' ) }
 
-						{ ! billing.isSuccess && <TextPlaceholder /> }
+						{ ! billing.isSuccess && ( billing.isLoading ? <TextPlaceholder /> : '-' ) }
 					</span>
 				</div>
 			</Card>

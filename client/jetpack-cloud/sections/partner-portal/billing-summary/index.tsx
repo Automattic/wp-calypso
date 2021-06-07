@@ -84,7 +84,7 @@ export default function BillingSummary(): ReactElement {
 				<strong className="billing-summary__value">
 					{ billing.isSuccess && numberFormat( billing.data.licenses.total, 0 ) }
 
-					{ ! billing.isSuccess && <TextPlaceholder /> }
+					{ ! billing.isSuccess && ( billing.isLoading ? <TextPlaceholder /> : '-' ) }
 				</strong>
 			</div>
 
@@ -93,7 +93,7 @@ export default function BillingSummary(): ReactElement {
 				<strong className="billing-summary__value">
 					{ billing.isSuccess && numberFormat( billing.data.licenses.assigned, 0 ) }
 
-					{ ! billing.isSuccess && <TextPlaceholder /> }
+					{ ! billing.isSuccess && ( billing.isLoading ? <TextPlaceholder /> : '-' ) }
 				</strong>
 			</div>
 
@@ -102,7 +102,7 @@ export default function BillingSummary(): ReactElement {
 				<strong className="billing-summary__value">
 					{ billing.isSuccess && numberFormat( billing.data.licenses.unassigned, 0 ) }
 
-					{ ! billing.isSuccess && <TextPlaceholder /> }
+					{ ! billing.isSuccess && ( billing.isLoading ? <TextPlaceholder /> : '-' ) }
 				</strong>
 			</div>
 
@@ -119,7 +119,7 @@ export default function BillingSummary(): ReactElement {
 				<strong className="billing-summary__value">
 					{ billing.isSuccess && formatCurrency( billing.data.costs.total, 'USD' ) }
 
-					{ ! billing.isSuccess && <TextPlaceholder /> }
+					{ ! billing.isSuccess && ( billing.isLoading ? <TextPlaceholder /> : '-' ) }
 				</strong>
 			</div>
 		</Card>
