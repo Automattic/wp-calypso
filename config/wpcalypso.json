@@ -83,7 +83,6 @@
 		"keyboard-shortcuts": true,
 		"mailchimp": true,
 		"manage/export/guided-transfer": true,
-		"manage/payment-methods": true,
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/categories": true,
 		"marketplace-yoast": false,

@@ -109,7 +109,6 @@
 		"mailchimp": true,
 		"manage/export/guided-transfer": true,
 		"manage/import/site-importer-endpoints": true,
-		"manage/payment-methods": true,
 		"manage/plugins/compatibility-warning": false,
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/categories": true,
