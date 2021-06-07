@@ -99,7 +99,7 @@ export default function useBillingDashboardQuery< TError = unknown >(
 	const dispatch = useDispatch();
 	const activeKeyId = useSelector( getActivePartnerKeyId );
 
-	const response = useQuery< APIBilling, TError, Billing >(
+	return useQuery< APIBilling, TError, Billing >(
 		[ 'partner-portal', 'billing-dashboard', activeKeyId ],
 		queryBillingDashboard,
 		{
@@ -130,6 +130,4 @@ export default function useBillingDashboardQuery< TError = unknown >(
 			...options,
 		}
 	);
-
-	return response;
 }
