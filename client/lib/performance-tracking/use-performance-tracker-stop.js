@@ -1,3 +1,4 @@
+/* global requestAnimationFrame:false */
 /**
  * External dependencies
  */

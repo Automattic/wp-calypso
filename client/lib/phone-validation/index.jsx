@@ -29,7 +29,7 @@ export default function ( phoneNumber ) {
 		};
 	}
 
-	if ( phoneNumber.search( /[^0-9,+]/ ) > -1 ) {
+	if ( phoneNumber.search( /[^0-9,\+]/ ) > -1 ) {
 		return {
 			error: 'phone_number_contains_special_characters',
 			message: i18n.translate( 'Phone numbers cannot contain special characters' ),

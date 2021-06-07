@@ -69,7 +69,7 @@ const AmpJetpack = ( {
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const customizerUrl = getCustomizerUrl( state, siteId );
-	const customizerAmpPanelUrl = customizerUrl
+	const customizerAmpPanelUrl = !! customizerUrl
 		? addQueryArgs(
 				{
 					'autofocus[panel]': 'amp_panel',

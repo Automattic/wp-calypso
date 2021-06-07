@@ -6,8 +6,8 @@ import { isEqual, memoize } from 'lodash';
 /**
  * Module variables
  */
-const REGEXP_ATTR_STRING = /(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*'([^']*)'(?:\s|$)|(\w+)\s*=\s*([^\s'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/g;
-const REGEXP_SHORTCODE = /\[(\[?)([^[\]/\s\u00a0\u200b]+)(?![\w-])([^\]/]*(?:\/(?!\])[^\]/]*)*?)(?:(\/)\]|\](?:([^[]*(?:\[(?!\/\2\])[^[]*)*)(\[\/\2\]))?)(\]?)/;
+const REGEXP_ATTR_STRING = /(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/g;
+const REGEXP_SHORTCODE = /\[(\[?)([^\[\]\/\s\u00a0\u200b]+)(?![\w-])([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*(?:\[(?!\/\2\])[^\[]*)*)(\[\/\2\]))?)(\]?)/;
 
 /**
  * Given a string, parses shortcode attributes and returns an object containing

@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { filter, some, get, includes, keyBy, map, omit, reject } from 'lodash';
+import { filter, some, find, get, includes, keyBy, map, omit, reject } from 'lodash';
 
 /**
  * Internal dependencies
