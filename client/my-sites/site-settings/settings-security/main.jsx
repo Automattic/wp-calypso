@@ -28,6 +28,7 @@ import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
 import isRewindActive from 'calypso/state/selectors/is-rewind-active';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { siteHasSecuritySettingsTab } from '../utils';
 
 const SiteSettingsSecurity = ( {
 	site,
@@ -37,9 +38,10 @@ const SiteSettingsSecurity = ( {
 	hasActiveRewind,
 	isJetpackSectionEnabled,
 	shouldDisplayBanner,
+	hasSecuritySettingsTab,
 	translate,
 } ) => {
-	if ( ! siteIsJetpack ) {
+	if ( ! siteIsJetpack || ! hasSecuritySettingsTab ) {
 		return (
 			<EmptyContent
 				action={ translate( 'Manage general settings for %(site)s', {
@@ -90,6 +92,7 @@ SiteSettingsSecurity.propTypes = {
 	hasActiveRewind: PropTypes.bool,
 	isJetpackSectionEnabled: PropTypes.bool,
 	shouldDisplayBanner: PropTypes.bool,
+	hasSecuritySettingsTab: PropTypes.bool,
 };
 
 export default connect( ( state ) => {
@@ -104,5 +107,6 @@ export default connect( ( state ) => {
 		hasActiveRewind: isRewindActive( state, siteId ),
 		isJetpackSectionEnabled: isJetpackSectionEnabledForSite( state, siteId ),
 		shouldDisplayBanner: shouldDisplayJetpackCredentialsBanner( state ),
+		hasSecuritySettingsTab: siteHasSecuritySettingsTab( site, state, siteId ),
 	};
 } )( localize( SiteSettingsSecurity ) );

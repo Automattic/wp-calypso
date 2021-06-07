@@ -17,9 +17,8 @@ import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-s
 import isSiteFailedMigrationSource from 'calypso/state/selectors/is-site-failed-migration-source';
 import isRewindActive from 'calypso/state/selectors/is-rewind-active';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import versionCompare from 'calypso/lib/version-compare';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import { FEATURE_SECURITY_SETTINGS } from '@automattic/calypso-products';
 
 export class SiteSettingsNavigation extends Component {
 	static propTypes = {
@@ -27,6 +26,7 @@ export class SiteSettingsNavigation extends Component {
 		// Connected props
 		site: PropTypes.object,
 		shouldShowJetpackSettings: PropTypes.bool,
+		hasActiveSecuritySettingsFeature: PropTypes.bool,
 	};
 
 	getStrings() {
@@ -42,13 +42,14 @@ export class SiteSettingsNavigation extends Component {
 	}
 
 	render() {
-		const { section, site, shouldShowSettings, shouldShowJetpackSettings } = this.props;
+		const {
+			section,
+			site,
+			shouldShowJetpackSettings,
+			hasActiveSecuritySettingsFeature,
+		} = this.props;
 		const strings = this.getStrings();
 		const selectedText = strings[ section ];
-
-		if ( ! shouldShowSettings ) {
-			return null;
-		}
 
 		if ( ! site ) {
 			return <SectionNav />;
@@ -66,7 +67,7 @@ export class SiteSettingsNavigation extends Component {
 						{ strings.general }
 					</NavItem>
 
-					{ site.jetpack && (
+					{ hasActiveSecuritySettingsFeature && (
 						<NavItem
 							path={ `/settings/security/${ site.slug }` }
 							preloadSectionName="settings-security"
@@ -119,23 +120,18 @@ export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 
-	// Do not render if the settings pages can be accessed directly from the sidebar menu (requires https://github.com/Automattic/jetpack/pull/20100).
-	let shouldShowSettings = false;
-	if ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) {
-		const jetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-		if ( jetpackVersion && versionCompare( jetpackVersion, '9.9-alpha', '<' ) ) {
-			shouldShowSettings = true;
-		}
-	}
-
 	return {
 		site,
-		shouldShowSettings,
 		shouldShowJetpackSettings:
 			siteId &&
 			isJetpackSectionEnabledForSite( state, siteId ) &&
 			( siteHasScanProductPurchase( state, siteId ) ||
 				isRewindActive( state, siteId ) ||
 				isSiteFailedMigrationSource( state, siteId ) ),
+		hasActiveSecuritySettingsFeature: hasActiveSiteFeature(
+			state,
+			siteId,
+			FEATURE_SECURITY_SETTINGS
+		),
 	};
 } )( localize( SiteSettingsNavigation ) );
