@@ -77,7 +77,6 @@
 		"login/magic-login": true,
 		"mailchimp": true,
 		"manage/custom-post-types": true,
-		"manage/customize": true,
 		"manage/edit-user": true,
 		"manage/payment-methods": true,
 		"manage/plugins": true,

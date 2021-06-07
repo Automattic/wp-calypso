@@ -77,7 +77,6 @@
 		"legal-updates-banner": false,
 		"mailchimp": false,
 		"manage/custom-post-types": true,
-		"manage/customize": true,
 		"manage/edit-user": true,
 		"manage/export/guided-transfer": true,
 		"manage/payment-methods": true,
