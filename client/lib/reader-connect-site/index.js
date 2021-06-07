@@ -45,16 +45,16 @@ const connectSite = ( Component ) => {
 
 	return connect( ( state, ownProps ) => {
 		let { feedId, siteId } = ownProps;
-		let feed = !! feedId ? getFeed( state, feedId ) : undefined;
-		let site = !! siteId ? getSite( state, siteId ) : undefined;
+		let feed = feedId ? getFeed( state, feedId ) : undefined;
+		let site = siteId ? getSite( state, siteId ) : undefined;
 
 		if ( feed && ! siteId ) {
 			siteId = feed.blog_ID !== 0 ? feed.blog_ID : undefined;
-			site = !! siteId ? getSite( state, feed.blog_ID ) : undefined;
+			site = siteId ? getSite( state, feed.blog_ID ) : undefined;
 		}
 		if ( site && ! feedId ) {
 			feedId = site.feed_ID;
-			feed = !! feedId ? getFeed( state, site.feed_ID ) : undefined;
+			feed = feedId ? getFeed( state, site.feed_ID ) : undefined;
 		}
 
 		return {
