@@ -76,7 +76,6 @@
 		"layout/query-selected-editor": true,
 		"legal-updates-banner": false,
 		"mailchimp": false,
-		"manage/comments": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,
 		"manage/edit-user": true,

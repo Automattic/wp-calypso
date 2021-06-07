@@ -112,7 +112,6 @@ class SiteMenu extends PureComponent {
 				count: get( this.props.commentCounts, 'pending' ),
 				capability: 'edit_posts',
 				queryable: true,
-				config: 'manage/comments',
 				link: '/comments',
 				paths: [ '/comment', '/comments' ],
 				wpAdminLink: 'edit-comments.php',
