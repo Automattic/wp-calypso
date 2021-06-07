@@ -60,12 +60,13 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 	// Skipped because it depends on the existing state. If the user does not have a pending purchase
 	// it may show only 5 results, but this test doesn't try to create a purchase.
 	it.skip( 'Displays Default Results initially', async function () {
-		supportSearchComponent = await SupportSearchComponent.Expect( this.driver );
+		// supportSearchComponent = await SupportSearchComponent.Expect( this.driver );
 		const resultsCount = await supportSearchComponent.getDefaultResultsCount();
 		assert.equal( resultsCount, 6, 'There are not 6 Default Results displayed.' );
 	} );
 
 	it( 'Returns API Search Results for valid search query', async function () {
+		supportSearchComponent = await SupportSearchComponent.Expect( this.driver );
 		await supportSearchComponent.searchFor( 'Domain' );
 
 		const searchResultsCount = await supportSearchComponent.getSearchResultsCount();
