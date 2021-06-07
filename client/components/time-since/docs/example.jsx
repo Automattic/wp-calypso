@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import React from 'react';
+import React, { PureComponent } from 'react';
 import moment from 'moment';
 
 /**

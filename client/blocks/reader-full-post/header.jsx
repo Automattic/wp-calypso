@@ -19,7 +19,7 @@ import { isDiscoverPost } from 'calypso/reader/discover/helper';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
 const ReaderFullPostHeader = ( { post, referralPost } ) => {
-	const handlePermalinkClick = () => {
+	const handlePermalinkClick = ( {} ) => {
 		recordPermalinkClick( 'full_post_title', post );
 	};
 

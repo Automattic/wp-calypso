@@ -7,6 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { Card } from '@automattic/components';
 import PostEditButton from 'calypso/blocks/post-edit-button';
 
 export default class PostEditButtonExample extends React.PureComponent {
