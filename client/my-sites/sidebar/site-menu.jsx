@@ -218,7 +218,6 @@ class SiteMenu extends PureComponent {
 					return memo.concat( {
 						name: postType.name,
 						label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
-						config: 'manage/custom-post-types',
 						//controls if we show the wp-admin link. It feels like this is coupling two different meanings (api_queryable)
 						queryable: false,
 
@@ -241,7 +240,6 @@ class SiteMenu extends PureComponent {
 				return memo.concat( {
 					name: postType.name,
 					label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
-					config: 'manage/custom-post-types',
 					queryable: postType.api_queryable,
 
 					//If the API endpoint doesn't send the .capabilities property (e.g. because the site's Jetpack

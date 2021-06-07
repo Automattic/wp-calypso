@@ -107,7 +107,6 @@
 		"login/magic-login": true,
 		"happychat": true,
 		"mailchimp": true,
-		"manage/custom-post-types": true,
 		"manage/edit-user": true,
 		"manage/export/guided-transfer": true,
 		"manage/import/site-importer-endpoints": true,
