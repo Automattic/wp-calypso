@@ -11,33 +11,34 @@ import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import { getTitanProductName } from 'calypso/lib/titan';
 
-const TitanExistingForwardsNotice = ( { domainsWithForwards } ) => {
+const TitanExistingForwardsNotice = ( { domainsWithForwards, selectedDomainName } ) => {
 	const translate = useTranslate();
 
-	return domainsWithForwards.length ? (
+	if ( ! domainsWithForwards.includes( selectedDomainName ) ) {
+		return null;
+	}
+
+	return (
 		<Notice showDismiss={ false } status="is-warning">
 			{ translate(
 				'Please note that email forwards are not compatible with %(productName)s, ' +
-					'and will be disabled once %(productName)s is added to this domain. The following ' +
-					'domains have forwards:',
+					'and will be disabled once %(productName)s is added to %(domainName)s.',
 				{
 					args: {
+						domainName: selectedDomainName,
 						productName: getTitanProductName(),
 					},
-					comment: '%(productName)s is the name of the product, e.g. Titan Mail or Email',
+					comment:
+						'%(productName)s is the name of the product, e.g. Titan Mail or Email; %(domainName)s is a domain name, e.g. example.org',
 				}
 			) }
-			<ul>
-				{ domainsWithForwards.map( ( domainName ) => {
-					return <li key={ domainName }>{ domainName }</li>;
-				} ) }
-			</ul>
 		</Notice>
-	) : null;
+	);
 };
 
 TitanExistingForwardsNotice.propTypes = {
 	domainsWithForwards: PropTypes.arrayOf( PropTypes.string ).isRequired,
+	selectedDomainName: PropTypes.string.isRequired,
 };
 
 export default TitanExistingForwardsNotice;

@@ -294,7 +294,11 @@ class TitanAddMailboxes extends React.Component {
 						{ getTitanProductName() + ': ' + selectedDomainName }
 					</HeaderCake>
 
-					<TitanExistingForwardsNotice domainsWithForwards={ domainsWithForwards } />
+					<TitanExistingForwardsNotice
+						domainsWithForwards={ domainsWithForwards }
+						selectedDomainName={ selectedDomainName }
+					/>
+
 					{ selectedDomain && (
 						<TitanUnusedMailboxesNotice
 							domain={ selectedDomain }
