@@ -345,9 +345,9 @@ describe( 'useBillingDashboardQuery', () => {
 			wrapper,
 		} );
 
-		// Test that the response has been converted to "Success".
-		await waitFor( () => result.current.isSuccess );
-		expect( result.current.isError ).toBe( false );
+		// Wait for the response.
+		await waitFor( () => result.current.isError );
+		expect( result.current.isError ).toBe( true );
 
 		// Test that the correct notification is being triggered.
 		expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
