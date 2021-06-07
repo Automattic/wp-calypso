@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 /**
  * WordPress dependencies
  */
@@ -29,11 +28,13 @@ jest.mock( 'calypso/lib/user/utils' );
 const mockedIsLoggedIn = jest.spyOn( userUtils, 'isLoggedIn' );
 
 function setSsrContext() {
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	global.window = undefined;
 }
 
 function setBrowserContext() {
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	global.window = {};
 }
