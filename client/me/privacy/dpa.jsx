@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { useMutation } from 'react-query';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -14,13 +13,15 @@ import { useDispatch } from 'react-redux';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import wp from 'calypso/lib/wp';
 
-const useSuccessNotice = ( isSuccess ) => {
-	const showNotice = React.useRef();
-	const dispatch = useDispatch();
+const DPA = () => {
+	const [ isLoading, setLoading ] = React.useState( false );
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
-	React.useEffect( () => {
-		showNotice.current = () => {
+	const requestDpa = async () => {
+		try {
+			setLoading( true );
+			await wp.req.post( '/me/request-dpa', { apiNamespace: 'wpcom/v2' } );
 			dispatch(
 				successNotice(
 					translate( 'Request successful! We are sending you our DPA via email', {
@@ -30,21 +31,7 @@ const useSuccessNotice = ( isSuccess ) => {
 					{ id: 'request-dpa-notice' }
 				)
 			);
-		};
-	}, [ dispatch, translate ] );
-
-	React.useEffect( () => {
-		isSuccess && showNotice.current();
-	}, [ isSuccess ] );
-};
-
-const useErrorNotice = ( isError, error ) => {
-	const showNotice = React.useRef();
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-
-	React.useEffect( () => {
-		showNotice.current = () => {
+		} catch ( error ) {
 			dispatch(
 				errorNotice(
 					error.error === 'too_many_requests'
@@ -56,29 +43,10 @@ const useErrorNotice = ( isError, error ) => {
 					{ id: 'request-dpa-notice' }
 				)
 			);
-		};
-	}, [ dispatch, translate, error ] );
-
-	React.useEffect( () => {
-		isError && showNotice.current();
-	}, [ isError ] );
-};
-
-const useRequestDpaMutation = () =>
-	useMutation( () => wp.req.post( '/me/request-dpa', { apiNamespace: 'wpcom/v2' } ) );
-
-const DPA = () => {
-	const translate = useTranslate();
-	const {
-		mutate: requestDpa,
-		isLoading: isRequestingDpa,
-		isSuccess,
-		isError,
-		error,
-	} = useRequestDpaMutation();
-
-	useSuccessNotice( isSuccess );
-	useErrorNotice( isError, error );
+		} finally {
+			setLoading( false );
+		}
+	};
 
 	return (
 		<>
@@ -117,8 +85,8 @@ const DPA = () => {
 				</p>
 				<Button
 					className="privacy__dpa-request-button"
-					disabled={ isRequestingDpa }
-					onClick={ () => requestDpa() }
+					disabled={ isLoading }
+					onClick={ requestDpa }
 				>
 					{ translate( 'Request a DPA', {
 						comment:
