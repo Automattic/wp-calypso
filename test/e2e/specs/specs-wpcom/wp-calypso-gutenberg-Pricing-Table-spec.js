@@ -8,7 +8,6 @@ import assert from 'assert';
 /**
  * Internal dependencies
  */
-import LoginFlow from '../../lib/flows/login-flow.js';
 
 import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 import PricingTableBlockComponent from '../../lib/gutenberg/blocks/pricing-table-block-component';
@@ -16,6 +15,7 @@ import PricingTableBlockComponent from '../../lib/gutenberg/blocks/pricing-table
 import * as driverManager from '../../lib/driver-manager';
 import * as driverHelper from '../../lib/driver-helper';
 import * as dataHelper from '../../lib/data-helper';
+import LoginFlow from '../../lib/flows/login-flow.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -29,14 +29,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pricing Table (${ screenSize })
 	let driver;
 	let pricingTableBlock;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
-
 	describe( 'Insert a Pricing Table block: @parallel', function () {
 		it( 'Can log in', async function () {
-			this.loginFlow = new LoginFlow( driver, gutenbergUser );
+			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -77,6 +72,20 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pricing Table (${ screenSize })
 			await pricingTableBlock.pricingTableItemAmountSendKeys( '150' );
 			await pricingTableBlock.pricingTableItemFeaturesSendKeys( 'More Feature Coming soon' );
 			return await pricingTableBlock.pricingTableItemButtonSendKeys( 'Select' );
+		} );
+
+		it( 'Can change Pricing table menu bar setting', async function () {
+			pricingTableBlock = await PricingTableBlockComponent.Expect( driver, 2 );
+			await pricingTableBlock.pricingTableItemTitleClick();
+			await pricingTableBlock.pricingTableParentSelectorVisible();
+			await pricingTableBlock.pricingTableParentSelectorClick();
+			await pricingTableBlock.pricingTableParentSelectorVisible();
+			await pricingTableBlock.pricingTableParentSelectorClick();
+			await pricingTableBlock.pricingTableChangeTextAlignmentVisible();
+			await pricingTableBlock.pricingTableChangeTextAlignmentClick();
+			await pricingTableBlock.pricingTableAlignLeftVisible();
+			await pricingTableBlock.pricingTableAlignLeftClick();
+			return await pricingTableBlock.pricingTableLeftAlignedBlockVisible();
 		} );
 
 		it( 'Can publish and view content', async function () {

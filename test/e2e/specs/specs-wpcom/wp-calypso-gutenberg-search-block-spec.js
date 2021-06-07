@@ -8,7 +8,6 @@ import assert from 'assert';
 /**
  * Internal dependencies
  */
-import LoginFlow from '../../lib/flows/login-flow.js';
 
 import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 import SearchBlockComponent from '../../lib/gutenberg/blocks/search-block-component';
@@ -16,6 +15,7 @@ import SearchBlockComponent from '../../lib/gutenberg/blocks/search-block-compon
 import * as driverManager from '../../lib/driver-manager';
 import * as driverHelper from '../../lib/driver-helper';
 import * as dataHelper from '../../lib/data-helper';
+import LoginFlow from '../../lib/flows/login-flow.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -29,14 +29,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Search Block (${ screenSize })`
 	let driver;
 	let searchBlock;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
-
 	describe( 'Insert Search Block and confirm it exists in te edit page: @parallel', function () {
 		it( 'Can log in', async function () {
-			this.loginFlow = new LoginFlow( driver, gutenbergUser );
+			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 

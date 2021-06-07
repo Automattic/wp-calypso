@@ -19,7 +19,9 @@ const pricingTableItemAmount = By.css( '.wp-block-coblocks-pricing-table-item__a
 const pricingTableItemFeatures = By.css( '.wp-block-coblocks-pricing-table-item__features' );
 const pricingTableItemButton = By.css( '.wp-block-button__link' );
 const pricingTableParentSelector = By.css( '.block-editor-block-parent-selector__button' );
-const pricingTableChangeTextAlignment = By.id( 'id-vde5ot-6' );
+const pricingTableChangeTextAlignment = By.xpath(
+	'/html/body/div[1]/div[2]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[2]/div[1]/div[4]/div[1]/div/div/div/div[2]/div/div/div[3]/div[1]/button'
+);
 const pricingTableAlignLeft = By.xpath( `//div/button[text()='Align text left']` );
 
 const pricingTableLeftAlignedBlock = By.css(
