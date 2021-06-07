@@ -518,7 +518,7 @@ export function buildCardFeatureItemFromFeatureKey(
 			subitems: subFeaturesKeys
 				? subFeaturesKeys
 						.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
-						.filter( ( f ): f is SelectorProductFeaturesItem => !! f )
+						.filter( Boolean )
 				: undefined,
 			isHighlighted: feature.isProduct?.( variation ) || feature.isPlan,
 		};
@@ -540,7 +540,7 @@ export function buildCardFeaturesFromFeatureKeys(
 ): SelectorProductFeaturesItem[] {
 	return features
 		.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
-		.filter( ( f ): f is SelectorProductFeaturesItem => !! f );
+		.filter( Boolean );
 }
 
 /**
