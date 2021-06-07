@@ -164,12 +164,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( product_slug ) => {
 		test( `Business 1 year for (${ product_slug })`, () => {
 			const comp = shallow(
-				<SeoForm
-					{ ...props }
-					siteIsJetpack={ false }
-					selectedSite={ { plan: { product_slug } } }
-					isSEOEligible={ true }
-				/>
+				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
 			);
 			expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
 			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS );
@@ -184,7 +179,6 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 						{ ...props }
 						siteIsJetpack={ false }
 						selectedSite={ { plan: { product_slug } } }
-						isSEOEligible={ true }
 					/>
 				);
 				expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
@@ -201,7 +195,6 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 						{ ...props }
 						siteIsJetpack={ true }
 						selectedSite={ { plan: { product_slug } } }
-						isSEOEligible={ true }
 					/>
 				);
 				expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
