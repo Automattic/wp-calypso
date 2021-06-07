@@ -102,6 +102,7 @@
 		"@automattic/page-pattern-modal": "^1.0.0-alpha.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/typography": "^1.0.0",
+		"@automattic/whats-new": "^1.0.0",
 		"@babel/core": "^7.14.0",
 		"@wordpress/a11y": "^2.15.3",
 		"@wordpress/api-fetch": "^4.0.0",

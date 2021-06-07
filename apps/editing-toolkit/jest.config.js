@@ -16,14 +16,10 @@
 const defaults = require( '@wordpress/scripts/config/jest-unit.config.js' );
 const path = require( 'path' );
 
-// Basically, CWD, so 'apps/editing-toolkit'.
-// Without this, it tries to use 'apps/editing-toolkit/bin'
-const pluginRoot = path.resolve( './' );
-
 const config = {
 	...defaults,
 	rootDir: path.normalize( '../../' ), // To detect wp-calypso root node_modules
-	testMatch: [ `${ pluginRoot }/**/?(*.)test.[jt]s?(x)` ],
+	testMatch: [ `${ __dirname }/**/?(*.)test.[jt]s?(x)` ],
 	transform: { '^.+\\.[jt]sx?$': path.join( __dirname, 'bin', 'babel-transform' ) },
 	setupFilesAfterEnv: [
 		...( defaults.setupFilesAfterEnv || [] ), // extend if present
