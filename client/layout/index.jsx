@@ -247,13 +247,9 @@ class Layout extends Component {
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
-			'is-jetpack-woocommerce-flow':
-				config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isJetpackWooCommerceFlow,
+			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
-			'is-wccom-oauth-flow':
-				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-				isWooOAuth2Client( this.props.oauth2Client ) &&
-				this.props.wccomFrom,
+			'is-wccom-oauth-flow': isWooOAuth2Client( this.props.oauth2Client ) && this.props.wccomFrom,
 		} );
 
 		const optionalBodyProps = () => {

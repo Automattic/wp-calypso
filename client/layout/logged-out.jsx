@@ -74,24 +74,16 @@ const LayoutLoggedOut = ( {
 		'is-jetpack-site': isJetpackCheckout,
 		'is-gutenboarding-login': isGutenboardingLogin,
 		'is-popup': isPopup,
-		'is-jetpack-woocommerce-flow':
-			config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow,
+		'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
-		'is-wccom-oauth-flow':
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			isWooOAuth2Client( oauth2Client ) &&
-			wccomFrom,
+		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 	};
 
 	let masterbar = null;
 
 	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
 	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
-		if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			isWooOAuth2Client( oauth2Client ) &&
-			wccomFrom
-		) {
+		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			masterbar = null;
 		} else {
 			classes.dops = true;

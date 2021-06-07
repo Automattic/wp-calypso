@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import ExternalLink from 'calypso/components/external-link';
 import Gridicon from 'calypso/components/gridicon';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
@@ -206,7 +206,7 @@ export class LoginLinks extends React.Component {
 	}
 
 	renderMagicLoginLink() {
-		if ( ! isEnabled( 'login/magic-login' ) || this.props.twoFactorAuthType ) {
+		if ( ! config.isEnabled( 'login/magic-login' ) || this.props.twoFactorAuthType ) {
 			return null;
 		}
 
@@ -220,17 +220,10 @@ export class LoginLinks extends React.Component {
 		}
 
 		// @todo Implement a muriel version of the email login links for the WooCommerce onboarding flows
-		if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			isWooOAuth2Client( this.props.oauth2Client ) &&
-			this.props.wccomFrom
-		) {
+		if ( isWooOAuth2Client( this.props.oauth2Client ) && this.props.wccomFrom ) {
 			return null;
 		}
-		if (
-			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-			this.props.isJetpackWooCommerceFlow
-		) {
+		if ( this.props.isJetpackWooCommerceFlow ) {
 			return null;
 		}
 

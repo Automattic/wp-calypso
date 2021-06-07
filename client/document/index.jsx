@@ -84,9 +84,7 @@ class Document extends React.Component {
 			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n`;
 
 		const isJetpackWooCommerceFlow =
-			config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-			'jetpack-connect' === sectionName &&
-			'woocommerce-onboarding' === requestFrom;
+			'jetpack-connect' === sectionName && 'woocommerce-onboarding' === requestFrom;
 
 		const isJetpackWooDnaFlow = 'jetpack-connect' === sectionName && isWooDna;
 

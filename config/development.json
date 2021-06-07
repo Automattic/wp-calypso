@@ -87,7 +87,6 @@
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/mobile-app-flow": true,
-		"jetpack/connect/woocommerce": true,
 		"jetpack/happychat": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/features-section/atomic": true,
@@ -187,7 +186,6 @@
 		"upsell/nudge-component": true,
 		"woocommerce/extension-dashboard": true,
 		"woocommerce/extension-referrers": true,
-		"woocommerce/onboarding-oauth": true,
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false,
 		"wordpress-action-search": false
