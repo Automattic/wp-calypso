@@ -9,7 +9,7 @@ import page from 'page';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { PRODUCT_YOAST_PREMIUM } from '@automattic/calypso-products';
+import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -350,7 +350,7 @@ export class List extends React.Component {
 			isDomainOnly,
 			isOnFreePlan,
 			hasNonPrimaryDomainsFlag,
-			hasYoastPremiumProduct,
+			canSetPrimaryDomain,
 		} = this.props;
 
 		return (
@@ -361,7 +361,7 @@ export class List extends React.Component {
 			! domain.isPrimary &&
 			! domain.isWPCOMDomain &&
 			! domain.isWpcomStagingDomain &&
-			! hasYoastPremiumProduct // <- Yoast Premium Product - Marketplace add-on.
+			! canSetPrimaryDomain
 		);
 	}
 
@@ -550,7 +550,7 @@ export default connect(
 			hasSingleSite: siteCount === 1,
 			isOnFreePlan,
 			userCanManageOptions,
-			hasYoastPremiumProduct: hasSiteProduct( state, siteId, PRODUCT_YOAST_PREMIUM ),
+			canSetPrimaryDomain: hasSiteProduct( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
 		};
 	},
 	( dispatch ) => {
