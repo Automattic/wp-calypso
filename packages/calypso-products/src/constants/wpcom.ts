@@ -3,7 +3,6 @@ export const GROUP_WPCOM = 'GROUP_WPCOM';
 // Products
 export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
 export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
-export const PRODUCT_YOAST_PREMIUM = 'yoast_premium';
 
 export const WPCOM_SEARCH_PRODUCTS = <const>[ PRODUCT_WPCOM_SEARCH, PRODUCT_WPCOM_SEARCH_MONTHLY ];
 
