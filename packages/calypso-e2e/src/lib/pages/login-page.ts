@@ -52,10 +52,16 @@ export class LoginPage {
 		await this.page.fill( this.usernameSelector, username );
 		await this.page.keyboard.press( 'Enter' );
 
+<<<<<<< HEAD
 		await this.page.fill( this.passwordSelector, password );
 
 		// Wait for all promises. Add more here as necessary, such as waiting for the request to be
 		// completed, or looking for a specific elemen on page.
 		await Promise.all( [ this.page.waitForNavigation(), this.page.keyboard.press( 'Enter' ) ] );
+=======
+		// Enter submits the form and initiates the log in process. Then wait for the navigation to
+		// settle and complete.
+		await this.page.keyboard.press( 'Enter' );
+>>>>>>> f18a77707e (Remove page.waitForNavigation() from LoginPage.login() due to issues with loginFromPopUp() flow.)
 	}
 }

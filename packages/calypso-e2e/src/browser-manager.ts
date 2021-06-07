@@ -147,4 +147,5 @@ export async function close(): Promise< void > {
  */
 export async function clearCookies( page: Page ): Promise< void > {
 	await page.context().clearCookies();
+	await page.waitForTimeout( 250 );
 }
