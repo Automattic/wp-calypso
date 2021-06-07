@@ -22,7 +22,6 @@ import type {
 } from '@automattic/shopping-cart';
 import {
 	getCouponLineItemFromCart,
-	getTaxLineItemFromCart,
 	getCreditsLineItemFromCart,
 	isWpComProductRenewal,
 } from '@automattic/wpcom-checkout';
@@ -322,7 +321,6 @@ export function WPOrderReviewLineItems( {
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): JSX.Element {
 	const { responseCart } = useShoppingCart();
-	const taxLineItem = getTaxLineItemFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 
@@ -343,11 +341,6 @@ export function WPOrderReviewLineItems( {
 					</WPOrderReviewListItem>
 				);
 			} ) }
-			{ taxLineItem && ! isSummary && (
-				<WPOrderReviewListItem key={ taxLineItem.id }>
-					<NonProductLineItem tax lineItem={ taxLineItem } isSummary={ isSummary } />
-				</WPOrderReviewListItem>
-			) }
 			{ couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
 					<NonProductLineItem
