@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { ShoppingCartProvider, useShoppingCart } from '@automattic/shopping-cart';
 import type { RequestCart, ResponseCart } from '@automattic/shopping-cart';
@@ -32,15 +32,24 @@ export default function CalypsoShoppingCartProvider( {
 	getCart?: ( cartKey: string ) => Promise< ResponseCart >;
 } ): JSX.Element {
 	const selectedSite = useSelector( getSelectedSite );
+	const finalCartKey = cartKey === undefined ? getCartKey( { selectedSite } ) : cartKey;
+
+	const options = useMemo(
+		() => ( {
+			refetchOnWindowFocus: !! finalCartKey,
+		} ),
+		[ finalCartKey ]
+	);
 
 	// If cartKey is null, we pass that to ShoppingCartProvider because it is
 	// probably intentional to delay loading. If cartKey is undefined, we try to
 	// get our own.
 	return (
 		<ShoppingCartProvider
-			cartKey={ cartKey === undefined ? getCartKey( { selectedSite } ) : cartKey }
+			cartKey={ finalCartKey }
 			getCart={ getCart || wpcomGetCart }
 			setCart={ wpcomSetCart }
+			options={ options }
 		>
 			<CalypsoShoppingCartMessages />
 			{ children }
