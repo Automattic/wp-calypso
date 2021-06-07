@@ -10,7 +10,6 @@ import debugFactory from 'debug';
 import wpcom from 'calypso/lib/wp';
 
 const debug = debugFactory( 'calypso:my-sites:media-library:proxied-image' );
-const { Blob } = globalThis; // The linter complains if I don't do this...?
 
 type RenderedComponentProps = {
 	src: string;
