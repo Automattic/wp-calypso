@@ -21,12 +21,12 @@ export interface Props {
 	status: ThreatStatus;
 	problem: string | ReactNode;
 	fix?: string | ReactNode;
-	context?: object;
+	context?: Record< string, unknown >;
 	diff?: string;
 	rows?: Record< string, unknown >;
 	table?: string;
 	filename?: string;
-	isFixable: bool;
+	isFixable: boolean;
 }
 
 class ThreatDescription extends React.PureComponent< Props > {
@@ -45,9 +45,9 @@ class ThreatDescription extends React.PureComponent< Props > {
 			case 'current':
 				if ( isFixable ) {
 					return translate( 'How will we fix it?' );
-				} else {
-					return translate( 'Resolving the threat' );
 				}
+				return translate( 'Resolving the threat' );
+
 				break;
 
 			default:

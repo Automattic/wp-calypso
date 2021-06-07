@@ -10,7 +10,7 @@ export interface WpcomRequestParams {
 	path?: string;
 	method?: string;
 	apiVersion?: string;
-	body?: object;
+	body?: Record< string, unknown >;
 	token?: string;
 	query?: string;
 	metaAPI?: {

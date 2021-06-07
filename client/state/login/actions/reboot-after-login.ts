@@ -10,9 +10,9 @@ import user from 'calypso/lib/user';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getRedirectToSanitized, isTwoFactorEnabled } from 'calypso/state/login/selectors';
 
-export const rebootAfterLogin = ( tracksEventArgs: object ) => async (
+export const rebootAfterLogin = ( tracksEventArgs: Record< string, unknown > ) => async (
 	dispatch: Dispatch,
-	getState: () => object
+	getState: () => Record< string, unknown >
 ) => {
 	dispatch(
 		recordTracksEvent( 'calypso_login_success', {

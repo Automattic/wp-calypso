@@ -3,7 +3,7 @@
  */
 import request from 'wpcom-proxy-request';
 
-export const send = async ( payload: object ): Promise< boolean > => {
+export const send = async ( payload: Record< string, unknown > ): Promise< boolean > => {
 	return request( {
 		method: 'POST',
 		apiVersion: '1.1',
