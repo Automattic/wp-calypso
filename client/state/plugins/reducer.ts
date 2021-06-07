@@ -14,7 +14,7 @@ import premium from './premium/reducer';
 import installed from './installed/reducer';
 import upload from './upload/reducer';
 import recommended from './recommended/reducer';
-import { default as marketplace } from './marketplace/reducer';
+import marketplace from './marketplace/reducer';
 import { IPurchaseFlowState } from './marketplace/types';
 
 export interface IAppState extends DefaultRootState {
