@@ -31,6 +31,7 @@ import useShoppingCartReducer from './use-shopping-cart-reducer';
 import useInitializeCartFromServer from './use-initialize-cart-from-server';
 import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
 import { createRequestCartProducts } from './create-request-cart-product';
+import useRefetchOnFocus from './use-refetch-on-focus';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-manager' );
 
@@ -38,6 +39,7 @@ export default function useShoppingCartManager( {
 	cartKey,
 	setCart,
 	getCart,
+	options,
 }: ShoppingCartManagerArguments ): ShoppingCartManager {
 	const setServerCart = useCallback( ( cartParam ) => setCart( String( cartKey ), cartParam ), [
 		cartKey,
@@ -143,6 +145,9 @@ export default function useShoppingCartManager( {
 		() => dispatchAndWaitForValid( { type: 'CART_RELOAD' } ),
 		[ dispatchAndWaitForValid ]
 	);
+
+	// Refetch when the window is refocused
+	useRefetchOnFocus( options ?? {}, cacheStatus, reloadFromServer );
 
 	const isLoading = cacheStatus === 'fresh' || cacheStatus === 'fresh-pending' || ! cartKey;
 	const loadingErrorForManager = cacheStatus === 'error' ? loadingError : null;
