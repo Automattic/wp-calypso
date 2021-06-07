@@ -16,6 +16,7 @@ import {
  */
 const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
+const user = 'gutenbergSimpleSiteUser';
 
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	describe( 'Like a new post', function () {
@@ -23,7 +24,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		let gutenbergEditorPage;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
+			const loginFlow = new LoginFlow( this.page, user );
 			await loginFlow.login();
 		} );
 
@@ -60,7 +61,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		let publishedPostPage;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
+			const loginFlow = new LoginFlow( this.page, user );
 			await loginFlow.login();
 		} );
 
@@ -70,7 +71,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Click on first post', async function () {
-			const publishedPostsListPage = await PublishedPostsListPage.Expect( this.page );
+			const publishedPostsListPage = await PublishedPostsListPage.Expect( this.page, user );
 			await publishedPostsListPage.visitPost( 1 );
 		} );
 
@@ -81,6 +82,42 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 
 		it( 'Unlike post', async function () {
 			await publishedPostPage.unlikePost();
+		} );
+	} );
+
+	describe( 'Like an existing post as logged out user', function () {
+		let loginFlow;
+		let postLikesComponent;
+		let publishedPostsListPage;
+		let url;
+
+		before( 'Obtain test site URL', async function () {
+			url = DataHelper.getAccountSiteURL( user );
+		} );
+
+		it( 'Log out', async function () {
+			const context = await this.page.context();
+			await context.clearCookies();
+		} );
+
+		it( 'Visit site', async function () {
+			// This is a raw call to the underlying page as it does not warrant creating
+			// an entire flow or page for this one action.
+			await this.page.goto( url );
+		} );
+
+		it( 'Click on first post', async function () {
+			publishedPostsListPage = await PublishedPostsListPage.Expect( this.page, user );
+			await publishedPostsListPage.visitPost( 1 );
+		} );
+
+		it( 'Like post', async function () {
+			postLikesComponent = await PostLikesComponent.Expect( this.page );
+			loginFlow = new LoginFlow( this.page );
+
+			// Clicking the Like button will bring up a new popup, so
+			// specifically call the flow for dealing with logging in from a popup.
+			await Promise.all( [ loginFlow.loginFromPopup(), postLikesComponent.clickLikePost() ] );
 		} );
 	} );
 } );

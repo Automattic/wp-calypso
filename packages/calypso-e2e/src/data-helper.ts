@@ -34,16 +34,39 @@ export function getCalypsoURL(
 /**
  * Returns the credential for a specified account from the configuration file.
  *
- * @param {string} username Username of the account for which the password is to be obtained.
- * @returns {string} Credential entry found in the configuration file for the given username.
+ * @param {string} username Username of the account for which the credentials are to be obtained.
+ * @returns {string[]} Credential entry found in the configuration file for the given username.
  * @throws {Error} If username does not correspond to a valid entry in the configuration file.
  */
-export function getAccountCredential( username: string ): string {
+export function getAccountCredential( username: string ): string[] {
 	const testAccounts: { [ key: string ]: string } = config.get( 'testAccounts' );
 	try {
-		return testAccounts[ username ];
+		const [ user_name, password ] = testAccounts[ username ];
+		return [ user_name, password ];
 	} catch ( err ) {
-		throw new Error( `Credential for username: ${ username } not found in configuration file.` );
+		throw new Error(
+			`Configuration file did not contain credentials for requested user ${ username }.`
+		);
+	}
+}
+
+/**
+ * Returns the site URL for a specified account from the configuration file.
+ *
+ * @param {string} username Username of the account for which the site URL is to be obtained.
+ * @returns {string} Site URL for the given username.
+ * @throws {Error} If the username does not have a corresponding site URL, or username does not have an entry in the configuration file.
+ */
+export function getAccountSiteURL( username: string ): string {
+	const testAccounts: { [ key: string ]: string } = config.get( 'testAccounts' );
+	try {
+		const [ , , url ] = testAccounts[ username ];
+		if ( url ) {
+			return `https://${ url }`;
+		}
+		throw new Error();
+	} catch ( err ) {
+		throw new Error( `Configuration file did not contain URL for requested user ${ username }.` );
 	}
 }
 
