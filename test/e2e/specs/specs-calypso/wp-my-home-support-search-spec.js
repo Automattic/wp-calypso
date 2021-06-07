@@ -57,7 +57,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 		);
 	} );
 
-	// Skipped because it depends on exissting state. If the user does not have a pending purchase
+	// Skipped because it depends on the existing state. If the user does not have a pending purchase
 	// it may show only 5 results, but this test doesn't try to create a purchase.
 	it.skip( 'Displays Default Results initially', async function () {
 		supportSearchComponent = await SupportSearchComponent.Expect( this.driver );
