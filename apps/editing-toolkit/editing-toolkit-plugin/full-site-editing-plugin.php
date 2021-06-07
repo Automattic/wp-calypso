@@ -315,7 +315,7 @@ function load_wpcom_block_editor_sidebar() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar' );
 
 /**
- * Coming soon.
+ * Coming soon module.
  */
 function load_coming_soon() {
 	if (
@@ -336,7 +336,7 @@ function load_whats_new() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );
 
 /**
- * Error reporting for wp-admin / Gutenberg
+ * Error reporting for wp-admin / Gutenberg.
  */
 function load_error_reporting() {
 	require_once __DIR__ . '/error-reporting/index.php';
