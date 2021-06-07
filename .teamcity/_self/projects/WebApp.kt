@@ -6,6 +6,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
@@ -357,6 +358,22 @@ object BuildDockerImage : BuildType({
 	}
 
 	steps {
+		script {
+			name = "Post PR comment"
+			scriptContent = """
+				#!/usr/bin/env bash
+				if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
+					exit 0
+				fi
+
+				export GH_TOKEN="%matticbot_oauth_token%"
+				. ./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF
+				Link to live branch is being generated...
+				Please wait a few minutes and refresh this page.
+				EOF
+			"""
+		}
+
 		dockerCommand {
 			name = "Build docker image"
 			commandType = build {
@@ -379,6 +396,7 @@ object BuildDockerImage : BuildType({
 			}
 			param("dockerImage.platform", "linux")
 		}
+
 		dockerCommand {
 			commandType = push {
 				namesAndTags = """
@@ -386,6 +404,22 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 				""".trimIndent()
 			}
+		}
+
+		script {
+			name = "Post PR comment with link"
+			scriptContent = """
+				#!/usr/bin/env bash
+				if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
+					exit 0
+				fi
+
+				export GH_TOKEN="%matticbot_oauth_token%"
+				. ./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF
+				Link to Calypso live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%
+				Link to Jetpack Cloud live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack
+				EOF
+			"""
 		}
 	}
 
