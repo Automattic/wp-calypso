@@ -60,8 +60,12 @@ type DivProps = Omit<
 
 export default class Draggable extends Component< Props & DivProps, State > {
 	static defaultProps = {
-		onDrag: () => {},
-		onStop: () => {},
+		onDrag: (): void => {
+			/*noop*/
+		},
+		onStop: (): void => {
+			/*noop*/
+		},
 		width: 0,
 		height: 0,
 		x: 0,
@@ -75,7 +79,7 @@ export default class Draggable extends Component< Props & DivProps, State > {
 		y: this.props.y,
 	};
 
-	dragging: boolean = false;
+	dragging = false;
 	frameRequestId: ReturnType< typeof requestAnimationFrame > | null = null;
 	relativePos: { x: number; y: number } | null = null;
 	mousePos: { x: number; y: number } | null = null;
