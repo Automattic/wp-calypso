@@ -8,9 +8,9 @@ import { isEnabled } from '@automattic/calypso-config';
  */
 
 // Used as placeholder / default domain to detect when we're looking at a relative url
-const INVALID_URL = `http://__domain__.invalid`;
+const INVALID_URL = `https://__domain__.invalid`;
 
-export function logmeinUrl( url: string, allow: string[], isWPComLoggedIn = true ): string {
+export function logmeinUrl( url: string, sites: any, isWPComLoggedIn = true ): string {
 	let newurl: URL;
 
 	if ( ! isEnabled( 'logmein' ) ) {
@@ -29,8 +29,9 @@ export function logmeinUrl( url: string, allow: string[], isWPComLoggedIn = true
 		return url;
 	}
 
+	let allow = logmeinAllowedUrls( sites );
 	// Ignore urls not in the allow list
-	allow = allow.map( ( allowed ) => new URL( String( allowed ), INVALID_URL ).hostname );
+	allow = allow.map( ( allowed: string ) => new URL( allowed, INVALID_URL ).hostname );
 	if ( allow.indexOf( newurl.hostname ) === -1 ) {
 		return url;
 	}
@@ -45,4 +46,22 @@ export function logmeinUrl( url: string, allow: string[], isWPComLoggedIn = true
 		newurl.searchParams.set( 'logmein', '1' );
 	}
 	return newurl.toString();
+}
+
+export function logmeinAllowedUrls( sites: any ): string[] {
+	return sites
+		.map( ( site: any ) =>
+			! site.is_vip &&
+			! site.jetpack &&
+			! site.options.is_automated_transfer &&
+			! site.options.is_domain_only &&
+			! site.options.is_redirect &&
+			! site.options.is_wpcom_atomic &&
+			! site.options.is_wpcom_store &&
+			! site.options.is_wpforteams_site &&
+			site.options.is_mapped_domain
+				? site.URL
+				: false
+		)
+		.filter( Boolean );
 }
