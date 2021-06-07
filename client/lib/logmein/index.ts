@@ -61,7 +61,7 @@ export function logmeinAllowedUrls( sites: any ): string[] {
 			! site.options.is_wpcom_store &&
 			! site.options.is_wpforteams_site &&
 			site.options.is_mapped_domain
-				? site.URL
+				? new URL( site.URL ).host
 				: false
 		)
 		.filter( Boolean );
@@ -80,36 +80,50 @@ export function appendLogmeinDirect( url: URL ): URL {
 	return url;
 }
 
+let allowedSites: string[] = [];
+
 export function attachLogmein( isWPComLoggedIn = false ): void {
 	if ( isWPComLoggedIn && isEnabled( 'logmein' ) ) {
 		wpcom.req.get( '/me/sites' ).then( ( sites: any ) => {
-			console.log( 'looked up sites', sites );
-
-			const allowed: string[] = logmeinAllowedUrls( sites.sites );
-			console.log( allowed );
-
-			function getLink( target: HTMLElement ): HTMLAnchorElement | null {
-				if ( target.tagName === 'A' && ( target as HTMLAnchorElement ).href ) {
-					return target as HTMLAnchorElement;
-				} else if ( target.parentElement ) {
-					return getLink( target.parentElement as HTMLElement );
-				}
-				return null;
-			}
-			function onClick( event: Event ) {
-				const link = getLink( event.target as HTMLElement );
-
-				if ( link ) {
-					let url = new URL( link.href );
-					if ( allowed.indexOf( url.hostname ) !== -1 ) {
-						url = appendLogmeinDirect( url );
-						console.log( 'intercepted', link, 'replaced', url );
-						link.href = url.toString();
-					}
-					return;
-				}
-			}
-			document.addEventListener( 'click', onClick, false );
+			allowedSites = logmeinAllowedUrls( sites.sites );
+			attachOnClick();
 		} );
+	}
+}
+
+function attachOnClick() {
+	function getLink( target: HTMLElement ): HTMLAnchorElement | null {
+		if ( target.tagName === 'A' && ( target as HTMLAnchorElement ).href ) {
+			return target as HTMLAnchorElement;
+		} else if ( target.parentElement ) {
+			return getLink( target.parentElement as HTMLElement );
+		}
+		return null;
+	}
+
+	function onClick( event: Event ) {
+		const link = getLink( event.target as HTMLElement );
+		if ( link ) {
+			let url = new URL( link.href );
+			if ( allowedSites.indexOf( url.hostname ) !== -1 ) {
+				url = appendLogmeinDirect( url );
+				console.log( 'intercepted', link.href, 'replaced', url.toString() );
+				link.href = url.toString();
+			}
+			return;
+		}
+	}
+
+	document.addEventListener( 'click', onClick, false );
+}
+
+export function navigateLogmein( url: string ): void {
+	let newurl = new URL( url );
+	if ( allowedSites.indexOf( newurl.hostname ) !== -1 ) {
+		newurl = appendLogmeinDirect( newurl );
+		console.log( 'intercepted', url, 'replaced', newurl.toString() );
+		window.location.href = newurl.toString();
+	} else {
+		window.location.href = url;
 	}
 }
