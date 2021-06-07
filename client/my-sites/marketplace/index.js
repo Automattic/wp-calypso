@@ -19,7 +19,7 @@ import {
 import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
-	if ( config.isEnabled( 'marketplace-yoast' ) ) {
+	if ( config.isEnabled( 'marketplace-test' ) ) {
 		page(
 			'/marketplace/test/:site?',
 			siteSelection,
@@ -28,7 +28,9 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+	}
 
+	if ( config.isEnabled( 'marketplace-yoast' ) ) {
 		page( '/marketplace/domain/:site?', renderDomainsPage, makeLayout, clientRender );
 		page(
 			'/marketplace/product/setup/:site?',

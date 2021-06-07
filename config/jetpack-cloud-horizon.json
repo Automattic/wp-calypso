@@ -44,6 +44,7 @@
 		"layout/nps-survey-notice": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
+		"marketplace-test": false,
 		"marketplace-yoast": false,
 		"oauth": false,
 		"purchases/new-payment-methods": true,
