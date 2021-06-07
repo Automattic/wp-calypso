@@ -147,6 +147,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		lang,
 		entrypoint: request.getFilesForEntrypoint( entrypoint ),
 		manifests: request.getAssets().manifests,
+		authHelper: !! config.isEnabled( 'dev/auth-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
 		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
 		devDocsURL: '/devdocs',

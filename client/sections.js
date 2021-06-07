@@ -447,7 +447,7 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud',
-		paths: [ '/', '/landing', '/settings', '/oauth-override' ],
+		paths: [ '/', '/landing', '/settings' ],
 		module: 'calypso/jetpack-cloud',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,

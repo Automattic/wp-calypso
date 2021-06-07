@@ -51,7 +51,6 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { setStore } from 'calypso/state/redux-store';
 import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { inJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 import DesktopListeners from 'calypso/lib/desktop-listeners';
 
@@ -177,11 +176,7 @@ const oauthTokenMiddleware = () => {
 			const isValidSection = loggedOutRoutes.some( ( route ) => context.path.startsWith( route ) );
 
 			// Check we have an OAuth token, otherwise redirect to auth/login page
-			if (
-				getToken() === false &&
-				! isValidSection &&
-				! ( isJetpackCloud() && inJetpackCloudOAuthOverride() )
-			) {
+			if ( getToken() === false && ! isValidSection ) {
 				window.location = authorizePath();
 				return;
 			}
@@ -394,6 +389,11 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		DesktopListeners.init( reduxStore );
 	}
 
+	if ( config.isEnabled( 'dev/auth-helper' ) && document.querySelector( '.environment.is-auth' ) ) {
+		asyncRequire( 'calypso/lib/auth-helper', ( authHelper ) => {
+			authHelper( document.querySelector( '.environment.is-auth' ), reduxStore );
+		} );
+	}
 	if (
 		config.isEnabled( 'dev/preferences-helper' ) &&
 		document.querySelector( '.environment.is-prefs' )
