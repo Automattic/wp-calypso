@@ -7,9 +7,9 @@ import type { AnyAction } from 'redux';
  * Internal dependencies
  */
 import {
-	PLUGINS_MARKETPLACE_PRIMARY_DOMAIN_CANDIDATE_UPDATE,
-	PLUGINS_MARKETPLACE_SET_PLUGIN_TO_BE_INSTALLED,
-	PLUGINS_MARKETPLACE_SET_IS_PLUGIN_INSTALLED_DURING_PURCHASE,
+	MARKETPLACE_PRIMARY_DOMAIN_SELECT,
+	MARKETPLACE_QUEUE_PLUGIN_INSTALL,
+	MARKETPLACE_PLUGIN_INSTALLED_ON_PURCHASE,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 import {
@@ -30,19 +30,19 @@ export function purchaseFlow(
 	action: AnyAction
 ): IPurchaseFlowState {
 	switch ( action.type ) {
-		case PLUGINS_MARKETPLACE_PRIMARY_DOMAIN_CANDIDATE_UPDATE:
+		case MARKETPLACE_PRIMARY_DOMAIN_SELECT:
 			action = action as ISetPrimaryDomainCandidateAction;
 			return {
 				...state,
 				primaryDomain: action.domainName,
 			};
-		case PLUGINS_MARKETPLACE_SET_PLUGIN_TO_BE_INSTALLED:
+		case MARKETPLACE_QUEUE_PLUGIN_INSTALL:
 			action = action as ISetPluginToBeInstalledAction;
 			return {
 				...state,
 				pluginSlugToBeInstalled: action.pluginSlugToBeInstalled,
 			};
-		case PLUGINS_MARKETPLACE_SET_IS_PLUGIN_INSTALLED_DURING_PURCHASE:
+		case MARKETPLACE_PLUGIN_INSTALLED_ON_PURCHASE:
 			action = action as ISetPluginInstalledDuringPurchaseFlag;
 			return {
 				...state,

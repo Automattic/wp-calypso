@@ -14,7 +14,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import theme from 'calypso/my-sites/plugins/marketplace/theme';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
@@ -38,45 +38,46 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 	const stages = [ STAGE_1, STAGE_2 ];
 
 	const [ currentStage, setCurrentStage ] = useState( STAGE_1 );
-	const [ simulatedProgressPercentage, setSimulatedProgressPercentage ] = useState( 0 );
-
-	const interval = 2000;
+	const [ simulatedProgressPercentage, setSimulatedProgressPercentage ] = useState( 1 );
 
 	const dispatch = useDispatch();
-	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const transferStatus = useSelector( ( state ) =>
-		getAutomatedTransferStatus( state, selectedSite?.ID )
+		getAutomatedTransferStatus( state, selectedSiteId )
 	);
 	const { pluginSlugToBeInstalled, isPluginInstalledDuringPurchase } = useSelector(
 		getPurchaseFlowState
 	);
 
 	useEffect( () => {
-		if ( pluginSlugToBeInstalled ) {
-			dispatch( initiateThemeTransfer( selectedSite.ID, null, pluginSlugToBeInstalled ) );
+		if ( pluginSlugToBeInstalled && selectedSiteId ) {
+			dispatch( initiateThemeTransfer( selectedSiteId, null, pluginSlugToBeInstalled ) );
 		} else if ( isPluginInstalledDuringPurchase ) {
 			alert( 'To be implemented: polling wait to be implemented to check for transfer' );
 		} else {
 			// Invalid State redirect to Yoast marketplace page for now, and maybe a marketplace home view in the future
 			page(
-				`/marketplace/product/details/wordpress-seo${
-					selectedSite?.slug ? `/${ selectedSite.slug }` : ''
-				}`
+				`/marketplace/product/details/wordpress-seo/${ selectedSiteId }?flags=marketplace-yoast`
 			);
 		}
 	}, [ dispatch, pluginSlugToBeInstalled ] );
 
+	const TIMEOUT_BEFORE_REDIRECTING_ON_TRANSFER_COMPLETE = 4000;
+	const SIMULATION_REFRESH_INTERVAL = 2000;
+	const INCREMENTED_PERCENTAGE_SIZE_ON_STEP = 6;
+	const MAX_PERCENTAGE_SIMULATED = 100 - INCREMENTED_PERCENTAGE_SIZE_ON_STEP * 2;
 	useEffect( () => {
 		setTimeout(
 			() => {
-				if ( simulatedProgressPercentage < 95 ) {
-					setSimulatedProgressPercentage( ( percentage ) => percentage + 6 );
-				} else if ( simulatedProgressPercentage !== 100 && simulatedProgressPercentage !== 95 ) {
-					setSimulatedProgressPercentage( 95 );
+				if ( simulatedProgressPercentage < MAX_PERCENTAGE_SIMULATED ) {
+					setSimulatedProgressPercentage(
+						( previousPercentage ) => previousPercentage + INCREMENTED_PERCENTAGE_SIZE_ON_STEP
+					);
 				}
 			},
 
-			interval
+			SIMULATION_REFRESH_INTERVAL
 		);
 	}, [ simulatedProgressPercentage ] );
 
@@ -85,14 +86,10 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 			// TODO: Make sure the primary domain is set to the relevant domain before redireting to thank-you page
 			setSimulatedProgressPercentage( 100 );
 			setTimeout( () => {
-				page(
-					`/marketplace/thank-you${
-						selectedSite?.slug ? `/${ selectedSite.slug }` : ''
-					}?flags=marketplace-yoast`
-				);
-			}, 4000 );
+				page( `/marketplace/thank-you/${ selectedSiteId }?flags=marketplace-yoast` );
+			}, TIMEOUT_BEFORE_REDIRECTING_ON_TRANSFER_COMPLETE );
 		}
-	}, [ selectedSite.slug, transferStatus ] );
+	}, [ selectedSiteSlug, transferStatus ] );
 
 	if ( simulatedProgressPercentage > 50 && currentStage === STAGE_1 ) {
 		setCurrentStage( STAGE_2 );
@@ -105,13 +102,11 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 
 	return (
 		<>
-			{ selectedSite?.ID ? <QueryJetpackPlugins siteIds={ [ selectedSite.ID ] } /> : '' }
+			{ selectedSiteId ? <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> : '' }
 			<Masterbar></Masterbar>
 			<div className="marketplace-plugin-setup-status__root">
 				<div>
-					<h1 className="marketplace-plugin-setup-status__title wp-brand-font">
-						{ <div>{ currentStage }</div> }
-					</h1>
+					<h1 className="marketplace-plugin-setup-status__title wp-brand-font">{ currentStage }</h1>
 					<StyledProgressBar value={ simulatedProgressPercentage } color="#C9356E" compact />
 					<div>{ stageIndication }</div>
 				</div>

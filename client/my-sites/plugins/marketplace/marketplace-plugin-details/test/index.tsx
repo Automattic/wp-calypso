@@ -32,7 +32,7 @@ describe( '<PurchaseArea/> Plugin details next step tests', () => {
 			<PurchaseArea
 				siteDomains={ [ wpcomDomain, primaryCustomDomain ] }
 				isProductListLoading={ false }
-				displayCost={ '$ 100' }
+				displayCost="$ 100"
 				wporgPluginName={ 'Yoast SEO' }
 				onAddYoastPremiumToCart={ onAddYoastPremiumToCart }
 				onNavigateToCheckout={ onNavigateToCheckoutMockFunction }
@@ -57,7 +57,7 @@ describe( '<PurchaseArea/> Plugin details next step tests', () => {
 			<PurchaseArea
 				siteDomains={ [ primaryWpcomDomain ] }
 				isProductListLoading={ false }
-				displayCost={ '$ 100' }
+				displayCost="$ 100"
 				wporgPluginName={ 'Yoast SEO' }
 				onAddYoastPremiumToCart={ onAddYoastPremiumToCart }
 				onNavigateToCheckout={ onNavigateToCheckoutMockFunction }
@@ -93,7 +93,7 @@ describe( '<PurchaseArea/> Plugin details next step tests', () => {
 			<PurchaseArea
 				siteDomains={ [ primaryWpcomDomain ] }
 				isProductListLoading={ false }
-				displayCost={ '$ 100' }
+				displayCost="$ 100"
 				wporgPluginName={ 'Yoast SEO' }
 				onAddYoastPremiumToCart={ onAddYoastPremiumToCart }
 				onNavigateToCheckout={ onNavigateToCheckoutMockFunction }
@@ -118,7 +118,7 @@ describe( '<PurchaseArea/> Plugin details next step tests', () => {
 			<PurchaseArea
 				siteDomains={ [ primaryWpcomDomain ] }
 				isProductListLoading={ false }
-				displayCost={ '$ 100' }
+				displayCost="$ 100"
 				wporgPluginName={ 'Yoast SEO' }
 				onAddYoastPremiumToCart={ onAddYoastPremiumToCart }
 				onNavigateToCheckout={ onNavigateToCheckoutMockFunction }

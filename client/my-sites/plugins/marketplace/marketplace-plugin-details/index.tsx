@@ -24,7 +24,7 @@ import {
 	isFetching as isWporgPluginFetching,
 	getPlugin as getWporgPlugin,
 } from 'calypso/state/plugins/wporg/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
@@ -49,10 +49,9 @@ function MarketplacePluginDetails( {
 	const cost = useSelector( ( state ) => getProductCost( state, productSlug ) );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 	const isProductListLoading = useSelector( ( state ) => isProductsListFetching( state ) );
-	const selectedSite = useSelector( getSelectedSite );
-	const siteDomains = useSelector( ( state ) =>
-		getDomainsBySiteId( state, selectedSite?.ID ?? 0 )
-	);
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSiteId ?? 0 ) );
 	const displayCost = formatCurrency( cost, currencyCode, { stripZeros: true } );
 	const dispatch = useDispatch();
 	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, marketplacePluginSlug ) );
@@ -86,23 +85,15 @@ function MarketplacePluginDetails( {
 					onAddYoastPremiumToCart={ onAddYoastPremiumToCart }
 					onRemoveEverythingFromCart={ onRemoveEverythingFromCart }
 					onNavigateToCheckout={ () =>
-						page( `/checkout${ selectedSite?.slug ? `/${ selectedSite?.slug }` : '' }` )
+						page( `/checkout/${ selectedSiteSlug }?flags=marketplace-yoast` )
 					}
 					onNavigateToDomainsSelection={ () =>
-						page(
-							`/marketplace/domain${
-								selectedSite?.slug ? `/${ selectedSite?.slug }?flags=marketplace-yoast` : ''
-							}?flags=marketplace-yoast`
-						)
+						page( `/marketplace/domain/${ selectedSiteSlug }?flags=marketplace-yoast` )
 					}
 					onInstallPluginManually={ async ( primaryDomain ) => {
 						await dispatch( setPluginSlugToBeInstalled( marketplacePluginSlug ) );
 						await dispatch( setPrimaryDomainCandidate( primaryDomain ) );
-						page(
-							`/marketplace/product/setup${
-								selectedSite?.slug ? `/${ selectedSite?.slug }` : ''
-							}?flags=marketplace-yoast`
-						);
+						page( `/marketplace/product/setup/${ selectedSiteSlug }?flags=marketplace-yoast` );
 					} }
 				/>
 			) : (
