@@ -15,7 +15,8 @@ import 'calypso/state/themes/init';
  */
 export function getThemeDemoUrl( state, themeId, siteId ) {
 	const theme = getCanonicalTheme( state, siteId, themeId );
-	//Temp. workaround to show an accurate theme demo site for Storefront
+	// Temp. workaround to show an accurate theme demo site for Storefront
+	// See https://github.com/Automattic/wp-calypso/issues/37658#issuecomment-843273411 for discussion
 	const storefrontDemoUri = 'https://themes.woocommerce.com/storefront/';
 
 	if ( 'Storefront' === theme?.name ) {
