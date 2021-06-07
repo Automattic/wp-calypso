@@ -69,18 +69,16 @@ export default function () {
 			page.redirect( '/plugins' + ( siteOrCategory ? '/' + siteOrCategory : '' ) );
 		} );
 
-		if ( config.isEnabled( 'manage/plugins/upload' ) ) {
-			page( '/plugins/upload', scrollTopIfNoHash, siteSelection, sites, makeLayout, clientRender );
-			page(
-				'/plugins/upload/:site_id',
-				scrollTopIfNoHash,
-				siteSelection,
-				navigation,
-				upload,
-				makeLayout,
-				clientRender
-			);
-		}
+		page( '/plugins/upload', scrollTopIfNoHash, siteSelection, sites, makeLayout, clientRender );
+		page(
+			'/plugins/upload/:site_id',
+			scrollTopIfNoHash,
+			siteSelection,
+			navigation,
+			upload,
+			makeLayout,
+			clientRender
+		);
 
 		page(
 			'/plugins',

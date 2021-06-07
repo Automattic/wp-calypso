@@ -388,10 +388,6 @@ export class PluginsBrowser extends Component {
 	};
 
 	renderUploadPluginButton() {
-		if ( ! isEnabled( 'manage/plugins/upload' ) ) {
-			return null;
-		}
-
 		const { siteSlug, translate } = this.props;
 		const uploadUrl = '/plugins/upload' + ( siteSlug ? '/' + siteSlug : '' );
 

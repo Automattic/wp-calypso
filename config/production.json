@@ -81,7 +81,6 @@
 		"manage/plugins": true,
 		"manage/plugins/browser": true,
 		"manage/plugins/setup": true,
-		"manage/plugins/upload": true,
 		"manage/security": true,
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/categories": true,

@@ -114,7 +114,6 @@
 		"manage/plugins": true,
 		"manage/plugins/compatibility-warning": false,
 		"manage/plugins/setup": true,
-		"manage/plugins/upload": true,
 		"manage/security": true,
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/categories": true,
