@@ -27,7 +27,7 @@ type Site = {
  * @param siteId Site ID to check.
  * @returns bool True if the site is on a free pln and a WPCOM site, false otherwise.
  */
-export function isFreeWPCOMsite( site: Site, state: string, siteId: string ): boolean | null {
+export function isFreeWPCOMSite( site: Site, state: string, siteId: string ): boolean | null {
 	if ( ! ( site && site.plan && state ) ) {
 		return false;
 	}
@@ -52,5 +52,5 @@ export function hasSiteAnalyticsFeature( site: Site ): boolean | undefined {
  * @returns bool True if the site should have a Security Settings tab, false otherwise.
  */
 export function siteHasSecuritySettingsTab( site: Site, state: string, siteId: string ): boolean {
-	return ! isFreeWPCOMsite( site, state, siteId );
+	return ! isFreeWPCOMSite( site, state, siteId );
 }
