@@ -33,11 +33,11 @@ describe( `[${ host }] Calypso Gutenberg Page Editor Tracking: (${ screenSize })
 			const loginFlow = new LoginFlow( this.driver, host === 'WPCOM' ? gutenbergUser : undefined );
 			await loginFlow.loginAndSelectWPAdmin();
 
-			const wpadminSidebarComponent = await WPAdminSidebar.Expect( this.driver );
-			await wpadminSidebarComponent.selectNewPage();
+			const wpAdminSidebar = await WPAdminSidebar.Expect( this.driver );
+			await wpAdminSidebar.selectNewPage();
 
-			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
-			await gEditorComponent.initEditor( { dismissPageTemplateLocator: true } );
+			const editor = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
+			await editor.initEditor( { dismissPageTemplateLocator: true } );
 		} );
 
 		createGeneralTests( { it, editorType: 'post', postType: 'page' } );

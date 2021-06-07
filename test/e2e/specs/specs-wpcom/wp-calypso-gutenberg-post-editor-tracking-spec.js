@@ -32,8 +32,8 @@ describe( `[${ host }] Calypso Gutenberg Post Editor Tracking: (${ screenSize })
 			const loginFlow = new LoginFlow( this.driver, host === 'WPCOM' ? gutenbergUser : undefined );
 			await loginFlow.loginAndSelectWPAdmin();
 
-			const wpadminSidebarComponent = await WPAdminSidebar.Expect( this.driver );
-			await wpadminSidebarComponent.selectNewPost();
+			const wpAdminSidebar = await WPAdminSidebar.Expect( this.driver );
+			await wpAdminSidebar.selectNewPost();
 		} );
 
 		createGeneralTests( {

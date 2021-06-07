@@ -35,11 +35,13 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 	describe( 'Tracking Site Editor: @parallel', function () {
 		it( 'Log in with site editor user and Site Editor opens successfully', async function () {
-			const loginFlow = new LoginFlow( this.driver, siteEditorUser );
+			const loginFlow = new LoginFlow( this.driver, host === 'WPCOM' ? siteEditorUser : undefined );
 			await loginFlow.loginAndSelectMySite();
 
-			const sidebarComponent = await SidebarComponent.Expect( this.driver );
-			await sidebarComponent.selectSiteEditor();
+			const sidebar = await SidebarComponent.Expect( this.driver );
+			await sidebar.selectSiteEditor();
+
+			// Wait until Site Editor page is loaded
 			await SiteEditorPage.Expect( this.driver );
 
 			const editor = await SiteEditorComponent.Expect( this.driver );
