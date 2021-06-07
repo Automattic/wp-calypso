@@ -90,7 +90,6 @@ class SiteMenu extends PureComponent {
 				name: 'post',
 				label: translate( 'Posts' ),
 				capability: 'edit_posts',
-				config: 'manage/posts',
 				queryable: true,
 				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
