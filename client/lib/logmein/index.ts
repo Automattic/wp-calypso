@@ -2,6 +2,7 @@
  * Internal Dependencies
  */
 import { isEnabled } from '@automattic/calypso-config';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Append logmein=1 query parameter to mapped domain urls we want the user to be logged in against.
@@ -64,4 +65,51 @@ export function logmeinAllowedUrls( sites: any ): string[] {
 				: false
 		)
 		.filter( Boolean );
+}
+
+export function appendLogmein( url: URL ): URL {
+	// logmein doesn't work with http.
+	url.protocol = 'https:';
+	url.searchParams.set( 'logmein', '1' );
+	return url;
+}
+export function appendLogmeinDirect( url: URL ): URL {
+	// logmein doesn't work with http.
+	url.protocol = 'https:';
+	url.searchParams.set( 'logmein', 'direct' );
+	return url;
+}
+
+export function attachLogmein( isWPComLoggedIn = false ): void {
+	if ( isWPComLoggedIn && isEnabled( 'logmein' ) ) {
+		wpcom.req.get( '/me/sites' ).then( ( sites: any ) => {
+			console.log( 'looked up sites', sites );
+
+			const allowed: string[] = logmeinAllowedUrls( sites.sites );
+			console.log( allowed );
+
+			function getLink( target: HTMLElement ): HTMLAnchorElement | null {
+				if ( target.tagName === 'A' && ( target as HTMLAnchorElement ).href ) {
+					return target as HTMLAnchorElement;
+				} else if ( target.parentElement ) {
+					return getLink( target.parentElement as HTMLElement );
+				}
+				return null;
+			}
+			function onClick( event: Event ) {
+				const link = getLink( event.target as HTMLElement );
+
+				if ( link ) {
+					let url = new URL( link.href );
+					if ( allowed.indexOf( url.hostname ) !== -1 ) {
+						url = appendLogmeinDirect( url );
+						console.log( 'intercepted', link, 'replaced', url );
+						link.href = url.toString();
+					}
+					return;
+				}
+			}
+			document.addEventListener( 'click', onClick, false );
+		} );
+	}
 }

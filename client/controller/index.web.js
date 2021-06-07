@@ -27,6 +27,7 @@ import {
 } from 'calypso/state/immediate-login/selectors';
 import { getSiteFragment } from 'calypso/lib/route';
 import { render, hydrate } from './web-util.js';
+import { attachLogmein } from 'calypso/lib/logmein';
 
 /**
  * Re-export
@@ -47,6 +48,8 @@ export const ProviderWrappedLayout = ( {
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
+
+	attachLogmein( userLoggedIn );
 
 	const layout = userLoggedIn ? (
 		<Layout primary={ primary } secondary={ secondary } />
