@@ -23,25 +23,23 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
-	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
-		page(
-			'/plugins/setup',
-			scrollTopIfNoHash,
-			siteSelection,
-			setupPlugins,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/plugins/setup',
+		scrollTopIfNoHash,
+		siteSelection,
+		setupPlugins,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/plugins/setup/:site',
-			scrollTopIfNoHash,
-			siteSelection,
-			setupPlugins,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/plugins/setup/:site',
+		scrollTopIfNoHash,
+		siteSelection,
+		setupPlugins,
+		makeLayout,
+		clientRender
+	);
 
 	if ( config.isEnabled( 'manage/plugins' ) ) {
 		page( '/plugins/wpcom-masterbar-redirect/:site', ( context ) => {

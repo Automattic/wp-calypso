@@ -113,7 +113,6 @@
 		"manage/payment-methods": true,
 		"manage/plugins": true,
 		"manage/plugins/compatibility-warning": false,
-		"manage/plugins/setup": true,
 		"manage/security": true,
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/categories": true,
