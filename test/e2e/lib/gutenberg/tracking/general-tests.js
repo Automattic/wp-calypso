@@ -26,12 +26,12 @@ export function createGeneralTests( { it, editorType, postType } ) {
 	} );
 
 	it( 'Make sure required and custom properties are added to the events', async function () {
-		const gEditorComponent = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
 		// Populate the event stack by inserting a few blocks
-		await gEditorComponent.addBlock( 'Heading' );
-		await gEditorComponent.addBlock( 'Columns' );
-		await gEditorComponent.addBlock( 'Columns' );
+		await editor.addBlock( 'Heading' );
+		await editor.addBlock( 'Columns' );
+		await editor.addBlock( 'Columns' );
 
 		const eventsStack = await getEventsStack( this.driver );
 
@@ -56,9 +56,9 @@ export function createGeneralTests( { it, editorType, postType } ) {
 	} );
 
 	it( `'editor_type' property should be '${ editorType }' and 'post_type' property should be '${ postType }' when editing a post`, async function () {
-		const gEditorComponent = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
-		await gEditorComponent.addBlock( 'Heading' );
+		await editor.addBlock( 'Heading' );
 
 		const eventsStack = await getEventsStack( this.driver );
 		const lastEventData = eventsStack[ 0 ][ 1 ];
@@ -75,12 +75,12 @@ export function createGeneralTests( { it, editorType, postType } ) {
 	} );
 
 	it( 'Tracks "wpcom_block_inserted" event', async function () {
-		const gEditorComponent = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
 		// Insert some Blocks
-		await gEditorComponent.addBlock( 'Heading' );
-		await gEditorComponent.addBlock( 'Columns' );
-		await gEditorComponent.addBlock( 'Columns' );
+		await editor.addBlock( 'Heading' );
+		await editor.addBlock( 'Columns' );
+		await editor.addBlock( 'Columns' );
 
 		// Grab the events stack (only present on e2e test envs).
 		// see: https://github.com/Automattic/wp-calypso/pull/41329
