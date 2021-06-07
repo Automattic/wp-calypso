@@ -349,12 +349,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = selectedSite.URL;
 	};
 
-	visitEmailManagement = ( event ) => {
-		event.preventDefault();
-		const { primaryPurchase, selectedSite } = this.props;
-		page( emailManagementEdit( selectedSite.slug, primaryPurchase.meta ) );
-	};
-
 	visitSiteHostingSettings = ( event ) => {
 		event.preventDefault();
 
@@ -374,8 +368,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = '/me/concierge/' + selectedSite.slug + '/book';
 	};
 
-	trackTitanWebmailClick = () => {
+	visitTitanWebmail = ( event ) => {
+		event.preventDefault();
+
 		this.props.recordTracksEvent( 'calypso_thank_you_titan_webmail_click' );
+
+		window.open( getTitanEmailUrl( '' ) );
 	};
 
 	downloadTrafficGuideHandler = ( event ) => {
@@ -458,10 +456,16 @@ export class CheckoutThankYouHeader extends PureComponent {
 				: translate( 'Manage domains' );
 		}
 
-		if (
-			isGSuiteOrExtraLicenseOrGoogleWorkspace( primaryPurchase ) ||
-			isTitanMail( primaryPurchase )
-		) {
+		if ( isTitanMail( primaryPurchase ) ) {
+			return (
+				<>
+					{ translate( 'Log in to my email' ) }
+					<Gridicon icon="external" />
+				</>
+			);
+		}
+
+		if ( isGSuiteOrExtraLicenseOrGoogleWorkspace( primaryPurchase ) ) {
 			return translate( 'Manage email' );
 		}
 
@@ -469,7 +473,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 	};
 
 	maybeGetSecondaryButton() {
-		const { primaryPurchase, upgradeIntent, translate } = this.props;
+		const { primaryPurchase, selectedSite, translate, upgradeIntent } = this.props;
 
 		if ( upgradeIntent === 'hosting' ) {
 			return (
@@ -481,13 +485,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		if ( isTitanMail( primaryPurchase ) ) {
 			return (
-				<Button
-					href={ getTitanEmailUrl( '' ) }
-					onClick={ this.trackTitanWebmailClick }
-					target="_blank"
-				>
-					{ translate( 'Log in to my email' ) }
-					<Gridicon icon="external" />
+				<Button href={ emailManagementEdit( selectedSite.slug, primaryPurchase.meta ) }>
+					{ translate( 'Manage email' ) }
 				</Button>
 			);
 		}
@@ -560,7 +559,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		} else if ( isTrafficGuidePurchase ) {
 			clickHandler = this.downloadTrafficGuideHandler;
 		} else if ( isTitanMail( primaryPurchase ) ) {
-			clickHandler = this.visitEmailManagement;
+			clickHandler = this.visitTitanWebmail;
 		}
 
 		return (
