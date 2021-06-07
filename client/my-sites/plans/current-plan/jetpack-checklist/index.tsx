@@ -396,7 +396,7 @@ function mapStateToProps( state ) {
 
 	const siteId = getSelectedSiteId( state );
 	const productInstallStatus = getJetpackProductInstallStatus( state, siteId );
-	const rewindState = getRewindState( state, siteId )?.state ?? 'uninitialized';
+	const rewindState = getRewindState( state, siteId ).state;
 	const isMinimumVersion =
 		siteId && isJetpackMinimumVersion( state, siteId, OFFER_RESET_VIDEO_MINIMUM_JETPACK_VERSION );
 
