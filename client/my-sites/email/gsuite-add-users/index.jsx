@@ -15,6 +15,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 import { Button, Card } from '@automattic/components';
 import DocumentHead from 'calypso/components/data/document-head';
+import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import {
@@ -42,7 +43,6 @@ import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SectionHeader from 'calypso/components/section-header';
@@ -200,24 +200,11 @@ class GSuiteAddUsers extends React.Component {
 
 		return (
 			<Fragment>
-				{ domainsWithForwards.length ? (
-					<Notice showDismiss={ false } status="is-warning">
-						{ translate(
-							'Please note that email forwards are not compatible with %(productFamily)s, and will be disabled once %(productFamily)s is added to this domain. The following domains have forwards:',
-							{
-								args: { productFamily: getGoogleMailServiceFamily() },
-								comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
-							}
-						) }
-						<ul>
-							{ domainsWithForwards.map( ( domainName ) => {
-								return <li key={ domainName }>{ domainName }</li>;
-							} ) }
-						</ul>
-					</Notice>
-				) : (
-					''
-				) }
+				<EmailExistingForwardsNotice
+					domainsWithForwards={ domainsWithForwards }
+					productName={ getGoogleMailServiceFamily() }
+					selectedDomainName={ selectedDomainName }
+				/>
 
 				{ userCanPurchaseGSuite &&
 					selectedDomainInfo.map( ( domain ) => {

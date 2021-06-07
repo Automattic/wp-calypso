@@ -21,6 +21,7 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import { Button, Card } from '@automattic/components';
 import DocumentHead from 'calypso/components/data/document-head';
+import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	emailManagement,
@@ -55,7 +56,6 @@ import {
 	TITAN_MAIL_MONTHLY_SLUG,
 } from 'calypso/lib/titan/constants';
 import SectionHeader from 'calypso/components/section-header';
-import TitanExistingForwardsNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-existing-forwards-notice';
 import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-mailbox-pricing-notice';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
@@ -294,8 +294,9 @@ class TitanAddMailboxes extends React.Component {
 						{ getTitanProductName() + ': ' + selectedDomainName }
 					</HeaderCake>
 
-					<TitanExistingForwardsNotice
+					<EmailExistingForwardsNotice
 						domainsWithForwards={ domainsWithForwards }
+						productName={ getTitanProductName() }
 						selectedDomainName={ selectedDomainName }
 					/>
 
