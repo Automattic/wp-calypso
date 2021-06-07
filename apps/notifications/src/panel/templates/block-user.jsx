@@ -38,7 +38,6 @@ export class UserBlock extends React.Component {
 		const DAY_IN_SECONDS = 3600 * 24;
 		const MAX_LENGTH = 15;
 		const parsedTime = Date.parse( timestamp );
-		let momentTime;
 		let timeString;
 
 		if ( isNaN( parsedTime ) ) {
@@ -46,7 +45,7 @@ export class UserBlock extends React.Component {
 		}
 
 		const localeSlug = getLocaleSlug();
-		momentTime = moment( timestamp ).locale( localeSlug );
+		const momentTime = moment( timestamp ).locale( localeSlug );
 
 		if ( Date.now() - parsedTime > 1000 * DAY_IN_SECONDS * 5 ) {
 			// 30 Apr 2015
@@ -71,7 +70,6 @@ export class UserBlock extends React.Component {
 		let timeIndicator;
 		let homeTemplate;
 		let followLink;
-		let noteActions;
 
 		if ( this.props.block.meta ) {
 			if ( this.props.block.meta.links ) {
@@ -159,16 +157,15 @@ export class UserBlock extends React.Component {
 					{ followLink }
 				</div>
 			);
-		} else {
-			return (
-				<div className="wpnc__user">
-					<img src={ grav.url } height={ grav.height } width={ grav.width } />
-					<span className="wpnc__user__username">{ this.props.block.text }</span>
-					{ homeTemplate }
-					{ followLink }
-				</div>
-			);
 		}
+		return (
+			<div className="wpnc__user">
+				<img src={ grav.url } height={ grav.height } width={ grav.width } />
+				<span className="wpnc__user__username">{ this.props.block.text }</span>
+				{ homeTemplate }
+				{ followLink }
+			</div>
+		);
 	}
 }
 

@@ -164,7 +164,7 @@ export function RelatedPostCard( {
 				<div className="reader-related-card__site-info">
 					<h1 className="reader-related-card__title">{ post.title }</h1>
 					<div className="reader-related-card__excerpt post-excerpt">
-						{ !! post.canonical_media ? post.short_excerpt : post.better_excerpt_no_html }
+						{ post.canonical_media ? post.short_excerpt : post.better_excerpt_no_html }
 					</div>
 				</div>
 			</a>

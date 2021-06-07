@@ -51,7 +51,6 @@ function init( wpcom ) {
 	const titleNode = document.getElementById( 'image-node-title' );
 	const captionNode = document.getElementById( 'image-node-caption' );
 	const descriptionNode = document.getElementById( 'image-node-description' );
-	const imageContainerNode = document.getElementById( 'image-container' );
 	const imageNode = document.getElementById( 'image-node' );
 	const imageDetailsNode = document.getElementById( 'image-details' );
 
@@ -74,7 +73,7 @@ function init( wpcom ) {
 			.me()
 			.get()
 			.then( ( data ) => {
-				siteId = data.primary_blog_url.replace( /http\:\/\//, '' );
+				siteId = data.primary_blog_url.replace( /http:\/\//, '' );
 				siteNode.value = siteId;
 				input.removeAttribute( 'disabled' );
 			} );
