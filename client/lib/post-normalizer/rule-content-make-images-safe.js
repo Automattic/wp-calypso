@@ -55,8 +55,18 @@ const imageShouldBeRemovedFromContent = ( imageUrl ) => {
 	return some( bannedUrlParts, ( part ) => includes( imageUrl.toLowerCase(), part ) );
 };
 
+function forceToHaveProtocol( post, url ) {
+	const postUrlParts = getUrlParts( post.URL );
+
+	// The image on the relative-protocol URL will have the same protocol with the post
+	if ( url.startsWith( '//' ) ) {
+		return `${ postUrlParts.protocol || 'https:' }${ url }`;
+	}
+	return url;
+}
+
 function makeImageSafe( post, image, maxWidth ) {
-	let imgSource = image.getAttribute( 'src' );
+	let imgSource = forceToHaveProtocol( post, image.getAttribute( 'src' ) );
 	const imgSourceParts = getUrlParts( imgSource );
 	const hostName = imgSourceParts.hostname;
 
