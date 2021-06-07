@@ -68,7 +68,7 @@ class SiteSettingsFormWriting extends Component {
 			>
 				{
 					// Only show taxonomy management for non-advanced dashboard user setting
-					config.isEnabled( 'manage/site-settings/categories' ) && ! showAdvancedDashboard && (
+					! showAdvancedDashboard && (
 						<div className="site-settings__taxonomies">
 							<QueryTaxonomies siteId={ siteId } postType="post" />
 							<TaxonomyCard taxonomy="category" postType="post" />

@@ -68,7 +68,6 @@
 		"mailchimp": true,
 		"manage/plugins/compatibility-warning": false,
 		"manage/site-settings/analytics": true,
-		"manage/site-settings/categories": true,
 		"me/account-close": true,
 		"memberships": true,
 		"network-connection": true,

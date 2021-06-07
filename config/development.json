@@ -111,7 +111,6 @@
 		"manage/import/site-importer-endpoints": true,
 		"manage/plugins/compatibility-warning": false,
 		"manage/site-settings/analytics": true,
-		"manage/site-settings/categories": true,
 		"marketplace-yoast": true,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
