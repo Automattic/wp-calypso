@@ -76,7 +76,6 @@
 		"legal-updates-banner": false,
 		"login/magic-login": true,
 		"mailchimp": true,
-		"manage/edit-user": true,
 		"manage/payment-methods": true,
 		"manage/plugins/browser": true,
 		"manage/security": true,
