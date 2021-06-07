@@ -77,7 +77,6 @@
 		"legal-updates-banner": false,
 		"login/magic-login": true,
 		"mailchimp": true,
-		"manage/site-settings/analytics": true,
 		"marketplace-yoast": false,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
