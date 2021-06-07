@@ -7,6 +7,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
+import wpcomBlockEditorGlobalStylesClick from './wpcom-block-editor-global-styles-click';
 import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
 import wpcomInserterTabPanelSelected from './wpcom-inserter-tab-panel-selected';
 import wpcomBlockDonationsPlanUpgrade from './wpcom-block-donations-plan-upgrade';
@@ -42,6 +43,7 @@ export const registerSubscriber = ( id, type, handler ) => {
  */
 const EVENTS_MAPPING = [
 	wpcomBlockEditorCloseClick(),
+	wpcomBlockEditorGlobalStylesClick(),
 	wpcomInserterInlineSearchTerm(),
 	wpcomInserterTabPanelSelected(),
 	wpcomBlockDonationsPlanUpgrade(),
