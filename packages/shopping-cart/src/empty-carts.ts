@@ -13,6 +13,7 @@ export function getEmptyResponseCart(): ResponseCart {
 		total_tax: '0',
 		total_tax_integer: 0,
 		total_tax_display: '0',
+		total_tax_breakdown: [],
 		total_cost: 0,
 		total_cost_integer: 0,
 		total_cost_display: '0',
