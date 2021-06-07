@@ -91,12 +91,15 @@ class Global_Styles {
 			'value' => self::SYSTEM_FONT,
 		),
 		'Arvo',
+		'Bodoni Mona',
 		'Cabin',
 		'Chivo',
 		'Courier Prime',
+		'DM Sans',
 		'Domine',
 		'EB Garamond',
 		'Fira Sans',
+		'Inter',
 		'Josefin Sans',
 		'Libre Baskerville',
 		'Libre Franklin',
@@ -116,9 +119,6 @@ class Global_Styles {
 		'Source Serif Pro',
 		'Space Mono',
 		'Work Sans',
-		'Inter',
-		'DM Sans',
-		'Bodoni Mona',
 	);
 
 	/**
