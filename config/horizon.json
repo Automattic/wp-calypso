@@ -78,7 +78,6 @@
 		"mailchimp": false,
 		"manage/export/guided-transfer": true,
 		"manage/payment-methods": true,
-		"manage/security": true,
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/categories": true,
 		"marketplace-yoast": false,

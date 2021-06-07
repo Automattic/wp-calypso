@@ -111,7 +111,6 @@
 		"manage/import/site-importer-endpoints": true,
 		"manage/payment-methods": true,
 		"manage/plugins/compatibility-warning": false,
-		"manage/security": true,
 		"manage/site-settings/analytics": true,
 		"manage/site-settings/categories": true,
 		"marketplace-yoast": true,

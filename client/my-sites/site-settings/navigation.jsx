@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
@@ -60,7 +59,7 @@ export class SiteSettingsNavigation extends Component {
 						{ strings.general }
 					</NavItem>
 
-					{ config.isEnabled( 'manage/security' ) && site.jetpack && (
+					{ site.jetpack && (
 						<NavItem
 							path={ `/settings/security/${ site.slug }` }
 							preloadSectionName="settings-security"
