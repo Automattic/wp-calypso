@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import debugFactory from 'debug';
 
 /**
@@ -25,8 +25,6 @@ export default function useRefetchOnFocus(
 	lastCart: ResponseCart,
 	refetch: () => void
 ): void {
-	const lastRefreshTime = useRef< number >( convertMsToSecs( Date.now() ) );
-
 	useEffect( () => {
 		if ( ! options.refetchOnWindowFocus || cacheStatus !== 'valid' ) {
 			return;
@@ -38,7 +36,8 @@ export default function useRefetchOnFocus(
 
 		function wasLastFetchRecent(): boolean {
 			const nowInSeconds = convertMsToSecs( Date.now() );
-			const secondsSinceLastFetch = nowInSeconds - lastRefreshTime.current;
+			const lastRefreshTime = lastCart.cart_generated_at_timestamp;
+			const secondsSinceLastFetch = nowInSeconds - lastRefreshTime;
 			debug( 'last fetch was', secondsSinceLastFetch, 'seconds ago' );
 			return secondsSinceLastFetch < minimumFetchInterval;
 		}
