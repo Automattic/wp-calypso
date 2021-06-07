@@ -1,24 +1,10 @@
 /**
  * External dependencies
  */
+import { throttle } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
 const THROTTLE_RATE_MS = 50;
-
-const throttle = ( func, waitForMilliseconds ) => {
-	let timeout = undefined;
-
-	return ( ...args ) => {
-		if ( timeout ) {
-			return;
-		}
-
-		func( ...args );
-		timeout = setTimeout( () => {
-			timeout = null;
-		}, waitForMilliseconds );
-	};
-};
 
 /**
  * Returns whether an element has touched/crossed the upper Window's boundary.
