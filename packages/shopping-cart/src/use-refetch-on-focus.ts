@@ -1,21 +1,32 @@
 /**
  * External dependencies
  */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import type { CacheStatus, ShoppingCartManagerOptions } from './types';
+import type { CacheStatus, ShoppingCartManagerOptions, ResponseCart } from './types';
 
 const debug = debugFactory( 'shopping-cart:use-refetch-on-focus' );
+
+// The number of seconds within that must have passed before we allow an
+// automatic refetch on focus.
+const minimumFetchInterval = 60;
+
+function convertMsToSecs( ms: number ): number {
+	return Math.floor( ms / 1000 );
+}
 
 export default function useRefetchOnFocus(
 	options: ShoppingCartManagerOptions,
 	cacheStatus: CacheStatus,
+	lastCart: ResponseCart,
 	refetch: () => void
 ): void {
+	const lastRefreshTime = useRef< number >( convertMsToSecs( Date.now() ) );
+
 	useEffect( () => {
 		if ( ! options.refetchOnWindowFocus || cacheStatus !== 'valid' ) {
 			return;
@@ -25,9 +36,20 @@ export default function useRefetchOnFocus(
 			return [ undefined, 'visible', 'prerender' ].includes( document.visibilityState );
 		}
 
+		function wasLastFetchRecent(): boolean {
+			const nowInSeconds = convertMsToSecs( Date.now() );
+			const secondsSinceLastFetch = nowInSeconds - lastRefreshTime.current;
+			debug( 'last fetch was', secondsSinceLastFetch, 'seconds ago' );
+			return secondsSinceLastFetch < minimumFetchInterval;
+		}
+
 		function handleFocusChange(): void {
 			if ( ! isFocused() ) {
 				debug( 'window was made invisible; ignoring' );
+				return;
+			}
+			if ( wasLastFetchRecent() ) {
+				debug( 'last fetch was quite recent; ignoring' );
 				return;
 			}
 
@@ -42,5 +64,5 @@ export default function useRefetchOnFocus(
 			window.removeEventListener( 'visibilitychange', handleFocusChange );
 			window.removeEventListener( 'focus', handleFocusChange );
 		};
-	}, [ options.refetchOnWindowFocus, refetch, cacheStatus ] );
+	}, [ options.refetchOnWindowFocus, lastCart.cart_generated_at_timestamp, refetch, cacheStatus ] );
 }

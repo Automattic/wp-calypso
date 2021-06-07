@@ -146,9 +146,6 @@ export default function useShoppingCartManager( {
 		[ dispatchAndWaitForValid ]
 	);
 
-	// Refetch when the window is refocused
-	useRefetchOnFocus( options ?? {}, cacheStatus, reloadFromServer );
-
 	const isLoading = cacheStatus === 'fresh' || cacheStatus === 'fresh-pending' || ! cartKey;
 	const loadingErrorForManager = cacheStatus === 'error' ? loadingError : null;
 	const isPendingUpdate =
@@ -162,6 +159,14 @@ export default function useShoppingCartManager( {
 	if ( cacheStatus === 'valid' ) {
 		lastValidResponseCart.current = responseCartWithoutTempProducts;
 	}
+
+	// Refetch when the window is refocused
+	useRefetchOnFocus(
+		options ?? {},
+		cacheStatus,
+		responseCartWithoutTempProducts,
+		reloadFromServer
+	);
 
 	useEffect( () => {
 		if ( cartValidCallbacks.current.length === 0 ) {
