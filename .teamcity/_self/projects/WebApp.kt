@@ -367,7 +367,10 @@ object BuildDockerImage : BuildType({
 				fi
 
 				export GH_TOKEN="%matticbot_oauth_token%"
-				. ./bin/post-link-live-branch.sh "%teamcity.build.branch%"
+				. ./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF
+				Link to live branch is being generated...
+				Please wait a few minutes and refresh this page.
+				EOF
 			"""
 		}
 
@@ -412,7 +415,10 @@ object BuildDockerImage : BuildType({
 				fi
 
 				export GH_TOKEN="%matticbot_oauth_token%"
-				. ./bin/post-link-live-branch.sh "%teamcity.build.branch%" "https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%"
+				. ./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF
+				Link to Calypso live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%
+				Link to Jetpack Cloud live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack
+				EOF
 			"""
 		}
 	}
