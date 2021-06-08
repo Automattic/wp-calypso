@@ -113,7 +113,7 @@ class SignupForm extends Component {
 
 	static defaultProps = {
 		displayNameInput: false,
-		displayUsernameInput: true,
+		displayUsernameInput: false,
 		flowName: '',
 		isSocialSignupEnabled: false,
 		showRecaptchaToS: false,
@@ -456,20 +456,38 @@ class SignupForm extends Component {
 		);
 	}
 
-	getUserData() {
-		const extraFields = {
-			extra: {
-				first_name: formState.getFieldValue( this.state.form, 'firstName' ),
-				last_name: formState.getFieldValue( this.state.form, 'lastName' ),
-			},
-		};
+	getUserNameHint() {
+		const email = formState.getFieldValue( this.state.form, 'email' );
+		const firstName = formState.getFieldValue( this.state.form, 'firstName' );
+		const lastName = formState.getFieldValue( this.state.form, 'lastName' );
 
-		return {
-			username: formState.getFieldValue( this.state.form, 'username' ),
+		const emailIdentifier = email.match( /^(.*?)@/ );
+		return ( emailIdentifier && emailIdentifier[ 1 ] ) || `${ firstName }.${ lastName }`;
+	}
+
+	getUserData() {
+		const userData = {
 			password: formState.getFieldValue( this.state.form, 'password' ),
 			email: formState.getFieldValue( this.state.form, 'email' ),
-			...( this.props.displayNameInput && extraFields ),
 		};
+
+		if ( this.props.displayNameInput ) {
+			userData.extra = {
+				first_name: formState.getFieldValue( this.state.form, 'firstName' ),
+				last_name: formState.getFieldValue( this.state.form, 'lastName' ),
+			};
+		}
+
+		if ( this.props.displayUsernameInput ) {
+			userData.username = formState.getFieldValue( this.state.form, 'username' );
+		} else {
+			userData.extra = {
+				...userData.extra,
+				username_hint: this.getUserNameHint(),
+			};
+		}
+
+		return userData;
 	}
 
 	getErrorMessagesWithLogin( fieldName ) {
