@@ -74,11 +74,8 @@ export default function PurchaseArea( {
 		} else if ( isCustomDomainAvailable && ! isCustomDomainPrimary ) {
 			// TODO: Pop up Modal for deciding on primary domain and related logic
 			setIsButtonClicked( false );
-			alert( 'To be implemented : Domain deciding Pop up modal ' );
 		} else if ( ! isCustomDomainAvailable ) {
 			onNavigateToDomainsSelection();
-		} else {
-			alert( 'Unknown combination' );
 		}
 	};
 

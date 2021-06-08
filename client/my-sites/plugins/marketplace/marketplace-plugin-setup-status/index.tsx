@@ -52,7 +52,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 		if ( pluginSlugToBeInstalled && selectedSiteId ) {
 			dispatch( initiateThemeTransfer( selectedSiteId, null, pluginSlugToBeInstalled ) );
 		} else if ( isPluginInstalledDuringPurchase ) {
-			alert( 'To be implemented: polling wait to be implemented to check for transfer' );
+			// TODO: To be implemented: polling wait to be implemented to check for transfer
 		} else {
 			// Invalid State redirect to Yoast marketplace page for now, and maybe a marketplace home view in the future
 			page(
