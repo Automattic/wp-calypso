@@ -10,7 +10,6 @@ import { stringify } from 'qs';
  */
 import Site from './site';
 import Me from './me';
-import MailingList from './mailing-list';
 import config from '@automattic/calypso-config';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
@@ -50,10 +49,6 @@ Undocumented.prototype.site = function ( id ) {
 
 Undocumented.prototype.me = function () {
 	return new Me( this.wpcom );
-};
-
-Undocumented.prototype.mailingList = function ( category ) {
-	return new MailingList( category, this.wpcom );
 };
 
 /*
