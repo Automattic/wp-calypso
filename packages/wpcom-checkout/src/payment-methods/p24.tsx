@@ -2,41 +2,89 @@
  * External dependencies
  */
 import React from 'react';
-import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import {
+	Button,
+	FormStatus,
+	useLineItems,
+	useFormStatus,
+	registerStore,
+	useSelect,
+	useDispatch,
+} from '@automattic/composite-checkout';
+import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
+import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import Field from '../../components/field';
-import Button from '../../components/button';
-import { FormStatus, useLineItems } from '../../public-api';
-import { useFormStatus } from '../form-status';
-import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
-import { registerStore, useSelect, useDispatch } from '../../lib/registry';
-import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
+import styled from '../styled';
+import Field from '../field';
+import { SummaryLine, SummaryDetails } from '../summary-details';
+import { PaymentMethodLogos } from '../payment-method-logos';
 
-const debug = debugFactory( 'composite-checkout:p24-payment-method' );
+// Disabling this to make migration easier
+/* eslint-disable @typescript-eslint/no-use-before-define */
 
-export function createP24PaymentMethodStore() {
+const debug = debugFactory( 'wpcom-checkout:p24-payment-method' );
+
+interface StoreStateValue {
+	value: string;
+	isTouched: boolean;
+}
+
+interface StoreState {
+	customerName: StoreStateValue;
+	customerEmail: StoreStateValue;
+}
+
+type StoreAction = { type: string; payload: string };
+
+interface StoreActions {
+	changeCustomerName: ( payload: string ) => StoreAction;
+	changeCustomerEmail: ( payload: string ) => StoreAction;
+}
+
+interface StoreSelectorsWithState {
+	getCustomerName: ( state: StoreState ) => StoreStateValue;
+	getCustomerEmail: ( state: StoreState ) => StoreStateValue;
+}
+
+interface StoreSelectors {
+	getCustomerName: () => StoreStateValue;
+	getCustomerEmail: () => StoreStateValue;
+}
+
+interface P24Store extends ReturnType< typeof registerStore > {
+	actions: StoreActions;
+	selectors: StoreSelectorsWithState;
+	getState: () => StoreState;
+}
+
+declare module '@wordpress/data' {
+	function select( key: 'p24' ): StoreSelectors;
+	function dispatch( key: 'p24' ): StoreActions;
+}
+
+export function createP24PaymentMethodStore(): P24Store {
 	debug( 'creating a new p24 payment method store' );
 	const actions = {
-		changeCustomerName( payload ) {
+		changeCustomerName( payload: string ) {
 			return { type: 'CUSTOMER_NAME_SET', payload };
 		},
-		changeCustomerEmail( payload ) {
+		changeCustomerEmail( payload: string ) {
 			return { type: 'CUSTOMER_EMAIL_SET', payload };
 		},
 	};
 
 	const selectors = {
-		getCustomerName( state ) {
-			return state.customerName || '';
+		getCustomerName( state: StoreState ): StoreStateValue {
+			return state.customerName;
 		},
-		getCustomerEmail( state ) {
-			return state.customerEmail || '';
+		getCustomerEmail( state: StoreState ): StoreStateValue {
+			return state.customerEmail;
 		},
 	};
 
@@ -63,11 +111,19 @@ export function createP24PaymentMethodStore() {
 	return { ...store, actions, selectors };
 }
 
-export function createP24Method( { store, stripe, stripeConfiguration } ) {
+export function createP24Method( {
+	store,
+	stripe,
+	stripeConfiguration,
+}: {
+	store: P24Store;
+	stripe: Stripe;
+	stripeConfiguration: StripeConfiguration;
+} ): PaymentMethod {
 	return {
 		id: 'p24',
 		label: <P24Label />,
-		activeContent: <P24Fields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />,
+		activeContent: <P24Fields />,
 		inactiveContent: <P24Summary />,
 		submitButton: (
 			<P24PayButton store={ store } stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
@@ -142,11 +198,32 @@ const P24Field = styled( Field )`
 	}
 `;
 
-function P24PayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
+function P24PayButton( {
+	disabled,
+	onClick,
+	store,
+	stripe,
+	stripeConfiguration,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+	store: P24Store;
+	stripe: Stripe;
+	stripeConfiguration: StripeConfiguration;
+} ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'p24' ).getCustomerName() );
 	const customerEmail = useSelect( ( select ) => select( 'p24' ).getCustomerEmail() );
+
+	// This must be typed as optional because it's injected by cloning the
+	// element in CheckoutSubmitButton, but the uncloned element does not have
+	// this prop yet.
+	if ( ! onClick ) {
+		throw new Error(
+			'Missing onClick prop; P24PayButton must be used as a payment button in CheckoutSubmitButton'
+		);
+	}
 
 	return (
 		<Button
@@ -173,19 +250,19 @@ function P24PayButton( { disabled, onClick, store, stripe, stripeConfiguration }
 	);
 }
 
-function ButtonContents( { formStatus, total } ) {
+function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
-		return __( 'Processing…' );
+		return <>{ __( 'Processing…' ) }</>;
 	}
 	if ( formStatus === FormStatus.READY ) {
 		/* translators: %s is the total to be paid in localized currency */
-		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
+		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
 	}
-	return __( 'Please wait…' );
+	return <>{ __( 'Please wait…' ) }</>;
 }
 
-function isFormValid( store ) {
+function isFormValid( store: P24Store ): boolean {
 	const customerName = store.selectors.getCustomerName( store.getState() );
 	const customerEmail = store.selectors.getCustomerEmail( store.getState() );
 
