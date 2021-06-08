@@ -14,7 +14,6 @@ import i18n from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
-import { isEnabled } from '@automattic/calypso-config';
 import { isBusiness, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
@@ -121,7 +120,7 @@ const BusinessPlanDetails = ( {
 				/>
 			) }
 
-			{ ! selectedFeature && isEnabled( 'manage/plugins/upload' ) && (
+			{ ! selectedFeature && (
 				<PurchaseDetail
 					icon={ <img alt="" src={ updatesImage } /> }
 					title={ i18n.translate( 'Add a Plugin' ) }

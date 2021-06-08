@@ -45,7 +45,6 @@ import {
 } from 'calypso/state/ui/selectors';
 import { getPlugins, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { Button } from '@automattic/components';
-import { isEnabled } from '@automattic/calypso-config';
 import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 /**
@@ -367,10 +366,6 @@ export class PluginsMain extends Component {
 	};
 
 	renderUploadPluginButton() {
-		if ( ! isEnabled( 'manage/plugins/upload' ) ) {
-			return null;
-		}
-
 		const { selectedSiteSlug, translate } = this.props;
 		const uploadUrl = '/plugins/upload' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
 
