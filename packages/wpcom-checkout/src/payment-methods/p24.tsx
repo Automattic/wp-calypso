@@ -137,9 +137,9 @@ function P24Fields() {
 				type="Text"
 				autoComplete="cc-name"
 				label={ __( 'Your name' ) }
-				value={ customerName?.value ?? '' }
+				value={ customerName.value }
 				onChange={ changeCustomerName }
-				isError={ customerName?.isTouched && customerName?.value.length === 0 }
+				isError={ customerName.isTouched && customerName.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
 				disabled={ isDisabled }
 			/>
@@ -148,9 +148,9 @@ function P24Fields() {
 				type="Text"
 				autoComplete="cc-email"
 				label={ __( 'Email address' ) }
-				value={ customerEmail?.value ?? '' }
+				value={ customerEmail.value ?? '' }
 				onChange={ changeCustomerEmail }
-				isError={ customerEmail?.isTouched && customerEmail?.value.length === 0 }
+				isError={ customerEmail.isTouched && customerEmail.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
 				disabled={ isDisabled }
 			/>
@@ -217,8 +217,8 @@ function P24PayButton( {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting p24 payment' );
 					onClick( 'p24', {
-						name: customerName?.value,
-						email: customerEmail?.value,
+						name: customerName.value,
+						email: customerEmail.value,
 					} );
 				}
 			} }
@@ -247,14 +247,14 @@ function isFormValid( store: P24Store ): boolean {
 	const customerName = store.selectors.getCustomerName( store.getState() );
 	const customerEmail = store.selectors.getCustomerEmail( store.getState() );
 
-	if ( ! customerName?.value.length ) {
+	if ( ! customerName.value.length ) {
 		// Touch the field so it displays a validation error
 		store.dispatch( store.actions.changeCustomerName( '' ) );
 	}
-	if ( ! customerEmail?.value.length ) {
+	if ( ! customerEmail.value.length ) {
 		store.dispatch( store.actions.changeCustomerEmail( '' ) );
 	}
-	if ( ! customerName?.value.length || ! customerEmail?.value.length ) {
+	if ( ! customerName.value.length || ! customerEmail.value.length ) {
 		return false;
 	}
 	return true;
@@ -376,8 +376,8 @@ function P24Summary() {
 
 	return (
 		<SummaryDetails>
-			<SummaryLine>{ customerName?.value }</SummaryLine>
-			<SummaryLine>{ customerEmail?.value }</SummaryLine>
+			<SummaryLine>{ customerName.value }</SummaryLine>
+			<SummaryLine>{ customerEmail.value }</SummaryLine>
 		</SummaryDetails>
 	);
 }
