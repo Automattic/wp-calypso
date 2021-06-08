@@ -28,6 +28,7 @@ import type {
 	StoreSelectors,
 	StoreSelectorsWithState,
 	StoreActions,
+	StoreState,
 } from '../payment-method-store';
 
 // Disabling this to make migration easier
@@ -47,7 +48,7 @@ declare module '@wordpress/data' {
 
 export function createP24PaymentMethodStore(): P24Store {
 	debug( 'creating a new p24 payment method store' );
-	const actions = {
+	const actions: StoreActions< NounsInStore > = {
 		changeCustomerName( payload: string ) {
 			return { type: 'CUSTOMER_NAME_SET', payload };
 		},
@@ -67,12 +68,12 @@ export function createP24PaymentMethodStore(): P24Store {
 
 	const store = registerStore( 'p24', {
 		reducer(
-			state = {
+			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 				customerEmail: { value: '', isTouched: false },
 			},
 			action
-		) {
+		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
 					return { ...state, customerName: { value: action.payload, isTouched: true } };
