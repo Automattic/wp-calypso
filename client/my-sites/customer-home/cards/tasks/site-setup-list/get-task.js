@@ -54,7 +54,6 @@ export const getTask = (
 		emailVerificationStatus,
 		isDomainUnverified,
 		isEmailUnverified,
-		isPodcastingSite,
 		menusUrl,
 		siteId,
 		siteSlug,
@@ -64,29 +63,6 @@ export const getTask = (
 ) => {
 	let taskData = {};
 	switch ( task.id ) {
-		case CHECKLIST_KNOWN_TASKS.START_SITE_SETUP:
-			taskData = {
-				timing: 1,
-				label: translate( 'Site created' ),
-				title: translate( 'Your site has been created!' ),
-				description: translate(
-					"Next, we'll guide you through setting up and launching your site."
-				),
-				actionText: translate( 'Get started' ),
-				...( ! task.isCompleted && {
-					actionDispatch: requestSiteChecklistTaskUpdate,
-					actionDispatchArgs: [ siteId, task.id ],
-				} ),
-				actionAdvanceToNext: true,
-				completeOnView: true,
-			};
-
-			// Change the task title for podcasting sites.
-			if ( isPodcastingSite ) {
-				taskData.title = translate( 'Welcome to your podcast site!' );
-				taskData.hideLabel = true;
-			}
-			break;
 		case CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
 			taskData = {
 				timing: 2,
