@@ -40,7 +40,7 @@ describe( `[${ host }] Manage Domains - Add a Domain: (${ screenSize }) @paralle
 		await new CreateSiteFlow( this.driver, tmpFreeSiteName ).createFreeSite();
 		tmpFreeSiteCreated = true;
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
-		return await sideBarComponent.selectDomains();
+		await sideBarComponent.selectDomains();
 	} );
 
 	after( 'Delete the temp free site', async function () {
