@@ -8,8 +8,11 @@ import page from 'page';
  * Internal dependencies
  */
 import { getSiteFragment } from 'calypso/lib/route';
-import AsyncLoad from 'calypso/components/async-load';
 import MarketplacePluginDetails from 'calypso/my-sites/plugins/marketplace/marketplace-plugin-details';
+import MarketplaceDomainUpsell from 'calypso/my-sites/plugins/marketplace/marketplace-domain-upsell';
+import MarketplacePluginSetup from 'calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status';
+import MarketplaceStandaloneThankYou from 'calypso/my-sites/plugins/marketplace/marketplace-stand-alone-thank-you';
+import MarketplaceTest from 'calypso/my-sites/plugins/marketplace/marketplace-test';
 
 export function renderMarketplacePlugin( context, next ) {
 	const siteUrl = getSiteFragment( context.path );
@@ -28,30 +31,22 @@ export function renderMarketplacePlugin( context, next ) {
 }
 
 export function renderDomainsPage( context, next ) {
-	context.primary = (
-		<AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-domain-upsell" />
-	);
+	context.primary = <MarketplaceDomainUpsell />;
 	next();
 }
 
 export function renderPluginsSetupStatusPage( context, next ) {
-	context.primary = (
-		<AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status" />
-	);
+	context.primary = <MarketplacePluginSetup />;
 	next();
 }
 
 export function renderMarketplaceThankYou( context, next ) {
-	// context.primary = (
-	// 	<AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-stand-alone-thank-you" />
-	// );
-	context.primary = <div>Not Implemented</div>;
+	context.primary = <MarketplaceStandaloneThankYou />;
 	next();
 }
 
 export function renderMarketplaceTestPage( context, next ) {
-	// context.primary = <AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-test" />;
-	context.primary = <div>Not Implemented</div>;
+	context.primary = <MarketplaceTest />;
 	next();
 }
 

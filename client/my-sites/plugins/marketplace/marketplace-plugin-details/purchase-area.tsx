@@ -18,6 +18,7 @@ interface PurchaseArea {
 	onNavigateToCheckout: () => void;
 	onNavigateToDomainsSelection: () => void;
 	onRemoveEverythingFromCart: () => Promise< ResponseCart >;
+	onInstallPluginManually: ( primaryDomain: string ) => Promise< void >;
 }
 
 export default function PurchaseArea( {
@@ -29,6 +30,7 @@ export default function PurchaseArea( {
 	onNavigateToCheckout,
 	onNavigateToDomainsSelection,
 	onRemoveEverythingFromCart,
+	onInstallPluginManually,
 }: PurchaseArea ): JSX.Element {
 	const [ isButtonClicked, setIsButtonClicked ] = useState( false );
 
@@ -49,31 +51,31 @@ export default function PurchaseArea( {
 			siteDomains.find( isCustomDomain )?.isPrimary
 		);
 	}
+	function getPrimaryDomain( siteDomains: any[] ): any {
+		return siteDomains.find( ( { isPrimary } ) => isPrimary );
+	}
 
 	const onAddPlugin = async ( isProductPurchased: boolean ) => {
 		setIsButtonClicked( true );
 		const isCustomDomainAvailable = evaluateIsCustomDomainAvailable( siteDomains );
 		const isCustomDomainPrimary = evaluateIsCustomDomainPrimary( siteDomains );
+
 		await onRemoveEverythingFromCart();
+
 		if ( isProductPurchased ) {
 			await onAddYoastPremiumToCart();
+		} else {
+			const primaryDomain = getPrimaryDomain( siteDomains ).domain;
+			onInstallPluginManually( primaryDomain );
 		}
 
-		if ( isCustomDomainAvailable && isCustomDomainPrimary ) {
-			if ( isProductPurchased ) {
-				onNavigateToCheckout();
-			} else {
-				//To be replaced with loading screen and then thank-you page
-				alert( 'To be implemented : Loading Screen -> Thank You Page' );
-			}
+		if ( isCustomDomainAvailable && isCustomDomainPrimary && isProductPurchased ) {
+			onNavigateToCheckout();
 		} else if ( isCustomDomainAvailable && ! isCustomDomainPrimary ) {
-			//Pop up Modal for deciding on primary domain and related logic
+			// TODO: Pop up Modal for deciding on primary domain and related logic
 			setIsButtonClicked( false );
-			alert( 'To be implemented : Domain deciding Pop up modal ' );
 		} else if ( ! isCustomDomainAvailable ) {
 			onNavigateToDomainsSelection();
-		} else {
-			alert( 'Unknown combination' );
 		}
 	};
 

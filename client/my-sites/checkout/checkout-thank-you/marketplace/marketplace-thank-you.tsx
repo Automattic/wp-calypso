@@ -26,6 +26,8 @@ import {
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import useSiteMenuItems from 'calypso/my-sites/sidebar-unified/use-site-menu-items';
+import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+
 /**
  * style dependencies
  */
@@ -87,7 +89,7 @@ const MarketplaceThankYou = () => {
 	const selectedSite = useSelector( getSelectedSite );
 	const previousPath = useSelector( getPreviousPath );
 	const menuItems = useSiteMenuItems();
-
+	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const { url: postsPageUrl } =
 		menuItems.find( ( { slug }: { slug: string } ) => slug === 'edit-php' ) ?? {};
 
@@ -102,6 +104,8 @@ const MarketplaceThankYou = () => {
 			<Masterbar>
 				<Item
 					icon="cross"
+					// TODO: Immediately after purchasing a domain and going through a transfer the selected site id remains uncertain
+					// We have to prevent the user from entering the flow before we finish provisioning the SSL certificate forsomeone with a fresh domains
 					onClick={ () =>
 						previousPath
 							? page( previousPath )
@@ -143,8 +147,11 @@ const MarketplaceThankYou = () => {
 										<FullWidthButton
 											href={ yoastSeoPageUrl }
 											primary
-											//TODO: To be removed after loading screen for plugin setup is completed
-											disabled={ ! yoastSeoPageUrl }
+											busy={ isRequestingMenu }
+											// TODO: Menu links are not properly loading on initial request, post transfer so yoastSeoPageUrl will remain empty post transfer
+											// This should be fixed with perhaps a work around to periodically poll for the menu with various domains until it loads
+											// or maybe blocking the user from entering this flow until a domain acquires SSL
+											disabled={ !! yoastSeoPageUrl }
 										>
 											{ translate( 'Get started' ) }
 										</FullWidthButton>
@@ -158,7 +165,11 @@ const MarketplaceThankYou = () => {
 										) }
 									</p>
 									<div>
-										<FullWidthButton href={ postsPageUrl }>
+										<FullWidthButton
+											href={ postsPageUrl }
+											busy={ isRequestingMenu }
+											disabled={ !! yoastSeoPageUrl }
+										>
 											{ translate( 'View posts' ) }
 										</FullWidthButton>
 									</div>
