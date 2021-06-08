@@ -14,7 +14,6 @@ import {
 	useSelect,
 	useDispatch,
 } from '@automattic/composite-checkout';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
 /**
@@ -111,23 +110,13 @@ export function createP24PaymentMethodStore(): P24Store {
 	return { ...store, actions, selectors };
 }
 
-export function createP24Method( {
-	store,
-	stripe,
-	stripeConfiguration,
-}: {
-	store: P24Store;
-	stripe: Stripe;
-	stripeConfiguration: StripeConfiguration;
-} ): PaymentMethod {
+export function createP24Method( { store }: { store: P24Store } ): PaymentMethod {
 	return {
 		id: 'p24',
 		label: <P24Label />,
 		activeContent: <P24Fields />,
 		inactiveContent: <P24Summary />,
-		submitButton: (
-			<P24PayButton store={ store } stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
-		),
+		submitButton: <P24PayButton store={ store } />,
 		getAriaLabel: () => 'Przelewy24',
 	};
 }
@@ -202,16 +191,12 @@ function P24PayButton( {
 	disabled,
 	onClick,
 	store,
-	stripe,
-	stripeConfiguration,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: P24Store;
-	stripe: Stripe;
-	stripeConfiguration: StripeConfiguration;
 } ) {
-	const [ items, total ] = useLineItems();
+	const [ , total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'p24' ).getCustomerName() );
 	const customerEmail = useSelect( ( select ) => select( 'p24' ).getCustomerEmail() );
@@ -232,12 +217,8 @@ function P24PayButton( {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting p24 payment' );
 					onClick( 'p24', {
-						stripe,
 						name: customerName?.value,
 						email: customerEmail?.value,
-						items,
-						total,
-						stripeConfiguration,
 					} );
 				}
 			} }
