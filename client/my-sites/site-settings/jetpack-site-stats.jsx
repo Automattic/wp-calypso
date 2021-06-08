@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { ToggleControl } from '@wordpress/components';
-import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -28,7 +27,7 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
-import useSiteRolesQuery from 'calypso/data/site-roles/use-site-roles-query';
+import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
 
 class JetpackSiteStats extends Component {
 	static defaultProps = {
@@ -185,15 +184,6 @@ class JetpackSiteStats extends Component {
 		);
 	}
 }
-
-const withSiteRoles = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
-		const { data } = useSiteRolesQuery( props.siteId );
-
-		return <Wrapped { ...props } siteRoles={ data ?? [] } />;
-	},
-	'WithSiteRoles'
-);
 
 export default connect(
 	( state ) => {
