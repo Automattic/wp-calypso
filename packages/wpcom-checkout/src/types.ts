@@ -355,6 +355,10 @@ export type ManagedContactDetailsUpdaters = {
 		arg0: ManagedContactDetails,
 		arg1: DomainContactDetails
 	) => ManagedContactDetails;
+	updateRequiredDomainFields: (
+		arg0: ManagedContactDetails,
+		arg1: ManagedContactDetailsRequiredMask
+	) => ManagedContactDetails;
 	touchContactFields: ( arg0: ManagedContactDetails ) => ManagedContactDetails;
 	updateVatId: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	setErrorMessages: (
