@@ -43,10 +43,6 @@ type DiscountMessageProps = {
 	toggleChecked?: boolean;
 };
 
-const CLOUD_MASTERBAR_STICKY = false;
-const CALYPSO_MASTERBAR_HEIGHT = 47;
-const CLOUD_MASTERBAR_HEIGHT = CLOUD_MASTERBAR_STICKY ? 94 : 0;
-
 const DiscountMessage: React.FC< DiscountMessageProps > = ( { toggleChecked } ) => {
 	const translate = useTranslate();
 	const isMobile: boolean = useMobileBreakpoint();
@@ -94,16 +90,20 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 	onDurationChange,
 } ) => {
 	const translate = useTranslate();
-	const isInConnectStore = useMemo( isConnectStore, [] );
-	const isInJetpackCloud = useMemo( isJetpackCloud, [] );
-	const windowBoundaryOffset =
-		isInJetpackCloud || isInConnectStore ? CLOUD_MASTERBAR_HEIGHT : CALYPSO_MASTERBAR_HEIGHT;
+
+	const CALYPSO_MASTERBAR_HEIGHT = 47;
+	const CLOUD_MASTERBAR_HEIGHT = 0;
+
+	const windowBoundaryOffset = useMemo( () => {
+		if ( isJetpackCloud() || isConnectStore() ) {
+			return CLOUD_MASTERBAR_HEIGHT;
+		}
+
+		return CALYPSO_MASTERBAR_HEIGHT;
+	}, [] );
 	const [ barRef, hasCrossed ] = useDetectWindowBoundary( windowBoundaryOffset );
 
-	const [ durationChecked, setDurationChecked ] = useState(
-		duration === TERM_ANNUALLY ? true : false
-	);
-
+	const [ durationChecked, setDurationChecked ] = useState( duration === TERM_ANNUALLY );
 	useEffect( () => {
 		const selectedDuration = durationChecked ? TERM_ANNUALLY : TERM_MONTHLY;
 		onDurationChange?.( selectedDuration );
