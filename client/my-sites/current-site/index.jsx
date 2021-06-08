@@ -108,6 +108,14 @@ class CurrentSite extends Component {
 							/>
 						</CalypsoShoppingCartProvider>
 					) }
+					{ selectedSite && isEnabled( 'current-site/abandoned-cart-survey' ) && (
+						<CalypsoShoppingCartProvider>
+							<AsyncLoad
+								require="calypso/my-sites/current-site/abandoned-cart-survey"
+								placeholder={ null }
+							/>
+						</CalypsoShoppingCartProvider>
+					) }
 					{ selectedSite && isEnabled( 'current-site/notice' ) && (
 						<AsyncLoad
 							require="calypso/my-sites/current-site/notice"
