@@ -45,12 +45,13 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import { hasSiteProduct } from 'calypso/state/sites/selectors';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getDomainManagementPath } from './utils';
 import DomainItem from './domain-item';
 import ListHeader from './list-header';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import InfoPopover from 'calypso/components/info-popover';
 import ExternalLink from 'calypso/components/external-link';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
@@ -471,6 +472,7 @@ export class List extends React.Component {
 
 		return [
 			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,
+			<QuerySiteFeatures key="query-features" siteId={ selectedSite.ID } />,
 			<ListHeader
 				key="domains-header"
 				headerClasses={ {
@@ -550,7 +552,7 @@ export default connect(
 			hasSingleSite: siteCount === 1,
 			isOnFreePlan,
 			userCanManageOptions,
-			canSetPrimaryDomain: hasSiteProduct( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
+			canSetPrimaryDomain: hasActiveSiteFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
 		};
 	},
 	( dispatch ) => {
