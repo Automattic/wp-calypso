@@ -19,7 +19,7 @@ recordTracksEvent( 'calypso_signup_step_start', { step: 'a_nice_step' } );
 _Note: Unless you have a strong reason to call `recordTracksEvent` directly, you should use the Analytics Middleware instead:_
 
 ```js
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 dispatch( recordTracksEvent( 'calypso_checkout_coupon_apply', { coupon_code: 'abc123' } ) );
 ```
