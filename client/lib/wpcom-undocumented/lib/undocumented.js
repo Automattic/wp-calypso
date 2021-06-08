@@ -882,6 +882,25 @@ Undocumented.prototype.getSitePlans = function ( siteDomain, fn ) {
 };
 
 /**
+ * Get a site specific details for WordPress.com featurs
+ *
+ * @param {Function} siteDomain The site slug
+ * @param {Function} fn The callback function
+ */
+Undocumented.prototype.getSiteFeatures = function ( siteDomain, fn ) {
+	debug( '/sites/:site_domain:/features query' );
+
+	return this._sendRequest(
+		{
+			path: `/sites/${ encodeURIComponent( siteDomain ) }/features`,
+			method: 'get',
+			apiVersion: '1.1',
+		},
+		fn
+	);
+};
+
+/**
  * Get cart.
  *
  * @param {string} cartKey The cart's key.
