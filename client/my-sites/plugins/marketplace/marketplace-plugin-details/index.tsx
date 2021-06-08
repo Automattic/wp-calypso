@@ -64,7 +64,7 @@ function MarketplacePluginDetails( {
 	}, [ dispatch, marketplacePluginSlug ] );
 
 	const onAddYoastPremiumToCart = async () => {
-		await dispatch( setIsPluginInstalledDuringPurchase( true ) );
+		dispatch( setIsPluginInstalledDuringPurchase( true ) );
 		const yoastProduct = fillInSingleCartItemAttributes( { product_slug: productSlug }, products );
 		return replaceProductsInCart( [ yoastProduct ] );
 	};
@@ -91,8 +91,8 @@ function MarketplacePluginDetails( {
 						page( `/marketplace/domain/${ selectedSiteSlug }?flags=marketplace-yoast` )
 					}
 					onInstallPluginManually={ async ( primaryDomain ) => {
-						await dispatch( setPluginSlugToBeInstalled( marketplacePluginSlug ) );
-						await dispatch( setPrimaryDomainCandidate( primaryDomain ) );
+						dispatch( setPluginSlugToBeInstalled( marketplacePluginSlug ) );
+						dispatch( setPrimaryDomainCandidate( primaryDomain ) );
 						page( `/marketplace/product/setup/${ selectedSiteSlug }?flags=marketplace-yoast` );
 					} }
 				/>

@@ -28,16 +28,14 @@ const StyledProgressBar = styled( ProgressBar )`
 	margin: 20px 0px;
 `;
 
-// Stages
-
 function WrappedMarketplacePluginSetup(): JSX.Element {
 	const translate = useTranslate();
 
-	const STAGE_1 = translate( 'Installing plugin' );
-	const STAGE_2 = translate( 'Activating plugin' );
-	const stages = [ STAGE_1, STAGE_2 ];
+	const STEP_1 = translate( 'Installing plugin' );
+	const STEP_2 = translate( 'Activating plugin' );
+	const steps = [ STEP_1, STEP_2 ];
 
-	const [ currentStage, setCurrentStage ] = useState( STAGE_1 );
+	const [ currentStep, setCurrentStep ] = useState( STEP_1 );
 	const [ simulatedProgressPercentage, setSimulatedProgressPercentage ] = useState( 1 );
 
 	const dispatch = useDispatch();
@@ -91,13 +89,15 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 		}
 	}, [ selectedSiteSlug, transferStatus ] );
 
-	if ( simulatedProgressPercentage > 50 && currentStage === STAGE_1 ) {
-		setCurrentStage( STAGE_2 );
+	if ( simulatedProgressPercentage > 50 && currentStep === STEP_1 ) {
+		setCurrentStep( STEP_2 );
 	}
 
-	const currentNumericStage = stages.indexOf( currentStage ) + 1;
-	const stageIndication = translate( 'Step %(currentStage)s of %(stageCount)s', {
-		args: { currentStage: currentNumericStage, stageCount: stages.length },
+	const currentNumericStep = steps.indexOf( currentStep ) + 1;
+
+	/* translators: %(currentStep)s  Is the current step number, given that steps are set of counting numbers representing each step starting from 1, %(stepCount)s  Is the total numer of steps, Eg: Step 1 of 3  */
+	const stepIndication = translate( 'Step %(currentStep)s of %(stepCount)s', {
+		args: { currentStep: currentNumericStep, stepCount: steps.length },
 	} );
 
 	return (
@@ -106,9 +106,9 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 			<Masterbar></Masterbar>
 			<div className="marketplace-plugin-setup-status__root">
 				<div>
-					<h1 className="marketplace-plugin-setup-status__title wp-brand-font">{ currentStage }</h1>
+					<h1 className="marketplace-plugin-setup-status__title wp-brand-font">{ currentStep }</h1>
 					<StyledProgressBar value={ simulatedProgressPercentage } color="#C9356E" compact />
-					<div>{ stageIndication }</div>
+					<div>{ stepIndication }</div>
 				</div>
 			</div>
 		</>
