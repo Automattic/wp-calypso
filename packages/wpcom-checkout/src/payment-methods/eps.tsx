@@ -2,33 +2,58 @@
  * External dependencies
  */
 import React from 'react';
-import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import {
+	Button,
+	FormStatus,
+	useLineItems,
+	useFormStatus,
+	registerStore,
+	useSelect,
+	useDispatch,
+} from '@automattic/composite-checkout';
+import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import Field from '../../components/field';
-import Button from '../../components/button';
-import { FormStatus, useLineItems } from '../../public-api';
-import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
-import { useFormStatus } from '../form-status';
-import { registerStore, useSelect, useDispatch } from '../../lib/registry';
-import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
+import styled from '../styled';
+import Field from '../field';
+import { SummaryLine, SummaryDetails } from '../summary-details';
+import { PaymentMethodLogos } from '../payment-method-logos';
+import type {
+	PaymentMethodStore,
+	StoreSelectors,
+	StoreSelectorsWithState,
+	StoreActions,
+	StoreState,
+} from '../payment-method-store';
 
-const debug = debugFactory( 'composite-checkout:eps-payment-method' );
+const debug = debugFactory( 'wpcom-checkout:eps-payment-method' );
 
-export function createEpsPaymentMethodStore() {
+// Disabling this to make migration easier
+/* eslint-disable @typescript-eslint/no-use-before-define */
+
+type StoreKey = 'eps';
+type NounsInStore = 'customerName';
+type EpsStore = PaymentMethodStore< NounsInStore >;
+
+declare module '@wordpress/data' {
+	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
+	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
+}
+
+export function createEpsPaymentMethodStore(): EpsStore {
 	debug( 'creating a new eps payment method store' );
-	const actions = {
+	const actions: StoreActions< NounsInStore > = {
 		changeCustomerName( payload ) {
 			return { type: 'CUSTOMER_NAME_SET', payload };
 		},
 	};
 
-	const selectors = {
+	const selectors: StoreSelectorsWithState< NounsInStore > = {
 		getCustomerName( state ) {
 			return state.customerName || '';
 		},
@@ -36,11 +61,11 @@ export function createEpsPaymentMethodStore() {
 
 	const store = registerStore( 'eps', {
 		reducer(
-			state = {
+			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
 			action
-		) {
+		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
 					return { ...state, customerName: { value: action.payload, isTouched: true } };
@@ -54,14 +79,12 @@ export function createEpsPaymentMethodStore() {
 	return { ...store, actions, selectors };
 }
 
-export function createEpsMethod( { store, stripe, stripeConfiguration } ) {
+export function createEpsMethod( { store }: { store: EpsStore } ): PaymentMethod {
 	return {
 		id: 'eps',
 		label: <EpsLabel />,
-		activeContent: <EpsFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />,
-		submitButton: (
-			<EpsPayButton store={ store } stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
-		),
+		activeContent: <EpsFields />,
+		submitButton: <EpsPayButton store={ store } />,
 		inactiveContent: <EpsSummary />,
 		getAriaLabel: ( __ ) => __( 'EPS e-Pay' ),
 	};
@@ -121,10 +144,27 @@ const EpsField = styled( Field )`
 	}
 `;
 
-function EpsPayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
-	const [ items, total ] = useLineItems();
+function EpsPayButton( {
+	disabled,
+	onClick,
+	store,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+	store: EpsStore;
+} ) {
+	const [ , total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'eps' ).getCustomerName() );
+
+	// This must be typed as optional because it's injected by cloning the
+	// element in CheckoutSubmitButton, but the uncloned element does not have
+	// this prop yet.
+	if ( ! onClick ) {
+		throw new Error(
+			'Missing onClick prop; EpsPayButton must be used as a payment button in CheckoutSubmitButton'
+		);
+	}
 
 	return (
 		<Button
@@ -133,11 +173,7 @@ function EpsPayButton( { disabled, onClick, store, stripe, stripeConfiguration }
 				if ( isFormValid( store ) ) {
 					debug( 'submitting eps payment' );
 					onClick( 'eps', {
-						stripe,
 						name: customerName?.value,
-						items,
-						total,
-						stripeConfiguration,
 					} );
 				}
 			} }
@@ -150,16 +186,16 @@ function EpsPayButton( { disabled, onClick, store, stripe, stripeConfiguration }
 	);
 }
 
-function ButtonContents( { formStatus, total } ) {
+function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
-		return __( 'Processing…' );
+		return <>{ __( 'Processing…' ) }</>;
 	}
 	if ( formStatus === FormStatus.READY ) {
 		/* translators: %s is the total to be paid in localized currency */
-		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
+		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
 	}
-	return __( 'Please wait…' );
+	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function EpsSummary() {
@@ -172,7 +208,7 @@ function EpsSummary() {
 	);
 }
 
-function isFormValid( store ) {
+function isFormValid( store: EpsStore ): boolean {
 	const customerName = store.selectors.getCustomerName( store.getState() );
 
 	if ( ! customerName?.value.length ) {
@@ -200,6 +236,6 @@ const EpsLogo = styled( EpsLogoImg )`
 	width: 28px;
 `;
 
-function EpsLogoImg( { className } ) {
+function EpsLogoImg( { className }: { className?: string } ) {
 	return <img src="/calypso/images/upgrades/eps.svg" alt="EPS e-Pay" className={ className } />;
 }
