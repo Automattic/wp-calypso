@@ -7,16 +7,11 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import {
-	areAllMailboxesValid,
-	buildNewTitanMailbox,
-	transformMailboxForCart,
-	validateMailboxes as validateTitanMailboxes,
-} from 'calypso/lib/titan/new-mailbox';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
 import { Button } from '@automattic/components';
 import { canCurrentUserAddEmail, getCurrentUserCannotAddEmailReason } from 'calypso/lib/domains';
@@ -54,9 +49,7 @@ import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powe
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import gSuiteLogo from 'calypso/assets/images/email-providers/gsuite.svg';
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
-import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
-import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Style dependencies
@@ -81,14 +74,12 @@ class EmailProvidersComparison extends React.Component {
 
 		this.state = {
 			googleUsers: [],
-			titanMailboxes: [ buildNewTitanMailbox( props.domain.name, false ) ],
 			expanded: {
 				forwarding: hasEmailForwards && ! isDomainEligibleForEmail,
 				google: false,
 				titan: isDomainEligibleForEmail,
 			},
 			addingToCart: false,
-			validatedTitanMailboxUuids: [],
 		};
 	}
 
@@ -126,69 +117,13 @@ class EmailProvidersComparison extends React.Component {
 		page( emailManagementForwarding( selectedSiteSlug, domain.name, currentRoute ) );
 	};
 
-	onTitanMailboxesChange = ( updatedMailboxes ) =>
-		this.setState( { titanMailboxes: updatedMailboxes } );
-
-	onTitanFormReturnKeyPress = ( event ) => {
-		// Simulate form submission
-		if ( event.key === 'Enter' ) {
-			this.onTitanConfirmNewMailboxes();
-		}
-	};
-
-	onTitanConfirmNewMailboxes = () => {
-		const { domain } = this.props;
-		const { titanMailboxes } = this.state;
-
-		const validatedTitanMailboxes = validateTitanMailboxes( titanMailboxes );
-
-		const mailboxesAreValid = areAllMailboxesValid( validatedTitanMailboxes );
-		const userCanAddEmail = canCurrentUserAddEmail( domain );
-
+	onTitanSubmitNewMailboxes = ( { mailboxCount, mailboxesAreValid, userCanAddEmail } ) => {
 		recordTracksEvent( 'calypso_email_providers_add_click', {
-			mailbox_count: validatedTitanMailboxes.length,
+			mailbox_count: mailboxCount,
 			mailboxes_valid: mailboxesAreValid ? 1 : 0,
 			provider: 'titan',
 			user_can_add_email: userCanAddEmail,
 		} );
-
-		const validatedTitanMailboxUuids = validatedTitanMailboxes.map( ( mailbox ) => mailbox.uuid );
-
-		this.setState( {
-			titanMailboxes: validatedTitanMailboxes,
-			validatedTitanMailboxUuids,
-		} );
-
-		if ( ! mailboxesAreValid || ! userCanAddEmail ) {
-			return;
-		}
-
-		const { productsList, selectedSiteSlug, shoppingCartManager } = this.props;
-
-		const cartItem = titanMailMonthly( {
-			domain: domain.name,
-			quantity: validatedTitanMailboxes.length,
-			extra: {
-				email_users: validatedTitanMailboxes.map( transformMailboxForCart ),
-				new_quantity: validatedTitanMailboxes.length,
-			},
-		} );
-
-		this.setState( { addingToCart: true } );
-
-		shoppingCartManager
-			.addProductsToCart( [ fillInSingleCartItemAttributes( cartItem, productsList ) ] )
-			.then( () => {
-				if ( this.isMounted ) {
-					this.setState( { addingToCart: false } );
-				}
-				const { errors } = this.props?.cart?.messages;
-				if ( errors && errors.length ) {
-					// Stay on the page to show the relevant error(s)
-					return;
-				}
-				this.isMounted && page( '/checkout/' + selectedSiteSlug );
-			} );
 	};
 
 	onGoogleUsersChange = ( changedUsers ) => {
@@ -393,28 +328,20 @@ class EmailProvidersComparison extends React.Component {
 
 		const formFields = (
 			<TitanNewMailboxList
-				onMailboxesChange={ this.onTitanMailboxesChange }
-				mailboxes={ this.state.titanMailboxes }
-				domain={ domain.name }
-				onReturnKeyPress={ this.onTitanFormReturnKeyPress }
+				domainName={ domain.name }
+				existingDomainObject={ domain }
+				onSubmitMailboxList={ this.onTitanSubmitNewMailboxes }
 				showLabels={ true }
-				validatedMailboxUuids={ this.state.validatedTitanMailboxUuids }
-			>
-				<Button
-					className="email-providers-comparison__titan-mailbox-action-continue"
-					primary
-					busy={ this.state.addingToCart }
-					onClick={ this.onTitanConfirmNewMailboxes }
-				>
-					{ translate( 'Add %(titanProductName)s', {
-						args: {
-							titanProductName: getTitanProductName(),
-						},
-						comment:
-							'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
-					} ) }
-				</Button>
-			</TitanNewMailboxList>
+				submitButtonClassName="email-providers-comparison__titan-mailbox-action-continue"
+				submitButtonIsBusy={ this.state.addingToCart }
+				submitButtonText={ translate( 'Add %(titanProductName)s', {
+					args: {
+						titanProductName: getTitanProductName(),
+					},
+					comment:
+						'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
+				} ) }
+			/>
 		);
 
 		return (
