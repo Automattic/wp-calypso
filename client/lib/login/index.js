@@ -14,6 +14,7 @@ import {
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { login } from 'calypso/lib/paths';
 
 export function getSocialServiceFromClientId( clientId ) {
 	if ( ! clientId ) {
@@ -123,3 +124,44 @@ export function getSignupUrl(
 
 	return signupUrl;
 }
+
+export const getLoginLinkPageUrl = ( locale, currentRoute, isGutenboarding ) => {
+	const loginParameters = {
+		locale,
+		twoFactorAuthType: 'link',
+	};
+
+	if ( currentRoute === '/login-in/jetpack' ) {
+		loginParameters.twoFactorAuthType = 'jetpack/link';
+	} else if ( isGutenboarding ) {
+		loginParameters.twoFactorAuthType = 'new/link';
+	}
+
+	return login( loginParameters );
+};
+
+export const canDoMagicLogin = (
+	twoFactorAuthType,
+	oauth2Client,
+	wccomFrom,
+	isJetpackWooCommerceFlow
+) => {
+	if ( ! config.isEnabled( `login/magic-login` ) || twoFactorAuthType ) {
+		return false;
+	}
+
+	// jetpack cloud cannot have users being sent to WordPress.com
+	if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+		return false;
+	}
+
+	if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+		return false;
+	}
+
+	if ( isJetpackWooCommerceFlow ) {
+		return false;
+	}
+
+	return true;
+};
