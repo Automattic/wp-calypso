@@ -12,8 +12,6 @@ import {
 	createIdealPaymentMethodStore,
 	createSofortMethod,
 	createSofortPaymentMethodStore,
-	createEpsMethod,
-	createEpsPaymentMethodStore,
 } from '@automattic/composite-checkout';
 import {
 	createApplePayMethod,
@@ -291,32 +289,6 @@ function useCreateSofort( {
 	);
 }
 
-function useCreateEps( {
-	isStripeLoading,
-	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
-}: {
-	isStripeLoading: boolean;
-	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
-} ): PaymentMethod | null {
-	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createEpsPaymentMethodStore(), [] );
-	return useMemo(
-		() =>
-			shouldLoad
-				? createEpsMethod( {
-						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
-				  } )
-				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
-	);
-}
-
 function useCreateNetbanking(): PaymentMethod {
 	const paymentMethodStore = useMemo( () => createNetBankingPaymentMethodStore(), [] );
 	return useMemo(
@@ -477,13 +449,6 @@ export default function useCreatePaymentMethods( {
 		stripe,
 	} );
 
-	const epsMethod = useCreateEps( {
-		isStripeLoading,
-		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
-	} );
-
 	const ebanxTefMethod = useCreateEbanxTef();
 
 	const idWalletMethod = useCreateIdWallet();
@@ -560,7 +525,6 @@ export default function useCreatePaymentMethods( {
 		netbankingMethod,
 		alipayMethod,
 		p24Method,
-		epsMethod,
 		wechatMethod,
 		bancontactMethod,
 	].filter( doesValueExist );
