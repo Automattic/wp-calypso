@@ -29,8 +29,7 @@ import CheckoutThankYouComponent from './checkout-thank-you';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { setSectionMiddleware } from 'calypso/controller';
 import { sites } from 'calypso/my-sites/controller';
-import userFactory from 'calypso/lib/user';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	retrieveSignupDestination,
 	setSignupCheckoutPageUnloaded,
@@ -48,8 +47,7 @@ const debug = debugFactory( 'calypso:checkout-controller' );
 export function checkout( context, next ) {
 	const { feature, plan, purchaseId } = context.params;
 
-	const user = userFactory();
-	const isLoggedOut = ! user.get();
+	const isLoggedOut = ! isUserLoggedIn( context.store.getState() );
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
 	const currentUser = getCurrentUser( state );
