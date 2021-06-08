@@ -33,19 +33,21 @@ describe( `[${ host }] Manage Domains - Add a Domain: (${ screenSize }) @paralle
 	const domainEmail = dataHelper.getEmailAddress( domainName, domainsInboxId );
 	const testDomainRegistarDetails = dataHelper.getTestDomainRegistarDetails( domainEmail );
 
-	before( 'Log in and create a temp free site', async function () {
+	let tmpFreeSiteCreated = false;
+
+	before( 'Log in, create a temp free site and go to Domains page', async function () {
 		await new LoginFlow( this.driver, 'gutenbergSimpleSiteUser' ).login();
 		await new CreateSiteFlow( this.driver, tmpFreeSiteName ).createFreeSite();
+		tmpFreeSiteCreated = true;
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
+		return await sideBarComponent.selectDomains();
 	} );
 
 	after( 'Delete the temp free site', async function () {
-		const deleteSite = new DeleteSiteFlow( this.driver );
-		await deleteSite.deleteSite( tmpFreeSiteName + '.wordpress.com' );
-	} );
-
-	it( 'Go to Domains page', async function () {
-		const sideBarComponent = await SidebarComponent.Expect( this.driver );
-		return await sideBarComponent.selectDomains();
+		if ( tmpFreeSiteCreated ) {
+			const deleteSite = new DeleteSiteFlow( this.driver );
+			await deleteSite.deleteSite( tmpFreeSiteName + '.wordpress.com' );
+		}
 	} );
 
 	it( 'Add a domain', async function () {
