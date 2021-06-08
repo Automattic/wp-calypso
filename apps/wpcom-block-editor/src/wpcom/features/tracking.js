@@ -226,8 +226,20 @@ const maybeTrackPatternInsertion = ( actionData ) => {
 	const patternName = meta?.patternName;
 
 	if ( patternName ) {
+		let patternCategory =
+			// Pattern category dropdown in global inserter
+			document.querySelector( '.block-editor-inserter__panel-header-patterns select' )?.value;
+
+		if ( ! patternCategory ) {
+			const patterns = select( 'core/block-editor' ).getSettings().__experimentalBlockPatterns;
+			const pattern = patterns.find( ( { name } ) => name === patternName );
+
+			patternCategory = pattern?.categories[ 0 ];
+		}
+
 		tracksRecordEvent( 'wpcom_pattern_inserted', {
 			pattern_name: patternName,
+			pattern_category: patternCategory,
 			blocks_replaced: actionData?.blocks_replaced,
 		} );
 	}
