@@ -83,42 +83,41 @@ export function appendLogmeinDirect( url: URL ): URL {
 let allowedSites: string[] = [];
 
 export function attachLogmein( isWPComLoggedIn = false ): void {
-	if ( isWPComLoggedIn && isEnabled( 'logmein' ) ) {
-		wpcom.req.get( '/me/sites' ).then( ( sites: any ) => {
-			allowedSites = logmeinAllowedUrls( sites.sites );
-			attachOnClick();
-		} );
+	if ( ! isEnabled( 'logmein' ) ) {
+		return;
+	}
+
+	if ( isWPComLoggedIn ) {
+		wpcom
+			.me()
+			.sites()
+			.then( ( sites: any ) => {
+				allowedSites = logmeinAllowedUrls( sites.sites );
+				document.addEventListener( 'click', logmeinOnClick, false );
+			} );
 	}
 }
 
-function attachOnClick() {
-	function getLink( target: HTMLElement ): HTMLAnchorElement | null {
-		if ( target.tagName === 'A' && ( target as HTMLAnchorElement ).href ) {
-			return target as HTMLAnchorElement;
-		} else if ( target.parentElement ) {
-			return getLink( target.parentElement as HTMLElement );
-		}
-		return null;
-	}
+function logmeinOnClick( event: MouseEvent ) {
+	const link = ( event.target as HTMLElement ).closest( 'a' );
 
-	function onClick( event: Event ) {
-		const link = getLink( event.target as HTMLElement );
-		if ( link ) {
-			let url = new URL( link.href );
-			if ( allowedSites.indexOf( url.hostname ) !== -1 ) {
-				url = appendLogmeinDirect( url );
-				console.log( 'intercepted', link.href, 'replaced', url.toString() );
-				link.href = url.toString();
-			}
-			return;
+	if ( link ) {
+		let url = new URL( link.href, INVALID_URL );
+		if ( allowedSites.indexOf( url.hostname ) !== -1 ) {
+			url = appendLogmeinDirect( url );
+			console.log( 'intercepted', link.href, 'replaced', url.toString() );
+			link.href = url.toString();
 		}
+		return;
 	}
-
-	document.addEventListener( 'click', onClick, false );
 }
 
-export function navigateLogmein( url: string ): void {
-	let newurl = new URL( url );
+export function logmeinNavigate( url: string ): void {
+	if ( ! isEnabled( 'logmein' ) ) {
+		window.location.href = url;
+	}
+
+	let newurl = new URL( url, INVALID_URL );
 	if ( allowedSites.indexOf( newurl.hostname ) !== -1 ) {
 		newurl = appendLogmeinDirect( newurl );
 		console.log( 'intercepted', url, 'replaced', newurl.toString() );
