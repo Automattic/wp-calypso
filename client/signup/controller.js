@@ -278,9 +278,10 @@ export default {
 			return;
 		}
 
-		if ( context.pathname !== getValidPath( context.params ) ) {
+		if ( context.pathname !== getValidPath( context.params, userLoggedIn ) ) {
 			return page.redirect(
-				getValidPath( context.params ) + ( context.querystring ? '?' + context.querystring : '' )
+				getValidPath( context.params, userLoggedIn ) +
+					( context.querystring ? '?' + context.querystring : '' )
 			);
 		}
 
