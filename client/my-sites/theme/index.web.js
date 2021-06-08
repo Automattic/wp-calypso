@@ -3,7 +3,7 @@
  */
 import { makeLayout, redirectLoggedOut } from 'calypso/controller';
 import { details, fetchThemeDetailsData } from './controller';
-import { siteSelection } from 'calypso/my-sites/controller';
+import { navigation, siteSelection } from 'calypso/my-sites/controller';
 
 function redirectToLoginIfSiteRequested( context, next ) {
 	if ( context.params.site_id ) {
@@ -21,6 +21,7 @@ export default function ( router ) {
 		siteSelection,
 		fetchThemeDetailsData,
 		details,
+		navigation,
 		makeLayout
 	);
 }
