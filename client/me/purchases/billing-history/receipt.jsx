@@ -3,8 +3,9 @@
  */
 import React from 'react';
 import page from 'page';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { localize, useTranslate } from 'i18n-calypso';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { billingHistory } from 'calypso/me/purchases/paths';
+import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
 import {
 	getTransactionTermLabel,
@@ -31,10 +32,12 @@ import {
 	clearBillingTransactionError,
 	requestBillingTransaction,
 } from 'calypso/state/billing-transactions/individual-transactions/actions';
+import { sendBillingReceiptEmail } from 'calypso/state/billing-transactions/actions';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
 import titles from 'calypso/me/purchases/titles';
 import FormattedHeader from 'calypso/components/formatted-header';
+import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {
@@ -138,6 +141,7 @@ export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
 					) : (
 						<EmptyReceiptDetails />
 					) }
+					{ config.isEnabled( 'me/vat-details' ) && <VatDetails transaction={ transaction } /> }
 				</ul>
 				<ReceiptLineItems transaction={ transaction } />
 
@@ -187,6 +191,89 @@ function ReceiptPaymentMethod( { transaction } ) {
 			<strong>{ translate( 'Payment Method' ) }</strong>
 			<span>{ text }</span>
 		</li>
+	);
+}
+
+function VatDetails( { transaction } ) {
+	const translate = useTranslate();
+	const { vatDetails, isLoading, fetchError } = useVatDetails();
+	const reduxDispatch = useDispatch();
+
+	const getEmailReceiptLinkClickHandler = ( receiptId ) => {
+		return ( event ) => {
+			event.preventDefault();
+			reduxDispatch( recordGoogleEvent( 'Me', 'Clicked on Receipt Email Button' ) );
+			reduxDispatch( sendBillingReceiptEmail( receiptId ) );
+		};
+	};
+
+	if ( isLoading || fetchError || ! vatDetails.id ) {
+		return null;
+	}
+
+	return (
+		<>
+			<li>
+				<strong>{ translate( 'VAT Details' ) }</strong>
+				<span className="receipt__vat-vendor-details-description">
+					{ translate(
+						'{{noPrint}}You can edit your VAT details {{vatDetailsLink}}on this page{{/vatDetailsLink}}. {{/noPrint}}This is not an official VAT receipt. For an official VAT receipt, {{emailReceiptLink}}email yourself a copy{{/emailReceiptLink}}.',
+						{
+							components: {
+								noPrint: <span className="receipt__no-print" />,
+								vatDetailsLink: <a href={ vatDetailsPath } />,
+								emailReceiptLink: (
+									<Button
+										plain
+										className="receipt__email-button"
+										onClick={ getEmailReceiptLinkClickHandler( transaction.id ) }
+									/>
+								),
+							},
+						}
+					) }
+				</span>
+				{ vatDetails.name }
+				<br />
+				{ vatDetails.address }
+				<br />
+				{ translate( 'VAT #: %(vatCountry)s %(vatId)s', {
+					args: {
+						vatCountry: vatDetails.country,
+						vatId: vatDetails.id,
+					},
+					comment: 'This is the user-supplied VAT number, format "UK 553557881".',
+				} ) }
+			</li>
+			<li>
+				<strong>{ translate( 'Vendor VAT Details' ) }</strong>
+				<span>
+					{ 'Aut O’Mattic Ltd.' }
+					<br />
+					{ 'c/o Noone Casey' }
+					<br />
+					{ 'Grand Canal Dock, 25 Herbert Pl' }
+					<br />
+					{ 'Dublin, D02 AY86' }
+					<br />
+					{ 'Ireland' }
+					<br />
+				</span>
+				<span className="receipt__vat-vendor-details-number">
+					{ translate( '{{strong}}Vendor VAT #:{{/strong}} %(ieVatNumber)s and %(ukVatNumber)s', {
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							ieVatNumber: 'IE 3255131SH',
+							ukVatNumber: 'UK 376 1703 88',
+						},
+						comment:
+							"This is both of Automattic's vendor VAT numbers with 'and' separating the numbers, format 'IE 3255131SH and UK 376 1703 88'.",
+					} ) }
+				</span>
+			</li>
+		</>
 	);
 }
 
@@ -300,6 +387,15 @@ export function ReceiptPlaceholder() {
 
 function ReceiptLabels() {
 	const translate = useTranslate();
+
+	let labelContent = translate(
+		'Use this field to add your billing information (eg. VAT number, business address) before printing.'
+	);
+	if ( config.isEnabled( 'me/vat-details' ) ) {
+		labelContent = translate(
+			'Use this field to add your billing information (eg. business address) before printing.'
+		);
+	}
 	return (
 		<div>
 			<FormLabel htmlFor="billing-history__billing-details-textarea">
@@ -309,9 +405,7 @@ function ReceiptLabels() {
 				className="billing-history__billing-details-description"
 				id="billing-history__billing-details-description"
 			>
-				{ translate(
-					'Use this field to add your billing information (eg. VAT number, business address) before printing.'
-				) }
+				{ labelContent }
 			</div>
 		</div>
 	);

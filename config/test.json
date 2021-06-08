@@ -68,6 +68,7 @@
 		"mailchimp": true,
 		"manage/plugins/compatibility-warning": false,
 		"me/account-close": true,
+		"me/vat-details": true,
 		"memberships": true,
 		"network-connection": true,
 		"perfmon": false,

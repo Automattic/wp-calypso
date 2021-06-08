@@ -210,6 +210,8 @@ textarea.billing-history__billing-details-editable {
 }
 
 .billing-history__billing-details-description {
+	display: block;
+	font-size: $font-body-small;
 	font-style: italic;
 }
 
@@ -248,6 +250,30 @@ textarea.billing-history__billing-details-editable {
 			font-weight: 600;
 			margin: 0 5px 0 0;
 			text-transform: uppercase;
+		}
+
+		.receipt__vat-vendor-details-number {
+			display: block;
+			margin-top: 8px;
+
+			strong {
+				display: inline;
+				margin: 0;
+			}
+		}
+
+		.receipt__vat-vendor-details-description {
+			display: block;
+			font-size: $font-body-small;
+			font-style: italic;
+			margin-bottom: 8px;
+
+			a,
+			.receipt__email-button {
+				color: var( --color-link );
+				font-style: italic;
+				text-decoration: underline;
+			}
 		}
 	}
 }
@@ -419,7 +445,8 @@ textarea.billing-history__billing-details-editable {
 		.billing-history__receipt-links,
 		.header-cake.card,
 		.inline-help,
-		.billing-history__billing-details-description {
+		.billing-history__billing-details-description,
+		.receipt__no-print {
 			display: none;
 		}
 	}

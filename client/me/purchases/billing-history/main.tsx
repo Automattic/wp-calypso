@@ -2,13 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
+import { CompactCard, Card } from '@automattic/components';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import { billingHistoryReceipt } from 'calypso/me/purchases/paths';
-import { Card } from '@automattic/components';
+import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import Main from 'calypso/components/main';
@@ -18,6 +19,7 @@ import QueryBillingTransactions from 'calypso/components/data/query-billing-tran
 import titles from 'calypso/me/purchases/titles';
 import FormattedHeader from 'calypso/components/formatted-header';
 import BillingHistoryList from 'calypso/me/purchases/billing-history/billing-history-list';
+import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 
 /**
  * Style dependencies
@@ -39,6 +41,12 @@ export function BillingHistoryContent( {
 }
 
 function BillingHistory(): JSX.Element {
+	const translate = useTranslate();
+	const { vatDetails } = useVatDetails();
+	const editVatText = translate( 'Edit VAT details (for Europe only)' );
+	const addVatText = translate( 'Add VAT details (for Europe only)' );
+	const vatText = vatDetails.id ? editVatText : addVatText;
+
 	return (
 		<Main wideLayout className="billing-history">
 			<DocumentHead title={ titles.billingHistory } />
@@ -48,6 +56,10 @@ function BillingHistory(): JSX.Element {
 			<QueryBillingTransactions />
 			<PurchasesNavigation section="billingHistory" />
 			<BillingHistoryContent siteId={ null } getReceiptUrlFor={ billingHistoryReceipt } />
+
+			{ config.isEnabled( 'me/vat-details' ) && (
+				<CompactCard href={ vatDetailsPath }>{ vatText }</CompactCard>
+			) }
 		</Main>
 	);
 }
