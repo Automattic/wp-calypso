@@ -13,17 +13,10 @@ import sinon from 'sinon';
  */
 import mockedFlows from './fixtures/flows';
 import flows from 'calypso/signup/config/flows';
-import userFactory from 'calypso/lib/user';
-
-jest.mock( 'calypso/lib/user', () => require( './mocks/lib/user' ) );
 
 describe( 'Signup Flows Configuration', () => {
 	describe( 'getFlow', () => {
-		let user;
-
 		beforeAll( () => {
-			user = userFactory();
-
 			sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
 		} );
 
@@ -32,13 +25,11 @@ describe( 'Signup Flows Configuration', () => {
 		} );
 
 		test( 'should return the full flow when the user is not logged in', () => {
-			assert.deepEqual( flows.getFlow( 'main' ).steps, [ 'user', 'site' ] );
+			assert.deepEqual( flows.getFlow( 'main', false ).steps, [ 'user', 'site' ] );
 		} );
 
 		test( 'should remove the user step from the flow when the user is logged in', () => {
-			user.setLoggedIn( true );
-			assert.deepEqual( flows.getFlow( 'main' ).steps, [ 'site' ] );
-			user.setLoggedIn( false );
+			assert.deepEqual( flows.getFlow( 'main', true ).steps, [ 'site' ] );
 		} );
 	} );
 
@@ -54,7 +45,7 @@ describe( 'Signup Flows Configuration', () => {
 
 		test( 'should exclude site step from getFlow', () => {
 			flows.excludeStep( 'site' );
-			assert.deepEqual( flows.getFlow( 'main' ).steps, [ 'user' ] );
+			assert.deepEqual( flows.getFlow( 'main', false ).steps, [ 'user' ] );
 		} );
 	} );
 } );

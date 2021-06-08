@@ -36,6 +36,7 @@ describe( 'NavigationLink', () => {
 		submitSignupStep: noop,
 		goToNextStep: jest.fn(),
 		translate: ( str ) => `translated:${ str }`,
+		userLoggedIn: true,
 	};
 
 	beforeEach( () => {
@@ -124,7 +125,7 @@ describe( 'NavigationLink', () => {
 	} );
 
 	test( 'getPreviousStep() When in 2nd step should return 1st step', () => {
-		const navigationLink = new NavigationLink();
+		const navigationLink = new NavigationLink( props );
 		const { flowName, signupProgress, stepName } = props;
 		getPreviousStepName.mockReturnValue( 'test:step1' );
 		const previousStep = navigationLink.getPreviousStep( flowName, signupProgress, stepName );
@@ -132,7 +133,7 @@ describe( 'NavigationLink', () => {
 	} );
 
 	test( 'getPreviousStep() When in 1st step should return nullish step', () => {
-		const navigationLink = new NavigationLink();
+		const navigationLink = new NavigationLink( props );
 		const { flowName, signupProgress } = props;
 		isFirstStepInFlow.mockReturnValue( true );
 		const previousStep = navigationLink.getPreviousStep( flowName, signupProgress, 'test:step1' );
@@ -140,7 +141,7 @@ describe( 'NavigationLink', () => {
 	} );
 
 	test( 'getPreviousStep() When in 3rd step should return 2nd step', () => {
-		const navigationLink = new NavigationLink();
+		const navigationLink = new NavigationLink( props );
 		const { flowName, signupProgress } = props;
 		getPreviousStepName.mockReturnValue( 'test:step2' );
 		isFirstStepInFlow.mockReturnValue( false );
@@ -149,7 +150,7 @@ describe( 'NavigationLink', () => {
 	} );
 
 	test( 'getPreviousStep() When current steps is unknown, step should return last step in progress which belong to the current flow', () => {
-		const navigationLink = new NavigationLink();
+		const navigationLink = new NavigationLink( props );
 		const { flowName, signupProgress } = props;
 
 		const singupProgressWithSomeStepsThatDoNotBelongToThisFlow = {
@@ -175,7 +176,7 @@ describe( 'NavigationLink', () => {
 	} );
 
 	test( 'getPreviousStep() When current progress does not contain any step of the current flow return nullish step', () => {
-		const navigationLink = new NavigationLink();
+		const navigationLink = new NavigationLink( props );
 		const { flowName } = props;
 
 		const singupProgressWithOnlyStepsThatDoNotBelongToThisFlow = {
@@ -206,7 +207,7 @@ describe( 'NavigationLink', () => {
 
 	test( 'getPreviousStep() When there are skipped steps they should be ignored', () => {
 		const { flowName, signupProgress } = props;
-		const navigationLink = new NavigationLink();
+		const navigationLink = new NavigationLink( props );
 		const stepsWithSkippedSteps = {
 			'test:step1': { stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
 			'test:step2': { stepName: 'test:step2', stepSectionName: 'test:section2', wasSkipped: true },

@@ -155,7 +155,7 @@ class Signup extends React.Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		const flow = flows.getFlow( this.props.flowName );
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
 		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
 		let providedDependencies;
@@ -192,7 +192,7 @@ class Signup extends React.Component {
 		// a WP.com account during the signup flow.
 		this.completeP2FlowAfterLoggingIn();
 
-		if ( canResumeFlow( this.props.flowName, this.props.progress ) ) {
+		if ( canResumeFlow( this.props.flowName, this.props.progress, this.props.isLoggedIn ) ) {
 			// Resume from the current window location
 			return;
 		}
@@ -200,7 +200,8 @@ class Signup extends React.Component {
 		if ( this.getPositionInFlow() !== 0 ) {
 			// Flow is not resumable; redirect to the beginning of the flow.
 			// Set `resumingStep` to prevent flash of incorrect step before the redirect.
-			const destinationStep = flows.getFlow( this.props.flowName ).steps[ 0 ];
+			const destinationStep = flows.getFlow( this.props.flowName, this.props.isLoggedIn )
+				.steps[ 0 ];
 			this.setState( { resumingStep: destinationStep } );
 			return page.redirect( getStepUrl( this.props.flowName, destinationStep, this.props.locale ) );
 		}
@@ -337,7 +338,11 @@ class Signup extends React.Component {
 	}
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
-		const hasInvalidSteps = !! getFirstInvalidStep( this.props.flowName, progress );
+		const hasInvalidSteps = !! getFirstInvalidStep(
+			this.props.flowName,
+			progress,
+			this.props.isLoggedIn
+		);
 		const waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress );
 		const startLoadingScreen = waitingForServer && ! this.state.shouldShowLoadingScreen;
 
@@ -378,8 +383,8 @@ class Signup extends React.Component {
 	};
 
 	removeFulfilledSteps = ( nextProps ) => {
-		const { flowName, stepName } = nextProps;
-		const flowSteps = flows.getFlow( flowName ).steps;
+		const { flowName, isLoggedIn, stepName } = nextProps;
+		const flowSteps = flows.getFlow( flowName, isLoggedIn ).steps;
 		const excludedSteps = clone( flows.excludedSteps );
 		map( excludedSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
 		map( flowSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
@@ -537,7 +542,7 @@ class Signup extends React.Component {
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
-		const flowSteps = flows.getFlow( nextFlowName ).steps;
+		const flowSteps = flows.getFlow( nextFlowName, this.props.isLoggedIn ).steps;
 		const currentStepIndex = flowSteps.indexOf( this.props.stepName );
 		const nextStepName = flowSteps[ currentStepIndex + 1 ];
 		const nextProgressItem = get( this.props.progress, nextStepName );
@@ -551,7 +556,11 @@ class Signup extends React.Component {
 	};
 
 	goToFirstInvalidStep = ( progress = this.props.progress ) => {
-		const firstInvalidStep = getFirstInvalidStep( this.props.flowName, progress );
+		const firstInvalidStep = getFirstInvalidStep(
+			this.props.flowName,
+			progress,
+			this.props.isLoggedIn
+		);
 
 		if ( firstInvalidStep ) {
 			recordSignupInvalidStep( this.props.flowName, this.props.stepName );
@@ -568,18 +577,22 @@ class Signup extends React.Component {
 	};
 
 	isEveryStepSubmitted = ( progress = this.props.progress ) => {
-		const flowSteps = flows.getFlow( this.props.flowName ).steps;
-		const completedSteps = getCompletedSteps( this.props.flowName, progress );
+		const flowSteps = flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps;
+		const completedSteps = getCompletedSteps(
+			this.props.flowName,
+			progress,
+			this.props.isLoggedIn
+		);
 		return flowSteps.length === completedSteps.length;
 	};
 
 	getPositionInFlow() {
 		const { flowName, stepName } = this.props;
-		return flows.getFlow( flowName ).steps.indexOf( stepName );
+		return flows.getFlow( flowName, this.props.isLoggedIn ).steps.indexOf( stepName );
 	}
 
 	getFlowLength() {
-		return flows.getFlow( this.props.flowName ).steps.length;
+		return flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps.length;
 	}
 
 	renderProcessingScreen( isReskinned ) {
@@ -611,7 +624,7 @@ class Signup extends React.Component {
 			...steps[ this.props.stepName ].props,
 		};
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
-		const flow = flows.getFlow( this.props.flowName );
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
 		const planWithDomain =
 			this.props.domainsWithPlansOnly &&
 			domainItem &&
@@ -669,7 +682,7 @@ class Signup extends React.Component {
 
 	shouldWaitToRender() {
 		const isStepRemovedFromFlow = ! includes(
-			flows.getFlow( this.props.flowName ).steps,
+			flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps,
 			this.props.stepName
 		);
 		const isDomainsForSiteEmpty =
