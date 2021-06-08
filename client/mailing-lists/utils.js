@@ -15,14 +15,14 @@ function createSubscriberResourceUrl( category, emailAddress, method ) {
 }
 
 export function deleteSubscriber( category, emailAddress, hmac, context ) {
-	return wpcom.req.post( createSubscriberResourceUrl( category, emailAddress, 'new' ), {
+	return wpcom.req.post( createSubscriberResourceUrl( category, emailAddress, 'delete' ), {
 		hmac,
 		context,
 	} );
 }
 
 export function addSubscriber( category, emailAddress, hmac, context ) {
-	return wpcom.req.post( createSubscriberResourceUrl( category, emailAddress, 'delete' ), {
+	return wpcom.req.post( createSubscriberResourceUrl( category, emailAddress, 'new' ), {
 		hmac,
 		context,
 	} );
