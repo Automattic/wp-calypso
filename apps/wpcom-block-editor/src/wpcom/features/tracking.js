@@ -327,7 +327,13 @@ const REDUX_TRACKING = {
 		updateOptions: trackGlobalStyles( 'wpcom_global_styles_update' ),
 		publishOptions: trackGlobalStyles( 'wpcom_global_styles_publish' ),
 	},
+	// Post Editor is using the undo/redo from the 'core/editor' store
 	'core/editor': {
+		undo: 'wpcom_block_editor_undo_performed',
+		redo: 'wpcom_block_editor_redo_performed',
+	},
+	// Site Editor is using the undo/redo from the 'core' store
+	core: {
 		undo: 'wpcom_block_editor_undo_performed',
 		redo: 'wpcom_block_editor_redo_performed',
 	},
