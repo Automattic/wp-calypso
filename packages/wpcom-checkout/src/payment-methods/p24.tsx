@@ -49,10 +49,10 @@ declare module '@wordpress/data' {
 export function createP24PaymentMethodStore(): P24Store {
 	debug( 'creating a new p24 payment method store' );
 	const actions: StoreActions< NounsInStore > = {
-		changeCustomerName( payload: string ) {
+		changeCustomerName( payload ) {
 			return { type: 'CUSTOMER_NAME_SET', payload };
 		},
-		changeCustomerEmail( payload: string ) {
+		changeCustomerEmail( payload ) {
 			return { type: 'CUSTOMER_EMAIL_SET', payload };
 		},
 	};
