@@ -49,7 +49,7 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 			<div className="post-share__service-account-name">
 				<span>{ external_display }</span>
 			</div>
-			<ToggleControl checked={ isActive } />
+			<ToggleControl label={ external_display } checked={ isActive } />
 		</div>
 	);
 };
