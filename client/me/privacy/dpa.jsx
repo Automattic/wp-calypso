@@ -3,13 +3,13 @@
  */
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
+import { Button, Card } from '@automattic/components';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@automattic/components';
 import SectionHeader from 'calypso/components/section-header';
-import { useDispatch } from 'react-redux';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import wp from 'calypso/lib/wp';
 
