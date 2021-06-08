@@ -23,48 +23,26 @@ import styled from '../styled';
 import Field from '../field';
 import { SummaryLine, SummaryDetails } from '../summary-details';
 import { PaymentMethodLogos } from '../payment-method-logos';
+import type {
+	PaymentMethodStore,
+	StoreSelectors,
+	StoreSelectorsWithState,
+	StoreActions,
+} from '../payment-method-store';
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 const debug = debugFactory( 'wpcom-checkout:p24-payment-method' );
 
-interface StoreStateValue {
-	value: string;
-	isTouched: boolean;
-}
+type StoreKey = 'p24';
+type NounsInStore = 'customerName' | 'customerEmail';
 
-interface StoreState {
-	customerName: StoreStateValue;
-	customerEmail: StoreStateValue;
-}
-
-type StoreAction = { type: string; payload: string };
-
-interface StoreActions {
-	changeCustomerName: ( payload: string ) => StoreAction;
-	changeCustomerEmail: ( payload: string ) => StoreAction;
-}
-
-interface StoreSelectorsWithState {
-	getCustomerName: ( state: StoreState ) => StoreStateValue;
-	getCustomerEmail: ( state: StoreState ) => StoreStateValue;
-}
-
-interface StoreSelectors {
-	getCustomerName: () => StoreStateValue;
-	getCustomerEmail: () => StoreStateValue;
-}
-
-interface P24Store extends ReturnType< typeof registerStore > {
-	actions: StoreActions;
-	selectors: StoreSelectorsWithState;
-	getState: () => StoreState;
-}
+type P24Store = PaymentMethodStore< NounsInStore >;
 
 declare module '@wordpress/data' {
-	function select( key: 'p24' ): StoreSelectors;
-	function dispatch( key: 'p24' ): StoreActions;
+	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
+	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
 }
 
 export function createP24PaymentMethodStore(): P24Store {
@@ -78,11 +56,11 @@ export function createP24PaymentMethodStore(): P24Store {
 		},
 	};
 
-	const selectors = {
-		getCustomerName( state: StoreState ): StoreStateValue {
+	const selectors: StoreSelectorsWithState< NounsInStore > = {
+		getCustomerName( state ) {
 			return state.customerName;
 		},
-		getCustomerEmail( state: StoreState ): StoreStateValue {
+		getCustomerEmail( state ) {
 			return state.customerEmail;
 		},
 	};
