@@ -933,7 +933,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( redirectTo );
 	} );
 
-	it( 'redirects to the redirects to the user connection/authorization page when jetpack checkout arg is set and the adminUrl is set', () => {
+	it( 'redirects to the user connection/authorization page when jetpack checkout arg is set and the adminUrl is set', () => {
 		const cart = {
 			products: [
 				{
