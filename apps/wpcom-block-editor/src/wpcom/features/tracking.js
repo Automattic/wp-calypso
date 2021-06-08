@@ -65,7 +65,10 @@ const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 	// If it is then the block was inserted using this menu. This inserter closes
 	// automatically when the user tries to use another form of block insertion
 	// (at least at the time of writing), which is why we can rely on this method.
-	if ( select( 'core/edit-post' ).isInserterOpened() ) {
+	if (
+		select( 'core/edit-post' )?.isInserterOpened() ||
+		select( 'core/edit-site' )?.isInserterOpened()
+	) {
 		return 'header-inserter';
 	}
 
