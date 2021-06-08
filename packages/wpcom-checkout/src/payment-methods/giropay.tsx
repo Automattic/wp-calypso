@@ -14,7 +14,6 @@ import {
 	useSelect,
 	useDispatch,
 } from '@automattic/composite-checkout';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
 /**
@@ -24,57 +23,49 @@ import styled from '../styled';
 import Field from '../field';
 import { SummaryLine, SummaryDetails } from '../summary-details';
 import { PaymentMethodLogos } from '../payment-method-logos';
+import type {
+	PaymentMethodStore,
+	StoreSelectors,
+	StoreSelectorsWithState,
+	StoreActions,
+	StoreState,
+} from '../payment-method-store';
 
 const debug = debugFactory( 'wpcom-checkout:giropay-payment-method' );
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-interface StoreStateValue {
-	value: string;
-	isTouched: boolean;
-}
+type StoreKey = 'giropay';
+type NounsInStore = 'customerName';
+type GiropayStore = PaymentMethodStore< NounsInStore >;
 
-interface StoreState {
-	customerName: StoreStateValue;
-}
-
-type StoreAction = { type: string; payload: string };
-
-interface StoreActions {
-	changeCustomerName: ( payload: string ) => StoreAction;
-}
-
-interface StoreSelectors {
-	getCustomerName: ( state: StoreState ) => StoreStateValue;
-}
-
-interface GiropayStore extends ReturnType< typeof registerStore > {
-	actions: StoreActions;
-	selectors: StoreSelectors;
+declare module '@wordpress/data' {
+	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
+	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
 }
 
 export function createGiropayPaymentMethodStore(): GiropayStore {
 	debug( 'creating a new giropay payment method store' );
-	const actions = {
-		changeCustomerName( payload: string ) {
+	const actions: StoreActions< NounsInStore > = {
+		changeCustomerName( payload ) {
 			return { type: 'CUSTOMER_NAME_SET', payload };
 		},
 	};
 
-	const selectors = {
-		getCustomerName( state: StoreState ) {
-			return state.customerName || '';
+	const selectors: StoreSelectorsWithState< NounsInStore > = {
+		getCustomerName( state ) {
+			return state.customerName;
 		},
 	};
 
 	const store = registerStore( 'giropay', {
 		reducer(
-			state = {
+			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
 			action
-		) {
+		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
 					return { ...state, customerName: { value: action.payload, isTouched: true } };
@@ -88,37 +79,21 @@ export function createGiropayPaymentMethodStore(): GiropayStore {
 	return { ...store, actions, selectors };
 }
 
-export function createGiropayMethod( {
-	store,
-	stripe,
-	stripeConfiguration,
-}: {
-	store: GiropayStore;
-	stripe: Stripe;
-	stripeConfiguration: StripeConfiguration;
-} ): PaymentMethod {
+export function createGiropayMethod( { store }: { store: GiropayStore } ): PaymentMethod {
 	return {
 		id: 'giropay',
 		label: <GiropayLabel />,
 		activeContent: <GiropayFields />,
 		inactiveContent: <GiropaySummary />,
-		submitButton: (
-			<GiropayPayButton
-				store={ store }
-				stripe={ stripe }
-				stripeConfiguration={ stripeConfiguration }
-			/>
-		),
-		getAriaLabel: ( __ ) => __( 'Giropay' ),
+		submitButton: <GiropayPayButton store={ store } />,
+		getAriaLabel: () => 'Giropay',
 	};
 }
 
 function GiropayFields(): JSX.Element {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() ) as
-		| StoreStateValue
-		| undefined;
+	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() );
 	const { changeCustomerName } = useDispatch( 'giropay' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -130,9 +105,9 @@ function GiropayFields(): JSX.Element {
 				type="Text"
 				autoComplete="cc-name"
 				label={ __( 'Your name' ) }
-				value={ customerName?.value ?? '' }
+				value={ customerName.value }
 				onChange={ changeCustomerName }
-				isError={ customerName?.isTouched && customerName?.value.length === 0 }
+				isError={ customerName.isTouched && customerName.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
 				disabled={ isDisabled }
 			/>
@@ -173,20 +148,14 @@ function GiropayPayButton( {
 	disabled,
 	onClick,
 	store,
-	stripe,
-	stripeConfiguration,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: GiropayStore;
-	stripe: Stripe;
-	stripeConfiguration: StripeConfiguration;
 } ): JSX.Element {
-	const [ items, total ] = useLineItems();
+	const [ , total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() ) as
-		| StoreStateValue
-		| undefined;
+	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() );
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -204,11 +173,7 @@ function GiropayPayButton( {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting giropay payment' );
 					onClick( 'giropay', {
-						stripe,
-						name: customerName?.value,
-						items,
-						total,
-						stripeConfiguration,
+						name: customerName.value,
 					} );
 				}
 			} }
@@ -234,9 +199,9 @@ function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total:
 }
 
 function isFormValid( store: GiropayStore ): boolean {
-	const customerName = store.selectors.getCustomerName( store.getState() as StoreState );
+	const customerName = store.selectors.getCustomerName( store.getState() );
 
-	if ( ! customerName?.value.length ) {
+	if ( ! customerName.value.length ) {
 		// Touch the field so it displays a validation error
 		store.dispatch( store.actions.changeCustomerName( '' ) );
 		return false;
@@ -265,13 +230,11 @@ function GiropayLogoImg( { className }: { className?: string } ) {
 }
 
 function GiropaySummary() {
-	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() ) as
-		| StoreStateValue
-		| undefined;
+	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() );
 
 	return (
 		<SummaryDetails>
-			<SummaryLine>{ customerName?.value }</SummaryLine>
+			<SummaryLine>{ customerName.value }</SummaryLine>
 		</SummaryDetails>
 	);
 }
