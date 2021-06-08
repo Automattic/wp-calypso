@@ -13,6 +13,8 @@ import SectionHeader from 'calypso/components/section-header';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import wp from 'calypso/lib/wp';
 
+const NOTICE_ID = 'request-dpa-notice';
+
 const DPA = () => {
 	const [ isLoading, setLoading ] = React.useState( false );
 	const translate = useTranslate();
@@ -28,7 +30,7 @@ const DPA = () => {
 						comment:
 							'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
 					} ),
-					{ id: 'request-dpa-notice' }
+					{ id: NOTICE_ID }
 				)
 			);
 		} catch ( error ) {
@@ -40,7 +42,7 @@ const DPA = () => {
 								comment:
 									'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
 						  } ),
-					{ id: 'request-dpa-notice' }
+					{ id: NOTICE_ID }
 				)
 			);
 		} finally {
