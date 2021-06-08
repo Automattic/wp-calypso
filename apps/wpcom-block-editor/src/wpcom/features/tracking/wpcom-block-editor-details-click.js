@@ -9,7 +9,7 @@ import tracksRecordEvent from './track-record-event';
  * @returns {{handler: Function, selector: string, type: string}} event object definition.
  */
 export default () => ( {
-	selector: '.edit-post-header .table-of-contents button',
+	selector: '.edit-post-header .table-of-contents button[aria-disabled="false"]',
 	type: 'click',
 	handler: () => tracksRecordEvent( 'wpcom_block_editor_details_click' ),
 } );
