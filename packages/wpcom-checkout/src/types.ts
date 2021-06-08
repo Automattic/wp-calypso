@@ -214,7 +214,6 @@ export type CheckoutPaymentMethodSlug =
 	| 'brazil-tef'
 	| 'netbanking'
 	| 'id_wallet'
-	| 'eps'
 	| 'giropay'
 	| 'ideal'
 	| 'p24'

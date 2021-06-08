@@ -46,7 +46,6 @@ export function paymentMethodName( method ) {
 		alipay: 'Alipay',
 		bancontact: 'Bancontact',
 		card: translate( 'Credit or debit card' ),
-		eps: 'EPS',
 		giropay: 'Giropay',
 		id_wallet: 'OVO',
 		ideal: 'iDEAL',

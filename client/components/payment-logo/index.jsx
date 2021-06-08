@@ -42,7 +42,6 @@ const ALT_TEXT = {
 	'brazil-tef': 'Transferência bancária',
 	diners: 'Diners Club',
 	discover: 'Discover',
-	eps: 'eps',
 	giropay: 'Giropay',
 	id_wallet: 'OVO',
 	ideal: 'iDEAL',
