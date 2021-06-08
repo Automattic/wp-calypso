@@ -76,15 +76,19 @@ class ThemeActivationConfirmationModal extends Component {
 			source,
 		} = this.props;
 		const isSolelyRetiredThemeModal = isCurrentThemeRetired && ! hasAutoLoadingHomepage;
-		const tracksPrefix = isSolelyRetiredThemeModal ? 'retired_theme' : 'autoloading_homepage';
 
 		if ( 'activeTheme' === action ) {
 			this.props.acceptActivateModalWarning( installingThemeId );
 			const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
-			recordTracksEvent( `calypso_theme_${ tracksPrefix }_modal_activate_click`, {
+			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_activate_click', {
 				theme: installingThemeId,
 				keep_current_homepage: keepCurrentHomepage,
 			} );
+			if ( isSolelyRetiredThemeModal ) {
+				recordTracksEvent( 'calypso_theme_retired_theme_modal_activate_click', {
+					theme: installingThemeId,
+				} );
+			}
 			return this.props.activateTheme(
 				installingThemeId,
 				siteId,
@@ -93,13 +97,20 @@ class ThemeActivationConfirmationModal extends Component {
 				keepCurrentHomepage
 			);
 		} else if ( 'keepCurrentTheme' === action ) {
-			recordTracksEvent( `calypso_theme_${ tracksPrefix }_modal_dismiss`, {
+			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
 				action: 'button',
 				theme: installingThemeId,
 			} );
+
+			if ( isSolelyRetiredThemeModal ) {
+				recordTracksEvent( 'calypso_theme_retired_theme_modal_dismiss', {
+					action: 'button',
+					theme: installingThemeId,
+				} );
+			}
 			return this.props.hideActivateModalWarning();
 		} else if ( 'dismiss' === action ) {
-			recordTracksEvent( `calypso_theme_${ tracksPrefix }_modal_dismiss`, {
+			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
 				action: 'escape',
 				theme: installingThemeId,
 			} );
@@ -194,15 +205,21 @@ class ThemeActivationConfirmationModal extends Component {
 				onClose={ this.closeModalHandler( 'dismiss' ) }
 			>
 				<TrackComponentView
-					eventName={
-						isCurrentThemeRetired && hasAutoLoadingHomepage
-							? 'calypso_theme_activation_retired_and_autoloading_homepage_confirmation_modal_view'
-							: 'calypso_theme_autoloading_homepage_modal_view'
-					}
+					eventName={ 'calypso_theme_autoloading_homepage_modal_view' }
 					eventProperties={ {
 						theme: installingTheme.id,
 					} }
 				/>
+				{ isCurrentThemeRetired && hasAutoLoadingHomepage && (
+					<TrackComponentView
+						eventName={
+							'calypso_theme_activation_retired_and_autoloading_homepage_confirmation_modal_view'
+						}
+						eventProperties={ {
+							theme: installingTheme.id,
+						} }
+					/>
+				) }
 				<div>
 					<h1 className="theme-activation-confirmation-modal__title">{ dialogHeading }</h1>
 					{ hasAutoLoadingHomepage && (
