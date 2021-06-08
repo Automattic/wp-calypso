@@ -218,7 +218,7 @@ export default {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const localeFromParams = context.params.lang;
-		const localeFromStore = store.get( 'signup-locale' );
+		const localeFromStore = ! userLoggedIn ? store.get( 'signup-locale' ) : '';
 		const signupProgress = getSignupProgress( context.store.getState() );
 
 		// Special case for the user step which may use oauth2 redirect flow

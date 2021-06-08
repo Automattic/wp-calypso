@@ -86,7 +86,10 @@ describe( 'NavigationLink', () => {
 	test( 'should set a proper url as href prop when the direction is "back".', () => {
 		expect( getStepUrl ).not.toHaveBeenCalled();
 
-		const wrapper = shallow( <NavigationLink { ...props } direction="back" /> );
+		const wrapper = shallow(
+			// We're mocking a logged-out user to ensure locale is being considered
+			<NavigationLink { ...props } userLoggedIn={ false } direction="back" />
+		);
 
 		// It should call getStepUrl()
 		expect( getStepUrl ).toHaveBeenCalled();

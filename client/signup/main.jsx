@@ -203,7 +203,8 @@ class Signup extends React.Component {
 			const destinationStep = flows.getFlow( this.props.flowName, this.props.isLoggedIn )
 				.steps[ 0 ];
 			this.setState( { resumingStep: destinationStep } );
-			return page.redirect( getStepUrl( this.props.flowName, destinationStep, this.props.locale ) );
+			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
+			return page.redirect( getStepUrl( this.props.flowName, destinationStep, undefined, locale ) );
 		}
 
 		this.isReskinned = false;
@@ -532,7 +533,8 @@ class Signup extends React.Component {
 		// redirect the user to the next step
 		scrollPromise.then( () => {
 			if ( ! this.isEveryStepSubmitted() ) {
-				page( getStepUrl( flowName, stepName, stepSectionName, this.props.locale ) );
+				const locale = ! this.props.isLoggedIn ? this.props.locale : '';
+				page( getStepUrl( flowName, stepName, stepSectionName, locale ) );
 			} else if ( this.isEveryStepSubmitted() ) {
 				this.goToFirstInvalidStep();
 			}
@@ -571,8 +573,9 @@ class Signup extends React.Component {
 				return;
 			}
 
+			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			debug( `Navigating to the first invalid step: ${ firstInvalidStep.stepName }` );
-			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
+			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, locale ) );
 		}
 	};
 

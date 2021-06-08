@@ -86,7 +86,7 @@ export class NavigationLink extends Component {
 			return this.props.backUrl;
 		}
 
-		const { flowName, signupProgress, stepName } = this.props;
+		const { flowName, signupProgress, stepName, userLoggedIn } = this.props;
 		const previousStep = this.getPreviousStep( flowName, signupProgress, stepName );
 
 		const stepSectionName = get(
@@ -95,11 +95,13 @@ export class NavigationLink extends Component {
 			''
 		);
 
+		const locale = ! userLoggedIn ? getLocaleSlug() : '';
+
 		return getStepUrl(
 			previousStep.lastKnownFlow || this.props.flowName,
 			previousStep.stepName,
 			stepSectionName,
-			getLocaleSlug()
+			locale
 		);
 	}
 

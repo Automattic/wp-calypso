@@ -9,7 +9,6 @@ import { translate } from 'i18n-calypso';
  */
 import steps from 'calypso/signup/config/steps-pure';
 import flows from 'calypso/signup/config/flows';
-import user from 'calypso/lib/user';
 
 const { defaultFlowName } = flows;
 
@@ -52,10 +51,7 @@ export function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
 	const flow = flowName ? `/${ flowName }` : '';
 	const step = stepName ? `/${ stepName }` : '';
 	const section = stepSectionName ? `/${ stepSectionName }` : '';
-	// when the user is logged in, the locale slug is meaningless in a
-	// signup URL, as the page will be translated in the language the user
-	// has in their settings.
-	const locale = localeSlug && ! user().get() ? `/${ localeSlug }` : '';
+	const locale = localeSlug ? `/${ localeSlug }` : '';
 
 	if ( flowName === defaultFlowName ) {
 		// we don't include the default flow name in the route
