@@ -6,8 +6,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import {
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
-	createP24Method,
-	createP24PaymentMethodStore,
 	createIdealMethod,
 	createIdealPaymentMethodStore,
 	createSofortMethod,
@@ -22,6 +20,8 @@ import {
 	createBancontactPaymentMethodStore,
 	createGiropayMethod,
 	createGiropayPaymentMethodStore,
+	createP24Method,
+	createP24PaymentMethodStore,
 	createPayPalMethod,
 } from '@automattic/wpcom-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
