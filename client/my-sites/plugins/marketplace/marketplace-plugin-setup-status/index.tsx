@@ -100,15 +100,6 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 		args: { currentStep: currentNumericStep, stepCount: steps.length },
 	} );
 
-	if ( simulatedProgressPercentage > 50 && currentStage === STAGE_1 ) {
-		setCurrentStage( STAGE_2 );
-	}
-
-	const currentNumericStage = stages.indexOf( currentStage ) + 1;
-	const stageIndication = translate( 'Step %(currentStage)s of %(stageCount)s', {
-		args: { currentStage: currentNumericStage, stageCount: stages.length },
-	} );
-
 	return (
 		<>
 			{ selectedSiteId ? <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> : '' }
