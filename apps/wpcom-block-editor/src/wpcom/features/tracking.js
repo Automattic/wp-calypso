@@ -17,6 +17,7 @@ import delegateEventTracking from './tracking/delegate-event-tracking';
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
 
 const noop = () => {};
+let lastUndoOrRedoTimestamp;
 
 /**
  * Global handler.
@@ -281,12 +282,52 @@ const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
  * @returns {void}
  */
 const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
+	// Template Parts and Reusable Blocks are asynchronously loaded blocks.
+	// Content is fetched from the REST API so the inner blocks are
+	// populated when the response is received. We want to ignore
+	// `replaceInnerBlocks` action calls when the `innerBlocks` are replaced
+	// because the template part or reusable block just loaded.
+	const parentBlock = select( 'core/block-editor' ).getBlocksByClientId( rootClientId )?.[ 0 ];
+	if ( parentBlock ) {
+		const { name, innerBlocks } = parentBlock;
+		const isAsyncLoadedEntityBlock =
+			// Template Part
+			name === 'core/template-part' ||
+			// Reusable BLock
+			name === 'core/block';
+		const hasInnerBlocks = innerBlocks.length > 0;
+
+		if ( isAsyncLoadedEntityBlock && ! hasInnerBlocks ) {
+			return;
+		}
+	}
+
+	// Performing an undo or redo will cause affected template parts
+	// and reusable blocks to synchronize their inner blocks.
+	// Which results in `replaceInnerBlocks` calls. We ignore them
+	// to avoid tracking these changes since they are behind the scenes changes.
+	const msElapsedSinceLastUndoOrRedo = Date.now() - lastUndoOrRedoTimestamp;
+	const IGNORE_THRESHOLD_IN_MS = 250;
+	if ( msElapsedSinceLastUndoOrRedo <= IGNORE_THRESHOLD_IN_MS ) {
+		return;
+	}
+
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
 		block_name: name,
 		blocks_replaced: true,
 		// isInsertingPageTemplate filter is set by Starter Page Templates
 		from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
 	} ) );
+};
+
+const trackUndo = () => {
+	tracksRecordEvent( 'wpcom_block_editor_undo_performed' );
+	lastUndoOrRedoTimestamp = Date.now();
+};
+
+const trackRedo = () => {
+	tracksRecordEvent( 'wpcom_block_editor_redo_performed' );
+	lastUndoOrRedoTimestamp = Date.now();
 };
 
 /**
@@ -329,13 +370,13 @@ const REDUX_TRACKING = {
 	},
 	// Post Editor is using the undo/redo from the 'core/editor' store
 	'core/editor': {
-		undo: 'wpcom_block_editor_undo_performed',
-		redo: 'wpcom_block_editor_redo_performed',
+		undo: trackUndo,
+		redo: trackRedo,
 	},
 	// Site Editor is using the undo/redo from the 'core' store
 	core: {
-		undo: 'wpcom_block_editor_undo_performed',
-		redo: 'wpcom_block_editor_redo_performed',
+		undo: trackUndo,
+		redo: trackRedo,
 	},
 	'core/block-editor': {
 		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),
