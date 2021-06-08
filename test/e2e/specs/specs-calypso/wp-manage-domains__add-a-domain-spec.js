@@ -9,11 +9,12 @@ import config from 'config';
 import * as driverManager from '../../lib/driver-manager.js';
 import * as dataHelper from '../../lib/data-helper.js';
 
+import CreateSiteFlow from '../../lib/flows/create-site-flow.js';
+import DeleteSiteFlow from '../../lib/flows/delete-site-flow.js';
 import DomainsPage from '../../lib/pages/domains-page.js';
 import CheckOutPage from '../../lib/pages/signup/checkout-page.js';
 import FindADomainComponent from '../../lib/components/find-a-domain-component.js';
 import SecurePaymentComponent from '../../lib/components/secure-payment-component.js';
-import ShoppingCartWidgetComponent from '../../lib/components/shopping-cart-widget-component.js';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 import LoginFlow from '../../lib/flows/login-flow.js';
 
@@ -25,14 +26,26 @@ const host = dataHelper.getJetpackHost();
 describe( `[${ host }] Manage Domains - Add a Domain: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
-	const blogName = dataHelper.getNewBlogName();
-	const domainEmailAddress = dataHelper.getEmailAddress( blogName, domainsInboxId );
-	const expectedDomainName = blogName + '.com';
-	const testDomainRegistarDetails = dataHelper.getTestDomainRegistarDetails( domainEmailAddress );
+	const tmpFreeSiteName = dataHelper.getNewBlogName();
+	const domainName = dataHelper.getNewBlogName();
+	const topLevelDomain = '.com';
+	const rootDomain = domainName + topLevelDomain;
+	const domainEmail = dataHelper.getEmailAddress( domainName, domainsInboxId );
+	const testDomainRegistarDetails = dataHelper.getTestDomainRegistarDetails( domainEmail );
 
-	it( 'Log in and go to Domains page', async function () {
-		const loginFlow = new LoginFlow( this.driver, 'gutenbergSimpleSiteUser' );
-		await loginFlow.loginAndSelectDomains();
+	before( 'Log in and create a temp free site', async function () {
+		await new LoginFlow( this.driver, 'gutenbergSimpleSiteUser' ).login();
+		await new CreateSiteFlow( this.driver, tmpFreeSiteName ).createFreeSite();
+	} );
+
+	after( 'Delete the temp free site', async function () {
+		const deleteSite = new DeleteSiteFlow( this.driver );
+		await deleteSite.deleteSite( tmpFreeSiteName + '.wordpress.com' );
+	} );
+
+	it( 'Go to Domains page', async function () {
+		const sideBarComponent = await SidebarComponent.Expect( this.driver );
+		return await sideBarComponent.selectDomains();
 	} );
 
 	it( 'Add a domain', async function () {
@@ -45,12 +58,12 @@ describe( `[${ host }] Manage Domains - Add a Domain: (${ screenSize }) @paralle
 		const findADomainComponent = await FindADomainComponent.Expect( this.driver );
 		// Search for the full blog name including the .com, as the default TLD suggestion is not
 		// always .com
-		await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
+		await findADomainComponent.searchForBlogNameAndWaitForResults( rootDomain );
 	} );
 
 	it( 'Select .com search result and decline Google Apps offer', async function () {
 		const findADomainComponent = await FindADomainComponent.Expect( this.driver );
-		await findADomainComponent.selectDomainAddress( expectedDomainName );
+		await findADomainComponent.selectDomainAddress( rootDomain );
 		await findADomainComponent.declineGoogleApps();
 	} );
 
@@ -67,12 +80,5 @@ describe( `[${ host }] Manage Domains - Add a Domain: (${ screenSize }) @paralle
 	it( 'Close the checkout page', async function () {
 		const checkOutPage = await CheckOutPage.Expect( this.driver );
 		await checkOutPage.close();
-	} );
-
-	it( 'Remove added domain from cart', async function () {
-		const sidebarComponent = await SidebarComponent.Expect( this.driver );
-		await sidebarComponent.selectDomains();
-		const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( this.driver );
-		await shoppingCartWidgetComponent.removeDomainRegistration( expectedDomainName );
 	} );
 } );
