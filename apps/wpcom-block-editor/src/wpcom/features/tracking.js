@@ -410,6 +410,30 @@ const trackListViewToggle = ( isOpen ) => {
 	} );
 };
 
+const trackSiteEditorBrowsingSidebarOpen = () => {
+	// We want to make sure the browsing sidebar is closed.
+	// This action is triggered even if the sidebar is open
+	// which we want to avoid tracking.
+	const isOpen = select( 'core/edit-site' ).isNavigationOpened();
+	if ( isOpen ) {
+		return;
+	}
+
+	tracksRecordEvent( 'calypso_editor_sidebar_open' );
+};
+
+const trackSiteEditorCreateTemplate = ( { slug } ) => {
+	tracksRecordEvent( 'calypso_editor_sidebar_item_add', { item_type: 'template', slug } );
+};
+
+const trackSiteEditorChangeTemplate = ( id, slug ) => {
+	tracksRecordEvent( 'calypso_editor_sidebar_item_edit', { item_type: 'template', id, slug } );
+};
+
+const trackSiteEditorChangeTemplatePart = ( id ) => {
+	tracksRecordEvent( 'calypso_editor_sidebar_item_edit', { item_type: 'template_part', id } );
+};
+
 /**
  * Tracks editEntityRecord for global styles updates.
  *
@@ -500,6 +524,10 @@ const REDUX_TRACKING = {
 	},
 	'core/edit-site': {
 		setIsListViewOpened: trackListViewToggle,
+		openNavigationPanelToMenu: trackSiteEditorBrowsingSidebarOpen,
+		addTemplate: trackSiteEditorCreateTemplate,
+		setTemplate: trackSiteEditorChangeTemplate,
+		setTemplatePart: trackSiteEditorChangeTemplatePart,
 	},
 	'core/edit-post': {
 		setIsListViewOpened: trackListViewToggle,
