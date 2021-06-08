@@ -5,7 +5,6 @@ import React, { FC, ReactElement, useCallback, useMemo } from 'react';
 import { connect, DefaultRootState } from 'react-redux';
 import { isDesktop } from '@automattic/viewport';
 import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -105,7 +104,7 @@ export const ThankYouCard: FC< Props > = ( {
 		[ dispatchRecordTracksEvent ]
 	);
 
-	const jetpackVersion = useMemo( () => get( selectedSite, 'options.jetpack_version', 0 ), [
+	const jetpackVersion = useMemo( () => selectedSite?.options?.jetpack_version ?? 0, [
 		selectedSite,
 	] );
 

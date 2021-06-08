@@ -2,7 +2,6 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { sortBy } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
 import React, { useMemo, useRef, useState, useEffect, useCallback, RefObject } from 'react';
 import { useSelector } from 'react-redux';
@@ -40,6 +39,15 @@ import type { JetpackProductSlug, JetpackPlanSlug } from '@automattic/calypso-pr
  */
 import './style.scss';
 
+const sortByGridPosition = ( items: SelectorProduct[] ) =>
+	items
+		.map( ( i ): [ number, SelectorProduct ] => [
+			getProductPosition( i.productSlug as JetpackPlanSlug | JetpackProductSlug ),
+			i,
+		] )
+		.sort( ( [ aPosition ], [ bPosition ] ) => aPosition - bPosition )
+		.map( ( [ , item ] ) => item );
+
 const ProductGrid: React.FC< ProductsGridProps > = ( {
 	duration,
 	urlQueryArgs,
@@ -70,10 +78,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const isInJetpackCloud = useMemo( isJetpackCloud, [] );
 	// Retrieve and cache the plans array, which might be already translated.
 	const untranslatedSortedPlans = useMemo(
-		() =>
-			sortBy( getPlansToDisplay( { duration, currentPlanSlug } ), ( item ) =>
-				getProductPosition( item.productSlug as JetpackPlanSlug )
-			),
+		() => sortByGridPosition( getPlansToDisplay( { duration, currentPlanSlug } ) ),
 		[ duration, currentPlanSlug ]
 	);
 	// Get the first plan description and pass it through `translate` so that
@@ -91,22 +96,18 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		: null;
 
 	const sortedPlans = useMemo(
-		() =>
-			sortBy( getPlansToDisplay( { duration, currentPlanSlug } ), ( item ) =>
-				getProductPosition( item.productSlug as JetpackPlanSlug )
-			),
+		() => sortByGridPosition( getPlansToDisplay( { duration, currentPlanSlug } ) ),
 		[ duration, currentPlanSlug, translatedFirstPlanDescription, translatedFirstPlanFirstFeature ]
 	);
 	const sortedProducts = useMemo(
 		() =>
-			sortBy(
+			sortByGridPosition(
 				getProductsToDisplay( {
 					duration,
 					availableProducts,
 					purchasedProducts,
 					includedInPlanProducts,
-				} ),
-				( item ) => getProductPosition( item.productSlug as JetpackProductSlug )
+				} )
 			),
 		[ duration, availableProducts, includedInPlanProducts, purchasedProducts ]
 	);
@@ -114,9 +115,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	let popularProducts = [] as SelectorProduct[];
 	let otherProducts = [] as SelectorProduct[];
 
-	const allProducts = sortBy( [ ...sortedPlans, ...sortedProducts ], ( item ) =>
-		getProductPosition( item.productSlug as JetpackPlanSlug | JetpackProductSlug )
-	);
+	const allProducts = sortByGridPosition( [ ...sortedPlans, ...sortedProducts ] );
 	popularProducts = allProducts.slice( 0, 3 );
 	otherProducts = allProducts.slice( 3 );
 

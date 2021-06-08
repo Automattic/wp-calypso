@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import { useEffect, useRef, useState } from 'react';
 import { throttle } from 'lodash';
+import { useEffect, useRef, useState } from 'react';
 
-export const THROTTLE_RATE = 50;
+const THROTTLE_RATE_MS = 50;
 
 /**
  * Returns whether an element has touched/crossed the upper Window's boundary.
@@ -34,12 +34,12 @@ const useDetectWindowBoundary = ( offsetY = 0 ) => {
 			}
 
 			setBorderCrossed( window.pageYOffset + offsetY > initialTopPos.current );
-		}, THROTTLE_RATE );
+		}, THROTTLE_RATE_MS );
 
 		window.addEventListener( 'scroll', addStickyClass );
 
 		return () => window.removeEventListener( 'scroll', addStickyClass );
-	}, [ elementRef.current, offsetY ] );
+	}, [ offsetY ] );
 
 	return [ elementRef, borderCrossed ];
 };
