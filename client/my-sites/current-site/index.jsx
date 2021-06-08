@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
@@ -39,6 +39,7 @@ class CurrentSite extends Component {
 		anySiteSelected: PropTypes.array,
 		forceAllSitesView: PropTypes.bool,
 		isNavUnificationEnabled: PropTypes.bool.isRequired,
+		isRtl: PropTypes.bool,
 	};
 
 	switchSites = ( event ) => {
@@ -68,6 +69,8 @@ class CurrentSite extends Component {
 			/* eslint-enable wpcalypso/jsx-classname-namespace, jsx-a11y/anchor-is-valid */
 		}
 
+		const arrowDirection = this.props.isRtl ? 'right' : 'left';
+
 		return (
 			<Card className="current-site">
 				<div role="button" tabIndex="0" aria-hidden="true" onClick={ this.expandUnifiedNavSidebar }>
@@ -76,9 +79,11 @@ class CurrentSite extends Component {
 							<Button borderless onClick={ this.switchSites }>
 								{ this.props.isNavUnificationEnabled ? (
 									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-									<span className="gridicon dashicons-before dashicons-arrow-left-alt2"></span>
+									<span
+										className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
+									></span>
 								) : (
-									<Gridicon icon="chevron-left" />
+									<Gridicon icon={ `chevron-${ arrowDirection }` } />
 								) }
 								<span className="current-site__switch-sites-label">
 									{ translate( 'Switch Site' ) }
@@ -134,4 +139,4 @@ export default connect(
 		setLayoutFocus,
 		savePreference,
 	}
-)( localize( CurrentSite ) );
+)( withRtl( localize( CurrentSite ) ) );
