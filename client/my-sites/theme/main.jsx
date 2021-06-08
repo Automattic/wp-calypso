@@ -50,6 +50,7 @@ import {
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
 	getThemeForumUrl,
+	getThemeDemoUrl,
 } from 'calypso/state/themes/selectors';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -234,8 +235,8 @@ class ThemeSheet extends React.Component {
 	}
 
 	isThemeAvailable() {
-		const { demo_uri, retired } = this.props;
-		return demo_uri && ! retired;
+		const { demoUrl, retired } = this.props;
+		return demoUrl && ! retired;
 	}
 
 	// Render "Open Live Demo" pseudo-button for mobiles.
@@ -245,7 +246,7 @@ class ThemeSheet extends React.Component {
 		return (
 			<div className="theme__sheet-preview-link">
 				<span className="theme__sheet-preview-link-text">
-					{ i18n.translate( 'Open Live Demo', {
+					{ i18n.translate( 'Open live demo', {
 						context: 'Individual theme live preview button',
 					} ) }
 				</span>
@@ -254,7 +255,7 @@ class ThemeSheet extends React.Component {
 	}
 
 	renderScreenshot() {
-		const { isWpcomTheme, name: themeName } = this.props;
+		const { isWpcomTheme, name: themeName, demoUrl } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
 		const width = 735;
 		// Photon may return null, allow fallbacks
@@ -277,7 +278,7 @@ class ThemeSheet extends React.Component {
 			return (
 				<a
 					className="theme__sheet-screenshot is-active"
-					href={ this.props.demo_uri }
+					href={ demoUrl }
 					onClick={ ( e ) => {
 						this.previewAction( e, 'screenshot' );
 					} }
@@ -299,7 +300,7 @@ class ThemeSheet extends React.Component {
 			support: i18n.translate( 'Support', { context: 'Filter label for theme content' } ),
 		};
 
-		const { siteSlug, id } = this.props;
+		const { siteSlug, id, demoUrl } = this.props;
 		const sitePart = siteSlug ? `/${ siteSlug }` : '';
 
 		const nav = (
@@ -315,13 +316,13 @@ class ThemeSheet extends React.Component {
 				) ) }
 				{ this.shouldRenderPreviewButton() ? (
 					<NavItem
-						path={ this.props.demo_uri }
+						path={ demoUrl }
 						onClick={ ( e ) => {
 							this.previewAction( e, 'link' );
 						} }
 						className="theme__sheet-preview-nav-item"
 					>
-						{ i18n.translate( 'Open Live Demo', {
+						{ i18n.translate( 'Open live demo', {
 							context: 'Individual theme live preview button',
 						} ) }
 					</NavItem>
@@ -561,7 +562,7 @@ class ThemeSheet extends React.Component {
 						</div>
 					</div>
 					<Button primary={ true } href={ '/themes/' }>
-						{ i18n.translate( 'See All Themes' ) }
+						{ i18n.translate( 'See all themes' ) }
 					</Button>
 				</Card>
 
@@ -777,7 +778,7 @@ class ThemeSheet extends React.Component {
 const ConnectedThemeSheet = connectOptions( ThemeSheet );
 
 const ThemeSheetWithOptions = ( props ) => {
-	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = props;
+	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack, demoUrl } = props;
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
@@ -803,6 +804,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	return (
 		<ConnectedThemeSheet
 			{ ...props }
+			demo_uri={ demoUrl }
 			siteId={ siteId }
 			defaultOption={ defaultOption }
 			secondaryOption={ secondaryOption }
@@ -845,6 +847,7 @@ export default connect(
 			canUserUploadThemes: hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// No siteId specified since we want the *canonical* URL :-)
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ),
+			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			previousRoute: getPreviousRoute( state ),
 		};
 	},
