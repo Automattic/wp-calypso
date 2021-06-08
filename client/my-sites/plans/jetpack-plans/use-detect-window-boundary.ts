@@ -48,7 +48,7 @@ const useDetectWindowBoundary = (
 		// intersection ratio becomes 1.0 (fully visible), or
 		// when it becomes less than 1.0 (not fully visible)
 		observerRef.current = new IntersectionObserver( handler, {
-			rootMargin: `-${ offsetY }px 0px 0px 0px`,
+			rootMargin: `${ -1 * offsetY }px 0px 0px 0px`,
 			threshold: [ 1 ],
 		} );
 
