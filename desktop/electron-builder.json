@@ -54,12 +54,12 @@
 		]
 	},
 	"appx": {
-		"applicationId": "WordPress.com",
-		"identityName": "22490Automattic.WordPress.com",
+		"applicationId": "WordPress.com Desktop",
+		"identityName": "22490Automattic.WordPress.comDesktop",
 		"publisher": "CN=E2E5A157-746D-4B04-9116-ABE5CB928306",
 		"publisherDisplayName": "Automattic, Inc.",
 		"backgroundColor": "transparent",
-		"artifactName": "WordPress.com-win-store-${version}-${arch}.${ext}"
+		"artifactName": "wordpress.com-win-store-${version}-${arch}.${ext}"
 	},
 	"nsis": {
 		"oneClick": false,
