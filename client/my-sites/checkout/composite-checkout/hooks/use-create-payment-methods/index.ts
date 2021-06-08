@@ -10,8 +10,6 @@ import {
 	createIdealPaymentMethodStore,
 	createSofortMethod,
 	createSofortPaymentMethodStore,
-	createEpsMethod,
-	createEpsPaymentMethodStore,
 } from '@automattic/composite-checkout';
 import {
 	createApplePayMethod,
@@ -22,6 +20,8 @@ import {
 	createGiropayPaymentMethodStore,
 	createP24Method,
 	createP24PaymentMethodStore,
+	createEpsMethod,
+	createEpsPaymentMethodStore,
 	createPayPalMethod,
 } from '@automattic/wpcom-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
