@@ -110,26 +110,35 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 	}, [ onDurationChange, durationChecked ] );
 
 	return (
-		<div ref={ barRef } className={ classNames( 'plans-filter-bar', { sticky: hasCrossed } ) }>
-			<div className="plans-filter-bar__duration-toggle-wrapper">
-				<div
-					className={ classNames( 'plans-filter-bar__duration-toggle', {
-						checked: durationChecked,
-					} ) }
-				>
-					<span className="plans-filter-bar__toggle-off-label">
-						{ translate( 'Bill monthly' ) }
-					</span>
-					<ToggleControl
-						className="plans-filter-bar__toggle-control"
-						checked={ durationChecked }
-						onChange={ () => setDurationChecked( ( prevState ) => ! prevState ) }
-					/>
-					<span className="plans-filter-bar__toggle-on-label">{ translate( 'Bill yearly' ) }</span>
+		<>
+			<div className="plans-filter-bar__viewport-sentinel" ref={ barRef }></div>
+			<div
+				className={ classNames( 'plans-filter-bar', {
+					sticky: hasCrossed,
+				} ) }
+			>
+				<div className="plans-filter-bar__duration-toggle-wrapper">
+					<div
+						className={ classNames( 'plans-filter-bar__duration-toggle', {
+							checked: durationChecked,
+						} ) }
+					>
+						<span className="plans-filter-bar__toggle-off-label">
+							{ translate( 'Bill monthly' ) }
+						</span>
+						<ToggleControl
+							className="plans-filter-bar__toggle-control"
+							checked={ durationChecked }
+							onChange={ () => setDurationChecked( ( prevState ) => ! prevState ) }
+						/>
+						<span className="plans-filter-bar__toggle-on-label">
+							{ translate( 'Bill yearly' ) }
+						</span>
+					</div>
+					{ showDiscountMessage && <DiscountMessage toggleChecked={ durationChecked } /> }
 				</div>
-				{ showDiscountMessage && <DiscountMessage toggleChecked={ durationChecked } /> }
 			</div>
-		</div>
+		</>
 	);
 };
 

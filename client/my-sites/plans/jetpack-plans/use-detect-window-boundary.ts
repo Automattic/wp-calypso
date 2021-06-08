@@ -1,44 +1,61 @@
 /**
  * External dependencies
  */
-import { throttle } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
-
-const THROTTLE_RATE_MS = 50;
+import { RefObject, useEffect, useRef, useState } from 'react';
 
 /**
- * Returns whether an element has touched/crossed the upper Window's boundary.
+ * Returns whether an element has touched/crossed the viewport's upper boundary,
+ * plus or minus a given vertical offset.
  *
- * @param {number} offsetY Add offset in the Y axis for the detection
- * @returns a tuple with the ref element, and boolean whether border has crossed
+ * @param offsetY A vertical offset (in pixels) to add or subtract
+ * 		  when determining if the observed element has crossed
+ * 		  the viewport's upper boundary
+ * @returns A tuple with a reference to the observed element,
+ * 			and a boolean indicating whether it's crossed
+ * 			the viewport's upper boundary
  */
-const useDetectWindowBoundary = ( offsetY = 0 ) => {
-	const elementRef = useRef< HTMLDivElement >( null );
+const useDetectWindowBoundary = (
+	offsetY = 0
+): [ RefObject< HTMLDivElement | undefined >, boolean | undefined ] => {
+	const elementRef = useRef< HTMLDivElement >();
+	const observerRef = useRef< IntersectionObserver >();
 
-	// Indicates whether the elementRef has crossed the upper window boundary
-	const [ borderCrossed, setBorderCrossed ] = useState( false );
-
-	// Stores the position of the element in the Y axis.relative to the viewport top.
-	const initialTopPos = useRef< number | null >( null );
+	const [ borderCrossed, setBorderCrossed ] = useState< boolean | undefined >( undefined );
 
 	useEffect( () => {
-		const addStickyClass = throttle( () => {
-			if ( ! elementRef || ! elementRef.current ) {
+		// We can't do anything without a valid reference to an element on the page
+		if ( ! elementRef.current ) {
+			return;
+		}
+
+		// If the observer is already defined, no need to continue
+		if ( observerRef.current ) {
+			return;
+		}
+
+		const handler = ( entries: IntersectionObserverEntry[] ) => {
+			if ( ! entries.length ) {
 				return;
 			}
 
-			const { top: distanceRelativeToViewport } = elementRef.current.getBoundingClientRect();
+			// When the observed element crosses out of the top of the viewport,
+			// its bounding rectangle will always have a Y coordinate
+			// smaller than the value of our offsetY parameter.
+			setBorderCrossed( entries[ 0 ].boundingClientRect.y < offsetY );
+		};
 
-			if ( ! initialTopPos.current && distanceRelativeToViewport ) {
-				initialTopPos.current = distanceRelativeToViewport;
-			}
+		// Only trigger the handler when the observed element's
+		// intersection ratio becomes 1.0 (fully visible), or
+		// when it becomes less than 1.0 (not fully visible)
+		observerRef.current = new IntersectionObserver( handler, {
+			rootMargin: `-${ offsetY }px 0px 0px 0px`,
+			threshold: [ 1 ],
+		} );
 
-			setBorderCrossed( window.pageYOffset + offsetY > initialTopPos.current );
-		}, THROTTLE_RATE_MS );
+		observerRef.current.observe( elementRef.current );
 
-		window.addEventListener( 'scroll', addStickyClass );
-
-		return () => window.removeEventListener( 'scroll', addStickyClass );
+		// Stop observing when this hook is unmounted
+		return () => observerRef.current?.disconnect?.();
 	}, [ offsetY ] );
 
 	return [ elementRef, borderCrossed ];
