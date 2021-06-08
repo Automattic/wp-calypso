@@ -43,11 +43,11 @@ describe( `[${ host }] Manage Domains - Map a Domain: (${ screenSize }) @paralle
 
 	it( 'Buy domain mapping', async function () {
 		const myOwnDomainPage = await MyOwnDomainPage.Expect( this.driver );
-		return await myOwnDomainPage.selectBuyDomainMapping();
+		await myOwnDomainPage.selectBuyDomainMapping();
 	} );
 
 	it( 'Enter domain name', async function () {
 		const enterADomainComponent = await EnterADomainComponent.Expect( this.driver );
-		return await enterADomainComponent.enterADomain( blogName );
+		await enterADomainComponent.enterADomain( blogName );
 	} );
 } );
