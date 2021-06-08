@@ -223,6 +223,6 @@ export const JETPACK_ANTI_SPAM_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/u
 // If JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN is true, checkout will redirect to the site's wp-admin,
 // otherwise it will redirect to the JETPACK_REDIRECT_URL. Checkout references these constants in:
 // client/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url.ts
-export const JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN = true;
+export const JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN = true;
 export const JETPACK_REDIRECT_URL =
 	'https://jetpack.com/redirect/?source=jetpack-checkout-thankyou';
