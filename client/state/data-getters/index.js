@@ -10,4 +10,3 @@ export { default as requestExternalContributorsRemoval } from './request-externa
 export { default as requestGeoLocation } from './request-geo-location';
 export { default as requestFeedDiscovery } from './request-feed-discovery';
 export { default as requestSiteAlerts } from './request-site-alerts';
-export { default as requestDpa } from './request-dpa';
