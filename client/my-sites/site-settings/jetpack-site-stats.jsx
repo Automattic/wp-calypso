@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { ToggleControl } from '@wordpress/components';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -19,16 +20,15 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
-import QuerySiteRoles from 'calypso/components/data/query-site-roles';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getSiteRoles } from 'calypso/state/site-roles/selectors';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import useSiteRolesQuery from 'calypso/data/site-roles/use-site-roles-query';
 
 class JetpackSiteStats extends Component {
 	static defaultProps = {
@@ -125,7 +125,6 @@ class JetpackSiteStats extends Component {
 		return (
 			<div className="site-settings__traffic-settings">
 				<QueryJetpackConnection siteId={ siteId } />
-				<QuerySiteRoles siteId={ siteId } />
 
 				<SettingsSectionHeader title={ translate( 'Site stats' ) } />
 
@@ -187,6 +186,15 @@ class JetpackSiteStats extends Component {
 	}
 }
 
+const withSiteRoles = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		const { data } = useSiteRolesQuery( props.siteId );
+
+		return <Wrapped { ...props } siteRoles={ data ?? [] } />;
+	},
+	'WithSiteRoles'
+);
+
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
@@ -203,11 +211,10 @@ export default connect(
 			siteSlug: getSelectedSiteSlug( state, siteId ),
 			statsModuleActive: isJetpackModuleActive( state, siteId, 'stats' ),
 			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-			siteRoles: getSiteRoles( state, siteId ),
 			path,
 		};
 	},
 	{
 		recordTracksEvent,
 	}
-)( localize( JetpackSiteStats ) );
+)( localize( withSiteRoles( JetpackSiteStats ) ) );
