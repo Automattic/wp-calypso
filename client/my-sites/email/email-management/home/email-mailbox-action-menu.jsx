@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -11,6 +12,11 @@ import { useTranslate } from 'i18n-calypso';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
+import {
+	getEmailForwardAddress,
+	hasGoogleAccountTOSWarning,
+	isEmailUserAdmin,
+} from 'calypso/lib/emails';
 import {
 	getGmailUrl,
 	getGoogleAdminUrl,
@@ -35,12 +41,22 @@ import googleDriveIcon from 'calypso/assets/images/email-providers/google-worksp
 import googleSheetsIcon from 'calypso/assets/images/email-providers/google-workspace/services/sheets.svg';
 import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/slides.svg';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import { hasGoogleAccountTOSWarning, isEmailUserAdmin } from 'calypso/lib/emails';
 import MaterialIcon from 'calypso/components/material-icon';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { removeEmailForward } from 'calypso/state/email-forwarding/actions';
 import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/calendar.svg';
 import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/contacts.svg';
 import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/mail.svg';
+
+const removeEmailForwardMailbox = ( { dispatch, mailbox } ) => {
+	recordTracksEvent( 'calypso_domain_management_email_forwarding_delete_click', {
+		destination: getEmailForwardAddress( mailbox ),
+		domain_name: mailbox.domain,
+		mailbox: mailbox.mailbox,
+	} );
+
+	dispatch( removeEmailForward( mailbox.domain, mailbox.mailbox ) );
+};
 
 /**
  * Returns the available menu items for Titan Emails
@@ -144,7 +160,14 @@ const getGSuiteMenuItems = ( { account, email, mailbox, translate } ) => {
 	];
 };
 
-const getEmailForwardMenuItems = ( { currentRoute, domain, selectedSite, translate } ) => {
+const getEmailForwardMenuItems = ( {
+	currentRoute,
+	dispatch,
+	domain,
+	mailbox,
+	selectedSite,
+	translate,
+} ) => {
 	return [
 		{
 			href: emailManagementForwarding( selectedSite.slug, domain.name, currentRoute ),
@@ -154,47 +177,51 @@ const getEmailForwardMenuItems = ( { currentRoute, domain, selectedSite, transla
 				comment: 'Edit an email forward',
 			} ),
 		},
+		{
+			isInternalLink: true,
+			materialIcon: 'delete',
+			onClick: () => {
+				removeEmailForwardMailbox( { dispatch, mailbox } );
+			},
+			key: `remove_forward:${ mailbox.mailbox }`,
+			title: translate( 'Remove email forward', {
+				comment: 'Remove an email forward',
+			} ),
+		},
 	];
-};
-
-const getMenuItems = ( {
-	account,
-	currentRoute,
-	domain,
-	email,
-	mailbox,
-	selectedSite,
-	translate,
-} ) => {
-	if ( hasTitanMailWithUs( domain ) ) {
-		return getTitanMenuItems( { email, translate } );
-	}
-
-	if ( hasGSuiteWithUs( domain ) ) {
-		return getGSuiteMenuItems( { account, email, mailbox, translate } );
-	}
-
-	if ( hasEmailForwards( domain ) ) {
-		return getEmailForwardMenuItems( { currentRoute, domain, selectedSite, translate } );
-	}
-
-	return null;
 };
 
 const EmailMailboxActionMenu = ( { account, domain, mailbox, selectedSite } ) => {
 	const currentRoute = useSelector( getCurrentRoute );
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const email = `${ mailbox.mailbox }@${ mailbox.domain }`;
-	const menuItems = getMenuItems( {
-		account,
-		currentRoute,
-		domain,
-		email,
-		mailbox,
-		selectedSite,
-		translate,
-	} );
+
+	const getMenuItems = () => {
+		if ( hasTitanMailWithUs( domain ) ) {
+			return getTitanMenuItems( { email, translate } );
+		}
+
+		if ( hasGSuiteWithUs( domain ) ) {
+			return getGSuiteMenuItems( { account, email, mailbox, translate } );
+		}
+
+		if ( hasEmailForwards( domain ) ) {
+			return getEmailForwardMenuItems( {
+				currentRoute,
+				dispatch,
+				domain,
+				mailbox,
+				selectedSite,
+				translate,
+			} );
+		}
+
+		return null;
+	};
+
+	const menuItems = getMenuItems();
 
 	if ( ! menuItems ) {
 		return null;
@@ -203,12 +230,22 @@ const EmailMailboxActionMenu = ( { account, domain, mailbox, selectedSite } ) =>
 	return (
 		<EllipsisMenu position="bottom" className="email-mailbox-action-menu__main">
 			{ menuItems.map(
-				( { href, image, imageAltText, isInternalLink = false, materialIcon, title } ) => (
+				( {
+					href,
+					image,
+					imageAltText,
+					isInternalLink = false,
+					key,
+					materialIcon,
+					onClick,
+					title,
+				} ) => (
 					<PopoverMenuItem
-						key={ href }
+						key={ href || key }
 						className="email-mailbox-action-menu__menu-item"
 						isExternalLink={ ! isInternalLink }
 						href={ href }
+						onClick={ onClick }
 					>
 						{ image && <img src={ image } alt={ imageAltText } /> }
 						{ materialIcon && <MaterialIcon icon={ materialIcon } /> }
