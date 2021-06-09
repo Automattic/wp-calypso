@@ -10,7 +10,6 @@ import config from 'config';
 import LoginFlow from '../../lib/flows/login-flow.js';
 
 import AcceptInvitePage from '../../lib/pages/accept-invite-page.js';
-import PostsPage from '../../lib/pages/posts-page.js';
 import PeoplePage from '../../lib/pages/people-page.js';
 import RevokePage from '../../lib/pages/revoke-page.js';
 import InvitePeoplePage from '../../lib/pages/invite-people-page.js';
@@ -92,8 +91,6 @@ describe( `[${ host }] Invites - New user as Editor: (${ screenSize }) @parallel
 	} );
 
 	it( 'User has been added as Editor', async function () {
-		await PostsPage.Expect( this.driver );
-
 		inviteAccepted = true;
 		const noticesComponent = await NoticesComponent.Expect( this.driver );
 		const invitesMessageTitleDisplayed = await noticesComponent.getNoticeContent();
