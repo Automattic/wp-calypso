@@ -50,7 +50,9 @@ const TaxonomyCard = ( {
 			<h2 className={ classes }>{ labels.name }</h2>
 			{ ! isLoading && (
 				<div className="taxonomies__card-content">
-					<Gridicon icon="tag" size={ 18 } /> { count } { labels.name }
+					<Gridicon icon="tag" size={ 18 } />
+					&nbsp;
+					{ count } { count === 1 ? labels.singular_name : labels.name }
 					{ defaultTerm && (
 						<span>
 							, { translate( 'default category:' ) } { decodeEntities( defaultTerm.name ) }
