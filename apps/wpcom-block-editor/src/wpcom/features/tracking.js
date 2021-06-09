@@ -423,15 +423,25 @@ const trackSiteEditorBrowsingSidebarOpen = () => {
 };
 
 const trackSiteEditorCreateTemplate = ( { slug } ) => {
-	tracksRecordEvent( 'calypso_editor_sidebar_item_add', { item_type: 'template', slug } );
+	tracksRecordEvent( 'calypso_editor_sidebar_item_add', {
+		item_type: 'template',
+		item_slug: slug,
+	} );
 };
 
 const trackSiteEditorChangeTemplate = ( id, slug ) => {
-	tracksRecordEvent( 'calypso_editor_sidebar_item_edit', { item_type: 'template', id, slug } );
+	tracksRecordEvent( 'calypso_editor_sidebar_item_edit', {
+		item_type: 'template',
+		item_id: id,
+		item_slug: slug,
+	} );
 };
 
 const trackSiteEditorChangeTemplatePart = ( id ) => {
-	tracksRecordEvent( 'calypso_editor_sidebar_item_edit', { item_type: 'template_part', id } );
+	tracksRecordEvent( 'calypso_editor_sidebar_item_edit', {
+		item_type: 'template_part',
+		item_id: id,
+	} );
 };
 
 /**
