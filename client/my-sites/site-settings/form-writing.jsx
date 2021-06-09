@@ -98,26 +98,25 @@ class SiteSettingsFormWriting extends Component {
 					updateFields={ updateFields }
 				/>
 
-				{ siteIsJetpack &&
-					! siteIsAutomatedTransfer(
-						<div>
-							<SettingsSectionHeader
-								disabled={ isRequestingSettings || isSavingSettings }
-								isSaving={ isSavingSettings }
-								onButtonClick={ handleSubmitForm }
-								showButton
-								title={ translate( 'Media' ) }
-							/>
-							<MediaSettingsWriting
-								siteId={ siteId }
-								handleAutosavingToggle={ handleAutosavingToggle }
-								onChangeField={ onChangeField }
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-								fields={ fields }
-							/>
-						</div>
-					) }
+				{ siteIsJetpack && ! siteIsAutomatedTransfer && (
+					<div>
+						<SettingsSectionHeader
+							disabled={ isRequestingSettings || isSavingSettings }
+							isSaving={ isSavingSettings }
+							onButtonClick={ handleSubmitForm }
+							showButton
+							title={ translate( 'Media' ) }
+						/>
+						<MediaSettingsWriting
+							siteId={ siteId }
+							handleAutosavingToggle={ handleAutosavingToggle }
+							onChangeField={ onChangeField }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+						/>
+					</div>
+				) }
 
 				<SettingsSectionHeader
 					disabled={ isRequestingSettings || isSavingSettings }
