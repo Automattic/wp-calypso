@@ -12,9 +12,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import {
 	checkout,
-	getYearlySlugFromMonthly,
 	manageSitePurchase,
 } from 'calypso/my-sites/plans/jetpack-plans/utils';
+import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/slugs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
