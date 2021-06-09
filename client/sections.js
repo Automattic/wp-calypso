@@ -25,12 +25,6 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'me',
-		paths: [ '/me' ],
-		module: 'calypso/me',
-		group: 'me',
-	},
-	{
 		name: 'account',
 		paths: [ '/me/account' ],
 		module: 'calypso/me/account',
@@ -43,15 +37,21 @@ const sections = [
 		group: 'me',
 	},
 	{
-		name: 'activity',
-		paths: [ '/activity-log' ],
-		module: 'calypso/my-sites/activity',
-		group: 'sites',
+		name: 'concierge',
+		paths: [ '/me/concierge' ],
+		module: 'calypso/me/concierge',
+		group: 'me',
 	},
 	{
-		name: 'security',
-		paths: [ '/me/security' ],
-		module: 'calypso/me/security',
+		name: 'happychat',
+		paths: [ '/me/chat' ],
+		module: 'calypso/me/happychat',
+		group: 'me',
+	},
+	{
+		name: 'notification-settings',
+		paths: [ '/me/notifications' ],
+		module: 'calypso/me/notification-settings',
 		group: 'me',
 	},
 	{
@@ -67,15 +67,9 @@ const sections = [
 		group: 'me',
 	},
 	{
-		name: 'site-purchases',
-		paths: [ '/purchases' ],
-		module: 'calypso/my-sites/purchases',
-		group: 'sites',
-	},
-	{
-		name: 'notification-settings',
-		paths: [ '/me/notifications' ],
-		module: 'calypso/me/notification-settings',
+		name: 'security',
+		paths: [ '/me/security' ],
+		module: 'calypso/me/security',
 		group: 'me',
 	},
 	{
@@ -85,10 +79,22 @@ const sections = [
 		group: 'me',
 	},
 	{
-		name: 'concierge',
-		paths: [ '/me/concierge' ],
-		module: 'calypso/me/concierge',
+		name: 'me',
+		paths: [ '/me' ],
+		module: 'calypso/me',
 		group: 'me',
+	},
+	{
+		name: 'activity',
+		paths: [ '/activity-log' ],
+		module: 'calypso/my-sites/activity',
+		group: 'sites',
+	},
+	{
+		name: 'site-purchases',
+		paths: [ '/purchases' ],
+		module: 'calypso/my-sites/purchases',
+		group: 'sites',
 	},
 	{
 		name: 'media',
@@ -365,12 +371,6 @@ const sections = [
 		paths: [ '/types' ],
 		module: 'calypso/my-sites/types',
 		group: 'sites',
-	},
-	{
-		name: 'happychat',
-		paths: [ '/me/chat' ],
-		module: 'calypso/me/happychat',
-		group: 'me',
 	},
 	{
 		name: 'comments',
