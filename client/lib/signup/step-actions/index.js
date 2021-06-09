@@ -817,7 +817,7 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 		flowName,
 	} = nextProps;
 
-	const flowSteps = flows.getFlow( flowName ).steps;
+	const flowSteps = flows.getFlow( flowName, nextProps.isLoggedIn ).steps;
 	let fulfilledDependencies = [];
 
 	if ( vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
