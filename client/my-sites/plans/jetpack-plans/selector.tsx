@@ -10,10 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useExperiment } from 'calypso/lib/explat';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import {
-	checkout,
-	manageSitePurchase,
-} from 'calypso/my-sites/plans/jetpack-plans/utils';
+import { checkout } from 'calypso/my-sites/plans/jetpack-plans/utils';
 import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/slugs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
@@ -25,6 +22,7 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import getViewTrackerPath from './get-view-tracker-path';
 import ProductGrid from './product-grid';
+import manageSitePurchase from './manage-site-purchase';
 
 /**
  * Type dependencies
