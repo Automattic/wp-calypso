@@ -123,35 +123,6 @@ UndocumentedSite.prototype.shortcodes = function ( attributes, callback ) {
 	return this.wpcom.req.get( '/sites/' + this._id + '/shortcodes/render', attributes, callback );
 };
 
-UndocumentedSite.prototype.removeViewer = function ( viewerId, callback ) {
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + this._id + '/viewers/' + viewerId + '/delete',
-		},
-		callback
-	);
-};
-
-UndocumentedSite.prototype.deleteUser = function ( userId, attributes, callback ) {
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + this._id + '/users/' + userId + '/delete',
-			body: attributes,
-		},
-		callback
-	);
-};
-
-UndocumentedSite.prototype.updateUser = function ( userId, attributes, callback ) {
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + this._id + '/users/' + userId,
-			body: attributes,
-		},
-		callback
-	);
-};
-
 UndocumentedSite.prototype.getUser = function ( login, callback ) {
 	return this.wpcom.req.get( '/sites/' + this._id + '/users/login:' + login, callback );
 };
