@@ -417,6 +417,7 @@ class ActivityCard extends Component {
 						<div className="activity-card__time-text">{ backupTimeDisplay }</div>
 					</div>
 				) }
+				{ ! summarize && this.renderShareButton() }
 				<Card>
 					<ActivityActor
 						actorAvatarUrl={ activity.actorAvatarUrl }
@@ -432,7 +433,7 @@ class ActivityCard extends Component {
 
 					{ ! summarize && this.renderTopToolbar() }
 
-					{ showActivityContent ? this.renderActivityContent() : this.renderShareButton() }
+					{ showActivityContent && this.renderActivityContent() }
 				</Card>
 			</div>
 		);
