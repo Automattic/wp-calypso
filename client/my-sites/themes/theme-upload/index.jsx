@@ -3,7 +3,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { includes, find, isEmpty, flowRight } from 'lodash';
 import page from 'page';
@@ -15,6 +15,7 @@ import Main from 'calypso/components/main';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import FeatureExample from 'calypso/components/feature-example';
 import { Card, ProgressBar, Button } from '@automattic/components';
 import UploadDropZone from 'calypso/blocks/upload-drop-zone';
 import EmptyContent from 'calypso/components/empty-content';
@@ -49,20 +50,29 @@ import {
 	isInstallInProgress,
 } from 'calypso/state/themes/upload-theme/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteOnAtomicPlan from 'calypso/state/selectors/is-site-on-atomic-plan';
 import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from '@automattic/calypso-products';
+
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
+	getAutomatedTransferStatus,
+	isAutomatedTransferActive,
 } from 'calypso/state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import {
+	PLAN_BUSINESS,
+	FEATURE_UPLOAD_THEMES,
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+} from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -202,6 +212,21 @@ class Upload extends React.Component {
 		tryandcustomize.action( this.props.themeId );
 	};
 
+	renderUpgradeBanner() {
+		const { siteId, translate } = this.props;
+
+		return (
+			<UpsellNudge
+				title={ translate( 'Upgrade to the Business plan to access the theme install features' ) }
+				event="calypso_theme_install_upgrade_click"
+				href={ `/checkout/${ siteId }/business` }
+				plan={ PLAN_BUSINESS }
+				feature={ FEATURE_UPLOAD_THEMES }
+				showIcon={ true }
+			/>
+		);
+	}
+
 	renderTheme() {
 		const { uploadedTheme: theme, translate, options } = this.props;
 		const { tryandcustomize, activate } = options;
@@ -226,22 +251,36 @@ class Upload extends React.Component {
 	}
 
 	renderUploadCard() {
-		const { inProgress, failed, uploadedTheme, complete, isJetpack, isBusiness } = this.props;
+		const {
+			complete,
+			failed,
+			inProgress,
+			isOnAtomicPlan,
+			isJetpack,
+			isAutomatedTransfer,
+			isTransferring,
+			selectedSite,
+			uploadedTheme,
+		} = this.props;
 
-		const uploadAction = isJetpack ? this.props.uploadTheme : this.props.initiateThemeTransfer;
-		const disabled = ! isBusiness && ! isJetpack;
+		const { showEligibility } = this.state;
+
+		const uploadAction = isJetpack ? this.props.uploadTheme : this.props.initiateThemeTransfer; // TODO: show eligibility modal
+		const isDisabled = showEligibility || ( ! isOnAtomicPlan && ! isJetpack );
+
+		const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
 
 		return (
-			<Card>
-				{ ! inProgress && ! complete && (
-					<UploadDropZone doUpload={ uploadAction } disabled={ disabled } />
-				) }
-				{ inProgress && this.renderProgressBar() }
-				{ complete && ! failed && uploadedTheme && this.renderTheme() }
-				{ complete && this.props.isSiteAutomatedTransfer && (
-					<WpAdminAutoLogin site={ this.props.selectedSite } />
-				) }
-			</Card>
+			<WrapperComponent>
+				<Card>
+					{ ! inProgress && ! complete && (
+						<UploadDropZone doUpload={ uploadAction } disabled={ isDisabled } />
+					) }
+					{ inProgress && this.renderProgressBar() }
+					{ complete && ! failed && uploadedTheme && this.renderTheme() }
+					{ complete && isAutomatedTransfer && <WpAdminAutoLogin site={ selectedSite } /> }
+				</Card>
+			</WrapperComponent>
 		);
 	}
 
@@ -258,7 +297,16 @@ class Upload extends React.Component {
 	}
 
 	render() {
-		const { backPath, complete, isMultisite, siteId, themeId, translate } = this.props;
+		const {
+			backPath,
+			complete,
+			isJetpack,
+			isMultisite,
+			isOnAtomicPlan,
+			siteId,
+			themeId,
+			translate,
+		} = this.props;
 
 		const { showEligibility } = this.state;
 
@@ -267,7 +315,7 @@ class Upload extends React.Component {
 		}
 
 		return (
-			<Main wideLayout>
+			<Main className="theme-upload" wideLayout>
 				<PageViewTracker path="/themes/upload/:site" title="Themes > Install" />
 				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
@@ -296,10 +344,13 @@ class Upload extends React.Component {
 				/>
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
 
+				{ ! isOnAtomicPlan && ! isJetpack && this.renderUpgradeBanner() }
+
 				{ showEligibility && (
 					<EligibilityWarnings backUrl={ backPath } onProceed={ this.onProceedClick } />
 				) }
-				{ ! showEligibility && this.renderUploadCard() }
+
+				{ this.renderUploadCard() }
 			</Main>
 		);
 	}
@@ -326,6 +377,10 @@ const mapStateToProps = ( state ) => {
 	);
 	const canUploadThemesOrPlugins = siteCanUploadThemesOrPlugins( state, siteId );
 	const isAtomic = isSiteWpcomAtomic( state, siteId );
+	const isOnAtomicPlan = isSiteOnAtomicPlan( state, siteId );
+	const showEligibility =
+		( isAtomic || ( isOnAtomicPlan && ! isJetpack ) ) &&
+		( hasEligibilityMessages || ! isEligible || ! canUploadThemesOrPlugins );
 
 	return {
 		siteId,
@@ -344,12 +399,13 @@ const mapStateToProps = ( state ) => {
 		progressLoaded: getUploadProgressLoaded( state, siteId ),
 		installing: isInstallInProgress( state, siteId ),
 		backPath: getBackPath( state ),
-		showEligibility:
-			( isAtomic || ! isJetpack ) &&
-			( hasEligibilityMessages || ! isEligible || ! canUploadThemesOrPlugins ),
-		isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+		showEligibility,
+		isAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		canUploadThemesOrPlugins,
+		isOnAtomicPlan,
+		transferState: getAutomatedTransferStatus( state, siteId ),
+		isTransferring: isAutomatedTransferActive( state, siteId ),
 	};
 };
 
