@@ -12,7 +12,9 @@ import page from 'page';
  * Internal dependencies
  */
 import Main from 'calypso/components/main';
+import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { Card, ProgressBar, Button } from '@automattic/components';
 import UploadDropZone from 'calypso/blocks/upload-drop-zone';
 import EmptyContent from 'calypso/components/empty-content';
@@ -154,8 +156,7 @@ class Upload extends React.Component {
 			incompatible: translate( 'Install problem: Incompatible theme.' ),
 			unsupported_mime_type: translate( 'Install problem: Not a valid zip file' ),
 			initiate_failure: translate(
-				'Install problem: Theme may not be valid. Check that your zip file contains only the theme ' +
-					'you are trying to install.'
+				'Install problem: Theme may not be valid. Check that your zip file contains only the theme you are trying to install.'
 			),
 		};
 
@@ -266,14 +267,35 @@ class Upload extends React.Component {
 		}
 
 		return (
-			<Main>
+			<Main wideLayout>
 				<PageViewTracker path="/themes/upload/:site" title="Themes > Install" />
 				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal source="upload" />
 				<AutoLoadingHomepageModal source="upload" />
+
+				<FormattedHeader
+					brandFont
+					headerText={ translate( 'Themes' ) }
+					subHeaderText={ translate(
+						'If you have a theme in .zip format, you may install or update it by uploading it here. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink
+										supportLink="https://wordpress.com/support/themes/uploading-setting-up-custom-themes/"
+										supportPostId={ 134784 }
+										showIcon={ false }
+									/>
+								),
+							},
+						}
+					) }
+					align="left"
+				/>
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
+
 				{ showEligibility && (
 					<EligibilityWarnings backUrl={ backPath } onProceed={ this.onProceedClick } />
 				) }
