@@ -332,7 +332,11 @@ class ActivityCard extends Component {
 							onChange={ this.handleShareEmailChange }
 							isError={ this.state.showShareEmailError }
 						/>
-						<Button className="activity-card__share-submit" onClick={ this.handleShare }>
+						<Button
+							className="activity-card__share-submit"
+							disabled={ ! this.state.shareEmail }
+							onClick={ this.handleShare }
+						>
 							{ translate( 'Share' ) }
 						</Button>
 					</div>
