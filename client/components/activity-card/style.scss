@@ -27,7 +27,7 @@
 	.activity-card__actor-info,
 	.activity-card__actor-role,
 	.activity-card__activity-title {
-		font-size: 0.8rem;
+		font-size: 0.75rem;
 		color: rgb( 100, 105, 112 );
 	}
 
@@ -140,7 +140,7 @@
 	padding-top: 0.8rem;
 	display: flex;
 	justify-content: left;
-	font-size: 0.9rem;
+	font-size: 0.875rem;
 }
 
 .activity-card__download-button.is-borderless {
@@ -151,7 +151,7 @@
 	padding-top: 0.8rem;
 	display: flex;
 	justify-content: left;
-	font-size: 0.9rem;
+	font-size: 0.875rem;
 }
 
 .activity-card__download-icon {
@@ -224,4 +224,56 @@
 			margin-left: 16px;
 		}
 	}
+}
+
+.activity-card__share-button svg {
+	margin-right: 5px;
+}
+
+.activity-card__share-button-wrap {
+	text-align: right;
+}
+
+.activity-card__share-button.button.is-borderless.is-primary {
+	color: var( --studio-gray );
+	font-size: 0.875rem;
+}
+
+.activity-card__share-heading {
+	font-size: 1rem;
+	font-weight: 600;
+	text-align: left;
+	margin-bottom: 0.25rem;
+}
+
+.activity-card__share-description {
+	font-size: 0.875rem;
+	margin-bottom: 0.75rem;
+	text-align: left;
+}
+
+.activity-card__share-popover {
+	width: 320px;
+}
+
+.activity-card__share-popover .popover__inner {
+	padding: 1rem;
+}
+
+.activity-card__share-form {
+	display: flex;
+}
+
+input[type=text].form-text-input.activity-card__share-email {
+	margin-right: 1rem;
+}
+
+.activity-card__share-submit {
+	width: 32%;
+}
+
+.activity-card__share-error {
+	color: var( --color-error );
+	text-align: left;
+	margin-top: 0.25rem;
 }

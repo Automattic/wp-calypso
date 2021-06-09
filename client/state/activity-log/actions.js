@@ -12,6 +12,9 @@ import {
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
+	REWIND_ACTIVITY_SHARE_FAILURE,
+	REWIND_ACTIVITY_SHARE_REQUEST,
+	REWIND_ACTIVITY_SHARE_SUCCESS,
 	REWIND_CLONE,
 	REWIND_DEACTIVATE_FAILURE,
 	REWIND_DEACTIVATE_REQUEST,
@@ -39,6 +42,7 @@ import 'calypso/state/data-layer/wpcom/activity-log/deactivate';
 import 'calypso/state/data-layer/wpcom/activity-log/rewind/downloads';
 import 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status';
 import 'calypso/state/data-layer/wpcom/activity-log/rewind/to';
+import 'calypso/state/data-layer/wpcom/activity-log/share';
 import 'calypso/state/data-layer/wpcom/sites/rewind/downloads';
 import 'calypso/state/data-layer/wpcom/sites/rewind/restores';
 import 'calypso/state/activity-log/init';
@@ -68,6 +72,37 @@ export function rewindActivateSuccess( siteId ) {
 export function rewindActivateFailure( siteId ) {
 	return {
 		type: REWIND_ACTIVATE_FAILURE,
+		siteId,
+	};
+}
+
+/**
+ * Share a rewind/activity-log event via email.
+ *
+ * @param {string|number} siteId Site ID
+ * @param {number} activityId Activity ID
+ * @param {string} email Email address to send to
+ * @returns {object} action object
+ */
+export function rewindShareRequest( siteId, activityId, email ) {
+	return {
+		type: REWIND_ACTIVITY_SHARE_REQUEST,
+		siteId,
+		activityId,
+		email,
+	};
+}
+
+export function rewindShareSuccess( siteId ) {
+	return {
+		type: REWIND_ACTIVITY_SHARE_SUCCESS,
+		siteId,
+	};
+}
+
+export function rewindShareFailure( siteId ) {
+	return {
+		type: REWIND_ACTIVITY_SHARE_FAILURE,
 		siteId,
 	};
 }
