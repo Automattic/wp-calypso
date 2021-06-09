@@ -110,7 +110,7 @@ export const updatePlaceholderComment = (
 		{ type: COMMENTS_COUNT_INCREMENT, siteId, postId },
 	];
 
-	if ( !! refreshCommentListQuery ) {
+	if ( refreshCommentListQuery ) {
 		actions.push( requestCommentsList( refreshCommentListQuery ) );
 	}
 

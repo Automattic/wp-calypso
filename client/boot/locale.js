@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import config from '@automattic/calypso-config';
@@ -45,7 +40,10 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
 
 		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
-		const languageSlug = get( i18nLocaleStringsObject, [ '', 'localeSlug' ] );
+
+		// The empty string key [ '' ] where metadata about the translation file
+		// (e.g., the locale name, plurals definitions, etc.) are stored.
+		const languageSlug = i18nLocaleStringsObject?.[ '' ]?.localeSlug;
 		if ( languageSlug ) {
 			loadUserUndeployedTranslations( languageSlug );
 		}

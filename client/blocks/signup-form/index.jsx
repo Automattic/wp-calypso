@@ -30,7 +30,6 @@ import PropTypes from 'prop-types';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import wpcom from 'calypso/lib/wp';
-import config from '@automattic/calypso-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Button } from '@automattic/components';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
@@ -630,15 +629,11 @@ class SignupForm extends Component {
 
 	recordWooCommerceSignupTracks( method ) {
 		const { isJetpackWooCommerceFlow, oauth2Client, wccomFrom } = this.props;
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+		if ( isJetpackWooCommerceFlow ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
 				signup_method: method,
 			} );
-		} else if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			isWooOAuth2Client( oauth2Client ) &&
-			'cart' === wccomFrom
-		) {
+		} else if ( isWooOAuth2Client( oauth2Client ) && 'cart' === wccomFrom ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_payment_create_account', {
 				signup_method: method,
 			} );
@@ -930,12 +925,9 @@ class SignupForm extends Component {
 		}
 
 		if (
-			( config.isEnabled( 'jetpack/connect/woocommerce' ) &&
-				this.props.isJetpackWooCommerceFlow ) ||
+			this.props.isJetpackWooCommerceFlow ||
 			this.props.isJetpackWooDnaFlow ||
-			( config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-				isWooOAuth2Client( this.props.oauth2Client ) &&
-				this.props.wccomFrom )
+			( isWooOAuth2Client( this.props.oauth2Client ) && this.props.wccomFrom )
 		) {
 			return (
 				<div className={ classNames( 'signup-form__woocommerce', this.props.className ) }>

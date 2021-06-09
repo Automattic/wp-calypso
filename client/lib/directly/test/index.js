@@ -5,26 +5,27 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import sinon from 'sinon';
+import nock from 'nock';
 
-/**
- * Internal dependencies
- */
-import useNock from 'calypso/test-helpers/use-nock';
-
-let directly;
-let loadScript;
+jest.mock( '@automattic/load-script', () => ( { loadScript: jest.fn() } ) );
 
 describe( 'index', () => {
+	let initialize;
+	let askQuestion;
+	let loadScript;
+
 	// Helpers to simulate whether the remote Directly script loads or fails
-	const simulateSuccessfulScriptLoad = () => loadScript.loadScript.callsArg( 1 );
-	const simulateFailedScriptLoad = ( error ) => loadScript.loadScript.callsArgWith( 1, error );
+	const simulateSuccessfulScriptLoad = () => {
+		loadScript.mockImplementation( ( url, callback ) => callback() );
+	};
+	const simulateFailedScriptLoad = ( error ) => {
+		loadScript.mockImplementation( ( url, callback ) => callback( error ) );
+	};
 
 	beforeEach( () => {
-		loadScript = require( '@automattic/load-script' );
-		sinon.stub( loadScript, 'loadScript' );
-		directly = require( '..' );
+		// The previous test called `resetModules()`, so these needs to be loaded again
+		( { initialize, askQuestion } = require( '../' ) );
+		( { loadScript } = require( '@automattic/load-script' ) );
 
 		// Since most tests expect the script to load, make this the default
 		simulateSuccessfulScriptLoad();
@@ -42,7 +43,7 @@ describe( 'index', () => {
 	} );
 
 	describe( 'when the API says Directly is available', () => {
-		useNock( ( nock ) => {
+		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/help/directly/mine' )
@@ -51,51 +52,32 @@ describe( 'index', () => {
 				} );
 		} );
 
+		afterAll( () => {
+			nock.cleanAll();
+		} );
+
 		describe( '#initialize()', () => {
-			test( 'creates a window.DirectlyRTM function', () => {
-				return directly
-					.initialize()
-					.then( () => expect( typeof window.DirectlyRTM ).to.equal( 'function' ) );
+			test( 'creates a window.DirectlyRTM function', async () => {
+				await initialize();
+				expect( window.DirectlyRTM ).toBeInstanceOf( Function );
 			} );
 
-			test( 'attempts to load the remote script', () => {
-				return directly
-					.initialize()
-					.then( () => expect( loadScript.loadScript ).to.have.been.calledOnce );
+			test( 'attempts to load the remote script', async () => {
+				await initialize();
+				expect( loadScript ).toHaveBeenCalledTimes( 1 );
 			} );
 
-			test( 'does nothing after the first call', () => {
-				return new Promise( ( done ) => {
-					Promise.all( [ directly.initialize(), directly.initialize(), directly.initialize() ] )
-						.then( () => {
-							expect( window.DirectlyRTM.cq ).to.have.lengthOf( 1 );
-							expect( window.DirectlyRTM.cq[ 0 ][ 0 ] ).to.equal( 'config' );
-							expect( loadScript.loadScript ).to.have.been.calledOnce;
-						} )
-						.then( () => done() );
-				} );
+			test( 'does nothing after the first call', async () => {
+				await Promise.all( [ initialize(), initialize(), initialize() ] );
+				expect( window.DirectlyRTM.cq ).toHaveLength( 1 );
+				expect( window.DirectlyRTM.cq[ 0 ][ 0 ] ).toBe( 'config' );
+				expect( loadScript ).toHaveBeenCalledTimes( 1 );
 			} );
 
-			// eslint-disable-next-line jest/expect-expect
-			test( 'resolves the returned promise if the library load succeeds', () => {
-				return new Promise( ( done ) => {
-					directly.initialize().then( () => done() );
-				} );
-			} );
-
-			test( 'rejects the returned promise if the library load fails', () => {
-				return new Promise( ( done ) => {
-					const error = { src: 'http://url.to/directly/embed.js' };
-					simulateFailedScriptLoad( error );
-
-					directly
-						.initialize()
-						.catch( ( e ) => {
-							expect( e ).to.be.an.instanceof( Error );
-							expect( e.message ).to.contain( error.src );
-						} )
-						.then( () => done() );
-				} );
+			test( 'rejects the returned promise if the library load fails', async () => {
+				const error = { src: 'http://url.to/directly/embed.js' };
+				simulateFailedScriptLoad( error );
+				await expect( initialize() ).rejects.toThrow( error.src );
 			} );
 		} );
 
@@ -104,38 +86,26 @@ describe( 'index', () => {
 			const name = 'Richie Rich';
 			const email = 'richie@richenterprises.biz';
 
-			test( "initializes Directly if it hasn't already been initialized", () => {
-				return new Promise( ( done ) => {
-					directly
-						.askQuestion( questionText, name, email )
-						.then( () => {
-							expect( typeof window.DirectlyRTM ).to.equal( 'function' );
-							expect( loadScript.loadScript ).to.have.been.calledOnce;
-						} )
-						.then( () => done() );
-				} );
+			test( "initializes Directly if it hasn't already been initialized", async () => {
+				await askQuestion( questionText, name, email );
+				expect( window.DirectlyRTM ).toBeInstanceOf( Function );
+				expect( loadScript ).toHaveBeenCalledTimes( 1 );
 			} );
 
-			test( 'invokes the Directly API with the given paramaters', () => {
-				return new Promise( ( done ) => {
-					window.DirectlyRTM = sinon.spy();
-					directly
-						.askQuestion( questionText, name, email )
-						.then( () =>
-							expect( window.DirectlyRTM ).to.have.been.calledWith( 'askQuestion', {
-								questionText,
-								name,
-								email,
-							} )
-						)
-						.then( () => done() );
+			test( 'invokes the Directly API with the given paramaters', async () => {
+				window.DirectlyRTM = jest.fn();
+				await askQuestion( questionText, name, email );
+				expect( window.DirectlyRTM ).toHaveBeenCalledWith( 'askQuestion', {
+					questionText,
+					name,
+					email,
 				} );
 			} );
 		} );
 	} );
 
 	describe( 'when the public API says Directly is not available', () => {
-		useNock( ( nock ) => {
+		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/help/directly/mine' )
@@ -144,30 +114,20 @@ describe( 'index', () => {
 				} );
 		} );
 
+		afterAll( () => {
+			nock.cleanAll();
+		} );
+
 		describe( '#initialize()', () => {
-			test( 'rejects intialization with an error', () => {
-				return new Promise( ( done ) => {
-					directly
-						.initialize()
-						.catch( ( e ) => {
-							expect( e ).to.be.an.instanceof( Error );
-							expect( e.message ).to.equal(
-								'Directly Real-Time Messaging is not available at this time.'
-							);
-						} )
-						.then( () => done() );
-				} );
+			test( 'rejects intialization with an error', async () => {
+				await expect( initialize() ).rejects.toThrow(
+					'Directly Real-Time Messaging is not available at this time.'
+				);
 			} );
 
-			test( 'does not attempt to load the remote script', () => {
-				return new Promise( ( done ) => {
-					directly
-						.initialize()
-						.catch( () => {
-							expect( loadScript.loadScript ).not.to.have.been.called;
-						} )
-						.then( () => done() );
-				} );
+			test( 'does not attempt to load the remote script', async () => {
+				await expect( initialize() ).rejects.toThrow();
+				expect( loadScript ).not.toHaveBeenCalled();
 			} );
 		} );
 	} );

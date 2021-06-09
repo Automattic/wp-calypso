@@ -40,7 +40,7 @@ import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
 import { login } from 'calypso/lib/paths';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
-import getSiteId from 'calypso/state/selectors/get-site-id';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -99,7 +99,8 @@ export const removeP2SignupClassName = function () {
 
 export default {
 	redirectTests( context, next ) {
-		const currentFlowName = getFlowName( context.params );
+		const isLoggedIn = isUserLoggedIn( context.store.getState() );
+		const currentFlowName = getFlowName( context.params, isLoggedIn );
 		currentFlowName === 'onboarding' && loadExperimentAssignment( 'refined_reskin_v2' );
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
 			next();
@@ -139,7 +140,7 @@ export default {
 			// Planned to be rerun see pbxNRc-xd-p2#comment-1949
 			// Commented out for eslint, to rerun next() has to be placed below this.
 			// const localeFromParams = context.params.lang;
-			// const flowName = getFlowName( context.params );
+			// const flowName = getFlowName( context.params, isLoggedIn );
 			// if (
 			// 	flowName === 'free' &&
 			//  	// Checking for treatment variation previously happened here:
@@ -181,7 +182,7 @@ export default {
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		if ( userLoggedIn && context.params.lang ) {
-			const flowName = getFlowName( context.params );
+			const flowName = getFlowName( context.params, userLoggedIn );
 			const stepName = getStepName( context.params );
 			const stepSectionName = getStepSectionName( context.params );
 			let urlWithoutLocale = getStepUrl( flowName, stepName, stepSectionName );
@@ -214,10 +215,10 @@ export default {
 	},
 
 	redirectToFlow( context, next ) {
-		const flowName = getFlowName( context.params );
-		const localeFromParams = context.params.lang;
-		const localeFromStore = store.get( 'signup-locale' );
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
+		const flowName = getFlowName( context.params, userLoggedIn );
+		const localeFromParams = context.params.lang;
+		const localeFromStore = ! userLoggedIn ? store.get( 'signup-locale' ) : '';
 		const signupProgress = getSignupProgress( context.store.getState() );
 
 		// Special case for the user step which may use oauth2 redirect flow
@@ -228,7 +229,7 @@ export default {
 			if (
 				alternativeFlowName &&
 				alternativeFlowName !== flowName &&
-				canResumeFlow( alternativeFlowName, signupProgress )
+				canResumeFlow( alternativeFlowName, signupProgress, userLoggedIn )
 			) {
 				window.location =
 					getStepUrl(
@@ -254,7 +255,7 @@ export default {
 
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
-		if ( ! userLoggedIn && shouldForceLogin( flowName ) ) {
+		if ( ! userLoggedIn && shouldForceLogin( flowName, userLoggedIn ) ) {
 			return page.redirect( login( { redirectTo: context.path } ) );
 		}
 
@@ -263,7 +264,7 @@ export default {
 			! userLoggedIn &&
 			! localeFromParams &&
 			localeFromStore &&
-			canResumeFlow( flowName, signupProgress )
+			canResumeFlow( flowName, signupProgress, userLoggedIn )
 		) {
 			window.location =
 				getStepUrl(
@@ -277,9 +278,10 @@ export default {
 			return;
 		}
 
-		if ( context.pathname !== getValidPath( context.params ) ) {
+		if ( context.pathname !== getValidPath( context.params, userLoggedIn ) ) {
 			return page.redirect(
-				getValidPath( context.params ) + ( context.querystring ? '?' + context.querystring : '' )
+				getValidPath( context.params, userLoggedIn ) +
+					( context.querystring ? '?' + context.querystring : '' )
 			);
 		}
 
@@ -289,8 +291,9 @@ export default {
 	},
 
 	async start( context, next ) {
+		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		const basePath = sectionify( context.path );
-		const flowName = getFlowName( context.params );
+		const flowName = getFlowName( context.params, userLoggedIn );
 		const stepName = getStepName( context.params );
 		const stepSectionName = getStepSectionName( context.params );
 
@@ -334,7 +337,7 @@ export default {
 			stepName,
 			stepSectionName,
 			stepComponent,
-			pageTitle: getFlowPageTitle( actualFlowName ),
+			pageTitle: getFlowPageTitle( actualFlowName, userLoggedIn ),
 		} );
 
 		next();
@@ -354,19 +357,24 @@ export default {
 			next();
 		} else {
 			// Fetch the site by siteSlug and then try to select again
-			dispatch( requestSite( siteSlug ) ).then( () => {
-				let freshSiteId = getSiteId( getState(), siteSlug );
+			dispatch( requestSite( siteSlug ) )
+				.catch( () => null )
+				.then( () => {
+					let freshSiteId = getSiteId( getState(), siteSlug );
 
-				if ( ! freshSiteId ) {
-					const wpcomStagingFragment = siteSlug.replace( /\.wordpress\.com$/, '.wpcomstaging.com' );
-					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
-				}
+					if ( ! freshSiteId ) {
+						const wpcomStagingFragment = siteSlug.replace(
+							/\.wordpress\.com$/,
+							'.wpcomstaging.com'
+						);
+						freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+					}
 
-				if ( freshSiteId ) {
-					dispatch( setSelectedSiteId( freshSiteId ) );
-					next();
-				}
-			} );
+					if ( freshSiteId ) {
+						dispatch( setSelectedSiteId( freshSiteId ) );
+						next();
+					}
+				} );
 			next();
 		}
 	},

@@ -65,7 +65,10 @@ const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 	// If it is then the block was inserted using this menu. This inserter closes
 	// automatically when the user tries to use another form of block insertion
 	// (at least at the time of writing), which is why we can rely on this method.
-	if ( select( 'core/edit-post' ).isInserterOpened() ) {
+	if (
+		select( 'core/edit-post' )?.isInserterOpened() ||
+		select( 'core/edit-site' )?.isInserterOpened()
+	) {
 		return 'header-inserter';
 	}
 
@@ -324,7 +327,13 @@ const REDUX_TRACKING = {
 		updateOptions: trackGlobalStyles( 'wpcom_global_styles_update' ),
 		publishOptions: trackGlobalStyles( 'wpcom_global_styles_publish' ),
 	},
+	// Post Editor is using the undo/redo from the 'core/editor' store
 	'core/editor': {
+		undo: 'wpcom_block_editor_undo_performed',
+		redo: 'wpcom_block_editor_redo_performed',
+	},
+	// Site Editor is using the undo/redo from the 'core' store
+	core: {
 		undo: 'wpcom_block_editor_undo_performed',
 		redo: 'wpcom_block_editor_redo_performed',
 	},

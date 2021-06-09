@@ -18,6 +18,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getFilteredSteps } from '../utils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -48,15 +49,17 @@ export class NavigationLink extends Component {
 	getPreviousStep( flowName, signupProgress, currentStepName ) {
 		const previousStep = { stepName: null };
 
-		if ( isFirstStepInFlow( flowName, currentStepName ) ) {
+		if ( isFirstStepInFlow( flowName, currentStepName, this.props.userLoggedIn ) ) {
 			return previousStep;
 		}
 
 		//Progressed steps will be filtered and sorted in relation to the steps definition of the current flow
 		//Skipped steps are also filtered out
-		const filteredProgressedSteps = getFilteredSteps( flowName, signupProgress ).filter(
-			( step ) => ! step.wasSkipped
-		);
+		const filteredProgressedSteps = getFilteredSteps(
+			flowName,
+			signupProgress,
+			this.props.userLoggedIn
+		).filter( ( step ) => ! step.wasSkipped );
 		if ( filteredProgressedSteps.length === 0 ) {
 			return previousStep;
 		}
@@ -83,7 +86,7 @@ export class NavigationLink extends Component {
 			return this.props.backUrl;
 		}
 
-		const { flowName, signupProgress, stepName } = this.props;
+		const { flowName, signupProgress, stepName, userLoggedIn } = this.props;
 		const previousStep = this.getPreviousStep( flowName, signupProgress, stepName );
 
 		const stepSectionName = get(
@@ -92,11 +95,13 @@ export class NavigationLink extends Component {
 			''
 		);
 
+		const locale = ! userLoggedIn ? getLocaleSlug() : '';
+
 		return getStepUrl(
 			previousStep.lastKnownFlow || this.props.flowName,
 			previousStep.stepName,
 			stepSectionName,
-			getLocaleSlug()
+			locale
 		);
 	}
 
@@ -182,6 +187,7 @@ export class NavigationLink extends Component {
 
 export default connect(
 	( state ) => ( {
+		userLoggedIn: isUserLoggedIn( state ),
 		signupProgress: getSignupProgress( state ),
 	} ),
 	{ recordTracksEvent, submitSignupStep }

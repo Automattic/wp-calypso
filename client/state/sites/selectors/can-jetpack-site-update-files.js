@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getSiteOption from './get-site-option';
@@ -40,7 +35,7 @@ export default function canJetpackSiteUpdateFiles( state, siteId ) {
 	}
 
 	return (
-		! includes( fileModDisabled, 'disallow_file_mods' ) &&
-		! includes( fileModDisabled, 'has_no_file_system_write_access' )
+		! fileModDisabled.includes( 'disallow_file_mods' ) &&
+		! fileModDisabled.includes( 'has_no_file_system_write_access' )
 	);
 }

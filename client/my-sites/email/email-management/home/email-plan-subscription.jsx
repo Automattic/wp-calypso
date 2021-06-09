@@ -28,11 +28,7 @@ class EmailPlanSubscription extends React.Component {
 	}
 
 	renderRenewButton() {
-		const { domain, purchase, selectedSite, isLoadingPurchase, translate } = this.props;
-
-		if ( ! domain.currentUserCanManage ) {
-			return null;
-		}
+		const { purchase, selectedSite, isLoadingPurchase, translate } = this.props;
 
 		if ( ! purchase && ! isLoadingPurchase ) {
 			return null;

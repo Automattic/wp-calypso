@@ -10,7 +10,12 @@ import classNames from 'classnames';
  */
 import './style.scss';
 
-function FormSettingExplanation( { className, noValidate, isIndented, ...rest } ) {
+function FormSettingExplanation( {
+	className = undefined,
+	noValidate = false,
+	isIndented = false,
+	...rest
+} ) {
 	const classes = classNames( 'form-setting-explanation', className, {
 		'no-validate': noValidate,
 		'is-indented': isIndented,

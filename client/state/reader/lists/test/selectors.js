@@ -338,7 +338,19 @@ describe( 'selectors', () => {
 				{
 					reader: {
 						lists: {
-							missingLists: [],
+							items: {
+								123: {
+									ID: 123,
+									owner: 'lister',
+									slug: 'bananas',
+								},
+								456: {
+									ID: 456,
+									owner: 'lister',
+									slug: 'ants',
+								},
+							},
+							isRequestingLists: false,
 						},
 					},
 				},
@@ -349,17 +361,57 @@ describe( 'selectors', () => {
 			expect( isMissing ).toEqual( false );
 		} );
 
+		test( 'should return false if lists are still being requested', () => {
+			const isMissing = isMissingByOwnerAndSlug(
+				{
+					reader: {
+						lists: {
+							items: {
+								123: {
+									ID: 123,
+									owner: 'lister',
+									slug: 'bananas',
+								},
+								456: {
+									ID: 456,
+									owner: 'lister',
+									slug: 'ants',
+								},
+							},
+							isRequestingLists: true,
+						},
+					},
+				},
+				'lister',
+				'kittens'
+			);
+
+			expect( isMissing ).toEqual( false );
+		} );
+
 		test( 'should return true if the owner and slug match a missing list', () => {
 			const isMissing = isMissingByOwnerAndSlug(
 				{
 					reader: {
 						lists: {
-							missingLists: [ { owner: 'lister', slug: 'bananas' } ],
+							items: {
+								123: {
+									ID: 123,
+									owner: 'lister',
+									slug: 'bananas',
+								},
+								456: {
+									ID: 456,
+									owner: 'lister',
+									slug: 'ants',
+								},
+							},
+							isRequestingLists: false,
 						},
 					},
 				},
 				'lister',
-				'bananas'
+				'kittens'
 			);
 
 			expect( isMissing ).toEqual( true );

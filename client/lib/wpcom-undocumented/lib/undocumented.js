@@ -10,7 +10,6 @@ import { stringify } from 'qs';
  */
 import Site from './site';
 import Me from './me';
-import MailingList from './mailing-list';
 import config from '@automattic/calypso-config';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
@@ -50,10 +49,6 @@ Undocumented.prototype.site = function ( id ) {
 
 Undocumented.prototype.me = function () {
 	return new Me( this.wpcom );
-};
-
-Undocumented.prototype.mailingList = function ( category ) {
-	return new MailingList( category, this.wpcom );
 };
 
 /*
@@ -1488,29 +1483,6 @@ Undocumented.prototype.supportAlternates = function ( query, fn ) {
 		'/support/alternates/' + query.site + '/posts/' + query.postId,
 		params,
 		fn
-	);
-};
-
-/**
- * Saves a user's A/B test variation on the backend
- *
- * @param {string} name - The name of the A/B test. No leading 'abtest_' needed
- * @param {string} variation - The variation the user is assigned to
- * @param {Function} callback - Function to invoke when request is complete
- * @returns {object} wpcomRequest
- */
-Undocumented.prototype.saveABTestData = function ( name, variation, callback ) {
-	const body = {
-		name,
-		variation,
-	};
-	debug( `POST /me/abtests with ${ JSON.stringify( body ) }` );
-	return this.wpcom.req.post(
-		{
-			path: '/me/abtests',
-			body,
-		},
-		callback
 	);
 };
 

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import canJetpackSiteUpdateFiles from './can-jetpack-site-update-files';
@@ -30,7 +25,7 @@ export default function canJetpackSiteAutoUpdateFiles( state, siteId ) {
 
 	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
 
-	if ( fileModDisabled && includes( fileModDisabled, 'automatic_updater_disabled' ) ) {
+	if ( fileModDisabled && fileModDisabled.includes( 'automatic_updater_disabled' ) ) {
 		return false;
 	}
 

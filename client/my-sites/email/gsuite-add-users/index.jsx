@@ -225,7 +225,7 @@ class GSuiteAddUsers extends React.Component {
 					} ) }
 
 				<SectionHeader
-					label={ translate( 'Add New Users', {
+					label={ translate( 'Add New Mailboxes', {
 						comment: 'This refers to Google Workspace user accounts',
 					} ) }
 				/>
@@ -286,11 +286,13 @@ class GSuiteAddUsers extends React.Component {
 				{ selectedSite && <QueryGSuiteUsers siteId={ selectedSite.ID } /> }
 
 				<Main wideLayout={ true }>
-					<DocumentHead title={ translate( 'Add New Users' ) } />
+					<DocumentHead title={ translate( 'Add New Mailboxes' ) } />
 
 					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
-					<HeaderCake onClick={ this.goToEmail }>{ translate( 'Add new users' ) }</HeaderCake>
+					<HeaderCake onClick={ this.goToEmail }>
+						{ googleMailServiceFamily + ': ' + selectedDomainName }
+					</HeaderCake>
 
 					<EmailVerificationGate
 						noticeText={ translate( 'You must verify your email to purchase %(productFamily)s.', {

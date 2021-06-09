@@ -23,10 +23,11 @@ import { withoutHttp } from 'calypso/lib/url';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { handleRenewNowClick } from 'calypso/lib/purchases';
 import {
-	resolveDomainStatus,
+	canCurrentUserAddEmail,
 	isDomainInGracePeriod,
 	isDomainUpdateable,
 	getDomainTypeText,
+	resolveDomainStatus,
 } from 'calypso/lib/domains';
 import InfoPopover from 'calypso/components/info-popover';
 import { emailManagement } from 'calypso/my-sites/email/paths';
@@ -42,6 +43,7 @@ import Spinner from 'calypso/components/spinner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
@@ -293,6 +295,7 @@ class DomainItem extends PureComponent {
 
 		if ( hasGSuiteWithUs( domainDetails ) ) {
 			const gSuiteMailboxCount = getGSuiteMailboxCount( domainDetails );
+
 			return translate( '%(gSuiteMailboxCount)d mailbox', '%(gSuiteMailboxCount)d mailboxes', {
 				count: gSuiteMailboxCount,
 				args: {
@@ -304,6 +307,7 @@ class DomainItem extends PureComponent {
 
 		if ( hasTitanMailWithUs( domainDetails ) ) {
 			const titanMailboxCount = getMaxTitanMailboxCount( domainDetails );
+
 			return translate( '%(titanMailboxCount)d mailbox', '%(titanMailboxCount)d mailboxes', {
 				args: {
 					titanMailboxCount,
@@ -313,14 +317,20 @@ class DomainItem extends PureComponent {
 			} );
 		}
 
-		if ( domainDetails?.emailForwardsCount > 0 ) {
+		if ( hasEmailForwards( domainDetails ) ) {
+			const emailForwardsCount = getEmailForwardsCount( domainDetails );
+
 			return translate( '%(emailForwardsCount)d forward', '%(emailForwardsCount)d forwards', {
-				count: domainDetails.emailForwardsCount,
+				count: emailForwardsCount,
 				args: {
-					emailForwardsCount: domainDetails.emailForwardsCount,
+					emailForwardsCount,
 				},
 				comment: 'The number of email forwards active for the current domain',
 			} );
+		}
+
+		if ( ! canCurrentUserAddEmail( domainDetails ) ) {
+			return this.renderMinus();
 		}
 
 		return (

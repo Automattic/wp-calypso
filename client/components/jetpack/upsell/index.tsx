@@ -44,8 +44,8 @@ const JetpackCloudUpsell: FunctionComponent< Props > = ( {
 	return (
 		<div className="upsell">
 			{ iconComponent }
-			<h2>{ headerText }</h2>
-			<p>{ bodyText }</p>
+			<h2 className="upsell__header-text">{ headerText }</h2>
+			<p className="upsell__body-text">{ bodyText }</p>
 			{ buttonLink && (
 				<Button
 					className="upsell__button"

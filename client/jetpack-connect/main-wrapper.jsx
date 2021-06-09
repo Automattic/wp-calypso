@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import Main from 'calypso/components/main';
@@ -36,6 +35,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	render() {
 		const {
 			isWide,
+			isWoo,
 			className,
 			children,
 			partnerSlug,
@@ -44,7 +44,6 @@ export class JetpackConnectMainWrapper extends PureComponent {
 			pageTitle,
 		} = this.props;
 
-		const isWoo = config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isWoo;
 		const isWooDna = wooDnaConfig && wooDnaConfig.isWooDnaFlow();
 
 		const wrapperClassName = classNames( 'jetpack-connect__main', {

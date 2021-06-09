@@ -12,21 +12,14 @@ import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_ECOMMERCE,
 	JETPACK_REDIRECT_URL,
-	redirectCloudCheckoutToWpAdmin,
+	redirectCheckoutToWpAdmin,
 } from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-
-let mockGSuiteCountryIsValid = true;
-jest.mock( 'calypso/lib/user', () =>
-	jest.fn( () => ( {
-		get: () => ( { is_valid_google_apps_country: mockGSuiteCountryIsValid } ),
-	} ) )
-);
 
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
 jest.mock( '@automattic/calypso-products', () => ( {
 	...jest.requireActual( '@automattic/calypso-products' ),
-	redirectCloudCheckoutToWpAdmin: jest.fn(),
+	redirectCheckoutToWpAdmin: jest.fn(),
 } ) );
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -48,7 +41,7 @@ const defaultArgs = {
 describe( 'getThankYouPageUrl', () => {
 	beforeEach( () => {
 		isJetpackCloud.mockImplementation( () => false );
-		redirectCloudCheckoutToWpAdmin.mockImplementation( () => false );
+		redirectCheckoutToWpAdmin.mockImplementation( () => false );
 	} );
 
 	it( 'redirects to the root page when no site is set', () => {
@@ -269,9 +262,9 @@ describe( 'getThankYouPageUrl', () => {
 		);
 	} );
 
-	it( 'redirects to the sites wp-admin if checkout is on Jetpack Cloud and if redirectCloudCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product', () => {
+	it( 'redirects to the sites wp-admin if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product', () => {
 		isJetpackCloud.mockImplementation( () => true );
-		redirectCloudCheckoutToWpAdmin.mockImplementation( () => true );
+		redirectCheckoutToWpAdmin.mockImplementation( () => true );
 		const adminUrl = 'https://my.site/wp-admin/';
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
@@ -662,7 +655,6 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		mockGSuiteCountryIsValid = true;
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
@@ -685,7 +677,6 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
@@ -708,7 +699,6 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
@@ -730,7 +720,6 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',

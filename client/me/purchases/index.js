@@ -18,35 +18,31 @@ import { sidebar } from 'calypso/me/controller';
 import { siteSelection } from 'calypso/my-sites/controller';
 
 export default ( router ) => {
-	if ( config.isEnabled( 'manage/payment-methods' ) ) {
-		router(
-			paths.paymentMethods,
-			sidebar,
-			paymentMethodsController.paymentMethods,
-			makeLayout,
-			clientRender
-		);
+	router(
+		paths.paymentMethods,
+		sidebar,
+		paymentMethodsController.paymentMethods,
+		makeLayout,
+		clientRender
+	);
 
-		router(
-			paths.addNewPaymentMethod,
-			sidebar,
-			controller.addNewPaymentMethod,
-			makeLayout,
-			clientRender
-		);
+	router(
+		paths.addNewPaymentMethod,
+		sidebar,
+		controller.addNewPaymentMethod,
+		makeLayout,
+		clientRender
+	);
 
-		router(
-			paths.addCreditCard,
-			sidebar,
-			controller.addNewPaymentMethod,
-			makeLayout,
-			clientRender
-		);
+	router( paths.addCreditCard, sidebar, controller.addNewPaymentMethod, makeLayout, clientRender );
 
-		// redirect legacy urls
-		router( '/payment-methods/add-credit-card', () => {
-			page.redirect( paths.addCreditCard );
-		} );
+	// redirect legacy urls
+	router( '/payment-methods/add-credit-card', () => {
+		page.redirect( paths.addCreditCard );
+	} );
+
+	if ( config.isEnabled( 'me/vat-details' ) ) {
+		router( paths.vatDetails, sidebar, controller.vatDetails, makeLayout, clientRender );
 	}
 
 	router(

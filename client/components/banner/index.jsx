@@ -59,6 +59,7 @@ export class Banner extends Component {
 		icon: PropTypes.string,
 		iconPath: PropTypes.string,
 		jetpack: PropTypes.bool,
+		isAtomic: PropTypes.bool,
 		compact: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
 		onClick: PropTypes.func,
@@ -88,6 +89,7 @@ export class Banner extends Component {
 		compact: false,
 		horizontal: false,
 		jetpack: false,
+		isAtomic: false,
 		onClick: noop,
 		onDismiss: noop,
 		primaryButton: true,
@@ -150,13 +152,13 @@ export class Banner extends Component {
 	};
 
 	getIcon() {
-		const { disableCircle, icon, iconPath, jetpack, showIcon } = this.props;
+		const { disableCircle, icon, iconPath, jetpack, showIcon, isAtomic } = this.props;
 
 		if ( ! showIcon ) {
 			return;
 		}
 
-		if ( jetpack ) {
+		if ( jetpack && ! isAtomic ) {
 			return (
 				<div className="banner__icon-plan">
 					<JetpackLogo size={ 32 } />
@@ -270,6 +272,7 @@ export class Banner extends Component {
 			forceHref,
 			horizontal,
 			jetpack,
+			isAtomic,
 			plan,
 		} = this.props;
 
@@ -292,7 +295,8 @@ export class Banner extends Component {
 			{ 'is-compact': compact },
 			{ 'is-dismissible': dismissPreferenceName },
 			{ 'is-horizontal': horizontal },
-			{ 'is-jetpack': jetpack }
+			{ 'is-jetpack': jetpack },
+			{ 'is-atomic': isAtomic }
 		);
 
 		if ( dismissPreferenceName ) {

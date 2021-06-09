@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
@@ -23,9 +24,7 @@ import './style.scss';
 const DomainManagementHeader = ( props ) => {
 	const { selectedDomainName, isManagingAllDomains, onClick, backHref, children } = props;
 	const translate = useTranslate();
-	let formattedHeaderText = selectedDomainName?.domain
-		? selectedDomainName.domain
-		: selectedDomainName;
+	let formattedHeaderText = selectedDomainName;
 	if ( ! selectedDomainName ) {
 		formattedHeaderText = isManagingAllDomains
 			? translate( 'All Domains' )
@@ -52,9 +51,15 @@ const DomainManagementHeader = ( props ) => {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-export default connect( ( state ) => {
+const connectComponent = connect( ( state ) => {
 	const path = getCurrentRoute( state );
 	return {
 		isManagingAllDomains: isUnderDomainManagementAll( path ),
 	};
 } )( DomainManagementHeader );
+
+connectComponent.propTypes = {
+	selectedDomainName: PropTypes.string,
+};
+
+export default connectComponent;

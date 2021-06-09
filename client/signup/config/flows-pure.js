@@ -268,7 +268,7 @@ export function generateFlows( {
 	if ( isEnabled( 'signup/wpforteams' ) ) {
 		flows.p2 = {
 			steps: [ 'p2-site', 'p2-details', 'user' ],
-			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
+			destination: ( dependencies ) => `https://${ dependencies.siteSlug }?p2-site`,
 			description: 'P2 signup flow',
 			lastModified: '2020-09-01',
 			showRecaptcha: true,

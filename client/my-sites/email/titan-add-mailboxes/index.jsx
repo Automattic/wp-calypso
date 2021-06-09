@@ -17,6 +17,7 @@ import {
 	areAllMailboxesAvailable,
 	buildNewTitanMailbox,
 	transformMailboxForCart,
+	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
 import { Button, Card } from '@automattic/components';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -71,6 +72,7 @@ class TitanAddMailboxes extends React.Component {
 		mailboxes: [ buildNewTitanMailbox( this.props.selectedDomainName, false ) ],
 		isAddingToCart: false,
 		isCheckingAvailability: false,
+		validatedMailboxUuids: [],
 	};
 
 	isMounted = false;
@@ -133,13 +135,16 @@ class TitanAddMailboxes extends React.Component {
 	handleContinue = async () => {
 		const { selectedSite } = this.props;
 		const { mailboxes } = this.state;
-		const allMailboxesAreValid = areAllMailboxesValid( mailboxes, [ 'alternativeEmail' ] );
+
+		const validatedMailboxes = validateMailboxes( mailboxes );
+
+		const allMailboxesAreValid = areAllMailboxesValid( validatedMailboxes );
 
 		let allMailboxesAreAvailable = false;
 		if ( allMailboxesAreValid ) {
 			this.setState( { isCheckingAvailability: true } );
 			allMailboxesAreAvailable = await areAllMailboxesAvailable(
-				mailboxes,
+				validatedMailboxes,
 				this.onMailboxesChange
 			);
 			if ( this.isMounted ) {
@@ -149,6 +154,13 @@ class TitanAddMailboxes extends React.Component {
 
 		const canContinue = allMailboxesAreValid && allMailboxesAreAvailable;
 
+		const validatedMailboxUuids = validatedMailboxes.map( ( mailbox ) => mailbox.uuid );
+
+		this.setState( {
+			mailboxes: validatedMailboxes,
+			validatedMailboxUuids,
+		} );
+
 		this.recordClickEvent( 'calypso_email_management_titan_add_mailboxes_continue_button_click', {
 			can_continue: canContinue,
 			mailbox_count: mailboxes.length,
@@ -156,6 +168,7 @@ class TitanAddMailboxes extends React.Component {
 
 		if ( canContinue ) {
 			this.setState( { isAddingToCart: true } );
+
 			this.props.shoppingCartManager
 				.addProductsToCart( [
 					fillInSingleCartItemAttributes( this.getCartItem(), this.props.productsList ),
@@ -203,10 +216,6 @@ class TitanAddMailboxes extends React.Component {
 		);
 	};
 
-	onButtonClick = () => {
-		this.setState( { quantity: this.state.quantity + 1 } );
-	};
-
 	onMailboxesChange = ( updatedMailboxes ) => {
 		this.setState( { mailboxes: updatedMailboxes, quantity: updatedMailboxes.length } );
 	};
@@ -227,6 +236,7 @@ class TitanAddMailboxes extends React.Component {
 						domain={ selectedDomainName }
 						mailboxes={ this.state.mailboxes }
 						onMailboxesChange={ this.onMailboxesChange }
+						validatedMailboxUuids={ this.state.validatedMailboxUuids }
 					>
 						<Button className="titan-add-mailboxes__action-cancel" onClick={ this.handleCancel }>
 							{ translate( 'Cancel' ) }
@@ -256,6 +266,7 @@ class TitanAddMailboxes extends React.Component {
 			selectedDomainName,
 			selectedSite,
 			titanMonthlyProduct,
+			translate,
 		} = this.props;
 
 		if ( ! isLoadingDomains && ! isSelectedDomainNameValid ) {
@@ -264,7 +275,6 @@ class TitanAddMailboxes extends React.Component {
 		}
 
 		const analyticsPath = emailManagementNewTitanAccount( ':site', ':domain', currentRoute );
-		const pageTitle = getTitanProductName() + ': ' + selectedDomainName;
 		const finishSetupLinkIsExternal = ! isEnabled( 'titan/iframe-control-panel' );
 
 		return (
@@ -276,11 +286,13 @@ class TitanAddMailboxes extends React.Component {
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 				<Main wideLayout={ true }>
-					<DocumentHead title={ pageTitle } />
+					<DocumentHead title={ translate( 'Add New Mailboxes' ) } />
 
 					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
-					<HeaderCake onClick={ this.goToEmail }>{ pageTitle }</HeaderCake>
+					<HeaderCake onClick={ this.goToEmail }>
+						{ getTitanProductName() + ': ' + selectedDomainName }
+					</HeaderCake>
 
 					<TitanExistingForwardsNotice domainsWithForwards={ domainsWithForwards } />
 					{ selectedDomain && (

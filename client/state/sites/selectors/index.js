@@ -11,7 +11,6 @@ export { default as canJetpackSiteAutoUpdateFiles } from './can-jetpack-site-aut
 export { default as canJetpackSiteUpdateFiles } from './can-jetpack-site-update-files';
 export { default as getCustomizerUrl } from './get-customizer-url';
 export { default as getJetpackComputedAttributes } from './get-jetpack-computed-attributes';
-export { default as getJetpackSiteUpdateFilesDisabledReasons } from './get-jetpack-site-update-files-disabled-reasons';
 export { default as getSeoTitle } from './get-seo-title';
 export { default as getSeoTitleFormats } from './get-seo-title-formats';
 export { default as getSeoTitleFormatsForSite } from './get-seo-title-formats-for-site';
@@ -25,6 +24,7 @@ export { default as getSiteDomain } from './get-site-domain';
 export { default as getSiteFrontPage } from './get-site-front-page';
 export { default as getSiteFrontPageType } from './get-site-front-page-type';
 export { default as getSiteHomeUrl } from './get-site-home-url';
+export { default as getSiteId } from './get-site-id';
 export { default as getSiteOption } from './get-site-option';
 export { default as getSitePlan } from './get-site-plan';
 export { default as getSitePlanSlug } from './get-site-plan-slug';
@@ -59,3 +59,4 @@ export { default as getSelectedSiteWithFallback } from './get-site-with-fallback
 export { default as getSiteWooCommerceUrl } from './get-site-woocommerce-url';
 export { default as getSiteWooCommerceWizardUrl } from './get-site-woocommerce-wizard-url';
 export { default as getSiteWordPressSeoWizardUrl } from './get-site-wordpress-seo-wizard-url';
+export { default as getWpcomFollowerRole } from './get-wpcom-follower-role';

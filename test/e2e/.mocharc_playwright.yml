@@ -6,5 +6,5 @@ file:
   - 'lib/before.js'
 reporter:
   - 'spec-junit-reporter'
-# Timeout for mocha when starting up only.
-timeout: 9000
+# If not defined, in slower environment the default 2000ms timeout is exhausted before browser launches.
+timeout: 30000

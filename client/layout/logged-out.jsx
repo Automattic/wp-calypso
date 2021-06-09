@@ -27,6 +27,10 @@ import GdprBanner from 'calypso/blocks/gdpr-banner';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { withCurrentRoute } from 'calypso/components/route';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 
 /**
  * Style dependencies
@@ -49,6 +53,8 @@ const LayoutLoggedOut = ( {
 	sectionTitle,
 	redirectUri,
 	useOAuth2Layout,
+	shouldRequestReaderTeams,
+	useFontSmoothAntialiased,
 } ) => {
 	const isCheckout = sectionName === 'checkout';
 	const isJetpackCheckout =
@@ -68,24 +74,16 @@ const LayoutLoggedOut = ( {
 		'is-jetpack-site': isJetpackCheckout,
 		'is-gutenboarding-login': isGutenboardingLogin,
 		'is-popup': isPopup,
-		'is-jetpack-woocommerce-flow':
-			config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow,
+		'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
-		'is-wccom-oauth-flow':
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			isWooOAuth2Client( oauth2Client ) &&
-			wccomFrom,
+		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 	};
 
 	let masterbar = null;
 
 	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
 	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
-		if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			isWooOAuth2Client( oauth2Client ) &&
-			wccomFrom
-		) {
+		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			masterbar = null;
 		} else {
 			classes.dops = true;
@@ -111,9 +109,15 @@ const LayoutLoggedOut = ( {
 		);
 	}
 
+	const bodyClass = [];
+	if ( useFontSmoothAntialiased ) {
+		bodyClass.push( 'font-smoothing-antialiased' );
+	}
+
 	return (
 		<div className={ classNames( 'layout', classes ) }>
-			<BodySectionCssClass group={ sectionGroup } section={ sectionName } />
+			{ shouldRequestReaderTeams && <QueryReaderTeams /> }
+			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
 			{ masterbar }
 			<div id="content" className="layout__content">
 				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
@@ -140,6 +144,8 @@ LayoutLoggedOut.propTypes = {
 	section: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	redirectUri: PropTypes.string,
 	showOAuth2Layout: PropTypes.bool,
+	shouldRequestReaderTeams: PropTypes.bool,
+	useFontSmoothAntialiased: PropTypes.bool,
 };
 
 export default compose(
@@ -173,6 +179,8 @@ export default compose(
 			sectionTitle,
 			oauth2Client: getCurrentOAuth2Client( state ),
 			useOAuth2Layout: showOAuth2Layout( state ),
+			shouldRequestReaderTeams: !! getCurrentUser( state ),
+			useFontSmoothAntialiased: isAutomatticTeamMember( getReaderTeams( state ) ),
 		};
 	} )
 )( LayoutLoggedOut );

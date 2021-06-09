@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import config from '@automattic/calypso-config';
 import FormattedHeader from 'calypso/components/formatted-header';
 import safeImageUrl from 'calypso/lib/safe-image-url';
 import Site from 'calypso/blocks/site';
@@ -89,7 +88,7 @@ export class AuthFormHeader extends Component {
 
 		const currentState = this.getState();
 
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isWoo ) {
+		if ( isWoo ) {
 			switch ( currentState ) {
 				case 'logged-out':
 					return translate( 'Create a Jetpack account' );
@@ -113,7 +112,7 @@ export class AuthFormHeader extends Component {
 		const { translate, isWoo, wooDnaConfig } = this.props;
 		const currentState = this.getState();
 
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isWoo ) {
+		if ( isWoo ) {
 			switch ( currentState ) {
 				case 'logged-out':
 					return translate(

@@ -29,6 +29,12 @@ export function FeaturesHelper() {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
+export function AuthHelper() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return <div className="environment is-auth" />;
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}
+
 export function Branch( { branchName, commitChecksum } ) {
 	return branchName === 'trunk' ? null : (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */

@@ -23,7 +23,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getSiteComment } from 'calypso/state/comments/selectors';
-import getSiteId from 'calypso/state/selectors/get-site-id';
+import { getSiteId } from 'calypso/state/sites/selectors';
 
 /**
  * Style dependencies

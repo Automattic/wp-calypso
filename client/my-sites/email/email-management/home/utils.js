@@ -31,7 +31,8 @@ import {
 export function getNumberOfMailboxesText( domain ) {
 	if ( hasGSuiteWithUs( domain ) ) {
 		const count = getGSuiteMailboxCount( domain );
-		return translate( '%(count)d user', '%(count)d users', {
+
+		return translate( '%(count)d mailbox', '%(count)d mailboxes', {
 			count,
 			args: {
 				count,
@@ -41,6 +42,7 @@ export function getNumberOfMailboxesText( domain ) {
 
 	if ( hasTitanMailWithUs( domain ) ) {
 		const count = getMaxTitanMailboxCount( domain );
+
 		return translate( '%(count)d mailbox', '%(count)d mailboxes', {
 			count,
 			args: {
@@ -51,6 +53,7 @@ export function getNumberOfMailboxesText( domain ) {
 
 	if ( hasEmailForwards( domain ) ) {
 		const count = getEmailForwardsCount( domain );
+
 		return translate( '%(count)d email forward', '%(count)d email forwards', {
 			count,
 			args: {
@@ -58,6 +61,7 @@ export function getNumberOfMailboxesText( domain ) {
 			},
 		} );
 	}
+
 	return '';
 }
 

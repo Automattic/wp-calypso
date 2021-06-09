@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { translate, TranslateResult, numberFormat } from 'i18n-calypso';
-import { compact } from 'lodash';
 import page from 'page';
 import { createElement, Fragment } from 'react';
 import { createSelector } from '@automattic/state-utils';
@@ -517,11 +516,9 @@ export function buildCardFeatureItemFromFeatureKey(
 			text: feature.getTitle( variation ),
 			description: options?.withoutDescription ? undefined : feature.getDescription?.(),
 			subitems: subFeaturesKeys
-				? compact(
-						subFeaturesKeys.map( ( f ) =>
-							buildCardFeatureItemFromFeatureKey( f, options, variation )
-						)
-				  )
+				? subFeaturesKeys
+						.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
+						.filter( Boolean )
 				: undefined,
 			isHighlighted: feature.isProduct?.( variation ) || feature.isPlan,
 		};
@@ -534,16 +531,16 @@ export function buildCardFeatureItemFromFeatureKey(
  * @param {string[]} features Feature keys
  * @param {object?} options Options
  * @param {string?} variation Experiment variation
- * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
+ * @returns {SelectorProductFeaturesItem[]} Features
  */
 export function buildCardFeaturesFromFeatureKeys(
 	features: string[],
 	options?: Record< string, unknown >,
 	variation?: Iterations
-): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
-	return compact(
-		features.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
-	);
+): SelectorProductFeaturesItem[] {
+	return features
+		.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
+		.filter( Boolean );
 }
 
 /**

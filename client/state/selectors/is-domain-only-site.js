@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
@@ -24,5 +18,5 @@ export default function isDomainOnlySite( state, siteId ) {
 		return null;
 	}
 
-	return get( site, 'options.is_domain_only', false );
+	return site.options?.is_domain_only ?? false;
 }

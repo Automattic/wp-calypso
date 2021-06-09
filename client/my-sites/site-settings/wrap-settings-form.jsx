@@ -35,6 +35,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
 import getRequest from 'calypso/state/selectors/get-request';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
 
 const debug = debugFactory( 'calypso:site-settings' );
 
@@ -352,6 +353,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					saveSiteSettings,
 					successNotice,
 					saveJetpackSettings,
+					activateModule,
 				},
 				dispatch
 			);

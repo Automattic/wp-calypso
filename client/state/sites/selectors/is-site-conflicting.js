@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getSiteCollisions from './get-site-collisions';
@@ -16,5 +11,5 @@ import getSiteCollisions from './get-site-collisions';
  * @returns {boolean}        Whether collision exists
  */
 export default function isSiteConflicting( state, siteId ) {
-	return includes( getSiteCollisions( state ), siteId );
+	return getSiteCollisions( state ).includes( siteId );
 }

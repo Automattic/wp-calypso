@@ -19,9 +19,9 @@ describe( 'selectors', () => {
 		// Need to convert timestamps to seconds, instead of milliseconds, because
 		// that's what the Happychat service provides
 		const timeline = [
-			{ timestamp: ( NOW - FIVE_MINUTES ) / 1000 },
-			{ timestamp: ( NOW - ONE_MINUTE ) / 1000 },
-			{ timestamp: NOW / 1000 },
+			{ timestamp: NOW - FIVE_MINUTES },
+			{ timestamp: NOW - ONE_MINUTE },
+			{ timestamp: NOW },
 		];
 
 		test( 'returns false if Happychat is focused', () => {

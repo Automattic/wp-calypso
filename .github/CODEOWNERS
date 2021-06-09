@@ -91,7 +91,6 @@
 /.github/workflows/send-calypso-app-build-trigger.sh @noahtallen
 
 # Experimentation platform legacy library and new client
-/client/lib/abtest @Automattic/experimentation-platform
 /client/lib/explat @Automattic/experimentation-platform
 /packages/explat-* @Automattic/experimentation-platform
 
@@ -127,5 +126,5 @@
 /packages/languages @Automattic/i18n
 
 # E2E specs
-/test/e2e @WunderBart @scinos
+/test/e2e @WunderBart @scinos @Automattic/quality-squad
 /packages/calypso-e2e @worldomonation

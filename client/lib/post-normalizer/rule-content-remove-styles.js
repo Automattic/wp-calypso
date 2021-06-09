@@ -1,4 +1,3 @@
-/* globals Element */
 /**
  * External dependencies
  */

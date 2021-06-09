@@ -104,7 +104,8 @@ export default class SignupFlowController {
 	_unsubscribeStore?: ReduxUnsubscribe;
 
 	constructor( options: SignupFlowControllerOptions ) {
-		this._flow = flows.getFlow( options.flowName );
+		const userLoggedIn = isUserLoggedIn( options.reduxStore.getState() );
+		this._flow = flows.getFlow( options.flowName, userLoggedIn );
 		this._flowName = options.flowName;
 		this._onComplete = options.onComplete;
 		this._reduxStore = options.reduxStore;
@@ -175,7 +176,8 @@ export default class SignupFlowController {
 
 		const hasStepThatProvidesSiteSlug = ( flowName: string ) => {
 			let foundStepThatProvidesSiteSlug = false;
-			forEach( pick( steps, flows.getFlow( flowName ).steps ), ( step ) => {
+			const userLoggedIn = isUserLoggedIn( this._reduxStore.getState() );
+			forEach( pick( steps, flows.getFlow( flowName, userLoggedIn ).steps ), ( step ) => {
 				if ( ( step.providesDependencies || [] ).indexOf( 'siteSlug' ) > -1 ) {
 					foundStepThatProvidesSiteSlug = true;
 					return false;
@@ -414,8 +416,9 @@ export default class SignupFlowController {
 	}
 
 	changeFlowName( flowName: string ) {
+		const userLoggedIn = isUserLoggedIn( this._reduxStore.getState() );
 		flows.resetExcludedSteps();
 		this._flowName = flowName;
-		this._flow = flows.getFlow( flowName );
+		this._flow = flows.getFlow( flowName, userLoggedIn );
 	}
 }

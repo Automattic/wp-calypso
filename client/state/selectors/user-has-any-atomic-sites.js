@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { some } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { createSelector } from '@automattic/state-utils';
@@ -17,6 +12,9 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
  * @returns {boolean}
  */
 export default createSelector(
-	( state ) => some( getSitesItems( state ), ( site ) => isAtomicSite( state, site.ID ) ),
+	( state ) => {
+		const siteIds = Object.keys( getSitesItems( state ) );
+		return siteIds.some( ( siteId ) => isAtomicSite( state, siteId ) );
+	},
 	( state ) => [ getSitesItems( state ) ]
 );

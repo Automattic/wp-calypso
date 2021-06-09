@@ -54,6 +54,7 @@ class SiteSettingsPerformance extends Component {
 			trackEvent,
 			updateFields,
 			saveJetpackSettings,
+			activateModule,
 		} = this.props;
 		const siteIsJetpackNonAtomic = siteIsJetpack && ! siteIsAtomic;
 
@@ -71,8 +72,6 @@ class SiteSettingsPerformance extends Component {
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
 
-				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
-
 				<Search
 					handleAutosavingToggle={ handleAutosavingToggle }
 					updateFields={ updateFields }
@@ -82,7 +81,10 @@ class SiteSettingsPerformance extends Component {
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
 					trackEvent={ trackEvent }
+					activateModule={ activateModule }
 				/>
+
+				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
 
 				{ siteIsJetpack && (
 					<Fragment>

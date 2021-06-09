@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 
 /**
  * Internal Dependencies
@@ -10,10 +9,6 @@ import page from 'page';
 import Types from './main';
 import { mapPostStatus } from 'calypso/lib/route';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
-
-export function redirect() {
-	page.redirect( '/posts' );
-}
 
 export function list( context, next ) {
 	const search = context.query.s;

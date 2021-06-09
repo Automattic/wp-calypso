@@ -14,7 +14,6 @@ import { get } from 'lodash';
  */
 import { Button, CompactCard } from '@automattic/components';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
-import config from '@automattic/calypso-config';
 import {
 	isRequestingInviteResend,
 	didInviteResendSucceed,
@@ -50,7 +49,6 @@ class PeopleListItem extends React.PureComponent {
 		const site = this.props.site;
 		const user = this.props.user;
 		return (
-			config.isEnabled( 'manage/edit-user' ) &&
 			user &&
 			user.roles &&
 			site &&
