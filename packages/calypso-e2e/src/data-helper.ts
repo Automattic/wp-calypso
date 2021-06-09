@@ -32,41 +32,39 @@ export function getCalypsoURL(
 }
 
 /**
- * Returns the credential for a specified account from the configuration file.
+ * Returns the credential for a specified account from the secrets file.
  *
- * @param {string} username Username of the account for which the credentials are to be obtained.
- * @returns {string[]} Credential entry found in the configuration file for the given username.
- * @throws {Error} If username does not correspond to a valid entry in the configuration file.
+ * @param {string} accountType Type of the account for which the credentials are to be obtained.
+ * @returns {string[]} Username and password found in the secrets file for the given account type.
+ * @throws {Error} If accountType does not correspond to a valid entry in the file.
  */
-export function getAccountCredential( username: string ): string[] {
+export function getAccountCredential( accountType: string ): string[] {
 	const testAccounts: { [ key: string ]: string } = config.get( 'testAccounts' );
 	try {
-		const [ user_name, password ] = testAccounts[ username ];
+		// Destruture the returned value and ignore the last entry (URL).
+		const [ user_name, password ] = testAccounts[ accountType ];
 		return [ user_name, password ];
 	} catch ( err ) {
 		throw new Error(
-			`Configuration file did not contain credentials for requested user ${ username }.`
+			`Secrets file did not contain credentials for requested user ${ accountType }.`
 		);
 	}
 }
 
 /**
- * Returns the site URL for a specified account from the configuration file.
+ * Returns the site URL for a specified account from the secrets file.
  *
- * @param {string} username Username of the account for which the site URL is to be obtained.
+ * @param {string} accountType N'ame of account type for which the site URL is to be obtained.
  * @returns {string} Site URL for the given username.
- * @throws {Error} If the username does not have a corresponding site URL, or username does not have an entry in the configuration file.
+ * @throws {Error} If the accountType does not have a site URL defined, or accountType does not have an entry in the file.
  */
-export function getAccountSiteURL( username: string ): string {
+export function getAccountSiteURL( accountType: string ): string {
 	const testAccounts: { [ key: string ]: string } = config.get( 'testAccounts' );
 	try {
-		const [ , , url ] = testAccounts[ username ];
-		if ( url ) {
-			return `https://${ url }`;
-		}
-		throw new Error();
+		const [ , , url ] = testAccounts[ accountType ];
+		return new URL( url ).toString();
 	} catch ( err ) {
-		throw new Error( `Configuration file did not contain URL for requested user ${ username }.` );
+		throw new Error( `Secrets file did not contain URL for requested user ${ accountType }.` );
 	}
 }
 
