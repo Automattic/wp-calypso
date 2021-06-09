@@ -25,7 +25,7 @@ describe( `[${ host }] Manage Domains - Map a Domain: (${ screenSize }) @paralle
 	const blogName = 'nature.com';
 
 	before( 'Log in and go to Domains page', async function () {
-		await new LoginFlow( this.driver, 'gutenbergSimpleSiteUser' ).loginAndSelectDomains();
+		await new LoginFlow( this.driver ).loginAndSelectDomains();
 	} );
 
 	it( 'Add a domain', async function () {

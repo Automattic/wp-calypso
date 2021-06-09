@@ -36,7 +36,7 @@ describe( `[${ host }] Manage Domains - Add a Domain: (${ screenSize }) @paralle
 	let tmpFreeSiteCreated = false;
 
 	before( 'Log in, create a temp free site and go to Domains page', async function () {
-		await new LoginFlow( this.driver, 'gutenbergSimpleSiteUser' ).login();
+		await new LoginFlow( this.driver ).login();
 		await new CreateSiteFlow( this.driver, tmpFreeSiteName ).createFreeSite();
 		tmpFreeSiteCreated = true;
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
