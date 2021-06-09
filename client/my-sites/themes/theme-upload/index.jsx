@@ -56,23 +56,17 @@ import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
 
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
-	getAutomatedTransferStatus,
 	isAutomatedTransferActive,
 } from 'calypso/state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import {
-	PLAN_BUSINESS,
-	FEATURE_UPLOAD_THEMES,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-} from '@automattic/calypso-products';
+import { PLAN_BUSINESS, FEATURE_UPLOAD_THEMES } from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -365,7 +359,6 @@ const UploadWithOptions = ( props ) => {
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const site = getSelectedSite( state );
 	const themeId = getUploadedThemeId( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
 	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
@@ -385,13 +378,12 @@ const mapStateToProps = ( state ) => {
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
-		isBusiness: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
-		selectedSite: site,
+		selectedSite: getSelectedSite( state ),
 		isJetpack,
 		inProgress: isUploadInProgress( state, siteId ),
 		complete: isUploadComplete( state, siteId ),
 		failed: hasUploadFailed( state, siteId ),
-		themeId,
+		themeId: getUploadedThemeId( state, siteId ),
 		isMultisite: isJetpackSiteMultiSite( state, siteId ),
 		uploadedTheme: getCanonicalTheme( state, siteId, themeId ),
 		error: getUploadError( state, siteId ),
@@ -404,7 +396,6 @@ const mapStateToProps = ( state ) => {
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		canUploadThemesOrPlugins,
 		isOnAtomicPlan,
-		transferState: getAutomatedTransferStatus( state, siteId ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
 	};
 };
