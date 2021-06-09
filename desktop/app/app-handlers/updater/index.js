@@ -16,12 +16,17 @@ const log = require( '../../lib/logger' )( 'desktop:updater' );
 let updater = false;
 
 function init() {
+	if ( process.windowsStore ) {
+		log.info( 'Windows Store: disabling Electron updater ...' )
+		return;
+	}
+
 	log.info( 'Updater config: ', Config.updater );
 	if ( Config.updater ) {
 		app.on( 'will-finish-launching', function () {
 			const beta = settings.getSetting( 'release-channel' ) === 'beta';
 			log.info( `Update channel: '${ settings.getSetting( 'release-channel' ) }'` );
-			if ( ( platform.isOSX() || platform.isWindows() || process.env.APPIMAGE ) && !process.windowsStore ) {
+			if ( ( platform.isOSX() || platform.isWindows() || process.env.APPIMAGE ) ) {
 				log.info( 'Initializing auto updater...' );
 				updater = new AutoUpdater( {
 					beta,
