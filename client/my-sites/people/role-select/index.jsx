@@ -26,8 +26,6 @@ const RoleSelect = ( props ) => {
 	const { data } = useSiteRolesQuery( props.siteId );
 	const { isWPForTeamsSite } = props;
 
-	let siteRoles = data ?? [];
-
 	const {
 		site,
 		includeFollower,
@@ -56,34 +54,37 @@ const RoleSelect = ( props ) => {
 		'wpcomFollowerRole',
 	];
 
-	if ( site && siteRoles && includeFollower ) {
-		siteRoles = siteRoles.concat( wpcomFollowerRole );
+	let siteRoles;
+
+	if ( site && data && includeFollower ) {
+		siteRoles = data.concat( wpcomFollowerRole );
 	}
 
 	return (
 		<FormFieldset key={ siteId } disabled={ ! siteRoles } id={ id }>
 			{ siteId && <QuerySites siteId={ siteId } /> }
 			<FormLabel htmlFor={ id }>{ translate( 'Role' ) }</FormLabel>
-			{ siteRoles.map( ( role ) => (
-				<FormLabel key={ role.name }>
-					<div className="role-select__role-wrapper">
-						<FormRadio
-							className="role-select__role-radio"
-							checked={ role.name === value }
-							value={ role.name }
-							{ ...omit( props, omitProps ) }
-						/>
-						<div className="role-select__role-name">
-							<div>{ role.display_name }</div>
-							{ ROLES_LIST[ role.name ] && (
-								<div className="role-select__role-name-description">
-									{ ROLES_LIST[ role.name ].getDescription( isWPForTeamsSite ) }
-								</div>
-							) }
+			{ siteRoles &&
+				siteRoles.map( ( role ) => (
+					<FormLabel key={ role.name }>
+						<div className="role-select__role-wrapper">
+							<FormRadio
+								className="role-select__role-radio"
+								checked={ role.name === value }
+								value={ role.name }
+								{ ...omit( props, omitProps ) }
+							/>
+							<div className="role-select__role-name">
+								<div>{ role.display_name }</div>
+								{ ROLES_LIST[ role.name ] && (
+									<div className="role-select__role-name-description">
+										{ ROLES_LIST[ role.name ].getDescription( isWPForTeamsSite ) }
+									</div>
+								) }
+							</div>
 						</div>
-					</div>
-				</FormLabel>
-			) ) }
+					</FormLabel>
+				) ) }
 			{ explanation && <FormSettingExplanation>{ explanation }</FormSettingExplanation> }
 		</FormFieldset>
 	);
