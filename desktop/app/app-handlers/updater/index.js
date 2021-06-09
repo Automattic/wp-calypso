@@ -21,7 +21,7 @@ function init() {
 		app.on( 'will-finish-launching', function () {
 			const beta = settings.getSetting( 'release-channel' ) === 'beta';
 			log.info( `Update channel: '${ settings.getSetting( 'release-channel' ) }'` );
-			if ( platform.isOSX() || platform.isWindows() || process.env.APPIMAGE ) {
+			if ( ( platform.isOSX() || platform.isWindows() || process.env.APPIMAGE ) && !process.windowsStore ) {
 				log.info( 'Initializing auto updater...' );
 				updater = new AutoUpdater( {
 					beta,
