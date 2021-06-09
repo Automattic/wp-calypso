@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import logmeinNavigate from 'calypso/lib/logmein';
+import { logmeinNavigate } from 'calypso/lib/logmein';
 
 // Using page() for cross origin navigations would throw a `History.pushState` exception
 // about creating state object with a cross-origin URL.
