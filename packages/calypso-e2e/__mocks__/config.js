@@ -31,6 +31,8 @@ const values = {
 	calypsoBaseURL: 'https://wordpress.com',
 	testAccounts: {
 		basicUser: [ 'wpcomuser', 'hunter2', 'wpcomuser.wordpress.com' ],
+		advancedUser: [ 'advancedwpcomuser', 'azurediamond', 'advancedwpcomuser.wordpress.com' ],
+		noURLUser: [ 'nourluser', 'password1234' ],
 	},
 };
 

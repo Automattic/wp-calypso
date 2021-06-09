@@ -6,7 +6,7 @@ import { describe, expect, test } from '@jest/globals';
 /**
  * Internal dependencies
  */
-import { getAccountCredential, getCalypsoURL } from '../src/data-helper';
+import { getAccountCredential, getCalypsoURL, getAccountSiteURL } from '../src/data-helper';
 
 describe( 'DataHelper Tests', function () {
 	describe( `Test: getCalypsoURL`, function () {
@@ -27,12 +27,47 @@ describe( 'DataHelper Tests', function () {
 
 	describe( `Test: getAccountCredential`, function () {
 		test.each`
-			username         | expected
+			accountType      | expected
 			${ 'basicUser' } | ${ [ 'wpcomuser', 'hunter2' ] }
+			${ 'noURLUser' } | ${ [ 'nourluser', 'password1234' ] }
 		`(
-			'Returns $expected if getAccountCredentials is called with $username',
-			function ( { username, expected } ) {
-				expect( getAccountCredential( username ) ).toBe( expected );
+			'Returns $expected if getAccountCredentials is called with $accountType',
+			function ( { accountType, expected } ) {
+				expect( getAccountCredential( accountType ) ).toStrictEqual( expected );
+			}
+		);
+
+		test.each`
+			accountType
+			${ 'nonexistent_user' }
+		`(
+			'Throws error if getAccountCredentials is called with $accountType',
+			function ( { accountType } ) {
+				expect( () => getAccountCredential( accountType ) ).toThrow();
+			}
+		);
+	} );
+
+	describe( `Test: getAccountSiteURL`, function () {
+		// test.each`
+		// 	accountType      | expected
+		// 	${ 'basicUser' } | ${ 'https://wpcomuser.wordpress.com/' }
+		// 	${ 'advancedUser' } | ${ 'https://advancedwpcomuser.wordpress.com/' }
+		// `(
+		// 	'Returns $expected if getAccountSiteURL is called with $accountType',
+		// 	function ( { accountType, expected } ) {
+		// 		expect( getAccountSiteURL( accountType ) ).toStrictEqual( expected );
+		// 	}
+		// );
+
+		test.each`
+			accountType             | expected
+			${ 'nonexistent_user' } | ${ Error }
+			${ 'noURLUser' }        | ${ Error }
+		`(
+			'Throws error if getAccountCredentials is called with $accountType',
+			function ( { accountType, expected } ) {
+				expect( () => getAccountSiteURL( accountType ) ).toThrow( expected );
 			}
 		);
 	} );
