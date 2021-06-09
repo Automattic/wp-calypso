@@ -578,7 +578,7 @@ jobs:
             # Build Windows Store appx -- don't sign
             # TODO: build conditionally on tag
             $env:CSC_LINK=""
-            make -f desktop/Makefile package MSYS2_ARG_CONV_EXCL="*" ELECTRON_BUILDER_ARGS='--config="C:\Users\circleci\wp-calypso\desktop\electron-builder-appx.json"'
+            make -f desktop/Makefile package ELECTRON_BUILDER_ARGS='--config="//Users\circleci\wp-calypso\desktop\electron-builder-appx.json"'
       - run:
           name: Archive Unpacked Directories
           command: |
