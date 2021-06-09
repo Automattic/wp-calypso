@@ -100,7 +100,7 @@ describe( `[${ host }] Invites - New user as Editor: (${ screenSize }) @parallel
 			`The invite message '${ invitesMessageTitleDisplayed }' does not include 'Editor'`
 		);
 
-		return PostsPage.Expect( this.driver );
+		await PostsPage.Expect( this.driver );
 	} );
 
 	it( 'As the original user can see and remove new user', async function () {
