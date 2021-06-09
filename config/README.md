@@ -18,7 +18,6 @@ The config files contain a features object that can be used to determine whether
 ```json
 {
 	"features": {
-		"manage/posts": true,
 		"reader": true
 	}
 }

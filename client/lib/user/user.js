@@ -19,7 +19,6 @@ import wpcom from 'calypso/lib/wp';
 import Emitter from 'calypso/lib/mixins/emitter';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
 import { clearStorage } from 'calypso/lib/browser-storage';
-import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'calypso/lib/abtest/utility';
 
 const debug = debugFactory( 'calypso:user' );
 
@@ -124,7 +123,6 @@ User.prototype.fetch = function () {
 		.me()
 		.get( {
 			meta: 'flags',
-			abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
 		} )
 		.then( ( data ) => {
 			debug( 'User successfully retrieved from api:', data );
@@ -172,11 +170,8 @@ User.prototype.handleFetchSuccess = function ( userData ) {
 	// Store user ID in local storage so that we can detect a change and clear the storage
 	store.set( 'wpcom_user_id', userData.ID );
 
-	if ( userData.abtests ) {
-		store.set( ABTEST_LOCALSTORAGE_KEY, userData.abtests );
-	}
-
 	this.data = userData;
+
 	this.emit( 'change' );
 };
 
@@ -209,28 +204,6 @@ User.prototype.set = function ( attributes ) {
 	}
 
 	return changed;
-};
-
-User.prototype.decrementSiteCount = function () {
-	const user = this.get();
-	if ( user ) {
-		this.set( {
-			visible_site_count: user.visible_site_count - 1,
-			site_count: user.site_count - 1,
-		} );
-	}
-	this.fetch();
-};
-
-User.prototype.incrementSiteCount = function () {
-	const user = this.get();
-	if ( user ) {
-		return this.set( {
-			visible_site_count: user.visible_site_count + 1,
-			site_count: user.site_count + 1,
-		} );
-	}
-	this.fetch();
 };
 
 /**

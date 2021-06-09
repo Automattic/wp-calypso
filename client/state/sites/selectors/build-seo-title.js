@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
 export default ( titleFormats, type, { site, post = {}, tag = '', date = '' } ) => {
 	const processPiece = ( piece = {}, data ) =>
-		'string' === piece.type ? piece.value : get( data, piece.type, '' );
+		'string' === piece.type ? piece.value : data[ piece.type ] ?? '';
 
 	const buildTitle = ( format, data ) =>
-		get( titleFormats, format, [] ).reduce(
-			( title, piece ) => title + processPiece( piece, data ),
-			''
-		);
+		( titleFormats[ format ] ?? [] ).map( ( piece ) => processPiece( piece, data ) ).join( '' );
 
 	switch ( type ) {
 		case 'frontPage':
@@ -27,15 +19,17 @@ export default ( titleFormats, type, { site, post = {}, tag = '', date = '' } ) 
 				buildTitle( 'posts', {
 					siteName: site.name,
 					tagline: site.description,
-					postTitle: get( post, 'title', '' ),
-				} ) || get( post, 'title', '' )
+					postTitle: post.title ?? '',
+				} ) ||
+				post.title ||
+				''
 			);
 
 		case 'pages':
 			return buildTitle( 'pages', {
 				siteName: site.name,
 				tagline: site.description,
-				pageTitle: get( post, 'title', '' ),
+				pageTitle: post.title ?? '',
 			} );
 
 		case 'groups':

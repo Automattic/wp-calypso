@@ -128,11 +128,7 @@ export class UserStep extends Component {
 		let subHeaderText = props.subHeaderText;
 
 		if ( includes( [ 'wpcc', 'crowdsignal' ], flowName ) && oauth2Client ) {
-			if (
-				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-				isWooOAuth2Client( oauth2Client ) &&
-				wccomFrom
-			) {
+			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 				subHeaderText =
 					'cart' === wccomFrom
 						? translate(
@@ -444,11 +440,7 @@ export class UserStep extends Component {
 			}
 		}
 
-		if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			isWooOAuth2Client( oauth2Client ) &&
-			wccomFrom
-		) {
+		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			isSocialSignupEnabled = true;
 		}
 

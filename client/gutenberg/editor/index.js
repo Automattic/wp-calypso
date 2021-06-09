@@ -8,7 +8,6 @@ import page from 'page';
  */
 import { siteSelection, sites } from 'calypso/my-sites/controller';
 import { authenticate, post, redirect, siteEditor, exitPost } from './controller';
-import config from '@automattic/calypso-config';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
@@ -50,19 +49,17 @@ export default function () {
 	page.exit( '/page/:site?/:post?', exitPost );
 	page( '/page/:site?', siteSelection, redirect, makeLayout, clientRender );
 
-	if ( config.isEnabled( 'manage/custom-post-types' ) ) {
-		page( '/edit/:customPostType', siteSelection, sites, makeLayout, clientRender );
-		page(
-			'/edit/:customPostType/:site/:post?',
-			siteSelection,
-			redirect,
-			authenticate,
-			post,
-			makeLayout,
-			clientRender
-		);
-		page( '/edit/:customPostType/:site?', siteSelection, redirect, makeLayout, clientRender );
-	}
+	page( '/edit/:customPostType', siteSelection, sites, makeLayout, clientRender );
+	page(
+		'/edit/:customPostType/:site/:post?',
+		siteSelection,
+		redirect,
+		authenticate,
+		post,
+		makeLayout,
+		clientRender
+	);
+	page( '/edit/:customPostType/:site?', siteSelection, redirect, makeLayout, clientRender );
 
 	/*
 	 * Redirecto the old `/block-editor` routes to the default routes.
@@ -86,14 +83,12 @@ export default function () {
 		page.redirect( `/page/${ site }/` );
 	} );
 
-	if ( config.isEnabled( 'manage/custom-post-types' ) ) {
-		page( '/block-editor/edit/:customPostType/:site/:post?', ( { params = {} } ) => {
-			const { customPostType, site, post: postId } = params;
-			if ( postId ) {
-				return page.redirect( `/edit/${ customPostType }/${ site }/${ postId }` );
-			}
+	page( '/block-editor/edit/:customPostType/:site/:post?', ( { params = {} } ) => {
+		const { customPostType, site, post: postId } = params;
+		if ( postId ) {
+			return page.redirect( `/edit/${ customPostType }/${ site }/${ postId }` );
+		}
 
-			page.redirect( `/edit/${ customPostType }/${ site }` );
-		} );
-	}
+		page.redirect( `/edit/${ customPostType }/${ site }` );
+	} );
 }

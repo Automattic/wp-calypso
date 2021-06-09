@@ -206,7 +206,7 @@ export class JetpackAuthorize extends Component {
 
 	redirect() {
 		const { isMobileAppFlow, mobileAppRedirect } = this.props;
-		const { from, redirectAfterAuth, scope } = this.props.authQuery;
+		const { from, redirectAfterAuth, scope, closeWindowAfterAuthorize } = this.props.authQuery;
 		const { isRedirecting } = this.state;
 
 		if ( isRedirecting ) {
@@ -217,6 +217,14 @@ export class JetpackAuthorize extends Component {
 			debug( `Redirecting to mobile app ${ mobileAppRedirect }` );
 			window.location.replace( mobileAppRedirect );
 			return;
+		}
+
+		if ( closeWindowAfterAuthorize && typeof window !== 'undefined' ) {
+			// Certain connection flows may complete the authorization step within a popup window.
+			// In these cases, we'll want to automatically close the window when the authorization
+			// step is complete, and have the window opener detect this and re-check user authorization status.
+			debug( 'Closing window after authorize' );
+			window.close();
 		}
 
 		if (
@@ -360,7 +368,7 @@ export class JetpackAuthorize extends Component {
 	handleSignIn = () => {
 		const { recordTracksEvent } = this.props;
 		const { from } = this.props.authQuery;
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
+		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
 		}
 	};
@@ -370,7 +378,7 @@ export class JetpackAuthorize extends Component {
 		const { from } = this.props.authQuery;
 		recordTracksEvent( 'calypso_jpc_signout_click' );
 
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
+		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { create_jetpack: true } );
 		}
 
@@ -424,7 +432,7 @@ export class JetpackAuthorize extends Component {
 
 		recordTracksEvent( 'calypso_jpc_approve_click' );
 
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
+		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
 		}
 

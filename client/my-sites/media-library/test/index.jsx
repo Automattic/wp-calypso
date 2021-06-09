@@ -43,6 +43,7 @@ describe( 'MediaLibrary', () => {
 				queries: {},
 				selectedItems: {},
 			},
+			sites: [],
 		} ),
 		dispatch: () => false,
 		subscribe: () => false,

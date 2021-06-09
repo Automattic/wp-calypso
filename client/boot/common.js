@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import page from 'page';
-import { startsWith } from 'lodash';
 import React from 'react';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
@@ -18,7 +17,6 @@ import config from '@automattic/calypso-config';
 import { ProviderWrappedLayout } from 'calypso/controller';
 import { getToken } from 'calypso/lib/oauth-token';
 import emailVerification from 'calypso/components/email-verification';
-import { getSavedVariations } from 'calypso/lib/abtest'; // used by error logger
 import Logger from 'calypso/lib/catch-js-errors';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { installPerfmonPageHandlers } from 'calypso/lib/perfmon';
@@ -53,7 +51,6 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { setStore } from 'calypso/state/redux-store';
 import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { inJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 import DesktopListeners from 'calypso/lib/desktop-listeners';
 
@@ -176,14 +173,10 @@ const oauthTokenMiddleware = () => {
 
 		// Forces OAuth users to the /login page if no token is present
 		page( '*', function ( context, next ) {
-			const isValidSection = loggedOutRoutes.some( ( route ) => startsWith( context.path, route ) );
+			const isValidSection = loggedOutRoutes.some( ( route ) => context.path.startsWith( route ) );
 
 			// Check we have an OAuth token, otherwise redirect to auth/login page
-			if (
-				getToken() === false &&
-				! isValidSection &&
-				! ( isJetpackCloud() && inJetpackCloudOAuthOverride() )
-			) {
+			if ( getToken() === false && ! isValidSection ) {
 				window.location = authorizePath();
 				return;
 			}
@@ -276,8 +269,6 @@ function setupErrorLogger( reduxStore ) {
 		};
 	} );
 
-	errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
-
 	tracksEvents.on( 'record-event', ( eventName, lastTracksEvent ) =>
 		errorLogger.saveExtraData( { lastTracksEvent } )
 	);
@@ -353,7 +344,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	page( '*', emailVerification );
 
 	// delete any lingering local storage data from signup
-	if ( ! startsWith( window.location.pathname, '/start' ) ) {
+	if ( ! window.location.pathname.startsWith( '/start' ) ) {
 		[ 'signupProgress', 'signupDependencies' ].forEach( ( item ) => store.remove( item ) );
 	}
 
@@ -398,6 +389,11 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		DesktopListeners.init( reduxStore );
 	}
 
+	if ( config.isEnabled( 'dev/auth-helper' ) && document.querySelector( '.environment.is-auth' ) ) {
+		asyncRequire( 'calypso/lib/auth-helper', ( authHelper ) => {
+			authHelper( document.querySelector( '.environment.is-auth' ), reduxStore );
+		} );
+	}
 	if (
 		config.isEnabled( 'dev/preferences-helper' ) &&
 		document.querySelector( '.environment.is-prefs' )

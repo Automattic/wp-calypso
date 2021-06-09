@@ -111,7 +111,7 @@ const Cloudflare = () => {
 							showIcon={ true }
 						/>
 					) }
-					<div class="site-settings__cloudflare-spacer" />
+					<div className="site-settings__cloudflare-spacer" />
 				</>
 			) }
 		</>

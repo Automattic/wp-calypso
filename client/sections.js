@@ -25,12 +25,6 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'me',
-		paths: [ '/me' ],
-		module: 'calypso/me',
-		group: 'me',
-	},
-	{
 		name: 'account',
 		paths: [ '/me/account' ],
 		module: 'calypso/me/account',
@@ -43,15 +37,21 @@ const sections = [
 		group: 'me',
 	},
 	{
-		name: 'activity',
-		paths: [ '/activity-log' ],
-		module: 'calypso/my-sites/activity',
-		group: 'sites',
+		name: 'concierge',
+		paths: [ '/me/concierge' ],
+		module: 'calypso/me/concierge',
+		group: 'me',
 	},
 	{
-		name: 'security',
-		paths: [ '/me/security' ],
-		module: 'calypso/me/security',
+		name: 'happychat',
+		paths: [ '/me/chat' ],
+		module: 'calypso/me/happychat',
+		group: 'me',
+	},
+	{
+		name: 'notification-settings',
+		paths: [ '/me/notifications' ],
+		module: 'calypso/me/notification-settings',
 		group: 'me',
 	},
 	{
@@ -67,15 +67,9 @@ const sections = [
 		group: 'me',
 	},
 	{
-		name: 'site-purchases',
-		paths: [ '/purchases' ],
-		module: 'calypso/my-sites/purchases',
-		group: 'sites',
-	},
-	{
-		name: 'notification-settings',
-		paths: [ '/me/notifications' ],
-		module: 'calypso/me/notification-settings',
+		name: 'security',
+		paths: [ '/me/security' ],
+		module: 'calypso/me/security',
 		group: 'me',
 	},
 	{
@@ -84,11 +78,25 @@ const sections = [
 		module: 'calypso/me/site-blocks',
 		group: 'me',
 	},
+	// This should be the last section for `/me` paths as it would otherwise have precedence over
+	// the other sub `/me/*` sections when resolving the requested path
 	{
-		name: 'concierge',
-		paths: [ '/me/concierge' ],
-		module: 'calypso/me/concierge',
+		name: 'me',
+		paths: [ '/me' ],
+		module: 'calypso/me',
 		group: 'me',
+	},
+	{
+		name: 'activity',
+		paths: [ '/activity-log' ],
+		module: 'calypso/my-sites/activity',
+		group: 'sites',
+	},
+	{
+		name: 'site-purchases',
+		paths: [ '/purchases' ],
+		module: 'calypso/my-sites/purchases',
+		group: 'sites',
 	},
 	{
 		name: 'media',
@@ -106,6 +114,12 @@ const sections = [
 		name: 'plugins',
 		paths: [ '/plugins' ],
 		module: 'calypso/my-sites/plugins',
+		group: 'sites',
+	},
+	{
+		name: 'marketplace',
+		paths: [ '/marketplace' ],
+		module: 'calypso/my-sites/marketplace',
 		group: 'sites',
 	},
 	{
@@ -361,12 +375,6 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'happychat',
-		paths: [ '/me/chat' ],
-		module: 'calypso/me/happychat',
-		group: 'me',
-	},
-	{
 		name: 'comments',
 		paths: [ '/comments', '/comment' ],
 		module: 'calypso/my-sites/comments',
@@ -441,7 +449,7 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud',
-		paths: [ '/', '/landing', '/settings', '/oauth-override' ],
+		paths: [ '/', '/landing', '/settings' ],
 		module: 'calypso/jetpack-cloud',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,

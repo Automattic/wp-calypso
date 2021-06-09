@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { abtest } from 'calypso/lib/abtest';
 import { getPlan, applyTestFiltersToPlansList } from '@automattic/calypso-products';
 
 /**
@@ -13,7 +12,7 @@ import { getPlan, applyTestFiltersToPlansList } from '@automattic/calypso-produc
  */
 export const planSlugToPlanProduct = ( products, planSlug ) => {
 	const plan = getPlan( planSlug );
-	const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
+	const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 	return {
 		planSlug,
 		plan: planConstantObj,

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
@@ -17,7 +12,5 @@ import getRawSite from 'calypso/state/selectors/get-raw-site';
  */
 export default function isSiteFailedMigrationSource( state, siteId ) {
 	const site = getRawSite( state, siteId );
-	const siteMigrationMeta = get( site, 'site_migration', {} );
-
-	return !! get( siteMigrationMeta, 'failed_backup_source', false );
+	return site?.site_migration?.failed_backup_source ?? false;
 }

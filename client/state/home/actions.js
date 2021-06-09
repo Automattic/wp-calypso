@@ -4,7 +4,7 @@
 import {
 	HOME_LAYOUT_REQUEST,
 	HOME_LAYOUT_SET,
-	HOME_LAYOUT_SKIP_CURRENT_VIEW,
+	HOME_LAYOUT_SKIP_VIEW,
 	HOME_QUICK_LINKS_EXPAND,
 	HOME_QUICK_LINKS_COLLAPSE,
 } from 'calypso/state/action-types';
@@ -19,10 +19,11 @@ export const requestHomeLayout = ( siteId, isDev = false, forcedView = null ) =>
 	forcedView,
 } );
 
-export const skipCurrentViewHomeLayout = ( siteId, reminder = null ) => ( {
-	type: HOME_LAYOUT_SKIP_CURRENT_VIEW,
+export const skipViewHomeLayout = ( siteId, viewName, reminder = null ) => ( {
+	type: HOME_LAYOUT_SKIP_VIEW,
 	siteId,
 	reminder,
+	viewName,
 } );
 
 export const setHomeLayout = ( siteId, layout ) => ( {

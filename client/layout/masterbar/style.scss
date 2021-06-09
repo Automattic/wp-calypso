@@ -36,6 +36,12 @@ $autobar-height: 20px;
 		border-bottom: 1px solid var( --color-jetpack-masterbar-border );
 		color: var( --color-jetpack-masterbar-text );
 	}
+
+	body.font-smoothing-antialiased & {
+		text-rendering: optimizeLegibility;
+		-moz-osx-font-smoothing: grayscale;
+		-webkit-font-smoothing: antialiased;
+	}
 }
 
 .pride .masterbar {

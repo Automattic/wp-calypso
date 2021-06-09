@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 
@@ -18,6 +13,5 @@ import getRawSite from 'calypso/state/selectors/get-raw-site';
  */
 export default function getSiteMigrationStatus( state, siteId ) {
 	const site = getRawSite( state, siteId );
-
-	return get( site, 'site_migration.status', 'inactive' );
+	return site?.site_migration?.status ?? 'inactive';
 }

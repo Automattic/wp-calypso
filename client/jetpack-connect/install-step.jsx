@@ -10,19 +10,16 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import { preventWidows } from 'calypso/lib/formatting';
-import versionCompare from 'calypso/lib/version-compare';
 import JetpackExampleInstall from './example-components/jetpack-install';
 import JetpackExampleActivate from './example-components/jetpack-activate';
 import JetpackExampleConnect from './example-components/jetpack-connect';
 
-const NEW_INSTRUCTIONS_JETPACK_VERSION = '4.2.0';
 const noop = () => {};
 
 class JetpackInstallStep extends Component {
 	static propTypes = {
 		confirmJetpackInstallStatus: PropTypes.func.isRequired,
 		currentUrl: PropTypes.string,
-		jetpackVersion: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		onClick: PropTypes.func,
 	};
 
@@ -66,14 +63,9 @@ class JetpackInstallStep extends Component {
 	}
 
 	getStep( stepName ) {
-		const { currentUrl, jetpackVersion, onClick, translate } = this.props;
+		const { currentUrl, onClick, translate } = this.props;
 
-		const isLegacyVersion =
-			jetpackVersion && versionCompare( jetpackVersion, NEW_INSTRUCTIONS_JETPACK_VERSION, '<' );
-
-		const jetpackConnectExample = (
-			<JetpackExampleConnect url={ currentUrl } isLegacy={ isLegacyVersion } onClick={ onClick } />
-		);
+		const jetpackConnectExample = <JetpackExampleConnect url={ currentUrl } onClick={ onClick } />;
 
 		const steps = {
 			installJetpack: {

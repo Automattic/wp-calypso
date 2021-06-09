@@ -20,6 +20,8 @@ const { getPath } = require( '../lib/assets' );
  * Module variables
  */
 const USE_LOCALHOST = process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined;
+const TITLE_BAR_HEIGHT = 38;
+
 let mainWindow = null;
 
 function showAppWindow() {
@@ -59,8 +61,28 @@ function showAppWindow() {
 	mainWindow.webContents.loadURL( `file://${ getPath( 'index.html' ) }` );
 
 	mainWindow.setBrowserView( mainView );
-	mainView.setBounds( { ...bounds, ...{ x: 0, y: 38 } } );
-	mainView.setAutoResize( { horizontal: true, vertical: true } );
+	mainView.setBounds( {
+		x: 0,
+		y: TITLE_BAR_HEIGHT,
+		width: bounds.width,
+		height: bounds.height - TITLE_BAR_HEIGHT,
+	} );
+	mainWindow.on( 'resize', function () {
+		const newBounds = mainWindow.getBounds();
+
+		// Windows doesn't resize properly and requires extra space added to fit properly after resize.
+		const boundsPadding =
+			process.platform === 'win32'
+				? { width: 20, height: TITLE_BAR_HEIGHT + 55 }
+				: { width: 0, height: TITLE_BAR_HEIGHT };
+
+		mainView.setBounds( {
+			x: 0,
+			y: TITLE_BAR_HEIGHT,
+			width: newBounds.width - boundsPadding.width,
+			height: newBounds.height - boundsPadding.height,
+		} );
+	} );
 
 	SessionManager.init( mainWindow );
 

@@ -17,14 +17,14 @@ import {
 	jetpackCheckoutThankYou,
 } from './controller';
 import { noop } from './utils';
-import SiftScience from 'calypso/lib/siftscience';
+import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
 import { noSite, siteSelection } from 'calypso/my-sites/controller';
 import { isEnabled } from '@automattic/calypso-config';
 import userFactory from 'calypso/lib/user';
 
 export default function () {
-	SiftScience.recordUser();
+	page( '/checkout*', recordSiftScienceUser );
 
 	const user = userFactory();
 	const isLoggedOut = ! user.get();

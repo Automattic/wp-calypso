@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { stringify } from 'qs';
 import superagent from 'superagent';
 import debugFactory from 'debug';
 import crypto from 'crypto';
@@ -10,7 +9,6 @@ import crypto from 'crypto';
  * Internal dependencies
  */
 import { filterUserObject } from 'calypso/lib/user/shared-utils';
-import { getActiveTestNames } from 'calypso/lib/abtest/utility';
 import config from '@automattic/calypso-config';
 
 const debug = debugFactory( 'calypso:bootstrap' );
@@ -20,11 +18,10 @@ const SUPPORT_SESSION_COOKIE_NAME = 'support_session_id';
  * WordPress.com REST API /me endpoint.
  */
 const API_PATH = 'https://public-api.wordpress.com/rest/v1/me';
-const apiQuery = {
+const apiQuery = new URLSearchParams( {
 	meta: 'flags',
-	abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
-};
-const url = `${ API_PATH }?${ stringify( apiQuery ) }`;
+} );
+const url = `${ API_PATH }?${ apiQuery.toString() }`;
 
 const getApiKey = () => config( 'wpcom_calypso_rest_api_key' );
 const getSupportSessionApiKey = () => config( 'wpcom_calypso_support_session_rest_api_key' );

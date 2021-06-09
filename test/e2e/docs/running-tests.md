@@ -5,22 +5,23 @@
 <!-- TOC -->
 
 - [Run tests](#run-tests)
-  - [Table of Contents](#table-of-contents)
-  - [Overview](#overview)
-  - [Target environment](#target-environment)
-    - [Staging](#staging)
-    - [Localhost](#localhost)
-  - [Running tests Selenium](#running-tests-selenium)
-    - [All tests](#all-tests)
-    - [Individual spec files](#individual-spec-files)
-    - [Individual suite](#individual-suite)
-  - [Running tests Playwright](#running-tests-playwright)
-    - [All tests](#all-tests)
-    - [Individual spec files](#individual-spec-files)
-    - [Individual suite](#individual-suite)
-  - [Options](#options)
-    - [Headless](#headless)
-  - [TeamCity](#teamcity)
+    - [Table of Contents](#table-of-contents)
+    - [Overview](#overview)
+    - [Target environment](#target-environment)
+        - [Staging](#staging)
+        - [Localhost](#localhost)
+    - [Running tests Selenium](#running-tests-selenium)
+        - [All tests](#all-tests)
+        - [Individual spec files](#individual-spec-files)
+        - [Individual suite](#individual-suite)
+    - [Running tests Playwright](#running-tests-playwright)
+        - [All tests](#all-tests)
+        - [Individual spec files](#individual-spec-files)
+        - [Individual suite](#individual-suite)
+    - [Execution parameters](#execution-parameters)
+        - [Headful](#headful)
+        - [Headless](#headless)
+    - [TeamCity](#teamcity)
 
 <!-- /TOC -->
 
@@ -196,7 +197,50 @@ mocha --config .mocharc_playwright.yml specs/specs-playwright -g 'Subsuite 2-1 @
 
 </details>
 
-## Options
+## Execution parameters
+
+### Headful
+
+To run tests in headful mode, either approach can be taken:
+
+<details>
+<summary>Using environment variables</summary>
+
+```
+BROWSERSIZE=<viewport> ./node_modules/.bin/mocha <path_to_e2e_spec>
+```
+
+</details>
+
+<details>
+<summary>Using run.sh</summary>
+
+```
+./run.sh -g -s <viewport>
+```
+
+</details>
+
+Multiple viewport sizes can be specified in a similar manner:
+
+<details>
+<summary>Using environment variables</summary>
+
+```
+./run.sh -g -s <viewport1>,<viewport2>
+```
+
+</details>
+
+<details>
+<summary>Using run.sh</summary>
+
+```
+./run.sh -g -s mobile,desktop
+```
+
+</details>
+
 
 ### Headless
 
@@ -221,6 +265,4 @@ Calypso end-to-end tests have migrated to TeamCity as of 2021-01.
 
 Both sets of E2E Tests (desktop, mobile) are run against all branches, PRs and trunk. This process is automatic.
 
-Note that access to TeamCity is available only to Automatticians.
-
-OSS Citizens (including Trialmatticians), please request an Automattician to execute the required e2e tests in the PR.
+> :lock: Unfortunately, access to TeamCity is available only to Automatticians at this time. OSS Citizens (including Trialmatticians), please request an Automattician to execute the required e2e tests in the PR.

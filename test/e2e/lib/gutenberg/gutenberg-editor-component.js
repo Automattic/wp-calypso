@@ -264,12 +264,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async closeBlockInserter() {
-		// @TODO: Remove `.edit-post-header .block-editor-inserter__toggle` selector in favor of the `.edit-post-header-toolbar__inserter-toggle` selector when Gutenberg 8.0.0 is deployed.
-		// @TODO: Remove `.block-editor-inserter__popover .components-popover__close` selector in favor of the `.edit-post-layout__inserter-panel-header .components-button` selector when Gutenberg 8.0.0 is deployed.
 		const inserterCloseLocator = By.css(
 			driverManager.currentScreenSize() === 'mobile'
-				? '.block-editor-inserter__popover .components-popover__close, .edit-post-layout__inserter-panel-header .components-button'
-				: '.edit-post-header .block-editor-inserter__toggle, .edit-post-header .edit-post-header-toolbar__inserter-toggle'
+				? '.edit-post-editor__inserter-panel-header .components-button'
+				: '.edit-post-header-toolbar__inserter-toggle'
 		);
 		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
 		await driverHelper.clickWhenClickable( this.driver, inserterCloseLocator );
@@ -285,7 +283,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await this.driver
 			.findElements(
 				By.css(
-					'.edit-post-layout__inserter-panel .block-editor-block-types-list span.block-editor-block-types-list__item-title'
+					'.edit-post-editor__inserter-panel .block-editor-block-types-list span.block-editor-block-types-list__item-title'
 				)
 			)
 			.then( ( els ) => webdriver.promise.map( els, ( el ) => el.getAttribute( 'innerText' ) ) );
@@ -388,7 +386,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 
 		const inserterBlockItemLocator = By.css(
-			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
+			`.edit-post-editor__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
 		);
 
 		const insertedBlockLocator = By.css(

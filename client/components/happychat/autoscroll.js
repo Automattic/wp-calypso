@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
@@ -17,15 +17,15 @@ import { createHigherOrderComponent } from '@wordpress/compose';
  *
  */
 export function useAutoscroll() {
-	const autoscrollEnabled = useRef( true );
 	const autoscrollNode = useRef( null );
+	const [ disabledAt, setDisabledAt ] = useState( null );
 
 	const scrollToBottom = useCallback( () => {
-		if ( autoscrollEnabled.current && autoscrollNode.current ) {
+		if ( disabledAt === null && autoscrollNode.current ) {
 			const { scrollHeight, offsetHeight } = autoscrollNode.current;
 			autoscrollNode.current.scrollTop = Math.max( 0, scrollHeight - offsetHeight );
 		}
-	}, [] );
+	}, [ disabledAt ] );
 
 	useEffect( () => {
 		window.addEventListener( 'resize', scrollToBottom );
@@ -42,8 +42,14 @@ export function useAutoscroll() {
 	const detectScroll = useCallback( () => {
 		const { scrollTop, offsetHeight, scrollHeight } = autoscrollNode.current;
 		const enable = scrollTop + offsetHeight >= scrollHeight;
-		autoscrollEnabled.current = enable;
-	}, [] );
+
+		if ( ! enable && disabledAt !== null ) {
+			// If we're disabling, but it's already disabled, skip so that the earlier `disabledAt` timestamp remains
+			return;
+		}
+
+		setDisabledAt( enable ? null : Date.now() );
+	}, [ disabledAt ] );
 
 	function setTarget( node ) {
 		if ( autoscrollNode.current ) {
@@ -57,7 +63,12 @@ export function useAutoscroll() {
 		}
 	}
 
-	return { setTarget };
+	function enableAutoscroll() {
+		setDisabledAt( null );
+		scrollToBottom();
+	}
+
+	return { setTarget, disabledAt, enableAutoscroll };
 }
 
 export const withAutoscroll = createHigherOrderComponent(

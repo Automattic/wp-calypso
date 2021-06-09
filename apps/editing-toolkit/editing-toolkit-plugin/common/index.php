@@ -69,13 +69,29 @@ function is_homepage_title_hidden() {
  * @return bool True if the site needs a temporary fix for the incorrect slider width.
  */
 function needs_slider_width_workaround() {
+	global $post;
+
 	if (
 		( defined( 'GUTENBERG_DEVELOPMENT_MODE' ) && GUTENBERG_DEVELOPMENT_MODE ) ||
 		( defined( 'GUTENBERG_VERSION' ) && version_compare( GUTENBERG_VERSION, '9.2', '>=' ) )
 	) {
-		return true;
+		// Workaround only needed when in the editor.
+		return isset( $post );
 	}
 	return false;
+}
+
+/**
+ * Determines whether the user should be included in trialing a new font-smoothing rule.
+ *
+ * @return bool True if antialiased font-smoothing rule should be applied.
+ */
+function use_font_smooth_antialiased() {
+	if ( defined( 'A8C_USE_FONT_SMOOTHING_ANTIALIASED' ) && A8C_USE_FONT_SMOOTHING_ANTIALIASED ) {
+		return true;
+	}
+
+	return apply_filters( 'a8c_use_font_smoothing_antialiased', false );
 }
 
 /**
@@ -90,7 +106,7 @@ function needs_slider_width_workaround() {
  * @return bool True if the common module assets should be loaded.
  */
 function should_load_assets() {
-	return (bool) is_homepage_title_hidden() || needs_slider_width_workaround();
+	return (bool) is_homepage_title_hidden() || needs_slider_width_workaround() || use_font_smooth_antialiased();
 }
 
 /**
@@ -102,6 +118,16 @@ function should_load_assets() {
 function admin_body_classes( $classes ) {
 	if ( is_homepage_title_hidden() ) {
 		$classes .= ' hide-homepage-title';
+	}
+
+	if ( needs_slider_width_workaround() ) {
+		$classes .= ' slider-width-workaround';
+	}
+
+	if ( use_font_smooth_antialiased() ) {
+		// Extra space needed because the `legacy-color-*` class isn't adding
+		// a leading space and breaking this class string.
+		$classes .= ' font-smoothing-antialiased ';
 	}
 
 	return $classes;
@@ -137,7 +163,7 @@ function enqueue_script_and_style() {
 		filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
 	);
 }
-add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );
+add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_script_and_style' );
 
 /**
  * Enable line-height settings for all themes with Gutenberg.

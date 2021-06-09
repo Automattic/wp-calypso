@@ -19,6 +19,7 @@ import repliesCache from './comment-replies-cache';
 import { init as initAPI } from './rest-client/wpcom';
 
 import Layout from './templates';
+import FontSmoothing from './utils/font-smoothing';
 
 /**
  * Style dependencies
@@ -48,6 +49,7 @@ export class Notifications extends PureComponent {
 		locale: PropTypes.string,
 		receiveMessage: PropTypes.func,
 		wpcom: PropTypes.object.isRequired,
+		isStandalone: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -73,7 +75,7 @@ export class Notifications extends PureComponent {
 			customEnhancer,
 			customMiddleware: mergeHandlers( customMiddleware, {
 				APP_REFRESH_NOTES: [
-					( store, action ) => {
+					( _store, action ) => {
 						if ( ! client ) {
 							return;
 						}
@@ -98,7 +100,7 @@ export class Notifications extends PureComponent {
 		 * Initialize store with actions that need to occur on
 		 * transitions from open to close or close to open
 		 *
-		 * @TODO: Pass this information directly into the Redux initial state
+		 * @todo Pass this information directly into the Redux initial state
 		 */
 		store.dispatch( { type: SET_IS_SHOWING, isShowing } );
 
@@ -131,6 +133,7 @@ export class Notifications extends PureComponent {
 	render() {
 		return (
 			<Provider store={ store }>
+				{ this.props.isStandalone && <FontSmoothing /> }
 				<RestClientContext.Provider value={ client }>
 					<Layout
 						client={ client }

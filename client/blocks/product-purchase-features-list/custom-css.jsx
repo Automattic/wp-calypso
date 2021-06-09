@@ -3,35 +3,24 @@
  */
 
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import PurchaseDetail from 'calypso/components/purchase-detail';
-import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Image dependencies
  */
 import customizeImage from 'calypso/assets/images/illustrations/dashboard.svg';
 
-function isCustomizeEnabled() {
-	return isEnabled( 'manage/customize' );
-}
-
 function getEditCSSLink( selectedSite ) {
-	const adminUrl = selectedSite.URL + '/wp-admin/';
-	const customizerInAdmin =
-		adminUrl +
-		'customize.php?return=' +
-		encodeURIComponent( window.location.href ) +
-		'&section=jetpack_custom_css';
-
-	return isCustomizeEnabled() ? '/customize/custom-css/' + selectedSite.slug : customizerInAdmin;
+	return '/customize/custom-css/' + selectedSite.slug;
 }
 
-export default localize( ( { selectedSite, translate } ) => {
+export default function CustomCSS( { selectedSite } ) {
+	const translate = useTranslate();
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
@@ -42,8 +31,7 @@ export default localize( ( { selectedSite, translate } ) => {
 				) }
 				buttonText={ translate( 'Edit CSS' ) }
 				href={ getEditCSSLink( selectedSite ) }
-				target={ isCustomizeEnabled() ? undefined : '_blank' }
 			/>
 		</div>
 	);
-} );
+}

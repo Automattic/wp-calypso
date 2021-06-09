@@ -15,7 +15,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getCouponLineItemFromCart,
-	getTaxLineItemFromCart,
+	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
 } from '@automattic/wpcom-checkout';
 
@@ -38,7 +38,7 @@ export default function WPCheckoutOrderSummary( {
 	const { formStatus } = useFormStatus();
 	const { responseCart } = useShoppingCart();
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
-	const taxLineItem = getTaxLineItemFromCart( responseCart );
+	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 
 	const hasRenewalInCart = responseCart.products.some(
@@ -79,12 +79,12 @@ export default function WPCheckoutOrderSummary( {
 						<span>{ couponLineItem.amount.displayValue }</span>
 					</CheckoutSummaryLineItem>
 				) }
-				{ taxLineItem && (
+				{ taxLineItems.map( ( taxLineItem ) => (
 					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
 						<span>{ taxLineItem.label }</span>
 						<span>{ taxLineItem.amount.displayValue }</span>
 					</CheckoutSummaryLineItem>
-				) }
+				) ) }
 				<CheckoutSummaryTotal>
 					<span>{ translate( 'Total' ) }</span>
 					<span className="wp-checkout-order-summary__total-price">

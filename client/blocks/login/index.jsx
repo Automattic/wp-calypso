@@ -133,7 +133,7 @@ class Login extends Component {
 			! socialConnect &&
 			! privateSite &&
 			! oauth2Client &&
-			! ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) &&
+			! isJetpackWooCommerceFlow &&
 			! isJetpack &&
 			! fromSite &&
 			! twoFactorEnabled &&
@@ -271,11 +271,7 @@ class Login extends Component {
 				);
 			}
 
-			if (
-				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-				isWooOAuth2Client( oauth2Client ) &&
-				wccomFrom
-			) {
+			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 				preHeader = (
 					<Fragment>
 						{ 'cart' === wccomFrom ? (
@@ -333,7 +329,7 @@ class Login extends Component {
 					},
 				} );
 			}
-		} else if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+		} else if ( isJetpackWooCommerceFlow ) {
 			headerText = translate( 'Log in to your WordPress.com account' );
 			preHeader = (
 				<div className="login__jetpack-logo">

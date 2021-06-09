@@ -135,10 +135,9 @@ function verifyBlockInEditor( Block ) {
 /**
  * Re-usable collection of steps for verifying blocks in the frontend/published page.
  *
- * @param {object} driver Instance of WebDriver
  * @param {Function} Block A block class.
  */
-function verifyBlockInPublishedPage( driver, Block ) {
+function verifyBlockInPublishedPage( Block ) {
 	it( 'Publish page', async function () {
 		await editor.publish( { visit: true } );
 	} );
@@ -152,7 +151,10 @@ function verifyBlockInPublishedPage( driver, Block ) {
 	 */
 	if ( ! [ YoutubeBlockComponent, SlideshowBlockComponent ].includes( Block ) ) {
 		it( 'Block is displayed in the published page', async function () {
-			await driverHelper.waitUntilElementLocatedAndVisible( driver, Block.blockFrontendLocator );
+			await driverHelper.waitUntilElementLocatedAndVisible(
+				this.driver,
+				Block.blockFrontendLocator
+			);
 		} );
 	}
 }
@@ -211,7 +213,7 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 					currentGutenbergBlocksCode = await editor.getBlocksCode();
 				} );
 
-				verifyBlockInPublishedPage( this.driver, Block );
+				verifyBlockInPublishedPage( Block );
 
 				describe( `Test the same block on a corresponding edge site`, function () {
 					it( `Start a new post`, async function () {

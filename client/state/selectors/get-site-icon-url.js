@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
@@ -28,5 +22,5 @@ export default function getSiteIconUrl( state, siteId ) {
 
 	// If cannot find media by ID, use icon.img property if available,
 	// otherwise assume icon is not set
-	return get( getRawSite( state, siteId ), 'icon.img', null );
+	return getRawSite( state, siteId )?.icon?.img ?? null;
 }

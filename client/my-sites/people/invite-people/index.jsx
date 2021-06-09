@@ -33,7 +33,7 @@ import FeatureExample from 'calypso/components/feature-example';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getWpcomFollowerRole } from 'calypso/state/sites/selectors';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -43,7 +43,6 @@ import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import { getInviteLinksForSite } from 'calypso/state/invites/selectors';
-import { getSiteRoles, getWpcomFollowerRole } from 'calypso/state/site-roles/selectors';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -52,6 +51,7 @@ import accept from 'calypso/lib/accept';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
 
 /**
  * Style dependencies
@@ -745,7 +745,6 @@ const mapStateToProps = ( state ) => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		inviteLinks: getInviteLinksForSite( state, siteId ),
-		siteRoles: getSiteRoles( state, siteId ),
 		wpcomFollowerRole: getWpcomFollowerRole( state, siteId ),
 	};
 };
@@ -761,4 +760,6 @@ const mapDispatchToProps = {
 
 const connectComponent = connect( mapStateToProps, mapDispatchToProps );
 
-export default connectComponent( localize( withTrackingTool( 'HotJar' )( InvitePeople ) ) );
+export default connectComponent(
+	localize( withTrackingTool( 'HotJar' )( withSiteRoles( InvitePeople ) ) )
+);

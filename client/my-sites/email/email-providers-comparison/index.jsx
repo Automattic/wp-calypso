@@ -15,6 +15,7 @@ import {
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
 	transformMailboxForCart,
+	validateMailboxes as validateTitanMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
 import { Button } from '@automattic/components';
@@ -87,6 +88,7 @@ class EmailProvidersComparison extends React.Component {
 				titan: isDomainEligibleForEmail,
 			},
 			addingToCart: false,
+			validatedTitanMailboxUuids: [],
 		};
 	}
 
@@ -138,14 +140,27 @@ class EmailProvidersComparison extends React.Component {
 		const { domain } = this.props;
 		const { titanMailboxes } = this.state;
 
-		const mailboxesAreValid = areAllMailboxesValid( titanMailboxes, [ 'alternativeEmail' ] );
+		const validatedTitanMailboxes = validateTitanMailboxes( titanMailboxes );
+
+		const mailboxesAreValid = areAllMailboxesValid( validatedTitanMailboxes );
 		const userCanAddEmail = canCurrentUserAddEmail( domain );
+		const userCannotAddEmailReason = userCanAddEmail
+			? null
+			: getCurrentUserCannotAddEmailReason( domain );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
-			mailbox_count: titanMailboxes.length,
+			mailbox_count: validatedTitanMailboxes.length,
 			mailboxes_valid: mailboxesAreValid ? 1 : 0,
 			provider: 'titan',
 			user_can_add_email: userCanAddEmail,
+			user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
+		} );
+
+		const validatedTitanMailboxUuids = validatedTitanMailboxes.map( ( mailbox ) => mailbox.uuid );
+
+		this.setState( {
+			titanMailboxes: validatedTitanMailboxes,
+			validatedTitanMailboxUuids,
 		} );
 
 		if ( ! mailboxesAreValid || ! userCanAddEmail ) {
@@ -156,14 +171,15 @@ class EmailProvidersComparison extends React.Component {
 
 		const cartItem = titanMailMonthly( {
 			domain: domain.name,
-			quantity: titanMailboxes.length,
+			quantity: validatedTitanMailboxes.length,
 			extra: {
-				email_users: titanMailboxes.map( transformMailboxForCart ),
-				new_quantity: titanMailboxes.length,
+				email_users: validatedTitanMailboxes.map( transformMailboxForCart ),
+				new_quantity: validatedTitanMailboxes.length,
 			},
 		} );
 
 		this.setState( { addingToCart: true } );
+
 		shoppingCartManager
 			.addProductsToCart( [ fillInSingleCartItemAttributes( cartItem, productsList ) ] )
 			.then( () => {
@@ -386,6 +402,7 @@ class EmailProvidersComparison extends React.Component {
 				domain={ domain.name }
 				onReturnKeyPress={ this.onTitanFormReturnKeyPress }
 				showLabels={ true }
+				validatedMailboxUuids={ this.state.validatedTitanMailboxUuids }
 			>
 				<Button
 					className="email-providers-comparison__titan-mailbox-action-continue"

@@ -47,10 +47,6 @@ import { createAlipayPaymentMethodStore, createAlipayMethod } from './lib/paymen
 import { createP24PaymentMethodStore, createP24Method } from './lib/payment-methods/p24';
 import { createEpsPaymentMethodStore, createEpsMethod } from './lib/payment-methods/eps';
 import {
-	createGiropayPaymentMethodStore,
-	createGiropayMethod,
-} from './lib/payment-methods/giropay';
-import {
 	createStripeMethod,
 	createStripePaymentMethodStore,
 } from './lib/payment-methods/stripe-credit-card-fields';
@@ -118,8 +114,6 @@ export {
 	createEpsMethod,
 	createEpsPaymentMethodStore,
 	createExistingCardMethod,
-	createGiropayMethod,
-	createGiropayPaymentMethodStore,
 	createIdealMethod,
 	createIdealPaymentMethodStore,
 	createP24Method,

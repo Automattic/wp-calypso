@@ -12,7 +12,6 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
-import config from '@automattic/calypso-config';
 import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
 import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
 import {
@@ -62,10 +61,6 @@ class PaymentMethodList extends Component {
 	};
 
 	renderAddPaymentMethodButton() {
-		if ( ! config.isEnabled( 'manage/payment-methods' ) ) {
-			return null;
-		}
-
 		return (
 			<Button primary compact onClick={ this.goToAddPaymentMethod }>
 				{ this.props.translate( 'Add payment method' ) }

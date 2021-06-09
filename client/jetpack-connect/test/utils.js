@@ -83,6 +83,7 @@ describe( 'parseAuthorizationQuery', () => {
 			blogname: 'Just Another WordPress.com Site',
 			client_id: '12345',
 			close_window_after_login: '0',
+			close_window_after_auth: '0',
 			home_url: 'https://yourjetpack.blog',
 			redirect_uri: 'https://yourjetpack.blog/wp-admin/admin.php',
 			scope: 'administrator:34579bf2a3185a47d1b31aab30125d',
@@ -97,12 +98,13 @@ describe( 'parseAuthorizationQuery', () => {
 		expect( result ).toMatchSnapshot();
 	} );
 
-	test( 'isPopup, closeWindowAfterLogin should be true if string is 1', () => {
+	test( 'isPopup, closeWindowAfterLogin, closeWindowAfterAuthorize should be true if string is 1', () => {
 		const data = {
 			_wp_nonce: 'foobar',
 			blogname: 'Just Another WordPress.com Site',
 			client_id: '12345',
 			close_window_after_login: '1',
+			close_window_after_auth: '1',
 			home_url: 'https://yourjetpack.blog',
 			is_popup: '1',
 			redirect_uri: 'https://yourjetpack.blog/wp-admin/admin.php',
@@ -115,14 +117,16 @@ describe( 'parseAuthorizationQuery', () => {
 		const result = parseAuthorizationQuery( data );
 		expect( result.isPopup ).toBe( true );
 		expect( result.closeWindowAfterLogin ).toBe( true );
+		expect( result.closeWindowAfterAuthorize ).toBe( true );
 	} );
 
-	test( 'isPopup, closeWindowAfterLogin should be false if string is not 1', () => {
+	test( 'isPopup, closeWindowAfterLogin, closeWindowAfterAuthorize should be false if string is not 1', () => {
 		const data = {
 			_wp_nonce: 'foobar',
 			blogname: 'Just Another WordPress.com Site',
 			client_id: '12345',
 			close_window_after_login: '0',
+			close_window_after_auth: '0',
 			home_url: 'https://yourjetpack.blog',
 			is_popup: 'FALSE',
 			redirect_uri: 'https://yourjetpack.blog/wp-admin/admin.php',
@@ -135,6 +139,7 @@ describe( 'parseAuthorizationQuery', () => {
 		const result = parseAuthorizationQuery( data );
 		expect( result.isPopup ).toBe( false );
 		expect( result.closeWindowAfterLogin ).toBe( false );
+		expect( result.closeWindowAfterAuthorize ).toBe( false );
 	} );
 
 	test( 'should return null data on valid input', () => {

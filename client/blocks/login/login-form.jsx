@@ -302,15 +302,11 @@ export class LoginForm extends Component {
 
 	recordWooCommerceLoginTracks( method ) {
 		const { isJetpackWooCommerceFlow, oauth2Client, wccomFrom } = this.props;
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+		if ( isJetpackWooCommerceFlow ) {
 			this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
 				login_method: method,
 			} );
-		} else if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			isWooOAuth2Client( oauth2Client ) &&
-			'cart' === wccomFrom
-		) {
+		} else if ( isWooOAuth2Client( oauth2Client ) && 'cart' === wccomFrom ) {
 			this.props.recordTracksEvent( 'wcadmin_storeprofiler_payment_login', {
 				login_method: method,
 			} );
@@ -481,7 +477,7 @@ export class LoginForm extends Component {
 			isGutenboarding
 		);
 
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+		if ( isJetpackWooCommerceFlow ) {
 			return this.renderWooCommerce();
 		}
 
@@ -489,11 +485,7 @@ export class LoginForm extends Component {
 			return this.renderWooCommerce( !! accountType ); // Only show the social buttons after the user entered an email.
 		}
 
-		if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			isWooOAuth2Client( oauth2Client ) &&
-			wccomFrom
-		) {
+		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			return this.renderWooCommerce();
 		}
 
