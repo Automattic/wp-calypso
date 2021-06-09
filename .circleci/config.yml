@@ -561,7 +561,29 @@ jobs:
                   $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
                   Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
       - run:
-          name: Build Desktop Windows
+          name: Build Source
+          command: |
+            make -f desktop/Makefile build-main
+      # - when:
+          # condition: << pipeline.git.tag >>
+          # steps:
+      - run:
+          name: Build Appx
+          command: |
+            # Don't sign the Windows Store package
+            $env:CSC_LINK=""
+            make -f desktop/Makefile package ELECTRON_BUILDER_ARGS='--config="electron-builder-appx.json"'
+      - run:
+          name: Clean Up Appx
+          command: |
+            set +e
+            rm desktop/release/latest.yml
+            rm desktop/release/win-unpacked-ia32.tar.gz
+            rm desktop/release/win-unpacked-x64.tar.gz
+            rm *.exe
+            rm *.blockmap
+      - run:
+          name: Build NSIS
           command: |
             # Use make for bash-like environment variable substitution
 
@@ -571,14 +593,7 @@ jobs:
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
             # If ( -Not $(git diff --name-only origin/trunk...HEAD | Select-String -Pattern desktop/package.json,desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
-
-            make -f desktop/Makefile build-main
             make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$($env:ARG1,$env:ARG2 -join " ")
-
-            # Build Windows Store appx -- don't sign
-            # TODO: build conditionally on tag
-            $env:CSC_LINK=""
-            make -f desktop/Makefile package ELECTRON_BUILDER_ARGS='--config="electron-builder-appx.json"'
       - run:
           name: Archive Unpacked Directories
           command: |
