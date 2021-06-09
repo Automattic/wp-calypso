@@ -56,6 +56,7 @@ class SiteSettingsFormWriting extends Component {
 			siteId,
 			siteIsJetpack,
 			translate,
+			siteIsAutomatedTransfer,
 			updateFields,
 			showAdvancedDashboard,
 		} = this.props;
@@ -97,25 +98,26 @@ class SiteSettingsFormWriting extends Component {
 					updateFields={ updateFields }
 				/>
 
-				{ siteIsJetpack && (
-					<div>
-						<SettingsSectionHeader
-							disabled={ isRequestingSettings || isSavingSettings }
-							isSaving={ isSavingSettings }
-							onButtonClick={ handleSubmitForm }
-							showButton
-							title={ translate( 'Media' ) }
-						/>
-						<MediaSettingsWriting
-							siteId={ siteId }
-							handleAutosavingToggle={ handleAutosavingToggle }
-							onChangeField={ onChangeField }
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							fields={ fields }
-						/>
-					</div>
-				) }
+				{ siteIsJetpack &&
+					! siteIsAutomatedTransfer(
+						<div>
+							<SettingsSectionHeader
+								disabled={ isRequestingSettings || isSavingSettings }
+								isSaving={ isSavingSettings }
+								onButtonClick={ handleSubmitForm }
+								showButton
+								title={ translate( 'Media' ) }
+							/>
+							<MediaSettingsWriting
+								siteId={ siteId }
+								handleAutosavingToggle={ handleAutosavingToggle }
+								onChangeField={ onChangeField }
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+								fields={ fields }
+							/>
+						</div>
+					) }
 
 				<SettingsSectionHeader
 					disabled={ isRequestingSettings || isSavingSettings }
@@ -213,6 +215,7 @@ const connectComponent = connect(
 				! siteIsAutomatedTransfer,
 			isPodcastingSupported,
 			showAdvancedDashboard,
+			siteIsAutomatedTransfer,
 		};
 	},
 	{ requestPostTypes },
