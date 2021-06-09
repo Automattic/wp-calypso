@@ -38,10 +38,7 @@ body {
 	background-color: #1a1e23;
 }
 
-.nav-button-icon {
+.nav-button svg {
 	margin: auto;
-}
-
-.nav-button-icon-wordpress {
-	margin: 6px 0 0 6px;
+	fill: #8f93a3;
 }
