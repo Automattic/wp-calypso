@@ -9,7 +9,7 @@ import { createSelector } from '@automattic/state-utils';
 import { AppState } from 'calypso/types';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
-import { getMonthlySlugFromYearly } from '../slugs';
+import { getMonthlySlugFromYearly } from '../convert-slug-terms';
 
 const getAnnualDiscount = ( state: AppState, annualProductSlug: string ) => {
 	const yearly = getProductCost( state, annualProductSlug );

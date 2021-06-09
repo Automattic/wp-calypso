@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useExperiment } from 'calypso/lib/explat';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/slugs';
+import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';

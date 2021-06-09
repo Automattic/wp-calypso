@@ -13,7 +13,7 @@ import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
 import SelectorPage from './selector';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getMonthlySlugFromYearly, getYearlySlugFromMonthly } from './slugs';
+import { getMonthlySlugFromYearly, getYearlySlugFromMonthly } from './convert-slug-terms';
 
 /**
  * Type dependencies
