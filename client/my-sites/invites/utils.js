@@ -5,7 +5,7 @@ import React from 'react';
 import { get } from 'lodash';
 import i18n from 'i18n-calypso';
 
-export function acceptedNotice( invite, displayOnNextPage = true ) {
+export function acceptedNotice( invite, isPersistent = true ) {
 	const site = (
 		<a href={ get( invite, 'site.URL' ) } className="invites__notice-site-link">
 			{ get( invite, 'site.title' ) }
@@ -21,7 +21,7 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 				{
 					button: i18n.translate( 'Visit Site' ),
 					href: get( invite, 'site.URL' ),
-					displayOnNextPage,
+					isPersistent,
 				},
 			];
 
@@ -33,7 +33,7 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 				{
 					button: i18n.translate( 'Visit Site' ),
 					href: get( invite, 'site.URL' ),
-					displayOnNextPage,
+					isPersistent,
 				},
 			];
 
@@ -62,7 +62,7 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 						) }
 					</p>
 				</div>,
-				{ displayOnNextPage },
+				{ isPersistent },
 			];
 
 		case 'editor':
@@ -88,7 +88,7 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 						) }
 					</p>
 				</div>,
-				{ displayOnNextPage },
+				{ isPersistent },
 			];
 
 		case 'author':
@@ -114,7 +114,7 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 						) }
 					</p>
 				</div>,
-				{ displayOnNextPage },
+				{ isPersistent },
 			];
 
 		case 'contributor':
@@ -131,7 +131,7 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 						) }
 					</p>
 				</div>,
-				{ displayOnNextPage },
+				{ isPersistent },
 			];
 
 		case 'subscriber':
@@ -139,14 +139,14 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 				i18n.translate( "You're now a Subscriber of: {{site/}}", {
 					components: { site },
 				} ),
-				{ displayOnNextPage },
+				{ isPersistent },
 			];
 		default:
 			return [
 				i18n.translate( "You're now a new member of: {{site/}}", {
 					components: { site },
 				} ),
-				{ displayOnNextPage },
+				{ isPersistent },
 			];
 	}
 }
