@@ -11,7 +11,7 @@ import { TranslateResult, useTranslate } from 'i18n-calypso';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
-import { productAboveButtonText, productButtonLabel, productTooltip } from '../utils';
+import { productAboveButtonText, productTooltip } from './utils';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	planHasFeature,
@@ -29,6 +29,7 @@ import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import productButtonLabel from './product-button-label';
 
 /**
  * Type dependencies
