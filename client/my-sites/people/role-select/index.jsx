@@ -56,8 +56,12 @@ const RoleSelect = ( props ) => {
 
 	let siteRoles;
 
-	if ( site && data && includeFollower ) {
-		siteRoles = data.concat( wpcomFollowerRole );
+	if ( site && data ) {
+		siteRoles = data;
+
+		if ( includeFollower ) {
+			siteRoles = siteRoles.concat( wpcomFollowerRole );
+		}
 	}
 
 	return (
