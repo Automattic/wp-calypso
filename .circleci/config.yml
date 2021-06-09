@@ -547,6 +547,26 @@ jobs:
       - run:
           name: Install Desktop Dependencies
           command: yarn run build-desktop:install-app-deps
+      - run:
+          name: Build Source
+          command: |
+            make -f desktop/Makefile build-main
+      # - when:
+          # condition: << pipeline.git.tag >>
+          # steps:
+      - run:
+          name: Build Appx
+          command: |
+            # Note: Windows Store build should be unsigned
+            make -f desktop/Makefile package ELECTRON_BUILDER_ARGS='--config="electron-builder-appx.json"'
+      - run:
+          name: Clean Up Appx
+          command: |
+            set +e
+            rm desktop/release/*.yml
+            rm desktop/release/*.gz
+            rm desktop/release/*.exe
+            rm desktop/release/*.blockmap
       - when:
           condition: << pipeline.git.tag >>
           steps:
@@ -560,28 +580,6 @@ jobs:
                   # package.json's `certificateSubjectName` to find the imported cert.
                   $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
                   Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
-      - run:
-          name: Build Source
-          command: |
-            make -f desktop/Makefile build-main
-      # - when:
-          # condition: << pipeline.git.tag >>
-          # steps:
-      - run:
-          name: Build Appx
-          command: |
-            # Don't sign the Windows Store package
-            $env:CSC_LINK=""
-            make -f desktop/Makefile package ELECTRON_BUILDER_ARGS='--config="electron-builder-appx.json"'
-      - run:
-          name: Clean Up Appx
-          command: |
-            set +e
-            rm desktop/release/latest.yml
-            rm desktop/release/win-unpacked-ia32.tar.gz
-            rm desktop/release/win-unpacked-x64.tar.gz
-            rm *.exe
-            rm *.blockmap
       - run:
           name: Build NSIS
           command: |
