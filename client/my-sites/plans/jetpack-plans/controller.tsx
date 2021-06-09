@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { isEnabled } from '@automattic/calypso-config';
+import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -12,13 +13,22 @@ import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
 import SelectorPage from './selector';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { TERM_ANNUALLY } from '@automattic/calypso-products';
-import { getHighlightedProduct, stringToDuration } from './utils';
+import { getHighlightedProduct } from './utils';
 
 /**
  * Type dependencies
  */
 import type { Duration, QueryArgs } from './types';
+
+function stringToDuration( duration?: string ): Duration | undefined {
+	if ( duration === undefined ) {
+		return undefined;
+	}
+	if ( duration === 'monthly' ) {
+		return TERM_MONTHLY;
+	}
+	return TERM_ANNUALLY;
+}
 
 export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, next ) => {
 	// Get the selected site's current plan term, and set it as default duration
