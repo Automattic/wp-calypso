@@ -101,7 +101,7 @@ export function attachLogmein( isWPComLoggedIn = false ): void {
 function logmeinOnClick( event: MouseEvent ) {
 	const link = ( event.target as HTMLElement ).closest( 'a' );
 
-	if ( link ) {
+	if ( link && link.href ) {
 		let url = new URL( link.href, INVALID_URL );
 		if ( allowedSites.indexOf( url.hostname ) !== -1 ) {
 			url = appendLogmeinDirect( url );
