@@ -29,11 +29,12 @@ const StyledProgressBar = styled( ProgressBar )`
 	margin: 20px 0px;
 `;
 
-function WrappedMarketplacePluginSetup( {
-	onCloseLoadingPage,
-}: {
-	onCloseLoadingPage?: () => void;
-} ): JSX.Element {
+/**
+ * This component simulates progress for the purchase flow. It also does any async tasks required in the purchase flow. This includes installing any plugins required.
+ * TODO: Refactor component so that it can easily handle multiple speeds of simulated progress
+ */
+
+function WrappedMarketplacePluginSetup(): JSX.Element {
 	const translate = useTranslate();
 
 	const STEP_1 = translate( 'Installing plugin' );
@@ -58,19 +59,13 @@ function WrappedMarketplacePluginSetup( {
 	}, [ fetchAutomatedTransferStatus ] );
 
 	useEffect( () => {
-		if ( isPluginInstalledDuringPurchase ) {
-			if ( transferStatus === 'completed' ) {
-				onCloseLoadingPage && onCloseLoadingPage();
-			}
-		} else if ( pluginSlugToBeInstalled && selectedSiteId ) {
+		if ( pluginSlugToBeInstalled && selectedSiteId ) {
 			dispatch( initiateThemeTransfer( selectedSiteId, null, pluginSlugToBeInstalled ) );
-		} else if ( isPluginInstalledDuringPurchase ) {
-			// TODO: To be implemented: polling wait to be implemented to check for transfer
-		} else {
+		} else if ( ! isPluginInstalledDuringPurchase ) {
 			// Invalid State redirect to Yoast marketplace page for now, and maybe a marketplace home view in the future
-			// page(
-			// 	`/marketplace/product/details/wordpress-seo/${ selectedSiteId }?flags=marketplace-yoast`
-			// );
+			page(
+				`/marketplace/product/details/wordpress-seo/${ selectedSiteSlug }?flags=marketplace-yoast`
+			);
 		}
 	}, [ dispatch, pluginSlugToBeInstalled, isPluginInstalledDuringPurchase, selectedSiteId ] );
 
@@ -94,7 +89,7 @@ function WrappedMarketplacePluginSetup( {
 
 	useEffect( () => {
 		if ( transferStatus === 'complete' ) {
-			// TODO: Make sure the primary domain is set to the relevant domain before redireting to thank-you page
+			// TODO: Make sure the primary domain is set to the relevant domain before redirecting to thank-you page
 			setSimulatedProgressPercentage( 100 );
 			setTimeout( () => {
 				page( `/marketplace/thank-you/${ selectedSiteId }?flags=marketplace-yoast` );
@@ -108,7 +103,7 @@ function WrappedMarketplacePluginSetup( {
 
 	const currentNumericStep = steps.indexOf( currentStep ) + 1;
 
-	/* translators: %(currentStep)s  Is the current step number, given that steps are set of counting numbers representing each step starting from 1, %(stepCount)s  Is the total numer of steps, Eg: Step 1 of 3  */
+	/* translators: %(currentStep)s  Is the current step number, given that steps are set of counting numbers representing each step starting from 1, %(stepCount)s  Is the total number of steps, Eg: Step 1 of 3  */
 	const stepIndication = translate( 'Step %(currentStep)s of %(stepCount)s', {
 		args: { currentStep: currentNumericStep, stepCount: steps.length },
 	} );
@@ -128,14 +123,10 @@ function WrappedMarketplacePluginSetup( {
 	);
 }
 
-export default function MarketplacePluginSetup( {
-	onCloseLoadingPage,
-}: {
-	onCloseLoadingPage?: () => void;
-} ): JSX.Element {
+export default function MarketplacePluginSetup(): JSX.Element {
 	return (
 		<ThemeProvider theme={ theme }>
-			<WrappedMarketplacePluginSetup onCloseLoadingPage={ onCloseLoadingPage } />
+			<WrappedMarketplacePluginSetup />
 		</ThemeProvider>
 	);
 }

@@ -97,7 +97,6 @@ const MarketplaceThankYou = () => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const dispatch = useDispatch();
-	const [ isLoadingPageOpen, setIsLoadingPageOpen ] = useState( true );
 
 	const isFetchingTransferStatus = useSelector( ( state ) =>
 		isFetchingAutomatedTransferStatus( state, selectedSiteId ?? 0 )
@@ -125,7 +124,11 @@ const MarketplaceThankYou = () => {
 	}, [ postsPageUrl, yoastSeoPageUrl ] );
 
 	useEffect( () => {
-		if ( transferStatus !== 'complete' ) {
+		if (
+			isPluginInstalledDuringPurchase &&
+			transferStatus !== 'complete' &&
+			! isFetchingTransferStatus
+		) {
 			setTimeout( () => {
 				dispatch( fetchAutomatedTransferStatus( selectedSiteId ?? 0 ) );
 				setPollCount( ( c ) => c + 1 );
@@ -142,8 +145,8 @@ const MarketplaceThankYou = () => {
 
 	return (
 		<>
-			{ isLoadingPageOpen && transferStatus !== 'complete' ? (
-				<MarketplacePluginSetupStatus onCloseLoadingPage={ () => setIsLoadingPageOpen( false ) } />
+			{ isPluginInstalledDuringPurchase && transferStatus !== 'complete' ? (
+				<MarketplacePluginSetupStatus />
 			) : (
 				<>
 					<Masterbar>
@@ -162,7 +165,6 @@ const MarketplaceThankYou = () => {
 						</MarketplaceThankYouHeader>
 						<ThankYouBody>
 							<div>
-								<div>{ transferStatus }</div>
 								<MarketplaceThankyouSection>
 									<MarketplaceHeaderTitle className="marketplace-thank-you__body-header wp-brand-font">
 										{ translate( 'Yoast SEO Premium is installed' ) }
@@ -177,8 +179,6 @@ const MarketplaceThankYou = () => {
 									</MarketplaceHeaderTitle>
 									<MarketplaceNextSteps>
 										<h3>{ translate( 'Plugin setup' ) }</h3>
-										<h3>{ isFetchingTransferStatus }</h3>
-										<h3>{ transferStatus }</h3>
 										<div>
 											<p>
 												{ translate(
