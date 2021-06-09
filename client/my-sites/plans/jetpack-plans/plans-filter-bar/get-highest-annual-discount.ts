@@ -48,8 +48,13 @@ const getHighestAnnualDiscount = createSelector(
 			.filter( ( discount ): discount is number => Number.isFinite( discount ) )
 			.sort( ( a, b ) => b - a );
 
-		const highestDiscount = Math.round( 100 * discounts?.[ 0 ] ?? 0 );
-		return highestDiscount > 0 ? `${ highestDiscount }%` : null;
+		const highestDiscount = discounts?.[ 0 ] ?? 0;
+		if ( highestDiscount <= 0 ) {
+			return null;
+		}
+
+		const rounded = Math.round( 100 * highestDiscount );
+		return `${ rounded }%`;
 	},
 	[
 		// HIDDEN DEPENDENCY: Discount rates differ based on the current user's currency code!
