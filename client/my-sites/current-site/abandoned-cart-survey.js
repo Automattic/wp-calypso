@@ -25,11 +25,15 @@ function useShowAbandonedCartSurvey() {
 	const userPurchases = useSelector( ( state ) => getUserPurchases( state, user?.ID ) );
 
 	const { responseCart, isPendingUpdate } = useShoppingCart();
-
 	useEffect( () => {
-		if ( ! eventTriggered && ! isPendingUpdate && hasStaleItem( responseCart ) && userPurchases ) {
+		if (
+			! eventTriggered &&
+			! isPendingUpdate &&
+			hasStaleItem( responseCart ) &&
+			! userPurchases
+		) {
 			triggerEvent( 'abandoned_cart_survey' );
 			eventTriggered = true;
 		}
-	}, [ isPendingUpdate, userPurchases, responseCart ] );
+	}, [ user, isPendingUpdate, userPurchases, responseCart ] );
 }
