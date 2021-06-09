@@ -5,7 +5,7 @@ import React from 'react';
 import { get } from 'lodash';
 import i18n from 'i18n-calypso';
 
-export function acceptedNotice( invite, isPersistent = true ) {
+export function acceptedNotice( invite, displayOnNextPage = true ) {
 	const site = (
 		<a href={ get( invite, 'site.URL' ) } className="invites__notice-site-link">
 			{ get( invite, 'site.title' ) }
@@ -21,7 +21,7 @@ export function acceptedNotice( invite, isPersistent = true ) {
 				{
 					button: i18n.translate( 'Visit Site' ),
 					href: get( invite, 'site.URL' ),
-					isPersistent,
+					displayOnNextPage,
 				},
 			];
 
@@ -33,7 +33,7 @@ export function acceptedNotice( invite, isPersistent = true ) {
 				{
 					button: i18n.translate( 'Visit Site' ),
 					href: get( invite, 'site.URL' ),
-					isPersistent,
+					displayOnNextPage,
 				},
 			];
 
@@ -62,7 +62,7 @@ export function acceptedNotice( invite, isPersistent = true ) {
 						) }
 					</p>
 				</div>,
-				{ isPersistent },
+				{ displayOnNextPage },
 			];
 
 		case 'editor':
@@ -88,7 +88,7 @@ export function acceptedNotice( invite, isPersistent = true ) {
 						) }
 					</p>
 				</div>,
-				{ isPersistent },
+				{ displayOnNextPage },
 			];
 
 		case 'author':
@@ -114,7 +114,7 @@ export function acceptedNotice( invite, isPersistent = true ) {
 						) }
 					</p>
 				</div>,
-				{ isPersistent },
+				{ displayOnNextPage },
 			];
 
 		case 'contributor':
@@ -131,7 +131,7 @@ export function acceptedNotice( invite, isPersistent = true ) {
 						) }
 					</p>
 				</div>,
-				{ isPersistent },
+				{ displayOnNextPage },
 			];
 
 		case 'subscriber':
@@ -139,14 +139,14 @@ export function acceptedNotice( invite, isPersistent = true ) {
 				i18n.translate( "You're now a Subscriber of: {{site/}}", {
 					components: { site },
 				} ),
-				{ isPersistent },
+				{ displayOnNextPage },
 			];
 		default:
 			return [
 				i18n.translate( "You're now a new member of: {{site/}}", {
 					components: { site },
 				} ),
-				{ isPersistent },
+				{ displayOnNextPage },
 			];
 	}
 }

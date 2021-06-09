@@ -16,6 +16,7 @@ import { acceptInvite } from 'calypso/state/invites/actions';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { navigate } from 'calypso/lib/navigate';
 
 /**
  * Style dependencies
@@ -30,7 +31,7 @@ class InviteAcceptLoggedIn extends React.Component {
 		this.props
 			.acceptInvite( this.props.invite )
 			.then( () => {
-				window.location.href = this.props.redirectTo;
+				navigate( this.props.redirectTo );
 			} )
 			.catch( () => {
 				this.setState( { submitting: false } );
