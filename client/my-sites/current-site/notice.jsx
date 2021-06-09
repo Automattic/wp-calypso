@@ -7,7 +7,7 @@ import React from 'react';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { get, reject } from 'lodash';
 
 /**
@@ -87,7 +87,7 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -123,7 +123,7 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -216,7 +216,7 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -263,8 +263,7 @@ export class SiteNotice extends React.Component {
 		const domainCreditNotice = this.domainCreditNotice();
 
 		const showJitms =
-			! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) &&
-			( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
+			! this.props.isSiteWPForTeams && ( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
 
 		return (
 			<div className="current-site__notices">

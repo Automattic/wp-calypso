@@ -6,7 +6,6 @@ import { get, includes, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import stepConfig from './steps';
 import user from 'calypso/lib/user';
 import { isEcommercePlan } from '@automattic/calypso-products';
@@ -137,7 +136,7 @@ function filterDestination( destination, dependencies, flowName, localeSlug ) {
 }
 
 function getDefaultFlowName() {
-	return config.isEnabled( 'signup/onboarding-flow' ) ? 'onboarding' : 'main';
+	return 'onboarding';
 }
 
 const Flows = {

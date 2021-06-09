@@ -71,7 +71,7 @@ export function getSignupUrl(
 		signupUrl += '/' + signupFlow;
 	}
 
-	if ( config.isEnabled( 'signup/wpcc' ) && isCrowdsignalOAuth2Client( oauth2Client ) ) {
+	if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 		const oauth2Flow = 'crowdsignal';
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,

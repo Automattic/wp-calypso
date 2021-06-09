@@ -9,7 +9,6 @@ import classNames from 'classnames';
 import { size } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -277,7 +276,7 @@ export class Banner extends Component {
 		} = this.props;
 
 		// No Banners for WP for Teams sites.
-		if ( config.isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return null;
 		}
 

@@ -6,7 +6,6 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/route';
 
 const noop = () => {};
@@ -213,67 +212,61 @@ export function generateFlows( {
 		allowContinue: false,
 	};
 
-	if ( isEnabled( 'signup/atomic-store-flow' ) ) {
-		// Important: For any changes done to the ecommerce flow,
-		// please copy the same changes to ecommerce-onboarding flow too
-		flows.ecommerce = {
-			steps: [ 'user', 'domains', 'plans-ecommerce-fulfilled' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2020-08-11',
-			showRecaptcha: true,
-		};
+	// Important: For any changes done to the ecommerce flow,
+	// please copy the same changes to ecommerce-onboarding flow too
+	flows.ecommerce = {
+		steps: [ 'user', 'domains', 'plans-ecommerce-fulfilled' ],
+		destination: getSignupDestination,
+		description: 'Signup flow for creating an online store with an Atomic site',
+		lastModified: '2020-08-11',
+		showRecaptcha: true,
+	};
 
-		flows[ 'ecommerce-onboarding' ] = {
-			steps: [ 'user', 'domains', 'plans-ecommerce' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2020-03-04',
-		};
+	flows[ 'ecommerce-onboarding' ] = {
+		steps: [ 'user', 'domains', 'plans-ecommerce' ],
+		destination: getSignupDestination,
+		description: 'Signup flow for creating an online store with an Atomic site',
+		lastModified: '2020-03-04',
+	};
 
-		flows[ 'ecommerce-design-first' ] = {
-			steps: [
-				'template-first-themes',
-				'user',
-				'site-type-with-theme',
-				'domains',
-				'plans-ecommerce',
-			],
-			destination: getSignupDestination,
-			description:
-				'Signup flow for creating an online store with an Atomic site, forked from the design-first flow',
-			lastModified: '2019-11-27',
-		};
+	flows[ 'ecommerce-design-first' ] = {
+		steps: [
+			'template-first-themes',
+			'user',
+			'site-type-with-theme',
+			'domains',
+			'plans-ecommerce',
+		],
+		destination: getSignupDestination,
+		description:
+			'Signup flow for creating an online store with an Atomic site, forked from the design-first flow',
+		lastModified: '2019-11-27',
+	};
 
-		flows[ 'ecommerce-monthly' ] = {
-			steps: [ 'user', 'domains', 'plans-ecommerce-monthly' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2021-02-02',
-			showRecaptcha: true,
-		};
-	}
+	flows[ 'ecommerce-monthly' ] = {
+		steps: [ 'user', 'domains', 'plans-ecommerce-monthly' ],
+		destination: getSignupDestination,
+		description: 'Signup flow for creating an online store with an Atomic site',
+		lastModified: '2021-02-02',
+		showRecaptcha: true,
+	};
 
-	if ( isEnabled( 'signup/wpcc' ) ) {
-		flows.wpcc = {
-			steps: [ 'oauth2-user' ],
-			destination: getRedirectDestination,
-			description: 'WordPress.com Connect signup flow',
-			lastModified: '2017-08-24',
-			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
-			showRecaptcha: true,
-		};
-	}
+	flows.wpcc = {
+		steps: [ 'oauth2-user' ],
+		destination: getRedirectDestination,
+		description: 'WordPress.com Connect signup flow',
+		lastModified: '2017-08-24',
+		disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
+		showRecaptcha: true,
+	};
 
-	if ( isEnabled( 'signup/wpforteams' ) ) {
-		flows.p2 = {
-			steps: [ 'p2-site', 'p2-details', 'user' ],
-			destination: ( dependencies ) => `https://${ dependencies.siteSlug }?p2-site`,
-			description: 'P2 signup flow',
-			lastModified: '2020-09-01',
-			showRecaptcha: true,
-		};
-	}
+	flows.p2 = {
+		steps: [ 'p2-site', 'p2-details', 'user' ],
+		destination: ( dependencies ) => `https://${ dependencies.siteSlug }?p2-site`,
+		description: 'P2 signup flow',
+		lastModified: '2020-09-01',
+		showRecaptcha: true,
+	};
 
 	flows.domain = {
 		steps: [
@@ -381,15 +374,6 @@ export function generateFlows( {
 		lastModified: '2020-08-11',
 		showRecaptcha: true,
 	};
-
-	if ( isEnabled( 'signup/full-site-editing' ) ) {
-		flows[ 'test-fse' ] = {
-			steps: [ 'user', 'fse-themes', 'domains', 'plans' ],
-			destination: getSignupDestination,
-			description: 'User testing Signup flow for Full Site Editing',
-			lastModified: '2019-12-02',
-		};
-	}
 
 	flows[ 'new-launch' ] = {
 		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
