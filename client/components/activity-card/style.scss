@@ -231,12 +231,21 @@
 }
 
 .activity-card__share-button-wrap {
+	position: absolute;
+	top: -6px; // Offset the button's inherit padding
+	right: 0;
 	text-align: right;
+
+	.activity-card-list__secondary-card & {
+		right: -32px;
+	}
 }
 
 .activity-card__share-button.button.is-borderless.is-primary {
-	color: var( --studio-gray );
-	font-size: 0.875rem;
+	margin: 0;
+	color: var( --color-neutral-40 );
+	font-size: $font-body-extra-small;
+	line-height: $font-body;
 }
 
 .activity-card__share-heading {
@@ -253,7 +262,7 @@
 }
 
 .activity-card__share-popover {
-	width: 320px;
+	width: 340px;
 }
 
 .activity-card__share-popover .popover__inner {
@@ -265,11 +274,15 @@
 }
 
 input[type=text].form-text-input.activity-card__share-email {
-	margin-right: 1rem;
+	margin-right: 0.5rem;
 }
 
 .activity-card__share-submit {
 	width: 32%;
+
+	&.form-button {
+		margin: 0;
+	}
 }
 
 .activity-card__share-error {
