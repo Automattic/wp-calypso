@@ -21,6 +21,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import type { VatDetails, UpdateError } from './use-vat-details';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
@@ -62,6 +63,7 @@ export default function VatInfoPage(): JSX.Element {
 
 function VatForm(): JSX.Element {
 	const translate = useTranslate();
+	const reduxDispatch = useDispatch();
 	const [ currentVatDetails, setCurrentVatDetails ] = useState< VatDetails >( {} );
 	const {
 		vatDetails,
@@ -72,10 +74,16 @@ function VatForm(): JSX.Element {
 	} = useVatDetails();
 
 	const saveDetails = () => {
+		reduxDispatch( recordTracksEvent( 'calypso_vat_details_update' ) );
 		setVatDetails( { ...vatDetails, ...currentVatDetails } );
 	};
 
 	useDisplayVatNotices( { error: updateError, success: isUpdateSuccessful } );
+	useRecordVatEvents( { error: updateError, success: isUpdateSuccessful } );
+
+	const clickSupport = () => {
+		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
+	};
 
 	const isVatAlreadySet = !! vatDetails.id;
 
@@ -109,7 +117,12 @@ function VatForm(): JSX.Element {
 							{
 								components: {
 									contactSupportLink: (
-										<a target="_blank" href={ CALYPSO_CONTACT } rel="noreferrer" />
+										<a
+											target="_blank"
+											href={ CALYPSO_CONTACT }
+											rel="noreferrer"
+											onClick={ clickSupport }
+										/>
 									),
 								},
 							}
@@ -257,6 +270,30 @@ function useDisplayVatNotices( {
 			return;
 		}
 	}, [ error, success, reduxDispatch, translate ] );
+}
+
+function useRecordVatEvents( {
+	error,
+	success,
+}: {
+	error: UpdateError | null;
+	success: boolean;
+} ): void {
+	const reduxDispatch = useDispatch();
+
+	useEffect( () => {
+		if ( error ) {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_vat_details_validation_failure', { error: error.error } )
+			);
+			return;
+		}
+
+		if ( success ) {
+			reduxDispatch( recordTracksEvent( 'calypso_vat_details_validation_success' ) );
+			return;
+		}
+	}, [ error, success, reduxDispatch ] );
 }
 
 function LoadingPlaceholder(): JSX.Element {
