@@ -25,6 +25,7 @@ import {
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getEmailForwards } from 'calypso/state/selectors/get-email-forwards';
 import {
 	getEmailPurchaseByDomain,
 	hasEmailSubscription,
@@ -43,6 +44,8 @@ import {
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import HeaderCake from 'calypso/components/header-cake';
+import isRequestingEmailForwards from 'calypso/state/selectors/is-requesting-email-forwards';
+import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 import VerticalNav from 'calypso/components/vertical-nav';
@@ -55,7 +58,9 @@ class EmailPlan extends React.Component {
 
 		// Connected props
 		currentRoute: PropTypes.string,
+		emailForwards: PropTypes.array,
 		hasSubscription: PropTypes.bool,
+		isLoadingEmailForwards: PropTypes.bool,
 		isLoadingPurchase: PropTypes.bool,
 		purchase: PropTypes.object,
 	};
@@ -75,10 +80,26 @@ class EmailPlan extends React.Component {
 	}
 
 	loadEmailAccounts() {
-		const { domain, selectedSite } = this.props;
+		const { domain, emailForwards, isLoadingEmailForwards, selectedSite } = this.props;
 
-		if ( this.state.isLoadingEmailAccounts || this.state.hasLoadedEmailAccounts ) {
+		if ( this.state.isLoadingEmailAccounts ) {
 			return;
+		}
+
+		if ( this.state.hasLoadedEmailAccounts ) {
+			if ( ! this.shouldCheckForEmailForwards( domain ) ) {
+				return;
+			}
+
+			// Special handling for email forwards, as we want to trigger a re-fetch if the default email forward
+			// Redux data has been updated due to adding or removing an email forward.
+			if ( emailForwards === null || isLoadingEmailForwards ) {
+				return;
+			}
+
+			if ( this.getMailboxes().length === emailForwards.length ) {
+				return;
+			}
 		}
 
 		this.setState( {
@@ -104,6 +125,10 @@ class EmailPlan extends React.Component {
 				}
 			);
 	}
+
+	shouldCheckForEmailForwards = ( domain ) => {
+		return ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain );
+	};
 
 	getAccount() {
 		return this.state?.emailAccounts[ 0 ];
@@ -308,9 +333,13 @@ class EmailPlan extends React.Component {
 
 		const { isLoadingEmailAccounts } = this.state;
 
+		// Ensure we check for email forwarding additions and removals
+		const queryForEmailForwards = this.shouldCheckForEmailForwards( domain );
+
 		return (
 			<>
 				{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
+				{ queryForEmailForwards && <QueryEmailForwards domainName={ domain.name } /> }
 
 				<HeaderCake onClick={ this.handleBack }>{ this.getHeaderText() }</HeaderCake>
 
@@ -349,6 +378,8 @@ class EmailPlan extends React.Component {
 export default connect( ( state, ownProps ) => {
 	return {
 		currentRoute: getCurrentRoute( state ),
+		emailForwards: getEmailForwards( state, ownProps.domain.name ),
+		isLoadingEmailForwards: isRequestingEmailForwards( state, ownProps.domain.name ),
 		isLoadingPurchase:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 		purchase: getEmailPurchaseByDomain( state, ownProps.domain ),
