@@ -92,15 +92,16 @@ describe( `[${ host }] Invites - New user as Editor: (${ screenSize }) @parallel
 	} );
 
 	it( 'User has been added as Editor', async function () {
-		await PostsPage.Expect( this.driver );
-
 		inviteAccepted = true;
 		const noticesComponent = await NoticesComponent.Expect( this.driver );
 		const invitesMessageTitleDisplayed = await noticesComponent.getNoticeContent();
-		return assert(
+		assert(
 			invitesMessageTitleDisplayed.includes( 'Editor' ),
 			`The invite message '${ invitesMessageTitleDisplayed }' does not include 'Editor'`
 		);
+
+		const postsPage = await PostsPage.Expect( this.driver );
+		return await postsPage.waitForPage();
 	} );
 
 	it( 'As the original user can see and remove new user', async function () {
