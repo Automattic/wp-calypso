@@ -51,6 +51,7 @@ class MasterbarLoggedIn extends React.Component {
 		user: PropTypes.object.isRequired,
 		domainOnlySite: PropTypes.bool,
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		sectionName: PropTypes.string,
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
@@ -185,13 +186,14 @@ class MasterbarLoggedIn extends React.Component {
 			translate,
 			isCustomerHomeEnabled,
 			section,
+			sectionName,
 		} = this.props;
 		const homeUrl = isCustomerHomeEnabled
 			? `/home/${ siteSlug }`
 			: getStatsPathForTab( 'day', siteSlug );
 
 		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
-		if ( this.props.isNavUnificationEnabled && 'sites' === section ) {
+		if ( this.props.isNavUnificationEnabled && 'sites' === section && 'theme' !== sectionName ) {
 			mySitesUrl = '';
 		}
 		return (
