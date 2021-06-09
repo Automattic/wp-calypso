@@ -213,7 +213,7 @@ class Upload extends React.Component {
 			<UpsellNudge
 				title={ translate( 'Upgrade to the Business plan to access the theme install features' ) }
 				event="calypso_theme_install_upgrade_click"
-				href={ `/checkout/${ siteId }/business` }
+				href={ `/checkout/${ siteId }/business?redirect_to=/themes/upload/${ siteId }` }
 				plan={ PLAN_BUSINESS }
 				feature={ FEATURE_UPLOAD_THEMES }
 				showIcon={ true }
