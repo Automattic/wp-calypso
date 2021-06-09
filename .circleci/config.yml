@@ -570,11 +570,15 @@ jobs:
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
-            If ( -Not $(git diff --name-only origin/trunk...HEAD | Select-String -Pattern desktop/package.json,desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
-
+            # If ( -Not $(git diff --name-only origin/trunk...HEAD | Select-String -Pattern desktop/package.json,desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
 
             make -f desktop/Makefile build-main
             make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$($env:ARG1,$env:ARG2 -join " ")
+
+            # Build Windows Store appx -- don't sign
+            # TODO: build conditionally on tag
+            $env:CSC_LINK=""
+            make -f desktop/Makefile package ELECTRON_BUILDER_ARGS='--config="C:\Users\circleci\wp-calypso\desktop\electron-builder-appx.json"'
       - run:
           name: Archive Unpacked Directories
           command: |
