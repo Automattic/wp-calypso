@@ -74,6 +74,8 @@ export class LoginFlow {
 	async loginFromPopup(): Promise< void > {
 		// Popup emits the event 'popup'. Capturing the event obtains the Page object
 		// for the popup page, where the login form is located.
+		// For more information, see https://playwright.dev/docs/multi-pages#handling-popups
+		// under 'unknown trigger'.
 		const popupPage = await this.page.waitForEvent( 'popup' );
 
 		await popupPage.waitForLoadState( 'networkidle' );

@@ -40,32 +40,36 @@ export function getCalypsoURL(
  */
 export function getAccountCredential( accountType: string ): string[] {
 	const testAccounts: { [ key: string ]: string } = config.get( 'testAccounts' );
-	try {
-		// Destruture the returned value and ignore the last entry (URL).
-		const [ user_name, password ] = testAccounts[ accountType ];
-		return [ user_name, password ];
-	} catch ( err ) {
+	if ( ! Object.keys( testAccounts ).includes( accountType ) ) {
 		throw new Error(
 			`Secrets file did not contain credentials for requested user ${ accountType }.`
 		);
 	}
+
+	const [ username, password ] = testAccounts[ accountType ];
+	return [ username, password ];
 }
 
 /**
  * Returns the site URL for a specified account from the secrets file.
  *
- * @param {string} accountType N'ame of account type for which the site URL is to be obtained.
+ * @param {string} accountType Type of the account for which the site URL is to be obtained.
  * @returns {string} Site URL for the given username.
  * @throws {Error} If the accountType does not have a site URL defined, or accountType does not have an entry in the file.
+ * @throws {TypeError} If invalid URL.
  */
 export function getAccountSiteURL( accountType: string ): string {
 	const testAccounts: { [ key: string ]: string } = config.get( 'testAccounts' );
-	try {
-		const [ , , url ] = testAccounts[ accountType ];
-		return new URL( url ).toString();
-	} catch ( err ) {
+	if ( ! Object.keys( testAccounts ).includes( accountType ) ) {
 		throw new Error( `Secrets file did not contain URL for requested user ${ accountType }.` );
 	}
+
+	const [ , , url ] = testAccounts[ accountType ];
+	if ( ! url ) {
+		throw new TypeError( `Secrets entry for ${ accountType } has no site URL defined.` );
+	}
+
+	return new URL( `https://${ url }` ).toString();
 }
 
 /**
