@@ -13,7 +13,7 @@ describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
 
 	it( 'Navigate to Tools > Marketing page', async function () {
 		const sidebarComponent = await SidebarComponent.Expect( this.page );
-		await sidebarComponent.clickMenuItem( 'Tools' );
+		await sidebarComponent.gotoMenu( { heading: 'Tools' } );
 	} );
 
 	it( 'Click on Traffic tab', async function () {

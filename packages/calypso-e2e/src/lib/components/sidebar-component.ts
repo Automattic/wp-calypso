@@ -7,10 +7,12 @@ import { toTitleCase } from '../../data-helper';
 /**
  * Type dependencies
  */
-import { Page } from 'playwright';
+import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
 	sidebar: '.sidebar',
+	menuText: '.sidebar__heading',
+	expandedMenu: '.sidebar__menu--selected',
 };
 
 /**
@@ -19,6 +21,8 @@ const selectors = {
  * @augments {BaseContainer}
  */
 export class SidebarComponent extends BaseContainer {
+	sidebar!: ElementHandle;
+
 	/**
 	 * Constructs an instance of the component.
 	 *
@@ -35,22 +39,81 @@ export class SidebarComponent extends BaseContainer {
 	 */
 	async _postInit(): Promise< void > {
 		await this.page.waitForLoadState( 'domcontentloaded' );
+		this.sidebar = await this.page.waitForSelector( selectors.sidebar );
 	}
 
 	/**
-	 * Clicks on the sidebar menu item matching the name.
-	 * Note that the menu item must be visible in some shape or form.
-	 * If there are multiple elements that match the selector, the first
-	 * matching element will be clicked (as per Playwright documentation).
-	 * Waits and assertions should be placed on the page/component that this
-	 * method will cause a navigation to, to ensure readiness before the script
-	 * continues.
+	 * Given heading and subheading, or any combination of the two, locate and click on the items on the sidebar.
 	 *
-	 * @param {string} name Plaintext name of the menu item in the sidebar.
+	 * This method supports any of the following use cases:
+	 *   - heading only
+	 *   - subheading only
+	 *   - heading and subheading
+	 *
+	 * Heading is defined as the top-level menu item that is permanently visible on the sidebar, unless outside
+	 * of the viewport.
+	 *
+	 * Subheading is defined as the child-level menu item that is exposed only on hover or main heading being toggled.
+	 *
+	 * Note, in the current Nav Unification paradigm, clicking on certain combinations of sidebar menu items will cause
+	 * a navigation away to an entirely new page (eg. wp-admin). Attempting to reuse the SidebarComponent object
+	 * under this condition will trigger an exception.
+	 *
+	 * @param {{[key: string]: string}} param0 Named object parameter.
+	 * @param {string} param0.heading Plaintext representation of the top level heading.
+	 * @param {string} param0.subheading Plaintext representation of the child level heading.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async clickMenuItem( name: string ): Promise< void > {
-		await this.page.click( `text=${ toTitleCase( name ) }` );
+	async gotoMenu( {
+		heading,
+		subheading,
+	}: {
+		heading: string;
+		subheading?: string;
+	} ): Promise< void > {
+		if ( heading ) {
+			await this._click( { selector: `${ selectors.menuText } >> text=${ heading.trim() }` } );
+		}
+
+		if ( subheading ) {
+			await this.sidebar.waitForSelector( selectors.expandedMenu );
+			await this._click( { selector: `span:has-text("${ subheading.trim() }")`, force: true } );
+		}
+	}
+
+	/**
+	 * Performs the underlying click action on a sidebar menu item.
+	 *
+	 * This method ensures the sidebar is in a stable, consistent state prior to executing its actions.
+	 *
+	 * In some cases, due to the way WPCOM sidebar is implemented, Playwright will struggle to scroll the menu item
+	 * into the viewport in order to perform the click action. This is a particular issue with child-level menu
+	 * items (eg. Settings > Reading). Set the `force` parameter to true to force a click action to occur regardless
+	 * of the visibility state of the target element.
+	 *
+	 * @param {{[key: string]: string|boolean}} param0 Named object parameter.
+	 * @param {string} param0.selector Any selector supported by Playwright.
+	 * @param {boolean} [param0.force] Whether to force a click action. Defaults to false.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async _click( {
+		selector,
+		force = false,
+	}: {
+		selector: string;
+		force?: boolean;
+	} ): Promise< void > {
+		await this.sidebar.waitForElementState( 'stable' );
+
+		const element = await this.sidebar.waitForSelector( selector );
+		await element.scrollIntoViewIfNeeded();
+
+		if ( ! force ) {
+			await element.click();
+		} else {
+			await element.dispatchEvent( 'click' );
+		}
+		await this.page.waitForLoadState( 'domcontentloaded' );
 	}
 
 	/**
@@ -60,7 +123,9 @@ export class SidebarComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async hoverMenuItem( name: string ): Promise< void > {
-		const element = await this.page.waitForSelector( `text=${ toTitleCase( name ) }` );
+		const element = await this.page.waitForSelector(
+			`${ selectors.menuText } >> text=${ toTitleCase( name ) }`
+		);
 		await element.hover();
 	}
 }
