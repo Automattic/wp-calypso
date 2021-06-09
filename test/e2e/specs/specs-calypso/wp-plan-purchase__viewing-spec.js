@@ -41,9 +41,6 @@ describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, f
 	it( 'Compare plans', async function () {
 		const plansPage = await PlansPage.Expect( this.driver );
 		await plansPage.openPlansTab();
-		if ( host === 'WPCOM' ) {
-			await plansPage.openAdvancedPlansSegment();
-		}
 		return await plansPage.waitForComparison();
 	} );
 

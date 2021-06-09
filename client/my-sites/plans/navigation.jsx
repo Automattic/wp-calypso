@@ -19,6 +19,7 @@ import PopoverCart from 'calypso/my-sites/checkout/cart/popover-cart';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 class PlansNavigation extends React.Component {
@@ -133,9 +134,10 @@ export default connect( ( state ) => {
 	const site = getSite( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isOnFreePlan = isSiteOnFreePlan( state, siteId );
+	const isAtomic = isAtomicSite( state, siteId );
 	return {
 		isJetpack,
-		shouldShowMyPlan: ! isOnFreePlan || isJetpack,
+		shouldShowMyPlan: ! isOnFreePlan || ( isJetpack && ! isAtomic ),
 		site,
 	};
 } )( localize( PlansNavigation ) );
