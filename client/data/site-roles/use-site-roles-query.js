@@ -12,6 +12,7 @@ function useSiteRolesQuery( siteId, queryOptions = {} ) {
 	return useQuery( [ 'site-roles', siteId ], () => wp.req.get( `/sites/${ siteId }/roles` ), {
 		...queryOptions,
 		select: ( { roles } ) => roles,
+		enabled: !! siteId,
 	} );
 }
 
