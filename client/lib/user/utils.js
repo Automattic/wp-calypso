@@ -56,10 +56,6 @@ const userUtils = {
 			} );
 	},
 
-	getLocaleSlug() {
-		return user().get().localeSlug;
-	},
-
 	isLoggedIn() {
 		return Boolean( user().data );
 	},
