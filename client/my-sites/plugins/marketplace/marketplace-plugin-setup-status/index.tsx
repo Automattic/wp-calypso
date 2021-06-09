@@ -17,18 +17,23 @@ import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
+import { getPurchaseFlowState } from 'calypso/state/plugins/marketplace/selectors';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 /**
  * Style dependencies
  */
 import 'calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status/style.scss';
-import { getPurchaseFlowState } from 'calypso/state/plugins/marketplace/selectors';
 
 const StyledProgressBar = styled( ProgressBar )`
 	margin: 20px 0px;
 `;
 
-function WrappedMarketplacePluginSetup(): JSX.Element {
+function WrappedMarketplacePluginSetup( {
+	onCloseLoadingPage,
+}: {
+	onCloseLoadingPage?: () => void;
+} ): JSX.Element {
 	const translate = useTranslate();
 
 	const STEP_1 = translate( 'Installing plugin' );
@@ -49,17 +54,25 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 	);
 
 	useEffect( () => {
-		if ( pluginSlugToBeInstalled && selectedSiteId ) {
+		dispatch( fetchAutomatedTransferStatus( selectedSiteId ?? 0 ) );
+	}, [ fetchAutomatedTransferStatus ] );
+
+	useEffect( () => {
+		if ( isPluginInstalledDuringPurchase ) {
+			if ( transferStatus === 'completed' ) {
+				onCloseLoadingPage && onCloseLoadingPage();
+			}
+		} else if ( pluginSlugToBeInstalled && selectedSiteId ) {
 			dispatch( initiateThemeTransfer( selectedSiteId, null, pluginSlugToBeInstalled ) );
 		} else if ( isPluginInstalledDuringPurchase ) {
 			// TODO: To be implemented: polling wait to be implemented to check for transfer
 		} else {
 			// Invalid State redirect to Yoast marketplace page for now, and maybe a marketplace home view in the future
-			page(
-				`/marketplace/product/details/wordpress-seo/${ selectedSiteId }?flags=marketplace-yoast`
-			);
+			// page(
+			// 	`/marketplace/product/details/wordpress-seo/${ selectedSiteId }?flags=marketplace-yoast`
+			// );
 		}
-	}, [ dispatch, pluginSlugToBeInstalled ] );
+	}, [ dispatch, pluginSlugToBeInstalled, isPluginInstalledDuringPurchase, selectedSiteId ] );
 
 	const TIMEOUT_BEFORE_REDIRECTING_ON_TRANSFER_COMPLETE = 4000;
 	const SIMULATION_REFRESH_INTERVAL = 2000;
@@ -115,10 +128,14 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 	);
 }
 
-export default function MarketplacePluginSetup(): JSX.Element {
+export default function MarketplacePluginSetup( {
+	onCloseLoadingPage,
+}: {
+	onCloseLoadingPage?: () => void;
+} ): JSX.Element {
 	return (
 		<ThemeProvider theme={ theme }>
-			<WrappedMarketplacePluginSetup />
+			<WrappedMarketplacePluginSetup onCloseLoadingPage={ onCloseLoadingPage } />
 		</ThemeProvider>
 	);
 }
