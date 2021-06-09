@@ -68,24 +68,38 @@ export class PageViewTracker extends React.Component {
 			path,
 			recorder = noop,
 			hasSelectedSiteLoaded,
+			isSelectedSiteNotRequested,
 			title,
-			properties,
 		} = this.props;
 
 		debug( `Queuing Page View: "${ title }" at "${ path }" with ${ delay }ms delay` );
 
-		if ( ! hasSelectedSiteLoaded || this.state.timer ) {
+		if ( this.state.timer ) {
+			return;
+		}
+
+		if ( isSelectedSiteNotRequested ) {
+			return this.recordViewWithProperties();
+		}
+
+		if ( ! hasSelectedSiteLoaded ) {
 			return;
 		}
 
 		if ( ! delay ) {
-			return recorder( path, title, 'default', properties );
+			return this.recordViewWithProperties();
 		}
 
 		this.setState( {
 			timer: setTimeout( () => recorder( path, title ), delay ),
 		} );
 	};
+
+	recordViewWithProperties() {
+		const { path, recorder = noop, title, properties } = this.props;
+
+		return recorder( path, title, 'default', properties );
+	}
 
 	render() {
 		return null;
@@ -102,9 +116,12 @@ const mapStateToProps = ( state ) => {
 		! currentSlug ||
 		( typeof currentSlug === 'number' && currentSlug === selectedSiteId ) ||
 		currentSlug === selectedSiteSlug;
+	const isSelectedSiteNotRequested =
+		currentSlug && ! selectedSiteId && ! state.sites.requesting[ currentSlug ];
 
 	return {
 		hasSelectedSiteLoaded,
+		isSelectedSiteNotRequested,
 		selectedSiteId,
 	};
 };
