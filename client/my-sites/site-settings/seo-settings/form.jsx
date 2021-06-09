@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Card, Button } from '@automattic/components';
 import { hasSiteSeoFeature, isFreeWPCOMSite } from '../utils';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'calypso/components/seo/meta-title-editor';
@@ -275,6 +276,7 @@ export class SeoForm extends React.Component {
 			siteIsComingSoon,
 			showAdvancedSeo,
 			isFreeWPCOM,
+			isAtomic,
 			showWebsiteMeta,
 			selectedSite,
 			isSeoToolsActive,
@@ -302,7 +304,7 @@ export class SeoForm extends React.Component {
 		const generalTabUrl = getGeneralTabUrl( slug );
 
 		const upsellProps =
-			siteIsJetpack && ! isFreeWPCOM
+			siteIsJetpack && ! isAtomic
 				? {
 						title: translate( 'Boost your search engine ranking' ),
 						feature: FEATURE_SEO_PREVIEW_TOOLS,
@@ -500,6 +502,7 @@ const mapStateToProps = ( state ) => {
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible,
 		isFreeWPCOM: isFreeWPCOMSite( site, state, siteId ),
+		isAtomic: isAtomicSite( state, siteId ),
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),

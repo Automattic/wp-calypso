@@ -39,7 +39,6 @@ export const GoogleAnalyticsForm = ( props ) => {
 		uniqueEventTracker,
 		path,
 		isFreeWPCOM,
-		isGoogleAnalyticsEligible,
 	} = props;
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ loggedGoogleAnalyticsModified, setLoggedGoogleAnalyticsModified ] = useState( false );
@@ -92,7 +91,7 @@ export const GoogleAnalyticsForm = ( props ) => {
 		setDisplayForm,
 		isFreeWPCOM,
 	};
-	if ( props.siteIsJetpack && isGoogleAnalyticsEligible ) {
+	if ( props.siteIsJetpack && ! isFreeWPCOM ) {
 		return <GoogleAnalyticsJetpackForm { ...newProps } />;
 	}
 	return <GoogleAnalyticsSimpleForm { ...newProps } />;
@@ -118,7 +117,6 @@ const mapStateToProps = ( state ) => {
 		sitePlugins,
 		jetpackModuleActive,
 		isFreeWPCOM: isFreeWPCOMSite( site, state, siteId ),
-		isGoogleAnalyticsEligible,
 	};
 };
 
