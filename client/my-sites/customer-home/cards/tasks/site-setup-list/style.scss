@@ -33,6 +33,20 @@
 		}
 	}
 
+	.site-setup-list__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		li {
+			border-bottom: 1px solid var( --color-border-subtle );
+
+			&:last-child {
+				border-bottom: none;
+			}
+		}
+	}
+
 	.card-heading {
 		padding: 16px 24px;
 		border-bottom: 1px solid var( --color-border-subtle );
@@ -44,16 +58,11 @@
 		display: flex;
 		align-items: center;
 		padding: 16px 24px;
-		border-bottom: 1px solid var( --color-border-subtle );
 		transition: all 0.1s;
 		cursor: pointer;
 		width: 100%;
 		margin: 0;
 		color: var( --color-text );
-
-		&:last-child {
-			border-bottom: none;
-		}
 
 		&:hover {
 			background-color: var( --color-neutral-0 );
