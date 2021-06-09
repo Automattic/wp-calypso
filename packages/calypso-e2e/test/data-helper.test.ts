@@ -6,7 +6,13 @@ import { describe, expect, test } from '@jest/globals';
 /**
  * Internal dependencies
  */
-import { getAccountCredential, getCalypsoURL, getAccountSiteURL } from '../src/data-helper';
+import {
+	getAccountCredential,
+	getCalypsoURL,
+	getAccountSiteURL,
+	toTitleCase,
+	createSuiteTitle,
+} from '../src/data-helper';
 
 describe( 'DataHelper Tests', function () {
 	describe( `Test: getCalypsoURL`, function () {
@@ -49,25 +55,53 @@ describe( 'DataHelper Tests', function () {
 	} );
 
 	describe( `Test: getAccountSiteURL`, function () {
-		// test.each`
-		// 	accountType      | expected
-		// 	${ 'basicUser' } | ${ 'https://wpcomuser.wordpress.com/' }
-		// 	${ 'advancedUser' } | ${ 'https://advancedwpcomuser.wordpress.com/' }
-		// `(
-		// 	'Returns $expected if getAccountSiteURL is called with $accountType',
-		// 	function ( { accountType, expected } ) {
-		// 		expect( getAccountSiteURL( accountType ) ).toStrictEqual( expected );
-		// 	}
-		// );
+		test.each`
+			accountType         | expected
+			${ 'basicUser' }    | ${ 'https://wpcomuser.wordpress.com/' }
+			${ 'advancedUser' } | ${ 'https://advancedwpcomuser.wordpress.com/' }
+		`(
+			'Returns $expected if getAccountSiteURL is called with $accountType',
+			function ( { accountType, expected } ) {
+				expect( getAccountSiteURL( accountType ) ).toStrictEqual( expected );
+			}
+		);
 
 		test.each`
 			accountType             | expected
 			${ 'nonexistent_user' } | ${ Error }
-			${ 'noURLUser' }        | ${ Error }
+			${ 'noURLUser' }        | ${ TypeError }
 		`(
 			'Throws error if getAccountCredentials is called with $accountType',
 			function ( { accountType, expected } ) {
 				expect( () => getAccountSiteURL( accountType ) ).toThrow( expected );
+			}
+		);
+	} );
+
+	describe( `Test: toTitleCase`, function () {
+		test.each`
+			words                        | expected
+			${ 'test' }                  | ${ 'Test' }
+			${ 'test words' }            | ${ 'Test Words' }
+			${ [ 'test', 'words' ] }     | ${ 'Test Words' }
+			${ 'Test Words Third' }      | ${ 'Test Words Third' }
+			${ '11 Words Third' }        | ${ '11 Words Third' }
+			${ [ '12', '33', 'ABCDE' ] } | ${ '12 33 ABCDE' }
+		`( 'Returns $expected if toTitleCase is called with $words', function ( { words, expected } ) {
+			expect( toTitleCase( words ) ).toStrictEqual( expected );
+		} );
+	} );
+
+	describe( `Test: createSuiteTitle`, function () {
+		test.each`
+			suite                       | viewport       | expected
+			${ 'Feature (Click: Tap)' } | ${ 'desktop' } | ${ '[WPCOM] Feature (Click: Tap): (desktop) @parallel' }
+			${ 'Manage' }               | ${ 'mobile' }  | ${ '[WPCOM] Manage: (mobile) @parallel' }
+		`(
+			'Returns $expected if toTitleCase is called with $words',
+			function ( { suite, viewport, expected } ) {
+				process.env.VIEWPORT_NAME = viewport;
+				expect( createSuiteTitle( suite ) ).toStrictEqual( expected );
 			}
 		);
 	} );
