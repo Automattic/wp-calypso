@@ -184,7 +184,7 @@ export class UserStep extends Component {
 			if ( this.props.isReskinned ) {
 				const loginUrl = this.getLoginLink();
 				subHeaderText = translate(
-					'Create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
+					'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
 					{
 						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
 					}

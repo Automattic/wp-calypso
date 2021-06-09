@@ -551,11 +551,7 @@ class SignupForm extends Component {
 					</>
 				) }
 
-				<FormLabel htmlFor="email">
-					{ this.props.isReskinned
-						? this.props.translate( 'Email address' )
-						: this.props.translate( 'Your email address' ) }
-				</FormLabel>
+				<FormLabel htmlFor="email">{ this.props.translate( 'Your email address' ) }</FormLabel>
 				<FormTextInput
 					autoCapitalize="off"
 					autoCorrect="off"
@@ -605,11 +601,7 @@ class SignupForm extends Component {
 					</>
 				) }
 
-				<FormLabel htmlFor="password">
-					{ this.props.isReskinned
-						? this.props.translate( 'Password' )
-						: this.props.translate( 'Choose a password' ) }
-				</FormLabel>
+				<FormLabel htmlFor="password">{ this.props.translate( 'Choose a password' ) }</FormLabel>
 				<FormPasswordInput
 					className="signup-form__input"
 					disabled={ this.state.submitting || this.props.disabled }
@@ -975,7 +967,11 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ this.props.horizontal && <div className="signup-form__separator"></div> }
+				{ this.props.horizontal && (
+					<div className="signup-form__separator">
+						<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
+					</div>
+				) }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<SocialSignupForm
