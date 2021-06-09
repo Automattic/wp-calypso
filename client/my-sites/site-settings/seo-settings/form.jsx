@@ -10,7 +10,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import { hasSiteSeoFeature, isFreeWPCOMSite } from '../utils';
+import hasSiteSeoFeature from 'calypso/state/selectors/has-site-seo-feature';
+import isSiteWPCOMOnFreePlan from 'calypso/state/selectors/is-site-wpcom-on-free-plan';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -486,7 +487,7 @@ const mapStateToProps = ( state ) => {
 	// the availability of the module.
 	const isAdvancedSeoEligible =
 		site.plan &&
-		hasSiteSeoFeature( site, state, siteId ) &&
+		hasSiteSeoFeature( state, site ) &&
 		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
 
 	const activePlugins = getPlugins( state, [ siteId ], 'active' );
@@ -501,7 +502,7 @@ const mapStateToProps = ( state ) => {
 		selectedSite: site,
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible,
-		isFreeWPCOM: isFreeWPCOMSite( site, state, siteId ),
+		isFreeWPCOM: isSiteWPCOMOnFreePlan( state, siteId ),
 		isAtomic: isAtomicSite( state, siteId ),
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),

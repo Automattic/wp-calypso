@@ -8,7 +8,8 @@ import { flowRight, partialRight, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { hasSiteAnalyticsFeature, isFreeWPCOMSite } from '../utils';
+import hasSiteAnalyticsFeature from 'calypso/state/selectors/has-site-analytics-feature';
+import isSiteWPCOMOnFreePlan from 'calypso/state/selectors/is-site-wpcom-on-free-plan';
 import wrapSettingsForm from '../wrap-settings-form';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -100,7 +101,7 @@ export const GoogleAnalyticsForm = ( props ) => {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isGoogleAnalyticsEligible = hasSiteAnalyticsFeature( site, state, siteId );
+	const isGoogleAnalyticsEligible = hasSiteAnalyticsFeature( state, site );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
@@ -116,7 +117,7 @@ const mapStateToProps = ( state ) => {
 		siteIsJetpack,
 		sitePlugins,
 		jetpackModuleActive,
-		isFreeWPCOM: isFreeWPCOMSite( site, state, siteId ),
+		isFreeWPCOM: isSiteWPCOMOnFreePlan( state, siteId ),
 	};
 };
 
