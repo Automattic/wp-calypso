@@ -1,52 +1,12 @@
 /**
- * External dependencies
- */
-
-import debugModule from 'debug';
-
-/**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import user from 'calypso/lib/user';
-
-/**
- * Module Variables
- */
-const debug = debugModule( 'calypso:user:utilities' );
+import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
 
 const userUtils = {
-	getLogoutUrl( redirect ) {
-		const userData = user().get();
-		let url;
-		let subdomain = '';
-
-		// If logout_URL isn't set, then go ahead and return the logout URL
-		// without a proper nonce as a fallback.
-		// Note: we never want to use logout_URL in the desktop app
-		if ( ! userData.logout_URL || config.isEnabled( 'always_use_logout_url' ) ) {
-			// Use localized version of the homepage in the redirect
-			if ( userData.localeSlug && userData.localeSlug !== '' && userData.localeSlug !== 'en' ) {
-				subdomain = userData.localeSlug + '.';
-			}
-
-			url = config( 'logout_url' ).replace( '|subdomain|', subdomain );
-		} else {
-			url = userData.logout_URL;
-		}
-
-		if ( 'string' === typeof redirect ) {
-			redirect = '&redirect_to=' + encodeURIComponent( redirect );
-			url += redirect;
-		}
-
-		debug( 'Logout Url: ' + url );
-
-		return url;
-	},
-
 	logout( redirect ) {
-		const logoutUrl = userUtils.getLogoutUrl( redirect );
+		const logoutUrl = getLogoutUrl( user().get(), redirect );
 
 		// Clear any data stored locally within the user data module or localStorage
 		user()
