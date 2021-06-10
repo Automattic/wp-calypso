@@ -1,0 +1,30 @@
+{
+	"productName": "WordPress.com",
+	"appId": "com.automattic.wordpress",
+	"asar": false,
+	"directories": {
+		"buildResources": "./resource",
+		"output": "./release"
+	},
+	"files": [ "dist", "package.json", "config/*.json" ],
+    "win": {
+		"icon": "./resource/icons/icon.ico",
+        "target": [
+            {
+                "target": "appx",
+                "arch": [
+                    "ia32",
+                    "x64"
+                ]
+            }
+        ]
+    },
+    "appx": {
+        "applicationId": "WordPress.comDesktop",
+        "identityName": "22491Automattic.WordPress.comDesktop",
+        "publisher": "CN=E3E5A157-746D-4B04-9116-ABE5CB928306",
+        "publisherDisplayName": "Automattic, Inc.",
+        "backgroundColor": "transparent",
+        "artifactName": "wordpress.com-win-store-${version}-${arch}.${ext}"
+    }
+}

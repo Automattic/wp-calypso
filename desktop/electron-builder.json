@@ -3,7 +3,7 @@
 	"appId": "com.automattic.wordpress",
 	"asar": false,
 	"directories": {
-		"buildResources": "./resource/icons",
+		"buildResources": "./resource",
 		"output": "./release"
 	},
 	"publish": [
@@ -41,10 +41,13 @@
 		"artifactName": "wordpress.com-macOS-dmg-${version}-${arch}.${ext}"
 	},
 	"win": {
-		"target": {
-			"target": "nsis",
-			"arch": [ "x64", "ia32" ]
-		}
+		"icon": "./resource/icon.ico",
+		"target": [
+			{
+				"target": "nsis",
+				"arch": [ "x64", "ia32" ]
+			}
+		]
 	},
 	"nsis": {
 		"oneClick": false,
@@ -53,9 +56,9 @@
 	"linux": {
 		"target": [ "deb", "tar.gz" ],
 		"executableName": "wpcom",
-		"description": "WordPress.com Desktop Client",
-		"synopsis": "WordPress.com Desktop client",
-		"category": "Development",
+		"description": "WordPress.com",
+		"synopsis": "WordPress.com Desktop Client",
+		"category": "Social",
 		"desktop": {
 			"StartupNotify": true
 		},

@@ -25,7 +25,7 @@
 		"ci:build-mac": "yarn run build:main && node bin/build-mac-ci",
 		"build": "yarn run build:main && ELECTRON_BUILDER_ARGS=${ELECTRON_BUILDER_ARGS} yarn run build:app",
 		"build:app": "yarn electron-builder ${ELECTRON_BUILDER_ARGS} build --publish never",
-		"build:main": "webpack --stats-preset errors-only",
+		"build:main": "yarn run build:config && webpack --stats-preset errors-only",
 		"build:config": "node bin/build-desktop-config.js",
 		"build:secrets": "node bin/build-desktop-secrets.js",
 		"ci:github:add-review": "node bin/github/add-review.js",
