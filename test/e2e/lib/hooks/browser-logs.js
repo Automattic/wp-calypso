@@ -13,8 +13,8 @@ export const saveBrowserLogs = async () => {
 	try {
 		await Promise.allSettled(
 			[
-				[ () => this.driver.manage().logs().get( logging.Type.BROWSER ) ],
-				[ () => this.driver.manage().logs().get( logging.Type.PERFORMANCE ) ],
+				[ () => this.driver.manage().logs().get( logging.Type.BROWSER ), 'console.log' ],
+				[ () => this.driver.manage().logs().get( logging.Type.PERFORMANCE ), 'performance.log' ],
 			].map( async ( [ logsPromise, file ] ) => {
 				const logs = await logsPromise();
 				return fs.writeFile( generatePath( file ), JSON.stringify( logs, null, 2 ) );
