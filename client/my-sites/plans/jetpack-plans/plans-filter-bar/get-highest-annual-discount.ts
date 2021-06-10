@@ -42,18 +42,20 @@ const getHighestAnnualDiscount = createSelector(
 			return null;
 		}
 
-		// Get all the annual discounts as decimal percentages (between 0 and 1), removing any null results
-		const discounts: number[] = annualProductSlugs
-			.map( ( yearlySlug ) => getAnnualDiscount( state, yearlySlug ) )
-			.filter( ( discount ): discount is number => Number.isFinite( discount ) )
-			.sort( ( a, b ) => b - a );
+		// Get all the annual discounts as decimal percentages (between 0 and 1),
+		// removing any null results and sorting in descending order;
+		// then get the first element, or 0 if the array is empty.
+		const highestDiscount: number =
+			annualProductSlugs
+				.map( ( yearlySlug ) => getAnnualDiscount( state, yearlySlug ) )
+				.filter( ( discount ): discount is number => Number.isFinite( discount ) )
+				.sort( ( a, b ) => b - a )?.[ 0 ] ?? 0;
 
-		const highestDiscount = discounts?.[ 0 ] ?? 0;
-		if ( highestDiscount <= 0 ) {
+		const rounded = Math.round( 100 * highestDiscount );
+		if ( rounded <= 0 ) {
 			return null;
 		}
 
-		const rounded = Math.round( 100 * highestDiscount );
 		return `${ rounded }%`;
 	},
 	[
