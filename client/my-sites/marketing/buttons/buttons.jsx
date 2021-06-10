@@ -168,17 +168,17 @@ class SharingButtons extends Component {
 						</NoticeAction>
 					</Notice>
 				) }
+				<ButtonsOptions
+					settings={ updatedSettings }
+					onChange={ this.handleChange }
+					saving={ isSaving }
+				/>
 				<ButtonsAppearance
 					buttons={ updatedButtons }
 					values={ updatedSettings }
 					onChange={ this.handleChange }
 					onButtonsChange={ this.handleButtonsChange }
 					initialized={ !! buttons && !! settings }
-					saving={ isSaving }
-				/>
-				<ButtonsOptions
-					settings={ updatedSettings }
-					onChange={ this.handleChange }
 					saving={ isSaving }
 				/>
 			</form>
