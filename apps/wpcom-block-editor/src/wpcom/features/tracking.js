@@ -17,7 +17,6 @@ import delegateEventTracking from './tracking/delegate-event-tracking';
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
 
 const noop = () => {};
-let lastUndoOrRedoTimestamp;
 
 /**
  * Global handler.
@@ -282,34 +281,34 @@ const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
  * @returns {void}
  */
 const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
-	// Template Parts and Reusable Blocks are asynchronously loaded blocks.
-	// Content is fetched from the REST API so the inner blocks are
-	// populated when the response is received. We want to ignore
-	// `replaceInnerBlocks` action calls when the `innerBlocks` are replaced
-	// because the template part or reusable block just loaded.
+	/*
+		We are ignoring `replaceInnerBlocks` action for template parts and
+		reusable blocks for the following reasons:
+
+		1. Template Parts and Reusable Blocks are asynchronously loaded blocks.
+		Content is fetched from the REST API so the inner blocks are
+		populated when the response is received. We want to ignore
+		`replaceInnerBlocks` action calls when the `innerBlocks` are replaced
+		because the template part or reusable block just loaded.
+
+		2. Having multiple instances of the same template part or resuable block
+		and making edits to a single instance will cause all the other instances
+		to update via `replaceInnerBlocks`.
+
+		3. Perfoming and undo or redo related to template parts or reusable blocks
+		will update the instances via `replaceInnerBlocks`. 
+	*/
 	const parentBlock = select( 'core/block-editor' ).getBlocksByClientId( rootClientId )?.[ 0 ];
 	if ( parentBlock ) {
 		const { name } = parentBlock;
-		const isAsyncLoadedEntityBlock =
+		if (
 			// Template Part
 			name === 'core/template-part' ||
 			// Reusable Block
-			name === 'core/block';
-		const innerBlocks = select( 'core/block-editor' ).getBlocks( rootClientId );
-		const hasInnerBlocks = innerBlocks.length > 0;
-		if ( isAsyncLoadedEntityBlock && ! hasInnerBlocks ) {
+			name === 'core/block'
+		) {
 			return;
 		}
-	}
-
-	// Performing an undo or redo will cause affected template parts
-	// and reusable blocks to synchronize their inner blocks.
-	// Which results in `replaceInnerBlocks` calls. We ignore them
-	// to avoid tracking these changes since they are behind the scenes changes.
-	const msElapsedSinceLastUndoOrRedo = Date.now() - lastUndoOrRedoTimestamp;
-	const IGNORE_THRESHOLD_IN_MS = 250;
-	if ( msElapsedSinceLastUndoOrRedo <= IGNORE_THRESHOLD_IN_MS ) {
-		return;
 	}
 
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
@@ -318,16 +317,6 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 		// isInsertingPageTemplate filter is set by Starter Page Templates
 		from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
 	} ) );
-};
-
-const trackUndo = () => {
-	tracksRecordEvent( 'wpcom_block_editor_undo_performed' );
-	lastUndoOrRedoTimestamp = Date.now();
-};
-
-const trackRedo = () => {
-	tracksRecordEvent( 'wpcom_block_editor_redo_performed' );
-	lastUndoOrRedoTimestamp = Date.now();
 };
 
 /**
@@ -370,13 +359,13 @@ const REDUX_TRACKING = {
 	},
 	// Post Editor is using the undo/redo from the 'core/editor' store
 	'core/editor': {
-		undo: trackUndo,
-		redo: trackRedo,
+		undo: 'wpcom_block_editor_undo_performed',
+		redo: 'wpcom_block_editor_redo_performed',
 	},
 	// Site Editor is using the undo/redo from the 'core' store
 	core: {
-		undo: trackUndo,
-		redo: trackRedo,
+		undo: 'wpcom_block_editor_undo_performed',
+		redo: 'wpcom_block_editor_redo_performed',
 	},
 	'core/block-editor': {
 		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),
