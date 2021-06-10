@@ -7,6 +7,8 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { includes, find, isEmpty, flowRight } from 'lodash';
 import page from 'page';
+import { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -23,13 +25,16 @@ import UploadDropZone from 'calypso/blocks/upload-drop-zone';
 import EmptyContent from 'calypso/components/empty-content';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
-import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 // Necessary for ThanksModal
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'calypso/state/themes/actions';
+
+import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import {
 	getSelectedSiteId,
 	getSelectedSite,
@@ -57,8 +62,6 @@ import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
-
-import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
@@ -304,6 +307,7 @@ class Upload extends React.Component {
 		const {
 			backPath,
 			complete,
+			isFetchingPurchases,
 			isJetpack,
 			isMultisite,
 			isOnAtomicPlan,
@@ -312,6 +316,7 @@ class Upload extends React.Component {
 			translate,
 		} = this.props;
 
+		const showUpgradeBanner = ! isFetchingPurchases && ! isOnAtomicPlan && ! isJetpack;
 		const { showEligibility } = this.state;
 
 		if ( isMultisite ) {
@@ -323,6 +328,7 @@ class Upload extends React.Component {
 				<PageViewTracker path="/themes/upload/:site" title="Themes > Install" />
 				<DocumentHead title={ translate( 'Install Theme' ) } />
 
+				<QuerySitePurchases siteId={ siteId } />
 				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
@@ -350,7 +356,7 @@ class Upload extends React.Component {
 				/>
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
 
-				{ ! isOnAtomicPlan && ! isJetpack && this.renderUpgradeBanner() }
+				{ showUpgradeBanner && this.renderUpgradeBanner() }
 
 				{ showEligibility && (
 					<EligibilityWarnings backUrl={ backPath } onProceed={ this.onProceedClick } />
@@ -409,6 +415,7 @@ const mapStateToProps = ( state ) => {
 		canUploadThemesOrPlugins,
 		isOnAtomicPlan,
 		isTransferring: isAutomatedTransferActive( state, siteId ),
+		isFetchingPurchases: isFetchingSitePurchases( state ),
 	};
 };
 
