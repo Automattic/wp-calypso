@@ -273,7 +273,7 @@ class Upload extends React.Component {
 
 		const { showEligibility } = this.state;
 
-		const uploadAction = isJetpack ? this.props.uploadTheme : this.props.initiateThemeTransfer; // TODO: show eligibility modal
+		const uploadAction = isJetpack ? this.props.uploadTheme : this.props.initiateThemeTransfer;
 		const isDisabled = showEligibility || ( ! isOnAtomicPlan && ! isJetpack );
 
 		const WrapperComponent = isDisabled ? FeatureExample : Fragment;
