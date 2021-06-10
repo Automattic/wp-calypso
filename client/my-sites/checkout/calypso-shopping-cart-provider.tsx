@@ -34,18 +34,18 @@ export default function CalypsoShoppingCartProvider( {
 	const selectedSite = useSelector( getSelectedSite );
 	const cartKeysThatDoNotAllowRefetch = [ 'no-site', 'no-user' ];
 	const isLoggedOutCart = ! useSelector( isUserLoggedIn );
-	const currentUrl = window.location.href;
+	const currentUrlPath = window.location.pathname;
 	const searchParams = new URLSearchParams( window.location.search );
 	const jetpackPurchaseToken = searchParams.has( 'purchasetoken' );
 	const jetpackPurchaseNonce = searchParams.has( 'purchaseNonce' );
 	const isJetpackCheckout =
-		currentUrl.includes( '/checkout/jetpack' ) &&
+		currentUrlPath.includes( '/checkout/jetpack' ) &&
 		isLoggedOutCart &&
 		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
 	const isNoSiteCart =
 		isJetpackCheckout ||
 		( ! isLoggedOutCart &&
-			currentUrl.includes( '/checkout/no-site' ) &&
+			currentUrlPath.includes( '/checkout/no-site' ) &&
 			'no-user' === searchParams.get( 'cart' ) );
 
 	const getCart = isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( emptyCart ) : undefined;
