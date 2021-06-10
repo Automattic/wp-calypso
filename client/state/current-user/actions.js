@@ -1,14 +1,9 @@
 /**
- * External dependencies
- */
-import store from 'store';
-
-/**
  * Internal dependencies
  */
 import userLibrary from 'calypso/lib/user';
-import { clearStorage } from 'calypso/lib/browser-storage';
 import { CURRENT_USER_CLEAR, CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
+import { clearStore } from 'calypso/lib/user/store';
 
 /**
  * Returns an action object that sets the current user object on the store
@@ -37,8 +32,7 @@ export function clearCurrentUser() {
 		 * Clear internal user data and empty localStorage cache
 		 * to discard any user reference that the application may hold
 		 */
-		store.clearAll();
-		await clearStorage();
+		await clearStore();
 
 		dispatch( {
 			type: CURRENT_USER_CLEAR,
