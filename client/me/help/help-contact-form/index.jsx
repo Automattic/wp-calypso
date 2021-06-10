@@ -490,6 +490,12 @@ export class HelpContactForm extends React.PureComponent {
 
 		const analyseSiteData = this.analyseSiteData();
 		const siteData = this.state.userDeclaredUrl && this.state.siteData;
+		const siteName =
+			siteData && siteData.name
+				? siteData.name
+				: translate( 'This site', {
+						comment: 'Full phrase: "This site is linked to another WordPress.com account"',
+				  } );
 
 		const hasNoSites = siteCount === 0;
 
@@ -503,12 +509,7 @@ export class HelpContactForm extends React.PureComponent {
 				"%(siteName)s is linked to another WordPress.com account. If you're trying to access it, please follow our Account Recovery procedure.",
 				{
 					args: {
-						siteName:
-							siteData && siteData.name
-								? siteData.name
-								: translate( 'This site', {
-										comment: 'Full phrase: "This site is linked to another WordPress.com account"',
-								  } ) + ' ',
+						siteName,
 					},
 				}
 			);
@@ -522,7 +523,7 @@ export class HelpContactForm extends React.PureComponent {
 			this.state.errorData !== 'jetpack_error'
 		) {
 			noticeMessage = translate(
-				'This site may be a copy of WordPress with a different hosting service. ' +
+				'%(siteName)s may be a copy of WordPress with a different hosting service. ' +
 					"{{helpLink}}Here's the best way to find help with that{{/helpLink}}. " +
 					"If you're not sure though, please share your question with a link, and we'll point you in the right direction!",
 				{
@@ -534,6 +535,9 @@ export class HelpContactForm extends React.PureComponent {
 								) }
 							/>
 						),
+					},
+					args: {
+						siteName,
 					},
 				}
 			);
