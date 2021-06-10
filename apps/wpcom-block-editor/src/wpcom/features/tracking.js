@@ -293,7 +293,7 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 		const isAsyncLoadedEntityBlock =
 			// Template Part
 			name === 'core/template-part' ||
-			// Reusable BLock
+			// Reusable Block
 			name === 'core/block';
 		const hasInnerBlocks = innerBlocks.length > 0;
 
