@@ -35,5 +35,5 @@ function useShowAbandonedCartSurvey() {
 			triggerEvent( 'abandoned_cart_survey' );
 			eventTriggered = true;
 		}
-	}, [ user, isPendingUpdate, userPurchases, responseCart ] );
+	}, [ isPendingUpdate, userPurchases, responseCart ] );
 }
