@@ -200,7 +200,7 @@ export class HelpContactForm extends React.PureComponent {
 	doRequestSite = () => {
 		if ( resemblesUrl( this.state.userDeclaredUrl ) ) {
 			// The API would reject something like "https://wp.com/slug".
-			// It'd need to either be "https://wp.com" or "wp.com".
+			// It'd need to either be "http(s)://wp.com" or "wp.com".
 			const url = this.state.userDeclaredUrl;
 			const query = url.includes( '://' )
 				? new URL( this.state.userDeclaredUrl ).hostname
@@ -208,8 +208,8 @@ export class HelpContactForm extends React.PureComponent {
 
 			this.props
 				.requestSite( query )
-				.catch( ( error ) => this.setState( { errorData: error.error } ) )
-				.then( ( siteData ) => this.setState( { siteData } ) );
+				.then( ( siteData ) => this.setState( { siteData, errorData: '' } ) )
+				.catch( ( error ) => this.setState( { errorData: error.error, siteData: '' } ) );
 		}
 	};
 
@@ -311,23 +311,23 @@ export class HelpContactForm extends React.PureComponent {
 	 * For the forums: check if we're dealing with a WP.com site.
 	 */
 	analyseSiteData = () => {
-		const requestData =
-			this.state.userDeclaredUrl && ( this.state.siteData || this.state.errorData );
+		const { userDeclaredUrl, userDeclaresUnableToSeeSite, errorData, siteData } = this.state;
 
 		// "Unauthorized" means it's still a WP.com site - just a private one.
 		const isWpComConnectedSite =
-			( requestData &&
-				requestData.ID &&
-				( ! requestData.jetpack || requestData.is_wpcom_atomic ) ) ||
-			( requestData && requestData === 'unauthorized' );
+			( userDeclaredUrl &&
+				siteData &&
+				siteData.ID &&
+				( ! siteData.jetpack || siteData.is_wpcom_atomic ) ) ||
+			( errorData && errorData === 'unauthorized' );
 
 		// Returns true for self-hosted sites, irrespective of Jetpack connection status, and non-WordPress sites.
 		const isNonWpComHostedSite =
-			( requestData && requestData.jetpack ) ||
-			( requestData && requestData === 'unknown_blog' ) ||
-			( this.props.helpSite &&
-				this.props.helpSite.jetpack &&
-				! this.state.userDeclaresUnableToSeeSite );
+			( userDeclaredUrl && siteData && siteData.jetpack ) ||
+			( userDeclaredUrl &&
+				errorData &&
+				( errorData === 'unknown_blog' || errorData === 'jetpack_error' ) ) ||
+			( this.props.helpSite && this.props.helpSite.jetpack && ! userDeclaresUnableToSeeSite );
 
 		if ( isWpComConnectedSite ) {
 			return 'isWpComConnectedSite';
@@ -336,12 +336,11 @@ export class HelpContactForm extends React.PureComponent {
 		if ( isNonWpComHostedSite ) {
 			// If the site is considered unknown, Jetpack isn't installed on it.
 			// Note: it's possible that the site isn't even a WordPress one if that happens.
-			return requestData === 'unknown_blog'
+			return userDeclaredUrl && errorData === 'unknown_blog'
 				? 'isNonWpComHostedSiteWithoutJetpack'
 				: 'isNonWpComHostedSiteWithJetpack';
 		}
 
-		// Avoids directing blogs with "jetpack_error" to the self-hosted forums.
 		return null;
 	};
 
@@ -517,16 +516,24 @@ export class HelpContactForm extends React.PureComponent {
 			actionMessage = translate( 'Learn more' );
 		}
 
-		if ( analyseSiteData && analyseSiteData.startsWith( 'isNonWpComHosted' ) ) {
+		if (
+			analyseSiteData &&
+			analyseSiteData.startsWith( 'isNonWpComHosted' ) &&
+			this.state.errorData !== 'jetpack_error'
+		) {
 			noticeMessage = translate(
-				'Your site is not {{comVsOrg}}hosted on our services{{/comVsOrg}}. ' +
-					'Support for the self-hosted version of WordPress is provided by the {{orgForums}}WordPress.org community forums{{/orgForums}}, ' +
-					'or if the problem relates to a specific plugin or theme, contact support for that product instead. ' +
-					"If you're not sure, share your question with a link, and we'll point you in the right direction!",
+				'This site may be a copy of WordPress with a different hosting service. ' +
+					"{{helpLink}}Here's the best way to find help with that{{/helpLink}}. " +
+					"If you're not sure though, please share your question with a link, and we'll point you in the right direction!",
 				{
 					components: {
-						comVsOrg: <a href={ localizeUrl( 'https://wordpress.com/support/com-vs-org/' ) } />,
-						orgForums: <a href="https://wordpress.org/support/forums/" />,
+						helpLink: (
+							<a
+								href={ localizeUrl(
+									'https://wordpress.com/support/help-support-options/#where-should-i-go-for-support'
+								) }
+							/>
+						),
 					},
 				}
 			);
