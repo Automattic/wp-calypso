@@ -12,6 +12,8 @@ import page from 'page';
  * Internal dependencies
  */
 import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -22,7 +24,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 // Necessary for ThanksModal
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
@@ -320,6 +321,8 @@ class Upload extends React.Component {
 		return (
 			<Main className="theme-upload" wideLayout>
 				<PageViewTracker path="/themes/upload/:site" title="Themes > Install" />
+				<DocumentHead title={ translate( 'Install Theme' ) } />
+
 				<QueryEligibility siteId={ siteId } />
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
