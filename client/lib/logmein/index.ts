@@ -49,21 +49,23 @@ export function logmeinUrl( url: string, sites: any, isWPComLoggedIn = true ): s
 	return newurl.toString();
 }
 
+export function isValidLogmeinSite( site: any ): boolean {
+	return (
+		! site.is_vip &&
+		! site.jetpack &&
+		! site.options.is_automated_transfer &&
+		! site.options.is_domain_only &&
+		! site.options.is_redirect &&
+		! site.options.is_wpcom_atomic &&
+		! site.options.is_wpcom_store &&
+		! site.options.is_wpforteams_site &&
+		site.options.is_mapped_domain
+	);
+}
+
 export function logmeinAllowedUrls( sites: any ): string[] {
 	return sites
-		.map( ( site: any ) =>
-			! site.is_vip &&
-			! site.jetpack &&
-			! site.options.is_automated_transfer &&
-			! site.options.is_domain_only &&
-			! site.options.is_redirect &&
-			! site.options.is_wpcom_atomic &&
-			! site.options.is_wpcom_store &&
-			! site.options.is_wpforteams_site &&
-			site.options.is_mapped_domain
-				? new URL( site.URL ).host
-				: false
-		)
+		.map( ( site: any ) => ( isValidLogmeinSite( site ) ? new URL( site.URL ).host : false ) )
 		.filter( Boolean );
 }
 
@@ -105,7 +107,6 @@ function logmeinOnClick( event: MouseEvent ) {
 		let url = new URL( link.href, INVALID_URL );
 		if ( allowedSites.indexOf( url.hostname ) !== -1 ) {
 			url = appendLogmeinDirect( url );
-			console.log( 'intercepted', link.href, 'replaced', url.toString() );
 			link.href = url.toString();
 		}
 		return;
@@ -120,7 +121,6 @@ export function logmeinNavigate( url: string ): void {
 	let newurl = new URL( url, INVALID_URL );
 	if ( allowedSites.indexOf( newurl.hostname ) !== -1 ) {
 		newurl = appendLogmeinDirect( newurl );
-		console.log( 'intercepted', url, 'replaced', newurl.toString() );
 		window.location.href = newurl.toString();
 	} else {
 		window.location.href = url;
