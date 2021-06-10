@@ -4,7 +4,6 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -93,7 +92,7 @@ export const UpsellNudge = ( {
 	}
 
 	// No upsells for WP for Teams sites
-	if ( config.isEnabled( 'signup/wpforteams' ) && siteIsWPForTeams ) {
+	if ( siteIsWPForTeams ) {
 		return null;
 	}
 

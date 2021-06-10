@@ -18,7 +18,6 @@ import { themes } from 'calypso/lib/signup/themes-data';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSurveyVertical } from 'calypso/state/signup/steps/survey/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { isEnabled } from '@automattic/calypso-config';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
@@ -88,10 +87,7 @@ class ThemeSelectionStep extends Component {
 	isStoreSignup() {
 		const { signupDependencies = {} } = this.props;
 
-		return (
-			isEnabled( 'signup/atomic-store-flow' ) &&
-			( this.props.designType === 'store' || signupDependencies.designType === 'store' )
-		);
+		return this.props.designType === 'store' || signupDependencies.designType === 'store';
 	}
 
 	headerText() {
