@@ -17,11 +17,28 @@ import wpcomBlockPremiumContentStripeConnect from './wpcom-block-premium-content
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
 
+const subscribers = {};
+/**
+ * Register a subscriber for a specific event.
+ * We can specify when to call the subscriber, either 'before' or 'after'
+ * the event handler is called.
+ *
+ * @param {string} id ID of the event
+ * @param {import('./types').DelegateEventSubscriberType} type when to call the subscriber, 'before' or 'after'
+ * @param {import('./types').DelegateEventSubscriberCallback} handler function to call
+ */
+export const registerSubscriber = ( id, type, handler ) => {
+	if ( ! subscribers[ id ] ) {
+		subscribers[ id ] = { before: [], after: [] };
+	}
+	subscribers[ id ][ type ].push( handler );
+};
+
 /**
  * Mapping of Events by DOM selector.
  * Events are matched by selector and their handlers called.
  *
- * @type {Array}
+ * @type {import('./types').DelegateEventHandler[]}
  */
 const EVENTS_MAPPING = [
 	wpcomBlockEditorCloseClick(),
@@ -38,9 +55,9 @@ const EVENTS_MAPPING = [
  * the desired target element. Accounts for event
  * bubbling.
  *
- * @param  {object} event          the DOM Event
+ * @param  {object} event                   the DOM Event
  * @param  {string|Function} targetSelector the CSS selector for the target element
- * @returns {object}                the target Element if found
+ * @returns {object}                        the target Element if found
  */
 const getMatchingEventTarget = ( event, targetSelector ) => {
 	if ( typeof targetSelector === 'function' ) {
@@ -79,6 +96,12 @@ export default ( event ) => {
 
 	matchingEvents.forEach( ( match ) => {
 		debug( 'triggering "%s". target: "%s"', match.event, match.target );
+		subscribers?.[ match.mapping.id ].before.forEach( ( subscriber ) =>
+			subscriber( match.mapping, match.event, match.target )
+		);
 		match.mapping.handler( match.event, match.target );
+		subscribers?.[ match.mapping.id ].after.forEach( ( subscriber ) =>
+			subscriber( match.mapping, match.event, match.target )
+		);
 	} );
 };
