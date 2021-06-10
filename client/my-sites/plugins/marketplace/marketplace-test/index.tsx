@@ -5,12 +5,13 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import page from 'page';
 import styled from '@emotion/styled';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import CardHeading from 'calypso/components/card-heading';
-import { Button, Card } from '@automattic/components';
+import { Button, Card, CompactCard } from '@automattic/components';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
@@ -19,7 +20,13 @@ import {
 } from 'calypso/state/automated-transfer/actions';
 import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { WarningList } from 'calypso/blocks/eligibility-warnings/warning-list';
 // import { getPlugins, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
+import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
+import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
+
+import Notice from 'calypso/components/notice';
 
 export const Container = styled.div`
 	margin: 0 25px;
@@ -27,8 +34,11 @@ export const Container = styled.div`
 `;
 
 export default function MarketplaceTest() {
+	const translate = useTranslate();
+
 	const selectedSite = useSelector( getSelectedSite ) || {};
 	const selectedSiteId = useSelector( getSelectedSiteId );
+	const isAtomicSite = useSelector( ( state ) => isSiteWpcomAtomic( state, selectedSiteId ?? 0 ) );
 	// This selector is not working need to investigate why that is
 	// const pluginDetails = useSelector( ( state ) => getPlugins( state, selectedSiteId ) );
 	const pluginDetails = useSelector(
@@ -57,6 +67,17 @@ export default function MarketplaceTest() {
 
 	const { ID, URL, domain, options = {} } = selectedSite;
 	const { is_wpcom_atomic, is_automated_transfer } = options;
+
+	const allBlockingMessages = getBlockingMessages( translate );
+	const holds = transferDetails?.eligibility?.eligibilityHolds || [];
+	const raisedBlockingMessages = holds
+		.filter( ( message: string ) => allBlockingMessages[ message ] )
+		.map( ( message: string ) => allBlockingMessages[ message ] );
+	const hardBlockSingleMessages = holds.filter(
+		( message: string ) => message !== 'TRANSFER_ALREADY_EXISTS' || ! allBlockingMessages[ message ]
+	);
+	const hasHardBlock =
+		isAtomicSiteWithoutBusinessPlan( holds ) || hardBlockSingleMessages.length > 0;
 	return (
 		<Container>
 			{ selectedSiteId && <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> }
@@ -89,6 +110,7 @@ export default function MarketplaceTest() {
 					<div>domain : { domain }</div>
 					<div>options.is_wpcom_atomic : { is_wpcom_atomic?.toString() }</div>
 					<div>options.is_automated_transfer : { is_automated_transfer?.toString() }</div>
+					<div>selector : isSiteWpcomAtomic : { isAtomicSite?.toString() }</div>
 				</Card>
 				<Card key="transfer-information">
 					<CardHeading tagName="h1" size={ 21 }>
@@ -106,6 +128,29 @@ export default function MarketplaceTest() {
 						</div>
 					) ) }
 				</Card>
+				<CompactCard>
+					<CardHeading tagName="h1" size={ 21 }>
+						Warnings
+					</CardHeading>
+					<WarningList
+						warnings={ transferDetails?.eligibility?.eligibilityWarnings ?? [] }
+						context="plugins"
+						translate={ translate }
+					/>
+				</CompactCard>
+				<CompactCard>
+					<CardHeading tagName="h1" size={ 21 }>
+						Blocking Messages
+					</CardHeading>
+					{ hasHardBlock &&
+						raisedBlockingMessages.map( ( message ) => (
+							<Notice
+								status={ message.status }
+								text={ message.message }
+								showDismiss={ false }
+							></Notice>
+						) ) }
+				</CompactCard>
 			</Card>
 			<Card key="installed-plugins">
 				<CardHeading tagName="h1" size={ 21 }>
