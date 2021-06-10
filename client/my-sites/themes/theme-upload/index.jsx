@@ -68,7 +68,6 @@ import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
-	isAutomatedTransferActive,
 } from 'calypso/state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
@@ -268,7 +267,6 @@ class Upload extends React.Component {
 			isOnAtomicPlan,
 			isJetpack,
 			isAutomatedTransfer,
-			isTransferring,
 			selectedSite,
 			uploadedTheme,
 		} = this.props;
@@ -278,7 +276,7 @@ class Upload extends React.Component {
 		const uploadAction = isJetpack ? this.props.uploadTheme : this.props.initiateThemeTransfer; // TODO: show eligibility modal
 		const isDisabled = showEligibility || ( ! isOnAtomicPlan && ! isJetpack );
 
-		const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
+		const WrapperComponent = isDisabled ? FeatureExample : Fragment;
 
 		return (
 			<WrapperComponent>
