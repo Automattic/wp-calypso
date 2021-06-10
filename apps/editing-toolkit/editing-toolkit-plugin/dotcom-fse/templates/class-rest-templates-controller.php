@@ -11,6 +11,12 @@ namespace A8C\FSE;
  * Based on `WP_REST_Blocks_Controller` from core
  */
 class REST_Templates_Controller extends \WP_REST_Posts_Controller {
+	public function get_items( $request ) {
+		$post_id = $request['wp_id'];
+		$request->set_param( 'id', $post_id );
+
+		return array( 'body' => self::get_item( $request )->data );
+	}
 
 	/**
 	 * Checks if a template can be read.

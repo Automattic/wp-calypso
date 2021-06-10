@@ -64,6 +64,14 @@ class Full_Site_Editing {
 
 		$this->theme_slug           = normalize_theme_slug( get_stylesheet() );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
+
+		add_filter(
+			'block_editor_preload_paths',
+			function ( $paths ) {
+				$paths[] = '/wp/v2/template_parts?wp_id=4&context=edit&_locale=user';
+				return $paths;
+			}
+		);
 	}
 
 	/**
