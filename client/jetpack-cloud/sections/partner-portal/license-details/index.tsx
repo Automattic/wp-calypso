@@ -47,6 +47,7 @@ export default function LicenseDetails( {
 }: Props ): ReactElement {
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
+	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
 
 	return (
 		<Card className="license-details">
@@ -69,11 +70,22 @@ export default function LicenseDetails( {
 					</div>
 				</li>
 
-				<li className="license-details__list-item license-details__list-item--wide">
+				<li className="license-details__list-item">
 					<h4 className="license-details__label">{ translate( 'Blog URL' ) }</h4>
 					{ siteUrl ? (
 						<a href={ siteUrl } target="_blank" rel="noopener noreferrer">
 							{ siteUrl }
+						</a>
+					) : (
+						<Gridicon icon="minus" />
+					) }
+				</li>
+
+				<li className="license-details__list-item">
+					<h4 className="license-details__label">{ translate( 'Jetpack Debugger URL' ) }</h4>
+					{ debugUrl ? (
+						<a href={ debugUrl } target="_blank" rel="noopener noreferrer">
+							{ debugUrl }
 						</a>
 					) : (
 						<Gridicon icon="minus" />
