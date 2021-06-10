@@ -5,7 +5,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
-import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.BuildReportTab
+import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportTab
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
@@ -22,9 +22,11 @@ object WPComTests : Project({
 		param("build.prefix", "1")
 	}
 
-	BuildReportTab {
-		title = "VR Report"
-		startPage= "vr-report.zip!/vr-report.zip!/test/visual/backstop_data/html_report/index.html"
+	features {
+		buildReportTab {
+			title = "VR Report"
+			startPage= "vr-report.zip!vr-report.zip!/test/visual/backstop_data/html_report/index.html"
+		}
 	}
 
 	// Keep the previous ID in order to preserve the historical data
