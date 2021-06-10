@@ -179,7 +179,16 @@ export default function WPCheckout( {
 	] = useState( false );
 
 	const emailTakenLoginRedirectMessage = ( emailAddress: string ) => {
-		const loginUrl = login( { redirectTo: '/checkout/no-site?cart=no-user', emailAddress } );
+		const { pathname, search } = window.location;
+		const isJetpackCheckout = pathname.includes( '/checkout/jetpack' );
+
+		// Users with a WP.com account should return to the checkout page
+		// once they are logged in to complete the process.
+		const redirectTo = isJetpackCheckout
+			? pathname + search + '&flow=logged-out-checkout'
+			: '/checkout/no-site?cart=no-user';
+
+		const loginUrl = login( { redirectTo, emailAddress } );
 
 		return translate(
 			'That email address is already in use. If you have an existing account, {{a}}please log in{{/a}}.',
