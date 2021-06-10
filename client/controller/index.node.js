@@ -58,30 +58,29 @@ export const ssrSetupLocale = ssrSetupLocaleMiddleware();
 
 export const setHrefLangLinks = ( context, next ) => {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-	const hrefLangBlock = []
-		.concat( 'x-default', 'en', config( 'magnificent_non_en_locales' ) )
-		.map( ( hrefLang ) => {
-			let localeSlug = hrefLang;
+	const langCodes = [ 'x-default', 'en', ...config( 'magnificent_non_en_locales' ) ];
+	const hrefLangBlock = langCodes.map( ( hrefLang ) => {
+		let localeSlug = hrefLang;
 
-			if ( localeSlug === 'x-default' ) {
-				localeSlug = config( 'i18n_default_locale_slug' );
-			}
+		if ( localeSlug === 'x-default' ) {
+			localeSlug = config( 'i18n_default_locale_slug' );
+		}
 
-			const baseUrl = `${ context.res.req.protocol }://${ context.res.req.get( 'host' ) }${
-				context.res.req.originalUrl
-			}`;
-			const baseUrlWithoutLang = baseUrl.replace(
-				new RegExp( `\\/(${ getLanguageSlugs().join( '|' ) })(\\/|\\?|$)` ),
-				'$2'
-			);
-			const href = localizeUrl( baseUrlWithoutLang, localeSlug, isLoggedIn );
+		const baseUrl = `${ context.res.req.protocol }://${ context.res.req.get( 'host' ) }${
+			context.res.req.originalUrl
+		}`;
+		const baseUrlWithoutLang = baseUrl.replace(
+			new RegExp( `\\/(${ getLanguageSlugs().join( '|' ) })(\\/|\\?|$)` ),
+			'$2'
+		);
+		const href = localizeUrl( baseUrlWithoutLang, localeSlug, isLoggedIn );
 
-			return {
-				rel: 'alternate',
-				hrefLang,
-				href,
-			};
-		} );
+		return {
+			rel: 'alternate',
+			hrefLang,
+			href,
+		};
+	} );
 
 	context.store.dispatch( setDocumentHeadLink( hrefLangBlock ) );
 	next();
