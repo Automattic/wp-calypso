@@ -119,7 +119,7 @@ const MarketplaceThankYou = () => {
 
 	useEffect( () => {
 		if ( ! postsPageUrl || ! yoastSeoPageUrl ) {
-			dispatch( requestAdminMenu( selectedSiteId ?? 0 ) );
+			selectedSiteId && dispatch( requestAdminMenu( selectedSiteId ) );
 		}
 	}, [ postsPageUrl, yoastSeoPageUrl ] );
 
@@ -130,7 +130,7 @@ const MarketplaceThankYou = () => {
 			! isFetchingTransferStatus
 		) {
 			setTimeout( () => {
-				dispatch( fetchAutomatedTransferStatus( selectedSiteId ?? 0 ) );
+				selectedSiteId && dispatch( fetchAutomatedTransferStatus( selectedSiteId ) );
 				setPollCount( ( c ) => c + 1 );
 			}, 1500 );
 		}
