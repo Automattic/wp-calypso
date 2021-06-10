@@ -53,6 +53,7 @@ export function checkout( context, next ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
 	const selectedSite = getSelectedSite( state );
+
 	const hasSite = getCurrentUserVisibleSiteCount( state ) >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 	const isDisallowedForSitePicker =
@@ -60,9 +61,10 @@ export function checkout( context, next ) {
 		( isLoggedOut || ! hasSite || isDomainOnlyFlow );
 	const jetpackPurchaseToken = context.query.purchasetoken;
 	const jetpackPurchaseNonce = context.query.purchaseNonce;
+	const isUserComingFromLoginForm = context.query?.flow === 'logged-out-checkout';
 	const isJetpackCheckout =
 		context.pathname.includes( '/checkout/jetpack' ) &&
-		( isLoggedOut || context.query?.flow === 'logged-out-checkout' ) &&
+		( isLoggedOut || isUserComingFromLoginForm ) &&
 		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
 	const jetpackSiteSlug = context.params.siteSlug;
 
