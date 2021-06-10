@@ -17,6 +17,7 @@ export default () => ( {
 	id: 'wpcom-block-editor-template-part-detach-blocks',
 	selector: '.components-menu-item__button',
 	type: 'click',
+	capture: true,
 	handler: ( _event, target ) => {
 		const item = target.querySelector( '.components-menu-item__item' );
 		if ( item?.innerText === __( 'Detach blocks from template part' ) ) {
