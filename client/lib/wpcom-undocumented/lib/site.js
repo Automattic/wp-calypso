@@ -94,15 +94,6 @@ UndocumentedSite.prototype.shortcodes = function ( attributes, callback ) {
 	return this.wpcom.req.get( '/sites/' + this._id + '/shortcodes/render', attributes, callback );
 };
 
-UndocumentedSite.prototype.removeViewer = function ( viewerId, callback ) {
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + this._id + '/viewers/' + viewerId + '/delete',
-		},
-		callback
-	);
-};
-
 UndocumentedSite.prototype.setOption = function ( query, callback ) {
 	return this.wpcom.req.post(
 		'/sites/' + this._id + '/option',
