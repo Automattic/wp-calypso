@@ -2,6 +2,8 @@
  * Internal Dependencies
  */
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import userUtils from 'calypso/lib/user/utils';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Append logmein=direct query parameter to mapped domain urls.
@@ -17,6 +19,16 @@ const INVALID_URL = `https://__domain__.invalid`;
 
 export function logmeinUrl( url: string ): string {
 	let newurl: URL;
+
+	// Disable feature if not enabled
+	if ( ! isEnabled( 'logmein' ) ) {
+		return url;
+	}
+
+	// logmein=direct only works for logged into wordpress.com users
+	if ( ! userUtils.isLoggedIn() ) {
+		return url;
+	}
 
 	try {
 		newurl = new URL( String( url ), INVALID_URL );
