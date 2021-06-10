@@ -53,12 +53,12 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 /**
  * Module variables
