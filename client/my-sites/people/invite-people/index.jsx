@@ -190,9 +190,10 @@ class InvitePeople extends React.Component {
 
 	async validateInvitation( siteId, usernamesOrEmails, role ) {
 		try {
-			const { success, errors } = await wpcom
-				.undocumented()
-				.createInviteValidation( siteId, usernamesOrEmails, role );
+			const { success, errors } = await wpcom.req.post( `/sites/${ siteId }/invites/validate`, {
+				invitees: usernamesOrEmails,
+				role,
+			} );
 
 			this.refreshValidation( success, errors );
 
@@ -253,9 +254,13 @@ class InvitePeople extends React.Component {
 
 	async sendInvites( siteId, usernamesOrEmails, role, message, isExternal ) {
 		try {
-			const response = await wpcom
-				.undocumented()
-				.sendInvites( siteId, usernamesOrEmails, role, message, isExternal );
+			const response = await wpcom.req.post( `/sites/${ siteId }/invites/new`, {
+				invitees: usernamesOrEmails,
+				is_external: isExternal,
+				role,
+				message,
+				source: 'calypso',
+			} );
 
 			const countValidationErrors = Object.keys( response.errors ).length;
 
