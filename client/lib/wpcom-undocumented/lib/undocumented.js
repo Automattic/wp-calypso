@@ -1082,17 +1082,6 @@ Undocumented.prototype.sitesExternalServices = function ( siteId, fn ) {
 };
 
 /**
- * Return a list of happiness engineers gravatar urls
- *
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getHappinessEngineers = function ( fn ) {
-	debug( 'meta/happiness-engineers/ query' );
-
-	return this.wpcom.req.get( { path: '/meta/happiness-engineers/' }, fn );
-};
-
-/**
  * Return a list of sharing buttons for the specified site, with optional
  * query parameters
  *
