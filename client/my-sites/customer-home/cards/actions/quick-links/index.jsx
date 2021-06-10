@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import page from 'page';
 
 /**
@@ -140,7 +140,13 @@ export const QuickLinks = ( {
 				href="https://wp.me/logo-maker"
 				onClick={ trackDesignLogoAction }
 				target="_blank"
-				label={ translate( 'Create a logo' ) }
+				label={
+					getLocaleSlug() === 'en' ||
+					getLocaleSlug() === 'en-gb' ||
+					i18nCalypso.hasTranslation( 'Create a logo with Fiverr' )
+						? translate( 'Create a logo with Fiverr' )
+						: translate( 'Create a logo' )
+				}
 				external
 				iconSrc={ fiverrIcon }
 			/>
