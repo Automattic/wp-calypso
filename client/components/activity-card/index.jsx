@@ -108,7 +108,13 @@ class ActivityCard extends Component {
 	closePopoverMenu = () =>
 		this.setState( { showTopPopoverMenu: false, showBottomPopoverMenu: false } );
 
-	toggleSharePopover = () => this.setState( { showSharePopover: ! this.state.showSharePopover } );
+	toggleSharePopover = () => {
+		if ( ! this.state.showSharePopover ) {
+			this.props.dispatchShareActivityPopoverTracksEvent();
+		}
+
+		this.setState( { showSharePopover: ! this.state.showSharePopover } );
+	};
 
 	closeSharePopover = ( event ) => {
 		// bit of a hack here, but it works
@@ -468,6 +474,8 @@ const mapDispatchToProps = ( dispatch ) => ( {
 			)
 		);
 	},
+	dispatchShareActivityPopoverTracksEvent: () =>
+		dispatch( recordTracksEvent( 'calypso_activity_share_popup' ) ),
 } );
 
 export default connect(
