@@ -17,12 +17,9 @@ const requestShare = ( action ) =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',
-			method: 'GET',
+			method: 'POST',
 			path: `/sites/${ action.siteId }/activity/${ action.rewindId }/share`,
-			query: {
-				force: 'wpcom',
-				email: action.email,
-			},
+			body: { email: action.email },
 		},
 		action
 	);
