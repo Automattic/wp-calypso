@@ -54,6 +54,7 @@
 		"artifactName": "wordpress.com-win32-setup-${version}.${ext}"
 	},
 	"linux": {
+		"icon": "./resource/icon.ico",
 		"target": [ "deb", "tar.gz" ],
 		"executableName": "wpcom",
 		"description": "WordPress.com",
