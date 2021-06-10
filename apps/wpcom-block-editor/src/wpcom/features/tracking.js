@@ -439,12 +439,21 @@ if (
 		},
 	} ) );
 
+	const delegateNonCaptureListener = ( event ) => {
+		delegateEventTracking( false, event );
+	};
+
+	const delegateCaptureListener = ( event ) => {
+		delegateEventTracking( true, event );
+	};
+
 	// Registers Plugin.
 	registerPlugin( 'wpcom-block-editor-tracking', {
 		render: () => {
-			EVENT_TYPES.forEach( ( eventType ) =>
-				document.addEventListener( eventType, delegateEventTracking )
-			);
+			EVENT_TYPES.forEach( ( eventType ) => {
+				document.addEventListener( eventType, delegateNonCaptureListener );
+				document.addEventListener( eventType, delegateCaptureListener, true );
+			} );
 			return null;
 		},
 	} );

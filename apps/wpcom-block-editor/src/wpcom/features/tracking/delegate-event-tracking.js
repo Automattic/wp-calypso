@@ -49,6 +49,8 @@ const EVENTS_MAPPING = [
 	wpcomBlockPremiumContentPlanUpgrade(),
 	wpcomBlockPremiumContentStripeConnect(),
 ];
+const EVENTS_MAPPING_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => capture );
+const EVENTS_MAPPING_NON_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => ! capture );
 
 /**
  * Checks the event for a selector which matches
@@ -74,11 +76,13 @@ const getMatchingEventTarget = ( event, targetSelector ) => {
  * Matches an event against list of known events
  * and for each match fires an appropriate handler function.
  *
- * @param  {object} event DOM event for the click event.
+ * @param  {boolean} capture Value of capture flag of the event listener.
+ * @param  {object}  event   DOM event for the click event.
  * @returns {void}
  */
-export default ( event ) => {
-	const matchingEvents = EVENTS_MAPPING.reduce( ( acc, mapping ) => {
+export default ( capture, event ) => {
+	const eventsMappingBasedOnCapture = capture ? EVENTS_MAPPING_CAPTURE : EVENTS_MAPPING_NON_CAPTURE;
+	const matchingEvents = eventsMappingBasedOnCapture.reduce( ( acc, mapping ) => {
 		const target = getMatchingEventTarget( event, mapping.selector );
 
 		// Set `click` as default of mapping event type.

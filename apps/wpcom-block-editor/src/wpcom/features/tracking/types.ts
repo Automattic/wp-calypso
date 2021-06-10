@@ -5,6 +5,7 @@ export interface DelegateEventHandler {
 	id: string;
 	selector: string | ( ( event: CallbackEventType ) => boolean );
 	type: DelegateEventHandlerType;
+	capture?: boolean;
 	handler: DelegateEventHandlerCallback;
 }
 
