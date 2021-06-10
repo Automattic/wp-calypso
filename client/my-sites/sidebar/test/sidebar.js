@@ -264,7 +264,7 @@ describe( 'MySitesSidebar', () => {
 			expect( wrapper.html() ).toEqual( null );
 		} );
 
-		test( 'Should return null item if signup/wpforteams enabled and isSiteWPForTeams', () => {
+		test( 'Should return null item if isSiteWPForTeams', () => {
 			const Sidebar = new MySitesSidebar( {
 				isSiteWPForTeams: true,
 				...defaultProps,

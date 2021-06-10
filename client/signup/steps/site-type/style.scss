@@ -84,16 +84,3 @@
 		transform: translateX( 0 );
 	}
 }
-
-.site-type__import-button {
-	text-align: center;
-	margin-top: 20px;
-
-	.button.is-borderless {
-		padding: 0;
-		color: var( --color-text-inverted );
-		font-size: $font-body-small;
-		font-weight: 600;
-		text-decoration: underline;
-	}
-}

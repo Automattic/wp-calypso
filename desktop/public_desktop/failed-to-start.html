@@ -1,53 +1,82 @@
 <!DOCTYPE html>
 <html class="desktop-auth">
-<head>
-	<title>WordPress.com failed to start</title>
+	<head>
+		<title>WordPress.com failed to start</title>
 
-	<meta charset="utf-8" />
+		<meta charset="utf-8" />
 
-	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,400,300,600|Merriweather:700,300,700italic,300italic" />
-	<link rel="stylesheet" href="wordpress-desktop.css" />
+		<link
+			rel="stylesheet"
+			href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,400,300,600|Merriweather:700,300,700italic,300italic"
+		/>
+		<link rel="stylesheet" href="wordpress-desktop.css" />
 
-	<script type="text/javascript">
-		function showme() {
-			document.getElementById( 'showme' ).style.display = 'block';
-			document.getElementById( 'hideme' ).style.display = 'none';
+		<script type="text/javascript">
+			function showme() {
+				document.getElementById( 'showme' ).style.display = 'block';
+				document.getElementById( 'hideme' ).style.display = 'none';
 
-			return false;
-		}
-	</script>
-</head>
-<body>
+				return false;
+			}
+		</script>
+	</head>
+	<body>
+		<div class="flex">
+			<div class="welcome">
+				<div class="large-icon">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="-2 -2 24 24"
+						width="36"
+						height="36"
+						role="img"
+						aria-hidden="true"
+						focusable="false"
+					>
+						<path
+							d="M10 2c4.42 0 8 3.58 8 8s-3.58 8-8 8-8-3.58-8-8 3.58-8 8-8zm1.13 9.38l.35-6.46H8.52l.35 6.46h2.26zm-.09 3.36c.24-.23.37-.55.37-.96 0-.42-.12-.74-.36-.97s-.59-.35-1.06-.35-.82.12-1.07.35-.37.55-.37.97c0 .41.13.73.38.96.26.23.61.34 1.06.34s.8-.11 1.05-.34z"
+						></path>
+					</svg>
+				</div>
 
-<div class="welcome">
-	<p><img class="sadface" src="https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/svg/1f615.svg" /></p>
+				<h3>Uh oh!</h3>
+				<p>
+					WordPress.com ran into an error! (code <code></code>)<br /><span id="hideme"
+						><a href="#" onclick="return showme()">Using a proxy?</a></span
+					>
+				</p>
+				<p><a class="button-emphasis" href="https://wordpress.com/stats/day">Try again</a></p>
 
-	<h3>Uh oh!</h3>
-	<p>WordPress.com ran into an error! (code <code></code>)<br /><span id="hideme"><a href="#" onclick="return showme()">Using a proxy?</a></span></p>
-	<p><a class="button-emphasis" href="http://127.0.0.1:41050">Try again</a></p>
+				<div style="display: none" id="showme">
+					<h2>How to bypass your proxy for this app</h2>
+					<p>
+						If you are using a system proxy, you will need to add an exclusion for
+						<code>127.0.0.1</code> to your proxy settings.
+					</p>
+					<ol>
+						<li>Open <code>System Preferences...</code></li>
+						<li>Pick <code>Network</code></li>
+						<li>Pick whichever connection is being proxied (probably Wi-fi)</li>
+						<li>Click on <code>Advanced</code></li>
+						<li>Click on <code>Proxies</code></li>
+						<li>
+							Add <code>, 127.0.0.1</code> to the
+							<code>Bypass proxy settings for these hosts</code> - the leading comma is important
+						</li>
+						<li>Press <code>OK</code></li>
+						<li>Press <code>Apply</code> - this last step is also important!</li>
+					</ol>
 
-	<div style="display: none" id="showme">
-		<h2>How to bypass your proxy for this app</h2>
-		<p>If you are using a system proxy, you will need to add an exclusion for <code>127.0.0.1</code> to your proxy settings.</p>
-		<ol>
-			<li>Open <code>System Preferences...</code></li>
-			<li>Pick <code>Network</code></li>
-			<li>Pick whichever connection is being proxied (probably Wi-fi)</li>
-			<li>Click on <code>Advanced</code></li>
-			<li>Click on <code>Proxies</code></li>
-			<li>Add <code>, 127.0.0.1</code> to the <code>Bypass proxy settings for these hosts</code> - the leading comma is important</li>
-			<li>Press <code>OK</code></li>
-			<li>Press <code>Apply</code> - this last step is also important!</li>
-		</ol>
+					<p><img class="instructions" src="unproxy.jpg" alt="Instructions" /></p>
+				</div>
+			</div>
+		</div>
+		<script>
+			var code = parseInt( document.location.hash.substring( 2 ), 10 );
 
-		<p><img class="instructions" src="unproxy.jpg" alt="Instructions" /></p>
-	</div>
-</div>
-
-<script>
-	var code = parseInt( document.location.hash.substring( 2 ), 10 );
-
-	document.querySelector( 'code' ).innerHTML = isNaN( code ) ? encodeURIComponent( document.location.hash.substring( 1 ) ) : code;
-</script>
-</body>
+			document.querySelector( 'code' ).innerHTML = isNaN( code )
+				? encodeURIComponent( document.location.hash.substring( 1 ) )
+				: code;
+		</script>
+	</body>
 </html>

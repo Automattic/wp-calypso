@@ -9,7 +9,6 @@ import page from 'page';
  */
 import config from '@automattic/calypso-config';
 import {
-	INVITE_ACCEPTED,
 	JETPACK_DISCONNECT_RECEIVE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	ROUTE_SET,
@@ -142,12 +141,6 @@ const handler = ( dispatch, action, getState ) => {
 
 				fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );
 			}, 0 );
-			return;
-
-		case INVITE_ACCEPTED:
-			if ( ! [ 'follower', 'viewer' ].includes( action.invite.role ) ) {
-				user().fetch();
-			}
 			return;
 
 		case SITE_DELETE_RECEIVE:

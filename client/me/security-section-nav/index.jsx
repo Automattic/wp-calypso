@@ -10,48 +10,38 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SectionNav from 'calypso/components/section-nav';
 
-export default class extends React.Component {
-	static displayName = 'SecuritySectionNav';
-
+export default class SecuritySectionNav extends React.Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 	};
 
 	getNavtabs = () => {
-		const tabs = [
+		return [
 			{
 				title: i18n.translate( 'Password' ),
 				path: '/me/security',
 			},
-			config.isEnabled( 'signup/social-management' )
-				? {
-						title: i18n.translate( 'Social Login' ),
-						path: '/me/security/social-login',
-				  }
-				: null,
+			{
+				title: i18n.translate( 'Social Login' ),
+				path: '/me/security/social-login',
+			},
 			{
 				title: i18n.translate( 'Two-Step Authentication' ),
 				path: '/me/security/two-step',
 			},
 			{
-				title: config.isEnabled( 'signup/social-management' )
-					? // This was shortened from 'Connected Applications' due to space constraints.
-					  i18n.translate( 'Connected Apps' )
-					: i18n.translate( 'Connected Applications' ),
+				title: i18n.translate( 'Connected Apps' ),
 				path: '/me/security/connected-applications',
 			},
 			{
 				title: i18n.translate( 'Account Recovery' ),
 				path: '/me/security/account-recovery',
 			},
-		].filter( ( tab ) => tab !== null );
-
-		return tabs;
+		];
 	};
 
 	getFilteredPath = () => {

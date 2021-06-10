@@ -8,9 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isEnabled } from '@automattic/calypso-config';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import { Button } from '@automattic/components';
 import SiteTypeForm from './form';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
@@ -58,20 +56,6 @@ class SiteType extends Component {
 		this.props.goToNextStep( flowName );
 	};
 
-	renderImportButton() {
-		if ( ! isEnabled( 'signup/import' ) ) {
-			return null;
-		}
-
-		return (
-			<div className="site-type__import-button">
-				<Button borderless onClick={ this.handleImportFlowClick }>
-					{ this.props.translate( 'Already have a website? Import your content here.' ) }
-				</Button>
-			</div>
-		);
-	}
-
 	renderStepContent() {
 		const { siteType } = this.props;
 
@@ -82,7 +66,6 @@ class SiteType extends Component {
 					submitForm={ this.submitStep }
 					siteType={ siteType }
 				/>
-				{ this.renderImportButton() }
 			</Fragment>
 		);
 	}

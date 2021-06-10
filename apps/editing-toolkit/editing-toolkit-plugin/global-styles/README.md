@@ -201,10 +201,13 @@ To white-label Global Styles:
 These are the fonts available via the font selector in the sidebar and for the themes to set as defaults:
 
 - Arvo
+- Bodoni Mona
 - Cabin
 - Chivo
+- DM Sans
 - Domine
 - Fira Sans
+- Inter
 - Libre Baskerville
 - Libre Franklin
 - Lora

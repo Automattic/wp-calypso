@@ -1,23 +1,12 @@
 /**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { getSite } from 'calypso/state/sites/selectors';
-
-/**
  * Retrieve the WPCOM follower role info, based on site settings
  *
- * @param  {object} state    Global state tree
- * @param  {number} siteId   Site ID
+ * @param  {boolean} isPrivateSite    Whether site is private or not
+ * @param  {Function} translate   `translate` function derived from `i18n-calypso`
  * @returns {object}         Follower role object
  */
-const getWpcomFollowerRole = ( state, siteId ) => {
-	const site = getSite( state, siteId );
-	const displayName = site.is_private
+const getWpcomFollowerRole = ( isPrivateSite, translate ) => {
+	const displayName = isPrivateSite
 		? translate( 'Viewer', { context: 'Role that is displayed in a select' } )
 		: translate( 'Follower', { context: 'Role that is displayed in a select' } );
 

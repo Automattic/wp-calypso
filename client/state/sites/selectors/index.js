@@ -59,4 +59,3 @@ export { default as getSelectedSiteWithFallback } from './get-site-with-fallback
 export { default as getSiteWooCommerceUrl } from './get-site-woocommerce-url';
 export { default as getSiteWooCommerceWizardUrl } from './get-site-woocommerce-wizard-url';
 export { default as getSiteWordPressSeoWizardUrl } from './get-site-wordpress-seo-wizard-url';
-export { default as getWpcomFollowerRole } from './get-wpcom-follower-role';

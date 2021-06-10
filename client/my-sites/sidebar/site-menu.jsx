@@ -204,11 +204,7 @@ class SiteMenu extends PureComponent {
 				}
 
 				// Hide "Feedback" for WP for Teams sites.
-				if (
-					config.isEnabled( 'signup/wpforteams' ) &&
-					this.props.isSiteWPForTeams &&
-					postTypeSlug === 'feedback'
-				) {
+				if ( this.props.isSiteWPForTeams && postTypeSlug === 'feedback' ) {
 					return memo;
 				} else if ( postTypeSlug === 'feedback' ) {
 					//Special handling for feedback (contact form entries), let's calypsoify except for VIP

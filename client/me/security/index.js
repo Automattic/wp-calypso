@@ -28,9 +28,7 @@ export default function () {
 		page( '/me/security/password', sidebar, password, makeLayout, clientRender );
 	}
 
-	if ( config.isEnabled( 'signup/social-management' ) ) {
-		page( '/me/security/social-login', sidebar, socialLogin, makeLayout, clientRender );
-	}
+	page( '/me/security/social-login', sidebar, socialLogin, makeLayout, clientRender );
 
 	page( '/me/security/two-step', sidebar, twoStep, makeLayout, clientRender );
 
