@@ -6,9 +6,9 @@ import {
 	LoginFlow,
 	NewPostFlow,
 	GutenbergEditorPage,
-	PostLikesComponent,
 	MyHomePage,
 	PublishedPostsListPage,
+	PublishedPostPage,
 } from '@automattic/calypso-e2e';
 
 /**
@@ -19,7 +19,7 @@ const quote =
 
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	describe( 'Like a new post', function () {
-		let postLikesComponent;
+		let publishedPostPage;
 		let gutenbergEditorPage;
 
 		it( 'Log in', async function () {
@@ -47,17 +47,17 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Like post', async function () {
-			postLikesComponent = await PostLikesComponent.Expect( this.page );
-			await postLikesComponent.clickLikePost();
+			publishedPostPage = await PublishedPostPage.Expect( this.page );
+			await publishedPostPage.likePost();
 		} );
 
 		it( 'Unlike post', async function () {
-			await postLikesComponent.clickLikePost();
+			await publishedPostPage.unlikePost();
 		} );
 	} );
 
 	describe( 'Like an existing post', function () {
-		let postLikesComponent;
+		let publishedPostPage;
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
@@ -75,8 +75,12 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Like post', async function () {
-			postLikesComponent = await PostLikesComponent.Expect( this.page );
-			await postLikesComponent.clickLikePost();
+			publishedPostPage = await PublishedPostPage.Expect( this.page );
+			await publishedPostPage.likePost();
+		} );
+
+		it( 'Unlike post', async function () {
+			await publishedPostPage.unlikePost();
 		} );
 	} );
 } );

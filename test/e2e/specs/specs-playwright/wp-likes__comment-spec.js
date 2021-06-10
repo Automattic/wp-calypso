@@ -7,7 +7,6 @@ import {
 	MyHomePage,
 	PublishedPostsListPage,
 	CommentsComponent,
-	CommentsLikesComponent,
 	GutenbergEditorPage,
 	NewPostFlow,
 } from '@automattic/calypso-e2e';
@@ -20,7 +19,7 @@ const quote =
 
 describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	describe( 'Comment and like on an existing post', function () {
-		let commentsLikesComponent;
+		let commentsComponent;
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
@@ -39,18 +38,21 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 
 		it( 'Post a comment', async function () {
 			const comment = DataHelper.randomPhrase();
-			const commentsComponent = await CommentsComponent.Expect( this.page );
+			commentsComponent = await CommentsComponent.Expect( this.page );
 			await commentsComponent.postComment( comment );
 		} );
 
 		it( 'Like a comment', async function () {
-			commentsLikesComponent = await CommentsLikesComponent.Expect( this.page );
-			await commentsLikesComponent.clickLikeComment( 1 );
+			await commentsComponent.like( { commentNumber: 1 } );
+		} );
+
+		it( 'Unlike a comment', async function () {
+			await commentsComponent.unlike( { commentNumber: 1 } );
 		} );
 	} );
 
 	describe( 'Comment and like on a new post', function () {
-		let commentsLikesComponent;
+		let commentsComponent;
 		let gutenbergEditorPage;
 
 		it( 'Log in', async function () {
@@ -79,17 +81,16 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 
 		it( 'Post a comment', async function () {
 			const comment = DataHelper.randomPhrase();
-			const commentsComponent = await CommentsComponent.Expect( this.page );
+			commentsComponent = await CommentsComponent.Expect( this.page );
 			await commentsComponent.postComment( comment );
 		} );
 
 		it( 'Like a comment', async function () {
-			commentsLikesComponent = await CommentsLikesComponent.Expect( this.page );
-			await commentsLikesComponent.clickLikeComment( 1 );
+			await commentsComponent.like( { commentNumber: 1 } );
 		} );
 
 		it( 'Unlike a comment', async function () {
-			await commentsLikesComponent.clickLikeComment( 1 );
+			await commentsComponent.unlike( { commentNumber: 1 } );
 		} );
 	} );
 } );

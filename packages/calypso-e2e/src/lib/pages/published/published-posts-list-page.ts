@@ -20,6 +20,11 @@ const selectors = {
  * @augments {BaseContainer}
  */
 export class PublishedPostsListPage extends BaseContainer {
+	/**
+	 * Constructs an instance of the PublishedPostsListPage.
+	 *
+	 * @param {Page} page Underlying page on which interactions take place.
+	 */
 	constructor( page: Page ) {
 		super( page, selectors.page );
 	}
