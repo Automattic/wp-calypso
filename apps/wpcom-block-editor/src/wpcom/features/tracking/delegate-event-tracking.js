@@ -21,6 +21,7 @@ import {
 } from './wpcom-template-part-replace';
 import wpcomTemplatePartChooseExisting from './wpcom-template-part-choose-existing';
 import wpcomBlockEditorListViewSelect from './wpcom-block-editor-list-view-select';
+import wpcomBlockEditorTemplatePartDetachBlocks from './wpcom-block-editor-template-part-detach-blocks';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -62,6 +63,7 @@ const EVENTS_MAPPING = [
 	wpcomTemplatePartReplaceBubble(),
 	wpcomTemplatePartChooseExisting(),
 	wpcomBlockEditorListViewSelect(),
+	wpcomBlockEditorTemplatePartDetachBlocks(),
 ];
 const EVENTS_MAPPING_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => capture );
 const EVENTS_MAPPING_NON_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => ! capture );
