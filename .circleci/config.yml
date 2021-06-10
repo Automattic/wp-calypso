@@ -365,7 +365,6 @@ jobs:
     <<: *desktop_defaults
     environment:
       VERSION: << pipeline.git.tag >>
-      CONFIG_ENV: release
     working_directory: ~/wp-calypso
     steps:
       - checkout
@@ -390,6 +389,8 @@ jobs:
       xcode: '12.3.0'
     shell: /bin/bash --login
     working_directory: /Users/distiller/wp-calypso
+    environment:
+      CONFIG_ENV: release
     steps:
       - checkout
       - attach_workspace:
@@ -462,6 +463,8 @@ jobs:
       - image: circleci/node:14.16.1-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
+    environment:
+      CONFIG_ENV: release
     steps:
       - checkout
       - attach_workspace:
@@ -528,6 +531,7 @@ jobs:
       name: win/default
     working_directory: C:\Users\circleci\wp-calypso
     environment:
+      CONFIG_ENV: release
     steps:
       - checkout
       - attach_workspace:
@@ -547,16 +551,14 @@ jobs:
       - run:
           name: Install Desktop Dependencies
           command: yarn run build-desktop:install-app-deps
-      - run:
-          name: Build Source
-          command: |
-            make -f desktop/Makefile build-main
       - when:
           condition: << pipeline.git.tag >>
           steps:
             - run:
                 name: Build Appx
                 command: |
+                  # Use make (not yarn/npm directly) for bash-like environment variable substitution
+                  make -f desktop/Makefile build-main WINDOWS_STORE=1
                   # Note: Windows Store build should be unsigned
                   make -f desktop/Makefile package ELECTRON_BUILDER_ARGS='--config="electron-builder-appx.json"'
             - run:
@@ -585,7 +587,8 @@ jobs:
       - run:
           name: Build NSIS
           command: |
-            # Use make for bash-like environment variable substitution
+            # Use make (not yarn/npm directly) for bash-like environment variable substitution
+            make -f desktop/Makefile build-main
 
             # Codesign release (tagged) builds only
             If ( $env:CIRCLE_TAG ) { $env:ARG1='-c.win.certificateSubjectName="Automattic"' }

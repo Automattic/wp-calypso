@@ -1,5 +1,5 @@
-const pkg = require( '../../../../desktop/package.json' );
-const config = require( '../../config.json' );
+const pkg = require( '../../../package.json' );
+const config = require( '../../../config/config.json' );
 
 // Merge in some details from package.json
 config.name = pkg.productName;
