@@ -14,7 +14,7 @@ import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 const { select } = defaultRegistry;
 
 export async function fetchStripeConfiguration( requestArgs, wpcom ) {
-	return wpcom.stripeConfiguration( requestArgs );
+	return wpcom.req.get( '/me/stripe-configuration', requestArgs );
 }
 
 async function createAccountCallback( response ) {
