@@ -17,6 +17,7 @@ import ConfirmDisconnection from './disconnect-site/confirm';
 import ManageConnection from './manage-connection';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
+import { getSiteFragment } from 'calypso/lib/route';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
@@ -111,6 +112,16 @@ export function legacyRedirects( context, next ) {
 
 	if ( redirectMap[ section ] ) {
 		return page.redirect( redirectMap[ section ] );
+	}
+
+	next();
+}
+
+export function redirectToGeneral( context, next ) {
+	const site = getSiteFragment( context.path );
+
+	if ( site ) {
+		return page.redirect( `/settings/general/${ site }` );
 	}
 
 	next();
