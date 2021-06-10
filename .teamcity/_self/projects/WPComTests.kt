@@ -404,7 +404,9 @@ private object VisualRegressionTests : BuildType({
     		notifierSettings = slackNotifier {
     			connection = "PROJECT_EXT_11"
     			sendTo = "#visual-regression-automated-tests"
-    			messageFormat = simpleMessageFormat
+    			messageFormat = verboseMessageFormat {
+                	addBranch = false
+                }
     		}
     		buildFailedToStart = true
     		buildFailed = true
