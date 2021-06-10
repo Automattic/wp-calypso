@@ -458,11 +458,8 @@ class SignupForm extends Component {
 
 	getUserNameHint() {
 		const email = formState.getFieldValue( this.state.form, 'email' );
-		const firstName = formState.getFieldValue( this.state.form, 'firstName' );
-		const lastName = formState.getFieldValue( this.state.form, 'lastName' );
-
 		const emailIdentifier = email.match( /^(.*?)@/ );
-		return ( emailIdentifier && emailIdentifier[ 1 ] ) || `${ firstName }.${ lastName }`;
+		return emailIdentifier && emailIdentifier[ 1 ];
 	}
 
 	getUserData() {
