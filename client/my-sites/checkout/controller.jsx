@@ -62,7 +62,7 @@ export function checkout( context, next ) {
 	const jetpackPurchaseNonce = context.query.purchaseNonce;
 	const isJetpackCheckout =
 		context.pathname.includes( '/checkout/jetpack' ) &&
-		isLoggedOut &&
+		( isLoggedOut || context.query?.flow === 'logged-out-checkout' ) &&
 		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
 	const jetpackSiteSlug = context.params.siteSlug;
 
