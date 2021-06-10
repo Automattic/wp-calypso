@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .task {
 	display: flex;
 	background: var( --color-surface );
@@ -8,7 +11,11 @@
 	.task__text,
 	.task__illustration {
 		box-sizing: border-box;
-		padding: 24px;
+		padding: 24px 16px;
+
+		@include break-mobile {
+			padding: 24px;
+		}
 
 		@include breakpoint-deprecated( '>1040px' ) {
 			padding: 32px;
