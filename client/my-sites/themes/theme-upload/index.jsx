@@ -223,12 +223,13 @@ class Upload extends React.Component {
 
 	renderUpgradeBanner() {
 		const { siteId, translate } = this.props;
+		const redirectTo = encodeURIComponent( `/themes/upload/${ siteId }?notice=purchase-success` );
 
 		return (
 			<UpsellNudge
 				title={ translate( 'Upgrade to the Business plan to access the theme install features' ) }
 				event="calypso_theme_install_upgrade_click"
-				href={ `/checkout/${ siteId }/business?redirect_to=/themes/upload/${ siteId }?notice=purchase-success` }
+				href={ `/checkout/${ siteId }/business?redirect_to=${ redirectTo }` }
 				plan={ PLAN_BUSINESS }
 				feature={ FEATURE_UPLOAD_THEMES }
 				showIcon={ true }
