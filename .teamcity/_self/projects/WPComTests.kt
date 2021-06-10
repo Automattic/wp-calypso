@@ -398,5 +398,35 @@ private object VisualRegressionTests : BuildType({
 	failureConditions {
 		executionTimeoutMin = 30
 	}
+
+	features {
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#visual-regression-automated-tests"
+				messageFormat = verboseMessageFormat {
+	            	addBranch = false
+	            }
+			}
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
+		}
+	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = daily {
+				hour = 3
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
 })
 
