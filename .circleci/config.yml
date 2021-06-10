@@ -137,13 +137,11 @@ references:
       npm install -g yarn
       yarn run build-desktop:install-app-deps
   desktop-cache-paths: &desktop-cache-paths
-    - desktop/config
     - desktop/resource/certificates/win.p12
     - desktop/resource/certificates/mac.p12
-  desktop-decrypt-assets: &desktop-decrypt-assets
-    name: Decrypt desktop app assets
+  desktop-decrypt-certs: &desktop-decrypt-certs
+    name: Decrypt desktop code signing certificates
     command: |
-      openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
   desktop-restore-yarn-cache: &desktop-restore-yarn-cache
@@ -377,7 +375,7 @@ jobs:
             - run:
                 name: Ensure package.json Version And Tag Match
                 command: cd desktop/bin && node validate_tag.js $VERSION
-      - run: *desktop-decrypt-assets
+      - run: *desktop-decrypt-certs
       - persist_to_workspace:
           root: ~/wp-calypso
           paths: *desktop-cache-paths
@@ -565,6 +563,7 @@ jobs:
                 name: Clean Up Appx
                 command: |
                   set +e
+                  rm -rf desktop/config
                   rm desktop/release/*.yml
                   rm desktop/release/*.gz
                   rm desktop/release/*.exe
