@@ -41,7 +41,7 @@
 		"artifactName": "wordpress.com-macOS-dmg-${version}-${arch}.${ext}"
 	},
 	"win": {
-		"icon": "./resource/icons/icon.ico",
+		"icon": "./resource/icon.ico",
 		"target": [
 			{
 				"target": "nsis",
