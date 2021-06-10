@@ -13,9 +13,10 @@ const gutenbergTabPanelName = ( tabPanel ) =>
 /**
  * Return the event definition object to track `wpcom_block_picker_tab_panel_selected`.
  *
- * @returns {{handler: Function, selector: string, type: string}} event object definition.
+ * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export default () => ( {
+	id: 'wpcom-inserter-menu-search-term',
 	// It would be nice to filter out events where the tab `is-active` before
 	// the click, but we can't do that because the update has already happened
 	selector: ( e ) => gutenbergTabPanelName( e.target ),
