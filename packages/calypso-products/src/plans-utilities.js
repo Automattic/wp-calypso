@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import {
-	JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN,
+	JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN,
 	BEST_VALUE_PLANS,
 	TERM_MONTHLY,
 	PLAN_MONTHLY_PERIOD,
@@ -39,4 +39,4 @@ export function getTermDuration( term ) {
 	}
 }
 
-export const redirectCheckoutToWpAdmin = () => !! JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN;
+export const redirectCloudCheckoutToWpAdmin = () => !! JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN;
