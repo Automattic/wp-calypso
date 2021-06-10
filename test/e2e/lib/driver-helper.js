@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import webdriver, {
+import {
 	By,
 	Condition,
 	Key,
-	logging,
+	promise,
+	until,
 	WebDriver,
 	WebElement,
 	WebElementCondition,
@@ -15,124 +16,91 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import * as SlackNotifier from './slack-notifier.js';
 import * as dataHelper from './data-helper';
 import * as driverManager from './driver-manager';
 
 const explicitWaitMS = config.get( 'explicitWaitMS' );
 
-export async function highlightElement( driver, element ) {
-	if ( process.env.HIGHLIGHT_ELEMENT === 'true' ) {
-		return await driver.executeScript(
-			"arguments[0].setAttribute('style', 'background: gold; border: 2px solid red;');",
-			element
-		);
-	}
-}
-
-const until = {
-	...webdriver.until,
-	/**
-	 * Creates a condition that will loop until element is clickable. A clickable
-	 * element must be located and not (aria-)disabled.
-	 *
-	 * @param {By|Function} locator The element's locator
-	 * @returns {WebElementCondition} The new condition
-	 */
-	elementIsClickable( locator ) {
-		const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
-
-		return new WebElementCondition(
-			`for element to be clickable ${ locatorStr }`,
-			async function ( driver ) {
-				try {
-					const element = await waitUntilElementStopsMoving( driver, locator );
-					const isEnabled = await element.isEnabled();
-					const isAriaEnabled = await element
-						.getAttribute( 'aria-disabled' )
-						.then( ( v ) => v !== 'true' );
-
-					return isEnabled && isAriaEnabled ? element : null;
-				} catch {
-					return null;
-				}
+/**
+ * Creates a locator function for finding elements with given inner text.
+ *
+ * @example
+ * const profileButtonLocator = driverHelper.createTextLocator( By.css( '.menu-item' ), 'Profile' );
+ * await driverHelper.clickWhenClickable( driver, profileButtonLocator );
+ *
+ * @param {By|Function} locator The element's locator
+ * @param {string|RegExp} text The element's inner text
+ * @returns {Function} An element locator function
+ */
+export function createTextLocator( locator, text ) {
+	async function textLocator( driver ) {
+		const allElements = await driver.findElements( locator );
+		return await promise.filter( allElements, async ( element ) => {
+			const elementText = await element.getText();
+			if ( typeof text === 'string' ) {
+				return elementText === text;
 			}
-		);
-	},
-};
+			if ( typeof text.test === 'function' ) {
+				return text.test( elementText );
+			}
+			throw new Error( 'Unknown matcher type; must be a string or a regular expression' );
+		} );
+	}
+
+	textLocator.toString = function () {
+		return `${ getLocatorString( locator ) } and text "${ text }"`;
+	};
+
+	return textLocator;
+}
 
 /**
- * Clicks an element when it becomes clickable. Throws an error after it
- * times out.
+ * Waits until an element is located in DOM. Throws an error after it times out.
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<WebElement>} A promise that will be resolved with
- * the clicked element
+ * @returns {Promise<WebElement>} A promise that will be resolved with the located element
  */
-export async function clickWhenClickable( driver, locator, timeout = explicitWaitMS ) {
-	const element = await driver.wait( until.elementIsClickable( locator ), timeout );
-
-	try {
-		await highlightElement( driver, element );
-		await element.click();
-	} catch ( error ) {
-		// Flaky response back from IE, so assume success and hope for the best
-		if ( global.browserName === 'Internet Explorer' ) {
-			console.log( "WARNING: IE claims the click action failed, but we're proceeding anyway!" );
-		} else {
-			throw error;
-		}
-	}
-
-	return element;
+export async function waitUntilElementLocated( driver, locator, timeout ) {
+	return await driver.wait( until.elementLocated( locator ), timeout );
 }
 
 /**
- * Checks whether an element is located in DOM or not.
- *
- * @param {WebDriver} driver The parent WebDriver instance
- * @param {By|Function} locator The element's locator
- * @returns {Promise<boolean>} A promise that will be resolved with whether the
- * element is located or not
- */
-export async function isElementLocated( driver, locator ) {
-	try {
-		return !! ( await driver.findElement( locator ) );
-	} catch {
-		return false;
-	}
-}
-
-/**
- * An opposite to the isElementLocated helper.
- *
- * @param {WebDriver} driver The parent WebDriver instance
- * @param {By|Function} locator The element's locator
- * @returns {Promise<boolean>} A promise that will be resolved with true if the
- * element is not in DOM
- */
-export async function isElementNotLocated( driver, locator ) {
-	return ! ( await isElementLocated( driver, locator ) );
-}
-
-/**
- * Waits until an element is located in DOM and visible. Throws an error after
- * it times out.
+ * Waits until an element is NOT located in DOM. Throws an error after it times
+ * out.
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<WebElement>} A promise that will be resolved with
- * the located element
+ * @returns {Promise<WebElement>} A promise that will be resolved with true when the element becomes
+ * unavaialble
+ */
+export async function waitUntilElementNotLocated( driver, locator, timeout ) {
+	const locatorStr = getLocatorString( locator );
+
+	return await driver.wait(
+		new Condition( `for element to NOT be located ${ locatorStr }`, function () {
+			return isElementNotLocated( driver, locator );
+		} ),
+		timeout
+	);
+}
+
+/**
+ * Waits until an element is located in DOM and visible. Throws an error after it times out.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By|Function} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will be resolved with the located element
  */
 export async function waitUntilElementLocatedAndVisible(
 	driver,
 	locator,
 	timeout = explicitWaitMS
 ) {
-	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+	const locatorStr = getLocatorString( locator );
 
 	return await driver.wait(
 		new WebElementCondition(
@@ -153,59 +121,147 @@ export async function waitUntilElementLocatedAndVisible(
 }
 
 /**
- * Waits until an element is located in DOM. Throws an error after it times out.
+ * Waits until an element stops moving. Useful for interacting with animated elements.
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<WebElement>} A promise that will be resolved with
- * the located element
+ * @returns {Promise<WebElement>} A promise that will be resolved with the located element
  */
-export async function waitUntilElementLocated( driver, locator, timeout ) {
-	return await driver.wait( until.elementLocated( locator ), timeout );
-}
-
-/**
- * Waits until an element is NOT located in DOM. Throws an error after it times
- * out.
- *
- * @param {WebDriver} driver The parent WebDriver instance
- * @param {By|Function} locator The element's locator
- * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<WebElement>} A promise that will be resolved with true when
- * the element becomes unavaialble
- */
-export async function waitUntilElementNotLocated( driver, locator, timeout ) {
-	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+export async function waitUntilElementStopsMoving( driver, locator, timeout = explicitWaitMS ) {
+	const locatorStr = getLocatorString( locator );
+	let elementX;
+	let elementY;
 
 	return await driver.wait(
-		new Condition( `for element to NOT be located ${ locatorStr }`, function () {
-			return isElementNotLocated( driver, locator );
+		new Condition( `for an element to stop moving ${ locatorStr }`, async function () {
+			try {
+				const element = await driver.findElement( locator );
+				const elementRect = await driver.executeScript(
+					`return arguments[0].getBoundingClientRect()`,
+					element
+				);
+
+				if ( elementX !== elementRect.x || elementY !== elementRect.y ) {
+					elementX = elementRect.x;
+					elementY = elementRect.y;
+					return null;
+				}
+
+				return element;
+			} catch {
+				return null;
+			}
 		} ),
 		timeout
 	);
 }
 
 /**
- * Checks whether an element is eventually located in DOM and visible.
+ * Waits until given element is clickable. A clickable element must be located and not
+ * (aria-)disabled.
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<WebElement>} A promise that will be resolved with whether
- * the element is located and visible
+ * @returns {Promise<WebElement>} A promise that will be resolved with the clickable element
  */
-export async function isElementEventuallyLocatedAndVisible(
+export async function waitUntilElementClickable( driver, locator, timeout = explicitWaitMS ) {
+	const locatorStr = getLocatorString( locator );
+
+	return await driver.wait(
+		new WebElementCondition( `for element to be clickable ${ locatorStr }`, async function () {
+			try {
+				const element = await waitUntilElementStopsMoving( driver, locator );
+				const isEnabled = await element.isEnabled();
+				const isAriaEnabled = await element
+					.getAttribute( 'aria-disabled' )
+					.then( ( v ) => v !== 'true' );
+
+				return isEnabled && isAriaEnabled ? element : null;
+			} catch {
+				return null;
+			}
+		} ),
+		timeout
+	);
+}
+
+/**
+ * Waits until the input driver is able to switch to the designated frame. Upon successful
+ * resolution, the driver will be left focused on the new frame.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By|Function} locator The frame element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<boolean>} A promise that will resolve with true if the switch was succesfull
+ */
+export async function waitUntilAbleToSwitchToFrame( driver, locator, timeout = explicitWaitMS ) {
+	return await driver.wait( until.ableToSwitchToFrame( locator ), timeout );
+}
+
+/**
+ * Waits until a window of a given index is ready to be switched to and switches to it.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {number} windowIndex The index of the window to switch to
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<boolean>} A promise that will resolve with true if the switch was succesfull
+ */
+export async function waitUntilAbleToSwitchToWindow(
 	driver,
-	locator,
+	windowIndex,
 	timeout = explicitWaitMS
 ) {
+	return await driver.wait(
+		new Condition( `to be able to switch to window #${ windowIndex }`, async function () {
+			try {
+				await switchToWindowByIndex( driver, windowIndex );
+			} catch {
+				return null;
+			}
+
+			return true;
+		} ),
+		timeout
+	);
+}
+
+/**
+ * Waits until a window alert becomes present.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise} A promise that will be resolved when alert is present
+ */
+export async function waitUntilAlertPresent( driver, timeout = explicitWaitMS ) {
+	return await driver.wait( until.alertIsPresent(), timeout );
+}
+
+/**
+ * Waits for an element to become clickable and clicks it.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By|Function} locator The element's locator
+ * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
+ * @returns {Promise<WebElement>} A promise that will be resolved with the clicked element
+ */
+export async function clickWhenClickable( driver, locator, timeout = explicitWaitMS ) {
+	const element = await waitUntilElementClickable( driver, locator, timeout );
+
 	try {
-		await waitUntilElementLocatedAndVisible( driver, locator, timeout );
-		return true;
-	} catch {
-		return false;
+		await highlightElement( driver, element );
+		await element.click();
+	} catch ( error ) {
+		// Flaky response back from IE, so assume success and hope for the best
+		if ( global.browserName === 'Internet Explorer' ) {
+			console.log( "WARNING: IE claims the click action failed, but we're proceeding anyway!" );
+		} else {
+			throw error;
+		}
 	}
+
+	return element;
 }
 
 /**
@@ -239,7 +295,7 @@ export async function setWhenSettable(
 	value,
 	{ secureValue = false, pauseBetweenKeysMS = 0 } = {}
 ) {
-	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
+	const locatorStr = getLocatorString( locator );
 	let timeout = explicitWaitMS;
 	let errorMessage = `for element to be settable ${ locatorStr }`;
 
@@ -314,60 +370,50 @@ export async function setCheckbox( driver, locator, check = true ) {
 }
 
 /**
- * Check whether an image element is actually visible - that is rendered to the
- * screen - not just having a reference in the DOM.
+ * Scrolls the page to an element with the given locator.
  *
  * @param {WebDriver} driver The parent WebDriver instance
- * @param {By|Function} locator The image element locator
- * @returns {Promise<boolean>} A promise that will resolve with whether the
- * image is visible or not
+ * @param {By|Function} locator The element's locator
+ * @param {string} [position='center'] An element's position. Can be 'start', 'end' and 'center'
+ * @returns {Promise<WebElement>} A promise that will resolve with the located element
  */
-export async function isImageVisible( driver, locator ) {
-	const element = await driver.findElement( locator );
-	const tagName = await element.getTagName();
-	if ( tagName.toUpperCase() !== 'IMG' ) {
-		throw new Error( `Element is not an image: ${ tagName }` );
-	}
+export async function scrollIntoView( driver, locator, position = 'center' ) {
+	const element = await waitUntilElementLocatedAndVisible( driver, locator );
 
-	return driver.executeScript( 'return arguments[ 0 ].naturalWidth > 0', element );
+	return await driver.executeScript(
+		`arguments[0].scrollIntoView( { block: "${ position }", inline: "center" } )`,
+		element
+	);
 }
 
-export function checkForConsoleErrors( driver ) {
-	if ( config.get( 'checkForConsoleErrors' ) === true ) {
-		driver
-			.manage()
-			.logs()
-			.get( 'browser' )
-			.then( function ( logs ) {
-				if ( logs.length > 0 ) {
-					logs.forEach( ( log ) => {
-						// Ignore chrome cast errors in Chrome - http://stackoverflow.com/questions/24490323/google-chrome-cast-sender-error-if-chrome-cast-extension-is-not-installed-or-usi/26095117#26095117
-						// Also ignore post message errors - this is a known limitation at present
-						// Also ignore 404 errors for viewing sites or posts/pages that are private
-						if (
-							log.message.indexOf( 'cast_sender.js' ) === -1 &&
-							log.message.indexOf( '404' ) === -1 &&
-							log.message.indexOf( "Failed to execute 'postMessage' on 'DOMWindow'" ) === -1
-						) {
-							driver.getCurrentUrl().then( ( url ) => {
-								SlackNotifier.warn( `Found console error: "${ log.message }" on url '${ url }'`, {
-									suppressDuplicateMessages: true,
-								} );
-							} );
-						}
-					} );
-				}
-			} );
-	}
+/**
+ * Accepts window alert if present.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ */
+export async function acceptAlertIfPresent( driver ) {
+	try {
+		await driver.switchTo().alert().accept();
+	} catch {}
 }
 
-export function getBrowserLogs( driver ) {
-	return driver.manage().logs().get( logging.Type.BROWSER );
-}
-export function getPerformanceLogs( driver ) {
-	return driver.manage().logs().get( logging.Type.PERFORMANCE );
+/**
+ * Dismisses window alert if present.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ */
+export async function dismissAlertIfPresent( driver ) {
+	try {
+		await driver.switchTo().alert().dismiss();
+	} catch {}
 }
 
+/**
+ * Switches to a window with given index.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {number} index The index of the target window
+ */
 export async function switchToWindowByIndex( driver, index ) {
 	const currentScreenSize = driverManager.currentScreenSize();
 	const handles = await driver.getAllWindowHandles();
@@ -379,15 +425,20 @@ export async function switchToWindowByIndex( driver, index ) {
 	}
 }
 
-export async function numberOfOpenWindows( driver ) {
-	const handles = await driver.getAllWindowHandles();
-	return handles.length;
-}
-
+/**
+ * Closes a window that is currently active.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ */
 export async function closeCurrentWindow( driver ) {
-	return await driver.close();
+	await driver.close();
 }
 
+/**
+ * Closes all open windows except the one that is currently active.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ */
 export async function closeAllPopupWindows( driver ) {
 	const numWindows = await numberOfOpenWindows( driver );
 	let windowIndex;
@@ -395,19 +446,22 @@ export async function closeAllPopupWindows( driver ) {
 		await switchToWindowByIndex( driver, windowIndex );
 		await closeCurrentWindow( driver );
 	}
-	return switchToWindowByIndex( driver, 0 );
+	await switchToWindowByIndex( driver, 0 );
 }
 
-export async function refreshIfJNError( driver, timeout = 2000 ) {
+/**
+ * When called, it will keep refreshing the page as long as the JN error is thrown.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ */
+export async function refreshIfJNError( driver ) {
 	if ( dataHelper.getTargetType() !== 'JETPACK' ) {
 		return false;
 	}
-
 	// Match only 503 Error codes
 	const jnSiteError = By.xpath(
 		"//pre[@class='error' and .='/srv/users/SYSUSER/log/APPNAME/APPNAME_apache.error.log' and //title[.='503 Service Unavailable']]"
 	);
-
 	// Match WP DB error
 	const jnDBError = By.xpath( '//h1[.="Error establishing a database connection"]' );
 
@@ -415,168 +469,121 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
 		const jnErrorDisplayed = await isElementEventuallyLocatedAndVisible(
 			driver,
 			jnSiteError,
-			timeout
+			2000
 		);
 		const jnDBErrorDisplayed = await isElementLocated( driver, jnDBError );
 		if ( jnErrorDisplayed || jnDBErrorDisplayed ) {
 			console.log( 'JN Error! Refreshing the page' );
 			await driver.navigate().refresh();
-			return await refreshIfNeeded();
+			await refreshIfNeeded();
 		}
-		return true;
 	};
 
-	return await refreshIfNeeded();
+	await refreshIfNeeded();
 }
 
 /**
- * Scroll element on a page to desired position
+ * Checks whether an element is located in DOM or not.
  *
  * @param {WebDriver} driver The parent WebDriver instance
  * @param {By|Function} locator The element's locator
- * @param {string} [position='center'] An element's position. Can be 'start', 'end' and 'center'
- * @returns {Promise<WebElement>} A promise that will resolve with the located element
+ * @returns {Promise<boolean>} A promise that will be resolved with whether the element is located
+ * or not
  */
-export async function scrollIntoView( driver, locator, position = 'center' ) {
-	const selectorElement = await driver.findElement( locator );
-
-	return await driver.executeScript(
-		`arguments[0].scrollIntoView( { block: "${ position }", inline: "center" } )`,
-		selectorElement
-	);
-}
-
-/**
- * Creates a locator function for finding elements with given inner text.
- *
- * @example
- * const profileButtonLocator = driverHelper.createTextLocator( By.css( '.menu-item' ), 'Profile' );
- * await driverHelper.clickWhenClickable( driver, profileButtonLocator );
- *
- * @param {By|Function} locator The element's locator
- * @param {string|RegExp} text The element's inner text
- * @returns {Function} An element locator function
- */
-export function createTextLocator( locator, text ) {
-	return async function ( driver ) {
-		const allElements = await driver.findElements( locator );
-		return webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
-	};
-}
-
-export async function dismissAlertIfPresent( driver ) {
+export async function isElementLocated( driver, locator ) {
 	try {
-		await driver.switchTo().alert().dismiss();
-		return true;
-	} catch ( error ) {
+		return !! ( await driver.findElement( locator ) );
+	} catch {
 		return false;
 	}
 }
 
-export async function acceptAlertIfPresent( driver ) {
-	try {
-		await driver.switchTo().alert().accept();
-		return true;
-	} catch ( error ) {
-		return false;
-	}
-}
-
-export async function waitUntilAlertPresent( driver, timeout = explicitWaitMS ) {
-	return await driver.wait( until.alertIsPresent(), timeout );
-}
-
-function getInnerTextMatcherFunction( match ) {
-	return async ( element ) => {
-		const elementText = await element.getText();
-		if ( typeof match === 'string' ) {
-			return elementText === match;
-		}
-		if ( match.test ) {
-			return match.test( elementText );
-		}
-		throw new Error( 'Unknown matcher type; must be a string or a regular expression' );
-	};
+/**
+ * An opposite to the isElementLocated helper.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {By|Function} locator The element's locator
+ * @returns {Promise<boolean>} A promise that will be resolved to true if the element is not located
+ */
+export async function isElementNotLocated( driver, locator ) {
+	return ! ( await isElementLocated( driver, locator ) );
 }
 
 /**
- * Waits until the input driver is able to switch to the designated frame.
- * Upon successful resolution, the driver will be left focused on the new frame.
+ * Checks whether an element is eventually located in DOM and visible.
  *
  * @param {WebDriver} driver The parent WebDriver instance
- * @param {By|Function} locator The frame element's locator
+ * @param {By|Function} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<boolean>} A promise that will resolve with true if the
- * switch was succesfull
+ * @returns {Promise<WebElement>} A promise that will be resolved with whether the element is
+ * located and visible
  */
-export async function waitUntilAbleToSwitchToFrame( driver, locator, timeout = explicitWaitMS ) {
-	return await driver.wait( until.ableToSwitchToFrame( locator ), timeout );
-}
-
-/**
- * Waits until a window of a given index is ready to be switched to and switches
- * to it.
- *
- * @param {WebDriver} driver The parent WebDriver instance
- * @param {number} windowIndex The index of the window to switch to
- * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<boolean>} A promise that will resolve with true if the
- * switch was succesfull
- */
-export async function waitUntilAbleToSwitchToWindow(
+export async function isElementEventuallyLocatedAndVisible(
 	driver,
-	windowIndex,
+	locator,
 	timeout = explicitWaitMS
 ) {
-	return await driver.wait(
-		new Condition( `to be able to switch to window #${ windowIndex }`, async function () {
-			try {
-				await switchToWindowByIndex( driver, windowIndex );
-			} catch {
-				return null;
-			}
-
-			return true;
-		} ),
-		timeout
-	);
+	try {
+		await waitUntilElementLocatedAndVisible( driver, locator, timeout );
+		return true;
+	} catch {
+		return false;
+	}
 }
 
 /**
- * Waits until an element stops moving. Useful for interacting with animated
- * elements.
+ * Check whether an image element is actually visible - that is rendered to the screen - not just
+ * having a reference in the DOM.
  *
  * @param {WebDriver} driver The parent WebDriver instance
- * @param {By|Function} locator The element's locator
- * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
- * @returns {Promise<WebElement>} A promise that will be resolved with
- * the located element
+ * @param {By|Function} locator The image element locator
+ * @returns {Promise<boolean>} A promise that will resolve with whether the image is visible or not
  */
-export async function waitUntilElementStopsMoving( driver, locator, timeout = explicitWaitMS ) {
-	const locatorStr = typeof locator === 'function' ? 'by function()' : locator + '';
-	let elementX;
-	let elementY;
+export async function isImageVisible( driver, locator ) {
+	const element = await driver.findElement( locator );
+	const tagName = await element.getTagName();
+	if ( tagName.toUpperCase() !== 'IMG' ) {
+		throw new Error( `Element is not an image: ${ tagName }` );
+	}
 
-	return await driver.wait(
-		new Condition( `for an element to stop moving ${ locatorStr }`, async function () {
-			try {
-				const element = await driver.findElement( locator );
-				const elementRect = await driver.executeScript(
-					`return arguments[0].getBoundingClientRect()`,
-					element
-				);
+	return driver.executeScript( 'return arguments[ 0 ].naturalWidth > 0', element );
+}
 
-				if ( elementX !== elementRect.x || elementY !== elementRect.y ) {
-					elementX = elementRect.x;
-					elementY = elementRect.y;
-					return null;
-				}
+/**
+ * Returns the number of all currently open windows.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @returns {number} The number of open windows
+ */
+export async function numberOfOpenWindows( driver ) {
+	const handles = await driver.getAllWindowHandles();
+	return handles.length;
+}
 
-				return element;
-			} catch {
-				return null;
-			}
-		} ),
-		timeout
-	);
+/**
+ * Highlights given element via inline style to indicate user action. Used for debugging purposes.
+ *
+ * @param {WebDriver} driver The parent WebDriver instance
+ * @param {WebElement} element The element to be highlighted
+ */
+async function highlightElement( driver, element ) {
+	if ( process.env.HIGHLIGHT_ELEMENT === 'true' ) {
+		await driver.executeScript(
+			"arguments[0].setAttribute('style', 'background: gold; border: 2px solid red;');",
+			element
+		);
+	}
+}
+
+/**
+ * Returns a human-readable version of the given locator. Used for providing better error stack.
+ *
+ * @param {By|Function} locator The element's locator
+ * @returns {string} The stringified locator
+ */
+function getLocatorString( locator ) {
+	if ( typeof locator === 'function' && locator.name !== 'textLocator' ) {
+		return locator.name ? `by function ${ locator.name }()` : 'by function()';
+	}
+	return locator.toString();
 }

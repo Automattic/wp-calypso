@@ -18,6 +18,7 @@ import SidebarComponent from '../../lib/components/sidebar-component';
 import WPAdminCustomizerPage from '../../lib/pages/wp-admin/wp-admin-customizer-page.js';
 import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page.js';
 import * as dataHelper from '../../lib/data-helper';
+import * as driverHelper from '../../lib/driver-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
@@ -65,7 +66,7 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function
 		} );
 
 		it( 'Can customize the site from the theme thanks dialog', async function () {
-			await WPAdminCustomizerPage.refreshIfJNError( this.driver );
+			await driverHelper.refreshIfJNError( this.driver );
 			return await WPAdminCustomizerPage.Expect( this.driver );
 		} );
 	}

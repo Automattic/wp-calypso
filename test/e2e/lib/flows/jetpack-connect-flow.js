@@ -45,7 +45,7 @@ export default class JetpackConnectFlow {
 	async connectFromWPAdmin() {
 		await driverManager.ensureNotLoggedIn( this.driver );
 		await this.createJNSite();
-		await WPAdminSidebar.refreshIfJNError( this.driver );
+		await driverHelper.refreshIfJNError( this.driver );
 		const wpAdminSidebar = await WPAdminSidebar.Expect( this.driver );
 		await wpAdminSidebar.selectJetpack();
 		await driverHelper.refreshIfJNError( this.driver );
@@ -65,7 +65,7 @@ export default class JetpackConnectFlow {
 		const loginFlow = new LoginFlow( this.driver, 'jetpackConnectUser' );
 		await loginFlow.login();
 		await this.createJNSite();
-		await WPAdminSidebar.refreshIfJNError( this.driver );
+		await driverHelper.refreshIfJNError( this.driver );
 		await ( await WPAdminSidebar.Expect( this.driver ) ).selectJetpack();
 		await driverHelper.refreshIfJNError( this.driver );
 		await ( await WPAdminJetpackPage.Expect( this.driver ) ).inPlaceConnect();
