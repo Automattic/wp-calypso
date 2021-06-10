@@ -15,6 +15,10 @@ import { isWpComMonthlyPlan, isWpComFreePlan } from '@automattic/calypso-product
  */
 export default createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! siteId ) {
+			return true;
+		}
+
 		const currentPlanSlug = getCurrentPlan( state, siteId )?.productSlug;
 
 		return (
