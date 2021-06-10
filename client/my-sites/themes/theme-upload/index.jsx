@@ -98,10 +98,14 @@ class Upload extends React.Component {
 	};
 
 	componentDidMount() {
-		const { siteId, inProgress } = this.props;
+		const { siteId, inProgress, noticeType } = this.props;
 		! inProgress && this.props.clearThemeUpload( siteId );
 		if ( this.props.canUploadThemesOrPlugins ) {
 			this.redirectToWpAdmin();
+		}
+
+		if ( 'purchase-success' === noticeType ) {
+			this.purchaseSuccessMessage();
 		}
 	}
 
@@ -146,6 +150,11 @@ class Upload extends React.Component {
 			} ),
 			{ duration: 5000 }
 		);
+	}
+
+	purchaseSuccessMessage() {
+		const { translate } = this.props;
+		this.props.successNotice( translate( 'Your purchase has been completed!' ) );
 	}
 
 	failureMessage() {
@@ -213,7 +222,7 @@ class Upload extends React.Component {
 			<UpsellNudge
 				title={ translate( 'Upgrade to the Business plan to access the theme install features' ) }
 				event="calypso_theme_install_upgrade_click"
-				href={ `/checkout/${ siteId }/business?redirect_to=/themes/upload/${ siteId }` }
+				href={ `/checkout/${ siteId }/business?redirect_to=/themes/upload/${ siteId }?notice=purchase-success` }
 				plan={ PLAN_BUSINESS }
 				feature={ FEATURE_UPLOAD_THEMES }
 				showIcon={ true }
