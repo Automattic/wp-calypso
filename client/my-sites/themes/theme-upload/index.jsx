@@ -34,7 +34,10 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'calypso/state/themes/actions';
 
-import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import {
+	isFetchingSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
 import {
 	getSelectedSiteId,
 	getSelectedSite,
@@ -414,8 +417,8 @@ const mapStateToProps = ( state ) => {
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		canUploadThemesOrPlugins,
 		isOnAtomicPlan,
-		isTransferring: isAutomatedTransferActive( state, siteId ),
-		isFetchingPurchases: isFetchingSitePurchases( state ),
+		isFetchingPurchases:
+			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 	};
 };
 
