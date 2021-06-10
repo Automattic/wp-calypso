@@ -19,6 +19,7 @@ import { buildGlobalStylesContentEvents } from './utils';
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
 
 const noop = () => {};
+let ignoreNextReplaceBlocksAction = false;
 
 /**
  * Global handler.
@@ -294,6 +295,11 @@ const trackBlockRemoval = ( blocks ) => {
  * @returns {void}
  */
 const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
+	if ( ignoreNextReplaceBlocksAction ) {
+		ignoreNextReplaceBlocksAction = false;
+		return;
+	}
+
 	const patternName = maybeTrackPatternInsertion( { ...args, blocks_replaced: true } );
 
 	const insert_method = getBlockInserterUsed( originalBlockIds );
@@ -396,6 +402,17 @@ const trackDisableComplementaryArea = ( scope ) => {
 	const activeArea = select( 'core/interface' ).getActiveComplementaryArea( scope );
 	if ( activeArea === 'edit-site/global-styles' && scope === 'core/edit-site' ) {
 		trackGlobalStylesTabSelected( { open: false } );
+	}
+};
+
+const trackSaveEntityRecord = ( kind, name ) => {
+	if (
+		document.querySelector( '.edit-site-template-part-converter__modal' ) &&
+		kind === 'postType' &&
+		name === 'wp_template_part'
+	) {
+		ignoreNextReplaceBlocksAction = true;
+		tracksRecordEvent( 'wpcom_block_editor_convert_to_template_part' );
 	}
 };
 
@@ -533,6 +550,7 @@ const REDUX_TRACKING = {
 		saveEntityRecord: trackSaveEntityRecord,
 		editEntityRecord: trackEditEntityRecord,
 		saveEditedEntityRecord: trackSaveEditedEntityRecord,
+		saveEntityRecord: trackSaveEntityRecord,
 	},
 	'core/block-editor': {
 		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),
