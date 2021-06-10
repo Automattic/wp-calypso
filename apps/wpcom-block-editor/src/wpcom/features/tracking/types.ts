@@ -1,17 +1,18 @@
+export type CallbackEventType = MouseEvent | KeyboardEvent;
 export type DelegateEventHandlerType = 'click' | 'keyup';
 
 export interface DelegateEventHandler {
 	id: string;
-	selector: string;
+	selector: string | ( ( event: CallbackEventType ) => boolean );
 	type: DelegateEventHandlerType;
 }
 
 export interface DelegateEventHandlerCallback {
-	( event: MouseEvent | KeyboardEvent, target: EventTarget ): void;
+	( event: CallbackEventType, target: EventTarget ): void;
 }
 
 export interface DelegateEventSubscriberCallback {
-	( mapping: DelegateEventHandler, event: MouseEvent | KeyboardEvent, target: EventTarget ): void;
+	( mapping: DelegateEventHandler, event: CallbackEventType, target: EventTarget ): void;
 }
 
 export type DelegateEventSubscriberType = 'before' | 'after';
