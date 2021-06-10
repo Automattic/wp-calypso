@@ -567,6 +567,8 @@ jobs:
                   rm desktop/release/*.gz
                   rm desktop/release/*.exe
                   rm desktop/release/*.blockmap
+                  rm -rf desktop/release/win-unpacked
+                  rm -rf desktop/release/win-ia32-unpacked
       - when:
           condition: << pipeline.git.tag >>
           steps:
