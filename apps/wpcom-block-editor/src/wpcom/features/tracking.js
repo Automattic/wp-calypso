@@ -289,14 +289,14 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 	// because the template part or reusable block just loaded.
 	const parentBlock = select( 'core/block-editor' ).getBlocksByClientId( rootClientId )?.[ 0 ];
 	if ( parentBlock ) {
-		const { name, innerBlocks } = parentBlock;
+		const { name } = parentBlock;
 		const isAsyncLoadedEntityBlock =
 			// Template Part
 			name === 'core/template-part' ||
 			// Reusable Block
 			name === 'core/block';
+		const innerBlocks = select( 'core/block-editor' ).getBlocks( rootClientId );
 		const hasInnerBlocks = innerBlocks.length > 0;
-
 		if ( isAsyncLoadedEntityBlock && ! hasInnerBlocks ) {
 			return;
 		}
