@@ -11,7 +11,9 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import tracksRecordEvent from './tracking/track-record-event';
-import delegateEventTracking from './tracking/delegate-event-tracking';
+import delegateEventTracking, {
+	registerSubscriber as registerDelegateEventSubscriber,
+} from './tracking/delegate-event-tracking';
 import { trackGlobalStylesTabSelected } from './tracking/wpcom-block-editor-global-styles-tab-selected';
 import { buildGlobalStylesContentEvents } from './utils';
 
@@ -646,4 +648,12 @@ if (
 			return null;
 		},
 	} );
+
+	registerDelegateEventSubscriber(
+		'wpcom-block-editor-template-part-detach-blocks',
+		'before',
+		() => {
+			ignoreNextReplaceBlocksAction = true;
+		}
+	);
 }
