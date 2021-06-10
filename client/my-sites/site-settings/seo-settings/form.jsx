@@ -487,7 +487,7 @@ const mapStateToProps = ( state ) => {
 	// the availability of the module.
 	const isAdvancedSeoEligible =
 		site.plan &&
-		hasSiteSeoFeature( state, site ) &&
+		hasSiteSeoFeature( state, siteId ) &&
 		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
 
 	const activePlugins = getPlugins( state, [ siteId ], 'active' );

@@ -244,7 +244,7 @@ export function CloudflareAnalyticsSettings( {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isAnalyticsEligible = hasSiteAnalyticsFeature( state, site );
+	const isAnalyticsEligible = hasSiteAnalyticsFeature( state, siteId );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
 	const path = getCurrentRouteParameterized( state, siteId );

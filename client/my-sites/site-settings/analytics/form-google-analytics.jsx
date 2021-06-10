@@ -101,7 +101,7 @@ export const GoogleAnalyticsForm = ( props ) => {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isGoogleAnalyticsEligible = hasSiteAnalyticsFeature( state, site );
+	const isGoogleAnalyticsEligible = hasSiteAnalyticsFeature( state, siteId );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
