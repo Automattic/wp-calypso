@@ -29,7 +29,10 @@ import CheckoutThankYouComponent from './checkout-thank-you';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { setSectionMiddleware } from 'calypso/controller';
 import { sites } from 'calypso/my-sites/controller';
-import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserVisibleSiteCount,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import {
 	retrieveSignupDestination,
 	setSignupCheckoutPageUnloaded,
@@ -47,11 +50,10 @@ const debug = debugFactory( 'calypso:checkout-controller' );
 export function checkout( context, next ) {
 	const { feature, plan, purchaseId } = context.params;
 
-	const isLoggedOut = ! isUserLoggedIn( context.store.getState() );
 	const state = context.store.getState();
+	const isLoggedOut = ! isUserLoggedIn( state );
 	const selectedSite = getSelectedSite( state );
-	const currentUser = getCurrentUser( state );
-	const hasSite = currentUser && currentUser.visible_site_count >= 1;
+	const hasSite = getCurrentUserVisibleSiteCount( state ) >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 	const isDisallowedForSitePicker =
 		context.pathname.includes( '/checkout/no-site' ) &&
