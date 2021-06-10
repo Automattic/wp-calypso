@@ -35,7 +35,7 @@ import {
 	FEATURE_ACTIVITY_LOG,
 } from '@automattic/calypso-products';
 import { Iterations } from './iterations';
-import { buildCardFeaturesFromItem } from './utils';
+import buildCardFeaturesFromItem from './build-card-features-from-item';
 
 /**
  * Type dependencies

@@ -9,11 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
  */
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import {
-	checkout,
-	getYearlySlugFromMonthly,
-	manageSitePurchase,
-} from 'calypso/my-sites/plans/jetpack-plans/utils';
+import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -24,6 +20,8 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import getViewTrackerPath from './get-view-tracker-path';
 import ProductGrid from './product-grid';
+import checkout from './checkout';
+import manageSitePurchase from './manage-site-purchase';
 
 /**
  * Type dependencies

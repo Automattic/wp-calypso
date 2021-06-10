@@ -60,7 +60,7 @@ import {
 	getProductDisplayCost,
 	getProductPriceTierList,
 } from 'calypso/state/products-list/selectors';
-import { getPriceTierForUnits } from 'calypso/my-sites/plans/jetpack-plans/utils';
+import getPriceTierForUnits from 'calypso/my-sites/plans/jetpack-plans/get-price-tier-for-units';
 
 import deleteIcon from './delete-icon.svg';
 
