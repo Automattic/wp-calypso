@@ -404,7 +404,7 @@ private object VisualRegressionTests : BuildType({
     		notifierSettings = slackNotifier {
     			connection = "PROJECT_EXT_11"
     			sendTo = "#visual-regression-automated-tests"
-    			messageFormat = SimpleMessageFormat
+    			messageFormat = simpleMessageFormat
     		}
     		buildFailedToStart = true
     		buildFailed = true
@@ -413,7 +413,7 @@ private object VisualRegressionTests : BuildType({
     		buildProbablyHanging = true
     	}
     }
-    
+
     triggers {
     	schedule {
     		schedulingPolicy = daily {
