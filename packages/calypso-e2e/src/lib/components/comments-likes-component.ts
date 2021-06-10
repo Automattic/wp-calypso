@@ -36,7 +36,7 @@ export class CommentsLikesComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _postInit(): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'domcontentloaded' );
 	}
 
 	/**
@@ -65,14 +65,14 @@ export class CommentsLikesComponent extends BaseContainer {
 		// Get the nth top-level comment, which is the target to have the like button toggled.
 		// Check whether the CSS class for the post having been 'liked' exists.
 		const comment = topLevelComments[ commentNum - 1 ];
-		const isLiked = await comment.$$( selectors.liked );
+		const isLiked = await comment.$( selectors.liked );
 		const likeButton = ( await comment.$( selectors.likeButton ) ) as ElementHandle;
 
 		// Click the like button and attempt to wait until the animations and such are done.
 		await Promise.all( [ likeButton.click(), likeButton.waitForElementState( 'enabled' ) ] );
 
 		// Check for intended outcome depending on the original liked state.
-		if ( isLiked.length ) {
+		if ( await isLiked?.isVisible() ) {
 			await comment.waitForSelector( selectors.notLiked );
 		} else {
 			await comment.waitForSelector( selectors.liked );

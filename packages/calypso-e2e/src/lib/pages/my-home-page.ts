@@ -11,7 +11,7 @@ import { Page } from 'playwright';
 const selectors = {
 	dashboard: '.customer-home__main',
 	statsCard: '.stats',
-	visitSiteButton: 'text=Visit site',
+	visitSiteButton: '.customer-home__view-site-button >> text=Visit site',
 };
 
 /**
@@ -35,7 +35,6 @@ export class MyHomePage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async visitSite(): Promise< void > {
-		await this.page.waitForSelector( selectors.visitSiteButton );
 		await Promise.all( [
 			this.page.waitForNavigation(),
 			this.page.click( selectors.visitSiteButton ),
