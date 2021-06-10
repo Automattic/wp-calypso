@@ -6,9 +6,7 @@ import { get, includes, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import stepConfig from './steps';
-import user from 'calypso/lib/user';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -137,7 +135,7 @@ function filterDestination( destination, dependencies, flowName, localeSlug ) {
 }
 
 function getDefaultFlowName() {
-	return config.isEnabled( 'signup/onboarding-flow' ) ? 'onboarding' : 'main';
+	return 'onboarding';
 }
 
 const Flows = {
@@ -152,9 +150,10 @@ const Flows = {
 	 * The returned flow is modified according to several filters.
 	 *
 	 * @param {string} flowName The name of the flow to return
+	 * @param {boolean} isUserLoggedIn Whether the user is logged in
 	 * @returns {object} A flow object
 	 */
-	getFlow( flowName ) {
+	getFlow( flowName, isUserLoggedIn ) {
 		let flow = Flows.getFlows()[ flowName ];
 
 		// if the flow couldn't be found, return early
@@ -162,11 +161,11 @@ const Flows = {
 			return flow;
 		}
 
-		if ( user() && user().get() ) {
+		if ( isUserLoggedIn ) {
 			flow = removeUserStepFromFlow( flow );
 		}
 
-		if ( flowName === 'p2' && user() && user().get() ) {
+		if ( flowName === 'p2' && isUserLoggedIn ) {
 			flow = removeP2DetailsStepFromFlow( flow );
 		}
 

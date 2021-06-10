@@ -4,7 +4,7 @@
 import { Card } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
-import React, { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import classnames from 'classnames';
 
@@ -177,7 +177,6 @@ const SiteSetupList = ( {
 				emailVerificationStatus,
 				isDomainUnverified,
 				isEmailUnverified,
-				isPodcastingSite,
 				menusUrl,
 				siteId,
 				siteSlug,
@@ -251,64 +250,66 @@ const SiteSetupList = ( {
 
 			<div className="site-setup-list__nav">
 				<CardHeading>{ translate( 'Site setup' ) }</CardHeading>
-				{ tasks.map( ( task ) => {
-					const enhancedTask = getTask( task );
-					const isCurrent = task.id === currentTask.id;
-					const isCompleted = task.isCompleted;
+				<ul className="site-setup-list__list">
+					{ tasks.map( ( task ) => {
+						const enhancedTask = getTask( task );
+						const isCurrent = task.id === currentTask.id;
+						const isCompleted = task.isCompleted;
 
-					return (
-						<Fragment key={ task.id }>
-							<NavItem
-								key={ task.id }
-								taskId={ task.id }
-								text={ enhancedTask.label || enhancedTask.title }
-								isCompleted={ isCompleted }
-								isCurrent={
-									useAccordionLayout ? isCurrent && showAccordionSelectedTask : isCurrent
-								}
-								onClick={
-									useAccordionLayout && isCurrent && showAccordionSelectedTask
-										? () => {
-												setShowAccordionSelectedTask( false );
-										  }
-										: () => {
-												setShowAccordionSelectedTask( true );
-												setTaskIsManuallySelected( true );
-												setCurrentTaskId( task.id );
-										  }
-								}
-								useAccordionLayout={ useAccordionLayout }
-							/>
-							{ useAccordionLayout && isCurrent && showAccordionSelectedTask ? (
-								<CurrentTaskItem
-									currentTask={ currentTask }
-									skipTask={ () => {
-										setTaskIsManuallySelected( false );
-										skipTask(
-											dispatch,
-											currentTask,
-											tasks,
-											siteId,
-											currentView,
-											setIsLoading,
-											isPodcastingSite
-										);
-									} }
-									startTask={ () =>
-										startTask(
-											dispatch,
-											currentTask,
-											siteId,
-											advanceToNextIncompleteTask,
-											isPodcastingSite
-										)
+						return (
+							<li key={ task.id }>
+								<NavItem
+									key={ task.id }
+									taskId={ task.id }
+									text={ enhancedTask.label || enhancedTask.title }
+									isCompleted={ isCompleted }
+									isCurrent={
+										useAccordionLayout ? isCurrent && showAccordionSelectedTask : isCurrent
+									}
+									onClick={
+										useAccordionLayout && isCurrent && showAccordionSelectedTask
+											? () => {
+													setShowAccordionSelectedTask( false );
+											  }
+											: () => {
+													setShowAccordionSelectedTask( true );
+													setTaskIsManuallySelected( true );
+													setCurrentTaskId( task.id );
+											  }
 									}
 									useAccordionLayout={ useAccordionLayout }
 								/>
-							) : null }
-						</Fragment>
-					);
-				} ) }
+								{ useAccordionLayout && isCurrent && showAccordionSelectedTask ? (
+									<CurrentTaskItem
+										currentTask={ currentTask }
+										skipTask={ () => {
+											setTaskIsManuallySelected( false );
+											skipTask(
+												dispatch,
+												currentTask,
+												tasks,
+												siteId,
+												currentView,
+												setIsLoading,
+												isPodcastingSite
+											);
+										} }
+										startTask={ () =>
+											startTask(
+												dispatch,
+												currentTask,
+												siteId,
+												advanceToNextIncompleteTask,
+												isPodcastingSite
+											)
+										}
+										useAccordionLayout={ useAccordionLayout }
+									/>
+								) : null }
+							</li>
+						);
+					} ) }
+				</ul>
 			</div>
 		</Card>
 	);

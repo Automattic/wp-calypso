@@ -1082,17 +1082,6 @@ Undocumented.prototype.sitesExternalServices = function ( siteId, fn ) {
 };
 
 /**
- * Return a list of happiness engineers gravatar urls
- *
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getHappinessEngineers = function ( fn ) {
-	debug( 'meta/happiness-engineers/ query' );
-
-	return this.wpcom.req.get( { path: '/meta/happiness-engineers/' }, fn );
-};
-
-/**
  * Return a list of sharing buttons for the specified site, with optional
  * query parameters
  *
@@ -1345,44 +1334,6 @@ Undocumented.prototype.transactions = function ( data, fn ) {
 Undocumented.prototype.updateCreditCard = function ( params, fn ) {
 	const data = pick( params, [ 'payment_partner', 'paygate_token' ] );
 	return this.wpcom.req.post( '/upgrades/' + params.purchaseId + '/update-credit-card', data, fn );
-};
-
-/**
- * GET paygate configuration
- *
- * @param {object} query - query parameters
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.paygateConfiguration = function ( query, fn ) {
-	debug( '/me/paygate-configuration query' );
-
-	return this.wpcom.req.get( '/me/paygate-configuration', query, fn );
-};
-
-/**
- * GET stripe configuration
- *
- * @param {object} query - query parameters
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.stripeConfiguration = function ( query, fn ) {
-	debug( '/me/stripe-configuration query' );
-
-	return this.wpcom.req.get( '/me/stripe-configuration', query, fn );
-};
-
-/**
- * GET ebanx js configuration
- *
- * @param {object} query - query parameters
- * @param {Function} fn The callback function
- *
- * @returns {Promise} promise
- */
-Undocumented.prototype.ebanxConfiguration = function ( query, fn ) {
-	debug( '/me/ebanx-configuration query' );
-
-	return this.wpcom.req.get( '/me/ebanx-configuration', query, fn );
 };
 
 /**

@@ -40,7 +40,7 @@ class ToolsMenu extends PureComponent {
 	getPluginItem() {
 		const { canManagePlugins, isAtomicSite, translate } = this.props;
 
-		if ( config.isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return {};
 		}
 

@@ -9,7 +9,6 @@ import { translate } from 'i18n-calypso';
  */
 import steps from 'calypso/signup/config/steps-pure';
 import flows from 'calypso/signup/config/flows';
-import user from 'calypso/lib/user';
 
 const { defaultFlowName } = flows;
 
@@ -17,22 +16,22 @@ function getDefaultFlowName() {
 	return defaultFlowName;
 }
 
-export function getFlowName( parameters ) {
-	return parameters.flowName && isFlowName( parameters.flowName )
+export function getFlowName( parameters, isUserLoggedIn ) {
+	return parameters.flowName && isFlowName( parameters.flowName, isUserLoggedIn )
 		? parameters.flowName
 		: getDefaultFlowName();
 }
 
-function isFlowName( pathFragment ) {
-	return ! isEmpty( flows.getFlow( pathFragment ) );
+function isFlowName( pathFragment, isUserLoggedIn ) {
+	return ! isEmpty( flows.getFlow( pathFragment, isUserLoggedIn ) );
 }
 
 export function getStepName( parameters ) {
 	return find( pick( parameters, [ 'flowName', 'stepName' ] ), isStepName );
 }
 
-export function isFirstStepInFlow( flowName, stepName ) {
-	const { steps: stepsBelongingToFlow } = flows.getFlow( flowName );
+export function isFirstStepInFlow( flowName, stepName, isUserLoggedIn ) {
+	const { steps: stepsBelongingToFlow } = flows.getFlow( flowName, isUserLoggedIn );
 	return stepsBelongingToFlow.indexOf( stepName ) === 0;
 }
 
@@ -52,10 +51,7 @@ export function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
 	const flow = flowName ? `/${ flowName }` : '';
 	const step = stepName ? `/${ stepName }` : '';
 	const section = stepSectionName ? `/${ stepSectionName }` : '';
-	// when the user is logged in, the locale slug is meaningless in a
-	// signup URL, as the page will be translated in the language the user
-	// has in their settings.
-	const locale = localeSlug && ! user().get() ? `/${ localeSlug }` : '';
+	const locale = localeSlug ? `/${ localeSlug }` : '';
 
 	if ( flowName === defaultFlowName ) {
 		// we don't include the default flow name in the route
@@ -65,10 +61,10 @@ export function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
 	return '/start' + flow + step + section + locale;
 }
 
-export function getValidPath( parameters ) {
+export function getValidPath( parameters, isUserLoggedIn ) {
 	const locale = parameters.lang;
-	const flowName = getFlowName( parameters );
-	const currentFlowSteps = flows.getFlow( flowName ).steps;
+	const flowName = getFlowName( parameters, isUserLoggedIn );
+	const currentFlowSteps = flows.getFlow( flowName, isUserLoggedIn ).steps;
 	const stepName = getStepName( parameters ) || currentFlowSteps[ 0 ];
 	const stepSectionName = getStepSectionName( parameters );
 
@@ -79,23 +75,23 @@ export function getValidPath( parameters ) {
 	return getStepUrl( flowName, stepName, stepSectionName, locale );
 }
 
-export function getPreviousStepName( flowName, currentStepName ) {
-	const flow = flows.getFlow( flowName );
+export function getPreviousStepName( flowName, currentStepName, isUserLoggedIn ) {
+	const flow = flows.getFlow( flowName, isUserLoggedIn );
 	return flow.steps[ flow.steps.indexOf( currentStepName ) - 1 ];
 }
 
-export function getNextStepName( flowName, currentStepName ) {
-	const flow = flows.getFlow( flowName );
+export function getNextStepName( flowName, currentStepName, isUserLoggedIn ) {
+	const flow = flows.getFlow( flowName, isUserLoggedIn );
 	return flow.steps[ flow.steps.indexOf( currentStepName ) + 1 ];
 }
 
-export function getFlowSteps( flowName ) {
-	const flow = flows.getFlow( flowName );
+export function getFlowSteps( flowName, isUserLoggedIn ) {
+	const flow = flows.getFlow( flowName, isUserLoggedIn );
 	return flow.steps;
 }
 
-export function getFlowPageTitle( flowName ) {
-	const flow = flows.getFlow( flowName );
+export function getFlowPageTitle( flowName, isUserLoggedIn ) {
+	const flow = flows.getFlow( flowName, isUserLoggedIn );
 	return flow.pageTitle || translate( 'Create a site' );
 }
 
@@ -168,8 +164,8 @@ export function getDesignTypeForSiteGoals( siteGoals, flow ) {
 	return 'blog';
 }
 
-export function getFilteredSteps( flowName, progress ) {
-	const flow = flows.getFlow( flowName );
+export function getFilteredSteps( flowName, progress, isUserLoggedIn ) {
+	const flow = flows.getFlow( flowName, isUserLoggedIn );
 
 	if ( ! flow ) {
 		return [];
@@ -183,35 +179,40 @@ export function getFilteredSteps( flowName, progress ) {
 	);
 }
 
-export function getFirstInvalidStep( flowName, progress ) {
-	return find( getFilteredSteps( flowName, progress ), { status: 'invalid' } );
+export function getFirstInvalidStep( flowName, progress, isUserLoggedIn ) {
+	return find( getFilteredSteps( flowName, progress, isUserLoggedIn ), { status: 'invalid' } );
 }
 
-export function getCompletedSteps( flowName, progress, options = {} ) {
+export function getCompletedSteps( flowName, progress, options = {}, isUserLoggedIn ) {
 	// Option to check that the current `flowName` matches the `lastKnownFlow`.
 	// This is to ensure that when resuming progress, we only do so if
 	// the last known flow matches the one that the user is returning to.
 	if ( options.shouldMatchFlowName ) {
 		return filter(
-			getFilteredSteps( flowName, progress ),
+			getFilteredSteps( flowName, progress, isUserLoggedIn ),
 			( step ) => 'in-progress' !== step.status && step.lastKnownFlow === flowName
 		);
 	}
 	return filter(
-		getFilteredSteps( flowName, progress ),
+		getFilteredSteps( flowName, progress, isUserLoggedIn ),
 		( step ) => 'in-progress' !== step.status
 	);
 }
 
-export function canResumeFlow( flowName, progress ) {
-	const flow = flows.getFlow( flowName );
-	const flowStepsInProgressStore = getCompletedSteps( flowName, progress, {
-		shouldMatchFlowName: true,
-	} );
+export function canResumeFlow( flowName, progress, isUserLoggedIn ) {
+	const flow = flows.getFlow( flowName, isUserLoggedIn );
+	const flowStepsInProgressStore = getCompletedSteps(
+		flowName,
+		progress,
+		{
+			shouldMatchFlowName: true,
+		},
+		isUserLoggedIn
+	);
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
 }
 
-export const shouldForceLogin = ( flowName ) => {
-	const flow = flows.getFlow( flowName );
+export const shouldForceLogin = ( flowName, userLoggedIn ) => {
+	const flow = flows.getFlow( flowName, userLoggedIn );
 	return !! flow && flow.forceLogin;
 };

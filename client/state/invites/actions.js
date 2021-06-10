@@ -8,6 +8,7 @@ import { get, truncate } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
+import user from 'calypso/lib/user';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { acceptedNotice } from 'calypso/my-sites/invites/utils';
 import { getInviteForSite } from 'calypso/state/invites/selectors';
@@ -219,33 +220,33 @@ export function disableInviteLinks( siteId ) {
 }
 
 export function acceptInvite( invite ) {
-	return ( dispatch ) => {
-		const result = wpcom.undocumented().acceptInvite( invite );
-		result
-			.then( ( data ) => {
-				if ( invite.role !== 'follower' && invite.role !== 'viewer' ) {
-					dispatch( receiveSites( data.sites ) );
-				}
+	return async ( dispatch ) => {
+		const data = await wpcom.undocumented().acceptInvite( invite );
+		try {
+			if ( invite.role !== 'follower' && invite.role !== 'viewer' ) {
+				dispatch( receiveSites( data.sites ) );
+				// @TODO: Replace with Redux user fetching once lib/user is fully reduxified
+				await user().fetch();
+			}
 
-				if ( ! get( invite, 'site.is_vip' ) ) {
-					dispatch( successNotice( ...acceptedNotice( invite ) ) );
-				}
+			if ( ! get( invite, 'site.is_vip' ) ) {
+				dispatch( successNotice( ...acceptedNotice( invite ) ) );
+			}
 
-				recordTracksEvent( 'calypso_invite_accepted', {
-					is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
-					inviter_blog_id: get( invite, 'site.ID', false ),
-				} );
-
-				dispatch( inviteAccepted( invite ) );
-				dispatch( requestSites() );
-			} )
-			.catch( ( error ) => {
-				if ( error.message ) {
-					dispatch( errorNotice( error.message, { displayOnNextPage: true } ) );
-				}
-				recordTracksEvent( 'calypso_invite_accept_failed', { error: error.error } );
+			recordTracksEvent( 'calypso_invite_accepted', {
+				is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
+				inviter_blog_id: get( invite, 'site.ID', false ),
 			} );
 
-		return result;
+			dispatch( inviteAccepted( invite ) );
+			dispatch( requestSites() );
+		} catch ( error ) {
+			if ( error.message ) {
+				dispatch( errorNotice( error.message, { displayOnNextPage: true } ) );
+			}
+			recordTracksEvent( 'calypso_invite_accept_failed', { error: error.error } );
+		}
+
+		return data;
 	};
 }

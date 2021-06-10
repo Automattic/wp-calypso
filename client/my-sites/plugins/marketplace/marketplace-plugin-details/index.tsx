@@ -24,13 +24,17 @@ import {
 	isFetching as isWporgPluginFetching,
 	getPlugin as getWporgPlugin,
 } from 'calypso/state/plugins/wporg/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import PurchaseArea from './purchase-area';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import MainComponent from 'calypso/components/main';
+import {
+	setPluginSlugToBeInstalled,
+	setPrimaryDomainCandidate,
+	setIsPluginInstalledDuringPurchase,
+} from 'calypso/state/plugins/marketplace/actions';
 
 interface MarketplacePluginDetailsInterface {
 	marketplacePluginSlug: keyof PluginProductMappingInterface;
@@ -45,10 +49,9 @@ function MarketplacePluginDetails( {
 	const cost = useSelector( ( state ) => getProductCost( state, productSlug ) );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 	const isProductListLoading = useSelector( ( state ) => isProductsListFetching( state ) );
-	const selectedSite = useSelector( getSelectedSite );
-	const siteDomains = useSelector( ( state ) =>
-		getDomainsBySiteId( state, selectedSite?.ID ?? 0 )
-	);
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSiteId ?? 0 ) );
 	const displayCost = formatCurrency( cost, currencyCode, { stripZeros: true } );
 	const dispatch = useDispatch();
 	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, marketplacePluginSlug ) );
@@ -60,7 +63,8 @@ function MarketplacePluginDetails( {
 		dispatch( wporgFetchPluginData( marketplacePluginSlug ) );
 	}, [ dispatch, marketplacePluginSlug ] );
 
-	const onAddYoastPremiumToCart = () => {
+	const onAddYoastPremiumToCart = async () => {
+		dispatch( setIsPluginInstalledDuringPurchase( true ) );
 		const yoastProduct = fillInSingleCartItemAttributes( { product_slug: productSlug }, products );
 		return replaceProductsInCart( [ yoastProduct ] );
 	};
@@ -70,7 +74,7 @@ function MarketplacePluginDetails( {
 	};
 
 	return (
-		<MainComponent>
+		<>
 			<SidebarNavigation />
 			{ ! wporgFetching ? (
 				<PurchaseArea
@@ -81,20 +85,21 @@ function MarketplacePluginDetails( {
 					onAddYoastPremiumToCart={ onAddYoastPremiumToCart }
 					onRemoveEverythingFromCart={ onRemoveEverythingFromCart }
 					onNavigateToCheckout={ () =>
-						page( `/checkout${ selectedSite?.slug ? `/${ selectedSite?.slug }` : '' }` )
+						page( `/checkout/${ selectedSiteSlug }?flags=marketplace-yoast` )
 					}
 					onNavigateToDomainsSelection={ () =>
-						page(
-							`/plugins/marketplace/domain${
-								selectedSite?.slug ? `/${ selectedSite?.slug }?flags=marketplace-yoast` : ''
-							}`
-						)
+						page( `/marketplace/domain/${ selectedSiteSlug }?flags=marketplace-yoast` )
 					}
+					onInstallPluginManually={ async ( primaryDomain ) => {
+						dispatch( setPluginSlugToBeInstalled( marketplacePluginSlug ) );
+						dispatch( setPrimaryDomainCandidate( primaryDomain ) );
+						page( `/marketplace/product/setup/${ selectedSiteSlug }?flags=marketplace-yoast` );
+					} }
 				/>
 			) : (
 				'Loading...'
 			) }
-		</MainComponent>
+		</>
 	);
 }
 

@@ -22,7 +22,6 @@ import { addReducerEnhancer } from 'calypso/state/utils/add-reducer-enhancer';
 /**
  * Redux middleware
  */
-import navigationMiddleware from './navigation/middleware';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 
 /**
@@ -58,7 +57,6 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 		isBrowser && require( './lib/middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
 		isDesktop && require( './desktop/middleware.js' ).default,
-		navigationMiddleware,
 	].filter( Boolean );
 
 	const enhancers = [

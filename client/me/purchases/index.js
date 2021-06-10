@@ -41,6 +41,10 @@ export default ( router ) => {
 		page.redirect( paths.addCreditCard );
 	} );
 
+	if ( config.isEnabled( 'me/vat-details' ) ) {
+		router( paths.vatDetails, sidebar, controller.vatDetails, makeLayout, clientRender );
+	}
+
 	router(
 		paths.billingHistory,
 		sidebar,

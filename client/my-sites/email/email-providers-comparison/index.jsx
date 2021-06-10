@@ -144,12 +144,16 @@ class EmailProvidersComparison extends React.Component {
 
 		const mailboxesAreValid = areAllMailboxesValid( validatedTitanMailboxes );
 		const userCanAddEmail = canCurrentUserAddEmail( domain );
+		const userCannotAddEmailReason = userCanAddEmail
+			? null
+			: getCurrentUserCannotAddEmailReason( domain );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
 			mailbox_count: validatedTitanMailboxes.length,
 			mailboxes_valid: mailboxesAreValid ? 1 : 0,
 			provider: 'titan',
 			user_can_add_email: userCanAddEmail,
+			user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
 		} );
 
 		const validatedTitanMailboxUuids = validatedTitanMailboxes.map( ( mailbox ) => mailbox.uuid );

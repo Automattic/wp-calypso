@@ -4,6 +4,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -35,9 +36,18 @@ const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick, useAccordionL
 		>
 			<div className="nav-item__status">
 				{ isCompleted ? (
-					<Gridicon className="nav-item__complete" icon="checkmark" size={ 18 } />
+					<Gridicon
+						aria-label={ translate( 'Task complete' ) }
+						className="nav-item__complete"
+						icon="checkmark"
+						size={ 18 }
+					/>
 				) : (
-					<div className="nav-item__pending" />
+					<div
+						role="img"
+						aria-label={ translate( 'Task incomplete' ) }
+						className="nav-item__pending"
+					/>
 				) }
 			</div>
 			<div className="nav-item__text">

@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import Debug from 'debug';
+import page from 'page';
 import { get, some } from 'lodash';
 
 /**
@@ -13,6 +14,8 @@ import config from '@automattic/calypso-config';
 import SearchPurchase from './search';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
 import { ALLOWED_MOBILE_APP_REDIRECT_URL_LIST } from '../../jetpack-connect/constants';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { login } from 'calypso/lib/paths';
 import {
 	persistMobileRedirect,
 	retrieveMobileRedirect,
@@ -48,6 +51,17 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 
 	return get( planSlugs, [ interval, type ], '' );
 };
+
+export function redirectToLogin( context, next ) {
+	const loggedIn = isUserLoggedIn( context.store.getState() );
+
+	if ( ! loggedIn ) {
+		page( login( { isJetpack: true, redirectTo: context.path } ) );
+		return;
+	}
+
+	next();
+}
 
 export function persistMobileAppFlow( context, next ) {
 	const { query } = context;

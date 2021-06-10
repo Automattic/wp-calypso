@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -20,9 +21,16 @@ import DocumentHead from 'calypso/components/data/document-head';
 import titles from './titles';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import HeaderCake from 'calypso/components/header-cake';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { managePurchase as managePurchaseUrl, purchasesRoot } from 'calypso/me/purchases/paths';
+import {
+	managePurchase as managePurchaseUrl,
+	purchasesRoot,
+	vatDetails as vatDetailsPath,
+	billingHistory,
+} from 'calypso/me/purchases/paths';
 import FormattedHeader from 'calypso/components/formatted-header';
+import VatInfoPage from './vat-info';
 
 const PurchasesWrapper = ( { title = null, children } ) => {
 	return (
@@ -112,6 +120,29 @@ export function list( context, next ) {
 	} );
 
 	context.primary = <ListWrapper />;
+	next();
+}
+
+export function vatDetails( context, next ) {
+	const VatInfoWrapper = localize( () => {
+		const goToBillingHistory = () => page( billingHistory );
+		const classes = 'vat-details';
+
+		return (
+			<PurchasesWrapper title={ titles.vatDetails }>
+				<Main wideLayout className={ classes }>
+					<PageViewTracker path={ vatDetailsPath } title="Purchases > VAT Details" />
+
+					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<HeaderCake onClick={ goToBillingHistory }>{ titles.vatDetails }</HeaderCake>
+
+					<VatInfoPage siteSlug={ context.params.site } />
+				</Main>
+			</PurchasesWrapper>
+		);
+	} );
+
+	context.primary = <VatInfoWrapper />;
 	next();
 }
 

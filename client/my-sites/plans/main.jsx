@@ -29,13 +29,9 @@ import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import {
-	getPlan,
-	getIntervalTypeForTerm,
-	isWpComMonthlyPlan,
-	isWpComFreePlan,
-} from '@automattic/calypso-products';
+import { getPlan, getIntervalTypeForTerm } from '@automattic/calypso-products';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 
 class Plans extends React.Component {
@@ -67,10 +63,10 @@ class Plans extends React.Component {
 	}
 
 	isInvalidPlanInterval() {
-		const { isEligibleForWpComMonthlyPlan, intervalType, selectedSite } = this.props;
+		const { isSiteEligibleForMonthlyPlan, intervalType, selectedSite } = this.props;
 		const isWpcomMonthly = intervalType === 'monthly';
 
-		return selectedSite && isWpcomMonthly && ! isEligibleForWpComMonthlyPlan;
+		return selectedSite && isWpcomMonthly && ! isSiteEligibleForMonthlyPlan;
 	}
 
 	redirectIfInvalidPlanInterval() {
@@ -183,8 +179,7 @@ export default connect( ( state ) => {
 		selectedSite: getSelectedSite( state ),
 		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
-		isEligibleForWpComMonthlyPlan:
-			isWpComMonthlyPlan( currentPlan?.productSlug ) || isWpComFreePlan( currentPlan?.productSlug ),
+		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );

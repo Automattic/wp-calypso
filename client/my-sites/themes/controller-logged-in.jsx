@@ -14,6 +14,7 @@ import { getProps } from './controller';
 import { sites, siteSelection } from 'calypso/my-sites/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { composeHandlers } from 'calypso/controller/shared';
 
 import SingleSiteComponent from './single-site';
 import Upload from './theme-upload';
@@ -61,11 +62,5 @@ export function selectSiteIfLoggedIn( context, next ) {
 	// Logged in: Terminate the regular handler path by not calling next()
 	// and render the site selection screen, redirecting the user if they
 	// only have one site.
-	siteSelection( context, () => {
-		sites( context, () => {
-			makeLayout( context, () => {
-				clientRender( context );
-			} );
-		} );
-	} );
+	composeHandlers( siteSelection, sites, makeLayout, clientRender )( context );
 }

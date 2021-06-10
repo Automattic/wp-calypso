@@ -1,0 +1,25 @@
+.is-loading {
+	.vat-info__form {
+		padding-top: 32px;
+	}
+	.vat-info__form-placeholder {
+		animation: pulse-light 1.8s ease-in-out infinite;
+		background-color: var( --color-neutral-10 );
+		height: 24px;
+		width: 100%;
+		margin-bottom: 16px;
+	}
+}
+
+.vat-info__sidebar-title {
+	margin-top: 0;
+}
+
+.vat-info__sidebar-paragraph {
+	margin-bottom: 0;
+	font-size: 0.875rem;
+}
+
+.vat-info__country-select {
+	width: 100%;
+}

@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
@@ -28,8 +27,5 @@ export default function canCurrentUserUseAnyWooCommerceBasedStore( state, siteId
 	const transferStatus = getAutomatedTransferStatus( state, siteId );
 	const siteHasBackgroundTransfer = hasSitePendingAT && transferStatus !== transferStates.ERROR;
 
-	return (
-		( canUserManageOptions && isSiteAT ) ||
-		( config.isEnabled( 'signup/atomic-store-flow' ) && siteHasBackgroundTransfer )
-	);
+	return ( canUserManageOptions && isSiteAT ) || siteHasBackgroundTransfer;
 }

@@ -189,6 +189,10 @@
 	button:nth-child( 2 ) {
 		margin-left: 10px;
 	}
+
+	.button > .gridicon.gridicons-external {
+		margin-left: 6px;
+	}
 }
 
 .checkout-thank-you__header-heading {
@@ -674,7 +678,7 @@
 .jetpack-checkout-thank-you {
 	.jetpack-checkout-thank-you__card,
 	.jetpack-checkout-thank-you__card-loading {
-		box-shadow: 0px 0px 40px 0px #00000014;
+		box-shadow: 0 0 40px 0 #00000014;
 
 		width: 100%;
 		max-width: none;

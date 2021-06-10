@@ -48,7 +48,7 @@ const windows = {
 		preload: getPath( 'preload_preferences.js' ),
 	},
 	secret: {
-		file: 'secret.html',
+		file: getPath( 'secret.html' ),
 		config: 'secretWindow',
 		handle: null,
 		preload: null,
