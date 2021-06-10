@@ -49,7 +49,7 @@ import titanContactsIcon from 'calypso/assets/images/email-providers/titan/servi
 import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/mail.svg';
 
 const removeEmailForwardMailbox = ( { dispatch, mailbox } ) => {
-	recordTracksEvent( 'calypso_domain_management_email_forwarding_delete_click', {
+	recordTracksEvent( 'calypso_email_management_email_forwarding_delete_click', {
 		destination: getEmailForwardAddress( mailbox ),
 		domain_name: mailbox.domain,
 		mailbox: mailbox.mailbox,
