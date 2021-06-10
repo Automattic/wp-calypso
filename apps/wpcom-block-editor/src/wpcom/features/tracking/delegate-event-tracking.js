@@ -55,7 +55,7 @@ const EVENTS_MAPPING = [
  * the desired target element. Accounts for event
  * bubbling.
  *
- * @param  {object} event                   the DOM Event
+ * @param  {object}          event          the DOM Event
  * @param  {string|Function} targetSelector the CSS selector for the target element
  * @returns {object}                        the target Element if found
  */
