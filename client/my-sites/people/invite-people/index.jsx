@@ -19,6 +19,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import getWpcomFollowerRole from 'calypso/lib/get-wpcom-follower-role';
 import { generateInviteLinks, disableInviteLinks } from 'calypso/state/invites/actions';
 import { Card, Button } from '@automattic/components';
 import Main from 'calypso/components/main';
@@ -33,7 +34,7 @@ import FeatureExample from 'calypso/components/feature-example';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { isJetpackSite, getWpcomFollowerRole } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -52,6 +53,7 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 /**
  * Style dependencies
@@ -496,7 +498,8 @@ class InvitePeople extends React.Component {
 	};
 
 	getInviteLinkRoles = () => {
-		const { siteRoles, wpcomFollowerRole } = this.props;
+		const { siteRoles, translate } = this.props;
+		const wpcomFollowerRole = getWpcomFollowerRole( this.props.isPrivateSite, translate );
 
 		if ( ! siteRoles || ! wpcomFollowerRole ) {
 			return [];
@@ -745,7 +748,7 @@ const mapStateToProps = ( state ) => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		inviteLinks: getInviteLinksForSite( state, siteId ),
-		wpcomFollowerRole: getWpcomFollowerRole( state, siteId ),
+		isPrivateSite: isPrivateSite( state, siteId ),
 	};
 };
 
