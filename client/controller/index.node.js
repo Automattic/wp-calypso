@@ -58,6 +58,12 @@ export const ssrSetupLocale = ssrSetupLocaleMiddleware();
 
 export const setHrefLangLinks = ( context, next ) => {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+
+	if ( isLoggedIn ) {
+		next();
+		return;
+	}
+
 	const langCodes = [ 'x-default', 'en', ...config( 'magnificent_non_en_locales' ) ];
 	const hrefLangBlock = langCodes.map( ( hrefLang ) => {
 		let localeSlug = hrefLang;
