@@ -53,7 +53,6 @@ export function checkout( context, next ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
 	const selectedSite = getSelectedSite( state );
-
 	const hasSite = getCurrentUserVisibleSiteCount( state ) >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 	const isDisallowedForSitePicker =
