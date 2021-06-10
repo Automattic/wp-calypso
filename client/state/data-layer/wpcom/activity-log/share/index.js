@@ -16,10 +16,11 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 const requestShare = ( action ) =>
 	http(
 		{
-			apiVersion: '1',
-			method: 'POST',
-			path: `/activity-log/${ action.siteId }/share/${ action.activityId }`,
-			body: {
+			apiNamespace: 'wpcom/v2',
+			method: 'GET',
+			path: `/sites/${ action.siteId }/activity/${ action.rewindId }/share`,
+			query: {
+				force: 'wpcom',
 				email: action.email,
 			},
 		},

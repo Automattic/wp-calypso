@@ -88,7 +88,7 @@ class ActivityCard extends Component {
 		} else {
 			this.props.shareActivity(
 				this.props.siteId,
-				this.props.activity.activityId,
+				this.props.activity.rewindId,
 				this.state.shareEmail
 			);
 			this.setState( { showSharePopover: false } );
@@ -460,11 +460,11 @@ const mapStateToProps = ( state ) => {
 
 const mapDispatchToProps = ( dispatch ) => ( {
 	dispatchRecordTracksEvent: recordTracksEvent,
-	shareActivity: ( siteId, activityId, email ) => {
+	shareActivity: ( siteId, rewindId, email ) => {
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activity_share_request' ),
-				rewindShareRequest( siteId, activityId, email )
+				rewindShareRequest( siteId, rewindId, email )
 			)
 		);
 	},

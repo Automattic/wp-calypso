@@ -12,9 +12,7 @@ import {
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
-	REWIND_ACTIVITY_SHARE_FAILURE,
 	REWIND_ACTIVITY_SHARE_REQUEST,
-	REWIND_ACTIVITY_SHARE_SUCCESS,
 	REWIND_CLONE,
 	REWIND_DEACTIVATE_FAILURE,
 	REWIND_DEACTIVATE_REQUEST,
@@ -80,30 +78,16 @@ export function rewindActivateFailure( siteId ) {
  * Share a rewind/activity-log event via email.
  *
  * @param {string|number} siteId Site ID
- * @param {number} activityId Activity ID
+ * @param {number} rewindId Activity ID
  * @param {string} email Email address to send to
  * @returns {object} action object
  */
-export function rewindShareRequest( siteId, activityId, email ) {
+export function rewindShareRequest( siteId, rewindId, email ) {
 	return {
 		type: REWIND_ACTIVITY_SHARE_REQUEST,
 		siteId,
-		activityId,
+		rewindId,
 		email,
-	};
-}
-
-export function rewindShareSuccess( siteId ) {
-	return {
-		type: REWIND_ACTIVITY_SHARE_SUCCESS,
-		siteId,
-	};
-}
-
-export function rewindShareFailure( siteId ) {
-	return {
-		type: REWIND_ACTIVITY_SHARE_FAILURE,
-		siteId,
 	};
 }
 
