@@ -63,10 +63,7 @@ export function activity( context, next ) {
 	const queryFilter = queryToFilterState( context.query );
 
 	if ( ! isEqual( filter, queryFilter ) ) {
-		context.store.dispatch( {
-			...setFilter( siteId, queryFilter ),
-			meta: { skipUrlUpdate: true },
-		} );
+		context.store.dispatch( setFilter( siteId, queryFilter, true ) );
 	}
 
 	recordTrack( 'calypso_activitylog_view', queryFilterToStats( queryFilter ) );
