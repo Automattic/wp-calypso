@@ -23,5 +23,8 @@ export function reloadProxy(): void;
 
 export function requestAllBlogsAccess(): ReturnType< typeof request >;
 
-export default function request( params: WpcomRequestParams, callback: Function ): XMLHttpRequest;
+export default function request(
+	params: WpcomRequestParams,
+	callback: ( err: unknown, body: unknown, headers: unknown ) => void
+): XMLHttpRequest;
 export default function request< T >( params: WpcomRequestParams ): Promise< T >;
