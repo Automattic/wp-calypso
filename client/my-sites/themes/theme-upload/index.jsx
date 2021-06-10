@@ -402,7 +402,7 @@ const mapStateToProps = ( state ) => {
 		inProgress: isUploadInProgress( state, siteId ),
 		complete: isUploadComplete( state, siteId ),
 		failed: hasUploadFailed( state, siteId ),
-		themeId: getUploadedThemeId( state, siteId ),
+		themeId,
 		isMultisite: isJetpackSiteMultiSite( state, siteId ),
 		uploadedTheme: getCanonicalTheme( state, siteId, themeId ),
 		error: getUploadError( state, siteId ),
