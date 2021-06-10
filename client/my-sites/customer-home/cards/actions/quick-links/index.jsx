@@ -105,6 +105,7 @@ export const QuickLinks = ( {
 			{ showCustomizer && (
 				<ActionBox
 					href={ menusUrl }
+					hideLinkIndicator
 					onClick={ trackEditMenusAction }
 					label={ translate( 'Edit menus' ) }
 					materialIcon="list"
@@ -113,6 +114,7 @@ export const QuickLinks = ( {
 			{ showCustomizer && (
 				<ActionBox
 					href={ customizeUrl }
+					hideLinkIndicator
 					onClick={ trackCustomizeThemeAction }
 					label={ translate( 'Customize theme' ) }
 					materialIcon="palette"

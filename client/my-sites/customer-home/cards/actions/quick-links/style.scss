@@ -66,6 +66,12 @@
 		right: 20px;
 	}
 
+	&.quick-links__action-box__hide-link-indicator {
+		.card__link-indicator {
+			display: none;
+		}
+	}
+
 	&:hover {
 		background: var( --color-neutral-0 );
 
