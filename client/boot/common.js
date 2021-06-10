@@ -53,6 +53,7 @@ import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions'
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 import DesktopListeners from 'calypso/lib/desktop-listeners';
+import { attachLogmein } from 'calypso/lib/logmein';
 
 const debug = debugFactory( 'calypso' );
 
@@ -409,6 +410,11 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		asyncRequire( 'calypso/lib/features-helper', ( featureHelper ) => {
 			featureHelper( document.querySelector( '.environment.is-features' ) );
 		} );
+	}
+
+	if ( config.isEnabled( 'logmein' ) && currentUser && currentUser.get() ) {
+		// Attach logmein handler if we're currently logged in
+		attachLogmein( reduxStore );
 	}
 };
 

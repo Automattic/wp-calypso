@@ -2,7 +2,7 @@
  * Internal Dependencies
  */
 import { isEnabled } from '@automattic/calypso-config';
-import wpcom from 'calypso/lib/wp';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
 
 /**
  * Append logmein=1 query parameter to mapped domain urls we want the user to be logged in against.
@@ -82,34 +82,25 @@ export function appendLogmeinDirect( url: URL ): URL {
 	return url;
 }
 
-let allowedSites: string[] = [];
+let reduxStore: any = null;
 
-export function attachLogmein( isWPComLoggedIn = false ): void {
-	if ( ! isEnabled( 'logmein' ) ) {
-		return;
-	}
-
-	if ( isWPComLoggedIn ) {
-		wpcom
-			.me()
-			.sites()
-			.then( ( sites: any ) => {
-				allowedSites = logmeinAllowedUrls( sites.sites );
-				document.addEventListener( 'click', logmeinOnClick, false );
-			} );
-	}
+export function attachLogmein( store: any ): void {
+	reduxStore = store;
+	document.addEventListener( 'click', logmeinOnClick, false );
 }
 
 function logmeinOnClick( event: MouseEvent ) {
 	const link = ( event.target as HTMLElement ).closest( 'a' );
 
+	const sites = Object.values( getSitesItems( reduxStore.getState() ) );
+	const allowedHosts = logmeinAllowedUrls( sites );
+
 	if ( link && link.href ) {
 		let url = new URL( link.href, INVALID_URL );
-		if ( allowedSites.indexOf( url.hostname ) !== -1 ) {
+		if ( allowedHosts.indexOf( url.hostname ) !== -1 ) {
 			url = appendLogmeinDirect( url );
 			link.href = url.toString();
 		}
-		return;
 	}
 }
 
@@ -118,8 +109,11 @@ export function logmeinNavigate( url: string ): void {
 		window.location.href = url;
 	}
 
+	const sites = Object.values( getSitesItems( reduxStore.getState() ) );
+	const allowedHosts = logmeinAllowedUrls( sites );
+
 	let newurl = new URL( url, INVALID_URL );
-	if ( allowedSites.indexOf( newurl.hostname ) !== -1 ) {
+	if ( allowedHosts.indexOf( newurl.hostname ) !== -1 ) {
 		newurl = appendLogmeinDirect( newurl );
 		window.location.href = newurl.toString();
 	} else {
