@@ -7,6 +7,7 @@ import { get, isEqual, reduce } from 'lodash';
  * Internal dependencies
  */
 import {
+	CURRENT_USER_CLEAR,
 	CURRENT_USER_RECEIVE,
 	SITE_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,
@@ -42,6 +43,8 @@ export const id = withSchemaValidation( idSchema, ( state = null, action ) => {
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
 			return action.user.ID;
+		case CURRENT_USER_CLEAR:
+			return null;
 	}
 
 	return state;
@@ -51,6 +54,8 @@ export const user = ( state = null, action ) => {
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
 			return action.user;
+		case CURRENT_USER_CLEAR:
+			return null;
 	}
 
 	return state;
@@ -60,6 +65,8 @@ export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) =
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
 			return get( action.user, 'meta.data.flags.active_flags', [] );
+		case CURRENT_USER_CLEAR:
+			return [];
 	}
 
 	return state;
@@ -84,6 +91,8 @@ export const currencyCode = withSchemaValidation( currencyCodeSchema, ( state = 
 		case SITE_PLANS_FETCH_COMPLETED: {
 			return get( action.plans, [ 0, 'currencyCode' ], state );
 		}
+		case CURRENT_USER_CLEAR:
+			return null;
 	}
 
 	return state;
@@ -120,6 +129,8 @@ export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = 
 				state
 			);
 		}
+		case CURRENT_USER_CLEAR:
+			return {};
 	}
 
 	return state;
@@ -129,6 +140,8 @@ export const lasagnaJwt = withSchemaValidation( lasagnaSchema, ( state = null, a
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
 			return action.user.lasagna_jwt || null;
+		case CURRENT_USER_CLEAR:
+			return null;
 	}
 
 	return state;

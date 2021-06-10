@@ -10,6 +10,7 @@ import deepFreeze from 'deep-freeze';
 import reducer, { id, capabilities, currencyCode } from '../reducer';
 import { serialize, deserialize } from 'calypso/state/utils';
 import {
+	CURRENT_USER_CLEAR,
 	CURRENT_USER_RECEIVE,
 	PLANS_RECEIVE,
 	SITE_RECEIVE,
@@ -50,6 +51,14 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.equal( 73705554 );
+		} );
+
+		test( 'should clear the current user ID', () => {
+			const state = id( 73705554, {
+				type: CURRENT_USER_CLEAR,
+			} );
+
+			expect( state ).to.equal( null );
 		} );
 
 		test( 'should validate ID is positive', () => {
@@ -139,6 +148,12 @@ describe( 'reducer', () => {
 				],
 			} );
 			expect( state ).to.equal( 'CAD' );
+		} );
+		test( 'should reset currency code when we clear the user', () => {
+			const state = currencyCode( 'USD', {
+				type: CURRENT_USER_CLEAR,
+			} );
+			expect( state ).to.equal( null );
 		} );
 		test( 'should persist state', () => {
 			const original = 'JPY';
@@ -270,6 +285,19 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.equal( original );
+		} );
+
+		test( 'should reset to empty object when clearing current user', () => {
+			const original = deepFreeze( {
+				2916284: {
+					manage_options: false,
+				},
+			} );
+			const state = capabilities( original, {
+				type: CURRENT_USER_CLEAR,
+			} );
+
+			expect( state ).to.eql( {} );
 		} );
 
 		test( 'should persist state', () => {
