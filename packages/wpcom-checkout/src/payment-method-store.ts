@@ -37,7 +37,5 @@ export type StoreActions< N extends string > = Record<
 >;
 
 export interface PaymentMethodStore< N extends string > extends ReturnType< typeof registerStore > {
-	actions: StoreActions< N >;
-	selectors: StoreSelectorsWithState< N >;
 	getState: () => StoreState< N >;
 }

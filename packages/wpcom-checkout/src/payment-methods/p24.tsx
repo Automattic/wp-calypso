@@ -46,26 +46,26 @@ declare module '@wordpress/data' {
 	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
 }
 
+const actions: StoreActions< NounsInStore > = {
+	changeCustomerName( payload ) {
+		return { type: 'CUSTOMER_NAME_SET', payload };
+	},
+	changeCustomerEmail( payload ) {
+		return { type: 'CUSTOMER_EMAIL_SET', payload };
+	},
+};
+
+const selectors: StoreSelectorsWithState< NounsInStore > = {
+	getCustomerName( state ) {
+		return state.customerName;
+	},
+	getCustomerEmail( state ) {
+		return state.customerEmail;
+	},
+};
+
 export function createP24PaymentMethodStore(): P24Store {
 	debug( 'creating a new p24 payment method store' );
-	const actions: StoreActions< NounsInStore > = {
-		changeCustomerName( payload ) {
-			return { type: 'CUSTOMER_NAME_SET', payload };
-		},
-		changeCustomerEmail( payload ) {
-			return { type: 'CUSTOMER_EMAIL_SET', payload };
-		},
-	};
-
-	const selectors: StoreSelectorsWithState< NounsInStore > = {
-		getCustomerName( state ) {
-			return state.customerName;
-		},
-		getCustomerEmail( state ) {
-			return state.customerEmail;
-		},
-	};
-
 	const store = registerStore( 'p24', {
 		reducer(
 			state: StoreState< NounsInStore > = {
@@ -86,7 +86,7 @@ export function createP24PaymentMethodStore(): P24Store {
 		selectors,
 	} );
 
-	return { ...store, actions, selectors };
+	return store;
 }
 
 export function createP24Method( { store }: { store: P24Store } ): PaymentMethod {
@@ -223,15 +223,15 @@ function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total:
 }
 
 function isFormValid( store: P24Store ): boolean {
-	const customerName = store.selectors.getCustomerName( store.getState() );
-	const customerEmail = store.selectors.getCustomerEmail( store.getState() );
+	const customerName = selectors.getCustomerName( store.getState() );
+	const customerEmail = selectors.getCustomerEmail( store.getState() );
 
 	if ( ! customerName.value.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( store.actions.changeCustomerName( '' ) );
+		store.dispatch( actions.changeCustomerName( '' ) );
 	}
 	if ( ! customerEmail.value.length ) {
-		store.dispatch( store.actions.changeCustomerEmail( '' ) );
+		store.dispatch( actions.changeCustomerEmail( '' ) );
 	}
 	if ( ! customerName.value.length || ! customerEmail.value.length ) {
 		return false;
