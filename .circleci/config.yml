@@ -570,6 +570,7 @@ jobs:
                   rm desktop/release/*.blockmap
                   rm -rf desktop/release/win-unpacked
                   rm -rf desktop/release/win-ia32-unpacked
+                shell: bash.exe
       - when:
           condition: << pipeline.git.tag >>
           steps:
@@ -610,7 +611,7 @@ jobs:
             }
       - run:
           when: always
-          name: Clean Up
+          name: Clean Up NSIS
           command: |
             set +e
             rm -rf desktop/release/github
