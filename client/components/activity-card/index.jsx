@@ -109,8 +109,13 @@ class ActivityCard extends Component {
 		this.setState( { showTopPopoverMenu: false, showBottomPopoverMenu: false } );
 
 	toggleSharePopover = () => {
+		const {
+			activity: { siteId, rewindId },
+			dispatchShareActivityPopoverTracksEvent,
+		} = this.props;
+
 		if ( ! this.state.showSharePopover ) {
-			this.props.dispatchShareActivityPopoverTracksEvent();
+			dispatchShareActivityPopoverTracksEvent( siteId, rewindId );
 		}
 
 		this.setState( { showSharePopover: ! this.state.showSharePopover } );
@@ -474,8 +479,8 @@ const mapDispatchToProps = ( dispatch ) => ( {
 			)
 		);
 	},
-	dispatchShareActivityPopoverTracksEvent: () =>
-		dispatch( recordTracksEvent( 'calypso_activity_share_popup' ) ),
+	dispatchShareActivityPopoverTracksEvent: ( siteId, rewindId ) =>
+		dispatch( recordTracksEvent( 'calypso_activity_share_popup', { siteId, rewindId } ) ),
 } );
 
 export default connect(
