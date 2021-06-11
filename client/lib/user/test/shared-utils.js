@@ -1,11 +1,12 @@
 /**
+ * External dependencies
+ */
+import config from '@automattic/calypso-config';
+
+/**
  * Internal dependencies
  */
-import UserUtils from '../utils';
-import config from '@automattic/calypso-config';
-import User from 'calypso/lib/user';
-
-const user = User();
+import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const mock = jest.fn();
@@ -23,8 +24,8 @@ describe( 'UserUtils', () => {
 		} );
 
 		test( 'uses userData.logout_URL when available', () => {
-			jest.spyOn( user, 'get' ).mockReturnValue( { logout_URL: '/userdata' } );
-			expect( UserUtils.getLogoutUrl() ).toBe( '/userdata' );
+			const user = { logout_URL: '/userdata' };
+			expect( getLogoutUrl( user ) ).toBe( '/userdata' );
 		} );
 	} );
 
@@ -35,20 +36,20 @@ describe( 'UserUtils', () => {
 
 		test( 'works when |subdomain| is not present', () => {
 			config.mockImplementation( configMock( { logout_url: 'wp.com/without-domain' } ) );
-			jest.spyOn( user, 'get' ).mockReturnValue( { logout_URL: '/userdata', localeSlug: 'es' } );
-			expect( UserUtils.getLogoutUrl() ).toBe( 'wp.com/without-domain' );
+			const user = { logout_URL: '/userdata', localeSlug: 'es' };
+			expect( getLogoutUrl( user ) ).toBe( 'wp.com/without-domain' );
 		} );
 
 		test( 'replaces |subdomain| when present and have non-default locale', () => {
 			config.mockImplementation( configMock( { logout_url: '|subdomain|wp.com/with-domain' } ) );
-			jest.spyOn( user, 'get' ).mockReturnValue( { logout_URL: '/userdata', localeSlug: 'es' } );
-			expect( UserUtils.getLogoutUrl() ).toBe( 'es.wp.com/with-domain' );
+			const user = { logout_URL: '/userdata', localeSlug: 'es' };
+			expect( getLogoutUrl( user ) ).toBe( 'es.wp.com/with-domain' );
 		} );
 
 		test( 'replaces |subdomain| when present but no locale', () => {
 			config.mockImplementation( configMock( { logout_url: '|subdomain|wp.com/with-domain' } ) );
-			jest.spyOn( user, 'get' ).mockReturnValue( { logout_URL: '/userdata' } );
-			expect( UserUtils.getLogoutUrl() ).toBe( 'wp.com/with-domain' );
+			const user = { logout_URL: '/userdata' };
+			expect( getLogoutUrl( user ) ).toBe( 'wp.com/with-domain' );
 		} );
 	} );
 } );
