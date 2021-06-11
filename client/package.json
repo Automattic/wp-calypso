@@ -137,7 +137,7 @@
 		"fast-json-stable-stringify": "^2.1.0",
 		"filesize": "^6.0.1",
 		"flag-icon-css": "^3.4.5",
-		"fuse.js": "^3.4.6",
+		"fuse.js": "^3.6.1",
 		"get-video-id": "^3.1.4",
 		"gridicons": "^3.3.1",
 		"hash.js": "^1.1.7",
