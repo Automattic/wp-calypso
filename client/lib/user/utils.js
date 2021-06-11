@@ -55,10 +55,6 @@ const userUtils = {
 				window.location.href = logoutUrl;
 			} );
 	},
-
-	isLoggedIn() {
-		return Boolean( user().data );
-	},
 };
 
 export default userUtils;
