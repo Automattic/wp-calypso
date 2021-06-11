@@ -52,9 +52,9 @@ export function logmeinUrl( url: string ): string {
 		newurl.host = hostmap[ newurl.host ];
 	}
 
-	const allowedHosts = allowedUrls( sites );
+	const allowed = allowedHosts( sites );
 
-	if ( allowedHosts.indexOf( newurl.host ) === -1 ) {
+	if ( allowed.indexOf( newurl.host ) === -1 ) {
 		return url;
 	}
 
@@ -79,7 +79,7 @@ function isValidLogmeinSite( site: any ): boolean {
 	);
 }
 
-function allowedUrls( sites: any ): Host[] {
+function allowedHosts( sites: any ): Host[] {
 	return sites
 		.map( ( site: any ) => ( isValidLogmeinSite( site ) ? new URL( site.URL ).host : false ) )
 		.filter( Boolean );
