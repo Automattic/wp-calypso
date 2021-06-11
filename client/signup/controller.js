@@ -154,7 +154,7 @@ export default {
 			// Planned to be rerun, see pbmo2S-Bv-p2#comment-1382
 			// Commented out for eslint, to rerun next() has to be placed below this.
 			// if (
-			// 	( ! user() || ! user().get() ) &&
+			// 	! isLoggedIn &&
 			// 	-1 === context.pathname.indexOf( 'free' ) &&
 			// 	-1 === context.pathname.indexOf( 'personal' ) &&
 			// 	-1 === context.pathname.indexOf( 'premium' ) &&
