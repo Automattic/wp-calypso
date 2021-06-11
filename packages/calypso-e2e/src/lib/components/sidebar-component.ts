@@ -114,6 +114,7 @@ export class SidebarComponent extends BaseContainer {
 			await element.click();
 		} else {
 			await element.dispatchEvent( 'click' );
+			await this.page.waitForNavigation();
 		}
 		await this.page.waitForLoadState( 'domcontentloaded' );
 	}
