@@ -735,7 +735,7 @@ object CheckCodeStyleBranch : BuildType({
 })
 
 object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
-	name = "Playwright E2E tests"
+	name = "Playwright E2E tests (desktop)"
 	description = "Runs Calypso e2e tests using Playwright"
 	params {
 		param("use_cached_node_modules", "false")
@@ -886,7 +886,7 @@ object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
 })
 
 object RunCalypsoPlaywrightE2eMobileTests : BuildType({
-	name = "Playwright E2E tests"
+	name = "Playwright E2E tests (mobile)"
 	description = "Runs Calypso e2e tests using Playwright"
 	params {
 		param("use_cached_node_modules", "false")
