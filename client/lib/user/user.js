@@ -17,8 +17,8 @@ import {
 } from 'calypso/lib/user/support-user-interop';
 import wpcom from 'calypso/lib/wp';
 import Emitter from 'calypso/lib/mixins/emitter';
+import { clearStore } from './store';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
-import { clearStorage } from 'calypso/lib/browser-storage';
 
 const debug = debugFactory( 'calypso:user' );
 
@@ -184,8 +184,7 @@ User.prototype.clear = async function () {
 	 * to discard any user reference that the application may hold
 	 */
 	this.data = false;
-	store.clearAll();
-	await clearStorage();
+	await clearStore();
 };
 
 User.prototype.set = function ( attributes ) {

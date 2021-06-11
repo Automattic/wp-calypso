@@ -17,13 +17,13 @@ import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
-import user from 'calypso/lib/user';
 import userUtilities from 'calypso/lib/user/utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { logoutUser } from 'calypso/state/logout/actions';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar-unified/utils';
+import { clearStore } from 'calypso/lib/user/store';
 
 /**
  * Style dependencies
@@ -51,7 +51,7 @@ class MeSidebar extends React.Component {
 
 		try {
 			const { redirect_to } = await this.props.logoutUser( redirectTo );
-			await user().clear();
+			await clearStore();
 			window.location.href = redirect_to || '/';
 		} catch {
 			// The logout endpoint might fail if the nonce has expired.
