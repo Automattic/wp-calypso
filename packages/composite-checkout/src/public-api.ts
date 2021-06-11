@@ -44,7 +44,6 @@ import {
 import { createIdealPaymentMethodStore, createIdealMethod } from './lib/payment-methods/ideal';
 import { createSofortPaymentMethodStore, createSofortMethod } from './lib/payment-methods/sofort';
 import { createAlipayPaymentMethodStore, createAlipayMethod } from './lib/payment-methods/alipay';
-import { createP24PaymentMethodStore, createP24Method } from './lib/payment-methods/p24';
 import { createEpsPaymentMethodStore, createEpsMethod } from './lib/payment-methods/eps';
 import {
 	createStripeMethod,
@@ -116,8 +115,6 @@ export {
 	createExistingCardMethod,
 	createIdealMethod,
 	createIdealPaymentMethodStore,
-	createP24Method,
-	createP24PaymentMethodStore,
 	createRegistry,
 	createSofortMethod,
 	createSofortPaymentMethodStore,

@@ -6,8 +6,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import {
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
-	createP24Method,
-	createP24PaymentMethodStore,
 	createIdealMethod,
 	createIdealPaymentMethodStore,
 	createSofortMethod,
@@ -22,6 +20,8 @@ import {
 	createBancontactPaymentMethodStore,
 	createGiropayMethod,
 	createGiropayPaymentMethodStore,
+	createP24Method,
+	createP24PaymentMethodStore,
 	createPayPalMethod,
 } from '@automattic/wpcom-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -135,13 +135,9 @@ function useCreateAlipay( {
 function useCreateP24( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createP24PaymentMethodStore(), [] );
@@ -150,11 +146,9 @@ function useCreateP24( {
 			shouldLoad
 				? createP24Method( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
@@ -459,8 +453,6 @@ export default function useCreatePaymentMethods( {
 	const p24Method = useCreateP24( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const bancontactMethod = useCreateBancontact( {
