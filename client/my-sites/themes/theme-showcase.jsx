@@ -15,7 +15,7 @@ import { Button } from '@automattic/components';
 import ThemesSelection from './themes-selection';
 import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { addTracking, trackClick } from './helpers';
+import { addTracking, trackClick, localizeThemesPath } from './helpers';
 import DocumentHead from 'calypso/components/data/document-head';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -182,7 +182,10 @@ class ThemeShowcase extends React.Component {
 	 * @returns {string} Theme showcase url
 	 */
 	constructUrl = ( sections ) => {
-		const { vertical, tier, filter, siteSlug, searchString } = { ...this.props, ...sections };
+		const { vertical, tier, filter, siteSlug, searchString, locale, isLoggedIn } = {
+			...this.props,
+			...sections,
+		};
 
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
@@ -190,8 +193,11 @@ class ThemeShowcase extends React.Component {
 
 		let filterSection = filter ? `/filter/${ filter }` : '';
 		filterSection = filterSection.replace( /\s/g, '+' );
-
-		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
+		const url = localizeThemesPath(
+			`/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`,
+			locale,
+			! isLoggedIn
+		);
 		return buildRelativeSearchUrl( url, searchString );
 	};
 
@@ -216,6 +222,7 @@ class ThemeShowcase extends React.Component {
 			title,
 			filterString,
 			isMultisite,
+			locale,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -233,7 +240,7 @@ class ThemeShowcase extends React.Component {
 
 		const headerIcons = [
 			{
-				label: 'new',
+				label: translate( 'New' ),
 				uri: this.constructUrl( { vertical: '' } ),
 				icon: 'star',
 			},
@@ -242,7 +249,7 @@ class ThemeShowcase extends React.Component {
 				.map(
 					( subject ) =>
 						subjectsMeta[ subject ] && {
-							label: subject,
+							label: this.props.subjects?.[ subject ]?.name || subject,
 							uri: this.constructUrl( { vertical: subject } ),
 							icon: subjectsMeta[ subject ].icon,
 							order: subjectsMeta[ subject ].order,
@@ -289,7 +296,12 @@ class ThemeShowcase extends React.Component {
 									if ( ! getScreenshotOption( theme ).getUrl ) {
 										return null;
 									}
-									return getScreenshotOption( theme ).getUrl( theme );
+
+									return localizeThemesPath(
+										getScreenshotOption( theme ).getUrl( theme ),
+										locale,
+										! isLoggedIn
+									);
 								} }
 								onScreenshotClick={ function ( themeId ) {
 									if ( ! getScreenshotOption( themeId ).action ) {
@@ -323,7 +335,6 @@ class ThemeShowcase extends React.Component {
 							</div>
 						</>
 					) }
-
 					<div
 						ref={ this.scrollRef }
 						className={
@@ -371,7 +382,12 @@ class ThemeShowcase extends React.Component {
 								if ( ! getScreenshotOption( theme ).getUrl ) {
 									return null;
 								}
-								return getScreenshotOption( theme ).getUrl( theme );
+
+								return localizeThemesPath(
+									getScreenshotOption( theme ).getUrl( theme ),
+									locale,
+									! isLoggedIn
+								);
 							} }
 							onScreenshotClick={ function ( themeId ) {
 								if ( ! getScreenshotOption( themeId ).action ) {
