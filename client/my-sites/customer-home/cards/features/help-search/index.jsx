@@ -99,7 +99,7 @@ const HelpSearch = ( { searchQuery, openDialog, track } ) => {
 						<span className="help-search__help-icon">
 							<Gridicon icon="help" size={ 36 } />
 						</span>
-						{ translate( 'Contact support' ) }
+						{ translate( 'More help' ) }
 					</a>
 				</div>
 			</Card>
