@@ -319,7 +319,7 @@ export class HelpContactForm extends React.PureComponent {
 				siteData &&
 				siteData.ID &&
 				( ! siteData.jetpack || siteData.is_wpcom_atomic ) ) ||
-			( errorData && errorData === 'unauthorized' );
+			( userDeclaredUrl && errorData && errorData === 'unauthorized' );
 
 		// Returns true for self-hosted sites, irrespective of Jetpack connection status, and non-WordPress sites.
 		const isNonWpComHostedSite =
