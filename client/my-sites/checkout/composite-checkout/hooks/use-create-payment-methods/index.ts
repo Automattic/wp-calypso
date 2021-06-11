@@ -41,10 +41,6 @@ import {
 	createEbanxTefMethod,
 } from '../../payment-methods/ebanx-tef';
 import {
-	createIdWalletPaymentMethodStore,
-	createIdWalletMethod,
-} from '../../payment-methods/id-wallet';
-import {
 	createNetBankingPaymentMethodStore,
 	createNetBankingMethod,
 } from '../../payment-methods/netbanking';
@@ -328,17 +324,6 @@ function useCreateNetbanking(): PaymentMethod {
 	);
 }
 
-function useCreateIdWallet(): PaymentMethod {
-	const paymentMethodStore = useMemo( () => createIdWalletPaymentMethodStore(), [] );
-	return useMemo(
-		() =>
-			createIdWalletMethod( {
-				store: paymentMethodStore,
-			} ),
-		[ paymentMethodStore ]
-	);
-}
-
 function useCreateEbanxTef() {
 	const paymentMethodStore = useMemo( () => createEbanxTefPaymentMethodStore(), [] );
 	return useMemo(
@@ -486,8 +471,6 @@ export default function useCreatePaymentMethods( {
 
 	const ebanxTefMethod = useCreateEbanxTef();
 
-	const idWalletMethod = useCreateIdWallet();
-
 	const netbankingMethod = useCreateNetbanking();
 
 	const sofortMethod = useCreateSofort( {
@@ -556,7 +539,6 @@ export default function useCreatePaymentMethods( {
 		giropayMethod,
 		sofortMethod,
 		ebanxTefMethod,
-		idWalletMethod,
 		netbankingMethod,
 		alipayMethod,
 		p24Method,
