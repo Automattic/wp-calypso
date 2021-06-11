@@ -56,6 +56,7 @@ class SiteSettingsFormWriting extends Component {
 			siteId,
 			siteIsJetpack,
 			translate,
+			siteIsAutomatedTransfer,
 			updateFields,
 			showAdvancedDashboard,
 		} = this.props;
@@ -97,7 +98,7 @@ class SiteSettingsFormWriting extends Component {
 					updateFields={ updateFields }
 				/>
 
-				{ siteIsJetpack && (
+				{ siteIsJetpack && ! siteIsAutomatedTransfer && (
 					<div>
 						<SettingsSectionHeader
 							disabled={ isRequestingSettings || isSavingSettings }
@@ -213,6 +214,7 @@ const connectComponent = connect(
 				! siteIsAutomatedTransfer,
 			isPodcastingSupported,
 			showAdvancedDashboard,
+			siteIsAutomatedTransfer,
 		};
 	},
 	{ requestPostTypes },
