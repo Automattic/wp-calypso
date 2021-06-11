@@ -35,6 +35,9 @@ import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/ac
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { protectForm } from 'calypso/lib/protect-form';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 
 class SharingButtons extends Component {
 	state = {
@@ -126,7 +129,16 @@ class SharingButtons extends Component {
 	}
 
 	render() {
-		const { buttons, isJetpack, isSaving, settings, siteId } = this.props;
+		const {
+			buttons,
+			isJetpack,
+			isSaving,
+			settings,
+			siteId,
+			isSharingButtonsModuleActive,
+			isFetchingModules,
+			translate,
+		} = this.props;
 		const updatedSettings = this.getUpdatedSettings();
 		const updatedButtons = this.state.buttonsPendingSave || buttons;
 
@@ -143,6 +155,19 @@ class SharingButtons extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySharingButtons siteId={ siteId } />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
+				{ isJetpack && ! isFetchingModules && ! isSharingButtonsModuleActive && (
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate(
+							'Adding sharing buttons need the Sharing Buttons module from Jetpack to be enabled'
+						) }
+					>
+						<NoticeAction onClick={ () => this.props.activateModule( siteId, 'sharedaddy' ) }>
+							{ translate( 'Enable' ) }
+						</NoticeAction>
+					</Notice>
+				) }
 				<ButtonsAppearance
 					buttons={ updatedButtons }
 					values={ updatedSettings }
@@ -167,7 +192,9 @@ const connectComponent = connect(
 		const settings = getSiteSettings( state, siteId );
 		const buttons = getSharingButtons( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
+		const isSharingButtonsModuleActive = isJetpackModuleActive( state, siteId, 'sharedaddy' );
 		const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
+		const isFetchingModules = isFetchingJetpackModules( state, siteId );
 		const isSavingSettings = isSavingSiteSettings( state, siteId );
 		const isSavingButtons = isSavingSharingButtons( state, siteId );
 		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
@@ -176,7 +203,9 @@ const connectComponent = connect(
 
 		return {
 			isJetpack,
+			isSharingButtonsModuleActive,
 			isLikesModuleActive,
+			isFetchingModules,
 			isSaving: isSavingSettings || isSavingButtons,
 			isSaveSettingsSuccessful,
 			isSaveButtonsSuccessful,

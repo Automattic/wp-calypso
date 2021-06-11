@@ -69,7 +69,6 @@ export default function () {
 		'/marketing/sharing-buttons/:domain',
 		siteSelection,
 		navigation,
-		jetpackModuleActive( 'sharedaddy' ),
 		sharingButtons,
 		layout,
 		makeLayout,
