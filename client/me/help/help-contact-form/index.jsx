@@ -208,8 +208,8 @@ export class HelpContactForm extends React.PureComponent {
 
 			this.props
 				.requestSite( query )
-				.then( ( siteData ) => this.setState( { siteData, errorData: '' } ) )
-				.catch( ( error ) => this.setState( { errorData: error.error, siteData: '' } ) );
+				.then( ( siteData ) => this.setState( { siteData, errorData: null } ) )
+				.catch( ( error ) => this.setState( { errorData: error.error, siteData: null } ) );
 		}
 	};
 
