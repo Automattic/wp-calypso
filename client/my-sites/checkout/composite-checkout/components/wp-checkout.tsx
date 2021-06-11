@@ -56,6 +56,7 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
+import { addQueryArgs } from 'calypso/lib/route';
 import PaymentMethodStep from './payment-method-step';
 import CheckoutHelpLink from './checkout-help-link';
 import type { CountryListItem } from '../types/country-list-item';
@@ -179,7 +180,18 @@ export default function WPCheckout( {
 	] = useState( false );
 
 	const emailTakenLoginRedirectMessage = ( emailAddress: string ) => {
-		const loginUrl = login( { redirectTo: '/checkout/no-site?cart=no-user', emailAddress } );
+		const { href, pathname } = window.location;
+		const isJetpackCheckout = pathname.includes( '/checkout/jetpack' );
+
+		// Users with a WP.com account should return to the checkout page
+		// once they are logged in to complete the process. The flow for them is
+		// checkout -> login -> checkout.
+		const currentURLQueryParameters = Object.fromEntries( new URL( href ).searchParams.entries() );
+		const redirectTo = isJetpackCheckout
+			? addQueryArgs( { ...currentURLQueryParameters, flow: 'logged-out-checkout' }, pathname )
+			: '/checkout/no-site?cart=no-user';
+
+		const loginUrl = login( { redirectTo, emailAddress } );
 
 		return translate(
 			'That email address is already in use. If you have an existing account, {{a}}please log in{{/a}}.',

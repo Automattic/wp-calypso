@@ -51,13 +51,7 @@ export default function () {
 
 	// Handle logged-in user visiting Jetpack checkout
 	if ( isEnabled( 'jetpack/userless-checkout' ) ) {
-		page(
-			'/checkout/jetpack/:product/:domainOrProduct',
-			siteSelection,
-			checkout,
-			makeLayout,
-			clientRender
-		);
+		page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
 		page(
 			'/checkout/jetpack/thank-you/:site/:product',
 			siteSelection,
