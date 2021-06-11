@@ -58,6 +58,8 @@ $min_results_height: 180px;
 		background: var( --color-primary );
 		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
 		border: 1px solid var( --color-primary );
+		// Using percentage because we're drawing a circle in CSS
+		// stylelint-disable-next-line declaration-property-unit-allowed-list
 		border-radius: 100%;
 
 		&::before {
@@ -69,6 +71,8 @@ $min_results_height: 180px;
 			left: 4px;
 			content: '';
 			background: var( --color-surface );
+			// Using percentage because we're drawing a circle in CSS
+			// stylelint-disable-next-line declaration-property-unit-allowed-list
 			border-radius: 100%;
 		}
 
