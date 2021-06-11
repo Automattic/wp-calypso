@@ -77,7 +77,7 @@ const InstallThemeButton = connectOptions(
 				onClick={ clickHandler }
 				href={ getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) }
 			>
-				{ translate( 'Install theme' ) }
+				{ translate( 'Upload theme' ) }
 			</Button>
 		);
 	}
