@@ -30,6 +30,11 @@
 	padding-top: 20px;
 	border-top: 1px solid var( --color-neutral-5 );
 	color: var( --color-text-subtle );
+	display: none;
+
+	@include break-large() {
+		display: block;
+	}
 }
 
 .go-mobile__email-link-button {
