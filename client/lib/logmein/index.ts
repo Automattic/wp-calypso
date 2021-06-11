@@ -97,10 +97,16 @@ export function attachLogmein( store: any ): void {
 	document.addEventListener( 'click', logmeinOnClick, false );
 }
 
+const seen: Record< Host, boolean > = {};
 function logmeinOnClick( event: MouseEvent ) {
 	const link = ( event.target as HTMLElement ).closest( 'a' );
 
 	if ( link && link.href ) {
-		link.href = logmeinUrl( link.href );
+		// Only apply logmein to each domain link once
+		const host = new URL( String( link.href ), INVALID_URL ).host;
+		if ( ! seen[ host ] ) {
+			link.href = logmeinUrl( link.href );
+			seen[ host ] = true;
+		}
 	}
 }
