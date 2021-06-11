@@ -33,6 +33,8 @@ const themesSchema = {
 				theme_uri: { type: 'string' },
 				update: { type: [ 'null', 'object' ] },
 				version: { type: 'string' },
+				seo_title: { type: 'string' },
+				seo_description: { type: 'string' },
 			},
 		},
 	},

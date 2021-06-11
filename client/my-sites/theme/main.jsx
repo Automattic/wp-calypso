@@ -90,6 +90,8 @@ class ThemeSheet extends React.Component {
 			PropTypes.string,
 			PropTypes.bool, // happens if no content: false
 		] ),
+		seoTitle: PropTypes.string,
+		seoDescription: PropTypes.string,
 		supportDocumentation: PropTypes.string,
 		download: PropTypes.string,
 		taxonomies: PropTypes.object,
@@ -643,11 +645,19 @@ class ThemeSheet extends React.Component {
 
 		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
 
-		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
+		const {
+			canonicalUrl,
+			currentUserId,
+			description,
+			name: themeName,
+			seoTitle,
+			seoDescription,
+		} = this.props;
+
 		const title =
-			themeName &&
+			( seoTitle || themeName ) &&
 			i18n.translate( '%(themeName)s Theme', {
-				args: { themeName },
+				args: { themeName: seoTitle || themeName },
 			} );
 
 		const metas = [
@@ -658,11 +668,11 @@ class ThemeSheet extends React.Component {
 			{ property: 'og:site_name', content: 'WordPress.com' },
 		];
 
-		if ( description ) {
+		if ( seoDescription || description ) {
 			metas.push( {
 				name: 'description',
 				property: 'og:description',
-				content: decodeEntities( description ),
+				content: decodeEntities( seoDescription || description ),
 			} );
 		}
 
