@@ -46,6 +46,7 @@
 // make sure the vertical lines don't appear through the transparent backgrounds of the icons
 .activity-card-list {
 	.activity-card {
+		position: relative;
 		margin-bottom: 32px;
 		.activity-card__time {
 			background: var( --color-surface-backdrop );
@@ -88,7 +89,7 @@
 		top: calc( 100% + 16px );
 		visibility: visible;
 		z-index: -1;
-		border-radius: 50%;
+		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	}
 }
 
@@ -158,7 +159,7 @@
 				top: calc( 100% - 9px );
 				visibility: visible;
 				z-index: -1;
-				border-radius: 50%;
+				border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			}
 		}
 	}

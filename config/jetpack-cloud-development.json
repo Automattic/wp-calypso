@@ -40,6 +40,7 @@
 		"jetpack-cloud": true,
 		"jetpack-cloud/connect": false,
 		"jetpack-cloud/search": true,
+		"jetpack/activity-log-sharing": true,
 		"jetpack/backups-date-picker": true,
 		"jetpack/search-product": true,
 		"jetpack/partner-portal-payment": true,
