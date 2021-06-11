@@ -31,7 +31,7 @@ export default class AcceptInvitePage extends AsyncBaseContainer {
 	async waitUntilNotVisible() {
 		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			By.css( '#username' ),
+			By.css( '#email' ),
 			this.explicitWaitMS * 2
 		);
 	}
