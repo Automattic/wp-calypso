@@ -498,8 +498,6 @@ export default function CompositeCheckout( {
 			wechat: ( transactionData: unknown ) => weChatProcessor( transactionData, dataForProcessor ),
 			netbanking: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'netbanking', transactionData, dataForProcessor ),
-			id_wallet: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'id_wallet', transactionData, dataForProcessor ),
 			ideal: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'ideal', transactionData, dataForProcessor ),
 			sofort: ( transactionData: unknown ) =>
