@@ -294,54 +294,6 @@ UndocumentedSite.prototype.statsTopCoupons = function ( query ) {
 };
 
 /**
- * Delete site invites
- *
- * @param {Array}     inviteIds  An array of inviteIds for deletion.
- * @returns {Promise}             A Promise to resolve when complete.
- */
-UndocumentedSite.prototype.deleteInvites = function ( inviteIds ) {
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ this._id }/invites/delete`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{
-			invite_ids: inviteIds,
-		}
-	);
-};
-/**
- * Generate invite links
- *
- * @returns {Promise}             A Promise to resolve when complete.
- */
-UndocumentedSite.prototype.generateInviteLinks = function () {
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ this._id }/invites/links/generate`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{}
-	);
-};
-
-/**
- * Disable invite links
- *
- * @returns {Promise}             A Promise to resolve when complete.
- */
-
-UndocumentedSite.prototype.disableInviteLinks = function () {
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ this._id }/invites/links/disable`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{}
-	);
-};
-
-/**
  * Expose `UndocumentedSite` module
  */
 export default UndocumentedSite;

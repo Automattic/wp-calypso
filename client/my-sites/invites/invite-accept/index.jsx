@@ -66,19 +66,17 @@ class InviteAccept extends React.Component {
 
 	async fetchInvite() {
 		try {
-			const response = await wpcom
-				.undocumented()
-				.getInvite( this.props.siteId, this.props.inviteKey );
-
+			const { siteId, inviteKey, activationKey, authKey } = this.props;
+			const response = await wpcom.req.get( `/sites/${ siteId }/invites/${ inviteKey }` );
 			const invite = {
 				...normalizeInvite( response ),
-				activationKey: this.props.activationKey,
-				authKey: this.props.authKey,
+				activationKey,
+				authKey,
 			};
 
 			// Replace the plain invite key with the strengthened key
 			// from the url: invite key + secret
-			invite.inviteKey = this.props.inviteKey;
+			invite.inviteKey = inviteKey;
 
 			this.handleFetchInvite( false, invite );
 		} catch ( error ) {
