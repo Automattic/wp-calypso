@@ -1,7 +1,7 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
-import user from 'calypso/lib/user';
+import { getCurrentUser } from '@automattic/calypso-analytics';
 
 /**
  * Hash function from:
@@ -45,7 +45,7 @@ function cyrb53( str: string, seed = 0 ) {
  * @returns Boolean of whether the user should have the feature enabled, i.e. true = rolled out, false = not rolled out.
  */
 export function badNaiveClientSideRollout( featureId: string, percentage: number ): boolean {
-	const maybeUserId = user()?.get()?.ID;
+	const maybeUserId = getCurrentUser()?.ID;
 
 	// zero-indexed buckets: 0-99
 	let bucket;
