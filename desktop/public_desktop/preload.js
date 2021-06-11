@@ -17,6 +17,7 @@ const sendChannels = [
 	'print',
 	'secrets',
 	'toggle-dev-tools',
+	'title-bar-double-click',
 ];
 
 // Incoming IPC message channels from Main process to Renderer.
