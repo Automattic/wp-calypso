@@ -59,7 +59,6 @@ import {
 } from 'calypso/state/current-user/selectors';
 import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
-import user from 'calypso/lib/user';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import {
 	cancelPendingEmailChange,
@@ -73,6 +72,7 @@ import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-chang
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { clearStore } from 'calypso/lib/user/store';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 
@@ -260,12 +260,12 @@ class Account extends React.Component {
 	};
 
 	async validateUsername() {
-		const { translate } = this.props;
+		const { currentUserName, translate } = this.props;
 		const username = this.getUserSetting( 'user_login' );
 
 		debug( 'Validating username ' + username );
 
-		if ( username === user().get().username ) {
+		if ( username === currentUserName ) {
 			this.setState( { validationResult: false } );
 			return;
 		}
@@ -699,19 +699,18 @@ class Account extends React.Component {
 		return formName ? this.state.formsSubmitting[ formName ] : this.state.submittingForm;
 	}
 
-	handleSubmitSuccess( response, formName = '' ) {
+	async handleSubmitSuccess( response, formName = '' ) {
 		if ( ! this.hasUnsavedUserSettings( ACCOUNT_FIELDS.concat( INTERFACE_FIELDS ) ) ) {
 			this.props.markSaved();
 		}
 
 		if ( this.state.redirect ) {
-			user()
-				.clear()
-				.then( () => {
-					// Sometimes changes in settings require a url refresh to update the UI.
-					// For example when the user changes the language.
-					window.location = this.state.redirect + '?updated=success';
-				} );
+			await clearStore();
+
+			// Sometimes changes in settings require a url refresh to update the UI.
+			// For example when the user changes the language.
+			window.location = this.state.redirect + '?updated=success';
+
 			return;
 		}
 
