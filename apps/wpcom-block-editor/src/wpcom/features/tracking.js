@@ -285,7 +285,7 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 		block_name: name,
 		blocks_replaced: true,
 		// isInsertingPageTemplate filter is set by Starter Page Templates
-		from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
+		from_template_selector: applyFilters( 'isInsertingPagePattern', false ),
 	} ) );
 };
 
