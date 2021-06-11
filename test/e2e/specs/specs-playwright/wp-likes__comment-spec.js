@@ -9,6 +9,7 @@ import {
 	CommentsComponent,
 	GutenbergEditorPage,
 	NewPostFlow,
+	PublishedPostPage,
 } from '@automattic/calypso-e2e';
 
 /**
@@ -34,6 +35,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 		it( 'Click on first post', async function () {
 			const publishedPostsListPage = await PublishedPostsListPage.Expect( this.page );
 			await publishedPostsListPage.visitPost( 1 );
+			await PublishedPostPage.Expect( this.page );
 		} );
 
 		it( 'Post a comment', async function () {
@@ -77,6 +79,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 
 		it( 'Publish and visit post', async function () {
 			await gutenbergEditorPage.publish( { visit: true } );
+			await PublishedPostPage.Expect( this.page );
 		} );
 
 		it( 'Post a comment', async function () {
