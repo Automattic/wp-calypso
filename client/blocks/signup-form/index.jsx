@@ -365,7 +365,8 @@ class SignupForm extends Component {
 
 		// When a user moves away from the signup form without having entered
 		// anything do not show error messages, think going to click log in.
-		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {
+		// we do data.username?.length because username can be undefined when the username field isn't used
+		if ( ! data.username?.length && data.password.length === 0 && data.email.length === 0 ) {
 			return;
 		}
 
