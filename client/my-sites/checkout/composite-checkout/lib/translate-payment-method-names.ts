@@ -49,6 +49,7 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 		case 'WPCOM_Billing_Web_Payment':
 			return 'web-pay';
 	}
+	throw new Error( `Unknown payment method '${ paymentMethod }'` );
 }
 
 export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
