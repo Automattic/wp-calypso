@@ -47,6 +47,10 @@ function showAppWindow() {
 		windowConfig.webPreferences.allowRunningInsecureContent = true;
 	}
 
+	if ( process.platform === 'linux' ) {
+		windowConfig.icon = getPath( 'app-logo.png' );
+	}
+
 	mainWindow = new BrowserWindow( {
 		...windowConfig,
 		...bounds,
