@@ -29,7 +29,6 @@ $min_results_height: 180px;
 
 	.help-search__footer {
 		margin-top: -#{$card_padding_large/2};
-		border-top: 1px solid var( --color-border-subtle );
 	}
 
 	.help-search__cta {
@@ -128,10 +127,8 @@ $min_results_height: 180px;
 	}
 
 	.inline-help__results {
-		margin: #{$search_results_top_spacing + 1px} #{-$card_padding_small} 0;
 		min-height: $min_results_height;
 		padding: #{$search_results_top_spacing / 2 - 1px} 0 0 0;
-		border-top: 1px solid var( --color-border-subtle );
 
 		@include break-mobile {
 			margin-left: -$card_padding_large;
@@ -182,7 +179,6 @@ $min_results_height: 180px;
 		min-height: $min_results_height;
 		margin: #{$search_results_top_spacing + 1} 0 0 #{-$search_results_top_spacing};
 		padding: #{$search_results_top_spacing / 2 - 1px} 0 0 0;
-		border-top: 1px solid var( --color-border-subtle );
 	}
 
 	.inline-help__results-placeholder-item {
