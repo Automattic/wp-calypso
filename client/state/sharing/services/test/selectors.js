@@ -123,6 +123,17 @@ describe( 'selectors', () => {
 					},
 				},
 			},
+			jetpack: {
+				modules: {
+					items: {
+						2916284: {
+							publicize: {
+								active: true,
+							},
+						},
+					},
+				},
+			},
 			sites: {
 				items: {
 					2916284: {
@@ -131,7 +142,6 @@ describe( 'selectors', () => {
 						URL: 'https://example.com',
 						options: {
 							unmapped_url: 'https://example.wordpress.com',
-							active_modules: [ 'publicize' ],
 						},
 						jetpack: true,
 					},
@@ -178,9 +188,9 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should omit services if required module is not activated', () => {
-			state.sites.items[ 2916284 ].options.active_modules = [];
+			state.jetpack.modules.items[ 2916284 ].publicize.active = false;
 			const services = getEligibleKeyringServices( state, 2916284, 'other' );
-			state.sites.items[ 2916284 ].options.active_modules = [ 'publicize' ];
+			state.jetpack.modules.items[ 2916284 ].publicize.active = true;
 
 			expect( services ).to.eql( [] );
 		} );
