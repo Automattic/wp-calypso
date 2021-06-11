@@ -43,7 +43,15 @@ export function logmeinUrl( url: string ): string {
 	}
 
 	const sites = Object.values( getSitesItems( reduxStore.getState() ) );
-	const allowedHosts = logmeinAllowedUrls( sites );
+
+	// Replace unmapped url usage with the mapped hostname
+	const hostmap = unmappedToMapped( sites );
+	if ( hostmap[ newurl.host ] ) {
+		newurl.host = hostmap[ newurl.host ];
+	}
+
+	const allowedHosts = allowedUrls( sites );
+
 	if ( allowedHosts.indexOf( newurl.host ) === -1 ) {
 		return url;
 	}
@@ -55,7 +63,7 @@ export function logmeinUrl( url: string ): string {
 	return newurl.toString();
 }
 
-export function isValidLogmeinSite( site: any ): boolean {
+function isValidLogmeinSite( site: any ): boolean {
 	return (
 		! site.is_vip &&
 		! site.jetpack &&
@@ -69,10 +77,19 @@ export function isValidLogmeinSite( site: any ): boolean {
 	);
 }
 
-export function logmeinAllowedUrls( sites: any ): string[] {
+function allowedUrls( sites: any ): string[] {
 	return sites
 		.map( ( site: any ) => ( isValidLogmeinSite( site ) ? new URL( site.URL ).host : false ) )
 		.filter( Boolean );
+}
+
+type Host = string;
+
+function unmappedToMapped( sites: any ): Record< string, Host > {
+	return sites.reduce( ( result: Record< string, Host >, site: any ) => {
+		result[ new URL( site.options.unmapped_url ).host ] = new URL( site.URL ).host;
+		return result;
+	}, {} );
 }
 
 export function attachLogmein( store: any ): void {
