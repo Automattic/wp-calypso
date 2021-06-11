@@ -213,12 +213,16 @@ export class SupportComponent extends BaseContainer {
 	async search( text: string ): Promise< void > {
 		await this.page.fill( selectors.searchInput, text );
 
-		if ( ! text ) {
-			await this.page.waitForSelector( selectors.spinner, { state: 'hidden' } );
-		} else {
+		if ( text.trim() ) {
+			// If there is valid search string, then there should be a network request made
+			// resulting in a spinner. The spinner will then disappear when either the results are
+			// displayed, or no results are found.
 			await this.page.waitForSelector( selectors.spinner );
-			await this.page.waitForSelector( selectors.spinner, { state: 'hidden' } );
+			await this.page.waitForSelector( selectors.spinner, { state: 'hidden', timeout: 60000 } );
 		}
+
+		// In all cases, wait for the 'load' state to be fired to add a brief (~1ms) wait between actions.
+		await this.page.waitForLoadState( 'load' );
 	}
 
 	/**

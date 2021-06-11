@@ -12,7 +12,7 @@ import {
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Support' ), function () {
-	describe( 'Search for a support topic', function () {
+	describe( 'Search for a support topic then close popover', function () {
 		let supportComponent;
 
 		it( 'Log in', async function () {
@@ -32,9 +32,9 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 			await supportComponent.clickSupportButton();
 		} );
 
-		it( 'Displays six entries by default', async function () {
-			const defaultResults = await supportComponent.getOverallResultsCount();
-			assert.strictEqual( 6, defaultResults );
+		it( 'Displays default entries', async function () {
+			const results = await supportComponent.getOverallResultsCount();
+			assert.notStrictEqual( 0, results );
 		} );
 
 		it( 'Enter search keyword', async function () {
@@ -53,11 +53,15 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		it( 'Clear keyword', async function () {
 			await supportComponent.clearSearch();
 			const defaultResults = await supportComponent.getOverallResultsCount();
-			assert.strictEqual( 6, defaultResults );
+			assert.notStrictEqual( 0, defaultResults );
 			const supportResults = await supportComponent.getSupportResultsCount();
 			assert.strictEqual( 0, supportResults );
 			const adminResults = await supportComponent.getAdminResultsCount();
 			assert.strictEqual( 0, adminResults );
+		} );
+
+		it( 'Close support popover', async function () {
+			await supportComponent.closePopover();
 		} );
 	} );
 
@@ -81,9 +85,9 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 			await supportComponent.clickSupportButton();
 		} );
 
-		it( 'Displays six entries by default', async function () {
+		it( 'Displays default entries', async function () {
 			const defaultResults = await supportComponent.getOverallResultsCount();
-			assert.strictEqual( 6, defaultResults );
+			assert.notStrictEqual( 0, defaultResults );
 		} );
 
 		it( 'Enter search keyword', async function () {
@@ -124,19 +128,19 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 			await supportComponent.clickSupportButton();
 		} );
 
-		it( 'Displays six entries by default', async function () {
+		it( 'Displays default entries', async function () {
 			const defaultResults = await supportComponent.getOverallResultsCount();
-			assert.strictEqual( 6, defaultResults );
+			assert.notStrictEqual( 0, defaultResults );
 		} );
 
 		it( 'Enter invalid search keyword', async function () {
-			const keyword = '';
+			const keyword = '        ';
 			await supportComponent.search( keyword );
 		} );
 
 		it( 'Continues to display default results', async function () {
 			const defaultResults = await supportComponent.getOverallResultsCount();
-			assert.strictEqual( 6, defaultResults );
+			assert.notStrictEqual( 0, defaultResults );
 		} );
 	} );
 
@@ -160,9 +164,9 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 			await supportComponent.clickSupportButton();
 		} );
 
-		it( 'Displays six entries by default', async function () {
+		it( 'Displays default entries', async function () {
 			const defaultResults = await supportComponent.getOverallResultsCount();
-			assert.strictEqual( 6, defaultResults );
+			assert.notStrictEqual( 0, defaultResults );
 		} );
 
 		it( 'Enter invalid search keyword', async function () {
