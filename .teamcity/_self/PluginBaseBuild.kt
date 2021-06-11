@@ -122,6 +122,21 @@ open class PluginBaseBuild : Template({
 					tag_response=`curl -s -X POST -H "Content-Type: text/plain" --data "$releaseTag" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/`
 					echo -e "Build tagging status: ${'$'}tag_response\n"
 
+					# On normal PRs, post a message about WordPress.com deployments.
+					if [[ "%teamcity.build.branch.is_default%" != "true" ]] ; then
+						cd %teamcity.build.checkoutDir%
+						export GH_TOKEN="%matticbot_oauth_token%"
+						chmod +x ./bin/add-pr-comment.sh
+						./bin/add-pr-comment.sh "%teamcity.build.branch%" "$pluginSlug" <<- EOF || true
+						**This PR modifies the release build for $pluginSlug**
+
+						To test your changes on WordPress.com, run \`install-plugin.sh $pluginSlug %teamcity.build.branch%\` on your sandbox.
+						
+						To deploy your changes after merging, see the documentation: %docs_link%
+						EOF
+						cd $workingDir
+					fi
+
 					# Ping commit merger in Slack if we're on the main branch and the build has changed.
 					if [ "%teamcity.build.branch.is_default%" == "true" ] && [ "%with_slack_notify%" == "true" ] ; then
 						echo "Posting slack reminder."

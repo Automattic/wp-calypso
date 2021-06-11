@@ -58,7 +58,7 @@ private object EditingToolkit : BuildType({
 		param("release_tag", "etk-release-build")
 		param("build.prefix", "3")
 		param("normalize_files", "sed -i -e \"/^\\s\\* Version:/c\\ * Version: %build.number%\" -e \"/^define( 'A8C_ETK_PLUGIN_VERSION'/c\\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );\" ./release-archive/full-site-editing-plugin.php && sed -i -e \"/^Stable tag:\\s/c\\Stable tag: %build.number%\" ./release-archive/readme.txt\n")
-
+		param("docs_link", "PCYsg-mMA-p2")
 	}
 
 	steps {
@@ -106,6 +106,7 @@ private object WpcomBlockEditor : BuildType({
 		param("plugin_slug", "wpcom-block-editor")
 		param("archive_dir", "./dist/")
 		param("build_env", "development")
+		param("docs_link", "PCYsg-l4k-p2")
 	}
 })
 
@@ -117,6 +118,7 @@ private object Notifications : BuildType({
 	params {
 		param("plugin_slug", "notifications")
 		param("archive_dir", "./dist/")
+		param("docs_link", "PCYsg-elI-p2")
 		// This param is executed in bash right before the build script compares
 		// the build with the previous release version. The purpose of this code
 		// is to remove sources of randomness so that the diff operation only
@@ -151,6 +153,7 @@ private object O2Blocks : BuildType({
 	params {
 		param("plugin_slug", "o2-blocks")
 		param("archive_dir", "./release-files/")
+		param("docs_link", "PCYsg-r7r-p2")
 	}
 
 	steps {
