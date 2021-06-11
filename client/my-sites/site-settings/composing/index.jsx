@@ -15,6 +15,7 @@ import { Card, CompactCard } from '@automattic/components';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
 import PublishConfirmation from './publish-confirmation';
+import Markdown from './markdown';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 
@@ -42,6 +43,12 @@ const Composing = ( {
 					isRequestingSettings={ isRequestingSettings }
 					isSavingSettings={ isSavingSettings }
 					onChangeField={ onChangeField }
+				/>
+				<Markdown
+					fields={ fields }
+					isRequestingSettings={ isRequestingSettings }
+					isSavingSettings={ isSavingSettings }
+					handleToggle={ handleToggle }
 				/>
 			</CardComponent>
 
