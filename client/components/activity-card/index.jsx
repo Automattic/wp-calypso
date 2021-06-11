@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -432,7 +433,7 @@ class ActivityCard extends Component {
 						<div className="activity-card__time-text">{ backupTimeDisplay }</div>
 					</div>
 				) }
-				{ ! summarize && this.renderShareButton() }
+				{ ! summarize && isEnabled( 'jetpack/activity-log-sharing' ) && this.renderShareButton() }
 				<Card>
 					<ActivityActor
 						actorAvatarUrl={ activity.actorAvatarUrl }
