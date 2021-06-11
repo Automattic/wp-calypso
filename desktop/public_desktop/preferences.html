@@ -169,7 +169,7 @@
 		else if ( ( navigator.platform === 'Linux x86_64' )  || ( navigator.platform === 'Linux' ) ) {
 			document.querySelector( '.option-bounce' ).style.display = 'none';
 			document.querySelector( '.option-notifications' ).style.display = 'none';
-			document.querySelector( '.option-notification-messages .option-title span').innerHTML('Notifications: ')
+			document.querySelector( '.option-notification-messages .option-title span').innerHTML = 'Notifications: ';
 		}
 
 		this.setSelect( 'select[name=proxy-type]', settings[ 'proxy-type' ] );
