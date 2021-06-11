@@ -59,7 +59,7 @@ module.exports = function ( { view, window }, status ) {
 			enabled: status,
 			accelerator: 'CmdOrCtrl+N',
 			click: function () {
-				view.show();
+				window.show();
 				if ( isCalypso( view ) ) {
 					ipc.newPost( view );
 				} else {
