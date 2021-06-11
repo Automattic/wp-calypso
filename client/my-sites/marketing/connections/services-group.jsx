@@ -1,4 +1,3 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -86,7 +85,6 @@ const SharingServicesGroup = ( {
 			return;
 		}
 
-		// Strict boolean comparison to handle unset initial state while fetching modules from the API.
 		if ( isPublicizeActive && ! wasPublicizeActive ) {
 			fetchServices();
 		}
@@ -101,6 +99,7 @@ const SharingServicesGroup = ( {
 		return null;
 	}
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="sharing-services-group">
 			<SectionHeader label={ title } />
