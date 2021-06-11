@@ -45,19 +45,20 @@ declare module '@wordpress/data' {
 	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
 }
 
+const actions: StoreActions< NounsInStore > = {
+	changeCustomerName( payload ) {
+		return { type: 'CUSTOMER_NAME_SET', payload };
+	},
+};
+
+const selectors: StoreSelectorsWithState< NounsInStore > = {
+	getCustomerName( state ) {
+		return state.customerName;
+	},
+};
+
 export function createGiropayPaymentMethodStore(): GiropayStore {
 	debug( 'creating a new giropay payment method store' );
-	const actions: StoreActions< NounsInStore > = {
-		changeCustomerName( payload ) {
-			return { type: 'CUSTOMER_NAME_SET', payload };
-		},
-	};
-
-	const selectors: StoreSelectorsWithState< NounsInStore > = {
-		getCustomerName( state ) {
-			return state.customerName;
-		},
-	};
 
 	const store = registerStore( 'giropay', {
 		reducer(
@@ -76,7 +77,7 @@ export function createGiropayPaymentMethodStore(): GiropayStore {
 		selectors,
 	} );
 
-	return { ...store, actions, selectors };
+	return store;
 }
 
 export function createGiropayMethod( { store }: { store: GiropayStore } ): PaymentMethod {
@@ -199,11 +200,11 @@ function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total:
 }
 
 function isFormValid( store: GiropayStore ): boolean {
-	const customerName = store.selectors.getCustomerName( store.getState() );
+	const customerName = selectors.getCustomerName( store.getState() );
 
 	if ( ! customerName.value.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( store.actions.changeCustomerName( '' ) );
+		store.dispatch( actions.changeCustomerName( '' ) );
 		return false;
 	}
 	return true;

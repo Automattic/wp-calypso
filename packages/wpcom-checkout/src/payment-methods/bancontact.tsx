@@ -195,11 +195,11 @@ function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total:
 }
 
 function isFormValid( store: BancontactStore ) {
-	const customerName = store.selectors.getCustomerName( store.getState() );
+	const customerName = selectors.getCustomerName( store.getState() );
 
 	if ( ! customerName.value.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( store.actions.changeCustomerName( '' ) );
+		store.dispatch( actions.changeCustomerName( '' ) );
 		return false;
 	}
 	return true;
