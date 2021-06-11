@@ -95,6 +95,7 @@ function unmappedToMapped( sites: any ): Record< Host, Host > {
 export function attachLogmein( store: any ): void {
 	reduxStore = store;
 	document.addEventListener( 'click', logmeinOnClick, false );
+	document.addEventListener( 'contextmenu', logmeinOnRightClick, false );
 }
 
 const seen: Record< Host, boolean > = {};
@@ -102,11 +103,19 @@ function logmeinOnClick( event: MouseEvent ) {
 	const link = ( event.target as HTMLElement ).closest( 'a' );
 
 	if ( link && link.href ) {
-		// Only apply logmein to each domain link once
+		// Only apply logmein to each host once
 		const host = new URL( String( link.href ), INVALID_URL ).host;
 		if ( ! seen[ host ] ) {
 			link.href = logmeinUrl( link.href );
 			seen[ host ] = true;
 		}
+	}
+}
+
+function logmeinOnRightClick( event: MouseEvent ) {
+	const link = ( event.target as HTMLElement ).closest( 'a' );
+
+	if ( link && link.href ) {
+		link.href = logmeinUrl( link.href );
 	}
 }
