@@ -53,11 +53,11 @@ export class SidebarComponent extends BaseContainer {
 	 * Heading is defined as the top-level menu item that is permanently visible on the sidebar, unless outside
 	 * of the viewport.
 	 *
-	 * Subheading is defined as the child-level menu item that is exposed only on hover or main heading being toggled.
+	 * Subheading is defined as the child-level menu item that is exposed only on hover or by toggling open the listing by clicking on the parent menu item.
 	 *
-	 * Note, in the current Nav Unification paradigm, clicking on certain combinations of sidebar menu items will cause
-	 * a navigation away to an entirely new page (eg. wp-admin). Attempting to reuse the SidebarComponent object
-	 * under this condition will trigger an exception.
+	 * Note, in the current Nav Unification paradigm, clicking on certain combinations of sidebar menu items will trigger
+	 * navigation away to an entirely new page (eg. wp-admin). Attempting to reuse the SidebarComponent object
+	 * under this condition will throw an exception from the Playwright engine.
 	 *
 	 * @param {{[key: string]: string}} param0 Named object parameter.
 	 * @param {string} param0.heading Plaintext representation of the top level heading.
@@ -72,12 +72,14 @@ export class SidebarComponent extends BaseContainer {
 		subheading?: string;
 	} ): Promise< void > {
 		if ( heading ) {
-			await this._click( { selector: `${ selectors.menuText } >> text=${ heading.trim() }` } );
+			heading = toTitleCase( heading.trim() );
+			await this._click( { selector: `${ selectors.menuText } >> text=${ heading }` } );
 		}
 
 		if ( subheading ) {
+			subheading = toTitleCase( subheading.trim() );
 			await this.sidebar.waitForSelector( selectors.expandedMenu );
-			await this._click( { selector: `span:has-text("${ subheading.trim() }")`, force: true } );
+			await this._click( { selector: `span:has-text("${ subheading }")`, force: true } );
 		}
 	}
 
