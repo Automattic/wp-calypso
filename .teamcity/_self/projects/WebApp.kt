@@ -863,6 +863,15 @@ object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
 		}
 	}
 
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
+		}
+	}
+
 	failureConditions {
 		executionTimeoutMin = 20
 		// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
@@ -1002,6 +1011,15 @@ object RunCalypsoPlaywrightE2eMobileTests : BuildType({
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
 			}
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
 		}
 	}
 
