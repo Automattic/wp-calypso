@@ -45,20 +45,20 @@ declare module '@wordpress/data' {
 	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
 }
 
+const actions: StoreActions< NounsInStore > = {
+	changeCustomerName( payload ) {
+		return { type: 'CUSTOMER_NAME_SET', payload };
+	},
+};
+
+const selectors: StoreSelectorsWithState< NounsInStore > = {
+	getCustomerName( state ) {
+		return state.customerName;
+	},
+};
+
 export function createBancontactPaymentMethodStore(): BancontactStore {
 	debug( 'creating a new bancontact payment method store' );
-	const actions: StoreActions< NounsInStore > = {
-		changeCustomerName( payload ) {
-			return { type: 'CUSTOMER_NAME_SET', payload };
-		},
-	};
-
-	const selectors: StoreSelectorsWithState< NounsInStore > = {
-		getCustomerName( state ) {
-			return state.customerName;
-		},
-	};
-
 	const store = registerStore( 'bancontact', {
 		reducer(
 			state: StoreState< NounsInStore > = {
@@ -76,7 +76,7 @@ export function createBancontactPaymentMethodStore(): BancontactStore {
 		selectors,
 	} );
 
-	return { ...store, actions, selectors };
+	return store;
 }
 
 export function createBancontactMethod( { store }: { store: BancontactStore } ): PaymentMethod {
