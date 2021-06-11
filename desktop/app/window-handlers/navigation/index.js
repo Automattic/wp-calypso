@@ -33,13 +33,13 @@ module.exports = function ( { view, window } ) {
 		}
 	} );
 
-	ipcMain.on( 'title-bar-double-click', () => {
-		if ( process.platform === 'darwin' ) {
+	if ( process.platform === 'darwin' ) {
+		ipcMain.on( 'title-bar-double-click', () => {
 			const action = systemPreferences.getUserDefault( 'AppleActionOnDoubleClick', 'string' );
 			if ( action === 'None' ) return;
 			if ( action === 'Minimize' ) return window.minimize();
-		}
-		if ( window.isMaximized() ) return window.unmaximize();
-		return window.maximize();
-	} );
+			if ( window.isMaximized() ) return window.unmaximize();
+			return window.maximize();
+		} );
+	}
 };
