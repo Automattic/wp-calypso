@@ -15,6 +15,7 @@
 	"homepage": "https://desktop.wordpress.com/",
 	"main": "./dist/index.js",
 	"keywords": [
+		"Automattic",
 		"desktop",
 		"wordpress",
 		"wordpress.com"
