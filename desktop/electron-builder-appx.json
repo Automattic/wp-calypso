@@ -7,24 +7,21 @@
 		"output": "./release"
 	},
 	"files": [ "dist", "package.json", "config/*.json" ],
-    "win": {
+	"win": {
 		"icon": "./resource/icons/icon.ico",
-        "target": [
-            {
-                "target": "appx",
-                "arch": [
-                    "ia32",
-                    "x64"
-                ]
-            }
-        ]
-    },
-    "appx": {
-        "applicationId": "WordPress.comDesktop",
-        "identityName": "22491Automattic.WordPress.comDesktop",
-        "publisher": "CN=E3E5A157-746D-4B04-9116-ABE5CB928306",
-        "publisherDisplayName": "Automattic, Inc.",
-        "backgroundColor": "transparent",
-        "artifactName": "wordpress.com-win-store-${version}-${arch}.${ext}"
-    }
+		"target": [
+			{
+				"target": "appx",
+				"arch": [ "ia32", "x64" ]
+			}
+		]
+	},
+	"appx": {
+		"applicationId": "WordPress.comDesktop",
+		"identityName": "22490Automattic.WordPress.comDesktop",
+		"publisher": "CN=E2E5A157-746D-4B04-9116-ABE5CB928306",
+		"publisherDisplayName": "Automattic, Inc.",
+		"backgroundColor": "transparent",
+		"artifactName": "wordpress.com-win-store-${version}-${arch}.${ext}"
+	}
 }
