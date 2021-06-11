@@ -34,8 +34,9 @@ export class PublishedPostsListPage extends BaseContainer {
 	 * This method assumes there is at least 1 existing post on the site.
 	 *
 	 * @param {number} postNumber The nth post to visit. Defaults to 1.
+	 * @returns {Promise<void>} No return value.
 	 */
-	async visitPost( postNumber = 1 ) {
+	async visitPost( postNumber = 1 ): Promise< void > {
 		const posts = await this.page.$$( selectors.postedDate );
 
 		// If told to open nth post when there are less than n posts, that is not possible.

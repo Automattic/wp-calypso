@@ -28,6 +28,11 @@ const selectors = {
  * @augments {BaseContainer}
  */
 export class CommentsComponent extends BaseContainer {
+	/**
+	 * Constructs and instance of the CommentsComponent.
+	 *
+	 * @param {Page} page Underlying page on which interactions take place.
+	 */
 	constructor( page: Page ) {
 		super( page, selectors.commentArea );
 	}
