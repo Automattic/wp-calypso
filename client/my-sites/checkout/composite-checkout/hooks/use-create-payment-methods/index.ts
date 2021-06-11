@@ -10,8 +10,6 @@ import {
 	createP24PaymentMethodStore,
 	createIdealMethod,
 	createIdealPaymentMethodStore,
-	createSofortMethod,
-	createSofortPaymentMethodStore,
 	createEpsMethod,
 	createEpsPaymentMethodStore,
 } from '@automattic/composite-checkout';
@@ -265,32 +263,6 @@ function useCreateIdeal( {
 	);
 }
 
-function useCreateSofort( {
-	isStripeLoading,
-	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
-}: {
-	isStripeLoading: boolean;
-	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
-} ): PaymentMethod | null {
-	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createSofortPaymentMethodStore(), [] );
-	return useMemo(
-		() =>
-			shouldLoad
-				? createSofortMethod( {
-						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
-				  } )
-				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
-	);
-}
-
 function useCreateEps( {
 	isStripeLoading,
 	stripeLoadingError,
@@ -490,13 +462,6 @@ export default function useCreatePaymentMethods( {
 
 	const netbankingMethod = useCreateNetbanking();
 
-	const sofortMethod = useCreateSofort( {
-		isStripeLoading,
-		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
-	} );
-
 	const wechatMethod = useCreateWeChat( {
 		isStripeLoading,
 		stripeLoadingError,
@@ -554,7 +519,6 @@ export default function useCreatePaymentMethods( {
 		paypalMethod,
 		idealMethod,
 		giropayMethod,
-		sofortMethod,
 		ebanxTefMethod,
 		idWalletMethod,
 		netbankingMethod,

@@ -58,7 +58,6 @@ export function paymentMethodName( method ) {
 		wechat: translate( 'WeChat Pay', {
 			comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
 		} ),
-		sofort: 'Sofort',
 	};
 
 	return paymentMethodsNames[ method ] || method;

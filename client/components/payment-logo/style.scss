@@ -10,7 +10,7 @@
 	width: 35px;
 
 	$payment-types: 'alipay', 'apple-pay', 'bancontact', 'giropay', 'eps', 'ideal', 'netbanking',
-		'paypal', 'p24', 'brazil-tef', 'wechat', 'sofort';
+		'paypal', 'p24', 'brazil-tef', 'wechat';
 
 	@each $type in $payment-types {
 		&.is-#{$type} {
@@ -82,16 +82,6 @@
 	&.is-brazil-tef {
 		background-size: 100px auto;
 		width: 100px;
-	}
-
-	&.is-sofort {
-		background-size: 60px auto;
-		width: 80px;
-		height: 20px;
-
-		&.is-compact {
-			width: 16px;
-		}
 	}
 
 	&.disabled {

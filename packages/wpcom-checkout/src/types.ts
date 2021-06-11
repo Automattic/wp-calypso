@@ -220,7 +220,6 @@ export type CheckoutPaymentMethodSlug =
 	| 'p24'
 	| 'paypal'
 	| 'paypal-direct'
-	| 'sofort'
 	| 'free-purchase'
 	| 'full-credits'
 	| 'stripe-three-d-secure'
@@ -246,7 +245,6 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Stripe_Source_Giropay'
 	| 'WPCOM_Billing_Stripe_Source_Ideal'
 	| 'WPCOM_Billing_Stripe_Source_P24'
-	| 'WPCOM_Billing_Stripe_Source_Sofort'
 	| 'WPCOM_Billing_Stripe_Source_Three_D_Secure'
 	| 'WPCOM_Billing_Stripe_Source_Wechat'
 	| 'WPCOM_Billing_Web_Payment';

@@ -502,8 +502,6 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'id_wallet', transactionData, dataForProcessor ),
 			ideal: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'ideal', transactionData, dataForProcessor ),
-			sofort: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'sofort', transactionData, dataForProcessor ),
 			eps: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
 			'ebanx-tef': ( transactionData: unknown ) =>

@@ -38,8 +38,6 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'ideal';
 		case 'WPCOM_Billing_Stripe_Source_P24':
 			return 'p24';
-		case 'WPCOM_Billing_Stripe_Source_Sofort':
-			return 'sofort';
 		case 'WPCOM_Billing_Stripe_Source_Three_D_Secure':
 			return 'stripe-three-d-secure';
 		case 'WPCOM_Billing_Stripe_Source_Wechat':
@@ -87,8 +85,6 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_Stripe_Source_Ideal';
 		case 'p24':
 			return 'WPCOM_Billing_Stripe_Source_P24';
-		case 'sofort':
-			return 'WPCOM_Billing_Stripe_Source_Sofort';
 		case 'stripe-three-d-secure':
 			return 'WPCOM_Billing_Stripe_Source_Three_D_Secure';
 		case 'wechat':
@@ -120,7 +116,6 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_Stripe_Source_Giropay':
 		case 'WPCOM_Billing_Stripe_Source_Ideal':
 		case 'WPCOM_Billing_Stripe_Source_P24':
-		case 'WPCOM_Billing_Stripe_Source_Sofort':
 		case 'WPCOM_Billing_Stripe_Source_Three_D_Secure':
 		case 'WPCOM_Billing_Stripe_Source_Wechat':
 		case 'WPCOM_Billing_Web_Payment':
@@ -147,7 +142,6 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'giropay':
 		case 'ideal':
 		case 'p24':
-		case 'sofort':
 		case 'stripe-three-d-secure':
 		case 'wechat':
 		case 'web-pay':
@@ -191,7 +185,6 @@ export function isRedirectPaymentMethod( slug: CheckoutPaymentMethodSlug ): bool
 		'p24',
 		'brazil-tef',
 		'wechat',
-		'sofort',
 	];
 	return redirectPaymentMethods.includes( slug );
 }
