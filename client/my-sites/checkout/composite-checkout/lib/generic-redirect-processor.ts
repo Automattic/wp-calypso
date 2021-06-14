@@ -46,14 +46,17 @@ export default async function genericRedirectProcessor(
 	// until a webhook is received that confirms the payment, at which point the
 	// pending page will redirect to the thank-you page as returned by
 	// getThankYouUrl.
-	const thankYouUrl = encodeURIComponent( getThankYouUrl() );
+	const { origin = 'https://wordpress.com', pathname = '/', search = '' } =
+		typeof window !== 'undefined' ? window.location : {};
+	const thankYouUrl = getThankYouUrl() || 'https://wordpress.com';
 	const successUrlPath = `/checkout/thank-you/${ siteSlug || 'no-site' }/pending`;
-	const successUrlBase = buildCalypsoUrl( successUrlPath );
+	const successUrlBase = `${ origin }${ successUrlPath }`;
+
 	const successUrlObject = new URL( successUrlBase );
 	successUrlObject.searchParams.set( 'redirectTo', thankYouUrl );
 	const successUrl = successUrlObject.href;
 
-	const cancelUrl = window.location.origin + window.location.pathname + window.location.search;
+	const cancelUrl = ( origin ?? 'https://wordpress.com' ) + ( pathname ?? '' ) + ( search ?? '' );
 
 	recordTransactionBeginAnalytics( {
 		paymentMethodId,
@@ -96,10 +99,4 @@ function isValidTransactionData( submitData: unknown ): submitData is RedirectTr
 		throw new Error( 'Transaction requires data and none was provided' );
 	}
 	return true;
-}
-
-function buildCalypsoUrl( path: string ): string {
-	const urlBase = window.location.origin;
-	const pathToJoin = path.startsWith( '/' ) ? path : `/${ path }`;
-	return `${ urlBase }${ pathToJoin }`;
 }
