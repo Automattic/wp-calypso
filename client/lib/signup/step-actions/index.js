@@ -3,6 +3,10 @@
  */
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
+import { getUrlParts } from '@automattic/calypso-url';
+import { Site } from '@automattic/data-stores';
+import { getAvailableDesigns, isBlankCanvasDesign } from '@automattic/design-picker';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -18,7 +22,6 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { getUrlParts } from '@automattic/calypso-url';
 
 // State actions and selectors
 import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -40,26 +43,22 @@ import {
 	getNuxUrlInputValue,
 } from 'calypso/state/importer-nux/temp-selectors';
 import { getSiteId } from 'calypso/state/sites/selectors';
-import { Site } from '@automattic/data-stores';
-const Visibility = Site.Visibility;
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-
 import SignupCart from 'calypso/lib/signup/cart';
 
 // Others
 import flows from 'calypso/signup/config/flows';
 import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
-import { getAvailableDesigns, isBlankCanvasDesign } from '@automattic/design-picker';
-import config from '@automattic/calypso-config';
 
 /**
  * Constants
  */
 const debug = debugFactory( 'calypso:signup:step-actions' );
+const Visibility = Site.Visibility;
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
