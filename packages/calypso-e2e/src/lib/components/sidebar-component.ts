@@ -34,7 +34,7 @@ export class SidebarComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _postInit(): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'domcontentloaded' );
 	}
 
 	/**
