@@ -3,16 +3,18 @@
  */
 import i18n from 'i18n-calypso';
 import { find, get } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
 
+/**
+ * Return default value for given `propertyKey`.
+ *
+ * @param {string} propertyKey property to retrieve
+ * @returns default value for the specified property
+ */
 const getSiteTypePropertyDefaults = ( propertyKey ) =>
 	get(
 		{
