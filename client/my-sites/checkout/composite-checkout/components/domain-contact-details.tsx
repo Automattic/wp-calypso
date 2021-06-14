@@ -4,6 +4,7 @@
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { isDomainProduct, isDomainTransfer, isDomainMapping } from '@automattic/calypso-products';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
 import type { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
 
@@ -44,6 +45,15 @@ export default function DomainContactDetails( {
 		! hasTransferProduct( responseCart );
 	const getIsFieldDisabled = () => isDisabled;
 	const needsAlternateEmailForGSuite = needsOnlyGoogleAppsDetails;
+	const needsFax = responseCart.products.some( ( product ) => {
+		if ( isDomainMapping( product ) ) {
+			return false;
+		}
+		if ( ! isDomainProduct( product ) || ! isDomainTransfer( product ) ) {
+			return false;
+		}
+		return product.meta.endsWith( '.nl' );
+	} );
 	const tlds = getAllTopLevelTlds( domainNames );
 
 	return (
@@ -51,6 +61,7 @@ export default function DomainContactDetails( {
 			<ManagedContactDetailsFormFields
 				needsOnlyGoogleAppsDetails={ needsOnlyGoogleAppsDetails }
 				needsAlternateEmailForGSuite={ needsAlternateEmailForGSuite }
+				needsFax={ needsFax }
 				contactDetails={ contactDetails }
 				contactDetailsErrors={
 					shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
