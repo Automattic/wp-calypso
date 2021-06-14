@@ -100,11 +100,11 @@ export default ( capture, event ) => {
 
 	matchingEvents.forEach( ( match ) => {
 		debug( 'triggering "%s". target: "%s"', match.event, match.target );
-		subscribers?.[ match.mapping.id ].before.forEach( ( subscriber ) =>
+		subscribers[ match.mapping.id ]?.before.forEach( ( subscriber ) =>
 			subscriber( match.mapping, match.event, match.target )
 		);
 		match.mapping.handler( match.event, match.target );
-		subscribers?.[ match.mapping.id ].after.forEach( ( subscriber ) =>
+		subscribers[ match.mapping.id ]?.after.forEach( ( subscriber ) =>
 			subscriber( match.mapping, match.event, match.target )
 		);
 	} );
