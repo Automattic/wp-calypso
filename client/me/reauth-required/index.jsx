@@ -20,10 +20,10 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import Notice from 'calypso/components/notice';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import userUtilities from 'calypso/lib/user/utils';
+import { redirectToLogout } from 'calypso/lib/user/shared-utils';
 import SecurityKeyForm from './security-key-form';
 import TwoFactorActions from './two-factor-actions';
 
@@ -176,6 +176,10 @@ class ReauthRequired extends React.Component {
 		);
 	}
 
+	redirectToLogout = () => {
+		redirectToLogout( this.props.currentUser );
+	};
+
 	renderVerificationForm() {
 		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'app';
 		return (
@@ -185,7 +189,10 @@ class ReauthRequired extends React.Component {
 				<p>
 					<a
 						className="reauth-required__sign-out"
-						onClick={ this.getClickHandler( 'Reauth Required Log Out Link', userUtilities.logout ) }
+						onClick={ this.getClickHandler(
+							'Reauth Required Log Out Link',
+							this.redirectToLogout
+						) }
 					>
 						{ this.props.translate( 'Not you? Log out' ) }
 					</a>
@@ -310,6 +317,7 @@ ReauthRequired.propTypes = {
 
 export default connect(
 	( state ) => ( {
+		currentUser: getCurrentUser( state ),
 		currentUserId: getCurrentUserId( state ),
 	} ),
 	{ recordGoogleEvent }
