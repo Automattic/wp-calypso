@@ -561,8 +561,7 @@ $font-size: rem( 14px );
 		.focus-content,
 		.focus-sites,
 		.focus-sidebar {
-			.sidebar,
-			.layout__secondary {
+			.sidebar {
 				z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
 			}
 		}
