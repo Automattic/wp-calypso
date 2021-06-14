@@ -43,8 +43,6 @@ class AccountPassword extends React.Component {
 		pendingValidation: true,
 	};
 
-	debouncedPasswordValidate = debounce( this.validatePassword, 300 );
-
 	componentDidUpdate( prevProps ) {
 		if (
 			prevProps.isPendingPasswordChange &&
@@ -84,6 +82,8 @@ class AccountPassword extends React.Component {
 			return;
 		}
 	};
+
+	debouncedPasswordValidate = debounce( this.validatePassword, 300 );
 
 	handlePasswordChange = ( event ) => {
 		const newPassword = event.currentTarget.value;
