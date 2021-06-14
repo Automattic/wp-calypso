@@ -34,7 +34,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 
 		it( 'Displays default entries', async function () {
 			const results = await supportComponent.getOverallResultsCount();
-			assert.notStrictEqual( 0, results );
+			assert.ok( results >= 5 );
 		} );
 
 		it( 'Enter search keyword', async function () {
