@@ -54,6 +54,7 @@ import flows from 'calypso/signup/config/flows';
 import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { getAvailableDesigns, isBlankCanvasDesign } from '@automattic/design-picker';
+import config from '@automattic/calypso-config';
 
 /**
  * Constants
@@ -166,7 +167,11 @@ function getNewSiteParams( {
 	// to lookup the theme object based on the theme slug.
 	let selectedDesign = get( signupDependencies, 'selectedDesign', false );
 	if ( ! selectedDesign ) {
-		const designs = getAvailableDesigns();
+		const designs = getAvailableDesigns( {
+			includeAlphaDesigns: false,
+			useFseDesigns: config.isEnabled( 'signup/core-site-editor' ),
+			randomize: false,
+		} );
 		const themeSlug = theme.replace( 'pub/', '' ).replace( 'premium/', '' );
 		selectedDesign = designs.featured.find( ( { slug } ) => slug === themeSlug );
 	}
