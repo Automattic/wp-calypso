@@ -55,8 +55,7 @@ export default async function genericRedirectProcessor(
 	const successUrlObject = new URL( successUrlBase );
 	successUrlObject.searchParams.set( 'redirectTo', thankYouUrl );
 	const successUrl = successUrlObject.href;
-
-	const cancelUrl = ( origin ?? 'https://wordpress.com' ) + ( pathname ?? '' ) + ( search ?? '' );
+	const cancelUrl = `${ origin }${ pathname }${ search }`;
 
 	recordTransactionBeginAnalytics( {
 		paymentMethodId,
