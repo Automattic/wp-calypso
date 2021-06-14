@@ -9,7 +9,7 @@ import { useMutation, useQueryClient } from 'react-query';
  */
 import wp from 'calypso/lib/wp';
 
-function useUpdateNameserversMutation( domainName ) {
+function useUpdateNameserversMutation( domainName, queryOptions = {} ) {
 	const queryClient = useQueryClient();
 	const mutation = useMutation(
 		( { nameservers } ) =>
@@ -17,8 +17,10 @@ function useUpdateNameserversMutation( domainName ) {
 				nameservers: nameservers.map( ( nameserver ) => ( { nameserver } ) ),
 			} ),
 		{
-			onSuccess() {
+			...queryOptions,
+			onSuccess( ...args ) {
 				queryClient.invalidateQueries( [ 'domain-nameservers', domainName ] );
+				queryOptions.onSuccess?.( ...args );
 			},
 		}
 	);
