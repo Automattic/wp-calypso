@@ -16,6 +16,7 @@ import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { withEnhancers } from 'calypso/state/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -68,21 +69,15 @@ export class PageViewTracker extends React.Component {
 			path,
 			recorder = noop,
 			hasSelectedSiteLoaded,
-			isSelectedSiteNotRequested,
+			isUserAuthenticated,
 			title,
 		} = this.props;
 
 		debug( `Queuing Page View: "${ title }" at "${ path }" with ${ delay }ms delay` );
 
-		if ( this.state.timer ) {
-			return;
-		}
-
-		if ( isSelectedSiteNotRequested ) {
-			return this.recordViewWithProperties();
-		}
-
-		if ( ! hasSelectedSiteLoaded ) {
+		// When the user is not authenticated, their site data isn't requested and we still want
+		// to record the page view.
+		if ( ( ! hasSelectedSiteLoaded && isUserAuthenticated ) || this.state.timer ) {
 			return;
 		}
 
@@ -116,13 +111,11 @@ const mapStateToProps = ( state ) => {
 		! currentSlug ||
 		( typeof currentSlug === 'number' && currentSlug === selectedSiteId ) ||
 		currentSlug === selectedSiteSlug;
-	const isSelectedSiteNotRequested =
-		currentSlug && ! selectedSiteId && ! state.sites.requesting[ currentSlug ];
 
 	return {
 		hasSelectedSiteLoaded,
-		isSelectedSiteNotRequested,
 		selectedSiteId,
+		isUserAuthenticated: getCurrentUserId( state ),
 	};
 };
 
