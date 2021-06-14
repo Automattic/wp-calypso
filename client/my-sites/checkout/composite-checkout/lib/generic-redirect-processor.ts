@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type {
@@ -43,31 +42,20 @@ export default async function genericRedirectProcessor(
 		throw new Error( 'Required purchase data is missing' );
 	}
 
-	const { protocol, hostname, port, pathname } = parseUrl(
-		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
-		true
-	);
-	const cancelUrlQuery = {};
-	const redirectToSuccessUrl = formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname: getThankYouUrl(),
-	} );
-	const successUrl = formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname: `/checkout/thank-you/${ siteSlug || 'no-site' }/pending`,
-		query: { redirectTo: redirectToSuccessUrl },
-	} );
-	const cancelUrl = formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname,
-		query: cancelUrlQuery,
-	} );
+	// The success URL will be a pending page where we will poll for the order
+	// until a webhook is received that confirms the payment, at which point the
+	// pending page will redirect to the thank-you page as returned by
+	// getThankYouUrl.
+	const { origin = 'https://wordpress.com', pathname = '/', search = '' } =
+		typeof window !== 'undefined' ? window.location : {};
+	const thankYouUrl = getThankYouUrl() || 'https://wordpress.com';
+	const successUrlPath = `/checkout/thank-you/${ siteSlug || 'no-site' }/pending`;
+	const successUrlBase = `${ origin }${ successUrlPath }`;
+
+	const successUrlObject = new URL( successUrlBase );
+	successUrlObject.searchParams.set( 'redirectTo', thankYouUrl );
+	const successUrl = successUrlObject.href;
+	const cancelUrl = `${ origin }${ pathname }${ search }`;
 
 	recordTransactionBeginAnalytics( {
 		paymentMethodId,

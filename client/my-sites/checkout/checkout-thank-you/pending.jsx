@@ -50,8 +50,12 @@ class CheckoutPending extends PureComponent {
 			if ( ORDER_TRANSACTION_STATUS.SUCCESS === processingStatus ) {
 				const { receiptId } = transaction;
 
-				const redirectPath = redirectTo.replace( 'pending', receiptId );
-				page( redirectPath );
+				if ( redirectTo.startsWith( '/' ) ) {
+					const redirectPath = redirectTo.replace( 'pending', receiptId );
+					page( redirectPath );
+				} else {
+					window.location.href = redirectTo;
+				}
 
 				return;
 			}
