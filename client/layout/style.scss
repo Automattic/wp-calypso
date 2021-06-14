@@ -103,6 +103,7 @@
 	background: var( --color-sidebar-background );
 	border-right: 1px solid var( --color-sidebar-border );
 	width: var( --sidebar-width-max );
+	z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
 	overflow: hidden;
 
 	@include breakpoint-deprecated( '<960px' ) {
