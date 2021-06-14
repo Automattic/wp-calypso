@@ -8,7 +8,7 @@
 	},
 	"files": [ "dist", "package.json", "config/*.json" ],
 	"win": {
-		"icon": "./resource/icons/icon.ico",
+		"icon": "./resource/icon.ico",
 		"target": [
 			{
 				"target": "appx",
