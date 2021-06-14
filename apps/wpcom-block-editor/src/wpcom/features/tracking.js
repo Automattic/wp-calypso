@@ -31,10 +31,27 @@ function globalEventPropsHandler( block ) {
 		return {};
 	}
 
-	return {
-		variation_slug: select( 'core/blocks' ).getActiveBlockVariation( block.name, block.attributes )
-			?.name,
-	};
+	// `getActiveBlockVariation` selector is only available since Gutenberg 10.6.
+	// To avoid errors, we make sure the selector exists. If it doesn't,
+	// then we fallback to the old way.
+	const { getActiveBlockVariation } = select( 'core/blocks' );
+	if ( getActiveBlockVariation ) {
+		return {
+			variation_slug: getActiveBlockVariation( block.name, block.attributes )?.name,
+		};
+	}
+
+	// Pick up variation slug from `core/embed` block.
+	if ( block.name === 'core/embed' && block?.attributes?.providerNameSlug ) {
+		return { variation_slug: block.attributes.providerNameSlug };
+	}
+
+	// Pick up variation slug from `core/social-link` block.
+	if ( block.name === 'core/social-link' && block?.attributes?.service ) {
+		return { variation_slug: block.attributes.service };
+	}
+
+	return {};
 }
 /**
  * Looks up the block name based on its id.
