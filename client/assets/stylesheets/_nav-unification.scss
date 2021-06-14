@@ -274,3 +274,11 @@
 		outline: 1px solid var( --color-sidebar-border );
 	}
 }
+
+// Ensure that the sidebar always remains on top.
+// Related issue: https://github.com/Automattic/wp-calypso/issues/53504
+.is-nav-unification {
+	.layout__secondary {
+		z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
+	}
+}
