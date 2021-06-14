@@ -21,9 +21,9 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import userUtils from 'calypso/lib/user/utils';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { redirectToLogout } from 'calypso/lib/user/shared-utils';
 import wpcom from 'calypso/lib/wp';
 import normalizeInvite from './utils/normalize-invite';
 
@@ -128,8 +128,8 @@ class InviteAccept extends React.Component {
 		return loginUrl;
 	};
 
-	signUpLink = () => {
-		userUtils.logout( window.location.href );
+	signUpLink = async () => {
+		await redirectToLogout( this.props.user, window.location.href );
 	};
 
 	localeSuggestions = () => {
