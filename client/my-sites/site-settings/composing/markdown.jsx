@@ -30,7 +30,7 @@ const Markdown = ( { fields, handleToggle, isRequestingSettings, isSavingSetting
 				checked={ !! fields.wpcom_publish_posts_with_markdown }
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleToggle( 'wpcom_publish_posts_with_markdown' ) }
-				label={ translate( 'Write posts or pages in plain-text Markdown syntax' ) }
+				label={ translate( 'Write posts or pages in plain-text Markdown syntax.' ) }
 			/>
 		</FormFieldset>
 	);
