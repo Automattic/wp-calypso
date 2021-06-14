@@ -63,7 +63,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 
 	useEffect( () => {
 		dispatch( fetchAutomatedTransferStatus( selectedSiteId ?? 0 ) );
-	}, [ fetchAutomatedTransferStatus ] );
+	}, [ dispatch, selectedSiteId ] );
 
 	useEffect( () => {
 		if ( pluginSlugToBeInstalled && isAtomicSite ) {
@@ -76,7 +76,14 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 				`/marketplace/product/details/wordpress-seo/${ selectedSiteSlug }?flags=marketplace-yoast`
 			);
 		}
-	}, [ dispatch, pluginSlugToBeInstalled, isPluginInstalledDuringPurchase, selectedSiteId ] );
+	}, [
+		dispatch,
+		pluginSlugToBeInstalled,
+		isPluginInstalledDuringPurchase,
+		selectedSiteId,
+		isAtomicSite,
+		selectedSiteSlug,
+	] );
 
 	const TIMEOUT_BEFORE_REDIRECTING_ON_TRANSFER_COMPLETE = 4000;
 	const SIMULATION_REFRESH_INTERVAL = 2000;
@@ -94,7 +101,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 
 			SIMULATION_REFRESH_INTERVAL
 		);
-	}, [ simulatedProgressPercentage ] );
+	}, [ MAX_PERCENTAGE_SIMULATED, simulatedProgressPercentage ] );
 
 	useEffect( () => {
 		if ( transferStatus === 'complete' ) {
@@ -104,7 +111,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 				page( `/marketplace/thank-you/${ selectedSiteId }?flags=marketplace-yoast` );
 			}, TIMEOUT_BEFORE_REDIRECTING_ON_TRANSFER_COMPLETE );
 		}
-	}, [ selectedSiteSlug, transferStatus ] );
+	}, [ selectedSiteId, selectedSiteSlug, transferStatus ] );
 
 	if ( simulatedProgressPercentage > 50 && currentStep === STEP_1 ) {
 		setCurrentStep( STEP_2 );
