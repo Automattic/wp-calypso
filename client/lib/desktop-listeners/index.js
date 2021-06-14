@@ -7,7 +7,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { newPost } from 'calypso/lib/paths';
-import userUtilities from 'calypso/lib/user/utils';
+import { redirectToLogout } from 'calypso/lib/user/shared-utils';
 import * as oAuthToken from 'calypso/lib/oauth-token';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -16,7 +16,11 @@ import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/anal
 import { NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_RESET } from 'calypso/state/desktop/window-events';
 import { setForceRefresh as forceNotificationsRefresh } from 'calypso/state/notifications-panel/actions';
 import { navigate } from 'calypso/lib/navigate';
-import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUser,
+	getCurrentUserId,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 
 /**
  * Module variables
@@ -138,7 +142,7 @@ const DesktopListeners = {
 	onSignout: function () {
 		debug( 'Signout' );
 
-		userUtilities.logout();
+		redirectToLogout( getCurrentUser( this.store.getState() ) );
 	},
 
 	onShowMySites: function () {
