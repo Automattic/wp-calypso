@@ -193,11 +193,34 @@ export default function WPCheckout( {
 
 		const loginUrl = login( { redirectTo, emailAddress } );
 
+		onEvent( {
+			type: 'WPCOM_EMAIL_ALREADY_EXISTS',
+			payload: {
+				email: emailAddress,
+				checkoutFlow: isJetpackCheckout ? 'site_only_checkout' : 'wpcom_registrationless',
+			},
+		} );
+
 		return translate(
 			'That email address is already in use. If you have an existing account, {{a}}please log in{{/a}}.',
 			{
 				components: {
-					a: <a href={ loginUrl } />,
+					a: (
+						<a
+							onClick={ () =>
+								onEvent( {
+									type: 'REDIRECT_TO_LOGIN',
+									payload: {
+										email: emailAddress,
+										checkoutFlow: isJetpackCheckout
+											? 'jetpack_site_only'
+											: 'wpcom_registrationless',
+									},
+								} )
+							}
+							href={ loginUrl }
+						/>
+					),
 				},
 			}
 		);

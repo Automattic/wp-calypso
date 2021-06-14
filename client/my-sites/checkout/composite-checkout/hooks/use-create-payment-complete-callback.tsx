@@ -61,6 +61,7 @@ export default function useCreatePaymentCompleteCallback( {
 	isFocusedLaunch,
 	siteSlug,
 	isJetpackCheckout = false,
+	checkoutFlow,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
@@ -71,7 +72,8 @@ export default function useCreatePaymentCompleteCallback( {
 	isComingFromUpsell?: boolean;
 	isFocusedLaunch?: boolean;
 	siteSlug: string | undefined;
-	isJetpackCheckout?: boolean;
+	isJetpackCheckout: boolean;
+	checkoutFlow: string;
 } ): PaymentCompleteCallback {
 	const { responseCart } = useShoppingCart();
 	const reduxDispatch = useDispatch();
@@ -119,6 +121,7 @@ export default function useCreatePaymentCompleteCallback( {
 					transactionResult,
 					redirectUrl: url,
 					responseCart,
+					checkoutFlow,
 					reduxDispatch,
 				} );
 			} catch ( err ) {
@@ -232,6 +235,7 @@ export default function useCreatePaymentCompleteCallback( {
 			createUserAndSiteBeforeTransaction,
 			isFocusedLaunch,
 			isJetpackCheckout,
+			checkoutFlow,
 		]
 	);
 }
@@ -314,12 +318,14 @@ function recordPaymentCompleteAnalytics( {
 	transactionResult,
 	redirectUrl,
 	responseCart,
+	checkoutFlow,
 	reduxDispatch,
 }: {
 	paymentMethodId: string | null;
 	transactionResult: WPCOMTransactionEndpointResponse | undefined;
 	redirectUrl: string;
 	responseCart: ResponseCart;
+	checkoutFlow: string;
 	reduxDispatch: ReturnType< typeof useDispatch >;
 } ) {
 	const wpcomPaymentMethod = paymentMethodId
@@ -356,6 +362,7 @@ function recordPaymentCompleteAnalytics( {
 			currency: responseCart.currency,
 			payment_method: wpcomPaymentMethod || '',
 			device,
+			checkout_flow: checkoutFlow,
 		} )
 	);
 }

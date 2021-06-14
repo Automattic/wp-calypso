@@ -44,6 +44,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 							apple_pay_available: action.payload?.apple_pay_available,
 							product_slug: action.payload?.product_slug,
 							is_composite: true,
+							checkout_flow: action.payload?.checkout_flow,
 						} )
 					);
 					return reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );
@@ -311,6 +312,22 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				case 'VALIDATE_DOMAIN_CONTACT_INFO': {
 					// TODO: Decide what to do here
 					return;
+				}
+				case 'WPCOM_EMAIL_ALREADY_EXISTS': {
+					return reduxDispatch(
+						recordTracksEvent( 'calypso_checkout_wpcom_email_exists', {
+							email: action.payload?.email,
+							checkout_flow: action.payload?.checkoutFlow,
+						} )
+					);
+				}
+				case 'REDIRECT_TO_LOGIN': {
+					return reduxDispatch(
+						recordTracksEvent( 'calypso_checkout_composite_login_click', {
+							email: action.payload?.email,
+							checkout_flow: action.payload?.checkpoutFlow,
+						} )
+					);
 				}
 				case 'SHOW_MODAL_AUTHORIZATION': {
 					return reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );

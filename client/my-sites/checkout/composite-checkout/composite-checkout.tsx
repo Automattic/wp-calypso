@@ -119,6 +119,7 @@ export default function CompositeCheckout( {
 	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
+	isUserComingFromLoginForm,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -137,9 +138,10 @@ export default function CompositeCheckout( {
 	infoMessage?: JSX.Element;
 	onAfterPaymentComplete?: () => void;
 	isFocusedLaunch?: boolean;
-	isJetpackCheckout?: boolean;
+	isJetpackCheckout: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
+	isUserComingFromLoginForm?: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
@@ -403,12 +405,27 @@ export default function CompositeCheckout( {
 		productSlug: planSlugs.length > 0 ? planSlugs[ 0 ] : undefined,
 	} );
 
+	let checkoutFlow = '';
+	if ( isLoggedOutCart ) {
+		if ( isJetpackCheckout ) {
+			checkoutFlow = isUserComingFromLoginForm
+				? 'jetpack_site_only_coming_from_login'
+				: 'Jetpack_site_only';
+		} else {
+			checkoutFlow = 'wpcom_registrationless';
+		}
+	} else {
+		checkoutFlow = isJetpackNotAtomic ? 'jetpack_checkout' : 'wpcom_checkout';
+	}
+
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
 		productAliasFromUrl,
 		updatedSiteSlug,
 		feature,
-		plan
+		plan,
+		isJetpackCheckout,
+		checkoutFlow
 	);
 
 	const products = useSelector( ( state ) => getProductsList( state ) );
@@ -560,6 +577,7 @@ export default function CompositeCheckout( {
 		responseCart,
 		storedCards,
 		productAliasFromUrl,
+		checkoutFlow,
 	} );
 
 	const onPaymentComplete = useCreatePaymentCompleteCallback( {
@@ -573,6 +591,7 @@ export default function CompositeCheckout( {
 		isFocusedLaunch,
 		siteSlug: updatedSiteSlug,
 		isJetpackCheckout,
+		checkoutFlow,
 	} );
 
 	const handlePaymentComplete = useCallback(
@@ -678,11 +697,22 @@ function getAnalyticsPath(
 	product: string | undefined,
 	selectedSiteSlug: string | undefined,
 	selectedFeature: string | undefined,
-	plan: string | undefined
+	plan: string | undefined,
+	isJetpackCheckout: boolean,
+	checkoutFlow: string
 ): { analyticsPath: string; analyticsProps: Record< string, string > } {
-	debug( 'getAnalyticsPath', { purchaseId, product, selectedSiteSlug, selectedFeature, plan } );
+	debug( 'getAnalyticsPath', {
+		purchaseId,
+		product,
+		selectedSiteSlug,
+		selectedFeature,
+		plan,
+		isJetpackCheckout,
+		checkoutFlow,
+	} );
 	let analyticsPath = '';
 	let analyticsProps = {};
+
 	if ( purchaseId && product ) {
 		analyticsPath = '/checkout/:product/renew/:purchase_id/:site';
 		analyticsProps = { product, purchase_id: purchaseId, site: selectedSiteSlug };
@@ -693,8 +723,10 @@ function getAnalyticsPath(
 		analyticsPath = '/checkout/features/:feature/:site';
 		analyticsProps = { feature: selectedFeature, site: selectedSiteSlug };
 	} else if ( product && ! purchaseId ) {
-		analyticsPath = '/checkout/:site/:product';
-		analyticsProps = { product, site: selectedSiteSlug };
+		analyticsPath = isJetpackCheckout
+			? '/checkout/jetpack/:site/:product'
+			: '/checkout/:site/:product';
+		analyticsProps = { product, site: selectedSiteSlug, checkoutFlow };
 	} else if ( selectedSiteSlug ) {
 		analyticsPath = '/checkout/:site';
 		analyticsProps = { site: selectedSiteSlug };
