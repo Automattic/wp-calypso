@@ -17,13 +17,13 @@ import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
-import userUtilities from 'calypso/lib/user/utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { logoutUser } from 'calypso/state/logout/actions';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar-unified/utils';
 import { clearStore } from 'calypso/lib/user/store';
+import { redirectToLogout } from 'calypso/lib/user/shared-utils';
 
 /**
  * Style dependencies
@@ -56,7 +56,7 @@ class MeSidebar extends React.Component {
 		} catch {
 			// The logout endpoint might fail if the nonce has expired.
 			// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
-			userUtilities.logout( redirectTo );
+			redirectToLogout( currentUser, redirectTo );
 		}
 
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Sidebar Sign Out Link' );
