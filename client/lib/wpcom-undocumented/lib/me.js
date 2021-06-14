@@ -57,6 +57,18 @@ UndocumentedMe.prototype.purchases = function ( callback ) {
 	return this.wpcom.req.get( '/me/purchases', callback );
 };
 
+UndocumentedMe.prototype.validatePassword = function ( password, callback ) {
+	const args = {
+		apiVersion: '1.1',
+		path: '/me/settings/password/validate',
+		body: {
+			password: password,
+		},
+	};
+
+	return this.wpcom.req.post( args, callback );
+};
+
 UndocumentedMe.prototype.sendSMSValidationCode = function ( callback ) {
 	const args = {
 		apiVersion: '1.1',
@@ -92,6 +104,28 @@ UndocumentedMe.prototype.getAppAuthCodes = function ( callback ) {
 	};
 
 	return this.wpcom.req.get( args, callback );
+};
+
+UndocumentedMe.prototype.validateUsername = function ( username, callback ) {
+	const args = {
+		apiVersion: '1.1',
+		path: '/me/username/validate/' + username,
+	};
+
+	return this.wpcom.req.get( args, callback );
+};
+
+UndocumentedMe.prototype.changeUsername = function ( username, action, callback ) {
+	const args = {
+		apiVersion: '1.1',
+		path: '/me/username',
+		body: {
+			username: username,
+			action: action,
+		},
+	};
+
+	return this.wpcom.req.post( args, callback );
 };
 
 UndocumentedMe.prototype.getPeerReferralLink = function ( callback ) {

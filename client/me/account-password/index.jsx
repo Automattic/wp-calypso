@@ -43,7 +43,9 @@ class AccountPassword extends React.Component {
 		pendingValidation: true,
 	};
 
-	debouncedPasswordValidate = debounce( this.validatePassword, 300 );
+	componentDidMount() {
+		this.debouncedPasswordValidate = debounce( this.validatePassword, 300 );
+	}
 
 	componentDidUpdate( prevProps ) {
 		if (
@@ -74,9 +76,7 @@ class AccountPassword extends React.Component {
 		}
 
 		try {
-			const validationResult = await wpcom.req.post( '/me/settings/password/validate', {
-				password,
-			} );
+			const validationResult = await wpcom.me().validatePassword( password );
 
 			this.setState( { pendingValidation: false, validation: validationResult } );
 		} catch ( err ) {
