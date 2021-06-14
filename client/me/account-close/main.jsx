@@ -32,8 +32,8 @@ import isAccountClosed from 'calypso/state/selectors/is-account-closed';
 import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
-import userUtils from 'calypso/lib/user/utils';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { redirectToLogout } from 'calypso/lib/user/shared-utils';
 
 /**
  * Style dependencies
@@ -49,7 +49,7 @@ class AccountSettingsClose extends Component {
 	UNSAFE_componentWillReceiveProps = ( nextProps ) => {
 		// If the account is closed, logout
 		if ( nextProps.isAccountClosed === true ) {
-			userUtils.logout();
+			redirectToLogout( nextProps.user );
 		}
 	};
 
@@ -288,5 +288,6 @@ export default connect( ( state ) => {
 		hasAtomicSites: userHasAnyAtomicSites( state ),
 		isAccountClosed: isAccountClosed( state ),
 		sitesToBeDeleted: getAccountClosureSites( state ),
+		user,
 	};
 } )( localize( AccountSettingsClose ) );
