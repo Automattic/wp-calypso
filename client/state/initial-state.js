@@ -10,9 +10,9 @@ import { map, pick, throttle } from 'lodash';
 import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { getAllStoredItems, setStoredItem, clearStorage } from 'calypso/lib/browser-storage';
+import { getStoredUserId } from 'calypso/lib/user/store';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import config from '@automattic/calypso-config';
-import user from 'calypso/lib/user';
 
 /**
  * Module variables
@@ -85,7 +85,7 @@ function shouldAddSympathy() {
 // scenario where state data may have been stored without this
 // check being performed.
 function verifyStoredRootState( state ) {
-	const currentUserId = user()?.get()?.ID ?? null;
+	const currentUserId = getStoredUserId() ?? null;
 	const storedUserId = state?.currentUser?.id ?? null;
 
 	if ( currentUserId !== storedUserId ) {
@@ -127,7 +127,7 @@ function getPersistenceKey( subkey, forceLoggedOutUser ) {
 }
 
 function getReduxStateKey( forceLoggedOutUser = false ) {
-	return getReduxStateKeyForUserId( forceLoggedOutUser ? null : user()?.get()?.ID ?? null );
+	return getReduxStateKeyForUserId( forceLoggedOutUser ? null : getStoredUserId() ?? null );
 }
 
 function getReduxStateKeyForUserId( userId ) {

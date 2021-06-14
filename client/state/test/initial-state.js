@@ -13,7 +13,7 @@ import { useFakeTimers } from 'sinon';
  */
 import { withStorageKey } from '@automattic/state-utils';
 import * as browserStorage from 'calypso/lib/browser-storage';
-import userFactory from 'calypso/lib/user';
+import { getStoredUserId } from 'calypso/lib/user/store';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import { createReduxStore } from 'calypso/state';
 import signupReducer from 'calypso/state/signup/reducer';
@@ -38,10 +38,8 @@ const initialReducer = combineReducers( {
 	postTypes,
 } );
 
-jest.mock( 'calypso/lib/user', () => () => ( {
-	get: () => ( {
-		ID: 123456789,
-	} ),
+jest.mock( 'calypso/lib/user/store', () => ( {
+	getStoredUserId: () => 123456789,
 } ) );
 jest.mock( 'calypso/lib/user/support-user-interop', () => ( {
 	isSupportSession: jest.fn().mockReturnValue( false ),
@@ -292,13 +290,13 @@ describe( 'initial-state', () => {
 				let consoleErrorSpy;
 				let getStoredItemSpy;
 
-				const userId = userFactory().get().ID + 1;
+				const userId = getStoredUserId() + 1;
 				const savedState = {
 					[ `redux-state-${ userId }` ]: {
 						// Create an invalid state by forcing the user ID
 						// stored in the state to differ from the current
 						// mocked user ID.
-						currentUser: { id: userFactory().get().ID + 1 },
+						currentUser: { id: getStoredUserId() + 1 },
 						postTypes: {
 							items: {
 								2916284: {
@@ -715,7 +713,7 @@ describe( 'initial-state', () => {
 			store.dispatch( {
 				type: 'foo',
 				data: 1,
-				userId: userFactory().get().ID + 1,
+				userId: getStoredUserId() + 1,
 			} );
 
 			clock.tick( SERIALIZE_THROTTLE );
