@@ -49,6 +49,7 @@ type OwnProps = {
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
 	onButtonClick: PurchaseCallback;
+	buttonURL?: string;
 	expiryDate?: Moment;
 	isFeatured?: boolean;
 	isFree?: boolean;
@@ -221,6 +222,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 	buttonLabel,
 	buttonPrimary,
 	onButtonClick,
+	buttonURL,
 	expiryDate,
 	isFeatured,
 	isOwned,
@@ -305,16 +307,27 @@ const JetpackProductCard: React.FC< Props > = ( {
 						{ preventWidows( disabledMessage ) }
 					</p>
 				) }
-				{ ! isDisabled && (
-					<Button
-						primary={ buttonPrimary }
-						className="jetpack-product-card__button"
-						onClick={ onButtonClick }
-						disabled={ isDeprecated }
-					>
-						{ buttonLabel }
-					</Button>
-				) }
+				{ ! isDisabled &&
+					( buttonURL ? (
+						<Button
+							primary={ buttonPrimary }
+							className="jetpack-product-card__button"
+							onClick={ onButtonClick }
+							href={ buttonURL }
+							disabled={ isDeprecated }
+						>
+							{ buttonLabel }
+						</Button>
+					) : (
+						<Button
+							primary={ buttonPrimary }
+							className="jetpack-product-card__button"
+							onClick={ onButtonClick }
+							disabled={ isDeprecated }
+						>
+							{ buttonLabel }
+						</Button>
+					) ) }
 
 				<p className="jetpack-product-card__description">{ description }</p>
 				{ features && features.items.length > 0 && (

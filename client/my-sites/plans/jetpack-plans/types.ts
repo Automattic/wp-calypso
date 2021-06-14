@@ -18,6 +18,11 @@ export interface QueryArgs {
 }
 
 export type PurchaseCallback = ( arg0: SelectorProduct, arg1?: boolean, arg2?: Purchase ) => void;
+export type PurchaseURLCallback = (
+	arg0: SelectorProduct,
+	arg1?: boolean,
+	arg2?: Purchase
+) => string | undefined;
 export type DurationChangeCallback = ( arg0: Duration ) => void;
 export type ScrollCardIntoViewCallback = ( arg0: HTMLDivElement, arg1: string ) => void;
 
@@ -42,6 +47,7 @@ export interface ProductsGridProps {
 	onSelectProduct: PurchaseCallback;
 	onDurationChange?: DurationChangeCallback;
 	scrollCardIntoView: ScrollCardIntoViewCallback;
+	createButtonLink?: PurchaseURLCallback;
 }
 
 export type PlanGridProducts = {

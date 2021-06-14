@@ -26,13 +26,14 @@ import './style.scss';
  * Type dependencies
  */
 import type { PlanRecommendation } from './types';
-import type { Duration, PurchaseCallback, SelectorProduct } from '../types';
+import type { Duration, PurchaseCallback, PurchaseURLCallback, SelectorProduct } from '../types';
 
 type Props = {
 	planRecommendation: PlanRecommendation;
 	duration: Duration;
 	filterBar: React.ReactNode;
 	onSelectProduct: PurchaseCallback;
+	createButtonLink: PurchaseURLCallback;
 };
 
 const PlanUpgradeSection: React.FC< Props > = ( {
@@ -40,6 +41,7 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 	duration,
 	filterBar,
 	onSelectProduct,
+	createButtonLink,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -100,6 +102,7 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 						selectedTerm={ duration }
 						hideSavingLabel
 						onClick={ onSelectProduct }
+						createButtonLink={ createButtonLink }
 					/>
 				</li>
 				<li className="plan-upgrade__separator">
@@ -119,6 +122,7 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 									isAligned
 									hideSavingLabel
 									onClick={ onSelectProduct }
+									createButtonLink={ createButtonLink }
 								/>
 							</li>
 						) ) }

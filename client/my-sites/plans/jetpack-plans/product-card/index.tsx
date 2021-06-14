@@ -38,6 +38,7 @@ import productTooltip from './product-tooltip';
 import type {
 	Duration,
 	PurchaseCallback,
+	PurchaseURLCallback,
 	ScrollCardIntoViewCallback,
 	SelectorProduct,
 	SiteProduct,
@@ -46,6 +47,7 @@ import type {
 interface ProductCardProps {
 	item: SelectorProduct;
 	onClick: PurchaseCallback;
+	createButtonLink?: PurchaseURLCallback;
 	siteId: number | null;
 	currencyCode: string | null;
 	selectedTerm?: Duration;
@@ -59,6 +61,7 @@ interface ProductCardProps {
 const ProductCard: React.FC< ProductCardProps > = ( {
 	item,
 	onClick,
+	createButtonLink,
 	siteId,
 	currencyCode,
 	selectedTerm,
@@ -162,6 +165,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			} ) }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
+			buttonURL={
+				createButtonLink ? createButtonLink( item, isUpgradeableToYearly, purchase ) : undefined
+			}
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isFeatured={ featuredPlans && featuredPlans.includes( item.productSlug ) }
 			isOwned={ isOwned }
