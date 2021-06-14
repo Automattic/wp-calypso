@@ -193,7 +193,7 @@ class HelpContact extends React.Component {
 		const { currentUserLocale, supportVariation } = this.props;
 		let plan = 'N/A';
 		if ( site ) {
-			plan = `${ site.plan.product_name_short } (${ getPlanTermLabel(
+			plan = `${ site.plan.product_id } - ${ site.plan.product_name_short } (${ getPlanTermLabel(
 				site.plan.product_slug,
 				( val ) => val // Passing an identity function instead of `translate` to always return the English string
 			) })`;
