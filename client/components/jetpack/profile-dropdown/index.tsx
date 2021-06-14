@@ -10,8 +10,8 @@ import { useTranslate } from 'i18n-calypso';
  */
 import useOutsideClickCallback from './use-outside-click-callback';
 import Gravatar from 'calypso/components/gravatar';
-import userUtilities from 'calypso/lib/user/utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { redirectToLogout } from 'calypso/lib/user/shared-utils';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 
 /**
@@ -39,8 +39,9 @@ const ProfileDropdown: React.FC = () => {
 
 	const trackedToggle = useTrackCallback( toggle, 'calypso_jetpack_masterbar_profile_toggle' );
 	const trackedClose = useTrackCallback( close, 'calypso_jetpack_masterbar_profile_close' );
+	const redirectToLogoutWithUser = useCallback( () => redirectToLogout( user ), [ user ] );
 	const trackedLogOut = useTrackCallback(
-		userUtilities.logout,
+		redirectToLogoutWithUser,
 		'calypso_jetpack_settings_masterbar_logout'
 	);
 
