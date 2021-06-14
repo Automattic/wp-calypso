@@ -8,23 +8,20 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLegend from 'calypso/components/forms/form-legend';
 import SupportInfo from 'calypso/components/support-info';
 import { ToggleControl } from '@wordpress/components';
+import { Card } from '@automattic/components';
 
 const Markdown = ( { fields, handleToggle, isRequestingSettings, isSavingSettings } ) => {
 	const translate = useTranslate();
 
 	return (
-		<FormFieldset>
-			<FormLegend>{ translate( 'Markdown' ) }</FormLegend>
+		<Card className="composing__card site-settings__card">
 			<SupportInfo
 				text={ translate(
 					'Use Markdown syntax to compose content with links, lists, and other styles. This setting enables Markdown in the Classic Editor as well as within a Classic Editor block.'
 				) }
 				link="https://wordpress.com/support/markdown-quick-reference/"
-				privacyLink={ false }
 			/>
 			<ToggleControl
 				checked={ !! fields.wpcom_publish_posts_with_markdown }
@@ -32,7 +29,7 @@ const Markdown = ( { fields, handleToggle, isRequestingSettings, isSavingSetting
 				onChange={ handleToggle( 'wpcom_publish_posts_with_markdown' ) }
 				label={ translate( 'Write posts or pages in plain-text Markdown syntax.' ) }
 			/>
-		</FormFieldset>
+		</Card>
 	);
 };
 
