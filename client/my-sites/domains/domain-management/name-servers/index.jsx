@@ -25,7 +25,7 @@ import {
 	WPCOM_DEFAULT_NAMESERVERS,
 	WPCOM_DEFAULT_NAMESERVERS_REGEX,
 	CLOUDFLARE_NAMESERVERS_REGEX,
-} from 'calypso/state/domains/nameservers/constants';
+} from './constants';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import FetchError from './fetch-error';
