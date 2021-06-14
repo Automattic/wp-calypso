@@ -100,3 +100,60 @@ export function createSuiteTitle( title: string ): string {
 
 	return parts.join( ' ' );
 }
+
+/**
+ * Returns a test email address resolving to a real Mailosaur address.
+ *
+ * @param {[key: string]: string} options Object to control the generated email address.
+ * @param {string} options.prefix String prefix to be prepended prior to the global email prefix.
+ * @param {string} options.inboxId String identifier of the Mailosaur inbox.
+ * @returns {string} Email address.
+ */
+export function getTestEmailAddress( options: { prefix: string; inboxId: string } ): string {
+	const domain = 'mailosaur.io';
+	const globalEmailPrefix = config.has( 'emailPrefix' ) ? config.get( 'emailPrefix' ) : '';
+	return `${ globalEmailPrefix }${ options.prefix }.${ options.inboxId }@${ domain }`;
+}
+
+/**
+ * Generate and return a test domain registrar contact information.
+ *
+ * @param {[key: string]: string} options Object to control the generated registrar details.options.
+ * @param {string} options.email Email address to be used for the test domain registrar details.
+ * @returns {[key: string]: string} Object containing generated domain registrar details.
+ */
+export function getTestDomainRegistrarDetails( options: {
+	email: string;
+} ): { [ key: string ]: string } {
+	return {
+		firstName: 'End to End',
+		lastName: 'Testing',
+		emailAddress: options.email,
+		phoneNumber: '0422 888 888',
+		countryCode: 'AU',
+		address: '888 Queen Street',
+		city: 'Brisbane',
+		stateCode: 'QLD',
+		postalCode: '4000',
+	};
+}
+
+/**
+ * Generate and return a test blog name.
+ *
+ * @returns {string} Test blog name.
+ */
+export function getNewBlogName(): string {
+	return `e2eflowtesting${ new Date().getTime().toString() }${ getRandomInt( 100, 999 ) }`;
+}
+
+/**
+ * Returns a pseudo-random integer between the min and max values.
+ *
+ * @param {number} min Minimum value of the bound.
+ * @param {number} max Maximum value of the bound.
+ * @returns {number} Generated pseudo-random number.
+ */
+export function getRandomInt( min: number, max: number ): number {
+	return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+}
