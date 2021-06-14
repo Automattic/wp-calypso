@@ -124,6 +124,11 @@ class Account extends React.Component {
 		validationResult: false,
 	};
 
+	componentDidMount() {
+		debug( this.constructor.displayName + ' component is mounted.' );
+		this.debouncedUsernameValidate = debounce( this.validateUsername, 600 );
+	}
+
 	componentDidUpdate() {
 		if ( ! this.hasUnsavedUserSettings( ACCOUNT_FIELDS.concat( INTERFACE_FIELDS ) ) ) {
 			this.props.markSaved();
@@ -286,9 +291,10 @@ class Account extends React.Component {
 		}
 
 		try {
-			const { success, allowed_actions } = await wpcom.req.get(
-				`/me/username/validate/${ username }`
-			);
+			const { success, allowed_actions } = await wpcom
+				.undocumented()
+				.me()
+				.validateUsername( username );
 
 			this.setState( {
 				validationResult: { success, allowed_actions, validatedUsername: username },
@@ -297,8 +303,6 @@ class Account extends React.Component {
 			this.setState( { validationResult: error } );
 		}
 	}
-
-	debouncedUsernameValidate = debounce( this.validateUsername, 600 );
 
 	hasEmailValidationError() {
 		return !! this.state.emailValidationError;
@@ -472,7 +476,7 @@ class Account extends React.Component {
 		this.setState( { submittingForm: true } );
 
 		try {
-			await wpcom.req.post( '/me/username', { username, action } );
+			await wpcom.undocumented().me().changeUsername( username, action );
 			this.setState( { submittingForm: false } );
 
 			this.props.markSaved();

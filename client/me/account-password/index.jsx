@@ -43,6 +43,10 @@ class AccountPassword extends React.Component {
 		pendingValidation: true,
 	};
 
+	componentDidMount() {
+		this.debouncedPasswordValidate = debounce( this.validatePassword, 300 );
+	}
+
 	componentDidUpdate( prevProps ) {
 		if (
 			prevProps.isPendingPasswordChange &&
@@ -72,9 +76,7 @@ class AccountPassword extends React.Component {
 		}
 
 		try {
-			const validationResult = await wpcom.req.post( '/me/settings/password/validate', {
-				password,
-			} );
+			const validationResult = await wpcom.me().validatePassword( password );
 
 			this.setState( { pendingValidation: false, validation: validationResult } );
 		} catch ( err ) {
@@ -82,8 +84,6 @@ class AccountPassword extends React.Component {
 			return;
 		}
 	};
-
-	debouncedPasswordValidate = debounce( this.validatePassword, 300 );
 
 	handlePasswordChange = ( event ) => {
 		const newPassword = event.currentTarget.value;
