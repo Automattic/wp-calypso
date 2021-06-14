@@ -124,6 +124,8 @@ class Account extends React.Component {
 		validationResult: false,
 	};
 
+	debouncedUsernameValidate = debounce( this.validateUsername, 600 );
+
 	componentDidUpdate() {
 		if ( ! this.hasUnsavedUserSettings( ACCOUNT_FIELDS.concat( INTERFACE_FIELDS ) ) ) {
 			this.props.markSaved();
@@ -297,8 +299,6 @@ class Account extends React.Component {
 			this.setState( { validationResult: error } );
 		}
 	}
-
-	debouncedUsernameValidate = debounce( this.validateUsername, 600 );
 
 	hasEmailValidationError() {
 		return !! this.state.emailValidationError;
