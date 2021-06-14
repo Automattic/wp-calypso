@@ -48,7 +48,6 @@ export default function () {
 		'/marketing/connections/:domain',
 		siteSelection,
 		navigation,
-		jetpackModuleActive( 'publicize', false ),
 		connections,
 		layout,
 		makeLayout,
