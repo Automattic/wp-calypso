@@ -37,7 +37,7 @@ describe( 'DataHelper Tests', function () {
 			${ 'basicUser' } | ${ [ 'wpcomuser', 'hunter2' ] }
 			${ 'noURLUser' } | ${ [ 'nourluser', 'password1234' ] }
 		`(
-			'Returns $expected if getAccountCredentials is called with $accountType',
+			'Returns $expected if getAccountCredential is called with $accountType',
 			function ( { accountType, expected } ) {
 				expect( getAccountCredential( accountType ) ).toStrictEqual( expected );
 			}
@@ -47,7 +47,7 @@ describe( 'DataHelper Tests', function () {
 			accountType
 			${ 'nonexistent_user' }
 		`(
-			'Throws error if getAccountCredentials is called with $accountType',
+			'Throws error if getAccountCredential is called with $accountType',
 			function ( { accountType } ) {
 				expect( () => getAccountCredential( accountType ) ).toThrow();
 			}
@@ -71,7 +71,7 @@ describe( 'DataHelper Tests', function () {
 			${ 'nonexistent_user' } | ${ Error }
 			${ 'noURLUser' }        | ${ TypeError }
 		`(
-			'Throws error if getAccountCredentials is called with $accountType',
+			'Throws error if getAccountSiteURL is called with $accountType',
 			function ( { accountType, expected } ) {
 				expect( () => getAccountSiteURL( accountType ) ).toThrow( expected );
 			}
