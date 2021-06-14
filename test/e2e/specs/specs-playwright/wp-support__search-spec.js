@@ -34,6 +34,8 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 
 		it( 'Displays default entries', async function () {
 			const results = await supportComponent.getOverallResultsCount();
+			// Default entries varies from 5 on TeamCity to 6 when run locally.
+			// This statement would check that at least 5 items are visible to compensate.
 			assert.ok( results >= 5 );
 		} );
 
@@ -86,8 +88,8 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		} );
 
 		it( 'Displays default entries', async function () {
-			const defaultResults = await supportComponent.getOverallResultsCount();
-			assert.notStrictEqual( 0, defaultResults );
+			const results = await supportComponent.getOverallResultsCount();
+			assert.ok( results >= 5 );
 		} );
 
 		it( 'Enter search keyword', async function () {
@@ -129,8 +131,8 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		} );
 
 		it( 'Displays default entries', async function () {
-			const defaultResults = await supportComponent.getOverallResultsCount();
-			assert.notStrictEqual( 0, defaultResults );
+			const results = await supportComponent.getOverallResultsCount();
+			assert.ok( results >= 5 );
 		} );
 
 		it( 'Enter invalid search keyword', async function () {
@@ -165,8 +167,8 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		} );
 
 		it( 'Displays default entries', async function () {
-			const defaultResults = await supportComponent.getOverallResultsCount();
-			assert.notStrictEqual( 0, defaultResults );
+			const results = await supportComponent.getOverallResultsCount();
+			assert.ok( results >= 5 );
 		} );
 
 		it( 'Enter invalid search keyword', async function () {
