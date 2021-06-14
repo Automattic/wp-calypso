@@ -13,7 +13,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { acceptedNotice } from 'calypso/my-sites/invites/utils';
 import { getInviteForSite } from 'calypso/state/invites/selectors';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { requestSites } from 'calypso/state/sites/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
@@ -245,7 +245,7 @@ export function acceptInvite( invite ) {
 			} );
 
 			dispatch( inviteAccepted( invite ) );
-			await dispatch( requestSites() );
+			await dispatch( requestSite( invite.site.ID ) );
 			return data;
 		} catch ( error ) {
 			if ( error.message ) {
