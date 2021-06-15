@@ -864,7 +864,7 @@ export class JetpackAuthorize extends Component {
 			>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
-						{ authSiteId && <QuerySitePurchases siteId={ authSiteId } /> }
+						<QuerySitePurchases siteId={ authSiteId } />
 						<QueryUserConnection
 							siteId={ authSiteId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
