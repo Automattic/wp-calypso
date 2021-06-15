@@ -16,10 +16,10 @@ export async function clearStore() {
 	await clearStorage();
 }
 
-export async function getUserId() {
-	return await store.get( 'wpcom_user_id' );
+export function getStoredUserId() {
+	return store.get( 'wpcom_user_id' );
 }
 
-export async function setUserId( userId ) {
-	await store.set( 'wpcom_user_id', userId );
+export function setStoredUserId( userId ) {
+	return store.set( 'wpcom_user_id', userId );
 }
