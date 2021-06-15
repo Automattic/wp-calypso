@@ -8,7 +8,7 @@
 .sorted-grid__label {
 	box-sizing: border-box;
 	display: flex;
-	height: 30px;
+	min-height: 30px;
 	padding: 6px 0;
 	margin: 0 10px 0 0;
 	color: var( --color-neutral-light );
