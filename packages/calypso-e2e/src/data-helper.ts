@@ -56,7 +56,7 @@ export function getAccountCredential( accountType: string ): string[] {
  * @param {string} accountType Type of the account for which the site URL is to be obtained.
  * @returns {string} Site URL for the given username.
  * @throws {Error} If the accountType does not have a site URL defined, or accountType does not have an entry in the file.
- * @throws {TypeError} If invalid URL.
+ * @throws {ReferenceError} If URL is not defined for the accountType.
  */
 export function getAccountSiteURL( accountType: string ): string {
 	const testAccounts: { [ key: string ]: string } = config.get( 'testAccounts' );
@@ -66,7 +66,7 @@ export function getAccountSiteURL( accountType: string ): string {
 
 	const [ , , url ] = testAccounts[ accountType ];
 	if ( ! url ) {
-		throw new TypeError( `Secrets entry for ${ accountType } has no site URL defined.` );
+		throw new ReferenceError( `Secrets entry for ${ accountType } has no site URL defined.` );
 	}
 
 	return new URL( `https://${ url }` ).toString();
