@@ -11,7 +11,8 @@ import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
 	sidebar: '.sidebar',
-	menuText: '.sidebar__heading',
+	heading: '.sidebar > li:not(.sidebar__menu-item--child)',
+	subheading: '.sidebar__menu-item--child',
 	expandedMenu: '.sidebar__menu--selected',
 };
 
@@ -68,18 +69,31 @@ export class SidebarComponent extends BaseContainer {
 		heading,
 		subheading,
 	}: {
-		heading: string;
+		heading?: string;
 		subheading?: string;
 	} ): Promise< void > {
 		if ( heading ) {
-			heading = toTitleCase( heading.trim() );
-			await this._click( { selector: `${ selectors.menuText } >> text=${ heading }` } );
+			heading = toTitleCase( heading ).trim();
+			// This will exclude entries where the `heading` term matches multiple times
+			// eg. `Settings` but they are sub-headings in reality, such as Jetpack > Settings.
+			// Since the sub-headings are always hidden unless heading is selected, this works to
+			// our advantage.
+			const selector = `${ selectors.heading } span:has-text("${ heading }"):visible`;
+			await Promise.all( [ this.page.waitForNavigation(), this._click( { selector: selector } ) ] );
 		}
 
 		if ( subheading ) {
-			subheading = toTitleCase( subheading.trim() );
+			subheading = toTitleCase( subheading ).trim();
+			// If there is a subheading, the expanded menu element will always be present.
 			await this.sidebar.waitForSelector( selectors.expandedMenu );
-			await this._click( { selector: `span:has-text("${ subheading }")`, force: true } );
+			// Explicitly select only the child headings and combine with the text matching engine.
+			// This works better than using CSS pseudo-classes like `:has-text` or `:text-matches`
+			// as those approaches result in the element not being clickable.
+			const selector = `${ selectors.subheading } >> text="${ subheading }"`;
+			await Promise.all( [
+				this.page.waitForNavigation(),
+				this._click( { selector: selector, force: true } ),
+			] );
 		}
 	}
 
@@ -105,30 +119,24 @@ export class SidebarComponent extends BaseContainer {
 		selector: string;
 		force?: boolean;
 	} ): Promise< void > {
-		await this.sidebar.waitForElementState( 'stable' );
+		// Wait for these promises in no particular order. We simply want to ensure the sidebar
+		// and the page is in a state to accept inputs.
+		await Promise.all( [
+			this.page.waitForLoadState( 'domcontentloaded' ),
+			this.sidebar.waitForElementState( 'stable' ),
+		] );
 
-		const element = await this.sidebar.waitForSelector( selector );
-		await element.scrollIntoViewIfNeeded();
+		const element = await this.page.waitForSelector( selector, { state: 'visible' } );
 
 		if ( ! force ) {
 			await element.click();
 		} else {
+			// Programatically send a `click` event regardless of element visibility.
+			// This eliminates the need to scroll the sidebar to expose the menu item,
+			// which Playwright struggles with for some reason.
+			// For more information on events, see https://playwright.dev/docs/api/class-elementhandle#element-handle-dispatch-event
 			await element.dispatchEvent( 'click' );
-			await this.page.waitForNavigation();
 		}
 		await this.page.waitForLoadState( 'domcontentloaded' );
-	}
-
-	/**
-	 * Hovers over the sidebar menu item matching the name.
-	 *
-	 * @param {string} name Plaintext name of the menu item in the sidebar.
-	 * @returns {Promise<void>} No return value.
-	 */
-	async hoverMenuItem( name: string ): Promise< void > {
-		const element = await this.page.waitForSelector(
-			`${ selectors.menuText } >> text=${ toTitleCase( name ) }`
-		);
-		await element.hover();
 	}
 }
