@@ -4,7 +4,7 @@
 import { spawn } from 'child_process';
 import { access, mkdir, writeFile } from 'fs/promises';
 import path from 'path';
-import { generatePath, getTestNameWithTime } from '../test-utils';
+import { generatePath, getTestNameWithTime } from '../../test-utils';
 
 export const getFreeDisplay = async () => {
 	// eslint-disable-next-line no-constant-condition
