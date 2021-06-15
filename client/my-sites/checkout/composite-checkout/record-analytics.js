@@ -313,22 +313,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					// TODO: Decide what to do here
 					return;
 				}
-				case 'WPCOM_EMAIL_ALREADY_EXISTS': {
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_wpcom_email_exists', {
-							email: action.payload?.email,
-							checkout_flow: action.payload?.checkoutFlow,
-						} )
-					);
-				}
-				case 'REDIRECT_TO_LOGIN': {
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_login_click', {
-							email: action.payload?.email,
-							checkout_flow: action.payload?.checkpoutFlow,
-						} )
-					);
-				}
 				case 'SHOW_MODAL_AUTHORIZATION': {
 					return reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
 				}

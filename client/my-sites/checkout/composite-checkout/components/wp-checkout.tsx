@@ -3,6 +3,7 @@
  */
 import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	Checkout,
 	CheckoutStep,
@@ -193,12 +194,9 @@ export default function WPCheckout( {
 
 		const loginUrl = login( { redirectTo, emailAddress } );
 
-		onEvent( {
-			type: 'WPCOM_EMAIL_ALREADY_EXISTS',
-			payload: {
-				email: emailAddress,
-				checkoutFlow: isJetpackCheckout ? 'site_only_checkout' : 'wpcom_registrationless',
-			},
+		recordTracksEvent( 'calypso_checkout_wpcom_email_exists', {
+			email: emailAddress,
+			checkout_flow: isJetpackCheckout ? 'site_only_checkout' : 'wpcom_registrationless',
 		} );
 
 		return translate(
@@ -208,14 +206,11 @@ export default function WPCheckout( {
 					a: (
 						<a
 							onClick={ () =>
-								onEvent( {
-									type: 'REDIRECT_TO_LOGIN',
-									payload: {
-										email: emailAddress,
-										checkoutFlow: isJetpackCheckout
-											? 'jetpack_site_only'
-											: 'wpcom_registrationless',
-									},
+								recordTracksEvent( 'calypso_checkout_composite_login_click', {
+									email: emailAddress,
+									checkout_flow: isJetpackCheckout
+										? 'site_only_checkout'
+										: 'wpcom_registrationless',
 								} )
 							}
 							href={ loginUrl }
