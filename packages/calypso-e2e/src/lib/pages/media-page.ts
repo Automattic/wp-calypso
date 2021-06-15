@@ -9,19 +9,25 @@ import { BaseContainer } from '../base-container';
 import { Page } from 'playwright';
 
 const selectors = {
+	// Navigation tabs
+	navtabs: '.section-nav-tabs',
+
 	// Gallery view
-	gallery: '.media-frame-content',
-	items: '.attachments li',
+	gallery: '.media-library__content',
+	items: '.media-library__list-item',
+	editButton: 'button[data-e2e-button="edit"]',
 
-	// Item clicked view
-	editButton: '.edit-attachment',
+	// Modal view
+	mediaModal: '.editor-media-modal__content',
+	mediaModalEditButton:
+		'.editor-media-modal-detail__edition-bar .editor-media-modal-detail__edit:visible',
+	mediaModalPreview: '.editor-media-modal-detail__preview',
 
-	// Image edit view
-	imageEditor: '.image-editor',
-	imagePreview: '.imgedit-crop-wrap img',
-	undoButton: 'imgedit-undo',
-	rotateButton: '.imgedit-r',
-	cancelButton: '.imgedit-cancel-btn',
+	// Editor view
+	imageEditorCanvas: '.image-editor__canvas-container',
+	imageEditorToolbarButton: '.image-editor__toolbar-button',
+	imageEditorResetButton: 'button[data-e2e-button="reset"]',
+	imageEditorCancelButton: 'button[data-e2e-button="cancel"]',
 };
 
 /**
@@ -40,59 +46,103 @@ export class MediaPage extends BaseContainer {
 	}
 
 	/**
+	 * Post-initialization steps.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async _postInit(): Promise< void > {
+		await this.page.waitForLoadState( 'domcontentloaded' );
+	}
+
+	/**
 	 * Given a 1-indexed number `n`, click on the nth item in the media gallery.
+	 *
+	 * If the media gallery has been filtered (eg. Images only), this method will select the
+	 * `nth` item in the filtered gallery.
 	 *
 	 * @param {[key: string]: number } param0 Parameter object.
 	 * @param {number} param0.item nth media gallery item to be selected.
 	 * @returns {Promise<void>} No return value.
-	 * @throws {Error} If media gallery contains less items than the requested item.
+	 * @throws {Error} If requested item could not be located in the gallery. Alternatively,
+	 * if the click action failed to select the gallery item.
 	 */
-	async click( { item }: { item: number } ): Promise< void > {
-		const items = await this.page.$$( selectors.items );
+	async clickOn( { item }: { item: number } ): Promise< void > {
+		// Playwright is able to select the nth matching item given a selector.
+		// See https://playwright.dev/docs/selectors#pick-n-th-match-from-the-query-result.
+		const element = await this.page.waitForSelector(
+			`:nth-match(${ selectors.items }, ${ item })`
+		);
 
-		if ( item > items.length ) {
+		if ( ! element ) {
 			throw new Error(
-				`Was requested item ${ item } but only ${ items.length } items in the media gallery.`
+				`Requested item number ${ item } is greater than number of items in gallery.`
 			);
 		}
 
-		const target = items[ item - 1 ];
-		await target.click();
+		await element.waitForElementState( 'visible' );
+		await element.click();
+		await element.waitForElementState( 'stable' );
+		const isSelected = await element.evaluate( ( node ) =>
+			node.classList.contains( 'is-selected' )
+		);
+		if ( ! isSelected ) {
+			throw new Error( `Failed to select requested item number ${ item }` );
+		}
 	}
 
 	/**
-	 * Clicks on the edit image button to enter image editor.
+	 * Clicks on the navigation tab.
+	 *
+	 * @param {[key: string]: string } param0 Parameter object.
+	 * @param {string} param0.name Name of the tab to click.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async clickTab( {
+		name,
+	}: {
+		name: 'All' | 'Images' | 'Documents' | 'Videos' | 'Audio';
+	} ): Promise< void > {
+		await this.page.waitForSelector( selectors.navtabs );
+		await this.page.click( `${ selectors.navtabs } span:has-text("${ name }")` );
+		// Wait for all placeholders to disappear.
+		// Alternatively, waiting for `networkidle` will achieve the same objective
+		// at the cost of much longer resolving time (~20s).
+		await this.page.waitForSelector( '.is-placeholder', { state: 'hidden' } );
+	}
+
+	/**
+	 * Given that a gallery item is selected, enter the edit screen.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async editImage(): Promise< void > {
 		await this.page.click( selectors.editButton );
-		await this.page.waitForSelector( selectors.imageEditor );
+		await this.page.waitForSelector( selectors.mediaModalPreview );
+		await this.page.click( selectors.mediaModalEditButton );
+		await this.page.waitForSelector( selectors.imageEditorCanvas );
 	}
 
 	/**
 	 * Rotates the image.
 	 *
-	 * @param {[key: string]: string } param0 Parameter object.
-	 * @param {string} param0.direction Rotation direction specified by either left or right.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async rotateImage( { direction }: { direction: 'left' | 'right' } ): Promise< void > {
-		const preview = await this.page.waitForSelector( selectors.imagePreview );
-		const selector = `${ selectors.rotateButton }${ direction }`;
+	async rotateImage(): Promise< void > {
+		const preview = await this.page.waitForSelector( selectors.imageEditorCanvas );
+		const selector = `${ selectors.imageEditorToolbarButton } span:text("Rotate")`;
 		await this.page.click( selector );
 		await preview.waitForElementState( 'stable' );
-		const undoButton = await this.page.waitForSelector( selectors.undoButton );
+		const undoButton = await this.page.waitForSelector( selectors.imageEditorResetButton );
 		await undoButton.isEnabled();
 	}
 
 	/**
-	 * Cancels the image editing process and returns to the image view screen.
+	 * Cancels the image editing process and returns to the media modal.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async cancelEdit(): Promise< void > {
-		const cancelButton = await this.page.waitForSelector( selectors.cancelButton );
+	async cancelImageEdit(): Promise< void > {
+		const cancelButton = await this.page.waitForSelector( selectors.imageEditorCancelButton );
 		await cancelButton.click();
 	}
 }
