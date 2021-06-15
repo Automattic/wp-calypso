@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import page from 'page';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { CheckoutProvider, CheckoutErrorBoundary, Button } from '@automattic/composite-checkout';
 import { styled } from '@automattic/wpcom-checkout';
@@ -18,6 +18,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import Popover from 'calypso/components/popover';
 import { WPOrderReviewLineItems } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
 import { CheckoutSummaryTotal } from 'calypso/my-sites/checkout/composite-checkout/components/wp-checkout-order-summary';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 
 type MasterbarCartProps = { tooltip: string; children: React.ReactNode };
 
@@ -65,9 +66,7 @@ function MasterbarCart( { children, tooltip }: MasterbarCartProps ): JSX.Element
 	);
 }
 
-function noop() {
-	// TODO: get rid of this and provide actual handlers for CheckoutProvider
-}
+function noop() {} // eslint-disable-line @typescript-eslint/no-empty-function
 
 const MasterbarCartCountWrapper = styled.div`
 	position: relative;
@@ -120,14 +119,35 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 		const checkoutUrl = `/checkout/${ selectedSiteSlug }`;
 		page( checkoutUrl );
 	};
+	const reduxDispatch = useDispatch();
+	const showErrorMessage = useCallback(
+		( error ) => {
+			const message = error && error.toString ? error.toString() : error;
+			reduxDispatch( errorNotice( message ) );
+		},
+		[ reduxDispatch ]
+	);
+	const showInfoMessage = useCallback(
+		( message ) => {
+			reduxDispatch( infoNotice( message ) );
+		},
+		[ reduxDispatch ]
+	);
+	const showSuccessMessage = useCallback(
+		( message ) => {
+			reduxDispatch( successNotice( message ) );
+		},
+		[ reduxDispatch ]
+	);
+
 	return (
 		<CheckoutProvider
 			paymentMethods={ [] }
 			paymentProcessors={ {} }
 			onPaymentComplete={ noop }
-			showErrorMessage={ noop }
-			showInfoMessage={ noop }
-			showSuccessMessage={ noop }
+			showErrorMessage={ showErrorMessage }
+			showInfoMessage={ showInfoMessage }
+			showSuccessMessage={ showSuccessMessage }
 		>
 			<MasterbarCartContentsWrapper>
 				<MasterbarCartTitle>{ translate( 'Cart' ) }</MasterbarCartTitle>
