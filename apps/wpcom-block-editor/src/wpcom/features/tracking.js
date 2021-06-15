@@ -419,18 +419,18 @@ const trackSiteEditorBrowsingSidebarOpen = () => {
 		return;
 	}
 
-	tracksRecordEvent( 'calypso_editor_sidebar_open' );
+	tracksRecordEvent( 'wpcom_block_editor_core_nav_sidebar_open' );
 };
 
 const trackSiteEditorCreateTemplate = ( { slug } ) => {
-	tracksRecordEvent( 'calypso_editor_sidebar_item_add', {
+	tracksRecordEvent( 'wpcom_block_editor_core_nav_sidebar_item_add', {
 		item_type: 'template',
 		item_slug: slug,
 	} );
 };
 
 const trackSiteEditorChangeTemplate = ( id, slug ) => {
-	tracksRecordEvent( 'calypso_editor_sidebar_item_edit', {
+	tracksRecordEvent( 'wpcom_block_editor_core_nav_sidebar_item_edit', {
 		item_type: 'template',
 		item_id: id,
 		item_slug: slug,
@@ -438,7 +438,7 @@ const trackSiteEditorChangeTemplate = ( id, slug ) => {
 };
 
 const trackSiteEditorChangeTemplatePart = ( id ) => {
-	tracksRecordEvent( 'calypso_editor_sidebar_item_edit', {
+	tracksRecordEvent( 'wpcom_block_editor_core_nav_sidebar_item_edit', {
 		item_type: 'template_part',
 		item_id: id,
 	} );
