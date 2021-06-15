@@ -282,7 +282,7 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.domain-suggestion {
-		flex-direction: row;
+		flex-direction: column;
 		box-shadow: none;
 
 		@include break-mobile {
@@ -384,6 +384,7 @@ body.is-section-signup.is-white-signup {
 			}
 
 			.domain-suggestion__action:not( .is-borderless ) {
+				width: 100%;
 				line-height: 20px;
 				padding: 0.57em 1.17em;
 				font-weight: 500; /* stylelint-disable-line */

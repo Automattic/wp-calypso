@@ -79,11 +79,11 @@
 		width: 100%;
 	}
 
-    .domain-registration-suggestion__title-wrapper .domain-registration-suggestion__title {
-        width: auto;
-    }
+	.domain-registration-suggestion__title-wrapper .domain-registration-suggestion__title {
+		width: auto;
+	}
 
-    .domain-registration-suggestion__title {
+	.domain-registration-suggestion__title {
 		font-size: $font-title-small;
 		font-weight: 400;
 		line-height: 1.2;
@@ -165,8 +165,11 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 		background: var( --color-surface );
 	}
 
+	.domain-suggestion__action-container {
+		width: 100%;
+	}
+
 	.button.domain-suggestion__action {
-		margin-top: 0;
 		font-weight: 500; /* stylelint-disable-line */
 		padding: 0.57em 1.17em;
 		border-radius: 4px; /* stylelint-disable-line */
