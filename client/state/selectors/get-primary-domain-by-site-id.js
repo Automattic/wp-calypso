@@ -9,7 +9,7 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
  * the given site ID
  *
  * @param {object} state - current state object
- * @param {object} siteId - site object
+ * @param {number} siteId - site id
  * @returns {object} primary domain
  */
 export default function getPrimaryDomainBySiteId( state, siteId ) {

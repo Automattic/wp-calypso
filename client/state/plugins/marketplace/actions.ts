@@ -13,6 +13,10 @@ import {
 	ISetPrimaryDomainCandidateAction,
 	ISetPluginInstalledDuringPurchaseFlag,
 } from './types';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getPurchaseFlowState } from 'calypso/state/plugins/marketplace/selectors';
+import { installPlugin } from 'calypso/state/plugins/installed/actions';
+import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 
 export function setPrimaryDomainCandidate(
 	domainName: string | undefined
@@ -38,5 +42,21 @@ export function setIsPluginInstalledDuringPurchase(
 	return {
 		type: MARKETPLACE_PLUGIN_INSTALLED_ON_PURCHASE,
 		isPluginInstalledDuringPurchase,
+	};
+}
+
+export function initiatePluginInstall( selectedSiteId: number ) {
+	return function ( dispatch: any, getState: () => any ): void {
+		const state = getState();
+		const isAtomic = isSiteWpcomAtomic( state, selectedSiteId );
+		const { pluginSlugToBeInstalled } = getPurchaseFlowState( state );
+
+		if ( pluginSlugToBeInstalled ) {
+			if ( isAtomic ) {
+				dispatch( installPlugin( selectedSiteId, pluginSlugToBeInstalled ) );
+			} else if ( selectedSiteId ) {
+				dispatch( initiateThemeTransfer( selectedSiteId, null, pluginSlugToBeInstalled ) );
+			}
+		}
 	};
 }

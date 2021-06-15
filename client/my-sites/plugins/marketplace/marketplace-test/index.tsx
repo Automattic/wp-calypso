@@ -35,6 +35,7 @@ import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-li
 import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
 
 import Notice from 'calypso/components/notice';
+import { initiatePluginInstall } from 'calypso/state/plugins/marketplace/actions';
 
 export const Container = styled.div`
 	margin: 0 25px;
@@ -77,14 +78,20 @@ export default function MarketplaceTest(): JSX.Element {
 		{ name: 'Thank You Page', path: '/marketplace/thank-you' },
 	];
 
+	useEffect( () => {
+		selectedSiteId && dispatch( initiatePluginInstall( selectedSiteId ) );
+	}, [ dispatch, selectedSiteId ] );
+
 	//Infinite Loop
 	useEffect( () => {
-		setTimeout( () => {
-			dispatch( fetchAutomatedTransferStatus( selectedSite?.ID ?? 0 ) );
-			dispatch( requestEligibility( selectedSite?.ID ?? 0 ) );
-			setInfiniteLoopCount( ( l ) => l + 1 );
-		}, 4000 );
-	}, [ infiniteLoopCount, selectedSite, dispatch ] );
+		if ( ! transferDetails.fetchingStatus ) {
+			setTimeout( () => {
+				dispatch( fetchAutomatedTransferStatus( selectedSite?.ID ?? 0 ) );
+				dispatch( requestEligibility( selectedSite?.ID ?? 0 ) );
+				setInfiniteLoopCount( ( l ) => l + 1 );
+			}, 5000 );
+		}
+	}, [ infiniteLoopCount, selectedSite, dispatch, transferDetails.fetchingStatus ] );
 
 	//Infinite Loop
 	useEffect( () => {
