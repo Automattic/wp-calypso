@@ -82,7 +82,7 @@ export default function LicenseDetails( {
 				</li>
 
 				<li className="license-details__list-item">
-					<h4 className="license-details__label">{ translate( 'Jetpack Debugger URL' ) }</h4>
+					<h4 className="license-details__label">{ translate( 'Jetpack Debugger' ) }</h4>
 					{ debugUrl ? (
 						<a href={ debugUrl } target="_blank" rel="noopener noreferrer">
 							{ debugUrl }
