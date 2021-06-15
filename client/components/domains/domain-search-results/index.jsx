@@ -339,12 +339,12 @@ class DomainSearchResults extends React.Component {
 
 		return (
 			<div className="domain-search-results__domain-suggestions">
-				{ this.props.children }
 				{ suggestionCount }
 				{ featuredSuggestionElement }
 				{ suggestionElements }
 				{ unavailableOffer }
 				{ this.props.showSkipButton && domainSkipSuggestion }
+				{ this.props.children }
 			</div>
 		);
 	}
