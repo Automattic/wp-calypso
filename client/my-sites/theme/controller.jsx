@@ -14,6 +14,7 @@ import ThemeNotFoundError from './theme-not-found-error';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { requestTheme, setBackPath } from 'calypso/state/themes/actions';
 import { getTheme, getThemeRequestErrors } from 'calypso/state/themes/selectors';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 const debug = debugFactory( 'calypso:themes' );
 
@@ -55,10 +56,12 @@ export function details( context, next ) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
 	}
 
+	context.store.dispatch( setNextLayoutFocus( 'sidebar' ) );
+
 	context.primary = (
 		<ThemeSheetComponent id={ slug } section={ section } pathName={ context.pathname } />
 	);
-	context.secondary = null; // When we're logged in, we need to remove the sidebar.
+
 	next();
 }
 
