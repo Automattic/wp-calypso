@@ -202,6 +202,18 @@ export default function CompositeCheckout( {
 		[ reduxDispatch ]
 	);
 
+	const checkoutFlow: string = useMemo( () => {
+		if ( isLoggedOutCart ) {
+			if ( isJetpackCheckout ) {
+				return isUserComingFromLoginForm
+					? 'jetpack_site_only_coming_from_login'
+					: 'Jetpack_site_only';
+			}
+			return 'wpcom_registrationless';
+		}
+		return isJetpackNotAtomic ? 'jetpack_checkout' : 'wpcom_checkout';
+	}, [ isLoggedOutCart, isJetpackCheckout, isUserComingFromLoginForm, isJetpackNotAtomic ] );
+
 	const countriesList = useCountryList( overrideCountryList || [] );
 
 	const {
@@ -404,19 +416,6 @@ export default function CompositeCheckout( {
 		siteId,
 		productSlug: planSlugs.length > 0 ? planSlugs[ 0 ] : undefined,
 	} );
-
-	let checkoutFlow = '';
-	if ( isLoggedOutCart ) {
-		if ( isJetpackCheckout ) {
-			checkoutFlow = isUserComingFromLoginForm
-				? 'jetpack_site_only_coming_from_login'
-				: 'Jetpack_site_only';
-		} else {
-			checkoutFlow = 'wpcom_registrationless';
-		}
-	} else {
-		checkoutFlow = isJetpackNotAtomic ? 'jetpack_checkout' : 'wpcom_checkout';
-	}
 
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
