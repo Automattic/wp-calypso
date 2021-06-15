@@ -11,7 +11,6 @@ import React from 'react';
  */
 import { Card } from '@automattic/components';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
@@ -29,7 +28,7 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import { hasGSuiteSupportedDomain, hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import Main from 'calypso/components/main';
@@ -61,7 +60,6 @@ class EmailManagementHome extends React.Component {
 			selectedSite,
 			selectedDomainName,
 			currentRoute,
-			userCanPurchaseGSuite,
 		} = this.props;
 
 		if ( ! hasSiteDomainsLoaded || ! hasSitesLoaded || ! selectedSite ) {
@@ -82,14 +80,10 @@ class EmailManagementHome extends React.Component {
 
 			if ( ! domainHasEmail( selectedDomain ) ) {
 				return this.renderContentWithHeader(
-					<EmailProvidersComparison
-						domain={ selectedDomain }
-						isGSuiteSupported={
-							userCanPurchaseGSuite && hasGSuiteSupportedDomain( [ selectedDomain ] )
-						}
-					/>
+					<EmailProvidersComparison selectedDomainName={ selectedDomainName } />
 				);
 			}
+
 			return this.renderContentWithHeader(
 				<EmailPlan selectedSite={ selectedSite } domain={ selectedDomain } />
 			);
@@ -105,14 +99,8 @@ class EmailManagementHome extends React.Component {
 		const domainsWithNoEmail = nonWpcomDomains.filter( ( domain ) => ! domainHasEmail( domain ) );
 
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
-			const firstDomainWithNoEmail = domainsWithNoEmail[ 0 ];
 			return this.renderContentWithHeader(
-				<EmailProvidersComparison
-					domain={ firstDomainWithNoEmail }
-					isGSuiteSupported={
-						userCanPurchaseGSuite && hasGSuiteSupportedDomain( [ firstDomainWithNoEmail ] )
-					}
-				/>
+				<EmailProvidersComparison selectedDomainName={ domainsWithNoEmail[ 0 ].name } />
 			);
 		}
 
@@ -186,6 +174,5 @@ export default connect( ( state ) => {
 		selectedSite: getSelectedSite( state ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
-		userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
 	};
 } )( localize( EmailManagementHome ) );

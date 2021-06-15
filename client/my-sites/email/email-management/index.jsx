@@ -16,12 +16,7 @@ import Main from 'calypso/components/main';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
-import {
-	hasGSuiteSupportedDomain,
-	hasGSuiteWithAnotherProvider,
-	hasGSuiteWithUs,
-} from 'calypso/lib/gsuite';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import { hasGSuiteWithAnotherProvider, hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
 import hasLoadedGSuiteUsers from 'calypso/state/selectors/has-loaded-gsuite-users';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
@@ -129,13 +124,7 @@ class EmailManagement extends React.Component {
 	}
 
 	content() {
-		const {
-			domains,
-			hasGSuiteUsersLoaded,
-			hasSiteDomainsLoaded,
-			selectedDomainName,
-			userCanPurchaseGSuite,
-		} = this.props;
+		const { domains, hasGSuiteUsersLoaded, hasSiteDomainsLoaded, selectedDomainName } = this.props;
 
 		if ( ! hasGSuiteUsersLoaded || ! hasSiteDomainsLoaded ) {
 			return <Placeholder />;
@@ -155,15 +144,9 @@ class EmailManagement extends React.Component {
 			return this.emptyContent();
 		}
 
-		const selectedDomain = validDomains[ 0 ];
-		const isGSuiteSupported = hasGSuiteSupportedDomain( [ selectedDomain ] );
-
 		return (
 			<CalypsoShoppingCartProvider>
-				<EmailProvidersComparison
-					domain={ selectedDomain }
-					isGSuiteSupported={ isGSuiteSupported && userCanPurchaseGSuite }
-				/>
+				<EmailProvidersComparison selectedDomainName={ validDomains[ 0 ].name } />
 			</CalypsoShoppingCartProvider>
 		);
 	}
@@ -282,6 +265,5 @@ export default connect( ( state ) => {
 		previousRoute: getPreviousRoute( state ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
-		userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
 	};
 } )( localize( EmailManagement ) );

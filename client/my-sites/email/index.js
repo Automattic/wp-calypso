@@ -104,6 +104,23 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
+			paths.emailManagementPurchaseNewEmailAccount(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementPurchaseNewEmailAccount( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementPurchaseNewEmailAccount,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
 			paths.emailManagementNewTitanAccount(
 				':site',
 				':domain',
