@@ -23,7 +23,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		it( 'Open Settings page', async function () {
 			await MyHomePage.Expect( this.page );
 			const sidebarComponent = await SidebarComponent.Expect( this.page );
-			await sidebarComponent.clickMenuItem( 'Settings' );
+			await sidebarComponent.gotoMenu( { heading: 'Settings' } );
 		} );
 
 		it( 'Open support popover', async function () {
@@ -78,7 +78,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		it( 'Open Settings page', async function () {
 			await MyHomePage.Expect( this.page );
 			const sidebarComponent = await SidebarComponent.Expect( this.page );
-			await sidebarComponent.clickMenuItem( 'Settings' );
+			await sidebarComponent.gotoMenu( { heading: 'Settings' } );
 		} );
 
 		it( 'Open support popover', async function () {
@@ -121,7 +121,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		it( 'Open Settings page', async function () {
 			await MyHomePage.Expect( this.page );
 			const sidebarComponent = await SidebarComponent.Expect( this.page );
-			await sidebarComponent.clickMenuItem( 'Settings' );
+			await sidebarComponent.gotoMenu( { heading: 'Settings' } );
 		} );
 
 		it( 'Open support popover', async function () {
@@ -157,7 +157,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		it( 'Open Settings page', async function () {
 			await MyHomePage.Expect( this.page );
 			const sidebarComponent = await SidebarComponent.Expect( this.page );
-			await sidebarComponent.clickMenuItem( 'Settings' );
+			await sidebarComponent.gotoMenu( { heading: 'Settings' } );
 		} );
 
 		it( 'Open support popover', async function () {
