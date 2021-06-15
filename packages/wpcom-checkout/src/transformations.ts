@@ -99,8 +99,8 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 		return lineItem ? [ lineItem ] : [];
 	}
 	return responseCart.total_tax_breakdown.map(
-		( taxBreakdownItem: TaxBreakdownItem, index: number ): LineItem => {
-			const id = `tax-line-item-${ index }`;
+		( taxBreakdownItem: TaxBreakdownItem ): LineItem => {
+			const id = `tax-line-item-${ taxBreakdownItem.label ?? taxBreakdownItem.rate }`;
 			const label = taxBreakdownItem.label
 				? `${ taxBreakdownItem.label } (${ taxBreakdownItem.rate_display })`
 				: String( translate( 'Tax' ) );
