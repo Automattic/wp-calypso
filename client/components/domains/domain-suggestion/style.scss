@@ -264,7 +264,7 @@ body.is-section-signup.is-white-signup {
 		margin-left: 0;
 		margin-top: 0;
 		margin-bottom: 10px;
-		
+
 		.badge {
 			border-radius: 4px; /* stylelint-disable-line */
 			font-size: 0.75rem;
@@ -288,7 +288,7 @@ body.is-section-signup.is-white-signup {
 		@include break-mobile {
 			margin: 0 20px;
 		}
-		
+
 		@include break-large {
 			margin: 0;
 		}
@@ -345,13 +345,15 @@ body.is-section-signup.is-white-signup {
 			background: none;
 			border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
 			border-top: 1px solid #fff; //This white border is to prevent jumpiness while showing borders on hover
-			
+
 			@include break-mobile {
 				padding-left: 5px;
 				padding-right: 5px;
 			}
 
 			.domain-registration-suggestion__domain-title {
+				font-size: $font-body;
+
 				@include break-xlarge {
 					line-height: 3rem;
 				}
@@ -385,7 +387,7 @@ body.is-section-signup.is-white-signup {
 				line-height: 20px;
 				padding: 0.57em 1.17em;
 				font-weight: 500; /* stylelint-disable-line */
-				border-radius: 4px;  /* stylelint-disable-line */
+				border-radius: 4px; /* stylelint-disable-line */
 				box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
 				border: 1px solid #c3c4c7;
 				letter-spacing: 0.32px;
