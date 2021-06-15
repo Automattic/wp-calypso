@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { jetpackModuleActive, navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	connections,
 	layout,
