@@ -14,6 +14,7 @@ import LoginFlow from '../../lib/flows/login-flow.js';
 import CustomizerPage from '../../lib/pages/customizer-page';
 import ThemesPage from '../../lib/pages/themes-page.js';
 import ThemeDialogComponent from '../../lib/components/theme-dialog-component.js';
+import ThemeSwitchConfirmationComponent from '../../lib/components/theme-switch-confirmation-component.js';
 import SidebarComponent from '../../lib/components/sidebar-component';
 import WPAdminCustomizerPage from '../../lib/pages/wp-admin/wp-admin-customizer-page.js';
 import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page.js';
@@ -25,7 +26,7 @@ const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 // NOTE: test in jetpack env is failing due to some strange issue, when switching to new tab. It fails only in CI
-describe.skip( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function () {
+describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
 	it( 'Login', async function () {
@@ -42,12 +43,17 @@ describe.skip( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, fun
 		const themesPage = await ThemesPage.Expect( this.driver );
 		await themesPage.waitUntilThemesLoaded();
 		await themesPage.showOnlyFreeThemes();
-		await themesPage.searchFor( 'Twenty F' );
-		await themesPage.waitForThemeStartingWith( 'Twenty F' );
+		await themesPage.searchFor( 'Twenty Twen' );
+		await themesPage.waitForThemeStartingWith( 'Twenty Twen' );
 		await themesPage.clickNewThemeMoreButton();
 		const displayed = await themesPage.popOverMenuDisplayed();
 		assert( displayed, true, 'Popover menu not displayed' );
 		return await themesPage.clickPopoverItem( 'Activate' );
+	} );
+
+	it( 'Can see the theme switch confirmation dialog', async function () {
+		const themeSwitchConfirmationComponent = await ThemeSwitchConfirmationComponent.Expect( this.driver );
+		await themeSwitchConfirmationComponent.activateTheme();
 	} );
 
 	it( 'Can see the theme thanks dialog', async function () {
