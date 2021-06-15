@@ -13,6 +13,10 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
  * @returns {boolean} True if the site is on a free plan and a WPCOM site, false otherwise.
  */
 export default ( state, siteId ) => {
+	if ( ! state && siteId ) {
+		return false;
+	}
+
 	const currentPlanSlug = getCurrentPlan( state, siteId )?.productSlug;
 
 	return isFreePlan( currentPlanSlug ) && isSiteWPCOM( state, siteId );

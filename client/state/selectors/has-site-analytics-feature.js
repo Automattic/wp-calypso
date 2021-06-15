@@ -19,15 +19,15 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
  * @returns {boolean} True if the site has the analytics feature, false otherwise.
  */
 export default ( state, siteId ) => {
-	if ( state && isSiteWPCOMOnFreePlan( state, siteId ) ) {
+	if ( state && siteId && isSiteWPCOMOnFreePlan( state, siteId ) ) {
 		return false;
 	}
 
-	const currentPlanSlug = getCurrentPlan( state, siteId )?.productSlug;
+	const currentPlan = getCurrentPlan( state, siteId );
 
 	return (
-		planHasFeature( currentPlanSlug, FEATURE_GOOGLE_ANALYTICS ) ||
-		( ( currentPlanSlug && ( isEnterprise( currentPlanSlug ) || isVipPlan( currentPlanSlug ) ) ) ??
+		planHasFeature( currentPlan?.productSlug, FEATURE_GOOGLE_ANALYTICS ) ||
+		( ( currentPlan?.productSlug && ( isEnterprise( currentPlan ) || isVipPlan( currentPlan ) ) ) ??
 			undefined )
 	);
 };
