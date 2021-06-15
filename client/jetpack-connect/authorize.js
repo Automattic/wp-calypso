@@ -258,7 +258,7 @@ export class JetpackAuthorize extends Component {
 			const { target, isExternal } = this.getRedirectionTarget();
 
 			if ( isExternal ) {
-				window.location.href = target;
+				externalRedirect( target );
 				return;
 			}
 
