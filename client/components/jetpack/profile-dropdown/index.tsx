@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useState, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import useOutsideClickCallback from './use-outside-click-callback';
 import Gravatar from 'calypso/components/gravatar';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { redirectToLogout } from 'calypso/lib/user/shared-utils';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 
 /**
@@ -25,6 +25,7 @@ import type { UserData } from 'calypso/lib/user/user';
 import './style.scss';
 
 const ProfileDropdown: React.FC = () => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const ref = React.useRef( null );
 	const [ isExpanded, setExpanded ] = useState( false );
@@ -39,7 +40,9 @@ const ProfileDropdown: React.FC = () => {
 
 	const trackedToggle = useTrackCallback( toggle, 'calypso_jetpack_masterbar_profile_toggle' );
 	const trackedClose = useTrackCallback( close, 'calypso_jetpack_masterbar_profile_close' );
-	const redirectToLogoutWithUser = useCallback( () => redirectToLogout( user ), [ user ] );
+	const redirectToLogoutWithUser = useCallback( () => dispatch( redirectToLogout() ), [
+		dispatch,
+	] );
 	const trackedLogOut = useTrackCallback(
 		redirectToLogoutWithUser,
 		'calypso_jetpack_settings_masterbar_logout'

@@ -6,7 +6,6 @@ import config from '@automattic/calypso-config';
 /**
  * Internal dependencies
  */
-import { clearStore } from 'calypso/lib/user/store';
 import { decodeEntities } from 'calypso/lib/formatting/decode-entities';
 import { getLanguage } from 'calypso/lib/i18n-utils/utils';
 import { withoutHttp } from 'calypso/lib/url';
@@ -103,13 +102,4 @@ export function getLogoutUrl( userData, redirect ) {
 	}
 
 	return url;
-}
-
-export async function redirectToLogout( userData, postLogoutRedirectUrl ) {
-	const logoutUrl = getLogoutUrl( userData, postLogoutRedirectUrl );
-
-	// Clear any data stored locally within the user data module or localStorage
-	await clearStore();
-
-	window.location.href = logoutUrl;
 }

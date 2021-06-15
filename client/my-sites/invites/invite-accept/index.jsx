@@ -23,7 +23,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { redirectToLogout } from 'calypso/lib/user/shared-utils';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import wpcom from 'calypso/lib/wp';
 import normalizeInvite from './utils/normalize-invite';
 
@@ -129,7 +129,7 @@ class InviteAccept extends React.Component {
 	};
 
 	signUpLink = async () => {
-		await redirectToLogout( this.props.user, window.location.href );
+		await this.props.redirectToLogout( window.location.href );
 	};
 
 	localeSuggestions = () => {
@@ -265,4 +265,5 @@ class InviteAccept extends React.Component {
 export default connect( ( state ) => ( { user: getCurrentUser( state ) } ), {
 	successNotice,
 	infoNotice,
+	redirectToLogout,
 } )( localize( InviteAccept ) );
