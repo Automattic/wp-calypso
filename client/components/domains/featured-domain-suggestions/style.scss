@@ -107,7 +107,7 @@
 		&.is-free-domain,
 		&.is-sale-domain {
 			small {
-				font-size: 0.9em;
+				font-size: 0.9em; /* stylelint-disable-line */
 			}
 		}
 	}
@@ -239,19 +239,19 @@ body.is-section-signup.is-white-signup .featured-domain-suggestions {
 @include breakpoint-deprecated( '>660px' ) {
 	.domain-registration-suggestion__title {
 		.featured-domain-suggestions--title-in-18em & {
-			font-size: 1.8em;
+			font-size: 1.8em; /* stylelint-disable-line */
 		}
 		.featured-domain-suggestions--title-in-16em & {
-			font-size: 1.6em;
+			font-size: 1.6em; /* stylelint-disable-line */
 		}
 		.featured-domain-suggestions--title-in-14em & {
 			font-size: $font-title-small;
 		}
 		.featured-domain-suggestions--title-in-12em & {
-			font-size: 1.2em;
+			font-size: 1.2em; /* stylelint-disable-line */
 		}
 		.featured-domain-suggestions--title-in-10em & {
-			font-size: 1em;
+			font-size: 1em; /* stylelint-disable-line */
 		}
 	}
 
