@@ -110,7 +110,6 @@ $min_results_height: 180px;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			margin-right: 8px;
 
 			.gridicon {
 				margin: 0 5px -3px 0;
@@ -133,11 +132,28 @@ $min_results_height: 180px;
 	.inline-help__results {
 		min-height: $min_results_height;
 		padding: #{$search_results_top_spacing - 1px} 0 0 0;
+		margin-left: -$card_padding_small;
+		margin-right: -$card_padding_small;
 
 		@include break-mobile {
 			margin-left: -$card_padding_large;
 			margin-right: -$card_padding_large;
 		}
+	}
+
+	.inline-help__results-title {
+		padding-left: $card_padding_small;
+		padding-right: $card_padding_small;
+
+		@include break-mobile {
+			padding-left: $card_padding_large;
+			padding-right: $card_padding_large;
+		}
+	}
+
+	.inline-help__empty-results {
+		padding-left: 0;
+		padding-right: 0;
 	}
 
 	.search-card {
