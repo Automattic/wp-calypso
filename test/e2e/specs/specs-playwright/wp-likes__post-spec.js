@@ -6,9 +6,9 @@ import {
 	LoginFlow,
 	NewPostFlow,
 	GutenbergEditorPage,
-	PostLikesComponent,
 	MyHomePage,
 	PublishedPostsListPage,
+	PublishedPostPage,
 } from '@automattic/calypso-e2e';
 
 /**
@@ -16,15 +16,14 @@ import {
  */
 const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
-const user = 'gutenbergSimpleSiteUser';
 
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	describe( 'Like a new post', function () {
-		let postLikesComponent;
+		let publishedPostPage;
 		let gutenbergEditorPage;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( this.page, user );
+			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
 			await loginFlow.login();
 		} );
 
@@ -48,20 +47,20 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Like post', async function () {
-			postLikesComponent = await PostLikesComponent.Expect( this.page );
-			await postLikesComponent.clickLikePost();
+			publishedPostPage = await PublishedPostPage.Expect( this.page );
+			await publishedPostPage.likePost();
 		} );
 
 		it( 'Unlike post', async function () {
-			await postLikesComponent.clickLikePost();
+			await publishedPostPage.unlikePost();
 		} );
 	} );
 
 	describe( 'Like an existing post', function () {
-		let postLikesComponent;
+		let publishedPostPage;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( this.page, user );
+			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
 			await loginFlow.login();
 		} );
 
@@ -71,17 +70,17 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Click on first post', async function () {
-			const publishedPostsListPage = await PublishedPostsListPage.Expect( this.page, user );
+			const publishedPostsListPage = await PublishedPostsListPage.Expect( this.page );
 			await publishedPostsListPage.visitPost( 1 );
 		} );
 
 		it( 'Like post', async function () {
-			postLikesComponent = await PostLikesComponent.Expect( this.page );
-			await postLikesComponent.clickLikePost();
+			publishedPostPage = await PublishedPostPage.Expect( this.page );
+			await publishedPostPage.likePost();
 		} );
 
 		it( 'Unlike post', async function () {
-			await postLikesComponent.clickLikePost();
+			await publishedPostPage.unlikePost();
 		} );
 	} );
 } );
