@@ -14,6 +14,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import SelectDropdown from 'calypso/components/select-dropdown';
 
 export const radioTextOption = (
+	groupName,
 	key,
 	radioValue,
 	textValue,
@@ -37,7 +38,7 @@ export const radioTextOption = (
 	return (
 		<FormLabel key={ key }>
 			<FormRadio
-				name={ key }
+				name={ groupName }
 				value={ key }
 				checked={ key === radioValue }
 				onChange={ onRadioChange }
@@ -49,6 +50,7 @@ export const radioTextOption = (
 };
 
 export const radioSelectOption = (
+	groupName,
 	key,
 	radioValue,
 	onRadioChange,
@@ -76,7 +78,7 @@ export const radioSelectOption = (
 		<React.Fragment key={ `fragment${ key }` }>
 			<FormLabel key={ key }>
 				<FormRadio
-					name={ key }
+					name={ groupName }
 					value={ key }
 					checked={ key === radioValue }
 					onChange={ onRadioChange }
