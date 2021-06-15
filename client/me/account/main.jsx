@@ -124,11 +124,6 @@ class Account extends React.Component {
 		validationResult: false,
 	};
 
-	componentDidMount() {
-		debug( this.constructor.displayName + ' component is mounted.' );
-		this.debouncedUsernameValidate = debounce( this.validateUsername, 600 );
-	}
-
 	componentDidUpdate() {
 		if ( ! this.hasUnsavedUserSettings( ACCOUNT_FIELDS.concat( INTERFACE_FIELDS ) ) ) {
 			this.props.markSaved();
@@ -259,7 +254,7 @@ class Account extends React.Component {
 		this.setState( { userLoginConfirm: event.target.value } );
 	};
 
-	async validateUsername() {
+	validateUsername = debounce( async () => {
 		const { currentUserName, translate } = this.props;
 		const username = this.getUserSetting( 'user_login' );
 
@@ -291,10 +286,9 @@ class Account extends React.Component {
 		}
 
 		try {
-			const { success, allowed_actions } = await wpcom
-				.undocumented()
-				.me()
-				.validateUsername( username );
+			const { success, allowed_actions } = await wpcom.req.get(
+				`/me/username/validate/${ username }`
+			);
 
 			this.setState( {
 				validationResult: { success, allowed_actions, validatedUsername: username },
@@ -302,7 +296,7 @@ class Account extends React.Component {
 		} catch ( error ) {
 			this.setState( { validationResult: error } );
 		}
-	}
+	}, 600 );
 
 	hasEmailValidationError() {
 		return !! this.state.emailValidationError;
@@ -412,7 +406,7 @@ class Account extends React.Component {
 	 * @param {object} event Event from onChange of user_login input
 	 */
 	handleUsernameChange = ( event ) => {
-		this.debouncedUsernameValidate();
+		this.validateUsername();
 		this.updateUserSetting( 'user_login', event.currentTarget.value );
 		this.setState( { usernameAction: null } );
 	};
@@ -476,7 +470,7 @@ class Account extends React.Component {
 		this.setState( { submittingForm: true } );
 
 		try {
-			await wpcom.undocumented().me().changeUsername( username, action );
+			await wpcom.req.post( '/me/username', { username, action } );
 			this.setState( { submittingForm: false } );
 
 			this.props.markSaved();
