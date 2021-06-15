@@ -179,7 +179,7 @@ describe( 'getTaxBreakdownLineItemsFromCart', function () {
 		};
 		const expected = [
 			{
-				id: 'tax-line-item-0',
+				id: 'tax-line-item-GST',
 				type: 'tax',
 				label: 'GST (5%)',
 				amount: {
@@ -189,7 +189,7 @@ describe( 'getTaxBreakdownLineItemsFromCart', function () {
 				},
 			},
 			{
-				id: 'tax-line-item-1',
+				id: 'tax-line-item-PST',
 				type: 'tax',
 				label: 'PST (10%)',
 				amount: {
