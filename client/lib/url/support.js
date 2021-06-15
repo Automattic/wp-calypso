@@ -56,7 +56,7 @@ export const FOLLOWERS = `${ root }/followers`;
 export const FORMS = `${ root }/forms`;
 export const GETTING_MORE_VIEWS_AND_TRAFFIC = `${ root }/getting-more-views-and-traffic`;
 export const GOOGLE_ANALYTICS = `${ root }/google-analytics`;
-export const GSUITE_LEARNING_CENTER = 'https://gsuite.google.com/learning-center/';
+export const GSUITE_LEARNING_CENTER = 'https://support.google.com/a/users#topic=9393003';
 export const GOOGLE_PLUS_EMBEDS = `${ root }/google-plus-embeds`;
 export const GRAVATAR_HOVERCARDS = `${ root }/gravatar-hovercards`;
 export const GUIDED_TRANSFER = `${ root }/guided-transfer`;
