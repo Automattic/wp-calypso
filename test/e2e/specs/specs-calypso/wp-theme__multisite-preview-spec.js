@@ -2,7 +2,6 @@
  * External dependencies
  */
 import assert from 'assert';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -14,41 +13,41 @@ import ThemesPage from '../../lib/pages/themes-page.js';
 import SidebarComponent from '../../lib/components/sidebar-component';
 import LoginFlow from '../../lib/flows/login-flow.js';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Themes: Preview a theme, all sites (${ screenSize }) @parallel`, function () {
-	this.timeout( mochaTimeOut );
+	let driver;
+
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	// TODO: Add test that verifies when visiting /themes,
 	// you're asked to select a site before proceeding.
-	/*
-	it( 'asks to select a site when visiting /themes logged in', async function () {
-		this.loginFlow = new LoginFlow( this.driver, 'multiSiteUser' );
+	// eslint-disable-next-line jest/no-disabled-tests
+	it.skip( 'asks to select a site when visiting /themes logged in', async function () {
+		this.loginFlow = new LoginFlow( driver, 'multiSiteUser' );
 		await this.loginFlow.loginAndSelectAllSites();
 
-		this.sidebarComponent = await SidebarComponent.Expect( this.driver );
+		this.sidebarComponent = await SidebarComponent.Expect( driver );
 		await this.sidebarComponent.selectAllSitesThemes();
 
 		// Check to see if "choose a site" screen is shown
 		// ? Unsure how to implement ?
 	} );
-    */
 
 	it( 'Login and select themes', async function () {
 		this.themeSearchName = 'twenty';
 		this.expectedTheme = 'Twenty F';
 
-		this.loginFlow = new LoginFlow( this.driver, 'multiSiteUser' );
+		this.loginFlow = new LoginFlow( driver, 'multiSiteUser' );
 		await this.loginFlow.loginAndSelectMySite();
 
-		this.sidebarComponent = await SidebarComponent.Expect( this.driver );
+		this.sidebarComponent = await SidebarComponent.Expect( driver );
 		await this.sidebarComponent.selectThemes();
 	} );
 
 	it( 'can search for free themes', async function () {
-		this.themesPage = await ThemesPage.Expect( this.driver );
+		this.themesPage = await ThemesPage.Expect( driver );
 		await this.themesPage.waitUntilThemesLoaded();
 		await this.themesPage.showOnlyFreeThemes();
 		await this.themesPage.searchFor( this.themeSearchName );

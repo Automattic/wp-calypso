@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import config from 'config';
-
-/**
  * Internal dependencies
  */
 import LoginFlow from '../../lib/flows/login-flow.js';
@@ -15,27 +10,28 @@ import StatsPage from '../../lib/pages/stats-page.js';
 
 import * as driverManager from '../../lib/driver-manager.js';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 
 describe( 'Stats: (' + screenSize + ') @parallel', function () {
-	this.timeout( mochaTimeOut );
 	let statsPage;
+	let driver;
+
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	it( 'Can log in as user', async function () {
-		this.loginFlow = new LoginFlow( this.driver );
+		this.loginFlow = new LoginFlow( driver );
 		return await this.loginFlow.login();
 	} );
 
 	it( 'Can open the sidebar', async function () {
-		const navBarComponent = await NavBarComponent.Expect( this.driver );
+		const navBarComponent = await NavBarComponent.Expect( driver );
 		await navBarComponent.clickMySites();
 	} );
 
 	it( 'Can open the stats page', async function () {
-		const sidebarComponent = await SidebarComponent.Expect( this.driver );
+		const sidebarComponent = await SidebarComponent.Expect( driver );
 		await sidebarComponent.selectStats();
-		statsPage = await StatsPage.Expect( this.driver );
+		statsPage = await StatsPage.Expect( driver );
 	} );
 
 	it( 'Can open the stats insights page', async function () {

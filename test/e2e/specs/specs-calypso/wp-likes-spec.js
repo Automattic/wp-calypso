@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import config from 'config';
-
-/**
  * Internal dependencies
  */
 import * as driverManager from '../../lib/driver-manager';
@@ -16,7 +11,6 @@ import CommentLikesComponent from '../../lib/pages/frontend/comment-likes-compon
 
 const host = dataHelper.getJetpackHost();
 const screenSize = driverManager.currentScreenSize();
-const mochaTimeoutMS = config.get( 'mochaTimeoutMS' );
 const blogPostTitle = dataHelper.randomPhrase();
 const blogPostQuote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
@@ -26,35 +20,37 @@ const blogPostQuote =
  * for both loggedin and logged out users.
  */
 describe( `[${ host }] Likes: (${ screenSize }) @parallel`, function () {
-	let postUrl;
-	this.timeout( mochaTimeoutMS );
 	const comment = dataHelper.randomPhrase();
 	const accountKey = 'gutenbergSimpleSiteUser';
+	let postUrl;
+	let driver;
+
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	it( 'Login, create a new post and view it', async function () {
-		const loginFlow = new LoginFlow( this.driver, accountKey );
+		const loginFlow = new LoginFlow( driver, accountKey );
 		await loginFlow.loginAndStartNewPost( null, true );
 
-		const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 		await gEditorComponent.enterTitle( blogPostTitle );
 		await gEditorComponent.enterText( blogPostQuote );
 		postUrl = await gEditorComponent.publish( { visit: true } );
 	} );
 
 	it( 'Like post', async function () {
-		const postLikes = await PostLikesComponent.Expect( this.driver );
+		const postLikes = await PostLikesComponent.Expect( driver );
 		await postLikes.clickLike();
 		await postLikes.expectLiked();
 	} );
 
 	it( 'Unlike post', async function () {
-		const postLikes = await PostLikesComponent.Expect( this.driver );
+		const postLikes = await PostLikesComponent.Expect( driver );
 		await postLikes.clickUnlike();
 		await postLikes.expectNotLiked();
 	} );
 
 	it( 'Post comment', async function () {
-		const commentArea = await CommentsAreaComponent.Expect( this.driver );
+		const commentArea = await CommentsAreaComponent.Expect( driver );
 
 		// commentArea.reply fails to find .comment-reply-link at times,
 		// as we're not concerned with the assertion just call postComment directly
@@ -62,24 +58,24 @@ describe( `[${ host }] Likes: (${ screenSize }) @parallel`, function () {
 	} );
 
 	it( 'Like comment', async function () {
-		const commentLikes = await CommentLikesComponent.Expect( this.driver, comment );
+		const commentLikes = await CommentLikesComponent.Expect( driver, comment );
 		await commentLikes.likeComment();
 		await commentLikes.expectLiked();
 	} );
 
 	it( 'Unlike comment', async function () {
-		const commentLikes = await CommentLikesComponent.Expect( this.driver, comment );
+		const commentLikes = await CommentLikesComponent.Expect( driver, comment );
 		await commentLikes.unlikeComment();
 		await commentLikes.expectNotLiked();
 	} );
 
 	it( 'Like post as logged out user', async function () {
-		await driverManager.ensureNotLoggedIntoSite( this.driver, postUrl );
+		await driverManager.ensureNotLoggedIntoSite( driver, postUrl );
 
-		const postLikes = await PostLikesComponent.Visit( this.driver, postUrl );
+		const postLikes = await PostLikesComponent.Visit( driver, postUrl );
 		await postLikes.clickLike();
 
-		const loginFlow = new LoginFlow( this.driver, accountKey );
+		const loginFlow = new LoginFlow( driver, accountKey );
 		await loginFlow.loginUsingPopup();
 
 		await postLikes.expectLiked();

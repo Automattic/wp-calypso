@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import assert from 'assert';
 
 /**
@@ -17,36 +16,33 @@ import ProfilePage from '../../lib/pages/profile-page';
 import PurchasesPage from '../../lib/pages/purchases-page';
 import ManagePurchasePage from '../../lib/pages/manage-purchase-page';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Plans - Renew: (${ screenSize }) @parallel`, function () {
-	this.timeout( mochaTimeOut );
+	let driver;
 
-	before( async function () {
-		return await driverManager.ensureNotLoggedIn( this.driver );
-	} );
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	it( 'Can log into WordPress.com', async function () {
-		const loginFlow = new LoginFlow( this.driver );
+		const loginFlow = new LoginFlow( driver );
 		return await loginFlow.login();
 	} );
 
 	it( 'Can navigate to purchases', async function () {
-		const navBarComponent = await NavBarComponent.Expect( this.driver );
+		const navBarComponent = await NavBarComponent.Expect( driver );
 		await navBarComponent.clickProfileLink();
-		const profilePage = await ProfilePage.Expect( this.driver );
+		const profilePage = await ProfilePage.Expect( driver );
 		await profilePage.chooseManagePurchases();
-		const purchasesPage = await PurchasesPage.Expect( this.driver );
+		const purchasesPage = await PurchasesPage.Expect( driver );
 		await purchasesPage.dismissGuidedTour();
 		return await purchasesPage.selectPremiumPlanOnConnectedSite();
 	} );
 
 	it( '"Renew Now" link takes user to Payment Details form', async function () {
-		const managePurchasePage = await ManagePurchasePage.Expect( this.driver );
+		const managePurchasePage = await ManagePurchasePage.Expect( driver );
 		await managePurchasePage.chooseRenewNow();
-		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
+		const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 		const premiumPlanInCart = await securePaymentComponent.containsPremiumPlan();
 		return assert.strictEqual(
 			premiumPlanInCart,

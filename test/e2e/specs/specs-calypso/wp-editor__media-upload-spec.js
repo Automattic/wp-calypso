@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import config from 'config';
-
-/**
  * Internal dependencies
  */
 import LoginFlow from '../../lib/flows/login-flow.js';
@@ -14,25 +9,25 @@ import * as driverManager from '../../lib/driver-manager.js';
 import * as mediaHelper from '../../lib/media-helper.js';
 import * as dataHelper from '../../lib/data-helper';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack`, function () {
-	this.timeout( mochaTimeOut );
 	let gutenbergEditor;
 	let blockID;
+	let driver;
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
-	before( async function () {
+	beforeAll( async function () {
 		let editorType = 'iframe';
-		const loginFlow = new LoginFlow( this.driver );
+		const loginFlow = new LoginFlow( driver );
 
 		if ( host !== 'WPCOM' ) {
 			editorType = 'wpadmin';
 		}
 		await loginFlow.loginAndStartNewPage( null, true, { editorType: editorType } );
 
-		gutenbergEditor = await GutenbergEditorComponent.Expect( this.driver, editorType );
+		gutenbergEditor = await GutenbergEditorComponent.Expect( driver, editorType );
 		await gutenbergEditor.displayed();
 	} );
 

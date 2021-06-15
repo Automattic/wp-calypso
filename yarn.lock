@@ -16153,6 +16153,13 @@ jake@^10.6.1:
     filelist "^1.0.1"
     minimatch "^3.0.4"
 
+jasmine-fail-fast@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/jasmine-fail-fast/-/jasmine-fail-fast-2.0.1.tgz#222daa16c89b675aba4ed9552d62cf0d1e759d71"
+  integrity sha512-En8ONwvDQOV+jyiZEZvbvUSLWSdJFj9HiWjhLdGq/V/gxs4XyST730ooe928BbRxv4bfy05OpykKuoOU4aLC5w==
+  dependencies:
+    lodash "^4.17.15"
+
 jest-canvas-mock@^2.3.0:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/jest-canvas-mock/-/jest-canvas-mock-2.3.1.tgz#9535d14bc18ccf1493be36ac37dd349928387826"
@@ -16650,6 +16657,11 @@ jest-snapshot@^26.6.2:
     natural-compare "^1.4.0"
     pretty-format "^26.6.2"
     semver "^7.3.2"
+
+jest-teamcity@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/jest-teamcity/-/jest-teamcity-1.9.0.tgz#e374e2bc583b51acffb2691bb0a66ac3202cc982"
+  integrity sha512-qZv44poGwHZp7JZxizZ08I8wZO4WnZ659XlZR56rcO3z7gx6UXXAzrfjRBMS8yF/e4UIeNWLByjZ1exc3Q4jng==
 
 jest-util@^24.9.0:
   version "24.9.0"

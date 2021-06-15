@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import assert from 'assert';
 
 /**
@@ -21,26 +20,27 @@ import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page.js';
 import * as dataHelper from '../../lib/data-helper';
 import * as driverHelper from '../../lib/driver-helper';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 // NOTE: test in jetpack env is failing due to some strange issue, when switching to new tab. It fails only in CI
 describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function () {
-	this.timeout( mochaTimeOut );
+	let driver;
+
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	it( 'Login', async function () {
-		const loginFlow = new LoginFlow( this.driver );
+		const loginFlow = new LoginFlow( driver );
 		return await loginFlow.loginAndSelectMySite( null, { useFreshLogin: true } );
 	} );
 
 	it( 'Can open Themes menu', async function () {
-		const sidebarComponent = await SidebarComponent.Expect( this.driver );
+		const sidebarComponent = await SidebarComponent.Expect( driver );
 		return await sidebarComponent.selectThemes();
 	} );
 
 	it( 'Can activate a different free theme', async function () {
-		const themesPage = await ThemesPage.Expect( this.driver );
+		const themesPage = await ThemesPage.Expect( driver );
 		await themesPage.waitUntilThemesLoaded();
 		await themesPage.showOnlyFreeThemes();
 		await themesPage.searchFor( 'Twenty Twen' );
@@ -59,23 +59,23 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function
 	} );
 
 	it( 'Can see the theme thanks dialog', async function () {
-		const themeDialogComponent = await ThemeDialogComponent.Expect( this.driver );
+		const themeDialogComponent = await ThemeDialogComponent.Expect( driver );
 		await themeDialogComponent.customizeSite();
 	} );
 
 	if ( host === 'WPCOM' ) {
-		it( 'Can customize the site from the theme thanks dialog', async function () {
-			return await CustomizerPage.Expect( this.driver );
+		it( 'Can customize the site from the theme thanks dialog [WPCOM]', async function () {
+			return await CustomizerPage.Expect( driver );
 		} );
 	} else {
 		it( 'Can log in via Jetpack SSO', async function () {
-			const wpAdminLogonPage = await WPAdminLogonPage.Expect( this.driver );
+			const wpAdminLogonPage = await WPAdminLogonPage.Expect( driver );
 			return await wpAdminLogonPage.logonSSO();
 		} );
 
 		it( 'Can customize the site from the theme thanks dialog', async function () {
-			await driverHelper.refreshIfJNError( this.driver );
-			return await WPAdminCustomizerPage.Expect( this.driver );
+			await driverHelper.refreshIfJNError( driver );
+			return await WPAdminCustomizerPage.Expect( driver );
 		} );
 	}
 } );

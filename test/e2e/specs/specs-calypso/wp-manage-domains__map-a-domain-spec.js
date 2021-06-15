@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import config from 'config';
-
-/**
  * Internal dependencies
  */
 import * as driverManager from '../../lib/driver-manager.js';
@@ -15,37 +10,38 @@ import FindADomainComponent from '../../lib/components/find-a-domain-component.j
 import MyOwnDomainPage from '../../lib/pages/domain-my-own-page';
 import EnterADomainComponent from '../../lib/components/enter-a-domain-component';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Manage Domains - Map a Domain: (${ screenSize }) @parallel`, function () {
-	this.timeout( mochaTimeOut );
+	let driver;
+
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	const blogName = 'nature.com';
 
-	before( 'Log in and go to Domains page', async function () {
-		await new LoginFlow( this.driver ).loginAndSelectDomains();
+	beforeAll( async function () {
+		await new LoginFlow( driver ).loginAndSelectDomains();
 	} );
 
 	it( 'Add a domain', async function () {
-		const domainsPage = await DomainsPage.Expect( this.driver );
+		const domainsPage = await DomainsPage.Expect( driver );
 		await domainsPage.clickAddDomain();
 		await domainsPage.clickPopoverItem( 'to this site' );
 	} );
 
 	it( 'Use own domain', async function () {
-		const findADomainComponent = await FindADomainComponent.Expect( this.driver );
+		const findADomainComponent = await FindADomainComponent.Expect( driver );
 		await findADomainComponent.selectUseOwnDomain();
 	} );
 
 	it( 'Buy domain mapping', async function () {
-		const myOwnDomainPage = await MyOwnDomainPage.Expect( this.driver );
+		const myOwnDomainPage = await MyOwnDomainPage.Expect( driver );
 		await myOwnDomainPage.selectBuyDomainMapping();
 	} );
 
 	it( 'Enter domain name', async function () {
-		const enterADomainComponent = await EnterADomainComponent.Expect( this.driver );
+		const enterADomainComponent = await EnterADomainComponent.Expect( driver );
 		await enterADomainComponent.enterADomain( blogName );
 	} );
 } );
