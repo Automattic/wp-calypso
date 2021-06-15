@@ -11,7 +11,7 @@ import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
 	sidebar: '.sidebar',
-	heading: '.sidebar > li:not(.sidebar__menu-item--child)',
+	heading: '.sidebar > li',
 	subheading: '.sidebar__menu-item--child',
 	expandedMenu: '.sidebar__menu--selected',
 };
@@ -79,7 +79,7 @@ export class SidebarComponent extends BaseContainer {
 			// Since the sub-headings are always hidden unless heading is selected, this works to
 			// our advantage.
 			const selector = `${ selectors.heading } span:has-text("${ heading }"):visible`;
-			await Promise.all( [ this.page.waitForNavigation(), this._click( { selector: selector } ) ] );
+			await Promise.all( [ this.page.waitForNavigation(), this._click( { selector } ) ] );
 		}
 
 		if ( subheading ) {
@@ -92,7 +92,7 @@ export class SidebarComponent extends BaseContainer {
 			const selector = `${ selectors.subheading } >> text="${ subheading }"`;
 			await Promise.all( [
 				this.page.waitForNavigation(),
-				this._click( { selector: selector, force: true } ),
+				this._click( { selector, force: true } ),
 			] );
 		}
 	}
