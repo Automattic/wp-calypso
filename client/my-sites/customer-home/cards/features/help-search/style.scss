@@ -11,10 +11,10 @@ $min_results_height: 180px;
 	}
 
 	.help-search__inner {
-		padding: 16px;
+		padding: 16px 16px 0;
 
 		@include break-mobile {
-			padding: 16px 24px;
+			padding: 16px 24px 0;
 		}
 	}
 
@@ -28,7 +28,7 @@ $min_results_height: 180px;
 	}
 
 	.help-search__footer {
-		margin-top: -#{$card_padding_large/2};
+		margin-bottom: 12px;
 	}
 
 	.help-search__cta {
@@ -132,7 +132,7 @@ $min_results_height: 180px;
 
 	.inline-help__results {
 		min-height: $min_results_height;
-		padding: #{$search_results_top_spacing / 2 - 1px} 0 0 0;
+		padding: #{$search_results_top_spacing - 1px} 0 0 0;
 
 		@include break-mobile {
 			margin-left: -$card_padding_large;
