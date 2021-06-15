@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -24,11 +25,13 @@ import {
 	getPreActivateThemeId,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import {
 	acceptAutoLoadingHomepageWarning,
 	hideAutoLoadingHomepageWarning,
 	activate as activateTheme,
 } from 'calypso/state/themes/actions';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Style dependencies
@@ -60,6 +63,7 @@ class AutoLoadingHomepageModal extends Component {
 
 			// Used to reset state when dialog re-opens, see `getDerivedStateFromProps`
 			wasVisible: props.isVisible,
+			uuid: uuid(),
 		};
 	}
 
@@ -139,7 +143,14 @@ class AutoLoadingHomepageModal extends Component {
 			return null;
 		}
 
-		const { name: themeName, id: themeId } = this.props.theme;
+		const { name: themeName, id: themeId, stylesheet } = this.props.theme;
+
+		const iframeSrc = addQueryArgs( 'https://' + this.props.siteDomain, {
+			customize_changeset_uuid: this.state.uuid,
+			customize_theme: stylesheet,
+			customize_messenger_channel: 'preview-0',
+			customize_autosaved: 'off',
+		} );
 
 		return (
 			<Dialog
@@ -171,6 +182,14 @@ class AutoLoadingHomepageModal extends Component {
 							args: { themeName },
 						} ) }
 					</h1>
+					<div>
+						<iframe
+							title="Site Preview"
+							name="customize-preview-0"
+							sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts"
+							src={ iframeSrc }
+						></iframe>
+					</div>
 					<FormLabel>
 						<FormRadio
 							value="keep_current_homepage"
@@ -207,6 +226,7 @@ export default connect(
 
 		return {
 			siteId,
+			siteDomain: getSiteDomain( state, siteId ),
 			installingThemeId,
 			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
