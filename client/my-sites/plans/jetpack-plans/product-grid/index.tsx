@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useMemo, useRef, useState, useEffect, useCallback, RefObject } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
@@ -64,6 +64,35 @@ const getShowFreeCard = ( state: AppState ) => {
 	return isJetpackCloud();
 };
 
+const useWrapGridForSmallScreens = ( maxItemsPerRow: number ) => {
+	const gridRef = useRef< HTMLUListElement >( null );
+	const [ shouldWrap, setShouldWrap ] = useState< boolean >( false );
+
+	useEffect( () => {
+		const onResize = () => {
+			const { current: grid } = gridRef;
+			if ( ! grid ) {
+				return;
+			}
+
+			const firstChild = grid.children[ 0 ];
+
+			if ( firstChild instanceof HTMLElement ) {
+				const possibleItemsPerRow = Math.round( grid.offsetWidth / firstChild.offsetWidth );
+
+				setShouldWrap( possibleItemsPerRow < maxItemsPerRow );
+			}
+		};
+
+		onResize();
+		window.addEventListener( 'resize', onResize );
+
+		return () => window.removeEventListener( 'resize', onResize );
+	}, [ maxItemsPerRow ] );
+
+	return { shouldWrap, gridRef };
+};
+
 const ProductGrid: React.FC< ProductsGridProps > = ( {
 	duration,
 	urlQueryArgs,
@@ -74,64 +103,51 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const bundleComparisonRef = useRef< null | HTMLElement >( null );
-	const planGridRef: RefObject< HTMLUListElement > = useRef( null );
-	const [ isPlanRowWrapping, setPlanRowWrapping ] = useState( false );
-
 	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const currentPlanSlug = currentPlan?.product_slug || null;
 
+	// Retrieve and cache the plans array, which might be already translated.
+	useEffect( () => {
+		// Get the first plan description and pass it through `translate` so that
+		// if it wasn't translated at the start the cache key for sortedPlans
+		// would change once translation becomes available, but if it was translated
+		// from the start the call to `translate` won't have any effect on it.
+		const oneUntranslatedPlan = getPlansToDisplay( { duration, currentPlanSlug } )?.[ 0 ];
+
+		if ( oneUntranslatedPlan?.description ) {
+			// eslint-disable-next-line wpcalypso/i18n-no-variables
+			translate( oneUntranslatedPlan.description );
+		}
+
+		if ( oneUntranslatedPlan?.features?.items?.[ 0 ]?.text ) {
+			// eslint-disable-next-line wpcalypso/i18n-no-variables
+			translate( oneUntranslatedPlan.features.items[ 0 ]?.text );
+		}
+	}, [ duration, currentPlanSlug, translate ] );
+
+	const { shouldWrap: shouldWrapGrid, gridRef } = useWrapGridForSmallScreens( 3 );
 	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
 		siteId
 	);
+	const [ popularItems, otherItems ] = useMemo( () => {
+		const allItems = sortByGridPosition( [
+			...getProductsToDisplay( {
+				duration,
+				availableProducts,
+				purchasedProducts,
+				includedInPlanProducts,
+			} ),
+			...getPlansToDisplay( { duration, currentPlanSlug } ),
+		] );
 
-	// Retrieve and cache the plans array, which might be already translated.
-	const untranslatedSortedPlans = useMemo(
-		() => sortByGridPosition( getPlansToDisplay( { duration, currentPlanSlug } ) ),
-		[ duration, currentPlanSlug ]
-	);
-	// Get the first plan description and pass it through `translate` so that
-	// if it wasn't translated at the start the cache key for sortedPlans
-	// would change once translation becomes available, but if it was translated
-	// from the start the call to `translate` won't have any effect on it.
-	const translatedFirstPlanDescription = untranslatedSortedPlans?.[ 0 ]?.description
-		? // eslint-disable-next-line wpcalypso/i18n-no-variables
-		  translate( untranslatedSortedPlans[ 0 ].description )
-		: null;
-	const translatedFirstPlanFirstFeature = untranslatedSortedPlans?.[ 0 ]?.features?.items?.[ 0 ]
-		?.text
-		? // eslint-disable-next-line wpcalypso/i18n-no-variables
-		  translate( untranslatedSortedPlans[ 0 ].features.items[ 0 ].text )
-		: null;
-
-	const sortedPlans = useMemo(
-		() => sortByGridPosition( getPlansToDisplay( { duration, currentPlanSlug } ) ),
-		[ duration, currentPlanSlug, translatedFirstPlanDescription, translatedFirstPlanFirstFeature ]
-	);
-	const sortedProducts = useMemo(
-		() =>
-			sortByGridPosition(
-				getProductsToDisplay( {
-					duration,
-					availableProducts,
-					purchasedProducts,
-					includedInPlanProducts,
-				} )
-			),
-		[ duration, availableProducts, includedInPlanProducts, purchasedProducts ]
-	);
-
-	let popularProducts = [] as SelectorProduct[];
-	let otherProducts = [] as SelectorProduct[];
-
-	const allProducts = sortByGridPosition( [ ...sortedPlans, ...sortedProducts ] );
-	popularProducts = allProducts.slice( 0, 3 );
-	otherProducts = allProducts.slice( 3 );
+		return [ allItems.slice( 0, 3 ), allItems.slice( 3 ) ];
+	}, [ duration, availableProducts, purchasedProducts, includedInPlanProducts, currentPlanSlug ] );
 
 	const showFreeCard = useSelector( getShowFreeCard );
 
+	const bundleComparisonRef = useRef< null | HTMLElement >( null );
 	const scrollToComparison = () => {
 		if ( bundleComparisonRef.current ) {
 			bundleComparisonRef.current?.scrollIntoView( {
@@ -139,29 +155,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 			} );
 		}
 	};
-
-	const onResize = useCallback( () => {
-		if ( planGridRef ) {
-			const { current: grid } = planGridRef;
-
-			if ( grid ) {
-				const firstChild = grid.children[ 0 ];
-
-				if ( firstChild instanceof HTMLElement ) {
-					const itemCount = Math.round( grid.offsetWidth / firstChild.offsetWidth );
-
-					setPlanRowWrapping( itemCount < sortedPlans.length );
-				}
-			}
-		}
-	}, [ planGridRef, sortedPlans ] );
-
-	useEffect( () => {
-		onResize();
-		window.addEventListener( 'resize', onResize );
-
-		return () => window.removeEventListener( 'resize', onResize );
-	}, [ onResize ] );
 
 	const filterBar = useMemo(
 		() => (
@@ -190,11 +183,11 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				{ ! planRecommendation && filterBar }
 				<ul
 					className={ classNames( 'product-grid__plan-grid', {
-						'is-wrapping': isPlanRowWrapping,
+						'is-wrapping': shouldWrapGrid,
 					} ) }
-					ref={ planGridRef }
+					ref={ gridRef }
 				>
-					{ popularProducts.map( ( product ) => (
+					{ popularItems.map( ( product ) => (
 						<li key={ product.iconSlug }>
 							<ProductCard
 								item={ product }
@@ -202,7 +195,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 								siteId={ siteId }
 								currencyCode={ currencyCode }
 								selectedTerm={ duration }
-								isAligned={ ! isPlanRowWrapping }
+								isAligned={ ! shouldWrapGrid }
 								featuredPlans={ [
 									PLAN_JETPACK_SECURITY_DAILY,
 									PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
@@ -214,7 +207,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				</ul>
 				<div
 					className={ classNames( 'product-grid__more', {
-						'is-detached': isPlanRowWrapping,
+						'is-detached': shouldWrapGrid,
 					} ) }
 				>
 					<MoreInfoBox
@@ -237,7 +230,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 			</ProductGridSection>
 			<ProductGridSection title={ translate( 'More Products' ) }>
 				<ul className="product-grid__product-grid">
-					{ otherProducts.map( ( product ) => (
+					{ otherItems.map( ( product ) => (
 						<li key={ product.iconSlug }>
 							<ProductCard
 								item={ product }
