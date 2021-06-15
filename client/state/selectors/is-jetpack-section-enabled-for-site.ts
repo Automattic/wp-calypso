@@ -9,7 +9,10 @@ const FLAG_JETPACK_SITES = 'jetpack/features-section/jetpack';
 const FLAG_ATOMIC_SITES = 'jetpack/features-section/atomic';
 const FLAG_SIMPLE_SITES = 'jetpack/features-section/simple';
 
-export default function isJetpackSectionEnabledForSite( state: object, siteId?: number | null ) {
+export default function isJetpackSectionEnabledForSite(
+	state: Record< string, unknown >,
+	siteId?: number | null
+) {
 	// From here, we can only determine whether the Jetpack section is enabled
 	// if we have a site ID -- no site ID, no access.
 	if ( ! siteId ) {

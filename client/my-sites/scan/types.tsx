@@ -13,7 +13,7 @@ type ScanState = 'unavailable' | 'provisioning' | 'idle' | 'scanning';
 export type Scan = {
 	state: ScanState;
 	threats: [ Threat ];
-	credentials: [ object ];
+	credentials: [ Record< string, unknown > ];
 	reason?: string;
 	mostRecent?: {
 		timestamp: string;

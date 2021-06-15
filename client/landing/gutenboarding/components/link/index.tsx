@@ -40,6 +40,7 @@ const LinkButton = forwardRef< HTMLAnchorElement, LinkButtonProps >(
 	}
 );
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 type Assign3< T extends object, U extends object, V extends object > = Assign< T, Assign< U, V > >;
 
 // Button _without_ href

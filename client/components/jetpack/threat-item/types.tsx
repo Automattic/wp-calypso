@@ -33,7 +33,7 @@ export interface BaseThreat {
 	rows?: Record< string, unknown >;
 	table?: string;
 	diff?: string;
-	context?: object;
+	context?: Record< string, unknown >;
 }
 
 export interface FixableThreat extends BaseThreat {

@@ -46,7 +46,9 @@ const Placeholder = () => (
 const BusinessATSwitch = ( { UpsellComponent }: Props ): ReactElement => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	const currentPlan: object | null = useSelector( ( state ) => getCurrentPlan( state, siteId ) );
+	const currentPlan: Record< string, unknown > | null = useSelector( ( state ) =>
+		getCurrentPlan( state, siteId )
+	);
 	const isATPlan = useSelector( ( state ) => isSiteOnAtomicPlan( state, siteId ) );
 
 	// If we're not sure, show a loading screen.

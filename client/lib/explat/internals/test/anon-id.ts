@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 /**
  * WordPress dependencies
  */
@@ -24,11 +23,13 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 } ) );
 
 function setSsrContext() {
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	global.window = undefined;
 }
 
 function setBrowserContext() {
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	global.window = {};
 }

@@ -213,7 +213,7 @@ EligibilityWarnings.defaultProps = {
 	onProceed: noop,
 };
 
-const mapStateToProps = ( state: object, ownProps: ExternalProps ) => {
+const mapStateToProps = ( state: Record< string, unknown >, ownProps: ExternalProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 	const eligibilityData = ownProps.eligibilityData || getEligibility( state, siteId );

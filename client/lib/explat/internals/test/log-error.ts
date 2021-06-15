@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 /**
  * Internal dependencies
  */
@@ -14,6 +13,7 @@ jest.mock( 'calypso/server/lib/logger', () => {
 const mockedLogger = Logger.getLogger().error as jest.MockedFunction< () => unknown >;
 
 function setSsrContext() {
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	globalThis.window = undefined;
 }
@@ -26,6 +26,7 @@ const mockWindow = {
 	fetch: jest.fn(),
 };
 function setBrowserContext() {
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	globalThis.window = mockWindow;
 }
