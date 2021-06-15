@@ -114,7 +114,13 @@ function MasterbarCartCount( { productsInCart }: { productsInCart: number } ): J
 }
 
 function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string } ) {
-	const { responseCart, removeCoupon, removeProductFromCart, isLoading } = useShoppingCart();
+	const {
+		responseCart,
+		removeCoupon,
+		removeProductFromCart,
+		isLoading,
+		isPendingUpdate,
+	} = useShoppingCart();
 	const translate = useTranslate();
 	const goToCheckout = () => {
 		const checkoutUrl = `/checkout/${ selectedSiteSlug }`;
@@ -140,6 +146,7 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 		},
 		[ reduxDispatch ]
 	);
+	const isDisabled = isLoading || isPendingUpdate;
 
 	return (
 		<CheckoutProvider
@@ -160,7 +167,13 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 				/>
 				<CheckoutSummaryTotal />
 				<ButtonSection>
-					<Button buttonType={ 'primary' } fullWidth onClick={ goToCheckout }>
+					<Button
+						buttonType={ 'primary' }
+						fullWidth
+						disabled={ isDisabled }
+						isBusy={ isDisabled }
+						onClick={ goToCheckout }
+					>
 						{ translate( 'Checkout' ) }
 					</Button>
 				</ButtonSection>
