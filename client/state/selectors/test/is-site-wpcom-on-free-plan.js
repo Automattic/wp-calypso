@@ -25,6 +25,13 @@ describe( 'isSiteWPCOMOnFreePlan', () => {
 			is_automated_transfer: false,
 		},
 	};
+	const atomicSite = {
+		ID: 3,
+		jetpack: false,
+		options: {
+			is_automated_transfer: true,
+		},
+	};
 	const state = deepFreeze( {
 		sites: {
 			items: {
@@ -49,12 +56,12 @@ describe( 'isSiteWPCOMOnFreePlan', () => {
 		expect( isSiteWPCOMOnFreePlan( state, wpcomSite.ID ) ).toEqual( true );
 	} );
 
-	test( 'should return true when wpcom site and on free Jetpack plan', () => {
+	test( 'should return true when wpcom site, atomic, and on free jetpack plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_FREE } );
-		expect( isSiteWPCOMOnFreePlan( state, wpcomSite.ID ) ).toEqual( true );
+		expect( isSiteWPCOMOnFreePlan( state, atomicSite.ID ) ).toEqual( true );
 	} );
 
-	test( 'should return false when jetpack site and on free Jetpack plan', () => {
+	test( 'should return false when jetpack site and on free jetpack plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_FREE } );
 		expect( isSiteWPCOMOnFreePlan( state, jetpackSite.ID ) ).toEqual( false );
 	} );
