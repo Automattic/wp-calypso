@@ -35,6 +35,9 @@ describe( 'hasSiteSeoFeature', () => {
 	const jetpackSite = {
 		ID: 2,
 		jetpack: true,
+		options: {
+			is_automated_transfer: false,
+		},
 	};
 	const state = deepFreeze( {
 		sites: {
@@ -82,44 +85,44 @@ describe( 'hasSiteSeoFeature', () => {
 	} );
 
 	// VIP sites use conflicting SEO plugins.
-	it( 'returns true when on a wpcom VIP plan', () => {
+	it( 'returns false when on a wpcom VIP plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_VIP } );
 		expect( hasSiteSeoFeature( state, wpcomSite.ID ) ).toEqual( false );
 	} );
 
 	// Jetpack plans
 
-	it( 'returns false when on a jetpack free plan', () => {
+	it( 'returns true when on a jetpack free plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_FREE } );
 		expect( hasSiteSeoFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
-	it( 'returns false when on a jetpack personal plan', () => {
+	it( 'returns true when on a jetpack personal plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_PERSONAL } );
 		expect( hasSiteSeoFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
-	it( 'returns false when on a jetpack premium plan', () => {
+	it( 'returns true when on a jetpack premium plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_PREMIUM } );
 		expect( hasSiteSeoFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
-	it( 'returns false when on a jetpack business plan', () => {
+	it( 'returns true when on a jetpack business plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_BUSINESS } );
 		expect( hasSiteSeoFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
-	it( 'returns false when on a jetpack security daily plan', () => {
+	it( 'returns true when on a jetpack security daily plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_SECURITY_DAILY } );
 		expect( hasSiteSeoFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
-	it( 'returns false when on a jetpack security realtime plan', () => {
+	it( 'returns true when on a jetpack security realtime plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_SECURITY_REALTIME } );
 		expect( hasSiteSeoFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
-	it( 'returns false when on a jetpack complete plan', () => {
+	it( 'returns true when on a jetpack complete plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_COMPLETE } );
 		expect( hasSiteSeoFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );

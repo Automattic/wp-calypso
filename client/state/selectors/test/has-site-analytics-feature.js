@@ -35,6 +35,9 @@ describe( 'hasSiteAnalyticsFeature', () => {
 	const jetpackSite = {
 		ID: 2,
 		jetpack: true,
+		options: {
+			is_automated_transfer: false,
+		},
 	};
 	const state = deepFreeze( {
 		sites: {
@@ -98,27 +101,27 @@ describe( 'hasSiteAnalyticsFeature', () => {
 		expect( hasSiteAnalyticsFeature( state, jetpackSite.ID ) ).toEqual( false );
 	} );
 
-	it( 'returns false when on a jetpack premium plan', () => {
+	it( 'returns true when on a jetpack premium plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_PREMIUM } );
 		expect( hasSiteAnalyticsFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
-	it( 'returns false when on a jetpack business plan', () => {
+	it( 'returns true when on a jetpack business plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_BUSINESS } );
 		expect( hasSiteAnalyticsFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
-	it( 'returns false when on a jetpack security daily plan', () => {
+	it( 'returns true when on a jetpack security daily plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_SECURITY_DAILY } );
 		expect( hasSiteAnalyticsFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
-	it( 'returns false when on a jetpack security realtime plan', () => {
+	it( 'returns true when on a jetpack security realtime plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_SECURITY_REALTIME } );
 		expect( hasSiteAnalyticsFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
-	it( 'returns false when on a jetpack complete plan', () => {
+	it( 'returns true when on a jetpack complete plan', () => {
 		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_COMPLETE } );
 		expect( hasSiteAnalyticsFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
