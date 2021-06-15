@@ -19,6 +19,7 @@ import Popover from 'calypso/components/popover';
 import { WPOrderReviewLineItems } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
 import { CheckoutSummaryTotal } from 'calypso/my-sites/checkout/composite-checkout/components/wp-checkout-order-summary';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 
 type MasterbarCartProps = { tooltip: string; children: React.ReactNode };
 
@@ -113,7 +114,7 @@ function MasterbarCartCount( { productsInCart }: { productsInCart: number } ): J
 }
 
 function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string } ) {
-	const { removeCoupon, removeProductFromCart } = useShoppingCart();
+	const { responseCart, removeCoupon, removeProductFromCart, isLoading } = useShoppingCart();
 	const translate = useTranslate();
 	const goToCheckout = () => {
 		const checkoutUrl = `/checkout/${ selectedSiteSlug }`;
@@ -149,6 +150,7 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 			showInfoMessage={ showInfoMessage }
 			showSuccessMessage={ showSuccessMessage }
 		>
+			<CartMessages isLoadingCart={ isLoading } cart={ responseCart } />
 			<MasterbarCartContentsWrapper>
 				<MasterbarCartTitle>{ translate( 'Cart' ) }</MasterbarCartTitle>
 				<WPOrderReviewLineItems
