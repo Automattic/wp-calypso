@@ -30,6 +30,9 @@ export class LoginPage extends BaseContainer {
 		super( page, selectors.loginContainer );
 	}
 
+	/**
+	 * Post-initialization steps.
+	 */
 	async _postInit(): Promise< void > {
 		await this.page.waitForLoadState( 'networkidle' );
 		const container = await this.page.waitForSelector( selectors.loginContainer );
