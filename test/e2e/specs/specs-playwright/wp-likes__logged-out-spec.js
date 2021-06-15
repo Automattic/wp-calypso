@@ -5,7 +5,7 @@ import {
 	DataHelper,
 	BrowserManager,
 	LoginFlow,
-	PostLikesComponent,
+	PublishedPostPage,
 	PublishedPostsListPage,
 } from '@automattic/calypso-e2e';
 
@@ -17,7 +17,7 @@ const user = 'gutenbergSimpleSiteUser';
 describe( DataHelper.createSuiteTitle( 'Likes (Logged Out)' ), function () {
 	describe( 'Like an existing post as logged out user', function () {
 		let loginFlow;
-		let postLikesComponent;
+		let publishedPostPage;
 		let publishedPostsListPage;
 		let url;
 
@@ -38,16 +38,16 @@ describe( DataHelper.createSuiteTitle( 'Likes (Logged Out)' ), function () {
 		} );
 
 		it( 'Like post', async function () {
-			postLikesComponent = await PostLikesComponent.Expect( this.page );
+			publishedPostPage = await PublishedPostPage.Expect( this.page );
 			loginFlow = new LoginFlow( this.page, user );
 
 			// Clicking the Like button will bring up a new popup, so
 			// specifically call the flow for dealing with logging in from a popup.
-			await Promise.all( [ loginFlow.loginFromPopup(), postLikesComponent.clickLikePost() ] );
+			await Promise.all( [ loginFlow.loginFromPopup(), publishedPostPage.likePost() ] );
 		} );
 
 		it( 'Unlike post', async function () {
-			await postLikesComponent.clickLikePost();
+			await publishedPostPage.unlikePost();
 		} );
 	} );
 } );

@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { LoginPage, MyHomePage } from '../pages';
-import { getAccountCredential } from '../../data-helper';
+import { LoginPage } from '../pages';
+import { getAccountCredential, getCalypsoURL } from '../../data-helper';
 
 /**
  * Type dependencies
