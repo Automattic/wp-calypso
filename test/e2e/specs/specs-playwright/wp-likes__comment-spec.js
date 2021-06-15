@@ -21,6 +21,7 @@ const quote =
 describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	describe( 'Comment and like on an existing post', function () {
 		let commentsComponent;
+		const comment = DataHelper.randomPhrase();
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
@@ -39,23 +40,23 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 		} );
 
 		it( 'Post a comment', async function () {
-			const comment = DataHelper.randomPhrase();
 			commentsComponent = await CommentsComponent.Expect( this.page );
 			await commentsComponent.postComment( comment );
 		} );
 
 		it( 'Like a comment', async function () {
-			await commentsComponent.like( { commentNumber: 1 } );
+			await commentsComponent.like( { commentBody: comment } );
 		} );
 
 		it( 'Unlike a comment', async function () {
-			await commentsComponent.unlike( { commentNumber: 1 } );
+			await commentsComponent.unlike( { commentBody: comment } );
 		} );
 	} );
 
 	describe( 'Comment and like on a new post', function () {
 		let commentsComponent;
 		let gutenbergEditorPage;
+		const comment = DataHelper.randomPhrase();
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
@@ -83,17 +84,16 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 		} );
 
 		it( 'Post a comment', async function () {
-			const comment = DataHelper.randomPhrase();
 			commentsComponent = await CommentsComponent.Expect( this.page );
 			await commentsComponent.postComment( comment );
 		} );
 
 		it( 'Like a comment', async function () {
-			await commentsComponent.like( { commentNumber: 1 } );
+			await commentsComponent.like( { commentBody: comment } );
 		} );
 
 		it( 'Unlike a comment', async function () {
-			await commentsComponent.unlike( { commentNumber: 1 } );
+			await commentsComponent.unlike( { commentBody: comment } );
 		} );
 	} );
 } );

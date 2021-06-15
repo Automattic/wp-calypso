@@ -16,7 +16,7 @@ const selectors = {
 
 	// Comment like
 	commentsList: '.comment-list',
-	topLevelComments: '.comment-list .depth-1:not(.children)',
+	comments: '.comment-content',
 	likeButton: '.comment-like-link',
 	notLiked: '.comment-not-liked',
 	liked: '.comment-liked',
@@ -58,30 +58,46 @@ export class CommentsComponent extends BaseContainer {
 	}
 
 	/**
-	 * Performs the click action on the comment's like button.
+	 * Selects the comment then clicks the `Like` star shaped button of the comment.
+	 *
+	 * This method takes two forms of selectors:
+	 *     - number to specify the nth comment.
+	 *     - string to specify the comment using string matching.
 	 *
 	 * This helper method does not check whether the button state has changed.
 	 * To ensure the state changed to the expected value, the caller should perform additional
 	 * checks.
 	 *
-	 * @param {number} commentNumber The nth comment to click like on.
-	 * @returns {Promise<void>} No return value.
+	 * @param {number|string} selector Unique selector for the comment.
+	 * @returns {Promise<ElementHandle>} The target comment.
+	 * @throws {Error} If selector was not supplied or supplied selector did not resolve to a comment.
 	 */
-	async _click( commentNumber: number ): Promise< ElementHandle > {
-		// Wait for comments to load, then select all matching comments.
-		// For now, only interact with top level comments since child comments introduce
-		// a whole new layer of complexity.
-		await this.page.waitForSelector( selectors.commentsList, { state: 'visible' } );
-		const topLevelComments = await this.page.$$( selectors.topLevelComments );
+	async _click( selector: string | number ): Promise< ElementHandle > {
+		let commentToLike;
 
-		if ( commentNumber > topLevelComments.length ) {
-			throw new Error(
-				`Post has comment count of ${ topLevelComments.length }, was asked to like comment number ${ commentNumber }`
+		await this.page.waitForSelector( selectors.commentsList, { state: 'visible' } );
+		await this.page.pause();
+
+		if ( typeof selector === 'number' ) {
+			commentToLike = await this.page.waitForSelector(
+				`:nth-match(${ selectors.comments }, ${ selector })`
 			);
 		}
 
-		// Obtain the ElementHandle to the comment to have its button clicked, then look for the button itself.
-		const commentToLike = topLevelComments[ commentNumber - 1 ];
+		if ( typeof selector === 'string' ) {
+			selector = selector.trim();
+			commentToLike = await this.page.waitForSelector(
+				`.comment-content:has-text("${ selector }")`,
+				{ state: 'visible' }
+			);
+		}
+
+		if ( ! commentToLike ) {
+			throw new Error( `Failed to select a comment. Please check the comment number or selector.` );
+		}
+
+		await commentToLike.waitForElementState( 'stable' );
+
 		const likeButton = ( await commentToLike.$( selectors.likeButton ) ) as ElementHandle;
 		// Click the like button and wait until the animations are done.
 		await Promise.all( [ likeButton.click(), likeButton.waitForElementState( 'enabled' ) ] );
@@ -91,30 +107,30 @@ export class CommentsComponent extends BaseContainer {
 	}
 
 	/**
-	 * Like the comment.
+	 * Given a selector, like the comment and verify its outcome.
 	 *
-	 * This method will check the target comment has indeed been liked.
+	 * This method accepts either a 1-indexed number denoting the nth comment on the post to like,
+	 * or a string that resolves to the body of a comment.
 	 *
-	 * @param {[key: string]: number} param0 Parameter object.
-	 * @param {number} param0.commentNumber The nth comment to click like on, 1-indexed. Defaults to 1.
+	 * @param {number|string} selector Either a 1-indexed number or a string.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async like( { commentNumber = 1 }: { commentNumber: number } ): Promise< void > {
-		const comment = await this._click( commentNumber );
-		await comment.waitForSelector( selectors.liked );
+	async like( selector: number | string ): Promise< void > {
+		const comment = await this._click( selector );
+		await comment!.waitForSelector( selectors.liked );
 	}
 
 	/**
-	 * Unlike the comment.
+	 * Given a selector, unlike the comment and verify its outcome.
 	 *
-	 * This method will check the target comment has indeed been unliked.
+	 * This method accepts either a 1-indexed number denoting the nth comment on the post to like,
+	 * or a string that resolves to the body of a comment.
 	 *
-	 * @param {[key: string]: number} param0 Parameter object.
-	 * @param {number} param0.commentNumber The nth comment to click unlike on, 1-indexed. Defaults to 1.
+	 * @param {number|string} selector Either a 1-indexed number or a string.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async unlike( { commentNumber = 1 }: { commentNumber: number } ): Promise< void > {
-		const comment = await this._click( commentNumber );
-		await comment.waitForSelector( selectors.notLiked );
+	async unlike( selector: number | string ): Promise< void > {
+		const comment = await this._click( selector );
+		await comment!.waitForSelector( selectors.notLiked );
 	}
 }
