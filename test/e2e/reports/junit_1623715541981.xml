@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="10.1330" tests="5" failures="1">
+  <testsuite name="Root Suite" timestamp="2021-06-15T00:05:41" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="[WPCOM] Seo Preview Page: (desktop) @parallel" timestamp="2021-06-15T00:05:44" tests="5" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-seo__preview-spec.js" time="10.1330" failures="1">
+    <testcase name="[WPCOM] Seo Preview Page: (desktop) @parallel Log in" time="4.5620" classname="Log in">
+    </testcase>
+    <testcase name="[WPCOM] Seo Preview Page: (desktop) @parallel Navigate to Tools &gt; Marketing page" time="5.5710" classname="Navigate to Tools &gt; Marketing page">
+      <failure message="elementHandle.waitForSelector: Protocol error (DOM.describeNode): Cannot find context with specified id
+=========================== logs ===========================
+waiting for selector &quot;.sidebar__menu--selected&quot; to be visible
+============================================================
+Note: use DEBUG=pw:api environment variable to capture Playwright logs." type="Error"><![CDATA[elementHandle.waitForSelector: Protocol error (DOM.describeNode): Cannot find context with specified id
+=========================== logs ===========================
+waiting for selector ".sidebar__menu--selected" to be visible
+============================================================
+Note: use DEBUG=pw:api environment variable to capture Playwright logs.
+Error
+    at Object.captureStackTrace (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/utils/stackTrace.js:50:19)
+    at Connection.sendMessageToServer (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/connection.js:65:48)
+    at Proxy.<anonymous> (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/channelOwner.js:64:61)
+    at /Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/elementHandle.js:251:42
+    at ElementHandle._wrapApiCall (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/channelOwner.js:77:34)
+    at ElementHandle.waitForSelector (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/elementHandle.js:250:21)
+    at SidebarComponent.gotoMenu (/Users/edwintakahashi/workspace/wp-calypso-second/packages/calypso-e2e/dist/cjs/lib/components/sidebar-component.js:79:32)
+    at runMicrotasks (<anonymous>)
+    at runNextTicks (internal/process/task_queues.js:58:5)
+    at processImmediate (internal/timers.js:434:9)
+    at async Context.<anonymous> (specs/specs-playwright/wp-seo__preview-spec.js:17:3)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

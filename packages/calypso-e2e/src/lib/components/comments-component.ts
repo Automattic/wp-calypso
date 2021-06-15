@@ -76,7 +76,6 @@ export class CommentsComponent extends BaseContainer {
 		let commentToLike;
 
 		await this.page.waitForSelector( selectors.commentsList, { state: 'visible' } );
-		await this.page.pause();
 
 		if ( typeof selector === 'number' ) {
 			commentToLike = await this.page.waitForSelector(

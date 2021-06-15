@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="48.8550" tests="26" failures="0">
+  <testsuite name="Root Suite" timestamp="2021-06-11T21:16:52" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="[WPCOM] Support: (desktop) @parallel" timestamp="2021-06-11T21:16:54" tests="0" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-support__search-spec.js" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="Search for a support topic" timestamp="2021-06-11T21:16:54" tests="7" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-support__search-spec.js" time="7.5820" failures="0">
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic Log in" time="4.8590" classname="Log in">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic Open Settings page" time="1.1530" classname="Open Settings page">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic Open support popover" time="0.8700" classname="Open support popover">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic Displays default entries" time="0.0210" classname="Displays default entries">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic Enter search keyword" time="0.5550" classname="Enter search keyword">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic Search results are shown" time="0.0230" classname="Search results are shown">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic Clear keyword" time="0.1010" classname="Clear keyword">
+    </testcase>
+  </testsuite>
+  <testsuite name="Search for a support topic and open a support page article" timestamp="2021-06-11T21:17:02" tests="7" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-support__search-spec.js" time="7.3920" failures="0">
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic and open a support page article Log in" time="4.7610" classname="Log in">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic and open a support page article Open Settings page" time="1.1780" classname="Open Settings page">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic and open a support page article Open support popover" time="0.5330" classname="Open support popover">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic and open a support page article Displays six entries by default" time="0.0410" classname="Displays six entries by default">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic and open a support page article Enter search keyword" time="0.5430" classname="Enter search keyword">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic and open a support page article Search results are shown" time="0.0230" classname="Search results are shown">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic and open a support page article Click on first link" time="0.3130" classname="Click on first link">
+    </testcase>
+  </testsuite>
+  <testsuite name="Empty search string" timestamp="2021-06-11T21:17:09" tests="6" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-support__search-spec.js" time="5.9190" failures="0">
+    <testcase name="[WPCOM] Support: (desktop) @parallel Empty search string Log in" time="4.5040" classname="Log in">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Empty search string Open Settings page" time="0.6570" classname="Open Settings page">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Empty search string Open support popover" time="0.6930" classname="Open support popover">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Empty search string Displays six entries by default" time="0.0090" classname="Displays six entries by default">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Empty search string Enter invalid search keyword" time="0.0400" classname="Enter invalid search keyword">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Empty search string Continues to display default results" time="0.0160" classname="Continues to display default results">
+    </testcase>
+  </testsuite>
+  <testsuite name="Invalid search string" timestamp="2021-06-11T21:17:15" tests="6" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-support__search-spec.js" time="27.9620" failures="0">
+    <testcase name="[WPCOM] Support: (desktop) @parallel Invalid search string Log in" time="4.6230" classname="Log in">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Invalid search string Open Settings page" time="0.7250" classname="Open Settings page">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Invalid search string Open support popover" time="0.5340" classname="Open support popover">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Invalid search string Displays six entries by default" time="0.0190" classname="Displays six entries by default">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Invalid search string Enter invalid search keyword" time="22.0140" classname="Enter invalid search keyword">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Invalid search string No search results are shown" time="0.0470" classname="No search results are shown">
+    </testcase>
+  </testsuite>
+</testsuites>

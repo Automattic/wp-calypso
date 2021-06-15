@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="23.3620" tests="12" failures="0">
+  <testsuite name="Root Suite" timestamp="2021-06-10T23:22:23" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="[WPCOM] Likes (post): (desktop) @parallel" timestamp="2021-06-10T23:22:26" tests="0" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-likes__post-spec.js" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="Like a new post" timestamp="2021-06-10T23:22:26" tests="7" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-likes__post-spec.js" time="17.5880" failures="0">
+    <testcase name="[WPCOM] Likes (post): (desktop) @parallel Like a new post Log in" time="1.6210" classname="Log in">
+    </testcase>
+    <testcase name="[WPCOM] Likes (post): (desktop) @parallel Like a new post Start new post" time="6.3250" classname="Start new post">
+    </testcase>
+    <testcase name="[WPCOM] Likes (post): (desktop) @parallel Like a new post Enter post title" time="1.1090" classname="Enter post title">
+    </testcase>
+    <testcase name="[WPCOM] Likes (post): (desktop) @parallel Like a new post Enter post text" time="1.6060" classname="Enter post text">
+    </testcase>
+    <testcase name="[WPCOM] Likes (post): (desktop) @parallel Like a new post Publish and visit post" time="5.8990" classname="Publish and visit post">
+    </testcase>
+    <testcase name="[WPCOM] Likes (post): (desktop) @parallel Like a new post Like post" time="0.9400" classname="Like post">
+    </testcase>
+    <testcase name="[WPCOM] Likes (post): (desktop) @parallel Like a new post Unlike post" time="0.0880" classname="Unlike post">
+    </testcase>
+  </testsuite>
+  <testsuite name="Like an existing post" timestamp="2021-06-10T23:22:43" tests="5" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-likes__post-spec.js" time="5.7740" failures="0">
+    <testcase name="[WPCOM] Likes (post): (desktop) @parallel Like an existing post Log in" time="1.5960" classname="Log in">
+    </testcase>
+    <testcase name="[WPCOM] Likes (post): (desktop) @parallel Like an existing post Visit site" time="2.5700" classname="Visit site">
+    </testcase>
+    <testcase name="[WPCOM] Likes (post): (desktop) @parallel Like an existing post Click on first post" time="0.3210" classname="Click on first post">
+    </testcase>
+    <testcase name="[WPCOM] Likes (post): (desktop) @parallel Like an existing post Like post" time="1.1780" classname="Like post">
+    </testcase>
+    <testcase name="[WPCOM] Likes (post): (desktop) @parallel Like an existing post Unlike post" time="0.1090" classname="Unlike post">
+    </testcase>
+  </testsuite>
+</testsuites>

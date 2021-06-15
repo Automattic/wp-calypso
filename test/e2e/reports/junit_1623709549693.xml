@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="7.4200" tests="2" failures="0">
+  <testsuite name="Root Suite" timestamp="2021-06-14T22:25:49" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="[WPCOM] Seo Preview Page: (desktop) @parallel" timestamp="2021-06-14T22:25:52" tests="2" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-seo__preview-spec.js" time="7.4200" failures="0">
+    <testcase name="[WPCOM] Seo Preview Page: (desktop) @parallel Log in" time="4.8080" classname="Log in">
+    </testcase>
+    <testcase name="[WPCOM] Seo Preview Page: (desktop) @parallel Navigate to Tools &gt; Marketing page" time="2.6120" classname="Navigate to Tools &gt; Marketing page">
+    </testcase>
+  </testsuite>
+</testsuites>

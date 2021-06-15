@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="34.1790" tests="8" failures="3">
+  <testsuite name="Root Suite" timestamp="2021-06-15T06:35:17" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="[WPCOM] Media: Edit Media: (desktop) @parallel" timestamp="2021-06-15T06:35:20" tests="8" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-media__edit-spec.js" time="34.1790" failures="3">
+    <testcase name="[WPCOM] Media: Edit Media: (desktop) @parallel Log In" time="4.8130" classname="Log In">
+    </testcase>
+    <testcase name="[WPCOM] Media: Edit Media: (desktop) @parallel Navigate to Media" time="0.8440" classname="Navigate to Media">
+    </testcase>
+    <testcase name="[WPCOM] Media: Edit Media: (desktop) @parallel See media gallery" time="0.2950" classname="See media gallery">
+    </testcase>
+    <testcase name="[WPCOM] Media: Edit Media: (desktop) @parallel Show only images" time="0.2630" classname="Show only images">
+    </testcase>
+    <testcase name="[WPCOM] Media: Edit Media: (desktop) @parallel Select the first image item" time="0.0730" classname="Select the first image item">
+    </testcase>
+    <testcase name="[WPCOM] Media: Edit Media: (desktop) @parallel Click to edit selected image" time="27.8800" classname="Click to edit selected image">
+      <failure message="page.click: Protocol error (Runtime.callFunctionOn): Browser closed.
+==================== Browser output: ====================
+&lt;launching&gt; /Users/edwintakahashi/Library/Caches/ms-playwright/chromium-878941/chrome-mac/Chromium.app/Contents/MacOS/Chromium --disable-background-networking --enable-features=NetworkService,NetworkServiceInProcess --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=TranslateUI,BlinkGenPropertyTrees,ImprovedCookieControls,SameSiteByDefaultCookies,LazyFrameLoading --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-sync --force-color-profile=srgb --metrics-recording-only --no-first-run --enable-automation --password-store=basic --use-mock-keychain --no-service-autorun --user-data-dir=/var/folders/2t/d2z_1zks2cq_wn2zn8whfxy80000gn/T/playwright_chromiumdev_profile-XYIJbu --remote-debugging-pipe --no-sandbox --window-position=0,0 --window-size=1440,1000 --no-startup-window
+&lt;launched&gt; pid=62073
+[pid=62073][err] objc[62088]: Class WebSwapLayerCGL is implemented in both /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks/WebCore.framework/Versions/A/WebCore (0x1fc8a6cf0) and /Users/edwintakahashi/Library/Caches/ms-playwright/chromium-878941/chrome-mac/Chromium.app/Contents/Frameworks/Chromium Framework.framework/Versions/92.0.4498.0/Libraries/libGLESv2.dylib (0x12e480fa8). One of the two will be used. Which one is undefined.
+[pid=62073] &lt;gracefully close start&gt;
+[pid=62073] &lt;forecefully close&gt;
+[pid=62073] &lt;kill&gt;
+[pid=62073] &lt;will force kill&gt;
+[pid=62073] &lt;process did exit: exitCode=null, signal=SIGKILL&gt;
+=========================== logs ===========================
+waiting for selector &quot;button[data-e2e-button=&quot;edit&quot;]&quot;
+============================================================
+Note: use DEBUG=pw:api environment variable to capture Playwright logs." type="Error"><![CDATA[page.click: Protocol error (Runtime.callFunctionOn): Browser closed.
+==================== Browser output: ====================
+<launching> /Users/edwintakahashi/Library/Caches/ms-playwright/chromium-878941/chrome-mac/Chromium.app/Contents/MacOS/Chromium --disable-background-networking --enable-features=NetworkService,NetworkServiceInProcess --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=TranslateUI,BlinkGenPropertyTrees,ImprovedCookieControls,SameSiteByDefaultCookies,LazyFrameLoading --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-sync --force-color-profile=srgb --metrics-recording-only --no-first-run --enable-automation --password-store=basic --use-mock-keychain --no-service-autorun --user-data-dir=/var/folders/2t/d2z_1zks2cq_wn2zn8whfxy80000gn/T/playwright_chromiumdev_profile-XYIJbu --remote-debugging-pipe --no-sandbox --window-position=0,0 --window-size=1440,1000 --no-startup-window
+<launched> pid=62073
+[pid=62073][err] objc[62088]: Class WebSwapLayerCGL is implemented in both /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks/WebCore.framework/Versions/A/WebCore (0x1fc8a6cf0) and /Users/edwintakahashi/Library/Caches/ms-playwright/chromium-878941/chrome-mac/Chromium.app/Contents/Frameworks/Chromium Framework.framework/Versions/92.0.4498.0/Libraries/libGLESv2.dylib (0x12e480fa8). One of the two will be used. Which one is undefined.
+[pid=62073] <gracefully close start>
+[pid=62073] <forecefully close>
+[pid=62073] <kill>
+[pid=62073] <will force kill>
+[pid=62073] <process did exit: exitCode=null, signal=SIGKILL>
+=========================== logs ===========================
+waiting for selector "button[data-e2e-button="edit"]"
+============================================================
+Note: use DEBUG=pw:api environment variable to capture Playwright logs.
+Error
+    at Object.captureStackTrace (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/utils/stackTrace.js:50:19)
+    at Connection.sendMessageToServer (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/connection.js:65:48)
+    at Proxy.<anonymous> (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/channelOwner.js:64:61)
+    at /Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/frame.js:284:34
+    at Frame._wrapApiCall (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/channelOwner.js:77:34)
+    at Frame.click (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/frame.js:283:21)
+    at /Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/page.js:457:60
+    at Page._attributeToPage (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/page.js:238:20)
+    at Page.click (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/page.js:457:21)
+    at MediaPage.editImage (/Users/edwintakahashi/workspace/wp-calypso-second/packages/calypso-e2e/dist/cjs/lib/pages/media-page.js:74:25)
+    at Context.<anonymous> (specs/specs-playwright/wp-media__edit-spec.js:33:19)
+    at processImmediate (internal/timers.js:461:21)]]></failure>
+    </testcase>
+    <testcase name="&quot;after each&quot; hook: saveScreenshot for &quot;Click to edit selected image&quot;" time="0.0080" classname="&quot;after each&quot; hook: saveScreenshot for &quot;Click to edit selected image&quot;">
+      <failure message="page.screenshot: Target page, context or browser has been closed" type="Error"><![CDATA[page.screenshot: Target page, context or browser has been closed
+Error
+    at Object.captureStackTrace (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/utils/stackTrace.js:50:19)
+    at Connection.sendMessageToServer (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/connection.js:65:48)
+    at Proxy.<anonymous> (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/channelOwner.js:64:61)
+    at /Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/page.js:422:42
+    at Page._wrapApiCall (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/channelOwner.js:77:34)
+    at Page.screenshot (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/page.js:418:21)
+    at Context.saveScreenshot (/Users/edwintakahashi/workspace/wp-calypso-second/packages/calypso-e2e/dist/cjs/hooks/screenshot.js:30:16)
+    at processImmediate (internal/timers.js:461:21)]]></failure>
+    </testcase>
+    <testcase name="&quot;after all&quot; hook: saveVideo in &quot;{root}&quot;" time="0.0030" classname="&quot;after all&quot; hook: saveVideo in &quot;{root}&quot;">
+      <failure message=".delete: Target page, context or browser has been closed" type="Error"><![CDATA[.delete: Target page, context or browser has been closed
+Error
+    at Object.captureStackTrace (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/utils/stackTrace.js:50:19)
+    at Connection.sendMessageToServer (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/connection.js:65:48)
+    at Proxy.<anonymous> (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/channelOwner.js:64:61)
+    at /Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/artifact.js:90:34
+    at Artifact._wrapApiCall (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/channelOwner.js:77:34)
+    at Artifact.delete (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/artifact.js:89:21)
+    at Video.delete (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/video.js:52:34)
+    at async Context.saveVideo (/Users/edwintakahashi/workspace/wp-calypso-second/packages/calypso-e2e/dist/cjs/hooks/recording.js:61:9)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

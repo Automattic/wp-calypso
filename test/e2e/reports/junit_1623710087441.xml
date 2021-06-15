@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="7.0360" tests="2" failures="1">
+  <testsuite name="Root Suite" timestamp="2021-06-14T22:34:47" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="[WPCOM] Seo Preview Page: (desktop) @parallel" timestamp="2021-06-14T22:34:49" tests="2" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-seo__preview-spec.js" time="7.0360" failures="1">
+    <testcase name="[WPCOM] Seo Preview Page: (desktop) @parallel Log in" time="4.8610" classname="Log in">
+    </testcase>
+    <testcase name="[WPCOM] Seo Preview Page: (desktop) @parallel Navigate to Tools &gt; Marketing page" time="2.1750" classname="Navigate to Tools &gt; Marketing page">
+      <failure message="elementHandle.waitForSelector: Evaluation failed: Error: &quot;has-text&quot; engine expects a single string
+    at Object.matches (&lt;anonymous&gt;:2609:19)
+    at &lt;anonymous&gt;:2481:27
+    at SelectorEvaluatorImpl._cached (&lt;anonymous&gt;:2290:24)
+    at SelectorEvaluatorImpl._callMatches (&lt;anonymous&gt;:2480:21)
+    at SelectorEvaluatorImpl._matchesEngine (&lt;anonymous&gt;:2467:25)
+    at &lt;anonymous&gt;:2394:58
+    at Array.filter (&lt;anonymous&gt;)
+    at &lt;anonymous&gt;:2394:41
+    at SelectorEvaluatorImpl._cached (&lt;anonymous&gt;:2290:24)
+    at SelectorEvaluatorImpl._querySimple (&lt;anonymous&gt;:2373:21)
+=========================== logs ===========================
+waiting for selector &quot;.sidebar &gt; li:has-text(Media)&quot; to be visible
+============================================================
+Note: use DEBUG=pw:api environment variable to capture Playwright logs." type="Error"><![CDATA[elementHandle.waitForSelector: Evaluation failed: Error: "has-text" engine expects a single string
+    at Object.matches (<anonymous>:2609:19)
+    at <anonymous>:2481:27
+    at SelectorEvaluatorImpl._cached (<anonymous>:2290:24)
+    at SelectorEvaluatorImpl._callMatches (<anonymous>:2480:21)
+    at SelectorEvaluatorImpl._matchesEngine (<anonymous>:2467:25)
+    at <anonymous>:2394:58
+    at Array.filter (<anonymous>)
+    at <anonymous>:2394:41
+    at SelectorEvaluatorImpl._cached (<anonymous>:2290:24)
+    at SelectorEvaluatorImpl._querySimple (<anonymous>:2373:21)
+=========================== logs ===========================
+waiting for selector ".sidebar > li:has-text(Media)" to be visible
+============================================================
+Note: use DEBUG=pw:api environment variable to capture Playwright logs.
+Error
+    at Object.captureStackTrace (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/utils/stackTrace.js:50:19)
+    at Connection.sendMessageToServer (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/connection.js:65:48)
+    at Proxy.<anonymous> (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/channelOwner.js:64:61)
+    at /Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/elementHandle.js:251:42
+    at ElementHandle._wrapApiCall (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/channelOwner.js:77:34)
+    at ElementHandle.waitForSelector (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/elementHandle.js:250:21)
+    at SidebarComponent._click (/Users/edwintakahashi/workspace/wp-calypso-second/packages/calypso-e2e/dist/cjs/lib/components/sidebar-component.js:87:44)
+    at async SidebarComponent.gotoMenu (/Users/edwintakahashi/workspace/wp-calypso-second/packages/calypso-e2e/dist/cjs/lib/components/sidebar-component.js:62:13)
+    at async Context.<anonymous> (specs/specs-playwright/wp-seo__preview-spec.js:16:3)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

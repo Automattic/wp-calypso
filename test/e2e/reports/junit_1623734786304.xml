@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="7.1320" tests="7" failures="1">
+  <testsuite name="Root Suite" timestamp="2021-06-15T05:26:26" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="[WPCOM] Media: Edit Media: (desktop) @parallel" timestamp="2021-06-15T05:26:28" tests="7" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-media__edit-spec.js" time="7.1320" failures="1">
+    <testcase name="[WPCOM] Media: Edit Media: (desktop) @parallel Log In" time="4.8880" classname="Log In">
+    </testcase>
+    <testcase name="[WPCOM] Media: Edit Media: (desktop) @parallel Navigate to Media" time="1.4760" classname="Navigate to Media">
+    </testcase>
+    <testcase name="[WPCOM] Media: Edit Media: (desktop) @parallel See media content" time="0.4350" classname="See media content">
+    </testcase>
+    <testcase name="[WPCOM] Media: Edit Media: (desktop) @parallel Select the first media item" time="0.3330" classname="Select the first media item">
+      <failure message="elementHandle.click: Element is not attached to the DOM
+=========================== logs ===========================
+attempting click action
+  waiting for element to be visible, enabled and stable
+  element is visible, enabled and stable
+  scrolling into view if needed
+  done scrolling
+  checking that element receives pointer events at (346.88,335.88)
+============================================================
+Note: use DEBUG=pw:api environment variable to capture Playwright logs." type="Error"><![CDATA[elementHandle.click: Element is not attached to the DOM
+=========================== logs ===========================
+attempting click action
+  waiting for element to be visible, enabled and stable
+  element is visible, enabled and stable
+  scrolling into view if needed
+  done scrolling
+  checking that element receives pointer events at (346.88,335.88)
+============================================================
+Note: use DEBUG=pw:api environment variable to capture Playwright logs.
+Error
+    at Object.captureStackTrace (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/utils/stackTrace.js:50:19)
+    at Connection.sendMessageToServer (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/connection.js:65:48)
+    at Proxy.<anonymous> (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/channelOwner.js:64:61)
+    at /Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/elementHandle.js:142:34
+    at ElementHandle._wrapApiCall (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/channelOwner.js:77:34)
+    at ElementHandle.click (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/elementHandle.js:141:21)
+    at MediaPage.click (/Users/edwintakahashi/workspace/wp-calypso-second/packages/calypso-e2e/dist/cjs/lib/pages/media-page.js:49:22)
+    at async Context.<anonymous> (specs/specs-playwright/wp-media__edit-spec.js:24:3)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

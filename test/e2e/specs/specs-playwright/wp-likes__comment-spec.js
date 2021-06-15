@@ -44,12 +44,12 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 			await commentsComponent.postComment( comment );
 		} );
 
-		it( 'Like a comment', async function () {
-			await commentsComponent.like( { commentBody: comment } );
+		it( 'Like the comment', async function () {
+			await commentsComponent.like( comment );
 		} );
 
-		it( 'Unlike a comment', async function () {
-			await commentsComponent.unlike( { commentBody: comment } );
+		it( 'Unlike the comment', async function () {
+			await commentsComponent.unlike( comment );
 		} );
 	} );
 
@@ -88,12 +88,12 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 			await commentsComponent.postComment( comment );
 		} );
 
-		it( 'Like a comment', async function () {
-			await commentsComponent.like( { commentBody: comment } );
+		it( 'Like the comment', async function () {
+			await commentsComponent.like( comment );
 		} );
 
-		it( 'Unlike a comment', async function () {
-			await commentsComponent.unlike( { commentBody: comment } );
+		it( 'Unlike the comment', async function () {
+			await commentsComponent.unlike( comment );
 		} );
 	} );
 } );

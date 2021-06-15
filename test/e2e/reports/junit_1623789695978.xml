@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="7.8100" tests="6" failures="1">
+  <testsuite name="Root Suite" timestamp="2021-06-15T20:41:35" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="[WPCOM] Likes (comment): (desktop) @parallel" timestamp="2021-06-15T20:41:38" tests="0" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-likes__comment-spec.js" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="Comment and like on an existing post" timestamp="2021-06-15T20:41:38" tests="6" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-likes__comment-spec.js" time="7.8100" failures="1">
+    <testcase name="[WPCOM] Likes (comment): (desktop) @parallel Comment and like on an existing post Log in" time="2.8930" classname="Log in">
+    </testcase>
+    <testcase name="[WPCOM] Likes (comment): (desktop) @parallel Comment and like on an existing post Visit site" time="0.9780" classname="Visit site">
+    </testcase>
+    <testcase name="[WPCOM] Likes (comment): (desktop) @parallel Comment and like on an existing post Click on first post" time="0.9250" classname="Click on first post">
+    </testcase>
+    <testcase name="[WPCOM] Likes (comment): (desktop) @parallel Comment and like on an existing post Post a comment" time="2.8370" classname="Post a comment">
+    </testcase>
+    <testcase name="[WPCOM] Likes (comment): (desktop) @parallel Comment and like on an existing post Like a comment" time="0.1770" classname="Like a comment">
+      <failure message="Cannot read property &apos;click&apos; of null" type="TypeError"><![CDATA[TypeError: Cannot read property 'click' of null
+    at CommentsComponent._click (/Users/edwintakahashi/workspace/wp-calypso-second/packages/calypso-e2e/dist/cjs/lib/components/comments-component.js:81:39)
+    at runMicrotasks (<anonymous>)
+    at runNextTicks (internal/process/task_queues.js:58:5)
+    at processImmediate (internal/timers.js:434:9)
+    at async CommentsComponent.like (/Users/edwintakahashi/workspace/wp-calypso-second/packages/calypso-e2e/dist/cjs/lib/components/comments-component.js:100:23)
+    at async Context.<anonymous> (specs/specs-playwright/wp-likes__comment-spec.js:48:4)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

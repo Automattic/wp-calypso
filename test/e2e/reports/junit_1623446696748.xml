@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="48.0870" tests="20" failures="1">
+  <testsuite name="Root Suite" timestamp="2021-06-11T21:24:56" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="[WPCOM] Support: (desktop) @parallel" timestamp="2021-06-11T21:24:59" tests="0" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-support__search-spec.js" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="Search for a support topic" timestamp="2021-06-11T21:24:59" tests="7" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-support__search-spec.js" time="6.3150" failures="0">
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic Log in" time="4.2480" classname="Log in">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic Open Settings page" time="0.7610" classname="Open Settings page">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic Open support popover" time="0.6530" classname="Open support popover">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic Displays default entries" time="0.0120" classname="Displays default entries">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic Enter search keyword" time="0.5430" classname="Enter search keyword">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic Search results are shown" time="0.0160" classname="Search results are shown">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic Clear keyword" time="0.0820" classname="Clear keyword">
+    </testcase>
+  </testsuite>
+  <testsuite name="Search for a support topic and open a support page article" timestamp="2021-06-11T21:25:05" tests="7" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-support__search-spec.js" time="6.2810" failures="0">
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic and open a support page article Log in" time="4.3610" classname="Log in">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic and open a support page article Open Settings page" time="0.3130" classname="Open Settings page">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic and open a support page article Open support popover" time="0.5570" classname="Open support popover">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic and open a support page article Displays default entries" time="0.0080" classname="Displays default entries">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic and open a support page article Enter search keyword" time="0.7300" classname="Enter search keyword">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic and open a support page article Search results are shown" time="0.0610" classname="Search results are shown">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Search for a support topic and open a support page article Click on first link" time="0.2510" classname="Click on first link">
+    </testcase>
+  </testsuite>
+  <testsuite name="Empty search string" timestamp="2021-06-11T21:25:11" tests="6" file="/Users/edwintakahashi/workspace/wp-calypso-second/test/e2e/specs/specs-playwright/wp-support__search-spec.js" time="35.4910" failures="1">
+    <testcase name="[WPCOM] Support: (desktop) @parallel Empty search string Log in" time="4.3580" classname="Log in">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Empty search string Open Settings page" time="0.4100" classname="Open Settings page">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Empty search string Open support popover" time="0.6120" classname="Open support popover">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Empty search string Displays default entries" time="0.0170" classname="Displays default entries">
+    </testcase>
+    <testcase name="[WPCOM] Support: (desktop) @parallel Empty search string Enter invalid search keyword" time="30.0940" classname="Enter invalid search keyword">
+      <failure message="page.waitForSelector: Timeout 30000ms exceeded.
+=========================== logs ===========================
+waiting for selector &quot;.spinner&quot; to be visible
+  selector resolved to hidden &lt;div class=&quot;spinner&quot;&gt;…&lt;/div&gt;
+============================================================
+Note: use DEBUG=pw:api environment variable to capture Playwright logs." type="TimeoutError"><![CDATA[page.waitForSelector: Timeout 30000ms exceeded.
+=========================== logs ===========================
+waiting for selector ".spinner" to be visible
+  selector resolved to hidden <div class="spinner">…</div>
+============================================================
+Note: use DEBUG=pw:api environment variable to capture Playwright logs.
+Error
+    at Object.captureStackTrace (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/utils/stackTrace.js:50:19)
+    at Connection.sendMessageToServer (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/connection.js:65:48)
+    at Proxy.<anonymous> (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/channelOwner.js:64:61)
+    at /Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/frame.js:207:42
+    at Frame._wrapApiCall (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/channelOwner.js:77:34)
+    at Frame.waitForSelector (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/frame.js:202:21)
+    at /Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/page.js:248:60
+    at Page._attributeToPage (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/page.js:238:20)
+    at Page.waitForSelector (/Users/edwintakahashi/workspace/wp-calypso-second/node_modules/playwright/lib/client/page.js:248:21)
+    at SupportComponent.search (/Users/edwintakahashi/workspace/wp-calypso-second/packages/calypso-e2e/dist/cjs/lib/components/support-component.js:191:29)
+    at async Context.<anonymous> (specs/specs-playwright/wp-support__search-spec.js:134:4)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>
