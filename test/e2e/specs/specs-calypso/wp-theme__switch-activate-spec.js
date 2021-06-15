@@ -52,7 +52,9 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function
 	} );
 
 	it( 'Can see the theme switch confirmation dialog', async function () {
-		const themeSwitchConfirmationComponent = await ThemeSwitchConfirmationComponent.Expect( this.driver );
+		const themeSwitchConfirmationComponent = await ThemeSwitchConfirmationComponent.Expect(
+			this.driver
+		);
 		await themeSwitchConfirmationComponent.activateTheme();
 	} );
 
