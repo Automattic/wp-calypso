@@ -62,10 +62,9 @@ export function checkout( context, next ) {
 	const jetpackPurchaseNonce = context.query.purchaseNonce;
 	const isUserComingFromLoginForm = context.query?.flow === 'logged-out-checkout';
 	const isJetpackCheckout =
-		( context.pathname.includes( '/checkout/jetpack' ) &&
-			( isLoggedOut || isUserComingFromLoginForm ) &&
-			( !! jetpackPurchaseToken || !! jetpackPurchaseNonce ) ) ??
-		false;
+		context.pathname.includes( '/checkout/jetpack' ) &&
+		( isLoggedOut || isUserComingFromLoginForm ) &&
+		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
 	const jetpackSiteSlug = context.params.siteSlug;
 
 	// Do not use Jetpack checkout for Jetpack Anti Spam
