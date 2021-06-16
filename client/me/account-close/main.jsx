@@ -32,8 +32,8 @@ import isAccountClosed from 'calypso/state/selectors/is-account-closed';
 import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
-import userUtils from 'calypso/lib/user/utils';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 
 /**
  * Style dependencies
@@ -46,12 +46,12 @@ class AccountSettingsClose extends Component {
 		showSiteDropdown: true,
 	};
 
-	UNSAFE_componentWillReceiveProps = ( nextProps ) => {
+	componentDidUpdate() {
 		// If the account is closed, logout
-		if ( nextProps.isAccountClosed === true ) {
-			userUtils.logout();
+		if ( this.props.isAccountClosed === true ) {
+			this.props.redirectToLogout();
 		}
-	};
+	}
 
 	goBack = () => {
 		page( '/me/account' );
@@ -271,22 +271,28 @@ class AccountSettingsClose extends Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const user = getCurrentUser( state );
-	const currentUserId = user && user.ID;
-	const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state, currentUserId );
-	const isLoading =
-		! purchasedPremiumThemes ||
-		! hasLoadedSites( state ) ||
-		! hasLoadedUserPurchasesFromServer( state );
+export default connect(
+	( state ) => {
+		const user = getCurrentUser( state );
+		const currentUserId = user && user.ID;
+		const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state, currentUserId );
+		const isLoading =
+			! purchasedPremiumThemes ||
+			! hasLoadedSites( state ) ||
+			! hasLoadedUserPurchasesFromServer( state );
 
-	return {
-		currentUserId: user && user.ID,
-		isLoading,
-		hasCancelablePurchases: hasCancelableUserPurchases( state, currentUserId ),
-		purchasedPremiumThemes,
-		hasAtomicSites: userHasAnyAtomicSites( state ),
-		isAccountClosed: isAccountClosed( state ),
-		sitesToBeDeleted: getAccountClosureSites( state ),
-	};
-} )( localize( AccountSettingsClose ) );
+		return {
+			currentUserId: user && user.ID,
+			isLoading,
+			hasCancelablePurchases: hasCancelableUserPurchases( state, currentUserId ),
+			purchasedPremiumThemes,
+			hasAtomicSites: userHasAnyAtomicSites( state ),
+			isAccountClosed: isAccountClosed( state ),
+			sitesToBeDeleted: getAccountClosureSites( state ),
+			user,
+		};
+	},
+	{
+		redirectToLogout,
+	}
+)( localize( AccountSettingsClose ) );

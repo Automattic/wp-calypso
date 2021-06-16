@@ -32,7 +32,7 @@ import MainWrapper from './main-wrapper';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
 import Spinner from 'calypso/components/spinner';
-import userUtilities from 'calypso/lib/user/utils';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { addQueryArgs, externalRedirect } from 'calypso/lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -396,7 +396,7 @@ export class JetpackAuthorize extends Component {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { create_jetpack: true } );
 		}
 
-		userUtilities.logout( window.location.href );
+		this.props.redirectToLogout( window.location.href );
 	};
 
 	handleResolve = () => {
@@ -922,6 +922,7 @@ const connectComponent = connect(
 	{
 		authorize: authorizeAction,
 		recordTracksEvent: recordTracksEventAction,
+		redirectToLogout,
 		retryAuth: retryAuthAction,
 	}
 );

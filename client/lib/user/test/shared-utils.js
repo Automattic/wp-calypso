@@ -52,4 +52,23 @@ describe( 'UserUtils', () => {
 			expect( getLogoutUrl( user ) ).toBe( 'wp.com/with-domain' );
 		} );
 	} );
+
+	describe( 'without user', () => {
+		const logoutUrl = 'https://wordpress.com/wp-login.php?action=logout';
+		beforeAll( () => {
+			config.mockImplementation( configMock( { logout_url: logoutUrl } ) );
+			config.isEnabled.mockImplementation( configMock( { always_use_logout_url: false } ) );
+		} );
+
+		test( 'falls back to the config logout URL', () => {
+			expect( getLogoutUrl() ).toBe( logoutUrl );
+		} );
+
+		test( 'appends redirect URL to the config logout URL', () => {
+			const postLogoutUrl = 'https://post-logout.wp.com';
+			expect( getLogoutUrl( undefined, postLogoutUrl ) ).toBe(
+				logoutUrl + '&redirect_to=' + encodeURIComponent( postLogoutUrl )
+			);
+		} );
+	} );
 } );
