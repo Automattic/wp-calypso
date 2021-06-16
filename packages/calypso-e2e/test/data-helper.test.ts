@@ -69,7 +69,7 @@ describe( 'DataHelper Tests', function () {
 		test.each`
 			accountType             | expected
 			${ 'nonexistent_user' } | ${ Error }
-			${ 'noURLUser' }        | ${ TypeError }
+			${ 'noURLUser' }        | ${ ReferenceError }
 		`(
 			'Throws error if getAccountSiteURL is called with $accountType',
 			function ( { accountType, expected } ) {
