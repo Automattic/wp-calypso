@@ -101,7 +101,6 @@ export default {
 	redirectTests( context, next ) {
 		const isLoggedIn = isUserLoggedIn( context.store.getState() );
 		const currentFlowName = getFlowName( context.params, isLoggedIn );
-		currentFlowName === 'onboarding' && loadExperimentAssignment( 'refined_reskin_v2' );
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
 			next();
 		} else if ( currentFlowName === 'onboarding' && config.isEnabled( 'signup/reskin' ) ) {
