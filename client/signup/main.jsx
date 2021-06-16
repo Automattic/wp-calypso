@@ -205,11 +205,6 @@ class Signup extends React.Component {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			return page.redirect( getStepUrl( this.props.flowName, destinationStep, undefined, locale ) );
 		}
-<<<<<<< HEAD
-=======
-
-		this.isReskinned = true;
->>>>>>> ae0aa7d789 (force reskin for testing)
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
