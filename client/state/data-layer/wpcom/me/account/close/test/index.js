@@ -11,8 +11,8 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { closeAccount } from 'calypso/state/account/actions';
 import { ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
 
-jest.mock( 'calypso/lib/user', () => () => {
-	return { clear: jest.fn() };
+jest.mock( 'calypso/lib/user/store', () => {
+	return { clearStore: jest.fn() };
 } );
 
 describe( 'account-close', () => {
