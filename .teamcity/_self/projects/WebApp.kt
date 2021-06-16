@@ -103,7 +103,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export BROWSERLOCALE="en"
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 
-				MOCHA_CAPTURE_PATH=test.json yarn mocha --reporter-options tags=parallel --reporter /Users/sergio/src/automattic/wp-calypso/packages/magellan-mocha-plugin/lib/suite_capture.js specs/specs-calypso
+				MOCHA_CAPTURE_PATH=test.json yarn mocha --reporter-options tags=parallel --reporter ../../packages/magellan-mocha-plugin/lib/suite_capture.js specs/specs-calypso
 
 				yarn magellan --config=magellan-calypso.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
 			""".trimIndent()
