@@ -406,6 +406,9 @@ private object VisualRegressionTests : BuildType({
 				sendTo = "#visual-regression-automated-tests"
 				messageFormat = simpleMessageFormat()
 			}
+			branchFilter = """
+            	+:trunk
+            """.trimIndent()
 			buildFailed = true
 			buildFinishedSuccessfully = true
 		}
