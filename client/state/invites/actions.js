@@ -226,7 +226,7 @@ export function acceptInvite( invite ) {
 				{
 					activate: invite.activationKey,
 					include_domain_only: true,
-					apiVersion: '1.2',
+					apiVersion: '1.3',
 				}
 			);
 
