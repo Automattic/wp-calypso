@@ -88,7 +88,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert.strictEqual( eventData.open, false );
 			} );
 
-			it( 'when Global Styles sidebar is closed by opening another sidebar', async function () {
+			it( 'when Global Styles sidebar is closed by opening another sidebar (tab = root)', async function () {
 				await driverHelper.clickWhenClickable(
 					this.driver,
 					By.css( '.edit-site-header__actions button[aria-label="Global Styles"]' )
@@ -105,6 +105,32 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert.strictEqual( tabSelectedEvents.length, 2 );
 				const [ , eventData ] = tabSelectedEvents[ 0 ];
 				assert.strictEqual( eventData.tab, 'root' );
+				assert.strictEqual( eventData.open, false );
+			} );
+
+			it( 'when Global Styles sidebar is closed by opening another sidebar (tab = block-type)', async function () {
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.edit-site-header__actions button[aria-label="Global Styles"]' )
+				);
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css(
+						'.edit-site-global-styles-sidebar .components-tab-panel__tabs button:nth-child(2)'
+					)
+				);
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.edit-site-header__actions button[aria-label="Settings"]' )
+				);
+
+				const eventsStack = await getEventsStack( this.driver );
+				const tabSelectedEvents = eventsStack.filter(
+					( [ eventName ] ) => eventName === 'wpcom_block_editor_global_styles_tab_selected'
+				);
+				assert.strictEqual( tabSelectedEvents.length, 3 );
+				const [ , eventData ] = tabSelectedEvents[ 0 ];
+				assert.strictEqual( eventData.tab, 'block-type' );
 				assert.strictEqual( eventData.open, false );
 			} );
 

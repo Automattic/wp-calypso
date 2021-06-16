@@ -369,7 +369,7 @@ const trackEnableComplementaryArea = ( scope, id ) => {
 	if ( active !== 'edit-site/global-styles' && id === 'edit-site/global-styles' ) {
 		trackGlobalStylesTabSelected( { tab: 'root', open: true } );
 	} else if ( active === 'edit-site/global-styles' && id !== 'edit-site/global-styles' ) {
-		trackGlobalStylesTabSelected( { tab: 'root', open: false } );
+		trackGlobalStylesTabSelected( { open: false } );
 	}
 };
 

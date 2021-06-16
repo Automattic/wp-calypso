@@ -9,7 +9,7 @@ export function trackGlobalStylesTabSelected( { tab, open } = {} ) {
 	const activeTabElement = document.querySelector(
 		'.edit-site-global-styles-sidebar .components-tab-panel__tabs button.is-active'
 	);
-	const activeTabName = tab || getTabNameFromId( activeTabElement.id );
+	const activeTabName = tab || getTabNameFromId( activeTabElement?.id );
 	const isSidebarOpen =
 		typeof open !== 'undefined'
 			? open
