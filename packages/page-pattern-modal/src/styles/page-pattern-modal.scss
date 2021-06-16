@@ -35,8 +35,6 @@ $sidebar-width-desktop: 324px;
 
 // Overrides of the Gutenberg modal component
 .page-pattern-modal {
-	position: relative;
-
 	&.components-modal__frame {
 		max-height: none;
 	}
@@ -47,7 +45,6 @@ $sidebar-width-desktop: 324px;
 		// prevents a 1px strip of content being visible after scrolling
 		overflow-y: hidden;
 		padding-bottom: 24px;
-		top: 20px;
 		.components-modal__content {
 			padding: 0 32px 24px;
 		}
