@@ -163,14 +163,17 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		return () => window.removeEventListener( 'resize', onResize );
 	}, [ onResize ] );
 
-	const filterBar = (
-		<div className="product-grid__filter-bar">
-			<PlansFilterBar
-				showDiscountMessage
-				onDurationChange={ onDurationChange }
-				duration={ duration }
-			/>
-		</div>
+	const filterBar = useMemo(
+		() => (
+			<div className="product-grid__filter-bar">
+				<PlansFilterBar
+					showDiscountMessage
+					onDurationChange={ onDurationChange }
+					duration={ duration }
+				/>
+			</div>
+		),
+		[ onDurationChange, duration ]
 	);
 
 	return (
