@@ -167,6 +167,10 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 
 	.domain-suggestion__action-container {
 		width: 100%;
+
+		@include break-mobile {
+			width: auto;
+		}
 	}
 
 	.button.domain-suggestion__action {
