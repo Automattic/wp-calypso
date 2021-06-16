@@ -63,6 +63,7 @@ $sidebar-width-desktop: 324px;
 		padding: 3px 16px 16px;
 
 		&::before {
+			// this is functioning like a clearfix in the core component, but we don't need it
 			display: none;
 		}
 	}
