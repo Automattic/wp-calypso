@@ -431,11 +431,18 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
  */
 const trackEditPostCreateTemplate = ( template ) => {
 	const isCreatingTemplate = !! template;
+	const editedTemplate = select( 'core/edit-post' ).getEditedPostTemplate();
 
 	if ( isCreatingTemplate ) {
-		tracksRecordEvent( 'wpcom_block_editor_custom_post_template_created', {} );
+		tracksRecordEvent( 'wpcom_block_editor_custom_post_template_created', {
+			template_theme: editedTemplate.theme,
+			template_slug: editedTemplate.slug,
+		} );
 	} else {
-		tracksRecordEvent( 'wpcom_block_editor_custom_post_template_editing', {} );
+		tracksRecordEvent( 'wpcom_block_editor_custom_post_template_editing', {
+			template_theme: editedTemplate.theme,
+			template_slug: editedTemplate.slug,
+		} );
 	}
 };
 
@@ -449,8 +456,11 @@ const trackEditPostCreateTemplate = ( template ) => {
 const trackEditPostSaveTemplate = ( kind, name, recordId ) => {
 	const editedEntity = select( 'core' ).getEditedEntityRecord( kind, name, recordId );
 
-	if ( editedEntity?.slug.startsWith( 'wp-custom-template' ) ) {
-		tracksRecordEvent( 'wpcom_block_editor_custom_post_template_saved', {} );
+	if ( kind === 'postType' && name === 'wp_template' ) {
+		tracksRecordEvent( 'wpcom_block_editor_custom_post_template_saved', {
+			template_theme: editedEntity.theme,
+			template_slug: editedEntity.slug,
+		} );
 	}
 };
 
