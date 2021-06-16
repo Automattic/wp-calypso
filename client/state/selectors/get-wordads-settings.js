@@ -33,6 +33,9 @@ export const getWordadsSettings = createSelector(
 		let jetpackSettings = {};
 		if ( isJetpack ) {
 			const siteSettings = getJetpackSettings( state, siteId );
+			if ( ! siteSettings ) {
+				return null;
+			}
 			jetpackSettings = {
 				jetpack_module_enabled: siteSettings?.wordads,
 				display_options: {
@@ -54,7 +57,11 @@ export const getWordadsSettings = createSelector(
 			...jetpackSettings,
 		};
 	},
-	( state, siteId ) => [ state.wordads.settings.items[ siteId ] ]
+	( state, siteId ) => [
+		state.wordads.settings.items[ siteId ],
+		isJetpackSite( state, siteId ),
+		getJetpackSettings( state, siteId ),
+	]
 );
 
 export default getWordadsSettings;
