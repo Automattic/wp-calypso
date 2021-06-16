@@ -19,15 +19,20 @@ export default function QueryWordadsSettings( { siteId } ) {
 		isRequestingJetpackSettings( state, siteId, null )
 	);
 
-	React.useEffect( () => {
-		dispatch( requestWordadsSettings( siteId ) );
+	React.useEffect(
+		() => {
+			dispatch( requestWordadsSettings( siteId ) );
 
-		// WordAds settings on Jetpack sites are not available on the WordAds API endpoint, so we
-		// fetch them from the site settings endpoints.
-		if ( isJetpack && ! isFetchingSettings ) {
-			dispatch( requestJetpackSettings( siteId, null ) );
-		}
-	}, [ dispatch, siteId, isJetpack ] );
-
+			// WordAds settings on Jetpack sites are not available on the WordAds API endpoint, so we
+			// fetch them from the site settings endpoints.
+			if ( isJetpack && ! isFetchingSettings ) {
+				dispatch( requestJetpackSettings( siteId, null ) );
+			}
+		},
+		// `isFetchingSettings` is intentionally not a dependency because we want this
+		// effect to run only if the Jetpack settings for the given site have not been
+		// requested yet.
+		[ dispatch, siteId, isJetpack ]
+	);
 	return null;
 }
