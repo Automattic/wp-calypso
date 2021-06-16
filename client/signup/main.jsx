@@ -89,7 +89,6 @@ import SiteMockups from './site-mockup';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import { ProvideExperimentData } from 'calypso/lib/explat';
 
 /**
  * Style dependencies
@@ -206,8 +205,6 @@ class Signup extends React.Component {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			return page.redirect( getStepUrl( this.props.flowName, destinationStep, undefined, locale ) );
 		}
-
-		this.isReskinned = false;
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -229,7 +226,7 @@ class Signup extends React.Component {
 			this.updateShouldShowLoadingScreen( progress );
 		}
 
-		if ( ! this.isReskinned ) {
+		if ( ! config.isEnabled( 'signup/reskin' ) ) {
 			document.body.classList.remove( 'is-white-signup' );
 			debug( 'In componentWillReceiveProps, removed is-white-signup class' );
 		}
@@ -703,14 +700,6 @@ class Signup extends React.Component {
 		}
 	}
 
-	/**
-	 * Temporary hack for adding a css class to the body
-	 * for a user who is assigned to the reskinned group of reskinSignupFlow a/b test.
-	 */
-	addCssClassToBodyForReskinnedFlow() {
-		document.body.classList.add( 'is-white-signup' );
-	}
-
 	render() {
 		// Prevent rendering a step if in the middle of performing a redirect or resuming progress.
 		if (
@@ -729,51 +718,33 @@ class Signup extends React.Component {
 
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
+		const isReskinned = config.isEnabled( 'signup/reskin' );
+
 		return (
-			<ProvideExperimentData
-				name="refined_reskin_v2"
-				options={ { isEligible: 'onboarding' === this.props.flowName } }
-			>
-				{ ( isLoading, experimentAssignment ) => {
-					if ( isLoading ) {
-						debug( 'Waiting for experiment status to load' );
-						return null;
-					}
-
-					this.isReskinned = 'treatment' === experimentAssignment?.variationName;
-					this.isReskinned
-						? document.body.classList.add( 'is-white-signup' )
-						: document.body.classList.remove( 'is-white-signup' );
-					debug( `isReskinned value is ${ this.isReskinned }` );
-
-					return (
-						<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
-							<DocumentHead title={ this.props.pageTitle } />
-							{ ! isWPForTeamsFlow( this.props.flowName ) && (
-								<SignupHeader
-									positionInFlow={ this.getPositionInFlow() }
-									flowLength={ this.getFlowLength() }
-									flowName={ this.props.flowName }
-									showProgressIndicator={ showProgressIndicator }
-									shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
-									isReskinned={ this.isReskinned }
-								/>
-							) }
-							<div className="signup__steps">{ this.renderCurrentStep( this.isReskinned ) }</div>
-							{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
-								<SiteMockups stepName={ this.props.stepName } />
-							) }
-							{ this.state.bearerToken && (
-								<WpcomLoginForm
-									authorization={ 'Bearer ' + this.state.bearerToken }
-									log={ this.state.username }
-									redirectTo={ this.state.redirectTo }
-								/>
-							) }
-						</div>
-					);
-				} }
-			</ProvideExperimentData>
+			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
+				<DocumentHead title={ this.props.pageTitle } />
+				{ ! isWPForTeamsFlow( this.props.flowName ) && (
+					<SignupHeader
+						positionInFlow={ this.getPositionInFlow() }
+						flowLength={ this.getFlowLength() }
+						flowName={ this.props.flowName }
+						showProgressIndicator={ showProgressIndicator }
+						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
+						isReskinned={ isReskinned }
+					/>
+				) }
+				<div className="signup__steps">{ this.renderCurrentStep( isReskinned ) }</div>
+				{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
+					<SiteMockups stepName={ this.props.stepName } />
+				) }
+				{ this.state.bearerToken && (
+					<WpcomLoginForm
+						authorization={ 'Bearer ' + this.state.bearerToken }
+						log={ this.state.username }
+						redirectTo={ this.state.redirectTo }
+					/>
+				) }
+			</div>
 		);
 	}
 }
