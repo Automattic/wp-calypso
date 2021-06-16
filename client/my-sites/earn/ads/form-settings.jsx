@@ -27,7 +27,7 @@ import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings
 import SectionHeader from 'calypso/components/section-header';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getWordadsSettings } from 'calypso/state/selectors/get-wordads-settings';
-import { isJetpackSite, getCustomizerUrl, getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getCustomizerUrl } from 'calypso/state/sites/selectors';
 import { dismissWordAdsSuccess } from 'calypso/state/wordads/approve/actions';
 import { protectForm } from 'calypso/lib/protect-form';
 import { saveWordadsSettings } from 'calypso/state/wordads/settings/actions';
@@ -120,6 +120,7 @@ class AdsFormSettings extends Component {
 			display_options: {},
 			ccpa_enabled: false,
 			ccpa_privacy_policy_url: '',
+			jetpack_module_enabled: false,
 		};
 	}
 
@@ -141,21 +142,23 @@ class AdsFormSettings extends Component {
 			display_options: this.state.display_options,
 			ccpa_enabled: this.state.ccpa_enabled,
 			ccpa_privacy_policy_url: this.state.ccpa_privacy_policy_url,
+			jetpack_module_enabled: this.state.jetpack_module_enabled,
 		};
-	}
-
-	jetpackPlacementControls() {
-		const { translate, siteAdminUrl } = this.props;
-
-		return (
-			<Card href={ `${ siteAdminUrl }admin.php?page=jetpack#/traffic` }>
-				{ translate( 'Manage ad placements' ) }
-			</Card>
-		);
 	}
 
 	showAdsToOptions() {
 		const { translate } = this.props;
+
+		if ( this.props.siteIsJetpack ) {
+			return (
+				<ToggleControl
+					checked={ !! this.state.jetpack_module_enabled }
+					disabled={ this.props.isLoading }
+					onChange={ this.handleCompactToggle( 'jetpack_module_enabled' ) }
+					label={ translate( 'Enable ads and display an ad below each post' ) }
+				/>
+			);
+		}
 
 		return (
 			<FormFieldset>
@@ -223,31 +226,34 @@ class AdsFormSettings extends Component {
 	displayOptions() {
 		const { translate } = this.props;
 
+		const isDisabled =
+			this.props.isLoading || ( this.props.siteIsJetpack && ! this.state.jetpack_module_enabled );
+
 		return (
 			<div>
 				<FormFieldset className="ads__settings-display-toggles">
 					<FormLegend>{ translate( 'Display ads below posts on' ) }</FormLegend>
 					<ToggleControl
 						checked={ !! this.state.display_options?.display_front_page }
-						disabled={ this.props.isLoading }
+						disabled={ isDisabled }
 						onChange={ this.handleDisplayToggle( 'display_front_page' ) }
 						label={ translate( 'Front page' ) }
 					/>
 					<ToggleControl
 						checked={ !! this.state.display_options?.display_post }
-						disabled={ this.props.isLoading }
+						disabled={ isDisabled }
 						onChange={ this.handleDisplayToggle( 'display_post' ) }
 						label={ translate( 'Posts' ) }
 					/>
 					<ToggleControl
 						checked={ !! this.state.display_options?.display_page }
-						disabled={ this.props.isLoading }
+						disabled={ isDisabled }
 						onChange={ this.handleDisplayToggle( 'display_page' ) }
 						label={ translate( 'Pages' ) }
 					/>
 					<ToggleControl
 						checked={ !! this.state.display_options?.display_archive }
-						disabled={ this.props.isLoading }
+						disabled={ isDisabled }
 						onChange={ this.handleDisplayToggle( 'display_archive' ) }
 						label={ translate( 'Archives' ) }
 					/>
@@ -256,22 +262,24 @@ class AdsFormSettings extends Component {
 					<FormLegend>{ translate( 'Additional ad placements' ) }</FormLegend>
 					<ToggleControl
 						checked={ !! this.state.display_options?.enable_header_ad }
-						disabled={ this.props.isLoading }
+						disabled={ isDisabled }
 						onChange={ this.handleDisplayToggle( 'enable_header_ad' ) }
 						label={ translate( 'Top of each page' ) }
 					/>
 					<ToggleControl
 						checked={ !! this.state.display_options?.second_belowpost }
-						disabled={ this.props.isLoading }
+						disabled={ isDisabled }
 						onChange={ this.handleDisplayToggle( 'second_belowpost' ) }
 						label={ translate( 'Second ad below post' ) }
 					/>
-					<ToggleControl
-						checked={ !! this.state.display_options?.sidebar }
-						disabled={ this.props.isLoading }
-						onChange={ this.handleDisplayToggle( 'sidebar' ) }
-						label={ translate( 'Sidebar' ) }
-					/>
+					{ ! this.props.siteIsJetpack && (
+						<ToggleControl
+							checked={ !! this.state.display_options?.sidebar }
+							disabled={ isDisabled }
+							onChange={ this.handleDisplayToggle( 'sidebar' ) }
+							label={ translate( 'Sidebar' ) }
+						/>
+					) }
 				</FormFieldset>
 			</div>
 		);
@@ -561,8 +569,6 @@ class AdsFormSettings extends Component {
 			<Fragment>
 				<QueryWordadsSettings siteId={ site.ID } />
 
-				{ this.props.siteIsJetpack && isWordAds ? this.jetpackPlacementControls() : null }
-
 				<SectionHeader label={ translate( 'Ads Settings' ) }>
 					<Button
 						compact
@@ -580,9 +586,9 @@ class AdsFormSettings extends Component {
 						onSubmit={ this.handleSubmit }
 						onChange={ this.props.markChanged }
 					>
-						{ ! this.props.siteIsJetpack ? this.showAdsToOptions() : null }
+						{ this.showAdsToOptions() }
 
-						{ ! this.props.siteIsJetpack ? this.displayOptions() : null }
+						{ this.displayOptions() }
 
 						{ ! this.props.siteIsJetpack ? this.privacy() : null }
 
@@ -603,16 +609,16 @@ export default compose(
 	connect(
 		( state ) => {
 			const siteId = getSelectedSiteId( state );
+			const isJetpack = isJetpackSite( state, siteId );
 			const isSavingSettings = isSavingWordadsSettings( state, siteId );
 			const wordadsSettings = getWordadsSettings( state, siteId );
 
 			return {
 				isLoading: isSavingSettings || ! wordadsSettings,
 				site: getSelectedSite( state ),
-				siteIsJetpack: isJetpackSite( state, siteId ),
+				siteIsJetpack: isJetpack,
 				wordadsSettings,
 				widgetsUrl: getCustomizerUrl( state, siteId, 'widgets' ),
-				siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			};
 		},
 		{ dismissWordAdsSuccess, saveWordadsSettings }
