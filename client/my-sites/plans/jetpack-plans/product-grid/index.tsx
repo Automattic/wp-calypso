@@ -31,6 +31,7 @@ import StoreFooter from 'calypso/jetpack-connect/store-footer';
 /**
  * Type dependencies
  */
+import type { AppState } from 'calypso/types';
 import type { ProductsGridProps, SelectorProduct } from '../types';
 import type { JetpackProductSlug, JetpackPlanSlug } from '@automattic/calypso-products';
 
@@ -48,6 +49,21 @@ const sortByGridPosition = ( items: SelectorProduct[] ) =>
 		.sort( ( [ aPosition ], [ bPosition ] ) => aPosition - bPosition )
 		.map( ( [ , item ] ) => item );
 
+const getShowFreeCard = ( state: AppState ) => {
+	if ( isConnectionFlow() ) {
+		return true;
+	}
+
+	// If a site is passed by URL and the site is found in the app's state, we will assume the site
+	// is connected, and thus, we don't need to show the Jetpack Free card.
+	const siteId = getSelectedSiteId( state );
+	if ( siteId ) {
+		return false;
+	}
+
+	return isJetpackCloud();
+};
+
 const ProductGrid: React.FC< ProductsGridProps > = ( {
 	duration,
 	urlQueryArgs,
@@ -63,9 +79,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const [ isPlanRowWrapping, setPlanRowWrapping ] = useState( false );
 
 	const siteId = useSelector( getSelectedSiteId );
-	// If a site is passed by URL and the site is found in the app's state, we will assume the site
-	// is connected, and thus, we don't need to show the Jetpack Free card.
-	const isSiteInContext = !! siteId;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const currentPlanSlug = currentPlan?.product_slug || null;
@@ -74,8 +87,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		siteId
 	);
 
-	const isInConnectFlow = useMemo( isConnectionFlow, [] );
-	const isInJetpackCloud = useMemo( isJetpackCloud, [] );
 	// Retrieve and cache the plans array, which might be already translated.
 	const untranslatedSortedPlans = useMemo(
 		() => sortByGridPosition( getPlansToDisplay( { duration, currentPlanSlug } ) ),
@@ -118,6 +129,8 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const allProducts = sortByGridPosition( [ ...sortedPlans, ...sortedProducts ] );
 	popularProducts = allProducts.slice( 0, 3 );
 	otherProducts = allProducts.slice( 3 );
+
+	const showFreeCard = useSelector( getShowFreeCard );
 
 	const scrollToComparison = () => {
 		if ( bundleComparisonRef.current ) {
@@ -235,9 +248,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					) ) }
 				</ul>
 				<div className="product-grid__free">
-					{ ( isInConnectFlow || ( isInJetpackCloud && ! isSiteInContext ) ) && (
-						<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
-					) }
+					{ showFreeCard && <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } /> }
 				</div>
 			</ProductGridSection>
 			<StoreFooter />
