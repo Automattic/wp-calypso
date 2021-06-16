@@ -17,7 +17,7 @@ import { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
  * @param {string | string[]} products Slugs of the products to add to the cart
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url (ie. for affiliate tracking, or whatever)
  */
-export function buildCheckoutURL(
+export default function buildCheckoutURL(
 	siteSlug: string,
 	products: string | string[],
 	urlQueryArgs: QueryArgs = {}

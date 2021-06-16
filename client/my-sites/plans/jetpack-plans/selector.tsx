@@ -20,7 +20,7 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import getViewTrackerPath from './get-view-tracker-path';
 import ProductGrid from './product-grid';
-import { buildCheckoutURL } from './build-checkout-url';
+import buildCheckoutURL from './build-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
