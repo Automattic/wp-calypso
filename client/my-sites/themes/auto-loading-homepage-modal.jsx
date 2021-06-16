@@ -14,6 +14,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
+import ExternalLink from 'calypso/components/external-link';
+import Gridicon from 'calypso/components/gridicon';
 import {
 	getCanonicalTheme,
 	hasActivatedTheme,
@@ -161,39 +163,81 @@ class AutoLoadingHomepageModal extends Component {
 				] }
 				onClose={ this.closeModalHandler( 'dismiss' ) }
 			>
+				<Gridicon
+					icon="cross"
+					className="themes__auto-loading-homepage-modal-close-icon"
+					onClick={ this.closeModalHandler( 'dismiss' ) }
+				/>
 				<TrackComponentView
 					eventName={ 'calypso_theme_autoloading_homepage_modal_view' }
 					eventProperties={ { theme: themeId } }
 				/>
 				<div>
 					<h1>
-						{ translate( 'How would you like to use %(themeName)s on your site?', {
+						{ translate( 'How would you like to use %(themeName)s?', {
 							args: { themeName },
 						} ) }
 					</h1>
-					<FormLabel>
-						<FormRadio
-							value="keep_current_homepage"
-							checked={ 'keep_current_homepage' === this.state.homepageAction }
-							onChange={ this.handleHomepageAction }
-							label={ translate( 'Switch to %(themeName)s without changing the homepage content.', {
-								args: { themeName },
-							} ) }
-						/>
-					</FormLabel>
-					<FormLabel>
-						<FormRadio
-							value="use_new_homepage"
-							checked={ 'use_new_homepage' === this.state.homepageAction }
-							onChange={ this.handleHomepageAction }
-							label={ translate(
-								'Replace the homepage content with the %(themeName)s demo content. The existing homepage will be saved as a draft under Pages → Drafts.',
-								{
+					<div className="themes__theme-preview-item">
+						<img src="https://placedog.net/500" alt="" />
+						<FormLabel>
+							<FormRadio
+								value="keep_current_homepage"
+								checked={ 'keep_current_homepage' === this.state.homepageAction }
+								onChange={ this.handleHomepageAction }
+								label={ translate( 'Switch theme, preserving my homepage content.' ) }
+							/>
+						</FormLabel>
+					</div>
+					<div className="themes__theme-preview-item">
+						<img src="https://placedog.net/500" alt="" />
+						<FormLabel>
+							<FormRadio
+								value="use_new_homepage"
+								checked={ 'use_new_homepage' === this.state.homepageAction }
+								onChange={ this.handleHomepageAction }
+								label={ translate( 'Replace my homepage content with the %(themeName)s demo.', {
 									args: { themeName },
-								}
-							) }
-						/>
-					</FormLabel>
+								} ) }
+							/>
+						</FormLabel>
+					</div>
+					<div style={ { clear: 'both' } } />
+					<div className="themes__autoloading-homepage-option-description">
+						{ this.state.homepageAction === 'keep_current_homepage' && (
+							<p>
+								{ translate(
+									'Your new theme design will be applied without changing your homepage content.'
+								) }{ ' ' }
+								<ExternalLink
+									href="https://wordpress.com/support/themes/#switch-themes"
+									icon
+									target="__blank"
+								>
+									{ translate( 'Learn more' ) }
+								</ExternalLink>
+							</p>
+						) }
+						{ this.state.homepageAction === 'use_new_homepage' && (
+							<p>
+								<span
+									// eslint-disable-next-line react/no-danger
+									dangerouslySetInnerHTML={ {
+										__html: translate(
+											'After activation, you can still access your old homepage content under Pages &rarr; Drafts.'
+										),
+									} }
+								/>{ ' ' }
+								<ExternalLink
+									href="https://wordpress.com/support/themes/#switch-themes"
+									icon
+									target="__blank"
+								>
+									{ translate( 'Learn more' ) }
+								</ExternalLink>
+							</p>
+						) }
+					</div>
 				</div>
 			</Dialog>
 		);
