@@ -12,6 +12,7 @@ import debugFactory from 'debug';
  */
 import tracksRecordEvent from './tracking/track-record-event';
 import delegateEventTracking from './tracking/delegate-event-tracking';
+import { trackGlobalStylesTabSelected } from './tracking/wpcom-block-editor-global-styles-tab-selected';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -354,6 +355,24 @@ const trackErrorNotices = ( content, options ) =>
 		notice_options: JSON.stringify( options ), // Returns undefined if options is undefined.
 	} );
 
+const trackEnableComplementaryArea = ( scope, id ) => {
+	const active = select( 'core/interface' ).getActiveComplementaryArea( scope );
+	// We are tracking both global styles open here and when global styles
+	// is closed by opening another sidebar in its place.
+	if ( active !== 'edit-site/global-styles' && id === 'edit-site/global-styles' ) {
+		trackGlobalStylesTabSelected( { tab: 'root', open: true } );
+	} else if ( active === 'edit-site/global-styles' && id !== 'edit-site/global-styles' ) {
+		trackGlobalStylesTabSelected( { tab: 'root', open: false } );
+	}
+};
+
+const trackDisableComplementaryArea = ( scope ) => {
+	const active = select( 'core/interface' ).getActiveComplementaryArea( scope );
+	if ( active === 'edit-site/global-styles' && scope === 'core/edit-site' ) {
+		trackGlobalStylesTabSelected( { open: false } );
+	}
+};
+
 /**
  * Tracker can be
  * - string - which means it is an event name and should be tracked as such automatically
@@ -391,6 +410,10 @@ const REDUX_TRACKING = {
 	},
 	'core/notices': {
 		createErrorNotice: trackErrorNotices,
+	},
+	'core/interface': {
+		enableComplementaryArea: trackEnableComplementaryArea,
+		disableComplementaryArea: trackDisableComplementaryArea,
 	},
 };
 
