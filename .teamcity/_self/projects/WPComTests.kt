@@ -419,9 +419,7 @@ private object VisualRegressionTests : BuildType({
 			schedulingPolicy = daily {
 				hour = 3
 			}
-			branchFilter = """
-				+:trunk
-			""".trimIndent()
+			branchFilter = "trunk"
 			triggerBuild = always()
 			withPendingChangesOnly = false
 		}
