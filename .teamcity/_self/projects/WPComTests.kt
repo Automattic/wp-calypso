@@ -411,6 +411,9 @@ private object VisualRegressionTests : BuildType({
 			""".trimIndent()
 			buildFailed = true
 			buildFinishedSuccessfully = true
+			buildFailedToStart = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
 		}
 	}
 
