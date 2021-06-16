@@ -735,6 +735,7 @@ object CheckCodeStyleBranch : BuildType({
 
 object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
 	name = "Playwright E2E tests (desktop)"
+	uuid = "23cc069f-59e5-4a63-a131-539fb55264e7"
 	description = "Runs Calypso e2e tests using Playwright"
 	params {
 		param("use_cached_node_modules", "false")
