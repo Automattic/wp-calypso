@@ -12,10 +12,10 @@ export function getTotalEventsFiredForBlock( eventsStack, event, block ) {
 	return getEventsFiredForBlock( eventsStack, event, block ).length;
 }
 
-export async function clearEventsStack() {
+export async function clearEventsStack( driver ) {
 	// Reset e2e tests events stack after each step in order
 	// that we have a test specific stack to assert against.
-	await this.driver.executeScript( `window._e2eEventsStack = [];` );
+	await driver.executeScript( `window._e2eEventsStack = [];` );
 }
 
 export async function getEventsStack( driver ) {

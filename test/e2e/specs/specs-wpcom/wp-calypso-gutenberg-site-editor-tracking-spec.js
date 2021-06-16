@@ -163,6 +163,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
-		afterEach( clearEventsStack );
+		afterEach( async function () {
+			await clearEventsStack( this.driver );
+		} );
 	} );
 } );

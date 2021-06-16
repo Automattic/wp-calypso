@@ -42,6 +42,8 @@ describe( `[${ host }] Calypso Gutenberg Page Editor Tracking: (${ screenSize })
 
 		createGeneralTests( { it, editorType: 'post', postType: 'page' } );
 
-		afterEach( clearEventsStack );
+		afterEach( async function () {
+			await clearEventsStack( this.driver );
+		} );
 	} );
 } );
