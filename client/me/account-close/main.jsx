@@ -46,12 +46,12 @@ class AccountSettingsClose extends Component {
 		showSiteDropdown: true,
 	};
 
-	componentDidUpdate = () => {
+	componentDidUpdate() {
 		// If the account is closed, logout
 		if ( this.props.isAccountClosed === true ) {
 			this.props.redirectToLogout();
 		}
-	};
+	}
 
 	goBack = () => {
 		page( '/me/account' );
