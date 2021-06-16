@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React, { useEffect, useState, useCallback } from 'react';
+import { useDispatch as useReduxDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	Checkout,
 	CheckoutStep,
@@ -58,6 +58,7 @@ import {
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/route';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import PaymentMethodStep from './payment-method-step';
 import CheckoutHelpLink from './checkout-help-link';
 import type { CountryListItem } from '../types/country-list-item';
@@ -162,6 +163,7 @@ export default function WPCheckout( {
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
 	const onEvent = useEvents();
+	const reduxDispatch = useReduxDispatch();
 
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
@@ -194,10 +196,12 @@ export default function WPCheckout( {
 
 		const loginUrl = login( { redirectTo, emailAddress } );
 
-		recordTracksEvent( 'calypso_checkout_wpcom_email_exists', {
-			email: emailAddress,
-			checkout_flow: isJetpackCheckout ? 'site_only_checkout' : 'wpcom_registrationless',
-		} );
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_wpcom_email_exists', {
+				email: emailAddress,
+				checkout_flow: isJetpackCheckout ? 'site_only_checkout' : 'wpcom_registrationless',
+			} )
+		);
 
 		return translate(
 			'That email address is already in use. If you have an existing account, {{a}}please log in{{/a}}.',
@@ -206,12 +210,14 @@ export default function WPCheckout( {
 					a: (
 						<a
 							onClick={ () =>
-								recordTracksEvent( 'calypso_checkout_composite_login_click', {
-									email: emailAddress,
-									checkout_flow: isJetpackCheckout
-										? 'site_only_checkout'
-										: 'wpcom_registrationless',
-								} )
+								reduxDispatch(
+									recordTracksEvent( 'calypso_checkout_composite_login_click', {
+										email: emailAddress,
+										checkout_flow: isJetpackCheckout
+											? 'site_only_checkout'
+											: 'wpcom_registrationless',
+									} )
+								)
 							}
 							href={ loginUrl }
 						/>
