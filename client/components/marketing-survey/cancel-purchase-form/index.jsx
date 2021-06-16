@@ -359,8 +359,9 @@ class CancelPurchaseForm extends React.Component {
 			? this.state.questionOneText
 			: 'select_a_product';
 
-		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
+		const appendRadioOption = ( groupName, key, radioPrompt, textPlaceholder ) =>
 			( reasons[ key ] = radioTextOption(
+				groupName,
 				key,
 				questionOneRadio,
 				questionOneText,
@@ -371,6 +372,7 @@ class CancelPurchaseForm extends React.Component {
 			) );
 
 		const appendRadioOptionWithSelect = (
+			groupName,
 			key,
 			radioPrompt,
 			selectLabel,
@@ -378,6 +380,7 @@ class CancelPurchaseForm extends React.Component {
 			selected
 		) =>
 			( reasons[ key ] = radioSelectOption(
+				groupName,
 				key,
 				questionOneRadio,
 				this.onRadioOneChange,
@@ -389,24 +392,28 @@ class CancelPurchaseForm extends React.Component {
 			) );
 
 		appendRadioOption(
+			'questionOne',
 			'couldNotInstall',
 			translate( "I couldn't install a plugin/theme I wanted." ),
 			translate( 'What plugin/theme were you trying to install?' )
 		);
 
 		appendRadioOption(
+			'questionOne',
 			'tooHard',
 			translate( 'It was too hard to set up my site.' ),
 			translate( 'Where did you run into problems?' )
 		);
 
 		appendRadioOption(
+			'questionOne',
 			'didNotInclude',
 			translate( "This upgrade didn't include what I needed." ),
 			translate( 'What are we missing that you need?' )
 		);
 
 		appendRadioOptionWithSelect(
+			'questionOne',
 			'downgradeToAnotherPlan',
 			translate( "I'd like to downgrade to another plan." ),
 			translate( 'Mind telling us which one?' ),
@@ -415,33 +422,38 @@ class CancelPurchaseForm extends React.Component {
 		);
 
 		appendRadioOption(
+			'questionOne',
 			'onlyNeedFree',
 			translate( 'The plan was too expensive.' ),
 			translate( 'How can we improve our upgrades?' )
 		);
 
 		appendRadioOption(
+			'questionOne',
 			'couldNotActivate',
 			translate( 'I was unable to activate or use the product.' ),
 			translate( 'Where did you run into problems?' )
 		);
 
 		appendRadioOption(
+			'questionOne',
 			'noLongerWantToTransfer',
 			translate( 'I no longer want to transfer my domain.' )
 		);
 
 		appendRadioOption(
+			'questionOne',
 			'couldNotCompleteTransfer',
 			translate( 'Something went wrong and I could not complete the transfer.' )
 		);
 
 		appendRadioOption(
+			'questionOne',
 			'useDomainWithoutTransferring',
 			translate( 'I’m going to use my domain with WordPress.com without transferring it.' )
 		);
 
-		appendRadioOption( 'anotherReasonOne', translate( 'Another reason…' ), ' ' );
+		appendRadioOption( 'questionOne', 'anotherReasonOne', translate( 'Another reason…' ), ' ' );
 
 		return (
 			<div className="cancel-purchase-form__question">
@@ -460,8 +472,9 @@ class CancelPurchaseForm extends React.Component {
 			return null;
 		}
 
-		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
+		const appendRadioOption = ( groupName, key, radioPrompt, textPlaceholder ) =>
 			( reasons[ key ] = radioTextOption(
+				groupName,
 				key,
 				questionTwoRadio,
 				questionTwoText,
@@ -471,39 +484,48 @@ class CancelPurchaseForm extends React.Component {
 				textPlaceholder
 			) );
 
-		appendRadioOption( 'stayingHere', translate( "I'm staying here and using the free plan." ) );
+		appendRadioOption(
+			'questionTwo',
+			'stayingHere',
+			translate( "I'm staying here and using the free plan." )
+		);
 
 		appendRadioOption(
+			'questionTwo',
 			'otherWordPress',
 			translate( "I'm going to use WordPress somewhere else." ),
 			translate( 'Mind telling us where?' )
 		);
 
 		appendRadioOption(
+			'questionTwo',
 			'differentService',
 			translate( "I'm going to use a different service for my website or blog." ),
 			translate( 'Mind telling us which one?' )
 		);
 
 		appendRadioOption(
+			'questionTwo',
 			'noNeed',
 			translate( 'I no longer need a website or blog.' ),
 			translate( 'What will you do instead?' )
 		);
 
 		appendRadioOption(
+			'questionTwo',
 			'otherPlugin',
 			translate( 'I found a better plugin or service.' ),
 			translate( 'Mind telling us which one(s)?' )
 		);
 
 		appendRadioOption(
+			'questionTwo',
 			'leavingWP',
 			translate( "I'm moving my site off of WordPress." ),
 			translate( 'Any particular reason(s)?' )
 		);
 
-		appendRadioOption( 'anotherReasonTwo', translate( 'Another reason…' ), ' ' );
+		appendRadioOption( 'questionTwo', 'anotherReasonTwo', translate( 'Another reason…' ), ' ' );
 
 		return (
 			<div className="cancel-purchase-form__question">
@@ -518,9 +540,10 @@ class CancelPurchaseForm extends React.Component {
 		const { translate } = this.props;
 		const { importQuestionRadio, importQuestionText } = this.state;
 
-		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
+		const appendRadioOption = ( groupName, key, radioPrompt, textPlaceholder ) =>
 			reasons.push(
 				radioTextOption(
+					groupName,
 					key,
 					importQuestionRadio,
 					importQuestionText,
@@ -531,18 +554,24 @@ class CancelPurchaseForm extends React.Component {
 				)
 			);
 
-		appendRadioOption( 'happy', translate( 'I was happy.' ) );
+		appendRadioOption( 'importQuestion', 'happy', translate( 'I was happy.' ) );
 
 		appendRadioOption(
+			'importQuestion',
 			'look',
 			translate(
 				'Most of my content was imported, but it was too hard to get things looking right.'
 			)
 		);
 
-		appendRadioOption( 'content', translate( 'Not enough of my content was imported.' ) );
+		appendRadioOption(
+			'importQuestion',
+			'content',
+			translate( 'Not enough of my content was imported.' )
+		);
 
 		appendRadioOption(
+			'importQuestion',
 			'functionality',
 			translate( "I didn't have the functionality I have on my existing site." )
 		);
