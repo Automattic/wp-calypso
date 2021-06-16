@@ -19,6 +19,7 @@ interface PurchaseArea {
 	onNavigateToDomainsSelection: () => void;
 	onRemoveEverythingFromCart: () => Promise< ResponseCart >;
 	onInstallPluginManually: ( primaryDomain: string ) => Promise< void >;
+	isDisabled: boolean;
 }
 
 export default function PurchaseArea( {
@@ -31,6 +32,7 @@ export default function PurchaseArea( {
 	onNavigateToDomainsSelection,
 	onRemoveEverythingFromCart,
 	onInstallPluginManually,
+	isDisabled,
 }: PurchaseArea ): JSX.Element {
 	const [ isButtonClicked, setIsButtonClicked ] = useState( false );
 
@@ -84,13 +86,22 @@ export default function PurchaseArea( {
 			<div className="marketplace-plugin-details__name">{ wporgPluginName }</div>
 			<div>
 				<h2>Yoast Premium cost : { ! isProductListLoading ? displayCost : '' }</h2>
-				<Button busy={ isButtonClicked } onClick={ () => onAddPlugin( true ) } primary>
+				<Button
+					busy={ isButtonClicked }
+					onClick={ () => onAddPlugin( true ) }
+					disabled={ isDisabled }
+				>
 					Buy Yoast Premium
 				</Button>
 			</div>
 			<div>
 				<h2>Yoast Free cost : Free</h2>
-				<Button busy={ isButtonClicked } onClick={ () => onAddPlugin( false ) } primary>
+				<Button
+					busy={ isButtonClicked }
+					onClick={ () => onAddPlugin( false ) }
+					primary
+					disabled={ isDisabled }
+				>
 					Add Yoast Free
 				</Button>
 			</div>
