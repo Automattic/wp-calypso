@@ -91,7 +91,7 @@ describe( 'selectors', () => {
 
 			expect( hasFetchedLicenseCounts( state ) ).toEqual( false );
 
-			state.partnerPortal.licenses.hasFetched = true;
+			state.partnerPortal.licenses.hasFetchedLicenseCounts = true;
 			expect( hasFetchedLicenseCounts( state ) ).toEqual( true );
 		} );
 	} );
