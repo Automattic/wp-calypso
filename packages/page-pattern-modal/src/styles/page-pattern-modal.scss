@@ -35,6 +35,10 @@ $sidebar-width-desktop: 324px;
 
 // Overrides of the Gutenberg modal component
 .page-pattern-modal {
+	&.components-modal__frame {
+		max-height: none;
+	}
+
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		width: calc( 100% - 32px );
 		height: 90vh;
@@ -61,6 +65,11 @@ $sidebar-width-desktop: 324px;
 	.components-modal__header {
 		border-bottom: none;
 		margin-right: -16px;
+
+		.components-button {
+			left: 31px;
+			top: -11px;
+		}
 	}
 }
 
