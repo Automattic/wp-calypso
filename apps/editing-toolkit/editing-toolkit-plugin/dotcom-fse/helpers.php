@@ -111,7 +111,6 @@ function normalize_theme_slug( $theme_slug ) {
  * @return bool True if current site is eligible for FSE, false otherwise.
  */
 function is_site_eligible_for_full_site_editing() {
-	return true;
 	/**
 	 * Can be used to disable Full Site Editing functionality.
 	 *
