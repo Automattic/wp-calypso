@@ -33,7 +33,7 @@ type Props = {
 	duration: Duration;
 	filterBar: React.ReactNode;
 	onSelectProduct: PurchaseCallback;
-	createButtonLink: PurchaseURLCallback;
+	createButtonURL: PurchaseURLCallback;
 };
 
 const PlanUpgradeSection: React.FC< Props > = ( {
@@ -41,7 +41,7 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 	duration,
 	filterBar,
 	onSelectProduct,
-	createButtonLink,
+	createButtonURL,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -102,7 +102,7 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 						selectedTerm={ duration }
 						hideSavingLabel
 						onClick={ onSelectProduct }
-						createButtonLink={ createButtonLink }
+						createButtonURL={ createButtonURL }
 					/>
 				</li>
 				<li className="plan-upgrade__separator">
@@ -122,7 +122,7 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 									isAligned
 									hideSavingLabel
 									onClick={ onSelectProduct }
-									createButtonLink={ createButtonLink }
+									createButtonURL={ createButtonURL }
 								/>
 							</li>
 						) ) }

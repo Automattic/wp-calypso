@@ -84,7 +84,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		[ highlightedProducts ]
 	);
 
-	const createProductLink: PurchaseURLCallback = (
+	const createProductURL: PurchaseURLCallback = (
 		product: SelectorProduct,
 		isUpgradeableToYearly = false,
 		purchase
@@ -172,7 +172,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				onSelectProduct={ selectProduct }
 				onDurationChange={ trackDurationChange }
 				scrollCardIntoView={ scrollCardIntoView }
-				createButtonLink={ createProductLink }
+				createButtonURL={ createProductURL }
 			/>
 
 			{ siteId ? <QuerySiteProducts siteId={ siteId } /> : <QueryProductsList type="jetpack" /> }
