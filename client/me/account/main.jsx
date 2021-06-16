@@ -59,7 +59,6 @@ import {
 } from 'calypso/state/current-user/selectors';
 import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
-import user from 'calypso/lib/user';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import {
 	cancelPendingEmailChange,
@@ -73,6 +72,7 @@ import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-chang
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { clearStore } from 'calypso/lib/user/store';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 
@@ -123,11 +123,6 @@ class Account extends React.Component {
 		usernameAction: 'new',
 		validationResult: false,
 	};
-
-	componentDidMount() {
-		debug( this.constructor.displayName + ' component is mounted.' );
-		this.debouncedUsernameValidate = debounce( this.validateUsername, 600 );
-	}
 
 	componentDidUpdate() {
 		if ( ! this.hasUnsavedUserSettings( ACCOUNT_FIELDS.concat( INTERFACE_FIELDS ) ) ) {
@@ -259,13 +254,13 @@ class Account extends React.Component {
 		this.setState( { userLoginConfirm: event.target.value } );
 	};
 
-	async validateUsername() {
-		const { translate } = this.props;
+	validateUsername = debounce( async () => {
+		const { currentUserName, translate } = this.props;
 		const username = this.getUserSetting( 'user_login' );
 
 		debug( 'Validating username ' + username );
 
-		if ( username === user().get().username ) {
+		if ( username === currentUserName ) {
 			this.setState( { validationResult: false } );
 			return;
 		}
@@ -291,10 +286,9 @@ class Account extends React.Component {
 		}
 
 		try {
-			const { success, allowed_actions } = await wpcom
-				.undocumented()
-				.me()
-				.validateUsername( username );
+			const { success, allowed_actions } = await wpcom.req.get(
+				`/me/username/validate/${ username }`
+			);
 
 			this.setState( {
 				validationResult: { success, allowed_actions, validatedUsername: username },
@@ -302,7 +296,7 @@ class Account extends React.Component {
 		} catch ( error ) {
 			this.setState( { validationResult: error } );
 		}
-	}
+	}, 600 );
 
 	hasEmailValidationError() {
 		return !! this.state.emailValidationError;
@@ -412,7 +406,7 @@ class Account extends React.Component {
 	 * @param {object} event Event from onChange of user_login input
 	 */
 	handleUsernameChange = ( event ) => {
-		this.debouncedUsernameValidate();
+		this.validateUsername();
 		this.updateUserSetting( 'user_login', event.currentTarget.value );
 		this.setState( { usernameAction: null } );
 	};
@@ -476,7 +470,7 @@ class Account extends React.Component {
 		this.setState( { submittingForm: true } );
 
 		try {
-			await wpcom.undocumented().me().changeUsername( username, action );
+			await wpcom.req.post( '/me/username', { username, action } );
 			this.setState( { submittingForm: false } );
 
 			this.props.markSaved();
@@ -699,19 +693,18 @@ class Account extends React.Component {
 		return formName ? this.state.formsSubmitting[ formName ] : this.state.submittingForm;
 	}
 
-	handleSubmitSuccess( response, formName = '' ) {
+	async handleSubmitSuccess( response, formName = '' ) {
 		if ( ! this.hasUnsavedUserSettings( ACCOUNT_FIELDS.concat( INTERFACE_FIELDS ) ) ) {
 			this.props.markSaved();
 		}
 
 		if ( this.state.redirect ) {
-			user()
-				.clear()
-				.then( () => {
-					// Sometimes changes in settings require a url refresh to update the UI.
-					// For example when the user changes the language.
-					window.location = this.state.redirect + '?updated=success';
-				} );
+			await clearStore();
+
+			// Sometimes changes in settings require a url refresh to update the UI.
+			// For example when the user changes the language.
+			window.location = this.state.redirect + '?updated=success';
+
 			return;
 		}
 

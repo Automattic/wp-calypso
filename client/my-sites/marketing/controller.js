@@ -16,7 +16,7 @@ import SharingConnections from './connections/connections';
 import Traffic from './traffic/';
 import UltimateTrafficGuide from './ultimate-traffic-guide';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteSlug, isJetpackSite, isJetpackModuleActive } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
@@ -115,20 +115,6 @@ export const sharingButtons = ( context, next ) => {
 	if ( siteId && ! canCurrentUser( state, siteId, 'manage_options' ) ) {
 		store.dispatch(
 			errorNotice( translate( 'You are not authorized to manage sharing settings for this site.' ) )
-		);
-	}
-
-	if (
-		siteId &&
-		isJetpackSite( state, siteId ) &&
-		! isJetpackModuleActive( state, siteId, 'sharedaddy' )
-	) {
-		store.dispatch(
-			errorNotice(
-				translate(
-					'This page is only available to Jetpack sites running version 3.4 or higher with the Sharing module activated.'
-				)
-			)
 		);
 	}
 

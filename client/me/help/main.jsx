@@ -163,17 +163,15 @@ class Help extends React.PureComponent {
 				</CompactCard>
 				<CompactCard
 					className="help__support-link"
-					href="https://dailypost.wordpress.com/blogging-university/"
+					href="https://wpcourses.com/?ref=wpcom-help-more-resources"
 					target="__blank"
 				>
 					<Gridicon icon="mail" size={ 36 } />
 					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Email courses' ) }
-						</h2>
+						<h2 className="help__support-link-title">{ this.props.translate( 'Courses' ) }</h2>
 						<p className="help__support-link-content">
 							{ this.props.translate(
-								'Pick from our ever-growing list of free email courses to improve your knowledge.'
+								'Enroll in a course taught by WordPress experts, and become a part of its community.'
 							) }
 						</p>
 					</div>

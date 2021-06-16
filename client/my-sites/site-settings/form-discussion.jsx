@@ -27,6 +27,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackModuleToggle from './jetpack-module-toggle';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 class SiteSettingsFormDiscussion extends Component {
 	handleCommentOrder = () => {
@@ -112,6 +113,8 @@ class SiteSettingsFormDiscussion extends Component {
 			isSavingSettings,
 			siteId,
 			translate,
+			isJetpack,
+			isAtomic,
 		} = this.props;
 		return (
 			<FormFieldset className="site-settings__other-comment-settings">
@@ -174,6 +177,20 @@ class SiteSettingsFormDiscussion extends Component {
 					label={ translate(
 						'Comments should be displayed with the older comments at the top of each page'
 					) }
+				/>
+				<SupportInfo
+					text={ translate( 'Allow readers to use markdown in comments.' ) }
+					link={
+						isJetpack && ! isAtomic
+							? 'https://jetpack.com/support/markdown/'
+							: 'https://wordpress.com/support/markdown-quick-reference/'
+					}
+				/>
+				<ToggleControl
+					checked={ !! fields.wpcom_publish_comments_with_markdown }
+					disabled={ isRequestingSettings || isSavingSettings }
+					onChange={ handleAutosavingToggle( 'wpcom_publish_comments_with_markdown' ) }
+					label={ translate( 'Use Markdown for comments.' ) }
 				/>
 
 				{ this.props.isJetpack && (
@@ -621,12 +638,14 @@ const connectComponent = connect( ( state ) => {
 	const siteSlug = getSelectedSiteSlug( state );
 
 	const isJetpack = isJetpackSite( state, siteId );
+	const isAtomic = isAtomicSite( state, siteId );
 	const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
 
 	return {
 		siteId,
 		siteSlug,
 		isJetpack,
+		isAtomic,
 		isLikesModuleActive,
 	};
 } );
@@ -663,6 +682,7 @@ const getFormSettings = ( settings ) => {
 		'subscriptions',
 		'stb_enabled',
 		'stc_enabled',
+		'wpcom_publish_comments_with_markdown',
 	] );
 };
 

@@ -41,7 +41,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import Notice from 'calypso/components/notice';
 import LoggedOutForm from 'calypso/components/logged-out-form';
-import { login } from 'calypso/lib/paths';
+import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import formState from 'calypso/lib/form-state';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
@@ -365,7 +365,8 @@ class SignupForm extends Component {
 
 		// When a user moves away from the signup form without having entered
 		// anything do not show error messages, think going to click log in.
-		if ( data.username.length === 0 && data.password.length === 0 && data.email.length === 0 ) {
+		// we do data.username?.length because username can be undefined when the username field isn't used
+		if ( ! data.username?.length && data.password.length === 0 && data.email.length === 0 ) {
 			return;
 		}
 
@@ -502,16 +503,20 @@ class SignupForm extends Component {
 						<p>
 							{ message }
 							&nbsp;
-							{ this.props.translate( 'If this is you {{a}}log in now{{/a}}.', {
-								components: {
-									a: (
-										<a
-											href={ link }
-											onClick={ ( event ) => this.handleLoginClick( event, fieldValue ) }
-										/>
-									),
-								},
-							} ) }
+							{ this.props.translate(
+								'{{loginLink}}Log in{{/loginLink}} or {{pwdResetLink}}reset your password{{/pwdResetLink}}.',
+								{
+									components: {
+										loginLink: (
+											<a
+												href={ link }
+												onClick={ ( event ) => this.handleLoginClick( event, fieldValue ) }
+											/>
+										),
+										pwdResetLink: <a href={ lostPassword( this.props.locale ) } />,
+									},
+								}
+							) }
 						</p>
 					</span>
 				);

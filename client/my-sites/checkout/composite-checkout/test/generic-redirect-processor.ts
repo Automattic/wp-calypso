@@ -191,6 +191,80 @@ describe( 'genericRedirectProcessor', () => {
 		} );
 	} );
 
+	it( 'sends the correct data to the endpoint a relative thankYouUrl', async () => {
+		const submitData = {
+			name: 'test name',
+			email: 'test@example.com',
+		};
+		const expected = { payload: 'https://test-redirect-url', type: 'REDIRECT' };
+		const thankYouUrl = '/payments?id=5#begin';
+		await expect(
+			genericRedirectProcessor( 'bancontact', submitData, {
+				...options,
+				getThankYouUrl: () => thankYouUrl,
+				siteSlug: 'example.wordpress.com',
+				siteId: 1234567,
+				contactDetails: {
+					countryCode,
+					postalCode,
+				},
+			} )
+		).resolves.toStrictEqual( expected );
+		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+			...basicExpectedStripeRequest,
+			cart: {
+				...basicExpectedStripeRequest.cart,
+				blog_id: '1234567',
+				cart_key: '1234567',
+				coupon: '',
+				create_new_blog: false,
+			},
+			payment: {
+				...basicExpectedStripeRequest.payment,
+				successUrl:
+					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=' +
+					encodeURIComponent( thankYouUrl ),
+			},
+		} );
+	} );
+
+	it( 'sends the correct data to the endpoint a fully-qualified thankYouUrl', async () => {
+		const submitData = {
+			name: 'test name',
+			email: 'test@example.com',
+		};
+		const expected = { payload: 'https://test-redirect-url', type: 'REDIRECT' };
+		const thankYouUrl = 'https://example.com:5000/payments?id=5#begin';
+		await expect(
+			genericRedirectProcessor( 'bancontact', submitData, {
+				...options,
+				getThankYouUrl: () => thankYouUrl,
+				siteSlug: 'example.wordpress.com',
+				siteId: 1234567,
+				contactDetails: {
+					countryCode,
+					postalCode,
+				},
+			} )
+		).resolves.toStrictEqual( expected );
+		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+			...basicExpectedStripeRequest,
+			cart: {
+				...basicExpectedStripeRequest.cart,
+				blog_id: '1234567',
+				cart_key: '1234567',
+				coupon: '',
+				create_new_blog: false,
+			},
+			payment: {
+				...basicExpectedStripeRequest.payment,
+				successUrl:
+					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=' +
+					encodeURIComponent( thankYouUrl ),
+			},
+		} );
+	} );
+
 	it( 'sends the correct data to the endpoint with tax information', async () => {
 		const submitData = {
 			name: 'test name',

@@ -391,7 +391,9 @@ export default compose(
 		const shouldShowAppBanner = getShouldShowAppBanner( getSelectedSite( state ) );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
-		const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
+		const isJetpack =
+			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
+			startsWith( currentRoute, '/checkout/jetpack' );
 		const isCheckoutFromGutenboarding =
 			'checkout' === sectionName && '1' === currentQuery?.preLaunch;
 		const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';

@@ -84,7 +84,10 @@ class InviteAcceptLoggedOut extends React.Component {
 		const { userData, bearerToken } = this.state;
 		return (
 			<WpcomLoginForm
-				log={ userData.username }
+				// in case the user signs up without a username, login for the first time using their email address
+				// users without a username are assigned one in the backend. But at this point, the client side don't have this generated username in memory yet
+				// so we failover to the email
+				log={ userData.username || userData.email }
 				authorization={ 'Bearer ' + bearerToken }
 				redirectTo={ window.location.href }
 			/>

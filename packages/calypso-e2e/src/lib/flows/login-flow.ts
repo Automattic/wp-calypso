@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { LoginPage, MyHomePage } from '../pages';
-import { getAccountCredential } from '../../data-helper';
+import { LoginPage } from '../pages';
+import { getAccountCredential, getCalypsoURL } from '../../data-helper';
 
 /**
  * Type dependencies
@@ -20,37 +20,70 @@ export class LoginFlow {
 	/**
 	 * Creates an instance of the log in flow.
 	 *
-	 * @param {Page} page Instance of a Playwright page on which test steps are executing.
+	 * @param {Page} page Object representing the base page.
 	 * @param {string} [accountType] Type of account to be used for the log in process.
 	 */
 	constructor( page: Page, accountType = 'defaultUser' ) {
 		this.page = page;
 
-		// Ignoring the last portion of the destructure (siteURL) because
-		// it is not useful to us yet.
 		const [ username, password ] = getAccountCredential( accountType );
 		this.username = username;
 		this.password = password;
 	}
 
 	/**
-	 * Executes the basic log in flow as the specified user.
+	 * Executes the common steps of logging in as a particular user.
+	 * Typically, this method should not be called directly by the test writer as
+	 * other login methods perform additional checks and waits.
 	 *
+	 * @param {Page} page Page on which the login interactions should occur. This is not necessarily
+	 * the same page as the base page where the test is being executed.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async baseflow(): Promise< void > {
-		console.log( 'Logging in as ' + this.username );
-		const loginPage = new LoginPage( this.page );
+	async baseflow( page?: Page ): Promise< void > {
+		console.log( '\tLogging in as ' + this.username );
+
+		// Unless a page object has explictly been passed into this method, assume the login process
+		// can execute on the same page object that was passed into the constructor of this flow.
+		if ( ! page ) {
+			page = this.page;
+		}
+
+		const loginPage = await LoginPage.Expect( page );
 		await loginPage.login( { username: this.username, password: this.password } );
 	}
 
+	/* Log in abstraction methods */
+
 	/**
-	 * Log in as the user without performing any additional steps.
+	 * Log in as the specified user from the WPCOM Log-In endpoint.
+	 * This is the most basic action of logging in.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async login(): Promise< void > {
+		await this.page.goto( getCalypsoURL( 'log-in' ) );
 		await this.baseflow();
-		await MyHomePage.Expect( this.page );
+	}
+
+	/**
+	 * Log in as the specified user from a popup, typically triggered while logged out.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async loginFromPopup(): Promise< void > {
+		// Popup emits the event 'popup'. Capturing the event obtains the Page object
+		// for the popup page, where the login form is located.
+		// For more information, see https://playwright.dev/docs/multi-pages#handling-popups
+		// under 'unknown trigger'.
+		const popupPage = await this.page.waitForEvent( 'popup' );
+
+		await popupPage.waitForLoadState( 'networkidle' );
+
+		// Execute the login steps using the popup page, not the base page.
+		await this.baseflow( popupPage );
+
+		// Wait for the popup to be closed before passing control back.
+		await popupPage.waitForEvent( 'close' );
 	}
 }

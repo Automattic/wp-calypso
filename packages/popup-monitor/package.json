@@ -37,6 +37,6 @@
 		"lodash": "^4.17.21"
 	},
 	"devDependencies": {
-		"chai": "^4.2.0"
+		"chai": "^4.3.4"
 	}
 }

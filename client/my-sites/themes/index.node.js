@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { makeLayout, ssrSetupLocale } from 'calypso/controller';
+import { makeLayout, ssrSetupLocale, setHrefLangLinks } from 'calypso/controller';
 import {
 	fetchThemeData,
 	fetchThemeFilters,
@@ -29,6 +29,7 @@ export default function ( router ) {
 	];
 	router(
 		showcaseRoutes,
+		setHrefLangLinks,
 		ssrSetupLocale,
 		fetchThemeFilters,
 		validateVertical,

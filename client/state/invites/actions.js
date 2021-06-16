@@ -222,13 +222,11 @@ export function acceptInvite( invite ) {
 	return async ( dispatch ) => {
 		try {
 			const data = await wpcom.req.get(
-				{
-					path: `/sites/${ invite.site.ID }/invites/${ invite.inviteKey }/accept`,
-					apiVersion: '1.2',
-				},
+				`/sites/${ invite.site.ID }/invites/${ invite.inviteKey }/accept`,
 				{
 					activate: invite.activationKey,
 					include_domain_only: true,
+					apiVersion: '1.2',
 				}
 			);
 

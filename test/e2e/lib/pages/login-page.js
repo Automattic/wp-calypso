@@ -20,9 +20,9 @@ export default class LoginPage extends AsyncBaseContainer {
 		super( driver, By.css( '.wp-login__container' ), LoginPage.getLoginURL() );
 	}
 
-	async login( username, password, emailSSO = false, { retry = true, isPopup = false } = {} ) {
+	async login( email, password, emailSSO = false, { retry = true, isPopup = false } = {} ) {
 		const driver = this.driver;
-		const userNameLocator = By.css( '#usernameOrEmail' );
+		const emailLocator = By.css( '#usernameOrEmail' );
 		const passwordLocator = By.css( '#password' );
 		const changeAccountLocator = By.css( '#loginAsAnotherUser' );
 		const alreadyLoggedInLocator = By.css( '.continue-as-user' );
@@ -35,9 +35,9 @@ export default class LoginPage extends AsyncBaseContainer {
 		if ( isDisplayed ) {
 			await driverHelper.clickWhenClickable( driver, changeAccountLocator );
 		}
-		await driverHelper.setWhenSettable( driver, userNameLocator, username );
+		await driverHelper.setWhenSettable( driver, emailLocator, email );
 		await this.driver.sleep( 1000 );
-		await driver.findElement( userNameLocator ).sendKeys( Key.ENTER );
+		await driver.findElement( emailLocator ).sendKeys( Key.ENTER );
 
 		if ( emailSSO === false ) {
 			await driverHelper.setWhenSettable( driver, passwordLocator, password, {
@@ -58,7 +58,7 @@ export default class LoginPage extends AsyncBaseContainer {
 			try {
 				await driverHelper.waitUntilElementNotLocated(
 					driver,
-					userNameLocator,
+					emailLocator,
 					this.explicitWaitMS * 2
 				);
 			} catch ( e ) {
@@ -66,10 +66,10 @@ export default class LoginPage extends AsyncBaseContainer {
 					suppressDuplicateMessages: true,
 				} );
 				await driverManager.ensureNotLoggedIn( this.driver );
-				return await this.login( username, password, { retry: false } );
+				return await this.login( email, password, { retry: false } );
 			}
 		}
-		await driverHelper.waitUntilElementNotLocated( driver, userNameLocator );
+		await driverHelper.waitUntilElementNotLocated( driver, emailLocator );
 	}
 
 	async use2FAMethod( twoFAMethod ) {

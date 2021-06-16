@@ -2,52 +2,78 @@
  * External dependencies
  */
 import React from 'react';
-import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import {
+	Button,
+	FormStatus,
+	useLineItems,
+	useFormStatus,
+	registerStore,
+	useSelect,
+	useDispatch,
+} from '@automattic/composite-checkout';
+import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import Field from '../../components/field';
-import Button from '../../components/button';
-import { FormStatus, useLineItems } from '../../public-api';
-import { useFormStatus } from '../form-status';
-import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
-import { registerStore, useSelect, useDispatch } from '../../lib/registry';
-import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
+import styled from '../styled';
+import Field from '../field';
+import { SummaryLine, SummaryDetails } from '../summary-details';
+import { PaymentMethodLogos } from '../payment-method-logos';
+import type {
+	PaymentMethodStore,
+	StoreSelectors,
+	StoreSelectorsWithState,
+	StoreActions,
+	StoreState,
+} from '../payment-method-store';
 
-const debug = debugFactory( 'composite-checkout:p24-payment-method' );
+// Disabling this to make migration easier
+/* eslint-disable @typescript-eslint/no-use-before-define */
 
-export function createP24PaymentMethodStore() {
+const debug = debugFactory( 'wpcom-checkout:p24-payment-method' );
+
+type StoreKey = 'p24';
+type NounsInStore = 'customerName' | 'customerEmail';
+
+type P24Store = PaymentMethodStore< NounsInStore >;
+
+declare module '@wordpress/data' {
+	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
+	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
+}
+
+const actions: StoreActions< NounsInStore > = {
+	changeCustomerName( payload ) {
+		return { type: 'CUSTOMER_NAME_SET', payload };
+	},
+	changeCustomerEmail( payload ) {
+		return { type: 'CUSTOMER_EMAIL_SET', payload };
+	},
+};
+
+const selectors: StoreSelectorsWithState< NounsInStore > = {
+	getCustomerName( state ) {
+		return state.customerName;
+	},
+	getCustomerEmail( state ) {
+		return state.customerEmail;
+	},
+};
+
+export function createP24PaymentMethodStore(): P24Store {
 	debug( 'creating a new p24 payment method store' );
-	const actions = {
-		changeCustomerName( payload ) {
-			return { type: 'CUSTOMER_NAME_SET', payload };
-		},
-		changeCustomerEmail( payload ) {
-			return { type: 'CUSTOMER_EMAIL_SET', payload };
-		},
-	};
-
-	const selectors = {
-		getCustomerName( state ) {
-			return state.customerName || '';
-		},
-		getCustomerEmail( state ) {
-			return state.customerEmail || '';
-		},
-	};
-
 	const store = registerStore( 'p24', {
 		reducer(
-			state = {
+			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 				customerEmail: { value: '', isTouched: false },
 			},
 			action
-		) {
+		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
 					return { ...state, customerName: { value: action.payload, isTouched: true } };
@@ -60,18 +86,16 @@ export function createP24PaymentMethodStore() {
 		selectors,
 	} );
 
-	return { ...store, actions, selectors };
+	return store;
 }
 
-export function createP24Method( { store, stripe, stripeConfiguration } ) {
+export function createP24Method( { store }: { store: P24Store } ): PaymentMethod {
 	return {
 		id: 'p24',
 		label: <P24Label />,
-		activeContent: <P24Fields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />,
+		activeContent: <P24Fields />,
 		inactiveContent: <P24Summary />,
-		submitButton: (
-			<P24PayButton store={ store } stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
-		),
+		submitButton: <P24PayButton store={ store } />,
 		getAriaLabel: () => 'Przelewy24',
 	};
 }
@@ -92,9 +116,9 @@ function P24Fields() {
 				type="Text"
 				autoComplete="cc-name"
 				label={ __( 'Your name' ) }
-				value={ customerName?.value ?? '' }
+				value={ customerName.value }
 				onChange={ changeCustomerName }
-				isError={ customerName?.isTouched && customerName?.value.length === 0 }
+				isError={ customerName.isTouched && customerName.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
 				disabled={ isDisabled }
 			/>
@@ -103,9 +127,9 @@ function P24Fields() {
 				type="Text"
 				autoComplete="cc-email"
 				label={ __( 'Email address' ) }
-				value={ customerEmail?.value ?? '' }
+				value={ customerEmail.value ?? '' }
 				onChange={ changeCustomerEmail }
-				isError={ customerEmail?.isTouched && customerEmail?.value.length === 0 }
+				isError={ customerEmail.isTouched && customerEmail.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
 				disabled={ isDisabled }
 			/>
@@ -142,11 +166,28 @@ const P24Field = styled( Field )`
 	}
 `;
 
-function P24PayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
-	const [ items, total ] = useLineItems();
+function P24PayButton( {
+	disabled,
+	onClick,
+	store,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+	store: P24Store;
+} ) {
+	const [ , total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'p24' ).getCustomerName() );
 	const customerEmail = useSelect( ( select ) => select( 'p24' ).getCustomerEmail() );
+
+	// This must be typed as optional because it's injected by cloning the
+	// element in CheckoutSubmitButton, but the uncloned element does not have
+	// this prop yet.
+	if ( ! onClick ) {
+		throw new Error(
+			'Missing onClick prop; P24PayButton must be used as a payment button in CheckoutSubmitButton'
+		);
+	}
 
 	return (
 		<Button
@@ -155,12 +196,8 @@ function P24PayButton( { disabled, onClick, store, stripe, stripeConfiguration }
 				if ( isFormValid( store ) ) {
 					debug( 'submitting p24 payment' );
 					onClick( 'p24', {
-						stripe,
-						name: customerName?.value,
-						email: customerEmail?.value,
-						items,
-						total,
-						stripeConfiguration,
+						name: customerName.value,
+						email: customerEmail.value,
 					} );
 				}
 			} }
@@ -173,30 +210,30 @@ function P24PayButton( { disabled, onClick, store, stripe, stripeConfiguration }
 	);
 }
 
-function ButtonContents( { formStatus, total } ) {
+function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
-		return __( 'Processing…' );
+		return <>{ __( 'Processing…' ) }</>;
 	}
 	if ( formStatus === FormStatus.READY ) {
 		/* translators: %s is the total to be paid in localized currency */
-		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
+		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
 	}
-	return __( 'Please wait…' );
+	return <>{ __( 'Please wait…' ) }</>;
 }
 
-function isFormValid( store ) {
-	const customerName = store.selectors.getCustomerName( store.getState() );
-	const customerEmail = store.selectors.getCustomerEmail( store.getState() );
+function isFormValid( store: P24Store ): boolean {
+	const customerName = selectors.getCustomerName( store.getState() );
+	const customerEmail = selectors.getCustomerEmail( store.getState() );
 
-	if ( ! customerName?.value.length ) {
+	if ( ! customerName.value.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( store.actions.changeCustomerName( '' ) );
+		store.dispatch( actions.changeCustomerName( '' ) );
 	}
-	if ( ! customerEmail?.value.length ) {
-		store.dispatch( store.actions.changeCustomerEmail( '' ) );
+	if ( ! customerEmail.value.length ) {
+		store.dispatch( actions.changeCustomerEmail( '' ) );
 	}
-	if ( ! customerName?.value.length || ! customerEmail?.value.length ) {
+	if ( ! customerName.value.length || ! customerEmail.value.length ) {
 		return false;
 	}
 	return true;
@@ -318,8 +355,8 @@ function P24Summary() {
 
 	return (
 		<SummaryDetails>
-			<SummaryLine>{ customerName?.value }</SummaryLine>
-			<SummaryLine>{ customerEmail?.value }</SummaryLine>
+			<SummaryLine>{ customerName.value }</SummaryLine>
+			<SummaryLine>{ customerEmail.value }</SummaryLine>
 		</SummaryDetails>
 	);
 }

@@ -14,7 +14,6 @@ import {
 	useSelect,
 	useDispatch,
 } from '@automattic/composite-checkout';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
 /**
@@ -24,57 +23,49 @@ import styled from '../styled';
 import Field from '../field';
 import { SummaryLine, SummaryDetails } from '../summary-details';
 import { PaymentMethodLogos } from '../payment-method-logos';
+import type {
+	PaymentMethodStore,
+	StoreSelectors,
+	StoreSelectorsWithState,
+	StoreActions,
+	StoreState,
+} from '../payment-method-store';
 
-const debug = debugFactory( 'composite-checkout:bancontact-payment-method' );
+const debug = debugFactory( 'wpcom-checkout:bancontact-payment-method' );
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-interface StoreStateValue {
-	value: string;
-	isTouched: boolean;
+type StoreKey = 'bancontact';
+type NounsInStore = 'customerName';
+type BancontactStore = PaymentMethodStore< NounsInStore >;
+
+declare module '@wordpress/data' {
+	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
+	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
 }
 
-interface StoreState {
-	customerName: StoreStateValue;
-}
+const actions: StoreActions< NounsInStore > = {
+	changeCustomerName( payload ) {
+		return { type: 'CUSTOMER_NAME_SET', payload };
+	},
+};
 
-type StoreAction = { type: string; payload: string };
-
-interface StoreActions {
-	changeCustomerName: ( payload: string ) => StoreAction;
-}
-
-interface StoreSelectors {
-	getCustomerName: ( state: StoreState ) => StoreStateValue;
-}
-
-interface BancontactStore extends ReturnType< typeof registerStore > {
-	actions: StoreActions;
-	selectors: StoreSelectors;
-}
+const selectors: StoreSelectorsWithState< NounsInStore > = {
+	getCustomerName( state ) {
+		return state.customerName;
+	},
+};
 
 export function createBancontactPaymentMethodStore(): BancontactStore {
 	debug( 'creating a new bancontact payment method store' );
-	const actions = {
-		changeCustomerName( payload: string ) {
-			return { type: 'CUSTOMER_NAME_SET', payload };
-		},
-	};
-
-	const selectors = {
-		getCustomerName( state: StoreState ) {
-			return state.customerName || '';
-		},
-	};
-
 	const store = registerStore( 'bancontact', {
 		reducer(
-			state = {
+			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
 			action
-		) {
+		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
 					return { ...state, customerName: { value: action.payload, isTouched: true } };
@@ -85,40 +76,24 @@ export function createBancontactPaymentMethodStore(): BancontactStore {
 		selectors,
 	} );
 
-	return { ...store, actions, selectors };
+	return store;
 }
 
-export function createBancontactMethod( {
-	store,
-	stripe,
-	stripeConfiguration,
-}: {
-	store: BancontactStore;
-	stripe: Stripe;
-	stripeConfiguration: StripeConfiguration;
-} ): PaymentMethod {
+export function createBancontactMethod( { store }: { store: BancontactStore } ): PaymentMethod {
 	return {
 		id: 'bancontact',
 		label: <BancontactLabel />,
 		activeContent: <BancontactFields />,
 		inactiveContent: <BancontactSummary />,
-		submitButton: (
-			<BancontactPayButton
-				store={ store }
-				stripe={ stripe }
-				stripeConfiguration={ stripeConfiguration }
-			/>
-		),
-		getAriaLabel: ( __ ) => __( 'Bancontact' ),
+		submitButton: <BancontactPayButton store={ store } />,
+		getAriaLabel: () => 'Bancontact',
 	};
 }
 
 function BancontactFields() {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() ) as
-		| StoreStateValue
-		| undefined;
+	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() );
 	const { changeCustomerName } = useDispatch( 'bancontact' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -130,9 +105,9 @@ function BancontactFields() {
 				type="Text"
 				autoComplete="cc-name"
 				label={ __( 'Your name' ) }
-				value={ customerName?.value ?? '' }
+				value={ customerName.value }
 				onChange={ changeCustomerName }
-				isError={ customerName?.isTouched && customerName?.value.length === 0 }
+				isError={ customerName.isTouched && customerName.value.length === 0 }
 				errorMessage={ __( 'This field is required' ) }
 				disabled={ isDisabled }
 			/>
@@ -173,20 +148,14 @@ function BancontactPayButton( {
 	disabled,
 	onClick,
 	store,
-	stripe,
-	stripeConfiguration,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: BancontactStore;
-	stripe: Stripe;
-	stripeConfiguration: StripeConfiguration;
 } ) {
-	const [ items, total ] = useLineItems();
+	const [ , total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() ) as
-		| StoreStateValue
-		| undefined;
+	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() );
 	if ( ! onClick ) {
 		throw new Error(
 			'Missing onClick prop; BancontactPayButton must be used as a payment button in CheckoutSubmitButton'
@@ -200,11 +169,7 @@ function BancontactPayButton( {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting bancontact payment' );
 					onClick( 'bancontact', {
-						stripe,
-						name: customerName?.value,
-						items,
-						total,
-						stripeConfiguration,
+						name: customerName.value,
 					} );
 				}
 			} }
@@ -230,11 +195,11 @@ function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total:
 }
 
 function isFormValid( store: BancontactStore ) {
-	const customerName = store.selectors.getCustomerName( store.getState() as StoreState );
+	const customerName = selectors.getCustomerName( store.getState() );
 
-	if ( ! customerName?.value.length ) {
+	if ( ! customerName.value.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( store.actions.changeCustomerName( '' ) );
+		store.dispatch( actions.changeCustomerName( '' ) );
 		return false;
 	}
 	return true;
@@ -271,13 +236,11 @@ function BancontactLogo() {
 }
 
 function BancontactSummary() {
-	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() ) as
-		| StoreStateValue
-		| undefined;
+	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() );
 
 	return (
 		<SummaryDetails>
-			<SummaryLine>{ customerName?.value }</SummaryLine>
+			<SummaryLine>{ customerName.value }</SummaryLine>
 		</SummaryDetails>
 	);
 }

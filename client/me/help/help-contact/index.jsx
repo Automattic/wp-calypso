@@ -33,6 +33,7 @@ import {
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import QueryTicketSupportConfiguration from 'calypso/components/data/query-ticket-support-configuration';
 import QuerySupportHistory from 'calypso/components/data/query-support-history';
+import { withoutHttp } from 'calypso/lib/url';
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import {
 	sendMessage as sendHappychatMessage,
@@ -193,7 +194,7 @@ class HelpContact extends React.Component {
 		const { currentUserLocale, supportVariation } = this.props;
 		let plan = 'N/A';
 		if ( site ) {
-			plan = `${ site.plan.product_name_short } (${ getPlanTermLabel(
+			plan = `${ site.plan.product_id } - ${ site.plan.product_name_short } (${ getPlanTermLabel(
 				site.plan.product_slug,
 				( val ) => val // Passing an identity function instead of `translate` to always return the English string
 			) })`;
@@ -256,15 +257,59 @@ class HelpContact extends React.Component {
 	};
 
 	submitSupportForumsTopic = ( contactForm ) => {
-		const { subject, message } = contactForm;
-		const { currentUserLocale } = this.props;
+		const {
+			helpSiteIsJetpack,
+			helpSiteIsNotWpCom,
+			site,
+			subject,
+			message,
+			userDeclaresNoSite,
+			userDeclaredUrl,
+			userRequestsHidingUrl,
+		} = contactForm;
+		const { currentUserLocale, translate } = this.props;
 
 		this.setState( { isSubmitting: true } );
 		this.recordCompactSubmit( 'forums' );
 
+		let blogHelpMessage = translate( "I don't have a site linked to this WordPress.com account" );
+
+		if ( userDeclaresNoSite ) {
+			blogHelpMessage = translate( "I don't have a site with WordPress.com yet" );
+		}
+
+		if ( site || userDeclaredUrl ) {
+			const siteUrl = userDeclaredUrl
+				? withoutHttp( userDeclaredUrl.trim() )
+				: withoutHttp( site.URL );
+
+			blogHelpMessage = translate( 'The site I need help with is %(siteUrl)s.', {
+				args: {
+					siteUrl: userRequestsHidingUrl
+						? translate( '[visible only to staff]' ) + ' help@' + siteUrl
+						: siteUrl,
+				},
+			} );
+
+			if ( helpSiteIsNotWpCom ) {
+				const jetpackMessage = helpSiteIsJetpack
+					? translate( 'It is not hosted by WordPress.com, but it is connected with Jetpack.' )
+					: translate( 'It is not hosted by WordPress.com or connected with Jetpack.' );
+
+				blogHelpMessage += ' ' + jetpackMessage;
+			}
+
+			if ( userDeclaredUrl ) {
+				blogHelpMessage +=
+					' ' + translate( 'This site is not linked to my WordPress.com account.' );
+			}
+		}
+
+		const forumMessage = message + '\n\n' + blogHelpMessage;
+
 		wpcom.submitSupportForumsTopic(
 			subject,
-			message,
+			forumMessage,
 			currentUserLocale,
 			this.props.clientSlug,
 			( error, data ) => {
@@ -459,7 +504,9 @@ class HelpContact extends React.Component {
 					showSubjectField: true,
 					showHowCanWeHelpField: false,
 					showHowYouFeelField: false,
-					showSiteField: false,
+					showSiteField: true,
+					showAlternativeSiteOptionsField: true,
+					showHidingUrlOption: true,
 					showQASuggestions: true,
 				};
 		}

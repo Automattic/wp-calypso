@@ -17,16 +17,22 @@ import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
+import { getPurchaseFlowState } from 'calypso/state/plugins/marketplace/selectors';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 /**
  * Style dependencies
  */
 import 'calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status/style.scss';
-import { getPurchaseFlowState } from 'calypso/state/plugins/marketplace/selectors';
 
 const StyledProgressBar = styled( ProgressBar )`
 	margin: 20px 0px;
 `;
+
+/**
+ * This component simulates progress for the purchase flow. It also does any async tasks required in the purchase flow. This includes installing any plugins required.
+ * TODO: Refactor component so that it can easily handle multiple speeds of simulated progress
+ */
 
 function WrappedMarketplacePluginSetup(): JSX.Element {
 	const translate = useTranslate();
@@ -49,17 +55,19 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 	);
 
 	useEffect( () => {
+		dispatch( fetchAutomatedTransferStatus( selectedSiteId ?? 0 ) );
+	}, [ fetchAutomatedTransferStatus ] );
+
+	useEffect( () => {
 		if ( pluginSlugToBeInstalled && selectedSiteId ) {
 			dispatch( initiateThemeTransfer( selectedSiteId, null, pluginSlugToBeInstalled ) );
-		} else if ( isPluginInstalledDuringPurchase ) {
-			// TODO: To be implemented: polling wait to be implemented to check for transfer
-		} else {
+		} else if ( ! isPluginInstalledDuringPurchase ) {
 			// Invalid State redirect to Yoast marketplace page for now, and maybe a marketplace home view in the future
 			page(
-				`/marketplace/product/details/wordpress-seo/${ selectedSiteId }?flags=marketplace-yoast`
+				`/marketplace/product/details/wordpress-seo/${ selectedSiteSlug }?flags=marketplace-yoast`
 			);
 		}
-	}, [ dispatch, pluginSlugToBeInstalled ] );
+	}, [ dispatch, pluginSlugToBeInstalled, isPluginInstalledDuringPurchase, selectedSiteId ] );
 
 	const TIMEOUT_BEFORE_REDIRECTING_ON_TRANSFER_COMPLETE = 4000;
 	const SIMULATION_REFRESH_INTERVAL = 2000;
@@ -81,7 +89,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 
 	useEffect( () => {
 		if ( transferStatus === 'complete' ) {
-			// TODO: Make sure the primary domain is set to the relevant domain before redireting to thank-you page
+			// TODO: Make sure the primary domain is set to the relevant domain before redirecting to thank-you page
 			setSimulatedProgressPercentage( 100 );
 			setTimeout( () => {
 				page( `/marketplace/thank-you/${ selectedSiteId }?flags=marketplace-yoast` );
@@ -95,7 +103,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 
 	const currentNumericStep = steps.indexOf( currentStep ) + 1;
 
-	/* translators: %(currentStep)s  Is the current step number, given that steps are set of counting numbers representing each step starting from 1, %(stepCount)s  Is the total numer of steps, Eg: Step 1 of 3  */
+	/* translators: %(currentStep)s  Is the current step number, given that steps are set of counting numbers representing each step starting from 1, %(stepCount)s  Is the total number of steps, Eg: Step 1 of 3  */
 	const stepIndication = translate( 'Step %(currentStep)s of %(stepCount)s', {
 		args: { currentStep: currentNumericStep, stepCount: steps.length },
 	} );

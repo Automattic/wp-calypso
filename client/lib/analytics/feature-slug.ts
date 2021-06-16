@@ -1,4 +1,4 @@
-export function getFeatureSlugFromPageUrl( pageUrl: string = '' ) {
+export function getFeatureSlugFromPageUrl( pageUrl = '' ): string {
 	let featureSlug =
 		pageUrl === '/' ? 'homepage' : pageUrl.replace( /^\//, '' ).replace( /\.|\/|:/g, '_' );
 	let matched;

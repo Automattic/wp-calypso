@@ -60,9 +60,10 @@ export function checkout( context, next ) {
 		( isLoggedOut || ! hasSite || isDomainOnlyFlow );
 	const jetpackPurchaseToken = context.query.purchasetoken;
 	const jetpackPurchaseNonce = context.query.purchaseNonce;
+	const isUserComingFromLoginForm = context.query?.flow === 'logged-out-checkout';
 	const isJetpackCheckout =
 		context.pathname.includes( '/checkout/jetpack' ) &&
-		isLoggedOut &&
+		( isLoggedOut || isUserComingFromLoginForm ) &&
 		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
 	const jetpackSiteSlug = context.params.siteSlug;
 

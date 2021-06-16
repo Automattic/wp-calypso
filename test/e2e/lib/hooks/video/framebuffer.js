@@ -2,16 +2,17 @@
  * External dependencies
  */
 import { spawn } from 'child_process';
-import { access, mkdir, writeFile } from 'fs/promises';
+import { mkdir, writeFile } from 'fs/promises';
+import { accessSync } from 'fs';
 import path from 'path';
-import { generatePath, getTestNameWithTime } from '../test-utils';
+import { generatePath, getTestNameWithTime } from '../../test-utils';
 
-export const getFreeDisplay = async () => {
+export const getFreeDisplay = () => {
 	// eslint-disable-next-line no-constant-condition
 	while ( true ) {
 		const i = 99 + Math.round( Math.random() * 100 );
 		try {
-			await access( `/tmp/.X${ i }-lock` );
+			accessSync( `/tmp/.X${ i }-lock` );
 			// File exists, retry with another port
 		} catch ( e ) {
 			// File doesn't exist, we found a free port

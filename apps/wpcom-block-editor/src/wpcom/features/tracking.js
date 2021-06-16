@@ -31,6 +31,16 @@ function globalEventPropsHandler( block ) {
 		return {};
 	}
 
+	// `getActiveBlockVariation` selector is only available since Gutenberg 10.6.
+	// To avoid errors, we make sure the selector exists. If it doesn't,
+	// then we fallback to the old way.
+	const { getActiveBlockVariation } = select( 'core/blocks' );
+	if ( getActiveBlockVariation ) {
+		return {
+			variation_slug: getActiveBlockVariation( block.name, block.attributes )?.name,
+		};
+	}
+
 	// Pick up variation slug from `core/embed` block.
 	if ( block.name === 'core/embed' && block?.attributes?.providerNameSlug ) {
 		return { variation_slug: block.attributes.providerNameSlug };
@@ -281,6 +291,36 @@ const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
  * @returns {void}
  */
 const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
+	/*
+		We are ignoring `replaceInnerBlocks` action for template parts and
+		reusable blocks for the following reasons:
+
+		1. Template Parts and Reusable Blocks are asynchronously loaded blocks.
+		   Content is fetched from the REST API so the inner blocks are
+		   populated when the response is received. We want to ignore
+		   `replaceInnerBlocks` action calls when the `innerBlocks` are replaced
+		   because the template part or reusable block just loaded.
+
+		2. Having multiple instances of the same template part or reusable block
+		   and making edits to a single instance will cause all the other instances
+		   to update via `replaceInnerBlocks`.
+
+		3. Performing undo or redo related to template parts and reusable blocks
+		   will update the instances via `replaceInnerBlocks`. 
+	*/
+	const parentBlock = select( 'core/block-editor' ).getBlocksByClientId( rootClientId )?.[ 0 ];
+	if ( parentBlock ) {
+		const { name } = parentBlock;
+		if (
+			// Template Part
+			name === 'core/template-part' ||
+			// Reusable Block
+			name === 'core/block'
+		) {
+			return;
+		}
+	}
+
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
 		block_name: name,
 		blocks_replaced: true,

@@ -102,7 +102,7 @@ const noop = () => {};
  * @param { object } context - Middleware context
  * @returns { object } React element containing the site selector and sidebar
  */
-function createNavigation( context ) {
+export function createNavigation( context ) {
 	const siteFragment = getSiteFragment( context.pathname );
 	let basePath = context.pathname;
 

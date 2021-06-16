@@ -558,6 +558,14 @@ $font-size: rem( 14px );
 // Flyout menu (showing from >782px)
 @media screen and ( min-width: 783px ) {
 	.is-nav-unification {
+		.focus-content,
+		.focus-sites,
+		.focus-sidebar {
+			.sidebar {
+				z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
+			}
+		}
+
 		// client/layout/style.scss
 		// layout/sidebar/style.scss
 		// TODO: For prototype only, this prevents the sidebar from being scrollable.
@@ -568,7 +576,6 @@ $font-size: rem( 14px );
 			.focus-sidebar {
 				.sidebar,
 				.layout__secondary {
-					z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
 					overflow: initial;
 				}
 			}

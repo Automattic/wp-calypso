@@ -85,7 +85,7 @@ export default function PaymentMethodStep( {
 			<WPOrderReviewSection>
 				<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
 				{ taxLineItems.map( ( taxLineItem ) => (
-					<NonProductLineItem tax lineItem={ taxLineItem } />
+					<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
 				) ) }
 				{ creditsLineItem && responseCart.sub_total_integer > 0 && (
 					<NonProductLineItem subtotal lineItem={ creditsLineItem } />

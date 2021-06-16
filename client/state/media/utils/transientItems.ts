@@ -1,5 +1,5 @@
 type TransientItemSiteState = {
-	transientItems: { [ transientId: string ]: object };
+	transientItems: { [ transientId: string ]: Record< string, unknown > };
 	transientIdsToServerIds: { [ transientId: string ]: number };
 };
 

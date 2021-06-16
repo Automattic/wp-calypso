@@ -33,7 +33,7 @@
 	},
 	"devDependencies": {
 		"asana-phrase": "0.0.8",
-		"chai": "3.5.0",
+		"chai": "4.3.4",
 		"copy-webpack-plugin": "^6.2.1",
 		"electron": "11.0.4",
 		"electron-builder": "22.10.4",

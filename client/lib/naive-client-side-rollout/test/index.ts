@@ -1,15 +1,19 @@
 /**
+ * External dependencies
+ */
+import { getCurrentUser } from '@automattic/calypso-analytics';
+
+/**
  * Internal dependencies
  */
-import user from 'calypso/lib/user';
 import { badNaiveClientSideRollout } from '../index';
 
-jest.mock( 'calypso/lib/user' );
-const mockedUser = user as jest.MockedFunction< typeof user >;
+jest.mock( '@automattic/calypso-analytics' );
+const mockedUser = getCurrentUser as jest.MockedFunction< typeof getCurrentUser >;
 const setUserId = ( userId ) =>
-	mockedUser.mockImplementationOnce( ( ( () => ( {
-		get: () => ( { ID: userId } ),
-	} ) ) as unknown ) as typeof user );
+	mockedUser.mockImplementationOnce(
+		( () => ( { ID: userId } as unknown ) ) as typeof getCurrentUser
+	);
 
 // [a, b)
 const range = ( a, b ) => {

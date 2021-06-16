@@ -1,35 +1,43 @@
 /**
  * Internal dependencies
  */
-import * as DataHelper from '../../data-helper';
+import { BaseContainer } from '../base-container';
 
 /**
  * Type dependencies
  */
 import { Page } from 'playwright';
 
+const selectors = {
+	loginContainer: '.wp-login__container',
+	username: '#usernameOrEmail',
+	password: '#password',
+	changeAccountButton: '#loginAsAnotherUser',
+};
+
 /**
  * Represents an instance of the calypso Login page.
+ *
+ * @augments {BaseContainer}
  */
-export class LoginPage {
+export class LoginPage extends BaseContainer {
 	/**
 	 * Creates an instance of the Login page.
 	 *
 	 * @param {Page} page Playwright page on which actions are executed.
 	 */
 	constructor( page: Page ) {
-		this.page = page;
-		this.url = DataHelper.getCalypsoURL( 'log-in' );
+		super( page, selectors.loginContainer );
 	}
 
-	page: Page;
-	url: string;
-
-	loginContainerSelector = '.wp-login__container';
-	usernameSelector = '#usernameOrEmail';
-	passwordSelector = '#password';
-	changeAccountSelector = '#loginAsAnotherUser';
-	alreadyLoggedInSelector = '.continue-as-user';
+	/**
+	 * Post-initialization steps.
+	 */
+	async _postInit(): Promise< void > {
+		await this.page.waitForLoadState( 'networkidle' );
+		const container = await this.page.waitForSelector( selectors.loginContainer );
+		await container.waitForElementState( 'stable' );
+	}
 
 	/**
 	 * Executes series of interactions on the log-in page to log in as a specific user.
@@ -41,21 +49,18 @@ export class LoginPage {
 	 * @throws {Error} If the log in process was unsuccessful for any reason.
 	 */
 	async login( { username, password }: { username: string; password: string } ): Promise< void > {
-		await this.page.goto( this.url, { waitUntil: 'networkidle' } );
-
-		const alreadyLoggedIn = await this.page.$( this.changeAccountSelector );
+		const alreadyLoggedIn = await this.page.$( selectors.changeAccountButton );
 		if ( alreadyLoggedIn ) {
-			await this.page.click( this.changeAccountSelector );
+			console.log( 'already logged in, selecting "change account' );
+			await this.page.click( selectors.changeAccountButton );
 		}
 
 		// Begin the process of logging in.
-		await this.page.fill( this.usernameSelector, username );
+		await this.page.fill( selectors.username, username );
 		await this.page.keyboard.press( 'Enter' );
+		await this.page.fill( selectors.password, password );
 
-		await this.page.fill( this.passwordSelector, password );
-
-		// Wait for all promises. Add more here as necessary, such as waiting for the request to be
-		// completed, or looking for a specific elemen on page.
-		await Promise.all( [ this.page.waitForNavigation(), this.page.keyboard.press( 'Enter' ) ] );
+		// Enter submits the form and initiates the log in process.
+		await this.page.keyboard.press( 'Enter' );
 	}
 }

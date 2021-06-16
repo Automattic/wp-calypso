@@ -7,14 +7,14 @@ import { logging } from 'selenium-webdriver';
 /**
  * Internal dependencies
  */
-import { generatePath } from '../test-utils';
+import { generatePath } from '../../test-utils';
 
-export const saveBrowserLogs = async () => {
+export const saveBrowserLogs = async ( driver ) => {
 	try {
 		await Promise.allSettled(
 			[
-				[ () => this.driver.manage().logs().get( logging.Type.BROWSER ), 'console.log' ],
-				[ () => this.driver.manage().logs().get( logging.Type.PERFORMANCE ), 'performance.log' ],
+				[ () => driver.manage().logs().get( logging.Type.BROWSER ), 'console.log' ],
+				[ () => driver.manage().logs().get( logging.Type.PERFORMANCE ), 'performance.log' ],
 			].map( async ( [ logsPromise, file ] ) => {
 				const logs = await logsPromise();
 				return fs.writeFile( generatePath( file ), JSON.stringify( logs, null, 2 ) );

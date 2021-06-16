@@ -18,7 +18,7 @@ const v1deprecation: BlockDeprecation< BlockAttributesV1 > = {
 		estimate: { type: 'string' },
 		team: { type: 'string', default: '' },
 	},
-	migrate( attributes: object ) {
+	migrate( attributes: Record< string, unknown > ) {
 		return {
 			allTasks: 0,
 			completedTasks: 0,

@@ -11,6 +11,7 @@ import { readFile } from 'fs/promises';
 import getAssetFilePath from 'calypso/lib/get-asset-file-path';
 import { getLanguage } from 'calypso/lib/i18n-utils';
 import { setLocaleRawData } from 'calypso/state/ui/language/actions';
+import config from 'calypso/server/config';
 
 export function ssrSetupLocaleMiddleware() {
 	const translationsCache = {};
@@ -24,6 +25,11 @@ export function ssrSetupLocaleMiddleware() {
 
 		if ( ! context.params.lang ) {
 			resetLocaleData();
+			return;
+		}
+
+		if ( ! config( 'magnificent_non_en_locales' ).includes( context.params.lang ) ) {
+			context.res.redirect( context.path.replace( `/${ context.params.lang }`, '' ) );
 			return;
 		}
 
