@@ -144,6 +144,7 @@ export interface LicensesStore {
 	isFetching: boolean;
 	paginated: PaginatedItems< License > | null;
 	counts: LicenseCounts;
+	hasFetchedLicenseCounts: boolean;
 }
 
 interface CombinedStore {
