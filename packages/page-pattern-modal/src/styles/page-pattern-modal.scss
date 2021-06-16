@@ -41,11 +41,6 @@ $sidebar-width-desktop: 324px;
 		max-height: none;
 	}
 
-	@media screen and ( max-width: $breakpoint-mobile ) {
-		height: calc( 100vh - 55px );
-		top: 50px; // don't get hidden by the adminbar
-	}
-
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		width: calc( 100% - 32px );
 		height: 90vh;
