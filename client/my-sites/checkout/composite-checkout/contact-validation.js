@@ -3,6 +3,12 @@
  */
 import { isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
+import {
+	getDomain,
+	isDomainTransfer,
+	isDomainProduct,
+	isDomainMapping,
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -17,7 +23,6 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import wp from 'calypso/lib/wp';
-import { getDomain, isDomainTransfer, isDomainProduct } from '@automattic/calypso-products';
 
 const wpcom = wp.undocumented();
 
@@ -106,6 +111,7 @@ export async function getTaxValidationResult( contactInfo ) {
 export async function getDomainValidationResult( products, contactInfo ) {
 	const domainNames = products
 		.filter( ( product ) => isDomainProduct( product ) || isDomainTransfer( product ) )
+		.filter( ( product ) => ! isDomainMapping( product ) )
 		.map( getDomain );
 	const formattedContactDetails = prepareContactDetailsForValidation( 'domains', contactInfo );
 	return wpcomValidateDomainContactInformation( formattedContactDetails, domainNames );
