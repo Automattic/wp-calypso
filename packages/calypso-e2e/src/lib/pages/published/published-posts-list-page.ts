@@ -15,7 +15,7 @@ const selectors = {
 };
 
 /**
- * Represents the published site's post listings page.
+ * Represents the published site's post list page.
  *
  * @augments {BaseContainer}
  */
@@ -27,6 +27,15 @@ export class PublishedPostsListPage extends BaseContainer {
 	 */
 	constructor( page: Page ) {
 		super( page, selectors.page );
+	}
+
+	/**
+	 * Post-object creation initialization steps.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async _postInit(): Promise< void > {
+		await this.page.waitForSelector( selectors.posts );
 	}
 
 	/**

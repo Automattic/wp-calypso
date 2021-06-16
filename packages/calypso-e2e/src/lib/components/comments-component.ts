@@ -116,7 +116,7 @@ export class CommentsComponent extends BaseContainer {
 	 */
 	async like( selector: number | string ): Promise< void > {
 		const comment = await this._click( selector );
-		await comment!.waitForSelector( selectors.liked );
+		await comment.waitForSelector( selectors.liked );
 	}
 
 	/**
@@ -130,6 +130,6 @@ export class CommentsComponent extends BaseContainer {
 	 */
 	async unlike( selector: number | string ): Promise< void > {
 		const comment = await this._click( selector );
-		await comment!.waitForSelector( selectors.notLiked );
+		await comment.waitForSelector( selectors.notLiked );
 	}
 }
