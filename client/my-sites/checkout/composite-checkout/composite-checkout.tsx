@@ -207,7 +207,7 @@ export default function CompositeCheckout( {
 			if ( isJetpackCheckout ) {
 				return isUserComingFromLoginForm
 					? 'jetpack_site_only_coming_from_login'
-					: 'Jetpack_site_only';
+					: 'jetpack_site_only';
 			}
 			return 'wpcom_registrationless';
 		}
