@@ -20,12 +20,16 @@ const screenSize = driverManager.currentScreenSize();
 
 describe( 'Reader: (' + screenSize + ') @parallel', function () {
 	let driver;
+	let loginFlow;
+	let comment;
+	let navBarComponent;
+	let notificationsComponent;
 
 	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	it( 'Can log in as commenting user', async function () {
-		this.loginFlow = new LoginFlow( driver, 'commentingUser' );
-		return await this.loginFlow.login( { useFreshLogin: true } );
+		loginFlow = new LoginFlow( driver, 'commentingUser' );
+		return await loginFlow.login( { useFreshLogin: true } );
 	} );
 
 	it( 'Can see the Reader stream', async function () {
@@ -44,24 +48,24 @@ describe( 'Reader: (' + screenSize + ') @parallel', function () {
 	} );
 
 	it( 'Can comment on the latest post and see the comment appear', async function () {
-		this.comment = dataHelper.randomPhrase();
+		comment = dataHelper.randomPhrase();
 		const readerPage = await ReaderPage.Expect( driver );
-		await readerPage.commentOnLatestPost( this.comment );
-		await readerPage.waitForCommentToAppear( this.comment );
+		await readerPage.commentOnLatestPost( comment );
+		await readerPage.waitForCommentToAppear( comment );
 	} );
 
 	it( 'Can log in as test site owner', async function () {
-		this.loginFlow = new LoginFlow( driver, 'notificationsUser' );
-		return await this.loginFlow.login();
+		loginFlow = new LoginFlow( driver, 'notificationsUser' );
+		return await loginFlow.login();
 	} );
 
 	it( 'Can delete the new comment (and wait for UNDO grace period so step is actually deleted)', async function () {
-		this.navBarComponent = await NavBarComponent.Expect( driver );
-		await this.navBarComponent.openNotifications();
-		this.notificationsComponent = await NotificationsComponent.Expect( driver );
-		await this.notificationsComponent.selectCommentByText( this.comment );
-		await this.notificationsComponent.trashComment();
-		await this.notificationsComponent.waitForUndoMessage();
-		return await this.notificationsComponent.waitForUndoMessageToDisappear();
+		navBarComponent = await NavBarComponent.Expect( driver );
+		await navBarComponent.openNotifications();
+		notificationsComponent = await NotificationsComponent.Expect( driver );
+		await notificationsComponent.selectCommentByText( comment );
+		await notificationsComponent.trashComment();
+		await notificationsComponent.waitForUndoMessage();
+		return await notificationsComponent.waitForUndoMessageToDisappear();
 	} );
 } );

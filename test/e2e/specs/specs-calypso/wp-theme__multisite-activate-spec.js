@@ -20,36 +20,41 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Themes: Activate a theme, all sites (${ screenSize }) @parallel`, function () {
 	let driver;
+	let themeSearchName;
+	let expectedTheme;
+	let loginFlow;
+	let sidebarComponent;
+	let themesPage;
 
 	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	it( 'Login and select themes', async function () {
-		this.themeSearchName = 'twenty';
-		this.expectedTheme = 'Twenty F';
+		themeSearchName = 'twenty';
+		expectedTheme = 'Twenty F';
 
-		this.loginFlow = new LoginFlow( driver, 'multiSiteUser' );
-		await this.loginFlow.loginAndSelectMySite();
+		loginFlow = new LoginFlow( driver, 'multiSiteUser' );
+		await loginFlow.loginAndSelectMySite();
 
-		this.sidebarComponent = await SidebarComponent.Expect( driver );
-		await this.sidebarComponent.selectThemes();
+		sidebarComponent = await SidebarComponent.Expect( driver );
+		await sidebarComponent.selectThemes();
 	} );
 
 	it( 'can search for free themes', async function () {
-		this.themesPage = await ThemesPage.Expect( driver );
-		await this.themesPage.waitUntilThemesLoaded();
-		await this.themesPage.showOnlyFreeThemes();
-		await this.themesPage.searchFor( this.themeSearchName );
-		await this.themesPage.waitForThemeStartingWith( this.expectedTheme );
+		themesPage = await ThemesPage.Expect( driver );
+		await themesPage.waitUntilThemesLoaded();
+		await themesPage.showOnlyFreeThemes();
+		await themesPage.searchFor( themeSearchName );
+		await themesPage.waitForThemeStartingWith( expectedTheme );
 
-		this.currentThemeName = await this.themesPage.getFirstThemeName();
+		await themesPage.getFirstThemeName();
 	} );
 
 	it( 'click new theme more button', async function () {
-		await this.themesPage.clickNewThemeMoreButton();
+		await themesPage.clickNewThemeMoreButton();
 	} );
 
 	it( 'should show a menu', async function () {
-		const displayed = await this.themesPage.popOverMenuDisplayed();
+		const displayed = await themesPage.popOverMenuDisplayed();
 		assert( displayed, 'Popover menu not displayed' );
 	} );
 
@@ -59,7 +64,7 @@ describe( `[${ host }] Themes: Activate a theme, all sites (${ screenSize }) @pa
 	*/
 	// eslint-disable-next-line jest/no-disabled-tests
 	it.skip( 'can click activate', async function () {
-		await this.themesPage.clickPopoverItem( 'Activate' );
+		await themesPage.clickPopoverItem( 'Activate' );
 		const thanksModalShown = await driverHelper.isElementEventuallyLocatedAndVisible(
 			driver,
 			By.css( '.themes__thanks-modal' )

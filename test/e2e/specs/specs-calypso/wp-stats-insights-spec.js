@@ -15,12 +15,13 @@ const screenSize = driverManager.currentScreenSize();
 describe( 'Stats: (' + screenSize + ') @parallel', function () {
 	let statsPage;
 	let driver;
+	let loginFlow;
 
 	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	it( 'Can log in as user', async function () {
-		this.loginFlow = new LoginFlow( driver );
-		return await this.loginFlow.login();
+		loginFlow = new LoginFlow( driver );
+		return await loginFlow.login();
 	} );
 
 	it( 'Can open the sidebar', async function () {

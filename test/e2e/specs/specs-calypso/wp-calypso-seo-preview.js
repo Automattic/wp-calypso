@@ -23,6 +23,7 @@ const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] SEO Preview page: (${ screenSize }) @parallel`, function () {
 	let driver;
+	let sidebarComponent;
 
 	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
@@ -35,8 +36,8 @@ describe( `[${ host }] SEO Preview page: (${ screenSize }) @parallel`, function 
 	} );
 
 	it( 'Open the marketing page', async function () {
-		this.sidebarComponent = await SidebarComponent.Expect( driver );
-		return await this.sidebarComponent.selectMarketing();
+		sidebarComponent = await SidebarComponent.Expect( driver );
+		return await sidebarComponent.selectMarketing();
 	} );
 
 	it( 'Enter front page meta description and click preview button', async function () {
