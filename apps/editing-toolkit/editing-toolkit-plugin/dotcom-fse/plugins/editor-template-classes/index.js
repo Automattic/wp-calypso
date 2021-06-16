@@ -38,6 +38,7 @@ const EditorTemplateClasses = withSelect( ( select ) => {
 		clearInterval( blockListInception );
 
 		blockListParent.className = classNames(
+			'editor-styles-wrapper',
 			'a8c-template-editor fse-template-part',
 			...templateClasses
 		);
