@@ -3,7 +3,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -11,10 +11,11 @@ import { connect } from 'react-redux';
  */
 import Latex from './latex';
 import Shortcodes from './shortcodes';
-import { Card, CompactCard } from '@automattic/components';
+import { CompactCard } from '@automattic/components';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
 import PublishConfirmation from './publish-confirmation';
+import Markdown from './markdown';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 
@@ -29,51 +30,54 @@ const Composing = ( {
 	setFieldValue,
 	siteIsJetpack,
 	updateFields,
-} ) => {
-	const CardComponent = siteIsJetpack ? CompactCard : Card;
-
-	return (
-		<Fragment>
-			<CardComponent className="composing__card site-settings">
-				<PublishConfirmation />
-				<DefaultPostFormat
-					eventTracker={ eventTracker }
-					fields={ fields }
-					isRequestingSettings={ isRequestingSettings }
-					isSavingSettings={ isSavingSettings }
-					onChangeField={ onChangeField }
-				/>
-			</CardComponent>
-
-			{ siteIsJetpack && (
-				<Fragment>
-					<Latex
-						fields={ fields }
-						handleToggle={ handleToggle }
-						isRequestingSettings={ isRequestingSettings }
-						isSavingSettings={ isSavingSettings }
-						setFieldValue={ setFieldValue }
-					/>
-					<Shortcodes
-						fields={ fields }
-						handleToggle={ handleToggle }
-						isRequestingSettings={ isRequestingSettings }
-						isSavingSettings={ isSavingSettings }
-						setFieldValue={ setFieldValue }
-					/>
-				</Fragment>
-			) }
-
-			<DateTimeFormat
+} ) => (
+	<>
+		<CompactCard className="composing__card site-settings">
+			<PublishConfirmation />
+			<DefaultPostFormat
+				eventTracker={ eventTracker }
 				fields={ fields }
-				handleSelect={ handleSelect }
 				isRequestingSettings={ isRequestingSettings }
 				isSavingSettings={ isSavingSettings }
-				updateFields={ updateFields }
+				onChangeField={ onChangeField }
 			/>
-		</Fragment>
-	);
-};
+		</CompactCard>
+
+		<Markdown
+			fields={ fields }
+			isRequestingSettings={ isRequestingSettings }
+			isSavingSettings={ isSavingSettings }
+			handleToggle={ handleToggle }
+		/>
+
+		{ siteIsJetpack && (
+			<>
+				<Latex
+					fields={ fields }
+					handleToggle={ handleToggle }
+					isRequestingSettings={ isRequestingSettings }
+					isSavingSettings={ isSavingSettings }
+					setFieldValue={ setFieldValue }
+				/>
+				<Shortcodes
+					fields={ fields }
+					handleToggle={ handleToggle }
+					isRequestingSettings={ isRequestingSettings }
+					isSavingSettings={ isSavingSettings }
+					setFieldValue={ setFieldValue }
+				/>
+			</>
+		) }
+
+		<DateTimeFormat
+			fields={ fields }
+			handleSelect={ handleSelect }
+			isRequestingSettings={ isRequestingSettings }
+			isSavingSettings={ isSavingSettings }
+			updateFields={ updateFields }
+		/>
+	</>
+);
 
 Composing.defaultProps = {
 	fields: {},

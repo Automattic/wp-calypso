@@ -263,6 +263,7 @@ const getFormSettings = ( settings ) => {
 		'time_format',
 		'timezone_string',
 		'podcasting_category_id',
+		'wpcom_publish_posts_with_markdown',
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values
