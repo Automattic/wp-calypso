@@ -36,6 +36,26 @@ export function getPreference( state, key ) {
 	);
 }
 
+export function getMediaScalePreference( state, key, isMobile ) {
+	const SCALE_TOUCH_GRID = 0.323;
+	const mediaScale = get(
+		find(
+			[
+				state.preferences?.localValues,
+				state.preferences?.remoteValues,
+				DEFAULT_PREFERENCE_VALUES,
+			],
+			( source ) => has( source, key )
+		),
+		key,
+		null
+	);
+
+	if ( ( isMobile && mediaScale !== 1 ) || ( ! isMobile && mediaScale > SCALE_TOUCH_GRID ) ) {
+		return SCALE_TOUCH_GRID;
+	}
+	return mediaScale;
+}
 /**
  * Returns the a key value store of all current remote preferences. The keys
  * of the object are each preference key and the values are the preference
