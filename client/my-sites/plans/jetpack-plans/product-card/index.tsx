@@ -164,7 +164,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 				currentPlan: sitePlan,
 			} ) }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
-			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
+			onButtonClick={ () => {
+				onClick( item, isUpgradeableToYearly, purchase );
+			} }
 			buttonURL={
 				createButtonURL ? createButtonURL( item, isUpgradeableToYearly, purchase ) : undefined
 			}

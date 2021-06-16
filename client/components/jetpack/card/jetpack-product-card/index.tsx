@@ -25,7 +25,6 @@ import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpac
 import type { Moment } from 'moment';
 import type {
 	Duration,
-	PurchaseCallback,
 	ScrollCardIntoViewCallback,
 } from 'calypso/my-sites/plans/jetpack-plans/types';
 
@@ -48,7 +47,7 @@ type OwnProps = {
 	billingTerm: Duration;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
-	onButtonClick: PurchaseCallback;
+	onButtonClick: React.MouseEventHandler;
 	buttonURL?: string;
 	expiryDate?: Moment;
 	isFeatured?: boolean;
