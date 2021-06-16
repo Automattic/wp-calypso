@@ -29,6 +29,7 @@ import {
 	hideAutoLoadingHomepageWarning,
 	activate as activateTheme,
 } from 'calypso/state/themes/actions';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Style dependencies
@@ -118,6 +119,7 @@ class AutoLoadingHomepageModal extends Component {
 			hasAutoLoadingHomepage,
 			isCurrentTheme,
 			isVisible = false,
+			siteId,
 		} = this.props;
 
 		// Nothing to do when it's the current theme.
@@ -140,6 +142,15 @@ class AutoLoadingHomepageModal extends Component {
 		}
 
 		const { name: themeName, id: themeId } = this.props.theme;
+
+		// Depends on D62921-code
+		// const iframeSrc =
+		// 	'https://public-api.wordpress.com/rest/v1/theme/preview/twentytwentyone/179276076?font_headings=Open%20Sans&font_base=Chivo&site_title=Barnsbury&viewport_height=700&language=en&use_screenshot_overrides=true';
+		const iframeSrc = addQueryArgs(
+			`https://public-api.wordpress.com/rest/v1/theme/preview/${ themeId }/${ siteId }`
+			// Not sure if these do anything yet
+			/* { viewport_height: 200, language: 'en', use_screenshot_overrides: 'true' } */
+		);
 
 		return (
 			<Dialog
@@ -171,6 +182,31 @@ class AutoLoadingHomepageModal extends Component {
 							args: { themeName },
 						} ) }
 					</h1>
+					{ /* Rough WIP: Inline styles */ }
+					{ /* Something is making me make the wrapping div taller than I expected to see the bottom edge of the iframe.
+						Expected: 520 * 0.75 = 390
+					*/ }
+					<div
+						style={ {
+							width: '600px',
+							height: '520px',
+							padding: 0,
+							overflow: 'hidden',
+						} }
+					>
+						<iframe
+							title="Site Preview"
+							name="customize-preview-0"
+							sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts"
+							src={ iframeSrc }
+							style={ {
+								width: '800px',
+								height: '520px',
+								border: '1px solid black',
+								transform: 'scale(0.75)',
+							} }
+						></iframe>
+					</div>
 					<FormLabel>
 						<FormRadio
 							value="keep_current_homepage"
