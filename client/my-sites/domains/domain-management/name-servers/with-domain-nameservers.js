@@ -14,6 +14,11 @@ import useDomainNameserversQuery from 'calypso/data/domains/nameservers/use-doma
 import useUpdateNameserversMutation from 'calypso/data/domains/nameservers/use-update-nameservers-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
+const noticeOptions = {
+	duration: 5000,
+	id: `nameserver-update-notification`,
+};
+
 const useSuccessNotice = ( isSuccess ) => {
 	const showNotice = useRef();
 	const dispatch = useDispatch();
@@ -22,10 +27,10 @@ const useSuccessNotice = ( isSuccess ) => {
 	useEffect( () => {
 		showNotice.current = () => {
 			dispatch(
-				successNotice( translate( 'Yay, the name servers have been successfully updated!' ), {
-					duration: 5000,
-					id: `nameserver-update-notification`,
-				} )
+				successNotice(
+					translate( 'Yay, the name servers have been successfully updated!' ),
+					noticeOptions
+				)
 			);
 		};
 	}, [ dispatch, translate ] );
@@ -43,12 +48,7 @@ const useErrorNotice = ( isError, error ) => {
 	useEffect( () => {
 		showNotice.current = () => {
 			const defaultMessage = translate( 'An error occurred while updating the nameservers.' );
-			dispatch(
-				errorNotice( error?.message ?? defaultMessage, {
-					duration: 5000,
-					id: `nameserver-update-notification`,
-				} )
-			);
+			dispatch( errorNotice( error?.message ?? defaultMessage, noticeOptions ) );
 		};
 	}, [ dispatch, translate, error ] );
 
