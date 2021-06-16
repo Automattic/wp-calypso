@@ -61,64 +61,53 @@ export class SidebarComponent extends BaseContainer {
 	 * under this condition will throw an exception from the Playwright engine.
 	 *
 	 * @param {{[key: string]: string}} param0 Named object parameter.
-	 * @param {string} param0.heading Plaintext representation of the top level heading.
-	 * @param {string} param0.subheading Plaintext representation of the child level heading.
+	 * @param {string} param0.item Plaintext representation of the top level heading.
+	 * @param {string} param0.subitem Plaintext representation of the child level heading.
+	 * @throws {Error} If neither item or subitem were specified in the parameter.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async gotoMenu( {
-		heading,
-		subheading,
-	}: {
-		heading?: string;
-		subheading?: string;
-	} ): Promise< void > {
-		if ( heading ) {
-			heading = toTitleCase( heading ).trim();
+	async gotoMenu( { item, subitem }: { item?: string; subitem?: string } ): Promise< void > {
+		let selector;
+
+		if ( item ) {
+			item = toTitleCase( item ).trim();
 			// This will exclude entries where the `heading` term matches multiple times
 			// eg. `Settings` but they are sub-headings in reality, such as Jetpack > Settings.
 			// Since the sub-headings are always hidden unless heading is selected, this works to
 			// our advantage.
-			const selector = `${ selectors.heading } span:has-text("${ heading }"):visible`;
-			await Promise.all( [ this.page.waitForNavigation(), this._click( { selector } ) ] );
+			selector = `${ selectors.heading } span:has-text("${ item }"):visible`;
 		}
 
-		if ( subheading ) {
-			subheading = toTitleCase( subheading ).trim();
-			// If there is a subheading, the expanded menu element will always be present.
+		if ( subitem ) {
+			subitem = toTitleCase( subitem ).trim();
+			// If there is a subheading, by definition the expanded menu element will always be present.
 			await this.sidebar.waitForSelector( selectors.expandedMenu );
 			// Explicitly select only the child headings and combine with the text matching engine.
-			// This works better than using CSS pseudo-classes like `:has-text` or `:text-matches`
-			// as those approaches result in the element not being clickable.
-			const selector = `${ selectors.subheading } >> text="${ subheading }"`;
-			await Promise.all( [
-				this.page.waitForNavigation(),
-				this._click( { selector, force: true } ),
-			] );
+			// This works better than using CSS pseudo-classes like `:has-text` or `:text-matches` for text
+			// matching.
+			selector = `${ selectors.subheading } >> text="${ subitem }"`;
 		}
+
+		if ( ! selector ) {
+			throw new Error(
+				`Selector is undefined. Check if item or subitem has been specified as argument(s).`
+			);
+		}
+
+		await Promise.all( [ this.page.waitForNavigation(), this._click( selector ) ] );
 	}
 
 	/**
 	 * Performs the underlying click action on a sidebar menu item.
 	 *
-	 * This method ensures the sidebar is in a stable, consistent state prior to executing its actions.
+	 * This method ensures the sidebar is in a stable, consistent state prior to executing its actions,
+	 * scrolls the sidebar and main content to expose the target element in the viewport, then
+	 * executes a click.
 	 *
-	 * In some cases, due to the way WPCOM sidebar is implemented, Playwright will struggle to scroll the menu item
-	 * into the viewport in order to perform the click action. This is a particular issue with child-level menu
-	 * items (eg. Settings > Reading). Set the `force` parameter to true to force a click action to occur regardless
-	 * of the visibility state of the target element.
-	 *
-	 * @param {{[key: string]: string|boolean}} param0 Named object parameter.
-	 * @param {string} param0.selector Any selector supported by Playwright.
-	 * @param {boolean} [param0.force] Whether to force a click action. Defaults to false.
+	 * @param {string} selector Any selector supported by Playwright.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async _click( {
-		selector,
-		force = false,
-	}: {
-		selector: string;
-		force?: boolean;
-	} ): Promise< void > {
+	async _click( selector: string ): Promise< void > {
 		// Wait for these promises in no particular order. We simply want to ensure the sidebar
 		// and the page is in a state to accept inputs.
 		await Promise.all( [
@@ -126,17 +115,22 @@ export class SidebarComponent extends BaseContainer {
 			this.sidebar.waitForElementState( 'stable' ),
 		] );
 
-		const element = await this.page.waitForSelector( selector, { state: 'visible' } );
+		const elementHandle = await this.page.waitForSelector( selector );
 
-		if ( ! force ) {
-			await element.click();
-		} else {
-			// Programatically send a `click` event regardless of element visibility.
-			// This eliminates the need to scroll the sidebar to expose the menu item,
-			// which Playwright struggles with for some reason.
-			// For more information on events, see https://playwright.dev/docs/api/class-elementhandle#element-handle-dispatch-event
-			await element.dispatchEvent( 'click' );
-		}
+		await this.page.evaluate(
+			( [ element ] ) => {
+				const elementBottom = element.getBoundingClientRect().bottom;
+				const isOutsideViewport = window.innerHeight < elementBottom;
+
+				if ( isOutsideViewport ) {
+					window.scrollTo( 0, elementBottom - window.innerHeight );
+				}
+			},
+			[ elementHandle ]
+		);
+
+		await elementHandle.click();
+
 		await this.page.waitForLoadState( 'domcontentloaded' );
 	}
 }
