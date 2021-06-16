@@ -283,6 +283,11 @@ body.is-section-signup.is-white-signup {
 
 	.domain-suggestion {
 		flex-direction: column;
+
+		@include break-mobile {
+			flex-direction: row;
+		}
+
 		box-shadow: none;
 
 		@include break-mobile {
