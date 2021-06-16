@@ -37,17 +37,19 @@ export const getWordadsSettings = createSelector(
 				return null;
 			}
 			jetpackSettings = {
-				jetpack_module_enabled: siteSettings?.wordads,
+				jetpack_module_enabled: siteSettings.wordads,
 				display_options: {
-					display_front_page: siteSettings?.wordads_display_front_page,
-					display_post: siteSettings?.wordads_display_post,
-					display_page: siteSettings?.wordads_display_page,
-					display_archive: siteSettings?.wordads_display_archive,
-					enable_header_ad: siteSettings?.enable_header_ad,
-					second_belowpost: siteSettings?.wordads_second_belowpost,
+					display_front_page: siteSettings.wordads_display_front_page,
+					display_post: siteSettings.wordads_display_post,
+					display_page: siteSettings.wordads_display_page,
+					display_archive: siteSettings.wordads_display_archive,
+					enable_header_ad: siteSettings.enable_header_ad,
+					second_belowpost: siteSettings.wordads_second_belowpost,
 				},
-				ccpa_enabled: siteSettings?.wordads_ccpa_enabled,
-				ccpa_privacy_policy_url: siteSettings?.wordads_ccpa_privacy_policy_url,
+				ccpa_enabled: siteSettings.wordads_ccpa_enabled,
+				ccpa_privacy_policy_url: siteSettings.wordads_ccpa_privacy_policy_url,
+				custom_adstxt_enabled: siteSettings.wordads_custom_adstxt_enabled,
+				custom_adstx: siteSettings.wordads_custom_adstxt,
 			};
 		}
 

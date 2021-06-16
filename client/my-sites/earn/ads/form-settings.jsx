@@ -21,6 +21,7 @@ import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
@@ -32,6 +33,7 @@ import { dismissWordAdsSuccess } from 'calypso/state/wordads/approve/actions';
 import { protectForm } from 'calypso/lib/protect-form';
 import { saveWordadsSettings } from 'calypso/state/wordads/settings/actions';
 import SupportInfo from 'calypso/components/support-info';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 
 class AdsFormSettings extends Component {
 	static propTypes = {
@@ -120,6 +122,8 @@ class AdsFormSettings extends Component {
 			display_options: {},
 			ccpa_enabled: false,
 			ccpa_privacy_policy_url: '',
+			custom_adstxt_enabled: false,
+			custom_adstxt: '',
 			jetpack_module_enabled: false,
 		};
 	}
@@ -142,6 +146,8 @@ class AdsFormSettings extends Component {
 			display_options: this.state.display_options,
 			ccpa_enabled: this.state.ccpa_enabled,
 			ccpa_privacy_policy_url: this.state.ccpa_privacy_policy_url,
+			custom_adstxt_enabled: this.state.custom_adstxt_enabled,
+			custom_adstxt: this.state.custom_adstxt,
 			jetpack_module_enabled: this.state.jetpack_module_enabled,
 		};
 	}
@@ -473,6 +479,9 @@ class AdsFormSettings extends Component {
 	privacy() {
 		const { translate } = this.props;
 
+		const isDisabled =
+			this.props.isLoading || ( this.props.siteIsJetpack && ! this.state.jetpack_module_enabled );
+
 		return (
 			<div>
 				<FormSectionHeading>{ translate( 'Privacy and Consent' ) }</FormSectionHeading>
@@ -485,7 +494,7 @@ class AdsFormSettings extends Component {
 					/>
 					<ToggleControl
 						checked={ !! this.state.ccpa_enabled }
-						disabled={ this.props.isLoading }
+						disabled={ isDisabled }
 						onChange={ this.handleCompactToggle( 'ccpa_enabled' ) }
 						label={ translate( 'Enable targeted advertising to California site visitors (CCPA)' ) }
 					/>
@@ -545,7 +554,7 @@ class AdsFormSettings extends Component {
 								id="ccpa-privacy-policy-url"
 								value={ this.state.ccpa_privacy_policy_url || '' }
 								onChange={ this.handleChange }
-								disabled={ this.props.isLoading }
+								disabled={ isDisabled }
 								placeholder="https://"
 							/>
 							<FormSettingExplanation>
@@ -556,6 +565,70 @@ class AdsFormSettings extends Component {
 						</FormFieldset>
 					</div>
 				) }
+			</div>
+		);
+	}
+
+	adstxt() {
+		const { translate } = this.props;
+
+		const isDisabled =
+			this.props.isLoading || ( this.props.siteIsJetpack && ! this.state.jetpack_module_enabled );
+
+		return (
+			<div>
+				<FormSectionHeading>{ translate( 'Ads.txt' ) }</FormSectionHeading>
+				<FormFieldset>
+					<SupportInfo
+						text={ translate(
+							'Ads.txt (Authorized Digital Sellers) is a mechanism that enables content owners to declare who is authorized to sell their ad inventory. It’s the formal list of advertising partners you support as a publisher.'
+						) }
+						link="https://jetpack.com/support/ads/"
+					/>
+					<ToggleControl
+						checked={ !! this.state.custom_adstxt_enabled }
+						disabled={ isDisabled }
+						onChange={ this.handleCompactToggle( 'custom_adstxt_enabled' ) }
+						label={ translate( 'Customize your ads.txt file' ) }
+					/>
+					{ this.state.custom_adstxt_enabled && (
+						<>
+							<div className="ads__child-settings">
+								<FormSettingExplanation>
+									{ translate(
+										'Ads automatically generates a custom {{link1}}ads.txt{{/link1}} tailored for your site. If you need to add additional entries for other networks please add them in the space below, one per line. {{link2}}Check here for more details{{/link2}}.',
+										{
+											components: {
+												link1: (
+													<a
+														href={ this.props.siteUrl + '/ads.txt' }
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+												link2: (
+													<a
+														href="https://jetpack.com/2018/11/09/how-jetpack-ads-members-can-increase-their-earnings-with-ads-txt"
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+											},
+										}
+									) }
+								</FormSettingExplanation>
+							</div>
+							<div className="ads__child-settings">
+								<FormTextarea
+									name="custom_adstxt"
+									value={ this.state.custom_adstxt }
+									onChange={ this.handleChange }
+									disabled={ isDisabled }
+								/>
+							</div>
+						</>
+					) }
+				</FormFieldset>
 			</div>
 		);
 	}
@@ -590,7 +663,9 @@ class AdsFormSettings extends Component {
 
 						{ this.displayOptions() }
 
-						{ ! this.props.siteIsJetpack ? this.privacy() : null }
+						{ this.privacy() }
+
+						{ this.props.siteIsJetpack ? this.adstxt() : null }
 
 						<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
 						{ this.siteOwnerOptions() }
@@ -619,6 +694,7 @@ export default compose(
 				siteIsJetpack: isJetpack,
 				wordadsSettings,
 				widgetsUrl: getCustomizerUrl( state, siteId, 'widgets' ),
+				siteUrl: getSiteUrl( state, siteId ),
 			};
 		},
 		{ dismissWordAdsSuccess, saveWordadsSettings }
