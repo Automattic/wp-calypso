@@ -406,9 +406,7 @@ private object VisualRegressionTests : BuildType({
 				sendTo = "#visual-regression-automated-tests"
 				messageFormat = simpleMessageFormat()
 			}
-			branchFilter = """
-				+:trunk
-			""".trimIndent()
+			branchFilter = "trunk"
 			buildFailed = true
 			buildFinishedSuccessfully = true
 			buildFailedToStart = true
@@ -422,7 +420,9 @@ private object VisualRegressionTests : BuildType({
 			schedulingPolicy = daily {
 				hour = 3
 			}
-			branchFilter = "trunk"
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
 			triggerBuild = always()
 			withPendingChangesOnly = false
 		}
