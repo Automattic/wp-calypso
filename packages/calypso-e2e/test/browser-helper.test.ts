@@ -27,6 +27,7 @@ describe( 'BrowserHelper Tests', function () {
 			${ 'dEsKtoP' }               | ${ 'desktop' }
 			${ 'non_existent_viewport' } | ${ 'non_existent_viewport' }
 			${ 'TEST_ENV' }              | ${ 'test_env' }
+			${ '"mobile"' }              | ${ '"mobile"' }
 		`(
 			'Returns $expected when environment variable is set to $env_var',
 			function ( { env_var, expected } ) {
@@ -85,6 +86,7 @@ describe( 'BrowserHelper Tests', function () {
 			${ 'unsupported_viewport' }
 			${ 'desktop_variant' }
 			${ 'm0bile' }
+			${ '"desktop"' }
 		`( 'Throws error when environment variable is set to $env_var', function ( { env_var } ) {
 			process.env.VIEWPORT_NAME = env_var;
 			expect( () => getViewportSize() ).toThrow();
