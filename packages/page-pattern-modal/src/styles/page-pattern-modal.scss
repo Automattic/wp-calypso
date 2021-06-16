@@ -67,18 +67,19 @@ $sidebar-width-desktop: 324px;
 		-webkit-overflow-scrolling: touch;
 		// prevents a 1px strip of content being visible after scrolling
 		margin-top: -1px;
-		padding: 0 16px 16px;
+		padding: 60px 16px 16px;
+
+		&::before {
+			margin-bottom: 0;
+		}
 	}
 
 	.components-modal__header {
 		border-bottom: none;
 		margin-right: -16px;
-
-		.components-button {
-			left: 31px;
-			top: -11px;
-		}
+		background-color: #fff;
 	}
+
 }
 
 .page-pattern-modal__heading {
