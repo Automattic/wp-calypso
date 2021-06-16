@@ -19,7 +19,7 @@ export function setCurrentUser( user ) {
 	};
 }
 
-export async function redirectToLogout( postLogoutRedirectUrl ) {
+export function redirectToLogout( postLogoutRedirectUrl ) {
 	return async ( dispatch, getState ) => {
 		const userData = getCurrentUser( getState() );
 		const logoutUrl = getLogoutUrl( userData, postLogoutRedirectUrl );
