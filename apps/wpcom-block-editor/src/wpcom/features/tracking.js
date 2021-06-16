@@ -324,8 +324,11 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
 		block_name: name,
 		blocks_replaced: true,
-		// isInsertingPageTemplate filter is set by Starter Page Templates
-		from_template_selector: applyFilters( 'isInsertingPageTemplate', false ),
+		// isInsertingPagePattern filter is set by Starter Page Templates.
+		// Also support isInsertingPageTemplate filter as this was used in older ETK versions.
+		from_template_selector:
+			applyFilters( 'isInsertingPagePattern', false ) ||
+			applyFilters( 'isInsertingPageTemplate', false ),
 	} ) );
 };
 
