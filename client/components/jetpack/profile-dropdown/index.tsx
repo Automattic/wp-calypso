@@ -40,11 +40,9 @@ const ProfileDropdown: React.FC = () => {
 
 	const trackedToggle = useTrackCallback( toggle, 'calypso_jetpack_masterbar_profile_toggle' );
 	const trackedClose = useTrackCallback( close, 'calypso_jetpack_masterbar_profile_close' );
-	const redirectToLogoutWithUser = useCallback( () => dispatch( redirectToLogout() ), [
-		dispatch,
-	] );
+	const redirectToLogoutUrl = useCallback( () => dispatch( redirectToLogout() ), [ dispatch ] );
 	const trackedLogOut = useTrackCallback(
-		redirectToLogoutWithUser,
+		redirectToLogoutUrl,
 		'calypso_jetpack_settings_masterbar_logout'
 	);
 
