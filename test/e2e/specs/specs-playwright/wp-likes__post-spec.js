@@ -24,7 +24,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
-			await loginFlow.login();
+			await loginFlow.logIn();
 		} );
 
 		it( 'Start new post', async function () {
@@ -61,7 +61,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
-			await loginFlow.login();
+			await loginFlow.logIn();
 		} );
 
 		it( 'Visit site', async function () {
