@@ -17,7 +17,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page );
-			await loginFlow.login();
+			await loginFlow.logIn();
 		} );
 
 		it( 'Open Settings page', async function () {
@@ -72,7 +72,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page );
-			await loginFlow.login();
+			await loginFlow.logIn();
 		} );
 
 		it( 'Open Settings page', async function () {
@@ -115,7 +115,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page );
-			await loginFlow.login();
+			await loginFlow.logIn();
 		} );
 
 		it( 'Open Settings page', async function () {
@@ -151,7 +151,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page );
-			await loginFlow.login();
+			await loginFlow.logIn();
 		} );
 
 		it( 'Open Settings page', async function () {

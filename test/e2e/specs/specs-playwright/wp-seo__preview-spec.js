@@ -8,7 +8,7 @@ describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
 
 	it( 'Log in', async function () {
 		const loginFlow = new LoginFlow( this.page, 'wooCommerceUser' );
-		await loginFlow.login();
+		await loginFlow.logIn();
 	} );
 
 	it( 'Navigate to Tools > Marketing page', async function () {
