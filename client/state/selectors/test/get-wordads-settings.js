@@ -165,6 +165,6 @@ describe( 'getWordadsSettings()', () => {
 			'custom_adstxt_enabled',
 			'wordads_custom_adstxt_enabled-test'
 		);
-		expect( output ).toHaveProperty( 'custom_adstx', 'wordads_custom_adstxt-test' );
+		expect( output ).toHaveProperty( 'custom_adstxt', 'wordads_custom_adstxt-test' );
 	} );
 } );

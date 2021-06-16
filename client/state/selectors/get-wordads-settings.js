@@ -49,7 +49,7 @@ export const getWordadsSettings = createSelector(
 				ccpa_enabled: siteSettings.wordads_ccpa_enabled,
 				ccpa_privacy_policy_url: siteSettings.wordads_ccpa_privacy_policy_url,
 				custom_adstxt_enabled: siteSettings.wordads_custom_adstxt_enabled,
-				custom_adstx: siteSettings.wordads_custom_adstxt,
+				custom_adstxt: siteSettings.wordads_custom_adstxt,
 			};
 		}
 
