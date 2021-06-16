@@ -2,7 +2,6 @@
  * External dependencies
  */
 import config from '@automattic/calypso-config';
-import page from 'page';
 
 /**
  * Internal dependencies
