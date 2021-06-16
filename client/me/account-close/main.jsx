@@ -46,10 +46,10 @@ class AccountSettingsClose extends Component {
 		showSiteDropdown: true,
 	};
 
-	UNSAFE_componentWillReceiveProps = ( nextProps ) => {
+	componentDidUpdate = () => {
 		// If the account is closed, logout
-		if ( nextProps.isAccountClosed === true ) {
-			nextProps.redirectToLogout();
+		if ( this.props.isAccountClosed === true ) {
+			this.props.redirectToLogout();
 		}
 	};
 
