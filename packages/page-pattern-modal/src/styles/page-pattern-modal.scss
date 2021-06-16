@@ -65,9 +65,8 @@ $sidebar-width-desktop: 324px;
 	.components-modal__content {
 		overflow-y: scroll;
 		-webkit-overflow-scrolling: touch;
-		// prevents a 1px strip of content being visible after scrolling
-		margin-top: -1px;
-		padding: 61px 16px 16px;
+		margin-top: 60px;
+		padding: 0 16px 16px;
 
 		&::before {
 			margin-bottom: 0;
