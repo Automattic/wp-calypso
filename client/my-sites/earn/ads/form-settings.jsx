@@ -44,8 +44,8 @@ class AdsFormSettings extends Component {
 
 	state = {};
 
-	UNSAFE_componentWillReceiveProps( { wordadsSettings } ) {
-		if ( isEmpty( this.state ) && wordadsSettings ) {
+	UNSAFE_componentWillReceiveProps( { wordadsSettings, site } ) {
+		if ( ( isEmpty( this.state ) && wordadsSettings ) || site?.ID !== this.props.site?.ID ) {
 			this.setState( {
 				...this.defaultSettings(),
 				...wordadsSettings,
