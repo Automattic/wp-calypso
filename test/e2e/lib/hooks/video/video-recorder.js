@@ -6,7 +6,7 @@ import { rename, mkdir, unlink } from 'fs/promises';
 import { createWriteStream } from 'fs';
 import { spawn } from 'child_process';
 import ffmpeg from 'ffmpeg-static';
-import { generatePath, getTestNameWithTime } from '../test-utils';
+import { generatePath, getTestNameWithTime } from '../../test-utils';
 
 const kill = ( proc ) =>
 	new Promise( ( resolve ) => {
