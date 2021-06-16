@@ -35,8 +35,15 @@ $sidebar-width-desktop: 324px;
 
 // Overrides of the Gutenberg modal component
 .page-pattern-modal {
+	position: relative;
+
 	&.components-modal__frame {
 		max-height: none;
+	}
+
+	@media screen and ( max-width: $breakpoint-mobile ) {
+		height: calc( 100vh - 55px );
+		top: 50px; // don't get hidden by the adminbar
 	}
 
 	@media screen and ( min-width: $breakpoint-mobile ) {
@@ -45,6 +52,7 @@ $sidebar-width-desktop: 324px;
 		// prevents a 1px strip of content being visible after scrolling
 		overflow-y: hidden;
 		padding-bottom: 24px;
+		top: 20px;
 		.components-modal__content {
 			padding: 0 32px 24px;
 		}
