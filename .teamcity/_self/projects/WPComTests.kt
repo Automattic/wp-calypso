@@ -407,8 +407,8 @@ private object VisualRegressionTests : BuildType({
 				messageFormat = simpleMessageFormat()
 			}
 			branchFilter = """
-            	+:trunk
-            """.trimIndent()
+				+:trunk
+			""".trimIndent()
 			buildFailed = true
 			buildFinishedSuccessfully = true
 		}
