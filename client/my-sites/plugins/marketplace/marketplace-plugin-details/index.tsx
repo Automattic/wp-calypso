@@ -73,8 +73,10 @@ function MarketplacePluginDetails( {
 		selectedSiteId && dispatch( requestEligibility( selectedSiteId ) );
 	}, [ dispatch, marketplacePluginSlug, selectedSiteId ] );
 
+	// TODO: Come up with a generic model for premium products and free products
 	const onAddYoastPremiumToCart = async () => {
 		dispatch( setIsPluginInstalledDuringPurchase( true ) );
+		dispatch( setPluginSlugToBeInstalled( 'wordpress-seo-premium' ) );
 		const yoastProduct = fillInSingleCartItemAttributes( { product_slug: productSlug }, products );
 		return replaceProductsInCart( [ yoastProduct ] );
 	};

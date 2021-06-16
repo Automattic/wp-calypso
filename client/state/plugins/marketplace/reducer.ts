@@ -10,19 +10,29 @@ import {
 	MARKETPLACE_PRIMARY_DOMAIN_SELECT,
 	MARKETPLACE_QUEUE_PLUGIN_INSTALL,
 	MARKETPLACE_PLUGIN_INSTALLED_ON_PURCHASE,
+	MARKETPLACE_SITE_TRANSFER_STATE_CHANGE,
+	MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
+	MARKETPLACE_SITE_TRANSFER_PLUGIN_INSTALL,
 } from 'calypso/state/action-types';
-import { combineReducers } from 'calypso/state/utils';
+import { combineReducers, withPersistence } from 'calypso/state/utils';
 import {
+	MARKETPLACE_ASYNC_PROCESS_STATUS,
 	IPurchaseFlowState,
 	ISetPluginInstalledDuringPurchaseFlag,
 	ISetPluginToBeInstalledAction,
 	ISetPrimaryDomainCandidateAction,
 } from './types';
+import { THEME_TRANSFER_INITIATE_REQUEST } from 'calypso/state/themes/action-types';
 
 export const defaultState: IPurchaseFlowState = {
-	primaryDomain: undefined,
-	pluginSlugToBeInstalled: undefined,
+	primaryDomain: null,
+	pluginSlugToBeInstalled: null,
 	isPluginInstalledDuringPurchase: false,
+	siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
+	pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
+	reasonForSiteTransferStatus: null,
+	reasonForPluginInstallationStatus: null,
+	isPluginInstalledAlongWithTransfer: null,
 };
 
 export function purchaseFlow(
@@ -40,13 +50,62 @@ export function purchaseFlow(
 			action = action as ISetPluginToBeInstalledAction;
 			return {
 				...state,
+				siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
+				pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
+				isPluginInstalledDuringPurchase: false,
 				pluginSlugToBeInstalled: action.pluginSlugToBeInstalled,
 			};
 		case MARKETPLACE_PLUGIN_INSTALLED_ON_PURCHASE:
 			action = action as ISetPluginInstalledDuringPurchaseFlag;
 			return {
 				...state,
+				siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
+				pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 				isPluginInstalledDuringPurchase: action.isPluginInstalledDuringPurchase,
+				pluginSlugToBeInstalled: action.pluginSlugToBeInstalled,
+			};
+		case THEME_TRANSFER_INITIATE_REQUEST:
+			return {
+				...state,
+				siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS,
+				pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
+			};
+		case MARKETPLACE_SITE_TRANSFER_STATE_CHANGE: {
+			const { isPluginInstalledAlongWithTransfer } = state;
+			if (
+				isPluginInstalledAlongWithTransfer &&
+				action.state === MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED
+			) {
+				/**
+				 * If the site transfer happened together with a plugin installation
+				 * We mark the plugin installation as completed as well
+				 */
+				return {
+					...state,
+					siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED,
+					reasonForSiteTransferStatus: 'Site transfer and plugin install done together',
+					pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED,
+					reasonForPluginInstallationStatus: 'Site transfer and plugin install done together',
+				};
+			}
+			return {
+				...state,
+				siteTransferStatus: action.state,
+				reasonForSiteTransferStatus: action.reason,
+			};
+		}
+		case MARKETPLACE_SITE_TRANSFER_PLUGIN_INSTALL:
+			return {
+				...state,
+				siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS,
+				pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS,
+				isPluginInstalledAlongWithTransfer: true,
+			};
+		case MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE:
+			return {
+				...state,
+				pluginInstallationStatus: action.state,
+				reasonForPluginInstallationStatus: action.reason,
 			};
 		default:
 			return state;
@@ -54,5 +113,5 @@ export function purchaseFlow(
 }
 
 export default combineReducers( {
-	purchaseFlow,
+	purchaseFlow: withPersistence( purchaseFlow ),
 } );

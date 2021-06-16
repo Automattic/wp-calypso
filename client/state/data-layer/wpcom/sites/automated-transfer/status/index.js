@@ -54,8 +54,11 @@ export const receiveStatus = ( { siteId }, { status, uploaded_plugin_slug, trans
 	}
 };
 
-export const requestingStatusFailure = ( { siteId } ) => {
-	return automatedTransferStatusFetchingFailure( siteId );
+export const requestingStatusFailure = ( response ) => {
+	return automatedTransferStatusFetchingFailure( {
+		siteId: response.siteId,
+		error: response.meta?.dataLayer?.error?.message || 'Unknown Error when fetching state',
+	} );
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/status/index.js', {

@@ -35,6 +35,10 @@ export const status = withPersistence( ( state = null, action ) => {
 			return action.status;
 		case TRANSFER_UPDATE:
 			return 'complete' === action.status ? transferStates.COMPLETE : state;
+		case REQUEST_STATUS_FAILURE:
+			return action.error === 'An invalid transfer ID was passed.'
+				? transferStates.NONE
+				: transferStates.REQUEST_FAILURE;
 	}
 
 	return state;
@@ -44,7 +48,8 @@ export const fetchingStatus = ( state = false, action ) => {
 	switch ( action.type ) {
 		case REQUEST_STATUS:
 			return true;
-
+		case SET_STATUS:
+			return false;
 		case REQUEST_STATUS_FAILURE:
 			return false;
 

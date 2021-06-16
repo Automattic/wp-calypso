@@ -68,12 +68,15 @@ export const setAutomatedTransferStatus = ( siteId, status, uploadedPluginId ) =
  * Report a failure of fetching Automated Transfer status (for example, the status
  * endpoint returns 404).
  *
- * @param {number} siteId The site id to which the status belongs
+ * @param {object} param failure details
+ * @param {number} param.siteId The site id to which the status belongs
+ * @param {string} param.error The error string received
  * @returns {object} An action object
  */
-export const automatedTransferStatusFetchingFailure = ( siteId ) => ( {
+export const automatedTransferStatusFetchingFailure = ( { siteId, error } ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
 	siteId,
+	error,
 } );
 
 /**
@@ -96,14 +99,14 @@ export const requestEligibility = ( siteId ) => ( {
  * @param {object} data eligibility information to be merged into existing state
  * @returns {object} Redux action
  */
-export const updateEligibility = (
-	siteId,
-	{ eligibilityHolds, eligibilityWarnings, lastUpdate, status }
-) => ( {
-	type: AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
-	eligibilityHolds,
-	eligibilityWarnings,
-	lastUpdate,
-	siteId,
-	status,
-} );
+export const updateEligibility = ( siteId, data ) => {
+	const { eligibilityHolds, eligibilityWarnings, lastUpdate, status } = data;
+	return {
+		type: AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
+		eligibilityHolds,
+		eligibilityWarnings,
+		lastUpdate,
+		siteId,
+		status,
+	};
+};

@@ -167,6 +167,7 @@ const MarketplaceThankYou = () => {
 							<div>
 								<MarketplaceThankyouSection>
 									<MarketplaceHeaderTitle className="marketplace-thank-you__body-header wp-brand-font">
+										// TODO: Change thank you message to be dynamic according to product
 										{ translate( 'Yoast SEO Premium is installed' ) }
 									</MarketplaceHeaderTitle>
 								</MarketplaceThankyouSection>
@@ -193,7 +194,7 @@ const MarketplaceThankYou = () => {
 													// TODO: Menu links are not properly loading on initial request, post transfer so yoastSeoPageUrl will remain empty post transfer
 													// This should be fixed with perhaps a work around to periodically poll for the menu with various domains until it loads
 													// or maybe blocking the user from entering this flow until a domain acquires SSL
-													disabled={ !! yoastSeoPageUrl }
+													disabled={ ! yoastSeoPageUrl }
 												>
 													{ translate( 'Get started' ) }
 												</FullWidthButton>
@@ -210,7 +211,7 @@ const MarketplaceThankYou = () => {
 												<FullWidthButton
 													href={ postsPageUrl }
 													busy={ isRequestingMenu }
-													disabled={ !! yoastSeoPageUrl }
+													disabled={ ! yoastSeoPageUrl }
 												>
 													{ translate( 'View posts' ) }
 												</FullWidthButton>

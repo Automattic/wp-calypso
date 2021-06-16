@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import page from 'page';
 import styled from '@emotion/styled';
@@ -58,14 +58,15 @@ export default function MarketplaceTest(): JSX.Element {
 	const isRequestingForSite = useSelector( ( state ) =>
 		isRequestingForSites( state, [ selectedSiteId ] )
 	);
-	const yoastPluginOnSite = useSelector( ( state ) =>
+	const yoastPremiumPluginOnSite = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSiteId, 'wordpress-seo-premium' )
+	);
+	const yoastFreePluginOnSite = useSelector( ( state ) =>
+		getPluginOnSite( state, selectedSiteId, 'wordpress-seo' )
 	);
 	const contactFormPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSiteId, 'contact-form-7' )
 	);
-
-	const [ infiniteLoopCount, setInfiniteLoopCount ] = useState( 0 );
 
 	const dispatch = useDispatch();
 	const transferDetails = useSelector( ( state ) => getAutomatedTransfer( state, selectedSiteId ) );
@@ -77,27 +78,15 @@ export default function MarketplaceTest(): JSX.Element {
 		{ name: 'Thank You Page', path: '/marketplace/thank-you' },
 	];
 
-	//Infinite Loop
 	useEffect( () => {
-		if ( ! transferDetails.fetchingStatus ) {
-			setTimeout( () => {
-				dispatch( fetchAutomatedTransferStatus( selectedSite?.ID ?? 0 ) );
-				dispatch( requestEligibility( selectedSite?.ID ?? 0 ) );
-				setInfiniteLoopCount( ( l ) => l + 1 );
-			}, 5000 );
-		}
-	}, [ infiniteLoopCount, selectedSite, dispatch, transferDetails.fetchingStatus ] );
+		selectedSiteId && dispatch( fetchAutomatedTransferStatus( selectedSiteId ) );
+		selectedSiteId && dispatch( requestEligibility( selectedSiteId ) );
+	}, [ dispatch, selectedSiteId ] );
 
-	//Infinite Loop
-	useEffect( () => {
-		if ( selectedSiteId ) {
-			setTimeout( () => {
-				dispatch( fetchAutomatedTransferStatus( selectedSiteId ) );
-				dispatch( requestEligibility( selectedSiteId ) );
-				setInfiniteLoopCount( ( l ) => l + 1 );
-			}, 4000 );
-		}
-	}, [ infiniteLoopCount, selectedSite, dispatch, selectedSiteId ] );
+	const refreshTransferDetails = () => {
+		selectedSiteId && dispatch( fetchAutomatedTransferStatus( selectedSiteId ) );
+		selectedSiteId && dispatch( requestEligibility( selectedSiteId ) );
+	};
 
 	const { ID, URL, domain, options = {} } = selectedSite;
 	const { is_wpcom_atomic, is_automated_transfer } = options;
@@ -150,7 +139,7 @@ export default function MarketplaceTest(): JSX.Element {
 				</Card>
 				<Card key="transfer-information">
 					<CardHeading tagName="h1" size={ 21 }>
-						Transfer Details
+						Transfer Details <Button onClick={ refreshTransferDetails }>Refresh</Button>
 						<div>
 							selector:<strong>transferDetails</strong>
 						</div>
@@ -158,7 +147,7 @@ export default function MarketplaceTest(): JSX.Element {
 							dispatch:<strong>fetchAutomatedTransferStatus</strong>
 						</div>
 					</CardHeading>
-					<div>keys: { Object.keys( transferDetails ).join( ', ' ) }</div>
+					<div>keys: { Object.keys( transferDetails ).join( ', ' ) } </div>
 					{ level1ObjectMap( transferDetails, ( [ key ] ) => key !== 'eligibility' ).map(
 						( entry, i ) => (
 							<div key={ i }>
@@ -214,9 +203,21 @@ export default function MarketplaceTest(): JSX.Element {
 						</div>
 					</CardHeading>
 					<Card>
-						Yoast plugin Query : Type of - { typeof yoastPluginOnSite }
-						{ yoastPluginOnSite &&
-							level1ObjectMap( yoastPluginOnSite ).map( ( { key, value } ) => (
+						Yoast Premium plugin Query : Type of yoastPremiumPluginOnSite -
+						{ typeof yoastPremiumPluginOnSite }
+						{ yoastPremiumPluginOnSite &&
+							level1ObjectMap( yoastPremiumPluginOnSite ).map( ( { key, value } ) => (
+								<div key={ key }>
+									{ key } : { value }
+								</div>
+							) ) }
+					</Card>
+
+					<Card>
+						Yoast Free plugin Query : Type of yoastFreePluginOnSite -
+						{ typeof yoastFreePluginOnSite }
+						{ yoastFreePluginOnSite &&
+							level1ObjectMap( yoastFreePluginOnSite ).map( ( { key, value } ) => (
 								<div key={ key }>
 									{ key } : { value }
 								</div>
