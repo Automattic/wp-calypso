@@ -1,6 +1,4 @@
 .themes__auto-loading-homepage-modal {
-	min-height: 90px;
-	max-width: 400px;
 	margin: 0 auto;
 
 	@include breakpoint-deprecated( '<480px' ) {
@@ -12,6 +10,16 @@
 			margin: 0 auto 10px;
 			width: 100%;
 		}
+	}
+
+	.themes__auto-loading-homepage-modal-close-icon {
+		float: right;
+		cursor: pointer;
+	}
+
+	.themes__theme-preview-item {
+		float: left;
+		width: 48%;
 	}
 
 	.form-label {
