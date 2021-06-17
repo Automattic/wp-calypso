@@ -125,6 +125,10 @@ function isWPForTeamsFlow( flowName ) {
 	return flowName === 'p2';
 }
 
+function isReskinnedFlow( flowName ) {
+	return config.isEnabled( 'signup/reskin' ) && config( 'reskinned_flows' ).includes( flowName );
+}
+
 class Signup extends React.Component {
 	static propTypes = {
 		store: PropTypes.object.isRequired,
@@ -226,7 +230,7 @@ class Signup extends React.Component {
 			this.updateShouldShowLoadingScreen( progress );
 		}
 
-		if ( ! config.isEnabled( 'signup/reskin' ) ) {
+		if ( ! isReskinnedFlow( flowName ) ) {
 			document.body.classList.remove( 'is-white-signup' );
 			debug( 'In componentWillReceiveProps, removed is-white-signup class' );
 		}
@@ -718,7 +722,7 @@ class Signup extends React.Component {
 
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
-		const isReskinned = config.isEnabled( 'signup/reskin' );
+		const isReskinned = isReskinnedFlow( this.props.flowName );
 
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
