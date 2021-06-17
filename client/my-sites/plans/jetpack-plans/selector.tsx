@@ -20,8 +20,9 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import getViewTrackerPath from './get-view-tracker-path';
 import ProductGrid from './product-grid';
-import checkout from './checkout';
-import manageSitePurchase from './manage-site-purchase';
+import buildCheckoutURL from './build-checkout-url';
+import { managePurchase } from 'calypso/me/purchases/paths';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 /**
  * Type dependencies
@@ -32,6 +33,7 @@ import type {
 	SelectorPageProps,
 	SelectorProduct,
 	PurchaseCallback,
+	PurchaseURLCallback,
 } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 import './style.scss';
@@ -82,6 +84,27 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		[ highlightedProducts ]
 	);
 
+	const createProductURL: PurchaseURLCallback = (
+		product: SelectorProduct,
+		isUpgradeableToYearly = false,
+		purchase
+	) => {
+		if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
+			return product.externalUrl || '';
+		}
+		if ( purchase && isUpgradeableToYearly ) {
+			const { productSlug: slug } = product;
+			const yearlySlug = getYearlySlugFromMonthly( slug );
+			return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
+		}
+		if ( purchase ) {
+			const relativePath = managePurchase( siteSlug, purchase.id );
+			return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
+		}
+
+		return buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs );
+	};
+
 	// Sends a user to a page based on whether there are subtypes.
 	const selectProduct: PurchaseCallback = (
 		product: SelectorProduct,
@@ -97,7 +120,6 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 		if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
 			dispatch( recordTracksEvent( 'calypso_product_external_click', trackingProps ) );
-			window.location.href = product.externalUrl || '';
 			return;
 		}
 
@@ -108,18 +130,11 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			dispatch( recordTracksEvent( 'calypso_product_checkout_click', trackingProps ) );
 			dispatch( recordTracksEvent( 'calypso_jetpack_pricing_page_product_click', trackingProps ) );
 
-			const { productSlug: slug } = product;
-			const yearlySlug = getYearlySlugFromMonthly( slug );
-
-			if ( yearlySlug ) {
-				checkout( siteSlug, yearlySlug, urlQueryArgs );
-			}
 			return;
 		}
 
 		if ( purchase ) {
 			dispatch( recordTracksEvent( 'calypso_product_manage_click', trackingProps ) );
-			manageSitePurchase( siteSlug, purchase.id );
 			return;
 		}
 
@@ -128,7 +143,6 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		// use `calypso_jetpack_pricing_page_product_click` instead when using tracking tools.
 		dispatch( recordTracksEvent( 'calypso_product_checkout_click', trackingProps ) );
 		dispatch( recordTracksEvent( 'calypso_jetpack_pricing_page_product_click', trackingProps ) );
-		checkout( siteSlug, product.productSlug, urlQueryArgs );
 	};
 
 	const trackDurationChange = ( selectedDuration: Duration ) => {
@@ -158,6 +172,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				onSelectProduct={ selectProduct }
 				onDurationChange={ trackDurationChange }
 				scrollCardIntoView={ scrollCardIntoView }
+				createButtonURL={ createProductURL }
 			/>
 
 			{ siteId ? <QuerySiteProducts siteId={ siteId } /> : <QueryProductsList type="jetpack" /> }
