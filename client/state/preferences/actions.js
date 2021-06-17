@@ -39,11 +39,8 @@ export function fetchPreferences() {
 	return ( dispatch ) => {
 		dispatch( { type: PREFERENCES_FETCH } );
 
-		return wpcom
-			.undocumented()
-			.me()
-			.preferences()
-			.get()
+		return wpcom.req
+			.get( '/me/preferences' )
 			.then( ( data ) => {
 				dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
 				dispatch( { type: PREFERENCES_FETCH_SUCCESS } );
@@ -93,11 +90,8 @@ export const savePreference = ( key, value ) => ( dispatch ) => {
 		},
 	};
 
-	return wpcom
-		.undocumented()
-		.me()
-		.preferences()
-		.update( payload )
+	return wpcom.req
+		.put( '/me/preferences', payload )
 		.then( ( data ) => {
 			dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
 			dispatch( {
