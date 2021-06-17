@@ -2,18 +2,20 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { keyBy, keys, times } from 'lodash';
+import { find, isEmpty, keyBy, keys, reduce, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import LazyRender from 'react-lazily-render';
+import { parse } from 'qs';
 
 /**
  * Internal dependencies
  */
 import config from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
+
 import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
 import {
 	composeAnalytics,
@@ -31,7 +33,7 @@ import {
 } from 'calypso/state/sites/domains/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import { getDomainManagementPath } from './utils';
+import { getDomainManagementPath, ListAllActions } from './utils';
 import getSites from 'calypso/state/selectors/get-sites';
 import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
 import ListItemPlaceholder from './item-placeholder';
@@ -44,11 +46,17 @@ import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import EmptyContent from 'calypso/components/empty-content';
+import BulkEditContactInfo from './bulk-edit-contact-info';
+import CardHeading from 'calypso/components/card-heading';
+import { isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
 
 /**
  * Style dependencies
  */
 import './list-all.scss';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import isRequestingContactDetailsCache from 'calypso/state/selectors/is-requesting-contact-details-cache';
+import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 
 class ListAll extends Component {
 	static propTypes = {
@@ -61,6 +69,10 @@ class ListAll extends Component {
 		requestingSiteDomains: PropTypes.object,
 	};
 
+	state = {
+		selectedDomains: {},
+	};
+
 	renderedQuerySiteDomains = {};
 
 	clickAddDomain = () => {
@@ -69,9 +81,18 @@ class ListAll extends Component {
 	};
 
 	handleDomainItemClick = ( domain ) => {
-		const { sites, currentRoute } = this.props;
+		const { action, sites, currentRoute } = this.props;
 		const site = sites[ domain.blogId ];
+
+		if ( ListAllActions.editContactInfo === action ) {
+			return;
+		}
+
 		page( getDomainManagementPath( domain.name, domain.type, site.slug, currentRoute ) );
+	};
+
+	handleDomainItemToggle = ( checked, domain ) => {
+		console.log( checked, domain );
 	};
 
 	headerButtons() {
@@ -89,6 +110,56 @@ class ListAll extends Component {
 	isLoading() {
 		const { domainsList, requestingFlatDomains, hasAllSitesLoaded } = this.props;
 		return ! hasAllSitesLoaded || ( requestingFlatDomains && domainsList.length === 0 );
+	}
+
+	isRequestingSiteDomains() {
+		const { requestingSiteDomains } = this.props;
+
+		return (
+			isEmpty( requestingSiteDomains ) ||
+			reduce(
+				requestingSiteDomains,
+				( result, value ) => {
+					return result || value;
+				},
+				false
+			)
+		);
+	}
+
+	isLoadingDomainDetails() {
+		return this.isLoading() || this.isRequestingSiteDomains();
+	}
+
+	shouldShowCheckbox() {
+		return ListAllActions.editContactInfo === this.props.action;
+	}
+
+	shouldShowDomainDetails() {
+		return ListAllActions.editContactInfo !== this.props.action;
+	}
+
+	shouldDefaultToChecked() {
+		return ListAllActions.editContactInfo === this.props.action;
+	}
+
+	shouldLazyLoadSiteDomainsDetails() {
+		return ListAllActions.editContactInfo !== this.props.action;
+	}
+
+	shouldRenderDomainItem( domain, domainDetails ) {
+		if ( ListAllActions.editContactInfo === this.props.action ) {
+			return (
+				! isEmpty( domainDetails ) &&
+				domainTypes.REGISTERED === domain.type &&
+				domainDetails?.currentUserCanManage &&
+				isDomainUpdateable( domainDetails ) &&
+				isDomainInGracePeriod( domainDetails ) &&
+				! domainDetails?.isPendingWhoisUpdate
+			);
+		}
+
+		return true;
 	}
 
 	findDomainDetails( domainsDetails = [], domain = {} ) {
@@ -111,22 +182,30 @@ class ListAll extends Component {
 
 		return (
 			<React.Fragment key={ `domain-item-${ index }-${ domain.name }` }>
-				{ domain?.blogId && (
+				{ domain?.blogId && this.shouldLazyLoadSiteDomainsDetails() ? (
 					<LazyRender>
 						{ ( render ) => ( render ? this.renderQuerySiteDomainsOnce( domain.blogId ) : null ) }
 					</LazyRender>
+				) : (
+					this.renderQuerySiteDomainsOnce( domain.blogId )
 				) }
-				<DomainItem
-					currentRoute={ currentRoute }
-					domain={ domain }
-					domainDetails={ domainDetails }
-					site={ sites[ domain?.blogId ] }
-					isManagingAllSites={ true }
-					isLoadingDomainDetails={
-						! domainDetails && ( requestingSiteDomains[ domain?.blogId ] ?? false )
-					}
-					onClick={ this.handleDomainItemClick }
-				/>
+				{ this.shouldRenderDomainItem( domain, domainDetails ) && (
+					<DomainItem
+						currentRoute={ currentRoute }
+						domain={ domain }
+						showDomainDetails={ this.shouldShowDomainDetails() }
+						domainDetails={ domainDetails }
+						showCheckbox={ this.shouldShowCheckbox() }
+						site={ sites[ domain?.blogId ] }
+						isManagingAllSites={ true }
+						isLoadingDomainDetails={
+							! domainDetails && ( requestingSiteDomains[ domain?.blogId ] ?? false )
+						}
+						onClick={ this.handleDomainItemClick }
+						onToggle={ this.handleDomainItemToggle }
+						defaultChecked={ this.shouldDefaultToChecked() }
+					/>
+				) }
 			</React.Fragment>
 		);
 	}
@@ -136,11 +215,41 @@ class ListAll extends Component {
 			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		const domainListItems = this.filteredDomains().map( ( domain, index ) => {
+		let domainListItems = this.filteredDomains().map( ( domain, index ) => {
 			return this.renderDomainItem( domain, index );
 		} );
 
-		return [ <ListHeader key="list-header" />, ...domainListItems ];
+		if ( ! this.shouldLazyLoadSiteDomainsDetails() && this.isRequestingSiteDomains() ) {
+			domainListItems = [
+				...domainListItems,
+				<ListItemPlaceholder key="item-is-requesting-site-domains" />,
+			];
+		}
+
+		return [ <ListHeader key="list-header" action={ this.props.action } />, ...domainListItems ];
+	}
+
+	renderHeaderButtons() {
+		if ( ListAllActions.editContactInfo === this.props.action ) {
+			return;
+		}
+
+		return <div className="list-all__heading-buttons">{ this.headerButtons() }</div>;
+	}
+
+	renderActionForm() {
+		if ( ! this.isLoading() && ListAllActions.editContactInfo === this.props.action ) {
+			return (
+				<Card>
+					<CardHeading>
+						{ this.props.translate( 'Edit Contact Info For Selected Domains' ) }
+					</CardHeading>
+					<BulkEditContactInfo
+						domainNamesList={ this.filteredDomains().map( ( domain ) => domain.domain ) }
+					/>
+				</Card>
+			);
+		}
 	}
 
 	filteredDomains() {
@@ -158,7 +267,11 @@ class ListAll extends Component {
 	renderContent() {
 		const { domainsList, translate, user } = this.props;
 
-		if ( domainsList.length > 0 && this.filteredDomains().length === 0 ) {
+		if (
+			ListAllActions.editContactInfo !== this.props.action &&
+			domainsList.length > 0 &&
+			this.filteredDomains().length === 0
+		) {
 			return (
 				<EmptyContent
 					title={ translate( 'Your next big idea starts here' ) }
@@ -174,8 +287,9 @@ class ListAll extends Component {
 			<>
 				<div className="list-all__heading">
 					<FormattedHeader brandFont headerText={ translate( 'All Domains' ) } align="left" />
-					<div className="list-all__heading-buttons">{ this.headerButtons() }</div>
+					{ this.renderHeaderButtons() }
 				</div>
+				<div className="list-all__form">{ this.renderActionForm() }</div>
 				<div className="list-all__container">
 					<QueryAllDomains />
 					<QueryUserPurchases userId={ user.ID } />
@@ -201,12 +315,13 @@ const addDomainClick = () =>
 	);
 
 export default connect(
-	( state ) => {
+	( state, { context } ) => {
 		const sites = keyBy( getSites( state ), 'ID' );
 		const user = getCurrentUser( state );
 		const purchases = keyBy( getUserPurchases( state, user?.ID ) || [], 'id' );
 
 		return {
+			action: parse( context.querystring )?.action,
 			canManageSitesMap: canCurrentUserForSites( state, keys( sites ), 'manage_options' ),
 			currentRoute: getCurrentRoute( state ),
 			domainsList: getFlatDomainsList( state ),

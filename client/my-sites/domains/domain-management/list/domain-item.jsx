@@ -67,6 +67,8 @@ class DomainItem extends PureComponent {
 		selectionIndex: PropTypes.number,
 		enableSelection: PropTypes.bool,
 		isChecked: PropTypes.bool,
+		showDomainDetails: PropTypes.bool,
+		defaultChecked: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -77,6 +79,8 @@ class DomainItem extends PureComponent {
 		isLoadingDomainDetails: false,
 		isBusy: false,
 		isChecked: false,
+		showDomainDetails: true,
+		defaultChecked: false,
 	};
 
 	handleClick = ( e ) => {
@@ -93,7 +97,7 @@ class DomainItem extends PureComponent {
 
 	onToggle = ( event ) => {
 		if ( this.props.onToggle ) {
-			this.props.onToggle( event.target.checked );
+			this.props.onToggle( event.target.checked, this.props.domain.domain );
 		}
 	};
 
@@ -344,7 +348,11 @@ class DomainItem extends PureComponent {
 	}
 
 	renderActionItems() {
-		const { isLoadingDomainDetails, domainDetails } = this.props;
+		const { isLoadingDomainDetails, domainDetails, showDomainDetails } = this.props;
+
+		if ( ! showDomainDetails ) {
+			return;
+		}
 
 		if ( isLoadingDomainDetails || ! domainDetails ) {
 			return (
@@ -377,6 +385,10 @@ class DomainItem extends PureComponent {
 	}
 
 	renderSiteMeta() {
+		if ( ! this.props.showDomainDetails ) {
+			return;
+		}
+
 		return <div className="domain-item__meta">{ this.getSiteMeta() }</div>;
 	}
 
@@ -448,6 +460,8 @@ class DomainItem extends PureComponent {
 			isManagingAllSites,
 			showCheckbox,
 			enableSelection,
+			defaultChecked,
+			s,
 		} = this.props;
 		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
 
@@ -465,6 +479,7 @@ class DomainItem extends PureComponent {
 						className="domain-item__checkbox"
 						onChange={ this.onToggle }
 						onClick={ this.stopPropagation }
+						defaultChecked={ defaultChecked }
 					/>
 				) }
 				{ enableSelection && (

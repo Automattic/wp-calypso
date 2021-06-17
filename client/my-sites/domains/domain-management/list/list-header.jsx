@@ -13,6 +13,7 @@ import { CompactCard } from '@automattic/components';
 import InfoPopover from 'calypso/components/info-popover';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getTitanProductName } from 'calypso/lib/titan';
+import { ListAllActions } from 'calypso/my-sites/domains/domain-management/list/utils';
 
 /**
  * Style dependencies
@@ -21,16 +22,15 @@ import './style.scss';
 
 class ListHeader extends React.PureComponent {
 	static propTypes = {
+		action: PropTypes.string,
 		headerClasses: PropTypes.object,
 	};
 
-	render() {
-		const { headerClasses, translate } = this.props;
-
-		const listHeaderClasses = classNames( 'list-header', headerClasses );
+	renderDefaultHeaderContent() {
+		const { translate } = this.props;
 
 		return (
-			<CompactCard className={ listHeaderClasses }>
+			<>
 				<div className="list__domain-link" />
 				<div className="list__domain-transfer-lock">
 					<span>{ translate( 'Transfer lock' ) }</span>
@@ -79,7 +79,25 @@ class ListHeader extends React.PureComponent {
 					</InfoPopover>
 				</div>
 				<div className="list__domain-options"></div>
-			</CompactCard>
+			</>
+		);
+	}
+
+	renderHeaderContent() {
+		if ( ListAllActions.editContactInfo === this.props?.action ) {
+			return <strong>Update the selected domains with the contact information above.</strong>;
+		}
+
+		return this.renderDefaultHeaderContent();
+	}
+
+	render() {
+		const { headerClasses } = this.props;
+
+		const listHeaderClasses = classNames( 'list-header', headerClasses );
+
+		return (
+			<CompactCard className={ listHeaderClasses }>{ this.renderHeaderContent() }</CompactCard>
 		);
 	}
 }
