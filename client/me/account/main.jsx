@@ -75,6 +75,10 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { clearStore } from 'calypso/lib/user/store';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
+import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
+import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
+import QueryAllDomains from 'calypso/components/data/query-all-domains';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 
 export const noticeId = 'me-settings-notice';
 const noticeOptions = {
@@ -582,8 +586,12 @@ class Account extends React.Component {
 	}
 
 	hasCustomDomains() {
-		// TODO: Implement
-		return true;
+		if ( this.props.requestingFlatDomains ) {
+			return false;
+		}
+		return this.props.domainsList.some( ( domain ) => {
+			return domainTypes.REGISTERED === domain.type;
+		} );
 	}
 
 	renderUsernameValidation() {
@@ -997,6 +1005,7 @@ class Account extends React.Component {
 
 		return (
 			<Main wideLayout className="account">
+				<QueryAllDomains />
 				<QueryUserSettings />
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<MeSidebarNavigation />
@@ -1144,6 +1153,8 @@ export default compose(
 			onboardingUrl: getOnboardingUrl( state ),
 			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 			linkDestination: getPreference( state, linkDestinationKey ),
+			requestingFlatDomains: isRequestingAllDomains( state ),
+			domainsList: getFlatDomainsList( state ),
 		} ),
 		{
 			bumpStat,
