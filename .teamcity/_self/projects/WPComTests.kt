@@ -35,6 +35,7 @@ object WPComTests : Project({
 	buildType(jetpackBuildType("desktop"));
 	buildType(jetpackBuildType("mobile"));
 	buildType(VisualRegressionTests);
+	buildType(I18NTests);
 })
 
 fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
@@ -429,3 +430,133 @@ private object VisualRegressionTests : BuildType({
 	}
 })
 
+private object I18NTests : BuildType({
+	name = "I18N Tests"
+	description = "Runs tests related to i18n"
+
+	artifactRules = """
+		reports => reports
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	params {
+		text(
+			name = "LOCALES",
+			value = "en,es,pt-br,de,fr,he,ja,it,nl,ru,tr,id,zh-cn,zh-tw,ko,ar,sv",
+			label = "Locales to use",
+			description = "Locales to use, separated by comma",
+			allowEmpty = false
+		)
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+					export NODE_ENV="test"
+
+					# Install modules
+					${_self.yarn_install_cmd}
+				"""
+		}
+		bashNodeScript {
+			name = "Run i18n tests"
+			scriptContent = """
+					shopt -s globstar
+					set -x
+
+					cd test/e2e
+					mkdir temp
+
+					export LIVEBRANCHES=false
+					export NODE_CONFIG_ENV=test
+					export TEST_VIDEO=true
+					export HIGHLIGHT_ELEMENT=true
+					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL}\"}"
+					export TARGET=I18N
+
+					# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
+					# mocha-teamcity-reporter to work.
+					export MAGELLANDEBUG=true
+
+					# Decrypt config
+					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+					# Run the test
+					IFS="," read -r -a LOCALE <<< "%LOCALES%"
+					for locale in ${'$'}{LOCALE[@]}; do
+						BROWSERLOCALE="${'$'}{locale}" yarn magellan --config=magellan-i18n.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json" || true
+					done
+				""".trimIndent()
+			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
+		}
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+					set -x
+
+					mkdir -p screenshots
+					find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+					mkdir -p logs
+					find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+				""".trimIndent()
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 30
+
+		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
+		// been muted previously.
+		nonZeroExitCode = false
+
+		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
+		// crashes and no tests are run.
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+			threshold = 50
+			units = BuildFailureOnMetric.MetricUnit.PERCENTS
+			comparison = BuildFailureOnMetric.MetricComparison.LESS
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
+	}
+
+	features {
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#i18n-bots"
+				messageFormat = simpleMessageFormat()
+			}
+			branchFilter = "trunk"
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			buildFailedToStart = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
+		}
+	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = daily {
+				hour = 3
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
+})
