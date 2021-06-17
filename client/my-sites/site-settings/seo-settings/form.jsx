@@ -316,12 +316,13 @@ export class SeoForm extends React.Component {
 							'Boost your search engine ranking with the powerful SEO tools in the Business plan'
 						),
 						feature: FEATURE_ADVANCED_SEO,
-						plan: isFreeWPCOM
-							? PLAN_BUSINESS
-							: selectedSite.plan &&
-							  findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-									type: TYPE_BUSINESS,
-							  } ),
+						plan:
+							isFreeWPCOM && isAtomic
+								? PLAN_BUSINESS
+								: selectedSite.plan &&
+								  findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
+										type: TYPE_BUSINESS,
+								  } ),
 				  };
 
 		// To ensure two Coming Soon badges don't appear while sites with Coming Soon v1 (isSitePrivate && siteIsComingSoon) still exist.
@@ -479,14 +480,13 @@ export class SeoForm extends React.Component {
 }
 
 const mapStateToProps = ( state ) => {
-	const site = getSelectedSite( state );
+	const selectedSite = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	// SEO Tools are available with Business plan on WordPress.com, and
 	// will soon be available on all Jetpack sites, so we're checking
 	// the availability of the module.
 	const isAdvancedSeoEligible =
-		site.plan &&
 		hasSiteSeoFeature( state, siteId ) &&
 		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
 
@@ -499,12 +499,12 @@ const mapStateToProps = ( state ) => {
 		isFetchingSite: isRequestingSite( state, siteId ),
 		siteId,
 		siteIsJetpack,
-		selectedSite: site,
+		selectedSite,
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible,
 		isFreeWPCOM: isSiteWPCOMOnFreePlan( state, siteId ),
 		isAtomic: isAtomicSite( state, siteId ),
-		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
+		showWebsiteMeta: !! get( selectedSite, 'options.advanced_seo_front_page_description', '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
