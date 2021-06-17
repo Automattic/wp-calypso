@@ -32,6 +32,7 @@ class MediaLibraryHeader extends React.Component {
 		onMediaScaleChange: PropTypes.func,
 		onAddMedia: PropTypes.func,
 		sticky: PropTypes.bool,
+		isMobile: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -138,7 +139,10 @@ class MediaLibraryHeader extends React.Component {
 					onDelete={ this.props.onDeleteItem }
 					site={ this.props.site }
 				/>
-				<MediaLibraryScale onChange={ this.props.onMediaScaleChange } />
+				<MediaLibraryScale
+					onChange={ this.props.onMediaScaleChange }
+					isMobile={ this.props.isMobile }
+				/>
 			</Card>
 		);
 

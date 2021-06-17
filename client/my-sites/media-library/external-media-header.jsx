@@ -132,7 +132,7 @@ class MediaLibraryExternalHeader extends React.Component {
 
 				{ canCopy && this.renderCopyButton() }
 
-				<MediaLibraryScale onChange={ onMediaScaleChange } />
+				<MediaLibraryScale onChange={ onMediaScaleChange } isMobile={ this.props.isMobile } />
 			</Card>
 		);
 	}

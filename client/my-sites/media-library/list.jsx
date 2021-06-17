@@ -19,7 +19,7 @@ import ListNoContent from './list-no-content';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import SortedGrid from 'calypso/components/sorted-grid';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getPreference } from 'calypso/state/preferences/selectors';
+import { getMediaScalePreference } from 'calypso/state/preferences/selectors';
 import { selectMediaItems } from 'calypso/state/media/actions';
 import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
 
@@ -44,6 +44,7 @@ export class MediaLibraryList extends React.Component {
 		mediaOnFetchNextPage: PropTypes.func,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
+		isMobile: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -254,14 +255,15 @@ export class MediaLibraryList extends React.Component {
 				renderItem={ this.renderItem }
 				renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				className="media-library__list"
+				isMobile={ this.props.isMobile }
 			/>
 		);
 	}
 }
 
 export default connect(
-	( state, { site } ) => ( {
-		mediaScale: getPreference( state, 'mediaScale' ),
+	( state, { site, isMobile } ) => ( {
+		mediaScale: getMediaScalePreference( state, 'mediaScale', isMobile ),
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		isFetchingNextPage: isFetchingNextPage( state, site?.ID ),
 	} ),

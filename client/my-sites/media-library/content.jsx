@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import page from 'page';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -63,12 +64,14 @@ export class MediaLibraryContent extends React.Component {
 		onMediaScaleChange: PropTypes.func,
 		postId: PropTypes.number,
 		isConnected: PropTypes.bool,
+		isMobile: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		mediaValidationErrors: Object.freeze( {} ),
 		onAddMedia: noop,
 		source: '',
+		isMobile: isMobile(),
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -364,6 +367,7 @@ export class MediaLibraryContent extends React.Component {
 				<MediaLibraryList
 					key="list-loading"
 					filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
+					isMobile={ this.props.isMobile }
 				/>
 			);
 		}
@@ -398,6 +402,7 @@ export class MediaLibraryContent extends React.Component {
 					thumbnailType={ this.getThumbnailType() }
 					single={ this.props.single }
 					scrollable={ this.props.scrollable }
+					isMobile={ this.props.isMobile }
 				/>
 			</MediaListData>
 		);
@@ -421,6 +426,7 @@ export class MediaLibraryContent extends React.Component {
 					sticky={ ! this.props.scrollable }
 					hasAttribution={ 'pexels' === this.props.source }
 					hasRefreshButton={ 'pexels' !== this.props.source }
+					isMobile={ this.props.isMobile }
 				/>
 			);
 		}
@@ -437,6 +443,7 @@ export class MediaLibraryContent extends React.Component {
 					onViewDetails={ this.props.onViewDetails }
 					onDeleteItem={ this.props.onDeleteItem }
 					sticky={ ! this.props.scrollable }
+					isMobile={ this.props.isMobile }
 				/>
 			);
 		}

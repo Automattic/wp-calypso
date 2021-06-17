@@ -15,7 +15,7 @@ import Gridicon from 'calypso/components/gridicon';
 import FormRange from 'calypso/components/forms/range';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { setPreference, savePreference } from 'calypso/state/preferences/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
+import { getMediaScalePreference } from 'calypso/state/preferences/selectors';
 import { SCALE_CHOICES } from 'calypso/lib/media/constants';
 
 /**
@@ -34,7 +34,7 @@ const SLIDER_STEPS = 100;
  *
  * @type {number}
  */
-const SCALE_TOUCH_GRID = 0.32;
+const SCALE_TOUCH_GRID = 0.323;
 
 class MediaLibraryScale extends Component {
 	static propTypes = {
@@ -42,6 +42,7 @@ class MediaLibraryScale extends Component {
 		onChange: PropTypes.func,
 		setMediaScalePreference: PropTypes.func,
 		saveMediaScalePreference: PropTypes.func,
+		isMobile: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -144,8 +145,8 @@ class MediaLibraryScale extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		scale: getPreference( state, 'mediaScale' ),
+	( state, { isMobile } ) => ( {
+		scale: getMediaScalePreference( state, 'mediaScale', isMobile ),
 	} ),
 	{
 		setMediaScalePreference: partial( setPreference, 'mediaScale' ),
