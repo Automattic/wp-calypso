@@ -1,8 +1,8 @@
 @import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .themes__auto-loading-homepage-modal {
 	margin: 0 auto;
-	text-align: center;
 
 	h1 {
 		margin-bottom: 1em;
@@ -15,7 +15,7 @@
 
 		+ .dialog__action-buttons .button {
 			display: block;
-			margin: 0 auto 10px;
+			margin: 0 auto 1em;
 			width: 100%;
 		}
 	}
@@ -27,7 +27,7 @@
 }
 
 .themes__auto-loading-homepage-modal-homepage-hint {
-	margin-left: 20px;
+	margin-left: 1.5em;
 	font-size: $font-body-small;
 	font-style: italic;
 	margin-top: -5px;
@@ -44,14 +44,19 @@
 }
 
 .themes__theme-preview-items {
+	display: flex;
+	flex-direction: column;
 	margin: 0 0 1.5em;
 	max-width: 700px;
+
+	@include break-medium {
+		flex-direction: row;
+	}
 }
 
 .themes__theme-preview-item {
 	border: 1px solid var( --color-border-subtle );
 	border-radius: 2px;
-	margin: 0 0 1em;
 
 	@include break-medium {
 		width: 48%;
