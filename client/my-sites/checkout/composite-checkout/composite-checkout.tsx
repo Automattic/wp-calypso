@@ -732,6 +732,11 @@ function getAnalyticsPath(
 	} else {
 		analyticsPath = '/checkout/no-site';
 	}
+
+	if ( isJetpackCheckout ) {
+		analyticsPath = analyticsPath.replace( 'checkout', 'checkout/jetpack' );
+	}
+
 	return { analyticsPath, analyticsProps };
 }
 
