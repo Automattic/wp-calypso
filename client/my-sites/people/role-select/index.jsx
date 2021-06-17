@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import { omit } from 'lodash';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -16,7 +14,6 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import getWpcomFollowerRole from 'calypso/lib/get-wpcom-follower-role';
 import QuerySites from 'calypso/components/data/query-sites';
-import { getSite } from 'calypso/state/sites/selectors';
 import { ROLES_LIST } from './constants';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -24,37 +21,19 @@ import useSiteRolesQuery from 'calypso/data/site-roles/use-site-roles-query';
 
 import './style.scss';
 
-const RoleSelect = ( props ) => {
+export default function RoleSelect( { includeFollower, siteId, id, explanation, value, ...rest } ) {
 	const translate = useTranslate();
-	const { data } = useSiteRolesQuery( props.siteId );
-	const { isWPForTeamsSite } = props;
-
-	const { site, includeFollower, siteId, id, explanation, value } = props;
-
-	const omitProps = [
-		'dispatch',
-		'explanation',
-		'id',
-		'includeFollower',
-		'isPrivateSite',
-		'isWPForTeamsSite',
-		'key',
-		'moment',
-		'numberFormat',
-		'site',
-		'siteId',
-		'siteRoles',
-		'translate',
-		'value',
-	];
+	const { data } = useSiteRolesQuery( siteId );
+	const isSitePrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
+	const isWPForTeamsSite = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
 
 	let siteRoles;
 
-	if ( site && data ) {
+	if ( data ) {
 		siteRoles = data;
 
 		if ( includeFollower ) {
-			const wpcomFollowerRole = getWpcomFollowerRole( props.isPrivateSite, translate );
+			const wpcomFollowerRole = getWpcomFollowerRole( isSitePrivate, translate );
 			siteRoles = siteRoles.concat( wpcomFollowerRole );
 		}
 	}
@@ -71,7 +50,7 @@ const RoleSelect = ( props ) => {
 								className="role-select__role-radio"
 								checked={ role.name === value }
 								value={ role.name }
-								{ ...omit( props, omitProps ) }
+								{ ...rest }
 							/>
 							<div className="role-select__role-name">
 								<div>{ role.display_name }</div>
@@ -87,10 +66,4 @@ const RoleSelect = ( props ) => {
 			{ explanation && <FormSettingExplanation>{ explanation }</FormSettingExplanation> }
 		</FormFieldset>
 	);
-};
-
-export default connect( ( state, ownProps ) => ( {
-	site: getSite( state, ownProps.siteId ),
-	isWPForTeamsSite: isSiteWPForTeams( state, ownProps.siteId ),
-	isPrivateSite: isPrivateSite( state, ownProps.siteId ),
-} ) )( RoleSelect );
+}
