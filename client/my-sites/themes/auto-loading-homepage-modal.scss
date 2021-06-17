@@ -33,7 +33,10 @@
 
 .themes__autoloading-homepage-option-description {
 	font-size: $font-body-small;
-	width: 70%;
+
+	@include break-medium {
+		width: 70%;
+	}
 }
 
 .themes__theme-preview-items {
