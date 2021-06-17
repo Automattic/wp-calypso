@@ -1,7 +1,15 @@
+@import '@wordpress/base-styles/breakpoints';
+
 .themes__auto-loading-homepage-modal {
 	margin: 0 auto;
+	text-align: center;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	h1 {
+		margin-bottom: 1em;
+		text-align: center;
+	}
+
+	@include break-mobile {
 		box-sizing: border-box;
 		max-width: 100%;
 
@@ -11,25 +19,56 @@
 			width: 100%;
 		}
 	}
+}
 
-	.themes__auto-loading-homepage-modal-close-icon {
-		float: right;
-		cursor: pointer;
+.themes__auto-loading-homepage-modal-close-icon {
+	cursor: pointer;
+	float: right;
+}
+
+.themes__auto-loading-homepage-modal-homepage-hint {
+	margin-left: 20px;
+	font-size: $font-body-small;
+	font-style: italic;
+	margin-top: -5px;
+}
+
+.themes__theme-preview-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.themes__autoloading-homepage-option-description {
+	width: 50%;
+}
+
+.themes__theme-preview-items {
+	margin: 0 0 1.5em;
+	max-width: 700px;
+}
+
+.themes__theme-preview-item {
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 2px;
+	margin: 0 0 1em;
+
+	@include break-medium {
+		width: 48%;
+		margin-left: 2%;
+
+		&:first-of-type {
+			margin-left: 0;
+			margin-right: 2%;
+		}
 	}
 
-	.themes__theme-preview-item {
-		float: left;
-		width: 48%;
+	img {
+		max-width: 100%;
+		height: auto;
 	}
 
 	.form-label {
-		font-weight: 400;
-	}
-
-	.themes__auto-loading-homepage-modal-homepage-hint {
-		margin-left: 20px;
-		font-size: 0.875rem;
-		font-style: italic;
-		margin-top: -5px;
+		margin: 1em;
 	}
 }
