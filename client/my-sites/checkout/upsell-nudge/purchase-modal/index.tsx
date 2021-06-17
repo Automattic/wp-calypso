@@ -4,7 +4,6 @@
 import React, { useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dialog } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import { useStripe } from '@automattic/calypso-stripe';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -48,7 +47,6 @@ export function PurchaseModal( {
 	siteSlug,
 	siteId,
 }: PurchaseModalProps ): JSX.Element {
-	const translate = useTranslate();
 	const [ step, setStep ] = useState( BEFORE_SUBMIT );
 	const submitTransaction = useSubmitTransaction( {
 		cart,
@@ -56,7 +54,6 @@ export function PurchaseModal( {
 		setStep,
 		storedCard: cards?.[ 0 ],
 		onClose,
-		successMessage: translate( 'Your purchase has been completed!' ),
 	} );
 	const contentProps = {
 		cards,
