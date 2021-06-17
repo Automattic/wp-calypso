@@ -82,9 +82,7 @@ export class MediaPage extends BaseContainer {
 		await element.waitForElementState( 'visible' );
 		await element.click();
 		await element.waitForElementState( 'stable' );
-		const isSelected = await element.evaluate( ( node ) =>
-			node.classList.contains( 'is-selected' )
-		);
+		const isSelected = await element.getAttribute( 'class' ).includes( 'is-selected' );
 		if ( ! isSelected ) {
 			throw new Error( `Failed to select requested item number ${ item }` );
 		}
