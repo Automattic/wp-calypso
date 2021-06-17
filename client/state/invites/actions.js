@@ -231,7 +231,7 @@ export function acceptInvite( invite ) {
 			);
 
 			if ( invite.role !== 'follower' && invite.role !== 'viewer' ) {
-				dispatch( receiveSite( data ) );
+				dispatch( receiveSite( data.site ) );
 				// @TODO: Replace with Redux user fetching once lib/user is fully reduxified
 				await user().fetch();
 			}
