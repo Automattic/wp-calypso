@@ -9,12 +9,12 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 
 		it( 'Log In', async function () {
 			const loginFlow = new LoginFlow( this.page );
-			await loginFlow.login();
+			await loginFlow.logIn();
 		} );
 
 		it( 'Navigate to Media', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( this.page );
-			await sidebarComponent.gotoMenu( { heading: 'Media' } );
+			await sidebarComponent.gotoMenu( { item: 'Media' } );
 		} );
 
 		it( 'See media gallery', async function () {
@@ -22,11 +22,11 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 		} );
 
 		it( 'Show only images', async function () {
-			await mediaPage.clickTab( { name: 'Images' } );
+			await mediaPage.clickTab( 'Images' );
 		} );
 
 		it( 'Select the first image item', async function () {
-			await mediaPage.clickOn( { item: 1 } );
+			await mediaPage.clickItem( 1 );
 		} );
 
 		it( 'Click to edit selected image', async function () {
@@ -47,12 +47,12 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 
 		it( 'Log In', async function () {
 			const loginFlow = new LoginFlow( this.page, 'wooCommerceUser' );
-			await loginFlow.login();
+			await loginFlow.logIn();
 		} );
 
 		it( 'Navigate to Media', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( this.page );
-			await sidebarComponent.gotoMenu( { heading: 'Media' } );
+			await sidebarComponent.gotoMenu( { item: 'Media' } );
 		} );
 
 		it( 'See media gallery', async function () {
@@ -60,11 +60,11 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 		} );
 
 		it( 'Show only images', async function () {
-			await mediaPage.clickTab( { name: 'Images' } );
+			await mediaPage.clickTab( 'Images' );
 		} );
 
 		it( 'Select the first image item', async function () {
-			await mediaPage.clickOn( { item: 1 } );
+			await mediaPage.clickItem( 1 );
 		} );
 
 		it( 'Click to edit selected image', async function () {

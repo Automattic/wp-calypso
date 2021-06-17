@@ -57,34 +57,30 @@ export class MediaPage extends BaseContainer {
 	/**
 	 * Given a 1-indexed number `n`, click on the nth item in the media gallery.
 	 *
-	 * If the media gallery has been filtered (eg. Images only), this method will select the
-	 * `nth` item in the filtered gallery.
+	 * Note that if the media gallery has been filtered (eg. Images only), this method
+	 * will select the `nth` item in the filtered gallery as shown.
 	 *
-	 * @param {[key: string]: number } param0 Parameter object.
-	 * @param {number} param0.item nth media gallery item to be selected.
+	 * @param {number} index 1-indexed value denoting the nth media gallery item to be selected.
 	 * @returns {Promise<void>} No return value.
-	 * @throws {Error} If requested item could not be located in the gallery. Alternatively,
-	 * if the click action failed to select the gallery item.
+	 * @throws {Error} If requested item could not be located in the gallery, or if the click action
+	 * failed to select the gallery item.
 	 */
-	async clickOn( { item }: { item: number } ): Promise< void > {
+	async clickItem( index: number ): Promise< void > {
 		// Playwright is able to select the nth matching item given a selector.
 		// See https://playwright.dev/docs/selectors#pick-n-th-match-from-the-query-result.
 		const element = await this.page.waitForSelector(
-			`:nth-match(${ selectors.items }, ${ item })`
+			`:nth-match(${ selectors.items }, ${ index })`
 		);
 
-		if ( ! element ) {
-			throw new Error(
-				`Requested item number ${ item } is greater than number of items in gallery.`
-			);
-		}
-
+		// Wait for the target element to be stable before checking for the `is-selected` class.
+		// Otherwise, Playwright executes too fast and the method throws despite successfully selecting.
 		await element.waitForElementState( 'visible' );
 		await element.click();
 		await element.waitForElementState( 'stable' );
-		const isSelected = await element.getAttribute( 'class' ).includes( 'is-selected' );
+		const classAttributes = ( await element.getAttribute( 'class' ) ) as string;
+		const isSelected = classAttributes.includes( 'is-selected' );
 		if ( ! isSelected ) {
-			throw new Error( `Failed to select requested item number ${ item }` );
+			throw new Error( `Failed to select requested item number ${ index }` );
 		}
 	}
 
@@ -128,7 +124,7 @@ export class MediaPage extends BaseContainer {
 		await this.page.click( selector );
 		await preview.waitForElementState( 'stable' );
 		const undoButton = await this.page.waitForSelector( selectors.imageEditorResetButton );
-		await undoButton.isEnabled();
+		await undoButton.waitForElementState( 'enabled' );
 	}
 
 	/**
@@ -139,5 +135,6 @@ export class MediaPage extends BaseContainer {
 	async cancelImageEdit(): Promise< void > {
 		const cancelButton = await this.page.waitForSelector( selectors.imageEditorCancelButton );
 		await cancelButton.click();
+		await this.page.waitForSelector( selectors.mediaModal );
 	}
 }
