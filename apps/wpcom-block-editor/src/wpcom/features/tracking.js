@@ -358,7 +358,7 @@ const trackErrorNotices = ( content, options ) =>
 	} );
 
 /**
- *	Track list view open and close events.
+ * Track list view open and close events.
  *
  * @param {boolean} isOpen new state of the list view
  */
