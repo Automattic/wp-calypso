@@ -55,6 +55,7 @@ import { getTitanProductName } from 'calypso/lib/titan';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
+import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -364,9 +365,7 @@ class EmailProvidersComparison extends React.Component {
 					</Button>
 				</GSuiteNewUserList>
 			</FormFieldset>
-		) : (
-			<FormFieldset></FormFieldset>
-		);
+		) : null;
 
 		return (
 			<EmailProviderCard
@@ -546,7 +545,7 @@ class EmailProvidersComparison extends React.Component {
 		const { isGSuiteSupported, selectedSiteId } = this.props;
 
 		return (
-			<>
+			<Main wideLayout>
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
 				{ this.renderHeaderSection() }
@@ -566,7 +565,7 @@ class EmailProvidersComparison extends React.Component {
 						layout: 'stacked',
 					} }
 				/>
-			</>
+			</Main>
 		);
 	}
 }
