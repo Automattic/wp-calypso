@@ -177,6 +177,6 @@
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false,
 		"wordpress-action-search": false,
-		"nav-unification/switcher": true
+		"nav-unification/switcher": false
 	}
 }
