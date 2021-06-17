@@ -363,19 +363,19 @@ const trackErrorNotices = ( content, options ) =>
 	} );
 
 const trackEnableComplementaryArea = ( scope, id ) => {
-	const active = select( 'core/interface' ).getActiveComplementaryArea( scope );
+	const activeArea = select( 'core/interface' ).getActiveComplementaryArea( scope );
 	// We are tracking both global styles open here and when global styles
 	// is closed by opening another sidebar in its place.
-	if ( active !== 'edit-site/global-styles' && id === 'edit-site/global-styles' ) {
+	if ( activeArea !== 'edit-site/global-styles' && id === 'edit-site/global-styles' ) {
 		trackGlobalStylesTabSelected( { tab: 'root', open: true } );
-	} else if ( active === 'edit-site/global-styles' && id !== 'edit-site/global-styles' ) {
+	} else if ( activeArea === 'edit-site/global-styles' && id !== 'edit-site/global-styles' ) {
 		trackGlobalStylesTabSelected( { open: false } );
 	}
 };
 
 const trackDisableComplementaryArea = ( scope ) => {
-	const active = select( 'core/interface' ).getActiveComplementaryArea( scope );
-	if ( active === 'edit-site/global-styles' && scope === 'core/edit-site' ) {
+	const activeArea = select( 'core/interface' ).getActiveComplementaryArea( scope );
+	if ( activeArea === 'edit-site/global-styles' && scope === 'core/edit-site' ) {
 		trackGlobalStylesTabSelected( { open: false } );
 	}
 };
