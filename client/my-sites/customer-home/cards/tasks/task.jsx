@@ -16,15 +16,9 @@ import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover/menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import Spinner from 'calypso/components/spinner';
-import {
-	bumpStat,
-	composeAnalytics,
-	recordTracksEvent,
-	withAnalytics,
-} from 'calypso/state/analytics/actions';
-import { skipViewHomeLayout } from 'calypso/state/home/actions';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
+import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 
 /**
  * Style dependencies
@@ -51,13 +45,13 @@ const Task = ( {
 	taskId,
 	timing,
 	title,
-	currentView,
 } ) => {
 	const [ isLoading, setIsLoading ] = useState( forceIsLoading );
 	const [ areSkipOptionsVisible, setSkipOptionsVisible ] = useState( false );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const skipButtonRef = useRef( null );
+	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
 	useEffect( () => setIsLoading( forceIsLoading ), [ forceIsLoading ] );
 
@@ -68,7 +62,7 @@ const Task = ( {
 
 		if ( completeOnStart ) {
 			setIsLoading( true );
-			dispatch( skipViewHomeLayout( siteId, currentView ) );
+			skipCurrentView();
 		}
 
 		dispatch(
@@ -85,16 +79,15 @@ const Task = ( {
 		setIsLoading( true );
 		setSkipOptionsVisible( false );
 
+		skipCurrentView( reminder );
+
 		dispatch(
-			withAnalytics(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_customer_home_task_skip', {
-						task: taskId,
-						reminder,
-					} ),
-					bumpStat( 'calypso_customer_home', 'task_skip' )
-				),
-				skipViewHomeLayout( siteId, currentView, reminder )
+			composeAnalytics(
+				recordTracksEvent( 'calypso_customer_home_task_skip', {
+					task: taskId,
+					reminder,
+				} ),
+				bumpStat( 'calypso_customer_home', 'task_skip' )
 			)
 		);
 	};
@@ -193,7 +186,6 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteId,
-		currentView: getHomeLayout( state, siteId )?.view_name,
 	};
 };
 
