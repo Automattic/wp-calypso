@@ -42,6 +42,12 @@ $autobar-height: 20px;
 		-moz-osx-font-smoothing: grayscale;
 		-webkit-font-smoothing: antialiased;
 	}
+
+	.screen-options-tab {
+		position: absolute;
+		right: 20px;
+		top: var( --masterbar-height );
+	}
 }
 
 .pride .masterbar {

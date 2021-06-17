@@ -41,6 +41,7 @@ import getPreviousPath from 'calypso/state/selectors/get-previous-path.js';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import PopUpSearch from '../popup-search';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 class MasterbarLoggedIn extends React.Component {
 	state = {
@@ -314,6 +315,7 @@ class MasterbarLoggedIn extends React.Component {
 							} ) }
 						</span>
 					</Notifications>
+					{ config.isEnabled( 'nav-unification/switcher' ) && <ScreenOptionsTab /> }
 				</Masterbar>
 			</>
 		);

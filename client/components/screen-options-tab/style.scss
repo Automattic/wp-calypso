@@ -1,0 +1,47 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/colors';
+
+$screen-options-icon-border-x: 5px;
+$screen-options-icon-border-y: 7px;
+
+.screen-options-tab__button {
+	border: 1px solid var( --color-neutral-5 );
+	border-radius: 0 0 4px 4px;
+	background-color: #ffffff;
+	font-size: $default-font-size;
+	padding: 3px 16px;
+	color: $gray-700;
+	cursor: pointer;
+	line-height: 1.7;
+
+	&:hover {
+		color: var( --color-neutral-70 );
+
+		.screen-options-tab__icon {
+			border-top-color: var( --color-neutral-70 );
+			border-bottom-color: var( --color-neutral-70 );
+		}
+	}
+}
+
+.screen-options-tab__label {
+	display: inline-block;
+	margin-right: 7px;
+}
+
+.screen-options-tab__icon,
+.screen-options-tab__icon {
+	border-left: $screen-options-icon-border-x solid transparent;
+	border-right: $screen-options-icon-border-x solid transparent;
+	display: inline-block;
+	width: 0;
+	height: 0;
+}
+
+.screen-options-tab__icon--closed {
+	border-top: $screen-options-icon-border-y solid $gray-700;
+}
+
+.screen-options-tab__icon--open {
+	border-bottom: $screen-options-icon-border-y solid $gray-700;
+}
