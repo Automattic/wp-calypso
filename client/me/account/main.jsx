@@ -557,6 +557,30 @@ class Account extends React.Component {
 		);
 	}
 
+	renderUpdateEmailInBulkNotice() {
+		const { translate } = this.props;
+		const editContactInfoInBulkUrl = `/domains/manage?site=all&action=edit-contact-info`;
+
+		if ( ! this.hasPendingEmailChange() ) {
+			return null;
+		}
+
+		return (
+			<Notice
+				showDismiss={ false }
+				status="is-info"
+				text={ translate(
+					'You can also update the contact info for all of your domains to this e-mail address by clicking {{link}}here{{/link}}',
+					{
+						components: {
+							link: <a href={ editContactInfoInBulkUrl } />,
+						},
+					}
+				) }
+			></Notice>
+		);
+	}
+
 	renderUsernameValidation() {
 		const { translate } = this.props;
 
@@ -766,10 +790,11 @@ class Account extends React.Component {
 						onChange={ this.updateEmailAddress }
 					/>
 					{ this.renderEmailValidation() }
-					{ this.renderPendingEmailChange() }
 					<FormSettingExplanation>
 						{ translate( 'Will not be publicly displayed' ) }
 					</FormSettingExplanation>
+					{ this.renderPendingEmailChange() }
+					{ this.renderUpdateEmailInBulkNotice() }
 				</FormFieldset>
 
 				<FormFieldset>
