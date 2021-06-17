@@ -1,6 +1,18 @@
-import { Page } from 'playwright';
-import { waitForElementEnabled } from '../../element-helper';
+/**
+ * External dependencies
+ */
+import path from 'path';
+
+/**
+ * Internal dependencies
+ */
 import { BaseContainer } from '../base-container';
+import { waitForElementEnabled } from '../../element-helper';
+
+/**
+ * Type dependencies
+ */
+import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
 	// Navigation tabs
@@ -12,6 +24,8 @@ const selectors = {
 	items: '.media-library__list-item',
 	placeholder: '.is-placeholder',
 	editButton: 'button[data-e2e-button="edit"]',
+	addNewButton: 'input[type="file"]',
+	uploadRejectionNotice: 'text=/could not be uploaded/i',
 
 	// Modal view
 	mediaModal: '.editor-media-modal__content',
@@ -132,5 +146,32 @@ export class MediaPage extends BaseContainer {
 	async cancelImageEdit(): Promise< void > {
 		await this.page.click( selectors.imageEditorCancelButton );
 		await this.page.waitForSelector( selectors.mediaModal );
+	}
+
+	/**
+	 * Uploads the file to the Media gallery.
+	 *
+	 * @param {string} fullPath Full path to the file on disk.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async upload( fullPath: string ): Promise< ElementHandle > {
+		// Simulate the user selecting a file and confirming.
+		await this.page.setInputFiles( selectors.addNewButton, fullPath );
+
+		// From here, confirm if upload is successful or rejected.
+		const filename = path.basename( fullPath );
+		// Item in gallery have the `title=<filename>` attribute.
+		const itemSelector = `figure[title="${ filename }"]`;
+		const result = await Promise.race( [
+			this.page.waitForSelector( itemSelector ), // Upload successful
+			this.page.waitForSelector( selectors.uploadRejectionNotice ), // Upload failed
+		] );
+
+		// If the promise resolved to a result with `title` attribute, upload was successful.
+		if ( ( await result.getAttribute( 'title' ) ) === filename ) {
+			return result;
+		}
+		// Otherwise, throw the content of the error banner to the caller for further processing.
+		throw new Error( await result.innerText() );
 	}
 }
