@@ -78,7 +78,7 @@ export function useIsWebPayAvailable(
 		// These arrays let us easily turn off web payments for particular currencies.
 		// Other payment methods handle this on the backend in a similar way.
 		const applePayDisabledCurrencies: string[] = [];
-		const googlePayDisabledCurrencies: string[] = [ 'inr', 'idr', 'huf', 'twd' ];
+		const googlePayDisabledCurrencies: string[] = [];
 		const isApplePayAllowedForCurrency = ! applePayDisabledCurrencies.includes(
 			normalizedCurrency
 		);
