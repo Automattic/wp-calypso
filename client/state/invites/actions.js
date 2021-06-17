@@ -13,7 +13,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { acceptedNotice } from 'calypso/my-sites/invites/utils';
 import { getInviteForSite } from 'calypso/state/invites/selectors';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { requestSite } from 'calypso/state/sites/actions';
+import { receiveSite } from 'calypso/state/sites/actions';
 import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
@@ -231,6 +231,7 @@ export function acceptInvite( invite ) {
 			);
 
 			if ( invite.role !== 'follower' && invite.role !== 'viewer' ) {
+				dispatch( receiveSite( data ) );
 				// @TODO: Replace with Redux user fetching once lib/user is fully reduxified
 				await user().fetch();
 			}
@@ -245,7 +246,6 @@ export function acceptInvite( invite ) {
 			} );
 
 			dispatch( inviteAccepted( invite ) );
-			await dispatch( requestSite( invite.site.ID ) );
 			return data;
 		} catch ( error ) {
 			if ( error.message ) {
