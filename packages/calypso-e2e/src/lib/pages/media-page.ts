@@ -10,7 +10,7 @@ import { Page } from 'playwright';
 
 const selectors = {
 	// Navigation tabs
-	navtabs: '.section-nav-tabs',
+	navTabs: '.section-nav-tabs',
 
 	// Gallery view
 	gallery: '.media-library__content',
@@ -91,21 +91,18 @@ export class MediaPage extends BaseContainer {
 	/**
 	 * Clicks on the navigation tab.
 	 *
-	 * @param {[key: string]: string } param0 Parameter object.
-	 * @param {string} param0.name Name of the tab to click.
+	 * @param {string} name Name of the tab to click.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async clickTab( {
-		name,
-	}: {
-		name: 'All' | 'Images' | 'Documents' | 'Videos' | 'Audio';
-	} ): Promise< void > {
-		await this.page.waitForSelector( selectors.navtabs );
-		await this.page.click( `${ selectors.navtabs } span:has-text("${ name }")` );
+	async clickTab( name: 'All' | 'Images' | 'Documents' | 'Videos' | 'Audio' ): Promise< void > {
+		await this.page.waitForSelector( selectors.navTabs );
+		const gallery = await this.page.waitForSelector( selectors.gallery );
+		await this.page.click( `${ selectors.navTabs } span:has-text("${ name }")` );
 		// Wait for all placeholders to disappear.
 		// Alternatively, waiting for `networkidle` will achieve the same objective
 		// at the cost of much longer resolving time (~20s).
 		await this.page.waitForSelector( '.is-placeholder', { state: 'hidden' } );
+		await gallery.waitForElementState( 'stable' );
 	}
 
 	/**
