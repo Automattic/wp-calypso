@@ -18,6 +18,8 @@ import {
 } from 'calypso/state/wordads/settings/actions';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 
 const noop = () => {};
 
@@ -59,7 +61,33 @@ export const requestWordadsSettings = ( action ) => {
  */
 export const saveWordadsSettings = ( action ) => ( dispatch, getState ) => {
 	const { settings, siteId } = action;
-	const previousSettings = getWordadsSettings( getState(), siteId );
+	const state = getState();
+	const previousSettings = getWordadsSettings( state, siteId );
+
+	// WordAds settings on Jetpack sites are not updatable on the WordAds API endpoint, so we
+	// update them from the site settings endpoints.
+	const isJetpack = isJetpackSite( state, siteId );
+	if ( isJetpack ) {
+		let jetpackSettings = {
+			wordads: settings.jetpack_module_enabled,
+		};
+		if ( settings.jetpack_module_enabled ) {
+			jetpackSettings = {
+				...jetpackSettings,
+				wordads_display_front_page: settings.display_options.display_front_page,
+				wordads_display_post: settings.display_options.display_post,
+				wordads_display_page: settings.display_options.display_page,
+				wordads_display_archive: settings.display_options.display_archive,
+				enable_header_ad: settings.display_options.enable_header_ad,
+				wordads_second_belowpost: settings.display_options.second_belowpost,
+				wordads_ccpa_enabled: settings.ccpa_enabled,
+				wordads_ccpa_privacy_policy_url: settings.ccpa_privacy_policy_url,
+				wordads_custom_adstxt_enabled: settings.custom_adstxt_enabled,
+				wordads_custom_adstxt: settings.custom_adstxt,
+			};
+		}
+		dispatch( saveJetpackSettings( siteId, jetpackSettings ) );
+	}
 
 	// Optimistically update settings to the new ones
 	dispatch( updateWordadsSettings( siteId, settings ) );
