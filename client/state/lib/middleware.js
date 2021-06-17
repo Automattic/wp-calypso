@@ -17,7 +17,7 @@ import {
 	SITE_RECEIVE,
 	SITES_RECEIVE,
 } from 'calypso/state/action-types';
-import user from 'calypso/lib/user';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
 import { isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -145,7 +145,7 @@ const handler = ( dispatch, action, getState ) => {
 
 		case SITE_DELETE_RECEIVE:
 		case JETPACK_DISCONNECT_RECEIVE:
-			user().fetch();
+			dispatch( fetchCurrentUser() );
 			return;
 	}
 };
