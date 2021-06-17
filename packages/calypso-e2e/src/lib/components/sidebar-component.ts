@@ -94,7 +94,7 @@ export class SidebarComponent extends BaseContainer {
 			);
 		}
 
-		await Promise.all( [ this.page.waitForNavigation(), this._click( selector ) ] );
+		await this._click( selector );
 	}
 
 	/**
