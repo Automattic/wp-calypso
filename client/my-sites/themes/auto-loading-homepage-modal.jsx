@@ -172,37 +172,38 @@ class AutoLoadingHomepageModal extends Component {
 					eventName={ 'calypso_theme_autoloading_homepage_modal_view' }
 					eventProperties={ { theme: themeId } }
 				/>
-				<div>
+				<div className="themes__theme-preview-wrapper">
 					<h1>
 						{ translate( 'How would you like to use %(themeName)s?', {
 							args: { themeName },
 						} ) }
 					</h1>
-					<div className="themes__theme-preview-item">
-						<img src="https://placedog.net/500" alt="" />
-						<FormLabel>
-							<FormRadio
-								value="keep_current_homepage"
-								checked={ 'keep_current_homepage' === this.state.homepageAction }
-								onChange={ this.handleHomepageAction }
-								label={ translate( 'Switch theme, preserving my homepage content.' ) }
-							/>
-						</FormLabel>
+					<div className="themes__theme-preview-items">
+						<div className="themes__theme-preview-item">
+							<img src="https://placedog.net/500" alt="" />
+							<FormLabel>
+								<FormRadio
+									value="keep_current_homepage"
+									checked={ 'keep_current_homepage' === this.state.homepageAction }
+									onChange={ this.handleHomepageAction }
+									label={ translate( 'Switch theme, preserving my homepage content.' ) }
+								/>
+							</FormLabel>
+						</div>
+						<div className="themes__theme-preview-item">
+							<img src="https://placedog.net/500" alt="" />
+							<FormLabel>
+								<FormRadio
+									value="use_new_homepage"
+									checked={ 'use_new_homepage' === this.state.homepageAction }
+									onChange={ this.handleHomepageAction }
+									label={ translate( 'Replace my homepage content with the %(themeName)s demo.', {
+										args: { themeName },
+									} ) }
+								/>
+							</FormLabel>
+						</div>
 					</div>
-					<div className="themes__theme-preview-item">
-						<img src="https://placedog.net/500" alt="" />
-						<FormLabel>
-							<FormRadio
-								value="use_new_homepage"
-								checked={ 'use_new_homepage' === this.state.homepageAction }
-								onChange={ this.handleHomepageAction }
-								label={ translate( 'Replace my homepage content with the %(themeName)s demo.', {
-									args: { themeName },
-								} ) }
-							/>
-						</FormLabel>
-					</div>
-					<div style={ { clear: 'both' } } />
 					<div className="themes__autoloading-homepage-option-description">
 						{ this.state.homepageAction === 'keep_current_homepage' && (
 							<p>
