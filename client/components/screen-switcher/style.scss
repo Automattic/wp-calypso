@@ -26,6 +26,8 @@
 	}
 
 	&:first-of-type {
+		margin-bottom: 4px; /* stylelint-disable-line */
+
 		// When the user sees this component they are going to be in Calypso
 		// so it's safe to assume the Calypso option is always going to be active.
 		> strong {
