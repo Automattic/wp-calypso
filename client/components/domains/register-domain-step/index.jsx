@@ -506,7 +506,8 @@ class RegisterDomainStep extends React.Component {
 			! Array.isArray( this.state.searchResults ) &&
 			! this.state.loadingResults &&
 			! this.props.showExampleSuggestions;
-		const showFilters = isKrackenUi && ! isRenderingInitialSuggestions && ! this.props.isReskinned;
+		const showFilters =
+			( isKrackenUi && ! isRenderingInitialSuggestions ) || this.props.isReskinned;
 
 		const showTldFilter =
 			( Array.isArray( this.state.availableTlds ) && this.state.availableTlds.length > 0 ) ||
