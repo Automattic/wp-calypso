@@ -23,7 +23,6 @@ import { Card } from '@automattic/components';
 import { useCreateStoredCreditCard } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/hooks/use-create-stored-credit-card';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
-import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
 import getPaymentMethodIdFromPayment from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/get-payment-method-id-from-payment';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
@@ -33,21 +32,6 @@ import type { PaymentMethod } from '@automattic/composite-checkout';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-
-function getInitiallySelectedPaymentMethodId(
-	currentlyAssignedPaymentMethodId: string,
-	paymentMethods: PaymentMethod[]
-) {
-	if (
-		! paymentMethods.some(
-			( paymentMethod ) => paymentMethod.id === currentlyAssignedPaymentMethodId
-		)
-	) {
-		return paymentMethods?.[ 0 ]?.id;
-	}
-
-	return currentlyAssignedPaymentMethodId;
-}
 
 function onPaymentSelectComplete( {
 	successCallback,
@@ -128,13 +112,13 @@ function AllSubscriptionsEffectWarning( {
 
 	if ( useForAllSubscriptions ) {
 		return (
-			<span className="payment-method-selector__all-subscriptions-effect-warning">
+			<span className="payment-method-add__all-subscriptions-effect-warning">
 				{ translate( 'This card will be used for future renewals of existing purchases.' ) }
 			</span>
 		);
 	}
 	return (
-		<span className="payment-method-selector__all-subscriptions-effect-warning">
+		<span className="payment-method-add__all-subscriptions-effect-warning">
 			{ translate(
 				'This card will not be assigned to any subscriptions. You can assign it to a subscription from the subscription page.'
 			) }
@@ -214,79 +198,60 @@ function PaymentMethodAdd(): ReactElement {
 				<CardHeading size={ 36 }>{ translate( 'Payment Method' ) }</CardHeading>
 			</div>
 
-			<Card className="payment-method-add__body">
-				<div className="payment-method-add__body-left">
-					{ /**
-					<PaymentMethodSelector
-						paymentMethods={ paymentMethodList }
-						successCallback={ goToPaymentMethods }
-					/>
-					*/ }
-					<CheckoutProvider
-						onPaymentComplete={ () =>
-							onPaymentSelectComplete( {
-								successCallback: () => page( '/partner-portal/payment-method/' ),
-								translate,
-								showSuccessMessage,
+			<CheckoutProvider
+				onPaymentComplete={ () =>
+					onPaymentSelectComplete( {
+						successCallback: () => page( '/partner-portal/payment-method/' ),
+						translate,
+						showSuccessMessage,
+						purchase,
+					} )
+				}
+				showErrorMessage={ showErrorMessage }
+				showInfoMessage={ showInfoMessage }
+				showSuccessMessage={ showSuccessMessage }
+				paymentMethods={ paymentMethods }
+				paymentProcessors={ {
+					card: ( data ) =>
+						assignNewCardProcessor(
+							{
 								purchase,
-							} )
-						}
-						showErrorMessage={ showErrorMessage }
-						showInfoMessage={ showInfoMessage }
-						showSuccessMessage={ showSuccessMessage }
-						paymentMethods={ paymentMethods }
-						paymentProcessors={ {
-							card: ( data ) =>
-								assignNewCardProcessor(
-									{
-										purchase,
-										useForAllSubscriptions,
-										translate,
-										stripe,
-										stripeConfiguration,
-										reduxDispatch,
-									},
-									data
-								),
-						} }
-						isLoading={ isStripeLoading }
-						initiallySelectedPaymentMethodId={ getInitiallySelectedPaymentMethodId(
-							currentlyAssignedPaymentMethodId,
-							paymentMethods
-						) }
-					>
-						<Card className="payment-method-selector__content">
-							<QueryPaymentCountries />
-							{ currentPaymentMethodNotAvailable && purchase && (
-								<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
-							) }
-							<CheckoutPaymentMethods
-								className="payment-method-selector__list"
-								isComplete={ false }
+								useForAllSubscriptions,
+								translate,
+								stripe,
+								stripeConfiguration,
+								reduxDispatch,
+							},
+							data
+						),
+				} }
+				isLoading={ isStripeLoading }
+				initiallySelectedPaymentMethodId="card"
+			>
+				<Card className="payment-method-add__content">
+					<QueryPaymentCountries />
+					{ currentPaymentMethodNotAvailable && purchase && (
+						<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
+					) }
+
+					{ paymentMethods && paymentMethods[ 0 ] && paymentMethods[ 0 ].activeContent }
+
+					{ ! purchase && (
+						<FormLabel className="payment-method-add__all-subscriptions-checkbox-label">
+							<FormInputCheckbox
+								className="payment-method-add__all-subscriptions-checkbox"
+								checked={ useForAllSubscriptions }
+								onChange={ () => setUseForAllSubscriptions( ( checked ) => ! checked ) }
+								aria-label={ assignAllSubscriptionsText }
 							/>
+							{ assignAllSubscriptionsText }
+							<AllSubscriptionsEffectWarning useForAllSubscriptions={ useForAllSubscriptions } />
+						</FormLabel>
+					) }
 
-							{ ! purchase && (
-								<FormLabel className="payment-method-selector__all-subscriptions-checkbox-label">
-									<FormInputCheckbox
-										className="payment-method-selector__all-subscriptions-checkbox"
-										checked={ useForAllSubscriptions }
-										onChange={ () => setUseForAllSubscriptions( ( checked ) => ! checked ) }
-										aria-label={ assignAllSubscriptionsText }
-									/>
-									{ assignAllSubscriptionsText }
-									<AllSubscriptionsEffectWarning
-										useForAllSubscriptions={ useForAllSubscriptions }
-									/>
-								</FormLabel>
-							) }
-
-							<CheckoutSubmitButton />
-						</Card>
-					</CheckoutProvider>
-				</div>
-
-				<div className="payment-method-add__body-right"></div>
-			</Card>
+					<CheckoutSubmitButton />
+				</Card>
+			</CheckoutProvider>
 		</Main>
 	);
 }

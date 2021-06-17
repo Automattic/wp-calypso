@@ -1,0 +1,16 @@
+.credit-card-fields {
+	display: flex;
+}
+.credit-card-fields__form {
+	display: flex;
+	flex-direction: column;
+	flex-basis: 100%;
+	flex: 1;
+}
+.credit-card-fields__image {
+	display: flex;
+	flex-direction: column;
+	flex-basis: 100%;
+	flex: 1;
+	align-self: center;
+}
