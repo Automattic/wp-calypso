@@ -39,21 +39,21 @@ import {
 	getTitanEmailUrl,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
-import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/gmail.svg';
-import googleAdminIcon from 'calypso/assets/images/email-providers/google-workspace/services/admin.svg';
-import googleCalendarIcon from 'calypso/assets/images/email-providers/google-workspace/services/calendar.svg';
-import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspace/services/docs.svg';
-import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/services/drive.svg';
-import googleSheetsIcon from 'calypso/assets/images/email-providers/google-workspace/services/sheets.svg';
-import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/slides.svg';
+import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/menu-items-flat/gmail.svg';
+import googleAdminIcon from 'calypso/assets/images/email-providers/google-workspace/menu-items-flat/admin.svg';
+import googleCalendarIcon from 'calypso/assets/images/email-providers/google-workspace/menu-items-flat/calendar.svg';
+import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspace/menu-items-flat/docs.svg';
+import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/menu-items-flat/drive.svg';
+import googleSheetsIcon from 'calypso/assets/images/email-providers/google-workspace/menu-items-flat/sheets.svg';
+import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/menu-items-flat/slides.svg';
 import Gridicon from 'calypso/components/gridicon';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import MaterialIcon from 'calypso/components/material-icon';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import SectionHeader from 'calypso/components/section-header';
-import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/calendar.svg';
-import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/contacts.svg';
-import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/mail.svg';
+import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/menu-items-flat/calendar.svg';
+import titanContactsIcon from 'calypso/assets/images/email-providers/titan/menu-items-flat/contacts.svg';
+import titanMailIcon from 'calypso/assets/images/email-providers/titan/menu-items-flat/mail.svg';
 
 const getListHeaderTextForAccountType = ( accountType, translate ) => {
 	if ( accountType === EMAIL_ACCOUNT_TYPE_FORWARD ) {
