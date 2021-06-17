@@ -29,6 +29,9 @@ export function trackGlobalStylesTabSelected( { tab, open } = {} ) {
 export default () => ( {
 	selector: `.edit-site-global-styles-sidebar .components-tab-panel__tabs button:not(.is-active)`,
 	type: 'click',
+	// Using capture event listener to make sure the tab is not set to active
+	// before this event listener runs. This way we can prevent the listener
+	// from triggering when the tab is already active.
 	capture: true,
 	handler: ( event ) =>
 		trackGlobalStylesTabSelected( {
