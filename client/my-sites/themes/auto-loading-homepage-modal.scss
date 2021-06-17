@@ -2,28 +2,19 @@
 @import '@wordpress/base-styles/mixins';
 
 .themes__auto-loading-homepage-modal {
-	margin: 0 auto;
+	position: relative;
 
 	h1 {
 		margin-bottom: 1em;
 		text-align: center;
 	}
-
-	@include break-mobile {
-		box-sizing: border-box;
-		max-width: 100%;
-
-		+ .dialog__action-buttons .button {
-			display: block;
-			margin: 0 auto 1em;
-			width: 100%;
-		}
-	}
 }
 
 .themes__auto-loading-homepage-modal-close-icon {
 	cursor: pointer;
-	float: right;
+	position: absolute;
+	right: 20px;
+	top: 20px;
 }
 
 .themes__auto-loading-homepage-modal-homepage-hint {
@@ -37,6 +28,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	max-width: 700px;
 }
 
 .themes__autoloading-homepage-option-description {
