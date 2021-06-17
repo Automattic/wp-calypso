@@ -43,6 +43,11 @@ const TaxonomyCard = ( {
 		recordMCStat( 'taxonomy_manager', `manage_${ taxonomy }` );
 	};
 
+	let label;
+	if ( ! isLoading ) {
+		label = count === 1 ? labels.singular_name : labels.name;
+	}
+
 	return (
 		<CompactCard onClick={ recordAnalytics } href={ settingsLink }>
 			{ site && <QuerySiteSettings siteId={ site.ID } /> }
@@ -50,9 +55,7 @@ const TaxonomyCard = ( {
 			<h2 className={ classes }>{ labels.name }</h2>
 			{ ! isLoading && (
 				<div className="taxonomies__card-content">
-					<Gridicon icon="tag" size={ 18 } />
-					&nbsp;
-					{ count } { count === 1 ? labels.singular_name : labels.name }
+					<Gridicon icon="tag" size={ 18 } /> { count } { label }
 					{ defaultTerm && (
 						<span>
 							, { translate( 'default category:' ) } { decodeEntities( defaultTerm.name ) }
