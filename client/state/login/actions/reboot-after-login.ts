@@ -6,7 +6,7 @@ import type { Dispatch } from 'redux';
 /**
  * Internal dependencies
  */
-import { clearStore, getUserId } from 'calypso/lib/user/store';
+import { clearStore, getStoredUserId } from 'calypso/lib/user/store';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getRedirectToSanitized, isTwoFactorEnabled } from 'calypso/state/login/selectors';
 
@@ -27,7 +27,7 @@ export const rebootAfterLogin = ( tracksEventArgs: Record< string, unknown > ) =
 	// user ID is persisted in localstorage
 	// therefore we need to reset it before we redirect, otherwise we'll get
 	// mixed data from old and new user
-	if ( getUserId() ) {
+	if ( getStoredUserId() ) {
 		await clearStore();
 	}
 
