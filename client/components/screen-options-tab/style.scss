@@ -6,7 +6,7 @@ $screen-options-icon-border-y: 7px;
 
 .screen-options-tab__button {
 	border: 1px solid var( --color-neutral-5 );
-	border-radius: 0 0 4px 4px;
+	border-radius: 0 0 4px 4px; /* stylelint-disable-line */
 	background-color: #ffffff;
 	font-size: $default-font-size;
 	padding: 3px 16px;
@@ -44,4 +44,8 @@ $screen-options-icon-border-y: 7px;
 
 .screen-options-tab__icon--open {
 	border-bottom: $screen-options-icon-border-y solid $gray-700;
+}
+
+.screen-options-tab__children {
+	position: relative;
 }

@@ -25,7 +25,7 @@ const ScreenOptionsTab = ( { children } ) => {
 					} ) }
 				/>
 			</button>
-			{ isOpen && children }
+			{ isOpen && <div className={ 'screen-options-tab__children' }>{ children }</div> }
 		</div>
 	);
 };
