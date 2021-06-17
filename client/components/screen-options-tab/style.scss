@@ -14,13 +14,19 @@ $screen-options-icon-border-y: 7px;
 	cursor: pointer;
 	line-height: 1.7;
 
-	&:hover {
+	&:hover,
+	&:focus-visible {
 		color: var( --color-neutral-70 );
 
 		.screen-options-tab__icon {
 			border-top-color: var( --color-neutral-70 );
 			border-bottom-color: var( --color-neutral-70 );
 		}
+	}
+
+	&:focus-visible {
+		border-color: var( --studio-blue-50 );
+		box-shadow: 0 0 3px var( --studio-blue-10 );
 	}
 }
 

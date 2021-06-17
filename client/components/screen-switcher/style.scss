@@ -1,5 +1,5 @@
 @import '@wordpress/base-styles/variables';
-@import '~@automattic/typography/variables';
+@import '@automattic/typography/styles/variables';
 
 .screen-switcher {
 	position: absolute;
@@ -20,7 +20,8 @@
 	text-align: left;
 	border: 1px solid transparent;
 
-	&:hover {
+	&:hover,
+	&:focus {
 		border-color: var( --studio-pink-50 );
 	}
 
