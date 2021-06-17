@@ -561,7 +561,7 @@ class Account extends React.Component {
 		const { translate } = this.props;
 		const editContactInfoInBulkUrl = `/domains/manage?site=all&action=edit-contact-info`;
 
-		if ( ! this.hasPendingEmailChange() ) {
+		if ( ! this.hasPendingEmailChange() || ! this.hasCustomDomains() ) {
 			return null;
 		}
 
@@ -579,6 +579,11 @@ class Account extends React.Component {
 				) }
 			></Notice>
 		);
+	}
+
+	hasCustomDomains() {
+		// TODO: Implement
+		return true;
 	}
 
 	renderUsernameValidation() {
