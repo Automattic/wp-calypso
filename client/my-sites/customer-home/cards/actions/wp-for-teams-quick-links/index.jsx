@@ -24,8 +24,7 @@ import { getGSuiteSupportedDomains } from 'calypso/lib/gsuite';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import ActionBox from '../quick-links/action-box';
-import isHomeQuickLinksExpanded from 'calypso/state/selectors/is-home-quick-links-expanded';
-import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'calypso/state/home/actions';
+import { useQuickLinksIsExpanded } from '../use-quick-links-is-expanded';
 
 /**
  * Style dependencies
@@ -43,11 +42,15 @@ export const QuickLinks = ( {
 	manageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
-	isExpanded,
-	expand,
-	collapse,
 } ) => {
 	const translate = useTranslate();
+
+	const [ isExpanded, setIsExpanded, isExpandedLoading ] = useQuickLinksIsExpanded();
+
+	// Wait until `isExpanded` is initialised before rendering
+	if ( isExpandedLoading ) {
+		return null;
+	}
 
 	const quickLinks = (
 		<div className="wp-for-teams-quick-links__boxes quick-links__boxes">
@@ -114,8 +117,8 @@ export const QuickLinks = ( {
 			header={ translate( 'Quick Links' ) }
 			clickableHeader
 			expanded={ isExpanded }
-			onOpen={ expand }
-			onClose={ collapse }
+			onOpen={ () => setIsExpanded( true ) }
+			onClose={ () => setIsExpanded( false ) }
 		>
 			{ quickLinks }
 		</FoldableCard>
@@ -206,7 +209,6 @@ const mapStateToProps = ( state ) => {
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
-		isExpanded: isHomeQuickLinksExpanded( state ),
 	};
 };
 
@@ -217,8 +219,6 @@ const mapDispatchToProps = {
 	manageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
-	expand: expandHomeQuickLinks,
-	collapse: collapseHomeQuickLinks,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
