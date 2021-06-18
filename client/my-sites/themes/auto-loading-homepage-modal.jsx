@@ -232,8 +232,6 @@ class AutoLoadingHomepageModal extends Component {
 						Current issues:
 						<ul>
 							<li> Iframe doesn't block clicks </li>
-							<li> Iframe should be zoomed out? </li>
-							<li> Right side preview missing</li>
 						</ul>
 					</div>
 					<div className="themes__autoloading-homepage-option-description">
