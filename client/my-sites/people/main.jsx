@@ -24,6 +24,7 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 class People extends React.Component {
 	renderPeopleList() {
@@ -74,6 +75,7 @@ class People extends React.Component {
 		if ( siteId && ! canViewPeople ) {
 			return (
 				<Main>
+					<ScreenOptionsTab />
 					<PageViewTracker
 						path={ `/people/${ filter }/:site` }
 						title={ `People > ${ titlecase( filter ) }` }
@@ -88,6 +90,7 @@ class People extends React.Component {
 		}
 		return (
 			<Main>
+				<ScreenOptionsTab />
 				<PageViewTracker
 					path={ `/people/${ filter }/:site` }
 					title={ `People > ${ titlecase( filter ) }` }

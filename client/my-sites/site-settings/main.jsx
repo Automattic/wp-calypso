@@ -25,10 +25,12 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * Style dependencies
  */
 import './style.scss';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 const SiteSettingsComponent = ( { siteId, translate } ) => {
 	return (
 		<Main className="site-settings">
+			<ScreenOptionsTab />
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<QueryProductsList />
 			<QuerySitePurchases siteId={ siteId } />

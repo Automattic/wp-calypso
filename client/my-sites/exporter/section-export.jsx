@@ -21,6 +21,7 @@ import {
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import FormattedHeader from 'calypso/components/formatted-header';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 /**
  * Style dependencies
@@ -65,6 +66,7 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 
 	return (
 		<Main>
+			<ScreenOptionsTab />
 			<DocumentHead title={ translate( 'Export' ) } />
 			<SidebarNavigation />
 			{ sectionContent }

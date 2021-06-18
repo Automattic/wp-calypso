@@ -24,6 +24,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { mapPostStatus } from 'calypso/lib/route';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
 import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 /**
  * Style dependencies
@@ -91,6 +92,7 @@ class PagesMain extends React.Component {
 
 		return (
 			<Main wideLayout classname="pages">
+				<ScreenOptionsTab />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Pages' ) } />
 				<SidebarNavigation />

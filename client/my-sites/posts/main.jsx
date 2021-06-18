@@ -20,6 +20,7 @@ import Main from 'calypso/components/main';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { mapPostStatus } from 'calypso/lib/route';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 class PostsMain extends React.Component {
 	getAnalyticsPath() {
@@ -75,6 +76,7 @@ class PostsMain extends React.Component {
 
 		return (
 			<Main wideLayout className="posts">
+				<ScreenOptionsTab />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Posts' ) } />
 				<SidebarNavigation />

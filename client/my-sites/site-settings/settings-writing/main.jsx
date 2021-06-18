@@ -16,9 +16,11 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import WritingForm from 'calypso/my-sites/site-settings/form-writing';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 const SiteSettingsWriting = ( { site, translate } ) => (
 	<Main className="settings-writing site-settings">
+		<ScreenOptionsTab />
 		<DocumentHead title={ translate( 'Site Settings' ) } />
 		<JetpackDevModeNotice />
 		<SidebarNavigation />

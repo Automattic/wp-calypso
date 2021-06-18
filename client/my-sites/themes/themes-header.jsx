@@ -11,6 +11,7 @@ import React from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { translate } from 'i18n-calypso';
 import InstallThemeButton from './install-theme-button';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 /**
  * Style dependencies
@@ -20,6 +21,7 @@ import './themes-header.scss';
 const ThemesHeader = () => {
 	return (
 		<div className="themes__header">
+			<ScreenOptionsTab />
 			<FormattedHeader
 				brandFont
 				className="themes__page-heading"

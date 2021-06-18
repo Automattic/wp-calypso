@@ -18,6 +18,7 @@ import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selecto
 import QueryTaxonomies from 'calypso/components/data/query-taxonomies';
 import TermFormDialog from 'calypso/blocks/term-form-dialog';
 import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 /**
  * Style dependencies
@@ -85,6 +86,7 @@ export class TaxonomyManager extends Component {
 
 		return (
 			<div>
+				<ScreenOptionsTab />
 				{ siteId && <QueryTaxonomies { ...{ siteId, postType } } /> }
 				<div className="taxonomy-manager__header">
 					<SearchCard onSearch={ this.onSearch } delaySearch />

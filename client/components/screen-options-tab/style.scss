@@ -9,6 +9,13 @@
 $screen-options-icon-border-x: 5px;
 $screen-options-icon-border-y: 7px;
 
+.screen-options-tab {
+	position: fixed;
+	top: var( --masterbar-height );
+	right: 20px;
+	z-index: z-index( 'root', '.screen-options-tab' );
+}
+
 .screen-options-tab__button {
 	border: 1px solid var( --color-neutral-5 );
 	border-radius: 0 0 4px 4px; /* stylelint-disable-line */

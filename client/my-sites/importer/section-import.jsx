@@ -42,6 +42,7 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import EmptyContent from 'calypso/components/empty-content';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 /**
  * Style dependencies
@@ -272,6 +273,7 @@ class SectionImport extends Component {
 		if ( ! canImport ) {
 			return (
 				<Main>
+					<ScreenOptionsTab />
 					<SidebarNavigation />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
@@ -288,6 +290,7 @@ class SectionImport extends Component {
 
 		return (
 			<Main>
+				<ScreenOptionsTab />
 				<DocumentHead title={ translate( 'Import Content' ) } />
 				<SidebarNavigation />
 				<FormattedHeader

@@ -8,6 +8,7 @@ import { useI18n } from '@wordpress/react-i18n';
 /**
  * Internal Dependencies
  */
+import config from '@automattic/calypso-config';
 import ScreenSwitcher from './screen-switcher';
 
 /**
@@ -55,6 +56,10 @@ const ScreenOptionsTab = () => {
 			document.removeEventListener( 'keydown', handleClosing, true );
 		};
 	}, [] );
+
+	if ( ! config.isEnabled( 'nav-unification/switcher' ) ) {
+		return null;
+	}
 
 	return (
 		<div className="screen-options-tab" ref={ ref }>
