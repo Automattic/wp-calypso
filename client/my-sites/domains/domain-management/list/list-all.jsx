@@ -337,6 +337,8 @@ class ListAll extends Component {
 	renderContent() {
 		const { domainsList, translate, user } = this.props;
 
+		console.log( this.props.filteredDomainsList );
+
 		if (
 			this.shouldShowContactForm() &&
 			domainsList.length > 0 &&
@@ -384,6 +386,42 @@ const addDomainClick = () =>
 		recordTracksEvent( 'calypso_domain_management_list_all_add_domain_click' )
 	);
 
+const getFilteredDomainsList = ( state, context ) => {
+	const action = parse( context.querystring )?.action;
+	const sites = keyBy( getSites( state ), 'ID' );
+	const canManageSitesMap = canCurrentUserForSites( state, keys( sites ), 'manage_options' );
+	const domainsList = getFlatDomainsList( state );
+	const domainsDetails = getAllDomains( state );
+
+	if ( ! domainsList ) {
+		return [];
+	}
+
+	switch ( action ) {
+		case ListAllActions.editContactEmail:
+		case ListAllActions.editContactInfo:
+			return domainsList.filter( ( domain ) => {
+				const domainDetails = domainsDetails[ domain?.blogId ]?.find(
+					( element ) => element.type === domain.type && element.domain === domain.domain
+				);
+
+				return (
+					! isEmpty( domainDetails ) &&
+					domainTypes.REGISTERED === domain.type &&
+					domainDetails?.currentUserCanManage &&
+					isDomainUpdateable( domainDetails ) &&
+					isDomainInGracePeriod( domainDetails ) &&
+					! domainDetails?.isPendingWhoisUpdate
+				);
+			} );
+
+		default:
+			return domainsList.filter(
+				( domain ) => domain.type !== domainTypes.WPCOM && canManageSitesMap[ domain.blogId ]
+			);
+	}
+};
+
 export default connect(
 	( state, { context } ) => {
 		const sites = keyBy( getSites( state ), 'ID' );
@@ -396,6 +434,7 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			domainsList: getFlatDomainsList( state ),
 			domainsDetails: getAllDomains( state ),
+			filteredDomainsList: getFilteredDomainsList( state, context ),
 			purchases,
 			requestingFlatDomains: isRequestingAllDomains( state ),
 			requestingSiteDomains: getAllRequestingSiteDomains( state ),
