@@ -17,6 +17,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import config from '@automattic/calypso-config';
 
 const SiteSettingsDiscussion = ( { site, translate } ) => (
 	<Main className="settings-discussion site-settings">
@@ -30,6 +31,7 @@ const SiteSettingsDiscussion = ( { site, translate } ) => (
 			headerText={ translate( 'Settings' ) }
 			subHeaderText={ translate( 'Control how people interact with your site through comments.' ) }
 			align="left"
+			hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 		/>
 		<SiteSettingsNavigation site={ site } section="discussion" />
 		<DiscussionForm />
