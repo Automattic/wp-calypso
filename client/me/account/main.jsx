@@ -563,7 +563,7 @@ class Account extends React.Component {
 
 	renderUpdateEmailInBulkNotice() {
 		const { translate } = this.props;
-		const editContactInfoInBulkUrl = `/domains/manage?site=all&action=edit-contact-info`;
+		const editContactInfoInBulkUrl = `/domains/manage?site=all&action=edit-contact-email`;
 
 		if ( ! this.hasPendingEmailChange() || ! this.hasCustomDomains() ) {
 			return null;
