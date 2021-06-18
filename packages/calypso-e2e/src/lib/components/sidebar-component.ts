@@ -1,8 +1,15 @@
 /**
+ * External dependencieds
+ */
+import assert from 'assert';
+
+/**
  * Internal dependencies
  */
 import { BaseContainer } from '../base-container';
+import { NavbarComponent } from './navbar-component';
 import { toTitleCase } from '../../data-helper';
+import { getViewportName } from '../../browser-helper';
 
 /**
  * Type dependencies
@@ -10,6 +17,10 @@ import { toTitleCase } from '../../data-helper';
 import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
+	// Mobile view
+	layout: '.layout',
+
+	// Sidebar
 	sidebar: '.sidebar',
 	heading: '.sidebar > li',
 	subheading: '.sidebar__menu-item--child',
@@ -106,8 +117,22 @@ export class SidebarComponent extends BaseContainer {
 	 *
 	 * @param {string} selector Any selector supported by Playwright.
 	 * @returns {Promise<void>} No return value.
+	 * @throws {assert.AssertionError} If on mobile the sidebar could not be toggled into view.
 	 */
 	async _click( selector: string ): Promise< void > {
+		const viewport_name = getViewportName();
+		// If mobile, sidebar is hidden by default and focus is on the content.
+		// The sidebar must be first brought into view.
+		if ( viewport_name === 'mobile' ) {
+			const navbarComponent = await NavbarComponent.Expect( this.page );
+			await navbarComponent.clickMySite();
+			const elementHandle = await this.page.waitForSelector( selectors.layout );
+			await elementHandle.waitForElementState( 'stable' );
+			const classAttributes = ( await elementHandle.getAttribute( 'class' ) ) as string;
+			const isSidebarOpen = classAttributes.includes( 'focus-sidebar' );
+			assert.strictEqual( isSidebarOpen, true );
+		}
+
 		// Wait for these promises in no particular order. We simply want to ensure the sidebar
 		// and the page is in a state to accept inputs.
 		await Promise.all( [
