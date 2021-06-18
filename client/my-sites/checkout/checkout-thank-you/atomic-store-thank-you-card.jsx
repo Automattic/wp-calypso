@@ -20,7 +20,7 @@ import {
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import user from 'calypso/lib/user';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import wpcom from 'calypso/lib/wp';
 
 const VERIFY_EMAIL_ERROR_NOTICE = 'ecommerce-verify-email-error';
@@ -42,7 +42,7 @@ class AtomicStoreThankYouCard extends Component {
 		}
 	}
 
-	checkVerification = () => user().fetch();
+	checkVerification = () => this.props.fetchCurrentUser();
 
 	resendEmail = () => {
 		const { translate } = this.props;
@@ -183,5 +183,5 @@ export default connect(
 			planClass,
 		};
 	},
-	{ errorNotice, removeNotice }
+	{ errorNotice, fetchCurrentUser, removeNotice }
 )( localize( AtomicStoreThankYouCard ) );
