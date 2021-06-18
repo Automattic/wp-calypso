@@ -128,9 +128,7 @@ class SpeedUpSiteSettings extends Component {
 				{ isPageOptimizeActive && (
 					<div className="site-settings__page-optimize">
 						<CompactCard href={ pageOptimizeUrl }>
-							{ translate(
-								'Optimizes JS and CSS for faster page load and render in the browser.'
-							) }
+							{ translate( 'Optimize JS and CSS for faster page load and render in the browser.' ) }
 						</CompactCard>
 					</div>
 				) }
