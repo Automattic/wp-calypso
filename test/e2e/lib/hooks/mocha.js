@@ -14,7 +14,9 @@ import { buildHooks as buildBrowserHooks } from './browser';
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 
 export const mochaHooks = async () => {
-	const tempDir = await mkdtemp( path.resolve( __dirname, '../../test-' ) );
+	const tempDir =
+		process.env.TEMP_ASSET_PATH || ( await mkdtemp( path.resolve( __dirname, '../../test-' ) ) );
+
 	let driver;
 	const hooks = {
 		afterAll: [],
