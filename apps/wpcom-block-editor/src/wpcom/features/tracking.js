@@ -13,7 +13,7 @@ import debugFactory from 'debug';
 import tracksRecordEvent from './tracking/track-record-event';
 import delegateEventTracking from './tracking/delegate-event-tracking';
 import { trackGlobalStylesTabSelected } from './tracking/wpcom-block-editor-global-styles-tab-selected';
-import { findChange } from './utils';
+import { findUpdate } from './utils';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -378,21 +378,41 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 	if ( kind === 'postType' && type === 'wp_global_styles' ) {
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
 		const entityContent = JSON.parse( editedEntity.content );
-		const updateContent = JSON.parse( updates.content );
+		const updatedContent = JSON.parse( updates.content );
 
-		const { keyMap, value } = findChange( updateContent, entityContent );
+		let { keyMap, value } = findUpdate( updatedContent, entityContent );
 
-		// Early return if no changes
+		// Early return if no changes.
+		// Sometimes a second GS update will happen but has no changes.
 		if ( ! keyMap.length ) {
 			return;
 		}
 
+		// No value returned implies something was removed instead of changed or added.
+		// Compare in reverse to know what was removed.
+		if ( ! value ) {
+			value = 'reset';
+			const reverseCompare = findUpdate( entityContent, updatedContent );
+			keyMap = reverseCompare.keyMap;
+		}
+
 		let blockName;
+		let elementType;
 		let changeType;
 		let propertyChanged;
 
 		if ( keyMap[ 1 ] === 'blocks' ) {
 			blockName = keyMap[ 2 ];
+			if ( keyMap[ 3 ] === 'elements' ) {
+				elementType = keyMap[ 4 ];
+				changeType = keyMap[ 5 ];
+				propertyChanged = keyMap[ 6 ];
+			} else {
+				changeType = keyMap[ 3 ];
+				propertyChanged = keyMap[ 4 ];
+			}
+		} else if ( keyMap[ 1 ] === 'elements' ) {
+			elementType = keyMap[ 2 ];
 			changeType = keyMap[ 3 ];
 			propertyChanged = keyMap[ 4 ];
 		} else {
@@ -401,10 +421,11 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 		}
 
 		tracksRecordEvent( 'wpcom-block-editor-global-styles-update', {
-			blockName,
-			changeType,
-			propertyChanged,
-			value,
+			block_type: blockName,
+			element_type: elementType,
+			section: changeType,
+			field: propertyChanged,
+			field_value: value,
 		} );
 	}
 };

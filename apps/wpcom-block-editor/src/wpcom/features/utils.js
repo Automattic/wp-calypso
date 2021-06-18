@@ -20,7 +20,18 @@ export const getEditorType = () => {
 	return undefined;
 };
 
-export const findChange = ( newContent, oldContent, keyMap = [] ) => {
+/**
+ * Finds a change between two like objects.
+ * Only the first found change is returned, this is useful if only
+ * one change is expected.
+ *
+ * @param {object} newContent The object that has had an update.
+ * @param {object} oldContent The original object to reference.
+ * @param {Array}  keyMap     Used in recursion.  A list of keys mapping to the changed item.
+ *
+ * @returns {object} Object containing a keyMap array and value for the changed item.
+ */
+export const findUpdate = ( newContent, oldContent, keyMap = [] ) => {
 	if ( isEqual( newContent, oldContent ) ) {
 		return { keyMap, value: null };
 	}
@@ -35,7 +46,7 @@ export const findChange = ( newContent, oldContent, keyMap = [] ) => {
 	} );
 
 	if ( addedKey && typeof newContent[ addedKey ] === 'object' ) {
-		return findChange( newContent[ addedKey ], oldContent?.[ addedKey ], keyMap );
+		return findUpdate( newContent[ addedKey ], oldContent?.[ addedKey ], keyMap );
 	}
 
 	return { keyMap, value: newContent[ addedKey ] };
