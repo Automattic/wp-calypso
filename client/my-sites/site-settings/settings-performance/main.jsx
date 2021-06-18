@@ -58,13 +58,13 @@ class SiteSettingsPerformance extends Component {
 
 		return (
 			<Main className="settings-performance site-settings site-settings__performance-settings">
-				<DocumentHead title={ translate( 'Site Settings' ) } />
+				<DocumentHead title={ translate( 'Performance Settings' ) } />
 				<JetpackDevModeNotice />
 				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="settings-performance__page-heading"
-					headerText={ translate( 'Settings' ) }
+					headerText={ translate( 'Performance Settings' ) }
 					subHeaderText={ translate( "Explore settings to improve your site's performance." ) }
 					align="left"
 				/>

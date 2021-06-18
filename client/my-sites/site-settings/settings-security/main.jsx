@@ -62,13 +62,13 @@ const SiteSettingsSecurity = ( {
 		<Main className="settings-security site-settings">
 			<QueryRewindState siteId={ siteId } />
 			<QuerySitePurchases siteId={ siteId } />
-			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<DocumentHead title={ translate( 'Security Settings' ) } />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="settings-security__page-heading"
-				headerText={ translate( 'Settings' ) }
+				headerText={ translate( 'Security Settings' ) }
 				subHeaderText={ translate( "Manage your site's security settings." ) }
 				align="left"
 			/>
