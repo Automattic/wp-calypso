@@ -254,7 +254,6 @@ class SharingButtonsOptions extends Component {
 			<Fragment>
 				<div className="sharing-buttons__panel">
 					{ siteId && <QueryPostTypes siteId={ siteId } /> }
-					<h4>{ translate( 'Options' ) }</h4>
 					<div className="sharing-buttons__fieldset-group">
 						{ this.getSharingShowOptionsElement() }
 						{ this.getCommentLikesOptionElement() }
