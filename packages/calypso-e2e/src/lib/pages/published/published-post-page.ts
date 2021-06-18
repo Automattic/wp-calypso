@@ -63,6 +63,7 @@ export class PublishedPostPage extends BaseContainer {
 	 */
 	async _click( selector: string ): Promise< void > {
 		const button = await this.frame.waitForSelector( selector );
+		await button.waitForElementState( 'stable' );
 		await button.click();
 	}
 
