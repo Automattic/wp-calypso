@@ -6,13 +6,18 @@ import classNames from 'classnames';
 import { useI18n } from '@wordpress/react-i18n';
 
 /**
+ * Internal Dependencies
+ */
+import ScreenSwitcher from './screen-switcher';
+
+/**
  * Style dependencies
  */
 import './style.scss';
 
 const isBoolean = ( val ) => 'boolean' === typeof val;
 
-const ScreenOptionsTab = ( { children } ) => {
+const ScreenOptionsTab = () => {
 	const ref = useRef( null );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const { __ } = useI18n();
@@ -62,7 +67,13 @@ const ScreenOptionsTab = ( { children } ) => {
 					} ) }
 				/>
 			</button>
-			{ isOpen && <div className={ 'screen-options-tab__children' }>{ children }</div> }
+			{ isOpen && (
+				<div className="screen-options-tab__wrapper">
+					<div className="screen-options-tab__dropdown" data-testid="screen-options-dropdown">
+						<ScreenSwitcher />
+					</div>
+				</div>
+			) }
 		</div>
 	);
 };

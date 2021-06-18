@@ -1,5 +1,10 @@
+@import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/colors';
+
+/*
+	Screen Options Tab
+ */
 
 $screen-options-icon-border-x: 5px;
 $screen-options-icon-border-y: 7px;
@@ -52,6 +57,60 @@ $screen-options-icon-border-y: 7px;
 	border-bottom: $screen-options-icon-border-y solid $gray-700;
 }
 
-.screen-options-tab__children {
+.screen-options-tab__wrapper {
 	position: relative;
+}
+
+.screen-options-tab__dropdown {
+	position: absolute;
+	top: 5px;
+	right: 0;
+	padding: 3px;
+	border: 1px solid var( --color-neutral-5 );
+	background-color: #ffffff;
+	box-shadow: 0 4px 10px rgba( 0, 0, 0, 0.1 );
+	width: 215px;
+	border-radius: 4px; /* stylelint-disable-line */
+}
+
+/*
+	Screen Switcher
+ */
+
+.screen-switcher__button {
+	cursor: pointer;
+	border-radius: 4px; /* stylelint-disable-line */
+	padding: 8px;
+	text-align: left;
+	border: 1px solid transparent;
+
+	&:hover,
+	&:focus {
+		border-color: var( --studio-pink-50 );
+	}
+
+	&:first-of-type {
+		margin-bottom: 4px; /* stylelint-disable-line */
+
+		// When the user sees this component they are going to be in Calypso
+		// so it's safe to assume the Calypso option is always going to be active.
+		> strong {
+			color: var( --studio-pink-50 );
+		}
+	}
+
+	&:last-of-type {
+		margin-bottom: 0;
+	}
+
+	strong {
+		display: inline-block;
+		font-size: $default-font-size;
+		margin-bottom: 4px;
+	}
+
+	p {
+		font-size: $font-body-extra-small;
+		margin-bottom: 0;
+	}
 }
