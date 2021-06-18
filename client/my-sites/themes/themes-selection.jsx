@@ -158,13 +158,16 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, upsellUrl, listLabel } = this.props;
+		const { source, query, upsellUrl, listLabel, noMarginBeforeHeader } = this.props;
 
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
 				{ ! this.props.recommendedThemes && (
-					<ThemesSelectionHeader label={ listLabel } source={ source } />
+					<ThemesSelectionHeader
+						label={ listLabel }
+						noMarginBeforeHeader={ noMarginBeforeHeader }
+					/>
 				) }
 				<ThemesList
 					upsellUrl={ upsellUrl }

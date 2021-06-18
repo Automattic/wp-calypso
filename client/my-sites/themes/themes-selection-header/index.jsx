@@ -12,10 +12,12 @@ import { useTranslate } from 'i18n-calypso';
  */
 import './style.scss';
 
-const ThemesSelectionHeader = ( { label, source } ) => {
+const ThemesSelectionHeader = ( { label, noMarginBeforeHeader } ) => {
 	const translate = useTranslate();
 
-	const classes = classNames( 'themes__themes-selection-header', `source-${ source }` );
+	const classes = classNames( 'themes__themes-selection-header', {
+		'margin-before-header': ! noMarginBeforeHeader,
+	} );
 
 	return (
 		<div className={ classes }>
