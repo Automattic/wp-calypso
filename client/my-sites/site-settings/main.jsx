@@ -20,6 +20,7 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import SiteSettingsNavigation from './navigation';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies
@@ -45,6 +46,7 @@ const SiteSettingsComponent = ( { siteId, translate } ) => {
 					'Manage your site settings, including language, time zone, site visibility, and more.'
 				) }
 				align="left"
+				hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 			/>
 			<SiteSettingsNavigation section={ 'general' } />
 			<GeneralSettings />
