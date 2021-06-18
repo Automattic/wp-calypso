@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -21,7 +22,16 @@ export default () => ( {
 	handler: ( _event, target ) => {
 		const item = target.querySelector( '.components-menu-item__item' );
 		if ( item?.innerText === __( 'Detach blocks from template part' ) ) {
-			tracksRecordEvent( 'wpcom_block_editor_template_part_detach_blocks' );
+			const block = select( 'core/block-editor' ).getSelectedBlock();
+			const templatePartId = `${ block.attributes.theme }//${ block.attributes.slug }`;
+			const templatePart = select( 'core' ).getEditedEntityRecord(
+				'postType',
+				'wp_template_part',
+				templatePartId
+			);
+			tracksRecordEvent( 'wpcom_block_editor_template_part_detach_blocks', {
+				variation_slug: templatePart.area,
+			} );
 		}
 	},
 } );
