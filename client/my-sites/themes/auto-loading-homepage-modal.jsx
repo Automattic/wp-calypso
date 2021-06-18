@@ -26,11 +26,13 @@ import {
 	getPreActivateThemeId,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import {
 	acceptAutoLoadingHomepageWarning,
 	hideAutoLoadingHomepageWarning,
 	activate as activateTheme,
 } from 'calypso/state/themes/actions';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Style dependencies
@@ -141,7 +143,13 @@ class AutoLoadingHomepageModal extends Component {
 			return null;
 		}
 
-		const { name: themeName, id: themeId } = this.props.theme;
+		const { name: themeName, id: themeId, stylesheet } = this.props.theme;
+
+		// is HTTPS always appropriate?
+		const iframeSrcKeepHomepage = addQueryArgs( 'https://' + this.props.siteDomain, {
+			theme: stylesheet,
+			hide_banners: 'true',
+		} );
 
 		return (
 			<Dialog
@@ -179,8 +187,12 @@ class AutoLoadingHomepageModal extends Component {
 						} ) }
 					</h1>
 					<div className="themes__theme-preview-items">
-						<div className="themes__theme-preview-item">
-							<img src="https://placedog.net/500" alt="" />
+						<div className="themes__theme-preview-item themes__theme-preview-item-iframe-container">
+							<iframe
+								title={ translate( 'Preview of current homepage with new theme applied' ) }
+								src={ iframeSrcKeepHomepage }
+							/>
+							{ /* <img src="https://placedog.net/500" alt="" /> */ }
 							<FormLabel>
 								<FormRadio
 									value="keep_current_homepage"
@@ -203,6 +215,16 @@ class AutoLoadingHomepageModal extends Component {
 								/>
 							</FormLabel>
 						</div>
+					</div>
+					<div
+						style={ { backgroundColor: 'rgb( 252, 165, 165 )', padding: '4px', fontSize: '10px' } }
+					>
+						Current issues:
+						<ul>
+							<li> Iframe doesn't block clicks </li>
+							<li> Iframe should be zoomed out? </li>
+							<li> Right side preview missing</li>
+						</ul>
 					</div>
 					<div className="themes__autoloading-homepage-option-description">
 						{ this.state.homepageAction === 'keep_current_homepage' && (
@@ -252,6 +274,7 @@ export default connect(
 
 		return {
 			siteId,
+			siteDomain: getSiteDomain( state, siteId ),
 			installingThemeId,
 			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
 			isActivating: !! isActivatingTheme( state, siteId ),

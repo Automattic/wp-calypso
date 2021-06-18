@@ -73,3 +73,11 @@
 		margin: 1em;
 	}
 }
+
+.themes__theme-preview-item-iframe-container {
+	display: flex;
+	flex-direction: column;
+	iframe {
+		flex-grow: 1;
+	}
+}
