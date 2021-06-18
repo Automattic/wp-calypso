@@ -13,6 +13,7 @@ import wpcomBlockDonationsPlanUpgrade from './wpcom-block-donations-plan-upgrade
 import wpcomBlockDonationsStripeConnect from './wpcom-block-donations-stripe-connect';
 import wpcomBlockPremiumContentPlanUpgrade from './wpcom-block-premium-content-plan-upgrade';
 import wpcomBlockPremiumContentStripeConnect from './wpcom-block-premium-content-stripe-connect';
+import wpcomBlockEditorCustomPostTemplateActionsClick from './wpcom-block-editor-custom-post-template-actions-click';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -48,6 +49,7 @@ const EVENTS_MAPPING = [
 	wpcomBlockDonationsStripeConnect(),
 	wpcomBlockPremiumContentPlanUpgrade(),
 	wpcomBlockPremiumContentStripeConnect(),
+	wpcomBlockEditorCustomPostTemplateActionsClick(),
 ];
 const EVENTS_MAPPING_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => capture );
 const EVENTS_MAPPING_NON_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => ! capture );
