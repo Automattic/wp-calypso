@@ -37,8 +37,8 @@ $screen-options-icon-border-y: 7px;
 	}
 
 	&:focus-visible {
-		border-color: var( --studio-blue-50 );
-		box-shadow: 0 0 3px var( --studio-blue-10 );
+		border-color: var( --color-primary-light );
+		box-shadow: 0 0 3px var( --color-primary-light );
 	}
 }
 

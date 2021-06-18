@@ -107,7 +107,7 @@ class PagesMain extends React.Component {
 							: translate( 'Create, edit, and manage the pages on your sites.' )
 					}
 					align="left"
-					hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) ? true : false }
+					hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ status } />
 				<PageList siteId={ siteId } status={ status } search={ search } query={ query } />
