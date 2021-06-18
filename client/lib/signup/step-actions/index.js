@@ -47,7 +47,7 @@ const Visibility = Site.Visibility;
 import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 
-import SignupCart from 'calypso/lib/signup/cart';
+import { createCart, addToCart } from 'calypso/lib/signup/cart';
 
 // Others
 import flows from 'calypso/signup/config/flows';
@@ -76,25 +76,22 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			domainItem,
 		};
 
-		const domainChoiceCart = [ domainItem ];
-		SignupCart.createCart( cartKey, domainChoiceCart, ( error ) =>
-			callback( error, providedDependencies )
-		);
+		const domainChoiceCart = [ domainItem ].filter( Boolean );
+		createCart( cartKey, domainChoiceCart, ( error ) => callback( error, providedDependencies ) );
 	} else if ( designType === 'existing-site' ) {
 		const providedDependencies = {
 			siteId,
 			siteSlug,
 		};
+		const products = [
+			dependencies.domainItem,
+			dependencies.privacyItem,
+			dependencies.cartItem,
+		].filter( Boolean );
 
-		SignupCart.createCart(
-			siteId,
-			[ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ].filter(
-				Boolean
-			),
-			( error ) => {
-				callback( error, providedDependencies );
-			}
-		);
+		createCart( siteId, products, ( error ) => {
+			callback( error, providedDependencies );
+		} );
 	} else {
 		const newSiteData = {
 			cartItem,
@@ -384,12 +381,13 @@ function processItemCart(
 	themeSlugWithRepo
 ) {
 	const addToCartAndProceed = () => {
+		debug( 'adding cart items', newCartItems );
 		const newCartItemsToAdd = newCartItems.map( ( item ) =>
 			addPrivacyProtectionIfSupported( item, reduxStore.getState() )
 		);
 
 		if ( newCartItemsToAdd.length ) {
-			SignupCart.addToCart( siteSlug, newCartItemsToAdd, function ( cartError ) {
+			addToCart( siteSlug, newCartItemsToAdd, function ( cartError ) {
 				callback( cartError, providedDependencies );
 			} );
 		} else {
