@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import PurchaseDetail from 'calypso/components/purchase-detail';
+import { hasCustomDomain } from 'calypso/lib/site/utils';
 
 /**
  * Image dependencies
@@ -53,6 +54,8 @@ const CustomDomainPurchaseDetail = ( {
 				href={ `/domains/add/${ selectedSite.slug }` }
 			/>
 		);
+	} else if ( ! hasDomainCredit && hasCustomDomain( selectedSite ) ) {
+		return null;
 	} else if ( hasNonPrimaryDomainsFlag && registeredDomain ) {
 		const actionButton = {};
 		actionButton.buttonText = translate( 'Change primary domain' );
