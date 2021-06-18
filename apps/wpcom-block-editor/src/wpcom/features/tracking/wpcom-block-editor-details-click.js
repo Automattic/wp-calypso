@@ -10,7 +10,11 @@ import tracksRecordEvent from './track-record-event';
  */
 export default () => ( {
 	id: 'wpcom-block-editor-details-click',
-	selector: '.edit-post-header .table-of-contents button[aria-disabled="false"]',
+	selector:
+		'.edit-post-header .table-of-contents button[aria-disabled="false"][aria-expanded="false"]',
 	type: 'click',
+	// We need to run this event listener before the button's aria-expanded
+	// attribute is changed. This makes sure we only track opens.
+	capture: true,
 	handler: () => tracksRecordEvent( 'wpcom_block_editor_details_click' ),
 } );
