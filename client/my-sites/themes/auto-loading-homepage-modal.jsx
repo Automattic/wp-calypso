@@ -226,14 +226,6 @@ class AutoLoadingHomepageModal extends Component {
 							</FormLabel>
 						</div>
 					</div>
-					<div
-						style={ { backgroundColor: 'rgb( 252, 165, 165 )', padding: '4px', fontSize: '10px' } }
-					>
-						Current issues:
-						<ul>
-							<li> Iframe doesn't block clicks </li>
-						</ul>
-					</div>
 					<div className="themes__autoloading-homepage-option-description">
 						{ this.state.homepageAction === 'keep_current_homepage' && (
 							<p>
