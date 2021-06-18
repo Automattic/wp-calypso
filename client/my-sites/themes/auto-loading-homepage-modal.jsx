@@ -194,6 +194,7 @@ class AutoLoadingHomepageModal extends Component {
 					<div className="themes__theme-preview-items">
 						<div className="themes__theme-preview-item themes__theme-preview-item-iframe-container">
 							<iframe
+								loading="lazy"
 								title={ translate( 'Preview of current homepage with new theme applied' ) }
 								src={ iframeSrcKeepHomepage }
 							/>
