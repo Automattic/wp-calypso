@@ -120,4 +120,11 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 			return await this.driver.findElement( insertedBlockLocator ).getAttribute( 'id' );
 		} );
 	}
+
+	async toggleListView() {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.edit-site-header-toolbar__list-view-toggle' )
+		);
+	}
 }

@@ -662,4 +662,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			)
 		);
 	}
+
+	async toggleListView() {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.edit-post-header-toolbar__list-view-toggle' )
+		);
+	}
 }

@@ -358,6 +358,17 @@ const trackErrorNotices = ( content, options ) =>
 	} );
 
 /**
+ * Track list view open and close events.
+ *
+ * @param {boolean} isOpen new state of the list view
+ */
+const trackListViewToggle = ( isOpen ) => {
+	tracksRecordEvent( 'wpcom_block_editor_list_view_toggle', {
+		is_open: isOpen,
+	} );
+};
+
+/**
  * Tracker can be
  * - string - which means it is an event name and should be tracked as such automatically
  * - function - in case you need to load additional properties from the action.
@@ -394,6 +405,12 @@ const REDUX_TRACKING = {
 	},
 	'core/notices': {
 		createErrorNotice: trackErrorNotices,
+	},
+	'core/edit-site': {
+		setIsListViewOpened: trackListViewToggle,
+	},
+	'core/edit-post': {
+		setIsListViewOpened: trackListViewToggle,
 	},
 };
 
