@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { debounce, isEmpty, merge } from 'lodash';
+import { debounce, isEmpty, mapValues, merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,13 +19,12 @@ import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-
 import isRequestingContactDetailsCache from 'calypso/state/selectors/is-requesting-contact-details-cache';
 import { requestContactDetailsCache, saveWhois } from 'calypso/state/domains/management/actions';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import {
-	getWhoisSaveError,
-	getWhoisSaveSuccess,
-	isUpdatingWhois,
-} from 'calypso/state/domains/management/selectors';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { DESIGNATED_AGENT, DOMAIN_REGISTRATION_AGREEMENTS } from 'calypso/lib/url/support';
+import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 
 import wp from 'calypso/lib/wp';
 
@@ -35,19 +34,24 @@ const wpcom = wp.undocumented();
  * Style dependencies
  */
 import './list-all.scss';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
-import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
 
 class BulkEditContactInfo extends React.Component {
 	static propTypes = {
-		domainNamesList: PropTypes.array.isRequired,
+		handleSaveContactInfo: PropTypes.func.isRequired,
+		isDisabled: PropTypes.bool,
+		isSubmitting: PropTypes.bool,
+		onTransferLockOptOutChange: PropTypes.func.isRequired,
+		emailOnly: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		isDisabled: false,
+		isSubmitting: false,
+		emailOnly: false,
 	};
 
 	state = {
-		isLoadingUserSettings: false,
-		hasLoadedContactDetails: false,
+		hasSetContactDetailsFromCache: false,
 		contactDetails: {},
 		errorMessages: {},
 	};
@@ -75,19 +79,23 @@ class BulkEditContactInfo extends React.Component {
 
 		if (
 			! isEmpty( this.props.contactDetailsCache ) &&
-			false === this.state.hasLoadedContactDetails
+			false === this.state.hasSetContactDetailsFromCache
 		) {
 			this.setContactDetailsFromCache( this.props.contactDetailsCache );
 		}
 	}
 
 	isLoading() {
-		return isEmpty( this.props.contactDetailsCache ) || this.props.isRequestingContactDetailsCache;
+		return (
+			isEmpty( this.props.contactDetailsCache ) ||
+			this.props.isRequestingContactDetailsCache ||
+			this.props.isFetchingUserSettings
+		);
 	}
 
 	setContactDetailsFromCache = ( data ) => {
 		delete data.email;
-		this.setState( { hasLoadedContactDetails: true }, () => {
+		this.setState( { hasSetContactDetailsFromCache: true }, () => {
 			this.updateDomainContactFields( data );
 		} );
 	};
@@ -98,27 +106,39 @@ class BulkEditContactInfo extends React.Component {
 		! isEmpty( newContactDetails ) && this.debouncedValidateContactDetails( newContactDetails );
 	};
 
-	submit = () => {
-		console.log( this.props.domainNamesList );
-		console.log( this.state.contactDetails );
+	onTransferLockOptOutChange = ( event ) => {
+		this.props.onTransferLockOptOutChange( event.target.checked );
 	};
 
 	validateContactDetails = ( contactDetails ) => {
+		if ( this.isLoading() ) {
+			return;
+		}
+
 		wpcom.validateDomainContactInformation( contactDetails, [], ( error, data ) => {
+			let errorMessages = ( data && data.messages ) || {};
+			if ( ! isEmpty( errorMessages ) ) {
+				errorMessages = mapValues( errorMessages, ( errors ) => {
+					return Array.isArray( errors ) ? errors.join( ' ' ) : errors;
+				} );
+			}
+
 			this.setState( {
-				errorMessages: ( data && data.messages ) || {},
+				errorMessages,
 			} );
 		} );
 	};
 
+	handleSaveContactInfo = () => this.props.handleSaveContactInfo( this.state.contactDetails );
+
 	renderTransferLockOptOut() {
-		const { domainRegistrationAgreementUrl, translate } = this.props;
+		const { translate } = this.props;
 		return (
 			<div>
 				<FormLabel>
 					<FormCheckbox
 						name="transfer-lock-opt-out"
-						disabled={ this.state.formSubmitting }
+						disabled={ this.props.disabled || this.props.isSubmitting }
 						onChange={ this.onTransferLockOptOutChange }
 					/>
 					<span>
@@ -135,15 +155,13 @@ class BulkEditContactInfo extends React.Component {
 						} ) }
 					</span>
 				</FormLabel>
-				<DesignatedAgentNotice
-					domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
-					saveButtonLabel={ translate( 'Save contact info' ) }
-				/>
+				<DesignatedAgentNotice saveButtonLabel={ translate( 'Save contact info' ) } />
 			</div>
 		);
 	}
 
 	render() {
+		const { emailOnly, isDisabled, isSubmitting } = this.props;
 		const { contactDetails, errorMessages } = this.state;
 
 		return (
@@ -153,13 +171,20 @@ class BulkEditContactInfo extends React.Component {
 					contactDetails={ contactDetails }
 					contactDetailsErrors={ errorMessages }
 					updateDomainContactFields={ this.updateDomainContactFields }
-					shouldShowContactDetailsValidationErrors={ true }
+					shouldShowContactDetailsValidationErrors={ ! this.isLoading() }
 					isLoggedOutCart={ false }
+					isDisabled={ isDisabled || isSubmitting }
+					emailOnly={ emailOnly }
 				/>
 				{ this.renderTransferLockOptOut() }
 				<div className="list__form-buttons">
-					<Button primary onClick={ this.submit }>
-						{ this.props.translate( 'Submit' ) }
+					<Button
+						primary
+						onClick={ this.handleSaveContactInfo }
+						disabled={ isDisabled }
+						busy={ isSubmitting }
+					>
+						{ this.props.translate( 'Save contact info' ) }
 					</Button>
 				</div>
 			</>
@@ -173,15 +198,12 @@ const trackBulkUpdateContactInfoSubmit = ( domainNamesList ) =>
 	} );
 
 export default connect(
-	( state, props ) => {
+	( state ) => {
 		return {
 			contactDetailsCache: getContactDetailsCache( state ),
+			isFetchingUserSettings: isFetchingUserSettings( state ),
 			isRequestingContactDetailsCache: isRequestingContactDetailsCache( state ),
 			userSettings: getUserSettings( state ),
-
-			// isUpdatingWhois: isUpdatingWhois( state, props.selectedDomain.name ),
-			// whoisSaveError: getWhoisSaveError( state, props.selectedDomain.name ),
-			// whoisSaveSuccess: getWhoisSaveSuccess( state, props.selectedDomain.name ),
 		};
 	},
 	{

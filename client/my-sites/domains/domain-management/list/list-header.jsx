@@ -84,7 +84,10 @@ class ListHeader extends React.PureComponent {
 	}
 
 	renderHeaderContent() {
-		if ( ListAllActions.editContactInfo === this.props?.action ) {
+		if (
+			ListAllActions.editContactInfo === this.props?.action ||
+			ListAllActions.editContactEmail === this.props?.action
+		) {
 			return <strong>Update the selected domains with the contact information above.</strong>;
 		}
 

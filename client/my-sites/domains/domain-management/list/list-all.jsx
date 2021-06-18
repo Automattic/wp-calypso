@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, isEmpty, keyBy, keys, reduce, times } from 'lodash';
+import { isEmpty, keyBy, keys, reduce, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
@@ -54,9 +54,6 @@ import { isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
  * Style dependencies
  */
 import './list-all.scss';
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-import isRequestingContactDetailsCache from 'calypso/state/selectors/is-requesting-contact-details-cache';
-import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 
 class ListAll extends Component {
 	static propTypes = {
@@ -71,6 +68,7 @@ class ListAll extends Component {
 
 	state = {
 		selectedDomains: {},
+		transferLockOptOut: false,
 	};
 
 	renderedQuerySiteDomains = {};
@@ -81,10 +79,10 @@ class ListAll extends Component {
 	};
 
 	handleDomainItemClick = ( domain ) => {
-		const { action, sites, currentRoute } = this.props;
+		const { sites, currentRoute } = this.props;
 		const site = sites[ domain.blogId ];
 
-		if ( ListAllActions.editContactInfo === action ) {
+		if ( this.shouldShowContactForm() ) {
 			return;
 		}
 
@@ -92,7 +90,9 @@ class ListAll extends Component {
 	};
 
 	handleDomainItemToggle = ( checked, domain ) => {
-		console.log( checked, domain );
+		const selectedDomains = { ...this.state.selectedDomains, [ domain ]: checked };
+
+		this.setState( { selectedDomains } );
 	};
 
 	headerButtons() {
@@ -131,24 +131,28 @@ class ListAll extends Component {
 		return this.isLoading() || this.isRequestingSiteDomains();
 	}
 
+	shouldShowContactForm() {
+		return ListAllActions.editContactEmail === this.props?.action;
+	}
+
 	shouldShowCheckbox() {
-		return ListAllActions.editContactInfo === this.props.action;
+		return this.shouldShowContactForm();
 	}
 
 	shouldShowDomainDetails() {
-		return ListAllActions.editContactInfo !== this.props.action;
+		return ! this.shouldShowContactForm();
 	}
 
 	shouldDefaultToChecked() {
-		return ListAllActions.editContactInfo === this.props.action;
+		return this.shouldShowContactForm();
 	}
 
 	shouldLazyLoadSiteDomainsDetails() {
-		return ListAllActions.editContactInfo !== this.props.action;
+		return ! this.shouldShowContactForm();
 	}
 
 	shouldRenderDomainItem( domain, domainDetails ) {
-		if ( ListAllActions.editContactInfo === this.props.action ) {
+		if ( this.shouldShowContactForm() ) {
 			return (
 				! isEmpty( domainDetails ) &&
 				domainTypes.REGISTERED === domain.type &&
@@ -180,6 +184,9 @@ class ListAll extends Component {
 		const { currentRoute, domainsDetails, sites, requestingSiteDomains } = this.props;
 		const domainDetails = this.findDomainDetails( domainsDetails, domain );
 
+		const { selectedDomains } = this.state;
+		const isChecked = selectedDomains[ domain.domain ] ?? false;
+
 		return (
 			<React.Fragment key={ `domain-item-${ index }-${ domain.name }` }>
 				{ domain?.blogId && this.shouldLazyLoadSiteDomainsDetails() ? (
@@ -203,7 +210,7 @@ class ListAll extends Component {
 						}
 						onClick={ this.handleDomainItemClick }
 						onToggle={ this.handleDomainItemToggle }
-						defaultChecked={ this.shouldDefaultToChecked() }
+						isChecked={ isChecked }
 					/>
 				) }
 			</React.Fragment>
@@ -230,22 +237,85 @@ class ListAll extends Component {
 	}
 
 	renderHeaderButtons() {
-		if ( ListAllActions.editContactInfo === this.props.action ) {
+		if ( this.shouldShowContactForm() ) {
 			return;
 		}
 
 		return <div className="list-all__heading-buttons">{ this.headerButtons() }</div>;
 	}
 
+	handleContactInfoTransferLockOptOutChange = ( transferLockOptOut ) => {
+		this.setState( { transferLockOptOut } );
+	};
+
+	handleSaveContactInfo = ( contactInfo ) => {
+		console.log( contactInfo );
+		console.log( this.state.transferLockOptOut );
+
+		// submit = () => {
+		// 	const { domainNamesList } = this.props;
+		// 	const { contactDetails, transferLock } = this.state;
+		//
+		// 	console.log( domainNamesList );
+		// 	console.log( contactDetails );
+		// 	console.log( transferLock );
+		//
+		//
+		// 	// return wpcom
+		// 	// .undocumented()
+		// 	// .updateWhois( domain, whoisData, transferLock )
+		// 	// .then( ( data ) => {
+		// 	// 	dispatch( updateWhois( domain, whoisData ) );
+		// 	// 	dispatch( {
+		// 	// 		type: DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
+		// 	// 		domain,
+		// 	// 		data,
+		// 	// 	} );
+		// 	// } )
+		// 	// .catch( ( error ) => {
+		// 	// 	dispatch( {
+		// 	// 		type: DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
+		// 	// 		domain,
+		// 	// 		error,
+		// 	// 	} );
+		// 	// } );
+		//
+		// 	const saveWhoisPromises = map( domainNamesList, ( domainName ) => {
+		// 		return wpcom.updateWhois( domainName, contactDetails, transferLock ).then( ( data ) => {
+		// 			console.log( data );
+		// 		} );
+		// 	} );
+		//
+		// 	Promise.allSettled( saveWhoisPromises ).then( ( results ) => {
+		// 		console.log( results );
+		// 	} );
+		//
+		// 	// this.props.domainNamesList.forEach( ( domainName ) => {
+		// 	// 	this.setState(
+		// 	// 		{
+		// 	// 			formSubmitting: true,
+		// 	// 		},
+		// 	// 		() => {
+		// 	// 			this.props.saveWhois( domainName, contactDetails, transferLock );
+		// 	// 		}
+		// 	// 	);
+		// 	// } );
+		// };
+	};
+
 	renderActionForm() {
-		if ( ! this.isLoading() && ListAllActions.editContactInfo === this.props.action ) {
+		if ( ! this.isLoading() && this.shouldShowContactForm() ) {
 			return (
 				<Card>
 					<CardHeading>
 						{ this.props.translate( 'Edit Contact Info For Selected Domains' ) }
 					</CardHeading>
 					<BulkEditContactInfo
-						domainNamesList={ this.filteredDomains().map( ( domain ) => domain.domain ) }
+						isDisabled={ false }
+						isSubmitting={ false }
+						onTransferLockOptOutChange={ this.handleContactInfoTransferLockOptOutChange }
+						handleSaveContactInfo={ this.handleSaveContactInfo }
+						emailOnly={ ListAllActions.editContactEmail === this.props?.action }
 					/>
 				</Card>
 			);
@@ -268,7 +338,7 @@ class ListAll extends Component {
 		const { domainsList, translate, user } = this.props;
 
 		if (
-			ListAllActions.editContactInfo !== this.props.action &&
+			this.shouldShowContactForm() &&
 			domainsList.length > 0 &&
 			this.filteredDomains().length === 0
 		) {

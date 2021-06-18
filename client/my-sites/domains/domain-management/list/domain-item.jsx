@@ -68,7 +68,7 @@ class DomainItem extends PureComponent {
 		enableSelection: PropTypes.bool,
 		isChecked: PropTypes.bool,
 		showDomainDetails: PropTypes.bool,
-		defaultChecked: PropTypes.bool,
+		isEnabled: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -80,7 +80,7 @@ class DomainItem extends PureComponent {
 		isBusy: false,
 		isChecked: false,
 		showDomainDetails: true,
-		defaultChecked: false,
+		isEnabled: false,
 	};
 
 	handleClick = ( e ) => {
@@ -457,11 +457,10 @@ class DomainItem extends PureComponent {
 			domain,
 			domainDetails,
 			isChecked,
+			isEnabled,
 			isManagingAllSites,
 			showCheckbox,
 			enableSelection,
-			defaultChecked,
-			s,
 		} = this.props;
 		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
 
@@ -479,13 +478,13 @@ class DomainItem extends PureComponent {
 						className="domain-item__checkbox"
 						onChange={ this.onToggle }
 						onClick={ this.stopPropagation }
-						defaultChecked={ defaultChecked }
+						checked={ isChecked }
 					/>
 				) }
 				{ enableSelection && (
 					<FormRadio
 						className="domain-item__checkbox"
-						checked={ isChecked }
+						checked={ isEnabled }
 						onClick={ this.onSelect }
 					/>
 				) }

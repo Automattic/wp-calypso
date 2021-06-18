@@ -23,4 +23,5 @@ export const getDomainManagementPath = ( domainName, domainType, siteSlug, curre
 
 export const ListAllActions = {
 	editContactInfo: 'edit-contact-info',
+	editContactEmail: 'edit-contact-email',
 };
