@@ -8,10 +8,10 @@ import { get, truncate } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
-import user from 'calypso/lib/user';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { acceptedNotice } from 'calypso/my-sites/invites/utils';
 import { getInviteForSite } from 'calypso/state/invites/selectors';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { receiveSite } from 'calypso/state/sites/actions';
 import {
@@ -232,8 +232,7 @@ export function acceptInvite( invite ) {
 
 			if ( invite.role !== 'follower' && invite.role !== 'viewer' ) {
 				dispatch( receiveSite( data.site ) );
-				// @TODO: Replace with Redux user fetching once lib/user is fully reduxified
-				await user().fetch();
+				await dispatch( fetchCurrentUser() );
 			}
 
 			if ( ! invite.site.is_vip ) {
