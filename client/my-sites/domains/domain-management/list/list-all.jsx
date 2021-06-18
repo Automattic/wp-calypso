@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { isEmpty, keyBy, keys, reduce, times } from 'lodash';
+import { isEmpty, keyBy, keys, map, reduce, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
@@ -60,6 +60,7 @@ class ListAll extends Component {
 		canManageSitesMap: PropTypes.object.isRequired,
 		currentRoute: PropTypes.string.isRequired,
 		domainsList: PropTypes.array.isRequired,
+		filteredDomainsList: PropTypes.array.isRequired,
 		sites: PropTypes.object.isRequired,
 		user: PropTypes.object.isRequired,
 		addDomainClick: PropTypes.func.isRequired,
@@ -72,6 +73,31 @@ class ListAll extends Component {
 	};
 
 	renderedQuerySiteDomains = {};
+
+	componentDidUpdate( prevProps ) {
+		const prevDomainsList = map( prevProps.filteredDomainsList, ( domain ) => {
+			return domain.domain;
+		} );
+		const newDomainsList = map( this.props.filteredDomainsList, ( domain ) => {
+			return domain.domain;
+		} );
+
+		const domainsToAdd = newDomainsList.filter(
+			( domain ) => ! prevDomainsList.includes( domain )
+		);
+
+		if ( ! isEmpty( domainsToAdd ) ) {
+			this.addToSelectedDomains( domainsToAdd );
+		}
+	}
+
+	addToSelectedDomains = ( domainsToAdd ) => {
+		const newSelectedDomains = domainsToAdd.reduce(
+			( list, domain ) => ( ( list[ domain ] = true ), list ),
+			{}
+		);
+		this.setState( { selectedDomains: { ...this.state.selectedDomains, ...newSelectedDomains } } );
+	};
 
 	clickAddDomain = () => {
 		this.props.addDomainClick();
