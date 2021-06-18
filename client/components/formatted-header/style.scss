@@ -2,8 +2,13 @@
 	margin: 16px 0 24px;
 	text-align: center;
 
+	&.has-screen-options {
+		margin: 32px 0 24px 16px;
+	}
+
 	@include breakpoint-deprecated( '>960px' ) {
 		margin-bottom: 35px;
+		margin-top: 16px;
 
 		&.is-without-subhead {
 			margin-bottom: 24px;
@@ -13,6 +18,10 @@
 	&.is-left-align,
 	&.is-right-align {
 		margin: 16px;
+
+		&.has-screen-options {
+			margin: 32px 16px 16px 16px;
+		}
 
 		@include breakpoint-deprecated( '>660px' ) {
 			margin: 0 0 16px;

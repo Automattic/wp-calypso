@@ -31,6 +31,7 @@ import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import { successNotice } from 'calypso/state/notices/actions';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies
@@ -84,6 +85,7 @@ const Home = ( {
 				headerText={ translate( 'My Home' ) }
 				subHeaderText={ translate( 'Your hub for posting, editing, and growing your site.' ) }
 				align="left"
+				hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 			/>
 			<div className="customer-home__view-site-button">
 				<Button href={ site.URL } onClick={ trackViewSiteAction }>

@@ -32,6 +32,7 @@ import searchUrl from 'calypso/lib/search-url';
 import { editMedia, deleteMedia } from 'calypso/state/media/thunks';
 import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies
@@ -378,6 +379,7 @@ class Media extends Component {
 						'Manage all the media on your site, including images, video, and more.'
 					) }
 					align="left"
+					hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 				/>
 				{ this.showDialog() && (
 					<EditorMediaModalDialog
