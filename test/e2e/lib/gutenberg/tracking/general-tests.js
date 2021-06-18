@@ -99,4 +99,19 @@ export function createGeneralTests( { it, editorType, postType } ) {
 			`"wpcom_block_inserted" editor tracking event failed to fire twice for core/columns`
 		);
 	} );
+
+	it( 'Tracks "wpcom_block_editor_list_view_toggle" event', async function () {
+		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+		await editor.toggleListView(); // Open list view
+		await editor.toggleListView(); // Close list view
+
+		const eventsStack = await getEventsStack( this.driver );
+		const toggleEvents = eventsStack.filter(
+			( [ eventName ] ) => eventName === 'wpcom_block_editor_list_view_toggle'
+		);
+		assert.strictEqual( toggleEvents.length, 2 );
+		assert.strictEqual( toggleEvents[ 0 ][ 1 ].is_open, false );
+		assert.strictEqual( toggleEvents[ 1 ][ 1 ].is_open, true );
+	} );
 }
