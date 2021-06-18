@@ -10,7 +10,6 @@ import page from 'page';
  * Internal dependencies
  */
 import FoldableCard from 'calypso/components/foldable-card';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getSiteFrontPage,
@@ -20,8 +19,8 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import { getGSuiteSupportedDomains } from 'calypso/lib/gsuite';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getDomainsEligibleToPurchaseEmail } from 'calypso/lib/domains';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import ActionBox from './action-box';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -42,7 +41,7 @@ export const QuickLinks = ( {
 	customizeUrl,
 	isStaticHomePage,
 	showCustomizer,
-	hasCustomDomain,
+	canAddEmail,
 	menusUrl,
 	editHomepageAction,
 	writePostAction,
@@ -125,7 +124,7 @@ export const QuickLinks = ( {
 				label={ translate( 'Change theme' ) }
 				materialIcon="view_quilt"
 			/>
-			{ hasCustomDomain ? (
+			{ canAddEmail ? (
 				<ActionBox
 					onClick={ addEmailAction }
 					label={ translate( 'Add email' ) }
@@ -308,8 +307,7 @@ const mapStateToProps = ( state ) => {
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),
 		showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
-		hasCustomDomain:
-			getGSuiteSupportedDomains( domains ).length > 0 && canUserPurchaseGSuite( state ),
+		canAddEmail: getDomainsEligibleToPurchaseEmail( domains ).length > 0,
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
