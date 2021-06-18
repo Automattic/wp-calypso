@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
+import userFactory from 'calypso/lib/user';
 import { clearStore, getStoredUserId, setStoredUserId } from 'calypso/lib/user/store';
 import { CURRENT_USER_FETCH, CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
 import { filterUserObject, getLogoutUrl } from 'calypso/lib/user/shared-utils';
@@ -20,26 +21,44 @@ export function setCurrentUser( user ) {
 	};
 }
 
+let fetchingUser = null;
+
 export function fetchCurrentUser() {
-	return async ( dispatch ) => {
+	return ( dispatch ) => {
+		if ( fetchingUser ) {
+			return fetchingUser;
+		}
+
 		dispatch( {
 			type: CURRENT_USER_FETCH,
 		} );
 
-		try {
-			const user = await wpcom.me().get( {
+		fetchingUser = wpcom
+			.me()
+			.get( {
 				meta: 'flags',
+			} )
+			.then( async ( user ) => {
+				const userData = filterUserObject( user );
+
+				const storedUserId = getStoredUserId();
+				if ( storedUserId != null && storedUserId !== userData.ID ) {
+					await clearStore();
+				}
+
+				setStoredUserId( userData.ID );
+				dispatch( setCurrentUser( userData ) );
+
+				// @TODO: Remove this once `lib/user` has been fully reduxified
+				userFactory().data = userData;
+			} )
+			.catch( () => {
+				// @TODO: Remove this once `lib/user` has been fully reduxified
+				userFactory().data = false;
+			} )
+			.finally( () => {
+				fetchingUser = null;
 			} );
-			const userData = filterUserObject( user );
-
-			const storedUserId = getStoredUserId();
-			if ( storedUserId != null && storedUserId !== userData.ID ) {
-				await clearStore();
-			}
-
-			setStoredUserId( userData.ID );
-			dispatch( setCurrentUser( userData ) );
-		} catch {}
 	};
 }
 
