@@ -77,7 +77,11 @@ const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 	// (at least at the time of writing), which is why we can rely on this method.
 	if (
 		select( 'core/edit-post' )?.isInserterOpened() ||
-		select( 'core/edit-site' )?.isInserterOpened()
+		select( 'core/edit-site' )?.isInserterOpened() ||
+		select( 'core/edit-widgets' )?.isInserterOpened() ||
+		document
+			.querySelector( '.customize-widgets-layout__inserter-panel' )
+			?.contains( document.activeElement )
 	) {
 		return 'header-inserter';
 	}
@@ -306,7 +310,7 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 		   to update via `replaceInnerBlocks`.
 
 		3. Performing undo or redo related to template parts and reusable blocks
-		   will update the instances via `replaceInnerBlocks`. 
+		   will update the instances via `replaceInnerBlocks`.
 	*/
 	const parentBlock = select( 'core/block-editor' ).getBlocksByClientId( rootClientId )?.[ 0 ];
 	if ( parentBlock ) {
