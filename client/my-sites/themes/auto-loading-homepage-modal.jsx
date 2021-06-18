@@ -143,7 +143,12 @@ class AutoLoadingHomepageModal extends Component {
 			return null;
 		}
 
-		const { name: themeName, id: themeId, stylesheet } = this.props.theme;
+		const {
+			name: themeName,
+			id: themeId,
+			stylesheet,
+			screenshot: themeScreenshot,
+		} = this.props.theme;
 
 		// is HTTPS always appropriate?
 		const iframeSrcKeepHomepage = addQueryArgs( 'https://' + this.props.siteDomain, {
@@ -192,7 +197,6 @@ class AutoLoadingHomepageModal extends Component {
 								title={ translate( 'Preview of current homepage with new theme applied' ) }
 								src={ iframeSrcKeepHomepage }
 							/>
-							{ /* <img src="https://placedog.net/500" alt="" /> */ }
 							<FormLabel>
 								<FormRadio
 									value="keep_current_homepage"
@@ -203,7 +207,7 @@ class AutoLoadingHomepageModal extends Component {
 							</FormLabel>
 						</div>
 						<div className="themes__theme-preview-item">
-							<img src="https://placedog.net/500" alt="" />
+							<img src={ themeScreenshot } alt="" />
 							<FormLabel>
 								<FormRadio
 									value="use_new_homepage"
