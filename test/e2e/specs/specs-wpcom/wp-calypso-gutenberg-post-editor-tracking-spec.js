@@ -44,7 +44,7 @@ describe( `[${ host }] Calypso Gutenberg Post Editor Tracking: (${ screenSize })
 			postType: 'post',
 		} );
 
-		it( 'Tracks "wpcom_block_editor_details_click" event', async function () {
+		it( 'Tracks "wpcom_block_editor_details_open" event', async function () {
 			const editor = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
 
 			await editor.toggleDetails(); // Open details
@@ -52,7 +52,7 @@ describe( `[${ host }] Calypso Gutenberg Post Editor Tracking: (${ screenSize })
 
 			const eventsStack = await getEventsStack( this.driver );
 			const toggleEvents = eventsStack.filter(
-				( [ eventName ] ) => eventName === 'wpcom_block_editor_details_click'
+				( [ eventName ] ) => eventName === 'wpcom_block_editor_details_open'
 			);
 			assert.strictEqual( toggleEvents.length, 1 );
 		} );
