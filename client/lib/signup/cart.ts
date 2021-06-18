@@ -32,40 +32,39 @@ function addProductsToCart( cart: ResponseCart, newCartItems: RequestCartProduct
 
 export type ErrorCallback = ( error: unknown ) => void;
 
-export default {
-	createCart: function (
-		cartKey: string,
-		newCartItems: RequestCartProduct[],
-		callback: ErrorCallback
-	): void {
-		const newCart = {
-			...getEmptyResponseCart(),
-			cart_key: cartKey,
-		};
+export function createCart(
+	cartKey: string,
+	newCartItems: RequestCartProduct[],
+	callback: ErrorCallback
+): void {
+	const newCart = {
+		...getEmptyResponseCart(),
+		cart_key: cartKey,
+	};
 
-		const updatedCart = addProductsToCart( newCart, newCartItems );
+	const updatedCart = addProductsToCart( newCart, newCartItems );
 
-		wpcom.undocumented().setCart( cartKey, updatedCart, function ( postError: unknown ) {
-			callback( postError );
-		} );
-	},
-	addToCart: function (
-		cartKey: string,
-		newCartItems: RequestCartProduct[],
-		callback: ErrorCallback
-	): void {
-		wpcom.undocumented().getCart( cartKey, function ( error: unknown, data: ResponseCart ) {
-			if ( error ) {
-				return callback( error );
-			}
+	wpcom.undocumented().setCart( cartKey, updatedCart, function ( postError: unknown ) {
+		callback( postError );
+	} );
+}
 
-			if ( ! Array.isArray( newCartItems ) ) {
-				newCartItems = [ newCartItems ];
-			}
+export function addToCart(
+	cartKey: string,
+	newCartItems: RequestCartProduct[],
+	callback: ErrorCallback
+): void {
+	wpcom.undocumented().getCart( cartKey, function ( error: unknown, data: ResponseCart ) {
+		if ( error ) {
+			return callback( error );
+		}
 
-			const newCart = addProductsToCart( data, newCartItems );
+		if ( ! Array.isArray( newCartItems ) ) {
+			newCartItems = [ newCartItems ];
+		}
 
-			wpcom.undocumented().setCart( cartKey, newCart, callback );
-		} );
-	},
-};
+		const newCart = addProductsToCart( data, newCartItems );
+
+		wpcom.undocumented().setCart( cartKey, newCart, callback );
+	} );
+}
