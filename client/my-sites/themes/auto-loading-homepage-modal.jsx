@@ -193,11 +193,13 @@ class AutoLoadingHomepageModal extends Component {
 					</h1>
 					<div className="themes__theme-preview-items">
 						<div className="themes__theme-preview-item themes__theme-preview-item-iframe-container">
-							<iframe
-								loading="lazy"
-								title={ translate( 'Preview of current homepage with new theme applied' ) }
-								src={ iframeSrcKeepHomepage }
-							/>
+							<div className="themes__iframe-wrapper">
+								<iframe
+									loading="lazy"
+									title={ translate( 'Preview of current homepage with new theme applied' ) }
+									src={ iframeSrcKeepHomepage }
+								/>
+							</div>
 							<FormLabel>
 								<FormRadio
 									value="keep_current_homepage"
