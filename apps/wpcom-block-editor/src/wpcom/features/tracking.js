@@ -4,7 +4,7 @@
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
-import { find, isEqual } from 'lodash';
+import { find } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -13,6 +13,7 @@ import debugFactory from 'debug';
 import tracksRecordEvent from './tracking/track-record-event';
 import delegateEventTracking from './tracking/delegate-event-tracking';
 import { trackGlobalStylesTabSelected } from './tracking/wpcom-block-editor-global-styles-tab-selected';
+import { findChange } from './utils';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -375,87 +376,36 @@ const trackDisableComplementaryArea = ( scope ) => {
 
 const trackEditEntityRecord = ( kind, type, id, updates ) => {
 	if ( kind === 'postType' && type === 'wp_global_styles' ) {
-		let eventDetails;
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
 		const entityContent = JSON.parse( editedEntity.content );
 		const updateContent = JSON.parse( updates.content );
 
-		// check color changes
-		if ( ! isEqual( updateContent.styles?.color, entityContent.styles?.color ) ) {
-			let changedKey;
-			const changedValue = find( updateContent.styles?.color, ( value, key ) => {
-				if ( ! isEqual( value, entityContent.styles?.color?.[ key ] ) ) {
-					changedKey = key;
-					return true;
-				}
-			} );
-			eventDetails = {
-				property: `color-${ changedKey }`,
-				value: changedValue,
-			};
+		const { keyMap, value } = findChange( updateContent, entityContent );
+
+		// Early return if no changes
+		if ( ! keyMap.length ) {
+			return;
 		}
 
-		// check typography changes
-		if ( ! isEqual( updateContent.styles?.typography, entityContent.styles?.typography ) ) {
-			let changedKey;
-			const changedValue = find( updateContent.styles?.typography, ( value, key ) => {
-				if ( ! isEqual( value, entityContent.styles?.typography?.[ key ] ) ) {
-					changedKey = key;
-					return true;
-				}
-			} );
-			eventDetails = {
-				property: `typography-${ changedKey }`,
-				value: changedValue,
-			};
+		let blockName;
+		let changeType;
+		let propertyChanged;
+
+		if ( keyMap[ 1 ] === 'blocks' ) {
+			blockName = keyMap[ 2 ];
+			changeType = keyMap[ 3 ];
+			propertyChanged = keyMap[ 4 ];
+		} else {
+			changeType = keyMap[ 1 ];
+			propertyChanged = keyMap[ 2 ];
 		}
 
-		// check block changes
-		if ( ! isEqual( updateContent.styles?.blocks, entityContent.styles?.blocks ) ) {
-			let changedBlock; //blockName
-			find( updateContent.styles?.blocks, ( value, key ) => {
-				if ( ! isEqual( value, entityContent.styles?.blocks?.[ key ] ) ) {
-					changedBlock = key;
-					return true;
-				}
-			} );
-			let changedBlockItem; // color or typography
-			find( updateContent.styles?.blocks?.[ changedBlock ], ( value, key ) => {
-				if ( ! isEqual( value, entityContent.styles?.blocks?.[ changedBlock ]?.[ key ] ) ) {
-					changedBlockItem = key;
-					return true;
-				}
-			} );
-			let changedKey; // text, background, fontSize, etc.
-			const changedValue = find(
-				updateContent.styles?.blocks?.[ changedBlock ]?.[ changedBlockItem ],
-				( value, key ) => {
-					if (
-						! isEqual(
-							value,
-							entityContent.styles?.blocks?.[ changedBlock ]?.[ changedBlockItem ]?.[ key ]
-						)
-					) {
-						changedKey = key;
-						return true;
-					}
-				}
-			);
-			eventDetails = {
-				property: `${ changedBlockItem }-${ changedKey }`,
-				value: changedValue,
-				block: changedBlock,
-			};
-		}
-
-		// TODO - Add for styles->elements (ex- changing link color) and for settings (ex changing color palette)
-		// ALSO - color palette for some blocks? eek
-
-		// Ensure eventDetails exist before sending event.  Sometimes the GS update seems to be called twice,
-		// with the second update containing no changes.
-		if ( eventDetails ) {
-			tracksRecordEvent( 'wpcom-block-editor-global-styles-update', eventDetails );
-		}
+		tracksRecordEvent( 'wpcom-block-editor-global-styles-update', {
+			blockName,
+			changeType,
+			propertyChanged,
+			value,
+		} );
 	}
 };
 
