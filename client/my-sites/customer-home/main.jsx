@@ -30,6 +30,7 @@ import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import { successNotice } from 'calypso/state/notices/actions';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 /**
  * Style dependencies
@@ -94,6 +95,7 @@ const Home = ( {
 
 	return (
 		<Main wideLayout className="customer-home__main">
+			<ScreenOptionsTab />
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
