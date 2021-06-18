@@ -84,6 +84,17 @@ $screen-options-icon-border-y: 7px;
 	Screen Switcher
  */
 
+.screen-switcher:not( :hover ) {
+	// When the user isn't hover over one of the buttons let's highlight the first
+	// because it is the Calypso option and its safe to assume they're in Calypso
+	// if they are seeing this component.
+	.screen-switcher__button:first-of-type {
+		> strong {
+			color: var( --color-accent );
+		}
+	}
+}
+
 .screen-switcher__button {
 	cursor: pointer;
 	border-radius: 4px; /* stylelint-disable-line */
@@ -93,17 +104,16 @@ $screen-options-icon-border-y: 7px;
 
 	&:hover,
 	&:focus {
-		border-color: var( --color-accent );
-	}
-
-	&:first-of-type {
-		margin-bottom: 4px; /* stylelint-disable-line */
-
-		// When the user sees this component they are going to be in Calypso
-		// so it's safe to assume the Calypso option is always going to be active.
 		> strong {
 			color: var( --color-accent );
 		}
+	}
+
+	// When the user sees this component they are going to be in Calypso
+	// so it's safe to assume the Calypso option is always going to be active.
+	&:first-of-type {
+		margin-bottom: 4px; /* stylelint-disable-line */
+		border-color: var( --color-accent );
 	}
 
 	&:last-of-type {
