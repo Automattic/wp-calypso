@@ -101,7 +101,7 @@ function parseAvatar( avatarUrl ) {
  * @returns {Array}         CSV Row
  */
 export function buildExportArray( data, parent = null ) {
-	if ( ! data || ! data.label || ! data.value || ! data.actions ) {
+	if ( ! data || ! data.label || ! data.value || ! data.actions || ! data.actions.length ) {
 		return [];
 	}
 	const label = parent ? parent + ' > ' + data.label : data.label;
