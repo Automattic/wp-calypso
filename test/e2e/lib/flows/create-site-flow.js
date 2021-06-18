@@ -28,11 +28,9 @@ export default class CreateSiteFlow {
 		const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 		await pickAPlanPage.selectFreePlan();
 
-		const hoorayTitleLocator = driverHelper.createTextLocator(
-			By.css( '.signup-processing-screen__title' ),
-			/your site will be ready shortly/i
-		);
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, hoorayTitleLocator );
+		const hoorayScreenLocator = By.css( '.reskinned-processing-screen' );
+
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, hoorayScreenLocator );
 		/**
 		 * Let's give the create request enough time to finish. Sometimes it takes
 		 * way more than the default 20 seconds, and the cost of waiting a bit
@@ -40,7 +38,7 @@ export default class CreateSiteFlow {
 		 */
 		await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			hoorayTitleLocator,
+			hoorayScreenLocator,
 			config.get( 'explicitWaitMS' ) * 3
 		);
 
