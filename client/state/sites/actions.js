@@ -10,6 +10,7 @@ import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import config from '@automattic/calypso-config';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
@@ -31,16 +32,19 @@ import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/c
 import 'calypso/state/data-layer/wpcom/sites/homepage';
 
 /**
- * Returns an action object to be used in signalling that a site has been
- * deleted.
+ * Returns a thunk that dispatches an action object to be used in signalling that a site has been
+ * deleted. It also re-re-fetches the current user.
  *
  * @param  {number} siteId  ID of deleted site
- * @returns {object}         Action object
+ * @returns {Function}        Action thunk
  */
 export function receiveDeletedSite( siteId ) {
-	return {
-		type: SITE_DELETE_RECEIVE,
-		siteId,
+	return ( dispatch ) => {
+		dispatch( {
+			type: SITE_DELETE_RECEIVE,
+			siteId,
+		} );
+		dispatch( fetchCurrentUser() );
 	};
 }
 

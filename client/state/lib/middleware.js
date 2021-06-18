@@ -13,7 +13,6 @@ import {
 	NOTIFICATIONS_PANEL_TOGGLE,
 	ROUTE_SET,
 	SELECTED_SITE_SET,
-	SITE_DELETE_RECEIVE,
 	SITE_RECEIVE,
 	SITES_RECEIVE,
 } from 'calypso/state/action-types';
@@ -143,7 +142,6 @@ const handler = ( dispatch, action, getState ) => {
 			}, 0 );
 			return;
 
-		case SITE_DELETE_RECEIVE:
 		case JETPACK_DISCONNECT_RECEIVE:
 			dispatch( fetchCurrentUser() );
 			return;

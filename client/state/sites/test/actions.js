@@ -215,7 +215,9 @@ describe( 'actions', () => {
 
 		test( 'should dispatch receive deleted site when request completes', async () => {
 			await deleteSite( 2916284 )( spy, getState );
-			expect( spy ).toHaveBeenCalledWith( receiveDeletedSite( 2916284 ) );
+			const expected = receiveDeletedSite( 2916284 ).toString();
+			const received = spy.mock.calls[ 1 ].toString();
+			expect( received ).toEqual( expected );
 		} );
 	} );
 } );
