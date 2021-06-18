@@ -9,6 +9,7 @@ import page from 'page';
 import {
 	checkout,
 	checkoutPending,
+	checkoutSiteless,
 	checkoutThankYou,
 	upsellNudge,
 	redirectToSupportSession,
@@ -33,6 +34,10 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+	}
+
+	if ( isEnabled( 'jetpack/siteless-checkout' ) ) {
+		page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
 	}
 
 	page(
