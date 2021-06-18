@@ -425,7 +425,7 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 			element_type: elementType,
 			section: changeType,
 			field: propertyChanged,
-			field_value: value,
+			field_value: typeof value === 'object' ? JSON.stringify( value ) : value,
 		} );
 	}
 };
