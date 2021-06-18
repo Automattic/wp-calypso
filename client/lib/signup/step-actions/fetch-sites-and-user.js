@@ -1,7 +1,9 @@
 /**
  * Internal dependencies
  */
-import { fetchCurrentUser } from 'calypso/state/current-user/actions';
+import user from 'calypso/lib/user';
+
+// State actions and selectors
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { requestSites } from 'calypso/state/sites/actions';
 
@@ -12,8 +14,7 @@ async function fetchSitesUntilSiteAppears( siteSlug, reduxStore ) {
 }
 
 export function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
-	Promise.all( [
-		fetchSitesUntilSiteAppears( siteSlug, reduxStore ),
-		reduxStore.dispatch( fetchCurrentUser() ),
-	] ).then( onComplete );
+	Promise.all( [ fetchSitesUntilSiteAppears( siteSlug, reduxStore ), user().fetch() ] ).then(
+		onComplete
+	);
 }
