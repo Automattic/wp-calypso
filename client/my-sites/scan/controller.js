@@ -21,9 +21,10 @@ import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-d
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanHistoryPlaceholder from 'calypso/components/jetpack/scan-history-placeholder';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isJetpackScanSlug } from '@automattic/calypso-products';
+import { isJetpackScanSlug, JETPACK_SCAN_PRODUCTS } from '@automattic/calypso-products';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
+import siteHasSubscription from 'calypso/state/selectors/site-has-subscription';
 
 export function showUpsellIfNoScan( context, next ) {
 	context.primary = scanUpsellSwitcher( <ScanPlaceholder />, context.primary );
@@ -78,7 +79,10 @@ export function showUnavailableForVaultPressSites( context, next ) {
 export function showUnavailableForMultisites( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	if ( isJetpackSiteMultiSite( state, siteId ) ) {
+	if (
+		isJetpackSiteMultiSite( state, siteId ) &&
+		! siteHasSubscription( state, siteId, JETPACK_SCAN_PRODUCTS )
+	) {
 		context.primary = isJetpackCloud() ? (
 			<ScanUpsellPage reason="multisite_not_supported" />
 		) : (
