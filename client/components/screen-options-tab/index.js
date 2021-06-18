@@ -41,7 +41,6 @@ const ScreenOptionsTab = () => {
 
 		if ( ref.current && ! ref.current.contains( e.target ) ) {
 			handleToggle( false );
-			return;
 		}
 	};
 
