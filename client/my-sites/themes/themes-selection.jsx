@@ -158,13 +158,13 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, upsellUrl, listLabel, themesCount } = this.props;
+		const { source, query, upsellUrl, listLabel } = this.props;
 
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
 				{ ! this.props.recommendedThemes && (
-					<ThemesSelectionHeader label={ listLabel } count={ themesCount } />
+					<ThemesSelectionHeader label={ listLabel } source={ source } />
 				) }
 				<ThemesList
 					upsellUrl={ upsellUrl }
