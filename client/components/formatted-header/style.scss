@@ -3,7 +3,10 @@
 	text-align: center;
 
 	&.has-screen-options {
-		margin: 32px 0 24px 16px;
+		// Titles that have long text (e.g. other languages) need extra margin to accommodate screen options on small devices.
+		@include breakpoint-deprecated( '<660px' ) {
+			margin: 32px 0 24px 16px;
+		}
 	}
 
 	@include breakpoint-deprecated( '>960px' ) {
@@ -20,7 +23,10 @@
 		margin: 16px;
 
 		&.has-screen-options {
-			margin: 32px 16px 16px 16px;
+			// Titles that have long text (e.g. other languages) need extra margin to accommodate screen options on small devices.
+			@include breakpoint-deprecated( '<660px' ) {
+				margin: 32px 16px 16px 16px;
+			}
 		}
 
 		@include breakpoint-deprecated( '>660px' ) {
