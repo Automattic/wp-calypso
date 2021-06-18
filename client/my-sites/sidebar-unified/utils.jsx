@@ -20,6 +20,10 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	if ( pathIncludes( currentPath, 'taxonomies', 2 ) ) {
 		return fragmentIsEqual( path, currentPath, 3 );
 	}
+	// Account for settings pages.
+	if ( pathIncludes( currentPath, 'settings', 1 ) ) {
+		return fragmentIsEqual( path, currentPath, 2 );
+	}
 	/*
 	 * If the menu item URL contains 'taxonomies', ignore it when on Settings screens.
 	 * Taxonomies are located under the Posts parent menu; this prevents the Posts parent
