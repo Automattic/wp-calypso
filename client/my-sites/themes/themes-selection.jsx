@@ -163,7 +163,7 @@ class ThemesSelection extends Component {
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
-				{ ! this.props.recommendedThemes && (
+				{ ! this.props.recommendedThemes && this.props.isLoggedIn && (
 					<ThemesSelectionHeader
 						label={ listLabel }
 						noMarginBeforeHeader={ noMarginBeforeHeader }
