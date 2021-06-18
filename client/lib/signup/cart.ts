@@ -2,7 +2,11 @@
  * External dependencies
  */
 import type { ResponseCart, RequestCart, RequestCartProduct } from '@automattic/shopping-cart';
-import { getEmptyResponseCart, convertResponseCartToRequestCart } from '@automattic/shopping-cart';
+import {
+	getEmptyResponseCart,
+	convertResponseCartToRequestCart,
+	createRequestCartProduct,
+} from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -14,10 +18,12 @@ import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 function addProductsToCart( cart: ResponseCart, newCartItems: RequestCartProduct[] ): RequestCart {
 	const productsData = productsList.get();
-	const newProducts = newCartItems.map( function ( cartItem ) {
-		cartItem.extra = { ...cartItem.extra, context: 'signup' };
-		return fillInSingleCartItemAttributes( cartItem, productsData );
-	} );
+	const newProducts = newCartItems
+		.map( function ( cartItem ) {
+			cartItem.extra = { ...cartItem.extra, context: 'signup' };
+			return fillInSingleCartItemAttributes( cartItem, productsData );
+		} )
+		.map( createRequestCartProduct );
 	return convertResponseCartToRequestCart( {
 		...cart,
 		products: [ ...cart.products, ...newProducts ],
