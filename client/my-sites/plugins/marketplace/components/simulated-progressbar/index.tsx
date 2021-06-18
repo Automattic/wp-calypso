@@ -33,7 +33,11 @@ export function resolveStep(
 	return steps[ quotient ];
 }
 
-export default function SimulatedProgressbar( {
+const SIMULATION_REFRESH_INTERVAL = 2000;
+const INCREMENTED_PERCENTAGE_SIZE_ON_STEP = 6;
+const MAX_PERCENTAGE_SIMULATED = 100 - INCREMENTED_PERCENTAGE_SIZE_ON_STEP * 2;
+
+export default function SimulatedProgressBar( {
 	steps,
 }: {
 	steps: TranslateResult[];
@@ -42,9 +46,6 @@ export default function SimulatedProgressbar( {
 	const [ currentStep, setCurrentStep ] = useState( steps[ 0 ] );
 	const [ simulatedProgressPercentage, setSimulatedProgressPercentage ] = useState( 1 );
 
-	const SIMULATION_REFRESH_INTERVAL = 2000;
-	const INCREMENTED_PERCENTAGE_SIZE_ON_STEP = 6;
-	const MAX_PERCENTAGE_SIMULATED = 100 - INCREMENTED_PERCENTAGE_SIZE_ON_STEP * 2;
 	useEffect( () => {
 		setTimeout(
 			() => {
@@ -57,10 +58,12 @@ export default function SimulatedProgressbar( {
 
 			SIMULATION_REFRESH_INTERVAL
 		);
-	}, [ MAX_PERCENTAGE_SIMULATED, simulatedProgressPercentage ] );
+	}, [ simulatedProgressPercentage ] );
 
 	const newStep = resolveStep( steps, simulatedProgressPercentage );
-	if ( newStep !== currentStep ) setCurrentStep( newStep );
+	if ( newStep !== currentStep ) {
+		setCurrentStep( newStep );
+	}
 
 	const currentNumericStep = steps.indexOf( currentStep ) + 1;
 

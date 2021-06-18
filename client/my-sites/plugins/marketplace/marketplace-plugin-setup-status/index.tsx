@@ -18,7 +18,7 @@ import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getPurchaseFlowState } from 'calypso/state/plugins/marketplace/selectors';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
-import SimulatedProgressbar from 'calypso/my-sites/plugins/marketplace/components/simulated-progressbar';
+import SimulatedProgressBar from 'calypso/my-sites/plugins/marketplace/components/simulated-progressbar';
 
 /**
  * Style dependencies
@@ -72,7 +72,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 			<Masterbar></Masterbar>
 			<div className="marketplace-plugin-setup-status__root">
 				<div>
-					<SimulatedProgressbar steps={ steps } />
+					<SimulatedProgressBar steps={ steps } />
 				</div>
 			</div>
 		</>
