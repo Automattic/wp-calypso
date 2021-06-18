@@ -23,13 +23,12 @@ import Search from 'calypso/my-sites/site-settings/search';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
-import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import SpeedUpYourSite from 'calypso/my-sites/site-settings/speed-up-site-settings';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import config from '@automattic/calypso-config';
 
@@ -41,7 +40,6 @@ class SiteSettingsPerformance extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
-			site,
 			siteId,
 			siteIsJetpack,
 			siteIsAtomic,
@@ -70,7 +68,6 @@ class SiteSettingsPerformance extends Component {
 					subHeaderText={ translate( "Explore settings to improve your site's performance." ) }
 					align="left"
 				/>
-				<SiteSettingsNavigation site={ site } section="performance" />
 
 				<Search
 					handleAutosavingToggle={ handleAutosavingToggle }
@@ -142,7 +139,6 @@ class SiteSettingsPerformance extends Component {
 }
 
 const connectComponent = connect( ( state ) => {
-	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const siteIsAtomic = isSiteAutomatedTransfer( state, siteId );
@@ -150,7 +146,6 @@ const connectComponent = connect( ( state ) => {
 	const showCloudflare = config.isEnabled( 'cloudflare' );
 
 	return {
-		site,
 		siteIsJetpack,
 		siteIsAtomic,
 		siteIsAtomicPrivate,

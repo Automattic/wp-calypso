@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,13 +12,11 @@ import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mod
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
-import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import WritingForm from 'calypso/my-sites/site-settings/form-writing';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import config from '@automattic/calypso-config';
 
-const SiteSettingsWriting = ( { site, translate } ) => (
+const SiteSettingsWriting = ( { translate } ) => (
 	<Main className="settings-writing site-settings">
 		<ScreenOptionsTab wpAdminPath="options-writing.php" />
 		<DocumentHead title={ translate( 'Site Settings' ) } />
@@ -35,11 +32,8 @@ const SiteSettingsWriting = ( { site, translate } ) => (
 			align="left"
 			hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 		/>
-		<SiteSettingsNavigation site={ site } section="writing" />
 		<WritingForm />
 	</Main>
 );
 
-export default connect( ( state ) => ( {
-	site: getSelectedSite( state ),
-} ) )( localize( SiteSettingsWriting ) );
+export default localize( SiteSettingsWriting );
