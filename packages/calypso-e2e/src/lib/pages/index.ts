@@ -8,3 +8,4 @@ export * from './my-home-page';
 export * from './marketing-page';
 export * from './settings-page';
 export * from './themes-page';
+export * from './themes-detail-page';
