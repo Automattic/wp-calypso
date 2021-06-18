@@ -3,7 +3,7 @@
  */
 import { quitBrowser, startBrowser, ensureNotLoggedIn } from '../../driver-manager';
 
-export const closeBrowser = async function ( driver ) {
+export const closeBrowser = async function ( { driver } ) {
 	await quitBrowser( driver );
 };
 

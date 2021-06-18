@@ -12,11 +12,11 @@ export const buildHooks = () => {
 			driver = await createBrowser();
 			return driver;
 		},
-		saveBrowserLogs: function () {
-			return saveBrowserLogs( driver );
+		saveBrowserLogs: function ( options ) {
+			if ( driver ) return saveBrowserLogs( { ...options, driver } );
 		},
 		closeBrowser: function () {
-			return closeBrowser( driver );
+			if ( driver ) return closeBrowser( { driver } );
 		},
 	};
 };
