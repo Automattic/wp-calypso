@@ -38,6 +38,8 @@ import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/sit
 import ScanNavigation from './navigation';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Type dependencies
@@ -58,6 +60,7 @@ interface Props {
 	scanProgress?: number;
 	isInitialScan?: boolean;
 	isRequestingScan: boolean;
+	isMultisite: boolean;
 	timezone: string | null;
 	gmtOffset: number | null;
 	moment: {
@@ -74,6 +77,34 @@ class ScanPage extends Component< Props > {
 	state = {
 		showJetpackReviewPrompt: false,
 	};
+
+	renderMultisiteMessage() {
+		const multiSiteInfoLink = `https://jetpack.com/support/scan/#does-jetpack-scan-support-multisite`;
+		return (
+			<div className="scan__multisite-warning">
+				<div className="scan__multisite-warning-title">
+					{ preventWidows( translate( 'This site is a WordPress Multisite installation.' ) ) }
+				</div>
+				<p className="scan__multisite-warning-info">
+					{ preventWidows(
+						translate(
+							'Jetpack Scan for Multisite installations is not fully supported. ' +
+								'For more information {{ExternalLink}}visit our documentation page {{externalIcon/}}{{/ExternalLink}}.',
+							{
+								components: {
+									ExternalLink: (
+										<a href={ multiSiteInfoLink } target="_blank" rel="noopener noreferrer" />
+									),
+									externalIcon: <Gridicon icon="external" size={ 18 } />,
+								},
+							}
+						)
+					) }
+				</p>
+			</div>
+		);
+	}
+
 	renderProvisioning() {
 		return (
 			<>
@@ -120,7 +151,7 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderScanOkay() {
-		const { scanState, siteId, moment, dispatchScanRun, applySiteOffset } = this.props;
+		const { scanState, siteId, moment, dispatchScanRun, applySiteOffset, isMultiSite } = this.props;
 
 		const lastScanStartTime = scanState?.mostRecent?.timestamp;
 		const lastScanDuration = scanState?.mostRecent?.duration;
@@ -135,6 +166,7 @@ class ScanPage extends Component< Props > {
 		return (
 			<>
 				<SecurityIcon />
+				{ isMultiSite && this.renderMultisiteMessage() }
 				{ this.renderHeader( translate( 'Don’t worry about a thing' ) ) }
 				<p>
 					{ translate(
@@ -333,6 +365,7 @@ export default connect(
 		const scanProgress = getSiteScanProgress( state, siteId ) ?? undefined;
 		const isRequestingScan = isRequestingJetpackScan( state, siteId );
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
+		const isMultiSite = isJetpackSiteMultiSite( state, siteId );
 
 		return {
 			site,
@@ -343,6 +376,7 @@ export default connect(
 			isInitialScan,
 			siteSettingsUrl,
 			isRequestingScan,
+			isMultiSite,
 		};
 	},
 	{

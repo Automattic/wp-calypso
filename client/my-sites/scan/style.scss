@@ -125,6 +125,21 @@
 	margin-top: 8px;
 }
 
+.scan__content .scan__multisite-warning {
+	padding-top: 1.2rem;
+}
+
+.scan__content .scan__multisite-warning-title {
+	font-size: 1rem;
+	font-weight: 600;
+	padding-bottom: 4px;
+}
+
+.scan__content .scan__multisite-warning-info {
+	font-size: 0.875rem;
+	color: var( --studio-gray-40 );
+}
+
 /**
  * Jetpack.com specific styles
  */
