@@ -30,6 +30,7 @@ const selectors = {
 	publishPanel: '.editor-post-publish-panel',
 	publishButton:
 		'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button',
+	publishSpinner: '.components-spinner',
 	viewPostButton: 'text=View Post',
 };
 
@@ -176,7 +177,7 @@ export class GutenbergEditorPage extends BaseContainer {
 		await this.frame.click( selectors.publishPanelToggle );
 		await this.frame.waitForSelector( selectors.publishPanel );
 		await this.frame.click( selectors.publishButton );
-		await this.frame.waitForSelector( selectors.viewPostButton );
+		await this.frame.waitForSelector( selectors.publishSpinner, { state: 'hidden' } );
 
 		if ( visit ) {
 			await this._visitPublishedEntryFromPublishPane();
@@ -189,10 +190,8 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _visitPublishedEntryFromPublishPane(): Promise< void > {
-		await Promise.all( [
-			this.frame.click( selectors.viewPostButton ),
-			this.page.waitForNavigation(),
-			this.page.waitForLoadState( 'networkidle' ),
-		] );
+		const viewPostButton = await this.frame.waitForSelector( selectors.viewPostButton );
+		await Promise.all( [ this.page.waitForNavigation(), viewPostButton.click() ] );
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 }
