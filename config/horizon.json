@@ -107,6 +107,7 @@
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
 		"sign-in-with-apple": false,
+		"signup/reskin": true,
 		"signup/social": true,
 		"site-indicator": true,
 		"memberships": true,
