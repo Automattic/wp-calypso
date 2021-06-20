@@ -4,6 +4,7 @@
 import React, { ReactElement } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -80,19 +81,19 @@ export default function BillingDetails(): ReactElement {
 				<Card compact>
 					<div className="billing-details__row">
 						<div className="billing-details__product">
-							{ billing.isLoading ? <TextPlaceholder /> : '-' }
+							{ billing.isLoading ? <TextPlaceholder /> : <Gridicon icon="minus" /> }
 						</div>
 
 						<div className="billing-details__assigned">
-							{ billing.isLoading ? <TextPlaceholder /> : '-' }
+							{ billing.isLoading ? <TextPlaceholder /> : <Gridicon icon="minus" /> }
 						</div>
 
 						<div className="billing-details__unassigned">
-							{ billing.isLoading ? <TextPlaceholder /> : '-' }
+							{ billing.isLoading ? <TextPlaceholder /> : <Gridicon icon="minus" /> }
 						</div>
 
 						<div className="billing-details__subtotal">
-							{ billing.isLoading ? <TextPlaceholder /> : '-' }
+							{ billing.isLoading ? <TextPlaceholder /> : <Gridicon icon="minus" /> }
 						</div>
 					</div>
 				</Card>
@@ -112,7 +113,8 @@ export default function BillingDetails(): ReactElement {
 					<strong className="billing-details__cost-amount">
 						{ billing.isSuccess && formatCurrency( billing.data.costs.total, 'USD' ) }
 
-						{ ! billing.isSuccess && ( billing.isLoading ? <TextPlaceholder /> : '-' ) }
+						{ ! billing.isSuccess &&
+							( billing.isLoading ? <TextPlaceholder /> : <Gridicon icon="minus" /> ) }
 					</strong>
 
 					<span className="billing-details__total-label billing-details__line-item-meta">
@@ -121,7 +123,8 @@ export default function BillingDetails(): ReactElement {
 					<span className="billing-details__line-item-meta">
 						{ billing.isSuccess && formatCurrency( billing.data.costs.assigned, 'USD' ) }
 
-						{ ! billing.isSuccess && ( billing.isLoading ? <TextPlaceholder /> : '-' ) }
+						{ ! billing.isSuccess &&
+							( billing.isLoading ? <TextPlaceholder /> : <Gridicon icon="minus" /> ) }
 					</span>
 
 					<span className="billing-details__total-label billing-details__line-item-meta">
@@ -130,7 +133,8 @@ export default function BillingDetails(): ReactElement {
 					<span className="billing-details__line-item-meta">
 						{ billing.isSuccess && formatCurrency( billing.data.costs.unassigned, 'USD' ) }
 
-						{ ! billing.isSuccess && ( billing.isLoading ? <TextPlaceholder /> : '-' ) }
+						{ ! billing.isSuccess &&
+							( billing.isLoading ? <TextPlaceholder /> : <Gridicon icon="minus" /> ) }
 					</span>
 				</div>
 			</Card>
