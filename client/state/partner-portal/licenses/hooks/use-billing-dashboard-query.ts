@@ -127,6 +127,23 @@ export default function useBillingDashboardQuery< TError = unknown >(
 					} )
 				);
 			},
+			retry: ( failureCount, error ) => {
+				// There is no reason for us to try and re-fetch on the "no billing
+				// invoice available" error because it is an expected behaviour which
+				// is only going to change when Jetpack prepares an invoice and is
+				// therefore not necessarily a temporary error and might take hours
+				// or even days before changing to either success or another error.
+				if ( error.hasOwnProperty( 'code' ) && 'no_billing_invoice_available' === error.code ) {
+					return false;
+				}
+
+				// We have to define a fallback amount of failures because we
+				// override the retry option with a function.
+				// We use 3 as the failureCount since its the default value for
+				// react-query that we used before.
+				// @link https://react-query.tanstack.com/guides/query-retries
+				return 3 > failureCount;
+			},
 			...options,
 		}
 	);
