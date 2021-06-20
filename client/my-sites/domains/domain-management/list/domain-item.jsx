@@ -97,7 +97,7 @@ class DomainItem extends PureComponent {
 
 	onToggle = ( event ) => {
 		if ( this.props.onToggle ) {
-			this.props.onToggle( event.target.checked, this.props.domain.domain );
+			this.props.onToggle( this.props.domain.domain, event.target.checked );
 		}
 	};
 

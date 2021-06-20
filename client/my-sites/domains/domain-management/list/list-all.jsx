@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { isEmpty, keyBy, keys, map, reduce, times } from 'lodash';
+import { forEach, get, isEmpty, keyBy, keys, reduce, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
@@ -49,6 +49,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import BulkEditContactInfo from './bulk-edit-contact-info';
 import CardHeading from 'calypso/components/card-heading';
 import { isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Style dependencies
@@ -68,35 +69,47 @@ class ListAll extends Component {
 	};
 
 	state = {
+		selectedDomainsSet: false,
 		selectedDomains: {},
 		transferLockOptOut: false,
+		whoisData: {},
 	};
 
 	renderedQuerySiteDomains = {};
 
-	componentDidUpdate( prevProps ) {
-		const prevDomainsList = map( prevProps.filteredDomainsList, ( domain ) => {
-			return domain.domain;
-		} );
-		const newDomainsList = map( this.props.filteredDomainsList, ( domain ) => {
-			return domain.domain;
-		} );
+	componentDidUpdate() {
+		if ( this.isLoadingDomainDetails() ) {
+			return;
+		}
 
-		const domainsToAdd = newDomainsList.filter(
-			( domain ) => ! prevDomainsList.includes( domain )
-		);
-
-		if ( ! isEmpty( domainsToAdd ) ) {
-			this.addToSelectedDomains( domainsToAdd );
+		if ( ! isEmpty( this.props.filteredDomainsList ) && ! this.state.selectedDomainsSet ) {
+			this.setSelectedDomains();
 		}
 	}
 
-	addToSelectedDomains = ( domainsToAdd ) => {
-		const newSelectedDomains = domainsToAdd.reduce(
-			( list, domain ) => ( ( list[ domain ] = true ), list ),
+	setSelectedDomains = () => {
+		const selectedDomains = this.props.filteredDomainsList.reduce(
+			( list, { domain } ) => ( ( list[ domain ] = true ), list ),
 			{}
 		);
-		this.setState( { selectedDomains: { ...this.state.selectedDomains, ...newSelectedDomains } } );
+
+		forEach( this.props.filteredDomainsList, ( { domain } ) => this.fetchWhoisData( domain ) );
+
+		this.setState( { selectedDomains, selectedDomainsSet: true } );
+	};
+
+	fetchWhoisData = ( domain ) => {
+		wpcom
+			.undocumented()
+			.fetchWhois( domain )
+			.then( ( whoisData ) => {
+				this.setWhoisData( domain, whoisData[ 0 ] );
+			} )
+			.catch( () => this.setWhoisData( domain, null ) );
+	};
+
+	setWhoisData = ( domain, whoisData ) => {
+		this.setState( { whoisData: { ...this.state.whoisData, [ domain ]: whoisData } } );
 	};
 
 	clickAddDomain = () => {
@@ -115,10 +128,12 @@ class ListAll extends Component {
 		page( getDomainManagementPath( domain.name, domain.type, site.slug, currentRoute ) );
 	};
 
-	handleDomainItemToggle = ( checked, domain ) => {
-		const selectedDomains = { ...this.state.selectedDomains, [ domain ]: checked };
+	handleDomainItemToggle = ( domain, selected ) => {
+		if ( selected && isEmpty( get( this.state.whoisData, domain, null ) ) ) {
+			this.fetchWhoisData( domain );
+		}
 
-		this.setState( { selectedDomains } );
+		this.setState( { selectedDomains: { ...this.state.selectedDomains, [ domain ]: selected } } );
 	};
 
 	headerButtons() {
@@ -209,9 +224,10 @@ class ListAll extends Component {
 	renderDomainItem( domain, index ) {
 		const { currentRoute, domainsDetails, sites, requestingSiteDomains } = this.props;
 		const domainDetails = this.findDomainDetails( domainsDetails, domain );
+		const isLoadingDomainDetails = this.isLoadingDomainDetails();
 
 		const { selectedDomains } = this.state;
-		const isChecked = selectedDomains[ domain.domain ] ?? false;
+		const isChecked = ( selectedDomains[ domain.domain ] ?? false ) || isLoadingDomainDetails;
 
 		return (
 			<React.Fragment key={ `domain-item-${ index }-${ domain.name }` }>
@@ -237,6 +253,7 @@ class ListAll extends Component {
 						onClick={ this.handleDomainItemClick }
 						onToggle={ this.handleDomainItemToggle }
 						isChecked={ isChecked }
+						disabeld={ isLoadingDomainDetails }
 					/>
 				) }
 			</React.Fragment>
@@ -277,6 +294,8 @@ class ListAll extends Component {
 	handleSaveContactInfo = ( contactInfo ) => {
 		console.log( contactInfo );
 		console.log( this.state.transferLockOptOut );
+		console.log( this.state.selectedDomains );
+		console.log( this.state.whoisData );
 
 		// submit = () => {
 		// 	const { domainNamesList } = this.props;
@@ -337,7 +356,7 @@ class ListAll extends Component {
 						{ this.props.translate( 'Edit Contact Info For Selected Domains' ) }
 					</CardHeading>
 					<BulkEditContactInfo
-						isDisabled={ false }
+						isDisabled={ this.isLoadingDomainDetails() }
 						isSubmitting={ false }
 						onTransferLockOptOutChange={ this.handleContactInfoTransferLockOptOutChange }
 						handleSaveContactInfo={ this.handleSaveContactInfo }
@@ -362,8 +381,6 @@ class ListAll extends Component {
 
 	renderContent() {
 		const { domainsList, translate, user } = this.props;
-
-		console.log( this.props.filteredDomainsList );
 
 		if (
 			this.shouldShowContactForm() &&
