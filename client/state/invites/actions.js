@@ -8,12 +8,12 @@ import { get, truncate } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
-import user from 'calypso/lib/user';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { acceptedNotice } from 'calypso/my-sites/invites/utils';
 import { getInviteForSite } from 'calypso/state/invites/selectors';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { requestSites, receiveSites } from 'calypso/state/sites/actions';
+import { receiveSite } from 'calypso/state/sites/actions';
 import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
@@ -226,14 +226,13 @@ export function acceptInvite( invite ) {
 				{
 					activate: invite.activationKey,
 					include_domain_only: true,
-					apiVersion: '1.2',
+					apiVersion: '1.3',
 				}
 			);
 
 			if ( invite.role !== 'follower' && invite.role !== 'viewer' ) {
-				dispatch( receiveSites( data.sites ) );
-				// @TODO: Replace with Redux user fetching once lib/user is fully reduxified
-				await user().fetch();
+				dispatch( receiveSite( data.site ) );
+				await dispatch( fetchCurrentUser() );
 			}
 
 			if ( ! invite.site.is_vip ) {
@@ -246,7 +245,6 @@ export function acceptInvite( invite ) {
 			} );
 
 			dispatch( inviteAccepted( invite ) );
-			await dispatch( requestSites() );
 			return data;
 		} catch ( error ) {
 			if ( error.message ) {

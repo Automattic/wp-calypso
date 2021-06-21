@@ -17,13 +17,13 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page );
-			await loginFlow.login();
+			await loginFlow.logIn();
 		} );
 
 		it( 'Open Settings page', async function () {
 			await MyHomePage.Expect( this.page );
 			const sidebarComponent = await SidebarComponent.Expect( this.page );
-			await sidebarComponent.clickMenuItem( 'Settings' );
+			await sidebarComponent.gotoMenu( { item: 'Settings' } );
 		} );
 
 		it( 'Open support popover', async function () {
@@ -72,13 +72,13 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page );
-			await loginFlow.login();
+			await loginFlow.logIn();
 		} );
 
 		it( 'Open Settings page', async function () {
 			await MyHomePage.Expect( this.page );
 			const sidebarComponent = await SidebarComponent.Expect( this.page );
-			await sidebarComponent.clickMenuItem( 'Settings' );
+			await sidebarComponent.gotoMenu( { item: 'Settings' } );
 		} );
 
 		it( 'Open support popover', async function () {
@@ -115,13 +115,13 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page );
-			await loginFlow.login();
+			await loginFlow.logIn();
 		} );
 
 		it( 'Open Settings page', async function () {
 			await MyHomePage.Expect( this.page );
 			const sidebarComponent = await SidebarComponent.Expect( this.page );
-			await sidebarComponent.clickMenuItem( 'Settings' );
+			await sidebarComponent.gotoMenu( { item: 'Settings' } );
 		} );
 
 		it( 'Open support popover', async function () {
@@ -151,13 +151,13 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( this.page );
-			await loginFlow.login();
+			await loginFlow.logIn();
 		} );
 
 		it( 'Open Settings page', async function () {
 			await MyHomePage.Expect( this.page );
 			const sidebarComponent = await SidebarComponent.Expect( this.page );
-			await sidebarComponent.clickMenuItem( 'Settings' );
+			await sidebarComponent.gotoMenu( { item: 'Settings' } );
 		} );
 
 		it( 'Open support popover', async function () {

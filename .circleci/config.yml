@@ -764,23 +764,4 @@ workflows:
           filters:
             branches:
               only: trunk
-
-  e2e-canary-i18n-nightly:
-    jobs:
-      - setup
-      - test-e2e-canary:
-          name: test-e2e-i18n-nightly
-          requires:
-            - setup
-          test-target: 'I18N'
-          test-flags: '-I'
-          filters:
-            branches:
-              only: trunk
-    triggers:
-      - schedule:
-          cron: '46 4 * * *'
-          filters:
-            branches:
-              only: trunk
 # vi: sts=2 ts=2 sw=2 et

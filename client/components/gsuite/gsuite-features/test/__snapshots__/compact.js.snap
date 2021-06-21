@@ -12,7 +12,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures in a list 1`] = 
     >
       <img
         alt="Gmail Logo"
-        src="/calypso/images/g-suite/logo_gmail_48dp.svg"
+        src="gmail.svg"
       />
     </div>
     <div
@@ -33,7 +33,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures in a list 1`] = 
     >
       <img
         alt="Google Docs Logo"
-        src="/calypso/images/g-suite/logo_docs_48dp.svg"
+        src="docs.svg"
       />
     </div>
     <div
@@ -54,7 +54,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures in a list 1`] = 
     >
       <img
         alt="Google Drive Logo"
-        src="/calypso/images/g-suite/logo_drive_48dp.svg"
+        src="drive.svg"
       />
     </div>
     <div
@@ -103,7 +103,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with basic plan 
     >
       <img
         alt="Gmail Logo"
-        src="/calypso/images/g-suite/logo_gmail_48dp.svg"
+        src="gmail.svg"
       />
     </div>
     <div
@@ -124,7 +124,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with basic plan 
     >
       <img
         alt="Google Docs Logo"
-        src="/calypso/images/g-suite/logo_docs_48dp.svg"
+        src="docs.svg"
       />
     </div>
     <div
@@ -145,7 +145,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with basic plan 
     >
       <img
         alt="Google Drive Logo"
-        src="/calypso/images/g-suite/logo_drive_48dp.svg"
+        src="drive.svg"
       />
     </div>
     <div
@@ -194,7 +194,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with business pl
     >
       <img
         alt="Gmail Logo"
-        src="/calypso/images/g-suite/logo_gmail_48dp.svg"
+        src="gmail.svg"
       />
     </div>
     <div
@@ -215,7 +215,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with business pl
     >
       <img
         alt="Google Docs Logo"
-        src="/calypso/images/g-suite/logo_docs_48dp.svg"
+        src="docs.svg"
       />
     </div>
     <div
@@ -236,7 +236,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with business pl
     >
       <img
         alt="Google Drive Logo"
-        src="/calypso/images/g-suite/logo_drive_48dp.svg"
+        src="drive.svg"
       />
     </div>
     <div
@@ -285,7 +285,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with no productS
     >
       <img
         alt="Gmail Logo"
-        src="/calypso/images/g-suite/logo_gmail_48dp.svg"
+        src="gmail.svg"
       />
     </div>
     <div
@@ -306,7 +306,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with no productS
     >
       <img
         alt="Google Docs Logo"
-        src="/calypso/images/g-suite/logo_docs_48dp.svg"
+        src="docs.svg"
       />
     </div>
     <div
@@ -327,7 +327,7 @@ exports[`GSuiteCompactFeatures it renders GSuiteCompactFeatures with no productS
     >
       <img
         alt="Google Drive Logo"
-        src="/calypso/images/g-suite/logo_drive_48dp.svg"
+        src="drive.svg"
       />
     </div>
     <div

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import config from '@automattic/calypso-config';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -12,17 +11,17 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 /**
- * Adds products to the cart and redirects to the checkout page.
+ * build the URL to checkout page for the enviroment and products.
  *
  * @param {string} siteSlug Selected site
  * @param {string | string[]} products Slugs of the products to add to the cart
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url (ie. for affiliate tracking, or whatever)
  */
-export default function checkout(
+export default function buildCheckoutURL(
 	siteSlug: string,
 	products: string | string[],
 	urlQueryArgs: QueryArgs = {}
-): void {
+): string {
 	const productsArray = Array.isArray( products ) ? products : [ products ];
 	const productsString = productsArray.join( ',' );
 
@@ -52,11 +51,10 @@ export default function checkout(
 					? 'http://calypso.localhost:3000'
 					: 'https://wordpress.com';
 
-			window.location.href = addQueryArgs(
+			return addQueryArgs(
 				urlQueryArgs,
 				host + `/checkout/jetpack/${ siteSlug }/${ productsString }`
 			);
-			return;
 		}
 	}
 
@@ -67,9 +65,7 @@ export default function checkout(
 		? `/checkout/${ siteSlug }/${ productsString }`
 		: `/jetpack/connect/${ productsString }`;
 
-	if ( isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
-		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
-	} else {
-		page( addQueryArgs( urlQueryArgs, path ) );
-	}
+	return isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' )
+		? addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` )
+		: addQueryArgs( urlQueryArgs, path );
 }

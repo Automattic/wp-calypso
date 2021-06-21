@@ -93,7 +93,7 @@ export function toTitleCase( words: string[] | string ): string {
 	}
 
 	const result = words.map( function ( word ) {
-		return word.charAt( 0 ).toUpperCase() + word.slice( 1 ).toLowerCase();
+		return word.charAt( 0 ).toUpperCase() + word.slice( 1 );
 	} );
 
 	return result.join( ' ' );

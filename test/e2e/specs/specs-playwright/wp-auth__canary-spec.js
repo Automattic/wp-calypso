@@ -16,6 +16,6 @@ describe( `[${ host }] Authentication: (${ viewportName }) @canary @parallel @sa
 
 	it( 'Can log in', async function () {
 		const loginFlow = new LoginFlow( this.page );
-		await loginFlow.login();
+		await loginFlow.logIn();
 	} );
 } );

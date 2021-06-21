@@ -35,6 +35,10 @@ $sidebar-width-desktop: 324px;
 
 // Overrides of the Gutenberg modal component
 .page-pattern-modal {
+	&.components-modal__frame {
+		max-height: none;
+	}
+
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		width: calc( 100% - 32px );
 		height: 90vh;
@@ -53,9 +57,12 @@ $sidebar-width-desktop: 324px;
 	.components-modal__content {
 		overflow-y: scroll;
 		-webkit-overflow-scrolling: touch;
-		// prevents a 1px strip of content being visible after scrolling
-		margin-top: -1px;
-		padding: 0 16px 16px;
+		padding: 3px 16px 16px;
+
+		&::before {
+			// this is functioning like a clearfix in the core component, but we don't need it
+			display: none;
+		}
 	}
 
 	.components-modal__header {

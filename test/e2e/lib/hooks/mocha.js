@@ -2,28 +2,72 @@
  * External dependencies
  */
 import config from 'config';
+import path from 'path';
+import { mkdtemp } from 'fs/promises';
 
 /**
  * Internal dependencies
  */
-import { buildHooks as buildVideoHooks } from './video';
+import { buildHooks as buildVideoHooks, isVideoEnabled } from './video';
 import { buildHooks as buildBrowserHooks } from './browser';
 
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 
-export const mochaHooks = () => {
-	const videoHooks = buildVideoHooks();
+export const mochaHooks = async () => {
+	const tempDir =
+		process.env.TEMP_ASSET_PATH || ( await mkdtemp( path.resolve( __dirname, '../../test-' ) ) );
+
+	let driver;
+	const hooks = {
+		afterAll: [],
+		beforeAll: [],
+		afterEach: [],
+	};
+
+	if ( isVideoEnabled() ) {
+		const {
+			startFramebuffer,
+			stopFramebuffer,
+			takeScreenshot,
+			startVideoRecording,
+			saveVideoRecording,
+			stopVideoRecording,
+		} = buildVideoHooks();
+
+		hooks.beforeAll.push( async function () {
+			await startFramebuffer();
+			await startVideoRecording( { tempDir } );
+		} );
+
+		hooks.afterEach.push( async function () {
+			if ( this.currentTest && this.currentTest.state === 'failed' ) {
+				await takeScreenshot( {
+					tempDir,
+					testName: this.currentTest.title,
+					driver,
+				} );
+				await saveVideoRecording( { tempDir, testName: this.currentTest.title } );
+			}
+		} );
+
+		hooks.afterAll.push( async function () {
+			await stopFramebuffer();
+			await stopVideoRecording();
+		} );
+	}
+
 	const browserHooks = buildBrowserHooks();
 
-	const createBrowserHook = async function () {
+	hooks.beforeAll.push( async function createBrowserHook() {
 		this.timeout( startBrowserTimeoutMS );
-		const driver = await browserHooks.createBrowser();
+		driver = await browserHooks.createBrowser();
 		this.driver = driver;
-	};
+	} );
 
-	return {
-		afterAll: [ ...videoHooks.afterAll, browserHooks.saveBrowserLogs, browserHooks.closeBrowser ],
-		beforeAll: [ ...videoHooks.beforeAll, createBrowserHook ],
-		afterEach: [ ...videoHooks.afterEach ],
-	};
+	hooks.afterAll.push( async function () {
+		await browserHooks.saveBrowserLogs( { tempDir } );
+		await browserHooks.closeBrowser();
+	} );
+
+	return hooks;
 };

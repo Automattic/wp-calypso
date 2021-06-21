@@ -61,7 +61,7 @@ export class LoginFlow {
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async login(): Promise< void > {
+	async logIn(): Promise< void > {
 		await this.page.goto( getCalypsoURL( 'log-in' ) );
 		await this.baseflow();
 	}
@@ -71,7 +71,7 @@ export class LoginFlow {
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async loginFromPopup(): Promise< void > {
+	async logInFromPopup(): Promise< void > {
 		// Popup emits the event 'popup'. Capturing the event obtains the Page object
 		// for the popup page, where the login form is located.
 		// For more information, see https://playwright.dev/docs/multi-pages#handling-popups

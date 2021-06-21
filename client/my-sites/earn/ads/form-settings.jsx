@@ -21,17 +21,19 @@ import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 import SectionHeader from 'calypso/components/section-header';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getWordadsSettings } from 'calypso/state/selectors/get-wordads-settings';
-import { isJetpackSite, getCustomizerUrl, getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getCustomizerUrl } from 'calypso/state/sites/selectors';
 import { dismissWordAdsSuccess } from 'calypso/state/wordads/approve/actions';
 import { protectForm } from 'calypso/lib/protect-form';
 import { saveWordadsSettings } from 'calypso/state/wordads/settings/actions';
 import SupportInfo from 'calypso/components/support-info';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 
 class AdsFormSettings extends Component {
 	static propTypes = {
@@ -42,8 +44,8 @@ class AdsFormSettings extends Component {
 
 	state = {};
 
-	UNSAFE_componentWillReceiveProps( { wordadsSettings } ) {
-		if ( isEmpty( this.state ) && wordadsSettings ) {
+	UNSAFE_componentWillReceiveProps( { wordadsSettings, site } ) {
+		if ( ( isEmpty( this.state ) && wordadsSettings ) || site?.ID !== this.props.site?.ID ) {
 			this.setState( {
 				...this.defaultSettings(),
 				...wordadsSettings,
@@ -120,6 +122,9 @@ class AdsFormSettings extends Component {
 			display_options: {},
 			ccpa_enabled: false,
 			ccpa_privacy_policy_url: '',
+			custom_adstxt_enabled: false,
+			custom_adstxt: '',
+			jetpack_module_enabled: false,
 		};
 	}
 
@@ -141,21 +146,25 @@ class AdsFormSettings extends Component {
 			display_options: this.state.display_options,
 			ccpa_enabled: this.state.ccpa_enabled,
 			ccpa_privacy_policy_url: this.state.ccpa_privacy_policy_url,
+			custom_adstxt_enabled: this.state.custom_adstxt_enabled,
+			custom_adstxt: this.state.custom_adstxt,
+			jetpack_module_enabled: this.state.jetpack_module_enabled,
 		};
-	}
-
-	jetpackPlacementControls() {
-		const { translate, siteAdminUrl } = this.props;
-
-		return (
-			<Card href={ `${ siteAdminUrl }admin.php?page=jetpack#/traffic` }>
-				{ translate( 'Manage ad placements' ) }
-			</Card>
-		);
 	}
 
 	showAdsToOptions() {
 		const { translate } = this.props;
+
+		if ( this.props.siteIsJetpack ) {
+			return (
+				<ToggleControl
+					checked={ !! this.state.jetpack_module_enabled }
+					disabled={ this.props.isLoading }
+					onChange={ this.handleCompactToggle( 'jetpack_module_enabled' ) }
+					label={ translate( 'Enable ads and display an ad below each post' ) }
+				/>
+			);
+		}
 
 		return (
 			<FormFieldset>
@@ -223,31 +232,34 @@ class AdsFormSettings extends Component {
 	displayOptions() {
 		const { translate } = this.props;
 
+		const isDisabled =
+			this.props.isLoading || ( this.props.siteIsJetpack && ! this.state.jetpack_module_enabled );
+
 		return (
 			<div>
 				<FormFieldset className="ads__settings-display-toggles">
 					<FormLegend>{ translate( 'Display ads below posts on' ) }</FormLegend>
 					<ToggleControl
 						checked={ !! this.state.display_options?.display_front_page }
-						disabled={ this.props.isLoading }
+						disabled={ isDisabled }
 						onChange={ this.handleDisplayToggle( 'display_front_page' ) }
 						label={ translate( 'Front page' ) }
 					/>
 					<ToggleControl
 						checked={ !! this.state.display_options?.display_post }
-						disabled={ this.props.isLoading }
+						disabled={ isDisabled }
 						onChange={ this.handleDisplayToggle( 'display_post' ) }
 						label={ translate( 'Posts' ) }
 					/>
 					<ToggleControl
 						checked={ !! this.state.display_options?.display_page }
-						disabled={ this.props.isLoading }
+						disabled={ isDisabled }
 						onChange={ this.handleDisplayToggle( 'display_page' ) }
 						label={ translate( 'Pages' ) }
 					/>
 					<ToggleControl
 						checked={ !! this.state.display_options?.display_archive }
-						disabled={ this.props.isLoading }
+						disabled={ isDisabled }
 						onChange={ this.handleDisplayToggle( 'display_archive' ) }
 						label={ translate( 'Archives' ) }
 					/>
@@ -256,22 +268,24 @@ class AdsFormSettings extends Component {
 					<FormLegend>{ translate( 'Additional ad placements' ) }</FormLegend>
 					<ToggleControl
 						checked={ !! this.state.display_options?.enable_header_ad }
-						disabled={ this.props.isLoading }
+						disabled={ isDisabled }
 						onChange={ this.handleDisplayToggle( 'enable_header_ad' ) }
 						label={ translate( 'Top of each page' ) }
 					/>
 					<ToggleControl
 						checked={ !! this.state.display_options?.second_belowpost }
-						disabled={ this.props.isLoading }
+						disabled={ isDisabled }
 						onChange={ this.handleDisplayToggle( 'second_belowpost' ) }
 						label={ translate( 'Second ad below post' ) }
 					/>
-					<ToggleControl
-						checked={ !! this.state.display_options?.sidebar }
-						disabled={ this.props.isLoading }
-						onChange={ this.handleDisplayToggle( 'sidebar' ) }
-						label={ translate( 'Sidebar' ) }
-					/>
+					{ ! this.props.siteIsJetpack && (
+						<ToggleControl
+							checked={ !! this.state.display_options?.sidebar }
+							disabled={ isDisabled }
+							onChange={ this.handleDisplayToggle( 'sidebar' ) }
+							label={ translate( 'Sidebar' ) }
+						/>
+					) }
 				</FormFieldset>
 			</div>
 		);
@@ -465,6 +479,9 @@ class AdsFormSettings extends Component {
 	privacy() {
 		const { translate } = this.props;
 
+		const isDisabled =
+			this.props.isLoading || ( this.props.siteIsJetpack && ! this.state.jetpack_module_enabled );
+
 		return (
 			<div>
 				<FormSectionHeading>{ translate( 'Privacy and Consent' ) }</FormSectionHeading>
@@ -477,7 +494,7 @@ class AdsFormSettings extends Component {
 					/>
 					<ToggleControl
 						checked={ !! this.state.ccpa_enabled }
-						disabled={ this.props.isLoading }
+						disabled={ isDisabled }
 						onChange={ this.handleCompactToggle( 'ccpa_enabled' ) }
 						label={ translate( 'Enable targeted advertising to California site visitors (CCPA)' ) }
 					/>
@@ -537,7 +554,7 @@ class AdsFormSettings extends Component {
 								id="ccpa-privacy-policy-url"
 								value={ this.state.ccpa_privacy_policy_url || '' }
 								onChange={ this.handleChange }
-								disabled={ this.props.isLoading }
+								disabled={ isDisabled }
 								placeholder="https://"
 							/>
 							<FormSettingExplanation>
@@ -552,6 +569,70 @@ class AdsFormSettings extends Component {
 		);
 	}
 
+	adstxt() {
+		const { translate } = this.props;
+
+		const isDisabled =
+			this.props.isLoading || ( this.props.siteIsJetpack && ! this.state.jetpack_module_enabled );
+
+		return (
+			<div>
+				<FormSectionHeading>{ translate( 'Ads.txt' ) }</FormSectionHeading>
+				<FormFieldset>
+					<SupportInfo
+						text={ translate(
+							'Ads.txt (Authorized Digital Sellers) is a mechanism that enables content owners to declare who is authorized to sell their ad inventory. It’s the formal list of advertising partners you support as a publisher.'
+						) }
+						link="https://jetpack.com/support/ads/"
+					/>
+					<ToggleControl
+						checked={ !! this.state.custom_adstxt_enabled }
+						disabled={ isDisabled }
+						onChange={ this.handleCompactToggle( 'custom_adstxt_enabled' ) }
+						label={ translate( 'Customize your ads.txt file' ) }
+					/>
+					{ this.state.custom_adstxt_enabled && (
+						<>
+							<div className="ads__child-settings">
+								<FormSettingExplanation>
+									{ translate(
+										'Ads automatically generates a custom {{link1}}ads.txt{{/link1}} tailored for your site. If you need to add additional entries for other networks please add them in the space below, one per line. {{link2}}Check here for more details{{/link2}}.',
+										{
+											components: {
+												link1: (
+													<a
+														href={ this.props.siteUrl + '/ads.txt' }
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+												link2: (
+													<a
+														href="https://jetpack.com/2018/11/09/how-jetpack-ads-members-can-increase-their-earnings-with-ads-txt"
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+											},
+										}
+									) }
+								</FormSettingExplanation>
+							</div>
+							<div className="ads__child-settings">
+								<FormTextarea
+									name="custom_adstxt"
+									value={ this.state.custom_adstxt }
+									onChange={ this.handleChange }
+									disabled={ isDisabled }
+								/>
+							</div>
+						</>
+					) }
+				</FormFieldset>
+			</div>
+		);
+	}
+
 	render() {
 		const { isLoading, site, translate } = this.props;
 
@@ -560,8 +641,6 @@ class AdsFormSettings extends Component {
 		return (
 			<Fragment>
 				<QueryWordadsSettings siteId={ site.ID } />
-
-				{ this.props.siteIsJetpack && isWordAds ? this.jetpackPlacementControls() : null }
 
 				<SectionHeader label={ translate( 'Ads Settings' ) }>
 					<Button
@@ -580,11 +659,13 @@ class AdsFormSettings extends Component {
 						onSubmit={ this.handleSubmit }
 						onChange={ this.props.markChanged }
 					>
-						{ ! this.props.siteIsJetpack ? this.showAdsToOptions() : null }
+						{ this.showAdsToOptions() }
 
-						{ ! this.props.siteIsJetpack ? this.displayOptions() : null }
+						{ this.displayOptions() }
 
-						{ ! this.props.siteIsJetpack ? this.privacy() : null }
+						{ this.privacy() }
+
+						{ this.props.siteIsJetpack ? this.adstxt() : null }
 
 						<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
 						{ this.siteOwnerOptions() }
@@ -603,16 +684,17 @@ export default compose(
 	connect(
 		( state ) => {
 			const siteId = getSelectedSiteId( state );
+			const isJetpack = isJetpackSite( state, siteId );
 			const isSavingSettings = isSavingWordadsSettings( state, siteId );
 			const wordadsSettings = getWordadsSettings( state, siteId );
 
 			return {
 				isLoading: isSavingSettings || ! wordadsSettings,
 				site: getSelectedSite( state ),
-				siteIsJetpack: isJetpackSite( state, siteId ),
+				siteIsJetpack: isJetpack,
 				wordadsSettings,
 				widgetsUrl: getCustomizerUrl( state, siteId, 'widgets' ),
-				siteAdminUrl: getSiteAdminUrl( state, siteId ),
+				siteUrl: getSiteUrl( state, siteId ),
 			};
 		},
 		{ dismissWordAdsSuccess, saveWordadsSettings }

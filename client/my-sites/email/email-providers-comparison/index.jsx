@@ -19,12 +19,18 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
 import { Button } from '@automattic/components';
-import { canCurrentUserAddEmail, getCurrentUserCannotAddEmailReason } from 'calypso/lib/domains';
+import {
+	canCurrentUserAddEmail,
+	getCurrentUserCannotAddEmailReason,
+	getSelectedDomain,
+} from 'calypso/lib/domains';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import EmailProviderCard from './email-provider-card';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getEmailForwardingFeatures,
 	getGoogleFeatures,
@@ -36,14 +42,20 @@ import {
 	GSUITE_BASIC_SLUG,
 } from 'calypso/lib/gsuite/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
-import { getAnnualPrice, getGoogleMailServiceFamily, getMonthlyPrice } from 'calypso/lib/gsuite';
+import {
+	getAnnualPrice,
+	getGoogleMailServiceFamily,
+	getMonthlyPrice,
+	hasGSuiteSupportedDomain,
+} from 'calypso/lib/gsuite';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getTitanProductName } from 'calypso/lib/titan';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
+import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -54,6 +66,7 @@ import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powe
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import gSuiteLogo from 'calypso/assets/images/email-providers/gsuite.svg';
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -67,8 +80,19 @@ const identityMap = ( item ) => item;
 
 class EmailProvidersComparison extends React.Component {
 	static propTypes = {
-		domain: PropTypes.object.isRequired,
+		// Props passed to this component
+		selectedDomainName: PropTypes.string.isRequired,
+
+		// Props injected via connect()
+		currencyCode: PropTypes.string,
+		currentRoute: PropTypes.string,
+		domain: PropTypes.object,
+		gSuiteProduct: PropTypes.object,
 		isGSuiteSupported: PropTypes.bool.isRequired,
+		productsList: PropTypes.object.isRequired,
+		selectedSiteId: PropTypes.number,
+		selectedSiteSlug: PropTypes.string,
+		titanMailProduct: PropTypes.object,
 	};
 
 	isMounted = false;
@@ -76,16 +100,13 @@ class EmailProvidersComparison extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		const isDomainEligibleForEmail = this.isDomainEligibleForEmail( props.domain );
-		const hasEmailForwards = this.doesDomainHaveEmailForwards( props.domain );
-
 		this.state = {
 			googleUsers: [],
-			titanMailboxes: [ buildNewTitanMailbox( props.domain.name, false ) ],
+			titanMailboxes: [ buildNewTitanMailbox( props.selectedDomainName, false ) ],
 			expanded: {
-				forwarding: hasEmailForwards && ! isDomainEligibleForEmail,
+				forwarding: false,
 				google: false,
-				titan: isDomainEligibleForEmail,
+				titan: true,
 			},
 			addingToCart: false,
 			validatedTitanMailboxUuids: [],
@@ -119,11 +140,11 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	goToEmailForwarding = () => {
-		const { domain, currentRoute, selectedSiteSlug } = this.props;
+		const { currentRoute, selectedDomainName, selectedSiteSlug } = this.props;
 
 		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'email-forwarding' } );
 
-		page( emailManagementForwarding( selectedSiteSlug, domain.name, currentRoute ) );
+		page( emailManagementForwarding( selectedSiteSlug, selectedDomainName, currentRoute ) );
 	};
 
 	onTitanMailboxesChange = ( updatedMailboxes ) =>
@@ -253,12 +274,6 @@ class EmailProvidersComparison extends React.Component {
 	renderEmailForwardingCard() {
 		const { domain, translate } = this.props;
 
-		const showExpandButton =
-			this.doesDomainHaveEmailForwards( domain ) || this.isDomainEligibleForEmail( domain );
-		const buttonLabel = this.doesDomainHaveEmailForwards( domain )
-			? translate( 'Manage email forwarding' )
-			: translate( 'Add email forwarding' );
-
 		return (
 			<EmailProviderCard
 				providerKey="forwarding"
@@ -269,8 +284,8 @@ class EmailProvidersComparison extends React.Component {
 				) }
 				detailsExpanded={ this.state.expanded.forwarding }
 				onExpandedChange={ this.onExpandedStateChange }
-				buttonLabel={ buttonLabel }
-				showExpandButton={ showExpandButton }
+				buttonLabel={ translate( 'Add email forwarding' ) }
+				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
 				expandButtonLabel={ translate( 'Add email forwarding' ) }
 				onButtonClick={ this.goToEmailForwarding }
 				features={ getEmailForwardingFeatures() }
@@ -279,7 +294,14 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderGoogleCard() {
-		const { currencyCode, domain, gSuiteProduct, isGSuiteSupported, translate } = this.props;
+		const {
+			currencyCode,
+			domain,
+			gSuiteProduct,
+			isGSuiteSupported,
+			selectedDomainName,
+			translate,
+		} = this.props;
 
 		// TODO: Improve handling of this case
 		if ( ! isGSuiteSupported ) {
@@ -314,16 +336,16 @@ class EmailProvidersComparison extends React.Component {
 		// If we don't have any users, initialize the list to have 1 empty user
 		const googleUsers =
 			( this.state.googleUsers ?? [] ).length === 0
-				? newUsers( domain.name )
+				? newUsers( selectedDomainName )
 				: this.state.googleUsers;
 
-		const formFields = (
+		const formFields = domain ? (
 			<FormFieldset>
 				<GSuiteNewUserList
 					extraValidation={ identityMap }
 					domains={ [ domain ] }
 					onUsersChange={ this.onGoogleUsersChange }
-					selectedDomainName={ domain.name }
+					selectedDomainName={ selectedDomainName }
 					users={ googleUsers }
 					onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
 					showLabels={ true }
@@ -343,7 +365,7 @@ class EmailProvidersComparison extends React.Component {
 					</Button>
 				</GSuiteNewUserList>
 			</FormFieldset>
-		);
+		) : null;
 
 		return (
 			<EmailProviderCard
@@ -373,7 +395,7 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderTitanCard() {
-		const { currencyCode, domain, titanMailProduct, translate } = this.props;
+		const { currencyCode, domain, selectedDomainName, titanMailProduct, translate } = this.props;
 
 		const formattedPrice = translate( '{{price/}} /user /month billed monthly', {
 			components: {
@@ -399,7 +421,7 @@ class EmailProvidersComparison extends React.Component {
 			<TitanNewMailboxList
 				onMailboxesChange={ this.onTitanMailboxesChange }
 				mailboxes={ this.state.titanMailboxes }
-				domain={ domain.name }
+				domain={ selectedDomainName }
 				onReturnKeyPress={ this.onTitanFormReturnKeyPress }
 				showLabels={ true }
 				validatedMailboxUuids={ this.state.validatedTitanMailboxUuids }
@@ -449,7 +471,8 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderHeaderSection() {
-		const { domain, translate } = this.props;
+		const { selectedDomainName, translate } = this.props;
+
 		const image = {
 			path: emailIllustration,
 			align: 'right',
@@ -457,7 +480,7 @@ class EmailProvidersComparison extends React.Component {
 
 		const translateArgs = {
 			args: {
-				domainName: domain.name,
+				domainName: selectedDomainName,
 			},
 			comment: '%(domainName)s is the domain name, e.g example.com',
 		};
@@ -478,10 +501,6 @@ class EmailProvidersComparison extends React.Component {
 				</p>
 			</PromoCard>
 		);
-	}
-
-	doesDomainHaveEmailForwards( domain ) {
-		return domain.emailForwardsCount > 0;
 	}
 
 	isDomainEligibleForEmail( domain ) {
@@ -523,15 +542,22 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	render() {
-		const { isGSuiteSupported } = this.props;
+		const { isGSuiteSupported, selectedSiteId } = this.props;
 
 		return (
-			<>
+			<Main wideLayout>
+				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
+
 				{ this.renderHeaderSection() }
+
 				{ this.renderDomainEligibilityNotice() }
+
 				{ this.renderTitanCard() }
+
 				{ this.renderGoogleCard() }
+
 				{ this.renderEmailForwardingCard() }
+
 				<TrackComponentView
 					eventName="calypso_email_providers_comparison_page_view"
 					eventProperties={ {
@@ -539,24 +565,38 @@ class EmailProvidersComparison extends React.Component {
 						layout: 'stacked',
 					} }
 				/>
-			</>
+			</Main>
 		);
 	}
 }
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
 		const productSlug = config.isEnabled( 'google-workspace-migration' )
 			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
 			: GSUITE_BASIC_SLUG;
 
+		const selectedSiteId = getSelectedSiteId( state );
+		const domains = getDomainsBySiteId( state, selectedSiteId );
+		const domain = getSelectedDomain( {
+			domains,
+			selectedDomainName: ownProps.selectedDomainName,
+		} );
+
+		const isGSuiteSupported = domain
+			? canUserPurchaseGSuite( state ) && hasGSuiteSupportedDomain( [ domain ] )
+			: true;
+
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			gSuiteProduct: getProductBySlug( state, productSlug ),
-			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 			currentRoute: getCurrentRoute( state ),
+			domain,
+			gSuiteProduct: getProductBySlug( state, productSlug ),
+			isGSuiteSupported,
 			productsList: getProductsList( state ),
+			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
+			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};
 	},
 	( dispatch ) => {

@@ -29,6 +29,7 @@ const noop = () => {};
  *
  * @param {object|object[]} files The file to upload
  * @param {object} site The site to add the media to
+ * @param {number} postId - ID of the post to attach the media item to
  * @param {Function} uploader The file uploader to use
  * @param {Function?} onItemUploaded Optional function to call when upload for an individual item succeeds
  * @param {Function?} onItemFailure Optional function to be called when upload for an individual item fails
@@ -38,6 +39,7 @@ const noop = () => {};
 export const uploadMedia = (
 	files,
 	site,
+	postId = 0,
 	uploader,
 	onItemUploaded = noop,
 	onItemFailure = noop
@@ -65,7 +67,7 @@ export const uploadMedia = (
 			const {
 				media: [ uploadedMedia ],
 				found,
-			} = await uploader( file, siteId );
+			} = await uploader( file, siteId, postId );
 			const uploadedMediaWithTransientId = {
 				...uploadedMedia,
 				transientId: transientMedia.ID,

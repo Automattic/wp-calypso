@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { omit } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { withStorageKey } from '@automattic/state-utils';
@@ -41,8 +36,8 @@ export const localValues = ( state = {}, action ) => {
 			return { ...state, [ key ]: value };
 		}
 		case PREFERENCES_SAVE_SUCCESS: {
-			const { key } = action;
-			return omit( state, key );
+			const { [ action.key ]: removed, ...rest } = state;
+			return rest;
 		}
 	}
 

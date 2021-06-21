@@ -19,7 +19,7 @@ object WebApp : Project({
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
-	buildType(RunCalypsoPlaywrightE2eTests)
+	buildType(RunCalypsoPlaywrightE2eDesktopTests)
 })
 
 object RunCalypsoE2eDesktopTests : BuildType({
@@ -733,8 +733,9 @@ object CheckCodeStyleBranch : BuildType({
 	}
 })
 
-object RunCalypsoPlaywrightE2eTests : BuildType({
-	name = "Playwright E2E tests"
+object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
+	name = "Playwright E2E tests (desktop)"
+	uuid = "23cc069f-59e5-4a63-a131-539fb55264e7"
 	description = "Runs Calypso e2e tests using Playwright"
 	params {
 		param("use_cached_node_modules", "false")
@@ -813,8 +814,8 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
-				export VIEWPORT_SIZE="mobile"
-				export LOCALE="en"
+				export VIEWPORT_SIZE=desktop
+				export LOCALE=en
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export DEBUG=pw:api
 
@@ -859,6 +860,14 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
 			}
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
 		}
 	}
 

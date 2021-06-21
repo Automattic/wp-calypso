@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import assert from 'assert';
+import config from 'config';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -163,6 +164,95 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
-		afterEach( clearEventsStack );
+		it( "Shouldn't track replaceInnerBlocks when template parts load", async function () {
+			const editor = await SiteEditorComponent.Expect( this.driver );
+
+			await editor.addBlock( 'Template Part' );
+			await clearEventsStack( this.driver );
+
+			await editor.runInCanvas( async () => {
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.wp-block-template-part.is-selected button.is-primary' )
+				);
+			} );
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.wp-block-template-part__selection-preview-item' )
+			);
+			await editor.waitForTemplatePartsToLoad();
+
+			const eventsStack = await getEventsStack( this.driver );
+			const blockInsertedEventFired = eventsStack.some(
+				( [ eventName ] ) => eventName === 'wpcom_block_inserted'
+			);
+			assert.strictEqual(
+				blockInsertedEventFired,
+				false,
+				'"wpcom_block_inserted" editor tracking event fired when template parts load, this should not happen'
+			);
+		} );
+
+		it( "Shouldn't track replaceInnerBlocks after undoing or redoing a template part edit", async function () {
+			const editor = await SiteEditorComponent.Expect( this.driver );
+
+			// Insert a template part block and clear the events stack
+			// so the insert event won't intefere with our asserts.
+			const blockId = await editor.addBlock( 'Template Part' );
+			await clearEventsStack( this.driver );
+
+			// Add a template part block and select an existing template part.
+			// Make sure the template part is loaded before moving on.
+			await editor.runInCanvas( async () => {
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.wp-block-template-part.is-selected button.is-primary' )
+				);
+			} );
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.wp-block-template-part__selection-preview-item' )
+			);
+			await editor.waitForTemplatePartsToLoad();
+
+			// Let's find out the ID of the first child block of the template part
+			// and remove the block.
+			let childBlockId;
+			await editor.runInCanvas( async () => {
+				const element = await this.driver.findElement( By.css( `#${ blockId } > .wp-block` ) );
+				childBlockId = await element.getAttribute( 'id' );
+			} );
+			await editor.removeBlock( childBlockId );
+
+			// Undo
+			await clearEventsStack( this.driver );
+			await driverHelper.clickWhenClickable( this.driver, By.css( 'button[aria-label="Undo"]' ) );
+			let eventsStack = await getEventsStack( this.driver );
+			let blockInsertedEventFired = eventsStack.some(
+				( [ eventName ] ) => eventName === 'wpcom_block_inserted'
+			);
+			assert.strictEqual(
+				blockInsertedEventFired,
+				false,
+				'"wpcom_block_inserted" editor tracking event fired when template part edits were undid , this should not happen'
+			);
+
+			// Redo
+			await clearEventsStack( this.driver );
+			await driverHelper.clickWhenClickable( this.driver, By.css( 'button[aria-label="Redo"]' ) );
+			eventsStack = await getEventsStack( this.driver );
+			blockInsertedEventFired = eventsStack.some(
+				( [ eventName ] ) => eventName === 'wpcom_block_inserted'
+			);
+			assert.strictEqual(
+				blockInsertedEventFired,
+				false,
+				'"wpcom_block_inserted" editor tracking event fired when template part edits were redid , this should not happen'
+			);
+		} );
+
+		afterEach( async function () {
+			await clearEventsStack( this.driver );
+		} );
 	} );
 } );

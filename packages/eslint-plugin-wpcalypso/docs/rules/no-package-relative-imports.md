@@ -3,17 +3,15 @@
 When importing modules, we support importing them relative to `./client` but using a absolute syntax:
 
 ```js
-import config from 'config';
-import userFactory from 'lib/user';
+import { addQueryArgs } from 'lib/route';
 ```
 
-Those work because Webpack will search for those modules in ./client first, and then in node_modules (so the example above gets resolved as ./client/config and ./client/lib/user). The current approach has some problems, namely having to configure every module resolution (webpack, node.js, typescript, IDEs...) to understand and follow that pattern.
+Those work because Webpack will search for those modules in ./client first, and then in node_modules (so the example above gets resolved as ./client/lib/route). The current approach has some problems, namely having to configure every module resolution (webpack, node.js, typescript, IDEs...) to understand and follow that pattern.
 
 As an alternative, we can rewrite the above as
 
 ```js
-import config from '@automattic/calypso-config';
-import userFactory from 'calypso/lib/user';
+import { addQueryArgs } from 'calypso/lib/route';
 ```
 
 Which works because `calypso` is a valid package in our repository, points to `./client` and is declared as a dependency in the root `package.json`. This will work out of the box in all module resolution systems.

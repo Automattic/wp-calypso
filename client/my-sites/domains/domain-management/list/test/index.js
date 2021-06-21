@@ -23,6 +23,7 @@ jest.mock( 'calypso/lib/wp', () => ( {
 	undocumented: () => ( {
 		getProducts: () => {},
 		getSitePlans: () => {},
+		getSiteFeatures: () => {},
 	} ),
 } ) );
 

@@ -8,12 +8,12 @@ describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
 
 	it( 'Log in', async function () {
 		const loginFlow = new LoginFlow( this.page, 'wooCommerceUser' );
-		await loginFlow.login();
+		await loginFlow.logIn();
 	} );
 
 	it( 'Navigate to Tools > Marketing page', async function () {
 		const sidebarComponent = await SidebarComponent.Expect( this.page );
-		await sidebarComponent.clickMenuItem( 'Tools' );
+		await sidebarComponent.gotoMenu( { item: 'Tools' } );
 	} );
 
 	it( 'Click on Traffic tab', async function () {

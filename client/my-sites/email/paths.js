@@ -26,10 +26,10 @@ function resolveRootPath( relativeTo ) {
 /**
  * Retrieves the url of the Add New Mailboxes page either for G Suite or Google Workspace:
  *
- * https://wordpress.com/email/:domainName/google-workspace/add-users/:siteName
- * https://wordpress.com/email/:domainName/gsuite/add-users/:siteName
- * https://wordpress.com/email/google-workspace/add-users/:siteName
- * https://wordpress.com/email/gsuite/add-users/:siteName
+ *   https://wordpress.com/email/:domainName/google-workspace/add-users/:siteName
+ *   https://wordpress.com/email/:domainName/gsuite/add-users/:siteName
+ *   https://wordpress.com/email/google-workspace/add-users/:siteName
+ *   https://wordpress.com/email/gsuite/add-users/:siteName
  *
  * @param {string} siteName - slug of the current site
  * @param {string} domainName - domain name of the account to add users to
@@ -118,6 +118,20 @@ export function emailManagement( siteName, domainName, relativeTo = null ) {
 
 export function emailManagementForwarding( siteName, domainName, relativeTo = null ) {
 	return emailManagementEdit( siteName, domainName, 'forwarding', relativeTo );
+}
+
+/**
+ * Retrieves the url of the Email Comparison page:
+ *
+ *   https://wordpress.com/email/:domainName/purchase/:siteName
+ *
+ * @param {string} siteName - slug of the current site
+ * @param {string} domainName - domain name of the account to add users to
+ * @param {string} relativeTo - optional path prefix
+ * @returns {string} the corresponding url
+ */
+export function emailManagementPurchaseNewEmailAccount( siteName, domainName, relativeTo = null ) {
+	return emailManagementEdit( siteName, domainName, 'purchase', relativeTo );
 }
 
 export function emailManagementEdit(

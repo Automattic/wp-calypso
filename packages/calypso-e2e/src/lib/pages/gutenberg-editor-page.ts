@@ -75,7 +75,7 @@ export class GutenbergEditorPage extends BaseContainer {
 		const sanitizedTitle = title.trim();
 		await this.setTitle( sanitizedTitle );
 		const readBack = await this.getTitle();
-		assert( readBack === sanitizedTitle );
+		assert.strictEqual( readBack, sanitizedTitle );
 	}
 
 	/**
@@ -110,7 +110,7 @@ export class GutenbergEditorPage extends BaseContainer {
 	async enterText( text: string ): Promise< void > {
 		await this.setText( text );
 		const readBack = await this.getText();
-		assert( readBack === text );
+		assert.strictEqual( readBack, text );
 	}
 
 	/**

@@ -16,6 +16,7 @@ import { bumpStat } from 'calypso/lib/analytics/mc';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { ScreenReaderText } from '@automattic/components';
 import { clearMediaItemErrors } from 'calypso/state/media/actions';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { addMedia } from 'calypso/state/media/thunks';
 
 /**
@@ -55,7 +56,7 @@ class MediaLibraryUploadUrl extends Component {
 		}
 
 		this.props.clearMediaItemErrors( this.props.site.ID );
-		this.props.addMedia( this.state.value, this.props.site );
+		this.props.addMedia( this.state.value, this.props.site, this.props.postId );
 
 		this.setState( { value: '', isError: false } );
 		this.props.onAddMedia();
@@ -116,6 +117,9 @@ class MediaLibraryUploadUrl extends Component {
 	}
 }
 
-export default connect( null, { addMedia, clearMediaItemErrors } )(
-	localize( MediaLibraryUploadUrl )
-);
+export default connect(
+	( state ) => ( {
+		postId: getEditorPostId( state ),
+	} ),
+	{ addMedia, clearMediaItemErrors }
+)( localize( MediaLibraryUploadUrl ) );

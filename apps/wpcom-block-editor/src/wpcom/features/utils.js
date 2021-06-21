@@ -17,6 +17,14 @@ export const getEditorType = () => {
 		return 'site';
 	}
 
+	if ( document.querySelector( '#widgets-editor' ) ) {
+		return 'widgets';
+	}
+
+	if ( document.querySelector( '#customize-controls .customize-widgets__sidebar-section.open' ) ) {
+		return 'customize-widgets';
+	}
+
 	return undefined;
 };
 

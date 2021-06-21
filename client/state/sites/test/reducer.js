@@ -49,6 +49,7 @@ describe( 'reducer', () => {
 			'sharingButtons',
 			'blogStickers',
 			'hasAllSitesList',
+			'features',
 		] );
 	} );
 

@@ -27,8 +27,12 @@ export function trackGlobalStylesTabSelected( { tab, open } = {} ) {
  * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export default () => ( {
+	id: 'wpcom-block-editor-global-styles-tab-selected',
 	selector: `.edit-site-global-styles-sidebar .components-tab-panel__tabs button:not(.is-active)`,
 	type: 'click',
+	// Using capture event listener to make sure the tab is not set to active
+	// before this event listener runs. This way we can prevent the listener
+	// from triggering when the tab is already active.
 	capture: true,
 	handler: ( event ) =>
 		trackGlobalStylesTabSelected( {
