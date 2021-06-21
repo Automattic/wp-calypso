@@ -156,4 +156,11 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 			)
 		);
 	}
+
+	async toggleNavigationSidebar() {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.edit-site-navigation-toggle__button' )
+		);
+	}
 }

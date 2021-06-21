@@ -676,4 +676,23 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			By.css( '.edit-post-header .table-of-contents button' )
 		);
 	}
+
+	async toggleNavigationSidebar() {
+		const isOpen = await driverHelper.isElementLocated(
+			this.driver,
+			By.css( '.wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard' )
+		);
+
+		if ( isOpen ) {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button' )
+			);
+		} else {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button' )
+			);
+		}
+	}
 }
