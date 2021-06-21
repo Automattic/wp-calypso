@@ -164,30 +164,6 @@ UndocumentedSite.prototype.getConnection = function ( connectionId ) {
 };
 
 /**
- * Upload an external media item to the WordPress media library
- *
- * @param {string} service - external media service name (i.e 'google_photos')
- * @param {Array} files - array of external media file IDs
- * @param {number} postId - ID of the post to attach the media item to
- *
- * @returns {object} promise - resolves on completion of the GET request
- */
-UndocumentedSite.prototype.uploadExternalMedia = function ( service, files, postId = 0 ) {
-	debug( '/sites/:site_id:/external-media-upload query' );
-
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + this._id + '/external-media-upload',
-		},
-		{
-			external_ids: files,
-			service,
-			post_id: postId,
-		}
-	);
-};
-
-/**
  * Runs Theme Setup (Headstart).
  *
  * @returns {Promise} A Promise to resolve when complete.

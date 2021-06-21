@@ -4,9 +4,12 @@
 import { uploadMedia } from './upload-media';
 import wpcom from 'calypso/lib/wp';
 
-const getExternalUploader = ( service ) => ( file, siteId, postId ) => {
-	return wpcom.undocumented().site( siteId ).uploadExternalMedia( service, [ file.guid ], postId );
-};
+const getExternalUploader = ( service ) => ( file, siteId, postId = 0 ) =>
+	wpcom.req.post( `/sites/${ siteId }/external-media-upload`, {
+		external_ids: [ file.guid ],
+		service,
+		post_id: postId,
+	} );
 
 /**
  * Add a single external media file.
