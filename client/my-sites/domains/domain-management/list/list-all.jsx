@@ -78,33 +78,29 @@ class ListAll extends Component {
 	renderedQuerySiteDomains = {};
 
 	componentDidUpdate() {
-		if ( this.isLoadingDomainDetails() ) {
-			return;
-		}
-
-		if ( ! isEmpty( this.props.filteredDomainsList ) && ! this.state.selectedDomainsSet ) {
+		if (
+			this.shouldSetSelectedDomains() &&
+			! this.isLoadingDomainDetails() &&
+			! isEmpty( this.props.filteredDomainsList ) &&
+			! this.state.selectedDomainsSet
+		) {
 			this.setSelectedDomains();
 		}
 	}
 
 	setSelectedDomains = () => {
-		const selectedDomains = this.props.filteredDomainsList.reduce(
-			( list, { domain } ) => ( ( list[ domain ] = true ), list ),
-			{}
+		this.setState( { selectedDomainsSet: true }, () =>
+			forEach( this.props.filteredDomainsList, ( { domain } ) =>
+				this.handleDomainItemToggle( domain, true )
+			)
 		);
-
-		forEach( this.props.filteredDomainsList, ( { domain } ) => this.fetchWhoisData( domain ) );
-
-		this.setState( { selectedDomains, selectedDomainsSet: true } );
 	};
 
 	fetchWhoisData = ( domain ) => {
 		wpcom
 			.undocumented()
 			.fetchWhois( domain )
-			.then( ( whoisData ) => {
-				this.setWhoisData( domain, whoisData[ 0 ] );
-			} )
+			.then( ( whoisData ) => this.setWhoisData( domain, whoisData[ 0 ] ?? null ) )
 			.catch( () => this.setWhoisData( domain, null ) );
 	};
 
@@ -133,7 +129,9 @@ class ListAll extends Component {
 			this.fetchWhoisData( domain );
 		}
 
-		this.setState( { selectedDomains: { ...this.state.selectedDomains, [ domain ]: selected } } );
+		this.setState( ( { selectedDomains } ) => {
+			return { selectedDomains: { ...selectedDomains, [ domain ]: selected } };
+		} );
 	};
 
 	headerButtons() {
@@ -173,7 +171,12 @@ class ListAll extends Component {
 	}
 
 	shouldShowContactForm() {
-		return ListAllActions.editContactEmail === this.props?.action;
+		return this.props.isContactEditContext;
+		// return ListAllActions.editContactEmail === this.props?.action;
+	}
+
+	shouldSetSelectedDomains() {
+		return this.shouldShowContactForm();
 	}
 
 	shouldShowCheckbox() {
@@ -470,9 +473,10 @@ export default connect(
 		const sites = keyBy( getSites( state ), 'ID' );
 		const user = getCurrentUser( state );
 		const purchases = keyBy( getUserPurchases( state, user?.ID ) || [], 'id' );
+		const action = parse( context.querystring )?.action;
 
 		return {
-			action: parse( context.querystring )?.action,
+			action,
 			canManageSitesMap: canCurrentUserForSites( state, keys( sites ), 'manage_options' ),
 			currentRoute: getCurrentRoute( state ),
 			domainsList: getFlatDomainsList( state ),
@@ -484,6 +488,7 @@ export default connect(
 			sites,
 			hasAllSitesLoaded: hasAllSitesList( state ),
 			user,
+			isContactEditContext: ListAllActions.editContactEmail === action,
 		};
 	},
 	{
