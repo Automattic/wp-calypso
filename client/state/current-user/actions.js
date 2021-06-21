@@ -65,6 +65,8 @@ export function fetchCurrentUser() {
 			.finally( () => {
 				fetchingUser = null;
 			} );
+
+		return fetchingUser;
 	};
 }
 
