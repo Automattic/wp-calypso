@@ -19,7 +19,6 @@ import * as driverHelper from '../../lib/driver-helper.js';
 import * as dataHelper from '../../lib/data-helper.js';
 import { clearEventsStack, getEventsStack } from '../../lib/gutenberg/tracking/utils.js';
 import { createGeneralTests } from '../../lib/gutenberg/tracking/general-tests.js';
-import { By } from 'selenium-webdriver';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
