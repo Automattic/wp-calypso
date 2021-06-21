@@ -33,7 +33,7 @@ import 'calypso/state/data-layer/wpcom/sites/homepage';
 
 /**
  * Returns a thunk that dispatches an action object to be used in signalling that a site has been
- * deleted. It also re-re-fetches the current user.
+ * deleted. It also re-fetches the current user.
  *
  * @param  {number} siteId  ID of deleted site
  * @returns {Function}        Action thunk
