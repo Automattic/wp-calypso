@@ -114,4 +114,19 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		assert.strictEqual( toggleEvents[ 0 ][ 1 ].is_open, false );
 		assert.strictEqual( toggleEvents[ 1 ][ 1 ].is_open, true );
 	} );
+
+	if ( editorType === 'post' ) {
+		it( 'Tracks "wpcom_block_editor_details_open" event', async function () {
+			const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+			await editor.toggleDetails(); // Open details
+			await editor.toggleDetails(); // Close details
+
+			const eventsStack = await getEventsStack( this.driver );
+			const toggleEvents = eventsStack.filter(
+				( [ eventName ] ) => eventName === 'wpcom_block_editor_details_open'
+			);
+			assert.strictEqual( toggleEvents.length, 1 );
+		} );
+	}
 }
