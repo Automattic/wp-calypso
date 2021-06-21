@@ -11,7 +11,7 @@ import tracksRecordEvent from './track-record-event';
 export default () => ( {
 	id: 'wpcom-block-editor-close-click',
 	selector:
-		'.edit-post-header .edit-post-fullscreen-mode-close, .edit-site-navigation-toggle__button',
+		'.edit-post-header .edit-post-fullscreen-mode-close, .edit-site-navigation-panel__back-to-dashboard',
 	type: 'click',
 	handler: () => tracksRecordEvent( 'wpcom_block_editor_close_click' ),
 } );
