@@ -105,7 +105,7 @@ class EditorMediaModalDetailFields extends Component {
 	};
 
 	handleDisplayEmbed = () => {
-		const inputValue = 1 === this.getItemValue( 'display_embed' ) ? 0 : 1;
+		const inputValue = '1' === this.getItemValue( 'display_embed' ) ? '0' : '1';
 
 		this.setFieldByName( 'display_embed', inputValue );
 	};
@@ -214,7 +214,7 @@ class EditorMediaModalDetailFields extends Component {
 					<FormCheckbox
 						id="display_embed"
 						name="display_embed"
-						checked={ share === 1 }
+						checked={ share === '1' }
 						onChange={ this.handleDisplayEmbed }
 					/>
 					<span>
