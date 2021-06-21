@@ -259,7 +259,7 @@ function load_block_patterns_from_api( $current_screen ) {
 
 	// While we're still testing the FSE patterns, limit activation via a filter.
 	if ( $is_site_editor && apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
-		$editor_type        = 'site_editor';
+		$editor_type = 'site_editor';
 	}
 
 	require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';

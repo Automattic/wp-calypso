@@ -107,15 +107,16 @@ class Block_Patterns_From_Api_Test extends TestCase {
 		$this->assertEquals( array( 'a8c/' . $this->pattern_mock_object['name'] => true ), $block_patterns_from_api->register_patterns() );
 	}
 
-		/**
-	 *  Tests that we're making a request where there are no cached patterns.
+	/**
+	 *  Tests that we're making two requests when we specify that we're on the site editor.
 	 */
 	public function test_patterns_site_editor_source_site() {
 		/**
 		 * A callback for the `a8c_enable_fse_block_patterns_api` filter.
+		 *
 		 * @return bool
 		 */
-		$should_enable_fse_block_patterns_api = function() {
+		$should_enable_fse_block_patterns_api = function () {
 			return true;
 		};
 
@@ -127,8 +128,8 @@ class Block_Patterns_From_Api_Test extends TestCase {
 		$utils_mock->expects( $this->exactly( 2 ) )
 			->method( 'remote_get' )
 			->withConsecutive(
-				[ 'https://public-api.wordpress.com/rest/v1/ptk/patterns/fr?tags=pattern&pattern_meta=is_web&patterns_source=block_patterns' ],
-				[ 'https://public-api.wordpress.com/rest/v1/ptk/patterns/fr?tags=pattern&pattern_meta=is_web&patterns_source=fse_block_patterns' ]
+				array( 'https://public-api.wordpress.com/rest/v1/ptk/patterns/fr?tags=pattern&pattern_meta=is_web&patterns_source=block_patterns' ),
+				array( 'https://public-api.wordpress.com/rest/v1/ptk/patterns/fr?tags=pattern&pattern_meta=is_web&patterns_source=fse_block_patterns' )
 			);
 
 		$this->assertEquals( array( 'a8c/' . $this->pattern_mock_object['name'] => true ), $block_patterns_from_api->register_patterns() );

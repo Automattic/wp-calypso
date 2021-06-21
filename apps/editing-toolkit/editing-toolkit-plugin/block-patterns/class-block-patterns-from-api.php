@@ -39,6 +39,8 @@ class Block_Patterns_From_API {
 	private $core_to_wpcom_categories_dictionary;
 
 	/**
+	 * This is the current editor type. One of `block_editor` (default), `site_editor`.
+	 *
 	 * @var string
 	 */
 	private $editor_type;
@@ -54,7 +56,7 @@ class Block_Patterns_From_API {
 		$this->patterns_sources = array( 'block_patterns' );
 
 		// While we're still testing the FSE patterns, limit activation via a filter.
-		if ( $this->editor_type === 'site_editor' && apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
+		if ( 'site_editor' === $this->editor_type && apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
 			$this->patterns_sources[] = 'fse_block_patterns';
 		}
 
@@ -246,24 +248,24 @@ class Block_Patterns_From_API {
 	 * that is, those in wp-includes/block-patterns.php (Core) and lib/block-patterns.php (Gutenberg)
 	 * Gutenberg overrides existing core patterns and loads remote patterns.
 	 * We also have to manually register core WordPress and Gutenberg patterns in order to make them use the site locale, not the account locale.
-	 * @TODO WordPress 5.8 has a `_load_remote_block_patterns()` method which we should call instead of `load_remote_patterns()`.
 	 */
 	private function reregister_core_and_gutenberg_patterns() {
 		$did_switch_locale = switch_to_locale( $this->utils->get_block_patterns_locale() );
 		add_theme_support( 'core-block-patterns' );
 
-		// WordPress Core patterns. See: WordPress wp-includes/block-patterns.php
+		// WordPress Core patterns. See: WordPress wp-includes/block-patterns.php.
 		if ( function_exists( '_register_core_block_patterns_and_categories' ) ) {
 			_register_core_block_patterns_and_categories();
 		}
 
-		// Gutenberg patterns. See Gutenberg lib/block-patterns.php
+		// Gutenberg patterns. See Gutenberg lib/block-patterns.php.
 		if ( function_exists( 'register_gutenberg_patterns' ) ) {
 			register_gutenberg_patterns();
 		}
 
-		// Load core pattern directory from the public API. See Gutenberg lib/block-patterns.php
-		if ( $this->editor_type === 'site_editor' && function_exists( 'load_remote_patterns' ) ) {
+		// Load core pattern directory from the public API. See Gutenberg lib/block-patterns.php.
+		// @TODO WordPress 5.8 has a `_load_remote_block_patterns()` method which we should call instead of `load_remote_patterns()`.
+		if ( 'site_editor' === $this->editor_type && function_exists( 'load_remote_patterns' ) ) {
 			load_remote_patterns();
 		}
 
