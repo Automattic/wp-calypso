@@ -1,14 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	deleteSite,
-	receiveDeletedSite,
-	receiveSite,
-	receiveSites,
-	requestSites,
-	requestSite,
-} from '../actions';
+import { deleteSite, receiveSite, receiveSites, requestSites, requestSite } from '../actions';
 import {
 	SITE_RECEIVE,
 	SITE_REQUEST,
@@ -198,6 +191,12 @@ describe( 'actions', () => {
 				items: {},
 			},
 		} );
+		const dispatch = ( action ) => {
+			if ( typeof action === 'function' ) {
+				return action( dispatch, getState );
+			}
+			return spy( action );
+		};
 
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
@@ -214,10 +213,8 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch receive deleted site when request completes', async () => {
-			await deleteSite( 2916284 )( spy, getState );
-			const expected = receiveDeletedSite( 2916284 ).toString();
-			const received = spy.mock.calls[ 1 ].toString();
-			expect( received ).toEqual( expected );
+			await dispatch( deleteSite( 2916284 ) );
+			expect( spy ).toHaveBeenCalledWith( { type: 'SITE_DELETE_RECEIVE', siteId: 2916284 } );
 		} );
 	} );
 } );
