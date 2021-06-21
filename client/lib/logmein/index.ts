@@ -45,11 +45,11 @@ export function logmeinUrl( url: string ): string {
 	}
 
 	const sites = Object.values( getSitesItems( reduxStore.getState() ) );
-
-	// Replace unmapped url usage with the mapped hostname
-	const hostmap = unmappedToMapped( sites );
-	if ( hostmap[ newurl.host ] ) {
-		newurl.host = hostmap[ newurl.host ];
+	const mappedlinksite = sites.find(
+		( site ) => new URL( site.options.unmapped_url ).host === newurl.host
+	);
+	if ( mappedlinksite ) {
+		newurl.host = new URL( mappedlinksite.URL ).host;
 	}
 
 	const allowed = allowedHosts( sites );
@@ -82,13 +82,6 @@ function allowedHosts( sites: any ): Host[] {
 	return sites
 		.map( ( site: any ) => ( isValidLogmeinSite( site ) ? new URL( site.URL ).host : false ) )
 		.filter( Boolean );
-}
-
-function unmappedToMapped( sites: any ): Record< Host, Host > {
-	return sites.reduce( ( result: Record< Host, Host >, site: any ) => {
-		result[ new URL( site.options.unmapped_url ).host ] = new URL( site.URL ).host;
-		return result;
-	}, {} );
 }
 
 export function attachLogmein( store: any ): void {
