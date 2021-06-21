@@ -447,6 +447,13 @@ private object I18NTests : BuildType({
 
 	params {
 		text(
+			name = "URL",
+			value = "https://wordpress.com",
+			label = "Test URL",
+			description = "URL to test against",
+			allowEmpty = false
+		)
+		text(
 			name = "LOCALES",
 			value = "en,es,pt-br,de,fr,he,ja,it,nl,ru,tr,id,zh-cn,zh-tw,ko,ar,sv",
 			label = "Locales to use",
@@ -474,6 +481,7 @@ private object I18NTests : BuildType({
 					cd test/e2e
 					mkdir temp
 
+					export URL=%URL%
 					export LIVEBRANCHES=false
 					export NODE_CONFIG_ENV=test
 					export TEST_VIDEO=true
