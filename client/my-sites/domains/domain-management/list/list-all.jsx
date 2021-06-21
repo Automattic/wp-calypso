@@ -66,6 +66,7 @@ class ListAll extends Component {
 		user: PropTypes.object.isRequired,
 		addDomainClick: PropTypes.func.isRequired,
 		requestingSiteDomains: PropTypes.object,
+		isContactEditContext: PropTypes.bool,
 	};
 
 	state = {
@@ -79,7 +80,7 @@ class ListAll extends Component {
 
 	componentDidUpdate() {
 		if (
-			this.shouldSetSelectedDomains() &&
+			this.props.isContactEditContext &&
 			! this.isLoadingDomainDetails() &&
 			! isEmpty( this.props.filteredDomainsList ) &&
 			! this.state.selectedDomainsSet
@@ -117,7 +118,7 @@ class ListAll extends Component {
 		const { sites, currentRoute } = this.props;
 		const site = sites[ domain.blogId ];
 
-		if ( this.shouldShowContactForm() ) {
+		if ( this.props.isContactEditContext ) {
 			return;
 		}
 
@@ -170,33 +171,8 @@ class ListAll extends Component {
 		return this.isLoading() || this.isRequestingSiteDomains();
 	}
 
-	shouldShowContactForm() {
-		return this.props.isContactEditContext;
-		// return ListAllActions.editContactEmail === this.props?.action;
-	}
-
-	shouldSetSelectedDomains() {
-		return this.shouldShowContactForm();
-	}
-
-	shouldShowCheckbox() {
-		return this.shouldShowContactForm();
-	}
-
-	shouldShowDomainDetails() {
-		return ! this.shouldShowContactForm();
-	}
-
-	shouldDefaultToChecked() {
-		return this.shouldShowContactForm();
-	}
-
-	shouldLazyLoadSiteDomainsDetails() {
-		return ! this.shouldShowContactForm();
-	}
-
 	shouldRenderDomainItem( domain, domainDetails ) {
-		if ( this.shouldShowContactForm() ) {
+		if ( this.props.isContactEditContext ) {
 			return (
 				! isEmpty( domainDetails ) &&
 				domainTypes.REGISTERED === domain.type &&
@@ -234,7 +210,7 @@ class ListAll extends Component {
 
 		return (
 			<React.Fragment key={ `domain-item-${ index }-${ domain.name }` }>
-				{ domain?.blogId && this.shouldLazyLoadSiteDomainsDetails() ? (
+				{ domain?.blogId && ! this.props.isContactEditContext ? (
 					<LazyRender>
 						{ ( render ) => ( render ? this.renderQuerySiteDomainsOnce( domain.blogId ) : null ) }
 					</LazyRender>
@@ -245,9 +221,9 @@ class ListAll extends Component {
 					<DomainItem
 						currentRoute={ currentRoute }
 						domain={ domain }
-						showDomainDetails={ this.shouldShowDomainDetails() }
+						showDomainDetails={ ! this.props.isContactEditContext }
 						domainDetails={ domainDetails }
-						showCheckbox={ this.shouldShowCheckbox() }
+						showCheckbox={ this.props.isContactEditContext }
 						site={ sites[ domain?.blogId ] }
 						isManagingAllSites={ true }
 						isLoadingDomainDetails={
@@ -272,7 +248,7 @@ class ListAll extends Component {
 			return this.renderDomainItem( domain, index );
 		} );
 
-		if ( ! this.shouldLazyLoadSiteDomainsDetails() && this.isRequestingSiteDomains() ) {
+		if ( this.props.isContactEditContext && this.isRequestingSiteDomains() ) {
 			domainListItems = [
 				...domainListItems,
 				<ListItemPlaceholder key="item-is-requesting-site-domains" />,
@@ -283,7 +259,7 @@ class ListAll extends Component {
 	}
 
 	renderHeaderButtons() {
-		if ( this.shouldShowContactForm() ) {
+		if ( this.props.isContactEditContext ) {
 			return;
 		}
 
@@ -352,7 +328,7 @@ class ListAll extends Component {
 	};
 
 	renderActionForm() {
-		if ( ! this.isLoading() && this.shouldShowContactForm() ) {
+		if ( ! this.isLoading() && this.props.isContactEditContext ) {
 			return (
 				<Card>
 					<CardHeading>
@@ -386,7 +362,7 @@ class ListAll extends Component {
 		const { domainsList, translate, user } = this.props;
 
 		if (
-			this.shouldShowContactForm() &&
+			this.props.isContactEditContext &&
 			domainsList.length > 0 &&
 			this.filteredDomains().length === 0
 		) {
