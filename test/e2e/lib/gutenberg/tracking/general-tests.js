@@ -2,6 +2,7 @@
  * External dependencies
  */
 import assert from 'assert';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -9,6 +10,7 @@ import assert from 'assert';
 import GutenbergEditorComponent from '../gutenberg-editor-component';
 import SiteEditorComponent from '../../components/site-editor-component';
 import { getEventsStack, getTotalEventsFiredForBlock } from './utils';
+import * as driverHelper from '../../driver-helper';
 
 export function createGeneralTests( { it, editorType, postType } ) {
 	const isSiteEditor = editorType === 'site';
@@ -113,6 +115,47 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		assert.strictEqual( toggleEvents.length, 2 );
 		assert.strictEqual( toggleEvents[ 0 ][ 1 ].is_open, false );
 		assert.strictEqual( toggleEvents[ 1 ][ 1 ].is_open, true );
+	} );
+
+	it( 'Tracks "wpcom_block_editor_undo_performed" event', async function () {
+		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+		await editor.addBlock( 'Heading' );
+		await editor.addBlock( 'Columns' );
+		await editor.addBlock( 'Columns' );
+
+		await driverHelper.clickWhenClickable( this.driver, By.css( 'button[aria-label="Undo"]' ) );
+
+		const eventsStack = await getEventsStack( this.driver );
+		const undoFiredOnce =
+			eventsStack.filter( ( [ eventName ] ) => eventName === 'wpcom_block_editor_undo_performed' )
+				.length === 1;
+		assert.strictEqual(
+			undoFiredOnce,
+			true,
+			'"wpcom_block_editor_undo_performed" editor tracking event failed to fire only once'
+		);
+	} );
+
+	it( 'Tracks "wpcom_block_editor_redo_performed" event', async function () {
+		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+		await editor.addBlock( 'Heading' );
+		await editor.addBlock( 'Columns' );
+		await editor.addBlock( 'Columns' );
+
+		await driverHelper.clickWhenClickable( this.driver, By.css( 'button[aria-label="Undo"]' ) );
+		await driverHelper.clickWhenClickable( this.driver, By.css( 'button[aria-label="Redo"]' ) );
+
+		const eventsStack = await getEventsStack( this.driver );
+		const redoFiredOnce =
+			eventsStack.filter( ( [ eventName ] ) => eventName === 'wpcom_block_editor_redo_performed' )
+				.length === 1;
+		assert.strictEqual(
+			redoFiredOnce,
+			true,
+			'"wpcom_block_editor_redo_performed" editor tracking event failed to fire only once'
+		);
 	} );
 
 	if ( editorType === 'post' ) {
