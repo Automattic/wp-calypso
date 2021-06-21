@@ -381,6 +381,17 @@ const trackDisableComplementaryArea = ( scope ) => {
 	}
 };
 
+/**
+ * Track list view open and close events.
+ *
+ * @param {boolean} isOpen new state of the list view
+ */
+const trackListViewToggle = ( isOpen ) => {
+	tracksRecordEvent( 'wpcom_block_editor_list_view_toggle', {
+		is_open: isOpen,
+	} );
+};
+
 const trackEditEntityRecord = ( kind, type, id, updates ) => {
 	if ( kind === 'postType' && type === 'wp_global_styles' ) {
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
@@ -435,131 +446,120 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 			field_value: typeof value === 'object' ? JSON.stringify( value ) : value,
 		} );
 	}
-
-	/**
-	 * Track list view open and close events.
-	 *
-	 * @param {boolean} isOpen new state of the list view
-	 */
-	const trackListViewToggle = ( isOpen ) => {
-		tracksRecordEvent( 'wpcom_block_editor_list_view_toggle', {
-			is_open: isOpen,
-		} );
-	};
-
-	/**
-	 * Tracker can be
-	 * - string - which means it is an event name and should be tracked as such automatically
-	 * - function - in case you need to load additional properties from the action.
-	 *
-	 * @type {object}
-	 */
-	const REDUX_TRACKING = {
-		'jetpack/global-styles': {
-			resetLocalChanges: 'wpcom_global_styles_reset',
-			updateOptions: trackGlobalStyles( 'wpcom_global_styles_update' ),
-			publishOptions: trackGlobalStyles( 'wpcom_global_styles_publish' ),
-		},
-		// Post Editor is using the undo/redo from the 'core/editor' store
-		'core/editor': {
-			undo: 'wpcom_block_editor_undo_performed',
-			redo: 'wpcom_block_editor_redo_performed',
-		},
-		// Site Editor is using the undo/redo from the 'core' store
-		core: {
-			undo: 'wpcom_block_editor_undo_performed',
-			redo: 'wpcom_block_editor_redo_performed',
-			editEntityRecord: trackEditEntityRecord,
-		},
-		'core/block-editor': {
-			moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),
-			moveBlocksDown: getBlocksTracker( 'wpcom_block_moved_down' ),
-			removeBlocks: trackBlockRemoval,
-			removeBlock: trackBlockRemoval,
-			moveBlockToPosition: getBlocksTracker( 'wpcom_block_moved_via_dragging' ),
-			insertBlock: trackBlockInsertion,
-			insertBlocks: trackBlockInsertion,
-			replaceBlock: trackBlockReplacement,
-			replaceBlocks: trackBlockReplacement,
-			replaceInnerBlocks: trackInnerBlocksReplacement,
-		},
-		'core/notices': {
-			createErrorNotice: trackErrorNotices,
-		},
-		'core/edit-site': {
-			setIsListViewOpened: trackListViewToggle,
-		},
-		'core/edit-post': {
-			setIsListViewOpened: trackListViewToggle,
-		},
-		'core/interface': {
-			enableComplementaryArea: trackEnableComplementaryArea,
-			disableComplementaryArea: trackDisableComplementaryArea,
-		},
-	};
-
-	/**
-	 * Mapping of Events by DOM selector.
-	 * Events are matched by selector and their handlers called.
-	 *
-	 * @type {Array}
-	 */
-	const EVENT_TYPES = [ 'keyup', 'click' ];
-
-	// Registering tracking handlers.
-	if (
-		undefined === window ||
-		undefined === window._currentSiteId ||
-		undefined === window._currentSiteType
-	) {
-		debug( 'Skip: No data available.' );
-	} else {
-		debug( 'registering tracking handlers.' );
-		// Intercept dispatch function and add tracking for actions that need it.
-		use( ( registry ) => ( {
-			dispatch: ( namespace ) => {
-				const namespaceName = typeof namespace === 'object' ? namespace.name : namespace;
-				const actions = { ...registry.dispatch( namespaceName ) };
-				const trackers = REDUX_TRACKING[ namespaceName ];
-
-				if ( trackers ) {
-					Object.keys( trackers ).forEach( ( actionName ) => {
-						const originalAction = actions[ actionName ];
-						const tracker = trackers[ actionName ];
-						actions[ actionName ] = ( ...args ) => {
-							debug( 'action "%s" called with %o arguments', actionName, [ ...args ] );
-							if ( typeof tracker === 'string' ) {
-								// Simple track - just based on the event name.
-								tracksRecordEvent( tracker );
-							} else if ( typeof tracker === 'function' ) {
-								// Advanced tracking - call function.
-								tracker( ...args );
-							}
-							return originalAction( ...args );
-						};
-					} );
-				}
-				return actions;
-			},
-		} ) );
-
-		const delegateNonCaptureListener = ( event ) => {
-			delegateEventTracking( false, event );
-		};
-
-		const delegateCaptureListener = ( event ) => {
-			delegateEventTracking( true, event );
-		};
-
-		// Registers Plugin.
-		registerPlugin( 'wpcom-block-editor-tracking', {
-			render: () => {
-				EVENT_TYPES.forEach( ( eventType ) => {
-					document.addEventListener( eventType, delegateNonCaptureListener );
-					document.addEventListener( eventType, delegateCaptureListener, true );
-				} );
-				return null;
-			},
-		} );
-	}
 };
+
+/**
+ * Tracker can be
+ * - string - which means it is an event name and should be tracked as such automatically
+ * - function - in case you need to load additional properties from the action.
+ *
+ * @type {object}
+ */
+const REDUX_TRACKING = {
+	'jetpack/global-styles': {
+		resetLocalChanges: 'wpcom_global_styles_reset',
+		updateOptions: trackGlobalStyles( 'wpcom_global_styles_update' ),
+		publishOptions: trackGlobalStyles( 'wpcom_global_styles_publish' ),
+	},
+	// Post Editor is using the undo/redo from the 'core/editor' store
+	'core/editor': {
+		undo: 'wpcom_block_editor_undo_performed',
+		redo: 'wpcom_block_editor_redo_performed',
+	},
+	// Site Editor is using the undo/redo from the 'core' store
+	core: {
+		undo: 'wpcom_block_editor_undo_performed',
+		redo: 'wpcom_block_editor_redo_performed',
+		editEntityRecord: trackEditEntityRecord,
+	},
+	'core/block-editor': {
+		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),
+		moveBlocksDown: getBlocksTracker( 'wpcom_block_moved_down' ),
+		removeBlocks: trackBlockRemoval,
+		removeBlock: trackBlockRemoval,
+		moveBlockToPosition: getBlocksTracker( 'wpcom_block_moved_via_dragging' ),
+		insertBlock: trackBlockInsertion,
+		insertBlocks: trackBlockInsertion,
+		replaceBlock: trackBlockReplacement,
+		replaceBlocks: trackBlockReplacement,
+		replaceInnerBlocks: trackInnerBlocksReplacement,
+	},
+	'core/notices': {
+		createErrorNotice: trackErrorNotices,
+	},
+	'core/edit-site': {
+		setIsListViewOpened: trackListViewToggle,
+	},
+	'core/edit-post': {
+		setIsListViewOpened: trackListViewToggle,
+	},
+	'core/interface': {
+		enableComplementaryArea: trackEnableComplementaryArea,
+		disableComplementaryArea: trackDisableComplementaryArea,
+	},
+};
+
+/**
+ * Mapping of Events by DOM selector.
+ * Events are matched by selector and their handlers called.
+ *
+ * @type {Array}
+ */
+const EVENT_TYPES = [ 'keyup', 'click' ];
+
+// Registering tracking handlers.
+if (
+	undefined === window ||
+	undefined === window._currentSiteId ||
+	undefined === window._currentSiteType
+) {
+	debug( 'Skip: No data available.' );
+} else {
+	debug( 'registering tracking handlers.' );
+	// Intercept dispatch function and add tracking for actions that need it.
+	use( ( registry ) => ( {
+		dispatch: ( namespace ) => {
+			const namespaceName = typeof namespace === 'object' ? namespace.name : namespace;
+			const actions = { ...registry.dispatch( namespaceName ) };
+			const trackers = REDUX_TRACKING[ namespaceName ];
+
+			if ( trackers ) {
+				Object.keys( trackers ).forEach( ( actionName ) => {
+					const originalAction = actions[ actionName ];
+					const tracker = trackers[ actionName ];
+					actions[ actionName ] = ( ...args ) => {
+						debug( 'action "%s" called with %o arguments', actionName, [ ...args ] );
+						if ( typeof tracker === 'string' ) {
+							// Simple track - just based on the event name.
+							tracksRecordEvent( tracker );
+						} else if ( typeof tracker === 'function' ) {
+							// Advanced tracking - call function.
+							tracker( ...args );
+						}
+						return originalAction( ...args );
+					};
+				} );
+			}
+			return actions;
+		},
+	} ) );
+
+	const delegateNonCaptureListener = ( event ) => {
+		delegateEventTracking( false, event );
+	};
+
+	const delegateCaptureListener = ( event ) => {
+		delegateEventTracking( true, event );
+	};
+
+	// Registers Plugin.
+	registerPlugin( 'wpcom-block-editor-tracking', {
+		render: () => {
+			EVENT_TYPES.forEach( ( eventType ) => {
+				document.addEventListener( eventType, delegateNonCaptureListener );
+				document.addEventListener( eventType, delegateCaptureListener, true );
+			} );
+			return null;
+		},
+	} );
+}
