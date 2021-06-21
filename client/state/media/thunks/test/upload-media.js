@@ -22,6 +22,7 @@ describe( 'media - thunks - uploadMedia', () => {
 	let fileUploader;
 
 	const siteId = 1343323;
+	const postId = 0;
 	const site = { ID: siteId };
 	const file = Object.freeze( {
 		fileContents: Symbol( 'file contents' ),
@@ -57,7 +58,7 @@ describe( 'media - thunks - uploadMedia', () => {
 			const receiveMedia = jest.spyOn( syncActions, 'receiveMedia' );
 			const failMediaItemRequest = jest.spyOn( syncActions, 'failMediaItemRequest' );
 
-			await expect( uploadMedia( file, site, fileUploader ) ).resolves.toEqual( [
+			await expect( uploadMedia( file, site, postId, fileUploader ) ).resolves.toEqual( [
 				{
 					...file,
 					ID: savedId,
@@ -81,7 +82,7 @@ describe( 'media - thunks - uploadMedia', () => {
 
 		it( 'should call the onItemSuccess callback', async () => {
 			const onItemUploaded = jest.fn();
-			await uploadMedia( file, site, fileUploader, onItemUploaded );
+			await uploadMedia( file, site, postId, fileUploader, onItemUploaded );
 
 			expect( onItemUploaded ).toHaveBeenCalledWith(
 				{
@@ -106,7 +107,7 @@ describe( 'media - thunks - uploadMedia', () => {
 			const receiveMedia = jest.spyOn( syncActions, 'receiveMedia' );
 			const failMediaItemRequest = jest.spyOn( syncActions, 'failMediaItemRequest' );
 
-			await expect( uploadMedia( file, site, fileUploader ) ).resolves.toEqual( [] );
+			await expect( uploadMedia( file, site, postId, fileUploader ) ).resolves.toEqual( [] );
 
 			expect( successMediaItemRequest ).not.toHaveBeenCalled();
 			expect( receiveMedia ).not.toHaveBeenCalled();
@@ -115,7 +116,7 @@ describe( 'media - thunks - uploadMedia', () => {
 
 		it( 'should call the onItemFailure callback', async () => {
 			const onItemFailure = jest.fn();
-			await uploadMedia( file, site, fileUploader, jest.fn(), onItemFailure );
+			await uploadMedia( file, site, postId, fileUploader, jest.fn(), onItemFailure );
 
 			expect( onItemFailure ).toHaveBeenCalledWith( { ...file } );
 		} );

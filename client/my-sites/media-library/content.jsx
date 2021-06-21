@@ -415,6 +415,7 @@ export class MediaLibraryContent extends React.Component {
 					site={ this.props.site }
 					visible={ ! this.props.isRequesting }
 					canCopy={ this.props.postId === undefined }
+					postId={ this.props.postId }
 					source={ this.props.source }
 					onSourceChange={ this.props.onSourceChange }
 					selectedItems={ this.props.selectedItems }
