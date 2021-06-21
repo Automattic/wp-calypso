@@ -13,25 +13,10 @@ require_once __DIR__ . '/class-block-patterns-utils.php';
  * Class Block_Patterns_From_API
  */
 class Block_Patterns_From_API {
-
 	const PATTERN_NAMESPACE = 'a8c/';
 
 	/**
-	 * Class instance.
-	 *
-	 * @var Block_Patterns
-	 */
-	private static $instance = null;
-
-	/**
-	 * Valid source strings for retrieving patterns.
-	 *
-	 * @var array
-	 */
-	private $valid_patterns_sources = array( 'block_patterns', 'fse_block_patterns' );
-
-	/**
-	 * Patterns source sites.
+	 * Patterns source sites. A array of strings, each of which matches a valid source for retrieving patterns.
 	 *
 	 * @var array
 	 */
@@ -52,17 +37,28 @@ class Block_Patterns_From_API {
 	 * @var array
 	 */
 	private $core_to_wpcom_categories_dictionary;
+	/**
+	 * @var string
+	 */
+	private $editor_type;
 
 	/**
 	 * Block_Patterns constructor.
 	 *
-	 * @param array                $patterns_sources A array of strings, each of which matches a valid source for retrieving patterns.
-	 * @param Block_Patterns_Utils $utils            A class dependency containing utils methods.
+	 * @param string $editor_type The current editor. One of `block_editor` (default), `site_editor`.
+	 * @param Block_Patterns_Utils $utils       A class dependency containing utils methods.
 	 */
-	public function __construct( $patterns_sources, Block_Patterns_Utils $utils = null ) {
-		$patterns_sources       = empty( $patterns_sources ) ? array( 'block_patterns' ) : $patterns_sources;
-		$this->patterns_sources = empty( array_diff( $patterns_sources, $this->valid_patterns_sources ) ) ? $patterns_sources : array( 'block_patterns' );
-		$this->utils            = empty( $utils ) ? new \A8C\FSE\Block_Patterns_Utils() : $utils;
+	public function __construct( string $editor_type = 'block_editor', Block_Patterns_Utils $utils = null ) {
+		$this->editor_type      = $editor_type;
+		$this->patterns_sources = array( 'block_patterns' );
+
+		// While we're still testing the FSE patterns, limit activation via a filter.
+		if ( $this->editor_type === 'site_editor' && apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
+			$this->patterns_sources[] = 'fse_block_patterns';
+		}
+
+		$this->utils = empty( $utils ) ? new \A8C\FSE\Block_Patterns_Utils() : $utils;
+
 		// Add categories to this array using the core pattern name as the key for core patterns we wish to "recategorize".
 		$this->core_to_wpcom_categories_dictionary = array(
 			'core/quote' => array(
@@ -78,7 +74,7 @@ class Block_Patterns_From_API {
 	 * @return array Results of pattern registration.
 	 */
 	public function register_patterns() {
-		$this->reregister_core_patterns();
+		$this->reregister_core_and_gutenberg_patterns();
 
 		// Used to track which patterns we successfully register.
 		$results = array();
@@ -245,19 +241,31 @@ class Block_Patterns_From_API {
 
 	/**
 	 * Because we prevent core pattern registration in full-site-editing-plugin.php in `remove_theme_support_for_core_block_patterns()`
-	 * we have to reregister core WordPress patterns,
-	 * that is, those in wp-includes/block-patterns.php
-	 * Gutenberg adds new and overrides existing core patterns. We don't want these for now.
+	 * we have to "manually" register core WordPress and Gutenberg patterns,
+	 * that is, those in wp-includes/block-patterns.php (Core) and lib/block-patterns.php (Gutenberg)
+	 * Gutenberg overrides existing core patterns and loads remote patterns.
+	 * We also have to manually register core WordPress and Gutenberg patterns in order to make them use the site locale, not the account locale.
 	 */
-	private function reregister_core_patterns() {
+	private function reregister_core_and_gutenberg_patterns() {
+		$did_switch_locale = switch_to_locale( $this->utils->get_block_patterns_locale() );
+		add_theme_support( 'core-block-patterns' );
+
 		if ( function_exists( '_register_core_block_patterns_and_categories' ) ) {
-			$did_switch_locale = switch_to_locale( $this->utils->get_block_patterns_locale() );
-			add_theme_support( 'core-block-patterns' );
 			_register_core_block_patterns_and_categories();
 			// The site locale might be the same as the current locale so switching could have failed in such instances.
-			if ( false !== $did_switch_locale ) {
-				restore_previous_locale();
-			}
+		}
+
+		if ( function_exists( 'register_gutenberg_patterns' ) ) {
+			register_gutenberg_patterns();
+		}
+
+		//
+		if ( $this->editor_type === 'site_editor' && function_exists( 'load_remote_patterns' ) ) {
+			load_remote_patterns();
+		}
+
+		if ( false !== $did_switch_locale ) {
+			restore_previous_locale();
 		}
 	}
 
