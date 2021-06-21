@@ -22,7 +22,7 @@ import './themes-header.scss';
 const ThemesHeader = () => {
 	return (
 		<div className="themes__header">
-			<ScreenOptionsTab />
+			<ScreenOptionsTab wpAdminPath="themes.php" />
 			<FormattedHeader
 				brandFont
 				className="themes__page-heading"

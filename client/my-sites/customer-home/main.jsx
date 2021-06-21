@@ -97,7 +97,7 @@ const Home = ( {
 
 	return (
 		<Main wideLayout className="customer-home__main">
-			<ScreenOptionsTab />
+			<ScreenOptionsTab wpAdminPath="index.php" />
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }

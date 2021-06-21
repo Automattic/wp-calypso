@@ -76,7 +76,6 @@ class People extends React.Component {
 		if ( siteId && ! canViewPeople ) {
 			return (
 				<Main>
-					<ScreenOptionsTab />
 					<PageViewTracker
 						path={ `/people/${ filter }/:site` }
 						title={ `People > ${ titlecase( filter ) }` }
@@ -91,7 +90,7 @@ class People extends React.Component {
 		}
 		return (
 			<Main>
-				<ScreenOptionsTab />
+				<ScreenOptionsTab wpAdminPath="users.php" />
 				<PageViewTracker
 					path={ `/people/${ filter }/:site` }
 					title={ `People > ${ titlecase( filter ) }` }
