@@ -10,7 +10,9 @@ import tracksRecordEvent from './track-record-event';
  */
 export default () => ( {
 	id: 'wpcom-block-editor-nav-sidebar-open',
-	selector: '.edit-post-header .wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button',
+	selector:
+		'.edit-post-header .wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button[aria-expanded="false"]',
 	type: 'click',
+	capture: true,
 	handler: () => tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_open' ),
 } );
