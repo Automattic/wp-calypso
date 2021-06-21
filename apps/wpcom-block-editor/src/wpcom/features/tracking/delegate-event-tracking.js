@@ -8,7 +8,6 @@ import debugFactory from 'debug';
  */
 import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
 import wpcomBlockEditorDetailsOpen from './wpcom-block-editor-details-open';
-import wpcomBlockEditorGlobalStylesClick from './wpcom-block-editor-global-styles-click';
 import wpcomBlockEditorGlobalStylesTabSelected from './wpcom-block-editor-global-styles-tab-selected';
 import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
 import wpcomInserterTabPanelSelected from './wpcom-inserter-tab-panel-selected';
@@ -46,7 +45,6 @@ export const registerSubscriber = ( id, type, handler ) => {
 const EVENTS_MAPPING = [
 	wpcomBlockEditorCloseClick(),
 	wpcomBlockEditorDetailsOpen(),
-	wpcomBlockEditorGlobalStylesClick(),
 	wpcomBlockEditorGlobalStylesTabSelected(),
 	wpcomInserterInlineSearchTerm(),
 	wpcomInserterTabPanelSelected(),
