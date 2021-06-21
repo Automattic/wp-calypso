@@ -6,7 +6,8 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import userUtils from 'calypso/lib/user/utils';
+import user from 'calypso/lib/user';
+import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
 
 /**
  * Module variables
@@ -19,8 +20,15 @@ export default async function ( params, callback ) {
 
 	return xhr( params, function ( error, response, headers ) {
 		if ( error && error.name === 'InvalidTokenError' ) {
-			debug( 'Invalid token error detected, authorisation probably revoked - logging out' );
-			userUtils.logout();
+			debug( 'Invalid token error detected, authorization probably revoked - logging out' );
+
+			const logoutUrl = getLogoutUrl( user().get() );
+			// Clear any data stored locally within the user data module or localStorage
+			user()
+				.clear()
+				.then( () => {
+					window.location.href = logoutUrl;
+				} );
 		}
 
 		callback( error, response, headers );
