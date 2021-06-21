@@ -8,7 +8,7 @@ import {
 	PublishedPostsListPage,
 	CommentsComponent,
 	GutenbergEditorPage,
-	NewPostFlow,
+	// NewPostFlow,
 	PublishedPostPage,
 } from '@automattic/calypso-e2e';
 
@@ -64,8 +64,12 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 		} );
 
 		it( 'Start new post', async function () {
-			const newPostFlow = new NewPostFlow( this.page );
-			await newPostFlow.newPostFromNavbar();
+			// const newPostFlow = new NewPostFlow( this.page );
+			// await newPostFlow.newPostFromNavbar();
+			await Promise.all( [
+				this.page.waitForNavigation(),
+				this.page.click( '*css=a >> text=Write' ),
+			] );
 		} );
 
 		it( 'Enter post title', async function () {
