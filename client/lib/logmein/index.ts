@@ -2,7 +2,7 @@
  * Internal Dependencies
  */
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
-import userUtils from 'calypso/lib/user/utils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isEnabled } from '@automattic/calypso-config';
 
 /**
@@ -28,7 +28,7 @@ export function logmeinUrl( url: string ): string {
 	}
 
 	// logmein=direct only works for logged into wordpress.com users
-	if ( ! userUtils.isLoggedIn() ) {
+	if ( ! isUserLoggedIn( reduxStore.getState() ) ) {
 		return url;
 	}
 
