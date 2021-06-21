@@ -246,25 +246,28 @@ class Block_Patterns_From_API {
 	 * that is, those in wp-includes/block-patterns.php (Core) and lib/block-patterns.php (Gutenberg)
 	 * Gutenberg overrides existing core patterns and loads remote patterns.
 	 * We also have to manually register core WordPress and Gutenberg patterns in order to make them use the site locale, not the account locale.
+	 * @TODO WordPress 5.8 has a `_load_remote_block_patterns()` method which we should call instead of `load_remote_patterns()`.
 	 */
 	private function reregister_core_and_gutenberg_patterns() {
 		$did_switch_locale = switch_to_locale( $this->utils->get_block_patterns_locale() );
 		add_theme_support( 'core-block-patterns' );
 
+		// WordPress Core patterns. See: WordPress wp-includes/block-patterns.php
 		if ( function_exists( '_register_core_block_patterns_and_categories' ) ) {
 			_register_core_block_patterns_and_categories();
-			// The site locale might be the same as the current locale so switching could have failed in such instances.
 		}
 
+		// Gutenberg patterns. See Gutenberg lib/block-patterns.php
 		if ( function_exists( 'register_gutenberg_patterns' ) ) {
 			register_gutenberg_patterns();
 		}
 
-		//
+		// Load core pattern directory from the public API. See Gutenberg lib/block-patterns.php
 		if ( $this->editor_type === 'site_editor' && function_exists( 'load_remote_patterns' ) ) {
 			load_remote_patterns();
 		}
 
+		// The site locale might be the same as the current locale so switching could have failed in such instances.
 		if ( false !== $did_switch_locale ) {
 			restore_previous_locale();
 		}
