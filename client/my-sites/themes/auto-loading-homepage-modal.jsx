@@ -35,6 +35,7 @@ import {
 } from 'calypso/state/themes/actions';
 import { addQueryArgs } from '@wordpress/url';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies
@@ -209,7 +210,9 @@ class AutoLoadingHomepageModal extends Component {
 									value="keep_current_homepage"
 									checked={ 'keep_current_homepage' === this.state.homepageAction }
 									onChange={ this.handleHomepageAction }
-									label={ translate( 'Switch theme, preserving my homepage content.' ) }
+									label={ preventWidows(
+										translate( 'Switch theme, preserving my homepage content.' )
+									) }
 								/>
 							</FormLabel>
 						</div>
@@ -223,9 +226,11 @@ class AutoLoadingHomepageModal extends Component {
 									value="use_new_homepage"
 									checked={ 'use_new_homepage' === this.state.homepageAction }
 									onChange={ this.handleHomepageAction }
-									label={ translate( 'Replace my homepage content with the %(themeName)s demo.', {
-										args: { themeName },
-									} ) }
+									label={ preventWidows(
+										translate( 'Replace my homepage content with the %(themeName)s demo.', {
+											args: { themeName },
+										} )
+									) }
 								/>
 							</FormLabel>
 						</div>
@@ -233,8 +238,10 @@ class AutoLoadingHomepageModal extends Component {
 					<div className="themes__autoloading-homepage-option-description">
 						{ this.state.homepageAction === 'keep_current_homepage' && (
 							<p>
-								{ translate(
-									'Your new theme design will be applied without changing your homepage content.'
+								{ preventWidows(
+									translate(
+										'Your new theme design will be applied without changing your homepage content.'
+									)
 								) }{ ' ' }
 								<ExternalLink
 									href={ localizeUrl( 'https://wordpress.com/support/themes/#switch-themes' ) }
@@ -250,8 +257,10 @@ class AutoLoadingHomepageModal extends Component {
 								<span
 									// eslint-disable-next-line react/no-danger
 									dangerouslySetInnerHTML={ {
-										__html: translate(
-											'After activation, you can still access your old homepage content under Pages &rarr; Drafts.'
+										__html: preventWidows(
+											translate(
+												'After activation, you can still access your old homepage content under Pages &rarr; Drafts.'
+											)
 										),
 									} }
 								/>{ ' ' }
