@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get, find, has } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { DEFAULT_PREFERENCE_VALUES } from './constants';
@@ -22,18 +17,16 @@ export const isFetchingPreferences = ( state ) => !! state.preferences.fetching;
  * @returns {*}            Preference value
  */
 export function getPreference( state, key ) {
-	return get(
-		find(
-			[
-				state.preferences?.localValues,
-				state.preferences?.remoteValues,
-				DEFAULT_PREFERENCE_VALUES,
-			],
-			( source ) => has( source, key )
-		),
-		key,
-		null
-	);
+	for ( const source of [
+		state.preferences?.localValues,
+		state.preferences?.remoteValues,
+		DEFAULT_PREFERENCE_VALUES,
+	] ) {
+		if ( source && source.hasOwnProperty( key ) ) {
+			return source[ key ] ?? null;
+		}
+	}
+	return null;
 }
 
 /**
