@@ -22,23 +22,53 @@ const Preference = ( { name, value } ) => {
 
 	const preferenceHandler = useMemo( () => {
 		if ( Array.isArray( value ) ) {
-			return <ArrayPreference name={ name } value={ value } />;
+			return (
+				<ArrayPreference
+					className="preferences-helper__preference-value"
+					name={ name }
+					value={ value }
+				/>
+			);
 		}
 
 		if ( isPlainObject( value ) ) {
-			return <ObjectPreference name={ name } value={ value } />;
+			return (
+				<ObjectPreference
+					className="preferences-helper__preference-value"
+					name={ name }
+					value={ value }
+				/>
+			);
 		}
 
 		if ( 'string' === typeof value ) {
-			return <StringPreference name={ name } value={ value } />;
+			return (
+				<StringPreference
+					className="preferences-helper__preference-value"
+					name={ name }
+					value={ value }
+				/>
+			);
 		}
 
 		if ( 'boolean' === typeof value ) {
-			return <BooleanPreference name={ name } value={ value } />;
+			return (
+				<BooleanPreference
+					className="preferences-helper__preference-value"
+					name={ name }
+					value={ value }
+				/>
+			);
 		}
 
 		if ( 'number' === typeof value ) {
-			return <NumberPreference name={ name } value={ value } />;
+			return (
+				<NumberPreference
+					className="preferences-helper__preference-value"
+					name={ name }
+					value={ value }
+				/>
+			);
 		}
 
 		return (
@@ -54,19 +84,17 @@ const Preference = ( { name, value } ) => {
 	] );
 
 	return (
-		<div>
-			<div className="preferences-helper__preference-header">
-				<button
-					className="preferences-helper__unset"
-					onClick={ unsetPreference }
-					title={ translate( 'Unset Preference' ) }
-				>
-					{ 'X' }
+		<tr>
+			<td className="preferences-helper__preference-unset">
+				<button onClick={ unsetPreference } title={ translate( 'Unset Preference' ) }>
+					<span role="img" aria-label={ translate( 'Unset Preference' ) }>
+						&#10060;
+					</span>
 				</button>
-				<span>{ name }</span>
-			</div>
-			{ preferenceHandler }
-		</div>
+			</td>
+			<td className="preferences-helper__preference-name">{ name }</td>
+			<td className="preferences-helper__preference-value">{ preferenceHandler }</td>
+		</tr>
 	);
 };
 

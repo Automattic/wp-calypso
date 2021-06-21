@@ -2,11 +2,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
-class ArrayPreference extends Component {
+export default class ArrayPreference extends Component {
 	static propTypes = {
 		name: PropTypes.string.isRequired,
 		value: PropTypes.array.isRequired,
@@ -16,7 +14,7 @@ class ArrayPreference extends Component {
 		const { value } = this.props;
 
 		return (
-			<ul className="preferences-helper__list">
+			<ul className="preferences-helper__array-preference">
 				{ value.map( ( preference, index ) => (
 					<li key={ index }>{ JSON.stringify( preference ) }</li>
 				) ) }
@@ -24,5 +22,3 @@ class ArrayPreference extends Component {
 		);
 	}
 }
-
-export default connect( null, null )( localize( ArrayPreference ) );

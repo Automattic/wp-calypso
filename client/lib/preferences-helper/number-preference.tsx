@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import React, {
 	FunctionComponent,
@@ -22,6 +23,7 @@ interface Props {
 
 const NumberPreference: FunctionComponent< Props > = ( { name, value } ) => {
 	const dispatch = useDispatch();
+	const translate = useTranslate();
 
 	const [ localValue, setLocalValue ] = useState( value );
 
@@ -45,18 +47,18 @@ const NumberPreference: FunctionComponent< Props > = ( { name, value } ) => {
 			{ value !== localValue && (
 				<>
 					<button
-						className="preferences-helper__save-pref-button"
+						className="preferences-helper__preference-save"
 						onClick={ savePreferenceChange }
 						disabled={ value === localValue }
 					>
-						{ 'save' }
-					</button>{ ' ' }
+						{ translate( 'save' ) }
+					</button>
 					<button
-						className="preferences-helper__reset-pref-button"
+						className="preferences-helper__preference-reset"
 						onClick={ resetPreferenceChange }
 						disabled={ value === localValue }
 					>
-						{ 'reset' }
+						{ translate( 'reset' ) }
 					</button>
 				</>
 			) }
