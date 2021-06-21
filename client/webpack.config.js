@@ -60,6 +60,8 @@ const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
+const shouldUsePersistentCache = process.env.PERSISTENT_CACHE === 'true';
+const shouldProfile = process.env.PROFILE === 'true';
 
 function filterEntrypoints( entrypoints ) {
 	/* eslint-disable no-console */
@@ -202,17 +204,25 @@ const webpackConfig = {
 			TranspileConfig.loader( {
 				workerCount,
 				configFile: path.resolve( 'babel.config.js' ),
-				cacheDirectory: path.resolve( cachePath, 'babel-client' ),
-				cacheIdentifier,
-				cacheCompression: false,
+				...( shouldUsePersistentCache
+					? {}
+					: {
+							cacheDirectory: path.resolve( cachePath, 'babel-client' ),
+							cacheIdentifier,
+							cacheCompression: false,
+					  } ),
 				exclude: /node_modules\//,
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
 				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
-				cacheDirectory: path.resolve( cachePath, 'babel-client' ),
-				cacheIdentifier,
-				cacheCompression: false,
+				...( shouldUsePersistentCache
+					? {}
+					: {
+							cacheDirectory: path.resolve( cachePath, 'babel-client' ),
+							cacheIdentifier,
+							cacheCompression: false,
+					  } ),
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
@@ -229,7 +239,11 @@ const webpackConfig = {
 					].filter( Boolean ),
 				},
 				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
-				cacheDirectory: path.resolve( cachePath, 'css-loader' ),
+				...( shouldUsePersistentCache
+					? {}
+					: {
+							cacheDirectory: path.resolve( cachePath, 'css-loader' ),
+					  } ),
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),
@@ -368,8 +382,40 @@ const webpackConfig = {
 		 * Replace `lodash` with `lodash-es`
 		 */
 		new ExtensiveLodashReplacementPlugin(),
+
+		// Equivalent to the CLI flag --progress=profile
+		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
+
+	...( shouldUsePersistentCache
+		? {
+				cache: {
+					type: 'filesystem',
+					buildDependencies: {
+						config: [ __filename ],
+					},
+					cacheDirectory: path.resolve( cachePath, 'webpack' ),
+					profile: true,
+					version: [
+						// No need to add BROWSERSLIST, as it is already part of the cacheDirectory
+						shouldBuildChunksMap,
+						shouldMinify,
+						process.env.ENTRY_LIMIT,
+						process.env.SECTION_LIMIT,
+						process.env.SOURCEMAP,
+						process.env.NODE_ENV,
+						process.env.CALYPSO_ENV,
+					].join( '-' ),
+				},
+				snapshot: {
+					managedPaths: [
+						path.resolve( __dirname, '../node_modules' ),
+						path.resolve( __dirname, 'node_modules' ),
+					],
+				},
+		  }
+		: {} ),
 };
 
 module.exports = webpackConfig;
