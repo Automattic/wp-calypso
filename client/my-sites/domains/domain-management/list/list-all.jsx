@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { forEach, get, isEmpty, keyBy, keys, reduce, times } from 'lodash';
+import { forEach, get, isEmpty, keyBy, keys, map, reduce, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
@@ -50,6 +50,7 @@ import BulkEditContactInfo from './bulk-edit-contact-info';
 import CardHeading from 'calypso/components/card-heading';
 import { isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -66,10 +67,11 @@ class ListAll extends Component {
 		user: PropTypes.object.isRequired,
 		addDomainClick: PropTypes.func.isRequired,
 		requestingSiteDomains: PropTypes.object,
-		isContactEditContext: PropTypes.bool,
+		isContactEmailEditContext: PropTypes.bool,
 	};
 
 	state = {
+		isSavingContactInfo: false,
 		selectedDomainsSet: false,
 		selectedDomains: {},
 		transferLockOptOut: false,
@@ -79,8 +81,9 @@ class ListAll extends Component {
 	renderedQuerySiteDomains = {};
 
 	componentDidUpdate() {
+		console.log( this.isLoadingWhoisData() );
 		if (
-			this.props.isContactEditContext &&
+			this.props.isContactEmailEditContext &&
 			! this.isLoadingDomainDetails() &&
 			! isEmpty( this.props.filteredDomainsList ) &&
 			! this.state.selectedDomainsSet
@@ -118,7 +121,7 @@ class ListAll extends Component {
 		const { sites, currentRoute } = this.props;
 		const site = sites[ domain.blogId ];
 
-		if ( this.props.isContactEditContext ) {
+		if ( this.props.isContactEmailEditContext ) {
 			return;
 		}
 
@@ -171,8 +174,30 @@ class ListAll extends Component {
 		return this.isLoading() || this.isRequestingSiteDomains();
 	}
 
+	isLoadingWhoisData() {
+		const { isContactEmailEditContext } = this.props;
+		const { selectedDomains, selectedDomainsSet, whoisData } = this.state;
+
+		return (
+			isContactEmailEditContext &&
+			! selectedDomainsSet &&
+			( isEmpty( whoisData ) ||
+				isEmpty( selectedDomains ) ||
+				reduce(
+					selectedDomains,
+					( result, isSelected, domainName ) => {
+						if ( isSelected ) {
+							result = result || isEmpty( whoisData[ domainName ] );
+						}
+						return result;
+					},
+					false
+				) )
+		);
+	}
+
 	shouldRenderDomainItem( domain, domainDetails ) {
-		if ( this.props.isContactEditContext ) {
+		if ( this.props.isContactEmailEditContext ) {
 			return (
 				! isEmpty( domainDetails ) &&
 				domainTypes.REGISTERED === domain.type &&
@@ -210,7 +235,7 @@ class ListAll extends Component {
 
 		return (
 			<React.Fragment key={ `domain-item-${ index }-${ domain.name }` }>
-				{ domain?.blogId && ! this.props.isContactEditContext ? (
+				{ domain?.blogId && ! this.props.isContactEmailEditContext ? (
 					<LazyRender>
 						{ ( render ) => ( render ? this.renderQuerySiteDomainsOnce( domain.blogId ) : null ) }
 					</LazyRender>
@@ -221,9 +246,9 @@ class ListAll extends Component {
 					<DomainItem
 						currentRoute={ currentRoute }
 						domain={ domain }
-						showDomainDetails={ ! this.props.isContactEditContext }
+						showDomainDetails={ ! this.props.isContactEmailEditContext }
 						domainDetails={ domainDetails }
-						showCheckbox={ this.props.isContactEditContext }
+						showCheckbox={ this.props.isContactEmailEditContext }
 						site={ sites[ domain?.blogId ] }
 						isManagingAllSites={ true }
 						isLoadingDomainDetails={
@@ -248,7 +273,7 @@ class ListAll extends Component {
 			return this.renderDomainItem( domain, index );
 		} );
 
-		if ( this.props.isContactEditContext && this.isRequestingSiteDomains() ) {
+		if ( this.props.isContactEmailEditContext && this.isRequestingSiteDomains() ) {
 			domainListItems = [
 				...domainListItems,
 				<ListItemPlaceholder key="item-is-requesting-site-domains" />,
@@ -259,7 +284,7 @@ class ListAll extends Component {
 	}
 
 	renderHeaderButtons() {
-		if ( this.props.isContactEditContext ) {
+		if ( this.props.isContactEmailEditContext ) {
 			return;
 		}
 
@@ -270,73 +295,113 @@ class ListAll extends Component {
 		this.setState( { transferLockOptOut } );
 	};
 
-	handleSaveContactInfo = ( contactInfo ) => {
-		console.log( contactInfo );
-		console.log( this.state.transferLockOptOut );
-		console.log( this.state.selectedDomains );
-		console.log( this.state.whoisData );
+	getUpdatedContactInfo = ( domainName, contactInfo ) => {
+		const { whoisData } = this.state;
+		const updatedContactInfo = whoisData[ domainName ];
 
-		// submit = () => {
-		// 	const { domainNamesList } = this.props;
-		// 	const { contactDetails, transferLock } = this.state;
-		//
-		// 	console.log( domainNamesList );
-		// 	console.log( contactDetails );
-		// 	console.log( transferLock );
-		//
-		//
-		// 	// return wpcom
-		// 	// .undocumented()
-		// 	// .updateWhois( domain, whoisData, transferLock )
-		// 	// .then( ( data ) => {
-		// 	// 	dispatch( updateWhois( domain, whoisData ) );
-		// 	// 	dispatch( {
-		// 	// 		type: DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
-		// 	// 		domain,
-		// 	// 		data,
-		// 	// 	} );
-		// 	// } )
-		// 	// .catch( ( error ) => {
-		// 	// 	dispatch( {
-		// 	// 		type: DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
-		// 	// 		domain,
-		// 	// 		error,
-		// 	// 	} );
-		// 	// } );
-		//
-		// 	const saveWhoisPromises = map( domainNamesList, ( domainName ) => {
-		// 		return wpcom.updateWhois( domainName, contactDetails, transferLock ).then( ( data ) => {
-		// 			console.log( data );
-		// 		} );
-		// 	} );
-		//
-		// 	Promise.allSettled( saveWhoisPromises ).then( ( results ) => {
-		// 		console.log( results );
-		// 	} );
-		//
-		// 	// this.props.domainNamesList.forEach( ( domainName ) => {
-		// 	// 	this.setState(
-		// 	// 		{
-		// 	// 			formSubmitting: true,
-		// 	// 		},
-		// 	// 		() => {
-		// 	// 			this.props.saveWhois( domainName, contactDetails, transferLock );
-		// 	// 		}
-		// 	// 	);
-		// 	// } );
-		// };
+		if ( this.props.isContactEmailEditContext ) {
+			const { email } = contactInfo;
+			updatedContactInfo.email = email;
+		}
+
+		return {
+			firstName: get( updatedContactInfo, 'fname' ),
+			lastName: get( updatedContactInfo, 'lname' ),
+			organization: get( updatedContactInfo, 'org' ),
+			email: get( updatedContactInfo, 'email' ),
+			phone: get( updatedContactInfo, 'phone' ),
+			address1: get( updatedContactInfo, 'sa1' ),
+			address2: get( updatedContactInfo, 'sa2' ),
+			city: get( updatedContactInfo, 'city' ),
+			state: get( updatedContactInfo, 'state' ),
+			countryCode: get( updatedContactInfo, 'country_code' ),
+			postalCode: get( updatedContactInfo, 'pc' ),
+			fax: get( updatedContactInfo, 'fax' ),
+		};
+	};
+
+	handleSaveContactInfo = ( contactInfo ) => {
+		this.setState( { isSavingContactInfo: true }, () => this.saveContactInfo( contactInfo ) );
+	};
+
+	saveContactInfo = ( contactInfo ) => {
+		const selectedDomainNamesList = reduce(
+			this.state.selectedDomains,
+			( list, isSelected, domainName ) => {
+				if ( isSelected ) {
+					list.push( domainName );
+				}
+				return list;
+			},
+			[]
+		);
+
+		if ( this.props.isContactEmailEditContext ) {
+			this.props.saveContactEmailClick();
+		}
+
+		const saveWhoisPromises = map( selectedDomainNamesList, ( domainName ) => {
+			const updatedContactInfo = this.getUpdatedContactInfo( domainName, contactInfo );
+			return wpcom
+				.undocumented()
+				.updateWhois( domainName, updatedContactInfo, this.state.transferLockOptOut )
+				.then( ( data ) => {
+					return { ...data, domain: domainName };
+				} )
+				.catch( ( error ) => {
+					error.domain = domainName;
+					throw error;
+				} );
+		} );
+
+		Promise.allSettled( saveWhoisPromises )
+			.then( ( results ) => {
+				const successDomains = reduce(
+					results,
+					( list, data ) => {
+						if ( 'fulfilled' === data.status && true === data.value.success ) {
+							list.push( data.value.domain );
+						}
+						return list;
+					},
+					[]
+				);
+
+				const failedDomains = reduce(
+					results,
+					( list, data ) => {
+						if ( 'rejected' === data.status ) {
+							list.push( data.reason.domain );
+						}
+						if ( 'fulfilled' === data.status && false === data.value.success ) {
+							list.push( data.value.domain );
+						}
+						return list;
+					},
+					[]
+				);
+
+				! isEmpty( successDomains ) &&
+					this.props.successNotice( this.props.translate( 'Successfully updated email address.' ) );
+
+				! isEmpty( failedDomains ) &&
+					this.props.errorNotice(
+						'Failed to updated email address for: ' + failedDomains.join( ', ' )
+					);
+			} )
+			.then( () => this.setState( { isSavingContactInfo: false } ) );
 	};
 
 	renderActionForm() {
-		if ( ! this.isLoading() && this.props.isContactEditContext ) {
+		if ( ! this.isLoading() && this.props.isContactEmailEditContext ) {
 			return (
 				<Card>
 					<CardHeading>
 						{ this.props.translate( 'Edit Contact Info For Selected Domains' ) }
 					</CardHeading>
 					<BulkEditContactInfo
-						isDisabled={ this.isLoadingDomainDetails() }
-						isSubmitting={ false }
+						isDisabled={ this.isLoadingDomainDetails() || this.isLoadingWhoisData() }
+						isSubmitting={ this.state.isSavingContactInfo }
 						onTransferLockOptOutChange={ this.handleContactInfoTransferLockOptOutChange }
 						handleSaveContactInfo={ this.handleSaveContactInfo }
 						emailOnly={ ListAllActions.editContactEmail === this.props?.action }
@@ -362,7 +427,7 @@ class ListAll extends Component {
 		const { domainsList, translate, user } = this.props;
 
 		if (
-			this.props.isContactEditContext &&
+			this.props.isContactEmailEditContext &&
 			domainsList.length > 0 &&
 			this.filteredDomains().length === 0
 		) {
@@ -406,6 +471,15 @@ const addDomainClick = () =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Management', 'Clicked "Add Domain" Button in ListAll' ),
 		recordTracksEvent( 'calypso_domain_management_list_all_add_domain_click' )
+	);
+
+const saveContactEmailClick = () =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Clicked "Save contact info" Button in ListAll > Bulk edit email address'
+		),
+		recordTracksEvent( 'calypso_domain_management_list_all_save_contact_email_click' )
 	);
 
 const getFilteredDomainsList = ( state, context ) => {
@@ -464,10 +538,13 @@ export default connect(
 			sites,
 			hasAllSitesLoaded: hasAllSitesList( state ),
 			user,
-			isContactEditContext: ListAllActions.editContactEmail === action,
+			isContactEmailEditContext: ListAllActions.editContactEmail === action,
 		};
 	},
 	{
 		addDomainClick,
+		saveContactEmailClick,
+		successNotice,
+		errorNotice,
 	}
 )( localize( ListAll ) );
