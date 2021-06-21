@@ -17,6 +17,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
+import ScanMultisiteNotice from 'calypso/components/jetpack/scan-multisite-notice';
 import { Scan, Site } from 'calypso/my-sites/scan/types';
 import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
@@ -39,7 +40,6 @@ import ScanNavigation from './navigation';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
-import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Type dependencies
@@ -77,33 +77,6 @@ class ScanPage extends Component< Props > {
 	state = {
 		showJetpackReviewPrompt: false,
 	};
-
-	renderMultisiteMessage() {
-		const multiSiteInfoLink = `https://jetpack.com/support/scan/#does-jetpack-scan-support-multisite`;
-		return (
-			<div className="scan__multisite-warning">
-				<div className="scan__multisite-warning-title">
-					{ preventWidows( translate( 'This site is a WordPress Multisite installation.' ) ) }
-				</div>
-				<p className="scan__multisite-warning-info">
-					{ preventWidows(
-						translate(
-							'Jetpack Scan for Multisite installations is not fully supported. ' +
-								'For more information {{ExternalLink}}visit our documentation page {{externalIcon/}}{{/ExternalLink}}.',
-							{
-								components: {
-									ExternalLink: (
-										<a href={ multiSiteInfoLink } target="_blank" rel="noopener noreferrer" />
-									),
-									externalIcon: <Gridicon icon="external" size={ 18 } />,
-								},
-							}
-						)
-					) }
-				</p>
-			</div>
-		);
-	}
 
 	renderProvisioning() {
 		return (
@@ -166,7 +139,7 @@ class ScanPage extends Component< Props > {
 		return (
 			<>
 				<SecurityIcon />
-				{ isMultiSite && this.renderMultisiteMessage() }
+				{ isMultiSite && <ScanMultisiteNotice /> }
 				{ this.renderHeader( translate( 'Don’t worry about a thing' ) ) }
 				<p>
 					{ translate(

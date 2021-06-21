@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { numberFormat, translate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 
@@ -13,6 +13,8 @@ import FixAllThreatsDialog from 'calypso/components/jetpack/fix-all-threats-dial
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
 import ThreatItem from 'calypso/components/jetpack/threat-item';
+import ScanMultisiteNotice from 'calypso/components/jetpack/scan-multisite-notice';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import { FixableThreat, Threat, ThreatAction } from 'calypso/components/jetpack/threat-item/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
@@ -62,6 +64,7 @@ const ScanError: React.FC< { site: Site } > = ( { site } ) => {
 };
 
 const ScanThreats = ( { error, site, threats }: Props ) => {
+	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, site.ID ) );
 	const {
 		updatingThreats,
 		selectedThreat,
@@ -138,6 +141,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 	return (
 		<>
 			<SecurityIcon icon="error" />
+			{ isMultiSite && <ScanMultisiteNotice /> }
 			<h1 className="scan-threats scan__header">{ translate( 'Your site may be at risk' ) }</h1>
 			<p>
 				{ translate(
