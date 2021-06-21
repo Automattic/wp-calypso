@@ -74,7 +74,6 @@ function isValidLogmeinSite( site: any ): boolean {
 		! site.options.is_redirect &&
 		! site.options.is_wpcom_atomic &&
 		! site.options.is_wpcom_store &&
-		! site.options.is_wpforteams_site &&
 		site.options.is_mapped_domain
 	);
 }
