@@ -16,6 +16,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import ExternalLink from 'calypso/components/external-link';
 import Gridicon from 'calypso/components/gridicon';
+import Spinner from 'calypso/components/spinner';
 import {
 	getCanonicalTheme,
 	hasActivatedTheme,
@@ -155,6 +156,7 @@ class AutoLoadingHomepageModal extends Component {
 		const iframeSrcKeepHomepage = addQueryArgs( 'https://' + this.props.siteDomain, {
 			theme: stylesheet,
 			hide_banners: 'true',
+			preview_overlay: 'true',
 		} );
 
 		return (
@@ -195,6 +197,7 @@ class AutoLoadingHomepageModal extends Component {
 					<div className="themes__theme-preview-items">
 						<div className="themes__theme-preview-item themes__theme-preview-item-iframe-container">
 							<div className="themes__iframe-wrapper">
+								<Spinner />
 								<iframe
 									loading="lazy"
 									title={ translate( 'Preview of current homepage with new theme applied' ) }

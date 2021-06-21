@@ -54,7 +54,16 @@
 	border: 1px solid var( --color-border-subtle );
 	border-radius: 2px;
 
+	img,
+	.themes__iframe-wrapper {
+		display: none;
+	}
+
 	@include break-medium {
+		img,
+		.themes__iframe-wrapper {
+			display: block;
+		}
 		width: 48%;
 		margin-left: 2%;
 
@@ -81,6 +90,7 @@
 	.themes__iframe-wrapper {
 		flex-grow: 1;
 		overflow: hidden;
+		position: relative;
 	}
 	iframe {
 		// flex-grow: 1;
@@ -89,5 +99,8 @@
 		max-width: 200%;
 		transform: scale( 0.5 );
 		transform-origin: top left;
+		position: absolute;
+		top: 0;
+		left: 0;
 	}
 }
