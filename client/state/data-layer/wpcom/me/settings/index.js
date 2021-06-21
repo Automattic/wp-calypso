@@ -11,6 +11,7 @@ import { translate } from 'i18n-calypso';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	clearUnsavedUserSettings,
@@ -110,16 +111,12 @@ export function userSettingsSaveFailure( { settingsOverride }, error ) {
  * After settings were successfully saved, update the settings stored in the Redux state,
  * clear the unsaved settings list, and re-fetch info about the user.
  */
-export const userSettingsSaveSuccess = ( { settingsOverride }, data ) => ( dispatch ) => {
+export const userSettingsSaveSuccess = ( { settingsOverride }, data ) => async ( dispatch ) => {
 	dispatch( saveUserSettingsSuccess( fromApi( data ) ) );
 	dispatch( clearUnsavedUserSettings( settingsOverride ? Object.keys( settingsOverride ) : null ) );
 
 	// Refetch the user data after saving user settings
-	// The require() trick is used to avoid excessive mocking in unit tests.
-	// TODO: Replace it with standard 'import' when the `lib/user` module is Reduxized
-	const userLibModule = require( 'calypso/lib/user' );
-	const userLib = userLibModule.default ? userLibModule.default : userLibModule; // TODO: delete line after removing add-module-exports.
-	userLib().fetch();
+	await dispatch( fetchCurrentUser() );
 
 	if ( settingsOverride?.user_email_change_pending !== undefined ) {
 		dispatch( successNotice( translate( 'The email change has been successfully canceled.' ) ) );
