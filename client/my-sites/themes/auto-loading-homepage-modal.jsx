@@ -31,6 +31,7 @@ import {
 	hideAutoLoadingHomepageWarning,
 	activate as activateTheme,
 } from 'calypso/state/themes/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -211,7 +212,7 @@ class AutoLoadingHomepageModal extends Component {
 									'Your new theme design will be applied without changing your homepage content.'
 								) }{ ' ' }
 								<ExternalLink
-									href="https://wordpress.com/support/themes/#switch-themes"
+									href={ localizeUrl( 'https://wordpress.com/support/themes/#switch-themes' ) }
 									icon
 									target="__blank"
 								>
@@ -230,7 +231,7 @@ class AutoLoadingHomepageModal extends Component {
 									} }
 								/>{ ' ' }
 								<ExternalLink
-									href="https://wordpress.com/support/themes/#switch-themes"
+									href={ localizeUrl( 'https://wordpress.com/support/themes/#switch-themes' ) }
 									icon
 									target="__blank"
 								>
