@@ -37,6 +37,7 @@ class Block_Patterns_From_API {
 	 * @var array
 	 */
 	private $core_to_wpcom_categories_dictionary;
+
 	/**
 	 * @var string
 	 */
@@ -45,7 +46,7 @@ class Block_Patterns_From_API {
 	/**
 	 * Block_Patterns constructor.
 	 *
-	 * @param string $editor_type The current editor. One of `block_editor` (default), `site_editor`.
+	 * @param string               $editor_type The current editor. One of `block_editor` (default), `site_editor`.
 	 * @param Block_Patterns_Utils $utils       A class dependency containing utils methods.
 	 */
 	public function __construct( string $editor_type = 'block_editor', Block_Patterns_Utils $utils = null ) {
@@ -73,7 +74,7 @@ class Block_Patterns_From_API {
 	 *
 	 * @return array Results of pattern registration.
 	 */
-	public function register_patterns() {
+	public function register_patterns(): array {
 		$this->reregister_core_and_gutenberg_patterns();
 
 		// Used to track which patterns we successfully register.
@@ -86,7 +87,7 @@ class Block_Patterns_From_API {
 			$pattern_categories = array();
 			$block_patterns     = $this->get_patterns( $patterns_cache_key, $patterns_source );
 
-			foreach ( (array) $block_patterns as $pattern ) {
+			foreach ( $block_patterns as $pattern ) {
 				foreach ( (array) $pattern['categories'] as $slug => $category ) {
 					$pattern_categories[ $slug ] = array( 'label' => $category['title'] );
 				}
@@ -116,11 +117,11 @@ class Block_Patterns_From_API {
 			}
 
 			// Register categories (and re-register existing categories).
-			foreach ( (array) $pattern_categories as $slug => $category_properties ) {
+			foreach ( $pattern_categories as $slug => $category_properties ) {
 				register_block_pattern_category( $slug, $category_properties );
 			}
 
-			foreach ( (array) $block_patterns as $pattern ) {
+			foreach ( $block_patterns as $pattern ) {
 				if ( $this->can_register_pattern( $pattern ) ) {
 					$is_premium = isset( $pattern['pattern_meta']['is_premium'] ) ? boolval( $pattern['pattern_meta']['is_premium'] ) : false;
 
@@ -161,7 +162,7 @@ class Block_Patterns_From_API {
 	 * @param string $patterns_source    Slug for valid patterns source site, e.g., `block_patterns`.
 	 * @return array                      The list of translated patterns.
 	 */
-	private function get_patterns( $patterns_cache_key, $patterns_source ) {
+	private function get_patterns( $patterns_cache_key, $patterns_source ): array {
 		$override_source_site = apply_filters( 'a8c_override_patterns_source_site', false );
 		if ( $override_source_site ) {
 			// Skip caching and request all patterns from a specified source site.
@@ -220,7 +221,7 @@ class Block_Patterns_From_API {
 	 *
 	 * @return bool
 	 */
-	private function can_register_pattern( $pattern ) {
+	private function can_register_pattern( $pattern ): bool {
 		if ( empty( $pattern['pattern_meta'] ) ) {
 			// Default to allowing patterns without metadata to be registered.
 			return true;
@@ -271,7 +272,7 @@ class Block_Patterns_From_API {
 
 	/**
 	 * Update categories for core patterns if a records exists in $this->core_to_wpcom_categories_dictionary
-	 * and reregister them.
+	 * and re-register them.
 	 */
 	private function update_core_patterns_with_wpcom_categories() {
 		if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
