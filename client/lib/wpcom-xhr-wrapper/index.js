@@ -4,6 +4,12 @@
 import debugModule from 'debug';
 
 /**
+ * Internal dependencies
+ */
+import user from 'calypso/lib/user';
+import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
+
+/**
  * Module variables
  */
 const debug = debugModule( 'calypso:wpcom-xhr-wrapper' );
@@ -14,8 +20,15 @@ export default async function ( params, callback ) {
 
 	return xhr( params, function ( error, response, headers ) {
 		if ( error && error.name === 'InvalidTokenError' ) {
-			debug( 'Invalid token error detected, authorisation probably revoked - logging out' );
-			window.location.reload();
+			debug( 'Invalid token error detected, authorization probably revoked - logging out' );
+
+			const logoutUrl = getLogoutUrl( user().get() );
+			// Clear any data stored locally within the user data module or localStorage
+			user()
+				.clear()
+				.then( () => {
+					window.location.href = logoutUrl;
+				} );
 		}
 
 		callback( error, response, headers );
