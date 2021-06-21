@@ -22,6 +22,12 @@
 	}
 }
 
+.card.header-cake--has-screen-options {
+	@include breakpoint-deprecated( '<660px' ) {
+		margin-top: 35px;
+	}
+}
+
 .header-cake__back {
 	flex: none;
 	display: block;
