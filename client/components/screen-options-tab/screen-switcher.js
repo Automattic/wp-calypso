@@ -26,7 +26,7 @@ const ScreenSwitcher = ( { onSwitch, wpAdminPath } ) => {
 	// We indicate that the WP Admin view is preferred with the `preferred-view` query param. WP Admin will
 	// use that param to store the preference, so next times the user visits the page via the sidebar menu
 	// it will default to the WP Admin page.
-	fullWpAdminUrl = addQueryArgs( { 'preferred-view': 'wp-admin' }, fullWpAdminUrl );
+	fullWpAdminUrl = addQueryArgs( { 'preferred-view': 'classic' }, fullWpAdminUrl );
 
 	return (
 		<div className="screen-switcher">
@@ -39,7 +39,7 @@ const ScreenSwitcher = ( { onSwitch, wpAdminPath } ) => {
 			</button>
 			<a
 				className="screen-switcher__button"
-				onClick={ () => onSwitch && onSwitch( 'wp-admin' ) }
+				onClick={ () => onSwitch && onSwitch( 'classic' ) }
 				href={ fullWpAdminUrl }
 			>
 				<strong>{ __( 'Classic view' ) }</strong>
