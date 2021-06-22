@@ -395,8 +395,8 @@ const trackListViewToggle = ( isOpen ) => {
 const trackEditEntityRecord = ( kind, type, id, updates ) => {
 	if ( kind === 'postType' && type === 'wp_global_styles' ) {
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
-		const entityContent = JSON.parse( editedEntity.content );
-		const updatedContent = JSON.parse( updates.content );
+		const entityContent = JSON.parse( editedEntity?.content );
+		const updatedContent = JSON.parse( updates?.content );
 
 		findUpdates( updatedContent, entityContent )?.forEach( ( { keyMap, value } ) => {
 			tracksRecordEvent(
@@ -407,11 +407,12 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 	}
 };
 
-const trackSaveEntityRecord = ( kind, type, id, updates ) => {
+const trackSaveEditedEntityRecord = ( kind, type, id ) => {
 	if ( kind === 'postType' && type === 'wp_global_styles' ) {
 		const savedEntity = select( 'core' ).getEntityRecord( kind, type, id );
-		const entityContent = JSON.parse( savedEntity.content );
-		const updatedContent = JSON.parse( updates.content );
+		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
+		const entityContent = JSON.parse( savedEntity?.content?.raw );
+		const updatedContent = JSON.parse( editedEntity?.content );
 
 		findUpdates( updatedContent, entityContent )?.forEach( ( { keyMap, value } ) => {
 			tracksRecordEvent(
@@ -445,7 +446,7 @@ const REDUX_TRACKING = {
 		undo: 'wpcom_block_editor_undo_performed',
 		redo: 'wpcom_block_editor_redo_performed',
 		editEntityRecord: trackEditEntityRecord,
-		saveEntityRecord: trackSaveEntityRecord,
+		saveEditedEntityRecord: trackSaveEditedEntityRecord,
 	},
 	'core/block-editor': {
 		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),
