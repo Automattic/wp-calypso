@@ -4,7 +4,7 @@
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
-import { find } from 'lodash';
+import { find, isEqual } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -13,7 +13,7 @@ import debugFactory from 'debug';
 import tracksRecordEvent from './tracking/track-record-event';
 import delegateEventTracking from './tracking/delegate-event-tracking';
 import { trackGlobalStylesTabSelected } from './tracking/wpcom-block-editor-global-styles-tab-selected';
-import { findUpdates, buildGlobalStylesEventProps } from './utils';
+import { buildGlobalStylesContentEvents } from './utils';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -398,12 +398,15 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 		const entityContent = JSON.parse( editedEntity?.content );
 		const updatedContent = JSON.parse( updates?.content );
 
-		findUpdates( updatedContent, entityContent )?.forEach( ( { keyMap, value } ) => {
-			tracksRecordEvent(
-				'wpcom_block_editor_global_styles_update',
-				buildGlobalStylesEventProps( keyMap, value )
+		// Sometimes a second update is triggered corresponding to no changes since the last update.
+		// Therefore we must check if there is a change to avoid debouncing a valid update to a changeless update.
+		if ( ! isEqual( updatedContent, entityContent ) ) {
+			buildGlobalStylesContentEvents(
+				updatedContent,
+				entityContent,
+				'wpcom_block_editor_global_styles_update'
 			);
-		} );
+		}
 	}
 };
 
@@ -414,12 +417,11 @@ const trackSaveEditedEntityRecord = ( kind, type, id ) => {
 		const entityContent = JSON.parse( savedEntity?.content?.raw );
 		const updatedContent = JSON.parse( editedEntity?.content );
 
-		findUpdates( updatedContent, entityContent )?.forEach( ( { keyMap, value } ) => {
-			tracksRecordEvent(
-				'wpcom_block_editor_global_styles_save',
-				buildGlobalStylesEventProps( keyMap, value )
-			);
-		} );
+		buildGlobalStylesContentEvents(
+			updatedContent,
+			entityContent,
+			'wpcom_block_editor_global_styles_save'
+		);
 	}
 };
 

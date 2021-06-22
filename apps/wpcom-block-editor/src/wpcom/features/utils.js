@@ -1,7 +1,12 @@
 /**
  * External Dependencies
  */
-import { isEqual, some } from 'lodash';
+import { isEqual, some, debounce } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import tracksRecordEvent from './tracking/track-record-event';
 
 /**
  * Determines the type of the block editor.
@@ -38,7 +43,7 @@ export const getEditorType = () => {
  *
  * @returns {Array[object]} Array of objects containing a keyMap array and value for the changed items.
  */
-export const compareObjects = ( newObject, oldObject, keyMap = [] ) => {
+const compareObjects = ( newObject, oldObject, keyMap = [] ) => {
 	if ( isEqual( newObject, oldObject ) ) {
 		return [];
 	}
@@ -65,7 +70,7 @@ export const compareObjects = ( newObject, oldObject, keyMap = [] ) => {
 	return changedItems;
 };
 
-export const findUpdates = ( newContent, oldContent ) => {
+const findUpdates = ( newContent, oldContent ) => {
 	const newItems = compareObjects( newContent, oldContent );
 
 	const removedItems = compareObjects( oldContent, newContent ).filter(
@@ -122,3 +127,11 @@ export const buildGlobalStylesEventProps = ( keyMap, value ) => {
 		palette_slug: paletteSlug,
 	};
 };
+
+export const buildGlobalStylesContentEvents = debounce( ( updated, original, eventName ) => {
+	// Debouncing is necessary to avoid spamming tracks events with updates when sliding inputs
+	// such as a color picker are in use.
+	return findUpdates( updated, original )?.forEach( ( { keyMap, value } ) => {
+		tracksRecordEvent( eventName, buildGlobalStylesEventProps( keyMap, value ) );
+	} );
+}, 100 );
