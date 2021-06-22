@@ -328,6 +328,7 @@ export function WPOrderReviewLineItems( {
 					<WPOrderReviewListItem key={ product.uuid }>
 						<LineItem
 							product={ product }
+							allowVariants
 							siteId={ siteId }
 							hasDeleteButton={ canItemBeDeleted( product ) }
 							removeProductFromCart={ removeProductFromCart }
@@ -817,6 +818,7 @@ function GSuiteDiscountCallout( {
 
 function WPLineItem( {
 	product,
+	allowVariants,
 	siteId,
 	className,
 	hasDeleteButton,
@@ -826,6 +828,7 @@ function WPLineItem( {
 	createUserAndSiteBeforeTransaction,
 }: {
 	product: ResponseCartProduct;
+	allowVariants?: boolean;
 	siteId?: number | undefined;
 	className?: string;
 	hasDeleteButton?: boolean;
@@ -862,7 +865,7 @@ function WPLineItem( {
 
 	const productSlug = product?.product_slug;
 
-	const shouldShowVariantSelector = product && ! isRenewal;
+	const shouldShowVariantSelector = allowVariants && product && ! isRenewal;
 	const variants = useGetProductVariants( siteId, productSlug );
 
 	const isGSuite =
