@@ -158,29 +158,20 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		);
 	} );
 
-	it( 'Tracks "wpcom_block_editor_nav_sidebar_open" event', async function () {
+	it( `W button should not trigger the "wpcom_block_editor_close_click" event when it's connected to a sidebar`, async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
-		// We open and close the navigation sidebar to make sure we are only tracking the open.
 		await editor.toggleNavigationSidebar();
 		await editor.toggleNavigationSidebar();
 
 		const eventsStack = await getEventsStack( this.driver );
-		const navSidebarOpenFiredOnce =
-			eventsStack.filter( ( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_open' )
-				.length === 1;
 		const editorCloseClickNotFired =
 			eventsStack.filter( ( [ eventName ] ) => eventName === 'wpcom_block_editor_close_click' )
 				.length === 0;
 		assert.strictEqual(
-			navSidebarOpenFiredOnce,
-			true,
-			'"wpcom_block_editor_nav_sidebar_open" editor tracking event failed to fire only once'
-		);
-		assert.strictEqual(
 			editorCloseClickNotFired,
 			true,
-			'"wpcom_block_editor_redo_performed" editor tracking event fired'
+			'"wpcom_block_editor_close_click" editor tracking event fired'
 		);
 	} );
 
