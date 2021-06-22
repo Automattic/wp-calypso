@@ -608,7 +608,12 @@ class Signup extends React.Component {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 			const hasPaidDomain = isDomainRegistration( domainItem );
 
-			return <ReskinnedProcessingScreen hasPaidDomain={ hasPaidDomain } />;
+			return (
+				<ReskinnedProcessingScreen
+					flowName={ this.props.flowName }
+					hasPaidDomain={ hasPaidDomain }
+				/>
+			);
 		}
 
 		return (
