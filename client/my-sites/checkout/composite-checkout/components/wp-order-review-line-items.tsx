@@ -362,7 +362,6 @@ WPOrderReviewLineItems.propTypes = {
 	isSummary: PropTypes.bool,
 	removeProductFromCart: PropTypes.func,
 	removeCoupon: PropTypes.func,
-	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 };
 
@@ -985,7 +984,6 @@ WPLineItem.propTypes = {
 	hasDeleteButton: PropTypes.bool,
 	removeProductFromCart: PropTypes.func,
 	product: PropTypes.object.isRequired,
-	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 	createUserAndSiteBeforeTransaction: PropTypes.bool,
 };
