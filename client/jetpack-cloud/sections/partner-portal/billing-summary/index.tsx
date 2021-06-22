@@ -84,8 +84,9 @@ export default function BillingSummary(): ReactElement {
 				<strong className="billing-summary__value">
 					{ billing.isSuccess && numberFormat( billing.data.licenses.total, 0 ) }
 
-					{ ! billing.isSuccess &&
-						( billing.isLoading ? <TextPlaceholder /> : <Gridicon icon="minus" /> ) }
+					{ billing.isLoading && <TextPlaceholder /> }
+
+					{ billing.isError && <Gridicon icon="minus" /> }
 				</strong>
 			</div>
 

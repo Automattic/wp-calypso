@@ -116,7 +116,7 @@ export default function BillingDetails(): ReactElement {
 								args: { date: moment( billing.data.date ).format( 'MMMM, YYYY' ) },
 							} ) }
 
-						{ ! billing.isSuccess && billing.isLoading && <TextPlaceholder /> }
+						{ billing.isLoading && <TextPlaceholder /> }
 					</span>
 					<strong className="billing-details__cost-amount">
 						{ billing.isSuccess && formatCurrency( billing.data.costs.total, 'USD' ) }
