@@ -321,13 +321,7 @@ describe( 'useBillingDashboardQuery', () => {
 	} );
 
 	it( 'dispatches notification on no invoice available', async () => {
-		const queryClient = new QueryClient( {
-			defaultOptions: {
-				queries: {
-					retry: false,
-				},
-			},
-		} );
+		const queryClient = new QueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
@@ -341,7 +335,7 @@ describe( 'useBillingDashboardQuery', () => {
 		const dispatch = jest.fn();
 		useDispatch.mockReturnValue( dispatch );
 
-		const { result, waitFor } = renderHook( () => useBillingDashboardQuery(), {
+		const { result, waitFor } = renderHook( () => useBillingDashboardQuery( { retry: false } ), {
 			wrapper,
 		} );
 
@@ -358,13 +352,7 @@ describe( 'useBillingDashboardQuery', () => {
 	} );
 
 	it( 'dispatches notice on error', async () => {
-		const queryClient = new QueryClient( {
-			defaultOptions: {
-				queries: {
-					retry: false,
-				},
-			},
-		} );
+		const queryClient = new QueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
@@ -376,7 +364,7 @@ describe( 'useBillingDashboardQuery', () => {
 		const dispatch = jest.fn();
 		useDispatch.mockReturnValue( dispatch );
 
-		const { result, waitFor } = renderHook( () => useBillingDashboardQuery(), {
+		const { result, waitFor } = renderHook( () => useBillingDashboardQuery( { retry: false } ), {
 			wrapper,
 		} );
 
