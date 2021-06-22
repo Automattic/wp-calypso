@@ -266,7 +266,7 @@ class AutoLoadingHomepageModal extends Component {
 									icon
 									target="__blank"
 								>
-									{ translate( 'Learn more' ) }
+									{ translate( 'Learn more.' ) }
 								</ExternalLink>
 							</p>
 						) }
@@ -287,7 +287,7 @@ class AutoLoadingHomepageModal extends Component {
 									icon
 									target="__blank"
 								>
-									{ translate( 'Learn more' ) }
+									{ translate( 'Learn more.' ) }
 								</ExternalLink>
 							</p>
 						) }
