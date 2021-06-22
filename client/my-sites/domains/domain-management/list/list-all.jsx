@@ -395,7 +395,7 @@ class ListAll extends Component {
 							contactInfoSaveResults: {
 								...contactInfoSaveResults,
 								[ domainName ]: {
-									message: 'Failed to updated email address.',
+									message: 'Failed to update email address.',
 									type: 'error',
 								},
 							},
