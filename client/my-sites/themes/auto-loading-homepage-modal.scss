@@ -12,9 +12,18 @@
 
 .themes__auto-loading-homepage-modal-close-icon {
 	cursor: pointer;
+	width: 16px;
+	height: 16px;
 	position: absolute;
-	right: 20px;
-	top: 20px;
+	top: 10px;
+	right: 10px;
+
+	@include break-medium {
+		width: 24px;
+		height: 24px;
+		right: 20px;
+		top: 20px;
+	}
 }
 
 .themes__auto-loading-homepage-modal-homepage-hint {
