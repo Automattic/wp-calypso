@@ -213,18 +213,18 @@ class AutoLoadingHomepageModal extends Component {
 					</h1>
 					<div className="themes__theme-preview-items">
 						<div className="themes__theme-preview-item themes__theme-preview-item-iframe-container">
-							<div className="themes__iframe-wrapper">
-								<Spinner />
-								{ ! isNarrow && (
-									<iframe
-										scrolling="no"
-										loading="lazy"
-										title={ translate( 'Preview of current homepage with new theme applied' ) }
-										src={ iframeSrcKeepHomepage }
-									/>
-								) }
-							</div>
 							<FormLabel>
+								<div className="themes__iframe-wrapper">
+									<Spinner />
+									{ ! isNarrow && (
+										<iframe
+											scrolling="no"
+											loading="lazy"
+											title={ translate( 'Preview of current homepage with new theme applied' ) }
+											src={ iframeSrcKeepHomepage }
+										/>
+									) }
+								</div>
 								<FormRadio
 									value="keep_current_homepage"
 									checked={ 'keep_current_homepage' === this.state.homepageAction }
@@ -236,11 +236,11 @@ class AutoLoadingHomepageModal extends Component {
 							</FormLabel>
 						</div>
 						<div className="themes__theme-preview-item">
-							<img
-								src={ themeScreenshot }
-								alt={ translate( "Preview of new theme's default homepage" ) }
-							/>
 							<FormLabel>
+								<img
+									src={ themeScreenshot }
+									alt={ translate( "Preview of new theme's default homepage" ) }
+								/>
 								<FormRadio
 									value="use_new_homepage"
 									checked={ 'use_new_homepage' === this.state.homepageAction }

@@ -75,10 +75,20 @@
 		img,
 		.themes__iframe-wrapper {
 			display: block;
+			height: 100%;
+			max-height: 250px;
 		}
 
 		.form-label {
+			height: 100%;
+		}
+
+		.form-radio {
 			margin: 1em;
+		}
+
+		.form-radio__label {
+			margin: 1em 1em 1em 3em;
 		}
 
 		&:first-of-type {
