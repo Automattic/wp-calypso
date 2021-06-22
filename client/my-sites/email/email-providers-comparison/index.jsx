@@ -70,7 +70,6 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { Fragment } from '@wordpress/element';
 import HeaderCake from 'calypso/components/header-cake';
 
 /**
@@ -492,9 +491,9 @@ class EmailProvidersComparison extends React.Component {
 		};
 
 		return (
-			<Fragment>
+			<>
 				<HeaderCake onClick={ this.goBack }>
-					<h1>{ translate( 'Emails' ) }</h1>
+					{ translate( 'Emails' ) }
 				</HeaderCake>
 				<PromoCard
 					isPrimary
@@ -510,7 +509,7 @@ class EmailProvidersComparison extends React.Component {
 						) }
 					</p>
 				</PromoCard>
-			</Fragment>
+			</>
 		);
 	}
 
