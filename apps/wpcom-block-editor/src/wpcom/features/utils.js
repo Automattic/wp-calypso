@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { isEqual, find } from 'lodash';
+import { isEqual, some } from 'lodash';
 
 /**
  * Determines the type of the block editor.
@@ -29,33 +29,48 @@ export const getEditorType = () => {
 };
 
 /**
- * Finds a change between two like objects.
- * Only the first found change is returned, this is useful if only
- * one change is expected.
+ * Compares two objects, returning values in newObject that do not correspond
+ * to values in oldObject.
  *
- * @param {object} newContent The object that has had an update.
- * @param {object} oldContent The original object to reference.
+ * @param {object} newObject The object that has had an update.
+ * @param {object} oldObject The original object to reference.
  * @param {Array}  keyMap     Used in recursion.  A list of keys mapping to the changed item.
  *
- * @returns {object} Object containing a keyMap array and value for the changed item.
+ * @returns {Array[object]} Array of objects containing a keyMap array and value for the changed items.
  */
-export const findUpdate = ( newContent, oldContent, keyMap = [] ) => {
-	if ( isEqual( newContent, oldContent ) ) {
-		return { keyMap, value: null };
+export const compareObjects = ( newObject, oldObject, keyMap = [] ) => {
+	if ( isEqual( newObject, oldObject ) ) {
+		return [];
 	}
 
-	let addedKey;
-	find( newContent, ( value, key ) => {
-		if ( ! isEqual( value, oldContent?.[ key ] ) ) {
-			keyMap.push( key );
-			addedKey = key;
-			return true;
+	const changedItems = [];
+	for ( const prop of Object.keys( newObject ) ) {
+		if ( ! isEqual( newObject[ prop ], oldObject?.[ prop ] ) ) {
+			// ?? where it doesnt exist in old content vs when it does?
+			if ( Array.isArray( newObject ) ) {
+				changedItems.push( { keyMap: [ ...keyMap, prop ], value: newObject[ prop ] || 'reset' } );
+			} else if ( typeof newObject[ prop ] === 'object' && newObject[ prop ] !== null ) {
+				changedItems.push(
+					...compareObjects( newObject[ prop ], oldObject?.[ prop ], [ ...keyMap, prop ] )
+				);
+			} else {
+				changedItems.push( { keyMap: [ ...keyMap, prop ], value: newObject[ prop ] || 'reset' } );
+			}
 		}
+	}
+
+	return changedItems;
+};
+
+export const findUpdates = ( newContent, oldContent ) => {
+	const newItems = compareObjects( newContent, oldContent );
+
+	const removedItems = compareObjects( oldContent, newContent ).filter(
+		( update ) => ! some( newItems, ( { keyMap } ) => isEqual( update.keyMap, keyMap ) )
+	);
+	removedItems.forEach( ( item ) => {
+		item.value = 'reset';
 	} );
 
-	if ( addedKey && typeof newContent[ addedKey ] === 'object' ) {
-		return findUpdate( newContent[ addedKey ], oldContent?.[ addedKey ], keyMap );
-	}
-
-	return { keyMap, value: newContent[ addedKey ] };
+	return [ ...newItems, ...removedItems ];
 };
