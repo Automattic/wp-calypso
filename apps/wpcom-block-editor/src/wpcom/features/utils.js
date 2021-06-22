@@ -44,17 +44,20 @@ export const compareObjects = ( newObject, oldObject, keyMap = [] ) => {
 	}
 
 	const changedItems = [];
-	for ( const prop of Object.keys( newObject ) ) {
-		if ( ! isEqual( newObject[ prop ], oldObject?.[ prop ] ) ) {
-			// ?? where it doesnt exist in old content vs when it does?
-			if ( Array.isArray( newObject ) ) {
-				changedItems.push( { keyMap: [ ...keyMap, prop ], value: newObject[ prop ] || 'reset' } );
-			} else if ( typeof newObject[ prop ] === 'object' && newObject[ prop ] !== null ) {
+	for ( const key of Object.keys( newObject ) ) {
+		// If an array, key/value association may not be maintained.
+		// So we must check against the entire collection instead of by key.
+		if ( Array.isArray( newObject ) ) {
+			if ( ! some( oldObject, ( item ) => isEqual( item, newObject[ key ] ) ) ) {
+				changedItems.push( { keyMap: [ ...keyMap ], value: newObject[ key ] || 'reset' } );
+			}
+		} else if ( ! isEqual( newObject[ key ], oldObject?.[ key ] ) ) {
+			if ( typeof newObject[ key ] === 'object' && newObject[ key ] !== null ) {
 				changedItems.push(
-					...compareObjects( newObject[ prop ], oldObject?.[ prop ], [ ...keyMap, prop ] )
+					...compareObjects( newObject[ key ], oldObject?.[ key ], [ ...keyMap, key ] )
 				);
 			} else {
-				changedItems.push( { keyMap: [ ...keyMap, prop ], value: newObject[ prop ] || 'reset' } );
+				changedItems.push( { keyMap: [ ...keyMap, key ], value: newObject[ key ] || 'reset' } );
 			}
 		}
 	}
