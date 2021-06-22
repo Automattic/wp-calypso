@@ -91,7 +91,7 @@ class Global_Styles {
 			'value' => self::SYSTEM_FONT,
 		),
 		'Arvo',
-		'Bodoni Mona',
+		'Bodoni Moda',
 		'Cabin',
 		'Chivo',
 		'Courier Prime',
