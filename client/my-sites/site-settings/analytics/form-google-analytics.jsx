@@ -101,7 +101,7 @@ export const GoogleAnalyticsForm = ( props ) => {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isGoogleAnalyticsEligible = hasSiteAnalyticsFeature( state, siteId );
+	const isGoogleAnalyticsEligible = hasSiteAnalyticsFeature( state, site, siteId );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
@@ -117,7 +117,7 @@ const mapStateToProps = ( state ) => {
 		siteIsJetpack,
 		sitePlugins,
 		jetpackModuleActive,
-		isFreeWPCOM: isSiteWPCOMOnFreePlan( state, siteId ),
+		isFreeWPCOM: isSiteWPCOMOnFreePlan( state, site, siteId ),
 	};
 };
 
