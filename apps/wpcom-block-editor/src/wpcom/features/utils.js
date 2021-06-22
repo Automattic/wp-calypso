@@ -72,9 +72,9 @@ const compareObjects = ( newObject, oldObject, keyMap = [] ) => {
 
 /**
  * Compares two objects by running compareObjects in both directions.
- * This returns items on newContent that are different from those found in oldContent.
- * Additionally, items found in oldContent that are not in newContent are added change list
- * with their value as 'reset'.
+ * This returns items in newContent that are different from those found in oldContent.
+ * Additionally, items found in oldContent that are not in newContent are added to the
+ * change list with their value as 'reset'.
  *
  * @param {object} newContent The object that has had an update.
  * @param {object} oldContent The original object to reference.
@@ -95,7 +95,7 @@ const findUpdates = ( newContent, oldContent ) => {
 };
 
 /**
- * Builds event props for a change in global styles.
+ * Builds tracks event props for a change in global styles.
  *
  * @param {Array[string]} keyMap A list of keys mapping to the changed item in the global styles content object.
  * @param {*} 			  value  New value of the updated item.
