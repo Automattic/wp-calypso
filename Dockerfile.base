@@ -9,6 +9,7 @@ ENV YARN_CACHE_FOLDER=/calypso/.cache/yarn
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
 ENV PROFILE=true
+ENV SKIP_TSC=true
 ENV NVM_DIR=/calypso/.nvm
 ENV NODE_ENV=production
 ENV CALYPSO_ENV=production
@@ -48,6 +49,7 @@ ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV NVM_DIR=/calypso/.nvm
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
+ENV SKIP_TSC=true
 ENV CHROMEDRIVER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
