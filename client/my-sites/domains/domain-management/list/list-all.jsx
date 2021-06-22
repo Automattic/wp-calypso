@@ -28,8 +28,8 @@ import ListHeader from './list-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import {
 	getAllDomains,
-	getFlatDomainsList,
 	getAllRequestingSiteDomains,
+	getFlatDomainsList,
 } from 'calypso/state/sites/domains/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
@@ -81,6 +81,7 @@ class ListAll extends Component {
 	renderedQuerySiteDomains = {};
 
 	componentDidUpdate() {
+		console.log( this.state.whoisData );
 		console.log( this.isLoadingWhoisData() );
 		if (
 			this.props.isContactEmailEditContext &&
@@ -178,22 +179,41 @@ class ListAll extends Component {
 		const { isContactEmailEditContext } = this.props;
 		const { selectedDomains, selectedDomainsSet, whoisData } = this.state;
 
-		return (
-			isContactEmailEditContext &&
-			! selectedDomainsSet &&
-			( isEmpty( whoisData ) ||
-				isEmpty( selectedDomains ) ||
-				reduce(
-					selectedDomains,
-					( result, isSelected, domainName ) => {
-						if ( isSelected ) {
-							result = result || isEmpty( whoisData[ domainName ] );
-						}
-						return result;
-					},
-					false
-				) )
+		if ( ! isContactEmailEditContext ) {
+			return false;
+		}
+
+		if ( ! selectedDomainsSet ) {
+			return true;
+		}
+
+		if ( isEmpty( whoisData ) ) {
+			return true;
+		}
+
+		const allWhoisLoaded = reduce(
+			selectedDomains,
+			( whoisLoaded, selected, domain ) => {
+				if ( ! selected ) {
+					return whoisLoaded;
+				}
+
+				const whoisForDomain = get( whoisData, domain, null );
+
+				if ( isEmpty( whoisForDomain ) ) {
+					return false;
+				}
+
+				return whoisLoaded;
+			},
+			true
 		);
+
+		if ( ! allWhoisLoaded ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	shouldRenderDomainItem( domain, domainDetails ) {
