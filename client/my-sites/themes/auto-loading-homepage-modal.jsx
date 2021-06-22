@@ -217,6 +217,7 @@ class AutoLoadingHomepageModal extends Component {
 								<Spinner />
 								{ ! isNarrow && (
 									<iframe
+										scrolling="no"
 										loading="lazy"
 										title={ translate( 'Preview of current homepage with new theme applied' ) }
 										src={ iframeSrcKeepHomepage }
