@@ -8,11 +8,13 @@ import { localize, useTranslate } from 'i18n-calypso';
 import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
 import page from 'page';
 import PropTypes from 'prop-types';
+import titleCase from 'to-title-case';
 
 /**
  * Internal dependencies
  */
 import wp from 'calypso/lib/wp';
+import DocumentHead from 'calypso/components/data/document-head';
 import {
 	emailManagement,
 	emailManagementAddGSuiteUsers,
@@ -356,7 +358,14 @@ class EmailPlan extends React.Component {
 	}
 
 	render() {
-		const { currentRoute, domain, selectedSite, hasSubscription, purchase, isLoadingPurchase } = this.props;
+		const {
+			currentRoute,
+			domain,
+			selectedSite,
+			hasSubscription,
+			purchase,
+			isLoadingPurchase,
+		} = this.props;
 
 		const { isLoadingEmailAccounts } = this.state;
 
@@ -367,6 +376,8 @@ class EmailPlan extends React.Component {
 			<>
 				{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				{ queryForEmailForwards && <QueryEmailForwards domainName={ domain.name } /> }
+
+				<DocumentHead title={ titleCase( this.getHeaderText() ) } />
 
 				<HeaderCake onClick={ this.handleBack }>{ this.getHeaderText() }</HeaderCake>
 
