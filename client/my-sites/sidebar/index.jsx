@@ -942,7 +942,7 @@ export class MySitesSidebar extends Component {
 					...urlParts,
 					protocol: urlParts.protocol || 'https:',
 					searchParams: new URLSearchParams( { page: 'jetpack' } ),
-					hash: '/my-plan',
+					hash: '/plans',
 				} ).href;
 			} catch ( error ) {
 				return null;
