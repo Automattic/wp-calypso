@@ -28,6 +28,11 @@ export class NavbarComponent extends BaseContainer {
 		super( page, selectors.navbar );
 	}
 
+	/**
+	 * Locates and clicks on the selector once the element is stable.
+	 *
+	 * @param {string} selector String selector.
+	 */
 	async _click( selector: string ): Promise< void > {
 		const elementHandle = await this.page.waitForSelector( selector );
 		await elementHandle.waitForElementState( 'stable' );
@@ -44,7 +49,9 @@ export class NavbarComponent extends BaseContainer {
 	}
 
 	/**
+	 * Clicks on `My Sites`.
 	 *
+	 * @returns {Promise<void>} No return value.
 	 */
 	async clickMySite(): Promise< void > {
 		await this._click( selectors.mySite );
