@@ -497,7 +497,7 @@ class EmailProvidersComparison extends React.Component {
 		};
 
 		const title = hasEmailForwards( domain )
-			? translate( 'Upgrade email' )
+			? translate( 'Upgrade to a hosted email' )
 			: translate( 'Add email' );
 
 		return (
@@ -510,16 +510,22 @@ class EmailProvidersComparison extends React.Component {
 
 				<PromoCard
 					isPrimary
-					title={ translate( 'Get your own @%(domainName)s email address', translateArgs ) }
+					title={
+						hasEmailForwards( domain )
+							? translate( 'Upgrade to start sending emails from %(domainName)s', translateArgs )
+							: translate( 'Get your own @%(domainName)s email address', translateArgs )
+					}
 					image={ image }
 					className="email-providers-comparison__action-panel"
 				>
 					<p>
-						{ translate(
-							'Pick one of our flexible options to connect your domain with email ' +
-								'and start getting emails @%(domainName)s today.',
-							translateArgs
-						) }
+						{ hasEmailForwards( domain )
+							? translate( 'Pick from one of our flexible options to unlock full email features.' )
+							: translate(
+									'Pick one of our flexible options to connect your domain with email ' +
+										'and start getting emails @%(domainName)s today.',
+									translateArgs
+							  ) }
 					</p>
 				</PromoCard>
 			</>

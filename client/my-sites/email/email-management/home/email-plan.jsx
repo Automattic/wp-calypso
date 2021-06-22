@@ -66,7 +66,7 @@ const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 		<VerticalNavItem
 			path={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug, domain.name, currentRoute ) }
 		>
-			{ translate( 'Upgrade to unlock email features' ) }
+			{ translate( 'Upgrade to a hosted email' ) }
 		</VerticalNavItem>
 	);
 };
