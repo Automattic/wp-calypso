@@ -10,7 +10,7 @@ import config from '@automattic/calypso-config';
 /**
  * Internal Dependencies
  */
-import ScreenSwitcher from './screen-switcher';
+import ScreenSwitcher, { DEFAULT_VIEW } from './screen-switcher';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -74,7 +74,7 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 	}
 
 	const onSwitchView = ( view ) => {
-		if ( view === 'default' ) {
+		if ( view === DEFAULT_VIEW ) {
 			setIsOpen( false );
 		}
 	};

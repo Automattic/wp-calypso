@@ -17,6 +17,9 @@ import { addQueryArgs } from 'calypso/lib/route';
  */
 import './style.scss';
 
+export const DEFAULT_VIEW = 'default';
+export const CLASSIC_VIEW = 'classic';
+
 const ScreenSwitcher = ( { onSwitch, wpAdminPath } ) => {
 	const { __ } = useI18n();
 
@@ -32,14 +35,14 @@ const ScreenSwitcher = ( { onSwitch, wpAdminPath } ) => {
 		<div className="screen-switcher">
 			<button
 				className="screen-switcher__button"
-				onClick={ () => onSwitch && onSwitch( 'default' ) }
+				onClick={ () => onSwitch && onSwitch( DEFAULT_VIEW ) }
 			>
 				<strong>{ __( 'Default view' ) }</strong>
 				{ __( 'Our WordPress.com redesign for a better experience.' ) }
 			</button>
 			<a
 				className="screen-switcher__button"
-				onClick={ () => onSwitch && onSwitch( 'classic' ) }
+				onClick={ () => onSwitch && onSwitch( CLASSIC_VIEW ) }
 				href={ fullWpAdminUrl }
 			>
 				<strong>{ __( 'Classic view' ) }</strong>
