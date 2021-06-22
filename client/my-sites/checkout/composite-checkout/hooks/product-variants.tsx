@@ -62,6 +62,46 @@ const DoNotPayThis = styled.span`
 	}
 `;
 
+export function useGetProductVariants(
+	siteId: number | undefined,
+	productSlug: string
+): WPCOMProductVariant[] {
+	const translate = useTranslate();
+	const reduxDispatch = useDispatch();
+
+	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
+
+	const productsWithPrices = useSelector( ( state ) => {
+		return computeProductsWithPrices( state, siteId, variantProductSlugs, 0, {} );
+	} );
+
+	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
+	const shouldFetchProducts = ! productsWithPrices;
+
+	useEffect( () => {
+		debug( 'deciding whether to request product variant data' );
+		if ( shouldFetchProducts && ! haveFetchedProducts ) {
+			debug( 'dispatching request for product variant data' );
+			reduxDispatch( requestPlans() );
+			reduxDispatch( requestProductsList() );
+			setHaveFetchedProducts( true );
+		}
+	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
+
+	const getProductVariantFromAvailableVariant = (
+		variant: AvailableProductVariant
+	): WPCOMProductVariant => {
+		return {
+			variantLabel: getTermText( variant.plan.term, translate ),
+			variantDetails: <VariantPrice variant={ variant } />,
+			productSlug: variant.planSlug,
+			productId: variant.product.product_id,
+		};
+	};
+
+	return productsWithPrices.map( getProductVariantFromAvailableVariant );
+}
+
 export function useProductVariants( {
 	siteId,
 	productSlug,
