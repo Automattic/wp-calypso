@@ -245,7 +245,7 @@ class AutoLoadingHomepageModal extends Component {
 									checked={ 'use_new_homepage' === this.state.homepageAction }
 									onChange={ this.handleHomepageAction }
 									label={ preventWidows(
-										translate( 'Replace my homepage content with the %(themeName)s demo.', {
+										translate( 'Replace my homepage content with the %(themeName)s homepage.', {
 											args: { themeName },
 										} )
 									) }
