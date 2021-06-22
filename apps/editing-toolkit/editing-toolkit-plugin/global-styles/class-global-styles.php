@@ -204,8 +204,8 @@ class Global_Styles {
 							'base'     => 'Roboto',
 						),
 						array(
-							'label'    => 'Bodoni Mona / Overpass',
-							'headings' => 'Bodoni Mona',
+							'label'    => 'Bodoni Moda / Overpass',
+							'headings' => 'Bodoni Moda',
 							'base'     => 'Overpass',
 						),
 						array(
