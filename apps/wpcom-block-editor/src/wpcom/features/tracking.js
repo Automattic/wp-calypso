@@ -13,7 +13,7 @@ import debugFactory from 'debug';
 import tracksRecordEvent from './tracking/track-record-event';
 import delegateEventTracking from './tracking/delegate-event-tracking';
 import { trackGlobalStylesTabSelected } from './tracking/wpcom-block-editor-global-styles-tab-selected';
-import { findUpdates } from './utils';
+import { findUpdates, buildGlobalStylesEventProps } from './utils';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -399,48 +399,25 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 		const updatedContent = JSON.parse( updates.content );
 
 		findUpdates( updatedContent, entityContent )?.forEach( ( { keyMap, value } ) => {
-			let blockName;
-			let elementType;
-			let changeType;
-			let propertyChanged;
-			let fieldValue = value;
-			let paletteSlug;
+			tracksRecordEvent(
+				'wpcom_block_editor_global_styles_update',
+				buildGlobalStylesEventProps( keyMap, value )
+			);
+		} );
+	}
+};
 
-			if ( keyMap[ 1 ] === 'blocks' ) {
-				blockName = keyMap[ 2 ];
-				if ( keyMap[ 3 ] === 'elements' ) {
-					elementType = keyMap[ 4 ];
-					changeType = keyMap[ 5 ];
-					propertyChanged = keyMap[ 6 ];
-				} else {
-					changeType = keyMap[ 3 ];
-					propertyChanged = keyMap[ 4 ];
-				}
-			} else if ( keyMap[ 1 ] === 'elements' ) {
-				elementType = keyMap[ 2 ];
-				changeType = keyMap[ 3 ];
-				propertyChanged = keyMap[ 4 ];
-			} else {
-				changeType = keyMap[ 1 ];
-				propertyChanged = keyMap[ 2 ];
-			}
+const trackSaveEntityRecord = ( kind, type, id, updates ) => {
+	if ( kind === 'postType' && type === 'wp_global_styles' ) {
+		const savedEntity = select( 'core' ).getEntityRecord( kind, type, id );
+		const entityContent = JSON.parse( savedEntity.content );
+		const updatedContent = JSON.parse( updates.content );
 
-			if ( propertyChanged === 'palette' ) {
-				fieldValue = value.color || 'reset';
-				paletteSlug = value.slug;
-			}
-
-			tracksRecordEvent( 'wpcom-block-editor-global-styles-update', {
-				block_type: blockName,
-				element_type: elementType,
-				section: changeType,
-				field: propertyChanged,
-				field_value:
-					typeof fieldValue === 'object' && fieldValue !== null
-						? JSON.stringify( fieldValue )
-						: fieldValue,
-				palette_slug: paletteSlug,
-			} );
+		findUpdates( updatedContent, entityContent )?.forEach( ( { keyMap, value } ) => {
+			tracksRecordEvent(
+				'wpcom_block_editor_global_styles_save',
+				buildGlobalStylesEventProps( keyMap, value )
+			);
 		} );
 	}
 };
@@ -468,6 +445,7 @@ const REDUX_TRACKING = {
 		undo: 'wpcom_block_editor_undo_performed',
 		redo: 'wpcom_block_editor_redo_performed',
 		editEntityRecord: trackEditEntityRecord,
+		saveEntityRecord: trackSaveEntityRecord,
 	},
 	'core/block-editor': {
 		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),

@@ -74,3 +74,48 @@ export const findUpdates = ( newContent, oldContent ) => {
 
 	return [ ...newItems, ...removedItems ];
 };
+
+export const buildGlobalStylesEventProps = ( keyMap, value ) => {
+	let blockName;
+	let elementType;
+	let changeType;
+	let propertyChanged;
+	let fieldValue = value;
+	let paletteSlug;
+
+	if ( keyMap[ 1 ] === 'blocks' ) {
+		blockName = keyMap[ 2 ];
+		if ( keyMap[ 3 ] === 'elements' ) {
+			elementType = keyMap[ 4 ];
+			changeType = keyMap[ 5 ];
+			propertyChanged = keyMap[ 6 ];
+		} else {
+			changeType = keyMap[ 3 ];
+			propertyChanged = keyMap[ 4 ];
+		}
+	} else if ( keyMap[ 1 ] === 'elements' ) {
+		elementType = keyMap[ 2 ];
+		changeType = keyMap[ 3 ];
+		propertyChanged = keyMap[ 4 ];
+	} else {
+		changeType = keyMap[ 1 ];
+		propertyChanged = keyMap[ 2 ];
+	}
+
+	if ( propertyChanged === 'palette' ) {
+		fieldValue = value.color || 'reset';
+		paletteSlug = value.slug;
+	}
+
+	return {
+		block_type: blockName,
+		element_type: elementType,
+		section: changeType,
+		field: propertyChanged,
+		field_value:
+			typeof fieldValue === 'object' && fieldValue !== null
+				? JSON.stringify( fieldValue )
+				: fieldValue,
+		palette_slug: paletteSlug,
+	};
+};
