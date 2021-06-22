@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { BaseContainer } from '../base-container';
+import { waitForElementEnabled } from '../../element-helper';
 
 /**
  * Type dependencies
@@ -123,8 +124,7 @@ export class MediaPage extends BaseContainer {
 		const selector = `${ selectors.imageEditorToolbarButton } span:text("Rotate")`;
 		await this.page.click( selector );
 		await preview.waitForElementState( 'stable' );
-		const undoButton = await this.page.waitForSelector( selectors.imageEditorResetButton );
-		await undoButton.waitForElementState( 'enabled' );
+		await waitForElementEnabled( this.page, selectors.imageEditorResetButton );
 	}
 
 	/**
