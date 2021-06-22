@@ -81,8 +81,6 @@ class ListAll extends Component {
 	renderedQuerySiteDomains = {};
 
 	componentDidUpdate() {
-		console.log( this.state.whoisData );
-		console.log( this.isLoadingWhoisData() );
 		if (
 			this.props.isContactEmailEditContext &&
 			! this.isLoadingDomainDetails() &&
