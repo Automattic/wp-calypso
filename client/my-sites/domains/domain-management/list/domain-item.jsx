@@ -8,6 +8,7 @@ import page from 'page';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -69,6 +70,7 @@ class DomainItem extends PureComponent {
 		isChecked: PropTypes.bool,
 		showDomainDetails: PropTypes.bool,
 		isEnabled: PropTypes.bool,
+		actionResult: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -452,6 +454,19 @@ class DomainItem extends PureComponent {
 		return null;
 	}
 
+	renderActionResult() {
+		const { actionResult } = this.props;
+
+		if ( isEmpty( actionResult ) ) {
+			return;
+		}
+
+		const { type, message } = actionResult;
+		const statusClass = 'error' === type ? 'alert' : 'success';
+
+		return <DomainNotice status={ statusClass } text={ message } />;
+	}
+
 	render() {
 		const {
 			domain,
@@ -494,6 +509,7 @@ class DomainItem extends PureComponent {
 						{ listStatusText && (
 							<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
 						) }
+						{ this.renderActionResult() }
 					</div>
 					{ this.renderSiteMeta() }
 				</div>

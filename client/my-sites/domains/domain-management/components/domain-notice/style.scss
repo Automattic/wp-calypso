@@ -1,6 +1,6 @@
 .domain-notice {
 	text-transform: none;
-	font-size: 12px;
+	font-size: 0.75rem;
 
 	.gridicon {
 		transform: translateY( 3.5px );
@@ -8,7 +8,8 @@
 	}
 }
 
-.domain-notice__info {
+.domain-notice__info,
+.domain-notice__success {
 	color: var( --color-success-50 );
 }
 

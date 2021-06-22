@@ -50,7 +50,7 @@ import BulkEditContactInfo from './bulk-edit-contact-info';
 import CardHeading from 'calypso/components/card-heading';
 import { isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -77,6 +77,7 @@ class ListAll extends Component {
 		selectedDomains: {},
 		transferLockOptOut: false,
 		whoisData: {},
+		contactInfoSaveResults: {},
 	};
 
 	renderedQuerySiteDomains = {};
@@ -244,6 +245,14 @@ class ListAll extends Component {
 		return <QuerySiteDomains siteId={ blogId } />;
 	}
 
+	getActionResult( domain ) {
+		if ( this.props.isContactEmailEditContext ) {
+			return get( this.state.contactInfoSaveResults, domain, null );
+		}
+
+		return null;
+	}
+
 	renderDomainItem( domain, index ) {
 		const { currentRoute, domainsDetails, sites, requestingSiteDomains } = this.props;
 		const domainDetails = this.findDomainDetails( domainsDetails, domain );
@@ -277,6 +286,7 @@ class ListAll extends Component {
 						onToggle={ this.handleDomainItemToggle }
 						isChecked={ isChecked }
 						disabeld={ isLoadingDomainDetails }
+						actionResult={ this.getActionResult( domain.name ) }
 					/>
 				) }
 			</React.Fragment>
@@ -340,7 +350,9 @@ class ListAll extends Component {
 	};
 
 	handleSaveContactInfo = ( contactInfo ) => {
-		this.setState( { isSavingContactInfo: true }, () => this.saveContactInfo( contactInfo ) );
+		this.setState( { isSavingContactInfo: true, contactInfoSaveResults: {} }, () =>
+			this.saveContactInfo( contactInfo )
+		);
 	};
 
 	saveContactInfo = ( contactInfo ) => {
@@ -364,51 +376,39 @@ class ListAll extends Component {
 			return wpcom
 				.undocumented()
 				.updateWhois( domainName, updatedContactInfo, this.state.transferLockOptOut )
-				.then( ( data ) => {
-					return { ...data, domain: domainName };
+				.then( () => {
+					this.setState( ( { contactInfoSaveResults } ) => {
+						return {
+							contactInfoSaveResults: {
+								...contactInfoSaveResults,
+								[ domainName ]: {
+									message: 'Successfully updated email address.',
+									type: 'success',
+								},
+							},
+						};
+					} );
 				} )
-				.catch( ( error ) => {
-					error.domain = domainName;
-					throw error;
+				.catch( () => {
+					this.setState( ( { contactInfoSaveResults } ) => {
+						return {
+							contactInfoSaveResults: {
+								...contactInfoSaveResults,
+								[ domainName ]: {
+									message: 'Failed to updated email address.',
+									type: 'error',
+								},
+							},
+						};
+					} );
 				} );
 		} );
 
-		Promise.allSettled( saveWhoisPromises )
-			.then( ( results ) => {
-				const successDomains = reduce(
-					results,
-					( list, data ) => {
-						if ( 'fulfilled' === data.status && true === data.value.success ) {
-							list.push( data.value.domain );
-						}
-						return list;
-					},
-					[]
-				);
-
-				const failedDomains = reduce(
-					results,
-					( list, data ) => {
-						if ( 'rejected' === data.status ) {
-							list.push( data.reason.domain );
-						}
-						if ( 'fulfilled' === data.status && false === data.value.success ) {
-							list.push( data.value.domain );
-						}
-						return list;
-					},
-					[]
-				);
-
-				! isEmpty( successDomains ) &&
-					this.props.successNotice( this.props.translate( 'Successfully updated email address.' ) );
-
-				! isEmpty( failedDomains ) &&
-					this.props.errorNotice(
-						'Failed to updated email address for: ' + failedDomains.join( ', ' )
-					);
-			} )
-			.then( () => this.setState( { isSavingContactInfo: false } ) );
+		Promise.allSettled( saveWhoisPromises ).then( () => {
+			this.setState( { isSavingContactInfo: false }, () =>
+				this.props.infoNotice( this.props.translate( 'Saving contact info is complete.' ) )
+			);
+		} );
 	};
 
 	renderActionForm() {
@@ -565,5 +565,6 @@ export default connect(
 		saveContactEmailClick,
 		successNotice,
 		errorNotice,
+		infoNotice,
 	}
 )( localize( ListAll ) );
