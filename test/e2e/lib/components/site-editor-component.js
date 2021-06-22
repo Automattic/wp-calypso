@@ -8,6 +8,7 @@ import { By } from 'selenium-webdriver';
  * Internal dependencies
  */
 import * as driverHelper from '../driver-helper';
+import * as driverManager from '../driver-manager';
 import AsyncBaseContainer from '../async-base-container';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
 
@@ -59,6 +60,25 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		} );
 	}
 
+	async isBlockInserterOpen() {
+		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
+		return await driverHelper.isElementLocated( this.driver, inserterMenuLocator );
+	}
+
+	async openBlockInserter() {
+		const inserterToggleLocator = By.css(
+			'.edit-site-header .edit-site-header-toolbar__inserter-toggle'
+		);
+		await driverHelper.clickWhenClickable( this.driver, inserterToggleLocator );
+		// "Click" twice - the first click seems to trigger a tooltip, the second opens the menu
+		// See https://github.com/Automattic/wp-calypso/issues/43179
+		if ( ! ( await this.isBlockInserterOpen() ) ) {
+			await driverHelper.clickWhenClickable( this.driver, inserterToggleLocator );
+		}
+		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, inserterMenuLocator );
+	}
+
 	async openBlockInserterAndSearch( searchTerm ) {
 		await this.runInCanvas( async () => {
 			await driverHelper.scrollIntoView(
@@ -67,23 +87,43 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 				'start'
 			);
 		} );
-		const inserterToggleLocator = By.css(
-			'.edit-site-header .edit-site-header-toolbar__inserter-toggle'
+
+		await this.openBlockInserter();
+		const inserterSearchInputLocator = By.css( 'input.block-editor-inserter__search-input' );
+		await driverHelper.setWhenSettable( this.driver, inserterSearchInputLocator, searchTerm );
+	}
+
+	async insertPattern( category, name ) {
+		await this.openBlockInserter();
+
+		const patternTabLocator = By.css(
+			'.block-editor-inserter__tabs .components-tab-panel__tabs-item[id$="patterns"]'
+		);
+		const patternCategoryDropdownLocator = By.css(
+			'.components-tab-panel__tab-content .components-select-control__input'
+		);
+		const patternCategoryDropdownOptionLocator = By.css(
+			`.components-tab-panel__tab-content .components-select-control__input option[value="${ category }"]`
+		);
+		const patternItemLocator = By.css(
+			`.block-editor-block-patterns-list__list-item[aria-label="${ name }"]`
+		);
+		await driverHelper.clickWhenClickable( this.driver, patternTabLocator );
+		await driverHelper.clickWhenClickable( this.driver, patternCategoryDropdownLocator );
+		await driverHelper.clickWhenClickable( this.driver, patternCategoryDropdownOptionLocator );
+		await driverHelper.clickWhenClickable( this.driver, patternCategoryDropdownLocator );
+		await driverHelper.clickWhenClickable( this.driver, patternItemLocator );
+	}
+
+	async closeBlockInserter() {
+		const inserterCloseLocator = By.css(
+			driverManager.currentScreenSize() === 'mobile'
+				? '.edit-site-editor__inserter-panel-header .components-button'
+				: '.edit-site-header-toolbar__inserter-toggle'
 		);
 		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
-		const inserterSearchInputLocator = By.css( 'input.block-editor-inserter__search-input' );
-
-		if ( await driverHelper.isElementNotLocated( this.driver, inserterMenuLocator ) ) {
-			await driverHelper.clickWhenClickable( this.driver, inserterToggleLocator );
-			// "Click" twice - the first click seems to trigger a tooltip, the second opens the menu
-			// See https://github.com/Automattic/wp-calypso/issues/43179
-			if ( await driverHelper.isElementNotLocated( this.driver, inserterMenuLocator ) ) {
-				await driverHelper.clickWhenClickable( this.driver, inserterToggleLocator );
-			}
-
-			await driverHelper.waitUntilElementLocatedAndVisible( this.driver, inserterMenuLocator );
-		}
-		await driverHelper.setWhenSettable( this.driver, inserterSearchInputLocator, searchTerm );
+		await driverHelper.clickWhenClickable( this.driver, inserterCloseLocator );
+		await driverHelper.waitUntilElementNotLocated( this.driver, inserterMenuLocator );
 	}
 
 	async addBlock( title ) {
@@ -178,5 +218,12 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 				By.css( 'button[aria-label="Global Styles"]' )
 			);
 		}
+	}
+
+	async dismissNotices() {
+		const locator = By.css( '.components-snackbar[aria-label="Dismiss this notice"]' );
+		const notices = await this.driver.findElements( locator );
+		await Promise.all( notices.map( ( notice ) => notice.click() ) );
+		await driverHelper.waitUntilElementNotLocated( this.driver, locator );
 	}
 }
